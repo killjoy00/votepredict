@@ -1,16 +1,14 @@
 // Server-side only — used by Vercel API routes, not imported by frontend
 import axios from 'axios';
+import { MN_LEGISLATORS } from '../data/legislators.js';
 
 const BASE_URL = 'https://v3.openstates.org';
 
 function getHeaders(): Record<string, string> {
-  const headers: Record<string, string> = {
+  return {
     'Content-Type': 'application/json',
+    ...(process.env.OPEN_STATES_API_KEY ? { 'X-API-KEY': process.env.OPEN_STATES_API_KEY } : {}),
   };
-  if (process.env.OPEN_STATES_API_KEY) {
-    headers['X-API-KEY'] = process.env.OPEN_STATES_API_KEY;
-  }
-  return headers;
 }
 
 // Simple in-memory cache (works within a single Vercel function invocation;
@@ -107,10 +105,16 @@ export async function fetchLegislators(chamber?: 'house' | 'senate'): Promise<Le
   const cached = getCached<Legislator[]>(cacheKey);
   if (cached) return cached;
 
+  // If no API key is configured, use the embedded static roster immediately.
+  if (!process.env.OPEN_STATES_API_KEY) {
+    const result = filterByChamber(MN_LEGISLATORS, chamber);
+    setCached(cacheKey, result);
+    return result;
+  }
+
   const legislators: Legislator[] = [];
   let page = 1;
   let hasMore = true;
-
   const orgClass = chamber === 'house' ? 'lower' : chamber === 'senate' ? 'upper' : undefined;
 
   while (hasMore) {
@@ -148,9 +152,19 @@ export async function fetchLegislators(chamber?: 'house' | 'senate'): Promise<Le
       hasMore = page < data.pagination.max_page;
       page++;
     } catch (error) {
-      console.error('OpenStates fetch error:', error);
-      hasMore = false;
+      console.error('OpenStates fetch error — falling back to static roster:', error);
+      // Fall back to static data so the app stays functional.
+      const result = filterByChamber(MN_LEGISLATORS, chamber);
+      setCached(cacheKey, result);
+      return result;
     }
+  }
+
+  if (legislators.length === 0) {
+    // OpenStates returned nothing (rate-limited or empty) — use static roster.
+    const result = filterByChamber(MN_LEGISLATORS, chamber);
+    setCached(cacheKey, result);
+    return result;
   }
 
   legislators.sort((a, b) => a.name.localeCompare(b.name));
@@ -158,31 +172,101 @@ export async function fetchLegislators(chamber?: 'house' | 'senate'): Promise<Le
   return legislators;
 }
 
+function filterByChamber(list: Legislator[], chamber?: 'house' | 'senate'): Legislator[] {
+  const filtered = chamber ? list.filter((l) => l.chamber === chamber) : list;
+  return [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+}
+
 export async function searchBills(query: string): Promise<Bill[]> {
+  // Try OpenStates first if an API key is available.
+  if (process.env.OPEN_STATES_API_KEY) {
+    try {
+      const { data } = await axios.get<OpenStatesPagedResponse<OpenStatesBill>>(
+        `${BASE_URL}/bills`,
+        {
+          headers: getHeaders(),
+          params: { jurisdiction: 'mn', q: query, per_page: 20 },
+          timeout: 10000,
+        }
+      );
+      return data.results.map(mapBill);
+    } catch (error) {
+      console.error('OpenStates bill search error:', error);
+      // Fall through to MN Revisor search.
+    }
+  }
+
+  // Fall back to the Minnesota Legislature Revisor's public search (no key needed).
+  return searchMNRevisor(query);
+}
+
+async function searchMNRevisor(query: string): Promise<Bill[]> {
   try {
-    const { data } = await axios.get<OpenStatesPagedResponse<OpenStatesBill>>(
-      `${BASE_URL}/bills`,
+    // MN Legislature full-text bill search — returns JSON when Accept header is set.
+    const { data } = await axios.get<RevisorSearchResponse>(
+      'https://www.revisor.mn.gov/bills/status_search.php',
       {
-        headers: getHeaders(),
-        params: { jurisdiction: 'mn', q: query, per_page: 20 },
+        params: {
+          keyword: query,
+          session: '93',          // 93rd Legislature (2025-2026)
+          session_year: '2025',
+          session_number: '0',
+          type: 'bill',
+          SDivision: 'all',
+          HDivision: 'all',
+        },
+        headers: { Accept: 'application/json', 'User-Agent': 'MN-VotePredictor/1.0' },
         timeout: 10000,
       }
     );
 
-    return data.results.map((b) => ({
-      id: b.id,
-      number: b.identifier,
-      title: b.title,
-      session: b.session,
-      sponsors: b.sponsorships ?? [],
-      status: b.latest_action_description ?? 'Unknown',
-      subjects: b.subject ?? [],
-      abstract: b.abstracts?.[0]?.abstract,
-      lastActionDate: b.latest_action_date,
-      committee: b.from_organization?.name,
+    if (!Array.isArray(data?.bills)) return [];
+
+    return data.bills.slice(0, 20).map((b) => ({
+      id: b.bill_id ?? b.number,
+      number: b.number ?? '',
+      title: b.title ?? '(no title)',
+      session: '2025-2026',
+      sponsors: b.chief_author ? [{ name: b.chief_author, primary: true }] : [],
+      status: b.status ?? 'Introduced',
+      subjects: b.subjects ?? [],
+      abstract: b.description,
+      lastActionDate: b.last_action_date,
+      committee: b.committee,
     }));
-  } catch (error) {
-    console.error('Bill search error:', error);
-    return [];
+  } catch {
+    // Revisor search also unavailable — throw a user-friendly error.
+    throw new Error(
+      'Bill search is currently unavailable. Use "Enter Manually" mode to paste a bill description directly.'
+    );
   }
+}
+
+interface RevisorSearchResponse {
+  bills?: Array<{
+    bill_id?: string;
+    number?: string;
+    title?: string;
+    chief_author?: string;
+    status?: string;
+    subjects?: string[];
+    description?: string;
+    last_action_date?: string;
+    committee?: string;
+  }>;
+}
+
+function mapBill(b: OpenStatesBill): Bill {
+  return {
+    id: b.id,
+    number: b.identifier,
+    title: b.title,
+    session: b.session,
+    sponsors: b.sponsorships ?? [],
+    status: b.latest_action_description ?? 'Unknown',
+    subjects: b.subject ?? [],
+    abstract: b.abstracts?.[0]?.abstract,
+    lastActionDate: b.latest_action_date,
+    committee: b.from_organization?.name,
+  };
 }

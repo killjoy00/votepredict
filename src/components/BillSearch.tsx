@@ -18,6 +18,7 @@ export default function BillSearch({ onPredict, predicting }: Props) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<Bill[]>([])
   const [searching, setSearching] = useState(false)
+  const [searchError, setSearchError] = useState<string | null>(null)
   const [selected, setSelected] = useState<Bill | null>(null)
   const [extraContext, setExtraContext] = useState('')
 
@@ -29,10 +30,13 @@ export default function BillSearch({ onPredict, predicting }: Props) {
     if (!query.trim()) return
     setSearching(true)
     setResults([])
+    setSearchError(null)
     try {
-      setResults(await searchBills(query.trim()))
+      const bills = await searchBills(query.trim())
+      setResults(bills)
+      if (bills.length === 0) setSearchError('No bills found. Try different keywords.')
     } catch (e) {
-      console.error(e)
+      setSearchError(e instanceof Error ? e.message : 'Bill search failed.')
     } finally {
       setSearching(false)
     }
@@ -117,8 +121,8 @@ export default function BillSearch({ onPredict, predicting }: Props) {
             </div>
           )}
 
-          {results.length === 0 && searching === false && query && !selected && (
-            <p className="text-xs text-gray-400 text-center">No results. Try different keywords.</p>
+          {searchError && !selected && (
+            <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">{searchError}</p>
           )}
 
           {/* Selected bill card */}
