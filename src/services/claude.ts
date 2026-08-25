@@ -128,7 +128,7 @@ Return ONLY valid JSON (no markdown, no extra text):
 
   // Skip thinking for speed — this is a pattern-matching task with a 60s timeout
   const response = await client.messages.create({
-    model: 'claude-opus-4-6',
+    model: 'claude-opus-5',
     max_tokens: 8000,
     system: systemPrompt,
     messages: [{ role: 'user', content: userMsg }],

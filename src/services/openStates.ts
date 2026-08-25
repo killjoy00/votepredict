@@ -223,7 +223,7 @@ async function searchMNRevisor(query: string): Promise<Bill[]> {
     if (!Array.isArray(data?.bills)) return [];
 
     return data.bills.slice(0, 20).map((b) => ({
-      id: b.bill_id ?? b.number,
+      id: b.bill_id ?? b.number ?? '',
       number: b.number ?? '',
       title: b.title ?? '(no title)',
       session: '2025-2026',
