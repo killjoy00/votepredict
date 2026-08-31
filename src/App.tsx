@@ -57,11 +57,11 @@ export default function App() {
     <div className="min-h-screen flex flex-col bg-slate-100">
       <Header />
 
-      <main className="flex-1 max-w-screen-2xl w-full mx-auto px-4 py-5 grid grid-cols-1 lg:grid-cols-5 gap-5"
+      <main className="flex-1 max-w-(--breakpoint-2xl) w-full mx-auto px-4 py-5 grid grid-cols-1 lg:grid-cols-5 gap-5"
         style={{ minHeight: 0 }}>
 
         {/* Left: Legislators */}
-        <div className="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 flex flex-col lg:h-[calc(100vh-130px)]">
+        <div className="lg:col-span-3 bg-white rounded-2xl shadow-xs border border-gray-100 p-4 sm:p-5 flex flex-col lg:h-[calc(100vh-130px)]">
           <div className="flex items-start justify-between gap-3 mb-3 shrink-0">
             <div>
               <h2 className="text-base font-bold text-gray-900">94th Legislature Members</h2>
@@ -90,7 +90,7 @@ export default function App() {
         <div className="lg:col-span-2 flex flex-col gap-4 lg:h-[calc(100vh-130px)] lg:overflow-y-auto">
 
           {/* Bill input card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 shrink-0">
+          <div className="bg-white rounded-2xl shadow-xs border border-gray-100 p-5 shrink-0">
             <h2 className="text-base font-bold text-gray-900 mb-4">Bill Vote Predictor</h2>
             <BillSearch onPredict={handlePredict} predicting={predicting} />
             {predictError && (
@@ -102,7 +102,7 @@ export default function App() {
 
           {/* Loading state */}
           {predicting && (
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="bg-white rounded-2xl shadow-xs border border-gray-100 p-6">
               <div className="flex items-center gap-4">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 shrink-0" />
                 <div>
@@ -117,14 +117,14 @@ export default function App() {
 
           {/* Prediction results */}
           {prediction && !predicting && (
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 shrink-0">
+            <div className="bg-white rounded-2xl shadow-xs border border-gray-100 p-5 shrink-0">
               <VotePrediction result={prediction} />
             </div>
           )}
 
           {/* Empty state */}
           {!prediction && !predicting && !predictError && (
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+            <div className="bg-white rounded-2xl shadow-xs border border-gray-100 p-8 text-center">
               <div className="text-4xl mb-3">🗳️</div>
               <p className="text-gray-500 text-sm leading-relaxed">
                 Search for a current Minnesota bill or paste a description to predict how every legislator will vote.
