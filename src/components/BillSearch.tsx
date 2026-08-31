@@ -123,7 +123,7 @@ export default function BillSearch({ onPredict, predicting }: Props) {
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               maxLength={120}
-              className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-400"
             />
             <button
               onClick={handleSearch}
@@ -136,7 +136,7 @@ export default function BillSearch({ onPredict, predicting }: Props) {
 
           {/* Results dropdown */}
           {results.length > 0 && (
-            <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+            <div className="border border-gray-200 rounded-lg overflow-hidden shadow-xs">
               {results.map((bill) => (
                 <button
                   key={bill.id}
@@ -206,7 +206,7 @@ export default function BillSearch({ onPredict, predicting }: Props) {
                   rows={4}
                   maxLength={12000}
                   placeholder="Paste or edit the bill summary here…"
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-400 bg-white"
                 />
               </div>
 
@@ -235,7 +235,7 @@ export default function BillSearch({ onPredict, predicting }: Props) {
               value={manualTitle}
               onChange={(e) => setManualTitle(e.target.value)}
               maxLength={300}
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-400"
             />
           </div>
           <div>
@@ -248,7 +248,7 @@ export default function BillSearch({ onPredict, predicting }: Props) {
               onChange={(e) => setManualDesc(e.target.value)}
               rows={7}
               maxLength={12000}
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-400"
             />
           </div>
           <button
