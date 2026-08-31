@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import type { Bill } from '../types/index.js'
-import { searchBills } from '../api/index.js'
+import { fetchBillText, searchBills } from '../api/index.js'
 
 interface Props {
   onPredict: (payload: {
@@ -21,6 +21,9 @@ export default function BillSearch({ onPredict, predicting }: Props) {
   const [searchError, setSearchError] = useState<string | null>(null)
   const [selected, setSelected] = useState<Bill | null>(null)
   const [extraContext, setExtraContext] = useState('')
+  const [loadingText, setLoadingText] = useState(false)
+  const [textNotice, setTextNotice] = useState<string | null>(null)
+  const detailRequest = useRef(0)
 
   // Manual mode
   const [manualTitle, setManualTitle] = useState('')
@@ -42,10 +45,30 @@ export default function BillSearch({ onPredict, predicting }: Props) {
     }
   }
 
-  function handleSelect(bill: Bill) {
+  async function handleSelect(bill: Bill) {
+    const requestId = ++detailRequest.current
     setSelected(bill)
     setResults([])
     setExtraContext(bill.abstract ?? '')
+    setTextNotice(null)
+    if (!bill.textUrl) return
+
+    setLoadingText(true)
+    try {
+      const result = await fetchBillText(bill.textUrl)
+      if (requestId !== detailRequest.current) return
+      setExtraContext(result.text)
+      setTextNotice(result.truncated
+        ? 'Loaded official text; a long middle section was omitted to fit the analysis limit.'
+        : 'Loaded the latest official bill text.')
+    } catch (error) {
+      if (requestId !== detailRequest.current) return
+      setTextNotice(error instanceof Error
+        ? `${error.message}. The official short description is still available below.`
+        : 'Could not load full text; using the official short description.')
+    } finally {
+      if (requestId === detailRequest.current) setLoadingText(false)
+    }
   }
 
   function handlePredictSearch() {
@@ -148,7 +171,13 @@ export default function BillSearch({ onPredict, predicting }: Props) {
                   )}
                 </div>
                 <button
-                  onClick={() => { setSelected(null); setExtraContext('') }}
+                  onClick={() => {
+                    detailRequest.current += 1
+                    setSelected(null)
+                    setExtraContext('')
+                    setLoadingText(false)
+                    setTextNotice(null)
+                  }}
                   className="text-blue-300 hover:text-blue-600 text-lg leading-none shrink-0"
                 >✕</button>
               </div>
@@ -157,6 +186,15 @@ export default function BillSearch({ onPredict, predicting }: Props) {
                 <label className="block text-xs font-medium text-gray-600 mb-1">
                   Bill description / context for AI analysis
                 </label>
+                {loadingText && (
+                  <p className="text-xs text-blue-700 mb-2 flex items-center gap-1.5">
+                    <span className="animate-spin inline-block w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full" />
+                    Loading latest official bill text…
+                  </p>
+                )}
+                {!loadingText && textNotice && (
+                  <p className="text-xs text-gray-500 mb-2">{textNotice}</p>
+                )}
                 <textarea
                   value={extraContext}
                   onChange={(e) => setExtraContext(e.target.value)}
@@ -169,7 +207,7 @@ export default function BillSearch({ onPredict, predicting }: Props) {
 
               <button
                 onClick={handlePredictSearch}
-                disabled={predicting}
+                disabled={predicting || loadingText}
                 className="w-full py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
               >
                 {predicting ? (

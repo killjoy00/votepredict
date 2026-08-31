@@ -21,6 +21,19 @@ export async function searchBills(query: string): Promise<Bill[]> {
   return res.json();
 }
 
+export async function fetchBillText(textUrl: string): Promise<{
+  text: string;
+  truncated: boolean;
+  sourceUrl: string;
+}> {
+  const res = await fetch(`${BASE}/bill-text?url=${encodeURIComponent(textUrl)}`);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error((err as { error?: string }).error ?? 'Failed to load official bill text');
+  }
+  return res.json();
+}
+
 export async function predictVotes(payload: {
   billDescription: string;
   billTitle?: string;
