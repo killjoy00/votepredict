@@ -1,6 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildRevisorSearchParams, parseRevisorSearchXml } from '../src/services/revisor.js';
+import {
+  buildRevisorSearchParams,
+  parseRevisorBillHtml,
+  parseRevisorSearchXml,
+  validateRevisorTextUrl,
+} from '../src/services/revisor.js';
 
 const XML = `<?xml version="1.0"?>
 <SEARCH_RESULTS>
@@ -43,4 +48,32 @@ test('Revisor XML parser filters an explicit chamber and decodes fields', () => 
   assert.equal(bills[0].title, 'Taxes & appropriations changed.');
   assert.equal(bills[0].session, '94th Legislature (2025-2026)');
   assert.equal(bills[0].sourceUrl, 'https://www.revisor.mn.gov/bills/94/2025/0/HF/10/versions/latest/');
+  assert.equal(bills[0].textUrl, bills[0].sourceUrl);
+});
+
+test('bill text URL validation prevents arbitrary upstream requests', () => {
+  assert.equal(
+    validateRevisorTextUrl('https://www.revisor.mn.gov/bills/94/2025/0/HF/10/versions/latest/?ignored=1'),
+    'https://www.revisor.mn.gov/bills/94/2025/0/HF/10/versions/latest/',
+  );
+  assert.throws(
+    () => validateRevisorTextUrl('https://attacker.example/bills/94/2025/0/HF/10/versions/latest/'),
+    /Only official/,
+  );
+});
+
+test('official bill HTML parser extracts provisions and removes visual annotations', () => {
+  const html = `<main><div id="document" class="col">
+    <p>A bill for an act<br/>relating to testing and public services.</p>
+    <span class="sr-only">new text begin</span>
+    <h2>Section 1.</h2>
+    <p>This section <span class="del">would have delayed but now</span> creates a detailed program for Minnesota residents and explains the eligibility rules, funding source, administration, and effective date.</p>
+    <p>The commissioner must publish an annual report beginning January 1, 2027.</p>
+  </div></main>`;
+  const result = parseRevisorBillHtml(html);
+  assert.match(result.text, /A bill for an act\nrelating to testing/);
+  assert.match(result.text, /Section 1/);
+  assert.doesNotMatch(result.text, /new text begin/);
+  assert.doesNotMatch(result.text, /would have delayed/);
+  assert.equal(result.truncated, false);
 });

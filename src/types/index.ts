@@ -29,6 +29,7 @@ export interface Bill {
   lastActionDate?: string;
   committee?: string;
   sourceUrl?: string;
+  textUrl?: string;
 }
 
 export type PredictedVote = 'yes' | 'no' | 'abstain' | 'uncertain';

@@ -2,8 +2,12 @@
   "name": "mn-vote-predictor",
   "version": "1.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
   "scripts": {
-    "dev": "vercel dev",
+    "dev": "npx --yes vercel@59.10.0 dev",
+    "dev:web": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
@@ -21,13 +25,12 @@
     "@types/node": "^20.11.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@vercel/node": "^3.2.9",
-    "@vitejs/plugin-react": "^4.3.1",
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.14",
+    "@vitejs/plugin-react": "^6.1.1",
+    "autoprefixer": "^10.5.4",
+    "postcss": "^8.5.26",
+    "tailwindcss": "^3.4.19",
     "tsx": "^4.23.13",
-    "typescript": "^5.5.3",
-    "vite": "^5.4.8"
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2"
   }
 }

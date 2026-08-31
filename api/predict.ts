@@ -1,19 +1,32 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { fetchLegislators } from '../src/services/openStates.js';
 import { predictVotes } from '../src/services/claude.js';
+import { enforceRateLimit, isSameOriginRequest } from '../src/services/rateLimit.js';
+import type { ApiRequest, ApiResponse } from '../src/types/http.js';
 
 // Extend timeout to 60s — Claude needs time to analyze all legislators
 export const config = {
   maxDuration: 60,
 };
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { billDescription, billTitle, billNumber, subjects, sponsors } = req.body ?? {};
+  if (!enforceRateLimit(req, res, 'predict', { maxRequests: 5, windowMs: 10 * 60_000 })) {
+    return;
+  }
+  if (!isSameOriginRequest(req)) {
+    return res.status(403).json({ error: 'Cross-origin prediction requests are not allowed' });
+  }
+  const contentType = req.headers['content-type'];
+  if (typeof contentType !== 'string' || !contentType.toLowerCase().startsWith('application/json')) {
+    return res.status(415).json({ error: 'Content-Type must be application/json' });
+  }
+
+  const body = typeof req.body === 'object' && req.body !== null ? req.body : {};
+  const { billDescription, billTitle, billNumber, subjects, sponsors } = body as Record<string, unknown>;
 
   if (typeof billDescription !== 'string' || !billDescription.trim()) {
     return res.status(400).json({ error: 'billDescription is required' });

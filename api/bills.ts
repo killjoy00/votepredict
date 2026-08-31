@@ -1,14 +1,23 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { searchBills } from '../src/services/openStates.js';
+import { enforceRateLimit } from '../src/services/rateLimit.js';
+import type { ApiRequest, ApiResponse } from '../src/types/http.js';
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method !== 'GET') {
+    res.setHeader('Allow', 'GET');
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const q = req.query.q as string | undefined;
-  if (!q?.trim()) {
+  if (!enforceRateLimit(req, res, 'bills', { maxRequests: 60, windowMs: 5 * 60_000 })) {
+    return;
+  }
+
+  const q = req.query.q;
+  if (typeof q !== 'string' || !q.trim()) {
     return res.status(400).json({ error: 'Query parameter "q" is required' });
+  }
+  if (q.length > 120) {
+    return res.status(400).json({ error: 'Query parameter "q" must be 120 characters or fewer' });
   }
 
   try {
