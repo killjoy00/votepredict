@@ -136,7 +136,7 @@ export const MN_LEGISLATORS: Legislator[] = [
   { id: "mn-house-15654", name: "Meg Luger-Nikolai", party: "DFL", chamber: "house", district: "64A", title: "Representative" },
   { id: "mn-house-15444", name: "Dave Pinto", party: "DFL", chamber: "house", district: "64B", title: "Representative" },
   { id: "mn-house-15573", name: "Samakab Hussein", party: "DFL", chamber: "house", district: "65A", title: "Representative" },
-  { id: "mn-house-15574", name: "Mar&#237;a Isa P&#233;rez-Vega", party: "DFL", chamber: "house", district: "65B", title: "Representative" },
+  { id: "mn-house-15574", name: "María Isa Pérez-Vega", party: "DFL", chamber: "house", district: "65B", title: "Representative" },
   { id: "mn-house-15575", name: "Leigh Finke", party: "DFL", chamber: "house", district: "66A", title: "Representative" },
   { id: "mn-house-15553", name: "Athena Hollins", party: "DFL", chamber: "house", district: "66B", title: "Representative" },
   { id: "mn-house-15576", name: "Liz Lee", party: "DFL", chamber: "house", district: "67A", title: "Representative" },

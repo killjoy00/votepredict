@@ -73,10 +73,15 @@ export default function BillSearch({ onPredict, predicting }: Props) {
 
   function handlePredictSearch() {
     if (!selected) return
+    const fallbackContext = [
+      selected.title,
+      selected.subjects.length ? `Topics: ${selected.subjects.join(', ')}` : '',
+      selected.status ? `Current status: ${selected.status}` : '',
+    ].filter(Boolean).join('\n')
     onPredict({
       billTitle: selected.title,
       billNumber: selected.number,
-      billDescription: extraContext || selected.abstract || selected.subjects.join(', ') || selected.title,
+      billDescription: extraContext.trim() || selected.abstract || fallbackContext,
       subjects: selected.subjects,
       sponsors: selected.sponsors.filter((s) => s.primary).map((s) => s.name),
     })
