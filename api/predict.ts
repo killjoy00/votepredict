@@ -8,6 +8,36 @@ export const config = {
   maxDuration: 60,
 };
 
+export function classifyPredictionError(error: unknown): {
+  status: number;
+  code: string;
+  message: string;
+} {
+  const providerStatus = typeof error === 'object' && error !== null && 'status' in error
+    ? Number((error as { status?: unknown }).status)
+    : undefined;
+
+  if (providerStatus === 400) {
+    return { status: 502, code: 'provider_request_rejected', message: 'The prediction provider rejected the model request.' };
+  }
+  if (providerStatus === 401) {
+    return { status: 503, code: 'provider_authentication_failed', message: 'The prediction provider credentials need attention.' };
+  }
+  if (providerStatus === 403 || providerStatus === 404) {
+    return { status: 503, code: 'provider_model_unavailable', message: 'The configured prediction model is unavailable.' };
+  }
+  if (providerStatus === 429) {
+    return { status: 503, code: 'provider_rate_limited', message: 'The prediction provider is temporarily rate limited.' };
+  }
+  if (providerStatus && providerStatus >= 500) {
+    return { status: 503, code: 'provider_unavailable', message: 'The prediction provider is temporarily unavailable.' };
+  }
+  if (error instanceof Error && /max_tokens|refusal|structured result/i.test(error.message)) {
+    return { status: 502, code: 'incomplete_model_response', message: 'The prediction provider returned an incomplete result.' };
+  }
+  return { status: 500, code: 'prediction_failed', message: 'Prediction failed. Please try again.' };
+}
+
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -67,6 +97,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     return res.status(200).json(result);
   } catch (error) {
     console.error('predict handler error:', error);
-    return res.status(500).json({ error: 'Prediction failed. Please try again.' });
+    const failure = classifyPredictionError(error);
+    return res.status(failure.status).json({ error: failure.message, code: failure.code });
   }
 }

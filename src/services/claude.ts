@@ -27,23 +27,23 @@ export interface ModelPredictionOutput {
   }>;
 }
 
-const predictionSchema = {
+// Keep this raw schema to the subset supported by Anthropic constrained decoding.
+// Bounds and list limits are enforced when the response is normalized below.
+export const predictionSchema = {
   type: 'object',
   additionalProperties: false,
   properties: {
     analysis: { type: 'string' },
-    dflYesPercent: { type: 'number', minimum: 0, maximum: 100 },
-    republicanYesPercent: { type: 'number', minimum: 0, maximum: 100 },
-    independentYesPercent: { type: 'number', minimum: 0, maximum: 100 },
-    passageConfidence: { type: 'number', minimum: 0, maximum: 100 },
+    dflYesPercent: { type: 'number' },
+    republicanYesPercent: { type: 'number' },
+    independentYesPercent: { type: 'number' },
+    passageConfidence: { type: 'number' },
     keyFactors: {
       type: 'array',
-      maxItems: 5,
       items: { type: 'string' },
     },
     exceptions: {
       type: 'array',
-      maxItems: 20,
       items: {
         type: 'object',
         additionalProperties: false,
@@ -51,7 +51,7 @@ const predictionSchema = {
           legislatorId: { type: 'string' },
           name: { type: 'string' },
           vote: { type: 'string', enum: ['yes', 'no', 'abstain'] },
-          confidence: { type: 'number', minimum: 0, maximum: 100 },
+          confidence: { type: 'number' },
           reasoning: { type: 'string' },
         },
         required: ['legislatorId', 'name', 'vote', 'confidence', 'reasoning'],
@@ -217,6 +217,7 @@ export async function predictVotes(input: {
     task: [
       'Briefly analyze the bill political dynamics.',
       'Estimate the percentage of each caucus likely to vote yes.',
+      'Return every percentage and confidence value on a 0-100 scale, and return at most five key factors.',
       'Identify at most 20 notable legislators likely to deviate from that caucus estimate.',
       'Use exact legislator IDs and names from the roster for every exception.',
       'Do not calculate chamber totals; the application calculates them from member-level predictions.',

@@ -68,7 +68,7 @@ export default function App() {
               {rosterInfo && (
                 <p className="text-xs text-gray-400 mt-0.5">
                   {rosterInfo.source === 'openstates' ? 'OpenStates' : rosterInfo.source === 'minnesota-legislature' ? 'Official Minnesota Legislature' : 'Verified official snapshot'}
-                  {' · '}updated {new Date(rosterInfo.asOf).toLocaleDateString()}
+                  {' · '}updated {new Date(rosterInfo.asOf).toLocaleDateString(undefined, { timeZone: 'UTC' })}
                 </p>
               )}
             </div>

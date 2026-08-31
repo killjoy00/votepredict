@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildPredictionResult, majorityNeeded } from '../src/services/claude.js';
+import { buildPredictionResult, majorityNeeded, predictionSchema } from '../src/services/claude.js';
 import type { Legislator } from '../src/types/index.js';
 
 const legislators: Legislator[] = [
@@ -14,6 +14,11 @@ test('majorityNeeded does not treat an even split as passage', () => {
   assert.equal(majorityNeeded(134), 68);
   assert.equal(majorityNeeded(67), 34);
   assert.equal(majorityNeeded(2), 2);
+});
+
+test('raw structured-output schema uses only supported constraints', () => {
+  const schema = JSON.stringify(predictionSchema);
+  assert.doesNotMatch(schema, /"(?:minimum|maximum|maxItems|minItems)"/);
 });
 
 test('prediction totals are derived from individual predictions', () => {

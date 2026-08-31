@@ -4,6 +4,7 @@ import billsHandler from '../api/bills.js';
 import billTextHandler from '../api/bill-text.js';
 import legislatorsHandler from '../api/legislators.js';
 import predictHandler from '../api/predict.js';
+import { classifyPredictionError } from '../api/predict.js';
 import type { ApiRequest, ApiResponse } from '../src/types/http.js';
 import {
   consumeRateLimit,
@@ -138,4 +139,14 @@ test('prediction API enforces JSON, same-origin requests, and bounded input', as
     body: { billDescription: 'x'.repeat(12_001) },
   }), tooLong);
   assert.equal(tooLong.statusCode, 400);
+});
+
+test('prediction provider failures return useful non-secret categories', () => {
+  assert.deepEqual(classifyPredictionError({ status: 400 }), {
+    status: 502,
+    code: 'provider_request_rejected',
+    message: 'The prediction provider rejected the model request.',
+  });
+  assert.equal(classifyPredictionError({ status: 401 }).code, 'provider_authentication_failed');
+  assert.equal(classifyPredictionError({ status: 429 }).code, 'provider_rate_limited');
 });
