@@ -72,20 +72,20 @@ function VoteBar({
       {/* Legend */}
       <div className="flex flex-wrap gap-3 mt-2">
         <span className="flex items-center gap-1 text-xs text-gray-600">
-          <span className="w-2.5 h-2.5 rounded-sm bg-green-500 inline-block" /> Yes: <strong>{yes}</strong>
+          <span className="w-2.5 h-2.5 rounded-xs bg-green-500 inline-block" /> Yes: <strong>{yes}</strong>
         </span>
         {abstain > 0 && (
           <span className="flex items-center gap-1 text-xs text-gray-600">
-            <span className="w-2.5 h-2.5 rounded-sm bg-yellow-400 inline-block" /> Abstain: <strong>{abstain}</strong>
+            <span className="w-2.5 h-2.5 rounded-xs bg-yellow-400 inline-block" /> Abstain: <strong>{abstain}</strong>
           </span>
         )}
         {uncertain > 0 && (
           <span className="flex items-center gap-1 text-xs text-gray-600">
-            <span className="w-2.5 h-2.5 rounded-sm bg-slate-400 inline-block" /> Uncertain: <strong>{uncertain}</strong>
+            <span className="w-2.5 h-2.5 rounded-xs bg-slate-400 inline-block" /> Uncertain: <strong>{uncertain}</strong>
           </span>
         )}
         <span className="flex items-center gap-1 text-xs text-gray-600">
-          <span className="w-2.5 h-2.5 rounded-sm bg-red-500 inline-block" /> No: <strong>{no}</strong>
+          <span className="w-2.5 h-2.5 rounded-xs bg-red-500 inline-block" /> No: <strong>{no}</strong>
         </span>
         <span className="flex items-center gap-1 text-xs text-gray-400">
           <span className="w-px h-3 bg-gray-400 inline-block" /> Majority ({majority})
