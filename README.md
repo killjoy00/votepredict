@@ -1,12 +1,12 @@
 # Minnesota Legislator Vote Predictor
 
-VotePredict is an exploratory web app that searches official Minnesota bills and asks Claude to estimate how the current House and Senate roster might vote. It is designed for scenario exploration—not as a poll, whip count, election tool, or statement by any legislator.
+VotePredict is an exploratory web app that searches official Minnesota bills and asks an OpenAI model to estimate how the current House and Senate roster might vote. It is designed for scenario exploration—not as a poll, whip count, election tool, or statement by any legislator.
 
 ## What it does
 
 - Searches the Minnesota Revisor's official bill service (or OpenStates when configured) and loads the latest official text for Revisor results.
 - Loads all 134 House and 67 Senate seats from official legislative sources, with a verified in-repo fallback.
-- Estimates caucus support and notable individual exceptions with a structured Claude response.
+- Estimates caucus support and notable individual exceptions with an OpenAI Responses API structured output.
 - Calculates chamber totals from the same member-level predictions shown in the UI.
 - Shows uncertain calls separately from predicted abstentions and explains the methodology.
 
@@ -20,20 +20,20 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Set `ANTHROPIC_API_KEY` in `.env.local` to enable predictions. Bill search and the roster work without OpenStates credentials.
+Set `OPENAI_API_KEY` in `.env.local` to enable predictions. Bill search and the roster work without OpenStates credentials.
 
 ### Environment variables
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `ANTHROPIC_API_KEY` | For predictions | Server-side Claude API credential. |
-| `ANTHROPIC_MODEL` | No | Model override; defaults to `claude-sonnet-5`. |
+| `OPENAI_API_KEY` | For predictions | Server-side OpenAI API credential. |
+| `OPENAI_MODEL` | No | Model override; defaults to `gpt-5.4-mini`. |
 | `OPEN_STATES_API_KEY` | No | Uses OpenStates before official-source fallbacks. |
 | `MN_OPENSTATES_SESSION` | No | OpenStates session slug; defaults to `2025-2026`. |
 | `MN_LEGISLATURE_SESSION` | No | Revisor session code; defaults to `0942025` (94th Legislature). |
 | `PUBLIC_SITE_URL` | No | Additional canonical origin allowed to submit predictions. |
 
-Never expose `ANTHROPIC_API_KEY` through a `VITE_` variable or commit a real `.env` file.
+Never expose `OPENAI_API_KEY` through a `VITE_` variable or commit a real `.env` file.
 
 ## Commands
 
