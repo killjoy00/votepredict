@@ -94,6 +94,7 @@ export default function BillSearch({ onPredict, predicting }: Props) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              maxLength={120}
               className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <button
@@ -132,6 +133,16 @@ export default function BillSearch({ onPredict, predicting }: Props) {
                 <div className="min-w-0">
                   <p className="font-semibold text-sm text-blue-900 leading-tight">{selected.number}: {selected.title}</p>
                   <p className="text-xs text-blue-600 mt-0.5">Session: {selected.session}</p>
+                  {selected.sourceUrl && (
+                    <a
+                      href={selected.sourceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-block text-xs text-blue-700 underline underline-offset-2 mt-1 hover:text-blue-900"
+                    >
+                      View official bill record
+                    </a>
+                  )}
                   {selected.subjects.length > 0 && (
                     <p className="text-xs text-gray-500 mt-1">Topics: {selected.subjects.join(', ')}</p>
                   )}
@@ -150,6 +161,7 @@ export default function BillSearch({ onPredict, predicting }: Props) {
                   value={extraContext}
                   onChange={(e) => setExtraContext(e.target.value)}
                   rows={4}
+                  maxLength={12000}
                   placeholder="Paste or edit the bill summary here…"
                   className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
                 />
@@ -179,6 +191,7 @@ export default function BillSearch({ onPredict, predicting }: Props) {
               placeholder="e.g., Clean Energy Standards Act"
               value={manualTitle}
               onChange={(e) => setManualTitle(e.target.value)}
+              maxLength={300}
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
@@ -191,6 +204,7 @@ export default function BillSearch({ onPredict, predicting }: Props) {
               value={manualDesc}
               onChange={(e) => setManualDesc(e.target.value)}
               rows={7}
+              maxLength={12000}
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>

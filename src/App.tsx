@@ -3,11 +3,12 @@ import Header from './components/Header.tsx'
 import LegislatorTable from './components/LegislatorTable.tsx'
 import BillSearch from './components/BillSearch.tsx'
 import VotePrediction from './components/VotePrediction.tsx'
-import type { Legislator, LegislatorPrediction, VotePredictionResult } from './types/index.js'
+import type { Legislator, LegislatorPrediction, LegislatorRoster, VotePredictionResult } from './types/index.js'
 import { fetchLegislators, predictVotes } from './api/index.js'
 
 export default function App() {
   const [legislators, setLegislators] = useState<Legislator[]>([])
+  const [rosterInfo, setRosterInfo] = useState<Omit<LegislatorRoster, 'legislators'> | null>(null)
   const [legLoading, setLegLoading] = useState(true)
   const [legError, setLegError] = useState<string | null>(null)
 
@@ -18,7 +19,10 @@ export default function App() {
   useEffect(() => {
     setLegLoading(true)
     fetchLegislators()
-      .then(setLegislators)
+      .then(({ legislators: roster, ...info }) => {
+        setLegislators(roster)
+        setRosterInfo(info)
+      })
       .catch((e: Error) => setLegError(e.message))
       .finally(() => setLegLoading(false))
   }, [])
@@ -57,10 +61,17 @@ export default function App() {
         style={{ minHeight: 0 }}>
 
         {/* Left: Legislators */}
-        <div className="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col"
-          style={{ height: 'calc(100vh - 130px)' }}>
-          <div className="flex items-center justify-between mb-3 shrink-0">
-            <h2 className="text-base font-bold text-gray-900">Legislature Members</h2>
+        <div className="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 flex flex-col lg:h-[calc(100vh-130px)]">
+          <div className="flex items-start justify-between gap-3 mb-3 shrink-0">
+            <div>
+              <h2 className="text-base font-bold text-gray-900">94th Legislature Members</h2>
+              {rosterInfo && (
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {rosterInfo.source === 'openstates' ? 'OpenStates' : rosterInfo.source === 'minnesota-legislature' ? 'Official Minnesota Legislature' : 'Verified official snapshot'}
+                  {' · '}updated {new Date(rosterInfo.asOf).toLocaleDateString()}
+                </p>
+              )}
+            </div>
             {!legLoading && !legError && (
               <span className="text-xs text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">
                 {legislators.length} members
@@ -76,7 +87,7 @@ export default function App() {
         </div>
 
         {/* Right: Prediction panel */}
-        <div className="lg:col-span-2 flex flex-col gap-4" style={{ height: 'calc(100vh - 130px)', overflowY: 'auto' }}>
+        <div className="lg:col-span-2 flex flex-col gap-4 lg:h-[calc(100vh-130px)] lg:overflow-y-auto">
 
           {/* Bill input card */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 shrink-0">
@@ -95,7 +106,7 @@ export default function App() {
               <div className="flex items-center gap-4">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 shrink-0" />
                 <div>
-                  <p className="font-semibold text-gray-800 text-sm">Claude is analyzing…</p>
+                  <p className="font-semibold text-gray-800 text-sm">Building an estimate…</p>
                   <p className="text-xs text-gray-400 mt-1">
                     Reviewing {legislators.length} legislators against the bill. This may take up to 30 seconds.
                   </p>
@@ -119,7 +130,7 @@ export default function App() {
                 Search for a current Minnesota bill or paste a description to predict how every legislator will vote.
               </p>
               <p className="text-gray-400 text-xs mt-2">
-                Legislators will be color-coded green (yes), red (no), or yellow (abstain) after prediction.
+                Members will be color-coded by estimated yes, no, abstain, or uncertain votes after prediction.
               </p>
             </div>
           )}

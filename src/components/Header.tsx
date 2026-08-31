@@ -8,7 +8,7 @@ export default function Header() {
             Minnesota Legislator Vote Predictor
           </h1>
           <p className="text-blue-300 text-xs mt-0.5">
-            AI-powered analysis of the Minnesota Legislature · Powered by Claude
+            Exploratory AI estimates using official Minnesota legislative data
           </p>
         </div>
       </div>
