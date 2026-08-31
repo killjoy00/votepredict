@@ -1,9 +1,9 @@
 import { fetchLegislators } from '../src/services/openStates.js';
-import { predictVotes } from '../src/services/claude.js';
+import { predictVotes } from '../src/services/openai.js';
 import { enforceRateLimit, isSameOriginRequest } from '../src/services/rateLimit.js';
 import type { ApiRequest, ApiResponse } from '../src/types/http.js';
 
-// Extend timeout to 60s — Claude needs time to analyze all legislators
+// Allow enough time for the model to analyze the full verified roster.
 export const config = {
   maxDuration: 60,
 };
@@ -70,7 +70,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (billNumber !== undefined && typeof billNumber !== 'string') {
     return res.status(400).json({ error: 'billNumber must be a string' });
   }
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!process.env.OPENAI_API_KEY) {
     return res.status(503).json({ error: 'Vote prediction is not configured on this server' });
   }
 
