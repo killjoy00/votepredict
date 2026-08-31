@@ -1,8 +1,8 @@
-import type { Legislator, Bill, VotePredictionResult } from '../types/index.js';
+import type { LegislatorRoster, Bill, VotePredictionResult } from '../types/index.js';
 
 const BASE = '/api';
 
-export async function fetchLegislators(chamber?: 'house' | 'senate'): Promise<Legislator[]> {
+export async function fetchLegislators(chamber?: 'house' | 'senate'): Promise<LegislatorRoster> {
   const url = chamber ? `${BASE}/legislators?chamber=${chamber}` : `${BASE}/legislators`;
   const res = await fetch(url);
   if (!res.ok) {

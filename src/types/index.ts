@@ -9,6 +9,14 @@ export interface Legislator {
   email?: string;
 }
 
+export type RosterSource = 'openstates' | 'minnesota-legislature' | 'verified-snapshot';
+
+export interface LegislatorRoster {
+  legislators: Legislator[];
+  source: RosterSource;
+  asOf: string;
+}
+
 export interface Bill {
   id: string;
   number: string;
@@ -20,11 +28,14 @@ export interface Bill {
   abstract?: string;
   lastActionDate?: string;
   committee?: string;
+  sourceUrl?: string;
 }
+
+export type PredictedVote = 'yes' | 'no' | 'abstain' | 'uncertain';
 
 export interface LegislatorPrediction {
   legislatorId: string;
-  vote: 'yes' | 'no' | 'abstain';
+  vote: PredictedVote;
   confidence: number;
   reasoning: string;
 }
@@ -36,12 +47,15 @@ export interface VotePredictionResult {
   houseYes: number;
   houseNo: number;
   houseAbstain: number;
+  houseUncertain: number;
   senateYes: number;
   senateNo: number;
   senateAbstain: number;
+  senateUncertain: number;
   likelyToPass: boolean;
   passageConfidence: number;
   keyFactors: string[];
   predictions: LegislatorPrediction[];
+  methodology: string;
   generatedAt: string;
 }

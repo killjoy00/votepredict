@@ -1,30 +1,26 @@
-// Server-side only — used by Vercel API routes, not imported by frontend
+// Server-side legislature and bill data services used by Vercel API routes.
 import axios from 'axios';
-import { MN_LEGISLATORS } from '../data/legislators.js';
+import { MN_LEGISLATORS, LEGISLATOR_SNAPSHOT_AS_OF } from '../data/legislators.js';
+import { searchRevisorBills } from './revisor.js';
+import type { Bill, Legislator, LegislatorRoster } from '../types/index.js';
 
-const BASE_URL = 'https://v3.openstates.org';
+export type { Bill, Legislator } from '../types/index.js';
 
-function getHeaders(): Record<string, string> {
-  return {
-    'Content-Type': 'application/json',
-    ...(process.env.OPEN_STATES_API_KEY ? { 'X-API-KEY': process.env.OPEN_STATES_API_KEY } : {}),
-  };
-}
+const OPEN_STATES_BASE_URL = 'https://v3.openstates.org';
+const HOUSE_ROSTER_URL = 'https://www.house.mn.gov/members/list';
+const SENATE_ROSTER_URL = 'https://www.senate.mn/api/members';
+const CACHE_TTL = 60 * 60 * 1000;
 
-// Simple in-memory cache (works within a single Vercel function invocation;
-// may persist across warm instances in production)
 interface CacheEntry<T> {
   data: T;
   timestamp: number;
 }
+
 const cache = new Map<string, CacheEntry<unknown>>();
-const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
 function getCached<T>(key: string): T | null {
   const entry = cache.get(key);
-  if (entry && Date.now() - entry.timestamp < CACHE_TTL) {
-    return entry.data as T;
-  }
+  if (entry && Date.now() - entry.timestamp < CACHE_TTL) return entry.data as T;
   return null;
 }
 
@@ -32,35 +28,139 @@ function setCached<T>(key: string, data: T): void {
   cache.set(key, { data, timestamp: Date.now() });
 }
 
-export interface Legislator {
-  id: string;
-  name: string;
-  party: string;
-  chamber: 'house' | 'senate';
-  district: string;
-  title: string;
-  imageUrl?: string;
+function decodeHtml(value: string): string {
+  return value
+    .replaceAll('&amp;', '&')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&#39;', "'")
+    .replaceAll('&apos;', "'")
+    .replaceAll('&nbsp;', ' ')
+    .trim();
+}
+
+function normalizeDistrict(value: string): string {
+  const match = String(value).trim().match(/^0*(\d+)([AB])?$/i);
+  if (!match) return String(value).trim();
+  return `${Number(match[1])}${match[2]?.toUpperCase() ?? ''}`;
+}
+
+function normalizeParty(party: string): string {
+  const value = party.trim().toUpperCase();
+  if (value === 'DFL' || value.includes('DEMOCRAT')) return 'DFL';
+  if (value === 'R' || value === 'GOP' || value.includes('REPUBLICAN')) return 'Republican';
+  if (value === 'I' || value.includes('INDEPENDENT')) return 'Independent';
+  return party.trim();
+}
+
+function sortRoster(members: Legislator[]): Legislator[] {
+  return [...members].sort((a, b) => {
+    if (a.chamber !== b.chamber) return a.chamber === 'house' ? -1 : 1;
+    return a.district.localeCompare(b.district, undefined, { numeric: true });
+  });
+}
+
+export function validateRoster(members: Legislator[]): string[] {
+  const errors: string[] = [];
+  const house = members.filter((member) => member.chamber === 'house');
+  const senate = members.filter((member) => member.chamber === 'senate');
+  if (house.length < 130 || house.length > 134) errors.push(`House count is ${house.length}`);
+  if (senate.length < 65 || senate.length > 67) errors.push(`Senate count is ${senate.length}`);
+
+  const ids = new Set<string>();
+  const districts = new Set<string>();
+  for (const member of members) {
+    if (!member.id || !member.name || !member.district) errors.push('Roster contains an incomplete member');
+    if (ids.has(member.id)) errors.push(`Duplicate member ID: ${member.id}`);
+    ids.add(member.id);
+    const districtKey = `${member.chamber}:${member.district}`;
+    if (districts.has(districtKey)) errors.push(`Duplicate district: ${districtKey}`);
+    districts.add(districtKey);
+  }
+  return errors;
+}
+
+function requireValidRoster(members: Legislator[], source: string): Legislator[] {
+  const sorted = sortRoster(members);
+  const errors = validateRoster(sorted);
+  if (errors.length) throw new Error(`${source} roster failed validation: ${errors.join('; ')}`);
+  return sorted;
+}
+
+export function parseHouseRoster(html: string): Legislator[] {
+  const start = html.indexOf('Begin New Row for Alphabetical members');
+  const end = html.indexOf('Begin New Row for Members by District Order', start);
+  const rosterHtml = start >= 0 && end > start ? html.slice(start, end) : html;
+  const members = new Map<string, Legislator>();
+  const pattern = /href="\/members\/profile\/(\d+)"[^>]*><b>([^<]+?) \((\d{1,2}[AB]),\s*(DFL|R|I)\)<\/b>/gi;
+
+  for (const match of rosterHtml.matchAll(pattern)) {
+    members.set(match[1], {
+      id: `mn-house-${match[1]}`,
+      name: decodeHtml(match[2]),
+      party: normalizeParty(match[4]),
+      chamber: 'house',
+      district: normalizeDistrict(match[3]),
+      title: 'Representative',
+    });
+  }
+  return [...members.values()];
+}
+
+interface SenateMember {
+  mem_id: number | string;
+  preferred_full_name?: string;
+  party?: string;
+  dist?: string;
+  mem_bio_pic?: string;
   email?: string;
 }
 
-export interface Bill {
-  id: string;
-  number: string;
-  title: string;
-  session: string;
-  sponsors: Array<{ name: string; primary: boolean }>;
-  status: string;
-  subjects: string[];
-  abstract?: string;
-  lastActionDate?: string;
-  committee?: string;
+interface SenateResponse {
+  members?: SenateMember[];
+}
+
+export function parseSenateRoster(payload: SenateResponse): Legislator[] {
+  return (payload.members ?? [])
+    .filter((member) => member.preferred_full_name && member.dist && String(member.mem_id) !== '0000')
+    .map((member) => ({
+      id: `mn-senate-${member.mem_id}`,
+      name: member.preferred_full_name!.trim(),
+      party: normalizeParty(member.party ?? ''),
+      chamber: 'senate' as const,
+      district: normalizeDistrict(member.dist!),
+      title: 'Senator',
+      imageUrl: member.mem_bio_pic
+        ? `https://www.senate.mn/img/member_thumbnails/${member.mem_bio_pic}`
+        : undefined,
+      email: member.email || undefined,
+    }));
+}
+
+async function fetchOfficialRoster(): Promise<Legislator[]> {
+  const [houseResponse, senateResponse] = await Promise.all([
+    axios.get<string>(HOUSE_ROSTER_URL, {
+      responseType: 'text',
+      timeout: 12_000,
+      maxContentLength: 3_000_000,
+      headers: { 'User-Agent': 'VotePredict/2.0 roster reader' },
+    }),
+    axios.get<SenateResponse>(SENATE_ROSTER_URL, {
+      timeout: 12_000,
+      maxContentLength: 1_000_000,
+      headers: { 'User-Agent': 'VotePredict/2.0 roster reader' },
+    }),
+  ]);
+  return requireValidRoster([
+    ...parseHouseRoster(houseResponse.data),
+    ...parseSenateRoster(senateResponse.data),
+  ], 'Minnesota Legislature');
 }
 
 interface OpenStatesPerson {
   id: string;
   name: string;
   party: string;
-  current_role: {
+  current_role?: {
     title: string;
     org_classification: 'lower' | 'upper';
     district: string;
@@ -71,12 +171,92 @@ interface OpenStatesPerson {
 
 interface OpenStatesPagedResponse<T> {
   results: T[];
-  pagination: {
-    total_items: number;
-    per_page: number;
-    page: number;
-    max_page: number;
+  pagination: { page: number; max_page: number };
+}
+
+async function fetchOpenStatesRoster(): Promise<Legislator[]> {
+  const legislators: Legislator[] = [];
+  let page = 1;
+
+  while (true) {
+    const { data } = await axios.get<OpenStatesPagedResponse<OpenStatesPerson>>(
+      `${OPEN_STATES_BASE_URL}/people`,
+      {
+        headers: { 'X-API-KEY': process.env.OPEN_STATES_API_KEY! },
+        params: { jurisdiction: 'mn', current_role: 'true', per_page: 100, page },
+        timeout: 15_000,
+      },
+    );
+
+    for (const person of data.results) {
+      const role = person.current_role;
+      if (!role || !['lower', 'upper'].includes(role.org_classification)) continue;
+      legislators.push({
+        id: person.id,
+        name: person.name,
+        party: normalizeParty(person.party),
+        chamber: role.org_classification === 'lower' ? 'house' : 'senate',
+        district: normalizeDistrict(role.district),
+        title: role.title,
+        imageUrl: person.image,
+        email: person.email,
+      });
+    }
+    if (page >= data.pagination.max_page) break;
+    page += 1;
+  }
+
+  return requireValidRoster(legislators, 'OpenStates');
+}
+
+export async function fetchLegislatorRoster(
+  chamber?: 'house' | 'senate',
+): Promise<LegislatorRoster> {
+  const cached = getCached<LegislatorRoster>('legislator_roster');
+  let roster = cached;
+
+  if (!roster) {
+    if (process.env.OPEN_STATES_API_KEY) {
+      try {
+        roster = {
+          legislators: await fetchOpenStatesRoster(),
+          source: 'openstates',
+          asOf: new Date().toISOString(),
+        };
+      } catch (error) {
+        console.error('OpenStates roster failed validation or loading:', error);
+      }
+    }
+
+    if (!roster) {
+      try {
+        roster = {
+          legislators: await fetchOfficialRoster(),
+          source: 'minnesota-legislature',
+          asOf: new Date().toISOString(),
+        };
+      } catch (error) {
+        console.error('Official Minnesota roster unavailable; using verified snapshot:', error);
+        roster = {
+          legislators: requireValidRoster(MN_LEGISLATORS, 'Verified snapshot'),
+          source: 'verified-snapshot',
+          asOf: LEGISLATOR_SNAPSHOT_AS_OF,
+        };
+      }
+    }
+    setCached('legislator_roster', roster);
+  }
+
+  return {
+    ...roster,
+    legislators: chamber
+      ? roster.legislators.filter((member) => member.chamber === chamber)
+      : roster.legislators,
   };
+}
+
+export async function fetchLegislators(chamber?: 'house' | 'senate'): Promise<Legislator[]> {
+  return (await fetchLegislatorRoster(chamber)).legislators;
 }
 
 interface OpenStatesBill {
@@ -84,189 +264,48 @@ interface OpenStatesBill {
   identifier: string;
   title: string;
   session: string;
-  sponsorships: Array<{ name: string; primary: boolean }>;
-  latest_action_description: string;
-  subject: string[];
+  sponsorships?: Array<{ name: string; primary: boolean }>;
+  latest_action_description?: string;
+  subject?: string[];
   abstracts?: Array<{ abstract: string }>;
   latest_action_date?: string;
   from_organization?: { name: string };
+  openstates_url?: string;
 }
 
-function normalizeParty(party: string): string {
-  const lower = party.toLowerCase();
-  if (lower.includes('democrat') || lower === 'dfl') return 'DFL';
-  if (lower.includes('republican') || lower === 'gop') return 'Republican';
-  if (lower.includes('independent')) return 'Independent';
-  return party;
-}
-
-export async function fetchLegislators(chamber?: 'house' | 'senate'): Promise<Legislator[]> {
-  const cacheKey = `legislators_${chamber ?? 'all'}`;
-  const cached = getCached<Legislator[]>(cacheKey);
-  if (cached) return cached;
-
-  // If no API key is configured, use the embedded static roster immediately.
-  if (!process.env.OPEN_STATES_API_KEY) {
-    const result = filterByChamber(MN_LEGISLATORS, chamber);
-    setCached(cacheKey, result);
-    return result;
-  }
-
-  const legislators: Legislator[] = [];
-  let page = 1;
-  let hasMore = true;
-  const orgClass = chamber === 'house' ? 'lower' : chamber === 'senate' ? 'upper' : undefined;
-
-  while (hasMore) {
-    const params: Record<string, string | number> = {
-      jurisdiction: 'mn',
-      current_role: 'true',
-      per_page: 100,
-      page,
-    };
-    if (orgClass) params['org_classification'] = orgClass;
-
-    try {
-      const { data } = await axios.get<OpenStatesPagedResponse<OpenStatesPerson>>(
-        `${BASE_URL}/people`,
-        { headers: getHeaders(), params, timeout: 15000 }
-      );
-
-      for (const person of data.results) {
-        if (!person.current_role) continue;
-        const org = person.current_role.org_classification;
-        if (org !== 'lower' && org !== 'upper') continue;
-
-        legislators.push({
-          id: person.id,
-          name: person.name,
-          party: normalizeParty(person.party),
-          chamber: org === 'lower' ? 'house' : 'senate',
-          district: person.current_role.district,
-          title: person.current_role.title,
-          imageUrl: person.image,
-          email: person.email,
-        });
-      }
-
-      hasMore = page < data.pagination.max_page;
-      page++;
-    } catch (error) {
-      console.error('OpenStates fetch error — falling back to static roster:', error);
-      // Fall back to static data so the app stays functional.
-      const result = filterByChamber(MN_LEGISLATORS, chamber);
-      setCached(cacheKey, result);
-      return result;
-    }
-  }
-
-  if (legislators.length === 0) {
-    // OpenStates returned nothing (rate-limited or empty) — use static roster.
-    const result = filterByChamber(MN_LEGISLATORS, chamber);
-    setCached(cacheKey, result);
-    return result;
-  }
-
-  legislators.sort((a, b) => a.name.localeCompare(b.name));
-  setCached(cacheKey, legislators);
-  return legislators;
-}
-
-function filterByChamber(list: Legislator[], chamber?: 'house' | 'senate'): Legislator[] {
-  const filtered = chamber ? list.filter((l) => l.chamber === chamber) : list;
-  return [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+function mapOpenStatesBill(bill: OpenStatesBill): Bill {
+  return {
+    id: bill.id,
+    number: bill.identifier,
+    title: bill.title,
+    session: bill.session,
+    sponsors: bill.sponsorships ?? [],
+    status: bill.latest_action_description ?? 'Unknown',
+    subjects: bill.subject ?? [],
+    abstract: bill.abstracts?.[0]?.abstract,
+    lastActionDate: bill.latest_action_date,
+    committee: bill.from_organization?.name,
+    sourceUrl: bill.openstates_url,
+  };
 }
 
 export async function searchBills(query: string): Promise<Bill[]> {
-  // Try OpenStates first if an API key is available.
   if (process.env.OPEN_STATES_API_KEY) {
     try {
       const { data } = await axios.get<OpenStatesPagedResponse<OpenStatesBill>>(
-        `${BASE_URL}/bills`,
+        `${OPEN_STATES_BASE_URL}/bills`,
         {
-          headers: getHeaders(),
+          headers: { 'X-API-KEY': process.env.OPEN_STATES_API_KEY },
           params: { jurisdiction: 'mn', q: query, per_page: 20 },
-          timeout: 10000,
-        }
+          timeout: 12_000,
+        },
       );
-      return data.results.map(mapBill);
+      const bills = data.results.map(mapOpenStatesBill);
+      if (bills.length) return bills;
     } catch (error) {
-      console.error('OpenStates bill search error:', error);
-      // Fall through to MN Revisor search.
+      console.error('OpenStates bill search failed; trying the Minnesota Revisor:', error);
     }
   }
 
-  // Fall back to the Minnesota Legislature Revisor's public search (no key needed).
-  return searchMNRevisor(query);
-}
-
-async function searchMNRevisor(query: string): Promise<Bill[]> {
-  try {
-    // MN Legislature full-text bill search — returns JSON when Accept header is set.
-    const { data } = await axios.get<RevisorSearchResponse>(
-      'https://www.revisor.mn.gov/bills/status_search.php',
-      {
-        params: {
-          keyword: query,
-          session: '93',          // 93rd Legislature (2025-2026)
-          session_year: '2025',
-          session_number: '0',
-          type: 'bill',
-          SDivision: 'all',
-          HDivision: 'all',
-        },
-        headers: { Accept: 'application/json', 'User-Agent': 'MN-VotePredictor/1.0' },
-        timeout: 10000,
-      }
-    );
-
-    if (!Array.isArray(data?.bills)) return [];
-
-    return data.bills.slice(0, 20).map((b) => ({
-      id: b.bill_id ?? b.number ?? '',
-      number: b.number ?? '',
-      title: b.title ?? '(no title)',
-      session: '2025-2026',
-      sponsors: b.chief_author ? [{ name: b.chief_author, primary: true }] : [],
-      status: b.status ?? 'Introduced',
-      subjects: b.subjects ?? [],
-      abstract: b.description,
-      lastActionDate: b.last_action_date,
-      committee: b.committee,
-    }));
-  } catch {
-    // Revisor search also unavailable — throw a user-friendly error.
-    throw new Error(
-      'Bill search is currently unavailable. Use "Enter Manually" mode to paste a bill description directly.'
-    );
-  }
-}
-
-interface RevisorSearchResponse {
-  bills?: Array<{
-    bill_id?: string;
-    number?: string;
-    title?: string;
-    chief_author?: string;
-    status?: string;
-    subjects?: string[];
-    description?: string;
-    last_action_date?: string;
-    committee?: string;
-  }>;
-}
-
-function mapBill(b: OpenStatesBill): Bill {
-  return {
-    id: b.id,
-    number: b.identifier,
-    title: b.title,
-    session: b.session,
-    sponsors: b.sponsorships ?? [],
-    status: b.latest_action_description ?? 'Unknown',
-    subjects: b.subject ?? [],
-    abstract: b.abstracts?.[0]?.abstract,
-    lastActionDate: b.latest_action_date,
-    committee: b.from_organization?.name,
-  };
+  return searchRevisorBills(query);
 }

@@ -5,12 +5,12 @@ interface Props {
 }
 
 function VoteBar({
-  yes, no, abstain, total, label,
+  yes, no, abstain, uncertain, total, label,
 }: {
-  yes: number; no: number; abstain: number; total: number; label: string
+  yes: number; no: number; abstain: number; uncertain: number; total: number; label: string
 }) {
   if (total === 0) return null
-  const majority = Math.ceil(total / 2)
+  const majority = Math.floor(total / 2) + 1
   const pct = (n: number) => `${((n / total) * 100).toFixed(1)}%`
 
   return (
@@ -29,6 +29,15 @@ function VoteBar({
             title={`Yes: ${yes}`}
           >
             {yes >= 8 ? yes : ''}
+          </div>
+        )}
+        {uncertain > 0 && (
+          <div
+            style={{ width: pct(uncertain) }}
+            className="bg-slate-400 flex items-center justify-center text-white text-xs font-bold transition-all"
+            title={`Uncertain: ${uncertain}`}
+          >
+            {uncertain >= 8 ? uncertain : ''}
           </div>
         )}
         {abstain > 0 && (
@@ -70,6 +79,11 @@ function VoteBar({
             <span className="w-2.5 h-2.5 rounded-sm bg-yellow-400 inline-block" /> Abstain: <strong>{abstain}</strong>
           </span>
         )}
+        {uncertain > 0 && (
+          <span className="flex items-center gap-1 text-xs text-gray-600">
+            <span className="w-2.5 h-2.5 rounded-sm bg-slate-400 inline-block" /> Uncertain: <strong>{uncertain}</strong>
+          </span>
+        )}
         <span className="flex items-center gap-1 text-xs text-gray-600">
           <span className="w-2.5 h-2.5 rounded-sm bg-red-500 inline-block" /> No: <strong>{no}</strong>
         </span>
@@ -82,8 +96,8 @@ function VoteBar({
 }
 
 export default function VotePrediction({ result }: Props) {
-  const houseTotal = result.houseYes + result.houseNo + result.houseAbstain
-  const senateTotal = result.senateYes + result.senateNo + result.senateAbstain
+  const houseTotal = result.houseYes + result.houseNo + result.houseAbstain + result.houseUncertain
+  const senateTotal = result.senateYes + result.senateNo + result.senateAbstain + result.senateUncertain
 
   return (
     <div className="space-y-5">
@@ -101,7 +115,7 @@ export default function VotePrediction({ result }: Props) {
             : 'bg-red-100 text-red-800'
         }`}>
           <p className="font-bold text-sm leading-tight">
-            {result.likelyToPass ? '✅ LIKELY PASSES' : '❌ LIKELY FAILS'}
+            {result.likelyToPass ? 'LIKELY PASSES' : 'LIKELY FALLS SHORT'}
           </p>
           <p className="text-xs opacity-75 mt-0.5">{result.passageConfidence}% confidence</p>
         </div>
@@ -113,6 +127,7 @@ export default function VotePrediction({ result }: Props) {
           yes={result.houseYes}
           no={result.houseNo}
           abstain={result.houseAbstain}
+          uncertain={result.houseUncertain}
           total={houseTotal}
           label="Minnesota House"
         />
@@ -120,6 +135,7 @@ export default function VotePrediction({ result }: Props) {
           yes={result.senateYes}
           no={result.senateNo}
           abstain={result.senateAbstain}
+          uncertain={result.senateUncertain}
           total={senateTotal}
           label="Minnesota Senate"
         />
@@ -146,11 +162,16 @@ export default function VotePrediction({ result }: Props) {
         </div>
       )}
 
+      <details className="text-xs text-gray-500 bg-slate-50 rounded-lg p-3">
+        <summary className="font-semibold text-gray-700 cursor-pointer">How this estimate is calculated</summary>
+        <p className="mt-2 leading-relaxed">{result.methodology}</p>
+      </details>
+
       {/* Footer */}
-      <div className="text-xs text-gray-400 pt-1 border-t border-gray-100">
-        Combined: {result.houseYes + result.senateYes} Yes · {result.houseNo + result.senateNo} No across both chambers
+      <div className="text-xs text-gray-400 pt-1 border-t border-gray-100 leading-relaxed">
+        Generated {new Date(result.generatedAt).toLocaleString()} · Select a member for individual reasoning.
         <br />
-        Generated {new Date(result.generatedAt).toLocaleString()} · Hover legislators for individual reasoning
+        This is an AI estimate, not a poll, whip count, or statement by any legislator.
       </div>
     </div>
   )

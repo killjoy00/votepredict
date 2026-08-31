@@ -5,11 +5,15 @@
   "scripts": {
     "dev": "vercel dev",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "check": "npm run typecheck && npm test && npm run build",
+    "data:update": "node scripts/update-legislators.mjs"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0",
-    "axios": "^1.6.0",
+    "@anthropic-ai/sdk": "^0.122.0",
+    "axios": "^1.20.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
@@ -22,6 +26,7 @@
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
+    "tsx": "^4.23.13",
     "typescript": "^5.5.3",
     "vite": "^5.4.8"
   }

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { Fragment, useState, useMemo } from 'react'
 import type { Legislator, LegislatorPrediction } from '../types/index.js'
 
 interface Props {
@@ -18,12 +18,14 @@ const VOTE_ROW: Record<string, string> = {
   yes: 'bg-green-50 hover:bg-green-100',
   no: 'bg-red-50 hover:bg-red-100',
   abstain: 'bg-yellow-50 hover:bg-yellow-100',
+  uncertain: 'bg-slate-50 hover:bg-slate-100',
 }
 
 const VOTE_CHIP: Record<string, string> = {
   yes: 'bg-green-100 text-green-800 border border-green-200',
   no: 'bg-red-100 text-red-800 border border-red-200',
   abstain: 'bg-yellow-100 text-yellow-800 border border-yellow-200',
+  uncertain: 'bg-slate-100 text-slate-700 border border-slate-300',
 }
 
 export default function LegislatorTable({ legislators, predictions, loading, error }: Props) {
@@ -31,6 +33,7 @@ export default function LegislatorTable({ legislators, predictions, loading, err
   const [search, setSearch] = useState('')
   const [partyFilter, setPartyFilter] = useState('all')
   const [voteFilter, setVoteFilter] = useState('all')
+  const [expandedId, setExpandedId] = useState<string | null>(null)
 
   const houseCount = legislators.filter((l) => l.chamber === 'house').length
   const senateCount = legislators.filter((l) => l.chamber === 'senate').length
@@ -62,7 +65,7 @@ export default function LegislatorTable({ legislators, predictions, loading, err
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-3">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600" />
-        <p className="text-gray-500 text-sm">Loading legislators from OpenStates...</p>
+        <p className="text-gray-500 text-sm">Loading the Minnesota Legislature roster…</p>
       </div>
     )
   }
@@ -72,7 +75,7 @@ export default function LegislatorTable({ legislators, predictions, loading, err
       <div className="flex flex-col items-center justify-center h-64 gap-2 text-center px-4">
         <span className="text-3xl">⚠️</span>
         <p className="text-red-600 font-medium text-sm">{error}</p>
-        <p className="text-gray-400 text-xs">Check your OpenStates API key or try again shortly.</p>
+        <p className="text-gray-400 text-xs">The live roster and verified fallback are both unavailable. Try again shortly.</p>
       </div>
     )
   }
@@ -97,7 +100,7 @@ export default function LegislatorTable({ legislators, predictions, loading, err
       </div>
 
       {/* Filters */}
-      <div className="flex gap-2 mb-2 shrink-0">
+      <div className="flex flex-wrap gap-2 mb-2 shrink-0">
         <input
           type="text"
           placeholder="Search name or district…"
@@ -125,13 +128,14 @@ export default function LegislatorTable({ legislators, predictions, loading, err
             <option value="yes">Yes</option>
             <option value="no">No</option>
             <option value="abstain">Abstain</option>
+            <option value="uncertain">Uncertain</option>
           </select>
         )}
       </div>
 
       <p className="text-xs text-gray-400 mb-2 shrink-0">
         Showing {filtered.length} of {chamberLegislators.length}
-        {predictions && ` · hover a row for AI reasoning`}
+        {predictions && ` · select a member for reasoning`}
       </p>
 
       {/* Table */}
@@ -154,13 +158,24 @@ export default function LegislatorTable({ legislators, predictions, loading, err
                 ? VOTE_ROW[pred.vote]
                 : i % 2 === 0 ? 'bg-white hover:bg-gray-50' : 'bg-gray-50/50 hover:bg-gray-100'
 
+              const expanded = expandedId === leg.id
+
               return (
-                <tr
-                  key={leg.id}
-                  className={`${rowClass} transition-colors cursor-default`}
-                  title={pred?.reasoning}
-                >
-                  <td className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">{leg.name}</td>
+                <Fragment key={leg.id}>
+                <tr className={`${rowClass} transition-colors`}>
+                  <td className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">
+                    {pred ? (
+                      <button
+                        type="button"
+                        onClick={() => setExpandedId(expanded ? null : leg.id)}
+                        aria-expanded={expanded}
+                        className="inline-flex items-center gap-1.5 text-left hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+                      >
+                        <span className="text-[10px] text-gray-400" aria-hidden="true">{expanded ? '▼' : '▶'}</span>
+                        {leg.name}
+                      </button>
+                    ) : leg.name}
+                  </td>
                   <td className="px-3 py-2">
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${PARTY_CHIP[leg.party] ?? PARTY_CHIP['Independent']}`}>
                       {leg.party}
@@ -179,6 +194,17 @@ export default function LegislatorTable({ legislators, predictions, loading, err
                     </td>
                   )}
                 </tr>
+                {pred && expanded && (
+                  <tr className={rowClass}>
+                    <td colSpan={4} className="px-4 pb-3 pt-0 text-xs text-gray-600">
+                      <div className="border-l-2 border-blue-300 pl-3 py-1">
+                        <span className="font-semibold text-gray-700">Why this estimate: </span>
+                        {pred.reasoning}
+                      </div>
+                    </td>
+                  </tr>
+                )}
+                </Fragment>
               )
             })}
           </tbody>
