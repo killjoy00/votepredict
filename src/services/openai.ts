@@ -1,5 +1,5 @@
 // Server-side only — used by Vercel API routes, not imported by the frontend.
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import type {
   Legislator,
   LegislatorPrediction,
@@ -7,9 +7,9 @@ import type {
   VotePredictionResult,
 } from '../types/index.js';
 
-const DEFAULT_MODEL = 'claude-sonnet-5';
+const DEFAULT_MODEL = 'gpt-5.4-mini';
 const METHODOLOGY =
-  'Claude estimates caucus support and identifies notable individual exceptions. The application then applies those estimates consistently to the verified roster and calculates every chamber total from the displayed member-level predictions. “Uncertain” means the model did not indicate a clear yes or no lean; it is not an abstention.';
+  'An OpenAI model estimates caucus support and identifies notable individual exceptions. The application then applies those estimates consistently to the verified roster and calculates every chamber total from the displayed member-level predictions. “Uncertain” means the model did not indicate a clear yes or no lean; it is not an abstention.';
 
 export interface ModelPredictionOutput {
   analysis: string;
@@ -27,7 +27,6 @@ export interface ModelPredictionOutput {
   }>;
 }
 
-// Keep this raw schema to the subset supported by Anthropic constrained decoding.
 // Bounds and list limits are enforced when the response is normalized below.
 export const predictionSchema = {
   type: 'object',
@@ -236,29 +235,30 @@ export async function predictVotes(input: {
     },
   };
 
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const response = await client.messages.create({
-    model: process.env.ANTHROPIC_MODEL || DEFAULT_MODEL,
-    max_tokens: 5_000,
-    system: systemPrompt,
-    messages: [{ role: 'user', content: JSON.stringify(userPayload) }],
-    output_config: {
-      effort: 'medium',
+  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const response = await client.responses.create({
+    model: process.env.OPENAI_MODEL || DEFAULT_MODEL,
+    max_output_tokens: 5_000,
+    reasoning: { effort: 'medium' },
+    input: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: JSON.stringify(userPayload) },
+    ],
+    text: {
       format: {
         type: 'json_schema',
+        name: 'vote_prediction',
+        strict: true,
         schema: predictionSchema,
       },
     },
   });
 
-  if (response.stop_reason === 'max_tokens' || response.stop_reason === 'refusal') {
-    throw new Error(`The prediction model stopped before completing the result (${response.stop_reason}).`);
+  if (response.status === 'incomplete') {
+    throw new Error(`The prediction model stopped before completing the result (${response.incomplete_details?.reason ?? 'incomplete'}).`);
   }
 
-  const text = response.content
-    .filter((block) => block.type === 'text')
-    .map((block) => block.text)
-    .join('');
+  const text = response.output_text;
   if (!text) throw new Error('The prediction model returned no structured result.');
 
   return buildPredictionResult({

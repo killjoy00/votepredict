@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildPredictionResult, majorityNeeded, predictionSchema } from '../src/services/claude.js';
+import { buildPredictionResult, majorityNeeded, predictionSchema } from '../src/services/openai.js';
 import type { Legislator } from '../src/types/index.js';
 
 const legislators: Legislator[] = [
@@ -16,7 +16,7 @@ test('majorityNeeded does not treat an even split as passage', () => {
   assert.equal(majorityNeeded(2), 2);
 });
 
-test('raw structured-output schema uses only supported constraints', () => {
+test('structured-output schema uses only portable constraints', () => {
   const schema = JSON.stringify(predictionSchema);
   assert.doesNotMatch(schema, /"(?:minimum|maximum|maxItems|minItems)"/);
 });
