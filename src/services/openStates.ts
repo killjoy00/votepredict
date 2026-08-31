@@ -1,7 +1,7 @@
 // Server-side legislature and bill data services used by Vercel API routes.
 import axios from 'axios';
 import { MN_LEGISLATORS, LEGISLATOR_SNAPSHOT_AS_OF } from '../data/legislators.js';
-import { searchRevisorBills } from './revisor.js';
+import { buildRevisorTextUrl, searchRevisorBills } from './revisor.js';
 import type { Bill, Legislator, LegislatorRoster } from '../types/index.js';
 
 export type { Bill, Legislator } from '../types/index.js';
@@ -10,6 +10,7 @@ const OPEN_STATES_BASE_URL = 'https://v3.openstates.org';
 const HOUSE_ROSTER_URL = 'https://www.house.mn.gov/members/list';
 const SENATE_ROSTER_URL = 'https://www.senate.mn/api/members';
 const CACHE_TTL = 60 * 60 * 1000;
+const DEFAULT_OPEN_STATES_SESSION = '2025-2026';
 
 interface CacheEntry<T> {
   data: T;
@@ -30,6 +31,8 @@ function setCached<T>(key: string, data: T): void {
 
 function decodeHtml(value: string): string {
   return value
+    .replace(/&#(\d+);/g, (_, code: string) => String.fromCodePoint(Number(code)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, code: string) => String.fromCodePoint(Number.parseInt(code, 16)))
     .replaceAll('&amp;', '&')
     .replaceAll('&quot;', '"')
     .replaceAll('&#39;', "'")
@@ -259,7 +262,7 @@ export async function fetchLegislators(chamber?: 'house' | 'senate'): Promise<Le
   return (await fetchLegislatorRoster(chamber)).legislators;
 }
 
-interface OpenStatesBill {
+export interface OpenStatesBill {
   id: string;
   identifier: string;
   title: string;
@@ -273,7 +276,7 @@ interface OpenStatesBill {
   openstates_url?: string;
 }
 
-function mapOpenStatesBill(bill: OpenStatesBill): Bill {
+export function mapOpenStatesBill(bill: OpenStatesBill): Bill {
   return {
     id: bill.id,
     number: bill.identifier,
@@ -286,6 +289,16 @@ function mapOpenStatesBill(bill: OpenStatesBill): Bill {
     lastActionDate: bill.latest_action_date,
     committee: bill.from_organization?.name,
     sourceUrl: bill.openstates_url,
+    textUrl: buildRevisorTextUrl(bill.identifier),
+  };
+}
+
+export function buildOpenStatesBillSearchParams(query: string): Record<string, string | number> {
+  return {
+    jurisdiction: 'mn',
+    session: process.env.MN_OPENSTATES_SESSION || DEFAULT_OPEN_STATES_SESSION,
+    q: query,
+    per_page: 20,
   };
 }
 
@@ -296,11 +309,14 @@ export async function searchBills(query: string): Promise<Bill[]> {
         `${OPEN_STATES_BASE_URL}/bills`,
         {
           headers: { 'X-API-KEY': process.env.OPEN_STATES_API_KEY },
-          params: { jurisdiction: 'mn', q: query, per_page: 20 },
+          params: buildOpenStatesBillSearchParams(query),
           timeout: 12_000,
         },
       );
-      const bills = data.results.map(mapOpenStatesBill);
+      const activeSession = process.env.MN_OPENSTATES_SESSION || DEFAULT_OPEN_STATES_SESSION;
+      const bills = data.results
+        .filter((bill) => bill.session === activeSession)
+        .map(mapOpenStatesBill);
       if (bills.length) return bills;
     } catch (error) {
       console.error('OpenStates bill search failed; trying the Minnesota Revisor:', error);

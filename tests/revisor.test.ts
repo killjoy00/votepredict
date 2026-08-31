@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   buildRevisorSearchParams,
+  buildRevisorTextUrl,
   parseRevisorBillHtml,
   parseRevisorSearchXml,
   validateRevisorTextUrl,
@@ -52,6 +53,10 @@ test('Revisor XML parser filters an explicit chamber and decodes fields', () => 
 });
 
 test('bill text URL validation prevents arbitrary upstream requests', () => {
+  assert.equal(
+    buildRevisorTextUrl('HF 0010'),
+    'https://www.revisor.mn.gov/bills/94/2025/0/HF/10/versions/latest/',
+  );
   assert.equal(
     validateRevisorTextUrl('https://www.revisor.mn.gov/bills/94/2025/0/HF/10/versions/latest/?ignored=1'),
     'https://www.revisor.mn.gov/bills/94/2025/0/HF/10/versions/latest/',

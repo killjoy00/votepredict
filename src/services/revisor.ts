@@ -29,6 +29,15 @@ function toHttpsUrl(value: string): string | undefined {
   return `https://${value.replace(/^https?:\/\//, '')}`;
 }
 
+export function buildRevisorTextUrl(identifier: string): string | undefined {
+  const bill = identifier.trim().match(/^(HF|SF)\s*0*(\d+)$/i);
+  const session = (process.env.MN_LEGISLATURE_SESSION || DEFAULT_SESSION)
+    .match(/^0?(\d{2,3})(\d{4})$/);
+  if (!bill || !session) return undefined;
+
+  return `https://www.revisor.mn.gov/bills/${Number(session[1])}/${session[2]}/0/${bill[1].toUpperCase()}/${Number(bill[2])}/versions/latest/`;
+}
+
 export function validateRevisorTextUrl(value: string): string {
   let url: URL;
   try {

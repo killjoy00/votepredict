@@ -29,6 +29,7 @@ Set `ANTHROPIC_API_KEY` in `.env.local` to enable predictions. Bill search and t
 | `ANTHROPIC_API_KEY` | For predictions | Server-side Claude API credential. |
 | `ANTHROPIC_MODEL` | No | Model override; defaults to `claude-sonnet-5`. |
 | `OPEN_STATES_API_KEY` | No | Uses OpenStates before official-source fallbacks. |
+| `MN_OPENSTATES_SESSION` | No | OpenStates session slug; defaults to `2025-2026`. |
 | `MN_LEGISLATURE_SESSION` | No | Revisor session code; defaults to `0942025` (94th Legislature). |
 | `PUBLIC_SITE_URL` | No | Additional canonical origin allowed to submit predictions. |
 
