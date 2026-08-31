@@ -106,12 +106,12 @@ export default function LegislatorTable({ legislators, predictions, loading, err
           placeholder="Search name or district…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 min-w-0 px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="flex-1 min-w-0 px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-400"
         />
         <select
           value={partyFilter}
           onChange={(e) => setPartyFilter(e.target.value)}
-          className="px-2 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+          className="px-2 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-400 bg-white"
         >
           <option value="all">All parties</option>
           {parties.map((p) => (
@@ -122,7 +122,7 @@ export default function LegislatorTable({ legislators, predictions, loading, err
           <select
             value={voteFilter}
             onChange={(e) => setVoteFilter(e.target.value)}
-            className="px-2 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+            className="px-2 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-400 bg-white"
           >
             <option value="all">All votes</option>
             <option value="yes">Yes</option>
@@ -169,7 +169,7 @@ export default function LegislatorTable({ legislators, predictions, loading, err
                         type="button"
                         onClick={() => setExpandedId(expanded ? null : leg.id)}
                         aria-expanded={expanded}
-                        className="inline-flex items-center gap-1.5 text-left hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+                        className="inline-flex items-center gap-1.5 text-left hover:text-blue-700 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 rounded-sm"
                       >
                         <span className="text-[10px] text-gray-400" aria-hidden="true">{expanded ? '▼' : '▶'}</span>
                         {leg.name}
@@ -185,7 +185,7 @@ export default function LegislatorTable({ legislators, predictions, loading, err
                   {predictions && (
                     <td className="px-3 py-2">
                       {pred ? (
-                        <span className={`px-2 py-0.5 rounded text-xs font-semibold capitalize ${VOTE_CHIP[pred.vote]}`}>
+                        <span className={`px-2 py-0.5 rounded-sm text-xs font-semibold capitalize ${VOTE_CHIP[pred.vote]}`}>
                           {pred.vote} <span className="font-normal opacity-60">{pred.confidence}%</span>
                         </span>
                       ) : (
