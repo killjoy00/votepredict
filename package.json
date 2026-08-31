@@ -16,13 +16,13 @@
     "data:update": "node scripts/update-legislators.mjs"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.122.0",
     "axios": "^1.20.0",
+    "openai": "^7.8.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
-    "@types/node": "^20.11.0",
+    "@types/node": "^26.4.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "@vitejs/plugin-react": "^6.1.1",
