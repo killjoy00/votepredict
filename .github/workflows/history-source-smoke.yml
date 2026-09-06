@@ -41,7 +41,7 @@ jobs:
         if: always()
         continue-on-error: true
         run: |
-          npx tsx -e "import { fetchRevisorBill } from './src/sources/minnesota/revisor.ts'; for (const key of ['302','300','257']) { const result = await fetchRevisorBill(key, 'HF1', false); if (!result.sourceUrl) throw new Error('missing Revisor source for '+key); console.log(key, result.sourceUrl, result.currentVersion ?? 'no-version'); }"
+          npx tsx -e "import { fetchRevisorBill } from './src/sources/minnesota/revisor.ts'; void (async () => { for (const key of ['302','300','257']) { const result = await fetchRevisorBill(key, 'HF1', false); if (!result.sourceUrl) throw new Error('missing Revisor source for '+key); console.log(key, result.sourceUrl, result.currentVersion ?? 'no-version'); } })();"
       - name: Require all source smokes
         if: always()
         shell: bash
