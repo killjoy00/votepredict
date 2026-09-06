@@ -8,11 +8,11 @@ test('LRL session search uses the legislative session number', () => {
   assert.equal(buildLrlSessionSearchUrl(getMinnesotaHouseSession('257')), 'https://www.lrl.mn.gov/legdb/results?body=Both&gender=&q=&search=session&sess=92');
 });
 
-test('LRL search discovery preserves stable legislator ids', () => {
-  const html = `<table><tr><td><a href="/legdb/fulldetail?id=12266">Hortman, Melissa</a></td></tr><tr><td><a href="https://www.lrl.mn.gov/legdb/fulldetail?id=15531">Gomez, Aisha</a></td></tr></table>`;
+test('LRL search discovery preserves stable legislator ids across current link forms', () => {
+  const html = `<table><tr><td><a href="/legdb/fulldetail.aspx?ID=12266">Hortman, Melissa</a></td></tr><tr><td><a href="https://www.lrl.mn.gov/legdb/fulldetail?id=15531">Gomez, Aisha</a></td></tr></table>`;
   assert.deepEqual(discoverLrlLegislators(html), [
-    { lrlId: '12266', displayName: 'Hortman, Melissa', sourceUrl: 'https://www.lrl.mn.gov/legdb/fulldetail?id=12266' },
-    { lrlId: '15531', displayName: 'Gomez, Aisha', sourceUrl: 'https://www.lrl.mn.gov/legdb/fulldetail?id=15531' },
+    { lrlId: '12266', displayName: 'Hortman, Melissa', sourceUrl: 'https://www.lrl.mn.gov/legdb/fulldetail?ID=12266' },
+    { lrlId: '15531', displayName: 'Gomez, Aisha', sourceUrl: 'https://www.lrl.mn.gov/legdb/fulldetail?ID=15531' },
   ]);
 });
 
@@ -23,7 +23,7 @@ test('LRL detail parser captures exact term dates including unfinished terms', (
     session: getMinnesotaHouseSession('302'),
     lrlId: '12266',
     fallbackName: 'Hortman, Melissa',
-    sourceUrl: 'https://www.lrl.mn.gov/legdb/fulldetail?id=12266',
+    sourceUrl: 'https://www.lrl.mn.gov/legdb/fulldetail?ID=12266',
   }), {
     lrlId: '12266',
     name: 'Melissa Hortman',
@@ -35,13 +35,13 @@ test('LRL detail parser captures exact term dates including unfinished terms', (
     endsOn: '2025-06-14',
     electedOn: '2024-11-05',
     oathOn: '2025-01-12',
-    sourceUrl: 'https://www.lrl.mn.gov/legdb/fulldetail?id=12266',
+    sourceUrl: 'https://www.lrl.mn.gov/legdb/fulldetail?ID=12266',
   });
 });
 
 test('LRL detail parser normalizes Senate district and Republican party', () => {
   const html = `<h1>Johnson, Mark - Legislator Record</h1><h3>92nd Legislative Session (2021-2022)</h3><p>Body: Senate</p><p>District: 01</p><p>Term of Office: 1/4/2021 to 1/1/2023</p><p>Party: Republican</p>`;
-  const record = parseLrlMembershipDetail({ html, session: getMinnesotaHouseSession('257'), lrlId: 'x', fallbackName: 'Johnson, Mark', sourceUrl: 'https://www.lrl.mn.gov/legdb/fulldetail?id=x' });
+  const record = parseLrlMembershipDetail({ html, session: getMinnesotaHouseSession('257'), lrlId: 'x', fallbackName: 'Johnson, Mark', sourceUrl: 'https://www.lrl.mn.gov/legdb/fulldetail?ID=x' });
   assert.equal(record?.chamber, 'senate');
   assert.equal(record?.district, '1');
   assert.equal(record?.party, 'R');
