@@ -14,9 +14,10 @@
     "check": "npm run typecheck && npm test && npm run build",
     "db:migrate": "tsx scripts/migrate.ts",
     "data:members:ingest": "tsx scripts/ingest-lrl-memberships.ts",
+    "data:members:reconcile": "tsx scripts/reconcile-member-votes.ts",
+    "data:history:audit": "tsx scripts/audit-historical-data.ts",
     "data:house:inspect": "tsx scripts/inspect-house-votes.ts",
     "data:house:ingest": "tsx scripts/ingest-house-history.ts",
-    "data:house:reconcile": "tsx scripts/reconcile-house-member-votes.ts",
     "data:revisor:enrich": "tsx scripts/enrich-revisor-bills.ts",
     "data:senate:inspect": "tsx scripts/inspect-senate-journals.ts",
     "data:senate:ingest": "tsx scripts/ingest-senate-history.ts"
