@@ -10,6 +10,9 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v7
+      - name: Migration checksums
+        run: sha256sum migrations/*.sql
       - name: Probe Neon Function
         run: |
           set -euo pipefail
