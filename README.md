@@ -1,41 +1,49 @@
 # VotePredict
 
-VotePredict is being rebuilt from scratch as a **private-first legislative forecasting system**.
+VotePredict is a private-first legislative forecasting system. Minnesota is the first implementation; the forecasting engine is intended to support additional jurisdictions later.
 
-The product's primary job is to answer:
+The product is being rebuilt from scratch under the V2 foundation defined in [CHARTER.md](./CHARTER.md) and the documents in [`docs/`](./docs).
 
-1. **Will this bill pass its next chamber vote?**
-2. **How is each relevant legislator likely to vote?**
+## Current implementation status
 
-Minnesota is the first implementation, not the architectural boundary.
+The legacy V1 predictor has been removed from the application surface. The repository now contains the V2 application and persistence foundation:
 
-## V2 foundation
+- Next.js App Router application shell;
+- managed Neon Auth integration with an owner-email authorization gate;
+- Neon Postgres persistence layer;
+- migration-managed core legislative and forecast entities;
+- a private forecast workspace ready for the historical-data and forecasting phases.
 
-The V2 rebuild is governed by:
+No production forecasting model is exposed yet. Historical data ingestion, backtesting, calibration, evidence research, and forecast generation are intentionally built before the product presents numerical predictions.
 
-- [CHARTER.md](./CHARTER.md) — mission, product principles, scope, forecast modes, and success criteria;
-- [docs/ARCHITECTURE_V2.md](./docs/ARCHITECTURE_V2.md) — data model, persistence, forecast lifecycle, and system boundaries;
-- [docs/DATA_AND_EVIDENCE.md](./docs/DATA_AND_EVIDENCE.md) — historical data, source provenance, current evidence, and research strategy;
-- [docs/EVALUATION_STANDARD.md](./docs/EVALUATION_STANDARD.md) — backtesting, calibration, baselines, and model-promotion requirements;
-- [docs/REBUILD_PLAN.md](./docs/REBUILD_PLAN.md) — clean-slate implementation sequence and initial backlog.
+## Local setup
 
-## Clean-slate status
+Requirements: Node.js 22.12+ and npm.
 
-The existing application code is V1 legacy and is **not a compatibility target**.
+```bash
+npm install
+cp .env.example .env.local
+npm run db:migrate
+npm run dev
+```
 
-V2 may delete or replace the current frontend, APIs, prediction engine, types, tests, and deployment structure. Legacy implementation details should only be reused when they independently fit the V2 design.
+The application uses `DATABASE_URL` for normal pooled traffic and `DATABASE_URL_UNPOOLED` for migrations. Do not commit either connection string or `NEON_AUTH_COOKIE_SECRET`.
 
-The next implementation phase should establish a persistent V2 application/database foundation, then build Minnesota historical vote ingestion and an evaluation harness **before** investing in a polished forecasting UI.
+## Commands
 
-## Core forecasting principles
+```bash
+npm run dev          # local Next.js development server
+npm run typecheck    # TypeScript validation
+npm test             # foundation tests
+npm run build        # production build
+npm run check        # typecheck + tests + production build
+npm run db:migrate   # apply checked-in SQL migrations using the direct DB URL
+```
 
-- Reliability beats sophistication.
-- Backtesting on held-out historical votes is mandatory.
-- Passage probability is derived from member-level probabilities rather than invented independently.
-- Probability, uncertainty, and evidence quality are separate concepts.
-- Important forecasts must be auditable back to sourced evidence.
-- Official legislative records are the primary source of truth.
-- Current public evidence can materially affect forecasts, especially direct statements.
-- Forecast updates create retained revisions rather than overwriting history.
-- Scenario assumptions never contaminate official forecasts or training truth.
-- Defaults such as historical decay and evidence weighting are starting hypotheses, not gospel; evaluation should tune them.
+## Governing documents
+
+- [CHARTER.md](./CHARTER.md)
+- [docs/ARCHITECTURE_V2.md](./docs/ARCHITECTURE_V2.md)
+- [docs/DATA_AND_EVIDENCE.md](./docs/DATA_AND_EVIDENCE.md)
+- [docs/EVALUATION_STANDARD.md](./docs/EVALUATION_STANDARD.md)
+- [docs/REBUILD_PLAN.md](./docs/REBUILD_PLAN.md)
