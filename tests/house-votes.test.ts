@@ -24,6 +24,20 @@ const DETAIL_FIXTURE = `
 <table><tr><td>Allen</td><td>Altendorf</td></tr></table>
 </body></html>`;
 
+const MOTION_HEADING_FIXTURE = `
+<html><body>
+<h3>H.F. NO. 3785 BE CONSIDERED FIRST</h3>
+<p>MOTIONS AND RESOLUTIONS</p>
+<p>FOR CALENDAR FOR THE DAY FOR SUNDAY, MAY 17, 2026</p>
+<h3>2 YEA and 1 Nay</h3>
+<p>Date: 05/16/2026</p>
+<p>Journal Page 7681 - Please see the Journal of the House</p>
+<p>Those who voted in the affirmative were:</p>
+<table><tr><td>Allen</td><td>Altendorf</td></tr></table>
+<p>Those who voted in the negative were:</p>
+<table><tr><td>Acomb</td></tr></table>
+</body></html>`;
+
 test('house summary and detail URLs are canonical and bounded to supported values', () => {
   assert.equal(buildHouseVoteSummaryUrl('302'), 'https://www.house.mn.gov/Votes/Summary/302');
   assert.equal(buildHouseVoteDetailUrl('302', 'HF 4252'), 'https://www.house.mn.gov/Votes/Details?SessionKey=302&BillNumber=HF4252');
@@ -48,6 +62,15 @@ test('house vote detail parser preserves named votes and passage metadata', () =
   assert.equal(event.journalPage, '6446');
   assert.deepEqual([event.yeaCount, event.nayCount], [3, 2]);
   assert.deepEqual(event.memberVotes.map((vote) => [vote.sourceName, vote.choice]), [['Acomb', 'yea'], ['Demuth', 'yea'], ['Pérez-Vega', 'yea'], ['Allen', 'nay'], ['Altendorf', 'nay']]);
+});
+
+test('house vote detail parser accepts motion text appended to the bill heading', () => {
+  const [event] = parseHouseVoteDetailHtml({ html: MOTION_HEADING_FIXTURE, sessionKey: '302', sourceUrl: buildHouseVoteDetailUrl('302', 'HF3785') });
+  assert.ok(event);
+  assert.equal(event.billIdentifier, 'HF3785');
+  assert.equal(event.occurredOn, '2026-05-16');
+  assert.equal(event.journalPage, '7681');
+  assert.deepEqual([event.yeaCount, event.nayCount], [2, 1]);
 });
 
 test('vote classifier and member normalization are deterministic', () => {
