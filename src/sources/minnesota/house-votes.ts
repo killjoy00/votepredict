@@ -1,6 +1,7 @@
 import type { HouseVoteBillLink, NormalizedMemberVote, NormalizedVoteEvent, NormalizedVoteKind } from './types';
 
 const HOUSE_BASE = 'https://www.house.mn.gov';
+const HOUSE_SUMMARY_API = `${HOUSE_BASE}/Votes/GetVoteSummary`;
 
 function decodeHtml(value: string): string {
   return value
@@ -179,9 +180,39 @@ async function fetchOfficialHousePage(sourceUrl: string): Promise<string> {
   return response.text();
 }
 
+async function fetchHouseSummaryRecords(sessionKey: string): Promise<Array<{ Number?: unknown }>> {
+  validateSessionKey(sessionKey);
+  const response = await fetch(HOUSE_SUMMARY_API, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json; charset=utf-8',
+      'User-Agent': 'VotePredict/2.0 historical vote ingester',
+    },
+    body: JSON.stringify({ SessionKey: Number(sessionKey), sortOption: 'BillNumber' }),
+    signal: AbortSignal.timeout(20_000),
+  });
+  if (!response.ok) throw new Error(`Minnesota House vote-summary API returned ${response.status}`);
+  const result: unknown = await response.json();
+  if (!Array.isArray(result)) throw new Error('Minnesota House vote-summary API returned unexpected data');
+  return result as Array<{ Number?: unknown }>;
+}
+
 export async function fetchHouseVoteSummary(sessionKey: string): Promise<{ html: string; sourceUrl: string }> {
   const sourceUrl = buildHouseVoteSummaryUrl(sessionKey);
-  return { html: await fetchOfficialHousePage(sourceUrl), sourceUrl };
+  const [officialHtml, records] = await Promise.all([
+    fetchOfficialHousePage(sourceUrl),
+    fetchHouseSummaryRecords(sessionKey),
+  ]);
+  const discoveryLinks = records
+    .map((record) => typeof record.Number === 'string' ? record.Number.replace(/\s+/g, '').toUpperCase() : '')
+    .filter((bill) => /^(HF|SF)\d+$/.test(bill))
+    .map((bill) => `<a href="/Votes/Details?SessionKey=${sessionKey}&BillNumber=${bill}">${bill}</a>`)
+    .join('\n');
+  return {
+    html: `${officialHtml}\n<!-- VotePredict discovery links derived from official /Votes/GetVoteSummary JSON -->\n${discoveryLinks}`,
+    sourceUrl,
+  };
 }
 
 export async function listHouseVoteBillLinks(sessionKey: string): Promise<HouseVoteBillLink[]> {
