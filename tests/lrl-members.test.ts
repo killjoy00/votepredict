@@ -9,7 +9,7 @@ test('LRL session search uses the legislative session number', () => {
 });
 
 test('LRL search discovery preserves stable legislator ids across current link forms', () => {
-  const html = `<table><tr><td><a href="/legdb/fulldetail.aspx?ID=12266">Hortman, Melissa</a></td></tr><tr><td><a href="https://www.lrl.mn.gov/legdb/fulldetail?id=15531">Gomez, Aisha</a></td></tr></table>`;
+  const html = `<table><tr><td><a href="fulldetail.aspx?ID=12266">Hortman, Melissa</a></td></tr><tr><td><a href="https://www.lrl.mn.gov/legdb/fulldetail?id=15531">Gomez, Aisha</a></td></tr></table>`;
   assert.deepEqual(discoverLrlLegislators(html), [
     { lrlId: '12266', displayName: 'Hortman, Melissa', sourceUrl: 'https://www.lrl.mn.gov/legdb/fulldetail?ID=12266' },
     { lrlId: '15531', displayName: 'Gomez, Aisha', sourceUrl: 'https://www.lrl.mn.gov/legdb/fulldetail?ID=15531' },
