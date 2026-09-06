@@ -17,12 +17,13 @@ test('Senate journal discovery keeps only requested biennium PDFs and canonicali
   ]);
 });
 
-test('Senate journal parser normalizes passage roll calls', () => {
+test('Senate journal parser normalizes passage roll calls and explicit successful outcomes', () => {
   const text = `SPECIAL ORDER\nH.F. No. 2532: A bill for an act relating to health.\nWas read the third time and placed on its final passage.\nThe question was taken on the passage of the bill.\nThe roll was called, and there were yeas 3 and nays 2, as follows:\nThose who voted in the affirmative were:\nBakk\nDibble\nDziedzic\nThose who voted in the negative were:\nHann\nLimmer\nSo the bill passed and its title was agreed to.\nMOTIONS AND RESOLUTIONS`;
   const events = parseSenateJournalText({ text, sessionKey: '257', sourceUrl: 'https://www.senate.mn/journals/2021-2022/example.pdf', occurredOn: '2022-04-24' });
   assert.equal(events.length, 1);
   assert.equal(events[0].billIdentifier, 'HF2532');
   assert.equal(events[0].isPassage, true);
+  assert.equal(events[0].passed, true);
   assert.deepEqual([events[0].yeaCount, events[0].nayCount], [3, 2]);
   assert.deepEqual(events[0].memberVotes.map((vote) => [vote.sourceName, vote.choice]), [['Bakk', 'yea'], ['Dibble', 'yea'], ['Dziedzic', 'yea'], ['Hann', 'nay'], ['Limmer', 'nay']]);
 });
@@ -37,6 +38,7 @@ test('Senate journal parser ignores PDF artifacts when active roster context is 
     knownMemberNames: ['Abeler', 'Anderson', 'Bahr'],
   });
   assert.equal(events.length, 1);
+  assert.equal(events[0].passed, true);
   assert.deepEqual(events[0].memberVotes.map((vote) => vote.sourceName), ['Abeler', 'Anderson', 'Bahr']);
 });
 
@@ -50,6 +52,7 @@ test('Senate journal parser accepts failed-passage wording before reconsideratio
     knownMemberNames: ['Boldon', 'Carlson', 'Champion', 'Abeler', 'Anderson'],
   });
   assert.equal(events.length, 1);
+  assert.equal(events[0].passed, false);
   assert.deepEqual([events[0].yeaCount, events[0].nayCount], [3, 2]);
   assert.deepEqual(events[0].memberVotes.map((vote) => [vote.sourceName, vote.choice]), [
     ['Boldon', 'yea'], ['Carlson', 'yea'], ['Champion', 'yea'], ['Abeler', 'nay'], ['Anderson', 'nay'],
@@ -66,6 +69,7 @@ test('Senate journal parser splits collapsed PDF table names using roster contex
     knownMemberNames: ['Abeler', 'Anderson', 'Fateh', 'Kunesh', 'McEwen', 'Murphy', 'Torres Ray'],
   });
   assert.equal(events.length, 1);
+  assert.equal(events[0].passed, true);
   assert.deepEqual(events[0].memberVotes.filter((vote) => vote.choice === 'nay').map((vote) => vote.sourceName), ['Fateh', 'Kunesh', 'McEwen', 'Murphy', 'Torres Ray']);
 });
 
