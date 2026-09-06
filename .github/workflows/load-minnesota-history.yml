@@ -42,7 +42,7 @@ jobs:
       - name: Load historical memberships
         run: npm run data:members:ingest
       - name: Load House history
-        run: npm run data:house:ingest -- --delay-ms 100
+        run: npm run data:house:ingest -- --delay-ms 100 --skip-existing
       - name: Load Senate history
         run: npm run data:senate:ingest -- --delay-ms 150
       - name: Enrich bills from Revisor
