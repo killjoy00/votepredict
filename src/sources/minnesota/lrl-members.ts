@@ -103,21 +103,28 @@ function termDates(value: string | undefined): { startsOn?: string; endsOn?: str
 function nameFromPage(lines: string[], fallback: string): string {
   const record = lines.find((line) => /\s-\sLegislator Record\b/i.test(line));
   const raw = record?.replace(/\s-\sLegislator Record[\s\S]*$/i, '').trim() || fallback;
-  const nicknameStripped = raw.replace(/\s+-\s+"[^"]+".*$/, '').trim();
+  const nicknameStripped = raw.replace(/\s*"[^"]*"\s*/g, ' ').replace(/\s+/g, ' ').trim();
   const comma = nicknameStripped.match(/^([^,]+),\s*(.+)$/);
   return comma ? `${comma[2]} ${comma[1]}`.replace(/\s+/g, ' ').trim() : nicknameStripped;
 }
 
-export function parseLrlMembershipDetail(input: { html: string; session: MinnesotaHouseSession; lrlId: string; fallbackName: string; sourceUrl: string }): HistoricalMembershipRecord | undefined {
-  const allLines = textLines(input.html);
-  const ordinal = `${input.session.legislature}${input.session.legislature % 100 >= 11 && input.session.legislature % 100 <= 13 ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' } as Record<number, string>)[input.session.legislature % 10] ?? 'th'}`;
-  const sessionIndex = allLines.findIndex((line) => line.includes(`${ordinal} Legislative Session`) && line.includes(input.session.slug));
-  if (sessionIndex < 0) return undefined;
-  let endIndex = allLines.length;
-  for (let index = sessionIndex + 1; index < allLines.length; index += 1) {
-    if (/^\d+(?:st|nd|rd|th) Legislative Session\s*\(/i.test(allLines[index])) { endIndex = index; break; }
-  }
-  const lines = allLines.slice(sessionIndex, endIndex);
+function sessionOrdinal(session: MinnesotaHouseSession): string {
+  const suffix = session.legislature % 100 >= 11 && session.legislature % 100 <= 13
+    ? 'th'
+    : ({ 1: 'st', 2: 'nd', 3: 'rd' } as Record<number, string>)[session.legislature % 10] ?? 'th';
+  return `${session.legislature}${suffix}`;
+}
+
+function isLegislativeSessionHeading(line: string): boolean {
+  return /^\d+(?:st|nd|rd|th) Legislative Session\s*\(/i.test(line);
+}
+
+function recordFromBlock(
+  input: { session: MinnesotaHouseSession; lrlId: string; sourceUrl: string },
+  allLines: string[],
+  lines: string[],
+  name: string,
+): HistoricalMembershipRecord {
   const body = valueAfter(lines, 'Body');
   const district = valueAfter(lines, 'District');
   const party = valueAfter(lines, 'Party');
@@ -125,7 +132,6 @@ export function parseLrlMembershipDetail(input: { html: string; session: Minneso
   const chamber = /^house$/i.test(body) ? 'house' : /^senate$/i.test(body) ? 'senate' : undefined;
   if (!chamber) throw new Error(`Unsupported LRL legislative body for ${input.lrlId}: ${body}`);
   const term = termDates(valueAfter(lines, 'Term of Office'));
-  const name = nameFromPage(allLines, input.fallbackName);
   return {
     lrlId: input.lrlId,
     name,
@@ -139,6 +145,37 @@ export function parseLrlMembershipDetail(input: { html: string; session: Minneso
     oathOn: isoDate(valueAfter(lines, 'Oath Date')),
     sourceUrl: input.sourceUrl,
   };
+}
+
+export function parseLrlMembershipDetails(input: { html: string; session: MinnesotaHouseSession; lrlId: string; fallbackName: string; sourceUrl: string }): HistoricalMembershipRecord[] {
+  const allLines = textLines(input.html);
+  const ordinal = sessionOrdinal(input.session);
+  const sessionIndexes = allLines
+    .map((line, index) => ({ line, index }))
+    .filter(({ line }) => line.includes(`${ordinal} Legislative Session`) && line.includes(input.session.slug))
+    .map(({ index }) => index);
+  if (sessionIndexes.length === 0) return [];
+
+  const name = nameFromPage(allLines, input.fallbackName);
+  const records: HistoricalMembershipRecord[] = [];
+  const seen = new Set<string>();
+  for (const sessionIndex of sessionIndexes) {
+    let endIndex = allLines.length;
+    for (let index = sessionIndex + 1; index < allLines.length; index += 1) {
+      if (isLegislativeSessionHeading(allLines[index])) { endIndex = index; break; }
+    }
+    const record = recordFromBlock(input, allLines, allLines.slice(sessionIndex, endIndex), name);
+    const key = `${record.chamber}:${record.district}:${record.startsOn ?? ''}:${record.endsOn ?? ''}`;
+    if (!seen.has(key)) {
+      records.push(record);
+      seen.add(key);
+    }
+  }
+  return records;
+}
+
+export function parseLrlMembershipDetail(input: { html: string; session: MinnesotaHouseSession; lrlId: string; fallbackName: string; sourceUrl: string }): HistoricalMembershipRecord | undefined {
+  return parseLrlMembershipDetails(input)[0];
 }
 
 async function fetchHtml(sourceUrl: string): Promise<string> {
@@ -155,8 +192,8 @@ export async function listLrlMemberships(session: MinnesotaHouseSession): Promis
   if (refs.length < 190) throw new Error(`LRL returned only ${refs.length} legislators for ${session.slug}`);
   const results: HistoricalMembershipRecord[] = [];
   for (const ref of refs) {
-    const record = parseLrlMembershipDetail({ html: await fetchHtml(ref.sourceUrl), session, lrlId: ref.lrlId, fallbackName: ref.displayName, sourceUrl: ref.sourceUrl });
-    if (record) results.push(record);
+    const records = parseLrlMembershipDetails({ html: await fetchHtml(ref.sourceUrl), session, lrlId: ref.lrlId, fallbackName: ref.displayName, sourceUrl: ref.sourceUrl });
+    results.push(...records);
   }
   return results;
 }
