@@ -27,9 +27,15 @@ test('Senate journal parser normalizes passage roll calls', () => {
   assert.deepEqual(events[0].memberVotes.map((vote) => [vote.sourceName, vote.choice]), [['Bakk', 'yea'], ['Dibble', 'yea'], ['Dziedzic', 'yea'], ['Hann', 'nay'], ['Limmer', 'nay']]);
 });
 
-test('Senate journal parser ignores PDF page markers inside roll tables', () => {
-  const text = `SPECIAL ORDER\nS.F. No. 334: A bill for an act.\nThe question was taken on the passage of the bill.\nThe roll was called, and there were yeas 3 and nays 0, as follows:\nThose who voted in the affirmative were:\nAbeler\n-- 30 of 32 --\nAnderson\nBahr\nSo the bill passed and its title was agreed to.`;
-  const events = parseSenateJournalText({ text, sessionKey: '302', sourceUrl: 'https://www.senate.mn/journals/2025-2026/example.pdf', occurredOn: '2025-02-10' });
+test('Senate journal parser ignores PDF artifacts when active roster context is available', () => {
+  const text = `SPECIAL ORDER\nS.F. No. 334: A bill for an act.\nThe question was taken on the passage of the bill.\nThe roll was called, and there were yeas 3 and nays 0, as follows:\nThose who voted in the affirmative were:\nAbeler\n-- 30 of 32 --\nTHURSDAY, APRIL 10,\nAnderson\nBahr\nSo the bill passed and its title was agreed to.`;
+  const events = parseSenateJournalText({
+    text,
+    sessionKey: '302',
+    sourceUrl: 'https://www.senate.mn/journals/2025-2026/example.pdf',
+    occurredOn: '2025-04-10',
+    knownMemberNames: ['Abeler', 'Anderson', 'Bahr'],
+  });
   assert.equal(events.length, 1);
   assert.deepEqual(events[0].memberVotes.map((vote) => vote.sourceName), ['Abeler', 'Anderson', 'Bahr']);
 });
@@ -41,7 +47,7 @@ test('Senate journal parser splits collapsed PDF table names using roster contex
     sessionKey: '257',
     sourceUrl: 'https://www.senate.mn/journals/2021-2022/example.pdf',
     occurredOn: '2021-04-27',
-    knownMemberNames: ['Fateh', 'Kunesh', 'McEwen', 'Murphy', 'Torres Ray'],
+    knownMemberNames: ['Abeler', 'Anderson', 'Fateh', 'Kunesh', 'McEwen', 'Murphy', 'Torres Ray'],
   });
   assert.equal(events.length, 1);
   assert.deepEqual(events[0].memberVotes.filter((vote) => vote.choice === 'nay').map((vote) => vote.sourceName), ['Fateh', 'Kunesh', 'McEwen', 'Murphy', 'Torres Ray']);
