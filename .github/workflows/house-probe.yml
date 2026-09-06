@@ -10,9 +10,8 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect raw House vote summary markup
+      - name: Inspect raw House vote summary AJAX code
         run: |
           set -euo pipefail
           curl -L --fail --show-error --silent 'https://www.house.mn.gov/Votes/Summary/302' > /tmp/house.html
-          echo '--- detail/bill references ---'
-          grep -inE 'Votes/Details|BillNumber|option value|Select a Bill|ddlBill|BillList' /tmp/house.html | head -n 80 || true
+          sed -n '845,925p' /tmp/house.html
