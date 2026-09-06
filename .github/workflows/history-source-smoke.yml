@@ -5,8 +5,10 @@ on:
     branches: [fix/history-live-load]
     paths:
       - '.github/workflows/history-source-smoke.yml'
+      - 'src/sources/minnesota/house-votes.ts'
       - 'src/sources/minnesota/senate-journals.ts'
       - 'src/sources/minnesota/revisor.ts'
+      - 'scripts/ingest-house-history.ts'
       - 'scripts/ingest-senate-history.ts'
 
 permissions:
@@ -15,15 +17,20 @@ permissions:
 jobs:
   smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
       - run: npm install --no-fund --no-audit
+      - id: house257
+        name: Smoke House 2021-22
+        continue-on-error: true
+        run: npm run data:house:ingest -- --dry-run --session 257 --limit 25 --delay-ms 1
       - id: senate302
         name: Smoke Senate 2025-26
+        if: always()
         continue-on-error: true
         run: npm run data:senate:ingest -- --dry-run --session 302 --limit 1 --delay-ms 1
       - id: senate300
@@ -52,6 +59,7 @@ jobs:
         if: always()
         shell: bash
         run: |
+          test '${{ steps.house257.outcome }}' = success
           test '${{ steps.senate302.outcome }}' = success
           test '${{ steps.senate300.outcome }}' = success
           test '${{ steps.senate257.outcome }}' = success
