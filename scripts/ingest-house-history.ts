@@ -19,6 +19,7 @@ interface CliOptions {
   limit?: number;
   delayMs: number;
   dryRun: boolean;
+  skipExisting: boolean;
 }
 
 interface SessionContext {
@@ -55,7 +56,13 @@ function parseOptions(args = process.argv.slice(2)): CliOptions {
     : [...MINNESOTA_HOUSE_HISTORICAL_SESSIONS];
   const limit = positiveInteger(argumentValue(args, '--limit'), '--limit');
   const delayMs = positiveInteger(argumentValue(args, '--delay-ms'), '--delay-ms') ?? 100;
-  return { sessions, limit, delayMs, dryRun: args.includes('--dry-run') };
+  return {
+    sessions,
+    limit,
+    delayMs,
+    dryRun: args.includes('--dry-run'),
+    skipExisting: args.includes('--skip-existing'),
+  };
 }
 
 function sha256(value: string): string {
@@ -115,6 +122,17 @@ async function persistSourceDocument(
     [context.jurisdictionId, context.sessionId, context.chamberId, sourceKind, sourceUrl, sha256(html), JSON.stringify(metadata)],
   );
   return result.rows[0].id;
+}
+
+async function hasPersistedVoteDetail(client: PoolClient, context: SessionContext, sourceUrl: string): Promise<boolean> {
+  const result = await client.query<{ exists: boolean }>(
+    `SELECT EXISTS (
+       SELECT 1 FROM source_documents
+        WHERE session_id=$1 AND chamber_id=$2 AND source_kind='house_vote_detail' AND source_url=$3
+     ) AS exists`,
+    [context.sessionId, context.chamberId, sourceUrl],
+  );
+  return result.rows[0]?.exists ?? false;
 }
 
 async function ensureBill(client: PoolClient, context: SessionContext, identifier: string, sourceUrl: string): Promise<string> {
@@ -280,9 +298,10 @@ async function runSession(pool: Pool | undefined, session: MinnesotaHouseSession
       `INSERT INTO ingestion_runs (source_system, scope, status, metadata)
        VALUES ('mn_house_chamber_voting', $1, 'running', $2::jsonb)
        RETURNING id`,
-      [session.slug, JSON.stringify({ sessionKey: session.sessionKey, discoveredBills: allLinks.length, selectedBills: links.length })],
+      [session.slug, JSON.stringify({ sessionKey: session.sessionKey, discoveredBills: allLinks.length, selectedBills: links.length, skipExisting: options.skipExisting })],
     );
     const runId = run.rows[0].id;
+    let skippedExisting = 0;
 
     try {
       await persistSourceDocument(client, context, 'house_vote_summary', summary.sourceUrl, summary.html, {
@@ -293,15 +312,19 @@ async function runSession(pool: Pool | undefined, session: MinnesotaHouseSession
 
       for (const [index, link] of links.entries()) {
         try {
-          const detail = await fetchHouseVoteDetail(session.sessionKey, link.billIdentifier);
-          await persistVotePage(client, context, session, detail.sourceUrl, detail.html, candidates, counters);
+          if (options.skipExisting && await hasPersistedVoteDetail(client, context, link.sourceUrl)) {
+            skippedExisting += 1;
+          } else {
+            const detail = await fetchHouseVoteDetail(session.sessionKey, link.billIdentifier);
+            await persistVotePage(client, context, session, detail.sourceUrl, detail.html, candidates, counters);
+          }
         } catch (error) {
           failures.push({ billIdentifier: link.billIdentifier, error: error instanceof Error ? error.message : String(error) });
         }
         if ((index + 1) % 25 === 0 || index === links.length - 1) {
-          console.log(`[${session.slug}] ${index + 1}/${links.length} bills; ${counters.voteEvents} votes; ${counters.unresolvedMembers} unresolved member votes`);
+          console.log(`[${session.slug}] ${index + 1}/${links.length} bills; ${counters.voteEvents} new votes; ${skippedExisting} existing bill pages skipped; ${counters.unresolvedMembers} unresolved new member votes`);
         }
-        if (index < links.length - 1) await sleep(options.delayMs);
+        if (!options.skipExisting && index < links.length - 1) await sleep(options.delayMs);
       }
     } finally {
       const status = failures.length === 0 ? 'complete' : 'failed';
@@ -324,7 +347,7 @@ async function runSession(pool: Pool | undefined, session: MinnesotaHouseSession
           counters.memberVotes,
           counters.unresolvedMembers,
           failures.length ? `${failures.length} bill page(s) failed; first: ${failures[0].billIdentifier}: ${failures[0].error}` : null,
-          JSON.stringify({ failures: failures.slice(0, 100) }),
+          JSON.stringify({ failures: failures.slice(0, 100), skippedExisting }),
         ],
       );
     }
