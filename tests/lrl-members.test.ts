@@ -60,6 +60,7 @@ test('LRL detail parser normalizes quoted nicknames to a stable canonical name',
 });
 
 test('official House clerk aliases remain provenance-backed and deterministic', () => {
+  assert.deepEqual(officialMembershipAliasesForLrlId('15409').map((alias) => [alias.sourceName, alias.normalizedName]), [["O'Neill", 'o neill']]);
   assert.deepEqual(officialMembershipAliasesForLrlId('15576').map((alias) => [alias.sourceName, alias.normalizedName]), [['Lee, K.', 'lee k']]);
   assert.deepEqual(officialMembershipAliasesForLrlId('15610').map((alias) => [alias.sourceName, alias.normalizedName]), [['Anderson, P. E.', 'anderson p e']]);
   assert.deepEqual(officialMembershipAliasesForLrlId('unknown'), []);
