@@ -81,6 +81,12 @@ function stripMarkup(html: string): string {
     .trim();
 }
 
+function parseCurrentVersion(html: string): string | undefined {
+  const match = html.match(/Current bill text:\s*([\s\S]*?)(?=<\/p>|<br\s*\/?>|\n)/i);
+  if (!match) return undefined;
+  return stripMarkup(match[1]) || undefined;
+}
+
 export function parseRevisorBillStatusHtml(input: { html: string; sessionKey: string; billIdentifier: string; sourceUrl: string }): RevisorBillMetadata {
   const session = getMinnesotaHouseSession(input.sessionKey);
   const identifier = normalizeBillIdentifier(input.billIdentifier);
@@ -91,7 +97,6 @@ export function parseRevisorBillStatusHtml(input: { html: string; sessionKey: st
   }
 
   const descriptionMatch = input.html.match(/<h2[^>]*>\s*Description\s*<\/h2>[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i);
-  const currentVersionMatch = input.html.match(/Current bill text:\s*([^<\n]+)/i);
   const text = stripMarkup(input.html);
   const heading = text.split('\n').find((line) => line.startsWith(`${identifier.slice(0, 2)} ${Number(identifier.slice(2))}`));
   return {
@@ -100,7 +105,7 @@ export function parseRevisorBillStatusHtml(input: { html: string; sessionKey: st
     sessionStartYear: Number(session.startsOn.slice(0, 4)),
     title: heading ?? `${identifier.slice(0, 2)} ${Number(identifier.slice(2))}`,
     description: descriptionMatch ? stripMarkup(descriptionMatch[1]) : undefined,
-    currentVersion: currentVersionMatch?.[1]?.trim(),
+    currentVersion: parseCurrentVersion(input.html),
     sourceUrl: input.sourceUrl,
     latestTextUrl: `${input.sourceUrl}versions/latest/`,
   };
