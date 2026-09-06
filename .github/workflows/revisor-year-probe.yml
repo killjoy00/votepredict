@@ -1,0 +1,21 @@
+name: Revisor year probe
+
+on:
+  push:
+    branches: [fix/revisor-year-fallback]
+    paths:
+      - '.github/workflows/revisor-year-probe.yml'
+      - 'src/sources/minnesota/revisor.ts'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: npm install --no-fund --no-audit
+      - name: Fetch a bill introduced in the second calendar year
+        run: |
+          npx tsx -e "import { fetchRevisorBill } from './src/sources/minnesota/revisor.ts'; (async()=>{ const bill=await fetchRevisorBill('302','HF4252',true); console.log(JSON.stringify({sourceUrl:bill.sourceUrl,latestTextUrl:bill.latestTextUrl,currentVersion:bill.currentVersion,textLength:bill.text?.length,textSha256:bill.textSha256},null,2)); })().catch(e=>{console.error(e);process.exit(1)})"
