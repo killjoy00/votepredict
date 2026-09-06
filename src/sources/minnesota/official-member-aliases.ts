@@ -7,6 +7,18 @@ export interface OfficialMembershipAlias {
 }
 
 const OFFICIAL_ALIASES_BY_LRL_ID: Readonly<Record<string, readonly OfficialMembershipAlias[]>> = {
+  '15409': [
+    {
+      sourceSystem: 'mn_house_chamber_voting',
+      sourceName: "O'Neill",
+      normalizedName: 'o neill',
+      sourceUrl: 'https://www.lrl.mn.gov/legdb/fulldetail?id=15409',
+      metadata: {
+        provenance: "Minnesota LRL records Marion Rarick's former name as O'Neill; House rolls in the historical dataset use O'Neill.",
+        houseMemberId: '15409',
+      },
+    },
+  ],
   '15576': [
     {
       sourceSystem: 'mn_house_chamber_voting',
