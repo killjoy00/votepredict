@@ -5,7 +5,9 @@ on:
     branches: [build/minnesota-history]
     paths:
       - '.github/workflows/load-minnesota-history.yml'
-      - 'scripts/migrate.ts'
+      - 'scripts/**'
+      - 'src/sources/minnesota/**'
+      - 'package.json'
 
 permissions:
   contents: read
