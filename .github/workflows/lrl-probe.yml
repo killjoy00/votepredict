@@ -13,5 +13,5 @@ jobs:
       - name: Inspect raw LRL detail markup
         run: |
           set -euo pipefail
-          curl --fail --show-error --silent 'https://www.lrl.mn.gov/legdb/fulldetail.aspx?ID=10002' > /tmp/lrl-detail.html
-          grep -inE '94th Legislative Session|Body:|District:|Term of Office:|Party:' /tmp/lrl-detail.html | head -n 30 || true
+          curl -L --fail --show-error --silent 'https://www.lrl.mn.gov/legdb/fulldetail.aspx?ID=10002' > /tmp/lrl-detail.html
+          grep -inE '94th Legislative Session|Body:|District:|Term of Office:|Party:' /tmp/lrl-detail.html | head -n 40 || true
