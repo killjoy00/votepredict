@@ -16,6 +16,17 @@ export interface RevisorBillMetadata {
   textSha256?: string;
 }
 
+interface OfficialResponse {
+  text: string;
+  finalUrl: string;
+}
+
+class RevisorFetchError extends Error {
+  constructor(readonly status: number, readonly url: string) {
+    super(`Minnesota Revisor returned ${status}: ${url}`);
+  }
+}
+
 function decodeHtml(value: string): string {
   return value
     .replace(/&#(\d+);/g, (_, code: string) => String.fromCodePoint(Number(code)))
@@ -35,12 +46,20 @@ function normalizeBillIdentifier(value: string): string {
   return `${match[1].toUpperCase()}${Number(match[2])}`;
 }
 
-export function buildRevisorBillUrl(sessionKey: string, billIdentifier: string): string {
+function buildRevisorBillUrlForYear(sessionKey: string, billIdentifier: string, year: number): string {
   const session = getMinnesotaHouseSession(sessionKey);
   const bill = normalizeBillIdentifier(billIdentifier);
-  const prefix = bill.slice(0, 2);
-  const number = bill.slice(2);
-  return `${REVISOR_BASE}/bills/${session.legislature}/${session.startsOn.slice(0, 4)}/0/${prefix}/${number}/`;
+  return `${REVISOR_BASE}/bills/${session.legislature}/${year}/0/${bill.slice(0, 2)}/${bill.slice(2)}/`;
+}
+
+export function buildRevisorBillCandidateUrls(sessionKey: string, billIdentifier: string): string[] {
+  const session = getMinnesotaHouseSession(sessionKey);
+  const startYear = Number(session.startsOn.slice(0, 4));
+  return [startYear, startYear + 1].map((year) => buildRevisorBillUrlForYear(sessionKey, billIdentifier, year));
+}
+
+export function buildRevisorBillUrl(sessionKey: string, billIdentifier: string): string {
+  return buildRevisorBillCandidateUrls(sessionKey, billIdentifier)[0];
 }
 
 export function buildRevisorLatestTextUrl(sessionKey: string, billIdentifier: string): string {
@@ -60,6 +79,12 @@ function stripMarkup(html: string): string {
     .trim();
 }
 
+function parseCurrentVersion(html: string): string | undefined {
+  const match = html.match(/Current bill text:\s*([\s\S]*?)(?=<\/p>|<br\s*\/?>|\n)/i);
+  if (!match) return undefined;
+  return stripMarkup(match[1]) || undefined;
+}
+
 export function parseRevisorBillStatusHtml(input: { html: string; sessionKey: string; billIdentifier: string; sourceUrl: string }): RevisorBillMetadata {
   const session = getMinnesotaHouseSession(input.sessionKey);
   const identifier = normalizeBillIdentifier(input.billIdentifier);
@@ -68,9 +93,7 @@ export function parseRevisorBillStatusHtml(input: { html: string; sessionKey: st
     const pageIdentifier = `${titleMatch[1].toUpperCase()}${Number(titleMatch[2])}`;
     if (pageIdentifier !== identifier) throw new Error(`Revisor bill mismatch: expected ${identifier}, found ${pageIdentifier}`);
   }
-
   const descriptionMatch = input.html.match(/<h2[^>]*>\s*Description\s*<\/h2>[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i);
-  const currentVersionMatch = input.html.match(/Current bill text:\s*([^<\n]+)/i);
   const text = stripMarkup(input.html);
   const heading = text.split('\n').find((line) => line.startsWith(`${identifier.slice(0, 2)} ${Number(identifier.slice(2))}`));
   return {
@@ -79,9 +102,9 @@ export function parseRevisorBillStatusHtml(input: { html: string; sessionKey: st
     sessionStartYear: Number(session.startsOn.slice(0, 4)),
     title: heading ?? `${identifier.slice(0, 2)} ${Number(identifier.slice(2))}`,
     description: descriptionMatch ? stripMarkup(descriptionMatch[1]) : undefined,
-    currentVersion: currentVersionMatch?.[1]?.trim(),
+    currentVersion: parseCurrentVersion(input.html),
     sourceUrl: input.sourceUrl,
-    latestTextUrl: buildRevisorLatestTextUrl(input.sessionKey, identifier),
+    latestTextUrl: `${input.sourceUrl}versions/latest/`,
   };
 }
 
@@ -93,21 +116,34 @@ export function parseRevisorBillTextHtml(html: string): { text: string; sha256: 
   return { text, sha256: createHash('sha256').update(text).digest('hex') };
 }
 
-async function fetchOfficial(url: string): Promise<string> {
+async function fetchOfficial(url: string): Promise<OfficialResponse> {
   const response = await fetch(url, {
     headers: { 'User-Agent': 'VotePredict/2.0 official Minnesota bill ingester' },
     signal: AbortSignal.timeout(20_000),
   });
-  if (!response.ok) throw new Error(`Minnesota Revisor returned ${response.status}: ${url}`);
-  return response.text();
+  if (!response.ok) throw new RevisorFetchError(response.status, url);
+  return { text: await response.text(), finalUrl: response.url || url };
 }
 
 export async function fetchRevisorBill(sessionKey: string, billIdentifier: string, includeText = false): Promise<RevisorBillMetadata> {
-  const sourceUrl = buildRevisorBillUrl(sessionKey, billIdentifier);
-  const html = await fetchOfficial(sourceUrl);
+  let sourceUrl: string | undefined;
+  let html: string | undefined;
+  let lastError: unknown;
+  for (const candidate of buildRevisorBillCandidateUrls(sessionKey, billIdentifier)) {
+    try {
+      const response = await fetchOfficial(candidate);
+      html = response.text;
+      sourceUrl = response.finalUrl;
+      break;
+    } catch (error) {
+      lastError = error;
+      if (!(error instanceof RevisorFetchError) || error.status !== 404) throw error;
+    }
+  }
+  if (!html || !sourceUrl) throw lastError instanceof Error ? lastError : new Error(`Minnesota Revisor bill not found: ${billIdentifier}`);
   const metadata = parseRevisorBillStatusHtml({ html, sessionKey, billIdentifier, sourceUrl });
   if (!includeText) return metadata;
-  const textHtml = await fetchOfficial(metadata.latestTextUrl);
-  const parsedText = parseRevisorBillTextHtml(textHtml);
+  const textResponse = await fetchOfficial(metadata.latestTextUrl);
+  const parsedText = parseRevisorBillTextHtml(textResponse.text);
   return { ...metadata, text: parsedText.text, textSha256: parsedText.sha256 };
 }
