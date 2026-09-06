@@ -13,6 +13,7 @@
     "test": "node --import tsx --test tests/*.test.ts",
     "check": "npm run typecheck && npm test && npm run build",
     "db:migrate": "tsx scripts/migrate.ts",
+    "data:members:ingest": "tsx scripts/ingest-lrl-memberships.ts",
     "data:house:inspect": "tsx scripts/inspect-house-votes.ts",
     "data:house:ingest": "tsx scripts/ingest-house-history.ts",
     "data:house:reconcile": "tsx scripts/reconcile-house-member-votes.ts",
