@@ -22,10 +22,24 @@ async function candidates(client:PoolClient,context:Context):Promise<MembershipC
  const aliases=await client.query<{membership_id:string;source_name:string}>(`SELECT a.membership_id,a.source_name FROM membership_source_aliases a JOIN memberships m ON m.id=a.membership_id WHERE m.session_id=$1 AND m.chamber_id=$2`,[context.sessionId,context.chamberId]);const map=new Map<string,string[]>();for(const row of aliases.rows)map.set(row.membership_id,[...(map.get(row.membership_id)??[]),row.source_name]);
  return result.rows.map(row=>({membershipId:row.membership_id,legislatorId:row.legislator_id,name:row.name,normalizedName:row.normalized_name,aliases:map.get(row.membership_id),startsOn:row.starts_on,endsOn:row.ends_on}));
 }
+
+function senateJournalNameForms(candidate:MembershipCandidate):string[]{
+ const forms=new Set<string>();
+ for(const raw of [candidate.name,...(candidate.aliases??[])]){
+  const value=raw.replace(/^spk\.?\s+/i,'').replace(/^speaker\s+/i,'').trim();
+  const comma=value.match(/^([^,]+),/);
+  if(comma){forms.add(comma[1].trim());continue;}
+  const tokens=value.replace(/\s*"[^"]*"\s*/g,' ').replace(/\s+/g,' ').trim().split(' ').filter(Boolean);
+  for(let width=1;width<=Math.min(3,tokens.length);width+=1)forms.add(tokens.slice(-width).join(' '));
+ }
+ return [...forms].filter(Boolean);
+}
+
 async function ensureBill(client:PoolClient,context:Context,identifier:string,sourceUrl:string):Promise<string>{const result=await client.query<{id:string}>(`INSERT INTO bills (session_id,identifier,title,source_url,metadata) VALUES ($1,$2,$2,$3,'{"seeded_from":"senate_journal_history"}'::jsonb) ON CONFLICT (session_id,identifier) DO UPDATE SET updated_at=now() RETURNING id`,[context.sessionId,identifier,sourceUrl]);return result.rows[0].id;}
 
 async function persistJournal(client:PoolClient,context:Context,session:MinnesotaHouseSession,sourceUrl:string,occurredOn:string|undefined,text:string,pdfSha256:string,byteLength:number):Promise<{votes:number;memberVotes:number;unresolved:number}>{
- const events=parseSenateJournalText({text,sessionKey:session.sessionKey,sourceUrl,occurredOn});if(events.length===0)return{votes:0,memberVotes:0,unresolved:0};const roster=await candidates(client,context);await client.query('BEGIN');
+ const roster=await candidates(client,context);const activeForJournal=occurredOn?activeMembershipCandidates(roster,occurredOn):roster;const knownMemberNames=[...new Set(activeForJournal.flatMap(senateJournalNameForms))];
+ const events=parseSenateJournalText({text,sessionKey:session.sessionKey,sourceUrl,occurredOn,knownMemberNames});if(events.length===0)return{votes:0,memberVotes:0,unresolved:0};await client.query('BEGIN');
  try{
   const source=await client.query<{id:string}>(`INSERT INTO source_documents (jurisdiction_id,session_id,chamber_id,source_kind,source_url,content_sha256,http_status,metadata) VALUES ($1,$2,$3,'senate_journal_pdf',$4,$5,200,$6::jsonb) ON CONFLICT (source_url,content_sha256) DO UPDATE SET fetched_at=now(),metadata=source_documents.metadata||EXCLUDED.metadata RETURNING id`,[context.jurisdictionId,context.sessionId,context.chamberId,sourceUrl,pdfSha256,JSON.stringify({sourceSystem:'mn_senate_journals',byteLength})]);let memberVotes=0,unresolved=0;
   for(const event of events){const billId=await ensureBill(client,context,event.billIdentifier,sourceUrl);const inserted=await client.query<{id:string}>(`INSERT INTO vote_events (session_id,chamber_id,bill_id,source_document_id,external_key,vote_kind,motion_text,occurred_on,yea_count,nay_count,other_count,is_passage,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13::jsonb) ON CONFLICT (session_id,chamber_id,external_key) DO UPDATE SET bill_id=EXCLUDED.bill_id,source_document_id=EXCLUDED.source_document_id,vote_kind=EXCLUDED.vote_kind,motion_text=EXCLUDED.motion_text,occurred_on=EXCLUDED.occurred_on,yea_count=EXCLUDED.yea_count,nay_count=EXCLUDED.nay_count,other_count=EXCLUDED.other_count,is_passage=EXCLUDED.is_passage,metadata=vote_events.metadata||EXCLUDED.metadata RETURNING id`,[context.sessionId,context.chamberId,billId,source.rows[0].id,event.externalKey,event.voteKind,event.motionText,event.occurredOn,event.yeaCount,event.nayCount,event.otherCount,event.isPassage,JSON.stringify({sourceSystem:'mn_senate_journals'})]);await client.query('DELETE FROM member_votes WHERE vote_event_id=$1',[inserted.rows[0].id]);const active=activeMembershipCandidates(roster,event.occurredOn);
