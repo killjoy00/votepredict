@@ -1,6 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { classifySenateVoteKind, discoverSenateJournalLinks, parseSenateJournalText } from '../src/sources/minnesota/senate-journals.js';
+import { buildSenateJournalIndexUrl, classifySenateVoteKind, discoverSenateJournalLinks, parseSenateJournalText } from '../src/sources/minnesota/senate-journals.js';
+
+test('Senate journal index selects the requested legislature', () => {
+  assert.equal(buildSenateJournalIndexUrl('2025-2026'), 'https://www.senate.mn/journals/journal_list.html?display_ls_year=94');
+  assert.equal(buildSenateJournalIndexUrl('2023-2024'), 'https://www.senate.mn/journals/journal_list.html?display_ls_year=93');
+  assert.equal(buildSenateJournalIndexUrl('2021-2022'), 'https://www.senate.mn/journals/journal_list.html?display_ls_year=92');
+  assert.throws(() => buildSenateJournalIndexUrl('2019-2020'), /Unsupported/);
+});
 
 test('Senate journal discovery keeps only requested biennium PDFs and canonicalizes current URL forms', () => {
   const html = `<a href="/journals//2025-2026/20260517078.pdf">May 17</a><a href="/journals/2025-2026/2026021700.pdf">Feb 17</a><a href="/journals/2023-2024/20240519099.pdf">old</a>`;
@@ -20,6 +27,7 @@ test('Senate journal parser normalizes passage roll calls', () => {
   assert.deepEqual(events[0].memberVotes.map((vote) => [vote.sourceName, vote.choice]), [['Bakk', 'yea'], ['Dibble', 'yea'], ['Dziedzic', 'yea'], ['Hann', 'nay'], ['Limmer', 'nay']]);
 });
 
-test('Senate vote kind treats repassage as passage', () => {
+test('Senate vote kind treats repassage and plural motions correctly', () => {
   assert.equal(classifySenateVoteKind('The question was taken on the repassage of the bill'), 'passage');
+  assert.equal(classifySenateVoteKind('MOTIONS AND RESOLUTIONS'), 'motion');
 });
