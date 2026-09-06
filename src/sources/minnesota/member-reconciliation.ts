@@ -6,12 +6,22 @@ export interface MembershipCandidate {
   name: string;
   normalizedName?: string;
   aliases?: string[];
+  startsOn?: string | null;
+  endsOn?: string | null;
 }
 
 export type MembershipResolution =
   | { status: 'matched'; membershipId: string; legislatorId: string; reason: string }
   | { status: 'ambiguous'; candidateMembershipIds: string[]; reason: string }
   | { status: 'unmatched'; reason: string };
+
+export function activeMembershipCandidates(candidates: MembershipCandidate[], occurredOn: string): MembershipCandidate[] {
+  return candidates.filter((candidate) => {
+    if (candidate.startsOn && occurredOn < candidate.startsOn) return false;
+    if (candidate.endsOn && occurredOn > candidate.endsOn) return false;
+    return true;
+  });
+}
 
 function stripHouseTitle(value: string): string {
   return value.replace(/^spk\.?\s+/i, '').replace(/^speaker\s+/i, '').trim();
@@ -40,20 +50,9 @@ function givenInitials(normalizedFullName: string, surname: string): string {
 
 function uniqueMatched(candidates: MembershipCandidate[], reason: string): MembershipResolution {
   if (candidates.length === 1) {
-    return {
-      status: 'matched',
-      membershipId: candidates[0].membershipId,
-      legislatorId: candidates[0].legislatorId,
-      reason,
-    };
+    return { status: 'matched', membershipId: candidates[0].membershipId, legislatorId: candidates[0].legislatorId, reason };
   }
-  if (candidates.length > 1) {
-    return {
-      status: 'ambiguous',
-      candidateMembershipIds: candidates.map((candidate) => candidate.membershipId),
-      reason,
-    };
-  }
+  if (candidates.length > 1) return { status: 'ambiguous', candidateMembershipIds: candidates.map((candidate) => candidate.membershipId), reason };
   return { status: 'unmatched', reason };
 }
 
@@ -69,21 +68,15 @@ export function reconcileHouseMemberName(sourceName: string, candidates: Members
   if (commaMatch) {
     const sourceSurname = normalizeMemberName(commaMatch[1]);
     const sourceInitials = normalizeMemberName(commaMatch[2]).split(' ').filter(Boolean).map((token) => token[0]).join('');
-    const initialMatches = candidates.filter((candidate) => {
-      return normalizedAliases(candidate).some((alias) => {
-        const surname = surnameForms(alias).find((form) => form === sourceSurname);
-        if (!surname) return false;
-        const candidateInitials = givenInitials(alias, surname);
-        return sourceInitials.length > 0 && candidateInitials.startsWith(sourceInitials);
-      });
-    });
+    const initialMatches = candidates.filter((candidate) => normalizedAliases(candidate).some((alias) => {
+      const surname = surnameForms(alias).find((form) => form === sourceSurname);
+      if (!surname) return false;
+      return sourceInitials.length > 0 && givenInitials(alias, surname).startsWith(sourceInitials);
+    }));
     if (initialMatches.length > 0) return uniqueMatched(initialMatches, 'surname and given-initial match');
   }
 
-  const surnameMatches = candidates.filter((candidate) => {
-    return normalizedAliases(candidate).some((alias) => surnameForms(alias).includes(normalizedSource));
-  });
+  const surnameMatches = candidates.filter((candidate) => normalizedAliases(candidate).some((alias) => surnameForms(alias).includes(normalizedSource)));
   if (surnameMatches.length > 0) return uniqueMatched(surnameMatches, 'unique surname-form match');
-
   return { status: 'unmatched', reason: 'no conservative roster match' };
 }
