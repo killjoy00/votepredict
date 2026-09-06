@@ -1,24 +1,27 @@
-name: Debug Senate HF669 extraction
+name: Validate Senate HF669 fix
 
 on:
   push:
-    branches: [build/minnesota-history]
+    branches: [fix/senate-hf669-boundary]
     paths:
       - '.github/workflows/debug-senate-hf669.yml'
+      - 'src/sources/minnesota/senate-journals.ts'
+      - 'tests/senate-journals.test.ts'
 
 permissions:
   contents: read
 
 jobs:
-  inspect:
+  verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
       - run: npm install --no-fund --no-audit
-      - name: Print HF669 roll extraction context
+      - run: npm run check
+      - name: Verify live HF669 passage layout contains expected failed-passage boundary
         run: |
-          npx tsx -e "import { fetchSenateJournal } from './src/sources/minnesota/senate-journals.ts'; void (async()=>{ const url='https://www.senate.mn/journals/2023-2024/20230316037.pdf'; const doc=await fetchSenateJournal(url); const t=doc.text.replace(/\\r/g,''); const needle='The question was taken on the passage of the bill'; const i=t.indexOf(needle); if(i<0) throw new Error('passage text not found'); const start=Math.max(0,i-1400), end=Math.min(t.length,i+7000); console.log(t.slice(start,end)); })();"
+          npx tsx -e "import { fetchSenateJournal } from './src/sources/minnesota/senate-journals.ts'; void (async()=>{ const url='https://www.senate.mn/journals/2023-2024/20230316037.pdf'; const doc=await fetchSenateJournal(url); if(!doc.text.includes('So, not having received a three-fifths vote')) throw new Error('HF669 failed-passage boundary not found'); if(!doc.text.includes('Those who voted in the negative were:')) throw new Error('HF669 negative-vote header not found'); console.log('HF669 live boundary verified'); })();"
