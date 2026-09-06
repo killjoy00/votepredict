@@ -69,7 +69,7 @@ export function buildLrlSessionSearchUrl(session: MinnesotaHouseSession): string
 export function discoverLrlLegislators(html: string): LrlLegislatorRef[] {
   const decoded = decodeHtml(html);
   const refs = new Map<string, LrlLegislatorRef>();
-  const pattern = /<a\b[^>]*href=["'](?:https?:\/\/www\.lrl\.mn\.gov)?\/legdb\/fulldetail(?:\.aspx)?\?id=(\d+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  const pattern = /<a\b[^>]*href=["'](?:(?:https?:\/\/www\.lrl\.mn\.gov)?\/legdb\/)?fulldetail(?:\.aspx)?\?id=(\d+)["'][^>]*>([\s\S]*?)<\/a>/gi;
   for (const match of decoded.matchAll(pattern)) {
     const lrlId = match[1];
     const displayName = match[2].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
