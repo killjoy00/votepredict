@@ -1,5 +1,6 @@
 import { Pool, type PoolClient } from 'pg';
 import { listLrlMemberships, type HistoricalMembershipRecord } from '../src/sources/minnesota/lrl-members.js';
+import { officialMembershipAliasesForLrlId } from '../src/sources/minnesota/official-member-aliases.js';
 import { getMinnesotaHouseSession, MINNESOTA_HOUSE_HISTORICAL_SESSIONS, type MinnesotaHouseSession } from '../src/sources/minnesota/sessions.js';
 
 function argumentValue(args: string[], name: string): string | undefined {
@@ -54,6 +55,15 @@ async function persistRecord(client: PoolClient, context: Awaited<ReturnType<typ
      ON CONFLICT (membership_id,source_system,normalized_name) DO UPDATE SET source_name=EXCLUDED.source_name,source_url=EXCLUDED.source_url,metadata=EXCLUDED.metadata`,
     [membership.rows[0].id, record.name, record.normalizedName, record.sourceUrl, JSON.stringify({ electedOn: record.electedOn, oathOn: record.oathOn })],
   );
+  for (const alias of officialMembershipAliasesForLrlId(record.lrlId)) {
+    if (record.chamber !== 'house') continue;
+    await client.query(
+      `INSERT INTO membership_source_aliases (membership_id,source_system,source_name,normalized_name,source_url,metadata)
+       VALUES ($1,$2,$3,$4,$5,$6::jsonb)
+       ON CONFLICT (membership_id,source_system,normalized_name) DO UPDATE SET source_name=EXCLUDED.source_name,source_url=EXCLUDED.source_url,metadata=EXCLUDED.metadata`,
+      [membership.rows[0].id, alias.sourceSystem, alias.sourceName, alias.normalizedName, alias.sourceUrl, JSON.stringify(alias.metadata)],
+    );
+  }
 }
 
 async function ingestSession(client: PoolClient, session: MinnesotaHouseSession): Promise<void> {
