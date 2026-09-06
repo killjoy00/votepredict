@@ -125,7 +125,6 @@ function compactName(value: string): string {
 function segmentKnownNames(token: string, knownMemberNames: readonly string[]): string[] | undefined {
   const target = compactName(token);
   if (!target || knownMemberNames.length === 0) return undefined;
-
   const entries = new Map<string, string>();
   for (const sourceName of knownMemberNames) {
     const compact = compactName(sourceName);
@@ -134,7 +133,6 @@ function segmentKnownNames(token: string, knownMemberNames: readonly string[]): 
   const candidates = [...entries.entries()]
     .map(([compact, sourceName]) => ({ compact, sourceName }))
     .sort((a, b) => b.compact.length - a.compact.length || a.sourceName.localeCompare(b.sourceName));
-
   const memo = new Map<number, string[][]>();
   const walk = (offset: number): string[][] => {
     if (offset === target.length) return [[]];
@@ -154,7 +152,6 @@ function segmentKnownNames(token: string, knownMemberNames: readonly string[]): 
     memo.set(offset, results);
     return results;
   };
-
   const solutions = walk(0);
   return solutions.length === 1 && solutions[0].length > 1 ? solutions[0] : undefined;
 }
@@ -181,13 +178,11 @@ function splitNames(
     .replace(/\b\d{3,5}\b/g, ' ');
   const tokens = cleaned.split(/\r?\n|\s{2,}/).map((value) => value.trim()).filter(Boolean);
   const names: string[] = [];
-
   for (const token of tokens) {
     if (/^(So the bill|The question|The roll|Those who|MOTIONS|SPECIAL|MESSAGES|CALENDAR|CONSENT|GENERAL ORDERS)/i.test(token)) break;
     if (token.length > 120 || !/[A-Za-zÀ-ž]/.test(token)) continue;
     const name = token.trim().replace(/[;.]$/, '');
     if (!name) continue;
-
     if (knownMemberNames.length > 0) {
       const exact = exactKnownName(name, knownMemberNames);
       if (exact) {
@@ -198,16 +193,21 @@ function splitNames(
       if (segmented) names.push(...segmented);
       continue;
     }
-
     if (name.length <= 60 && name.split(/\s+/).length <= 5) names.push(name);
   }
-
   return names.map((sourceName, index) => ({
     sourceName,
     normalizedName: normalizeMemberName(sourceName),
     choice,
     sourceOrdinal: startOrdinal + index,
   }));
+}
+
+function explicitPassageOutcome(resultText: string): boolean | undefined {
+  const compact = resultText.replace(/\s+/g, ' ').trim();
+  if (/\bfailed to pass\b/i.test(compact)) return false;
+  if (/\bSo,?\s+(?:the bill|the bill, as amended)[\s\S]{0,120}\bpassed\b/i.test(compact)) return true;
+  return undefined;
 }
 
 export function parseSenateJournalText(input: {
@@ -239,6 +239,9 @@ export function parseSenateJournalText(input: {
       throw new Error(`Senate journal roster mismatch for ${billIdentifier}: expected ${yeaCount}-${nayCount}, parsed ${yeaVotes.length}-${nayVotes.length}`);
     }
 
+    const resultOffset = negative ? (negative.index ?? 0) + negative[0].length : 0;
+    const resultText = after.slice(resultOffset, resultOffset + 500);
+    const passed = explicitPassageOutcome(resultText);
     const motionText = text.slice(Math.max(0, start - 500), start + 120).replace(/\s+/g, ' ').trim();
     const voteKind = classifySenateVoteKind(match[1] ? 'repassage' : 'passage');
     const occurredOn = input.occurredOn ?? '1900-01-01';
@@ -247,6 +250,7 @@ export function parseSenateJournalText(input: {
       billIdentifier,
       voteKind,
       isPassage: voteKind === 'passage',
+      passed,
       motionText,
       occurredOn,
       yeaCount,
@@ -256,6 +260,5 @@ export function parseSenateJournalText(input: {
       sourceUrl: input.sourceUrl,
     });
   }
-
   return events;
 }

@@ -44,7 +44,7 @@ jobs:
       - name: Load House history
         run: npm run data:house:ingest -- --delay-ms 100 --skip-existing
       - name: Load Senate history
-        run: npm run data:senate:ingest -- --delay-ms 150
+        run: npm run data:senate:ingest -- --delay-ms 150 --skip-existing
       - name: Enrich bills from Revisor
         run: npm run data:revisor:enrich -- --include-text
       - name: Reconcile member votes
