@@ -4,12 +4,23 @@ import type { NormalizedMemberVote, NormalizedVoteEvent, NormalizedVoteKind } fr
 
 const SENATE_BASE = 'https://www.senate.mn';
 const SENATE_JOURNAL_INDEX = `${SENATE_BASE}/journals/journal_list.html`;
+const SENATE_LEGISLATURE_BY_SESSION: Readonly<Record<string, number>> = {
+  '2021-2022': 92,
+  '2023-2024': 93,
+  '2025-2026': 94,
+};
 
 export interface SenateJournalLink { sourceUrl: string; sessionSlug: string; year: number; legislativeDay?: number; date?: string; }
 export interface SenateJournalDocument { text: string; pdfSha256: string; byteLength: number; }
 
 function decodeHtml(value: string): string {
   return value.replace(/&#(\d+);/g,(_,code:string)=>String.fromCodePoint(Number(code))).replace(/&#x([0-9a-f]+);/gi,(_,code:string)=>String.fromCodePoint(Number.parseInt(code,16))).replaceAll('&amp;','&').replaceAll('&quot;','"').replaceAll('&#39;',"'").replaceAll('&nbsp;',' ');
+}
+
+export function buildSenateJournalIndexUrl(sessionSlug:string):string{
+  const legislature=SENATE_LEGISLATURE_BY_SESSION[sessionSlug];
+  if(!legislature)throw new Error(`Unsupported Minnesota Senate journal session: ${sessionSlug}`);
+  return `${SENATE_JOURNAL_INDEX}?display_ls_year=${legislature}`;
 }
 
 export function discoverSenateJournalLinks(html:string,sessionSlug:string):SenateJournalLink[]{
@@ -25,8 +36,9 @@ export function discoverSenateJournalLinks(html:string,sessionSlug:string):Senat
 }
 
 export async function listSenateJournalLinks(sessionSlug:string):Promise<SenateJournalLink[]>{
-  const response=await fetch(SENATE_JOURNAL_INDEX,{headers:{'User-Agent':'VotePredict/2.0 historical vote ingester'},signal:AbortSignal.timeout(20_000)});
-  if(!response.ok)throw new Error(`Minnesota Senate journal index returned ${response.status}`);
+  const indexUrl=buildSenateJournalIndexUrl(sessionSlug);
+  const response=await fetch(indexUrl,{headers:{'User-Agent':'VotePredict/2.0 historical vote ingester'},signal:AbortSignal.timeout(20_000)});
+  if(!response.ok)throw new Error(`Minnesota Senate journal index returned ${response.status}: ${indexUrl}`);
   const links=discoverSenateJournalLinks(await response.text(),sessionSlug); if(links.length===0)throw new Error(`No Minnesota Senate journals discovered for ${sessionSlug}`); return links;
 }
 
@@ -50,7 +62,7 @@ export async function fetchSenateJournal(sourceUrl:string):Promise<SenateJournal
 
 export async function extractSenateJournalText(sourceUrl:string):Promise<string>{return (await fetchSenateJournal(sourceUrl)).text;}
 
-export function classifySenateVoteKind(text:string):NormalizedVoteKind{const value=text.toLowerCase();if(/\b(repassage|passage|final passage)\b/.test(value))return'passage';if(/\bamendment\b/.test(value))return'amendment';if(/\b(motion|reconsider|recall|re-refer)\b/.test(value))return'motion';if(/\b(rule|procedural|adjourn|table)\b/.test(value))return'procedural';return'other';}
+export function classifySenateVoteKind(text:string):NormalizedVoteKind{const value=text.toLowerCase();if(/\b(repassage|passage|final passage)\b/.test(value))return'passage';if(/\bamendment\b/.test(value))return'amendment';if(/\b(motions?|reconsider|recall|re-refer)\b/.test(value))return'motion';if(/\b(rule|procedural|adjourn|table)\b/.test(value))return'procedural';return'other';}
 function canonicalBill(value:string):string|undefined{const match=value.match(/([HS])\.?\s*F\.?\s*(?:No\.?\s*)?0*(\d+)/i);return match?`${match[1].toUpperCase()}F${Number(match[2])}`:undefined;}
 function splitNames(block:string,choice:'yea'|'nay',startOrdinal:number):NormalizedMemberVote[]{
   const cleaned=block.replace(/\f/g,'\n').replace(/\b\d+(?:ST|ND|RD|TH) DAY\b/gi,' ').replace(/\bJOURNAL OF THE SENATE\b/gi,' ').replace(/\[[^\]]+DAY[^\]]*\]/gi,' ').replace(/\b\d{3,5}\b/g,' ');
