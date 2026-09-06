@@ -40,6 +40,22 @@ test('Senate journal parser ignores PDF artifacts when active roster context is 
   assert.deepEqual(events[0].memberVotes.map((vote) => vote.sourceName), ['Abeler', 'Anderson', 'Bahr']);
 });
 
+test('Senate journal parser accepts failed-passage wording before reconsideration', () => {
+  const text = `H.F. No. 669 was read the third time, as amended, and placed on its final passage.\nThe question was taken on the passage of the bill, as amended.\nThe roll was called, and there were yeas 3 and nays 2, as follows:\nThose who voted in the affirmative were:\nBoldon\nCarlson\nChampion\nThose who voted in the negative were:\nAbeler\nAnderson\nSo, not having received a three-fifths vote, the bill, as amended, failed to pass.\nRECONSIDERATION\nHaving voted on the prevailing side, Senator Pappas moved that the vote be reconsidered.`;
+  const events = parseSenateJournalText({
+    text,
+    sessionKey: '300',
+    sourceUrl: 'https://www.senate.mn/journals/2023-2024/example.pdf',
+    occurredOn: '2023-03-16',
+    knownMemberNames: ['Boldon', 'Carlson', 'Champion', 'Abeler', 'Anderson'],
+  });
+  assert.equal(events.length, 1);
+  assert.deepEqual([events[0].yeaCount, events[0].nayCount], [3, 2]);
+  assert.deepEqual(events[0].memberVotes.map((vote) => [vote.sourceName, vote.choice]), [
+    ['Boldon', 'yea'], ['Carlson', 'yea'], ['Champion', 'yea'], ['Abeler', 'nay'], ['Anderson', 'nay'],
+  ]);
+});
+
 test('Senate journal parser splits collapsed PDF table names using roster context', () => {
   const text = `SPECIAL ORDER\nS.F. No. 1279: A bill for an act relating to public safety.\nS.F. No. 1279 was read the third time and placed on its final passage.\nThe question was taken on the passage of the bill.\nThe roll was called, and there were yeas 2 and nays 5, as follows:\nThose who voted in the affirmative were:\nAbeler\nAnderson\nThose who voted in the negative were:\nFatehKuneshMcEwenMurphyTorres Ray\nPursuant to Rule 40, Senator Frentz cast the negative vote on behalf of the following Senators:\nFateh, Kunesh, McEwen, and Torres Ray.\nSo the bill passed and its title was agreed to.`;
   const events = parseSenateJournalText({
