@@ -1,71 +1,41 @@
-# Minnesota Legislator Vote Predictor
+# VotePredict
 
-VotePredict is an exploratory web app that searches official Minnesota bills and asks an OpenAI model to estimate how the current House and Senate roster might vote. It is designed for scenario exploration—not as a poll, whip count, election tool, or statement by any legislator.
+VotePredict is being rebuilt from scratch as a **private-first legislative forecasting system**.
 
-## What it does
+The product's primary job is to answer:
 
-- Searches the Minnesota Revisor's official bill service (or OpenStates when configured) and loads the latest official text for Revisor results.
-- Loads all 134 House and 67 Senate seats from official legislative sources, with a verified in-repo fallback.
-- Estimates caucus support and notable individual exceptions with an OpenAI Responses API structured output.
-- Calculates chamber totals from the same member-level predictions shown in the UI.
-- Shows uncertain calls separately from predicted abstentions and explains the methodology.
+1. **Will this bill pass its next chamber vote?**
+2. **How is each relevant legislator likely to vote?**
 
-## Local setup
+Minnesota is the first implementation, not the architectural boundary.
 
-Requirements: Node.js 22.12 or newer and npm.
+## V2 foundation
 
-```bash
-npm ci
-cp .env.example .env.local
-npm run dev
-```
+The V2 rebuild is governed by:
 
-Set `OPENAI_API_KEY` in `.env.local` to enable predictions. Bill search and the roster work without OpenStates credentials.
+- [CHARTER.md](./CHARTER.md) — mission, product principles, scope, forecast modes, and success criteria;
+- [docs/ARCHITECTURE_V2.md](./docs/ARCHITECTURE_V2.md) — data model, persistence, forecast lifecycle, and system boundaries;
+- [docs/DATA_AND_EVIDENCE.md](./docs/DATA_AND_EVIDENCE.md) — historical data, source provenance, current evidence, and research strategy;
+- [docs/EVALUATION_STANDARD.md](./docs/EVALUATION_STANDARD.md) — backtesting, calibration, baselines, and model-promotion requirements;
+- [docs/REBUILD_PLAN.md](./docs/REBUILD_PLAN.md) — clean-slate implementation sequence and initial backlog.
 
-### Environment variables
+## Clean-slate status
 
-| Variable | Required | Purpose |
-| --- | --- | --- |
-| `OPENAI_API_KEY` | For predictions | Server-side OpenAI API credential. |
-| `OPENAI_MODEL` | No | Model override; defaults to `gpt-5.4-mini`. |
-| `OPEN_STATES_API_KEY` | No | Uses OpenStates before official-source fallbacks. |
-| `MN_OPENSTATES_SESSION` | No | OpenStates session slug; defaults to `2025-2026`. |
-| `MN_LEGISLATURE_SESSION` | No | Revisor session code; defaults to `0942025` (94th Legislature). |
-| `PUBLIC_SITE_URL` | No | Additional canonical origin allowed to submit predictions. |
+The existing application code is V1 legacy and is **not a compatibility target**.
 
-Never expose `OPENAI_API_KEY` through a `VITE_` variable or commit a real `.env` file.
+V2 may delete or replace the current frontend, APIs, prediction engine, types, tests, and deployment structure. Legacy implementation details should only be reused when they independently fit the V2 design.
 
-## Commands
+The next implementation phase should establish a persistent V2 application/database foundation, then build Minnesota historical vote ingestion and an evaluation harness **before** investing in a polished forecasting UI.
 
-```bash
-npm run check        # typecheck, tests, and production build
-npm test             # Node test suite
-npm run data:update  # regenerate and validate the official roster snapshot
-npm run dev          # Vercel local development server
-```
+## Core forecasting principles
 
-The roster updater intentionally fails unless it finds plausible full-chamber counts and unique IDs/districts. Review and commit the generated `src/data/legislators.ts` diff.
-
-## API
-
-| Route | Method | Description |
-| --- | --- | --- |
-| `/api/legislators` | GET | Roster plus source and freshness metadata; optional `chamber=house|senate`. |
-| `/api/bills?q=...` | GET | Up to 20 Minnesota bill results. |
-| `/api/bill-text?url=...` | GET | Extracted context from an allow-listed official Revisor bill URL. |
-| `/api/predict` | POST JSON | AI estimate for a bill description. |
-
-The prediction route accepts descriptions up to 12,000 characters, requires same-origin JSON requests in browsers, and has a best-effort per-instance rate limit of five requests per ten minutes per client IP. For a high-traffic public deployment, also configure durable rate limiting or a spend limit at the platform/API-account layer.
-
-## Data and prediction limitations
-
-- The checked-in roster is a session snapshot and may lag resignations, appointments, or special elections if both live sources are unavailable.
-- The model is given bill text, sponsors/topics, caucus membership, chamber, and district. It is not trained here on a verified roll-call dataset and does not know private whip counts.
-- Member exceptions are accepted only when they match a real roster ID or exact normalized name. Other model-proposed names are ignored.
-- “Likely passes” requires predicted yes votes to reach a majority in both chambers. Uncertain votes do not count as yes.
-
-## Deployment
-
-The repository is configured for Vercel. Add the server-side environment variables to the Vercel project, deploy, and verify the `/api` routes. Pull requests receive preview deployments through the existing GitHub integration.
-
-CI runs the same `npm run check` command used locally and rejects high/critical production dependency advisories.
+- Reliability beats sophistication.
+- Backtesting on held-out historical votes is mandatory.
+- Passage probability is derived from member-level probabilities rather than invented independently.
+- Probability, uncertainty, and evidence quality are separate concepts.
+- Important forecasts must be auditable back to sourced evidence.
+- Official legislative records are the primary source of truth.
+- Current public evidence can materially affect forecasts, especially direct statements.
+- Forecast updates create retained revisions rather than overwriting history.
+- Scenario assumptions never contaminate official forecasts or training truth.
+- Defaults such as historical decay and evidence weighting are starting hypotheses, not gospel; evaluation should tune them.
