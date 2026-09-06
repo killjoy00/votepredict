@@ -2,10 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { classifySenateVoteKind, discoverSenateJournalLinks, parseSenateJournalText } from '../src/sources/minnesota/senate-journals.js';
 
-test('Senate journal discovery keeps only requested biennium PDFs', () => {
-  const html = `<a href="/journals/2025-2026/20260517078.pdf">May 17</a><a href="/journals/2025-2026/20260516077.pdf">May 16</a><a href="/journals/2023-2024/20240519099.pdf">old</a>`;
+test('Senate journal discovery keeps only requested biennium PDFs and canonicalizes current URL forms', () => {
+  const html = `<a href="/journals//2025-2026/20260517078.pdf">May 17</a><a href="/journals/2025-2026/2026021700.pdf">Feb 17</a><a href="/journals/2023-2024/20240519099.pdf">old</a>`;
   assert.deepEqual(discoverSenateJournalLinks(html, '2025-2026'), [
-    { sourceUrl: 'https://www.senate.mn/journals/2025-2026/20260516077.pdf', sessionSlug: '2025-2026', year: 2026, date: '2026-05-16', legislativeDay: 77 },
+    { sourceUrl: 'https://www.senate.mn/journals/2025-2026/2026021700.pdf', sessionSlug: '2025-2026', year: 2026, date: '2026-02-17', legislativeDay: undefined },
     { sourceUrl: 'https://www.senate.mn/journals/2025-2026/20260517078.pdf', sessionSlug: '2025-2026', year: 2026, date: '2026-05-17', legislativeDay: 78 },
   ]);
 });
