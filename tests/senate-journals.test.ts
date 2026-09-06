@@ -27,6 +27,19 @@ test('Senate journal parser normalizes passage roll calls', () => {
   assert.deepEqual(events[0].memberVotes.map((vote) => [vote.sourceName, vote.choice]), [['Bakk', 'yea'], ['Dibble', 'yea'], ['Dziedzic', 'yea'], ['Hann', 'nay'], ['Limmer', 'nay']]);
 });
 
+test('Senate journal parser splits collapsed PDF table names using roster context', () => {
+  const text = `SPECIAL ORDER\nS.F. No. 1279: A bill for an act relating to public safety.\nS.F. No. 1279 was read the third time and placed on its final passage.\nThe question was taken on the passage of the bill.\nThe roll was called, and there were yeas 2 and nays 5, as follows:\nThose who voted in the affirmative were:\nAbeler\nAnderson\nThose who voted in the negative were:\nFatehKuneshMcEwenMurphyTorres Ray\nPursuant to Rule 40, Senator Frentz cast the negative vote on behalf of the following Senators:\nFateh, Kunesh, McEwen, and Torres Ray.\nSo the bill passed and its title was agreed to.`;
+  const events = parseSenateJournalText({
+    text,
+    sessionKey: '257',
+    sourceUrl: 'https://www.senate.mn/journals/2021-2022/example.pdf',
+    occurredOn: '2021-04-27',
+    knownMemberNames: ['Fateh', 'Kunesh', 'McEwen', 'Murphy', 'Torres Ray'],
+  });
+  assert.equal(events.length, 1);
+  assert.deepEqual(events[0].memberVotes.filter((vote) => vote.choice === 'nay').map((vote) => vote.sourceName), ['Fateh', 'Kunesh', 'McEwen', 'Murphy', 'Torres Ray']);
+});
+
 test('Senate vote kind treats repassage and plural motions correctly', () => {
   assert.equal(classifySenateVoteKind('The question was taken on the repassage of the bill'), 'passage');
   assert.equal(classifySenateVoteKind('MOTIONS AND RESOLUTIONS'), 'motion');
