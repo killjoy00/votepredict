@@ -2,6 +2,7 @@ import { normalizeMemberName } from './house-votes';
 import type { NormalizedMemberVote, NormalizedVoteEvent, NormalizedVoteKind } from './types';
 
 const SENATE_BASE = 'https://www.senate.mn';
+const SENATE_JOURNAL_INDEX = `${SENATE_BASE}/journals/journal_list.html`;
 
 export interface SenateJournalLink {
   sourceUrl: string;
@@ -39,6 +40,33 @@ export function discoverSenateJournalLinks(html: string, sessionSlug: string): S
     });
   }
   return [...found.values()].sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''));
+}
+
+export async function listSenateJournalLinks(sessionSlug: string): Promise<SenateJournalLink[]> {
+  const response = await fetch(SENATE_JOURNAL_INDEX, {
+    headers: { 'User-Agent': 'VotePredict/2.0 historical vote ingester' },
+    signal: AbortSignal.timeout(20_000),
+  });
+  if (!response.ok) throw new Error(`Minnesota Senate journal index returned ${response.status}`);
+  const links = discoverSenateJournalLinks(await response.text(), sessionSlug);
+  if (links.length === 0) throw new Error(`No Minnesota Senate journals discovered for ${sessionSlug}`);
+  return links;
+}
+
+export async function extractSenateJournalText(sourceUrl: string): Promise<string> {
+  const url = new URL(sourceUrl);
+  if (url.protocol !== 'https:' || url.hostname !== 'www.senate.mn' || !/^\/journals\/\d{4}-\d{4}\/\d{11}\.pdf$/i.test(url.pathname)) {
+    throw new Error(`Unsupported Minnesota Senate journal URL: ${sourceUrl}`);
+  }
+  const { PDFParse } = await import('pdf-parse');
+  const parser = new PDFParse({ url: sourceUrl });
+  try {
+    const result = await parser.getText();
+    if (!result.text || result.text.length < 100) throw new Error(`Senate journal text extraction returned too little text: ${sourceUrl}`);
+    return result.text;
+  } finally {
+    await parser.destroy();
+  }
 }
 
 export function classifySenateVoteKind(text: string): NormalizedVoteKind {
