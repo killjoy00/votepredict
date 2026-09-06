@@ -14,12 +14,14 @@ function decodeHtml(value: string): string {
 
 export function discoverSenateJournalLinks(html:string,sessionSlug:string):SenateJournalLink[]{
   const decoded=decodeHtml(html); const found=new Map<string,SenateJournalLink>();
-  const pattern=/href=["']([^"']*\/journals\/(\d{4}-\d{4})\/(\d{8})(\d{3})\.pdf)["']/gi;
+  const pattern=/href=["']([^"']*\/journals\/+((?:\d{4})-(?:\d{4}))\/(\d{8})(\d{2,3})\.pdf)["']/gi;
   for(const match of decoded.matchAll(pattern)){
-    if(match[2]!==sessionSlug)continue; const sourceUrl=new URL(match[1],SENATE_BASE).toString(); const compactDate=match[3]; const legislativeDay=Number(match[4]);
-    found.set(sourceUrl,{sourceUrl,sessionSlug,year:Number(compactDate.slice(0,4)),date:`${compactDate.slice(0,4)}-${compactDate.slice(4,6)}-${compactDate.slice(6,8)}`,legislativeDay:Number.isFinite(legislativeDay)?legislativeDay:undefined});
+    if(match[2]!==sessionSlug)continue;
+    const compactDate=match[3]; const suffix=match[4]; const day=Number(suffix);
+    const sourceUrl=`${SENATE_BASE}/journals/${match[2]}/${compactDate}${suffix}.pdf`;
+    found.set(sourceUrl,{sourceUrl,sessionSlug,year:Number(compactDate.slice(0,4)),date:`${compactDate.slice(0,4)}-${compactDate.slice(4,6)}-${compactDate.slice(6,8)}`,legislativeDay:Number.isFinite(day)&&day>0?day:undefined});
   }
-  return [...found.values()].sort((a,b)=>(a.date??'').localeCompare(b.date??''));
+  return [...found.values()].sort((a,b)=>(a.date??'').localeCompare(b.date??'')||a.sourceUrl.localeCompare(b.sourceUrl));
 }
 
 export async function listSenateJournalLinks(sessionSlug:string):Promise<SenateJournalLink[]>{
@@ -30,7 +32,7 @@ export async function listSenateJournalLinks(sessionSlug:string):Promise<SenateJ
 
 function validateJournalUrl(sourceUrl:string):void{
   const url=new URL(sourceUrl);
-  if(url.protocol!=='https:'||url.hostname!=='www.senate.mn'||!/^\/journals\/\d{4}-\d{4}\/\d{11}\.pdf$/i.test(url.pathname))throw new Error(`Unsupported Minnesota Senate journal URL: ${sourceUrl}`);
+  if(url.protocol!=='https:'||url.hostname!=='www.senate.mn'||!/^\/journals\/\d{4}-\d{4}\/\d{10,11}\.pdf$/i.test(url.pathname))throw new Error(`Unsupported Minnesota Senate journal URL: ${sourceUrl}`);
 }
 
 export async function fetchSenateJournal(sourceUrl:string):Promise<SenateJournalDocument>{
