@@ -1,0 +1,18 @@
+name: LRL raw probe
+
+on:
+  push:
+    branches: [build/minnesota-history]
+    paths:
+      - '.github/workflows/lrl-probe.yml'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect raw LRL member links
+        run: |
+          set -euo pipefail
+          curl --fail --show-error --silent 'https://www.lrl.mn.gov/legdb/results?body=Both&gender=&q=&search=session&sess=94' > /tmp/lrl.html
+          grep -oiE '.{0,120}fulldetail.{0,160}' /tmp/lrl.html | head -n 5
+          echo "count=$(grep -oi 'fulldetail' /tmp/lrl.html | wc -l)"
