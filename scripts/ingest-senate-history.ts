@@ -169,15 +169,30 @@ async function persistJournal(
       const inserted = await client.query<{ id: string }>(
         `INSERT INTO vote_events (
            session_id,chamber_id,bill_id,source_document_id,external_key,vote_kind,motion_text,
-           occurred_on,yea_count,nay_count,other_count,is_passage,metadata
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13::jsonb)
+           occurred_on,yea_count,nay_count,other_count,passed,is_passage,metadata
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14::jsonb)
          ON CONFLICT (session_id,chamber_id,external_key) DO UPDATE SET
            bill_id=EXCLUDED.bill_id,source_document_id=EXCLUDED.source_document_id,
            vote_kind=EXCLUDED.vote_kind,motion_text=EXCLUDED.motion_text,occurred_on=EXCLUDED.occurred_on,
            yea_count=EXCLUDED.yea_count,nay_count=EXCLUDED.nay_count,other_count=EXCLUDED.other_count,
-           is_passage=EXCLUDED.is_passage,metadata=vote_events.metadata||EXCLUDED.metadata
+           passed=EXCLUDED.passed,is_passage=EXCLUDED.is_passage,metadata=vote_events.metadata||EXCLUDED.metadata
          RETURNING id`,
-        [context.sessionId, context.chamberId, billId, source.rows[0].id, event.externalKey, event.voteKind, event.motionText, event.occurredOn, event.yeaCount, event.nayCount, event.otherCount, event.isPassage, JSON.stringify({ sourceSystem: 'mn_senate_journals' })],
+        [
+          context.sessionId,
+          context.chamberId,
+          billId,
+          source.rows[0].id,
+          event.externalKey,
+          event.voteKind,
+          event.motionText,
+          event.occurredOn,
+          event.yeaCount,
+          event.nayCount,
+          event.otherCount,
+          event.passed ?? null,
+          event.isPassage,
+          JSON.stringify({ sourceSystem: 'mn_senate_journals' }),
+        ],
       );
       await client.query('DELETE FROM member_votes WHERE vote_event_id=$1', [inserted.rows[0].id]);
       const active = activeMembershipCandidates(roster, event.occurredOn);
