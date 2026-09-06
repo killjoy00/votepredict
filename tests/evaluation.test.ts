@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { binaryAccuracy, brierScore, calibrationBins, expectedCalibrationError, logLoss } from '../src/evaluation/metrics.js';
 import { globalRateBaseline, memberHistoryBaseline, partyRateBaseline, priorVotesOnly, type HistoricalMemberVote } from '../src/evaluation/baselines.js';
-import { simulateChamber } from '../src/evaluation/simulation.js';
+import { simulateChamber } from '../src/evaluation/chamber.js';
 
 test('binary evaluation metrics reward accurate confident forecasts', () => {
   const good = [
