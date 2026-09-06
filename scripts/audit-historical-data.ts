@@ -11,6 +11,7 @@ interface AuditRow {
   parsed_nays: string;
   unresolved_members: string;
   out_of_term_members: string;
+  missing_passage_outcomes: string;
 }
 
 async function main(): Promise<void> {
@@ -44,7 +45,8 @@ async function main(): Promise<void> {
              sum(ve.nay_count)::text declared_nays,
              sum(vmc.parsed_nays)::text parsed_nays,
              sum(vmc.unresolved_members)::text unresolved_members,
-             sum(vmc.out_of_term_members)::text out_of_term_members
+             sum(vmc.out_of_term_members)::text out_of_term_members,
+             count(*) FILTER (WHERE c.slug='senate' AND ve.is_passage AND ve.passed IS NULL)::text missing_passage_outcomes
         FROM vote_events ve
         JOIN legislative_sessions s ON s.id=ve.session_id
         JOIN chambers c ON c.id=ve.chamber_id
@@ -59,11 +61,13 @@ async function main(): Promise<void> {
       const nayMismatch=Number(row.declared_nays)!==Number(row.parsed_nays);
       const unresolved=Number(row.unresolved_members);
       const outOfTerm=Number(row.out_of_term_members);
-      if(yeaMismatch||nayMismatch||unresolved>0||outOfTerm>0) failures+=1;
+      const missingPassageOutcomes=Number(row.missing_passage_outcomes);
+      const ok=!yeaMismatch&&!nayMismatch&&unresolved===0&&outOfTerm===0&&missingPassageOutcomes===0;
+      if(!ok) failures+=1;
       console.log(JSON.stringify({
         session:row.session_slug,chamber:row.chamber_slug,voteEvents:Number(row.vote_events),passageEvents:Number(row.passage_events),
         declared:{yeas:Number(row.declared_yeas),nays:Number(row.declared_nays)},parsed:{yeas:Number(row.parsed_yeas),nays:Number(row.parsed_nays)},
-        unresolvedMembers:unresolved,outOfTermMembers:outOfTerm,ok:!yeaMismatch&&!nayMismatch&&unresolved===0&&outOfTerm===0
+        unresolvedMembers:unresolved,outOfTermMembers:outOfTerm,missingPassageOutcomes,ok
       }));
     }
 
