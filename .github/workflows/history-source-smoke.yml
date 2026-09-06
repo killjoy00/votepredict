@@ -1,0 +1,30 @@
+name: Historical source smoke
+
+on:
+  push:
+    branches: [fix/history-live-load]
+    paths:
+      - '.github/workflows/history-source-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: npm install --no-fund --no-audit
+      - name: Smoke Senate 2025-26
+        run: npm run data:senate:ingest -- --dry-run --session 302 --limit 1 --delay-ms 1
+      - name: Smoke Senate 2023-24
+        run: npm run data:senate:ingest -- --dry-run --session 300 --limit 1 --delay-ms 1
+      - name: Smoke Senate 2021-22
+        run: npm run data:senate:ingest -- --dry-run --session 257 --limit 1 --delay-ms 1
+      - name: Smoke Revisor across target sessions
+        run: |
+          npx tsx -e "import { fetchRevisorBill } from './src/sources/minnesota/revisor.ts'; for (const key of ['302','300','257']) { const result = await fetchRevisorBill(key, 'HF1', false); if (!result.sourceUrl) throw new Error('missing Revisor source for '+key); console.log(key, result.sourceUrl, result.currentVersion ?? 'no-version'); }"
