@@ -83,8 +83,13 @@ function valueAfter(lines: string[], label: string): string | undefined {
   const normalizedLabel = label.toLowerCase();
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index];
-    if (line.toLowerCase() === normalizedLabel && lines[index + 1]) return lines[index + 1];
-    if (line.toLowerCase().startsWith(`${normalizedLabel}:`)) return line.slice(label.length + 1).trim();
+    const lower = line.toLowerCase();
+    if (lower === normalizedLabel || lower === `${normalizedLabel}:`) return lines[index + 1];
+    if (lower.startsWith(`${normalizedLabel}:`)) {
+      const inline = line.slice(label.length + 1).trim();
+      if (inline) return inline;
+      return lines[index + 1];
+    }
   }
   return undefined;
 }
