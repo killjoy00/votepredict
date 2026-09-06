@@ -125,15 +125,25 @@ async function ensureBill(client: PoolClient, context: Context, identifier: stri
   return result.rows[0].id;
 }
 
-async function hasPersistedJournal(client: PoolClient, context: Context, sourceUrl: string): Promise<boolean> {
-  const result = await client.query<{ exists: boolean }>(
-    `SELECT EXISTS (
-       SELECT 1 FROM source_documents
-        WHERE session_id=$1 AND chamber_id=$2 AND source_kind='senate_journal_pdf' AND source_url=$3
-     ) AS exists`,
+async function hasCompletePersistedJournal(client: PoolClient, context: Context, sourceUrl: string): Promise<boolean> {
+  const result = await client.query<{ complete: boolean }>(
+    `SELECT
+       EXISTS (
+         SELECT 1 FROM source_documents sd
+          WHERE sd.session_id=$1 AND sd.chamber_id=$2
+            AND sd.source_kind='senate_journal_pdf' AND sd.source_url=$3
+       )
+       AND NOT EXISTS (
+         SELECT 1
+           FROM source_documents sd
+           JOIN vote_events ve ON ve.source_document_id=sd.id
+          WHERE sd.session_id=$1 AND sd.chamber_id=$2
+            AND sd.source_kind='senate_journal_pdf' AND sd.source_url=$3
+            AND ve.is_passage AND ve.passed IS NULL
+       ) AS complete`,
     [context.sessionId, context.chamberId, sourceUrl],
   );
-  return result.rows[0]?.exists ?? false;
+  return result.rows[0]?.complete ?? false;
 }
 
 async function persistJournal(
@@ -245,7 +255,7 @@ async function runSession(pool: Pool | undefined, session: MinnesotaHouseSession
     for (const [index, journal] of journals.entries()) {
       let fetched = false;
       try {
-        if (!options.dryRun && options.skipExisting && client && context && await hasPersistedJournal(client, context, journal.sourceUrl)) {
+        if (!options.dryRun && options.skipExisting && client && context && await hasCompletePersistedJournal(client, context, journal.sourceUrl)) {
           skippedExisting += 1;
         } else {
           fetched = true;
@@ -265,7 +275,7 @@ async function runSession(pool: Pool | undefined, session: MinnesotaHouseSession
         failures.push(`${journal.sourceUrl}: ${error instanceof Error ? error.message : error}`);
       }
       if ((index + 1) % 20 === 0 || index === journals.length - 1) {
-        console.log(`[${session.slug}] ${index + 1}/${journals.length} journals; ${votes} new passage votes; ${skippedExisting} existing journals skipped; ${unresolved} unresolved new member votes`);
+        console.log(`[${session.slug}] ${index + 1}/${journals.length} journals; ${votes} new passage votes; ${skippedExisting} complete journals skipped; ${unresolved} unresolved new member votes`);
       }
       if (fetched && index < journals.length - 1) await sleep(options.delayMs);
     }

@@ -22,6 +22,7 @@ async function main(): Promise<void> {
   const sessions = requestedSession ? [getMinnesotaHouseSession(requestedSession)] : [...MINNESOTA_HOUSE_HISTORICAL_SESSIONS];
   const limit = parsePositiveInteger(argumentValue(args, '--limit'), '--limit');
   const includeText = args.includes('--include-text');
+  const skipExisting = args.includes('--skip-existing');
   const connectionString = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
   if (!connectionString) throw new Error('DATABASE_URL_UNPOOLED or DATABASE_URL is required');
 
@@ -29,69 +30,86 @@ async function main(): Promise<void> {
   let failures = 0;
   try {
     for (const session of sessions) {
-      const result = await pool.query<{ id: string; identifier: string }>(
-        `SELECT b.id, b.identifier
+      const result = await pool.query<{ id: string; identifier: string; already_enriched: boolean }>(
+        `SELECT b.id, b.identifier,
+                ((b.metadata ? 'revisor')
+                  AND b.source_url LIKE 'https://www.revisor.mn.gov/%'
+                  AND (
+                    NOT $2::boolean OR EXISTS (
+                      SELECT 1 FROM bill_versions bv
+                       WHERE bv.bill_id=b.id
+                         AND bv.raw_text IS NOT NULL
+                         AND length(bv.raw_text) >= 100
+                    )
+                  )) AS already_enriched
            FROM bills b
            JOIN legislative_sessions s ON s.id = b.session_id
            JOIN jurisdictions j ON j.id = s.jurisdiction_id
           WHERE j.slug = 'us-mn' AND s.slug = $1
           ORDER BY b.identifier`,
-        [session.slug],
+        [session.slug, includeText],
       );
       const bills = limit ? result.rows.slice(0, limit) : result.rows;
-      console.log(`[${session.slug}] enriching ${bills.length}/${result.rows.length} bills from Revisor`);
+      let skipped = 0;
+      console.log(`[${session.slug}] considering ${bills.length}/${result.rows.length} bills for Revisor enrichment`);
 
       for (const [index, bill] of bills.entries()) {
-        try {
-          const metadata = await fetchRevisorBill(session.sessionKey, bill.identifier, includeText);
-          await pool.query('BEGIN');
+        if (skipExisting && bill.already_enriched) {
+          skipped += 1;
+        } else {
           try {
-            await pool.query(
-              `UPDATE bills SET
-                 title = COALESCE($2, title),
-                 status = COALESCE($3, status),
-                 source_url = $4,
-                 metadata = metadata || $5::jsonb,
-                 updated_at = now()
-               WHERE id = $1`,
-              [
-                bill.id,
-                metadata.description || metadata.title,
-                metadata.currentVersion || 'Official Revisor record',
-                metadata.sourceUrl,
-                JSON.stringify({
-                  revisor: {
-                    legislature: metadata.legislature,
-                    sessionStartYear: metadata.sessionStartYear,
-                    currentVersion: metadata.currentVersion,
-                    latestTextUrl: metadata.latestTextUrl,
-                  },
-                }),
-              ],
-            );
-
-            if (metadata.text && metadata.textSha256) {
+            const metadata = await fetchRevisorBill(session.sessionKey, bill.identifier, includeText);
+            await pool.query('BEGIN');
+            try {
               await pool.query(
-                `INSERT INTO bill_versions (bill_id, version_key, text_url, text_hash, raw_text, source_url)
-                 VALUES ($1, $2, $3, $4, $5, $3)
-                 ON CONFLICT (bill_id, version_key) DO UPDATE SET
-                   text_url = EXCLUDED.text_url,
-                   text_hash = EXCLUDED.text_hash,
-                   raw_text = EXCLUDED.raw_text,
-                   source_url = EXCLUDED.source_url`,
-                [bill.id, metadata.currentVersion || 'latest', metadata.latestTextUrl, metadata.textSha256, metadata.text],
+                `UPDATE bills SET
+                   title = COALESCE($2, title),
+                   status = COALESCE($3, status),
+                   source_url = $4,
+                   metadata = metadata || $5::jsonb,
+                   updated_at = now()
+                 WHERE id = $1`,
+                [
+                  bill.id,
+                  metadata.description || metadata.title,
+                  metadata.currentVersion || 'Official Revisor record',
+                  metadata.sourceUrl,
+                  JSON.stringify({
+                    revisor: {
+                      legislature: metadata.legislature,
+                      sessionStartYear: metadata.sessionStartYear,
+                      currentVersion: metadata.currentVersion,
+                      latestTextUrl: metadata.latestTextUrl,
+                    },
+                  }),
+                ],
               );
+
+              if (metadata.text && metadata.textSha256) {
+                await pool.query(
+                  `INSERT INTO bill_versions (bill_id, version_key, text_url, text_hash, raw_text, source_url)
+                   VALUES ($1, $2, $3, $4, $5, $3)
+                   ON CONFLICT (bill_id, version_key) DO UPDATE SET
+                     text_url = EXCLUDED.text_url,
+                     text_hash = EXCLUDED.text_hash,
+                     raw_text = EXCLUDED.raw_text,
+                     source_url = EXCLUDED.source_url`,
+                  [bill.id, metadata.currentVersion || 'latest', metadata.latestTextUrl, metadata.textSha256, metadata.text],
+                );
+              }
+              await pool.query('COMMIT');
+            } catch (error) {
+              await pool.query('ROLLBACK');
+              throw error;
             }
-            await pool.query('COMMIT');
           } catch (error) {
-            await pool.query('ROLLBACK');
-            throw error;
+            failures += 1;
+            console.error(`[${session.slug}] ${bill.identifier}: ${error instanceof Error ? error.message : error}`);
           }
-        } catch (error) {
-          failures += 1;
-          console.error(`[${session.slug}] ${bill.identifier}: ${error instanceof Error ? error.message : error}`);
         }
-        if ((index + 1) % 25 === 0 || index === bills.length - 1) console.log(`[${session.slug}] ${index + 1}/${bills.length}`);
+        if ((index + 1) % 25 === 0 || index === bills.length - 1) {
+          console.log(`[${session.slug}] ${index + 1}/${bills.length}; ${skipped} existing bills skipped`);
+        }
       }
     }
   } finally {
