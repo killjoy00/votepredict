@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, fix/history-live-load]
 
 permissions:
   contents: read
