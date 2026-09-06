@@ -16,6 +16,12 @@ export interface RevisorBillMetadata {
   textSha256?: string;
 }
 
+class RevisorFetchError extends Error {
+  constructor(readonly status: number, readonly url: string) {
+    super(`Minnesota Revisor returned ${status}: ${url}`);
+  }
+}
+
 function decodeHtml(value: string): string {
   return value
     .replace(/&#(\d+);/g, (_, code: string) => String.fromCodePoint(Number(code)))
@@ -35,12 +41,22 @@ function normalizeBillIdentifier(value: string): string {
   return `${match[1].toUpperCase()}${Number(match[2])}`;
 }
 
-export function buildRevisorBillUrl(sessionKey: string, billIdentifier: string): string {
+function buildRevisorBillUrlForYear(sessionKey: string, billIdentifier: string, year: number): string {
   const session = getMinnesotaHouseSession(sessionKey);
   const bill = normalizeBillIdentifier(billIdentifier);
   const prefix = bill.slice(0, 2);
   const number = bill.slice(2);
-  return `${REVISOR_BASE}/bills/${session.legislature}/${session.startsOn.slice(0, 4)}/0/${prefix}/${number}/`;
+  return `${REVISOR_BASE}/bills/${session.legislature}/${year}/0/${prefix}/${number}/`;
+}
+
+export function buildRevisorBillCandidateUrls(sessionKey: string, billIdentifier: string): string[] {
+  const session = getMinnesotaHouseSession(sessionKey);
+  const startYear = Number(session.startsOn.slice(0, 4));
+  return [startYear, startYear + 1].map((year) => buildRevisorBillUrlForYear(sessionKey, billIdentifier, year));
+}
+
+export function buildRevisorBillUrl(sessionKey: string, billIdentifier: string): string {
+  return buildRevisorBillCandidateUrls(sessionKey, billIdentifier)[0];
 }
 
 export function buildRevisorLatestTextUrl(sessionKey: string, billIdentifier: string): string {
@@ -81,7 +97,7 @@ export function parseRevisorBillStatusHtml(input: { html: string; sessionKey: st
     description: descriptionMatch ? stripMarkup(descriptionMatch[1]) : undefined,
     currentVersion: currentVersionMatch?.[1]?.trim(),
     sourceUrl: input.sourceUrl,
-    latestTextUrl: buildRevisorLatestTextUrl(input.sessionKey, identifier),
+    latestTextUrl: `${input.sourceUrl}versions/latest/`,
   };
 }
 
@@ -98,13 +114,26 @@ async function fetchOfficial(url: string): Promise<string> {
     headers: { 'User-Agent': 'VotePredict/2.0 official Minnesota bill ingester' },
     signal: AbortSignal.timeout(20_000),
   });
-  if (!response.ok) throw new Error(`Minnesota Revisor returned ${response.status}: ${url}`);
+  if (!response.ok) throw new RevisorFetchError(response.status, url);
   return response.text();
 }
 
 export async function fetchRevisorBill(sessionKey: string, billIdentifier: string, includeText = false): Promise<RevisorBillMetadata> {
-  const sourceUrl = buildRevisorBillUrl(sessionKey, billIdentifier);
-  const html = await fetchOfficial(sourceUrl);
+  let sourceUrl: string | undefined;
+  let html: string | undefined;
+  let lastError: unknown;
+  for (const candidate of buildRevisorBillCandidateUrls(sessionKey, billIdentifier)) {
+    try {
+      html = await fetchOfficial(candidate);
+      sourceUrl = candidate;
+      break;
+    } catch (error) {
+      lastError = error;
+      if (!(error instanceof RevisorFetchError) || error.status !== 404) throw error;
+    }
+  }
+  if (!html || !sourceUrl) throw lastError instanceof Error ? lastError : new Error(`Minnesota Revisor bill not found: ${billIdentifier}`);
+
   const metadata = parseRevisorBillStatusHtml({ html, sessionKey, billIdentifier, sourceUrl });
   if (!includeText) return metadata;
   const textHtml = await fetchOfficial(metadata.latestTextUrl);
