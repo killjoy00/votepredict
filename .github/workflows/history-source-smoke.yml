@@ -36,6 +36,12 @@ jobs:
         if: always()
         continue-on-error: true
         run: npm run data:senate:ingest -- --dry-run --session 257 --limit 1 --delay-ms 1
+      - id: senatepassage
+        name: Smoke known Senate passage journals
+        if: always()
+        continue-on-error: true
+        run: |
+          npx tsx -e "import { fetchSenateJournal, parseSenateJournalText } from './src/sources/minnesota/senate-journals.ts'; void (async () => { const checks = [ ['302','2026-04-13','https://www.senate.mn/journals/2025-2026/20260413056.pdf'], ['300','2024-04-08','https://www.senate.mn/journals/2023-2024/20240408099.pdf'], ['257','2021-04-27','https://www.senate.mn/journals/2021-2022/20210427047.pdf'] ]; for (const [key,date,url] of checks) { const doc = await fetchSenateJournal(url); const events = parseSenateJournalText({ text: doc.text, sessionKey: key, sourceUrl: url, occurredOn: date }); if (events.length < 1) throw new Error('no passage events parsed from '+url); console.log(key, events.length, events[0].billIdentifier, events[0].yeaCount+'-'+events[0].nayCount); } })();"
       - id: revisor
         name: Smoke Revisor across target sessions
         if: always()
@@ -49,4 +55,5 @@ jobs:
           test '${{ steps.senate302.outcome }}' = success
           test '${{ steps.senate300.outcome }}' = success
           test '${{ steps.senate257.outcome }}' = success
+          test '${{ steps.senatepassage.outcome }}' = success
           test '${{ steps.revisor.outcome }}' = success
