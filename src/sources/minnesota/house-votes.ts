@@ -74,7 +74,7 @@ function htmlToLines(html: string): string[] {
 }
 
 function billHeading(line: string): string | undefined {
-  const match = line.match(/^([HS])\.?F\.?\s+NO\.?\s+0*(\d+)$/i);
+  const match = line.match(/^([HS])\.?F\.?\s*(?:NO\.?\s*)?0*(\d+)\b/i);
   return match ? `${match[1].toUpperCase()}F${Number(match[2])}` : undefined;
 }
 
