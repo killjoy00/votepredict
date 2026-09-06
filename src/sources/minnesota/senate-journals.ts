@@ -231,7 +231,7 @@ export function parseSenateJournalText(input: {
     const yeaCount = Number(match[2]);
     const nayCount = Number(match[3]);
     const after = text.slice(start + match[0].length, start + match[0].length + 5000);
-    const negative = after.match(/^\s*Those who voted in the negative were:\s*([\s\S]*?)(?=So the bill|MOTIONS|SPECIAL|MESSAGES|CALENDAR|CONSENT|GENERAL ORDERS)/i);
+    const negative = after.match(/^\s*Those who voted in the negative were:\s*([\s\S]*?)(?=So(?:\s|,)|RECONSIDERATION|MOTIONS|SPECIAL|MESSAGES|CALENDAR|CONSENT|GENERAL ORDERS|MEMBERS EXCUSED|ADJOURNMENT)/i);
     const knownMemberNames = input.knownMemberNames ?? [];
     const yeaVotes = splitNames(match[4], 'yea', 0, knownMemberNames).slice(0, yeaCount);
     const nayVotes = nayCount === 0 ? [] : splitNames(negative?.[1] ?? '', 'nay', yeaVotes.length, knownMemberNames).slice(0, nayCount);
