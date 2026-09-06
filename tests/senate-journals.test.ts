@@ -59,6 +59,20 @@ test('Senate journal parser accepts failed-passage wording before reconsideratio
   ]);
 });
 
+test('Senate journal parser accepts explicit repassed wording', () => {
+  const text = `S.F. No. 475 was read the third time, as amended by the House, and placed on its repassage.\nThe question was taken on the repassage of the bill, as amended.\nThe roll was called, and there were yeas 2 and nays 0, as follows:\nThose who voted in the affirmative were:\nAbeler\nAnderson\nSo the bill, as amended, was repassed and its title was agreed to.`;
+  const events = parseSenateJournalText({
+    text,
+    sessionKey: '257',
+    sourceUrl: 'https://www.senate.mn/journals/2021-2022/repassage.pdf',
+    occurredOn: '2021-03-01',
+    knownMemberNames: ['Abeler', 'Anderson'],
+  });
+  assert.equal(events.length, 1);
+  assert.equal(events[0].isPassage, true);
+  assert.equal(events[0].passed, true);
+});
+
 test('Senate journal parser splits collapsed PDF table names using roster context', () => {
   const text = `SPECIAL ORDER\nS.F. No. 1279: A bill for an act relating to public safety.\nS.F. No. 1279 was read the third time and placed on its final passage.\nThe question was taken on the passage of the bill.\nThe roll was called, and there were yeas 2 and nays 5, as follows:\nThose who voted in the affirmative were:\nAbeler\nAnderson\nThose who voted in the negative were:\nFatehKuneshMcEwenMurphyTorres Ray\nPursuant to Rule 40, Senator Frentz cast the negative vote on behalf of the following Senators:\nFateh, Kunesh, McEwen, and Torres Ray.\nSo the bill passed and its title was agreed to.`;
   const events = parseSenateJournalText({
