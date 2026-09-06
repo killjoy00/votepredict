@@ -28,10 +28,19 @@ export function classifyHouseVoteKind(motionText: string): NormalizedVoteKind {
   return 'other';
 }
 
+function validateSessionKey(sessionKey: string): void {
+  if (!/^\d+$/.test(sessionKey)) throw new Error(`Invalid House vote session key: ${sessionKey}`);
+}
+
+export function buildHouseVoteSummaryUrl(sessionKey: string): string {
+  validateSessionKey(sessionKey);
+  return `${HOUSE_BASE}/Votes/Summary/${encodeURIComponent(sessionKey)}`;
+}
+
 export function buildHouseVoteDetailUrl(sessionKey: string, billIdentifier: string): string {
   const bill = billIdentifier.replace(/\s+/g, '').toUpperCase();
   if (!/^(HF|SF)\d+$/.test(bill)) throw new Error(`Unsupported Minnesota bill identifier: ${billIdentifier}`);
-  if (!/^\d+$/.test(sessionKey)) throw new Error(`Invalid House vote session key: ${sessionKey}`);
+  validateSessionKey(sessionKey);
   return `${HOUSE_BASE}/Votes/Details?SessionKey=${encodeURIComponent(sessionKey)}&BillNumber=${encodeURIComponent(bill)}`;
 }
 
@@ -161,9 +170,28 @@ export function parseHouseVoteDetailHtml(input: { html: string; sessionKey: stri
   return events;
 }
 
+async function fetchOfficialHousePage(sourceUrl: string): Promise<string> {
+  const response = await fetch(sourceUrl, {
+    headers: { 'User-Agent': 'VotePredict/2.0 historical vote ingester' },
+    signal: AbortSignal.timeout(20_000),
+  });
+  if (!response.ok) throw new Error(`Minnesota House page returned ${response.status}: ${sourceUrl}`);
+  return response.text();
+}
+
+export async function fetchHouseVoteSummary(sessionKey: string): Promise<{ html: string; sourceUrl: string }> {
+  const sourceUrl = buildHouseVoteSummaryUrl(sessionKey);
+  return { html: await fetchOfficialHousePage(sourceUrl), sourceUrl };
+}
+
+export async function listHouseVoteBillLinks(sessionKey: string): Promise<HouseVoteBillLink[]> {
+  const { html } = await fetchHouseVoteSummary(sessionKey);
+  const links = discoverHouseVoteBillLinks(html, sessionKey);
+  if (links.length === 0) throw new Error(`No Minnesota House vote-detail links discovered for session ${sessionKey}`);
+  return links;
+}
+
 export async function fetchHouseVoteDetail(sessionKey: string, billIdentifier: string): Promise<{ html: string; sourceUrl: string }> {
   const sourceUrl = buildHouseVoteDetailUrl(sessionKey, billIdentifier);
-  const response = await fetch(sourceUrl, { headers: { 'User-Agent': 'VotePredict/2.0 historical vote ingester' }, signal: AbortSignal.timeout(20_000) });
-  if (!response.ok) throw new Error(`Minnesota House vote page returned ${response.status}`);
-  return { html: await response.text(), sourceUrl };
+  return { html: await fetchOfficialHousePage(sourceUrl), sourceUrl };
 }
