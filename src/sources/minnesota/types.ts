@@ -13,6 +13,7 @@ export interface NormalizedVoteEvent {
   billIdentifier: string;
   voteKind: NormalizedVoteKind;
   isPassage: boolean;
+  passed?: boolean;
   motionText: string;
   amendmentRef?: string;
   occurredOn: string;
