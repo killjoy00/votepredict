@@ -16,6 +16,11 @@ export interface RevisorBillMetadata {
   textSha256?: string;
 }
 
+interface OfficialResponse {
+  text: string;
+  finalUrl: string;
+}
+
 class RevisorFetchError extends Error {
   constructor(readonly status: number, readonly url: string) {
     super(`Minnesota Revisor returned ${status}: ${url}`);
@@ -109,13 +114,13 @@ export function parseRevisorBillTextHtml(html: string): { text: string; sha256: 
   return { text, sha256: createHash('sha256').update(text).digest('hex') };
 }
 
-async function fetchOfficial(url: string): Promise<string> {
+async function fetchOfficial(url: string): Promise<OfficialResponse> {
   const response = await fetch(url, {
     headers: { 'User-Agent': 'VotePredict/2.0 official Minnesota bill ingester' },
     signal: AbortSignal.timeout(20_000),
   });
   if (!response.ok) throw new RevisorFetchError(response.status, url);
-  return response.text();
+  return { text: await response.text(), finalUrl: response.url || url };
 }
 
 export async function fetchRevisorBill(sessionKey: string, billIdentifier: string, includeText = false): Promise<RevisorBillMetadata> {
@@ -124,8 +129,9 @@ export async function fetchRevisorBill(sessionKey: string, billIdentifier: strin
   let lastError: unknown;
   for (const candidate of buildRevisorBillCandidateUrls(sessionKey, billIdentifier)) {
     try {
-      html = await fetchOfficial(candidate);
-      sourceUrl = candidate;
+      const response = await fetchOfficial(candidate);
+      html = response.text;
+      sourceUrl = response.finalUrl;
       break;
     } catch (error) {
       lastError = error;
@@ -136,7 +142,7 @@ export async function fetchRevisorBill(sessionKey: string, billIdentifier: strin
 
   const metadata = parseRevisorBillStatusHtml({ html, sessionKey, billIdentifier, sourceUrl });
   if (!includeText) return metadata;
-  const textHtml = await fetchOfficial(metadata.latestTextUrl);
-  const parsedText = parseRevisorBillTextHtml(textHtml);
+  const textResponse = await fetchOfficial(metadata.latestTextUrl);
+  const parsedText = parseRevisorBillTextHtml(textResponse.text);
   return { ...metadata, text: parsedText.text, textSha256: parsedText.sha256 };
 }
