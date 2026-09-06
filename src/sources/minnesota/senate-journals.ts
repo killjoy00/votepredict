@@ -159,6 +159,13 @@ function segmentKnownNames(token: string, knownMemberNames: readonly string[]): 
   return solutions.length === 1 && solutions[0].length > 1 ? solutions[0] : undefined;
 }
 
+function exactKnownName(token: string, knownMemberNames: readonly string[]): string | undefined {
+  const target = compactName(token);
+  if (!target) return undefined;
+  const matches = [...new Set(knownMemberNames.filter((candidate) => compactName(candidate) === target))];
+  return matches.length === 1 ? matches[0] : undefined;
+}
+
 function splitNames(
   block: string,
   choice: 'yea' | 'nay',
@@ -177,15 +184,21 @@ function splitNames(
 
   for (const token of tokens) {
     if (/^(So the bill|The question|The roll|Those who|MOTIONS|SPECIAL|MESSAGES|CALENDAR|CONSENT|GENERAL ORDERS)/i.test(token)) break;
-    if (/^--\s*\d+\s+of\s+\d+\s*--$/i.test(token)) continue;
     if (token.length > 120 || !/[A-Za-zÀ-ž]/.test(token)) continue;
     const name = token.trim().replace(/[;.]$/, '');
     if (!name) continue;
-    const segmented = segmentKnownNames(name, knownMemberNames);
-    if (segmented) {
-      names.push(...segmented);
+
+    if (knownMemberNames.length > 0) {
+      const exact = exactKnownName(name, knownMemberNames);
+      if (exact) {
+        names.push(exact);
+        continue;
+      }
+      const segmented = segmentKnownNames(name, knownMemberNames);
+      if (segmented) names.push(...segmented);
       continue;
     }
+
     if (name.length <= 60 && name.split(/\s+/).length <= 5) names.push(name);
   }
 
