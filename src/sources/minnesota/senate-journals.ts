@@ -205,8 +205,8 @@ function splitNames(
 
 function explicitPassageOutcome(resultText: string): boolean | undefined {
   const compact = resultText.replace(/\s+/g, ' ').trim();
-  if (/\bfailed to pass\b/i.test(compact)) return false;
-  if (/\bSo,?\s+(?:the bill|the bill, as amended)[\s\S]{0,120}\bpassed\b/i.test(compact)) return true;
+  if (/\bfailed to (?:re)?pass\b/i.test(compact)) return false;
+  if (/\bSo,?\s+(?:the bill|the bill, as amended)[\s\S]{0,120}\b(?:re)?passed\b/i.test(compact)) return true;
   return undefined;
 }
 
