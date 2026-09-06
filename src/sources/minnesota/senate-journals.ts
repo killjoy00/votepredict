@@ -167,6 +167,7 @@ function splitNames(
 ): NormalizedMemberVote[] {
   const cleaned = block
     .replace(/\f/g, '\n')
+    .replace(/--\s*\d+\s+of\s+\d+\s*--/gi, ' ')
     .replace(/\b\d+(?:ST|ND|RD|TH) DAY\b/gi, ' ')
     .replace(/\bJOURNAL OF THE SENATE\b/gi, ' ')
     .replace(/\[[^\]]+DAY[^\]]*\]/gi, ' ')
@@ -176,6 +177,7 @@ function splitNames(
 
   for (const token of tokens) {
     if (/^(So the bill|The question|The roll|Those who|MOTIONS|SPECIAL|MESSAGES|CALENDAR|CONSENT|GENERAL ORDERS)/i.test(token)) break;
+    if (/^--\s*\d+\s+of\s+\d+\s*--$/i.test(token)) continue;
     if (token.length > 120 || !/[A-Za-zÀ-ž]/.test(token)) continue;
     const name = token.trim().replace(/[;.]$/, '');
     if (!name) continue;
