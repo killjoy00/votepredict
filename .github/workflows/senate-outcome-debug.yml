@@ -1,0 +1,20 @@
+name: Senate outcome debug
+
+on:
+  push:
+    branches: [fix/repassage-outcomes]
+    paths:
+      - '.github/workflows/senate-outcome-debug.yml'
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: npm install --no-fund --no-audit
+      - name: Print HF669 result context
+        run: |
+          npx tsx -e "import { fetchSenateJournal } from './src/sources/minnesota/senate-journals.ts'; (async()=>{ const d=await fetchSenateJournal('https://www.senate.mn/journals/2023-2024/20230522077.pdf'); const needle='there were yeas 56 and nays 11'; const i=d.text.toLowerCase().indexOf(needle); if(i<0) throw new Error('needle not found'); console.log(d.text.slice(i, i+3500)); })().catch(e=>{console.error(e);process.exit(1)})"
