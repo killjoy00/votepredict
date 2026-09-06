@@ -25,10 +25,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OIDC_TOKEN="$(curl --fail --show-error --silent \
+          OIDC_TOKEN="$(curl --fail --show-error --silent --retry 3 --retry-all-errors \
             -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=votepredict-neon-loader" | jq -r .value)"
-          DATABASE_URL="$(curl --fail --show-error --silent \
+          DATABASE_URL="$(curl --fail --show-error --silent --retry 3 --retry-all-errors \
             -H "Authorization: Bearer $OIDC_TOKEN" \
             https://br-billowing-wave-aecfbwky-dblease.compute.c-2.us-east-2.aws.neon.tech/)"
           test -n "$DATABASE_URL"
