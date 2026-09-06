@@ -13,6 +13,20 @@ export const legislators = pgTable('legislators', { id: uuid('id').primaryKey().
 
 export const memberships = pgTable('memberships', { id: uuid('id').primaryKey().defaultRandom(), sessionId: uuid('session_id').notNull().references(() => legislativeSessions.id), chamberId: uuid('chamber_id').notNull().references(() => chambers.id), legislatorId: uuid('legislator_id').notNull().references(() => legislators.id), district: text('district').notNull(), party: text('party').notNull(), title: text('title').notNull(), startsOn: date('starts_on'), endsOn: date('ends_on'), sourceUrl: text('source_url'), createdAt: createdAt() }, (table) => [uniqueIndex('memberships_session_chamber_legislator_uq').on(table.sessionId, table.chamberId, table.legislatorId), index('memberships_legislator_idx').on(table.legislatorId), index('memberships_session_chamber_idx').on(table.sessionId, table.chamberId)]);
 
+export const membershipSourceAliases = pgTable('membership_source_aliases', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  membershipId: uuid('membership_id').notNull().references(() => memberships.id, { onDelete: 'cascade' }),
+  sourceSystem: text('source_system').notNull(),
+  sourceName: text('source_name').notNull(),
+  normalizedName: text('normalized_name').notNull(),
+  sourceUrl: text('source_url'),
+  metadata: jsonb('metadata').notNull().default({}),
+  createdAt: createdAt(),
+}, (table) => [
+  uniqueIndex('membership_source_aliases_membership_source_name_uq').on(table.membershipId, table.sourceSystem, table.normalizedName),
+  index('membership_source_aliases_lookup_idx').on(table.sourceSystem, table.normalizedName, table.membershipId),
+]);
+
 export const bills = pgTable('bills', { id: uuid('id').primaryKey().defaultRandom(), sessionId: uuid('session_id').notNull().references(() => legislativeSessions.id), originatingChamberId: uuid('originating_chamber_id').references(() => chambers.id), identifier: text('identifier').notNull(), title: text('title').notNull(), status: text('status'), sourceUrl: text('source_url'), introducedAt: timestamp('introduced_at', { withTimezone: true }), latestActionAt: timestamp('latest_action_at', { withTimezone: true }), metadata: jsonb('metadata').notNull().default({}), createdAt: createdAt(), updatedAt: updatedAt() }, (table) => [uniqueIndex('bills_session_identifier_uq').on(table.sessionId, table.identifier), index('bills_session_idx').on(table.sessionId)]);
 
 export const billVersions = pgTable('bill_versions', { id: uuid('id').primaryKey().defaultRandom(), billId: uuid('bill_id').notNull().references(() => bills.id), versionKey: text('version_key').notNull(), publishedAt: timestamp('published_at', { withTimezone: true }), textUrl: text('text_url'), textHash: text('text_hash'), rawText: text('raw_text'), sourceUrl: text('source_url'), createdAt: createdAt() }, (table) => [uniqueIndex('bill_versions_bill_key_uq').on(table.billId, table.versionKey), index('bill_versions_bill_published_idx').on(table.billId, table.publishedAt)]);
