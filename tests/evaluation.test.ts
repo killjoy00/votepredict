@@ -1,12 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { globalRateBaseline, memberHistoryBaseline, partyRateBaseline, priorVotesOnly, type HistoricalMemberVote } from '../src/evaluation/baselines.js';
-import { simulateChamber } from '../src/evaluation/chamber.js';
 import { binaryAccuracy, brierScore, calibrationBins, expectedCalibrationError, logLoss } from '../src/evaluation/metrics.js';
+import { globalRateBaseline, memberHistoryBaseline, partyRateBaseline, priorVotesOnly, type HistoricalMemberVote } from '../src/evaluation/baselines.js';
+import { simulateChamber } from '../src/evaluation/simulation.js';
 
 test('binary evaluation metrics reward accurate confident forecasts', () => {
-  const good = [{ probability: 0.9, outcome: 1 as const }, { probability: 0.1, outcome: 0 as const }];
-  const bad = [{ probability: 0.1, outcome: 1 as const }, { probability: 0.9, outcome: 0 as const }];
+  const good = [
+    { probability: 0.9, outcome: 1 as const },
+    { probability: 0.1, outcome: 0 as const },
+  ];
+  const bad = [
+    { probability: 0.1, outcome: 1 as const },
+    { probability: 0.9, outcome: 0 as const },
+  ];
   assert.ok(brierScore(good) < brierScore(bad));
   assert.ok(logLoss(good) < logLoss(bad));
   assert.equal(binaryAccuracy(good), 1);
@@ -15,8 +21,10 @@ test('binary evaluation metrics reward accurate confident forecasts', () => {
 
 test('calibration bins and ECE are deterministic', () => {
   const forecasts = [
-    { probability: 0.2, outcome: 0 as const }, { probability: 0.2, outcome: 1 as const },
-    { probability: 0.8, outcome: 1 as const }, { probability: 0.8, outcome: 1 as const },
+    { probability: 0.2, outcome: 0 as const },
+    { probability: 0.2, outcome: 1 as const },
+    { probability: 0.8, outcome: 1 as const },
+    { probability: 0.8, outcome: 1 as const },
   ];
   const bins = calibrationBins(forecasts, 5);
   assert.equal(bins.length, 2);
@@ -53,7 +61,7 @@ test('chamber simulation is seeded, reproducible, and derives passage from membe
   const first = simulateChamber(members, 6, { simulations: 5_000, seed: 42 });
   const second = simulateChamber(members, 6, { simulations: 5_000, seed: 42 });
   assert.deepEqual(first, second);
-  assert.equal(first.expectedYes, 7);
+  assert.ok(Math.abs(first.expectedYes - 7) < 1e-12);
   assert.ok(first.passageProbability > 0.5);
   assert.ok(first.yesLow <= first.expectedYes && first.yesHigh >= first.expectedYes);
 });
