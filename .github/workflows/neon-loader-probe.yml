@@ -1,0 +1,21 @@
+name: Neon loader probe
+
+on:
+  push:
+    branches: [build/minnesota-history]
+    paths:
+      - '.github/workflows/neon-loader-probe.yml'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Migration checksums
+        run: sha256sum migrations/*.sql
+      - name: Probe Neon Function
+        run: |
+          set -euo pipefail
+          curl --fail --show-error --silent \
+            https://br-withered-sun-ae62n3vu-loadtest.compute.c-2.us-east-2.aws.neon.tech/
+          echo

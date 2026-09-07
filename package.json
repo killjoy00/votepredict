@@ -12,13 +12,22 @@
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test tests/*.test.ts",
     "check": "npm run typecheck && npm test && npm run build",
-    "db:migrate": "tsx scripts/migrate.ts"
+    "db:migrate": "tsx scripts/migrate.ts",
+    "data:members:ingest": "tsx scripts/ingest-lrl-memberships.ts",
+    "data:members:reconcile": "tsx scripts/reconcile-member-votes.ts",
+    "data:history:audit": "tsx scripts/audit-historical-data.ts",
+    "data:house:inspect": "tsx scripts/inspect-house-votes.ts",
+    "data:house:ingest": "tsx scripts/ingest-house-history.ts",
+    "data:revisor:enrich": "tsx scripts/enrich-revisor-bills.ts",
+    "data:senate:inspect": "tsx scripts/inspect-senate-journals.ts",
+    "data:senate:ingest": "tsx scripts/ingest-senate-history.ts"
   },
   "dependencies": {
     "@neondatabase/auth": "0.5.0-beta",
     "@vercel/functions": "3.9.5",
     "drizzle-orm": "0.45.2",
     "next": "16.3.4",
+    "pdf-parse": "2.4.5",
     "pg": "8.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"

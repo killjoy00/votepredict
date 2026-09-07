@@ -1,0 +1,53 @@
+name: Load historical Minnesota data
+
+on:
+  push:
+    branches: [build/minnesota-history]
+    paths:
+      - '.github/workflows/load-minnesota-history.yml'
+      - 'scripts/**'
+      - 'src/sources/minnesota/**'
+      - 'package.json'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  load:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-fund --no-audit
+      - name: Lease primary Neon connection
+        shell: bash
+        run: |
+          set -euo pipefail
+          OIDC_TOKEN="$(curl --fail --show-error --silent --retry 3 --retry-all-errors \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=votepredict-neon-loader" | jq -r .value)"
+          DATABASE_URL="$(curl --fail --show-error --silent --retry 3 --retry-all-errors \
+            -H "Authorization: Bearer $OIDC_TOKEN" \
+            https://br-billowing-wave-aecfbwky-dblease.compute.c-2.us-east-2.aws.neon.tech/)"
+          test -n "$DATABASE_URL"
+          echo "::add-mask::$DATABASE_URL"
+          echo "DATABASE_URL=$DATABASE_URL" >> "$GITHUB_ENV"
+      - name: Verify migrations
+        run: npm run db:migrate
+      - name: Load historical memberships
+        run: npm run data:members:ingest
+      - name: Load House history
+        run: npm run data:house:ingest -- --delay-ms 100 --skip-existing
+      - name: Load Senate history
+        run: npm run data:senate:ingest -- --delay-ms 150 --skip-existing
+      - name: Enrich bills from Revisor
+        run: npm run data:revisor:enrich -- --include-text --skip-existing
+      - name: Reconcile member votes
+        run: npm run data:members:reconcile
+      - name: Strict historical audit
+        run: npm run data:history:audit -- --strict

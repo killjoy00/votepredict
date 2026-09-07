@@ -1,0 +1,17 @@
+name: LRL raw probe
+
+on:
+  push:
+    branches: [build/minnesota-history]
+    paths:
+      - '.github/workflows/lrl-probe.yml'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect raw LRL detail markup
+        run: |
+          set -euo pipefail
+          curl -L --fail --show-error --silent 'https://www.lrl.mn.gov/legdb/fulldetail.aspx?ID=10002' > /tmp/lrl-detail.html
+          grep -inE '94th Legislative Session|Body:|District:|Term of Office:|Party:' /tmp/lrl-detail.html | head -n 40 || true

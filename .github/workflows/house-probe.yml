@@ -1,0 +1,17 @@
+name: House raw probe
+
+on:
+  push:
+    branches: [build/minnesota-history]
+    paths:
+      - '.github/workflows/house-probe.yml'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect raw House vote summary AJAX code
+        run: |
+          set -euo pipefail
+          curl -L --fail --show-error --silent 'https://www.house.mn.gov/Votes/Summary/302' > /tmp/house.html
+          sed -n '845,925p' /tmp/house.html

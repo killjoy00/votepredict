@@ -1,0 +1,31 @@
+name: Official source smoke
+
+on:
+  workflow_dispatch:
+    inputs:
+      session:
+        description: Minnesota House session key
+        required: true
+        default: "302"
+        type: choice
+        options:
+          - "302"
+          - "300"
+          - "257"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package.json
+      - run: npm install --no-fund --no-audit
+      - run: npx tsx scripts/smoke-official-sources.ts "${{ inputs.session }}"
