@@ -34,8 +34,6 @@ type GdeltArticle = {
   title?: unknown;
   seendate?: unknown;
   domain?: unknown;
-  language?: unknown;
-  sourcecountry?: unknown;
 };
 
 type GdeltResponse = {
@@ -151,7 +149,7 @@ export async function collectPreloadedResearchContext(request: DeepResearchReque
   const asOf = new Date(request.asOf);
   if (Number.isNaN(asOf.getTime())) throw new Error('Deep research asOf must be a valid date/time');
 
-  const items = campaignFinanceItems();
+  const financeItems = campaignFinanceItems();
   let gdeltQueries = 0;
   let gdeltFailures = 0;
   const tasks: Array<Promise<PreloadedResearchItem[]>> = [];
@@ -176,9 +174,9 @@ export async function collectPreloadedResearchContext(request: DeepResearchReque
   }
 
   const gdeltItems = (await Promise.all(tasks)).flat();
-  const merged = uniqueByUrl([...items, ...gdeltItems]);
-  const sourceReferences = gdeltItems.map((item, index): DeepResearchSourceReference => ({
-    id: `preloaded-news-${index + 1}`,
+  const merged = uniqueByUrl([...financeItems, ...gdeltItems]);
+  const sourceReferences = merged.map((item, index): DeepResearchSourceReference => ({
+    id: item.sourceKind === 'news_index' ? `preloaded-news-${index + 1}` : `preloaded-finance-${index + 1}`,
     url: item.sourceUrl,
     title: item.title,
   }));
@@ -190,7 +188,7 @@ export async function collectPreloadedResearchContext(request: DeepResearchReque
       gdeltQueries,
       gdeltArticles: gdeltItems.length,
       gdeltFailures,
-      campaignFinanceCatalogs: items.length,
+      campaignFinanceCatalogs: financeItems.length,
     },
   };
 }
