@@ -12,17 +12,24 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Probe production routes
+      - name: Poll production health
         shell: bash
         run: |
           set -u
-          # Production redeploy after runtime secrets were added: 2026-09-07
-          for path in /auth/setup /auth/sign-in /api/health; do
-            echo "===== ${path} ====="
+          for i in 1 2 3 4 5 6 7 8 9 10 11 12; do
+            echo "===== health attempt ${i} ====="
             body="$(mktemp)"
-            code="$(curl -sS -L --max-time 30 -o "$body" -w '%{http_code}' "https://votepredict.vercel.app${path}" || true)"
+            code="$(curl -sS -L --max-time 20 -o "$body" -w '%{http_code}' "https://votepredict.vercel.app/api/health" || true)"
             echo "HTTP ${code}"
-            head -c 5000 "$body" || true
+            cat "$body" || true
             echo
+            if grep -q '"database":"ok"' "$body" && grep -q '"neonAuthBaseUrl":"configured"' "$body" && grep -q '"neonAuthCookieSecret":"configured"' "$body"; then
+              rm -f "$body"
+              echo "Production runtime configuration is healthy."
+              exit 0
+            fi
             rm -f "$body"
+            if [ "$i" -lt 12 ]; then sleep 10; fi
           done
+          echo "Production runtime configuration did not become healthy during the polling window."
+          exit 1
