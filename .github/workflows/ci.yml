@@ -15,7 +15,23 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -24,5 +40,7 @@ jobs:
           cache: npm
           cache-dependency-path: package.json
       - run: npm install --no-fund --no-audit
+      - name: Verify migrations from a clean database
+        run: npm run db:migrate
       - run: npm run check
       - run: npm audit --omit=dev --audit-level=high

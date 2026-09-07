@@ -1,20 +1,26 @@
 # VotePredict
 
-VotePredict is a private-first legislative forecasting system. Minnesota is the first implementation; the forecasting engine is intended to support additional jurisdictions later.
+VotePredict is a private-first legislative forecasting system. Minnesota is the first implementation; the architecture is intended to support additional jurisdictions later.
 
-The product is being rebuilt from scratch under the V2 foundation defined in [CHARTER.md](./CHARTER.md) and the documents in [`docs/`](./docs).
+VotePredict V2 is the active product. The rebuild sequence defined in [CHARTER.md](./CHARTER.md) and [`docs/REBUILD_PLAN.md`](./docs/REBUILD_PLAN.md) is complete through production hardening and forecast-vs-actual scoring.
 
-## Current implementation status
+## Current implementation
 
-The legacy V1 predictor has been removed from the application surface. The repository now contains the V2 application and persistence foundation:
+The repository contains:
 
-- Next.js App Router application shell;
-- managed Neon Auth integration with an owner-email authorization gate;
-- Neon Postgres persistence layer;
-- migration-managed core legislative and forecast entities;
-- a private forecast workspace ready for the historical-data and forecasting phases.
+- a Next.js App Router application with managed Neon Auth and an owner-email authorization gate;
+- Neon Postgres persistence for legislative data, forecasts, immutable revisions, member predictions, evidence, scenarios, subsets, shares, and production outcome resolution;
+- Minnesota official-data ingestion for recent legislatures, including House passage votes, Senate journal passage votes, member reconciliation, and Revisor bill/version metadata;
+- a leakage-safe chronological evaluation harness with accepted baseline and member-model artifacts;
+- deterministic bill features and historical analogue retrieval that refuses future bill versions;
+- the benchmarked `member-eb-v1` member model plus exact Poisson-binomial chamber simulation;
+- Quick forecasts using historical/member/analogue support with explicit cannot-predict behavior;
+- targeted Deep research for consequential uncertain members, with source provenance, evidence inclusion/exclusion lineage, contradictions, and before/after probability movement;
+- a private mobile-first forecast workspace with saved history, immutable updates, revision diffs, scenarios, subsets, and revocable revision-specific read-only sharing;
+- `/dashboard/operations` for ingestion/source/Deep health, official outcome reconciliation, and leakage-safe production scorecards;
+- a database-enforced rolling Deep-research usage limit and durable external-usage ledger.
 
-No production forecasting model is exposed yet. Historical data ingestion, backtesting, calibration, evidence research, and forecast generation are intentionally built before the product presents numerical predictions.
+Calibration remains off by default because the evaluated calibrator did not earn promotion. New model/configuration defaults must pass the evaluation and model-promotion rules documented in [`docs/EVALUATION_STANDARD.md`](./docs/EVALUATION_STANDARD.md) and [`docs/OPERATIONS.md`](./docs/OPERATIONS.md).
 
 ## Local setup
 
@@ -27,18 +33,33 @@ npm run db:migrate
 npm run dev
 ```
 
-The application uses `DATABASE_URL` for normal pooled traffic and `DATABASE_URL_UNPOOLED` for migrations. Do not commit either connection string or `NEON_AUTH_COOKIE_SECRET`.
+The application uses `DATABASE_URL` for normal pooled traffic and `DATABASE_URL_UNPOOLED` for migrations/administrative jobs. Do not commit database credentials, `NEON_AUTH_COOKIE_SECRET`, AI Gateway credentials, or other production secrets.
 
 ## Commands
 
 ```bash
-npm run dev          # local Next.js development server
-npm run typecheck    # TypeScript validation
-npm test             # foundation tests
-npm run build        # production build
-npm run check        # typecheck + tests + production build
-npm run db:migrate   # apply checked-in SQL migrations using the direct DB URL
+npm run dev                       # local Next.js development server
+npm run typecheck                 # TypeScript validation
+npm test                          # full automated test suite
+npm run build                     # production build
+npm run check                     # typecheck + tests + production build
+npm run db:migrate                # apply checked-in migrations using the direct DB URL
+npm run data:history:audit        # strict historical-data audit
+npm run data:revisor:versions     # ingest dated official Revisor bill versions
+npm run features:bills:backfill   # materialize deterministic bill feature sets
+npm run eval:baselines            # reproduce baseline evaluation artifact
+npm run eval:member-model         # reproduce member-model evaluation
 ```
+
+CI also runs the complete migration chain against a fresh PostgreSQL database before typecheck/tests/build, so checked-in migrations must remain able to construct a clean database from zero.
+
+## Production workflow
+
+1. Create a Quick or Deep forecast from `/dashboard`.
+2. Use the saved forecast page for immutable updates, revision diffs, scenarios, subsets, and shares.
+3. Use `/dashboard/operations` to monitor ingestion/source/Deep health.
+4. After a forecasted bill receives an official passage vote, explicitly reconcile the forecast to the matching vote event.
+5. Use the production scorecard as observational evidence; do not promote model changes without a new leakage-safe historical evaluation artifact.
 
 ## Governing documents
 
@@ -47,3 +68,4 @@ npm run db:migrate   # apply checked-in SQL migrations using the direct DB URL
 - [docs/DATA_AND_EVIDENCE.md](./docs/DATA_AND_EVIDENCE.md)
 - [docs/EVALUATION_STANDARD.md](./docs/EVALUATION_STANDARD.md)
 - [docs/REBUILD_PLAN.md](./docs/REBUILD_PLAN.md)
+- [docs/OPERATIONS.md](./docs/OPERATIONS.md)
