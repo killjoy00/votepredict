@@ -28,10 +28,32 @@ export default async function DashboardPage() {
     : [];
 
   return (
-    <ForecastWorkspace
-      ownerEmail={user.email ?? 'Owner'}
-      session={session ? { id: session.id, name: session.name } : null}
-      chambers={chamberOptions}
-    />
+    <>
+      <a
+        href="/dashboard/forecasts"
+        style={{
+          position: 'fixed',
+          right: 14,
+          bottom: 14,
+          zIndex: 30,
+          border: '1px solid #ccd6cf',
+          borderRadius: 999,
+          padding: '8px 12px',
+          color: '#315342',
+          background: 'rgba(250, 252, 249, .96)',
+          boxShadow: '0 6px 22px rgb(31 55 42 / 12%)',
+          fontSize: 10,
+          fontWeight: 760,
+          textDecoration: 'none',
+        }}
+      >
+        Forecast history →
+      </a>
+      <ForecastWorkspace
+        ownerEmail={user.email ?? 'Owner'}
+        session={session ? { id: session.id, name: session.name } : null}
+        chambers={chamberOptions}
+      />
+    </>
   );
 }
