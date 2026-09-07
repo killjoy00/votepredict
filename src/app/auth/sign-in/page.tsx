@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth/client';
 
@@ -45,6 +46,9 @@ export default function SignInPage() {
           </label>
           {error && <p className="form-error">{error}</p>}
           <button type="submit" disabled={pending}>{pending ? 'Signing in…' : 'Sign in'}</button>
+          <p className="muted" style={{ margin: 0, textAlign: 'center' }}>
+            First time here? <Link href="/auth/setup">Create the owner account</Link>
+          </p>
         </form>
       </section>
     </main>
