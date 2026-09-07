@@ -44,6 +44,16 @@ export interface MemberModelScorecard {
   expectedCalibrationError: number;
 }
 
+export interface PassageSubsetScorecard {
+  events: number;
+  passed: number;
+  passRate: number;
+  brier: number;
+  accuracy: number;
+  alwaysPassBrier: number;
+  brierSkillVsAlwaysPass: number;
+}
+
 export interface MemberModelChamberScorecard {
   totalVoteEvents: number;
   voteEvents: number;
@@ -53,9 +63,18 @@ export interface MemberModelChamberScorecard {
   passageEventsScored: number;
   passageBrier?: number;
   passageAccuracy?: number;
+  passagePassRate?: number;
+  passageAlwaysPassBrier?: number;
+  passageBrierSkillVsAlwaysPass?: number;
+  passageByActualMargin?: {
+    within5: PassageSubsetScorecard;
+    within10: PassageSubsetScorecard;
+    within20: PassageSubsetScorecard;
+  };
 }
 
 interface MutableCounts { yes: number; total: number; }
+interface PassageForecastRow { probability: number; outcome: 0 | 1; absoluteMargin: number; }
 
 function add(map: Map<string, MutableCounts>, key: string, outcome: 0 | 1): void {
   const current = map.get(key) ?? { yes: 0, total: 0 };
@@ -66,6 +85,33 @@ function add(map: Map<string, MutableCounts>, key: string, outcome: 0 | 1): void
 
 function evidence(state: MutableCounts | undefined): RateEvidence | undefined {
   return state ? { yes: state.yes, total: state.total } : undefined;
+}
+
+function scorePassageSubset(rows: readonly PassageForecastRow[]): PassageSubsetScorecard {
+  if (rows.length === 0) {
+    return {
+      events: 0,
+      passed: 0,
+      passRate: Number.NaN,
+      brier: Number.NaN,
+      accuracy: Number.NaN,
+      alwaysPassBrier: Number.NaN,
+      brierSkillVsAlwaysPass: Number.NaN,
+    };
+  }
+  const forecasts = rows.map((row) => ({ probability: row.probability, outcome: row.outcome }));
+  const alwaysPass = rows.map((row) => ({ probability: 1, outcome: row.outcome }));
+  const modelBrier = brierScore(forecasts);
+  const baselineBrier = brierScore(alwaysPass);
+  return {
+    events: rows.length,
+    passed: rows.filter((row) => row.outcome === 1).length,
+    passRate: rows.filter((row) => row.outcome === 1).length / rows.length,
+    brier: modelBrier,
+    accuracy: binaryAccuracy(forecasts),
+    alwaysPassBrier: baselineBrier,
+    brierSkillVsAlwaysPass: baselineBrier === 0 ? Number.NaN : 1 - modelBrier / baselineBrier,
+  };
 }
 
 export function evaluateChronologicalMemberModel(
@@ -149,7 +195,7 @@ export function scoreMemberModelChambers(predictions: readonly MemberModelPredic
     groups.set(prediction.voteEventId, group);
   }
   const voteRows: { actualYes: number; expectedYes: number; yesLow: number; yesHigh: number }[] = [];
-  const passageForecasts: { probability: number; outcome: 0 | 1 }[] = [];
+  const passageForecasts: PassageForecastRow[] = [];
   for (const rows of groups.values()) {
     if (rows.length === 0 || rows.some((row) => row.probability === undefined)) continue;
     const probabilities = rows.map((row) => row.probability as number);
@@ -157,7 +203,13 @@ export function scoreMemberModelChambers(predictions: readonly MemberModelPredic
     const simulation = simulateChamber(probabilities, rule, { interval });
     const actualYes = rows.reduce((sum, row) => sum + row.outcome, 0);
     voteRows.push({ actualYes, expectedYes: simulation.expectedYes, yesLow: simulation.yesLow, yesHigh: simulation.yesHigh });
-    if (rows[0].passageRule && rows[0].passed !== undefined) passageForecasts.push({ probability: simulation.passageProbability, outcome: rows[0].passed ? 1 : 0 });
+    if (rows[0].passageRule && rows[0].passed !== undefined) {
+      passageForecasts.push({
+        probability: simulation.passageProbability,
+        outcome: rows[0].passed ? 1 : 0,
+        absoluteMargin: Math.abs(actualYes - simulation.requiredYes),
+      });
+    }
   }
   if (voteRows.length === 0) throw new Error('No complete chamber forecasts available to score');
   const result: MemberModelChamberScorecard = {
@@ -169,8 +221,17 @@ export function scoreMemberModelChambers(predictions: readonly MemberModelPredic
     passageEventsScored: passageForecasts.length,
   };
   if (passageForecasts.length > 0) {
-    result.passageBrier = brierScore(passageForecasts);
-    result.passageAccuracy = binaryAccuracy(passageForecasts);
+    const allPassage = scorePassageSubset(passageForecasts);
+    result.passageBrier = allPassage.brier;
+    result.passageAccuracy = allPassage.accuracy;
+    result.passagePassRate = allPassage.passRate;
+    result.passageAlwaysPassBrier = allPassage.alwaysPassBrier;
+    result.passageBrierSkillVsAlwaysPass = allPassage.brierSkillVsAlwaysPass;
+    result.passageByActualMargin = {
+      within5: scorePassageSubset(passageForecasts.filter((row) => row.absoluteMargin <= 5)),
+      within10: scorePassageSubset(passageForecasts.filter((row) => row.absoluteMargin <= 10)),
+      within20: scorePassageSubset(passageForecasts.filter((row) => row.absoluteMargin <= 20)),
+    };
   }
   return result;
 }
