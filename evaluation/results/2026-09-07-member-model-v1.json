@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "generatedAt": "2026-09-07T04:14:00Z",
+    "logicCommit": "2e05eb9a4899c3bdaf7e4ffc27a4f2ad94b42e99",
+    "jurisdiction": "us-mn",
+    "acceptedBaseline": "evaluation/results/2026-09-07-baselines.json",
+    "observations": 129802,
+    "voteEvents": 1264,
+    "leakageGuard": "same-date outcomes enter member, party, global, and calibration history only after scoring the full date",
+    "promotedModel": {
+      "modelVersion": "member-eb-v1",
+      "partyPriorStrength": 12,
+      "memberPriorStrength": 3,
+      "maximumAnalogueWeight": 8,
+      "runtimeMinimumGlobalSupport": 20,
+      "calibrationDefault": "disabled"
+    },
+    "notes": [
+      "The full-coverage comparison sets minimumGlobalSupport to 0 only so the model is scored on exactly the same 129802 observations as the accepted baseline.",
+      "Runtime defaults preserve explicit cannot-predict behavior for the earliest no-support cases; that configuration covers 99.9499% of historical observations.",
+      "Analogue evidence is not included in this v1 benchmark because the dated Revisor historical-version backfill is a separate operational step. Analogue inputs remain bounded and must be generated as-of the forecast date.",
+      "The equal-width sequential calibrator was evaluated and rejected as the v1 default because it worsened Brier score, accuracy, and ECE despite improving log loss and chamber Yes-count MAE.",
+      "Passage probability is not historically scored here because an explicit procedure rule is required; the evaluator intentionally does not infer a threshold from the observed result."
+    ]
+  },
+  "acceptedMemberHistoryBaseline": {
+    "accuracy": 0.8274679897074005,
+    "brier": 0.11712867925591043,
+    "logLoss": 0.3705309784402285,
+    "expectedCalibrationError": 0.02825856496426948,
+    "meanAbsoluteYesError": 18.258149560330647
+  },
+  "fullCoverageComparison": {
+    "coverage": 1,
+    "accuracy": 0.8274525816243201,
+    "brier": 0.11712228619180662,
+    "logLoss": 0.3637049223285757,
+    "expectedCalibrationError": 0.02893353832127539,
+    "meanAbsoluteYesError": 18.2470537962814,
+    "assessment": "Promote as v1: Brier, log loss, and chamber Yes-count MAE improve; accuracy is effectively flat; ECE is slightly worse. Improvements are modest and slice performance is mixed, so future complexity must continue to earn promotion."
+  },
+  "runtimeDefaultCoveredRows": {
+    "coverage": 0.9994992372998875,
+    "predicted": 129737,
+    "accuracy": 0.8273661330229618,
+    "brier": 0.1170557126515098,
+    "logLoss": 0.3635398672804003,
+    "meanAbsoluteYesError": 18.235768803245975
+  },
+  "rejectedCalibratedCandidate": {
+    "coverage": 0.9994992372998875,
+    "predicted": 129737,
+    "calibrateAfterObservations": 500,
+    "bins": 10,
+    "minimumBinSize": 25,
+    "smoothing": 4,
+    "accuracy": 0.8260403739873745,
+    "brier": 0.11793857610151252,
+    "logLoss": 0.3685687246424567,
+    "expectedCalibrationError": 0.030561677518657328,
+    "meanAbsoluteYesError": 18.08002111816714,
+    "decision": "Do not enable by default in v1."
+  },
+  "fullCoverageSlices": {
+    "byChamber": {
+      "house": {
+        "baseline": { "accuracy": 0.828263, "brier": 0.113639, "logLoss": 0.353385, "expectedCalibrationError": 0.036515 },
+        "memberEbV1": { "accuracy": 0.8282846502350158, "brier": 0.11359903657274327, "logLoss": 0.35159023092290276, "expectedCalibrationError": 0.037116533883579717 }
+      },
+      "senate": {
+        "baseline": { "accuracy": 0.825359, "brier": 0.126379, "logLoss": 0.415985, "expectedCalibrationError": 0.018938 },
+        "memberEbV1": { "accuracy": 0.8252468146148004, "brier": 0.12646222243769917, "logLoss": 0.3958202867224782, "expectedCalibrationError": 0.020316286464390355 }
+      }
+    },
+    "bySession": {
+      "2021-2022": {
+        "baseline": { "accuracy": 0.839334, "brier": 0.107104, "logLoss": 0.351410, "expectedCalibrationError": 0.015442 },
+        "memberEbV1": { "accuracy": 0.8394486229873881, "brier": 0.10700317917031515, "logLoss": 0.32825734829799147, "expectedCalibrationError": 0.015760988531949557 }
+      },
+      "2023-2024": {
+        "baseline": { "accuracy": 0.772535, "brier": 0.131965, "logLoss": 0.383110, "expectedCalibrationError": 0.056382 },
+        "memberEbV1": { "accuracy": 0.7726665059501633, "brier": 0.13200598431318816, "logLoss": 0.3841138807762488, "expectedCalibrationError": 0.055018758178344895 }
+      },
+      "2025-2026": {
+        "baseline": { "accuracy": 0.869975, "brier": 0.110494, "logLoss": 0.372454, "expectedCalibrationError": 0.103693 },
+        "memberEbV1": { "accuracy": 0.869731333577206, "brier": 0.11051143697915125, "logLoss": 0.3699695029919366, "expectedCalibrationError": 0.10393553083523152 }
+      }
+    }
+  }
+}
