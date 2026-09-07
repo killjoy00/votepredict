@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { listOutcomeCandidates, resolveForecastOutcome, ScorecardError } from '@/operations/scorecard';
+import { ScorecardError } from '@/operations/scorecard';
+import { listSafeOutcomeCandidates, resolveSafeForecastOutcome } from '@/operations/safe-resolution';
 import { requireOwner } from '@/lib/auth/guard';
 
 type RouteContext = { params: Promise<{ forecastId: string }> };
@@ -9,7 +10,7 @@ export async function GET(_request: Request, context: RouteContext) {
   const user = await requireOwner();
   const { forecastId } = await context.params;
   try {
-    const candidates = await listOutcomeCandidates(forecastId, user.id);
+    const candidates = await listSafeOutcomeCandidates(forecastId, user.id);
     return NextResponse.json({ forecastId, candidates });
   } catch (error) {
     if (error instanceof ScorecardError) {
@@ -26,7 +27,7 @@ export async function POST(request: Request, context: RouteContext) {
   const body = await request.json().catch(() => null) as ResolveBody | null;
   if (!body?.voteEventId) return NextResponse.json({ error: 'Choose an official passage vote.' }, { status: 400 });
   try {
-    await resolveForecastOutcome({ forecastId, ownerUserId: user.id, voteEventId: body.voteEventId });
+    await resolveSafeForecastOutcome({ forecastId, ownerUserId: user.id, voteEventId: body.voteEventId });
     return NextResponse.json({ resolved: true });
   } catch (error) {
     if (error instanceof ScorecardError) {
