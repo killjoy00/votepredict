@@ -323,7 +323,7 @@ async function main() {
   };
 
   await mkdir(dirname(OUTPUT), { recursive: true });
-  await writeFile(OUTPUT, `${JSON.stringify(snapshot, null, 2)}\n`, 'utf8');
+  await writeFile(OUTPUT, `${JSON.stringify(snapshot)}\n`, 'utf8');
   console.log(`Wrote ${serialized.length} legislative candidate committee summaries to ${OUTPUT}`);
   console.log(`2025-26 contribution rows: ${contributionStats.cycleRows}; IE rows: ${independentStats.cycleRows}`);
 }
