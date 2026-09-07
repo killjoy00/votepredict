@@ -6,6 +6,15 @@ export interface EvidenceImpactPolicyDecision {
 }
 
 export function evidenceImpactPolicy(draft: EvidenceDraft): EvidenceImpactPolicyDecision {
+  if (draft.metadata?.sourceVerified === false) {
+    return { mechanicallyActionable: false, rationale: 'The evidence URL was not verified against the research provider source list.' };
+  }
+  if (draft.metadata?.afterAsOf === true) {
+    return { mechanicallyActionable: false, rationale: 'The evidence was published after the forecast as-of cutoff.' };
+  }
+  if (draft.metadata?.publishedAtInvalid === true) {
+    return { mechanicallyActionable: false, rationale: 'The evidence publication timestamp could not be validated.' };
+  }
   if (!['supports', 'opposes'].includes(draft.stance)) {
     return { mechanicallyActionable: false, rationale: 'No directional support/opposition stance is established.' };
   }
@@ -21,5 +30,5 @@ export function evidenceImpactPolicy(draft: EvidenceDraft): EvidenceImpactPolicy
   if (draft.confidence !== undefined && draft.confidence < 0.5) {
     return { mechanicallyActionable: false, rationale: 'Extraction confidence is below the initial impact threshold.' };
   }
-  return { mechanicallyActionable: true, rationale: 'Directional evidence passed the initial provenance, relevance, and confidence checks.' };
+  return { mechanicallyActionable: true, rationale: 'Directional evidence passed the initial provenance, as-of, relevance, and confidence checks.' };
 }
