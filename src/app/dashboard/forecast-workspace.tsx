@@ -783,7 +783,7 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
                 {forecastResult
                   ? forecastResult.researchMode === 'deep'
                     ? 'Target selection, source-backed evidence, exclusions, contradictions, and chamber movement stay visible below the call.'
-                    : 'Quick mode combines historical member tendencies with direct member votes on as-of-safe historical analogues. Historical validation has not yet shown analogue lift.'
+                    : 'Quick mode combines historical member tendencies with direct member votes on as-of-safe historical analogues. Historical backtesting shows a small member-level lift from the analogue layer, but not validated passage-odds skill.'
                   : researchMode === 'deep'
                     ? 'Deep mode ranks members by exact pivotality, uncertainty, and evidence need instead of researching the entire chamber.'
                     : 'The result view keeps model support, analogues, direct evidence, exclusions, and source provenance inspectable without crowding the chamber call.'}
