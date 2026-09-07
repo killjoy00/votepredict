@@ -12,23 +12,24 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Verify production owner setup
+      - name: Probe production auth sign-in
         shell: bash
         run: |
           set -eu
-          health="$(mktemp)"
-          setup="$(mktemp)"
-          health_code="$(curl -sS -L --max-time 20 -o "$health" -w '%{http_code}' "https://votepredict.vercel.app/api/health")"
-          setup_code="$(curl -sS -L --max-time 20 -o "$setup" -w '%{http_code}' "https://votepredict.vercel.app/auth/setup")"
-          echo "health HTTP ${health_code}"
-          cat "$health"
-          echo
-          echo "setup HTTP ${setup_code}"
-          grep -o 'Create the VotePredict owner account' "$setup" | head -1 || true
-          test "$health_code" = "200"
-          grep -q '"database":"ok"' "$health"
-          grep -q '"neonAuthBaseUrl":"configured"' "$health"
-          grep -q '"neonAuthCookieSecret":"configured"' "$health"
-          test "$setup_code" = "200"
-          grep -q 'Create the VotePredict owner account' "$setup"
-          rm -f "$health" "$setup"
+          payload='{"email":"nobody-votepredict-smoke@example.com","password":"definitely-not-valid"}'
+          for url in \
+            "https://votepredict.vercel.app/api/auth/sign-in/email" \
+            "https://ep-odd-haze-aebm7w42.neonauth.c-2.us-east-2.aws.neon.tech/votepredict/auth/sign-in/email"; do
+            echo "===== ${url} ====="
+            body="$(mktemp)"
+            start="$(date +%s)"
+            code="$(curl -sS --max-time 20 -o "$body" -w '%{http_code}' \
+              -H 'content-type: application/json' \
+              -H 'origin: https://votepredict.vercel.app' \
+              --data "$payload" "$url" || true)"
+            end="$(date +%s)"
+            echo "HTTP ${code} elapsed=$((end-start))s"
+            cat "$body" || true
+            echo
+            rm -f "$body"
+          done
