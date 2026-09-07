@@ -1,8 +1,10 @@
 import { attachDatabasePool } from '@vercel/functions';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import * as schema from './schema';
+import * as baseSchema from './schema';
+import * as featureEvidenceSchema from './feature-evidence-schema';
 
+const schema = { ...baseSchema, ...featureEvidenceSchema };
 const globalForDatabase = globalThis as unknown as { votePredictPool?: Pool };
 
 export const pool = globalForDatabase.votePredictPool ?? new Pool({
