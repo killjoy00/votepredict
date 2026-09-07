@@ -1,0 +1,83 @@
+{
+  "benchmarkDate": "2026-09-07",
+  "jurisdiction": "us-mn",
+  "data": {
+    "observations": 129802,
+    "voteEvents": 1264,
+    "firstOccurredAt": "2021-01-19T00:00:00Z",
+    "lastOccurredAt": "2026-05-17T00:00:00Z",
+    "sessions": ["2021-2022", "2023-2024", "2025-2026"]
+  },
+  "configuration": {
+    "fallback": 0.5,
+    "memberPriorStrength": 4,
+    "leakageGuard": "same-date outcomes enter history only after scoring the full date",
+    "logicCommit": "bb7faa27158ff5c565dfeb366a6b115a309871ff"
+  },
+  "generation": {
+    "historicalAuditRun": 34069390624,
+    "historicalAudit": "passed",
+    "method": "Read-only SQL parity reproduction of src/evaluation/harness.ts against the accepted primary Neon historical store",
+    "note": "The attempted GitHub Actions benchmark workflow was not retained because the existing Neon OIDC lease was scoped to the historical-loader identity and rejected the new evaluation identity with HTTP 401."
+  },
+  "overall": [
+    {
+      "model": "global-rate",
+      "observations": 129802,
+      "accuracy": 0.8247561670852529,
+      "brier": 0.14505362080252676,
+      "logLoss": 0.4669848295464747,
+      "expectedCalibrationError": 0.016848118444579688
+    },
+    {
+      "model": "party-rate",
+      "observations": 129802,
+      "accuracy": 0.8247561670852529,
+      "brier": 0.12477858765752128,
+      "logLoss": 0.39498189341238804,
+      "expectedCalibrationError": 0.030726332567631638
+    },
+    {
+      "model": "member-history",
+      "observations": 129802,
+      "accuracy": 0.8274679897074005,
+      "brier": 0.11712867925591043,
+      "logLoss": 0.3705309784402285,
+      "expectedCalibrationError": 0.02825856496426948
+    }
+  ],
+  "byChamber": {
+    "house": [
+      {"model":"global-rate","observations":94249,"accuracy":0.8298761790576027,"brier":0.14206341820994656,"logLoss":0.4599208279125249,"expectedCalibrationError":0.022014487253400706},
+      {"model":"party-rate","observations":94249,"accuracy":0.8298761790576027,"brier":0.12359306453062584,"logLoss":0.3866556457303213,"expectedCalibrationError":0.06455523444763671},
+      {"model":"member-history","observations":94249,"accuracy":0.8282634298507146,"brier":0.11363914692346347,"logLoss":0.35338479403977224,"expectedCalibrationError":0.03651530110978782}
+    ],
+    "senate": [
+      {"model":"global-rate","observations":35553,"accuracy":0.8111833037999606,"brier":0.15298047941225051,"logLoss":0.48571109990329314,"expectedCalibrationError":0.01898556876535245},
+      {"model":"party-rate","observations":35553,"accuracy":0.8111833037999606,"brier":0.12792134267653307,"logLoss":0.41705430693011425,"expectedCalibrationError":0.0797265997237297},
+      {"model":"member-history","observations":35553,"accuracy":0.8253593227013192,"brier":0.1263792328744679,"logLoss":0.4159845472968552,"expectedCalibrationError":0.018938337508067896}
+    ]
+  },
+  "bySession": {
+    "2021-2022": [
+      {"model":"global-rate","observations":34967,"accuracy":0.838647867989819,"brier":0.13673767733113895,"logLoss":0.4509519398811672,"expectedCalibrationError":0.02584903416161872},
+      {"model":"party-rate","observations":34967,"accuracy":0.838647867989819,"brier":0.1300006415108231,"logLoss":0.44741997975742703,"expectedCalibrationError":0.016148101013123212},
+      {"model":"member-history","observations":34967,"accuracy":0.8393342294163068,"brier":0.10710363668731372,"logLoss":0.35141043982919146,"expectedCalibrationError":0.01544175371528525}
+    ],
+    "2023-2024": [
+      {"model":"global-rate","observations":45629,"accuracy":0.7342260404567271,"brier":0.20006590893821202,"logLoss":0.5937400655793584,"expectedCalibrationError":0.07251664277227171},
+      {"model":"party-rate","observations":45629,"accuracy":0.7342260404567271,"brier":0.13789299614290904,"logLoss":0.39380146079854267,"expectedCalibrationError":0.12685817631634966},
+      {"model":"member-history","observations":45629,"accuracy":0.7725350106292051,"brier":0.13196545973374468,"logLoss":0.38311003895711077,"expectedCalibrationError":0.056382061630496395}
+    ],
+    "2025-2026": [
+      {"model":"global-rate","observations":49206,"accuracy":0.8988334755924074,"brier":0.09994993222837852,"logLoss":0.3608373554167024,"expectedCalibrationError":0.09332028992189349},
+      {"model":"party-rate","observations":49206,"accuracy":0.8988334755924074,"brier":0.10890660249581618,"logLoss":0.35881271474543314,"expectedCalibrationError":0.09917062542241858},
+      {"model":"member-history","observations":49206,"accuracy":0.8699752062756574,"brier":0.11049449251188376,"logLoss":0.3724538724224525,"expectedCalibrationError":0.10369252444784341}
+    ]
+  },
+  "chamberYesTotals": [
+    {"model":"global-rate","voteEvents":1264,"meanAbsoluteYesError":18.619142688672905},
+    {"model":"party-rate","voteEvents":1264,"meanAbsoluteYesError":18.77253564409591},
+    {"model":"member-history","voteEvents":1264,"meanAbsoluteYesError":18.258149560330647}
+  ]
+}

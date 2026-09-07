@@ -20,7 +20,8 @@
     "data:house:ingest": "tsx scripts/ingest-house-history.ts",
     "data:revisor:enrich": "tsx scripts/enrich-revisor-bills.ts",
     "data:senate:inspect": "tsx scripts/inspect-senate-journals.ts",
-    "data:senate:ingest": "tsx scripts/ingest-senate-history.ts"
+    "data:senate:ingest": "tsx scripts/ingest-senate-history.ts",
+    "eval:baselines": "tsx scripts/evaluate-baselines.ts"
   },
   "dependencies": {
     "@neondatabase/auth": "0.5.0-beta",
