@@ -1,5 +1,5 @@
 import { binaryAccuracy, brierScore, expectedCalibrationError, logLoss } from './metrics';
-import { calibrateProbability, estimateMemberProbability, fitProbabilityCalibrator, type CalibrationObservation, type RateEvidence } from '../forecasting/member-model';
+import { calibrateProbability, estimateMemberProbability, fitProbabilityCalibrator, type CalibrationObservation, type MemberModelOptions, type RateEvidence } from '../forecasting/member-model';
 import { empiricalIntervalCoverage, simulateChamber, type PassageRule } from '../forecasting/chamber';
 
 export interface MemberModelObservation {
@@ -25,6 +25,7 @@ export interface MemberModelPrediction extends MemberModelObservation {
 }
 
 export interface MemberModelEvaluationOptions {
+  modelOptions?: MemberModelOptions;
   calibrateAfterObservations?: number;
   calibratorBins?: number;
   calibratorMinimumBinSize?: number;
@@ -67,7 +68,7 @@ export function evaluateChronologicalMemberModel(
   observations: readonly MemberModelObservation[],
   options: MemberModelEvaluationOptions = {},
 ): MemberModelPrediction[] {
-  const calibrateAfter = options.calibrateAfterObservations ?? 500;
+  const calibrateAfter = options.calibrateAfterObservations ?? Number.POSITIVE_INFINITY;
   const sorted = [...observations].sort((a, b) => a.occurredAt.localeCompare(b.occurredAt) || a.voteEventId.localeCompare(b.voteEventId) || a.observationId.localeCompare(b.observationId));
   const predictions: MemberModelPrediction[] = [];
   const partyCounts = new Map<string, MutableCounts>();
@@ -93,7 +94,7 @@ export function evaluateChronologicalMemberModel(
         memberHistory: evidence(memberCounts.get(row.memberId)),
         analogueYesRate: row.analogueYesRate,
         analogueEffectiveWeight: row.analogueEffectiveWeight,
-      });
+      }, options.modelOptions);
       const probability = estimate.probability === undefined ? undefined : calibrator ? calibrateProbability(estimate.probability, calibrator) : estimate.probability;
       predictions.push({ ...row, rawProbability: estimate.rawProbability, probability, calibrated: Boolean(calibrator && probability !== undefined), cannotPredictReason: estimate.cannotPredictReason });
     }
