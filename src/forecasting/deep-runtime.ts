@@ -239,7 +239,7 @@ async function insertDeepMemberPredictions(client: PoolClient, revisionId: strin
       }]),
       JSON.stringify([
         ...(member.analogue ? [{ kind: 'historical_analogue', ...member.analogue }] : []),
-        ...(member.deepResearch?.evidence ?? []).map((item) => ({ kind: 'deep_evidence', ...item })),
+        ...(member.deepResearch?.evidence ?? []).map((item) => ({ ...item, recordKind: 'deep_evidence' })),
       ]),
       JSON.stringify([{
         uncertainty: member.uncertainty,
