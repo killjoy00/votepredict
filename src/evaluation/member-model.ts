@@ -15,6 +15,8 @@ export interface MemberModelObservation {
   analogueEffectiveWeight?: number;
   passageRule?: PassageRule;
   passed?: boolean;
+  historyOutcome?: 0 | 1 | null;
+  memberScorable?: boolean;
 }
 
 export interface MemberModelPrediction extends MemberModelObservation {
@@ -43,7 +45,9 @@ export interface MemberModelScorecard {
 }
 
 export interface MemberModelChamberScorecard {
+  totalVoteEvents: number;
   voteEvents: number;
+  coverage: number;
   meanAbsoluteYesError: number;
   intervalCoverage: number;
   passageEventsScored: number;
@@ -100,12 +104,16 @@ export function evaluateChronologicalMemberModel(
     }
 
     for (const prediction of predictions.slice(predictions.length - group.length)) {
-      if (prediction.rawProbability !== undefined) calibrationHistory.push({ probability: prediction.rawProbability, outcome: prediction.outcome });
+      if (prediction.memberScorable !== false && prediction.rawProbability !== undefined) {
+        calibrationHistory.push({ probability: prediction.rawProbability, outcome: prediction.outcome });
+      }
     }
     for (const row of group) {
-      global = { yes: global.yes + row.outcome, total: global.total + 1 };
-      add(partyCounts, row.party, row.outcome);
-      add(memberCounts, row.memberId, row.outcome);
+      const historyOutcome = row.historyOutcome === undefined ? row.outcome : row.historyOutcome;
+      if (historyOutcome === null) continue;
+      global = { yes: global.yes + historyOutcome, total: global.total + 1 };
+      add(partyCounts, row.party, historyOutcome);
+      add(memberCounts, row.memberId, historyOutcome);
     }
     offset = end;
   }
@@ -113,13 +121,14 @@ export function evaluateChronologicalMemberModel(
 }
 
 export function scoreMemberModel(predictions: readonly MemberModelPrediction[]): MemberModelScorecard {
-  const scored = predictions.filter((row): row is MemberModelPrediction & { probability: number } => row.probability !== undefined);
+  const eligible = predictions.filter((row) => row.memberScorable !== false);
+  const scored = eligible.filter((row): row is MemberModelPrediction & { probability: number } => row.probability !== undefined);
   if (scored.length === 0) throw new Error('No member predictions available to score');
   const forecasts = scored.map((row) => ({ probability: row.probability, outcome: row.outcome }));
   return {
-    observations: predictions.length,
+    observations: eligible.length,
     predicted: scored.length,
-    coverage: scored.length / predictions.length,
+    coverage: scored.length / eligible.length,
     accuracy: binaryAccuracy(forecasts),
     brier: brierScore(forecasts),
     logLoss: logLoss(forecasts),
@@ -135,7 +144,6 @@ export function scoreMemberModelBy(predictions: readonly MemberModelPrediction[]
 export function scoreMemberModelChambers(predictions: readonly MemberModelPrediction[], interval = 0.8): MemberModelChamberScorecard {
   const groups = new Map<string, MemberModelPrediction[]>();
   for (const prediction of predictions) {
-    if (prediction.probability === undefined) continue;
     const group = groups.get(prediction.voteEventId) ?? [];
     group.push(prediction);
     groups.set(prediction.voteEventId, group);
@@ -143,7 +151,7 @@ export function scoreMemberModelChambers(predictions: readonly MemberModelPredic
   const voteRows: { actualYes: number; expectedYes: number; yesLow: number; yesHigh: number }[] = [];
   const passageForecasts: { probability: number; outcome: 0 | 1 }[] = [];
   for (const rows of groups.values()) {
-    if (rows.length === 0) continue;
+    if (rows.length === 0 || rows.some((row) => row.probability === undefined)) continue;
     const probabilities = rows.map((row) => row.probability as number);
     const rule = rows[0].passageRule ?? { kind: 'fixed' as const, requiredYes: probabilities.length + 1 };
     const simulation = simulateChamber(probabilities, rule, { interval });
@@ -151,9 +159,11 @@ export function scoreMemberModelChambers(predictions: readonly MemberModelPredic
     voteRows.push({ actualYes, expectedYes: simulation.expectedYes, yesLow: simulation.yesLow, yesHigh: simulation.yesHigh });
     if (rows[0].passageRule && rows[0].passed !== undefined) passageForecasts.push({ probability: simulation.passageProbability, outcome: rows[0].passed ? 1 : 0 });
   }
-  if (voteRows.length === 0) throw new Error('No chamber forecasts available to score');
+  if (voteRows.length === 0) throw new Error('No complete chamber forecasts available to score');
   const result: MemberModelChamberScorecard = {
+    totalVoteEvents: groups.size,
     voteEvents: voteRows.length,
+    coverage: voteRows.length / groups.size,
     meanAbsoluteYesError: voteRows.reduce((sum, row) => sum + Math.abs(row.expectedYes - row.actualYes), 0) / voteRows.length,
     intervalCoverage: empiricalIntervalCoverage(voteRows),
     passageEventsScored: passageForecasts.length,
