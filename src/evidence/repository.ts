@@ -76,7 +76,7 @@ export async function persistEvidenceItem(sourceDocumentId: string, draft: Evide
   return rows[0].id;
 }
 
-export async function persistEvidenceDiagnostics(evidenceIds: readonly string[], diagnostics: EvidenceDiagnostics): Promise<void> {
+export async function persistEvidenceDiagnostics(evidenceIds: readonly (string | undefined)[], diagnostics: EvidenceDiagnostics): Promise<void> {
   const rows = diagnostics.relationships.map((relationship) => ({
     fromEvidenceId: evidenceIds[relationship.fromIndex],
     toEvidenceId: evidenceIds[relationship.toIndex],
