@@ -48,6 +48,8 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
   const [proposalText, setProposalText] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
+  const [isCreatingForecast, setIsCreatingForecast] = useState(false);
+  const [createdForecastId, setCreatedForecastId] = useState<string | null>(null);
   const [runNotice, setRunNotice] = useState<string | null>(null);
 
   useEffect(() => {
@@ -104,23 +106,58 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
       && (sourceMode === 'official' ? selectedBill : proposalText.trim().length >= 20),
   );
 
+  function resetCreatedForecast() {
+    setCreatedForecastId(null);
+    setRunNotice(null);
+  }
+
   function selectSourceMode(mode: SourceMode) {
     setSourceMode(mode);
-    setRunNotice(null);
+    resetCreatedForecast();
   }
 
   function chooseBill(bill: BillResult) {
     setSelectedBill(bill);
     setBillQuery(bill.identifier);
     setBillResults([]);
-    setRunNotice(null);
+    resetCreatedForecast();
   }
 
-  function handleRun() {
-    if (!canPrepareForecast) return;
-    setRunNotice(
-      'The workspace inputs are ready. The next UI slice connects this launcher to forecast creation and the member-model execution path; no placeholder probability has been generated.',
-    );
+  async function handleRun() {
+    if (!canPrepareForecast || isCreatingForecast) return;
+
+    setIsCreatingForecast(true);
+    setCreatedForecastId(null);
+    setRunNotice(null);
+
+    try {
+      const response = await fetch('/api/forecasts', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          sourceMode,
+          researchMode,
+          chamberId: selectedChamberId,
+          billId: sourceMode === 'official' ? selectedBill?.id : undefined,
+          proposalTitle: sourceMode === 'proposal' ? proposalTitle : undefined,
+          proposalText: sourceMode === 'proposal' ? proposalText : undefined,
+        }),
+      });
+      const data = (await response.json()) as { forecastId?: string; error?: string };
+
+      if (!response.ok || !data.forecastId) {
+        throw new Error(data.error || 'Could not create the forecast.');
+      }
+
+      setCreatedForecastId(data.forecastId);
+      setRunNotice(
+        `Forecast ${data.forecastId.slice(0, 8)} is saved privately as a draft. The numerical execution route is the next slice; no placeholder probability has been generated.`,
+      );
+    } catch (error) {
+      setRunNotice(error instanceof Error ? error.message : 'Could not create the forecast.');
+    } finally {
+      setIsCreatingForecast(false);
+    }
   }
 
   return (
@@ -180,7 +217,7 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
                     const next = event.target.value;
                     setBillQuery(next);
                     if (selectedBill && next.trim() !== selectedBill.identifier) setSelectedBill(null);
-                    setRunNotice(null);
+                    resetCreatedForecast();
                   }}
                   placeholder="HF 1234 or a few words from the title"
                   autoComplete="off"
@@ -229,7 +266,7 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
                   value={proposalTitle}
                   onChange={(event) => {
                     setProposalTitle(event.target.value);
-                    setRunNotice(null);
+                    resetCreatedForecast();
                   }}
                   placeholder="e.g. Property tax levy cap"
                 />
@@ -241,7 +278,7 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
                   value={proposalText}
                   onChange={(event) => {
                     setProposalText(event.target.value);
-                    setRunNotice(null);
+                    resetCreatedForecast();
                   }}
                   placeholder="Paste bill language or describe the proposal precisely enough to compare it with historical legislation."
                   rows={8}
@@ -259,7 +296,7 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
                 value={selectedChamberId}
                 onChange={(event) => {
                   setSelectedChamberId(event.target.value);
-                  setRunNotice(null);
+                  resetCreatedForecast();
                 }}
                 disabled={chambers.length === 0}
               >
@@ -279,7 +316,7 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
                   aria-pressed={researchMode === 'quick'}
                   onClick={() => {
                     setResearchMode('quick');
-                    setRunNotice(null);
+                    resetCreatedForecast();
                   }}
                 >Quick</button>
                 <button
@@ -288,7 +325,7 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
                   aria-pressed={researchMode === 'deep'}
                   onClick={() => {
                     setResearchMode('deep');
-                    setRunNotice(null);
+                    resetCreatedForecast();
                   }}
                 >Deep</button>
               </div>
@@ -303,10 +340,10 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
           <button
             className="primary-action"
             type="button"
-            disabled={!canPrepareForecast}
+            disabled={!canPrepareForecast || isCreatingForecast}
             onClick={handleRun}
           >
-            <span>{researchMode === 'deep' ? 'Run Deep forecast' : 'Run Quick forecast'}</span>
+            <span>{isCreatingForecast ? 'Creating forecast…' : researchMode === 'deep' ? 'Create Deep forecast' : 'Create Quick forecast'}</span>
             <span aria-hidden="true">→</span>
           </button>
 
@@ -324,7 +361,7 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
           <div className="result-toolbar">
             <div>
               <span className="section-kicker">Forecast result</span>
-              <h2 id="forecast-result-heading">No forecast run yet</h2>
+              <h2 id="forecast-result-heading">{createdForecastId ? 'Forecast created' : 'No forecast run yet'}</h2>
             </div>
             <span className="private-badge">Private</span>
           </div>
@@ -333,7 +370,11 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
             <div className="outcome-copy">
               <span className="outcome-label">Passage probability</span>
               <strong className="outcome-value">—</strong>
-              <p>Select a bill or proposal and run a forecast. VotePredict will show the chamber conclusion first, with uncertainty one layer below.</p>
+              <p>
+                {createdForecastId
+                  ? `Draft ${createdForecastId.slice(0, 8)} is persisted. Numerical output remains intentionally blank until the validated execution route is connected.`
+                  : 'Select a bill or proposal and create a forecast. VotePredict will show the chamber conclusion first, with uncertainty one layer below.'}
+              </p>
             </div>
             <div className="metric-strip" aria-label="Forecast metrics">
               <div><span>Expected Yes</span><strong>—</strong></div>
