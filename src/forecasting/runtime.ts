@@ -502,8 +502,9 @@ async function persistRevision(
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    await client.query('SELECT id FROM forecasts WHERE id = $1 FOR UPDATE', [request.forecastId]);
     const revisionNumberResult = await client.query<{ revision_number: number }>(
-      `SELECT COALESCE(max(revision_number), 0)::int + 1 AS revision_number FROM forecast_revisions WHERE forecast_id = $1 FOR UPDATE`,
+      'SELECT COALESCE(max(revision_number), 0)::int + 1 AS revision_number FROM forecast_revisions WHERE forecast_id = $1',
       [request.forecastId],
     );
     const revisionNumber = revisionNumberResult.rows[0]?.revision_number ?? 1;
