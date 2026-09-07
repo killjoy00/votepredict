@@ -1,8 +1,9 @@
 import { gateway, generateText, jsonSchema, Output, stepCountIs } from 'ai';
+import { collectPreloadedResearchContext, renderPreloadedResearchContext, type PreloadedResearchContext } from './preloaded-context';
 import type { DeepResearchProvider, DeepResearchProviderResult, DeepResearchRequest, DeepResearchSourceReference } from './provider';
 import type { EvidenceDraft, EvidenceFreshness, EvidenceKind, EvidenceRelevance, EvidenceSourceQuality, EvidenceStance } from './types';
 
-export const AI_GATEWAY_RESEARCH_PROVIDER_VERSION = 'ai-gateway-web-v1';
+export const AI_GATEWAY_RESEARCH_PROVIDER_VERSION = 'ai-gateway-web-v2';
 export const DEFAULT_DEEP_RESEARCH_MODEL = 'openai/gpt-5.5';
 
 interface GatewayEvidenceItem {
@@ -65,7 +66,7 @@ function outputSchema(targetMembershipIds: readonly string[]) {
   });
 }
 
-function buildPrompt(request: DeepResearchRequest): string {
+function buildPrompt(request: DeepResearchRequest, preloaded: PreloadedResearchContext): string {
   if (!request.subject?.title) throw new Error('Gateway Deep research requires a searchable bill/proposal subject title');
   const unnamed = request.targets.filter((target) => !target.memberName);
   if (unnamed.length > 0) throw new Error(`Gateway Deep research requires member names for all targets; missing ${unnamed.length}`);
@@ -88,12 +89,23 @@ function buildPrompt(request: DeepResearchRequest): string {
     'Target legislators:',
     JSON.stringify(targets, null, 2),
     '',
+    'Preloaded source packet (use this first, then search to verify/expand it):',
+    renderPreloadedResearchContext(preloaded),
+    '',
+    'Required source coverage:',
+    '- Official legislative record: bill text/version, sponsors, committee actions, calendars, amendments, companion progress, and prior votes when available.',
+    '- Member-primary evidence: official statements, press releases, newsletters, interviews, hearings, transcripts, and attributable public commitments.',
+    '- Minnesota Campaign Finance and Public Disclosure Board: candidate contributions, expenditures, independent expenditures affecting the candidate, large-contribution notices, and relevant lobbying disclosures. Treat financial relationships as context, never as proof of a vote position.',
+    '- Reputable reporting: search recent Minnesota/local news for the measure, policy issue, target legislators, caucus negotiations, stakeholder pressure, and public commitments. The preloaded GDELT links are leads, not automatically trusted evidence.',
+    '- Other primary sources: agency analyses, fiscal notes, advocacy/industry statements, union/business group positions, and endorsements when they materially illuminate pressure or stated commitments.',
+    '',
     'Research rules:',
-    '- Search the public web. Prefer official legislative records, a legislator’s own official statements, direct interviews/transcripts, then reputable reporting.',
+    '- Search the public web. Prefer official records and member-primary sources, then high-quality reporting; use advocacy and campaign-finance material with explicit provenance and appropriate caution.',
     '- Research the named target legislators rather than the entire chamber. Bill-level factual context may also be returned when it materially helps interpret member evidence.',
-    '- Do not infer a member position from party alone, ideology alone, endorsements alone, or the pre-research forecast.',
+    '- Do not infer a member position from party alone, ideology alone, an endorsement alone, a donor alone, an independent expenditure alone, lobbying activity alone, or the pre-research forecast.',
+    '- Campaign-finance and lobbying findings should normally be kind=context or fact with stance=neutral/unclear unless a separate attributable source directly connects the member to a position on the measure/policy.',
     '- Use direct_statement only for an attributable statement or commitment by the target member. Use related_statement when the statement concerns the substantive policy but not an explicit commitment on this exact vote.',
-    '- A source URL must be a real URL found during research. Never invent a URL or citation.',
+    '- A source URL must be a real URL from the preloaded packet or found during research. Never invent a URL or citation.',
     '- Keep claims atomic and factual. Separate facts/context from model inference.',
     '- stance must be neutral or unclear when the source does not actually establish support/opposition.',
     '- confidence describes extraction/attribution confidence, not the probability the member will vote Yes.',
@@ -110,6 +122,15 @@ function asOfTimestamp(request: DeepResearchRequest): number {
   return timestamp;
 }
 
+function uniqueSources(sources: readonly DeepResearchSourceReference[]): DeepResearchSourceReference[] {
+  const seen = new Set<string>();
+  return sources.filter((source) => {
+    if (seen.has(source.url)) return false;
+    seen.add(source.url);
+    return true;
+  });
+}
+
 export class AiGatewayDeepResearchProvider implements DeepResearchProvider {
   readonly name = 'ai-gateway-web';
   readonly version = AI_GATEWAY_RESEARCH_PROVIDER_VERSION;
@@ -124,10 +145,11 @@ export class AiGatewayDeepResearchProvider implements DeepResearchProvider {
 
   async research(request: DeepResearchRequest): Promise<DeepResearchProviderResult> {
     const cutoff = asOfTimestamp(request);
+    const preloaded = await collectPreloadedResearchContext(request);
     const result = await generateText({
       model: this.model,
-      system: 'You are a legislative evidence researcher. Source fidelity is more important than producing a large number of findings.',
-      prompt: buildPrompt(request),
+      system: 'You are a legislative evidence researcher. Source fidelity is more important than producing a large number of findings. Financial relationships and media coverage are context, not substitutes for evidence of a legislator position.',
+      prompt: buildPrompt(request, preloaded),
       tools: {
         perplexity_search: gateway.tools.perplexitySearch({
           country: 'US',
@@ -143,9 +165,10 @@ export class AiGatewayDeepResearchProvider implements DeepResearchProvider {
       }),
     });
 
-    const sourceReferences: DeepResearchSourceReference[] = result.sources.flatMap((source) => source.sourceType === 'url'
+    const gatewaySources: DeepResearchSourceReference[] = result.sources.flatMap((source) => source.sourceType === 'url'
       ? [{ id: source.id, url: source.url, title: source.title }]
       : []);
+    const sourceReferences = uniqueSources([...preloaded.sourceReferences, ...gatewaySources]);
     const sourceByUrl = new Map(sourceReferences.map((source) => [source.url, source]));
 
     const evidence: EvidenceDraft[] = result.output.evidence.map((item) => {
@@ -188,6 +211,9 @@ export class AiGatewayDeepResearchProvider implements DeepResearchProvider {
         model: this.model,
         steps: result.steps.length,
         sourceCount: sourceReferences.length,
+        gatewaySourceCount: gatewaySources.length,
+        preloadedSourceCount: preloaded.sourceReferences.length,
+        preloaded: preloaded.diagnostics,
         verifiedEvidence: evidence.filter((item) => item.metadata?.sourceVerified === true).length,
         afterAsOfEvidence: evidence.filter((item) => item.metadata?.afterAsOf === true).length,
         notes: result.output.notes,

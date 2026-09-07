@@ -45,9 +45,13 @@ export async function runPersistedDeepResearch(
     await persistResearchTargets(researchRunId, targets);
     const execution = await executeDeepResearch(members, context, provider);
 
+    // Providers can return a broad discovery packet. Persist only sources that actually
+    // support a returned evidence item so a blocked/unrelated discovery URL cannot fail
+    // an otherwise valid Deep run or bloat the provenance store.
+    const evidenceUrls = new Set(execution.evidence.map((draft) => draft.sourceUrl));
     const sourceDocumentByUrl = new Map<string, string>();
     for (const reference of execution.sourceReferences) {
-      if (sourceDocumentByUrl.has(reference.url)) continue;
+      if (!evidenceUrls.has(reference.url) || sourceDocumentByUrl.has(reference.url)) continue;
       const sourceDocumentId = await options.materializeSource(reference);
       if (!sourceDocumentId) throw new Error(`Source materialization returned no source document ID for ${reference.url}`);
       sourceDocumentByUrl.set(reference.url, sourceDocumentId);
