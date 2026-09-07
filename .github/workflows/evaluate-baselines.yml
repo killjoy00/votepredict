@@ -1,0 +1,84 @@
+name: Evaluate historical baselines
+
+on:
+  push:
+    branches: [build/evaluation-harness]
+    paths:
+      - '.github/workflows/evaluate-baselines.yml'
+      - 'scripts/evaluate-baselines.ts'
+      - 'src/evaluation/**'
+      - 'package.json'
+  workflow_dispatch:
+    inputs:
+      chamber:
+        description: Chamber scope
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - house
+          - senate
+      session:
+        description: Optional legislative session slug
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-fund --no-audit
+      - name: Lease primary Neon connection
+        shell: bash
+        run: |
+          set -euo pipefail
+          OIDC_TOKEN="$(curl --fail --show-error --silent --retry 3 --retry-all-errors \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=votepredict-neon-loader" | jq -r .value)"
+          DATABASE_URL="$(curl --fail --show-error --silent --retry 3 --retry-all-errors \
+            -H "Authorization: Bearer $OIDC_TOKEN" \
+            https://br-billowing-wave-aecfbwky-dblease.compute.c-2.us-east-2.aws.neon.tech/)"
+          test -n "$DATABASE_URL"
+          echo "::add-mask::$DATABASE_URL"
+          echo "DATABASE_URL=$DATABASE_URL" >> "$GITHUB_ENV"
+      - name: Verify historical truth layer
+        run: npm run data:history:audit -- --strict
+      - name: Run baseline scorecard
+        shell: bash
+        env:
+          CHAMBER: ${{ inputs.chamber || 'all' }}
+          SESSION: ${{ inputs.session || '' }}
+        run: |
+          set -euo pipefail
+          args=()
+          if [ "$CHAMBER" != "all" ]; then
+            args+=(--chamber "$CHAMBER")
+          fi
+          if [ -n "$SESSION" ]; then
+            args+=(--session "$SESSION")
+          fi
+          npm run --silent eval:baselines -- "${args[@]}" | tee baseline-results.json
+          {
+            echo '## Historical baseline scorecard'
+            echo
+            echo '```json'
+            cat baseline-results.json
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Preserve scorecard artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: baseline-evaluation-${{ github.run_id }}
+          path: baseline-results.json
+          retention-days: 90
