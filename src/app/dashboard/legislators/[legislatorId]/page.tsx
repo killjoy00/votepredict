@@ -112,12 +112,17 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                 <span className={styles.kicker}>Issue record</span>
                 <h2>Where the voting history is concentrated</h2>
               </div>
-              <span>Primary issue from bill title · not an ideology score</span>
+              <span>Primary issue from bill title · click an issue for its dossier</span>
             </header>
             {profile.issues.length > 0 ? (
               <div className={styles.issueList}>
                 {profile.issues.map((issue) => (
-                  <div className={styles.issueRow} key={issue.area}>
+                  <Link
+                    className={styles.issueRow}
+                    href={`/dashboard/legislators/${legislatorId}/issues/${encodeURIComponent(issue.area)}`}
+                    key={issue.area}
+                    style={{ color: 'inherit', textDecoration: 'none' }}
+                  >
                     <div className={styles.issueName}>
                       <strong>{issueName(issue.area)}</strong>
                       <span>{issue.rollCallVotes} roll calls · latest {date(issue.latestVoteOn)}</span>
@@ -125,8 +130,8 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                     <div className={styles.issueBar} aria-label={`${percent(issue.yesRate)} Yes rate`}>
                       <span style={{ width: `${Math.round((issue.yesRate ?? 0) * 100)}%` }} />
                     </div>
-                    <div className={styles.issueRate}>{percent(issue.yesRate)} Yes</div>
-                  </div>
+                    <div className={styles.issueRate}>{percent(issue.yesRate)} Yes →</div>
+                  </Link>
                 ))}
               </div>
             ) : (
