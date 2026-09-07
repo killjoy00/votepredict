@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { executeDeepRuntimeForecast } from '@/forecasting/deep-runtime';
 import { executeRuntimeForecast, ForecastRuntimeError, type ForecastRuntimeSubject } from '@/forecasting/runtime';
 import { requireOwner } from '@/lib/auth/guard';
-import { db } from '@/lib/db';
+import { db, pool } from '@/lib/db';
 import { bills, chambers, forecasts, legislativeSessions, proposals } from '@/lib/db/schema';
 
 type CreateForecastBody = {
@@ -129,6 +129,10 @@ export async function POST(request: Request) {
     })
     .returning({ id: forecasts.id });
 
+  // PR 9 pins every forecast identity to the session in which it was created so proposal
+  // updates remain reproducible after the jurisdiction's current session changes.
+  await pool.query(`UPDATE forecasts SET session_id = $2 WHERE id = $1`, [forecast.id, session.id]);
+
   const baseRequest = {
     forecastId: forecast.id,
     chamberId: targetChamber.id,
@@ -146,6 +150,7 @@ export async function POST(request: Request) {
     if (body.researchMode === 'quick') {
       return NextResponse.json({
         forecastId: forecast.id,
+        detailPath: `/dashboard/forecasts/${forecast.id}`,
         status: 'ready',
         researchMode: 'quick',
         result: quick,
@@ -160,6 +165,7 @@ export async function POST(request: Request) {
       }, quick);
       return NextResponse.json({
         forecastId: forecast.id,
+        detailPath: `/dashboard/forecasts/${forecast.id}`,
         status: 'ready',
         researchMode: 'deep',
         result: deep,
@@ -167,6 +173,7 @@ export async function POST(request: Request) {
     } catch (error) {
       return NextResponse.json({
         forecastId: forecast.id,
+        detailPath: `/dashboard/forecasts/${forecast.id}`,
         status: 'ready',
         researchMode: 'deep',
         result: quick,
@@ -177,6 +184,7 @@ export async function POST(request: Request) {
     if (error instanceof ForecastRuntimeError) {
       return NextResponse.json({
         forecastId: forecast.id,
+        detailPath: `/dashboard/forecasts/${forecast.id}`,
         status: 'draft',
         researchMode: body.researchMode,
         errorCode: error.code,
@@ -187,6 +195,7 @@ export async function POST(request: Request) {
     console.error('Forecast execution failed', error);
     return NextResponse.json({
       forecastId: forecast.id,
+      detailPath: `/dashboard/forecasts/${forecast.id}`,
       status: 'draft',
       researchMode: body.researchMode,
       error: 'Forecast execution failed before a valid revision could be produced.',
