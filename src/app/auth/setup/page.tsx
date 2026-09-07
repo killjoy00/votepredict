@@ -7,7 +7,22 @@ export const dynamic = 'force-dynamic';
 
 export default async function OwnerSetupPage() {
   const { data: session } = await auth.getSession();
-  const owner = await getOwnerIdentity();
+
+  let owner;
+  try {
+    owner = await getOwnerIdentity();
+  } catch {
+    return (
+      <main className="auth-shell">
+        <section className="auth-card">
+          <div className="brand-mark">VP</div>
+          <p className="eyebrow">Private workspace</p>
+          <h1>Owner setup is temporarily unavailable</h1>
+          <p className="muted">VotePredict cannot currently reach its production database. The account setup form will return once the database connection is healthy.</p>
+        </section>
+      </main>
+    );
+  }
 
   if (owner) {
     if (session?.user && await userMatchesOwner(session.user)) redirect('/dashboard');
