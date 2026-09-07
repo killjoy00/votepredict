@@ -1,0 +1,27 @@
+name: Live production smoke
+
+on:
+  push:
+    branches:
+      - ops/live-production-smoke
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe production routes
+        shell: bash
+        run: |
+          set -u
+          for path in /auth/setup /auth/sign-in /api/health; do
+            echo "===== ${path} ====="
+            body="$(mktemp)"
+            code="$(curl -sS -L --max-time 30 -o "$body" -w '%{http_code}' "https://votepredict.vercel.app${path}" || true)"
+            echo "HTTP ${code}"
+            head -c 5000 "$body" || true
+            echo
+            rm -f "$body"
+          done
