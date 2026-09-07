@@ -1,35 +1,34 @@
 # Deployment policy
 
-VotePredict uses **manual-only Vercel deployments** during the V2 rebuild.
-
-## Why
-
-The project has a limited Vercel deployment/build allowance, while the historical-data and modeling phases require many small repository commits. GitHub Actions is the normal validation path for those commits; a Vercel build is not needed for every parser, schema, test, or model change.
+VotePredict deploys the protected `main` branch to Vercel production automatically. Feature-branch Git deployments remain disabled so ordinary development and CI do not consume Vercel build quota.
 
 ## Automatic Git deployments
 
-`vercel.json` sets:
+`vercel.json` uses overlapping branch rules:
 
 ```json
 {
   "git": {
-    "deploymentEnabled": false
+    "deploymentEnabled": {
+      "*": false,
+      "main": true
+    }
   }
 }
 ```
 
-This disables Vercel deployments triggered automatically by Git pushes, pull-request updates, and merges.
+Vercel treats a branch as deployable when at least one matching rule is `true`, so `main` deploys while other branches do not.
 
-## Normal development loop
+## Release path
 
-1. Push changes to a feature branch.
-2. Let GitHub Actions run type checking, tests, the Next.js production build, and the dependency audit.
-3. Continue development without creating a Vercel deployment.
-4. Create a Vercel preview only when a browser/runtime check is useful or explicitly requested.
-5. Create/promote a production deployment only when intentionally releasing.
+1. Push work to a feature branch.
+2. Let GitHub Actions run type checking, tests, a clean migration replay, the Next.js production build, and the dependency audit.
+3. Merge the pull request only after the protected `verify` check succeeds.
+4. The resulting push to `main` triggers the Vercel production deployment.
+5. Verify the production health endpoint and the changed user path after the deployment is ready.
+
+Vercel installs dependencies with `npm ci --no-fund --no-audit`, using the committed `package-lock.json` for reproducible production builds.
 
 ## Manual deploys
 
-Manual deployments can be triggered through the connected Vercel tooling or the Vercel CLI. They are intentionally not embedded in the normal GitHub CI workflow, so ordinary CI cannot consume Vercel build quota by accident.
-
-If a recurring release window becomes useful later, add a deliberately scheduled deployment workflow rather than re-enabling deploy-on-push.
+Manual Vercel deployments and promotions remain available for recovery, previews, or deliberately staged releases. They are not part of ordinary feature-branch CI.
