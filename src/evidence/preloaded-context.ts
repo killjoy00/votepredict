@@ -1,3 +1,4 @@
+import { campaignFinanceSnapshotInfo, getCampaignFinanceContexts } from './campaign-finance-snapshot';
 import type { DeepResearchRequest, DeepResearchSourceReference } from './provider';
 
 const GDELT_DOC_URL = 'https://api.gdeltproject.org/api/v2/doc/doc';
@@ -7,6 +8,7 @@ const CFB_LARGE_CONTRIBUTIONS_URL = 'https://register.cfb.mn.gov/reports-and-dat
 const GDELT_TARGET_LIMIT = 6;
 const GDELT_ARTICLES_PER_QUERY = 4;
 const GDELT_LOOKBACK_DAYS = 89;
+const FINANCE_TOP_LIMIT = 5;
 
 export interface PreloadedResearchItem {
   sourceUrl: string;
@@ -14,7 +16,7 @@ export interface PreloadedResearchItem {
   publishedAt?: string;
   targetMembershipId?: string;
   targetMemberName?: string;
-  sourceKind: 'news_index' | 'campaign_finance_catalog';
+  sourceKind: 'news_index' | 'campaign_finance_catalog' | 'campaign_finance_snapshot';
   note?: string;
 }
 
@@ -26,6 +28,9 @@ export interface PreloadedResearchContext {
     gdeltArticles: number;
     gdeltFailures: number;
     campaignFinanceCatalogs: number;
+    campaignFinanceMemberMatches: number;
+    campaignFinanceContextItems: number;
+    campaignFinanceSnapshot: ReturnType<typeof campaignFinanceSnapshotInfo>;
   };
 }
 
@@ -64,15 +69,31 @@ function gdeltSeenDate(value: unknown): string | undefined {
   return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
 }
 
-function uniqueByUrl(items: readonly PreloadedResearchItem[]): PreloadedResearchItem[] {
+function uniqueItems(items: readonly PreloadedResearchItem[]): PreloadedResearchItem[] {
   const seen = new Set<string>();
   const result: PreloadedResearchItem[] = [];
   for (const item of items) {
-    if (seen.has(item.sourceUrl)) continue;
-    seen.add(item.sourceUrl);
+    const key = [item.sourceUrl, item.targetMembershipId ?? '', item.sourceKind, item.title].join('|');
+    if (seen.has(key)) continue;
+    seen.add(key);
     result.push(item);
   }
   return result;
+}
+
+function sourceReferences(items: readonly PreloadedResearchItem[]): DeepResearchSourceReference[] {
+  const seen = new Set<string>();
+  const references: DeepResearchSourceReference[] = [];
+  for (const item of items) {
+    if (seen.has(item.sourceUrl)) continue;
+    seen.add(item.sourceUrl);
+    references.push({
+      id: `preloaded-${item.sourceKind}-${references.length + 1}`,
+      url: item.sourceUrl,
+      title: item.title,
+    });
+  }
+  return references;
 }
 
 async function queryGdelt(
@@ -115,7 +136,7 @@ async function queryGdelt(
   });
 }
 
-function campaignFinanceItems(): PreloadedResearchItem[] {
+function campaignFinanceCatalogItems(): PreloadedResearchItem[] {
   return [
     {
       sourceUrl: CFB_REPORTS_URL,
@@ -138,6 +159,69 @@ function campaignFinanceItems(): PreloadedResearchItem[] {
   ];
 }
 
+function formatMoney(value: number): string {
+  return `$${Math.round(value).toLocaleString('en-US')}`;
+}
+
+function rankedSummary(entries: readonly { name: string; amount: number; count: number; type?: string; employer?: string; direction?: string }[]): string {
+  return entries.slice(0, FINANCE_TOP_LIMIT).map((entry) => {
+    const details = [entry.type, entry.direction, entry.employer].filter(Boolean).join('; ');
+    return `${entry.name} ${formatMoney(entry.amount)}${details ? ` (${details})` : ''}`;
+  }).join(', ');
+}
+
+function campaignFinanceSnapshotItems(request: DeepResearchRequest): { contexts: number; items: PreloadedResearchItem[] } {
+  const contexts = getCampaignFinanceContexts(request.targets.flatMap((target) => target.memberName
+    ? [{ membershipId: target.membershipId, memberName: target.memberName }]
+    : []));
+  const items: PreloadedResearchItem[] = [];
+
+  for (const context of contexts) {
+    if (context.contributions) {
+      const contributions = context.contributions;
+      const topContributors = rankedSummary(contributions.topContributors);
+      const contributorTypes = rankedSummary(contributions.byContributorType);
+      const employers = rankedSummary(contributions.topEmployers);
+      items.push({
+        sourceUrl: contributions.sourceUrl,
+        title: `CFB 2025-26 candidate contributions — ${context.memberName}`,
+        publishedAt: contributions.latestReceiptDate ? `${contributions.latestReceiptDate}T00:00:00.000Z` : undefined,
+        targetMembershipId: context.membershipId,
+        targetMemberName: context.memberName,
+        sourceKind: 'campaign_finance_snapshot',
+        note: [
+          `Deterministic aggregate of the official CFB bulk file for ${context.committeeName}${context.registrationNumber ? ` (registration ${context.registrationNumber})` : ''}.`,
+          `${contributions.transactionCount} itemized receipts in 2025-26 totaling ${formatMoney(contributions.totalAmount)}${contributions.latestReceiptDate ? `; latest receipt ${contributions.latestReceiptDate}` : ''}.`,
+          topContributors ? `Top contributors by aggregate amount: ${topContributors}.` : '',
+          contributorTypes ? `Source types: ${contributorTypes}.` : '',
+          employers ? `Top disclosed employers on individual records: ${employers}.` : '',
+          'Financial relationships are context only and do not establish a vote position.',
+        ].filter(Boolean).join(' '),
+      });
+    }
+    if (context.independentExpenditures) {
+      const independent = context.independentExpenditures;
+      const topSpenders = rankedSummary(independent.topSpenders);
+      items.push({
+        sourceUrl: independent.sourceUrl,
+        title: `CFB 2025-26 independent expenditures — ${context.memberName}`,
+        publishedAt: independent.latestDate ? `${independent.latestDate}T00:00:00.000Z` : undefined,
+        targetMembershipId: context.membershipId,
+        targetMemberName: context.memberName,
+        sourceKind: 'campaign_finance_snapshot',
+        note: [
+          `Deterministic aggregate of the official CFB independent-expenditure bulk file for ${context.committeeName}.`,
+          `${independent.transactionCount} records totaling ${formatMoney(independent.totalAmount)}: ${formatMoney(independent.forAmount)} supporting and ${formatMoney(independent.againstAmount)} opposing${independent.latestDate ? `; latest ${independent.latestDate}` : ''}.`,
+          topSpenders ? `Top spenders: ${topSpenders}.` : '',
+          'Independent spending is context only and does not establish the candidate’s own vote position.',
+        ].filter(Boolean).join(' '),
+      });
+    }
+  }
+
+  return { contexts: contexts.length, items };
+}
+
 function subjectQuery(request: DeepResearchRequest): string | undefined {
   if (!request.subject) return undefined;
   if (request.subject.identifier) return `"${request.subject.identifier}" Minnesota legislature`;
@@ -149,7 +233,8 @@ export async function collectPreloadedResearchContext(request: DeepResearchReque
   const asOf = new Date(request.asOf);
   if (Number.isNaN(asOf.getTime())) throw new Error('Deep research asOf must be a valid date/time');
 
-  const financeItems = campaignFinanceItems();
+  const financeCatalogItems = campaignFinanceCatalogItems();
+  const financeSnapshot = campaignFinanceSnapshotItems(request);
   let gdeltQueries = 0;
   let gdeltFailures = 0;
   const tasks: Array<Promise<PreloadedResearchItem[]>> = [];
@@ -174,21 +259,19 @@ export async function collectPreloadedResearchContext(request: DeepResearchReque
   }
 
   const gdeltItems = (await Promise.all(tasks)).flat();
-  const merged = uniqueByUrl([...financeItems, ...gdeltItems]);
-  const sourceReferences = merged.map((item, index): DeepResearchSourceReference => ({
-    id: item.sourceKind === 'news_index' ? `preloaded-news-${index + 1}` : `preloaded-finance-${index + 1}`,
-    url: item.sourceUrl,
-    title: item.title,
-  }));
+  const merged = uniqueItems([...financeCatalogItems, ...financeSnapshot.items, ...gdeltItems]);
 
   return {
     items: merged,
-    sourceReferences,
+    sourceReferences: sourceReferences(merged),
     diagnostics: {
       gdeltQueries,
       gdeltArticles: gdeltItems.length,
       gdeltFailures,
-      campaignFinanceCatalogs: financeItems.length,
+      campaignFinanceCatalogs: financeCatalogItems.length,
+      campaignFinanceMemberMatches: financeSnapshot.contexts,
+      campaignFinanceContextItems: financeSnapshot.items.length,
+      campaignFinanceSnapshot: campaignFinanceSnapshotInfo(),
     },
   };
 }
