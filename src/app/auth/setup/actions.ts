@@ -48,9 +48,10 @@ export async function createOwnerAccount(
 
   let userId = existing.rows[0]?.id;
   if (userId) {
-    const signIn = await auth.signIn.email({ email, password });
-    if (signIn.error) {
-      return { error: 'An account with this email already exists, but the password did not match.' };
+    const { data: session } = await auth.getSession();
+    const sessionEmail = session?.user?.email?.trim().toLowerCase();
+    if (session?.user?.id !== userId || sessionEmail !== email) {
+      return { error: 'An account with this email already exists. Sign in to it, return here, and enter the setup code again.' };
     }
   } else {
     const signUp = await auth.signUp.email({
@@ -63,14 +64,14 @@ export async function createOwnerAccount(
     }
 
     const created = await pool.query<{ id: string }>(
-      'SELECT id FROM neon_auth."user" WHERE lower(email) = $1 ORDER BY "createdAt" DESC LIMIT 1',
+      'SELECT id FROM neon_auth."user" WHERE lower(email) = $1 LIMIT 1',
       [email],
     );
     userId = created.rows[0]?.id;
   }
 
   if (!userId) {
-    return { error: 'The account was authenticated, but VotePredict could not bind it as owner.' };
+    return { error: 'The account was created, but VotePredict could not bind it as owner.' };
   }
 
   const claimed = await claimOwnerIdentity(userId, email);
