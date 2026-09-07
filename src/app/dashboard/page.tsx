@@ -55,6 +55,7 @@ export default async function DashboardPage() {
           justifyContent: 'flex-end',
         }}
       >
+        <a href="/dashboard/legislators" style={deskLinkStyle}>Legislators</a>
         <a href="/dashboard/operations" style={deskLinkStyle}>Health + scorecard</a>
         <a href="/dashboard/forecasts" style={deskLinkStyle}>Forecast history →</a>
       </nav>
