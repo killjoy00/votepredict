@@ -3,7 +3,6 @@ import { boolean, date, doublePrecision, index, integer, jsonb, pgTable, text, t
 const createdAt = () => timestamp('created_at', { withTimezone: true }).notNull().defaultNow();
 const updatedAt = () => timestamp('updated_at', { withTimezone: true }).notNull().defaultNow();
 
-export const ownerIdentity = pgTable('votepredict_owner_identity', { singleton: boolean('singleton').primaryKey().default(true), userId: text('user_id').notNull().unique(), email: text('email').notNull().unique(), createdAt: createdAt() });
 
 export const jurisdictions = pgTable('jurisdictions', { id: uuid('id').primaryKey().defaultRandom(), slug: text('slug').notNull().unique(), name: text('name').notNull(), countryCode: text('country_code').notNull(), createdAt: createdAt() });
 export const legislativeSessions = pgTable('legislative_sessions', { id: uuid('id').primaryKey().defaultRandom(), jurisdictionId: uuid('jurisdiction_id').notNull().references(() => jurisdictions.id), slug: text('slug').notNull(), name: text('name').notNull(), startsOn: date('starts_on'), endsOn: date('ends_on'), isCurrent: boolean('is_current').notNull().default(false), createdAt: createdAt() }, (table) => [uniqueIndex('legislative_sessions_jurisdiction_slug_uq').on(table.jurisdictionId, table.slug)]);
