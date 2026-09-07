@@ -35,7 +35,7 @@ test('non-voting active members do not enter historical member evidence', () => 
   assert.equal(first?.probability, second?.probability);
 });
 
-test('member and chamber scorecards report coverage and proper scores', () => {
+test('member and chamber scorecards report coverage, proper scores, and passage baselines', () => {
   const baseRows = [
     { observationId: 'a', voteEventId: 'v1', memberId: 'm1', party: 'A', occurredAt: '2025-01-02', outcome: 1 as const, session: 's', chamber: 'house', passageRule: { kind: 'fixed' as const, requiredYes: 2 }, passed: true },
     { observationId: 'b', voteEventId: 'v1', memberId: 'm2', party: 'A', occurredAt: '2025-01-02', outcome: 1 as const, session: 's', chamber: 'house', passageRule: { kind: 'fixed' as const, requiredYes: 2 }, passed: true },
@@ -50,4 +50,8 @@ test('member and chamber scorecards report coverage and proper scores', () => {
   assert.equal(chamber.coverage, 1);
   assert.equal(chamber.passageEventsScored, 1);
   assert.ok(chamber.passageBrier !== undefined);
+  assert.equal(chamber.passagePassRate, 1);
+  assert.equal(chamber.passageAlwaysPassBrier, 0);
+  assert.ok(chamber.passageBrierSkillVsAlwaysPass !== undefined);
+  assert.equal(chamber.passageByActualMargin?.within5.events, 1);
 });
