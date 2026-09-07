@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/server';
 import { pool } from '@/lib/db';
 
-const OWNER_SETUP_TOKEN_SHA256 = 'e2dead993a74e67fad21e90a8d5c641177997eaf626576dcb18476c1bbd93d08';
+const OWNER_SETUP_TOKEN_SHA256 = '7d5b2ac0c35bafc449d08ebbd2c244283967b212ffae1aeaff186d1fd43ce78c';
 
 export type OwnerSetupState = {
   error: string | null;
