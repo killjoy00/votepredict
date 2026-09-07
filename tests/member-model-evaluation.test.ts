@@ -22,6 +22,19 @@ test('calibration cannot use current-date outcomes', () => {
   assert.equal(first.at(-1)?.probability, second.at(-1)?.probability);
 });
 
+test('non-voting active members do not enter historical member evidence', () => {
+  const withNonVote = [
+    { observationId: 'a', voteEventId: 'v1', memberId: 'm1', party: 'A', occurredAt: '2025-01-01', outcome: 1 as const, historyOutcome: 1 as const, session: 's', chamber: 'house' },
+    { observationId: 'b', voteEventId: 'v1', memberId: 'm2', party: 'A', occurredAt: '2025-01-01', outcome: 0 as const, historyOutcome: null, memberScorable: false, session: 's', chamber: 'house' },
+    { observationId: 'c', voteEventId: 'v2', memberId: 'm2', party: 'A', occurredAt: '2025-01-02', outcome: 1 as const, session: 's', chamber: 'house' },
+  ];
+  const withoutNonVote = withNonVote.filter((row) => row.observationId !== 'b');
+  const options = { modelOptions: { minimumGlobalSupport: 0 } };
+  const first = evaluateChronologicalMemberModel(withNonVote, options).find((row) => row.observationId === 'c');
+  const second = evaluateChronologicalMemberModel(withoutNonVote, options).find((row) => row.observationId === 'c');
+  assert.equal(first?.probability, second?.probability);
+});
+
 test('member and chamber scorecards report coverage and proper scores', () => {
   const baseRows = [
     { observationId: 'a', voteEventId: 'v1', memberId: 'm1', party: 'A', occurredAt: '2025-01-02', outcome: 1 as const, session: 's', chamber: 'house', passageRule: { kind: 'fixed' as const, requiredYes: 2 }, passed: true },
@@ -32,7 +45,9 @@ test('member and chamber scorecards report coverage and proper scores', () => {
   const chamber = scoreMemberModelChambers(predictions);
   assert.equal(member.coverage, 1);
   assert.ok(Math.abs(member.brier - 0.04) < 1e-12);
+  assert.equal(chamber.totalVoteEvents, 1);
   assert.equal(chamber.voteEvents, 1);
+  assert.equal(chamber.coverage, 1);
   assert.equal(chamber.passageEventsScored, 1);
   assert.ok(chamber.passageBrier !== undefined);
 });
