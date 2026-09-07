@@ -16,6 +16,7 @@ jobs:
         shell: bash
         run: |
           set -u
+          # Production release under test: 48657f44bc33c8602874fefeb7f2342bf120a224
           for path in /auth/setup /auth/sign-in /api/health; do
             echo "===== ${path} ====="
             body="$(mktemp)"
