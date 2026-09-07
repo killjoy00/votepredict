@@ -72,6 +72,12 @@ function evidenceQualityScore(quality: ForecastRuntimeMember['evidenceQuality'])
   return 0.3;
 }
 
+function persistedEvidenceQuality(quality: ForecastRuntimeMember['evidenceQuality']): 'high' | 'medium' | 'low' {
+  if (quality === 'strong') return 'high';
+  if (quality === 'moderate') return 'medium';
+  return 'low';
+}
+
 function probabilityUncertainty(probability: number | undefined): number | undefined {
   if (probability === undefined) return undefined;
   return 1 - Math.abs(probability - 0.5) * 2;
@@ -222,12 +228,15 @@ async function insertDeepMemberPredictions(client: PoolClient, revisionId: strin
   if (members.length === 0) return;
   const values: unknown[] = [];
   const placeholders = members.map((member, index) => {
-    const base = index * 10;
+    const base = index * 11;
+    const yesProbability = member.yesProbability ?? null;
     values.push(
       revisionId,
       member.membershipId,
-      member.yesProbability ?? null,
-      member.evidenceQuality,
+      yesProbability,
+      yesProbability === null ? null : 0,
+      yesProbability === null ? null : 1,
+      persistedEvidenceQuality(member.evidenceQuality),
       member.cannotPredictReason ?? null,
       member.strongestReason,
       JSON.stringify([{
@@ -253,9 +262,8 @@ async function insertDeepMemberPredictions(client: PoolClient, revisionId: strin
           excludedEvidenceCount: member.deepResearch.excludedEvidenceCount,
         } : null,
       }]),
-      null,
     );
-    return `($${base + 1}, $${base + 2}, $${base + 3}, $${base + 10}, $${base + 10}, $${base + 4}, $${base + 5}, $${base + 6}, $${base + 7}::jsonb, $${base + 8}::jsonb, $${base + 9}::jsonb)`;
+    return `($${base + 1}, $${base + 2}, $${base + 3}, $${base + 4}, $${base + 5}, $${base + 6}, $${base + 7}, $${base + 8}, $${base + 9}::jsonb, $${base + 10}::jsonb, $${base + 11}::jsonb)`;
   });
   await client.query(`
     INSERT INTO forecast_member_predictions (
@@ -288,6 +296,7 @@ async function finalizeDeepRevision(
     researchRunId,
     passageRule: base.chamber.passageRule,
     requiredYes: base.chamber.requiredYes,
+    memberProbabilityBounds: 'non-informative [0,1] until a validated interval model earns promotion',
     provider: execution.provider,
     providerVersion: execution.providerVersion,
     targets: execution.targets,
@@ -334,7 +343,7 @@ async function finalizeDeepRevision(
       JSON.stringify(metadata),
     ]);
     await insertDeepMemberPredictions(client, skeleton.id, members);
-    await client.query(`UPDATE forecasts SET status = 'ready', updated_at = now() WHERE id = $1`, [request.forecastId]);
+    await client.query(`UPDATE forecasts SET status = 'complete', updated_at = now() WHERE id = $1`, [request.forecastId]);
     await client.query('COMMIT');
   } catch (error) {
     await client.query('ROLLBACK');
