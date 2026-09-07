@@ -16,7 +16,7 @@ export interface EvidenceImpactResult {
 }
 
 const KIND_WEIGHT: Record<EvidenceKind, number> = {
-  direct_statement: 2.2,
+  direct_statement: 4,
   related_statement: 1.25,
   fact: 0.65,
   context: 0.35,
