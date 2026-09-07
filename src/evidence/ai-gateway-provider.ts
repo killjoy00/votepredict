@@ -1,5 +1,5 @@
 import { gateway, generateText, jsonSchema, Output, stepCountIs } from 'ai';
-import type { DeepResearchProvider, DeepResearchProviderResult, DeepResearchRequest } from './provider';
+import type { DeepResearchProvider, DeepResearchProviderResult, DeepResearchRequest, DeepResearchSourceReference } from './provider';
 import type { EvidenceDraft, EvidenceFreshness, EvidenceKind, EvidenceRelevance, EvidenceSourceQuality, EvidenceStance } from './types';
 
 export const AI_GATEWAY_RESEARCH_PROVIDER_VERSION = 'ai-gateway-web-v1';
@@ -104,6 +104,12 @@ function buildPrompt(request: DeepResearchRequest): string {
   ].join('\n');
 }
 
+function asOfTimestamp(request: DeepResearchRequest): number {
+  const timestamp = Date.parse(request.asOf);
+  if (!Number.isFinite(timestamp)) throw new Error('Deep research asOf must be a valid date/time');
+  return timestamp;
+}
+
 export class AiGatewayDeepResearchProvider implements DeepResearchProvider {
   readonly name = 'ai-gateway-web';
   readonly version = AI_GATEWAY_RESEARCH_PROVIDER_VERSION;
@@ -117,12 +123,17 @@ export class AiGatewayDeepResearchProvider implements DeepResearchProvider {
   }
 
   async research(request: DeepResearchRequest): Promise<DeepResearchProviderResult> {
+    const cutoff = asOfTimestamp(request);
     const result = await generateText({
       model: this.model,
       system: 'You are a legislative evidence researcher. Source fidelity is more important than producing a large number of findings.',
       prompt: buildPrompt(request),
       tools: {
-        web_search: gateway.tools.perplexitySearch({ country: 'US' }),
+        perplexity_search: gateway.tools.perplexitySearch({
+          country: 'US',
+          maxResults: 8,
+          searchLanguageFilter: ['en'],
+        }),
       },
       stopWhen: stepCountIs(this.maxSteps),
       output: Output.object({
@@ -132,34 +143,53 @@ export class AiGatewayDeepResearchProvider implements DeepResearchProvider {
       }),
     });
 
-    const evidence: EvidenceDraft[] = result.output.evidence.map((item) => ({
-      sourceUrl: item.sourceUrl,
-      publishedAt: item.publishedAt ?? undefined,
-      kind: item.kind,
-      stance: item.stance,
-      claim: item.claim,
-      excerpt: item.excerpt ?? undefined,
-      sourceQuality: item.sourceQuality,
-      relevance: item.relevance,
-      freshness: item.freshness,
-      confidence: item.confidence,
-      targetMembershipId: item.targetMembershipId ?? undefined,
-      targetBillId: item.targetBillId ?? request.billId,
-      metadata: {
-        researchProvider: this.name,
-        researchProviderVersion: this.version,
-        model: this.model,
-      },
-    }));
+    const sourceReferences: DeepResearchSourceReference[] = result.sources.flatMap((source) => source.sourceType === 'url'
+      ? [{ id: source.id, url: source.url, title: source.title }]
+      : []);
+    const sourceByUrl = new Map(sourceReferences.map((source) => [source.url, source]));
+
+    const evidence: EvidenceDraft[] = result.output.evidence.map((item) => {
+      const source = sourceByUrl.get(item.sourceUrl);
+      const publishedTimestamp = item.publishedAt ? Date.parse(item.publishedAt) : Number.NaN;
+      const publishedAtInvalid = Boolean(item.publishedAt) && !Number.isFinite(publishedTimestamp);
+      const afterAsOf = Number.isFinite(publishedTimestamp) && publishedTimestamp > cutoff;
+      return {
+        sourceUrl: item.sourceUrl,
+        publishedAt: publishedAtInvalid ? undefined : item.publishedAt ?? undefined,
+        kind: item.kind,
+        stance: item.stance,
+        claim: item.claim,
+        excerpt: item.excerpt ?? undefined,
+        sourceQuality: item.sourceQuality,
+        relevance: item.relevance,
+        freshness: item.freshness,
+        confidence: item.confidence,
+        targetMembershipId: item.targetMembershipId ?? undefined,
+        targetBillId: request.billId ?? item.targetBillId ?? undefined,
+        metadata: {
+          researchProvider: this.name,
+          researchProviderVersion: this.version,
+          model: this.model,
+          sourceVerified: Boolean(source),
+          sourceId: source?.id,
+          sourceTitle: source?.title,
+          afterAsOf,
+          publishedAtInvalid,
+        },
+      };
+    });
 
     return {
       provider: this.name,
       providerVersion: this.version,
       evidence,
+      sourceReferences,
       diagnostics: {
         model: this.model,
         steps: result.steps.length,
-        sourceCount: result.sources.length,
+        sourceCount: sourceReferences.length,
+        verifiedEvidence: evidence.filter((item) => item.metadata?.sourceVerified === true).length,
+        afterAsOfEvidence: evidence.filter((item) => item.metadata?.afterAsOf === true).length,
         notes: result.output.notes,
         totalUsage: result.totalUsage,
       },
