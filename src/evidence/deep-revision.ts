@@ -2,7 +2,7 @@ import { simulateChamber, type ChamberSimulation, type PassageRule } from '../fo
 import { diagnoseEvidence, type EvidenceDiagnostics } from './diagnostics';
 import { applyEvidenceSignals } from './impact';
 import { evidenceImpactPolicy } from './policy';
-import type { DeepResearchProvider, DeepResearchProviderResult } from './provider';
+import type { DeepResearchProvider, DeepResearchProviderResult, DeepResearchSubject } from './provider';
 import { selectDeepResearchTargets, type DeepResearchCandidate } from './targeting';
 import type { DeepResearchTarget, EvidenceDraft, EvidenceSignal } from './types';
 
@@ -18,6 +18,7 @@ export interface DeepResearchContext {
   proposalId?: string;
   chamberId: string;
   asOf: string;
+  subject?: DeepResearchSubject;
   passageRule: PassageRule;
   targetLimit?: number;
 }
@@ -93,6 +94,7 @@ export async function executeDeepResearch(
     proposalId: context.proposalId,
     chamberId: context.chamberId,
     asOf: context.asOf,
+    subject: context.subject,
     targets: targets.map((target) => {
       const member = memberById.get(target.membershipId);
       return {
