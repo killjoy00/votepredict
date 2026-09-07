@@ -1,7 +1,7 @@
 import { requireOwner } from '@/lib/auth/guard';
 import { getOperationalHealth } from '@/operations/health';
 import { listResolutionQueue } from '@/operations/resolution';
-import { getProductionScorecard } from '@/operations/scorecard';
+import { getLeakageSafeProductionScorecard } from '@/operations/safe-scorecard';
 import { OutcomeResolutionQueue } from './operations-desk';
 
 export const dynamic = 'force-dynamic';
@@ -24,7 +24,7 @@ export default async function OperationsPage() {
   const user = await requireOwner();
   const [health, scorecard, queue] = await Promise.all([
     getOperationalHealth(),
-    getProductionScorecard(user.id),
+    getLeakageSafeProductionScorecard(user.id),
     listResolutionQueue(user.id),
   ]);
 
@@ -63,10 +63,10 @@ export default async function OperationsPage() {
 
       <section className="panel revisions-panel">
         <div className="panel-heading"><div><span className="kicker">Frozen predictions vs actuals</span><h2>Scored revisions</h2></div><span>{scorecard.scoredRevisions} revision{scorecard.scoredRevisions === 1 ? '' : 's'}</span></div>
-        {scorecard.revisions.length === 0 ? <div className="empty-score"><strong>No production outcomes have been reconciled yet.</strong><p>The scorecard starts only after you explicitly link a saved bill forecast to its official passage vote.</p></div> : <div className="revision-table"><div className="revision-head"><span>Forecast</span><span>Revision</span><span>Passage</span><span>Brier</span><span>Yes error</span><span>Members</span></div>{scorecard.revisions.map((row) => <div className="revision-score" key={row.revisionId}><div><strong>{row.targetLabel}</strong><small>{row.chamberName} · actual {row.actualYes} Yes on {row.actualOccurredOn}</small></div><span>r{row.revisionNumber} · {row.researchMode}</span><span>{percent(row.passageProbability)} → {row.actualPassed === null ? '—' : row.actualPassed ? 'pass' : 'fail'}</span><span>{metric(row.passageBrier)}</span><span>{row.yesAbsoluteError === undefined ? '—' : row.yesAbsoluteError.toFixed(1)}</span><span>{percent(row.memberAccuracy)}<small>{row.memberResolved} scored</small></span></div>)}</div>}
+        {scorecard.revisions.length === 0 ? <div className="empty-score"><strong>No production outcomes have been reconciled yet.</strong><p>The scorecard starts only after you explicitly link a saved bill forecast to its official passage vote. Revisions generated on the same calendar date as the official vote are excluded because the source data does not establish which came first.</p></div> : <div className="revision-table"><div className="revision-head"><span>Forecast</span><span>Revision</span><span>Passage</span><span>Brier</span><span>Yes error</span><span>Members</span></div>{scorecard.revisions.map((row) => <div className="revision-score" key={row.revisionId}><div><strong>{row.targetLabel}</strong><small>{row.chamberName} · actual {row.actualYes} Yes on {row.actualOccurredOn}</small></div><span>r{row.revisionNumber} · {row.researchMode}</span><span>{percent(row.passageProbability)} → {row.actualPassed === null ? '—' : row.actualPassed ? 'pass' : 'fail'}</span><span>{metric(row.passageBrier)}</span><span>{row.yesAbsoluteError === undefined ? '—' : row.yesAbsoluteError.toFixed(1)}</span><span>{percent(row.memberAccuracy)}<small>{row.memberResolved} scored</small></span></div>)}</div>}
       </section>
 
-      <footer>Production scoring uses the frozen revision lineage. Outcome reconciliation never rewrites a forecast, member prediction, evidence item, or historical vote.</footer>
+      <footer>Production scoring uses only unambiguously pre-vote frozen revisions. Outcome reconciliation never rewrites a forecast, member prediction, evidence item, or historical vote.</footer>
 
       <style>{`
         :global(body) { background: #f5f6f2; }
