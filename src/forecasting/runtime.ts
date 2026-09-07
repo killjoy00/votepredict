@@ -195,6 +195,12 @@ function qualityForSupport(memberSupport: number, analogueSupport: number): Fore
   return 'limited';
 }
 
+function persistedEvidenceQuality(quality: ForecastRuntimeMember['evidenceQuality']): 'high' | 'medium' | 'low' {
+  if (quality === 'strong') return 'high';
+  if (quality === 'moderate') return 'medium';
+  return 'low';
+}
+
 function uncertainty(probability: number | undefined): number | undefined {
   if (probability === undefined) return undefined;
   return 1 - Math.abs(probability - 0.5) * 2;
@@ -517,6 +523,7 @@ async function persistRevision(
       cannotPredictCount: diagnostics.cannotPredictMembers,
       billSpecific: true,
       calibration: 'off',
+      memberProbabilityBounds: 'non-informative [0,1] until a validated interval model earns promotion',
       analogue: {
         selected: analogues,
         directMemberCoverage: members.length === 0 ? 0 : diagnostics.directAnalogueMembers / members.length,
@@ -546,7 +553,7 @@ async function persistRevision(
     ]);
     const revisionId = revisionResult.rows[0].id;
     await insertMemberPredictions(client, revisionId, members);
-    await client.query(`UPDATE forecasts SET status = 'ready', updated_at = now() WHERE id = $1`, [request.forecastId]);
+    await client.query(`UPDATE forecasts SET status = 'complete', updated_at = now() WHERE id = $1`, [request.forecastId]);
     await client.query('COMMIT');
     return { revisionId, revisionNumber };
   } catch (error) {
@@ -561,12 +568,15 @@ async function insertMemberPredictions(client: PoolClient, revisionId: string, m
   if (members.length === 0) return;
   const values: unknown[] = [];
   const placeholders = members.map((member, index) => {
-    const base = index * 10;
+    const base = index * 11;
+    const yesProbability = member.yesProbability ?? null;
     values.push(
       revisionId,
       member.membershipId,
-      member.yesProbability ?? null,
-      member.evidenceQuality,
+      yesProbability,
+      yesProbability === null ? null : 0,
+      yesProbability === null ? null : 1,
+      persistedEvidenceQuality(member.evidenceQuality),
       member.cannotPredictReason ?? null,
       member.strongestReason,
       JSON.stringify([{
@@ -578,9 +588,8 @@ async function insertMemberPredictions(client: PoolClient, revisionId: string, m
       }]),
       JSON.stringify(member.analogue ? [{ kind: 'historical_analogue', ...member.analogue }] : []),
       JSON.stringify([{ uncertainty: member.uncertainty, researched: member.researched }]),
-      null,
     );
-    return `($${base + 1}, $${base + 2}, $${base + 3}, $${base + 10}, $${base + 10}, $${base + 4}, $${base + 5}, $${base + 6}, $${base + 7}::jsonb, $${base + 8}::jsonb, $${base + 9}::jsonb)`;
+    return `($${base + 1}, $${base + 2}, $${base + 3}, $${base + 4}, $${base + 5}, $${base + 6}, $${base + 7}, $${base + 8}, $${base + 9}::jsonb, $${base + 10}::jsonb, $${base + 11}::jsonb)`;
   });
   await client.query(`
     INSERT INTO forecast_member_predictions (
