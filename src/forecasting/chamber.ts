@@ -29,7 +29,8 @@ export function simulateChamber(probabilities: readonly number[], rule: PassageR
   const tail = (1 - interval) / 2;
   const yesLow = quantile(distribution, tail);
   const yesHigh = quantile(distribution, 1 - tail);
-  const passageProbability = requiredYes >= distribution.length ? 0 : distribution.slice(requiredYes).reduce((sum, probability) => sum + probability, 0);
+  const rawPassageProbability = requiredYes >= distribution.length ? 0 : distribution.slice(requiredYes).reduce((sum, probability) => sum + probability, 0);
+  const passageProbability = Math.min(1, Math.max(0, rawPassageProbability));
   return { members: probabilities.length, expectedYes, yesLow, yesHigh, passageProbability, requiredYes, distribution };
 }
 export function empiricalIntervalCoverage(rows: readonly { actualYes: number; yesLow: number; yesHigh: number }[]): number { if (rows.length === 0) return Number.NaN; return rows.filter((row) => row.actualYes >= row.yesLow && row.actualYes <= row.yesHigh).length / rows.length; }
