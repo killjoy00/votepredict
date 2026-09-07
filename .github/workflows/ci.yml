@@ -38,8 +38,8 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: package.json
-      - run: npm install --no-fund --no-audit
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
       - name: Verify migrations from a clean database
         run: npm run db:migrate
       - run: npm run check
