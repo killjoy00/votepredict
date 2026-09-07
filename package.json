@@ -19,8 +19,11 @@
     "data:house:inspect": "tsx scripts/inspect-house-votes.ts",
     "data:house:ingest": "tsx scripts/ingest-house-history.ts",
     "data:revisor:enrich": "tsx scripts/enrich-revisor-bills.ts",
+    "data:revisor:versions": "tsx scripts/enrich-revisor-bills.ts --include-versions --skip-existing",
     "data:senate:inspect": "tsx scripts/inspect-senate-journals.ts",
     "data:senate:ingest": "tsx scripts/ingest-senate-history.ts",
+    "features:bills:backfill": "tsx scripts/backfill-bill-features.ts",
+    "features:analogues:inspect": "tsx scripts/inspect-bill-analogues.ts",
     "eval:baselines": "tsx scripts/evaluate-baselines.ts"
   },
   "dependencies": {
