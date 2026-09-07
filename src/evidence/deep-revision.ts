@@ -1,6 +1,7 @@
 import { simulateChamber, type ChamberSimulation, type PassageRule } from '../forecasting/chamber';
 import { diagnoseEvidence, type EvidenceDiagnostics } from './diagnostics';
 import { applyEvidenceSignals } from './impact';
+import { evidenceImpactPolicy } from './policy';
 import type { DeepResearchProvider, DeepResearchProviderResult } from './provider';
 import { selectDeepResearchTargets, type DeepResearchCandidate } from './targeting';
 import type { DeepResearchTarget, EvidenceDraft, EvidenceSignal } from './types';
@@ -21,13 +22,22 @@ export interface DeepResearchContext {
   targetLimit?: number;
 }
 
+export interface DeepMemberEvidenceDecision {
+  sourceUrl: string;
+  mechanicallyActionable: boolean;
+  rationale: string;
+}
+
 export interface DeepMemberUpdate {
   membershipId: string;
   probabilityBefore?: number;
   probabilityAfter?: number;
   totalLogitDelta?: number;
   evidenceCount: number;
+  appliedEvidenceCount: number;
+  excludedEvidenceCount: number;
   evidence: EvidenceDraft[];
+  evidenceDecisions: DeepMemberEvidenceDecision[];
 }
 
 export interface DeepResearchExecution {
@@ -40,6 +50,7 @@ export interface DeepResearchExecution {
   chamberAfter?: ChamberSimulation;
   diagnostics: {
     unscopedEvidence: number;
+    excludedFromImpact: number;
     unresolvedMembers: number;
     evidence: EvidenceDiagnostics;
     providerDiagnostics?: Record<string, unknown>;
@@ -106,23 +117,31 @@ export async function executeDeepResearch(
 
   const memberUpdates: DeepMemberUpdate[] = members.map((member) => {
     const evidence = scopedEvidence.get(member.membershipId) ?? [];
-    if (member.yesProbability === undefined || evidence.length === 0) {
+    const evidenceDecisions = evidence.map((draft) => ({ sourceUrl: draft.sourceUrl, ...evidenceImpactPolicy(draft) }));
+    const actionableEvidence = evidence.filter((_, index) => evidenceDecisions[index].mechanicallyActionable);
+    if (member.yesProbability === undefined || actionableEvidence.length === 0) {
       return {
         membershipId: member.membershipId,
         probabilityBefore: member.yesProbability,
         probabilityAfter: member.yesProbability,
         evidenceCount: evidence.length,
+        appliedEvidenceCount: 0,
+        excludedEvidenceCount: evidence.length,
         evidence,
+        evidenceDecisions,
       };
     }
-    const impact = applyEvidenceSignals(member.yesProbability, evidence.map(evidenceSignal));
+    const impact = applyEvidenceSignals(member.yesProbability, actionableEvidence.map(evidenceSignal));
     return {
       membershipId: member.membershipId,
       probabilityBefore: member.yesProbability,
       probabilityAfter: impact.probability,
       totalLogitDelta: impact.totalLogitDelta,
       evidenceCount: evidence.length,
+      appliedEvidenceCount: actionableEvidence.length,
+      excludedEvidenceCount: evidence.length - actionableEvidence.length,
       evidence,
+      evidenceDecisions,
     };
   });
 
@@ -142,6 +161,7 @@ export async function executeDeepResearch(
     chamberAfter: chamberSimulation(afterMembers, context.passageRule),
     diagnostics: {
       unscopedEvidence: providerResult.evidence.filter((draft) => !draft.targetMembershipId || !targetedIds.has(draft.targetMembershipId)).length,
+      excludedFromImpact: memberUpdates.reduce((sum, update) => sum + update.excludedEvidenceCount, 0),
       unresolvedMembers: memberUpdates.filter((update) => update.probabilityAfter === undefined).length,
       evidence: evidenceDiagnostics,
       providerDiagnostics: providerResult.diagnostics,
