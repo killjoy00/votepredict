@@ -14,7 +14,7 @@ async function main(): Promise<void> {
 
   const pool = new Pool({ connectionString, max: 1 });
   try {
-    const result = await pool.query<{
+    const memberResult = await pool.query<{
       observation_id: string;
       vote_event_id: string;
       member_id: string;
@@ -42,7 +42,7 @@ async function main(): Promise<void> {
          AND mv.choice IN ('yea', 'nay')
        ORDER BY ve.occurred_on, ve.id, mv.id`);
 
-    const observations: MemberModelObservation[] = result.rows.map((row) => ({
+    const memberObservations: MemberModelObservation[] = memberResult.rows.map((row) => ({
       observationId: row.observation_id,
       voteEventId: row.vote_event_id,
       memberId: row.member_id,
@@ -52,7 +52,71 @@ async function main(): Promise<void> {
       session: row.session_slug,
       chamber: row.chamber_slug,
     }));
-    if (observations.length === 0) throw new Error('No resolved historical passage member votes found');
+    if (memberObservations.length === 0) throw new Error('No resolved historical passage member votes found');
+
+    const chamberResult = await pool.query<{
+      observation_id: string;
+      vote_event_id: string;
+      member_id: string;
+      party: string | null;
+      occurred_at: string;
+      outcome: 0 | 1;
+      history_outcome: 0 | 1 | null;
+      member_scorable: boolean;
+      session_slug: string;
+      chamber_slug: string;
+      yea_count: number;
+      passed: boolean | null;
+      active_members: number;
+    }>(`
+      SELECT ve.id::text || ':' || m.id::text AS observation_id,
+             ve.id AS vote_event_id,
+             m.legislator_id AS member_id,
+             NULLIF(btrim(m.party), '') AS party,
+             ve.occurred_on::text || 'T00:00:00Z' AS occurred_at,
+             CASE WHEN mv.choice = 'yea' THEN 1 ELSE 0 END AS outcome,
+             CASE WHEN mv.choice = 'yea' THEN 1 WHEN mv.choice = 'nay' THEN 0 ELSE NULL END AS history_outcome,
+             COALESCE(mv.choice IN ('yea', 'nay'), false) AS member_scorable,
+             s.slug AS session_slug,
+             c.slug AS chamber_slug,
+             ve.yea_count,
+             ve.passed,
+             (count(*) OVER (PARTITION BY ve.id))::int AS active_members
+        FROM vote_events ve
+        JOIN legislative_sessions s ON s.id = ve.session_id
+        JOIN chambers c ON c.id = ve.chamber_id
+        JOIN jurisdictions j ON j.id = s.jurisdiction_id AND j.slug = 'us-mn'
+        JOIN memberships m
+          ON m.session_id = ve.session_id
+         AND m.chamber_id = ve.chamber_id
+         AND (m.starts_on IS NULL OR m.starts_on <= ve.occurred_on)
+         AND (m.ends_on IS NULL OR m.ends_on >= ve.occurred_on)
+        LEFT JOIN member_votes mv
+          ON mv.vote_event_id = ve.id
+         AND mv.membership_id = m.id
+       WHERE ve.is_passage = true
+       ORDER BY ve.occurred_on, ve.id, m.id`);
+
+    const chamberObservations: MemberModelObservation[] = chamberResult.rows.map((row) => {
+      const activeMembers = Number(row.active_members);
+      if (!Number.isInteger(activeMembers) || activeMembers <= 0) throw new Error(`Invalid active membership for vote ${row.vote_event_id}`);
+      const requiredYes = Math.floor(activeMembers / 2) + 1;
+      return {
+        observationId: row.observation_id,
+        voteEventId: row.vote_event_id,
+        memberId: row.member_id,
+        party: row.party ?? 'UNKNOWN',
+        occurredAt: row.occurred_at,
+        outcome: Number(row.outcome) as 0 | 1,
+        historyOutcome: row.history_outcome === null ? null : Number(row.history_outcome) as 0 | 1,
+        memberScorable: row.member_scorable,
+        session: row.session_slug,
+        chamber: row.chamber_slug,
+        passageRule: { kind: 'absolute-majority', seats: activeMembers },
+        passed: row.passed ?? Number(row.yea_count) >= requiredYes,
+      };
+    });
+    if (chamberObservations.length === 0) throw new Error('No active-chamber passage observations found');
 
     const configurations: Record<string, MemberModelEvaluationOptions> = {
       default: {},
@@ -61,15 +125,16 @@ async function main(): Promise<void> {
     };
 
     const evaluations = Object.fromEntries(Object.entries(configurations).map(([name, options]) => {
-      const predictions = evaluateChronologicalMemberModel(observations, options);
+      const memberPredictions = evaluateChronologicalMemberModel(memberObservations, options);
+      const chamberPredictions = evaluateChronologicalMemberModel(chamberObservations, options);
       return [name, {
         options,
         member: {
-          overall: scoreMemberModel(predictions),
-          byChamber: scoreMemberModelBy(predictions, 'chamber'),
-          bySession: scoreMemberModelBy(predictions, 'session'),
+          overall: scoreMemberModel(memberPredictions),
+          byChamber: scoreMemberModelBy(memberPredictions, 'chamber'),
+          bySession: scoreMemberModelBy(memberPredictions, 'session'),
         },
-        chamber: scoreMemberModelChambers(predictions),
+        chamber: scoreMemberModelChambers(chamberPredictions),
       }];
     }));
 
@@ -79,12 +144,15 @@ async function main(): Promise<void> {
         codeSha: process.env.GITHUB_SHA ?? null,
         acceptedBaseline: 'evaluation/results/2026-09-07-baselines.json',
         leakageGuard: 'same-date outcomes enter member, party, global, and calibration history only after scoring the full date',
-        analogueSignal: 'not included in this v1 benchmark; analogue inputs remain optional and must be generated as-of the vote date',
+        chamberPopulation: 'every active member is forecast for each passage event; non-yea/nay outcomes count as No for chamber resolution but do not enter member-history evidence',
+        passageRule: 'Minnesota bill passage is scored with an explicit absolute-majority rule using the active elected membership on the vote date; House outcomes are derived from official yea counts only where the stored passed flag is absent',
+        analogueSignal: 'not included in this benchmark; analogue inputs require dated bill versions available as of each historical vote',
       },
-      observations: observations.length,
-      voteEvents: new Set(observations.map((row) => row.voteEventId)).size,
-      firstOccurredAt: observations[0].occurredAt,
-      lastOccurredAt: observations.at(-1)?.occurredAt,
+      memberObservations: memberObservations.length,
+      chamberObservations: chamberObservations.length,
+      voteEvents: new Set(memberObservations.map((row) => row.voteEventId)).size,
+      firstOccurredAt: memberObservations[0].occurredAt,
+      lastOccurredAt: memberObservations.at(-1)?.occurredAt,
       evaluations,
     }, null, 2));
   } finally {

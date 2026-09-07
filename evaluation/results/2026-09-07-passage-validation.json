@@ -1,0 +1,100 @@
+{
+  "metadata": {
+    "generatedAt": "2026-09-07T17:19:39.863Z",
+    "productionEvaluationRunId": 34147089216,
+    "operationalCodeSha": "d777eb157717543f944b3274d1f89d37cbcbc47f",
+    "pullRequest": 41,
+    "acceptedMemberBaseline": "evaluation/results/2026-09-07-member-model-v1.json",
+    "leakageGuard": "same-date outcomes enter member, party, global, and calibration history only after scoring the full date",
+    "chamberPopulation": "every active member is forecast for each passage event; non-yea/nay outcomes count as not-Yes for chamber resolution but do not enter member-history evidence",
+    "passageRule": "Minnesota bill passage is scored with an explicit absolute-majority rule using active elected membership on the vote date",
+    "analogueSignal": "not included; historical analogue lift requires dated bill versions available as of each historical vote"
+  },
+  "corpus": {
+    "memberObservations": 129802,
+    "activeChamberObservations": 132994,
+    "passageEvents": 1264,
+    "firstOccurredAt": "2021-01-19T00:00:00Z",
+    "lastOccurredAt": "2026-05-17T00:00:00Z",
+    "passedEvents": 1254,
+    "failedEvents": 10,
+    "passRate": 0.9920886075949367
+  },
+  "default": {
+    "member": {
+      "observations": 129802,
+      "predicted": 129737,
+      "coverage": 0.9994992372998875,
+      "accuracy": 0.8273661330229618,
+      "brier": 0.11705571265150988,
+      "logLoss": 0.3635398672804002,
+      "expectedCalibrationError": 0.028697527622638795,
+      "session2025_2026ExpectedCalibrationError": 0.10393553083522952
+    },
+    "chamber": {
+      "totalVoteEvents": 1264,
+      "scoredVoteEvents": 1263,
+      "coverage": 0.9992088607594937,
+      "meanAbsoluteYesError": 18.063455435783432,
+      "nominalCentralRangeCoverage": 0.08788598574821853,
+      "passageBrier": 0.007917656373713364,
+      "passageAccuracy": 0.9920823436262867,
+      "alwaysPassBrier": 0.00791765637371338,
+      "brierSkillVsAlwaysPass": 1.9984014443252818e-15,
+      "byActualMargin": {
+        "within5": {
+          "events": 315,
+          "passed": 306,
+          "passRate": 0.9714285714285714,
+          "brier": 0.028571428571428505,
+          "alwaysPassBrier": 0.02857142857142857,
+          "brierSkillVsAlwaysPass": 2.3314683517128287e-15
+        },
+        "within10": {
+          "events": 375,
+          "passed": 365,
+          "passRate": 0.9733333333333334,
+          "brier": 0.02666666666666661,
+          "alwaysPassBrier": 0.02666666666666667,
+          "brierSkillVsAlwaysPass": 2.220446049250313e-15
+        },
+        "within20": {
+          "events": 461,
+          "passed": 451,
+          "passRate": 0.9783080260303688,
+          "brier": 0.02169197396963119,
+          "alwaysPassBrier": 0.021691973969631236,
+          "brierSkillVsAlwaysPass": 2.1094237467877974e-15
+        }
+      }
+    }
+  },
+  "fullCoverageComparison": {
+    "member": {
+      "observations": 129802,
+      "predicted": 129802,
+      "coverage": 1,
+      "accuracy": 0.8274525816243201,
+      "brier": 0.11712228619180681,
+      "logLoss": 0.36370492232857543,
+      "expectedCalibrationError": 0.028933538321276178,
+      "session2025_2026ExpectedCalibrationError": 0.10393553083522952
+    },
+    "chamber": {
+      "totalVoteEvents": 1264,
+      "scoredVoteEvents": 1264,
+      "coverage": 1,
+      "meanAbsoluteYesError": 18.074085613444996,
+      "nominalCentralRangeCoverage": 0.08781645569620253,
+      "passageBrier": 0.008109177215189856,
+      "passageAccuracy": 0.9920886075949367,
+      "alwaysPassBrier": 0.007911392405063292,
+      "brierSkillVsAlwaysPass": -0.02499999999999769
+    }
+  },
+  "interpretation": {
+    "passageProbability": "Not promoted as a validated decision probability. The historical passage corpus is 99.2% positive and the current chamber probability does not beat an always-pass baseline, including near the actual threshold.",
+    "voteRange": "Not calibrated. The nominal 80% independent-member Poisson-binomial range covers only about 8.8% of historical chamber Yes totals and must be labeled uncalibrated.",
+    "memberModel": "member-eb-v1 remains primarily a historical member/party tendency model until as-of-safe historical analogue lift is separately benchmarked."
+  }
+}
