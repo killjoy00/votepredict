@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { auth } from './server';
+import { userMatchesOwner } from './owner';
 
 export async function requireOwner() {
   const { data: session } = await auth.getSession();
@@ -7,10 +8,7 @@ export async function requireOwner() {
 
   if (!user) redirect('/auth/sign-in');
 
-  const ownerEmail = process.env.VOTEPREDICT_OWNER_EMAIL?.trim().toLowerCase();
-  const userEmail = user.email?.trim().toLowerCase();
-
-  if (!ownerEmail || !userEmail || ownerEmail !== userEmail) {
+  if (!(await userMatchesOwner(user))) {
     redirect('/unauthorized');
   }
 

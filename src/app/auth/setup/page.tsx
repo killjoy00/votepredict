@@ -1,15 +1,18 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/server';
+import { getOwnerIdentity, userMatchesOwner } from '@/lib/auth/owner';
 import { OwnerSetupForm } from './setup-form';
 
 export const dynamic = 'force-dynamic';
 
 export default async function OwnerSetupPage() {
   const { data: session } = await auth.getSession();
-  const ownerEmail = process.env.VOTEPREDICT_OWNER_EMAIL?.trim().toLowerCase();
-  const userEmail = session?.user?.email?.trim().toLowerCase();
+  const owner = await getOwnerIdentity();
 
-  if (ownerEmail && userEmail === ownerEmail) redirect('/dashboard');
+  if (owner) {
+    if (session?.user && await userMatchesOwner(session.user)) redirect('/dashboard');
+    redirect('/auth/sign-in');
+  }
 
   return (
     <main className="auth-shell">
@@ -18,7 +21,7 @@ export default async function OwnerSetupPage() {
         <p className="eyebrow">Private workspace</p>
         <h1>Create the VotePredict owner account</h1>
         <p className="muted">
-          This is a one-time bootstrap. Use the configured owner email, choose a password, and enter the setup code provided privately.
+          This is a one-time bootstrap. Enter the email you want to use, choose a password, and enter the setup code provided privately.
         </p>
         <OwnerSetupForm />
       </section>
