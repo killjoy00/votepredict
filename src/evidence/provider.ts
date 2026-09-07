@@ -1,11 +1,19 @@
 import type { EvidenceDraft } from './types';
 
+export interface DeepResearchSubject {
+  identifier?: string;
+  title: string;
+  summary?: string;
+  sourceUrl?: string;
+}
+
 export interface DeepResearchRequest {
   forecastId: string;
   billId?: string;
   proposalId?: string;
   chamberId: string;
   asOf: string;
+  subject?: DeepResearchSubject;
   targets: readonly {
     membershipId: string;
     memberName?: string;
