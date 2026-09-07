@@ -7,6 +7,12 @@ export interface DeepResearchSubject {
   sourceUrl?: string;
 }
 
+export interface DeepResearchSourceReference {
+  id: string;
+  url: string;
+  title?: string;
+}
+
 export interface DeepResearchRequest {
   forecastId: string;
   billId?: string;
@@ -28,6 +34,7 @@ export interface DeepResearchProviderResult {
   provider: string;
   providerVersion?: string;
   evidence: EvidenceDraft[];
+  sourceReferences?: DeepResearchSourceReference[];
   diagnostics?: Record<string, unknown>;
 }
 
