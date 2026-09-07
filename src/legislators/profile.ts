@@ -29,6 +29,7 @@ export interface LegislatorMembershipRow {
 }
 
 export interface LegislatorVoteSummary {
+  recordedVotes: number;
   passageVotes: number;
   yesVotes: number;
   noVotes: number;
@@ -40,7 +41,7 @@ export interface LegislatorVoteSummary {
 
 export interface LegislatorIssueRow {
   area: string;
-  passageVotes: number;
+  rollCallVotes: number;
   yesVotes: number;
   noVotes: number;
   yesRate?: number;
@@ -108,42 +109,6 @@ type DirectoryDbRow = {
   source_url: string | null;
 };
 
-function directoryRow(row: DirectoryDbRow): LegislatorDirectoryRow {
-  return {
-    legislatorId: row.legislator_id,
-    membershipId: row.membership_id,
-    name: row.name,
-    party: row.party,
-    district: row.district,
-    title: row.title,
-    chamberSlug: row.chamber_slug,
-    chamberName: row.chamber_name,
-    sourceUrl: row.source_url ?? undefined,
-  };
-}
-
-export async function loadCurrentLegislators(): Promise<LegislatorDirectoryRow[]> {
-  const result = await pool.query<DirectoryDbRow>(`
-    SELECT l.id AS legislator_id,
-           m.id AS membership_id,
-           l.name,
-           m.party,
-           m.district,
-           m.title,
-           c.slug AS chamber_slug,
-           c.name AS chamber_name,
-           m.source_url
-      FROM legislative_sessions s
-      JOIN memberships m ON m.session_id = s.id
-      JOIN legislators l ON l.id = m.legislator_id
-      JOIN chambers c ON c.id = m.chamber_id
-     WHERE s.is_current = true
-       AND (m.starts_on IS NULL OR m.starts_on <= current_date)
-       AND (m.ends_on IS NULL OR m.ends_on >= current_date)
-     ORDER BY c.kind, c.name, m.district, l.name`);
-  return result.rows.map(directoryRow);
-}
-
 type MembershipDbRow = {
   membership_id: string;
   session_name: string;
@@ -160,6 +125,7 @@ type MembershipDbRow = {
 };
 
 type VoteSummaryDbRow = {
+  recorded_votes: number;
   passage_votes: number;
   yes_votes: number;
   no_votes: number;
@@ -167,12 +133,10 @@ type VoteSummaryDbRow = {
   party_aligned_votes: number;
 };
 
-type IssueDbRow = {
-  area: string;
-  passage_votes: number;
-  yes_votes: number;
-  no_votes: number;
-  latest_vote_on: string | null;
+type IssueVoteDbRow = {
+  title: string;
+  choice: 'yea' | 'nay';
+  occurred_on: string;
 };
 
 type AlignmentDbRow = {
@@ -209,6 +173,87 @@ type EvidenceDbRow = {
   confidence: number | null;
   source_url: string;
 };
+
+const ISSUE_RULES: Array<{ area: string; patterns: RegExp[] }> = [
+  { area: 'education', patterns: [/\beducation\b/i, /\bschool/i, /\bteacher/i, /\bstudent/i, /\bcollege/i, /\buniversity/i] },
+  { area: 'health', patterns: [/\bhealth\b/i, /\bmedical\b/i, /\bhospital/i, /\bpatient/i, /\bpharmacy/i, /\bmedicaid\b/i, /\bmncare\b/i] },
+  { area: 'human_services', patterns: [/\bhuman services\b/i, /\bchild care\b/i, /\bdisabilit/i, /\bfoster care\b/i, /\bpublic assistance\b/i] },
+  { area: 'taxes_revenue', patterns: [/\btax/i, /\brevenue\b/i, /\bcredit\b/i, /\bdeduction\b/i, /\bexemption\b/i] },
+  { area: 'public_safety', patterns: [/\bpublic safety\b/i, /\bpolice\b/i, /\blaw enforcement\b/i, /\bcrime\b/i, /\bcriminal\b/i, /\bcorrection/i, /\bfirearm/i] },
+  { area: 'housing', patterns: [/\bhousing\b/i, /\btenant/i, /\blandlord/i, /\brent\b/i, /\bresidential\b/i] },
+  { area: 'transportation', patterns: [/\btransportation\b/i, /\bhighway\b/i, /\broad\b/i, /\btransit\b/i, /\bvehicle\b/i, /\bdriver/i] },
+  { area: 'environment_natural_resources', patterns: [/\benvironment/i, /\bnatural resources\b/i, /\bwater\b/i, /\bclimate\b/i, /\bpollution\b/i, /\bwetland/i] },
+  { area: 'labor_employment', patterns: [/\blabor\b/i, /\bemployment\b/i, /\bemployer/i, /\bemployee/i, /\bwage/i, /\bworkplace\b/i] },
+  { area: 'elections', patterns: [/\belection/i, /\bballot/i, /\bvoter/i, /\bcampaign\b/i] },
+  { area: 'agriculture', patterns: [/\bagricultur/i, /\bfarm/i, /\bcrop\b/i, /\blivestock\b/i] },
+  { area: 'commerce_consumer', patterns: [/\bcommerce\b/i, /\bconsumer/i, /\bbusiness\b/i, /\binsurance\b/i, /\blicens/i] },
+  { area: 'local_government', patterns: [/\blocal government\b/i, /\bcounty\b/i, /\bmunicipal/i, /\btownship\b/i, /\bcity\b/i] },
+  { area: 'judiciary_civil_law', patterns: [/\bjudiciar/i, /\bcourt\b/i, /\bjudge\b/i, /\bcivil law\b/i, /\battorney\b/i] },
+  { area: 'state_government', patterns: [/\bstate government\b/i, /\bstate agency\b/i, /\bdepartment\b/i, /\bcommission\b/i] },
+];
+
+function directoryRow(row: DirectoryDbRow): LegislatorDirectoryRow {
+  return {
+    legislatorId: row.legislator_id,
+    membershipId: row.membership_id,
+    name: row.name,
+    party: row.party,
+    district: row.district,
+    title: row.title,
+    chamberSlug: row.chamber_slug,
+    chamberName: row.chamber_name,
+    sourceUrl: row.source_url ?? undefined,
+  };
+}
+
+function primaryIssue(title: string): string {
+  return ISSUE_RULES.find((rule) => rule.patterns.some((pattern) => pattern.test(title)))?.area ?? 'other';
+}
+
+export async function loadCurrentLegislators(): Promise<LegislatorDirectoryRow[]> {
+  const result = await pool.query<DirectoryDbRow>(`
+    SELECT l.id AS legislator_id,
+           m.id AS membership_id,
+           l.name,
+           m.party,
+           m.district,
+           m.title,
+           c.slug AS chamber_slug,
+           c.name AS chamber_name,
+           m.source_url
+      FROM legislative_sessions s
+      JOIN memberships m ON m.session_id = s.id
+      JOIN legislators l ON l.id = m.legislator_id
+      JOIN chambers c ON c.id = m.chamber_id
+     WHERE s.is_current = true
+       AND (m.starts_on IS NULL OR m.starts_on <= current_date)
+       AND (m.ends_on IS NULL OR m.ends_on >= current_date)
+     ORDER BY c.kind, c.name, m.district, l.name`);
+  return result.rows.map(directoryRow);
+}
+
+async function loadCurrentMembership(legislatorId: string): Promise<LegislatorDirectoryRow | undefined> {
+  const result = await pool.query<DirectoryDbRow>(`
+    SELECT l.id AS legislator_id,
+           m.id AS membership_id,
+           l.name,
+           m.party,
+           m.district,
+           m.title,
+           c.slug AS chamber_slug,
+           c.name AS chamber_name,
+           m.source_url
+      FROM legislative_sessions s
+      JOIN memberships m ON m.session_id = s.id
+      JOIN legislators l ON l.id = m.legislator_id
+      JOIN chambers c ON c.id = m.chamber_id
+     WHERE s.is_current = true
+       AND l.id = $1
+       AND (m.starts_on IS NULL OR m.starts_on <= current_date)
+       AND (m.ends_on IS NULL OR m.ends_on >= current_date)
+     LIMIT 1`, [legislatorId]);
+  return result.rows[0] ? directoryRow(result.rows[0]) : undefined;
+}
 
 async function loadMemberships(legislatorId: string): Promise<LegislatorMembershipRow[]> {
   const result = await pool.query<MembershipDbRow>(`
@@ -253,13 +298,13 @@ async function loadVoteSummary(legislatorId: string): Promise<LegislatorVoteSumm
       SELECT ve.id AS vote_event_id,
              ve.session_id,
              ve.chamber_id,
+             ve.is_passage,
              mv.choice,
              tm.party
         FROM member_votes mv
         JOIN vote_events ve ON ve.id = mv.vote_event_id
         JOIN memberships tm ON tm.id = mv.membership_id
        WHERE tm.legislator_id = $1
-         AND ve.is_passage = true
          AND mv.choice IN ('yea', 'nay')
     ), party_counts AS (
       SELECT tv.vote_event_id,
@@ -274,9 +319,10 @@ async function loadVoteSummary(legislatorId: string): Promise<LegislatorVoteSumm
          AND pmv.choice IN ('yea', 'nay')
        GROUP BY tv.vote_event_id
     )
-    SELECT count(*)::int AS passage_votes,
-           count(*) FILTER (WHERE tv.choice = 'yea')::int AS yes_votes,
-           count(*) FILTER (WHERE tv.choice = 'nay')::int AS no_votes,
+    SELECT count(*)::int AS recorded_votes,
+           count(*) FILTER (WHERE tv.is_passage)::int AS passage_votes,
+           count(*) FILTER (WHERE tv.is_passage AND tv.choice = 'yea')::int AS yes_votes,
+           count(*) FILTER (WHERE tv.is_passage AND tv.choice = 'nay')::int AS no_votes,
            count(*) FILTER (WHERE pc.yes_count <> pc.no_count)::int AS party_comparable_votes,
            count(*) FILTER (
              WHERE (tv.choice = 'yea' AND pc.yes_count > pc.no_count)
@@ -284,8 +330,16 @@ async function loadVoteSummary(legislatorId: string): Promise<LegislatorVoteSumm
            )::int AS party_aligned_votes
       FROM target_votes tv
       JOIN party_counts pc ON pc.vote_event_id = tv.vote_event_id`, [legislatorId]);
-  const row = result.rows[0] ?? { passage_votes: 0, yes_votes: 0, no_votes: 0, party_comparable_votes: 0, party_aligned_votes: 0 };
+  const row = result.rows[0] ?? {
+    recorded_votes: 0,
+    passage_votes: 0,
+    yes_votes: 0,
+    no_votes: 0,
+    party_comparable_votes: 0,
+    party_aligned_votes: 0,
+  };
   return {
+    recordedVotes: row.recorded_votes,
     passageVotes: row.passage_votes,
     yesVotes: row.yes_votes,
     noVotes: row.no_votes,
@@ -297,53 +351,40 @@ async function loadVoteSummary(legislatorId: string): Promise<LegislatorVoteSumm
 }
 
 async function loadIssueRows(legislatorId: string): Promise<LegislatorIssueRow[]> {
-  const result = await pool.query<IssueDbRow>(`
-    WITH target_votes AS (
-      SELECT ve.id AS vote_event_id,
-             ve.bill_id,
-             ve.occurred_on,
-             mv.choice
-        FROM member_votes mv
-        JOIN vote_events ve ON ve.id = mv.vote_event_id
-        JOIN memberships tm ON tm.id = mv.membership_id
-       WHERE tm.legislator_id = $1
-         AND ve.is_passage = true
-         AND ve.bill_id IS NOT NULL
-         AND mv.choice IN ('yea', 'nay')
-    ), tagged AS (
-      SELECT tv.vote_event_id,
-             tv.occurred_on,
-             tv.choice,
-             area.area
-        FROM target_votes tv
-        JOIN LATERAL (
-          SELECT bfs.features
-            FROM bill_versions bv
-            JOIN bill_feature_sets bfs ON bfs.bill_version_id = bv.id
-           WHERE bv.bill_id = tv.bill_id
-             AND (bv.published_at IS NULL OR bv.published_at::date <= tv.occurred_on)
-           ORDER BY bv.published_at DESC NULLS LAST, bv.created_at DESC
-           LIMIT 1
-        ) feature ON true
-        CROSS JOIN LATERAL jsonb_array_elements_text(COALESCE(feature.features -> 'policyAreas', '[]'::jsonb)) area(area)
-    )
-    SELECT area,
-           count(*)::int AS passage_votes,
-           count(*) FILTER (WHERE choice = 'yea')::int AS yes_votes,
-           count(*) FILTER (WHERE choice = 'nay')::int AS no_votes,
-           max(occurred_on)::text AS latest_vote_on
-      FROM tagged
-     GROUP BY area
-     ORDER BY count(*) DESC, area
-     LIMIT 12`, [legislatorId]);
-  return result.rows.map((row) => ({
-    area: row.area,
-    passageVotes: row.passage_votes,
-    yesVotes: row.yes_votes,
-    noVotes: row.no_votes,
-    yesRate: row.passage_votes > 0 ? row.yes_votes / row.passage_votes : undefined,
-    latestVoteOn: row.latest_vote_on ?? undefined,
-  }));
+  const result = await pool.query<IssueVoteDbRow>(`
+    SELECT b.title,
+           mv.choice,
+           ve.occurred_on::text
+      FROM member_votes mv
+      JOIN memberships m ON m.id = mv.membership_id
+      JOIN vote_events ve ON ve.id = mv.vote_event_id
+      JOIN bills b ON b.id = ve.bill_id
+     WHERE m.legislator_id = $1
+       AND mv.choice IN ('yea', 'nay')
+     ORDER BY ve.occurred_on DESC`, [legislatorId]);
+
+  const aggregate = new Map<string, { rollCallVotes: number; yesVotes: number; noVotes: number; latestVoteOn?: string }>();
+  for (const row of result.rows) {
+    const area = primaryIssue(row.title);
+    const current = aggregate.get(area) ?? { rollCallVotes: 0, yesVotes: 0, noVotes: 0, latestVoteOn: undefined };
+    current.rollCallVotes += 1;
+    if (row.choice === 'yea') current.yesVotes += 1;
+    if (row.choice === 'nay') current.noVotes += 1;
+    if (!current.latestVoteOn || row.occurred_on > current.latestVoteOn) current.latestVoteOn = row.occurred_on;
+    aggregate.set(area, current);
+  }
+
+  return [...aggregate.entries()]
+    .map(([area, row]) => ({
+      area,
+      rollCallVotes: row.rollCallVotes,
+      yesVotes: row.yesVotes,
+      noVotes: row.noVotes,
+      yesRate: row.rollCallVotes > 0 ? row.yesVotes / row.rollCallVotes : undefined,
+      latestVoteOn: row.latestVoteOn,
+    }))
+    .sort((left, right) => right.rollCallVotes - left.rollCallVotes || left.area.localeCompare(right.area))
+    .slice(0, 12);
 }
 
 async function loadAlignmentRows(currentMembership: LegislatorDirectoryRow): Promise<LegislatorAlignmentRow[]> {
@@ -351,9 +392,7 @@ async function loadAlignmentRows(currentMembership: LegislatorDirectoryRow): Pro
     WITH target_votes AS (
       SELECT mv.vote_event_id, mv.choice
         FROM member_votes mv
-        JOIN vote_events ve ON ve.id = mv.vote_event_id
        WHERE mv.membership_id = $1
-         AND ve.is_passage = true
          AND mv.choice IN ('yea', 'nay')
     ), peer_alignment AS (
       SELECT pmv.membership_id,
@@ -364,7 +403,7 @@ async function loadAlignmentRows(currentMembership: LegislatorDirectoryRow): Pro
        WHERE pmv.membership_id <> $1
          AND pmv.choice IN ('yea', 'nay')
        GROUP BY pmv.membership_id
-       HAVING count(*) >= 3
+       HAVING count(*) >= 10
     )
     SELECT l.id AS legislator_id,
            m.id AS membership_id,
@@ -380,7 +419,7 @@ async function loadAlignmentRows(currentMembership: LegislatorDirectoryRow): Pro
      WHERE m.session_id = (SELECT session_id FROM memberships WHERE id = $1)
        AND m.chamber_id = (SELECT chamber_id FROM memberships WHERE id = $1)
      ORDER BY agreement DESC, pa.shared_votes DESC, l.name
-     LIMIT 30`, [currentMembership.membershipId]);
+     LIMIT 200`, [currentMembership.membershipId]);
   return result.rows.map((row) => ({
     legislatorId: row.legislator_id,
     membershipId: row.membership_id,
@@ -464,15 +503,14 @@ export async function loadLegislatorProfile(legislatorId: string): Promise<Legis
   const identity = identityResult.rows[0];
   if (!identity) return undefined;
 
-  const [currentMembers, memberships, voteSummary, issues, notableVotes, evidence] = await Promise.all([
-    loadCurrentLegislators(),
+  const [currentMembership, memberships, voteSummary, issues, notableVotes, evidence] = await Promise.all([
+    loadCurrentMembership(legislatorId),
     loadMemberships(legislatorId),
     loadVoteSummary(legislatorId),
     loadIssueRows(legislatorId),
     loadNotableVotes(legislatorId),
     loadEvidence(legislatorId),
   ]);
-  const currentMembership = currentMembers.find((row) => row.legislatorId === legislatorId);
   const alignments = currentMembership ? await loadAlignmentRows(currentMembership) : [];
   const closestAlignments = alignments.slice(0, 8);
   const crossPartyAlignments = currentMembership
