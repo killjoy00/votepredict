@@ -320,7 +320,7 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
       return `Chamber probability is withheld because ${forecastResult.diagnostics.cannotPredictMembers} member row${forecastResult.diagnostics.cannotPredictMembers === 1 ? '' : 's'} remain cannot-predict.`;
     }
     const call = probability >= 0.65 ? 'Passage is favored.' : probability <= 0.35 ? 'Passage is not favored.' : 'The chamber call is close.';
-    return `${call} ${forecastResult.diagnostics.directAnalogueMembers} active members have direct votes on the selected historical analogues.`;
+    return `${call} ${forecastResult.diagnostics.directAnalogueMembers} active members have direct votes on the selected historical analogues. Treat the passage estimate as directional rather than calibrated odds on a close bill.`;
   }, [forecastResult]);
 
   function resetCreatedForecast() {
@@ -605,13 +605,13 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
 
           <article className={`outcome-card ${forecastResult ? 'has-result' : 'empty-outcome'}`}>
             <div className="outcome-copy">
-              <span className="outcome-label">Passage probability</span>
+              <span className="outcome-label">Model passage estimate</span>
               <strong className="outcome-value">{formatProbability(forecastResult?.chamber.passageProbability)}</strong>
               <p>{outcomeSummary}</p>
             </div>
             <div className="metric-strip" aria-label="Forecast metrics">
               <div><span>Expected Yes</span><strong>{formatExpectedYes(forecastResult?.chamber.expectedYes)}</strong></div>
-              <div><span>Central range</span><strong>{formatRange(forecastResult?.chamber.yesLow, forecastResult?.chamber.yesHigh)}</strong></div>
+              <div><span>Vote range (uncalibrated)</span><strong>{formatRange(forecastResult?.chamber.yesLow, forecastResult?.chamber.yesHigh)}</strong></div>
               <div><span>Required Yes</span><strong>{forecastResult?.chamber.requiredYes ?? '—'}</strong></div>
               <div><span>As of</span><strong className="metric-date">{formatAsOf(forecastResult?.asOf)}</strong></div>
             </div>
@@ -783,7 +783,7 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
                 {forecastResult
                   ? forecastResult.researchMode === 'deep'
                     ? 'Target selection, source-backed evidence, exclusions, contradictions, and chamber movement stay visible below the call.'
-                    : 'Quick mode uses the validated historical member model plus direct member votes on as-of-safe historical analogues.'
+                    : 'Quick mode combines historical member tendencies with direct member votes on as-of-safe historical analogues. Historical validation has not yet shown analogue lift.'
                   : researchMode === 'deep'
                     ? 'Deep mode ranks members by exact pivotality, uncertainty, and evidence need instead of researching the entire chamber.'
                     : 'The result view keeps model support, analogues, direct evidence, exclusions, and source provenance inspectable without crowding the chamber call.'}

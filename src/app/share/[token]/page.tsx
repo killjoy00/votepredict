@@ -32,14 +32,14 @@ export default async function SharedForecastPage({ params }: PageProps) {
           <p>{shared.chamberName} · revision {shared.revision.number} · {shared.revision.researchMode === 'deep' ? 'Deep' : 'Quick'}</p>
         </div>
         <div className="hero-probability">
-          <span>Passage probability</span>
+          <span>Model passage estimate</span>
           <strong>{probability(shared.revision.passageProbability)}</strong>
         </div>
       </section>
 
       <section className="metrics" aria-label="Forecast metrics">
         <div><span>Expected Yes</span><strong>{number(shared.revision.expectedYes)}</strong></div>
-        <div><span>Central range</span><strong>{shared.revision.yesLow === undefined || shared.revision.yesHigh === undefined ? '—' : `${shared.revision.yesLow}–${shared.revision.yesHigh}`}</strong></div>
+        <div><span>Vote range (uncalibrated)</span><strong>{shared.revision.yesLow === undefined || shared.revision.yesHigh === undefined ? '—' : `${shared.revision.yesLow}–${shared.revision.yesHigh}`}</strong></div>
         <div><span>As of</span><strong>{shared.revision.generatedAt ? new Date(shared.revision.generatedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}</strong></div>
         <div><span>Model</span><strong>{shared.revision.modelVersion ?? '—'}</strong></div>
       </section>
@@ -62,7 +62,7 @@ export default async function SharedForecastPage({ params }: PageProps) {
         </div>
       </section>
 
-      <footer>This link exposes only this saved revision. It does not grant access to the private VotePredict workspace.</footer>
+      <footer>This link exposes only this saved revision. It does not grant access to the private VotePredict workspace. The passage estimate is experimental and the vote range is not historically calibrated.</footer>
 
       <style>{`
         :global(body) { margin: 0; background: #f5f6f2; color: #17201b; font-family: Arial, Helvetica, sans-serif; }
