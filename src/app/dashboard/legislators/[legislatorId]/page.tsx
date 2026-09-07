@@ -70,8 +70,8 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
           <div className={styles.heroBadges}>
             {member ? <span className={styles.badge}>{member.party}</span> : null}
             {member ? <span className={styles.badge}>District {member.district}</span> : null}
-            <span className={styles.badge}>{profile.voteSummary.passageVotes} passage votes recorded</span>
-            {profile.evidence.length > 0 ? <span className={styles.badge}>{profile.evidence.length} stored evidence items</span> : null}
+            <span className={styles.badge}>{profile.voteSummary.recordedVotes} roll calls recorded</span>
+            {profile.evidence.length > 0 ? <span className={styles.badge}>Stored source evidence</span> : null}
           </div>
         </div>
         <div className={styles.heroAside}>
@@ -83,24 +83,24 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
 
       <section className={styles.metrics} aria-label="Legislator vote metrics">
         <article className={styles.metricCard}>
-          <span>Passage votes</span>
-          <strong>{profile.voteSummary.passageVotes}</strong>
-          <small>{profile.voteSummary.yesVotes} Yes · {profile.voteSummary.noVotes} No</small>
+          <span>Recorded roll calls</span>
+          <strong>{profile.voteSummary.recordedVotes}</strong>
+          <small>{profile.voteSummary.passageVotes} final-passage votes</small>
         </article>
         <article className={styles.metricCard}>
-          <span>Yes rate</span>
+          <span>Passage Yes rate</span>
           <strong>{percent(profile.voteSummary.yesRate)}</strong>
-          <small>Recorded final-passage votes</small>
+          <small>{profile.voteSummary.yesVotes} Yes · {profile.voteSummary.noVotes} No</small>
         </article>
         <article className={styles.metricCard}>
           <span>Party alignment</span>
           <strong>{percent(profile.voteSummary.partyAlignment)}</strong>
-          <small>{profile.voteSummary.partyAlignedVotes}/{profile.voteSummary.partyComparableVotes} votes with a party majority</small>
+          <small>{profile.voteSummary.partyAlignedVotes}/{profile.voteSummary.partyComparableVotes} comparable roll calls</small>
         </article>
         <article className={styles.metricCard}>
-          <span>Issue areas</span>
+          <span>Primary issue areas</span>
           <strong>{profile.issues.length}</strong>
-          <small>Tagged areas with recorded passage votes</small>
+          <small>Deterministically classified bill titles</small>
         </article>
       </section>
 
@@ -112,7 +112,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                 <span className={styles.kicker}>Issue record</span>
                 <h2>Where the voting history is concentrated</h2>
               </div>
-              <span>Bill-text tags · descriptive, not ideology scores</span>
+              <span>Primary issue from bill title · not an ideology score</span>
             </header>
             {profile.issues.length > 0 ? (
               <div className={styles.issueList}>
@@ -120,7 +120,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                   <div className={styles.issueRow} key={issue.area}>
                     <div className={styles.issueName}>
                       <strong>{issueName(issue.area)}</strong>
-                      <span>{issue.passageVotes} votes · latest {date(issue.latestVoteOn)}</span>
+                      <span>{issue.rollCallVotes} roll calls · latest {date(issue.latestVoteOn)}</span>
                     </div>
                     <div className={styles.issueBar} aria-label={`${percent(issue.yesRate)} Yes rate`}>
                       <span style={{ width: `${Math.round((issue.yesRate ?? 0) * 100)}%` }} />
@@ -130,10 +130,10 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                 ))}
               </div>
             ) : (
-              <p className={styles.note}>No tagged passage-vote history is available for this legislator yet.</p>
+              <p className={styles.note}>No bill-linked roll-call history is available for this legislator yet.</p>
             )}
             <p className={styles.note}>
-              “Yes rate” means the share of recorded passage votes tagged to that policy area that received a Yes vote. It does not mean support for every policy concept inside the category.
+              “Yes rate” is the share of bill-linked recorded roll calls assigned to that primary issue that received a Yes vote. Categories come from bill titles and should be read as activity summaries, not policy-support scores.
             </p>
           </section>
 
@@ -143,7 +143,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                 <span className={styles.kicker}>Voting alignment</span>
                 <h2>Closest voting partners</h2>
               </div>
-              <span>Current-session passage votes</span>
+              <span>Current-session recorded roll calls</span>
             </header>
             {profile.closestAlignments.length > 0 ? (
               <div className={styles.alignmentList}>
@@ -157,7 +157,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                   </Link>
                 ))}
               </div>
-            ) : <p className={styles.note}>Not enough shared current-session passage votes to calculate alignment.</p>}
+            ) : <p className={styles.note}>Not enough shared current-session roll calls to calculate alignment.</p>}
             <p className={styles.note}>Alignment is descriptive co-voting, not evidence of coordination or a formal caucus bloc.</p>
           </section>
 
@@ -191,7 +191,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                 <span className={styles.kicker}>Source-backed intelligence</span>
                 <h2>Stored evidence</h2>
               </div>
-              <span>Populates as Deep research finds usable sources</span>
+              <span>Accumulates as Deep research finds usable sources</span>
             </header>
             {profile.evidence.length > 0 ? (
               <div className={styles.evidenceList}>
