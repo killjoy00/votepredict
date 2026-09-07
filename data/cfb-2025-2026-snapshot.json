@@ -1,6 +1,6 @@
 {
   "schemaVersion": "mn-cfb-2025-2026-v1",
-  "generatedAt": "2026-09-07T20:53:40.186Z",
+  "generatedAt": "2026-09-07T20:54:58.006Z",
   "cycleYears": [
     2025,
     2026
@@ -9,14 +9,14 @@
     "landingPage": "https://register.cfb.mn.gov/reports-and-data/self-help/data-downloads/campaign-finance/",
     "contributions": {
       "url": "https://register.cfb.mn.gov/reports-and-data/self-help/data-downloads/campaign-finance/?download=-2026985457",
-      "contentSha256": "9cb9c2702e3a8d0ad080936611a56c80300933615cb2ad901ab7c9bea5956224",
+      "contentSha256": "6dfa790a802ecd89a9d1d439953ac02dda8832960dacd3471cba730f70c0b842",
       "bytes": 37981313,
       "rawRows": 268774,
       "cycleRows": 17555
     },
     "independentExpenditures": {
       "url": "https://register.cfb.mn.gov/reports-and-data/self-help/data-downloads/campaign-finance/?download=-617535497",
-      "contentSha256": "846a17de1cab39ea99a36a21fb74965d2dcc90b5520cafa93c6abf3cafff7ee5",
+      "contentSha256": "ae230f4be7ecaa2c08903dd305eeaf123e0f38b790045890c98a20b26a9d3b8a",
       "bytes": 9089054,
       "rawRows": 41141,
       "cycleRows": 515
@@ -27900,7 +27900,7 @@
             "amount": 622,
             "count": 5,
             "type": "Individual",
-            "employer": "Sales - Solitude Corp"
+            "employer": "Sales"
           },
           {
             "name": "Hasbargen, Vernae",
