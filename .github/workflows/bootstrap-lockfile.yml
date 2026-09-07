@@ -1,0 +1,38 @@
+name: Bootstrap reproducible dependencies
+
+on:
+  push:
+    branches: [chore/reproducible-dependencies]
+
+permissions:
+  contents: write
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: chore/reproducible-dependencies
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Generate package lock and switch CI to npm ci
+        run: |
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('.github/workflows/ci.yml')
+          text = path.read_text()
+          text = text.replace('cache-dependency-path: package.json', 'cache-dependency-path: package-lock.json')
+          text = text.replace('npm install --no-fund --no-audit', 'npm ci --no-fund --no-audit')
+          path.write_text(text)
+          PY
+          rm .github/workflows/bootstrap-lockfile.yml
+      - name: Commit generated lockfile
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json .github/workflows/ci.yml .github/workflows/bootstrap-lockfile.yml
+          git commit -m "chore: make dependency installs reproducible"
+          git push origin HEAD:chore/reproducible-dependencies
