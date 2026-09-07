@@ -16,7 +16,7 @@ function shrink(observed: RateEvidence | undefined, prior: number, priorStrength
 export function estimateMemberProbability(input: MemberProbabilityInput, options: MemberModelOptions = {}): MemberProbabilityResult {
   const fallback = options.fallback ?? 0.5;
   const partyPriorStrength = options.partyPriorStrength ?? 12;
-  const memberPriorStrength = options.memberPriorStrength ?? 6;
+  const memberPriorStrength = options.memberPriorStrength ?? 3;
   const maximumAnalogueWeight = options.maximumAnalogueWeight ?? 8;
   const minimumGlobalSupport = options.minimumGlobalSupport ?? 20;
   assertProbability(fallback, 'fallback');
