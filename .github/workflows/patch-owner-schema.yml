@@ -1,0 +1,38 @@
+name: Patch owner schema
+
+on:
+  push:
+    branches:
+      - fix/database-owner-claim
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Sync Drizzle schema
+        shell: bash
+        run: |
+          node <<'JS'
+          const fs = require('node:fs');
+          const path = 'src/lib/db/schema.ts';
+          let value = fs.readFileSync(path, 'utf8');
+          if (value.includes("pgTable('votepredict_owner_identity'")) process.exit(0);
+          const marker = "const updatedAt = () => timestamp('updated_at', { withTimezone: true }).notNull().defaultNow();";
+          const addition = "\n\nexport const ownerIdentity = pgTable('votepredict_owner_identity', { singleton: boolean('singleton').primaryKey().default(true), userId: text('user_id').notNull().unique(), email: text('email').notNull().unique(), createdAt: createdAt() });";
+          if (!value.includes(marker)) throw new Error('Schema insertion marker not found');
+          value = value.replace(marker, marker + addition);
+          fs.writeFileSync(path, value);
+          JS
+      - name: Commit schema sync
+        shell: bash
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/lib/db/schema.ts
+          git commit -m "db: sync owner identity schema"
+          git push origin HEAD:fix/database-owner-claim
