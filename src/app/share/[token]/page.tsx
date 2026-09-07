@@ -6,7 +6,10 @@ export const dynamic = 'force-dynamic';
 type PageProps = { params: Promise<{ token: string }> };
 
 function probability(value: number | undefined) {
-  return value === undefined ? '—' : `${Math.round(value * 100)}%`;
+  if (value === undefined) return '—';
+  if (value >= 0.995) return '>99%';
+  if (value <= 0.005) return '<1%';
+  return `${Math.round(value * 100)}%`;
 }
 
 function number(value: number | undefined) {

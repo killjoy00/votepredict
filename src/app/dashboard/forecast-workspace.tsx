@@ -167,6 +167,8 @@ function modeDescription(mode: ResearchMode) {
 
 function formatProbability(value: number | undefined): string {
   if (value === undefined) return '—';
+  if (value >= 0.995) return '>99%';
+  if (value <= 0.005) return '<1%';
   return `${Math.round(value * 100)}%`;
 }
 
