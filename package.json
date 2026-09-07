@@ -24,7 +24,8 @@
     "data:senate:ingest": "tsx scripts/ingest-senate-history.ts",
     "features:bills:backfill": "tsx scripts/backfill-bill-features.ts",
     "features:analogues:inspect": "tsx scripts/inspect-bill-analogues.ts",
-    "eval:baselines": "tsx scripts/evaluate-baselines.ts"
+    "eval:baselines": "tsx scripts/evaluate-baselines.ts",
+    "eval:member-model": "tsx scripts/evaluate-member-model.ts"
   },
   "dependencies": {
     "@neondatabase/auth": "0.5.0-beta",
