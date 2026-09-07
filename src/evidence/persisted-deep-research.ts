@@ -73,7 +73,8 @@ export async function runPersistedDeepResearch(
         const memberUpdate = draft.targetMembershipId
           ? execution.memberUpdates.find((update) => update.membershipId === draft.targetMembershipId)
           : undefined;
-        const decision = memberUpdate?.evidenceDecisions.find((item) => item.sourceUrl === draft.sourceUrl);
+        const memberEvidenceIndex = memberUpdate?.evidence.indexOf(draft) ?? -1;
+        const decision = memberEvidenceIndex >= 0 ? memberUpdate?.evidenceDecisions[memberEvidenceIndex] : undefined;
         await linkEvidenceToRevision({
           revisionId: options.resultRevisionId,
           evidenceItemId,
