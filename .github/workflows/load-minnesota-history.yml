@@ -1,22 +1,19 @@
-name: Load historical Minnesota data
+name: Evaluate historical baselines via loader identity
 
 on:
   push:
-    branches: [build/minnesota-history]
+    branches: [build/evaluation-harness]
     paths:
       - '.github/workflows/load-minnesota-history.yml'
-      - 'scripts/**'
-      - 'src/sources/minnesota/**'
-      - 'package.json'
 
 permissions:
   contents: read
   id-token: write
 
 jobs:
-  load:
+  evaluate:
     runs-on: ubuntu-latest
-    timeout-minutes: 330
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -37,17 +34,13 @@ jobs:
           test -n "$DATABASE_URL"
           echo "::add-mask::$DATABASE_URL"
           echo "DATABASE_URL=$DATABASE_URL" >> "$GITHUB_ENV"
-      - name: Verify migrations
-        run: npm run db:migrate
-      - name: Load historical memberships
-        run: npm run data:members:ingest
-      - name: Load House history
-        run: npm run data:house:ingest -- --delay-ms 100 --skip-existing
-      - name: Load Senate history
-        run: npm run data:senate:ingest -- --delay-ms 150 --skip-existing
-      - name: Enrich bills from Revisor
-        run: npm run data:revisor:enrich -- --include-text --skip-existing
-      - name: Reconcile member votes
-        run: npm run data:members:reconcile
-      - name: Strict historical audit
+      - name: Verify historical truth layer
         run: npm run data:history:audit -- --strict
+      - name: Run baseline scorecard
+        run: npm run --silent eval:baselines | tee baseline-results.json
+      - name: Preserve scorecard artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: baseline-evaluation-loader-identity-${{ github.run_id }}
+          path: baseline-results.json
+          retention-days: 90
