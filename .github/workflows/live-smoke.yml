@@ -12,24 +12,23 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Poll production health
+      - name: Verify production owner setup
         shell: bash
         run: |
-          set -u
-          for i in 1 2 3 4 5 6 7 8 9 10 11 12; do
-            echo "===== health attempt ${i} ====="
-            body="$(mktemp)"
-            code="$(curl -sS -L --max-time 20 -o "$body" -w '%{http_code}' "https://votepredict.vercel.app/api/health" || true)"
-            echo "HTTP ${code}"
-            cat "$body" || true
-            echo
-            if grep -q '"database":"ok"' "$body" && grep -q '"neonAuthBaseUrl":"configured"' "$body" && grep -q '"neonAuthCookieSecret":"configured"' "$body"; then
-              rm -f "$body"
-              echo "Production runtime configuration is healthy."
-              exit 0
-            fi
-            rm -f "$body"
-            if [ "$i" -lt 12 ]; then sleep 10; fi
-          done
-          echo "Production runtime configuration did not become healthy during the polling window."
-          exit 1
+          set -eu
+          health="$(mktemp)"
+          setup="$(mktemp)"
+          health_code="$(curl -sS -L --max-time 20 -o "$health" -w '%{http_code}' "https://votepredict.vercel.app/api/health")"
+          setup_code="$(curl -sS -L --max-time 20 -o "$setup" -w '%{http_code}' "https://votepredict.vercel.app/auth/setup")"
+          echo "health HTTP ${health_code}"
+          cat "$health"
+          echo
+          echo "setup HTTP ${setup_code}"
+          grep -o 'Create the VotePredict owner account' "$setup" | head -1 || true
+          test "$health_code" = "200"
+          grep -q '"database":"ok"' "$health"
+          grep -q '"neonAuthBaseUrl":"configured"' "$health"
+          grep -q '"neonAuthCookieSecret":"configured"' "$health"
+          test "$setup_code" = "200"
+          grep -q 'Create the VotePredict owner account' "$setup"
+          rm -f "$health" "$setup"
