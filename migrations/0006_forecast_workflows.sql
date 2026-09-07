@@ -1,3 +1,27 @@
+ALTER TABLE forecasts
+  ADD COLUMN IF NOT EXISTS session_id uuid REFERENCES legislative_sessions(id);
+
+UPDATE forecasts f
+   SET session_id = b.session_id
+  FROM bills b
+ WHERE f.bill_id = b.id
+   AND f.session_id IS NULL;
+
+UPDATE forecasts f
+   SET session_id = current_session.id
+  FROM (
+    SELECT id
+      FROM legislative_sessions
+     WHERE is_current = true
+     ORDER BY created_at DESC
+     LIMIT 1
+  ) current_session
+ WHERE f.proposal_id IS NOT NULL
+   AND f.session_id IS NULL;
+
+CREATE INDEX IF NOT EXISTS forecasts_session_idx
+  ON forecasts (session_id, updated_at DESC);
+
 CREATE TABLE IF NOT EXISTS forecast_scenarios (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   forecast_id uuid NOT NULL REFERENCES forecasts(id) ON DELETE CASCADE,
