@@ -1,0 +1,30 @@
+name: Inspect public CFB bulk formats
+
+on:
+  push:
+    branches:
+      - ops/inspect-cfb-bulk
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect candidate contributions and independent expenditures
+        shell: bash
+        run: |
+          set -eu
+          base='https://register.cfb.mn.gov/reports-and-data/self-help/data-downloads/campaign-finance/'
+          for spec in 'candidate:?download=-2026985457' 'independent:?download=-617535497'; do
+            name="${spec%%:*}"
+            query="${spec#*:}"
+            file="${RUNNER_TEMP}/${name}.dat"
+            echo "===== ${name} ====="
+            curl -fL --retry 2 --connect-timeout 20 --max-time 180 -A 'VotePredict/2.0 public-data-inspector' "${base}${query}" -o "$file"
+            wc -c "$file"
+            file "$file"
+            echo '--- first 12 lines ---'
+            head -n 12 "$file" | cut -c 1-1000
+          done
