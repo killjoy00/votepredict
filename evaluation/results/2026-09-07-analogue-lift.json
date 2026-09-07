@@ -1,0 +1,89 @@
+{
+  "metadata": {
+    "generatedAt": "2026-09-07T17:30:53.982Z",
+    "productionEvaluationRunId": 34147717616,
+    "operationalCodeSha": "953b5f7ae00fb01cc564baafa36b614909378cd7",
+    "policy": "production-equivalent title-token prefilter (30), top-10 deterministic-feature similarity plus recency; target and candidate versions must predate the vote day",
+    "leakageGuard": "same-day Revisor versions are excluded because date-only metadata cannot establish before/after-vote ordering"
+  },
+  "coverage": {
+    "passageEvents": 1264,
+    "featuredVersions": 1322,
+    "safeTargetEvents": 1006,
+    "eventsWithSelectedAnalogues": 993,
+    "meanSelectedAnalogues": 9.287009063444108,
+    "meanPrefilteredEvents": 28.401812688821753,
+    "directResolvedMemberRows": 97695
+  },
+  "memberComparable": {
+    "observations": 102260,
+    "base": {
+      "accuracy": 0.8173283786426755,
+      "brier": 0.12023830011350173,
+      "logLoss": 0.37048560680184406,
+      "expectedCalibrationError": 0.01884081082848966
+    },
+    "analogue": {
+      "accuracy": 0.8205456679053393,
+      "brier": 0.11917136543279103,
+      "logLoss": 0.36784352707848444,
+      "expectedCalibrationError": 0.019013414333613712
+    },
+    "deltaAnalogueMinusBase": {
+      "accuracy": 0.003217289262663847,
+      "brier": -0.0010669346807107016,
+      "logLoss": -0.002642079723359614,
+      "expectedCalibrationError": 0.00017260350512405404
+    },
+    "bySession": {
+      "2021-2022": {
+        "baseBrier": 0.10700839953256411,
+        "analogueBrier": 0.10498283666898357,
+        "baseAccuracy": 0.8370412807536841,
+        "analogueAccuracy": 0.8426111588529234
+      },
+      "2023-2024": {
+        "baseBrier": 0.13358077754067607,
+        "analogueBrier": 0.132603921992788,
+        "baseAccuracy": 0.7688843729071889,
+        "analogueAccuracy": 0.7724176154077085
+      },
+      "2025-2026": {
+        "baseBrier": 0.11435192297366753,
+        "analogueBrier": 0.11423707058611143,
+        "baseAccuracy": 0.8710145980100226,
+        "analogueAccuracy": 0.87105091146779,
+        "baseExpectedCalibrationError": 0.12791567562107858,
+        "analogueExpectedCalibrationError": 0.1277825562425573
+      }
+    }
+  },
+  "directMemberRows": {
+    "observations": 97695,
+    "baseBrier": 0.12085442772846475,
+    "analogueBrier": 0.11973763832829563,
+    "baseAccuracy": 0.8164286810993397,
+    "analogueAccuracy": 0.819796304826245,
+    "baseLogLoss": 0.3705295335021609,
+    "analogueLogLoss": 0.36776399716446495
+  },
+  "chamberComparable": {
+    "events": 993,
+    "baseMeanAbsoluteYesError": 18.682651197298185,
+    "analogueMeanAbsoluteYesError": 18.583061281555793,
+    "deltaMeanAbsoluteYesError": -0.09958991574239207,
+    "baseIntervalCoverage": 0.08257804632426989,
+    "analogueIntervalCoverage": 0.08459214501510574,
+    "basePassageBrier": 0.010070493454179234,
+    "analoguePassageBrier": 0.010070493454179234,
+    "passageBrierDelta": 0,
+    "passageBrierSkillVsAlwaysPassBase": 2.1094237467877974e-15,
+    "passageBrierSkillVsAlwaysPassAnalogue": 2.1094237467877974e-15
+  },
+  "interpretation": {
+    "analogueLayer": "Keep as a bounded bill-aware nudge. It produces a small but repeatable improvement in member accuracy, Brier score, log loss, and chamber Yes-count MAE on comparable historical rows.",
+    "currentSession": "The 2025-2026 lift is very small and calibration remains poor, so the analogue layer should not be described as strongly validated for current close-vote forecasting.",
+    "passageProbability": "The analogue layer produces no measurable passage-probability skill over the base model or the trivial always-pass baseline on this historical passage corpus.",
+    "voteRange": "The chamber range remains severely under-dispersed and is not a calibrated interval."
+  }
+}
