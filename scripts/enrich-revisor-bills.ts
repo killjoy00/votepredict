@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { fetchRevisorBill } from '../src/sources/minnesota/revisor.js';
+import { fetchRevisorBill, fetchRevisorBillVersion } from '../src/sources/minnesota/revisor.js';
 import { getMinnesotaHouseSession, MINNESOTA_HOUSE_HISTORICAL_SESSIONS } from '../src/sources/minnesota/sessions.js';
 
 function argumentValue(args: string[], name: string): string | undefined {
@@ -22,6 +22,7 @@ async function main(): Promise<void> {
   const sessions = requestedSession ? [getMinnesotaHouseSession(requestedSession)] : [...MINNESOTA_HOUSE_HISTORICAL_SESSIONS];
   const limit = parsePositiveInteger(argumentValue(args, '--limit'), '--limit');
   const includeText = args.includes('--include-text');
+  const includeVersions = args.includes('--include-versions');
   const skipExisting = args.includes('--skip-existing');
   const connectionString = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
   if (!connectionString) throw new Error('DATABASE_URL_UNPOOLED or DATABASE_URL is required');
@@ -41,13 +42,16 @@ async function main(): Promise<void> {
                          AND bv.raw_text IS NOT NULL
                          AND length(bv.raw_text) >= 100
                     )
+                  )
+                  AND (
+                    NOT $3::boolean OR COALESCE((b.metadata #>> '{revisor,versionHistoryLoaded}')::boolean, false)
                   )) AS already_enriched
            FROM bills b
            JOIN legislative_sessions s ON s.id = b.session_id
            JOIN jurisdictions j ON j.id = s.jurisdiction_id
           WHERE j.slug = 'us-mn' AND s.slug = $1
           ORDER BY b.identifier`,
-        [session.slug, includeText],
+        [session.slug, includeText, includeVersions],
       );
       const bills = limit ? result.rows.slice(0, limit) : result.rows;
       let skipped = 0;
@@ -59,6 +63,11 @@ async function main(): Promise<void> {
         } else {
           try {
             const metadata = await fetchRevisorBill(session.sessionKey, bill.identifier, includeText);
+            const historicalVersions = [];
+            if (includeVersions) {
+              for (const version of metadata.versions) historicalVersions.push(await fetchRevisorBillVersion(version));
+            }
+
             await pool.query('BEGIN');
             try {
               await pool.query(
@@ -80,6 +89,9 @@ async function main(): Promise<void> {
                       sessionStartYear: metadata.sessionStartYear,
                       currentVersion: metadata.currentVersion,
                       latestTextUrl: metadata.latestTextUrl,
+                      companionIdentifier: metadata.companionIdentifier,
+                      versionHistoryLoaded: includeVersions || undefined,
+                      versionCount: includeVersions ? historicalVersions.length : undefined,
                     },
                   }),
                 ],
@@ -95,6 +107,20 @@ async function main(): Promise<void> {
                      raw_text = EXCLUDED.raw_text,
                      source_url = EXCLUDED.source_url`,
                   [bill.id, metadata.currentVersion || 'latest', metadata.latestTextUrl, metadata.textSha256, metadata.text],
+                );
+              }
+
+              for (const version of historicalVersions) {
+                await pool.query(
+                  `INSERT INTO bill_versions (bill_id, version_key, published_at, text_url, text_hash, raw_text, source_url)
+                   VALUES ($1, $2, $3::date, $4, $5, $6, $4)
+                   ON CONFLICT (bill_id, version_key) DO UPDATE SET
+                     published_at = EXCLUDED.published_at,
+                     text_url = EXCLUDED.text_url,
+                     text_hash = EXCLUDED.text_hash,
+                     raw_text = EXCLUDED.raw_text,
+                     source_url = EXCLUDED.source_url`,
+                  [bill.id, version.versionKey, version.postedOn, version.textUrl, version.textSha256, version.text],
                 );
               }
               await pool.query('COMMIT');

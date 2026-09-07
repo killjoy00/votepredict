@@ -3,6 +3,13 @@ import { getMinnesotaHouseSession } from './sessions';
 
 const REVISOR_BASE = 'https://www.revisor.mn.gov';
 
+export interface RevisorBillVersionMetadata {
+  versionKey: string;
+  ordinal: number;
+  postedOn: string;
+  textUrl: string;
+}
+
 export interface RevisorBillMetadata {
   identifier: string;
   legislature: number;
@@ -10,8 +17,10 @@ export interface RevisorBillMetadata {
   title: string;
   description?: string;
   currentVersion?: string;
+  companionIdentifier?: string;
   sourceUrl: string;
   latestTextUrl: string;
+  versions: RevisorBillVersionMetadata[];
   text?: string;
   textSha256?: string;
 }
@@ -85,6 +94,29 @@ function parseCurrentVersion(html: string): string | undefined {
   return stripMarkup(match[1]) || undefined;
 }
 
+function parseCompanionIdentifier(html: string): string | undefined {
+  const match = html.match(/Companion:\s*<a\b[^>]*>\s*([HS]F)\s*0*(\d+)\s*<\/a>/i);
+  return match ? `${match[1].toUpperCase()}${Number(match[2])}` : undefined;
+}
+
+function parseVersionHistory(html: string, sourceUrl: string): RevisorBillVersionMetadata[] {
+  const versions = new Map<number, RevisorBillVersionMetadata>();
+  const pattern = /<a\b[^>]*href=["']([^"']*\/versions\/(\d+)\/)["'][^>]*>([\s\S]*?)<\/a>[\s\S]{0,240}?Posted on\s*(\d{2})\/(\d{2})\/(\d{4})/gi;
+  for (const match of html.matchAll(pattern)) {
+    const ordinal = Number(match[2]);
+    const versionKey = stripMarkup(match[3]);
+    if (!versionKey) continue;
+    const postedOn = `${match[6]}-${match[4]}-${match[5]}`;
+    versions.set(ordinal, {
+      versionKey,
+      ordinal,
+      postedOn,
+      textUrl: new URL(match[1], sourceUrl).toString(),
+    });
+  }
+  return [...versions.values()].sort((a, b) => a.ordinal - b.ordinal);
+}
+
 export function parseRevisorBillStatusHtml(input: { html: string; sessionKey: string; billIdentifier: string; sourceUrl: string }): RevisorBillMetadata {
   const session = getMinnesotaHouseSession(input.sessionKey);
   const identifier = normalizeBillIdentifier(input.billIdentifier);
@@ -103,8 +135,10 @@ export function parseRevisorBillStatusHtml(input: { html: string; sessionKey: st
     title: heading ?? `${identifier.slice(0, 2)} ${Number(identifier.slice(2))}`,
     description: descriptionMatch ? stripMarkup(descriptionMatch[1]) : undefined,
     currentVersion: parseCurrentVersion(input.html),
+    companionIdentifier: parseCompanionIdentifier(input.html),
     sourceUrl: input.sourceUrl,
     latestTextUrl: `${input.sourceUrl}versions/latest/`,
+    versions: parseVersionHistory(input.html, input.sourceUrl),
   };
 }
 
@@ -123,6 +157,12 @@ async function fetchOfficial(url: string): Promise<OfficialResponse> {
   });
   if (!response.ok) throw new RevisorFetchError(response.status, url);
   return { text: await response.text(), finalUrl: response.url || url };
+}
+
+export async function fetchRevisorBillVersion(version: RevisorBillVersionMetadata): Promise<RevisorBillVersionMetadata & { text: string; textSha256: string }> {
+  const response = await fetchOfficial(version.textUrl);
+  const parsed = parseRevisorBillTextHtml(response.text);
+  return { ...version, textUrl: response.finalUrl, text: parsed.text, textSha256: parsed.sha256 };
 }
 
 export async function fetchRevisorBill(sessionKey: string, billIdentifier: string, includeText = false): Promise<RevisorBillMetadata> {
