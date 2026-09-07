@@ -1,4 +1,5 @@
 import { simulateChamber, type ChamberSimulation, type PassageRule } from '../forecasting/chamber';
+import { diagnoseEvidence, type EvidenceDiagnostics } from './diagnostics';
 import { applyEvidenceSignals } from './impact';
 import type { DeepResearchProvider, DeepResearchProviderResult } from './provider';
 import { selectDeepResearchTargets, type DeepResearchCandidate } from './targeting';
@@ -40,6 +41,7 @@ export interface DeepResearchExecution {
   diagnostics: {
     unscopedEvidence: number;
     unresolvedMembers: number;
+    evidence: EvidenceDiagnostics;
     providerDiagnostics?: Record<string, unknown>;
   };
 }
@@ -128,6 +130,7 @@ export async function executeDeepResearch(
     const update = memberUpdates.find((row) => row.membershipId === member.membershipId);
     return { yesProbability: update?.probabilityAfter };
   });
+  const evidenceDiagnostics = diagnoseEvidence(providerResult.evidence);
 
   return {
     provider: providerResult.provider,
@@ -140,6 +143,7 @@ export async function executeDeepResearch(
     diagnostics: {
       unscopedEvidence: providerResult.evidence.filter((draft) => !draft.targetMembershipId || !targetedIds.has(draft.targetMembershipId)).length,
       unresolvedMembers: memberUpdates.filter((update) => update.probabilityAfter === undefined).length,
+      evidence: evidenceDiagnostics,
       providerDiagnostics: providerResult.diagnostics,
     },
   };
