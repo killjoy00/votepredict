@@ -101,7 +101,7 @@ function parseCompanionIdentifier(html: string): string | undefined {
 
 function parseVersionHistory(html: string, sourceUrl: string): RevisorBillVersionMetadata[] {
   const versions = new Map<number, RevisorBillVersionMetadata>();
-  const pattern = /<a\b[^>]*href=["']([^"']*(?:^|\/)versions\/(\d+)\/)["'][^>]*>([\s\S]*?)<\/a>[\s\S]{0,240}?Posted on\s*(\d{2})\/(\d{2})\/(\d{4})/gim;
+  const pattern = /<a\b[^>]*href=["']([^"']*versions\/(\d+)\/)["'][^>]*>([\s\S]*?)<\/a>[\s\S]{0,240}?Posted on\s*(\d{2})\/(\d{2})\/(\d{4})/gi;
   for (const match of html.matchAll(pattern)) {
     const ordinal = Number(match[2]);
     const versionKey = stripMarkup(match[3]);
