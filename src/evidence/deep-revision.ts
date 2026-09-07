@@ -2,7 +2,7 @@ import { simulateChamber, type ChamberSimulation, type PassageRule } from '../fo
 import { diagnoseEvidence, type EvidenceDiagnostics } from './diagnostics';
 import { applyEvidenceSignals } from './impact';
 import { evidenceImpactPolicy } from './policy';
-import type { DeepResearchProvider, DeepResearchProviderResult, DeepResearchSubject } from './provider';
+import type { DeepResearchProvider, DeepResearchProviderResult, DeepResearchSourceReference, DeepResearchSubject } from './provider';
 import { selectDeepResearchTargets, type DeepResearchCandidate } from './targeting';
 import type { DeepResearchTarget, EvidenceDraft, EvidenceSignal } from './types';
 
@@ -44,6 +44,7 @@ export interface DeepMemberUpdate {
 export interface DeepResearchExecution {
   provider: string;
   providerVersion?: string;
+  sourceReferences: DeepResearchSourceReference[];
   targets: DeepResearchTarget[];
   evidence: EvidenceDraft[];
   memberUpdates: DeepMemberUpdate[];
@@ -156,6 +157,7 @@ export async function executeDeepResearch(
   return {
     provider: providerResult.provider,
     providerVersion: providerResult.providerVersion,
+    sourceReferences: providerResult.sourceReferences ?? [],
     targets,
     evidence: providerResult.evidence,
     memberUpdates,
