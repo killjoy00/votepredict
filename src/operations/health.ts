@@ -29,6 +29,7 @@ export type OperationalHealth = {
     running: number;
     latestFinishedAt?: string;
   };
+  continuousForecasting: { enabledSchedules: number; dueSchedules: number; completed24Hours: number; failed24Hours: number; openDriftAlerts: number };
   warnings: string[];
 };
 
@@ -95,6 +96,12 @@ export async function getOperationalHealth(): Promise<OperationalHealth> {
            count(*) FILTER (WHERE status IN ('pending', 'running'))::int AS running,
            max(finished_at)::text AS latest_finished_at
       FROM research_runs`);
+  const continuousResult = await pool.query<{ enabled_schedules: number; due_schedules: number; completed_24h: number; failed_24h: number; open_drift_alerts: number }>(`
+    SELECT (SELECT count(*) FROM forecast_schedules WHERE enabled)::int AS enabled_schedules,
+           (SELECT count(*) FROM forecast_schedules WHERE enabled AND next_run_at <= now())::int AS due_schedules,
+           (SELECT count(*) FROM forecast_snapshot_runs WHERE status = 'completed' AND started_at >= now() - interval '24 hours')::int AS completed_24h,
+           (SELECT count(*) FROM forecast_snapshot_runs WHERE status = 'failed' AND started_at >= now() - interval '24 hours')::int AS failed_24h,
+           (SELECT count(*) FROM model_drift_alerts WHERE status = 'open')::int AS open_drift_alerts`);
 
   const ingestion = ingestionResult.rows.map((row) => ({
     sourceSystem: row.source_system,
@@ -124,6 +131,11 @@ export async function getOperationalHealth(): Promise<OperationalHealth> {
     running: Number(researchRow.running),
     latestFinishedAt: researchRow.latest_finished_at ?? undefined,
   };
+  const continuousRow = continuousResult.rows[0] ?? { enabled_schedules: 0, due_schedules: 0, completed_24h: 0, failed_24h: 0, open_drift_alerts: 0 };
+  const continuousForecasting = {
+    enabledSchedules: Number(continuousRow.enabled_schedules), dueSchedules: Number(continuousRow.due_schedules),
+    completed24Hours: Number(continuousRow.completed_24h), failed24Hours: Number(continuousRow.failed_24h), openDriftAlerts: Number(continuousRow.open_drift_alerts),
+  };
 
   const warnings: string[] = [];
   for (const run of ingestion) {
@@ -135,6 +147,9 @@ export async function getOperationalHealth(): Promise<OperationalHealth> {
   }
   if (research.failed > 0) warnings.push(`Deep research: ${research.failed} failed run${research.failed === 1 ? '' : 's'} in the last 24 hours.`);
   if (research.running > 0) warnings.push(`Deep research: ${research.running} run${research.running === 1 ? '' : 's'} still pending/running.`);
+  if (continuousForecasting.failed24Hours > 0) warnings.push(`Continuous forecasting: ${continuousForecasting.failed24Hours} snapshot failure${continuousForecasting.failed24Hours === 1 ? '' : 's'} in the last 24 hours.`);
+  if (continuousForecasting.dueSchedules > 0) warnings.push(`Continuous forecasting: ${continuousForecasting.dueSchedules} schedule${continuousForecasting.dueSchedules === 1 ? '' : 's'} overdue.`);
+  if (continuousForecasting.openDriftAlerts > 0) warnings.push(`Models: ${continuousForecasting.openDriftAlerts} open drift alert${continuousForecasting.openDriftAlerts === 1 ? '' : 's'}.`);
 
-  return { generatedAt: new Date(now).toISOString(), ingestion, sourceFreshness, research, warnings };
+  return { generatedAt: new Date(now).toISOString(), ingestion, sourceFreshness, research, continuousForecasting, warnings };
 }

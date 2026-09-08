@@ -58,6 +58,8 @@ export default async function OperationsPage() {
           <div className="health-block"><h3>Latest ingestion runs</h3>{health.ingestion.length === 0 ? <p>No ingestion run history recorded.</p> : health.ingestion.map((run) => <div className="health-row" key={`${run.sourceSystem}-${run.scope}`}><div><strong>{run.sourceSystem}</strong><small>{run.scope}</small></div><span className={`status ${run.status}`}>{run.status}</span><span>{hours(run.ageHours)} ago</span><small>{run.voteEvents} votes · {run.memberVotes} member votes</small></div>)}</div>
           <div className="health-block"><h3>Source freshness</h3>{health.sourceFreshness.map((source) => <div className="health-row" key={source.sourceKind}><div><strong>{source.sourceKind}</strong><small>{source.documents} documents</small></div><span>{hours(source.ageHours)} ago</span><small>{source.recentHttpFailures ? `${source.recentHttpFailures} recent HTTP failures` : 'no recent HTTP failures'}</small></div>)}</div>
           <div className="research-line"><span>Deep research, last 24h</span><strong>{health.research.completed} completed · {health.research.failed} failed · {health.research.running} active</strong></div>
+          <div className="research-line"><span>Daily forecast snapshots</span><strong>{health.continuousForecasting.enabledSchedules} enabled · {health.continuousForecasting.completed24Hours} completed · {health.continuousForecasting.failed24Hours} failed</strong></div>
+          <div className="research-line"><span>Model monitoring</span><strong>{health.continuousForecasting.openDriftAlerts} open drift alerts · {health.continuousForecasting.dueSchedules} overdue</strong></div>
         </section>
       </div>
 

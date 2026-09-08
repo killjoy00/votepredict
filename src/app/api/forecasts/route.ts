@@ -5,7 +5,7 @@ import { executeRuntimeForecast, ForecastRuntimeError, type ForecastRuntimeSubje
 import { floorTargetForChamber, forecastTargetDefinition } from '@/forecasting/targets';
 import { requireOwner } from '@/lib/auth/guard';
 import { db, pool } from '@/lib/db';
-import { bills, chambers, forecasts, legislativeSessions, proposals } from '@/lib/db/schema';
+import { bills, chambers, forecasts, forecastSchedules, legislativeSessions, proposals } from '@/lib/db/schema';
 
 type CreateForecastBody = {
   sourceMode?: 'official' | 'proposal';
@@ -136,6 +136,9 @@ export async function POST(request: Request) {
   // PR 9 pins every forecast identity to the session in which it was created so proposal
   // updates remain reproducible after the jurisdiction's current session changes.
   await pool.query(`UPDATE forecasts SET session_id = $2 WHERE id = $1`, [forecast.id, session.id]);
+  if (body.sourceMode === 'official') {
+    await db.insert(forecastSchedules).values({ forecastId: forecast.id, researchMode: 'quick' }).onConflictDoNothing();
+  }
 
   const baseRequest = {
     forecastId: forecast.id,
