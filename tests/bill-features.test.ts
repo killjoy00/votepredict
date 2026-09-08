@@ -23,6 +23,23 @@ test('feature similarity rewards substantively similar bills', () => {
   assert.ok(billFeatureSimilarity(health, similar) > billFeatureSimilarity(health, tax));
 });
 
+test('gambling policy design contributes to analogue similarity', () => {
+  const tribal = extractDeterministicBillFeatures({
+    title: 'Sports wagering authorization',
+    text: 'Tribal nations may operate mobile sports wagering. Racetracks receive revenue distributions.',
+  });
+  const sameDesign = extractDeterministicBillFeatures({
+    title: 'Mobile wagering licenses',
+    text: 'Tribal nations may operate mobile sports wagering and fund horse racing.',
+  });
+  const commercial = extractDeterministicBillFeatures({
+    title: 'Sports wagering authorization',
+    text: 'Commercial operators and racetracks may obtain retail sports wagering licenses.',
+  });
+  assert.equal(tribal.gambling?.licenseModel, 'tribal_exclusive');
+  assert.ok(billFeatureSimilarity(tribal, sameDesign) > billFeatureSimilarity(tribal, commercial));
+});
+
 test('version selection never uses a version published after the cutoff', () => {
   const versions = [
     { publishedAt: '2025-01-10T00:00:00Z', key: 'intro' },

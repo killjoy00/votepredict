@@ -1,7 +1,8 @@
 import { createHash } from 'node:crypto';
+import { extractGamblingBillFeatures, type GamblingBillFeatures } from '../gambling/policy';
 
-export const BILL_FEATURE_SCHEMA_VERSION = 'bill-features-v1';
-export const DETERMINISTIC_EXTRACTOR_VERSION = 'deterministic-v1';
+export const BILL_FEATURE_SCHEMA_VERSION = 'bill-features-v2';
+export const DETERMINISTIC_EXTRACTOR_VERSION = 'deterministic-v2';
 
 export type FiscalDirection = 'expansionary' | 'contractionary' | 'mixed' | 'unknown';
 
@@ -22,6 +23,7 @@ export interface DeterministicBillFeatures {
     bonding: boolean;
     direction: FiscalDirection;
   };
+  gambling?: GamblingBillFeatures;
 }
 
 export interface BillFeatureIdentity {
@@ -165,6 +167,7 @@ export function extractDeterministicBillFeatures(input: { title: string; text: s
       bonding: actionTypes.includes('bonding'),
       direction: fiscalDirection(input.text, actionTypes),
     },
+    gambling: extractGamblingBillFeatures(input.title, input.text),
   };
 }
 
@@ -186,12 +189,23 @@ function structuralSimilarity(a: number, b: number): number {
 
 export function billFeatureSimilarity(a: DeterministicBillFeatures, b: DeterministicBillFeatures): number {
   if (a.bodyHash === b.bodyHash) return 1;
-  return 0.24 * jaccard(a.policyAreas, b.policyAreas)
+  const generic = 0.24 * jaccard(a.policyAreas, b.policyAreas)
     + 0.18 * jaccard(a.actionTypes, b.actionTypes)
     + 0.10 * jaccard(a.affectedEntities, b.affectedEntities)
     + 0.20 * jaccard(a.keywords, b.keywords)
     + 0.16 * jaccard(a.titleTokens, b.titleTokens)
     + 0.12 * structuralSimilarity(a.tokenCount, b.tokenCount);
+  if (!a.gambling || !b.gambling) return generic;
+  const designMatches = [
+    a.gambling.topic === b.gambling.topic,
+    a.gambling.licenseModel === b.gambling.licenseModel,
+    a.gambling.mobileAllowed === b.gambling.mobileAllowed,
+    a.gambling.retailAllowed === b.gambling.retailAllowed,
+    a.gambling.racetrackRole === b.gambling.racetrackRole,
+    a.gambling.collegeBettingPolicy === b.gambling.collegeBettingPolicy,
+  ];
+  const designSimilarity = designMatches.filter(Boolean).length / designMatches.length;
+  return 0.7 * generic + 0.3 * designSimilarity;
 }
 
 export function classifyBillRelationship(a: BillFeatureIdentity, b: BillFeatureIdentity): AnalogueResult['relationship'] | undefined {
