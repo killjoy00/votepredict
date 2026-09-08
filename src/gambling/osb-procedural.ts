@@ -94,12 +94,8 @@ export const SF3414_OSB_PROCEDURAL_VOTE = {
 const NO_NAME_ALIASES = new Map<string, string>([
   ['Jim J. Abeler', 'Jim Abeler'],
   ['Bruce D. Anderson', 'Bruce Anderson'],
-  ['Cal K. Bahr', 'Cal Bahr'],
-  ['Jim Carlson', 'James Carlson'],
-  ['Gary H. Dahms', 'Gary Dahms'],
-  ['John R. Jasinski', 'John Jasinski'],
-  ['Mark W. Koran', 'Mark Koran'],
-  ['Paul J. Utke', 'Paul Utke'],
+  ['Cal K. Bahr', 'Calvin K. Bahr'],
+  ['Jeff Howe', 'Jeff R. Howe'],
 ]);
 
 function normalizedMatch(memberName: string, sourceName: string): boolean {
