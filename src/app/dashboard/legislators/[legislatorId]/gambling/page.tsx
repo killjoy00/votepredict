@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { requireOwner } from '@/lib/auth/guard';
-import { gamblingTopicLabel } from '@/gambling/policy';
 import { loadLegislatorGamblingProfile } from '@/gambling/intelligence';
+import { getSf3414OsbProceduralVote } from '@/gambling/osb-procedural';
+import { gamblingTopicLabel } from '@/gambling/policy';
 import styles from './gambling-profile.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -33,6 +34,7 @@ export default async function LegislatorGamblingPage({ params }: PageProps) {
   const alignment = profile.tribalGamingAlignment;
   const directVotes = profile.votes.filter((vote) => vote.scope === 'direct');
   const embeddedVotes = profile.votes.filter((vote) => vote.scope === 'embedded');
+  const osbProcedural = getSf3414OsbProceduralVote(profile.name);
 
   return (
     <main className={styles.shell}>
@@ -69,12 +71,40 @@ export default async function LegislatorGamblingPage({ params }: PageProps) {
       <section className={styles.metrics}>
         <article><span>Direct gambling votes</span><strong>{directVotes.length}</strong><small>Dedicated gambling legislation</small></article>
         <article><span>Embedded-bill votes</span><strong>{embeddedVotes.length}</strong><small>Shown as context, not automatic stance</small></article>
-        <article><span>Public-position records</span><strong>{profile.publicRecord.length}</strong><small>Votes, sponsorships and sourced statements</small></article>
+        <article><span>Public-position records</span><strong>{profile.publicRecord.length + (osbProcedural ? 1 : 0)}</strong><small>Votes, sponsorships and sourced statements</small></article>
         <article><span>Gaming finance matches</span><strong>{profile.gamingFinance.length}</strong><small>Keyword-matched disclosure context only</small></article>
       </section>
 
       <div className={styles.grid}>
         <div className={styles.mainStack}>
+          {osbProcedural ? (
+            <section className={styles.panel}>
+              <header className={styles.panelHeader}>
+                <div><span className={styles.kicker}>High-value procedural signal</span><h2>2025 Senate OSB advancement vote</h2></div>
+                <span>SF3414 · Apr 23, 2025 · motion failed 15–50</span>
+              </header>
+              <div className={styles.voteList}>
+                <article className={styles.voteRow}>
+                  <span className={`${styles.choice} ${osbProcedural.choice === 'nay' ? styles.choiceNo : ''}`}>{osbProcedural.choice === 'yea' ? 'YES' : 'NO'}</span>
+                  <div className={styles.voteIdentity}>
+                    <div className={styles.tags}>
+                      <span>procedural</span>
+                      <span>sports betting</span>
+                      <span>{date(osbProcedural.occurredOn)}</span>
+                      {osbProcedural.supportsOsb ? <span>OSB support signal</span> : <span>not scored as OSB opposition</span>}
+                    </div>
+                    <strong>{osbProcedural.identifier} · motion to advance the sports-betting bill</strong>
+                    <small>{osbProcedural.motion} · Senate tally {osbProcedural.tally}</small>
+                  </div>
+                  <a href={osbProcedural.journalUrl} target="_blank" rel="noreferrer">Journal ↗</a>
+                </article>
+              </div>
+              <p className={styles.note}>
+                A Yes vote is treated as affirmative evidence of support for advancing online sports betting. A No vote is preserved as a procedural action but is not automatically treated as substantive opposition to OSB.
+              </p>
+            </section>
+          ) : null}
+
           <section className={styles.panel}>
             <header className={styles.panelHeader}><div><span className={styles.kicker}>Public record</span><h2>Position by gambling topic</h2></div><span>Statements stay separate from inferred positions</span></header>
             {profile.topicSummaries.length > 0 ? (
