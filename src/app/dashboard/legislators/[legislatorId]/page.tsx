@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { requireOwner } from '@/lib/auth/guard';
+import { loadLegislatorIssueSummaries } from '@/legislators/issue-summary';
 import { loadLegislatorProfile } from '@/legislators/profile';
+import issueStyles from './issue-summary.module.css';
 import styles from '../legislators.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -39,7 +41,10 @@ function sourceKind(value: string): string {
 export default async function LegislatorProfilePage({ params }: PageProps) {
   await requireOwner();
   const { legislatorId } = await params;
-  const profile = await loadLegislatorProfile(legislatorId);
+  const [profile, issueSummaries] = await Promise.all([
+    loadLegislatorProfile(legislatorId),
+    loadLegislatorIssueSummaries(legislatorId),
+  ]);
   if (!profile) notFound();
 
   const member = profile.currentMembership;
@@ -99,8 +104,8 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
         </article>
         <article className={styles.metricCard}>
           <span>Primary issue areas</span>
-          <strong>{profile.issues.length}</strong>
-          <small>Deterministically classified bill titles</small>
+          <strong>{issueSummaries.length}</strong>
+          <small>Top classified policy areas · “Other” excluded</small>
         </article>
       </section>
 
@@ -109,36 +114,93 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
           <section className={styles.panel}>
             <header className={styles.panelHeader}>
               <div>
-                <span className={styles.kicker}>Issue record</span>
-                <h2>Where the voting history is concentrated</h2>
+                <span className={styles.kicker}>Issue intelligence</span>
+                <h2>How this legislator behaves by issue</h2>
               </div>
-              <span>Primary issue from bill title · click an issue for its dossier</span>
+              <span>Voting patterns, party breaks, cross-party overlap and sourced evidence · tap for full dossier</span>
             </header>
-            {profile.issues.length > 0 ? (
-              <div className={styles.issueList}>
-                {profile.issues.map((issue) => (
-                  <Link
-                    className={styles.issueRow}
-                    href={`/dashboard/legislators/${legislatorId}/issues/${encodeURIComponent(issue.area)}`}
-                    key={issue.area}
-                    style={{ color: 'inherit', textDecoration: 'none' }}
-                  >
-                    <div className={styles.issueName}>
-                      <strong>{issueName(issue.area)}</strong>
-                      <span>{issue.rollCallVotes} roll calls · latest {date(issue.latestVoteOn)}</span>
-                    </div>
-                    <div className={styles.issueBar} aria-label={`${percent(issue.yesRate)} Yes rate`}>
-                      <span style={{ width: `${Math.round((issue.yesRate ?? 0) * 100)}%` }} />
-                    </div>
-                    <div className={styles.issueRate}>{percent(issue.yesRate)} Yes →</div>
-                  </Link>
-                ))}
+            {issueSummaries.length > 0 ? (
+              <div className={issueStyles.summaryList}>
+                {issueSummaries.map((issue) => {
+                  const peer = issue.strongestCrossParty;
+                  return (
+                    <Link
+                      className={issueStyles.summaryCard}
+                      href={`/dashboard/legislators/${legislatorId}/issues/${encodeURIComponent(issue.area)}`}
+                      key={issue.area}
+                    >
+                      <div className={issueStyles.summaryTop}>
+                        <div className={issueStyles.identity}>
+                          <strong>{issueName(issue.area)}</strong>
+                          <span>{issue.rollCallVotes} roll calls · {issue.distinctBills} bills · latest {date(issue.latestVoteOn)}</span>
+                        </div>
+                        <div className={issueStyles.yesRate}>
+                          {percent(issue.yesRate)}
+                          <small>Yes activity</small>
+                        </div>
+                      </div>
+
+                      <div className={issueStyles.bar} aria-label={`${percent(issue.yesRate)} Yes activity`}>
+                        <span style={{ width: `${Math.round((issue.yesRate ?? 0) * 100)}%` }} />
+                      </div>
+
+                      <div className={issueStyles.stats}>
+                        <div className={issueStyles.stat}>
+                          <span>Party alignment</span>
+                          <strong>{percent(issue.partyAlignment)}</strong>
+                        </div>
+                        <div className={issueStyles.stat}>
+                          <span>Party breaks</span>
+                          <strong>{issue.partyBreaks}</strong>
+                        </div>
+                        <div className={issueStyles.stat}>
+                          <span>Closest margin</span>
+                          <strong>{issue.closestMargin ?? '—'}</strong>
+                        </div>
+                        <div className={issueStyles.stat}>
+                          <span>Sourced evidence</span>
+                          <strong>{issue.evidenceCount}</strong>
+                        </div>
+                      </div>
+
+                      <div className={issueStyles.signalRow}>
+                        {issue.partyBreaks > 0 ? (
+                          <span className={issueStyles.signalStrong}>
+                            {issue.partyBreaks} party break{issue.partyBreaks === 1 ? '' : 's'} worth reviewing
+                          </span>
+                        ) : (
+                          <span className={issueStyles.signal}>No recorded party breaks</span>
+                        )}
+                        {issue.closestMargin !== undefined && issue.closestMargin <= 3 ? (
+                          <span className={issueStyles.signalStrong}>Close chamber vote in record</span>
+                        ) : null}
+                        {issue.evidenceCount > 0 ? (
+                          <span className={issueStyles.signalEvidence}>
+                            {issue.evidenceCount} sourced item{issue.evidenceCount === 1 ? '' : 's'}
+                          </span>
+                        ) : null}
+                      </div>
+
+                      {peer ? (
+                        <div className={issueStyles.crossParty}>
+                          <span>Strongest current-session cross-party overlap: {peer.name} ({peer.party} · {peer.district})</span>
+                          <strong>{percent(peer.agreement)} · {peer.sharedVotes} shared</strong>
+                        </div>
+                      ) : (
+                        <div className={issueStyles.crossParty}>
+                          <span>No cross-party comparison with at least 8 shared issue votes</span>
+                          <strong className={issueStyles.openCue}>Open dossier →</strong>
+                        </div>
+                      )}
+                    </Link>
+                  );
+                })}
               </div>
             ) : (
-              <p className={styles.note}>No bill-linked roll-call history is available for this legislator yet.</p>
+              <p className={styles.note}>No classified bill-linked roll-call history is available for this legislator yet.</p>
             )}
             <p className={styles.note}>
-              “Yes rate” is the share of bill-linked recorded roll calls assigned to that primary issue that received a Yes vote. Categories come from bill titles and should be read as activity summaries, not policy-support scores.
+              Issue categories are derived from bill titles. Yes activity is descriptive, not an ideology or support score. Party alignment compares each vote with the member’s party majority on that roll call; cross-party overlap is descriptive co-voting, not evidence of coordination.
             </p>
           </section>
 
