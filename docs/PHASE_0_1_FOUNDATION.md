@@ -36,3 +36,7 @@ These fields are inspectable candidate features. They do **not** mechanically mo
 ## Next ingestion increment
 
 The next increment should parse official bill actions into `legislative_stage_events`, resolve rules from `vote_rules`, and produce a checked-in gambling-only forward-chaining benchmark. The existing floor model remains available during that work, but the UI must preserve its conditional and uncalibrated label.
+
+## Phase 2 candidate
+
+Phase 2 adds `gambling-hierarchical-v1-candidate`, a partially pooled, recency-weighted member model for gambling topics and matching policy designs. Sponsorship, committee, leadership, and majority-party inputs are represented, but default to zero effect until their coefficients earn promotion in held-out evaluation. `npm run eval:gambling-model` compares the candidate with the generic member baseline after v2 bill features have been backfilled.
