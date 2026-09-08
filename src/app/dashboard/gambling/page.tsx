@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { requireOwner } from '@/lib/auth/guard';
-import { gamblingTopicLabel } from '@/gambling/policy';
 import { loadGamblingDashboard } from '@/gambling/intelligence';
+import { SF3414_OSB_PROCEDURAL_VOTE } from '@/gambling/osb-procedural';
+import { gamblingTopicLabel } from '@/gambling/policy';
 import styles from './gambling.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -24,6 +25,8 @@ export default async function GamblingDashboardPage() {
   const embedded = data.bills.filter((bill) => bill.scope === 'embedded');
   const mentions = data.bills.filter((bill) => bill.scope === 'mention');
   const rated = data.members.filter((member) => member.tribalGamingAlignment.score !== undefined);
+  const osbSupportNames = new Set<string>(SF3414_OSB_PROCEDURAL_VOTE.yesNames);
+  const osbSupporters = data.members.filter((member) => osbSupportNames.has(member.name));
 
   return (
     <main className={styles.shell}>
@@ -86,6 +89,44 @@ export default async function GamblingDashboardPage() {
                 </article>
               ))}
             </div>
+          </section>
+
+          <section className={styles.panel}>
+            <header className={styles.panelHeader}>
+              <div><span className={styles.kicker}>High-value procedural signal</span><h2>2025 Senate OSB advancement vote</h2></div>
+              <span>{SF3414_OSB_PROCEDURAL_VOTE.tally} · motion failed</span>
+            </header>
+            <div className={styles.billRow}>
+              <div className={styles.billIdentity}>
+                <div className={styles.billTags}>
+                  <span>Apr 23, 2025</span>
+                  <span>Senate procedural vote</span>
+                  <span>Yes = OSB support</span>
+                </div>
+                <strong>{SF3414_OSB_PROCEDURAL_VOTE.identifier} · {SF3414_OSB_PROCEDURAL_VOTE.billTitle}</strong>
+                <small>{SF3414_OSB_PROCEDURAL_VOTE.motion}. The motion failed 15–50.</small>
+              </div>
+              <div className={styles.topLinks}>
+                <a href={SF3414_OSB_PROCEDURAL_VOTE.billUrl} target="_blank" rel="noreferrer">Bill ↗</a>
+                <a href={SF3414_OSB_PROCEDURAL_VOTE.journalUrl} target="_blank" rel="noreferrer">Senate journal ↗</a>
+              </div>
+            </div>
+            <div className={styles.memberTable}>
+              <div className={`${styles.memberRow} ${styles.memberHead}`}>
+                <span>Yes voter</span><span>Signal</span><span>Chamber</span><span>District</span>
+              </div>
+              {osbSupporters.map((member) => (
+                <Link href={`/dashboard/legislators/${member.legislatorId}/gambling`} className={styles.memberRow} key={member.legislatorId}>
+                  <span className={styles.memberIdentity}><strong>{member.name}</strong><small>{member.party}</small></span>
+                  <strong className={styles.score}>OSB+</strong>
+                  <span>{member.chamberName}</span>
+                  <span>{member.district}</span>
+                </Link>
+              ))}
+            </div>
+            <p className={styles.note}>
+              VotePredict treats a Yes vote on this motion as affirmative evidence of support for advancing online sports betting. A procedural No is retained in an individual dossier but is not, by itself, treated as proof of substantive opposition to OSB.
+            </p>
           </section>
 
           <section className={styles.panel}>
