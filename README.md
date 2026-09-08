@@ -50,6 +50,7 @@ npm run features:bills:backfill   # materialize deterministic bill feature sets
 npm run eval:baselines            # reproduce baseline evaluation artifact
 npm run eval:member-model         # reproduce member-model evaluation
 npm run eval:gambling-model       # evaluate the unpromoted gambling-domain candidate
+npm run forecasts:scheduled       # run due snapshots and safe outcome reconciliation
 ```
 
 CI also runs the complete migration chain against a fresh PostgreSQL database before typecheck/tests/build, so checked-in migrations must remain able to construct a clean database from zero.

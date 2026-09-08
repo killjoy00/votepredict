@@ -4,6 +4,7 @@
   "installCommand": "npm ci --no-fund --no-audit",
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
+  "crons": [{ "path": "/api/cron/forecasts", "schedule": "17 11 * * *" }],
   "git": {
     "deploymentEnabled": {
       "*": false,

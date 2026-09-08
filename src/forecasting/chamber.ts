@@ -18,6 +18,28 @@ export interface ChamberSimulation {
   systematicSigmaVotes: number;
 }
 
+export const COALITION_SIMULATION_VERSION = 'coalition-logistic-normal-v1';
+export interface CoalitionMemberProbability { probability: number; coalition: string; }
+export interface CoalitionSimulationOptions {
+  simulations?: number;
+  seed?: number;
+  interval?: number;
+  chamberShockSigma?: number;
+  coalitionShockSigma?: number;
+  billShockSigma?: number;
+}
+export interface CoalitionChamberSimulation {
+  version: typeof COALITION_SIMULATION_VERSION;
+  simulations: number;
+  expectedYes: number;
+  yesLow: number;
+  yesHigh: number;
+  passageProbability: number;
+  requiredYes: number;
+  distribution: number[];
+  assumptions: { chamberShockSigma: number; coalitionShockSigma: number; billShockSigma: number };
+}
+
 function validateCount(value: number, label: string): void {
   if (!Number.isInteger(value) || value < 0) throw new Error(`${label} must be a non-negative integer`);
 }
@@ -143,4 +165,73 @@ export function simulateChamber(
 export function empiricalIntervalCoverage(rows: readonly { actualYes: number; yesLow: number; yesHigh: number }[]): number {
   if (rows.length === 0) return Number.NaN;
   return rows.filter((row) => row.actualYes >= row.yesLow && row.actualYes <= row.yesHigh).length / rows.length;
+}
+
+function seededRandom(seed: number): () => number {
+  let state = seed >>> 0;
+  return () => {
+    state += 0x6d2b79f5;
+    let value = state;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    return ((value ^ (value >>> 14)) >>> 0) / 4_294_967_296;
+  };
+}
+
+function normal(random: () => number): number {
+  const u = Math.max(Number.EPSILON, random());
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * random());
+}
+
+function probabilityLogit(probability: number): number {
+  if (!Number.isFinite(probability) || probability < 0 || probability > 1) throw new Error('member probabilities must be between 0 and 1');
+  const bounded = Math.max(0.000_001, Math.min(0.999_999, probability));
+  return Math.log(bounded / (1 - bounded));
+}
+
+export function simulateCoalitionChamber(
+  members: readonly CoalitionMemberProbability[],
+  rule: PassageRule,
+  options: CoalitionSimulationOptions = {},
+): CoalitionChamberSimulation {
+  const simulations = options.simulations ?? 25_000;
+  const interval = options.interval ?? 0.8;
+  if (!Number.isInteger(simulations) || simulations < 1_000) throw new Error('simulations must be an integer >= 1000');
+  if (!(interval > 0 && interval < 1)) throw new Error('interval must be between 0 and 1');
+  const assumptions = {
+    chamberShockSigma: options.chamberShockSigma ?? 0.2,
+    coalitionShockSigma: options.coalitionShockSigma ?? 0.45,
+    billShockSigma: options.billShockSigma ?? 0.35,
+  };
+  if (Object.values(assumptions).some((value) => !Number.isFinite(value) || value < 0)) throw new Error('shock sigmas must be finite and non-negative');
+  const requiredYes = requiredYesForRule(rule, members.length);
+  const random = seededRandom(options.seed ?? 20_260_908);
+  const counts = Array(members.length + 1).fill(0) as number[];
+  const logits = members.map((member) => probabilityLogit(member.probability));
+  const coalitions = [...new Set(members.map((member) => member.coalition))];
+  for (let simulation = 0; simulation < simulations; simulation += 1) {
+    const chamberShock = normal(random) * assumptions.chamberShockSigma;
+    const billShock = normal(random) * assumptions.billShockSigma;
+    const coalitionShocks = new Map(coalitions.map((coalition) => [coalition, normal(random) * assumptions.coalitionShockSigma]));
+    let yes = 0;
+    for (let index = 0; index < members.length; index += 1) {
+      const probability = 1 / (1 + Math.exp(-(logits[index] + chamberShock + billShock + (coalitionShocks.get(members[index].coalition) ?? 0))));
+      if (random() < probability) yes += 1;
+    }
+    counts[yes] += 1;
+  }
+  const distribution = counts.map((count) => count / simulations);
+  const expectedYes = distribution.reduce((sum, probability, yes) => sum + probability * yes, 0);
+  const tail = (1 - interval) / 2;
+  return {
+    version: COALITION_SIMULATION_VERSION,
+    simulations,
+    expectedYes,
+    yesLow: quantile(distribution, tail),
+    yesHigh: quantile(distribution, 1 - tail),
+    passageProbability: distribution.slice(requiredYes).reduce((sum, probability) => sum + probability, 0),
+    requiredYes,
+    distribution,
+    assumptions,
+  };
 }

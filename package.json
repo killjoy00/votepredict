@@ -28,7 +28,8 @@
     "eval:baselines": "tsx scripts/evaluate-baselines.ts",
     "eval:member-model": "tsx scripts/evaluate-member-model.ts",
     "eval:analogue-lift": "tsx scripts/evaluate-analogue-lift.ts",
-    "eval:gambling-model": "tsx scripts/evaluate-gambling-model.ts"
+    "eval:gambling-model": "tsx scripts/evaluate-gambling-model.ts",
+    "forecasts:scheduled": "tsx scripts/run-scheduled-forecasts.ts"
   },
   "dependencies": {
     "@neondatabase/auth": "0.5.0-beta",
