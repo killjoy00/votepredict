@@ -2,6 +2,7 @@ import { and, eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { executeDeepRuntimeForecast } from '@/forecasting/deep-runtime';
 import { executeRuntimeForecast, ForecastRuntimeError, type ForecastRuntimeSubject } from '@/forecasting/runtime';
+import { floorTargetForChamber, forecastTargetDefinition } from '@/forecasting/targets';
 import { requireOwner } from '@/lib/auth/guard';
 import { db, pool } from '@/lib/db';
 import { bills, chambers, forecasts, legislativeSessions, proposals } from '@/lib/db/schema';
@@ -117,11 +118,14 @@ export async function POST(request: Request) {
     };
   }
 
+  const targetKind = floorTargetForChamber(targetChamber.slug);
   const [forecast] = await db
     .insert(forecasts)
     .values({
       ownerUserId: user.id,
       targetType: body.sourceMode === 'official' ? 'bill' : 'proposal',
+      targetKind,
+      conditionalOn: forecastTargetDefinition(targetKind).conditionalOn,
       billId,
       proposalId,
       targetChamberId: targetChamber.id,

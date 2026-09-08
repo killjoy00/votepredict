@@ -32,7 +32,7 @@ export default async function ForecastWorkflowPage({ params }: PageProps) {
           <h1>{detail.targetLabel}</h1>
           <p>{detail.chamberName} · {detail.revisions.length} saved revision{detail.revisions.length === 1 ? '' : 's'}</p>
         </div>
-        <div className="latest-call"><span>Latest passage</span><strong>{probability(latest?.passageProbability)}</strong><small>{latest ? `r${latest.revisionNumber} · ${latest.researchMode === 'deep' ? 'Deep' : 'Quick'}` : 'No revision'}</small></div>
+        <div className="latest-call"><span>Floor estimate</span><strong>{probability(latest?.passageProbability)}</strong><small>{latest ? `uncalibrated · r${latest.revisionNumber} · ${latest.researchMode === 'deep' ? 'Deep' : 'Quick'}` : 'No revision'}</small></div>
       </header>
 
       <ForecastWorkflowDesk detail={detail} />

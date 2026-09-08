@@ -26,7 +26,7 @@ export default async function ForecastHistoryPage() {
             <div className="forecast-title"><span>{forecast.targetType === 'bill' ? 'Official' : 'Proposal'}</span><strong>{forecast.targetLabel}</strong><small>{forecast.chamberName} · updated {new Date(forecast.updatedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</small></div>
             <div><span>Latest</span><strong>{forecast.latestRevisionNumber ? `r${forecast.latestRevisionNumber}` : '—'}</strong></div>
             <div><span>Mode</span><strong>{forecast.latestResearchMode ? forecast.latestResearchMode === 'deep' ? 'Deep' : 'Quick' : '—'}</strong></div>
-            <div><span>Passage</span><strong>{probability(forecast.latestPassageProbability)}</strong></div>
+            <div><span>Floor estimate</span><strong>{probability(forecast.latestPassageProbability)}</strong></div>
             <div className="arrow" aria-hidden="true">→</div>
           </a>
         ))}
