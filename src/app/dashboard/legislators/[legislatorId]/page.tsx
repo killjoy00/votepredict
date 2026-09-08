@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { requireOwner } from '@/lib/auth/guard';
+import { loadLegislatorGamblingSummary } from '@/gambling/intelligence';
 import { loadLegislatorIssueSummaries } from '@/legislators/issue-summary';
 import { loadLegislatorProfile } from '@/legislators/profile';
+import gamblingStyles from './gambling-summary.module.css';
 import issueStyles from './issue-summary.module.css';
 import styles from '../legislators.module.css';
 
@@ -41,9 +43,10 @@ function sourceKind(value: string): string {
 export default async function LegislatorProfilePage({ params }: PageProps) {
   await requireOwner();
   const { legislatorId } = await params;
-  const [profile, issueSummaries] = await Promise.all([
+  const [profile, issueSummaries, gambling] = await Promise.all([
     loadLegislatorProfile(legislatorId),
     loadLegislatorIssueSummaries(legislatorId),
+    loadLegislatorGamblingSummary(legislatorId),
   ]);
   if (!profile) notFound();
 
@@ -58,6 +61,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
           <span>VotePredict</span>
         </Link>
         <nav className={styles.topLinks} aria-label="Workspace navigation">
+          <Link href="/dashboard/gambling" className={styles.backLink}>Gambling intelligence</Link>
           <Link href="/dashboard/legislators" className={styles.backLink}>All legislators</Link>
           <Link href="/dashboard" className={styles.backLink}>Forecast desk</Link>
         </nav>
@@ -108,6 +112,34 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
           <small>Top classified policy areas · “Other” excluded</small>
         </article>
       </section>
+
+      {gambling ? (
+        <Link href={`/dashboard/legislators/${legislatorId}/gambling`} className={gamblingStyles.card}>
+          <div className={gamblingStyles.heading}>
+            <span>Priority issue · specialized intelligence</span>
+            <h2>Gaming & gambling</h2>
+            <p>{gambling.sportsBettingPosition}</p>
+          </div>
+          <div className={gamblingStyles.stats}>
+            <div>
+              <span>Direct gambling votes</span>
+              <strong>{gambling.directVotes}</strong>
+              <small>{gambling.latestVoteOn ? `latest ${date(gambling.latestVoteOn)}` : 'no recorded direct vote'}</small>
+            </div>
+            <div>
+              <span>Tribal gaming alignment</span>
+              <strong>{gambling.tribalGamingAlignment.score ?? '—'}</strong>
+              <small>{gambling.tribalGamingAlignment.score === undefined ? 'no benchmark signal' : `${gambling.tribalGamingAlignment.confidence} confidence`}</small>
+            </div>
+            <div>
+              <span>Rating evidence</span>
+              <strong>{gambling.tribalGamingAlignment.signals.length}</strong>
+              <small>{gambling.tribalGamingAlignment.observedWeight.toFixed(2)} evidence weight</small>
+            </div>
+            <span className={gamblingStyles.open}>Open gambling dossier →</span>
+          </div>
+        </Link>
+      ) : null}
 
       <div className={styles.profileGrid}>
         <div className={styles.mainStack}>
