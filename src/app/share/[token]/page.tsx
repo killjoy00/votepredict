@@ -35,10 +35,11 @@ export default async function SharedForecastPage({ params }: PageProps) {
           <p>{shared.chamberName} · revision {shared.revision.number} · {shared.revision.researchMode === 'deep' ? 'Deep' : 'Quick'}</p>
         </div>
         <div className="hero-probability">
-          <span>Model passage estimate</span>
+          <span>Floor passage estimate · uncalibrated</span>
           <strong>{probability(shared.revision.passageProbability)}</strong>
         </div>
       </section>
+      <p className="forecast-caveat">Conditional on the measure reaching this chamber&apos;s floor. This is not an enactment probability or calibrated wagering odds.</p>
 
       <section className="metrics" aria-label="Forecast metrics">
         <div><span>Expected Yes</span><strong>{number(shared.revision.expectedYes)}</strong></div>
@@ -81,6 +82,7 @@ export default async function SharedForecastPage({ params }: PageProps) {
         .hero-probability { text-align: right; }
         .hero-probability span { display: block; color: #758078; font-size: 9px; }
         .hero-probability strong { display: block; margin-top: 5px; font-size: 46px; line-height: 1; letter-spacing: -.05em; }
+        .forecast-caveat { margin: -8px 0 18px; color: #68736c; font-size: 10px; }
         .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; border: 1px solid #dce1dc; border-top: 0; background: #dce1dc; }
         .metrics div { padding: 14px 18px; background: #fbfcfa; }
         .metrics span { display: block; color: #7b857e; font-size: 8px; }

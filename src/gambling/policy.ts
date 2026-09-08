@@ -18,6 +18,25 @@ export interface GamblingClassification {
   termHits: number;
 }
 
+export const GAMBLING_FEATURE_SCHEMA_VERSION = 'gambling-policy-v1';
+export type GamblingLicenseModel = 'tribal_exclusive' | 'commercial' | 'hybrid' | 'unknown';
+
+export interface GamblingBillFeatures {
+  schemaVersion: typeof GAMBLING_FEATURE_SCHEMA_VERSION;
+  topic: GamblingTopic;
+  scope: GamblingScope;
+  licenseModel: GamblingLicenseModel;
+  mobileAllowed: boolean | null;
+  retailAllowed: boolean | null;
+  racetrackRole: 'licensee' | 'revenue_share' | 'none' | 'unknown';
+  taxRatesPercent: number[];
+  minimumAge?: number;
+  operatorCount?: number;
+  collegeBettingPolicy: 'prohibited' | 'restricted' | 'allowed' | 'unknown';
+  revenueRecipients: string[];
+  policyFlags: string[];
+}
+
 export interface TribalAlignmentSignal {
   benchmarkKey: string;
   label: string;
@@ -122,6 +141,65 @@ export function classifyGamblingBill(title: string, rawText = ''): GamblingClass
     scope,
     topic: classifyTopic(combined),
     termHits,
+  };
+}
+
+function unique<T>(values: readonly T[]): T[] {
+  return [...new Set(values)];
+}
+
+export function extractGamblingBillFeatures(title: string, rawText = ''): GamblingBillFeatures | undefined {
+  const classification = classifyGamblingBill(title, rawText);
+  if (!classification) return undefined;
+  const text = `${title}\n${rawText}`;
+  const tribal = /\btrib(?:e|al|es|es'|al nation|al nations)\b/i.test(text);
+  const commercial = /\b(?:sports wagering|betting) operator|commercial operator|licensed operator\b/i.test(text);
+  const racetrack = /\bracetrack|running aces|canterbury park\b/i.test(text);
+  const racetrackLicense = racetrack && /racetrack.{0,120}(?:license|operator)|(?:license|operator).{0,120}racetrack/is.test(text);
+  const racetrackRevenue = racetrack && /racetrack.{0,160}(?:revenue|payment|distribution|allocation)|(?:revenue|payment|distribution|allocation).{0,160}racetrack/is.test(text);
+  const mobileAllowed = /\bmobile (?:sports )?(?:betting|wagering)|online (?:sports )?(?:betting|wagering)\b/i.test(text) ? true
+    : /\b(?:mobile|online) (?:betting|wagering).{0,80}(?:prohibited|not permitted)\b/i.test(text) ? false : null;
+  const retailAllowed = /\bretail (?:sports )?(?:betting|wagering)|in-person (?:sports )?(?:betting|wagering)\b/i.test(text) ? true
+    : /\bretail (?:betting|wagering).{0,80}(?:prohibited|not permitted)\b/i.test(text) ? false : null;
+  const taxRatesPercent = unique([
+    ...[...text.matchAll(/(?:tax|rate)[^\d%]{0,40}(\d+(?:\.\d+)?)\s*percent/gi)].map((match) => Number(match[1])),
+    ...[...text.matchAll(/(\d+(?:\.\d+)?)\s*percent[^.\n]{0,40}\btax\b/gi)].map((match) => Number(match[1])),
+  ].filter((value) => value >= 0 && value <= 100)).sort((a, b) => a - b);
+  const age = text.match(/(?:at least|minimum age(?: of)?|under)\s+(18|21)\s+years?\s+of\s+age/i);
+  const operators = text.match(/(?:up to|maximum of|not more than)\s+(\d+)\s+(?:mobile\s+)?(?:licenses?|operators?|skins?)/i);
+  const revenueRecipients = unique([
+    /problem gambling|compulsive gambling/i.test(text) ? 'problem_gambling' : undefined,
+    /horse racing|racetrack|racing commission/i.test(text) ? 'horse_racing' : undefined,
+    /youth sports/i.test(text) ? 'youth_sports' : undefined,
+    /(?:tribal|Indian) nation|tribes?/i.test(text) ? 'tribal_nations' : undefined,
+    /general fund/i.test(text) ? 'general_fund' : undefined,
+  ].filter((value): value is string => Boolean(value)));
+  const policyFlags = unique([
+    /official league data/i.test(text) ? 'official_league_data' : undefined,
+    /in-game|in game|proposition wager/i.test(text) ? 'in_game_wagering' : undefined,
+    /geofenc|geolocat/i.test(text) ? 'geolocation' : undefined,
+    /constitutional amendment/i.test(text) ? 'constitutional_amendment' : undefined,
+    /problem gambling|compulsive gambling/i.test(text) ? 'responsible_gaming_funding' : undefined,
+  ].filter((value): value is string => Boolean(value)));
+  const collegeBettingPolicy = /college|collegiate/i.test(text)
+    ? /college|collegiate.{0,100}(?:prohibited|may not|not permit)/is.test(text) ? 'prohibited'
+      : /college|collegiate.{0,100}(?:restrict|in-state|Minnesota team)/is.test(text) ? 'restricted' : 'allowed'
+    : 'unknown';
+
+  return {
+    schemaVersion: GAMBLING_FEATURE_SCHEMA_VERSION,
+    topic: classification.topic,
+    scope: classification.scope,
+    licenseModel: tribal && commercial ? 'hybrid' : tribal ? 'tribal_exclusive' : commercial ? 'commercial' : 'unknown',
+    mobileAllowed,
+    retailAllowed,
+    racetrackRole: racetrackLicense ? 'licensee' : racetrackRevenue ? 'revenue_share' : racetrack ? 'unknown' : 'none',
+    taxRatesPercent,
+    minimumAge: age ? Number(age[1]) : undefined,
+    operatorCount: operators ? Number(operators[1]) : undefined,
+    collegeBettingPolicy,
+    revenueRecipients,
+    policyFlags,
   };
 }
 

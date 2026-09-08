@@ -319,10 +319,10 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
     const probability = forecastResult?.chamber.passageProbability;
     if (!forecastResult) return 'Select a measure and run a forecast. The chamber conclusion will appear here first.';
     if (probability === undefined) {
-      return `Chamber probability is withheld because ${forecastResult.diagnostics.cannotPredictMembers} member row${forecastResult.diagnostics.cannotPredictMembers === 1 ? '' : 's'} remain cannot-predict.`;
+      return `Floor-vote estimate is withheld because ${forecastResult.diagnostics.cannotPredictMembers} member row${forecastResult.diagnostics.cannotPredictMembers === 1 ? '' : 's'} remain cannot-predict.`;
     }
     const call = probability >= 0.65 ? 'Passage is favored.' : probability <= 0.35 ? 'Passage is not favored.' : 'The chamber call is close.';
-    return `${call} ${forecastResult.diagnostics.directAnalogueMembers} active members have direct votes on the selected historical analogues. Treat the passage estimate as directional rather than calibrated odds on a close bill.`;
+    return `${call} ${forecastResult.diagnostics.directAnalogueMembers} active members have direct votes on the selected historical analogues. This is an uncalibrated estimate conditional on the measure reaching this chamber's floor—not an enactment probability.`;
   }, [forecastResult]);
 
   function resetCreatedForecast() {
@@ -607,7 +607,7 @@ export function ForecastWorkspace({ ownerEmail, session, chambers }: ForecastWor
 
           <article className={`outcome-card ${forecastResult ? 'has-result' : 'empty-outcome'}`}>
             <div className="outcome-copy">
-              <span className="outcome-label">Model passage estimate</span>
+              <span className="outcome-label">Floor passage estimate · uncalibrated</span>
               <strong className="outcome-value">{formatProbability(forecastResult?.chamber.passageProbability)}</strong>
               <p>{outcomeSummary}</p>
             </div>
