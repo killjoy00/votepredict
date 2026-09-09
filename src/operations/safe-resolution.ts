@@ -1,5 +1,5 @@
 import { pool } from '@/lib/db';
-import { resolveForecastOutcome, ScorecardError, type ForecastOutcomeCandidate } from './scorecard';
+import { ScorecardError, type ForecastOutcomeCandidate } from './scorecard';
 
 export async function listSafeOutcomeCandidates(forecastId: string, ownerUserId: string): Promise<ForecastOutcomeCandidate[]> {
   const result = await pool.query<{
@@ -23,10 +23,12 @@ export async function listSafeOutcomeCandidates(forecastId: string, ownerUserId:
         ON ve.bill_id = f.bill_id
        AND ve.chamber_id = f.target_chamber_id
        AND ve.is_passage = true
+       AND ve.passed IS NOT NULL
        AND ve.occurred_on > f.created_at::date
      WHERE f.id = $1
        AND f.owner_user_id = $2
        AND f.target_type = 'bill'
+       AND f.target_kind = (SELECT CASE c.slug WHEN 'house' THEN 'house_floor_passage' WHEN 'senate' THEN 'senate_floor_passage' END FROM chambers c WHERE c.id=f.target_chamber_id)
      ORDER BY ve.occurred_on DESC, ve.id DESC`, [forecastId, ownerUserId]);
   return result.rows.map((row) => ({
     id: row.id,
@@ -52,10 +54,12 @@ export async function resolveSafeForecastOutcome(input: {
        AND ve.bill_id = f.bill_id
        AND ve.chamber_id = f.target_chamber_id
        AND ve.is_passage = true
+       AND ve.passed IS NOT NULL
        AND ve.occurred_on > f.created_at::date
      WHERE f.id = $1
        AND f.owner_user_id = $2
        AND f.target_type = 'bill'
+       AND f.target_kind = (SELECT CASE c.slug WHEN 'house' THEN 'house_floor_passage' WHEN 'senate' THEN 'senate_floor_passage' END FROM chambers c WHERE c.id=f.target_chamber_id)
      LIMIT 1`, [input.forecastId, input.ownerUserId, input.voteEventId]);
   if (!validation.rows[0]) {
     throw new ScorecardError(
@@ -63,5 +67,14 @@ export async function resolveSafeForecastOutcome(input: {
       'The selected vote must be an official matching passage event on a later calendar date than the frozen forecast.',
     );
   }
-  await resolveForecastOutcome(input);
+  await pool.query(`
+    WITH resolved AS (
+      INSERT INTO forecast_resolutions (forecast_id, vote_event_id, metadata)
+      VALUES ($1, $2, '{"resolutionSource":"verified_official_floor_vote"}'::jsonb)
+      ON CONFLICT (forecast_id) DO UPDATE SET vote_event_id=EXCLUDED.vote_event_id,
+        resolved_at=now(), metadata=forecast_resolutions.metadata || EXCLUDED.metadata
+      RETURNING forecast_id
+    )
+    UPDATE forecast_schedules SET enabled=false, updated_at=now()
+     WHERE forecast_id IN (SELECT forecast_id FROM resolved)`, [input.forecastId, input.voteEventId]);
 }
