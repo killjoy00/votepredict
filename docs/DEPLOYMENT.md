@@ -39,7 +39,8 @@ The bridge is intentionally narrow:
 - The issue title must start with `[vercel-ops] `.
 - It is pinned to Vercel team `killjoy00s-projects` and project `votepredict`.
 - It never prints the token or pulls environment-variable values.
-- It does not expose runtime/application logs because this repository is public.
+- Raw runtime/application log messages are never exposed because this repository is public.
+- Diagnostic commands emit only sanitized aggregate summaries; query strings and identifier-like path segments are removed or normalized.
 - Production deployment requires an explicit confirmation line in the issue body.
 
 ### Required GitHub secret
@@ -51,7 +52,9 @@ GitHub Actions must expose a secret named `VERCEL_TOKEN` to this repository. A r
 Open an issue with one of these exact titles:
 
 - `[vercel-ops] auth-check` — verifies the token can access the configured Vercel project.
-- `[vercel-ops] status` — verifies access and prints a short list of recent production deployments in the Actions run.
+- `[vercel-ops] status` — verifies access and prints a short list of recent production deployments.
+- `[vercel-ops] errors` — queries up to 200 production 5xx requests from the last 24 hours and emits a sanitized aggregate summary.
+- `[vercel-ops] logs` — queries up to 200 production runtime-log entries from the last hour and emits a sanitized aggregate summary.
 - `[vercel-ops] deploy-production` — deploys the current protected `main` branch directly to Vercel production.
 
 For `deploy-production`, the issue body must contain this line exactly:
@@ -60,7 +63,7 @@ For `deploy-production`, the issue body must contain this line exactly:
 CONFIRM PRODUCTION DEPLOY
 ```
 
-The workflow comments on the issue with success/failure and, for a successful production deployment, the deployment URL. Raw Vercel credentials are never echoed.
+The workflow comments on the issue with success/failure and, when applicable, the sanitized diagnostic summary or production deployment URL. Raw Vercel credentials and raw runtime log messages are never echoed.
 
 This issue-based command surface is deliberate: it lets an authorized GitHub client create a Vercel operation without pushing an ops commit or generating an unwanted Vercel preview deployment.
 
