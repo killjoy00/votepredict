@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: [.github/workflows/production-runtime-smoke.yml, scripts/smoke-production-runtime.ts, scripts/prepare-production-cron.ts]
+    paths: [.github/workflows/production-runtime-smoke.yml, scripts/smoke-production-runtime.ts, scripts/prepare-production-cron.ts, src/app/api/cron/forecasts/route.ts]
 permissions:
   contents: read
 concurrency:
@@ -35,8 +35,7 @@ jobs:
       - name: Ensure missing cron configuration
         id: cron
         run: node --import tsx scripts/prepare-production-cron.ts
-      - name: Deploy main with the new cron settings
-        if: steps.cron.outputs.changed == 'true'
+      - name: Deploy main before runtime validation
         shell: bash
         run: |
           if ! npx --yes vercel@59.13.1 deploy --prod --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-deploy.log" 2>&1; then
