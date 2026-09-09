@@ -1,0 +1,156 @@
+name: Vercel Fallback Bridge
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: vercel-fallback-bridge
+  cancel-in-progress: false
+
+jobs:
+  vercel-ops:
+    if: >-
+      github.actor == github.repository_owner &&
+      startsWith(github.event.issue.title, '[vercel-ops] ')
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_TEAM_SLUG: killjoy00s-projects
+      VERCEL_PROJECT_SLUG: votepredict
+      VERCEL_CLI_VERSION: 59.11.7
+
+    steps:
+      - name: Validate Vercel secret
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ]; then
+            echo "::error::VERCEL_TOKEN is not available to this repository. Add it as a repository Actions secret (or an organization secret explicitly shared with this repository)."
+            exit 1
+          fi
+
+      - name: Parse request
+        id: request
+        shell: bash
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          set -euo pipefail
+          action="${ISSUE_TITLE#\[vercel-ops\] }"
+
+          case "$action" in
+            auth-check|status|deploy-production)
+              ;;
+            *)
+              echo "::error::Unsupported Vercel operation: $action"
+              exit 2
+              ;;
+          esac
+
+          if [ "$action" = "deploy-production" ]; then
+            if ! printf '%s\n' "$ISSUE_BODY" | grep -Fxq 'CONFIRM PRODUCTION DEPLOY'; then
+              echo "::error::Production deploy requires an issue-body line containing exactly: CONFIRM PRODUCTION DEPLOY"
+              exit 3
+            fi
+          fi
+
+          printf 'action=%s\n' "$action" >> "$GITHUB_OUTPUT"
+
+      - name: Check out protected main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Install pinned Vercel CLI
+        shell: bash
+        run: npm install --global "vercel@${VERCEL_CLI_VERSION}"
+
+      - name: Verify Vercel authentication and project access
+        shell: bash
+        run: |
+          set -euo pipefail
+          vercel project inspect "$VERCEL_PROJECT_SLUG" \
+            --scope "$VERCEL_TEAM_SLUG" \
+            --token "$VERCEL_TOKEN" \
+            --no-color \
+            >/dev/null
+          echo "Vercel token can access ${VERCEL_TEAM_SLUG}/${VERCEL_PROJECT_SLUG}."
+
+      - name: Show recent production deployments
+        if: steps.request.outputs.action == 'status'
+        shell: bash
+        run: |
+          set -euo pipefail
+          vercel list "$VERCEL_PROJECT_SLUG" \
+            --prod \
+            --yes \
+            --scope "$VERCEL_TEAM_SLUG" \
+            --token "$VERCEL_TOKEN" \
+            --no-color \
+            | sed -n '1,20p'
+
+      - name: Deploy main to production
+        if: steps.request.outputs.action == 'deploy-production'
+        id: deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          deployment_url="$(vercel deploy \
+            --prod \
+            --yes \
+            --project "$VERCEL_PROJECT_SLUG" \
+            --scope "$VERCEL_TEAM_SLUG" \
+            --token "$VERCEL_TOKEN" \
+            --no-color)"
+
+          case "$deployment_url" in
+            https://*) ;;
+            *)
+              echo "::error::Vercel did not return a deployment URL."
+              exit 4
+              ;;
+          esac
+
+          printf 'url=%s\n' "$deployment_url" >> "$GITHUB_OUTPUT"
+          echo "Production deployment created: $deployment_url"
+
+      - name: Report result on issue
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          REQUESTED_ACTION: ${{ steps.request.outputs.action }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
+          JOB_STATUS: ${{ job.status }}
+        with:
+          script: |
+            const action = process.env.REQUESTED_ACTION || 'unknown';
+            const status = process.env.JOB_STATUS;
+            const deploymentUrl = process.env.DEPLOYMENT_URL;
+
+            let body;
+            if (status === 'success' && action === 'deploy-production' && deploymentUrl) {
+              body = `Vercel fallback bridge succeeded for **${action}**.\n\nProduction deployment: ${deploymentUrl}`;
+            } else if (status === 'success') {
+              body = `Vercel fallback bridge succeeded for **${action}**.`;
+            } else {
+              body = `Vercel fallback bridge failed for **${action}**. Check the Actions run for the failed step. The Vercel token is never printed by this workflow.`;
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
