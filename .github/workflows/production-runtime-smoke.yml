@@ -13,7 +13,7 @@ jobs:
   smoke:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
@@ -32,6 +32,18 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
+      - name: Ensure missing cron configuration
+        id: cron
+        run: node --import tsx scripts/prepare-production-cron.ts
+      - name: Deploy main with the new cron settings
+        if: steps.cron.outputs.changed == 'true'
+        shell: bash
+        run: |
+          if ! npx --yes vercel@59.13.1 deploy --prod --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-deploy.log" 2>&1; then
+            echo 'Production deployment failed; inspect Vercel deployment status. No scheduler work was run.'
+            exit 1
+          fi
+          echo 'Production deployment completed with cron settings.'
       - name: Read production environment privately
         shell: bash
         run: |
@@ -51,6 +63,6 @@ jobs:
           python - <<'PYTHON'
           import os
           from pathlib import Path
-          for name in ['votepredict-production.env', 'vercel-pull.log']:
+          for name in ['votepredict-production.env', 'vercel-pull.log', 'vercel-deploy.log']:
               Path(os.environ['RUNNER_TEMP'], name).unlink(missing_ok=True)
           PYTHON

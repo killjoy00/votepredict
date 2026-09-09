@@ -6,7 +6,7 @@ async function main(){
  if(!path)throw new Error('Production environment file is required');
  const env=parseEnv(readFileSync(path,'utf8'));
  // Mask before loading modules or reporting errors. Never print the file or a connection URL.
- for(const value of Object.values(env))if(value)console.log(`::add-mask::${value.replaceAll('%','%25').replaceAll('\r','%0D').replaceAll('\n','%0A')}`);
+ for(const [key,value] of Object.entries(env))if(value && /SECRET|PASSWORD|TOKEN|KEY|DATABASE_URL|POSTGRES_URL/i.test(key))console.log(`::add-mask::${value.replaceAll('%','%25').replaceAll('\r','%0D').replaceAll('\n','%0A')}`);
  console.log(JSON.stringify({configuration:{databasePresent:Boolean(env.DATABASE_URL),cronSecretPresent:Boolean(env.CRON_SECRET),batchSize:Number(env.FORECAST_BATCH_SIZE??10)}}));
  const projectResponse=await fetch(`https://api.vercel.com/v9/projects/${process.env.VERCEL_PROJECT_ID}?teamId=${process.env.VERCEL_ORG_ID}`,{headers:{Authorization:`Bearer ${process.env.VERCEL_TOKEN}`},signal:AbortSignal.timeout(30000)});
  if(!projectResponse.ok)throw new Error('Project configuration lookup failed');
@@ -36,6 +36,14 @@ async function main(){
   if(result.claimed!==1||result.completed!==1||result.failed!==0)throw new Error('One-item scheduler smoke did not complete');
   const runs=await pool.query(`SELECT status,revision_id IS NOT NULL AS has_revision,resolution_id IS NOT NULL AS has_resolution,finished_at IS NOT NULL AS finished FROM forecast_snapshot_runs WHERE forecast_id=$1 ORDER BY started_at DESC LIMIT 1`,[forecastId]);
   console.log(JSON.stringify({latestRun:runs.rows[0]}));
+  const due=await pool.query("SELECT count(*)::int AS count FROM forecast_schedules WHERE enabled AND next_run_at<=now()");
+  if(due.rows[0].count===0){
+   const authenticated=await fetch('https://votepredict.vercel.app/api/cron/forecasts',{headers:{Authorization:`Bearer ${env.CRON_SECRET}`},signal:AbortSignal.timeout(30000)});
+   if(authenticated.status!==200)throw new Error('Authenticated cron did not return 200');
+   const batch=await authenticated.json();
+   console.log(JSON.stringify({authenticatedCron:authenticated.status,claimed:batch.claimed,failed:batch.failed}));
+   if(batch.claimed!==0||batch.failed!==0)throw new Error('Authenticated cron empty-batch validation failed');
+  }else console.log('Authenticated cron check deferred because other schedules are due');
  }finally{await pool.end();}
 }
-main().catch(error=>{console.error(error instanceof Error && /^(Missing production variable: |Production FORECAST_BATCH_SIZE|System |Expected exactly|One-item |Production health|Unauthenticated cron|Project configuration)/.test(error.message)?error.message:'Production runtime verification failed; inspect configuration and the system smoke ledger.');process.exitCode=1;});
+main().catch(error=>{console.error(error instanceof Error && /^(Missing production variable: |Production FORECAST_BATCH_SIZE|System |Expected exactly|One-item |Production health|Unauthenticated cron|Project configuration|Authenticated cron)/.test(error.message)?error.message:'Production runtime verification failed; inspect configuration and the system smoke ledger.');process.exitCode=1;});
