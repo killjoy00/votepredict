@@ -12,8 +12,8 @@ async function main(){
  const path=process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
  if(!path)throw new Error('Production environment file is required');
  const env=parseEnv(readFileSync(path,'utf8'));
- secretValues=Object.entries(env).filter(([key])=>/SECRET|PASSWORD|TOKEN|KEY|DATABASE_URL|POSTGRES_URL/i.test(key)).map(([,value])=>value);
- try{const uri=new URL(env.DATABASE_URL);secretValues.push(decodeURIComponent(uri.username),decodeURIComponent(uri.password));}catch{}
+ secretValues=Object.entries(env).filter(([key])=>/SECRET|PASSWORD|TOKEN|KEY|DATABASE_URL|POSTGRES_URL/i.test(key)).map(([,value])=>value).filter((value):value is string=>typeof value==='string');
+ try{const uri=new URL(env.DATABASE_URL??'');secretValues.push(decodeURIComponent(uri.username),decodeURIComponent(uri.password));}catch{}
  // Mask before loading modules or reporting errors. Never print the file or a connection URL.
  for(const [key,value] of Object.entries(env))if(value && /SECRET|PASSWORD|TOKEN|KEY|DATABASE_URL|POSTGRES_URL/i.test(key))console.log(`::add-mask::${value.replaceAll('%','%25').replaceAll('\r','%0D').replaceAll('\n','%0A')}`);
  console.log(JSON.stringify({configuration:{databasePresent:Boolean(env.DATABASE_URL),cronSecretPresent:Boolean(env.CRON_SECRET),batchSize:Number(env.FORECAST_BATCH_SIZE??10)}}));
