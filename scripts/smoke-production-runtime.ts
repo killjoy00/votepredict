@@ -1,5 +1,6 @@
 import {readFileSync} from 'node:fs';
 import {parseEnv} from 'node:util';
+import {parseRuntimeEnvironment} from '../src/operations/environment-file.js';
 
 let stage='configuration';
 let secretValues:string[]=[];
@@ -11,7 +12,10 @@ function safeError(error:unknown){
 async function main(){
  const path=process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
  if(!path)throw new Error('Production environment file is required');
- const env=parseEnv(readFileSync(path,'utf8'));
+ const contents=readFileSync(path,'utf8');
+ const raw=parseEnv(contents);
+ const env=parseRuntimeEnvironment(contents);
+ console.log(JSON.stringify({databaseUsesVariableReference:/\$[\{A-Za-z_]/.test(raw.DATABASE_URL??'')}));
  secretValues=Object.entries(env).filter(([key])=>/SECRET|PASSWORD|TOKEN|KEY|DATABASE_URL|POSTGRES_URL/i.test(key)).map(([,value])=>value).filter((value):value is string=>typeof value==='string');
  try{const uri=new URL(env.DATABASE_URL??'');secretValues.push(decodeURIComponent(uri.username),decodeURIComponent(uri.password));}catch{}
  // Mask before loading modules or reporting errors. Never print the file or a connection URL.
@@ -31,6 +35,7 @@ async function main(){
  const unauthorized=await fetch('https://votepredict.vercel.app/api/cron/forecasts',{signal:AbortSignal.timeout(30000)});
  if(unauthorized.status!==401)throw new Error('Unauthenticated cron must return 401');
  // Only inject what Quick mode needs; no AI keys and no deployment OIDC token.
+ if(!/^postgres(?:ql)?:\/\//.test(env.DATABASE_URL??''))throw new Error('Production DATABASE_URL did not resolve to a PostgreSQL URL');
  process.env.DATABASE_URL=env.DATABASE_URL;
  stage='load database module';
  const {pool}=await import('../src/lib/db/index.js');
