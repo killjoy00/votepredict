@@ -1,0 +1,28 @@
+{
+  "metadata": {
+    "generatedAt": "2026-09-09",
+    "model": "gambling-hierarchical-v1-candidate",
+    "leakageGuard": "same-day outcomes excluded from history",
+    "source": "production Neon evaluation reconstructed from repository model equations"
+  },
+  "scorecard": {
+    "observations": 17228,
+    "generic": {
+      "brier": 0.1262005787535005,
+      "logLoss": 0.3842167606930896,
+      "expectedCalibrationError": 0.04317252725194104
+    },
+    "gambling": {
+      "brier": 0.13605956016304345,
+      "logLoss": 0.4265049604938211,
+      "expectedCalibrationError": 0.04344023726739736
+    },
+    "deltaGamblingMinusGeneric": {
+      "brier": 0.009858981409542952,
+      "logLoss": 0.042288199800731486,
+      "expectedCalibrationError": 0.000267710015456327
+    }
+  },
+  "promotionDecision": "do-not-promote",
+  "reason": "The candidate regresses versus the generic baseline on Brier score, log loss, and expected calibration error."
+}
