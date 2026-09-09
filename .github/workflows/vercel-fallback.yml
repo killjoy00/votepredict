@@ -23,7 +23,7 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_TEAM_SLUG: killjoy00s-projects
       VERCEL_PROJECT_SLUG: votepredict
-      VERCEL_CLI_VERSION: 54.15.1
+      VERCEL_CLI_VERSION: 59.11.7
 
     steps:
       - name: Validate Vercel secret
