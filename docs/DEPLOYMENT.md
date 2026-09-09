@@ -29,6 +29,41 @@ Vercel treats a branch as deployable when at least one matching rule is `true`, 
 
 Vercel installs dependencies with `npm ci --no-fund --no-audit`, using the committed `package-lock.json` for reproducible production builds.
 
+## Vercel fallback bridge
+
+`.github/workflows/vercel-fallback.yml` provides a GitHub-side recovery path when the ChatGPT/Vercel OAuth connector cannot discover the account or team. The Vercel token stays in GitHub Actions secrets and is never copied into an issue, commit, workflow output, or chat.
+
+The bridge is intentionally narrow:
+
+- It runs only for issues opened by the repository owner.
+- The issue title must start with `[vercel-ops] `.
+- It is pinned to Vercel team `killjoy00s-projects` and project `votepredict`.
+- It never prints the token or pulls environment-variable values.
+- It does not expose runtime/application logs because this repository is public.
+- Production deployment requires an explicit confirmation line in the issue body.
+
+### Required GitHub secret
+
+GitHub Actions must expose a secret named `VERCEL_TOKEN` to this repository. A repository Actions secret is the simplest option. If an organization secret is used, that organization must own the repository and the secret must be shared with it; an organization secret cannot be inherited by a repository owned by a personal GitHub account.
+
+### Supported requests
+
+Open an issue with one of these exact titles:
+
+- `[vercel-ops] auth-check` — verifies the token can access the configured Vercel project.
+- `[vercel-ops] status` — verifies access and prints a short list of recent production deployments in the Actions run.
+- `[vercel-ops] deploy-production` — deploys the current protected `main` branch directly to Vercel production.
+
+For `deploy-production`, the issue body must contain this line exactly:
+
+```text
+CONFIRM PRODUCTION DEPLOY
+```
+
+The workflow comments on the issue with success/failure and, for a successful production deployment, the deployment URL. Raw Vercel credentials are never echoed.
+
+This issue-based command surface is deliberate: it lets an authorized GitHub client create a Vercel operation without pushing an ops commit or generating an unwanted Vercel preview deployment.
+
 ## Manual deploys
 
 Manual Vercel deployments and promotions remain available for recovery, previews, or deliberately staged releases. They are not part of ordinary feature-branch CI.
