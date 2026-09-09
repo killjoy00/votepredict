@@ -1,0 +1,484 @@
+{
+  "metadata": {
+    "version": "gambling-diagnostics-v1",
+    "datasetSha256": "c7c2fff0058f8996d8c8465d0e9aa395caa24f6f249148805b21b5639eb5b5db",
+    "sameDayOutcomesExcluded": true,
+    "featureCutoff": "Strictly before vote date, latest version regardless of classification",
+    "purpose": "Diagnostic only; all existing sessions were previously exposed. No coefficients fitted.",
+    "population": "Gambling-tagged events only, matching the candidate evaluator history restriction; not a full-history production generic-model benchmark.",
+    "optionalPoliticalInputs": "Sponsorship, committee, leadership and majority inputs are absent in the evaluator; their default coefficients are zero.",
+    "latestSessionPresence": "Descriptive slice only; not an input or an assertion about current officeholders."
+  },
+  "scorecard": {
+    "observations": 15851,
+    "generic": {
+      "brier": 0.12556833473874565,
+      "logLoss": 0.3847433642544227,
+      "expectedCalibrationError": 0.04910883189651182
+    },
+    "gambling": {
+      "brier": 0.13462944106493518,
+      "logLoss": 0.42638342357759845,
+      "expectedCalibrationError": 0.0520864273082924
+    },
+    "deltaGamblingMinusGeneric": {
+      "brier": 0.009061106326189533,
+      "logLoss": 0.04164005932317577,
+      "expectedCalibrationError": 0.0029775954117805814
+    }
+  },
+  "slices": {
+    "chamber": {
+      "house": {
+        "events": 82,
+        "observations": 10654,
+        "generic": {
+          "brier": 0.11497705730319817,
+          "logLoss": 0.35290024400843123,
+          "expectedCalibrationError": 0.060060516426961114
+        },
+        "gambling": {
+          "brier": 0.12212086447114454,
+          "logLoss": 0.3918001043673352,
+          "expectedCalibrationError": 0.054721113055928416
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0.007143807167946367,
+          "logLoss": 0.03889986035890397,
+          "expectedCalibrationError": -0.005339403371032697
+        }
+      },
+      "senate": {
+        "events": 79,
+        "observations": 5197,
+        "generic": {
+          "brier": 0.14728075917558925,
+          "logLoss": 0.4500226798405465,
+          "expectedCalibrationError": 0.05499528716081261
+        },
+        "gambling": {
+          "brier": 0.1602723841148207,
+          "logLoss": 0.49728022613014367,
+          "expectedCalibrationError": 0.07347263798504652
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0.01299162493923145,
+          "logLoss": 0.04725754628959716,
+          "expectedCalibrationError": 0.018477350824233914
+        }
+      }
+    },
+    "session": {
+      "2021-2022": {
+        "events": 29,
+        "observations": 2904,
+        "generic": {
+          "brier": 0.13568924482381553,
+          "logLoss": 0.430600640006498,
+          "expectedCalibrationError": 0.07345270417841387
+        },
+        "gambling": {
+          "brier": 0.17502869310040706,
+          "logLoss": 0.5617116378080723,
+          "expectedCalibrationError": 0.0865303752691475
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0.03933944827659153,
+          "logLoss": 0.1311109978015743,
+          "expectedCalibrationError": 0.013077671090733628
+        }
+      },
+      "2023-2024": {
+        "events": 86,
+        "observations": 8310,
+        "generic": {
+          "brier": 0.0924288175144276,
+          "logLoss": 0.2936434395615467,
+          "expectedCalibrationError": 0.04432640716400814
+        },
+        "gambling": {
+          "brier": 0.10425471496724549,
+          "logLoss": 0.3437229520786225,
+          "expectedCalibrationError": 0.061903532484872424
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0.011825897452817896,
+          "logLoss": 0.05007951251707582,
+          "expectedCalibrationError": 0.017577125320864286
+        }
+      },
+      "2025-2026": {
+        "events": 46,
+        "observations": 4637,
+        "generic": {
+          "brier": 0.17861950257290168,
+          "logLoss": 0.5192852761401159,
+          "expectedCalibrationError": 0.15513330599275316
+        },
+        "gambling": {
+          "brier": 0.16376348159992524,
+          "logLoss": 0.48976823790383117,
+          "expectedCalibrationError": 0.13770626863188695
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": -0.014856020972976447,
+          "logLoss": -0.02951703823628471,
+          "expectedCalibrationError": -0.017427037360866204
+        }
+      }
+    },
+    "topic": {
+      "casino_gaming": {
+        "events": 7,
+        "observations": 721,
+        "generic": {
+          "brier": 0.10050026331874375,
+          "logLoss": 0.32466962721011833,
+          "expectedCalibrationError": 0.08005981524211443
+        },
+        "gambling": {
+          "brier": 0.09770423304575288,
+          "logLoss": 0.33844275192063805,
+          "expectedCalibrationError": 0.0598775443031469
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": -0.002796030272990871,
+          "logLoss": 0.013773124710519724,
+          "expectedCalibrationError": -0.02018227093896753
+        }
+      },
+      "charitable_gambling": {
+        "events": 20,
+        "observations": 2035,
+        "generic": {
+          "brier": 0.12676146205154598,
+          "logLoss": 0.373611114816488,
+          "expectedCalibrationError": 0.07087688056464424
+        },
+        "gambling": {
+          "brier": 0.150967656706986,
+          "logLoss": 0.47063069363755544,
+          "expectedCalibrationError": 0.08472442933781284
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0.024206194655440022,
+          "logLoss": 0.09701957882106743,
+          "expectedCalibrationError": 0.0138475487731686
+        }
+      },
+      "election_betting": {
+        "events": 1,
+        "observations": 134,
+        "generic": {
+          "brier": 0.15445463695842718,
+          "logLoss": 0.4163024504734002,
+          "expectedCalibrationError": 0.2126545914995411
+        },
+        "gambling": {
+          "brier": 0.15445463695842718,
+          "logLoss": 0.4163024504734002,
+          "expectedCalibrationError": 0.2126545914995411
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0,
+          "logLoss": 0,
+          "expectedCalibrationError": 0
+        }
+      },
+      "horse_racing": {
+        "events": 31,
+        "observations": 3021,
+        "generic": {
+          "brier": 0.12261235656790331,
+          "logLoss": 0.3623193203810764,
+          "expectedCalibrationError": 0.07624730331260667
+        },
+        "gambling": {
+          "brier": 0.14673093993900738,
+          "logLoss": 0.4445967702447435,
+          "expectedCalibrationError": 0.07494890270102718
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0.024118583371104063,
+          "logLoss": 0.08227744986366708,
+          "expectedCalibrationError": -0.0012984006115794866
+        }
+      },
+      "lottery": {
+        "events": 73,
+        "observations": 7186,
+        "generic": {
+          "brier": 0.1267898398101681,
+          "logLoss": 0.4066338392220817,
+          "expectedCalibrationError": 0.045434575388166136
+        },
+        "gambling": {
+          "brier": 0.12649543758528045,
+          "logLoss": 0.41102053783831644,
+          "expectedCalibrationError": 0.04703110682081731
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": -0.00029440222488763546,
+          "logLoss": 0.004386698616234752,
+          "expectedCalibrationError": 0.001596531432651177
+        }
+      },
+      "other_gambling": {
+        "events": 24,
+        "observations": 2299,
+        "generic": {
+          "brier": 0.12949002046468863,
+          "logLoss": 0.3724763658337426,
+          "expectedCalibrationError": 0.12413399603056166
+        },
+        "gambling": {
+          "brier": 0.13686711749814054,
+          "logLoss": 0.43807727183293704,
+          "expectedCalibrationError": 0.09013156281265552
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0.007377097033451907,
+          "logLoss": 0.06560090599919444,
+          "expectedCalibrationError": -0.034002433217906136
+        }
+      },
+      "prediction_markets": {
+        "events": 3,
+        "observations": 263,
+        "generic": {
+          "brier": 0.14793325376789782,
+          "logLoss": 0.41124025075658993,
+          "expectedCalibrationError": 0.14747007229247874
+        },
+        "gambling": {
+          "brier": 0.1809268508152833,
+          "logLoss": 0.4940229097960658,
+          "expectedCalibrationError": 0.2296767290670242
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0.0329935970473855,
+          "logLoss": 0.08278265903947585,
+          "expectedCalibrationError": 0.08220665677454544
+        }
+      },
+      "sports_betting": {
+        "events": 1,
+        "observations": 127,
+        "generic": {
+          "brier": 0.08061328270682493,
+          "logLoss": 0.29248391350779224,
+          "expectedCalibrationError": 0.11563972279222035
+        },
+        "gambling": {
+          "brier": 0.08061328270682493,
+          "logLoss": 0.2924839135077917,
+          "expectedCalibrationError": 0.11563972279222035
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0,
+          "logLoss": -5.551115123125783e-16,
+          "expectedCalibrationError": 0
+        }
+      },
+      "sweepstakes": {
+        "events": 1,
+        "observations": 65,
+        "generic": {
+          "brier": 0.16770584158592197,
+          "logLoss": 0.4636134619432778,
+          "expectedCalibrationError": 0.27964372611966654
+        },
+        "gambling": {
+          "brier": 0.16770584158592197,
+          "logLoss": 0.4636134619432778,
+          "expectedCalibrationError": 0.27964372611966654
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0,
+          "logLoss": 0,
+          "expectedCalibrationError": 0
+        }
+      }
+    },
+    "scope": {
+      "direct": {
+        "events": 10,
+        "observations": 910,
+        "generic": {
+          "brier": 0.14830802101678534,
+          "logLoss": 0.4341969118145033,
+          "expectedCalibrationError": 0.13220443713696733
+        },
+        "gambling": {
+          "brier": 0.1339019695998301,
+          "logLoss": 0.394531964894927,
+          "expectedCalibrationError": 0.12486885580499536
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": -0.014406051416955223,
+          "logLoss": -0.03966494691957634,
+          "expectedCalibrationError": -0.0073355813319719715
+        }
+      },
+      "embedded": {
+        "events": 91,
+        "observations": 9173,
+        "generic": {
+          "brier": 0.12263441932847093,
+          "logLoss": 0.3781583180448127,
+          "expectedCalibrationError": 0.04780541616143416
+        },
+        "gambling": {
+          "brier": 0.13341024877027752,
+          "logLoss": 0.4153734812648698,
+          "expectedCalibrationError": 0.05360193633626221
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0.010775829441806592,
+          "logLoss": 0.03721516322005708,
+          "expectedCalibrationError": 0.005796520174828047
+        }
+      },
+      "mention": {
+        "events": 60,
+        "observations": 5768,
+        "generic": {
+          "brier": 0.12664664464605327,
+          "logLoss": 0.38741359667491215,
+          "expectedCalibrationError": 0.05148574672454117
+        },
+        "gambling": {
+          "brier": 0.13668312517591394,
+          "logLoss": 0.44891792916627726,
+          "expectedCalibrationError": 0.06071042690677621
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0.01003648052986067,
+          "logLoss": 0.06150433249136511,
+          "expectedCalibrationError": 0.009224680182235039
+        }
+      }
+    },
+    "close": {
+      "other": {
+        "events": 72,
+        "observations": 7240,
+        "generic": {
+          "brier": 0.1877335065211839,
+          "logLoss": 0.5378655290086602,
+          "expectedCalibrationError": 0.2176757688032238
+        },
+        "gambling": {
+          "brier": 0.1865404262029094,
+          "logLoss": 0.55347780969247,
+          "expectedCalibrationError": 0.20519289604149624
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": -0.0011930803182745031,
+          "logLoss": 0.01561228068380971,
+          "expectedCalibrationError": -0.012482872761727576
+        }
+      },
+      "within_5_of_provisional_threshold": {
+        "events": 89,
+        "observations": 8611,
+        "generic": {
+          "brier": 0.07330078814660967,
+          "logLoss": 0.2560005384710759,
+          "expectedCalibrationError": 0.11904043643663793
+        },
+        "gambling": {
+          "brier": 0.0909834612253215,
+          "logLoss": 0.31952436476070484,
+          "expectedCalibrationError": 0.12491774797053502
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0.017682673078711825,
+          "logLoss": 0.06352382628962894,
+          "expectedCalibrationError": 0.005877311533897089
+        }
+      }
+    },
+    "experience": {
+      "at_least_10": {
+        "events": 141,
+        "observations": 12883,
+        "generic": {
+          "brier": 0.12130298019192275,
+          "logLoss": 0.3696621802709936,
+          "expectedCalibrationError": 0.054628469813122735
+        },
+        "gambling": {
+          "brier": 0.12238532342019501,
+          "logLoss": 0.3852103348537003,
+          "expectedCalibrationError": 0.0402358962369821
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0.0010823432282722617,
+          "logLoss": 0.015548154582706697,
+          "expectedCalibrationError": -0.014392573576140634
+        }
+      },
+      "fewer_than_10_prior_gambling_votes": {
+        "events": 103,
+        "observations": 2968,
+        "generic": {
+          "brier": 0.14408267524639434,
+          "logLoss": 0.45020525551406804,
+          "expectedCalibrationError": 0.09219105743699967
+        },
+        "gambling": {
+          "brier": 0.18777666735105372,
+          "logLoss": 0.6051007086279683,
+          "expectedCalibrationError": 0.11613498674400341
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0.04369399210465938,
+          "logLoss": 0.15489545311390024,
+          "expectedCalibrationError": 0.023943929307003745
+        }
+      }
+    },
+    "latestSessionPresence": {
+      "appears_in_latest_session": {
+        "events": 161,
+        "observations": 13666,
+        "generic": {
+          "brier": 0.12899568065706193,
+          "logLoss": 0.39164450350191815,
+          "expectedCalibrationError": 0.05810842839318779
+        },
+        "gambling": {
+          "brier": 0.13541730040028316,
+          "logLoss": 0.4254505689137699,
+          "expectedCalibrationError": 0.05463236780194304
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0.006421619743221224,
+          "logLoss": 0.03380606541185177,
+          "expectedCalibrationError": -0.0034760605912447506
+        }
+      },
+      "not_seen_in_latest_session": {
+        "events": 115,
+        "observations": 2185,
+        "generic": {
+          "brier": 0.10413212910043558,
+          "logLoss": 0.3415804494003149,
+          "expectedCalibrationError": 0.041220673503553025
+        },
+        "gambling": {
+          "brier": 0.1297018045995637,
+          "logLoss": 0.4322179278501948,
+          "expectedCalibrationError": 0.054352523766089136
+        },
+        "deltaGamblingMinusGeneric": {
+          "brier": 0.025569675499128128,
+          "logLoss": 0.0906374784498799,
+          "expectedCalibrationError": 0.013131850262536111
+        }
+      }
+    }
+  },
+  "promotionDecision": "do-not-promote"
+}
