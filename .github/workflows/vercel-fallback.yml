@@ -112,11 +112,9 @@ jobs:
             exit 6
           fi
 
-          jq -r '
-            ["Recent production deployments:"],
-            (.deployments[]? | "- " + (.state // "UNKNOWN") + "  " + (.url // "(no URL)") + "  " + ((.created // 0) / 1000 | strftime("%Y-%m-%d %H:%M:%S UTC")))
-            | .[]
-          ' /tmp/vercel-deployments.json
+          echo "Recent production deployments:"
+          jq -r '.deployments[]? | "- \(.state // "UNKNOWN")  \(.url // "(no URL)")  \(((.created // 0) / 1000) | strftime("%Y-%m-%d %H:%M:%S UTC"))"' \
+            /tmp/vercel-deployments.json
 
       - name: Check out protected main
         if: steps.request.outputs.action == 'deploy-production'
@@ -147,26 +145,6 @@ jobs:
             --token "$VERCEL_TOKEN"
           vercel project inspect --non-interactive --token "$VERCEL_TOKEN" >/dev/null
 
-      - name: Pull production configuration
-        if: steps.request.outputs.action == 'deploy-production'
-        shell: bash
-        run: |
-          set -euo pipefail
-          vercel pull \
-            --yes \
-            --environment=production \
-            --scope "$VERCEL_TEAM_SLUG" \
-            --token "$VERCEL_TOKEN"
-
-      - name: Build production artifact
-        if: steps.request.outputs.action == 'deploy-production'
-        shell: bash
-        run: |
-          set -euo pipefail
-          vercel build \
-            --prod \
-            --token "$VERCEL_TOKEN"
-
       - name: Deploy main to production
         if: steps.request.outputs.action == 'deploy-production'
         id: deploy
@@ -174,7 +152,6 @@ jobs:
         run: |
           set -euo pipefail
           deployment_output="$(vercel deploy \
-            --prebuilt \
             --prod \
             --yes \
             --scope "$VERCEL_TEAM_SLUG" \
