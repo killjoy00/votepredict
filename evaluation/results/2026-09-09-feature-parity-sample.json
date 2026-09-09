@@ -1,0 +1,148 @@
+[
+  {
+    "bill": "HF778",
+    "differences": [
+      "gambling"
+    ],
+    "stored": {
+      "scope": "direct",
+      "topic": "sports_betting",
+      "policyFlags": [],
+      "licenseModel": "commercial",
+      "mobileAllowed": true,
+      "racetrackRole": "none",
+      "retailAllowed": null,
+      "schemaVersion": "gambling-policy-v1",
+      "taxRatesPercent": [],
+      "revenueRecipients": [],
+      "collegeBettingPolicy": "unknown"
+    },
+    "extracted": {
+      "schemaVersion": "gambling-policy-v1",
+      "topic": "sports_betting",
+      "scope": "direct",
+      "licenseModel": "hybrid",
+      "mobileAllowed": true,
+      "retailAllowed": null,
+      "racetrackRole": "none",
+      "taxRatesPercent": [],
+      "minimumAge": 18,
+      "collegeBettingPolicy": "prohibited",
+      "revenueRecipients": [
+        "problem_gambling",
+        "horse_racing",
+        "youth_sports",
+        "tribal_nations",
+        "general_fund"
+      ],
+      "policyFlags": [
+        "in_game_wagering",
+        "responsible_gaming_funding"
+      ]
+    }
+  },
+  {
+    "bill": "SF2219",
+    "differences": [
+      "gambling"
+    ],
+    "stored": {
+      "scope": "direct",
+      "topic": "horse_racing",
+      "policyFlags": [],
+      "licenseModel": "unknown",
+      "mobileAllowed": null,
+      "racetrackRole": "licensee",
+      "retailAllowed": null,
+      "schemaVersion": "gambling-policy-v1",
+      "taxRatesPercent": [],
+      "revenueRecipients": [],
+      "collegeBettingPolicy": "unknown"
+    },
+    "extracted": {
+      "schemaVersion": "gambling-policy-v1",
+      "topic": "horse_racing",
+      "scope": "direct",
+      "licenseModel": "unknown",
+      "mobileAllowed": null,
+      "retailAllowed": null,
+      "racetrackRole": "licensee",
+      "taxRatesPercent": [],
+      "collegeBettingPolicy": "unknown",
+      "revenueRecipients": [
+        "horse_racing"
+      ],
+      "policyFlags": []
+    }
+  },
+  {
+    "bill": "SF4474",
+    "differences": [
+      "gambling"
+    ],
+    "stored": {
+      "scope": "direct",
+      "topic": "sweepstakes",
+      "policyFlags": [],
+      "licenseModel": "unknown",
+      "mobileAllowed": null,
+      "racetrackRole": "none",
+      "retailAllowed": null,
+      "schemaVersion": "gambling-policy-v1",
+      "taxRatesPercent": [],
+      "revenueRecipients": [],
+      "collegeBettingPolicy": "unknown"
+    },
+    "extracted": {
+      "schemaVersion": "gambling-policy-v1",
+      "topic": "sweepstakes",
+      "scope": "direct",
+      "licenseModel": "unknown",
+      "mobileAllowed": null,
+      "retailAllowed": null,
+      "racetrackRole": "none",
+      "taxRatesPercent": [],
+      "collegeBettingPolicy": "unknown",
+      "revenueRecipients": [],
+      "policyFlags": [
+        "geolocation"
+      ]
+    }
+  },
+  {
+    "bill": "SF4511",
+    "differences": [
+      "gambling"
+    ],
+    "stored": {
+      "scope": "direct",
+      "topic": "prediction_markets",
+      "policyFlags": [],
+      "licenseModel": "unknown",
+      "mobileAllowed": null,
+      "racetrackRole": "none",
+      "retailAllowed": null,
+      "schemaVersion": "gambling-policy-v1",
+      "taxRatesPercent": [],
+      "revenueRecipients": [],
+      "collegeBettingPolicy": "unknown"
+    },
+    "extracted": {
+      "schemaVersion": "gambling-policy-v1",
+      "topic": "prediction_markets",
+      "scope": "direct",
+      "licenseModel": "unknown",
+      "mobileAllowed": null,
+      "retailAllowed": null,
+      "racetrackRole": "none",
+      "taxRatesPercent": [],
+      "collegeBettingPolicy": "unknown",
+      "revenueRecipients": [
+        "horse_racing"
+      ],
+      "policyFlags": [
+        "geolocation"
+      ]
+    }
+  }
+]
