@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: [.github/workflows/production-runtime-smoke.yml]
+    paths: [.github/workflows/production-runtime-smoke.yml, scripts/smoke-production-runtime.ts, scripts/prepare-production-cron.ts]
 permissions:
   contents: read
 concurrency:
