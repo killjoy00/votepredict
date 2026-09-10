@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { evidenceIngestionKey, type DurableEvidenceDraft } from '../src/evidence/durable-ingestion';
+import { evidenceIngestionKey, evidenceSeriesKey, type DurableEvidenceDraft } from '../src/evidence/durable-ingestion';
 
 const draft: DurableEvidenceDraft = {
   kind: 'context',
@@ -53,4 +53,54 @@ test('durable evidence ingestion key changes for a materially different claim', 
     evidenceIngestionKey(base),
     evidenceIngestionKey({ ...base, draft: { ...draft, claim: 'A different sourced claim.' } }),
   );
+});
+
+test('campaign-finance series key is stable across changing aggregate claims', () => {
+  const financeDraft: DurableEvidenceDraft = {
+    ...draft,
+    metadata: {
+      contextType: 'campaign_finance',
+      subtype: 'candidate_contributions',
+      cycleYears: [2026, 2025],
+    },
+  };
+  const first = evidenceSeriesKey({ membershipId: base.membershipId, draft: financeDraft });
+  const second = evidenceSeriesKey({
+    membershipId: base.membershipId,
+    draft: { ...financeDraft, claim: 'A newer aggregate amount.' },
+  });
+  assert.equal(first, second);
+  assert.equal(first, `campaign_finance:candidate_contributions:membership:${base.membershipId}:cycle:2025-2026`);
+});
+
+test('campaign-finance series key separates member, subtype, and cycle', () => {
+  const financeDraft: DurableEvidenceDraft = {
+    ...draft,
+    metadata: {
+      contextType: 'campaign_finance',
+      subtype: 'candidate_contributions',
+      cycleYears: [2025, 2026],
+    },
+  };
+  const baseKey = evidenceSeriesKey({ membershipId: base.membershipId, draft: financeDraft });
+  assert.notEqual(baseKey, evidenceSeriesKey({
+    membershipId: '33333333-3333-3333-3333-333333333333',
+    draft: financeDraft,
+  }));
+  assert.notEqual(baseKey, evidenceSeriesKey({
+    membershipId: base.membershipId,
+    draft: { ...financeDraft, metadata: { ...financeDraft.metadata, subtype: 'independent_expenditures' } },
+  }));
+  assert.notEqual(baseKey, evidenceSeriesKey({
+    membershipId: base.membershipId,
+    draft: { ...financeDraft, metadata: { ...financeDraft.metadata, cycleYears: [2027, 2028] } },
+  }));
+});
+
+test('explicit evidence series key is honored outside campaign finance', () => {
+  const explicit = evidenceSeriesKey({
+    membershipId: base.membershipId,
+    draft: { ...draft, metadata: { evidenceSeriesKey: 'official-role:lrl-15544:2025-2026' } },
+  });
+  assert.equal(explicit, 'official-role:lrl-15544:2025-2026');
 });
