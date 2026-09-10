@@ -1,6 +1,6 @@
 import snapshotJson from '../../data/cfb-2025-2026-snapshot.json';
 
-interface RankedAmount {
+export interface RankedAmount {
   name: string;
   amount: number;
   count: number;
@@ -9,7 +9,7 @@ interface RankedAmount {
   direction?: string;
 }
 
-interface CandidateSnapshot {
+export interface CandidateSnapshot {
   committeeName: string;
   candidateName: string;
   chamber: string;
@@ -34,14 +34,14 @@ interface CandidateSnapshot {
   };
 }
 
-interface CampaignFinanceSnapshot {
+export interface CampaignFinanceSnapshot {
   schemaVersion: string;
   generatedAt: string;
   cycleYears: number[];
   provenance: {
     landingPage: string;
-    contributions: { url: string; contentSha256: string; cycleRows: number };
-    independentExpenditures: { url: string; contentSha256: string; cycleRows: number };
+    contributions: { url: string; contentSha256: string; cycleRows: number; bytes?: number };
+    independentExpenditures: { url: string; contentSha256: string; cycleRows: number; bytes?: number };
   };
   candidates: CandidateSnapshot[];
 }
@@ -109,6 +109,12 @@ export interface CampaignFinanceMemberResolution {
   context?: CampaignFinanceMemberContext;
 }
 
+export interface CampaignFinanceMemberInput {
+  membershipId: string;
+  memberName: string;
+  chamber?: string;
+}
+
 function normalizeToken(value: string): string {
   return value
     .normalize('NFKD')
@@ -142,11 +148,11 @@ function uniqueCandidate(candidates: readonly CandidateSnapshot[]): CandidateSna
   return undefined;
 }
 
-function findCandidate(memberName: string, chamber?: string): { candidate?: CandidateSnapshot; method?: CampaignFinanceResolutionMethod; ambiguous?: boolean } {
+function findCandidate(snapshotData: CampaignFinanceSnapshot, memberName: string, chamber?: string): { candidate?: CandidateSnapshot; method?: CampaignFinanceResolutionMethod; ambiguous?: boolean } {
   const chamberKey = chamber?.toLowerCase();
   const chamberCandidates = chamberKey
-    ? snapshot.candidates.filter((candidate) => candidate.chamber === chamberKey)
-    : snapshot.candidates;
+    ? snapshotData.candidates.filter((candidate) => candidate.chamber === chamberKey)
+    : snapshotData.candidates;
   const personKey = normalizedPersonName(memberName);
 
   const fullName = uniqueCandidate(chamberCandidates.filter((candidate) => normalizedPersonName(candidate.candidateName) === personKey));
@@ -174,10 +180,10 @@ function findCandidate(memberName: string, chamber?: string): { candidate?: Cand
   return sameLastName ? { candidate: sameLastName, method: 'unique_last_name' } : {};
 }
 
-function contextForCandidate(input: { membershipId: string; memberName: string }, candidate: CandidateSnapshot): CampaignFinanceMemberContext | undefined {
+function contextForCandidate(snapshotData: CampaignFinanceSnapshot, input: CampaignFinanceMemberInput, candidate: CandidateSnapshot): CampaignFinanceMemberContext | undefined {
   const contributions = candidate.contributions.transactionCount > 0
     ? {
-        sourceUrl: snapshot.provenance.contributions.url,
+        sourceUrl: snapshotData.provenance.contributions.url,
         transactionCount: candidate.contributions.transactionCount,
         totalAmount: candidate.contributions.totalAmount,
         latestReceiptDate: candidate.contributions.latestReceiptDate,
@@ -188,7 +194,7 @@ function contextForCandidate(input: { membershipId: string; memberName: string }
     : undefined;
   const independentExpenditures = candidate.independentExpenditures.transactionCount > 0
     ? {
-        sourceUrl: snapshot.provenance.independentExpenditures.url,
+        sourceUrl: snapshotData.provenance.independentExpenditures.url,
         transactionCount: candidate.independentExpenditures.transactionCount,
         totalAmount: candidate.independentExpenditures.totalAmount,
         forAmount: candidate.independentExpenditures.forAmount,
@@ -220,21 +226,17 @@ export function campaignFinanceSnapshotInfo(): CampaignFinanceSnapshotInfo {
   };
 }
 
-export function resolveCampaignFinanceMember(input: {
-  membershipId: string;
-  memberName: string;
-  chamber?: string;
-}): CampaignFinanceMemberResolution {
-  const match = findCandidate(input.memberName, input.chamber);
+export function resolveCampaignFinanceMemberAgainstSnapshot(snapshotData: CampaignFinanceSnapshot, input: CampaignFinanceMemberInput): CampaignFinanceMemberResolution {
+  const match = findCandidate(snapshotData, input.memberName, input.chamber);
   if (match.ambiguous) {
     return { membershipId: input.membershipId, memberName: input.memberName, status: 'ambiguous' };
   }
   if (!match.candidate) {
-    // The bundled snapshot is activity-derived: absence means no committee row was found
+    // These snapshots are activity-derived: absence means no committee row was found
     // in the contribution/IE corpus. It is not proof that roster identity resolution failed.
     return { membershipId: input.membershipId, memberName: input.memberName, status: 'not_in_activity_snapshot' };
   }
-  const context = contextForCandidate(input, match.candidate);
+  const context = contextForCandidate(snapshotData, input, match.candidate);
   return {
     membershipId: input.membershipId,
     memberName: input.memberName,
@@ -247,26 +249,22 @@ export function resolveCampaignFinanceMember(input: {
   };
 }
 
-export function resolveCampaignFinanceMembers(inputs: readonly {
-  membershipId: string;
-  memberName: string;
-  chamber?: string;
-}[]): CampaignFinanceMemberResolution[] {
-  return inputs.map(resolveCampaignFinanceMember);
+export function resolveCampaignFinanceMembersAgainstSnapshot(snapshotData: CampaignFinanceSnapshot, inputs: readonly CampaignFinanceMemberInput[]): CampaignFinanceMemberResolution[] {
+  return inputs.map((input) => resolveCampaignFinanceMemberAgainstSnapshot(snapshotData, input));
 }
 
-export function getCampaignFinanceContextForMember(input: {
-  membershipId: string;
-  memberName: string;
-  chamber?: string;
-}): CampaignFinanceMemberContext | undefined {
+export function resolveCampaignFinanceMember(input: CampaignFinanceMemberInput): CampaignFinanceMemberResolution {
+  return resolveCampaignFinanceMemberAgainstSnapshot(snapshot, input);
+}
+
+export function resolveCampaignFinanceMembers(inputs: readonly CampaignFinanceMemberInput[]): CampaignFinanceMemberResolution[] {
+  return resolveCampaignFinanceMembersAgainstSnapshot(snapshot, inputs);
+}
+
+export function getCampaignFinanceContextForMember(input: CampaignFinanceMemberInput): CampaignFinanceMemberContext | undefined {
   return resolveCampaignFinanceMember(input).context;
 }
 
-export function getCampaignFinanceContexts(inputs: readonly {
-  membershipId: string;
-  memberName: string;
-  chamber?: string;
-}[]): CampaignFinanceMemberContext[] {
+export function getCampaignFinanceContexts(inputs: readonly CampaignFinanceMemberInput[]): CampaignFinanceMemberContext[] {
   return resolveCampaignFinanceMembers(inputs).flatMap((resolution) => resolution.context ? [resolution.context] : []);
 }
