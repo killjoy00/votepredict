@@ -1,0 +1,31 @@
+name: Revisor source-passage snapshot
+on:
+  push:
+    branches: [model/authoritative-source-passage-labels]
+    paths:
+      - .github/workflows/revisor-source-passage-snapshot.yml
+      - scripts/export-revisor-source-passage-snapshot.ts
+      - src/sources/minnesota/revisor-action-search.ts
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Export audited Revisor source-passage set
+        run: node --import tsx scripts/export-revisor-source-passage-snapshot.ts
+      - name: Upload machine-readable snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: revisor-source-passage-snapshot
+          path: artifacts/revisor-source-passage-snapshot.json
+          if-no-files-found: error
+          retention-days: 7
