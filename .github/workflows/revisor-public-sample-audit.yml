@@ -5,6 +5,7 @@ on:
     paths:
       - .github/workflows/revisor-public-sample-audit.yml
       - scripts/audit-revisor-public-samples.ts
+      - scripts/probe-revisor-action-search.ts
       - src/sources/minnesota/revisor-actions.ts
   workflow_dispatch:
 permissions:
@@ -20,5 +21,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
+      - name: Probe Revisor action-search form values
+        run: node --import tsx scripts/probe-revisor-action-search.ts
       - name: Audit official Revisor XML samples directly
         run: node --import tsx scripts/audit-revisor-public-samples.ts
