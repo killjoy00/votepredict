@@ -16,6 +16,7 @@ export interface GamblingModelObservation {
   party: string;
   occurredAt: string;
   outcome: 0 | 1;
+  chamber?: string;
   topic: GamblingTopic;
   designKey?: string;
   sponsorshipRole?: SponsorshipRole;
@@ -51,6 +52,10 @@ export function evaluateChronologicalGamblingModel(
   observations: readonly GamblingModelObservation[],
   options: { halfLifeDays?: number; model?: GamblingMemberModelOptions } = {},
 ): GamblingModelPrediction[] {
+  const chambers = [...new Set(observations.map(row => row.chamber ?? 'unknown'))];
+  if (chambers.length > 1) return chambers.flatMap(chamber =>
+    evaluateChronologicalGamblingModel(observations.filter(row => (row.chamber ?? 'unknown') === chamber), options))
+    .sort((a, b) => a.occurredAt.localeCompare(b.occurredAt) || a.voteEventId.localeCompare(b.voteEventId) || a.observationId.localeCompare(b.observationId));
   const halfLifeDays = options.halfLifeDays ?? 730;
   const sorted = [...observations].sort((a, b) => a.occurredAt.localeCompare(b.occurredAt) || a.voteEventId.localeCompare(b.voteEventId) || a.observationId.localeCompare(b.observationId));
   const history: HistoricalRow[] = [];

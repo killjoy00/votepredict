@@ -1,0 +1,11 @@
+{
+  "extractorVersion": "deterministic-v2.1",
+  "versions": 1594,
+  "changed": 243,
+  "changedFields": {
+    "gambling": 243
+  },
+  "gamblingVersions": 251,
+  "datasetSha256": "6fe2c9be053b3cfaf287834bf7a10c6c61ebd7a928591d40568a2c884bdf7c5d",
+  "writes": 0
+}

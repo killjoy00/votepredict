@@ -118,6 +118,10 @@ export function evaluateChronologicalMemberModel(
   observations: readonly MemberModelObservation[],
   options: MemberModelEvaluationOptions = {},
 ): MemberModelPrediction[] {
+  const chambers = [...new Set(observations.map(row => row.chamber))];
+  if (chambers.length > 1) return chambers.flatMap(chamber =>
+    evaluateChronologicalMemberModel(observations.filter(row => row.chamber === chamber), options))
+    .sort((a, b) => a.occurredAt.localeCompare(b.occurredAt) || a.voteEventId.localeCompare(b.voteEventId) || a.observationId.localeCompare(b.observationId));
   const calibrateAfter = options.calibrateAfterObservations ?? Number.POSITIVE_INFINITY;
   const sorted = [...observations].sort((a, b) => a.occurredAt.localeCompare(b.occurredAt) || a.voteEventId.localeCompare(b.voteEventId) || a.observationId.localeCompare(b.observationId));
   const predictions: MemberModelPrediction[] = [];

@@ -1,3 +1,4 @@
+import { auditBillFeature } from '../src/features/feature-audit.js';
 import { Pool } from 'pg';
 import { BILL_FEATURE_SCHEMA_VERSION, DETERMINISTIC_EXTRACTOR_VERSION, extractDeterministicBillFeatures } from '../src/features/bills.js';
 
@@ -10,6 +11,7 @@ function argumentValue(args: string[], name: string): string | undefined {
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
+  const dryRun = args.includes('--dry-run');
   const session = argumentValue(args, '--session');
   const limitValue = argumentValue(args, '--limit');
   const limit = limitValue ? Number.parseInt(limitValue, 10) : undefined;
@@ -47,7 +49,8 @@ async function main(): Promise<void> {
     const rows = limit ? result.rows.slice(0, limit) : result.rows;
     let processed = 0;
     for (const row of rows) {
-      const features = extractDeterministicBillFeatures({ title: row.title, text: row.raw_text });
+      const { features, provenance } = auditBillFeature(row);
+      if (dryRun) { processed += 1; continue; }
       await pool.query(`
         INSERT INTO bill_feature_sets (
           bill_version_id, feature_schema_version, extractor_kind, extractor_version,
@@ -59,19 +62,12 @@ async function main(): Promise<void> {
         BILL_FEATURE_SCHEMA_VERSION,
         DETERMINISTIC_EXTRACTOR_VERSION,
         JSON.stringify(features),
-        JSON.stringify({
-          billId: row.bill_id,
-          identifier: row.identifier,
-          session: row.session_slug,
-          versionKey: row.version_key,
-          publishedAt: row.published_at,
-          sourceTextHash: row.text_hash,
-          sourceUrl: row.source_url,
-        }),
+        JSON.stringify(provenance),
       ]);
       processed += 1;
       if (processed % 100 === 0 || processed === rows.length) console.log(`bill features ${processed}/${rows.length}`);
     }
+    console.log(JSON.stringify({ processed, dryRun, extractorVersion: DETERMINISTIC_EXTRACTOR_VERSION }));
   } finally {
     await pool.end();
   }
