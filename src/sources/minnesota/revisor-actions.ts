@@ -34,8 +34,8 @@ function decodeXml(value: string): string {
 
 function parseLeafFields(block: string): Record<string, string> {
   const fields: Record<string, string> = {};
-  for (const match of block.matchAll(/<([A-Z][A-Z0-9_]*)\b[^>]*>([\s\S]*?)<\/\1>/gi)) {
-    if (/<[A-Z][A-Z0-9_]*\b/i.test(match[2])) continue;
+  for (const match of block.matchAll(/<(?:[A-Z0-9_.-]+:)?([A-Z][A-Z0-9_]*)\b[^>]*>([\s\S]*?)<\/(?:[A-Z0-9_.-]+:)?\1>/gi)) {
+    if (/<(?:[A-Z0-9_.-]+:)?[A-Z][A-Z0-9_]*\b/i.test(match[2])) continue;
     const value = decodeXml(match[2]);
     if (value) fields[match[1].toUpperCase()] = value;
   }
@@ -101,7 +101,7 @@ function isPassageNegative(description: string): boolean {
 
 export function parseRevisorOfficialActions(xml: string): RevisorOfficialAction[] {
   const actions: RevisorOfficialAction[] = [];
-  for (const match of xml.matchAll(/<ACTION\b[^>]*>([\s\S]*?)<\/ACTION>/gi)) {
+  for (const match of xml.matchAll(/<(?:[A-Z0-9_.-]+:)?ACTION\b[^>]*>([\s\S]*?)<\/(?:[A-Z0-9_.-]+:)?ACTION>/gi)) {
     const fields = parseLeafFields(match[1]);
     const description = descriptionFromFields(fields);
     if (!description && Object.keys(fields).length === 0) continue;
@@ -135,12 +135,53 @@ export function auditRevisorSourceChamberPassage(input: {
   };
 }
 
+export function normalizeRevisorStatusXmlUrl(value: string): string {
+  const input = value.trim();
+  const withScheme = /^https?:\/\//i.test(input) ? input : `https://${input.replace(/^\/+/, '')}`;
+  const url = new URL(withScheme);
+  if (url.hostname.toLowerCase() === 'api.revisor.mn.gov') {
+    url.protocol = 'https:';
+    return url.toString();
+  }
+
+  const match = url.pathname.match(/^\/bills\/(\d+)\/(\d{4})\/(\d+)\/(HF|SF)\/(\d+)\/?$/i);
+  if (url.hostname.toLowerCase() === 'www.revisor.mn.gov' && match) {
+    const [, legislature, year, sessionType, fileType, fileNumber] = match;
+    return `https://api.revisor.mn.gov/bills/v1/${legislature}/${year}/${sessionType}/${fileType.toUpperCase()}/${fileNumber}/`;
+  }
+  return url.toString();
+}
+
+function sleep(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
 export async function fetchRevisorStatusXml(statusXmlUrl: string): Promise<string> {
-  const response = await fetch(statusXmlUrl, {
-    headers: { 'User-Agent': 'VotePredict/2.0 official Minnesota action-history audit' },
-    signal: AbortSignal.timeout(20_000),
-    cache: 'no-store',
-  });
-  if (!response.ok) throw new Error(`Minnesota Revisor bill status returned ${response.status}: ${statusXmlUrl}`);
-  return response.text();
+  const apiUrl = normalizeRevisorStatusXmlUrl(statusXmlUrl);
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const response = await fetch(apiUrl, {
+      headers: {
+        'User-Agent': 'VotePredict/2.0 official Minnesota action-history audit',
+        Accept: 'application/xml,text/xml;q=0.9,*/*;q=0.1',
+      },
+      signal: AbortSignal.timeout(20_000),
+      cache: 'no-store',
+      redirect: 'follow',
+    });
+    if (response.status === 429 && attempt < 2) {
+      await sleep(600 * (attempt + 1));
+      continue;
+    }
+    if (!response.ok) throw new Error(`Minnesota Revisor bill status returned ${response.status}: ${apiUrl}`);
+    const text = await response.text();
+    const contentType = response.headers.get('content-type') ?? '';
+    if (/<!doctype\s+html|<html\b/i.test(text.slice(0, 1000))) {
+      throw new Error(`Minnesota Revisor XML endpoint returned HTML (${contentType || 'unknown content type'}): ${apiUrl}`);
+    }
+    if (!/<(?:[A-Z0-9_.-]+:)?BILL\b/i.test(text)) {
+      throw new Error(`Minnesota Revisor XML endpoint returned an unexpected document (${contentType || 'unknown content type'}): ${apiUrl}`);
+    }
+    return text;
+  }
+  throw new Error(`Minnesota Revisor bill status retry budget exhausted: ${apiUrl}`);
 }
