@@ -52,6 +52,9 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
 
   const member = profile.currentMembership;
   const finance = profile.campaignFinance;
+  const financeSource = finance?.contributions?.sourceUrl
+    ?? finance?.expenditures?.sourceUrl
+    ?? finance?.independentExpenditures?.sourceUrl;
 
   return (
     <main className={styles.shell}>
@@ -85,7 +88,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
         </div>
         <div className={styles.heroAside}>
           {member?.sourceUrl ? <a href={member.sourceUrl} target="_blank" rel="noreferrer">Official legislator page ↗</a> : null}
-          {finance?.contributions?.sourceUrl ? <a href={finance.contributions.sourceUrl} target="_blank" rel="noreferrer">Campaign finance source ↗</a> : null}
+          {financeSource ? <a href={financeSource} target="_blank" rel="noreferrer">Campaign finance source ↗</a> : null}
           <Link href="/dashboard/legislators">← Back to chamber directory</Link>
         </div>
       </section>
@@ -341,7 +344,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
             <header className={styles.panelHeader}>
               <div>
                 <span className={styles.kicker}>Campaign finance</span>
-                <h3>2025–26 disclosure snapshot</h3>
+                <h3>Current 2025–26 CFB disclosure</h3>
               </div>
             </header>
             {finance ? (
@@ -351,6 +354,10 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                   <div>
                     <span>Candidate committee receipts</span>
                     <strong>{money(finance.contributions?.totalAmount)}</strong>
+                  </div>
+                  <div>
+                    <span>Candidate committee spending</span>
+                    <strong>{money(finance.expenditures?.totalAmount)}</strong>
                   </div>
                   <div>
                     <span>Independent expenditures</span>
@@ -367,6 +374,19 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                     ))}
                   </div>
                 ) : null}
+                {finance.expenditures?.topPayees.length ? (
+                  <>
+                    <p className={styles.note}>Top candidate-committee payees</p>
+                    <div className={styles.financeList}>
+                      {finance.expenditures.topPayees.slice(0, 5).map((item) => (
+                        <div className={styles.financeItem} key={`${item.name}-${item.amount}`}>
+                          <strong>{item.name}</strong>
+                          <span>{money(item.amount)} · {item.count} item{item.count === 1 ? '' : 's'}{item.type ? ` · ${item.type}` : ''}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : null}
                 {finance.independentExpenditures?.topSpenders.length ? (
                   <>
                     <p className={styles.note}>Top independent spenders affecting this candidate</p>
@@ -380,9 +400,9 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                     </div>
                   </>
                 ) : null}
-                <p className={styles.note}>Campaign-finance relationships are context only. They are not treated as evidence that a legislator supports or opposes a bill.</p>
+                <p className={styles.note}>Current records come from the persisted CFB evidence refresh. Campaign-finance relationships are context only and are not treated as evidence that a legislator supports or opposes a bill.</p>
               </>
-            ) : <p className={styles.note}>No matched 2025–26 legislative candidate committee was found in the bundled CFB snapshot.</p>}
+            ) : <p className={styles.note}>No current 2025–26 campaign-finance evidence is available for this legislator.</p>}
           </section>
 
           <section className={styles.panel}>
