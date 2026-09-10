@@ -15,11 +15,19 @@ VotePredict stores reusable public evidence in the existing `source_documents` a
 ## Commands
 
 - `npm run data:cfb:snapshot` builds the normalized Minnesota Campaign Finance and Public Disclosure Board snapshot.
-- `npm run data:cfb:evidence -- --snapshot=PATH` maps that snapshot to current memberships and persists campaign-finance context.
-- `npm run data:evidence:bills -- --manifest=PATH` ensures official Revisor bills referenced by an evidence manifest have canonical bill/version records and `deterministic-v2.1` features.
-- `npm run data:evidence:curated -- --manifest=PATH` fetches and hashes each manifest source, resolves targets, and persists evidence.
+- `npm run data:cfb:evidence -- --snapshot=PATH` maps that snapshot to current memberships and persists campaign-finance context when run in an environment with a routable database connection.
+- `npm run data:evidence:bills -- --manifest=PATH` ensures official Revisor bills referenced by an evidence manifest have canonical bill/version records and `deterministic-v2.1` features when run in an environment with a routable database connection.
+- `npm run data:evidence:curated -- --manifest=PATH` fetches and hashes each manifest source, resolves targets, and persists evidence when run in an environment with a routable database connection.
 
-`Production evidence refresh` pulls the production runtime environment through the existing protected Vercel credential path and runs the three production ingestion stages on `main`. It is intentionally not scheduled on a recurring cadence yet. Before recurring refresh is enabled, evidence supersession/current-version selection should be explicit so changed source content does not appear as duplicate current evidence.
+## Production execution
+
+Vercel's production database URL uses a Marketplace/internal database alias that is valid inside the deployed application runtime but is not routable from a GitHub-hosted runner. Production evidence refreshes therefore do **not** connect directly from GitHub Actions.
+
+The `Production evidence refresh` workflow follows the same deployed-runtime boundary used by scheduler validation: it deploys protected `main`, privately reads `CRON_SECRET`, then invokes the production-only `POST /api/operations/evidence-refresh` endpoint. The endpoint performs the database work inside Vercel, where the configured Neon connection is valid. The GitHub runner never receives a separately routable database credential and the endpoint rejects unauthenticated requests.
+
+The initial runtime refresh uses the versioned `data/cfb-2025-2026-snapshot.json` campaign-finance snapshot, whose official bulk-download URLs and content hashes are retained in provenance. The first production runtime bridge was added after a GitHub-runner attempt failed on the unroutable database alias before inserting any evidence. A later ingestion phase should refactor the official CFB downloader into reusable application code so production can refresh the snapshot dynamically without relying on a GitHub runner for database access.
+
+Production refresh is intentionally not scheduled on a recurring cadence yet. Before recurring refresh is enabled, evidence supersession/current-version selection should be explicit so changed source content does not appear as duplicate current evidence.
 
 ## Initial gambling tranche
 
