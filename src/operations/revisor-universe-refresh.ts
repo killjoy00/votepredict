@@ -7,7 +7,12 @@ import {
 } from '@/sources/minnesota/revisor-bill-search';
 import { MINNESOTA_HOUSE_HISTORICAL_SESSIONS } from '@/sources/minnesota/sessions';
 
-const SESSION_HISTORY_SOURCE = 'https://www.lrl.mn.gov/history/sessions';
+const BILL_TALLY_SOURCE = 'https://www.lrl.mn.gov/history/bills';
+const SESSION_HISTORY_SOURCE: Record<string, string> = {
+  '2021-2022': 'https://www.lrl.mn.gov/timecapsule/session?sess=92',
+  '2023-2024': 'https://www.lrl.mn.gov/timecapsule/session?sess=93',
+  '2025-2026': 'https://www.lrl.mn.gov/timecapsule/session?sess=94',
+};
 const BIENNIUM_ADJOURNMENT: Record<string, string> = {
   '2021-2022': '2022-05-23',
   '2023-2024': '2024-05-20',
@@ -38,6 +43,11 @@ export interface RevisorUniverseRefreshResult {
   sourceDocuments: number;
   floorStageEvents: number;
   expirationEvents: number;
+  passageLabels: {
+    passed: number;
+    failed: number;
+    unknown: number;
+  };
 }
 
 type ScopeRow = { session_id: string; chamber_id: string };
@@ -90,7 +100,6 @@ async function persistSearchDocuments(input: {
 }
 
 async function persistBills(input: {
-  session: string;
   body: RevisorBillSearchBody;
   scope: ScopeRow;
   bills: readonly RevisorBillSearchResult[];
@@ -120,13 +129,15 @@ async function persistBills(input: {
            $2::uuid,
            p.identifier,
            p.title,
-           'Official Revisor bill status',
+           'Introduced',
            p.status_xml_url,
            jsonb_build_object(
              'revisorUniverse', jsonb_build_object(
                'source', 'bill-status-api-v1',
+               'officialIntroductionTallySource', $5,
+               'introduced', true,
                'body', $3,
-               'fetchedAt', $5,
+               'fetchedAt', $6,
                'statusXmlUrl', p.status_xml_url,
                'latestTextHtmlUrl', p.latest_text_html_url
              )
@@ -146,6 +157,7 @@ async function persistBills(input: {
     input.scope.chamber_id,
     input.body,
     JSON.stringify(payload),
+    BILL_TALLY_SOURCE,
     input.fetchedAt,
   ]);
   const inserted = result.rows.filter((row) => row.inserted).length;
@@ -191,6 +203,8 @@ async function materializeFloorStageEvents(): Promise<number> {
 async function materializeExpirationEvents(): Promise<number> {
   let total = 0;
   for (const [session, adjournedOn] of Object.entries(BIENNIUM_ADJOURNMENT)) {
+    const sourceUrl = SESSION_HISTORY_SOURCE[session];
+    if (!sourceUrl) throw new Error(`Missing official session-history source for ${session}`);
     const result = await pool.query(`
       INSERT INTO legislative_stage_events (
         bill_id, session_id, chamber_id, stage_kind, outcome, occurred_at,
@@ -204,7 +218,7 @@ async function materializeExpirationEvents(): Promise<number> {
              ($2 || 'T23:59:59Z')::timestamptz,
              $3,
              jsonb_build_object(
-               'reason', 'regular_biennium_adjourned_sine_die_without_recorded_source-chamber final-passage event',
+               'reason', 'regular biennium adjourned sine die without any recorded source-chamber final-passage vote',
                'targetStage', CASE c.slug WHEN 'house' THEN 'house_floor_passage' ELSE 'senate_floor_passage' END,
                'officialAdjournmentDate', $2
              )
@@ -220,10 +234,51 @@ async function materializeExpirationEvents(): Promise<number> {
          )
       ON CONFLICT (bill_id, stage_kind, occurred_at, source_url) DO UPDATE SET
         metadata = legislative_stage_events.metadata || EXCLUDED.metadata
-      RETURNING id`, [session, adjournedOn, SESSION_HISTORY_SOURCE]);
+      RETURNING id`, [session, adjournedOn, sourceUrl]);
     total += result.rowCount ?? 0;
   }
   return total;
+}
+
+async function persistPassageLabels(): Promise<{ passed: number; failed: number; unknown: number }> {
+  const result = await pool.query<{ outcome: boolean | null; bills: number }>(`
+    WITH labels AS (
+      SELECT b.id,
+             CASE
+               WHEN bool_or(stage.outcome = true) FILTER (WHERE stage.stage_kind = CASE c.slug WHEN 'house' THEN 'house_floor_passage' ELSE 'senate_floor_passage' END) THEN true
+               WHEN bool_or(stage.outcome = false) FILTER (WHERE stage.stage_kind = CASE c.slug WHEN 'house' THEN 'house_floor_passage' ELSE 'senate_floor_passage' END) THEN false
+               WHEN bool_or(stage.stage_kind = 'session_expiration') THEN false
+               ELSE NULL
+             END AS outcome,
+             CASE c.slug WHEN 'house' THEN 'house_floor_passage' ELSE 'senate_floor_passage' END AS target_stage,
+             bool_or(stage.stage_kind = 'session_expiration') AS expired_without_floor_vote
+        FROM bills b
+        JOIN chambers c ON c.id = b.originating_chamber_id AND c.slug IN ('house', 'senate')
+        LEFT JOIN legislative_stage_events stage ON stage.bill_id = b.id
+       WHERE b.metadata ? 'revisorUniverse'
+       GROUP BY b.id, c.slug
+    ), updated AS (
+      UPDATE bills b
+         SET metadata = b.metadata || jsonb_build_object(
+           'sourceChamberPassage', jsonb_build_object(
+             'targetStage', labels.target_stage,
+             'outcome', labels.outcome,
+             'expiredWithoutFloorVote', labels.expired_without_floor_vote,
+             'labelMethod', 'official introduced-bill universe + recorded final-passage events + sine-die expiration'
+           )
+         ),
+             updated_at = now()
+        FROM labels
+       WHERE labels.id = b.id
+      RETURNING labels.outcome
+    )
+    SELECT outcome, count(*)::int AS bills
+      FROM updated
+     GROUP BY outcome`);
+  const passed = result.rows.find((row) => row.outcome === true)?.bills ?? 0;
+  const failed = result.rows.find((row) => row.outcome === false)?.bills ?? 0;
+  const unknown = result.rows.find((row) => row.outcome === null)?.bills ?? 0;
+  return { passed, failed, unknown };
 }
 
 export async function runRevisorUniverseRefresh(): Promise<RevisorUniverseRefreshResult> {
@@ -232,7 +287,8 @@ export async function runRevisorUniverseRefresh(): Promise<RevisorUniverseRefres
     VALUES ('mn-revisor-bill-universe', '2021-2026 regular biennia', 'running', $1::jsonb)
     RETURNING id::text`, [JSON.stringify({
     source: 'Minnesota Revisor Bill Status API v1',
-    validationSource: SESSION_HISTORY_SOURCE,
+    validationSource: BILL_TALLY_SOURCE,
+    purpose: 'Load the complete introduced-bill denominator, including bills that never reached or passed an originating-chamber floor vote.',
   })]);
   const runId = run.rows[0].id;
 
@@ -261,7 +317,6 @@ export async function runRevisorUniverseRefresh(): Promise<RevisorUniverseRefres
       const scope = await resolveScope(item.session, item.body);
       const sourceDocuments = await persistSearchDocuments({ scope, body: item.body, documents: item.universe.documents });
       const persisted = await persistBills({
-        session: item.session,
         body: item.body,
         scope,
         bills: item.universe.bills,
@@ -281,6 +336,7 @@ export async function runRevisorUniverseRefresh(): Promise<RevisorUniverseRefres
 
     const floorStageEvents = await materializeFloorStageEvents();
     const expirationEvents = await materializeExpirationEvents();
+    const passageLabels = await persistPassageLabels();
     const result: RevisorUniverseRefreshResult = {
       scopes,
       totalDiscoveredBills: scopes.reduce((sum, row) => sum + row.discoveredBills, 0),
@@ -289,6 +345,7 @@ export async function runRevisorUniverseRefresh(): Promise<RevisorUniverseRefres
       sourceDocuments: scopes.reduce((sum, row) => sum + row.sourceDocuments, 0),
       floorStageEvents,
       expirationEvents,
+      passageLabels,
     };
     await pool.query(`
       UPDATE ingestion_runs
