@@ -8,8 +8,10 @@ on:
       - scripts/build-cfb-snapshot.mjs
       - scripts/ingest-cfb-evidence.ts
       - scripts/ingest-evidence-manifest.ts
+      - scripts/seed-evidence-bills.ts
       - src/evidence/durable-ingestion.ts
       - src/operations/environment-file.ts
+      - src/sources/minnesota/revisor.ts
       - data/evidence/**
       - package.json
 permissions:
@@ -54,6 +56,10 @@ jobs:
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: npm run data:cfb:evidence -- --snapshot="$RUNNER_TEMP/cfb-evidence.json"
+      - name: Seed canonical bills referenced by official evidence
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: npm run data:evidence:bills -- --manifest=data/evidence/gambling-curated-v1.json
       - name: Persist curated sourced gambling evidence
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
