@@ -1,4 +1,5 @@
-import { getCampaignFinanceContextForMember, type CampaignFinanceMemberContext } from '@/evidence/campaign-finance-snapshot';
+import { loadCurrentCampaignFinanceContext } from '@/evidence/campaign-finance-store';
+import type { CampaignFinanceMemberContext } from '@/evidence/campaign-finance-snapshot';
 import { pool } from '@/lib/db';
 import {
   classifyGamblingBill,
@@ -753,7 +754,7 @@ export async function loadLegislatorGamblingProfile(legislatorId: string): Promi
     ? scoreTribalGamingAlignment(signalsForMember(member, benchmarkVotes))
     : scoreTribalGamingAlignment([]);
   const campaignFinance = member
-    ? getCampaignFinanceContextForMember({ membershipId: member.membership_id, memberName: member.name, chamber: member.chamber_slug })
+    ? await loadCurrentCampaignFinanceContext({ membershipId: member.membership_id, memberName: member.name, chamber: member.chamber_slug })
     : undefined;
   const [news] = await Promise.all([loadRecentGamblingNews(name)]);
   const topics = [...new Set(publicRecord.map((record) => record.topic))];
