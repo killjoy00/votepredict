@@ -24,3 +24,16 @@ test('stage base rates do not learn from outcomes on the same date', () => {
   assert.equal(score?.observations, 3);
   assert.equal(score?.positiveRate, 2 / 3);
 });
+
+test('stage scorecards compare low-base-rate targets against always-no as well as always-yes', () => {
+  const score = scoreStagePredictions([
+    { billId: 'a', asOf: '2025-01-01', targetKind: 'house_floor_passage', outcome: 0, probability: 0.1, model: 'candidate' },
+    { billId: 'b', asOf: '2025-01-01', targetKind: 'house_floor_passage', outcome: 0, probability: 0.1, model: 'candidate' },
+    { billId: 'c', asOf: '2025-01-01', targetKind: 'house_floor_passage', outcome: 1, probability: 0.1, model: 'candidate' },
+  ])[0];
+  assert.equal(score?.positiveRate, 1 / 3);
+  assert.equal(score?.alwaysPositiveBrier, 2 / 3);
+  assert.equal(score?.alwaysNegativeBrier, 1 / 3);
+  assert.ok((score?.brierSkillVsAlwaysPositive ?? 0) > 0);
+  assert.ok((score?.brierSkillVsAlwaysNegative ?? 0) > 0);
+});
