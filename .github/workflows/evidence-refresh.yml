@@ -8,8 +8,10 @@ on:
       - scripts/run-production-evidence-refresh.ts
       - src/app/api/operations/evidence-refresh/route.ts
       - src/evidence/production-refresh.ts
+      - src/evidence/live-campaign-finance-refresh.ts
       - src/evidence/durable-ingestion.ts
       - src/evidence/campaign-finance-snapshot.ts
+      - src/evidence/campaign-finance-live.ts
       - src/operations/environment-file.ts
       - src/sources/minnesota/revisor.ts
       - src/sources/minnesota/sessions.ts
