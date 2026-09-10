@@ -268,7 +268,7 @@ async function persistSupersessionRelationships(input: {
     ON CONFLICT DO NOTHING
     RETURNING id::text`, [evidenceItemId, sourceDocumentId, seriesKey, membershipId, billId]);
 
-  return older.rowCount + newer.rowCount;
+  return (older.rowCount ?? 0) + (newer.rowCount ?? 0);
 }
 
 export async function persistDurableEvidence(
