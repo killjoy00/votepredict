@@ -52,6 +52,7 @@ export interface DurableEvidencePersistResult {
   evidenceItemIds: string[];
   inserted: number;
   reused: number;
+  supersessionRelationships: number;
   unresolvedTargets: Array<{ claim: string; reason: string }>;
 }
 
@@ -96,6 +97,27 @@ export function evidenceIngestionKey(input: {
     extractionMethod: input.draft.extractionMethod,
     extractionVersion: input.draft.extractionVersion ?? null,
   }));
+}
+
+export function evidenceSeriesKey(input: {
+  membershipId?: string;
+  billId?: string;
+  draft: DurableEvidenceDraft;
+}): string | undefined {
+  const explicit = input.draft.metadata?.evidenceSeriesKey;
+  if (typeof explicit === 'string' && explicit.trim()) return explicit.trim();
+
+  if (input.draft.metadata?.contextType !== 'campaign_finance' || !input.membershipId) return undefined;
+  const subtype = input.draft.metadata?.subtype;
+  if (typeof subtype !== 'string' || !subtype.trim()) return undefined;
+  const cycleYears = Array.isArray(input.draft.metadata?.cycleYears)
+    ? input.draft.metadata.cycleYears
+        .map((year) => typeof year === 'number' || typeof year === 'string' ? String(year).trim() : '')
+        .filter(Boolean)
+        .sort()
+        .join('-')
+    : 'unknown';
+  return `campaign_finance:${subtype.trim()}:membership:${input.membershipId}:cycle:${cycleYears || 'unknown'}`;
 }
 
 async function scalarId(client: PoolClient, sql: string, values: unknown[], label: string): Promise<string> {
@@ -199,6 +221,56 @@ async function persistSourceDocument(client: PoolClient, source: DurableSourceDe
   return result.rows[0].id;
 }
 
+async function persistSupersessionRelationships(input: {
+  client: PoolClient;
+  evidenceItemId: string;
+  sourceDocumentId: string;
+  seriesKey: string;
+  membershipId: string | null;
+  billId: string | null;
+}): Promise<number> {
+  const { client, evidenceItemId, sourceDocumentId, seriesKey, membershipId, billId } = input;
+  const older = await client.query<{ id: string }>(`
+    INSERT INTO evidence_relationships (from_evidence_id,to_evidence_id,relation_kind,reason)
+    SELECT $1::uuid, prior.id, 'supersedes', 'Newer source snapshot in the same durable evidence series'
+      FROM evidence_items prior
+      JOIN source_documents prior_source ON prior_source.id = prior.source_document_id
+      JOIN source_documents current_source ON current_source.id = $2::uuid
+     WHERE prior.id <> $1::uuid
+       AND prior.metadata->>'evidenceSeriesKey' = $3
+       AND prior.membership_id IS NOT DISTINCT FROM $4::uuid
+       AND prior.bill_id IS NOT DISTINCT FROM $5::uuid
+       AND prior_source.fetched_at < current_source.fetched_at
+       AND NOT EXISTS (
+         SELECT 1 FROM evidence_relationships existing_rel
+          WHERE existing_rel.to_evidence_id = prior.id
+            AND existing_rel.relation_kind = 'supersedes'
+       )
+    ON CONFLICT DO NOTHING
+    RETURNING id::text`, [evidenceItemId, sourceDocumentId, seriesKey, membershipId, billId]);
+
+  const newer = await client.query<{ id: string }>(`
+    INSERT INTO evidence_relationships (from_evidence_id,to_evidence_id,relation_kind,reason)
+    SELECT newer_item.id, $1::uuid, 'supersedes', 'A newer source snapshot already exists in the same durable evidence series'
+      FROM evidence_items newer_item
+      JOIN source_documents newer_source ON newer_source.id = newer_item.source_document_id
+      JOIN source_documents current_source ON current_source.id = $2::uuid
+     WHERE newer_item.id <> $1::uuid
+       AND newer_item.metadata->>'evidenceSeriesKey' = $3
+       AND newer_item.membership_id IS NOT DISTINCT FROM $4::uuid
+       AND newer_item.bill_id IS NOT DISTINCT FROM $5::uuid
+       AND newer_source.fetched_at > current_source.fetched_at
+       AND NOT EXISTS (
+         SELECT 1 FROM evidence_relationships existing_rel
+          WHERE existing_rel.to_evidence_id = newer_item.id
+            AND existing_rel.relation_kind = 'supersedes'
+       )
+    ON CONFLICT DO NOTHING
+    RETURNING id::text`, [evidenceItemId, sourceDocumentId, seriesKey, membershipId, billId]);
+
+  return older.rowCount + newer.rowCount;
+}
+
 export async function persistDurableEvidence(
   source: DurableSourceDescriptor,
   drafts: readonly DurableEvidenceDraft[],
@@ -211,6 +283,7 @@ export async function persistDurableEvidence(
     const unresolvedTargets: Array<{ claim: string; reason: string }> = [];
     let inserted = 0;
     let reused = 0;
+    let supersessionRelationships = 0;
 
     for (const draft of drafts) {
       const membershipId = await resolveMembership(client, draft.target, draft.publishedAt);
@@ -225,14 +298,28 @@ export async function persistDurableEvidence(
         continue;
       }
       const key = evidenceIngestionKey({ sourceUrl: source.sourceUrl, contentSha256: source.contentSha256, membershipId: membershipId ?? undefined, billId: billId ?? undefined, draft });
-      await client.query(`SELECT pg_advisory_xact_lock(hashtextextended($1, 0))`, [key]);
+      const seriesKey = evidenceSeriesKey({ membershipId: membershipId ?? undefined, billId: billId ?? undefined, draft });
+      await client.query(`SELECT pg_advisory_xact_lock(hashtextextended($1, 0))`, [seriesKey ? `series:${seriesKey}` : `item:${key}`]);
       const existing = await client.query<{ id: string }>(`SELECT id::text FROM evidence_items WHERE metadata->>'ingestionKey' = $1 LIMIT 1`, [key]);
       if (existing.rows[0]) {
+        if (seriesKey) {
+          await client.query(`
+            UPDATE evidence_items
+               SET metadata = metadata || jsonb_build_object('evidenceSeriesKey',$2::text)
+             WHERE id = $1::uuid
+               AND metadata->>'evidenceSeriesKey' IS DISTINCT FROM $2`, [existing.rows[0].id, seriesKey]);
+        }
         evidenceItemIds.push(existing.rows[0].id);
         reused += 1;
         continue;
       }
       const publishedAt = requiredDate(draft.publishedAt, 'publishedAt') ?? null;
+      const metadata = {
+        ...(draft.metadata ?? {}),
+        ...(seriesKey ? { evidenceSeriesKey: seriesKey } : {}),
+        ingestionKey: key,
+        durableIngestion: true,
+      };
       const result = await client.query<{ id: string }>(`
         INSERT INTO evidence_items (
           source_document_id, bill_id, membership_id, evidence_kind, stance, claim, excerpt,
@@ -254,14 +341,24 @@ export async function persistDurableEvidence(
         draft.extractionMethod,
         draft.extractionVersion ?? null,
         draft.confidence ?? null,
-        JSON.stringify({ ...(draft.metadata ?? {}), ingestionKey: key, durableIngestion: true }),
+        JSON.stringify(metadata),
       ]);
       evidenceItemIds.push(result.rows[0].id);
       inserted += 1;
+      if (seriesKey) {
+        supersessionRelationships += await persistSupersessionRelationships({
+          client,
+          evidenceItemId: result.rows[0].id,
+          sourceDocumentId,
+          seriesKey,
+          membershipId,
+          billId,
+        });
+      }
     }
 
     await client.query('COMMIT');
-    return { sourceDocumentId, evidenceItemIds, inserted, reused, unresolvedTargets };
+    return { sourceDocumentId, evidenceItemIds, inserted, reused, supersessionRelationships, unresolvedTargets };
   } catch (error) {
     await client.query('ROLLBACK');
     throw error;
