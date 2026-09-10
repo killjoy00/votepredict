@@ -119,13 +119,17 @@ async function resolveSourceScope(client: PoolClient, source: DurableSourceDescr
   return { jurisdictionId, sessionId, chamberId };
 }
 
-async function resolveMembership(client: PoolClient, target: DurableEvidenceTarget | undefined): Promise<string | null> {
+async function resolveMembership(
+  client: PoolClient,
+  target: DurableEvidenceTarget | undefined,
+  publishedAt?: string,
+): Promise<string | null> {
   if (!target) return null;
   if (target.membershipId) {
     return scalarId(client, `SELECT id::text FROM memberships WHERE id = $1::uuid`, [target.membershipId], `Membership ${target.membershipId}`);
   }
   if (!target.memberName) return null;
-  const occurredOn = target.occurredOn ?? target.publishedAt;
+  const occurredOn = target.occurredOn ?? publishedAt;
   const result = await client.query<{ id: string }>(`
     SELECT m.id::text
       FROM memberships m
@@ -201,7 +205,7 @@ export async function persistDurableEvidence(
     let reused = 0;
 
     for (const draft of drafts) {
-      const membershipId = await resolveMembership(client, draft.target);
+      const membershipId = await resolveMembership(client, draft.target, draft.publishedAt);
       const billId = await resolveBill(client, draft.target);
       if (draft.target?.memberName && !membershipId) {
         unresolvedTargets.push({ claim: draft.claim, reason: `membership:${draft.target.memberName}` });
