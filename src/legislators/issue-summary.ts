@@ -133,6 +133,12 @@ export async function loadLegislatorIssueSummaries(legislatorId: string): Promis
         JOIN evidence_items ei ON ei.bill_id = tb.bill_id
         JOIN memberships em ON em.id = ei.membership_id
        WHERE em.legislator_id = $1
+         AND NOT EXISTS (
+           SELECT 1
+             FROM evidence_relationships er
+            WHERE er.to_evidence_id = ei.id
+              AND er.relation_kind = 'supersedes'
+         )
        GROUP BY tb.area
     ), current_issue_votes AS (
       SELECT tv.*
