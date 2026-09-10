@@ -7,11 +7,12 @@ VotePredict stores reusable public evidence in the existing `source_documents` a
 1. **Retain source provenance.** Every imported source is fetched or derived from an identified URL and stored with a SHA-256 content hash.
 2. **Resolve targets conservatively.** Member and bill targets must resolve uniquely. Ambiguous targets are recorded as unresolved rather than guessed. Curated member evidence should prefer the durable LRL legislator external key (`lrl:<id>`) when available so display-name changes do not break identity.
 3. **Make refreshes idempotent.** Evidence receives a deterministic ingestion key scoped to source content, resolved target, claim, date, and extractor version. Re-running the same import reuses the prior evidence item.
-4. **Separate evidence from model effect.** Importing an item does not make it a forecasting feature. New curated and campaign-finance records default to `mechanicallyActionable: false` until a separately evaluated model explicitly uses them.
-5. **Treat money as context, not stance.** Campaign receipts and independent expenditures are factual context. They do not imply a legislator's vote position by themselves.
-6. **Prefer official facts.** Bill authorship/sponsorship is sourced from the Minnesota Revisor rather than inferred from advocacy material. Organizational letters describe only the organization's documented position.
-7. **Treat legislative roles as context, not vote intent.** Committee membership and leadership may be relevant to bill routing or leverage, but they are persisted as neutral context and do not imply support or opposition.
-8. **Preserve pre-vote bills.** An official bill referenced by evidence may be seeded into the canonical `bills` and `bill_versions` tables even if it has not appeared in historical floor-vote ingestion. Its deterministic features are generated at the same time.
+4. **Version mutable evidence explicitly.** Repeated aggregates such as campaign-finance snapshots receive a stable `evidenceSeriesKey`. When a newer source snapshot creates a new item in the same series, the new item points to the older current item with an `evidence_relationships.relation_kind='supersedes'` relationship. Reads that represent current evidence exclude items targeted by a `supersedes` relationship. Exact re-runs backfill the series key onto existing rows without creating duplicates.
+5. **Separate evidence from model effect.** Importing an item does not make it a forecasting feature. New curated and campaign-finance records default to `mechanicallyActionable: false` until a separately evaluated model explicitly uses them.
+6. **Treat money as context, not stance.** Campaign receipts and independent expenditures are factual context. They do not imply a legislator's vote position by themselves.
+7. **Prefer official facts.** Bill authorship/sponsorship is sourced from the Minnesota Revisor rather than inferred from advocacy material. Organizational letters describe only the organization's documented position.
+8. **Treat legislative roles as context, not vote intent.** Committee membership and leadership may be relevant to bill routing or leverage, but they are persisted as neutral context and do not imply support or opposition.
+9. **Preserve pre-vote bills.** An official bill referenced by evidence may be seeded into the canonical `bills` and `bill_versions` tables even if it has not appeared in historical floor-vote ingestion. Its deterministic features are generated at the same time.
 
 ## Commands
 
@@ -27,9 +28,9 @@ Vercel's production database URL uses a Marketplace/internal database alias that
 
 The `Production evidence refresh` workflow follows the same deployed-runtime boundary used by scheduler validation: it deploys protected `main`, privately reads `CRON_SECRET`, then invokes the production-only `POST /api/operations/evidence-refresh` endpoint. The endpoint performs the database work inside Vercel, where the configured Neon connection is valid. The GitHub runner never receives a separately routable database credential and the endpoint rejects unauthenticated requests.
 
-The current production refresh still uses the versioned `data/cfb-2025-2026-snapshot.json` campaign-finance snapshot, whose official bulk-download URLs and content hashes are retained in provenance. The shared live-source parser now lives in application code and is also used by the snapshot-build command, including broader committee-name parsing for nonstandard natural-order names. Production will switch to live official CFB downloads only after evidence supersession/current-version selection is implemented so a changed bulk-file hash cannot make stale and current finance aggregates appear side by side.
+The current production refresh still uses the versioned `data/cfb-2025-2026-snapshot.json` campaign-finance snapshot, whose official bulk-download URLs and content hashes are retained in provenance. The shared live-source parser now lives in application code and is also used by the snapshot-build command, including broader committee-name parsing for nonstandard natural-order names. The supersession layer lets the current bundled refresh first attach stable finance series keys to existing rows. A subsequent change can then switch production to live official CFB downloads safely: a new source hash produces a new aggregate and explicitly supersedes the prior aggregate instead of showing both as current.
 
-Production refresh is intentionally not scheduled on a recurring cadence yet. Before recurring refresh is enabled, evidence supersession/current-version selection should be explicit so changed source content does not appear as duplicate current evidence.
+Production refresh is intentionally not scheduled on a recurring cadence yet. Live CFB ingestion should be production-verified with supersession relationships and current-evidence filtering before a recurring schedule is enabled.
 
 ## Initial gambling tranche
 
