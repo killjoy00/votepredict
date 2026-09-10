@@ -11,7 +11,7 @@ export const REVISOR_ACTION_SEARCH_RESULT_LIMIT = 500;
 
 export const REVISOR_SOURCE_PASSAGE_ACTIONS: Record<RevisorBillSearchBody, readonly string[]> = {
   House: ['1283', '1284'], // Bill was passed; Bill was passed as amended
-  Senate: ['2268', '2269'], // Third reading Passed; Third reading Passed as amended
+  Senate: ['2137', '2268', '2269'], // Consent Calendar: Third reading Passed; Third reading Passed; Third reading Passed as amended
 };
 
 export const REVISOR_SOURCE_REPASS_ACTIONS: Record<RevisorBillSearchBody, readonly string[]> = {
