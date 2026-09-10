@@ -56,6 +56,12 @@ function chamberSlug(body: RevisorBillSearchBody): 'house' | 'senate' {
   return body === 'House' ? 'house' : 'senate';
 }
 
+function expectedBills(session: string, body: RevisorBillSearchBody): number {
+  const expected = EXPECTED_REGULAR_BILLS[session]?.[body];
+  if (!expected) throw new Error(`Missing official bill-introduction tally for ${session}/${body}`);
+  return expected;
+}
+
 async function resolveScope(session: string, body: RevisorBillSearchBody): Promise<ScopeRow> {
   const result = await pool.query<ScopeRow>(`
     SELECT s.id::text AS session_id,
@@ -81,8 +87,8 @@ async function persistSearchDocuments(input: {
         fetched_at, content_sha256, http_status, metadata
       ) VALUES (
         (SELECT id FROM jurisdictions WHERE slug = 'us-mn'),
-        $1::uuid, $2::uuid, 'revisor_bill_universe_search', $3,
-        $4::timestamptz, $5, 200, $6::jsonb
+        $1::uuid, $2::uuid, 'revisor_bill_universe_search', $3::text,
+        $4::timestamptz, $5::text, 200, $6::jsonb
       )
       ON CONFLICT (source_url, content_sha256) DO UPDATE SET
         fetched_at = EXCLUDED.fetched_at,
@@ -134,10 +140,10 @@ async function persistBills(input: {
            jsonb_build_object(
              'revisorUniverse', jsonb_build_object(
                'source', 'bill-status-api-v1',
-               'officialIntroductionTallySource', $5,
+               'officialIntroductionTallySource', $5::text,
                'introduced', true,
-               'body', $3,
-               'fetchedAt', $6,
+               'body', $3::text,
+               'fetchedAt', $6::timestamptz,
                'statusXmlUrl', p.status_xml_url,
                'latestTextHtmlUrl', p.latest_text_html_url
              )
@@ -215,15 +221,15 @@ async function materializeExpirationEvents(): Promise<number> {
              b.originating_chamber_id,
              'session_expiration',
              true,
-             ($2 || 'T23:59:59Z')::timestamptz,
-             $3,
+             ($2::text || 'T23:59:59Z')::timestamptz,
+             $3::text,
              jsonb_build_object(
                'reason', 'regular biennium adjourned sine die without any recorded source-chamber final-passage vote',
                'targetStage', CASE c.slug WHEN 'house' THEN 'house_floor_passage' ELSE 'senate_floor_passage' END,
-               'officialAdjournmentDate', $2
+               'officialAdjournmentDate', $2::text
              )
         FROM bills b
-        JOIN legislative_sessions s ON s.id = b.session_id AND s.slug = $1
+        JOIN legislative_sessions s ON s.id = b.session_id AND s.slug = $1::text
         JOIN chambers c ON c.id = b.originating_chamber_id AND c.slug IN ('house', 'senate')
        WHERE b.metadata ? 'revisorUniverse'
          AND NOT EXISTS (
@@ -307,13 +313,18 @@ export async function runRevisorUniverseRefresh(): Promise<RevisorUniverseRefres
       }),
     })));
 
+    for (const item of fetched) {
+      const expected = expectedBills(item.session, item.body);
+      const discovered = item.universe.bills.length;
+      if (discovered < Math.floor(expected * 0.95) || discovered > Math.ceil(expected * 1.02)) {
+        throw new Error(`Revisor universe plausibility check failed for ${item.session}/${item.body}: discovered ${discovered}, expected approximately ${expected}`);
+      }
+    }
+
     const scopes: RevisorUniverseScopeResult[] = [];
     for (const item of fetched) {
-      const expectedBills = EXPECTED_REGULAR_BILLS[item.session][item.body];
+      const expected = expectedBills(item.session, item.body);
       const discoveredBills = item.universe.bills.length;
-      if (discoveredBills < Math.floor(expectedBills * 0.95) || discoveredBills > Math.ceil(expectedBills * 1.02)) {
-        throw new Error(`Revisor universe plausibility check failed for ${item.session}/${item.body}: discovered ${discoveredBills}, expected approximately ${expectedBills}`);
-      }
       const scope = await resolveScope(item.session, item.body);
       const sourceDocuments = await persistSearchDocuments({ scope, body: item.body, documents: item.universe.documents });
       const persisted = await persistBills({
@@ -326,8 +337,8 @@ export async function runRevisorUniverseRefresh(): Promise<RevisorUniverseRefres
         session: item.session,
         body: item.body,
         discoveredBills,
-        expectedBills,
-        coverageVsOfficialTally: expectedBills ? discoveredBills / expectedBills : 0,
+        expectedBills: expected,
+        coverageVsOfficialTally: discoveredBills / expected,
         insertedBills: persisted.inserted,
         updatedBills: persisted.updated,
         sourceDocuments,
