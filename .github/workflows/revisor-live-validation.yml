@@ -1,0 +1,24 @@
+name: Revisor live parser validation
+on:
+  push:
+    branches: [audit/revisor-live-validation]
+    paths:
+      - .github/workflows/revisor-live-validation.yml
+      - scripts/validate-revisor-parent-chamber-live.ts
+      - src/sources/minnesota/revisor-actions.ts
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Validate live Revisor action parsing
+        run: node --import tsx scripts/validate-revisor-parent-chamber-live.ts
