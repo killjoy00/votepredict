@@ -59,6 +59,14 @@ test('LRL detail parser normalizes quoted nicknames to a stable canonical name',
   assert.equal(record?.normalizedName, 'patricia anderson');
 });
 
+test('LRL detail parser moves an inverted suffix after the surname', () => {
+  const html = `<h1>Holmstrom, Jr., Michael - Legislator Record</h1><h3>94th Legislative Session (2025-2026)</h3><p>Body: Senate</p><p>District: 29</p><p>Term of Office: 11/18/2025 to 1/3/2027</p><p>Party: Republican</p>`;
+  const record = parseLrlMembershipDetail({ html, session: getMinnesotaHouseSession('302'), lrlId: '15653', fallbackName: 'Holmstrom, Jr., Michael', sourceUrl: 'https://www.lrl.mn.gov/legdb/fulldetail?ID=15653' });
+  assert.equal(record?.name, 'Michael Holmstrom Jr.');
+  assert.equal(record?.normalizedName, 'michael holmstrom jr');
+  assert.equal(record?.district, '29');
+});
+
 test('official House clerk aliases remain provenance-backed and deterministic', () => {
   assert.deepEqual(officialMembershipAliasesForLrlId('15409').map((alias) => [alias.sourceName, alias.normalizedName]), [["O'Neill", 'o neill']]);
   assert.deepEqual(officialMembershipAliasesForLrlId('15576').map((alias) => [alias.sourceName, alias.normalizedName]), [['Lee, K.', 'lee k']]);
