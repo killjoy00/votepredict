@@ -29,6 +29,40 @@ const xml = `<?xml version="1.0"?>
   </ACTIONS>
 </BILL>`;
 
+const liveShape = `<?xml version="1.0" encoding="UTF-8"?>
+<BILL>
+  <FILE_TYPE>HF</FILE_TYPE>
+  <FILE_NUMBER>4591</FILE_NUMBER>
+  <ACTIONS>
+    <HOUSE>
+      <ACTION>
+        <ACTION_NUMBER>1</ACTION_NUMBER>
+        <ACTION_GROUP>Action</ACTION_GROUP>
+        <ACTION_TEXT>Introduction and first reading, referred to</ACTION_TEXT>
+        <ACTION_DATE>2026-03-23 00:00:00</ACTION_DATE>
+        <COMMITTEE_NAME>State Government Finance and Policy</COMMITTEE_NAME>
+      </ACTION>
+      <ACTION>
+        <ACTION_NUMBER>9</ACTION_NUMBER>
+        <ACTION_GROUP>Action</ACTION_GROUP>
+        <ACTION_TEXT>Bill was passed as amended</ACTION_TEXT>
+        <ACTION_DATE>2026-05-07 00:00:00</ACTION_DATE>
+        <JOURNAL_PAGE>6700</JOURNAL_PAGE>
+        <ROLL_CALL>120-4</ROLL_CALL>
+      </ACTION>
+    </HOUSE>
+    <SENATE>
+      <ACTION>
+        <ACTION_NUMBER>5</ACTION_NUMBER>
+        <ACTION_GROUP>Action</ACTION_GROUP>
+        <ACTION_TEXT>Third reading Passed</ACTION_TEXT>
+        <ACTION_DATE>2026-05-16 00:00:00</ACTION_DATE>
+        <ROLL_CALL>53-13</ROLL_CALL>
+      </ACTION>
+    </SENATE>
+  </ACTIONS>
+</BILL>`;
+
 test('Revisor action parser preserves fields, chamber, date, and descriptions', () => {
   const actions = parseRevisorOfficialActions(xml);
   assert.equal(actions.length, 3);
@@ -51,6 +85,20 @@ test('source-chamber passage audit does not confuse second-chamber passage', () 
   assert.equal(result.sourceChamberFailed, false);
   assert.equal(result.passageActions.length, 1);
   assert.equal(result.passageActions[0].description, 'Bill was passed as amended');
+});
+
+test('live Revisor ACTIONS/HOUSE and ACTIONS/SENATE containers supply chamber context', () => {
+  const actions = parseRevisorOfficialActions(liveShape);
+  assert.equal(actions.length, 3);
+  assert.equal(actions[0].chamber, 'house');
+  assert.equal(actions[1].chamber, 'house');
+  assert.equal(actions[2].chamber, 'senate');
+
+  const result = auditRevisorSourceChamberPassage({ xml: liveShape, identifier: 'HF4591' });
+  assert.equal(result.classifiedActions, 3);
+  assert.equal(result.unclassifiedActions, 0);
+  assert.equal(result.sourceChamberPassed, true);
+  assert.deepEqual(result.passageActions.map((action) => action.description), ['Bill was passed as amended']);
 });
 
 test('explicit failed final-passage language is classified separately', () => {
