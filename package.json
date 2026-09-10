@@ -32,6 +32,7 @@
     "eval:baselines": "tsx scripts/evaluate-baselines.ts",
     "eval:member-model": "tsx scripts/evaluate-member-model.ts",
     "eval:analogue-lift": "tsx scripts/evaluate-analogue-lift.ts",
+    "eval:target-selection": "tsx scripts/audit-forecast-target-selection.ts",
     "eval:gambling-model": "tsx scripts/evaluate-gambling-model.ts",
     "forecasts:scheduled": "tsx scripts/run-scheduled-forecasts.ts",
     "eval:coalition-chamber": "tsx scripts/evaluate-coalition-chamber.ts",
