@@ -22,7 +22,7 @@
     "data:revisor:versions": "tsx scripts/enrich-revisor-bills.ts --include-versions --skip-existing",
     "data:senate:inspect": "tsx scripts/inspect-senate-journals.ts",
     "data:senate:ingest": "tsx scripts/ingest-senate-history.ts",
-    "data:cfb:snapshot": "node scripts/build-cfb-snapshot.mjs",
+    "data:cfb:snapshot": "tsx scripts/build-cfb-snapshot.ts",
     "data:cfb:evidence": "tsx scripts/ingest-cfb-evidence.ts",
     "data:evidence:bills": "tsx scripts/seed-evidence-bills.ts",
     "data:evidence:curated": "tsx scripts/ingest-evidence-manifest.ts",
