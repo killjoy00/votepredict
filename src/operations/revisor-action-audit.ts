@@ -98,7 +98,7 @@ export async function runRevisorActionHistoryAudit() {
      ORDER BY session_slug, chamber_slug, provisional_outcome NULLS LAST, identifier`);
 
   const failures: Array<{ identifier: string; error: string }> = [];
-  const audits = (await mapConcurrent(result.rows, 6, async (bill, index): Promise<AuditRow | null> => {
+  const audits = (await mapConcurrent(result.rows, 2, async (bill, index): Promise<AuditRow | null> => {
     try {
       const xml = await fetchRevisorStatusXml(bill.status_xml_url);
       const audit = auditRevisorSourceChamberPassage({ xml, identifier: bill.identifier });
