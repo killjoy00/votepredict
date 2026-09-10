@@ -157,7 +157,6 @@ async function main(): Promise<void> {
         title,
         version_key: versionKey,
         published_at: latestVersion.postedOn,
-        text_hash: official.textSha256,
         raw_text: official.text,
         source_url: official.latestTextUrl,
       });
