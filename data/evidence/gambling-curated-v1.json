@@ -1,0 +1,333 @@
+{
+  "sourceSystem": "mn-gambling-curated",
+  "version": "mn-gambling-curated-v1",
+  "jurisdictionSlug": "us-mn",
+  "records": [
+    {
+      "source": {
+        "sourceKind": "member_statement",
+        "sourceUrl": "https://www.house.mn.gov/members/Profile/News/15548/40260",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "house",
+        "publisher": "Minnesota House of Representatives"
+      },
+      "target": {
+        "memberName": "Cedrick Rommel Frazier",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "house",
+        "occurredOn": "2025-02-27"
+      },
+      "kind": "related_statement",
+      "stance": "supports",
+      "claim": "Frazier publicly supported a regulated sports-betting framework developed with tribal and other stakeholders and emphasized consumer protections.",
+      "publishedAt": "2025-02-27T00:00:00.000Z",
+      "sourceQuality": "member_primary",
+      "relevance": "high",
+      "confidence": 0.95,
+      "metadata": {
+        "topic": "sports_betting",
+        "signalType": "public_position",
+        "mechanicallyActionable": false
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "member_statement",
+        "sourceUrl": "https://www.house.mn.gov/members/profile/news/15595/40261",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "house",
+        "publisher": "Minnesota House of Representatives"
+      },
+      "target": {
+        "memberName": "Liish Kozlowski",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "house",
+        "occurredOn": "2025-02-27"
+      },
+      "kind": "related_statement",
+      "stance": "supports",
+      "claim": "Kozlowski publicly supported legal sports wagering through the 2025 tribal-led legislative framework.",
+      "publishedAt": "2025-02-27T00:00:00.000Z",
+      "sourceQuality": "member_primary",
+      "relevance": "high",
+      "confidence": 0.95,
+      "metadata": {
+        "topic": "sports_betting",
+        "signalType": "public_position",
+        "mechanicallyActionable": false
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "official_news",
+        "sourceUrl": "https://www.house.mn.gov/sessiondaily/Story/17445",
+        "sessionSlug": "2021-2022",
+        "chamberSlug": "house",
+        "publisher": "Minnesota House of Representatives Session Daily"
+      },
+      "target": {
+        "memberName": "Zack Stephenson",
+        "sessionSlug": "2021-2022",
+        "chamberSlug": "house",
+        "occurredOn": "2022-05-12"
+      },
+      "kind": "related_statement",
+      "stance": "supports",
+      "claim": "During the 2022 House sports-betting debate, Stephenson argued for moving sports wagering into a legal, regulated marketplace with consumer safeguards.",
+      "publishedAt": "2022-05-12T00:00:00.000Z",
+      "sourceQuality": "official",
+      "relevance": "high",
+      "confidence": 0.9,
+      "metadata": {
+        "topic": "sports_betting",
+        "signalType": "reported_floor_position",
+        "mechanicallyActionable": false
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "interest_group_position",
+        "sourceUrl": "https://www.house.mn.gov/comm/docs/5ZZzt3JCfESBIx3_UQvzFw.pdf",
+        "sessionSlug": "2021-2022",
+        "publisher": "Minnesota Indian Gaming Association"
+      },
+      "target": {
+        "billIdentifier": "HF778",
+        "sessionSlug": "2021-2022"
+      },
+      "kind": "related_statement",
+      "stance": "supports",
+      "claim": "The Minnesota Indian Gaming Association supported the tribal-license sports-betting framework represented by HF778.",
+      "sourceQuality": "other",
+      "relevance": "medium",
+      "confidence": 0.95,
+      "metadata": {
+        "topic": "sports_betting",
+        "benchmarkKey": "sports-betting-2022",
+        "organization": "Minnesota Indian Gaming Association",
+        "tribalGamingBenchmark": true,
+        "mechanicallyActionable": false
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "interest_group_position",
+        "sourceUrl": "https://www.house.mn.gov/comm/docs/Gc-B6kBmgkii0LRZ4ymkhg.pdf",
+        "sessionSlug": "2023-2024",
+        "publisher": "Minnesota Indian Gaming Association"
+      },
+      "target": {
+        "billIdentifier": "SF2219",
+        "sessionSlug": "2023-2024"
+      },
+      "kind": "related_statement",
+      "stance": "supports",
+      "claim": "The Minnesota Indian Gaming Association supported legislative limits on historical horse racing that protected the existing tribal gaming framework.",
+      "sourceQuality": "other",
+      "relevance": "medium",
+      "confidence": 0.95,
+      "metadata": {
+        "topic": "horse_racing",
+        "benchmarkKey": "historical-horse-racing-2024",
+        "organization": "Minnesota Indian Gaming Association",
+        "tribalGamingBenchmark": true,
+        "mechanicallyActionable": false
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "interest_group_position",
+        "sourceUrl": "https://www.house.mn.gov/comm/docs/w4Mlbjf4ike5s0gq9Ou00A.pdf",
+        "sessionSlug": "2025-2026",
+        "publisher": "Minnesota Indian Gaming Association"
+      },
+      "target": {
+        "billIdentifier": "SF4474",
+        "sessionSlug": "2025-2026"
+      },
+      "kind": "related_statement",
+      "stance": "supports",
+      "claim": "The Minnesota Indian Gaming Association supported prohibiting online sweepstakes casino products operating outside Minnesota gaming regulation.",
+      "sourceQuality": "other",
+      "relevance": "medium",
+      "confidence": 0.95,
+      "metadata": {
+        "topic": "sweepstakes",
+        "benchmarkKey": "sweepstakes-2026",
+        "organization": "Minnesota Indian Gaming Association",
+        "tribalGamingBenchmark": true,
+        "mechanicallyActionable": false
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "interest_group_position",
+        "sourceUrl": "https://www.house.mn.gov/comm/docs/X4r5XanzfU6Gs956Dy0uvw.pdf",
+        "sessionSlug": "2025-2026",
+        "publisher": "Shakopee Mdewakanton Sioux Community"
+      },
+      "target": {
+        "billIdentifier": "SF4511",
+        "sessionSlug": "2025-2026"
+      },
+      "kind": "related_statement",
+      "stance": "supports",
+      "claim": "The Shakopee Mdewakanton Sioux Community supported restrictions on prediction-market sports wagering and framed unregulated products as a threat to tribal gaming sovereignty.",
+      "sourceQuality": "other",
+      "relevance": "medium",
+      "confidence": 0.95,
+      "metadata": {
+        "topic": "prediction_markets",
+        "benchmarkKey": "prediction-markets-2026",
+        "organization": "Shakopee Mdewakanton Sioux Community",
+        "tribalGamingBenchmark": true,
+        "mechanicallyActionable": false
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "interest_group_position",
+        "sourceUrl": "https://www.senate.mn/committees/2025-2026/3134_Committee_on_State_and_Local_Government/20250213_MIGA_Support-Letter.pdf",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate",
+        "publisher": "Minnesota Indian Gaming Association"
+      },
+      "target": {
+        "billIdentifier": "SF757",
+        "sessionSlug": "2025-2026"
+      },
+      "kind": "related_statement",
+      "stance": "supports",
+      "claim": "The Minnesota Indian Gaming Association supported the 2025 sports-wagering framework centered on tribal mobile license holders.",
+      "publishedAt": "2025-02-13T00:00:00.000Z",
+      "sourceQuality": "other",
+      "relevance": "medium",
+      "confidence": 0.95,
+      "metadata": {
+        "topic": "sports_betting",
+        "benchmarkKey": "sports-betting-2025",
+        "organization": "Minnesota Indian Gaming Association",
+        "tribalGamingBenchmark": true,
+        "mechanicallyActionable": false
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "interest_group_position",
+        "sourceUrl": "https://www.senate.mn/committees/2025-2026/3134_Committee_on_State_and_Local_Government/20250213_MIGA_Support-Letter.pdf",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate",
+        "publisher": "Minnesota Indian Gaming Association"
+      },
+      "target": {
+        "memberNames": [
+          "Cedrick Rommel Frazier",
+          "Liish Kozlowski",
+          "John Huot",
+          "Brad Tabke",
+          "Zack Stephenson",
+          "Erin Koegel",
+          "Kari Rehrauer",
+          "Peter Johnson",
+          "Matt Norris",
+          "Nick A. Frentz",
+          "Matt D. Klein",
+          "Eric R. Pratt",
+          "Mary K. Kunesh",
+          "Julia E. Coleman"
+        ],
+        "sessionSlug": "2025-2026",
+        "occurredOn": "2025-02-13"
+      },
+      "kind": "fact",
+      "stance": "supports",
+      "claim": "Sponsored HF1842 or SF757, part of the 2025 sports-wagering framework publicly supported by the Minnesota Indian Gaming Association.",
+      "publishedAt": "2025-02-13T00:00:00.000Z",
+      "sourceQuality": "other",
+      "relevance": "medium",
+      "confidence": 0.9,
+      "metadata": {
+        "topic": "sports_betting",
+        "signalType": "sponsorship",
+        "benchmarkKey": "sports-betting-2025",
+        "mechanicallyActionable": false
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "interest_group_position",
+        "sourceUrl": "https://www.house.mn.gov/comm/docs/w4Mlbjf4ike5s0gq9Ou00A.pdf",
+        "sessionSlug": "2025-2026",
+        "publisher": "Minnesota Indian Gaming Association"
+      },
+      "target": {
+        "memberNames": [
+          "Jordan Rasmusson",
+          "John J. Marty",
+          "Erin K. Maye Quade",
+          "Warren E. Limmer",
+          "Matt D. Klein",
+          "Gregory M. Davids",
+          "Erin Koegel",
+          "Ben Bakeberg",
+          "Ethan Cha",
+          "Liz Reyer",
+          "Bianca Ward Virnig",
+          "Brad Tabke"
+        ],
+        "sessionSlug": "2025-2026",
+        "occurredOn": "2026-04-30"
+      },
+      "kind": "fact",
+      "stance": "supports",
+      "claim": "Sponsored SF4474 or HF4410 restricting online sweepstakes casino games, legislation publicly supported by the Minnesota Indian Gaming Association.",
+      "publishedAt": "2026-04-30T00:00:00.000Z",
+      "sourceQuality": "other",
+      "relevance": "medium",
+      "confidence": 0.9,
+      "metadata": {
+        "topic": "sweepstakes",
+        "signalType": "sponsorship",
+        "benchmarkKey": "sweepstakes-2026",
+        "mechanicallyActionable": false
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "interest_group_position",
+        "sourceUrl": "https://www.house.mn.gov/comm/docs/X4r5XanzfU6Gs956Dy0uvw.pdf",
+        "sessionSlug": "2025-2026",
+        "publisher": "Shakopee Mdewakanton Sioux Community"
+      },
+      "target": {
+        "memberNames": [
+          "John J. Marty",
+          "Jordan Rasmusson",
+          "Mary K. Kunesh",
+          "Erin K. Maye Quade",
+          "Matt D. Klein",
+          "Emma Greenman",
+          "Peter Fischer",
+          "Gregory M. Davids",
+          "Brad Tabke",
+          "Cedrick Rommel Frazier"
+        ],
+        "sessionSlug": "2025-2026",
+        "occurredOn": "2026-04-30"
+      },
+      "kind": "fact",
+      "stance": "supports",
+      "claim": "Sponsored SF4511 or HF4437 restricting prediction-market wagering, legislation publicly supported by the Shakopee Mdewakanton Sioux Community.",
+      "publishedAt": "2026-04-30T00:00:00.000Z",
+      "sourceQuality": "other",
+      "relevance": "medium",
+      "confidence": 0.9,
+      "metadata": {
+        "topic": "prediction_markets",
+        "signalType": "sponsorship",
+        "benchmarkKey": "prediction-markets-2026",
+        "mechanicallyActionable": false
+      }
+    }
+  ]
+}
