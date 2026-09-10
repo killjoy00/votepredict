@@ -1,0 +1,296 @@
+{
+  "sourceSystem": "mn-legislator-context",
+  "version": "mn-legislator-context-v1",
+  "jurisdictionSlug": "us-mn",
+  "records": [
+    {
+      "source": {
+        "sourceKind": "official_member_profile",
+        "sourceUrl": "https://www.house.mn.gov/members/profile/15544",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "house",
+        "publisher": "Minnesota House of Representatives"
+      },
+      "target": {
+        "legislatorExternalKey": "lrl:15544",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "house"
+      },
+      "kind": "context",
+      "stance": "neutral",
+      "claim": "For the 2025-2026 session, Bjorn Olson is Speaker Pro Tempore, co-vice chair of the Veterans and Military Affairs Division, and serves on Transportation Finance and Policy, Ways and Means, Children and Families Finance and Policy, and Legacy Finance.",
+      "sourceQuality": "official",
+      "relevance": "low",
+      "freshness": "current",
+      "confidence": 1,
+      "metadata": {
+        "contextType": "legislative_role",
+        "subtype": "leadership_and_committee_assignments",
+        "contextOnly": true,
+        "mechanicallyActionable": false,
+        "session": "2025-2026"
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "official_member_profile",
+        "sourceUrl": "https://www.house.mn.gov/members/profile/15576",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "house",
+        "publisher": "Minnesota House of Representatives"
+      },
+      "target": {
+        "legislatorExternalKey": "lrl:15576",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "house"
+      },
+      "kind": "context",
+      "stance": "neutral",
+      "claim": "For the 2025-2026 session, Liz Lee is co-vice chair of Elections Finance and Government Operations and serves on Taxes and Education Finance.",
+      "sourceQuality": "official",
+      "relevance": "low",
+      "freshness": "current",
+      "confidence": 1,
+      "metadata": {
+        "contextType": "legislative_role",
+        "subtype": "leadership_and_committee_assignments",
+        "contextOnly": true,
+        "mechanicallyActionable": false,
+        "session": "2025-2026"
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "official_member_profile",
+        "sourceUrl": "https://www.house.mn.gov/members/profile/15647",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "house",
+        "publisher": "Minnesota House of Representatives"
+      },
+      "target": {
+        "legislatorExternalKey": "lrl:15647",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "house"
+      },
+      "kind": "context",
+      "stance": "neutral",
+      "claim": "For the 2025-2026 session, Scott Van Binsbergen serves on Commerce Finance and Policy, Health Finance and Policy, and Judiciary Finance and Civil Law.",
+      "sourceQuality": "official",
+      "relevance": "medium",
+      "freshness": "current",
+      "confidence": 1,
+      "metadata": {
+        "contextType": "legislative_role",
+        "subtype": "committee_assignments",
+        "contextOnly": true,
+        "mechanicallyActionable": false,
+        "session": "2025-2026",
+        "gamblingProcessRelevance": "commerce_committee"
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "official_member_profile",
+        "sourceUrl": "https://www.house.mn.gov/members/profile/15603",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "house",
+        "publisher": "Minnesota House of Representatives"
+      },
+      "target": {
+        "legislatorExternalKey": "lrl:15603",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "house"
+      },
+      "kind": "context",
+      "stance": "neutral",
+      "claim": "For the 2025-2026 session, Steven Jacob serves on Agriculture Finance and Policy, Environment and Natural Resources Finance and Policy, Human Services Finance and Policy, and Rules and Legislative Administration.",
+      "sourceQuality": "official",
+      "relevance": "low",
+      "freshness": "current",
+      "confidence": 1,
+      "metadata": {
+        "contextType": "legislative_role",
+        "subtype": "committee_assignments",
+        "contextOnly": true,
+        "mechanicallyActionable": false,
+        "session": "2025-2026"
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "official_committee_roster",
+        "sourceUrl": "https://www.senate.mn/committees/committee_bio.html?cmte_id=3123",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate",
+        "publisher": "Minnesota Senate"
+      },
+      "target": {
+        "legislatorExternalKey": "lrl:15525",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate"
+      },
+      "kind": "context",
+      "stance": "neutral",
+      "claim": "For the 2025-2026 session, Alice Mann is vice chair of the Senate Health and Human Services Committee.",
+      "sourceQuality": "official",
+      "relevance": "low",
+      "freshness": "current",
+      "confidence": 1,
+      "metadata": {
+        "contextType": "legislative_role",
+        "subtype": "committee_leadership",
+        "contextOnly": true,
+        "mechanicallyActionable": false,
+        "session": "2025-2026",
+        "committee": "Health and Human Services"
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "official_committee_roster",
+        "sourceUrl": "https://www.senate.mn/committees/committee_bio.html?cmte_id=3134",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate",
+        "publisher": "Minnesota Senate"
+      },
+      "target": {
+        "legislatorExternalKey": "lrl:15473",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate"
+      },
+      "kind": "context",
+      "stance": "neutral",
+      "claim": "For the 2025-2026 session, Erin K. Maye Quade is a vice chair of the Senate State and Local Government Committee.",
+      "sourceQuality": "official",
+      "relevance": "medium",
+      "freshness": "current",
+      "confidence": 1,
+      "metadata": {
+        "contextType": "legislative_role",
+        "subtype": "committee_leadership",
+        "contextOnly": true,
+        "mechanicallyActionable": false,
+        "session": "2025-2026",
+        "committee": "State and Local Government",
+        "gamblingProcessRelevance": "sports_wagering_committee"
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "official_committee_roster",
+        "sourceUrl": "https://www.senate.mn/committees/committee_bio.html?cmte_id=3121",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate",
+        "publisher": "Minnesota Senate"
+      },
+      "target": {
+        "legislatorExternalKey": "lrl:15245",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate"
+      },
+      "kind": "context",
+      "stance": "neutral",
+      "claim": "For the 2025-2026 session, Jim Carlson is chair of the Senate Elections Committee.",
+      "sourceQuality": "official",
+      "relevance": "low",
+      "freshness": "current",
+      "confidence": 1,
+      "metadata": {
+        "contextType": "legislative_role",
+        "subtype": "committee_leadership",
+        "contextOnly": true,
+        "mechanicallyActionable": false,
+        "session": "2025-2026",
+        "committee": "Elections"
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "official_committee_roster",
+        "sourceUrl": "https://www.senate.mn/committees/committee_bio.html?cmte_id=3119",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate",
+        "publisher": "Minnesota Senate"
+      },
+      "target": {
+        "legislatorExternalKey": "lrl:15653",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate"
+      },
+      "kind": "context",
+      "stance": "neutral",
+      "claim": "For the 2025-2026 session, Michael W. Holmstrom of Senate District 29 serves on the Senate Education Finance Committee.",
+      "sourceQuality": "official",
+      "relevance": "low",
+      "freshness": "current",
+      "confidence": 1,
+      "metadata": {
+        "contextType": "legislative_role",
+        "subtype": "committee_assignment",
+        "contextOnly": true,
+        "mechanicallyActionable": false,
+        "session": "2025-2026",
+        "committee": "Education Finance"
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "official_committee_roster",
+        "sourceUrl": "https://www.senate.mn/committees/committee_bio.html?cmte_id=3134",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate",
+        "publisher": "Minnesota Senate"
+      },
+      "target": {
+        "legislatorExternalKey": "lrl:15286",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate"
+      },
+      "kind": "context",
+      "stance": "neutral",
+      "claim": "For the 2025-2026 session, Steve Drazkowski serves on the Senate State and Local Government Committee.",
+      "sourceQuality": "official",
+      "relevance": "medium",
+      "freshness": "current",
+      "confidence": 1,
+      "metadata": {
+        "contextType": "legislative_role",
+        "subtype": "committee_assignment",
+        "contextOnly": true,
+        "mechanicallyActionable": false,
+        "session": "2025-2026",
+        "committee": "State and Local Government",
+        "gamblingProcessRelevance": "sports_wagering_committee"
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "official_committee_roster",
+        "sourceUrl": "https://www.senate.mn/committees/committee_bio.html?cmte_id=1019",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate",
+        "publisher": "Minnesota Senate"
+      },
+      "target": {
+        "legislatorExternalKey": "lrl:15286",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate"
+      },
+      "kind": "context",
+      "stance": "neutral",
+      "claim": "For the 2025-2026 session, Steve Drazkowski also serves on the Senate Taxes Committee.",
+      "sourceQuality": "official",
+      "relevance": "low",
+      "freshness": "current",
+      "confidence": 1,
+      "metadata": {
+        "contextType": "legislative_role",
+        "subtype": "committee_assignment",
+        "contextOnly": true,
+        "mechanicallyActionable": false,
+        "session": "2025-2026",
+        "committee": "Taxes"
+      }
+    }
+  ]
+}

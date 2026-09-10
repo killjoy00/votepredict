@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import campaignSnapshotJson from '../../data/cfb-2025-2026-snapshot.json';
 import gamblingManifestJson from '../../data/evidence/gambling-curated-v1.json';
+import legislatorContextManifestJson from '../../data/evidence/legislator-context-v1.json';
 import { pool } from '@/lib/db';
 import { auditBillFeature } from '@/features/feature-audit';
 import { BILL_FEATURE_SCHEMA_VERSION, DETERMINISTIC_EXTRACTOR_VERSION } from '@/features/bills';
@@ -37,6 +38,7 @@ type ManifestSource = {
 type ManifestTarget = {
   memberName?: string;
   memberNames?: string[];
+  legislatorExternalKey?: string;
   billIdentifier?: string;
   sessionSlug?: string;
   chamberSlug?: string;
@@ -77,6 +79,7 @@ type MembershipRow = { membership_id: string; name: string; chamber_slug: string
 
 const campaignSnapshot = campaignSnapshotJson as CampaignSnapshot;
 const gamblingManifest = gamblingManifestJson as EvidenceManifest;
+const legislatorContextManifest = legislatorContextManifestJson as EvidenceManifest;
 
 function money(value: number): string {
   return new Intl.NumberFormat('en-US', {
@@ -248,8 +251,6 @@ async function persistCampaignFinanceEvidence() {
       resolvedWithoutActivityMemberships: resolvedWithoutActivity.length,
       notInActivitySnapshotMemberships: notInActivitySnapshot.length,
       ambiguousMemberships: ambiguous.length,
-      // Compatibility fields for existing operational consumers. These now mean
-      // snapshot resolution, not proof of canonical roster identity resolution.
       matchedMemberships: resolvedWithActivity.length + resolvedWithoutActivity.length,
       unmatchedMemberships: notInActivitySnapshot.length + ambiguous.length,
       contributionEvidence: contributionDrafts.length,
@@ -400,14 +401,18 @@ async function fetchEvidenceSource(sourceUrl: string): Promise<FetchedSource> {
   };
 }
 
-function curatedDrafts(record: ManifestRecord): DurableEvidenceDraft[] {
+function manifestDrafts(record: ManifestRecord, manifest: EvidenceManifest): DurableEvidenceDraft[] {
   const names = record.target?.memberNames?.length
     ? record.target.memberNames
     : [record.target?.memberName].filter((value): value is string => Boolean(value));
-  const targets = names.length > 0 ? names : [undefined];
-  return targets.map((memberName) => ({
+  const membershipTargets: Array<{ memberName?: string; legislatorExternalKey?: string }> = names.length > 0
+    ? names.map((memberName) => ({ memberName }))
+    : record.target?.legislatorExternalKey
+      ? [{ legislatorExternalKey: record.target.legislatorExternalKey }]
+      : [{}];
+  return membershipTargets.map((membershipTarget) => ({
     target: record.target ? {
-      memberName,
+      ...membershipTarget,
       billIdentifier: record.target.billIdentifier,
       sessionSlug: record.target.sessionSlug ?? record.source.sessionSlug,
       chamberSlug: record.target.chamberSlug,
@@ -422,28 +427,28 @@ function curatedDrafts(record: ManifestRecord): DurableEvidenceDraft[] {
     relevance: record.relevance,
     freshness: record.freshness ?? freshness(record.publishedAt),
     extractionMethod: 'curated-source-manifest',
-    extractionVersion: gamblingManifest.version,
+    extractionVersion: manifest.version,
     confidence: record.confidence,
     metadata: {
       ...(record.metadata ?? {}),
-      manifestVersion: gamblingManifest.version,
+      manifestVersion: manifest.version,
       publisher: record.source.publisher,
       mechanicallyActionable: record.metadata?.mechanicallyActionable === true,
     },
   }));
 }
 
-async function persistCuratedEvidence() {
+async function persistManifestEvidence(manifest: EvidenceManifest) {
   const groups = new Map<string, { source: ManifestSource; records: ManifestRecord[] }>();
-  for (const record of gamblingManifest.records) {
+  for (const record of manifest.records) {
     const key = sourceGroupKey(record.source);
     const group = groups.get(key) ?? { source: record.source, records: [] };
     group.records.push(record);
     groups.set(key, group);
   }
-  const runId = await startRun(gamblingManifest.sourceSystem, `manifest:${gamblingManifest.version}`, {
-    manifestVersion: gamblingManifest.version,
-    records: gamblingManifest.records.length,
+  const runId = await startRun(manifest.sourceSystem, `manifest:${manifest.version}`, {
+    manifestVersion: manifest.version,
+    records: manifest.records.length,
     uniqueSourceGroups: groups.size,
     execution: 'vercel-runtime',
   });
@@ -460,23 +465,23 @@ async function persistCuratedEvidence() {
         sourceKind: source.sourceKind,
         sourceUrl: source.sourceUrl,
         contentSha256: fetchedSource.contentSha256,
-        jurisdictionSlug: gamblingManifest.jurisdictionSlug ?? 'us-mn',
+        jurisdictionSlug: manifest.jurisdictionSlug ?? 'us-mn',
         sessionSlug: source.sessionSlug,
         chamberSlug: source.chamberSlug,
         fetchedAt: fetchedSource.fetchedAt,
         httpStatus: fetchedSource.httpStatus,
         metadata: {
           publisher: source.publisher,
-          manifestVersion: gamblingManifest.version,
+          manifestVersion: manifest.version,
           bytes: fetchedSource.bytes,
           contentType: fetchedSource.contentType,
         },
-      }, records.flatMap(curatedDrafts));
+      }, records.flatMap((record) => manifestDrafts(record, manifest)));
       inserted += result.inserted;
       reused += result.reused;
       unresolved.push(...result.unresolvedTargets);
     }
-    const result = { sources: fetched.size, records: gamblingManifest.records.length, inserted, reused, unresolved };
+    const result = { sources: fetched.size, records: manifest.records.length, inserted, reused, unresolved };
     await completeRun(runId, result, fetched.size, unresolved.filter((item) => item.reason.startsWith('membership:')).length);
     return result;
   } catch (error) {
@@ -486,9 +491,10 @@ async function persistCuratedEvidence() {
 }
 
 export async function runProductionEvidenceRefresh() {
-  if (!campaignSnapshot.schemaVersion || !gamblingManifest.version) throw new Error('Bundled evidence inputs are invalid');
+  if (!campaignSnapshot.schemaVersion || !gamblingManifest.version || !legislatorContextManifest.version) throw new Error('Bundled evidence inputs are invalid');
   const campaignFinance = await persistCampaignFinanceEvidence();
   const bills = await seedEvidenceBills();
-  const curated = await persistCuratedEvidence();
-  return { campaignFinance, bills, curated };
+  const curated = await persistManifestEvidence(gamblingManifest);
+  const legislatorContext = await persistManifestEvidence(legislatorContextManifest);
+  return { campaignFinance, bills, curated, legislatorContext };
 }

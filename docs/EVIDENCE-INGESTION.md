@@ -5,12 +5,13 @@ VotePredict stores reusable public evidence in the existing `source_documents` a
 ## Rules
 
 1. **Retain source provenance.** Every imported source is fetched or derived from an identified URL and stored with a SHA-256 content hash.
-2. **Resolve targets conservatively.** Member and bill targets must resolve uniquely. Ambiguous targets are recorded as unresolved rather than guessed.
+2. **Resolve targets conservatively.** Member and bill targets must resolve uniquely. Ambiguous targets are recorded as unresolved rather than guessed. Curated member evidence should prefer the durable LRL legislator external key (`lrl:<id>`) when available so display-name changes do not break identity.
 3. **Make refreshes idempotent.** Evidence receives a deterministic ingestion key scoped to source content, resolved target, claim, date, and extractor version. Re-running the same import reuses the prior evidence item.
 4. **Separate evidence from model effect.** Importing an item does not make it a forecasting feature. New curated and campaign-finance records default to `mechanicallyActionable: false` until a separately evaluated model explicitly uses them.
 5. **Treat money as context, not stance.** Campaign receipts and independent expenditures are factual context. They do not imply a legislator's vote position by themselves.
 6. **Prefer official facts.** Bill authorship/sponsorship is sourced from the Minnesota Revisor rather than inferred from advocacy material. Organizational letters describe only the organization's documented position.
-7. **Preserve pre-vote bills.** An official bill referenced by evidence may be seeded into the canonical `bills` and `bill_versions` tables even if it has not appeared in historical floor-vote ingestion. Its deterministic features are generated at the same time.
+7. **Treat legislative roles as context, not vote intent.** Committee membership and leadership may be relevant to bill routing or leverage, but they are persisted as neutral context and do not imply support or opposition.
+8. **Preserve pre-vote bills.** An official bill referenced by evidence may be seeded into the canonical `bills` and `bill_versions` tables even if it has not appeared in historical floor-vote ingestion. Its deterministic features are generated at the same time.
 
 ## Commands
 
@@ -18,6 +19,7 @@ VotePredict stores reusable public evidence in the existing `source_documents` a
 - `npm run data:cfb:evidence -- --snapshot=PATH` maps that snapshot to current memberships and persists campaign-finance context when run in an environment with a routable database connection.
 - `npm run data:evidence:bills -- --manifest=PATH` ensures official Revisor bills referenced by an evidence manifest have canonical bill/version records and `deterministic-v2.1` features when run in an environment with a routable database connection.
 - `npm run data:evidence:curated -- --manifest=PATH` fetches and hashes each manifest source, resolves targets, and persists evidence when run in an environment with a routable database connection.
+- `npm run data:evidence:legislators` imports the versioned official committee/leadership context manifest using stable `lrl:` legislator keys.
 
 ## Production execution
 
@@ -32,3 +34,7 @@ Production refresh is intentionally not scheduled on a recurring cadence yet. Be
 ## Initial gambling tranche
 
 `data/evidence/gambling-curated-v1.json` moves the existing priority gambling evidence into the durable store. It contains sourced member statements, official Revisor authorship records, and documented MIGA/SMSC gaming-policy positions. All are inspectable and currently non-mechanical.
+
+## Legislator context tranche
+
+`data/evidence/legislator-context-v1.json` adds official 2025-2026 House member profiles and Senate committee rosters for the initial identity-gap cohort. It records committee assignments and leadership roles as neutral context, targets memberships through stable LRL legislator keys, and explicitly tags process-relevant committees such as House Commerce and Senate State and Local Government without converting committee service into a forecast stance or mechanical feature.
