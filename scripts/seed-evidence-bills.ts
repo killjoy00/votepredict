@@ -85,9 +85,9 @@ async function main(): Promise<void> {
         SELECT s.id::text AS session_id, c.id::text AS chamber_id
           FROM legislative_sessions s
           JOIN jurisdictions j ON j.id=s.jurisdiction_id
-          JOIN chambers c ON c.jurisdiction_id=j.id AND c.slug=$3
+          JOIN chambers c ON c.jurisdiction_id=j.id AND c.slug=$2
          WHERE j.slug='us-mn' AND s.slug=$1
-         LIMIT 2`, [target.sessionSlug, target.identifier, chamberSlug]);
+         LIMIT 2`, [target.sessionSlug, chamberSlug]);
       if (scope.rows.length !== 1) throw new Error(`Session/chamber scope could not be resolved for ${target.sessionSlug} ${target.identifier}`);
 
       const existing = await pool.query<{ id: string }>(`SELECT id::text FROM bills WHERE session_id=$1::uuid AND identifier=$2`, [scope.rows[0].session_id, target.identifier]);
