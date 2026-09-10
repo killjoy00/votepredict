@@ -6,6 +6,8 @@ on:
     paths:
       - .github/workflows/revisor-action-audit.yml
       - scripts/audit-revisor-action-history.ts
+      - src/app/api/operations/revisor-action-audit/route.ts
+      - src/operations/revisor-action-audit.ts
       - src/sources/minnesota/revisor-actions.ts
       - tests/revisor-actions.test.ts
 permissions:
@@ -33,7 +35,14 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - name: Read production database environment privately
+      - name: Deploy main before Revisor action audit
+        shell: bash
+        run: |
+          if ! npx --yes vercel@59.13.1 deploy --prod --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-deploy.log" 2>&1; then
+            echo 'Production deployment failed; no Revisor action audit was invoked.'
+            exit 1
+          fi
+      - name: Read production authentication privately
         shell: bash
         run: |
           umask 077
@@ -42,8 +51,8 @@ jobs:
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: node --import tsx scripts/audit-revisor-action-history.ts
-      - name: Remove temporary credentials
+      - name: Remove temporary credentials and deployment logs
         if: always()
         shell: bash
         run: |
-          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log"
+          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/vercel-deploy.log"
