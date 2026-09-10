@@ -104,6 +104,10 @@ function nameFromPage(lines: string[], fallback: string): string {
   const record = lines.find((line) => /\s-\sLegislator Record\b/i.test(line));
   const raw = record?.replace(/\s-\sLegislator Record[\s\S]*$/i, '').trim() || fallback;
   const nicknameStripped = raw.replace(/\s*"[^"]*"\s*/g, ' ').replace(/\s+/g, ' ').trim();
+  // LRL renders suffixes in inverted names as "Last, Jr., First". Treat the
+  // suffix as part of the surname side, not as the given name.
+  const suffixed = nicknameStripped.match(/^([^,]+),\s*(Jr\.?|Sr\.?|II|III|IV),\s*(.+)$/i);
+  if (suffixed) return `${suffixed[3]} ${suffixed[1]} ${suffixed[2]}`.replace(/\s+/g, ' ').trim();
   const comma = nicknameStripped.match(/^([^,]+),\s*(.+)$/);
   return comma ? `${comma[2]} ${comma[1]}`.replace(/\s+/g, ' ').trim() : nicknameStripped;
 }

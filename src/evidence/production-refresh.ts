@@ -5,7 +5,7 @@ import { pool } from '@/lib/db';
 import { auditBillFeature } from '@/features/feature-audit';
 import { BILL_FEATURE_SCHEMA_VERSION, DETERMINISTIC_EXTRACTOR_VERSION } from '@/features/bills';
 import { fetchRevisorBill } from '@/sources/minnesota/revisor';
-import { getCampaignFinanceContexts } from '@/evidence/campaign-finance-snapshot';
+import { resolveCampaignFinanceMembers } from '@/evidence/campaign-finance-snapshot';
 import {
   persistDurableEvidence,
   type DurableEvidenceDraft,
@@ -142,11 +142,16 @@ async function persistCampaignFinanceEvidence() {
          AND (m.starts_on IS NULL OR m.starts_on<=current_date)
          AND (m.ends_on IS NULL OR m.ends_on>=current_date)
        ORDER BY c.slug,l.name`);
-    const contexts = getCampaignFinanceContexts(memberships.rows.map((membership) => ({
+    const resolutions = resolveCampaignFinanceMembers(memberships.rows.map((membership) => ({
       membershipId: membership.membership_id,
       memberName: membership.name,
       chamber: membership.chamber_slug,
     })));
+    const contexts = resolutions.flatMap((resolution) => resolution.context ? [resolution.context] : []);
+    const resolvedWithActivity = resolutions.filter((resolution) => resolution.status === 'resolved_with_activity');
+    const resolvedWithoutActivity = resolutions.filter((resolution) => resolution.status === 'resolved_without_activity');
+    const notInActivitySnapshot = resolutions.filter((resolution) => resolution.status === 'not_in_activity_snapshot');
+    const ambiguous = resolutions.filter((resolution) => resolution.status === 'ambiguous');
 
     const contributionDrafts: DurableEvidenceDraft[] = contexts.flatMap((context) => context.contributions ? [{
       target: { membershipId: context.membershipId },
@@ -239,15 +244,21 @@ async function persistCampaignFinanceEvidence() {
 
     const result = {
       currentMemberships: memberships.rows.length,
-      matchedMemberships: contexts.length,
-      unmatchedMemberships: memberships.rows.length - contexts.length,
+      resolvedWithActivityMemberships: resolvedWithActivity.length,
+      resolvedWithoutActivityMemberships: resolvedWithoutActivity.length,
+      notInActivitySnapshotMemberships: notInActivitySnapshot.length,
+      ambiguousMemberships: ambiguous.length,
+      // Compatibility fields for existing operational consumers. These now mean
+      // snapshot resolution, not proof of canonical roster identity resolution.
+      matchedMemberships: resolvedWithActivity.length + resolvedWithoutActivity.length,
+      unmatchedMemberships: notInActivitySnapshot.length + ambiguous.length,
       contributionEvidence: contributionDrafts.length,
       independentExpenditureEvidence: independentDrafts.length,
       inserted: contributions.inserted + independent.inserted,
       reused: contributions.reused + independent.reused,
       snapshotGeneratedAt: campaignSnapshot.generatedAt,
     };
-    await completeRun(runId, result, 2, result.unmatchedMemberships);
+    await completeRun(runId, result, 2, result.ambiguousMemberships);
     return result;
   } catch (error) {
     await failRun(runId, error);
