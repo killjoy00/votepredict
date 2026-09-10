@@ -1,0 +1,24 @@
+name: Revisor public sample audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/revisor-public-sample-audit.yml
+      - scripts/audit-revisor-public-samples.ts
+      - src/sources/minnesota/revisor-actions.ts
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Audit official Revisor XML samples directly
+        run: node --import tsx scripts/audit-revisor-public-samples.ts
