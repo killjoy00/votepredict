@@ -1,0 +1,26 @@
+name: Revisor source-passage audit
+on:
+  push:
+    branches: [main, model/revisor-source-passage-action-search]
+    paths:
+      - .github/workflows/revisor-source-passage-audit.yml
+      - scripts/audit-revisor-source-passage-search.ts
+      - src/sources/minnesota/revisor-action-search.ts
+      - src/sources/minnesota/revisor-actions.ts
+      - tests/revisor-action-search.test.ts
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Audit all six source-chamber passage sets
+        run: node --import tsx scripts/audit-revisor-source-passage-search.ts
