@@ -4,6 +4,7 @@ import type { CampaignFinanceSnapshot, CandidateSnapshot, RankedAmount } from '.
 
 const PAGE_URL = 'https://register.cfb.mn.gov/reports-and-data/self-help/data-downloads/campaign-finance/';
 const FALLBACK_CONTRIBUTIONS_URL = `${PAGE_URL}?download=-2026985457`;
+const FALLBACK_EXPENDITURES_URL = `${PAGE_URL}?download=-1315784544`;
 const FALLBACK_INDEPENDENT_URL = `${PAGE_URL}?download=-617535497`;
 const CYCLE_YEARS = new Set(['2025', '2026']);
 const TOP_LIMIT = 10;
@@ -23,7 +24,7 @@ interface CandidateIdentity {
   lastNameKey: string;
 }
 
-interface CandidateAccumulator extends Omit<CandidateSnapshot, 'contributions' | 'independentExpenditures'> {
+interface CandidateAccumulator extends Omit<CandidateSnapshot, 'contributions' | 'expenditures' | 'independentExpenditures'> {
   contributions: {
     transactionCount: number;
     totalAmount: number;
@@ -31,6 +32,14 @@ interface CandidateAccumulator extends Omit<CandidateSnapshot, 'contributions' |
     contributors: Map<string, RankedAmount>;
     contributorTypes: Map<string, RankedAmount>;
     employers: Map<string, RankedAmount>;
+  };
+  expenditures: {
+    transactionCount: number;
+    totalAmount: number;
+    latestDate?: string;
+    payees: Map<string, RankedAmount>;
+    purposes: Map<string, RankedAmount>;
+    types: Map<string, RankedAmount>;
   };
   independentExpenditures: {
     transactionCount: number;
@@ -46,6 +55,7 @@ type FetchLike = typeof fetch;
 
 type DownloadUrls = {
   contributions: string;
+  expenditures: string;
   independentExpenditures: string;
   discovered: boolean;
 };
@@ -133,6 +143,7 @@ async function discoverDownloadUrls(fetchImpl: FetchLike): Promise<DownloadUrls>
     .map((match) => new URL(decodeHtml(match[1]), PAGE_URL).toString());
   return {
     contributions: hrefs[1] ?? FALLBACK_CONTRIBUTIONS_URL,
+    expenditures: hrefs[9] ?? FALLBACK_EXPENDITURES_URL,
     independentExpenditures: hrefs[16] ?? FALLBACK_INDEPENDENT_URL,
     discovered: hrefs.length >= 17,
   };
@@ -198,12 +209,20 @@ function parseCsv(text: string, onRow: (row: string[]) => void): void {
 }
 
 function headerIndex(header: string[]): Map<string, number> {
-  return new Map(header.map((name, index) => [name.trim(), index]));
+  return new Map(header.map((name, index) => [name.trim().toLowerCase(), index]));
 }
 
 function value(row: string[], indexes: Map<string, number>, name: string): string {
-  const index = indexes.get(name);
+  const index = indexes.get(name.trim().toLowerCase());
   return index === undefined ? '' : (row[index] ?? '').trim();
+}
+
+function firstValue(row: string[], indexes: Map<string, number>, names: readonly string[]): string {
+  for (const name of names) {
+    const result = value(row, indexes, name);
+    if (result) return result;
+  }
+  return '';
 }
 
 function numericAmount(valueText: string): number {
@@ -230,14 +249,14 @@ function top(map: Map<string, RankedAmount>, limit = TOP_LIMIT): RankedAmount[] 
 }
 
 function ensureCandidate(map: Map<string, CandidateAccumulator>, committeeName: string, registrationNumber = ''): CandidateAccumulator | undefined {
-  const identity = candidateIdentityFromCommitteeName(committeeName);
-  if (!identity) return undefined;
   const key = registrationNumber ? `reg:${registrationNumber}` : `name:${committeeName.toLowerCase()}`;
   const existing = map.get(key);
   if (existing) {
     if (!existing.registrationNumber && registrationNumber) existing.registrationNumber = registrationNumber;
     return existing;
   }
+  const identity = candidateIdentityFromCommitteeName(committeeName);
+  if (!identity) return undefined;
   const candidate: CandidateAccumulator = {
     committeeName,
     registrationNumber: registrationNumber || undefined,
@@ -248,6 +267,13 @@ function ensureCandidate(map: Map<string, CandidateAccumulator>, committeeName: 
       contributors: new Map(),
       contributorTypes: new Map(),
       employers: new Map(),
+    },
+    expenditures: {
+      transactionCount: 0,
+      totalAmount: 0,
+      payees: new Map(),
+      purposes: new Map(),
+      types: new Map(),
     },
     independentExpenditures: {
       transactionCount: 0,
@@ -292,6 +318,39 @@ function parseContributions(text: string, candidates: Map<string, CandidateAccum
   return { rawRows, cycleRows };
 }
 
+function parseCandidateExpenditures(text: string, candidates: Map<string, CandidateAccumulator>): { rawRows: number; cycleRows: number } {
+  let indexes: Map<string, number> | undefined;
+  let rawRows = 0;
+  let cycleRows = 0;
+  parseCsv(text, (row) => {
+    if (!indexes) {
+      indexes = headerIndex(row);
+      return;
+    }
+    rawRows += 1;
+    const year = value(row, indexes, 'Year');
+    if (!CYCLE_YEARS.has(year)) return;
+    const committeeName = firstValue(row, indexes, ['Committee name', 'Committee', 'Filer name']);
+    const registrationNumber = firstValue(row, indexes, ['Committee reg num', 'Committee registration number', 'Registration number']);
+    if (!committeeName) return;
+    const candidate = ensureCandidate(candidates, committeeName, registrationNumber);
+    if (!candidate) return;
+    cycleRows += 1;
+    const rowAmount = numericAmount(value(row, indexes, 'Amount')) + numericAmount(value(row, indexes, 'Unpaid amount'));
+    const date = value(row, indexes, 'Date');
+    const purpose = value(row, indexes, 'Purpose') || 'Unknown';
+    const type = value(row, indexes, 'Type') || 'Unknown';
+    const payee = firstValue(row, indexes, ['Vendor name', 'Payee', 'Recipient', 'Vendor']);
+    candidate.expenditures.transactionCount += 1;
+    candidate.expenditures.totalAmount += rowAmount;
+    if (date && (!candidate.expenditures.latestDate || date > candidate.expenditures.latestDate)) candidate.expenditures.latestDate = date;
+    if (payee) addAmount(candidate.expenditures.payees, payee, rowAmount, { type });
+    addAmount(candidate.expenditures.purposes, purpose, rowAmount);
+    addAmount(candidate.expenditures.types, type, rowAmount);
+  });
+  return { rawRows, cycleRows };
+}
+
 function parseIndependentExpenditures(text: string, candidates: Map<string, CandidateAccumulator>): { rawRows: number; cycleRows: number } {
   let indexes: Map<string, number> | undefined;
   let rawRows = 0;
@@ -323,6 +382,16 @@ function parseIndependentExpenditures(text: string, candidates: Map<string, Cand
 }
 
 function serializeCandidate(candidate: CandidateAccumulator): CandidateSnapshot {
+  const expenditures = candidate.expenditures.transactionCount > 0
+    ? {
+        transactionCount: candidate.expenditures.transactionCount,
+        totalAmount: Number(candidate.expenditures.totalAmount.toFixed(2)),
+        latestDate: candidate.expenditures.latestDate,
+        topPayees: top(candidate.expenditures.payees),
+        byPurpose: top(candidate.expenditures.purposes, 20),
+        byType: top(candidate.expenditures.types, 20),
+      }
+    : undefined;
   return {
     committeeName: candidate.committeeName,
     candidateName: candidate.candidateName,
@@ -338,6 +407,7 @@ function serializeCandidate(candidate: CandidateAccumulator): CandidateSnapshot 
       byContributorType: top(candidate.contributions.contributorTypes, 20),
       topEmployers: top(candidate.contributions.employers),
     },
+    expenditures,
     independentExpenditures: {
       transactionCount: candidate.independentExpenditures.transactionCount,
       totalAmount: Number(candidate.independentExpenditures.totalAmount.toFixed(2)),
@@ -351,20 +421,23 @@ function serializeCandidate(candidate: CandidateAccumulator): CandidateSnapshot 
 
 export function buildCampaignFinanceSnapshotFromTexts(input: {
   contributionsText: string;
+  expendituresText?: string;
   independentExpendituresText: string;
   contributionsUrl: string;
+  expendituresUrl?: string;
   independentExpendituresUrl: string;
   generatedAt?: string;
 }): CampaignFinanceSnapshot {
   const candidates = new Map<string, CandidateAccumulator>();
   const contributionStats = parseContributions(input.contributionsText, candidates);
+  const expenditureStats = input.expendituresText ? parseCandidateExpenditures(input.expendituresText, candidates) : undefined;
   const independentStats = parseIndependentExpenditures(input.independentExpendituresText, candidates);
   const serialized = [...candidates.values()]
-    .filter((candidate) => candidate.contributions.transactionCount > 0 || candidate.independentExpenditures.transactionCount > 0)
+    .filter((candidate) => candidate.contributions.transactionCount > 0 || candidate.expenditures.transactionCount > 0 || candidate.independentExpenditures.transactionCount > 0)
     .map(serializeCandidate)
     .sort((left, right) => left.chamber.localeCompare(right.chamber) || left.candidateName.localeCompare(right.candidateName));
   return {
-    schemaVersion: 'mn-cfb-2025-2026-v1',
+    schemaVersion: input.expendituresText ? 'mn-cfb-2025-2026-v2' : 'mn-cfb-2025-2026-v1',
     generatedAt: input.generatedAt ?? new Date().toISOString(),
     cycleYears: [2025, 2026],
     provenance: {
@@ -375,6 +448,14 @@ export function buildCampaignFinanceSnapshotFromTexts(input: {
         bytes: Buffer.byteLength(input.contributionsText),
         cycleRows: contributionStats.cycleRows,
       },
+      ...(input.expendituresText && input.expendituresUrl && expenditureStats ? {
+        expenditures: {
+          url: input.expendituresUrl,
+          contentSha256: sha256(input.expendituresText),
+          bytes: Buffer.byteLength(input.expendituresText),
+          cycleRows: expenditureStats.cycleRows,
+        },
+      } : {}),
       independentExpenditures: {
         url: input.independentExpendituresUrl,
         contentSha256: sha256(input.independentExpendituresText),
@@ -392,12 +473,38 @@ export async function fetchCurrentCampaignFinanceSnapshot(fetchImpl: FetchLike =
     fetchText(fetchImpl, urls.contributions),
     fetchText(fetchImpl, urls.independentExpenditures),
   ]);
-  const snapshot = buildCampaignFinanceSnapshotFromTexts({
-    contributionsText,
-    independentExpendituresText,
-    contributionsUrl: urls.contributions,
-    independentExpendituresUrl: urls.independentExpenditures,
-  });
+
+  let expendituresText: string | undefined;
+  try {
+    expendituresText = await fetchText(fetchImpl, urls.expenditures);
+  } catch (error) {
+    console.warn('CFB candidate-expenditure bulk download unavailable; continuing without supplemental spending data', error instanceof Error ? error.name : 'Error');
+  }
+
+  let snapshot: CampaignFinanceSnapshot;
+  try {
+    snapshot = buildCampaignFinanceSnapshotFromTexts({
+      contributionsText,
+      expendituresText,
+      independentExpendituresText,
+      contributionsUrl: urls.contributions,
+      expendituresUrl: expendituresText ? urls.expenditures : undefined,
+      independentExpendituresUrl: urls.independentExpenditures,
+    });
+    if (snapshot.provenance.expenditures && snapshot.provenance.expenditures.cycleRows < 100) {
+      throw new Error(`CFB candidate-expenditure stream failed plausibility checks: rows=${snapshot.provenance.expenditures.cycleRows}`);
+    }
+  } catch (error) {
+    if (!expendituresText) throw error;
+    console.warn('CFB candidate-expenditure parsing failed plausibility checks; continuing with receipts and independent expenditures', error instanceof Error ? error.message : 'Error');
+    snapshot = buildCampaignFinanceSnapshotFromTexts({
+      contributionsText,
+      independentExpendituresText,
+      contributionsUrl: urls.contributions,
+      independentExpendituresUrl: urls.independentExpenditures,
+    });
+  }
+
   if (snapshot.candidates.length < 300 || snapshot.provenance.contributions.cycleRows < 5_000) {
     throw new Error(`CFB live snapshot failed plausibility checks: candidates=${snapshot.candidates.length}, contributions=${snapshot.provenance.contributions.cycleRows}`);
   }
