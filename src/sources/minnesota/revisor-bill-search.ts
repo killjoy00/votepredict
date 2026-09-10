@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { getMinnesotaHouseSession } from './sessions';
 
 const REVISOR_SEARCH_URL = 'https://www.revisor.mn.gov/bills/status_result.php';
+export const REVISOR_SEARCH_RESULT_LIMIT = 500;
 
 export type RevisorBillSearchBody = 'House' | 'Senate';
 
@@ -70,6 +71,9 @@ export function buildRevisorBillSearchUrl(input: {
 }): string {
   if (!Number.isInteger(input.firstBill) || !Number.isInteger(input.lastBill) || input.firstBill < 1 || input.lastBill < input.firstBill) {
     throw new Error('Revisor bill search requires a positive inclusive bill-number range');
+  }
+  if (input.lastBill - input.firstBill + 1 > REVISOR_SEARCH_RESULT_LIMIT) {
+    throw new Error(`Revisor bill search ranges cannot exceed ${REVISOR_SEARCH_RESULT_LIMIT} bill numbers`);
   }
   const params = new URLSearchParams({
     body: input.body,
@@ -150,9 +154,11 @@ export async function fetchRevisorBillUniverseWithDocuments(input: {
   batchSize?: number;
 }): Promise<RevisorBillUniverse> {
   const maxBillNumber = input.maxBillNumber ?? 7000;
-  const batchSize = input.batchSize ?? 1000;
+  const batchSize = input.batchSize ?? REVISOR_SEARCH_RESULT_LIMIT;
   if (!Number.isInteger(maxBillNumber) || maxBillNumber < 1) throw new Error('maxBillNumber must be a positive integer');
-  if (!Number.isInteger(batchSize) || batchSize < 1 || batchSize > 1000) throw new Error('batchSize must be between 1 and 1000');
+  if (!Number.isInteger(batchSize) || batchSize < 1 || batchSize > REVISOR_SEARCH_RESULT_LIMIT) {
+    throw new Error(`batchSize must be between 1 and ${REVISOR_SEARCH_RESULT_LIMIT}`);
+  }
 
   const rows = new Map<string, RevisorBillSearchResult>();
   const documents: RevisorBillSearchDocument[] = [];

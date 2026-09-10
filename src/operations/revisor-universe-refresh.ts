@@ -303,7 +303,7 @@ export async function runRevisorUniverseRefresh(): Promise<RevisorUniverseRefres
         sessionKey: input.session,
         body: input.body,
         maxBillNumber: 7000,
-        batchSize: 1000,
+        batchSize: 500,
       }),
     })));
 

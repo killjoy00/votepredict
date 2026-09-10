@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   buildRevisorBillSearchUrl,
   parseRevisorBillSearchXml,
+  REVISOR_SEARCH_RESULT_LIMIT,
   revisorSearchSessionValue,
 } from '../src/sources/minnesota/revisor-bill-search.js';
 
@@ -17,7 +18,7 @@ test('builds the documented Revisor bill-status XML search shape', () => {
     sessionKey: '2025-2026',
     body: 'House',
     firstBill: 1,
-    lastBill: 500,
+    lastBill: REVISOR_SEARCH_RESULT_LIMIT,
   }));
   assert.equal(url.origin, 'https://www.revisor.mn.gov');
   assert.equal(url.pathname, '/bills/status_result.php');
@@ -26,6 +27,15 @@ test('builds the documented Revisor bill-status XML search shape', () => {
   assert.equal(url.searchParams.get('location'), 'House');
   assert.equal(url.searchParams.get('bill'), '1-500');
   assert.equal(url.searchParams.get('format'), 'xml');
+});
+
+test('refuses ranges larger than the Revisor 500-result cap', () => {
+  assert.throws(() => buildRevisorBillSearchUrl({
+    sessionKey: '2025-2026',
+    body: 'House',
+    firstBill: 1,
+    lastBill: 501,
+  }), /cannot exceed 500/);
 });
 
 test('parses Revisor BILL_RESULT rows without fuzzy identifiers', () => {
