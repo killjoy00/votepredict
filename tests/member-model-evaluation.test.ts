@@ -55,3 +55,10 @@ test('member and chamber scorecards report coverage, proper scores, and passage 
   assert.ok(chamber.passageBrierSkillVsAlwaysPass !== undefined);
   assert.equal(chamber.passageByActualMargin?.within5.events, 1);
 });
+
+test('House evidence and calibration cannot change Senate predictions', () => {
+  const senate = [{ observationId: 's', voteEventId: 'vs', memberId: 'same', party: 'A', occurredAt: '2025-02-01', outcome: 0 as const, session: 's', chamber: 'senate' }];
+  const house = Array.from({ length: 40 }, (_, i) => ({ ...senate[0], observationId: `h${i}`, voteEventId: `vh${i}`, occurredAt: '2025-01-01', outcome: 1 as const, chamber: 'house' }));
+  const options = { modelOptions: { minimumGlobalSupport: 0 }, calibrateAfterObservations: 1, calibratorMinimumBinSize: 1 };
+  assert.deepEqual(evaluateChronologicalMemberModel([...house, ...senate], options).find(r => r.observationId === 's'), evaluateChronologicalMemberModel(senate, options)[0]);
+});

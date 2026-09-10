@@ -331,7 +331,7 @@ async function loadActiveMembers(sessionId: string, chamberId: string, asOfDate:
   return result.rows;
 }
 
-async function loadHistoricalSupport(asOfDate: string): Promise<{
+async function loadHistoricalSupport(asOfDate: string, chamberId: string): Promise<{
   global: RateEvidence;
   parties: Map<string, RateEvidence>;
   members: Map<string, RateEvidence>;
@@ -346,8 +346,9 @@ async function loadHistoricalSupport(asOfDate: string): Promise<{
       JOIN memberships m ON m.id = mv.membership_id
      WHERE ve.is_passage = true
        AND ve.occurred_on < $1::date
+       AND ve.chamber_id = $2
        AND mv.choice IN ('yea', 'nay')
-     GROUP BY m.legislator_id, COALESCE(NULLIF(btrim(m.party), ''), 'UNKNOWN')`, [asOfDate]);
+     GROUP BY m.legislator_id, COALESCE(NULLIF(btrim(m.party), ''), 'UNKNOWN')`, [asOfDate, chamberId]);
 
   const parties = new Map<string, RateEvidence>();
   const members = new Map<string, RateEvidence>();
@@ -624,7 +625,7 @@ export async function executeRuntimeForecast(request: ForecastRuntimeRequest): P
 
   const [activeMembers, historicalSupport] = await Promise.all([
     loadActiveMembers(request.subject.sessionId, request.chamberId, asOfDate),
-    loadHistoricalSupport(asOfDate),
+    loadHistoricalSupport(asOfDate, request.chamberId),
   ]);
   if (activeMembers.length === 0) throw new ForecastRuntimeError('NO_ACTIVE_MEMBERS', 'No active memberships are available for the selected chamber and as-of date.');
 

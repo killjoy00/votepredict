@@ -13,7 +13,7 @@ async function main(){
  events.sort((a,b)=>a.date.localeCompare(b.date)||a.id.localeCompare(b.id));
  const population=events.filter(e=>e.gambling);
  const context=new Map(population.map(e=>[e.id,e]));
- const observations:GamblingModelObservation[]=population.flatMap(e=>e.members.filter(m=>m[2]==='yea'||m[2]==='nay').map(([id,party,choice])=>({observationId:`${e.id}:${id}`,voteEventId:e.id,memberId:String(id),party,occurredAt:e.date,outcome:choice==='yea'?1:0,topic:e.gambling!.topic,designKey:[e.gambling!.topic,e.gambling!.licenseModel,e.gambling!.racetrackRole,e.gambling!.mobileAllowed??''].join(':')})));
+ const observations:GamblingModelObservation[]=population.flatMap(e=>e.members.filter(m=>m[2]==='yea'||m[2]==='nay').map(([id,party,choice])=>({observationId:`${e.id}:${id}`,voteEventId:e.id,memberId:String(id),chamber:e.chamber,party,occurredAt:e.date,outcome:choice==='yea'?1:0,topic:e.gambling!.topic,designKey:[e.gambling!.topic,e.gambling!.licenseModel,e.gambling!.racetrackRole,e.gambling!.mobileAllowed??''].join(':')})));
  const predictions=evaluateChronologicalGamblingModel(observations);
  const history=new Map<string,number>();const support=new Map<string,number>();
  for(let start=0;start<predictions.length;){let end=start+1;while(end<predictions.length&&predictions[end].occurredAt===predictions[start].occurredAt)end++;

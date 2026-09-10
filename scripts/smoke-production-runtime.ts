@@ -39,10 +39,19 @@ async function main(){
  console.log(JSON.stringify({health:'ok',unauthenticatedCron:401,authenticatedCron:200,
   productionBatchSize:10,smokeBatchSize:1,claimed:result.claimed,completed:result.completed,
   failed:result.failed,latestRun:result.latestRun}));
- if(result.claimed!==1||result.completed!==1||result.failed!==0)
+ if((result.alreadyCompleted ? result.claimed!==0 : result.claimed!==1||result.completed!==1)||result.failed!==0)
   throw new Error('One-item scheduler smoke did not complete');
  if(result.latestRun?.status!=='completed'||!result.latestRun.finished||
    !(result.latestRun.has_revision||result.latestRun.has_resolution))
   throw new Error('Completed smoke must have a finished ledger and revision or resolution');
+ stage='system Deep research';
+ const deep=await fetch('https://votepredict.vercel.app/api/cron/forecasts?systemDeep=1',{
+  method:'POST',headers:{Authorization:`Bearer ${env.CRON_SECRET}`},signal:AbortSignal.timeout(310000)});
+ if(deep.status!==200)throw new Error(`Deep research check returned HTTP ${deep.status}`);
+ const research=await deep.json();
+ console.log(JSON.stringify({deepResearch:research}));
+ if(research.mode!=='deep'||research.failure||research.evidenceCount<1||research.sourceCount<1)
+  throw new Error(`Deep research is not ready: ${research.failure??'no_persisted_evidence'}`);
+
 }
 main().catch(error=>{console.error(JSON.stringify(safeError(error)));process.exitCode=1;});

@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { extractGamblingBillFeatures, type GamblingBillFeatures } from '../gambling/policy';
 
 export const BILL_FEATURE_SCHEMA_VERSION = 'bill-features-v2';
-export const DETERMINISTIC_EXTRACTOR_VERSION = 'deterministic-v2';
+export const DETERMINISTIC_EXTRACTOR_VERSION = 'deterministic-v2.1';
 
 export type FiscalDirection = 'expansionary' | 'contractionary' | 'mixed' | 'unknown';
 
