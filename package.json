@@ -23,6 +23,8 @@
     "data:senate:inspect": "tsx scripts/inspect-senate-journals.ts",
     "data:senate:ingest": "tsx scripts/ingest-senate-history.ts",
     "data:cfb:snapshot": "node scripts/build-cfb-snapshot.mjs",
+    "data:cfb:evidence": "tsx scripts/ingest-cfb-evidence.ts",
+    "data:evidence:curated": "tsx scripts/ingest-evidence-manifest.ts",
     "features:bills:backfill": "tsx scripts/backfill-bill-features.ts",
     "features:analogues:inspect": "tsx scripts/inspect-bill-analogues.ts",
     "eval:baselines": "tsx scripts/evaluate-baselines.ts",
