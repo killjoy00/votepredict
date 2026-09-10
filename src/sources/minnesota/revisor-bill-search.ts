@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { getMinnesotaHouseSession } from './sessions';
 
 const REVISOR_SEARCH_URL = 'https://www.revisor.mn.gov/bills/status_result.php';
@@ -11,6 +12,18 @@ export interface RevisorBillSearchResult {
   description?: string;
   statusXmlUrl: string;
   latestTextHtmlUrl?: string;
+}
+
+export interface RevisorBillSearchDocument {
+  sourceUrl: string;
+  contentSha256: string;
+  fetchedAt: string;
+  results: RevisorBillSearchResult[];
+}
+
+export interface RevisorBillUniverse {
+  bills: RevisorBillSearchResult[];
+  documents: RevisorBillSearchDocument[];
 }
 
 function decodeXml(value: string): string {
@@ -37,6 +50,10 @@ function absoluteHttps(value: string | undefined): string | undefined {
   if (/^http:\/\//i.test(normalized)) return normalized.replace(/^http:/i, 'https:');
   if (/^[a-z0-9.-]+\//i.test(normalized)) return `https://${normalized}`;
   return new URL(normalized, 'https://www.revisor.mn.gov').toString();
+}
+
+function expectedFileType(body: RevisorBillSearchBody): 'HF' | 'SF' {
+  return body === 'House' ? 'HF' : 'SF';
 }
 
 export function revisorSearchSessionValue(sessionKeyOrSlug: string): string {
@@ -95,20 +112,63 @@ export function parseRevisorBillSearchXml(xml: string): RevisorBillSearchResult[
   return rows;
 }
 
+export async function fetchRevisorBillSearchRangeDocument(input: {
+  sessionKey: string;
+  body: RevisorBillSearchBody;
+  firstBill: number;
+  lastBill: number;
+}): Promise<RevisorBillSearchDocument> {
+  const sourceUrl = buildRevisorBillSearchUrl(input);
+  const response = await fetch(sourceUrl, {
+    headers: { 'User-Agent': 'VotePredict/2.0 official Minnesota bill-universe audit' },
+    signal: AbortSignal.timeout(30_000),
+    cache: 'no-store',
+  });
+  if (!response.ok) throw new Error(`Minnesota Revisor bill search returned ${response.status}: ${sourceUrl}`);
+  const text = await response.text();
+  return {
+    sourceUrl: response.url || sourceUrl,
+    contentSha256: createHash('sha256').update(text).digest('hex'),
+    fetchedAt: new Date().toISOString(),
+    results: parseRevisorBillSearchXml(text),
+  };
+}
+
 export async function fetchRevisorBillSearchRange(input: {
   sessionKey: string;
   body: RevisorBillSearchBody;
   firstBill: number;
   lastBill: number;
 }): Promise<RevisorBillSearchResult[]> {
-  const url = buildRevisorBillSearchUrl(input);
-  const response = await fetch(url, {
-    headers: { 'User-Agent': 'VotePredict/2.0 official Minnesota bill-universe audit' },
-    signal: AbortSignal.timeout(30_000),
-    cache: 'no-store',
-  });
-  if (!response.ok) throw new Error(`Minnesota Revisor bill search returned ${response.status}: ${url}`);
-  return parseRevisorBillSearchXml(await response.text());
+  return (await fetchRevisorBillSearchRangeDocument(input)).results;
+}
+
+export async function fetchRevisorBillUniverseWithDocuments(input: {
+  sessionKey: string;
+  body: RevisorBillSearchBody;
+  maxBillNumber?: number;
+  batchSize?: number;
+}): Promise<RevisorBillUniverse> {
+  const maxBillNumber = input.maxBillNumber ?? 7000;
+  const batchSize = input.batchSize ?? 1000;
+  if (!Number.isInteger(maxBillNumber) || maxBillNumber < 1) throw new Error('maxBillNumber must be a positive integer');
+  if (!Number.isInteger(batchSize) || batchSize < 1 || batchSize > 1000) throw new Error('batchSize must be between 1 and 1000');
+
+  const rows = new Map<string, RevisorBillSearchResult>();
+  const documents: RevisorBillSearchDocument[] = [];
+  const fileType = expectedFileType(input.body);
+  for (let firstBill = 1; firstBill <= maxBillNumber; firstBill += batchSize) {
+    const lastBill = Math.min(maxBillNumber, firstBill + batchSize - 1);
+    const document = await fetchRevisorBillSearchRangeDocument({ ...input, firstBill, lastBill });
+    documents.push(document);
+    for (const row of document.results) {
+      if (row.fileType === fileType) rows.set(row.identifier, row);
+    }
+  }
+  return {
+    bills: [...rows.values()].sort((left, right) => left.fileNumber - right.fileNumber || left.identifier.localeCompare(right.identifier)),
+    documents,
+  };
 }
 
 export async function fetchRevisorBillUniverse(input: {
@@ -117,16 +177,5 @@ export async function fetchRevisorBillUniverse(input: {
   maxBillNumber?: number;
   batchSize?: number;
 }): Promise<RevisorBillSearchResult[]> {
-  const maxBillNumber = input.maxBillNumber ?? 7000;
-  const batchSize = input.batchSize ?? 500;
-  if (!Number.isInteger(maxBillNumber) || maxBillNumber < 1) throw new Error('maxBillNumber must be a positive integer');
-  if (!Number.isInteger(batchSize) || batchSize < 1 || batchSize > 1000) throw new Error('batchSize must be between 1 and 1000');
-
-  const rows = new Map<string, RevisorBillSearchResult>();
-  for (let firstBill = 1; firstBill <= maxBillNumber; firstBill += batchSize) {
-    const lastBill = Math.min(maxBillNumber, firstBill + batchSize - 1);
-    const batch = await fetchRevisorBillSearchRange({ ...input, firstBill, lastBill });
-    for (const row of batch) rows.set(row.identifier, row);
-  }
-  return [...rows.values()].sort((left, right) => left.fileNumber - right.fileNumber || left.identifier.localeCompare(right.identifier));
+  return (await fetchRevisorBillUniverseWithDocuments(input)).bills;
 }
