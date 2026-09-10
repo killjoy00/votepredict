@@ -1,147 +1,42 @@
 import { readFileSync } from 'node:fs';
-import { Pool } from 'pg';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
-import { auditRevisorSourceChamberPassage, fetchRevisorStatusXml } from '../src/sources/minnesota/revisor-actions.js';
 
-type BillRow = {
-  bill_id: string;
-  identifier: string;
-  session_slug: string;
-  chamber_slug: 'house' | 'senate';
-  status_xml_url: string;
-  provisional_outcome: boolean | null;
-};
+let secretValues: string[] = [];
 
-type AuditRow = BillRow & {
-  officialPassed: boolean;
-  officialFailed: boolean;
-  actionCount: number;
-  classifiedActions: number;
-  unclassifiedActions: number;
-  fieldNames: string[];
-  passageDescriptions: string[];
-};
-
-function safeError(error: unknown): string {
-  return (error instanceof Error ? error.message : String(error)).replace(/postgres(?:ql)?:\/\/\S+/gi, '[redacted database URL]');
-}
-
-async function mapConcurrent<T, R>(values: readonly T[], concurrency: number, fn: (value: T) => Promise<R>): Promise<R[]> {
-  const results = new Array<R>(values.length);
-  let cursor = 0;
-  async function worker(): Promise<void> {
-    while (cursor < values.length) {
-      const index = cursor++;
-      results[index] = await fn(values[index]);
-    }
+function safeMessage(error: unknown): string {
+  let message = error instanceof Error ? error.message : String(error);
+  for (const value of secretValues.filter((value) => value.length > 3).sort((left, right) => right.length - left.length)) {
+    message = message.split(value).join('[redacted]');
   }
-  await Promise.all(Array.from({ length: Math.min(concurrency, values.length) }, () => worker()));
-  return results;
+  return message.replace(/postgres(?:ql)?:\/\/\S+/gi, '[redacted database URL]');
 }
 
 async function main(): Promise<void> {
-  const envPath = process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
-  if (!envPath) throw new Error('VOTEPREDICT_PRODUCTION_ENV_FILE is required');
-  const env = parseRuntimeEnvironment(readFileSync(envPath, 'utf8'));
-  const connectionString = env.DATABASE_URL_UNPOOLED || env.DATABASE_URL;
-  if (!connectionString) throw new Error('Production database URL is unavailable');
-  console.log(`::add-mask::${connectionString.replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A')}`);
-
-  const pool = new Pool({ connectionString, max: 1 });
-  try {
-    const result = await pool.query<BillRow>(`
-      WITH candidates AS (
-        SELECT b.id::text AS bill_id,
-               b.identifier,
-               s.slug AS session_slug,
-               c.slug AS chamber_slug,
-               COALESCE(b.metadata #>> '{revisorUniverse,statusXmlUrl}', b.source_url) AS status_xml_url,
-               CASE b.metadata #>> '{sourceChamberPassage,outcome}'
-                 WHEN 'true' THEN true
-                 WHEN 'false' THEN false
-                 ELSE NULL
-               END AS provisional_outcome,
-               row_number() OVER (
-                 PARTITION BY s.slug, c.slug, COALESCE(b.metadata #>> '{sourceChamberPassage,outcome}', 'unknown')
-                 ORDER BY b.identifier
-               ) AS sample_rank
-          FROM bills b
-          JOIN legislative_sessions s ON s.id = b.session_id
-          JOIN chambers c ON c.id = b.originating_chamber_id AND c.slug IN ('house', 'senate')
-         WHERE b.metadata ? 'revisorUniverse'
-           AND COALESCE(b.metadata #>> '{revisorUniverse,statusXmlUrl}', b.source_url) IS NOT NULL
-      )
-      SELECT bill_id, identifier, session_slug, chamber_slug, status_xml_url, provisional_outcome
-        FROM candidates
-       WHERE sample_rank <= 5
-       ORDER BY session_slug, chamber_slug, provisional_outcome NULLS LAST, identifier`);
-
-    const failures: Array<{ identifier: string; error: string }> = [];
-    const audits = (await mapConcurrent(result.rows, 6, async (bill): Promise<AuditRow | null> => {
-      try {
-        const xml = await fetchRevisorStatusXml(bill.status_xml_url);
-        const audit = auditRevisorSourceChamberPassage({ xml, identifier: bill.identifier });
-        return {
-          ...bill,
-          officialPassed: audit.sourceChamberPassed,
-          officialFailed: audit.sourceChamberFailed,
-          actionCount: audit.actions.length,
-          classifiedActions: audit.classifiedActions,
-          unclassifiedActions: audit.unclassifiedActions,
-          fieldNames: [...new Set(audit.actions.flatMap((action) => Object.keys(action.fields)))].sort(),
-          passageDescriptions: audit.passageActions.map((action) => action.description),
-        };
-      } catch (error) {
-        failures.push({ identifier: bill.identifier, error: safeError(error) });
-        return null;
-      }
-    })).filter((row): row is AuditRow => row !== null);
-
-    const fieldNames = [...new Set(audits.flatMap((row) => row.fieldNames))].sort();
-    const mismatches = audits.filter((row) => row.provisional_outcome !== null && row.officialPassed !== row.provisional_outcome);
-    console.log(JSON.stringify({
-      revisorActionHistoryAudit: {
-        generatedAt: new Date().toISOString(),
-        purpose: 'Audit only. No production bill labels are modified.',
-        sampledBills: result.rows.length,
-        fetchedBills: audits.length,
-        fetchFailures: failures,
-        actionFieldNames: fieldNames,
-        parsedActions: audits.reduce((sum, row) => sum + row.actionCount, 0),
-        classifiedActions: audits.reduce((sum, row) => sum + row.classifiedActions, 0),
-        unclassifiedActions: audits.reduce((sum, row) => sum + row.unclassifiedActions, 0),
-        officialSourcePasses: audits.filter((row) => row.officialPassed).length,
-        officialSourceFailures: audits.filter((row) => row.officialFailed).length,
-        provisionalMismatches: mismatches.map((row) => ({
-          identifier: row.identifier,
-          session: row.session_slug,
-          chamber: row.chamber_slug,
-          provisionalOutcome: row.provisional_outcome,
-          officialPassed: row.officialPassed,
-          officialFailed: row.officialFailed,
-          passageDescriptions: row.passageDescriptions,
-          fieldNames: row.fieldNames,
-        })),
-        samples: audits.slice(0, 12).map((row) => ({
-          identifier: row.identifier,
-          session: row.session_slug,
-          chamber: row.chamber_slug,
-          provisionalOutcome: row.provisional_outcome,
-          officialPassed: row.officialPassed,
-          actionCount: row.actionCount,
-          classifiedActions: row.classifiedActions,
-          unclassifiedActions: row.unclassifiedActions,
-          passageDescriptions: row.passageDescriptions,
-          fieldNames: row.fieldNames,
-        })),
-      },
-    }, null, 2));
-  } finally {
-    await pool.end();
+  const path = process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
+  if (!path) throw new Error('Production environment file is required');
+  const env = parseRuntimeEnvironment(readFileSync(path, 'utf8'));
+  const cronSecret = env.CRON_SECRET;
+  if (!cronSecret) throw new Error('Production CRON_SECRET is unavailable');
+  secretValues = Object.entries(env)
+    .filter(([key]) => /SECRET|PASSWORD|TOKEN|KEY|DATABASE_URL|POSTGRES_URL/i.test(key))
+    .map(([, value]) => value)
+    .filter((value): value is string => typeof value === 'string');
+  secretValues.push(cronSecret);
+  for (const value of secretValues.filter((value) => value.length > 3)) {
+    console.log(`::add-mask::${value.replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A')}`);
   }
+
+  const response = await fetch('https://votepredict.vercel.app/api/operations/revisor-action-audit', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${cronSecret}` },
+    signal: AbortSignal.timeout(310_000),
+  });
+  if (!response.ok) throw new Error(`Production Revisor action-history audit returned HTTP ${response.status}`);
+  const result = await response.json() as Record<string, unknown>;
+  console.log(JSON.stringify({ productionRevisorActionHistoryAudit: result }));
 }
 
 main().catch((error) => {
-  console.error(safeError(error));
+  console.error(safeMessage(error));
   process.exitCode = 1;
 });
