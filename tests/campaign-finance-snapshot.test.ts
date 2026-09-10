@@ -25,14 +25,13 @@ test('current legislator names can resolve to campaign-finance context without e
   assert.ok(context.contributions || context.independentExpenditures);
 });
 
-test('current roster aliases resolve deterministically to active CFB committees', () => {
+test('current roster aliases resolve deterministically to activity-bearing CFB committees', () => {
   const cases = [
     { memberName: 'Bjorn Olson', chamber: 'house', candidate: /Olson/i },
     { memberName: 'Liz Lee', chamber: 'house', candidate: /Lee/i },
     { memberName: 'Scott Van Binsbergen', chamber: 'house', candidate: /Van Binsbergen/i },
     { memberName: 'Jim Carlson', chamber: 'senate', candidate: /Carlson/i },
     { memberName: 'Jr. Michael Holmstrom', chamber: 'senate', candidate: /Holmstrom/i },
-    { memberName: 'Steve Drazkowski', chamber: 'senate', candidate: /Drazkowski/i },
   ] as const;
 
   for (const item of cases) {
@@ -47,7 +46,17 @@ test('current roster aliases resolve deterministically to active CFB committees'
   }
 });
 
-test('absence from the activity-derived snapshot is not reported as an identity failure', () => {
+test('a current member absent from the receipts/IE snapshot is not reported as an identity failure', () => {
+  const resolution = resolveCampaignFinanceMember({
+    membershipId: 'test-drazkowski',
+    memberName: 'Steve Drazkowski',
+    chamber: 'senate',
+  });
+  assert.equal(resolution.status, 'not_in_activity_snapshot');
+  assert.equal(resolution.context, undefined);
+});
+
+test('unknown names are classified as absent from the activity-derived snapshot, not falsely resolved', () => {
   const resolution = resolveCampaignFinanceMember({
     membershipId: 'test-no-row',
     memberName: 'Definitely No Such Minnesota Legislator',
