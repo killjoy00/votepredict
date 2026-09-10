@@ -58,6 +58,7 @@ const candidateNameAliases = new Map<string, readonly string[]>([
   ['senate|jimcarlson', ['jimacarlson', 'jamesacarlson', 'jamescarlson']],
   ['senate|michaelholmstrom', ['michaelholmstrom']],
   ['senate|stevedrazkowski', ['stevenjdrazkowski', 'stevendrazkowski']],
+  ['senate|erinkmayequade', ['erinmayequade']],
 ]);
 
 export interface CampaignFinanceMemberContext {
