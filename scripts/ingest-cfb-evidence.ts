@@ -1,43 +1,11 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
+import {
+  resolveCampaignFinanceMembersAgainstSnapshot,
+  type CampaignFinanceSnapshot,
+} from '../src/evidence/campaign-finance-snapshot.js';
 
-type RankedAmount = { name: string; amount: number; count: number; type?: string; employer?: string; direction?: string };
-type CandidateSnapshot = {
-  committeeName: string;
-  candidateName: string;
-  chamber: string;
-  registrationNumber?: string;
-  matchKey: string;
-  lastNameKey: string;
-  contributions: {
-    transactionCount: number;
-    totalAmount: number;
-    latestReceiptDate?: string;
-    topContributors: RankedAmount[];
-    byContributorType: RankedAmount[];
-    topEmployers: RankedAmount[];
-  };
-  independentExpenditures: {
-    transactionCount: number;
-    totalAmount: number;
-    forAmount: number;
-    againstAmount: number;
-    latestDate?: string;
-    topSpenders: RankedAmount[];
-  };
-};
-type CampaignFinanceSnapshot = {
-  schemaVersion: string;
-  generatedAt: string;
-  cycleYears: number[];
-  provenance: {
-    landingPage: string;
-    contributions: { url: string; contentSha256: string; cycleRows: number; bytes?: number };
-    independentExpenditures: { url: string; contentSha256: string; cycleRows: number; bytes?: number };
-  };
-  candidates: CandidateSnapshot[];
-};
 type MembershipRow = { membership_id: string; name: string; chamber_slug: string };
 
 function argumentValue(name: string): string | undefined {
@@ -62,31 +30,6 @@ function safeErrorText(error: unknown): string {
     message = message.split(value).join('[redacted]');
   }
   return message.replace(/postgres(?:ql)?:\/\/\S+/gi, '[redacted database URL]');
-}
-
-function normalizeToken(value: string): string {
-  return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '');
-}
-
-const ignoredNameTokens = new Set(['jr', 'sr', 'ii', 'iii', 'iv', 'hon', 'rep', 'sen', 'representative', 'senator']);
-function memberIdentity(name: string): { matchKey?: string; lastNameKey?: string } {
-  const tokens = name.split(/\s+/).map(normalizeToken).filter((token) => token && !ignoredNameTokens.has(token));
-  if (tokens.length === 0) return {};
-  const lastNameKey = tokens[tokens.length - 1];
-  const first = tokens.find((token) => token.length > 1) ?? tokens[0];
-  return { matchKey: first && lastNameKey ? `${first}|${lastNameKey}` : undefined, lastNameKey };
-}
-
-function findCandidate(snapshot: CampaignFinanceSnapshot, membership: MembershipRow): CandidateSnapshot | undefined {
-  const identity = memberIdentity(membership.name);
-  const chamberCandidates = snapshot.candidates.filter((candidate) => candidate.chamber === membership.chamber_slug.toLowerCase());
-  if (identity.matchKey) {
-    const exact = chamberCandidates.find((candidate) => candidate.matchKey === identity.matchKey);
-    if (exact) return exact;
-  }
-  if (!identity.lastNameKey) return undefined;
-  const lastNameMatches = chamberCandidates.filter((candidate) => candidate.lastNameKey === identity.lastNameKey);
-  return lastNameMatches.length === 1 ? lastNameMatches[0] : undefined;
 }
 
 function money(value: number): string {
@@ -138,19 +81,26 @@ async function main(): Promise<void> {
          AND (m.ends_on IS NULL OR m.ends_on >= current_date)
        ORDER BY c.slug, l.name`);
 
-    const matches = memberships.rows.flatMap((membership) => {
-      const candidate = findCandidate(snapshot, membership);
-      return candidate ? [{ membership, candidate }] : [];
-    });
-    const contributionDrafts = matches.flatMap(({ membership, candidate }) => candidate.contributions.transactionCount > 0 ? [{
-      target: { membershipId: membership.membership_id },
+    const resolutions = resolveCampaignFinanceMembersAgainstSnapshot(snapshot, memberships.rows.map((membership) => ({
+      membershipId: membership.membership_id,
+      memberName: membership.name,
+      chamber: membership.chamber_slug,
+    })));
+    const contexts = resolutions.flatMap((resolution) => resolution.context ? [resolution.context] : []);
+    const resolvedWithActivity = resolutions.filter((resolution) => resolution.status === 'resolved_with_activity');
+    const resolvedWithoutActivity = resolutions.filter((resolution) => resolution.status === 'resolved_without_activity');
+    const notInActivitySnapshot = resolutions.filter((resolution) => resolution.status === 'not_in_activity_snapshot');
+    const ambiguous = resolutions.filter((resolution) => resolution.status === 'ambiguous');
+
+    const contributionDrafts = contexts.flatMap((context) => context.contributions ? [{
+      target: { membershipId: context.membershipId },
       kind: 'context' as const,
       stance: 'neutral' as const,
-      claim: `${snapshot.cycleYears.join('-')} campaign committee receipts total ${money(candidate.contributions.totalAmount)} across ${candidate.contributions.transactionCount.toLocaleString('en-US')} itemized records.`,
-      publishedAt: candidate.contributions.latestReceiptDate ? `${candidate.contributions.latestReceiptDate}T00:00:00.000Z` : undefined,
+      claim: `${snapshot.cycleYears.join('-')} campaign committee receipts total ${money(context.contributions.totalAmount)} across ${context.contributions.transactionCount.toLocaleString('en-US')} itemized records.`,
+      publishedAt: context.contributions.latestReceiptDate ? `${context.contributions.latestReceiptDate}T00:00:00.000Z` : undefined,
       sourceQuality: 'official' as const,
       relevance: 'low' as const,
-      freshness: freshness(candidate.contributions.latestReceiptDate),
+      freshness: freshness(context.contributions.latestReceiptDate),
       extractionMethod: 'deterministic-cfb-bulk-aggregate',
       extractionVersion: snapshot.schemaVersion,
       confidence: 1,
@@ -159,27 +109,27 @@ async function main(): Promise<void> {
         subtype: 'candidate_contributions',
         contextOnly: true,
         mechanicallyActionable: false,
-        committeeName: candidate.committeeName,
-        candidateName: candidate.candidateName,
-        registrationNumber: candidate.registrationNumber,
+        committeeName: context.committeeName,
+        candidateName: context.candidateName,
+        registrationNumber: context.registrationNumber,
         cycleYears: snapshot.cycleYears,
-        totalAmount: candidate.contributions.totalAmount,
-        transactionCount: candidate.contributions.transactionCount,
-        latestReceiptDate: candidate.contributions.latestReceiptDate,
-        topContributors: candidate.contributions.topContributors,
-        byContributorType: candidate.contributions.byContributorType,
-        topEmployers: candidate.contributions.topEmployers,
+        totalAmount: context.contributions.totalAmount,
+        transactionCount: context.contributions.transactionCount,
+        latestReceiptDate: context.contributions.latestReceiptDate,
+        topContributors: context.contributions.topContributors,
+        byContributorType: context.contributions.byContributorType,
+        topEmployers: context.contributions.topEmployers,
       },
     }] : []);
-    const independentDrafts = matches.flatMap(({ membership, candidate }) => candidate.independentExpenditures.transactionCount > 0 ? [{
-      target: { membershipId: membership.membership_id },
+    const independentDrafts = contexts.flatMap((context) => context.independentExpenditures ? [{
+      target: { membershipId: context.membershipId },
       kind: 'context' as const,
       stance: 'neutral' as const,
-      claim: `${snapshot.cycleYears.join('-')} independent expenditures affecting this candidate total ${money(candidate.independentExpenditures.totalAmount)} across ${candidate.independentExpenditures.transactionCount.toLocaleString('en-US')} records (${money(candidate.independentExpenditures.forAmount)} supporting; ${money(candidate.independentExpenditures.againstAmount)} opposing).`,
-      publishedAt: candidate.independentExpenditures.latestDate ? `${candidate.independentExpenditures.latestDate}T00:00:00.000Z` : undefined,
+      claim: `${snapshot.cycleYears.join('-')} independent expenditures affecting this candidate total ${money(context.independentExpenditures.totalAmount)} across ${context.independentExpenditures.transactionCount.toLocaleString('en-US')} records (${money(context.independentExpenditures.forAmount)} supporting; ${money(context.independentExpenditures.againstAmount)} opposing).`,
+      publishedAt: context.independentExpenditures.latestDate ? `${context.independentExpenditures.latestDate}T00:00:00.000Z` : undefined,
       sourceQuality: 'official' as const,
       relevance: 'low' as const,
-      freshness: freshness(candidate.independentExpenditures.latestDate),
+      freshness: freshness(context.independentExpenditures.latestDate),
       extractionMethod: 'deterministic-cfb-bulk-aggregate',
       extractionVersion: snapshot.schemaVersion,
       confidence: 1,
@@ -188,16 +138,16 @@ async function main(): Promise<void> {
         subtype: 'independent_expenditures',
         contextOnly: true,
         mechanicallyActionable: false,
-        committeeName: candidate.committeeName,
-        candidateName: candidate.candidateName,
-        registrationNumber: candidate.registrationNumber,
+        committeeName: context.committeeName,
+        candidateName: context.candidateName,
+        registrationNumber: context.registrationNumber,
         cycleYears: snapshot.cycleYears,
-        totalAmount: candidate.independentExpenditures.totalAmount,
-        transactionCount: candidate.independentExpenditures.transactionCount,
-        forAmount: candidate.independentExpenditures.forAmount,
-        againstAmount: candidate.independentExpenditures.againstAmount,
-        latestDate: candidate.independentExpenditures.latestDate,
-        topSpenders: candidate.independentExpenditures.topSpenders,
+        totalAmount: context.independentExpenditures.totalAmount,
+        transactionCount: context.independentExpenditures.transactionCount,
+        forAmount: context.independentExpenditures.forAmount,
+        againstAmount: context.independentExpenditures.againstAmount,
+        latestDate: context.independentExpenditures.latestDate,
+        topSpenders: context.independentExpenditures.topSpenders,
       },
     }] : []);
 
@@ -232,33 +182,25 @@ async function main(): Promise<void> {
 
     const inserted = contributionResult.inserted + independentResult.inserted;
     const reused = contributionResult.reused + independentResult.reused;
-    const unmatched = memberships.rows.length - matches.length;
+    const result = {
+      currentMemberships: memberships.rows.length,
+      resolvedWithActivityMemberships: resolvedWithActivity.length,
+      resolvedWithoutActivityMemberships: resolvedWithoutActivity.length,
+      notInActivitySnapshotMemberships: notInActivitySnapshot.length,
+      ambiguousMemberships: ambiguous.length,
+      matchedMemberships: resolvedWithActivity.length + resolvedWithoutActivity.length,
+      unmatchedMemberships: notInActivitySnapshot.length + ambiguous.length,
+      contributionEvidence: contributionDrafts.length,
+      independentExpenditureEvidence: independentDrafts.length,
+      evidenceInserted: inserted,
+      evidenceReused: reused,
+    };
     await pool.query(`
       UPDATE ingestion_runs
          SET status='complete', finished_at=now(), source_documents=2, unresolved_members=$2,
              metadata=metadata || $3::jsonb
-       WHERE id=$1::uuid`, [
-      runId,
-      unmatched,
-      JSON.stringify({
-        currentMemberships: memberships.rows.length,
-        matchedMemberships: matches.length,
-        contributionEvidence: contributionDrafts.length,
-        independentExpenditureEvidence: independentDrafts.length,
-        evidenceInserted: inserted,
-        evidenceReused: reused,
-      }),
-    ]);
-    console.log(JSON.stringify({
-      runId,
-      currentMemberships: memberships.rows.length,
-      matchedMemberships: matches.length,
-      unmatchedMemberships: unmatched,
-      contributionEvidence: contributionDrafts.length,
-      independentExpenditureEvidence: independentDrafts.length,
-      inserted,
-      reused,
-    }));
+       WHERE id=$1::uuid`, [runId, ambiguous.length, JSON.stringify(result)]);
+    console.log(JSON.stringify({ runId, ...result }));
   } catch (error) {
     const message = safeErrorText(error);
     await pool.query(`UPDATE ingestion_runs SET status='failed', finished_at=now(), error_summary=$2 WHERE id=$1::uuid`, [runId, message.slice(0, 2000)]).catch(() => undefined);
