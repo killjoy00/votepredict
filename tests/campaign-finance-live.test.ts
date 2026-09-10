@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   buildCampaignFinanceSnapshotFromTexts,
   candidateIdentityFromCommitteeName,
+  loadCurrentCampaignFinanceSnapshot,
 } from '../src/evidence/campaign-finance-live.js';
 import { resolveCampaignFinanceMemberAgainstSnapshot } from '../src/evidence/campaign-finance-snapshot.js';
 
@@ -73,4 +74,13 @@ test('zero activity remains different from identity ambiguity', () => {
   });
   assert.equal(mann.status, 'not_in_activity_snapshot');
   assert.notEqual(mann.status, 'ambiguous');
+});
+
+test('live CFB loader falls back to the bundled snapshot on source failure', async () => {
+  const unavailableFetch = (async () => new Response('temporarily unavailable', { status: 503 })) as typeof fetch;
+  const loaded = await loadCurrentCampaignFinanceSnapshot(unavailableFetch);
+  assert.equal(loaded.sourceMode, 'bundled_fallback');
+  assert.match(loaded.warning ?? '', /returned 503/);
+  assert.ok(loaded.snapshot.candidates.length > 300);
+  assert.ok(loaded.snapshot.provenance.contributions.cycleRows > 5_000);
 });
