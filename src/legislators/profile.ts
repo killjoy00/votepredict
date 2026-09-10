@@ -1,4 +1,5 @@
-import { getCampaignFinanceContextForMember, type CampaignFinanceMemberContext } from '@/evidence/campaign-finance-snapshot';
+import { loadCurrentCampaignFinanceContext } from '@/evidence/campaign-finance-store';
+import type { CampaignFinanceMemberContext } from '@/evidence/campaign-finance-snapshot';
 import { pool } from '@/lib/db';
 
 export interface LegislatorDirectoryRow {
@@ -523,7 +524,7 @@ export async function loadLegislatorProfile(legislatorId: string): Promise<Legis
     ? alignments.filter((row) => row.party !== currentMembership.party).slice(0, 6)
     : [];
   const campaignFinance = currentMembership
-    ? getCampaignFinanceContextForMember({
+    ? await loadCurrentCampaignFinanceContext({
         membershipId: currentMembership.membershipId,
         memberName: currentMembership.name,
         chamber: currentMembership.chamberSlug,
