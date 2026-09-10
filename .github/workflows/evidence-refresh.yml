@@ -5,13 +5,14 @@ on:
     branches: [main]
     paths:
       - .github/workflows/evidence-refresh.yml
-      - scripts/build-cfb-snapshot.mjs
-      - scripts/ingest-cfb-evidence.ts
-      - scripts/ingest-evidence-manifest.ts
-      - scripts/seed-evidence-bills.ts
+      - scripts/run-production-evidence-refresh.ts
+      - src/app/api/operations/evidence-refresh/route.ts
+      - src/evidence/production-refresh.ts
       - src/evidence/durable-ingestion.ts
+      - src/evidence/campaign-finance-snapshot.ts
       - src/operations/environment-file.ts
       - src/sources/minnesota/revisor.ts
+      - data/cfb-2025-2026-snapshot.json
       - data/evidence/**
       - package.json
 permissions:
@@ -42,35 +43,33 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - name: Read production environment privately
+      - name: Deploy main before runtime evidence refresh
+        shell: bash
+        run: |
+          if ! npx --yes vercel@59.13.1 deploy --prod --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-deploy.log" 2>&1; then
+            echo 'Production deployment failed; no evidence refresh was invoked.'
+            exit 1
+          fi
+          echo 'Production deployment completed before evidence refresh.'
+      - name: Read production authentication privately
         shell: bash
         run: |
           umask 077
           if ! npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1; then
-            echo 'Could not read the VotePredict production environment using VERCEL_TOKEN. No production evidence was changed.'
+            echo 'Could not read the VotePredict production authentication environment. No evidence refresh was invoked.'
             exit 1
           fi
-      - name: Build current official campaign-finance snapshot
-        run: node scripts/build-cfb-snapshot.mjs "$RUNNER_TEMP/cfb-evidence.json"
-      - name: Persist official campaign-finance evidence
+      - name: Invoke authenticated production evidence refresh
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
-        run: npm run data:cfb:evidence -- --snapshot="$RUNNER_TEMP/cfb-evidence.json"
-      - name: Seed canonical bills referenced by official evidence
-        env:
-          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
-        run: npm run data:evidence:bills -- --manifest=data/evidence/gambling-curated-v1.json
-      - name: Persist curated sourced gambling evidence
-        env:
-          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
-        run: npm run data:evidence:curated -- --manifest=data/evidence/gambling-curated-v1.json
-      - name: Remove temporary source and credential files
+        run: node --import tsx scripts/run-production-evidence-refresh.ts
+      - name: Remove temporary credentials and deployment logs
         if: always()
         shell: bash
         run: |
           python - <<'PYTHON'
           import os
           from pathlib import Path
-          for name in ['votepredict-production.env', 'vercel-pull.log', 'cfb-evidence.json']:
+          for name in ['votepredict-production.env', 'vercel-pull.log', 'vercel-deploy.log']:
               Path(os.environ['RUNNER_TEMP'], name).unlink(missing_ok=True)
           PYTHON
