@@ -9,6 +9,14 @@ test('Revisor URLs are session-aware for all target legislatures', () => {
   assert.equal(buildRevisorLatestTextUrl('300', 'HF1'), 'https://www.revisor.mn.gov/bills/93/2023/0/HF/1/versions/latest/');
 });
 
+test('Revisor URLs accept canonical session slugs as aliases for ingestion keys', () => {
+  assert.equal(buildRevisorBillUrl('2025-2026', 'HF1842'), 'https://www.revisor.mn.gov/bills/94/2025/0/HF/1842/');
+  assert.deepEqual(buildRevisorBillCandidateUrls('2023-2024', 'SF2219'), [
+    'https://www.revisor.mn.gov/bills/93/2023/0/SF/2219/',
+    'https://www.revisor.mn.gov/bills/93/2024/0/SF/2219/',
+  ]);
+});
+
 test('Revisor candidates include both calendar years of a biennium', () => {
   assert.deepEqual(buildRevisorBillCandidateUrls('302', 'HF4252'), [
     'https://www.revisor.mn.gov/bills/94/2025/0/HF/4252/',
