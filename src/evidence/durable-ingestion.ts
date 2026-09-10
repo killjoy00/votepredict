@@ -73,7 +73,7 @@ function stableJson(value: unknown): string {
       .map(([key, nested]) => `${JSON.stringify(key)}:${stableJson(nested)}`)
       .join(',')}}`;
   }
-  return JSON.stringify(value);
+  return JSON.stringify(value) ?? 'null';
 }
 
 export function evidenceIngestionKey(input: {
