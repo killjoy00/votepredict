@@ -10,6 +10,16 @@ type BillRow = {
   provisional_outcome: boolean | null;
 };
 
+type XmlDiagnostic = {
+  identifier: string;
+  xmlLength: number;
+  prefix: string;
+  tagNames: string[];
+  actionLikeTags: string[];
+  actionTokenIndex: number;
+  actionFragment: string | null;
+};
+
 type AuditRow = BillRow & {
   officialPassed: boolean;
   officialFailed: boolean;
@@ -18,19 +28,41 @@ type AuditRow = BillRow & {
   unclassifiedActions: number;
   fieldNames: string[];
   passageDescriptions: string[];
+  xmlDiagnostic: XmlDiagnostic | null;
 };
 
 function safeError(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
-async function mapConcurrent<T, R>(values: readonly T[], concurrency: number, fn: (value: T) => Promise<R>): Promise<R[]> {
+function boundedText(value: string, max = 800): string {
+  return value.replace(/\s+/g, ' ').trim().slice(0, max);
+}
+
+function diagnoseXml(identifier: string, xml: string): XmlDiagnostic {
+  const tagNames = [...new Set(
+    [...xml.matchAll(/<\s*\/?\s*([A-Za-z_][A-Za-z0-9_.:-]*)\b/g)].map((match) => match[1]),
+  )].sort();
+  const actionTokenIndex = xml.search(/action/i);
+  const fragmentStart = actionTokenIndex < 0 ? -1 : Math.max(0, actionTokenIndex - 300);
+  return {
+    identifier,
+    xmlLength: xml.length,
+    prefix: boundedText(xml, 600),
+    tagNames: tagNames.slice(0, 120),
+    actionLikeTags: tagNames.filter((tag) => /action/i.test(tag)).slice(0, 60),
+    actionTokenIndex,
+    actionFragment: fragmentStart < 0 ? null : boundedText(xml.slice(fragmentStart, fragmentStart + 1400), 1000),
+  };
+}
+
+async function mapConcurrent<T, R>(values: readonly T[], concurrency: number, fn: (value: T, index: number) => Promise<R>): Promise<R[]> {
   const results = new Array<R>(values.length);
   let cursor = 0;
   async function worker(): Promise<void> {
     while (cursor < values.length) {
       const index = cursor++;
-      results[index] = await fn(values[index]);
+      results[index] = await fn(values[index], index);
     }
   }
   await Promise.all(Array.from({ length: Math.min(concurrency, values.length) }, () => worker()));
@@ -66,7 +98,7 @@ export async function runRevisorActionHistoryAudit() {
      ORDER BY session_slug, chamber_slug, provisional_outcome NULLS LAST, identifier`);
 
   const failures: Array<{ identifier: string; error: string }> = [];
-  const audits = (await mapConcurrent(result.rows, 6, async (bill): Promise<AuditRow | null> => {
+  const audits = (await mapConcurrent(result.rows, 6, async (bill, index): Promise<AuditRow | null> => {
     try {
       const xml = await fetchRevisorStatusXml(bill.status_xml_url);
       const audit = auditRevisorSourceChamberPassage({ xml, identifier: bill.identifier });
@@ -79,6 +111,7 @@ export async function runRevisorActionHistoryAudit() {
         unclassifiedActions: audit.unclassifiedActions,
         fieldNames: [...new Set(audit.actions.flatMap((action) => Object.keys(action.fields)))].sort(),
         passageDescriptions: audit.passageActions.map((action) => action.description),
+        xmlDiagnostic: index < 3 ? diagnoseXml(bill.identifier, xml) : null,
       };
     } catch (error) {
       failures.push({ identifier: bill.identifier, error: safeError(error) });
@@ -93,6 +126,7 @@ export async function runRevisorActionHistoryAudit() {
     sampledBills: result.rows.length,
     fetchedBills: audits.length,
     fetchFailures: failures,
+    xmlDiagnostics: audits.flatMap((row) => row.xmlDiagnostic ? [row.xmlDiagnostic] : []),
     actionFieldNames: fieldNames,
     parsedActions: audits.reduce((sum, row) => sum + row.actionCount, 0),
     classifiedActions: audits.reduce((sum, row) => sum + row.classifiedActions, 0),
