@@ -1,3 +1,4 @@
+import { ordinaryMinnesotaPassageRule } from './minnesota-rules';
 import type { PoolClient } from 'pg';
 import { extractDeterministicBillFeatures, retrieveHistoricalAnalogues, type BillFeatureIdentity, type HistoricalAnalogueCandidate } from '@/features/bills';
 import { pool } from '@/lib/db';
@@ -518,6 +519,7 @@ async function persistRevision(
     const metadata = {
       asOf,
       passageRule,
+      passageRuleAssumption: 'ordinary floor passage; special majority rules require separate verification',
       requiredYes: simulation?.requiredYes ?? (passageRule.kind === 'absolute-majority' ? Math.floor(passageRule.seats / 2) + 1 : undefined),
       activeMemberCount: members.length,
       predictedMemberCount: members.filter((member) => member.yesProbability !== undefined).length,
@@ -708,7 +710,7 @@ export async function executeRuntimeForecast(request: ForecastRuntimeRequest): P
     throw new ForecastRuntimeError('NO_MEMBER_ANALOGUE_SUPPORT', 'The selected analogues contain no direct votes from the active chamber membership, so VotePredict will not substitute a bill-insensitive prior.');
   }
 
-  const passageRule: PassageRule = { kind: 'absolute-majority', seats: activeMembers.length };
+  const passageRule = ordinaryMinnesotaPassageRule(request.chamberSlug);
   const simulation = simulationForMembers(members, passageRule);
   const requiredYes = simulation?.requiredYes ?? Math.floor(activeMembers.length / 2) + 1;
   const analogues: ForecastRuntimeAnalogue[] = selected.map((analogue) => ({

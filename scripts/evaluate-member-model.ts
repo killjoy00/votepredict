@@ -1,3 +1,4 @@
+import { ordinaryMinnesotaPassageRule } from '../src/forecasting/minnesota-rules.js';
 import { Pool } from 'pg';
 import {
   evaluateChronologicalMemberModel,
@@ -100,7 +101,6 @@ async function main(): Promise<void> {
     const chamberObservations: MemberModelObservation[] = chamberResult.rows.map((row) => {
       const activeMembers = Number(row.active_members);
       if (!Number.isInteger(activeMembers) || activeMembers <= 0) throw new Error(`Invalid active membership for vote ${row.vote_event_id}`);
-      const requiredYes = Math.floor(activeMembers / 2) + 1;
       return {
         observationId: row.observation_id,
         voteEventId: row.vote_event_id,
@@ -112,8 +112,8 @@ async function main(): Promise<void> {
         memberScorable: row.member_scorable,
         session: row.session_slug,
         chamber: row.chamber_slug,
-        passageRule: { kind: 'absolute-majority', seats: activeMembers },
-        passed: row.passed ?? Number(row.yea_count) >= requiredYes,
+        passageRule: ordinaryMinnesotaPassageRule(row.chamber_slug),
+        passed: row.passed ?? undefined,
       };
     });
     if (chamberObservations.length === 0) throw new Error('No active-chamber passage observations found');
@@ -145,7 +145,7 @@ async function main(): Promise<void> {
         acceptedBaseline: 'evaluation/results/2026-09-07-baselines.json',
         leakageGuard: 'same-date outcomes enter member, party, global, and calibration history only after scoring the full date',
         chamberPopulation: 'every active member is forecast for each passage event; non-yea/nay outcomes count as No for chamber resolution but do not enter member-history evidence',
-        passageRule: 'Minnesota bill passage is scored with an explicit absolute-majority rule using the active elected membership on the vote date; House outcomes are derived from official yea counts only where the stored passed flag is absent',
+        passageRule: 'Ordinary Minnesota floor thresholds use chamber capacity, not imported roster length; unknown official outcomes remain unscored. Special majorities require separate rule verification.',
         analogueSignal: 'not included in this benchmark; analogue inputs require dated bill versions available as of each historical vote',
       },
       memberObservations: memberObservations.length,

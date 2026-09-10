@@ -1,4 +1,4 @@
-export const MEMBER_MODEL_VERSION = 'member-eb-v1';
+export const MEMBER_MODEL_VERSION = 'member-eb-v1.1';
 export const CALIBRATOR_VERSION = 'equal-width-v1';
 
 export interface RateEvidence { yes: number; total: number; }
