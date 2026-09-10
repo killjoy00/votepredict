@@ -12,6 +12,7 @@ on:
       - src/evidence/campaign-finance-snapshot.ts
       - src/operations/environment-file.ts
       - src/sources/minnesota/revisor.ts
+      - src/sources/minnesota/sessions.ts
       - data/cfb-2025-2026-snapshot.json
       - data/evidence/**
       - package.json
