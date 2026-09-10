@@ -31,6 +31,7 @@
     "features:analogues:inspect": "tsx scripts/inspect-bill-analogues.ts",
     "eval:baselines": "tsx scripts/evaluate-baselines.ts",
     "eval:member-model": "tsx scripts/evaluate-member-model.ts",
+    "eval:member-history-cap": "tsx scripts/evaluate-member-history-cap.ts",
     "eval:analogue-lift": "tsx scripts/evaluate-analogue-lift.ts",
     "eval:target-selection": "tsx scripts/audit-forecast-target-selection.ts",
     "eval:gambling-model": "tsx scripts/evaluate-gambling-model.ts",
