@@ -267,13 +267,14 @@ export default async function LegislatorIssueDossierPage({ params }: PageProps) 
             <header className={styles.panelHeader}>
               <div>
                 <span className={styles.kicker}>Campaign finance context</span>
-                <h3>2025–26 disclosure snapshot</h3>
+                <h3>Current 2025–26 CFB disclosure</h3>
               </div>
             </header>
             {finance ? (
               <>
                 <div className={styles.financeSummary}>
                   <div><span>Committee receipts</span><strong>{money(finance.contributions?.totalAmount)}</strong></div>
+                  <div><span>Candidate spending</span><strong>{money(finance.expenditures?.totalAmount)}</strong></div>
                   <div><span>Independent spending</span><strong>{money(finance.independentExpenditures?.totalAmount)}</strong></div>
                 </div>
                 {finance.contributions?.byContributorType.length ? (
@@ -292,6 +293,14 @@ export default async function LegislatorIssueDossierPage({ params }: PageProps) 
                     ))}
                   </div>
                 ) : null}
+                {finance.expenditures?.topPayees.length ? (
+                  <div className={styles.financeList}>
+                    <h4>Top candidate-committee payees</h4>
+                    {finance.expenditures.topPayees.slice(0, 5).map((item) => (
+                      <div key={`${item.name}-${item.amount}`}><strong>{item.name}</strong><span>{money(item.amount)} · {item.count} items</span></div>
+                    ))}
+                  </div>
+                ) : null}
                 {finance.independentExpenditures?.topSpenders.length ? (
                   <div className={styles.financeList}>
                     <h4>Independent spenders affecting candidate</h4>
@@ -300,9 +309,9 @@ export default async function LegislatorIssueDossierPage({ params }: PageProps) 
                     ))}
                   </div>
                 ) : null}
-                <p className={styles.note}>This finance snapshot is candidate-level, not issue-specific. It is context only and never treated as proof of a policy position.</p>
+                <p className={styles.note}>This current finance context comes from the persisted CFB evidence refresh. It is candidate-level, not issue-specific, and is never treated as proof of a policy position.</p>
               </>
-            ) : <p className={styles.note}>No matched candidate committee was found in the bundled CFB snapshot.</p>}
+            ) : <p className={styles.note}>No current 2025–26 campaign-finance evidence is available for this legislator.</p>}
           </section>
 
           <section className={styles.panel}>
