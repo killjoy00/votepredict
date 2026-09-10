@@ -24,6 +24,8 @@ export interface StageScorecard {
   expectedCalibrationError: number;
   alwaysPositiveBrier: number;
   brierSkillVsAlwaysPositive: number;
+  alwaysNegativeBrier: number;
+  brierSkillVsAlwaysNegative: number;
 }
 
 export function scoreStagePredictions(predictions: readonly BillStagePrediction[]): StageScorecard[] {
@@ -35,6 +37,7 @@ export function scoreStagePredictions(predictions: readonly BillStagePrediction[
     const positiveRate = rows.reduce((sum, row) => sum + row.outcome, 0) / rows.length;
     const brier = brierScore(forecasts);
     const alwaysPositiveBrier = rows.reduce((sum, row) => sum + (1 - row.outcome) ** 2, 0) / rows.length;
+    const alwaysNegativeBrier = rows.reduce((sum, row) => sum + row.outcome ** 2, 0) / rows.length;
     return {
       targetKind,
       model,
@@ -46,6 +49,8 @@ export function scoreStagePredictions(predictions: readonly BillStagePrediction[
       expectedCalibrationError: expectedCalibrationError(forecasts),
       alwaysPositiveBrier,
       brierSkillVsAlwaysPositive: alwaysPositiveBrier === 0 ? Number.NaN : 1 - brier / alwaysPositiveBrier,
+      alwaysNegativeBrier,
+      brierSkillVsAlwaysNegative: alwaysNegativeBrier === 0 ? Number.NaN : 1 - brier / alwaysNegativeBrier,
     };
   });
 }
