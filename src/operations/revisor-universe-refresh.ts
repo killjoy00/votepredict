@@ -172,32 +172,50 @@ async function persistBills(input: {
 
 async function materializeFloorStageEvents(): Promise<number> {
   const result = await pool.query(`
+    WITH grouped AS (
+      SELECT ve.bill_id,
+             ve.session_id,
+             ve.chamber_id,
+             CASE c.slug
+               WHEN 'house' THEN 'house_floor_passage'
+               WHEN 'senate' THEN 'senate_floor_passage'
+             END AS stage_kind,
+             CASE
+               WHEN bool_or(ve.passed = true) THEN true
+               WHEN bool_or(ve.passed = false) THEN false
+               ELSE NULL
+             END AS outcome,
+             (ve.occurred_on::text || 'T12:00:00Z')::timestamptz AS occurred_at,
+             sd.source_url,
+             (array_agg(ve.source_document_id ORDER BY ve.id))[1] AS source_document_id,
+             jsonb_build_object(
+               'derivedFrom', 'vote_event_group',
+               'voteEventIds', jsonb_agg(ve.id::text ORDER BY ve.id),
+               'externalKeys', jsonb_agg(ve.external_key ORDER BY ve.id),
+               'voteKinds', jsonb_agg(ve.vote_kind ORDER BY ve.id),
+               'voteEventCount', count(*)
+             ) AS metadata
+        FROM vote_events ve
+        JOIN chambers c ON c.id = ve.chamber_id AND c.slug IN ('house', 'senate')
+        JOIN source_documents sd ON sd.id = ve.source_document_id
+       WHERE ve.is_passage = true
+         AND ve.bill_id IS NOT NULL
+       GROUP BY ve.bill_id, ve.session_id, ve.chamber_id, c.slug, ve.occurred_on, sd.source_url
+    )
     INSERT INTO legislative_stage_events (
       bill_id, session_id, chamber_id, stage_kind, outcome, occurred_at,
       source_url, source_document_id, metadata
     )
-    SELECT ve.bill_id,
-           ve.session_id,
-           ve.chamber_id,
-           CASE c.slug
-             WHEN 'house' THEN 'house_floor_passage'
-             WHEN 'senate' THEN 'senate_floor_passage'
-           END,
-           ve.passed,
-           (ve.occurred_on::text || 'T12:00:00Z')::timestamptz,
-           sd.source_url,
-           ve.source_document_id,
-           jsonb_build_object(
-             'derivedFrom', 'vote_event',
-             'voteEventId', ve.id::text,
-             'externalKey', ve.external_key,
-             'voteKind', ve.vote_kind
-           )
-      FROM vote_events ve
-      JOIN chambers c ON c.id = ve.chamber_id AND c.slug IN ('house', 'senate')
-      JOIN source_documents sd ON sd.id = ve.source_document_id
-     WHERE ve.is_passage = true
-       AND ve.bill_id IS NOT NULL
+    SELECT bill_id,
+           session_id,
+           chamber_id,
+           stage_kind,
+           outcome,
+           occurred_at,
+           source_url,
+           source_document_id,
+           metadata
+      FROM grouped
     ON CONFLICT (bill_id, stage_kind, occurred_at, source_url) DO UPDATE SET
       outcome = EXCLUDED.outcome,
       source_document_id = EXCLUDED.source_document_id,
