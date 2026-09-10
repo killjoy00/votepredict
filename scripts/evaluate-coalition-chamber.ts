@@ -1,9 +1,10 @@
+import { ordinaryMinnesotaPassageRule } from '../src/forecasting/minnesota-rules.js';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { Pool } from 'pg';
 import { evaluateChronologicalMemberModel, type MemberModelObservation } from '../src/evaluation/member-model.js';
 import { simulateChamber, simulateCoalitionChamber, type CoalitionSimulationOptions } from '../src/forecasting/chamber.js';
-import { brierScore, logLoss, expectedCalibrationError } from '../src/evaluation/metrics.js';
+import { brierScore, logLoss, expectedCalibrationError, rankedProbabilityScore } from '../src/evaluation/metrics.js';
 import type { GamblingBillFeatures } from '../src/gambling/policy.js';
 import { coalitionPromotionBlockers } from '../src/evaluation/promotion-gate.js';
 
@@ -39,14 +40,14 @@ async function main() {
     return population.map(e=>{
       const members=byEvent.get(e.id)!;
       // Provisional floor threshold; promotion remains blocked until dated rules are verified.
-      const rule={kind:'absolute-majority' as const,seats:members.length};
+      const rule=ordinaryMinnesotaPassageRule(e.chamber);
       const sim = model==='coalition' ? simulateCoalitionChamber(members,rule,{...options,simulations,seed:parseInt(createHash('sha256').update(e.id).digest('hex').slice(0,8),16)}) : simulateChamber(members.map(m=>m.probability),rule,{systematicSigmaVotes:model==='independent'?0:undefined});
       const intervals = [0.5,0.8,0.95].map(level=> {
         if(model!=='coalition') { const s=simulateChamber(members.map(m=>m.probability),rule,{interval:level,systematicSigmaVotes:model==='independent'?0:undefined}); return [s.yesLow,s.yesHigh]; }
         const quantile=(q:number)=>{let sum=0;for(let i=0;i<sim.distribution.length;i++){sum+=sim.distribution[i];if(sum>=q)return i;}return sim.distribution.length-1;};
         return [quantile((1-level)/2),quantile((1+level)/2)];
       });
-      return {event:e,probability:sim.passageProbability,expectedYes:sim.expectedYes,intervals,close:Math.abs(e.yes-sim.requiredYes)<=5};
+      return {event:e,countRps:model==='residual'?null:rankedProbabilityScore(sim.distribution,e.yes),probability:sim.passageProbability,expectedYes:sim.expectedYes,intervals,close:Math.abs(e.yes-sim.requiredYes)<=5};
     });
   }
   type Row=ReturnType<typeof evaluate>[number];
@@ -54,7 +55,7 @@ async function main() {
     const known=rows.filter(r=>r.event.passed!==null);
     const forecasts=known.map(r=>({probability:r.probability,outcome:r.event.passed?1 as const:0 as const}));
     const alwaysPass=known.map(r=>({probability:1,outcome:r.event.passed?1 as const:0 as const}));
-    return {events:rows.length,knownOutcomes:known.length,failed:known.filter(r=>!r.event.passed).length,
+    return {countRps:rows.length&&rows.every(r=>r.countRps!==null)?rows.reduce((s,r)=>s+r.countRps!,0)/rows.length:null,events:rows.length,knownOutcomes:known.length,failed:known.filter(r=>!r.event.passed).length,
       brier:known.length?brierScore(forecasts):null,logLoss:known.length?logLoss(forecasts):null,calibrationError:known.length?expectedCalibrationError(forecasts):null,
       alwaysPassBrier:known.length?brierScore(alwaysPass):null,alwaysPassLogLoss:known.length?logLoss(alwaysPass):null,
       yesMae:rows.length?rows.reduce((s,r)=>s+Math.abs(r.expectedYes-r.event.yes),0)/rows.length:null,
@@ -65,7 +66,7 @@ async function main() {
   // Fix billShockSigma=0 and fit the equivalent common shock, rather than report two spurious estimates.
   const grid=[0,0.5,1,2].flatMap(chamberShockSigma=>[0,0.5,1,2].map(coalitionShockSigma=>({chamberShockSigma,coalitionShockSigma,billShockSigma:0})));
   const fits=grid.map(config=>({config,score:score(evaluate(validationEvents,'coalition',config))}));
-  fits.sort((a,b)=>(a.score.brier??Infinity)-(b.score.brier??Infinity)||(a.score.yesMae??Infinity)-(b.score.yesMae??Infinity));
+  fits.sort((a,b)=>(a.score.countRps??Infinity)-(b.score.countRps??Infinity)||(a.score.yesMae??Infinity)-(b.score.yesMae??Infinity));
   const selected=fits[0];
   const splitScores=Object.fromEntries([train,validation,test].map(session=>[session,Object.fromEntries((['independent','residual','coalition'] as const).map(model=>{
     const rows=evaluate(usable.filter(e=>e.session===session),model,selected.config);
@@ -75,7 +76,7 @@ async function main() {
   const blockers=coalitionPromotionBlockers({knownOutcomes:testScores.coalition.overall.knownOutcomes,failed:testScores.coalition.overall.failed,
     candidateBrier:testScores.coalition.overall.brier,baselineBriers:[testScores.independent.overall.brier,testScores.residual.overall.brier,testScores.coalition.overall.alwaysPassBrier],
     coverage80:testScores.coalition.overall.coverage[80],freshTest:false,verifiedRules:false,slicesReviewed:false});
-  console.log(JSON.stringify({metadata:{version:'coalition-evaluation-v1',codeSha:process.env.GITHUB_SHA??null,datasetSha256:createHash('sha256').update(JSON.stringify(events)).digest('hex'),train,validation,test,simulations,
+  console.log(JSON.stringify({metadata:{version:'coalition-evaluation-v2',selectionObjective:'validation vote-count ranked probability score; includes events with unknown passage outcome',codeSha:process.env.GITHUB_SHA??null,datasetSha256:createHash('sha256').update(JSON.stringify(events)).digest('hex'),train,validation,test,simulations,
     leakageGuard:'Whole-date member updates; bill versions strictly before vote date; validation-only shock selection. Test is scored only after selection.',
     limitations:['Existing sessions were exposed to prior model evaluations; no claim of a fresh untouched final test.','House unknown outcomes excluded from passage metrics; no inferred outcome substituted.','Floor thresholds provisional until dated official vote rules are persisted.','Legacy residual sigma was fitted previously; its historical training provenance is not established.','Missing member choices are excluded from member training, not treated as observed Nay.'],
     parameterIdentifiability:'chamberShockSigma² + billShockSigma² is identifiable, not its two components; billShockSigma fixed to zero'},

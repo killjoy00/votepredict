@@ -67,3 +67,19 @@ export function expectedCalibrationError(forecasts: readonly BinaryForecast[], b
     return sum + (bin.count / forecasts.length) * Math.abs(bin.meanProbability - bin.observedRate);
   }, 0);
 }
+
+/** Proper score for an ordered vote-count distribution; lower is better. */
+export function rankedProbabilityScore(distribution: readonly number[], actual: number): number {
+  if (distribution.length < 2 || !Number.isInteger(actual) || actual < 0 || actual >= distribution.length ||
+      distribution.some(p => !Number.isFinite(p) || p < 0) ||
+      Math.abs(distribution.reduce((s, p) => s + p, 0) - 1) > 1e-6) {
+    throw new Error('Expected a normalized count distribution and an in-range actual count');
+  }
+  let cumulative = 0;
+  let loss = 0;
+  for (let count = 0; count < distribution.length - 1; count++) {
+    cumulative += distribution[count];
+    loss += (cumulative - (actual <= count ? 1 : 0)) ** 2;
+  }
+  return loss / (distribution.length - 1);
+}
