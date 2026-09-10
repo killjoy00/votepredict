@@ -26,6 +26,7 @@
     "data:cfb:evidence": "tsx scripts/ingest-cfb-evidence.ts",
     "data:evidence:bills": "tsx scripts/seed-evidence-bills.ts",
     "data:evidence:curated": "tsx scripts/ingest-evidence-manifest.ts",
+    "data:evidence:legislators": "tsx scripts/ingest-evidence-manifest.ts --manifest data/evidence/legislator-context-v1.json",
     "features:bills:backfill": "tsx scripts/backfill-bill-features.ts",
     "features:analogues:inspect": "tsx scripts/inspect-bill-analogues.ts",
     "eval:baselines": "tsx scripts/evaluate-baselines.ts",

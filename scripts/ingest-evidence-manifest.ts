@@ -21,6 +21,7 @@ type ManifestSource = {
 type ManifestTarget = {
   memberName?: string;
   memberNames?: string[];
+  legislatorExternalKey?: string;
   billIdentifier?: string;
   sessionSlug?: string;
   chamberSlug?: string;
@@ -112,16 +113,21 @@ function validateManifest(manifest: EvidenceManifest): void {
   for (const record of manifest.records) {
     if (!record.source?.sourceKind || !record.source?.sourceUrl || !record.claim || !record.kind || !record.sourceQuality || !record.relevance) throw new Error('Evidence manifest record is incomplete');
     if (record.target?.memberName && record.target.memberNames?.length) throw new Error('Use memberName or memberNames, not both');
+    if (record.target?.legislatorExternalKey && (record.target.memberName || record.target.memberNames?.length)) throw new Error('Use legislatorExternalKey or member-name targeting, not both');
     if (record.confidence !== undefined && (record.confidence < 0 || record.confidence > 1)) throw new Error('Evidence confidence must be between 0 and 1');
   }
 }
 
 function draftsForRecord(record: ManifestRecord, manifest: EvidenceManifest): DurableEvidenceDraft[] {
   const memberNames = record.target?.memberNames?.length ? record.target.memberNames : [record.target?.memberName].filter((value): value is string => Boolean(value));
-  const targets = memberNames.length > 0 ? memberNames : [undefined];
-  return targets.map((memberName) => ({
+  const membershipTargets: Array<{ memberName?: string; legislatorExternalKey?: string }> = memberNames.length > 0
+    ? memberNames.map((memberName) => ({ memberName }))
+    : record.target?.legislatorExternalKey
+      ? [{ legislatorExternalKey: record.target.legislatorExternalKey }]
+      : [{}];
+  return membershipTargets.map((membershipTarget) => ({
     target: record.target ? {
-      memberName,
+      ...membershipTarget,
       billIdentifier: record.target.billIdentifier,
       sessionSlug: record.target.sessionSlug ?? record.source.sessionSlug,
       chamberSlug: record.target.chamberSlug,

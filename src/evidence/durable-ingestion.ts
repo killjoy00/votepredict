@@ -23,6 +23,7 @@ export interface DurableSourceDescriptor {
 export interface DurableEvidenceTarget {
   membershipId?: string;
   memberName?: string;
+  legislatorExternalKey?: string;
   billId?: string;
   billIdentifier?: string;
   sessionSlug?: string;
@@ -128,7 +129,7 @@ async function resolveMembership(
   if (target.membershipId) {
     return scalarId(client, `SELECT id::text FROM memberships WHERE id = $1::uuid`, [target.membershipId], `Membership ${target.membershipId}`);
   }
-  if (!target.memberName) return null;
+  if (!target.memberName && !target.legislatorExternalKey) return null;
   const occurredOn = target.occurredOn ?? publishedAt;
   const result = await client.query<{ id: string }>(`
     SELECT m.id::text
@@ -136,17 +137,24 @@ async function resolveMembership(
       JOIN legislators l ON l.id = m.legislator_id
       JOIN legislative_sessions s ON s.id = m.session_id
       JOIN chambers c ON c.id = m.chamber_id
-     WHERE lower(l.name) = lower($1)
-       AND ($2::text IS NULL OR s.slug = $2)
-       AND ($3::text IS NULL OR c.slug = $3)
-       AND ($4::date IS NULL OR (
-         (m.starts_on IS NULL OR m.starts_on <= $4::date)
-         AND (m.ends_on IS NULL OR m.ends_on >= $4::date)
-         AND (s.starts_on IS NULL OR s.starts_on <= $4::date)
-         AND (s.ends_on IS NULL OR s.ends_on >= $4::date)
+     WHERE ($1::text IS NULL OR lower(l.name) = lower($1))
+       AND ($2::text IS NULL OR l.external_key = $2)
+       AND ($3::text IS NULL OR s.slug = $3)
+       AND ($4::text IS NULL OR c.slug = $4)
+       AND ($5::date IS NULL OR (
+         (m.starts_on IS NULL OR m.starts_on <= $5::date)
+         AND (m.ends_on IS NULL OR m.ends_on >= $5::date)
+         AND (s.starts_on IS NULL OR s.starts_on <= $5::date)
+         AND (s.ends_on IS NULL OR s.ends_on >= $5::date)
        ))
      ORDER BY s.starts_on DESC NULLS LAST, m.starts_on DESC NULLS LAST
-     LIMIT 2`, [target.memberName, target.sessionSlug ?? null, target.chamberSlug ?? null, occurredOn ?? null]);
+     LIMIT 2`, [
+    target.memberName ?? null,
+    target.legislatorExternalKey ?? null,
+    target.sessionSlug ?? null,
+    target.chamberSlug ?? null,
+    occurredOn ?? null,
+  ]);
   return result.rows.length === 1 ? result.rows[0].id : null;
 }
 
@@ -207,8 +215,9 @@ export async function persistDurableEvidence(
     for (const draft of drafts) {
       const membershipId = await resolveMembership(client, draft.target, draft.publishedAt);
       const billId = await resolveBill(client, draft.target);
-      if (draft.target?.memberName && !membershipId) {
-        unresolvedTargets.push({ claim: draft.claim, reason: `membership:${draft.target.memberName}` });
+      if ((draft.target?.memberName || draft.target?.legislatorExternalKey) && !membershipId) {
+        const identity = draft.target.legislatorExternalKey ?? draft.target.memberName ?? 'unknown';
+        unresolvedTargets.push({ claim: draft.claim, reason: `membership:${identity}` });
         continue;
       }
       if (draft.target?.billIdentifier && !billId) {
