@@ -40,12 +40,12 @@ async function startRun(scope: string, metadata: Record<string, unknown>): Promi
   return result.rows[0].id;
 }
 
-async function completeRun(id: string, metadata: Record<string, unknown>, unresolvedMembers: number): Promise<void> {
+async function completeRun(id: string, metadata: Record<string, unknown>, sourceDocuments: number, unresolvedMembers: number): Promise<void> {
   await pool.query(`
     UPDATE ingestion_runs
-       SET status='complete', finished_at=now(), source_documents=2, unresolved_members=$2,
-           metadata=metadata || $3::jsonb
-     WHERE id=$1::uuid`, [id, unresolvedMembers, JSON.stringify(metadata)]);
+       SET status='complete', finished_at=now(), source_documents=$2, unresolved_members=$3,
+           metadata=metadata || $4::jsonb
+     WHERE id=$1::uuid`, [id, sourceDocuments, unresolvedMembers, JSON.stringify(metadata)]);
 }
 
 async function failRun(id: string, error: unknown): Promise<void> {
@@ -63,6 +63,7 @@ export async function runLiveCampaignFinanceRefresh() {
     snapshotGeneratedAt: snapshot.generatedAt,
     sourceMode: loaded.sourceMode,
     fallbackWarning: loaded.warning,
+    expenditureSourceAvailable: Boolean(snapshot.provenance.expenditures),
     execution: 'vercel-runtime',
   });
 
@@ -120,6 +121,37 @@ export async function runLiveCampaignFinanceRefresh() {
       },
     }] : []);
 
+    const expenditureDrafts: DurableEvidenceDraft[] = contexts.flatMap((context) => context.expenditures ? [{
+      target: { membershipId: context.membershipId },
+      kind: 'context',
+      stance: 'neutral',
+      claim: `${snapshot.cycleYears.join('-')} campaign committee general expenditures and contributions made total ${money(context.expenditures.totalAmount)} across ${context.expenditures.transactionCount.toLocaleString('en-US')} itemized records.`,
+      publishedAt: context.expenditures.latestDate ? `${context.expenditures.latestDate}T00:00:00.000Z` : undefined,
+      sourceQuality: 'official',
+      relevance: 'low',
+      freshness: freshness(context.expenditures.latestDate),
+      extractionMethod: 'deterministic-cfb-bulk-aggregate',
+      extractionVersion: snapshot.schemaVersion,
+      confidence: 1,
+      metadata: {
+        contextType: 'campaign_finance',
+        subtype: 'candidate_expenditures',
+        contextOnly: true,
+        mechanicallyActionable: false,
+        committeeName: context.committeeName,
+        candidateName: context.candidateName,
+        registrationNumber: context.registrationNumber,
+        cycleYears: snapshot.cycleYears,
+        totalAmount: context.expenditures.totalAmount,
+        transactionCount: context.expenditures.transactionCount,
+        latestDate: context.expenditures.latestDate,
+        topPayees: context.expenditures.topPayees,
+        byPurpose: context.expenditures.byPurpose,
+        byType: context.expenditures.byType,
+        sourceMode: loaded.sourceMode,
+      },
+    }] : []);
+
     const independentDrafts: DurableEvidenceDraft[] = contexts.flatMap((context) => context.independentExpenditures ? [{
       target: { membershipId: context.membershipId },
       kind: 'context',
@@ -166,6 +198,25 @@ export async function runLiveCampaignFinanceRefresh() {
         sourceMode: loaded.sourceMode,
       },
     }, contributionDrafts);
+
+    const expenditures = snapshot.provenance.expenditures
+      ? await persistDurableEvidence({
+          sourceKind: 'campaign_finance_bulk',
+          sourceUrl: snapshot.provenance.expenditures.url,
+          contentSha256: snapshot.provenance.expenditures.contentSha256,
+          fetchedAt: snapshot.generatedAt,
+          metadata: {
+            publisher: 'Minnesota Campaign Finance and Public Disclosure Board',
+            dataset: 'candidate_expenditures',
+            cycleYears: snapshot.cycleYears,
+            snapshotSchemaVersion: snapshot.schemaVersion,
+            rows: snapshot.provenance.expenditures.cycleRows,
+            bytes: snapshot.provenance.expenditures.bytes,
+            sourceMode: loaded.sourceMode,
+          },
+        }, expenditureDrafts)
+      : undefined;
+
     const independent = await persistDurableEvidence({
       sourceKind: 'campaign_finance_bulk',
       sourceUrl: snapshot.provenance.independentExpenditures.url,
@@ -185,21 +236,24 @@ export async function runLiveCampaignFinanceRefresh() {
     const result = {
       sourceMode: loaded.sourceMode,
       fallbackWarning: loaded.warning,
+      expenditureSourceAvailable: Boolean(snapshot.provenance.expenditures),
       currentMemberships: memberships.rows.length,
       resolvedWithActivityMemberships: resolvedWithActivity.length,
       resolvedWithoutActivityMemberships: resolvedWithoutActivity.length,
       notInActivitySnapshotMemberships: notInActivitySnapshot.length,
       ambiguousMemberships: ambiguous.length,
       contributionEvidence: contributionDrafts.length,
+      candidateExpenditureEvidence: expenditureDrafts.length,
       independentExpenditureEvidence: independentDrafts.length,
-      inserted: contributions.inserted + independent.inserted,
-      reused: contributions.reused + independent.reused,
-      supersessionRelationships: contributions.supersessionRelationships + independent.supersessionRelationships,
+      inserted: contributions.inserted + (expenditures?.inserted ?? 0) + independent.inserted,
+      reused: contributions.reused + (expenditures?.reused ?? 0) + independent.reused,
+      supersessionRelationships: contributions.supersessionRelationships + (expenditures?.supersessionRelationships ?? 0) + independent.supersessionRelationships,
       snapshotGeneratedAt: snapshot.generatedAt,
       contributionRows: snapshot.provenance.contributions.cycleRows,
+      candidateExpenditureRows: snapshot.provenance.expenditures?.cycleRows ?? 0,
       independentExpenditureRows: snapshot.provenance.independentExpenditures.cycleRows,
     };
-    await completeRun(runId, result, result.ambiguousMemberships);
+    await completeRun(runId, result, snapshot.provenance.expenditures ? 3 : 2, result.ambiguousMemberships);
     return result;
   } catch (error) {
     await failRun(runId, error);

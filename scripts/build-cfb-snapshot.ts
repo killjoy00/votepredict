@@ -9,7 +9,11 @@ async function main(): Promise<void> {
   await mkdir(dirname(output), { recursive: true });
   await writeFile(output, `${JSON.stringify(snapshot)}\n`, 'utf8');
   console.log(`Wrote ${snapshot.candidates.length} legislative candidate committee summaries to ${output}`);
-  console.log(`2025-26 contribution rows: ${snapshot.provenance.contributions.cycleRows}; IE rows: ${snapshot.provenance.independentExpenditures.cycleRows}`);
+  console.log(
+    `2025-26 contribution rows: ${snapshot.provenance.contributions.cycleRows}; `
+      + `candidate expenditure rows: ${snapshot.provenance.expenditures?.cycleRows ?? 0}; `
+      + `IE rows: ${snapshot.provenance.independentExpenditures.cycleRows}`,
+  );
 }
 
 main().catch((error) => {

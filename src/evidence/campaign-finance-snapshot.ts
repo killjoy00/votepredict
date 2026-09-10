@@ -24,6 +24,14 @@ export interface CandidateSnapshot {
     byContributorType: RankedAmount[];
     topEmployers: RankedAmount[];
   };
+  expenditures?: {
+    transactionCount: number;
+    totalAmount: number;
+    latestDate?: string;
+    topPayees: RankedAmount[];
+    byPurpose: RankedAmount[];
+    byType: RankedAmount[];
+  };
   independentExpenditures: {
     transactionCount: number;
     totalAmount: number;
@@ -41,6 +49,7 @@ export interface CampaignFinanceSnapshot {
   provenance: {
     landingPage: string;
     contributions: { url: string; contentSha256: string; cycleRows: number; bytes?: number };
+    expenditures?: { url: string; contentSha256: string; cycleRows: number; bytes?: number };
     independentExpenditures: { url: string; contentSha256: string; cycleRows: number; bytes?: number };
   };
   candidates: CandidateSnapshot[];
@@ -76,6 +85,15 @@ export interface CampaignFinanceMemberContext {
     byContributorType: RankedAmount[];
     topEmployers: RankedAmount[];
   };
+  expenditures?: {
+    sourceUrl: string;
+    transactionCount: number;
+    totalAmount: number;
+    latestDate?: string;
+    topPayees: RankedAmount[];
+    byPurpose: RankedAmount[];
+    byType: RankedAmount[];
+  };
   independentExpenditures?: {
     sourceUrl: string;
     transactionCount: number;
@@ -93,6 +111,7 @@ export interface CampaignFinanceSnapshotInfo {
   cycleYears: number[];
   candidateCommitteeCount: number;
   contributionRows: number;
+  expenditureRows: number;
   independentExpenditureRows: number;
 }
 
@@ -193,6 +212,17 @@ function contextForCandidate(snapshotData: CampaignFinanceSnapshot, input: Campa
         topEmployers: candidate.contributions.topEmployers,
       }
     : undefined;
+  const expenditures = candidate.expenditures && candidate.expenditures.transactionCount > 0 && snapshotData.provenance.expenditures
+    ? {
+        sourceUrl: snapshotData.provenance.expenditures.url,
+        transactionCount: candidate.expenditures.transactionCount,
+        totalAmount: candidate.expenditures.totalAmount,
+        latestDate: candidate.expenditures.latestDate,
+        topPayees: candidate.expenditures.topPayees,
+        byPurpose: candidate.expenditures.byPurpose,
+        byType: candidate.expenditures.byType,
+      }
+    : undefined;
   const independentExpenditures = candidate.independentExpenditures.transactionCount > 0
     ? {
         sourceUrl: snapshotData.provenance.independentExpenditures.url,
@@ -204,7 +234,7 @@ function contextForCandidate(snapshotData: CampaignFinanceSnapshot, input: Campa
         topSpenders: candidate.independentExpenditures.topSpenders,
       }
     : undefined;
-  if (!contributions && !independentExpenditures) return undefined;
+  if (!contributions && !expenditures && !independentExpenditures) return undefined;
   return {
     membershipId: input.membershipId,
     memberName: input.memberName,
@@ -212,6 +242,7 @@ function contextForCandidate(snapshotData: CampaignFinanceSnapshot, input: Campa
     committeeName: candidate.committeeName,
     registrationNumber: candidate.registrationNumber,
     contributions,
+    expenditures,
     independentExpenditures,
   };
 }
@@ -223,6 +254,7 @@ export function campaignFinanceSnapshotInfo(): CampaignFinanceSnapshotInfo {
     cycleYears: [...snapshot.cycleYears],
     candidateCommitteeCount: snapshot.candidates.length,
     contributionRows: snapshot.provenance.contributions.cycleRows,
+    expenditureRows: snapshot.provenance.expenditures?.cycleRows ?? 0,
     independentExpenditureRows: snapshot.provenance.independentExpenditures.cycleRows,
   };
 }
@@ -233,8 +265,8 @@ export function resolveCampaignFinanceMemberAgainstSnapshot(snapshotData: Campai
     return { membershipId: input.membershipId, memberName: input.memberName, status: 'ambiguous' };
   }
   if (!match.candidate) {
-    // These snapshots are activity-derived: absence means no committee row was found
-    // in the contribution/IE corpus. It is not proof that roster identity resolution failed.
+    // Activity snapshots are source-derived: absence means no committee row was found
+    // in the available finance streams. It is not proof that canonical identity failed.
     return { membershipId: input.membershipId, memberName: input.memberName, status: 'not_in_activity_snapshot' };
   }
   const context = contextForCandidate(snapshotData, input, match.candidate);
