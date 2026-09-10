@@ -1,7 +1,7 @@
 name: Revisor public sample audit
 on:
   push:
-    branches: [main]
+    branches: [main, audit/revisor-public-samples]
     paths:
       - .github/workflows/revisor-public-sample-audit.yml
       - scripts/audit-revisor-public-samples.ts
