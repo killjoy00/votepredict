@@ -38,8 +38,10 @@ export const MINNESOTA_HOUSE_HISTORICAL_SESSIONS: readonly MinnesotaHouseSession
   },
 ] as const;
 
-export function getMinnesotaHouseSession(sessionKey: string): MinnesotaHouseSession {
-  const session = MINNESOTA_HOUSE_HISTORICAL_SESSIONS.find((candidate) => candidate.sessionKey === sessionKey);
-  if (!session) throw new Error(`Unsupported Minnesota House historical session key: ${sessionKey}`);
+export function getMinnesotaHouseSession(sessionKeyOrSlug: string): MinnesotaHouseSession {
+  const session = MINNESOTA_HOUSE_HISTORICAL_SESSIONS.find(
+    (candidate) => candidate.sessionKey === sessionKeyOrSlug || candidate.slug === sessionKeyOrSlug,
+  );
+  if (!session) throw new Error(`Unsupported Minnesota House historical session: ${sessionKeyOrSlug}`);
   return session;
 }
