@@ -288,6 +288,12 @@ async function loadIssueEvidence(legislatorId: string, billIds: readonly string[
       JOIN memberships m ON m.id = ei.membership_id
      WHERE m.legislator_id = $1
        AND ei.bill_id = ANY($2::uuid[])
+       AND NOT EXISTS (
+         SELECT 1
+           FROM evidence_relationships er
+          WHERE er.to_evidence_id = ei.id
+            AND er.relation_kind = 'supersedes'
+       )
      ORDER BY COALESCE(ei.published_at, ei.created_at) DESC
      LIMIT 30`, [legislatorId, billIds]);
   return result.rows.map((row) => ({
