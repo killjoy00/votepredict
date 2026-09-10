@@ -1,0 +1,1238 @@
+{
+  "metadata": {
+    "version": "coalition-evaluation-v2",
+    "selectionObjective": "validation vote-count ranked probability score; includes events with unknown passage outcome",
+    "codeSha": null,
+    "datasetSha256": "6b8275f04a3e31af7294e44b98ce78fca70cc93fc9d3f6d82014a980e392ce47",
+    "train": "2021-2022",
+    "validation": "2023-2024",
+    "test": "2025-2026",
+    "simulations": 1000,
+    "leakageGuard": "Whole-date member updates; bill versions strictly before vote date; validation-only shock selection. Test is scored only after selection.",
+    "limitations": [
+      "Existing sessions were exposed to prior model evaluations; no claim of a fresh untouched final test.",
+      "House unknown outcomes excluded from passage metrics; no inferred outcome substituted.",
+      "Floor thresholds provisional until dated official vote rules are persisted.",
+      "Legacy residual sigma was fitted previously; its historical training provenance is not established.",
+      "Missing member choices are excluded from member training, not treated as observed Nay."
+    ],
+    "parameterIdentifiability": "chamberShockSigma² + billShockSigma² is identifiable, not its two components; billShockSigma fixed to zero"
+  },
+  "audit": {
+    "events": 1264,
+    "excludedEvents": 0,
+    "excludedIds": [],
+    "unknownPassageOutcomes": 37
+  },
+  "selectedCandidate": {
+    "version": "coalition-fit-v1-candidate",
+    "chamberShockSigma": 2,
+    "coalitionShockSigma": 2,
+    "billShockSigma": 0
+  },
+  "validationGrid": [
+    {
+      "config": {
+        "chamberShockSigma": 2,
+        "coalitionShockSigma": 2,
+        "billShockSigma": 0
+      },
+      "score": {
+        "countRps": 0.11363598621519884,
+        "events": 440,
+        "knownOutcomes": 435,
+        "failed": 2,
+        "brier": 0.029439779310344718,
+        "logLoss": 0.1775866148313509,
+        "calibrationError": 0.15009195402298767,
+        "alwaysPassBrier": 0.004597701149425287,
+        "alwaysPassLogLoss": 0.1270392792556761,
+        "yesMae": 19.90117954545455,
+        "coverage": {
+          "50": 0.40454545454545454,
+          "80": 0.9795454545454545,
+          "95": 1
+        }
+      }
+    },
+    {
+      "config": {
+        "chamberShockSigma": 1,
+        "coalitionShockSigma": 2,
+        "billShockSigma": 0
+      },
+      "score": {
+        "countRps": 0.11540343974581979,
+        "events": 440,
+        "knownOutcomes": 435,
+        "failed": 2,
+        "brier": 0.012397806896551646,
+        "logLoss": 0.09845095117632598,
+        "calibrationError": 0.07716321839080438,
+        "alwaysPassBrier": 0.004597701149425287,
+        "alwaysPassLogLoss": 0.1270392792556761,
+        "yesMae": 20.175959090909096,
+        "coverage": {
+          "50": 0.2545454545454545,
+          "80": 0.7022727272727273,
+          "95": 0.990909090909091
+        }
+      }
+    },
+    {
+      "config": {
+        "chamberShockSigma": 2,
+        "coalitionShockSigma": 1,
+        "billShockSigma": 0
+      },
+      "score": {
+        "countRps": 0.11707799032477738,
+        "events": 440,
+        "knownOutcomes": 435,
+        "failed": 2,
+        "brier": 0.021826436781609067,
+        "logLoss": 0.1468330705690327,
+        "calibrationError": 0.12312183908045926,
+        "alwaysPassBrier": 0.004597701149425287,
+        "alwaysPassLogLoss": 0.1270392792556761,
+        "yesMae": 20.182563636363643,
+        "coverage": {
+          "50": 0.30454545454545456,
+          "80": 0.9431818181818182,
+          "95": 1
+        }
+      }
+    },
+    {
+      "config": {
+        "chamberShockSigma": 0.5,
+        "coalitionShockSigma": 2,
+        "billShockSigma": 0
+      },
+      "score": {
+        "countRps": 0.11734489287920458,
+        "events": 440,
+        "knownOutcomes": 435,
+        "failed": 2,
+        "brier": 0.008857645977011422,
+        "logLoss": 0.07452267550344459,
+        "calibrationError": 0.05266666666666622,
+        "alwaysPassBrier": 0.004597701149425287,
+        "alwaysPassLogLoss": 0.1270392792556761,
+        "yesMae": 20.25557045454543,
+        "coverage": {
+          "50": 0.22272727272727272,
+          "80": 0.5977272727272728,
+          "95": 0.9818181818181818
+        }
+      }
+    },
+    {
+      "config": {
+        "chamberShockSigma": 0,
+        "coalitionShockSigma": 2,
+        "billShockSigma": 0
+      },
+      "score": {
+        "countRps": 0.11830348873646979,
+        "events": 440,
+        "knownOutcomes": 435,
+        "failed": 2,
+        "brier": 0.00773123218390799,
+        "logLoss": 0.06541843353087337,
+        "calibrationError": 0.04377931034482718,
+        "alwaysPassBrier": 0.004597701149425287,
+        "alwaysPassLogLoss": 0.1270392792556761,
+        "yesMae": 20.27895227272726,
+        "coverage": {
+          "50": 0.21136363636363636,
+          "80": 0.5522727272727272,
+          "95": 0.9613636363636363
+        }
+      }
+    },
+    {
+      "config": {
+        "chamberShockSigma": 2,
+        "coalitionShockSigma": 0.5,
+        "billShockSigma": 0
+      },
+      "score": {
+        "countRps": 0.11862592949648545,
+        "events": 440,
+        "knownOutcomes": 435,
+        "failed": 2,
+        "brier": 0.019850177011494143,
+        "logLoss": 0.13805414448510941,
+        "calibrationError": 0.11505517241379218,
+        "alwaysPassBrier": 0.004597701149425287,
+        "alwaysPassLogLoss": 0.1270392792556761,
+        "yesMae": 20.267393181818157,
+        "coverage": {
+          "50": 0.28863636363636364,
+          "80": 0.875,
+          "95": 1
+        }
+      }
+    },
+    {
+      "config": {
+        "chamberShockSigma": 2,
+        "coalitionShockSigma": 0,
+        "billShockSigma": 0
+      },
+      "score": {
+        "countRps": 0.11921980165666038,
+        "events": 440,
+        "knownOutcomes": 435,
+        "failed": 2,
+        "brier": 0.019116871264367716,
+        "logLoss": 0.13457946156699555,
+        "calibrationError": 0.11198390804597654,
+        "alwaysPassBrier": 0.004597701149425287,
+        "alwaysPassLogLoss": 0.1270392792556761,
+        "yesMae": 20.295247727272717,
+        "coverage": {
+          "50": 0.2818181818181818,
+          "80": 0.8454545454545455,
+          "95": 0.9977272727272727
+        }
+      }
+    },
+    {
+      "config": {
+        "chamberShockSigma": 1,
+        "coalitionShockSigma": 1,
+        "billShockSigma": 0
+      },
+      "score": {
+        "countRps": 0.12734235376092892,
+        "events": 440,
+        "knownOutcomes": 435,
+        "failed": 2,
+        "brier": 0.006123643678160906,
+        "logLoss": 0.05039735909493046,
+        "calibrationError": 0.027326436781609176,
+        "alwaysPassBrier": 0.004597701149425287,
+        "alwaysPassLogLoss": 0.1270392792556761,
+        "yesMae": 20.57973636363639,
+        "coverage": {
+          "50": 0.14545454545454545,
+          "80": 0.3977272727272727,
+          "95": 0.7863636363636364
+        }
+      }
+    },
+    {
+      "config": {
+        "chamberShockSigma": 1,
+        "coalitionShockSigma": 0.5,
+        "billShockSigma": 0
+      },
+      "score": {
+        "countRps": 0.1342419719686345,
+        "events": 440,
+        "knownOutcomes": 435,
+        "failed": 2,
+        "brier": 0.005228478160919526,
+        "logLoss": 0.039953858793699136,
+        "calibrationError": 0.014422988505745415,
+        "alwaysPassBrier": 0.004597701149425287,
+        "alwaysPassLogLoss": 0.1270392792556761,
+        "yesMae": 20.694831818181818,
+        "coverage": {
+          "50": 0.12954545454545455,
+          "80": 0.3,
+          "95": 0.6136363636363636
+        }
+      }
+    },
+    {
+      "config": {
+        "chamberShockSigma": 0.5,
+        "coalitionShockSigma": 1,
+        "billShockSigma": 0
+      },
+      "score": {
+        "countRps": 0.1364906274481997,
+        "events": 440,
+        "knownOutcomes": 435,
+        "failed": 2,
+        "brier": 0.004739554022988477,
+        "logLoss": 0.08405043080297857,
+        "calibrationError": 0.0031678160919534903,
+        "alwaysPassBrier": 0.004597701149425287,
+        "alwaysPassLogLoss": 0.1270392792556761,
+        "yesMae": 20.69526818181816,
+        "coverage": {
+          "50": 0.12045454545454545,
+          "80": 0.26590909090909093,
+          "95": 0.5363636363636364
+        }
+      }
+    },
+    {
+      "config": {
+        "chamberShockSigma": 1,
+        "coalitionShockSigma": 0,
+        "billShockSigma": 0
+      },
+      "score": {
+        "countRps": 0.13737459232868462,
+        "events": 440,
+        "knownOutcomes": 435,
+        "failed": 2,
+        "brier": 0.005048531034482736,
+        "logLoss": 0.039879635763708045,
+        "calibrationError": 0.010595402298849366,
+        "alwaysPassBrier": 0.004597701149425287,
+        "alwaysPassLogLoss": 0.1270392792556761,
+        "yesMae": 20.732002272727264,
+        "coverage": {
+          "50": 0.12272727272727273,
+          "80": 0.2772727272727273,
+          "95": 0.5545454545454546
+        }
+      }
+    },
+    {
+      "config": {
+        "chamberShockSigma": 0,
+        "coalitionShockSigma": 1,
+        "billShockSigma": 0
+      },
+      "score": {
+        "countRps": 0.14130145372841027,
+        "events": 440,
+        "knownOutcomes": 435,
+        "failed": 2,
+        "brier": 0.004620186206896555,
+        "logLoss": 0.08218559507547907,
+        "calibrationError": 0.0018229885057481354,
+        "alwaysPassBrier": 0.004597701149425287,
+        "alwaysPassLogLoss": 0.1270392792556761,
+        "yesMae": 20.732563636363647,
+        "coverage": {
+          "50": 0.10909090909090909,
+          "80": 0.21136363636363636,
+          "95": 0.42045454545454547
+        }
+      }
+    },
+    {
+      "config": {
+        "chamberShockSigma": 0.5,
+        "coalitionShockSigma": 0.5,
+        "billShockSigma": 0
+      },
+      "score": {
+        "countRps": 0.1503317205921435,
+        "events": 440,
+        "knownOutcomes": 435,
+        "failed": 2,
+        "brier": 0.004598740229885062,
+        "logLoss": 0.08054949147743462,
+        "calibrationError": 0.0034482758620696385,
+        "alwaysPassBrier": 0.004597701149425287,
+        "alwaysPassLogLoss": 0.1270392792556761,
+        "yesMae": 20.84209545454545,
+        "coverage": {
+          "50": 0.09545454545454546,
+          "80": 0.15227272727272728,
+          "95": 0.2840909090909091
+        }
+      }
+    },
+    {
+      "config": {
+        "chamberShockSigma": 0.5,
+        "coalitionShockSigma": 0,
+        "billShockSigma": 0
+      },
+      "score": {
+        "countRps": 0.15806810910225866,
+        "events": 440,
+        "knownOutcomes": 435,
+        "failed": 2,
+        "brier": 0.004598137931034469,
+        "logLoss": 0.12728317611891146,
+        "calibrationError": 0.004354022988506734,
+        "alwaysPassBrier": 0.004597701149425287,
+        "alwaysPassLogLoss": 0.1270392792556761,
+        "yesMae": 20.88959545454547,
+        "coverage": {
+          "50": 0.08181818181818182,
+          "80": 0.12954545454545455,
+          "95": 0.20681818181818182
+        }
+      }
+    },
+    {
+      "config": {
+        "chamberShockSigma": 0,
+        "coalitionShockSigma": 0.5,
+        "billShockSigma": 0
+      },
+      "score": {
+        "countRps": 0.1605303393042054,
+        "events": 440,
+        "knownOutcomes": 435,
+        "failed": 2,
+        "brier": 0.004597714942528735,
+        "logLoss": 0.12704848156219298,
+        "calibrationError": 0.004588505747126326,
+        "alwaysPassBrier": 0.004597701149425287,
+        "alwaysPassLogLoss": 0.1270392792556761,
+        "yesMae": 20.88970681818182,
+        "coverage": {
+          "50": 0.075,
+          "80": 0.11818181818181818,
+          "95": 0.18409090909090908
+        }
+      }
+    },
+    {
+      "config": {
+        "chamberShockSigma": 0,
+        "coalitionShockSigma": 0,
+        "billShockSigma": 0
+      },
+      "score": {
+        "countRps": 0.17498892007171946,
+        "events": 440,
+        "knownOutcomes": 435,
+        "failed": 2,
+        "brier": 0.004597701149425287,
+        "logLoss": 0.1270392792556761,
+        "calibrationError": 0.0045977011494252595,
+        "alwaysPassBrier": 0.004597701149425287,
+        "alwaysPassLogLoss": 0.1270392792556761,
+        "yesMae": 20.94220681818183,
+        "coverage": {
+          "50": 0.045454545454545456,
+          "80": 0.08181818181818182,
+          "95": 0.1159090909090909
+        }
+      }
+    }
+  ],
+  "scores": {
+    "2021-2022": {
+      "independent": {
+        "overall": {
+          "countRps": 0.14729596989820165,
+          "events": 361,
+          "knownOutcomes": 346,
+          "failed": 1,
+          "brier": 0.005263482237769759,
+          "logLoss": 0.08628047235466768,
+          "calibrationError": 0.0074242724114635845,
+          "alwaysPassBrier": 0.002890173410404624,
+          "alwaysPassLogLoss": 0.07985850646889535,
+          "yesMae": 16.89453154243259,
+          "coverage": {
+            "50": 0.04155124653739612,
+            "80": 0.06925207756232687,
+            "95": 0.10526315789473684
+          }
+        },
+        "byChamber": {
+          "house": {
+            "countRps": 0.16716746628717818,
+            "events": 171,
+            "knownOutcomes": 156,
+            "failed": 1,
+            "brier": 0.010071569578643183,
+            "logLoss": 0.1869224118843999,
+            "calibrationError": 0.013261527271579462,
+            "alwaysPassBrier": 0.00641025641025641,
+            "alwaysPassLogLoss": 0.17712207203876987,
+            "yesMae": 24.496843383773975,
+            "coverage": {
+              "50": 0.04678362573099415,
+              "80": 0.06432748538011696,
+              "95": 0.0935672514619883
+            }
+          },
+          "senate": {
+            "countRps": 0.12941162314812288,
+            "events": 190,
+            "knownOutcomes": 190,
+            "failed": 0,
+            "brier": 0.0013157894736842105,
+            "logLoss": 0.0036481430565733744,
+            "calibrationError": 0.002631578947368421,
+            "alwaysPassBrier": 0,
+            "alwaysPassLogLoss": 9.99977878280376e-13,
+            "yesMae": 10.052450885225392,
+            "coverage": {
+              "50": 0.03684210526315789,
+              "80": 0.07368421052631578,
+              "95": 0.11578947368421053
+            }
+          }
+        },
+        "gambling": {
+          "countRps": 0.1821432868819289,
+          "events": 29,
+          "knownOutcomes": 27,
+          "failed": 0,
+          "brier": 1.8397624120605773e-31,
+          "logLoss": 9.999778782803791e-13,
+          "calibrationError": 0,
+          "alwaysPassBrier": 0,
+          "alwaysPassLogLoss": 9.999778782803791e-13,
+          "yesMae": 21.20045693001383,
+          "coverage": {
+            "50": 0,
+            "80": 0,
+            "95": 0.10344827586206896
+          }
+        },
+        "close": {
+          "countRps": 0.2682462683614348,
+          "events": 71,
+          "knownOutcomes": 70,
+          "failed": 0,
+          "brier": 5.951673793854955e-32,
+          "logLoss": 9.999778782803785e-13,
+          "calibrationError": 0,
+          "alwaysPassBrier": 0,
+          "alwaysPassLogLoss": 9.999778782803785e-13,
+          "yesMae": 29.969143408736983,
+          "coverage": {
+            "50": 0,
+            "80": 0,
+            "95": 0
+          }
+        }
+      },
+      "residual": {
+        "overall": {
+          "countRps": null,
+          "events": 361,
+          "knownOutcomes": 346,
+          "failed": 1,
+          "brier": 0.018197046045977685,
+          "logLoss": 0.1319290766529235,
+          "calibrationError": 0.10216736096665487,
+          "alwaysPassBrier": 0.002890173410404624,
+          "alwaysPassLogLoss": 0.07985850646889535,
+          "yesMae": 16.89453154243259,
+          "coverage": {
+            "50": 0.5429362880886427,
+            "80": 0.8476454293628809,
+            "95": 0.9806094182825484
+          }
+        },
+        "byChamber": {
+          "house": {
+            "countRps": null,
+            "events": 171,
+            "knownOutcomes": 156,
+            "failed": 1,
+            "brier": 0.012135006733232744,
+            "logLoss": 0.09491512385878302,
+            "calibrationError": 0.04496381839516606,
+            "alwaysPassBrier": 0.00641025641025641,
+            "alwaysPassLogLoss": 0.17712207203876987,
+            "yesMae": 24.496843383773975,
+            "coverage": {
+              "50": 0.23391812865497075,
+              "80": 0.6900584795321637,
+              "95": 0.9590643274853801
+            }
+          },
+          "senate": {
+            "countRps": null,
+            "events": 190,
+            "knownOutcomes": 190,
+            "failed": 0,
+            "brier": 0.023174299376441942,
+            "logLoss": 0.16231947999969182,
+            "calibrationError": 0.14913448013061387,
+            "alwaysPassBrier": 0,
+            "alwaysPassLogLoss": 9.99977878280376e-13,
+            "yesMae": 10.052450885225392,
+            "coverage": {
+              "50": 0.8210526315789474,
+              "80": 0.9894736842105263,
+              "95": 1
+            }
+          }
+        },
+        "gambling": {
+          "countRps": null,
+          "events": 29,
+          "knownOutcomes": 27,
+          "failed": 0,
+          "brier": 0.014147555542114996,
+          "logLoss": 0.11530016154764733,
+          "calibrationError": 0.1074543857167339,
+          "alwaysPassBrier": 0,
+          "alwaysPassLogLoss": 9.999778782803791e-13,
+          "yesMae": 21.20045693001383,
+          "coverage": {
+            "50": 0.3793103448275862,
+            "80": 0.6551724137931034,
+            "95": 1
+          }
+        },
+        "close": {
+          "countRps": null,
+          "events": 71,
+          "knownOutcomes": 70,
+          "failed": 0,
+          "brier": 0.011176420415770136,
+          "logLoss": 0.09683925317972067,
+          "calibrationError": 0.09065992813771609,
+          "alwaysPassBrier": 0,
+          "alwaysPassLogLoss": 9.999778782803785e-13,
+          "yesMae": 29.969143408736983,
+          "coverage": {
+            "50": 0,
+            "80": 0.4647887323943662,
+            "95": 0.9436619718309859
+          }
+        }
+      },
+      "coalition": {
+        "overall": {
+          "countRps": 0.10830258169677941,
+          "events": 361,
+          "knownOutcomes": 346,
+          "failed": 1,
+          "brier": 0.018099390173410314,
+          "logLoss": 0.13481772646404158,
+          "calibrationError": 0.11229768786127127,
+          "alwaysPassBrier": 0.002890173410404624,
+          "alwaysPassLogLoss": 0.07985850646889535,
+          "yesMae": 19.015783933518005,
+          "coverage": {
+            "50": 0.3656509695290859,
+            "80": 0.9390581717451524,
+            "95": 0.9944598337950139
+          }
+        },
+        "byChamber": {
+          "house": {
+            "countRps": 0.11540172318233392,
+            "events": 171,
+            "knownOutcomes": 156,
+            "failed": 1,
+            "brier": 0.02654000641025626,
+            "logLoss": 0.16980439649178625,
+            "calibrationError": 0.12754487179487142,
+            "alwaysPassBrier": 0.00641025641025641,
+            "alwaysPassLogLoss": 0.17712207203876987,
+            "yesMae": 26.03772514619883,
+            "coverage": {
+              "50": 0.39766081871345027,
+              "80": 0.9122807017543859,
+              "95": 0.9941520467836257
+            }
+          },
+          "senate": {
+            "countRps": 0.10191335435978002,
+            "events": 190,
+            "knownOutcomes": 190,
+            "failed": 0,
+            "brier": 0.011169199999999926,
+            "logLoss": 0.10609182896757775,
+            "calibrationError": 0.09977894736842055,
+            "alwaysPassBrier": 0,
+            "alwaysPassLogLoss": 9.99977878280376e-13,
+            "yesMae": 12.696036842105258,
+            "coverage": {
+              "50": 0.3368421052631579,
+              "80": 0.9631578947368421,
+              "95": 0.9947368421052631
+            }
+          }
+        },
+        "gambling": {
+          "countRps": 0.11579802110138955,
+          "events": 29,
+          "knownOutcomes": 27,
+          "failed": 0,
+          "brier": 0.014305333333333226,
+          "logLoss": 0.12457517787692149,
+          "calibrationError": 0.11674074074074035,
+          "alwaysPassBrier": 0,
+          "alwaysPassLogLoss": 9.999778782803791e-13,
+          "yesMae": 19.153172413793108,
+          "coverage": {
+            "50": 0.20689655172413793,
+            "80": 0.9310344827586207,
+            "95": 1
+          }
+        },
+        "close": {
+          "countRps": 0.14614263338238379,
+          "events": 71,
+          "knownOutcomes": 70,
+          "failed": 0,
+          "brier": 0.013166814285714175,
+          "logLoss": 0.1192163787016888,
+          "calibrationError": 0.11204285714285665,
+          "alwaysPassBrier": 0,
+          "alwaysPassLogLoss": 9.999778782803785e-13,
+          "yesMae": 23.416802816901413,
+          "coverage": {
+            "50": 0.028169014084507043,
+            "80": 0.9859154929577465,
+            "95": 0.9859154929577465
+          }
+        }
+      }
+    },
+    "2023-2024": {
+      "independent": {
+        "overall": {
+          "countRps": 0.17493033836256422,
+          "events": 440,
+          "knownOutcomes": 435,
+          "failed": 2,
+          "brier": 0.004597701149425274,
+          "logLoss": 0.12703927946703575,
+          "calibrationError": 0.004597700937765237,
+          "alwaysPassBrier": 0.004597701149425287,
+          "alwaysPassLogLoss": 0.1270392792556761,
+          "yesMae": 20.935046562271708,
+          "coverage": {
+            "50": 0.04318181818181818,
+            "80": 0.07954545454545454,
+            "95": 0.1159090909090909
+          }
+        },
+        "byChamber": {
+          "house": {
+            "countRps": 0.17780550053912103,
+            "events": 270,
+            "knownOutcomes": 265,
+            "failed": 1,
+            "brier": 0.0037735849056603774,
+            "logLoss": 0.1042680876911598,
+            "calibrationError": 0.0037735849056603765,
+            "alwaysPassBrier": 0.0037735849056603774,
+            "alwaysPassLogLoss": 0.1042680876911598,
+            "yesMae": 26.007711103243107,
+            "coverage": {
+              "50": 0.018518518518518517,
+              "80": 0.05185185185185185,
+              "95": 0.07777777777777778
+            }
+          },
+          "senate": {
+            "countRps": 0.17036390431744505,
+            "events": 170,
+            "knownOutcomes": 170,
+            "failed": 1,
+            "brier": 0.005882352941176437,
+            "logLoss": 0.16253554900002093,
+            "calibrationError": 0.005882352399575019,
+            "alwaysPassBrier": 0.0058823529411764705,
+            "alwaysPassLogLoss": 0.16253554845918883,
+            "yesMae": 12.878461703081832,
+            "coverage": {
+              "50": 0.08235294117647059,
+              "80": 0.12352941176470589,
+              "95": 0.17647058823529413
+            }
+          }
+        },
+        "gambling": {
+          "countRps": 0.20525679739649305,
+          "events": 86,
+          "knownOutcomes": 84,
+          "failed": 0,
+          "brier": 4.727441365806034e-19,
+          "logLoss": 3.193439734592408e-10,
+          "calibrationError": 3.1877456230233747e-10,
+          "alwaysPassBrier": 0,
+          "alwaysPassLogLoss": 9.999778782803791e-13,
+          "yesMae": 22.483981799032403,
+          "coverage": {
+            "50": 0.046511627906976744,
+            "80": 0.05813953488372093,
+            "95": 0.08139534883720931
+          }
+        },
+        "close": {
+          "countRps": 0.2440379307590508,
+          "events": 193,
+          "knownOutcomes": 191,
+          "failed": 2,
+          "brier": 0.010471204188481645,
+          "logLoss": 0.2893302959059992,
+          "calibrationError": 0.010471203967917564,
+          "alwaysPassBrier": 0.010471204188481676,
+          "alwaysPassLogLoss": 0.2893302956857353,
+          "yesMae": 28.09489034106704,
+          "coverage": {
+            "50": 0,
+            "80": 0,
+            "95": 0
+          }
+        }
+      },
+      "residual": {
+        "overall": {
+          "countRps": null,
+          "events": 440,
+          "knownOutcomes": 435,
+          "failed": 2,
+          "brier": 0.01943363954362151,
+          "logLoss": 0.12741199487945037,
+          "calibrationError": 0.10407411393970942,
+          "alwaysPassBrier": 0.004597701149425287,
+          "alwaysPassLogLoss": 0.1270392792556761,
+          "yesMae": 20.935046562271708,
+          "coverage": {
+            "50": 0.3159090909090909,
+            "80": 0.7318181818181818,
+            "95": 1
+          }
+        },
+        "byChamber": {
+          "house": {
+            "countRps": null,
+            "events": 270,
+            "knownOutcomes": 265,
+            "failed": 1,
+            "brier": 0.006847956431042903,
+            "logLoss": 0.07067139808638366,
+            "calibrationError": 0.055550227229369975,
+            "alwaysPassBrier": 0.0037735849056603774,
+            "alwaysPassLogLoss": 0.1042680876911598,
+            "yesMae": 26.007711103243107,
+            "coverage": {
+              "50": 0.13333333333333333,
+              "80": 0.562962962962963,
+              "95": 1
+            }
+          },
+          "senate": {
+            "countRps": null,
+            "events": 170,
+            "knownOutcomes": 170,
+            "failed": 1,
+            "brier": 0.03905249851322938,
+            "logLoss": 0.2158605722333491,
+            "calibrationError": 0.17971429028229735,
+            "alwaysPassBrier": 0.0058823529411764705,
+            "alwaysPassLogLoss": 0.16253554845918883,
+            "yesMae": 12.878461703081832,
+            "coverage": {
+              "50": 0.6058823529411764,
+              "80": 1,
+              "95": 1
+            }
+          }
+        },
+        "gambling": {
+          "countRps": null,
+          "events": 86,
+          "knownOutcomes": 84,
+          "failed": 0,
+          "brier": 0.020556028940972273,
+          "logLoss": 0.13955988147500625,
+          "calibrationError": 0.12783680983503518,
+          "alwaysPassBrier": 0,
+          "alwaysPassLogLoss": 9.999778782803791e-13,
+          "yesMae": 22.483981799032403,
+          "coverage": {
+            "50": 0.23255813953488372,
+            "80": 0.627906976744186,
+            "95": 1
+          }
+        },
+        "close": {
+          "countRps": null,
+          "events": 193,
+          "knownOutcomes": 191,
+          "failed": 2,
+          "brier": 0.02385115584505127,
+          "logLoss": 0.13921741084918646,
+          "calibrationError": 0.09764135545371845,
+          "alwaysPassBrier": 0.010471204188481676,
+          "alwaysPassLogLoss": 0.2893302956857353,
+          "yesMae": 28.09489034106704,
+          "coverage": {
+            "50": 0.04145077720207254,
+            "80": 0.40414507772020725,
+            "95": 1
+          }
+        }
+      },
+      "coalition": {
+        "overall": {
+          "countRps": 0.11363598621519884,
+          "events": 440,
+          "knownOutcomes": 435,
+          "failed": 2,
+          "brier": 0.029439779310344718,
+          "logLoss": 0.1775866148313509,
+          "calibrationError": 0.15009195402298767,
+          "alwaysPassBrier": 0.004597701149425287,
+          "alwaysPassLogLoss": 0.1270392792556761,
+          "yesMae": 19.90117954545455,
+          "coverage": {
+            "50": 0.40454545454545454,
+            "80": 0.9795454545454545,
+            "95": 1
+          }
+        },
+        "byChamber": {
+          "house": {
+            "countRps": 0.11399456194715643,
+            "events": 270,
+            "knownOutcomes": 265,
+            "failed": 1,
+            "brier": 0.017076199999999857,
+            "logLoss": 0.13394727297273246,
+            "calibrationError": 0.11530943396226331,
+            "alwaysPassBrier": 0.0037735849056603774,
+            "alwaysPassLogLoss": 0.1042680876911598,
+            "yesMae": 25.289285185185186,
+            "coverage": {
+              "50": 0.3037037037037037,
+              "80": 0.9925925925925926,
+              "95": 1
+            }
+          },
+          "senate": {
+            "countRps": 0.1130664835820895,
+            "events": 170,
+            "knownOutcomes": 170,
+            "failed": 1,
+            "brier": 0.04871241764705867,
+            "logLoss": 0.24561264772860908,
+            "calibrationError": 0.20431176470588186,
+            "alwaysPassBrier": 0.0058823529411764705,
+            "alwaysPassLogLoss": 0.16253554845918883,
+            "yesMae": 11.343599999999997,
+            "coverage": {
+              "50": 0.5647058823529412,
+              "80": 0.9588235294117647,
+              "95": 1
+            }
+          }
+        },
+        "gambling": {
+          "countRps": 0.12166183029923812,
+          "events": 86,
+          "knownOutcomes": 84,
+          "failed": 0,
+          "brier": 0.030363523809523656,
+          "logLoss": 0.1845596398318668,
+          "calibrationError": 0.1670476190476187,
+          "alwaysPassBrier": 0,
+          "alwaysPassLogLoss": 9.999778782803791e-13,
+          "yesMae": 19.173395348837218,
+          "coverage": {
+            "50": 0.27906976744186046,
+            "80": 0.9883720930232558,
+            "95": 1
+          }
+        },
+        "close": {
+          "countRps": 0.13220853228675264,
+          "events": 193,
+          "knownOutcomes": 191,
+          "failed": 2,
+          "brier": 0.03303033507853388,
+          "logLoss": 0.18582359139427054,
+          "calibrationError": 0.14270157068062797,
+          "alwaysPassBrier": 0.010471204188481676,
+          "alwaysPassLogLoss": 0.2893302956857353,
+          "yesMae": 22.431072538860104,
+          "coverage": {
+            "50": 0.16062176165803108,
+            "80": 1,
+            "95": 1
+          }
+        }
+      }
+    },
+    "2025-2026": {
+      "independent": {
+        "overall": {
+          "countRps": 0.13802919957165916,
+          "events": 463,
+          "knownOutcomes": 446,
+          "failed": 9,
+          "brier": 0.02017937219730841,
+          "logLoss": 0.5575771063542148,
+          "calibrationError": 0.020179371541061752,
+          "alwaysPassBrier": 0.020179372197309416,
+          "alwaysPassLogLoss": 0.5575771056983743,
+          "yesMae": 16.503909688521784,
+          "coverage": {
+            "50": 0.05183585313174946,
+            "80": 0.1079913606911447,
+            "95": 0.15550755939524838
+          }
+        },
+        "byChamber": {
+          "house": {
+            "countRps": 0.13251481909160712,
+            "events": 281,
+            "knownOutcomes": 264,
+            "failed": 9,
+            "brier": 0.03409090909090738,
+            "logLoss": 0.9419673831109616,
+            "calibrationError": 0.03409090909090717,
+            "alwaysPassBrier": 0.03409090909090909,
+            "alwaysPassLogLoss": 0.9419673831109616,
+            "yesMae": 19.87127406529962,
+            "coverage": {
+              "50": 0.03558718861209965,
+              "80": 0.08185053380782918,
+              "95": 0.13167259786476868
+            }
+          },
+          "senate": {
+            "countRps": 0.1465431606425084,
+            "events": 182,
+            "knownOutcomes": 182,
+            "failed": 0,
+            "brier": 5.391435040623066e-18,
+            "logLoss": 1.6081656357124942e-9,
+            "calibrationError": 1.608164490463082e-9,
+            "alwaysPassBrier": 0,
+            "alwaysPassLogLoss": 9.999778782803763e-13,
+            "yesMae": 11.304847106793341,
+            "coverage": {
+              "50": 0.07692307692307693,
+              "80": 0.14835164835164835,
+              "95": 0.19230769230769232
+            }
+          }
+        },
+        "gambling": {
+          "countRps": 0.1252958498846984,
+          "events": 46,
+          "knownOutcomes": 45,
+          "failed": 0,
+          "brier": 1.0113995226514897e-18,
+          "logLoss": 5.295278072938287e-10,
+          "calibrationError": 5.290167193194861e-10,
+          "alwaysPassBrier": 0,
+          "alwaysPassLogLoss": 9.999778782803781e-13,
+          "yesMae": 13.44950552999212,
+          "coverage": {
+            "50": 0.10869565217391304,
+            "80": 0.2391304347826087,
+            "95": 0.30434782608695654
+          }
+        },
+        "close": {
+          "countRps": 0.23433474965875029,
+          "events": 51,
+          "knownOutcomes": 51,
+          "failed": 9,
+          "brier": 0.17647058823528528,
+          "logLoss": 4.876066454758922,
+          "calibrationError": 0.17647058722227105,
+          "alwaysPassBrier": 0.17647058823529413,
+          "alwaysPassLogLoss": 4.876066453746705,
+          "yesMae": 20.57439227890511,
+          "coverage": {
+            "50": 0,
+            "80": 0,
+            "95": 0
+          }
+        }
+      },
+      "residual": {
+        "overall": {
+          "countRps": null,
+          "events": 463,
+          "knownOutcomes": 446,
+          "failed": 9,
+          "brier": 0.0346965796611883,
+          "logLoss": 0.16461558107189952,
+          "calibrationError": 0.08520531730878596,
+          "alwaysPassBrier": 0.020179372197309416,
+          "alwaysPassLogLoss": 0.5575771056983743,
+          "yesMae": 16.503909688521784,
+          "coverage": {
+            "50": 0.490280777537797,
+            "80": 0.9481641468682506,
+            "95": 1
+          }
+        },
+        "byChamber": {
+          "house": {
+            "countRps": null,
+            "events": 281,
+            "knownOutcomes": 264,
+            "failed": 9,
+            "brier": 0.03023322212584846,
+            "logLoss": 0.12182109271091796,
+            "calibrationError": 0.004130797247259954,
+            "alwaysPassBrier": 0.03409090909090909,
+            "alwaysPassLogLoss": 0.9419673831109616,
+            "yesMae": 19.87127406529962,
+            "coverage": {
+              "50": 0.28113879003558717,
+              "80": 0.9145907473309609,
+              "95": 1
+            }
+          },
+          "senate": {
+            "countRps": null,
+            "events": 182,
+            "knownOutcomes": 182,
+            "failed": 0,
+            "brier": 0.0411709004816812,
+            "logLoss": 0.22669110265046652,
+            "calibrationError": 0.2028079178375929,
+            "alwaysPassBrier": 0,
+            "alwaysPassLogLoss": 9.999778782803763e-13,
+            "yesMae": 11.304847106793341,
+            "coverage": {
+              "50": 0.8131868131868132,
+              "80": 1,
+              "95": 1
+            }
+          }
+        },
+        "gambling": {
+          "countRps": null,
+          "events": 46,
+          "knownOutcomes": 45,
+          "failed": 0,
+          "brier": 0.020385719222500667,
+          "logLoss": 0.12682504821138854,
+          "calibrationError": 0.1150540488196507,
+          "alwaysPassBrier": 0,
+          "alwaysPassLogLoss": 9.999778782803781e-13,
+          "yesMae": 13.44950552999212,
+          "coverage": {
+            "50": 0.5652173913043478,
+            "80": 1,
+            "95": 1
+          }
+        },
+        "close": {
+          "countRps": null,
+          "events": 51,
+          "knownOutcomes": 51,
+          "failed": 9,
+          "brier": 0.18166221788038578,
+          "logLoss": 0.6251225010008011,
+          "calibrationError": 0.3239777839020971,
+          "alwaysPassBrier": 0.17647058823529413,
+          "alwaysPassLogLoss": 4.876066453746705,
+          "yesMae": 20.57439227890511,
+          "coverage": {
+            "50": 0.13725490196078433,
+            "80": 0.803921568627451,
+            "95": 1
+          }
+        }
+      },
+      "coalition": {
+        "overall": {
+          "countRps": 0.11610969397521316,
+          "events": 463,
+          "knownOutcomes": 446,
+          "failed": 9,
+          "brier": 0.05236583183856486,
+          "logLoss": 0.2502838642812139,
+          "calibrationError": 0.1815044843049322,
+          "alwaysPassBrier": 0.020179372197309416,
+          "alwaysPassLogLoss": 0.5575771056983743,
+          "yesMae": 22.466352051835845,
+          "coverage": {
+            "50": 0.4017278617710583,
+            "80": 0.7602591792656588,
+            "95": 1
+          }
+        },
+        "byChamber": {
+          "house": {
+            "countRps": 0.11561364552128992,
+            "events": 281,
+            "knownOutcomes": 264,
+            "failed": 9,
+            "brier": 0.053138371212121054,
+            "logLoss": 0.2461786389924432,
+            "calibrationError": 0.15089393939393883,
+            "alwaysPassBrier": 0.03409090909090909,
+            "alwaysPassLogLoss": 0.9419673831109616,
+            "yesMae": 28.62171530249108,
+            "coverage": {
+              "50": 0.3238434163701068,
+              "80": 0.6761565836298933,
+              "95": 1
+            }
+          },
+          "senate": {
+            "countRps": 0.11687557098374267,
+            "events": 182,
+            "knownOutcomes": 182,
+            "failed": 0,
+            "brier": 0.05124522527472513,
+            "logLoss": 0.2562386965682204,
+            "calibrationError": 0.2259065934065929,
+            "alwaysPassBrier": 0,
+            "alwaysPassLogLoss": 9.999778782803763e-13,
+            "yesMae": 12.962741758241757,
+            "coverage": {
+              "50": 0.521978021978022,
+              "80": 0.8901098901098901,
+              "95": 1
+            }
+          }
+        },
+        "gambling": {
+          "countRps": 0.10154134191689777,
+          "events": 46,
+          "knownOutcomes": 45,
+          "failed": 0,
+          "brier": 0.041697311111110934,
+          "logLoss": 0.22628251997799406,
+          "calibrationError": 0.20193333333333296,
+          "alwaysPassBrier": 0,
+          "alwaysPassLogLoss": 9.999778782803781e-13,
+          "yesMae": 16.657347826086955,
+          "coverage": {
+            "50": 0.717391304347826,
+            "80": 0.9347826086956522,
+            "95": 1
+          }
+        },
+        "close": {
+          "countRps": 0.12137370291536823,
+          "events": 51,
+          "knownOutcomes": 51,
+          "failed": 9,
+          "brier": 0.14642117647058825,
+          "logLoss": 0.4692427609421637,
+          "calibrationError": 0.04901960784313677,
+          "alwaysPassBrier": 0.17647058823529413,
+          "alwaysPassLogLoss": 4.876066453746705,
+          "yesMae": 14.309274509803933,
+          "coverage": {
+            "50": 0.6078431372549019,
+            "80": 1,
+            "95": 1
+          }
+        }
+      }
+    }
+  },
+  "promotion": {
+    "eligible": false,
+    "blockers": [
+      "A fresh, untouched final test window is required.",
+      "Dated official passage rules are not verified.",
+      "House/Senate, session, gambling and close-vote slice review is required.",
+      "Candidate must beat every required baseline on held-out passage Brier."
+    ],
+    "productionChanged": false
+  }
+}

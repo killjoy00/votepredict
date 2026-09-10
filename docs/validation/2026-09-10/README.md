@@ -15,3 +15,9 @@ Coalition parameters are now selected by a proper vote-count ranked probability 
 The deployed runtime check passed health, authenticated cron, unauthenticated rejection, and completed Quick-ledger verification. The explicit system-only Deep check fell back to Quick with `billing_required`, zero evidence and zero sources. Vercel AI Gateway billing remains an external blocker. The workflow records this as a failure, not a successful Deep validation. Automatic daily execution has not yet been observed since activation.
 
 Reproduce feature extraction with `node --import tsx scripts/audit-bill-features.ts --input-dir=PATH --manifest=PATH`. Recover journal outcomes with `node --import tsx scripts/recover-house-outcomes.ts --input=EVENTS --journal-dir=JOURNALS --manifest=OUTPUT`. `scripts/apply-house-outcomes.ts` defaults to a dry run and requires `--apply` for writes. Its SQL updates only matching, previously unknown House passage events and stores source provenance atomically.
+
+## Final exploratory scorecard
+
+The latest-session slice contains 463 vote events, 446 known passage outcomes and 9 failures after journal recovery. The validation-selected shocks are common=2, coalition=2, bill=0. Nominal 80% count coverage is 76.0%, but passage Brier is 0.05237 versus 0.03470 for the existing residual model and 0.02018 for always-pass. Mean absolute Yes-count error is 22.47 versus 16.50 for the residual model. The candidate does not earn promotion. Improving interval width alone does not establish a better forecaster.
+
+Local final validation: TypeScript passed; 115 tests passed, one database integration test runs in CI. Source transfers were compared byte-for-byte with the local verified files before merge.
