@@ -64,6 +64,15 @@ function configureProductionEnvironment(): void {
   for (const [key, value] of Object.entries(parsed)) if (value !== undefined) process.env[key] = value;
 }
 
+function safeErrorText(error: unknown): string {
+  let message = error instanceof Error ? error.stack ?? error.message : String(error);
+  for (const [key, value] of Object.entries(process.env)) {
+    if (!value || value.length < 4 || !/SECRET|PASSWORD|TOKEN|KEY|DATABASE_URL|POSTGRES_URL/i.test(key)) continue;
+    message = message.split(value).join('[redacted]');
+  }
+  return message.replace(/postgres(?:ql)?:\/\/\S+/gi, '[redacted database URL]');
+}
+
 function computedFreshness(publishedAt: string | undefined): DurableEvidenceFreshness {
   if (!publishedAt) return 'unknown';
   const date = new Date(publishedAt);
@@ -152,10 +161,9 @@ async function main(): Promise<void> {
     groups.set(key, group);
   }
 
-  const fetched = new Map<string, FetchedSource>();
-  await Promise.all([...groups.values()].map(async ({ source }) => {
-    if (!fetched.has(source.sourceUrl)) fetched.set(source.sourceUrl, await fetchSource(source.sourceUrl));
-  }));
+  const uniqueSourceUrls = [...new Set([...groups.values()].map(({ source }) => source.sourceUrl))];
+  const fetchedPairs = await Promise.all(uniqueSourceUrls.map(async (url) => [url, await fetchSource(url)] as const));
+  const fetched = new Map<string, FetchedSource>(fetchedPairs);
 
   const [{ pool }, { persistDurableEvidence }] = await Promise.all([
     import('../src/lib/db/index.js'),
@@ -212,7 +220,7 @@ async function main(): Promise<void> {
     ]);
     console.log(JSON.stringify({ runId, sources: fetched.size, records: manifest.records.length, inserted, reused, unresolved }));
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
+    const message = safeErrorText(error);
     await pool.query(`UPDATE ingestion_runs SET status='failed', finished_at=now(), error_summary=$2 WHERE id=$1::uuid`, [runId, message.slice(0, 2000)]).catch(() => undefined);
     throw error;
   } finally {
@@ -221,6 +229,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((error) => {
-  console.error(error instanceof Error ? error.stack ?? error.message : error);
+  console.error(safeErrorText(error));
   process.exitCode = 1;
 });
