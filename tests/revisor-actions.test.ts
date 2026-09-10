@@ -1,6 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { auditRevisorSourceChamberPassage, parseRevisorOfficialActions } from '../src/sources/minnesota/revisor-actions.js';
+import {
+  auditRevisorSourceChamberPassage,
+  normalizeRevisorStatusXmlUrl,
+  parseRevisorOfficialActions,
+} from '../src/sources/minnesota/revisor-actions.js';
 
 const xml = `<?xml version="1.0"?>
 <BILL>
@@ -54,4 +58,22 @@ test('explicit failed final-passage language is classified separately', () => {
   const result = auditRevisorSourceChamberPassage({ xml: failed, identifier: 'SF99' });
   assert.equal(result.sourceChamberPassed, false);
   assert.equal(result.sourceChamberFailed, true);
+});
+
+test('status-page URLs are normalized to the official Bill Status API endpoint', () => {
+  assert.equal(
+    normalizeRevisorStatusXmlUrl('https://www.revisor.mn.gov/bills/94/2025/0/SF/856/'),
+    'https://api.revisor.mn.gov/bills/v1/94/2025/0/SF/856/',
+  );
+  assert.equal(
+    normalizeRevisorStatusXmlUrl('api.revisor.mn.gov/bills/v1/93/2023/0/HF/10/'),
+    'https://api.revisor.mn.gov/bills/v1/93/2023/0/HF/10/',
+  );
+});
+
+test('namespaced ACTION elements are parsed namespace-insensitively', () => {
+  const namespaced = `<r:BILL xmlns:r="urn:mn"><r:ACTIONS><r:ACTION><r:ACTION_BODY>House</r:ACTION_BODY><r:ACTION_DATE>03/23/2021</r:ACTION_DATE><r:ACTION_DESCRIPTION>Bill was passed</r:ACTION_DESCRIPTION></r:ACTION></r:ACTIONS></r:BILL>`;
+  const result = auditRevisorSourceChamberPassage({ xml: namespaced, identifier: 'HF1064' });
+  assert.equal(result.actions.length, 1);
+  assert.equal(result.sourceChamberPassed, true);
 });
