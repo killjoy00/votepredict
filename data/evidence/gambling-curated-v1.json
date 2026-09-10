@@ -213,11 +213,11 @@
     },
     {
       "source": {
-        "sourceKind": "interest_group_position",
-        "sourceUrl": "https://www.senate.mn/committees/2025-2026/3134_Committee_on_State_and_Local_Government/20250213_MIGA_Support-Letter.pdf",
+        "sourceKind": "official_bill_status",
+        "sourceUrl": "https://www.revisor.mn.gov/bills/94/2025/0/HF/1842/",
         "sessionSlug": "2025-2026",
-        "chamberSlug": "senate",
-        "publisher": "Minnesota Indian Gaming Association"
+        "chamberSlug": "house",
+        "publisher": "Minnesota Office of the Revisor of Statutes"
       },
       "target": {
         "memberNames": [
@@ -229,36 +229,69 @@
           "Erin Koegel",
           "Kari Rehrauer",
           "Peter Johnson",
-          "Matt Norris",
+          "Matt Norris"
+        ],
+        "billIdentifier": "HF1842",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "house",
+        "occurredOn": "2025-03-03"
+      },
+      "kind": "fact",
+      "stance": "supports",
+      "claim": "Listed by the Minnesota Revisor as an author of HF1842, the 2025 House sports-betting and fantasy-contests proposal.",
+      "publishedAt": "2025-03-03T00:00:00.000Z",
+      "sourceQuality": "official",
+      "relevance": "medium",
+      "confidence": 1,
+      "metadata": {
+        "topic": "sports_betting",
+        "signalType": "sponsorship",
+        "billIdentifier": "HF1842",
+        "mechanicallyActionable": false
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "official_bill_status",
+        "sourceUrl": "https://www.revisor.mn.gov/bills/94/2025/0/SF/757/",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate",
+        "publisher": "Minnesota Office of the Revisor of Statutes"
+      },
+      "target": {
+        "memberNames": [
           "Nick A. Frentz",
           "Matt D. Klein",
           "Eric R. Pratt",
           "Mary K. Kunesh",
           "Julia E. Coleman"
         ],
+        "billIdentifier": "SF757",
         "sessionSlug": "2025-2026",
-        "occurredOn": "2025-02-13"
+        "chamberSlug": "senate",
+        "occurredOn": "2025-03-27"
       },
       "kind": "fact",
       "stance": "supports",
-      "claim": "Sponsored HF1842 or SF757, part of the 2025 sports-wagering framework publicly supported by the Minnesota Indian Gaming Association.",
-      "publishedAt": "2025-02-13T00:00:00.000Z",
-      "sourceQuality": "other",
+      "claim": "Listed by the Minnesota Revisor as an author of SF757, the 2025 Senate sports-betting and fantasy-contests proposal.",
+      "publishedAt": "2025-03-27T00:00:00.000Z",
+      "sourceQuality": "official",
       "relevance": "medium",
-      "confidence": 0.9,
+      "confidence": 1,
       "metadata": {
         "topic": "sports_betting",
         "signalType": "sponsorship",
-        "benchmarkKey": "sports-betting-2025",
+        "billIdentifier": "SF757",
         "mechanicallyActionable": false
       }
     },
     {
       "source": {
-        "sourceKind": "interest_group_position",
-        "sourceUrl": "https://www.house.mn.gov/comm/docs/w4Mlbjf4ike5s0gq9Ou00A.pdf",
+        "sourceKind": "official_bill_status",
+        "sourceUrl": "https://www.revisor.mn.gov/bills/94/2026/0/SF/4474/",
         "sessionSlug": "2025-2026",
-        "publisher": "Minnesota Indian Gaming Association"
+        "chamberSlug": "senate",
+        "publisher": "Minnesota Office of the Revisor of Statutes"
       },
       "target": {
         "memberNames": [
@@ -266,7 +299,37 @@
           "John J. Marty",
           "Erin K. Maye Quade",
           "Warren E. Limmer",
-          "Matt D. Klein",
+          "Matt D. Klein"
+        ],
+        "billIdentifier": "SF4474",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate",
+        "occurredOn": "2026-03-12"
+      },
+      "kind": "fact",
+      "stance": "supports",
+      "claim": "Listed by the Minnesota Revisor as an author of SF4474, the 2026 Senate online-sweepstakes prohibition.",
+      "publishedAt": "2026-03-12T00:00:00.000Z",
+      "sourceQuality": "official",
+      "relevance": "medium",
+      "confidence": 1,
+      "metadata": {
+        "topic": "sweepstakes",
+        "signalType": "sponsorship",
+        "billIdentifier": "SF4474",
+        "mechanicallyActionable": false
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "official_bill_status",
+        "sourceUrl": "https://www.revisor.mn.gov/bills/94/2026/0/HF/4410/",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "house",
+        "publisher": "Minnesota Office of the Revisor of Statutes"
+      },
+      "target": {
+        "memberNames": [
           "Gregory M. Davids",
           "Erin Koegel",
           "Ben Bakeberg",
@@ -275,29 +338,32 @@
           "Bianca Ward Virnig",
           "Brad Tabke"
         ],
+        "billIdentifier": "HF4410",
         "sessionSlug": "2025-2026",
-        "occurredOn": "2026-04-30"
+        "chamberSlug": "house",
+        "occurredOn": "2026-03-25"
       },
       "kind": "fact",
       "stance": "supports",
-      "claim": "Sponsored SF4474 or HF4410 restricting online sweepstakes casino games, legislation publicly supported by the Minnesota Indian Gaming Association.",
-      "publishedAt": "2026-04-30T00:00:00.000Z",
-      "sourceQuality": "other",
+      "claim": "Listed by the Minnesota Revisor as an author of HF4410, the 2026 House online-sweepstakes prohibition.",
+      "publishedAt": "2026-03-25T00:00:00.000Z",
+      "sourceQuality": "official",
       "relevance": "medium",
-      "confidence": 0.9,
+      "confidence": 1,
       "metadata": {
         "topic": "sweepstakes",
         "signalType": "sponsorship",
-        "benchmarkKey": "sweepstakes-2026",
+        "billIdentifier": "HF4410",
         "mechanicallyActionable": false
       }
     },
     {
       "source": {
-        "sourceKind": "interest_group_position",
-        "sourceUrl": "https://www.house.mn.gov/comm/docs/X4r5XanzfU6Gs956Dy0uvw.pdf",
+        "sourceKind": "official_bill_status",
+        "sourceUrl": "https://www.revisor.mn.gov/bills/94/2026/0/SF/4511/",
         "sessionSlug": "2025-2026",
-        "publisher": "Shakopee Mdewakanton Sioux Community"
+        "chamberSlug": "senate",
+        "publisher": "Minnesota Office of the Revisor of Statutes"
       },
       "target": {
         "memberNames": [
@@ -305,27 +371,59 @@
           "Jordan Rasmusson",
           "Mary K. Kunesh",
           "Erin K. Maye Quade",
-          "Matt D. Klein",
+          "Matt D. Klein"
+        ],
+        "billIdentifier": "SF4511",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "senate",
+        "occurredOn": "2026-03-13"
+      },
+      "kind": "fact",
+      "stance": "supports",
+      "claim": "Listed by the Minnesota Revisor as an author of SF4511, the 2026 Senate prediction-market wagering restrictions.",
+      "publishedAt": "2026-03-13T00:00:00.000Z",
+      "sourceQuality": "official",
+      "relevance": "medium",
+      "confidence": 1,
+      "metadata": {
+        "topic": "prediction_markets",
+        "signalType": "sponsorship",
+        "billIdentifier": "SF4511",
+        "mechanicallyActionable": false
+      }
+    },
+    {
+      "source": {
+        "sourceKind": "official_bill_status",
+        "sourceUrl": "https://www.revisor.mn.gov/bills/94/2026/0/HF/4437/",
+        "sessionSlug": "2025-2026",
+        "chamberSlug": "house",
+        "publisher": "Minnesota Office of the Revisor of Statutes"
+      },
+      "target": {
+        "memberNames": [
           "Emma Greenman",
           "Peter Fischer",
           "Gregory M. Davids",
           "Brad Tabke",
           "Cedrick Rommel Frazier"
         ],
+        "billIdentifier": "HF4437",
         "sessionSlug": "2025-2026",
-        "occurredOn": "2026-04-30"
+        "chamberSlug": "house",
+        "occurredOn": "2026-03-18"
       },
       "kind": "fact",
       "stance": "supports",
-      "claim": "Sponsored SF4511 or HF4437 restricting prediction-market wagering, legislation publicly supported by the Shakopee Mdewakanton Sioux Community.",
-      "publishedAt": "2026-04-30T00:00:00.000Z",
-      "sourceQuality": "other",
+      "claim": "Listed by the Minnesota Revisor as an author of HF4437, the 2026 House prediction-market wagering restrictions.",
+      "publishedAt": "2026-03-18T00:00:00.000Z",
+      "sourceQuality": "official",
       "relevance": "medium",
-      "confidence": 0.9,
+      "confidence": 1,
       "metadata": {
         "topic": "prediction_markets",
         "signalType": "sponsorship",
-        "benchmarkKey": "prediction-markets-2026",
+        "billIdentifier": "HF4437",
         "mechanicallyActionable": false
       }
     }
