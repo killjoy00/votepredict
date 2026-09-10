@@ -55,6 +55,15 @@ function configureProductionEnvironment(): void {
   for (const [key, value] of Object.entries(parsed)) if (value !== undefined) process.env[key] = value;
 }
 
+function safeErrorText(error: unknown): string {
+  let message = error instanceof Error ? error.stack ?? error.message : String(error);
+  for (const [key, value] of Object.entries(process.env)) {
+    if (!value || value.length < 4 || !/SECRET|PASSWORD|TOKEN|KEY|DATABASE_URL|POSTGRES_URL/i.test(key)) continue;
+    message = message.split(value).join('[redacted]');
+  }
+  return message.replace(/postgres(?:ql)?:\/\/\S+/gi, '[redacted database URL]');
+}
+
 function normalizeToken(value: string): string {
   return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '');
 }
@@ -251,7 +260,7 @@ async function main(): Promise<void> {
       reused,
     }));
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
+    const message = safeErrorText(error);
     await pool.query(`UPDATE ingestion_runs SET status='failed', finished_at=now(), error_summary=$2 WHERE id=$1::uuid`, [runId, message.slice(0, 2000)]).catch(() => undefined);
     throw error;
   } finally {
@@ -260,6 +269,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((error) => {
-  console.error(error instanceof Error ? error.stack ?? error.message : error);
+  console.error(safeErrorText(error));
   process.exitCode = 1;
 });
