@@ -1,5 +1,7 @@
 import { Pool } from 'pg';
 import {
+  BILL_FEATURE_SCHEMA_VERSION,
+  DETERMINISTIC_EXTRACTOR_VERSION,
   retrieveHistoricalAnalogues,
   type BillFeatureIdentity,
   type DeterministicBillFeatures,
@@ -13,6 +15,7 @@ import {
   type MemberModelObservation,
   type MemberModelPrediction,
 } from '../src/evaluation/member-model.js';
+import { ordinaryMinnesotaPassageRule } from '../src/forecasting/minnesota-rules.js';
 
 const MAX_PREFILTER_EVENTS = 30;
 const MAX_ANALOGUES = 10;
@@ -144,8 +147,8 @@ async function main(): Promise<void> {
        WHERE bv.published_at IS NOT NULL
          AND bv.raw_text IS NOT NULL
          AND length(bv.raw_text) >= 100
-         AND bfs.feature_schema_version = 'bill-features-v1'
-         AND bfs.extractor_version = 'deterministic-v1'`);
+         AND bfs.feature_schema_version = $1
+         AND bfs.extractor_version = $2`, [BILL_FEATURE_SCHEMA_VERSION, DETERMINISTIC_EXTRACTOR_VERSION]);
     const versionsByBill = new Map<string, VersionRow[]>();
     for (const row of versionResult.rows) {
       const rows = versionsByBill.get(row.bill_id) ?? [];
@@ -296,9 +299,7 @@ async function main(): Promise<void> {
       member_scorable: boolean;
       session_slug: string;
       chamber_slug: string;
-      yea_count: number;
       passed: boolean | null;
-      active_members: number;
     }>(`
       SELECT ve.id::text || ':' || m.id::text AS observation_id,
              ve.id AS vote_event_id,
@@ -310,9 +311,7 @@ async function main(): Promise<void> {
              COALESCE(mv.choice IN ('yea', 'nay'), false) AS member_scorable,
              s.slug AS session_slug,
              c.slug AS chamber_slug,
-             ve.yea_count,
-             ve.passed,
-             (count(*) OVER (PARTITION BY ve.id))::int AS active_members
+             ve.passed
         FROM vote_events ve
         JOIN legislative_sessions s ON s.id = ve.session_id
         JOIN chambers c ON c.id = ve.chamber_id
@@ -327,24 +326,20 @@ async function main(): Promise<void> {
          AND mv.membership_id = m.id
        WHERE ve.is_passage = true
        ORDER BY ve.occurred_on, ve.id, m.id`);
-    const chamberRows: MemberModelObservation[] = chamberResult.rows.map((row) => {
-      const seats = Number(row.active_members);
-      const requiredYes = Math.floor(seats / 2) + 1;
-      return {
-        observationId: row.observation_id,
-        voteEventId: row.vote_event_id,
-        memberId: row.member_id,
-        party: row.party ?? 'UNKNOWN',
-        occurredAt: row.occurred_at,
-        outcome: Number(row.outcome) as 0 | 1,
-        historyOutcome: row.history_outcome === null ? null : Number(row.history_outcome) as 0 | 1,
-        memberScorable: row.member_scorable,
-        session: row.session_slug,
-        chamber: row.chamber_slug,
-        passageRule: { kind: 'absolute-majority', seats },
-        passed: row.passed ?? Number(row.yea_count) >= requiredYes,
-      };
-    });
+    const chamberRows: MemberModelObservation[] = chamberResult.rows.map((row) => ({
+      observationId: row.observation_id,
+      voteEventId: row.vote_event_id,
+      memberId: row.member_id,
+      party: row.party ?? 'UNKNOWN',
+      occurredAt: row.occurred_at,
+      outcome: Number(row.outcome) as 0 | 1,
+      historyOutcome: row.history_outcome === null ? null : Number(row.history_outcome) as 0 | 1,
+      memberScorable: row.member_scorable,
+      session: row.session_slug,
+      chamber: row.chamber_slug,
+      passageRule: ordinaryMinnesotaPassageRule(row.chamber_slug),
+      passed: row.passed ?? undefined,
+    }));
 
     const eligibleEvents = new Set(supportByEvent.keys());
     if (eligibleEvents.size === 0) throw new Error('No as-of-safe events produced historical analogues');
@@ -376,8 +371,11 @@ async function main(): Promise<void> {
       metadata: {
         generatedAt: new Date().toISOString(),
         codeSha: process.env.GITHUB_SHA ?? null,
+        featureSchemaVersion: BILL_FEATURE_SCHEMA_VERSION,
+        extractorVersion: DETERMINISTIC_EXTRACTOR_VERSION,
         analoguePolicy: 'production-equivalent title-token prefilter (30), top-10 feature similarity + recency; historical target/candidate bill versions must predate the vote day',
         leakageGuard: 'same-day Revisor versions are excluded because before/after-vote ordering cannot be established from date-only metadata',
+        passageScoring: 'only official known outcomes; unknown ve.passed values are not inferred; Minnesota ordinary thresholds are fixed at 68 House / 34 Senate for simulation',
       },
       coverage: {
         passageEvents: eventResult.rows.length,
