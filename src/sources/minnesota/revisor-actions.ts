@@ -99,18 +99,38 @@ function isPassageNegative(description: string): boolean {
     || /\bfailed to pass\b/.test(text);
 }
 
-export function parseRevisorOfficialActions(xml: string): RevisorOfficialAction[] {
+function parseActionElements(block: string, chamberOverride: RevisorActionChamber): RevisorOfficialAction[] {
   const actions: RevisorOfficialAction[] = [];
-  for (const match of xml.matchAll(/<(?:[A-Z0-9_.-]+:)?ACTION\b[^>]*>([\s\S]*?)<\/(?:[A-Z0-9_.-]+:)?ACTION>/gi)) {
+  for (const match of block.matchAll(/<(?:[A-Z0-9_.-]+:)?ACTION\b[^>]*>([\s\S]*?)<\/(?:[A-Z0-9_.-]+:)?ACTION>/gi)) {
     const fields = parseLeafFields(match[1]);
     const description = descriptionFromFields(fields);
     if (!description && Object.keys(fields).length === 0) continue;
     actions.push({
-      chamber: chamberFromFields(fields),
+      chamber: chamberOverride ?? chamberFromFields(fields),
       occurredOn: dateFromFields(fields),
       description,
       fields,
     });
+  }
+  return actions;
+}
+
+export function parseRevisorOfficialActions(xml: string): RevisorOfficialAction[] {
+  const actionsMatch = xml.match(/<(?:[A-Z0-9_.-]+:)?ACTIONS\b[^>]*>([\s\S]*?)<\/(?:[A-Z0-9_.-]+:)?ACTIONS>/i);
+  const root = actionsMatch?.[1] ?? xml;
+  const actions: RevisorOfficialAction[] = [];
+  let chamberSections = 0;
+
+  for (const [tag, chamber] of [['HOUSE', 'house'], ['SENATE', 'senate']] as const) {
+    const pattern = new RegExp(`<(?:[A-Z0-9_.-]+:)?${tag}\\b[^>]*>([\\s\\S]*?)<\\/(?:[A-Z0-9_.-]+:)?${tag}>`, 'gi');
+    for (const match of root.matchAll(pattern)) {
+      chamberSections += 1;
+      actions.push(...parseActionElements(match[1], chamber));
+    }
+  }
+
+  if (chamberSections === 0) {
+    actions.push(...parseActionElements(root, null));
   }
   return actions;
 }
