@@ -34,6 +34,7 @@
     "eval:member-history-cap": "tsx scripts/evaluate-member-history-cap.ts",
     "eval:analogue-lift": "tsx scripts/evaluate-analogue-lift.ts",
     "eval:target-selection": "tsx scripts/audit-forecast-target-selection.ts",
+    "eval:full-universe-stage": "tsx scripts/evaluate-full-universe-stage-baseline.ts",
     "eval:gambling-model": "tsx scripts/evaluate-gambling-model.ts",
     "forecasts:scheduled": "tsx scripts/run-scheduled-forecasts.ts",
     "eval:coalition-chamber": "tsx scripts/evaluate-coalition-chamber.ts",
