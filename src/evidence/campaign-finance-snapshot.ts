@@ -49,6 +49,17 @@ interface CampaignFinanceSnapshot {
 const snapshot = snapshotJson as CampaignFinanceSnapshot;
 const ignoredNameTokens = new Set(['jr', 'sr', 'ii', 'iii', 'iv', 'hon', 'rep', 'sen', 'representative', 'senator']);
 
+// Current-roster display names do not always match the legal/given name used by CFB.
+// Keep these deterministic and explicit rather than introducing fuzzy nickname matching.
+// Keys and values are normalized person names after titles/suffixes are removed.
+const candidateNameAliases = new Map<string, readonly string[]>([
+  ['house|bjornolson', ['christianbjornolson']],
+  ['house|lizlee', ['kaozouapaelizabethlee']],
+  ['senate|jimcarlson', ['jimacarlson', 'jamesacarlson', 'jamescarlson']],
+  ['senate|michaelholmstrom', ['michaelholmstrom']],
+  ['senate|stevedrazkowski', ['stevenjdrazkowski', 'stevendrazkowski']],
+]);
+
 export interface CampaignFinanceMemberContext {
   membershipId: string;
   memberName: string;
@@ -84,12 +95,34 @@ export interface CampaignFinanceSnapshotInfo {
   independentExpenditureRows: number;
 }
 
+export type CampaignFinanceResolutionStatus = 'resolved_with_activity' | 'resolved_without_activity' | 'not_in_activity_snapshot' | 'ambiguous';
+export type CampaignFinanceResolutionMethod = 'normalized_full_name' | 'explicit_alias' | 'snapshot_match_key' | 'unique_last_name';
+
+export interface CampaignFinanceMemberResolution {
+  membershipId: string;
+  memberName: string;
+  status: CampaignFinanceResolutionStatus;
+  method?: CampaignFinanceResolutionMethod;
+  candidateName?: string;
+  committeeName?: string;
+  registrationNumber?: string;
+  context?: CampaignFinanceMemberContext;
+}
+
 function normalizeToken(value: string): string {
   return value
     .normalize('NFKD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '');
+}
+
+function normalizedPersonName(value: string): string {
+  return value
+    .split(/\s+/)
+    .map((token) => normalizeToken(token))
+    .filter((token) => token && !ignoredNameTokens.has(token))
+    .join('');
 }
 
 function nameIdentity(memberName: string): { matchKey?: string; lastNameKey?: string } {
@@ -103,39 +136,45 @@ function nameIdentity(memberName: string): { matchKey?: string; lastNameKey?: st
   return { matchKey: first && lastNameKey ? `${first}|${lastNameKey}` : undefined, lastNameKey };
 }
 
-function findCandidate(memberName: string, chamber?: string): CandidateSnapshot | undefined {
-  const identity = nameIdentity(memberName);
-  const chamberCandidates = chamber
-    ? snapshot.candidates.filter((candidate) => candidate.chamber === chamber.toLowerCase())
+function uniqueCandidate(candidates: readonly CandidateSnapshot[]): CandidateSnapshot | 'ambiguous' | undefined {
+  if (candidates.length === 1) return candidates[0];
+  if (candidates.length > 1) return 'ambiguous';
+  return undefined;
+}
+
+function findCandidate(memberName: string, chamber?: string): { candidate?: CandidateSnapshot; method?: CampaignFinanceResolutionMethod; ambiguous?: boolean } {
+  const chamberKey = chamber?.toLowerCase();
+  const chamberCandidates = chamberKey
+    ? snapshot.candidates.filter((candidate) => candidate.chamber === chamberKey)
     : snapshot.candidates;
+  const personKey = normalizedPersonName(memberName);
 
-  if (identity.matchKey) {
-    const exact = chamberCandidates.find((candidate) => candidate.matchKey === identity.matchKey);
-    if (exact) return exact;
+  const fullName = uniqueCandidate(chamberCandidates.filter((candidate) => normalizedPersonName(candidate.candidateName) === personKey));
+  if (fullName === 'ambiguous') return { ambiguous: true };
+  if (fullName) return { candidate: fullName, method: 'normalized_full_name' };
+
+  if (chamberKey) {
+    const aliases = candidateNameAliases.get(`${chamberKey}|${personKey}`);
+    if (aliases) {
+      const aliasMatch = uniqueCandidate(chamberCandidates.filter((candidate) => aliases.includes(normalizedPersonName(candidate.candidateName))));
+      if (aliasMatch === 'ambiguous') return { ambiguous: true };
+      if (aliasMatch) return { candidate: aliasMatch, method: 'explicit_alias' };
+    }
   }
-  if (!identity.lastNameKey) return undefined;
-  const sameLastName = chamberCandidates.filter((candidate) => candidate.lastNameKey === identity.lastNameKey);
-  return sameLastName.length === 1 ? sameLastName[0] : undefined;
+
+  const identity = nameIdentity(memberName);
+  if (identity.matchKey) {
+    const exact = uniqueCandidate(chamberCandidates.filter((candidate) => candidate.matchKey === identity.matchKey));
+    if (exact === 'ambiguous') return { ambiguous: true };
+    if (exact) return { candidate: exact, method: 'snapshot_match_key' };
+  }
+  if (!identity.lastNameKey) return {};
+  const sameLastName = uniqueCandidate(chamberCandidates.filter((candidate) => candidate.lastNameKey === identity.lastNameKey));
+  if (sameLastName === 'ambiguous') return { ambiguous: true };
+  return sameLastName ? { candidate: sameLastName, method: 'unique_last_name' } : {};
 }
 
-export function campaignFinanceSnapshotInfo(): CampaignFinanceSnapshotInfo {
-  return {
-    schemaVersion: snapshot.schemaVersion,
-    generatedAt: snapshot.generatedAt,
-    cycleYears: [...snapshot.cycleYears],
-    candidateCommitteeCount: snapshot.candidates.length,
-    contributionRows: snapshot.provenance.contributions.cycleRows,
-    independentExpenditureRows: snapshot.provenance.independentExpenditures.cycleRows,
-  };
-}
-
-export function getCampaignFinanceContextForMember(input: {
-  membershipId: string;
-  memberName: string;
-  chamber?: string;
-}): CampaignFinanceMemberContext | undefined {
-  const candidate = findCandidate(input.memberName, input.chamber);
-  if (!candidate) return undefined;
+function contextForCandidate(input: { membershipId: string; memberName: string }, candidate: CandidateSnapshot): CampaignFinanceMemberContext | undefined {
   const contributions = candidate.contributions.transactionCount > 0
     ? {
         sourceUrl: snapshot.provenance.contributions.url,
@@ -170,13 +209,64 @@ export function getCampaignFinanceContextForMember(input: {
   };
 }
 
+export function campaignFinanceSnapshotInfo(): CampaignFinanceSnapshotInfo {
+  return {
+    schemaVersion: snapshot.schemaVersion,
+    generatedAt: snapshot.generatedAt,
+    cycleYears: [...snapshot.cycleYears],
+    candidateCommitteeCount: snapshot.candidates.length,
+    contributionRows: snapshot.provenance.contributions.cycleRows,
+    independentExpenditureRows: snapshot.provenance.independentExpenditures.cycleRows,
+  };
+}
+
+export function resolveCampaignFinanceMember(input: {
+  membershipId: string;
+  memberName: string;
+  chamber?: string;
+}): CampaignFinanceMemberResolution {
+  const match = findCandidate(input.memberName, input.chamber);
+  if (match.ambiguous) {
+    return { membershipId: input.membershipId, memberName: input.memberName, status: 'ambiguous' };
+  }
+  if (!match.candidate) {
+    // The bundled snapshot is activity-derived: absence means no committee row was found
+    // in the contribution/IE corpus. It is not proof that roster identity resolution failed.
+    return { membershipId: input.membershipId, memberName: input.memberName, status: 'not_in_activity_snapshot' };
+  }
+  const context = contextForCandidate(input, match.candidate);
+  return {
+    membershipId: input.membershipId,
+    memberName: input.memberName,
+    status: context ? 'resolved_with_activity' : 'resolved_without_activity',
+    method: match.method,
+    candidateName: match.candidate.candidateName,
+    committeeName: match.candidate.committeeName,
+    registrationNumber: match.candidate.registrationNumber,
+    context,
+  };
+}
+
+export function resolveCampaignFinanceMembers(inputs: readonly {
+  membershipId: string;
+  memberName: string;
+  chamber?: string;
+}[]): CampaignFinanceMemberResolution[] {
+  return inputs.map(resolveCampaignFinanceMember);
+}
+
+export function getCampaignFinanceContextForMember(input: {
+  membershipId: string;
+  memberName: string;
+  chamber?: string;
+}): CampaignFinanceMemberContext | undefined {
+  return resolveCampaignFinanceMember(input).context;
+}
+
 export function getCampaignFinanceContexts(inputs: readonly {
   membershipId: string;
   memberName: string;
   chamber?: string;
 }[]): CampaignFinanceMemberContext[] {
-  return inputs.flatMap((input) => {
-    const context = getCampaignFinanceContextForMember(input);
-    return context ? [context] : [];
-  });
+  return resolveCampaignFinanceMembers(inputs).flatMap((resolution) => resolution.context ? [resolution.context] : []);
 }
