@@ -6,6 +6,7 @@ on:
       - .github/workflows/revisor-source-passage-snapshot.yml
       - scripts/export-revisor-source-passage-snapshot.ts
       - scripts/audit-revisor-passage-discrepancies.ts
+      - scripts/audit-revisor-alternate-passage-actions.ts
       - src/sources/minnesota/revisor-action-search.ts
       - src/sources/minnesota/revisor-actions.ts
   workflow_dispatch:
@@ -22,6 +23,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
+      - name: Audit alternate Senate passage categories
+        run: node --import tsx scripts/audit-revisor-alternate-passage-actions.ts
       - name: Audit disputed Senate passage labels
         run: node --import tsx scripts/audit-revisor-passage-discrepancies.ts
       - name: Export audited Revisor source-passage set
