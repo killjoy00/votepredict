@@ -137,8 +137,14 @@ async function verifyTailComplete(
        AND (
          b.metadata #>> '{revisorIntroduction,parserVersion}' IS DISTINCT FROM $4
          OR b.introduced_at IS NULL
-         OR b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' IS DISTINCT FROM 'true'
+         OR b.metadata #>> '{revisorIntroduction,introducedOn}' IS NULL
          OR b.metadata #>> '{revisorIntroduction,initialDocument,documentName}' IS NULL
+         OR b.metadata #>> '{revisorIntroduction,initialDocument,insertedOn}' IS NULL
+         OR b.metadata #>> '{revisorIntroduction,initialDocument,htmlUrl}' IS NULL
+         OR (
+           b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' IS DISTINCT FROM 'true'
+           AND b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' IS DISTINCT FROM 'false'
+         )
          OR NOT EXISTS (
            SELECT 1
              FROM bill_versions bv
@@ -366,7 +372,7 @@ async function main(): Promise<void> {
       || verification.universeTotal !== 31_010
       || verification.parserMetadataTotal !== 31_010
       || verification.introductionDateTotal !== 31_010
-      || verification.eligibleInitialDocumentTotal !== 31_010
+      || verification.initialDocumentTotal !== 31_010
       || verification.initialVersionTotal !== 31_010
     )) {
       throw new Error('Production Revisor introduction backfill did not reach exact authoritative coverage');
