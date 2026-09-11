@@ -60,8 +60,10 @@ function logistic(value: number) {
 export function introductionPreamble(rawText: string | null, maxChars = DEFAULT_OPTIONS.preambleMaxChars): string {
   if (!rawText) return '';
   const enacted = rawText.search(/\bBE IT ENACTED BY THE LEGISLATURE\b/i);
-  const preamble = (enacted >= 0 ? rawText.slice(0, enacted) : rawText).slice(0, maxChars).trim();
-  return preamble;
+  const whereas = rawText.search(/(?:^|\n)\s*WHEREAS\b/i);
+  const candidates = [enacted, whereas].filter((index) => index >= 0);
+  const boundary = candidates.length ? Math.min(...candidates) : rawText.length;
+  return rawText.slice(0, boundary).slice(0, maxChars).trim();
 }
 
 export function incrementalIntroductionTextTokens(title: string, rawText: string | null, maxChars = DEFAULT_OPTIONS.preambleMaxChars): string[] {
