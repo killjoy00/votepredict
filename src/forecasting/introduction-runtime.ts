@@ -1,10 +1,9 @@
 import { pool } from '@/lib/db';
 import {
-  predictIntroductionTextModel,
-  trainIntroductionTextModel,
-  type IntroductionTextModel,
-  type IntroductionTextObservation,
-} from '@/evaluation/introduction-text-model';
+  FROZEN_INTRODUCTION_PRIOR_ARTIFACT,
+  scoreIntroductionPriorRow,
+  type IntroductionPriorBillRow,
+} from '@/forecasting/introduction-prior-runtime';
 import { INTRODUCTION_PRIOR_MODEL_VERSION } from '@/forecasting/introduction-prior-model';
 
 export const INTRODUCTION_MODEL_VERSION = INTRODUCTION_PRIOR_MODEL_VERSION;
@@ -31,140 +30,38 @@ export type IntroductionStageForecast = {
     trainingSessions: string[];
     initialTextAvailableAtIntroduction: boolean;
     purposeTextOnly: true;
+    frozen: true;
+    trainedThroughSession: string;
   };
 };
 
-type TargetRow = {
+type TargetRow = IntroductionPriorBillRow & {
   bill_id: string;
   identifier: string;
-  title: string;
-  introduced_at: string | null;
-  session_slug: string;
-  session_start: string;
   chamber_id: string | null;
-  chamber_slug: 'house' | 'senate' | null;
   chamber_name: string | null;
   initial_version_id: string | null;
-  raw_text: string | null;
-  text_model_eligible: string | null;
 };
-
-type TrainingRow = {
-  bill_id: string;
-  session_slug: string;
-  session_start: string;
-  chamber_slug: 'house' | 'senate';
-  identifier: string;
-  title: string;
-  raw_text: string | null;
-  text_model_eligible: string | null;
-  outcome: boolean;
-};
-
-type CachedModel = {
-  model: IntroductionTextModel;
-  trainingBills: number;
-  trainingPasses: number;
-  trainingSessions: string[];
-};
-
-const modelCache = new Map<string, Promise<CachedModel>>();
-
-function parseBillNumber(identifier: string): number | null {
-  const match = identifier.match(/(\d+)\s*$/);
-  return match ? Number(match[1]) : null;
-}
-
-async function loadModelBefore(sessionStart: string): Promise<CachedModel> {
-  const rows = await pool.query<TrainingRow>(`
-    SELECT b.id::text AS bill_id,
-           s.slug AS session_slug,
-           s.starts_on::text AS session_start,
-           c.slug AS chamber_slug,
-           b.identifier,
-           COALESCE(b.title, '') AS title,
-           CASE
-             WHEN b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' = 'true'
-               THEN left(bv.raw_text, 8000)
-             ELSE NULL
-           END AS raw_text,
-           b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' AS text_model_eligible,
-           (b.metadata #>> '{sourceChamberPassage,outcome}')::boolean AS outcome
-      FROM bills b
-      JOIN legislative_sessions s ON s.id = b.session_id
-      JOIN chambers c ON c.id = b.originating_chamber_id AND c.slug IN ('house', 'senate')
-      JOIN bill_versions bv
-        ON bv.bill_id = b.id
-       AND bv.version_key = b.metadata #>> '{revisorIntroduction,initialDocument,documentName}'
-     WHERE b.metadata ? 'revisorUniverse'
-       AND b.metadata #>> '{sourceChamberPassage,outcome}' IN ('true', 'false')
-       AND b.metadata #>> '{sourceChamberPassage,targetStage}' = 'source_chamber_passage'
-       AND s.starts_on < $1::date
-     ORDER BY s.starts_on, c.slug, b.identifier`, [sessionStart]);
-
-  if (rows.rows.length === 0) {
-    throw new Error(`No authoritative prior-biennium training data exists before ${sessionStart}.`);
-  }
-
-  const observations: IntroductionTextObservation[] = rows.rows.map((row) => ({
-    billId: row.bill_id,
-    sessionSlug: row.session_slug,
-    sessionStart: row.session_start,
-    chamber: row.chamber_slug,
-    title: row.title,
-    billNumber: parseBillNumber(row.identifier),
-    outcome: row.outcome ? 1 : 0,
-    initialText: row.text_model_eligible === 'true' ? row.raw_text : null,
-    initialTextAvailableAtIntroduction: row.text_model_eligible === 'true',
-  }));
-
-  for (const row of observations) {
-    if (row.initialTextAvailableAtIntroduction && !row.initialText) {
-      throw new Error(`${row.billId}: authoritative introduction text is missing from the production training corpus.`);
-    }
-  }
-
-  return {
-    model: trainIntroductionTextModel(observations),
-    trainingBills: observations.length,
-    trainingPasses: observations.reduce((sum, row) => sum + row.outcome, 0),
-    trainingSessions: [...new Set(observations.map((row) => row.sessionSlug))].sort(),
-  };
-}
-
-function modelBefore(sessionStart: string): Promise<CachedModel> {
-  let cached = modelCache.get(sessionStart);
-  if (!cached) {
-    cached = loadModelBefore(sessionStart).catch((error) => {
-      modelCache.delete(sessionStart);
-      throw error;
-    });
-    modelCache.set(sessionStart, cached);
-  }
-  return cached;
-}
 
 export async function forecastSourceChamberPassageAtIntroduction(billId: string): Promise<IntroductionStageForecast> {
   const result = await pool.query<TargetRow>(`
     SELECT b.id::text AS bill_id,
            b.identifier,
            COALESCE(b.title, '') AS title,
-           b.introduced_at::text,
+           COALESCE(b.metadata #>> '{revisorIntroduction,introducedOn}', b.introduced_at::date::text) AS introduced_on,
            s.slug AS session_slug,
            s.starts_on::text AS session_start,
            c.id::text AS chamber_id,
-           c.slug AS chamber_slug,
+           c.slug AS originating_chamber,
            c.name AS chamber_name,
            bv.id::text AS initial_version_id,
-           CASE
-             WHEN b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' = 'true'
-               THEN left(bv.raw_text, 8000)
-             ELSE NULL
-           END AS raw_text,
-           b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' AS text_model_eligible
+           b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' AS model_eligible,
+           bv.raw_text,
+           bv.text_hash,
+           (b.metadata ? 'revisorUniverse') AS in_authoritative_universe
       FROM bills b
       JOIN legislative_sessions s ON s.id = b.session_id
-      LEFT JOIN chambers c ON c.id = b.originating_chamber_id
+      LEFT JOIN chambers c ON c.id = b.originating_chamber_id AND c.slug IN ('house', 'senate')
       LEFT JOIN bill_versions bv
         ON bv.bill_id = b.id
        AND bv.version_key = b.metadata #>> '{revisorIntroduction,initialDocument,documentName}'
@@ -174,26 +71,24 @@ export async function forecastSourceChamberPassageAtIntroduction(billId: string)
 
   const row = result.rows[0];
   if (!row) throw new Error('The selected bill is not in the authoritative Minnesota introduction universe.');
-  if (!row.introduced_at) throw new Error('The selected bill is missing its authoritative introduction date.');
-  if (!row.chamber_id || !row.chamber_slug || !row.chamber_name) throw new Error('The selected bill is missing its originating chamber.');
-  if (row.chamber_slug !== 'house' && row.chamber_slug !== 'senate') throw new Error('The originating chamber is unsupported.');
+  if (!row.introduced_on) throw new Error('The selected bill is missing its authoritative introduction date.');
+  if (!row.chamber_id || !row.originating_chamber || !row.chamber_name) throw new Error('The selected bill is missing its originating chamber.');
   if (!row.initial_version_id) throw new Error('The selected bill is missing its authoritative initial version.');
+  if (row.model_eligible === 'true' && (!row.raw_text || !row.text_hash)) {
+    throw new Error('The selected bill is missing introduction-available initial text or its authoritative hash.');
+  }
 
-  const textAvailable = row.text_model_eligible === 'true';
-  if (textAvailable && !row.raw_text) throw new Error('The selected bill is missing introduction-available initial text.');
+  const prior = scoreIntroductionPriorRow(row);
+  if (!prior) {
+    throw new Error(`No frozen introduction model is available for Minnesota session ${row.session_slug}.`);
+  }
 
-  const cached = await modelBefore(row.session_start);
-  const probability = predictIntroductionTextModel(cached.model, {
-    title: row.title,
-    initialText: textAvailable ? row.raw_text : null,
-    initialTextAvailableAtIntroduction: textAvailable,
-  });
-
+  const artifact = FROZEN_INTRODUCTION_PRIOR_ARTIFACT;
   return {
     targetKind: 'source_chamber_passage',
     modelVersion: INTRODUCTION_MODEL_VERSION,
-    probability,
-    asOfIntroduction: row.introduced_at,
+    probability: prior.probability,
+    asOfIntroduction: row.introduced_on,
     bill: {
       id: row.bill_id,
       identifier: row.identifier,
@@ -201,16 +96,18 @@ export async function forecastSourceChamberPassageAtIntroduction(billId: string)
     },
     sourceChamber: {
       id: row.chamber_id,
-      slug: row.chamber_slug,
+      slug: row.originating_chamber,
       name: row.chamber_name,
     },
     model: {
-      trainingBills: cached.trainingBills,
-      trainingPasses: cached.trainingPasses,
-      historicalBaseRate: cached.model.baseRate,
-      trainingSessions: cached.trainingSessions,
-      initialTextAvailableAtIntroduction: textAvailable,
+      trainingBills: artifact.trainingRows,
+      trainingPasses: artifact.trainingPositives,
+      historicalBaseRate: artifact.baseRate,
+      trainingSessions: artifact.trainingSessions,
+      initialTextAvailableAtIntroduction: prior.inputMode === 'title+purpose-text',
       purposeTextOnly: true,
+      frozen: true,
+      trainedThroughSession: artifact.trainedThroughSessionSlug,
     },
   };
 }
