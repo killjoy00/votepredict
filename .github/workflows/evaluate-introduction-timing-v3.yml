@@ -1,0 +1,59 @@
+name: Evaluate introduction timing v3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/evaluate-introduction-timing-v3.yml
+      - scripts/evaluate-introduction-timing-v3.ts
+      - src/evaluation/introduction-timing-model.ts
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evaluate:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+    steps:
+      - uses: actions/checkout@v7
+      - name: Require production credential access
+        shell: bash
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo 'VERCEL_TOKEN is unavailable. No evaluation was run.'
+            exit 1
+          fi
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Read production authentication privately
+        shell: bash
+        run: |
+          umask 077
+          if ! npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1; then
+            echo 'Could not read VotePredict production authentication. No evaluation was run.'
+            exit 1
+          fi
+      - name: Evaluate v3 against authoritative production universe
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/evaluate-introduction-timing-v3.ts
+      - name: Remove temporary credentials and Vercel logs
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PYTHON'
+          import os
+          from pathlib import Path
+          for name in ['votepredict-production.env', 'vercel-pull.log']:
+              Path(os.environ['RUNNER_TEMP'], name).unlink(missing_ok=True)
+          PYTHON
