@@ -176,20 +176,54 @@ function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
+const REVISOR_FETCH_ATTEMPTS = 5;
+const REVISOR_MAX_RETRY_DELAY_MS = 15_000;
+
+export function isRetryableRevisorStatus(status: number): boolean {
+  return status === 429 || (status >= 500 && status <= 599);
+}
+
+function retryDelayMilliseconds(response: Response, attempt: number): number {
+  const retryAfter = response.headers.get('retry-after');
+  if (retryAfter) {
+    const seconds = Number(retryAfter);
+    if (Number.isFinite(seconds) && seconds >= 0) {
+      return Math.min(REVISOR_MAX_RETRY_DELAY_MS, Math.round(seconds * 1_000));
+    }
+    const at = Date.parse(retryAfter);
+    if (Number.isFinite(at)) {
+      return Math.min(REVISOR_MAX_RETRY_DELAY_MS, Math.max(0, at - Date.now()));
+    }
+  }
+  return Math.min(REVISOR_MAX_RETRY_DELAY_MS, 750 * (2 ** attempt));
+}
+
 export async function fetchRevisorStatusXml(statusXmlUrl: string): Promise<string> {
   const apiUrl = normalizeRevisorStatusXmlUrl(statusXmlUrl);
-  for (let attempt = 0; attempt < 3; attempt += 1) {
-    const response = await fetch(apiUrl, {
-      headers: {
-        'User-Agent': 'VotePredict/2.0 official Minnesota action-history audit',
-        Accept: 'application/xml,text/xml;q=0.9,*/*;q=0.1',
-      },
-      signal: AbortSignal.timeout(20_000),
-      cache: 'no-store',
-      redirect: 'follow',
-    });
-    if (response.status === 429 && attempt < 2) {
-      await sleep(600 * (attempt + 1));
+  let lastTransportError: unknown;
+  for (let attempt = 0; attempt < REVISOR_FETCH_ATTEMPTS; attempt += 1) {
+    let response: Response;
+    try {
+      response = await fetch(apiUrl, {
+        headers: {
+          'User-Agent': 'VotePredict/2.0 official Minnesota action-history audit',
+          Accept: 'application/xml,text/xml;q=0.9,*/*;q=0.1',
+        },
+        signal: AbortSignal.timeout(20_000),
+        cache: 'no-store',
+        redirect: 'follow',
+      });
+    } catch (error) {
+      lastTransportError = error;
+      if (attempt < REVISOR_FETCH_ATTEMPTS - 1) {
+        await sleep(Math.min(REVISOR_MAX_RETRY_DELAY_MS, 750 * (2 ** attempt)));
+        continue;
+      }
+      throw error;
+    }
+
+    if (isRetryableRevisorStatus(response.status) && attempt < REVISOR_FETCH_ATTEMPTS - 1) {
+      await sleep(retryDelayMilliseconds(response, attempt));
       continue;
     }
     if (!response.ok) throw new Error(`Minnesota Revisor bill status returned ${response.status}: ${apiUrl}`);
@@ -203,5 +237,6 @@ export async function fetchRevisorStatusXml(statusXmlUrl: string): Promise<strin
     }
     return text;
   }
+  if (lastTransportError instanceof Error) throw lastTransportError;
   throw new Error(`Minnesota Revisor bill status retry budget exhausted: ${apiUrl}`);
 }
