@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { predictIntroductionTitleModel } from '../src/evaluation/introduction-model.js';
 import {
   evaluateIntroductionTextModelChronologically,
   incrementalIntroductionTextTokens,
@@ -36,7 +37,7 @@ test('unavailable initial text falls back exactly to title prediction', () => {
   ];
   const model = trainIntroductionTextModel(rows, { titleOptions: { minTokenSupport: 1 }, textMinSupport: 1 });
   const prediction = predictIntroductionTextModel(model, { title: 'housing grants', initialText: null, initialTextAvailableAtIntroduction: false });
-  const titleOnly = predictIntroductionTextModel(model, { title: 'housing grants', initialText: null, initialTextAvailableAtIntroduction: false });
+  const titleOnly = predictIntroductionTitleModel(model.titleModel, 'housing grants');
   assert.equal(prediction, titleOnly);
 });
 
