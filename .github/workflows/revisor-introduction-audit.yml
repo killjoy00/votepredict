@@ -1,14 +1,6 @@
 name: Revisor introduction metadata audit
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/revisor-introduction-audit.yml
-      - scripts/run-production-revisor-introduction-audit.ts
-      - src/app/api/operations/revisor-introduction-audit/route.ts
-      - src/sources/minnesota/revisor-introduction.ts
-      - src/sources/minnesota/revisor-actions.ts
   workflow_dispatch:
 
 permissions:
