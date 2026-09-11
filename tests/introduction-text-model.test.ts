@@ -10,12 +10,19 @@ import {
   type IntroductionTextObservation,
 } from '../src/evaluation/introduction-text-model.js';
 
-test('preamble stops before enacted body and caps text length', () => {
+test('bill preamble stops before enacted body and caps text length', () => {
   const raw = 'A bill for an act relating to housing; establishing grants.\n\nBE IT ENACTED BY THE LEGISLATURE OF THE STATE OF MINNESOTA:\nSection 1. secret body token';
   const preamble = introductionPreamble(raw);
   assert.match(preamble, /housing/);
   assert.doesNotMatch(preamble, /secret body token/);
   assert.equal(introductionPreamble('abcdefghij', 5), 'abcde');
+});
+
+test('resolution preamble stops before the first whereas clause', () => {
+  const raw = 'A joint resolution relating to Religious Freedom Day.\n\nWHEREAS, historical background should not enter the purpose-only feature; and\n\nBE IT RESOLVED by the Legislature.';
+  const preamble = introductionPreamble(raw);
+  assert.equal(preamble, 'A joint resolution relating to Religious Freedom Day.');
+  assert.doesNotMatch(preamble, /historical background/i);
 });
 
 test('incremental text tokens exclude title tokens', () => {
