@@ -1,4 +1,4 @@
-name: Evaluate introduction timing v3
+name: Evaluate introduction models
 
 on:
   push:
@@ -7,6 +7,8 @@ on:
       - .github/workflows/evaluate-introduction-timing-v3.yml
       - scripts/evaluate-introduction-timing-v3.ts
       - src/evaluation/introduction-timing-model.ts
+      - scripts/evaluate-introduction-text-v4.ts
+      - src/evaluation/introduction-text-model.ts
   workflow_dispatch:
 
 permissions:
@@ -47,6 +49,10 @@ jobs:
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: node --import tsx scripts/evaluate-introduction-timing-v3.ts
+      - name: Evaluate frozen v4 against authoritative production universe
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/evaluate-introduction-text-v4.ts
       - name: Remove temporary credentials and Vercel logs
         if: always()
         shell: bash
