@@ -12,6 +12,7 @@ const DATABASE_CANDIDATES = [
 ] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const SCOPE_ENV = 'VOTEPREDICT_INTRODUCTION_BACKFILL_SCOPES';
+const START_AFTER_ENV = 'VOTEPREDICT_INTRODUCTION_BACKFILL_START_AFTER';
 const ADVISORY_LOCK_NAMESPACE = 'votepredict-revisor-introduction-backfill';
 
 type DatabaseCandidate = typeof DATABASE_CANDIDATES[number];
@@ -111,6 +112,43 @@ function selectScopes<T extends { session: string; chamber: string }>(allScopes:
   });
 }
 
+function startAfterBillNumber(selectedScopes: readonly { session: string; chamber: string }[]): number {
+  const raw = process.env[START_AFTER_ENV]?.trim();
+  if (!raw) return 0;
+  if (selectedScopes.length !== 1) throw new Error(`${START_AFTER_ENV} requires exactly one selected scope`);
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value < 0) throw new Error(`${START_AFTER_ENV} must be a non-negative integer`);
+  return value;
+}
+
+async function verifyTailComplete(
+  pool: { query<T = unknown>(text: string, values?: unknown[]): Promise<{ rows: T[] }> },
+  input: { session: string; chamber: string; startAfter: number; parserVersion: string },
+): Promise<number> {
+  const result = await pool.query<{ incomplete: string }>(`
+    SELECT count(*)::text AS incomplete
+      FROM bills b
+      JOIN legislative_sessions s ON s.id = b.session_id
+      JOIN jurisdictions j ON j.id = s.jurisdiction_id AND j.slug = 'us-mn'
+      JOIN chambers c ON c.id = b.originating_chamber_id AND c.slug = $2
+     WHERE s.slug = $1
+       AND b.metadata ? 'revisorUniverse'
+       AND substring(b.identifier from '[0-9]+$')::integer > $3
+       AND (
+         b.metadata #>> '{revisorIntroduction,parserVersion}' IS DISTINCT FROM $4
+         OR b.introduced_at IS NULL
+         OR b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' IS DISTINCT FROM 'true'
+         OR b.metadata #>> '{revisorIntroduction,initialDocument,documentName}' IS NULL
+         OR NOT EXISTS (
+           SELECT 1
+             FROM bill_versions bv
+            WHERE bv.bill_id = b.id
+              AND bv.version_key = b.metadata #>> '{revisorIntroduction,initialDocument,documentName}'
+         )
+       )`, [input.session, input.chamber, input.startAfter, input.parserVersion]);
+  return Number(result.rows[0]?.incomplete ?? 0);
+}
+
 async function main(): Promise<void> {
   const envPath = process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
   if (!envPath) throw new Error('Production environment file is required');
@@ -131,25 +169,28 @@ async function main(): Promise<void> {
   delete process.env.DATABASE_URL_UNPOOLED;
   delete process.env.POSTGRES_URL_NON_POOLING;
 
-  // The direct runner already retries a failed batch three times. Keep each individual
-  // Revisor year candidate to one transport attempt here so a systematic 5xx from the
-  // wrong biennium year cannot consume minutes before the correct alternate year is tried.
-  // Server/runtime callers retain the default five-attempt source retry budget.
   process.env.VOTEPREDICT_REVISOR_FETCH_ATTEMPTS = '1';
   console.log(JSON.stringify({ directBackfillRevisorFetchAttemptBudget: 1 }));
 
   const {
     backfillRevisorIntroductionBatch,
     INTRODUCTION_BACKFILL_MAX_BATCH,
+    INTRODUCTION_BACKFILL_PARSER_VERSION,
     INTRODUCTION_BACKFILL_SCOPES,
     verifyRevisorIntroductionBackfill,
   } = await import('../src/operations/revisor-introduction-backfill.js');
   const { pool } = await import('../src/lib/db/index.js');
   const selectedScopes = selectScopes(INTRODUCTION_BACKFILL_SCOPES);
   const selectedKeys = new Set(selectedScopes.map(scopeKey));
-  const fullRun = selectedScopes.length === INTRODUCTION_BACKFILL_SCOPES.length
+  const initialAfterBillNumber = startAfterBillNumber(selectedScopes);
+  const fullRun = initialAfterBillNumber === 0
+    && selectedScopes.length === INTRODUCTION_BACKFILL_SCOPES.length
     && INTRODUCTION_BACKFILL_SCOPES.every((scope) => selectedKeys.has(scopeKey(scope)));
-  console.log(JSON.stringify({ directBackfillScopes: selectedScopes.map(scopeKey), fullRun }));
+  console.log(JSON.stringify({
+    directBackfillScopes: selectedScopes.map(scopeKey),
+    startAfterBillNumber: initialAfterBillNumber,
+    fullRun,
+  }));
 
   try {
     const progress: Array<Record<string, unknown>> = [];
@@ -180,7 +221,7 @@ async function main(): Promise<void> {
           continue;
         }
 
-        let afterBillNumber = 0;
+        let afterBillNumber = initialAfterBillNumber;
         let processed = 0;
         let batches = 0;
         let existingDatesPreserved = 0;
@@ -265,11 +306,24 @@ async function main(): Promise<void> {
           if (result.done) break;
         }
 
-        const after = await verifyRevisorIntroductionBackfill();
-        const afterScope = after.scopes.find((row) => scopeKey(row) === key);
-        if (!afterScope?.complete) {
-          throw new Error(`Selected production Revisor introduction scope did not reach exact authoritative coverage: ${key}`);
+        if (initialAfterBillNumber > 0) {
+          const incompleteTail = await verifyTailComplete(pool, {
+            session: scope.session,
+            chamber: scope.chamber,
+            startAfter: initialAfterBillNumber,
+            parserVersion: INTRODUCTION_BACKFILL_PARSER_VERSION,
+          });
+          if (incompleteTail !== 0) {
+            throw new Error(`High-cursor production Revisor introduction tail is incomplete for ${key}: ${incompleteTail} rows remain after ${initialAfterBillNumber}`);
+          }
+        } else {
+          const after = await verifyRevisorIntroductionBackfill();
+          const afterScope = after.scopes.find((row) => scopeKey(row) === key);
+          if (!afterScope?.complete) {
+            throw new Error(`Selected production Revisor introduction scope did not reach exact authoritative coverage: ${key}`);
+          }
         }
+
         progress.push({
           session: scope.session,
           chamber: scope.chamber,
@@ -278,6 +332,7 @@ async function main(): Promise<void> {
           batches,
           existingDatesPreserved,
           alreadyComplete: false,
+          startAfterBillNumber: initialAfterBillNumber,
         });
       } finally {
         await lockClient.query(
@@ -295,12 +350,14 @@ async function main(): Promise<void> {
       productionRevisorIntroductionBackfill: {
         databaseCandidate: database.name,
         selectedScopes: selectedScopes.map(scopeKey),
+        startAfterBillNumber: initialAfterBillNumber,
         progress,
         selectedVerification,
         verification,
       },
     }));
-    if (selectedVerification.length !== selectedScopes.length || selectedVerification.some((scope) => !scope.complete)) {
+    if (initialAfterBillNumber === 0
+      && (selectedVerification.length !== selectedScopes.length || selectedVerification.some((scope) => !scope.complete))) {
       throw new Error('Selected production Revisor introduction backfill scopes did not reach exact authoritative coverage');
     }
     if (fullRun && (
