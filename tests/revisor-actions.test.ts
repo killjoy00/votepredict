@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   auditRevisorSourceChamberPassage,
+  fetchRevisorStatusXml,
+  isRetryableRevisorStatus,
   normalizeRevisorStatusXmlUrl,
   parseRevisorOfficialActions,
 } from '../src/sources/minnesota/revisor-actions.js';
@@ -124,4 +126,55 @@ test('namespaced ACTION elements are parsed namespace-insensitively', () => {
   const result = auditRevisorSourceChamberPassage({ xml: namespaced, identifier: 'HF1064' });
   assert.equal(result.actions.length, 1);
   assert.equal(result.sourceChamberPassed, true);
+});
+
+test('Revisor transport retries rate limits and server errors, but not missing alternate-year records', () => {
+  assert.equal(isRetryableRevisorStatus(429), true);
+  assert.equal(isRetryableRevisorStatus(500), true);
+  assert.equal(isRetryableRevisorStatus(502), true);
+  assert.equal(isRetryableRevisorStatus(599), true);
+  assert.equal(isRetryableRevisorStatus(404), false);
+  assert.equal(isRetryableRevisorStatus(400), false);
+});
+
+test('Revisor status fetch recovers from a transient server error', async () => {
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = (async () => {
+    calls += 1;
+    if (calls === 1) {
+      return new Response('temporary failure', { status: 500, headers: { 'retry-after': '0' } });
+    }
+    return new Response('<BILL><FILE_TYPE>HF</FILE_TYPE><FILE_NUMBER>201</FILE_NUMBER></BILL>', {
+      status: 200,
+      headers: { 'content-type': 'application/xml' },
+    });
+  }) as typeof fetch;
+
+  try {
+    const result = await fetchRevisorStatusXml('https://api.revisor.mn.gov/bills/v1/92/2021/0/HF/201/');
+    assert.match(result, /<BILL>/);
+    assert.equal(calls, 2);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('Revisor status fetch does not retry a 404 needed for biennium-year fallthrough', async () => {
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = (async () => {
+    calls += 1;
+    return new Response('missing', { status: 404 });
+  }) as typeof fetch;
+
+  try {
+    await assert.rejects(
+      fetchRevisorStatusXml('https://api.revisor.mn.gov/bills/v1/92/2021/0/HF/201/'),
+      /returned 404/,
+    );
+    assert.equal(calls, 1);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });
