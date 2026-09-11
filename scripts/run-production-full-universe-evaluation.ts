@@ -1,38 +1,43 @@
 import { readFileSync } from 'node:fs';
-import { spawnSync } from 'node:child_process';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 
-function main(): void {
+let secretValues: string[] = [];
+
+function safeMessage(error: unknown): string {
+  let message = error instanceof Error ? error.message : String(error);
+  for (const value of secretValues.filter((value) => value.length > 3).sort((left, right) => right.length - left.length)) {
+    message = message.split(value).join('[redacted]');
+  }
+  return message.replace(/postgres(?:ql)?:\/\/\S+/gi, '[redacted database URL]');
+}
+
+async function main(): Promise<void> {
   const path = process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
   if (!path) throw new Error('Production environment file is required');
+  const env = parseRuntimeEnvironment(readFileSync(path, 'utf8'));
+  const cronSecret = env.CRON_SECRET;
+  if (!cronSecret) throw new Error('Production CRON_SECRET is unavailable');
 
-  const parsed = parseRuntimeEnvironment(readFileSync(path, 'utf8'));
-  const databaseUrl = parsed.DATABASE_URL_UNPOOLED || parsed.DATABASE_URL;
-  if (!databaseUrl) throw new Error('Production database URL is unavailable');
-
-  for (const value of [parsed.DATABASE_URL_UNPOOLED, parsed.DATABASE_URL].filter((value): value is string => Boolean(value))) {
+  secretValues = Object.entries(env)
+    .filter(([key]) => /SECRET|PASSWORD|TOKEN|KEY|DATABASE_URL|POSTGRES_URL/i.test(key))
+    .map(([, value]) => value)
+    .filter((value): value is string => typeof value === 'string');
+  secretValues.push(cronSecret);
+  for (const value of secretValues.filter((value) => value.length > 3)) {
     console.log(`::add-mask::${value.replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A')}`);
   }
 
-  const env = {
-    ...process.env,
-    DATABASE_URL_UNPOOLED: parsed.DATABASE_URL_UNPOOLED || databaseUrl,
-    DATABASE_URL: parsed.DATABASE_URL || databaseUrl,
-  };
-
-  for (const command of [
-    ['npm', ['run', 'db:migrate']],
-    ['npm', ['run', 'eval:full-universe-stage']],
-  ] as const) {
-    const result = spawnSync(command[0], command[1], { env, stdio: 'inherit' });
-    if (result.error) throw result.error;
-    if (result.status !== 0) throw new Error(`${command[0]} ${command[1].join(' ')} exited with ${result.status}`);
-  }
+  const response = await fetch('https://votepredict.vercel.app/api/operations/full-universe-evaluation', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${cronSecret}` },
+    signal: AbortSignal.timeout(310_000),
+  });
+  if (!response.ok) throw new Error(`Production full-universe evaluation returned HTTP ${response.status}`);
+  const result = await response.json() as Record<string, unknown>;
+  console.log(JSON.stringify({ productionFullUniverseEvaluation: result }));
 }
 
-try {
-  main();
-} catch (error) {
-  console.error(error instanceof Error ? error.message.replace(/postgres(?:ql)?:\/\/\S+/gi, '[redacted database URL]') : String(error));
+main().catch((error) => {
+  console.error(safeMessage(error));
   process.exitCode = 1;
-}
+});
