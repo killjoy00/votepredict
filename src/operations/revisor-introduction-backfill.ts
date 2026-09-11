@@ -148,8 +148,20 @@ async function selectBatch(input: {
      WHERE s.slug = $1
        AND b.metadata ? 'revisorUniverse'
        AND substring(b.identifier from '[0-9]+$')::integer > $3
+       AND (
+         b.metadata #>> '{revisorIntroduction,parserVersion}' IS DISTINCT FROM $5
+         OR b.introduced_at IS NULL
+         OR b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' IS DISTINCT FROM 'true'
+         OR b.metadata #>> '{revisorIntroduction,initialDocument,documentName}' IS NULL
+         OR NOT EXISTS (
+           SELECT 1
+             FROM bill_versions bv
+            WHERE bv.bill_id = b.id
+              AND bv.version_key = b.metadata #>> '{revisorIntroduction,initialDocument,documentName}'
+         )
+       )
      ORDER BY substring(b.identifier from '[0-9]+$')::integer, b.identifier
-     LIMIT $4`, [input.session, input.chamber, input.afterBillNumber, input.limit]);
+     LIMIT $4`, [input.session, input.chamber, input.afterBillNumber, input.limit, INTRODUCTION_BACKFILL_PARSER_VERSION]);
   return result.rows;
 }
 
