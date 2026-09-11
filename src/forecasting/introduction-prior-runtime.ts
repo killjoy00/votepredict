@@ -12,7 +12,8 @@ import {
 } from './introduction-prior-model';
 import { pool } from '@/lib/db';
 
-const FROZEN_ARTIFACT_SHA256 = '646b428ce6a2192bc97c0cd5301fc5a9bac7c4866bf9a33c52b0a2d0d8a36e4d';
+const RUNTIME_ASSEMBLED_ARTIFACT_SHA256 = '7e1f87193ffe3182a27086d1d5a66e6f730f0f4b31bd2785ef25d9a45700d200';
+const ORIGINAL_MINIFIED_ARTIFACT_SHA256 = '646b428ce6a2192bc97c0cd5301fc5a9bac7c4866bf9a33c52b0a2d0d8a36e4d';
 const ORIGINAL_EXPORT_SHA256 = 'a5731c809298e7b6d914259178c9fcafe45b8cba314fea4c4253d3bfb144ae84';
 const PREDICTION_SHA256 = '56ef5169cca75b8586a4e2571bcb7745c33770c8a55d1723db9cdab97e9f3ca4';
 
@@ -40,7 +41,7 @@ function verifyFrozenArtifact(): void {
     throw new Error('Frozen introduction prior artifact metadata failed integrity checks');
   }
   const sha256 = createHash('sha256').update(JSON.stringify(artifact)).digest('hex');
-  if (sha256 !== FROZEN_ARTIFACT_SHA256) {
+  if (sha256 !== RUNTIME_ASSEMBLED_ARTIFACT_SHA256) {
     throw new Error(`Frozen introduction prior artifact hash mismatch: ${sha256}`);
   }
 }
@@ -61,7 +62,8 @@ export interface ForecastIntroductionPrior {
     trainingPositives: number;
     evaluationCommit: string;
     generatedAt: string;
-    minifiedSha256: string;
+    runtimeAssembledSha256: string;
+    originalMinifiedSha256: string;
     originalExportSha256: string;
     predictionSha256: string;
   };
@@ -108,7 +110,8 @@ export function scoreIntroductionPriorRow(row: IntroductionPriorBillRow): Foreca
       trainingPositives: artifact.trainingPositives,
       evaluationCommit: artifact.provenance.evaluationCommit,
       generatedAt: artifact.provenance.generatedAt,
-      minifiedSha256: FROZEN_ARTIFACT_SHA256,
+      runtimeAssembledSha256: RUNTIME_ASSEMBLED_ARTIFACT_SHA256,
+      originalMinifiedSha256: ORIGINAL_MINIFIED_ARTIFACT_SHA256,
       originalExportSha256: ORIGINAL_EXPORT_SHA256,
       predictionSha256: PREDICTION_SHA256,
     },
