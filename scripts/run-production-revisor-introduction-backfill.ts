@@ -74,6 +74,7 @@ type BatchResult = {
   done: boolean;
   introductionDates: number;
   initialDocuments: number;
+  eligibleInitialDocuments: number;
   existingDatesPreserved: number;
   sourceDocumentsRecorded: number;
   initialVersionsRecorded: number;
@@ -85,7 +86,9 @@ type Verification = {
   universeTotal: number;
   parserMetadataTotal: number;
   introductionDateTotal: number;
+  initialDocumentTotal: number;
   eligibleInitialDocumentTotal: number;
+  ineligibleInitialDocumentTotal: number;
   initialVersionTotal: number;
   scopes: Array<Record<string, unknown>>;
 };
@@ -188,7 +191,7 @@ async function main(): Promise<void> {
     || verification.universeTotal !== 31_010
     || verification.parserMetadataTotal !== 31_010
     || verification.introductionDateTotal !== 31_010
-    || verification.eligibleInitialDocumentTotal !== 31_010
+    || verification.initialDocumentTotal !== 31_010
     || verification.initialVersionTotal !== 31_010) {
     throw new Error('Production Revisor introduction backfill did not reach exact authoritative coverage');
   }

@@ -69,6 +69,56 @@ test('introduction backfill falls through a valid but pre-introduction alternate
   }
 });
 
+test('introduction backfill records a zero-engrossment document posted after introduction without treating it as eligible', async () => {
+  const originalFetch = globalThis.fetch;
+  const sfRow = {
+    ...row,
+    bill_id: '00000000-0000-0000-0000-000000003587',
+    identifier: 'SF3587',
+    bill_number: 3587,
+  };
+  const xml = `
+  <BILL>
+    <FILE_TYPE>SF</FILE_TYPE>
+    <FILE_NUMBER>3587</FILE_NUMBER>
+    <ACTIONS>
+      <SENATE>
+        <ACTION>
+          <ACTION_DATE>02/17/2026</ACTION_DATE>
+          <ACTION_DESCRIPTION>Introduction and first reading</ACTION_DESCRIPTION>
+        </ACTION>
+      </SENATE>
+    </ACTIONS>
+    <TEXT_VERSION_LIST>
+      <DOCUMENT>
+        <DOCUMENT_NAME>2026.0-SF3587-0</DOCUMENT_NAME>
+        <DOCUMENT_ENGROSSMENT>0</DOCUMENT_ENGROSSMENT>
+        <DATE_INSERT>2026-02-24 12:00:00</DATE_INSERT>
+        <HTML_URI>https://www.revisor.mn.gov/bills/94/2026/0/SF/3587/versions/0/</HTML_URI>
+      </DOCUMENT>
+    </TEXT_VERSION_LIST>
+  </BILL>`;
+  globalThis.fetch = (async (input) => {
+    const url = String(input);
+    if (url.includes('/94/2025/0/SF/3587/')) return new Response('missing', { status: 404 });
+    if (url.includes('/94/2026/0/SF/3587/')) {
+      return new Response(xml, { status: 200, headers: { 'content-type': 'application/xml' } });
+    }
+    throw new Error(`Unexpected URL: ${url}`);
+  }) as typeof fetch;
+
+  try {
+    const result = await fetchRevisorIntroductionForBackfill(sfRow, '2025-2026');
+    assert.equal(result.sourceFormat, 'xml');
+    assert.equal(result.sourceYear, 2026);
+    assert.equal(result.metadata.introducedOn, '2026-02-17');
+    assert.equal(result.metadata.initialDocument?.insertedOn, '2026-02-24');
+    assert.equal(result.metadata.initialDocumentKnownByIntroduction, false);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test('introduction backfill still hard-fails an official XML bill identity mismatch', async () => {
   const originalFetch = globalThis.fetch;
   let calls = 0;

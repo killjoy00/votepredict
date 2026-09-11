@@ -61,6 +61,7 @@ export interface IntroductionBackfillBatchResult {
   done: boolean;
   introductionDates: number;
   initialDocuments: number;
+  eligibleInitialDocuments: number;
   existingDatesPreserved: number;
   sourceDocumentsRecorded: number;
   initialVersionsRecorded: number;
@@ -73,7 +74,9 @@ export interface IntroductionBackfillVerificationScope {
   universeBills: number;
   parserMetadata: number;
   introductionDates: number;
+  initialDocuments: number;
   eligibleInitialDocuments: number;
+  ineligibleInitialDocuments: number;
   initialVersions: number;
   complete: boolean;
 }
@@ -101,9 +104,6 @@ function requireCompleteIntroduction(metadata: RevisorIntroductionMetadata, iden
   }
   if (!metadata.initialDocument || !metadata.initialDocument.documentName || !metadata.initialDocument.insertedOn || !metadata.initialDocument.htmlUrl) {
     throw new Error(`${identifier}: zero-engrossment initial official document metadata incomplete`);
-  }
-  if (!metadata.initialDocumentKnownByIntroduction) {
-    throw new Error(`${identifier}: initial official document was not demonstrably available by introduction`);
   }
 }
 
@@ -152,9 +152,9 @@ export async function fetchRevisorIntroductionForBackfill(row: BillRow, session:
   }
 
   // The Revisor Bill Status API has rare historical records that persistently return 5xx
-  // even though the corresponding official status HTML remains available. Use that official
-  // page only after both biennium-year API candidates fail, and require the HTML itself to
-  // prove bill identity, introduction date, and zero-engrossment introduction-document date.
+  // or do not expose complete introduction metadata even though the corresponding official
+  // status HTML remains available. Require the HTML itself to prove bill identity,
+  // introduction date, and the zero-engrossment document's actual posting date.
   for (const statusHtmlUrl of buildRevisorRegularSessionStatusHtmlUrls(session, row.identifier)) {
     let html: string;
     try {
@@ -187,7 +187,7 @@ export async function fetchRevisorIntroductionForBackfill(row: BillRow, session:
       sourceName: 'Minnesota Revisor official Bill Status HTML fallback',
       fetchedAt: new Date().toISOString(),
       sourceYear: resolvedStatusYear,
-      fallbackReason: 'Bill Status API v1 unavailable for both biennium-year candidates',
+      fallbackReason: 'Bill Status API v1 candidates unavailable or incomplete for introduction metadata',
       metadata,
     };
   }
@@ -229,8 +229,14 @@ async function selectBatch(input: {
        AND (
          b.metadata #>> '{revisorIntroduction,parserVersion}' IS DISTINCT FROM $5
          OR b.introduced_at IS NULL
-         OR b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' IS DISTINCT FROM 'true'
+         OR b.metadata #>> '{revisorIntroduction,introducedOn}' IS NULL
          OR b.metadata #>> '{revisorIntroduction,initialDocument,documentName}' IS NULL
+         OR b.metadata #>> '{revisorIntroduction,initialDocument,insertedOn}' IS NULL
+         OR b.metadata #>> '{revisorIntroduction,initialDocument,htmlUrl}' IS NULL
+         OR (
+           b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' IS DISTINCT FROM 'true'
+           AND b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' IS DISTINCT FROM 'false'
+         )
          OR NOT EXISTS (
            SELECT 1
              FROM bill_versions bv
@@ -266,6 +272,7 @@ async function persistFetched(rows: readonly FetchedIntroduction[]): Promise<{
   }));
   const billPayload = rows.map((row) => {
     const initial = row.metadata.initialDocument!;
+    const documentModelEligible = row.metadata.initialDocumentKnownByIntroduction;
     const sourceMetadata = row.sourceFormat === 'xml'
       ? {
           statusXmlUrl: row.sourceUrl,
@@ -293,7 +300,8 @@ async function persistFetched(rows: readonly FetchedIntroduction[]): Promise<{
         ...(row.sourceFormat === 'html' ? { insertedAtPrecision: 'date' } : {}),
         htmlUrl: initial.htmlUrl,
         engrossment: initial.engrossment,
-        modelEligible: true,
+        availableAtIntroduction: documentModelEligible,
+        modelEligible: documentModelEligible,
       },
       currentCompanion: row.metadata.currentCompanionIdentifier
         ? { identifier: row.metadata.currentCompanionIdentifier, observedAt: row.fetchedAt, modelEligible: false }
@@ -440,6 +448,7 @@ export async function backfillRevisorIntroductionBatch(input: {
       done: true,
       introductionDates: 0,
       initialDocuments: 0,
+      eligibleInitialDocuments: 0,
       existingDatesPreserved: 0,
       sourceDocumentsRecorded: 0,
       initialVersionsRecorded: 0,
@@ -457,7 +466,8 @@ export async function backfillRevisorIntroductionBatch(input: {
     nextAfterBillNumber,
     done: selected.length < limit,
     introductionDates: fetched.filter((row) => row.metadata.introducedOn).length,
-    initialDocuments: fetched.filter((row) => row.metadata.initialDocumentKnownByIntroduction).length,
+    initialDocuments: fetched.filter((row) => row.metadata.initialDocument !== null).length,
+    eligibleInitialDocuments: fetched.filter((row) => row.metadata.initialDocumentKnownByIntroduction).length,
     existingDatesPreserved: fetched.filter((row) => existingDate(row.existing_introduced_at) !== null).length,
     ...persisted,
   };
@@ -469,7 +479,9 @@ export async function verifyRevisorIntroductionBackfill(): Promise<{
   universeTotal: number;
   parserMetadataTotal: number;
   introductionDateTotal: number;
+  initialDocumentTotal: number;
   eligibleInitialDocumentTotal: number;
+  ineligibleInitialDocumentTotal: number;
   initialVersionTotal: number;
   scopes: IntroductionBackfillVerificationScope[];
 }> {
@@ -479,7 +491,9 @@ export async function verifyRevisorIntroductionBackfill(): Promise<{
     universe_bills: string;
     parser_metadata: string;
     introduction_dates: string;
+    initial_documents: string;
     eligible_initial_documents: string;
+    ineligible_initial_documents: string;
     initial_versions: string;
   }>(`
     SELECT s.slug AS session_slug,
@@ -491,17 +505,31 @@ export async function verifyRevisorIntroductionBackfill(): Promise<{
            count(*) FILTER (
              WHERE b.introduced_at IS NOT NULL
                AND b.metadata #>> '{revisorIntroduction,parserVersion}' = $1
+               AND b.metadata #>> '{revisorIntroduction,introducedOn}' IS NOT NULL
            )::text AS introduction_dates,
            count(*) FILTER (
-             WHERE b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' = 'true'
+             WHERE b.metadata #>> '{revisorIntroduction,parserVersion}' = $1
+               AND b.metadata #>> '{revisorIntroduction,initialDocument,documentName}' IS NOT NULL
+               AND b.metadata #>> '{revisorIntroduction,initialDocument,insertedOn}' IS NOT NULL
+               AND b.metadata #>> '{revisorIntroduction,initialDocument,htmlUrl}' IS NOT NULL
+               AND b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' IN ('true', 'false')
+           )::text AS initial_documents,
+           count(*) FILTER (
+             WHERE b.metadata #>> '{revisorIntroduction,parserVersion}' = $1
+               AND b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' = 'true'
            )::text AS eligible_initial_documents,
            count(*) FILTER (
-             WHERE EXISTS (
-               SELECT 1
-                 FROM bill_versions bv
-                WHERE bv.bill_id = b.id
-                  AND bv.version_key = b.metadata #>> '{revisorIntroduction,initialDocument,documentName}'
-             )
+             WHERE b.metadata #>> '{revisorIntroduction,parserVersion}' = $1
+               AND b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}' = 'false'
+           )::text AS ineligible_initial_documents,
+           count(*) FILTER (
+             WHERE b.metadata #>> '{revisorIntroduction,parserVersion}' = $1
+               AND EXISTS (
+                 SELECT 1
+                   FROM bill_versions bv
+                  WHERE bv.bill_id = b.id
+                    AND bv.version_key = b.metadata #>> '{revisorIntroduction,initialDocument,documentName}'
+               )
            )::text AS initial_versions
       FROM bills b
       JOIN legislative_sessions s ON s.id = b.session_id
@@ -516,7 +544,9 @@ export async function verifyRevisorIntroductionBackfill(): Promise<{
     const universeBills = Number(row?.universe_bills ?? 0);
     const parserMetadata = Number(row?.parser_metadata ?? 0);
     const introductionDates = Number(row?.introduction_dates ?? 0);
+    const initialDocuments = Number(row?.initial_documents ?? 0);
     const eligibleInitialDocuments = Number(row?.eligible_initial_documents ?? 0);
+    const ineligibleInitialDocuments = Number(row?.ineligible_initial_documents ?? 0);
     const initialVersions = Number(row?.initial_versions ?? 0);
     return {
       session: expected.session,
@@ -525,18 +555,20 @@ export async function verifyRevisorIntroductionBackfill(): Promise<{
       universeBills,
       parserMetadata,
       introductionDates,
+      initialDocuments,
       eligibleInitialDocuments,
+      ineligibleInitialDocuments,
       initialVersions,
       complete: universeBills === expected.expectedBills
         && parserMetadata === expected.expectedBills
         && introductionDates === expected.expectedBills
-        && eligibleInitialDocuments === expected.expectedBills
+        && initialDocuments === expected.expectedBills
         && initialVersions === expected.expectedBills,
     };
   });
 
   const expectedTotal = INTRODUCTION_BACKFILL_SCOPES.reduce((sum, row) => sum + row.expectedBills, 0);
-  const sum = (key: 'universeBills' | 'parserMetadata' | 'introductionDates' | 'eligibleInitialDocuments' | 'initialVersions') =>
+  const sum = (key: 'universeBills' | 'parserMetadata' | 'introductionDates' | 'initialDocuments' | 'eligibleInitialDocuments' | 'ineligibleInitialDocuments' | 'initialVersions') =>
     scopes.reduce((total, row) => total + row[key], 0);
   return {
     complete: scopes.every((row) => row.complete) && expectedTotal === 31_010,
@@ -544,7 +576,9 @@ export async function verifyRevisorIntroductionBackfill(): Promise<{
     universeTotal: sum('universeBills'),
     parserMetadataTotal: sum('parserMetadata'),
     introductionDateTotal: sum('introductionDates'),
+    initialDocumentTotal: sum('initialDocuments'),
     eligibleInitialDocumentTotal: sum('eligibleInitialDocuments'),
+    ineligibleInitialDocumentTotal: sum('ineligibleInitialDocuments'),
     initialVersionTotal: sum('initialVersions'),
     scopes,
   };
