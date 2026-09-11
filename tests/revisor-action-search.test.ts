@@ -10,7 +10,7 @@ import type { RevisorBillSearchResult } from '../src/sources/minnesota/revisor-b
 
 test('uses the verified source-chamber passage action categories', () => {
   assert.deepEqual(REVISOR_SOURCE_PASSAGE_ACTIONS.House, ['1283', '1284']);
-  assert.deepEqual(REVISOR_SOURCE_PASSAGE_ACTIONS.Senate, ['2268', '2269']);
+  assert.deepEqual(REVISOR_SOURCE_PASSAGE_ACTIONS.Senate, ['2137', '2268', '2269']);
   assert.deepEqual(REVISOR_SOURCE_REPASS_ACTIONS.House, ['1287', '1288']);
   assert.deepEqual(REVISOR_SOURCE_REPASS_ACTIONS.Senate, ['2231', '2241', '2296']);
 });

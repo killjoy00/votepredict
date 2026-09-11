@@ -9,17 +9,18 @@ import type { RevisorBillSearchBody } from '../src/sources/minnesota/revisor-bil
 type Scope = {
   sessionKey: '2021-2022' | '2023-2024' | '2025-2026';
   body: RevisorBillSearchBody;
+  expectedPassageCount: number;
   knownPasses: string[];
   knownNonPasses: string[];
 };
 
 const scopes: Scope[] = [
-  { sessionKey: '2021-2022', body: 'House', knownPasses: ['HF1064', 'HF109'], knownNonPasses: ['HF1051', 'HF2267'] },
-  { sessionKey: '2021-2022', body: 'Senate', knownPasses: ['SF1', 'SF1018'], knownNonPasses: [] },
-  { sessionKey: '2023-2024', body: 'House', knownPasses: ['HF1', 'HF100'], knownNonPasses: [] },
-  { sessionKey: '2023-2024', body: 'Senate', knownPasses: ['SF10', 'SF13'], knownNonPasses: [] },
-  { sessionKey: '2025-2026', body: 'House', knownPasses: ['HF1014', 'HF4591'], knownNonPasses: ['HF3422', 'HF4271'] },
-  { sessionKey: '2025-2026', body: 'Senate', knownPasses: ['SF1075'], knownNonPasses: [] },
+  { sessionKey: '2021-2022', body: 'House', expectedPassageCount: 89, knownPasses: ['HF1064', 'HF109'], knownNonPasses: ['HF1051', 'HF2267'] },
+  { sessionKey: '2021-2022', body: 'Senate', expectedPassageCount: 108, knownPasses: ['SF1', 'SF1018', 'SF2774', 'SF3534', 'SF702'], knownNonPasses: [] },
+  { sessionKey: '2023-2024', body: 'House', expectedPassageCount: 160, knownPasses: ['HF1', 'HF100'], knownNonPasses: [] },
+  { sessionKey: '2023-2024', body: 'Senate', expectedPassageCount: 45, knownPasses: ['SF10', 'SF13'], knownNonPasses: [] },
+  { sessionKey: '2025-2026', body: 'House', expectedPassageCount: 174, knownPasses: ['HF1014', 'HF4591'], knownNonPasses: ['HF3422', 'HF4271'] },
+  { sessionKey: '2025-2026', body: 'Senate', expectedPassageCount: 78, knownPasses: ['SF1075'], knownNonPasses: [] },
 ];
 
 function sleep(milliseconds: number): Promise<void> {
@@ -40,6 +41,9 @@ async function main(): Promise<void> {
     const repassIds = repass.bills.map((bill) => bill.identifier);
     const repassMissingInitialPass = repassIds.filter((identifier) => !passageIds.has(identifier));
 
+    if (passage.bills.length !== scope.expectedPassageCount) {
+      failures.push(`${scope.sessionKey}/${scope.body}: source-passage count ${passage.bills.length} != audited ${scope.expectedPassageCount}`);
+    }
     for (const identifier of scope.knownPasses) {
       if (!passageIds.has(identifier)) failures.push(`${scope.sessionKey}/${scope.body}: expected ${identifier} in source-passage set`);
     }
@@ -49,7 +53,6 @@ async function main(): Promise<void> {
     if (repassMissingInitialPass.length > 0) {
       failures.push(`${scope.sessionKey}/${scope.body}: ${repassMissingInitialPass.length} repass bills lack an initial source-passage action`);
     }
-    if (passage.bills.length === 0) failures.push(`${scope.sessionKey}/${scope.body}: source-passage set is unexpectedly empty`);
 
     const detailedControls = [];
     for (const identifier of scope.knownPasses) {
@@ -77,6 +80,7 @@ async function main(): Promise<void> {
     results.push({
       session: scope.sessionKey,
       body: scope.body,
+      expectedPassageCount: scope.expectedPassageCount,
       sourcePassageCount: passage.bills.length,
       sourceRepassCount: repass.bills.length,
       repassMissingInitialPass,
@@ -100,11 +104,13 @@ async function main(): Promise<void> {
   }
 
   const totalSourcePassages = results.reduce((sum, row) => sum + row.sourcePassageCount, 0);
+  if (totalSourcePassages !== 654) failures.push(`all scopes: source-passage total ${totalSourcePassages} != audited 654`);
+
   console.log(JSON.stringify({
     revisorSourcePassageAudit: {
       generatedAt: new Date().toISOString(),
       source: 'Minnesota Revisor Search by Action XML',
-      semantics: 'A bill is positive only when its originating chamber records a verified final-passage action. Repass actions are audited as a subset invariant.',
+      semantics: 'A bill is positive only when its originating chamber records a verified final-passage action. Senate Consent Calendar third-reading passage is included. Repass actions are audited as a subset invariant.',
       totalSourcePassages,
       failures,
       scopes: results,
