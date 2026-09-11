@@ -45,13 +45,13 @@ async function main(): Promise<void> {
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
     source: 'Minnesota Revisor Search by Action XML',
-    semantics: 'Originating-chamber final passage: HF must have a House pass action; SF must have a Senate third-reading pass action.',
+    semantics: 'Originating-chamber final passage: HF must have a House Bill-was-passed action; SF must have a Senate third-reading pass action, including the historical Consent Calendar passage category.',
     totalSourcePassages: rows.reduce((sum, row) => sum + row.count, 0),
     scopes: rows,
   };
 
-  if (snapshot.totalSourcePassages !== 651) {
-    throw new Error(`Authoritative passage snapshot changed unexpectedly: ${snapshot.totalSourcePassages} != audited 651`);
+  if (snapshot.totalSourcePassages !== 654) {
+    throw new Error(`Authoritative passage snapshot changed unexpectedly: ${snapshot.totalSourcePassages} != audited 654`);
   }
 
   await mkdir(dirname(outputPath), { recursive: true });
