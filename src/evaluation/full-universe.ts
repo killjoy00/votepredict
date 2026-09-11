@@ -9,6 +9,10 @@ import {
   evaluateIntroductionTitleModelChronologically,
   type IntroductionObservation,
 } from './introduction-model';
+import {
+  evaluateIntroductionTimingModelChronologically,
+  type IntroductionTimingObservation,
+} from './introduction-timing-model';
 import type { ForecastTargetKind } from '../forecasting/targets';
 
 type Queryable = {
@@ -22,6 +26,10 @@ type Row = {
   chamber_slug: 'house' | 'senate';
   identifier: string;
   title: string;
+  introduced_on: string | null;
+  initial_document_on: string | null;
+  introduction_parser_version: string | null;
+  initial_document_model_eligible: string | null;
   target_kind: ForecastTargetKind;
   outcome: boolean;
 };
@@ -83,6 +91,10 @@ export async function evaluateAuthoritativeFullUniverse(database: Queryable, cod
            c.slug AS chamber_slug,
            b.identifier,
            COALESCE(b.title, '') AS title,
+           (b.metadata #>> '{revisorIntroduction,introducedOn}')::text AS introduced_on,
+           (b.metadata #>> '{revisorIntroduction,initialDocument,insertedOn}')::text AS initial_document_on,
+           (b.metadata #>> '{revisorIntroduction,parserVersion}')::text AS introduction_parser_version,
+           (b.metadata #>> '{revisorIntroduction,initialDocument,modelEligible}')::text AS initial_document_model_eligible,
            'source_chamber_passage'::text AS target_kind,
            (b.metadata #>> '{sourceChamberPassage,outcome}')::boolean AS outcome
       FROM bills b
@@ -111,12 +123,34 @@ export async function evaluateAuthoritativeFullUniverse(database: Queryable, cod
     outcome: row.outcome ? 1 : 0,
   }));
 
+  const timingRows = result.rows.filter((row) =>
+    row.introduction_parser_version === 'revisor-introduction-v1'
+    && row.initial_document_model_eligible === 'true'
+    && row.introduced_on !== null
+    && row.initial_document_on !== null,
+  );
+  if (timingRows.length !== result.rows.length) {
+    throw new Error(`Exact introduction timing coverage is incomplete: ${timingRows.length}/${result.rows.length}`);
+  }
+  const timingObservations: IntroductionTimingObservation[] = timingRows.map((row) => ({
+    billId: row.bill_id,
+    sessionSlug: row.session_slug,
+    sessionStart: row.session_start,
+    chamber: row.chamber_slug,
+    title: row.title,
+    billNumber: parseBillNumber(row.identifier),
+    introducedOn: row.introduced_on!,
+    initialDocumentOn: row.initial_document_on!,
+    outcome: row.outcome ? 1 : 0,
+  }));
+
   const overallBaseRate = stageBaseRatePredictions(observations);
   const chamberBaseRate = chamberBaseRatePredictions(observations, result.rows);
   const introductionTitleModel = evaluateIntroductionTitleModelChronologically(introductionObservations);
   const introductionStructuralModel = evaluateIntroductionStructuralModelChronologically(introductionObservations);
+  const introductionTimingModel = evaluateIntroductionTimingModelChronologically(timingObservations);
   const baselinePredictions = [...overallBaseRate, ...chamberBaseRate];
-  const candidatePredictions = [...introductionTitleModel, ...introductionStructuralModel];
+  const candidatePredictions = [...introductionTitleModel, ...introductionStructuralModel, ...introductionTimingModel];
   const orderedSessions = [...new Set(result.rows.map((row) => row.session_slug))].sort();
   const firstSession = orderedSessions[0];
   const sessionByBill = new Map(result.rows.map((row) => [row.bill_id, row.session_slug]));
@@ -140,15 +174,18 @@ export async function evaluateAuthoritativeFullUniverse(database: Queryable, cod
       codeSha,
       target: 'Unconditional originating-chamber passage among the complete official regular-session introduced-bill universe.',
       labelVersion: 'revisor-source-chamber-passage-v1',
-      predictionTiming: 'Session-start cohort evaluation. Each holdout biennium is predicted using only earlier biennia.',
-      holdoutDefinition: `Metrics under holdout exclude the cold-start ${firstSession} cohort; later sessions use only prior-session history.`,
+      introductionMetadataVersion: 'revisor-introduction-v1',
+      predictionTiming: 'Biennium-forward evaluation. Each holdout biennium is predicted using only earlier biennia; v3 features are fixed from facts demonstrably known by each bill introduction.',
+      holdoutDefinition: `Metrics under holdout exclude the cold-start ${firstSession} cohort; later sessions use only prior-session history. The 2023-24 and 2025-26 cohorts are now development holdouts, not untouched blind data.`,
       candidates: [
-        'intro-title-eb-v1: title unigram empirical-Bayes model retained as the first benchmark.',
-        'intro-structural-eb-v2: more strongly shrunk title unigram/bigram evidence plus originating chamber, absolute bill-number band, and title-length band; all features are visible at introduction.',
+        'intro-title-eb-v1: title unigram empirical-Bayes model retained as the exploratory champion.',
+        'intro-structural-eb-v2: title n-grams plus weak structural proxies; retained as a rejected comparison.',
+        'intro-title-timing-eb-v3: v1 title probability plus strongly shrunk first/second legislative-year, year-month, and initial-document lead-time effects from exact official introduction metadata.',
       ],
-      caveat: 'Both candidates deliberately exclude post-introduction legislative actions. Chief-author, exact introduction-date, companion-at-introduction, and initial-version text features require complete leak-safe enrichment before use.',
+      caveat: 'No current author or companion state is model eligible. Initial bill text is not used until the exact zero-engrossment versions are separately fetched and provenance-verified. No candidate in this evaluator changes production forecasts.',
     },
     observations: observations.length,
+    timingCoverage: timingRows.length,
     counts,
     allSessions: scoreStagePredictions(baselinePredictions),
     holdout: scoreStagePredictions(holdoutPredictions),
