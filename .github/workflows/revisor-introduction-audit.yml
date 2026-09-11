@@ -1,0 +1,73 @@
+name: Revisor introduction metadata audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/revisor-introduction-audit.yml
+      - scripts/run-production-revisor-introduction-audit.ts
+      - src/app/api/operations/revisor-introduction-audit/route.ts
+      - src/sources/minnesota/revisor-introduction.ts
+      - src/sources/minnesota/revisor-actions.ts
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: revisor-introduction-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+    steps:
+      - uses: actions/checkout@v7
+      - name: Require the existing Vercel credential
+        shell: bash
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo 'VERCEL_TOKEN is unavailable to this repository. No production action was taken.'
+            exit 1
+          fi
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Deploy main before introduction metadata audit
+        shell: bash
+        run: |
+          if ! npx --yes vercel@59.13.1 deploy --prod --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-deploy.log" 2>&1; then
+            echo 'Production deployment failed; no introduction metadata audit was invoked.'
+            exit 1
+          fi
+          echo 'Production deployment completed before introduction metadata audit.'
+      - name: Read production authentication privately
+        shell: bash
+        run: |
+          umask 077
+          if ! npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1; then
+            echo 'Could not read the VotePredict production authentication environment. No introduction metadata audit was invoked.'
+            exit 1
+          fi
+      - name: Audit Revisor introduction metadata in production runtime
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/run-production-revisor-introduction-audit.ts
+      - name: Remove temporary credentials and deployment logs
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PYTHON'
+          import os
+          from pathlib import Path
+          for name in ['votepredict-production.env', 'vercel-pull.log', 'vercel-deploy.log']:
+              Path(os.environ['RUNNER_TEMP'], name).unlink(missing_ok=True)
+          PYTHON
