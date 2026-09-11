@@ -28,7 +28,7 @@ export const INTRODUCTION_BACKFILL_SCOPES = Object.entries(EXPECTED_REGULAR_BILL
   (['house', 'senate'] as const).map((chamber) => ({ session, chamber, expectedBills: chambers[chamber] })),
 );
 
-type BillRow = {
+export type IntroductionBackfillBillRow = {
   bill_id: string;
   session_id: string;
   chamber_id: string;
@@ -36,6 +36,8 @@ type BillRow = {
   bill_number: number;
   existing_introduced_at: string | null;
 };
+
+type BillRow = IntroductionBackfillBillRow;
 
 type IntroductionSourceFormat = 'xml' | 'html';
 
@@ -112,7 +114,7 @@ function verifyExistingIntroductionDate(row: BillRow, metadata: RevisorIntroduct
   }
 }
 
-async function fetchIntroduction(row: BillRow, session: string): Promise<FetchedIntroduction> {
+export async function fetchRevisorIntroductionForBackfill(row: BillRow, session: string): Promise<FetchedIntroduction> {
   let lastFetchError: unknown = new Error(`${row.identifier}: no Revisor API candidates`);
   for (const statusXmlUrl of buildRevisorRegularSessionStatusXmlUrls(session, row.identifier)) {
     let xml: string;
@@ -123,9 +125,18 @@ async function fetchIntroduction(row: BillRow, session: string): Promise<Fetched
       continue;
     }
 
+    // A Revisor API endpoint for the other calendar year in the same biennium can
+    // return a syntactically valid bill record that predates this bill's introduction.
+    // Identity mismatches remain hard failures, but semantically incomplete timing
+    // metadata means "try the alternate official year", not "abort the bill".
     const metadata = parseRevisorIntroductionMetadata({ xml, identifier: row.identifier });
     const resolvedApiYear = apiYear(statusXmlUrl);
-    requireCompleteIntroduction(metadata, row.identifier, resolvedApiYear);
+    try {
+      requireCompleteIntroduction(metadata, row.identifier, resolvedApiYear);
+    } catch (error) {
+      lastFetchError = error;
+      continue;
+    }
     verifyExistingIntroductionDate(row, metadata);
     return {
       ...row,
@@ -190,7 +201,7 @@ async function fetchBatch(rows: readonly BillRow[], session: string): Promise<Fe
   const fetched: FetchedIntroduction[] = [];
   for (let offset = 0; offset < rows.length; offset += FETCH_CONCURRENCY) {
     const group = rows.slice(offset, offset + FETCH_CONCURRENCY);
-    fetched.push(...await Promise.all(group.map((row) => fetchIntroduction(row, session))));
+    fetched.push(...await Promise.all(group.map((row) => fetchRevisorIntroductionForBackfill(row, session))));
   }
   return fetched;
 }
