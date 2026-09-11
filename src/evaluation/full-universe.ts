@@ -4,6 +4,10 @@ import {
   type BillStageObservation,
   type BillStagePrediction,
 } from './stages';
+import {
+  evaluateIntroductionTitleModelChronologically,
+  type IntroductionObservation,
+} from './introduction-model';
 import type { ForecastTargetKind } from '../forecasting/targets';
 
 type Queryable = {
@@ -15,6 +19,8 @@ type Row = {
   session_slug: string;
   session_start: string;
   chamber_slug: 'house' | 'senate';
+  identifier: string;
+  title: string;
   target_kind: ForecastTargetKind;
   outcome: boolean;
 };
@@ -63,12 +69,19 @@ function chamberBaseRatePredictions(observations: readonly BillStageObservation[
   return predictions;
 }
 
+function parseBillNumber(identifier: string): number | null {
+  const match = identifier.match(/(\d+)\s*$/);
+  return match ? Number(match[1]) : null;
+}
+
 export async function evaluateAuthoritativeFullUniverse(database: Queryable, codeSha: string | null = null) {
   const result = await database.query<Row>(`
     SELECT b.id::text AS bill_id,
            s.slug AS session_slug,
            s.starts_on::text AS session_start,
            c.slug AS chamber_slug,
+           b.identifier,
+           COALESCE(b.title, '') AS title,
            'source_chamber_passage'::text AS target_kind,
            (b.metadata #>> '{sourceChamberPassage,outcome}')::boolean AS outcome
       FROM bills b
@@ -87,13 +100,25 @@ export async function evaluateAuthoritativeFullUniverse(database: Queryable, cod
   }));
   if (observations.length === 0) throw new Error('No authoritative full-universe source-chamber passage labels are available');
 
+  const introductionObservations: IntroductionObservation[] = result.rows.map((row) => ({
+    billId: row.bill_id,
+    sessionSlug: row.session_slug,
+    sessionStart: row.session_start,
+    chamber: row.chamber_slug,
+    title: row.title,
+    billNumber: parseBillNumber(row.identifier),
+    outcome: row.outcome ? 1 : 0,
+  }));
+
   const overallBaseRate = stageBaseRatePredictions(observations);
   const chamberBaseRate = chamberBaseRatePredictions(observations, result.rows);
-  const predictions = [...overallBaseRate, ...chamberBaseRate];
+  const introductionTitleModel = evaluateIntroductionTitleModelChronologically(introductionObservations);
+  const baselinePredictions = [...overallBaseRate, ...chamberBaseRate];
   const orderedSessions = [...new Set(result.rows.map((row) => row.session_slug))].sort();
   const firstSession = orderedSessions[0];
   const sessionByBill = new Map(result.rows.map((row) => [row.bill_id, row.session_slug]));
-  const holdoutPredictions = predictions.filter((prediction) => sessionByBill.get(prediction.billId) !== firstSession);
+  const holdoutBaselines = baselinePredictions.filter((prediction) => sessionByBill.get(prediction.billId) !== firstSession);
+  const holdoutPredictions = [...holdoutBaselines, ...introductionTitleModel];
 
   const counts = result.rows.reduce<Record<string, { bills: number; passed: number; failed: number; rate: number }>>((acc, row) => {
     const key = `${row.session_slug}/${row.chamber_slug}`;
@@ -112,14 +137,15 @@ export async function evaluateAuthoritativeFullUniverse(database: Queryable, cod
       codeSha,
       target: 'Unconditional originating-chamber passage among the complete official regular-session introduced-bill universe.',
       labelVersion: 'revisor-source-chamber-passage-v1',
-      predictionTiming: 'Session-start cohort baseline. All bills in a biennium are predicted before outcomes from that biennium are added to history.',
+      predictionTiming: 'Session-start cohort evaluation. Each holdout biennium is predicted using only earlier biennia.',
       holdoutDefinition: `Metrics under holdout exclude the cold-start ${firstSession} cohort; later sessions use only prior-session history.`,
-      caveat: 'These baselines deliberately ignore bill-specific features. They establish honest hurdles that richer introduction-stage models must beat.',
+      candidate: 'intro-title-eb-v1 uses only introduction-time bill title text. It is evaluation-only and cannot alter production forecasts.',
+      caveat: 'The candidate deliberately excludes post-introduction legislative actions. Richer models should wait for complete sponsor, introduction-date, and initial-text coverage.',
     },
     observations: observations.length,
     counts,
-    allSessions: scoreStagePredictions(predictions),
+    allSessions: scoreStagePredictions(baselinePredictions),
     holdout: scoreStagePredictions(holdoutPredictions),
-    bySession: scoreBySession(predictions, result.rows),
+    bySession: scoreBySession([...baselinePredictions, ...introductionTitleModel], result.rows),
   };
 }
