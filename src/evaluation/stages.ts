@@ -1,4 +1,4 @@
-import { brierScore, expectedCalibrationError, logLoss } from './metrics';
+import { averagePrecision, brierScore, expectedCalibrationError, logLoss, rocAuc } from './metrics';
 import type { ForecastTargetKind } from '../forecasting/targets';
 
 export interface BillStageObservation {
@@ -22,6 +22,8 @@ export interface StageScorecard {
   brier: number;
   logLoss: number;
   expectedCalibrationError: number;
+  averagePrecision: number;
+  rocAuc: number;
   alwaysPositiveBrier: number;
   brierSkillVsAlwaysPositive: number;
   alwaysNegativeBrier: number;
@@ -47,6 +49,8 @@ export function scoreStagePredictions(predictions: readonly BillStagePrediction[
       brier,
       logLoss: logLoss(forecasts),
       expectedCalibrationError: expectedCalibrationError(forecasts),
+      averagePrecision: averagePrecision(forecasts),
+      rocAuc: rocAuc(forecasts),
       alwaysPositiveBrier,
       brierSkillVsAlwaysPositive: alwaysPositiveBrier === 0 ? Number.NaN : 1 - brier / alwaysPositiveBrier,
       alwaysNegativeBrier,

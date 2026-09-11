@@ -68,6 +68,68 @@ export function expectedCalibrationError(forecasts: readonly BinaryForecast[], b
   }, 0);
 }
 
+/**
+ * Tie-stable average precision for rare binary events. Higher is better.
+ * A non-informative ranking is expected to be near the positive base rate.
+ */
+export function averagePrecision(forecasts: readonly BinaryForecast[]): number {
+  if (forecasts.length === 0) throw new Error('Average precision requires at least one forecast');
+  const totalPositives = forecasts.reduce((sum, row) => sum + row.outcome, 0);
+  if (totalPositives === 0) return Number.NaN;
+  const ordered = [...forecasts]
+    .map((row) => ({ probability: clampProbability(row.probability), outcome: row.outcome }))
+    .sort((a, b) => b.probability - a.probability);
+
+  let seen = 0;
+  let seenPositives = 0;
+  let score = 0;
+  let offset = 0;
+  while (offset < ordered.length) {
+    const probability = ordered[offset].probability;
+    let end = offset;
+    let groupPositives = 0;
+    while (end < ordered.length && ordered[end].probability === probability) {
+      groupPositives += ordered[end].outcome;
+      end += 1;
+    }
+    seen += end - offset;
+    seenPositives += groupPositives;
+    if (groupPositives > 0) score += (groupPositives / totalPositives) * (seenPositives / seen);
+    offset = end;
+  }
+  return score;
+}
+
+/** Tie-stable ROC AUC using grouped probability ranks. Higher is better. */
+export function rocAuc(forecasts: readonly BinaryForecast[]): number {
+  if (forecasts.length === 0) throw new Error('ROC AUC requires at least one forecast');
+  const positives = forecasts.reduce((sum, row) => sum + row.outcome, 0);
+  const negatives = forecasts.length - positives;
+  if (positives === 0 || negatives === 0) return Number.NaN;
+  const ordered = [...forecasts]
+    .map((row) => ({ probability: clampProbability(row.probability), outcome: row.outcome }))
+    .sort((a, b) => a.probability - b.probability);
+
+  let negativesBefore = 0;
+  let wins = 0;
+  let offset = 0;
+  while (offset < ordered.length) {
+    const probability = ordered[offset].probability;
+    let end = offset;
+    let groupPositives = 0;
+    let groupNegatives = 0;
+    while (end < ordered.length && ordered[end].probability === probability) {
+      if (ordered[end].outcome) groupPositives += 1;
+      else groupNegatives += 1;
+      end += 1;
+    }
+    wins += groupPositives * negativesBefore + 0.5 * groupPositives * groupNegatives;
+    negativesBefore += groupNegatives;
+    offset = end;
+  }
+  return wins / (positives * negatives);
+}
+
 /** Proper score for an ordered vote-count distribution; lower is better. */
 export function rankedProbabilityScore(distribution: readonly number[], actual: number): number {
   if (distribution.length < 2 || !Number.isInteger(actual) || actual < 0 || actual >= distribution.length ||

@@ -5,6 +5,7 @@ import {
   type BillStagePrediction,
 } from './stages';
 import {
+  evaluateIntroductionStructuralModelChronologically,
   evaluateIntroductionTitleModelChronologically,
   type IntroductionObservation,
 } from './introduction-model';
@@ -113,12 +114,14 @@ export async function evaluateAuthoritativeFullUniverse(database: Queryable, cod
   const overallBaseRate = stageBaseRatePredictions(observations);
   const chamberBaseRate = chamberBaseRatePredictions(observations, result.rows);
   const introductionTitleModel = evaluateIntroductionTitleModelChronologically(introductionObservations);
+  const introductionStructuralModel = evaluateIntroductionStructuralModelChronologically(introductionObservations);
   const baselinePredictions = [...overallBaseRate, ...chamberBaseRate];
+  const candidatePredictions = [...introductionTitleModel, ...introductionStructuralModel];
   const orderedSessions = [...new Set(result.rows.map((row) => row.session_slug))].sort();
   const firstSession = orderedSessions[0];
   const sessionByBill = new Map(result.rows.map((row) => [row.bill_id, row.session_slug]));
   const holdoutBaselines = baselinePredictions.filter((prediction) => sessionByBill.get(prediction.billId) !== firstSession);
-  const holdoutPredictions = [...holdoutBaselines, ...introductionTitleModel];
+  const holdoutPredictions = [...holdoutBaselines, ...candidatePredictions];
 
   const counts = result.rows.reduce<Record<string, { bills: number; passed: number; failed: number; rate: number }>>((acc, row) => {
     const key = `${row.session_slug}/${row.chamber_slug}`;
@@ -139,13 +142,16 @@ export async function evaluateAuthoritativeFullUniverse(database: Queryable, cod
       labelVersion: 'revisor-source-chamber-passage-v1',
       predictionTiming: 'Session-start cohort evaluation. Each holdout biennium is predicted using only earlier biennia.',
       holdoutDefinition: `Metrics under holdout exclude the cold-start ${firstSession} cohort; later sessions use only prior-session history.`,
-      candidate: 'intro-title-eb-v1 uses only introduction-time bill title text. It is evaluation-only and cannot alter production forecasts.',
-      caveat: 'The candidate deliberately excludes post-introduction legislative actions. Richer models should wait for complete sponsor, introduction-date, and initial-text coverage.',
+      candidates: [
+        'intro-title-eb-v1: title unigram empirical-Bayes model retained as the first benchmark.',
+        'intro-structural-eb-v2: more strongly shrunk title unigram/bigram evidence plus originating chamber, absolute bill-number band, and title-length band; all features are visible at introduction.',
+      ],
+      caveat: 'Both candidates deliberately exclude post-introduction legislative actions. Chief-author, exact introduction-date, companion-at-introduction, and initial-version text features require complete leak-safe enrichment before use.',
     },
     observations: observations.length,
     counts,
     allSessions: scoreStagePredictions(baselinePredictions),
     holdout: scoreStagePredictions(holdoutPredictions),
-    bySession: scoreBySession([...baselinePredictions, ...introductionTitleModel], result.rows),
+    bySession: scoreBySession([...baselinePredictions, ...candidatePredictions], result.rows),
   };
 }
