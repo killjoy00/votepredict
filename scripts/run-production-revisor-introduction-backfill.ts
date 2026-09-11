@@ -4,7 +4,7 @@ import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 const ENDPOINT = 'https://votepredict.vercel.app/api/operations/revisor-introduction-backfill';
 const BATCH_LIMIT = 100;
 const MAX_BATCHES_PER_SCOPE = 100;
-const MAX_ATTEMPTS = 8;
+const MAX_REQUEST_ATTEMPTS = 3;
 
 const SCOPES = [
   { session: '2021-2022', chamber: 'house', expectedBills: 4_905 },
@@ -32,9 +32,9 @@ function safeMessage(error: unknown): string {
     .replace(/https?:\/\/\S+/gi, '[source URL]');
 }
 
-async function requestOperation<T>(body: Record<string, unknown>): Promise<T> {
+async function requestOperation<T>(body: Record<string, unknown>, maxAttempts = MAX_REQUEST_ATTEMPTS): Promise<T> {
   let lastError: unknown;
-  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
       const response = await fetch(ENDPOINT, {
         method: 'POST',
@@ -53,12 +53,12 @@ async function requestOperation<T>(body: Record<string, unknown>): Promise<T> {
       console.warn(JSON.stringify({
         productionBackfillRequestRetry: {
           attempt,
-          maxAttempts: MAX_ATTEMPTS,
+          maxAttempts,
           error: safeMessage(error),
         },
       }));
-      if (attempt < MAX_ATTEMPTS) {
-        await sleep(Math.min(30_000, 2_000 * (2 ** (attempt - 1))));
+      if (attempt < maxAttempts) {
+        await sleep(Math.min(10_000, 2_000 * (2 ** (attempt - 1))));
       }
     }
   }
@@ -112,16 +112,40 @@ async function main(): Promise<void> {
     let processed = 0;
     let batches = 0;
     let existingDatesPreserved = 0;
+    let batchLimit = BATCH_LIMIT;
     while (true) {
+      if (batches >= MAX_BATCHES_PER_SCOPE) throw new Error(`Exceeded batch safety cap for ${scope.session}/${scope.chamber}`);
+
+      let result: BatchResult;
+      try {
+        result = await requestOperation<BatchResult>({
+          action: 'batch',
+          session: scope.session,
+          chamber: scope.chamber,
+          afterBillNumber,
+          limit: batchLimit,
+        });
+      } catch (error) {
+        if (batchLimit === 1) {
+          throw new Error(
+            `Persistent production backfill failure for ${scope.session}/${scope.chamber} after bill ${afterBillNumber}; next incomplete bill failed individually: ${safeMessage(error)}`,
+          );
+        }
+        const previousLimit = batchLimit;
+        batchLimit = Math.max(1, Math.floor(batchLimit / 2));
+        console.warn(JSON.stringify({
+          productionBackfillNarrowing: {
+            session: scope.session,
+            chamber: scope.chamber,
+            afterBillNumber,
+            previousLimit,
+            nextLimit: batchLimit,
+          },
+        }));
+        continue;
+      }
+
       batches += 1;
-      if (batches > MAX_BATCHES_PER_SCOPE) throw new Error(`Exceeded batch safety cap for ${scope.session}/${scope.chamber}`);
-      const result = await requestOperation<BatchResult>({
-        action: 'batch',
-        session: scope.session,
-        chamber: scope.chamber,
-        afterBillNumber,
-        limit: BATCH_LIMIT,
-      });
       if (result.nextAfterBillNumber < afterBillNumber) {
         throw new Error(`Backfill cursor moved backwards for ${scope.session}/${scope.chamber}`);
       }
@@ -131,6 +155,7 @@ async function main(): Promise<void> {
       processed += result.processed;
       existingDatesPreserved += result.existingDatesPreserved;
       afterBillNumber = result.nextAfterBillNumber;
+      batchLimit = BATCH_LIMIT;
       if (batches === 1 || batches % 10 === 0 || result.done) {
         console.log(JSON.stringify({
           introductionBackfillProgress: {
