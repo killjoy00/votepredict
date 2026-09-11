@@ -10,3 +10,4 @@ tsconfig.tsbuildinfo
 *.log
 .DS_Store
 coverage/
+artifacts/introduction-v4-2025-2026.json

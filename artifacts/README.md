@@ -1,0 +1,1 @@
+Generated production-model artifacts are emitted here by audited workflows. The v4 introduction serving model is intentionally uploaded as a GitHub Actions artifact first; it is committed only after its serialized predictions are verified against the in-memory evaluated model.

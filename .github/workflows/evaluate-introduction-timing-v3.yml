@@ -9,6 +9,8 @@ on:
       - src/evaluation/introduction-timing-model.ts
       - scripts/evaluate-introduction-text-v4.ts
       - src/evaluation/introduction-text-model.ts
+      - scripts/export-introduction-v4-serving-model.ts
+      - src/forecasting/introduction-prior-model.ts
   workflow_dispatch:
 
 permissions:
@@ -53,6 +55,17 @@ jobs:
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: node --import tsx scripts/evaluate-introduction-text-v4.ts
+      - name: Export frozen v4 serving artifact
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/export-introduction-v4-serving-model.ts
+      - name: Upload frozen v4 serving artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: introduction-v4-2025-2026-serving-model
+          path: artifacts/introduction-v4-2025-2026.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Remove temporary credentials and Vercel logs
         if: always()
         shell: bash
