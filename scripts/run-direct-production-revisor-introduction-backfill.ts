@@ -2,12 +2,13 @@ import { readFileSync } from 'node:fs';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 
 const MAX_BATCH_ATTEMPTS = 5;
+let secretValues: string[] = [];
 
 function sleep(milliseconds: number) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
-function safeMessage(error: unknown, secretValues: readonly string[]): string {
+function safeMessage(error: unknown): string {
   let message = error instanceof Error ? error.message : String(error);
   for (const value of secretValues.filter((value) => value.length > 3).sort((left, right) => right.length - left.length)) {
     message = message.split(value).join('[redacted]');
@@ -25,7 +26,7 @@ async function main(): Promise<void> {
     || env.POSTGRES_URL_NON_POOLING?.trim();
   if (!databaseUrl) throw new Error('Production database URL is unavailable');
 
-  const secretValues = Object.entries(env)
+  secretValues = Object.entries(env)
     .filter(([key]) => /SECRET|PASSWORD|TOKEN|KEY|DATABASE_URL|POSTGRES_URL/i.test(key))
     .map(([, value]) => value)
     .filter((value): value is string => typeof value === 'string');
@@ -70,7 +71,7 @@ async function main(): Promise<void> {
                 afterBillNumber,
                 attempt,
                 maxAttempts: MAX_BATCH_ATTEMPTS,
-                error: safeMessage(error, secretValues),
+                error: safeMessage(error),
               },
             }));
             if (attempt < MAX_BATCH_ATTEMPTS) await sleep(Math.min(15_000, 1_500 * (2 ** (attempt - 1))));
@@ -121,6 +122,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((error) => {
-  console.error(error instanceof Error ? error.message : String(error));
+  console.error(safeMessage(error));
   process.exitCode = 1;
 });
