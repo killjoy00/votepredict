@@ -131,7 +131,13 @@ async function main() {
     const timing: IntroductionTimingObservation[] = result.rows.map((row) => {
       const available = row.initial_document_model_eligible === 'true';
       return {
-        ...intro.find((candidate) => candidate.billId === row.bill_id)!,
+        billId: row.bill_id,
+        sessionSlug: row.session_slug,
+        sessionStart: row.session_start,
+        chamber: row.chamber_slug,
+        title: row.title,
+        billNumber: parseBillNumber(row.identifier),
+        outcome: row.outcome ? 1 : 0,
         introducedOn: row.introduced_on!,
         initialDocumentOn: available ? row.initial_document_on! : null,
         initialDocumentAvailableAtIntroduction: available,
