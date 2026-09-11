@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { binaryAccuracy, brierScore, calibrationBins, expectedCalibrationError, logLoss } from '../src/evaluation/metrics.js';
+import { averagePrecision, binaryAccuracy, brierScore, calibrationBins, expectedCalibrationError, logLoss, rocAuc } from '../src/evaluation/metrics.js';
 import { globalRateBaseline, memberHistoryBaseline, partyRateBaseline, priorVotesOnly, type HistoricalMemberVote } from '../src/evaluation/baselines.js';
 import { simulateChamber } from '../src/evaluation/chamber.js';
 import { aggregateChamberTotals, evaluateChronologicalBaselines, scoreBaselinePredictions, scoreChamberTotals, type HistoricalMemberObservation } from '../src/evaluation/harness.js';
@@ -18,6 +18,31 @@ test('binary evaluation metrics reward accurate confident forecasts', () => {
   assert.ok(logLoss(good) < logLoss(bad));
   assert.equal(binaryAccuracy(good), 1);
   assert.equal(binaryAccuracy(bad), 0);
+});
+
+test('rare-event ranking metrics reward ordering positives above negatives', () => {
+  const ranked = [
+    { probability: 0.9, outcome: 1 as const },
+    { probability: 0.8, outcome: 1 as const },
+    { probability: 0.2, outcome: 0 as const },
+    { probability: 0.1, outcome: 0 as const },
+  ];
+  const reversed = ranked.map((row) => ({ probability: 1 - row.probability, outcome: row.outcome }));
+  assert.equal(averagePrecision(ranked), 1);
+  assert.equal(rocAuc(ranked), 1);
+  assert.ok(averagePrecision(ranked) > averagePrecision(reversed));
+  assert.ok(rocAuc(ranked) > rocAuc(reversed));
+});
+
+test('rare-event ranking metrics treat equal-probability ties deterministically', () => {
+  const tied = [
+    { probability: 0.2, outcome: 1 as const },
+    { probability: 0.2, outcome: 0 as const },
+    { probability: 0.2, outcome: 1 as const },
+    { probability: 0.2, outcome: 0 as const },
+  ];
+  assert.equal(averagePrecision(tied), 0.5);
+  assert.equal(rocAuc(tied), 0.5);
 });
 
 test('calibration bins and ECE are deterministic', () => {
