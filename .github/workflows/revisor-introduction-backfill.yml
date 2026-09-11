@@ -5,7 +5,6 @@ on:
     branches: [main]
     paths:
       - .github/workflows/revisor-introduction-backfill.yml
-      - scripts/run-direct-production-revisor-introduction-backfill.ts
       - scripts/run-production-revisor-introduction-backfill.ts
       - src/app/api/operations/revisor-introduction-backfill/route.ts
       - src/operations/revisor-introduction-backfill.ts
@@ -43,18 +42,18 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - name: Read production database environment privately
+      - name: Read production authentication privately
         shell: bash
         run: |
           umask 077
           if ! npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1; then
-            echo 'Could not read the VotePredict production database environment. No introduction backfill was invoked.'
+            echo 'Could not read the VotePredict production authentication environment. No introduction backfill was invoked.'
             exit 1
           fi
-      - name: Backfill introduction metadata directly from exact main
+      - name: Backfill introduction metadata through existing production runtime
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
-        run: node --import tsx scripts/run-direct-production-revisor-introduction-backfill.ts
+        run: node --import tsx scripts/run-production-revisor-introduction-backfill.ts
       - name: Remove temporary credentials and Vercel logs
         if: always()
         shell: bash
