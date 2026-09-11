@@ -30,14 +30,8 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-          cache: npm
-      - run: npm ci --no-fund --no-audit
-      - name: Pull production Vercel settings
-        run: npx --yes vercel@59.13.1 pull --yes --environment=production --token "$VERCEL_TOKEN"
-      - name: Build exact production artifact
-        run: npx --yes vercel@59.13.1 build --prod --token "$VERCEL_TOKEN"
-      - name: Deploy prebuilt artifact to production
+      - name: Deploy exact green commit with remote Vercel build
         shell: bash
         run: |
-          url="$(npx --yes vercel@59.13.1 deploy --prebuilt --prod --token "$VERCEL_TOKEN")"
+          url="$(npx --yes vercel@59.13.1 deploy --prod --yes --token "$VERCEL_TOKEN")"
           echo "Production deployment: $url"
