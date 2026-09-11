@@ -112,6 +112,13 @@ async function main(): Promise<void> {
   delete process.env.DATABASE_URL_UNPOOLED;
   delete process.env.POSTGRES_URL_NON_POOLING;
 
+  // The direct runner already retries a failed batch three times. Keep each individual
+  // Revisor year candidate to one transport attempt here so a systematic 5xx from the
+  // wrong biennium year cannot consume minutes before the correct alternate year is tried.
+  // Server/runtime callers retain the default five-attempt source retry budget.
+  process.env.VOTEPREDICT_REVISOR_FETCH_ATTEMPTS = '1';
+  console.log(JSON.stringify({ directBackfillRevisorFetchAttemptBudget: 1 }));
+
   const {
     backfillRevisorIntroductionBatch,
     INTRODUCTION_BACKFILL_MAX_BATCH,
