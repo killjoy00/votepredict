@@ -6,6 +6,10 @@ on:
     paths:
       - .github/workflows/revisor-introduction-direct-backfill.yml
       - scripts/run-direct-production-revisor-introduction-backfill.ts
+      - src/operations/revisor-introduction-backfill.ts
+      - src/sources/minnesota/revisor-introduction.ts
+      - src/sources/minnesota/revisor-introduction-html.ts
+      - src/sources/minnesota/revisor-actions.ts
   workflow_dispatch:
 
 permissions:

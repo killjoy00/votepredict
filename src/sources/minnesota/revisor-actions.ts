@@ -176,8 +176,15 @@ function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
-const REVISOR_FETCH_ATTEMPTS = 5;
+const DEFAULT_REVISOR_FETCH_ATTEMPTS = 5;
 const REVISOR_MAX_RETRY_DELAY_MS = 15_000;
+
+export function revisorFetchAttemptBudget(): number {
+  const configured = Number(process.env.VOTEPREDICT_REVISOR_FETCH_ATTEMPTS);
+  return Number.isInteger(configured) && configured >= 1 && configured <= DEFAULT_REVISOR_FETCH_ATTEMPTS
+    ? configured
+    : DEFAULT_REVISOR_FETCH_ATTEMPTS;
+}
 
 export function isRetryableRevisorStatus(status: number): boolean {
   return status === 429 || (status >= 500 && status <= 599);
@@ -200,8 +207,9 @@ function retryDelayMilliseconds(response: Response, attempt: number): number {
 
 export async function fetchRevisorStatusXml(statusXmlUrl: string): Promise<string> {
   const apiUrl = normalizeRevisorStatusXmlUrl(statusXmlUrl);
+  const fetchAttempts = revisorFetchAttemptBudget();
   let lastTransportError: unknown;
-  for (let attempt = 0; attempt < REVISOR_FETCH_ATTEMPTS; attempt += 1) {
+  for (let attempt = 0; attempt < fetchAttempts; attempt += 1) {
     let response: Response;
     try {
       response = await fetch(apiUrl, {
@@ -215,14 +223,14 @@ export async function fetchRevisorStatusXml(statusXmlUrl: string): Promise<strin
       });
     } catch (error) {
       lastTransportError = error;
-      if (attempt < REVISOR_FETCH_ATTEMPTS - 1) {
+      if (attempt < fetchAttempts - 1) {
         await sleep(Math.min(REVISOR_MAX_RETRY_DELAY_MS, 750 * (2 ** attempt)));
         continue;
       }
       throw error;
     }
 
-    if (isRetryableRevisorStatus(response.status) && attempt < REVISOR_FETCH_ATTEMPTS - 1) {
+    if (isRetryableRevisorStatus(response.status) && attempt < fetchAttempts - 1) {
       await sleep(retryDelayMilliseconds(response, attempt));
       continue;
     }
