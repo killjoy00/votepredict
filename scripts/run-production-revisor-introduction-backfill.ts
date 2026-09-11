@@ -4,7 +4,7 @@ import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 const ENDPOINT = 'https://votepredict.vercel.app/api/operations/revisor-introduction-backfill';
 const BATCH_LIMIT = 100;
 const MAX_BATCHES_PER_SCOPE = 100;
-const MAX_ATTEMPTS = 3;
+const MAX_ATTEMPTS = 8;
 
 const SCOPES = [
   { session: '2021-2022', chamber: 'house', expectedBills: 4_905 },
@@ -50,7 +50,16 @@ async function requestOperation<T>(body: Record<string, unknown>): Promise<T> {
       return JSON.parse(text) as T;
     } catch (error) {
       lastError = error;
-      if (attempt < MAX_ATTEMPTS) await sleep(attempt * 2_000);
+      console.warn(JSON.stringify({
+        productionBackfillRequestRetry: {
+          attempt,
+          maxAttempts: MAX_ATTEMPTS,
+          error: safeMessage(error),
+        },
+      }));
+      if (attempt < MAX_ATTEMPTS) {
+        await sleep(Math.min(30_000, 2_000 * (2 ** (attempt - 1))));
+      }
     }
   }
   throw lastError instanceof Error ? lastError : new Error('Production introduction backfill request failed');
