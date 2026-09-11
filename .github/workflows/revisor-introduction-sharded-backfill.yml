@@ -14,6 +14,7 @@ jobs:
   backfill:
     strategy:
       fail-fast: false
+      max-parallel: 2
       matrix:
         include:
           - shard: session-2021-senate
