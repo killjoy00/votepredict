@@ -109,11 +109,23 @@ export function parseRevisorCurrentCompanionIdentifier(xml: string): string | nu
   return `${type}${number}`;
 }
 
+function validateRecordIdentifier(xml: string, expectedIdentifier: string): void {
+  const fileType = tag(xml, 'FILE_TYPE')?.toUpperCase();
+  const fileNumber = Number(tag(xml, 'FILE_NUMBER'));
+  if (!fileType || !Number.isInteger(fileNumber) || fileNumber <= 0) return;
+  if (fileType !== 'HF' && fileType !== 'SF') throw new Error(`Unexpected Minnesota bill file type: ${fileType}`);
+  const actualIdentifier = `${fileType}${fileNumber}`;
+  if (actualIdentifier !== expectedIdentifier) {
+    throw new Error(`Revisor bill mismatch: expected ${expectedIdentifier}, found ${actualIdentifier}`);
+  }
+}
+
 export function parseRevisorIntroductionMetadata(input: {
   xml: string;
   identifier: string;
 }): RevisorIntroductionMetadata {
   const identifier = normalizeIdentifier(input.identifier);
+  validateRecordIdentifier(input.xml, identifier);
   const sourceChamber = identifier.startsWith('HF') ? 'house' : 'senate';
   const introductionActions = parseRevisorOfficialActions(input.xml)
     .filter((action) => action.chamber === sourceChamber)
