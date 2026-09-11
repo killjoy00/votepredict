@@ -63,13 +63,19 @@ function normalizeIdentifier(identifier: string): string {
   return `${match[1].toUpperCase()}${Number(match[2])}`;
 }
 
-export function buildRevisorRegularSessionStatusXmlUrl(sessionKeyOrSlug: string, rawIdentifier: string): string {
+export function buildRevisorRegularSessionStatusXmlUrls(sessionKeyOrSlug: string, rawIdentifier: string): string[] {
   const session = getMinnesotaHouseSession(sessionKeyOrSlug);
   const identifier = normalizeIdentifier(rawIdentifier);
   const match = identifier.match(/^(HF|SF)(\d+)$/);
   if (!match) throw new Error(`Unsupported Minnesota bill identifier: ${rawIdentifier}`);
-  const year = Number(session.startsOn.slice(0, 4));
-  return `https://api.revisor.mn.gov/bills/v1/${session.legislature}/${year}/0/${match[1]}/${Number(match[2])}/`;
+  const firstYear = Number(session.startsOn.slice(0, 4));
+  return [firstYear, firstYear + 1].map(
+    (year) => `https://api.revisor.mn.gov/bills/v1/${session.legislature}/${year}/0/${match[1]}/${Number(match[2])}/`,
+  );
+}
+
+export function buildRevisorRegularSessionStatusXmlUrl(sessionKeyOrSlug: string, rawIdentifier: string): string {
+  return buildRevisorRegularSessionStatusXmlUrls(sessionKeyOrSlug, rawIdentifier)[0];
 }
 
 export function parseRevisorInitialDocument(xml: string): RevisorInitialDocument | null {

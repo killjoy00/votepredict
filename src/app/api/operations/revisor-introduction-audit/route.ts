@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
 import { fetchRevisorStatusXml } from '@/sources/minnesota/revisor-actions';
 import {
-  buildRevisorRegularSessionStatusXmlUrl,
+  buildRevisorRegularSessionStatusXmlUrls,
   parseRevisorIntroductionMetadata,
 } from '@/sources/minnesota/revisor-introduction';
 
@@ -28,6 +28,7 @@ type AuditRow = {
   initialDocumentUrl: string | null;
   initialDocumentKnownByIntroduction: boolean;
   currentCompanionIdentifier: string | null;
+  resolvedApiYear: number | null;
   error: string | null;
 };
 
@@ -64,15 +65,31 @@ function safeError(error: unknown): string {
     .slice(0, 240);
 }
 
+function apiYear(url: string): number | null {
+  const match = url.match(/\/bills\/v1\/\d+\/(20\d{2})\//);
+  return match ? Number(match[1]) : null;
+}
+
+async function fetchRegularSessionStatus(sessionSlug: string, identifier: string): Promise<{ xml: string; sourceUrl: string }> {
+  let lastError: unknown = new Error(`No Revisor API candidates for ${identifier}`);
+  for (const sourceUrl of buildRevisorRegularSessionStatusXmlUrls(sessionSlug, identifier)) {
+    try {
+      return { xml: await fetchRevisorStatusXml(sourceUrl), sourceUrl };
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError;
+}
+
 async function auditSamples(samples: readonly SampleRow[]): Promise<AuditRow[]> {
   const output: AuditRow[] = [];
   for (let offset = 0; offset < samples.length; offset += FETCH_CONCURRENCY) {
     const batch = samples.slice(offset, offset + FETCH_CONCURRENCY);
     const rows = await Promise.all(batch.map(async (sample): Promise<AuditRow> => {
       try {
-        const statusXmlUrl = buildRevisorRegularSessionStatusXmlUrl(sample.session_slug, sample.identifier);
-        const xml = await fetchRevisorStatusXml(statusXmlUrl);
-        const metadata = parseRevisorIntroductionMetadata({ xml, identifier: sample.identifier });
+        const fetched = await fetchRegularSessionStatus(sample.session_slug, sample.identifier);
+        const metadata = parseRevisorIntroductionMetadata({ xml: fetched.xml, identifier: sample.identifier });
         return {
           session: sample.session_slug,
           chamber: sample.chamber_slug,
@@ -82,6 +99,7 @@ async function auditSamples(samples: readonly SampleRow[]): Promise<AuditRow[]> 
           initialDocumentUrl: metadata.initialDocument?.htmlUrl ?? null,
           initialDocumentKnownByIntroduction: metadata.initialDocumentKnownByIntroduction,
           currentCompanionIdentifier: metadata.currentCompanionIdentifier,
+          resolvedApiYear: apiYear(fetched.sourceUrl),
           error: null,
         };
       } catch (error) {
@@ -94,6 +112,7 @@ async function auditSamples(samples: readonly SampleRow[]): Promise<AuditRow[]> 
           initialDocumentUrl: null,
           initialDocumentKnownByIntroduction: false,
           currentCompanionIdentifier: null,
+          resolvedApiYear: null,
           error: safeError(error),
         };
       }
@@ -112,6 +131,11 @@ function summarize(rows: readonly AuditRow[]) {
     initialDocumentFound: scopeRows.filter((row) => row.initialDocumentOn && row.initialDocumentUrl).length,
     initialDocumentKnownByIntroduction: scopeRows.filter((row) => row.initialDocumentKnownByIntroduction).length,
     currentCompanionFound: scopeRows.filter((row) => row.currentCompanionIdentifier).length,
+    resolvedApiYears: Object.fromEntries(
+      [...new Set(scopeRows.map((row) => row.resolvedApiYear).filter((year): year is number => year !== null))]
+        .sort((a, b) => a - b)
+        .map((year) => [String(year), scopeRows.filter((row) => row.resolvedApiYear === year).length]),
+    ),
   });
 
   const scopes = Object.fromEntries(
@@ -162,7 +186,7 @@ export async function POST(request: Request) {
         codeSha: process.env.VERCEL_GIT_COMMIT_SHA ?? null,
         sampleDesign: `${SAMPLE_BUCKETS} bill-number tiles per session/chamber; first bill in each tile`,
         fetchConcurrency: FETCH_CONCURRENCY,
-        statusUrlMethod: 'canonical official Revisor API URL constructed from audited regular-session scope + bill identifier',
+        statusUrlMethod: 'official Revisor API candidates for both calendar years in each regular-session biennium; first valid record wins',
         modelEligibility: {
           introductionDate: 'eligible when source-chamber introduction/first-reading action is dated',
           initialDocument: 'eligible only when zero-engrossment official document is dated on/before introduction',

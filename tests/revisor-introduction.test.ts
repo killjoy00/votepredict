@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   buildRevisorRegularSessionStatusXmlUrl,
+  buildRevisorRegularSessionStatusXmlUrls,
   parseRevisorCurrentCompanionIdentifier,
   parseRevisorInitialDocument,
   parseRevisorIntroductionMetadata,
@@ -48,14 +49,17 @@ const xml = `<?xml version="1.0"?>
   </ACTIONS>
 </BILL>`;
 
-test('canonical regular-session API URL is derived from audited session and bill identifier', () => {
+test('regular-session API candidates cover both calendar years in a biennium', () => {
   assert.equal(
     buildRevisorRegularSessionStatusXmlUrl('2025-2026', 'HF10'),
     'https://api.revisor.mn.gov/bills/v1/94/2025/0/HF/10/',
   );
-  assert.equal(
-    buildRevisorRegularSessionStatusXmlUrl('2021-2022', 'SF1064'),
-    'https://api.revisor.mn.gov/bills/v1/92/2021/0/SF/1064/',
+  assert.deepEqual(
+    buildRevisorRegularSessionStatusXmlUrls('2021-2022', 'SF1064'),
+    [
+      'https://api.revisor.mn.gov/bills/v1/92/2021/0/SF/1064/',
+      'https://api.revisor.mn.gov/bills/v1/92/2022/0/SF/1064/',
+    ],
   );
 });
 
