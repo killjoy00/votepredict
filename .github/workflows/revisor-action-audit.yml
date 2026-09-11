@@ -1,15 +1,6 @@
 name: Revisor action-history audit
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/revisor-action-audit.yml
-      - scripts/audit-revisor-action-history.ts
-      - src/app/api/operations/revisor-action-audit/route.ts
-      - src/operations/revisor-action-audit.ts
-      - src/sources/minnesota/revisor-actions.ts
-      - tests/revisor-actions.test.ts
 permissions:
   contents: read
 jobs:
