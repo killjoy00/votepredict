@@ -10,8 +10,10 @@ const DATABASE_CANDIDATES = [
   'DATABASE_URL',
   'POSTGRES_URL',
 ] as const;
+const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 
 type DatabaseCandidate = typeof DATABASE_CANDIDATES[number];
+type DatabaseSource = DatabaseCandidate | 'NEON_FUNCTION_BRIDGE';
 let secretValues: string[] = [];
 
 function sleep(milliseconds: number) {
@@ -35,38 +37,59 @@ function errorCode(error: unknown): string {
   return 'UNKNOWN';
 }
 
-async function choosePortableDatabaseUrl(env: Record<string, string | undefined>): Promise<{ name: DatabaseCandidate; value: string }> {
+async function probeDatabase(name: DatabaseSource, value: string): Promise<boolean> {
+  const probe = new Pool({
+    connectionString: value,
+    max: 1,
+    connectionTimeoutMillis: 8_000,
+    idleTimeoutMillis: 1_000,
+  });
+  try {
+    await probe.query('SELECT 1');
+    console.log(JSON.stringify({ directBackfillDatabaseCandidate: { candidate: name, present: true, connected: true } }));
+    return true;
+  } catch (error) {
+    console.warn(JSON.stringify({
+      directBackfillDatabaseCandidate: {
+        candidate: name,
+        present: true,
+        connected: false,
+        errorCode: errorCode(error),
+      },
+    }));
+    return false;
+  } finally {
+    await probe.end().catch(() => undefined);
+  }
+}
+
+async function choosePortableDatabaseUrl(env: Record<string, string | undefined>): Promise<{ name: DatabaseSource; value: string }> {
   for (const name of DATABASE_CANDIDATES) {
     const value = env[name]?.trim();
     if (!value) {
       console.log(JSON.stringify({ directBackfillDatabaseCandidate: { candidate: name, present: false, connected: false } }));
       continue;
     }
-
-    const probe = new Pool({
-      connectionString: value,
-      max: 1,
-      connectionTimeoutMillis: 8_000,
-      idleTimeoutMillis: 1_000,
-    });
-    try {
-      await probe.query('SELECT 1');
-      console.log(JSON.stringify({ directBackfillDatabaseCandidate: { candidate: name, present: true, connected: true } }));
-      return { name, value };
-    } catch (error) {
-      console.warn(JSON.stringify({
-        directBackfillDatabaseCandidate: {
-          candidate: name,
-          present: true,
-          connected: false,
-          errorCode: errorCode(error),
-        },
-      }));
-    } finally {
-      await probe.end().catch(() => undefined);
-    }
+    if (await probeDatabase(name, value)) return { name, value };
   }
-  throw new Error('No portable production database connection candidate succeeded from GitHub Actions');
+
+  const cronSecret = env.CRON_SECRET?.trim();
+  if (!cronSecret) throw new Error('CRON_SECRET is unavailable for authenticated Neon database bridge');
+  const response = await fetch(DATABASE_BRIDGE_URL, {
+    method: 'POST',
+    headers: { authorization: `Bearer ${cronSecret}` },
+  });
+  if (!response.ok) throw new Error(`Authenticated Neon database bridge returned HTTP ${response.status}`);
+  const value = (await response.text()).trim();
+  if (!value.startsWith('postgresql://') && !value.startsWith('postgres://')) {
+    throw new Error('Authenticated Neon database bridge returned an invalid database connection value');
+  }
+  secretValues.push(value);
+  console.log(`::add-mask::${value.replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A')}`);
+  if (!await probeDatabase('NEON_FUNCTION_BRIDGE', value)) {
+    throw new Error('Authenticated Neon database bridge returned a connection that is not portable from GitHub Actions');
+  }
+  return { name: 'NEON_FUNCTION_BRIDGE', value };
 }
 
 async function main(): Promise<void> {
