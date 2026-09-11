@@ -1,15 +1,6 @@
 name: Revisor introduction production backfill
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/revisor-introduction-backfill.yml
-      - scripts/run-production-revisor-introduction-backfill.ts
-      - src/app/api/operations/revisor-introduction-backfill/route.ts
-      - src/operations/revisor-introduction-backfill.ts
-      - src/sources/minnesota/revisor-introduction.ts
-      - src/sources/minnesota/revisor-actions.ts
   workflow_dispatch:
 
 permissions:
