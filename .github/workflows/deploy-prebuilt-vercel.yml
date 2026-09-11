@@ -1,10 +1,6 @@
 name: Deploy prebuilt to Vercel
 
 on:
-  pull_request:
-    branches: [main]
-    paths:
-      - .github/workflows/deploy-prebuilt-vercel.yml
   push:
     branches: [main]
     paths:
@@ -14,24 +10,26 @@ permissions:
   contents: read
 
 concurrency:
-  group: prebuilt-vercel-${{ github.ref }}
+  group: prebuilt-vercel-production
   cancel-in-progress: false
 
 jobs:
   deploy:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
     steps:
       - uses: actions/checkout@v7
 
-      - name: Require Vercel deployment credentials
+      - name: Require Vercel deployment credential
         shell: bash
         run: |
-          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
-            echo 'Required Vercel deployment credentials are unavailable.'
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo 'VERCEL_TOKEN is unavailable. No production deployment was attempted.'
             exit 1
           fi
 
@@ -42,39 +40,17 @@ jobs:
 
       - run: npm ci --no-fund --no-audit
 
-      - name: Pull preview configuration
-        if: github.event_name == 'pull_request'
-        shell: bash
-        run: |
-          umask 077
-          npx --yes vercel@59.13.1 pull --yes --environment=preview --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
-
-      - name: Build preview locally
-        if: github.event_name == 'pull_request'
-        shell: bash
-        run: npx --yes vercel@59.13.1 build --token "$VERCEL_TOKEN"
-
-      - name: Deploy prebuilt preview
-        if: github.event_name == 'pull_request'
-        shell: bash
-        run: |
-          url=$(npx --yes vercel@59.13.1 deploy --prebuilt --token "$VERCEL_TOKEN")
-          echo "Preview deployment: $url"
-
       - name: Pull production configuration
-        if: github.event_name == 'push'
         shell: bash
         run: |
           umask 077
           npx --yes vercel@59.13.1 pull --yes --environment=production --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
 
       - name: Build production locally
-        if: github.event_name == 'push'
         shell: bash
         run: npx --yes vercel@59.13.1 build --prod --token "$VERCEL_TOKEN"
 
       - name: Deploy prebuilt production
-        if: github.event_name == 'push'
         shell: bash
         run: |
           url=$(npx --yes vercel@59.13.1 deploy --prebuilt --prod --token "$VERCEL_TOKEN")
@@ -85,4 +61,4 @@ jobs:
         shell: bash
         run: |
           rm -f "$RUNNER_TEMP/vercel-pull.log"
-          rm -f .vercel/.env.preview.local .vercel/.env.production.local
+          rm -f .vercel/.env.production.local
