@@ -1,4 +1,5 @@
 import { parseRevisorOfficialActions } from './revisor-actions';
+import { getMinnesotaHouseSession } from './sessions';
 
 export interface RevisorInitialDocument {
   documentName: string | null;
@@ -60,6 +61,15 @@ function normalizeIdentifier(identifier: string): string {
   const match = identifier.trim().match(/^(HF|SF)\s*0*(\d+)$/i);
   if (!match) throw new Error(`Unsupported Minnesota bill identifier: ${identifier}`);
   return `${match[1].toUpperCase()}${Number(match[2])}`;
+}
+
+export function buildRevisorRegularSessionStatusXmlUrl(sessionKeyOrSlug: string, rawIdentifier: string): string {
+  const session = getMinnesotaHouseSession(sessionKeyOrSlug);
+  const identifier = normalizeIdentifier(rawIdentifier);
+  const match = identifier.match(/^(HF|SF)(\d+)$/);
+  if (!match) throw new Error(`Unsupported Minnesota bill identifier: ${rawIdentifier}`);
+  const year = Number(session.startsOn.slice(0, 4));
+  return `https://api.revisor.mn.gov/bills/v1/${session.legislature}/${year}/0/${match[1]}/${Number(match[2])}/`;
 }
 
 export function parseRevisorInitialDocument(xml: string): RevisorInitialDocument | null {
