@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
 import { fetchRevisorStatusXml } from '@/sources/minnesota/revisor-actions';
-import { parseRevisorIntroductionMetadata } from '@/sources/minnesota/revisor-introduction';
+import {
+  buildRevisorRegularSessionStatusXmlUrl,
+  parseRevisorIntroductionMetadata,
+} from '@/sources/minnesota/revisor-introduction';
 
 export const maxDuration = 300;
 
@@ -13,7 +16,6 @@ type SampleRow = {
   session_slug: string;
   chamber_slug: 'house' | 'senate';
   identifier: string;
-  status_xml_url: string;
   sample_bucket: number;
 };
 
@@ -36,13 +38,11 @@ async function sampleUniverse(): Promise<SampleRow[]> {
              s.slug AS session_slug,
              c.slug AS chamber_slug,
              b.identifier,
-             b.metadata #>> '{revisorUniverse,statusXmlUrl}' AS status_xml_url,
              substring(b.identifier from '[0-9]+$')::integer AS bill_number
         FROM bills b
         JOIN legislative_sessions s ON s.id = b.session_id
         JOIN chambers c ON c.id = b.originating_chamber_id AND c.slug IN ('house', 'senate')
        WHERE b.metadata ? 'revisorUniverse'
-         AND b.metadata #>> '{revisorUniverse,statusXmlUrl}' IS NOT NULL
     ), tiled AS (
       SELECT *, ntile($1::integer) OVER (
         PARTITION BY session_slug, chamber_slug
@@ -51,7 +51,7 @@ async function sampleUniverse(): Promise<SampleRow[]> {
       FROM universe
     )
     SELECT DISTINCT ON (session_slug, chamber_slug, sample_bucket)
-           bill_id, session_slug, chamber_slug, identifier, status_xml_url, sample_bucket
+           bill_id, session_slug, chamber_slug, identifier, sample_bucket
       FROM tiled
      ORDER BY session_slug, chamber_slug, sample_bucket, bill_number, identifier`, [SAMPLE_BUCKETS]);
   return result.rows;
@@ -70,7 +70,8 @@ async function auditSamples(samples: readonly SampleRow[]): Promise<AuditRow[]> 
     const batch = samples.slice(offset, offset + FETCH_CONCURRENCY);
     const rows = await Promise.all(batch.map(async (sample): Promise<AuditRow> => {
       try {
-        const xml = await fetchRevisorStatusXml(sample.status_xml_url);
+        const statusXmlUrl = buildRevisorRegularSessionStatusXmlUrl(sample.session_slug, sample.identifier);
+        const xml = await fetchRevisorStatusXml(statusXmlUrl);
         const metadata = parseRevisorIntroductionMetadata({ xml, identifier: sample.identifier });
         return {
           session: sample.session_slug,
@@ -151,6 +152,9 @@ export async function POST(request: Request) {
 
   try {
     const samples = await sampleUniverse();
+    if (samples.length !== SAMPLE_BUCKETS * 6) {
+      throw new Error(`Expected ${SAMPLE_BUCKETS * 6} stratified samples, found ${samples.length}`);
+    }
     const rows = await auditSamples(samples);
     return NextResponse.json({
       metadata: {
@@ -158,6 +162,7 @@ export async function POST(request: Request) {
         codeSha: process.env.VERCEL_GIT_COMMIT_SHA ?? null,
         sampleDesign: `${SAMPLE_BUCKETS} bill-number tiles per session/chamber; first bill in each tile`,
         fetchConcurrency: FETCH_CONCURRENCY,
+        statusUrlMethod: 'canonical official Revisor API URL constructed from audited regular-session scope + bill identifier',
         modelEligibility: {
           introductionDate: 'eligible when source-chamber introduction/first-reading action is dated',
           initialDocument: 'eligible only when zero-engrossment official document is dated on/before introduction',
