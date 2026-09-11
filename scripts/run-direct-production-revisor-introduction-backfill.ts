@@ -11,6 +11,8 @@ const DATABASE_CANDIDATES = [
   'POSTGRES_URL',
 ] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
+const SCOPE_ENV = 'VOTEPREDICT_INTRODUCTION_BACKFILL_SCOPES';
+const ADVISORY_LOCK_NAMESPACE = 'votepredict-revisor-introduction-backfill';
 
 type DatabaseCandidate = typeof DATABASE_CANDIDATES[number];
 type DatabaseSource = DatabaseCandidate | 'NEON_FUNCTION_BRIDGE';
@@ -92,6 +94,23 @@ async function choosePortableDatabaseUrl(env: Record<string, string | undefined>
   return { name: 'NEON_FUNCTION_BRIDGE', value };
 }
 
+function scopeKey(scope: { session: string; chamber: string }): string {
+  return `${scope.session}/${scope.chamber}`;
+}
+
+function selectScopes<T extends { session: string; chamber: string }>(allScopes: readonly T[]): T[] {
+  const raw = process.env[SCOPE_ENV]?.trim();
+  if (!raw) return [...allScopes];
+  const requested = [...new Set(raw.split(',').map((value) => value.trim()).filter(Boolean))];
+  if (requested.length === 0) throw new Error(`${SCOPE_ENV} did not contain any scopes`);
+  const byKey = new Map(allScopes.map((scope) => [scopeKey(scope), scope]));
+  return requested.map((key) => {
+    const scope = byKey.get(key);
+    if (!scope) throw new Error(`Unsupported introduction backfill scope in ${SCOPE_ENV}: ${key}`);
+    return scope;
+  });
+}
+
 async function main(): Promise<void> {
   const envPath = process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
   if (!envPath) throw new Error('Production environment file is required');
@@ -126,114 +145,173 @@ async function main(): Promise<void> {
     verifyRevisorIntroductionBackfill,
   } = await import('../src/operations/revisor-introduction-backfill.js');
   const { pool } = await import('../src/lib/db/index.js');
+  const selectedScopes = selectScopes(INTRODUCTION_BACKFILL_SCOPES);
+  const selectedKeys = new Set(selectedScopes.map(scopeKey));
+  const fullRun = selectedScopes.length === INTRODUCTION_BACKFILL_SCOPES.length
+    && INTRODUCTION_BACKFILL_SCOPES.every((scope) => selectedKeys.has(scopeKey(scope)));
+  console.log(JSON.stringify({ directBackfillScopes: selectedScopes.map(scopeKey), fullRun }));
 
   try {
     const progress: Array<Record<string, unknown>> = [];
-    for (const scope of INTRODUCTION_BACKFILL_SCOPES) {
-      let afterBillNumber = 0;
-      let processed = 0;
-      let batches = 0;
-      let existingDatesPreserved = 0;
-      let batchLimit = INTRODUCTION_BACKFILL_MAX_BATCH;
+    for (const scope of selectedScopes) {
+      const key = scopeKey(scope);
+      const lockClient = await pool.connect();
+      console.log(JSON.stringify({ introductionBackfillScopeLock: { scope: key, state: 'waiting' } }));
+      await lockClient.query(
+        'SELECT pg_advisory_lock(hashtext($1), hashtext($2))',
+        [ADVISORY_LOCK_NAMESPACE, key],
+      );
+      console.log(JSON.stringify({ introductionBackfillScopeLock: { scope: key, state: 'acquired' } }));
 
-      while (true) {
-        if (batches >= MAX_BATCHES_PER_SCOPE) throw new Error(`Exceeded batch safety cap for ${scope.session}/${scope.chamber}`);
+      try {
+        const before = await verifyRevisorIntroductionBackfill();
+        const beforeScope = before.scopes.find((row) => scopeKey(row) === key);
+        if (!beforeScope) throw new Error(`Verification did not return selected scope ${key}`);
+        if (beforeScope.complete) {
+          progress.push({
+            session: scope.session,
+            chamber: scope.chamber,
+            processed: 0,
+            expectedBills: scope.expectedBills,
+            batches: 0,
+            existingDatesPreserved: 0,
+            alreadyComplete: true,
+          });
+          continue;
+        }
 
-        let result: Awaited<ReturnType<typeof backfillRevisorIntroductionBatch>> | undefined;
-        let lastError: unknown;
-        for (let attempt = 1; attempt <= MAX_BATCH_ATTEMPTS; attempt += 1) {
-          try {
-            result = await backfillRevisorIntroductionBatch({
-              session: scope.session,
-              chamber: scope.chamber,
-              afterBillNumber,
-              limit: batchLimit,
-            });
-            break;
-          } catch (error) {
-            lastError = error;
-            console.warn(JSON.stringify({
-              introductionBackfillBatchRetry: {
+        let afterBillNumber = 0;
+        let processed = 0;
+        let batches = 0;
+        let existingDatesPreserved = 0;
+        let batchLimit = INTRODUCTION_BACKFILL_MAX_BATCH;
+
+        while (true) {
+          if (batches >= MAX_BATCHES_PER_SCOPE) throw new Error(`Exceeded batch safety cap for ${key}`);
+
+          let result: Awaited<ReturnType<typeof backfillRevisorIntroductionBatch>> | undefined;
+          let lastError: unknown;
+          for (let attempt = 1; attempt <= MAX_BATCH_ATTEMPTS; attempt += 1) {
+            try {
+              result = await backfillRevisorIntroductionBatch({
                 session: scope.session,
                 chamber: scope.chamber,
                 afterBillNumber,
                 limit: batchLimit,
-                attempt,
-                maxAttempts: MAX_BATCH_ATTEMPTS,
-                error: safeMessage(error),
+              });
+              break;
+            } catch (error) {
+              lastError = error;
+              console.warn(JSON.stringify({
+                introductionBackfillBatchRetry: {
+                  session: scope.session,
+                  chamber: scope.chamber,
+                  afterBillNumber,
+                  limit: batchLimit,
+                  attempt,
+                  maxAttempts: MAX_BATCH_ATTEMPTS,
+                  error: safeMessage(error),
+                },
+              }));
+              if (attempt < MAX_BATCH_ATTEMPTS) await sleep(Math.min(10_000, 2_000 * (2 ** (attempt - 1))));
+            }
+          }
+
+          if (!result) {
+            if (batchLimit === 1) {
+              throw new Error(
+                `Persistent direct production backfill failure for ${key} after bill ${afterBillNumber}; next incomplete bill failed individually: ${safeMessage(lastError)}`,
+              );
+            }
+            const previousLimit = batchLimit;
+            batchLimit = Math.max(1, Math.floor(batchLimit / 2));
+            console.warn(JSON.stringify({
+              introductionBackfillNarrowing: {
+                session: scope.session,
+                chamber: scope.chamber,
+                afterBillNumber,
+                previousLimit,
+                nextLimit: batchLimit,
               },
             }));
-            if (attempt < MAX_BATCH_ATTEMPTS) await sleep(Math.min(10_000, 2_000 * (2 ** (attempt - 1))));
+            continue;
           }
-        }
 
-        if (!result) {
-          if (batchLimit === 1) {
-            throw new Error(
-              `Persistent direct production backfill failure for ${scope.session}/${scope.chamber} after bill ${afterBillNumber}; next incomplete bill failed individually: ${safeMessage(lastError)}`,
-            );
+          batches += 1;
+          if (result.nextAfterBillNumber < afterBillNumber) {
+            throw new Error(`Backfill cursor moved backwards for ${key}`);
           }
-          const previousLimit = batchLimit;
-          batchLimit = Math.max(1, Math.floor(batchLimit / 2));
-          console.warn(JSON.stringify({
-            introductionBackfillNarrowing: {
-              session: scope.session,
-              chamber: scope.chamber,
-              afterBillNumber,
-              previousLimit,
-              nextLimit: batchLimit,
-            },
-          }));
-          continue;
+          if (!result.done && (result.processed === 0 || result.nextAfterBillNumber === afterBillNumber)) {
+            throw new Error(`Backfill cursor stalled for ${key}`);
+          }
+
+          processed += result.processed;
+          existingDatesPreserved += result.existingDatesPreserved;
+          afterBillNumber = result.nextAfterBillNumber;
+          batchLimit = INTRODUCTION_BACKFILL_MAX_BATCH;
+          if (batches === 1 || batches % 10 === 0 || result.done) {
+            console.log(JSON.stringify({
+              introductionBackfillProgress: {
+                session: scope.session,
+                chamber: scope.chamber,
+                processed,
+                expectedBills: scope.expectedBills,
+                batches,
+                afterBillNumber,
+                done: result.done,
+              },
+            }));
+          }
+          if (result.done) break;
         }
 
-        batches += 1;
-        if (result.nextAfterBillNumber < afterBillNumber) {
-          throw new Error(`Backfill cursor moved backwards for ${scope.session}/${scope.chamber}`);
+        const after = await verifyRevisorIntroductionBackfill();
+        const afterScope = after.scopes.find((row) => scopeKey(row) === key);
+        if (!afterScope?.complete) {
+          throw new Error(`Selected production Revisor introduction scope did not reach exact authoritative coverage: ${key}`);
         }
-        if (!result.done && (result.processed === 0 || result.nextAfterBillNumber === afterBillNumber)) {
-          throw new Error(`Backfill cursor stalled for ${scope.session}/${scope.chamber}`);
-        }
-
-        processed += result.processed;
-        existingDatesPreserved += result.existingDatesPreserved;
-        afterBillNumber = result.nextAfterBillNumber;
-        batchLimit = INTRODUCTION_BACKFILL_MAX_BATCH;
-        if (batches === 1 || batches % 10 === 0 || result.done) {
-          console.log(JSON.stringify({
-            introductionBackfillProgress: {
-              session: scope.session,
-              chamber: scope.chamber,
-              processed,
-              expectedBills: scope.expectedBills,
-              batches,
-              afterBillNumber,
-              done: result.done,
-            },
-          }));
-        }
-        if (result.done) break;
+        progress.push({
+          session: scope.session,
+          chamber: scope.chamber,
+          processed,
+          expectedBills: scope.expectedBills,
+          batches,
+          existingDatesPreserved,
+          alreadyComplete: false,
+        });
+      } finally {
+        await lockClient.query(
+          'SELECT pg_advisory_unlock(hashtext($1), hashtext($2))',
+          [ADVISORY_LOCK_NAMESPACE, key],
+        ).catch(() => undefined);
+        lockClient.release();
+        console.log(JSON.stringify({ introductionBackfillScopeLock: { scope: key, state: 'released' } }));
       }
-
-      progress.push({
-        session: scope.session,
-        chamber: scope.chamber,
-        processed,
-        expectedBills: scope.expectedBills,
-        batches,
-        existingDatesPreserved,
-      });
     }
 
     const verification = await verifyRevisorIntroductionBackfill();
-    console.log(JSON.stringify({ productionRevisorIntroductionBackfill: { databaseCandidate: database.name, progress, verification } }));
-    if (!verification.complete
+    const selectedVerification = verification.scopes.filter((scope) => selectedKeys.has(scopeKey(scope)));
+    console.log(JSON.stringify({
+      productionRevisorIntroductionBackfill: {
+        databaseCandidate: database.name,
+        selectedScopes: selectedScopes.map(scopeKey),
+        progress,
+        selectedVerification,
+        verification,
+      },
+    }));
+    if (selectedVerification.length !== selectedScopes.length || selectedVerification.some((scope) => !scope.complete)) {
+      throw new Error('Selected production Revisor introduction backfill scopes did not reach exact authoritative coverage');
+    }
+    if (fullRun && (
+      !verification.complete
       || verification.expectedTotal !== 31_010
       || verification.universeTotal !== 31_010
       || verification.parserMetadataTotal !== 31_010
       || verification.introductionDateTotal !== 31_010
       || verification.eligibleInitialDocumentTotal !== 31_010
-      || verification.initialVersionTotal !== 31_010) {
+      || verification.initialVersionTotal !== 31_010
+    )) {
       throw new Error('Production Revisor introduction backfill did not reach exact authoritative coverage');
     }
   } finally {
