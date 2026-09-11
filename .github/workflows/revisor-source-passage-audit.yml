@@ -1,10 +1,11 @@
 name: Revisor source-passage audit
 on:
   push:
-    branches: [main, model/revisor-source-passage-action-search]
+    branches: [main, model/authoritative-source-passage-labels]
     paths:
       - .github/workflows/revisor-source-passage-audit.yml
       - scripts/audit-revisor-source-passage-search.ts
+      - scripts/export-revisor-source-passage-snapshot.ts
       - src/sources/minnesota/revisor-action-search.ts
       - src/sources/minnesota/revisor-actions.ts
       - tests/revisor-action-search.test.ts
@@ -22,5 +23,14 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - name: Audit all six source-chamber passage sets
+      - name: Audit all six authoritative source-chamber passage sets
         run: node --import tsx scripts/audit-revisor-source-passage-search.ts
+      - name: Export audited 654-bill source-passage snapshot
+        run: node --import tsx scripts/export-revisor-source-passage-snapshot.ts
+      - name: Upload machine-readable authoritative snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: revisor-source-passage-snapshot
+          path: artifacts/revisor-source-passage-snapshot.json
+          if-no-files-found: error
+          retention-days: 7
