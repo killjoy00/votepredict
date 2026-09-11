@@ -35,7 +35,7 @@ function errorCode(error: unknown): string {
   return 'UNKNOWN';
 }
 
-async function choosePortableDatabaseUrl(env: Record<string, string>): Promise<{ name: DatabaseCandidate; value: string }> {
+async function choosePortableDatabaseUrl(env: Record<string, string | undefined>): Promise<{ name: DatabaseCandidate; value: string }> {
   for (const name of DATABASE_CANDIDATES) {
     const value = env[name]?.trim();
     if (!value) {
