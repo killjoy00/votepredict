@@ -1,5 +1,11 @@
 import { pool } from '@/lib/db';
 import {
+  fetchRevisorSourceChamberPassageSearch,
+  REVISOR_SOURCE_PASSAGE_ACTIONS,
+  type RevisorActionSearchDocument,
+  type RevisorSourcePassageSearch,
+} from '@/sources/minnesota/revisor-action-search';
+import {
   fetchRevisorBillUniverseWithDocuments,
   type RevisorBillSearchBody,
   type RevisorBillSearchDocument,
@@ -23,6 +29,14 @@ const EXPECTED_REGULAR_BILLS: Record<string, Record<RevisorBillSearchBody, numbe
   '2023-2024': { House: 5488, Senate: 5535 },
   '2025-2026': { House: 5162, Senate: 5310 },
 };
+const EXPECTED_SOURCE_CHAMBER_PASSAGES: Record<string, Record<RevisorBillSearchBody, number>> = {
+  '2021-2022': { House: 89, Senate: 108 },
+  '2023-2024': { House: 160, Senate: 45 },
+  '2025-2026': { House: 174, Senate: 78 },
+};
+const AUTHORITATIVE_PASSAGE_LABEL_VERSION = 'revisor-source-chamber-passage-v1';
+const EXPECTED_TOTAL_BILLS = 31_010;
+const EXPECTED_TOTAL_SOURCE_PASSAGES = 654;
 
 export interface RevisorUniverseScopeResult {
   session: string;
@@ -30,9 +44,11 @@ export interface RevisorUniverseScopeResult {
   discoveredBills: number;
   expectedBills: number;
   coverageVsOfficialTally: number;
+  authoritativePassages: number;
   insertedBills: number;
   updatedBills: number;
   sourceDocuments: number;
+  passageSourceDocuments: number;
 }
 
 export interface RevisorUniverseRefreshResult {
@@ -41,8 +57,10 @@ export interface RevisorUniverseRefreshResult {
   totalInsertedBills: number;
   totalUpdatedBills: number;
   sourceDocuments: number;
+  passageSourceDocuments: number;
   floorStageEvents: number;
   expirationEvents: number;
+  expirationEventsRemoved: number;
   passageLabels: {
     passed: number;
     failed: number;
@@ -51,14 +69,30 @@ export interface RevisorUniverseRefreshResult {
 }
 
 type ScopeRow = { session_id: string; chamber_id: string };
+type PassageScope = {
+  session: string;
+  body: RevisorBillSearchBody;
+  scope: ScopeRow;
+  passage: RevisorSourcePassageSearch;
+};
 
 function chamberSlug(body: RevisorBillSearchBody): 'house' | 'senate' {
   return body === 'House' ? 'house' : 'senate';
 }
 
+function floorStage(body: RevisorBillSearchBody): 'house_floor_passage' | 'senate_floor_passage' {
+  return body === 'House' ? 'house_floor_passage' : 'senate_floor_passage';
+}
+
 function expectedBills(session: string, body: RevisorBillSearchBody): number {
   const expected = EXPECTED_REGULAR_BILLS[session]?.[body];
   if (!expected) throw new Error(`Missing official bill-introduction tally for ${session}/${body}`);
+  return expected;
+}
+
+function expectedSourcePassages(session: string, body: RevisorBillSearchBody): number {
+  const expected = EXPECTED_SOURCE_CHAMBER_PASSAGES[session]?.[body];
+  if (expected === undefined) throw new Error(`Missing audited source-chamber passage count for ${session}/${body}`);
   return expected;
 }
 
@@ -99,6 +133,43 @@ async function persistSearchDocuments(input: {
       document.fetchedAt,
       document.contentSha256,
       JSON.stringify({ body: input.body, results: document.results.length, source: 'Minnesota Revisor Bill Status API v1' }),
+    ]);
+    persisted += 1;
+  }
+  return persisted;
+}
+
+async function persistPassageSearchDocuments(input: {
+  scope: ScopeRow;
+  body: RevisorBillSearchBody;
+  documents: readonly RevisorActionSearchDocument[];
+}): Promise<number> {
+  let persisted = 0;
+  for (const document of input.documents) {
+    await pool.query(`
+      INSERT INTO source_documents (
+        jurisdiction_id, session_id, chamber_id, source_kind, source_url,
+        fetched_at, content_sha256, http_status, metadata
+      ) VALUES (
+        (SELECT id FROM jurisdictions WHERE slug = 'us-mn'),
+        $1::uuid, $2::uuid, 'revisor_source_chamber_passage_action_search', $3::text,
+        $4::timestamptz, $5::text, 200, $6::jsonb
+      )
+      ON CONFLICT (source_url, content_sha256) DO UPDATE SET
+        fetched_at = EXCLUDED.fetched_at,
+        metadata = source_documents.metadata || EXCLUDED.metadata`, [
+      input.scope.session_id,
+      input.scope.chamber_id,
+      document.sourceUrl,
+      document.fetchedAt,
+      document.contentSha256,
+      JSON.stringify({
+        body: input.body,
+        actionId: document.actionId,
+        results: document.results.length,
+        source: 'Minnesota Revisor Search by Action XML',
+        semantics: 'originating-chamber final passage discovery',
+      }),
     ]);
     persisted += 1;
   }
@@ -224,85 +295,161 @@ async function materializeFloorStageEvents(): Promise<number> {
   return result.rowCount ?? 0;
 }
 
-async function materializeExpirationEvents(): Promise<number> {
-  let total = 0;
-  for (const [session, adjournedOn] of Object.entries(BIENNIUM_ADJOURNMENT)) {
-    const sourceUrl = SESSION_HISTORY_SOURCE[session];
-    if (!sourceUrl) throw new Error(`Missing official session-history source for ${session}`);
-    const result = await pool.query(`
-      INSERT INTO legislative_stage_events (
-        bill_id, session_id, chamber_id, stage_kind, outcome, occurred_at,
-        source_url, metadata
-      )
-      SELECT b.id,
-             b.session_id,
-             b.originating_chamber_id,
-             'session_expiration',
-             true,
-             ($2::text || 'T23:59:59Z')::timestamptz,
-             $3::text,
-             jsonb_build_object(
-               'reason', 'regular biennium adjourned sine die without any recorded source-chamber final-passage vote',
-               'targetStage', CASE c.slug WHEN 'house' THEN 'house_floor_passage' ELSE 'senate_floor_passage' END,
-               'officialAdjournmentDate', $2::text
-             )
-        FROM bills b
-        JOIN legislative_sessions s ON s.id = b.session_id AND s.slug = $1::text
-        JOIN chambers c ON c.id = b.originating_chamber_id AND c.slug IN ('house', 'senate')
-       WHERE b.metadata ? 'revisorUniverse'
-         AND NOT EXISTS (
-           SELECT 1
-             FROM legislative_stage_events stage
-            WHERE stage.bill_id = b.id
-              AND stage.stage_kind = CASE c.slug WHEN 'house' THEN 'house_floor_passage' ELSE 'senate_floor_passage' END
-         )
-      ON CONFLICT (bill_id, stage_kind, occurred_at, source_url) DO UPDATE SET
-        metadata = legislative_stage_events.metadata || EXCLUDED.metadata
-      RETURNING id`, [session, adjournedOn, sourceUrl]);
-    total += result.rowCount ?? 0;
-  }
-  return total;
-}
+async function persistAuthoritativePassageState(inputs: readonly PassageScope[]): Promise<{
+  expirationEvents: number;
+  expirationEventsRemoved: number;
+  passageLabels: { passed: number; failed: number; unknown: number };
+}> {
+  const client = await pool.connect();
+  let expirationEvents = 0;
+  let expirationEventsRemoved = 0;
+  try {
+    await client.query('BEGIN');
 
-async function persistPassageLabels(): Promise<{ passed: number; failed: number; unknown: number }> {
-  const result = await pool.query<{ outcome: boolean | null; bills: number }>(`
-    WITH labels AS (
-      SELECT b.id,
-             CASE
-               WHEN bool_or(stage.outcome = true) FILTER (WHERE stage.stage_kind = CASE c.slug WHEN 'house' THEN 'house_floor_passage' ELSE 'senate_floor_passage' END) THEN true
-               WHEN bool_or(stage.outcome = false) FILTER (WHERE stage.stage_kind = CASE c.slug WHEN 'house' THEN 'house_floor_passage' ELSE 'senate_floor_passage' END) THEN false
-               WHEN bool_or(stage.stage_kind = 'session_expiration') THEN false
-               ELSE NULL
-             END AS outcome,
-             CASE c.slug WHEN 'house' THEN 'house_floor_passage' ELSE 'senate_floor_passage' END AS target_stage,
-             bool_or(stage.stage_kind = 'session_expiration') AS expired_without_floor_vote
-        FROM bills b
-        JOIN chambers c ON c.id = b.originating_chamber_id AND c.slug IN ('house', 'senate')
-        LEFT JOIN legislative_stage_events stage ON stage.bill_id = b.id
-       WHERE b.metadata ? 'revisorUniverse'
-       GROUP BY b.id, c.slug
-    ), updated AS (
-      UPDATE bills b
-         SET metadata = b.metadata || jsonb_build_object(
-           'sourceChamberPassage', jsonb_build_object(
-             'targetStage', labels.target_stage,
-             'outcome', labels.outcome,
-             'expiredWithoutFloorVote', labels.expired_without_floor_vote,
-             'labelMethod', 'official introduced-bill universe + recorded final-passage events + sine-die expiration'
+    for (const input of inputs) {
+      const positiveIdentifiers = input.passage.bills.map((bill) => bill.identifier);
+      const expectedPassages = expectedSourcePassages(input.session, input.body);
+      if (positiveIdentifiers.length !== expectedPassages) {
+        throw new Error(`Refusing to label ${input.session}/${input.body}: ${positiveIdentifiers.length} authoritative passages != audited ${expectedPassages}`);
+      }
+      const adjournedOn = BIENNIUM_ADJOURNMENT[input.session];
+      const sessionHistoryUrl = SESSION_HISTORY_SOURCE[input.session];
+      if (!adjournedOn || !sessionHistoryUrl) throw new Error(`Missing session-end provenance for ${input.session}`);
+
+      const sourceDocuments = input.passage.documents.map((document) => ({
+        actionId: document.actionId,
+        sourceUrl: document.sourceUrl,
+        fetchedAt: document.fetchedAt,
+        contentSha256: document.contentSha256,
+      }));
+      const actionIds = REVISOR_SOURCE_PASSAGE_ACTIONS[input.body];
+
+      await client.query(`
+        UPDATE bills b
+           SET metadata =
+                 CASE
+                   WHEN b.metadata ? 'sourceChamberPassageProvisional' THEN b.metadata
+                   ELSE b.metadata || jsonb_build_object('sourceChamberPassageProvisional', b.metadata->'sourceChamberPassage')
+                 END
+                 || jsonb_build_object(
+                   'sourceChamberPassage', jsonb_build_object(
+                     'targetStage', 'source_chamber_passage',
+                     'outcome', b.identifier = ANY($4::text[]),
+                     'unconditionalFrom', 'introduction',
+                     'labelVersion', $5::text,
+                     'labelSource', 'Minnesota Revisor Search by Action XML',
+                     'labelMethod', 'complete official introduced-bill universe + originating-chamber final-passage action search; absence after sine die => false',
+                     'actionIds', $6::jsonb,
+                     'sourceDocuments', $7::jsonb,
+                     'officialAdjournmentDate', $8::text,
+                     'officialSessionHistorySource', $9::text,
+                     'labeledAt', now()
+                   )
+                 ),
+               updated_at = now()
+         WHERE b.session_id = $1::uuid
+           AND b.originating_chamber_id = $2::uuid
+           AND b.metadata ? 'revisorUniverse'
+           AND b.metadata #>> '{revisorUniverse,body}' = $3::text`, [
+        input.scope.session_id,
+        input.scope.chamber_id,
+        input.body,
+        positiveIdentifiers,
+        AUTHORITATIVE_PASSAGE_LABEL_VERSION,
+        JSON.stringify(actionIds),
+        JSON.stringify(sourceDocuments),
+        adjournedOn,
+        sessionHistoryUrl,
+      ]);
+
+      const removed = await client.query(`
+        DELETE FROM legislative_stage_events stage
+         USING bills b
+         WHERE stage.bill_id = b.id
+           AND b.session_id = $1::uuid
+           AND b.originating_chamber_id = $2::uuid
+           AND b.metadata ? 'revisorUniverse'
+           AND stage.stage_kind = 'session_expiration'
+           AND b.identifier = ANY($3::text[])
+        RETURNING stage.id`, [input.scope.session_id, input.scope.chamber_id, positiveIdentifiers]);
+      expirationEventsRemoved += removed.rowCount ?? 0;
+
+      const expired = await client.query(`
+        INSERT INTO legislative_stage_events (
+          bill_id, session_id, chamber_id, stage_kind, outcome, occurred_at,
+          source_url, metadata
+        )
+        SELECT b.id,
+               b.session_id,
+               b.originating_chamber_id,
+               'session_expiration',
+               true,
+               ($3::text || 'T23:59:59Z')::timestamptz,
+               $4::text,
+               jsonb_build_object(
+                 'reason', 'regular biennium adjourned sine die without an official originating-chamber passage action or recorded source-chamber floor-passage event',
+                 'targetStage', 'source_chamber_passage',
+                 'officialAdjournmentDate', $3::text,
+                 'authoritativeLabelVersion', $5::text
+               )
+          FROM bills b
+         WHERE b.session_id = $1::uuid
+           AND b.originating_chamber_id = $2::uuid
+           AND b.metadata ? 'revisorUniverse'
+           AND NOT (b.identifier = ANY($6::text[]))
+           AND NOT EXISTS (
+             SELECT 1
+               FROM legislative_stage_events stage
+              WHERE stage.bill_id = b.id
+                AND stage.stage_kind = $7::text
            )
-         ),
-             updated_at = now()
-        FROM labels
-       WHERE labels.id = b.id
-      RETURNING labels.outcome
-    )
-    SELECT outcome, count(*)::int AS bills
-      FROM updated
-     GROUP BY outcome`);
-  const passed = result.rows.find((row) => row.outcome === true)?.bills ?? 0;
-  const failed = result.rows.find((row) => row.outcome === false)?.bills ?? 0;
-  const unknown = result.rows.find((row) => row.outcome === null)?.bills ?? 0;
-  return { passed, failed, unknown };
+        ON CONFLICT (bill_id, stage_kind, occurred_at, source_url) DO UPDATE SET
+          metadata = legislative_stage_events.metadata || EXCLUDED.metadata
+        RETURNING id`, [
+        input.scope.session_id,
+        input.scope.chamber_id,
+        adjournedOn,
+        sessionHistoryUrl,
+        AUTHORITATIVE_PASSAGE_LABEL_VERSION,
+        positiveIdentifiers,
+        floorStage(input.body),
+      ]);
+      expirationEvents += expired.rowCount ?? 0;
+    }
+
+    const validation = await client.query<{ passed: number; failed: number; unknown: number; positive_expirations: number }>(`
+      SELECT count(*) FILTER (WHERE b.metadata #>> '{sourceChamberPassage,outcome}' = 'true')::int AS passed,
+             count(*) FILTER (WHERE b.metadata #>> '{sourceChamberPassage,outcome}' = 'false')::int AS failed,
+             count(*) FILTER (WHERE b.metadata #>> '{sourceChamberPassage,outcome}' IS NULL)::int AS unknown,
+             count(*) FILTER (
+               WHERE b.metadata #>> '{sourceChamberPassage,outcome}' = 'true'
+                 AND EXISTS (
+                   SELECT 1 FROM legislative_stage_events stage
+                    WHERE stage.bill_id = b.id AND stage.stage_kind = 'session_expiration'
+                 )
+             )::int AS positive_expirations
+        FROM bills b
+       WHERE b.metadata ? 'revisorUniverse'`);
+    const labels = validation.rows[0];
+    if (labels.passed !== EXPECTED_TOTAL_SOURCE_PASSAGES || labels.failed !== EXPECTED_TOTAL_BILLS - EXPECTED_TOTAL_SOURCE_PASSAGES || labels.unknown !== 0) {
+      throw new Error(`Authoritative source-passage validation failed: passed=${labels.passed}, failed=${labels.failed}, unknown=${labels.unknown}`);
+    }
+    if (labels.positive_expirations !== 0) {
+      throw new Error(`Authoritative source-passage validation found ${labels.positive_expirations} passed bills with contradictory session-expiration events`);
+    }
+
+    await client.query('COMMIT');
+    return {
+      expirationEvents,
+      expirationEventsRemoved,
+      passageLabels: { passed: labels.passed, failed: labels.failed, unknown: labels.unknown },
+    };
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 export async function runRevisorUniverseRefresh(): Promise<RevisorUniverseRefreshResult> {
@@ -310,9 +457,10 @@ export async function runRevisorUniverseRefresh(): Promise<RevisorUniverseRefres
     INSERT INTO ingestion_runs (source_system, scope, status, metadata)
     VALUES ('mn-revisor-bill-universe', '2021-2026 regular biennia', 'running', $1::jsonb)
     RETURNING id::text`, [JSON.stringify({
-    source: 'Minnesota Revisor Bill Status API v1',
+    source: 'Minnesota Revisor Bill Status API v1 + Search by Action XML',
     validationSource: BILL_TALLY_SOURCE,
-    purpose: 'Load the complete introduced-bill denominator, including bills that never reached or passed an originating-chamber floor vote.',
+    passageLabelVersion: AUTHORITATIVE_PASSAGE_LABEL_VERSION,
+    purpose: 'Load the complete introduced-bill denominator and authoritative originating-chamber passage outcomes without contaminating conditional floor-vote models.',
   })]);
   const runId = run.rows[0].id;
 
@@ -339,42 +487,64 @@ export async function runRevisorUniverseRefresh(): Promise<RevisorUniverseRefres
       }
     }
 
+    const passageSearches: Array<{ session: string; body: RevisorBillSearchBody; passage: RevisorSourcePassageSearch }> = [];
+    for (const input of scopeInputs) {
+      const passage = await fetchRevisorSourceChamberPassageSearch({ sessionKey: input.session, body: input.body });
+      const expected = expectedSourcePassages(input.session, input.body);
+      if (passage.bills.length !== expected) {
+        throw new Error(`Revisor source-passage validation failed for ${input.session}/${input.body}: discovered ${passage.bills.length}, audited ${expected}`);
+      }
+      passageSearches.push({ ...input, passage });
+    }
+    const totalPassages = passageSearches.reduce((sum, item) => sum + item.passage.bills.length, 0);
+    if (totalPassages !== EXPECTED_TOTAL_SOURCE_PASSAGES) {
+      throw new Error(`Revisor source-passage total changed unexpectedly: ${totalPassages} != audited ${EXPECTED_TOTAL_SOURCE_PASSAGES}`);
+    }
+
     const scopes: RevisorUniverseScopeResult[] = [];
+    const passageScopes: PassageScope[] = [];
     for (const item of fetched) {
       const expected = expectedBills(item.session, item.body);
       const discoveredBills = item.universe.bills.length;
+      const passageItem = passageSearches.find((candidate) => candidate.session === item.session && candidate.body === item.body);
+      if (!passageItem) throw new Error(`Missing validated passage search for ${item.session}/${item.body}`);
       const scope = await resolveScope(item.session, item.body);
       const sourceDocuments = await persistSearchDocuments({ scope, body: item.body, documents: item.universe.documents });
+      const passageSourceDocuments = await persistPassageSearchDocuments({ scope, body: item.body, documents: passageItem.passage.documents });
       const persisted = await persistBills({
         body: item.body,
         scope,
         bills: item.universe.bills,
         fetchedAt: item.universe.documents[0]?.fetchedAt ?? new Date().toISOString(),
       });
+      passageScopes.push({ session: item.session, body: item.body, scope, passage: passageItem.passage });
       scopes.push({
         session: item.session,
         body: item.body,
         discoveredBills,
         expectedBills: expected,
         coverageVsOfficialTally: discoveredBills / expected,
+        authoritativePassages: passageItem.passage.bills.length,
         insertedBills: persisted.inserted,
         updatedBills: persisted.updated,
         sourceDocuments,
+        passageSourceDocuments,
       });
     }
 
     const floorStageEvents = await materializeFloorStageEvents();
-    const expirationEvents = await materializeExpirationEvents();
-    const passageLabels = await persistPassageLabels();
+    const authoritative = await persistAuthoritativePassageState(passageScopes);
     const result: RevisorUniverseRefreshResult = {
       scopes,
       totalDiscoveredBills: scopes.reduce((sum, row) => sum + row.discoveredBills, 0),
       totalInsertedBills: scopes.reduce((sum, row) => sum + row.insertedBills, 0),
       totalUpdatedBills: scopes.reduce((sum, row) => sum + row.updatedBills, 0),
-      sourceDocuments: scopes.reduce((sum, row) => sum + row.sourceDocuments, 0),
+      sourceDocuments: scopes.reduce((sum, row) => sum + row.sourceDocuments + row.passageSourceDocuments, 0),
+      passageSourceDocuments: scopes.reduce((sum, row) => sum + row.passageSourceDocuments, 0),
       floorStageEvents,
-      expirationEvents,
-      passageLabels,
+      expirationEvents: authoritative.expirationEvents,
+      expirationEventsRemoved: authoritative.expirationEventsRemoved,
+      passageLabels: authoritative.passageLabels,
     };
     await pool.query(`
       UPDATE ingestion_runs
