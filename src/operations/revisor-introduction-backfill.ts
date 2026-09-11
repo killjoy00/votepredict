@@ -2,6 +2,11 @@ import { createHash } from 'node:crypto';
 import { pool } from '@/lib/db';
 import { fetchRevisorStatusXml } from '@/sources/minnesota/revisor-actions';
 import {
+  buildRevisorRegularSessionStatusHtmlUrls,
+  fetchRevisorIntroductionStatusHtml,
+  parseRevisorIntroductionStatusHtml,
+} from '@/sources/minnesota/revisor-introduction-html';
+import {
   buildRevisorRegularSessionStatusXmlUrls,
   parseRevisorIntroductionMetadata,
   type RevisorIntroductionMetadata,
@@ -32,11 +37,16 @@ type BillRow = {
   existing_introduced_at: string | null;
 };
 
+type IntroductionSourceFormat = 'xml' | 'html';
+
 type FetchedIntroduction = BillRow & {
-  statusXmlUrl: string;
-  statusXmlSha256: string;
+  sourceUrl: string;
+  sourceSha256: string;
+  sourceFormat: IntroductionSourceFormat;
+  sourceName: string;
   fetchedAt: string;
-  apiYear: number;
+  sourceYear: number;
+  fallbackReason: string | null;
   metadata: RevisorIntroductionMetadata;
 };
 
@@ -72,20 +82,33 @@ function apiYear(url: string): number {
   return Number(match[1]);
 }
 
+function statusHtmlYear(url: string): number {
+  const match = url.match(/\/bills\/\d+\/(20\d{2})\//);
+  if (!match) throw new Error('Could not determine Revisor HTML year from canonical status URL');
+  return Number(match[1]);
+}
+
 function existingDate(value: string | null): string | null {
   return value?.match(/^(20\d{2}-\d{2}-\d{2})/)?.[1] ?? null;
 }
 
-function requireCompleteIntroduction(metadata: RevisorIntroductionMetadata, identifier: string, resolvedApiYear: number): void {
+function requireCompleteIntroduction(metadata: RevisorIntroductionMetadata, identifier: string, resolvedSourceYear: number): void {
   if (!metadata.introducedOn) throw new Error(`${identifier}: source-chamber introduction date missing`);
-  if (!metadata.introducedOn.startsWith(`${resolvedApiYear}-`)) {
-    throw new Error(`${identifier}: introduction year ${metadata.introducedOn.slice(0, 4)} does not match resolved API year ${resolvedApiYear}`);
+  if (!metadata.introducedOn.startsWith(`${resolvedSourceYear}-`)) {
+    throw new Error(`${identifier}: introduction year ${metadata.introducedOn.slice(0, 4)} does not match resolved source year ${resolvedSourceYear}`);
   }
   if (!metadata.initialDocument || !metadata.initialDocument.documentName || !metadata.initialDocument.insertedOn || !metadata.initialDocument.htmlUrl) {
     throw new Error(`${identifier}: zero-engrossment initial official document metadata incomplete`);
   }
   if (!metadata.initialDocumentKnownByIntroduction) {
     throw new Error(`${identifier}: initial official document was not demonstrably available by introduction`);
+  }
+}
+
+function verifyExistingIntroductionDate(row: BillRow, metadata: RevisorIntroductionMetadata): void {
+  const currentDate = existingDate(row.existing_introduced_at);
+  if (currentDate && currentDate !== metadata.introducedOn) {
+    throw new Error(`${row.identifier}: existing introduction date ${currentDate} conflicts with Revisor ${metadata.introducedOn}`);
   }
 }
 
@@ -103,20 +126,64 @@ async function fetchIntroduction(row: BillRow, session: string): Promise<Fetched
     const metadata = parseRevisorIntroductionMetadata({ xml, identifier: row.identifier });
     const resolvedApiYear = apiYear(statusXmlUrl);
     requireCompleteIntroduction(metadata, row.identifier, resolvedApiYear);
-    const currentDate = existingDate(row.existing_introduced_at);
-    if (currentDate && currentDate !== metadata.introducedOn) {
-      throw new Error(`${row.identifier}: existing introduction date ${currentDate} conflicts with Revisor ${metadata.introducedOn}`);
-    }
+    verifyExistingIntroductionDate(row, metadata);
     return {
       ...row,
-      statusXmlUrl,
-      statusXmlSha256: createHash('sha256').update(xml).digest('hex'),
+      sourceUrl: statusXmlUrl,
+      sourceSha256: createHash('sha256').update(xml).digest('hex'),
+      sourceFormat: 'xml',
+      sourceName: 'Minnesota Revisor Bill Status API v1',
       fetchedAt: new Date().toISOString(),
-      apiYear: resolvedApiYear,
+      sourceYear: resolvedApiYear,
+      fallbackReason: null,
       metadata,
     };
   }
-  throw lastFetchError instanceof Error ? lastFetchError : new Error(`${row.identifier}: Revisor introduction fetch failed`);
+
+  // The Revisor Bill Status API has rare historical records that persistently return 5xx
+  // even though the corresponding official status HTML remains available. Use that official
+  // page only after both biennium-year API candidates fail, and require the HTML itself to
+  // prove bill identity, introduction date, and zero-engrossment introduction-document date.
+  for (const statusHtmlUrl of buildRevisorRegularSessionStatusHtmlUrls(session, row.identifier)) {
+    let html: string;
+    try {
+      html = await fetchRevisorIntroductionStatusHtml(statusHtmlUrl);
+    } catch (error) {
+      lastFetchError = error;
+      continue;
+    }
+
+    const resolvedStatusYear = statusHtmlYear(statusHtmlUrl);
+    let metadata: RevisorIntroductionMetadata;
+    try {
+      metadata = parseRevisorIntroductionStatusHtml({
+        html,
+        identifier: row.identifier,
+        session,
+        sourceYear: resolvedStatusYear,
+      });
+      requireCompleteIntroduction(metadata, row.identifier, resolvedStatusYear);
+    } catch (error) {
+      lastFetchError = error;
+      continue;
+    }
+    verifyExistingIntroductionDate(row, metadata);
+    return {
+      ...row,
+      sourceUrl: statusHtmlUrl,
+      sourceSha256: createHash('sha256').update(html).digest('hex'),
+      sourceFormat: 'html',
+      sourceName: 'Minnesota Revisor official Bill Status HTML fallback',
+      fetchedAt: new Date().toISOString(),
+      sourceYear: resolvedStatusYear,
+      fallbackReason: 'Bill Status API v1 unavailable for both biennium-year candidates',
+      metadata,
+    };
+  }
+
+  throw lastFetchError instanceof Error
+    ? new Error(`${row.identifier}: Revisor introduction fetch failed: ${lastFetchError.message}`)
+    : new Error(`${row.identifier}: Revisor introduction fetch failed`);
 }
 
 async function fetchBatch(rows: readonly BillRow[], session: string): Promise<FetchedIntroduction[]> {
@@ -177,27 +244,42 @@ async function persistFetched(rows: readonly FetchedIntroduction[]): Promise<{
   }
 
   const sourcePayload = rows.map((row) => ({
-    source_url: row.statusXmlUrl,
+    source_url: row.sourceUrl,
     fetched_at: row.fetchedAt,
-    content_sha256: row.statusXmlSha256,
+    content_sha256: row.sourceSha256,
     identifier: row.identifier,
-    api_year: row.apiYear,
+    source_year: row.sourceYear,
+    source_format: row.sourceFormat,
+    source_name: row.sourceName,
+    fallback_reason: row.fallbackReason,
   }));
   const billPayload = rows.map((row) => {
     const initial = row.metadata.initialDocument!;
+    const sourceMetadata = row.sourceFormat === 'xml'
+      ? {
+          statusXmlUrl: row.sourceUrl,
+          statusXmlSha256: row.sourceSha256,
+          apiYear: row.sourceYear,
+        }
+      : {
+          statusHtmlUrl: row.sourceUrl,
+          statusHtmlSha256: row.sourceSha256,
+          statusYear: row.sourceYear,
+          fallbackReason: row.fallbackReason,
+        };
     const introductionMetadata = {
       parserVersion: INTRODUCTION_BACKFILL_PARSER_VERSION,
-      source: 'Minnesota Revisor Bill Status API v1',
-      statusXmlUrl: row.statusXmlUrl,
-      statusXmlSha256: row.statusXmlSha256,
+      source: row.sourceName,
+      sourceFormat: row.sourceFormat,
+      ...sourceMetadata,
       fetchedAt: row.fetchedAt,
-      apiYear: row.apiYear,
       introducedOn: row.metadata.introducedOn,
       introducedAtPrecision: 'date',
       initialDocument: {
         documentName: initial.documentName,
         insertedAt: initial.insertedAt,
         insertedOn: initial.insertedOn,
+        ...(row.sourceFormat === 'html' ? { insertedAtPrecision: 'date' } : {}),
         htmlUrl: initial.htmlUrl,
         engrossment: initial.engrossment,
         modelEligible: true,
@@ -214,7 +296,7 @@ async function persistFetched(rows: readonly FetchedIntroduction[]): Promise<{
       versionKey: initial.documentName,
       initialPublishedAt: `${initial.insertedOn}T12:00:00Z`,
       initialTextUrl: initial.htmlUrl,
-      sourceUrl: row.statusXmlUrl,
+      sourceUrl: row.sourceUrl,
     };
   });
 
@@ -223,13 +305,16 @@ async function persistFetched(rows: readonly FetchedIntroduction[]): Promise<{
     await client.query('BEGIN');
     const sources = await client.query(`
       WITH payload AS (
-        SELECT source_url, fetched_at, content_sha256, identifier, api_year
+        SELECT source_url, fetched_at, content_sha256, identifier, source_year, source_format, source_name, fallback_reason
           FROM jsonb_to_recordset($3::jsonb) AS x(
             source_url text,
             fetched_at timestamptz,
             content_sha256 text,
             identifier text,
-            api_year integer
+            source_year integer,
+            source_format text,
+            source_name text,
+            fallback_reason text
           )
       )
       INSERT INTO source_documents (
@@ -244,12 +329,15 @@ async function persistFetched(rows: readonly FetchedIntroduction[]): Promise<{
              p.fetched_at,
              p.content_sha256,
              200,
-             jsonb_build_object(
+             jsonb_strip_nulls(jsonb_build_object(
                'identifier', p.identifier,
-               'apiYear', p.api_year,
+               'sourceYear', p.source_year,
+               'sourceFormat', p.source_format,
+               'source', p.source_name,
+               'fallbackReason', p.fallback_reason,
                'parserVersion', $4::text,
                'semantics', 'introduction-time metadata and zero-engrossment initial official document provenance'
-             )
+             ))
         FROM payload p
       ON CONFLICT (source_url, content_sha256) DO UPDATE SET
         fetched_at = GREATEST(source_documents.fetched_at, EXCLUDED.fetched_at),
