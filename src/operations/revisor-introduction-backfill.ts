@@ -90,30 +90,33 @@ function requireCompleteIntroduction(metadata: RevisorIntroductionMetadata, iden
 }
 
 async function fetchIntroduction(row: BillRow, session: string): Promise<FetchedIntroduction> {
-  let lastError: unknown = new Error(`${row.identifier}: no Revisor API candidates`);
+  let lastFetchError: unknown = new Error(`${row.identifier}: no Revisor API candidates`);
   for (const statusXmlUrl of buildRevisorRegularSessionStatusXmlUrls(session, row.identifier)) {
+    let xml: string;
     try {
-      const xml = await fetchRevisorStatusXml(statusXmlUrl);
-      const metadata = parseRevisorIntroductionMetadata({ xml, identifier: row.identifier });
-      const resolvedApiYear = apiYear(statusXmlUrl);
-      requireCompleteIntroduction(metadata, row.identifier, resolvedApiYear);
-      const currentDate = existingDate(row.existing_introduced_at);
-      if (currentDate && currentDate !== metadata.introducedOn) {
-        throw new Error(`${row.identifier}: existing introduction date ${currentDate} conflicts with Revisor ${metadata.introducedOn}`);
-      }
-      return {
-        ...row,
-        statusXmlUrl,
-        statusXmlSha256: createHash('sha256').update(xml).digest('hex'),
-        fetchedAt: new Date().toISOString(),
-        apiYear: resolvedApiYear,
-        metadata,
-      };
+      xml = await fetchRevisorStatusXml(statusXmlUrl);
     } catch (error) {
-      lastError = error;
+      lastFetchError = error;
+      continue;
     }
+
+    const metadata = parseRevisorIntroductionMetadata({ xml, identifier: row.identifier });
+    const resolvedApiYear = apiYear(statusXmlUrl);
+    requireCompleteIntroduction(metadata, row.identifier, resolvedApiYear);
+    const currentDate = existingDate(row.existing_introduced_at);
+    if (currentDate && currentDate !== metadata.introducedOn) {
+      throw new Error(`${row.identifier}: existing introduction date ${currentDate} conflicts with Revisor ${metadata.introducedOn}`);
+    }
+    return {
+      ...row,
+      statusXmlUrl,
+      statusXmlSha256: createHash('sha256').update(xml).digest('hex'),
+      fetchedAt: new Date().toISOString(),
+      apiYear: resolvedApiYear,
+      metadata,
+    };
   }
-  throw lastError instanceof Error ? lastError : new Error(`${row.identifier}: Revisor introduction fetch failed`);
+  throw lastFetchError instanceof Error ? lastFetchError : new Error(`${row.identifier}: Revisor introduction fetch failed`);
 }
 
 async function fetchBatch(rows: readonly BillRow[], session: string): Promise<FetchedIntroduction[]> {
@@ -162,11 +165,11 @@ async function persistFetched(rows: readonly FetchedIntroduction[]): Promise<{
   }
 
   const sourcePayload = rows.map((row) => ({
-    sourceUrl: row.statusXmlUrl,
-    fetchedAt: row.fetchedAt,
-    contentSha256: row.statusXmlSha256,
+    source_url: row.statusXmlUrl,
+    fetched_at: row.fetchedAt,
+    content_sha256: row.statusXmlSha256,
     identifier: row.identifier,
-    apiYear: row.apiYear,
+    api_year: row.apiYear,
   }));
   const billPayload = rows.map((row) => {
     const initial = row.metadata.initialDocument!;
