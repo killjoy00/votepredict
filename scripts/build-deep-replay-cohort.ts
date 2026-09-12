@@ -99,7 +99,7 @@ async function main(): Promise<void> {
             FROM bill_versions bv
            WHERE bv.bill_id = candidate.bill_id
              AND bv.published_at IS NOT NULL
-             AND bv.published_at::date < candidate.occurred_on
+             AND (bv.published_at AT TIME ZONE 'UTC')::date < candidate.occurred_on
              AND bv.raw_text IS NOT NULL
              AND length(bv.raw_text) >= ${MIN_REPLAY_BILL_TEXT_LENGTH}
            ORDER BY bv.published_at DESC, bv.created_at DESC, bv.id
@@ -118,7 +118,7 @@ async function main(): Promise<void> {
             FROM evidence_items ei
             LEFT JOIN source_documents sd ON sd.id = ei.source_document_id
            WHERE ei.published_at IS NOT NULL
-             AND ei.published_at::date < candidate.occurred_on
+             AND (ei.published_at AT TIME ZONE 'UTC')::date < candidate.occurred_on
              AND (
                ei.bill_id = candidate.bill_id
                OR ei.membership_id = ANY(candidate.membership_ids)
@@ -170,7 +170,7 @@ async function main(): Promise<void> {
         generatedAt: new Date().toISOString(),
         codeSha: process.env.GITHUB_SHA ?? null,
         purpose: 'evaluation-only historical replay manifest; this command performs no writes, creates no forecasts, invokes no research, and changes no serving probabilities',
-        leakageGuard: 'target bill text and stored evidence must be published on a calendar date strictly before the official vote date; same-day information is excluded because vote_events stores date but not vote time',
+        leakageGuard: 'target bill text and stored evidence must be published on a UTC calendar date strictly before the official vote date; same-day information is excluded because vote_events stores date but not vote time',
         researchCutoff: '23:59:59.999Z on the calendar day before each vote',
         minimumDecisiveMemberVotes: MIN_REPLAY_DECISIVE_MEMBER_VOTES,
         minimumBillTextLength: MIN_REPLAY_BILL_TEXT_LENGTH,
