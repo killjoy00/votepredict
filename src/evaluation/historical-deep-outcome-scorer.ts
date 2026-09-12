@@ -60,7 +60,8 @@ export interface HistoricalDeepDiscoveryScoredPair {
   party: string;
   selectedForCurrentDeep: boolean;
   quickYesProbability?: number;
-  actualOutcome: 0 | 1;
+  outcomeStatus: 'decisive' | 'no_decisive_floor_outcome';
+  actualOutcome?: 0 | 1;
   candidateCount: number;
   directionalCandidateCount: number;
   signal: 'supports_advancement' | 'opposes_advancement' | 'conflicting' | 'ambiguous_only';
@@ -78,7 +79,10 @@ export interface HistoricalDeepDiscoveryScore {
   summary: {
     candidateObservations: number;
     memberCasePairs: number;
+    decisiveOutcomePairs: number;
+    noDecisiveOutcomePairs: number;
     directionalPairs: number;
+    scorableDirectionalPairs: number;
     conflictingPairs: number;
     ambiguousOnlyPairs: number;
     floorAgreementPairs: number;
@@ -123,8 +127,11 @@ export function scoreHistoricalDeepDiscoveryCandidates(
   }
 
   const outcomeByPair = new Map<string, HistoricalDeepOutcomeMember>();
+  const outcomeCaseKeys = new Set<string>();
   for (const outcomeCase of outcomes.cases) {
     const caseKey = historicalDeepSourceCaseKey(outcomeCase);
+    if (outcomeCaseKeys.has(caseKey)) throw new Error(`Duplicate frozen outcome case: ${caseKey}`);
+    outcomeCaseKeys.add(caseKey);
     for (const member of outcomeCase.members) {
       const key = stablePairKey(caseKey, member.legislatorId);
       if (outcomeByPair.has(key)) {
@@ -147,8 +154,8 @@ export function scoreHistoricalDeepDiscoveryCandidates(
   for (const [key, observations] of grouped) {
     const first = observations[0];
     const caseKey = historicalDeepSourceCaseKey(first.case);
+    if (!outcomeCaseKeys.has(caseKey)) throw new Error(`Missing frozen outcome case for ${caseKey}`);
     const outcome = outcomeByPair.get(key);
-    if (!outcome) throw new Error(`Missing frozen outcome for ${key}`);
 
     const directional = observations
       .map((candidate) => proceduralSignal(candidate.motionText, candidate.voteSide))
@@ -161,12 +168,16 @@ export function scoreHistoricalDeepDiscoveryCandidates(
         : directional[0];
     const quickProbability = first.quickYesProbability;
     const quickPrediction = quickProbability === undefined ? undefined : predictedOutcome(quickProbability);
-    const quickError = quickPrediction === undefined ? undefined : quickPrediction !== outcome.actualOutcome;
-    const highConfidenceQuickError = quickError === true && quickProbability !== undefined
+    const quickError = quickPrediction === undefined || !outcome
+      ? undefined
+      : quickPrediction !== outcome.actualOutcome;
+    const highConfidenceQuickError = quickError === true && quickProbability !== undefined && outcome
       ? (outcome.actualOutcome === 1 ? quickProbability <= 0.1 : quickProbability >= 0.9)
       : false;
     const signalOutcome = signal === 'supports_advancement' ? 1 : signal === 'opposes_advancement' ? 0 : undefined;
-    const signalMatchesFloorOutcome = signalOutcome === undefined ? undefined : signalOutcome === outcome.actualOutcome;
+    const signalMatchesFloorOutcome = signalOutcome === undefined || !outcome
+      ? undefined
+      : signalOutcome === outcome.actualOutcome;
 
     pairs.push({
       caseKey,
@@ -179,7 +190,8 @@ export function scoreHistoricalDeepDiscoveryCandidates(
       party: first.party,
       selectedForCurrentDeep: observations.some((candidate) => candidate.selectedForCurrentDeep),
       quickYesProbability: quickProbability,
-      actualOutcome: outcome.actualOutcome,
+      outcomeStatus: outcome ? 'decisive' : 'no_decisive_floor_outcome',
+      actualOutcome: outcome?.actualOutcome,
       candidateCount: observations.length,
       directionalCandidateCount: directional.length,
       signal,
@@ -193,24 +205,28 @@ export function scoreHistoricalDeepDiscoveryCandidates(
 
   pairs.sort((a, b) => a.occurredOn.localeCompare(b.occurredOn) || a.identifier.localeCompare(b.identifier) || a.memberName.localeCompare(b.memberName));
   const directionalPairs = pairs.filter((pair) => pair.signal === 'supports_advancement' || pair.signal === 'opposes_advancement');
-  const floorAgreementPairs = directionalPairs.filter((pair) => pair.signalMatchesFloorOutcome).length;
-  const quickErrors = directionalPairs.filter((pair) => pair.quickError).length;
-  const rescued = directionalPairs.filter((pair) => pair.rescuedQuickError).length;
-  const highConfidenceErrors = directionalPairs.filter((pair) => pair.highConfidenceQuickError).length;
-  const rescuedHighConfidenceErrors = directionalPairs.filter((pair) => pair.highConfidenceQuickError && pair.rescuedQuickError).length;
+  const scorableDirectionalPairs = directionalPairs.filter((pair) => pair.outcomeStatus === 'decisive');
+  const floorAgreementPairs = scorableDirectionalPairs.filter((pair) => pair.signalMatchesFloorOutcome).length;
+  const quickErrors = scorableDirectionalPairs.filter((pair) => pair.quickError).length;
+  const rescued = scorableDirectionalPairs.filter((pair) => pair.rescuedQuickError).length;
+  const highConfidenceErrors = scorableDirectionalPairs.filter((pair) => pair.highConfidenceQuickError).length;
+  const rescuedHighConfidenceErrors = scorableDirectionalPairs.filter((pair) => pair.highConfidenceQuickError && pair.rescuedQuickError).length;
 
   return {
     schemaVersion: HISTORICAL_DEEP_DISCOVERY_SCORE_SCHEMA,
     generatedAt: new Date().toISOString(),
-    purpose: 'evaluation-only scoring of already-frozen pre-vote procedural discovery signals against later floor outcomes; no targeting, evidence-weight, probability, database, or serving changes',
+    purpose: 'evaluation-only scoring of already-frozen pre-vote procedural discovery signals against later decisive floor outcomes; candidates without a decisive YEA/NAY remain visible but unscored; no targeting, evidence-weight, probability, database, or serving changes',
     summary: {
       candidateObservations: candidates.candidates.length,
       memberCasePairs: pairs.length,
+      decisiveOutcomePairs: pairs.filter((pair) => pair.outcomeStatus === 'decisive').length,
+      noDecisiveOutcomePairs: pairs.filter((pair) => pair.outcomeStatus === 'no_decisive_floor_outcome').length,
       directionalPairs: directionalPairs.length,
+      scorableDirectionalPairs: scorableDirectionalPairs.length,
       conflictingPairs: pairs.filter((pair) => pair.signal === 'conflicting').length,
       ambiguousOnlyPairs: pairs.filter((pair) => pair.signal === 'ambiguous_only').length,
       floorAgreementPairs,
-      floorAgreementRate: ratio(floorAgreementPairs, directionalPairs.length),
+      floorAgreementRate: ratio(floorAgreementPairs, scorableDirectionalPairs.length),
       currentDeepPairs: pairs.filter((pair) => pair.selectedForCurrentDeep).length,
       outsideCurrentDeepPairs: pairs.filter((pair) => !pair.selectedForCurrentDeep).length,
       quickErrorsOnDirectionalPairs: quickErrors,
