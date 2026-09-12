@@ -246,7 +246,7 @@ export async function evaluateHistoricalQuickReplay(
       statuses: statusCounts,
       storedFeatureVersions: versionsUsingStoredFeatures,
       fallbackFeatureVersions: versionsUsingFeatureFallback,
-      targetVersionsUsingFeatureFallback,
+      targetVersionsUsingFeatureFallback: targetVersionsUsingFallbackFeatures,
       featureFallbackNote: 'Missing persisted deterministic feature sets are recomputed from the frozen dated raw bill text with the current deterministic extractor; no current bill text is fetched.',
     },
     score,
