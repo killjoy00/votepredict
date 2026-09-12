@@ -15,6 +15,13 @@ const baseCandidate = {
   extractionMethod: 'deterministic-house-committee-roll-call-v1',
 } as const;
 
+type OutcomeFixtureMember = {
+  membershipId: string;
+  legislatorId: string;
+  memberName: string;
+  actualOutcome: 0 | 1;
+};
+
 function candidateBundle() {
   return {
     schemaVersion: 'historical-deep-discovery-candidates-v1', generatedAt: '2026-09-12T00:00:00.000Z', purpose: 'test',
@@ -24,7 +31,11 @@ function candidateBundle() {
   };
 }
 
-function outcomeSnapshot(members = [{ membershipId: 'current-membership', legislatorId: 'l1', memberName: 'Member One', actualOutcome: 0 as const }]) {
+function outcomeSnapshot(
+  members: OutcomeFixtureMember[] = [
+    { membershipId: 'current-membership', legislatorId: 'l1', memberName: 'Member One', actualOutcome: 0 },
+  ],
+) {
   return {
     schemaVersion: 'historical-deep-outcome-snapshot-v1', generatedAt: '2026-09-12T00:00:00.000Z', codeSha: 'sha', purpose: 'test',
     cases: [{ session: '2023-2024', chamber: 'house', identifier: 'HF1', occurredOn: '2023-01-19', voteEventId: 'current-v1', members }],
@@ -54,7 +65,9 @@ test('scores frozen candidates by stable legislator identity when membership UUI
 });
 
 test('keeps candidates without a decisive floor vote visible but unscored', () => {
-  const otherMember = [{ membershipId: 'other-membership', legislatorId: 'l2', memberName: 'Other Member', actualOutcome: 1 as const }];
+  const otherMember: OutcomeFixtureMember[] = [
+    { membershipId: 'other-membership', legislatorId: 'l2', memberName: 'Other Member', actualOutcome: 1 },
+  ];
   const result = scoreHistoricalDeepDiscoveryCandidates(candidateBundle() as never, outcomeSnapshot(otherMember) as never);
   assert.equal(result.summary.memberCasePairs, 1);
   assert.equal(result.summary.decisiveOutcomePairs, 0);
@@ -78,9 +91,9 @@ test('fails closed when the frozen outcome snapshot omits a candidate case entir
 });
 
 test('fails closed when an outcome snapshot has duplicate stable legislator identities', () => {
-  const duplicateMembers = [
-    { membershipId: 'current-membership-a', legislatorId: 'l1', memberName: 'Member One', actualOutcome: 0 as const },
-    { membershipId: 'current-membership-b', legislatorId: 'l1', memberName: 'Member One', actualOutcome: 0 as const },
+  const duplicateMembers: OutcomeFixtureMember[] = [
+    { membershipId: 'current-membership-a', legislatorId: 'l1', memberName: 'Member One', actualOutcome: 0 },
+    { membershipId: 'current-membership-b', legislatorId: 'l1', memberName: 'Member One', actualOutcome: 0 },
   ];
   assert.throws(
     () => scoreHistoricalDeepDiscoveryCandidates(candidateBundle() as never, outcomeSnapshot(duplicateMembers) as never),
