@@ -1,7 +1,5 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { spawnSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
-import { requireEvaluationDatabaseConnection } from '../src/operations/evaluation-database.js';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 
 let secretValues: string[] = [];
@@ -29,29 +27,19 @@ async function main(): Promise<void> {
   if (!envPath) throw new Error('Production environment file is required');
   const outputPath = resolve(process.env.VOTEPREDICT_REPLAY_OUTPUT ?? 'artifacts/historical-quick-replay.json');
   const runtimeEnv = parseRuntimeEnvironment(readFileSync(envPath, 'utf8'));
-  requireEvaluationDatabaseConnection(runtimeEnv);
+  const cronSecret = runtimeEnv.CRON_SECRET;
+  if (!cronSecret) throw new Error('Production CRON_SECRET is unavailable');
   maskSecrets(runtimeEnv);
 
-  const child = spawnSync(
-    process.execPath,
-    ['--import', 'tsx', 'scripts/evaluate-historical-quick-replay.ts'],
-    {
-      cwd: process.cwd(),
-      env: { ...process.env, ...runtimeEnv, GITHUB_SHA: process.env.GITHUB_SHA ?? '' },
-      encoding: 'utf8',
-      maxBuffer: 64 * 1024 * 1024,
-    },
-  );
-  if (child.error) throw child.error;
-  if (child.status !== 0) {
-    throw new Error(`Historical Quick replay failed with exit ${child.status}: ${safeMessage(child.stderr)}`);
+  const response = await fetch('https://vote.planitnow.us/api/operations/historical-quick-replay', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${cronSecret}` },
+    signal: AbortSignal.timeout(310_000),
+  });
+  if (!response.ok) {
+    throw new Error(`Production historical Quick replay returned HTTP ${response.status}`);
   }
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(child.stdout);
-  } catch (error) {
-    throw new Error(`Historical Quick replay did not return valid JSON: ${safeMessage(error)}`);
-  }
+  const parsed = await response.json() as unknown;
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, `${JSON.stringify(parsed, null, 2)}\n`, { mode: 0o600 });
   const result = parsed as { readiness?: Record<string, unknown>; score?: { overall?: Record<string, unknown> } };
