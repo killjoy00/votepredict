@@ -1,0 +1,100 @@
+name: Introduction scorecard production audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/introduction-scorecard-production-audit.yml
+      - scripts/run-production-introduction-scorecard-audit.ts
+      - src/app/api/operations/introduction-scorecard-audit/route.ts
+      - src/app/dashboard/operations/page.tsx
+      - src/operations/introduction-scorecard.ts
+      - src/forecasting/introduction-prior-runtime.ts
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: introduction-scorecard-production-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+    steps:
+      - uses: actions/checkout@v7
+      - name: Require the existing Vercel credential
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ]; then
+            echo 'VERCEL_TOKEN is unavailable. No production audit was attempted.'
+            exit 1
+          fi
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Wait for this exact main SHA to be live in production
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            http_code="$(curl \
+              --silent \
+              --show-error \
+              --output "$RUNNER_TEMP/vercel-deployments.json" \
+              --write-out '%{http_code}' \
+              --header "Authorization: Bearer ${VERCEL_TOKEN}" \
+              "https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&target=production&limit=20&teamId=${VERCEL_ORG_ID}")"
+            if [ "$http_code" != "200" ]; then
+              echo "Vercel deployment lookup returned HTTP ${http_code}."
+              exit 1
+            fi
+            match="$(jq -c --arg sha "$GITHUB_SHA" '[.deployments[]? | select(.target == "production" and .meta.githubCommitSha == $sha)] | first // empty' "$RUNNER_TEMP/vercel-deployments.json")"
+            if [ -n "$match" ]; then
+              state="$(printf '%s' "$match" | jq -r '.state // "UNKNOWN"')"
+              if [ "$state" = "READY" ]; then
+                echo "Exact main SHA ${GITHUB_SHA} is READY in production."
+                exit 0
+              fi
+              if [ "$state" = "ERROR" ] || [ "$state" = "CANCELED" ]; then
+                echo "Production deployment for ${GITHUB_SHA} entered ${state}."
+                exit 1
+              fi
+            fi
+            sleep 5
+          done
+          echo "Exact main SHA ${GITHUB_SHA} did not become READY before the audit deadline."
+          exit 1
+      - name: Read production authentication privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          if ! npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1; then
+            echo 'Could not read the VotePredict production authentication environment. No audit was invoked.'
+            exit 1
+          fi
+      - name: Verify frozen introduction serving parity in production
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/run-production-introduction-scorecard-audit.ts
+      - name: Remove temporary credentials and lookup files
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PYTHON'
+          import os
+          from pathlib import Path
+          for name in ['votepredict-production.env', 'vercel-pull.log', 'vercel-deployments.json']:
+              Path(os.environ['RUNNER_TEMP'], name).unlink(missing_ok=True)
+          PYTHON
