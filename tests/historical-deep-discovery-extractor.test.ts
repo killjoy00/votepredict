@@ -7,6 +7,7 @@ import {
   historicalHtmlLines,
 } from '../src/evaluation/historical-deep-discovery-extractor.js';
 import type { HistoricalDeepDiscoveryManifest } from '../src/evaluation/historical-deep-discovery.js';
+import { HISTORICAL_DEEP_PILOT_CASES } from '../src/evaluation/historical-deep-pilot.js';
 import type { HistoricalDeepSourceBundle } from '../src/evaluation/historical-deep-source-catalog.js';
 
 function discovery(memberNames = ['Rick Hansen', 'Jim Nash']): HistoricalDeepDiscoveryManifest {
@@ -16,7 +17,7 @@ function discovery(memberNames = ['Rick Hansen', 'Jim Nash']): HistoricalDeepDis
       codeSha: 'sha',
       databaseSource: 'DATABASE_URL',
       purpose: 'test',
-      pilotCases: [],
+      pilotCases: HISTORICAL_DEEP_PILOT_CASES,
       cases: 1,
       memberCasePairs: memberNames.length,
       currentDeepTargetLimit: 12,
