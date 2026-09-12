@@ -77,7 +77,9 @@ CI also runs the complete migration chain against a fresh PostgreSQL database be
 
 ## Deployment
 
-Production release policy and fallback procedures are documented in [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md). The release rule is that the exact commit that passes the GitHub gate is the commit deployed to Vercel production, followed by route smoke tests and runtime-error checks.
+Automatic Vercel Git deployments are disabled. Feature branches are validated in GitHub CI without generating routine Vercel previews. After a push to `main` passes CI, `.github/workflows/deploy-production.yml` checks out that exact green SHA and performs the Vercel production deployment.
+
+Production release policy, fallback procedures, smoke checks, and quota discipline are documented in [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md).
 
 ## Governing documents
 
