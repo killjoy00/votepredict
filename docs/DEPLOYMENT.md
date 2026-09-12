@@ -4,6 +4,8 @@ VotePredict uses GitHub CI as the branch validation surface and Vercel only as t
 
 The release invariant is: **the exact commit that passed the release gate is the commit that reaches production**.
 
+A second invariant now applies: **`.github/workflows/deploy-production.yml` is the only repository workflow allowed to create a Vercel production deployment.** Audit, refresh, backfill, evaluation, and smoke tooling must operate against an already-deployed release and must never create their own production build.
+
 ## Why Git auto-deploys are disabled
 
 The previous configuration attempted to disable feature branches with:
@@ -35,7 +37,7 @@ This disables automatic Git deployments entirely.
 
 ## Production deployment workflow
 
-`.github/workflows/deploy-production.yml` is the normal release mechanism.
+`.github/workflows/deploy-production.yml` is the sole release mechanism.
 
 It is triggered by completion of the `CI` workflow and runs only when:
 
@@ -46,12 +48,13 @@ It is triggered by completion of the `CI` workflow and runs only when:
 The workflow then:
 
 1. checks out `github.event.workflow_run.head_sha` exactly;
-2. verifies the checked-out SHA matches the release SHA;
-3. requires the repository `VERCEL_TOKEN` secret;
-4. performs a remote `vercel deploy --prod` against the pinned VotePredict team/project;
-5. records the commit and deployment URL in the Actions job summary.
+2. verifies the checked-out SHA matches the release SHA and is still current `main`;
+3. requires the repository Vercel credential;
+4. ensures required production runtime configuration exists before deployment;
+5. performs one remote `vercel deploy --prod` against the pinned VotePredict team/project;
+6. records the commit and deployment URL in the Actions job summary.
 
-This design prevents a feature branch, failed CI commit, or later-moving branch head from being substituted into production.
+This design prevents a feature branch, failed CI commit, later-moving branch head, audit workflow, or maintenance workflow from being substituted into production or creating an extra deployment.
 
 ## Standard release path
 
@@ -64,7 +67,7 @@ This design prevents a feature branch, failed CI commit, or later-moving branch 
    - high-severity production dependency audit.
 3. Merge only after release-relevant checks are green.
 4. The push to `main` starts a fresh CI run for the merge commit.
-5. When that `main` CI run succeeds, `Deploy production` checks out the exact green SHA and starts the remote Vercel production deployment.
+5. When that `main` CI run succeeds, `Deploy production` checks out the exact green SHA and starts the single remote Vercel production deployment.
 6. Confirm the Vercel deployment reaches `READY` and identifies the expected commit SHA.
 7. Confirm production aliases are attached, including `vote.planitnow.us` and `votepredict.vercel.app`.
 8. Smoke-test the changed user path.
@@ -76,36 +79,15 @@ Vercel installs dependencies with `npm ci --no-fund --no-audit` using the commit
 
 VotePredict requires production secrets during the Next.js build/runtime configuration path. `vercel env pull` may intentionally return `[SENSITIVE]` placeholders for secret values, so a local `vercel build --prod` can fail even when the real Vercel production build is healthy.
 
-Normal/fallback release tooling should therefore use Vercel's **remote production build** (`vercel deploy --prod`) so secret values remain server-side and available in the production environment.
+The release workflow therefore uses Vercel's **remote production build** (`vercel deploy --prod`) so secret values remain server-side and available in the production environment.
 
-## Owner-only fallback bridge
+## Maintenance and audit tooling
 
-`.github/workflows/vercel-fallback.yml` remains the manual recovery path when the normal CI-triggered deployment workflow cannot be used.
+Maintenance capabilities remain available through their application endpoints and scripts, but legacy GitHub workflows that independently deployed production before invoking them were removed. This includes the former evidence-refresh, Revisor audit/refresh, runtime-smoke, and issue-driven Vercel fallback deployment workflows.
 
-The bridge is intentionally narrow:
+When one of these capabilities is needed, it must target the already-deployed production release. It may not create a deployment as a prerequisite. Production model/evaluation audits that remain automated follow the same rule: they verify or wait for the exact release SHA and then inspect that runtime.
 
-- it runs only for issues opened by the repository owner;
-- the title must start with `[vercel-ops] `;
-- it is pinned to the VotePredict Vercel team/project;
-- credentials remain in GitHub Actions secrets;
-- raw runtime/application messages are withheld from the public repository;
-- production deployment requires explicit confirmation.
-
-Supported issue commands:
-
-- `[vercel-ops] auth-check`
-- `[vercel-ops] status`
-- `[vercel-ops] errors`
-- `[vercel-ops] logs`
-- `[vercel-ops] deploy-production`
-
-For `deploy-production`, the issue body must contain exactly:
-
-```text
-CONFIRM PRODUCTION DEPLOY
-```
-
-A fallback production deployment should still deploy the exact current reviewed `main` state and receive the same post-deploy validation.
+`/api/health` exposes the deployed Git commit SHA alongside database/auth health so release tooling can verify which exact commit is currently serving without creating another deployment.
 
 ## Deployment quota discipline
 
@@ -115,6 +97,8 @@ Operational rules:
 
 - Vercel Git previews stay disabled globally;
 - GitHub CI is the default validation surface for feature branches;
+- the central CI-gated workflow is the only repository production deployer;
+- audits, refreshes, backfills, evaluations, and smoke checks never deploy production themselves;
 - previews, when genuinely necessary, are explicit/manual rather than automatic on every push;
 - documentation, evaluation, ingestion, and model-training commits do not need a Vercel preview by default;
 - when the quota is exhausted, do not weaken validation or deploy a different commit as a workaround;
