@@ -165,7 +165,7 @@ export function summarizeIntroductionServingScorecard(rows: readonly ScoredIntro
   };
 }
 
-export async function getIntroductionServingScorecard(): Promise<IntroductionServingScorecard> {
+async function computeIntroductionServingScorecard(): Promise<IntroductionServingScorecard> {
   const artifact = FROZEN_INTRODUCTION_PRIOR_ARTIFACT;
   const result = await pool.query<SourceRow>(`
     SELECT b.id::text AS bill_id,
@@ -224,8 +224,8 @@ export async function getIntroductionServingScorecard(): Promise<IntroductionSer
   return scorecard;
 }
 
-export const getCachedIntroductionServingScorecard = unstable_cache(
-  getIntroductionServingScorecard,
+export const getIntroductionServingScorecard = unstable_cache(
+  computeIntroductionServingScorecard,
   [
     'introduction-serving-scorecard',
     INTRODUCTION_PRIOR_MODEL_VERSION,
