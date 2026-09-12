@@ -77,14 +77,15 @@ export function strictPreVoteCutoff(occurredOn: string): string {
 
 export function replayCaseValidationErrors(replayCase: HistoricalReplayCase): string[] {
   const errors: string[] = [];
+  const validVoteDate = isValidCalendarDate(replayCase.occurredOn);
 
-  if (!isValidCalendarDate(replayCase.occurredOn)) {
+  if (!validVoteDate) {
     errors.push('vote date is invalid');
   }
   if (!isStrictlyPreVoteTimestamp(replayCase.billVersionPublishedAt, replayCase.occurredOn)) {
     errors.push('target bill version is not strictly pre-vote');
   }
-  if (replayCase.cutoff !== strictPreVoteCutoff(replayCase.occurredOn)) {
+  if (validVoteDate && replayCase.cutoff !== strictPreVoteCutoff(replayCase.occurredOn)) {
     errors.push('research cutoff is not the end of the prior calendar day');
   }
   if (replayCase.billTextLength < MIN_REPLAY_BILL_TEXT_LENGTH) {
