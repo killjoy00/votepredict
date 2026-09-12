@@ -132,10 +132,10 @@
       "case": { "session": "2023-2024", "chamber": "house", "identifier": "HF3276", "occurredOn": "2024-05-19" },
       "id": "hf3276-state-local-committee-2024-04-09",
       "sourceClass": "house_committee_record",
-      "url": "https://www.house.mn.gov/Committees/archives/93022",
-      "title": "State and Local Government Finance and Policy Archive",
+      "url": "https://www.house.mn.gov/committees/minutes/93022/100838",
+      "title": "State and Local Government Finance and Policy Thirty-Ninth Meeting",
       "publishedAt": "2024-04-09T00:00:00.000Z",
-      "expectedMarkers": ["4/9/2024", "HF 3276", "Frazier"]
+      "expectedMarkers": ["April 9, 2024", "HF 3276", "Frazier"]
     }
   ]
 }
