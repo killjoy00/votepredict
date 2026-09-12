@@ -13,11 +13,11 @@ function safeMessage(value: unknown): string {
   return message.replace(/postgres(?:ql)?:\/\/\S+/gi, '[redacted database URL]');
 }
 
-function maskSecrets(env: Record<string, string>): void {
+function maskSecrets(env: Record<string, string | undefined>): void {
   secretValues = Object.entries(env)
     .filter(([key]) => /SECRET|PASSWORD|TOKEN|KEY|DATABASE_URL|POSTGRES_URL/i.test(key))
     .map(([, value]) => value)
-    .filter((value) => value.length > 3);
+    .filter((value): value is string => typeof value === 'string' && value.length > 3);
   for (const value of secretValues) {
     console.log(`::add-mask::${value.replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A')}`);
   }
