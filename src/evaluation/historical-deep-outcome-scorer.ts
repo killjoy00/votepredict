@@ -94,8 +94,13 @@ export interface HistoricalDeepDiscoveryScore {
   pairs: HistoricalDeepDiscoveryScoredPair[];
 }
 
-function pairKey(caseKey: string, membershipId: string): string {
-  return `${caseKey}|${membershipId}`;
+/**
+ * Membership UUIDs are ingestion records and may be regenerated. Legislator IDs are
+ * the stable person identity shared by the frozen discovery artifact and a later
+ * official-outcome snapshot, so the scorer joins on case + legislator instead.
+ */
+function stablePairKey(caseKey: string, legislatorId: string): string {
+  return `${caseKey}|${legislatorId}`;
 }
 
 function predictedOutcome(probability: number): 0 | 1 {
@@ -120,13 +125,19 @@ export function scoreHistoricalDeepDiscoveryCandidates(
   const outcomeByPair = new Map<string, HistoricalDeepOutcomeMember>();
   for (const outcomeCase of outcomes.cases) {
     const caseKey = historicalDeepSourceCaseKey(outcomeCase);
-    for (const member of outcomeCase.members) outcomeByPair.set(pairKey(caseKey, member.membershipId), member);
+    for (const member of outcomeCase.members) {
+      const key = stablePairKey(caseKey, member.legislatorId);
+      if (outcomeByPair.has(key)) {
+        throw new Error(`Ambiguous frozen outcomes for ${key}`);
+      }
+      outcomeByPair.set(key, member);
+    }
   }
 
   const grouped = new Map<string, typeof candidates.candidates>();
   for (const candidate of candidates.candidates) {
     const caseKey = historicalDeepSourceCaseKey(candidate.case);
-    const key = pairKey(caseKey, candidate.membershipId);
+    const key = stablePairKey(caseKey, candidate.legislatorId);
     const current = grouped.get(key) ?? [];
     current.push(candidate);
     grouped.set(key, current);
@@ -138,7 +149,6 @@ export function scoreHistoricalDeepDiscoveryCandidates(
     const caseKey = historicalDeepSourceCaseKey(first.case);
     const outcome = outcomeByPair.get(key);
     if (!outcome) throw new Error(`Missing frozen outcome for ${key}`);
-    if (outcome.legislatorId !== first.legislatorId) throw new Error(`Legislator mismatch for ${key}`);
 
     const directional = observations
       .map((candidate) => proceduralSignal(candidate.motionText, candidate.voteSide))
@@ -162,6 +172,7 @@ export function scoreHistoricalDeepDiscoveryCandidates(
       caseKey,
       identifier: first.case.identifier,
       occurredOn: first.case.occurredOn,
+      // Preserve the frozen discovery membership UUID for provenance; it is not a join key.
       membershipId: first.membershipId,
       legislatorId: first.legislatorId,
       memberName: first.memberName,
