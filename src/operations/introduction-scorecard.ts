@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { unstable_cache } from 'next/cache';
 import {
   averagePrecision,
   brierScore,
@@ -222,3 +223,16 @@ export async function getIntroductionServingScorecard(): Promise<IntroductionSer
   }
   return scorecard;
 }
+
+export const getCachedIntroductionServingScorecard = unstable_cache(
+  getIntroductionServingScorecard,
+  [
+    'introduction-serving-scorecard',
+    INTRODUCTION_PRIOR_MODEL_VERSION,
+    INTRODUCTION_PRIOR_SERVING_PROVENANCE.predictionSha256,
+  ],
+  {
+    revalidate: 3600,
+    tags: ['introduction-serving-scorecard'],
+  },
+);
