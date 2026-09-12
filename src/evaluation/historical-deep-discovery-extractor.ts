@@ -121,33 +121,70 @@ function stripVoteNameDecorations(value: string): string {
     .trim();
 }
 
+function resolveExplicitCommaName(
+  cleaned: string,
+  members: readonly HistoricalDeepDiscoveryMember[],
+): { member?: HistoricalDeepDiscoveryMember; ambiguous: boolean; alias?: string } {
+  const comma = cleaned.indexOf(',');
+  if (comma < 1) return { ambiguous: false };
+  const lastTokens = normalizeName(cleaned.slice(0, comma)).split(' ').filter(Boolean);
+  const firstTokens = normalizeName(cleaned.slice(comma + 1)).split(' ').filter(Boolean);
+  const first = firstTokens[0];
+  if (lastTokens.length === 0 || !first) return { ambiguous: false };
+  const candidates = members.filter((member) => {
+    const tokens = memberTokens(member);
+    if (!tokens.includes(first)) return false;
+    return lastTokens.every((token) => tokens.includes(token));
+  });
+  if (candidates.length === 1) {
+    return { member: candidates[0], ambiguous: false, alias: lastTokens.join(' ') };
+  }
+  return { ambiguous: candidates.length > 1, alias: lastTokens.join(' ') };
+}
+
+type PageLocalAliases = ReadonlyMap<string, HistoricalDeepDiscoveryMember | null>;
+
+export function buildPageLocalVoteAliases(
+  lines: readonly string[],
+  members: readonly HistoricalDeepDiscoveryMember[],
+): Map<string, HistoricalDeepDiscoveryMember | null> {
+  const aliases = new Map<string, HistoricalDeepDiscoveryMember | null>();
+  for (const line of lines) {
+    if (!line.includes(',') || line.length > 120) continue;
+    const resolved = resolveExplicitCommaName(stripVoteNameDecorations(line), members);
+    if (!resolved.member || !resolved.alias) continue;
+    if (!aliases.has(resolved.alias)) {
+      aliases.set(resolved.alias, resolved.member);
+      continue;
+    }
+    const existing = aliases.get(resolved.alias);
+    if (existing && existing.membershipId !== resolved.member.membershipId) aliases.set(resolved.alias, null);
+  }
+  return aliases;
+}
+
 function resolveVoteName(
   rawName: string,
   members: readonly HistoricalDeepDiscoveryMember[],
+  pageAliases?: PageLocalAliases,
 ): { member?: HistoricalDeepDiscoveryMember; ambiguous: boolean } {
   const cleaned = stripVoteNameDecorations(rawName);
   if (!cleaned) return { ambiguous: false };
   const comma = cleaned.indexOf(',');
-  let candidates: HistoricalDeepDiscoveryMember[];
+  if (comma >= 0) return resolveExplicitCommaName(cleaned, members);
 
-  if (comma >= 0) {
-    const lastTokens = normalizeName(cleaned.slice(0, comma)).split(' ').filter(Boolean);
-    const firstTokens = normalizeName(cleaned.slice(comma + 1)).split(' ').filter(Boolean);
-    const first = firstTokens[0];
-    candidates = members.filter((member) => {
-      const tokens = memberTokens(member);
-      if (first && !tokens.includes(first)) return false;
-      return lastTokens.every((token) => tokens.includes(token));
-    });
-  } else {
-    const sourceTokens = normalizeName(cleaned).split(' ').filter(Boolean);
-    candidates = members.filter((member) => {
-      const tokens = memberTokens(member);
-      if (sourceTokens.length === 1) return tokens.at(-1) === sourceTokens[0];
-      return sourceTokens.every((token) => tokens.includes(token));
-    });
+  const sourceTokens = normalizeName(cleaned).split(' ').filter(Boolean);
+  if (sourceTokens.length === 1 && pageAliases?.has(sourceTokens[0])) {
+    const pageMember = pageAliases.get(sourceTokens[0]);
+    if (pageMember) return { member: pageMember, ambiguous: false };
+    return { ambiguous: true };
   }
 
+  const candidates = members.filter((member) => {
+    const tokens = memberTokens(member);
+    if (sourceTokens.length === 1) return tokens.at(-1) === sourceTokens[0];
+    return sourceTokens.every((token) => tokens.includes(token));
+  });
   if (candidates.length === 1) return { member: candidates[0], ambiguous: false };
   return { ambiguous: candidates.length > 1 };
 }
@@ -298,7 +335,9 @@ export function extractHistoricalDeepDiscoveryCandidates(
     if (!discoveryCase) throw new Error(`Frozen source ${source.id} has no matching discovery case`);
     if (source.sourceClass !== 'house_committee_record') continue;
 
-    const rollCalls = extractBillProceduralRollCalls(historicalHtmlLines(source.content), discoveryCase.identifier);
+    const lines = historicalHtmlLines(source.content);
+    const pageAliases = buildPageLocalVoteAliases(lines, discoveryCase.members);
+    const rollCalls = extractBillProceduralRollCalls(lines, discoveryCase.identifier);
     if (rollCalls.length === 0) {
       diagnostics.push({
         sourceId: source.id,
@@ -312,7 +351,7 @@ export function extractHistoricalDeepDiscoveryCandidates(
     for (const rollCall of rollCalls) {
       for (const [voteSide, rawNames] of [['aye', rollCall.ayes], ['nay', rollCall.nays]] as const) {
         for (const rawName of rawNames) {
-          const resolved = resolveVoteName(rawName, discoveryCase.members);
+          const resolved = resolveVoteName(rawName, discoveryCase.members, pageAliases);
           if (!resolved.member) {
             diagnostics.push({
               sourceId: source.id,
