@@ -74,6 +74,10 @@ jobs:
         with:
           node-version: 24
 
+      - name: Ensure required production runtime configuration
+        if: steps.freshness.outputs.deploy == 'true'
+        run: node scripts/prepare-production-cron.ts
+
       - name: Deploy exact green commit to Vercel production
         if: steps.freshness.outputs.deploy == 'true'
         id: deploy
