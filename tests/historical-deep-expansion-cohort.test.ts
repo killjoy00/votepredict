@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   buildHistoricalDeepExpansionCandidate,
+  historicalDeepExpansionEventKey,
   outcomeBlindExpansionEvent,
   selectHistoricalDeepExpansionCases,
   type HistoricalDeepExpansionCandidate,
@@ -51,6 +52,7 @@ function replayEvent(actualFlip = false): HistoricalQuickReplayEventResult {
 
 const metadata: HistoricalDeepExpansionMetadataRow = {
   voteEventId: '11111111-1111-1111-1111-111111111111',
+  externalKey: '93:HF9000:2022-02-01:1234:1',
   identifier: 'HF9000',
   title: 'Expansion fixture',
   session: '2021-2022',
@@ -72,28 +74,47 @@ test('expansion candidate and target disagreement are invariant to later floor o
   assert.deepEqual(original.needOnlyTargetIds, flipped.needOnlyTargetIds);
   assert.equal(original.targetOverlap, flipped.targetOverlap);
   assert.equal(original.targetDisagreementRate, flipped.targetDisagreementRate);
+  assert.equal(original.stableKey, '2021-2022|house|93:HF9000:2022-02-01:1234:1');
+  assert.equal(original.caseKey, '2021-2022|house|HF9000|2022-02-01');
   assert.ok(!('actualOutcome' in original));
+});
+
+test('source-derived external keys disambiguate multiple passage events for the same bill and day', () => {
+  const first = historicalDeepExpansionEventKey({
+    session: '2023-2024',
+    chamber: 'house',
+    externalKey: '94:HF2335:2023-05-08:7025:1',
+  });
+  const second = historicalDeepExpansionEventKey({
+    session: '2023-2024',
+    chamber: 'house',
+    externalKey: '94:HF2335:2023-05-08:7026:2',
+  });
+  assert.notEqual(first, second);
 });
 
 function fakeCandidate(
   session: string,
   index: number,
   targetDisagreementRate: number,
-  stableKeyOverride?: string,
+  options: { caseKey?: string; externalKey?: string } = {},
 ): HistoricalDeepExpansionCandidate {
   const identifier = `HF${5000 + index}`;
   const day = String((index % 27) + 1).padStart(2, '0');
   const occurredOn = session === '2021-2022' ? `2022-03-${day}` : `2024-03-${day}`;
+  const externalKey = options.externalKey ?? `${session}:${identifier}:${occurredOn}:${index}`;
   const current = Array.from({ length: 12 }, (_, member) => `c-${session}-${index}-${member}`);
   const need = Array.from({ length: 12 }, (_, member) => `n-${session}-${index}-${member}`);
   return {
-    voteEventId: `${session}-${index}`,
+    voteEventId: `${session}-${index}-${externalKey}`,
+    externalKey,
     identifier,
     title: `Candidate ${index}`,
     session,
     chamber: 'house',
     occurredOn,
-    stableKey: stableKeyOverride ?? `${session}|house|${identifier}|${occurredOn}`,
+    stableKey: `${session}|house|${externalKey}`,
+    caseKey: options.caseKey ?? `${session}|house|${identifier}|${occurredOn}`,
     targetVersionId: `version-${session}-${index}`,
     quickModelVersion: 'member-eb-v1.1',
     activeMembers: 134,
@@ -103,6 +124,18 @@ function fakeCandidate(
     targetDisagreementRate,
   };
 }
+
+test('same bill/date can contribute distinct vote events without colliding', () => {
+  const sameCaseKey = '2023-2024|house|HF2335|2023-05-08';
+  const candidates = [
+    fakeCandidate('2023-2024', 1, 0.5, { caseKey: sameCaseKey, externalKey: '94:HF2335:2023-05-08:7025:1' }),
+    fakeCandidate('2023-2024', 2, 0.5, { caseKey: sameCaseKey, externalKey: '94:HF2335:2023-05-08:7026:2' }),
+  ];
+  assert.doesNotThrow(() => selectHistoricalDeepExpansionCases(candidates, {
+    sessions: ['2023-2024'],
+    perSessionPerTranche: 1,
+  }));
+});
 
 test('freezes balanced uniform and selector-disagreement development tranches without pilot cases', () => {
   const candidates: HistoricalDeepExpansionCandidate[] = [];
@@ -116,7 +149,7 @@ test('freezes balanced uniform and selector-disagreement development tranches wi
     pilot.session,
     99,
     1,
-    historicalDeepPilotCaseKey(pilot),
+    { caseKey: historicalDeepPilotCaseKey(pilot), externalKey: 'pilot-distinct-event-key' },
   ));
 
   const forward = selectHistoricalDeepExpansionCases(candidates);
@@ -124,7 +157,7 @@ test('freezes balanced uniform and selector-disagreement development tranches wi
   assert.deepEqual(forward, reversed);
   assert.equal(forward.cases.length, 24);
   assert.equal(new Set(forward.cases.map((item) => item.stableKey)).size, 24);
-  assert.ok(forward.cases.every((item) => item.stableKey !== historicalDeepPilotCaseKey(pilot)));
+  assert.ok(forward.cases.every((item) => item.caseKey !== historicalDeepPilotCaseKey(pilot)));
 
   for (const session of ['2021-2022', '2023-2024']) {
     const sessionCases = forward.cases.filter((item) => item.session === session);
