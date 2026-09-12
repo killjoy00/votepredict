@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This audit was performed immediately after production promotion of the Minnesota 2025-26 introduction-stage model `intro-title-text-eb-v4`.
+This audit was performed immediately after production promotion of the Minnesota 2025-26 introduction-stage model `intro-title-text-eb-v4` and was updated as the resulting deployment/accountability work was completed.
 
 The review asked:
 
@@ -29,7 +29,7 @@ The meaningful drift was in documentation and deployment operations, not model s
 - the original charter/architecture described chamber passage almost exclusively as the current/floor member-derived probability;
 - the old Vercel branch configuration did not actually suppress feature-branch previews under current Vercel semantics.
 
-Both issues are corrected in this refresh.
+Both issues were corrected in PR #128. The next accountability layer now verifies that the production introduction runtime still reproduces the exact frozen prediction vector that earned promotion.
 
 ## Current forecast taxonomy
 
@@ -82,7 +82,7 @@ The v4 work demonstrated that the safest promotion sequence is:
 2. separate serving-artifact/runtime integration;
 3. exact-commit deployment and live validation.
 
-Operations now codifies that sequence rather than allowing a candidate to alter serving merely because evaluation code exists.
+Operations now also requires the introduction serving layer to retain and reproduce the complete target-session prediction-vector digest before retrospective metrics are displayed.
 
 ### `docs/DEPLOYMENT.md` — updated and deployment control corrected
 
@@ -99,7 +99,7 @@ The deployment review found a real infrastructure bug. The prior configuration w
 }
 ```
 
-Under current Vercel semantics, object keys are branch names and unspecified branches default to enabled. `"*"` was not acting as a wildcard. Feature-branch commits were therefore still creating previews, including multiple commits in this audit branch, and this behavior explains the otherwise surprising deployment volume that contributed to the daily quota failure during v4 promotion.
+Under current Vercel semantics, object keys are branch names and unspecified branches default to enabled. `"*"` was not acting as a wildcard. Feature-branch commits were therefore still creating previews, including multiple commits in the audit branch, and this behavior explains the otherwise surprising deployment volume that contributed to the daily quota failure during v4 promotion.
 
 The fix is:
 
@@ -111,13 +111,13 @@ The fix is:
 }
 ```
 
-All automatic Vercel Git deployments are now disabled in repository configuration. A new `.github/workflows/deploy-production.yml` becomes the normal release path: after a successful push-triggered CI run on `main`, it checks out the exact CI-passed SHA and performs a remote Vercel production deployment.
+All automatic Vercel Git deployments are disabled in repository configuration. `.github/workflows/deploy-production.yml` is now the normal release path: after a successful push-triggered CI run on `main`, it checks out the exact CI-passed SHA, verifies that SHA is still current `main`, and performs a remote Vercel production deployment.
 
-This gives VotePredict a clearer invariant: branch work costs GitHub CI only; Vercel is used for explicit production releases unless a preview is intentionally requested.
+This gives VotePredict a clear invariant: branch work costs GitHub CI only; Vercel is used for explicit production releases unless a preview is intentionally requested.
 
 ### `README.md` — updated
 
-The implementation summary names both forecast surfaces, the production introduction model, and the exact-green-commit deployment rule.
+The implementation summary names both forecast surfaces, the production introduction model, the stage-specific operations scorecards, and the exact-green-commit deployment rule.
 
 ### `docs/modeling/source-chamber-introduction-v4.md` — updated
 
@@ -131,37 +131,51 @@ Its official-source hierarchy, provenance rules, historical-version discipline, 
 
 The rebuild plan is historical design provenance for the clean-slate V2 sequence. It should not be continuously renumbered to match every post-beta model experiment. The introduction forecast is a post-foundation evaluated product extension, not evidence that the original mission changed.
 
-## Production state after v4 promotion
+## Current production state
 
-- promoted application commit: `f5d855bf669ac74a844b343ec248a6866b0f60bc`;
-- production deployment: `dpl_VhST7gkrhXeMZYWr6JQoczJdPfsQ`;
+After PR #128:
+
+- application commit: `2af621c97bda1d548f73b5ff2709b7bd23c06fca`;
+- production deployment: `dpl_4NYwhH98s5pcG1eQcxSQbZM3yHWT`;
 - deployment state: `READY`;
 - production aliases include `vote.planitnow.us` and `votepredict.vercel.app`;
-- production build completed successfully;
-- `/dashboard/introduction` returned the expected owner-auth redirect when probed without a session;
-- no 5xx requests were observed immediately after deployment;
-- no runtime-error cluster was observed for `/dashboard/introduction` or `/api/introduction-forecast` in the initial post-deploy window.
+- feature-branch automatic Vercel deployments are disabled;
+- `main` CI gates production deployment;
+- the deploy workflow verifies and deploys the exact current green `main` SHA;
+- `/dashboard/introduction` returns the expected owner-auth boundary when probed without a session;
+- no relevant post-release 5xx or introduction-route runtime error cluster was observed.
 
-A non-fatal PostgreSQL client warning about future SSL-mode semantics was observed on sign-in startup. It is an infrastructure-maintenance item, not a current v4 serving failure.
+A non-fatal PostgreSQL client warning about future SSL-mode semantics remains an infrastructure-maintenance item, not a current v4 serving failure.
 
-## Updated deployment/operations plan
+## Deployment/operations plan status
 
-### P0 — release-control and production confidence
+### P0 — release control and production confidence — complete
 
-1. Merge the corrected Vercel configuration and CI-gated production deployment workflow only after normal CI passes.
-2. Verify that commits made after `git.deploymentEnabled=false` no longer create automatic feature-branch Vercel previews.
-3. After merge, verify the merge commit passes `main` CI and that `Deploy production` deploys that exact SHA once.
-4. Confirm the resulting production deployment is `READY`, has the expected aliases, and produces no new relevant 5xx/runtime errors.
-5. Continue normal owner use of `/dashboard/introduction` so the authenticated API path receives real production exercise.
-6. Review production errors/logs after meaningful authenticated usage, especially `/api/introduction-forecast`.
-7. Make PostgreSQL SSL intent explicit before the next major `pg` behavior change.
+Completed:
 
-### P1 — production accountability
+1. automatic Vercel Git deployments disabled;
+2. feature-branch pushes verified not to create Vercel previews after the fix;
+3. exact-green-`main` deployment workflow merged and exercised end to end;
+4. stale green SHA guard added so an older CI run cannot roll production backward;
+5. production deployment reached `READY` with expected aliases;
+6. post-release 5xx/runtime checks were clean apart from the known non-fatal PostgreSQL SSL warning.
 
-1. Add/confirm a production introduction scorecard keyed to `source_chamber_passage`, not individual floor-vote outcomes.
-2. Retain introduction forecast/model provenance needed to score current-session predictions later.
-3. Surface model/version and forecast-stage language clearly enough that an owner cannot confuse the introduction prior with a floor probability.
-4. Add monitoring/operations visibility for introduction corpus completeness gates where useful.
+Remaining maintenance: make PostgreSQL SSL intent explicit before the next major `pg` behavior change.
+
+### P1 — introduction production accountability — implementation underway
+
+Implemented in the current accountability change:
+
+1. full supported-session introduction scorecard keyed to `source_chamber_passage`;
+2. exact replay of all 10,472 frozen 2025-26 predictions using introduction-safe inputs;
+3. SHA-256 parity gate against the promotion artifact's prediction vector;
+4. corpus gates for 10,472 total bills, 10,471 title+purpose-text inputs, and one title-only fallback;
+5. Brier, log loss, ECE, average precision, ROC-AUC, observed rate, mean predicted probability, and House/Senate slices;
+6. artifact/model/training/evaluation provenance surfaced in Operations;
+7. visible failure state if corpus or prediction parity breaks;
+8. explicit labeling that 2025-26 is a **promotion-holdout replay / serving-integrity check**, not a new independent test set.
+
+The current production database contains 10,472 authoritative 2025-26 bills, 10,471 text-eligible bills, one title-only fallback, and complete `source_chamber_passage` labels (252 passes / 10,220 failures).
 
 ### P2 — next model cycle
 
@@ -178,7 +192,8 @@ Before serving a new session:
 2. verify exact introduction-time metadata/document eligibility rules;
 3. train a new session artifact only on completed prior sessions;
 4. evaluate/validate the new artifact under the introduction promotion gate;
-5. never silently reuse the 2025-26 artifact for an unsupported session.
+5. freeze the complete target-session prediction-vector digest;
+6. never silently reuse the 2025-26 artifact for an unsupported session.
 
 ## Guardrails that remain unchanged
 
