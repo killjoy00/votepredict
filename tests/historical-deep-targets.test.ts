@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { selectDeepResearchTargets } from '../src/evidence/targeting.js';
+import { MEMBER_MODEL_VERSION } from '../src/forecasting/member-model.js';
 import { ordinaryMinnesotaPassageRule } from '../src/forecasting/minnesota-rules.js';
 import {
   historicalQuickEvidenceQuality,
@@ -37,7 +38,7 @@ function replay(status: HistoricalQuickReplayEventResult['status'] = 'replayable
     chamber: 'senate',
     occurredOn: '2024-05-01',
     status,
-    modelVersion: 'member-eb-v1',
+    modelVersion: MEMBER_MODEL_VERSION,
     targetVersionId: 'version-1',
     activeMembers: 67,
     directAnalogueMembers: 23,
