@@ -139,6 +139,22 @@ test('ambiguous last-name-only committee votes fail closed instead of guessing',
   assert.equal(result.diagnostics.some((diagnostic) => diagnostic.type === 'ambiguous_vote_name' && diagnostic.rawName === 'Nelson'), true);
 });
 
+test('page-local roster identity safely resolves otherwise ambiguous last-name shorthand', () => {
+  const ambiguousDiscovery = discovery(['Michael V. Nelson', 'Nathan Nelson']);
+  const html = `
+    <div>NELSON, Michael, Chair</div>
+    <p>HF3276 (Frazier)</p>
+    <p>Chair Nelson renewed the motion that HF3276 be re-referred to Ways and Means.</p>
+    <p>Representative Nadeau requested a roll call on HF3276.</p>
+    <div>AYES</div><div>NELSON</div><div>NAYS</div><div>Nash</div><div>There being one aye and one nay.</div>`;
+  const result = extractHistoricalDeepDiscoveryCandidates(ambiguousDiscovery, sourceBundle(html));
+  const nelson = result.candidates.find((candidate) => candidate.memberName === 'Michael V. Nelson');
+  assert.ok(nelson);
+  assert.equal(nelson.voteSide, 'aye');
+  assert.equal(result.candidates.some((candidate) => candidate.memberName === 'Nathan Nelson'), false);
+  assert.equal(result.diagnostics.some((diagnostic) => diagnostic.rawName === 'NELSON'), false);
+});
+
 test('extractor rejects frozen source content that does not match its recorded SHA', () => {
   assert.throws(() => extractHistoricalDeepDiscoveryCandidates(
     discovery(),
