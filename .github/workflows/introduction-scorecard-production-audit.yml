@@ -1,26 +1,26 @@
-name: Full-universe production evaluation
+name: Introduction scorecard production audit
 
 on:
   push:
     branches: [main]
     paths:
-      - .github/workflows/full-universe-production-eval.yml
-      - scripts/run-production-full-universe-evaluation.ts
-      - scripts/evaluate-full-universe-stage-baseline.ts
-      - src/app/api/operations/full-universe-evaluation/route.ts
-      - src/evaluation/full-universe.ts
-      - src/evaluation/stages.ts
+      - .github/workflows/introduction-scorecard-production-audit.yml
+      - scripts/run-production-introduction-scorecard-audit.ts
+      - src/app/api/operations/introduction-scorecard-audit/route.ts
+      - src/app/dashboard/operations/page.tsx
+      - src/operations/introduction-scorecard.ts
+      - src/forecasting/introduction-prior-runtime.ts
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: full-universe-production-eval
+  group: introduction-scorecard-production-audit
   cancel-in-progress: false
 
 jobs:
-  evaluate:
+  audit:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -35,12 +35,12 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "${VERCEL_TOKEN:-}" ]; then
-            echo 'VERCEL_TOKEN is unavailable to this repository. No production evaluation was attempted.'
+            echo 'VERCEL_TOKEN is unavailable. No production audit was attempted.'
             exit 1
           fi
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
       - run: npm ci --no-fund --no-audit
       - name: Wait for this exact main SHA to be live in production
@@ -73,7 +73,7 @@ jobs:
             fi
             sleep 5
           done
-          echo "Exact main SHA ${GITHUB_SHA} did not become READY before the evaluation deadline."
+          echo "Exact main SHA ${GITHUB_SHA} did not become READY before the audit deadline."
           exit 1
       - name: Read production authentication privately
         shell: bash
@@ -81,13 +81,13 @@ jobs:
           set -euo pipefail
           umask 077
           if ! npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1; then
-            echo 'Could not read the VotePredict production authentication environment. No evaluation was invoked.'
+            echo 'Could not read the VotePredict production authentication environment. No audit was invoked.'
             exit 1
           fi
-      - name: Evaluate authoritative full universe in production runtime
+      - name: Verify frozen introduction serving parity in production
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
-        run: node --import tsx scripts/run-production-full-universe-evaluation.ts
+        run: node --import tsx scripts/run-production-introduction-scorecard-audit.ts
       - name: Remove temporary credentials and lookup files
         if: always()
         shell: bash

@@ -21,6 +21,7 @@ The repository contains:
 - Neon Postgres persistence for legislative data, forecasts, immutable revisions, member predictions, evidence, scenarios, subsets, shares, and production outcome resolution;
 - a complete authoritative Minnesota introduced-bill universe for 2021-22, 2023-24, and 2025-26 with introduction-time Revisor metadata and initial bill text provenance;
 - a production introduction-stage source-chamber passage model with a frozen, session-pinned serving artifact and leak-safe title-only fallback for unavailable-at-introduction text;
+- a frozen introduction serving scorecard that replays the complete supported-session prediction vector, verifies its SHA-256 digest and corpus contract, and only then reports Brier/log-loss/calibration/ranking metrics and chamber slices;
 - Minnesota official-data ingestion for recent legislatures, including House passage votes, Senate journal passage votes, member reconciliation, and Revisor bill/version metadata;
 - a leakage-safe chronological evaluation harness with accepted baseline and member-model artifacts;
 - deterministic bill features and historical analogue retrieval that refuses future bill versions;
@@ -28,7 +29,7 @@ The repository contains:
 - Quick forecasts using historical/member/analogue support with explicit cannot-predict behavior;
 - targeted Deep research for consequential uncertain members, with source provenance, evidence inclusion/exclusion lineage, contradictions, and before/after probability movement;
 - a private mobile-first forecast workspace with saved history, immutable updates, revision diffs, scenarios, subsets, and revocable revision-specific read-only sharing;
-- `/dashboard/operations` for ingestion/source/Deep health, official outcome reconciliation, and leakage-safe production scorecards;
+- `/dashboard/operations` for ingestion/source/Deep health, introduction serving-integrity accountability, official floor-outcome reconciliation, and stage-specific production scorecards;
 - a database-enforced rolling Deep-research usage limit and durable external-usage ledger.
 
 Calibration remains off by default for the member/floor model because the evaluated calibrator did not earn promotion. New model/configuration defaults must pass the evaluation and model-promotion rules documented in [`docs/EVALUATION_STANDARD.md`](./docs/EVALUATION_STANDARD.md) and [`docs/OPERATIONS.md`](./docs/OPERATIONS.md).
@@ -71,9 +72,10 @@ CI also runs the complete migration chain against a fresh PostgreSQL database be
 1. Use `/dashboard/introduction` when the question is the bill's source-chamber passage probability **as assessed at introduction**.
 2. Create a Quick or Deep forecast from `/dashboard` when the question is the current selected-chamber/floor forecast.
 3. Use the saved forecast page for immutable updates, revision diffs, scenarios, subsets, and shares.
-4. Use `/dashboard/operations` to monitor ingestion/source/Deep health.
+4. Use `/dashboard/operations` to monitor system health and both forecast stages. The introduction panel first verifies the exact frozen prediction vector/corpus before showing its resolved-session metrics; the current/floor panel scores immutable production revisions against explicitly reconciled official votes.
 5. After a forecasted bill receives an official passage vote, explicitly reconcile the current/floor forecast to the matching vote event.
-6. Use production scorecards as observational evidence; do not promote model changes without a new leakage-safe historical evaluation artifact.
+6. Treat the current 2025-26 introduction scorecard as a promotion-holdout replay and serving-integrity check, not a new independent test set.
+7. Use production scorecards as observational/accountability evidence; do not promote model changes without a new leakage-safe historical evaluation artifact.
 
 ## Deployment
 

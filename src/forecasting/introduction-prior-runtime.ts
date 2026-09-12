@@ -12,10 +12,15 @@ import {
 } from './introduction-prior-model';
 import { pool } from '@/lib/db';
 
-const RUNTIME_ASSEMBLED_ARTIFACT_SHA256 = '7e1f87193ffe3182a27086d1d5a66e6f730f0f4b31bd2785ef25d9a45700d200';
-const ORIGINAL_MINIFIED_ARTIFACT_SHA256 = '646b428ce6a2192bc97c0cd5301fc5a9bac7c4866bf9a33c52b0a2d0d8a36e4d';
-const ORIGINAL_EXPORT_SHA256 = 'a5731c809298e7b6d914259178c9fcafe45b8cba314fea4c4253d3bfb144ae84';
-const PREDICTION_SHA256 = '56ef5169cca75b8586a4e2571bcb7745c33770c8a55d1723db9cdab97e9f3ca4';
+export const INTRODUCTION_PRIOR_SERVING_PROVENANCE = Object.freeze({
+  expectedTargetRows: 10_472,
+  expectedTextEligibleRows: 10_471,
+  expectedTitleOnlyFallbackRows: 1,
+  runtimeAssembledArtifactSha256: '7e1f87193ffe3182a27086d1d5a66e6f730f0f4b31bd2785ef25d9a45700d200',
+  originalMinifiedArtifactSha256: '646b428ce6a2192bc97c0cd5301fc5a9bac7c4866bf9a33c52b0a2d0d8a36e4d',
+  originalExportSha256: 'a5731c809298e7b6d914259178c9fcafe45b8cba314fea4c4253d3bfb144ae84',
+  predictionSha256: '56ef5169cca75b8586a4e2571bcb7745c33770c8a55d1723db9cdab97e9f3ca4',
+});
 
 function asStats(value: unknown): IntroductionPriorStat[] {
   if (!Array.isArray(value)) throw new Error('Invalid frozen introduction prior stats');
@@ -41,7 +46,7 @@ function verifyFrozenArtifact(): void {
     throw new Error('Frozen introduction prior artifact metadata failed integrity checks');
   }
   const sha256 = createHash('sha256').update(JSON.stringify(artifact)).digest('hex');
-  if (sha256 !== RUNTIME_ASSEMBLED_ARTIFACT_SHA256) {
+  if (sha256 !== INTRODUCTION_PRIOR_SERVING_PROVENANCE.runtimeAssembledArtifactSha256) {
     throw new Error(`Frozen introduction prior artifact hash mismatch: ${sha256}`);
   }
 }
@@ -110,10 +115,10 @@ export function scoreIntroductionPriorRow(row: IntroductionPriorBillRow): Foreca
       trainingPositives: artifact.trainingPositives,
       evaluationCommit: artifact.provenance.evaluationCommit,
       generatedAt: artifact.provenance.generatedAt,
-      runtimeAssembledSha256: RUNTIME_ASSEMBLED_ARTIFACT_SHA256,
-      originalMinifiedSha256: ORIGINAL_MINIFIED_ARTIFACT_SHA256,
-      originalExportSha256: ORIGINAL_EXPORT_SHA256,
-      predictionSha256: PREDICTION_SHA256,
+      runtimeAssembledSha256: INTRODUCTION_PRIOR_SERVING_PROVENANCE.runtimeAssembledArtifactSha256,
+      originalMinifiedSha256: INTRODUCTION_PRIOR_SERVING_PROVENANCE.originalMinifiedArtifactSha256,
+      originalExportSha256: INTRODUCTION_PRIOR_SERVING_PROVENANCE.originalExportSha256,
+      predictionSha256: INTRODUCTION_PRIOR_SERVING_PROVENANCE.predictionSha256,
     },
   };
 }
