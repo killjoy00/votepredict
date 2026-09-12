@@ -40,13 +40,41 @@ test('classifies procedural direction conservatively', () => {
 
 test('scores frozen candidates by stable legislator identity when membership UUIDs differ', () => {
   const result = scoreHistoricalDeepDiscoveryCandidates(candidateBundle() as never, outcomeSnapshot() as never);
+  assert.equal(result.summary.decisiveOutcomePairs, 1);
+  assert.equal(result.summary.noDecisiveOutcomePairs, 0);
   assert.equal(result.summary.directionalPairs, 1);
+  assert.equal(result.summary.scorableDirectionalPairs, 1);
   assert.equal(result.summary.quickErrorsOnDirectionalPairs, 1);
   assert.equal(result.summary.rescuedQuickErrors, 1);
   assert.equal(result.summary.rescuedHighConfidenceQuickErrors, 1);
   assert.equal(result.pairs[0].membershipId, 'frozen-membership');
   assert.equal(result.pairs[0].legislatorId, 'l1');
+  assert.equal(result.pairs[0].outcomeStatus, 'decisive');
   assert.equal(result.pairs[0].signal, 'opposes_advancement');
+});
+
+test('keeps candidates without a decisive floor vote visible but unscored', () => {
+  const otherMember = [{ membershipId: 'other-membership', legislatorId: 'l2', memberName: 'Other Member', actualOutcome: 1 as const }];
+  const result = scoreHistoricalDeepDiscoveryCandidates(candidateBundle() as never, outcomeSnapshot(otherMember) as never);
+  assert.equal(result.summary.memberCasePairs, 1);
+  assert.equal(result.summary.decisiveOutcomePairs, 0);
+  assert.equal(result.summary.noDecisiveOutcomePairs, 1);
+  assert.equal(result.summary.directionalPairs, 1);
+  assert.equal(result.summary.scorableDirectionalPairs, 0);
+  assert.equal(result.summary.floorAgreementPairs, 0);
+  assert.equal(result.summary.quickErrorsOnDirectionalPairs, 0);
+  assert.equal(result.pairs[0].outcomeStatus, 'no_decisive_floor_outcome');
+  assert.equal(result.pairs[0].actualOutcome, undefined);
+  assert.equal(result.pairs[0].quickError, undefined);
+  assert.equal(result.pairs[0].signalMatchesFloorOutcome, undefined);
+});
+
+test('fails closed when the frozen outcome snapshot omits a candidate case entirely', () => {
+  const snapshot = { ...outcomeSnapshot(), cases: [] };
+  assert.throws(
+    () => scoreHistoricalDeepDiscoveryCandidates(candidateBundle() as never, snapshot as never),
+    /Missing frozen outcome case/,
+  );
 });
 
 test('fails closed when an outcome snapshot has duplicate stable legislator identities', () => {
