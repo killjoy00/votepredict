@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "historical-deep-artifact-lineage-v1",
+  "discoveryManifest": {
+    "workflowRunId": "34715517901",
+    "artifactId": "10303729452",
+    "artifactName": "historical-deep-discovery-manifest-d10cae33c9c3099af6fdbf8a8684b992138e65ba",
+    "artifactSha256": "cab77e528bc0ce955ba0f13c57da5f3a356d94b9d0e5d2af64cbc64cfdeab314",
+    "headSha": "d10cae33c9c3099af6fdbf8a8684b992138e65ba",
+    "fileName": "historical-deep-discovery-manifest.json"
+  },
+  "sourceBundle": {
+    "workflowRunId": "34715944104",
+    "artifactId": "10304930688",
+    "artifactName": "historical-deep-pilot-source-bundle-7e7fc3d00b387e2c2e8400a46e0d69d1bb3d46f6",
+    "artifactSha256": "0b55af36a2941857d87706accec7d2522313f60cc3403946c698a521e860fe16",
+    "headSha": "7e7fc3d00b387e2c2e8400a46e0d69d1bb3d46f6",
+    "fileName": "historical-deep-pilot-source-bundle.json"
+  }
+}

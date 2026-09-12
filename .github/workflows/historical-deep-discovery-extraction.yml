@@ -1,0 +1,100 @@
+name: Historical Deep discovery extraction
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-deep-discovery-extraction.yml
+      - scripts/extract-historical-deep-discovery-candidates.ts
+      - src/evaluation/historical-deep-discovery-extractor.ts
+      - data/evaluation/historical-deep-artifact-lineage-v1.json
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-discovery-extraction
+  cancel-in-progress: false
+
+jobs:
+  extract:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VOTEPREDICT_DEEP_DISCOVERY_CANDIDATES_OUTPUT: artifacts/historical-deep-discovery-candidates.json
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Read frozen artifact lineage
+        id: lineage
+        shell: bash
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-artifact-lineage-v1.json'
+          echo "discovery_run_id=$(jq -r '.discoveryManifest.workflowRunId' "$lineage")" >> "$GITHUB_OUTPUT"
+          echo "discovery_artifact_id=$(jq -r '.discoveryManifest.artifactId' "$lineage")" >> "$GITHUB_OUTPUT"
+          echo "discovery_name=$(jq -r '.discoveryManifest.artifactName' "$lineage")" >> "$GITHUB_OUTPUT"
+          echo "source_run_id=$(jq -r '.sourceBundle.workflowRunId' "$lineage")" >> "$GITHUB_OUTPUT"
+          echo "source_artifact_id=$(jq -r '.sourceBundle.artifactId' "$lineage")" >> "$GITHUB_OUTPUT"
+          echo "source_name=$(jq -r '.sourceBundle.artifactName' "$lineage")" >> "$GITHUB_OUTPUT"
+      - name: Verify pinned GitHub artifact digests
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-artifact-lineage-v1.json'
+          verify_artifact() {
+            local section="$1"
+            local id expected actual expired
+            id="$(jq -r ".${section}.artifactId" "$lineage")"
+            expected="sha256:$(jq -r ".${section}.artifactSha256" "$lineage")"
+            gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}" > "$RUNNER_TEMP/${section}.json"
+            actual="$(jq -r '.digest // empty' "$RUNNER_TEMP/${section}.json")"
+            expired="$(jq -r '.expired' "$RUNNER_TEMP/${section}.json")"
+            if [ "$expired" != "false" ]; then
+              echo "Pinned artifact ${id} is expired."
+              exit 1
+            fi
+            if [ "$actual" != "$expected" ]; then
+              echo "Pinned artifact ${id} digest mismatch. Expected ${expected}; got ${actual}."
+              exit 1
+            fi
+          }
+          verify_artifact discoveryManifest
+          verify_artifact sourceBundle
+      - name: Download frozen chamber-wide discovery manifest
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ steps.lineage.outputs.discovery_run_id }}
+          name: ${{ steps.lineage.outputs.discovery_name }}
+          path: artifacts/frozen/discovery
+      - name: Download frozen official source bundle
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ steps.lineage.outputs.source_run_id }}
+          name: ${{ steps.lineage.outputs.source_name }}
+          path: artifacts/frozen/sources
+      - name: Extract outcome-blind committee discovery candidates
+        run: |
+          node --import tsx scripts/extract-historical-deep-discovery-candidates.ts \
+            --discovery artifacts/frozen/discovery/historical-deep-discovery-manifest.json \
+            --sources artifacts/frozen/sources/historical-deep-pilot-source-bundle.json
+      - name: Upload frozen discovery candidate artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-discovery-candidates-${{ github.sha }}
+          path: artifacts/historical-deep-discovery-candidates.json
+          if-no-files-found: error
+          retention-days: 30
