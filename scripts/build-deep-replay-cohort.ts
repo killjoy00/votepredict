@@ -7,6 +7,7 @@ import {
   summarizeReplayCohort,
   type HistoricalReplayCase,
 } from '../src/evaluation/deep-replay.js';
+import { requireEvaluationDatabaseConnection } from '../src/operations/evaluation-database.js';
 
 type ReplayRow = {
   vote_event_id: string;
@@ -38,8 +39,7 @@ function toNumber(value: unknown): number {
 }
 
 async function main(): Promise<void> {
-  const connectionString = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
-  if (!connectionString) throw new Error('DATABASE_URL_UNPOOLED or DATABASE_URL is required');
+  const { connectionString, source: databaseSource } = requireEvaluationDatabaseConnection();
 
   const pool = new Pool({ connectionString, max: 1 });
   try {
@@ -169,6 +169,7 @@ async function main(): Promise<void> {
       metadata: {
         generatedAt: new Date().toISOString(),
         codeSha: process.env.GITHUB_SHA ?? null,
+        databaseSource,
         purpose: 'evaluation-only historical replay manifest; this command performs no writes, creates no forecasts, invokes no research, and changes no serving probabilities',
         leakageGuard: 'target bill text and stored evidence must be published on a UTC calendar date strictly before the official vote date; same-day information is excluded because vote_events stores date but not vote time',
         researchCutoff: '23:59:59.999Z on the calendar day before each vote',
