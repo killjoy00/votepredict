@@ -6,12 +6,12 @@ import type { HistoricalQuickReplayEventResult } from './historical-quick-replay
 import { evaluateHistoricalQuickReplay } from './historical-quick-runtime';
 
 export const HISTORICAL_DEEP_PILOT_VOTE_EVENT_IDS = [
-  '2669f8aa-2ba6-48e2-84d2-c90129a3a805', // 2023-01-19 HF1, House, 69-65
-  '1e92daf1-5e46-441e-ae1d-51c58b58b4d4', // 2023-03-20 HF366, House, 68-64
-  '307aba48-9582-40d2-b738-f619a7ee9318', // 2023-03-23 HF146, House, 68-62
-  '1ac4141c-a40e-4714-8ac2-817dfb7feeee', // 2023-05-02 HF2, House, 68-64
-  '2c91372e-7ddc-4966-87c0-f811ef87bdb7', // 2024-05-02 HF4300, House, 68-64
-  'e50af52a-8a92-45e3-9de4-9c8df9bcdb5e', // 2024-05-19 HF3276, House, 66-62, failed
+  '774117b0-4de3-4b55-9107-2951082be473', // 2023-01-19 HF1, House, 69-65, resolved passed event
+  '43597bb0-84e9-4aa0-a12f-5ef486d8fd56', // 2023-03-20 HF366, House, 68-62
+  'a9850d7d-a8fa-41ae-aeaa-d73413a886fd', // 2023-03-23 HF146, House, 68-62
+  'e973bf71-d42b-4e98-b45e-ea15f600d156', // 2023-05-02 HF2, House, 68-64
+  '3fe25ee0-8717-45ef-b52c-ad910f2aa3b9', // 2024-05-02 HF4300, House, 68-64
+  'd84a2bef-f44e-4d99-96ec-09a7a2a40e88', // 2024-05-19 HF3276, House, 66-62, failed
 ] as const;
 
 export interface HistoricalDeepPilotMember {
