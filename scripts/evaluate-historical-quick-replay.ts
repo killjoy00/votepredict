@@ -13,6 +13,7 @@ import {
   type QuickReplayVersion,
   type QuickReplayVote,
 } from '../src/evaluation/historical-quick-replay.js';
+import { requireEvaluationDatabaseConnection } from '../src/operations/evaluation-database.js';
 
 function toNumber(value: unknown): number {
   const parsed = typeof value === 'number' ? value : Number(value);
@@ -21,8 +22,7 @@ function toNumber(value: unknown): number {
 }
 
 async function main(): Promise<void> {
-  const connectionString = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
-  if (!connectionString) throw new Error('DATABASE_URL_UNPOOLED or DATABASE_URL is required');
+  const { connectionString, source: databaseSource } = requireEvaluationDatabaseConnection();
   const includeMembers = process.argv.includes('--include-members');
   const pool = new Pool({ connectionString, max: 1 });
 
@@ -230,6 +230,7 @@ async function main(): Promise<void> {
         codeSha: process.env.GITHUB_SHA ?? null,
         purpose: 'evaluation-only historical Quick replay; no writes, no research calls, no forecast revisions, no serving changes',
         modelVersion: replay[0]?.modelVersion ?? null,
+        databaseSource,
         snapshotInstant: 'start of official vote date, equivalent to the end of the prior UTC calendar day',
         leakageGuard: 'target bill text predates the vote date; historical vote support and analogue vote events must occur on an earlier calendar date; active roster is evaluated at the prior calendar day',
         includeMembers,
