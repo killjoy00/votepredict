@@ -13,11 +13,13 @@ The pilot manifest does **not** perform research. It reconstructs Quick inside t
 | Vote date | Bill | Outcome | Floor vote |
 | --- | --- | --- | --- |
 | 2023-01-19 | HF1 | Passed | 69-65 |
-| 2023-03-20 | HF366 | Passed | 68-64 |
+| 2023-03-20 | HF366 | Passed | 68-62 |
 | 2023-03-23 | HF146 | Passed | 68-62 |
 | 2023-05-02 | HF2 | Passed | 68-64 |
 | 2024-05-02 | HF4300 | Passed | 68-64 |
 | 2024-05-19 | HF3276 | Failed | 66-62 |
+
+The manifest binds to the resolved official vote-event row for each bill. This matters for HF1, where the database also contains incomplete duplicate rows with `passed = null`; those rows are not eligible pilot targets.
 
 HF3276 is intentionally included because the broader floor-vote history is extremely pass-skewed. A close failed bill is particularly useful for testing whether Deep evidence improves member-level predictions without merely learning an always-pass chamber prior.
 
