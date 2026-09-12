@@ -1,6 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
+import { requireEvaluationDatabaseConnection } from '../src/operations/evaluation-database.js';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 
 let secretValues: string[] = [];
@@ -28,8 +29,7 @@ async function main(): Promise<void> {
   if (!envPath) throw new Error('Production environment file is required');
   const outputPath = resolve(process.env.VOTEPREDICT_REPLAY_OUTPUT ?? 'artifacts/historical-quick-replay.json');
   const runtimeEnv = parseRuntimeEnvironment(readFileSync(envPath, 'utf8'));
-  const databaseUrl = runtimeEnv.DATABASE_URL_UNPOOLED || runtimeEnv.DATABASE_URL;
-  if (!databaseUrl) throw new Error('Production database URL is unavailable');
+  requireEvaluationDatabaseConnection(runtimeEnv);
   maskSecrets(runtimeEnv);
 
   const child = spawnSync(
