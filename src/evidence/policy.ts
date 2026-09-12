@@ -6,6 +6,9 @@ export interface EvidenceImpactPolicyDecision {
 }
 
 export function evidenceImpactPolicy(draft: EvidenceDraft): EvidenceImpactPolicyDecision {
+  if (draft.metadata?.mechanicallyActionable === false) {
+    return { mechanicallyActionable: false, rationale: 'Evidence is explicitly marked context-only/non-actionable by its durable ingestion policy.' };
+  }
   if (draft.metadata?.sourceVerified === false) {
     return { mechanicallyActionable: false, rationale: 'The evidence URL was not verified against the research provider source list.' };
   }
