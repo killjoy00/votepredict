@@ -28,7 +28,7 @@ export interface HistoricalDeepDiscoveryCandidate {
   quickYesProbability?: number;
   quickEvidenceQuality: HistoricalDeepDiscoveryMember['evidenceQuality'];
   selectedForCurrentDeep: boolean;
-  kind: 'committee_bill_advancement_vote';
+  kind: 'committee_bill_procedural_vote';
   voteSide: 'aye' | 'nay';
   motionText: string;
   excerpt: string;
@@ -46,7 +46,7 @@ export interface HistoricalDeepDiscoveryCandidate {
 export interface HistoricalDeepDiscoveryExtractionDiagnostic {
   sourceId: string;
   identifier: string;
-  type: 'unresolved_vote_name' | 'ambiguous_vote_name' | 'no_bill_advancement_roll_call';
+  type: 'unresolved_vote_name' | 'ambiguous_vote_name' | 'no_bill_procedural_roll_call';
   rawName?: string;
   detail: string;
 }
@@ -160,7 +160,7 @@ function containsIdentifier(value: string, identifier: string): boolean {
   return compactIdentifier(value).includes(compactIdentifier(identifier));
 }
 
-function isAdvancementMotion(value: string, identifier: string): boolean {
+function isBillProceduralMotion(value: string, identifier: string): boolean {
   const normalized = value.toLowerCase();
   if (!containsIdentifier(value, identifier)) return false;
   if (normalized.includes('amendment')) return false;
@@ -168,7 +168,7 @@ function isAdvancementMotion(value: string, identifier: string): boolean {
 }
 
 function isRollCallRequest(value: string): boolean {
-  return /\broll call\b/i.test(value) && !/\bamendment\b/i.test(value);
+  return /\brequest(?:ed|s)?\b[^.]{0,100}\broll call\b/i.test(value) && !/\bamendment\b/i.test(value);
 }
 
 function voteMarker(value: string): 'aye' | 'nay' | undefined {
@@ -183,7 +183,9 @@ function isVoteStop(value: string): boolean {
 
 function looksLikeVoteName(value: string): boolean {
   if (!value || value.length > 80) return false;
-  if (/\b(?:motion|prevailed|committee|representative|chair|clerk|roll call|aye|nay|excused|absent|abstain)\b/i.test(value)) {
+  const cleaned = stripVoteNameDecorations(value);
+  if (!cleaned) return false;
+  if (/\b(?:motion|prevailed|committee|representative|clerk|roll call|aye|nay|excused|absent|abstain)\b/i.test(cleaned)) {
     return false;
   }
   return /^[A-Za-zÀ-ÖØ-öø-ÿ’'\-. ]+(?:,\s*[A-Za-zÀ-ÖØ-öø-ÿ’'\-. ]+)?(?:\s*\([^)]*\))?$/.test(value);
@@ -199,7 +201,7 @@ interface RollCallBlock {
   excerpt: string;
 }
 
-export function extractBillAdvancementRollCalls(lines: readonly string[], identifier: string): RollCallBlock[] {
+export function extractBillProceduralRollCalls(lines: readonly string[], identifier: string): RollCallBlock[] {
   const blocks: RollCallBlock[] = [];
   for (let index = 0; index < lines.length; index += 1) {
     const request = lines[index];
@@ -208,7 +210,7 @@ export function extractBillAdvancementRollCalls(lines: readonly string[], identi
     let motionIndex = -1;
     for (let back = index - 1; back >= Math.max(0, index - 4); back -= 1) {
       if (/\bamendment\b/i.test(lines[back])) break;
-      if (isAdvancementMotion(lines[back], identifier)) {
+      if (isBillProceduralMotion(lines[back], identifier)) {
         motionIndex = back;
         break;
       }
@@ -216,7 +218,7 @@ export function extractBillAdvancementRollCalls(lines: readonly string[], identi
     if (motionIndex < 0 && containsIdentifier(request, identifier)) {
       for (let back = index - 1; back >= Math.max(0, index - 6); back -= 1) {
         if (/\bamendment\b/i.test(lines[back])) break;
-        if (isAdvancementMotion(lines[back], identifier)) {
+        if (isBillProceduralMotion(lines[back], identifier)) {
           motionIndex = back;
           break;
         }
@@ -296,13 +298,13 @@ export function extractHistoricalDeepDiscoveryCandidates(
     if (!discoveryCase) throw new Error(`Frozen source ${source.id} has no matching discovery case`);
     if (source.sourceClass !== 'house_committee_record') continue;
 
-    const rollCalls = extractBillAdvancementRollCalls(historicalHtmlLines(source.content), discoveryCase.identifier);
+    const rollCalls = extractBillProceduralRollCalls(historicalHtmlLines(source.content), discoveryCase.identifier);
     if (rollCalls.length === 0) {
       diagnostics.push({
         sourceId: source.id,
         identifier: discoveryCase.identifier,
-        type: 'no_bill_advancement_roll_call',
-        detail: 'No unambiguous bill-advancement roll call was found; amendment and unrelated roll calls are intentionally ignored.',
+        type: 'no_bill_procedural_roll_call',
+        detail: 'No unambiguous bill-level procedural roll call was found; amendment and unrelated roll calls are intentionally ignored.',
       });
       continue;
     }
@@ -342,7 +344,7 @@ export function extractHistoricalDeepDiscoveryCandidates(
             quickYesProbability: member.yesProbability,
             quickEvidenceQuality: member.evidenceQuality,
             selectedForCurrentDeep: member.selectedForCurrentDeep,
-            kind: 'committee_bill_advancement_vote',
+            kind: 'committee_bill_procedural_vote',
             voteSide,
             motionText: rollCall.motionText,
             excerpt: rollCall.excerpt,
