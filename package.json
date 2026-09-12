@@ -37,6 +37,7 @@
     "eval:full-universe-stage": "tsx scripts/evaluate-full-universe-stage-baseline.ts",
     "eval:gambling-model": "tsx scripts/evaluate-gambling-model.ts",
     "eval:deep-vs-quick": "tsx scripts/evaluate-deep-vs-quick.ts",
+    "eval:deep-replay-cohort": "tsx scripts/build-deep-replay-cohort.ts",
     "forecasts:scheduled": "tsx scripts/run-scheduled-forecasts.ts",
     "eval:coalition-chamber": "tsx scripts/evaluate-coalition-chamber.ts",
     "eval:gambling:diagnose": "tsx scripts/diagnose-gambling-model.ts"
