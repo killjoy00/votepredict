@@ -10,8 +10,13 @@ function configurationStatus() {
   } as const;
 }
 
+function deploymentCommitSha() {
+  return process.env.VERCEL_GIT_COMMIT_SHA?.trim() || null;
+}
+
 export async function GET() {
   const authConfiguration = configurationStatus();
+  const deployedCommit = deploymentCommitSha();
 
   try {
     await pool.query('select 1');
@@ -19,6 +24,7 @@ export async function GET() {
       status: 'ok',
       database: 'ok',
       databaseSource: databaseConnectionSource,
+      deploymentCommitSha: deployedCommit,
       authConfiguration,
     });
   } catch {
@@ -28,6 +34,7 @@ export async function GET() {
         database: 'unavailable',
         databaseSource: databaseConnectionSource,
         databaseConfiguration: databaseConnectionSource === 'missing' ? 'missing' : 'configured',
+        deploymentCommitSha: deployedCommit,
         authConfiguration,
       },
       { status: 503 },
