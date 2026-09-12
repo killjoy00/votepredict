@@ -34,6 +34,7 @@ Operational tooling, scorecards, logs, and future outcome reconciliation must pr
 
 - The serving artifact is immutable for its supported session unless a newly evaluated replacement earns promotion.
 - Runtime must expose/retain enough model/session provenance to identify the artifact and training cutoff.
+- The frozen serving package must retain a digest of the complete target-session prediction vector, not only model coefficients/statistics.
 - Request-time retraining from current production labels is prohibited.
 - Unsupported future sessions fail closed until a new frozen artifact is evaluated and promoted.
 
@@ -52,11 +53,35 @@ Rules:
 5. metrics include passage Brier score, expected-Yes error, interval coverage, member accuracy, member Brier score, and member log loss;
 6. cannot-predict and unresolved member outcomes remain explicit.
 
-### Introduction scorecard
+### Introduction serving scorecard
 
-Introduction predictions must eventually be scored against the `source_chamber_passage` outcome for the introduced bill, including bills that never reach a floor vote. An individual later floor-vote result is not a substitute for this target.
+The operations desk also verifies and scores the frozen introduction-stage prediction set against the authoritative `source_chamber_passage` outcome for every bill in the supported introduced-bill universe, including bills that never receive a floor vote.
 
-Production scorecards are observational evidence. They do not automatically promote a model or configuration.
+Before displaying performance metrics, the scorecard must:
+
+1. load the complete supported-session authoritative universe in the same deterministic ordering used by the frozen exporter;
+2. reproduce each probability using only introduction-safe inputs;
+3. reproduce the exact frozen prediction-vector SHA-256 digest;
+4. verify the expected total-universe count and title+purpose-text vs. title-only fallback counts;
+5. fail visibly if any prediction or corpus-integrity check differs from the frozen serving contract.
+
+Once integrity is established, report at least:
+
+- labeled/unlabeled outcome counts;
+- source-chamber pass rate and mean predicted probability;
+- Brier score;
+- log loss;
+- expected calibration error;
+- average precision;
+- ROC-AUC;
+- House/Senate slices;
+- model version, training cutoff, evaluation commit, artifact hash, and prediction digest.
+
+For Minnesota 2025-26, these resolved outcomes were already part of the locked chronological promotion evaluation. Therefore the current scorecard is a **promotion-holdout replay and serving-integrity check**, not a new independent production test set. It is useful for detecting serving/corpus drift and reporting the resolved session faithfully, but it must not be cited as fresh evidence for another promotion decision.
+
+Future genuinely out-of-sample introduction scorecards should preserve the same target and integrity rules and clearly identify observations that were not used to choose the serving model.
+
+Production scorecards do not automatically promote a model or configuration.
 
 ## Model promotion
 
@@ -76,6 +101,7 @@ For introduction-stage models specifically:
 - train serving artifacts only on completed eligible prior sessions;
 - freeze numeric settings before the governing holdout result;
 - verify serialized-versus-evaluated prediction parity;
+- freeze a digest of the complete target-session prediction vector;
 - keep fallback behavior explicit;
 - never silently reuse a 2025-26 artifact for a future session.
 
@@ -103,13 +129,14 @@ The private operations page should report, where available:
 - recent official-source HTTP failures;
 - Deep research completed/failed/active counts.
 
-For the introduction-stage corpus, operations should also preserve auditable checks for:
+For the introduction-stage corpus, operations must also preserve auditable checks for:
 
-- complete session universe size;
+- complete supported-session universe size;
 - label completeness;
 - exact introduction-date completeness;
 - initial-document provenance completeness;
-- count of introduction-text-eligible vs. fallback bills.
+- count of introduction-text-eligible vs. fallback bills;
+- exact prediction-vector digest parity with the frozen serving artifact.
 
 Source cadence differs by data type, so report observed freshness rather than inventing one universal staleness threshold.
 
@@ -122,7 +149,7 @@ When an official source changes:
 1. capture the failing source/document and parser error;
 2. update the adapter with a fixture/regression test where practical;
 3. rerun the strict ingestion/source audit;
-4. rerun any affected introduction-universe completeness gate;
+4. rerun any affected introduction-universe completeness and prediction-digest gate;
 5. never silently drop affected records to make the pipeline green.
 
 ## Backup and recovery
