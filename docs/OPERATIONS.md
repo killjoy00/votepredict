@@ -1,116 +1,161 @@
 # VotePredict V2 Operations
 
-This document defines the operating expectations for the private production tool. It supplements `docs/REBUILD_PLAN.md`, `docs/EVALUATION_STANDARD.md`, and the V2 architecture docs; it does not relax their leakage, evidence, or model-promotion rules.
+This document defines operating expectations for the private production tool. It supplements `CHARTER.md`, `docs/EVALUATION_STANDARD.md`, `docs/DEPLOYMENT.md`, and the V2 architecture. It does not relax leakage, evidence, lineage, or model-promotion rules.
 
 ## Access and security
 
 - Owner workspace routes and all mutations require the private owner guard.
 - Read-only share links are explicit, revision-specific bearer links. Only a SHA-256 hash of the random share token is stored in PostgreSQL.
 - A share link exposes the selected frozen revision only. It does not grant private workspace access and can be revoked by the owner.
-- Treat an unrevoked share URL as a secret: anyone who possesses it can read that shared revision.
-- External web/source content is untrusted input. It is source material and provenance, never executable instruction authority.
-- Deep evidence may affect probabilities only through the existing evidence policy and persisted inclusion/exclusion lineage.
-- Secrets belong in platform environment configuration. Never commit database credentials, AI Gateway credentials, source API keys, or owner-auth secrets.
+- External web/source content is untrusted source material, never executable instruction authority.
+- Deep evidence may affect current/floor probabilities only through the persisted evidence policy and inclusion/exclusion lineage.
+- Secrets belong in platform environment configuration. Never commit database credentials, AI Gateway credentials, source API keys, owner-auth secrets, or Vercel tokens.
+
+## Forecast target separation
+
+VotePredict operates two different chamber-passage targets:
+
+- **Introduction forecast:** unconditional source-chamber passage probability assessed at introduction, served from a session-pinned frozen artifact.
+- **Current/floor forecast:** selected-chamber passage probability at forecast time, derived from member-level probabilities.
+
+Operational tooling, scorecards, logs, and future outcome reconciliation must preserve this distinction. Do not compare or overwrite one target using the other's outcome definition.
 
 ## Forecast lineage
+
+### Current/floor forecasts
 
 - A forecast is a durable identity.
 - `Update Forecast` creates a new immutable revision under that identity.
 - Scenarios are counterfactual overlays and never mutate an official revision, evidence item, recorded vote, or training truth.
-- Subsets are named member sets. They expose an aggregate distribution only; VotePredict does not infer a procedural threshold for an arbitrary subset.
-- Production outcome reconciliation links a forecast to an official passage `vote_event`. It does not rewrite the forecast or the historical vote.
+- Subsets are named member sets and do not imply a procedural threshold unless one is explicitly known.
+- Production outcome reconciliation links a revision to an explicitly selected official passage `vote_event`; it never rewrites the forecast.
 
-## Production scorecard
+### Introduction forecasts
 
-The operations desk scores frozen production revisions against an explicitly selected matching official passage vote.
+- The serving artifact is immutable for its supported session unless a newly evaluated replacement earns promotion.
+- Runtime must expose/retain enough model/session provenance to identify the artifact and training cutoff.
+- Request-time retraining from current production labels is prohibited.
+- Unsupported future sessions fail closed until a new frozen artifact is evaluated and promoted.
+
+## Production scorecards
+
+### Current/floor scorecard
+
+The operations desk scores frozen forecast revisions against an explicitly selected matching official passage vote.
 
 Rules:
 
-1. The owner must explicitly select the matching official passage event. VotePredict does not silently assume the latest matching event is the scorecard truth.
-2. The outcome must match the forecast bill and chamber.
-3. The official vote must occur on a later calendar date than the forecast. Same-day revisions are excluded because the stored official vote time is date-granular and cannot establish which happened first.
-4. Scoring operates on the frozen revision rows and member predictions as originally persisted.
-5. Current production metrics include passage Brier score, expected-Yes absolute error, central-range coverage, member accuracy, member Brier score, and member log loss.
-6. Cannot-predict and unresolved member outcomes remain explicit rather than being converted into synthetic labels.
+1. the owner selects the matching passage event;
+2. outcome bill/chamber must match the forecast;
+3. the official vote must occur after the forecast cutoff;
+4. scoring uses frozen revision/member rows as originally persisted;
+5. metrics include passage Brier score, expected-Yes error, interval coverage, member accuracy, member Brier score, and member log loss;
+6. cannot-predict and unresolved member outcomes remain explicit.
 
-Production scorecard results are observational evidence. They do not automatically promote a new model or configuration.
+### Introduction scorecard
+
+Introduction predictions must eventually be scored against the `source_chamber_passage` outcome for the introduced bill, including bills that never reach a floor vote. An individual later floor-vote result is not a substitute for this target.
+
+Production scorecards are observational evidence. They do not automatically promote a model or configuration.
 
 ## Model promotion
 
-A model/configuration change earns default promotion only through the evaluation process described in `docs/EVALUATION_STANDARD.md`.
+Every model/configuration change must follow `docs/EVALUATION_STANDARD.md`.
 
-For every proposed default model change:
+Promotion is deliberately staged:
 
-1. preserve chronological/as-of-safe evaluation;
-2. write a versioned evaluation artifact under `evaluation/results/`;
-3. compare against the currently accepted benchmark on the same eligible observations;
-4. report chamber-passage performance first, then member calibration/calls and vote-count error;
-5. document coverage and cannot-predict behavior;
-6. document any complexity added and the measurable improvement it purchased;
-7. change the runtime default only in the same reviewed change that records why promotion was earned.
+1. **Evaluation PR** — freeze the candidate, run the leakage-safe historical comparison, record metrics/limitations, and decide whether the candidate earns promotion. This PR must not change serving probabilities merely because evaluation code exists.
+2. **Serving integration PR** — only after promotion is earned, build/freeze the production artifact or runtime integration, prove parity with the evaluated candidate, add leakage/fallback tests, and pass the normal release gate.
+3. **Production deployment** — deploy the exact green merge commit and run the smoke/runtime-log checks in `docs/DEPLOYMENT.md`.
 
-Calibration remains opt-in unless a new benchmark demonstrates that default calibration improves the governing metrics.
+This separation prevents a candidate from changing production probabilities before its empirical promotion decision exists.
+
+For introduction-stage models specifically:
+
+- preserve chronological/as-of-introduction evaluation;
+- train serving artifacts only on completed eligible prior sessions;
+- freeze numeric settings before the governing holdout result;
+- verify serialized-versus-evaluated prediction parity;
+- keep fallback behavior explicit;
+- never silently reuse a 2025-26 artifact for a future session.
+
+For current/floor models:
+
+- compare chamber passage, member calls/calibration, vote-count error, coverage, and important slices against the accepted model/baselines;
+- calibration remains opt-in unless a benchmark demonstrates that default calibration improves governing metrics.
 
 ## Deep research budget and failures
 
-- The database enforces a maximum of 20 `ai-gateway-web` research runs in a rolling 24-hour window.
-- Completed and failed AI Gateway Deep runs are recorded in `external_usage_events` automatically from the durable `research_runs` ledger.
-- A budget failure is a transparent Deep failure. The persisted Quick baseline remains the valid result; the application must not imply that Deep completed.
+- The database enforces the configured rolling limit for `ai-gateway-web` research runs.
+- Completed and failed Deep runs are recorded through the durable usage/research ledger.
+- A budget failure is a transparent Deep failure; the persisted Quick baseline remains valid.
 - Provider/source failures never justify invented evidence or fabricated probabilities.
-- If the budget needs to change, change the migration/operating policy intentionally and review the expected cost/usage impact. Do not bypass the database guard in application code.
+- Budget changes require an intentional reviewed policy/configuration change.
 
 ## Data freshness and ingestion health
 
-The private operations page reports:
+The private operations page should report, where available:
 
-- the latest ingestion run per source/scope;
+- latest ingestion run per source/scope;
 - run state and error summary;
 - unresolved member count;
 - source-document fetch age;
-- recent recorded HTTP source failures;
+- recent official-source HTTP failures;
 - Deep research completed/failed/active counts.
 
-VotePredict reports the observed age instead of inventing a universal staleness threshold. Source cadence differs across legislative data, bill text, and research evidence.
+For the introduction-stage corpus, operations should also preserve auditable checks for:
 
-Current refreshes remain explicit ingestion/source workflows. A scheduler should be added only when its cadence and failure behavior are deliberately specified and observable.
+- complete session universe size;
+- label completeness;
+- exact introduction-date completeness;
+- initial-document provenance completeness;
+- count of introduction-text-eligible vs. fallback bills.
+
+Source cadence differs by data type, so report observed freshness rather than inventing one universal staleness threshold.
 
 ## Parser and source changes
 
-Source adapters must fail loudly when an official source changes in a way that breaks parsing. Source smoke workflows and ingestion audits are release gates for parser changes.
+Source adapters must fail loudly when an official source changes in a way that breaks parsing.
 
 When an official source changes:
 
-1. capture the failing source URL/document and parser error;
-2. update the source adapter with a fixture or regression test where practical;
+1. capture the failing source/document and parser error;
+2. update the adapter with a fixture/regression test where practical;
 3. rerun the strict ingestion/source audit;
-4. do not silently drop affected records to make the pipeline green.
+4. rerun any affected introduction-universe completeness gate;
+5. never silently drop affected records to make the pipeline green.
 
 ## Backup and recovery
 
-Neon branch/restore capabilities provide the database recovery mechanism, but recovery is an operational procedure rather than an assumption.
+Use Neon branch/restore capabilities as the database recovery mechanism, but treat recovery as an explicit procedure.
 
 Before a destructive production migration or data repair:
 
-1. use the Neon branch-first migration workflow against a production-like branch;
-2. verify the intended schema/data change there;
-3. apply only the reviewed migration to primary;
-4. verify primary after application;
+1. test on a production-like Neon branch;
+2. verify the intended schema/data effect;
+3. apply only reviewed migrations to primary;
+4. verify primary afterward;
 5. preserve migration SQL in the repository.
 
-For an incident requiring data recovery, use Neon's retained history/branch restore capability available to the project at that time. Do not assume a retention duration from this document; account/project retention can change and should be checked in Neon before relying on a specific restore point.
-
-VotePredict should not treat a source re-ingestion as a substitute for recovery of private forecasts, revisions, scenarios, shares, research lineage, or owner-created proposals.
+Source re-ingestion is not a substitute for recovery of private forecasts, revisions, scenarios, shares, research lineage, or owner-created proposals.
 
 ## Release gate
 
 Normal release gate:
 
 - GitHub pull request;
+- clean-database migration replay;
 - typecheck;
 - full test suite;
 - production build;
-- high-severity npm audit;
-- branch-test database migrations before primary application;
-- verify primary after migration.
+- high-severity production dependency audit;
+- branch-test database validation when schema/data migration risk warrants it;
+- exact-commit production deployment;
+- production route/auth smoke test;
+- production 5xx/runtime-error review for the changed surface.
 
-Avoid unnecessary Vercel deployments during development. Deploy only when the application actually needs a production/preview runtime validation beyond GitHub CI and database checks.
+Avoid unnecessary Vercel deployments during development. GitHub CI is the default branch validation surface; deploy only when a production/preview runtime check adds information CI cannot provide.
+
+## Current known production warning
+
+Production currently emits a non-fatal `pg` / `pg-connection-string` warning about future SSL-mode semantics on database connection startup. It is not a current request failure. Before upgrading to the next major `pg` behavior, make the intended SSL mode explicit and verify the change against Neon.
