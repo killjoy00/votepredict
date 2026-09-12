@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { HISTORICAL_DEEP_PILOT_CASES, type HistoricalDeepPilotCaseSpec } from './historical-deep-pilot';
+import { HISTORICAL_DEEP_PILOT_CASES, type HistoricalDeepPilotSpec } from './historical-deep-pilot';
 
 export const HISTORICAL_DEEP_SOURCE_CATALOG_SCHEMA = 'historical-deep-source-catalog-v1' as const;
 export const HISTORICAL_DEEP_SOURCE_BUNDLE_SCHEMA = 'historical-deep-source-bundle-v1' as const;
@@ -65,7 +65,7 @@ export function historicalDeepSourceCaseKey(value: HistoricalDeepSourceCatalogCa
   return `${value.session}|${value.chamber}|${value.identifier}|${value.occurredOn}`;
 }
 
-function pilotCaseKey(value: HistoricalDeepPilotCaseSpec): string {
+function pilotCaseKey(value: HistoricalDeepPilotSpec): string {
   return historicalDeepSourceCaseKey(value);
 }
 
