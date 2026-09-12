@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "historical-deep-source-catalog-v1",
+  "jurisdictionSlug": "us-mn",
+  "sources": [
+    {
+      "case": { "session": "2023-2024", "chamber": "house", "identifier": "HF1", "occurredOn": "2023-01-19" },
+      "id": "hf1-revisor-introduction",
+      "sourceClass": "revisor_bill_text",
+      "url": "https://www.revisor.mn.gov/bills/93/2023/0/HF/1/versions/0/",
+      "title": "HF1 Introduction",
+      "publishedAt": "2023-01-04T00:00:00.000Z",
+      "expectedMarkers": ["HF 1", "Introduction", "Protect Reproductive Options"]
+    },
+    {
+      "case": { "session": "2023-2024", "chamber": "house", "identifier": "HF1", "occurredOn": "2023-01-19" },
+      "id": "hf1-health-committee-2023-01-05",
+      "sourceClass": "house_committee_record",
+      "url": "https://www.house.mn.gov/committees/minutes/93010/89889",
+      "title": "Health Finance and Policy First Meeting",
+      "publishedAt": "2023-01-05T00:00:00.000Z",
+      "expectedMarkers": ["Thursday, January 5, 2023", "HF1", "Kotyza-Witthuhn"]
+    },
+    {
+      "case": { "session": "2023-2024", "chamber": "house", "identifier": "HF1", "occurredOn": "2023-01-19" },
+      "id": "hf1-state-local-committee-2023-01-12",
+      "sourceClass": "house_committee_record",
+      "url": "https://www.house.mn.gov/committees/minutes/93022/89921",
+      "title": "State and Local Government Finance and Policy Third Meeting",
+      "publishedAt": "2023-01-12T00:00:00.000Z",
+      "expectedMarkers": ["Thursday, January 12, 2023", "HF1", "Kotyza-Witthuhn"]
+    },
+    {
+      "case": { "session": "2023-2024", "chamber": "house", "identifier": "HF366", "occurredOn": "2023-03-20" },
+      "id": "hf366-revisor-second-engrossment",
+      "sourceClass": "revisor_bill_text",
+      "url": "https://www.revisor.mn.gov/bills/93/2023/0/HF/366/versions/2/",
+      "title": "HF366 2nd Engrossment",
+      "publishedAt": "2023-02-08T00:00:00.000Z",
+      "expectedMarkers": ["HF 366", "2nd Engrossment", "reproductive health"]
+    },
+    {
+      "case": { "session": "2023-2024", "chamber": "house", "identifier": "HF366", "occurredOn": "2023-03-20" },
+      "id": "hf366-health-committee-2023-01-26",
+      "sourceClass": "house_committee_record",
+      "url": "https://www.house.mn.gov/committees/minutes/93010/90020",
+      "title": "Health Finance and Policy Seventh Meeting",
+      "publishedAt": "2023-01-26T00:00:00.000Z",
+      "expectedMarkers": ["HF366", "Agbaje", "Reproductive health care"]
+    },
+    {
+      "case": { "session": "2023-2024", "chamber": "house", "identifier": "HF146", "occurredOn": "2023-03-23" },
+      "id": "hf146-revisor-first-engrossment",
+      "sourceClass": "revisor_bill_text",
+      "url": "https://www.revisor.mn.gov/bills/93/2023/0/HF/146/versions/1/",
+      "title": "HF146 1st Engrossment",
+      "publishedAt": "2023-02-27T00:00:00.000Z",
+      "expectedMarkers": ["HF 146", "1st Engrossment", "gender-affirming health care"]
+    },
+    {
+      "case": { "session": "2023-2024", "chamber": "house", "identifier": "HF146", "occurredOn": "2023-03-23" },
+      "id": "hf146-judiciary-committee-2023-01-31",
+      "sourceClass": "house_committee_record",
+      "url": "https://www.house.mn.gov/committees/minutes/93015/90052",
+      "title": "Judiciary Finance and Civil Law Eighth Meeting",
+      "publishedAt": "2023-01-31T00:00:00.000Z",
+      "expectedMarkers": ["HF 146", "Finke", "gender-affirming health care"]
+    },
+    {
+      "case": { "session": "2023-2024", "chamber": "house", "identifier": "HF2", "occurredOn": "2023-05-02" },
+      "id": "hf2-revisor-seventh-engrossment",
+      "sourceClass": "revisor_bill_text",
+      "url": "https://www.revisor.mn.gov/bills/93/2023/0/HF/2/versions/7/",
+      "title": "HF2 7th Engrossment",
+      "publishedAt": "2023-04-25T00:00:00.000Z",
+      "expectedMarkers": ["HF 2", "7th Engrossment", "family"]
+    },
+    {
+      "case": { "session": "2023-2024", "chamber": "house", "identifier": "HF2", "occurredOn": "2023-05-02" },
+      "id": "hf2-workforce-committee-2023-01-25",
+      "sourceClass": "house_committee_record",
+      "url": "https://www.house.mn.gov/Committees/minutes/93029/90056",
+      "title": "Workforce Development Finance and Policy Third Meeting",
+      "publishedAt": "2023-01-25T00:00:00.000Z",
+      "expectedMarkers": ["HF 2", "Richardson", "Paid family"]
+    },
+    {
+      "case": { "session": "2023-2024", "chamber": "house", "identifier": "HF2", "occurredOn": "2023-05-02" },
+      "id": "hf2-labor-committee-2023-02-07",
+      "sourceClass": "house_committee_record",
+      "url": "https://www.house.mn.gov/committees/minutes/93018/90099",
+      "title": "Labor and Industry Finance and Policy Eighth Meeting",
+      "publishedAt": "2023-02-07T00:00:00.000Z",
+      "expectedMarkers": ["HF 2", "Richardson", "Paid Family Medical Leave"]
+    },
+    {
+      "case": { "session": "2023-2024", "chamber": "house", "identifier": "HF4300", "occurredOn": "2024-05-02" },
+      "id": "hf4300-revisor-second-engrossment",
+      "sourceClass": "revisor_bill_text",
+      "url": "https://www.revisor.mn.gov/bills/93/2024/0/HF/4300/versions/2/",
+      "title": "HF4300 2nd Engrossment",
+      "publishedAt": "2024-04-25T00:00:00.000Z",
+      "expectedMarkers": ["HF 4300", "2nd Engrossment", "storage of firearms"]
+    },
+    {
+      "case": { "session": "2023-2024", "chamber": "house", "identifier": "HF4300", "occurredOn": "2024-05-02" },
+      "id": "hf4300-public-safety-committee-2024-02-29",
+      "sourceClass": "house_committee_record",
+      "url": "https://www.house.mn.gov/Committees/minutes/93020/100634",
+      "title": "Public Safety Finance and Policy Thirty-Fourth Meeting",
+      "publishedAt": "2024-02-29T00:00:00.000Z",
+      "expectedMarkers": ["HF4300", "Becker-Finn", "safe storage"]
+    },
+    {
+      "case": { "session": "2023-2024", "chamber": "house", "identifier": "HF3276", "occurredOn": "2024-05-19" },
+      "id": "hf3276-revisor-second-engrossment",
+      "sourceClass": "revisor_bill_text",
+      "url": "https://www.revisor.mn.gov/bills/93/2023/0/HF/3276/versions/2/",
+      "title": "HF3276 2nd Engrossment",
+      "publishedAt": "2024-05-06T00:00:00.000Z",
+      "expectedMarkers": ["HF 3276", "2nd Engrossment", "ranked choice voting"]
+    },
+    {
+      "case": { "session": "2023-2024", "chamber": "house", "identifier": "HF3276", "occurredOn": "2024-05-19" },
+      "id": "hf3276-elections-committee-2024-03-13",
+      "sourceClass": "house_committee_record",
+      "url": "https://www.house.mn.gov/committees/minutes/93007/100860",
+      "title": "Elections Finance and Policy Twentieth Meeting",
+      "publishedAt": "2024-03-13T00:00:00.000Z",
+      "expectedMarkers": ["HF 3276", "Frazier", "ranked choice voting"]
+    },
+    {
+      "case": { "session": "2023-2024", "chamber": "house", "identifier": "HF3276", "occurredOn": "2024-05-19" },
+      "id": "hf3276-state-local-committee-2024-04-09",
+      "sourceClass": "house_committee_record",
+      "url": "https://www.house.mn.gov/committees/minutes/93022/100838",
+      "title": "State and Local Government Finance and Policy Thirty-Ninth Meeting",
+      "publishedAt": "2024-04-09T00:00:00.000Z",
+      "expectedMarkers": ["April 9, 2024", "HF 3276", "Frazier"]
+    }
+  ]
+}

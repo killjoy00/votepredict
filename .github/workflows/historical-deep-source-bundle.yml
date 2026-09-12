@@ -1,0 +1,43 @@
+name: Historical Deep source bundle
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-deep-source-bundle.yml
+      - scripts/collect-historical-deep-pilot-sources.ts
+      - src/evaluation/historical-deep-source-catalog.ts
+      - src/evaluation/historical-deep-pilot.ts
+      - data/evaluation/historical-deep-pilot-sources-v1.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: historical-deep-source-bundle
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VOTEPREDICT_DEEP_SOURCE_BUNDLE_OUTPUT: artifacts/historical-deep-pilot-source-bundle.json
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Collect and validate official pre-vote source corpus
+        run: node --import tsx scripts/collect-historical-deep-pilot-sources.ts
+      - name: Upload frozen source bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-pilot-source-bundle-${{ github.sha }}
+          path: artifacts/historical-deep-pilot-source-bundle.json
+          if-no-files-found: error
+          retention-days: 30
