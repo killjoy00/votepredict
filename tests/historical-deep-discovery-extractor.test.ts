@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import test from 'node:test';
 import {
-  extractBillAdvancementRollCalls,
+  extractBillProceduralRollCalls,
   extractHistoricalDeepDiscoveryCandidates,
   historicalHtmlLines,
 } from '../src/evaluation/historical-deep-discovery-extractor.js';
@@ -98,8 +98,8 @@ const FINAL_ROLL_CALL_HTML = `
 <div>AYES</div><div>Nash</div><div>NAYS</div><div>Hansen</div><div>There being 1 aye and 1 nay. THE MOTION PREVAILED.</div>
 </body></html>`;
 
-test('bill-advancement parser ignores amendment votes and keeps the final bill motion', () => {
-  const blocks = extractBillAdvancementRollCalls(historicalHtmlLines(FINAL_ROLL_CALL_HTML), 'HF3276');
+test('bill-procedural parser ignores amendment votes and keeps the final bill motion', () => {
+  const blocks = extractBillProceduralRollCalls(historicalHtmlLines(FINAL_ROLL_CALL_HTML), 'HF3276');
   assert.equal(blocks.length, 1);
   assert.equal(blocks[0].ayes.length, 1);
   assert.equal(blocks[0].nays.length, 1);
@@ -150,10 +150,20 @@ test('parser recognizes final roll call when the request itself omits the bill i
   const html = `
     <p>Chair Liebling renewed her motion that HF1 be re-referred to the Committee on Judiciary Finance and Civil Law.</p>
     <p>Representative Backer requested a roll call vote.</p>
-    <div>AYE</div><div>LIEBLING, Tina</div><div>NAY</div><div>BACKER, Jeff</div>
+    <div>AYE</div><div>LIEBLING, Tina (Chair)</div><div>NAY</div><div>BACKER, Jeff</div>
     <div>On a vote of 1 AYE and 1 NAY THE MOTION PREVAILED.</div>`;
-  const blocks = extractBillAdvancementRollCalls(historicalHtmlLines(html), 'HF1');
+  const blocks = extractBillProceduralRollCalls(historicalHtmlLines(html), 'HF1');
   assert.equal(blocks.length, 1);
-  assert.deepEqual(blocks[0].ayes, ['LIEBLING, Tina']);
+  assert.deepEqual(blocks[0].ayes, ['LIEBLING, Tina (Chair)']);
   assert.deepEqual(blocks[0].nays, ['BACKER, Jeff']);
+});
+
+test('clerk roll-call narration does not create a second procedural vote', () => {
+  const html = `
+    <p>Chair Nelson renewed the motion that HF 2, as amended, be recommended to pass and re-referred to State and Local Government.</p>
+    <p>Representative McDonald requested a roll call on HF 2, as amended.</p>
+    <p>The clerk took the roll call.</p>
+    <div>AYE</div><div>Nelson</div><div>NAY</div><div>McDonald</div><div>There being 1 aye and 1 nay.</div>`;
+  const blocks = extractBillProceduralRollCalls(historicalHtmlLines(html), 'HF2');
+  assert.equal(blocks.length, 1);
 });
