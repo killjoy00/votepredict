@@ -4,16 +4,17 @@
 
 This audit was performed immediately after production promotion of the Minnesota 2025-26 introduction-stage model `intro-title-text-eb-v4`.
 
-The review asked two questions:
+The review asked:
 
 1. Has the project drifted from the V2 charter/rebuild scope?
 2. Do the baseline architecture, evaluation, operations, and deployment documents still describe the product that is actually running?
+3. Does the deployment configuration enforce the release discipline those documents claim?
 
 ## Conclusion
 
 **No harmful product-scope drift was found.**
 
-The introduction-stage source-chamber forecast is a legitimate extension of the original chamber-passage mission because it answers a distinct earlier-stage question using the same core principles:
+The introduction-stage source-chamber forecast is a legitimate extension of the original chamber-passage mission because it follows the same core principles:
 
 - official legislative sources;
 - private-first professional workflow;
@@ -23,9 +24,12 @@ The introduction-stage source-chamber forecast is a legitimate extension of the 
 - explicit provenance;
 - no claim to predict final enactment into law.
 
-However, documentation **had drifted behind implementation**. The original charter/architecture described chamber passage almost exclusively as the current/floor member-derived probability. That wording became incomplete once VotePredict added an unconditional source-chamber passage prior assessed at introduction.
+The meaningful drift was in documentation and deployment operations, not model scope:
 
-The fix is semantic separation, not removal of either product surface.
+- the original charter/architecture described chamber passage almost exclusively as the current/floor member-derived probability;
+- the old Vercel branch configuration did not actually suppress feature-branch previews under current Vercel semantics.
+
+Both issues are corrected in this refresh.
 
 ## Current forecast taxonomy
 
@@ -60,7 +64,7 @@ These probabilities are not interchangeable and must remain visibly labeled in t
 
 ### `CHARTER.md` — updated
 
-The old mission/forecast-philosophy language implied all passage probabilities should be member-derived. The refreshed charter now explicitly defines both introduction and current/floor targets and narrows the member-derived rule to the current/floor product.
+The old mission/forecast-philosophy language implied all passage probabilities should be member-derived. The refreshed charter explicitly defines both introduction and current/floor targets and narrows the member-derived rule to the current/floor product.
 
 ### `docs/ARCHITECTURE_V2.md` — updated
 
@@ -68,49 +72,64 @@ The original single forecast pipeline no longer fully described production. The 
 
 ### `docs/EVALUATION_STANDARD.md` — updated
 
-The original standard centered on floor/member forecasting. The refreshed standard now defines target-specific populations, metrics, leakage rules, chronological evaluation, and promotion gates for introduction-stage models while preserving the existing member/floor discipline.
+The original standard centered on floor/member forecasting. The refreshed standard defines target-specific populations, metrics, leakage rules, chronological evaluation, and promotion gates for introduction-stage models while preserving the existing member/floor discipline.
 
 ### `docs/OPERATIONS.md` — updated
 
-The old promotion wording implied evaluation and runtime-default change could occur in one reviewed change. The v4 work demonstrated that a safer process is:
+The v4 work demonstrated that the safest promotion sequence is:
 
-1. evaluation/promotion decision;
+1. evaluation and explicit promotion decision;
 2. separate serving-artifact/runtime integration;
 3. exact-commit deployment and live validation.
 
-The operations document now codifies that staged process.
+Operations now codifies that sequence rather than allowing a candidate to alter serving merely because evaluation code exists.
 
-### `docs/DEPLOYMENT.md` — updated
+### `docs/DEPLOYMENT.md` — updated and deployment control corrected
 
-The refreshed deployment plan incorporates lessons from the v4 rollout:
+The deployment review found a real infrastructure bug. The prior configuration was:
 
-- exact green `main` SHA is the deployable unit;
-- GitHub CI is the default branch validation surface;
-- remote Vercel builds are preferred when production secrets are required;
-- local `vercel build --prod` must not be trusted when pulled secrets are `[SENSITIVE]` placeholders;
-- production release is not complete until READY/SHA/alias/route/5xx/runtime checks pass;
-- Vercel deployment quota exhaustion is an explicit operational risk;
-- unnecessary previews should be suppressed.
+```json
+{
+  "git": {
+    "deploymentEnabled": {
+      "*": false,
+      "main": true
+    }
+  }
+}
+```
+
+Under current Vercel semantics, object keys are branch names and unspecified branches default to enabled. `"*"` was not acting as a wildcard. Feature-branch commits were therefore still creating previews, including multiple commits in this audit branch, and this behavior explains the otherwise surprising deployment volume that contributed to the daily quota failure during v4 promotion.
+
+The fix is:
+
+```json
+{
+  "git": {
+    "deploymentEnabled": false
+  }
+}
+```
+
+All automatic Vercel Git deployments are now disabled in repository configuration. A new `.github/workflows/deploy-production.yml` becomes the normal release path: after a successful push-triggered CI run on `main`, it checks out the exact CI-passed SHA and performs a remote Vercel production deployment.
+
+This gives VotePredict a clearer invariant: branch work costs GitHub CI only; Vercel is used for explicit production releases unless a preview is intentionally requested.
 
 ### `README.md` — updated
 
-The implementation summary now names both forecast surfaces and the production introduction model.
+The implementation summary names both forecast surfaces, the production introduction model, and the exact-green-commit deployment rule.
 
 ### `docs/modeling/source-chamber-introduction-v4.md` — updated
 
-The model document now records the authoritative corpus, serving contract, exact production promotion/deployment identity, and production validation state.
+The model document records the authoritative corpus, serving contract, exact production promotion/deployment identity, and production validation state.
 
 ### `docs/DATA_AND_EVIDENCE.md` — reviewed; no rewrite required now
 
-Its official-source hierarchy, provenance rules, historical-version discipline, conflict handling, and source-quality policy remain consistent with the introduction work.
-
-The introduction-specific timing/text-eligibility rules are now governed more precisely by the refreshed charter, architecture, evaluation standard, operations document, and v4 model document. A later data-strategy revision can fold those details into the broader data document if desired, but there is no current contradiction that affects serving behavior.
+Its official-source hierarchy, provenance rules, historical-version discipline, conflict handling, and source-quality policy remain consistent with the introduction work. Introduction-specific timing/text eligibility is governed more precisely by the charter, architecture, evaluation standard, operations policy, and v4 model document.
 
 ### `docs/REBUILD_PLAN.md` — reviewed; retain as historical implementation plan
 
-The rebuild plan describes the clean-slate V2 sequence that produced the current product. It should remain useful as historical design provenance rather than being continuously renumbered to match every post-beta model experiment.
-
-The introduction forecast is best treated as a post-foundation evaluated product extension, not evidence that the original rebuild mission changed.
+The rebuild plan is historical design provenance for the clean-slate V2 sequence. It should not be continuously renumbered to match every post-beta model experiment. The introduction forecast is a post-foundation evaluated product extension, not evidence that the original mission changed.
 
 ## Production state after v4 promotion
 
@@ -127,21 +146,22 @@ A non-fatal PostgreSQL client warning about future SSL-mode semantics was observ
 
 ## Updated deployment/operations plan
 
-### P0 — immediate production confidence
+### P0 — release-control and production confidence
 
-1. Continue normal owner use of `/dashboard/introduction` so the authenticated path receives real production exercise.
-2. Review production errors/logs after meaningful authenticated usage, especially `/api/introduction-forecast`.
-3. Keep the frozen v4 artifact unchanged unless a new candidate earns promotion.
-4. Keep current/floor serving semantics untouched by introduction-stage model work.
-5. Verify Vercel project Git settings match the repository's intent to suppress routine feature-branch previews; unexpected previews should be treated as quota leakage.
-6. Make PostgreSQL SSL intent explicit before the next major `pg` behavior change.
+1. Merge the corrected Vercel configuration and CI-gated production deployment workflow only after normal CI passes.
+2. Verify that commits made after `git.deploymentEnabled=false` no longer create automatic feature-branch Vercel previews.
+3. After merge, verify the merge commit passes `main` CI and that `Deploy production` deploys that exact SHA once.
+4. Confirm the resulting production deployment is `READY`, has the expected aliases, and produces no new relevant 5xx/runtime errors.
+5. Continue normal owner use of `/dashboard/introduction` so the authenticated API path receives real production exercise.
+6. Review production errors/logs after meaningful authenticated usage, especially `/api/introduction-forecast`.
+7. Make PostgreSQL SSL intent explicit before the next major `pg` behavior change.
 
 ### P1 — production accountability
 
 1. Add/confirm a production introduction scorecard keyed to `source_chamber_passage`, not individual floor-vote outcomes.
 2. Retain introduction forecast/model provenance needed to score current-session predictions later.
 3. Surface model/version and forecast-stage language clearly enough that an owner cannot confuse the introduction prior with a floor probability.
-4. Add monitoring/operations visibility for the introduction corpus completeness gates where useful.
+4. Add monitoring/operations visibility for introduction corpus completeness gates where useful.
 
 ### P2 — next model cycle
 
