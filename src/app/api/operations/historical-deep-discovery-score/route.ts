@@ -102,7 +102,7 @@ export async function POST(request: Request) {
 
     const result = scoreHistoricalDeepDiscoveryCandidates(bundle, scoringCases);
     return NextResponse.json({
-      metadata: {
+      runtime: {
         codeSha: process.env.VERCEL_GIT_COMMIT_SHA ?? null,
         databaseSource: quick.metadata && typeof quick.metadata === 'object'
           ? (quick.metadata as Record<string, unknown>).databaseSource ?? null
