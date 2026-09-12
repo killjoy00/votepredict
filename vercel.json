@@ -6,9 +6,6 @@
   "outputDirectory": ".next",
   "crons": [{ "path": "/api/cron/forecasts", "schedule": "17 11 * * *" }],
   "git": {
-    "deploymentEnabled": {
-      "*": false,
-      "main": true
-    }
+    "deploymentEnabled": false
   }
 }

@@ -2,322 +2,215 @@
 
 ## Status
 
-Planning baseline for the clean-slate V2 rebuild. This document defines boundaries and durable concepts, not implementation details that must remain unchanged. Defaults should be revised when backtesting or operational evidence shows a better approach.
+This document defines durable V2 boundaries. Implementation details may change when evaluation or operational evidence shows a better approach, but forecast-target semantics, leakage controls, lineage, and auditability are architectural requirements.
 
 ## Architectural goals
 
 VotePredict V2 should:
 
 - support a general legislative forecasting engine with Minnesota as the first jurisdiction;
+- support distinct forecast stages without conflating their probabilities;
 - persist historical legislative data, evidence, forecasts, revisions, scenarios, and model metadata;
 - make every important forecast auditable and reproducible;
 - separate source facts from model inference and generated explanation;
-- derive chamber passage probability from member-level probabilities;
-- support Quick and Deep research modes;
+- derive **current/floor** chamber passage probability from member-level probabilities;
+- support a separately evaluated **introduction-stage** source-chamber passage model over the complete introduced-bill universe;
+- support Quick and Deep research modes for current/floor forecasting;
 - support full chambers and arbitrary member subsets;
 - keep private-user workflows simple;
-- make replacement of models, feature sets, weighting schemes, and data adapters routine;
-- avoid compatibility constraints from V1.
+- make models, feature sets, weighting schemes, and data adapters replaceable;
+- fail closed when an information cutoff cannot be reconstructed safely.
 
-## Proposed high-level system
+## Forecast-stage architecture
+
+VotePredict has two numeric chamber-passage paths with different conditioning information.
 
 ```text
-Official legislature sources   Public web/news sources   Normalized third parties
-           |                            |                         |
-           v                            v                         v
-   Jurisdiction adapters        Research/evidence        Import/normalization
-           |                            |                         |
-           +---------------> PostgreSQL evidence/data store <----+
-                                      |
-                                      v
-                             Feature construction
-                                      |
-                         +------------+-------------+
-                         |                          |
-                         v                          v
-                  Baseline models            Bill/evidence AI
-                         |                          |
-                         +------------+-------------+
-                                      |
-                                      v
-                              Forecast engine
-                                      |
-                       member vote probabilities
-                                      |
-                                      v
-                           chamber simulation
-                                      |
-                                      v
-                           Forecast revision
-                                      |
-                                      v
-                          Private web application
+                    Official legislature sources
+                              |
+                              v
+                    PostgreSQL source/data store
+                              |
+              +---------------+----------------+
+              |                                |
+              v                                v
+   Introduction-time snapshot          Current/as-of snapshot
+              |                                |
+   frozen intro feature logic             bill/member/evidence
+              |                                |
+   session-pinned intro model          member probability model
+              |                                |
+              v                                v
+ unconditional source-chamber            member probabilities
+ passage prior at introduction                  |
+              |                         chamber aggregation
+              |                                |
+              +---------------+----------------+
+                              |
+                              v
+                     Private web application
 ```
+
+The two outputs are never interchangeable:
+
+- **Introduction forecast:** probability, assessed at introduction, that the bill eventually passes its originating chamber during the biennium. It includes bills that never receive a floor vote.
+- **Current/floor forecast:** probability that the selected chamber vote passes given the information available at the forecast timestamp. Its chamber probability is derived from member forecasts.
 
 ## Persistence
 
-V2 requires a relational database. PostgreSQL is the default choice.
-
-The database is the system of record for:
+PostgreSQL is the system of record for:
 
 - jurisdictions and legislative sessions;
 - chambers and committees;
-- legislators and membership periods;
+- legislators and time-bounded memberships;
 - actual bills and bill versions;
+- introduction timestamps and authoritative initial-version provenance;
 - proposed/hypothetical bills;
 - recorded vote events and member votes;
 - normalized bill features;
 - evidence sources and extracted evidence claims;
-- model/configuration versions;
-- forecasts and forecast revisions;
+- model/configuration versions and frozen introduction artifacts;
+- forecasts and immutable forecast revisions;
 - member-level forecasts;
 - evidence linked to forecasts;
 - scenarios and user overrides;
 - eventual observed outcomes for evaluation.
 
-V2 should not depend on in-memory state for durable forecasting behavior.
+Durable forecasting behavior must not depend on mutable in-memory state or request-time retraining from production labels.
 
 ## Core data entities
 
-Names below are conceptual and may change during schema implementation.
+### Jurisdiction/session/chamber
 
-### `jurisdiction`
+`jurisdiction`, `legislative_session`, and `chamber` define the legislative context. Jurisdiction-specific source identifiers remain behind adapter boundaries.
 
-Represents Minnesota or a future state. Jurisdiction-specific source adapters hang from this boundary.
+### Legislator and membership
 
-### `legislative_session`
+`legislator` represents stable person identity where possible. `membership` represents service in a chamber, district, party/caucus, and time period so current attributes are never treated as timeless.
 
-Represents a legislature/session such as Minnesota 2025–2026. Session identifiers from external systems are stored as source mappings rather than hardcoded application constants.
+### Bill and bill version
 
-### `chamber`
+`bill` represents a logical measure. `bill_version` represents a specific official text/version/stage. Introduction-stage modeling must retain the exact zero-engrossment document provenance and whether that document was actually available on or before introduction.
 
-House, Senate, or another jurisdiction-specific chamber.
+### Proposal
 
-### `legislator`
+A `proposal` is user-supplied hypothetical or draft legislation. It is used by the current/floor forecasting workflow and is not automatically eligible for the official introduced-bill introduction model.
 
-Stable person identity where possible.
+### Vote event and member vote
 
-### `membership`
+`vote_event` stores chamber/date/question/threshold/result/source metadata. `member_vote` preserves official member-vote semantics before any modeling normalization.
 
-Represents a legislator's service in a chamber, district, party/caucus, and time period. This avoids treating party, district, committee, or chamber membership as timeless person attributes.
+### Evidence
 
-### `committee` and `committee_membership`
+`evidence_source` identifies the underlying source. `evidence_item` stores a specific extracted claim/fact with date, subject, relevance, directness, quality, freshness, contradiction state, and provenance.
 
-Used as forecast evidence and to define member subsets. V2 does not need committee passage forecasting as a separate product.
+### Feature/model/data versions
 
-### `bill`
+`bill_feature_set`, model/configuration identifiers, and data-snapshot manifests make derived information reproducible.
 
-Logical legislative proposal within a jurisdiction/session.
+For introduction models, a serving artifact must additionally identify:
 
-### `bill_version`
+- supported session;
+- training sessions and cutoff;
+- frozen numeric settings;
+- feature/token statistics;
+- serialized artifact identity/integrity metadata;
+- fallback policy for missing-at-introduction inputs.
 
-Specific text/version/stage of a bill. Forecasts should point to the version they analyzed whenever possible.
+### Forecast, revision, and member forecast
 
-### `proposal`
+A `forecast` is the durable identity for the current/floor workflow. `forecast_revision` is immutable and records the model/data/evidence state used at that moment. `member_forecast` stores per-member probability, interval/evidence-quality metadata, and structured reasons.
 
-A user-supplied hypothetical or draft that may come from pasted legislative text, plain-language description, or an uploaded document. Proposals are forecast in a user-selected chamber.
+Introduction forecasts may be computed from a frozen session artifact without creating the same revision/member graph; their runtime must still expose model and source-provenance identity so the result is auditable.
 
-### `vote_event`
+### Scenarios and subsets
 
-A recorded legislative vote with chamber, date, motion/question, threshold/result metadata, official source, and links to the relevant bill/version when known.
-
-### `member_vote`
-
-A legislator's recorded position in a vote event, preserving the official vote semantics before any normalization needed for modeling.
-
-### `evidence_source`
-
-Represents the underlying source: official record, legislator statement, article, interview, campaign page, organization publication, etc.
-
-Expected metadata includes source URL/reference, publisher/owner, publication or observation date, retrieval date, source class, and source-quality assessment.
-
-### `evidence_item`
-
-Represents a specific extracted claim or fact from a source. Expected fields include:
-
-- legislator or other subject;
-- claim/fact;
-- evidence type;
-- stance/direction when applicable;
-- target bill/policy or policy family;
-- relevance;
-- freshness;
-- source quality;
-- supporting excerpt or structured reference when appropriate;
-- extraction/model version if AI was used;
-- verification state.
-
-A source may produce multiple evidence items.
-
-### `bill_feature_set`
-
-Versioned structured representation of a bill or proposal. Candidate features include policy subjects, substantive provisions, fiscal impact, affected constituencies, ideological direction, sponsors, stage, and embeddings/text-similarity representations.
-
-### `model_version`
-
-Identifies the complete forecast approach rather than only an LLM name. It should be possible to reproduce which feature logic, statistical model, AI prompts/classifiers, calibration, simulation settings, and configuration produced a forecast.
-
-### `data_snapshot`
-
-Identifies the data state used by a forecast revision. Exact implementation may be a snapshot/version manifest rather than copying every row.
-
-### `forecast`
-
-Persistent user-facing forecast identity. It points to a target bill/proposal, chamber, and optionally a defined member subset.
-
-### `forecast_revision`
-
-Immutable revision under a forecast. Contains mode (Quick/Deep), bill version, timestamp, model version, data snapshot, research state, chamber-level results, and revision notes/deltas.
-
-Updating a forecast creates a new revision. It does not mutate a prior revision.
-
-### `member_forecast`
-
-Per-member result for a forecast revision, including:
-
-- yes/no probability representation;
-- plausible probability interval;
-- evidence-quality score/label;
-- forecastability state;
-- decomposition or structured reason codes;
-- generated explanation as presentation, not source truth.
-
-### `forecast_evidence_link`
-
-Records which evidence items contributed to a member forecast or revision, how they were categorized, and any importance/relevance value needed for auditability.
-
-### `scenario`
-
-A branch from a specific forecast revision used for user-controlled counterfactuals.
-
-### `scenario_override`
-
-Explicit assumption such as a member forced to Yes/No or a changed contextual input. Scenario data never becomes historical truth, training data, or evidence for official forecasts.
+Scenarios are explicit counterfactual overlays. Scenario assumptions never become historical truth, evidence, training data, or default model inputs. Custom subsets primarily expose member distributions unless a valid procedural threshold is explicitly defined.
 
 ## Source adapter boundary
 
-Minnesota-specific logic belongs behind adapters so the forecasting core does not directly know Revisor URLs, Minnesota session codes, chamber names, or roster page formats.
-
-A jurisdiction adapter should eventually expose normalized capabilities such as:
-
-- list sessions;
-- load chambers/committees;
-- load legislators and memberships;
-- search bills;
-- load bill metadata and versions;
-- load official vote events and member votes;
-- resolve official source links;
-- load sponsorship/committee actions when available.
+Minnesota-specific logic belongs behind adapters so the forecasting core does not directly depend on Revisor URLs, Minnesota session identifiers, House/Senate page formats, or roster peculiarities.
 
 Official Minnesota records are authoritative when they conflict with normalized third-party data.
 
-## Forecast pipeline
+Adapters should support, as available:
 
-### 1. Resolve forecast target
+- session/chamber discovery;
+- legislators and memberships;
+- bills and official versions;
+- exact introduction actions/dates;
+- vote events and member votes;
+- sponsorship and committee actions;
+- authoritative source links/provenance.
 
-For an actual bill:
+## Introduction forecast pipeline
 
-- identify jurisdiction/session;
-- resolve current bill version/stage;
-- select target chamber;
-- identify active membership/roster at forecast time.
+### 1. Resolve the complete source-chamber universe
 
-For a proposal:
+Evaluation is based on every introduced bill in the supported regular-session universe, not only bills that later receive floor votes.
 
-- ingest supplied text/description/document;
-- select target jurisdiction and chamber;
-- create a versioned proposal representation.
+### 2. Freeze the introduction-time information set
+
+Eligible inputs must be knowable at introduction. Current Minnesota v4 uses official Revisor title/description plus the opening purpose statement of the zero-engrossment document only when that document was posted on or before introduction.
+
+Later actions, later versions, current sponsor/companion state without historical provenance, committee movement, scheduling, and outcomes are forbidden.
+
+### 3. Apply the session-pinned serving artifact
+
+Production uses a frozen artifact trained only on completed earlier sessions. Runtime must not retrain against mutable same-session outcomes.
+
+### 4. Apply explicit fallback/fail-closed behavior
+
+When introduction-time text is unavailable but an evaluated title fallback exists, use that fallback. Unsupported future sessions fail closed until a new artifact earns promotion.
+
+### 5. Return the introduction prior with lineage
+
+The UI/API must identify the target as unconditional source-chamber passage at introduction and retain model/version/provenance sufficient to audit the result.
+
+## Current/floor forecast pipeline
+
+### 1. Resolve target
+
+Identify jurisdiction/session, target bill/proposal version, selected chamber, active roster, and forecast-time cutoff.
 
 ### 2. Construct bill features
 
-Build a versioned structured representation of the bill. AI may assist with classification and comparison, but features must be stored so the resulting forecast can be audited and reproduced.
+Create a versioned structured bill representation. AI may assist, but material features must be stored and reproducible.
 
 ### 3. Build historical/member features
 
-Examples:
+Candidate inputs include same/substantially similar votes, policy-family behavior, sponsorship, committee behavior, caucus patterns, district context, tenure, and comparable-member signals.
 
-- same/substantially similar recorded votes;
-- related policy-family voting history;
-- sponsorship history;
-- committee membership/votes;
-- caucus and chamber behavior;
-- district/constituency context;
-- legislator tenure and information availability;
-- comparable-member signals.
+### 4. Produce member probabilities
 
-Recent identical or near-identical votes should generally be strong evidence. Older votes decay but are not simply deleted. Decay and relevance parameters are tuned empirically.
+A common replaceable model produces individualized member probabilities. Numeric prediction must be benchmarked against simple baselines.
 
-### 4. Produce initial member probabilities
+### 5. Research consequential evidence for Deep mode
 
-A common forecasting model produces individualized probabilities using member-specific features. V2 should not maintain a separate model per legislator.
+Identify members where fresh evidence could materially affect the chamber forecast or where uncertainty is high. Research only sourced current information and persist evidence provenance.
 
-The numeric prediction layer must be replaceable and benchmarked against simple baselines.
+### 6. Recompute member probabilities
 
-### 5. Identify consequential/uncertain members
+Combine stored quantitative/history features with sourced current evidence. Conflicts remain explicit and probabilistic.
 
-For Deep mode, use the initial distribution to identify members where fresh information could materially affect the chamber forecast or where the model has meaningful uncertainty.
+### 7. Aggregate the chamber
 
-This prevents indiscriminate web research across every member on every forecast.
+Use exact aggregation or simulation under the applicable threshold to derive passage probability, expected vote, likely range, and consequential members. Correlation/dispersion assumptions must be evaluated rather than cosmetically widened.
 
-### 6. Research current evidence
+### 8. Persist an immutable revision
 
-Research public sources for the selected members and issue. Extract source-linked evidence items, classify their strength/relevance, and distinguish direct statements from indirect or contextual evidence.
-
-An unambiguous direct statement on the target bill may move an individual forecast near 98% in the stated direction, subject to contradiction, source quality, and recency. This is a default product intuition, not a permanently fixed coefficient.
-
-### 7. Recompute member probabilities
-
-Combine quantitative/history features with current sourced evidence. Conflicts remain probabilistic and should widen uncertainty or reduce evidence quality rather than being hidden.
-
-### 8. Simulate the chamber
-
-Use member-level probabilities to simulate the relevant vote many times under the chamber's applicable passage threshold.
-
-Outputs include:
-
-- probability of passage;
-- expected Yes/No result;
-- plausible chamber vote range;
-- distribution around the threshold;
-- consequential/uncertain members.
-
-The exact simulation method must account for correlation when evaluation shows independent Bernoulli assumptions are inadequate. Independence is not a permanent design assumption.
-
-### 9. Persist an immutable revision
-
-Store enough provenance to reconstruct the result:
-
-- forecast and revision IDs;
-- bill/proposal version;
-- target chamber/subset;
-- roster/membership snapshot;
-- feature version;
-- evidence set;
-- model/config version;
-- research mode;
-- timestamp;
-- member probabilities/intervals/evidence quality;
-- chamber simulation outputs.
+Store enough lineage to reconstruct bill version, chamber, roster, feature version, evidence set, model/configuration, research mode, timestamp, member outputs, and chamber outputs.
 
 ## Forecast lifecycle
 
-### Generate new forecast
-
-Creates a new `forecast` and first `forecast_revision`.
-
-### Update forecast
-
-Creates another immutable revision under the same `forecast`. The UI should show what changed between revisions when practical: bill version, evidence, member probabilities, and passage probability.
-
-### Quick vs. Deep
-
-Research depth is orthogonal to forecast identity.
-
-A new or updated forecast can be Quick or Deep. Deep is not a separate forecast type; it is a research mode recorded on the revision.
+- **Generate new forecast:** creates a new current/floor forecast identity and first revision.
+- **Update forecast:** creates another immutable revision under the same identity.
+- **Quick vs. Deep:** research depth is recorded on the revision; it is not a separate forecast identity.
+- **Introduction forecast:** separate pre-floor product surface using the frozen introduction-stage artifact for the supported session.
 
 ## Evidence hierarchy
 
-Initial ordering, subject to evaluation and domain-specific refinement:
+Initial ordering, subject to evaluation:
 
 1. official recorded legislative action;
 2. direct legislator statement or first-party official communication;
@@ -326,58 +219,35 @@ Initial ordering, subject to evaluation and domain-specific refinement:
 5. reputable secondary reporting/analysis;
 6. weaker contextual or derived signals.
 
-Source quality is only one dimension. Relevance, recency, specificity, contradiction, and whether a source reports direct knowledge also matter.
+Quality is only one dimension. Relevance, recency, specificity, directness, and contradiction also matter.
 
-## Forecast uncertainty
+## Uncertainty semantics
 
-V2 must represent three distinct concepts:
+Current/floor forecasts distinguish:
 
-1. **Point probability** — best current estimate, e.g. 74% Yes.
-2. **Uncertainty interval** — plausible probability range, e.g. 65–82%.
-3. **Evidence quality** — High/Medium/Low or a future calibrated equivalent.
+1. point probability;
+2. plausible probability interval;
+3. evidence quality.
 
-The method for producing intervals and evidence-quality labels is deliberately deferred until it can be validated through historical evaluation.
-
-## Historical weighting
-
-The initial dataset should target approximately the last 2–3 Minnesota legislatures.
-
-A starting intuition is that the same/near-identical issue voted on in the current session is extremely persuasive, the prior legislature remains strongly persuasive, and older legislatures decay progressively. Exact values must be configuration/model parameters and should be tuned with backtesting rather than hardcoded as immutable business rules.
-
-## Subset and committee analysis
-
-The forecast engine accepts either:
-
-- an entire chamber; or
-- an explicit set of legislators.
-
-For committee/custom subsets, the primary result is the member table and aggregate distribution. A pass/fail outcome should not be implied unless a valid voting threshold and procedural meaning are explicitly known.
+Introduction forecasts currently expose a calibrated point probability from the accepted model and should not manufacture member-level intervals/evidence labels that the model does not produce.
 
 ## Authentication and sharing
 
-V2 is private by default and requires authentication for forecast creation, research, scenarios, and history.
-
-Read-only share links may expose a specific forecast/revision without granting access to the private application. Sharing must be explicitly enabled per forecast/revision and revocable.
+V2 is private by default. Owner authentication is required for private forecasting/research/scenario/history workflows. Explicit revocable read-only links may expose a selected frozen current/floor forecast revision.
 
 ## AI responsibilities
 
-Good candidate uses for AI include:
+Good AI uses include structured bill extraction, substantive comparison, analogue discovery, sourced evidence extraction/classification, contradiction recognition, and explanation generation.
 
-- extracting structured bill features;
-- comparing bills substantively;
-- identifying relevant historical analogues;
-- extracting and classifying sourced public evidence;
-- recognizing contradictions and changes in position;
-- generating user-facing explanations from stored evidence/model outputs.
-
-AI should not be treated as the uncalibrated oracle for numeric member or passage probabilities.
+AI is not an uncalibrated oracle for numeric member, current/floor passage, or introduction-stage passage probability.
 
 ## Replaceability
 
-The architecture must make the following independently replaceable:
+The architecture must allow independent replacement of:
 
 - jurisdiction adapters;
 - source/research providers;
+- introduction-stage feature logic/model artifact;
 - bill-feature extraction;
 - similarity model;
 - member forecasting model;
@@ -385,13 +255,7 @@ The architecture must make the following independently replaceable:
 - evidence weighting;
 - calibration method;
 - uncertainty method;
-- simulation method;
+- chamber aggregation/simulation;
 - explanatory model/UI.
 
-This is intentional. Backtesting should be able to disprove today's preferred implementation without forcing another product rewrite.
-
-## V1 migration rule
-
-There is no V1 compatibility layer. V2 may replace the current frontend, API routes, server architecture, types, data structures, and deployment assumptions.
-
-When legacy code is useful, port the idea deliberately into the V2 architecture rather than preserving old boundaries solely to reduce the size of a diff.
+Backtesting must be able to disprove today's preferred implementation without forcing another product rewrite.

@@ -1,0 +1,120 @@
+name: Deploy production
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vercel-production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.event == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+
+    steps:
+      - name: Checkout exact green main commit
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.RELEASE_SHA }}
+
+      - name: Verify release SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          if [ "$actual" != "$RELEASE_SHA" ]; then
+            echo "::error::Checked out $actual but expected $RELEASE_SHA"
+            exit 1
+          fi
+
+      - name: Check release is still current main
+        id: freshness
+        shell: bash
+        run: |
+          set -euo pipefail
+          current="$(git ls-remote origin refs/heads/main | awk '{print $1}')"
+          if [ -z "$current" ]; then
+            echo '::error::Could not resolve the current main SHA.'
+            exit 1
+          fi
+          if [ "$current" = "$RELEASE_SHA" ]; then
+            echo 'deploy=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'deploy=false' >> "$GITHUB_OUTPUT"
+            echo "Superseded release skipped: CI passed for $RELEASE_SHA but main is now $current"
+          fi
+
+      - name: Require Vercel credential
+        if: steps.freshness.outputs.deploy == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ]; then
+            echo '::error::VERCEL_TOKEN is unavailable. No production deployment was attempted.'
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v7
+        if: steps.freshness.outputs.deploy == 'true'
+        with:
+          node-version: 24
+
+      - name: Deploy exact green commit to Vercel production
+        if: steps.freshness.outputs.deploy == 'true'
+        id: deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          current="$(git ls-remote origin refs/heads/main | awk '{print $1}')"
+          if [ "$current" != "$RELEASE_SHA" ]; then
+            echo "::error::Main advanced to $current after the freshness gate; refusing to deploy stale $RELEASE_SHA."
+            exit 1
+          fi
+          output="$(npx --yes vercel@59.13.1 deploy --prod --yes --token "$VERCEL_TOKEN")"
+          url="$(printf '%s\n' "$output" | grep -E '^https://[^ ]+$' | tail -n 1 || true)"
+          if [ -z "$url" ]; then
+            echo '::error::Vercel completed without returning a recognizable deployment URL.'
+            exit 1
+          fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Production deployment: $url"
+
+      - name: Record release
+        if: steps.freshness.outputs.deploy == 'true'
+        shell: bash
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          {
+            echo '## VotePredict production deployment'
+            echo
+            echo "- Commit: \`$RELEASE_SHA\`"
+            echo "- Deployment: $DEPLOYMENT_URL"
+            echo '- Trigger: successful CI run on protected `main`'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Record superseded release
+        if: steps.freshness.outputs.deploy != 'true'
+        shell: bash
+        run: |
+          {
+            echo '## VotePredict production deployment skipped'
+            echo
+            echo "- Green commit: \`$RELEASE_SHA\`"
+            echo '- Reason: a newer commit is already on `main`.'
+          } >> "$GITHUB_STEP_SUMMARY"

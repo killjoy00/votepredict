@@ -1,10 +1,12 @@
-# Deployment policy
+# VotePredict deployment policy
 
-VotePredict deploys the protected `main` branch to Vercel production automatically. Feature-branch Git deployments remain disabled so ordinary development and CI do not consume Vercel build quota.
+VotePredict uses GitHub CI as the branch validation surface and Vercel only as the production runtime. Automatic Vercel Git deployments are disabled for **all** branches; production is deployed by a dedicated GitHub Actions workflow only after the exact `main` commit has passed CI.
 
-## Automatic Git deployments
+The release invariant is: **the exact commit that passed the release gate is the commit that reaches production**.
 
-`vercel.json` uses overlapping branch rules:
+## Why Git auto-deploys are disabled
+
+The previous configuration attempted to disable feature branches with:
 
 ```json
 {
@@ -17,56 +19,145 @@ VotePredict deploys the protected `main` branch to Vercel production automatical
 }
 ```
 
-Vercel treats a branch as deployable when at least one matching rule is `true`, so `main` deploys while other branches do not.
+That was incorrect for Vercel's current configuration semantics. `deploymentEnabled` object entries are branch names, and unspecified branches default to enabled; the `"*"` key did not function as a wildcard. As a result, routine feature-branch commits still generated previews and contributed to exhausting the project's daily deployment quota.
 
-## Release path
+The corrected repository setting is:
+
+```json
+{
+  "git": {
+    "deploymentEnabled": false
+  }
+}
+```
+
+This disables automatic Git deployments entirely.
+
+## Production deployment workflow
+
+`.github/workflows/deploy-production.yml` is the normal release mechanism.
+
+It is triggered by completion of the `CI` workflow and runs only when:
+
+- CI concluded `success`;
+- the CI run was for `main`;
+- the CI run was triggered by a push.
+
+The workflow then:
+
+1. checks out `github.event.workflow_run.head_sha` exactly;
+2. verifies the checked-out SHA matches the release SHA;
+3. requires the repository `VERCEL_TOKEN` secret;
+4. performs a remote `vercel deploy --prod` against the pinned VotePredict team/project;
+5. records the commit and deployment URL in the Actions job summary.
+
+This design prevents a feature branch, failed CI commit, or later-moving branch head from being substituted into production.
+
+## Standard release path
 
 1. Push work to a feature branch.
-2. Let GitHub Actions run type checking, tests, a clean migration replay, the Next.js production build, and the dependency audit.
-3. Merge the pull request only after the protected `verify` check succeeds.
-4. The resulting push to `main` triggers the Vercel production deployment.
-5. Verify the production health endpoint and the changed user path after the deployment is ready.
+2. GitHub Actions runs the complete `verify` gate:
+   - clean migration replay;
+   - TypeScript validation;
+   - full automated tests;
+   - Next.js production build;
+   - high-severity production dependency audit.
+3. Merge only after release-relevant checks are green.
+4. The push to `main` starts a fresh CI run for the merge commit.
+5. When that `main` CI run succeeds, `Deploy production` checks out the exact green SHA and starts the remote Vercel production deployment.
+6. Confirm the Vercel deployment reaches `READY` and identifies the expected commit SHA.
+7. Confirm production aliases are attached, including `vote.planitnow.us` and `votepredict.vercel.app`.
+8. Smoke-test the changed user path.
+9. Inspect production 5xx/runtime errors for the new deployment before considering the release complete.
 
-Vercel installs dependencies with `npm ci --no-fund --no-audit`, using the committed `package-lock.json` for reproducible production builds.
+Vercel installs dependencies with `npm ci --no-fund --no-audit` using the committed lockfile.
 
-## Vercel fallback bridge
+## Why the production build is remote
 
-`.github/workflows/vercel-fallback.yml` provides a GitHub-side recovery path when the ChatGPT/Vercel OAuth connector cannot discover the account or team. The Vercel token stays in GitHub Actions secrets and is never copied into an issue, commit, workflow output, or chat.
+VotePredict requires production secrets during the Next.js build/runtime configuration path. `vercel env pull` may intentionally return `[SENSITIVE]` placeholders for secret values, so a local `vercel build --prod` can fail even when the real Vercel production build is healthy.
+
+Normal/fallback release tooling should therefore use Vercel's **remote production build** (`vercel deploy --prod`) so secret values remain server-side and available in the production environment.
+
+## Owner-only fallback bridge
+
+`.github/workflows/vercel-fallback.yml` remains the manual recovery path when the normal CI-triggered deployment workflow cannot be used.
 
 The bridge is intentionally narrow:
 
-- It runs only for issues opened by the repository owner.
-- The issue title must start with `[vercel-ops] `.
-- It is pinned to Vercel team `killjoy00s-projects` and project `votepredict`.
-- It never prints the token or pulls environment-variable values.
-- Raw runtime/application log messages are never exposed because this repository is public.
-- Diagnostic commands emit only sanitized aggregate summaries; query strings and identifier-like path segments are removed or normalized.
-- Production deployment requires an explicit confirmation line in the issue body.
+- it runs only for issues opened by the repository owner;
+- the title must start with `[vercel-ops] `;
+- it is pinned to the VotePredict Vercel team/project;
+- credentials remain in GitHub Actions secrets;
+- raw runtime/application messages are withheld from the public repository;
+- production deployment requires explicit confirmation.
 
-### Required GitHub secret
+Supported issue commands:
 
-GitHub Actions must expose a secret named `VERCEL_TOKEN` to this repository. A repository Actions secret is the simplest option. If an organization secret is used, that organization must own the repository and the secret must be shared with it; an organization secret cannot be inherited by a repository owned by a personal GitHub account.
+- `[vercel-ops] auth-check`
+- `[vercel-ops] status`
+- `[vercel-ops] errors`
+- `[vercel-ops] logs`
+- `[vercel-ops] deploy-production`
 
-### Supported requests
-
-Open an issue with one of these exact titles:
-
-- `[vercel-ops] auth-check` — verifies the token can access the configured Vercel project.
-- `[vercel-ops] status` — verifies access and prints a short list of recent production deployments.
-- `[vercel-ops] errors` — queries up to 200 production 5xx requests from the last 24 hours and emits a sanitized aggregate summary.
-- `[vercel-ops] logs` — queries up to 200 production runtime-log entries from the last hour and emits a sanitized aggregate summary.
-- `[vercel-ops] deploy-production` — deploys the current protected `main` branch directly to Vercel production.
-
-For `deploy-production`, the issue body must contain this line exactly:
+For `deploy-production`, the issue body must contain exactly:
 
 ```text
 CONFIRM PRODUCTION DEPLOY
 ```
 
-The workflow comments on the issue with success/failure and, when applicable, the sanitized diagnostic summary or production deployment URL. Raw Vercel credentials and raw runtime log messages are never echoed.
+A fallback production deployment should still deploy the exact current reviewed `main` state and receive the same post-deploy validation.
 
-This issue-based command surface is deliberate: it lets an authorized GitHub client create a Vercel operation without pushing an ops commit or generating an unwanted Vercel preview deployment.
+## Deployment quota discipline
 
-## Manual deploys
+Vercel can reject new deployments after the plan's daily deployment allowance is exhausted. VotePredict hit this during the v4 promotion rollout (`api-deployments-free-per-day`).
 
-Manual Vercel deployments and promotions remain available for recovery, previews, or deliberately staged releases. They are not part of ordinary feature-branch CI.
+Operational rules:
+
+- Vercel Git previews stay disabled globally;
+- GitHub CI is the default validation surface for feature branches;
+- previews, when genuinely necessary, are explicit/manual rather than automatic on every push;
+- documentation, evaluation, ingestion, and model-training commits do not need a Vercel preview by default;
+- when the quota is exhausted, do not weaken validation or deploy a different commit as a workaround;
+- retry the exact green release commit once Vercel accepts deployments again.
+
+## Production smoke checklist
+
+A release is complete only after all applicable checks pass:
+
+- deployment state is `READY`;
+- deployment metadata identifies the expected release SHA;
+- production aliases are attached without alias errors;
+- the changed route returns the expected status/redirect for the current authentication state;
+- no new production 5xx errors appear for the deployment;
+- no relevant runtime-error cluster appears for the changed route;
+- Vercel build logs contain no build failure.
+
+For owner-authenticated features, an unauthenticated smoke test validates only routing and the auth boundary. A redirect to `/auth/sign-in` does not prove the signed-in workflow has run end to end.
+
+## Model-serving release additions
+
+When a release changes a production probability model:
+
+1. the candidate must first earn promotion under `docs/EVALUATION_STANDARD.md`;
+2. freeze/version the serving artifact and training cutoff;
+3. verify serialized-versus-evaluated prediction parity before runtime integration;
+4. ensure serving semantics identify the target being predicted;
+5. keep introduction-stage and current/floor probabilities separate;
+6. test leakage/fallback behavior explicitly;
+7. merge only after runtime integration passes the normal release gate;
+8. deploy the exact green merge commit through the CI-gated production workflow;
+9. smoke-test the model surface and inspect live errors.
+
+## Rollback
+
+If a new production deployment has a material runtime failure:
+
+- stop additional deployments while the failure is diagnosed;
+- use Vercel rollback/promote only to a previously known-good production deployment;
+- preserve the failing commit and logs for diagnosis;
+- fix forward through a reviewed PR when practical;
+- never mutate model artifacts or production data simply to make the deployment appear healthy.
+
+## Known non-blocking warning
+
+Current production startup may emit a `pg` / `pg-connection-string` warning about future SSL-mode semantics. It is not a current request failure, but the database connection configuration should move to an explicit intended SSL mode before the next major `pg` behavior change.
