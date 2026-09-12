@@ -8,10 +8,10 @@ import {
   type PairedMemberForecast,
 } from '../src/evaluation/deep-vs-quick.js';
 import type { EvidenceKind } from '../src/evidence/types.js';
+import { requireEvaluationDatabaseConnection } from '../src/operations/evaluation-database.js';
 
 async function main(): Promise<void> {
-  const connectionString = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
-  if (!connectionString) throw new Error('DATABASE_URL_UNPOOLED or DATABASE_URL is required');
+  const { connectionString, source: databaseSource } = requireEvaluationDatabaseConnection();
 
   const pool = new Pool({ connectionString, max: 1 });
   try {
@@ -198,6 +198,7 @@ async function main(): Promise<void> {
       metadata: {
         generatedAt: new Date().toISOString(),
         codeSha: process.env.GITHUB_SHA ?? null,
+        databaseSource,
         status: blockers.length === 0 ? 'evaluable' : 'insufficient-sample',
         purpose: 'evaluation-only; this command never creates forecasts, invokes research, or changes serving probabilities',
         pairingRule: 'research_runs.base_revision_id (Quick) versus research_runs.result_revision_id (Deep)',
