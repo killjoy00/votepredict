@@ -8,12 +8,28 @@ import {
 
 const baseCandidate = {
   case: { voteEventId: 'v1', session: '2023-2024', chamber: 'house', identifier: 'HF1', occurredOn: '2023-01-19', asOf: '2023-01-18T23:59:59.999Z' },
-  membershipId: 'm1', legislatorId: 'l1', memberName: 'Member One', party: 'DFL', quickYesProbability: 0.95,
+  membershipId: 'frozen-membership', legislatorId: 'l1', memberName: 'Member One', party: 'DFL', quickYesProbability: 0.95,
   quickEvidenceQuality: 'medium', selectedForCurrentDeep: false, kind: 'committee_bill_procedural_vote', voteSide: 'nay',
   motionText: 'Chair renewed the motion that HF1 be re-referred to the Committee on Judiciary Finance and Civil Law.',
   excerpt: 'example', source: { sourceId: 's1', sourceClass: 'house_committee_record', title: 'minutes', url: 'https://www.house.mn.gov/committees/minutes/93000/1', publishedAt: '2023-01-10T00:00:00.000Z', contentSha256: 'abc' },
   extractionMethod: 'deterministic-house-committee-roll-call-v1',
 } as const;
+
+function candidateBundle() {
+  return {
+    schemaVersion: 'historical-deep-discovery-candidates-v1', generatedAt: '2026-09-12T00:00:00.000Z', purpose: 'test',
+    input: { discoveryCases: 1, discoveryMemberCasePairs: 1, sourceCount: 1, sourceCaseCount: 1 },
+    summary: { candidateCount: 1, memberCasePairsWithCandidates: 1, casesWithCandidates: 1, sourcesWithCandidates: 1, ayeCandidates: 0, nayCandidates: 1, currentDeepTargetCandidates: 0, outsideCurrentDeepCandidates: 1 },
+    candidates: [baseCandidate], diagnostics: [],
+  };
+}
+
+function outcomeSnapshot(members = [{ membershipId: 'current-membership', legislatorId: 'l1', memberName: 'Member One', actualOutcome: 0 as const }]) {
+  return {
+    schemaVersion: 'historical-deep-outcome-snapshot-v1', generatedAt: '2026-09-12T00:00:00.000Z', codeSha: 'sha', purpose: 'test',
+    cases: [{ session: '2023-2024', chamber: 'house', identifier: 'HF1', occurredOn: '2023-01-19', voteEventId: 'current-v1', members }],
+  };
+}
 
 test('classifies procedural direction conservatively', () => {
   assert.equal(classifyHistoricalDeepMotion('HF1 be re-referred to Judiciary'), 'advances');
@@ -22,21 +38,24 @@ test('classifies procedural direction conservatively', () => {
   assert.equal(proceduralSignal('motion to table HF1', 'nay'), 'supports_advancement');
 });
 
-test('scores frozen candidates only after outcomes are joined', () => {
-  const candidates = {
-    schemaVersion: 'historical-deep-discovery-candidates-v1', generatedAt: '2026-09-12T00:00:00.000Z', purpose: 'test',
-    input: { discoveryCases: 1, discoveryMemberCasePairs: 1, sourceCount: 1, sourceCaseCount: 1 },
-    summary: { candidateCount: 1, memberCasePairsWithCandidates: 1, casesWithCandidates: 1, sourcesWithCandidates: 1, ayeCandidates: 0, nayCandidates: 1, currentDeepTargetCandidates: 0, outsideCurrentDeepCandidates: 1 },
-    candidates: [baseCandidate], diagnostics: [],
-  };
-  const outcomes = {
-    schemaVersion: 'historical-deep-outcome-snapshot-v1', generatedAt: '2026-09-12T00:00:00.000Z', codeSha: 'sha', purpose: 'test',
-    cases: [{ session: '2023-2024', chamber: 'house', identifier: 'HF1', occurredOn: '2023-01-19', voteEventId: 'current-v1', members: [{ membershipId: 'm1', legislatorId: 'l1', memberName: 'Member One', actualOutcome: 0 as const }] }],
-  } as const;
-  const result = scoreHistoricalDeepDiscoveryCandidates(candidates as never, outcomes as never);
+test('scores frozen candidates by stable legislator identity when membership UUIDs differ', () => {
+  const result = scoreHistoricalDeepDiscoveryCandidates(candidateBundle() as never, outcomeSnapshot() as never);
   assert.equal(result.summary.directionalPairs, 1);
   assert.equal(result.summary.quickErrorsOnDirectionalPairs, 1);
   assert.equal(result.summary.rescuedQuickErrors, 1);
   assert.equal(result.summary.rescuedHighConfidenceQuickErrors, 1);
+  assert.equal(result.pairs[0].membershipId, 'frozen-membership');
+  assert.equal(result.pairs[0].legislatorId, 'l1');
   assert.equal(result.pairs[0].signal, 'opposes_advancement');
+});
+
+test('fails closed when an outcome snapshot has duplicate stable legislator identities', () => {
+  const duplicateMembers = [
+    { membershipId: 'current-membership-a', legislatorId: 'l1', memberName: 'Member One', actualOutcome: 0 as const },
+    { membershipId: 'current-membership-b', legislatorId: 'l1', memberName: 'Member One', actualOutcome: 0 as const },
+  ];
+  assert.throws(
+    () => scoreHistoricalDeepDiscoveryCandidates(candidateBundle() as never, outcomeSnapshot(duplicateMembers) as never),
+    /Ambiguous frozen outcomes/,
+  );
 });
