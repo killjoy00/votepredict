@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "historical-deep-scoring-lineage-v1",
+  "candidateArtifact": {
+    "workflowRunId": "34716635288",
+    "artifactId": "10303909915",
+    "artifactName": "historical-deep-discovery-candidates-2810f864f01e91a0960027fbc8264a52c26f68e8",
+    "artifactSha256": "828ec8cf95ddbb33f2a08232d7d562f5ead6462f1ba1283c32480a036d22da9c",
+    "headSha": "2810f864f01e91a0960027fbc8264a52c26f68e8",
+    "fileName": "historical-deep-discovery-candidates.json"
+  }
+}
