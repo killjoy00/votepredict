@@ -4,279 +4,263 @@
 
 VotePredict is a forecasting product, so correctness must be measured on outcomes the model did not have access to at forecast time. Plausible explanations and attractive UI are not substitutes for empirical evaluation.
 
-This document defines the minimum evaluation discipline for V2. Metric targets are intentionally not hardcoded yet; they should be established after building the historical dataset and simple baselines.
+VotePredict now has two distinct chamber-passage forecast stages. They must be evaluated against their own target populations and information cutoffs rather than mixed into one scorecard.
 
-## Evaluation priorities
+## Forecast-stage evaluation taxonomy
 
-Optimize in this order:
+### Introduction-stage source-chamber passage
 
-1. chamber-passage prediction;
+Target: **At introduction, will this bill eventually pass its originating chamber during the biennium?**
+
+Population: the complete authoritative introduced-bill universe for the supported regular sessions, including bills that never receive a floor vote.
+
+The governing information cutoff is introduction. Later legislative actions and later state are forbidden even if they would be useful predictors in a current/floor model.
+
+Primary metrics:
+
+1. Brier score;
+2. log loss.
+
+Required secondary review:
+
+- calibration / ECE and calibration bins;
+- average precision / PR behavior for the rare positive class;
+- ROC-AUC where useful;
+- session/chamber slices;
+- coverage/fallback behavior;
+- comparison against the accepted introduction baseline/model on the exact same holdout observations.
+
+Simple accuracy is not a governing metric for this target because source-chamber passage is rare.
+
+### Current/floor chamber forecast
+
+Target: **Given the information available at forecast time, will the selected chamber vote pass?**
+
+The chamber probability is derived from member-level probabilities under the applicable threshold.
+
+Evaluation priorities are:
+
+1. chamber-passage probability/call;
 2. individual legislator calls;
-3. calibrated individual probabilities;
-4. chamber vote estimates/ranges.
+3. calibrated member probabilities;
+4. expected chamber vote and interval coverage.
 
-A model that improves a lower-priority metric while materially degrading a higher-priority one should not become the default without an explicit product decision.
+Primary/secondary metrics include chamber and member Brier score, log loss, calibration, classification accuracy where interpretable, expected-vote error, and interval coverage.
 
-## Historical universe
+## Historical universes
 
-Initial Minnesota evaluation should focus on approximately the last two to three legislatures, expected to include a recent enough sample to reflect current political behavior while remaining large enough for meaningful testing.
+Initial Minnesota evaluation should use recent legislatures with enough data for forward-looking testing while reflecting current political behavior.
 
-The dataset should include, when reliably available:
+For introduction-stage evaluation, the current authoritative regular-session corpus is:
 
-- bills and bill versions;
-- chamber and vote date;
-- official vote question/type;
-- actual passage result;
-- recorded member votes;
-- roster/membership state at the time;
-- sponsorship;
-- committees and committee behavior where useful;
-- bill text/structured policy features;
-- evidence that would have been available before the vote when evaluating research-enabled models.
+- 31,010 introduced bills;
+- 654 source-chamber passages;
+- 30,356 non-passages;
+- 0 unknown labels;
+- 2021-22, 2023-24, and 2025-26;
+- House and Senate.
+
+For current/floor member evaluation, retain official vote events, member votes, historical roster state, bill/version identity, and only evidence/features available by the forecast cutoff.
 
 ## No information leakage
 
-Historical evaluation must reproduce what VotePredict could have known at the time.
+Historical evaluation must reproduce what VotePredict could have known at the forecast cutoff.
 
-The system must not use:
+### Universal prohibitions
 
-- the eventual vote result as an input;
-- public statements published after the forecast cutoff;
-- later bill versions when forecasting an earlier version;
+Do not use:
+
+- the eventual target result as an input;
+- public statements published after the cutoff;
+- later bill versions when forecasting an earlier state;
 - future caucus behavior or membership changes;
-- later reporting that reveals private whip counts or the result;
-- features computed from future observations in a way that leaks outcome information.
+- later reporting that reveals private whip counts or outcomes;
+- features computed from future observations in a way that leaks target information.
 
-Time-aware feature generation is a hard requirement.
+### Introduction-specific prohibitions
+
+At introduction, also exclude unless historically proven as available at that exact time:
+
+- later legislative actions or status;
+- committee progress;
+- floor scheduling;
+- later engrossments;
+- governor/final status;
+- current author/sponsor lists as a substitute for historical sponsor state;
+- current companion relationships as a substitute for historical companion state;
+- bill text posted after introduction.
+
+The current Minnesota v4 model may use official title/description and introduction-eligible zero-engrossment purpose text only. The single late-posted initial document uses the evaluated title-only fallback.
 
 ## Train/validation/test strategy
 
-Randomly splitting individual member votes is usually inappropriate because votes on the same bill are highly related and later observations can leak political context into earlier predictions.
+Random observation splits are generally inappropriate when related legislative observations share political context.
 
 Preferred strategy:
 
-- split by time and/or complete vote event;
+- split by time and/or complete legislative event/session;
 - train/tune only on earlier data;
-- validate on later held-out events;
-- maintain a final test window not used for parameter tuning;
-- periodically run rolling/forward-chaining evaluation to mimic actual deployment.
+- validate on later held-out observations;
+- use rolling/forward-chaining evaluation where practical;
+- freeze candidate settings before the holdout score used for promotion;
+- do not retune after seeing holdout results and present the tuned result as the same candidate.
 
-Exact windows will depend on data volume.
+For the introduction model, predict each later biennium using only completed earlier biennia. A future-session production artifact must never train on unresolved same-session outcomes.
 
 ## Required baselines
 
-V2 must compare sophisticated approaches against deliberately simple baselines. At minimum evaluate:
+Complexity must earn its place.
 
-### Party-line baseline
+### Introduction-stage baselines
 
-Predict members according to observed caucus/party tendency for the relevant policy or a simple majority-party heuristic.
+At minimum compare against:
 
-### Member-history baseline
+- overall historical source-chamber passage base rate;
+- accepted introduction model on the same holdout;
+- simpler feature variants when testing added signals.
 
-Use recent member voting tendency without AI-generated current evidence.
+### Current/floor baselines
 
-### Bill/caucus baseline
+At minimum evaluate:
 
-Use bill features plus caucus behavior without individual current-news research.
-
-The forecasting system earns complexity only when it demonstrates value over simpler alternatives.
+- party-line / caucus heuristic;
+- member-history baseline;
+- bill/caucus baseline without fresh research;
+- currently accepted member/chamber model.
 
 ## Member-level metrics
 
-### Classification accuracy
+For current/floor models:
 
-Measure whether the predicted side matches the recorded member vote after defining normalization rules for absence, abstention, excused votes, paired votes, and other chamber-specific outcomes.
+- classification accuracy/call rate after explicit vote normalization;
+- Brier score;
+- log loss;
+- calibration;
+- forecast coverage/cannot-predict rate;
+- important slices by chamber, caucus, policy family, experience, evidence quality, and research state.
 
-Accuracy is understandable but insufficient by itself.
+Coverage must not be maximized by manufacturing precision.
 
-### Brier score
+## Chamber-level current/floor metrics
 
-Primary probability-quality metric for binary Yes/No forecasts where applicable.
+### Passage probability
 
-It rewards probabilities that are both correct and appropriately uncertain.
+Score the derived chamber probability against the actual selected vote outcome using Brier score/log loss and passage-call accuracy.
 
-### Log loss
+### Vote estimate
 
-Useful secondary metric that heavily penalizes confident wrong predictions.
-
-### Calibration
-
-Group predictions into probability bands and compare predicted probability with actual frequency.
-
-Examples:
-
-- members forecast around 60% Yes should vote Yes about 60% of the time;
-- forecasts around 90% should resolve Yes roughly 90% of the time.
-
-Track calibration error overall and by important slices.
-
-### Coverage / cannot-predict rate
-
-Measure the percentage of members for whom the model provides a forecast and the accuracy/calibration of low-information predictions.
-
-"Cannot predict" should remain uncommon, but coverage must not be maximized by manufacturing precision.
-
-## Chamber-level metrics
-
-### Passage-call accuracy
-
-Whether the system correctly predicts the side of 50% passage probability for the targeted chamber vote.
-
-This is the top product priority, but it should be supplemented by probability scoring so a 51% and 99% prediction are not treated as equivalent.
-
-### Passage probability Brier score / log loss
-
-Score the chamber-level probability against the actual passage outcome.
-
-### Vote-margin error
-
-Compare expected Yes count or expected margin with the actual result.
+Compare expected Yes count/margin with the official result.
 
 ### Interval coverage
 
-If VotePredict reports a likely vote-count range, measure how often the actual vote falls within that interval. A nominal 80% interval should contain the true result at approximately the advertised rate.
+If VotePredict reports a likely vote-count range, measure empirical coverage. A nominal interval should contain the observed result at approximately the advertised rate over an appropriate sample.
+
+## Introduction-stage ranking and calibration
+
+Because introduction-stage positives are rare, ranking metrics are useful but must not displace probability quality.
+
+A candidate can have better ROC-AUC or average precision while becoming worse calibrated; it should not be promoted solely on ranking lift.
+
+Likewise, a tiny ranking regression need not block promotion when Brier/log loss/calibration improve broadly and the tradeoff is explicitly judged immaterial.
 
 ## Slice analysis
 
-Evaluation should report performance across important subsets, including when sample size permits:
+Review performance across important subsets when sample size permits.
 
-- chamber;
-- session/legislature;
+Introduction-stage slices:
+
+- biennium/session;
+- source chamber;
+- text-eligible vs. fallback observations;
+- major document/bill forms where parsing differs;
+- probability bands.
+
+Current/floor slices:
+
+- chamber/session;
 - party/caucus;
 - policy family;
 - close vs. non-close votes;
 - new vs. experienced legislators;
-- members with rich vs. sparse personal history;
+- rich vs. sparse member history;
 - high vs. low evidence quality;
-- direct-statement vs. no-direct-statement cases;
-- Quick vs. Deep forecasts;
-- actual bills vs. historical pseudo-proposals where a proposal workflow can be evaluated honestly.
+- direct-statement vs. no-direct-statement;
+- Quick vs. Deep.
 
-The purpose is to find where the model is weak, not to produce vanity averages.
+The purpose is to find failure modes, not to produce vanity averages.
 
-## Historical evidence decay
+## Historical evidence decay and similarity
 
-Historical-vote weighting is a tunable model choice.
+Historical weighting and bill-similarity logic are tunable model choices for current/floor forecasting. Candidate schedules/formulas should be compared empirically rather than hardcoded from intuition.
 
-Product intuition at project start:
-
-- same-session votes on the same/substantially identical issue are extremely persuasive;
-- the immediately prior legislature remains strongly persuasive;
-- older legislatures decay progressively;
-- an old identical-policy vote should not be silently ignored merely because it crossed an arbitrary date boundary.
-
-Candidate decay schedules should be compared empirically. The system should not permanently encode intuitive values such as 98/90/60/40 as fixed truth.
-
-## Bill-similarity evaluation
-
-Because historical analogues are central to member forecasting, similarity quality should be tested separately where practical.
-
-Possible evaluation methods:
-
-- expert/user review of retrieved analogues;
-- known companion/reintroduced bill retrieval;
-- whether analogous-vote features improve held-out forecasts;
-- ablation tests comparing structured similarity with keyword/text-only methods.
-
-AI-selected similar bills must remain inspectable so bad analogues can be diagnosed.
+AI-selected analogues must remain inspectable. Useful checks include known companion/reintroduced retrieval, expert review, and whether analogue features improve held-out forecasts.
 
 ## Current public evidence evaluation
 
-Deep mode adds evidence not available to purely historical models. Its value should be measured rather than assumed.
+Deep mode must be measured against the Quick forecast it modifies.
 
-Compare:
-
-- Quick forecast before fresh research;
-- Deep forecast after sourced current evidence;
-- actual outcome.
-
-Track whether Deep mode:
+Track whether fresh sourced evidence:
 
 - improves member probability scoring;
 - improves chamber passage probabilities;
-- correctly moves consequential members;
-- introduces harmful noisy evidence;
+- moves consequential members correctly;
+- introduces noisy harmful changes;
 - changes forecasts when it should remain stable.
 
-Direct public commitments should be evaluated separately from indirect reporting/context.
+Direct commitments should be evaluated separately from indirect reporting/context.
 
-## Evidence quality validation
+## Uncertainty and chamber aggregation
 
-Evidence quality is distinct from forecast probability.
+Probability intervals require an explicit empirical/statistical construction. An LLM may not invent intervals.
 
-A future evidence-quality score/label should correlate with actual information richness and forecast reliability. Candidate inputs may include:
+Current/floor chamber aggregation must test whether member-error correlation makes independent aggregation under-dispersed. If so, introduce evaluated correlation/hierarchical structure rather than cosmetic widening.
 
-- source class;
-- specificity to the exact bill/provision;
-- recency;
-- number of independent sources;
-- directness;
-- contradiction;
-- historical sample size;
-- similarity strength of prior votes.
+## Model promotion gates
 
-The High/Medium/Low display is a product layer. Its thresholds should be data-informed.
+### Introduction-stage promotion
 
-## Uncertainty intervals
+A candidate may become the accepted introduction default only when:
 
-Probability intervals must have an explicit statistical or empirical construction. An LLM should not simply invent `65–82%`.
+1. the complete authoritative target universe is defined and label-complete;
+2. the evaluation pipeline is reproducible and chronological;
+3. no known introduction-time leakage exists;
+4. candidate settings were frozen before the governing holdout result;
+5. Brier score and log loss are compared against the accepted model/baseline on identical observations;
+6. calibration and ranking behavior are reviewed overall and by important session/chamber slices;
+7. fallback/coverage behavior is explicit;
+8. the serving artifact is trained only on eligible completed history;
+9. serialized serving predictions reproduce the evaluated model exactly before runtime integration;
+10. production serving is changed only in a separate reviewed integration after promotion is earned.
 
-Candidate methods can include:
+### Current/floor promotion
 
-- bootstrap/model ensembles;
-- parameter/posterior uncertainty;
-- sensitivity to evidence weighting;
-- empirical residual/error distributions;
-- calibrated conformal-style procedures where appropriate.
+A candidate may become the current/floor default only when:
 
-Whichever method is chosen must be tested for coverage.
+1. evaluation is reproducible and leakage-safe;
+2. required simple baselines are included;
+3. chamber-passage performance is not materially worse than the accepted model;
+4. member calls and probability calibration are understood;
+5. vote-count/interval behavior is understood;
+6. material slice regressions are reviewed;
+7. model/configuration versions are recorded;
+8. runtime changes preserve forecast lineage and target semantics.
 
-## Chamber simulation
+Promotion does not require every metric to improve. Tradeoffs must be explicit and target-appropriate.
 
-Initial chamber passage may be derived using repeated simulation from member probabilities, but the model must test whether treating member votes as independent produces misleadingly narrow chamber distributions.
+## Production audit
 
-Potential sources of correlated error include:
+### Current/floor forecasts
 
-- party/caucus movement;
-- late-breaking amendments;
-- leadership decisions;
-- shared external events;
-- systematic model misunderstanding of a bill.
+Each production revision should retain enough information to join it later to an explicitly selected official vote outcome: target bill/version/chamber, timestamp, mode, member probabilities, chamber probability, expected vote/range, model/configuration, and data/evidence snapshot.
 
-If independent simulation is under-dispersed, introduce evaluated correlation/hierarchical structure rather than cosmetically widening ranges.
+### Introduction forecasts
 
-## Model promotion gate
+Production introduction results should retain or expose enough model/session provenance to identify the frozen artifact and introduction-time source state used. Future outcome scoring must compare the frozen introduction probability with source-chamber passage, not with whether a later individual floor vote passed.
 
-A model/configuration may become the default only when:
+Production observations are valuable evidence but do not automatically promote a model.
 
-1. the evaluation pipeline runs reproducibly;
-2. there is no known leakage in the held-out evaluation;
-3. results are compared against required baselines;
-4. passage performance is not materially worse than the current accepted model;
-5. member-level performance and calibration are understood;
-6. important slice regressions are reviewed;
-7. probability calibration is measured rather than assumed;
-8. all model/configuration versions are recorded.
+## What VotePredict should never claim
 
-Promotion does not require every metric to improve, but tradeoffs must be explicit.
+A probability should only be described according to the target and cutoff it was evaluated for.
 
-## Production forecast audit
-
-Each production forecast revision should retain enough information to join it later to the observed vote outcome. This enables a continuous real-world scorecard in addition to retrospective backtesting.
-
-At minimum retain:
-
-- target bill/version/chamber;
-- forecast timestamp;
-- forecast mode;
-- member probabilities;
-- passage probability;
-- expected vote/range;
-- model/configuration version;
-- data/evidence snapshot identifiers.
-
-## What V2 should never claim
-
-Until validated, avoid language implying that a displayed probability has a calibrated empirical meaning.
-
-Once calibration has been demonstrated, VotePredict may state methodology and historical calibration plainly, but should continue to describe forecasts as probabilistic estimates rather than private knowledge of legislators' intentions.
+VotePredict must never imply that an introduction-stage prior is a floor-vote probability, that a floor-vote forecast is unconditional from introduction, or that a displayed probability represents private knowledge of legislators' intentions.
