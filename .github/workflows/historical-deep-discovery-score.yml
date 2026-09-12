@@ -1,0 +1,98 @@
+name: Historical Deep discovery score
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-deep-discovery-score.yml
+      - data/evaluation/historical-deep-scoring-lineage-v1.json
+      - scripts/run-production-historical-deep-outcome-snapshot.ts
+      - scripts/score-historical-deep-discovery.ts
+      - src/app/api/operations/historical-deep-outcome-snapshot/route.ts
+      - src/evaluation/historical-deep-outcome-scorer.ts
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-discovery-score
+  cancel-in-progress: false
+
+jobs:
+  score:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_DEEP_OUTCOME_OUTPUT: artifacts/historical-deep-outcome-snapshot.json
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Wait for this exact main SHA to be live in production
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            curl --silent --show-error --output "$RUNNER_TEMP/deployments.json" \
+              --header "Authorization: Bearer ${VERCEL_TOKEN}" \
+              "https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&target=production&limit=20&teamId=${VERCEL_ORG_ID}"
+            match="$(jq -c --arg sha "$GITHUB_SHA" '[.deployments[]? | select(.target == "production" and .meta.githubCommitSha == $sha)] | first // empty' "$RUNNER_TEMP/deployments.json")"
+            if [ -n "$match" ] && [ "$(printf '%s' "$match" | jq -r '.state')" = "READY" ]; then exit 0; fi
+            sleep 5
+          done
+          exit 1
+      - name: Pull production operation secret privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" >/dev/null 2>&1
+      - name: Freeze official historical outcomes after discovery
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/run-production-historical-deep-outcome-snapshot.ts
+      - name: Verify pinned candidate artifact digest
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-scoring-lineage-v1.json'
+          id="$(jq -r '.candidateArtifact.artifactId' "$lineage")"
+          expected="sha256:$(jq -r '.candidateArtifact.artifactSha256' "$lineage")"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}" > "$RUNNER_TEMP/candidate-artifact.json"
+          test "$(jq -r '.expired' "$RUNNER_TEMP/candidate-artifact.json")" = "false"
+          test "$(jq -r '.digest' "$RUNNER_TEMP/candidate-artifact.json")" = "$expected"
+          echo "candidate_run_id=$(jq -r '.candidateArtifact.workflowRunId' "$lineage")" >> "$GITHUB_ENV"
+          echo "candidate_name=$(jq -r '.candidateArtifact.artifactName' "$lineage")" >> "$GITHUB_ENV"
+      - name: Download frozen candidate artifact
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.candidate_run_id }}
+          name: ${{ env.candidate_name }}
+          path: artifacts/frozen/candidates
+      - name: Score frozen discovery candidates
+        run: node --import tsx scripts/score-historical-deep-discovery.ts artifacts/frozen/candidates/historical-deep-discovery-candidates.json artifacts/historical-deep-outcome-snapshot.json artifacts/historical-deep-discovery-score.json
+      - name: Upload outcome snapshot and score
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-discovery-score-${{ github.sha }}
+          path: |
+            artifacts/historical-deep-outcome-snapshot.json
+            artifacts/historical-deep-discovery-score.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Remove temporary production environment
+        if: always()
+        run: rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/deployments.json" "$RUNNER_TEMP/candidate-artifact.json"
