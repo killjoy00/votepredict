@@ -5,13 +5,20 @@ import { selectHistoricalDeepTargets, type HistoricalDeepTarget } from './histor
 import type { HistoricalQuickReplayEventResult } from './historical-quick-replay';
 import { evaluateHistoricalQuickReplay } from './historical-quick-runtime';
 
-export const HISTORICAL_DEEP_PILOT_VOTE_EVENT_IDS = [
-  '2669f8aa-2ba6-48e2-84d2-c90129a3a805', // 2023-01-19 HF1, House, 69-65
-  '1e92daf1-5e46-441e-ae1d-51c58b58b4d4', // 2023-03-20 HF366, House, 68-64
-  '307aba48-9582-40d2-b738-f619a7ee9318', // 2023-03-23 HF146, House, 68-62
-  '1ac4141c-a40e-4714-8ac2-817dfb7feeee', // 2023-05-02 HF2, House, 68-64
-  '2c91372e-7ddc-4966-87c0-f811ef87bdb7', // 2024-05-02 HF4300, House, 68-64
-  'e50af52a-8a92-45e3-9de4-9c8df9bcdb5e', // 2024-05-19 HF3276, House, 66-62, failed
+export interface HistoricalDeepPilotSpec {
+  session: string;
+  chamber: string;
+  identifier: string;
+  occurredOn: string;
+}
+
+export const HISTORICAL_DEEP_PILOT_CASES: readonly HistoricalDeepPilotSpec[] = [
+  { session: '2023-2024', chamber: 'house', identifier: 'HF1', occurredOn: '2023-01-19' },
+  { session: '2023-2024', chamber: 'house', identifier: 'HF366', occurredOn: '2023-03-20' },
+  { session: '2023-2024', chamber: 'house', identifier: 'HF146', occurredOn: '2023-03-23' },
+  { session: '2023-2024', chamber: 'house', identifier: 'HF2', occurredOn: '2023-05-02' },
+  { session: '2023-2024', chamber: 'house', identifier: 'HF4300', occurredOn: '2024-05-02' },
+  { session: '2023-2024', chamber: 'house', identifier: 'HF3276', occurredOn: '2024-05-19' },
 ] as const;
 
 export interface HistoricalDeepPilotMember {
@@ -57,6 +64,7 @@ export interface HistoricalDeepPilotManifest {
     codeSha: string | null;
     databaseSource: string | null;
     purpose: string;
+    pilotCases: readonly HistoricalDeepPilotSpec[];
     pilotVoteEventIds: readonly string[];
     targetLimit: number;
   };
@@ -91,6 +99,42 @@ function runtimeEvents(result: Record<string, unknown>): HistoricalQuickReplayEv
   return result.events as HistoricalQuickReplayEventResult[];
 }
 
+export function historicalDeepPilotCaseKey(
+  value: Pick<HistoricalDeepPilotSpec, 'session' | 'chamber' | 'identifier' | 'occurredOn'>,
+): string {
+  return [value.session, value.chamber, value.identifier.replace(/\s+/g, '').toUpperCase(), value.occurredOn].join('|');
+}
+
+function metadataRowKey(row: EventMetadataRow): string {
+  return historicalDeepPilotCaseKey({
+    session: row.session_slug,
+    chamber: row.chamber_slug,
+    identifier: row.identifier,
+    occurredOn: row.occurred_on,
+  });
+}
+
+export function resolveHistoricalDeepPilotMetadata(
+  specs: readonly HistoricalDeepPilotSpec[],
+  rows: readonly EventMetadataRow[],
+): EventMetadataRow[] {
+  const rowsByKey = new Map<string, EventMetadataRow[]>();
+  for (const row of rows) {
+    const key = metadataRowKey(row);
+    const matches = rowsByKey.get(key) ?? [];
+    matches.push(row);
+    rowsByKey.set(key, matches);
+  }
+
+  return specs.map((spec) => {
+    const key = historicalDeepPilotCaseKey(spec);
+    const matches = rowsByKey.get(key) ?? [];
+    if (matches.length === 0) throw new Error(`Historical Deep pilot case is missing official passage metadata: ${key}`);
+    if (matches.length > 1) throw new Error(`Historical Deep pilot case is ambiguous across official passage rows: ${key}`);
+    return matches[0];
+  });
+}
+
 function withMemberMetadata(
   target: HistoricalDeepTarget,
   memberByMembership: ReadonlyMap<string, HistoricalDeepPilotMember>,
@@ -116,6 +160,10 @@ export async function evaluateHistoricalDeepPilotManifest(
   });
   const replayById = new Map(runtimeEvents(quick).map((event) => [event.voteEventId, event]));
 
+  const sessions = [...new Set(HISTORICAL_DEEP_PILOT_CASES.map((spec) => spec.session))];
+  const chambers = [...new Set(HISTORICAL_DEEP_PILOT_CASES.map((spec) => spec.chamber))];
+  const identifiers = [...new Set(HISTORICAL_DEEP_PILOT_CASES.map((spec) => spec.identifier))];
+  const occurredOn = [...new Set(HISTORICAL_DEEP_PILOT_CASES.map((spec) => spec.occurredOn))];
   const metadataResult = await pool.query<EventMetadataRow>(`
     SELECT ve.id AS vote_event_id,
            ve.bill_id,
@@ -132,19 +180,22 @@ export async function evaluateHistoricalDeepPilotManifest(
       JOIN bills b ON b.id = ve.bill_id
       JOIN legislative_sessions s ON s.id = ve.session_id
       JOIN chambers c ON c.id = ve.chamber_id
-     WHERE ve.id = ANY($1::uuid[])`, [HISTORICAL_DEEP_PILOT_VOTE_EVENT_IDS]);
-  const metadataById = new Map(metadataResult.rows.map((row) => [row.vote_event_id, row]));
+     WHERE ve.is_passage = true
+       AND ve.passed IS NOT NULL
+       AND s.slug = ANY($1::text[])
+       AND c.slug = ANY($2::text[])
+       AND b.identifier = ANY($3::text[])
+       AND ve.occurred_on = ANY($4::date[])`, [sessions, chambers, identifiers, occurredOn]);
+  const resolvedMetadata = resolveHistoricalDeepPilotMetadata(HISTORICAL_DEEP_PILOT_CASES, metadataResult.rows);
 
-  const planned = HISTORICAL_DEEP_PILOT_VOTE_EVENT_IDS.map((voteEventId) => {
-    const replay = replayById.get(voteEventId);
-    const metadata = metadataById.get(voteEventId);
-    if (!replay) throw new Error(`Pilot vote ${voteEventId} is missing from historical Quick replay`);
-    if (!metadata) throw new Error(`Pilot vote ${voteEventId} is missing event metadata`);
+  const planned = resolvedMetadata.map((metadata) => {
+    const replay = replayById.get(metadata.vote_event_id);
+    if (!replay) throw new Error(`Pilot vote ${metadata.vote_event_id} is missing from historical Quick replay`);
     if (replay.status !== 'replayable') {
-      throw new Error(`Pilot vote ${voteEventId} is not replayable: ${replay.status}`);
+      throw new Error(`Pilot vote ${metadata.vote_event_id} is not replayable: ${replay.status}`);
     }
     const targets = selectHistoricalDeepTargets(replay);
-    if (targets.length === 0) throw new Error(`Pilot vote ${voteEventId} produced no Deep targets`);
+    if (targets.length === 0) throw new Error(`Pilot vote ${metadata.vote_event_id} produced no Deep targets`);
     return { replay, metadata, targets };
   });
 
@@ -221,7 +272,8 @@ export async function evaluateHistoricalDeepPilotManifest(
       codeSha: options.codeSha ?? null,
       databaseSource: options.databaseSource ?? null,
       purpose: 'evaluation-only close-vote historical Deep target manifest; no research calls, evidence application, database writes, or serving changes',
-      pilotVoteEventIds: HISTORICAL_DEEP_PILOT_VOTE_EVENT_IDS,
+      pilotCases: HISTORICAL_DEEP_PILOT_CASES,
+      pilotVoteEventIds: cases.map((pilotCase) => pilotCase.voteEventId),
       targetLimit: 12,
     },
     cases,
