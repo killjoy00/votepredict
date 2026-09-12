@@ -36,6 +36,7 @@
     "eval:target-selection": "tsx scripts/audit-forecast-target-selection.ts",
     "eval:full-universe-stage": "tsx scripts/evaluate-full-universe-stage-baseline.ts",
     "eval:gambling-model": "tsx scripts/evaluate-gambling-model.ts",
+    "eval:deep-vs-quick": "tsx scripts/evaluate-deep-vs-quick.ts",
     "forecasts:scheduled": "tsx scripts/run-scheduled-forecasts.ts",
     "eval:coalition-chamber": "tsx scripts/evaluate-coalition-chamber.ts",
     "eval:gambling:diagnose": "tsx scripts/diagnose-gambling-model.ts"
