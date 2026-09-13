@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "historical-deep-expansion-scoring-lineage-v2",
+  "candidateArtifact": {
+    "workflowRunId": "34731281176",
+    "artifactId": 10308234950,
+    "artifactName": "historical-deep-expansion-discovery-candidates-v2-99e73d4fa45a72317868d24dfa9ae55ed56f9316",
+    "artifactSha256": "41ca3d40144d6b125d618b32577d017d9b9c6c49405da40aaec478c8415274fd",
+    "headSha": "99e73d4fa45a72317868d24dfa9ae55ed56f9316",
+    "fileName": "historical-deep-expansion-discovery-candidates-v2.json"
+  },
+  "outcomeArtifact": {
+    "workflowRunId": "34728183585",
+    "artifactId": 10308981046,
+    "artifactName": "historical-deep-expansion-discovery-score-39980f44b4d0d36270358ef9646f4e5d77330c2a",
+    "artifactSha256": "0487cbf826c1fe1dcbaf887b2850a94914aa9e8a6fdddcfff73483ef87c92471",
+    "headSha": "39980f44b4d0d36270358ef9646f4e5d77330c2a",
+    "fileName": "historical-deep-expansion-outcome-snapshot.json",
+    "originCandidateArtifactId": 10308141732,
+    "originCandidateArtifactSha256": "c752a3885921d086609b11e815cb7e122ba36a8521cb4d091c6c54aac8cdd4eb"
+  },
+  "policy": {
+    "outcomeUse": "post-v2-freeze-scoring-only",
+    "signalClassifier": "historical-deep-outcome-scorer-v1-unchanged",
+    "databaseReads": "none",
+    "notes": "The guarded v2 candidate artifact was frozen on main before this lineage was created. Scoring reuses the already-immutable 24-event official outcome snapshot produced for v1; no new outcome query is performed. The signal-direction classifier is intentionally unchanged, so v2 General Register motions not already recognized by the v1 classifier remain ambiguous in this stage rather than being reinterpreted after outcomes are available."
+  }
+}
