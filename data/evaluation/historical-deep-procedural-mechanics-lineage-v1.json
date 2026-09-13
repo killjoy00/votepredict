@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "historical-deep-procedural-mechanics-lineage-v1",
+  "candidateArtifact": {
+    "workflowRunId": "34731281176",
+    "artifactId": 10308234950,
+    "artifactName": "historical-deep-expansion-discovery-candidates-v2-99e73d4fa45a72317868d24dfa9ae55ed56f9316",
+    "artifactSha256": "41ca3d40144d6b125d618b32577d017d9b9c6c49405da40aaec478c8415274fd",
+    "headSha": "99e73d4fa45a72317868d24dfa9ae55ed56f9316",
+    "fileName": "historical-deep-expansion-discovery-candidates-v2.json"
+  },
+  "policy": {
+    "taxonomy": "mn-house-procedural-mechanics-v1",
+    "outcomeUse": "none",
+    "probabilityAction": "none",
+    "mechanicallyActionable": false,
+    "notes": "Classify the institutional mechanics of the already-frozen parser-v2 committee motions without consulting floor outcomes. AYE/NAY describes support/opposition to the recorded motion only. No category in this artifact is mapped to a final-passage probability change."
+  }
+}
