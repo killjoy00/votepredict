@@ -1,0 +1,115 @@
+name: Historical Deep House Journal source bundle
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/historical-deep-house-journal-source-bundle.yml
+      - data/evaluation/historical-deep-house-journal-source-lineage-v1.json
+      - scripts/collect-historical-deep-house-journal-sources.ts
+      - src/evaluation/historical-deep-house-journal-source-bundle.ts
+      - tests/historical-deep-house-journal-source-bundle.test.ts
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-deep-house-journal-source-bundle.yml
+      - data/evaluation/historical-deep-house-journal-source-lineage-v1.json
+      - scripts/collect-historical-deep-house-journal-sources.ts
+      - src/evaluation/historical-deep-house-journal-source-bundle.ts
+      - tests/historical-deep-house-journal-source-bundle.test.ts
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-house-journal-source-bundle-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify pinned expansion cohort artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-house-journal-source-lineage-v1.json'
+          artifact_id="$(jq -r '.cohortArtifact.artifactId' "$lineage")"
+          expected="sha256:$(jq -r '.cohortArtifact.artifactSha256' "$lineage")"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}" > "$RUNNER_TEMP/cohort-artifact.json"
+          test "$(jq -r '.expired' "$RUNNER_TEMP/cohort-artifact.json")" = 'false'
+          test "$(jq -r '.digest' "$RUNNER_TEMP/cohort-artifact.json")" = "$expected"
+          echo "cohort_run_id=$(jq -r '.cohortArtifact.workflowRunId' "$lineage")" >> "$GITHUB_ENV"
+          echo "cohort_name=$(jq -r '.cohortArtifact.artifactName' "$lineage")" >> "$GITHUB_ENV"
+          echo "cohort_head_sha=$(jq -r '.cohortArtifact.headSha' "$lineage")" >> "$GITHUB_ENV"
+          echo "cohort_artifact_id=${artifact_id}" >> "$GITHUB_ENV"
+          echo "cohort_artifact_digest=$(jq -r '.cohortArtifact.artifactSha256' "$lineage")" >> "$GITHUB_ENV"
+      - name: Download frozen expansion cohort
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.cohort_run_id }}
+          name: ${{ env.cohort_name }}
+          path: artifacts/frozen/cohort
+      - name: Diagnose raw Journal archive markup
+        run: |
+          node <<'NODE'
+          const url = 'https://www.house.mn.gov/Journals/257';
+          const response = await fetch(url, { headers: { 'user-agent': 'VotePredict/2.0 journal-markup-diagnostic' } });
+          const html = await response.text();
+          const needles = ['J0510106', '/cco/journals/', 'HTML'];
+          console.log(JSON.stringify({ status: response.status, finalUrl: response.url, contentType: response.headers.get('content-type'), bytes: Buffer.byteLength(html) }));
+          for (const needle of needles) {
+            const index = html.indexOf(needle);
+            const snippet = index >= 0 ? html.slice(Math.max(0, index - 220), Math.min(html.length, index + needle.length + 220)) : null;
+            console.log(JSON.stringify({ needle, index, snippet }));
+          }
+          NODE
+      - name: Enumerate and freeze official pre-vote House Journals
+        run: |
+          node --import tsx scripts/collect-historical-deep-house-journal-sources.ts \
+            --cohort artifacts/frozen/cohort/historical-deep-expansion-cohort.json \
+            --cohort-head-sha "$cohort_head_sha" \
+            --cohort-artifact-id "$cohort_artifact_id" \
+            --cohort-artifact-digest "$cohort_artifact_digest" \
+            --code-sha "$GITHUB_SHA" \
+            --output artifacts/historical-deep-house-journal-source-bundle.json
+      - name: Verify frozen journal-source guardrails
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='artifacts/historical-deep-house-journal-source-bundle.json'
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-deep-house-journal-source-bundle-v1'
+          test "$(jq -r '.metadata.sourcePolicy' "$file")" = 'house-journal-archive-enumeration-v1'
+          test "$(jq -r '.input.selectedCases' "$file")" = '24'
+          test "$(jq -r '.input.archiveIndexesAttempted' "$file")" = '2'
+          test "$(jq '[.sources[] | select(.sourceClass != "house_journal_record")] | length' "$file")" = '0'
+          test "$(jq '[.sources[] | select((.contentSha256 | test("^[a-f0-9]{64}$")) | not)] | length' "$file")" = '0'
+          test "$(jq '[.sources[].matchedCases[] | select(.occurredOn <= "0000-00-00")] | length' "$file")" = '0'
+          test "$(jq '[.sources[] as $s | $s.matchedCases[] | select($s.journalDate >= .occurredOn)] | length' "$file")" = '0'
+          test "$(jq '[.sources[] | select((.url | startswith("https://www.house.mn.gov/cco/journals/")) | not)] | length' "$file")" = '0'
+          test "$(jq '[.sources[] | select((.finalUrl | startswith("https://www.house.mn.gov/cco/journals/")) | not)] | length' "$file")" = '0'
+          links="$(jq -r '.summary.journalLinksDiscovered' "$file")"
+          pages="$(jq -r '.summary.journalPagesFetched' "$file")"
+          matches="$(jq -r '.summary.matchedSourcePages' "$file")"
+          test "$links" -ge 100
+          test "$pages" -ge 80
+          test "$matches" -ge 1
+      - name: Upload frozen House Journal source bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-house-journal-source-bundle-v1-${{ github.sha }}
+          path: artifacts/historical-deep-house-journal-source-bundle.json
+          if-no-files-found: error
+          retention-days: 30
