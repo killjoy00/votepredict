@@ -1,0 +1,145 @@
+name: Historical Deep expansion discovery manifest
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-deep-expansion-discovery-manifest.yml
+      - data/evaluation/historical-deep-expansion-discovery-lineage-v1.json
+      - scripts/run-production-historical-deep-expansion-discovery-manifest.ts
+      - src/app/api/operations/historical-deep-expansion-discovery-manifest/route.ts
+      - src/evaluation/historical-deep-expansion-discovery.ts
+      - src/evaluation/historical-deep-expansion-cohort.ts
+      - src/evaluation/historical-deep-target-strategies.ts
+      - src/evaluation/historical-quick-runtime.ts
+      - src/evaluation/historical-quick-replay.ts
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-expansion-discovery-manifest
+  cancel-in-progress: false
+
+jobs:
+  manifest:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_DEEP_EXPANSION_DISCOVERY_OUTPUT: artifacts/historical-deep-expansion-discovery-manifest.json
+    steps:
+      - uses: actions/checkout@v7
+      - name: Require the existing Vercel credential
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ]; then
+            echo 'VERCEL_TOKEN is unavailable. No expansion discovery manifest was attempted.'
+            exit 1
+          fi
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify pinned expansion cohort artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-expansion-discovery-lineage-v1.json'
+          artifact_id="$(jq -r '.cohortArtifact.artifactId' "$lineage")"
+          expected="sha256:$(jq -r '.cohortArtifact.artifactSha256' "$lineage")"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}" > "$RUNNER_TEMP/cohort-artifact.json"
+          test "$(jq -r '.expired' "$RUNNER_TEMP/cohort-artifact.json")" = 'false'
+          test "$(jq -r '.digest' "$RUNNER_TEMP/cohort-artifact.json")" = "$expected"
+          echo "cohort_run_id=$(jq -r '.cohortArtifact.workflowRunId' "$lineage")" >> "$GITHUB_ENV"
+          echo "cohort_name=$(jq -r '.cohortArtifact.artifactName' "$lineage")" >> "$GITHUB_ENV"
+      - name: Download frozen expansion cohort
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.cohort_run_id }}
+          name: ${{ env.cohort_name }}
+          path: artifacts/frozen/cohort
+      - name: Wait for this exact main SHA to be live in production
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            http_code="$(curl \
+              --silent \
+              --show-error \
+              --output "$RUNNER_TEMP/vercel-deployments.json" \
+              --write-out '%{http_code}' \
+              --header "Authorization: Bearer ${VERCEL_TOKEN}" \
+              "https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&target=production&limit=20&teamId=${VERCEL_ORG_ID}")"
+            if [ "$http_code" != "200" ]; then
+              echo "Vercel deployment lookup returned HTTP ${http_code}."
+              exit 1
+            fi
+            match="$(jq -c --arg sha "$GITHUB_SHA" '[.deployments[]? | select(.target == "production" and .meta.githubCommitSha == $sha)] | first // empty' "$RUNNER_TEMP/vercel-deployments.json")"
+            if [ -n "$match" ]; then
+              state="$(printf '%s' "$match" | jq -r '.state // "UNKNOWN"')"
+              if [ "$state" = "READY" ]; then
+                echo "Exact main SHA ${GITHUB_SHA} is READY in production."
+                exit 0
+              fi
+              if [ "$state" = "ERROR" ] || [ "$state" = "CANCELED" ]; then
+                echo "Production deployment for ${GITHUB_SHA} entered ${state}."
+                exit 1
+              fi
+            fi
+            sleep 5
+          done
+          echo "Exact main SHA ${GITHUB_SHA} did not become READY before the manifest deadline."
+          exit 1
+      - name: Read production operation secret privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          if ! npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1; then
+            echo 'Could not read the VotePredict production environment. No expansion discovery manifest was run.'
+            exit 1
+          fi
+      - name: Freeze chamber-wide pre-vote Quick member manifest
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: |
+          node --import tsx scripts/run-production-historical-deep-expansion-discovery-manifest.ts \
+            artifacts/frozen/cohort/historical-deep-expansion-cohort.json
+      - name: Verify manifest is outcome-free
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='artifacts/historical-deep-expansion-discovery-manifest.json'
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-deep-expansion-discovery-manifest-v1'
+          test "$(jq -r '.metadata.cases' "$file")" = '24'
+          test "$(jq '[.. | objects | select(has("actualOutcome") or has("actualYes") or has("passed") or has("yeaCount") or has("nayCount"))] | length' "$file")" = '0'
+          test "$(jq '[.cases[] | select((.currentDeepTargetIds | length) != 12 or (.candidateDeepTargetIds | length) != 12)] | length' "$file")" = '0'
+      - name: Upload frozen expansion discovery manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-expansion-discovery-manifest-${{ github.sha }}
+          path: artifacts/historical-deep-expansion-discovery-manifest.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Remove temporary credentials and lookup files
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PYTHON'
+          import os
+          from pathlib import Path
+          for name in ['votepredict-production.env', 'vercel-pull.log', 'vercel-deployments.json', 'cohort-artifact.json']:
+              Path(os.environ['RUNNER_TEMP'], name).unlink(missing_ok=True)
+          PYTHON
