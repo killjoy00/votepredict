@@ -1,0 +1,100 @@
+name: Historical Deep procedural mechanics taxonomy
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/historical-deep-procedural-mechanics.yml
+      - data/evaluation/historical-deep-procedural-mechanics-lineage-v1.json
+      - scripts/classify-historical-deep-procedural-mechanics.ts
+      - src/evaluation/historical-deep-procedural-mechanics.ts
+      - tests/historical-deep-procedural-mechanics.test.ts
+      - docs/evaluation/historical-deep-procedural-mechanics-v1.md
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-deep-procedural-mechanics.yml
+      - data/evaluation/historical-deep-procedural-mechanics-lineage-v1.json
+      - scripts/classify-historical-deep-procedural-mechanics.ts
+      - src/evaluation/historical-deep-procedural-mechanics.ts
+      - tests/historical-deep-procedural-mechanics.test.ts
+      - docs/evaluation/historical-deep-procedural-mechanics-v1.md
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-procedural-mechanics-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify immutable parser-v2 candidate artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-procedural-mechanics-lineage-v1.json'
+          id="$(jq -r '.candidateArtifact.artifactId' "$lineage")"
+          expected="sha256:$(jq -r '.candidateArtifact.artifactSha256' "$lineage")"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}" > "$RUNNER_TEMP/candidate.json"
+          test "$(jq -r '.expired' "$RUNNER_TEMP/candidate.json")" = 'false'
+          test "$(jq -r '.digest' "$RUNNER_TEMP/candidate.json")" = "$expected"
+          echo "candidate_run_id=$(jq -r '.candidateArtifact.workflowRunId' "$lineage")" >> "$GITHUB_ENV"
+          echo "candidate_name=$(jq -r '.candidateArtifact.artifactName' "$lineage")" >> "$GITHUB_ENV"
+      - name: Download frozen guarded parser-v2 candidates
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.candidate_run_id }}
+          name: ${{ env.candidate_name }}
+          path: artifacts/frozen/candidates-v2
+      - name: Verify outcome-blind input boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='artifacts/frozen/candidates-v2/historical-deep-expansion-discovery-candidates-v2.json'
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-deep-expansion-discovery-candidates-v2'
+          test "$(jq -r '.metadata.parser' "$file")" = 'deterministic-house-committee-roll-call-v2'
+          test "$(jq -r '.metadata.outcomeUse' "$file")" = 'none'
+          test "$(jq -r '.summary.candidateCount' "$file")" = '212'
+          test "$(jq -r '.summary.memberCasePairsWithCandidates' "$file")" = '190'
+          test "$(jq '[.. | objects | select(has("actualOutcome") or has("actualYes") or has("passed") or has("yeaCount") or has("nayCount"))] | length' "$file")" = '0'
+      - name: Classify institutional motion mechanics
+        run: |
+          node --import tsx scripts/classify-historical-deep-procedural-mechanics.ts \
+            artifacts/frozen/candidates-v2/historical-deep-expansion-discovery-candidates-v2.json \
+            artifacts/historical-deep-procedural-mechanics-v1.json
+      - name: Verify non-actionable taxonomy boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='artifacts/historical-deep-procedural-mechanics-v1.json'
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-deep-procedural-mechanics-v1'
+          test "$(jq -r '.metadata.policy' "$file")" = 'mn-house-procedural-mechanics-v1'
+          test "$(jq -r '.metadata.outcomeUse' "$file")" = 'none'
+          test "$(jq -r '.metadata.probabilityAction' "$file")" = 'none'
+          test "$(jq -r '.summary.observations' "$file")" = '212'
+          test "$(jq -r '.summary.memberEventPairs' "$file")" = '190'
+          test "$(jq '[.observations[] | select(.mechanicallyActionable != false or .finalPassageInference != "none")] | length' "$file")" = '0'
+          test "$(jq '[.pairs[] | select(.mechanicallyActionable != false or .finalPassageInference != "none")] | length' "$file")" = '0'
+          test "$(jq '[.. | objects | select(has("actualOutcome") or has("actualYes") or has("passed") or has("yeaCount") or has("nayCount"))] | length' "$file")" = '0'
+      - name: Upload frozen mechanics taxonomy
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-procedural-mechanics-v1-${{ github.sha }}
+          path: artifacts/historical-deep-procedural-mechanics-v1.json
+          if-no-files-found: error
+          retention-days: 30
