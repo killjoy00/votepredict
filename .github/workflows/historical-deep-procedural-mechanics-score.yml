@@ -1,0 +1,137 @@
+name: Historical Deep procedural mechanics score
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/historical-deep-procedural-mechanics-score.yml
+      - data/evaluation/historical-deep-procedural-mechanics-score-lineage-v1.json
+      - scripts/score-historical-deep-procedural-mechanics.ts
+      - src/evaluation/historical-deep-procedural-mechanics-score.ts
+      - tests/historical-deep-procedural-mechanics-score.test.ts
+      - docs/evaluation/historical-deep-procedural-mechanics-score-v1.md
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-deep-procedural-mechanics-score.yml
+      - data/evaluation/historical-deep-procedural-mechanics-score-lineage-v1.json
+      - scripts/score-historical-deep-procedural-mechanics.ts
+      - src/evaluation/historical-deep-procedural-mechanics-score.ts
+      - tests/historical-deep-procedural-mechanics-score.test.ts
+      - docs/evaluation/historical-deep-procedural-mechanics-score-v1.md
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-procedural-mechanics-score-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify immutable scoring artifact digests
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-procedural-mechanics-score-lineage-v1.json'
+          verify_artifact() {
+            local section="$1"
+            local id expected actual expired
+            id="$(jq -r ".${section}.artifactId" "$lineage")"
+            expected="sha256:$(jq -r ".${section}.artifactSha256" "$lineage")"
+            gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}" > "$RUNNER_TEMP/${section}.json"
+            actual="$(jq -r '.digest // empty' "$RUNNER_TEMP/${section}.json")"
+            expired="$(jq -r '.expired' "$RUNNER_TEMP/${section}.json")"
+            test "$expired" = 'false'
+            test "$actual" = "$expected"
+            echo "${section}_run_id=$(jq -r ".${section}.workflowRunId" "$lineage")" >> "$GITHUB_ENV"
+            echo "${section}_name=$(jq -r ".${section}.artifactName" "$lineage")" >> "$GITHUB_ENV"
+          }
+          verify_artifact candidateArtifact
+          verify_artifact taxonomyArtifact
+          verify_artifact outcomeArtifact
+      - name: Download frozen parser-v2 candidates
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.candidateArtifact_run_id }}
+          name: ${{ env.candidateArtifact_name }}
+          path: artifacts/frozen/candidates-v2
+      - name: Download frozen mechanics taxonomy
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.taxonomyArtifact_run_id }}
+          name: ${{ env.taxonomyArtifact_name }}
+          path: artifacts/frozen/mechanics
+      - name: Download preexisting frozen development outcomes
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.outcomeArtifact_run_id }}
+          name: ${{ env.outcomeArtifact_name }}
+          path: artifacts/frozen/outcomes
+      - name: Verify post-taxonomy-freeze boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-procedural-mechanics-score-lineage-v1.json'
+          candidates='artifacts/frozen/candidates-v2/historical-deep-expansion-discovery-candidates-v2.json'
+          taxonomy='artifacts/frozen/mechanics/historical-deep-procedural-mechanics-v1.json'
+          outcomes='artifacts/frozen/outcomes/historical-deep-expansion-outcome-snapshot.json'
+          test "$(jq -r '.schemaVersion' "$candidates")" = 'historical-deep-expansion-discovery-candidates-v2'
+          test "$(jq -r '.metadata.outcomeUse' "$candidates")" = 'none'
+          test "$(jq -r '.summary.candidateCount' "$candidates")" = '212'
+          test "$(jq -r '.schemaVersion' "$taxonomy")" = 'historical-deep-procedural-mechanics-v1'
+          test "$(jq -r '.metadata.policy' "$taxonomy")" = 'mn-house-procedural-mechanics-v1'
+          test "$(jq -r '.metadata.outcomeUse' "$taxonomy")" = 'none'
+          test "$(jq -r '.metadata.probabilityAction' "$taxonomy")" = 'none'
+          test "$(jq -r '.summary.observations' "$taxonomy")" = '212'
+          test "$(jq -r '.summary.memberEventPairs' "$taxonomy")" = '190'
+          test "$(jq '[.observations[] | select(.mechanicallyActionable != false or .finalPassageInference != "none")] | length' "$taxonomy")" = '0'
+          test "$(jq -r '.schemaVersion' "$outcomes")" = 'historical-deep-expansion-outcome-snapshot-v1'
+          test "$(jq '.cases | length' "$outcomes")" = '24'
+          test "$(jq -r '.candidateArtifact.artifactId' "$outcomes")" = "$(jq -r '.outcomeArtifact.originCandidateArtifactId' "$lineage")"
+          test "$(jq -r '.candidateArtifact.artifactSha256' "$outcomes")" = "$(jq -r '.outcomeArtifact.originCandidateArtifactSha256' "$lineage")"
+      - name: Score frozen mechanics against frozen development outcomes
+        run: |
+          node --import tsx scripts/score-historical-deep-procedural-mechanics.ts \
+            artifacts/frozen/candidates-v2/historical-deep-expansion-discovery-candidates-v2.json \
+            artifacts/frozen/mechanics/historical-deep-procedural-mechanics-v1.json \
+            artifacts/frozen/outcomes/historical-deep-expansion-outcome-snapshot.json \
+            artifacts/historical-deep-procedural-mechanics-score-v1.json
+      - name: Verify descriptive-only score boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='artifacts/historical-deep-procedural-mechanics-score-v1.json'
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-deep-procedural-mechanics-score-v1'
+          test "$(jq -r '.metadata.taxonomyPolicy' "$file")" = 'mn-house-procedural-mechanics-v1'
+          test "$(jq -r '.metadata.evaluationPolicy' "$file")" = 'naive-same-side-diagnostic-v1'
+          test "$(jq -r '.metadata.probabilityAction' "$file")" = 'none'
+          test "$(jq -r '.input.taxonomyObservations' "$file")" = '212'
+          test "$(jq -r '.input.taxonomyMemberEventPairs' "$file")" = '190'
+          test "$(jq -r '.summary.mechanicallyActionableRows' "$file")" = '0'
+          test "$(jq '[.rows[] | select(.mechanicallyActionable != false or .finalPassageInference != "none")] | length' "$file")" = '0'
+      - name: Upload frozen mechanics development score
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-procedural-mechanics-score-v1-${{ github.sha }}
+          path: artifacts/historical-deep-procedural-mechanics-score-v1.json
+          if-no-files-found: error
+          retention-days: 30
