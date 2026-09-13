@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "historical-deep-expansion-scoring-lineage-v1",
+  "candidateArtifact": {
+    "workflowRunId": "34727923763",
+    "artifactId": 10308141732,
+    "artifactName": "historical-deep-expansion-discovery-candidates-bb99563426a7289b20770a476cef28bed01f30f1",
+    "artifactSha256": "c752a3885921d086609b11e815cb7e122ba36a8521cb4d091c6c54aac8cdd4eb",
+    "headSha": "bb99563426a7289b20770a476cef28bed01f30f1",
+    "fileName": "historical-deep-expansion-discovery-candidates.json"
+  },
+  "discoveryManifest": {
+    "workflowRunId": "34727649103",
+    "artifactId": 10308004770,
+    "artifactName": "historical-deep-expansion-discovery-manifest-03463b728ed30540c8a840f214d56ccd70578b6f",
+    "artifactSha256": "084c5d38b41ef8532e67a076c585fd9e9e36e14babe9c8fc2dbebd20e1313cb0",
+    "headSha": "03463b728ed30540c8a840f214d56ccd70578b6f",
+    "fileName": "historical-deep-expansion-discovery-manifest.json"
+  },
+  "policy": {
+    "outcomeFreeze": "post-discovery-only",
+    "joinIdentity": "exact voteEventId + source-derived externalKey; candidate/member scoring by stable legislator identity",
+    "notes": "Both frozen artifacts are verified before the production outcome operation is called. Outcomes cannot affect cohort selection, source discovery, Quick reconstruction, target selection, or deterministic candidate extraction."
+  }
+}
