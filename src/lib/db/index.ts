@@ -3,6 +3,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import * as baseSchema from './schema';
 import * as featureEvidenceSchema from './feature-evidence-schema';
+import { normalizePgSslMode } from './connection-string';
 
 const schema = { ...baseSchema, ...featureEvidenceSchema };
 const globalForDatabase = globalThis as unknown as { votePredictPool?: Pool };
@@ -16,7 +17,7 @@ const connectionCandidates = [
 
 const selectedConnection = connectionCandidates.find(([, value]) => value?.trim());
 export const databaseConnectionSource = selectedConnection?.[0] ?? 'missing';
-const connectionString = selectedConnection?.[1]?.trim();
+const connectionString = normalizePgSslMode(selectedConnection?.[1]);
 
 export const pool = globalForDatabase.votePredictPool ?? new Pool({
   connectionString,
