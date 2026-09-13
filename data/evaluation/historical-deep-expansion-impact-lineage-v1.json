@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "historical-deep-expansion-impact-lineage-v1",
+  "discoveryManifest": {
+    "workflowRunId": "34727649103",
+    "artifactId": 10308004770,
+    "artifactName": "historical-deep-expansion-discovery-manifest-03463b728ed30540c8a840f214d56ccd70578b6f",
+    "artifactSha256": "084c5d38b41ef8532e67a076c585fd9e9e36e14babe9c8fc2dbebd20e1313cb0",
+    "headSha": "03463b728ed30540c8a840f214d56ccd70578b6f",
+    "fileName": "historical-deep-expansion-discovery-manifest.json"
+  },
+  "sourceBundle": {
+    "workflowRunId": "34727446742",
+    "artifactId": 10307974620,
+    "artifactName": "historical-deep-expansion-source-bundle-74b0ebad93cccb1e14353f32170465f402673259",
+    "artifactSha256": "6d522eddcb3b6a92b413c9f19e6db189c0412e76760663173f95cf2f220bf1cf",
+    "headSha": "74b0ebad93cccb1e14353f32170465f402673259",
+    "fileName": "historical-deep-expansion-source-bundle.json"
+  },
+  "candidateArtifact": {
+    "workflowRunId": "34727923763",
+    "artifactId": 10308141732,
+    "artifactName": "historical-deep-expansion-discovery-candidates-bb99563426a7289b20770a476cef28bed01f30f1",
+    "artifactSha256": "c752a3885921d086609b11e815cb7e122ba36a8521cb4d091c6c54aac8cdd4eb",
+    "headSha": "bb99563426a7289b20770a476cef28bed01f30f1",
+    "fileName": "historical-deep-expansion-discovery-candidates.json"
+  },
+  "outcomeScoreArtifact": {
+    "workflowRunId": "34728183585",
+    "artifactId": 10308981046,
+    "artifactName": "historical-deep-expansion-discovery-score-39980f44b4d0d36270358ef9646f4e5d77330c2a",
+    "artifactSha256": "0487cbf826c1fe1dcbaf887b2850a94914aa9e8a6fdddcfff73483ef87c92471",
+    "headSha": "39980f44b4d0d36270358ef9646f4e5d77330c2a",
+    "outcomeFileName": "historical-deep-expansion-outcome-snapshot.json",
+    "scoreFileName": "historical-deep-expansion-discovery-score.json"
+  },
+  "policy": {
+    "candidateStrategy": "need-only",
+    "targetLimit": 12,
+    "impactVersion": "logit-evidence-v1",
+    "notes": "Replay the four immutable expansion artifacts entirely offline through the existing HistoricalArchiveDeepResearchProvider, evidenceImpactPolicy, and applyEvidenceSignals implementation. No target, evidence, outcome, or weight may be recomputed in this stage."
+  }
+}
