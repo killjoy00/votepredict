@@ -179,11 +179,15 @@ function quickProbabilityMap(
   const result = new Map<string, number>();
   for (const candidate of candidates.candidates) {
     const key = pairKey(candidate.case.caseKey, candidate.legislatorId);
+    const probability = candidate.quickYesProbability;
+    if (probability === undefined) {
+      throw new Error(`Missing frozen Quick probability for ${key}`);
+    }
     const previous = result.get(key);
-    if (previous !== undefined && Math.abs(previous - candidate.quickYesProbability) > 1e-12) {
+    if (previous !== undefined && Math.abs(previous - probability) > 1e-12) {
       throw new Error(`Inconsistent frozen Quick probability for ${key}`);
     }
-    result.set(key, candidate.quickYesProbability);
+    result.set(key, probability);
   }
   return result;
 }
@@ -265,54 +269,56 @@ export function scoreHistoricalDeepProceduralMechanics(
     }
   }
 
-  const rows: HistoricalDeepProceduralMechanicsScoreRow[] = [...grouped.values()].map(({ mechanic, observations }) => {
-    const first = observations[0];
-    const sides = new Set(observations.map((observation) => observation.voteRelationToMotion));
-    const votePattern: HistoricalDeepMechanicsVotePattern = sides.size > 1
-      ? 'conflicting_motion_votes'
-      : observations[0].voteRelationToMotion;
-    const quickYesProbability = quick.get(pairKey(first.caseKey, first.legislatorId));
-    if (quickYesProbability === undefined) throw new Error(`Missing frozen Quick probability for ${first.caseKey}|${first.legislatorId}`);
-    const outcome = outcomeMembers.get(pairKey(first.caseKey, first.legislatorId));
-    const quickPredictedOutcome = predictedOutcome(quickYesProbability);
-    const naiveSameSideFloorOutcome: 0 | 1 | undefined = votePattern === 'supports_motion'
-      ? 1
-      : votePattern === 'opposes_motion'
-        ? 0
+  const rows: HistoricalDeepProceduralMechanicsScoreRow[] = [...grouped.values()].map(
+    ({ mechanic, observations }): HistoricalDeepProceduralMechanicsScoreRow => {
+      const first = observations[0];
+      const sides = new Set(observations.map((observation) => observation.voteRelationToMotion));
+      const votePattern: HistoricalDeepMechanicsVotePattern = sides.size > 1
+        ? 'conflicting_motion_votes'
+        : observations[0].voteRelationToMotion;
+      const quickYesProbability = quick.get(pairKey(first.caseKey, first.legislatorId));
+      if (quickYesProbability === undefined) throw new Error(`Missing frozen Quick probability for ${first.caseKey}|${first.legislatorId}`);
+      const outcome = outcomeMembers.get(pairKey(first.caseKey, first.legislatorId));
+      const quickPredictedOutcome = predictedOutcome(quickYesProbability);
+      const naiveSameSideFloorOutcome: 0 | 1 | undefined = votePattern === 'supports_motion'
+        ? 1
+        : votePattern === 'opposes_motion'
+          ? 0
+          : undefined;
+      const naiveSameSideMatchesFloor = outcome && naiveSameSideFloorOutcome !== undefined
+        ? outcome.actualOutcome === naiveSameSideFloorOutcome
         : undefined;
-    const naiveSameSideMatchesFloor = outcome && naiveSameSideFloorOutcome !== undefined
-      ? outcome.actualOutcome === naiveSameSideFloorOutcome
-      : undefined;
-    const quickError = outcome ? quickPredictedOutcome !== outcome.actualOutcome : undefined;
+      const quickError = outcome ? quickPredictedOutcome !== outcome.actualOutcome : undefined;
 
-    return {
-      stableKey: first.stableKey,
-      caseKey: first.caseKey,
-      voteEventId: first.voteEventId,
-      identifier: first.identifier,
-      occurredOn: first.occurredOn,
-      legislatorId: first.legislatorId,
-      membershipId: first.membershipId,
-      memberName: first.memberName,
-      party: first.party,
-      mechanic,
-      observationCount: observations.length,
-      votePattern,
-      selectedForCurrentDeep: observations.some((observation) => observation.selectedForCurrentDeep),
-      selectedForCandidateDeep: observations.some((observation) => observation.selectedForCandidateDeep),
-      quickYesProbability,
-      quickPredictedOutcome,
-      outcomeStatus: outcome ? 'decisive' : 'no_decisive_floor_outcome',
-      actualOutcome: outcome?.actualOutcome,
-      quickError,
-      naiveSameSideFloorOutcome,
-      naiveSameSideMatchesFloor,
-      naiveSameSideWouldCorrectQuickError: quickError === true && naiveSameSideMatchesFloor === true,
-      naiveSameSideWouldHarmCorrectQuick: quickError === false && naiveSameSideMatchesFloor === false,
-      mechanicallyActionable: false,
-      finalPassageInference: 'none',
-    };
-  }).sort((left, right) => left.occurredOn.localeCompare(right.occurredOn)
+      return {
+        stableKey: first.stableKey,
+        caseKey: first.caseKey,
+        voteEventId: first.voteEventId,
+        identifier: first.identifier,
+        occurredOn: first.occurredOn,
+        legislatorId: first.legislatorId,
+        membershipId: first.membershipId,
+        memberName: first.memberName,
+        party: first.party,
+        mechanic,
+        observationCount: observations.length,
+        votePattern,
+        selectedForCurrentDeep: observations.some((observation) => observation.selectedForCurrentDeep),
+        selectedForCandidateDeep: observations.some((observation) => observation.selectedForCandidateDeep),
+        quickYesProbability,
+        quickPredictedOutcome,
+        outcomeStatus: outcome ? 'decisive' : 'no_decisive_floor_outcome',
+        actualOutcome: outcome?.actualOutcome,
+        quickError,
+        naiveSameSideFloorOutcome,
+        naiveSameSideMatchesFloor,
+        naiveSameSideWouldCorrectQuickError: quickError === true && naiveSameSideMatchesFloor === true,
+        naiveSameSideWouldHarmCorrectQuick: quickError === false && naiveSameSideMatchesFloor === false,
+        mechanicallyActionable: false,
+        finalPassageInference: 'none',
+      };
+    },
+  ).sort((left, right) => left.occurredOn.localeCompare(right.occurredOn)
     || left.identifier.localeCompare(right.identifier)
     || left.memberName.localeCompare(right.memberName)
     || left.mechanic.localeCompare(right.mechanic));
