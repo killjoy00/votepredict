@@ -15,7 +15,7 @@ The workflow pins and verifies the exact source artifact before classification:
 - source head SHA: `504abcb59e82132a570bc106b4e696065ea4cd08`
 - source artifact SHA-256: `935f2ffcbdf70ab67efbb47e0f9607debcae90e2b872220ec0edc916dbf90387`
 
-That source bundle already fixes the 24-case development cohort, exact official Journal URLs, strict pre-vote dates, matched case lineage, and SHA-256 content bindings. This mechanics stage does not discover new sources or replace cases.
+That source bundle already fixes the 24-case development cohort, exact official Journal URLs, strict pre-vote dates, matched case lineage, and original raw-byte SHA-256 provenance for each source page. This mechanics stage does not discover new sources or replace cases.
 
 ## Parser policy
 
@@ -62,7 +62,13 @@ House Journals contain many bills on a single page, so proximity alone is not en
 - companion substitution requires the frozen bill both in the Chief Clerk comparison and in the substitution motion;
 - direct actions such as second reading, report to House, or table motions require the frozen bill in the same deterministic phrase.
 
-The frozen source content is re-hashed before extraction and classification fails closed if any source content or pre-vote date no longer matches its binding.
+## Integrity model
+
+The downstream workflow verifies the **entire immutable #170 artifact** against GitHub Actions' SHA-256 digest before downloading or classifying it, then verifies that the bundle's recorded code SHA matches the pinned source-head lineage. Each source also retains the raw-byte SHA-256 created when #170 fetched the official HTTP response.
+
+The raw-byte page hash is provenance, not something this stage can recompute from the JSON `content` string: decoding arbitrary historical HTML bytes to UTF-8 and serializing them into JSON is not guaranteed to preserve the original byte sequence. The mechanics stage therefore validates the recorded per-page hash shape and carries it into every observation rather than pretending that re-encoding decoded text proves raw-byte identity. Artifact-level SHA-256 verification is the integrity boundary for the frozen JSON content consumed here.
+
+Classification also fails closed if a source is no longer strictly before the frozen floor-vote date.
 
 ## What this stage does not establish
 
