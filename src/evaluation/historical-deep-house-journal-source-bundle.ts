@@ -129,7 +129,6 @@ function parseLongDate(value: string): string | undefined {
   const match = value.trim().match(/^(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),?\s+([A-Za-z]+)\s+(\d{1,2}),\s*(\d{4})$/i)
     ?? value.trim().match(/^([A-Za-z]+)\s+(\d{1,2}),\s*(\d{4})$/i);
   if (!match) return undefined;
-  const offset = match.length === 4 ? 0 : 0;
   const monthName = match[1];
   const month = MONTHS.get(monthName.toLowerCase());
   return month ? dateIso(Number(match[3]), month, Number(match[2])) : undefined;
@@ -183,7 +182,7 @@ export function parseHistoricalDeepHouseJournalIndex(
 
   const links: HistoricalDeepHouseJournalLink[] = [];
   const seen = new Set<string>();
-  const anchor = /<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>\s*HTML\s*<\/a>/gi;
+  const anchor = /<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>/gi;
   for (const match of html.matchAll(anchor)) {
     const identity = journalIdentity(match[1], session);
     if (!identity || seen.has(identity.url)) continue;
