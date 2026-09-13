@@ -20,6 +20,6 @@
     "parser": "deterministic-house-committee-roll-call-v2",
     "baselineParser": "deterministic-house-committee-roll-call-v1",
     "outcomeUse": "none",
-    "notes": "V2 is an evaluation-only, outcome-blind format-coverage extension designed from the already-frozen official source corpus. It preserves v1 candidates and adds exact-bill General Register motions, alternate official roll-call trigger wording, and direct named AYES/NAYS lists. It still requires named member votes and excludes amendments, voice votes, and floor outcomes."
+    "notes": "V2 is an evaluation-only, outcome-blind format-coverage extension designed from the already-frozen official source corpus. It preserves v1 candidates and adds exact-bill General Register motions, alternate official roll-call trigger wording, and direct named AYES/NAYS lists. Supplemental candidates are rejected when the nearest preceding local bill reference within 12 parsed lines identifies a different bill, protecting against section-local copy/paste bill-number errors observed in the frozen official minutes. V2 still requires named member votes and excludes amendments, voice votes, and floor outcomes."
   }
 }
