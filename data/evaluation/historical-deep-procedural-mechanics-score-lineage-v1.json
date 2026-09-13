@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "historical-deep-procedural-mechanics-score-lineage-v1",
+  "candidateArtifact": {
+    "workflowRunId": "34731281176",
+    "artifactId": 10308234950,
+    "artifactName": "historical-deep-expansion-discovery-candidates-v2-99e73d4fa45a72317868d24dfa9ae55ed56f9316",
+    "artifactSha256": "41ca3d40144d6b125d618b32577d017d9b9c6c49405da40aaec478c8415274fd",
+    "headSha": "99e73d4fa45a72317868d24dfa9ae55ed56f9316",
+    "fileName": "historical-deep-expansion-discovery-candidates-v2.json"
+  },
+  "taxonomyArtifact": {
+    "workflowRunId": "34732079539",
+    "artifactId": 10310345988,
+    "artifactName": "historical-deep-procedural-mechanics-v1-a9b6b69ad8e705fbe929b15a9361f8018fa8ce19",
+    "artifactSha256": "9b632666ddf828874d5e1b28f540c8d6b81414122cf1bf56585bef43682320e9",
+    "headSha": "a9b6b69ad8e705fbe929b15a9361f8018fa8ce19",
+    "fileName": "historical-deep-procedural-mechanics-v1.json"
+  },
+  "outcomeArtifact": {
+    "workflowRunId": "34728183585",
+    "artifactId": 10308981046,
+    "artifactName": "historical-deep-expansion-discovery-score-39980f44b4d0d36270358ef9646f4e5d77330c2a",
+    "artifactSha256": "0487cbf826c1fe1dcbaf887b2850a94914aa9e8a6fdddcfff73483ef87c92471",
+    "headSha": "39980f44b4d0d36270358ef9646f4e5d77330c2a",
+    "fileName": "historical-deep-expansion-outcome-snapshot.json",
+    "originCandidateArtifactId": 10308141732,
+    "originCandidateArtifactSha256": "c752a3885921d086609b11e815cb7e122ba36a8521cb4d091c6c54aac8cdd4eb"
+  },
+  "policy": {
+    "taxonomy": "mn-house-procedural-mechanics-v1",
+    "evaluation": "naive-same-side-diagnostic-v1",
+    "outcomeUse": "post-taxonomy-freeze-development-scoring-only",
+    "probabilityAction": "none",
+    "notes": "The mechanics taxonomy was frozen on main before this scoring lineage was created. Outcomes are the preexisting immutable 24-event development snapshot; no new database read is allowed. The naive same-side diagnostic compares AYE/NAY on each mechanic separately to later YEA/NAY only as a descriptive reliability test. It does not make any mechanic mechanically actionable or map it to a production probability change."
+  }
+}
