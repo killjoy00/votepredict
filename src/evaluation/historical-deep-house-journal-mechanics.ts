@@ -216,17 +216,17 @@ function extractCaseMechanics(
   add(
     'introduced_and_referred',
     'introduced-first-reading-referral',
-    firstMatch(text, new RegExp(`(?:[A-Z][A-Za-z'.,\\- ]{1,180} introduced:\\s*)${bill},\\s*A bill[\\s\\S]{0,3_200}?The bill was read for the first time and referred to the Committee on [^.]+\\.`, 'i')),
+    firstMatch(text, new RegExp(`(?:[A-Z][A-Za-z'.,\\- ]{1,180} introduced:\\s*)${bill},\\s*A bill[\\s\\S]{0,3200}?The bill was read for the first time and referred to the Committee on [^.]+\\.`, 'i')),
   );
   add(
     'committee_advances_to_general_register',
     'standing-committee-general-register-report',
-    firstMatch(text, new RegExp(`from the Committee on [^:]{1,240} to which was referred:\\s*${bill},\\s*A bill[\\s\\S]{0,7_500}?Reported the same back with the recommendation that the bill be placed on the General Register\\.`, 'i')),
+    firstMatch(text, new RegExp(`from the Committee on [^:]{1,240} to which was referred:\\s*${bill},\\s*A bill[\\s\\S]{0,7500}?Reported the same back with the recommendation that the bill be placed on the General Register\\.`, 'i')),
   );
   add(
     'committee_routes_for_additional_review',
     'standing-committee-rereferral-report',
-    firstMatch(text, new RegExp(`from the Committee on [^:]{1,240} to which was referred:\\s*${bill},\\s*A bill[\\s\\S]{0,5_000}?Reported the same back with the recommendation that the bill be re-referred to the Committee on [^.]+\\.`, 'i')),
+    firstMatch(text, new RegExp(`from the Committee on [^:]{1,240} to which was referred:\\s*${bill},\\s*A bill[\\s\\S]{0,5000}?Reported the same back with the recommendation that the bill be re-referred to the Committee on [^.]+\\.`, 'i')),
   );
   add(
     'second_reading',
@@ -271,7 +271,7 @@ function extractCaseMechanics(
   add(
     'reaches_final_passage_stage',
     'direct-third-reading-final-passage-stage',
-    firstMatch(text, new RegExp(`${bill},\\s*A bill[\\s\\S]{0,6_000}?The bill was read for the third time[\\s\\S]{0,220}?(?:placed upon its final passage|final passage)`, 'i')),
+    firstMatch(text, new RegExp(`${bill},\\s*A bill[\\s\\S]{0,6000}?The bill was read for the third time[\\s\\S]{0,220}?(?:placed upon its final passage|final passage)`, 'i')),
   );
   add(
     'author_added',
