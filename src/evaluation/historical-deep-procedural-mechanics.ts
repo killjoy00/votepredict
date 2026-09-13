@@ -193,28 +193,30 @@ export function buildHistoricalDeepProceduralMechanicsArtifact(
     grouped.set(key, values);
   }
 
-  const pairs: HistoricalDeepProceduralMechanicsPair[] = [...grouped.values()].map((values) => {
-    const first = values[0];
-    return {
-      caseKey: first.caseKey,
-      stableKey: first.stableKey,
-      voteEventId: first.voteEventId,
-      identifier: first.identifier,
-      occurredOn: first.occurredOn,
-      membershipId: first.membershipId,
-      legislatorId: first.legislatorId,
-      memberName: first.memberName,
-      party: first.party,
-      selectedForCurrentDeep: first.selectedForCurrentDeep,
-      selectedForCandidateDeep: first.selectedForCandidateDeep,
-      observationCount: values.length,
-      voteSides: uniqueSorted(values.map((value) => value.voteSide)),
-      mechanics: MECHANIC_ORDER.filter((mechanic) => values.some((value) => value.mechanics.includes(mechanic))),
-      extractionRules: uniqueSorted(values.map((value) => value.extractionRule)),
-      mechanicallyActionable: false,
-      finalPassageInference: 'none',
-    };
-  }).sort((left, right) => left.stableKey.localeCompare(right.stableKey)
+  const pairs: HistoricalDeepProceduralMechanicsPair[] = [...grouped.values()].map(
+    (values): HistoricalDeepProceduralMechanicsPair => {
+      const first = values[0];
+      return {
+        caseKey: first.caseKey,
+        stableKey: first.stableKey,
+        voteEventId: first.voteEventId,
+        identifier: first.identifier,
+        occurredOn: first.occurredOn,
+        membershipId: first.membershipId,
+        legislatorId: first.legislatorId,
+        memberName: first.memberName,
+        party: first.party,
+        selectedForCurrentDeep: first.selectedForCurrentDeep,
+        selectedForCandidateDeep: first.selectedForCandidateDeep,
+        observationCount: values.length,
+        voteSides: uniqueSorted(values.map((value) => value.voteSide)),
+        mechanics: MECHANIC_ORDER.filter((mechanic) => values.some((value) => value.mechanics.includes(mechanic))),
+        extractionRules: uniqueSorted(values.map((value) => value.extractionRule)),
+        mechanicallyActionable: false,
+        finalPassageInference: 'none',
+      };
+    },
+  ).sort((left, right) => left.stableKey.localeCompare(right.stableKey)
     || left.legislatorId.localeCompare(right.legislatorId));
 
   if (pairs.length !== candidates.summary.memberCasePairsWithCandidates) {
