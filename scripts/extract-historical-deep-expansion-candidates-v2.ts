@@ -1,5 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
+import { applyHistoricalDeepExpansionV2LocalBillGuard } from '../src/evaluation/historical-deep-expansion-candidate-v2-guard.js';
 import { extractHistoricalDeepExpansionCandidatesV2 } from '../src/evaluation/historical-deep-expansion-extractor-v2.js';
 import type { HistoricalDeepExpansionDiscoveryManifest } from '../src/evaluation/historical-deep-expansion-discovery.js';
 import type { HistoricalDeepExpansionSourceBundle } from '../src/evaluation/historical-deep-expansion-source-bundle.js';
@@ -28,7 +29,8 @@ function main(): void {
   );
   const discovery = JSON.parse(readFileSync(discoveryPath, 'utf8')) as HistoricalDeepExpansionDiscoveryManifest;
   const sources = JSON.parse(readFileSync(sourcesPath, 'utf8')) as HistoricalDeepExpansionSourceBundle;
-  const result = extractHistoricalDeepExpansionCandidatesV2(discovery, sources);
+  const extracted = extractHistoricalDeepExpansionCandidatesV2(discovery, sources);
+  const result = applyHistoricalDeepExpansionV2LocalBillGuard(extracted, sources);
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, `${JSON.stringify(result, null, 2)}\n`, { mode: 0o600 });
   console.log(JSON.stringify({
