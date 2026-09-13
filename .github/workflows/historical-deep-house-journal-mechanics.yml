@@ -1,0 +1,106 @@
+name: Historical Deep House Journal mechanics
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/historical-deep-house-journal-mechanics.yml
+      - data/evaluation/historical-deep-house-journal-mechanics-lineage-v1.json
+      - scripts/classify-historical-deep-house-journal-mechanics.ts
+      - src/evaluation/historical-deep-house-journal-mechanics.ts
+      - tests/historical-deep-house-journal-mechanics.test.ts
+      - docs/evaluation/historical-deep-house-journal-mechanics-v1.md
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-deep-house-journal-mechanics.yml
+      - data/evaluation/historical-deep-house-journal-mechanics-lineage-v1.json
+      - scripts/classify-historical-deep-house-journal-mechanics.ts
+      - src/evaluation/historical-deep-house-journal-mechanics.ts
+      - tests/historical-deep-house-journal-mechanics.test.ts
+      - docs/evaluation/historical-deep-house-journal-mechanics-v1.md
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-house-journal-mechanics-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify pinned House Journal source artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-house-journal-mechanics-lineage-v1.json'
+          artifact_id="$(jq -r '.sourceArtifact.artifactId' "$lineage")"
+          artifact_sha256="$(jq -r '.sourceArtifact.artifactSha256' "$lineage")"
+          expected="sha256:${artifact_sha256}"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}" > "$RUNNER_TEMP/source-artifact.json"
+          test "$(jq -r '.expired' "$RUNNER_TEMP/source-artifact.json")" = 'false'
+          test "$(jq -r '.digest' "$RUNNER_TEMP/source-artifact.json")" = "$expected"
+          echo "source_run_id=$(jq -r '.sourceArtifact.workflowRunId' "$lineage")" >> "$GITHUB_ENV"
+          echo "source_name=$(jq -r '.sourceArtifact.artifactName' "$lineage")" >> "$GITHUB_ENV"
+          echo "source_file=$(jq -r '.sourceArtifact.fileName' "$lineage")" >> "$GITHUB_ENV"
+          echo "source_head_sha=$(jq -r '.sourceArtifact.headSha' "$lineage")" >> "$GITHUB_ENV"
+          echo "source_artifact_id=${artifact_id}" >> "$GITHUB_ENV"
+          echo "source_artifact_sha256=${artifact_sha256}" >> "$GITHUB_ENV"
+      - name: Download frozen House Journal source bundle
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.source_run_id }}
+          name: ${{ env.source_name }}
+          path: artifacts/frozen/house-journal-source
+      - name: Classify outcome-blind House Journal mechanics
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --import tsx scripts/classify-historical-deep-house-journal-mechanics.ts \
+            "artifacts/frozen/house-journal-source/${source_file}" \
+            "$source_artifact_id" \
+            "sha256:${source_artifact_sha256}" \
+            "$source_head_sha" \
+            artifacts/historical-deep-house-journal-mechanics-v1.json
+      - name: Verify mechanics guardrails
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='artifacts/historical-deep-house-journal-mechanics-v1.json'
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-deep-house-journal-mechanics-v1'
+          test "$(jq -r '.metadata.parser' "$file")" = 'deterministic-house-journal-mechanics-v1'
+          test "$(jq -r '.metadata.inputSourceSchema' "$file")" = 'historical-deep-house-journal-source-bundle-v1'
+          test "$(jq -r '.metadata.inputSourcePolicy' "$file")" = 'house-journal-archive-enumeration-v1'
+          test "$(jq -r '.metadata.outcomeUse' "$file")" = 'none'
+          test "$(jq -r '.metadata.holdoutUse' "$file")" = 'none'
+          test "$(jq -r '.metadata.probabilityAction' "$file")" = 'none'
+          test "$(jq -r '.input.selectedCases' "$file")" = '24'
+          test "$(jq -r '.input.sourcePages' "$file")" = '71'
+          test "$(jq -r '.input.sourceCasePairs' "$file")" = '110'
+          test "$(jq '[.observations[] | select(.mechanicallyActionable != false)] | length' "$file")" = '0'
+          test "$(jq '[.observations[] | select(.finalPassageInference != "none")] | length' "$file")" = '0'
+          test "$(jq '[.observations[] | select((.sourceContentSha256 | test("^[a-f0-9]{64}$")) | not)] | length' "$file")" = '0'
+          test "$(jq '[.observations[] | select(.journalDate >= .occurredOn)] | length' "$file")" = '0'
+          test "$(jq -r '.summary.observations' "$file")" -ge 1
+          test "$(jq -r '.summary.casesWithMechanics' "$file")" -ge 1
+      - name: Upload frozen House Journal mechanics artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-house-journal-mechanics-v1-${{ github.sha }}
+          path: artifacts/historical-deep-house-journal-mechanics-v1.json
+          if-no-files-found: error
+          retention-days: 30
