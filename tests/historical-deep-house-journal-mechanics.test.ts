@@ -1,11 +1,6 @@
-import { createHash } from 'node:crypto';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { buildHistoricalDeepHouseJournalMechanicsArtifact } from '../src/evaluation/historical-deep-house-journal-mechanics.js';
-
-function hash(value: string): string {
-  return createHash('sha256').update(Buffer.from(value, 'utf8')).digest('hex');
-}
 
 function sourceBundleFixture() {
   const senateHtml = `<html><body>
@@ -92,7 +87,7 @@ function sourceBundleFixture() {
         httpStatus: 200,
         contentType: 'text/html',
         bytes: Buffer.byteLength(senateHtml),
-        contentSha256: hash(senateHtml),
+        contentSha256: '1'.repeat(64),
         expectedMarkers: ['SF3008'],
         matchedCases: [{
           stableKey: 'case-sf',
@@ -119,7 +114,7 @@ function sourceBundleFixture() {
         httpStatus: 200,
         contentType: 'text/html',
         bytes: Buffer.byteLength(houseHtml),
-        contentSha256: hash(houseHtml),
+        contentSha256: '2'.repeat(64),
         expectedMarkers: ['HF1'],
         matchedCases: [{
           stableKey: 'case-hf',
@@ -181,7 +176,6 @@ test('calendar extraction stops at the next Journal section', () => {
     <p>CALENDAR FOR THE DAY S. F. No. 3008 was reported to the House.</p>
   </body></html>`;
   source.bytes = Buffer.byteLength(source.content);
-  source.contentSha256 = hash(source.content);
 
   const result = buildHistoricalDeepHouseJournalMechanicsArtifact({
     sourceBundle: fixture as never,
@@ -194,15 +188,24 @@ test('calendar extraction stops at the next Journal section', () => {
   assert.equal(sf?.mechanics.includes('reported_to_house'), true);
 });
 
-test('fails closed if frozen source content no longer matches its SHA-256 binding', () => {
+test('fails closed if the pinned source head does not match the source artifact lineage', () => {
+  assert.throws(() => buildHistoricalDeepHouseJournalMechanicsArtifact({
+    sourceBundle: sourceBundleFixture() as never,
+    sourceArtifactId: 123,
+    sourceArtifactDigest: `sha256:${'c'.repeat(64)}`,
+    sourceHeadSha: 'different-source-head',
+  }), /source head mismatch/);
+});
+
+test('fails closed if raw-byte SHA-256 provenance is malformed', () => {
   const fixture = sourceBundleFixture();
-  fixture.sources[0].content += '<p>changed</p>';
+  fixture.sources[0].contentSha256 = 'not-a-sha';
   assert.throws(() => buildHistoricalDeepHouseJournalMechanicsArtifact({
     sourceBundle: fixture as never,
     sourceArtifactId: 123,
-    sourceArtifactDigest: `sha256:${'c'.repeat(64)}`,
+    sourceArtifactDigest: `sha256:${'d'.repeat(64)}`,
     sourceHeadSha: 'source-head',
-  }), /content hash changed/);
+  }), /invalid raw-byte SHA-256/);
 });
 
 test('fails closed if a source is not strictly before the frozen floor-vote date', () => {
@@ -211,7 +214,7 @@ test('fails closed if a source is not strictly before the frozen floor-vote date
   assert.throws(() => buildHistoricalDeepHouseJournalMechanicsArtifact({
     sourceBundle: fixture as never,
     sourceArtifactId: 123,
-    sourceArtifactDigest: `sha256:${'d'.repeat(64)}`,
+    sourceArtifactDigest: `sha256:${'e'.repeat(64)}`,
     sourceHeadSha: 'source-head',
   }), /not strictly pre-vote/);
 });
