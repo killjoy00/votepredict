@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "historical-deep-house-journal-mechanics-score-lineage-v1",
+  "discoveryManifest": {
+    "workflowRunId": "34727649103",
+    "artifactId": 10308004770,
+    "artifactName": "historical-deep-expansion-discovery-manifest-03463b728ed30540c8a840f214d56ccd70578b6f",
+    "artifactSha256": "084c5d38b41ef8532e67a076c585fd9e9e36e14babe9c8fc2dbebd20e1313cb0",
+    "headSha": "03463b728ed30540c8a840f214d56ccd70578b6f",
+    "fileName": "historical-deep-expansion-discovery-manifest.json"
+  },
+  "mechanicsArtifact": {
+    "workflowRunId": "34778905021",
+    "artifactId": 10324485900,
+    "artifactName": "historical-deep-house-journal-mechanics-v1-c3de5f8e06e411b661ab3cda7e92b174005c0d2c",
+    "artifactSha256": "b65eff9cbc1302906c5131b8d41222df9b161e34c55bbfeaeb12ade2a07d1de6",
+    "headSha": "c3de5f8e06e411b661ab3cda7e92b174005c0d2c",
+    "fileName": "historical-deep-house-journal-mechanics-v1.json"
+  },
+  "outcomeArtifact": {
+    "workflowRunId": "34728183585",
+    "artifactId": 10308981046,
+    "artifactName": "historical-deep-expansion-discovery-score-39980f44b4d0d36270358ef9646f4e5d77330c2a",
+    "artifactSha256": "0487cbf826c1fe1dcbaf887b2850a94914aa9e8a6fdddcfff73483ef87c92471",
+    "headSha": "39980f44b4d0d36270358ef9646f4e5d77330c2a",
+    "fileName": "historical-deep-expansion-outcome-snapshot.json",
+    "originCandidateArtifactId": 10308141732,
+    "originCandidateArtifactSha256": "c752a3885921d086609b11e815cb7e122ba36a8521cb4d091c6c54aac8cdd4eb"
+  },
+  "policy": {
+    "evaluation": "mechanic-conditioned-quick-residual-diagnostic-v1",
+    "outcomeUse": "post-mechanics-freeze-development-scoring-only",
+    "probabilityAction": "none",
+    "actionabilityDecision": "none",
+    "notes": "The Quick discovery manifest and House Journal mechanics taxonomy were both frozen outcome-blind before this lineage was created. The 24-case development outcome snapshot already existed independently. This stage only stratifies frozen Quick member probabilities and decisive member outcomes by frozen bill-level Journal mechanics, reports overlap and recency, and may not create evidence weights, actionability, target changes, or production probability changes."
+  }
+}
