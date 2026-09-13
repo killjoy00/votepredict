@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "historical-deep-expansion-source-lineage-v1",
+  "cohortArtifact": {
+    "workflowRunId": "34726851111",
+    "artifactId": 10307649483,
+    "artifactName": "historical-deep-expansion-cohort-2b2c143a96a21bd61da7d5932a13ae0133707c95",
+    "artifactSha256": "7b1cc8e6f7628f73b3f5a444078301c11cf466c617eeeea5cd636b5d600917b2",
+    "headSha": "2b2c143a96a21bd61da7d5932a13ae0133707c95",
+    "fileName": "historical-deep-expansion-cohort.json"
+  },
+  "archivePolicy": {
+    "name": "house-committee-archive-enumeration-v1",
+    "sessions": {
+      "2021-2022": { "committeeIdStart": 92001, "committeeIdEnd": 92099 },
+      "2023-2024": { "committeeIdStart": 93001, "committeeIdEnd": 93099 }
+    },
+    "notes": "The cohort is immutable before source discovery. Committee home pages are enumerated by fixed ID ranges and used only to route to exact official committee-minutes pages. No bill search, search ranking, floor outcome, or source-availability replacement is allowed."
+  }
+}
