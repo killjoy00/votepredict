@@ -4,6 +4,7 @@ import type { HistoricalDeepExpansionCohort } from '../src/evaluation/historical
 import {
   buildHistoricalDeepHouseJournalSourceBundle,
   collectHistoricalDeepHouseJournalSource,
+  historicalDeepHouseJournalContainsIdentifier,
   matchHistoricalDeepHouseJournalCases,
   parseHistoricalDeepHouseJournalDate,
   parseHistoricalDeepHouseJournalIndex,
@@ -108,6 +109,14 @@ test('parses dated official House Journal HTML links from a session archive inde
       fileName: 'J0510106.htm',
     },
   ]);
+});
+
+test('matches exact official House Journal bill notation without broadening identifiers', () => {
+  assert.equal(historicalDeepHouseJournalContainsIdentifier('<p>S. F. No. 3008</p>', 'SF3008'), true);
+  assert.equal(historicalDeepHouseJournalContainsIdentifier('<p>H. F. No. 1</p>', 'HF1'), true);
+  assert.equal(historicalDeepHouseJournalContainsIdentifier('<p>SF3008</p>', 'SF3008'), true);
+  assert.equal(historicalDeepHouseJournalContainsIdentifier('<p>H. F. No. 3008</p>', 'SF3008'), false);
+  assert.equal(historicalDeepHouseJournalContainsIdentifier('<p>S. F. No. 3009</p>', 'SF3008'), false);
 });
 
 test('proves the exact journal page date and enforces previous-day cutoff', () => {
