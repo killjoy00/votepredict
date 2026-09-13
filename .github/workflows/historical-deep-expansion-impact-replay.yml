@@ -1,0 +1,143 @@
+name: Historical Deep expansion impact replay
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/historical-deep-expansion-impact-replay.yml
+      - data/evaluation/historical-deep-expansion-impact-lineage-v1.json
+      - scripts/evaluate-historical-deep-expansion-impact-replay.ts
+      - src/evaluation/historical-deep-expansion-impact-replay.ts
+      - src/evaluation/historical-deep-impact-replay.ts
+      - src/evidence/historical-archive-provider.ts
+      - src/evidence/policy.ts
+      - src/evidence/impact.ts
+      - tests/historical-deep-expansion-impact-replay.test.ts
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-deep-expansion-impact-replay.yml
+      - data/evaluation/historical-deep-expansion-impact-lineage-v1.json
+      - scripts/evaluate-historical-deep-expansion-impact-replay.ts
+      - src/evaluation/historical-deep-expansion-impact-replay.ts
+      - src/evaluation/historical-deep-impact-replay.ts
+      - src/evidence/historical-archive-provider.ts
+      - src/evidence/policy.ts
+      - src/evidence/impact.ts
+      - tests/historical-deep-expansion-impact-replay.test.ts
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-expansion-impact-replay-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify all immutable replay artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-expansion-impact-lineage-v1.json'
+          verify_artifact() {
+            local section="$1"
+            local id expected actual expired
+            id="$(jq -r ".${section}.artifactId" "$lineage")"
+            expected="sha256:$(jq -r ".${section}.artifactSha256" "$lineage")"
+            gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}" > "$RUNNER_TEMP/${section}.json"
+            actual="$(jq -r '.digest // empty' "$RUNNER_TEMP/${section}.json")"
+            expired="$(jq -r '.expired' "$RUNNER_TEMP/${section}.json")"
+            test "$expired" = 'false'
+            test "$actual" = "$expected"
+            echo "${section}_run_id=$(jq -r ".${section}.workflowRunId" "$lineage")" >> "$GITHUB_ENV"
+            echo "${section}_name=$(jq -r ".${section}.artifactName" "$lineage")" >> "$GITHUB_ENV"
+          }
+          verify_artifact discoveryManifest
+          verify_artifact sourceBundle
+          verify_artifact candidateArtifact
+          verify_artifact outcomeScoreArtifact
+      - name: Download frozen expansion discovery manifest
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.discoveryManifest_run_id }}
+          name: ${{ env.discoveryManifest_name }}
+          path: artifacts/frozen/discovery
+      - name: Download frozen official expansion source bundle
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.sourceBundle_run_id }}
+          name: ${{ env.sourceBundle_name }}
+          path: artifacts/frozen/sources
+      - name: Download frozen expansion candidates
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.candidateArtifact_run_id }}
+          name: ${{ env.candidateArtifact_name }}
+          path: artifacts/frozen/candidates
+      - name: Download frozen post-discovery outcomes and signal score
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.outcomeScoreArtifact_run_id }}
+          name: ${{ env.outcomeScoreArtifact_name }}
+          path: artifacts/frozen/outcomes
+      - name: Verify replay boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(jq -r '.schemaVersion' artifacts/frozen/discovery/historical-deep-expansion-discovery-manifest.json)" = 'historical-deep-expansion-discovery-manifest-v1'
+          test "$(jq -r '.schemaVersion' artifacts/frozen/sources/historical-deep-expansion-source-bundle.json)" = 'historical-deep-expansion-source-bundle-v1'
+          test "$(jq -r '.schemaVersion' artifacts/frozen/candidates/historical-deep-expansion-discovery-candidates.json)" = 'historical-deep-expansion-discovery-candidates-v1'
+          test "$(jq -r '.metadata.outcomeUse' artifacts/frozen/candidates/historical-deep-expansion-discovery-candidates.json)" = 'none'
+          test "$(jq -r '.schemaVersion' artifacts/frozen/outcomes/historical-deep-expansion-outcome-snapshot.json)" = 'historical-deep-expansion-outcome-snapshot-v1'
+          test "$(jq -r '.schemaVersion' artifacts/frozen/outcomes/historical-deep-expansion-discovery-score.json)" = 'historical-deep-expansion-discovery-score-v1'
+          test "$(jq -r '.candidateArtifact.artifactId' artifacts/frozen/outcomes/historical-deep-expansion-outcome-snapshot.json)" = '10308141732'
+          test "$(jq -r '.candidateArtifact.artifactSha256' artifacts/frozen/outcomes/historical-deep-expansion-outcome-snapshot.json)" = 'c752a3885921d086609b11e815cb7e122ba36a8521cb4d091c6c54aac8cdd4eb'
+      - name: Replay frozen evidence through unchanged production impact
+        run: |
+          node --import tsx scripts/evaluate-historical-deep-expansion-impact-replay.ts \
+            artifacts/frozen/discovery/historical-deep-expansion-discovery-manifest.json \
+            artifacts/frozen/candidates/historical-deep-expansion-discovery-candidates.json \
+            artifacts/frozen/sources/historical-deep-expansion-source-bundle.json \
+            artifacts/frozen/outcomes/historical-deep-expansion-outcome-snapshot.json \
+            artifacts/frozen/outcomes/historical-deep-expansion-discovery-score.json \
+            artifacts/historical-deep-expansion-impact-replay.json
+      - name: Verify unchanged impact version and scenario budget
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='artifacts/historical-deep-expansion-impact-replay.json'
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-deep-expansion-impact-replay-v1'
+          test "$(jq -r '.metadata.impactVersion' "$file")" = 'logit-evidence-v1'
+          test "$(jq -r '.metadata.candidateStrategy' "$file")" = 'need-only'
+          test "$(jq -r '.metadata.targetLimit' "$file")" = '12'
+          test "$(jq -r '.input.discoveryCases' "$file")" = '24'
+          test "$(jq -r '.scenarios["current-targets"].requestedTargets' "$file")" = '288'
+          test "$(jq -r '.scenarios["need-only-targets"].requestedTargets' "$file")" = '288'
+      - name: Upload final expansion impact replay
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-expansion-impact-replay-${{ github.sha }}
+          path: artifacts/historical-deep-expansion-impact-replay.json
+          if-no-files-found: error
+          retention-days: 30
