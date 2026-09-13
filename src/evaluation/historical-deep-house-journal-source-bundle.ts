@@ -182,9 +182,11 @@ export function parseHistoricalDeepHouseJournalIndex(
 
   const links: HistoricalDeepHouseJournalLink[] = [];
   const seen = new Set<string>();
-  const anchor = /<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>/gi;
+  const anchor = /<a\b[^>]*href\s*=\s*(?:["']([^"']+)["']|([^\s>]+))[^>]*>/gi;
   for (const match of html.matchAll(anchor)) {
-    const identity = journalIdentity(match[1], session);
+    const rawHref = match[1] ?? match[2];
+    if (!rawHref) continue;
+    const identity = journalIdentity(rawHref, session);
     if (!identity || seen.has(identity.url)) continue;
     const before = historicalDeepExpansionHtmlText(html.slice(Math.max(0, (match.index ?? 0) - 900), match.index ?? 0));
     const journalDate = latestLongDate(before);
