@@ -1,0 +1,131 @@
+name: Historical Deep expansion source-gap audit
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/historical-deep-expansion-source-gap-audit.yml
+      - data/evaluation/historical-deep-expansion-source-gap-audit-lineage-v1.json
+      - scripts/audit-historical-deep-expansion-source-gaps.ts
+      - src/evaluation/historical-deep-expansion-source-gap-audit.ts
+      - tests/historical-deep-expansion-source-gap-audit.test.ts
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-deep-expansion-source-gap-audit.yml
+      - data/evaluation/historical-deep-expansion-source-gap-audit-lineage-v1.json
+      - scripts/audit-historical-deep-expansion-source-gaps.ts
+      - src/evaluation/historical-deep-expansion-source-gap-audit.ts
+      - tests/historical-deep-expansion-source-gap-audit.test.ts
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-expansion-source-gap-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify immutable upstream artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-expansion-source-gap-audit-lineage-v1.json'
+          for key in sourceBundleArtifact candidateBundleArtifact; do
+            id="$(jq -r ".${key}.artifactId" "$lineage")"
+            expected="sha256:$(jq -r ".${key}.artifactSha256" "$lineage")"
+            gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}" > "$RUNNER_TEMP/${key}.json"
+            test "$(jq -r '.expired' "$RUNNER_TEMP/${key}.json")" = 'false'
+            test "$(jq -r '.digest' "$RUNNER_TEMP/${key}.json")" = "$expected"
+          done
+          echo "source_run_id=$(jq -r '.sourceBundleArtifact.workflowRunId' "$lineage")" >> "$GITHUB_ENV"
+          echo "source_name=$(jq -r '.sourceBundleArtifact.artifactName' "$lineage")" >> "$GITHUB_ENV"
+          echo "candidate_run_id=$(jq -r '.candidateBundleArtifact.workflowRunId' "$lineage")" >> "$GITHUB_ENV"
+          echo "candidate_name=$(jq -r '.candidateBundleArtifact.artifactName' "$lineage")" >> "$GITHUB_ENV"
+      - name: Download frozen source bundle
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.source_run_id }}
+          name: ${{ env.source_name }}
+          path: artifacts/frozen/source
+      - name: Download frozen parser-v2 candidates
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.candidate_run_id }}
+          name: ${{ env.candidate_name }}
+          path: artifacts/frozen/candidates
+      - name: Verify outcome-blind coverage inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          source='artifacts/frozen/source/historical-deep-expansion-source-bundle.json'
+          candidates='artifacts/frozen/candidates/historical-deep-expansion-discovery-candidates-v2.json'
+          test "$(jq -r '.schemaVersion' "$source")" = 'historical-deep-expansion-source-bundle-v1'
+          test "$(jq -r '.metadata.sourcePolicy' "$source")" = 'house-committee-archive-enumeration-v1'
+          test "$(jq -r '.input.selectedCases' "$source")" = '24'
+          test "$(jq -r '.summary.matchedSourcePages' "$source")" = '49'
+          test "$(jq -r '.summary.sourceCaseMatches' "$source")" = '51'
+          test "$(jq -r '.summary.casesWithSources' "$source")" = '19'
+          test "$(jq -r '.summary.casesWithoutSources' "$source")" = '5'
+          test "$(jq -r '.schemaVersion' "$candidates")" = 'historical-deep-expansion-discovery-candidates-v2'
+          test "$(jq -r '.metadata.parser' "$candidates")" = 'deterministic-house-committee-roll-call-v2'
+          test "$(jq -r '.metadata.outcomeUse' "$candidates")" = 'none'
+          test "$(jq -r '.summary.candidateCount' "$candidates")" = '212'
+          test "$(jq -r '.summary.casesWithCandidates' "$candidates")" = '9'
+      - name: Audit source and extraction gaps
+        run: |
+          node --import tsx scripts/audit-historical-deep-expansion-source-gaps.ts \
+            artifacts/frozen/source/historical-deep-expansion-source-bundle.json \
+            artifacts/frozen/candidates/historical-deep-expansion-discovery-candidates-v2.json \
+            artifacts/historical-deep-expansion-source-gap-audit-v1.json
+      - name: Verify frozen gap result
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='artifacts/historical-deep-expansion-source-gap-audit-v1.json'
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-deep-expansion-source-gap-audit-v1'
+          test "$(jq -r '.metadata.outcomeUse' "$file")" = 'none'
+          test "$(jq -r '.metadata.probabilityAction' "$file")" = 'none'
+          test "$(jq -r '.summary.cases' "$file")" = '24'
+          test "$(jq -r '.summary.casesWithOfficialSources' "$file")" = '19'
+          test "$(jq -r '.summary.casesWithoutOfficialSources' "$file")" = '5'
+          test "$(jq -r '.summary.casesWithCandidates' "$file")" = '9'
+          test "$(jq -r '.summary.casesWithSourcesButNoCandidates' "$file")" = '10'
+          test "$(jq -r '.summary.bySession["2021-2022"].missingOfficialSource' "$file")" = '5'
+          test "$(jq -r '.summary.bySession["2021-2022"].sourceWithoutCandidate' "$file")" = '0'
+          test "$(jq -r '.summary.bySession["2021-2022"].candidateCovered' "$file")" = '7'
+          test "$(jq -r '.summary.bySession["2023-2024"].missingOfficialSource' "$file")" = '0'
+          test "$(jq -r '.summary.bySession["2023-2024"].sourceWithoutCandidate' "$file")" = '10'
+          test "$(jq -r '.summary.bySession["2023-2024"].candidateCovered' "$file")" = '2'
+          test "$(jq -r '.summary.byBillPrefix.HF.cases' "$file")" = '17'
+          test "$(jq -r '.summary.byBillPrefix.HF.missingOfficialSource' "$file")" = '0'
+          test "$(jq -r '.summary.byBillPrefix.HF.sourceWithoutCandidate' "$file")" = '8'
+          test "$(jq -r '.summary.byBillPrefix.HF.candidateCovered' "$file")" = '9'
+          test "$(jq -r '.summary.byBillPrefix.SF.cases' "$file")" = '7'
+          test "$(jq -r '.summary.byBillPrefix.SF.missingOfficialSource' "$file")" = '5'
+          test "$(jq -r '.summary.byBillPrefix.SF.sourceWithoutCandidate' "$file")" = '2'
+          test "$(jq -r '.summary.byBillPrefix.SF.candidateCovered' "$file")" = '0'
+      - name: Upload immutable source-gap audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-expansion-source-gap-audit-v1-${{ github.sha }}
+          path: artifacts/historical-deep-expansion-source-gap-audit-v1.json
+          if-no-files-found: error
+          retention-days: 30
