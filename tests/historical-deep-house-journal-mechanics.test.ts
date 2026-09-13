@@ -14,6 +14,7 @@ function sourceBundleFixture() {
   const houseHtml = `<html><body>
     <p>Nelson from the Committee on State Government Finance and Elections to which was referred: H. F. No. 1, A bill for an act relating to a fixture. Reported the same back with the recommendation that the bill be placed on the General Register.</p>
     <p>The report was adopted.</p>
+    <p>Smith from the Committee on Transportation Finance and Policy to which was referred: H. F. No. 2, A bill for an act relating to another fixture. Reported the same back with the recommendation that the bill be re-referred to the Committee on Ways and Means.</p>
     <p>H. F. No. 1 was reported to the House.</p>
     <p>Long moved that H. F. No. 1 be laid on the table. The motion prevailed.</p>
     <p>H. F. No. 1, A bill for an act relating to a fixture. The bill was read for the third time and placed upon its final passage. The question was taken on passage and the roll was called. There were 99 yeas and 1 nay.</p>
@@ -161,6 +162,7 @@ test('extracts deterministic House Journal process mechanics without actionabili
     'laid_on_table',
     'reaches_final_passage_stage',
   ]);
+  assert.equal(hf?.mechanics.includes('committee_routes_for_additional_review'), false);
 
   const finalStage = result.observations.find((item) => item.mechanic === 'reaches_final_passage_stage');
   assert.ok(finalStage);
@@ -188,11 +190,30 @@ test('calendar extraction stops at the next Journal section', () => {
   assert.equal(sf?.mechanics.includes('reported_to_house'), true);
 });
 
+test('final-passage stage does not cross into the next bill block', () => {
+  const fixture = sourceBundleFixture();
+  const source = fixture.sources[0];
+  source.content = `<html><body>
+    <p>S. F. No. 3008, A bill for an act relating to the target. The bill was read for the first time.</p>
+    <p>H. F. No. 7, A bill for an act relating to another matter. The bill was read for the third time and placed upon its final passage. The roll was called.</p>
+  </body></html>`;
+  source.bytes = Buffer.byteLength(source.content);
+
+  const result = buildHistoricalDeepHouseJournalMechanicsArtifact({
+    sourceBundle: fixture as never,
+    sourceArtifactId: 123,
+    sourceArtifactDigest: `sha256:${'c'.repeat(64)}`,
+    sourceHeadSha: 'source-head',
+  });
+  const sf = result.cases.find((item) => item.identifier === 'SF3008');
+  assert.equal(sf?.mechanics.includes('reaches_final_passage_stage'), false);
+});
+
 test('fails closed if the pinned source head does not match the source artifact lineage', () => {
   assert.throws(() => buildHistoricalDeepHouseJournalMechanicsArtifact({
     sourceBundle: sourceBundleFixture() as never,
     sourceArtifactId: 123,
-    sourceArtifactDigest: `sha256:${'c'.repeat(64)}`,
+    sourceArtifactDigest: `sha256:${'d'.repeat(64)}`,
     sourceHeadSha: 'different-source-head',
   }), /source head mismatch/);
 });
@@ -203,7 +224,7 @@ test('fails closed if raw-byte SHA-256 provenance is malformed', () => {
   assert.throws(() => buildHistoricalDeepHouseJournalMechanicsArtifact({
     sourceBundle: fixture as never,
     sourceArtifactId: 123,
-    sourceArtifactDigest: `sha256:${'d'.repeat(64)}`,
+    sourceArtifactDigest: `sha256:${'e'.repeat(64)}`,
     sourceHeadSha: 'source-head',
   }), /invalid raw-byte SHA-256/);
 });
@@ -214,7 +235,7 @@ test('fails closed if a source is not strictly before the frozen floor-vote date
   assert.throws(() => buildHistoricalDeepHouseJournalMechanicsArtifact({
     sourceBundle: fixture as never,
     sourceArtifactId: 123,
-    sourceArtifactDigest: `sha256:${'e'.repeat(64)}`,
+    sourceArtifactDigest: `sha256:${'f'.repeat(64)}`,
     sourceHeadSha: 'source-head',
   }), /not strictly pre-vote/);
 });
