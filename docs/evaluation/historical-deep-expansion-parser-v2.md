@@ -19,6 +19,12 @@ V2 preserves every v1 candidate and adds only these exact-bill, named-member com
 
 The parser still rejects amendments, voice votes, bare `motion prevailed` text without named members, unrelated roll calls, post-cutoff material, source hash mismatches, and unresolved member names. It does not infer the votes of members absent from a named list.
 
+### Local bill-section guard
+
+An outcome-blind inspection of the first v2 candidate artifact exposed an official-minute copy/paste error: inside the HF4394 section, a renewed motion line repeated `HF1829`. To avoid treating that kind of official text typo as reliable bill identity, supplemental v2 candidates are rejected when the nearest preceding local bill reference within 12 parsed lines identifies a different bill. V1 candidates remain untouched so the v1 baseline stays reproducible.
+
+This guard uses only the already-frozen source text. It does not consult floor outcomes or later information.
+
 ## Frozen lineage
 
 `data/evaluation/historical-deep-expansion-candidate-lineage-v2.json` pins the same immutable inputs as v1:
@@ -26,7 +32,7 @@ The parser still rejects amendments, voice votes, bare `motion prevailed` text w
 - outcome-free expansion discovery manifest: workflow run `34727649103`, artifact `10308004770`, SHA-256 `084c5d38b41ef8532e67a076c585fd9e9e36e14babe9c8fc2dbebd20e1313cb0`;
 - official expansion source bundle: workflow run `34727446742`, artifact `10307974620`, SHA-256 `6d522eddcb3b6a92b413c9f19e6db189c0412e76760663173f95cf2f220bf1cf`.
 
-The dedicated workflow re-verifies both artifact digests, runs parser v2 offline, rejects any artifact containing floor-outcome fields, and freezes the resulting candidate artifact separately from v1.
+The dedicated workflow re-verifies both artifact digests, runs parser v2 plus the local bill-section guard offline, rejects any artifact containing floor-outcome fields, and freezes the resulting candidate artifact separately from v1.
 
 ## Evaluation order
 
