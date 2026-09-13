@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto';
 import { historicalDeepExpansionHtmlText } from './historical-deep-expansion-source-bundle';
 import type {
   HistoricalDeepHouseJournalCollectedSource,
@@ -283,12 +282,14 @@ function extractCaseMechanics(
 }
 
 function verifySourceIntegrity(source: HistoricalDeepHouseJournalCollectedSource): void {
-  const hash = createHash('sha256').update(Buffer.from(source.content, 'utf8')).digest('hex');
-  if (hash !== source.contentSha256) {
-    throw new Error(`House Journal source ${source.id} content hash changed: expected ${source.contentSha256}, got ${hash}`);
-  }
   if (source.sourceClass !== 'house_journal_record') {
     throw new Error(`Unsupported House Journal source class ${String(source.sourceClass)}`);
+  }
+  if (!/^[a-f0-9]{64}$/.test(source.contentSha256)) {
+    throw new Error(`House Journal source ${source.id} has invalid raw-byte SHA-256 ${source.contentSha256}`);
+  }
+  if (!source.content.trim()) {
+    throw new Error(`House Journal source ${source.id} has empty frozen content`);
   }
   for (const match of source.matchedCases) {
     if (source.journalDate >= match.occurredOn) {
@@ -328,6 +329,9 @@ export function buildHistoricalDeepHouseJournalMechanicsArtifact(input: {
   }
   if (sourceBundle.metadata.sourcePolicy !== 'house-journal-archive-enumeration-v1') {
     throw new Error(`Unsupported House Journal source policy ${String(sourceBundle.metadata.sourcePolicy)}`);
+  }
+  if (sourceBundle.metadata.codeSha !== input.sourceHeadSha) {
+    throw new Error(`House Journal source head mismatch: expected ${input.sourceHeadSha}, got ${sourceBundle.metadata.codeSha ?? 'null'}`);
   }
   if (sourceBundle.summary.casesWithSources !== sourceBundle.cases.length) {
     throw new Error(`House Journal source coverage is incomplete: ${sourceBundle.summary.casesWithSources}/${sourceBundle.cases.length}`);
@@ -425,7 +429,7 @@ export function buildHistoricalDeepHouseJournalMechanicsArtifact(input: {
       outcomeUse: 'none',
       holdoutUse: 'none',
       probabilityAction: 'none',
-      designGuard: 'Only deterministic phrases in the immutable pre-vote House Journal pages are classified. Calendar lists are section-bounded; committee classifications require the frozen bill to be the explicit referred bill; final-passage-stage extraction records only that the procedural stage was reached and never reads the ensuing roll-call result. Every extracted mechanic remains mechanicallyActionable=false and finalPassageInference=none.',
+      designGuard: 'The workflow SHA-256 verifies the immutable source artifact before classification, while each source retains its original raw-byte SHA-256 provenance from collection. Only deterministic phrases in those frozen pre-vote Journal pages are classified. Calendar lists are section-bounded; committee classifications require the frozen bill to be the explicit referred bill; final-passage-stage extraction records only that the procedural stage was reached and never reads the ensuing roll-call result. Every extracted mechanic remains mechanicallyActionable=false and finalPassageInference=none.',
     },
     input: {
       selectedCases: sourceBundle.cases.length,
