@@ -1,0 +1,123 @@
+name: Historical Deep expansion discovery score v2
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/historical-deep-expansion-discovery-score-v2.yml
+      - data/evaluation/historical-deep-expansion-scoring-lineage-v2.json
+      - scripts/score-historical-deep-expansion-discovery-v2.ts
+      - src/evaluation/historical-deep-expansion-outcome-scorer-v2.ts
+      - tests/historical-deep-expansion-outcome-scorer-v2.test.ts
+      - docs/evaluation/historical-deep-expansion-outcome-score-v2.md
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-deep-expansion-discovery-score-v2.yml
+      - data/evaluation/historical-deep-expansion-scoring-lineage-v2.json
+      - scripts/score-historical-deep-expansion-discovery-v2.ts
+      - src/evaluation/historical-deep-expansion-outcome-scorer-v2.ts
+      - tests/historical-deep-expansion-outcome-scorer-v2.test.ts
+      - docs/evaluation/historical-deep-expansion-outcome-score-v2.md
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-expansion-discovery-score-v2-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify immutable candidate and outcome artifact digests
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-expansion-scoring-lineage-v2.json'
+          verify_artifact() {
+            local section="$1"
+            local id expected actual expired
+            id="$(jq -r ".${section}.artifactId" "$lineage")"
+            expected="sha256:$(jq -r ".${section}.artifactSha256" "$lineage")"
+            gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}" > "$RUNNER_TEMP/${section}.json"
+            actual="$(jq -r '.digest // empty' "$RUNNER_TEMP/${section}.json")"
+            expired="$(jq -r '.expired' "$RUNNER_TEMP/${section}.json")"
+            test "$expired" = 'false'
+            test "$actual" = "$expected"
+            echo "${section}_run_id=$(jq -r ".${section}.workflowRunId" "$lineage")" >> "$GITHUB_ENV"
+            echo "${section}_name=$(jq -r ".${section}.artifactName" "$lineage")" >> "$GITHUB_ENV"
+          }
+          verify_artifact candidateArtifact
+          verify_artifact outcomeArtifact
+      - name: Download frozen guarded parser-v2 candidates
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.candidateArtifact_run_id }}
+          name: ${{ env.candidateArtifact_name }}
+          path: artifacts/frozen/candidates-v2
+      - name: Download preexisting frozen expansion outcomes
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.outcomeArtifact_run_id }}
+          name: ${{ env.outcomeArtifact_name }}
+          path: artifacts/frozen/outcomes
+      - name: Verify frozen scoring boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-expansion-scoring-lineage-v2.json'
+          candidate='artifacts/frozen/candidates-v2/historical-deep-expansion-discovery-candidates-v2.json'
+          outcome='artifacts/frozen/outcomes/historical-deep-expansion-outcome-snapshot.json'
+          test "$(jq -r '.schemaVersion' "$candidate")" = 'historical-deep-expansion-discovery-candidates-v2'
+          test "$(jq -r '.metadata.parser' "$candidate")" = 'deterministic-house-committee-roll-call-v2'
+          test "$(jq -r '.metadata.outcomeUse' "$candidate")" = 'none'
+          test "$(jq -r '.summary.candidateCount' "$candidate")" = '212'
+          test "$(jq -r '.summary.memberCasePairsWithCandidates' "$candidate")" = '190'
+          test "$(jq '[.. | objects | select(has("actualOutcome") or has("actualYes") or has("passed") or has("yeaCount") or has("nayCount"))] | length' "$candidate")" = '0'
+          test "$(jq -r '.schemaVersion' "$outcome")" = 'historical-deep-expansion-outcome-snapshot-v1'
+          test "$(jq '.cases | length' "$outcome")" = '24'
+          test "$(jq -r '.candidateArtifact.artifactId' "$outcome")" = "$(jq -r '.outcomeArtifact.originCandidateArtifactId' "$lineage")"
+          test "$(jq -r '.candidateArtifact.artifactSha256' "$outcome")" = "$(jq -r '.outcomeArtifact.originCandidateArtifactSha256' "$lineage")"
+      - name: Score frozen parser-v2 candidates against frozen outcomes
+        run: |
+          node --import tsx scripts/score-historical-deep-expansion-discovery-v2.ts \
+            artifacts/frozen/candidates-v2/historical-deep-expansion-discovery-candidates-v2.json \
+            artifacts/frozen/outcomes/historical-deep-expansion-outcome-snapshot.json \
+            artifacts/historical-deep-expansion-discovery-score-v2.json
+      - name: Verify score partition and unchanged classifier policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='artifacts/historical-deep-expansion-discovery-score-v2.json'
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-deep-expansion-discovery-score-v2'
+          test "$(jq -r '.metadata.candidateParser' "$file")" = 'deterministic-house-committee-roll-call-v2'
+          test "$(jq -r '.metadata.signalClassifier' "$file")" = 'historical-deep-outcome-scorer-v1-unchanged'
+          test "$(jq -r '.summary.candidateObservations' "$file")" = '212'
+          test "$(jq -r '.summary.memberCasePairs' "$file")" = '190'
+          test "$(jq -r '.summary.baselineCandidateObservations' "$file")" = '24'
+          test "$(jq -r '.summary.supplementalCandidateObservations' "$file")" = '188'
+          partition="$(jq '.summary.directionalPairs + .summary.conflictingPairs + .summary.ambiguousOnlyPairs' "$file")"
+          test "$partition" = '190'
+      - name: Upload frozen parser-v2 score
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-expansion-discovery-score-v2-${{ github.sha }}
+          path: artifacts/historical-deep-expansion-discovery-score-v2.json
+          if-no-files-found: error
+          retention-days: 30
