@@ -1,0 +1,103 @@
+name: Historical Deep expansion candidate extraction
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/historical-deep-expansion-candidate-extraction.yml
+      - data/evaluation/historical-deep-expansion-candidate-lineage-v1.json
+      - scripts/extract-historical-deep-expansion-candidates.ts
+      - src/evaluation/historical-deep-expansion-extractor.ts
+      - src/evaluation/historical-deep-discovery-extractor.ts
+      - tests/historical-deep-expansion-extractor.test.ts
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-deep-expansion-candidate-extraction.yml
+      - data/evaluation/historical-deep-expansion-candidate-lineage-v1.json
+      - scripts/extract-historical-deep-expansion-candidates.ts
+      - src/evaluation/historical-deep-expansion-extractor.ts
+      - src/evaluation/historical-deep-discovery-extractor.ts
+      - tests/historical-deep-expansion-extractor.test.ts
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-expansion-candidate-extraction-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify pinned input artifact digests
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-expansion-candidate-lineage-v1.json'
+          verify_artifact() {
+            local section="$1"
+            local id expected actual expired
+            id="$(jq -r ".${section}.artifactId" "$lineage")"
+            expected="sha256:$(jq -r ".${section}.artifactSha256" "$lineage")"
+            gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}" > "$RUNNER_TEMP/${section}.json"
+            actual="$(jq -r '.digest // empty' "$RUNNER_TEMP/${section}.json")"
+            expired="$(jq -r '.expired' "$RUNNER_TEMP/${section}.json")"
+            test "$expired" = 'false'
+            test "$actual" = "$expected"
+            echo "${section}_run_id=$(jq -r ".${section}.workflowRunId" "$lineage")" >> "$GITHUB_ENV"
+            echo "${section}_name=$(jq -r ".${section}.artifactName" "$lineage")" >> "$GITHUB_ENV"
+          }
+          verify_artifact discoveryManifest
+          verify_artifact sourceBundle
+      - name: Download frozen expansion discovery manifest
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.discoveryManifest_run_id }}
+          name: ${{ env.discoveryManifest_name }}
+          path: artifacts/frozen/discovery
+      - name: Download frozen expansion source bundle
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.sourceBundle_run_id }}
+          name: ${{ env.sourceBundle_name }}
+          path: artifacts/frozen/sources
+      - name: Extract deterministic procedural candidates
+        run: |
+          node --import tsx scripts/extract-historical-deep-expansion-candidates.ts \
+            --discovery artifacts/frozen/discovery/historical-deep-expansion-discovery-manifest.json \
+            --sources artifacts/frozen/sources/historical-deep-expansion-source-bundle.json \
+            --output artifacts/historical-deep-expansion-discovery-candidates.json
+      - name: Verify outcome-free candidate artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='artifacts/historical-deep-expansion-discovery-candidates.json'
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-deep-expansion-discovery-candidates-v1'
+          test "$(jq -r '.metadata.parser' "$file")" = 'deterministic-house-committee-roll-call-v1'
+          test "$(jq -r '.metadata.outcomeUse' "$file")" = 'none'
+          test "$(jq -r '.input.discoveryCases' "$file")" = '24'
+          test "$(jq -r '.summary.candidateCount' "$file")" -gt 0
+          test "$(jq '[.. | objects | select(has("actualOutcome") or has("actualYes") or has("passed") or has("yeaCount") or has("nayCount"))] | length' "$file")" = '0'
+      - name: Upload frozen expansion candidates
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-expansion-discovery-candidates-${{ github.sha }}
+          path: artifacts/historical-deep-expansion-discovery-candidates.json
+          if-no-files-found: error
+          retention-days: 30
