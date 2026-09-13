@@ -177,6 +177,47 @@ function firstMatch(text: string, pattern: RegExp): string | undefined {
   return match ? compactEvidence(match[0]) : undefined;
 }
 
+function committeeRecommendationEvidence(
+  text: string,
+  billPattern: string,
+  recommendation: RegExp,
+): string | undefined {
+  const startPattern = /\bfrom the Committee on [^:]{1,240} to which was referred:/gi;
+  const starts = [...text.matchAll(startPattern)];
+  for (let index = 0; index < starts.length; index += 1) {
+    const start = starts[index].index ?? 0;
+    const end = starts[index + 1]?.index ?? text.length;
+    const block = text.slice(start, end);
+    if (!new RegExp(`to which was referred:\\s*${billPattern},\\s*A bill\\b`, 'i').test(block)) continue;
+    const match = block.match(recommendation);
+    if (!match) continue;
+    const matchEnd = (match.index ?? 0) + match[0].length;
+    return compactEvidence(block.slice(0, matchEnd));
+  }
+  return undefined;
+}
+
+function billBlockActionEvidence(
+  text: string,
+  billPattern: string,
+  action: RegExp,
+): string | undefined {
+  const startPattern = /\b(?:H|S)\.?\s*F\.?\s*(?:No\.?\s*)?\d+\b,\s*A bill\b/gi;
+  const starts = [...text.matchAll(startPattern)];
+  for (let index = 0; index < starts.length; index += 1) {
+    const startMatch = starts[index];
+    if (!new RegExp(`^${billPattern},\\s*A bill\\b`, 'i').test(startMatch[0])) continue;
+    const start = startMatch.index ?? 0;
+    const end = starts[index + 1]?.index ?? text.length;
+    const block = text.slice(start, end);
+    const match = block.match(action);
+    if (!match) continue;
+    const matchEnd = (match.index ?? 0) + match[0].length;
+    return compactEvidence(block.slice(0, matchEnd));
+  }
+  return undefined;
+}
+
 function calendarDesignationEvidence(text: string, billPattern: string): string | undefined {
   const lead = /designated the following bills? to be placed on the Calendar for the Day for [A-Za-z]+,\s+[A-Za-z]+\s+\d{1,2},\s+\d{4} and established a prefiling requirement for amendments offered to the following bills?:/gi;
   const stop = /\b(?:ANNOUNCEMENTS? BY THE SPEAKER|ANNOUNCEMENT BY THE SPEAKER|CALENDAR FOR THE DAY|MESSAGES FROM THE SENATE|MOTIONS AND RESOLUTIONS|REPORTS OF CHIEF CLERK|REPORTS OF STANDING COMMITTEES|SECOND READING OF|THIRD READING OF|RECESS RECONVENED)\b/i;
@@ -215,17 +256,29 @@ function extractCaseMechanics(
   add(
     'introduced_and_referred',
     'introduced-first-reading-referral',
-    firstMatch(text, new RegExp(`(?:[A-Z][A-Za-z'.,\\- ]{1,180} introduced:\\s*)${bill},\\s*A bill[\\s\\S]{0,3200}?The bill was read for the first time and referred to the Committee on [^.]+\\.`, 'i')),
+    billBlockActionEvidence(
+      text,
+      bill,
+      /The bill was read for the first time and referred to the Committee on [^.]+\./i,
+    ),
   );
   add(
     'committee_advances_to_general_register',
     'standing-committee-general-register-report',
-    firstMatch(text, new RegExp(`from the Committee on [^:]{1,240} to which was referred:\\s*${bill},\\s*A bill[\\s\\S]{0,7500}?Reported the same back with the recommendation that the bill be placed on the General Register\\.`, 'i')),
+    committeeRecommendationEvidence(
+      text,
+      bill,
+      /with the recommendation that(?: when so amended)? the bill be placed on the General Register\./i,
+    ),
   );
   add(
     'committee_routes_for_additional_review',
     'standing-committee-rereferral-report',
-    firstMatch(text, new RegExp(`from the Committee on [^:]{1,240} to which was referred:\\s*${bill},\\s*A bill[\\s\\S]{0,5000}?Reported the same back with the recommendation that the bill be re-referred to the Committee on [^.]+\\.`, 'i')),
+    committeeRecommendationEvidence(
+      text,
+      bill,
+      /with the recommendation that(?: when so amended)? the bill be re-referred to the Committee on [^.]+\./i,
+    ),
   );
   add(
     'second_reading',
@@ -245,7 +298,7 @@ function extractCaseMechanics(
   add(
     'conference_committee_appointment',
     'conference-committee-appointment',
-    firstMatch(text, new RegExp(`(?:appointment of|appointed)[\\s\\S]{0,420}?Conference Committee on\\s+${bill}`, 'i')),
+    firstMatch(text, new RegExp(`The Speaker announced the appointment of the following members of the House to a Conference Committee on\\s+${bill}`, 'i')),
   );
   add(
     'conference_report_received',
@@ -270,7 +323,11 @@ function extractCaseMechanics(
   add(
     'reaches_final_passage_stage',
     'direct-third-reading-final-passage-stage',
-    firstMatch(text, new RegExp(`${bill},\\s*A bill[\\s\\S]{0,6000}?The bill was read for the third time[\\s\\S]{0,220}?(?:placed upon its final passage|final passage)`, 'i')),
+    billBlockActionEvidence(
+      text,
+      bill,
+      /The bill was read for the third time(?:, as amended)?,?\s+and placed upon its final passage/i,
+    ),
   );
   add(
     'author_added',
@@ -429,7 +486,7 @@ export function buildHistoricalDeepHouseJournalMechanicsArtifact(input: {
       outcomeUse: 'none',
       holdoutUse: 'none',
       probabilityAction: 'none',
-      designGuard: 'The workflow SHA-256 verifies the immutable source artifact before classification, while each source retains its original raw-byte SHA-256 provenance from collection. Only deterministic phrases in those frozen pre-vote Journal pages are classified. Calendar lists are section-bounded; committee classifications require the frozen bill to be the explicit referred bill; final-passage-stage extraction records only that the procedural stage was reached and never reads the ensuing roll-call result. Every extracted mechanic remains mechanicallyActionable=false and finalPassageInference=none.',
+      designGuard: 'The workflow SHA-256 verifies the immutable source artifact before classification, while each source retains its original raw-byte SHA-256 provenance from collection. Only deterministic phrases in those frozen pre-vote Journal pages are classified. Committee and first/third-reading mechanics are bounded to structural report or bill blocks; Calendar lists are section-bounded; final-passage-stage extraction records only that the target bill reached the procedural stage and never reads the ensuing roll-call result. Every extracted mechanic remains mechanicallyActionable=false and finalPassageInference=none.',
     },
     input: {
       selectedCases: sourceBundle.cases.length,
