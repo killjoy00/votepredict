@@ -103,7 +103,7 @@ test('proves the session date from the minute page and matches exact bill identi
   const html = `
     <h3>2023-2024 Regular Session - Thursday, January 5, 2023</h3>
     <p>House File HF 1370 was before the committee.</p>
-    <p>HF13700 is a different identifier and must not satisfy HF137.</p>`;
+    <p>HF13700 is a different longer identifier.</p>`;
   assert.equal(parseHistoricalDeepMinuteDate(html, '2023-2024'), '2023-01-05');
   assert.equal(parseHistoricalDeepMinuteDate(html, '2021-2022'), undefined);
   assert.equal(historicalDeepMinuteContainsIdentifier(html, 'HF1370'), true);
