@@ -5,7 +5,6 @@ import type {
 } from './historical-deep-expansion-cohort';
 import {
   historicalDeepExpansionHtmlText,
-  historicalDeepMinuteContainsIdentifier,
 } from './historical-deep-expansion-source-bundle';
 
 export const HISTORICAL_DEEP_HOUSE_JOURNAL_SOURCE_SCHEMA = 'historical-deep-house-journal-source-bundle-v1' as const;
@@ -171,6 +170,17 @@ function latestLegislativeDay(text: string): number | undefined {
   return Number.isInteger(value) && value > 0 ? value : undefined;
 }
 
+export function historicalDeepHouseJournalContainsIdentifier(html: string, identifier: string): boolean {
+  const compact = identifier.replace(/\s+/g, '').toUpperCase();
+  const match = compact.match(/^(HF|SF)(\d+)$/);
+  if (!match) return false;
+  const prefix = match[1];
+  const number = match[2];
+  const text = historicalDeepExpansionHtmlText(html);
+  const pattern = new RegExp(`\\b${prefix[0]}\\.?\\s*${prefix[1]}\\.?\\s*(?:No\\.?\\s*)?${number}\\b`, 'i');
+  return pattern.test(text);
+}
+
 export function parseHistoricalDeepHouseJournalIndex(
   html: string,
   session: string,
@@ -222,7 +232,7 @@ export function matchHistoricalDeepHouseJournalCases(
   return cases
     .filter((item) => item.session === input.session && item.chamber === 'house')
     .filter((item) => input.journalDate < item.occurredOn)
-    .filter((item) => historicalDeepMinuteContainsIdentifier(input.html, item.identifier))
+    .filter((item) => historicalDeepHouseJournalContainsIdentifier(input.html, item.identifier))
     .map((item) => ({
       stableKey: item.stableKey,
       caseKey: item.caseKey,
@@ -272,7 +282,7 @@ export function collectHistoricalDeepHouseJournalSource(input: {
   }
   for (const item of input.matchedCases) {
     if (input.journalDate >= item.occurredOn) throw new Error(`House Journal ${input.url} is not pre-cutoff for ${item.stableKey}`);
-    if (!historicalDeepMinuteContainsIdentifier(content, item.identifier)) {
+    if (!historicalDeepHouseJournalContainsIdentifier(content, item.identifier)) {
       throw new Error(`House Journal ${input.url} lost marker ${item.identifier}`);
     }
   }
