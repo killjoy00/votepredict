@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "historical-deep-house-journal-mechanics-lineage-v1",
+  "purpose": "Pin the immutable official House Journal source artifact produced from the already-selected 24-case Deep development cohort before extracting any Journal mechanics. This stage remains outcome-blind and cannot alter forecasts.",
+  "sourceArtifact": {
+    "workflowRunId": 34777844843,
+    "artifactId": 10323714365,
+    "artifactName": "historical-deep-house-journal-source-bundle-v1-504abcb59e82132a570bc106b4e696065ea4cd08",
+    "artifactSha256": "935f2ffcbdf70ab67efbb47e0f9607debcae90e2b872220ec0edc916dbf90387",
+    "headSha": "504abcb59e82132a570bc106b4e696065ea4cd08",
+    "fileName": "historical-deep-house-journal-source-bundle.json"
+  },
+  "policy": {
+    "parser": "deterministic-house-journal-mechanics-v1",
+    "outcomeUse": "none",
+    "holdoutUse": "none",
+    "probabilityAction": "none",
+    "notes": "Classify only deterministic bill-specific procedural mechanics from the immutable, strictly pre-vote House Journal pages. Section-bounded list rules and bill-anchored phrases are used to avoid attributing another bill's Journal action to the frozen case. Reaching final-passage procedure is classified only up to the procedural stage phrase; ensuing roll-call results are deliberately excluded."
+  },
+  "guardrails": {
+    "developmentOnly": true,
+    "outcomeAccess": false,
+    "holdoutAccess": false,
+    "databaseAccess": false,
+    "liveDeepCalls": false,
+    "externalSourceDiscovery": false,
+    "mechanicallyActionable": false,
+    "probabilityChanges": false,
+    "targetPolicyChanges": false,
+    "evidenceWeightChanges": false,
+    "sourceArtifactMutation": false
+  }
+}
