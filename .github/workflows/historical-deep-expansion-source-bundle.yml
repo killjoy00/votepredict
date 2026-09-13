@@ -1,0 +1,75 @@
+name: Historical Deep expansion source bundle
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-deep-expansion-source-bundle.yml
+      - data/evaluation/historical-deep-expansion-source-lineage-v1.json
+      - scripts/collect-historical-deep-expansion-sources.ts
+      - src/evaluation/historical-deep-expansion-source-bundle.ts
+      - src/evaluation/historical-deep-expansion-cohort.ts
+      - tests/historical-deep-expansion-source-bundle.test.ts
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-expansion-source-bundle
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify pinned expansion cohort artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-expansion-source-lineage-v1.json'
+          artifact_id="$(jq -r '.cohortArtifact.artifactId' "$lineage")"
+          expected="sha256:$(jq -r '.cohortArtifact.artifactSha256' "$lineage")"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}" > "$RUNNER_TEMP/cohort-artifact.json"
+          test "$(jq -r '.expired' "$RUNNER_TEMP/cohort-artifact.json")" = 'false'
+          test "$(jq -r '.digest' "$RUNNER_TEMP/cohort-artifact.json")" = "$expected"
+          echo "cohort_run_id=$(jq -r '.cohortArtifact.workflowRunId' "$lineage")" >> "$GITHUB_ENV"
+          echo "cohort_name=$(jq -r '.cohortArtifact.artifactName' "$lineage")" >> "$GITHUB_ENV"
+          echo "cohort_head_sha=$(jq -r '.cohortArtifact.headSha' "$lineage")" >> "$GITHUB_ENV"
+          echo "cohort_artifact_id=${artifact_id}" >> "$GITHUB_ENV"
+          echo "cohort_artifact_digest=$(jq -r '.cohortArtifact.artifactSha256' "$lineage")" >> "$GITHUB_ENV"
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Download frozen expansion cohort
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.cohort_run_id }}
+          name: ${{ env.cohort_name }}
+          path: artifacts/frozen/cohort
+      - name: Enumerate and freeze official pre-vote committee minutes
+        run: |
+          node --import tsx scripts/collect-historical-deep-expansion-sources.ts \
+            --cohort artifacts/frozen/cohort/historical-deep-expansion-cohort.json \
+            --cohort-head-sha "$cohort_head_sha" \
+            --cohort-artifact-id "$cohort_artifact_id" \
+            --cohort-artifact-digest "$cohort_artifact_digest" \
+            --code-sha "$GITHUB_SHA" \
+            --output artifacts/historical-deep-expansion-source-bundle.json
+      - name: Upload frozen expansion source bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-expansion-source-bundle-${{ github.sha }}
+          path: artifacts/historical-deep-expansion-source-bundle.json
+          if-no-files-found: error
+          retention-days: 30
