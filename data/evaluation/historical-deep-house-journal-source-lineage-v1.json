@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "historical-deep-house-journal-source-lineage-v1",
+  "purpose": "Pin the immutable 24-case development cohort before enumerating a new official House Journal source class. The journal source freeze is outcome-blind and does not replace or mutate the existing House-committee source bundle.",
+  "cohortArtifact": {
+    "workflowRunId": 34726851111,
+    "artifactId": 10307649483,
+    "artifactName": "historical-deep-expansion-cohort-2b2c143a96a21bd61da7d5932a13ae0133707c95",
+    "artifactSha256": "7b1cc8e6f7628f73b3f5a444078301c11cf466c617eeeea5cd636b5d600917b2",
+    "headSha": "2b2c143a96a21bd61da7d5932a13ae0133707c95",
+    "fileName": "historical-deep-expansion-cohort.json"
+  },
+  "archivePolicy": {
+    "name": "house-journal-archive-enumeration-v1",
+    "officialArchiveIndexes": {
+      "2021-2022": "https://www.house.mn.gov/Journals/257",
+      "2023-2024": "https://www.house.mn.gov/Journals/300"
+    },
+    "officialJournalPathPattern": "https://www.house.mn.gov/cco/journals/<session-folder>/J<journal-id>.htm",
+    "availabilityRule": "The official House site describes the Journal as the official legal record and states that daily journals are published following adjournment of each session day. Both archive-index date and exact page date must agree, and only journal dates strictly earlier than a frozen case vote date may match that case.",
+    "notes": "The frozen cohort predates journal discovery. Journal archive indexes are enumerated directly and exact pages are matched only by frozen bill identifiers. No bill search, search ranking, outcome, current result ranking, or source-availability replacement is allowed."
+  },
+  "guardrails": {
+    "developmentOnly": true,
+    "outcomeAccess": false,
+    "holdoutAccess": false,
+    "databaseAccess": false,
+    "liveDeepCalls": false,
+    "candidateExtraction": false,
+    "mechanicalActionability": false,
+    "probabilityChanges": false,
+    "targetPolicyChanges": false,
+    "evidenceWeightChanges": false,
+    "existingSourceArtifactMutation": false
+  }
+}
