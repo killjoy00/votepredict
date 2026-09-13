@@ -30,4 +30,7 @@ async function main(): Promise<void> {
   }, null, 2));
 }
 
-await main();
+main().catch((error: unknown) => {
+  console.error(error);
+  process.exitCode = 1;
+});
