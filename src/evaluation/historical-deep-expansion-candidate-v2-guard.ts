@@ -60,7 +60,6 @@ function candidateHasSafeLocalContext(
 }
 
 function recalculateSummary(
-  bundle: HistoricalDeepExpansionDiscoveryCandidateBundleV2,
   candidates: HistoricalDeepExpansionDiscoveryCandidateV2[],
 ): HistoricalDeepExpansionDiscoveryCandidateBundleV2['summary'] {
   const baselineCount = candidates.filter((item) => item.extractionRule === 'v1-baseline').length;
@@ -100,7 +99,7 @@ export function applyHistoricalDeepExpansionV2LocalBillGuard(
       ...bundle.metadata,
       designGuard: `${bundle.metadata.designGuard} Supplemental candidates are also rejected when the nearest preceding local bill reference within 12 parsed lines identifies a different bill, protecting against section-local copy/paste bill-number errors in official minutes.`,
     },
-    summary: recalculateSummary(bundle, candidates),
+    summary: recalculateSummary(candidates),
     candidates,
   };
 }
