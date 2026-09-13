@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "historical-deep-expansion-actionability-audit-lineage-v1",
+  "purpose": "Pin the immutable development-only parser-v2 impact replay and the later outcome-blind procedural-mechanics taxonomy used to enforce the actionability safety boundary without mutating either upstream artifact.",
+  "impactReplayArtifact": {
+    "workflowRunId": 34731737583,
+    "artifactId": 10309342389,
+    "artifactName": "historical-deep-expansion-impact-replay-v2-5d5d0eb5112fc6ac2e2987bd687a52f0dfdd4aed",
+    "artifactSha256": "aad229117078f103513b0c3a209c60b47fe56cd01fb55621a5ac8024d44f7ab4",
+    "headSha": "5d5d0eb5112fc6ac2e2987bd687a52f0dfdd4aed"
+  },
+  "mechanicsTaxonomyArtifact": {
+    "workflowRunId": 34732079539,
+    "artifactId": 10310345988,
+    "artifactName": "historical-deep-procedural-mechanics-v1-a9b6b69ad8e705fbe929b15a9361f8018fa8ce19",
+    "artifactSha256": "9b632666ddf828874d5e1b28f540c8d6b81414122cf1bf56585bef43682320e9",
+    "headSha": "a9b6b69ad8e705fbe929b15a9361f8018fa8ce19"
+  },
+  "guardrails": {
+    "developmentOnly": true,
+    "holdoutAccess": false,
+    "databaseAccess": false,
+    "liveDeepCalls": false,
+    "evidenceWeightChanges": false,
+    "targetPolicyChanges": false,
+    "productionProbabilityChanges": false,
+    "postOutcomeActionabilityInput": false
+  }
+}
