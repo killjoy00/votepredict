@@ -121,6 +121,7 @@ jobs:
           set -euo pipefail
           file='artifacts/historical-deep-house-journal-holdout-cohort-v1.json'
           test "$(jq -r '.schemaVersion' "$file")" = 'historical-deep-house-journal-holdout-cohort-v1'
+          test "$(jq -r '.metadata.codeSha' "$file")" = "$GITHUB_SHA"
           test "$(jq -r '.metadata.sessions | join(",")' "$file")" = '2025-2026'
           test "$(jq -r '.metadata.chamber' "$file")" = 'house'
           test "$(jq -r '.metadata.perSessionPerTranche' "$file")" = '12'
