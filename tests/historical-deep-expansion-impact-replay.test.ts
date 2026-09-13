@@ -6,8 +6,9 @@ import { evaluateHistoricalDeepExpansionImpactReplay } from '../src/evaluation/h
 function fixture() {
   const cases = Array.from({ length: 24 }, (_, caseIndex) => {
     const identifier = `HF${100 + caseIndex}`;
-    const day = String(caseIndex + 1).padStart(2, '0');
-    const occurredOn = `2024-04-${day}`;
+    const day = String(caseIndex + 2).padStart(2, '0');
+    const cutoffDay = String(caseIndex + 1).padStart(2, '0');
+    const occurredOn = `2024-05-${day}`;
     const voteEventId = `vote-${caseIndex}`;
     const members = Array.from({ length: 13 }, (_, memberIndex) => ({
       membershipId: `m-${caseIndex}-${memberIndex}`,
@@ -35,7 +36,7 @@ function fixture() {
       chamberId: 'house-id',
       chamber: 'house',
       occurredOn,
-      asOf: `2024-04-${String(caseIndex).padStart(2, '0')}T23:59:59.999Z`,
+      asOf: `2024-05-${cutoffDay}T23:59:59.999Z`,
       targetVersionId: `target-${caseIndex}`,
       quickModelVersion: 'member-eb-v1.1',
       members,
@@ -45,7 +46,7 @@ function fixture() {
         forecastId: voteEventId,
         billId: `bill-${caseIndex}`,
         chamberId: 'house-id',
-        asOf: `2024-04-${String(caseIndex).padStart(2, '0')}T23:59:59.999Z`,
+        asOf: `2024-05-${cutoffDay}T23:59:59.999Z`,
         subject: { identifier, title: `${identifier} fixture` },
         targets: members.map((member) => ({
           membershipId: member.membershipId,
