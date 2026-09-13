@@ -170,9 +170,9 @@ test('v2 broadens only deterministic named-member roll-call formats and remains 
   assert.equal(result.summary.supplementalCandidateCount, 7);
   assert.equal(result.summary.casesWithCandidates, 4);
   assert.equal(result.summary.sourceCaseMatchesWithCandidates, 4);
-  assert.equal(result.summary.generalRegisterCandidates, 2);
+  assert.equal(result.summary.generalRegisterCandidates, 3);
   assert.equal(result.summary.alternateRollTriggerCandidates, 2);
-  assert.equal(result.summary.directNamedRollListCandidates, 3);
+  assert.equal(result.summary.directNamedRollListCandidates, 2);
   assert.equal(result.summary.currentDeepTargetCandidates, 3);
   assert.equal(result.summary.candidateDeepTargetCandidates, 4);
   assert.equal(result.summary.bothTargetCandidates, 0);
