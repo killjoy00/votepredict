@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "historical-deep-expansion-source-gap-audit-lineage-v1",
+  "purpose": "Pin the immutable outcome-blind House-committee source bundle and parser-v2 candidate artifact used to separate archive-source coverage gaps from source-present extraction gaps in the 24-case development cohort.",
+  "sourceBundleArtifact": {
+    "workflowRunId": 34727446742,
+    "artifactId": 10307974620,
+    "artifactName": "historical-deep-expansion-source-bundle-74b0ebad93cccb1e14353f32170465f402673259",
+    "artifactSha256": "6d522eddcb3b6a92b413c9f19e6db189c0412e76760663173f95cf2f220bf1cf",
+    "headSha": "74b0ebad93cccb1e14353f32170465f402673259"
+  },
+  "candidateBundleArtifact": {
+    "workflowRunId": 34731281176,
+    "artifactId": 10308234950,
+    "artifactName": "historical-deep-expansion-discovery-candidates-v2-99e73d4fa45a72317868d24dfa9ae55ed56f9316",
+    "artifactSha256": "41ca3d40144d6b125d618b32577d017d9b9c6c49405da40aaec478c8415274fd",
+    "headSha": "99e73d4fa45a72317868d24dfa9ae55ed56f9316"
+  },
+  "guardrails": {
+    "developmentOnly": true,
+    "outcomeAccess": false,
+    "holdoutAccess": false,
+    "databaseAccess": false,
+    "liveDeepCalls": false,
+    "probabilityChanges": false,
+    "targetPolicyChanges": false,
+    "evidenceWeightChanges": false,
+    "upstreamArtifactMutation": false
+  }
+}
