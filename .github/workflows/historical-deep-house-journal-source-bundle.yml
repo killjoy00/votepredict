@@ -62,6 +62,20 @@ jobs:
           run-id: ${{ env.cohort_run_id }}
           name: ${{ env.cohort_name }}
           path: artifacts/frozen/cohort
+      - name: Diagnose raw Journal archive markup
+        run: |
+          node <<'NODE'
+          const url = 'https://www.house.mn.gov/Journals/257';
+          const response = await fetch(url, { headers: { 'user-agent': 'VotePredict/2.0 journal-markup-diagnostic' } });
+          const html = await response.text();
+          const needles = ['J0510106', '/cco/journals/', 'HTML'];
+          console.log(JSON.stringify({ status: response.status, finalUrl: response.url, contentType: response.headers.get('content-type'), bytes: Buffer.byteLength(html) }));
+          for (const needle of needles) {
+            const index = html.indexOf(needle);
+            const snippet = index >= 0 ? html.slice(Math.max(0, index - 220), Math.min(html.length, index + needle.length + 220)) : null;
+            console.log(JSON.stringify({ needle, index, snippet }));
+          }
+          NODE
       - name: Enumerate and freeze official pre-vote House Journals
         run: |
           node --import tsx scripts/collect-historical-deep-house-journal-sources.ts \
