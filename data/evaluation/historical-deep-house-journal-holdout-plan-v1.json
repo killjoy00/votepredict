@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "historical-deep-house-journal-holdout-plan-v1",
+  "purpose": "Predeclare the independent 2025-2026 Minnesota House validation cohort, hypotheses, replication thresholds, and interpretation rules before any House Journal source collection or outcome reveal for this workstream.",
+  "developmentScoreArtifact": {
+    "workflowRunId": 34779526860,
+    "artifactId": 10324384188,
+    "artifactName": "historical-deep-house-journal-mechanics-score-v1-f646a205850286f9a2b7a196628dc23a127a9d06",
+    "artifactSha256": "c10d82ffb511b4fcdf047b7765015b40bbdcc98b08c50ce6d3a8b08c667c9f19",
+    "headSha": "f646a205850286f9a2b7a196628dc23a127a9d06",
+    "fileName": "historical-deep-house-journal-mechanics-score-v1.json"
+  },
+  "cohort": {
+    "sessions": ["2025-2026"],
+    "chamber": "house",
+    "perSessionPerTranche": 12,
+    "expectedSelectedCases": 24,
+    "tranches": ["deterministic-uniform", "selector-disagreement"],
+    "selectionVersion": "holdout-v1-reuse-expansion-selector",
+    "selectionInputs": "Replayable pre-vote Quick fields, stable bill/session/chamber/date identifiers, source-derived external_key, and outcome-stripped target-selector inputs only.",
+    "selectionProhibitions": [
+      "No YEA/NAY member outcomes may enter case selection.",
+      "No bill passed/failed value may enter case selection.",
+      "No House Journal source availability may enter case selection.",
+      "No Journal mechanic presence may enter case selection.",
+      "No case may be replaced because its later source or outcome is inconvenient."
+    ]
+  },
+  "primaryHypotheses": [
+    {
+      "id": "H1-final-passage-stage-positive-residual",
+      "mechanic": "reaches_final_passage_stage",
+      "developmentCases": 5,
+      "developmentMemberWeightedSignedResidual": 0.0657632465,
+      "developmentCaseMeanSignedResidual": 0.0655433998,
+      "expectedDirection": "positive",
+      "interpretation": "When this previously frozen pre-vote procedural stage is present, frozen Quick underpredicts eventual member YEA share on average.",
+      "replicationMinimumCases": 5,
+      "replicationMinimumDecisiveMemberOutcomes": 400,
+      "minimumAbsoluteMemberWeightedResidual": 0.02
+    },
+    {
+      "id": "H2-calendar-designation-negative-residual",
+      "mechanic": "calendar_designation",
+      "developmentCases": 7,
+      "developmentMemberWeightedSignedResidual": -0.0828156649,
+      "developmentCaseMeanSignedResidual": -0.0825803721,
+      "expectedDirection": "negative",
+      "interpretation": "When this previously frozen Calendar-for-the-Day designation is present, frozen Quick overpredicts eventual member YEA share on average.",
+      "replicationMinimumCases": 5,
+      "replicationMinimumDecisiveMemberOutcomes": 400,
+      "minimumAbsoluteMemberWeightedResidual": 0.02
+    },
+    {
+      "id": "H3-companion-substitution-positive-residual",
+      "mechanic": "companion_substitution",
+      "developmentCases": 5,
+      "developmentMemberWeightedSignedResidual": 0.0383907967,
+      "developmentCaseMeanSignedResidual": 0.0384087983,
+      "expectedDirection": "positive",
+      "interpretation": "When this previously frozen companion-substitution mechanic is present, frozen Quick underpredicts eventual member YEA share on average.",
+      "replicationMinimumCases": 5,
+      "replicationMinimumDecisiveMemberOutcomes": 400,
+      "minimumAbsoluteMemberWeightedResidual": 0.02
+    }
+  ],
+  "negativeControls": [
+    {
+      "id": "NC1-author-added-confounding-sentinel",
+      "mechanic": "author_added",
+      "developmentCases": 7,
+      "developmentMemberWeightedSignedResidual": 0.0613754365,
+      "role": "Administrative-only confounding sentinel. Its development association is evidence that small overlapping strata can correlate with residuals even when the mechanic is not substantively predictive. No validation sign or magnitude may make this mechanic actionable."
+    }
+  ],
+  "exploratoryOnly": [
+    {
+      "mechanic": "laid_on_table",
+      "developmentCases": 2,
+      "developmentMemberWeightedSignedResidual": -0.2202631017,
+      "reason": "Development slice is too small for a primary replication claim. Report only."
+    },
+    {
+      "mechanic": "second_reading",
+      "developmentCases": 3,
+      "developmentMemberWeightedSignedResidual": -0.1983620095,
+      "reason": "Development slice is too small for a primary replication claim. Report only."
+    },
+    {
+      "mechanic": "reported_to_house",
+      "developmentCases": 6,
+      "developmentMemberWeightedSignedResidual": -0.1152792326,
+      "reason": "Retain as exploratory because it overlaps later-stage procedural mechanics and was not selected as a primary hypothesis before holdout reveal."
+    }
+  ],
+  "excludedAsIndependentHypotheses": [
+    {
+      "mechanics": ["introduced_and_referred", "committee_advances_to_general_register"],
+      "reason": "Exact same 18 development cases; Jaccard 1.0, so the development cohort cannot separate them."
+    },
+    {
+      "mechanics": ["conference_committee_appointment", "interchamber_amendment_message"],
+      "reason": "Exact same 3 development cases; Jaccard 1.0 and too few cases."
+    }
+  ],
+  "replicationRule": {
+    "eligible": "A primary hypothesis is eligible for a directional replication assessment only if the frozen holdout has at least the hypothesis-specific minimum number of distinct cases and decisive member outcomes.",
+    "replicates": "For an eligible primary hypothesis, both member-weighted signed residual and equal-case mean signed residual must match the predeclared development sign, and the absolute member-weighted signed residual must be at least the predeclared minimum.",
+    "doesNotReplicate": "An eligible primary hypothesis fails replication if either residual sign disagrees with development or the absolute member-weighted residual is below the predeclared minimum.",
+    "inconclusive": "A primary hypothesis is inconclusive if it does not meet its predeclared holdout case/member minimum. Inconclusive is not failure and may not be converted into a different threshold after outcomes are revealed."
+  },
+  "secondaryBillOutcomeAnalysis": {
+    "policy": "If the outcome-blind holdout cohort naturally contains both passed and failed selected floor events, report mechanic-present versus mechanic-absent passage rates and risk differences. If only one bill outcome class appears, mark bill-level discrimination unidentifiable. No outcome-balanced resampling or case replacement is allowed after reveal.",
+    "actionability": "none"
+  },
+  "overlapGuard": {
+    "policy": "Report the full mechanic co-occurrence matrix in holdout. A primary mechanic with Jaccard overlap >= 0.8 with another primary or substantively adjacent mechanic may replicate directionally but may not be claimed as an independent signal from this validation alone."
+  },
+  "decisionBoundary": {
+    "probabilityAction": "none",
+    "mechanicActionability": "none",
+    "evidenceWeightChanges": "none",
+    "targetPolicyChanges": "none",
+    "productionChanges": "none",
+    "nextStepIfReplicationSucceeds": "Only nominate the replicated mechanic for a separately specified multivariable or prospective experiment. This validation alone cannot create a production weight."
+  }
+}
