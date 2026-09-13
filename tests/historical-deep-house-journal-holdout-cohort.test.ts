@@ -74,6 +74,6 @@ test('selection result contains no outcome or Journal-mechanic fields', () => {
 test('fails closed when fewer than the predeclared holdout case count are eligible', () => {
   assert.throws(
     () => selectHistoricalDeepHouseJournalHoldoutCases(Array.from({ length: 20 }, (_, index) => candidate(index))),
-    /not enough cases|Expected 24 holdout cases/i,
+    /has \d+ cases; need 12|Expected 24 holdout cases/i,
   );
 });
