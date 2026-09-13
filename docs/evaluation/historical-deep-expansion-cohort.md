@@ -6,7 +6,7 @@ The first six-vote close-House pilot shows that useful frozen official procedura
 
 The next archive tranche must therefore be chosen **before** looking for new committee evidence. Otherwise source availability itself could become a hindsight selection rule.
 
-This cohort freezes 24 additional Minnesota House passage-vote cases using only leak-safe historical Quick fields and stable bill/session/chamber/date metadata. It does not collect sources, extract evidence, load floor outcomes into cohort selection, alter production targeting, or tune impact weights.
+This cohort freezes 24 additional Minnesota House passage-vote events using only leak-safe historical Quick fields and stable source/bill/session/chamber/date metadata. It does not collect sources, extract evidence, load floor outcomes into cohort selection, alter production targeting, or tune impact weights.
 
 ## Development-only boundary
 
@@ -24,11 +24,11 @@ Each development session contributes six cases to each tranche, for 24 cases tot
 
 ### Deterministic uniform
 
-Six cases per session are selected first by a stable hash of the natural case key. This is the representative tranche. It is frozen before the stress-test tranche so selector disagreement cannot bias it.
+Six cases per session are selected first by a stable hash of the source-derived event key. This is the representative tranche. It is frozen before the stress-test tranche so selector disagreement cannot bias it.
 
 ### Selector disagreement
 
-After removing the deterministic-uniform cases, six cases per session are chosen by the largest disagreement between the 12-person `live-current` and `need-only` target sets. Stable hashing breaks ties.
+After removing the deterministic-uniform cases, six cases per session are chosen by the largest disagreement between the 12-person `live-current` and `need-only` target sets. Stable event-key hashing breaks ties.
 
 This tranche is an outcome-blind stress test of the exact product question: does removing the pivotality multiplier route the same 12-person research budget to materially different members where archive evidence can help?
 
@@ -38,19 +38,25 @@ The cohort generator deliberately separates reconstruction from selection:
 
 1. Historical Quick is reconstructed with the existing strict pre-vote replay.
 2. Before either target selector runs, every member `actualOutcome` is removed from the selector input; event `actualYes` and `passed` are neutralized as well.
-3. The stable-metadata query loads only vote-event ID, bill identifier/title, session, chamber, and vote date. It does **not** select passage outcome, yea/nay totals, or member choices.
+3. The stable-metadata query loads only vote-event ID, source-derived `external_key`, bill identifier/title, session, chamber, and vote date. It does **not** select passage outcome, yea/nay totals, or member choices.
 4. The emitted cohort artifact contains no floor outcomes.
 5. Tests verify that flipping all later floor outcomes leaves the target sets and disagreement score unchanged.
 
 Cohort selection may therefore be rerun reproducibly without using the later result of the vote.
 
-## Stable keys
+## Stable event identity
 
-Cases are identified by the same legislative natural key used elsewhere in the historical Deep pipeline:
+The original six-case pilot could use this bill/date key because those hand-picked cases were unique:
 
 `session | chamber | normalized bill identifier | occurredOn`
 
-The database `vote_events.id` UUID is retained only as runtime lineage and is not the case-selection identity.
+The broader historical corpus exposed same-bill, same-day multiple passage rows (for example, multiple recorded events can exist for one bill on one date). The expansion therefore keeps that bill/date key as `caseKey` for pilot exclusion and human-readable lineage, while using the historical vote store's source-derived `external_key` to distinguish vote events:
+
+`session | chamber | external_key`
+
+`vote_events.external_key` is constrained unique within session/chamber by the historical schema. For Minnesota House ingestion it is deterministically built from the session key, bill identifier, vote date, journal page when available, and the event ordinal on the official bill vote page. It is therefore a stable non-outcome discriminator rather than a generated database UUID.
+
+The database `vote_events.id` UUID remains runtime lineage only and is not the cohort-selection identity.
 
 ## Archive collection after freeze
 

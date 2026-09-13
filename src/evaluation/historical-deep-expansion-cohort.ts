@@ -19,6 +19,7 @@ export type HistoricalDeepExpansionTranche = 'deterministic-uniform' | 'selector
 
 export interface HistoricalDeepExpansionMetadataRow {
   voteEventId: string;
+  externalKey: string;
   identifier: string;
   title: string;
   session: string;
@@ -27,7 +28,10 @@ export interface HistoricalDeepExpansionMetadataRow {
 }
 
 export interface HistoricalDeepExpansionCandidate extends HistoricalDeepExpansionMetadataRow {
+  /** Source-derived event identity; unique within the historical vote store. */
   stableKey: string;
+  /** Bill/date key retained for pilot exclusion and human-readable lineage. */
+  caseKey: string;
   targetVersionId: string;
   quickModelVersion: string;
   activeMembers: number;
@@ -64,6 +68,7 @@ export interface HistoricalDeepExpansionCohort {
 
 type EventMetadataRow = {
   vote_event_id: string;
+  external_key: string;
   identifier: string;
   title: string;
   session_slug: string;
@@ -108,9 +113,18 @@ export function outcomeBlindExpansionEvent(
   };
 }
 
+export function historicalDeepExpansionEventKey(
+  value: Pick<HistoricalDeepExpansionMetadataRow, 'session' | 'chamber' | 'externalKey'>,
+): string {
+  const externalKey = value.externalKey.trim();
+  if (!externalKey) throw new Error('Historical Deep expansion external key is required');
+  return `${value.session}|${value.chamber}|${externalKey}`;
+}
+
 function normalizedMetadata(row: EventMetadataRow): HistoricalDeepExpansionMetadataRow {
   return {
     voteEventId: row.vote_event_id,
+    externalKey: row.external_key,
     identifier: row.identifier,
     title: row.title,
     session: row.session_slug,
@@ -138,10 +152,10 @@ export function buildHistoricalDeepExpansionCandidate(
   const current = new Set(currentDeepTargetIds);
   const targetOverlap = needOnlyTargetIds.filter((membershipId) => current.has(membershipId)).length;
   const comparisonSize = Math.min(currentDeepTargetIds.length, needOnlyTargetIds.length);
-  const stableKey = historicalDeepPilotCaseKey(metadata);
   return {
     ...metadata,
-    stableKey,
+    stableKey: historicalDeepExpansionEventKey(metadata),
+    caseKey: historicalDeepPilotCaseKey(metadata),
     targetVersionId: event.targetVersionId,
     quickModelVersion: event.modelVersion,
     activeMembers: event.activeMembers,
@@ -177,14 +191,14 @@ export function selectHistoricalDeepExpansionCases(
   const pilotKeys = new Set(HISTORICAL_DEEP_PILOT_CASES.map(historicalDeepPilotCaseKey));
   const seenKeys = new Set<string>();
   for (const candidate of candidates) {
-    if (seenKeys.has(candidate.stableKey)) throw new Error(`Duplicate expansion natural key: ${candidate.stableKey}`);
+    if (seenKeys.has(candidate.stableKey)) throw new Error(`Duplicate expansion event key: ${candidate.stableKey}`);
     seenKeys.add(candidate.stableKey);
   }
 
   const eligible = candidates.filter((candidate) =>
     sessions.includes(candidate.session)
     && candidate.chamber === chamber
-    && !pilotKeys.has(candidate.stableKey)
+    && !pilotKeys.has(candidate.caseKey)
     && candidate.currentDeepTargetIds.length === Math.min(targetLimit, candidate.activeMembers)
     && candidate.needOnlyTargetIds.length === Math.min(targetLimit, candidate.activeMembers));
 
@@ -242,10 +256,11 @@ export async function evaluateHistoricalDeepExpansionCohort(
     && event.chamber === HISTORICAL_DEEP_EXPANSION_CHAMBER);
   if (replayable.length === 0) throw new Error('Historical Deep expansion has no replayable development events');
 
-  // Deliberately query no passed/yea/nay/member-choice columns here. Stable natural keys
-  // are the only database metadata allowed into cohort selection.
+  // Deliberately query no passed/yea/nay/member-choice columns here. `external_key` is the
+  // source-derived non-outcome event discriminator enforced unique by the historical store.
   const metadataResult = await pool.query<EventMetadataRow>(`
     SELECT ve.id AS vote_event_id,
+           ve.external_key,
            b.identifier,
            b.title,
            s.slug AS session_slug,
@@ -277,7 +292,7 @@ export async function evaluateHistoricalDeepExpansionCohort(
       codeSha: options.codeSha ?? null,
       databaseSource: options.databaseSource ?? null,
       purpose: 'evaluation-only predeclared archive expansion cohort for historical Deep; freezes cases before any new source discovery, evidence extraction, or outcome scoring',
-      selectionGuard: 'Only replayable pre-vote Quick fields plus stable bill/session/chamber/date identifiers enter selection. Member actualOutcome is stripped before both target selectors, the metadata query loads no outcome columns, and the emitted artifact contains no floor outcome.',
+      selectionGuard: 'Only replayable pre-vote Quick fields plus stable bill/session/chamber/date identifiers and the source-derived external_key enter selection. Member actualOutcome is stripped before both target selectors, the metadata query loads no outcome columns, and the emitted artifact contains no floor outcome.',
       holdoutPolicy: 'The first expansion is restricted to 2021-22 and 2023-24 development sessions. 2025-26 is excluded from archive expansion/tuning at this stage.',
       sessions: HISTORICAL_DEEP_EXPANSION_SESSIONS,
       chamber: HISTORICAL_DEEP_EXPANSION_CHAMBER,
