@@ -12,6 +12,7 @@ import {
 import type { ForecastRuntimeRequest, ForecastRuntimeResult } from './runtime';
 
 const BASELINE_TOLERANCE = 1e-12;
+const FROZEN_BASELINE_MODEL_VERSION = 'member-eb-v1.1';
 
 type HistoricalSupportRow = {
   legislator_id: string;
@@ -127,6 +128,12 @@ export async function captureMemberHistoryCap20ProspectiveShadow(
     researchMode: request.researchMode,
   })) return undefined;
   if (quick.researchMode !== 'quick') throw new Error('Prospective cap-20 capture requires a Quick runtime result');
+  if (quick.forecastId !== request.forecastId || quick.chamber.id !== request.chamberId) {
+    throw new Error('Prospective cap-20 capture request/result lineage mismatch');
+  }
+  if (quick.modelVersion !== FROZEN_BASELINE_MODEL_VERSION) {
+    throw new Error(`Prospective cap-20 baseline model drift: expected ${FROZEN_BASELINE_MODEL_VERSION}, got ${quick.modelVersion}`);
+  }
 
   const asOfDate = quick.asOf.slice(0, 10);
   const historicalResult = await pool.query<HistoricalSupportRow>(`
@@ -187,7 +194,7 @@ export async function captureMemberHistoryCap20ProspectiveShadow(
         : {
             kind: 'prospective_shadow_model',
             experiment: MEMBER_HISTORY_CAP20_PROSPECTIVE_EXPERIMENT,
-            modelVersion: baseline.modelVersion,
+            modelVersion: FROZEN_BASELINE_MODEL_VERSION,
             maximumMemberHistoryWeight: 20,
             yesProbability: null,
             servesTraffic: false,
@@ -209,7 +216,7 @@ export async function captureMemberHistoryCap20ProspectiveShadow(
            SET context = COALESCE(context, '[]'::jsonb) || $3::jsonb
          WHERE revision_id = $1
            AND membership_id = $2
-           AND NOT COALESCE(context, '[]'::jsonb) @> $4::jsonb`, [
+           AND NOT (COALESCE(context, '[]'::jsonb) @> $4::jsonb)`, [
         quick.revisionId,
         write.membershipId,
         JSON.stringify([write.context]),
