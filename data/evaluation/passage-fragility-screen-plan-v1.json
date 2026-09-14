@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "passage-fragility-screen-plan-v1",
+  "frozenAt": "2026-09-14T21:10:00Z",
+  "scope": {
+    "memberHistoryHalfLifeDays": 180,
+    "primarySlice": "2025-2026/house",
+    "highConfidencePassageProbabilityFloor": 0.8,
+    "interpretation": "retrospective feature-discovery only; any selected candidate may only enter a future non-serving shadow"
+  },
+  "features": [
+    "marginRisk",
+    "meanEntropy",
+    "swingShare40to60",
+    "softYesExpectedShare",
+    "analogueCoverageGap",
+    "analogueCountGap",
+    "analogueWeightRisk",
+    "partyExpectedYesConcentration"
+  ],
+  "riskScores": {
+    "margin": ["marginRisk"],
+    "softYes": ["meanEntropy", "swingShare40to60", "softYesExpectedShare"],
+    "evidence": ["analogueCoverageGap", "analogueCountGap", "analogueWeightRisk"],
+    "party": ["partyExpectedYesConcentration"],
+    "composite": ["marginRisk", "meanEntropy", "softYesExpectedShare", "analogueCoverageGap", "partyExpectedYesConcentration"]
+  },
+  "candidates": [
+    { "id": "composite-top20-normal1.25", "riskScore": "composite", "riskPercentileFloor": 0.8, "sigmaMultiplier": 1.25 },
+    { "id": "composite-top10-normal1.5", "riskScore": "composite", "riskPercentileFloor": 0.9, "sigmaMultiplier": 1.5 },
+    { "id": "softyes-top20-normal1.25", "riskScore": "softYes", "riskPercentileFloor": 0.8, "sigmaMultiplier": 1.25 },
+    { "id": "evidence-top20-normal1.25", "riskScore": "evidence", "riskPercentileFloor": 0.8, "sigmaMultiplier": 1.25 },
+    { "id": "margin-top20-normal1.25", "riskScore": "margin", "riskPercentileFloor": 0.8, "sigmaMultiplier": 1.25 },
+    { "id": "party-top20-normal1.25", "riskScore": "party", "riskPercentileFloor": 0.8, "sigmaMultiplier": 1.25 }
+  ],
+  "frozenSelectionRule": {
+    "minimumEvents": 150,
+    "minimumFailures": 5,
+    "minimumFlagRate": 0.05,
+    "maximumFlagRate": 0.30,
+    "minimumFailureCaptureRate": 0.30,
+    "minimumOverallBrierImprovement": 0.0005,
+    "minimumOverallLogLossImprovement": 0.001,
+    "minimumFailedBrierImprovement": 0.02,
+    "minimumFailedMeanProbabilityReduction": 0.02,
+    "maximumPassedBrierDegradation": 0.001,
+    "minimumAccuracyDelta": -0.01
+  },
+  "guardrails": {
+    "productionAction": "none",
+    "runtimeDefaultChange": false,
+    "modelVersionChange": false,
+    "frozenCap20ProspectiveExperimentChanged": false,
+    "introductionModelChanged": false,
+    "journalMechanicsChanged": false
+  }
+}
