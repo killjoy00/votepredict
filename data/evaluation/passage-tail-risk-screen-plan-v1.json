@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "passage-tail-risk-screen-plan-v1",
+  "purpose": "Retrospective screen of heavier-tailed chamber residual models for rare passage failures after member-eb-v1.2-decay180 was selected. This screen is descriptive/post-selection and cannot by itself change production probabilities.",
+  "scope": {
+    "memberHistoryHalfLifeDays": 180,
+    "primarySlice": "2025-2026/house",
+    "baselineResidualModel": "normal-v1"
+  },
+  "candidates": [
+    "normal-v1",
+    "normal-sigma-1.25x",
+    "normal-sigma-1.5x",
+    "laplace-mae",
+    "logistic-mae"
+  ],
+  "candidateDefinitions": {
+    "normal-v1": "Existing historical-residual-v1 Normal residual with sigma derived from historical chamber YES MAE.",
+    "normal-sigma-1.25x": "Same Normal family with systematic sigma multiplied by 1.25.",
+    "normal-sigma-1.5x": "Same Normal family with systematic sigma multiplied by 1.5.",
+    "laplace-mae": "Zero-centered Laplace residual with scale equal to the same historical chamber YES MAE, preserving mean absolute residual while adding heavier tails.",
+    "logistic-mae": "Zero-centered logistic residual with scale MAE/(2 ln 2), preserving mean absolute residual while adding heavier tails."
+  },
+  "frozenSelectionRule": {
+    "minimumEvents": 150,
+    "minimumFailures": 5,
+    "minimumOverallBrierImprovement": 0.001,
+    "minimumOverallLogLossImprovement": 0.005,
+    "minimumFailedBrierImprovement": 0.02,
+    "minimumFailedMeanProbabilityReduction": 0.02,
+    "maximumPassedBrierDegradation": 0.002,
+    "minimumAccuracyDelta": -0.01,
+    "selection": "Among non-baseline candidates passing every guardrail, select lowest primary-slice overall passage Brier; tie-break by failed-event Brier, then candidate id."
+  },
+  "guardrails": {
+    "productionAction": "none",
+    "runtimeDefaultChange": false,
+    "modelVersionChange": false,
+    "memberModelChange": false,
+    "frozenCap20ProspectiveExperimentChanged": false,
+    "introductionModelChanged": false,
+    "journalMechanicsChanged": false,
+    "interpretation": "Candidate family and thresholds were frozen after historical rare failures had already been examined. Any winner is eligible only for non-serving prospective validation or a separate reviewed evaluation; no direct production promotion is allowed."
+  }
+}
