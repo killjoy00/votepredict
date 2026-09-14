@@ -46,7 +46,7 @@ jobs:
           test "$(jq -r '.frozenSelectionRule.minimumOverallLogLossImprovement' "$plan")" = '0.001'
           test "$(jq -r '.frozenSelectionRule.minimumFailedBrierImprovement' "$plan")" = '0.02'
           test "$(jq -r '.frozenSelectionRule.maximumPassedBrierDegradation' "$plan")" = '0.001'
-          test "$(jq -r '.frozenSelectionRule.minimumFailureCaptureRate' "$plan")" = '0.3'
+          test "$(jq -r '.frozenSelectionRule.minimumFailureCaptureRate' "$plan")" = '0.30'
           test "$(jq -r '.guardrails.productionAction' "$plan")" = 'none'
           test "$(jq -r '.guardrails.runtimeDefaultChange' "$plan")" = 'false'
           test "$(jq -r '.guardrails.modelVersionChange' "$plan")" = 'false'
