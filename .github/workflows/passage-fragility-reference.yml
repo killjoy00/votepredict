@@ -1,0 +1,116 @@
+name: Passage fragility reference
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/passage-fragility-reference.yml
+      - data/evaluation/passage-fragility-reference-plan-v1.json
+      - scripts/run-production-passage-fragility-reference.ts
+      - src/app/api/operations/passage-fragility-reference/route.ts
+      - src/evaluation/passage-fragility-reference.ts
+      - tests/passage-fragility-reference.test.ts
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: passage-fragility-reference-v1
+  cancel-in-progress: false
+
+jobs:
+  materialize:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_PASSAGE_FRAGILITY_REFERENCE_OUTPUT: artifacts/passage-fragility-reference-v1.json
+    steps:
+      - uses: actions/checkout@v7
+      - name: Verify frozen selected-candidate lineage
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          plan='data/evaluation/passage-fragility-reference-plan-v1.json'
+          test "$(jq -r '.schemaVersion' "$plan")" = 'passage-fragility-reference-plan-v1'
+          test "$(jq -r '.selectedCandidate' "$plan")" = 'evidence-top20-normal1.25'
+          test "$(jq -r '.referenceScope.session' "$plan")" = '2025-2026'
+          test "$(jq -r '.referenceScope.chamber' "$plan")" = 'house'
+          test "$(jq -r '.referenceScope.memberHistoryHalfLifeDays' "$plan")" = '180'
+          test "$(jq -r '.referenceScope.riskPercentileFloor' "$plan")" = '0.8'
+          test "$(jq -r '.referenceScope.sigmaMultiplier' "$plan")" = '1.25'
+          test "$(jq -r '.referenceScope.expectedReferenceEvents' "$plan")" = '263'
+          test "$(jq -r '.referenceScope.expectedHistoricalFlaggedEvents' "$plan")" = '53'
+          test "$(jq -r '.guardrails.usesOutcomeFields' "$plan")" = 'false'
+          test "$(jq -r '.guardrails.productionAction' "$plan")" = 'none'
+          artifact_id="$(jq -r '.sourceScreen.artifactId' "$plan")"
+          expected_digest="sha256:$(jq -r '.sourceScreen.artifactSha256' "$plan")"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}" > "$RUNNER_TEMP/source-artifact.json"
+          test "$(jq -r '.expired' "$RUNNER_TEMP/source-artifact.json")" = 'false'
+          test "$(jq -r '.digest' "$RUNNER_TEMP/source-artifact.json")" = "$expected_digest"
+      - name: Require production environment access
+        shell: bash
+        run: test -n "${VERCEL_TOKEN:-}"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Wait for this exact main SHA to be live in production
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            code="$(curl --silent --show-error --output "$RUNNER_TEMP/vercel-deployments.json" --write-out '%{http_code}' --header "Authorization: Bearer ${VERCEL_TOKEN}" "https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&target=production&limit=20&teamId=${VERCEL_ORG_ID}")"
+            test "$code" = '200'
+            match="$(jq -c --arg sha "$GITHUB_SHA" '[.deployments[]? | select(.target == "production" and .meta.githubCommitSha == $sha)] | first // empty' "$RUNNER_TEMP/vercel-deployments.json")"
+            if [ -n "$match" ]; then
+              state="$(printf '%s' "$match" | jq -r '.state // "UNKNOWN"')"
+              if [ "$state" = 'READY' ]; then exit 0; fi
+              if [ "$state" = 'ERROR' ] || [ "$state" = 'CANCELED' ]; then exit 1; fi
+            fi
+            sleep 5
+          done
+          exit 1
+      - name: Read production operation secret privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+      - name: Materialize outcome-blind fragility reference
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/run-production-passage-fragility-reference.ts
+      - name: Verify immutable reference artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$VOTEPREDICT_PASSAGE_FRAGILITY_REFERENCE_OUTPUT"
+          test "$(jq -r '.schemaVersion' "$file")" = 'passage-fragility-reference-v1'
+          test "$(jq -r '.source.outcomeFieldsUsed' "$file")" = 'false'
+          test "$(jq -r '.candidate.id' "$file")" = 'evidence-top20-normal1.25'
+          test "$(jq -r '.referenceEvents' "$file")" = '263'
+          test "$(jq -r '.historicalFlaggedEvents' "$file")" = '53'
+          test "$(jq -r '.featureValues.analogueCoverageGap | length' "$file")" = '263'
+          test "$(jq -r '.featureValues.analogueCountGap | length' "$file")" = '263'
+          test "$(jq -r '.featureValues.analogueWeightRisk | length' "$file")" = '263'
+          test "$(jq -r '.evidenceRiskScores | length' "$file")" = '263'
+      - name: Upload immutable reference
+        uses: actions/upload-artifact@v4
+        with:
+          name: passage-fragility-reference-v1-${{ github.sha }}
+          path: artifacts/passage-fragility-reference-v1.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Remove temporary production files
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/vercel-deployments.json" "$RUNNER_TEMP/source-artifact.json"
