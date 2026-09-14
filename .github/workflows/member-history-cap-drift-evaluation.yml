@@ -1,0 +1,108 @@
+name: Member history cap drift evaluation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/member-history-cap-drift-evaluation.yml
+      - data/evaluation/member-history-cap-drift-plan-v1.json
+      - scripts/evaluate-member-history-cap.ts
+      - scripts/select-member-history-cap-drift.ts
+      - src/evaluation/member-model.ts
+      - src/forecasting/member-model.ts
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: member-history-cap-drift-evaluation-v1
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+    steps:
+      - uses: actions/checkout@v7
+      - name: Verify frozen cap grid and selection plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          plan='data/evaluation/member-history-cap-drift-plan-v1.json'
+          test "$(jq -r '.schemaVersion' "$plan")" = 'member-history-cap-drift-plan-v1'
+          evaluator="$(jq -r '.existingEvaluator.sourceFile' "$plan")"
+          expected_blob="$(jq -r '.existingEvaluator.sourceFileBlobSha' "$plan")"
+          test "$(git rev-parse "HEAD:${evaluator}")" = "$expected_blob"
+          test "$(jq -r '.existingEvaluator.candidateCaps | map(tostring) | join(",")' "$plan")" = '5,10,20,40,80,uncapped'
+          test "$(jq -r '.selectionRule.baseline' "$plan")" = 'uncapped'
+          test "$(jq -r '.selectionRule.primarySlice' "$plan")" = '2025-2026/house'
+          test "$(jq -r '.guardrails.probabilityAction' "$plan")" = 'none'
+          test "$(jq -r '.guardrails.runtimeDefaultChange' "$plan")" = 'false'
+          test "$(jq -r '.guardrails.modelVersionChange' "$plan")" = 'false'
+      - name: Require production environment access
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${VERCEL_TOKEN:-}"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Read production database environment privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+      - name: Run the pre-existing cap grid on current historical data
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          GITHUB_SHA="$GITHUB_SHA" node --env-file="$RUNNER_TEMP/votepredict-production.env" --import tsx scripts/evaluate-member-history-cap.ts > artifacts/member-history-cap-drift-raw-v1.json
+      - name: Apply frozen candidate-selection rule
+        run: |
+          node --import tsx scripts/select-member-history-cap-drift.ts \
+            artifacts/member-history-cap-drift-raw-v1.json \
+            data/evaluation/member-history-cap-drift-plan-v1.json \
+            artifacts/member-history-cap-drift-evaluation-v1.json
+      - name: Verify shadow-only result
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='artifacts/member-history-cap-drift-evaluation-v1.json'
+          test "$(jq -r '.schemaVersion' "$file")" = 'member-history-cap-drift-evaluation-v1'
+          test "$(jq -r '.metadata.runtimeCodeSha' "$file")" = "$GITHUB_SHA"
+          test "$(jq -r '.metadata.analysisStatus' "$file")" = 'retrospective-shadow-only'
+          test "$(jq -r '.metadata.probabilityAction' "$file")" = 'none'
+          test "$(jq -r '.metadata.runtimeDefaultChange' "$file")" = 'false'
+          test "$(jq -r '.metadata.modelVersionChange' "$file")" = 'false'
+          test "$(jq -r '.baseline.cap' "$file")" = 'uncapped'
+          test "$(jq '.candidates | length' "$file")" = '5'
+          test "$(jq -r '.decision.productionAction' "$file")" = 'none'
+          test "$(jq '[.candidates[].cap] | join(",")' "$file")" = '5,10,20,40,80'
+          if jq -e '.. | objects | select(has("probabilityAfter") or has("productionWeight") or has("mechanicallyActionable"))' "$file" >/dev/null; then
+            echo 'Cap evaluation artifact contains a forbidden production-action field.'
+            exit 1
+          fi
+      - name: Upload immutable cap-drift evaluation
+        uses: actions/upload-artifact@v4
+        with:
+          name: member-history-cap-drift-evaluation-v1-${{ github.sha }}
+          path: |
+            artifacts/member-history-cap-drift-raw-v1.json
+            artifacts/member-history-cap-drift-evaluation-v1.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Remove temporary production environment
+        if: always()
+        shell: bash
+        run: |
+          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log"
