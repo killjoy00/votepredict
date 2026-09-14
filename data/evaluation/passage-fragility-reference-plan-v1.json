@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "passage-fragility-reference-plan-v1",
+  "frozenAt": "2026-09-14T21:30:00Z",
+  "selectedCandidate": "evidence-top20-normal1.25",
+  "sourceScreen": {
+    "workflowRunId": 34898247486,
+    "artifactId": 10369836536,
+    "artifactSha256": "8248c4741f491627af0a746e6316c4cfd7e61e6295ba3a05ebb4bfb4d18eb2b7",
+    "productionCodeSha": "7a5a9d26a071a597cc37e36d80dab845d3a1a629"
+  },
+  "referenceScope": {
+    "session": "2025-2026",
+    "chamber": "house",
+    "memberHistoryHalfLifeDays": 180,
+    "features": ["analogueCoverageGap", "analogueCountGap", "analogueWeightRisk"],
+    "riskScore": "mean empirical percentile of the three frozen features",
+    "riskPercentileFloor": 0.8,
+    "sigmaMultiplier": 1.25,
+    "expectedReferenceEvents": 263,
+    "expectedHistoricalFlaggedEvents": 53
+  },
+  "guardrails": {
+    "usesOutcomeFields": false,
+    "productionAction": "none",
+    "runtimeDefaultChange": false,
+    "modelVersionChange": false,
+    "frozenCap20ProspectiveExperimentChanged": false
+  }
+}
