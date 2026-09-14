@@ -1,0 +1,132 @@
+name: Historical Deep House Journal holdout mechanics
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/historical-deep-house-journal-holdout-mechanics.yml
+      - data/evaluation/historical-deep-house-journal-holdout-mechanics-lineage-v1.json
+      - scripts/classify-historical-deep-house-journal-holdout-mechanics.ts
+      - src/evaluation/historical-deep-house-journal-holdout-mechanics.ts
+      - src/evaluation/historical-deep-house-journal-holdout-source-bundle.ts
+      - src/evaluation/historical-deep-house-journal-mechanics.ts
+      - tests/historical-deep-house-journal-holdout-mechanics.test.ts
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-deep-house-journal-holdout-mechanics.yml
+      - data/evaluation/historical-deep-house-journal-holdout-mechanics-lineage-v1.json
+      - scripts/classify-historical-deep-house-journal-holdout-mechanics.ts
+      - src/evaluation/historical-deep-house-journal-holdout-mechanics.ts
+      - src/evaluation/historical-deep-house-journal-holdout-source-bundle.ts
+      - src/evaluation/historical-deep-house-journal-mechanics.ts
+      - tests/historical-deep-house-journal-holdout-mechanics.test.ts
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-house-journal-holdout-mechanics-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify frozen source and parser lineage
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-house-journal-holdout-mechanics-lineage-v1.json'
+          test "$(jq -r '.schemaVersion' "$lineage")" = 'historical-deep-house-journal-holdout-mechanics-lineage-v1'
+          test "$(jq -r '.frozenParserReference.parser' "$lineage")" = 'deterministic-house-journal-mechanics-v1'
+
+          source_artifact_id="$(jq -r '.sourceArtifact.artifactId' "$lineage")"
+          source_expected="sha256:$(jq -r '.sourceArtifact.artifactSha256' "$lineage")"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${source_artifact_id}" > "$RUNNER_TEMP/source-artifact.json"
+          test "$(jq -r '.expired' "$RUNNER_TEMP/source-artifact.json")" = 'false'
+          test "$(jq -r '.digest' "$RUNNER_TEMP/source-artifact.json")" = "$source_expected"
+
+          parser_artifact_id="$(jq -r '.frozenParserReference.artifactId' "$lineage")"
+          parser_expected="sha256:$(jq -r '.frozenParserReference.artifactSha256' "$lineage")"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${parser_artifact_id}" > "$RUNNER_TEMP/parser-artifact.json"
+          test "$(jq -r '.expired' "$RUNNER_TEMP/parser-artifact.json")" = 'false'
+          test "$(jq -r '.digest' "$RUNNER_TEMP/parser-artifact.json")" = "$parser_expected"
+
+          parser_file="$(jq -r '.frozenParserReference.sourceFile' "$lineage")"
+          expected_blob="$(jq -r '.frozenParserReference.sourceFileBlobSha' "$lineage")"
+          actual_blob="$(git rev-parse "HEAD:${parser_file}")"
+          test "$actual_blob" = "$expected_blob"
+
+          echo "source_run_id=$(jq -r '.sourceArtifact.workflowRunId' "$lineage")" >> "$GITHUB_ENV"
+          echo "source_name=$(jq -r '.sourceArtifact.artifactName' "$lineage")" >> "$GITHUB_ENV"
+          echo "source_head_sha=$(jq -r '.sourceArtifact.headSha' "$lineage")" >> "$GITHUB_ENV"
+          echo "source_artifact_id=${source_artifact_id}" >> "$GITHUB_ENV"
+          echo "source_artifact_digest=${source_expected}" >> "$GITHUB_ENV"
+          echo "parser_artifact_id=${parser_artifact_id}" >> "$GITHUB_ENV"
+          echo "parser_artifact_digest=${parser_expected}" >> "$GITHUB_ENV"
+          echo "parser_head_sha=$(jq -r '.frozenParserReference.headSha' "$lineage")" >> "$GITHUB_ENV"
+          echo "parser_source_blob_sha=${expected_blob}" >> "$GITHUB_ENV"
+      - name: Download immutable holdout source artifact
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.source_run_id }}
+          name: ${{ env.source_name }}
+          path: artifacts/frozen/holdout-source
+      - name: Apply frozen Journal mechanics parser to holdout sources
+        run: |
+          node --import tsx scripts/classify-historical-deep-house-journal-holdout-mechanics.ts \
+            artifacts/frozen/holdout-source/historical-deep-house-journal-holdout-source-bundle-v1.json \
+            "$source_artifact_id" \
+            "$source_artifact_digest" \
+            "$source_head_sha" \
+            "$parser_artifact_id" \
+            "$parser_artifact_digest" \
+            "$parser_head_sha" \
+            "$parser_source_blob_sha" \
+            artifacts/historical-deep-house-journal-holdout-mechanics-v1.json
+      - name: Verify holdout mechanics guardrails
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='artifacts/historical-deep-house-journal-holdout-mechanics-v1.json'
+          source='artifacts/frozen/holdout-source/historical-deep-house-journal-holdout-source-bundle-v1.json'
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-deep-house-journal-holdout-mechanics-v1'
+          test "$(jq -r '.metadata.parser' "$file")" = 'deterministic-house-journal-mechanics-v1'
+          test "$(jq -r '.metadata.inputSourceSchema' "$file")" = 'historical-deep-house-journal-holdout-source-bundle-v1'
+          test "$(jq -r '.metadata.inputSourcePolicy' "$file")" = 'house-journal-current-session-enumeration-v1'
+          test "$(jq -r '.metadata.outcomeUse' "$file")" = 'none'
+          test "$(jq -r '.metadata.probabilityAction' "$file")" = 'none'
+          test "$(jq -r '.input.selectedCases' "$file")" = '24'
+          test "$(jq '.cases | length' "$file")" = '24'
+          test "$(jq '[.cases[].stableKey] | unique | length' "$file")" = '24'
+          test "$(jq -r '.input.sourcePages' "$file")" = "$(jq '.sources | length' "$source")"
+          test "$(jq -r '.input.sourceCasePairs' "$file")" = "$(jq '[.sources[].matchedCases[]] | length' "$source")"
+          test "$(jq '[.observations[] | select(.mechanicallyActionable != false or .finalPassageInference != "none")] | length' "$file")" = '0'
+          test "$(jq '[.cases[] | select((.sourceIds | length) == 0 and ((.mechanics | length) != 0 or (.mechanicObservationIds | length) != 0))] | length' "$file")" = '0'
+          test "$(jq '[.observations[] | select(.mechanic == "reaches_final_passage_stage" and (.evidenceText | test("\\b(?:yeas|nays|voted|vote was taken|passed|failed)\\b"; "i")))] | length' "$file")" = '0'
+          observations="$(jq -r '.summary.observations' "$file")"
+          test "$observations" -ge 1
+          if jq -e '.. | objects | select(has("actualOutcome") or has("actualYes") or has("actualNo") or has("passed") or has("memberChoice") or has("probabilityAfter"))' "$file" >/dev/null; then
+            echo 'Holdout Journal mechanics artifact leaked outcome or probability fields.'
+            exit 1
+          fi
+      - name: Upload frozen House Journal holdout mechanics artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-house-journal-holdout-mechanics-v1-${{ github.sha }}
+          path: artifacts/historical-deep-house-journal-holdout-mechanics-v1.json
+          if-no-files-found: error
+          retention-days: 30

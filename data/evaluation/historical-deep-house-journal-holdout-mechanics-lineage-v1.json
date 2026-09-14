@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "historical-deep-house-journal-holdout-mechanics-lineage-v1",
+  "purpose": "Pin the immutable 2025-2026 holdout House Journal source artifact and the already-frozen #171 deterministic mechanics parser before classifying any holdout Journal mechanics. Outcomes remain sealed.",
+  "sourceArtifact": {
+    "workflowRunId": 34795147259,
+    "artifactId": 10329757011,
+    "artifactName": "historical-deep-house-journal-holdout-source-bundle-v1-418bff10e82e03df300b1ec52fdc2a2bb8f081f6",
+    "artifactSha256": "d446cf2f8b5e676fb842a0c8d0aa3adaa8e02d05db2b7ef4f1d9bbbf97e09228",
+    "headSha": "418bff10e82e03df300b1ec52fdc2a2bb8f081f6",
+    "fileName": "historical-deep-house-journal-holdout-source-bundle-v1.json"
+  },
+  "frozenParserReference": {
+    "parser": "deterministic-house-journal-mechanics-v1",
+    "workflowRunId": 34778905021,
+    "artifactId": 10324485900,
+    "artifactName": "historical-deep-house-journal-mechanics-v1-c3de5f8e06e411b661ab3cda7e92b174005c0d2c",
+    "artifactSha256": "b65eff9cbc1302906c5131b8d41222df9b161e34c55bbfeaeb12ade2a07d1de6",
+    "headSha": "c3de5f8e06e411b661ab3cda7e92b174005c0d2c",
+    "sourceFile": "src/evaluation/historical-deep-house-journal-mechanics.ts",
+    "sourceFileBlobSha": "1561b8c752df0eb84a5444a3df59e862d1b78fe8"
+  },
+  "guardrails": {
+    "holdoutOnly": true,
+    "outcomeAccess": false,
+    "databaseAccess": false,
+    "liveDeepCalls": false,
+    "sourceMutation": false,
+    "parserRuleChanges": false,
+    "mechanicalActionability": false,
+    "probabilityChanges": false,
+    "targetPolicyChanges": false,
+    "evidenceWeightChanges": false,
+    "caseReplacement": false,
+    "sourceLessCasesRemainFrozen": true
+  }
+}
