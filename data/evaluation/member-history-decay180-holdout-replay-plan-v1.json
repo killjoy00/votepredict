@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "member-history-decay180-holdout-replay-plan-v1",
+  "purpose": "Post-selection descriptive replay of the mechanically selected 180-day member-history decay candidate on the exact frozen 24-case 2025-2026 House holdout through the unchanged historical Quick analogue, roster, and chamber pipeline. This replay cannot promote the candidate to production.",
+  "decayEvaluationArtifact": {
+    "workflowRunId": 34860349956,
+    "artifactId": 10354173225,
+    "artifactName": "member-history-decay-evaluation-v1-7ee78425604ffec07144d6d69d77d7c150fe216a",
+    "artifactSha256": "5be280d41cb411c7dca9540e6c8dfbe947adfac4fda04d8f8fd216ad609c897e",
+    "headSha": "7ee78425604ffec07144d6d69d77d7c150fe216a",
+    "selectedCandidate": "member-180",
+    "memberHistoryHalfLifeDays": 180
+  },
+  "holdoutCohortArtifact": {
+    "workflowRunId": 34780337625,
+    "artifactId": 10325391449,
+    "artifactName": "historical-deep-house-journal-holdout-cohort-v1-de024e2ae136c07ab188d47bdb79d0f1b9860803",
+    "artifactSha256": "e23c831caca7647d2061c643f42ebf081aee44dee95de3f4272db041008dd54e",
+    "headSha": "de024e2ae136c07ab188d47bdb79d0f1b9860803",
+    "fileName": "historical-deep-house-journal-holdout-cohort-v1.json"
+  },
+  "uncappedHoldoutScoreArtifact": {
+    "workflowRunId": 34795989512,
+    "artifactId": 10330006541,
+    "artifactName": "historical-deep-house-journal-holdout-score-v1-99a9e74759266940898319a1ae8661d0907de023",
+    "artifactSha256": "4067c09f9e2a7b3e3c3606cf440ab28d27ace8de16c0904083d35df1d1b432f0",
+    "headSha": "99a9e74759266940898319a1ae8661d0907de023",
+    "fileName": "historical-deep-house-journal-holdout-score-v1.json"
+  },
+  "replayPolicy": {
+    "modelVersion": "member-eb-v1.1",
+    "memberHistoryHalfLifeDays": 180,
+    "partyHistoryDecay": "none",
+    "globalHistoryDecay": "none",
+    "allOtherMemberModelParameters": "production defaults unchanged",
+    "quickAnaloguePipeline": "unchanged historical Quick analogue selection and weighting",
+    "activeRosterPipeline": "unchanged strict pre-vote active-roster logic",
+    "chamberAggregation": "unchanged ordinary Minnesota passage rule and chamber simulation",
+    "caseSelection": "exact frozen 24 holdout cases; no replacement or reranking",
+    "baseline": "immutable uncapped/unweighted Quick probabilities and outcomes from the one-shot #176 holdout artifact"
+  },
+  "reportedMetrics": [
+    "member Brier",
+    "member log loss",
+    "member binary accuracy",
+    "member expected calibration error",
+    "member-weighted signed residual",
+    "equal-case signed residual",
+    "chamber mean absolute expected-Yes error",
+    "case-level signed residual and expected-Yes error",
+    "probability-bin calibration"
+  ],
+  "interpretation": {
+    "primaryQuestion": "Does the mechanically selected 180-day member-history decay candidate retain its component-level gains when replayed through the exact already-revealed Quick holdout pipeline?",
+    "notConfirmatory": "The 2025-2026 outcomes contributed to the retrospective decay screen and were already revealed before this replay. Any improvement is post-selection descriptive evidence only.",
+    "promotionBoundary": "No outcome of this replay may change MEMBER_MODEL_VERSION, runtime history weighting, production probabilities, the frozen cap-20 prospective experiment, Deep targeting, or Journal mechanics. Any decay promotion requires a separately frozen future prospective/shadow validation lineage."
+  },
+  "guardrails": {
+    "databaseWrites": false,
+    "forecastWrites": false,
+    "runtimeDefaultChange": false,
+    "modelVersionChange": false,
+    "probabilityAction": "none",
+    "productionAction": "none",
+    "frozenCap20ProspectiveExperimentChanged": false
+  }
+}
