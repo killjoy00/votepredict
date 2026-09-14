@@ -6,7 +6,6 @@ import { runPersistedDeepResearch } from '@/evidence/persisted-deep-research';
 import type { DeepResearchSourceReference } from '@/evidence/provider';
 import { failResearchRun } from '@/evidence/repository';
 import { pool } from '@/lib/db';
-import { MEMBER_MODEL_VERSION } from './member-model';
 import type { ForecastRuntimeMember, ForecastRuntimeRequest, ForecastRuntimeResult } from './runtime';
 
 const DEEP_TARGET_LIMIT = 12;
@@ -83,7 +82,12 @@ function probabilityUncertainty(probability: number | undefined): number | undef
   return 1 - Math.abs(probability - 0.5) * 2;
 }
 
-async function createDeepRevisionSkeleton(forecastId: string, baseRevisionId: string, asOf: string): Promise<{ id: string; revisionNumber: number; billVersionId: string | null }> {
+async function createDeepRevisionSkeleton(
+  forecastId: string,
+  baseRevisionId: string,
+  baseModelVersion: string,
+  asOf: string,
+): Promise<{ id: string; revisionNumber: number; billVersionId: string | null }> {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -108,8 +112,8 @@ async function createDeepRevisionSkeleton(forecastId: string, baseRevisionId: st
       revisionNumber,
       baseResult.rows[0].bill_version_id,
       asOf,
-      MEMBER_MODEL_VERSION,
-      JSON.stringify({ status: 'researching', baseRevisionId, asOf }),
+      baseModelVersion,
+      JSON.stringify({ status: 'researching', baseRevisionId, baseModelVersion, asOf }),
     ]);
     await client.query('COMMIT');
     return { id: result.rows[0].id, revisionNumber, billVersionId: baseResult.rows[0].bill_version_id };
@@ -281,7 +285,7 @@ async function finalizeDeepRevision(
   members: readonly DeepRuntimeMember[],
 ): Promise<void> {
   const simulation = execution.chamberAfter;
-  const modelVersion = `${MEMBER_MODEL_VERSION}+${execution.providerVersion ?? execution.provider}`;
+  const modelVersion = `${base.modelVersion}+${execution.providerVersion ?? execution.provider}`;
   const includedEvidenceCount = execution.memberUpdates.reduce((sum, update) => sum + update.appliedEvidenceCount, 0);
   const excludedEvidenceCount = execution.memberUpdates.reduce((sum, update) => sum + update.excludedEvidenceCount, 0);
   const contradictions = execution.diagnostics.evidence.relationships.filter((relation) => relation.kind === 'contradicts').length;
@@ -293,6 +297,7 @@ async function finalizeDeepRevision(
     status: 'ready',
     asOf: base.asOf,
     baseRevisionId: base.revisionId,
+    baseModelVersion: base.modelVersion,
     researchRunId,
     passageRule: base.chamber.passageRule,
     requiredYes: base.chamber.requiredYes,
@@ -358,7 +363,7 @@ export async function executeDeepRuntimeForecast(
   base: ForecastRuntimeResult,
 ): Promise<DeepRuntimeResult> {
   if (request.researchMode !== 'deep') throw new Error('Deep runtime requires researchMode=deep');
-  const skeleton = await createDeepRevisionSkeleton(request.forecastId, base.revisionId, base.asOf);
+  const skeleton = await createDeepRevisionSkeleton(request.forecastId, base.revisionId, base.modelVersion, base.asOf);
   const deepMembers: DeepForecastMember[] = base.members.map((member) => ({
     membershipId: member.membershipId,
     memberName: member.memberName,
@@ -414,7 +419,7 @@ export async function executeDeepRuntimeForecast(
       revisionId: skeleton.id,
       revisionNumber: skeleton.revisionNumber,
       researchMode: 'deep',
-      modelVersion: `${MEMBER_MODEL_VERSION}+${persisted.execution.providerVersion ?? persisted.execution.provider}`,
+      modelVersion: `${base.modelVersion}+${persisted.execution.providerVersion ?? persisted.execution.provider}`,
       chamber: {
         ...base.chamber,
         passageProbability: simulation?.passageProbability,
