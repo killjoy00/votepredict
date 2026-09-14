@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "member-history-cap-drift-plan-v1",
+  "purpose": "Retrospective evaluation of the pre-existing member-history cap grid against the 2025-2026 calibration drift revealed by the frozen House Journal holdout. Candidate caps and evaluator implementation predate this plan; this run may nominate a shadow candidate but cannot change production defaults.",
+  "existingEvaluator": {
+    "sourceFile": "scripts/evaluate-member-history-cap.ts",
+    "sourceFileBlobSha": "2f706191e9817d08add58ad3800d79c5d20d5e68",
+    "candidateCaps": [5, 10, 20, 40, 80, "uncapped"],
+    "evaluation": "Chronological passage-vote member prediction; histories update only after each vote date and are isolated by chamber."
+  },
+  "motivation": {
+    "frozenHoldoutScoreArtifactId": 10330006541,
+    "frozenHoldoutScoreArtifactSha256": "4067c09f9e2a7b3e3c3606cf440ab28d27ace8de16c0904083d35df1d1b432f0",
+    "holdoutOverallMemberWeightedSignedResidual": 0.0933318495,
+    "knownFullHistory2025_2026Ece": 0.1039355308,
+    "note": "The 2025-2026 House Journal holdout is post-reveal and cannot serve as a new untouched holdout. The pre-existing cap grid is therefore evaluated retrospectively and any winner remains shadow-only until separately validated."
+  },
+  "selectionRule": {
+    "baseline": "uncapped",
+    "primarySlice": "2025-2026/house",
+    "qualifyingConditions": [
+      "Candidate 2025-2026/house Brier must be lower than uncapped.",
+      "Candidate 2025-2026/house expected calibration error must be lower than uncapped.",
+      "Candidate 2025-2026/house log loss may not be more than 0.005 worse than uncapped.",
+      "Candidate overall Brier may not be more than 0.001 worse than uncapped.",
+      "Candidate overall accuracy may not be more than 0.002 lower than uncapped.",
+      "Candidate 2021-2022/house Brier and 2023-2024/house Brier may each be at most 0.003 worse than uncapped."
+    ],
+    "ranking": "Among qualifying finite caps, rank by lowest 2025-2026/house Brier, then lowest 2025-2026/house ECE, then smallest finite cap. If none qualify, retain uncapped and record no candidate.",
+    "promotionBoundary": "A qualifying cap is only a shadow candidate. This retrospective result cannot alter MEMBER_MODEL_VERSION, runtime defaults, production probability calibration, Deep targeting, or Journal mechanics."
+  },
+  "guardrails": {
+    "productionWrites": false,
+    "databaseWrites": false,
+    "modelVersionChange": false,
+    "runtimeDefaultChange": false,
+    "probabilityAction": "none",
+    "nextStepIfCandidateQualifies": "Replay the nominated cap on the exact frozen 24-case 2025-2026 House cohort and report member Brier/log loss/accuracy, case residuals, and chamber-level expected-Yes error against uncapped. Because the cohort is already revealed, that replay remains descriptive; prospective validation is still required before promotion."
+  }
+}
