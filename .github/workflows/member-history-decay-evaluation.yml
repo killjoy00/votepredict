@@ -1,0 +1,138 @@
+name: Member history decay evaluation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/member-history-decay-evaluation.yml
+      - data/evaluation/member-history-decay-plan-v1.json
+      - scripts/run-production-member-history-decay-evaluation.ts
+      - src/app/api/operations/member-history-decay-evaluation/route.ts
+      - src/evaluation/member-history-decay-grid.ts
+      - src/evaluation/member-model.ts
+      - src/forecasting/member-model.ts
+      - src/operations/environment-file.ts
+      - tests/member-history-decay-grid.test.ts
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: member-history-decay-evaluation-v1
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_MEMBER_HISTORY_DECAY_OUTPUT: artifacts/member-history-decay-evaluation-v1.json
+    steps:
+      - uses: actions/checkout@v7
+      - name: Verify frozen decay grid and decision boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          plan='data/evaluation/member-history-decay-plan-v1.json'
+          test "$(jq -r '.schemaVersion' "$plan")" = 'member-history-decay-plan-v1'
+          test "$(jq -r '.baseline.id' "$plan")" = 'uncapped-unweighted'
+          test "$(jq -r '[.candidates[].id] | join(",")' "$plan")" = 'member-180,member-365,member-730,member-365-party-730,member-730-party-1460,hierarchical-365-730-1460'
+          test "$(jq -r '.selectionRule.matureSlices | join(",")' "$plan")" = '2023-2024/house,2023-2024/senate,2025-2026/house,2025-2026/senate'
+          test "$(jq -r '.selectionRule.minimumMatureSliceBrierWins' "$plan")" = '3'
+          test "$(jq -r '.selectionRule.maximumWorstMatureSliceBrierDelta' "$plan")" = '0.001'
+          test "$(jq -r '.selectionRule.maximumOverallBrierDelta' "$plan")" = '-0.0001'
+          test "$(jq -r '.selectionRule.maximumOverallLogLossDelta' "$plan")" = '0'
+          test "$(jq -r '.selectionRule.maximumOverallEceDelta' "$plan")" = '0'
+          test "$(jq -r '.selectionRule.minimumOverallAccuracyDelta' "$plan")" = '-0.002'
+          test "$(jq -r '.guardrails.probabilityAction' "$plan")" = 'none'
+          test "$(jq -r '.guardrails.runtimeDefaultChange' "$plan")" = 'false'
+          test "$(jq -r '.guardrails.modelVersionChange' "$plan")" = 'false'
+          test "$(jq -r '.guardrails.frozenProspectiveCap20ExperimentChanged' "$plan")" = 'false'
+      - name: Require production environment access
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${VERCEL_TOKEN:-}"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Wait for this exact main SHA to be live in production
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            http_code="$(curl \
+              --silent \
+              --show-error \
+              --output "$RUNNER_TEMP/vercel-deployments.json" \
+              --write-out '%{http_code}' \
+              --header "Authorization: Bearer ${VERCEL_TOKEN}" \
+              "https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&target=production&limit=20&teamId=${VERCEL_ORG_ID}")"
+            if [ "$http_code" != "200" ]; then
+              echo "Vercel deployment lookup returned HTTP ${http_code}."
+              exit 1
+            fi
+            match="$(jq -c --arg sha "$GITHUB_SHA" '[.deployments[]? | select(.target == "production" and .meta.githubCommitSha == $sha)] | first // empty' "$RUNNER_TEMP/vercel-deployments.json")"
+            if [ -n "$match" ]; then
+              state="$(printf '%s' "$match" | jq -r '.state // "UNKNOWN"')"
+              if [ "$state" = "READY" ]; then
+                echo "Exact main SHA ${GITHUB_SHA} is READY in production."
+                exit 0
+              fi
+              if [ "$state" = "ERROR" ] || [ "$state" = "CANCELED" ]; then
+                echo "Production deployment for ${GITHUB_SHA} entered ${state}."
+                exit 1
+              fi
+            fi
+            sleep 5
+          done
+          echo "Exact main SHA ${GITHUB_SHA} did not become READY before the decay-evaluation deadline."
+          exit 1
+      - name: Read production operation secret privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+      - name: Run frozen decay grid inside production runtime
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/run-production-member-history-decay-evaluation.ts
+      - name: Verify immutable shadow result
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$VOTEPREDICT_MEMBER_HISTORY_DECAY_OUTPUT"
+          test "$(jq -r '.schemaVersion' "$file")" = 'member-history-decay-evaluation-v1'
+          test "$(jq -r '.metadata.codeSha' "$file")" = "$GITHUB_SHA"
+          test "$(jq -r '.metadata.analysisStatus' "$file")" = 'retrospective-shadow-only'
+          test "$(jq -r '.metadata.probabilityAction' "$file")" = 'none'
+          test "$(jq -r '.metadata.runtimeDefaultChange' "$file")" = 'false'
+          test "$(jq -r '.metadata.modelVersionChange' "$file")" = 'false'
+          test "$(jq -r '.baseline.config.id' "$file")" = 'uncapped-unweighted'
+          test "$(jq -r '[.candidates[].config.id] | join(",")' "$file")" = 'member-180,member-365,member-730,member-365-party-730,member-730-party-1460,hierarchical-365-730-1460'
+          test "$(jq -r '.metadata.baselineValidation.maximumAbsoluteProbabilityDifference <= 1e-12' "$file")" = 'true'
+          test "$(jq -r '.decision.productionAction' "$file")" = 'none'
+          if jq -e '.. | objects | select(has("probabilityAfter") or has("productionWeight") or has("mechanicallyActionable"))' "$file" >/dev/null; then
+            echo 'Decay evaluation artifact contains a forbidden production-action field.'
+            exit 1
+          fi
+      - name: Upload immutable decay evaluation
+        uses: actions/upload-artifact@v4
+        with:
+          name: member-history-decay-evaluation-v1-${{ github.sha }}
+          path: artifacts/member-history-decay-evaluation-v1.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Remove temporary production files
+        if: always()
+        shell: bash
+        run: |
+          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/vercel-deployments.json"

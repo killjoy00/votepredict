@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "member-history-decay-plan-v1",
+  "purpose": "Retrospective shadow screening of time-decayed member and party passage-vote history before any runtime model change.",
+  "baseline": {
+    "id": "uncapped-unweighted",
+    "memberHalfLifeDays": null,
+    "partyHalfLifeDays": null,
+    "globalHalfLifeDays": null
+  },
+  "candidates": [
+    {
+      "id": "member-180",
+      "memberHalfLifeDays": 180,
+      "partyHalfLifeDays": null,
+      "globalHalfLifeDays": null
+    },
+    {
+      "id": "member-365",
+      "memberHalfLifeDays": 365,
+      "partyHalfLifeDays": null,
+      "globalHalfLifeDays": null
+    },
+    {
+      "id": "member-730",
+      "memberHalfLifeDays": 730,
+      "partyHalfLifeDays": null,
+      "globalHalfLifeDays": null
+    },
+    {
+      "id": "member-365-party-730",
+      "memberHalfLifeDays": 365,
+      "partyHalfLifeDays": 730,
+      "globalHalfLifeDays": null
+    },
+    {
+      "id": "member-730-party-1460",
+      "memberHalfLifeDays": 730,
+      "partyHalfLifeDays": 1460,
+      "globalHalfLifeDays": null
+    },
+    {
+      "id": "hierarchical-365-730-1460",
+      "memberHalfLifeDays": 365,
+      "partyHalfLifeDays": 730,
+      "globalHalfLifeDays": 1460
+    }
+  ],
+  "selectionRule": {
+    "analysisStatus": "retrospective-shadow-only",
+    "matureSlices": [
+      "2023-2024/house",
+      "2023-2024/senate",
+      "2025-2026/house",
+      "2025-2026/senate"
+    ],
+    "minimumMatureSliceBrierWins": 3,
+    "maximumWorstMatureSliceBrierDelta": 0.001,
+    "maximumOverallBrierDelta": -0.0001,
+    "maximumOverallLogLossDelta": 0,
+    "maximumOverallEceDelta": 0,
+    "minimumOverallAccuracyDelta": -0.002,
+    "ranking": [
+      "overallBrier",
+      "overallLogLoss",
+      "overallEce"
+    ],
+    "qualification": "A candidate is only nominated for a later exact Quick replay if all frozen thresholds pass. This retrospective screen cannot promote a model to production."
+  },
+  "guardrails": {
+    "probabilityAction": "none",
+    "runtimeDefaultChange": false,
+    "modelVersionChange": false,
+    "frozenProspectiveCap20ExperimentChanged": false,
+    "journalMechanicsActionabilityChanged": false,
+    "selectionBiasWarning": "This screen conditions on bills that reached final passage and therefore evaluates the member-vote component, not unconditional bill passage selection."
+  }
+}
