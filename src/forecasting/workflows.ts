@@ -3,7 +3,8 @@ import type { PoolClient } from 'pg';
 import { pool } from '@/lib/db';
 import { executeDeepRuntimeForecast, type DeepRuntimeResult } from './deep-runtime';
 import { poissonBinomialDistribution, type PassageRule } from './chamber';
-import { executeRuntimeForecast, type ForecastRuntimeRequest, type ForecastRuntimeResult, type ForecastRuntimeSubject, type RuntimeResearchMode } from './runtime';
+import { executeQuickRuntimeForecast } from './quick-runtime';
+import { type ForecastRuntimeRequest, type ForecastRuntimeResult, type ForecastRuntimeSubject, type RuntimeResearchMode } from './runtime';
 
 export class ForecastWorkflowError extends Error {
   constructor(
@@ -372,7 +373,7 @@ async function revisionSummary(row: RevisionRow): Promise<ForecastRevisionSummar
 export async function updateForecast(forecastId: string, ownerUserId: string, researchMode: RuntimeResearchMode): Promise<ForecastUpdateResult> {
   const context = await ownedForecastContext(forecastId, ownerUserId);
   const baseRequest = runtimeRequest(context, 'quick');
-  const quick = await executeRuntimeForecast(baseRequest);
+  const quick = await executeQuickRuntimeForecast(baseRequest);
   if (researchMode === 'quick') return { result: quick };
   try {
     const deep = await executeDeepRuntimeForecast({ ...runtimeRequest(context, 'deep'), asOf: quick.asOf }, quick);

@@ -1,7 +1,8 @@
 import { and, eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { executeDeepRuntimeForecast } from '@/forecasting/deep-runtime';
-import { executeRuntimeForecast, ForecastRuntimeError, type ForecastRuntimeSubject } from '@/forecasting/runtime';
+import { executeQuickRuntimeForecast } from '@/forecasting/quick-runtime';
+import { ForecastRuntimeError, type ForecastRuntimeSubject } from '@/forecasting/runtime';
 import { floorTargetForChamber, forecastTargetDefinition } from '@/forecasting/targets';
 import { requireOwner } from '@/lib/auth/guard';
 import { db, pool } from '@/lib/db';
@@ -149,7 +150,7 @@ export async function POST(request: Request) {
   };
 
   try {
-    const quick = await executeRuntimeForecast({
+    const quick = await executeQuickRuntimeForecast({
       ...baseRequest,
       researchMode: 'quick',
     });
