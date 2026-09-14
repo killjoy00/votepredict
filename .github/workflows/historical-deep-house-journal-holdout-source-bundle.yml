@@ -1,0 +1,115 @@
+name: Historical Deep House Journal holdout source bundle
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/historical-deep-house-journal-holdout-source-bundle.yml
+      - data/evaluation/historical-deep-house-journal-holdout-source-lineage-v1.json
+      - scripts/collect-historical-deep-house-journal-holdout-sources.ts
+      - src/evaluation/historical-deep-house-journal-holdout-source-bundle.ts
+      - src/evaluation/historical-deep-house-journal-source-bundle.ts
+      - src/evaluation/historical-deep-house-journal-holdout-cohort.ts
+      - tests/historical-deep-house-journal-holdout-source-bundle.test.ts
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-deep-house-journal-holdout-source-bundle.yml
+      - data/evaluation/historical-deep-house-journal-holdout-source-lineage-v1.json
+      - scripts/collect-historical-deep-house-journal-holdout-sources.ts
+      - src/evaluation/historical-deep-house-journal-holdout-source-bundle.ts
+      - src/evaluation/historical-deep-house-journal-source-bundle.ts
+      - src/evaluation/historical-deep-house-journal-holdout-cohort.ts
+      - tests/historical-deep-house-journal-holdout-source-bundle.test.ts
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-house-journal-holdout-source-bundle-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify pinned holdout cohort artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/historical-deep-house-journal-holdout-source-lineage-v1.json'
+          test "$(jq -r '.schemaVersion' "$lineage")" = 'historical-deep-house-journal-holdout-source-lineage-v1'
+          test "$(jq -r '.indexPolicy.name' "$lineage")" = 'house-journal-current-session-enumeration-v1'
+          artifact_id="$(jq -r '.cohortArtifact.artifactId' "$lineage")"
+          expected="sha256:$(jq -r '.cohortArtifact.artifactSha256' "$lineage")"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}" > "$RUNNER_TEMP/cohort-artifact.json"
+          test "$(jq -r '.expired' "$RUNNER_TEMP/cohort-artifact.json")" = 'false'
+          test "$(jq -r '.digest' "$RUNNER_TEMP/cohort-artifact.json")" = "$expected"
+          echo "cohort_run_id=$(jq -r '.cohortArtifact.workflowRunId' "$lineage")" >> "$GITHUB_ENV"
+          echo "cohort_name=$(jq -r '.cohortArtifact.artifactName' "$lineage")" >> "$GITHUB_ENV"
+          echo "cohort_head_sha=$(jq -r '.cohortArtifact.headSha' "$lineage")" >> "$GITHUB_ENV"
+          echo "cohort_artifact_id=${artifact_id}" >> "$GITHUB_ENV"
+          echo "cohort_artifact_digest=$(jq -r '.cohortArtifact.artifactSha256' "$lineage")" >> "$GITHUB_ENV"
+      - name: Download frozen holdout cohort
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.cohort_run_id }}
+          name: ${{ env.cohort_name }}
+          path: artifacts/frozen/holdout-cohort
+      - name: Enumerate and freeze official pre-vote 2025-2026 House Journals
+        run: |
+          node --import tsx scripts/collect-historical-deep-house-journal-holdout-sources.ts \
+            --cohort artifacts/frozen/holdout-cohort/historical-deep-house-journal-holdout-cohort-v1.json \
+            --cohort-head-sha "$cohort_head_sha" \
+            --cohort-artifact-id "$cohort_artifact_id" \
+            --cohort-artifact-digest "$cohort_artifact_digest" \
+            --code-sha "$GITHUB_SHA" \
+            --output artifacts/historical-deep-house-journal-holdout-source-bundle-v1.json
+      - name: Verify holdout source-freeze guardrails
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='artifacts/historical-deep-house-journal-holdout-source-bundle-v1.json'
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-deep-house-journal-holdout-source-bundle-v1'
+          test "$(jq -r '.metadata.sourcePolicy' "$file")" = 'house-journal-current-session-enumeration-v1'
+          test "$(jq -r '.metadata.sessionIndexUrl' "$file")" = 'https://www.house.mn.gov/Journals'
+          test "$(jq -r '.input.selectedCases' "$file")" = '24'
+          test "$(jq -r '.input.sessions | join(",")' "$file")" = '2025-2026'
+          test "$(jq -r '.input.chamber' "$file")" = 'house'
+          test "$(jq -r '.input.sessionIndexesAttempted' "$file")" = '1'
+          test "$(jq '.cases | length' "$file")" = '24'
+          test "$(jq '[.cases[].stableKey] | unique | length' "$file")" = '24'
+          test "$(jq '[.sources[] | select(.sourceClass != "house_journal_record" or .session != "2025-2026")] | length' "$file")" = '0'
+          test "$(jq '[.sources[] | select((.contentSha256 | test("^[a-f0-9]{64}$")) | not)] | length' "$file")" = '0'
+          test "$(jq '[.sources[] as $s | $s.matchedCases[] | select($s.journalDate >= .occurredOn)] | length' "$file")" = '0'
+          test "$(jq '[.sources[] | select((.url | startswith("https://www.house.mn.gov/cco/journals/2025-26/J")) | not)] | length' "$file")" = '0'
+          test "$(jq '[.sources[] | select((.finalUrl | startswith("https://www.house.mn.gov/cco/journals/2025-26/J")) | not)] | length' "$file")" = '0'
+          links="$(jq -r '.summary.journalLinksDiscovered' "$file")"
+          fetched="$(jq -r '.summary.journalPagesFetched' "$file")"
+          matches="$(jq -r '.summary.matchedSourcePages' "$file")"
+          test "$links" -ge 40
+          test "$fetched" -ge 30
+          test "$matches" -ge 1
+          if jq -e '.. | objects | select(has("actualOutcome") or has("actualYes") or has("actualNo") or has("passed") or has("mechanic") or has("finalPassageInference") or has("mechanicallyActionable") or has("probabilityAfter"))' "$file" >/dev/null; then
+            echo 'Holdout Journal source bundle leaked outcome, mechanic, or probability fields.'
+            exit 1
+          fi
+      - name: Upload frozen House Journal holdout source bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-house-journal-holdout-source-bundle-v1-${{ github.sha }}
+          path: artifacts/historical-deep-house-journal-holdout-source-bundle-v1.json
+          if-no-files-found: error
+          retention-days: 30

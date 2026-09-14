@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "historical-deep-house-journal-holdout-source-lineage-v1",
+  "purpose": "Pin the immutable 24-case 2025-2026 House holdout cohort before enumerating official pre-vote House Journal pages. This step is source-only and keeps outcomes and mechanic extraction sealed.",
+  "cohortArtifact": {
+    "workflowRunId": 34780337625,
+    "artifactId": 10325391449,
+    "artifactName": "historical-deep-house-journal-holdout-cohort-v1-de024e2ae136c07ab188d47bdb79d0f1b9860803",
+    "artifactSha256": "e23c831caca7647d2061c643f42ebf081aee44dee95de3f4272db041008dd54e",
+    "headSha": "de024e2ae136c07ab188d47bdb79d0f1b9860803",
+    "fileName": "historical-deep-house-journal-holdout-cohort-v1.json"
+  },
+  "indexPolicy": {
+    "name": "house-journal-current-session-enumeration-v1",
+    "officialSessionIndex": "https://www.house.mn.gov/Journals",
+    "officialJournalPathPattern": "https://www.house.mn.gov/cco/journals/2025-26/J<journal-id>.htm",
+    "availabilityRule": "The official current-session index and exact Journal page must agree on the Journal date, and only pages dated strictly before a frozen case vote date may match that case.",
+    "notes": "The frozen cohort predates Journal discovery. The current-session index is enumerated directly and exact pages are matched only by frozen bill identifiers. No bill search, outcome, mechanic presence, or source-availability replacement is allowed."
+  },
+  "guardrails": {
+    "holdoutOnly": true,
+    "outcomeAccess": false,
+    "databaseAccess": false,
+    "liveDeepCalls": false,
+    "candidateExtraction": false,
+    "mechanicExtraction": false,
+    "mechanicalActionability": false,
+    "probabilityChanges": false,
+    "targetPolicyChanges": false,
+    "evidenceWeightChanges": false,
+    "caseReplacement": false
+  }
+}
