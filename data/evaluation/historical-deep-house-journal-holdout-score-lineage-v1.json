@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "historical-deep-house-journal-holdout-score-lineage-v1",
+  "cohortArtifact": {
+    "workflowRunId": 34780337625,
+    "artifactId": 10325391449,
+    "artifactName": "historical-deep-house-journal-holdout-cohort-v1-de024e2ae136c07ab188d47bdb79d0f1b9860803",
+    "artifactSha256": "e23c831caca7647d2061c643f42ebf081aee44dee95de3f4272db041008dd54e",
+    "headSha": "de024e2ae136c07ab188d47bdb79d0f1b9860803",
+    "fileName": "historical-deep-house-journal-holdout-cohort-v1.json"
+  },
+  "mechanicsArtifact": {
+    "workflowRunId": 34795572828,
+    "artifactId": 10329173931,
+    "artifactName": "historical-deep-house-journal-holdout-mechanics-v1-688beea942a6bcc53b83f4c2bad13cfb2f1d7018",
+    "artifactSha256": "66f43e5d46bc4b8063810e81ba2ac22ff9beae85df04df6fd4cbaf54ba930b8f",
+    "headSha": "688beea942a6bcc53b83f4c2bad13cfb2f1d7018",
+    "fileName": "historical-deep-house-journal-holdout-mechanics-v1.json"
+  },
+  "holdoutPlan": {
+    "sourceFile": "data/evaluation/historical-deep-house-journal-holdout-plan-v1.json",
+    "sourceFileBlobSha": "527f1cae9a712a3f8c9d600b7430aa675df93e88",
+    "frozenAtHeadSha": "de024e2ae136c07ab188d47bdb79d0f1b9860803"
+  },
+  "policy": {
+    "evaluation": "predeclared-house-journal-holdout-replication-v1",
+    "outcomeUse": "single-post-freeze-holdout-reveal",
+    "probabilityAction": "none",
+    "actionabilityDecision": "none"
+  }
+}
