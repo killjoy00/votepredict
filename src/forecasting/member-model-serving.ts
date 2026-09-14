@@ -15,6 +15,10 @@ export interface ServingMemberModelConfig {
   rollbackActive: boolean;
 }
 
+export interface ServingMemberModelStatus extends ServingMemberModelConfig {
+  rollbackControl: typeof MEMBER_MODEL_ROLLBACK_ENV;
+}
+
 type ServingModelEnvironment = Record<string, string | undefined>;
 
 function rollbackRequested(value: string | undefined): boolean {
@@ -45,5 +49,14 @@ export function resolveServingMemberModelConfig(
     shadowModelVersion: MEMBER_MODEL_VERSION,
     shadowMemberHistoryHalfLifeDays: null,
     rollbackActive: false,
+  };
+}
+
+export function getServingMemberModelStatus(
+  env: ServingModelEnvironment = process.env,
+): ServingMemberModelStatus {
+  return {
+    ...resolveServingMemberModelConfig(env),
+    rollbackControl: MEMBER_MODEL_ROLLBACK_ENV,
   };
 }
