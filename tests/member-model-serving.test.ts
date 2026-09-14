@@ -5,6 +5,7 @@ import {
   DECAY180_MEMBER_HISTORY_HALF_LIFE_DAYS,
   DECAY180_MEMBER_MODEL_VERSION,
   MEMBER_MODEL_ROLLBACK_ENV,
+  getServingMemberModelStatus,
   resolveServingMemberModelConfig,
 } from '../src/forecasting/member-model-serving';
 
@@ -35,4 +36,21 @@ test('rollback requires an explicit truthy value', () => {
     assert.equal(config.modelVersion, DECAY180_MEMBER_MODEL_VERSION);
     assert.equal(config.rollbackActive, false);
   }
+});
+
+test('serving status reports the active arm, shadow arm, and rollback control', () => {
+  const defaultStatus = getServingMemberModelStatus({ [MEMBER_MODEL_ROLLBACK_ENV]: undefined });
+  assert.equal(defaultStatus.modelVersion, DECAY180_MEMBER_MODEL_VERSION);
+  assert.equal(defaultStatus.memberHistoryHalfLifeDays, DECAY180_MEMBER_HISTORY_HALF_LIFE_DAYS);
+  assert.equal(defaultStatus.shadowModelVersion, MEMBER_MODEL_VERSION);
+  assert.equal(defaultStatus.rollbackActive, false);
+  assert.equal(defaultStatus.rollbackControl, MEMBER_MODEL_ROLLBACK_ENV);
+
+  const rollbackStatus = getServingMemberModelStatus({ [MEMBER_MODEL_ROLLBACK_ENV]: '1' });
+  assert.equal(rollbackStatus.modelVersion, MEMBER_MODEL_VERSION);
+  assert.equal(rollbackStatus.memberHistoryHalfLifeDays, null);
+  assert.equal(rollbackStatus.shadowModelVersion, DECAY180_MEMBER_MODEL_VERSION);
+  assert.equal(rollbackStatus.shadowMemberHistoryHalfLifeDays, DECAY180_MEMBER_HISTORY_HALF_LIFE_DAYS);
+  assert.equal(rollbackStatus.rollbackActive, true);
+  assert.equal(rollbackStatus.rollbackControl, MEMBER_MODEL_ROLLBACK_ENV);
 });
