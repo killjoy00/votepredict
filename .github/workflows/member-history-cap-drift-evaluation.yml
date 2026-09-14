@@ -7,9 +7,12 @@ on:
       - .github/workflows/member-history-cap-drift-evaluation.yml
       - data/evaluation/member-history-cap-drift-plan-v1.json
       - scripts/evaluate-member-history-cap.ts
+      - scripts/run-production-member-history-cap-grid.ts
       - scripts/select-member-history-cap-drift.ts
       - src/evaluation/member-model.ts
       - src/forecasting/member-model.ts
+      - src/operations/environment-file.ts
+      - src/operations/evaluation-database.ts
   workflow_dispatch:
 
 permissions:
@@ -66,7 +69,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p artifacts
-          GITHUB_SHA="$GITHUB_SHA" node --env-file="$RUNNER_TEMP/votepredict-production.env" --import tsx scripts/evaluate-member-history-cap.ts > artifacts/member-history-cap-drift-raw-v1.json
+          GITHUB_SHA="$GITHUB_SHA" node --import tsx scripts/run-production-member-history-cap-grid.ts "$RUNNER_TEMP/votepredict-production.env" > artifacts/member-history-cap-drift-raw-v1.json
       - name: Apply frozen candidate-selection rule
         run: |
           node --import tsx scripts/select-member-history-cap-drift.ts \
