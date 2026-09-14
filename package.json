@@ -45,20 +45,20 @@
   },
   "dependencies": {
     "@neondatabase/auth": "0.5.0-beta",
-    "@vercel/functions": "3.9.5",
-    "ai": "7.0.93",
+    "@vercel/functions": "3.9.7",
+    "ai": "7.0.97",
     "drizzle-orm": "0.45.2",
     "next": "16.3.4",
     "pdf-parse": "2.4.5",
     "pg": "8.23.0",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
   },
   "devDependencies": {
     "@types/node": "^26.4.0",
     "@types/pg": "^8.15.6",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2"
   }
