@@ -1,3 +1,4 @@
+import { getServingMemberModelStatus } from '@/forecasting/member-model-serving';
 import { requireOwner } from '@/lib/auth/guard';
 import { getIntroductionServingScorecard } from '@/operations/introduction-scorecard';
 import { getOperationalHealth } from '@/operations/health';
@@ -36,6 +37,7 @@ export default async function OperationsPage() {
       .catch((error) => ({ scorecard: null, error: error instanceof Error ? error.message : 'Introduction scorecard failed.' })),
   ]);
   const introduction = introductionResult.scorecard;
+  const memberModel = getServingMemberModelStatus();
 
   return (
     <main className="ops-shell">
@@ -106,6 +108,13 @@ export default async function OperationsPage() {
         <section className="panel">
           <div className="panel-heading"><div><span className="kicker">System state</span><h2>Operational health</h2></div><span>as of {new Date(health.generatedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span></div>
           {health.warnings.length ? <div className="warning-list">{health.warnings.map((warning) => <div key={warning}>{warning}</div>)}</div> : <div className="clear-state">No ingestion, source, or Deep research warnings are active.</div>}
+          <div className={`model-state ${memberModel.rollbackActive ? 'rollback' : ''}`}>
+            <div><span>Serving member model</span><strong>{memberModel.modelVersion}</strong></div>
+            <div><span>Member history</span><strong>{memberModel.memberHistoryHalfLifeDays === null ? 'Raw history' : `${memberModel.memberHistoryHalfLifeDays}-day half-life`}</strong></div>
+            <div><span>Rollback</span><strong>{memberModel.rollbackActive ? 'ACTIVE' : 'Standby'}</strong></div>
+            <div><span>Non-serving shadow</span><strong>{memberModel.shadowModelVersion}</strong></div>
+            <small>{memberModel.rollbackActive ? 'Legacy v1.1 is serving. Clear the rollback control and redeploy to restore decay-180.' : `Emergency rollback control: ${memberModel.rollbackControl}=1, then redeploy.`}</small>
+          </div>
           <div className="health-block"><h3>Latest ingestion runs</h3>{health.ingestion.length === 0 ? <p>No ingestion run history recorded.</p> : health.ingestion.map((run) => <div className="health-row" key={`${run.sourceSystem}-${run.scope}`}><div><strong>{run.sourceSystem}</strong><small>{run.scope}</small></div><span className={`status ${run.status}`}>{run.status}</span><span>{hours(run.ageHours)} ago</span><small>{run.voteEvents} votes · {run.memberVotes} member votes</small></div>)}</div>
           <div className="health-block"><h3>Source freshness</h3>{health.sourceFreshness.map((source) => <div className="health-row" key={source.sourceKind}><div><strong>{source.sourceKind}</strong><small>{source.documents} documents</small></div><span>{hours(source.ageHours)} ago</span><small>{source.recentHttpFailures ? `${source.recentHttpFailures} recent HTTP failures` : 'no recent HTTP failures'}</small></div>)}</div>
           <div className="research-line"><span>Deep research, last 24h</span><strong>{health.research.completed} completed · {health.research.failed} failed · {health.research.running} active</strong></div>
@@ -161,6 +170,14 @@ export default async function OperationsPage() {
         .warning-list { display: grid; gap: 5px; margin: 11px 0; }
         .warning-list > div { border-left: 2px solid #c0924b; padding: 5px 8px; color: #6f552e; background: #faf5eb; font-size: 8.5px; line-height: 1.4; }
         .clear-state { margin: 11px 0; border-left: 2px solid #6f9b80; padding: 6px 8px; color: #40624e; background: #f0f6f2; font-size: 8.5px; }
+        .model-state { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; overflow: hidden; margin: 11px 0 14px; border: 1px solid #dce1dc; border-radius: 9px; background: #dce1dc; }
+        .model-state > div { min-width: 0; padding: 8px; background: #fafbf9; }
+        .model-state span { display: block; color: #818b84; font-size: 7px; }
+        .model-state strong { display: block; overflow-wrap: anywhere; margin-top: 3px; font-size: 9px; }
+        .model-state > small { grid-column: 1 / -1; padding: 6px 8px; color: #727d75; background: #f4f6f4; font-size: 7.5px; line-height: 1.4; }
+        .model-state.rollback { border-color: #d6b67d; background: #d6b67d; }
+        .model-state.rollback > div, .model-state.rollback > small { background: #fff8ec; }
+        .model-state.rollback strong { color: #76521c; }
         .health-block { margin-top: 14px; border-top: 1px solid #e8ebe8; padding-top: 11px; }
         .health-block h3 { margin: 0 0 6px; color: #657169; font-size: 8px; text-transform: uppercase; letter-spacing: .05em; }
         .health-block > p { color: #858e88; font-size: 8.5px; }
@@ -197,6 +214,7 @@ export default async function OperationsPage() {
           .ops-grid { grid-template-columns: 1fr; }
           .score-strip { grid-template-columns: repeat(3, 1fr); }
           .intro-strip { grid-template-columns: repeat(2, 1fr); }
+          .model-state { grid-template-columns: 1fr; }
           .health-row { grid-template-columns: 1fr auto auto; }
           .health-row > small:last-child { display: none; }
         }
