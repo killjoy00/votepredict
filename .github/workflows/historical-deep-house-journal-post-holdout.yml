@@ -1,0 +1,117 @@
+name: Historical Deep House Journal post-holdout sensitivity
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/historical-deep-house-journal-post-holdout.yml
+      - data/evaluation/historical-deep-house-journal-post-holdout-plan-v1.json
+      - scripts/analyze-historical-deep-house-journal-post-holdout.ts
+      - src/evaluation/historical-deep-house-journal-post-holdout.ts
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-deep-house-journal-post-holdout.yml
+      - data/evaluation/historical-deep-house-journal-post-holdout-plan-v1.json
+      - scripts/analyze-historical-deep-house-journal-post-holdout.ts
+      - src/evaluation/historical-deep-house-journal-post-holdout.ts
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: historical-deep-house-journal-post-holdout-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify frozen post-holdout lineage
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          plan='data/evaluation/historical-deep-house-journal-post-holdout-plan-v1.json'
+          test "$(jq -r '.schemaVersion' "$plan")" = 'historical-deep-house-journal-post-holdout-plan-v1'
+          test "$(jq -r '.frozenFinding.mechanic' "$plan")" = 'companion_substitution'
+          test "$(jq -r '.frozenFinding.predeclaredHoldoutStatus' "$plan")" = 'replicates'
+          test "$(jq -r '.decisionBoundary.confirmatoryStatus' "$plan")" = 'none-post-reveal'
+          test "$(jq -r '.decisionBoundary.probabilityAction' "$plan")" = 'none'
+          test "$(jq -r '.decisionBoundary.mechanicActionability' "$plan")" = 'none'
+          test "$(jq -r '.prospective2027_2028.session' "$plan")" = '2027-2028'
+          test "$(jq -r '.prospective2027_2028.primaryEstimand' "$plan")" = 'Within-session companion-substitution minus non-companion Quick signed residual contrast, reported both decisive-member weighted and equal-case weighted.'
+
+          for key in developmentScoreArtifact holdoutScoreArtifact; do
+            artifact_id="$(jq -r ".frozenInputs.${key}.artifactId" "$plan")"
+            expected="sha256:$(jq -r ".frozenInputs.${key}.artifactSha256" "$plan")"
+            gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}" > "$RUNNER_TEMP/${key}.json"
+            test "$(jq -r '.expired' "$RUNNER_TEMP/${key}.json")" = 'false'
+            test "$(jq -r '.digest' "$RUNNER_TEMP/${key}.json")" = "$expected"
+            echo "${key}_run_id=$(jq -r ".frozenInputs.${key}.workflowRunId" "$plan")" >> "$GITHUB_ENV"
+            echo "${key}_name=$(jq -r ".frozenInputs.${key}.artifactName" "$plan")" >> "$GITHUB_ENV"
+          done
+      - name: Download frozen development score
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.developmentScoreArtifact_run_id }}
+          name: ${{ env.developmentScoreArtifact_name }}
+          path: artifacts/frozen/development-score
+      - name: Download frozen holdout score
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.holdoutScoreArtifact_run_id }}
+          name: ${{ env.holdoutScoreArtifact_name }}
+          path: artifacts/frozen/holdout-score
+      - name: Run deterministic post-holdout sensitivity analysis
+        run: |
+          node --import tsx scripts/analyze-historical-deep-house-journal-post-holdout.ts \
+            artifacts/frozen/development-score/historical-deep-house-journal-mechanics-score-v1.json \
+            artifacts/frozen/holdout-score/historical-deep-house-journal-holdout-score-v1.json \
+            data/evaluation/historical-deep-house-journal-post-holdout-plan-v1.json \
+            artifacts/historical-deep-house-journal-post-holdout-sensitivity-v1.json
+      - name: Verify no-action interpretation and contrast reversal
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='artifacts/historical-deep-house-journal-post-holdout-sensitivity-v1.json'
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-deep-house-journal-post-holdout-sensitivity-v1'
+          test "$(jq -r '.metadata.analysisStatus' "$file")" = 'post-reveal-descriptive-only'
+          test "$(jq -r '.metadata.probabilityAction' "$file")" = 'none'
+          test "$(jq -r '.metadata.actionabilityDecision' "$file")" = 'none'
+          test "$(jq -r '.conclusion.predeclaredReplicationStatus' "$file")" = 'replicates'
+          test "$(jq -r '.conclusion.incrementalSignalAssessment' "$file")" = 'not_stable_across_periods'
+          test "$(jq -r '.conclusion.productionAction' "$file")" = 'none'
+          jq -e '.companionSubstitution.development.incrementalContrast.memberWeighted > 0.05' "$file" >/dev/null
+          jq -e '.companionSubstitution.holdout.incrementalContrast.memberWeighted < -0.02' "$file" >/dev/null
+          jq -e '.companionSubstitution.development.incrementalContrast.equalCase > 0.05' "$file" >/dev/null
+          jq -e '.companionSubstitution.holdout.incrementalContrast.equalCase < -0.02' "$file" >/dev/null
+          test "$(jq -r '.companionSubstitution.crossPeriod.incrementalContrastSignStable' "$file")" = 'false'
+          test "$(jq -r '.companionSubstitution.crossPeriod.periodNormalizedSignStable' "$file")" = 'false'
+          test "$(jq -r '.companionSubstitution.caseHeterogeneity.cases | length' "$file")" = '10'
+          test "$(jq -r '.companionSubstitution.caseHeterogeneity.positiveResidualCases' "$file")" = '7'
+          test "$(jq -r '.companionSubstitution.caseHeterogeneity.negativeResidualCases' "$file")" = '3'
+          if jq -e '.. | objects | select(has("probabilityAfter") or has("mechanicallyActionable") or has("evidenceWeight") or has("targetPolicyChange"))' "$file" >/dev/null; then
+            echo 'Post-holdout artifact contains a forbidden production-action field.'
+            exit 1
+          fi
+      - name: Upload post-holdout sensitivity artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-deep-house-journal-post-holdout-sensitivity-v1-${{ github.sha }}
+          path: artifacts/historical-deep-house-journal-post-holdout-sensitivity-v1.json
+          if-no-files-found: error
+          retention-days: 90
