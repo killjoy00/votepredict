@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "member-history-cap20-holdout-replay-plan-v1",
+  "purpose": "Post-reveal descriptive replay of the cap-20 shadow candidate on the exact frozen 24-case 2025-2026 House holdout. The cap was selected mechanically by the pre-frozen #178 full-history rule; this replay cannot promote it to production.",
+  "capEvaluationArtifact": {
+    "workflowRunId": 34797442342,
+    "artifactId": 10329544331,
+    "artifactName": "member-history-cap-drift-evaluation-v1-f692cc4bd8100d4587bcb9d4c5f92c54b2a91dba",
+    "artifactSha256": "f6e0e79d437602e4af25d3e5333f6a254b89ee9849d2115db264cf3523ccf457",
+    "headSha": "f692cc4bd8100d4587bcb9d4c5f92c54b2a91dba",
+    "selectedCap": 20,
+    "qualifyingCaps": [20, 40, 80]
+  },
+  "holdoutCohortArtifact": {
+    "workflowRunId": 34780337625,
+    "artifactId": 10325391449,
+    "artifactName": "historical-deep-house-journal-holdout-cohort-v1-de024e2ae136c07ab188d47bdb79d0f1b9860803",
+    "artifactSha256": "e23c831caca7647d2061c643f42ebf081aee44dee95de3f4272db041008dd54e",
+    "headSha": "de024e2ae136c07ab188d47bdb79d0f1b9860803",
+    "fileName": "historical-deep-house-journal-holdout-cohort-v1.json"
+  },
+  "uncappedHoldoutScoreArtifact": {
+    "workflowRunId": 34795989512,
+    "artifactId": 10330006541,
+    "artifactName": "historical-deep-house-journal-holdout-score-v1-99a9e74759266940898319a1ae8661d0907de023",
+    "artifactSha256": "4067c09f9e2a7b3e3c3606cf440ab28d27ace8de16c0904083d35df1d1b432f0",
+    "headSha": "99a9e74759266940898319a1ae8661d0907de023",
+    "fileName": "historical-deep-house-journal-holdout-score-v1.json"
+  },
+  "replayPolicy": {
+    "modelVersion": "member-eb-v1.1",
+    "maximumMemberHistoryWeight": 20,
+    "allOtherMemberModelParameters": "production defaults unchanged",
+    "quickAnaloguePipeline": "unchanged historical Quick analogue selection and weighting",
+    "activeRosterPipeline": "unchanged strict pre-vote active-roster logic",
+    "caseSelection": "exact frozen 24 holdout cases; no replacement or reranking",
+    "baseline": "immutable uncapped Quick probabilities and outcomes from the one-shot #176 holdout artifact"
+  },
+  "reportedMetrics": [
+    "member Brier",
+    "member log loss",
+    "member binary accuracy",
+    "member expected calibration error",
+    "member-weighted signed residual",
+    "equal-case signed residual",
+    "chamber mean absolute expected-Yes error",
+    "case-level signed residual and expected-Yes error",
+    "probability-bin calibration"
+  ],
+  "interpretation": {
+    "primaryQuestion": "Does the mechanically selected cap-20 shadow candidate improve the exact already-revealed holdout relative to the immutable uncapped baseline?",
+    "notConfirmatory": "The 2025-2026 outcomes were revealed before cap selection/replay. Any improvement is retrospective descriptive evidence only.",
+    "promotionBoundary": "No outcome of this replay may change MEMBER_MODEL_VERSION, maximumMemberHistoryWeight runtime defaults, production probabilities, Deep targeting, or Journal mechanics. A cap may advance only to a separately frozen prospective/shadow validation."
+  },
+  "guardrails": {
+    "databaseWrites": false,
+    "forecastWrites": false,
+    "runtimeDefaultChange": false,
+    "modelVersionChange": false,
+    "probabilityAction": "none",
+    "productionAction": "none"
+  }
+}
