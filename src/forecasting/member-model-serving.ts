@@ -15,6 +15,8 @@ export interface ServingMemberModelConfig {
   rollbackActive: boolean;
 }
 
+type ServingModelEnvironment = Partial<Record<typeof MEMBER_MODEL_ROLLBACK_ENV, string | undefined>>;
+
 function rollbackRequested(value: string | undefined): boolean {
   return value === '1' || value?.toLowerCase() === 'true' || value?.toLowerCase() === 'yes';
 }
@@ -25,7 +27,7 @@ function rollbackRequested(value: string | undefined): boolean {
  * Whichever arm is not serving is persisted as a non-serving member shadow.
  */
 export function resolveServingMemberModelConfig(
-  env: Pick<NodeJS.ProcessEnv, typeof MEMBER_MODEL_ROLLBACK_ENV> = process.env,
+  env: ServingModelEnvironment = process.env,
 ): ServingMemberModelConfig {
   const rollbackActive = rollbackRequested(env[MEMBER_MODEL_ROLLBACK_ENV]);
   if (rollbackActive) {
