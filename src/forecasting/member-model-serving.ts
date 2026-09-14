@@ -15,7 +15,7 @@ export interface ServingMemberModelConfig {
   rollbackActive: boolean;
 }
 
-type ServingModelEnvironment = Partial<Record<typeof MEMBER_MODEL_ROLLBACK_ENV, string | undefined>>;
+type ServingModelEnvironment = Record<string, string | undefined>;
 
 function rollbackRequested(value: string | undefined): boolean {
   return value === '1' || value?.toLowerCase() === 'true' || value?.toLowerCase() === 'yes';
