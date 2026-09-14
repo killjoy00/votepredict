@@ -33,7 +33,14 @@ interface FrozenReference {
   evidenceRiskScores: number[];
 }
 
-const reference = referenceJson as FrozenReference;
+const importedReference = referenceJson as unknown;
+const reference = (
+  importedReference
+  && typeof importedReference === 'object'
+  && 'default' in importedReference
+    ? (importedReference as { default: unknown }).default
+    : importedReference
+) as FrozenReference;
 
 function validateReference(): void {
   if (reference.schemaVersion !== 'passage-fragility-reference-v1'
