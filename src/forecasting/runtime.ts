@@ -5,7 +5,14 @@ import { pool } from '@/lib/db';
 import { fetchRevisorBill, fetchRevisorBillVersion, type RevisorBillMetadata, type RevisorBillVersionMetadata } from '@/sources/minnesota/revisor';
 import { MINNESOTA_HOUSE_HISTORICAL_SESSIONS } from '@/sources/minnesota/sessions';
 import { simulateChamber, type ChamberSimulation, type PassageRule } from './chamber';
-import { estimateMemberProbability, MEMBER_MODEL_VERSION, type RateEvidence } from './member-model';
+import { estimateMemberProbability, type RateEvidence } from './member-model';
+import {
+  DECAY180_MEMBER_HISTORY_HALF_LIFE_DAYS,
+  MEMBER_MODEL_SHADOW_KIND,
+  resolveServingMemberModelConfig,
+  type ServingMemberModelConfig,
+  type ServingMemberModelVersion,
+} from './member-model-serving';
 
 const MAX_PREFILTER_EVENTS = 30;
 const MAX_ANALOGUES = 10;
@@ -90,7 +97,7 @@ export interface ForecastRuntimeResult {
   revisionId: string;
   revisionNumber: number;
   researchMode: RuntimeResearchMode;
-  modelVersion: typeof MEMBER_MODEL_VERSION;
+  modelVersion: ServingMemberModelVersion;
   asOf: string;
   chamber: {
     id: string;
@@ -135,6 +142,8 @@ type HistoricalSupportRow = {
   party: string;
   yes: number;
   total: number;
+  decay180_yes: number;
+  decay180_total: number;
 };
 
 type CandidateEventRow = {
@@ -173,6 +182,19 @@ type RuntimeTargetVersion = {
   publishedAt: string;
   text: string;
   companionIdentifier?: string;
+};
+
+type MemberModelShadow = {
+  kind: typeof MEMBER_MODEL_SHADOW_KIND;
+  modelVersion: ServingMemberModelVersion;
+  memberHistoryHalfLifeDays: number | null;
+  yesProbability: number | null;
+  cannotPredictReason: string | null;
+  servingModelVersion: ServingMemberModelVersion;
+  relationshipToServing: 'rollback-baseline' | 'promotion-candidate';
+  servesTraffic: false;
+  outcomeUseAtCapture: 'none';
+  capturedAt: string;
 };
 
 function toCount(value: unknown): number {
@@ -335,13 +357,22 @@ async function loadActiveMembers(sessionId: string, chamberId: string, asOfDate:
 async function loadHistoricalSupport(asOfDate: string, chamberId: string): Promise<{
   global: RateEvidence;
   parties: Map<string, RateEvidence>;
-  members: Map<string, RateEvidence>;
+  legacyMembers: Map<string, RateEvidence>;
+  decay180Members: Map<string, RateEvidence>;
 }> {
   const result = await pool.query<HistoricalSupportRow>(`
     SELECT m.legislator_id,
            COALESCE(NULLIF(btrim(m.party), ''), 'UNKNOWN') AS party,
-           sum(CASE WHEN mv.choice = 'yea' THEN 1 ELSE 0 END)::int AS yes,
-           count(*)::int AS total
+           sum(CASE WHEN mv.choice = 'yea' THEN 1 ELSE 0 END)::double precision AS yes,
+           count(*)::double precision AS total,
+           sum(
+             CASE WHEN mv.choice = 'yea' THEN
+               power(2.0, -(($1::date - ve.occurred_on::date)::double precision / $3::double precision))
+             ELSE 0 END
+           )::double precision AS decay180_yes,
+           sum(
+             power(2.0, -(($1::date - ve.occurred_on::date)::double precision / $3::double precision))
+           )::double precision AS decay180_total
       FROM member_votes mv
       JOIN vote_events ve ON ve.id = mv.vote_event_id
       JOIN memberships m ON m.id = mv.membership_id
@@ -349,27 +380,32 @@ async function loadHistoricalSupport(asOfDate: string, chamberId: string): Promi
        AND ve.occurred_on < $1::date
        AND ve.chamber_id = $2
        AND mv.choice IN ('yea', 'nay')
-     GROUP BY m.legislator_id, COALESCE(NULLIF(btrim(m.party), ''), 'UNKNOWN')`, [asOfDate, chamberId]);
+     GROUP BY m.legislator_id, COALESCE(NULLIF(btrim(m.party), ''), 'UNKNOWN')`, [
+    asOfDate,
+    chamberId,
+    DECAY180_MEMBER_HISTORY_HALF_LIFE_DAYS,
+  ]);
 
   const parties = new Map<string, RateEvidence>();
-  const members = new Map<string, RateEvidence>();
+  const legacyMembers = new Map<string, RateEvidence>();
+  const decay180Members = new Map<string, RateEvidence>();
   let globalYes = 0;
   let globalTotal = 0;
   for (const row of result.rows) {
     const yes = toCount(row.yes);
     const total = toCount(row.total);
+    const decay180Yes = toCount(row.decay180_yes);
+    const decay180Total = toCount(row.decay180_total);
     globalYes += yes;
     globalTotal += total;
     const party = parties.get(row.party) ?? rateEvidence(0, 0);
     party.yes += yes;
     party.total += total;
     parties.set(row.party, party);
-    const member = members.get(row.legislator_id) ?? rateEvidence(0, 0);
-    member.yes += yes;
-    member.total += total;
-    members.set(row.legislator_id, member);
+    legacyMembers.set(row.legislator_id, rateEvidence(yes, total));
+    decay180Members.set(row.legislator_id, rateEvidence(decay180Yes, decay180Total));
   }
-  return { global: rateEvidence(globalYes, globalTotal), parties, members };
+  return { global: rateEvidence(globalYes, globalTotal), parties, legacyMembers, decay180Members };
 }
 
 async function prefilterCandidateEvents(tokens: string[], asOfDate: string, targetBillId?: string, companionIdentifier?: string): Promise<CandidateEventRow[]> {
@@ -482,11 +518,19 @@ async function loadAnalogueVotes(eventIds: readonly string[]): Promise<AnalogueV
   return result.rows;
 }
 
-function strongestReason(memberName: string, memberSupport: RateEvidence | undefined, analogue: ForecastRuntimeMember['analogue']): string {
+function strongestReason(
+  memberName: string,
+  memberSupport: RateEvidence | undefined,
+  analogue: ForecastRuntimeMember['analogue'],
+  memberHistoryHalfLifeDays: number | null,
+): string {
   if (analogue) {
     return `${analogue.identifier} is the strongest selected analogue with a direct ${memberName} vote (${analogue.memberChoice === 'yea' ? 'Yes' : 'No'}).`;
   }
   if (memberSupport?.total) {
+    if (memberHistoryHalfLifeDays !== null) {
+      return `${memberSupport.total.toFixed(1)} effective prior passage-vote weight (${memberHistoryHalfLifeDays}-day half-life) supports the member estimate; no direct vote was found on the selected analogues.`;
+    }
     return `${memberSupport.total} prior passage votes support the member estimate; no direct vote was found on the selected analogues.`;
   }
   return 'No direct member history or direct analogue vote is available; the estimate relies on broader historical support.';
@@ -501,6 +545,8 @@ async function persistRevision(
   request: ForecastRuntimeRequest,
   targetVersionId: string | null,
   members: readonly ForecastRuntimeMember[],
+  memberShadows: ReadonlyMap<string, MemberModelShadow>,
+  modelConfig: ServingMemberModelConfig,
   simulation: ChamberSimulation | undefined,
   passageRule: PassageRule,
   analogues: readonly ForecastRuntimeAnalogue[],
@@ -526,6 +572,12 @@ async function persistRevision(
       cannotPredictCount: diagnostics.cannotPredictMembers,
       billSpecific: true,
       calibration: 'off',
+      memberModel: {
+        memberHistoryHalfLifeDays: modelConfig.memberHistoryHalfLifeDays,
+        rollbackActive: modelConfig.rollbackActive,
+        shadowModelVersion: modelConfig.shadowModelVersion,
+        shadowMemberHistoryHalfLifeDays: modelConfig.shadowMemberHistoryHalfLifeDays,
+      },
       memberProbabilityBounds: 'non-informative [0,1] until a validated interval model earns promotion',
       analogue: {
         selected: analogues,
@@ -551,11 +603,11 @@ async function persistRevision(
       simulation?.expectedYes ?? null,
       simulation?.yesLow ?? null,
       simulation?.yesHigh ?? null,
-      MEMBER_MODEL_VERSION,
+      modelConfig.modelVersion,
       JSON.stringify(metadata),
     ]);
     const revisionId = revisionResult.rows[0].id;
-    await insertMemberPredictions(client, revisionId, members);
+    await insertMemberPredictions(client, revisionId, members, memberShadows);
     await client.query(`UPDATE forecasts SET status = 'complete', updated_at = now() WHERE id = $1`, [request.forecastId]);
     await client.query('COMMIT');
     return { revisionId, revisionNumber };
@@ -567,12 +619,18 @@ async function persistRevision(
   }
 }
 
-async function insertMemberPredictions(client: PoolClient, revisionId: string, members: readonly ForecastRuntimeMember[]): Promise<void> {
+async function insertMemberPredictions(
+  client: PoolClient,
+  revisionId: string,
+  members: readonly ForecastRuntimeMember[],
+  memberShadows: ReadonlyMap<string, MemberModelShadow>,
+): Promise<void> {
   if (members.length === 0) return;
   const values: unknown[] = [];
   const placeholders = members.map((member, index) => {
     const base = index * 11;
     const yesProbability = member.yesProbability ?? null;
+    const shadow = memberShadows.get(member.membershipId);
     values.push(
       revisionId,
       member.membershipId,
@@ -590,7 +648,10 @@ async function insertMemberPredictions(client: PoolClient, revisionId: string, m
         analogue: member.support.analogue,
       }]),
       JSON.stringify(member.analogue ? [{ kind: 'historical_analogue', ...member.analogue }] : []),
-      JSON.stringify([{ uncertainty: member.uncertainty, researched: member.researched }]),
+      JSON.stringify([
+        { uncertainty: member.uncertainty, researched: member.researched },
+        ...(shadow ? [shadow] : []),
+      ]),
     );
     return `($${base + 1}, $${base + 2}, $${base + 3}, $${base + 4}, $${base + 5}, $${base + 6}, $${base + 7}, $${base + 8}, $${base + 9}::jsonb, $${base + 10}::jsonb, $${base + 11}::jsonb)`;
   });
@@ -604,6 +665,7 @@ async function insertMemberPredictions(client: PoolClient, revisionId: string, m
 export async function executeRuntimeForecast(request: ForecastRuntimeRequest): Promise<ForecastRuntimeResult> {
   const asOf = request.asOf ?? new Date().toISOString();
   const asOfDate = asOf.slice(0, 10);
+  const modelConfig = resolveServingMemberModelConfig();
   const targetVersion = request.subject.kind === 'bill'
     ? await ensureTargetBillVersion(request.subject, asOf)
     : {
@@ -656,6 +718,14 @@ export async function executeRuntimeForecast(request: ForecastRuntimeRequest): P
   }
 
   let directAnalogueMembers = 0;
+  const memberShadows = new Map<string, MemberModelShadow>();
+  const servingMemberMap = modelConfig.memberHistoryHalfLifeDays === null
+    ? historicalSupport.legacyMembers
+    : historicalSupport.decay180Members;
+  const shadowMemberMap = modelConfig.shadowMemberHistoryHalfLifeDays === null
+    ? historicalSupport.legacyMembers
+    : historicalSupport.decay180Members;
+
   const members: ForecastRuntimeMember[] = activeMembers.map((member) => {
     const directRows = votesByLegislator.get(member.legislator_id) ?? [];
     let analogueYesWeight = 0;
@@ -678,16 +748,36 @@ export async function executeRuntimeForecast(request: ForecastRuntimeRequest): P
       }
     }
     if (analogueWeight > 0) directAnalogueMembers += 1;
-    const memberSupport = historicalSupport.members.get(member.legislator_id);
+    const memberSupport = servingMemberMap.get(member.legislator_id);
+    const shadowMemberSupport = shadowMemberMap.get(member.legislator_id);
     const partySupport = historicalSupport.parties.get(member.party);
-    const estimate = estimateMemberProbability({
+    const commonInput = {
       memberId: member.legislator_id,
       party: member.party,
       global: historicalSupport.global,
       partyHistory: partySupport,
-      memberHistory: memberSupport,
       analogueYesRate: analogueWeight > 0 ? analogueYesWeight / analogueWeight : undefined,
       analogueEffectiveWeight: analogueWeight,
+    };
+    const estimate = estimateMemberProbability({
+      ...commonInput,
+      memberHistory: memberSupport,
+    });
+    const shadowEstimate = estimateMemberProbability({
+      ...commonInput,
+      memberHistory: shadowMemberSupport,
+    });
+    memberShadows.set(member.membership_id, {
+      kind: MEMBER_MODEL_SHADOW_KIND,
+      modelVersion: modelConfig.shadowModelVersion,
+      memberHistoryHalfLifeDays: modelConfig.shadowMemberHistoryHalfLifeDays,
+      yesProbability: shadowEstimate.probability ?? null,
+      cannotPredictReason: shadowEstimate.cannotPredictReason ?? null,
+      servingModelVersion: modelConfig.modelVersion,
+      relationshipToServing: modelConfig.rollbackActive ? 'promotion-candidate' : 'rollback-baseline',
+      servesTraffic: false,
+      outcomeUseAtCapture: 'none',
+      capturedAt: asOf,
     });
     return {
       membershipId: member.membership_id,
@@ -701,7 +791,12 @@ export async function executeRuntimeForecast(request: ForecastRuntimeRequest): P
       uncertainty: uncertainty(estimate.probability),
       support: estimate.support,
       analogue: strongest,
-      strongestReason: strongestReason(member.member_name, memberSupport, strongest),
+      strongestReason: strongestReason(
+        member.member_name,
+        memberSupport,
+        strongest,
+        modelConfig.memberHistoryHalfLifeDays,
+      ),
       researched: false,
     };
   });
@@ -743,6 +838,8 @@ export async function executeRuntimeForecast(request: ForecastRuntimeRequest): P
     request,
     request.subject.kind === 'bill' && !targetVersion.id.startsWith('proposal:') ? targetVersion.id : null,
     members,
+    memberShadows,
+    modelConfig,
     simulation,
     passageRule,
     analogues,
@@ -755,7 +852,7 @@ export async function executeRuntimeForecast(request: ForecastRuntimeRequest): P
     revisionId: persisted.revisionId,
     revisionNumber: persisted.revisionNumber,
     researchMode: request.researchMode,
-    modelVersion: MEMBER_MODEL_VERSION,
+    modelVersion: modelConfig.modelVersion,
     asOf,
     chamber: {
       id: request.chamberId,
