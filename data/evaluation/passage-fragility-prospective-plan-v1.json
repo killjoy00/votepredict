@@ -23,6 +23,7 @@
     "sourceArtifactId": 10370232552,
     "sourceArtifactZipSha256": "6b857b9a5381260935fc945f7e409ca8305994d337a849f8cc448537bc5281f2",
     "sourceJsonSha256": "50b6c2c928dad8a24315c5797f27eaaeec4d19d1f93dc087df8e7920ef21e240",
+    "repositoryBlobSha": "b9fe3564f5e946c22b9b266ea764d2b63e6ab458",
     "referenceEvents": 263,
     "historicalFlaggedEvents": 53,
     "outcomeFieldsUsed": false
