@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "historical-deep-house-journal-post-holdout-plan-v1",
+  "purpose": "Post-reveal descriptive sensitivity analysis of the #173 House Journal validation result. This plan is explicitly not confirmatory: the 2025-2026 holdout outcomes have already been revealed. Its role is to distinguish unconditional residual replication from period-adjusted incremental signal and to define the next prospective test without changing production behavior.",
+  "frozenInputs": {
+    "developmentScoreArtifact": {
+      "workflowRunId": 34779526860,
+      "artifactId": 10324384188,
+      "artifactName": "historical-deep-house-journal-mechanics-score-v1-f646a205850286f9a2b7a196628dc23a127a9d06",
+      "artifactSha256": "c10d82ffb511b4fcdf047b7765015b40bbdcc98b08c50ce6d3a8b08c667c9f19",
+      "headSha": "f646a205850286f9a2b7a196628dc23a127a9d06",
+      "fileName": "historical-deep-house-journal-mechanics-score-v1.json"
+    },
+    "holdoutScoreArtifact": {
+      "workflowRunId": 34795989512,
+      "artifactId": 10330006541,
+      "artifactName": "historical-deep-house-journal-holdout-score-v1-99a9e74759266940898319a1ae8661d0907de023",
+      "artifactSha256": "4067c09f9e2a7b3e3c3606cf440ab28d27ace8de16c0904083d35df1d1b432f0",
+      "headSha": "99a9e74759266940898319a1ae8661d0907de023",
+      "fileName": "historical-deep-house-journal-holdout-score-v1.json"
+    }
+  },
+  "frozenFinding": {
+    "mechanic": "companion_substitution",
+    "predeclaredHoldoutStatus": "replicates",
+    "developmentMemberWeightedSignedResidual": 0.0383907967,
+    "holdoutMemberWeightedSignedResidual": 0.0720832733,
+    "note": "The predeclared unconditional sign/magnitude replication succeeded. This post-reveal analysis does not relabel that result; it asks the different question of whether companion substitution adds residual signal relative to contemporaneous non-companion cases."
+  },
+  "diagnostics": [
+    {
+      "id": "D1-period-specific-incremental-contrast",
+      "definition": "Within development and holdout separately, compute companion-substitution residual minus non-companion residual using both decisive-member weighting and equal-case weighting.",
+      "interpretation": "Positive values indicate more Quick underprediction on companion cases than on contemporaneous non-companion cases. Sign stability across periods is more relevant to incremental signal than the already-completed unconditional replication test."
+    },
+    {
+      "id": "D2-period-normalized-residual",
+      "definition": "Within each period, compute companion-substitution residual minus the overall period residual using decisive-member weighting and equal-case weighting.",
+      "interpretation": "This centers out broad period-level Quick calibration drift."
+    },
+    {
+      "id": "D3-cross-period-stability",
+      "definition": "Compute holdout minus development change in D1 and D2. Report sign reversals explicitly.",
+      "interpretation": "Large sign-changing movement is evidence against treating the mechanic as a stable standalone correction."
+    },
+    {
+      "id": "D4-case-heterogeneity",
+      "definition": "Report every companion-substitution case residual in both periods and counts above/below zero. No case may be removed as an outlier.",
+      "interpretation": "A mean effect driven by a small number of unanimous or near-unanimous votes should remain visibly heterogeneous."
+    },
+    {
+      "id": "D5-negative-control-comparison",
+      "definition": "Apply the same period-specific incremental contrast to author_added, the administrative-only confounding sentinel frozen in #173.",
+      "interpretation": "If the negative control also appears strong or unstable, that reinforces confounding/calibration-shift concerns. It can never become actionable."
+    }
+  ],
+  "decisionBoundary": {
+    "confirmatoryStatus": "none-post-reveal",
+    "probabilityAction": "none",
+    "mechanicActionability": "none",
+    "evidenceWeightChanges": "none",
+    "targetPolicyChanges": "none",
+    "productionChanges": "none",
+    "promotionRule": "No result from this post-reveal sensitivity analysis can create a production correction. Companion substitution remains non-actionable until an independently frozen prospective experiment evaluates an incremental within-period contrast."
+  },
+  "prospective2027_2028": {
+    "schemaVersion": "historical-deep-house-journal-prospective-plan-v1",
+    "session": "2027-2028",
+    "chamber": "house",
+    "mechanic": "companion_substitution",
+    "mode": "shadow-only-no-probability-movement",
+    "caseEnrollment": "Enroll every otherwise-eligible Minnesota House passage forecast prospectively before the selected floor vote. Enrollment may not depend on outcome, Journal source availability, or companion-substitution presence. The pre-vote Quick member probabilities and the frozen deterministic Journal mechanic classification must be timestamped before outcome reveal.",
+    "primaryEstimand": "Within-session companion-substitution minus non-companion Quick signed residual contrast, reported both decisive-member weighted and equal-case weighted.",
+    "expectedDirection": "positive",
+    "minimumCompanionCases": 8,
+    "minimumCompanionDecisiveMemberOutcomes": 800,
+    "minimumAbsoluteMemberWeightedIncrementalContrast": 0.02,
+    "replicationRule": "Eligible only after the minimum companion case/member counts are met. Both member-weighted and equal-case companion-minus-noncompanion residual contrasts must be positive, and the member-weighted contrast must be at least +0.02. Otherwise the prospective result does not replicate. No threshold changes after enrollment begins.",
+    "robustness": {
+      "leaveOneCompanionCaseOut": "Report the incremental contrast after excluding each companion case one at a time. This is descriptive robustness only; no outlier exclusion is allowed in the primary estimate.",
+      "calendarDesignationStratum": "Report companion contrast separately inside/outside calendar_designation when sample size permits, because prior periods show partial overlap.",
+      "secondReadingStratum": "Report companion contrast separately inside/outside second_reading when sample size permits, because the 2025-2026 holdout had overlap with the single large negative companion case."
+    },
+    "analysisTiming": "Single end-of-evaluation reveal after the enrolled source/mechanics/Quick artifacts are frozen. No sequential peeking for threshold adjustment.",
+    "actionability": "A successful prospective replication still nominates a separately reviewed calibration experiment; it does not directly write a production weight."
+  }
+}
