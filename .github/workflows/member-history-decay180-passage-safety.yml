@@ -1,0 +1,138 @@
+name: Member history decay-180 passage safety audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/member-history-decay180-passage-safety.yml
+      - data/evaluation/member-history-decay180-passage-safety-plan-v1.json
+      - scripts/run-production-member-history-decay180-passage-safety.ts
+      - src/app/api/operations/member-history-decay180-passage-safety/route.ts
+      - src/evaluation/member-history-decay180-passage-safety.ts
+      - src/evaluation/historical-quick-decay-shadow-replay.ts
+      - src/evaluation/historical-quick-replay-dataset.ts
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: member-history-decay180-passage-safety-v1
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_DECAY180_PASSAGE_SAFETY_OUTPUT: artifacts/member-history-decay180-passage-safety-v1.json
+    steps:
+      - uses: actions/checkout@v7
+      - name: Verify frozen passage-safety boundary and lineage
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          plan='data/evaluation/member-history-decay180-passage-safety-plan-v1.json'
+          test "$(jq -r '.schemaVersion' "$plan")" = 'member-history-decay180-passage-safety-plan-v1'
+          test "$(jq -r '.candidate.memberHistoryHalfLifeDays' "$plan")" = '180'
+          test "$(jq -r '.scope.primarySafetySlice' "$plan")" = '2025-2026/house'
+          test "$(jq -r '.frozenSafetyRule.minimumPrimarySliceReplayableEvents' "$plan")" = '150'
+          test "$(jq -r '.frozenSafetyRule.minimumPrimarySliceFailedEvents' "$plan")" = '5'
+          test "$(jq -r '.frozenSafetyRule.maximumPrimarySlicePassageBrierDelta' "$plan")" = '0.002'
+          test "$(jq -r '.frozenSafetyRule.minimumPrimarySliceMemberBrierImprovement' "$plan")" = '0.01'
+          test "$(jq -r '.frozenSafetyRule.minimumPrimarySliceChamberMaeImprovementVotes' "$plan")" = '2'
+          test "$(jq -r '.frozenSafetyRule.maximumFailedEventPassageBrierDelta' "$plan")" = '0.05'
+          test "$(jq -r '.frozenSafetyRule.maximumFailedEventMeanPassageProbabilityIncrease' "$plan")" = '0.03'
+          test "$(jq -r '.frozenSafetyRule.minimumPrimarySlicePassageAccuracyDelta' "$plan")" = '-0.01'
+          test "$(jq -r '.guardrails.productionAction' "$plan")" = 'none'
+          test "$(jq -r '.guardrails.runtimeDefaultChange' "$plan")" = 'false'
+          test "$(jq -r '.guardrails.modelVersionChange' "$plan")" = 'false'
+          test "$(jq -r '.guardrails.frozenCap20ProspectiveExperimentChanged' "$plan")" = 'false'
+
+          selection_id="$(jq -r '.lineage.decaySelectionArtifactId' "$plan")"
+          selection_digest="sha256:$(jq -r '.lineage.decaySelectionArtifactSha256' "$plan")"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${selection_id}" > "$RUNNER_TEMP/selection-artifact.json"
+          test "$(jq -r '.expired' "$RUNNER_TEMP/selection-artifact.json")" = 'false'
+          test "$(jq -r '.digest' "$RUNNER_TEMP/selection-artifact.json")" = "$selection_digest"
+
+          replay_id="$(jq -r '.lineage.exactHoldoutReplayArtifactId' "$plan")"
+          replay_digest="sha256:$(jq -r '.lineage.exactHoldoutReplayArtifactSha256' "$plan")"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${replay_id}" > "$RUNNER_TEMP/replay-artifact.json"
+          test "$(jq -r '.expired' "$RUNNER_TEMP/replay-artifact.json")" = 'false'
+          test "$(jq -r '.digest' "$RUNNER_TEMP/replay-artifact.json")" = "$replay_digest"
+      - name: Require production environment access
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${VERCEL_TOKEN:-}"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Wait for this exact main SHA to be live in production
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            code="$(curl --silent --show-error --output "$RUNNER_TEMP/vercel-deployments.json" --write-out '%{http_code}' --header "Authorization: Bearer ${VERCEL_TOKEN}" "https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&target=production&limit=20&teamId=${VERCEL_ORG_ID}")"
+            test "$code" = '200'
+            match="$(jq -c --arg sha "$GITHUB_SHA" '[.deployments[]? | select(.target == "production" and .meta.githubCommitSha == $sha)] | first // empty' "$RUNNER_TEMP/vercel-deployments.json")"
+            if [ -n "$match" ]; then
+              state="$(printf '%s' "$match" | jq -r '.state // "UNKNOWN"')"
+              if [ "$state" = 'READY' ]; then exit 0; fi
+              if [ "$state" = 'ERROR' ] || [ "$state" = 'CANCELED' ]; then exit 1; fi
+            fi
+            sleep 5
+          done
+          echo 'Exact main SHA did not become READY before passage-safety deadline.'
+          exit 1
+      - name: Read production operation secret privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+      - name: Run frozen decay-180 passage safety audit
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/run-production-member-history-decay180-passage-safety.ts
+      - name: Verify immutable no-action safety artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$VOTEPREDICT_DECAY180_PASSAGE_SAFETY_OUTPUT"
+          test "$(jq -r '.schemaVersion' "$file")" = 'member-history-decay180-passage-safety-v1'
+          test "$(jq -r '.metadata.runtimeCodeSha' "$file")" = "$GITHUB_SHA"
+          test "$(jq -r '.metadata.memberHistoryHalfLifeDays' "$file")" = '180'
+          test "$(jq -r '.metadata.analysisStatus' "$file")" = 'post-selection-passage-safety-audit'
+          test "$(jq -r '.metadata.probabilityAction' "$file")" = 'none'
+          test "$(jq -r '.metadata.productionAction' "$file")" = 'none'
+          test "$(jq -r '.metadata.runtimeDefaultChange' "$file")" = 'false'
+          test "$(jq -r '.metadata.modelVersionChange' "$file")" = 'false'
+          jq -e '.metadata.baselineValidation.maximumAbsoluteProbabilityDifference <= 1e-12' "$file" >/dev/null
+          test "$(jq -r '.primarySafetySlice.key' "$file")" = '2025-2026/house'
+          test "$(jq -r '.decision.productionAction' "$file")" = 'none'
+          if jq -e '.. | objects | select(has("probabilityAfter") or has("productionWeight") or has("runtimeDefaultApplied"))' "$file" >/dev/null; then
+            echo 'Passage-safety artifact contains a forbidden production-action field.'
+            exit 1
+          fi
+      - name: Upload immutable passage safety audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: member-history-decay180-passage-safety-v1-${{ github.sha }}
+          path: artifacts/member-history-decay180-passage-safety-v1.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Remove temporary production files
+        if: always()
+        shell: bash
+        run: |
+          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/vercel-deployments.json" "$RUNNER_TEMP/selection-artifact.json" "$RUNNER_TEMP/replay-artifact.json"
