@@ -51,13 +51,25 @@ test('unweighted decay baseline exactly reproduces chronological evaluator', () 
 test('shorter member half-life reduces stale personal-history support', () => {
   const observations: MemberModelObservation[] = [];
   for (let index = 0; index < 25; index += 1) {
+    const occurredAt = `2021-01-${String(index + 1).padStart(2, '0')}T00:00:00Z`;
+    const voteEventId = `old-vote-${index}`;
     observations.push({
-      observationId: `old-${index}`,
-      voteEventId: `old-vote-${index}`,
+      observationId: `old-yes-${index}`,
+      voteEventId,
       memberId: 'member-1',
       party: 'DFL',
-      occurredAt: `2021-01-${String(index + 1).padStart(2, '0')}T00:00:00Z`,
+      occurredAt,
       outcome: 1,
+      session: '2021-2022',
+      chamber: 'house',
+    });
+    observations.push({
+      observationId: `old-no-${index}`,
+      voteEventId,
+      memberId: 'member-2',
+      party: 'DFL',
+      occurredAt,
+      outcome: 0,
       session: '2021-2022',
       chamber: 'house',
     });
