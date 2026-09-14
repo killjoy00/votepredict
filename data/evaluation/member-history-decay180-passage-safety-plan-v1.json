@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "member-history-decay180-passage-safety-plan-v1",
+  "purpose": "Evaluate whether the selected 180-day member-history decay candidate improves member/chamber forecasts without materially degrading rare final-passage failure discrimination before any production model change.",
+  "candidate": {
+    "memberHistoryHalfLifeDays": 180,
+    "partyHistoryDecay": "none",
+    "globalHistoryDecay": "none",
+    "modelVersionBaseline": "member-eb-v1.1"
+  },
+  "scope": {
+    "jurisdiction": "us-mn",
+    "sessions": ["2021-2022", "2023-2024", "2025-2026"],
+    "chambers": ["house", "senate"],
+    "events": "all replayable historical passage events with strict pre-vote bill text, unchanged Quick analogues, active roster, and at least 20 decisive member outcomes",
+    "primarySafetySlice": "2025-2026/house",
+    "reason": "This slice contains 9 of the 12 observed passage failures in the historical corpus and therefore carries most of the available failure-discrimination information."
+  },
+  "frozenSafetyRule": {
+    "minimumPrimarySliceReplayableEvents": 150,
+    "minimumPrimarySliceFailedEvents": 5,
+    "maximumPrimarySlicePassageBrierDelta": 0.002,
+    "minimumPrimarySliceMemberBrierImprovement": 0.01,
+    "minimumPrimarySliceChamberMaeImprovementVotes": 2,
+    "maximumFailedEventPassageBrierDelta": 0.05,
+    "maximumFailedEventMeanPassageProbabilityIncrease": 0.03,
+    "minimumPrimarySlicePassageAccuracyDelta": -0.01,
+    "interpretation": "All thresholds must pass to classify decay-180 as passage-safe-for-production-review. A failed threshold blocks production promotion from this research line. Passing still does not change production."
+  },
+  "reportedMetrics": [
+    "member Brier/log loss/accuracy/ECE",
+    "chamber mean absolute expected-Yes error",
+    "passage Brier/accuracy/pass rate/always-pass Brier",
+    "passed-event passage Brier and mean passage probability",
+    "failed-event passage Brier and mean passage probability",
+    "session/chamber scorecards",
+    "paired event-level passage-probability and expected-Yes deltas"
+  ],
+  "lineage": {
+    "decaySelectionWorkflowRunId": 34860349956,
+    "decaySelectionArtifactId": 10354173225,
+    "decaySelectionArtifactSha256": "5be280d41cb411c7dca9540e6c8dfbe947adfac4fda04d8f8fd216ad609c897e",
+    "decaySelectionHeadSha": "7ee78425604ffec07144d6d69d77d7c150fe216a",
+    "exactHoldoutReplayWorkflowRunId": 34861990421,
+    "exactHoldoutReplayArtifactId": 10355446200,
+    "exactHoldoutReplayArtifactSha256": "18ff125acdd98538f3a64d608c0fa939bc8df2b1838cc2a2ee732526d250c87c",
+    "exactHoldoutReplayHeadSha": "bd79021581eb7fa51c8d08cd4e4678775aea9d3b"
+  },
+  "guardrails": {
+    "analysisStatus": "post-selection-passage-safety-audit",
+    "probabilityAction": "none",
+    "productionAction": "none",
+    "runtimeDefaultChange": false,
+    "modelVersionChange": false,
+    "databaseWrites": false,
+    "frozenCap20ProspectiveExperimentChanged": false,
+    "warning": "The candidate was selected after historical outcomes were inspected. This audit is a safety check, not an independent confirmatory validation."
+  }
+}
