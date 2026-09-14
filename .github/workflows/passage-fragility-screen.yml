@@ -1,0 +1,112 @@
+name: Passage fragility screen
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/passage-fragility-screen.yml
+      - data/evaluation/passage-fragility-screen-plan-v1.json
+      - scripts/run-production-passage-fragility-screen.ts
+      - src/app/api/operations/passage-fragility-screen/route.ts
+      - src/evaluation/passage-fragility-screen.ts
+      - tests/passage-fragility-screen.test.ts
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: passage-fragility-screen-v1
+  cancel-in-progress: false
+
+jobs:
+  screen:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_PASSAGE_FRAGILITY_OUTPUT: artifacts/passage-fragility-screen-v1.json
+    steps:
+      - uses: actions/checkout@v7
+      - name: Verify frozen fragility definition
+        shell: bash
+        run: |
+          set -euo pipefail
+          plan='data/evaluation/passage-fragility-screen-plan-v1.json'
+          test "$(jq -r '.schemaVersion' "$plan")" = 'passage-fragility-screen-plan-v1'
+          test "$(jq -r '.scope.memberHistoryHalfLifeDays' "$plan")" = '180'
+          test "$(jq -r '.scope.primarySlice' "$plan")" = '2025-2026/house'
+          test "$(jq -r '.scope.highConfidencePassageProbabilityFloor' "$plan")" = '0.8'
+          test "$(jq -r '.features | join(",")' "$plan")" = 'marginRisk,meanEntropy,swingShare40to60,softYesExpectedShare,analogueCoverageGap,analogueCountGap,analogueWeightRisk,partyExpectedYesConcentration'
+          test "$(jq -r '.candidates | map(.id) | join(",")' "$plan")" = 'composite-top20-normal1.25,composite-top10-normal1.5,softyes-top20-normal1.25,evidence-top20-normal1.25,margin-top20-normal1.25,party-top20-normal1.25'
+          test "$(jq -r '.frozenSelectionRule.minimumOverallBrierImprovement' "$plan")" = '0.0005'
+          test "$(jq -r '.frozenSelectionRule.minimumOverallLogLossImprovement' "$plan")" = '0.001'
+          test "$(jq -r '.frozenSelectionRule.minimumFailedBrierImprovement' "$plan")" = '0.02'
+          test "$(jq -r '.frozenSelectionRule.maximumPassedBrierDegradation' "$plan")" = '0.001'
+          test "$(jq -r '.frozenSelectionRule.minimumFailureCaptureRate' "$plan")" = '0.3'
+          test "$(jq -r '.guardrails.productionAction' "$plan")" = 'none'
+          test "$(jq -r '.guardrails.runtimeDefaultChange' "$plan")" = 'false'
+          test "$(jq -r '.guardrails.modelVersionChange' "$plan")" = 'false'
+          test "$(jq -r '.guardrails.frozenCap20ProspectiveExperimentChanged' "$plan")" = 'false'
+      - name: Require production environment access
+        shell: bash
+        run: test -n "${VERCEL_TOKEN:-}"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Wait for this exact main SHA to be live in production
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            code="$(curl --silent --show-error --output "$RUNNER_TEMP/vercel-deployments.json" --write-out '%{http_code}' --header "Authorization: Bearer ${VERCEL_TOKEN}" "https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&target=production&limit=20&teamId=${VERCEL_ORG_ID}")"
+            test "$code" = '200'
+            match="$(jq -c --arg sha "$GITHUB_SHA" '[.deployments[]? | select(.target == "production" and .meta.githubCommitSha == $sha)] | first // empty' "$RUNNER_TEMP/vercel-deployments.json")"
+            if [ -n "$match" ]; then
+              state="$(printf '%s' "$match" | jq -r '.state // "UNKNOWN"')"
+              if [ "$state" = 'READY' ]; then exit 0; fi
+              if [ "$state" = 'ERROR' ] || [ "$state" = 'CANCELED' ]; then exit 1; fi
+            fi
+            sleep 5
+          done
+          exit 1
+      - name: Read production operation secret privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+      - name: Run frozen passage fragility screen
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/run-production-passage-fragility-screen.ts
+      - name: Verify no-action artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$VOTEPREDICT_PASSAGE_FRAGILITY_OUTPUT"
+          test "$(jq -r '.schemaVersion' "$file")" = 'passage-fragility-screen-v1'
+          test "$(jq -r '.metadata.runtimeCodeSha' "$file")" = "$GITHUB_SHA"
+          test "$(jq -r '.metadata.featureSource' "$file")" = 'strictly pre-vote replay state; feature extractor accepts no outcome fields'
+          test "$(jq -r '.metadata.productionAction' "$file")" = 'none'
+          test "$(jq -r '.metadata.runtimeDefaultChange' "$file")" = 'false'
+          test "$(jq -r '.metadata.modelVersionChange' "$file")" = 'false'
+          jq -e '.metadata.baselineValidation.maximumAbsoluteProbabilityDifference <= 1e-12' "$file" >/dev/null
+          test "$(jq -r '.primarySlice.key' "$file")" = '2025-2026/house'
+          test "$(jq -r '.decision.productionAction' "$file")" = 'none'
+      - name: Upload immutable fragility artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: passage-fragility-screen-v1-${{ github.sha }}
+          path: artifacts/passage-fragility-screen-v1.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Remove temporary production files
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/vercel-deployments.json"
