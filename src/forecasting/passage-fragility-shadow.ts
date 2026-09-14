@@ -33,14 +33,16 @@ interface FrozenReference {
   evidenceRiskScores: number[];
 }
 
-const importedReference = referenceJson as unknown;
-const reference = (
-  importedReference
-  && typeof importedReference === 'object'
-  && 'default' in importedReference
-    ? (importedReference as { default: unknown }).default
-    : importedReference
-) as FrozenReference;
+function unwrapReferenceModule(value: unknown): unknown {
+  let current = value;
+  for (let depth = 0; depth < 4; depth += 1) {
+    if (!current || typeof current !== 'object' || 'schemaVersion' in current || !('default' in current)) break;
+    current = (current as { default: unknown }).default;
+  }
+  return current;
+}
+
+const reference = unwrapReferenceModule(referenceJson as unknown) as FrozenReference;
 
 function validateReference(): void {
   if (reference.schemaVersion !== 'passage-fragility-reference-v1'
