@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { buildMemberHistoryCap20ProspectiveInputs } from '../src/forecasting/member-history-cap20-prospective-capture.js';
+import {
+  buildMemberHistoryCap20ProspectiveInputs,
+  captureMemberHistoryCap20ProspectiveShadow,
+} from '../src/forecasting/member-history-cap20-prospective-capture.js';
 import { estimateMemberHistoryCap20ProspectiveShadow } from '../src/forecasting/member-history-cap20-prospective-shadow.js';
 import { estimateMemberProbability } from '../src/forecasting/member-model.js';
 
@@ -53,4 +56,40 @@ test('reconstructs the exact serving member-model inputs from frozen Quick outpu
     assert.ok(cap20?.yesProbability !== undefined);
     assert.equal(cap20?.servesTraffic, false);
   }
+});
+
+test('fails before database capture when the future serving model version is not the frozen baseline', async () => {
+  const request = {
+    forecastId: 'forecast',
+    chamberId: 'house-id',
+    chamberSlug: 'house',
+    chamberName: 'House',
+    researchMode: 'quick',
+    subject: {
+      kind: 'bill',
+      billId: 'bill',
+      identifier: 'HF1',
+      title: 'Future bill',
+      sessionId: 'session',
+      sessionSlug: '2027-2028',
+    },
+  } as any;
+  const quick = {
+    forecastId: 'forecast',
+    revisionId: 'revision',
+    revisionNumber: 1,
+    researchMode: 'quick',
+    modelVersion: 'member-eb-v2',
+    asOf: '2027-03-10T12:00:00.000Z',
+    chamber: { id: 'house-id', slug: 'house', name: 'House', activeMembers: 0, passageRule: { kind: 'fixed', requiredYes: 1 }, requiredYes: 1 },
+    supportState: 'partial',
+    members: [],
+    analogues: [],
+    diagnostics: { prefilteredEvents: 0, safeCandidateEvents: 0, selectedAnalogues: 0, directAnalogueMembers: 0, cannotPredictMembers: 0 },
+  } as any;
+
+  await assert.rejects(
+    () => captureMemberHistoryCap20ProspectiveShadow(request, quick),
+    /baseline model drift/,
+  );
 });
