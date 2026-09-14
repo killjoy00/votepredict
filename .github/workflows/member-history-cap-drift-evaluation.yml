@@ -7,12 +7,13 @@ on:
       - .github/workflows/member-history-cap-drift-evaluation.yml
       - data/evaluation/member-history-cap-drift-plan-v1.json
       - scripts/evaluate-member-history-cap.ts
-      - scripts/run-production-member-history-cap-grid.ts
+      - scripts/run-production-member-history-cap-drift-evaluation.ts
       - scripts/select-member-history-cap-drift.ts
+      - src/app/api/operations/member-history-cap-drift-evaluation/route.ts
+      - src/evaluation/member-history-cap-grid.ts
       - src/evaluation/member-model.ts
       - src/forecasting/member-model.ts
       - src/operations/environment-file.ts
-      - src/operations/evaluation-database.ts
   workflow_dispatch:
 
 permissions:
@@ -26,11 +27,12 @@ jobs:
   evaluate:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
       VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_MEMBER_HISTORY_CAP_DRIFT_RAW_OUTPUT: artifacts/member-history-cap-drift-raw-v1.json
     steps:
       - uses: actions/checkout@v7
       - name: Verify frozen cap grid and selection plan
@@ -58,18 +60,57 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - name: Read production database environment privately
+      - name: Wait for this exact main SHA to be live in production
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            http_code="$(curl \
+              --silent \
+              --show-error \
+              --output "$RUNNER_TEMP/vercel-deployments.json" \
+              --write-out '%{http_code}' \
+              --header "Authorization: Bearer ${VERCEL_TOKEN}" \
+              "https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&target=production&limit=20&teamId=${VERCEL_ORG_ID}")"
+            if [ "$http_code" != "200" ]; then
+              echo "Vercel deployment lookup returned HTTP ${http_code}."
+              exit 1
+            fi
+            match="$(jq -c --arg sha "$GITHUB_SHA" '[.deployments[]? | select(.target == "production" and .meta.githubCommitSha == $sha)] | first // empty' "$RUNNER_TEMP/vercel-deployments.json")"
+            if [ -n "$match" ]; then
+              state="$(printf '%s' "$match" | jq -r '.state // "UNKNOWN"')"
+              if [ "$state" = "READY" ]; then
+                echo "Exact main SHA ${GITHUB_SHA} is READY in production."
+                exit 0
+              fi
+              if [ "$state" = "ERROR" ] || [ "$state" = "CANCELED" ]; then
+                echo "Production deployment for ${GITHUB_SHA} entered ${state}."
+                exit 1
+              fi
+            fi
+            sleep 5
+          done
+          echo "Exact main SHA ${GITHUB_SHA} did not become READY before the cap-evaluation deadline."
+          exit 1
+      - name: Read production operation secret privately
         shell: bash
         run: |
           set -euo pipefail
           umask 077
           npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
-      - name: Run the pre-existing cap grid on current historical data
+      - name: Run pre-existing cap grid inside production runtime
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/run-production-member-history-cap-drift-evaluation.ts
+      - name: Verify raw grid lineage
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p artifacts
-          GITHUB_SHA="$GITHUB_SHA" node --import tsx scripts/run-production-member-history-cap-grid.ts "$RUNNER_TEMP/votepredict-production.env" > artifacts/member-history-cap-drift-raw-v1.json
+          raw="$VOTEPREDICT_MEMBER_HISTORY_CAP_DRIFT_RAW_OUTPUT"
+          test "$(jq -r '.metadata.codeSha' "$raw")" = "$GITHUB_SHA"
+          test "$(jq -r '[.candidates[].cap] | join(",")' "$raw")" = '5,10,20,40,80,uncapped'
+          test "$(jq -r '.metadata.warning' "$raw")" = 'This is retrospective/shadow evaluation on already inspected sessions. It does not qualify a candidate for production promotion by itself.'
+          test "$(jq -r '.metadata.scope' "$raw")" = 'Member vote component only. It does not solve selection bias from conditioning on bills that reached a final-passage vote.'
       - name: Apply frozen candidate-selection rule
         run: |
           node --import tsx scripts/select-member-history-cap-drift.ts \
@@ -90,7 +131,7 @@ jobs:
           test "$(jq -r '.baseline.cap' "$file")" = 'uncapped'
           test "$(jq '.candidates | length' "$file")" = '5'
           test "$(jq -r '.decision.productionAction' "$file")" = 'none'
-          test "$(jq '[.candidates[].cap] | join(",")' "$file")" = '5,10,20,40,80'
+          test "$(jq -r '[.candidates[].cap] | join(",")' "$file")" = '5,10,20,40,80'
           if jq -e '.. | objects | select(has("probabilityAfter") or has("productionWeight") or has("mechanicallyActionable"))' "$file" >/dev/null; then
             echo 'Cap evaluation artifact contains a forbidden production-action field.'
             exit 1
@@ -104,8 +145,8 @@ jobs:
             artifacts/member-history-cap-drift-evaluation-v1.json
           if-no-files-found: error
           retention-days: 90
-      - name: Remove temporary production environment
+      - name: Remove temporary production files
         if: always()
         shell: bash
         run: |
-          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log"
+          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/vercel-deployments.json"
