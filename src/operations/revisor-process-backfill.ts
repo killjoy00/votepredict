@@ -42,30 +42,40 @@ export interface RevisorProcessBackfillVerification {
 
 async function selectBatch(limit: number): Promise<ProcessBackfillBillRow[]> {
   const result = await pool.query<ProcessBackfillBillRow>(`
-    SELECT DISTINCT b.id::text AS bill_id,
+    SELECT b.id::text AS bill_id,
            b.session_id::text AS session_id,
            b.identifier,
            b.source_url
       FROM bills b
-      JOIN vote_events ve ON ve.bill_id = b.id AND ve.is_passage = true
       JOIN legislative_sessions s ON s.id = b.session_id
       JOIN jurisdictions j ON j.id = s.jurisdiction_id AND j.slug = 'us-mn'
      WHERE s.slug IN ('2021-2022', '2023-2024', '2025-2026')
        AND b.source_url IS NOT NULL
        AND b.metadata #>> '{revisorProcessHistory,parserVersion}' IS DISTINCT FROM $1
+       AND EXISTS (
+         SELECT 1
+           FROM vote_events ve
+          WHERE ve.bill_id = b.id
+            AND ve.is_passage = true
+       )
      ORDER BY b.id
      LIMIT $2`, [REVISOR_PROCESS_PARSER_VERSION, limit]);
   return result.rows;
 }
 
 async function fetchBill(row: ProcessBackfillBillRow): Promise<FetchedProcessBill> {
-  const xml = await fetchRevisorStatusXml(row.source_url);
-  return {
-    ...row,
-    fetchedAt: new Date().toISOString(),
-    contentSha256: createHash('sha256').update(xml).digest('hex'),
-    events: parseRevisorProcessEvents({ xml, identifier: row.identifier }),
-  };
+  try {
+    const xml = await fetchRevisorStatusXml(row.source_url);
+    return {
+      ...row,
+      fetchedAt: new Date().toISOString(),
+      contentSha256: createHash('sha256').update(xml).digest('hex'),
+      events: parseRevisorProcessEvents({ xml, identifier: row.identifier }),
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'unknown Revisor fetch failure';
+    throw new Error(`${row.identifier}: ${message}`);
+  }
 }
 
 async function fetchBatch(rows: readonly ProcessBackfillBillRow[]): Promise<FetchedProcessBill[]> {
@@ -98,6 +108,13 @@ function groupedEvents(events: readonly RevisorProcessEvent[]) {
     groups.set(key, group);
   }
   return [...groups.values()];
+}
+
+function stageTimestamp(occurredOn: string, chamber: 'house' | 'senate'): string {
+  // The Revisor action source is date-precise. A deterministic one-minute offset keeps
+  // same-day House and Senate events distinct under the existing stage-event uniqueness
+  // key without pretending the official source supplied a time-of-day.
+  return `${occurredOn}T${chamber === 'house' ? '12:00:00' : '12:01:00'}Z`;
 }
 
 async function persistBill(row: FetchedProcessBill): Promise<number> {
@@ -151,7 +168,7 @@ async function persistBill(row: FetchedProcessBill): Promise<number> {
           source_url, source_document_id, metadata
         ) VALUES (
           $1::uuid, $2::uuid, $3::uuid, $4::text, NULL,
-          ($5::date::text || 'T12:00:00Z')::timestamptz,
+          $5::timestamptz,
           $6::text, $7::uuid,
           jsonb_build_object(
             'parserVersion', $8::text,
@@ -171,7 +188,7 @@ async function persistBill(row: FetchedProcessBill): Promise<number> {
         row.session_id,
         chamberId,
         group.stageKind,
-        group.occurredOn,
+        stageTimestamp(group.occurredOn, group.chamber),
         row.source_url,
         sourceDocumentId,
         REVISOR_PROCESS_PARSER_VERSION,
@@ -211,7 +228,8 @@ async function persistBill(row: FetchedProcessBill): Promise<number> {
     return stageEvents;
   } catch (error) {
     await client.query('ROLLBACK');
-    throw error;
+    const message = error instanceof Error ? error.message : 'unknown persistence failure';
+    throw new Error(`${row.identifier}: ${message}`);
   } finally {
     client.release();
   }
