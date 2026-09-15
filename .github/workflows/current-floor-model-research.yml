@@ -1,18 +1,6 @@
 name: Current floor model research
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/current-floor-model-research.yml
-      - scripts/evaluate-current-floor-research.ts
-      - src/evaluation/current-floor-research.ts
-      - tests/current-floor-research.test.ts
-      - src/evaluation/historical-quick-replay.ts
-      - src/features/bills.ts
-      - src/forecasting/member-model.ts
-      - src/forecasting/chamber.ts
-      - src/forecasting/minnesota-rules.ts
   workflow_dispatch:
 
 permissions:
