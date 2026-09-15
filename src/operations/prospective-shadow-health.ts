@@ -101,7 +101,7 @@ export async function getProspectiveShadowCaptureHealth(): Promise<ProspectiveSh
     ),
     cap20 AS (
       SELECT scoped.*,
-             (model_version = $2 AND generated_at IS NOT NULL) AS eligible,
+             (COALESCE(model_version = $2, false) AND generated_at IS NOT NULL) AS eligible,
              (
                EXISTS (
                  SELECT 1
@@ -121,7 +121,8 @@ export async function getProspectiveShadowCaptureHealth(): Promise<ProspectiveSh
     fragility AS (
       SELECT scoped.*,
              (
-               model_version = $4
+               COALESCE(model_version = $4, false)
+               AND generated_at IS NOT NULL
                AND generated_at >= $5::timestamptz
                AND passage_probability IS NOT NULL
              ) AS eligible,
