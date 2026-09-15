@@ -326,6 +326,7 @@ async function main(): Promise<void> {
       return { config, rows, validation: compactScore(rows, VALIDATION_SESSION), test: compactScore(rows, TEST_SESSION) };
     });
     const selectedAnalogue = choose(analogueRuns, (row) => [row.validation.memberBrier, row.validation.memberLogLoss, row.validation.chamberYesMae]);
+    const noAnalogueRun = analogueRuns.find((row) => row.config.analogue === null);
 
     const combinedConfig: CurrentFloorResearchModelConfig = {
       id: 'combined-v3-candidate',
@@ -348,7 +349,6 @@ async function main(): Promise<void> {
       row.validation.passageBrier,
     ]);
 
-    const finalRows = selectedUncertainty.rows;
     const finalValidation = selectedUncertainty.validation;
     const finalTest = selectedUncertainty.test;
     const combinedVsBaselineValidation = compare(combinedValidation, baselineValidation);
@@ -403,7 +403,9 @@ async function main(): Promise<void> {
         grid: processRuns.map((row) => ({ config: row.config, validation: row.validation, test: row.test })),
       },
       analogues: {
-        noAnalogueAblation: analogueRuns.find((row) => row.config.analogue === null),
+        noAnalogueAblation: noAnalogueRun
+          ? { config: noAnalogueRun.config, validation: noAnalogueRun.validation, test: noAnalogueRun.test }
+          : null,
         selected: { config: selectedAnalogue.config, validation: selectedAnalogue.validation, test: selectedAnalogue.test },
         grid: analogueRuns.map((row) => ({ config: row.config, validation: row.validation, test: row.test })),
       },
