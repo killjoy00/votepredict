@@ -1,0 +1,90 @@
+name: Process history one-shot pipeline
+
+on:
+  workflow_run:
+    workflows: ['Deploy production']
+    types: [completed]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: process-history-one-shot
+  cancel-in-progress: false
+
+jobs:
+  pipeline:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 210
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_PROCESS_RESEARCH_OUTPUT: artifacts/process-history-model-research.json
+    steps:
+      - name: Checkout exact deployed main commit
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Require Vercel credential
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ]; then
+            echo '::error::VERCEL_TOKEN is unavailable. One-shot process pipeline was not attempted.'
+            exit 1
+          fi
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Read production environment privately
+        run: |
+          set -euo pipefail
+          umask 077
+          if ! npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1; then
+            echo '::error::Could not read VotePredict production environment. One-shot process pipeline was not run.'
+            exit 1
+          fi
+      - name: Backfill dated Revisor process history
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/run-production-revisor-process-backfill.ts
+      - name: Run frozen process-history model screen
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/evaluate-process-history-research.ts
+      - name: Upload research artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: process-history-model-research-${{ github.event.workflow_run.head_sha }}
+          path: artifacts/process-history-model-research.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Summarize decision
+        run: |
+          file=artifacts/process-history-model-research.json
+          {
+            echo '## Process-history one-shot pipeline'
+            echo
+            echo "- Deployed commit: \`${{ github.event.workflow_run.head_sha }}\`"
+            echo "- Process-data coverage: $(jq -r '.data.parsedBills|tostring' "$file")/$(jq -r '.data.targetBills|tostring' "$file")"
+            echo "- Process stage events: $(jq -r '.data.processStageEvents' "$file")"
+            echo "- Selected candidate: $(jq -r '.processContext.selected.config.id' "$file")"
+            echo "- Prospective shadow: $(jq -r '.decision.prospectiveShadow' "$file")"
+            echo '- Serving production probabilities changed: no'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove temporary credentials and Vercel logs
+        if: always()
+        run: |
+          python - <<'PYTHON'
+          import os
+          from pathlib import Path
+          for name in ['votepredict-production.env', 'vercel-pull.log']:
+              Path(os.environ['RUNNER_TEMP'], name).unlink(missing_ok=True)
+          PYTHON
