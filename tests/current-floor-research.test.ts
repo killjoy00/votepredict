@@ -169,7 +169,7 @@ function syntheticRiskRows(): ResearchReplayRow[] {
       riskScore: highRisk ? 0.9 : 0.1,
       meanParticipationProbability: 0.98,
       policyAreas: ['education'],
-      processContext: { key: 'x', billAgeDays: 30, versionCount: 1, companionPriorPass: false, priorSameBillPriorPass: false } as never,
+      processContext: { key: 'x', billAgeDays: 30, versionCount: 1, priorSameBillPass: false },
     });
   }
   return rows;
