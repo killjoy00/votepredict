@@ -71,7 +71,6 @@ export interface ResearchProcessContext {
   key: string;
   billAgeDays: number;
   versionCount: number;
-  companionPriorPass: boolean;
   priorSameBillPass: boolean;
 }
 
@@ -258,10 +257,6 @@ function processContextForEvent(
   const first = availableVersions[0];
   const billAgeDays = first ? daysBetween(first.publishedAt, event.occurredOn) : 0;
   const versionCount = availableVersions.length;
-  const companionPriorPass = Boolean(event.companionIdentifier && events.some((candidate) =>
-    candidate.identifier === event.companionIdentifier
-      && candidate.occurredOn < event.occurredOn
-      && candidate.passed === true));
   const priorSameBillPass = events.some((candidate) =>
     candidate.billId === event.billId
       && candidate.voteEventId !== event.voteEventId
@@ -269,13 +264,11 @@ function processContextForEvent(
       && candidate.passed === true);
   const ageBand = billAgeDays <= 30 ? 'age-0-30' : billAgeDays <= 90 ? 'age-31-90' : 'age-91+';
   const versionBand = versionCount <= 1 ? 'v1' : versionCount === 2 ? 'v2' : 'v3+';
-  const companionBand = companionPriorPass ? 'companion-passed' : event.companionIdentifier ? 'companion-no-prior-pass' : 'no-companion';
   const priorBand = priorSameBillPass ? 'same-bill-prior-pass' : 'no-same-bill-prior-pass';
   return {
-    key: [ageBand, versionBand, companionBand, priorBand].join('|'),
+    key: [ageBand, versionBand, priorBand].join('|'),
     billAgeDays,
     versionCount,
-    companionPriorPass,
     priorSameBillPass,
   };
 }
@@ -513,7 +506,7 @@ export function runCurrentFloorResearchReplay(
       const analogue = analogueSupport.get(target.voteEventId);
       const policyAreas = prepared.policyAreasByEvent.get(target.voteEventId) ?? ['other'];
       const processContext = prepared.processContextByEvent.get(target.voteEventId) ?? {
-        key: 'unknown', billAgeDays: 0, versionCount: 0, companionPriorPass: false, priorSameBillPass: false,
+        key: 'unknown', billAgeDays: 0, versionCount: 0, priorSameBillPass: false,
       };
       const processEvidence = mutableEvidence(process.get(processContext.key));
       const targetVersion = prepared.targetVersionByEvent.get(target.voteEventId);
@@ -642,7 +635,7 @@ export function scoreResearchReplay(rows: readonly ResearchReplayRow[]): Researc
 function quantile(values: readonly number[], q: number): number {
   if (values.length === 0) return 0;
   const sorted = [...values].sort((a, b) => a - b);
-  const index = Math.min(sorted.length - 1, Math.max(0, Math.floor(q * sorted.length)));
+  const index = Math.min(sorted.length - 1, Math.max(0, Math.ceil(q * sorted.length) - 1));
   return sorted[index];
 }
 
