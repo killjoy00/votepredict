@@ -22,7 +22,7 @@ async function main(){
  if(!projectResponse.ok)throw new Error('Project configuration lookup failed');
  const project=await projectResponse.json();
  const definitions=project.crons?.definitions??[];
- console.log(JSON.stringify({cronRegistration:{enabled:project.crons?.enabled??null,matchingDailyDefinition:definitions.some((d:{path:string;schedule:string})=>d.path==='/api/cron/forecasts'&&d.schedule==='17 11 * * *')}}));
+ console.log(JSON.stringify({cronRegistration:{enabled:project.crons?.enabled??null,matchingDailyDefinition:definitions.some((d:{path:string;schedule:string})=>d.path==='/api/cron/forecasts'&&d.schedule==='47 11 * * *')}}));
  for(const key of ['CRON_SECRET'])if(!env[key])throw new Error(`Missing production variable: ${key}`);
  if(Number(env.FORECAST_BATCH_SIZE??10)!==10)throw new Error('Production FORECAST_BATCH_SIZE must be 10');
  stage='public health';
