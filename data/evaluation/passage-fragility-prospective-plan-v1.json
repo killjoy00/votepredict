@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "passage-fragility-prospective-plan-v1",
+  "frozenAt": "2026-09-14T21:38:00Z",
+  "candidate": {
+    "id": "evidence-top20-normal1.25",
+    "version": "passage-fragility-shadow-v1",
+    "riskPercentileFloor": 0.8,
+    "sigmaMultiplier": 1.25,
+    "servingMemberModelVersion": "member-eb-v1.2-decay180"
+  },
+  "scope": {
+    "session": "2027-2028",
+    "chamber": "house",
+    "researchMode": "quick",
+    "captureGeneratedAfter": "2026-09-14T21:38:00Z",
+    "scoreOnlyVotesAfter": "2026-09-14",
+    "strictScoreCutoff": "revision generated before official vote date",
+    "dedupe": "latest eligible pre-date revision per official passage vote"
+  },
+  "reference": {
+    "schemaVersion": "passage-fragility-reference-v1",
+    "sourceWorkflowRunId": 34899515676,
+    "sourceArtifactId": 10370232552,
+    "sourceArtifactZipSha256": "6b857b9a5381260935fc945f7e409ca8305994d337a849f8cc448537bc5281f2",
+    "sourceJsonSha256": "50b6c2c928dad8a24315c5797f27eaaeec4d19d1f93dc087df8e7920ef21e240",
+    "repositoryBlobSha": "5e7689f9338393f8583a0e3fab70a1df05f93568",
+    "referenceEvents": 263,
+    "historicalFlaggedEvents": 53,
+    "outcomeFieldsUsed": false
+  },
+  "prospectiveReviewBoundary": {
+    "minimumResolvedVotes": 100,
+    "minimumFailedVotes": 5,
+    "minimumOverallBrierImprovement": 0.0005,
+    "minimumOverallLogLossImprovement": 0.001,
+    "minimumFailedBrierImprovement": 0.02,
+    "maximumPassedBrierDegradation": 0.001,
+    "minimumAccuracyDelta": -0.01
+  },
+  "guardrails": {
+    "servesTraffic": false,
+    "outcomeUseAtCapture": "none",
+    "productionAction": "none",
+    "automaticPromotion": false,
+    "frozenCap20ProspectiveExperimentChanged": false,
+    "introductionModelChanged": false,
+    "journalMechanicsChanged": false
+  }
+}

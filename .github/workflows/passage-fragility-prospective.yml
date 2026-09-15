@@ -1,0 +1,208 @@
+name: Passage fragility prospective
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/passage-fragility-prospective.yml
+      - data/evaluation/passage-fragility-prospective-plan-v1.json
+      - data/evaluation/passage-fragility-reference-v1.json
+      - scripts/run-production-passage-fragility-shadow-capture.ts
+      - scripts/run-production-passage-fragility-prospective-score.ts
+      - src/app/api/operations/passage-fragility-shadow/capture/route.ts
+      - src/app/api/operations/passage-fragility-shadow/score/route.ts
+      - src/forecasting/passage-fragility-shadow.ts
+      - src/operations/passage-fragility-shadow-capture.ts
+      - src/operations/passage-fragility-prospective-score.ts
+      - tests/passage-fragility-shadow.test.ts
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+    - cron: '37 13 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: passage-fragility-prospective-${{ github.event_name }}-${{ github.event.schedule || github.sha }}
+  cancel-in-progress: false
+
+env:
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+  VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+  VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+
+jobs:
+  capture:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event.schedule == '17 * * * *'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      VOTEPREDICT_PASSAGE_FRAGILITY_CAPTURE_OUTPUT: artifacts/passage-fragility-shadow-capture-v1.json
+    steps:
+      - uses: actions/checkout@v7
+      - name: Verify frozen prospective protocol
+        shell: bash
+        run: |
+          set -euo pipefail
+          plan='data/evaluation/passage-fragility-prospective-plan-v1.json'
+          reference='data/evaluation/passage-fragility-reference-v1.json'
+          test "$(jq -r '.schemaVersion' "$plan")" = 'passage-fragility-prospective-plan-v1'
+          test "$(jq -r '.candidate.id' "$plan")" = 'evidence-top20-normal1.25'
+          test "$(jq -r '.candidate.version' "$plan")" = 'passage-fragility-shadow-v1'
+          test "$(jq -r '.candidate.riskPercentileFloor' "$plan")" = '0.8'
+          test "$(jq -r '.candidate.sigmaMultiplier' "$plan")" = '1.25'
+          test "$(jq -r '.candidate.servingMemberModelVersion' "$plan")" = 'member-eb-v1.2-decay180'
+          test "$(jq -r '.scope.session' "$plan")" = '2027-2028'
+          test "$(jq -r '.scope.chamber' "$plan")" = 'house'
+          test "$(jq -r '.scope.researchMode' "$plan")" = 'quick'
+          test "$(jq -r '.scope.captureGeneratedAfter' "$plan")" = '2026-09-14T21:38:00Z'
+          test "$(jq -r '.reference.sourceArtifactId' "$plan")" = '10370232552'
+          test "$(jq -r '.reference.sourceArtifactZipSha256' "$plan")" = '6b857b9a5381260935fc945f7e409ca8305994d337a849f8cc448537bc5281f2'
+          test "$(jq -r '.reference.sourceJsonSha256' "$plan")" = '50b6c2c928dad8a24315c5797f27eaaeec4d19d1f93dc087df8e7920ef21e240'
+          test "$(jq -r '.reference.repositoryBlobSha' "$plan")" = '5e7689f9338393f8583a0e3fab70a1df05f93568'
+          test "$(jq -r '.guardrails.servesTraffic' "$plan")" = 'false'
+          test "$(jq -r '.guardrails.outcomeUseAtCapture' "$plan")" = 'none'
+          test "$(jq -r '.guardrails.productionAction' "$plan")" = 'none'
+          test "$(jq -r '.guardrails.automaticPromotion' "$plan")" = 'false'
+          test "$(jq -r '.schemaVersion' "$reference")" = 'passage-fragility-reference-v1'
+          test "$(jq -r '.source.outcomeFieldsUsed' "$reference")" = 'false'
+          test "$(jq -r '.referenceEvents' "$reference")" = '263'
+          test "$(jq -r '.historicalFlaggedEvents' "$reference")" = '53'
+          test "$(git rev-parse "HEAD:${reference}")" = '5e7689f9338393f8583a0e3fab70a1df05f93568'
+      - name: Require production environment access
+        shell: bash
+        run: test -n "${VERCEL_TOKEN:-}"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Wait for this exact main SHA to be live in production
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            code="$(curl --silent --show-error --output "$RUNNER_TEMP/vercel-deployments.json" --write-out '%{http_code}' --header "Authorization: Bearer ${VERCEL_TOKEN}" "https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&target=production&limit=20&teamId=${VERCEL_ORG_ID}")"
+            test "$code" = '200'
+            match="$(jq -c --arg sha "$GITHUB_SHA" '[.deployments[]? | select(.target == "production" and .meta.githubCommitSha == $sha)] | first // empty' "$RUNNER_TEMP/vercel-deployments.json")"
+            if [ -n "$match" ]; then
+              state="$(printf '%s' "$match" | jq -r '.state // "UNKNOWN"')"
+              if [ "$state" = 'READY' ]; then exit 0; fi
+              if [ "$state" = 'ERROR' ] || [ "$state" = 'CANCELED' ]; then exit 1; fi
+            fi
+            sleep 5
+          done
+          exit 1
+      - name: Read production operation secret privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+      - name: Capture prospective passage fragility shadows
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/run-production-passage-fragility-shadow-capture.ts
+      - name: Verify no-action capture artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$VOTEPREDICT_PASSAGE_FRAGILITY_CAPTURE_OUTPUT"
+          test "$(jq -r '.schemaVersion' "$file")" = 'passage-fragility-shadow-capture-v1'
+          test "$(jq -r '.productionAction' "$file")" = 'none'
+          jq -e '.eligibleRevisions >= 0 and .capturedRevisions >= 0 and .flaggedRevisions >= 0' "$file" >/dev/null
+      - uses: actions/upload-artifact@v4
+        with:
+          name: passage-fragility-shadow-capture-v1-${{ github.sha }}-${{ github.run_id }}
+          path: artifacts/passage-fragility-shadow-capture-v1.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Remove temporary production files
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/vercel-deployments.json"
+
+  score:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event.schedule == '37 13 * * 1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      VOTEPREDICT_PASSAGE_FRAGILITY_SCORE_OUTPUT: artifacts/passage-fragility-prospective-score-v1.json
+    steps:
+      - uses: actions/checkout@v7
+      - name: Verify frozen prospective review boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          plan='data/evaluation/passage-fragility-prospective-plan-v1.json'
+          test "$(jq -r '.schemaVersion' "$plan")" = 'passage-fragility-prospective-plan-v1'
+          test "$(jq -r '.candidate.version' "$plan")" = 'passage-fragility-shadow-v1'
+          test "$(jq -r '.scope.session' "$plan")" = '2027-2028'
+          test "$(jq -r '.scope.chamber' "$plan")" = 'house'
+          test "$(jq -r '.scope.strictScoreCutoff' "$plan")" = 'revision generated before official vote date'
+          test "$(jq -r '.scope.dedupe' "$plan")" = 'latest eligible pre-date revision per official passage vote'
+          test "$(jq -r '.prospectiveReviewBoundary.minimumResolvedVotes' "$plan")" = '100'
+          test "$(jq -r '.prospectiveReviewBoundary.minimumFailedVotes' "$plan")" = '5'
+          test "$(jq -r '.prospectiveReviewBoundary.minimumOverallBrierImprovement' "$plan")" = '0.0005'
+          test "$(jq -r '.prospectiveReviewBoundary.minimumOverallLogLossImprovement' "$plan")" = '0.001'
+          test "$(jq -r '.prospectiveReviewBoundary.minimumFailedBrierImprovement' "$plan")" = '0.02'
+          test "$(jq -r '.prospectiveReviewBoundary.maximumPassedBrierDegradation' "$plan")" = '0.001'
+          test "$(jq -r '.prospectiveReviewBoundary.minimumAccuracyDelta' "$plan")" = '-0.01'
+          test "$(jq -r '.guardrails.productionAction' "$plan")" = 'none'
+          test "$(jq -r '.guardrails.automaticPromotion' "$plan")" = 'false'
+      - name: Require production environment access
+        shell: bash
+        run: test -n "${VERCEL_TOKEN:-}"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Wait for this exact main SHA to be live in production
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            code="$(curl --silent --show-error --output "$RUNNER_TEMP/vercel-deployments.json" --write-out '%{http_code}' --header "Authorization: Bearer ${VERCEL_TOKEN}" "https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&target=production&limit=20&teamId=${VERCEL_ORG_ID}")"
+            test "$code" = '200'
+            match="$(jq -c --arg sha "$GITHUB_SHA" '[.deployments[]? | select(.target == "production" and .meta.githubCommitSha == $sha)] | first // empty' "$RUNNER_TEMP/vercel-deployments.json")"
+            if [ -n "$match" ]; then
+              state="$(printf '%s' "$match" | jq -r '.state // "UNKNOWN"')"
+              if [ "$state" = 'READY' ]; then exit 0; fi
+              if [ "$state" = 'ERROR' ] || [ "$state" = 'CANCELED' ]; then exit 1; fi
+            fi
+            sleep 5
+          done
+          exit 1
+      - name: Read production operation secret privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+      - name: Score prospective passage fragility shadow
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/run-production-passage-fragility-prospective-score.ts
+      - name: Verify no-action score artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$VOTEPREDICT_PASSAGE_FRAGILITY_SCORE_OUTPUT"
+          test "$(jq -r '.schemaVersion' "$file")" = 'passage-fragility-prospective-score-v1'
+          test "$(jq -r '.scope.session' "$file")" = '2027-2028'
+          test "$(jq -r '.scope.chamber' "$file")" = 'house'
+          test "$(jq -r '.decision.productionAction' "$file")" = 'none'
+          test "$(jq -r '.decision.automaticPromotion' "$file")" = 'false'
+          jq -e '.input.resolvedVotes >= 0 and .input.failedVotes >= 0 and .input.flaggedVotes >= 0' "$file" >/dev/null
+      - uses: actions/upload-artifact@v4
+        with:
+          name: passage-fragility-prospective-score-v1-${{ github.sha }}-${{ github.run_id }}
+          path: artifacts/passage-fragility-prospective-score-v1.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Remove temporary production files
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/vercel-deployments.json"
