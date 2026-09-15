@@ -60,7 +60,7 @@ jobs:
           test "$(jq -r '.reference.sourceArtifactId' "$plan")" = '10370232552'
           test "$(jq -r '.reference.sourceArtifactZipSha256' "$plan")" = '6b857b9a5381260935fc945f7e409ca8305994d337a849f8cc448537bc5281f2'
           test "$(jq -r '.reference.sourceJsonSha256' "$plan")" = '50b6c2c928dad8a24315c5797f27eaaeec4d19d1f93dc087df8e7920ef21e240'
-          test "$(jq -r '.reference.repositoryBlobSha' "$plan")" = 'b9fe3564f5e946c22b9b266ea764d2b63e6ab458'
+          test "$(jq -r '.reference.repositoryBlobSha' "$plan")" = '5e7689f9338393f8583a0e3fab70a1df05f93568'
           test "$(jq -r '.guardrails.servesTraffic' "$plan")" = 'false'
           test "$(jq -r '.guardrails.outcomeUseAtCapture' "$plan")" = 'none'
           test "$(jq -r '.guardrails.productionAction' "$plan")" = 'none'
@@ -69,7 +69,7 @@ jobs:
           test "$(jq -r '.source.outcomeFieldsUsed' "$reference")" = 'false'
           test "$(jq -r '.referenceEvents' "$reference")" = '263'
           test "$(jq -r '.historicalFlaggedEvents' "$reference")" = '53'
-          test "$(git rev-parse "HEAD:${reference}")" = 'b9fe3564f5e946c22b9b266ea764d2b63e6ab458'
+          test "$(git rev-parse "HEAD:${reference}")" = '5e7689f9338393f8583a0e3fab70a1df05f93568'
       - name: Require production environment access
         shell: bash
         run: test -n "${VERCEL_TOKEN:-}"
