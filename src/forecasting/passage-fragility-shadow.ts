@@ -86,9 +86,37 @@ function isFrozenReference(value: unknown): value is FrozenReference {
     && typed.evidenceRiskScores.length === 263;
 }
 
+function describeReferenceShape(value: unknown): string {
+  if (value === null) return 'null';
+  if (typeof value !== 'object') return `type=${typeof value}`;
+  const record = value as Record<string, unknown>;
+  const candidate = record.candidate && typeof record.candidate === 'object'
+    ? record.candidate as Record<string, unknown>
+    : null;
+  const featureValues = record.featureValues && typeof record.featureValues === 'object'
+    ? record.featureValues as Record<string, unknown>
+    : null;
+  const arrayLength = (entry: unknown) => Array.isArray(entry) ? entry.length : 'na';
+  return [
+    `keys=${Object.keys(record).slice(0, 12).join(',')}`,
+    `schema=${String(record.schemaVersion)}`,
+    `candidate=${String(candidate?.id)}`,
+    `floor=${String(candidate?.riskPercentileFloor)}`,
+    `sigma=${String(candidate?.sigmaMultiplier)}`,
+    `events=${String(record.referenceEvents)}`,
+    `flags=${String(record.historicalFlaggedEvents)}`,
+    `coverage=${arrayLength(featureValues?.analogueCoverageGap)}`,
+    `count=${arrayLength(featureValues?.analogueCountGap)}`,
+    `weight=${arrayLength(featureValues?.analogueWeightRisk)}`,
+    `risk=${arrayLength(record.evidenceRiskScores)}`,
+  ].join(';');
+}
+
 const unwrappedReference = unwrapReferenceModule(referenceJson as unknown);
 if (!isFrozenReference(unwrappedReference)) {
-  throw new Error('Frozen passage fragility reference does not match the prospective protocol');
+  throw new Error(
+    `Frozen passage fragility reference does not match the prospective protocol; import=${describeReferenceShape(referenceJson as unknown)}; unwrapped=${describeReferenceShape(unwrappedReference)}`,
+  );
 }
 const reference = unwrappedReference;
 
