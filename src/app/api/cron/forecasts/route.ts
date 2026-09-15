@@ -1,6 +1,7 @@
 import { updateForecast } from '@/forecasting/workflows';
 import { pool } from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { ensureProspectiveEvidenceForecasts } from '@/operations/prospective-evidence';
 import { runScheduledForecasts } from '@/operations/scheduled-forecasts';
 
 export const maxDuration = 300;
@@ -27,11 +28,21 @@ export async function GET(request: Request) {
       FROM forecast_snapshot_runs WHERE forecast_id = $1 ORDER BY started_at DESC LIMIT 1`, [forecastId]);
     return NextResponse.json({ generatedAt: new Date().toISOString(), ...result, alreadyCompleted, latestRun: runs.rows[0] });
   }
+
+  let prospectiveEvidence: Awaited<ReturnType<typeof ensureProspectiveEvidenceForecasts>> | { error: string };
+  try {
+    prospectiveEvidence = await ensureProspectiveEvidenceForecasts();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Prospective production evidence seeding failed', { message });
+    prospectiveEvidence = { error: message };
+  }
+
   const result = await runScheduledForecasts(Number(process.env.FORECAST_BATCH_SIZE ?? 10));
-  return NextResponse.json({ generatedAt: new Date().toISOString(), ...result });
+  return NextResponse.json({ generatedAt: new Date().toISOString(), prospectiveEvidence, ...result });
 }
 
-// Explicit authenticated operation; never part of the automatic daily GET batch.
+// Explicit authenticated operation; never part of the automatic scheduled GET batch.
 export async function POST(request: Request) {
   const secret = process.env.CRON_SECRET;
   if (!secret || request.headers.get('authorization') !== `Bearer ${secret}`) {
