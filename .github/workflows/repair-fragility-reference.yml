@@ -1,0 +1,46 @@
+name: Repair frozen fragility reference
+
+on:
+  push:
+    branches:
+      - research/passage-fragility-prospective-shadow-v1
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: research/passage-fragility-prospective-shadow-v1
+
+      - name: Restore exact immutable reference
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl --fail --location \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/10370232552/zip" \
+            --output /tmp/passage-fragility-reference.zip
+          unzip -p /tmp/passage-fragility-reference.zip passage-fragility-reference-v1.json \
+            > data/evaluation/passage-fragility-reference-v1.json
+          echo "50b6c2c928dad8a24315c5797f27eaaeec4d19d1f93dc087df8e7920ef21e240  data/evaluation/passage-fragility-reference-v1.json" | sha256sum --check --strict
+          test "$(git hash-object data/evaluation/passage-fragility-reference-v1.json)" = "5e7689f9338393f8583a0e3fab70a1df05f93568"
+          sed -i 's/b9fe3564f5e946c22b9b266ea764d2b63e6ab458/5e7689f9338393f8583a0e3fab70a1df05f93568/' src/forecasting/passage-fragility-shadow.ts
+          grep -q '5e7689f9338393f8583a0e3fab70a1df05f93568' src/forecasting/passage-fragility-shadow.ts
+
+      - name: Commit repaired lineage and remove one-shot workflow
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/repair-fragility-reference.yml
+          git add data/evaluation/passage-fragility-reference-v1.json src/forecasting/passage-fragility-shadow.ts
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git commit -m "Restore exact frozen fragility reference"
+          git push origin HEAD:research/passage-fragility-prospective-shadow-v1
