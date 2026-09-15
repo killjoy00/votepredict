@@ -30,25 +30,43 @@ function features(area: string): DeterministicBillFeatures {
 
 function dataset(): CurrentFloorResearchDataset {
   const events = [
-    { voteEventId: 'e1', billId: 'b1', identifier: 'HF1', title: 'Education policy', sessionId: 's1', session: '2021-2022', chamberId: 'c1', chamber: 'house', occurredOn: '2021-02-10', yeaCount: 1, nayCount: 1, passed: true },
-    { voteEventId: 'e2', billId: 'b2', identifier: 'HF2', title: 'Tax policy', sessionId: 's1', session: '2021-2022', chamberId: 'c1', chamber: 'house', occurredOn: '2021-03-10', yeaCount: 1, nayCount: 0, passed: true },
-    { voteEventId: 'e3', billId: 'b3', identifier: 'HF3', title: 'Education update', sessionId: 's1', session: '2021-2022', chamberId: 'c1', chamber: 'house', occurredOn: '2021-04-10', yeaCount: 1, nayCount: 1, passed: true },
+    { voteEventId: 'e1', billId: 'b1', identifier: 'HF1', title: 'Education policy', sessionId: 's1', session: '2021-2022', chamberId: 'c1', chamber: 'house', occurredOn: '2021-02-10', yeaCount: 11, nayCount: 10, passed: true },
+    { voteEventId: 'e2', billId: 'b2', identifier: 'HF2', title: 'Tax policy', sessionId: 's1', session: '2021-2022', chamberId: 'c1', chamber: 'house', occurredOn: '2021-03-10', yeaCount: 10, nayCount: 10, passed: true },
+    { voteEventId: 'e3', billId: 'b3', identifier: 'HF3', title: 'Education update', sessionId: 's1', session: '2021-2022', chamberId: 'c1', chamber: 'house', occurredOn: '2021-04-10', yeaCount: 11, nayCount: 10, passed: true },
   ];
   const versionsByBill = new Map([
     ['b1', [{ id: 'v1', billId: 'b1', publishedAt: '2021-02-01T00:00:00.000Z', createdAt: '2021-02-01T00:00:00.000Z', rawText: 'education '.repeat(30), features: features('education') }]],
     ['b2', [{ id: 'v2', billId: 'b2', publishedAt: '2021-03-01T00:00:00.000Z', createdAt: '2021-03-01T00:00:00.000Z', rawText: 'taxes '.repeat(30), features: features('taxes') }]],
     ['b3', [{ id: 'v3', billId: 'b3', publishedAt: '2021-04-01T00:00:00.000Z', createdAt: '2021-04-01T00:00:00.000Z', rawText: 'education '.repeat(30), features: features('education') }]],
   ]);
+  const extraMemberships = Array.from({ length: 19 }, (_, index) => ({
+    membershipId: `mx${index}`,
+    legislatorId: `lx${index}`,
+    sessionId: 's1',
+    chamberId: 'c1',
+    party: index % 2 === 0 ? 'A' : 'B',
+  }));
   const memberships = [
     { membershipId: 'm1', legislatorId: 'l1', sessionId: 's1', chamberId: 'c1', party: 'A' },
     { membershipId: 'm2', legislatorId: 'l2', sessionId: 's1', chamberId: 'c1', party: 'A' },
+    ...extraMemberships,
   ];
+  const extraVotes = events.flatMap((event) => extraMemberships.map((membership, index) => ({
+    voteEventId: event.voteEventId,
+    occurredOn: event.occurredOn,
+    chamberId: 'c1',
+    membershipId: membership.membershipId,
+    legislatorId: membership.legislatorId,
+    party: membership.party,
+    choice: (index % 2 === 0 ? 'yea' : 'nay') as 'yea' | 'nay',
+  })));
   const historicalVotes = [
     { voteEventId: 'e1', occurredOn: '2021-02-10', chamberId: 'c1', membershipId: 'm1', legislatorId: 'l1', party: 'A', choice: 'yea' as const },
     { voteEventId: 'e1', occurredOn: '2021-02-10', chamberId: 'c1', membershipId: 'm2', legislatorId: 'l2', party: 'A', choice: 'nay' as const },
     { voteEventId: 'e2', occurredOn: '2021-03-10', chamberId: 'c1', membershipId: 'm1', legislatorId: 'l1', party: 'A', choice: 'nay' as const },
     { voteEventId: 'e3', occurredOn: '2021-04-10', chamberId: 'c1', membershipId: 'm1', legislatorId: 'l1', party: 'A', choice: 'yea' as const },
     { voteEventId: 'e3', occurredOn: '2021-04-10', chamberId: 'c1', membershipId: 'm2', legislatorId: 'l2', party: 'A', choice: 'nay' as const },
+    ...extraVotes,
   ];
   return { events, versionsByBill, memberships, historicalVotes };
 }
@@ -151,7 +169,7 @@ function syntheticRiskRows(): ResearchReplayRow[] {
       riskScore: highRisk ? 0.9 : 0.1,
       meanParticipationProbability: 0.98,
       policyAreas: ['education'],
-      processContext: { key: 'x', billAgeDays: 30, versionCount: 1, companionPriorPass: false, priorSameBillPass: false },
+      processContext: { key: 'x', billAgeDays: 30, versionCount: 1, companionPriorPass: false, priorSameBillPriorPass: false } as never,
     });
   }
   return rows;
