@@ -35,31 +35,62 @@ interface FrozenReference {
 
 function unwrapReferenceModule(value: unknown): unknown {
   let current = value;
-  for (let depth = 0; depth < 4; depth += 1) {
-    if (!current || typeof current !== 'object' || 'schemaVersion' in current || !('default' in current)) break;
+  for (let depth = 0; depth < 8; depth += 1) {
+    if (typeof current === 'string') {
+      try {
+        current = JSON.parse(current) as unknown;
+        continue;
+      } catch {
+        break;
+      }
+    }
+    if (!current || typeof current !== 'object' || 'schemaVersion' in current) break;
+    if (!('default' in current)) break;
     current = (current as { default: unknown }).default;
   }
   return current;
 }
 
-const reference = unwrapReferenceModule(referenceJson as unknown) as FrozenReference;
+function isFrozenReference(value: unknown): value is FrozenReference {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = (value as { candidate?: unknown }).candidate;
+  const featureValues = (value as { featureValues?: unknown }).featureValues;
+  if (!candidate || typeof candidate !== 'object' || !featureValues || typeof featureValues !== 'object') return false;
 
-function validateReference(): void {
-  if (reference.schemaVersion !== 'passage-fragility-reference-v1'
-    || reference.candidate.id !== 'evidence-top20-normal1.25'
-    || reference.candidate.riskPercentileFloor !== 0.8
-    || reference.candidate.sigmaMultiplier !== 1.25
-    || reference.referenceEvents !== 263
-    || reference.historicalFlaggedEvents !== 53
-    || reference.featureValues.analogueCoverageGap.length !== 263
-    || reference.featureValues.analogueCountGap.length !== 263
-    || reference.featureValues.analogueWeightRisk.length !== 263
-    || reference.evidenceRiskScores.length !== 263) {
-    throw new Error('Frozen passage fragility reference does not match the prospective protocol');
-  }
+  const typed = value as {
+    schemaVersion?: unknown;
+    candidate: { id?: unknown; riskPercentileFloor?: unknown; sigmaMultiplier?: unknown };
+    referenceEvents?: unknown;
+    historicalFlaggedEvents?: unknown;
+    featureValues: {
+      analogueCoverageGap?: unknown;
+      analogueCountGap?: unknown;
+      analogueWeightRisk?: unknown;
+    };
+    evidenceRiskScores?: unknown;
+  };
+
+  return typed.schemaVersion === 'passage-fragility-reference-v1'
+    && typed.candidate.id === 'evidence-top20-normal1.25'
+    && typed.candidate.riskPercentileFloor === 0.8
+    && typed.candidate.sigmaMultiplier === 1.25
+    && typed.referenceEvents === 263
+    && typed.historicalFlaggedEvents === 53
+    && Array.isArray(typed.featureValues.analogueCoverageGap)
+    && typed.featureValues.analogueCoverageGap.length === 263
+    && Array.isArray(typed.featureValues.analogueCountGap)
+    && typed.featureValues.analogueCountGap.length === 263
+    && Array.isArray(typed.featureValues.analogueWeightRisk)
+    && typed.featureValues.analogueWeightRisk.length === 263
+    && Array.isArray(typed.evidenceRiskScores)
+    && typed.evidenceRiskScores.length === 263;
 }
 
-validateReference();
+const unwrappedReference = unwrapReferenceModule(referenceJson as unknown);
+if (!isFrozenReference(unwrappedReference)) {
+  throw new Error('Frozen passage fragility reference does not match the prospective protocol');
+}
+const reference = unwrappedReference;
 
 export function passageFragilityReferencePercentile(sortedReference: readonly number[], value: number): number {
   if (sortedReference.length === 0) throw new Error('Passage fragility reference cannot be empty');
