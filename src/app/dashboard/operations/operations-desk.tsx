@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { ReleaseSmokePanel } from './release-smoke-panel';
 
 type QueueRow = {
   forecastId: string;
@@ -143,6 +144,7 @@ export function OutcomeResolutionQueue({ rows }: { rows: QueueRow[] }) {
 
   return (
     <div>
+      <ReleaseSmokePanel />
       <ProspectiveShadowCapturePanel />
       {rows.length === 0 ? (
         <div className="resolution-empty"><strong>No unresolved production bill forecasts.</strong><span>When an official passage vote becomes available, it will appear here for explicit reconciliation.</span></div>
