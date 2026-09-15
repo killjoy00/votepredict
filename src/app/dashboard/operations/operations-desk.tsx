@@ -31,8 +31,19 @@ type ShadowStatus = {
   failedRevisions: number;
 };
 
+type ProductionEvidenceStatus = {
+  session: string;
+  forecasts: number;
+  enabledSchedules: number;
+  dueSchedules: number;
+  revisions: number;
+  resolvedForecasts: number;
+  latestRevisionAt?: string;
+};
+
 type ShadowHealth = {
   failureGraceHours: number;
+  productionEvidence: ProductionEvidenceStatus;
   cap20: ShadowStatus & { session: string; frozenBaselineModelVersion: string };
   passageFragility: ShadowStatus & { session: string; servingMemberModelVersion: string };
 };
@@ -50,24 +61,34 @@ function ProspectiveShadowCapturePanel() {
     void fetch('/api/operations/prospective-shadow-health')
       .then(async (response) => {
         const payload = await response.json() as ShadowHealth & { error?: string };
-        if (!response.ok) throw new Error(payload.error || 'Could not load prospective shadow capture health.');
+        if (!response.ok) throw new Error(payload.error || 'Could not load prospective validation health.');
         if (active) setHealth(payload);
       })
       .catch((reason) => {
-        if (active) setError(reason instanceof Error ? reason.message : 'Could not load prospective shadow capture health.');
+        if (active) setError(reason instanceof Error ? reason.message : 'Could not load prospective validation health.');
       });
     return () => { active = false; };
   }, []);
 
   return (
-    <section className={`shadow-health ${error ? 'shadow-health-error' : ''}`} aria-label="Prospective shadow capture health">
+    <section className={`shadow-health ${error ? 'shadow-health-error' : ''}`} aria-label="Prospective validation health">
       <div className="shadow-health-heading">
-        <div><span>2027–28 prospective validation</span><strong>Shadow capture readiness</strong></div>
+        <div><span>2027–28 prospective validation</span><strong>Evidence and shadow readiness</strong></div>
         <small>{health ? `failure grace ${health.failureGraceHours}h` : error ? 'unavailable' : 'loading…'}</small>
       </div>
       {error ? <p>{error}</p> : health ? (
         <>
           <div className="shadow-health-grid">
+            <div className="shadow-experiment">
+              <div><strong>Independent serving evidence</strong><small>{health.productionEvidence.session} · real bills · no historical backfill</small></div>
+              <div className="shadow-counts">
+                <span>Forecasts<strong>{health.productionEvidence.forecasts}</strong></span>
+                <span>Revisions<strong>{health.productionEvidence.revisions}</strong></span>
+                <span>Resolved<strong>{health.productionEvidence.resolvedForecasts}</strong></span>
+                <span>Due now<strong>{health.productionEvidence.dueSchedules}</strong></span>
+              </div>
+              <small>{health.productionEvidence.enabledSchedules} active schedules. Eligible future bills are discovered hourly; immutable Quick revisions retain a 24-hour cadence until official resolution.</small>
+            </div>
             <div className="shadow-experiment">
               <div><strong>Member-history cap 20</strong><small>{health.cap20.session} · House + Senate · {health.cap20.scopeRevisions} in scope</small></div>
               <div className="shadow-counts">
@@ -89,9 +110,9 @@ function ProspectiveShadowCapturePanel() {
               <small>Requires serving model {health.passageFragility.servingMemberModelVersion}; capture remains non-serving and outcome-blind.</small>
             </div>
           </div>
-          <p>Eligible means frozen prerequisites match. Captured means shadow data is persisted. Excluded means the protocol intentionally rejected the revision. Failed means an eligible revision remained uncaptured beyond the grace window.</p>
+          <p>The serving-evidence cohort records real pre-outcome forecasts. Shadow experiments remain non-serving. No 2025–26 outcomes are backfilled into the prospective cohort.</p>
         </>
-      ) : <p>Loading frozen experiment capture status…</p>}
+      ) : <p>Loading frozen prospective validation status…</p>}
     </section>
   );
 }
@@ -182,7 +203,7 @@ export function OutcomeResolutionQueue({ rows }: { rows: QueueRow[] }) {
         .shadow-health-heading strong { font-size: 10px; }
         .shadow-health-heading small, .shadow-health p { color: #77827a; font-size: 7.5px; }
         .shadow-health p { margin: 8px 0 0; line-height: 1.4; }
-        .shadow-health-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-top: 9px; }
+        .shadow-health-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-top: 9px; }
         .shadow-experiment { min-width: 0; border: 1px solid #e2e6e2; border-radius: 8px; padding: 9px; background: #fff; }
         .shadow-experiment > div:first-child { display: grid; gap: 2px; }
         .shadow-experiment > div:first-child strong { font-size: 9px; }
@@ -212,8 +233,10 @@ export function OutcomeResolutionQueue({ rows }: { rows: QueueRow[] }) {
         .resolution-empty { display: grid; gap: 3px; padding: 14px; border: 1px dashed #d8ddd8; border-radius: 9px; color: #68736c; }
         .resolution-empty strong { color: #34473b; font-size: 10px; }
         .resolution-empty span { font-size: 8.5px; }
-        @media (max-width: 650px) {
+        @media (max-width: 900px) {
           .shadow-health-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 650px) {
           .shadow-counts { grid-template-columns: repeat(2, 1fr); }
           .resolution-summary { grid-template-columns: minmax(0,1fr) 45px auto; gap: 8px; }
           .resolution-summary > small { display: none; }
