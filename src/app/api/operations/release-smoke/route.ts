@@ -58,7 +58,6 @@ async function currentFixture(ownerUserId: string, sessionId: string): Promise<F
      WHERE f.owner_user_id = $1
        AND f.session_id = $2
        AND f.target_type = 'proposal'
-       AND f.status = 'release-smoke'
        AND f.archived_at IS NOT NULL
        AND p.title LIKE $3
      GROUP BY f.id, p.id, c.id, c.slug, c.name
@@ -125,7 +124,7 @@ export async function POST() {
       INSERT INTO forecasts (
         owner_user_id, target_type, target_kind, conditional_on, proposal_id,
         target_chamber_id, session_id, status, archived_at
-      ) VALUES ($1, 'proposal', $2, $3, $4, $5, $6, 'release-smoke', now())
+      ) VALUES ($1, 'proposal', $2, $3, $4, $5, $6, 'draft', now())
       RETURNING id`, [
       user.id,
       targetKind,
