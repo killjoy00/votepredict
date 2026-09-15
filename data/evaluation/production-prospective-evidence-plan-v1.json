@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "production-prospective-evidence-plan-v1",
+  "frozenAt": "2026-09-15T19:10:00Z",
+  "purpose": "Accumulate independent, pre-outcome production evidence for the serving VotePredict workflow without retrospective backfill or outcome leakage.",
+  "scope": {
+    "jurisdiction": "us-mn",
+    "session": "2027-2028",
+    "target": "source-chamber floor passage",
+    "researchMode": "quick",
+    "cadenceHours": 24,
+    "startingServingMemberModelVersion": "member-eb-v1.2-decay180"
+  },
+  "cohort": {
+    "ownerUserId": "system:prospective-evidence-v1",
+    "seedBatchLimit": 10,
+    "historicalBackfill": false,
+    "eligibility": [
+      "the current legislative session is exactly 2027-2028",
+      "the bill belongs to the official Revisor universe",
+      "the bill's official status contains Engrossment",
+      "source-chamber memberships exist for the session",
+      "no official source-chamber passage outcome is present at seed time",
+      "no source-chamber passage vote event is present at seed time",
+      "no session-expiration event is present at seed time"
+    ]
+  },
+  "capture": {
+    "forecastMode": "immutable Quick revisions",
+    "schedule": "every 24 hours while unresolved",
+    "resolution": "automatic only when exactly one matching official passage vote is available",
+    "servingVersion": "recorded on every revision"
+  },
+  "scoring": {
+    "primaryRevision": "latest eligible serving revision strictly before the official vote date",
+    "partitionByModelVersion": true,
+    "sameDayRevisionEligible": false
+  },
+  "guardrails": {
+    "outcomeUseAtSeed": "none",
+    "outcomeUseAtCapture": "none",
+    "productionProbabilityChange": "none",
+    "historicalOutcomeBackfill": "forbidden",
+    "automaticPromotion": false
+  }
+}
