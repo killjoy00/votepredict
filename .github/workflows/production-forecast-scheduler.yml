@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '17 * * * *'
   workflow_dispatch:
+  workflow_run:
+    workflows: [Deploy production]
+    types: [completed]
 
 permissions:
   contents: read
@@ -14,6 +17,10 @@ concurrency:
 
 jobs:
   run:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
@@ -23,6 +30,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
 
       - uses: actions/setup-node@v7
         with:
