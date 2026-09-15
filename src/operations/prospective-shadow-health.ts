@@ -9,6 +9,10 @@ import {
   MEMBER_HISTORY_CAP20_PROSPECTIVE_EXPERIMENT,
   MEMBER_HISTORY_CAP20_PROSPECTIVE_SESSION,
 } from '@/forecasting/member-history-cap20-prospective-shadow';
+import {
+  PROSPECTIVE_EVIDENCE_OWNER_USER_ID,
+  PROSPECTIVE_EVIDENCE_SESSION,
+} from './prospective-evidence-plan';
 
 const CAP20_FROZEN_BASELINE_MODEL_VERSION = 'member-eb-v1.1';
 const FAILURE_GRACE_HOURS = 2;
@@ -23,9 +27,21 @@ export interface ProspectiveShadowCaptureStatus {
   latestCapturedAt?: string;
 }
 
+export interface ProspectiveProductionEvidenceStatus {
+  session: typeof PROSPECTIVE_EVIDENCE_SESSION;
+  ownerUserId: typeof PROSPECTIVE_EVIDENCE_OWNER_USER_ID;
+  forecasts: number;
+  enabledSchedules: number;
+  dueSchedules: number;
+  revisions: number;
+  resolvedForecasts: number;
+  latestRevisionAt?: string;
+}
+
 export interface ProspectiveShadowCaptureHealth {
   generatedAt: string;
   failureGraceHours: number;
+  productionEvidence: ProspectiveProductionEvidenceStatus;
   cap20: ProspectiveShadowCaptureStatus & {
     experiment: typeof MEMBER_HISTORY_CAP20_PROSPECTIVE_EXPERIMENT;
     session: typeof MEMBER_HISTORY_CAP20_PROSPECTIVE_SESSION;
@@ -41,6 +57,12 @@ export interface ProspectiveShadowCaptureHealth {
 }
 
 type StatusRow = {
+  evidence_forecasts: string | number;
+  evidence_enabled_schedules: string | number;
+  evidence_due_schedules: string | number;
+  evidence_revisions: string | number;
+  evidence_resolved_forecasts: string | number;
+  evidence_latest_revision_at: string | null;
   cap20_scope: string | number;
   cap20_eligible: string | number;
   cap20_captured: string | number;
@@ -129,8 +151,30 @@ export async function getProspectiveShadowCaptureHealth(): Promise<ProspectiveSh
              (metadata ? 'passageFragilityShadow') AS captured
         FROM scoped
        WHERE chamber_slug = $6
+    ),
+    production_evidence AS (
+      SELECT f.id AS forecast_id,
+             fs.enabled AS schedule_enabled,
+             fs.next_run_at,
+             r.id AS revision_id,
+             r.generated_at,
+             fr.id AS resolution_id
+        FROM forecasts f
+        JOIN legislative_sessions s ON s.id = f.session_id
+        LEFT JOIN forecast_schedules fs ON fs.forecast_id = f.id
+        LEFT JOIN forecast_revisions r ON r.forecast_id = f.id
+        LEFT JOIN forecast_resolutions fr ON fr.forecast_id = f.id
+       WHERE f.owner_user_id = $8
+         AND f.target_type = 'bill'
+         AND s.slug = $9
     )
     SELECT
+      (SELECT count(DISTINCT forecast_id) FROM production_evidence) AS evidence_forecasts,
+      (SELECT count(DISTINCT forecast_id) FROM production_evidence WHERE schedule_enabled = true) AS evidence_enabled_schedules,
+      (SELECT count(DISTINCT forecast_id) FROM production_evidence WHERE schedule_enabled = true AND next_run_at <= now()) AS evidence_due_schedules,
+      (SELECT count(DISTINCT revision_id) FROM production_evidence WHERE revision_id IS NOT NULL) AS evidence_revisions,
+      (SELECT count(DISTINCT forecast_id) FROM production_evidence WHERE resolution_id IS NOT NULL) AS evidence_resolved_forecasts,
+      (SELECT max(generated_at)::text FROM production_evidence) AS evidence_latest_revision_at,
       (SELECT count(*) FROM cap20) AS cap20_scope,
       (SELECT count(*) FROM cap20 WHERE eligible) AS cap20_eligible,
       (SELECT count(*) FROM cap20 WHERE eligible AND captured) AS cap20_captured,
@@ -153,6 +197,8 @@ export async function getProspectiveShadowCaptureHealth(): Promise<ProspectiveSh
     PASSAGE_FRAGILITY_CAPTURE_AFTER,
     PASSAGE_FRAGILITY_PROSPECTIVE_CHAMBER,
     FAILURE_GRACE_HOURS,
+    PROSPECTIVE_EVIDENCE_OWNER_USER_ID,
+    PROSPECTIVE_EVIDENCE_SESSION,
   ]);
 
   const row = result.rows[0];
@@ -161,6 +207,16 @@ export async function getProspectiveShadowCaptureHealth(): Promise<ProspectiveSh
   return {
     generatedAt: new Date().toISOString(),
     failureGraceHours: FAILURE_GRACE_HOURS,
+    productionEvidence: {
+      session: PROSPECTIVE_EVIDENCE_SESSION,
+      ownerUserId: PROSPECTIVE_EVIDENCE_OWNER_USER_ID,
+      forecasts: count(row.evidence_forecasts),
+      enabledSchedules: count(row.evidence_enabled_schedules),
+      dueSchedules: count(row.evidence_due_schedules),
+      revisions: count(row.evidence_revisions),
+      resolvedForecasts: count(row.evidence_resolved_forecasts),
+      ...(row.evidence_latest_revision_at ? { latestRevisionAt: row.evidence_latest_revision_at } : {}),
+    },
     cap20: {
       experiment: MEMBER_HISTORY_CAP20_PROSPECTIVE_EXPERIMENT,
       session: MEMBER_HISTORY_CAP20_PROSPECTIVE_SESSION,
