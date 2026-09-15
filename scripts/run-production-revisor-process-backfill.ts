@@ -8,7 +8,14 @@ const MAX_ATTEMPTS = 3;
 
 function safeMessage(error: unknown): string {
   const message = error instanceof Error ? error.message : String(error);
-  return message.replace(/Bearer\s+\S+/gi, 'Bearer [redacted]');
+  return message
+    .replace(/Bearer\s+\S+/gi, 'Bearer [redacted]')
+    .replace(/postgres(?:ql)?:\/\/\S+/gi, '[redacted database URL]');
+}
+
+async function failureDetails(response: Response): Promise<string> {
+  const text = await response.text();
+  return safeMessage(text).slice(0, 1200);
 }
 
 async function post(secret: string, suffix: string): Promise<Response> {
@@ -43,7 +50,9 @@ async function main(): Promise<void> {
   let totalStageEvents = 0;
   for (let batch = 1; batch <= MAX_BATCHES; batch += 1) {
     const response = await post(secret, `?limit=${BATCH_LIMIT}`);
-    if (!response.ok) throw new Error(`Production process backfill returned HTTP ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`Production process backfill returned HTTP ${response.status}: ${await failureDetails(response)}`);
+    }
     const result = await response.json() as {
       processed: number;
       classifiedActions: number;
@@ -59,7 +68,9 @@ async function main(): Promise<void> {
   }
 
   const verificationResponse = await post(secret, '?verify=1');
-  if (!verificationResponse.ok) throw new Error(`Process backfill verification returned HTTP ${verificationResponse.status}`);
+  if (!verificationResponse.ok) {
+    throw new Error(`Process backfill verification returned HTTP ${verificationResponse.status}: ${await failureDetails(verificationResponse)}`);
+  }
   const verification = await verificationResponse.json() as {
     targetBills: number;
     parsedBills: number;
