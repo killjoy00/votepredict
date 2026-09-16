@@ -69,6 +69,26 @@ test('campaign filing parser keeps an office label embedded in its own table row
   ]);
 });
 
+test('campaign filing parser ignores registry navigation cells before the candidate name', () => {
+  const html = `
+    <table>
+      <tr><td colspan="5"><strong>State Representative District 26A</strong></td></tr>
+      <tr><th></th><th>Candidate Name</th><th>Party</th><th>Website</th><th>File Date</th></tr>
+      <tr>
+        <td><a href="/CandidateFilingDetails.aspx?candidateid=123">View</a></td>
+        <td>Aaron Repinski</td>
+        <td>Republican</td>
+        <td><a href="https://repinskiformn.com/">Campaign site</a></td>
+        <td>5/20/2026</td>
+      </tr>
+    </table>`;
+  const rows = parseCampaignSiteFilings(html);
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].candidateName, 'Aaron Repinski');
+  assert.equal(rows[0].website, 'https://repinskiformn.com/');
+  assert.equal(filingMatchesMember(rows[0], { name: 'Aaron Repinski', chamber: 'house', district: '026A' }), true);
+});
+
 test('public URL canonicalization removes tracking but preserves substantive query state', () => {
   assert.equal(
     canonicalPublicUrl('HTTPS://Example.COM:443/issues/?utm_source=x&bill=HF123&fbclid=abc#top'),
