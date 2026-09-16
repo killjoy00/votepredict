@@ -6,7 +6,7 @@ import {
   selectCampaignContentLinks,
 } from '../src/evidence/campaign-site-discovery';
 import { canonicalPublicUrl, publicPageMentionsPerson, type PublicPage } from '../src/evidence/public-http';
-import { gdeltSeenDate } from '../src/evidence/public-news';
+import { gdeltBatchQuery, gdeltSeenDate } from '../src/evidence/public-news';
 
 test('campaign filing parser keeps filed state legislative websites and rejects email-like website fields', () => {
   const html = `
@@ -97,12 +97,15 @@ test('public URL canonicalization removes tracking but preserves substantive que
   assert.throws(() => canonicalPublicUrl('file:///etc/passwd'), /Unsupported public evidence protocol/);
 });
 
-test('person verification requires both first and last name tokens', () => {
+test('person verification requires a contiguous recognizable member name form', () => {
   assert.equal(publicPageMentionsPerson('Rep. Grant Hauschild discussed the bill Tuesday.', 'Grant Hauschild'), true);
   assert.equal(publicPageMentionsPerson('Hauschild discussed the bill Tuesday.', 'Grant Hauschild'), false);
+  assert.equal(publicPageMentionsPerson('Ben opened the event. Jefferson Davis was discussed much later.', 'Ben Davis'), false);
+  assert.equal(publicPageMentionsPerson('Representative Bianca Virnig discussed the proposal.', 'Bianca Ward Virnig'), true);
+  assert.equal(publicPageMentionsPerson('Amanda Hemmingsen-Jaeger spoke at the hearing.', 'Amanda Hemmingsen-Jaeger'), true);
 });
 
-test('campaign content link selection stays same-site and favors issue pages', () => {
+test('campaign content link selection stays same-site, favors issues, and excludes legal boilerplate', () => {
   const page: PublicPage = {
     requestedUrl: 'https://candidate.example/',
     finalUrl: 'https://candidate.example/',
@@ -118,6 +121,8 @@ test('campaign content link selection stays same-site and favors issue pages', (
     links: [
       'https://candidate.example/about',
       'https://candidate.example/issues',
+      'https://candidate.example/privacy-policy',
+      'https://candidate.example/intellectual-property-policy',
       'https://candidate.example/press/latest',
       'https://other.example/issues',
     ],
@@ -131,4 +136,11 @@ test('campaign content link selection stays same-site and favors issue pages', (
 test('GDELT seen timestamps are normalized and invalid dates rejected', () => {
   assert.equal(gdeltSeenDate('20260915T143000Z'), '2026-09-15T14:30:00.000Z');
   assert.equal(gdeltSeenDate('bad'), undefined);
+});
+
+test('GDELT batch discovery builds one OR query for multiple exact member names', () => {
+  assert.equal(
+    gdeltBatchQuery(['Aaron Repinski', 'Aisha Gomez', 'Aaron Repinski']),
+    '("Aaron Repinski" OR "Aisha Gomez") Minnesota',
+  );
 });
