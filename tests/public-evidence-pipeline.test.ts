@@ -97,9 +97,12 @@ test('public URL canonicalization removes tracking but preserves substantive que
   assert.throws(() => canonicalPublicUrl('file:///etc/passwd'), /Unsupported public evidence protocol/);
 });
 
-test('person verification requires both first and last name tokens', () => {
+test('person verification requires a contiguous recognizable member name form', () => {
   assert.equal(publicPageMentionsPerson('Rep. Grant Hauschild discussed the bill Tuesday.', 'Grant Hauschild'), true);
   assert.equal(publicPageMentionsPerson('Hauschild discussed the bill Tuesday.', 'Grant Hauschild'), false);
+  assert.equal(publicPageMentionsPerson('Ben opened the event. Jefferson Davis was discussed much later.', 'Ben Davis'), false);
+  assert.equal(publicPageMentionsPerson('Representative Bianca Virnig discussed the proposal.', 'Bianca Ward Virnig'), true);
+  assert.equal(publicPageMentionsPerson('Amanda Hemmingsen-Jaeger spoke at the hearing.', 'Amanda Hemmingsen-Jaeger'), true);
 });
 
 test('campaign content link selection stays same-site, favors issues, and excludes legal boilerplate', () => {
