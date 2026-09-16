@@ -18,6 +18,7 @@ export interface PublicPage {
   bytes: number;
   title?: string;
   publishedAt?: string;
+  rawContent: string;
   text: string;
   excerpt: string;
   links: string[];
@@ -263,6 +264,7 @@ export async function fetchPublicPage(rawUrl: string, options: PublicFetchOption
     bytes: bytes.byteLength,
     title: htmlLike ? htmlTitle(decoded) : undefined,
     publishedAt: htmlLike ? publishedAt(decoded) : undefined,
+    rawContent: decoded,
     text,
     excerpt: text.slice(0, 1600),
     links: htmlLike ? extractLinks(decoded, finalUrl) : [],
