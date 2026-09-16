@@ -2,10 +2,12 @@ import { fetchPublicPage, publicPageMentionsPerson, type PublicPage } from './pu
 
 const GDELT_DOC_URL = 'https://api.gdeltproject.org/api/v2/doc/doc';
 const LOOKBACK_DAYS = 45;
-const MAX_RESULTS = 4;
-const GDELT_TIMEOUT_MS = 30_000;
-const GDELT_START_SPACING_MS = 6_000;
-const GDELT_ATTEMPTS = 3;
+const MAX_RESULTS_PER_MEMBER = 4;
+const MAX_BATCH_RESULTS = 24;
+const GDELT_TIMEOUT_MS = 15_000;
+const GDELT_START_SPACING_MS = 15_000;
+const GDELT_RETRY_BASE_MS = 15_000;
+const GDELT_ATTEMPTS = 2;
 
 let gdeltGate: Promise<void> = Promise.resolve();
 let gdeltNextStart = 0;
@@ -66,7 +68,7 @@ function gdeltFailure(status: number, body: string): Error {
 async function fetchGdeltJson(url: string): Promise<GdeltResponse> {
   let lastError: unknown;
   for (let attempt = 0; attempt < GDELT_ATTEMPTS; attempt += 1) {
-    if (attempt > 0) await sleep(5_000 * attempt);
+    if (attempt > 0) await sleep(GDELT_RETRY_BASE_MS * attempt);
     await waitForGdeltSlot();
     try {
       const response = await fetch(url, {
@@ -109,18 +111,18 @@ export function gdeltSeenDate(value: unknown): string | undefined {
   return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
 }
 
-export async function discoverMemberNews(memberName: string, asOf = new Date()): Promise<NewsLead[]> {
-  const start = new Date(asOf.getTime() - LOOKBACK_DAYS * 86_400_000);
-  const params = new URLSearchParams({
-    query: `"${memberName}" Minnesota`,
-    mode: 'artlist',
-    format: 'json',
-    maxrecords: String(MAX_RESULTS),
-    sort: 'datedesc',
-    startdatetime: compactTimestamp(start),
-    enddatetime: compactTimestamp(asOf),
-  });
-  const payload = await fetchGdeltJson(`${GDELT_DOC_URL}?${params.toString()}`);
+function gdeltPhrase(value: string): string | undefined {
+  const cleaned = value.replace(/["()]/g, ' ').replace(/\s+/g, ' ').trim();
+  return cleaned ? `"${cleaned}"` : undefined;
+}
+
+export function gdeltBatchQuery(memberNames: readonly string[]): string {
+  const phrases = [...new Set(memberNames.map(gdeltPhrase).filter((value): value is string => Boolean(value)))];
+  if (phrases.length === 0) throw new Error('At least one member name is required for GDELT discovery');
+  return `(${phrases.join(' OR ')}) Minnesota`;
+}
+
+function parseGdeltLeads(payload: GdeltResponse, limit: number): NewsLead[] {
   const rows = Array.isArray(payload.articles) ? payload.articles as GdeltArticle[] : [];
   const unique = new Map<string, NewsLead>();
   for (const row of rows) {
@@ -133,15 +135,42 @@ export async function discoverMemberNews(memberName: string, asOf = new Date()):
     };
     unique.set(lead.url, lead);
   }
-  return [...unique.values()].slice(0, MAX_RESULTS);
+  return [...unique.values()].slice(0, limit);
 }
 
-export async function verifyNewsLead(lead: NewsLead, memberName: string): Promise<VerifiedNewsArticle> {
-  const page = await fetchPublicPage(lead.url, {
+export async function discoverMemberNewsBatch(memberNames: readonly string[], asOf = new Date()): Promise<NewsLead[]> {
+  const names = [...new Set(memberNames.map((name) => name.trim()).filter(Boolean))];
+  if (names.length === 0) return [];
+  const start = new Date(asOf.getTime() - LOOKBACK_DAYS * 86_400_000);
+  const maxRecords = Math.min(MAX_BATCH_RESULTS, Math.max(MAX_RESULTS_PER_MEMBER, names.length * MAX_RESULTS_PER_MEMBER));
+  const params = new URLSearchParams({
+    query: gdeltBatchQuery(names),
+    mode: 'artlist',
+    format: 'json',
+    maxrecords: String(maxRecords),
+    sort: 'datedesc',
+    startdatetime: compactTimestamp(start),
+    enddatetime: compactTimestamp(asOf),
+  });
+  const payload = await fetchGdeltJson(`${GDELT_DOC_URL}?${params.toString()}`);
+  return parseGdeltLeads(payload, maxRecords);
+}
+
+export async function discoverMemberNews(memberName: string, asOf = new Date()): Promise<NewsLead[]> {
+  const leads = await discoverMemberNewsBatch([memberName], asOf);
+  return leads.slice(0, MAX_RESULTS_PER_MEMBER);
+}
+
+export async function fetchNewsLeadPage(lead: NewsLead): Promise<PublicPage> {
+  return fetchPublicPage(lead.url, {
     timeoutMs: 10_000,
     maxBytes: 1_500_000,
     userAgent: 'VotePredict/2.0 public-evidence-news-verifier',
   });
+}
+
+export async function verifyNewsLead(lead: NewsLead, memberName: string): Promise<VerifiedNewsArticle> {
+  const page = await fetchNewsLeadPage(lead);
   if (!publicPageMentionsPerson(page.text, memberName)) {
     throw new Error(`Fetched article does not contain an unambiguous ${memberName} name match`);
   }
