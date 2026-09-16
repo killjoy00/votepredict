@@ -51,11 +51,20 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
       memberships: number;
       bills: number;
     }>(`
+      WITH target_session AS (
+        SELECT s.id, s.is_current
+          FROM legislative_sessions s
+          JOIN jurisdictions j ON j.id=s.jurisdiction_id
+         WHERE j.slug='us-mn'
+           AND s.slug='2027-2028'
+         ORDER BY s.starts_on DESC NULLS LAST
+         LIMIT 1
+      )
       SELECT
-        EXISTS(SELECT 1 FROM legislative_sessions WHERE slug='2027-2028') AS session_exists,
-        COALESCE((SELECT is_current FROM legislative_sessions WHERE slug='2027-2028' ORDER BY starts_on DESC NULLS LAST LIMIT 1), false) AS is_current,
-        (SELECT count(*)::int FROM memberships m JOIN legislative_sessions s ON s.id=m.session_id WHERE s.slug='2027-2028') AS memberships,
-        (SELECT count(*)::int FROM bills b JOIN legislative_sessions s ON s.id=b.session_id WHERE s.slug='2027-2028') AS bills`),
+        EXISTS(SELECT 1 FROM target_session) AS session_exists,
+        COALESCE((SELECT is_current FROM target_session), false) AS is_current,
+        (SELECT count(*)::int FROM memberships m WHERE m.session_id=(SELECT id FROM target_session)) AS memberships,
+        (SELECT count(*)::int FROM bills b WHERE b.session_id=(SELECT id FROM target_session)) AS bills`),
     pool.query<{
       campaign_finance_items: number;
       campaign_finance_members: number;
