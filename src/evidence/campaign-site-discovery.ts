@@ -135,14 +135,7 @@ export async function discoverMinnesotaCampaignSites(): Promise<CampaignSiteDisc
     maxBytes: 4_000_000,
     userAgent: 'VotePredict/2.0 Minnesota campaign-site registry',
   });
-  // The parser needs table markup, while PublicPage intentionally retains only text.
-  const response = await fetch(MN_SOS_CANDIDATE_RESULTS_URL, {
-    headers: { 'user-agent': 'VotePredict/2.0 Minnesota campaign-site registry' },
-    signal: AbortSignal.timeout(20_000),
-  });
-  if (!response.ok) throw new Error(`Minnesota candidate filings returned HTTP ${response.status}`);
-  const html = await response.text();
-  return { filingSource: source, filings: parseCampaignSiteFilings(html) };
+  return { filingSource: source, filings: parseCampaignSiteFilings(source.rawContent) };
 }
 
 export function selectCampaignContentLinks(page: PublicPage, limit = 2): string[] {
