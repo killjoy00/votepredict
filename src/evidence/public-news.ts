@@ -4,13 +4,7 @@ const GDELT_DOC_URL = 'https://api.gdeltproject.org/api/v2/doc/doc';
 const LOOKBACK_DAYS = 45;
 const MAX_RESULTS_PER_MEMBER = 4;
 const MAX_BATCH_RESULTS = 24;
-const GDELT_TIMEOUT_MS = 15_000;
-const GDELT_START_SPACING_MS = 15_000;
-const GDELT_RETRY_BASE_MS = 15_000;
-const GDELT_ATTEMPTS = 2;
-
-let gdeltGate: Promise<void> = Promise.resolve();
-let gdeltNextStart = 0;
+const GDELT_TIMEOUT_MS = 20_000;
 
 export interface NewsLead {
   url: string;
@@ -40,61 +34,30 @@ function compactTimestamp(date: Date): string {
   ].join('');
 }
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function waitForGdeltSlot(): Promise<void> {
-  let release: () => void = () => {};
-  const previous = gdeltGate;
-  gdeltGate = new Promise<void>((resolve) => {
-    release = resolve;
-  });
-  await previous;
-  try {
-    const delay = gdeltNextStart - Date.now();
-    if (delay > 0) await sleep(delay);
-    gdeltNextStart = Date.now() + GDELT_START_SPACING_MS;
-  } finally {
-    release();
-  }
-}
-
 function gdeltFailure(status: number, body: string): Error {
   const detail = body.replace(/\s+/g, ' ').trim().slice(0, 240);
   return new Error(`GDELT returned HTTP ${status}${detail ? `: ${detail}` : ''}`);
 }
 
 async function fetchGdeltJson(url: string): Promise<GdeltResponse> {
-  let lastError: unknown;
-  for (let attempt = 0; attempt < GDELT_ATTEMPTS; attempt += 1) {
-    if (attempt > 0) await sleep(GDELT_RETRY_BASE_MS * attempt);
-    await waitForGdeltSlot();
+  try {
+    const response = await fetch(url, {
+      headers: {
+        accept: 'application/json,text/plain;q=0.9,*/*;q=0.8',
+        'user-agent': 'Mozilla/5.0 (compatible; VotePredict/2.0; +https://vote.planitnow.us)',
+      },
+      signal: AbortSignal.timeout(GDELT_TIMEOUT_MS),
+    });
+    const body = await response.text();
+    if (!response.ok) throw gdeltFailure(response.status, body);
     try {
-      const response = await fetch(url, {
-        headers: {
-          accept: 'application/json,text/plain;q=0.9,*/*;q=0.8',
-          'user-agent': 'Mozilla/5.0 (compatible; VotePredict/2.0; +https://vote.planitnow.us)',
-        },
-        signal: AbortSignal.timeout(GDELT_TIMEOUT_MS),
-      });
-      const body = await response.text();
-      if (!response.ok) {
-        lastError = gdeltFailure(response.status, body);
-        if (response.status !== 429 && response.status < 500) throw lastError;
-        continue;
-      }
-      try {
-        return JSON.parse(body) as GdeltResponse;
-      } catch {
-        lastError = gdeltFailure(response.status, body);
-        continue;
-      }
-    } catch (error) {
-      lastError = error;
+      return JSON.parse(body) as GdeltResponse;
+    } catch {
+      throw gdeltFailure(response.status, body);
     }
+  } catch (error) {
+    throw error instanceof Error ? error : new Error('GDELT discovery failed');
   }
-  throw lastError instanceof Error ? lastError : new Error('GDELT discovery failed');
 }
 
 export function gdeltSeenDate(value: unknown): string | undefined {
@@ -138,11 +101,16 @@ function parseGdeltLeads(payload: GdeltResponse, limit: number): NewsLead[] {
   return [...unique.values()].slice(0, limit);
 }
 
+/**
+ * GDELT is discovery-only and is deliberately called at most once per refresh invocation.
+ * All selected membership names share one exact-name OR block; underlying articles still
+ * have to be fetched directly and pass strict contiguous-name verification before storage.
+ */
 export async function discoverMemberNewsBatch(memberNames: readonly string[], asOf = new Date()): Promise<NewsLead[]> {
   const names = [...new Set(memberNames.map((name) => name.trim()).filter(Boolean))];
   if (names.length === 0) return [];
   const start = new Date(asOf.getTime() - LOOKBACK_DAYS * 86_400_000);
-  const maxRecords = Math.min(MAX_BATCH_RESULTS, Math.max(MAX_RESULTS_PER_MEMBER, names.length * MAX_RESULTS_PER_MEMBER));
+  const maxRecords = Math.min(MAX_BATCH_RESULTS, Math.max(MAX_RESULTS_PER_MEMBER, names.length * 2));
   const params = new URLSearchParams({
     query: gdeltBatchQuery(names),
     mode: 'artlist',
