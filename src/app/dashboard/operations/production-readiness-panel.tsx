@@ -26,6 +26,16 @@ function shortSha(value?: string) {
   return value ? value.slice(0, 10) : 'not exposed';
 }
 
+function ageLabel(value?: string) {
+  if (!value) return 'no run yet';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'time unavailable';
+  const hours = Math.max(0, (Date.now() - date.getTime()) / 3_600_000);
+  if (hours < 1) return `${Math.max(1, Math.round(hours * 60))}m ago`;
+  if (hours < 48) return `${hours.toFixed(1)}h ago`;
+  return `${(hours / 24).toFixed(1)}d ago`;
+}
+
 export function ProductionReadinessPanel(props: Props) {
   const {
     readiness,
@@ -44,7 +54,10 @@ export function ProductionReadinessPanel(props: Props) {
   const introductionState: State = introductionVerified ? 'ready' : 'attention';
   const schedulerState: State = scheduler.dueSchedules === 0 && scheduler.failed24Hours === 0 ? 'ready' : 'attention';
   const deepState: State = readiness.deep.state === 'ready' ? 'ready' : 'attention';
-  const evidenceState: State = readiness.evidence.currentCampaignFinanceItems > 0 ? 'ready' : 'attention';
+  const evidenceState: State = readiness.evidence.currentCampaignFinanceItems > 0
+    && readiness.evidence.latestPublicEvidenceStatus === 'complete'
+    ? 'ready'
+    : 'attention';
   const futureState: State = readiness.futureSession.exists && readiness.futureSession.memberships > 0 ? 'ready' : 'planned';
 
   const overall = runtimeState === 'ready' && deepState === 'ready' ? 'All production modes ready' : runtimeState === 'ready' ? 'Core ready · review optional modes' : 'Production review needed';
@@ -83,7 +96,11 @@ export function ProductionReadinessPanel(props: Props) {
         </article>
         <article>
           <div className={`state-dot ${evidenceState}`} />
-          <div><span>Durable external evidence</span><strong>{readiness.evidence.currentCampaignFinanceItems.toLocaleString()} current finance items</strong><small>{readiness.evidence.campaignFinanceMembers} members · {readiness.evidence.currentCuratedItems} curated items · {readiness.evidence.mechanicallyActionableItems} mechanical</small></div>
+          <div>
+            <span>Public evidence pipeline</span>
+            <strong>{readiness.evidence.latestPublicEvidenceStatus === 'complete' ? 'Crawler operational' : readiness.evidence.latestPublicEvidenceStatus === 'failed' ? 'Crawler failed' : 'Crawler not verified'}</strong>
+            <small>{readiness.evidence.currentCampaignFinanceItems.toLocaleString()} finance · {readiness.evidence.campaignSiteItems} campaign-site · {readiness.evidence.publicNewsItems} news · {readiness.evidence.publicEvidenceMembers} web-covered members · {ageLabel(readiness.evidence.latestPublicEvidenceRun)}</small>
+          </div>
         </article>
         <article>
           <div className={`state-dot ${sourceWarningCount === 0 ? 'ready' : 'attention'}`} />
@@ -93,6 +110,10 @@ export function ProductionReadinessPanel(props: Props) {
           <div className={`state-dot ${futureState}`} />
           <div><span>2027–28 opening day</span><strong>{futureState === 'ready' ? 'Provisioned' : 'Not provisioned yet'}</strong><small>{readiness.futureSession.memberships} memberships · {readiness.futureSession.bills} bills · session {readiness.futureSession.exists ? 'exists' : 'absent'}</small></div>
         </article>
+      </div>
+
+      <div className="evidence-footnote">
+        Public evidence is stored independently of model impact. Current mechanical public-evidence items: <strong>{readiness.evidence.mechanicallyActionableItems}</strong>. Curated legacy items: <strong>{readiness.evidence.currentCuratedItems}</strong>. Campaign-finance members: <strong>{readiness.evidence.campaignFinanceMembers}</strong>.
       </div>
 
       <style>{`
@@ -114,6 +135,8 @@ export function ProductionReadinessPanel(props: Props) {
         .state-dot.ready { background: #72aa83; box-shadow: 0 0 0 3px rgba(114,170,131,.08); }
         .state-dot.attention { background: #d1a45f; }
         .state-dot.planned { background: #87948b; }
+        .evidence-footnote { margin-top: 10px; border-top: 1px solid #34453a; padding-top: 9px; color: #aab8ae; font-size: 7.5px; line-height: 1.4; }
+        .evidence-footnote strong { color: #e7ede9; }
         @media (max-width: 980px) { .readiness-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
         @media (max-width: 560px) { .readiness-heading { display: grid; } .overall-state { width: fit-content; } .readiness-grid { grid-template-columns: 1fr; } }
       `}</style>

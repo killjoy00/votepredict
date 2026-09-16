@@ -7,66 +7,110 @@ VotePredict stores reusable public evidence in the existing `source_documents` a
 1. **Retain source provenance.** Every imported source is fetched or derived from an identified URL and stored with a SHA-256 content hash.
 2. **Resolve targets conservatively.** Member and bill targets must resolve uniquely. Ambiguous targets are recorded as unresolved rather than guessed. Curated member evidence should prefer the durable LRL legislator external key (`lrl:<id>`) when available so display-name changes do not break identity.
 3. **Make refreshes idempotent.** Evidence receives a deterministic ingestion key scoped to source content, resolved target, claim, date, and extractor version. Re-running the same import reuses the prior evidence item.
-4. **Version mutable evidence explicitly.** Repeated aggregates such as campaign-finance snapshots receive a stable `evidenceSeriesKey`. When a newer source snapshot creates a new item in the same series, the new item points to the older current item with an `evidence_relationships.relation_kind='supersedes'` relationship. Reads that represent current evidence exclude items targeted by a `supersedes` relationship. Exact re-runs backfill the series key onto existing rows without creating duplicates.
-5. **Separate evidence from model effect.** Importing an item does not make it a forecasting feature. New curated and campaign-finance records default to `mechanicallyActionable: false` until a separately evaluated model explicitly uses them.
+4. **Version mutable evidence explicitly.** Repeated aggregates and mutable campaign pages receive a stable `evidenceSeriesKey`. When a newer source snapshot creates a new item in the same series, the new item points to the older current item with an `evidence_relationships.relation_kind='supersedes'` relationship. Reads that represent current evidence exclude superseded items.
+5. **Separate evidence from model effect.** Importing an item does not make it a forecasting feature. New public evidence defaults to `mechanicallyActionable: false` until a separately frozen evaluation or prospective protocol justifies model use.
 6. **Treat money as context, not stance.** Campaign receipts, campaign expenditures, and independent expenditures are factual context. They do not imply a legislator's vote position by themselves.
-7. **Prefer official facts.** Bill authorship/sponsorship is sourced from the Minnesota Revisor rather than inferred from advocacy material. Organizational letters describe only the organization's documented position.
-8. **Treat legislative roles as context, not vote intent.** Committee membership and leadership may be relevant to bill routing or leverage, but they are persisted as neutral context and do not imply support or opposition.
-9. **Preserve pre-vote bills.** An official bill referenced by evidence may be seeded into the canonical `bills` and `bill_versions` tables even if it has not appeared in historical floor-vote ingestion. Its deterministic features are generated at the same time.
+7. **Treat campaign claims as primary-source claims.** A campaign site establishes what a campaign publishes, not whether the claim is independently true and not how the legislator will vote.
+8. **Treat news discovery separately from verification.** GDELT is a discovery index. A hit is not durable evidence until VotePredict fetches the underlying article, verifies the target member is actually named, and preserves publication/capture provenance.
+9. **Prefer official identity sources.** Campaign-site URLs come from Minnesota Secretary of State candidate filings rather than guessed domains or general web search.
+10. **Preserve as-of boundaries in modeling.** Historical use requires evidence that the information was public before the forecast cutoff, not merely that the underlying event happened before it.
 
 ## Relationship to Quick and Deep
 
-Durable evidence ingestion does **not** require a Deep forecast. The durable store is a shared substrate that can be populated on a schedule or by curated imports and then displayed in legislator profiles, issue dossiers, Operations, or Quick forecast explanations.
+Durable evidence ingestion does **not** require a Deep forecast. The durable store is a shared substrate that can be populated on a schedule and then displayed in member profiles, issue dossiers, Operations, or Quick forecast explanations.
 
-Today the serving Quick model does not mechanically consume general durable evidence. Quick remains based on the evaluated member/history/analogue pipeline. That separation is intentional: storing a fact or source does not prove that using it as a numeric feature improves forecasts.
+The serving Quick model remains `member-eb-v1.2-decay180` and does not mechanically consume general durable public evidence. That separation is intentional: storing a source-backed fact does not prove that using it as a numeric feature improves forecasts.
 
-Deep adds a second layer: it selects consequential/uncertain members, performs fresh targeted research, verifies source-backed directional evidence against the forecast cutoff, applies the evidence-impact policy, and writes a new immutable Deep revision. The evidence-impact path is therefore currently invoked by Deep, but the underlying evidence schema and durable ingestion system are not Deep-only.
+Deep adds a separate targeted research layer for consequential/uncertain members. It can perform fresh research, classify directional evidence, apply the evidence-impact policy, and create an immutable Deep revision. Deep being unavailable does not stop the public evidence pipeline.
 
-The current Deep preloaded context includes:
+## Unified public evidence pipeline
 
-- GDELT news-index discovery for the target bill and selected members;
-- official Minnesota Campaign Finance Board catalog links;
-- deterministic campaign-finance snapshots already available to VotePredict.
+The recurring non-Deep pipeline combines three streams behind a common provenance and durability contract.
 
-A GDELT hit is discovery metadata, not verified article evidence. The article content must still be fetched/verified and associated with a publication date before it may be treated as source-backed evidence.
+### Campaign sites
 
-### Non-Deep public-evidence direction
+Minnesota Secretary of State candidate filings are the campaign-site discovery authority. VotePredict retrieves the state House/Senate filing results, matches a filed candidate to a current membership only when chamber, district, first name, and last name line up, and persists the filed campaign URL as official registry context. Email-like values in the filing Website field are explicitly rejected rather than treated as web hosts.
 
-The next evidence expansion should create a durable source registry and recurring ingestion for campaign/legislator websites, press releases, issue pages, and selected reputable news sources. This can happen without invoking Deep or changing probabilities.
+For uniquely matched sites, the crawler captures the campaign home page plus a bounded set of same-site pages that look most useful for legislative context: issue/platform/policy pages first, then press/news/update pages, then about pages. Each captured page is source-hashed and mutable paths use stable evidence-series keys so later captures supersede rather than overwrite history.
 
-A safe progression is:
+Campaign pages are stored as `member_primary` neutral context. They are not automatically converted into support/opposition evidence.
 
-1. fetch and hash the source with capture/publication time and canonical URL;
-2. resolve the member/bill target conservatively;
-3. extract/store claims and provenance as non-mechanical durable evidence;
-4. display the material in member profiles and Quick explanations;
-5. build historical/as-of coverage and a frozen evaluation/shadow for any evidence class proposed to change probabilities;
-6. only then promote a proven evidence class into a serving probability path.
+### News
 
-Campaign-finance data should remain neutral context unless an evaluated model demonstrates predictive value. Donor identity, employer, contribution amount, or independent spending must never be converted directly into a support/opposition stance.
+GDELT DOC 2.0 is used only to find recent candidate/member news leads. The pipeline then fetches the underlying article itself through the hardened public fetcher. The article is accepted only when the page contains an unambiguous first-and-last-name match for the target member.
 
-## Commands
+Publication time comes from article metadata when available, with the GDELT seen timestamp retained only as a fallback. The discovery title/domain and publication-date source remain in metadata. General news remains non-mechanical durable context until prospective coverage and evaluation justify anything more.
+
+### Campaign finance
+
+The existing official Minnesota Campaign Finance and Public Disclosure Board bulk-data path is part of the same public evidence program. It refreshes:
+
+- candidate contributions/receipts;
+- candidate general expenditures/contributions made;
+- independent expenditures affecting candidates.
+
+Current production aggregates retain source hashes, cycle metadata, top-level descriptive breakdowns, and explicit supersession lineage. Money remains neutral context; donor identity, employer, contribution amount, spender identity, or independent spending is never directly translated into a vote stance.
+
+CFB bulk rows expose transaction dates, while ordinary campaign-finance information is generally disclosed through periodic reports and some large contributions have separate faster notice rules. A transaction date therefore does **not** prove the item was already public on that date. VotePredict preserves this distinction in model evaluation.
+
+## Fetch hardening
+
+Arbitrary public URLs are treated as untrusted input. The shared fetcher:
+
+- allows only HTTP(S);
+- resolves DNS and rejects localhost, private, link-local, loopback, and other non-public destinations;
+- revalidates every manual redirect destination;
+- caps redirect count, response bytes, and request duration;
+- accepts only text/HTML-like content for the first implementation;
+- canonicalizes URLs and strips common tracking parameters;
+- computes the durable SHA-256 from the fetched response body;
+- extracts readable text, title, publication metadata, and same-page links without executing page scripts.
+
+The crawler is intentionally bounded rather than exhaustive. One bad site or article does not fail the other evidence streams.
+
+## Production cadence
+
+`.github/workflows/public-evidence-refresh.yml` invokes the protected production runtime every six hours and after a successful production deployment. The job pulls production authentication privately and calls `POST /api/operations/public-evidence-refresh`; database work occurs inside the deployed Vercel runtime where the Neon Marketplace connection is routable.
+
+Current-member web work is rotated by least-recent public-evidence capture. The default batch is 12 memberships and the endpoint caps a batch at 24. Campaign-finance refresh is folded into the same run when the last successful live finance refresh is older than the configured freshness threshold, avoiding repeated bulk downloads on every web batch.
+
+Operations exposes the latest pipeline status plus current finance, campaign-site, news, and web-covered-member counts. Public evidence ingestion is expected to remain useful even when every item is non-mechanical.
+
+## Quick evaluation boundary
+
+The first Quick experiment tests whether aggregate campaign-finance activity contains **possible incremental signal** beyond the serving model. It is intentionally an exploratory upper-bound sensitivity screen, not a promotion-eligible backtest.
+
+`public-evidence-quick-screen-v1` replays the serving Quick pipeline with 180-day member-history decay and adds a ridge-regularized logistic offset using four aggregate finance activity features whose underlying transactions occurred before each target vote:
+
+- log receipts;
+- log campaign spending;
+- log independent spending magnitude;
+- log finance transaction count.
+
+It explicitly excludes donor names, employers, donor categories, spender identity, inferred issue alignment, campaign-site text, and news text. Training uses 2021-22; regularization selection uses 2023-24; 2025-26 is descriptive only.
+
+The screen is **not leakage-safe for historical public availability** because the CFB bulk transaction date does not establish the item-level filing/publication timestamp. Accordingly:
+
+- `promotionEligible` is false;
+- `shadowNominationEligible` is false;
+- `prospectiveShadowNomination` is forced false in the production artifact;
+- any apparent improvement is labeled a `hypothesisSignal` only;
+- serving Quick probabilities never change and `productionAction` remains `none`.
+
+The recurring pipeline solves this going forward: finance, campaign-site, and news evidence receive durable `fetched_at` provenance prospectively. Once future forecasts resolve, those truly as-of captures can support an eligible Quick evidence evaluation.
+
+News and campaign-site material also begin as a prospective durable corpus because VotePredict does not have comparable timestamped historical captures. They must not be backfilled from the present web and treated as though they were known before old votes.
+
+## Existing commands
 
 - `npm run data:cfb:snapshot` builds the normalized Minnesota Campaign Finance and Public Disclosure Board snapshot through the shared TypeScript live-source parser.
 - `npm run data:cfb:evidence -- --snapshot=PATH` maps that snapshot to current memberships and persists campaign-finance context when run in an environment with a routable database connection.
-- `npm run data:evidence:bills -- --manifest=PATH` ensures official Revisor bills referenced by an evidence manifest have canonical bill/version records and `deterministic-v2.1` features when run in an environment with a routable database connection.
-- `npm run data:evidence:curated -- --manifest=PATH` fetches and hashes each manifest source, resolves targets, and persists evidence when run in an environment with a routable database connection.
+- `npm run data:evidence:bills -- --manifest=PATH` ensures official Revisor bills referenced by an evidence manifest have canonical bill/version records and deterministic features.
+- `npm run data:evidence:curated -- --manifest=PATH` fetches and hashes each manifest source, resolves targets, and persists evidence.
 - `npm run data:evidence:legislators` imports the versioned official committee/leadership context manifest using stable `lrl:` legislator keys.
 
-## Production execution
+## Initial curated tranches
 
-Vercel's production database URL uses a Marketplace/internal database alias that is valid inside the deployed application runtime but is not routable from a GitHub-hosted runner. Production evidence refreshes therefore do **not** connect directly from GitHub Actions.
+`data/evidence/gambling-curated-v1.json` contains sourced member statements, official Revisor authorship records, and documented MIGA/SMSC gaming-policy positions. All remain inspectable and non-mechanical unless a separate evaluated model says otherwise.
 
-The `Production evidence refresh` workflow follows the same deployed-runtime boundary used by scheduler validation: it deploys protected `main`, privately reads `CRON_SECRET`, then invokes the production-only `POST /api/operations/evidence-refresh` endpoint. The endpoint performs the database work inside Vercel, where the configured Neon connection is valid. The GitHub runner never receives a separately routable database credential and the endpoint rejects unauthenticated requests.
-
-Production campaign-finance refresh uses a migration-safe flow with stable evidence-series keys. The runtime refreshes official Minnesota CFB candidate contributions, candidate expenditures, and independent-expenditure context through the shared live parser. A changed official source hash creates a new aggregate that explicitly supersedes the older item in the same series. If a live source is unavailable or fails plausibility checks, the supported fallback path records the source mode instead of silently replacing provenance.
-
-Production refresh is not yet the broad recurring public-evidence crawler described above. Campaign finance is durable; general news/campaign-site material is not yet systematically captured outside curated imports and Deep discovery/research.
-
-## Initial gambling tranche
-
-`data/evidence/gambling-curated-v1.json` moves the existing priority gambling evidence into the durable store. It contains sourced member statements, official Revisor authorship records, and documented MIGA/SMSC gaming-policy positions. All are inspectable and currently non-mechanical.
-
-## Legislator context tranche
-
-`data/evidence/legislator-context-v1.json` adds official 2025-2026 House member profiles and Senate committee rosters for the initial identity-gap cohort. It records committee assignments and leadership roles as neutral context, targets memberships through stable LRL legislator keys, and explicitly tags process-relevant committees such as House Commerce and Senate State and Local Government without converting committee service into a forecast stance or mechanical feature.
+`data/evidence/legislator-context-v1.json` adds official 2025-2026 House member profiles and Senate committee rosters for the initial identity-gap cohort. Committee assignments and leadership roles remain neutral context and do not imply support or opposition.
