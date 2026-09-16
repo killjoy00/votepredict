@@ -196,20 +196,33 @@ function extractLinks(html: string, baseUrl: string): string[] {
   return links;
 }
 
-export function publicPageMentionsPerson(text: string, personName: string): boolean {
-  const tokens = personName
+function normalizePersonText(value: string): string {
+  return value
     .normalize('NFKD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, ' ')
-    .trim()
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+export function publicPageMentionsPerson(text: string, personName: string): boolean {
+  const tokens = normalizePersonText(personName)
     .split(/\s+/)
-    .filter((token) => token.length > 1);
-  if (tokens.length === 0) return false;
-  const haystack = ` ${text.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ')} `;
-  const first = tokens[0];
-  const last = tokens[tokens.length - 1];
-  return haystack.includes(` ${first} `) && haystack.includes(` ${last} `);
+    .filter(Boolean)
+    .filter((token) => !new Set(['jr', 'sr', 'ii', 'iii', 'iv']).has(token));
+  if (tokens.length < 2) return false;
+
+  const variants = new Set<string>();
+  variants.add(tokens.join(' '));
+  const withoutInitials = tokens.filter((token, index) => index === 0 || index === tokens.length - 1 || token.length > 1);
+  variants.add(withoutInitials.join(' '));
+  variants.add(`${tokens[0]} ${tokens[tokens.length - 1]}`);
+
+  const haystack = ` ${normalizePersonText(text)} `;
+  return [...variants]
+    .filter((variant) => variant.split(' ').length >= 2)
+    .some((variant) => haystack.includes(` ${variant} `));
 }
 
 export async function fetchPublicPage(rawUrl: string, options: PublicFetchOptions = {}): Promise<PublicPage> {
