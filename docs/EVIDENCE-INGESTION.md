@@ -13,7 +13,7 @@ VotePredict stores reusable public evidence in the existing `source_documents` a
 7. **Treat campaign claims as primary-source claims.** A campaign site establishes what a campaign publishes, not whether the claim is independently true and not how the legislator will vote.
 8. **Treat news discovery separately from verification.** GDELT is a discovery index. A hit is not durable evidence until VotePredict fetches the underlying article, verifies the target member is actually named, and preserves publication/capture provenance.
 9. **Prefer official identity sources.** Campaign-site URLs come from Minnesota Secretary of State candidate filings rather than guessed domains or general web search.
-10. **Preserve pre-vote boundaries in modeling.** Evidence used in any retrospective forecast evaluation must be demonstrably dated before the target forecast/vote cutoff.
+10. **Preserve as-of boundaries in modeling.** Historical use requires evidence that the information was public before the forecast cutoff, not merely that the underlying event happened before it.
 
 ## Relationship to Quick and Deep
 
@@ -29,7 +29,7 @@ The recurring non-Deep pipeline combines three streams behind a common provenanc
 
 ### Campaign sites
 
-Minnesota Secretary of State candidate filings are the campaign-site discovery authority. VotePredict retrieves the state House/Senate filing results, matches a filed candidate to a current membership only when chamber, district, first name, and last name line up, and persists the filed campaign URL as official registry context.
+Minnesota Secretary of State candidate filings are the campaign-site discovery authority. VotePredict retrieves the state House/Senate filing results, matches a filed candidate to a current membership only when chamber, district, first name, and last name line up, and persists the filed campaign URL as official registry context. Email-like values in the filing Website field are explicitly rejected rather than treated as web hosts.
 
 For uniquely matched sites, the crawler captures the campaign home page plus a bounded set of same-site pages that look most useful for legislative context: issue/platform/policy pages first, then press/news/update pages, then about pages. Each captured page is source-hashed and mutable paths use stable evidence-series keys so later captures supersede rather than overwrite history.
 
@@ -50,6 +50,8 @@ The existing official Minnesota Campaign Finance and Public Disclosure Board bul
 - independent expenditures affecting candidates.
 
 Current production aggregates retain source hashes, cycle metadata, top-level descriptive breakdowns, and explicit supersession lineage. Money remains neutral context; donor identity, employer, contribution amount, spender identity, or independent spending is never directly translated into a vote stance.
+
+CFB bulk rows expose transaction dates, while ordinary campaign-finance information is generally disclosed through periodic reports and some large contributions have separate faster notice rules. A transaction date therefore does **not** prove the item was already public on that date. VotePredict preserves this distinction in model evaluation.
 
 ## Fetch hardening
 
@@ -76,18 +78,28 @@ Operations exposes the latest pipeline status plus current finance, campaign-sit
 
 ## Quick evaluation boundary
 
-The first Quick experiment deliberately tests only the part of the public evidence system that has defensible historical timestamps: official campaign-finance transactions.
+The first Quick experiment tests whether aggregate campaign-finance activity contains **possible incremental signal** beyond the serving model. It is intentionally an exploratory upper-bound sensitivity screen, not a promotion-eligible backtest.
 
-`public-evidence-quick-screen-v1` replays the serving Quick pipeline with 180-day member-history decay and adds a ridge-regularized logistic offset using only four aggregate finance activity features available strictly before each target vote:
+`public-evidence-quick-screen-v1` replays the serving Quick pipeline with 180-day member-history decay and adds a ridge-regularized logistic offset using four aggregate finance activity features whose underlying transactions occurred before each target vote:
 
 - log receipts;
 - log campaign spending;
 - log independent spending magnitude;
 - log finance transaction count.
 
-It explicitly excludes donor names, employers, donor categories, spender identity, inferred issue alignment, campaign-site text, and news text. Training uses 2021-22; regularization selection uses 2023-24; 2025-26 is descriptive only. Retrospective results can at most nominate a **future prospective shadow**. The screen cannot alter serving Quick probabilities and always records `productionAction: none`.
+It explicitly excludes donor names, employers, donor categories, spender identity, inferred issue alignment, campaign-site text, and news text. Training uses 2021-22; regularization selection uses 2023-24; 2025-26 is descriptive only.
 
-News and campaign-site material begin as a prospective durable corpus because VotePredict does not have comparable timestamped historical captures. They should not be backfilled from the present web and treated as though they were known before old votes.
+The screen is **not leakage-safe for historical public availability** because the CFB bulk transaction date does not establish the item-level filing/publication timestamp. Accordingly:
+
+- `promotionEligible` is false;
+- `shadowNominationEligible` is false;
+- `prospectiveShadowNomination` is forced false in the production artifact;
+- any apparent improvement is labeled a `hypothesisSignal` only;
+- serving Quick probabilities never change and `productionAction` remains `none`.
+
+The recurring pipeline solves this going forward: finance, campaign-site, and news evidence receive durable `fetched_at` provenance prospectively. Once future forecasts resolve, those truly as-of captures can support an eligible Quick evidence evaluation.
+
+News and campaign-site material also begin as a prospective durable corpus because VotePredict does not have comparable timestamped historical captures. They must not be backfilled from the present web and treated as though they were known before old votes.
 
 ## Existing commands
 
