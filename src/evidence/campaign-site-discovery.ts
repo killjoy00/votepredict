@@ -31,6 +31,13 @@ function textCell(value: string): string {
   return decodeEntities(value.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
 }
 
+function normalizeDistrict(value: string): string {
+  const compact = value.toUpperCase().replace(/\s+/g, '');
+  const match = compact.match(/^0*(\d+)([A-B]?)$/);
+  if (!match) return compact;
+  return `${Number(match[1])}${match[2]}`;
+}
+
 function normalizeWebsite(value: string): string | undefined {
   const trimmed = decodeEntities(value).trim();
   if (!trimmed || /^(?:n\/a|none|no website)$/i.test(trimmed) || trimmed.includes('@')) return undefined;
@@ -52,19 +59,44 @@ function lastOffice(value: string): { chamber: 'house' | 'senate'; district: str
   if (!match) return undefined;
   return {
     chamber: match[1].toLowerCase() === 'senator' ? 'senate' : 'house',
-    district: match[2].toUpperCase(),
+    district: normalizeDistrict(match[2]),
   };
+}
+
+function isRegistryNavigationUrl(value: string): boolean {
+  try {
+    const url = new URL(value, MN_SOS_CANDIDATE_RESULTS_URL);
+    const hostname = url.hostname.toLowerCase();
+    return hostname === 'candidates.sos.mn.gov' || hostname === 'www.sos.mn.gov' || hostname === 'sos.mn.gov';
+  } catch {
+    return false;
+  }
 }
 
 function websiteFromCell(raw: string, text: string): string | undefined {
   if (text.includes('@')) return undefined;
   if (/(?:https?:\/\/|www\.|[a-z0-9-]+\.[a-z]{2,})/i.test(text)) {
     const normalized = normalizeWebsite(text);
-    if (normalized) return normalized;
+    if (normalized && !isRegistryNavigationUrl(normalized)) return normalized;
   }
   const href = raw.match(/href\s*=\s*["']([^"']+)["']/i)?.[1];
   if (!href || /^mailto:/i.test(href)) return undefined;
-  return normalizeWebsite(href);
+  let resolved: string;
+  try {
+    resolved = new URL(decodeEntities(href), MN_SOS_CANDIDATE_RESULTS_URL).toString();
+  } catch {
+    return undefined;
+  }
+  if (isRegistryNavigationUrl(resolved)) return undefined;
+  return normalizeWebsite(resolved);
+}
+
+function plausibleCandidateName(value: string): boolean {
+  const text = value.trim();
+  if (!text || lastOffice(text)) return false;
+  if (/^(?:candidate\s+name|party|website|file\s+date|details?|view|select|more)$/i.test(text)) return false;
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(text)) return false;
+  return /[A-Za-z]/.test(text);
 }
 
 /**
@@ -72,6 +104,10 @@ function websiteFromCell(raw: string, text: string): string | undefined {
  * presentation-specific heading tags/classes. Office labels can appear either between
  * candidate rows or inside a table row, so each candidate row inherits the most recent
  * State Senator/Representative district label in document order.
+ *
+ * The live ASP.NET result grid may add presentation/navigation cells before the candidate
+ * name. Find the campaign-website cell first, then infer the candidate from the first
+ * plausible textual cell before it rather than assuming candidate name is always cell 0.
  */
 export function parseCampaignSiteFilings(html: string): CampaignSiteFiling[] {
   const sanitized = html
@@ -97,21 +133,34 @@ export function parseCampaignSiteFilings(html: string): CampaignSiteFiling[] {
       raw: match[1],
       text: textCell(match[1]),
     }));
-    if (cells.length < 3 || /candidate\s+name/i.test(cells[0]?.text ?? '')) continue;
+    if (cells.length < 3 || cells.some((cell) => /candidate\s+name/i.test(cell.text))) continue;
 
     const dateIndex = cells.findIndex((cell) => /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(cell.text));
     if (dateIndex < 0) continue;
+
     let website: string | undefined;
-    for (let index = 1; index < dateIndex; index += 1) {
-      website = websiteFromCell(cells[index].raw, cells[index].text);
-      if (website) break;
+    let websiteIndex = -1;
+    for (let index = 0; index < dateIndex; index += 1) {
+      const candidateWebsite = websiteFromCell(cells[index].raw, cells[index].text);
+      if (!candidateWebsite) continue;
+      website = candidateWebsite;
+      websiteIndex = index;
+      break;
     }
-    if (!website) continue;
+    if (!website || websiteIndex <= 0) continue;
+
+    const candidateIndex = cells.slice(0, websiteIndex).findIndex((cell) => plausibleCandidateName(cell.text));
+    if (candidateIndex < 0) continue;
+    const candidateName = cells[candidateIndex].text;
+    const party = cells
+      .slice(candidateIndex + 1, websiteIndex)
+      .map((cell) => cell.text.trim())
+      .find((text) => text && plausibleCandidateName(text));
 
     filings.push({
       ...office,
-      candidateName: cells[0].text,
-      party: cells[1]?.text || undefined,
+      candidateName,
+      party,
       website,
       filingDate: cells[dateIndex].text,
     });
@@ -146,7 +195,7 @@ export function filingMatchesMember(
   filing: CampaignSiteFiling,
   member: { name: string; chamber: string; district: string },
 ): boolean {
-  if (filing.chamber !== member.chamber || filing.district.toUpperCase() !== member.district.toUpperCase()) return false;
+  if (filing.chamber !== member.chamber || normalizeDistrict(filing.district) !== normalizeDistrict(member.district)) return false;
   const candidate = nameEndpoints(filing.candidateName);
   const legislator = nameEndpoints(member.name);
   if (!candidate || !legislator) return false;
