@@ -34,6 +34,24 @@ test('campaign filing parser keeps filed state legislative websites and rejects 
   assert.equal(filingMatchesMember(bianca, { name: 'Bianca Ward Virnig', chamber: 'house', district: '53B' }), false);
 });
 
+test('campaign filing parser follows live-style office labels outside heading tags and href-only sites', () => {
+  const html = `
+    <div class="office-result"><span>State Representative</span> <strong>District 26A</strong></div>
+    <table>
+      <tr><th>Candidate Name</th><th>Party</th><th>Website</th><th>File Date</th></tr>
+      <tr><td>Aaron Repinski</td><td>Republican</td><td><a href="https://repinskiformn.com/"><span>Campaign site</span></a></td><td>5/20/2026</td></tr>
+    </table>
+    <div>State Senator <em>District 50</em></div>
+    <table>
+      <tr><td>Alice Mann</td><td>Democratic-Farmer-Labor</td><td>alicemann.org</td><td>5/19/2026</td></tr>
+    </table>`;
+  const rows = parseCampaignSiteFilings(html);
+  assert.deepEqual(rows.map((row) => [row.chamber, row.district, row.candidateName, row.website]), [
+    ['house', '26A', 'Aaron Repinski', 'https://repinskiformn.com/'],
+    ['senate', '50', 'Alice Mann', 'https://alicemann.org/'],
+  ]);
+});
+
 test('public URL canonicalization removes tracking but preserves substantive query state', () => {
   assert.equal(
     canonicalPublicUrl('HTTPS://Example.COM:443/issues/?utm_source=x&bill=HF123&fbclid=abc#top'),
