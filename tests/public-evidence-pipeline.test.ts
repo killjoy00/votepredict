@@ -8,12 +8,13 @@ import {
 import { canonicalPublicUrl, publicPageMentionsPerson, type PublicPage } from '../src/evidence/public-http';
 import { gdeltSeenDate } from '../src/evidence/public-news';
 
-test('campaign filing parser keeps filed state legislative websites and office scope', () => {
+test('campaign filing parser keeps filed state legislative websites and rejects email-like website fields', () => {
   const html = `
     <h3>State Senator District 8</h3>
     <table><tr><th>Candidate Name</th><th>Party</th><th>Website</th><th>File Date</th></tr>
       <tr><td>Jen McEwen</td><td>Democratic-Farmer-Labor</td><td><a href="https://www.votemcewen.com">www.votemcewen.com</a></td><td>5/19/2026</td></tr>
       <tr><td>Darrick Law</td><td>Republican</td><td>darrickformnsenate.com</td><td>6/2/2026</td></tr>
+      <tr><td>Email Only</td><td>Republican</td><td>candidate@gmail.com</td><td>6/2/2026</td></tr>
     </table>
     <h3>State Representative District 52B</h3>
     <table><tr><th>Candidate Name</th><th>Party</th><th>Website</th><th>File Date</th></tr>
