@@ -33,10 +33,13 @@ function textCell(value: string): string {
 
 function normalizeWebsite(value: string): string | undefined {
   const trimmed = value.trim();
-  if (!trimmed || /^(?:n\/a|none|no website)$/i.test(trimmed)) return undefined;
+  if (!trimmed || /^(?:n\/a|none|no website)$/i.test(trimmed) || trimmed.includes('@')) return undefined;
   const withScheme = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
   try {
-    return canonicalPublicUrl(withScheme);
+    const normalized = canonicalPublicUrl(withScheme);
+    const url = new URL(normalized);
+    if (url.username || url.password || !url.hostname.includes('.')) return undefined;
+    return normalized;
   } catch {
     return undefined;
   }
