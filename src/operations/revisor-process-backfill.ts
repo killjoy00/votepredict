@@ -70,6 +70,7 @@ async function selectBatch(limit: number): Promise<ProcessBackfillBillRow[]> {
      WHERE s.slug IN ('2021-2022', '2023-2024', '2025-2026')
        AND b.source_url IS NOT NULL
        AND b.metadata #>> '{revisorProcessHistory,parserVersion}' IS DISTINCT FROM $1
+       AND b.metadata #>> '{revisorProcessHistory,exclusionVersion}' IS DISTINCT FROM $1
        AND EXISTS (
          SELECT 1
            FROM vote_events ve
@@ -270,7 +271,7 @@ async function persistExclusion(row: ExcludedProcessBill): Promise<void> {
     UPDATE bills
        SET metadata = metadata || jsonb_build_object(
          'revisorProcessHistory', jsonb_build_object(
-           'parserVersion', $2::text,
+           'exclusionVersion', $2::text,
            'status', 'excluded',
            'sourceUrl', $3::text,
            'fetchedAt', $4::timestamptz,
@@ -343,11 +344,9 @@ export async function verifyRevisorProcessBackfill(): Promise<RevisorProcessBack
     )
     SELECT (SELECT count(*) FROM target)::text AS target_bills,
            (SELECT count(*) FROM bills b JOIN target t ON t.id = b.id
-             WHERE b.metadata #>> '{revisorProcessHistory,parserVersion}' = $1
-               AND b.metadata #>> '{revisorProcessHistory,status}' IS DISTINCT FROM 'excluded')::text AS parsed_bills,
+             WHERE b.metadata #>> '{revisorProcessHistory,parserVersion}' = $1)::text AS parsed_bills,
            (SELECT count(*) FROM bills b JOIN target t ON t.id = b.id
-             WHERE b.metadata #>> '{revisorProcessHistory,parserVersion}' = $1
-               AND b.metadata #>> '{revisorProcessHistory,status}' = 'excluded')::text AS excluded_bills,
+             WHERE b.metadata #>> '{revisorProcessHistory,exclusionVersion}' = $1)::text AS excluded_bills,
            (SELECT count(*) FROM legislative_stage_events se JOIN target t ON t.id = se.bill_id
              WHERE se.metadata ->> 'parserVersion' = $1)::text AS stage_events`, [REVISOR_PROCESS_PARSER_VERSION]);
   const kinds = await pool.query<{ stage_kind: string; n: string }>(`
