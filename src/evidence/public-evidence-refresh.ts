@@ -2,13 +2,15 @@ import { pool } from '@/lib/db';
 import { persistDurableEvidence, type DurableEvidenceFreshness } from './durable-ingestion';
 import { discoverMinnesotaCampaignSites, filingMatchesMember, selectCampaignContentLinks, type CampaignSiteFiling } from './campaign-site-discovery';
 import { runLiveCampaignFinanceRefresh } from './live-campaign-finance-refresh';
-import { fetchPublicPage } from './public-http';
-import { discoverMemberNews, verifyNewsLead } from './public-news';
+import { fetchPublicPage, publicPageMentionsPerson } from './public-http';
+import { discoverMemberNewsBatch, fetchNewsLeadPage, type NewsLead } from './public-news';
 
 const PIPELINE_VERSION = 'public-evidence-v1';
 const DEFAULT_BATCH = 12;
 const MAX_BATCH = 24;
 const NEWS_PER_MEMBER = 2;
+const NEWS_DISCOVERY_GROUP_SIZE = 6;
+const NEWS_FETCH_CONCURRENCY = 4;
 const CAMPAIGN_PAGES_PER_MEMBER = 3;
 const FINANCE_REFRESH_AFTER_HOURS = 18;
 const MAX_DIAGNOSTIC_ROWS = 24;
@@ -267,80 +269,169 @@ async function refreshCampaignMember(
   return result;
 }
 
-async function refreshNewsMember(
-  member: MembershipRow,
+function publicationDateSource(pagePublishedAt: string | undefined, lead: NewsLead): 'page_metadata' | 'gdelt_seen_at' | 'unknown' {
+  return pagePublishedAt ? 'page_metadata' : lead.seenAt ? 'gdelt_seen_at' : 'unknown';
+}
+
+async function persistVerifiedNewsLead(
+  lead: NewsLead,
+  members: MembershipRow[],
+  now: Date,
+) {
+  const page = await fetchNewsLeadPage(lead);
+  const publishedAt = page.publishedAt ?? lead.seenAt;
+  if (publishedAt && new Date(publishedAt).getTime() > now.getTime() + 86_400_000) {
+    throw new Error('News publication timestamp is implausibly in the future');
+  }
+  const matched = members.filter((member) => publicPageMentionsPerson(page.text, member.name));
+  if (matched.length === 0) return { matched: [] as MembershipRow[], persisted: undefined };
+  const dateSource = publicationDateSource(page.publishedAt, lead);
+  const persisted = await persistDurableEvidence({
+    sourceKind: 'public_news_article',
+    sourceUrl: page.canonicalUrl,
+    contentSha256: page.contentSha256,
+    fetchedAt: page.fetchedAt,
+    httpStatus: page.httpStatus,
+    metadata: {
+      pipelineVersion: PIPELINE_VERSION,
+      discoveryProvider: 'GDELT DOC 2.0',
+      discoveryDomain: lead.domain,
+      discoveryTitle: lead.title,
+      contentType: page.contentType,
+      bytes: page.bytes,
+    },
+  }, matched.map((member) => ({
+    target: { membershipId: member.membership_id },
+    kind: 'context' as const,
+    stance: 'neutral' as const,
+    claim: `News coverage: ${page.title ?? lead.title}`,
+    excerpt: page.excerpt,
+    publishedAt,
+    sourceQuality: 'other' as const,
+    relevance: 'medium' as const,
+    freshness: freshness(publishedAt ?? page.fetchedAt, now),
+    extractionMethod: 'gdelt-discovery-deterministic-page-verification',
+    extractionVersion: PIPELINE_VERSION,
+    confidence: 1,
+    metadata: {
+      contextType: 'public_evidence',
+      subtype: 'news_article',
+      publicationDateSource: dateSource,
+      sourceVerified: true,
+      contextOnly: true,
+      mechanicallyActionable: false,
+    },
+  })));
+  return { matched, persisted };
+}
+
+async function refreshNewsGroup(
+  members: MembershipRow[],
   now: Date,
   failureDetails: FailureDetail[],
   noLeadMembers: string[],
 ): Promise<StreamResult> {
   const result = emptyStream();
-  let leads;
+  if (members.length === 0) return result;
+  let leads: NewsLead[];
+  const groupLabel = members.map((member) => member.name).join(', ').slice(0, 240);
   try {
-    leads = await discoverMemberNews(member.name, now);
+    leads = await discoverMemberNewsBatch(members.map((member) => member.name), now);
   } catch (error) {
     result.attempted += 1;
     result.failures += 1;
-    pushDiagnostic(failureDetails, { member: member.name, stage: 'gdelt-discovery', message: safeMessage(error) });
+    pushDiagnostic(failureDetails, { member: groupLabel, stage: 'gdelt-batch-discovery', message: safeMessage(error) });
+    for (const member of members) pushDiagnostic(noLeadMembers, member.name);
     return result;
   }
-  if (leads.length === 0) pushDiagnostic(noLeadMembers, member.name);
-  let accepted = 0;
-  for (const lead of leads) {
-    if (accepted >= NEWS_PER_MEMBER) break;
-    result.attempted += 1;
-    try {
-      const verified = await verifyNewsLead(lead, member.name);
-      if (verified.publishedAt && new Date(verified.publishedAt).getTime() > now.getTime() + 86_400_000) {
-        throw new Error('News publication timestamp is implausibly in the future');
+
+  const accepted = new Map(members.map((member) => [member.membership_id, 0]));
+  for (let offset = 0; offset < leads.length; offset += NEWS_FETCH_CONCURRENCY) {
+    if (members.every((member) => (accepted.get(member.membership_id) ?? 0) >= NEWS_PER_MEMBER)) break;
+    const chunk = leads.slice(offset, offset + NEWS_FETCH_CONCURRENCY);
+    const fetched = await Promise.all(chunk.map(async (lead) => {
+      result.attempted += 1;
+      try {
+        return { lead, pageResult: await fetchNewsLeadPage(lead), error: undefined as unknown };
+      } catch (error) {
+        return { lead, pageResult: undefined, error };
       }
-      const persisted = await persistDurableEvidence({
-        sourceKind: 'public_news_article',
-        sourceUrl: verified.page.canonicalUrl,
-        contentSha256: verified.page.contentSha256,
-        fetchedAt: verified.page.fetchedAt,
-        httpStatus: verified.page.httpStatus,
-        metadata: {
-          pipelineVersion: PIPELINE_VERSION,
-          discoveryProvider: 'GDELT DOC 2.0',
-          discoveryDomain: lead.domain,
-          discoveryTitle: lead.title,
-          contentType: verified.page.contentType,
-          bytes: verified.page.bytes,
-        },
-      }, [{
-        target: { membershipId: member.membership_id },
-        kind: 'context',
-        stance: 'neutral',
-        claim: `News coverage: ${verified.page.title ?? lead.title}`,
-        excerpt: verified.page.excerpt,
-        publishedAt: verified.publishedAt,
-        sourceQuality: 'other',
-        relevance: 'medium',
-        freshness: freshness(verified.publishedAt ?? verified.page.fetchedAt, now),
-        extractionMethod: 'gdelt-discovery-deterministic-page-verification',
-        extractionVersion: PIPELINE_VERSION,
-        confidence: 1,
-        metadata: {
-          contextType: 'public_evidence',
-          subtype: 'news_article',
-          publicationDateSource: verified.publicationDateSource,
-          sourceVerified: true,
-          contextOnly: true,
-          mechanicallyActionable: false,
-        },
-      }]);
-      result.inserted += persisted.inserted;
-      result.reused += persisted.reused;
-      result.unresolved += persisted.unresolvedTargets.length;
-      accepted += 1;
-    } catch (error) {
-      result.failures += 1;
-      pushDiagnostic(failureDetails, {
-        member: member.name,
-        stage: 'article-fetch-verify-or-persist',
-        message: safeMessage(error),
-      });
+    }));
+
+    for (const row of fetched) {
+      if (row.error || !row.pageResult) {
+        result.failures += 1;
+        pushDiagnostic(failureDetails, {
+          member: groupLabel,
+          stage: 'article-fetch',
+          message: `${row.lead.url}: ${safeMessage(row.error)}`.slice(0, 600),
+        });
+        continue;
+      }
+      const eligible = members.filter((member) => (accepted.get(member.membership_id) ?? 0) < NEWS_PER_MEMBER
+        && publicPageMentionsPerson(row.pageResult!.text, member.name));
+      if (eligible.length === 0) continue;
+      try {
+        const publishedAt = row.pageResult.publishedAt ?? row.lead.seenAt;
+        if (publishedAt && new Date(publishedAt).getTime() > now.getTime() + 86_400_000) {
+          throw new Error('News publication timestamp is implausibly in the future');
+        }
+        const dateSource = publicationDateSource(row.pageResult.publishedAt, row.lead);
+        const persisted = await persistDurableEvidence({
+          sourceKind: 'public_news_article',
+          sourceUrl: row.pageResult.canonicalUrl,
+          contentSha256: row.pageResult.contentSha256,
+          fetchedAt: row.pageResult.fetchedAt,
+          httpStatus: row.pageResult.httpStatus,
+          metadata: {
+            pipelineVersion: PIPELINE_VERSION,
+            discoveryProvider: 'GDELT DOC 2.0',
+            discoveryDomain: row.lead.domain,
+            discoveryTitle: row.lead.title,
+            contentType: row.pageResult.contentType,
+            bytes: row.pageResult.bytes,
+          },
+        }, eligible.map((member) => ({
+          target: { membershipId: member.membership_id },
+          kind: 'context' as const,
+          stance: 'neutral' as const,
+          claim: `News coverage: ${row.pageResult!.title ?? row.lead.title}`,
+          excerpt: row.pageResult!.excerpt,
+          publishedAt,
+          sourceQuality: 'other' as const,
+          relevance: 'medium' as const,
+          freshness: freshness(publishedAt ?? row.pageResult!.fetchedAt, now),
+          extractionMethod: 'gdelt-discovery-deterministic-page-verification',
+          extractionVersion: PIPELINE_VERSION,
+          confidence: 1,
+          metadata: {
+            contextType: 'public_evidence',
+            subtype: 'news_article',
+            publicationDateSource: dateSource,
+            sourceVerified: true,
+            contextOnly: true,
+            mechanicallyActionable: false,
+          },
+        })));
+        result.inserted += persisted.inserted;
+        result.reused += persisted.reused;
+        result.unresolved += persisted.unresolvedTargets.length;
+        for (const member of eligible) {
+          accepted.set(member.membership_id, (accepted.get(member.membership_id) ?? 0) + 1);
+        }
+      } catch (error) {
+        result.failures += 1;
+        pushDiagnostic(failureDetails, {
+          member: eligible.map((member) => member.name).join(', ').slice(0, 240),
+          stage: 'article-verify-or-persist',
+          message: safeMessage(error),
+        });
+      }
     }
+  }
+
+  for (const member of members) {
+    if ((accepted.get(member.membership_id) ?? 0) === 0) pushDiagnostic(noLeadMembers, member.name);
   }
   return result;
 }
@@ -412,16 +503,14 @@ export async function runPublicEvidenceRefresh(options: PublicEvidenceRefreshOpt
       const group = memberships.slice(offset, offset + 3);
       const rows = await Promise.all(group.map(async (member) => {
         const filing = filingByMembership.get(member.membership_id);
-        const [campaignResult, newsResult] = await Promise.all([
-          filing ? refreshCampaignMember(member, filing, now, campaignFailures) : Promise.resolve(emptyStream()),
-          refreshNewsMember(member, now, newsFailures, newsNoLeadMembers),
-        ]);
-        return { campaignResult, newsResult };
+        return filing ? refreshCampaignMember(member, filing, now, campaignFailures) : emptyStream();
       }));
-      for (const row of rows) {
-        addStream(campaign, row.campaignResult);
-        addStream(news, row.newsResult);
-      }
+      for (const row of rows) addStream(campaign, row);
+    }
+
+    for (let offset = 0; offset < memberships.length; offset += NEWS_DISCOVERY_GROUP_SIZE) {
+      const group = memberships.slice(offset, offset + NEWS_DISCOVERY_GROUP_SIZE);
+      addStream(news, await refreshNewsGroup(group, now, newsFailures, newsNoLeadMembers));
     }
 
     let campaignFinance: Record<string, unknown> | { skipped: true; reason: string };
@@ -444,6 +533,7 @@ export async function runPublicEvidenceRefresh(options: PublicEvidenceRefreshOpt
       rotationOffset: batch.rotationOffset,
       rotationNextOffset: batch.rotationNextOffset,
       totalMemberships: batch.totalMemberships,
+      newsDiscoveryGroupSize: NEWS_DISCOVERY_GROUP_SIZE,
       batchMembers: memberships.map((member) => ({ name: member.name, chamber: member.chamber_slug, district: member.district })),
       campaignRegistryFilings: filingDiscovery?.filings.length ?? 0,
       campaignRegistryFilingSamples: (filingDiscovery?.filings ?? []).slice(0, 12).map((filing) => ({
