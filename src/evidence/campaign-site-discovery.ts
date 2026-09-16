@@ -1,6 +1,6 @@
 import { canonicalPublicUrl, fetchPublicPage, type PublicPage } from './public-http';
 
-export const MN_SOS_CANDIDATE_RESULTS_URL = 'https://candidates.sos.mn.gov/CandidateFilingResults.aspx?candidateid=0&county=0&executive=False&federal=False&hospitaldistrict=0&judicial=False&level=1&municipality=0&office=0&party=0&representative=True&schooldistrict=0&senate=True';
+export const MN_SOS_CANDIDATE_RESULTS_URL = 'https://candidates.sos.mn.gov/CandidateFilingResults.aspx?candidateid=0&executive=False&federal=False&judicial=False&level=1&office=0&party=0&representative=True&senate=True';
 
 export interface CampaignSiteFiling {
   chamber: 'house' | 'senate';
@@ -32,7 +32,7 @@ function textCell(value: string): string {
 }
 
 function normalizeWebsite(value: string): string | undefined {
-  const trimmed = value.trim();
+  const trimmed = decodeEntities(value).trim();
   if (!trimmed || /^(?:n\/a|none|no website)$/i.test(trimmed) || trimmed.includes('@')) return undefined;
   const withScheme = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
   try {
@@ -45,54 +45,73 @@ function normalizeWebsite(value: string): string | undefined {
   }
 }
 
-function parseOffice(value: string): { chamber: 'house' | 'senate'; district: string } | undefined {
+function lastOffice(value: string): { chamber: 'house' | 'senate'; district: string } | undefined {
   const cleaned = textCell(value);
-  const senate = cleaned.match(/State\s+Senator\s+District\s+(\d+)/i);
-  if (senate) return { chamber: 'senate', district: senate[1] };
-  const house = cleaned.match(/State\s+Representative\s+District\s+(\d+[A-B]?)/i);
-  if (house) return { chamber: 'house', district: house[1].toUpperCase() };
-  return undefined;
+  const matches = [...cleaned.matchAll(/State\s+(Senator|Representative)\s+District\s+(\d+[A-B]?)/gi)];
+  const match = matches.at(-1);
+  if (!match) return undefined;
+  return {
+    chamber: match[1].toLowerCase() === 'senator' ? 'senate' : 'house',
+    district: match[2].toUpperCase(),
+  };
+}
+
+function websiteFromCell(raw: string, text: string): string | undefined {
+  if (text.includes('@')) return undefined;
+  if (/(?:https?:\/\/|www\.|[a-z0-9-]+\.[a-z]{2,})/i.test(text)) {
+    const normalized = normalizeWebsite(text);
+    if (normalized) return normalized;
+  }
+  const href = raw.match(/href\s*=\s*["']([^"']+)["']/i)?.[1];
+  if (!href || /^mailto:/i.test(href)) return undefined;
+  return normalizeWebsite(href);
 }
 
 /**
- * Parses Minnesota Secretary of State candidate filing tables without depending on
- * presentation CSS/classes. Table cells and office headings are the stable contract;
- * incomplete rows and candidates without a filed campaign website are ignored.
+ * Parse the live Minnesota Secretary of State filing result tables without relying on
+ * presentation-specific heading tags/classes. The live page can place office labels in
+ * containers other than h1-h6/caption, so each table row is associated with the last
+ * preceding State Senator/Representative district label in document order.
  */
 export function parseCampaignSiteFilings(html: string): CampaignSiteFiling[] {
-  const normalized = html
+  const sanitized = html
     .replace(/<!--[\s\S]*?-->/g, ' ')
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
-    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
-    .replace(/<(h[1-6]|caption)\b[^>]*>/gi, '\n<$1>')
-    .replace(/<\/\s*(h[1-6]|caption)\s*>/gi, '</$1>\n')
-    .replace(/<tr\b[^>]*>/gi, '\n<tr>')
-    .replace(/<\/tr>/gi, '</tr>\n');
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ');
 
   let office: { chamber: 'house' | 'senate'; district: string } | undefined;
+  let cursor = 0;
   const filings: CampaignSiteFiling[] = [];
-  for (const block of normalized.split(/\n+/)) {
-    const parsedOffice = parseOffice(block);
-    if (parsedOffice) {
-      office = parsedOffice;
-      continue;
-    }
-    if (!office || !/<tr>/i.test(block)) continue;
-    const cells = [...block.matchAll(/<t[dh]\b[^>]*>([\s\S]*?)<\/t[dh]>/gi)].map((match) => textCell(match[1]));
-    if (cells.length < 3 || /candidate\s+name/i.test(cells[0])) continue;
-    const dateIndex = cells.findIndex((cell) => /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(cell));
+  const rows = sanitized.matchAll(/<tr\b[^>]*>[\s\S]*?<\/tr>/gi);
+
+  for (const rowMatch of rows) {
+    const rowIndex = rowMatch.index ?? cursor;
+    const precedingOffice = lastOffice(sanitized.slice(cursor, rowIndex));
+    if (precedingOffice) office = precedingOffice;
+    cursor = rowIndex + rowMatch[0].length;
+    if (!office) continue;
+
+    const cells = [...rowMatch[0].matchAll(/<t[dh]\b[^>]*>([\s\S]*?)<\/t[dh]>/gi)].map((match) => ({
+      raw: match[1],
+      text: textCell(match[1]),
+    }));
+    if (cells.length < 3 || /candidate\s+name/i.test(cells[0]?.text ?? '')) continue;
+
+    const dateIndex = cells.findIndex((cell) => /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(cell.text));
     if (dateIndex < 0) continue;
-    const websiteIndex = cells.findIndex((cell, index) => index > 0 && index < dateIndex && /(?:https?:\/\/|www\.|[a-z0-9-]+\.[a-z]{2,})/i.test(cell));
-    if (websiteIndex < 0) continue;
-    const website = normalizeWebsite(cells[websiteIndex]);
+    let website: string | undefined;
+    for (let index = 1; index < dateIndex; index += 1) {
+      website = websiteFromCell(cells[index].raw, cells[index].text);
+      if (website) break;
+    }
     if (!website) continue;
-    const filingDate = cells[dateIndex];
+
     filings.push({
       ...office,
-      candidateName: cells[0],
-      party: cells[1] || undefined,
+      candidateName: cells[0].text,
+      party: cells[1]?.text || undefined,
       website,
-      filingDate,
+      filingDate: cells[dateIndex].text,
     });
   }
 
