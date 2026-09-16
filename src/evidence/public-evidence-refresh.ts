@@ -1,0 +1,380 @@
+import { pool } from '@/lib/db';
+import { persistDurableEvidence, type DurableEvidenceFreshness } from './durable-ingestion';
+import { discoverMinnesotaCampaignSites, filingMatchesMember, selectCampaignContentLinks, type CampaignSiteFiling } from './campaign-site-discovery';
+import { runLiveCampaignFinanceRefresh } from './live-campaign-finance-refresh';
+import { fetchPublicPage } from './public-http';
+import { discoverMemberNews, verifyNewsLead } from './public-news';
+
+const PIPELINE_VERSION = 'public-evidence-v1';
+const DEFAULT_BATCH = 12;
+const MAX_BATCH = 24;
+const NEWS_PER_MEMBER = 2;
+const CAMPAIGN_PAGES_PER_MEMBER = 3;
+const FINANCE_REFRESH_AFTER_HOURS = 18;
+
+export interface PublicEvidenceRefreshOptions {
+  batchSize?: number;
+  forceCampaignFinance?: boolean;
+  now?: Date;
+}
+
+type MembershipRow = {
+  membership_id: string;
+  legislator_id: string;
+  name: string;
+  chamber_slug: 'house' | 'senate';
+  district: string;
+  last_public_fetch: string | null;
+};
+
+type StreamResult = {
+  attempted: number;
+  inserted: number;
+  reused: number;
+  failures: number;
+  unresolved: number;
+};
+
+function emptyStream(): StreamResult {
+  return { attempted: 0, inserted: 0, reused: 0, failures: 0, unresolved: 0 };
+}
+
+function safeMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.replace(/postgres(?:ql)?:\/\/\S+/gi, '[redacted database URL]').slice(0, 600);
+}
+
+function freshness(value: string | undefined, now: Date): DurableEvidenceFreshness {
+  if (!value) return 'unknown';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'unknown';
+  const ageDays = Math.max(0, (now.getTime() - date.getTime()) / 86_400_000);
+  if (ageDays <= 45) return 'current';
+  if (ageDays <= 365) return 'recent';
+  return 'stale';
+}
+
+async function startRun(batchSize: number): Promise<string> {
+  const result = await pool.query<{ id: string }>(`
+    INSERT INTO ingestion_runs (source_system, scope, status, metadata)
+    VALUES ('public-evidence-pipeline',$1,'running',$2::jsonb)
+    RETURNING id::text`, [
+    `current-members:batch-${batchSize}`,
+    JSON.stringify({ pipelineVersion: PIPELINE_VERSION, execution: 'vercel-runtime' }),
+  ]);
+  return result.rows[0].id;
+}
+
+async function finishRun(id: string, status: 'complete' | 'failed', metadata: Record<string, unknown>, error?: string): Promise<void> {
+  await pool.query(`
+    UPDATE ingestion_runs
+       SET status=$2, finished_at=now(), metadata=metadata || $3::jsonb, error_summary=$4
+     WHERE id=$1::uuid`, [id, status, JSON.stringify(metadata), error ?? null]);
+}
+
+async function selectMembershipBatch(batchSize: number): Promise<MembershipRow[]> {
+  const result = await pool.query<MembershipRow>(`
+    SELECT m.id::text AS membership_id,
+           m.legislator_id::text AS legislator_id,
+           l.name,
+           c.slug AS chamber_slug,
+           m.district,
+           max(sd.fetched_at)::text AS last_public_fetch
+      FROM memberships m
+      JOIN legislators l ON l.id=m.legislator_id
+      JOIN legislative_sessions s ON s.id=m.session_id
+      JOIN chambers c ON c.id=m.chamber_id
+      LEFT JOIN evidence_items ei ON ei.membership_id=m.id
+      LEFT JOIN source_documents sd ON sd.id=ei.source_document_id
+        AND sd.source_kind IN ('public_news_article','campaign_site','campaign_site_registry')
+     WHERE s.is_current=true
+       AND (m.starts_on IS NULL OR m.starts_on<=current_date)
+       AND (m.ends_on IS NULL OR m.ends_on>=current_date)
+     GROUP BY m.id,m.legislator_id,l.name,c.slug,m.district
+     ORDER BY max(sd.fetched_at) ASC NULLS FIRST,l.name
+     LIMIT $1`, [batchSize]);
+  return result.rows;
+}
+
+async function campaignFinanceDue(now: Date, force: boolean): Promise<boolean> {
+  if (force) return true;
+  const result = await pool.query<{ finished_at: string | null }>(`
+    SELECT finished_at::text
+      FROM ingestion_runs
+     WHERE source_system='mn-cfb-live' AND status='complete'
+     ORDER BY finished_at DESC NULLS LAST
+     LIMIT 1`);
+  const latest = result.rows[0]?.finished_at ? new Date(result.rows[0].finished_at) : undefined;
+  return !latest || Number.isNaN(latest.getTime()) || now.getTime() - latest.getTime() >= FINANCE_REFRESH_AFTER_HOURS * 3_600_000;
+}
+
+function matchingFiling(member: MembershipRow, filings: readonly CampaignSiteFiling[]): CampaignSiteFiling | undefined {
+  const matches = filings.filter((filing) => filingMatchesMember(filing, {
+    name: member.name,
+    chamber: member.chamber_slug,
+    district: member.district,
+  }));
+  return matches.length === 1 ? matches[0] : undefined;
+}
+
+async function persistCampaignRegistry(member: MembershipRow, filing: CampaignSiteFiling, source: Awaited<ReturnType<typeof discoverMinnesotaCampaignSites>>['filingSource']) {
+  return persistDurableEvidence({
+    sourceKind: 'campaign_site_registry',
+    sourceUrl: source.finalUrl,
+    contentSha256: source.contentSha256,
+    fetchedAt: source.fetchedAt,
+    httpStatus: source.httpStatus,
+    metadata: {
+      pipelineVersion: PIPELINE_VERSION,
+      publisher: 'Minnesota Secretary of State',
+      registryKind: 'candidate_filing_campaign_website',
+      contentType: source.contentType,
+    },
+  }, [{
+    target: { membershipId: member.membership_id },
+    kind: 'context',
+    stance: 'neutral',
+    claim: `Minnesota Secretary of State candidate filing lists campaign website ${filing.website}.`,
+    publishedAt: filing.filingDate ? new Date(`${filing.filingDate} 12:00:00 UTC`).toISOString() : undefined,
+    sourceQuality: 'official',
+    relevance: 'low',
+    freshness: freshness(filing.filingDate ? new Date(`${filing.filingDate} 12:00:00 UTC`).toISOString() : undefined, new Date()),
+    extractionMethod: 'deterministic-mn-sos-candidate-filing',
+    extractionVersion: PIPELINE_VERSION,
+    confidence: 1,
+    metadata: {
+      contextType: 'public_evidence',
+      subtype: 'campaign_site_registry',
+      campaignWebsite: filing.website,
+      filedCandidateName: filing.candidateName,
+      district: filing.district,
+      chamber: filing.chamber,
+      contextOnly: true,
+      mechanicallyActionable: false,
+      evidenceSeriesKey: `campaign_site_registry:membership:${member.membership_id}`,
+    },
+  }]);
+}
+
+async function persistCampaignPage(member: MembershipRow, pageUrl: string, now: Date) {
+  const page = await fetchPublicPage(pageUrl, {
+    timeoutMs: 12_000,
+    maxBytes: 1_500_000,
+    userAgent: 'VotePredict/2.0 campaign-site-evidence',
+  });
+  const path = new URL(page.canonicalUrl).pathname.replace(/\/+$/, '') || '/';
+  return persistDurableEvidence({
+    sourceKind: 'campaign_site',
+    sourceUrl: page.canonicalUrl,
+    contentSha256: page.contentSha256,
+    fetchedAt: page.fetchedAt,
+    httpStatus: page.httpStatus,
+    metadata: {
+      pipelineVersion: PIPELINE_VERSION,
+      contentType: page.contentType,
+      bytes: page.bytes,
+      title: page.title,
+    },
+  }, [{
+    target: { membershipId: member.membership_id },
+    kind: 'context',
+    stance: 'neutral',
+    claim: page.title ? `Campaign-site page: ${page.title}` : `Campaign-site page captured from ${new URL(page.canonicalUrl).hostname}.`,
+    excerpt: page.excerpt,
+    publishedAt: page.publishedAt,
+    sourceQuality: 'member_primary',
+    relevance: 'medium',
+    freshness: freshness(page.publishedAt ?? page.fetchedAt, now),
+    extractionMethod: 'deterministic-public-page-capture',
+    extractionVersion: PIPELINE_VERSION,
+    confidence: 1,
+    metadata: {
+      contextType: 'public_evidence',
+      subtype: 'campaign_site_page',
+      pagePath: path,
+      contextOnly: true,
+      mechanicallyActionable: false,
+      evidenceSeriesKey: `campaign_site_page:membership:${member.membership_id}:path:${path}`,
+    },
+  }]);
+}
+
+async function refreshCampaignMember(member: MembershipRow, filing: CampaignSiteFiling, now: Date): Promise<StreamResult> {
+  const result = emptyStream();
+  try {
+    const home = await fetchPublicPage(filing.website, {
+      timeoutMs: 12_000,
+      maxBytes: 1_500_000,
+      userAgent: 'VotePredict/2.0 campaign-site-evidence',
+    });
+    const urls = [home.canonicalUrl, ...selectCampaignContentLinks(home, CAMPAIGN_PAGES_PER_MEMBER - 1)];
+    for (const url of urls.slice(0, CAMPAIGN_PAGES_PER_MEMBER)) {
+      result.attempted += 1;
+      try {
+        const persisted = await persistCampaignPage(member, url, now);
+        result.inserted += persisted.inserted;
+        result.reused += persisted.reused;
+        result.unresolved += persisted.unresolvedTargets.length;
+      } catch {
+        result.failures += 1;
+      }
+    }
+  } catch {
+    result.attempted += 1;
+    result.failures += 1;
+  }
+  return result;
+}
+
+async function refreshNewsMember(member: MembershipRow, now: Date): Promise<StreamResult> {
+  const result = emptyStream();
+  let leads;
+  try {
+    leads = await discoverMemberNews(member.name, now);
+  } catch {
+    result.attempted += 1;
+    result.failures += 1;
+    return result;
+  }
+  let accepted = 0;
+  for (const lead of leads) {
+    if (accepted >= NEWS_PER_MEMBER) break;
+    result.attempted += 1;
+    try {
+      const verified = await verifyNewsLead(lead, member.name);
+      if (verified.publishedAt && new Date(verified.publishedAt).getTime() > now.getTime() + 86_400_000) {
+        throw new Error('News publication timestamp is implausibly in the future');
+      }
+      const persisted = await persistDurableEvidence({
+        sourceKind: 'public_news_article',
+        sourceUrl: verified.page.canonicalUrl,
+        contentSha256: verified.page.contentSha256,
+        fetchedAt: verified.page.fetchedAt,
+        httpStatus: verified.page.httpStatus,
+        metadata: {
+          pipelineVersion: PIPELINE_VERSION,
+          discoveryProvider: 'GDELT DOC 2.0',
+          discoveryDomain: lead.domain,
+          discoveryTitle: lead.title,
+          contentType: verified.page.contentType,
+          bytes: verified.page.bytes,
+        },
+      }, [{
+        target: { membershipId: member.membership_id },
+        kind: 'context',
+        stance: 'neutral',
+        claim: `News coverage: ${verified.page.title ?? lead.title}`,
+        excerpt: verified.page.excerpt,
+        publishedAt: verified.publishedAt,
+        sourceQuality: 'other',
+        relevance: 'medium',
+        freshness: freshness(verified.publishedAt ?? verified.page.fetchedAt, now),
+        extractionMethod: 'gdelt-discovery-deterministic-page-verification',
+        extractionVersion: PIPELINE_VERSION,
+        confidence: 1,
+        metadata: {
+          contextType: 'public_evidence',
+          subtype: 'news_article',
+          publicationDateSource: verified.publicationDateSource,
+          sourceVerified: true,
+          contextOnly: true,
+          mechanicallyActionable: false,
+        },
+      }]);
+      result.inserted += persisted.inserted;
+      result.reused += persisted.reused;
+      result.unresolved += persisted.unresolvedTargets.length;
+      accepted += 1;
+    } catch {
+      result.failures += 1;
+    }
+  }
+  return result;
+}
+
+function addStream(target: StreamResult, addition: StreamResult): void {
+  target.attempted += addition.attempted;
+  target.inserted += addition.inserted;
+  target.reused += addition.reused;
+  target.failures += addition.failures;
+  target.unresolved += addition.unresolved;
+}
+
+export async function runPublicEvidenceRefresh(options: PublicEvidenceRefreshOptions = {}) {
+  const now = options.now ?? new Date();
+  const batchSize = Math.min(MAX_BATCH, Math.max(1, Math.trunc(options.batchSize ?? DEFAULT_BATCH)));
+  const runId = await startRun(batchSize);
+  const warnings: string[] = [];
+  const campaign = emptyStream();
+  const news = emptyStream();
+
+  try {
+    const memberships = await selectMembershipBatch(batchSize);
+    let filingDiscovery: Awaited<ReturnType<typeof discoverMinnesotaCampaignSites>> | undefined;
+    try {
+      filingDiscovery = await discoverMinnesotaCampaignSites();
+    } catch (error) {
+      warnings.push(`campaign registry: ${safeMessage(error)}`);
+    }
+
+    if (filingDiscovery) {
+      for (const member of memberships) {
+        const filing = matchingFiling(member, filingDiscovery.filings);
+        if (!filing) continue;
+        try {
+          const registry = await persistCampaignRegistry(member, filing, filingDiscovery.filingSource);
+          campaign.inserted += registry.inserted;
+          campaign.reused += registry.reused;
+          campaign.unresolved += registry.unresolvedTargets.length;
+        } catch (error) {
+          warnings.push(`campaign registry ${member.name}: ${safeMessage(error)}`);
+        }
+      }
+    }
+
+    for (let offset = 0; offset < memberships.length; offset += 3) {
+      const group = memberships.slice(offset, offset + 3);
+      const rows = await Promise.all(group.map(async (member) => {
+        const filing = filingDiscovery ? matchingFiling(member, filingDiscovery.filings) : undefined;
+        const [campaignResult, newsResult] = await Promise.all([
+          filing ? refreshCampaignMember(member, filing, now) : Promise.resolve(emptyStream()),
+          refreshNewsMember(member, now),
+        ]);
+        return { campaignResult, newsResult };
+      }));
+      for (const row of rows) {
+        addStream(campaign, row.campaignResult);
+        addStream(news, row.newsResult);
+      }
+    }
+
+    let campaignFinance: Record<string, unknown> | { skipped: true; reason: string };
+    if (await campaignFinanceDue(now, options.forceCampaignFinance ?? false)) {
+      try {
+        campaignFinance = await runLiveCampaignFinanceRefresh();
+      } catch (error) {
+        campaignFinance = { skipped: true, reason: `refresh failed: ${safeMessage(error)}` };
+        warnings.push(`campaign finance: ${safeMessage(error)}`);
+      }
+    } else {
+      campaignFinance = { skipped: true, reason: `latest successful refresh is newer than ${FINANCE_REFRESH_AFTER_HOURS} hours` };
+    }
+
+    const result = {
+      pipelineVersion: PIPELINE_VERSION,
+      generatedAt: now.toISOString(),
+      batchSize,
+      membershipsProcessed: memberships.length,
+      campaignRegistryFilings: filingDiscovery?.filings.length ?? 0,
+      campaign,
+      news,
+      campaignFinance,
+      warnings,
+    };
+    await finishRun(runId, 'complete', result);
+    return result;
+  } catch (error) {
+    await finishRun(runId, 'failed', { pipelineVersion: PIPELINE_VERSION, batchSize, campaign, news, warnings }, safeMessage(error)).catch(() => undefined);
+    throw error;
+  }
+}
