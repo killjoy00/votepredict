@@ -73,7 +73,7 @@ jobs:
             exit 1
           fi
 
-      - name: Run leakage-safe finance-to-Quick screen
+      - name: Run exploratory finance-to-Quick sensitivity screen
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: node --import tsx scripts/evaluate-public-evidence-quick-screen.ts
@@ -86,21 +86,23 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
-      - name: Summarize frozen decision
+      - name: Summarize hypothesis-only result
         shell: bash
         run: |
           file=artifacts/public-evidence-quick-screen.json
           {
-            echo '## Public evidence Quick screen'
+            echo '## Public evidence Quick sensitivity screen'
             echo
             echo "- Commit: \`$GITHUB_SHA\`"
+            echo '- Evaluation status: exploratory / not promotion eligible'
             echo "- Training finance coverage: $(jq -r '.coverage.training.financeCoverage' "$file")"
             echo "- Validation finance coverage: $(jq -r '.coverage.validation.financeCoverage' "$file")"
             echo "- Selected ridge lambda: $(jq -r '.selected.lambda' "$file")"
             echo "- Validation member Brier delta: $(jq -r '.selected.deltaCandidateMinusBaseline.validation.memberBrier' "$file")"
             echo "- Validation passage Brier delta: $(jq -r '.selected.deltaCandidateMinusBaseline.validation.passageBrier' "$file")"
             echo "- Descriptive-test member Brier delta: $(jq -r '.selected.deltaCandidateMinusBaseline.descriptiveTest.memberBrier' "$file")"
-            echo "- Prospective finance shadow nomination: $(jq -r '.conclusion.prospectiveShadowNomination' "$file")"
+            echo "- Potential finance hypothesis signal: $(jq -r '.conclusion.hypothesisSignal' "$file")"
+            echo '- Prospective shadow nomination: false (historical public-availability timing is not reconstructed)'
             echo '- Serving Quick probabilities changed: no'
           } >> "$GITHUB_STEP_SUMMARY"
 
