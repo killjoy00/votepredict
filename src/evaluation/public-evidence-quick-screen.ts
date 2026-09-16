@@ -3,7 +3,11 @@ import { simulateChamber } from '@/forecasting/chamber';
 import { ordinaryMinnesotaPassageRule } from '@/forecasting/minnesota-rules';
 import { loadHistoricalQuickReplayDataset } from './historical-quick-replay-dataset';
 import { runHistoricalQuickDecayShadowReplay } from './historical-quick-decay-shadow-replay';
-import { scoreHistoricalQuickReplay, type HistoricalQuickReplayEventResult } from './historical-quick-replay';
+import {
+  scoreHistoricalQuickReplay,
+  type HistoricalQuickReplayEventResult,
+  type HistoricalQuickReplayScorecard,
+} from './historical-quick-replay';
 import { loadPublicFinanceDataset, type PublicFinanceTransaction } from './public-finance-data';
 
 export const PUBLIC_EVIDENCE_QUICK_SCREEN_SCHEMA = 'public-evidence-quick-screen-v1' as const;
@@ -169,8 +173,8 @@ function groupedTransactions(rows: readonly PublicFinanceTransaction[]): Map<str
   return grouped;
 }
 
-function scoreBySession(events: readonly HistoricalQuickReplayEventResult[], session: SessionSlug) {
-  return scoreHistoricalQuickReplay(events.filter((event) => event.session === session));
+function scoreBySession(events: readonly HistoricalQuickReplayEventResult[], session: SessionSlug): HistoricalQuickReplayScorecard {
+  return scoreHistoricalQuickReplay(events.filter((event) => event.session === session)).overall;
 }
 
 function adjustReplay(
@@ -206,7 +210,7 @@ function adjustReplay(
   });
 }
 
-function delta(candidate: ReturnType<typeof scoreHistoricalQuickReplay>, baseline: ReturnType<typeof scoreHistoricalQuickReplay>) {
+function delta(candidate: HistoricalQuickReplayScorecard, baseline: HistoricalQuickReplayScorecard) {
   return {
     memberBrier: candidate.memberBrier - baseline.memberBrier,
     memberLogLoss: candidate.memberLogLoss - baseline.memberLogLoss,
