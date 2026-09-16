@@ -205,6 +205,12 @@ function retryDelayMilliseconds(response: Response, attempt: number): number {
   return Math.min(REVISOR_MAX_RETRY_DELAY_MS, 750 * (2 ** attempt));
 }
 
+async function retryMalformedDocument(attempt: number, fetchAttempts: number): Promise<boolean> {
+  if (attempt >= fetchAttempts - 1) return false;
+  await sleep(Math.min(REVISOR_MAX_RETRY_DELAY_MS, 750 * (2 ** attempt)));
+  return true;
+}
+
 export async function fetchRevisorStatusXml(statusXmlUrl: string): Promise<string> {
   const apiUrl = normalizeRevisorStatusXmlUrl(statusXmlUrl);
   const fetchAttempts = revisorFetchAttemptBudget();
@@ -238,9 +244,11 @@ export async function fetchRevisorStatusXml(statusXmlUrl: string): Promise<strin
     const text = await response.text();
     const contentType = response.headers.get('content-type') ?? '';
     if (/<!doctype\s+html|<html\b/i.test(text.slice(0, 1000))) {
+      if (await retryMalformedDocument(attempt, fetchAttempts)) continue;
       throw new Error(`Minnesota Revisor XML endpoint returned HTML (${contentType || 'unknown content type'}): ${apiUrl}`);
     }
     if (!/<(?:[A-Z0-9_.-]+:)?BILL\b/i.test(text)) {
+      if (await retryMalformedDocument(attempt, fetchAttempts)) continue;
       throw new Error(`Minnesota Revisor XML endpoint returned an unexpected document (${contentType || 'unknown content type'}): ${apiUrl}`);
     }
     return text;

@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
+import { MIN_REVISOR_PROCESS_RESEARCH_COVERAGE } from '../src/operations/revisor-process-source-policy.js';
 
 const ENDPOINT = 'https://votepredict.vercel.app/api/operations/revisor-process-backfill';
 const BATCH_LIMIT = 12;
@@ -46,8 +47,10 @@ async function main(): Promise<void> {
   console.log(`::add-mask::${secret.replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A')}`);
 
   let totalProcessed = 0;
+  let totalExcluded = 0;
   let totalClassifiedActions = 0;
   let totalStageEvents = 0;
+  const excludedIdentifiers = new Set<string>();
   for (let batch = 1; batch <= MAX_BATCHES; batch += 1) {
     const response = await post(secret, `?limit=${BATCH_LIMIT}`);
     if (!response.ok) {
@@ -55,13 +58,17 @@ async function main(): Promise<void> {
     }
     const result = await response.json() as {
       processed: number;
+      excluded: number;
+      excludedIdentifiers: string[];
       classifiedActions: number;
       stageEvents: number;
       done: boolean;
     };
     totalProcessed += result.processed;
+    totalExcluded += result.excluded;
     totalClassifiedActions += result.classifiedActions;
     totalStageEvents += result.stageEvents;
+    for (const identifier of result.excludedIdentifiers) excludedIdentifiers.add(identifier);
     console.log(JSON.stringify({ batch, ...result }));
     if (result.done || result.processed === 0) break;
     if (batch === MAX_BATCHES) throw new Error('Process backfill exceeded maximum batch count');
@@ -74,14 +81,31 @@ async function main(): Promise<void> {
   const verification = await verificationResponse.json() as {
     targetBills: number;
     parsedBills: number;
+    excludedBills: number;
+    completedBills: number;
     coverage: number;
     stageEvents: number;
     stageKinds: Record<string, number>;
     complete: boolean;
   };
-  console.log(JSON.stringify({ totals: { totalProcessed, totalClassifiedActions, totalStageEvents }, verification }));
-  if (!verification.complete || verification.coverage !== 1) {
-    throw new Error(`Process backfill incomplete: ${verification.parsedBills}/${verification.targetBills}`);
+  console.log(JSON.stringify({
+    totals: {
+      totalProcessed,
+      totalExcluded,
+      totalClassifiedActions,
+      totalStageEvents,
+      excludedIdentifiers: [...excludedIdentifiers].sort(),
+    },
+    verification,
+    minimumResearchCoverage: MIN_REVISOR_PROCESS_RESEARCH_COVERAGE,
+  }));
+  if (!verification.complete) {
+    throw new Error(`Process backfill incomplete: ${verification.completedBills}/${verification.targetBills} classified or explicitly excluded`);
+  }
+  if (verification.coverage < MIN_REVISOR_PROCESS_RESEARCH_COVERAGE) {
+    throw new Error(
+      `Process source coverage ${(verification.coverage * 100).toFixed(2)}% is below the frozen ${(MIN_REVISOR_PROCESS_RESEARCH_COVERAGE * 100).toFixed(2)}% research gate`,
+    );
   }
 }
 
