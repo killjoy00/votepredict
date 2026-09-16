@@ -25,8 +25,13 @@ export type ProductionReadiness = {
     currentCampaignFinanceItems: number;
     campaignFinanceMembers: number;
     currentCuratedItems: number;
+    publicNewsItems: number;
+    campaignSiteItems: number;
+    publicEvidenceMembers: number;
     mechanicallyActionableItems: number;
     latestCampaignFinanceFetch?: string;
+    latestPublicEvidenceRun?: string;
+    latestPublicEvidenceStatus?: string;
   };
 };
 
@@ -69,8 +74,13 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
       campaign_finance_items: number;
       campaign_finance_members: number;
       curated_items: number;
+      public_news_items: number;
+      campaign_site_items: number;
+      public_evidence_members: number;
       mechanically_actionable_items: number;
       latest_campaign_finance_fetch: string | null;
+      latest_public_evidence_run: string | null;
+      latest_public_evidence_status: string | null;
     }>(`
       WITH current_evidence AS (
         SELECT ei.*, sd.source_kind, sd.fetched_at
@@ -87,8 +97,13 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
         count(*) FILTER (WHERE metadata->>'contextType'='campaign_finance')::int AS campaign_finance_items,
         count(DISTINCT membership_id) FILTER (WHERE metadata->>'contextType'='campaign_finance')::int AS campaign_finance_members,
         count(*) FILTER (WHERE source_kind IN ('member_statement','official_news','interest_group_position','official_member_profile','official_committee_roster'))::int AS curated_items,
+        count(*) FILTER (WHERE source_kind='public_news_article')::int AS public_news_items,
+        count(*) FILTER (WHERE source_kind IN ('campaign_site','campaign_site_registry'))::int AS campaign_site_items,
+        count(DISTINCT membership_id) FILTER (WHERE source_kind IN ('public_news_article','campaign_site','campaign_site_registry'))::int AS public_evidence_members,
         count(*) FILTER (WHERE metadata->>'mechanicallyActionable'='true')::int AS mechanically_actionable_items,
-        max(fetched_at) FILTER (WHERE source_kind='campaign_finance_bulk')::text AS latest_campaign_finance_fetch
+        max(fetched_at) FILTER (WHERE source_kind='campaign_finance_bulk')::text AS latest_campaign_finance_fetch,
+        (SELECT finished_at::text FROM ingestion_runs WHERE source_system='public-evidence-pipeline' ORDER BY created_at DESC LIMIT 1) AS latest_public_evidence_run,
+        (SELECT status FROM ingestion_runs WHERE source_system='public-evidence-pipeline' ORDER BY created_at DESC LIMIT 1) AS latest_public_evidence_status
       FROM current_evidence`),
   ]);
 
@@ -117,8 +132,13 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
     campaign_finance_items: 0,
     campaign_finance_members: 0,
     curated_items: 0,
+    public_news_items: 0,
+    campaign_site_items: 0,
+    public_evidence_members: 0,
     mechanically_actionable_items: 0,
     latest_campaign_finance_fetch: null,
+    latest_public_evidence_run: null,
+    latest_public_evidence_status: null,
   };
 
   return {
@@ -144,8 +164,13 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
       currentCampaignFinanceItems: Number(evidence.campaign_finance_items),
       campaignFinanceMembers: Number(evidence.campaign_finance_members),
       currentCuratedItems: Number(evidence.curated_items),
+      publicNewsItems: Number(evidence.public_news_items),
+      campaignSiteItems: Number(evidence.campaign_site_items),
+      publicEvidenceMembers: Number(evidence.public_evidence_members),
       mechanicallyActionableItems: Number(evidence.mechanically_actionable_items),
       latestCampaignFinanceFetch: evidence.latest_campaign_finance_fetch ?? undefined,
+      latestPublicEvidenceRun: evidence.latest_public_evidence_run ?? undefined,
+      latestPublicEvidenceStatus: evidence.latest_public_evidence_status ?? undefined,
     },
   };
 }
