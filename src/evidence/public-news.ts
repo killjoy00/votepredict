@@ -3,6 +3,11 @@ import { fetchPublicPage, publicPageMentionsPerson, type PublicPage } from './pu
 const GDELT_DOC_URL = 'https://api.gdeltproject.org/api/v2/doc/doc';
 const LOOKBACK_DAYS = 45;
 const MAX_RESULTS = 4;
+const GDELT_TIMEOUT_MS = 25_000;
+const GDELT_START_SPACING_MS = 1_500;
+
+let gdeltGate: Promise<void> = Promise.resolve();
+let gdeltNextStart = 0;
 
 export interface NewsLead {
   url: string;
@@ -32,6 +37,63 @@ function compactTimestamp(date: Date): string {
   ].join('');
 }
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function waitForGdeltSlot(): Promise<void> {
+  let release = () => undefined;
+  const previous = gdeltGate;
+  gdeltGate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await previous;
+  try {
+    const delay = gdeltNextStart - Date.now();
+    if (delay > 0) await sleep(delay);
+    gdeltNextStart = Date.now() + GDELT_START_SPACING_MS;
+  } finally {
+    release();
+  }
+}
+
+function gdeltFailure(status: number, body: string): Error {
+  const detail = body.replace(/\s+/g, ' ').trim().slice(0, 240);
+  return new Error(`GDELT returned HTTP ${status}${detail ? `: ${detail}` : ''}`);
+}
+
+async function fetchGdeltJson(url: string): Promise<GdeltResponse> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    if (attempt > 0) await sleep(2_500 * attempt);
+    await waitForGdeltSlot();
+    try {
+      const response = await fetch(url, {
+        headers: {
+          accept: 'application/json,text/plain;q=0.9,*/*;q=0.8',
+          'user-agent': 'Mozilla/5.0 (compatible; VotePredict/2.0; +https://vote.planitnow.us)',
+        },
+        signal: AbortSignal.timeout(GDELT_TIMEOUT_MS),
+      });
+      const body = await response.text();
+      if (!response.ok) {
+        lastError = gdeltFailure(response.status, body);
+        if (response.status !== 429 && response.status < 500) throw lastError;
+        continue;
+      }
+      try {
+        return JSON.parse(body) as GdeltResponse;
+      } catch {
+        lastError = gdeltFailure(response.status, body);
+        continue;
+      }
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error('GDELT discovery failed');
+}
+
 export function gdeltSeenDate(value: unknown): string | undefined {
   if (typeof value !== 'string') return undefined;
   const digits = value.replace(/[^0-9]/g, '');
@@ -57,12 +119,7 @@ export async function discoverMemberNews(memberName: string, asOf = new Date()):
     startdatetime: compactTimestamp(start),
     enddatetime: compactTimestamp(asOf),
   });
-  const response = await fetch(`${GDELT_DOC_URL}?${params.toString()}`, {
-    headers: { 'user-agent': 'VotePredict/2.0 public-evidence-news-discovery' },
-    signal: AbortSignal.timeout(8_000),
-  });
-  if (!response.ok) throw new Error(`GDELT returned HTTP ${response.status}`);
-  const payload = await response.json() as GdeltResponse;
+  const payload = await fetchGdeltJson(`${GDELT_DOC_URL}?${params.toString()}`);
   const rows = Array.isArray(payload.articles) ? payload.articles as GdeltArticle[] : [];
   const unique = new Map<string, NewsLead>();
   for (const row of rows) {
