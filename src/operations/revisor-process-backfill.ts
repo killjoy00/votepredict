@@ -6,6 +6,10 @@ import {
   REVISOR_PROCESS_PARSER_VERSION,
   type RevisorProcessEvent,
 } from '@/sources/minnesota/revisor-process';
+import {
+  classifyRevisorProcessSourceFailure,
+  type RevisorProcessSourceExclusionReason,
+} from '@/operations/revisor-process-source-policy';
 
 export const REVISOR_PROCESS_BACKFILL_MAX_BATCH = 24;
 const FETCH_CONCURRENCY = 3;
@@ -18,14 +22,26 @@ interface ProcessBackfillBillRow {
 }
 
 interface FetchedProcessBill extends ProcessBackfillBillRow {
+  status: 'parsed';
   fetchedAt: string;
   contentSha256: string;
   events: RevisorProcessEvent[];
 }
 
+interface ExcludedProcessBill extends ProcessBackfillBillRow {
+  status: 'excluded';
+  fetchedAt: string;
+  exclusionReason: RevisorProcessSourceExclusionReason;
+  failureMessage: string;
+}
+
+type ProcessBackfillFetchResult = FetchedProcessBill | ExcludedProcessBill;
+
 export interface RevisorProcessBackfillBatchResult {
   requested: number;
   processed: number;
+  excluded: number;
+  excludedIdentifiers: string[];
   classifiedActions: number;
   stageEvents: number;
   done: boolean;
@@ -34,6 +50,8 @@ export interface RevisorProcessBackfillBatchResult {
 export interface RevisorProcessBackfillVerification {
   targetBills: number;
   parsedBills: number;
+  excludedBills: number;
+  completedBills: number;
   coverage: number;
   stageEvents: number;
   stageKinds: Record<string, number>;
@@ -63,23 +81,34 @@ async function selectBatch(limit: number): Promise<ProcessBackfillBillRow[]> {
   return result.rows;
 }
 
-async function fetchBill(row: ProcessBackfillBillRow): Promise<FetchedProcessBill> {
+async function fetchBill(row: ProcessBackfillBillRow): Promise<ProcessBackfillFetchResult> {
+  const fetchedAt = new Date().toISOString();
   try {
     const xml = await fetchRevisorStatusXml(row.source_url);
     return {
       ...row,
-      fetchedAt: new Date().toISOString(),
+      status: 'parsed',
+      fetchedAt,
       contentSha256: createHash('sha256').update(xml).digest('hex'),
       events: parseRevisorProcessEvents({ xml, identifier: row.identifier }),
     };
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'unknown Revisor fetch failure';
-    throw new Error(`${row.identifier}: ${message}`);
+    const policy = classifyRevisorProcessSourceFailure(error);
+    if (policy.permanent && policy.reason) {
+      return {
+        ...row,
+        status: 'excluded',
+        fetchedAt,
+        exclusionReason: policy.reason,
+        failureMessage: policy.message,
+      };
+    }
+    throw new Error(`${row.identifier}: ${policy.message}`);
   }
 }
 
-async function fetchBatch(rows: readonly ProcessBackfillBillRow[]): Promise<FetchedProcessBill[]> {
-  const fetched: FetchedProcessBill[] = [];
+async function fetchBatch(rows: readonly ProcessBackfillBillRow[]): Promise<ProcessBackfillFetchResult[]> {
+  const fetched: ProcessBackfillFetchResult[] = [];
   for (let offset = 0; offset < rows.length; offset += FETCH_CONCURRENCY) {
     fetched.push(...await Promise.all(rows.slice(offset, offset + FETCH_CONCURRENCY).map(fetchBill)));
   }
@@ -204,6 +233,7 @@ async function persistBill(row: FetchedProcessBill): Promise<number> {
          SET metadata = metadata || jsonb_build_object(
            'revisorProcessHistory', jsonb_build_object(
              'parserVersion', $2::text,
+             'status', 'parsed',
              'sourceUrl', $3::text,
              'contentSha256', $4::text,
              'fetchedAt', $5::timestamptz,
@@ -235,23 +265,64 @@ async function persistBill(row: FetchedProcessBill): Promise<number> {
   }
 }
 
+async function persistExclusion(row: ExcludedProcessBill): Promise<void> {
+  await pool.query(`
+    UPDATE bills
+       SET metadata = metadata || jsonb_build_object(
+         'revisorProcessHistory', jsonb_build_object(
+           'parserVersion', $2::text,
+           'status', 'excluded',
+           'sourceUrl', $3::text,
+           'fetchedAt', $4::timestamptz,
+           'exclusionReason', $5::text,
+           'failureMessage', $6::text,
+           'classifiedActions', 0,
+           'stageEvents', 0,
+           'currentAuthorsModelEligible', false,
+           'currentCompanionModelEligible', false
+         )
+       ),
+           updated_at = now()
+     WHERE id = $1::uuid`, [
+    row.bill_id,
+    REVISOR_PROCESS_PARSER_VERSION,
+    row.source_url,
+    row.fetchedAt,
+    row.exclusionReason,
+    row.failureMessage,
+  ]);
+}
+
 export async function backfillRevisorProcessBatch(
   requestedLimit = 12,
 ): Promise<RevisorProcessBackfillBatchResult> {
   const limit = Math.min(REVISOR_PROCESS_BACKFILL_MAX_BATCH, Math.max(1, Math.floor(requestedLimit)));
   const rows = await selectBatch(limit);
   if (rows.length === 0) {
-    return { requested: limit, processed: 0, classifiedActions: 0, stageEvents: 0, done: true };
+    return {
+      requested: limit,
+      processed: 0,
+      excluded: 0,
+      excludedIdentifiers: [],
+      classifiedActions: 0,
+      stageEvents: 0,
+      done: true,
+    };
   }
-  const fetched = await fetchBatch(rows);
+  const results = await fetchBatch(rows);
+  const parsed = results.filter((row): row is FetchedProcessBill => row.status === 'parsed');
+  const excluded = results.filter((row): row is ExcludedProcessBill => row.status === 'excluded');
   let stageEvents = 0;
-  for (const row of fetched) stageEvents += await persistBill(row);
+  for (const row of parsed) stageEvents += await persistBill(row);
+  for (const row of excluded) await persistExclusion(row);
   return {
     requested: limit,
-    processed: fetched.length,
-    classifiedActions: fetched.reduce((sum, row) => sum + row.events.length, 0),
+    processed: results.length,
+    excluded: excluded.length,
+    excludedIdentifiers: excluded.map((row) => row.identifier),
+    classifiedActions: parsed.reduce((sum, row) => sum + row.events.length, 0),
     stageEvents,
-    done: fetched.length < limit,
+    done: results.length < limit,
   };
 }
 
@@ -259,6 +330,7 @@ export async function verifyRevisorProcessBackfill(): Promise<RevisorProcessBack
   const summary = await pool.query<{
     target_bills: string;
     parsed_bills: string;
+    excluded_bills: string;
     stage_events: string;
   }>(`
     WITH target AS (
@@ -271,7 +343,11 @@ export async function verifyRevisorProcessBackfill(): Promise<RevisorProcessBack
     )
     SELECT (SELECT count(*) FROM target)::text AS target_bills,
            (SELECT count(*) FROM bills b JOIN target t ON t.id = b.id
-             WHERE b.metadata #>> '{revisorProcessHistory,parserVersion}' = $1)::text AS parsed_bills,
+             WHERE b.metadata #>> '{revisorProcessHistory,parserVersion}' = $1
+               AND b.metadata #>> '{revisorProcessHistory,status}' IS DISTINCT FROM 'excluded')::text AS parsed_bills,
+           (SELECT count(*) FROM bills b JOIN target t ON t.id = b.id
+             WHERE b.metadata #>> '{revisorProcessHistory,parserVersion}' = $1
+               AND b.metadata #>> '{revisorProcessHistory,status}' = 'excluded')::text AS excluded_bills,
            (SELECT count(*) FROM legislative_stage_events se JOIN target t ON t.id = se.bill_id
              WHERE se.metadata ->> 'parserVersion' = $1)::text AS stage_events`, [REVISOR_PROCESS_PARSER_VERSION]);
   const kinds = await pool.query<{ stage_kind: string; n: string }>(`
@@ -282,12 +358,16 @@ export async function verifyRevisorProcessBackfill(): Promise<RevisorProcessBack
      ORDER BY stage_kind`, [REVISOR_PROCESS_PARSER_VERSION]);
   const targetBills = Number(summary.rows[0]?.target_bills ?? 0);
   const parsedBills = Number(summary.rows[0]?.parsed_bills ?? 0);
+  const excludedBills = Number(summary.rows[0]?.excluded_bills ?? 0);
+  const completedBills = parsedBills + excludedBills;
   return {
     targetBills,
     parsedBills,
+    excludedBills,
+    completedBills,
     coverage: targetBills > 0 ? parsedBills / targetBills : 0,
     stageEvents: Number(summary.rows[0]?.stage_events ?? 0),
     stageKinds: Object.fromEntries(kinds.rows.map((row) => [row.stage_kind, Number(row.n)])),
-    complete: targetBills > 0 && parsedBills === targetBills,
+    complete: targetBills > 0 && completedBills === targetBills,
   };
 }
