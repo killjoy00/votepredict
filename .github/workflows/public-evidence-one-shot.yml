@@ -26,7 +26,6 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
       VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
-      VOTEPREDICT_PUBLIC_EVIDENCE_BATCH: '24'
       VOTEPREDICT_PUBLIC_EVIDENCE_SCREEN_OUTPUT: artifacts/public-evidence-quick-screen.json
 
     steps:
@@ -60,7 +59,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "${VERCEL_TOKEN:-}" ]; then
-            echo '::error::VERCEL_TOKEN is unavailable. Public evidence pipeline was not attempted.'
+            echo '::error::VERCEL_TOKEN is unavailable. Public evidence Quick screen was not attempted.'
             exit 1
           fi
 
@@ -73,11 +72,6 @@ jobs:
             echo '::error::Could not read the VotePredict production environment.'
             exit 1
           fi
-
-      - name: Seed first production public-evidence batch
-        env:
-          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
-        run: node --import tsx scripts/run-production-public-evidence-refresh.ts
 
       - name: Run leakage-safe finance-to-Quick screen
         env:
