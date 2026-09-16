@@ -52,6 +52,23 @@ test('campaign filing parser follows live-style office labels outside heading ta
   ]);
 });
 
+test('campaign filing parser keeps an office label embedded in its own table row', () => {
+  const html = `
+    <table>
+      <tr><td colspan="4"><strong>State Senator District 27</strong></td></tr>
+      <tr><th>Candidate Name</th><th>Party</th><th>Website</th><th>File Date</th></tr>
+      <tr><td>Andrew Mathews</td><td>Republican</td><td><a href="https://andrewmathews.com">andrewmathews.com</a></td><td>5/19/2026</td></tr>
+      <tr><td colspan="4"><strong>State Senator District 47</strong></td></tr>
+      <tr><th>Candidate Name</th><th>Party</th><th>Website</th><th>File Date</th></tr>
+      <tr><td>Amanda Hemmingsen-Jaeger</td><td>Democratic-Farmer-Labor</td><td><a href="https://www.amandaformn.com">www.amandaformn.com</a></td><td>5/19/2026</td></tr>
+    </table>`;
+  const rows = parseCampaignSiteFilings(html);
+  assert.deepEqual(rows.map((row) => [row.chamber, row.district, row.candidateName]), [
+    ['senate', '27', 'Andrew Mathews'],
+    ['senate', '47', 'Amanda Hemmingsen-Jaeger'],
+  ]);
+});
+
 test('public URL canonicalization removes tracking but preserves substantive query state', () => {
   assert.equal(
     canonicalPublicUrl('HTTPS://Example.COM:443/issues/?utm_source=x&bill=HF123&fbclid=abc#top'),
