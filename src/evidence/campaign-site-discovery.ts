@@ -69,9 +69,9 @@ function websiteFromCell(raw: string, text: string): string | undefined {
 
 /**
  * Parse the live Minnesota Secretary of State filing result tables without relying on
- * presentation-specific heading tags/classes. The live page can place office labels in
- * containers other than h1-h6/caption, so each table row is associated with the last
- * preceding State Senator/Representative district label in document order.
+ * presentation-specific heading tags/classes. Office labels can appear either between
+ * candidate rows or inside a table row, so each candidate row inherits the most recent
+ * State Senator/Representative district label in document order.
  */
 export function parseCampaignSiteFilings(html: string): CampaignSiteFiling[] {
   const sanitized = html
@@ -88,6 +88,8 @@ export function parseCampaignSiteFilings(html: string): CampaignSiteFiling[] {
     const rowIndex = rowMatch.index ?? cursor;
     const precedingOffice = lastOffice(sanitized.slice(cursor, rowIndex));
     if (precedingOffice) office = precedingOffice;
+    const rowOffice = lastOffice(rowMatch[0]);
+    if (rowOffice) office = rowOffice;
     cursor = rowIndex + rowMatch[0].length;
     if (!office) continue;
 

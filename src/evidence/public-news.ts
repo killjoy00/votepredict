@@ -3,8 +3,9 @@ import { fetchPublicPage, publicPageMentionsPerson, type PublicPage } from './pu
 const GDELT_DOC_URL = 'https://api.gdeltproject.org/api/v2/doc/doc';
 const LOOKBACK_DAYS = 45;
 const MAX_RESULTS = 4;
-const GDELT_TIMEOUT_MS = 25_000;
-const GDELT_START_SPACING_MS = 1_500;
+const GDELT_TIMEOUT_MS = 30_000;
+const GDELT_START_SPACING_MS = 6_000;
+const GDELT_ATTEMPTS = 3;
 
 let gdeltGate: Promise<void> = Promise.resolve();
 let gdeltNextStart = 0;
@@ -64,8 +65,8 @@ function gdeltFailure(status: number, body: string): Error {
 
 async function fetchGdeltJson(url: string): Promise<GdeltResponse> {
   let lastError: unknown;
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    if (attempt > 0) await sleep(2_500 * attempt);
+  for (let attempt = 0; attempt < GDELT_ATTEMPTS; attempt += 1) {
+    if (attempt > 0) await sleep(5_000 * attempt);
     await waitForGdeltSlot();
     try {
       const response = await fetch(url, {
@@ -111,7 +112,7 @@ export function gdeltSeenDate(value: unknown): string | undefined {
 export async function discoverMemberNews(memberName: string, asOf = new Date()): Promise<NewsLead[]> {
   const start = new Date(asOf.getTime() - LOOKBACK_DAYS * 86_400_000);
   const params = new URLSearchParams({
-    query: `"${memberName}" Minnesota legislature`,
+    query: `"${memberName}" Minnesota`,
     mode: 'artlist',
     format: 'json',
     maxrecords: String(MAX_RESULTS),
