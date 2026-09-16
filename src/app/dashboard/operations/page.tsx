@@ -2,9 +2,11 @@ import { getServingMemberModelStatus } from '@/forecasting/member-model-serving'
 import { requireOwner } from '@/lib/auth/guard';
 import { getIntroductionServingScorecard } from '@/operations/introduction-scorecard';
 import { getOperationalHealth } from '@/operations/health';
+import { getProductionReadiness } from '@/operations/readiness';
 import { listResolutionQueue } from '@/operations/resolution';
 import { getLeakageSafeProductionScorecard } from '@/operations/safe-scorecard';
 import { OutcomeResolutionQueue } from './operations-desk';
+import { ProductionReadinessPanel } from './production-readiness-panel';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,16 +30,18 @@ function shortHash(value: string) {
 
 export default async function OperationsPage() {
   const user = await requireOwner();
-  const [health, floorScorecard, queue, introductionResult] = await Promise.all([
+  const [health, floorScorecard, queue, introductionResult, readiness] = await Promise.all([
     getOperationalHealth(),
     getLeakageSafeProductionScorecard(user.id),
     listResolutionQueue(user.id),
     getIntroductionServingScorecard()
       .then((scorecard) => ({ scorecard, error: null as string | null }))
       .catch((error) => ({ scorecard: null, error: error instanceof Error ? error.message : 'Introduction scorecard failed.' })),
+    getProductionReadiness(),
   ]);
   const introduction = introductionResult.scorecard;
   const memberModel = getServingMemberModelStatus();
+  const sourceWarningCount = health.warnings.filter((warning) => !warning.startsWith('Deep research:')).length;
 
   return (
     <main className="ops-shell">
@@ -46,6 +50,20 @@ export default async function OperationsPage() {
         <div><span className="kicker">Production operations</span><h1>Health + scorecards</h1><p>Freshness, serving integrity, official outcome reconciliation, and forecast performance by stage.</p></div>
         <div className={`health-chip ${health.warnings.length || introductionResult.error ? 'warning' : 'clear'}`}>{health.warnings.length || introductionResult.error ? 'Review warnings' : 'No active warnings'}</div>
       </header>
+
+      <ProductionReadinessPanel
+        readiness={readiness}
+        servingModel={memberModel.modelVersion}
+        rollbackActive={memberModel.rollbackActive}
+        introductionModel={introduction?.modelVersion}
+        introductionVerified={introduction?.predictionIntegrity.verified ?? false}
+        scheduler={{
+          enabledSchedules: health.continuousForecasting.enabledSchedules,
+          dueSchedules: health.continuousForecasting.dueSchedules,
+          failed24Hours: health.continuousForecasting.failed24Hours,
+        }}
+        sourceWarningCount={sourceWarningCount}
+      />
 
       <section className={`panel intro-scorecard ${introductionResult.error ? 'intro-failed' : ''}`}>
         <div className="panel-heading">
