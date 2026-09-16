@@ -211,12 +211,17 @@ export async function discoverMinnesotaCampaignSites(): Promise<CampaignSiteDisc
   return { filingSource: source, filings: parseCampaignSiteFilings(source.rawContent) };
 }
 
+function isCampaignBoilerplatePath(pathname: string): boolean {
+  return /(?:^|\/)(?:privacy(?:[-_]?policy)?|cookie(?:[-_]?policy)?|terms(?:[-_](?:of[-_])?service)?|legal|disclaimer|copyright|intellectual[-_]property[-_]policy)(?:\/|$)/i.test(pathname);
+}
+
 export function selectCampaignContentLinks(page: PublicPage, limit = 2): string[] {
   const base = new URL(page.finalUrl);
   const scored = page.links.flatMap((link) => {
     try {
       const url = new URL(link);
       if (url.hostname.replace(/^www\./, '') !== base.hostname.replace(/^www\./, '')) return [];
+      if (isCampaignBoilerplatePath(url.pathname)) return [];
       const key = `${url.pathname} ${url.search}`.toLowerCase();
       const score = /issues?|priorities|platform|policy|positions?/.test(key) ? 4
         : /news|press|updates?|blog/.test(key) ? 3
