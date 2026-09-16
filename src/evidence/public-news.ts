@@ -42,7 +42,7 @@ function sleep(ms: number): Promise<void> {
 }
 
 async function waitForGdeltSlot(): Promise<void> {
-  let release = () => undefined;
+  let release: () => void = () => {};
   const previous = gdeltGate;
   gdeltGate = new Promise<void>((resolve) => {
     release = resolve;
