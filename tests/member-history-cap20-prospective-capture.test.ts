@@ -58,7 +58,7 @@ test('reconstructs the exact serving member-model inputs from frozen Quick outpu
   }
 });
 
-test('fails before database capture when the future serving model version is not the frozen baseline', async () => {
+test('does not enroll the frozen v1.1 cap-20 protocol when decay-180 is serving', async () => {
   const request = {
     forecastId: 'forecast',
     chamberId: 'house-id',
@@ -79,7 +79,7 @@ test('fails before database capture when the future serving model version is not
     revisionId: 'revision',
     revisionNumber: 1,
     researchMode: 'quick',
-    modelVersion: 'member-eb-v2',
+    modelVersion: 'member-eb-v1.2-decay180',
     asOf: '2027-03-10T12:00:00.000Z',
     chamber: { id: 'house-id', slug: 'house', name: 'House', activeMembers: 0, passageRule: { kind: 'fixed', requiredYes: 1 }, requiredYes: 1 },
     supportState: 'partial',
@@ -88,8 +88,5 @@ test('fails before database capture when the future serving model version is not
     diagnostics: { prefilteredEvents: 0, safeCandidateEvents: 0, selectedAnalogues: 0, directAnalogueMembers: 0, cannotPredictMembers: 0 },
   } as any;
 
-  await assert.rejects(
-    () => captureMemberHistoryCap20ProspectiveShadow(request, quick),
-    /baseline model drift/,
-  );
+  assert.equal(await captureMemberHistoryCap20ProspectiveShadow(request, quick), undefined);
 });
