@@ -26,6 +26,13 @@ type Readiness = {
   };
 };
 
+type BootstrapState = {
+  houseMembers: number;
+  senateMembers: number;
+  houseBills: number;
+  senateBills: number;
+};
+
 function runChild(script: string, args: string[], env: NodeJS.ProcessEnv): void {
   const result = spawnSync(process.execPath, ['--import', 'tsx', script, ...args], {
     env,
@@ -38,7 +45,7 @@ function runChild(script: string, args: string[], env: NodeJS.ProcessEnv): void 
   if (result.status !== 0) throw new Error(`${script} failed with exit code ${result.status ?? 'unknown'}`);
 }
 
-async function verifyBootstrap(connectionString: string) {
+async function readBootstrapState(connectionString: string): Promise<BootstrapState> {
   const pool = new Pool({ connectionString, max: 1 });
   try {
     const result = await pool.query<{
@@ -62,21 +69,23 @@ async function verifyBootstrap(connectionString: string) {
       GROUP BY s.id`);
     if (result.rows.length !== 1) throw new Error('2027-2028 bootstrap verification could not resolve the session');
     const row = result.rows[0];
-    const summary = {
+    return {
       houseMembers: Number(row.house_members),
       senateMembers: Number(row.senate_members),
       houseBills: Number(row.house_bills),
       senateBills: Number(row.senate_bills),
     };
-    if (summary.houseMembers < 130 || summary.senateMembers < 65) {
-      throw new Error(`2027 roster remains implausible after bootstrap: ${JSON.stringify(summary)}`);
-    }
-    if (summary.houseBills + summary.senateBills < 1) {
-      throw new Error(`2027 Revisor universe remains empty after bootstrap: ${JSON.stringify(summary)}`);
-    }
-    return summary;
   } finally {
     await pool.end();
+  }
+}
+
+function verifyBootstrap(summary: BootstrapState): void {
+  if (summary.houseMembers < 130 || summary.senateMembers < 65) {
+    throw new Error(`2027 roster remains implausible after bootstrap: ${JSON.stringify(summary)}`);
+  }
+  if (summary.houseBills + summary.senateBills < 1) {
+    throw new Error(`2027 Revisor universe remains empty after bootstrap: ${JSON.stringify(summary)}`);
   }
 }
 
@@ -109,9 +118,17 @@ async function main() {
   }
 
   const childEnv = { ...process.env, ...runtime };
-  runChild('scripts/ingest-lrl-memberships.ts', ['--session=2027-2028'], childEnv);
+  const before = await readBootstrapState(connectionString);
+  if (before.houseMembers < 130 || before.senateMembers < 65) {
+    runChild('scripts/ingest-lrl-memberships.ts', ['--session=2027-2028'], childEnv);
+  } else {
+    console.log(JSON.stringify({ rosterBootstrap: 'skipped', reason: 'plausible_roster_already_persisted', state: before }));
+  }
   runChild('scripts/ingest-live-revisor-universe.ts', [], childEnv);
-  console.log(JSON.stringify({ bootstrap: 'complete', verification: await verifyBootstrap(connectionString) }));
+
+  const after = await readBootstrapState(connectionString);
+  verifyBootstrap(after);
+  console.log(JSON.stringify({ bootstrap: 'complete', verification: after }));
 }
 
 main().catch((error) => {
