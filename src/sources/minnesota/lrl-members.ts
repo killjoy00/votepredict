@@ -185,14 +185,17 @@ export function parseLrlMembershipDetail(input: { html: string; session: Minneso
 async function fetchHtml(sourceUrl: string): Promise<string> {
   const url = new URL(sourceUrl);
   if (url.protocol !== 'https:' || url.hostname !== 'www.lrl.mn.gov' || !url.pathname.startsWith('/legdb/')) throw new Error(`Unsupported LRL URL: ${sourceUrl}`);
-  const response = await fetch(sourceUrl, { headers: { 'User-Agent': 'VotePredict/2.0 historical membership ingester' }, signal: AbortSignal.timeout(20_000) });
+  const response = await fetch(sourceUrl, { headers: { 'User-Agent': 'VotePredict/2.0 Minnesota membership ingester' }, signal: AbortSignal.timeout(20_000) });
   if (!response.ok) throw new Error(`Minnesota LRL returned ${response.status}: ${sourceUrl}`);
   return response.text();
 }
 
+export async function fetchLrlLegislatorRefs(session: MinnesotaHouseSession): Promise<LrlLegislatorRef[]> {
+  return discoverLrlLegislators(await fetchHtml(buildLrlSessionSearchUrl(session)));
+}
+
 export async function listLrlMemberships(session: MinnesotaHouseSession): Promise<HistoricalMembershipRecord[]> {
-  const searchUrl = buildLrlSessionSearchUrl(session);
-  const refs = discoverLrlLegislators(await fetchHtml(searchUrl));
+  const refs = await fetchLrlLegislatorRefs(session);
   if (refs.length < 190) throw new Error(`LRL returned only ${refs.length} legislators for ${session.slug}`);
   const results: HistoricalMembershipRecord[] = [];
   for (const ref of refs) {
