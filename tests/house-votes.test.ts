@@ -8,7 +8,11 @@ import {
   normalizeMemberName,
   parseHouseVoteDetailHtml,
 } from '../src/sources/minnesota/house-votes.js';
-import { getMinnesotaHouseSession, MINNESOTA_HOUSE_HISTORICAL_SESSIONS } from '../src/sources/minnesota/sessions.js';
+import {
+  getMinnesotaHouseSession,
+  MINNESOTA_HOUSE_HISTORICAL_SESSIONS,
+  MINNESOTA_HOUSE_UPCOMING_SESSIONS,
+} from '../src/sources/minnesota/sessions.js';
 
 const DETAIL_FIXTURE = `
 <html><body>
@@ -80,8 +84,10 @@ test('vote classifier and member normalization are deterministic', () => {
   assert.equal(normalizeMemberName('Pérez-Vega'), 'perez vega');
 });
 
-test('historical House session configuration covers the target three legislatures', () => {
+test('historical House session configuration stays closed while 2027-2028 is supported separately', () => {
   assert.deepEqual(MINNESOTA_HOUSE_HISTORICAL_SESSIONS.map((session) => session.sessionKey), ['302', '300', '257']);
+  assert.deepEqual(MINNESOTA_HOUSE_UPCOMING_SESSIONS.map((session) => session.slug), ['2027-2028']);
   assert.equal(getMinnesotaHouseSession('300').slug, '2023-2024');
+  assert.equal(getMinnesotaHouseSession('2027-2028').legislature, 95);
   assert.throws(() => getMinnesotaHouseSession('999'), /Unsupported/);
 });
