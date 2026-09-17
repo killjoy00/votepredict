@@ -1,6 +1,10 @@
 import { createHash } from 'node:crypto';
 import { pool } from '@/lib/db';
-import { fetchRevisorStatusXml, parseRevisorOfficialActions } from '@/sources/minnesota/revisor-actions';
+import {
+  auditRevisorSourceChamberPassage,
+  fetchRevisorStatusXml,
+  parseRevisorOfficialActions,
+} from '@/sources/minnesota/revisor-actions';
 import {
   parseRevisorCurrentOfficialTextVersion,
   parseRevisorIntroductionMetadata,
@@ -29,6 +33,7 @@ type FetchedLiveStatus = LiveStatusBillRow & {
   versions: RevisorTextVersion[];
   currentVersion: RevisorTextVersion | null;
   latestActionOn: string | null;
+  passageActionObserved: boolean;
 };
 
 export type LiveRevisorStatusFailure = {
@@ -45,6 +50,7 @@ export type LiveRevisorStatusResult = {
   introductionDates: number;
   initialVersions: number;
   engrossedBills: number;
+  passageActionsObserved: number;
   versionsRecorded: number;
   sourceDocumentsRecorded: number;
   failures: LiveRevisorStatusFailure[];
@@ -103,6 +109,7 @@ async function fetchOne(row: LiveStatusBillRow): Promise<FetchedLiveStatus> {
   if (currentDate && introduction.introducedOn && currentDate !== introduction.introducedOn) {
     throw new Error(`${row.identifier}: existing introduction date ${currentDate} conflicts with Revisor ${introduction.introducedOn}`);
   }
+  const passageAudit = auditRevisorSourceChamberPassage({ xml, identifier: row.identifier });
   return {
     ...row,
     fetchedAt: new Date().toISOString(),
@@ -111,6 +118,9 @@ async function fetchOne(row: LiveStatusBillRow): Promise<FetchedLiveStatus> {
     versions: parseRevisorTextVersions(xml),
     currentVersion: parseRevisorCurrentOfficialTextVersion(xml),
     latestActionOn: latestActionDate(xml),
+    // This is only a prospective leakage guard. It is never written to the
+    // historical sourceChamberPassage outcome label used for model training.
+    passageActionObserved: passageAudit.passageActions.length > 0,
   };
 }
 
@@ -182,10 +192,12 @@ async function persistFetched(rows: readonly FetchedLiveStatus[]): Promise<{
       content_sha256: row.sourceSha256,
       identifier: row.identifier,
       current_engrossment: row.currentVersion?.engrossment ?? null,
+      passage_action_observed: row.passageActionObserved,
     }));
     const sources = await client.query(`
       WITH payload AS (
-        SELECT session_id, chamber_id, source_url, fetched_at, content_sha256, identifier, current_engrossment
+        SELECT session_id, chamber_id, source_url, fetched_at, content_sha256, identifier,
+               current_engrossment, passage_action_observed
           FROM jsonb_to_recordset($1::jsonb) AS x(
             session_id uuid,
             chamber_id uuid,
@@ -193,7 +205,8 @@ async function persistFetched(rows: readonly FetchedLiveStatus[]): Promise<{
             fetched_at timestamptz,
             content_sha256 text,
             identifier text,
-            current_engrossment integer
+            current_engrossment integer,
+            passage_action_observed boolean
           )
       )
       INSERT INTO source_documents (
@@ -212,7 +225,8 @@ async function persistFetched(rows: readonly FetchedLiveStatus[]): Promise<{
                'identifier', p.identifier,
                'parserVersion', $2::text,
                'currentEngrossment', p.current_engrossment,
-               'semantics', 'live status/introduction/version observation only; no outcome inference',
+               'passageActionObserved', p.passage_action_observed,
+               'semantics', 'live status/introduction/version observation; passage-action presence is a prospective leakage blocker, not a training outcome label',
                'outcomeBlind', true
              )
         FROM payload p
@@ -240,6 +254,7 @@ async function persistFetched(rows: readonly FetchedLiveStatus[]): Promise<{
           currentEngrossment: row.currentVersion?.engrossment ?? null,
           currentVersion: row.currentVersion,
           latestActionOn: row.latestActionOn,
+          passageActionObserved: row.passageActionObserved,
         },
         introduction_metadata: introMetadata,
       };
@@ -334,6 +349,7 @@ export async function syncLiveRevisorStatusBatch(limit = LIVE_REVISOR_STATUS_BAT
     introductionDates: fetched.filter((row) => row.introduction.introducedOn !== null).length,
     initialVersions: fetched.filter((row) => row.introduction.initialDocument !== null).length,
     engrossedBills: fetched.filter((row) => (row.currentVersion?.engrossment ?? 0) > 0).length,
+    passageActionsObserved: fetched.filter((row) => row.passageActionObserved).length,
     versionsRecorded: persisted.versionsRecorded,
     sourceDocumentsRecorded: persisted.sourceDocumentsRecorded,
     failures,
