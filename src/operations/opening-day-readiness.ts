@@ -1,7 +1,7 @@
 import { pool } from '@/lib/db';
 import { fetchLrlLegislatorRefs } from '@/sources/minnesota/lrl-members';
 import { fetchRevisorBillSearchRangeDocument, revisorSearchSessionValue } from '@/sources/minnesota/revisor-bill-search';
-import { getMinnesotaHouseSession } from '@/sources/minnesota/sessions';
+import { getMinnesotaHouseSession, isMinnesotaHouseSessionCurrent } from '@/sources/minnesota/sessions';
 import { assessOpeningDaySources, OPENING_DAY_SESSION } from './opening-day-plan';
 
 export type OpeningDayReadinessResult = {
@@ -18,8 +18,7 @@ export type OpeningDayReadinessResult = {
 
 export async function ensureOpeningDaySessionMetadata(checkedAt = new Date()): Promise<OpeningDayReadinessResult['sessionMetadata']> {
   const session = getMinnesotaHouseSession(OPENING_DAY_SESSION);
-  const checkedDate = checkedAt.toISOString().slice(0, 10);
-  const shouldBeCurrent = checkedDate >= session.startsOn && checkedDate <= session.endsOn;
+  const shouldBeCurrent = isMinnesotaHouseSessionCurrent(session, checkedAt);
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -80,18 +79,29 @@ export async function ensureOpeningDaySessionMetadata(checkedAt = new Date()): P
   }
 }
 
+function sourceError(label: string, reason: unknown): string {
+  const message = reason instanceof Error ? reason.message : String(reason);
+  return `${label} probe failed: ${message.slice(0, 500)}`;
+}
+
 export async function probeOpeningDaySources(checkedAt = new Date()): Promise<ReturnType<typeof assessOpeningDaySources>> {
   const session = getMinnesotaHouseSession(OPENING_DAY_SESSION);
-  const [lrlRefs, house, senate] = await Promise.all([
+  const [lrlResult, houseResult, senateResult] = await Promise.allSettled([
     fetchLrlLegislatorRefs(session),
     fetchRevisorBillSearchRangeDocument({ sessionKey: session.slug, body: 'House', firstBill: 1, lastBill: 500 }),
     fetchRevisorBillSearchRangeDocument({ sessionKey: session.slug, body: 'Senate', firstBill: 1, lastBill: 500 }),
   ]);
+  const sourceErrors: string[] = [];
+  if (lrlResult.status === 'rejected') sourceErrors.push(sourceError('Minnesota LRL', lrlResult.reason));
+  if (houseResult.status === 'rejected') sourceErrors.push(sourceError('Minnesota Revisor House', houseResult.reason));
+  if (senateResult.status === 'rejected') sourceErrors.push(sourceError('Minnesota Revisor Senate', senateResult.reason));
+
   return assessOpeningDaySources({
     checkedAt,
-    lrlLegislatorRefs: lrlRefs.length,
-    revisorHouseBillsInFirst500: house.results.length,
-    revisorSenateBillsInFirst500: senate.results.length,
+    lrlLegislatorRefs: lrlResult.status === 'fulfilled' ? lrlResult.value.length : 0,
+    revisorHouseBillsInFirst500: houseResult.status === 'fulfilled' ? houseResult.value.results.length : 0,
+    revisorSenateBillsInFirst500: senateResult.status === 'fulfilled' ? senateResult.value.results.length : 0,
+    sourceErrors,
   });
 }
 
