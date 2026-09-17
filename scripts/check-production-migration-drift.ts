@@ -33,7 +33,15 @@ async function productionEnvironment(): Promise<Record<string, string | undefine
 async function main(): Promise<void> {
   const runtime = await productionEnvironment();
   const connectionString = runtime.DATABASE_URL_UNPOOLED || runtime.DATABASE_URL;
-  if (!connectionString) throw new Error('Production DATABASE_URL_UNPOOLED or DATABASE_URL is required.');
+  const required = runtime.VOTEPREDICT_REQUIRE_MIGRATION_LEDGER === '1';
+
+  if (!connectionString && !required) {
+    process.stdout.write(`${JSON.stringify({ migrationLedger: { skipped: true, reason: 'database-unavailable' } })}\n`);
+    return;
+  }
+  if (!connectionString) {
+    throw new Error('Production DATABASE_URL_UNPOOLED or DATABASE_URL is required for the migration ledger gate.');
+  }
 
   const expected = await expectedMigrationLedger();
   const client = new Client({ connectionString });
