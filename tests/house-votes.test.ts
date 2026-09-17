@@ -10,6 +10,7 @@ import {
 } from '../src/sources/minnesota/house-votes.js';
 import {
   getMinnesotaHouseSession,
+  isMinnesotaHouseSessionCurrent,
   MINNESOTA_HOUSE_HISTORICAL_SESSIONS,
   MINNESOTA_HOUSE_UPCOMING_SESSIONS,
 } from '../src/sources/minnesota/sessions.js';
@@ -90,4 +91,13 @@ test('historical House session configuration stays closed while 2027-2028 is sup
   assert.equal(getMinnesotaHouseSession('300').slug, '2023-2024');
   assert.equal(getMinnesotaHouseSession('2027-2028').legislature, 95);
   assert.throws(() => getMinnesotaHouseSession('999'), /Unsupported/);
+});
+
+test('current-session state rolls from 2025-2026 to 2027-2028 by date', () => {
+  const current = getMinnesotaHouseSession('2025-2026');
+  const future = getMinnesotaHouseSession('2027-2028');
+  assert.equal(isMinnesotaHouseSessionCurrent(current, new Date('2026-12-31T12:00:00Z')), true);
+  assert.equal(isMinnesotaHouseSessionCurrent(future, new Date('2026-12-31T12:00:00Z')), false);
+  assert.equal(isMinnesotaHouseSessionCurrent(current, new Date('2027-01-01T12:00:00Z')), false);
+  assert.equal(isMinnesotaHouseSessionCurrent(future, new Date('2027-01-01T12:00:00Z')), true);
 });
