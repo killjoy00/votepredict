@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  MEMBER_HISTORY_CAP20_PROSPECTIVE_BASELINE_MODEL_VERSION,
   MEMBER_HISTORY_CAP20_PROSPECTIVE_CAP,
   MEMBER_HISTORY_CAP20_PROSPECTIVE_EXPERIMENT,
   estimateMemberHistoryCap20ProspectiveShadow,
@@ -8,12 +9,14 @@ import {
 } from '../src/forecasting/member-history-cap20-prospective-shadow.js';
 import { estimateMemberProbability, MEMBER_MODEL_VERSION } from '../src/forecasting/member-model.js';
 
-test('prospective cap-20 capture is limited to 2027-2028 Quick House and Senate forecasts', () => {
-  assert.equal(shouldCaptureMemberHistoryCap20ProspectiveShadow({ sessionSlug: '2027-2028', chamberSlug: 'house', researchMode: 'quick' }), true);
-  assert.equal(shouldCaptureMemberHistoryCap20ProspectiveShadow({ sessionSlug: '2027-2028', chamberSlug: 'senate', researchMode: 'quick' }), true);
-  assert.equal(shouldCaptureMemberHistoryCap20ProspectiveShadow({ sessionSlug: '2025-2026', chamberSlug: 'house', researchMode: 'quick' }), false);
-  assert.equal(shouldCaptureMemberHistoryCap20ProspectiveShadow({ sessionSlug: '2027-2028', chamberSlug: 'house', researchMode: 'deep' }), false);
-  assert.equal(shouldCaptureMemberHistoryCap20ProspectiveShadow({ sessionSlug: '2027-2028', chamberSlug: 'other', researchMode: 'quick' }), false);
+test('prospective cap-20 capture is limited to its frozen 2027-2028 Quick v1.1 baseline', () => {
+  assert.equal(MEMBER_HISTORY_CAP20_PROSPECTIVE_BASELINE_MODEL_VERSION, 'member-eb-v1.1');
+  assert.equal(shouldCaptureMemberHistoryCap20ProspectiveShadow({ sessionSlug: '2027-2028', chamberSlug: 'house', researchMode: 'quick', modelVersion: 'member-eb-v1.1' }), true);
+  assert.equal(shouldCaptureMemberHistoryCap20ProspectiveShadow({ sessionSlug: '2027-2028', chamberSlug: 'senate', researchMode: 'quick', modelVersion: 'member-eb-v1.1' }), true);
+  assert.equal(shouldCaptureMemberHistoryCap20ProspectiveShadow({ sessionSlug: '2025-2026', chamberSlug: 'house', researchMode: 'quick', modelVersion: 'member-eb-v1.1' }), false);
+  assert.equal(shouldCaptureMemberHistoryCap20ProspectiveShadow({ sessionSlug: '2027-2028', chamberSlug: 'house', researchMode: 'deep', modelVersion: 'member-eb-v1.1' }), false);
+  assert.equal(shouldCaptureMemberHistoryCap20ProspectiveShadow({ sessionSlug: '2027-2028', chamberSlug: 'other', researchMode: 'quick', modelVersion: 'member-eb-v1.1' }), false);
+  assert.equal(shouldCaptureMemberHistoryCap20ProspectiveShadow({ sessionSlug: '2027-2028', chamberSlug: 'house', researchMode: 'quick', modelVersion: 'member-eb-v1.2-decay180' }), false);
 });
 
 test('prospective shadow changes only the maximum member-history weight and never serves traffic', () => {
