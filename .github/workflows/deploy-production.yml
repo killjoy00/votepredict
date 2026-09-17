@@ -79,23 +79,6 @@ jobs:
         if: steps.freshness.outputs.deploy == 'true'
         run: npm ci --no-fund --no-audit
 
-      - name: Read production environment privately
-        if: steps.freshness.outputs.deploy == 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          umask 077
-          if ! npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1; then
-            echo '::error::Could not read the VotePredict production environment. Deployment was not attempted.'
-            exit 1
-          fi
-
-      - name: Verify production migration ledger
-        if: steps.freshness.outputs.deploy == 'true'
-        env:
-          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
-        run: node --import tsx scripts/check-production-migration-drift.ts
-
       - name: Ensure required production runtime configuration
         if: steps.freshness.outputs.deploy == 'true'
         run: node scripts/prepare-production-cron.ts
@@ -111,7 +94,7 @@ jobs:
             echo "::error::Main advanced to $current after the freshness gate; refusing to deploy stale $RELEASE_SHA."
             exit 1
           fi
-          output="$(npx --yes vercel@59.13.1 deploy --prod --yes --token "$VERCEL_TOKEN")"
+          output="$(npx --yes vercel@59.13.1 deploy --prod --yes --build-env VOTEPREDICT_REQUIRE_MIGRATION_LEDGER=1 --token "$VERCEL_TOKEN")"
           url="$(printf '%s\n' "$output" | grep -E '^https://[^ ]+$' | tail -n 1 || true)"
           if [ -z "$url" ]; then
             echo '::error::Vercel completed without returning a recognizable deployment URL.'
@@ -131,7 +114,7 @@ jobs:
             echo
             echo "- Commit: \`$RELEASE_SHA\`"
             echo "- Deployment: $DEPLOYMENT_URL"
-            echo '- Migration ledger: exact repository match required before deploy'
+            echo '- Migration ledger: exact repository match required inside the Vercel production build'
             echo '- Trigger: successful CI run on protected `main`'
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -145,9 +128,3 @@ jobs:
             echo "- Green commit: \`$RELEASE_SHA\`"
             echo '- Reason: a newer commit is already on `main`.'
           } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Remove temporary production environment
-        if: always()
-        shell: bash
-        run: |
-          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log"
