@@ -2,7 +2,7 @@ name: Opening Day readiness
 
 on:
   schedule:
-    - cron: '17 13 * * *'
+    - cron: '17 1,7,13,19 * * *'
   workflow_dispatch:
   workflow_run:
     workflows: [Deploy production]
@@ -64,7 +64,7 @@ jobs:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: node --import tsx scripts/run-production-opening-day-readiness.ts
 
-      - name: Bootstrap live 2027 session when sources are ready
+      - name: Bootstrap and refresh live 2027 session when sources are ready
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: node --import tsx scripts/run-production-opening-day-bootstrap.ts

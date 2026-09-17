@@ -1,13 +1,15 @@
 import { parseRevisorOfficialActions } from './revisor-actions';
 import { getMinnesotaHouseSession } from './sessions';
 
-export interface RevisorInitialDocument {
+export interface RevisorTextVersion {
   documentName: string | null;
   insertedAt: string | null;
   insertedOn: string | null;
   htmlUrl: string | null;
   engrossment: number;
 }
+
+export type RevisorInitialDocument = RevisorTextVersion;
 
 export interface RevisorIntroductionMetadata {
   identifier: string;
@@ -78,16 +80,22 @@ export function buildRevisorRegularSessionStatusXmlUrl(sessionKeyOrSlug: string,
   return buildRevisorRegularSessionStatusXmlUrls(sessionKeyOrSlug, rawIdentifier)[0];
 }
 
-export function parseRevisorInitialDocument(xml: string): RevisorInitialDocument | null {
+export function parseRevisorTextVersions(xml: string): RevisorTextVersion[] {
   const list = xml.match(/<(?:[A-Z0-9_.-]+:)?TEXT_VERSION_LIST\b[^>]*>([\s\S]*?)<\/(?:[A-Z0-9_.-]+:)?TEXT_VERSION_LIST>/i)?.[1];
-  if (!list) return null;
+  if (!list) return [];
 
-  const documents: RevisorInitialDocument[] = [];
+  const documents: RevisorTextVersion[] = [];
   for (const match of list.matchAll(/<(?:[A-Z0-9_.-]+:)?DOCUMENT\b[^>]*>([\s\S]*?)<\/(?:[A-Z0-9_.-]+:)?DOCUMENT>/gi)) {
     const block = match[1];
+    const documentType = tag(block, 'DOCUMENT_TYPE')?.toLowerCase();
+    // Current API records use "official" for introductions and official
+    // engrossments; older records used "bill"/"resolution". Exclude any
+    // explicitly different document type so unofficial text cannot become a
+    // prospective stage signal.
+    if (documentType && !['official', 'bill', 'resolution'].includes(documentType)) continue;
     const engrossmentText = tag(block, 'DOCUMENT_ENGROSSMENT');
     const engrossment = engrossmentText === null ? Number.NaN : Number(engrossmentText);
-    if (!Number.isInteger(engrossment) || engrossment !== 0) continue;
+    if (!Number.isInteger(engrossment) || engrossment < 0) continue;
     const insertedAt = tag(block, 'DATE_INSERT');
     documents.push({
       documentName: tag(block, 'DOCUMENT_NAME'),
@@ -98,8 +106,20 @@ export function parseRevisorInitialDocument(xml: string): RevisorInitialDocument
     });
   }
 
-  documents.sort((left, right) => (left.insertedAt ?? '').localeCompare(right.insertedAt ?? ''));
-  return documents[0] ?? null;
+  documents.sort((left, right) => {
+    if (left.engrossment !== right.engrossment) return left.engrossment - right.engrossment;
+    return (left.insertedAt ?? '').localeCompare(right.insertedAt ?? '');
+  });
+  return documents;
+}
+
+export function parseRevisorInitialDocument(xml: string): RevisorInitialDocument | null {
+  return parseRevisorTextVersions(xml).find((document) => document.engrossment === 0) ?? null;
+}
+
+export function parseRevisorCurrentOfficialTextVersion(xml: string): RevisorTextVersion | null {
+  const versions = parseRevisorTextVersions(xml);
+  return versions[versions.length - 1] ?? null;
 }
 
 export function parseRevisorCurrentCompanionIdentifier(xml: string): string | null {

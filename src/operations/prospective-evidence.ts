@@ -61,8 +61,12 @@ export async function ensureProspectiveEvidenceForecasts(
             ON c.id = b.originating_chamber_id
            AND c.slug IN ('house', 'senate')
          WHERE b.metadata ? 'revisorUniverse'
-           AND b.status ILIKE '%Engrossment%'
+           AND (
+             b.status ILIKE '%Engrossment%'
+             OR b.metadata #>> '{revisorLiveStatus,currentVersionKind}' = 'engrossment'
+           )
            AND b.metadata #>> '{sourceChamberPassage,outcome}' IS NULL
+           AND b.metadata #>> '{revisorLiveStatus,passageActionObserved}' IS DISTINCT FROM 'true'
            AND EXISTS (
              SELECT 1
                FROM memberships m

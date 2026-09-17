@@ -125,6 +125,7 @@ async function main() {
     console.log(JSON.stringify({ rosterBootstrap: 'skipped', reason: 'plausible_roster_already_persisted', state: before }));
   }
   runChild('scripts/ingest-live-revisor-universe.ts', [], childEnv);
+  runChild('scripts/ingest-live-revisor-status.ts', [], childEnv);
 
   const after = await readBootstrapState(connectionString);
   verifyBootstrap(after);
