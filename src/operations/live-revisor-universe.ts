@@ -41,11 +41,8 @@ function expectedFileType(body: RevisorBillSearchBody): 'HF' | 'SF' {
   return body === 'House' ? 'HF' : 'SF';
 }
 
-export function shouldStopLiveRevisorScan(input: {
-  seenExpectedBill: boolean;
-  expectedResultsInRange: number;
-}): boolean {
-  return input.seenExpectedBill && input.expectedResultsInRange === 0;
+export function shouldStopLiveRevisorScan(expectedResultsInRange: number): boolean {
+  return expectedResultsInRange === 0;
 }
 
 async function resolveScope(body: RevisorBillSearchBody): Promise<ScopeRow> {
@@ -71,7 +68,6 @@ async function fetchLiveBody(body: RevisorBillSearchBody): Promise<{
   const expectedType = expectedFileType(body);
   const bills = new Map<string, RevisorBillSearchResult>();
   const documents: RevisorBillSearchDocument[] = [];
-  let seenExpectedBill = false;
   let highestScannedBillNumber = 0;
   let trailingEmptyRangeStart: number | null = null;
 
@@ -87,14 +83,13 @@ async function fetchLiveBody(body: RevisorBillSearchBody): Promise<{
     highestScannedBillNumber = lastBill;
     const expectedRows = document.results.filter((row) => row.fileType === expectedType);
     for (const row of expectedRows) bills.set(row.identifier, row);
-    if (expectedRows.length > 0) seenExpectedBill = true;
-    if (shouldStopLiveRevisorScan({ seenExpectedBill, expectedResultsInRange: expectedRows.length })) {
+    if (shouldStopLiveRevisorScan(expectedRows.length)) {
       trailingEmptyRangeStart = firstBill;
       break;
     }
   }
 
-  if (seenExpectedBill && trailingEmptyRangeStart === null && highestScannedBillNumber === LIVE_REVISOR_MAX_BILL_NUMBER) {
+  if (trailingEmptyRangeStart === null && highestScannedBillNumber === LIVE_REVISOR_MAX_BILL_NUMBER) {
     throw new Error(`${body} live Revisor scan reached ${LIVE_REVISOR_MAX_BILL_NUMBER} without an empty trailing range; raise the safety ceiling before continuing`);
   }
 
