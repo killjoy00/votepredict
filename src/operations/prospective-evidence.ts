@@ -66,6 +66,7 @@ export async function ensureProspectiveEvidenceForecasts(
              OR b.metadata #>> '{revisorLiveStatus,currentVersionKind}' = 'engrossment'
            )
            AND b.metadata #>> '{sourceChamberPassage,outcome}' IS NULL
+           AND b.metadata #>> '{revisorLiveStatus,passageActionObserved}' IS DISTINCT FROM 'true'
            AND EXISTS (
              SELECT 1
                FROM memberships m
