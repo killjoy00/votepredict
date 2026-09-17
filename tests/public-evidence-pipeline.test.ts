@@ -6,7 +6,15 @@ import {
   selectCampaignContentLinks,
 } from '../src/evidence/campaign-site-discovery';
 import { canonicalPublicUrl, publicPageMentionsPerson, type PublicPage } from '../src/evidence/public-http';
-import { gdeltBatchQuery, gdeltSeenDate } from '../src/evidence/public-news';
+import {
+  bingNewsQuery,
+  gdeltBatchQuery,
+  gdeltSeenDate,
+  newsPublicationDateSource,
+  parseBingNewsRss,
+  unwrapBingNewsUrl,
+  type NewsLead,
+} from '../src/evidence/public-news';
 
 test('campaign filing parser keeps filed state legislative websites and rejects email-like website fields', () => {
   const html = `
@@ -143,4 +151,61 @@ test('GDELT batch discovery builds one OR query for multiple exact member names'
     gdeltBatchQuery(['Aaron Repinski', 'Aisha Gomez', 'Aaron Repinski']),
     '("Aaron Repinski" OR "Aisha Gomez") Minnesota',
   );
+});
+
+test('Bing News RSS discovery builds an exact-name OR query', () => {
+  assert.equal(
+    bingNewsQuery(['Aaron Repinski', 'Aisha Gomez', 'Aaron Repinski']),
+    '("Aaron Repinski" OR "Aisha Gomez") Minnesota',
+  );
+});
+
+test('Bing News RSS unwraps publisher URLs and rejects aggregator-only URLs', () => {
+  assert.equal(
+    unwrapBingNewsUrl('https://www.bing.com/news/apiclick.aspx?ref=FexRss&url=https%3A%2F%2Fexample.com%2Fstory%3Fid%3D42'),
+    'https://example.com/story?id=42',
+  );
+  assert.equal(unwrapBingNewsUrl('https://www.bing.com/news/search?q=test'), undefined);
+  assert.equal(unwrapBingNewsUrl('https://publisher.example/story'), 'https://publisher.example/story');
+});
+
+test('Bing News RSS parser keeps direct publisher leads with normalized dates', () => {
+  const xml = `<?xml version="1.0"?>
+    <rss><channel>
+      <item>
+        <title><![CDATA[Rep. Aaron Repinski discusses transportation plan]]></title>
+        <link>https://www.bing.com/news/apiclick.aspx?ref=FexRss&amp;url=https%3A%2F%2Fexample.com%2Fpolitics%2Frepinski%3Futm_source%3Dbing</link>
+        <pubDate>Tue, 15 Sep 2026 14:30:00 GMT</pubDate>
+      </item>
+      <item>
+        <title>Aggregator only</title>
+        <link>https://www.bing.com/news/search?q=repinski</link>
+        <pubDate>Tue, 15 Sep 2026 12:00:00 GMT</pubDate>
+      </item>
+    </channel></rss>`;
+  const leads = parseBingNewsRss(xml);
+  assert.equal(leads.length, 1);
+  assert.equal(leads[0].url, 'https://example.com/politics/repinski?utm_source=bing');
+  assert.equal(leads[0].title, 'Rep. Aaron Repinski discusses transportation plan');
+  assert.equal(leads[0].seenAt, '2026-09-15T14:30:00.000Z');
+  assert.equal(leads[0].domain, 'example.com');
+  assert.equal(leads[0].provider, 'bing_news_rss');
+});
+
+test('news publication date provenance follows the actual discovery provider', () => {
+  const gdeltLead: NewsLead = {
+    url: 'https://example.com/a',
+    title: 'A',
+    seenAt: '2026-09-15T14:30:00.000Z',
+    provider: 'gdelt',
+  };
+  const rssLead: NewsLead = {
+    url: 'https://example.com/b',
+    title: 'B',
+    seenAt: '2026-09-15T14:30:00.000Z',
+    provider: 'bing_news_rss',
+  };
+  assert.equal(newsPublicationDateSource(undefined, gdeltLead), 'gdelt_seen_at');
+  assert.equal(newsPublicationDateSource(undefined, rssLead), 'rss_pub_date');
+  assert.equal(newsPublicationDateSource('2026-09-15T10:00:00.000Z', rssLead), 'page_metadata');
 });
