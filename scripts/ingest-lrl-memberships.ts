@@ -1,7 +1,7 @@
 import { Pool, type PoolClient } from 'pg';
 import { listLrlMemberships, type HistoricalMembershipRecord } from '../src/sources/minnesota/lrl-members.js';
 import { officialMembershipAliasesForLrlId } from '../src/sources/minnesota/official-member-aliases.js';
-import { getMinnesotaHouseSession, MINNESOTA_HOUSE_HISTORICAL_SESSIONS, type MinnesotaHouseSession } from '../src/sources/minnesota/sessions.js';
+import { getMinnesotaHouseSession, isMinnesotaHouseSessionCurrent, MINNESOTA_HOUSE_HISTORICAL_SESSIONS, type MinnesotaHouseSession } from '../src/sources/minnesota/sessions.js';
 
 function argumentValue(args: string[], name: string): string | undefined {
   const inline = args.find((arg) => arg.startsWith(`${name}=`));
@@ -16,12 +16,19 @@ async function ensureSession(client: PoolClient, session: MinnesotaHouseSession)
      ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name RETURNING id`,
   );
   const jurisdictionId = jurisdiction.rows[0].id;
+  const isCurrent = isMinnesotaHouseSessionCurrent(session);
+  if (isCurrent) {
+    await client.query(
+      `UPDATE legislative_sessions SET is_current=false WHERE jurisdiction_id=$1 AND slug<>$2 AND is_current=true`,
+      [jurisdictionId, session.slug],
+    );
+  }
   const legislativeSession = await client.query<{ id: string }>(
     `INSERT INTO legislative_sessions (jurisdiction_id,slug,name,starts_on,ends_on,is_current)
      VALUES ($1,$2,$3,$4,$5,$6)
      ON CONFLICT (jurisdiction_id,slug) DO UPDATE SET name=EXCLUDED.name,starts_on=EXCLUDED.starts_on,ends_on=EXCLUDED.ends_on,is_current=EXCLUDED.is_current
      RETURNING id`,
-    [jurisdictionId, session.slug, session.name, session.startsOn, session.endsOn, session.isCurrent],
+    [jurisdictionId, session.slug, session.name, session.startsOn, session.endsOn, isCurrent],
   );
   const house = await client.query<{ id: string }>(
     `INSERT INTO chambers (jurisdiction_id,slug,name,kind) VALUES ($1,'house','Minnesota House of Representatives','lower')
