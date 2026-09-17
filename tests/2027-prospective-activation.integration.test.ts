@@ -147,12 +147,14 @@ test('2027 production-evidence seeding and passage-fragility shadow activate on 
     await client.query(`
       INSERT INTO forecast_revisions(id, forecast_id, model_version, generated_at, passage_probability, metadata, research_mode)
       VALUES ($1::uuid, $2::uuid, 'member-eb-v1.2-decay180', '2027-02-01T12:00:00Z', 0.55,
-        '{"passageRule":{"kind":"fixed","requiredYes":1},"analogue":{"selected":[]}}', 'quick');
+        '{"passageRule":{"kind":"fixed","requiredYes":1},"analogue":{"selected":[]}}', 'quick')
+    `, [revisionId, forecastId]);
+    await client.query(`
       INSERT INTO forecast_member_predictions(revision_id, membership_id, yes_probability, facts)
       VALUES
         ($1::uuid, 'm1', 0.65, '[]'),
-        ($1::uuid, 'm2', 0.35, '[]');
-    `, [revisionId, forecastId]);
+        ($1::uuid, 'm2', 0.35, '[]')
+    `, [revisionId]);
 
     const rehearsalPool = { query: client.query.bind(client) } as unknown as Pool;
     const captured = await captureProspectivePassageFragilityShadows(rehearsalPool);
