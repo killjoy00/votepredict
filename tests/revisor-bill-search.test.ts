@@ -11,6 +11,7 @@ test('builds Revisor search session keys from canonical VotePredict sessions', (
   assert.equal(revisorSearchSessionValue('2021-2022'), '0922021');
   assert.equal(revisorSearchSessionValue('2023-2024'), '0932023');
   assert.equal(revisorSearchSessionValue('2025-2026'), '0942025');
+  assert.equal(revisorSearchSessionValue('2027-2028'), '0952027');
 });
 
 test('builds the documented Revisor bill-status XML search shape', () => {
