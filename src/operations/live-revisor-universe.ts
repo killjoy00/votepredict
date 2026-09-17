@@ -152,11 +152,13 @@ async function persistLiveBody(input: {
       (latest, document) => document.fetchedAt > latest ? document.fetchedAt : latest,
       input.documents[0]?.fetchedAt ?? new Date().toISOString(),
     );
+    // Keep JSON keys aligned with the jsonb_to_recordset SQL field names below.
+    // A camelCase payload silently materializes these columns as NULL in Postgres.
     const payload = input.bills.map((bill) => ({
       identifier: bill.identifier,
       title: bill.description || bill.identifier,
-      statusXmlUrl: bill.statusXmlUrl,
-      latestTextHtmlUrl: bill.latestTextHtmlUrl ?? null,
+      status_xml_url: bill.statusXmlUrl,
+      latest_text_html_url: bill.latestTextHtmlUrl ?? null,
     }));
     const persistedBills = await client.query<{ inserted: boolean }>(`
       WITH payload AS (
