@@ -1,0 +1,73 @@
+name: One-shot freeze 2027 introduction runtime
+
+on:
+  push:
+    branches: [work/2027-introduction-runtime-freeze]
+    paths:
+      - .github/workflows/one-shot-freeze-2027-introduction-runtime.yml
+
+permissions:
+  contents: write
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: work/2027-introduction-runtime-freeze
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Read production authentication privately
+        shell: bash
+        run: |
+          test -n "$VERCEL_TOKEN"
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+      - name: Rebuild exact frozen candidate from completed history
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/prepare-2027-introduction-serving-artifact.ts
+      - name: Split candidate into runtime source files
+        shell: bash
+        run: |
+          python - <<'PYTHON'
+          import json, math
+          from pathlib import Path
+          artifact = json.loads(Path('artifacts/introduction-v4-2027-2028.json').read_text())
+          out = Path('src/forecasting/generated')
+          meta = {key: value for key, value in artifact.items() if key not in {'titleStats', 'textStats'}}
+          (out / 'introduction-v4-2027-2028-meta.json').write_text(json.dumps(meta, separators=(',', ':')) + '\n')
+          stats = artifact['titleStats']
+          chunk = math.ceil(len(stats) / 4)
+          for index in range(4):
+              part = stats[index * chunk:(index + 1) * chunk]
+              (out / f'introduction-v4-2027-title-stats-{index + 1}.json').write_text(json.dumps(part, separators=(',', ':')) + '\n')
+          (out / 'introduction-v4-2027-text-stats.json').write_text(json.dumps(artifact['textStats'], separators=(',', ':')) + '\n')
+          PYTHON
+      - name: Commit frozen runtime source
+        shell: bash
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add src/forecasting/generated/introduction-v4-2027-2028-meta.json \
+                  src/forecasting/generated/introduction-v4-2027-title-stats-1.json \
+                  src/forecasting/generated/introduction-v4-2027-title-stats-2.json \
+                  src/forecasting/generated/introduction-v4-2027-title-stats-3.json \
+                  src/forecasting/generated/introduction-v4-2027-title-stats-4.json \
+                  src/forecasting/generated/introduction-v4-2027-text-stats.json
+          git commit -m 'Freeze 2027 introduction serving artifact'
+          git push origin HEAD:work/2027-introduction-runtime-freeze
+      - name: Remove temporary credentials
+        if: always()
+        shell: bash
+        run: |
+          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log"
