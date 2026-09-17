@@ -25,6 +25,13 @@ const xml = `<?xml version="1.0"?>
       <DOCUMENT_ENGROSSMENT>0</DOCUMENT_ENGROSSMENT>
     </DOCUMENT>
     <DOCUMENT>
+      <HTML_URI>www.revisor.mn.gov/bills/94/HF/10/versions/unofficial/</HTML_URI>
+      <DATE_INSERT>2025-03-05 09:00:00</DATE_INSERT>
+      <DOCUMENT_NAME>2025.0-HF0010-U9</DOCUMENT_NAME>
+      <DOCUMENT_TYPE>unofficial</DOCUMENT_TYPE>
+      <DOCUMENT_ENGROSSMENT>9</DOCUMENT_ENGROSSMENT>
+    </DOCUMENT>
+    <DOCUMENT>
       <HTML_URI>www.revisor.mn.gov/bills/94/HF/10/versions/1/</HTML_URI>
       <DATE_INSERT>2025-03-06 15:41:02</DATE_INSERT>
       <DOCUMENT_NAME>2025.0-HF0010-1</DOCUMENT_NAME>
@@ -75,7 +82,7 @@ test('initial official document is the zero-engrossment document', () => {
   });
 });
 
-test('official version parser exposes the current engrossment without outcome inference', () => {
+test('official version parser excludes unofficial documents and exposes the current engrossment', () => {
   const versions = parseRevisorTextVersions(xml);
   assert.deepEqual(versions.map((version) => version.engrossment), [0, 1]);
   assert.deepEqual(parseRevisorCurrentOfficialTextVersion(xml), {
