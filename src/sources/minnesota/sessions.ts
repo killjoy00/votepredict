@@ -73,3 +73,14 @@ export function getMinnesotaHouseSession(sessionKeyOrSlug: string): MinnesotaHou
   if (!session) throw new Error(`Unsupported Minnesota House session: ${sessionKeyOrSlug}`);
   return session;
 }
+
+/**
+ * `isCurrent` on the static records documents the repository's current-era
+ * baseline, but ingestion must not persist that flag forever. Derive live
+ * current-session state from the canonical biennium dates so rerunning a 2025
+ * historical ingester after 2027 starts cannot reactivate the old session.
+ */
+export function isMinnesotaHouseSessionCurrent(session: MinnesotaHouseSession, asOf = new Date()): boolean {
+  const date = asOf.toISOString().slice(0, 10);
+  return date >= session.startsOn && date <= session.endsOn;
+}
