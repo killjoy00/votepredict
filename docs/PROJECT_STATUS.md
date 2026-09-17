@@ -2,7 +2,7 @@
 
 _Last updated: 2026-09-17_
 
-VotePredict V2 is no longer a rebuild project. The clean-slate V2 sequence is complete through production hardening, introduction forecasting, current/floor forecasting, immutable revisions, evidence storage, scheduled production forecasting, forecast-vs-actual scoring infrastructure, and the automated 2027-28 Opening Day transition path. The project is now in **operate, validate prospectively, and selectively expand** mode.
+VotePredict V2 is no longer a rebuild project. The clean-slate V2 sequence is complete through production hardening, introduction forecasting, current/floor forecasting, immutable revisions, evidence storage, scheduled production forecasting, forecast-vs-actual scoring infrastructure, and the automated 2027-28 Opening Day transition path. The **2027 Opening Day Ready** release-integrity milestone is now complete; the project is in **operate, validate prospectively, and selectively expand** mode.
 
 ## Production posture
 
@@ -14,9 +14,9 @@ VotePredict V2 is no longer a rebuild project. The clean-slate V2 sequence is co
 - 2027-28 introduction artifact: frozen from completed prior-biennium data and prepared for the future session; it does not use 2027 outcomes.
 - Hourly production forecast polling: GitHub Actions, with Vercel Cron as the daily fallback.
 - 2027-28 source/bootstrap readiness: automated and guarded; production remains fail-closed until authoritative future-session sources are plausible.
-- Release migration integrity: PR #231 adds a read-only exact migration-ledger gate before Vercel production deployment so code cannot silently outrun the production database.
+- Release migration integrity: the live Neon ledger is reconciled through `0012`, and every Vercel production build now requires an exact repository-vs-production migration-ledger match before the application build can complete.
 - Process-history research: completed and manual-only; the selected enriched process candidate did not earn a prospective shadow or production action.
-- Deep research: currently operationally blocked because Vercel AI Gateway requests fail until billing is enabled. Quick forecasting remains independent of that failure.
+- Deep research: explicitly unavailable while Vercel AI Gateway returns `billing_required`. Quick forecasting remains independent and operational.
 
 The owner Operations page is the live production source of truth. Its Production readiness panel separates the availability of core Quick/introduction forecasting from optional/blocked modes such as Deep and from 2027-28 source provisioning.
 
@@ -87,32 +87,39 @@ The application-level transition path is now rehearsed before any 2027 outcomes 
 - the rehearsal found and fixed a real handoff defect in live Revisor persistence: camelCase URL payload keys did not match the PostgreSQL `jsonb_to_recordset` snake_case fields, which would have left bill source URLs null and prevented status refresh selection;
 - the repaired path passed PR CI, post-merge main CI, exact-green-main deployment, production scheduler, production Opening Day readiness/bootstrap, and public-evidence refresh checks.
 
-The production-engine preseason rehearsal is also complete without modifying production:
+The production-engine preseason rehearsal is also complete:
 
 - a disposable Neon branch was cloned directly from production and confirmed to have the expected pre-rollover state: 2025-26 current, with 2027-28 present but zero memberships and zero bills;
 - an isolated Neon rehearsal database on that branch successfully ran the schema path through `0012`, including the approved `DROP CONSTRAINT`/replacement steps in `0011` and `0012`;
 - the final constraints include `source_chamber_passage` and the complete process-history stage set;
 - a separate temporary Neon migration branch cloned from production successfully applied the prepared one-time production reconciliation and produced an exact 12-entry migration ledger with the expected checksums;
-- no production database rows or constraints were changed by either rehearsal.
+- after explicit operator approval, the same reconciliation was applied to production and verified in place.
 
-That production-shaped rehearsal exposed a release-integrity defect: the live production migration ledger stops at `0010`. The expanded `0012` stage-event constraint is already present structurally, apparently from an out-of-band operation, while the `0011` `source_chamber_passage` forecast constraint is not present. The production repair is prepared and tested on a temporary Neon branch but still requires explicit production-apply approval.
+The production reconciliation repaired the release-integrity drift found during rehearsal:
+
+- the live production migration ledger now contains exact checksums for repository migrations `0001` through `0012`;
+- `forecasts_target_kind_check` now includes `source_chamber_passage`;
+- `legislative_stage_events_stage_kind_check` matches the expanded process-history stage set;
+- the deployment guard was moved into the Vercel production build because `vercel env pull` intentionally redacts sensitive database credentials on external runners;
+- the first live guarded production build proved the final design by reporting `expected: 12`, `applied: 12`, and zero missing, unexpected, or checksum-mismatched migrations before completing the Next.js build;
+- the exact-main production deployment reached READY, after which scheduler, Opening Day readiness/bootstrap, and public-evidence refresh checks passed;
+- the production runtime smoke passed database, health, cron-authentication, Quick-run, and revision checks and failed only on the separately known Deep `billing_required` condition.
 
 ## Current gaps
 
-1. **Production migration reconciliation.** Apply the prepared, production-tested `0011`/`0012` reconciliation and ledger repair, then require the new exact migration-ledger deployment gate for every release.
-2. **Deep availability.** AI Gateway billing must be enabled or Deep should be explicitly treated as unavailable. The production runtime smoke is expected to remain red while its real Deep check cannot complete.
-3. **Prospective production evidence.** The production scorecard infrastructure is built, but the project still needs a meaningful set of real pre-outcome forecasts that later resolve to official votes.
-4. **Durable external-evidence breadth.** Campaign finance and guarded publisher-verified news ingestion are durable, but broader campaign-site/press-release coverage is not yet systematic.
+1. **Deep availability.** Deep is explicitly unavailable while AI Gateway returns `billing_required`. If Deep remains a core product mode, billing must be enabled and a successful persisted evidence/revision smoke should be required before re-enabling it.
+2. **Prospective production evidence.** The production scorecard infrastructure is built, but the project still needs a meaningful set of real pre-outcome forecasts that later resolve to official votes.
+3. **Durable external-evidence breadth.** Campaign finance and guarded publisher-verified news ingestion are durable, but broader campaign-site/press-release coverage is not yet systematic.
 
 ## Plan from here
 
-### P0 — finish production release integrity
+### P0 — operate release integrity and core forecasting
 
-- Apply the prepared production migration reconciliation after explicit operator approval.
-- Verify the live production ledger contains exact checksums for all repository migrations through `0012` and that both widened constraints match the repository definitions.
-- Merge the read-only deployment migration gate so future exact-main releases fail closed on missing, unexpected, or checksum-mismatched migrations.
-- Decide whether Deep remains a core product mode. If yes, enable AI Gateway billing and require a successful persisted evidence/revision smoke; otherwise explicitly treat Deep as unavailable while keeping Quick independent.
+- Keep the production migration ledger exact; future production builds fail closed on missing, unexpected, or checksum-mismatched migrations.
+- Keep Deep explicitly unavailable until AI Gateway billing is enabled and the real persisted Deep smoke passes.
+- Keep Quick independent from Deep availability.
 - Keep the Production readiness panel as the at-a-glance source of truth for serving model, introduction integrity, scheduler health, Deep state, durable evidence, source warnings, and 2027-28 provisioning.
+- Treat any future schema migration as a release artifact that must be reconciled before the corresponding code can become production-ready.
 
 ### P1 — build a non-Deep durable public-evidence program
 
@@ -134,21 +141,23 @@ That production-shaped rehearsal exposed a release-integrity defect: the live pr
 - [x] Validate a disposable Neon production clone has the expected pre-Opening-Day baseline.
 - [x] Execute the complete Neon schema write rehearsal through `0012`, including the constraint-replacement migrations.
 - [x] Validate the one-time production migration reconciliation on a temporary Neon branch cloned from production.
+- [x] Apply and verify the production migration reconciliation through `0012`.
+- [x] Prove the fail-closed migration-ledger guard in a real Vercel production build.
 
 ### P2 — measure rather than tune
 
-Once 2027-28 begins, keep the serving model stable long enough to accumulate genuinely prospective evidence. Resolve real production forecasts to official outcomes, score Quick, and build paired Quick-vs-Deep observations if Deep is operational. Resume model research only when new evidence identifies a concrete failure pattern worth testing.
+Once 2027-28 begins, keep the serving model stable long enough to accumulate genuinely prospective evidence. Resolve real production forecasts to official outcomes, score Quick, and build paired Quick-vs-Deep observations if Deep becomes operational. Resume model research only when new evidence identifies a concrete failure pattern worth testing.
 
 ## Project milestone
 
-The next project milestone remains **2027 Opening Day Ready** until release integrity is reconciled in production:
+**2027 Opening Day Ready — achieved for the pre-session production transition path.**
 
-- core Quick/introduction production readiness green;
-- Deep either operational or explicitly unavailable;
-- 2027-28 session/roster ingestion automated;
-- 2027-28 introduction artifact frozen and deployed;
-- Quick model and prospective protocols frozen before in-scope outcomes;
-- scheduler, source health, recovery, and Operations checks green;
-- disposable PostgreSQL and Neon preseason rehearsals complete;
-- production migration ledger reconciled and deployment drift gate active;
-- no manual production database preparation required when the first 2027 bills arrive.
+- core Quick/introduction production readiness is green;
+- Deep is explicitly unavailable pending AI Gateway billing and does not block Quick;
+- 2027-28 session/roster ingestion is automated and guarded;
+- the 2027-28 introduction artifact is frozen and deployed;
+- Quick model and prospective protocols are frozen before in-scope outcomes;
+- scheduler, source-readiness/bootstrap, and durable public-evidence production checks are green;
+- disposable PostgreSQL and Neon preseason rehearsals are complete;
+- production migration ledger is reconciled through `0012`, and the deployment drift gate is active and proven;
+- no manual production database preparation is required when the first 2027 bills arrive.
