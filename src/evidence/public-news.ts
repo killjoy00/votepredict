@@ -192,6 +192,12 @@ function isBingHost(hostname: string): boolean {
   return normalized === 'bing.com' || normalized.endsWith('.bing.com');
 }
 
+function isBingNewsClickUrl(url: URL): boolean {
+  if (!isBingHost(url.hostname)) return false;
+  const path = url.pathname.toLowerCase().replace(/\/+$/, '');
+  return path === '/news/apiclick.aspx' || path === '/news/apiclick';
+}
+
 export function unwrapBingNewsUrl(value: string): string | undefined {
   try {
     const initial = new URL(decodeXmlEntities(value).trim());
@@ -204,9 +210,10 @@ export function unwrapBingNewsUrl(value: string): string | undefined {
         const decoded = new URL(candidate);
         if (['http:', 'https:'].includes(decoded.protocol) && !isBingHost(decoded.hostname)) return decoded.toString();
       } catch {
-        // Ignore opaque Bing redirect parameters and keep looking.
+        // Opaque Bing redirect parameters can still be resolved by the guarded page fetch below.
       }
     }
+    if (isBingNewsClickUrl(initial)) return initial.toString();
   } catch {
     return undefined;
   }
