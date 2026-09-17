@@ -87,6 +87,12 @@ export function parseRevisorTextVersions(xml: string): RevisorTextVersion[] {
   const documents: RevisorTextVersion[] = [];
   for (const match of list.matchAll(/<(?:[A-Z0-9_.-]+:)?DOCUMENT\b[^>]*>([\s\S]*?)<\/(?:[A-Z0-9_.-]+:)?DOCUMENT>/gi)) {
     const block = match[1];
+    const documentType = tag(block, 'DOCUMENT_TYPE')?.toLowerCase();
+    // Current API records use "official" for introductions and official
+    // engrossments; older records used "bill"/"resolution". Exclude any
+    // explicitly different document type so unofficial text cannot become a
+    // prospective stage signal.
+    if (documentType && !['official', 'bill', 'resolution'].includes(documentType)) continue;
     const engrossmentText = tag(block, 'DOCUMENT_ENGROSSMENT');
     const engrossment = engrossmentText === null ? Number.NaN : Number(engrossmentText);
     if (!Number.isInteger(engrossment) || engrossment < 0) continue;
