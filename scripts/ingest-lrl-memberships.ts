@@ -12,6 +12,10 @@ function argumentValue(args: string[], name: string): string | undefined {
 }
 
 async function main(): Promise<void> {
+  if (!process.env.DATABASE_URL_UNPOOLED && !process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL_UNPOOLED or DATABASE_URL is required');
+  }
+
   const args = process.argv.slice(2);
   const requested = argumentValue(args, '--session');
   const sessions = requested
