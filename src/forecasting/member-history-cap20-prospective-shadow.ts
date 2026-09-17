@@ -7,11 +7,13 @@ import {
 export const MEMBER_HISTORY_CAP20_PROSPECTIVE_EXPERIMENT = 'member-history-cap20-prospective-v1' as const;
 export const MEMBER_HISTORY_CAP20_PROSPECTIVE_SESSION = '2027-2028' as const;
 export const MEMBER_HISTORY_CAP20_PROSPECTIVE_CAP = 20 as const;
+export const MEMBER_HISTORY_CAP20_PROSPECTIVE_BASELINE_MODEL_VERSION = MEMBER_MODEL_VERSION;
 
 export interface MemberHistoryCap20ProspectiveScope {
   sessionSlug: string;
   chamberSlug: string;
   researchMode: string;
+  modelVersion: string;
 }
 
 export interface MemberHistoryCap20ProspectiveShadowPrediction {
@@ -29,6 +31,7 @@ export function shouldCaptureMemberHistoryCap20ProspectiveShadow(
 ): boolean {
   return scope.sessionSlug === MEMBER_HISTORY_CAP20_PROSPECTIVE_SESSION
     && scope.researchMode === 'quick'
+    && scope.modelVersion === MEMBER_HISTORY_CAP20_PROSPECTIVE_BASELINE_MODEL_VERSION
     && (scope.chamberSlug === 'house' || scope.chamberSlug === 'senate');
 }
 

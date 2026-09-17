@@ -4,6 +4,8 @@
 
 Cap 20 remains a non-serving shadow candidate. This protocol freezes the 2027-2028 prospective test before any in-scope outcomes exist. It does not change `MEMBER_MODEL_VERSION`, production member probabilities, Deep targeting, or House Journal mechanics.
 
+This v1 protocol is explicitly baseline-bound to `member-eb-v1.1`. The serving Quick default has since been promoted to `member-eb-v1.2-decay180`, so v1 is dormant under the normal production configuration. It is eligible only if the frozen v1.1 baseline is actually serving (for example under the explicit rollback control). A future cap-20 experiment against decay-180 would require its own separately frozen protocol and evaluation; this document does not authorize silently rebasing v1 onto a different serving model.
+
 ## Why a prospective test is required
 
 The frozen cap grid mechanically selected a maximum member-history weight of 20 as the best qualifying finite cap. The subsequent exact 24-case 2025-2026 House replay reproduced all 3,193 uncapped member probabilities exactly before comparing the candidate.
@@ -56,7 +58,9 @@ If House passes but Senate enrollment is insufficient, the global model still ca
 
 ## Capture implementation boundary
 
-`src/forecasting/member-history-cap20-prospective-shadow.ts` freezes the experiment key, session/chamber/mode eligibility, cap value, and deterministic candidate estimate. The current PR deliberately does **not** activate capture in the production runtime yet because VotePredict does not support the 2027-2028 Minnesota source session today. Runtime integration must occur before the first eligible 2027-2028 forecast and must persist the shadow probability without returning or serving it as the production prediction.
+`src/forecasting/member-history-cap20-prospective-shadow.ts` freezes the experiment key, session/chamber/mode eligibility, cap value, baseline model version, and deterministic candidate estimate. `src/forecasting/quick-runtime.ts` invokes the capture hook after a Quick revision is created, while `src/forecasting/member-history-cap20-prospective-capture.ts` persists the non-serving member-level shadow only when the Quick result is actually using the frozen `member-eb-v1.1` baseline.
+
+A 2027-2028 Quick revision served by `member-eb-v1.2-decay180` is therefore intentionally ineligible for this v1 experiment rather than treated as a failed capture. This prevents routine production forecasts from logging false baseline-drift failures and prevents the old experiment from being silently redefined after the serving-model promotion.
 
 ## Production boundary
 

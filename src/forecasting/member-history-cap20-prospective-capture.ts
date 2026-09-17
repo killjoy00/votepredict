@@ -126,6 +126,7 @@ export async function captureMemberHistoryCap20ProspectiveShadow(
     sessionSlug: request.subject.sessionSlug,
     chamberSlug: request.chamberSlug,
     researchMode: request.researchMode,
+    modelVersion: quick.modelVersion,
   })) return undefined;
   if (quick.researchMode !== 'quick') throw new Error('Prospective cap-20 capture requires a Quick runtime result');
   if (quick.forecastId !== request.forecastId || quick.chamber.id !== request.chamberId) {
