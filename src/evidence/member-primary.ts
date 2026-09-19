@@ -253,7 +253,8 @@ export async function discoverMemberPrimarySource(
   const directory = dfl ? directories.dfl : directories.republican;
   if (!directory) throw new Error(`Minnesota Senate ${dfl ? 'DFL' : 'Republican'} directory is unavailable`);
 
-  let profileUrl = findSenateMemberProfileUrl(directory, member);
+  const directoryProfileUrl = findSenateMemberProfileUrl(directory, member);
+  let profileUrl = directoryProfileUrl;
   if (!profileUrl && dfl) profileUrl = senateDflFallbackProfileUrl(member.name);
   if (!profileUrl) throw new Error(`No unique caucus profile matched ${member.name}`);
   const registryPage = await fetchPublicPage(profileUrl, {
@@ -261,7 +262,14 @@ export async function discoverMemberPrimarySource(
     maxBytes: 2_500_000,
     userAgent: 'VotePredict/2.0 Minnesota Senate member-primary evidence',
   });
-  if (!memberPrimaryProfileMatches(registryPage, member)) {
+  const directoryResolved = Boolean(directoryProfileUrl && directoryProfileUrl === profileUrl);
+  const memberSurname = surname(member.name);
+  const registryPathTokens = new URL(registryPage.canonicalUrl).pathname.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+  const directoryIdentityVerified = directoryResolved
+    && Boolean(memberSurname)
+    && registryPathTokens.includes(memberSurname!)
+    && normalizePersonKey(registryPage.text).split(/\s+/).includes(memberSurname!);
+  if (!directoryIdentityVerified && !memberPrimaryProfileMatches(registryPage, member)) {
     throw new Error(`Caucus profile did not verify ${member.name} in district ${member.district}`);
   }
 
