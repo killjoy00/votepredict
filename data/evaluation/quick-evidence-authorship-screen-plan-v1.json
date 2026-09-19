@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "quick-evidence-authorship-screen-plan-v1",
+  "frozenAt": "2026-09-19T20:35:00Z",
+  "purpose": "Evaluate reconstructed bill authorship as a zero-weight component of the single quick-evidence-v1 candidate using official dated Revisor provenance.",
+  "scope": {
+    "candidateVersion": "quick-evidence-v1",
+    "servingBaseline": "member-eb-v1.2-decay180",
+    "trainSession": "2021-2022",
+    "validationSession": "2023-2024",
+    "descriptiveSession": "2025-2026"
+  },
+  "source": {
+    "system": "Minnesota Revisor Bill Status API v1",
+    "currentState": "AUTHORS",
+    "datedChanges": "ACTIONS containing author added/stricken",
+    "identityPolicy": "session/chamber roster resolution must be unique; unresolved or ambiguous names make the bill ineligible"
+  },
+  "asOfPolicy": {
+    "reconstruction": "start from current resolved authors and reverse dated add/strike actions on or after the target date",
+    "sameDayExcluded": true,
+    "reason": "historical Revisor actions are date-granular and do not prove ordering within a day"
+  },
+  "feature": {
+    "name": "billAuthor",
+    "type": "binary",
+    "activeWeightBeforeTest": 0,
+    "automaticDirectionalEvidence": false
+  },
+  "fit": {
+    "model": "single ridge logistic offset on serving Quick logit",
+    "lambdas": [
+      0.1,
+      1,
+      5,
+      20,
+      100
+    ],
+    "maximumAbsoluteLogitDelta": 1,
+    "selectionMetricOrder": [
+      "validation member Brier",
+      "validation member log loss",
+      "validation chamber mean absolute yes-vote error",
+      "lambda"
+    ]
+  },
+  "diagnosticThresholds": {
+    "minimumTrainingAuthorOutcomes": 50,
+    "minimumValidationAuthorOutcomes": 50,
+    "validationMemberBrierDeltaAtMost": -0.0005,
+    "validationMemberLogLossDeltaAtMost": 0,
+    "validationChamberYesMaeDeltaAtMost": 0.25,
+    "validationPassageBrierDeltaAtMost": 0.002,
+    "descriptiveMemberBrierDeltaAtMost": 0.0005
+  },
+  "interpretation": {
+    "authorshipIsNotVoteGuarantee": true,
+    "productionAction": "none",
+    "servingProbabilityChange": "none",
+    "quickEvidenceFrozenWeightChange": "none",
+    "automaticPromotion": false
+  }
+}
