@@ -84,7 +84,7 @@ test('authorship can be reconstructed strictly before a forecast date from curre
     actions: record.actions,
     asOfDateExclusive: '2025-02-26',
   });
-  assert.deepEqual(asOf, ['Anderson, P. H.', 'Nelson', 'Rehrauer', 'Virnig']);
+  assert.deepEqual(asOf, ['Anderson, P. H.', 'Nelson', 'Rehrauer', 'Virnig', 'Youakim']);
 });
 
 test('same-day additions are excluded under date-only historical timing', () => {
