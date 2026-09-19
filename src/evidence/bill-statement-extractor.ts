@@ -102,6 +102,13 @@ function sentenceLike(window: string): string {
   return `${window.slice(0, 277).trimEnd()}...`;
 }
 
+function crossesSentenceBoundary(value: string): boolean {
+  const sanitized = value
+    .replace(/\b(?:H\s*\.\s*F\s*\.|S\s*\.\s*F\s*\.)\s*(?:No\.)?/gi, 'BILL')
+    .replace(/\b(?:Sen|Rep)\.\s+/gi, (match) => match.replace('.', ''));
+  return /[.!?]\s+[A-Z]/.test(sanitized);
+}
+
 function matchEnd(match: RegExpMatchArray | null): number {
   return match?.index === undefined ? -1 : match.index + match[0].length;
 }
@@ -147,7 +154,7 @@ export function extractExplicitBillStatements(input: ExtractBillStatementsInput)
       attributionIndex + attributionMatch[0].length,
     );
     const localSpan = excerpt.slice(localStart, localEnd);
-    if (/[.!?]\s+[A-Z]/.test(localSpan)) continue;
+    if (crossesSentenceBoundary(localSpan)) continue;
 
     const supports = Boolean(supportMatch);
     const stance = supports ? 'supports' as const : 'opposes' as const;
