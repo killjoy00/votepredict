@@ -117,7 +117,7 @@ function cleanAuthorTail(value: string): { namesText: string; chiefAuthor: boole
 
 function looksLikeInitialsOnly(value: string): boolean {
   const compact = value.replace(/\s+/g, '');
-  return /^(?:[A-Z]\.?){1,4}$/i.test(compact);
+  return /^(?:[A-Z]\.?){1,4}$/.test(compact);
 }
 
 function looksLikeSingleCommaQualifiedName(value: string): boolean {
