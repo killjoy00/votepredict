@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "quick-evidence-prospective-plan-v1",
+  "frozenAt": "2026-09-19T16:10:00Z",
+  "purpose": "Prospectively evaluate one unified Quick Evidence candidate that layers bounded, source-backed evidence on top of the serving Quick member probabilities without changing serving traffic.",
+  "supersession": {
+    "supersedes": "public-evidence-prospective-v1",
+    "reason": "The earlier availability-only protocol was replaced before activation by the unified Quick Evidence candidate requested for a single evidence system.",
+    "verifiedPreActivationState": {
+      "session": "2027-2028",
+      "quickRevisions": 0,
+      "oldProtocolCapturedRevisions": 0
+    }
+  },
+  "scope": {
+    "jurisdiction": "us-mn",
+    "session": "2027-2028",
+    "researchMode": "quick",
+    "servingMemberModelVersion": "member-eb-v1.2-decay180",
+    "candidateVersion": "quick-evidence-v1",
+    "chambers": ["house", "senate"]
+  },
+  "candidate": {
+    "servesTraffic": false,
+    "impactVersion": "logit-evidence-v1",
+    "maxAbsoluteLogitDelta": 1,
+    "activeEvidence": [
+      "bill-specific direct statements from verified member-controlled sources extracted by deterministic exact-bill rules",
+      "bill-specific related statements that satisfy the Quick Evidence candidate policy",
+      "existing bill-specific directional evidence that already passes the evidence impact policy",
+      "official prior passage votes on the same bill or companion bill strictly before the forecast date"
+    ],
+    "recordedButZeroWeightUntilSeparateValidation": [
+      "campaign-finance activity",
+      "campaign-site volume",
+      "member-primary volume",
+      "publisher-news volume",
+      "source diversity",
+      "evidence freshness"
+    ],
+    "forbiddenAutomaticInferences": [
+      "party implies stance",
+      "donor or lobbyist relationship implies stance",
+      "generic news sentiment implies stance",
+      "campaign-finance amount implies support or opposition",
+      "LLM-generated stance without source-backed deterministic or separately validated extraction"
+    ]
+  },
+  "capture": {
+    "unit": "member prediction within an immutable Quick revision",
+    "timing": "immediately after the serving Quick revision is persisted",
+    "sourceCutoff": "all durable evidence must have source_documents.fetched_at less than or equal to the forecast as-of timestamp; published_at, when present, must also be no later than the as-of timestamp",
+    "features": [
+      "directSupport",
+      "directOppose",
+      "relatedSupport",
+      "relatedOppose",
+      "officialFactSupport",
+      "officialFactOppose",
+      "priorSameBillYes",
+      "priorSameBillNo",
+      "priorCompanionYes",
+      "priorCompanionNo",
+      "candidateEvidenceItems",
+      "conflictingDirectionalEvidence",
+      "totalEvidenceItems",
+      "sourceKinds",
+      "campaignFinanceItems",
+      "campaignSiteItems",
+      "memberPrimaryItems",
+      "newsItems",
+      "newestFetchedAt",
+      "newestEvidenceAgeDays"
+    ],
+    "storedOutputs": [
+      "baseProbability",
+      "candidateProbability",
+      "uncappedLogitDelta",
+      "appliedLogitDelta"
+    ],
+    "probabilityWriteToServingQuick": false
+  },
+  "minimumEvidenceBeforePrimaryScoring": {
+    "resolvedForecasts": 40,
+    "memberOutcomes": 2000,
+    "minimumMembersWithAppliedDirectionalEvidence": 50
+  },
+  "scoring": {
+    "primary": [
+      "paired member Brier",
+      "paired member log loss",
+      "paired member expected calibration error",
+      "chamber mean absolute yes-count error",
+      "passage Brier"
+    ],
+    "requiredComparisons": [
+      "serving Quick versus Quick Evidence on all eligible resolved member outcomes",
+      "serving Quick versus Quick Evidence on members whose candidate probability actually moved",
+      "performance sliced by evidence type, chamber, party, source quality, conflict status, and evidence freshness"
+    ],
+    "automaticPromotion": false
+  },
+  "guardrails": {
+    "outcomeUseAtCapture": "none",
+    "historicalWebBackfill": false,
+    "servingProbabilityChange": "none",
+    "deepModelImpactFromCandidateOnlyStatements": "none",
+    "candidateStatementMetadata": "quickEvidenceCandidate=true and mechanicallyActionable=false",
+    "automaticPromotion": false
+  }
+}
