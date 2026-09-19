@@ -118,7 +118,7 @@ test('availability features are recorded but do not move probability by themselv
   });
   assert.equal(vector.totalEvidenceItems, 12);
   assert.equal(shadow.appliedEvidenceItems, 0);
-  assert.equal(shadow.candidateProbability, 0.61);
+  assert.ok(Math.abs((shadow.candidateProbability ?? 0) - 0.61) < 1e-12);
 });
 
 
