@@ -74,13 +74,20 @@ export function extractExplicitBillStatements(input: ExtractBillStatementsInput)
     if (!bill) continue;
     const start = mention.index ?? 0;
     const excerpt = statementWindow(input.text, start, start + mention[0].length);
-    const supports = SUPPORT.test(excerpt);
-    const opposes = OPPOSE.test(excerpt);
-    if (supports === opposes) continue;
+    const supportMatch = excerpt.match(SUPPORT);
+    const opposeMatch = excerpt.match(OPPOSE);
+    if (Boolean(supportMatch) === Boolean(opposeMatch)) continue;
 
-    const attributed = attribution.test(excerpt);
-    if (!attributed) continue;
+    const attributionMatch = excerpt.match(attribution);
+    if (!attributionMatch) continue;
+    const stanceMatch = supportMatch ?? opposeMatch;
+    const billIndex = excerpt.toLowerCase().indexOf(mention[0].toLowerCase());
+    const stanceIndex = stanceMatch?.index ?? -1;
+    const attributionIndex = attributionMatch.index ?? -1;
+    if (billIndex < 0 || stanceIndex < 0 || attributionIndex < 0) continue;
+    if (Math.abs(stanceIndex - billIndex) > 120 || Math.abs(attributionIndex - stanceIndex) > 120) continue;
 
+    const supports = Boolean(supportMatch);
     const stance = supports ? 'supports' as const : 'opposes' as const;
     const last = normalizedNameTokens(input.memberName).at(-1) ?? '';
     const kind = /\b(?:i|we)\b/i.test(excerpt)
