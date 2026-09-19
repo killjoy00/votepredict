@@ -117,7 +117,7 @@ function looksLikeSingleCommaQualifiedName(value: string): boolean {
   const comma = value.indexOf(',');
   if (comma < 0 || comma !== value.lastIndexOf(',')) return false;
   const qualifier = value.slice(comma + 1).trim();
-  return /^(?:(?:[A-Z]\.\s*)+|Jr\.?|Sr\.?|II|III|IV)$/i.test(qualifier);
+  return /^(?:(?:[A-Z]\.?\s*)+|Jr\.?|Sr\.?|II|III|IV)$/i.test(qualifier);
 }
 
 function cleanNamePart(value: string): string {
