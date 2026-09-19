@@ -10,7 +10,7 @@ export const QUICK_EVIDENCE_PROSPECTIVE_SESSION = '2027-2028' as const;
 export const QUICK_EVIDENCE_BASE_MODEL_VERSION = 'member-eb-v1.2-decay180' as const;
 export const QUICK_EVIDENCE_MAX_ABS_LOGIT_DELTA = 1 as const;
 
-type EvidenceRow = {
+export type QuickEvidenceStoredRow = {
   id: string;
   membership_id: string;
   evidence_kind: EvidenceSignal['kind'];
@@ -25,7 +25,7 @@ type EvidenceRow = {
   metadata: Record<string, unknown> | null;
 };
 
-type AvailabilityRow = {
+export type QuickEvidenceQuickEvidenceAvailabilityRow = {
   membership_id: string;
   total_items: number;
   campaign_finance_items: number;
@@ -36,7 +36,7 @@ type AvailabilityRow = {
   newest_fetched_at: string | null;
 };
 
-type PriorVoteRow = {
+export type QuickEvidenceQuickEvidencePriorVoteRow = {
   membership_id: string;
   same_yes: number;
   same_no: number;
@@ -126,7 +126,7 @@ function candidateDecision(draft: EvidenceDraft): boolean {
   return evidenceImpactPolicy(draft).mechanicallyActionable;
 }
 
-function rowDraft(row: EvidenceRow): EvidenceDraft {
+function rowDraft(row: QuickEvidenceStoredRow): EvidenceDraft {
   return {
     sourceUrl: 'stored://quick-evidence',
     publishedAt: row.published_at ?? undefined,
@@ -142,7 +142,7 @@ function rowDraft(row: EvidenceRow): EvidenceDraft {
   };
 }
 
-function rowSignal(row: EvidenceRow): EvidenceSignal {
+function rowSignal(row: QuickEvidenceStoredRow): EvidenceSignal {
   return {
     evidenceId: row.id,
     kind: row.evidence_kind,
@@ -154,7 +154,7 @@ function rowSignal(row: EvidenceRow): EvidenceSignal {
   };
 }
 
-function priorVoteSignals(row: PriorVoteRow | undefined): EvidenceSignal[] {
+function priorVoteSignals(row: QuickEvidencePriorVoteRow | undefined): EvidenceSignal[] {
   if (!row) return [];
   const signals: EvidenceSignal[] = [];
   const add = (id: string, stance: 'supports' | 'opposes') => signals.push({
@@ -174,9 +174,9 @@ function priorVoteSignals(row: PriorVoteRow | undefined): EvidenceSignal[] {
 }
 
 export function buildQuickEvidenceFeatureVector(input: {
-  evidenceRows?: readonly EvidenceRow[];
-  availability?: AvailabilityRow;
-  priorVotes?: PriorVoteRow;
+  evidenceRows?: readonly QuickEvidenceStoredRow[];
+  availability?: QuickEvidenceAvailabilityRow;
+  priorVotes?: QuickEvidencePriorVoteRow;
   capturedAt: string;
 }): QuickEvidenceFeatureVector {
   const rows = input.evidenceRows ?? [];
@@ -214,9 +214,9 @@ export function buildQuickEvidenceFeatureVector(input: {
 
 export function buildQuickEvidenceMemberShadow(input: {
   baseProbability?: number;
-  evidenceRows?: readonly EvidenceRow[];
-  availability?: AvailabilityRow;
-  priorVotes?: PriorVoteRow;
+  evidenceRows?: readonly QuickEvidenceStoredRow[];
+  availability?: QuickEvidenceAvailabilityRow;
+  priorVotes?: QuickEvidencePriorVoteRow;
   capturedAt: string;
   prospective?: boolean;
 }): QuickEvidenceMemberShadow {
@@ -254,8 +254,8 @@ export function buildQuickEvidenceMemberShadow(input: {
   };
 }
 
-async function loadAvailability(membershipIds: readonly string[], asOf: string): Promise<Map<string, AvailabilityRow>> {
-  const result = await pool.query<AvailabilityRow>(`
+async function loadAvailability(membershipIds: readonly string[], asOf: string): Promise<Map<string, QuickEvidenceAvailabilityRow>> {
+  const result = await pool.query<QuickEvidenceAvailabilityRow>(`
     WITH current_evidence AS (
       SELECT ei.membership_id, sd.source_kind, sd.fetched_at
         FROM evidence_items ei
@@ -285,8 +285,8 @@ async function loadDirectionalEvidence(
   membershipIds: readonly string[],
   billId: string,
   asOf: string,
-): Promise<Map<string, EvidenceRow[]>> {
-  const result = await pool.query<EvidenceRow>(`
+): Promise<Map<string, QuickEvidenceStoredRow[]>> {
+  const result = await pool.query<QuickEvidenceStoredRow>(`
     SELECT ei.id::text,
            ei.membership_id::text,
            ei.evidence_kind,
@@ -315,7 +315,7 @@ async function loadDirectionalEvidence(
     billId,
     asOf,
   ]);
-  const byMembership = new Map<string, EvidenceRow[]>();
+  const byMembership = new Map<string, QuickEvidenceStoredRow[]>();
   for (const row of result.rows) {
     const rows = byMembership.get(row.membership_id) ?? [];
     rows.push(row);
@@ -328,8 +328,8 @@ async function loadPriorVotes(
   membershipIds: readonly string[],
   billId: string,
   asOf: string,
-): Promise<Map<string, PriorVoteRow>> {
-  const result = await pool.query<PriorVoteRow>(`
+): Promise<Map<string, QuickEvidencePriorVoteRow>> {
+  const result = await pool.query<QuickEvidencePriorVoteRow>(`
     WITH target_members AS (
       SELECT m.id, m.legislator_id
         FROM memberships m
