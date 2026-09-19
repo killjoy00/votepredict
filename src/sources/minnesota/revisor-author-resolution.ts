@@ -3,6 +3,7 @@ export interface AuthorshipRosterMember {
   legislatorId: string;
   name: string;
   chamber: 'house' | 'senate';
+  aliases?: readonly string[];
 }
 
 export interface RevisorAuthorResolution {
@@ -11,7 +12,7 @@ export interface RevisorAuthorResolution {
   membershipId?: string;
   legislatorId?: string;
   memberName?: string;
-  method?: 'exact' | 'surname_initials' | 'unique_surname' | 'token_subset';
+  method?: 'exact' | 'source_alias' | 'surname_initials' | 'unique_surname' | 'token_subset';
   candidates?: string[];
 }
 
@@ -53,11 +54,23 @@ function memberInitials(tokens: readonly string[]): string[] {
   return tokens.slice(0, -1).map((token) => token[0]).filter(Boolean);
 }
 
-function exactMatches(rawName: string, roster: readonly AuthorshipRosterMember[]): AuthorshipRosterMember[] {
-  const target = normalize(rawName.includes(',')
-    ? rawName.split(',').reverse().join(' ')
-    : rawName);
-  return roster.filter((member) => normalize(member.name) === target);
+function comparableName(value: string): string {
+  return normalize(value.includes(',')
+    ? value.split(',').reverse().join(' ')
+    : value);
+}
+
+function exactMatches(rawName: string, roster: readonly AuthorshipRosterMember[]): Array<{
+  member: AuthorshipRosterMember;
+  method: 'exact' | 'source_alias';
+}> {
+  const target = comparableName(rawName);
+  return roster.flatMap((member) => {
+    const canonicalMatch = comparableName(member.name) === target;
+    const aliasMatch = member.aliases?.some((alias) => comparableName(alias) === target) ?? false;
+    if (!canonicalMatch && !aliasMatch) return [];
+    return [{ member, method: canonicalMatch ? 'exact' as const : 'source_alias' as const }];
+  });
 }
 
 function candidateNames(rows: readonly AuthorshipRosterMember[]): string[] {
@@ -75,13 +88,15 @@ export function resolveRevisorAuthor(
     return {
       rawName,
       status: 'resolved',
-      membershipId: exact[0].membershipId,
-      legislatorId: exact[0].legislatorId,
-      memberName: exact[0].name,
-      method: 'exact',
+      membershipId: exact[0].member.membershipId,
+      legislatorId: exact[0].member.legislatorId,
+      memberName: exact[0].member.name,
+      method: exact[0].method,
     };
   }
-  if (exact.length > 1) return { rawName, status: 'ambiguous', candidates: candidateNames(exact) };
+  if (exact.length > 1) {
+    return { rawName, status: 'ambiguous', candidates: candidateNames(exact.map((row) => row.member)) };
+  }
 
   const parts = rawAuthorParts(rawName);
   const surname = parts.surname;
