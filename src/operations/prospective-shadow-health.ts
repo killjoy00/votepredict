@@ -262,8 +262,8 @@ export async function getProspectiveShadowCaptureHealth(): Promise<ProspectiveSh
              WHERE eligible AND NOT captured
                AND generated_at < now() - ($4::text || ' hours')::interval
            ) AS failed,
-           max(generated_at)::text FILTER (WHERE eligible) AS latest_eligible_at,
-           max(generated_at)::text FILTER (WHERE eligible AND captured) AS latest_captured_at
+           (max(generated_at) FILTER (WHERE eligible))::text AS latest_eligible_at,
+           (max(generated_at) FILTER (WHERE eligible AND captured))::text AS latest_captured_at
       FROM evaluated
   `, [
     PUBLIC_EVIDENCE_PROSPECTIVE_SESSION,
