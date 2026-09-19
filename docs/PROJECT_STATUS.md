@@ -109,7 +109,7 @@ The production reconciliation repaired the release-integrity drift found during 
 
 1. **Deep availability.** Deep is explicitly unavailable while AI Gateway returns `billing_required`. If Deep remains a core product mode, billing must be enabled and a successful persisted evidence/revision smoke should be required before re-enabling it.
 2. **Prospective production evidence.** The production scorecard infrastructure is built, but the project still needs a meaningful set of real pre-outcome forecasts that later resolve to official votes.
-3. **Durable external-evidence breadth.** Campaign finance and guarded publisher-verified news ingestion are durable, but broader campaign-site/press-release coverage is not yet systematic.
+3. **Durable external-evidence breadth.** Campaign finance and campaign-site ingestion are durable, and a systematic member-primary registry/publication stream now covers House and Senate source channels. Generic publisher-verified news remains the thinnest stream and should be treated as supplemental until its yield improves.
 
 ## Plan from here
 
@@ -121,15 +121,16 @@ The production reconciliation repaired the release-integrity drift found during 
 - Keep the Production readiness panel as the at-a-glance source of truth for serving model, introduction integrity, scheduler health, Deep state, durable evidence, source warnings, and 2027-28 provisioning.
 - Treat any future schema migration as a release artifact that must be reconciled before the corresponding code can become production-ready.
 
-### P1 — build a non-Deep durable public-evidence program
+### P1 — operate and deepen the non-Deep durable public-evidence program
 
-- Expand the source registry for official/member/campaign websites with stable legislator identity and source type.
-- Expand scheduled, timestamped retrieval of campaign issue pages, press releases, and selected reputable news discovery while retaining publisher verification.
-- Store fetched content hashes, publication/capture dates, canonical URLs, extraction provenance, and target member/bill linkage.
-- Deduplicate and supersede mutable pages rather than overwriting history.
-- Expose durable evidence in member profiles and Quick forecast explanation/context even when it is non-mechanical.
-- Create historical/as-of replay coverage before any new evidence class is allowed to change Quick probabilities.
-- Evaluate candidate mechanical use in frozen shadows first; do not infer a vote stance from campaign finance by default.
+- [x] Keep campaign finance on the scheduled official CFB refresh path.
+- [x] Keep Minnesota Secretary of State campaign-site discovery and bounded issue/news/about crawling on the scheduled rotation.
+- [x] Add deterministic House member-news and Senate caucus member-primary source registries keyed to stable legislator identity.
+- [x] Capture recent member-primary publications with content hashes, canonical URLs, publication/capture dates, and supersession history.
+- [x] Expose member-primary publication health in Operations and the publications themselves on legislator profiles.
+- [x] Keep all newly captured public evidence non-mechanical by default.
+- [ ] Improve generic publisher-verified news yield without weakening publisher verification.
+- [ ] Accumulate prospective/as-of evidence long enough to evaluate any candidate mechanical use under the frozen promotion standard.
 
 ### P1 — prepare 2027-28
 
