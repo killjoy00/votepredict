@@ -52,10 +52,10 @@ function authorBlocks(block: string): string[] {
 }
 
 function authorName(block: string): string | null {
+  const composite = [tag(block, 'LAST_NAME'), tag(block, 'FIRST_NAME')].filter(Boolean).join(', ');
   return tag(block, 'AUTHOR_NAME')
     ?? tag(block, 'NAME')
-    ?? [tag(block, 'LAST_NAME'), tag(block, 'FIRST_NAME')].filter(Boolean).join(', ')
-    || null;
+    ?? (composite || null);
 }
 
 function sourceChamber(identifier: string): 'house' | 'senate' {
