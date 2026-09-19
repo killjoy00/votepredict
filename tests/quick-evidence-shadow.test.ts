@@ -165,6 +165,12 @@ test('frozen unified Quick Evidence plan remains single-candidate and non-servin
   assert.equal(plan.supersession.verifiedPreActivationState.oldProtocolCapturedRevisions, 0);
   assert.equal(plan.candidate.servesTraffic, false);
   assert.equal(plan.candidate.maxAbsoluteLogitDelta, 1);
+  assert.equal(plan.amendment.verifiedPreActivationState.quickRevisions, 0);
+  assert.equal(plan.amendment.verifiedPreActivationState.quickEvidenceCapturedRevisions, 0);
+  assert.equal(plan.amendment.activeWeightChange, 'none');
+  assert.ok(plan.capture.features.includes('priorSameBillAmendmentYes'));
+  assert.ok(plan.capture.features.includes('priorSameBillMotionProceduralNo'));
+  assert.ok(plan.capture.features.includes('priorSameBillOtherNo'));
   assert.equal(plan.capture.probabilityWriteToServingQuick, false);
   assert.equal(plan.guardrails.historicalWebBackfill, false);
   assert.equal(plan.guardrails.automaticPromotion, false);
