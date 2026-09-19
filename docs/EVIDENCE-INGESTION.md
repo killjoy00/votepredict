@@ -100,7 +100,7 @@ The candidate uses a single feature vector. The first directional inputs are int
 - existing bill-specific directional evidence that already clears the evidence impact policy;
 - official prior passage votes by the same legislator on the same bill or its recorded companion, strictly before the forecast cutoff.
 
-The candidate also records campaign-finance volume, campaign-site/member-primary/news counts, source diversity, freshness, and conflict status in the same vector, but those availability/context features have zero directional weight until separately validated. Donor or lobbying relationships, party identity, generic news sentiment, and campaign-finance magnitude do not imply a vote stance.
+The candidate also records campaign-finance volume, campaign-site/member-primary/news counts, source diversity, freshness, conflict status, and prior same-bill non-passage vote counts (amendment, motion/procedural, and other YEA/NAY). Those fields have zero directional weight until separately validated. A YEA or NAY on an amendment or procedural motion is not automatically treated as support or opposition to final passage. Donor or lobbying relationships, party identity, generic news sentiment, and campaign-finance magnitude likewise do not imply a vote stance.
 
 Directional candidate items created by the public crawler are stored with `quickEvidenceCandidate=true` and `mechanicallyActionable=false`. That distinction is deliberate: Quick Evidence may evaluate them in its shadow under its frozen policy, while Deep and serving Quick continue to treat the underlying item as non-mechanical.
 
@@ -120,6 +120,12 @@ Every eligible 2027-28 Quick member prediction now records the same unified feat
 All durable source rows must have been fetched by the forecast as-of timestamp, and any publication timestamp must also be no later than the cutoff. Capture is outcome-blind and automatic promotion is forbidden.
 
 Primary prospective scoring waits for at least 40 resolved forecasts, 2,000 member outcomes, and 50 members whose candidate received directional evidence. The required comparison is paired serving Quick versus Quick Evidence overall and among actually moved members, with calibration/error slices by evidence type, source quality, freshness, chamber, party, and conflict status.
+
+### Structured legislative diagnostic
+
+The unified program also evaluates historically reconstructable prior same-bill non-passage votes without giving them production weight. `quick-evidence-legislative-screen-v1` uses only official bill-linked member votes dated strictly before the target floor-vote date. Same-day records are excluded because the historical corpus does not preserve vote time.
+
+The screen records six feature families: amendment YEA/NAY, motion-or-procedural YEA/NAY, and other recorded YEA/NAY. Counts are log-transformed and tested as a bounded ridge-logistic offset on top of the serving Quick probability. Training uses 2021-22, regularization selection uses 2023-24, and 2025-26 remains descriptive. Regardless of result, these ambiguous vote types remain zero-weight in `quick-evidence-v1` until a separate frozen decision changes that policy.
 
 ### Finance diagnostic
 
