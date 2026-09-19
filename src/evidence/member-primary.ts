@@ -122,10 +122,7 @@ export function houseMemberNewsUrl(externalKey: string): string | undefined {
 export function senateDflFallbackProfileUrl(memberName: string): string | undefined {
   const tokens = memberNameTokens(memberName).filter((token) => token.length > 1);
   if (tokens.length < 2) return undefined;
-  const first = tokens[0];
-  const last = tokens.at(-1);
-  if (!last) return undefined;
-  const slug = [first, last].map((token) => token.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')).filter(Boolean).join('-');
+  const slug = tokens.map((token) => token.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')).filter(Boolean).join('-');
   return slug ? `https://senatedfl.mn/home/members/senator-${slug}/` : undefined;
 }
 
