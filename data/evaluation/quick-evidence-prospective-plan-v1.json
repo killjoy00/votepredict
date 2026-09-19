@@ -41,7 +41,8 @@
       "evidence freshness",
       "prior same-bill amendment YEA/NAY counts",
       "prior same-bill motion/procedural YEA/NAY counts",
-      "prior same-bill other recorded YEA/NAY counts"
+      "prior same-bill other recorded YEA/NAY counts",
+      "bill authorship reconstructed as-of the forecast date from official Revisor current-author state plus dated author additions/strikes"
     ],
     "forbiddenAutomaticInferences": [
       "party implies stance",
@@ -54,7 +55,7 @@
   "capture": {
     "unit": "member prediction within an immutable Quick revision",
     "timing": "immediately after the serving Quick revision is persisted",
-    "sourceCutoff": "all durable evidence must have source_documents.fetched_at less than or equal to the forecast as-of timestamp; published_at, when present, must also be no later than the as-of timestamp",
+    "sourceCutoff": "durable evidence items require source_documents.fetched_at <= forecast as-of and published_at <= as-of when present; Revisor authorship requires revisorAuthorship.fetchedAt <= forecast as-of and complete fail-closed as-of reconstruction",
     "features": [
       "directSupport",
       "directOppose",
@@ -72,6 +73,8 @@
       "priorSameBillMotionProceduralNo",
       "priorSameBillOtherYes",
       "priorSameBillOtherNo",
+      "billAuthor",
+      "authorshipAvailable",
       "candidateEvidenceItems",
       "conflictingDirectionalEvidence",
       "totalEvidenceItems",
@@ -119,9 +122,20 @@
     "candidateStatementMetadata": "quickEvidenceCandidate=true and mechanicallyActionable=false",
     "automaticPromotion": false
   },
-  "amendedAt": "2026-09-19T17:52:00Z",
+  "amendedAt": "2026-09-19T20:30:00Z",
   "amendment": {
     "reason": "Before any 2027-2028 Quick revision existed, add historically reconstructable prior same-bill non-passage vote counts to the unified feature vector at zero weight pending validation.",
+    "verifiedPreActivationState": {
+      "quickRevisions": 0,
+      "quickEvidenceCapturedRevisions": 0
+    },
+    "servingProbabilityChange": "none",
+    "activeWeightChange": "none"
+  },
+  "authorshipAmendment": {
+    "reason": "Before any 2027-2028 Quick revision existed, add fail-closed as-of bill authorship to the single Quick Evidence feature vector at zero weight pending retrospective and prospective validation.",
+    "source": "Minnesota Revisor Bill Status API current AUTHORS state plus dated author-added/stricken ACTIONS",
+    "reconstruction": "start from current author membership identities and reverse dated add/strike operations on or after the target forecast date; same-day action changes are excluded because historical action time-of-day is unavailable",
     "verifiedPreActivationState": {
       "quickRevisions": 0,
       "quickEvidenceCapturedRevisions": 0

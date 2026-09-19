@@ -140,7 +140,8 @@ The production reconciliation repaired the release-integrity drift found during 
 - [x] Keep the finance-only retrospective screen as a hypothesis-only component diagnostic under the unified protocol.
 - [x] Record historically reconstructable prior same-bill amendment/motion/procedural/other vote counts in the unified Quick Evidence vector at zero weight, with same-day rows excluded.
 - [x] Add a frozen retrospective structured-legislative component diagnostic using 2021-22 training, 2023-24 validation, and 2025-26 descriptive scoring.
-- [ ] Add richer dated sponsorship/committee-member evidence only when member identity and as-of provenance are complete; current author lists remain ineligible.
+- [x] Add fail-closed dated sponsorship reconstruction from official Revisor current-author state plus dated author additions/strikes, record `billAuthor` inside the single Quick Evidence vector at zero weight, and freeze an authorship component diagnostic.
+- [ ] Add recurring House/Senate committee-minute ingestion with named-member bill-motion extraction; this is the remaining structured source that requires additional public-data capture.
 - [ ] Accumulate enough prospective/as-of forecasts and outcomes to score `quick-evidence-prospective-v1`.
 
 ### P1 — prepare 2027-28
