@@ -42,6 +42,12 @@ export type QuickEvidencePriorVoteRow = {
   same_no: number;
   companion_yes: number;
   companion_no: number;
+  same_amendment_yes: number;
+  same_amendment_no: number;
+  same_motion_procedural_yes: number;
+  same_motion_procedural_no: number;
+  same_other_yes: number;
+  same_other_no: number;
 };
 
 export interface QuickEvidenceFeatureVector {
@@ -55,6 +61,12 @@ export interface QuickEvidenceFeatureVector {
   priorSameBillNo: number;
   priorCompanionYes: number;
   priorCompanionNo: number;
+  priorSameBillAmendmentYes: number;
+  priorSameBillAmendmentNo: number;
+  priorSameBillMotionProceduralYes: number;
+  priorSameBillMotionProceduralNo: number;
+  priorSameBillOtherYes: number;
+  priorSameBillOtherNo: number;
   candidateEvidenceItems: number;
   conflictingDirectionalEvidence: boolean;
   totalEvidenceItems: number;
@@ -199,6 +211,12 @@ export function buildQuickEvidenceFeatureVector(input: {
     priorSameBillNo: count(prior?.same_no),
     priorCompanionYes: count(prior?.companion_yes),
     priorCompanionNo: count(prior?.companion_no),
+    priorSameBillAmendmentYes: count(prior?.same_amendment_yes),
+    priorSameBillAmendmentNo: count(prior?.same_amendment_no),
+    priorSameBillMotionProceduralYes: count(prior?.same_motion_procedural_yes),
+    priorSameBillMotionProceduralNo: count(prior?.same_motion_procedural_no),
+    priorSameBillOtherYes: count(prior?.same_other_yes),
+    priorSameBillOtherNo: count(prior?.same_other_no),
     candidateEvidenceItems: directional.length,
     conflictingDirectionalEvidence: supportCount > 0 && opposeCount > 0,
     totalEvidenceItems: count(input.availability?.total_items),
@@ -349,17 +367,52 @@ async function loadPriorVotes(
        WHERE target.companion_identifier IS NOT NULL
     )
     SELECT tm.id::text AS membership_id,
-           count(*) FILTER (WHERE bs.relation='same' AND mv.choice='yea')::int AS same_yes,
-           count(*) FILTER (WHERE bs.relation='same' AND mv.choice='nay')::int AS same_no,
-           count(*) FILTER (WHERE bs.relation='companion' AND mv.choice='yea')::int AS companion_yes,
-           count(*) FILTER (WHERE bs.relation='companion' AND mv.choice='nay')::int AS companion_no
+           count(*) FILTER (WHERE bs.relation='same' AND ve.is_passage=true AND mv.choice='yea')::int AS same_yes,
+           count(*) FILTER (WHERE bs.relation='same' AND ve.is_passage=true AND mv.choice='nay')::int AS same_no,
+           count(*) FILTER (WHERE bs.relation='companion' AND ve.is_passage=true AND mv.choice='yea')::int AS companion_yes,
+           count(*) FILTER (WHERE bs.relation='companion' AND ve.is_passage=true AND mv.choice='nay')::int AS companion_no,
+           count(*) FILTER (
+             WHERE bs.relation='same'
+               AND ve.is_passage=false
+               AND ve.vote_kind='amendment'
+               AND mv.choice='yea'
+           )::int AS same_amendment_yes,
+           count(*) FILTER (
+             WHERE bs.relation='same'
+               AND ve.is_passage=false
+               AND ve.vote_kind='amendment'
+               AND mv.choice='nay'
+           )::int AS same_amendment_no,
+           count(*) FILTER (
+             WHERE bs.relation='same'
+               AND ve.is_passage=false
+               AND ve.vote_kind IN ('motion','procedural')
+               AND mv.choice='yea'
+           )::int AS same_motion_procedural_yes,
+           count(*) FILTER (
+             WHERE bs.relation='same'
+               AND ve.is_passage=false
+               AND ve.vote_kind IN ('motion','procedural')
+               AND mv.choice='nay'
+           )::int AS same_motion_procedural_no,
+           count(*) FILTER (
+             WHERE bs.relation='same'
+               AND ve.is_passage=false
+               AND ve.vote_kind='other'
+               AND mv.choice='yea'
+           )::int AS same_other_yes,
+           count(*) FILTER (
+             WHERE bs.relation='same'
+               AND ve.is_passage=false
+               AND ve.vote_kind='other'
+               AND mv.choice='nay'
+           )::int AS same_other_no
       FROM target_members tm
       LEFT JOIN memberships prior_m ON prior_m.legislator_id=tm.legislator_id
       LEFT JOIN member_votes mv ON mv.membership_id=prior_m.id AND mv.choice IN ('yea','nay')
       LEFT JOIN vote_events ve
         ON ve.id=mv.vote_event_id
        AND ve.occurred_on < $3::timestamptz::date
-       AND ve.is_passage=true
       LEFT JOIN bill_scope bs ON bs.id=ve.bill_id
      GROUP BY tm.id`, [membershipIds, billId, asOf]);
   return new Map(result.rows.map((row) => [row.membership_id, row]));
