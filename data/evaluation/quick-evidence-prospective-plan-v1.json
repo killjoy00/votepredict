@@ -42,7 +42,8 @@
       "prior same-bill amendment YEA/NAY counts",
       "prior same-bill motion/procedural YEA/NAY counts",
       "prior same-bill other recorded YEA/NAY counts",
-      "bill authorship reconstructed as-of the forecast date from official Revisor current-author state plus dated author additions/strikes"
+      "bill authorship reconstructed as-of the forecast date from official Revisor current-author state plus dated author additions/strikes",
+      "official named committee bill-motion roll calls captured from House/Senate minutes"
     ],
     "forbiddenAutomaticInferences": [
       "party implies stance",
@@ -75,6 +76,12 @@
       "priorSameBillOtherNo",
       "billAuthor",
       "authorshipAvailable",
+      "priorCommitteeRecommendAye",
+      "priorCommitteeRecommendNay",
+      "priorCommitteeReferralAye",
+      "priorCommitteeReferralNay",
+      "priorCommitteeHoldTableAye",
+      "priorCommitteeHoldTableNay",
       "candidateEvidenceItems",
       "conflictingDirectionalEvidence",
       "totalEvidenceItems",
@@ -136,6 +143,21 @@
     "reason": "Before any 2027-2028 Quick revision existed, add fail-closed as-of bill authorship to the single Quick Evidence feature vector at zero weight pending retrospective and prospective validation.",
     "source": "Minnesota Revisor Bill Status API current AUTHORS state plus dated author-added/stricken ACTIONS",
     "reconstruction": "start from current author membership identities and reverse dated add/strike operations on or after the target forecast date; same-day action changes are excluded because historical action time-of-day is unavailable",
+    "verifiedPreActivationState": {
+      "quickRevisions": 0,
+      "quickEvidenceCapturedRevisions": 0
+    },
+    "servingProbabilityChange": "none",
+    "activeWeightChange": "none"
+  },
+  "committeeMinutesAmendment": {
+    "amendedAt": "2026-09-19T20:55:00Z",
+    "reason": "Before any 2027-2028 Quick revision existed, add named exact-bill committee roll-call features to the single Quick Evidence vector at zero weight pending separate validation.",
+    "sources": [
+      "Minnesota House committee minute pages discovered from the official committee list and minute indexes",
+      "Minnesota Senate committee hearing-minute pages discovered from official committee biennium schedules"
+    ],
+    "semantics": "records the member's vote side and the exact bill-motion class; does not reinterpret amendments or generic procedural votes as final-passage support/opposition",
     "verifiedPreActivationState": {
       "quickRevisions": 0,
       "quickEvidenceCapturedRevisions": 0
