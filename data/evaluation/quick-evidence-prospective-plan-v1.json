@@ -55,7 +55,7 @@
   "capture": {
     "unit": "member prediction within an immutable Quick revision",
     "timing": "immediately after the serving Quick revision is persisted",
-    "sourceCutoff": "all durable evidence must have source_documents.fetched_at less than or equal to the forecast as-of timestamp; published_at, when present, must also be no later than the as-of timestamp",
+    "sourceCutoff": "durable evidence items require source_documents.fetched_at <= forecast as-of and published_at <= as-of when present; Revisor authorship requires revisorAuthorship.fetchedAt <= forecast as-of and complete fail-closed as-of reconstruction",
     "features": [
       "directSupport",
       "directOppose",
