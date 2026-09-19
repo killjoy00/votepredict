@@ -1,6 +1,6 @@
 import { parseRevisorOfficialActions, type RevisorActionChamber } from './revisor-actions';
 
-export const REVISOR_AUTHORSHIP_PARSER_VERSION = 'revisor-authorship-v2' as const;
+export const REVISOR_AUTHORSHIP_PARSER_VERSION = 'revisor-authorship-v3' as const;
 
 export type RevisorAuthorshipOperation = 'add' | 'strike';
 
@@ -102,9 +102,11 @@ export function parseRevisorCurrentAuthors(input: {
 }
 
 function cleanAuthorTail(value: string): { namesText: string; chiefAuthor: boolean } {
-  const chiefAuthor = /\bas\s+chief\s+author\b/i.test(value);
+  const chiefAuthor = /\b(?:chief\s+author|as\s+chief)\b/i.test(value);
   return {
     namesText: value
+      .replace(/\s*\((?:added\s+as\s+chief\s+author|made\s+second\s+author|as\s+(?:chief|second)(?:\s+author)?)\)\s*/gi, ' ')
+      .replace(/\b(?:be\s+added|added)\s+as\s+(?:chief\s+author|co-authors?)\b/gi, ' ')
       .replace(/\bas\s+chief\s+author\b/gi, ' ')
       .replace(/\s+/g, ' ')
       .trim()
@@ -113,11 +115,16 @@ function cleanAuthorTail(value: string): { namesText: string; chiefAuthor: boole
   };
 }
 
+function looksLikeInitialsOnly(value: string): boolean {
+  const compact = value.replace(/\s+/g, '');
+  return /^(?:[A-Z]\.?){1,4}$/i.test(compact);
+}
+
 function looksLikeSingleCommaQualifiedName(value: string): boolean {
   const comma = value.indexOf(',');
   if (comma < 0 || comma !== value.lastIndexOf(',')) return false;
   const qualifier = value.slice(comma + 1).trim();
-  return /^(?:(?:[A-Z]\.?)(?:\s+[A-Z]\.?)*|Jr\.?|Sr\.?|II|III|IV)$/i.test(qualifier);
+  return looksLikeInitialsOnly(qualifier) || /^(?:Jr\.?|Sr\.?|II|III|IV)$/i.test(qualifier);
 }
 
 function cleanNamePart(value: string): string {
@@ -127,27 +134,31 @@ function cleanNamePart(value: string): string {
     .trim();
 }
 
-export function splitRevisorAuthorNames(value: string, options: { plural?: boolean } = {}): string[] {
+export function splitRevisorAuthorNames(value: string, _options: { plural?: boolean } = {}): string[] {
   const cleaned = value
     .replace(/^\s*(?:and|&)\s+/i, '')
     .replace(/\s+/g, ' ')
     .trim();
   if (!cleaned) return [];
 
-  const normalized = cleaned.replace(/,\s+(?:and|&)\s+/gi, '; ');
-  const coarseParts = normalized.includes(';')
-    ? normalized.split(';')
-    : normalized.split(/\s+(?:and|&)\s+/i);
+  const coarseParts = cleaned
+    .replace(/,\s+(?:and|&)\s+/gi, '; ')
+    .split(';')
+    .flatMap((part) => part.split(/\s+(?:and|&)\s+/i));
 
   const names: string[] = [];
   for (const rawPart of coarseParts) {
     const part = rawPart.replace(/^\s*(?:and|&)\s+/i, '').trim();
     if (!part) continue;
 
-    if (options.plural && part.includes(',') && !looksLikeSingleCommaQualifiedName(part)) {
-      for (const commaPart of part.split(',')) {
-        const name = cleanNamePart(commaPart);
-        if (name) names.push(name);
+    if (part.includes(',') && !looksLikeSingleCommaQualifiedName(part)) {
+      const commaParts = part.split(',').map(cleanNamePart).filter(Boolean);
+      for (const commaPart of commaParts) {
+        if (looksLikeInitialsOnly(commaPart) && names.length > 0) {
+          names[names.length - 1] = `${names[names.length - 1]}, ${commaPart}`;
+        } else {
+          names.push(commaPart);
+        }
       }
       continue;
     }
