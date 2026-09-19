@@ -44,7 +44,7 @@ type ProductionEvidenceStatus = {
 type ShadowHealth = {
   failureGraceHours: number;
   productionEvidence: ProductionEvidenceStatus;
-  publicEvidence: ShadowStatus & { session: string; servingMemberModelVersion: string };
+  quickEvidence: ShadowStatus & { session: string; servingMemberModelVersion: string };
   cap20: ShadowStatus & { session: string; frozenBaselineModelVersion: string };
   passageFragility: ShadowStatus & { session: string; servingMemberModelVersion: string };
 };
@@ -91,14 +91,14 @@ function ProspectiveShadowCapturePanel() {
               <small>{health.productionEvidence.enabledSchedules} active schedules. Eligible future bills are discovered hourly; immutable Quick revisions retain a 24-hour cadence until official resolution.</small>
             </div>
             <div className="shadow-experiment">
-              <div><strong>Public-evidence snapshot</strong><small>{health.publicEvidence.session} · House + Senate · {health.publicEvidence.scopeRevisions} in scope</small></div>
+              <div><strong>Quick Evidence</strong><small>{health.quickEvidence.session} · House + Senate · {health.quickEvidence.scopeRevisions} in scope</small></div>
               <div className="shadow-counts">
-                <span>Eligible<strong>{health.publicEvidence.eligibleRevisions}</strong></span>
-                <span>Captured<strong>{health.publicEvidence.capturedRevisions}</strong></span>
-                <span>Excluded<strong>{health.publicEvidence.excludedRevisions}</strong></span>
-                <span>Failed &gt;{health.failureGraceHours}h<strong className={health.publicEvidence.failedRevisions ? 'bad' : ''}>{health.publicEvidence.failedRevisions}</strong></span>
+                <span>Eligible<strong>{health.quickEvidence.eligibleRevisions}</strong></span>
+                <span>Captured<strong>{health.quickEvidence.capturedRevisions}</strong></span>
+                <span>Excluded<strong>{health.quickEvidence.excludedRevisions}</strong></span>
+                <span>Failed &gt;{health.failureGraceHours}h<strong className={health.quickEvidence.failedRevisions ? 'bad' : ''}>{health.quickEvidence.failedRevisions}</strong></span>
               </div>
-              <small>Captures evidence counts, source diversity and freshness at forecast time under {health.publicEvidence.servingMemberModelVersion}. It is non-serving and records no inferred stance.</small>
+              <small>One unified non-serving evidence candidate under {health.quickEvidence.servingMemberModelVersion}: bill-specific directional evidence, prior official bill votes, and the broader evidence feature vector. Serving Quick is unchanged.</small>
             </div>
             <div className="shadow-experiment">
               <div><strong>Member-history cap 20</strong><small>{health.cap20.session} · House + Senate · {health.cap20.scopeRevisions} in scope</small></div>
