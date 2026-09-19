@@ -119,6 +119,21 @@ export function houseMemberNewsUrl(externalKey: string): string | undefined {
   return match ? `${MN_HOUSE_MEMBER_NEWS_ROOT}/${match[1]}` : undefined;
 }
 
+export function senateDflFallbackProfileUrl(memberName: string): string | undefined {
+  const last = surname(memberName);
+  if (!last) return undefined;
+  const slug = last.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  return slug ? `https://senatedfl.mn/home/members/${slug}/` : undefined;
+}
+
+export function houseArchiveMatchesMember(page: PublicPage, member: MemberPrimaryMember): boolean {
+  const first = meaningfulFirstName(member.name);
+  const last = surname(member.name);
+  const normalized = normalizePersonKey(page.text);
+  if (!last || !normalized.includes(last)) return false;
+  return !first || normalized.includes(first);
+}
+
 export function findSenateMemberProfileUrl(
   directory: PublicPage,
   member: Pick<MemberPrimaryMember, 'name' | 'party'>,
@@ -220,8 +235,8 @@ export async function discoverMemberPrimarySource(
       maxBytes: 2_500_000,
       userAgent: 'VotePredict/2.0 Minnesota House member-primary evidence',
     });
-    if (!memberPrimaryProfileMatches(registryPage, member)) {
-      throw new Error(`Minnesota House news archive did not verify ${member.name} in district ${member.district}`);
+    if (!houseArchiveMatchesMember(registryPage, member)) {
+      throw new Error(`Minnesota House news archive did not verify ${member.name}`);
     }
     return {
       hostKind: 'house_official',
@@ -238,7 +253,8 @@ export async function discoverMemberPrimarySource(
   const directory = dfl ? directories.dfl : directories.republican;
   if (!directory) throw new Error(`Minnesota Senate ${dfl ? 'DFL' : 'Republican'} directory is unavailable`);
 
-  const profileUrl = findSenateMemberProfileUrl(directory, member);
+  let profileUrl = findSenateMemberProfileUrl(directory, member);
+  if (!profileUrl && dfl) profileUrl = senateDflFallbackProfileUrl(member.name);
   if (!profileUrl) throw new Error(`No unique caucus profile matched ${member.name}`);
   const registryPage = await fetchPublicPage(profileUrl, {
     timeoutMs: 15_000,
