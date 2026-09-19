@@ -1,6 +1,6 @@
 import { parseRevisorOfficialActions, type RevisorActionChamber } from './revisor-actions';
 
-export const REVISOR_AUTHORSHIP_PARSER_VERSION = 'revisor-authorship-v1' as const;
+export const REVISOR_AUTHORSHIP_PARSER_VERSION = 'revisor-authorship-v2' as const;
 
 export type RevisorAuthorshipOperation = 'add' | 'strike';
 
@@ -54,6 +54,7 @@ function authorBlocks(block: string): string[] {
 function authorName(block: string): string | null {
   const composite = [tag(block, 'LAST_NAME'), tag(block, 'FIRST_NAME')].filter(Boolean).join(', ');
   return tag(block, 'AUTHOR_NAME')
+    ?? tag(block, 'MEMBER_NAME')
     ?? tag(block, 'NAME')
     ?? (composite || null);
 }
@@ -112,38 +113,80 @@ function cleanAuthorTail(value: string): { namesText: string; chiefAuthor: boole
   };
 }
 
-export function splitRevisorAuthorNames(value: string): string[] {
+function looksLikeSingleCommaQualifiedName(value: string): boolean {
+  const comma = value.indexOf(',');
+  if (comma < 0 || comma !== value.lastIndexOf(',')) return false;
+  const qualifier = value.slice(comma + 1).trim();
+  return /^(?:(?:[A-Z]\.\s*)+|Jr\.?|Sr\.?|II|III|IV)$/i.test(qualifier);
+}
+
+function cleanNamePart(value: string): string {
+  return value
+    .replace(/^\s*(?:and|&)\s+/i, '')
+    .replace(/[.;]+$/, '')
+    .trim();
+}
+
+export function splitRevisorAuthorNames(value: string, options: { plural?: boolean } = {}): string[] {
   const cleaned = value
     .replace(/^\s*(?:and|&)\s+/i, '')
     .replace(/\s+/g, ' ')
     .trim();
   if (!cleaned) return [];
 
-  const semicolonParts = cleaned.includes(';')
-    ? cleaned.split(';')
-    : cleaned.split(/\s+(?:and|&)\s+/i);
+  const normalized = cleaned.replace(/,\s+(?:and|&)\s+/gi, '; ');
+  const coarseParts = normalized.includes(';')
+    ? normalized.split(';')
+    : normalized.split(/\s+(?:and|&)\s+/i);
 
-  return semicolonParts
-    .map((part) => part.replace(/^\s*(?:and|&)\s+/i, '').replace(/[.;]+$/, '').trim())
-    .filter(Boolean);
+  const names: string[] = [];
+  for (const rawPart of coarseParts) {
+    const part = rawPart.replace(/^\s*(?:and|&)\s+/i, '').trim();
+    if (!part) continue;
+
+    if (options.plural && part.includes(',') && !looksLikeSingleCommaQualifiedName(part)) {
+      for (const commaPart of part.split(',')) {
+        const name = cleanNamePart(commaPart);
+        if (name) names.push(name);
+      }
+      continue;
+    }
+
+    const name = cleanNamePart(part);
+    if (name) names.push(name);
+  }
+
+  return names;
 }
 
 export function parseRevisorAuthorActions(xml: string): RevisorAuthorAction[] {
   const rows: RevisorAuthorAction[] = [];
   for (const action of parseRevisorOfficialActions(xml)) {
     if (!action.chamber || !action.occurredOn) continue;
-    const match = action.description.match(/\bauthors?\s+(added|stricken)\s+(.+)$/i);
-    if (!match) continue;
-    const { namesText, chiefAuthor } = cleanAuthorTail(match[2]);
-    const names = splitRevisorAuthorNames(namesText);
+
+    const actionText = action.fields.ACTION_TEXT?.trim() ?? '';
+    const actionDetail = action.fields.ACTION_DESCRIPTION?.trim() ?? '';
+    const actionLabel = actionText || action.description;
+    const operationMatch = actionLabel.match(/\bauthors?\s+(added|stricken)\b/i);
+    if (!operationMatch) continue;
+
+    const inlineTail = actionText.match(/\bauthors?\s+(?:added|stricken)\s+(.+)$/i)?.[1]
+      ?? action.description.match(/\bauthors?\s+(?:added|stricken)\s+(.+)$/i)?.[1]
+      ?? '';
+    const rawNames = actionDetail || inlineTail;
+    const { namesText, chiefAuthor } = cleanAuthorTail(rawNames);
+    const plural = /\bauthors\b/i.test(actionLabel);
+    const names = splitRevisorAuthorNames(namesText, { plural });
     if (names.length === 0) continue;
+
+    const description = [actionText, actionDetail].filter(Boolean).join(' ').trim() || action.description;
     rows.push({
       chamber: action.chamber,
       occurredOn: action.occurredOn,
-      operation: match[1].toLowerCase() === 'added' ? 'add' : 'strike',
+      operation: operationMatch[1].toLowerCase() === 'added' ? 'add' : 'strike',
       names,
       chiefAuthor,
-      description: action.description,
+      description,
     });
   }
   return rows.sort((left, right) => left.occurredOn.localeCompare(right.occurredOn)
