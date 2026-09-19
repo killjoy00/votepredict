@@ -1,0 +1,114 @@
+name: Public evidence Quick screen
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/public-evidence-quick-screen.yml
+      - scripts/evaluate-public-evidence-quick-screen.ts
+      - src/app/api/operations/public-evidence-quick-screen/route.ts
+      - src/evaluation/public-evidence-quick-screen.ts
+      - tests/public-evidence-quick-screen.test.ts
+      - data/evaluation/public-evidence-prospective-plan-v1.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-evidence-quick-screen-v1
+  cancel-in-progress: false
+
+jobs:
+  screen:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_PUBLIC_EVIDENCE_SCREEN_OUTPUT: artifacts/public-evidence-quick-screen-v1.json
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Verify prospective evidence boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          plan='data/evaluation/public-evidence-prospective-plan-v1.json'
+          test "$(jq -r '.schemaVersion' "$plan")" = 'public-evidence-prospective-plan-v1'
+          test "$(jq -r '.scope.session' "$plan")" = '2027-2028'
+          test "$(jq -r '.scope.servingMemberModelVersion' "$plan")" = 'member-eb-v1.2-decay180'
+          test "$(jq -r '.capture.probabilityWrite' "$plan")" = 'false'
+          test "$(jq -r '.guardrails.historicalBackfill' "$plan")" = 'false'
+          test "$(jq -r '.guardrails.automaticPromotion' "$plan")" = 'false'
+
+      - name: Require production environment access
+        shell: bash
+        run: test -n "${VERCEL_TOKEN:-}"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-fund --no-audit
+
+      - name: Wait for this exact main SHA to be live in production
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            code="$(curl --silent --show-error --output "$RUNNER_TEMP/vercel-deployments.json" --write-out '%{http_code}' --header "Authorization: Bearer ${VERCEL_TOKEN}" "https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&target=production&limit=20&teamId=${VERCEL_ORG_ID}")"
+            test "$code" = '200'
+            match="$(jq -c --arg sha "$GITHUB_SHA" '[.deployments[]? | select(.target == "production" and .meta.githubCommitSha == $sha)] | first // empty' "$RUNNER_TEMP/vercel-deployments.json")"
+            if [ -n "$match" ]; then
+              state="$(printf '%s' "$match" | jq -r '.state // "UNKNOWN"')"
+              if [ "$state" = 'READY' ]; then exit 0; fi
+              if [ "$state" = 'ERROR' ] || [ "$state" = 'CANCELED' ]; then exit 1; fi
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Read production operation secret privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+
+      - name: Run exploratory public-evidence Quick screen
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/evaluate-public-evidence-quick-screen.ts
+
+      - name: Verify hypothesis-only artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$VOTEPREDICT_PUBLIC_EVIDENCE_SCREEN_OUTPUT"
+          test "$(jq -r '.schemaVersion' "$file")" = 'public-evidence-quick-screen-v1'
+          test "$(jq -r '.metadata.codeSha' "$file")" = "$GITHUB_SHA"
+          test "$(jq -r '.metadata.promotionEligible' "$file")" = 'false'
+          test "$(jq -r '.metadata.shadowNominationEligible' "$file")" = 'false'
+          test "$(jq -r '.conclusion.productionAction' "$file")" = 'none'
+          test "$(jq -r '.conclusion.servingQuickChanged' "$file")" = 'false'
+          test "$(jq -r '.conclusion.prospectiveShadowNomination' "$file")" = 'false'
+          jq -e '.coverage.training.financeMemberOutcomes > 0' "$file" >/dev/null
+          jq -e '.coverage.validation.financeMemberOutcomes > 0' "$file" >/dev/null
+
+      - name: Upload immutable public-evidence screen
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-evidence-quick-screen-v1-${{ github.sha }}
+          path: artifacts/public-evidence-quick-screen-v1.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Remove temporary production files
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/vercel-deployments.json"
