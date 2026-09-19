@@ -10,6 +10,11 @@ import {
   MEMBER_HISTORY_CAP20_PROSPECTIVE_SESSION,
 } from '@/forecasting/member-history-cap20-prospective-shadow';
 import {
+  PUBLIC_EVIDENCE_PROSPECTIVE_EXPERIMENT,
+  PUBLIC_EVIDENCE_PROSPECTIVE_MODEL_VERSION,
+  PUBLIC_EVIDENCE_PROSPECTIVE_SESSION,
+} from '@/forecasting/public-evidence-prospective-capture';
+import {
   PROSPECTIVE_EVIDENCE_OWNER_USER_ID,
   PROSPECTIVE_EVIDENCE_SESSION,
 } from './prospective-evidence-plan';
@@ -42,6 +47,12 @@ export interface ProspectiveShadowCaptureHealth {
   generatedAt: string;
   failureGraceHours: number;
   productionEvidence: ProspectiveProductionEvidenceStatus;
+  publicEvidence: ProspectiveShadowCaptureStatus & {
+    experiment: typeof PUBLIC_EVIDENCE_PROSPECTIVE_EXPERIMENT;
+    session: typeof PUBLIC_EVIDENCE_PROSPECTIVE_SESSION;
+    chambers: readonly ['house', 'senate'];
+    servingMemberModelVersion: typeof PUBLIC_EVIDENCE_PROSPECTIVE_MODEL_VERSION;
+  };
   cap20: ProspectiveShadowCaptureStatus & {
     experiment: typeof MEMBER_HISTORY_CAP20_PROSPECTIVE_EXPERIMENT;
     session: typeof MEMBER_HISTORY_CAP20_PROSPECTIVE_SESSION;
@@ -105,6 +116,7 @@ function status(input: {
 
 export async function getProspectiveShadowCaptureHealth(): Promise<ProspectiveShadowCaptureHealth> {
   const cap20Context = JSON.stringify([{ experiment: MEMBER_HISTORY_CAP20_PROSPECTIVE_EXPERIMENT }]);
+  const publicEvidenceContext = JSON.stringify([{ experiment: PUBLIC_EVIDENCE_PROSPECTIVE_EXPERIMENT }]);
   const result = await pool.query<StatusRow>(`
     WITH scoped AS (
       SELECT r.id,
@@ -204,6 +216,64 @@ export async function getProspectiveShadowCaptureHealth(): Promise<ProspectiveSh
   const row = result.rows[0];
   if (!row) throw new Error('Prospective shadow capture health query returned no row');
 
+  const publicEvidenceResult = await pool.query<{
+    scope: string | number;
+    eligible: string | number;
+    captured: string | number;
+    excluded: string | number;
+    failed: string | number;
+    latest_eligible_at: string | null;
+    latest_captured_at: string | null;
+  }>(`
+    WITH scoped AS (
+      SELECT r.id,
+             r.model_version,
+             r.generated_at,
+             c.slug AS chamber_slug
+        FROM forecast_revisions r
+        JOIN forecasts f ON f.id=r.forecast_id
+        JOIN legislative_sessions s ON s.id=f.session_id
+        JOIN chambers c ON c.id=f.target_chamber_id
+       WHERE s.slug=$1
+         AND f.target_type='bill'
+         AND r.research_mode='quick'
+         AND c.slug IN ('house','senate')
+    ), evaluated AS (
+      SELECT scoped.*,
+             (COALESCE(model_version=$2, false) AND generated_at IS NOT NULL) AS eligible,
+             (
+               EXISTS (
+                 SELECT 1 FROM forecast_member_predictions fmp
+                  WHERE fmp.revision_id=scoped.id
+               )
+               AND NOT EXISTS (
+                 SELECT 1 FROM forecast_member_predictions fmp
+                  WHERE fmp.revision_id=scoped.id
+                    AND NOT (COALESCE(fmp.context, '[]'::jsonb) @> $3::jsonb)
+               )
+             ) AS captured
+        FROM scoped
+    )
+    SELECT count(*) AS scope,
+           count(*) FILTER (WHERE eligible) AS eligible,
+           count(*) FILTER (WHERE eligible AND captured) AS captured,
+           count(*) FILTER (WHERE NOT eligible) AS excluded,
+           count(*) FILTER (
+             WHERE eligible AND NOT captured
+               AND generated_at < now() - ($4::text || ' hours')::interval
+           ) AS failed,
+           max(generated_at)::text FILTER (WHERE eligible) AS latest_eligible_at,
+           max(generated_at)::text FILTER (WHERE eligible AND captured) AS latest_captured_at
+      FROM evaluated
+  `, [
+    PUBLIC_EVIDENCE_PROSPECTIVE_SESSION,
+    PUBLIC_EVIDENCE_PROSPECTIVE_MODEL_VERSION,
+    publicEvidenceContext,
+    FAILURE_GRACE_HOURS,
+  ]);
+  const publicEvidence = publicEvidenceResult.rows[0];
+  if (!publicEvidence) throw new Error('Public-evidence prospective capture health query returned no row');
+
   return {
     generatedAt: new Date().toISOString(),
     failureGraceHours: FAILURE_GRACE_HOURS,
@@ -216,6 +286,21 @@ export async function getProspectiveShadowCaptureHealth(): Promise<ProspectiveSh
       revisions: count(row.evidence_revisions),
       resolvedForecasts: count(row.evidence_resolved_forecasts),
       ...(row.evidence_latest_revision_at ? { latestRevisionAt: row.evidence_latest_revision_at } : {}),
+    },
+    publicEvidence: {
+      experiment: PUBLIC_EVIDENCE_PROSPECTIVE_EXPERIMENT,
+      session: PUBLIC_EVIDENCE_PROSPECTIVE_SESSION,
+      chambers: ['house', 'senate'],
+      servingMemberModelVersion: PUBLIC_EVIDENCE_PROSPECTIVE_MODEL_VERSION,
+      ...status({
+        scope: publicEvidence.scope,
+        eligible: publicEvidence.eligible,
+        captured: publicEvidence.captured,
+        excluded: publicEvidence.excluded,
+        failed: publicEvidence.failed,
+        latestEligibleAt: publicEvidence.latest_eligible_at,
+        latestCapturedAt: publicEvidence.latest_captured_at,
+      }),
     },
     cap20: {
       experiment: MEMBER_HISTORY_CAP20_PROSPECTIVE_EXPERIMENT,
