@@ -37,6 +37,10 @@ export type ProductionReadiness = {
     publicEvidenceMembers: number;
     quickEvidenceCandidateItems: number;
     quickEvidenceCandidateMembers: number;
+    committeeEvidenceItems: number;
+    committeeEvidenceMembers: number;
+    latestCommitteeEvidenceRun?: string;
+    latestCommitteeEvidenceStatus?: string;
     mechanicallyActionableItems: number;
     latestCampaignFinanceFetch?: string;
     latestPublicEvidenceRun?: string;
@@ -95,6 +99,10 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
       public_evidence_members: number;
       quick_evidence_candidate_items: number;
       quick_evidence_candidate_members: number;
+      committee_evidence_items: number;
+      committee_evidence_members: number;
+      latest_committee_evidence_run: string | null;
+      latest_committee_evidence_status: string | null;
       mechanically_actionable_items: number;
       latest_campaign_finance_fetch: string | null;
       latest_public_evidence_run: string | null;
@@ -169,6 +177,10 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
         )::int AS public_evidence_members,
         count(*) FILTER (WHERE metadata->>'quickEvidenceCandidate'='true')::int AS quick_evidence_candidate_items,
         count(DISTINCT membership_id) FILTER (WHERE metadata->>'quickEvidenceCandidate'='true')::int AS quick_evidence_candidate_members,
+        count(*) FILTER (WHERE metadata->>'contextType'='committee_bill_vote')::int AS committee_evidence_items,
+        count(DISTINCT membership_id) FILTER (WHERE metadata->>'contextType'='committee_bill_vote')::int AS committee_evidence_members,
+        (SELECT finished_at::text FROM ingestion_runs WHERE source_system='committee-evidence-pipeline' ORDER BY created_at DESC LIMIT 1) AS latest_committee_evidence_run,
+        (SELECT status FROM ingestion_runs WHERE source_system='committee-evidence-pipeline' ORDER BY created_at DESC LIMIT 1) AS latest_committee_evidence_status,
         count(*) FILTER (WHERE metadata->>'mechanicallyActionable'='true')::int AS mechanically_actionable_items,
         max(fetched_at) FILTER (WHERE source_kind='campaign_finance_bulk')::text AS latest_campaign_finance_fetch,
         (SELECT finished_at::text FROM ingestion_runs WHERE source_system='public-evidence-pipeline' ORDER BY created_at DESC LIMIT 1) AS latest_public_evidence_run,
@@ -213,6 +225,10 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
     public_evidence_members: 0,
     quick_evidence_candidate_items: 0,
     quick_evidence_candidate_members: 0,
+    committee_evidence_items: 0,
+    committee_evidence_members: 0,
+    latest_committee_evidence_run: null,
+    latest_committee_evidence_status: null,
     mechanically_actionable_items: 0,
     latest_campaign_finance_fetch: null,
     latest_public_evidence_run: null,
@@ -254,6 +270,10 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
       publicEvidenceMembers: Number(evidence.public_evidence_members),
       quickEvidenceCandidateItems: Number(evidence.quick_evidence_candidate_items),
       quickEvidenceCandidateMembers: Number(evidence.quick_evidence_candidate_members),
+      committeeEvidenceItems: Number(evidence.committee_evidence_items),
+      committeeEvidenceMembers: Number(evidence.committee_evidence_members),
+      latestCommitteeEvidenceRun: evidence.latest_committee_evidence_run ?? undefined,
+      latestCommitteeEvidenceStatus: evidence.latest_committee_evidence_status ?? undefined,
       mechanicallyActionableItems: Number(evidence.mechanically_actionable_items),
       latestCampaignFinanceFetch: evidence.latest_campaign_finance_fetch ?? undefined,
       latestPublicEvidenceRun: evidence.latest_public_evidence_run ?? undefined,
