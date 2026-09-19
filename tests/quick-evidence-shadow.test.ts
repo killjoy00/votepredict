@@ -207,6 +207,13 @@ test('frozen unified Quick Evidence plan remains single-candidate and non-servin
   assert.ok(plan.capture.features.includes('priorSameBillOtherNo'));
   assert.ok(plan.capture.features.includes('billAuthor'));
   assert.ok(plan.capture.features.includes('authorshipAvailable'));
+  assert.ok(plan.capture.features.includes('priorCommitteeRecommendAye'));
+  assert.ok(plan.capture.features.includes('priorCommitteeRecommendNay'));
+  assert.ok(plan.capture.features.includes('priorCommitteeReferralAye'));
+  assert.ok(plan.capture.features.includes('priorCommitteeHoldTableNay'));
+  assert.equal(plan.committeeMinutesAmendment.verifiedPreActivationState.quickRevisions, 0);
+  assert.equal(plan.committeeMinutesAmendment.verifiedPreActivationState.quickEvidenceCapturedRevisions, 0);
+  assert.equal(plan.committeeMinutesAmendment.activeWeightChange, 'none');
   assert.equal(plan.authorshipAmendment.verifiedPreActivationState.quickRevisions, 0);
   assert.equal(plan.authorshipAmendment.verifiedPreActivationState.quickEvidenceCapturedRevisions, 0);
   assert.equal(plan.authorshipAmendment.activeWeightChange, 'none');
