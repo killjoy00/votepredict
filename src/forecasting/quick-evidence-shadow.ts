@@ -25,7 +25,7 @@ export type QuickEvidenceStoredRow = {
   metadata: Record<string, unknown> | null;
 };
 
-export type QuickEvidenceQuickEvidenceAvailabilityRow = {
+export type QuickEvidenceAvailabilityRow = {
   membership_id: string;
   total_items: number;
   campaign_finance_items: number;
@@ -36,7 +36,7 @@ export type QuickEvidenceQuickEvidenceAvailabilityRow = {
   newest_fetched_at: string | null;
 };
 
-export type QuickEvidenceQuickEvidencePriorVoteRow = {
+export type QuickEvidencePriorVoteRow = {
   membership_id: string;
   same_yes: number;
   same_no: number;
