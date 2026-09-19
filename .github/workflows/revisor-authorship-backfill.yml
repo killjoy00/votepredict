@@ -2,6 +2,11 @@ name: Revisor authorship production backfill
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - ops/revisor-authorship-backfill-20260919
+    paths:
+      - .github/workflows/revisor-authorship-backfill.yml
 
 permissions:
   contents: read
@@ -12,7 +17,7 @@ concurrency:
 
 jobs:
   backfill:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/ops/revisor-authorship-backfill-20260919'
     runs-on: ubuntu-latest
     timeout-minutes: 180
     env:
