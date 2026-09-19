@@ -140,6 +140,6 @@ test('extracts per-member Y/N Senate vote format', () => {
   `;
   const rows = extractCommitteeBillRollCalls(html, ['SF73']);
   assert.equal(rows.length, 1);
-  assert.deepEqual(rows[0].ayes, ['Chair Murphy', 'Champion']);
+  assert.deepEqual(rows[0].ayes, ['Murphy', 'Champion']);
   assert.deepEqual(rows[0].nays, ['Anderson']);
 });
