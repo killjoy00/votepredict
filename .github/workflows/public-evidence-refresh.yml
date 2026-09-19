@@ -27,7 +27,7 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
       VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
-      VOTEPREDICT_PUBLIC_EVIDENCE_BATCH: '12'
+      VOTEPREDICT_PUBLIC_EVIDENCE_BATCH: '24'
 
     steps:
       - uses: actions/checkout@v7

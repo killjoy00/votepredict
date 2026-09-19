@@ -108,7 +108,7 @@ The production reconciliation repaired the release-integrity drift found during 
 ## Current gaps
 
 1. **Deep availability.** Deep is explicitly unavailable while AI Gateway returns `billing_required`. If Deep remains a core product mode, billing must be enabled and a successful persisted evidence/revision smoke should be required before re-enabling it.
-2. **Prospective production evidence.** The production scorecard infrastructure is built, but the project still needs a meaningful set of real pre-outcome forecasts that later resolve to official votes.
+2. **Prospective production evidence.** The production scorecard infrastructure is built and the public-evidence availability protocol is now frozen for 2027-28 Quick revisions. The project still needs a meaningful set of real pre-outcome forecasts that later resolve to official votes before primary scoring is available.
 3. **Durable external-evidence breadth.** Campaign finance, campaign-site ingestion, and systematic House/Senate member-primary publication capture are durable. Generic publisher-verified news remains supplemental, but its discovery path now expands common member-name variants, allocates Bing results fairly per member, unions GDELT and Bing leads, and backs off GDELT cleanly when rate-limited. Operations now exposes news coverage and prospective-corpus accrual metrics so remaining yield gaps are measurable.
 
 ## Plan from here
@@ -131,7 +131,10 @@ The production reconciliation repaired the release-integrity drift found during 
 - [x] Keep all newly captured public evidence non-mechanical by default.
 - [x] Improve generic publisher-verified news discovery without weakening publisher-page verification: common-name aliases, per-member result fairness, multi-provider union, and GDELT rate-limit backoff.
 - [x] Expose news-member coverage, latest-batch yield/failures/no-lead counts, and prospective-corpus age in Operations.
-- [ ] Accumulate prospective/as-of evidence long enough to evaluate any candidate mechanical use under the frozen promotion standard.
+- [x] Double scheduled web-evidence rotation to 24 members per run and deepen bounded member-primary/news capture.
+- [x] Freeze and implement `public-evidence-prospective-v1`, which snapshots evidence availability/freshness on eligible 2027-28 Quick member predictions without changing probabilities.
+- [x] Automate the existing finance-only retrospective sensitivity screen as a hypothesis-only immutable artifact.
+- [ ] Accumulate enough prospective/as-of forecasts and outcomes to score the frozen public-evidence availability protocol.
 
 ### P1 — prepare 2027-28
 

@@ -67,10 +67,28 @@ test('House archive identity accepts deterministic LRL pages even when district 
   assert.equal(houseArchiveMatchesMember(archive, member), true);
 });
 
-test('Senate DFL fallback profile URLs derive from the member surname and remain verify-before-use', () => {
-  assert.equal(senateDflFallbackProfileUrl('John A. Hoffman'), 'https://senatedfl.mn/home/members/hoffman/');
-  assert.equal(senateDflFallbackProfileUrl('John J. Marty'), 'https://senatedfl.mn/home/members/marty/');
-  assert.equal(senateDflFallbackProfileUrl('Jim Carlson'), 'https://senatedfl.mn/home/members/carlson/');
+test('Senate DFL fallback profile URLs follow the live senator-first-last slug and remain verify-before-use', () => {
+  assert.equal(senateDflFallbackProfileUrl('John A. Hoffman'), 'https://senatedfl.mn/home/members/senator-john-hoffman/');
+  assert.equal(senateDflFallbackProfileUrl('John J. Marty'), 'https://senatedfl.mn/home/members/senator-john-marty/');
+  assert.equal(senateDflFallbackProfileUrl('Nick A. Frentz'), 'https://senatedfl.mn/home/members/senator-nick-frentz/');
+  assert.equal(senateDflFallbackProfileUrl('Omar Fateh'), 'https://senatedfl.mn/home/members/senator-omar-fateh/');
+  assert.equal(senateDflFallbackProfileUrl('Bobby Joe Champion'), 'https://senatedfl.mn/home/members/senator-bobby-joe-champion/');
+  assert.equal(senateDflFallbackProfileUrl('Erin Maye Quade'), 'https://senatedfl.mn/home/members/senator-erin-maye-quade/');
+});
+
+test('Senate DFL directory matching accepts live profile cards with descriptive nested text', () => {
+  const directory = page({
+    canonicalUrl: 'https://senatedfl.mn/senators/',
+    rawContent: '<a href="/home/members/senator-nick-frentz/"><div>Nick Frentz</div><span>Assistant Majority Leader Senate District 18 North Mankato</span></a>',
+    text: 'Nick Frentz Assistant Majority Leader Senate District 18 North Mankato',
+  });
+  assert.equal(
+    findSenateMemberProfileUrl(directory, {
+      name: 'Nick A. Frentz',
+      party: 'DFL',
+    }),
+    'https://senatedfl.mn/home/members/senator-nick-frentz/',
+  );
 });
 
 test('Senate directory matching tolerates initials and common first-name variants while keeping surname unique', () => {

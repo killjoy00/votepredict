@@ -44,6 +44,7 @@ type ProductionEvidenceStatus = {
 type ShadowHealth = {
   failureGraceHours: number;
   productionEvidence: ProductionEvidenceStatus;
+  publicEvidence: ShadowStatus & { session: string; servingMemberModelVersion: string };
   cap20: ShadowStatus & { session: string; frozenBaselineModelVersion: string };
   passageFragility: ShadowStatus & { session: string; servingMemberModelVersion: string };
 };
@@ -88,6 +89,16 @@ function ProspectiveShadowCapturePanel() {
                 <span>Due now<strong>{health.productionEvidence.dueSchedules}</strong></span>
               </div>
               <small>{health.productionEvidence.enabledSchedules} active schedules. Eligible future bills are discovered hourly; immutable Quick revisions retain a 24-hour cadence until official resolution.</small>
+            </div>
+            <div className="shadow-experiment">
+              <div><strong>Public-evidence snapshot</strong><small>{health.publicEvidence.session} · House + Senate · {health.publicEvidence.scopeRevisions} in scope</small></div>
+              <div className="shadow-counts">
+                <span>Eligible<strong>{health.publicEvidence.eligibleRevisions}</strong></span>
+                <span>Captured<strong>{health.publicEvidence.capturedRevisions}</strong></span>
+                <span>Excluded<strong>{health.publicEvidence.excludedRevisions}</strong></span>
+                <span>Failed &gt;{health.failureGraceHours}h<strong className={health.publicEvidence.failedRevisions ? 'bad' : ''}>{health.publicEvidence.failedRevisions}</strong></span>
+              </div>
+              <small>Captures evidence counts, source diversity and freshness at forecast time under {health.publicEvidence.servingMemberModelVersion}. It is non-serving and records no inferred stance.</small>
             </div>
             <div className="shadow-experiment">
               <div><strong>Member-history cap 20</strong><small>{health.cap20.session} · House + Senate · {health.cap20.scopeRevisions} in scope</small></div>

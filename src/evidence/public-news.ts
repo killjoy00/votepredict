@@ -3,8 +3,8 @@ import { fetchPublicPage, publicPageMentionsPerson, type PublicPage } from './pu
 const GDELT_DOC_URL = 'https://api.gdeltproject.org/api/v2/doc/doc';
 const BING_NEWS_RSS_URL = 'https://www.bing.com/news/search';
 const LOOKBACK_DAYS = 45;
-const MAX_RESULTS_PER_MEMBER = 4;
-const MAX_BATCH_RESULTS = 24;
+const MAX_RESULTS_PER_MEMBER = 6;
+const MAX_BATCH_RESULTS = 36;
 const BING_RSS_GROUP_SIZE = 1;
 const GDELT_TIMEOUT_MS = 15_000;
 const GDELT_START_SPACING_MS = 15_000;
