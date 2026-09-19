@@ -2,7 +2,16 @@ import { pool } from '@/lib/db';
 import { persistDurableEvidence, type DurableEvidenceFreshness } from './durable-ingestion';
 import { discoverMinnesotaCampaignSites, filingMatchesMember, selectCampaignContentLinks, type CampaignSiteFiling } from './campaign-site-discovery';
 import { runLiveCampaignFinanceRefresh } from './live-campaign-finance-refresh';
-import { fetchPublicPage, publicPageMentionsPerson } from './public-http';
+import {
+  discoverMemberPrimarySource,
+  fetchSenateMemberPrimaryDirectory,
+  memberPrimaryArticleMatches,
+  memberPrimaryPublishedAt,
+  selectMemberPrimaryArticleCandidates,
+  type MemberPrimaryDiscovery,
+  type SenateMemberPrimaryDirectories,
+} from './member-primary';
+import { fetchPublicPage, publicPageMentionsPerson, type PublicPage } from './public-http';
 import {
   discoverMemberNewsBatch,
   fetchNewsLeadPage,
@@ -11,13 +20,15 @@ import {
   type NewsLead,
 } from './public-news';
 
-const PIPELINE_VERSION = 'public-evidence-v1';
+const PIPELINE_VERSION = 'public-evidence-v2';
 const DEFAULT_BATCH = 12;
 const MAX_BATCH = 24;
 const NEWS_PER_MEMBER = 2;
 const NEWS_DISCOVERY_GROUP_SIZE = 6;
 const NEWS_FETCH_CONCURRENCY = 4;
 const CAMPAIGN_PAGES_PER_MEMBER = 3;
+const MEMBER_PRIMARY_ARTICLES_PER_MEMBER = 3;
+const MEMBER_PRIMARY_CANDIDATE_LIMIT = 10;
 const FINANCE_REFRESH_AFTER_HOURS = 18;
 const MAX_DIAGNOSTIC_ROWS = 24;
 
@@ -31,7 +42,9 @@ type MembershipRow = {
   membership_id: string;
   legislator_id: string;
   name: string;
+  external_key: string;
   chamber_slug: 'house' | 'senate';
+  party: string;
   district: string;
 };
 
@@ -102,7 +115,9 @@ async function selectMembershipBatch(batchSize: number): Promise<MembershipBatch
     SELECT m.id::text AS membership_id,
            m.legislator_id::text AS legislator_id,
            l.name,
+           l.external_key,
            c.slug AS chamber_slug,
+           m.party,
            m.district
       FROM memberships m
       JOIN legislators l ON l.id=m.legislator_id
@@ -275,6 +290,168 @@ async function refreshCampaignMember(
   return result;
 }
 
+
+async function persistMemberPrimaryRegistry(
+  member: MembershipRow,
+  discovery: MemberPrimaryDiscovery,
+  now: Date,
+) {
+  const page = discovery.registryPage;
+  const registryQuality = discovery.hostKind === 'house_official' ? 'official' as const : 'member_primary' as const;
+  return persistDurableEvidence({
+    sourceKind: 'member_primary_registry',
+    sourceUrl: page.canonicalUrl,
+    contentSha256: page.contentSha256,
+    fetchedAt: page.fetchedAt,
+    httpStatus: page.httpStatus,
+    metadata: {
+      pipelineVersion: PIPELINE_VERSION,
+      publisher: discovery.publisher,
+      hostKind: discovery.hostKind,
+      registryKind: 'member_primary_source',
+      contentType: page.contentType,
+      bytes: page.bytes,
+      title: page.title,
+    },
+  }, [{
+    target: { membershipId: member.membership_id },
+    kind: 'context',
+    stance: 'neutral',
+    claim: `${discovery.publisher} member-primary source registry for ${member.name}.`,
+    excerpt: page.excerpt,
+    sourceQuality: registryQuality,
+    relevance: 'low',
+    freshness: freshness(page.fetchedAt, now),
+    extractionMethod: 'deterministic-member-primary-registry',
+    extractionVersion: PIPELINE_VERSION,
+    confidence: 1,
+    metadata: {
+      contextType: 'public_evidence',
+      subtype: 'member_primary_registry',
+      publisher: discovery.publisher,
+      hostKind: discovery.hostKind,
+      sourceVerified: true,
+      contextOnly: true,
+      mechanicallyActionable: false,
+      evidenceSeriesKey: `member_primary_registry:membership:${member.membership_id}:host:${discovery.hostKind}`,
+    },
+  }]);
+}
+
+async function persistMemberPrimaryArticlePage(
+  member: MembershipRow,
+  discovery: MemberPrimaryDiscovery,
+  page: PublicPage,
+  now: Date,
+) {
+  const publishedAt = memberPrimaryPublishedAt(page);
+  if (publishedAt && new Date(publishedAt).getTime() > now.getTime() + 86_400_000) {
+    throw new Error('Member-primary publication timestamp is implausibly in the future');
+  }
+  const path = new URL(page.canonicalUrl).pathname.replace(/\/+$/, '') || '/';
+  return persistDurableEvidence({
+    sourceKind: 'member_primary_article',
+    sourceUrl: page.canonicalUrl,
+    contentSha256: page.contentSha256,
+    fetchedAt: page.fetchedAt,
+    httpStatus: page.httpStatus,
+    metadata: {
+      pipelineVersion: PIPELINE_VERSION,
+      publisher: discovery.publisher,
+      hostKind: discovery.hostKind,
+      contentType: page.contentType,
+      bytes: page.bytes,
+      title: page.title,
+    },
+  }, [{
+    target: { membershipId: member.membership_id },
+    kind: 'context',
+    stance: 'neutral',
+    claim: page.title
+      ? `Member-primary publication: ${page.title}`
+      : `Member-primary publication captured from ${new URL(page.canonicalUrl).hostname}.`,
+    excerpt: page.excerpt,
+    publishedAt,
+    sourceQuality: 'member_primary',
+    relevance: 'medium',
+    freshness: freshness(publishedAt ?? page.fetchedAt, now),
+    extractionMethod: 'deterministic-member-primary-page-capture',
+    extractionVersion: PIPELINE_VERSION,
+    confidence: 1,
+    metadata: {
+      contextType: 'public_evidence',
+      subtype: 'member_primary_article',
+      publisher: discovery.publisher,
+      hostKind: discovery.hostKind,
+      articlePath: path,
+      sourceVerified: true,
+      contextOnly: true,
+      mechanicallyActionable: false,
+      evidenceSeriesKey: `member_primary_article:membership:${member.membership_id}:url:${page.canonicalUrl}`,
+    },
+  }]);
+}
+
+async function refreshMemberPrimaryMember(
+  member: MembershipRow,
+  directories: SenateMemberPrimaryDirectories,
+  now: Date,
+  failureDetails: FailureDetail[],
+  noSourceMembers: string[],
+  noArticleMembers: string[],
+): Promise<StreamResult> {
+  const result = emptyStream();
+  let discovery: MemberPrimaryDiscovery;
+  result.attempted += 1;
+  try {
+    discovery = await discoverMemberPrimarySource(member, directories);
+  } catch (error) {
+    result.failures += 1;
+    pushDiagnostic(noSourceMembers, member.name);
+    pushDiagnostic(failureDetails, { member: member.name, stage: 'source-discovery', message: safeMessage(error) });
+    return result;
+  }
+
+  try {
+    const registry = await persistMemberPrimaryRegistry(member, discovery, now);
+    result.inserted += registry.inserted;
+    result.reused += registry.reused;
+    result.unresolved += registry.unresolvedTargets.length;
+  } catch (error) {
+    result.failures += 1;
+    pushDiagnostic(failureDetails, { member: member.name, stage: 'registry-persist', message: safeMessage(error) });
+  }
+
+  const candidates = selectMemberPrimaryArticleCandidates(discovery, member, MEMBER_PRIMARY_CANDIDATE_LIMIT);
+  let accepted = 0;
+  for (const url of candidates) {
+    if (accepted >= MEMBER_PRIMARY_ARTICLES_PER_MEMBER) break;
+    result.attempted += 1;
+    try {
+      const page = await fetchPublicPage(url, {
+        timeoutMs: 12_000,
+        maxBytes: 1_500_000,
+        userAgent: 'VotePredict/2.0 member-primary-evidence',
+      });
+      if (!memberPrimaryArticleMatches(page, discovery, member)) continue;
+      const persisted = await persistMemberPrimaryArticlePage(member, discovery, page, now);
+      result.inserted += persisted.inserted;
+      result.reused += persisted.reused;
+      result.unresolved += persisted.unresolvedTargets.length;
+      accepted += 1;
+    } catch (error) {
+      result.failures += 1;
+      pushDiagnostic(failureDetails, {
+        member: member.name,
+        stage: 'article-fetch-or-persist',
+        message: `${url}: ${safeMessage(error)}`.slice(0, 600),
+      });
+    }
+  }
+  if (accepted === 0) pushDiagnostic(noArticleMembers, member.name);
+  return result;
+}
+
 async function refreshNewsGroup(
   members: MembershipRow[],
   now: Date,
@@ -406,8 +583,12 @@ export async function runPublicEvidenceRefresh(options: PublicEvidenceRefreshOpt
   const runId = await startRun(batchSize);
   const warnings: string[] = [];
   const campaign = emptyStream();
+  const memberPrimary = emptyStream();
   const news = emptyStream();
   const campaignFailures: FailureDetail[] = [];
+  const memberPrimaryFailures: FailureDetail[] = [];
+  const memberPrimaryNoSourceMembers: string[] = [];
+  const memberPrimaryNoArticleMembers: string[] = [];
   const newsFailures: FailureDetail[] = [];
   const newsNoLeadMembers: string[] = [];
 
@@ -464,6 +645,35 @@ export async function runPublicEvidenceRefresh(options: PublicEvidenceRefreshOpt
       for (const row of rows) addStream(campaign, row);
     }
 
+    const memberPrimaryDirectories: SenateMemberPrimaryDirectories = {};
+    if (memberships.some((member) => member.chamber_slug === 'senate' && member.party.toUpperCase() === 'DFL')) {
+      try {
+        memberPrimaryDirectories.dfl = await fetchSenateMemberPrimaryDirectory('DFL');
+      } catch (error) {
+        warnings.push(`member-primary DFL directory: ${safeMessage(error)}`);
+      }
+    }
+    if (memberships.some((member) => member.chamber_slug === 'senate' && ['R', 'GOP', 'REPUBLICAN'].includes(member.party.toUpperCase()))) {
+      try {
+        memberPrimaryDirectories.republican = await fetchSenateMemberPrimaryDirectory('R');
+      } catch (error) {
+        warnings.push(`member-primary Republican directory: ${safeMessage(error)}`);
+      }
+    }
+
+    for (let offset = 0; offset < memberships.length; offset += 3) {
+      const group = memberships.slice(offset, offset + 3);
+      const rows = await Promise.all(group.map((member) => refreshMemberPrimaryMember(
+        member,
+        memberPrimaryDirectories,
+        now,
+        memberPrimaryFailures,
+        memberPrimaryNoSourceMembers,
+        memberPrimaryNoArticleMembers,
+      )));
+      for (const row of rows) addStream(memberPrimary, row);
+    }
+
     for (let offset = 0; offset < memberships.length; offset += NEWS_DISCOVERY_GROUP_SIZE) {
       const group = memberships.slice(offset, offset + NEWS_DISCOVERY_GROUP_SIZE);
       addStream(news, await refreshNewsGroup(group, now, newsFailures, newsNoLeadMembers, warnings));
@@ -502,9 +712,13 @@ export async function runPublicEvidenceRefresh(options: PublicEvidenceRefreshOpt
       campaignRegistryUnmatchedMembers,
       campaignRegistryAmbiguousMembers,
       campaign,
+      memberPrimary,
       news,
       diagnostics: {
         campaignFailures,
+        memberPrimaryFailures,
+        memberPrimaryNoSourceMembers,
+        memberPrimaryNoArticleMembers,
         newsFailures,
         newsNoLeadMembers,
       },
@@ -518,8 +732,16 @@ export async function runPublicEvidenceRefresh(options: PublicEvidenceRefreshOpt
       pipelineVersion: PIPELINE_VERSION,
       batchSize,
       campaign,
+      memberPrimary,
       news,
-      diagnostics: { campaignFailures, newsFailures, newsNoLeadMembers },
+      diagnostics: {
+        campaignFailures,
+        memberPrimaryFailures,
+        memberPrimaryNoSourceMembers,
+        memberPrimaryNoArticleMembers,
+        newsFailures,
+        newsNoLeadMembers,
+      },
       warnings,
     }, safeMessage(error)).catch(() => undefined);
     throw error;
