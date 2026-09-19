@@ -9,11 +9,13 @@ const BING_RSS_GROUP_SIZE = 1;
 const GDELT_TIMEOUT_MS = 15_000;
 const GDELT_START_SPACING_MS = 15_000;
 const GDELT_ATTEMPTS = 1;
+const GDELT_RATE_LIMIT_COOLDOWN_MS = 30 * 60_000;
 const BING_RSS_TIMEOUT_MS = 12_000;
 const MAX_RSS_BYTES = 2_000_000;
 
 let gdeltGate: Promise<void> = Promise.resolve();
 let gdeltNextStart = 0;
+let gdeltBackoffUntil = 0;
 
 export type NewsDiscoveryProvider = 'gdelt' | 'bing_news_rss';
 export type NewsPublicationDateSource = 'page_metadata' | 'gdelt_seen_at' | 'rss_pub_date' | 'unknown';
@@ -24,6 +26,7 @@ export interface NewsLead {
   seenAt?: string;
   domain?: string;
   provider: NewsDiscoveryProvider;
+  queryMemberNames?: string[];
 }
 
 export interface NewsDiscoveryBatchResult {
@@ -78,6 +81,7 @@ function safeDiscoveryError(error: unknown): string {
 
 function gdeltFailure(status: number, body: string): Error {
   const detail = body.replace(/\s+/g, ' ').trim().slice(0, 240);
+  if (status === 429) gdeltBackoffUntil = Date.now() + GDELT_RATE_LIMIT_COOLDOWN_MS;
   return new Error(`GDELT returned HTTP ${status}${detail ? `: ${detail}` : ''}`);
 }
 
@@ -126,14 +130,62 @@ function exactNewsPhrase(value: string): string | undefined {
   return cleaned ? `"${cleaned}"` : undefined;
 }
 
+const NAME_SUFFIXES = new Set(['jr', 'sr', 'ii', 'iii', 'iv']);
+
+function normalizedNameToken(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+export function newsNameVariants(value: string): string[] {
+  const cleaned = value.replace(/\s+/g, ' ').trim();
+  if (!cleaned) return [];
+
+  const rawTokens = cleaned.split(' ');
+  const suffixToken = rawTokens.find((token) => NAME_SUFFIXES.has(normalizedNameToken(token)));
+  const core = rawTokens.filter((token) => !NAME_SUFFIXES.has(normalizedNameToken(token)));
+  const variants: string[] = [];
+  const seen = new Set<string>();
+  const add = (candidate: string) => {
+    const normalized = candidate.replace(/\s+/g, ' ').trim();
+    const key = normalized.toLowerCase();
+    if (!normalized || seen.has(key)) return;
+    seen.add(key);
+    variants.push(normalized);
+  };
+
+  add(cleaned);
+
+  const withoutInitials = core.filter((token) => normalizedNameToken(token).length > 1);
+  if (withoutInitials.length >= 2) add(withoutInitials.join(' '));
+
+  const surname = core.at(-1);
+  const firstMeaningful = core.slice(0, -1).find((token) => normalizedNameToken(token).length > 1);
+  if (firstMeaningful && surname) add(`${firstMeaningful} ${surname}`);
+
+  if (suffixToken && withoutInitials.length >= 2) {
+    const suffix = normalizedNameToken(suffixToken);
+    const renderedSuffix = suffix === 'jr' ? 'Jr' : suffix === 'sr' ? 'Sr' : suffix.toUpperCase();
+    add(`${withoutInitials.join(' ')} ${renderedSuffix}`);
+  }
+
+  return variants.slice(0, 4);
+}
+
+function discoveryPhrases(memberNames: readonly string[]): string[] {
+  return [...new Set(memberNames
+    .flatMap((name) => newsNameVariants(name))
+    .map(exactNewsPhrase)
+    .filter((value): value is string => Boolean(value)))];
+}
+
 export function gdeltBatchQuery(memberNames: readonly string[]): string {
-  const phrases = [...new Set(memberNames.map(exactNewsPhrase).filter((value): value is string => Boolean(value)))];
+  const phrases = discoveryPhrases(memberNames);
   if (phrases.length === 0) throw new Error('At least one member name is required for GDELT discovery');
   return `(${phrases.join(' OR ')}) Minnesota`;
 }
 
 export function bingNewsQuery(memberNames: readonly string[]): string {
-  const phrases = [...new Set(memberNames.map(exactNewsPhrase).filter((value): value is string => Boolean(value)))];
+  const phrases = discoveryPhrases(memberNames);
   if (phrases.length === 0) throw new Error('At least one member name is required for Bing News discovery');
   return `(${phrases.join(' OR ')}) Minnesota`;
 }
@@ -247,7 +299,7 @@ export function parseBingNewsRss(xml: string, limit = MAX_BATCH_RESULTS): NewsLe
   return [...unique.values()];
 }
 
-async function fetchBingNewsRss(memberNames: readonly string[]): Promise<NewsLead[]> {
+async function fetchBingNewsRss(memberNames: readonly string[], limit: number): Promise<NewsLead[]> {
   const params = new URLSearchParams({
     q: bingNewsQuery(memberNames),
     format: 'rss',
@@ -264,7 +316,10 @@ async function fetchBingNewsRss(memberNames: readonly string[]): Promise<NewsLea
   if (Number.isFinite(declared) && declared > MAX_RSS_BYTES) throw new Error('Bing News RSS response is unexpectedly large');
   const body = await response.text();
   if (Buffer.byteLength(body, 'utf8') > MAX_RSS_BYTES) throw new Error('Bing News RSS response is unexpectedly large');
-  return parseBingNewsRss(body, MAX_BATCH_RESULTS);
+  return parseBingNewsRss(body, limit).map((lead) => ({
+    ...lead,
+    queryMemberNames: [...memberNames],
+  }));
 }
 
 async function discoverBingNewsRssBatch(memberNames: readonly string[], asOf: Date, limit: number): Promise<NewsLead[]> {
@@ -272,7 +327,7 @@ async function discoverBingNewsRssBatch(memberNames: readonly string[], asOf: Da
   const unique = new Map<string, NewsLead>();
   for (let offset = 0; offset < memberNames.length; offset += BING_RSS_GROUP_SIZE) {
     const group = memberNames.slice(offset, offset + BING_RSS_GROUP_SIZE);
-    const rows = await fetchBingNewsRss(group);
+    const rows = await fetchBingNewsRss(group, Math.min(MAX_RESULTS_PER_MEMBER, limit));
     for (const row of rows) {
       if (row.seenAt) {
         const seen = new Date(row.seenAt).getTime();
@@ -300,25 +355,65 @@ async function discoverGdeltBatch(memberNames: readonly string[], asOf: Date, ma
   return parseGdeltLeads(payload, maxRecords);
 }
 
+function mergeNewsLeads(groups: readonly NewsLead[][], limit: number): NewsLead[] {
+  const unique = new Map<string, NewsLead>();
+  for (const rows of groups) {
+    for (const row of rows) {
+      const existing = unique.get(row.url);
+      if (!existing) {
+        unique.set(row.url, row);
+        continue;
+      }
+      const queryMemberNames = [...new Set([
+        ...(existing.queryMemberNames ?? []),
+        ...(row.queryMemberNames ?? []),
+      ])];
+      unique.set(row.url, {
+        ...existing,
+        seenAt: existing.seenAt ?? row.seenAt,
+        domain: existing.domain ?? row.domain,
+        queryMemberNames: queryMemberNames.length > 0 ? queryMemberNames : undefined,
+      });
+    }
+  }
+  return [...unique.values()]
+    .sort((a, b) => (b.seenAt ?? '').localeCompare(a.seenAt ?? ''))
+    .slice(0, limit);
+}
+
 export async function discoverMemberNewsBatch(memberNames: readonly string[], asOf = new Date()): Promise<NewsDiscoveryBatchResult> {
   const names = [...new Set(memberNames.map((name) => name.trim()).filter(Boolean))];
   if (names.length === 0) return { leads: [], warnings: [] };
   const maxRecords = Math.min(MAX_BATCH_RESULTS, Math.max(MAX_RESULTS_PER_MEMBER, names.length * MAX_RESULTS_PER_MEMBER));
   const warnings: string[] = [];
-  try {
-    const gdeltLeads = await discoverGdeltBatch(names, asOf, maxRecords);
-    if (gdeltLeads.length > 0) return { leads: gdeltLeads, warnings };
-    warnings.push('GDELT returned no usable news leads; using Bing News RSS fallback.');
-  } catch (error) {
-    warnings.push(`GDELT discovery unavailable; using Bing News RSS fallback: ${safeDiscoveryError(error)}`);
+  const groups: NewsLead[][] = [];
+  let successfulProviders = 0;
+
+  if (Date.now() >= gdeltBackoffUntil) {
+    try {
+      const gdeltLeads = await discoverGdeltBatch(names, asOf, maxRecords);
+      successfulProviders += 1;
+      groups.push(gdeltLeads);
+      if (gdeltLeads.length === 0) warnings.push('GDELT returned no usable news leads; supplementing with Bing News RSS.');
+    } catch (error) {
+      warnings.push(`GDELT discovery unavailable; supplementing with Bing News RSS: ${safeDiscoveryError(error)}`);
+    }
+  } else {
+    warnings.push('GDELT is temporarily backed off after a rate-limit response; using Bing News RSS during the cooldown.');
   }
 
   try {
     const rssLeads = await discoverBingNewsRssBatch(names, asOf, maxRecords);
-    return { leads: rssLeads, warnings };
+    successfulProviders += 1;
+    groups.push(rssLeads);
   } catch (error) {
-    throw new Error(`News discovery failed after GDELT and Bing News RSS attempts: ${warnings.join(' ')} Bing News RSS: ${safeDiscoveryError(error)}`);
+    warnings.push(`Bing News RSS discovery unavailable: ${safeDiscoveryError(error)}`);
   }
+
+  if (successfulProviders === 0) {
+    throw new Error(`News discovery failed across all providers: ${warnings.join(' ')}`);
+  }
+  return { leads: mergeNewsLeads(groups, maxRecords), warnings };
 }
 
 export async function discoverMemberNews(memberName: string, asOf = new Date()): Promise<NewsLead[]> {
