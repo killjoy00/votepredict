@@ -86,7 +86,7 @@ The crawler is intentionally bounded rather than exhaustive. One bad site or art
 
 `.github/workflows/public-evidence-refresh.yml` invokes the protected production runtime every six hours and after a successful production deployment. The job pulls production authentication privately and calls `POST /api/operations/public-evidence-refresh`; database work occurs inside the deployed Vercel runtime where the Neon Marketplace connection is routable.
 
-Current-member web work is rotated by least-recent public-evidence capture. The default batch is 12 memberships and the endpoint caps a batch at 24. Campaign-finance refresh is folded into the same run when the last successful live finance refresh is older than the configured freshness threshold, avoiding repeated bulk downloads on every web batch.
+Current-member web work is rotated by least-recent public-evidence capture. Production now requests the endpoint maximum of 24 memberships per run, so the 200-member active legislature is revisited in roughly nine scheduled batches rather than seventeen. Each pass may retain up to four recent member-primary publications and three verified publisher-news articles per member. Campaign-finance refresh is folded into the same run when the last successful live finance refresh is older than the configured freshness threshold, avoiding repeated bulk downloads on every web batch.
 
 Operations exposes the latest pipeline status plus current finance, campaign-site, member-primary, news, and web-covered-member counts. It also reports news-member coverage, last-batch news insert/failure/no-lead counts, and the age of the prospective public-evidence corpus so evidence accrual can be monitored without manual database inspection. Public evidence ingestion is expected to remain useful even when every item is non-mechanical.
 
@@ -114,6 +114,12 @@ The screen is **not leakage-safe for historical public availability** because th
 The recurring pipeline solves this going forward: finance, campaign-site, member-primary, and news evidence receive durable `fetched_at` provenance prospectively. Once future forecasts resolve, those truly as-of captures can support an eligible Quick evidence evaluation.
 
 News, campaign-site, and member-primary material also begin as a prospective durable corpus because VotePredict does not have comparable timestamped historical captures. They must not be backfilled from the present web and treated as though they were known before old votes.
+
+### Prospective evidence-availability test
+
+`public-evidence-prospective-v1` is frozen before 2027-28 outcomes. Every eligible Quick member prediction records a non-serving snapshot of the durable evidence that had actually been fetched by that forecast's as-of timestamp: source counts, source diversity, finance/campaign/member-primary/news mix, and newest-evidence age. The snapshot contains no text-derived stance, no probability adjustment, and no outcome information.
+
+The primary future test is whether evidence availability/freshness identifies forecast strata with different residual magnitude or calibration, plus whether collection coverage is imbalanced by chamber or party. The protocol is not promotion-eligible and cannot authorize a directional evidence-to-vote transformation. Minimum primary scoring is deferred until at least 40 resolved forecasts, 2,000 member outcomes, and 50 members with captured web evidence are available. Operations reports whether eligible future Quick revisions successfully received the snapshot.
 
 ## Existing commands
 
