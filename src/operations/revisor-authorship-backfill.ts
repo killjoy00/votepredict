@@ -122,22 +122,30 @@ async function rosterFor(
     legislator_id: string;
     name: string;
     chamber: 'house' | 'senate';
+    aliases: string[];
   }>(`
     SELECT m.id::text AS membership_id,
            l.id::text AS legislator_id,
            l.name,
-           c.slug AS chamber
+           c.slug AS chamber,
+           COALESCE(
+             array_agg(DISTINCT msa.source_name) FILTER (WHERE msa.source_name IS NOT NULL),
+             ARRAY[]::text[]
+           ) AS aliases
       FROM memberships m
       JOIN legislators l ON l.id=m.legislator_id
       JOIN chambers c ON c.id=m.chamber_id
+      LEFT JOIN membership_source_aliases msa ON msa.membership_id=m.id
      WHERE m.session_id=$1::uuid
        AND m.chamber_id=$2::uuid
+     GROUP BY m.id, l.id, l.name, c.slug, l.normalized_name
      ORDER BY l.normalized_name, m.id`, [sessionId, chamberId]);
   return result.rows.map((row) => ({
     membershipId: row.membership_id,
     legislatorId: row.legislator_id,
     name: row.name,
     chamber: row.chamber,
+    aliases: row.aliases,
   }));
 }
 
