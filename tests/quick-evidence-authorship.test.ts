@@ -11,7 +11,6 @@ const metadata: StoredRevisorAuthorship = {
   completeForAsOfReconstruction: true,
   currentAuthors: [
     { rawName: 'Alpha', status: 'resolved', membershipId: 'a' },
-    { rawName: 'Gamma', status: 'resolved', membershipId: 'c' },
   ],
   actions: [
     {
