@@ -11,6 +11,15 @@ import {
   parseRevisorTextVersions,
   type RevisorTextVersion,
 } from '@/sources/minnesota/revisor-introduction';
+import {
+  parseRevisorAuthorship,
+  REVISOR_AUTHORSHIP_PARSER_VERSION,
+  type RevisorAuthorshipRecord,
+} from '@/sources/minnesota/revisor-authorship';
+import {
+  resolveRevisorAuthor,
+  type AuthorshipRosterMember,
+} from '@/sources/minnesota/revisor-author-resolution';
 
 export const LIVE_REVISOR_STATUS_SESSION = '2027-2028' as const;
 export const LIVE_REVISOR_STATUS_PARSER_VERSION = 'revisor-live-status-v1';
@@ -34,6 +43,7 @@ type FetchedLiveStatus = LiveStatusBillRow & {
   currentVersion: RevisorTextVersion | null;
   latestActionOn: string | null;
   passageActionObserved: boolean;
+  authorship: RevisorAuthorshipRecord;
 };
 
 export type LiveRevisorStatusFailure = {
@@ -121,6 +131,7 @@ async function fetchOne(row: LiveStatusBillRow): Promise<FetchedLiveStatus> {
     // This is only a prospective leakage guard. It is never written to the
     // historical sourceChamberPassage outcome label used for model training.
     passageActionObserved: passageAudit.passageActions.length > 0,
+    authorship: parseRevisorAuthorship({ xml, identifier: row.identifier }),
   };
 }
 
@@ -176,6 +187,44 @@ function introductionMetadata(row: FetchedLiveStatus): Record<string, unknown> |
   };
 }
 
+function resolvedAuthorshipMetadata(
+  row: FetchedLiveStatus,
+  roster: readonly AuthorshipRosterMember[],
+) {
+  const currentAuthors = row.authorship.currentAuthors
+    .filter((author) => author.chamber === (row.identifier.startsWith('HF') ? 'house' : 'senate'))
+    .map((author) => resolveRevisorAuthor(author.name, author.chamber, roster));
+  const actions = row.authorship.actions
+    .filter((action) => action.chamber === (row.identifier.startsWith('HF') ? 'house' : 'senate'))
+    .map((action) => ({
+      occurredOn: action.occurredOn,
+      operation: action.operation,
+      chiefAuthor: action.chiefAuthor,
+      description: action.description,
+      authors: action.names.map((name) => resolveRevisorAuthor(name, action.chamber, roster)),
+    }));
+  const resolutions = [...currentAuthors, ...actions.flatMap((action) => action.authors)];
+  const unresolvedNames = resolutions.filter((item) => item.status === 'unresolved').length;
+  const ambiguousNames = resolutions.filter((item) => item.status === 'ambiguous').length;
+  const resolvedNames = resolutions.filter((item) => item.status === 'resolved').length;
+  return {
+    parserVersion: REVISOR_AUTHORSHIP_PARSER_VERSION,
+    source: 'Minnesota Revisor Bill Status API v1 live sync',
+    sourceUrl: row.status_xml_url,
+    contentSha256: row.sourceSha256,
+    fetchedAt: row.fetchedAt,
+    chamber: row.identifier.startsWith('HF') ? 'house' : 'senate',
+    currentAuthors,
+    actions,
+    completeForAsOfReconstruction: currentAuthors.length > 0 && unresolvedNames === 0 && ambiguousNames === 0,
+    resolvedNames,
+    unresolvedNames,
+    ambiguousNames,
+    timingPolicy: 'prospective author state is captured from official current AUTHORS plus dated add/strike ACTIONS; same-day historical ordering is never inferred',
+    modelEligibility: 'zero-weight Quick Evidence feature until separately validated',
+  };
+}
+
 async function persistFetched(rows: readonly FetchedLiveStatus[]): Promise<{
   versionsRecorded: number;
   sourceDocumentsRecorded: number;
@@ -184,6 +233,41 @@ async function persistFetched(rows: readonly FetchedLiveStatus[]): Promise<{
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    const rosterResult = await client.query<{
+      session_id: string;
+      chamber_id: string;
+      membership_id: string;
+      legislator_id: string;
+      name: string;
+      chamber: 'house' | 'senate';
+    }>(`
+      SELECT m.session_id::text,
+             m.chamber_id::text,
+             m.id::text AS membership_id,
+             l.id::text AS legislator_id,
+             l.name,
+             c.slug AS chamber
+        FROM memberships m
+        JOIN legislators l ON l.id=m.legislator_id
+        JOIN chambers c ON c.id=m.chamber_id
+       WHERE m.session_id = ANY($1::uuid[])
+         AND m.chamber_id = ANY($2::uuid[])
+       ORDER BY l.normalized_name, m.id`, [
+      [...new Set(rows.map((row) => row.session_id))],
+      [...new Set(rows.map((row) => row.chamber_id))],
+    ]);
+    const rosterByScope = new Map<string, AuthorshipRosterMember[]>();
+    for (const item of rosterResult.rows) {
+      const key = `${item.session_id}|${item.chamber_id}`;
+      const roster = rosterByScope.get(key) ?? [];
+      roster.push({
+        membershipId: item.membership_id,
+        legislatorId: item.legislator_id,
+        name: item.name,
+        chamber: item.chamber,
+      });
+      rosterByScope.set(key, roster);
+    }
     const sourcePayload = rows.map((row) => ({
       session_id: row.session_id,
       chamber_id: row.chamber_id,
@@ -257,17 +341,22 @@ async function persistFetched(rows: readonly FetchedLiveStatus[]): Promise<{
           passageActionObserved: row.passageActionObserved,
         },
         introduction_metadata: introMetadata,
+        authorship_metadata: resolvedAuthorshipMetadata(
+          row,
+          rosterByScope.get(`${row.session_id}|${row.chamber_id}`) ?? [],
+        ),
       };
     });
     await client.query(`
       WITH payload AS (
-        SELECT bill_id, introduced_at, latest_action_at, live_status, introduction_metadata
+        SELECT bill_id, introduced_at, latest_action_at, live_status, introduction_metadata, authorship_metadata
           FROM jsonb_to_recordset($1::jsonb) AS x(
             bill_id uuid,
             introduced_at timestamptz,
             latest_action_at timestamptz,
             live_status jsonb,
-            introduction_metadata jsonb
+            introduction_metadata jsonb,
+            authorship_metadata jsonb
           )
       )
       UPDATE bills b
@@ -282,7 +371,8 @@ async function persistFetched(rows: readonly FetchedLiveStatus[]): Promise<{
                || CASE
                     WHEN p.introduction_metadata IS NULL THEN '{}'::jsonb
                     ELSE jsonb_build_object('revisorIntroduction', p.introduction_metadata)
-                  END,
+                  END
+               || jsonb_build_object('revisorAuthorship', p.authorship_metadata),
              updated_at = now()
         FROM payload p
        WHERE b.id = p.bill_id`, [JSON.stringify(billPayload)]);
