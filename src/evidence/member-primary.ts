@@ -209,6 +209,17 @@ export function memberPrimaryProfileMatches(page: PublicPage, member: MemberPrim
     && (publicPageMentionsPerson(page.text, member.name) || normalizedText.includes(memberSurname!));
 }
 
+export function directoryProfileMatchesMember(
+  page: PublicPage,
+  member: MemberPrimaryMember,
+): boolean {
+  const memberSurname = surname(member.name);
+  if (!memberSurname) return false;
+  const pathTokens = new URL(page.canonicalUrl).pathname.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+  const textTokens = normalizePersonKey(page.text).split(/\s+/);
+  return pathTokens.includes(memberSurname) && textTokens.includes(memberSurname);
+}
+
 export async function fetchSenateMemberPrimaryDirectory(party: 'DFL' | 'R'): Promise<PublicPage> {
   const url = party === 'DFL' ? MN_SENATE_DFL_DIRECTORY_URL : MN_SENATE_REPUBLICAN_DIRECTORY_URL;
   return fetchPublicPage(url, {
@@ -263,12 +274,7 @@ export async function discoverMemberPrimarySource(
     userAgent: 'VotePredict/2.0 Minnesota Senate member-primary evidence',
   });
   const directoryResolved = Boolean(directoryProfileUrl && directoryProfileUrl === profileUrl);
-  const memberSurname = surname(member.name);
-  const registryPathTokens = new URL(registryPage.canonicalUrl).pathname.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
-  const directoryIdentityVerified = directoryResolved
-    && Boolean(memberSurname)
-    && registryPathTokens.includes(memberSurname!)
-    && normalizePersonKey(registryPage.text).split(/\s+/).includes(memberSurname!);
+  const directoryIdentityVerified = directoryResolved && directoryProfileMatchesMember(registryPage, member);
   if (!directoryIdentityVerified && !memberPrimaryProfileMatches(registryPage, member)) {
     throw new Error(`Caucus profile did not verify ${member.name} in district ${member.district}`);
   }
