@@ -8,6 +8,7 @@ export interface BillReference {
 }
 
 export interface ExtractBillStatementsInput {
+  membershipId: string;
   memberName: string;
   text: string;
   publishedAt?: string;
@@ -91,7 +92,7 @@ export function extractExplicitBillStatements(input: ExtractBillStatementsInput)
       const seriesKey = `quick_evidence_statement:membership:${input.memberName.toLowerCase()}:bill:${bill.id}:source:${input.sourceSubtype}`;
 
       drafts.push({
-        target: { billId: bill.id },
+        target: { membershipId: input.membershipId, billId: bill.id },
         kind,
         stance,
         claim: `${input.memberName} ${stance === 'supports' ? 'expressed support for' : 'expressed opposition to'} ${bill.identifier} on a member-controlled source.`,
