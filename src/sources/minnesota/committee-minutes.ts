@@ -120,6 +120,15 @@ export function senateHearingMinutesUrl(
 function compactIdentifier(value: string): string {
   return value.replace(/[^a-z0-9]/gi, '').toUpperCase();
 }
+export function committeeBillIdentifiers(html: string): string[] {
+  const text = committeeMinutesLines(html).join(' ');
+  const ids = new Set<string>();
+  for (const match of text.matchAll(/\b([HS])\.?\s*F\.?\s*(\d{1,5})\b/gi)) {
+    ids.add(`${match[1].toUpperCase()}F${Number(match[2])}`);
+  }
+  return [...ids].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+}
+
 
 function identifierPattern(identifier: string): RegExp {
   const compact = compactIdentifier(identifier);
