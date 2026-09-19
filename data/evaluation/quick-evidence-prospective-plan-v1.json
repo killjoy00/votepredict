@@ -17,7 +17,10 @@
     "researchMode": "quick",
     "servingMemberModelVersion": "member-eb-v1.2-decay180",
     "candidateVersion": "quick-evidence-v1",
-    "chambers": ["house", "senate"]
+    "chambers": [
+      "house",
+      "senate"
+    ]
   },
   "candidate": {
     "servesTraffic": false,
@@ -35,7 +38,10 @@
       "member-primary volume",
       "publisher-news volume",
       "source diversity",
-      "evidence freshness"
+      "evidence freshness",
+      "prior same-bill amendment YEA/NAY counts",
+      "prior same-bill motion/procedural YEA/NAY counts",
+      "prior same-bill other recorded YEA/NAY counts"
     ],
     "forbiddenAutomaticInferences": [
       "party implies stance",
@@ -60,6 +66,12 @@
       "priorSameBillNo",
       "priorCompanionYes",
       "priorCompanionNo",
+      "priorSameBillAmendmentYes",
+      "priorSameBillAmendmentNo",
+      "priorSameBillMotionProceduralYes",
+      "priorSameBillMotionProceduralNo",
+      "priorSameBillOtherYes",
+      "priorSameBillOtherNo",
       "candidateEvidenceItems",
       "conflictingDirectionalEvidence",
       "totalEvidenceItems",
@@ -106,5 +118,15 @@
     "deepModelImpactFromCandidateOnlyStatements": "none",
     "candidateStatementMetadata": "quickEvidenceCandidate=true and mechanicallyActionable=false",
     "automaticPromotion": false
+  },
+  "amendedAt": "2026-09-19T17:52:00Z",
+  "amendment": {
+    "reason": "Before any 2027-2028 Quick revision existed, add historically reconstructable prior same-bill non-passage vote counts to the unified feature vector at zero weight pending validation.",
+    "verifiedPreActivationState": {
+      "quickRevisions": 0,
+      "quickEvidenceCapturedRevisions": 0
+    },
+    "servingProbabilityChange": "none",
+    "activeWeightChange": "none"
   }
 }
