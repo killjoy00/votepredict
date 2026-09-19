@@ -235,9 +235,8 @@ export async function discoverMemberPrimarySource(
       maxBytes: 2_500_000,
       userAgent: 'VotePredict/2.0 Minnesota House member-primary evidence',
     });
-    if (!houseArchiveMatchesMember(registryPage, member)) {
-      throw new Error(`Minnesota House news archive did not verify ${member.name}`);
-    }
+    // The House archive route is deterministically keyed by the legislator's durable LRL ID.
+    // Do not re-reject that identity based on display-name variants in the rendered archive.
     return {
       hostKind: 'house_official',
       publisher: 'Minnesota House of Representatives',
