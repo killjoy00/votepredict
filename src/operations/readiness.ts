@@ -26,6 +26,11 @@ export type ProductionReadiness = {
     campaignFinanceMembers: number;
     currentCuratedItems: number;
     publicNewsItems: number;
+    publicNewsMembers: number;
+    latestNewsInserted: number;
+    latestNewsFailures: number;
+    latestNewsNoLeadMembers: number;
+    prospectiveEvidenceSince?: string;
     campaignSiteItems: number;
     memberPrimaryItems: number;
     memberPrimaryMembers: number;
@@ -77,6 +82,11 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
       campaign_finance_members: number;
       curated_items: number;
       public_news_items: number;
+      public_news_members: number;
+      latest_news_inserted: number;
+      latest_news_failures: number;
+      latest_news_no_lead_members: number;
+      prospective_evidence_since: string | null;
       campaign_site_items: number;
       member_primary_items: number;
       member_primary_members: number;
@@ -102,6 +112,39 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
         count(DISTINCT membership_id) FILTER (WHERE metadata->>'contextType'='campaign_finance')::int AS campaign_finance_members,
         count(*) FILTER (WHERE source_kind IN ('member_statement','official_news','interest_group_position','official_member_profile','official_committee_roster'))::int AS curated_items,
         count(*) FILTER (WHERE source_kind='public_news_article')::int AS public_news_items,
+        count(DISTINCT membership_id) FILTER (WHERE source_kind='public_news_article')::int AS public_news_members,
+        COALESCE((
+          SELECT (metadata->'news'->>'inserted')::int
+            FROM ingestion_runs
+           WHERE source_system='public-evidence-pipeline'
+           ORDER BY created_at DESC
+           LIMIT 1
+        ), 0)::int AS latest_news_inserted,
+        COALESCE((
+          SELECT (metadata->'news'->>'failures')::int
+            FROM ingestion_runs
+           WHERE source_system='public-evidence-pipeline'
+           ORDER BY created_at DESC
+           LIMIT 1
+        ), 0)::int AS latest_news_failures,
+        COALESCE((
+          SELECT jsonb_array_length(COALESCE(metadata->'diagnostics'->'newsNoLeadMembers', '[]'::jsonb))
+            FROM ingestion_runs
+           WHERE source_system='public-evidence-pipeline'
+           ORDER BY created_at DESC
+           LIMIT 1
+        ), 0)::int AS latest_news_no_lead_members,
+        (
+          SELECT min(sd2.fetched_at)::text
+            FROM source_documents sd2
+           WHERE sd2.source_kind IN (
+             'public_news_article',
+             'campaign_site',
+             'campaign_site_registry',
+             'member_primary_article',
+             'member_primary_registry'
+           )
+        ) AS prospective_evidence_since,
         count(*) FILTER (WHERE source_kind IN ('campaign_site','campaign_site_registry'))::int AS campaign_site_items,
         count(*) FILTER (WHERE source_kind='member_primary_article')::int AS member_primary_items,
         count(DISTINCT membership_id) FILTER (WHERE source_kind IN ('member_primary_article','member_primary_registry'))::int AS member_primary_members,
@@ -147,6 +190,11 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
     campaign_finance_members: 0,
     curated_items: 0,
     public_news_items: 0,
+    public_news_members: 0,
+    latest_news_inserted: 0,
+    latest_news_failures: 0,
+    latest_news_no_lead_members: 0,
+    prospective_evidence_since: null,
     campaign_site_items: 0,
     member_primary_items: 0,
     member_primary_members: 0,
@@ -181,6 +229,11 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
       campaignFinanceMembers: Number(evidence.campaign_finance_members),
       currentCuratedItems: Number(evidence.curated_items),
       publicNewsItems: Number(evidence.public_news_items),
+      publicNewsMembers: Number(evidence.public_news_members),
+      latestNewsInserted: Number(evidence.latest_news_inserted),
+      latestNewsFailures: Number(evidence.latest_news_failures),
+      latestNewsNoLeadMembers: Number(evidence.latest_news_no_lead_members),
+      prospectiveEvidenceSince: evidence.prospective_evidence_since ?? undefined,
       campaignSiteItems: Number(evidence.campaign_site_items),
       memberPrimaryItems: Number(evidence.member_primary_items),
       memberPrimaryMembers: Number(evidence.member_primary_members),
