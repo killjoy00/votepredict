@@ -9,7 +9,7 @@ on:
       - src/app/api/operations/public-evidence-quick-screen/route.ts
       - src/evaluation/public-evidence-quick-screen.ts
       - tests/public-evidence-quick-screen.test.ts
-      - data/evaluation/public-evidence-prospective-plan-v1.json
+      - data/evaluation/quick-evidence-prospective-plan-v1.json
   workflow_dispatch:
 
 permissions:
@@ -37,12 +37,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          plan='data/evaluation/public-evidence-prospective-plan-v1.json'
-          test "$(jq -r '.schemaVersion' "$plan")" = 'public-evidence-prospective-plan-v1'
+          plan='data/evaluation/quick-evidence-prospective-plan-v1.json'
+          test "$(jq -r '.schemaVersion' "$plan")" = 'quick-evidence-prospective-plan-v1'
           test "$(jq -r '.scope.session' "$plan")" = '2027-2028'
           test "$(jq -r '.scope.servingMemberModelVersion' "$plan")" = 'member-eb-v1.2-decay180'
-          test "$(jq -r '.capture.probabilityWrite' "$plan")" = 'false'
-          test "$(jq -r '.guardrails.historicalBackfill' "$plan")" = 'false'
+          test "$(jq -r '.scope.candidateVersion' "$plan")" = 'quick-evidence-v1'
+          test "$(jq -r '.candidate.servesTraffic' "$plan")" = 'false'
+          test "$(jq -r '.capture.probabilityWriteToServingQuick' "$plan")" = 'false'
+          test "$(jq -r '.guardrails.historicalWebBackfill' "$plan")" = 'false'
           test "$(jq -r '.guardrails.automaticPromotion' "$plan")" = 'false'
 
       - name: Require production environment access
