@@ -69,56 +69,64 @@ function sentenceLike(window: string): string {
 export function extractExplicitBillStatements(input: ExtractBillStatementsInput): DurableEvidenceDraft[] {
   const drafts: DurableEvidenceDraft[] = [];
   const attribution = memberAttributionPattern(input.memberName);
+  const billByKey = new Map(input.bills.map((bill) => [
+    bill.identifier.toUpperCase().replace(/\s+/g, ''),
+    bill,
+  ]));
+  const mentions = [...input.text.matchAll(/\b([A-Z]{1,4})\s*(\d{1,6})\b/gi)];
 
-  for (const bill of input.bills) {
-    const pattern = billPattern(bill.identifier);
-    for (const match of input.text.matchAll(pattern)) {
-      const start = match.index ?? 0;
-      const excerpt = statementWindow(input.text, start, start + match[0].length);
-      const supports = SUPPORT.test(excerpt);
-      const opposes = OPPOSE.test(excerpt);
-      if (supports === opposes) continue;
+  for (const mention of mentions) {
+    const bill = billByKey.get(`${mention[1].toUpperCase()}${mention[2]}`);
+    if (!bill) continue;
+    const start = mention.index ?? 0;
+    const excerpt = statementWindow(input.text, start, start + mention[0].length);
+    const supports = SUPPORT.test(excerpt);
+    const opposes = OPPOSE.test(excerpt);
+    if (supports === opposes) continue;
 
-      const attributed = attribution.test(excerpt);
-      if (!attributed) continue;
+    const attributed = attribution.test(excerpt);
+    if (!attributed) continue;
 
-      const stance = supports ? 'supports' as const : 'opposes' as const;
-      const last = normalizedNameTokens(input.memberName).at(-1) ?? '';
-      const kind = /\b(?:i|we)\b/i.test(excerpt)
-        || new RegExp(`\\b(?:rep(?:resentative)?|sen(?:ator)?)\\.?[^.]{0,60}\\b${regexEscape(last)}\\b`, 'i').test(excerpt)
-        ? 'direct_statement' as const
-        : 'related_statement' as const;
-      const confidence = kind === 'direct_statement' ? 0.98 : 0.82;
-      const seriesKey = `quick_evidence_statement:membership:${input.memberName.toLowerCase()}:bill:${bill.id}:source:${input.sourceSubtype}`;
+    const stance = supports ? 'supports' as const : 'opposes' as const;
+    const last = normalizedNameTokens(input.memberName).at(-1) ?? '';
+    const kind = /\b(?:i|we)\b/i.test(excerpt)
+      || new RegExp(`\\b(?:rep(?:resentative)?|sen(?:ator)?)\\.?[^.]{0,60}\\b${regexEscape(last)}\\b`, 'i').test(excerpt)
+      ? 'direct_statement' as const
+      : 'related_statement' as const;
+    const confidence = kind === 'direct_statement' ? 0.98 : 0.82;
+    const seriesKey = `quick_evidence_statement:membership:${input.membershipId}:bill:${bill.id}:source:${input.sourceSubtype}`;
 
-      drafts.push({
-        target: { membershipId: input.membershipId, billId: bill.id },
-        kind,
-        stance,
-        claim: `${input.memberName} ${stance === 'supports' ? 'expressed support for' : 'expressed opposition to'} ${bill.identifier} on a member-controlled source.`,
-        excerpt: sentenceLike(excerpt),
-        publishedAt: input.publishedAt,
-        sourceQuality: 'member_primary',
-        relevance: 'direct',
-        freshness: freshness(input.publishedAt ?? input.fetchedAt, input.fetchedAt),
-        extractionMethod: 'deterministic-explicit-bill-statement',
-        extractionVersion: QUICK_EVIDENCE_STATEMENT_EXTRACTOR_VERSION,
-        confidence,
-        metadata: {
-          contextType: 'quick_evidence',
-          subtype: 'explicit_bill_statement',
-          sourceSubtype: input.sourceSubtype,
-          sourceVerified: true,
-          quickEvidenceCandidate: true,
-          mechanicallyActionable: false,
-          statementAttribution: attributed ? 'member_or_first_person' : 'none',
-          exactBillIdentifier: bill.identifier,
-          evidenceSeriesKey: seriesKey,
-        },
-      });
-      break;
-    }
+    drafts.push({
+      target: { membershipId: input.membershipId, billId: bill.id },
+      kind,
+      stance,
+      claim: `${input.memberName} ${stance === 'supports' ? 'expressed support for' : 'expressed opposition to'} ${bill.identifier} on a member-controlled source.`,
+      excerpt: sentenceLike(excerpt),
+      publishedAt: input.publishedAt,
+      sourceQuality: 'member_primary',
+      relevance: 'direct',
+      freshness: freshness(input.publishedAt ?? input.fetchedAt, input.fetchedAt),
+      extractionMethod: 'deterministic-explicit-bill-statement',
+      extractionVersion: QUICK_EVIDENCE_STATEMENT_EXTRACTOR_VERSION,
+      confidence,
+      metadata: {
+        contextType: 'quick_evidence',
+        subtype: 'explicit_bill_statement',
+        sourceSubtype: input.sourceSubtype,
+        sourceVerified: true,
+        quickEvidenceCandidate: true,
+        mechanicallyActionable: false,
+        statementAttribution: 'member_or_first_person',
+        exactBillIdentifier: bill.identifier,
+        evidenceSeriesKey: seriesKey,
+      },
+    });
   }
 
-  return drafts;
+  const unique = new Map<string, DurableEvidenceDraft>();
+  for (const draft of drafts) {
+    const key = `${draft.target?.billId}|${draft.stance}|${draft.kind}`;
+    if (!unique.has(key)) unique.set(key, draft);
+  }
+  return [...unique.values()];
 }
