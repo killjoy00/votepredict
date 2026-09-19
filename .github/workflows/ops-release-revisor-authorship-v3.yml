@@ -1,0 +1,129 @@
+name: Ops release Revisor authorship v3
+
+on:
+  push:
+    branches: [ops/revisor-authorship-v3-release-20260919]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ops-revisor-authorship-v3-release
+  cancel-in-progress: false
+
+jobs:
+  release-and-backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      RELEASE_SHA: 23b67b8ff603d56dcecf26fab95060d56f50edb7
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_QUICK_EVIDENCE_AUTHORSHIP_OUTPUT: artifacts/quick-evidence-authorship-screen-v1.json
+    steps:
+      - name: Checkout exact merged main commit
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.RELEASE_SHA }}
+
+      - name: Verify exact main freshness
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          current="$(git ls-remote origin refs/heads/main | awk '{print $1}')"
+          test "$actual" = "$RELEASE_SHA"
+          test "$current" = "$RELEASE_SHA"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-fund --no-audit
+      - name: Verify migrations from a clean database
+        run: npm run db:migrate
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+
+      - name: Verify frozen authorship diagnostic boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          plan='data/evaluation/quick-evidence-authorship-screen-plan-v1.json'
+          test "$(jq -r '.schemaVersion' "$plan")" = 'quick-evidence-authorship-screen-plan-v1'
+          test "$(jq -r '.scope.candidateVersion' "$plan")" = 'quick-evidence-v1'
+          test "$(jq -r '.asOfPolicy.sameDayExcluded' "$plan")" = 'true'
+          test "$(jq -r '.feature.activeWeightBeforeTest' "$plan")" = '0'
+          test "$(jq -r '.interpretation.productionAction' "$plan")" = 'none'
+          test "$(jq -r '.interpretation.automaticPromotion' "$plan")" = 'false'
+
+      - name: Read production authentication privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${VERCEL_TOKEN:-}"
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+
+      - name: Deploy exact green main commit to Vercel production
+        shell: bash
+        run: |
+          set -euo pipefail
+          current="$(git ls-remote origin refs/heads/main | awk '{print $1}')"
+          test "$current" = "$RELEASE_SHA"
+          npx --yes vercel@59.13.1 deploy --prod --yes --build-env VOTEPREDICT_REQUIRE_MIGRATION_LEDGER=1 --token "$VERCEL_TOKEN"
+
+      - name: Backfill dated Revisor authorship v3
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/run-production-revisor-authorship-backfill.ts
+
+      - name: Run frozen Quick Evidence authorship diagnostic
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/evaluate-quick-evidence-authorship-screen.ts
+
+      - name: Verify diagnostic-only authorship artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$VOTEPREDICT_QUICK_EVIDENCE_AUTHORSHIP_OUTPUT"
+          test "$(jq -r '.schemaVersion' "$file")" = 'quick-evidence-authorship-screen-v1'
+          test "$(jq -r '.metadata.quickEvidenceCandidate' "$file")" = 'quick-evidence-v1'
+          test "$(jq -r '.metadata.productionAction' "$file")" = 'none'
+          test "$(jq -r '.conclusion.productionAction' "$file")" = 'none'
+          test "$(jq -r '.conclusion.servingQuickChanged' "$file")" = 'false'
+          test "$(jq -r '.conclusion.quickEvidenceWeightChanged' "$file")" = 'false'
+          jq -e '.coverage.training.authorMemberOutcomes >= 50' "$file" >/dev/null
+          jq -e '.coverage.validation.authorMemberOutcomes >= 50' "$file" >/dev/null
+
+      - name: Upload immutable authorship screen
+        uses: actions/upload-artifact@v4
+        with:
+          name: quick-evidence-authorship-screen-v1-${{ env.RELEASE_SHA }}-v3
+          path: artifacts/quick-evidence-authorship-screen-v1.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Remove temporary credentials
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log"
