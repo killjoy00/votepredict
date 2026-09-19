@@ -99,7 +99,7 @@ export function ProductionReadinessPanel(props: Props) {
           <div>
             <span>Public evidence pipeline</span>
             <strong>{readiness.evidence.latestPublicEvidenceStatus === 'complete' ? 'Crawler operational' : readiness.evidence.latestPublicEvidenceStatus === 'failed' ? 'Crawler failed' : 'Crawler not verified'}</strong>
-            <small>{readiness.evidence.currentCampaignFinanceItems.toLocaleString()} finance · {readiness.evidence.campaignSiteItems} campaign-site · {readiness.evidence.memberPrimaryItems} member-primary · {readiness.evidence.publicNewsItems} news · {readiness.evidence.publicEvidenceMembers} web-covered members · {ageLabel(readiness.evidence.latestPublicEvidenceRun)}</small>
+            <small>{readiness.evidence.currentCampaignFinanceItems.toLocaleString()} finance · {readiness.evidence.campaignSiteItems} campaign-site · {readiness.evidence.memberPrimaryItems} member-primary · {readiness.evidence.publicNewsItems} news / {readiness.evidence.publicNewsMembers} members · {readiness.evidence.publicEvidenceMembers} web-covered members · {ageLabel(readiness.evidence.latestPublicEvidenceRun)}</small>
           </div>
         </article>
         <article>
@@ -113,7 +113,7 @@ export function ProductionReadinessPanel(props: Props) {
       </div>
 
       <div className="evidence-footnote">
-        Public evidence is stored independently of model impact. Current mechanical public-evidence items: <strong>{readiness.evidence.mechanicallyActionableItems}</strong>. Curated legacy items: <strong>{readiness.evidence.currentCuratedItems}</strong>. Campaign-finance members: <strong>{readiness.evidence.campaignFinanceMembers}</strong>. Member-primary source members: <strong>{readiness.evidence.memberPrimaryMembers}</strong>.
+        Public evidence is stored independently of model impact. Current mechanical public-evidence items: <strong>{readiness.evidence.mechanicallyActionableItems}</strong>. Curated legacy items: <strong>{readiness.evidence.currentCuratedItems}</strong>. Campaign-finance members: <strong>{readiness.evidence.campaignFinanceMembers}</strong>. Member-primary source members: <strong>{readiness.evidence.memberPrimaryMembers}</strong>. Latest news batch: <strong>{readiness.evidence.latestNewsInserted} inserted</strong>, <strong>{readiness.evidence.latestNewsFailures} failures</strong>, <strong>{readiness.evidence.latestNewsNoLeadMembers} no-lead members</strong>. Prospective capture began <strong>{ageLabel(readiness.evidence.prospectiveEvidenceSince)}</strong>.
       </div>
 
       <style>{`
