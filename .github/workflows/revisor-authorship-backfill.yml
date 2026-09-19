@@ -22,6 +22,17 @@ jobs:
       VOTEPREDICT_QUICK_EVIDENCE_AUTHORSHIP_OUTPUT: artifacts/quick-evidence-authorship-screen-v1.json
     steps:
       - uses: actions/checkout@v7
+      - name: Verify frozen authorship diagnostic boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          plan='data/evaluation/quick-evidence-authorship-screen-plan-v1.json'
+          test "$(jq -r '.schemaVersion' "$plan")" = 'quick-evidence-authorship-screen-plan-v1'
+          test "$(jq -r '.scope.candidateVersion' "$plan")" = 'quick-evidence-v1'
+          test "$(jq -r '.asOfPolicy.sameDayExcluded' "$plan")" = 'true'
+          test "$(jq -r '.feature.activeWeightBeforeTest' "$plan")" = '0'
+          test "$(jq -r '.interpretation.productionAction' "$plan")" = 'none'
+          test "$(jq -r '.interpretation.automaticPromotion' "$plan")" = 'false'
       - uses: actions/setup-node@v7
         with:
           node-version: 22
