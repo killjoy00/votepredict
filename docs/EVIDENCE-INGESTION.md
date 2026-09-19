@@ -100,7 +100,7 @@ The candidate uses a single feature vector. The first directional inputs are int
 - existing bill-specific directional evidence that already clears the evidence impact policy;
 - official prior passage votes by the same legislator on the same bill or its recorded companion, strictly before the forecast cutoff.
 
-The candidate also records campaign-finance volume, campaign-site/member-primary/news counts, source diversity, freshness, conflict status, and prior same-bill non-passage vote counts (amendment, motion/procedural, and other YEA/NAY). Those fields have zero directional weight until separately validated. A YEA or NAY on an amendment or procedural motion is not automatically treated as support or opposition to final passage. Donor or lobbying relationships, party identity, generic news sentiment, and campaign-finance magnitude likewise do not imply a vote stance.
+The candidate also records campaign-finance volume, campaign-site/member-primary/news counts, source diversity, freshness, conflict status, prior same-bill non-passage vote counts (amendment, motion/procedural, and other YEA/NAY), and a fail-closed `billAuthor` flag. Historical authorship is reconstructed from the official Revisor current-author roster by reversing dated author-added/stricken actions on or after the forecast date; ambiguous roster identity makes the bill ineligible, and same-day author changes are excluded because historical action timestamps are date-granular. These fields have zero directional weight until separately validated. A YEA or NAY on an amendment or procedural motion is not automatically treated as support or opposition to final passage. Donor or lobbying relationships, party identity, generic news sentiment, and campaign-finance magnitude likewise do not imply a vote stance.
 
 Directional candidate items created by the public crawler are stored with `quickEvidenceCandidate=true` and `mechanicallyActionable=false`. That distinction is deliberate: Quick Evidence may evaluate them in its shadow under its frozen policy, while Deep and serving Quick continue to treat the underlying item as non-mechanical.
 
@@ -117,7 +117,7 @@ Every eligible 2027-28 Quick member prediction now records the same unified feat
 - uncapped and applied evidence logit deltas;
 - evidence counts and conflict state.
 
-All durable source rows must have been fetched by the forecast as-of timestamp, and any publication timestamp must also be no later than the cutoff. Capture is outcome-blind and automatic promotion is forbidden.
+All durable evidence rows must have been fetched by the forecast as-of timestamp, and any publication timestamp must also be no later than the cutoff. Revisor authorship has the same prospective rule: its official status observation must have been fetched by the forecast as-of timestamp and its identity reconstruction must be complete. Capture is outcome-blind and automatic promotion is forbidden.
 
 Primary prospective scoring waits for at least 40 resolved forecasts, 2,000 member outcomes, and 50 members whose candidate received directional evidence. The required comparison is paired serving Quick versus Quick Evidence overall and among actually moved members, with calibration/error slices by evidence type, source quality, freshness, chamber, party, and conflict status.
 
@@ -144,3 +144,6 @@ The screen records six feature families: amendment YEA/NAY, motion-or-procedural
 `data/evidence/gambling-curated-v1.json` contains sourced member statements, official Revisor authorship records, and documented MIGA/SMSC gaming-policy positions. All remain inspectable and non-mechanical unless a separate evaluated model says otherwise.
 
 `data/evidence/legislator-context-v1.json` adds official 2025-2026 House member profiles and Senate committee rosters for the initial identity-gap cohort. Committee assignments and leadership roles remain neutral context and do not imply support or opposition.
+### Committee-action expansion
+
+Committee-member action is the next structured Quick Evidence source that requires additional recurring public capture. The implementation should reuse official Minnesota House committee-minute pages and Senate committee/hearing minutes, persist exact source hashes and meeting dates, resolve named roll calls to the contemporaneous committee roster, and initially record bill-level committee motion votes at zero weight. Amendment votes and generic procedural YEA/NAY must not be reinterpreted as final-passage support. House online minutes are a useful official-hosted source but are not the complete official record; Senate official digital minutes are filed with the Legislative Reference Library on a delayed schedule, so prospective collection should preserve the exact Senate-hosted observation and later official-filed provenance when available.
