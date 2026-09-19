@@ -1,0 +1,37 @@
+name: Debug Revisor authorship payload
+
+on:
+  push:
+    branches:
+      - ops/revisor-authorship-backfill-20260919
+    paths:
+      - .github/workflows/debug-revisor-authorship-payload.yml
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch official Revisor sample
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://api.revisor.mn.gov/bills/v1/92/2021/0/HF/39/'
+          curl -fsSL -H 'Accept: application/xml,text/xml;q=0.9,*/*;q=0.1' "$url" -o sample.xml
+          echo "bytes=$(wc -c < sample.xml)"
+          if grep -Eiq '<!doctype[[:space:]]+html|<html\b' sample.xml; then
+            echo 'unexpected HTML'
+            exit 1
+          fi
+      - name: Show author-related XML structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '--- tags containing AUTHOR ---'
+          grep -oEi '<[^>]*AUTHOR[^>]*>' sample.xml | head -120 || true
+          echo '--- author-related text fragments ---'
+          grep -oEi '.{0,100}AUTHOR.{0,180}' sample.xml | head -80 || true
+          echo '--- first top-level-ish tags ---'
+          grep -oEi '<[A-Z_][A-Z0-9_.:-]*\b[^>]*>' sample.xml | head -120 || true
