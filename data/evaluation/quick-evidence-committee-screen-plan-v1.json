@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "quick-evidence-committee-screen-plan-v1",
+  "frozenAt": "2026-09-19T21:05:00Z",
+  "purpose": "Retrospective House committee-minute component diagnostic inside the single quick-evidence-v1 candidate. Tests whether exact-bill named committee motion votes contain incremental signal beyond serving Quick while preserving the historical public-availability limitation.",
+  "scope": {
+    "candidateVersion": "quick-evidence-v1",
+    "servingBaseline": "member-eb-v1.2-decay180",
+    "chamber": "house",
+    "trainSession": "2021-2022",
+    "validationSession": "2023-2024",
+    "descriptiveSession": "2025-2026"
+  },
+  "sources": {
+    "system": "Minnesota House official committee minute archive",
+    "historicalBackfill": true,
+    "voteExtraction": "deterministic exact-bill named roll calls only",
+    "supportedMotionClasses": [
+      "recommend_pass",
+      "general_register",
+      "general_orders",
+      "refer",
+      "rerefer",
+      "lay_over",
+      "table"
+    ],
+    "amendmentVotesExcluded": true
+  },
+  "asOfPolicy": {
+    "meetingDateStrictlyBeforeTargetFloorVote": true,
+    "sameDayExcluded": true,
+    "historicalPublicAvailabilityProven": false,
+    "consequence": "hypothesis-only; historical result cannot authorize a serving or frozen-weight change"
+  },
+  "features": [
+    "recommendAye",
+    "recommendNay",
+    "referralAye",
+    "referralNay",
+    "holdTableAye",
+    "holdTableNay"
+  ],
+  "fit": {
+    "model": "ridge logistic offset on serving Quick logit",
+    "lambdas": [
+      0.1,
+      1,
+      5,
+      20,
+      100
+    ],
+    "maximumAbsoluteLogitDelta": 1,
+    "selectionMetricOrder": [
+      "validation member Brier",
+      "validation member log loss",
+      "validation chamber mean absolute yes-vote error",
+      "lambda"
+    ]
+  },
+  "minimumCoverage": {
+    "trainingMemberOutcomesWithCommitteeVote": 50,
+    "validationMemberOutcomesWithCommitteeVote": 50
+  },
+  "interpretation": {
+    "motionVoteIsNotFinalPassageVote": true,
+    "productionAction": "none",
+    "servingProbabilityChange": "none",
+    "quickEvidenceFrozenWeightChange": "none",
+    "automaticPromotion": false
+  }
+}
