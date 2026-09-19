@@ -41,6 +41,16 @@ export type QuickEvidenceAvailabilityRow = {
   newest_fetched_at: string | null;
 };
 
+export type QuickEvidenceCommitteeVoteRow = {
+  membership_id: string;
+  recommend_aye: number;
+  recommend_nay: number;
+  referral_aye: number;
+  referral_nay: number;
+  hold_table_aye: number;
+  hold_table_nay: number;
+};
+
 export type QuickEvidencePriorVoteRow = {
   membership_id: string;
   same_yes: number;
@@ -74,6 +84,12 @@ export interface QuickEvidenceFeatureVector {
   priorSameBillOtherNo: number;
   billAuthor: boolean;
   authorshipAvailable: boolean;
+  priorCommitteeRecommendAye: number;
+  priorCommitteeRecommendNay: number;
+  priorCommitteeReferralAye: number;
+  priorCommitteeReferralNay: number;
+  priorCommitteeHoldTableAye: number;
+  priorCommitteeHoldTableNay: number;
   candidateEvidenceItems: number;
   conflictingDirectionalEvidence: boolean;
   totalEvidenceItems: number;
@@ -196,6 +212,7 @@ export function buildQuickEvidenceFeatureVector(input: {
   evidenceRows?: readonly QuickEvidenceStoredRow[];
   availability?: QuickEvidenceAvailabilityRow;
   priorVotes?: QuickEvidencePriorVoteRow;
+  committeeVotes?: QuickEvidenceCommitteeVoteRow;
   billAuthor?: boolean;
   authorshipAvailable?: boolean;
   capturedAt: string;
@@ -228,6 +245,12 @@ export function buildQuickEvidenceFeatureVector(input: {
     priorSameBillOtherNo: count(prior?.same_other_no),
     billAuthor: input.billAuthor === true,
     authorshipAvailable: input.authorshipAvailable === true,
+    priorCommitteeRecommendAye: count(input.committeeVotes?.recommend_aye),
+    priorCommitteeRecommendNay: count(input.committeeVotes?.recommend_nay),
+    priorCommitteeReferralAye: count(input.committeeVotes?.referral_aye),
+    priorCommitteeReferralNay: count(input.committeeVotes?.referral_nay),
+    priorCommitteeHoldTableAye: count(input.committeeVotes?.hold_table_aye),
+    priorCommitteeHoldTableNay: count(input.committeeVotes?.hold_table_nay),
     candidateEvidenceItems: directional.length,
     conflictingDirectionalEvidence: supportCount > 0 && opposeCount > 0,
     totalEvidenceItems: count(input.availability?.total_items),
@@ -246,6 +269,7 @@ export function buildQuickEvidenceMemberShadow(input: {
   evidenceRows?: readonly QuickEvidenceStoredRow[];
   availability?: QuickEvidenceAvailabilityRow;
   priorVotes?: QuickEvidencePriorVoteRow;
+  committeeVotes?: QuickEvidenceCommitteeVoteRow;
   billAuthor?: boolean;
   authorshipAvailable?: boolean;
   capturedAt: string;
@@ -280,6 +304,7 @@ export function buildQuickEvidenceMemberShadow(input: {
       evidenceRows: input.evidenceRows,
       availability: input.availability,
       priorVotes: input.priorVotes,
+      committeeVotes: input.committeeVotes,
       billAuthor: input.billAuthor,
       authorshipAvailable: input.authorshipAvailable,
       capturedAt: input.capturedAt,
@@ -355,6 +380,53 @@ async function loadDirectionalEvidence(
     byMembership.set(row.membership_id, rows);
   }
   return byMembership;
+}
+
+async function loadCommitteeVotes(
+  membershipIds: readonly string[],
+  billId: string,
+  asOf: string,
+): Promise<Map<string, QuickEvidenceCommitteeVoteRow>> {
+  const result = await pool.query<QuickEvidenceCommitteeVoteRow>(`
+    SELECT ei.membership_id::text,
+           count(*) FILTER (
+             WHERE ei.metadata->>'committeeMotionType' IN ('recommend_pass','general_register','general_orders')
+               AND ei.metadata->>'committeeVoteSide'='aye'
+           )::int AS recommend_aye,
+           count(*) FILTER (
+             WHERE ei.metadata->>'committeeMotionType' IN ('recommend_pass','general_register','general_orders')
+               AND ei.metadata->>'committeeVoteSide'='nay'
+           )::int AS recommend_nay,
+           count(*) FILTER (
+             WHERE ei.metadata->>'committeeMotionType' IN ('refer','rerefer')
+               AND ei.metadata->>'committeeVoteSide'='aye'
+           )::int AS referral_aye,
+           count(*) FILTER (
+             WHERE ei.metadata->>'committeeMotionType' IN ('refer','rerefer')
+               AND ei.metadata->>'committeeVoteSide'='nay'
+           )::int AS referral_nay,
+           count(*) FILTER (
+             WHERE ei.metadata->>'committeeMotionType' IN ('lay_over','table')
+               AND ei.metadata->>'committeeVoteSide'='aye'
+           )::int AS hold_table_aye,
+           count(*) FILTER (
+             WHERE ei.metadata->>'committeeMotionType' IN ('lay_over','table')
+               AND ei.metadata->>'committeeVoteSide'='nay'
+           )::int AS hold_table_nay
+      FROM evidence_items ei
+      JOIN source_documents sd ON sd.id=ei.source_document_id
+     WHERE ei.membership_id = ANY($1::uuid[])
+       AND ei.bill_id=$2::uuid
+       AND ei.metadata->>'contextType'='committee_bill_vote'
+       AND sd.fetched_at <= $3::timestamptz
+       AND (ei.published_at IS NULL OR ei.published_at <= $3::timestamptz)
+       AND NOT EXISTS (
+         SELECT 1 FROM evidence_relationships er
+          WHERE er.to_evidence_id=ei.id
+            AND er.relation_kind='supersedes'
+       )
+     GROUP BY ei.membership_id`, [membershipIds, billId, asOf]);
+  return new Map(result.rows.map((row) => [row.membership_id, row]));
 }
 
 async function loadAuthorship(
@@ -460,10 +532,11 @@ export async function captureQuickEvidenceShadow(
 
   const membershipIds = quick.members.map((member) => member.membershipId);
   const prospectiveEligible = request.subject.sessionSlug === QUICK_EVIDENCE_PROSPECTIVE_SESSION;
-  const [availability, evidence, priorVotes, authorship] = await Promise.all([
+  const [availability, evidence, priorVotes, committeeVotes, authorship] = await Promise.all([
     loadAvailability(membershipIds, quick.asOf),
     loadDirectionalEvidence(membershipIds, request.subject.billId, quick.asOf),
     loadPriorVotes(membershipIds, request.subject.billId, quick.asOf),
+    loadCommitteeVotes(membershipIds, request.subject.billId, quick.asOf),
     loadAuthorship(request.subject.billId, quick.asOf),
   ]);
   const shadows = quick.members.map((member) => ({
@@ -473,6 +546,7 @@ export async function captureQuickEvidenceShadow(
       evidenceRows: evidence.get(member.membershipId),
       availability: availability.get(member.membershipId),
       priorVotes: priorVotes.get(member.membershipId),
+      committeeVotes: committeeVotes.get(member.membershipId),
       billAuthor: authorship.membershipIds?.has(member.membershipId) ?? false,
       authorshipAvailable: authorship.available,
       capturedAt: quick.asOf,
