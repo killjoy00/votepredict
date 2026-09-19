@@ -86,6 +86,14 @@ export function extractExplicitBillStatements(input: ExtractBillStatementsInput)
     const attributionIndex = attributionMatch.index ?? -1;
     if (billIndex < 0 || stanceIndex < 0 || attributionIndex < 0) continue;
     if (Math.abs(stanceIndex - billIndex) > 120 || Math.abs(attributionIndex - stanceIndex) > 120) continue;
+    const localStart = Math.min(billIndex, stanceIndex, attributionIndex);
+    const localEnd = Math.max(
+      billIndex + mention[0].length,
+      stanceIndex + (stanceMatch?.[0].length ?? 0),
+      attributionIndex + attributionMatch[0].length,
+    );
+    const localSpan = excerpt.slice(localStart, localEnd);
+    if (/[.!?]\s+[A-Z]/.test(localSpan)) continue;
 
     const supports = Boolean(supportMatch);
     const stance = supports ? 'supports' as const : 'opposes' as const;
