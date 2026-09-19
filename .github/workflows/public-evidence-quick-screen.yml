@@ -10,6 +10,11 @@ on:
       - src/evaluation/public-evidence-quick-screen.ts
       - tests/public-evidence-quick-screen.test.ts
       - data/evaluation/quick-evidence-prospective-plan-v1.json
+      - data/evaluation/quick-evidence-legislative-screen-plan-v1.json
+      - scripts/evaluate-quick-evidence-legislative-screen.ts
+      - src/app/api/operations/quick-evidence-legislative-screen/route.ts
+      - src/evaluation/quick-evidence-legislative-screen.ts
+      - tests/quick-evidence-legislative-screen.test.ts
   workflow_dispatch:
 
 permissions:
@@ -29,6 +34,7 @@ jobs:
       VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
       VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
       VOTEPREDICT_PUBLIC_EVIDENCE_SCREEN_OUTPUT: artifacts/public-evidence-quick-screen-v1.json
+      VOTEPREDICT_QUICK_EVIDENCE_LEGISLATIVE_OUTPUT: artifacts/quick-evidence-legislative-screen-v1.json
 
     steps:
       - uses: actions/checkout@v7
@@ -46,6 +52,13 @@ jobs:
           test "$(jq -r '.capture.probabilityWriteToServingQuick' "$plan")" = 'false'
           test "$(jq -r '.guardrails.historicalWebBackfill' "$plan")" = 'false'
           test "$(jq -r '.guardrails.automaticPromotion' "$plan")" = 'false'
+          legislative_plan='data/evaluation/quick-evidence-legislative-screen-plan-v1.json'
+          test "$(jq -r '.schemaVersion' "$legislative_plan")" = 'quick-evidence-legislative-screen-plan-v1'
+          test "$(jq -r '.scope.candidateVersion' "$legislative_plan")" = 'quick-evidence-v1'
+          test "$(jq -r '.asOfPolicy.strictlyBeforeTargetDate' "$legislative_plan")" = 'true'
+          test "$(jq -r '.asOfPolicy.sameDayExcluded' "$legislative_plan")" = 'true'
+          test "$(jq -r '.interpretation.votesRemainAmbiguous' "$legislative_plan")" = 'true'
+          test "$(jq -r '.interpretation.servingProbabilityChange' "$legislative_plan")" = 'none'
 
       - name: Require production environment access
         shell: bash
@@ -102,11 +115,40 @@ jobs:
           jq -e '.coverage.training.financeMemberOutcomes > 0' "$file" >/dev/null
           jq -e '.coverage.validation.financeMemberOutcomes > 0' "$file" >/dev/null
 
+      - name: Run structured legislative Quick Evidence screen
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/evaluate-quick-evidence-legislative-screen.ts
+
+      - name: Verify structured legislative artifact is diagnostic-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$VOTEPREDICT_QUICK_EVIDENCE_LEGISLATIVE_OUTPUT"
+          test "$(jq -r '.schemaVersion' "$file")" = 'quick-evidence-legislative-screen-v1'
+          test "$(jq -r '.metadata.codeSha' "$file")" = "$GITHUB_SHA"
+          test "$(jq -r '.metadata.quickEvidenceCandidate' "$file")" = 'quick-evidence-v1'
+          test "$(jq -r '.metadata.productionAction' "$file")" = 'none'
+          test "$(jq -r '.metadata.servingQuickChanged' "$file")" = 'false'
+          test "$(jq -r '.conclusion.productionAction' "$file")" = 'none'
+          test "$(jq -r '.conclusion.servingQuickChanged' "$file")" = 'false'
+          test "$(jq -r '.conclusion.quickEvidenceWeightChanged' "$file")" = 'false'
+          jq -e '.coverage.training.memberOutcomesWithPriorNonPassageVote >= 500' "$file" >/dev/null
+          jq -e '.coverage.validation.memberOutcomesWithPriorNonPassageVote >= 500' "$file" >/dev/null
+
       - name: Upload immutable public-evidence screen
         uses: actions/upload-artifact@v4
         with:
           name: public-evidence-quick-screen-v1-${{ github.sha }}
           path: artifacts/public-evidence-quick-screen-v1.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload immutable structured-legislative screen
+        uses: actions/upload-artifact@v4
+        with:
+          name: quick-evidence-legislative-screen-v1-${{ github.sha }}
+          path: artifacts/quick-evidence-legislative-screen-v1.json
           if-no-files-found: error
           retention-days: 90
 

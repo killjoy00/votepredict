@@ -138,7 +138,9 @@ The production reconciliation repaired the release-integrity drift found during 
 - [x] Record finance, campaign, member-primary, news, source-diversity and freshness features in the same vector with zero directional weight until validated.
 - [x] Cap the unified candidate at ±1 logit and persist base/candidate probabilities without changing serving Quick.
 - [x] Keep the finance-only retrospective screen as a hypothesis-only component diagnostic under the unified protocol.
-- [ ] Add richer historically reconstructable legislative features (especially dated sponsorship/committee records) only when their as-of provenance is complete.
+- [x] Record historically reconstructable prior same-bill amendment/motion/procedural/other vote counts in the unified Quick Evidence vector at zero weight, with same-day rows excluded.
+- [x] Add a frozen retrospective structured-legislative component diagnostic using 2021-22 training, 2023-24 validation, and 2025-26 descriptive scoring.
+- [ ] Add richer dated sponsorship/committee-member evidence only when member identity and as-of provenance are complete; current author lists remain ineligible.
 - [ ] Accumulate enough prospective/as-of forecasts and outcomes to score `quick-evidence-prospective-v1`.
 
 ### P1 — prepare 2027-28
