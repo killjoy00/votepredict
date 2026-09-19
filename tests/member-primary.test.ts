@@ -72,6 +72,8 @@ test('Senate DFL fallback profile URLs follow the live senator-first-last slug a
   assert.equal(senateDflFallbackProfileUrl('John J. Marty'), 'https://senatedfl.mn/home/members/senator-john-marty/');
   assert.equal(senateDflFallbackProfileUrl('Nick A. Frentz'), 'https://senatedfl.mn/home/members/senator-nick-frentz/');
   assert.equal(senateDflFallbackProfileUrl('Omar Fateh'), 'https://senatedfl.mn/home/members/senator-omar-fateh/');
+  assert.equal(senateDflFallbackProfileUrl('Bobby Joe Champion'), 'https://senatedfl.mn/home/members/senator-bobby-joe-champion/');
+  assert.equal(senateDflFallbackProfileUrl('Erin Maye Quade'), 'https://senatedfl.mn/home/members/senator-erin-maye-quade/');
 });
 
 test('Senate DFL directory matching accepts live profile cards with descriptive nested text', () => {
