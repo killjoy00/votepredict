@@ -152,7 +152,7 @@ function isBillMotion(line: string, identifier: string): CommitteeMotionType | u
 
 function normalizeVoteName(value: string): string {
   return value
-    .replace(/^\s*(?:Senator|Representative|Rep\.)\s+/i, '')
+    .replace(/^\s*(?:Chair|Vice\s+Chair|Senator|Representative|Rep\.)\s+/i, '')
     .replace(/\([^)]*\)/g, ' ')
     .replace(/^[-•]+\s*/, '')
     .replace(/[.;]+$/, '')
