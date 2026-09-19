@@ -120,10 +120,13 @@ export function houseMemberNewsUrl(externalKey: string): string | undefined {
 }
 
 export function senateDflFallbackProfileUrl(memberName: string): string | undefined {
-  const last = surname(memberName);
+  const tokens = memberNameTokens(memberName).filter((token) => token.length > 1);
+  if (tokens.length < 2) return undefined;
+  const first = tokens[0];
+  const last = tokens.at(-1);
   if (!last) return undefined;
-  const slug = last.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-  return slug ? `https://senatedfl.mn/home/members/${slug}/` : undefined;
+  const slug = [first, last].map((token) => token.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')).filter(Boolean).join('-');
+  return slug ? `https://senatedfl.mn/home/members/senator-${slug}/` : undefined;
 }
 
 export function houseArchiveMatchesMember(page: PublicPage, member: MemberPrimaryMember): boolean {
@@ -152,12 +155,12 @@ export function findSenateMemberProfileUrl(
     const url = new URL(anchor.url);
     if (url.hostname.toLowerCase() !== expectedHost) return false;
     if (dfl ? !isDflProfilePath(url.pathname) : !isRepublicanProfilePath(url.pathname)) return false;
-    const anchorSurname = surname(anchor.text);
-    return anchorSurname === memberSurname;
+    const anchorTokens = memberNameTokens(anchor.text);
+    return anchorTokens.includes(memberSurname);
   });
   if (candidates.length === 0) return undefined;
 
-  const exact = candidates.filter((anchor) => normalizePersonKey(anchor.text) === normalizedName);
+  const exact = candidates.filter((anchor) => normalizePersonKey(anchor.text).includes(normalizedName));
   if (exact.length === 1) return exact[0].url;
 
   const first = meaningfulFirstName(member.name);
