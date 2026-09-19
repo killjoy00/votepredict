@@ -138,6 +138,19 @@ test('prior same-bill non-passage votes are recorded but remain zero-weight pend
   assert.ok(Math.abs((shadow.candidateProbability ?? 0) - 0.61) < 1e-12);
 });
 
+test('reconstructed bill authorship is recorded but remains zero-weight pending validation', () => {
+  const shadow = buildQuickEvidenceMemberShadow({
+    baseProbability: 0.61,
+    billAuthor: true,
+    authorshipAvailable: true,
+    capturedAt: '2027-02-10T12:00:00.000Z',
+  });
+  assert.equal(shadow.features.billAuthor, true);
+  assert.equal(shadow.features.authorshipAvailable, true);
+  assert.equal(shadow.appliedEvidenceItems, 0);
+  assert.ok(Math.abs((shadow.candidateProbability ?? 0) - 0.61) < 1e-12);
+});
+
 test('availability features are recorded but do not move probability by themselves', () => {
   const vector = buildQuickEvidenceFeatureVector({
     availability,
@@ -171,6 +184,11 @@ test('frozen unified Quick Evidence plan remains single-candidate and non-servin
   assert.ok(plan.capture.features.includes('priorSameBillAmendmentYes'));
   assert.ok(plan.capture.features.includes('priorSameBillMotionProceduralNo'));
   assert.ok(plan.capture.features.includes('priorSameBillOtherNo'));
+  assert.ok(plan.capture.features.includes('billAuthor'));
+  assert.ok(plan.capture.features.includes('authorshipAvailable'));
+  assert.equal(plan.authorshipAmendment.verifiedPreActivationState.quickRevisions, 0);
+  assert.equal(plan.authorshipAmendment.verifiedPreActivationState.quickEvidenceCapturedRevisions, 0);
+  assert.equal(plan.authorshipAmendment.activeWeightChange, 'none');
   assert.equal(plan.capture.probabilityWriteToServingQuick, false);
   assert.equal(plan.guardrails.historicalWebBackfill, false);
   assert.equal(plan.guardrails.automaticPromotion, false);
