@@ -33,7 +33,7 @@ function memberPattern(member: LegislativeSpeechMember): RegExp {
   const surname = parts.at(-1) ?? '';
   const full = parts.map(escapeRegex).join('\\s+');
   const title = member.chamber === 'house' ? '(?:Rep(?:resentative)?\\.?)' : '(?:Sen(?:ator)?\\.?)';
-  return new RegExp('(?:\\b' + full + '\\b|\\b' + title + '\\s+(?:[A-Z][A-Za-z\\'.-]*\\s+){0,3}' + escapeRegex(surname) + '\\b)', 'i');
+  return new RegExp("(?:\\b" + full + "\\b|\\b" + title + "\\s+(?:[A-Z][A-Za-z'.-]*\\s+){0,3}" + escapeRegex(surname) + "\\b)", 'i');
 }
 
 function billPattern(identifier: string): RegExp {
