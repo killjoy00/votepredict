@@ -32,12 +32,6 @@ function regexEscape(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function billPattern(identifier: string): RegExp {
-  const match = identifier.trim().toUpperCase().match(/^([A-Z]+)\s*([0-9]+)$/);
-  if (!match) return new RegExp(regexEscape(identifier), 'gi');
-  return new RegExp(`\\b${regexEscape(match[1])}\\s*${regexEscape(match[2])}\\b`, 'gi');
-}
-
 function normalizedNameTokens(name: string): string[] {
   return name.normalize('NFKD')
     .replace(/[\u0300-\u036f]/g, '')
