@@ -37,6 +37,7 @@ type PageSource = {
   url: string;
   fallbackDate?: string;
   sourceStatus: 'house_official_minutes' | 'senate_hosted_minutes';
+  historicalBackfill?: boolean;
 };
 
 type RunState = {
@@ -81,6 +82,28 @@ function legislatureNumber(startsOn: string): number {
   const value = (year - 1837) / 2;
   if (!Number.isInteger(value) || value < 1) throw new Error(`Cannot derive Minnesota Legislature number from ${startsOn}`);
   return value;
+}
+
+async function sessionBySlug(slug: string): Promise<SessionContext> {
+  const result = await pool.query<{
+    id: string;
+    slug: string;
+    starts_on: string;
+  }>(`
+    SELECT id::text,slug,starts_on::text
+      FROM legislative_sessions
+     WHERE jurisdiction_id=(SELECT id FROM jurisdictions WHERE slug='us-mn')
+       AND slug=$1
+     ORDER BY starts_on DESC
+     LIMIT 1`, [slug]);
+  const row = result.rows[0];
+  if (!row) throw new Error(`Minnesota session ${slug} is unavailable`);
+  return {
+    sessionId: row.id,
+    sessionSlug: row.slug,
+    startsOn: row.starts_on,
+    legislatureNumber: legislatureNumber(row.starts_on),
+  };
 }
 
 async function currentSession(): Promise<SessionContext> {
@@ -270,6 +293,7 @@ function evidenceDrafts(input: {
   meetingDate: string;
   sourceUrl: string;
   sourceStatus: PageSource['sourceStatus'];
+  historicalBackfill?: boolean;
 }): {
   drafts: DurableEvidenceDraft[];
   resolvedVotes: number;
@@ -321,6 +345,7 @@ function evidenceDrafts(input: {
           committeeResult: rollCall.result,
           meetingDate: input.meetingDate,
           sourceRecordStatus: input.sourceStatus,
+          historicalBackfill: input.historicalBackfill === true,
           sourceVerified: true,
           mechanicallyActionable: false,
           quickEvidenceCandidate: false,
@@ -376,6 +401,7 @@ async function processSource(input: {
       meetingDate,
       sourceUrl: page.canonicalUrl,
       sourceStatus: input.source.sourceStatus,
+      historicalBackfill: input.source.historicalBackfill,
     });
     if (extracted.drafts.length === 0) {
       return {
@@ -404,6 +430,7 @@ async function processSource(input: {
         pipelineVersion: COMMITTEE_EVIDENCE_PIPELINE_VERSION,
         meetingDate,
         sourceRecordStatus: input.source.sourceStatus,
+        historicalBackfill: input.source.historicalBackfill === true,
         title: page.title,
       },
     }, extracted.drafts);
@@ -445,6 +472,119 @@ async function beginRun(session: SessionContext): Promise<string> {
     pipelineVersion: COMMITTEE_EVIDENCE_PIPELINE_VERSION,
   })]);
   return result.rows[0].id;
+}
+
+function historicalHouseSessionForCommitteeId(committeeId: number): string | undefined {
+  const legislature = Math.floor(committeeId / 1000);
+  if (legislature === 92) return '2021-2022';
+  if (legislature === 93) return '2023-2024';
+  if (legislature === 94) return '2025-2026';
+  return undefined;
+}
+
+export async function backfillHistoricalHouseCommitteeEvidence(committeeId: number): Promise<{
+  committeeId: number;
+  session?: string;
+  found: boolean;
+  pages: number;
+  rollCalls: number;
+  inserted: number;
+  reused: number;
+  resolvedVotes: number;
+  unresolvedVotes: number;
+  ambiguousVotes: number;
+  skippedUnknownBills: number;
+  warnings: string[];
+}> {
+  if (!Number.isInteger(committeeId)) throw new Error('committeeId must be an integer');
+  const sessionSlug = historicalHouseSessionForCommitteeId(committeeId);
+  if (!sessionSlug) {
+    return {
+      committeeId,
+      found: false,
+      pages: 0,
+      rollCalls: 0,
+      inserted: 0,
+      reused: 0,
+      resolvedVotes: 0,
+      unresolvedVotes: 0,
+      ambiguousVotes: 0,
+      skippedUnknownBills: 0,
+      warnings: ['unsupported committee legislature'],
+    };
+  }
+  const session = await sessionBySlug(sessionSlug);
+  let index: PublicPage;
+  try {
+    index = await fetchPage(`https://www.house.mn.gov/Committees/minutes/${committeeId}`);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (/HTTP 404/i.test(message) || /too little readable text/i.test(message)) {
+      return {
+        committeeId,
+        session: sessionSlug,
+        found: false,
+        pages: 0,
+        rollCalls: 0,
+        inserted: 0,
+        reused: 0,
+        resolvedVotes: 0,
+        unresolvedVotes: 0,
+        ambiguousVotes: 0,
+        skippedUnknownBills: 0,
+        warnings: [],
+      };
+    }
+    throw error;
+  }
+  const urls = discoverHouseCommitteeMinutes(index.rawContent);
+  if (urls.length === 0) {
+    return {
+      committeeId,
+      session: sessionSlug,
+      found: true,
+      pages: 0,
+      rollCalls: 0,
+      inserted: 0,
+      reused: 0,
+      resolvedVotes: 0,
+      unresolvedVotes: 0,
+      ambiguousVotes: 0,
+      skippedUnknownBills: 0,
+      warnings: ['committee minute index contained no minute detail links'],
+    };
+  }
+
+  const [bills, roster] = await Promise.all([
+    billsForSession(session.sessionId),
+    rosterForSession(session.sessionId),
+  ]);
+  const outcomes = await mapConcurrent(
+    urls.map((url): PageSource => ({
+      chamber: 'house',
+      url,
+      sourceStatus: 'house_official_minutes',
+      historicalBackfill: true,
+    })),
+    FETCH_CONCURRENCY,
+    (source) => processSource({ source, session, bills, roster }),
+  );
+  return {
+    committeeId,
+    session: sessionSlug,
+    found: true,
+    pages: outcomes.length,
+    rollCalls: outcomes.reduce((sum, row) => sum + row.rollCalls, 0),
+    inserted: outcomes.reduce((sum, row) => sum + row.inserted, 0),
+    reused: outcomes.reduce((sum, row) => sum + row.reused, 0),
+    resolvedVotes: outcomes.reduce((sum, row) => sum + row.resolvedVotes, 0),
+    unresolvedVotes: outcomes.reduce((sum, row) => sum + row.unresolvedVotes, 0),
+    ambiguousVotes: outcomes.reduce((sum, row) => sum + row.ambiguousVotes, 0),
+    skippedUnknownBills: outcomes.reduce((sum, row) => sum + row.skippedUnknownBills, 0),
+    warnings: outcomes
+      .flatMap((row) => row.errors.map((message) => `${row.sourceUrl}: ${message}`))
+      .slice(0, 30),
+  };
 }
 
 export async function refreshCommitteeEvidence(): Promise<CommitteeEvidenceRefreshResult> {
