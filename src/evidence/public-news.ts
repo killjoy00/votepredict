@@ -377,7 +377,11 @@ function mergeNewsLeads(groups: readonly NewsLead[][], limit: number): NewsLead[
     }
   }
   return [...unique.values()]
-    .sort((a, b) => (b.seenAt ?? '').localeCompare(a.seenAt ?? ''))
+    .sort((a, b) => {
+      const attribution = Number(Boolean(b.queryMemberNames?.length)) - Number(Boolean(a.queryMemberNames?.length));
+      if (attribution !== 0) return attribution;
+      return (b.seenAt ?? '').localeCompare(a.seenAt ?? '');
+    })
     .slice(0, limit);
 }
 
