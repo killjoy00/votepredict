@@ -2,6 +2,11 @@ import { pool } from '@/lib/db';
 import { evidenceLogitDelta, EVIDENCE_IMPACT_VERSION } from '@/evidence/impact';
 import { evidenceImpactPolicy } from '@/evidence/policy';
 import type { EvidenceDraft, EvidenceSignal } from '@/evidence/types';
+import {
+  authorshipAvailableAt,
+  authorshipMembershipIdsAsOf,
+  type StoredRevisorAuthorship,
+} from './quick-evidence-authorship';
 import type { ForecastRuntimeRequest, ForecastRuntimeResult } from './runtime';
 
 export const QUICK_EVIDENCE_SHADOW_VERSION = 'quick-evidence-v1' as const;
@@ -67,6 +72,8 @@ export interface QuickEvidenceFeatureVector {
   priorSameBillMotionProceduralNo: number;
   priorSameBillOtherYes: number;
   priorSameBillOtherNo: number;
+  billAuthor: boolean;
+  authorshipAvailable: boolean;
   candidateEvidenceItems: number;
   conflictingDirectionalEvidence: boolean;
   totalEvidenceItems: number;
@@ -189,6 +196,8 @@ export function buildQuickEvidenceFeatureVector(input: {
   evidenceRows?: readonly QuickEvidenceStoredRow[];
   availability?: QuickEvidenceAvailabilityRow;
   priorVotes?: QuickEvidencePriorVoteRow;
+  billAuthor?: boolean;
+  authorshipAvailable?: boolean;
   capturedAt: string;
 }): QuickEvidenceFeatureVector {
   const rows = input.evidenceRows ?? [];
@@ -217,6 +226,8 @@ export function buildQuickEvidenceFeatureVector(input: {
     priorSameBillMotionProceduralNo: count(prior?.same_motion_procedural_no),
     priorSameBillOtherYes: count(prior?.same_other_yes),
     priorSameBillOtherNo: count(prior?.same_other_no),
+    billAuthor: input.billAuthor === true,
+    authorshipAvailable: input.authorshipAvailable === true,
     candidateEvidenceItems: directional.length,
     conflictingDirectionalEvidence: supportCount > 0 && opposeCount > 0,
     totalEvidenceItems: count(input.availability?.total_items),
@@ -235,6 +246,8 @@ export function buildQuickEvidenceMemberShadow(input: {
   evidenceRows?: readonly QuickEvidenceStoredRow[];
   availability?: QuickEvidenceAvailabilityRow;
   priorVotes?: QuickEvidencePriorVoteRow;
+  billAuthor?: boolean;
+  authorshipAvailable?: boolean;
   capturedAt: string;
   prospective?: boolean;
 }): QuickEvidenceMemberShadow {
@@ -267,6 +280,8 @@ export function buildQuickEvidenceMemberShadow(input: {
       evidenceRows: input.evidenceRows,
       availability: input.availability,
       priorVotes: input.priorVotes,
+      billAuthor: input.billAuthor,
+      authorshipAvailable: input.authorshipAvailable,
       capturedAt: input.capturedAt,
     }),
   };
@@ -340,6 +355,20 @@ async function loadDirectionalEvidence(
     byMembership.set(row.membership_id, rows);
   }
   return byMembership;
+}
+
+async function loadAuthorship(
+  billId: string,
+  asOf: string,
+): Promise<{ available: boolean; membershipIds?: Set<string> }> {
+  const result = await pool.query<{ authorship: StoredRevisorAuthorship | null }>(`
+    SELECT metadata -> 'revisorAuthorship' AS authorship
+      FROM bills
+     WHERE id=$1::uuid`, [billId]);
+  const authorship = result.rows[0]?.authorship ?? null;
+  if (!authorship || !authorshipAvailableAt(authorship, asOf)) return { available: false };
+  const membershipIds = authorshipMembershipIdsAsOf(authorship, asOf.slice(0, 10));
+  return membershipIds ? { available: true, membershipIds } : { available: false };
 }
 
 async function loadPriorVotes(
@@ -431,10 +460,11 @@ export async function captureQuickEvidenceShadow(
 
   const membershipIds = quick.members.map((member) => member.membershipId);
   const prospectiveEligible = request.subject.sessionSlug === QUICK_EVIDENCE_PROSPECTIVE_SESSION;
-  const [availability, evidence, priorVotes] = await Promise.all([
+  const [availability, evidence, priorVotes, authorship] = await Promise.all([
     loadAvailability(membershipIds, quick.asOf),
     loadDirectionalEvidence(membershipIds, request.subject.billId, quick.asOf),
     loadPriorVotes(membershipIds, request.subject.billId, quick.asOf),
+    loadAuthorship(request.subject.billId, quick.asOf),
   ]);
   const shadows = quick.members.map((member) => ({
     membershipId: member.membershipId,
@@ -443,6 +473,8 @@ export async function captureQuickEvidenceShadow(
       evidenceRows: evidence.get(member.membershipId),
       availability: availability.get(member.membershipId),
       priorVotes: priorVotes.get(member.membershipId),
+      billAuthor: authorship.membershipIds?.has(member.membershipId) ?? false,
+      authorshipAvailable: authorship.available,
       capturedAt: quick.asOf,
       prospective: prospectiveEligible,
     }),
