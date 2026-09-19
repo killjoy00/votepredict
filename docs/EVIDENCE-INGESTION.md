@@ -25,7 +25,7 @@ Deep adds a separate targeted research layer for consequential/uncertain members
 
 ## Unified public evidence pipeline
 
-The recurring non-Deep pipeline combines three streams behind a common provenance and durability contract.
+The recurring non-Deep pipeline combines four streams behind a common provenance and durability contract.
 
 ### Campaign sites
 
@@ -34,6 +34,18 @@ Minnesota Secretary of State candidate filings are the campaign-site discovery a
 For uniquely matched sites, the crawler captures the campaign home page plus a bounded set of same-site pages that look most useful for legislative context: issue/platform/policy pages first, then press/news/update pages, then about pages. Each captured page is source-hashed and mutable paths use stable evidence-series keys so later captures supersede rather than overwrite history.
 
 Campaign pages are stored as `member_primary` neutral context. They are not automatically converted into support/opposition evidence.
+
+### Member-primary publications
+
+VotePredict now maintains a dedicated member-primary source registry for the active Minnesota Legislature instead of relying on general web search to discover legislator statements.
+
+- Minnesota House members use the government-hosted `house.mn.gov/members/profile/news/{memberId}` archive derived from the legislator's durable `lrl:` identity.
+- Minnesota Senate DFL members are resolved through the caucus senator directory, then their caucus-hosted profile and publication results are verified against member identity and district.
+- Minnesota Senate Republican members are resolved through the caucus senator directory, and the per-senator profile's "News from Senator" links are used as the article index.
+
+The registry page is stored separately from individual publications. Publication pages are accepted only after the fetched page verifies the target member; Senate DFL items additionally require a matching member byline. Each accepted item is source-hashed, timestamped, stored as `member_primary` neutral context, and assigned a stable evidence-series key so edited pages supersede older captures without erasing history.
+
+These publications establish what a member or office published. They do not independently verify every factual assertion in the publication and they do not automatically imply a future vote position. They remain `mechanicallyActionable: false` until a separately frozen prospective evaluation justifies mechanical use.
 
 ### News
 
@@ -74,7 +86,7 @@ The crawler is intentionally bounded rather than exhaustive. One bad site or art
 
 Current-member web work is rotated by least-recent public-evidence capture. The default batch is 12 memberships and the endpoint caps a batch at 24. Campaign-finance refresh is folded into the same run when the last successful live finance refresh is older than the configured freshness threshold, avoiding repeated bulk downloads on every web batch.
 
-Operations exposes the latest pipeline status plus current finance, campaign-site, news, and web-covered-member counts. Public evidence ingestion is expected to remain useful even when every item is non-mechanical.
+Operations exposes the latest pipeline status plus current finance, campaign-site, member-primary, news, and web-covered-member counts. Public evidence ingestion is expected to remain useful even when every item is non-mechanical.
 
 ## Quick evaluation boundary
 
@@ -97,9 +109,9 @@ The screen is **not leakage-safe for historical public availability** because th
 - any apparent improvement is labeled a `hypothesisSignal` only;
 - serving Quick probabilities never change and `productionAction` remains `none`.
 
-The recurring pipeline solves this going forward: finance, campaign-site, and news evidence receive durable `fetched_at` provenance prospectively. Once future forecasts resolve, those truly as-of captures can support an eligible Quick evidence evaluation.
+The recurring pipeline solves this going forward: finance, campaign-site, member-primary, and news evidence receive durable `fetched_at` provenance prospectively. Once future forecasts resolve, those truly as-of captures can support an eligible Quick evidence evaluation.
 
-News and campaign-site material also begin as a prospective durable corpus because VotePredict does not have comparable timestamped historical captures. They must not be backfilled from the present web and treated as though they were known before old votes.
+News, campaign-site, and member-primary material also begin as a prospective durable corpus because VotePredict does not have comparable timestamped historical captures. They must not be backfilled from the present web and treated as though they were known before old votes.
 
 ## Existing commands
 

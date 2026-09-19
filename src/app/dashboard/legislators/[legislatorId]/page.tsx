@@ -84,6 +84,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
             {member ? <span className={styles.badge}>District {member.district}</span> : null}
             <span className={styles.badge}>{profile.voteSummary.recordedVotes} roll calls recorded</span>
             {profile.evidence.length > 0 ? <span className={styles.badge}>Stored source evidence</span> : null}
+            {profile.memberPrimaryEvidence.length > 0 ? <span className={styles.badge}>Member-primary sources</span> : null}
           </div>
         </div>
         <div className={styles.heroAside}>
@@ -290,10 +291,39 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
           <section className={styles.panel}>
             <header className={styles.panelHeader}>
               <div>
+                <span className={styles.kicker}>Member-primary evidence</span>
+                <h2>Statements & legislative updates</h2>
+              </div>
+              <span>Official House and caucus-hosted member publications</span>
+            </header>
+            {profile.memberPrimaryEvidence.length > 0 ? (
+              <div className={styles.evidenceList}>
+                {profile.memberPrimaryEvidence.map((item, index) => (
+                  <article className={styles.evidenceItem} key={`member-primary-${item.sourceUrl}-${index}`}>
+                    <div className={styles.evidenceMeta}>
+                      <span>member primary</span>
+                      {item.publishedAt ? <span>{date(item.publishedAt)}</span> : null}
+                      <span>{sourceKind(item.sourceQuality)}</span>
+                    </div>
+                    <strong>{item.claim.replace(/^Member-primary publication:\s*/i, '')}</strong>
+                    {item.excerpt ? <p>“{item.excerpt}”</p> : null}
+                    <a href={item.sourceUrl} target="_blank" rel="noreferrer" className={styles.sourceLink}>Open publication ↗</a>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className={styles.note}>No current member-primary publication has been captured for this legislator yet.</p>
+            )}
+            <p className={styles.note}>These are primary-source publications from the legislator’s House or Senate caucus channel. They show what the member or office published; they are not independently verified facts and do not mechanically change forecast probabilities.</p>
+          </section>
+
+          <section className={styles.panel}>
+            <header className={styles.panelHeader}>
+              <div>
                 <span className={styles.kicker}>Source-backed intelligence</span>
                 <h2>Stored evidence</h2>
               </div>
-              <span>Accumulates as Deep research finds usable sources</span>
+              <span>Campaign, news and curated sources outside the member-primary stream</span>
             </header>
             {profile.evidence.length > 0 ? (
               <div className={styles.evidenceList}>
@@ -312,7 +342,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                 ))}
               </div>
             ) : (
-              <p className={styles.note}>No persisted Deep-research evidence has been attached to this legislator yet. Future researched forecasts will accumulate here.</p>
+              <p className={styles.note}>No other current durable evidence has been attached to this legislator yet.</p>
             )}
           </section>
         </div>
