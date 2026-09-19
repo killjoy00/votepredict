@@ -39,6 +39,7 @@ type Anchor = {
 
 const SENATE_REPUBLICAN_NON_ARTICLE_SLUGS = new Set([
   'about',
+  'accomplishments',
   'contact',
   'news',
   'senators',
@@ -46,6 +47,8 @@ const SENATE_REPUBLICAN_NON_ARTICLE_SLUGS = new Set([
   'leadership',
   'issues',
   'resources',
+  'immigration-resources',
+  'federal-impacts-committee',
   'privacy-policy',
 ]);
 
@@ -151,6 +154,21 @@ export function findSenateMemberProfileUrl(
   return candidates.length === 1 ? candidates[0].url : undefined;
 }
 
+export function findDflAuthorArchiveUrl(indexPage: PublicPage, memberName: string): string | undefined {
+  const memberSurname = surname(memberName);
+  if (!memberSurname) return undefined;
+  const candidates = extractAnchors(indexPage.rawContent, indexPage.canonicalUrl).filter((anchor) => {
+    const url = new URL(anchor.url);
+    return url.hostname.toLowerCase() === 'senatedfl.mn'
+      && /^\/author\/[^/]+\/?$/i.test(url.pathname)
+      && surname(anchor.text) === memberSurname;
+  });
+  const exact = candidates.filter((anchor) => normalizePersonKey(anchor.text) === normalizePersonKey(memberName)
+    || normalizePersonKey(anchor.text) === `senator ${normalizePersonKey(memberName)}`);
+  if (exact.length === 1) return exact[0].url;
+  return candidates.length === 1 ? candidates[0].url : undefined;
+}
+
 function pageHasDistrict(page: PublicPage, member: Pick<MemberPrimaryMember, 'chamber_slug' | 'district'>): boolean {
   const normalized = page.text
     .normalize('NFKD')
@@ -232,11 +250,25 @@ export async function discoverMemberPrimarySource(
   }
 
   if (dfl) {
-    const articleIndexPage = await fetchPublicPage(dflSearchUrl(member.name), {
+    const searchPage = await fetchPublicPage(dflSearchUrl(member.name), {
       timeoutMs: 15_000,
       maxBytes: 2_500_000,
       userAgent: 'VotePredict/2.0 Minnesota Senate DFL member-primary search',
     });
+    let articleIndexPage = searchPage;
+    const authorUrl = findDflAuthorArchiveUrl(searchPage, member.name);
+    if (authorUrl) {
+      try {
+        const authorPage = await fetchPublicPage(authorUrl, {
+          timeoutMs: 15_000,
+          maxBytes: 2_500_000,
+          userAgent: 'VotePredict/2.0 Minnesota Senate DFL member-primary author archive',
+        });
+        if (memberPrimaryProfileMatches(authorPage, member)) articleIndexPage = authorPage;
+      } catch {
+        // The member profile remains the registry source; a failed author archive falls back to site search.
+      }
+    }
     return {
       hostKind: 'senate_dfl_caucus',
       publisher: 'Minnesota Senate DFL Caucus',
@@ -292,6 +324,10 @@ export function selectMemberPrimaryArticleCandidates(
     const url = new URL(value);
     if (url.hostname.toLowerCase() !== expectedHost || !isRootArticlePath(url.pathname)) continue;
     if (url.toString() === discovery.registryPage.canonicalUrl) continue;
+    if (discovery.hostKind === 'senate_republican_caucus') {
+      const memberSurname = surname(member.name);
+      if (memberSurname && !url.pathname.toLowerCase().includes(memberSurname)) continue;
+    }
     const canonical = canonicalPublicUrl(url.toString());
     if (unique.has(canonical)) continue;
     unique.add(canonical);
@@ -306,9 +342,8 @@ function bylineMatchesMember(text: string, memberName: string): boolean {
   const marker = normalized.indexOf('by senator ');
   if (marker < 0) return false;
   const byline = normalized.slice(marker + 'by senator '.length, marker + 'by senator '.length + 100);
-  const first = meaningfulFirstName(memberName);
   const last = surname(memberName);
-  return Boolean(first && last && byline.includes(first) && byline.includes(last));
+  return Boolean(last && byline.includes(last));
 }
 
 export function memberPrimaryArticleMatches(
@@ -316,16 +351,11 @@ export function memberPrimaryArticleMatches(
   discovery: MemberPrimaryDiscovery,
   member: MemberPrimaryMember,
 ): boolean {
-  if (!publicPageMentionsPerson(page.text, member.name)) {
-    const first = meaningfulFirstName(member.name);
-    const last = surname(member.name);
-    const normalized = normalizePersonKey(page.text);
-    if (!first || !last || !normalized.includes(first) || !normalized.includes(last)) return false;
-  }
   if (discovery.hostKind === 'senate_dfl_caucus') {
     return bylineMatchesMember(page.text.slice(0, 2400), member.name);
   }
-  return true;
+  const last = surname(member.name);
+  return Boolean(last && normalizePersonKey(page.text).includes(last));
 }
 
 const DATE_PATTERN = /\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}\b/i;
