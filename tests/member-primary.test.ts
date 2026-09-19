@@ -76,6 +76,21 @@ test('Senate DFL fallback profile URLs follow the live senator-first-last slug a
   assert.equal(senateDflFallbackProfileUrl('Erin Maye Quade'), 'https://senatedfl.mn/home/members/senator-erin-maye-quade/');
 });
 
+test('Senate DFL directory matching can resolve public-name variants from the canonical profile path', () => {
+  const directory = page({
+    canonicalUrl: 'https://senatedfl.mn/senators/',
+    rawContent: '<a href="/home/members/senator-ron-latz/"><img alt="" /></a><span>Ron Latz Senate District 46</span>',
+    text: 'Ron Latz Senate District 46',
+  });
+  assert.equal(
+    findSenateMemberProfileUrl(directory, {
+      name: 'Ronald Steven Latz',
+      party: 'DFL',
+    }),
+    'https://senatedfl.mn/home/members/senator-ron-latz/',
+  );
+});
+
 test('Senate DFL directory matching accepts live profile cards with descriptive nested text', () => {
   const directory = page({
     canonicalUrl: 'https://senatedfl.mn/senators/',
