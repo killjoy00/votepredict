@@ -35,6 +35,8 @@ export type ProductionReadiness = {
     memberPrimaryItems: number;
     memberPrimaryMembers: number;
     publicEvidenceMembers: number;
+    quickEvidenceCandidateItems: number;
+    quickEvidenceCandidateMembers: number;
     mechanicallyActionableItems: number;
     latestCampaignFinanceFetch?: string;
     latestPublicEvidenceRun?: string;
@@ -91,6 +93,8 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
       member_primary_items: number;
       member_primary_members: number;
       public_evidence_members: number;
+      quick_evidence_candidate_items: number;
+      quick_evidence_candidate_members: number;
       mechanically_actionable_items: number;
       latest_campaign_finance_fetch: string | null;
       latest_public_evidence_run: string | null;
@@ -145,8 +149,14 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
              'member_primary_registry'
            )
         ) AS prospective_evidence_since,
-        count(*) FILTER (WHERE source_kind IN ('campaign_site','campaign_site_registry'))::int AS campaign_site_items,
-        count(*) FILTER (WHERE source_kind='member_primary_article')::int AS member_primary_items,
+        count(*) FILTER (
+          WHERE source_kind='campaign_site_registry'
+             OR (source_kind='campaign_site' AND metadata->>'subtype'='campaign_site_page')
+        )::int AS campaign_site_items,
+        count(*) FILTER (
+          WHERE source_kind='member_primary_article'
+            AND metadata->>'subtype'='member_primary_article'
+        )::int AS member_primary_items,
         count(DISTINCT membership_id) FILTER (WHERE source_kind IN ('member_primary_article','member_primary_registry'))::int AS member_primary_members,
         count(DISTINCT membership_id) FILTER (
           WHERE source_kind IN (
@@ -157,6 +167,8 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
             'member_primary_registry'
           )
         )::int AS public_evidence_members,
+        count(*) FILTER (WHERE metadata->>'quickEvidenceCandidate'='true')::int AS quick_evidence_candidate_items,
+        count(DISTINCT membership_id) FILTER (WHERE metadata->>'quickEvidenceCandidate'='true')::int AS quick_evidence_candidate_members,
         count(*) FILTER (WHERE metadata->>'mechanicallyActionable'='true')::int AS mechanically_actionable_items,
         max(fetched_at) FILTER (WHERE source_kind='campaign_finance_bulk')::text AS latest_campaign_finance_fetch,
         (SELECT finished_at::text FROM ingestion_runs WHERE source_system='public-evidence-pipeline' ORDER BY created_at DESC LIMIT 1) AS latest_public_evidence_run,
@@ -199,6 +211,8 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
     member_primary_items: 0,
     member_primary_members: 0,
     public_evidence_members: 0,
+    quick_evidence_candidate_items: 0,
+    quick_evidence_candidate_members: 0,
     mechanically_actionable_items: 0,
     latest_campaign_finance_fetch: null,
     latest_public_evidence_run: null,
@@ -238,6 +252,8 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
       memberPrimaryItems: Number(evidence.member_primary_items),
       memberPrimaryMembers: Number(evidence.member_primary_members),
       publicEvidenceMembers: Number(evidence.public_evidence_members),
+      quickEvidenceCandidateItems: Number(evidence.quick_evidence_candidate_items),
+      quickEvidenceCandidateMembers: Number(evidence.quick_evidence_candidate_members),
       mechanicallyActionableItems: Number(evidence.mechanically_actionable_items),
       latestCampaignFinanceFetch: evidence.latest_campaign_finance_fetch ?? undefined,
       latestPublicEvidenceRun: evidence.latest_public_evidence_run ?? undefined,

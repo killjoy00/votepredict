@@ -108,7 +108,7 @@ The production reconciliation repaired the release-integrity drift found during 
 ## Current gaps
 
 1. **Deep availability.** Deep is explicitly unavailable while AI Gateway returns `billing_required`. If Deep remains a core product mode, billing must be enabled and a successful persisted evidence/revision smoke should be required before re-enabling it.
-2. **Prospective production evidence.** The production scorecard infrastructure is built and the public-evidence availability protocol is now frozen for 2027-28 Quick revisions. The project still needs a meaningful set of real pre-outcome forecasts that later resolve to official votes before primary scoring is available.
+2. **Prospective production evidence.** The production scorecard infrastructure is built and the single unified `quick-evidence-v1` candidate is frozen for 2027-28 Quick revisions. It records the serving base probability, a bounded non-serving evidence candidate probability, and the complete as-of feature vector. The project still needs real pre-outcome forecasts that later resolve to official votes before promotion-quality scoring is possible.
 3. **Durable external-evidence breadth.** Campaign finance, campaign-site ingestion, and systematic House/Senate member-primary publication capture are durable. Generic publisher-verified news remains supplemental, but its discovery path now expands common member-name variants, allocates Bing results fairly per member, unions GDELT and Bing leads, and backs off GDELT cleanly when rate-limited. Operations now exposes news coverage and prospective-corpus accrual metrics so remaining yield gaps are measurable.
 
 ## Plan from here
@@ -132,9 +132,14 @@ The production reconciliation repaired the release-integrity drift found during 
 - [x] Improve generic publisher-verified news discovery without weakening publisher-page verification: common-name aliases, per-member result fairness, multi-provider union, and GDELT rate-limit backoff.
 - [x] Expose news-member coverage, latest-batch yield/failures/no-lead counts, and prospective-corpus age in Operations.
 - [x] Double scheduled web-evidence rotation to 24 members per run and deepen bounded member-primary/news capture.
-- [x] Freeze and implement `public-evidence-prospective-v1`, which snapshots evidence availability/freshness on eligible 2027-28 Quick member predictions without changing probabilities.
-- [x] Automate the existing finance-only retrospective sensitivity screen as a hypothesis-only immutable artifact.
-- [ ] Accumulate enough prospective/as-of forecasts and outcomes to score the frozen public-evidence availability protocol.
+- [x] Supersede the unactivated availability-only evidence protocol with one unified `quick-evidence-v1` candidate before any 2027 Quick revision existed.
+- [x] Add deterministic exact-bill support/opposition extraction for verified member-primary and campaign pages while keeping extracted items non-mechanical outside the Quick Evidence shadow.
+- [x] Add official prior same-bill/companion passage votes to the same Quick Evidence feature vector.
+- [x] Record finance, campaign, member-primary, news, source-diversity and freshness features in the same vector with zero directional weight until validated.
+- [x] Cap the unified candidate at ±1 logit and persist base/candidate probabilities without changing serving Quick.
+- [x] Keep the finance-only retrospective screen as a hypothesis-only component diagnostic under the unified protocol.
+- [ ] Add richer historically reconstructable legislative features (especially dated sponsorship/committee records) only when their as-of provenance is complete.
+- [ ] Accumulate enough prospective/as-of forecasts and outcomes to score `quick-evidence-prospective-v1`.
 
 ### P1 — prepare 2027-28
 

@@ -1,5 +1,6 @@
 import { pool } from '@/lib/db';
-import { persistDurableEvidence, type DurableEvidenceFreshness } from './durable-ingestion';
+import { extractExplicitBillStatements, type BillReference } from './bill-statement-extractor';
+import { persistDurableEvidence, type DurableEvidenceDraft, type DurableEvidenceFreshness } from './durable-ingestion';
 import { discoverMinnesotaCampaignSites, filingMatchesMember, selectCampaignContentLinks, type CampaignSiteFiling } from './campaign-site-discovery';
 import { runLiveCampaignFinanceRefresh } from './live-campaign-finance-refresh';
 import {
@@ -20,7 +21,7 @@ import {
   type NewsLead,
 } from './public-news';
 
-const PIPELINE_VERSION = 'public-evidence-v2';
+const PIPELINE_VERSION = 'public-evidence-v3';
 const DEFAULT_BATCH = 12;
 const MAX_BATCH = 24;
 const NEWS_PER_MEMBER = 3;
@@ -154,6 +155,19 @@ async function selectMembershipBatch(batchSize: number): Promise<MembershipBatch
   return { memberships, rotationOffset, rotationNextOffset, totalMemberships: all.length };
 }
 
+async function loadCurrentBillReferences(): Promise<BillReference[]> {
+  const result = await pool.query<BillReference>(`
+    SELECT b.id::text AS id, b.identifier
+      FROM bills b
+      JOIN legislative_sessions s ON s.id=b.session_id
+      JOIN jurisdictions j ON j.id=s.jurisdiction_id
+     WHERE j.slug='us-mn'
+       AND s.is_current=true
+       AND b.identifier IS NOT NULL
+     ORDER BY b.identifier`);
+  return result.rows;
+}
+
 async function campaignFinanceDue(now: Date, force: boolean): Promise<boolean> {
   if (force) return true;
   const result = await pool.query<{ finished_at: string | null }>(`
@@ -213,26 +227,14 @@ async function persistCampaignRegistry(member: MembershipRow, filing: CampaignSi
   }]);
 }
 
-async function persistCampaignPage(member: MembershipRow, pageUrl: string, now: Date) {
+async function persistCampaignPage(member: MembershipRow, pageUrl: string, now: Date, bills: readonly BillReference[]) {
   const page = await fetchPublicPage(pageUrl, {
     timeoutMs: 12_000,
     maxBytes: 1_500_000,
     userAgent: 'VotePredict/2.0 campaign-site-evidence',
   });
   const path = new URL(page.canonicalUrl).pathname.replace(/\/+$/, '') || '/';
-  return persistDurableEvidence({
-    sourceKind: 'campaign_site',
-    sourceUrl: page.canonicalUrl,
-    contentSha256: page.contentSha256,
-    fetchedAt: page.fetchedAt,
-    httpStatus: page.httpStatus,
-    metadata: {
-      pipelineVersion: PIPELINE_VERSION,
-      contentType: page.contentType,
-      bytes: page.bytes,
-      title: page.title,
-    },
-  }, [{
+  const drafts: DurableEvidenceDraft[] = [{
     target: { membershipId: member.membership_id },
     kind: 'context',
     stance: 'neutral',
@@ -253,7 +255,29 @@ async function persistCampaignPage(member: MembershipRow, pageUrl: string, now: 
       mechanicallyActionable: false,
       evidenceSeriesKey: `campaign_site_page:membership:${member.membership_id}:path:${path}`,
     },
-  }]);
+  }, ...extractExplicitBillStatements({
+    membershipId: member.membership_id,
+    memberName: member.name,
+    text: page.text,
+    publishedAt: page.publishedAt,
+    fetchedAt: page.fetchedAt,
+    bills,
+    sourceSubtype: 'campaign_site_page',
+  })];
+  return persistDurableEvidence({
+    sourceKind: 'campaign_site',
+    sourceUrl: page.canonicalUrl,
+    contentSha256: page.contentSha256,
+    fetchedAt: page.fetchedAt,
+    httpStatus: page.httpStatus,
+    metadata: {
+      pipelineVersion: PIPELINE_VERSION,
+      contentType: page.contentType,
+      bytes: page.bytes,
+      title: page.title,
+      quickEvidenceStatements: drafts.length - 1,
+    },
+  }, drafts);
 }
 
 async function refreshCampaignMember(
@@ -261,6 +285,7 @@ async function refreshCampaignMember(
   filing: CampaignSiteFiling,
   now: Date,
   failureDetails: FailureDetail[],
+  bills: readonly BillReference[],
 ): Promise<StreamResult> {
   const result = emptyStream();
   try {
@@ -273,7 +298,7 @@ async function refreshCampaignMember(
     for (const url of urls.slice(0, CAMPAIGN_PAGES_PER_MEMBER)) {
       result.attempted += 1;
       try {
-        const persisted = await persistCampaignPage(member, url, now);
+        const persisted = await persistCampaignPage(member, url, now, bills);
         result.inserted += persisted.inserted;
         result.reused += persisted.reused;
         result.unresolved += persisted.unresolvedTargets.length;
@@ -343,27 +368,14 @@ async function persistMemberPrimaryArticlePage(
   discovery: MemberPrimaryDiscovery,
   page: PublicPage,
   now: Date,
+  bills: readonly BillReference[],
 ) {
   const publishedAt = memberPrimaryPublishedAt(page);
   if (publishedAt && new Date(publishedAt).getTime() > now.getTime() + 86_400_000) {
     throw new Error('Member-primary publication timestamp is implausibly in the future');
   }
   const path = new URL(page.canonicalUrl).pathname.replace(/\/+$/, '') || '/';
-  return persistDurableEvidence({
-    sourceKind: 'member_primary_article',
-    sourceUrl: page.canonicalUrl,
-    contentSha256: page.contentSha256,
-    fetchedAt: page.fetchedAt,
-    httpStatus: page.httpStatus,
-    metadata: {
-      pipelineVersion: PIPELINE_VERSION,
-      publisher: discovery.publisher,
-      hostKind: discovery.hostKind,
-      contentType: page.contentType,
-      bytes: page.bytes,
-      title: page.title,
-    },
-  }, [{
+  const drafts: DurableEvidenceDraft[] = [{
     target: { membershipId: member.membership_id },
     kind: 'context',
     stance: 'neutral',
@@ -389,7 +401,31 @@ async function persistMemberPrimaryArticlePage(
       mechanicallyActionable: false,
       evidenceSeriesKey: `member_primary_article:membership:${member.membership_id}:url:${page.canonicalUrl}`,
     },
-  }]);
+  }, ...extractExplicitBillStatements({
+    membershipId: member.membership_id,
+    memberName: member.name,
+    text: page.text,
+    publishedAt,
+    fetchedAt: page.fetchedAt,
+    bills,
+    sourceSubtype: 'member_primary_article',
+  })];
+  return persistDurableEvidence({
+    sourceKind: 'member_primary_article',
+    sourceUrl: page.canonicalUrl,
+    contentSha256: page.contentSha256,
+    fetchedAt: page.fetchedAt,
+    httpStatus: page.httpStatus,
+    metadata: {
+      pipelineVersion: PIPELINE_VERSION,
+      publisher: discovery.publisher,
+      hostKind: discovery.hostKind,
+      contentType: page.contentType,
+      bytes: page.bytes,
+      title: page.title,
+      quickEvidenceStatements: drafts.length - 1,
+    },
+  }, drafts);
 }
 
 async function refreshMemberPrimaryMember(
@@ -399,6 +435,7 @@ async function refreshMemberPrimaryMember(
   failureDetails: FailureDetail[],
   noSourceMembers: string[],
   noArticleMembers: string[],
+  bills: readonly BillReference[],
 ): Promise<StreamResult> {
   const result = emptyStream();
   let discovery: MemberPrimaryDiscovery;
@@ -434,7 +471,7 @@ async function refreshMemberPrimaryMember(
         userAgent: 'VotePredict/2.0 member-primary-evidence',
       });
       if (!memberPrimaryArticleMatches(page, discovery, member)) continue;
-      const persisted = await persistMemberPrimaryArticlePage(member, discovery, page, now);
+      const persisted = await persistMemberPrimaryArticlePage(member, discovery, page, now, bills);
       result.inserted += persisted.inserted;
       result.reused += persisted.reused;
       result.unresolved += persisted.unresolvedTargets.length;
@@ -598,7 +635,10 @@ export async function runPublicEvidenceRefresh(options: PublicEvidenceRefreshOpt
   const newsNoLeadMembers: string[] = [];
 
   try {
-    const batch = await selectMembershipBatch(batchSize);
+    const [batch, bills] = await Promise.all([
+      selectMembershipBatch(batchSize),
+      loadCurrentBillReferences(),
+    ]);
     const memberships = batch.memberships;
     let filingDiscovery: Awaited<ReturnType<typeof discoverMinnesotaCampaignSites>> | undefined;
     try {
@@ -645,7 +685,7 @@ export async function runPublicEvidenceRefresh(options: PublicEvidenceRefreshOpt
       const group = memberships.slice(offset, offset + 3);
       const rows = await Promise.all(group.map(async (member) => {
         const filing = filingByMembership.get(member.membership_id);
-        return filing ? refreshCampaignMember(member, filing, now, campaignFailures) : emptyStream();
+        return filing ? refreshCampaignMember(member, filing, now, campaignFailures, bills) : emptyStream();
       }));
       for (const row of rows) addStream(campaign, row);
     }
@@ -675,6 +715,7 @@ export async function runPublicEvidenceRefresh(options: PublicEvidenceRefreshOpt
         memberPrimaryFailures,
         memberPrimaryNoSourceMembers,
         memberPrimaryNoArticleMembers,
+        bills,
       )));
       for (const row of rows) addStream(memberPrimary, row);
     }
@@ -705,6 +746,7 @@ export async function runPublicEvidenceRefresh(options: PublicEvidenceRefreshOpt
       rotationNextOffset: batch.rotationNextOffset,
       totalMemberships: batch.totalMemberships,
       newsDiscoveryGroupSize: NEWS_DISCOVERY_GROUP_SIZE,
+      quickEvidenceBillReferenceCount: bills.length,
       batchMembers: memberships.map((member) => ({ name: member.name, chamber: member.chamber_slug, district: member.district })),
       campaignRegistryFilings: filingDiscovery?.filings.length ?? 0,
       campaignRegistryFilingSamples: (filingDiscovery?.filings ?? []).slice(0, 12).map((filing) => ({

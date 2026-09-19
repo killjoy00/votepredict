@@ -1,5 +1,5 @@
 import { captureMemberHistoryCap20ProspectiveShadow } from './member-history-cap20-prospective-capture';
-import { capturePublicEvidenceProspectiveSnapshot } from './public-evidence-prospective-capture';
+import { captureQuickEvidenceShadow } from './quick-evidence-shadow';
 import {
   executeRuntimeForecast,
   type ForecastRuntimeRequest,
@@ -22,9 +22,9 @@ export async function executeQuickRuntimeForecast(
     });
   }
   try {
-    await capturePublicEvidenceProspectiveSnapshot(request, quick);
+    await captureQuickEvidenceShadow(request, quick);
   } catch (error) {
-    console.error('Prospective public-evidence snapshot capture failed', {
+    console.error('Quick Evidence shadow capture failed', {
       revisionId: quick.revisionId,
       message: error instanceof Error ? error.message : String(error),
     });

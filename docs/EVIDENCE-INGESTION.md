@@ -88,38 +88,42 @@ The crawler is intentionally bounded rather than exhaustive. One bad site or art
 
 Current-member web work is rotated by least-recent public-evidence capture. Production now requests the endpoint maximum of 24 memberships per run, so the 200-member active legislature is revisited in roughly nine scheduled batches rather than seventeen. Each pass may retain up to four recent member-primary publications and three verified publisher-news articles per member. Campaign-finance refresh is folded into the same run when the last successful live finance refresh is older than the configured freshness threshold, avoiding repeated bulk downloads on every web batch.
 
-Operations exposes the latest pipeline status plus current finance, campaign-site, member-primary, news, and web-covered-member counts. It also reports news-member coverage, last-batch news insert/failure/no-lead counts, and the age of the prospective public-evidence corpus so evidence accrual can be monitored without manual database inspection. Public evidence ingestion is expected to remain useful even when every item is non-mechanical.
+Operations exposes the latest pipeline status plus current finance, campaign-site, member-primary, news, and web-covered-member counts. It also reports news-member coverage, last-batch news insert/failure/no-lead counts, the age of the prospective corpus, and the number of current Quick Evidence candidate items/members. Candidate counts are distinct from serving mechanically-actionable counts. Public evidence ingestion remains useful even when an item has no serving model impact.
 
-## Quick evaluation boundary
+## Quick Evidence candidate
 
-The first Quick experiment tests whether aggregate campaign-finance activity contains **possible incremental signal** beyond the serving model. It is intentionally an exploratory upper-bound sensitivity screen, not a promotion-eligible backtest.
+VotePredict now has one unified non-serving evidence candidate: `quick-evidence-v1`. Serving Quick remains `member-eb-v1.2-decay180`; the candidate is computed after the immutable Quick revision is persisted and is stored beside the serving probability in `forecast_member_predictions.context`. It never overwrites or serves the Quick probability.
 
-`public-evidence-quick-screen-v1` replays the serving Quick pipeline with 180-day member-history decay and adds a ridge-regularized logistic offset using four aggregate finance activity features whose underlying transactions occurred before each target vote:
+The candidate uses a single feature vector. The first directional inputs are intentionally narrow:
 
-- log receipts;
-- log campaign spending;
-- log independent spending magnitude;
-- log finance transaction count.
+- verified bill-specific direct or related statements from member-controlled House/Senate/campaign pages, extracted only when the member attribution, explicit support/opposition language, and an exact current-session bill identifier occur locally together;
+- existing bill-specific directional evidence that already clears the evidence impact policy;
+- official prior passage votes by the same legislator on the same bill or its recorded companion, strictly before the forecast cutoff.
 
-It explicitly excludes donor names, employers, donor categories, spender identity, inferred issue alignment, campaign-site text, and news text. Training uses 2021-22; regularization selection uses 2023-24; 2025-26 is descriptive only.
+The candidate also records campaign-finance volume, campaign-site/member-primary/news counts, source diversity, freshness, and conflict status in the same vector, but those availability/context features have zero directional weight until separately validated. Donor or lobbying relationships, party identity, generic news sentiment, and campaign-finance magnitude do not imply a vote stance.
 
-The screen is **not leakage-safe for historical public availability** because the CFB bulk transaction date does not establish the item-level filing/publication timestamp. Accordingly:
+Directional candidate items created by the public crawler are stored with `quickEvidenceCandidate=true` and `mechanicallyActionable=false`. That distinction is deliberate: Quick Evidence may evaluate them in its shadow under its frozen policy, while Deep and serving Quick continue to treat the underlying item as non-mechanical.
 
-- `promotionEligible` is false;
-- `shadowNominationEligible` is false;
-- `prospectiveShadowNomination` is forced false in the production artifact;
-- any apparent improvement is labeled a `hypothesisSignal` only;
-- serving Quick probabilities never change and `productionAction` remains `none`.
+The initial candidate reuses the existing `logit-evidence-v1` contribution function and caps the *combined* evidence adjustment at ±1 logit. The cap prevents several correlated evidence items from overwhelming the serving historical/analogue model during evaluation.
 
-The recurring pipeline solves this going forward: finance, campaign-site, member-primary, and news evidence receive durable `fetched_at` provenance prospectively. Once future forecasts resolve, those truly as-of captures can support an eligible Quick evidence evaluation.
+### Prospective Quick Evidence protocol
 
-News, campaign-site, and member-primary material also begin as a prospective durable corpus because VotePredict does not have comparable timestamped historical captures. They must not be backfilled from the present web and treated as though they were known before old votes.
+`quick-evidence-prospective-v1` supersedes the earlier availability-only `public-evidence-prospective-v1` before activation. At supersession there were zero 2027-28 Quick revisions and zero captures under the old protocol, so no prospective cohort was redefined after outcomes or observations existed.
 
-### Prospective evidence-availability test
+Every eligible 2027-28 Quick member prediction now records the same unified feature vector plus:
 
-`public-evidence-prospective-v1` is frozen before 2027-28 outcomes. Every eligible Quick member prediction records a non-serving snapshot of the durable evidence that had actually been fetched by that forecast's as-of timestamp: source counts, source diversity, finance/campaign/member-primary/news mix, and newest-evidence age. The snapshot contains no text-derived stance, no probability adjustment, and no outcome information.
+- the serving base probability;
+- the non-serving candidate probability;
+- uncapped and applied evidence logit deltas;
+- evidence counts and conflict state.
 
-The primary future test is whether evidence availability/freshness identifies forecast strata with different residual magnitude or calibration, plus whether collection coverage is imbalanced by chamber or party. The protocol is not promotion-eligible and cannot authorize a directional evidence-to-vote transformation. Minimum primary scoring is deferred until at least 40 resolved forecasts, 2,000 member outcomes, and 50 members with captured web evidence are available. Operations reports whether eligible future Quick revisions successfully received the snapshot.
+All durable source rows must have been fetched by the forecast as-of timestamp, and any publication timestamp must also be no later than the cutoff. Capture is outcome-blind and automatic promotion is forbidden.
+
+Primary prospective scoring waits for at least 40 resolved forecasts, 2,000 member outcomes, and 50 members whose candidate received directional evidence. The required comparison is paired serving Quick versus Quick Evidence overall and among actually moved members, with calibration/error slices by evidence type, source quality, freshness, chamber, party, and conflict status.
+
+### Finance diagnostic
+
+`public-evidence-quick-screen-v1` remains an exploratory component diagnostic inside this single Quick Evidence program. It tests whether aggregate campaign-finance activity may contain incremental signal, but it is not a second candidate and cannot promote independently. The screen is not leakage-safe for historical public availability because transaction dates do not establish item-level filing/publication timestamps. It therefore remains hypothesis-only with `productionAction=none`.
 
 ## Existing commands
 

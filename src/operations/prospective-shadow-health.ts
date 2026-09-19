@@ -10,10 +10,10 @@ import {
   MEMBER_HISTORY_CAP20_PROSPECTIVE_SESSION,
 } from '@/forecasting/member-history-cap20-prospective-shadow';
 import {
-  PUBLIC_EVIDENCE_PROSPECTIVE_EXPERIMENT,
-  PUBLIC_EVIDENCE_PROSPECTIVE_MODEL_VERSION,
-  PUBLIC_EVIDENCE_PROSPECTIVE_SESSION,
-} from '@/forecasting/public-evidence-prospective-capture';
+  QUICK_EVIDENCE_BASE_MODEL_VERSION,
+  QUICK_EVIDENCE_PROSPECTIVE_EXPERIMENT,
+  QUICK_EVIDENCE_PROSPECTIVE_SESSION,
+} from '@/forecasting/quick-evidence-shadow';
 import {
   PROSPECTIVE_EVIDENCE_OWNER_USER_ID,
   PROSPECTIVE_EVIDENCE_SESSION,
@@ -47,11 +47,11 @@ export interface ProspectiveShadowCaptureHealth {
   generatedAt: string;
   failureGraceHours: number;
   productionEvidence: ProspectiveProductionEvidenceStatus;
-  publicEvidence: ProspectiveShadowCaptureStatus & {
-    experiment: typeof PUBLIC_EVIDENCE_PROSPECTIVE_EXPERIMENT;
-    session: typeof PUBLIC_EVIDENCE_PROSPECTIVE_SESSION;
+  quickEvidence: ProspectiveShadowCaptureStatus & {
+    experiment: typeof QUICK_EVIDENCE_PROSPECTIVE_EXPERIMENT;
+    session: typeof QUICK_EVIDENCE_PROSPECTIVE_SESSION;
     chambers: readonly ['house', 'senate'];
-    servingMemberModelVersion: typeof PUBLIC_EVIDENCE_PROSPECTIVE_MODEL_VERSION;
+    servingMemberModelVersion: typeof QUICK_EVIDENCE_BASE_MODEL_VERSION;
   };
   cap20: ProspectiveShadowCaptureStatus & {
     experiment: typeof MEMBER_HISTORY_CAP20_PROSPECTIVE_EXPERIMENT;
@@ -116,7 +116,7 @@ function status(input: {
 
 export async function getProspectiveShadowCaptureHealth(): Promise<ProspectiveShadowCaptureHealth> {
   const cap20Context = JSON.stringify([{ experiment: MEMBER_HISTORY_CAP20_PROSPECTIVE_EXPERIMENT }]);
-  const publicEvidenceContext = JSON.stringify([{ experiment: PUBLIC_EVIDENCE_PROSPECTIVE_EXPERIMENT }]);
+  const quickEvidenceContext = JSON.stringify([{ experiment: QUICK_EVIDENCE_PROSPECTIVE_EXPERIMENT }]);
   const result = await pool.query<StatusRow>(`
     WITH scoped AS (
       SELECT r.id,
@@ -216,7 +216,7 @@ export async function getProspectiveShadowCaptureHealth(): Promise<ProspectiveSh
   const row = result.rows[0];
   if (!row) throw new Error('Prospective shadow capture health query returned no row');
 
-  const publicEvidenceResult = await pool.query<{
+  const quickEvidenceResult = await pool.query<{
     scope: string | number;
     eligible: string | number;
     captured: string | number;
@@ -266,13 +266,13 @@ export async function getProspectiveShadowCaptureHealth(): Promise<ProspectiveSh
            (max(generated_at) FILTER (WHERE eligible AND captured))::text AS latest_captured_at
       FROM evaluated
   `, [
-    PUBLIC_EVIDENCE_PROSPECTIVE_SESSION,
-    PUBLIC_EVIDENCE_PROSPECTIVE_MODEL_VERSION,
-    publicEvidenceContext,
+    QUICK_EVIDENCE_PROSPECTIVE_SESSION,
+    QUICK_EVIDENCE_BASE_MODEL_VERSION,
+    quickEvidenceContext,
     FAILURE_GRACE_HOURS,
   ]);
-  const publicEvidence = publicEvidenceResult.rows[0];
-  if (!publicEvidence) throw new Error('Public-evidence prospective capture health query returned no row');
+  const quickEvidence = quickEvidenceResult.rows[0];
+  if (!quickEvidence) throw new Error('Quick Evidence prospective capture health query returned no row');
 
   return {
     generatedAt: new Date().toISOString(),
@@ -287,19 +287,19 @@ export async function getProspectiveShadowCaptureHealth(): Promise<ProspectiveSh
       resolvedForecasts: count(row.evidence_resolved_forecasts),
       ...(row.evidence_latest_revision_at ? { latestRevisionAt: row.evidence_latest_revision_at } : {}),
     },
-    publicEvidence: {
-      experiment: PUBLIC_EVIDENCE_PROSPECTIVE_EXPERIMENT,
-      session: PUBLIC_EVIDENCE_PROSPECTIVE_SESSION,
+    quickEvidence: {
+      experiment: QUICK_EVIDENCE_PROSPECTIVE_EXPERIMENT,
+      session: QUICK_EVIDENCE_PROSPECTIVE_SESSION,
       chambers: ['house', 'senate'],
-      servingMemberModelVersion: PUBLIC_EVIDENCE_PROSPECTIVE_MODEL_VERSION,
+      servingMemberModelVersion: QUICK_EVIDENCE_BASE_MODEL_VERSION,
       ...status({
-        scope: publicEvidence.scope,
-        eligible: publicEvidence.eligible,
-        captured: publicEvidence.captured,
-        excluded: publicEvidence.excluded,
-        failed: publicEvidence.failed,
-        latestEligibleAt: publicEvidence.latest_eligible_at,
-        latestCapturedAt: publicEvidence.latest_captured_at,
+        scope: quickEvidence.scope,
+        eligible: quickEvidence.eligible,
+        captured: quickEvidence.captured,
+        excluded: quickEvidence.excluded,
+        failed: quickEvidence.failed,
+        latestEligibleAt: quickEvidence.latest_eligible_at,
+        latestCapturedAt: quickEvidence.latest_captured_at,
       }),
     },
     cap20: {
