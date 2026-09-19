@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "quick-evidence-legislative-screen-plan-v1",
+  "frozenAt": "2026-09-19T17:50:00Z",
+  "purpose": "Retrospective as-of-safe component diagnostic inside the single quick-evidence-v1 candidate. Tests whether prior same-bill non-passage recorded votes contain incremental signal beyond the serving Quick baseline without redefining those ambiguous votes as support/opposition.",
+  "scope": {
+    "candidateVersion": "quick-evidence-v1",
+    "servingBaseline": "member-eb-v1.2-decay180",
+    "trainSession": "2021-2022",
+    "validationSession": "2023-2024",
+    "descriptiveSession": "2025-2026"
+  },
+  "features": [
+    "sameAmendmentYes",
+    "sameAmendmentNo",
+    "sameMotionProceduralYes",
+    "sameMotionProceduralNo",
+    "sameOtherYes",
+    "sameOtherNo"
+  ],
+  "asOfPolicy": {
+    "source": "official bill-linked member_votes joined to vote_events",
+    "strictlyBeforeTargetDate": true,
+    "sameDayExcluded": true,
+    "reason": "Historical vote-event timestamps are date-only, so same-day ordering is not provable."
+  },
+  "fit": {
+    "model": "ridge logistic offset on serving Quick logit",
+    "lambdas": [0.1, 1, 5, 20, 100],
+    "selectionMetricOrder": [
+      "validation member Brier",
+      "validation member log loss",
+      "validation chamber mean absolute yes-vote error",
+      "lambda"
+    ],
+    "maximumAbsoluteLogitDelta": 1
+  },
+  "interpretation": {
+    "votesRemainAmbiguous": true,
+    "automaticDirectionalEvidence": false,
+    "servingProbabilityChange": "none",
+    "quickEvidenceFrozenWeightChange": "none",
+    "productionAction": "none",
+    "validationUse": "hypothesis generation for continued prospective measurement only"
+  }
+}
