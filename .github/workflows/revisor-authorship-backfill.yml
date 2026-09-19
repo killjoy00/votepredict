@@ -2,6 +2,20 @@ name: Revisor authorship production backfill
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/revisor-authorship-backfill.yml
+      - src/sources/minnesota/revisor-authorship.ts
+      - src/sources/minnesota/revisor-author-resolution.ts
+      - src/operations/revisor-authorship-backfill.ts
+      - src/forecasting/quick-evidence-authorship.ts
+      - src/evaluation/quick-evidence-authorship-screen.ts
+      - src/app/api/operations/revisor-authorship-backfill/route.ts
+      - src/app/api/operations/quick-evidence-authorship-screen/route.ts
+      - scripts/run-production-revisor-authorship-backfill.ts
+      - scripts/evaluate-quick-evidence-authorship-screen.ts
+      - data/evaluation/quick-evidence-authorship-screen-plan-v1.json
 
 permissions:
   contents: read
