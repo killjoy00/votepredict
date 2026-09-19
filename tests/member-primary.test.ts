@@ -2,7 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   findSenateMemberProfileUrl,
+  houseArchiveMatchesMember,
   houseMemberNewsUrl,
+  senateDflFallbackProfileUrl,
   memberPrimaryArticleMatches,
   memberPrimaryPublishedAt,
   selectMemberPrimaryArticleCandidates,
@@ -47,6 +49,28 @@ const republicanMember: MemberPrimaryMember = {
 test('House member news archive is derived from durable LRL identity', () => {
   assert.equal(houseMemberNewsUrl('lrl:15347'), 'https://www.house.mn.gov/members/profile/news/15347');
   assert.equal(houseMemberNewsUrl('other:15347'), undefined);
+});
+
+test('House archive identity accepts deterministic LRL pages even when district text is absent', () => {
+  const member: MemberPrimaryMember = {
+    name: 'John Burkel',
+    chamber_slug: 'house',
+    district: '1A',
+    party: 'R',
+    external_key: 'lrl:15555',
+  };
+  const archive = page({
+    canonicalUrl: 'https://www.house.mn.gov/members/profile/news/15555',
+    rawContent: '',
+    text: 'Legislative News and Views Representative John Burkel Recent Updates',
+  });
+  assert.equal(houseArchiveMatchesMember(archive, member), true);
+});
+
+test('Senate DFL fallback profile URLs derive from the member surname and remain verify-before-use', () => {
+  assert.equal(senateDflFallbackProfileUrl('John A. Hoffman'), 'https://senatedfl.mn/home/members/hoffman/');
+  assert.equal(senateDflFallbackProfileUrl('John J. Marty'), 'https://senatedfl.mn/home/members/marty/');
+  assert.equal(senateDflFallbackProfileUrl('Jim Carlson'), 'https://senatedfl.mn/home/members/carlson/');
 });
 
 test('Senate directory matching tolerates initials and common first-name variants while keeping surname unique', () => {
