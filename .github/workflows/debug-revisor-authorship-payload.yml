@@ -17,37 +17,50 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 22
-      - name: Fetch and inspect official Revisor sample with Node
+      - name: Sample live Revisor author-action grammar
         shell: bash
         run: |
           set -euo pipefail
           node <<'NODE'
-          const url = 'https://api.revisor.mn.gov/bills/v1/92/2021/0/HF/39/';
-          const response = await fetch(url, {
-            headers: {
-              'User-Agent': 'VotePredict/2.0 official Minnesota authorship diagnostic',
-              Accept: 'application/xml,text/xml;q=0.9,*/*;q=0.1',
-            },
-            redirect: 'follow',
-          });
-          console.log('status=' + response.status);
-          console.log('content-type=' + (response.headers.get('content-type') ?? ''));
-          const xml = await response.text();
-          console.log('bytes=' + xml.length);
-          if (!response.ok) throw new Error('HTTP ' + response.status);
-          const names = [...xml.matchAll(/<\/?(?:[A-Z0-9_.-]+:)?([A-Z][A-Z0-9_.-]*)\b[^>]*>/gi)]
-            .map((m) => m[1].toUpperCase());
-          console.log('unique-tags=' + [...new Set(names)].join(','));
-          const structural = xml
-            .replace(/>[\s\S]*?</g, '><')
-            .match(/<[^>]*(?:AUTHOR|ACTION)[^>]*>/gi) ?? [];
-          console.log('author-action-tags=' + structural.slice(0, 160).join(' '));
-          for (const token of ['<AUTHORS', '<ACTIONS']) {
-            const index = xml.toUpperCase().indexOf(token);
-            console.log('index-' + token.slice(1).toLowerCase() + '=' + index);
-            if (index >= 0) {
-              console.log('snippet-' + token.slice(1).toLowerCase() + '=' +
-                xml.slice(index, Math.min(xml.length, index + 5000)).replace(/\s+/g, ' ').slice(0, 5000));
+          const bills = [
+            ['92','2021','HF','39'],
+            ['92','2021','HF','1064'],
+            ['92','2021','SF','1'],
+            ['92','2021','SF','1018'],
+            ['93','2023','HF','1'],
+            ['93','2023','HF','100'],
+            ['93','2023','SF','10'],
+            ['93','2023','SF','13'],
+            ['94','2025','HF','1014'],
+            ['94','2025','HF','1027'],
+            ['94','2025','SF','1075'],
+            ['94','2025','SF','1251'],
+          ];
+          const tag = (block, name) => {
+            const m = block.match(new RegExp('<' + name + '\\b[^>]*>([\\s\\S]*?)<\\/' + name + '>', 'i'));
+            return (m?.[1] ?? '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+          };
+          for (const [leg,year,type,num] of bills) {
+            const id = type + num;
+            const url = `https://api.revisor.mn.gov/bills/v1/${leg}/${year}/0/${type}/${num}/`;
+            const r = await fetch(url, {
+              headers: {
+                'User-Agent': 'VotePredict/2.0 official Minnesota authorship diagnostic',
+                Accept: 'application/xml,text/xml;q=0.9,*/*;q=0.1',
+              },
+            });
+            const xml = await r.text();
+            if (!r.ok) {
+              console.log(id + '|HTTP ' + r.status);
+              continue;
+            }
+            const actionsRoot = xml.match(/<ACTIONS\b[^>]*>([\s\S]*?)<\/ACTIONS>/i)?.[1] ?? '';
+            for (const m of actionsRoot.matchAll(/<ACTION\b[^>]*>([\s\S]*?)<\/ACTION>/gi)) {
+              const actionText = tag(m[1], 'ACTION_TEXT');
+              const actionDescription = tag(m[1], 'ACTION_DESCRIPTION');
+              if (/\bauthors?\s+(?:added|stricken)\b/i.test(actionText)) {
+                console.log(id + '|' + actionText + '|' + actionDescription);
+              }
             }
           }
           NODE
