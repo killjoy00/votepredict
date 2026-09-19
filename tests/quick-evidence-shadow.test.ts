@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
   buildQuickEvidenceFeatureVector,
   buildQuickEvidenceMemberShadow,
@@ -118,4 +119,21 @@ test('availability features are recorded but do not move probability by themselv
   assert.equal(vector.totalEvidenceItems, 12);
   assert.equal(shadow.appliedEvidenceItems, 0);
   assert.equal(shadow.candidateProbability, 0.61);
+});
+
+
+test('frozen unified Quick Evidence plan remains single-candidate and non-serving', () => {
+  const plan = JSON.parse(readFileSync(
+    new URL('../data/evaluation/quick-evidence-prospective-plan-v1.json', import.meta.url),
+    'utf8',
+  )) as Record<string, any>;
+  assert.equal(plan.schemaVersion, 'quick-evidence-prospective-plan-v1');
+  assert.equal(plan.scope.candidateVersion, 'quick-evidence-v1');
+  assert.equal(plan.supersession.verifiedPreActivationState.quickRevisions, 0);
+  assert.equal(plan.supersession.verifiedPreActivationState.oldProtocolCapturedRevisions, 0);
+  assert.equal(plan.candidate.servesTraffic, false);
+  assert.equal(plan.candidate.maxAbsoluteLogitDelta, 1);
+  assert.equal(plan.capture.probabilityWriteToServingQuick, false);
+  assert.equal(plan.guardrails.historicalWebBackfill, false);
+  assert.equal(plan.guardrails.automaticPromotion, false);
 });
