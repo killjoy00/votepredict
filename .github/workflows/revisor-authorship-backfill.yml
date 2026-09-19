@@ -19,6 +19,7 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
       VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_QUICK_EVIDENCE_AUTHORSHIP_OUTPUT: artifacts/quick-evidence-authorship-screen-v1.json
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -37,6 +38,30 @@ jobs:
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: node --import tsx scripts/run-production-revisor-authorship-backfill.ts
+      - name: Run Quick Evidence authorship diagnostic
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/evaluate-quick-evidence-authorship-screen.ts
+      - name: Verify diagnostic-only authorship artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$VOTEPREDICT_QUICK_EVIDENCE_AUTHORSHIP_OUTPUT"
+          test "$(jq -r '.schemaVersion' "$file")" = 'quick-evidence-authorship-screen-v1'
+          test "$(jq -r '.metadata.quickEvidenceCandidate' "$file")" = 'quick-evidence-v1'
+          test "$(jq -r '.metadata.productionAction' "$file")" = 'none'
+          test "$(jq -r '.conclusion.productionAction' "$file")" = 'none'
+          test "$(jq -r '.conclusion.servingQuickChanged' "$file")" = 'false'
+          test "$(jq -r '.conclusion.quickEvidenceWeightChanged' "$file")" = 'false'
+          jq -e '.coverage.training.authorMemberOutcomes >= 50' "$file" >/dev/null
+          jq -e '.coverage.validation.authorMemberOutcomes >= 50' "$file" >/dev/null
+      - name: Upload immutable authorship screen
+        uses: actions/upload-artifact@v4
+        with:
+          name: quick-evidence-authorship-screen-v1-${{ github.sha }}
+          path: artifacts/quick-evidence-authorship-screen-v1.json
+          if-no-files-found: error
+          retention-days: 90
       - name: Remove temporary credentials
         if: always()
         shell: bash
