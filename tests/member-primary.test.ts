@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  directoryProfileMatchesMember,
   findSenateMemberProfileUrl,
   houseArchiveMatchesMember,
   houseMemberNewsUrl,
@@ -89,6 +90,22 @@ test('Senate DFL directory matching can resolve public-name variants from the ca
     }),
     'https://senatedfl.mn/home/members/senator-ron-latz/',
   );
+});
+
+test('uniquely resolved Senate caucus profiles can verify identity without repeating district text', () => {
+  const member: MemberPrimaryMember = {
+    name: 'Steve A. Cwodzinski',
+    chamber_slug: 'senate',
+    district: '49',
+    party: 'DFL',
+    external_key: 'lrl:12345',
+  };
+  const profile = page({
+    canonicalUrl: 'https://senatedfl.mn/home/members/senator-steve-cwodzinski/',
+    rawContent: '',
+    text: 'Senator Steve Cwodzinski Education Policy Biography and legislative work.',
+  });
+  assert.equal(directoryProfileMatchesMember(profile, member), true);
 });
 
 test('Senate DFL directory matching accepts live profile cards with descriptive nested text', () => {
