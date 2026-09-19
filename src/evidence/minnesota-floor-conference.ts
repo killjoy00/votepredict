@@ -58,6 +58,23 @@ function integer(value: string): number | undefined {
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
+
+export function extractHouseRecordedVoteLinks(html: string, baseUrl: string): string[] {
+  const urls: string[] = [];
+  for (const match of html.matchAll(/<a\b[^>]*href\s*=\s*["']([^"'#]+)["'][^>]*>([\s\S]*?)<\/a>/gi)) {
+    const href = match[1];
+    const label = cellText(match[2]);
+    if (!/\/votes\/details/i.test(href) && !/recorded.*(?:roll\s+call|floor\s+vote)/i.test(label)) continue;
+    try {
+      const url = new URL(href, baseUrl).toString();
+      if (/^https?:/i.test(url)) urls.push(url);
+    } catch {
+      // Ignore malformed official links.
+    }
+  }
+  return [...new Set(urls)];
+}
+
 export function parseHouseRecordedFloorVotes(
   html: string,
   expectedBillIdentifier?: string,
