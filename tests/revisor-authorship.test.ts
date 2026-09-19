@@ -133,7 +133,7 @@ test('dated author additions and strikes are parsed without splitting comma init
 });
 
 test('live Revisor v1 payload shape uses MEMBER_NAME and split action text/detail fields', () => {
-  assert.equal(REVISOR_AUTHORSHIP_PARSER_VERSION, 'revisor-authorship-v2');
+  assert.equal(REVISOR_AUTHORSHIP_PARSER_VERSION, 'revisor-authorship-v3');
   assert.deepEqual(parseRevisorCurrentAuthors({ xml: liveShapeXml, identifier: 'HF39' }), [
     { chamber: 'house', name: 'Carlson' },
     { chamber: 'house', name: 'Xiong, T.' },
@@ -218,4 +218,49 @@ test('stricken authors are restored when reconstructing a date before the strike
     asOfDateExclusive: '2025-03-10',
   });
   assert.deepEqual(asOf, ['Alpha', 'Beta']);
+});
+
+
+test('live action grammar strips role annotations and splits conjunction tails', () => {
+  assert.deepEqual(
+    splitRevisorAuthorNames('Stephenson (as chief), Huot, Lislegard, Lillie added as co-authors', { plural: true }),
+    ['Stephenson (as chief)', 'Huot', 'Lislegard', 'Lillie added as co-authors'],
+  );
+
+  const grammarXml = `<BILL><ACTIONS><HOUSE>
+    <ACTION><ACTION_DATE>2025-01-01</ACTION_DATE><ACTION_TEXT>Authors added</ACTION_TEXT><ACTION_DESCRIPTION>Stephenson (as chief), Huot, Lislegard, Lillie added as co-authors</ACTION_DESCRIPTION></ACTION>
+    <ACTION><ACTION_DATE>2025-01-02</ACTION_DATE><ACTION_TEXT>Authors added</ACTION_TEXT><ACTION_DESCRIPTION>Schultz; Duran; Gordon; Warwas and Roach</ACTION_DESCRIPTION></ACTION>
+    <ACTION><ACTION_DATE>2025-01-03</ACTION_DATE><ACTION_TEXT>Author added</ACTION_TEXT><ACTION_DESCRIPTION>Davids be added as Chief Author</ACTION_DESCRIPTION></ACTION>
+    <ACTION><ACTION_DATE>2025-01-04</ACTION_DATE><ACTION_TEXT>Author added</ACTION_TEXT><ACTION_DESCRIPTION>Theis (made second author)</ACTION_DESCRIPTION></ACTION>
+  </HOUSE></ACTIONS></BILL>`;
+
+  assert.deepEqual(parseRevisorAuthorActions(grammarXml).map((row) => ({
+    date: row.occurredOn,
+    names: row.names,
+    chief: row.chiefAuthor,
+  })), [
+    { date: '2025-01-01', names: ['Stephenson', 'Huot', 'Lislegard', 'Lillie'], chief: true },
+    { date: '2025-01-02', names: ['Schultz', 'Duran', 'Gordon', 'Warwas', 'Roach'], chief: false },
+    { date: '2025-01-03', names: ['Davids'], chief: true },
+    { date: '2025-01-04', names: ['Theis'], chief: false },
+  ]);
+});
+
+test('comma lists preserve compact or spaced initials while splitting surrounding surnames', () => {
+  assert.deepEqual(
+    splitRevisorAuthorNames('Anderson, P.E.; Davids; Klevorn', { plural: true }),
+    ['Anderson, P.E', 'Davids', 'Klevorn'],
+  );
+  assert.deepEqual(
+    splitRevisorAuthorNames('Reyer, Virnig, Clardy, Hicks, Smith, Hill, Hanson, J., and Jordan', { plural: true }),
+    ['Reyer', 'Virnig', 'Clardy', 'Hicks', 'Smith', 'Hill', 'Hanson, J', 'Jordan'],
+  );
+  assert.deepEqual(
+    splitRevisorAuthorNames('Sencer-Mura, Curran, Tabke, Freiberg and Hassan'),
+    ['Sencer-Mura', 'Curran', 'Tabke', 'Freiberg', 'Hassan'],
+  );
+  assert.deepEqual(
+    splitRevisorAuthorNames('Rehrauer, Lillie'),
+    ['Rehrauer', 'Lillie'],
+  );
 });
