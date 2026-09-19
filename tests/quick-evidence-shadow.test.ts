@@ -95,6 +95,12 @@ test('prior official same-bill votes are part of the same unified evidence candi
     same_no: 0,
     companion_yes: 0,
     companion_no: 0,
+    same_amendment_yes: 0,
+    same_amendment_no: 0,
+    same_motion_procedural_yes: 0,
+    same_motion_procedural_no: 0,
+    same_other_yes: 0,
+    same_other_no: 0,
   };
   const shadow = buildQuickEvidenceMemberShadow({
     baseProbability: 0.5,
@@ -104,6 +110,32 @@ test('prior official same-bill votes are part of the same unified evidence candi
   assert.equal(shadow.features.priorSameBillYes, 1);
   assert.ok(shadow.appliedLogitDelta > 0);
   assert.ok((shadow.candidateProbability ?? 0) > 0.5);
+});
+
+test('prior same-bill non-passage votes are recorded but remain zero-weight pending validation', () => {
+  const priorVotes: QuickEvidencePriorVoteRow = {
+    membership_id: 'member-1',
+    same_yes: 0,
+    same_no: 0,
+    companion_yes: 0,
+    companion_no: 0,
+    same_amendment_yes: 2,
+    same_amendment_no: 1,
+    same_motion_procedural_yes: 1,
+    same_motion_procedural_no: 0,
+    same_other_yes: 3,
+    same_other_no: 2,
+  };
+  const shadow = buildQuickEvidenceMemberShadow({
+    baseProbability: 0.61,
+    priorVotes,
+    capturedAt: '2027-02-10T12:00:00.000Z',
+  });
+  assert.equal(shadow.features.priorSameBillAmendmentYes, 2);
+  assert.equal(shadow.features.priorSameBillMotionProceduralYes, 1);
+  assert.equal(shadow.features.priorSameBillOtherNo, 2);
+  assert.equal(shadow.appliedEvidenceItems, 0);
+  assert.ok(Math.abs((shadow.candidateProbability ?? 0) - 0.61) < 1e-12);
 });
 
 test('availability features are recorded but do not move probability by themselves', () => {
