@@ -48,7 +48,7 @@ function tableRows(html: string): string[][] {
 function isoDate(value: string): string | undefined {
   const match = value.match(/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/);
   if (!match) return undefined;
-  return \`\${match[3]}-\${match[1].padStart(2, '0')}-\${match[2].padStart(2, '0')}\`;
+  return match[3] + '-' + match[1].padStart(2, '0') + '-' + match[2].padStart(2, '0');
 }
 
 function integer(value: string): number | undefined {
