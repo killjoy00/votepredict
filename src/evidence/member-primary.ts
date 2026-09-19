@@ -153,7 +153,8 @@ export function findSenateMemberProfileUrl(
     if (url.hostname.toLowerCase() !== expectedHost) return false;
     if (dfl ? !isDflProfilePath(url.pathname) : !isRepublicanProfilePath(url.pathname)) return false;
     const anchorTokens = memberNameTokens(anchor.text);
-    return anchorTokens.includes(memberSurname);
+    const pathTokens = url.pathname.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+    return anchorTokens.includes(memberSurname) || pathTokens.includes(memberSurname);
   });
   if (candidates.length === 0) return undefined;
 
