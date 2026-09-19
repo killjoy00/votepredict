@@ -49,9 +49,11 @@ These publications establish what a member or office published. They do not inde
 
 ### News
 
-GDELT DOC 2.0 is used only to find recent candidate/member news leads. The pipeline then fetches the underlying article itself through the hardened public fetcher. The article is accepted only when the page contains an unambiguous first-and-last-name match for the target member.
+News discovery uses GDELT DOC 2.0 and Bing News RSS as complementary discovery surfaces. VotePredict does not trust either index as evidence: every discovered URL must resolve to an underlying publisher page, the page is fetched through the hardened public fetcher, and the article is accepted only when its readable text contains an unambiguous recognizable name for the target member.
 
-Publication time comes from article metadata when available, with the GDELT seen timestamp retained only as a fallback. The discovery title/domain and publication-date source remain in metadata. General news remains non-mechanical durable context until prospective coverage and evaluation justify anything more.
+Discovery expands stored legislator names into bounded aliases that remove middle initials and normalize suffix placement, so records such as `Jennifer A McEwen`, `D. Scott Dibble`, and `Jr. Bidal Duran` can still find publisher coverage using common public name forms. Bing retrieval is capped per member before the group cap is applied, preventing one well-covered member from consuming the entire batch. GDELT and Bing results are unioned rather than treating Bing as an all-or-nothing fallback. If GDELT returns a rate-limit response, the runtime temporarily backs it off and continues with Bing instead of repeatedly consuming the batch window on known-throttled requests.
+
+Publication time comes from article metadata when available, with the provider timestamp retained only as a fallback. Discovery provider, title/domain, query-member attribution, and publication-date source remain in metadata. General news remains non-mechanical durable context until prospective coverage and evaluation justify anything more.
 
 ### Campaign finance
 
@@ -86,7 +88,7 @@ The crawler is intentionally bounded rather than exhaustive. One bad site or art
 
 Current-member web work is rotated by least-recent public-evidence capture. The default batch is 12 memberships and the endpoint caps a batch at 24. Campaign-finance refresh is folded into the same run when the last successful live finance refresh is older than the configured freshness threshold, avoiding repeated bulk downloads on every web batch.
 
-Operations exposes the latest pipeline status plus current finance, campaign-site, member-primary, news, and web-covered-member counts. Public evidence ingestion is expected to remain useful even when every item is non-mechanical.
+Operations exposes the latest pipeline status plus current finance, campaign-site, member-primary, news, and web-covered-member counts. It also reports news-member coverage, last-batch news insert/failure/no-lead counts, and the age of the prospective public-evidence corpus so evidence accrual can be monitored without manual database inspection. Public evidence ingestion is expected to remain useful even when every item is non-mechanical.
 
 ## Quick evaluation boundary
 
