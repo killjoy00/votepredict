@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   classifyCommitteeMotion,
+  committeeBillIdentifiers,
   discoverHouseCommitteeMinuteIndexes,
   discoverHouseCommitteeMinutes,
   discoverSenateCommitteeIds,
@@ -56,6 +57,13 @@ test('discovers Senate committee ids and hearing references', () => {
   assert.equal(
     senateHearingMinutesUrl('19804', 94),
     'https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=19804&ls=94&type=minutes',
+  );
+});
+
+test('extracts normalized House and Senate bill identifiers from minute text', () => {
+  assert.deepEqual(
+    committeeBillIdentifiers('<p>H.F. 24 and SF 3975 plus H F 0016</p>'),
+    ['HF16', 'HF24', 'SF3975'],
   );
 });
 
