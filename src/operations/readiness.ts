@@ -149,8 +149,14 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
              'member_primary_registry'
            )
         ) AS prospective_evidence_since,
-        count(*) FILTER (WHERE source_kind IN ('campaign_site','campaign_site_registry'))::int AS campaign_site_items,
-        count(*) FILTER (WHERE source_kind='member_primary_article')::int AS member_primary_items,
+        count(*) FILTER (
+          WHERE source_kind='campaign_site_registry'
+             OR (source_kind='campaign_site' AND metadata->>'subtype'='campaign_site_page')
+        )::int AS campaign_site_items,
+        count(*) FILTER (
+          WHERE source_kind='member_primary_article'
+            AND metadata->>'subtype'='member_primary_article'
+        )::int AS member_primary_items,
         count(DISTINCT membership_id) FILTER (WHERE source_kind IN ('member_primary_article','member_primary_registry'))::int AS member_primary_members,
         count(DISTINCT membership_id) FILTER (
           WHERE source_kind IN (
