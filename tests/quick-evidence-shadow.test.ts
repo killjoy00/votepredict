@@ -138,6 +138,27 @@ test('prior same-bill non-passage votes are recorded but remain zero-weight pend
   assert.ok(Math.abs((shadow.candidateProbability ?? 0) - 0.61) < 1e-12);
 });
 
+test('committee roll-call features are recorded but remain zero-weight pending validation', () => {
+  const shadow = buildQuickEvidenceMemberShadow({
+    baseProbability: 0.61,
+    committeeVotes: {
+      membership_id: 'member-1',
+      recommend_aye: 1,
+      recommend_nay: 0,
+      referral_aye: 2,
+      referral_nay: 0,
+      hold_table_aye: 0,
+      hold_table_nay: 1,
+    },
+    capturedAt: '2027-02-10T12:00:00.000Z',
+  });
+  assert.equal(shadow.features.priorCommitteeRecommendAye, 1);
+  assert.equal(shadow.features.priorCommitteeReferralAye, 2);
+  assert.equal(shadow.features.priorCommitteeHoldTableNay, 1);
+  assert.equal(shadow.appliedEvidenceItems, 0);
+  assert.ok(Math.abs((shadow.candidateProbability ?? 0) - 0.61) < 1e-12);
+});
+
 test('reconstructed bill authorship is recorded but remains zero-weight pending validation', () => {
   const shadow = buildQuickEvidenceMemberShadow({
     baseProbability: 0.61,
