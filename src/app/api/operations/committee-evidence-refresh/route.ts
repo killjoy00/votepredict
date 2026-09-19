@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
-import { refreshCommitteeEvidence } from '@/evidence/committee-evidence-refresh';
+import {
+  backfillHistoricalHouseCommitteeEvidence,
+  refreshCommitteeEvidence,
+} from '@/evidence/committee-evidence-refresh';
 
 export const maxDuration = 300;
 
@@ -12,6 +15,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Production runtime required' }, { status: 409 });
   }
   try {
+    const url = new URL(request.url);
+    const committeeId = url.searchParams.get('houseCommitteeId');
+    if (committeeId) {
+      const parsed = Number(committeeId);
+      if (!Number.isInteger(parsed)) {
+        return NextResponse.json({ error: 'houseCommitteeId must be an integer' }, { status: 400 });
+      }
+      return NextResponse.json(await backfillHistoricalHouseCommitteeEvidence(parsed));
+    }
     return NextResponse.json(await refreshCommitteeEvidence());
   } catch (error) {
     console.error('Committee evidence refresh failed', error instanceof Error ? error.name : 'Error');
