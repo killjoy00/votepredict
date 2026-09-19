@@ -494,13 +494,17 @@ async function refreshNewsGroup(
       if (row.error || !row.pageResult) {
         result.failures += 1;
         pushDiagnostic(failureDetails, {
-          member: groupLabel,
+          member: row.lead.queryMemberNames?.join(', ').slice(0, 240) || groupLabel,
           stage: 'article-fetch',
           message: `${row.lead.url}: ${safeMessage(row.error)}`.slice(0, 600),
         });
         continue;
       }
-      const eligible = members.filter((member) => (accepted.get(member.membership_id) ?? 0) < NEWS_PER_MEMBER
+      const discoveredFor = row.lead.queryMemberNames?.length
+        ? new Set(row.lead.queryMemberNames)
+        : undefined;
+      const eligible = members.filter((member) => (!discoveredFor || discoveredFor.has(member.name))
+        && (accepted.get(member.membership_id) ?? 0) < NEWS_PER_MEMBER
         && publicPageMentionsPerson(row.pageResult!.text, member.name));
       if (eligible.length === 0) continue;
       try {
@@ -521,6 +525,7 @@ async function refreshNewsGroup(
             discoveryProviderKey: row.lead.provider,
             discoveryDomain: row.lead.domain,
             discoveryTitle: row.lead.title,
+            discoveryQueryMembers: row.lead.queryMemberNames,
             contentType: row.pageResult.contentType,
             bytes: row.pageResult.bytes,
           },

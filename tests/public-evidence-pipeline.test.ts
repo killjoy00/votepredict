@@ -10,6 +10,7 @@ import {
   bingNewsQuery,
   gdeltBatchQuery,
   gdeltSeenDate,
+  newsNameVariants,
   newsPublicationDateSource,
   parseBingNewsRss,
   unwrapBingNewsUrl,
@@ -150,6 +151,33 @@ test('GDELT batch discovery builds one OR query for multiple exact member names'
   assert.equal(
     gdeltBatchQuery(['Aaron Repinski', 'Aisha Gomez', 'Aaron Repinski']),
     '("Aaron Repinski" OR "Aisha Gomez") Minnesota',
+  );
+});
+
+test('news discovery expands middle initials and suffix-order variants without losing the canonical name', () => {
+  assert.deepEqual(newsNameVariants('Jennifer A McEwen'), [
+    'Jennifer A McEwen',
+    'Jennifer McEwen',
+  ]);
+  assert.deepEqual(newsNameVariants('D. Scott Dibble'), [
+    'D. Scott Dibble',
+    'Scott Dibble',
+  ]);
+  assert.deepEqual(newsNameVariants('Jr. Bidal Duran'), [
+    'Jr. Bidal Duran',
+    'Bidal Duran',
+    'Bidal Duran Jr',
+  ]);
+});
+
+test('news queries include discoverable aliases for names with middle initials', () => {
+  assert.equal(
+    bingNewsQuery(['John A. Hoffman']),
+    '("John A. Hoffman" OR "John Hoffman") Minnesota',
+  );
+  assert.equal(
+    gdeltBatchQuery(['Julia E. Coleman']),
+    '("Julia E. Coleman" OR "Julia Coleman") Minnesota',
   );
 });
 

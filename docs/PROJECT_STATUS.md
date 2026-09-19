@@ -1,6 +1,6 @@
 # VotePredict project status
 
-_Last updated: 2026-09-17_
+_Last updated: 2026-09-18_
 
 VotePredict V2 is no longer a rebuild project. The clean-slate V2 sequence is complete through production hardening, introduction forecasting, current/floor forecasting, immutable revisions, evidence storage, scheduled production forecasting, forecast-vs-actual scoring infrastructure, and the automated 2027-28 Opening Day transition path. The **2027 Opening Day Ready** release-integrity milestone is now complete; the project is in **operate, validate prospectively, and selectively expand** mode.
 
@@ -109,7 +109,7 @@ The production reconciliation repaired the release-integrity drift found during 
 
 1. **Deep availability.** Deep is explicitly unavailable while AI Gateway returns `billing_required`. If Deep remains a core product mode, billing must be enabled and a successful persisted evidence/revision smoke should be required before re-enabling it.
 2. **Prospective production evidence.** The production scorecard infrastructure is built, but the project still needs a meaningful set of real pre-outcome forecasts that later resolve to official votes.
-3. **Durable external-evidence breadth.** Campaign finance and campaign-site ingestion are durable, and a systematic member-primary registry/publication stream now covers House and Senate source channels. Generic publisher-verified news remains the thinnest stream and should be treated as supplemental until its yield improves.
+3. **Durable external-evidence breadth.** Campaign finance, campaign-site ingestion, and systematic House/Senate member-primary publication capture are durable. Generic publisher-verified news remains supplemental, but its discovery path now expands common member-name variants, allocates Bing results fairly per member, unions GDELT and Bing leads, and backs off GDELT cleanly when rate-limited. Operations now exposes news coverage and prospective-corpus accrual metrics so remaining yield gaps are measurable.
 
 ## Plan from here
 
@@ -129,7 +129,8 @@ The production reconciliation repaired the release-integrity drift found during 
 - [x] Capture recent member-primary publications with content hashes, canonical URLs, publication/capture dates, and supersession history.
 - [x] Expose member-primary publication health in Operations and the publications themselves on legislator profiles.
 - [x] Keep all newly captured public evidence non-mechanical by default.
-- [ ] Improve generic publisher-verified news yield without weakening publisher verification.
+- [x] Improve generic publisher-verified news discovery without weakening publisher-page verification: common-name aliases, per-member result fairness, multi-provider union, and GDELT rate-limit backoff.
+- [x] Expose news-member coverage, latest-batch yield/failures/no-lead counts, and prospective-corpus age in Operations.
 - [ ] Accumulate prospective/as-of evidence long enough to evaluate any candidate mechanical use under the frozen promotion standard.
 
 ### P1 — prepare 2027-28
