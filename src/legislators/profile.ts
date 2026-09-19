@@ -95,6 +95,7 @@ export interface LegislatorProfile {
   crossPartyAlignments: LegislatorAlignmentRow[];
   notableVotes: LegislatorNotableVote[];
   evidence: LegislatorEvidenceRow[];
+  memberPrimaryEvidence: LegislatorEvidenceRow[];
   campaignFinance?: CampaignFinanceMemberContext;
 }
 
@@ -482,6 +483,7 @@ async function loadEvidence(legislatorId: string): Promise<LegislatorEvidenceRow
       JOIN source_documents sd ON sd.id = ei.source_document_id
       JOIN memberships m ON m.id = ei.membership_id
      WHERE m.legislator_id = $1
+       AND sd.source_kind NOT IN ('member_primary_article','member_primary_registry')
        AND NOT EXISTS (
          SELECT 1
            FROM evidence_relationships er
@@ -502,6 +504,41 @@ async function loadEvidence(legislatorId: string): Promise<LegislatorEvidenceRow
   }));
 }
 
+async function loadMemberPrimaryEvidence(legislatorId: string): Promise<LegislatorEvidenceRow[]> {
+  const result = await pool.query<EvidenceDbRow>(`
+    SELECT ei.evidence_kind AS kind,
+           ei.stance,
+           ei.claim,
+           ei.excerpt,
+           ei.published_at::text,
+           ei.source_quality,
+           ei.confidence,
+           sd.source_url
+      FROM evidence_items ei
+      JOIN source_documents sd ON sd.id = ei.source_document_id
+      JOIN memberships m ON m.id = ei.membership_id
+     WHERE m.legislator_id = $1
+       AND sd.source_kind = 'member_primary_article'
+       AND NOT EXISTS (
+         SELECT 1
+           FROM evidence_relationships er
+          WHERE er.to_evidence_id = ei.id
+            AND er.relation_kind = 'supersedes'
+       )
+     ORDER BY COALESCE(ei.published_at, ei.created_at) DESC
+     LIMIT 8`, [legislatorId]);
+  return result.rows.map((row) => ({
+    kind: row.kind,
+    stance: row.stance ?? undefined,
+    claim: row.claim,
+    excerpt: row.excerpt ?? undefined,
+    publishedAt: row.published_at ?? undefined,
+    sourceQuality: row.source_quality,
+    confidence: row.confidence ?? undefined,
+    sourceUrl: row.source_url,
+  }));
+}
+
 export async function loadLegislatorProfile(legislatorId: string): Promise<LegislatorProfile | undefined> {
   const identityResult = await pool.query<{ id: string; name: string }>(
     'SELECT id, name FROM legislators WHERE id = $1 LIMIT 1',
@@ -510,13 +547,14 @@ export async function loadLegislatorProfile(legislatorId: string): Promise<Legis
   const identity = identityResult.rows[0];
   if (!identity) return undefined;
 
-  const [currentMembership, memberships, voteSummary, issues, notableVotes, evidence] = await Promise.all([
+  const [currentMembership, memberships, voteSummary, issues, notableVotes, evidence, memberPrimaryEvidence] = await Promise.all([
     loadCurrentMembership(legislatorId),
     loadMemberships(legislatorId),
     loadVoteSummary(legislatorId),
     loadIssueRows(legislatorId),
     loadNotableVotes(legislatorId),
     loadEvidence(legislatorId),
+    loadMemberPrimaryEvidence(legislatorId),
   ]);
   const alignments = currentMembership ? await loadAlignmentRows(currentMembership) : [];
   const closestAlignments = alignments.slice(0, 8);
@@ -542,6 +580,7 @@ export async function loadLegislatorProfile(legislatorId: string): Promise<Legis
     crossPartyAlignments,
     notableVotes,
     evidence,
+    memberPrimaryEvidence,
     campaignFinance,
   };
 }
