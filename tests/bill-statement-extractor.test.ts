@@ -144,3 +144,16 @@ test('rejoins digits split by page markup inside an otherwise explicit bill iden
   assert.equal(rows.length, 1);
   assert.equal(rows[0].target?.billId, bills[0].id);
 });
+
+test('title abbreviations do not trigger the cross-sentence guard', () => {
+  const rows = extractExplicitBillStatements({
+    membershipId: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    memberName: 'Alice Mann',
+    text: 'Sen. Alice Mann voted against S.F. 55 during final debate.',
+    fetchedAt: '2026-09-19T12:00:00.000Z',
+    bills,
+    sourceSubtype: 'member_primary_article',
+  });
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].stance, 'opposes');
+});
