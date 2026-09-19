@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "public-evidence-prospective-plan-v1",
+  "frozenAt": "2026-09-19T15:34:00Z",
+  "purpose": "Measure whether the amount, diversity, freshness, and source mix of durable public evidence available at forecast time is associated with future Quick forecast error, without allowing the evidence snapshot to alter serving probabilities.",
+  "scope": {
+    "jurisdiction": "us-mn",
+    "session": "2027-2028",
+    "researchMode": "quick",
+    "servingMemberModelVersion": "member-eb-v1.2-decay180",
+    "chambers": ["house", "senate"]
+  },
+  "capture": {
+    "unit": "member prediction within an immutable Quick revision",
+    "timing": "immediately after the serving Quick revision is persisted",
+    "sourceCutoff": "source_documents.fetched_at must be less than or equal to the forecast as-of timestamp",
+    "fields": [
+      "totalItems",
+      "sourceKinds",
+      "campaignFinanceItems",
+      "campaignSiteItems",
+      "memberPrimaryItems",
+      "newsItems",
+      "curatedItems",
+      "hasAnyWebEvidence",
+      "newestFetchedAt",
+      "newestEvidenceAgeDays"
+    ],
+    "textFeatures": false,
+    "stanceInference": false,
+    "probabilityWrite": false
+  },
+  "primaryQuestions": [
+    "Does serving Quick member-level absolute error differ between members with and without any contemporaneously captured web evidence?",
+    "Does source diversity or evidence freshness identify forecast strata with systematically different calibration or residual magnitude?",
+    "Are evidence-coverage rates materially different by chamber or party, indicating a collection imbalance that must be corrected before model experiments?"
+  ],
+  "minimumEvidenceBeforePrimaryScoring": {
+    "resolvedForecasts": 40,
+    "memberOutcomes": 2000,
+    "minimumMembersWithWebEvidence": 50
+  },
+  "scoring": {
+    "primary": [
+      "member Brier by evidence-availability stratum",
+      "absolute member residual by evidence-availability stratum",
+      "expected calibration error by evidence-availability stratum"
+    ],
+    "secondary": [
+      "source-diversity gradient",
+      "freshness gradient",
+      "coverage by chamber and party"
+    ],
+    "modelPromotionEligible": false,
+    "candidateProbabilityAdjustment": "none"
+  },
+  "guardrails": {
+    "outcomeUseAtCapture": "none",
+    "historicalBackfill": false,
+    "mechanicallyActionable": false,
+    "servingProbabilityChange": "none",
+    "automaticPromotion": false,
+    "interpretation": "This v1 protocol tests evidence availability and data quality. It does not test a directional evidence-to-vote transformation and cannot authorize one."
+  }
+}
