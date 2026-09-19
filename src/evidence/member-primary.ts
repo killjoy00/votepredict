@@ -153,7 +153,8 @@ export function findSenateMemberProfileUrl(
     if (url.hostname.toLowerCase() !== expectedHost) return false;
     if (dfl ? !isDflProfilePath(url.pathname) : !isRepublicanProfilePath(url.pathname)) return false;
     const anchorTokens = memberNameTokens(anchor.text);
-    return anchorTokens.includes(memberSurname);
+    const pathTokens = url.pathname.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+    return anchorTokens.includes(memberSurname) || pathTokens.includes(memberSurname);
   });
   if (candidates.length === 0) return undefined;
 
@@ -208,6 +209,17 @@ export function memberPrimaryProfileMatches(page: PublicPage, member: MemberPrim
     && (publicPageMentionsPerson(page.text, member.name) || normalizedText.includes(memberSurname!));
 }
 
+export function directoryProfileMatchesMember(
+  page: PublicPage,
+  member: MemberPrimaryMember,
+): boolean {
+  const memberSurname = surname(member.name);
+  if (!memberSurname) return false;
+  const pathTokens = new URL(page.canonicalUrl).pathname.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+  const textTokens = normalizePersonKey(page.text).split(/\s+/);
+  return pathTokens.includes(memberSurname) && textTokens.includes(memberSurname);
+}
+
 export async function fetchSenateMemberPrimaryDirectory(party: 'DFL' | 'R'): Promise<PublicPage> {
   const url = party === 'DFL' ? MN_SENATE_DFL_DIRECTORY_URL : MN_SENATE_REPUBLICAN_DIRECTORY_URL;
   return fetchPublicPage(url, {
@@ -252,7 +264,8 @@ export async function discoverMemberPrimarySource(
   const directory = dfl ? directories.dfl : directories.republican;
   if (!directory) throw new Error(`Minnesota Senate ${dfl ? 'DFL' : 'Republican'} directory is unavailable`);
 
-  let profileUrl = findSenateMemberProfileUrl(directory, member);
+  const directoryProfileUrl = findSenateMemberProfileUrl(directory, member);
+  let profileUrl = directoryProfileUrl;
   if (!profileUrl && dfl) profileUrl = senateDflFallbackProfileUrl(member.name);
   if (!profileUrl) throw new Error(`No unique caucus profile matched ${member.name}`);
   const registryPage = await fetchPublicPage(profileUrl, {
@@ -260,7 +273,9 @@ export async function discoverMemberPrimarySource(
     maxBytes: 2_500_000,
     userAgent: 'VotePredict/2.0 Minnesota Senate member-primary evidence',
   });
-  if (!memberPrimaryProfileMatches(registryPage, member)) {
+  const directoryResolved = Boolean(directoryProfileUrl && directoryProfileUrl === profileUrl);
+  const directoryIdentityVerified = directoryResolved && directoryProfileMatchesMember(registryPage, member);
+  if (!directoryIdentityVerified && !memberPrimaryProfileMatches(registryPage, member)) {
     throw new Error(`Caucus profile did not verify ${member.name} in district ${member.district}`);
   }
 
