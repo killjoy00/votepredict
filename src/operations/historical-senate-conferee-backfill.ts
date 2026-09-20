@@ -17,7 +17,7 @@ import {
 } from '@/sources/minnesota/revisor-author-resolution';
 import { verifyHistoricalHouseConferees } from '@/operations/historical-house-conferee-backfill';
 
-export const HISTORICAL_SENATE_CONFEREE_BACKFILL_VERSION = 'historical-senate-conferee-v1' as const;
+export const HISTORICAL_SENATE_CONFEREE_BACKFILL_VERSION = 'historical-senate-conferee-v2' as const;
 
 const SESSION_CONFERENCE_YEARS = {
   '2021-2022': ['2021-92', '2022-92'],
@@ -66,6 +66,25 @@ function safeMessage(error: unknown): string {
   return (error instanceof Error ? error.message : String(error))
     .replace(/postgres(?:ql)?:\/\/\S+/gi, '[redacted database URL]')
     .slice(0, 500);
+}
+
+async function withSourceRetry<T>(
+  label: string,
+  worker: () => Promise<T>,
+  attempts = 3,
+): Promise<T> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return await worker();
+    } catch (error) {
+      lastError = error;
+      if (attempt < attempts - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 500 * (attempt + 1)));
+      }
+    }
+  }
+  throw new Error(label + ' failed after ' + attempts + ' attempts: ' + safeMessage(lastError));
 }
 
 async function loadRoster(session: SupportedSession): Promise<AuthorshipRosterMember[]> {
@@ -130,11 +149,14 @@ async function loadHistoricalConferenceCrossCheck(
     .map((year) => 'https://www.leg.mn.gov/leg/cc/?year=' + year);
   const pages = [];
   for (const sourceUrl of sourceUrls) {
-    pages.push(await fetchPublicPage(sourceUrl, {
-      timeoutMs: 20_000,
-      maxBytes: 3_000_000,
-      userAgent: 'VotePredict/2.0 historical-senate-conferee-cross-check',
-    }));
+    pages.push(await withSourceRetry(
+      'Historical conference cross-check ' + sourceUrl,
+      () => fetchPublicPage(sourceUrl, {
+        timeoutMs: 20_000,
+        maxBytes: 3_000_000,
+        userAgent: 'VotePredict/2.0 historical-senate-conferee-cross-check',
+      }),
+    ));
   }
 
   const pairByBillIdentifier = new Map<string, string>();
@@ -241,7 +263,10 @@ export async function backfillHistoricalSenateConferees(input: {
   const [roster, bills, journalLinks] = await Promise.all([
     loadRoster(session),
     loadBills(session),
-    listSenateJournalLinks(session),
+    withSourceRetry(
+      'Senate journal index ' + session,
+      () => listSenateJournalLinks(session),
+    ),
   ]);
   const crossCheck = await loadHistoricalConferenceCrossCheck(session, roster);
   const batch = journalLinks.slice(offset, offset + limit);

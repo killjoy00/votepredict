@@ -89,8 +89,9 @@ export async function fetchSenateJournal(sourceUrl: string): Promise<SenateJourn
   if (!response.ok) throw new Error(`Minnesota Senate journal returned ${response.status}: ${sourceUrl}`);
   const bytes = new Uint8Array(await response.arrayBuffer());
   if (bytes.byteLength < 1000) throw new Error(`Minnesota Senate journal PDF was unexpectedly small: ${sourceUrl}`);
+  const { CanvasFactory } = await import('pdf-parse/worker');
   const { PDFParse } = await import('pdf-parse');
-  const parser = new PDFParse({ data: bytes });
+  const parser = new PDFParse({ data: bytes, CanvasFactory });
   try {
     const result = await parser.getText();
     if (!result.text || result.text.length < 100) throw new Error(`Senate journal text extraction returned too little text: ${sourceUrl}`);
