@@ -35,6 +35,26 @@ function sha256(value: Uint8Array): string {
   return createHash('sha256').update(value).digest('hex');
 }
 
+export function decodePublicTextBytes(bytes: Uint8Array, contentTypeHeader = ''): string {
+  const lower = contentTypeHeader.toLowerCase();
+  if (bytes.length >= 2 && bytes[0] === 0xff && bytes[1] === 0xfe) {
+    return new TextDecoder('utf-16le').decode(bytes.subarray(2));
+  }
+  if (bytes.length >= 2 && bytes[0] === 0xfe && bytes[1] === 0xff) {
+    return new TextDecoder('utf-16be').decode(bytes.subarray(2));
+  }
+  if (/charset\s*=\s*["']?utf-16le\b/.test(lower)) {
+    return new TextDecoder('utf-16le').decode(bytes);
+  }
+  if (/charset\s*=\s*["']?utf-16be\b/.test(lower)) {
+    return new TextDecoder('utf-16be').decode(bytes);
+  }
+  if (/charset\s*=\s*["']?utf-16\b/.test(lower)) {
+    return new TextDecoder('utf-16le').decode(bytes);
+  }
+  return new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+}
+
 function decodeEntities(value: string): string {
   return value
     .replace(/&nbsp;/gi, ' ')
@@ -256,12 +276,13 @@ export async function fetchPublicPage(rawUrl: string, options: PublicFetchOption
   if (!response) throw new Error(`No response returned for ${requestedUrl}`);
   if ([301, 302, 303, 307, 308].includes(response.status)) throw new Error(`Too many redirects for ${requestedUrl}`);
   if (!response.ok) throw new Error(`Public evidence fetch returned HTTP ${response.status} for ${current}`);
-  const contentType = (response.headers.get('content-type') ?? '').split(';')[0].trim().toLowerCase();
+  const contentTypeHeader = response.headers.get('content-type') ?? '';
+  const contentType = contentTypeHeader.split(';')[0].trim().toLowerCase();
   if (!allowContentTypes.some((allowed) => contentType === allowed || contentType.startsWith(`${allowed};`))) {
     throw new Error(`Unsupported public evidence content type ${contentType || '(missing)'} for ${current}`);
   }
   const bytes = await readLimitedBody(response, maxBytes);
-  const decoded = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+  const decoded = decodePublicTextBytes(bytes, contentTypeHeader);
   const htmlLike = contentType.includes('html');
   const text = htmlLike ? extractText(decoded) : normalizeWhitespace(decoded);
   if (text.length < 40) throw new Error(`Public evidence page has too little readable text: ${current}`);
