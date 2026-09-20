@@ -542,10 +542,6 @@ async function refreshFiscalNotes(bill: BillRow, counts: StreamCounts): Promise<
   if (!(fiscalHost === 'mn.gov' || fiscalHost.endsWith('.mn.gov'))) {
     throw new Error('Fiscal-note source redirected away from mn.gov to ' + fiscalHost);
   }
-  const fiscalHost = new URL(page.canonicalUrl).hostname.toLowerCase();
-  if (!(fiscalHost === 'mn.gov' || fiscalHost.endsWith('.mn.gov'))) {
-    throw new Error('Fiscal-note source redirected away from mn.gov to ' + fiscalHost);
-  }
   const summary = summarizeFiscalNoteSearch(page.text, bill.identifier);
   const drafts: DurableEvidenceDraft[] = summary.noteCount > 0 ? [{
     target: { billId: bill.bill_id },
