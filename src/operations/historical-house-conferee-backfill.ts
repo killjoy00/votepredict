@@ -14,7 +14,7 @@ import {
   type AuthorshipRosterMember,
 } from '@/sources/minnesota/revisor-author-resolution';
 
-export const HISTORICAL_HOUSE_CONFEREE_BACKFILL_VERSION = 'historical-house-conferee-v2' as const;
+export const HISTORICAL_HOUSE_CONFEREE_BACKFILL_VERSION = 'historical-house-conferee-v3' as const;
 
 const SESSION_ARCHIVES = {
   '2021-2022': 257,
@@ -120,7 +120,7 @@ async function fetchJournal(url: string) {
     try {
       return await fetchPublicPage(url, {
         timeoutMs: 45_000,
-        maxBytes: 16_000_000,
+        maxBytes: 24_000_000,
         userAgent: 'VotePredict/2.0 historical-house-conferee-backfill',
       });
     } catch (error) {
@@ -162,7 +162,7 @@ export async function backfillHistoricalHouseConferees(
     servingProbabilityChange: 'none',
   };
 
-  const results = await mapConcurrent(parsedIndex.links, 2, async (link) => {
+  const results = await mapConcurrent(parsedIndex.links, 1, async (link) => {
     try {
       const page = await fetchJournal(link.url);
       const pageDate = parseHistoricalDeepHouseJournalDate(page.rawContent);
