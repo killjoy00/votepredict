@@ -16,6 +16,11 @@ import {
 import {
   extractLegislativeSpeechMentions,
 } from '../src/evidence/legislative-speech.js';
+import {
+  extractSessionDailyArchiveMaxPage,
+  extractSessionDailyStoryLinks,
+  sessionDailyPublishedDay,
+} from '../src/evidence/session-daily-archive.js';
 
 test('SOS legislative flat-file parser produces neutral district contest context', () => {
   const text = [
@@ -195,4 +200,25 @@ test('official legislative speech extraction requires exact bill and named-membe
     bills: [{ id: 'bill-1', identifier: 'HF2438' }],
     members: [{ membershipId: 'member-1', name: 'Alice Example', chamber: 'house' }],
   }), []);
+});
+
+
+test('Session Daily archive helpers bound pages and keep official story links', () => {
+  const html = [
+    '<a href="/SessionDaily/Archive/Topic/0/Page/1/Dates/01012023/12312023/">1</a>',
+    '<a href="/SessionDaily/Archive/Topic/0/Page/37/Dates/01012023/12312023/">37</a>',
+  ].join('');
+  assert.equal(extractSessionDailyArchiveMaxPage(html), 37);
+  assert.deepEqual(extractSessionDailyStoryLinks([
+    'https://www.house.mn.gov/SessionDaily/Story/18008',
+    'https://house.mn.gov/sessiondaily/story/18008/',
+    'https://www.house.mn.gov/SessionDaily/Archive/Topic/0/Page/2/Dates/01012023/12312023/',
+    'https://example.com/SessionDaily/Story/99999',
+  ]), ['https://www.house.mn.gov/SessionDaily/Story/18008']);
+});
+
+test('Session Daily publication date parser preserves day granularity for as-of exclusion', () => {
+  assert.equal(sessionDailyPublishedDay('May 16, 2023 2:23 PM By Tim Walker'), '2023-05-16');
+  assert.equal(sessionDailyPublishedDay('ignored', '2024-04-25T19:30:00.000Z'), '2024-04-25');
+  assert.equal(sessionDailyPublishedDay('No publication date here'), undefined);
 });
