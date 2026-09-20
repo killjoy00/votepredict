@@ -100,7 +100,7 @@ export function parseSenateJournalConferenceAppointments(text: string): SenateJo
     for (const row of bounded.matchAll(rowPattern)) {
       const billIdentifier = row[1].toUpperCase().replace(/\./g, '').replace(/\s+/g, '').replace('NO', '');
       for (const rawName of row[2]
-        .split(/\s*,\s*|\s+and\s+/i)
+        .split(/\s*,\s*(?:and\s+)?|\s+and\s+/i)
         .map((value) => value.trim().replace(/[.;]+$/, ''))
         .filter(Boolean)) {
         if (!/^[A-ZÀ-ÖØ-Þ][A-Za-zÀ-ÖØ-öø-ÿ'’.-]*(?:\s+[A-ZÀ-ÖØ-Þ][A-Za-zÀ-ÖØ-öø-ÿ'’.-]*)*$/.test(rawName)) continue;
