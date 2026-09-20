@@ -2,6 +2,9 @@ name: Frozen conferee diagnostic
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: [Deploy production]
+    types: [completed]
 
 permissions:
   contents: read
@@ -12,7 +15,10 @@ concurrency:
 
 jobs:
   evaluate:
-    if: github.ref == 'refs/heads/main'
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -23,6 +29,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
 
       - name: Verify frozen conferee diagnostic boundary
         shell: bash
