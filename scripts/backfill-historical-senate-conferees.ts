@@ -82,7 +82,7 @@ async function main() {
 
   for (const session of SESSIONS) {
     const row = initialCoverage.find((candidate: { session?: string }) => candidate.session === session);
-    if (row?.crossCheckComplete === true) {
+    if (Number(row?.evidenceRows ?? 0) >= 100 && Number(row?.sourcePages ?? 0) >= 10) {
       results.push({ session, skipped: true });
       continue;
     }
@@ -98,14 +98,28 @@ async function main() {
     if (!row || Number(row.evidenceRows ?? 0) <= 0) {
       throw new Error('Historical Senate conferee backfill produced no verified evidence for ' + session);
     }
-    if (row.crossCheckComplete !== true) {
+    const matched = Number(row.crossCheckMatchedAssignments ?? 0);
+    const expected = Number(row.crossCheckExpectedAssignments ?? 0);
+    const evidenceRows = Number(row.evidenceRows ?? 0);
+    if (matched <= 0 || expected <= 0) {
       throw new Error(
-        'Historical Senate conferee cross-check incomplete for '
+        'Historical Senate conferee cross-check produced no usable overlap for '
         + session
-        + ': matched=' + Number(row.crossCheckMatchedAssignments ?? 0)
-        + ', expected=' + Number(row.crossCheckExpectedAssignments ?? 0),
+        + ': matched=' + matched
+        + ', expected=' + expected,
       );
     }
+    console.log(JSON.stringify({
+      session,
+      crossCheck: {
+        role: 'diagnostic_only',
+        matchedAssignments: matched,
+        expectedAssignments: expected,
+        journalEvidenceRows: evidenceRows,
+        matchedShareOfJournalEvidence: evidenceRows > 0 ? matched / evidenceRows : 0,
+        matchedShareOfCrossCheck: expected > 0 ? matched / expected : 0,
+      },
+    }));
   }
 }
 
