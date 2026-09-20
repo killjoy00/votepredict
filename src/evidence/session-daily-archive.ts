@@ -1,4 +1,4 @@
-export const SESSION_DAILY_HISTORICAL_BACKFILL_VERSION = 'session-daily-historical-v1' as const;
+export const SESSION_DAILY_HISTORICAL_BACKFILL_VERSION = 'session-daily-historical-v2' as const;
 
 const MONTHS = new Map([
   ['jan', 0], ['january', 0],
@@ -51,14 +51,30 @@ export function extractSessionDailyStoryLinks(links: readonly string[]): string[
     .map(([, url]) => url);
 }
 
-export function sessionDailyPublishedDay(text: string, metaPublishedAt?: string): string | undefined {
+export function sessionDailyPublishedDay(
+  text: string,
+  metaPublishedAt?: string,
+  pageTitle?: string,
+): string | undefined {
   if (metaPublishedAt) {
     const explicitDay = metaPublishedAt.match(/^(\d{4}-\d{2}-\d{2})\b/);
     if (explicitDay) return explicitDay[1];
     const parsed = new Date(metaPublishedAt);
     if (!Number.isNaN(parsed.getTime())) return parsed.toISOString().slice(0, 10);
   }
-  const match = text.slice(0, 1000).match(
+
+  let candidateText = text.slice(0, 1000);
+  if (pageTitle) {
+    const articleTitle = pageTitle.replace(/\s+-\s+Session Daily(?:\s+-\s+Minnesota House of Representatives)?\s*$/i, '').trim();
+    if (articleTitle) {
+      const titleIndex = text.indexOf(articleTitle);
+      if (titleIndex >= 0) {
+        candidateText = text.slice(Math.max(0, titleIndex - 220), Math.min(text.length, titleIndex + articleTitle.length));
+      }
+    }
+  }
+
+  const match = candidateText.match(
     /\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sep\.?|Sept\.?|Oct\.?|Nov\.?|Dec\.?)\s+(\d{1,2}),\s+(\d{4})\b/i,
   );
   if (!match) return undefined;
