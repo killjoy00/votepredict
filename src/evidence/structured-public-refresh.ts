@@ -159,6 +159,7 @@ async function refreshElection(
     allowContentTypes: ['text/plain', 'application/octet-stream'],
   });
   const rows = parseSosLegislativeByDistrict(page.rawContent);
+  if (rows.length === 0) throw new Error('Minnesota SOS legislative result export parsed zero rows');
   const drafts: DurableEvidenceDraft[] = [];
   for (const member of members) {
     const office: MinnesotaLegislativeOffice = member.chamber_slug === 'house'
@@ -197,6 +198,9 @@ async function refreshElection(
         evidenceSeriesKey: 'district_election_context:membership:' + member.membership_id,
       },
     });
+  }
+  if (drafts.length === 0 && members.length > 0) {
+    throw new Error('Minnesota SOS legislative results did not match any current memberships');
   }
   const persisted = await persistDurableEvidence({
     sourceKind: 'mn_sos_legislative_results',
@@ -515,6 +519,10 @@ async function refreshFiscalNotes(bill: BillRow, counts: StreamCounts): Promise<
     maxBytes: 2_000_000,
     userAgent: 'VotePredict/2.0 structured-public-data',
   });
+  const fiscalHost = new URL(page.canonicalUrl).hostname.toLowerCase();
+  if (!(fiscalHost === 'mn.gov' || fiscalHost.endsWith('.mn.gov'))) {
+    throw new Error('Fiscal-note source redirected away from mn.gov to ' + fiscalHost);
+  }
   const summary = summarizeFiscalNoteSearch(page.text, bill.identifier);
   const drafts: DurableEvidenceDraft[] = summary.noteCount > 0 ? [{
     target: { billId: bill.bill_id },
