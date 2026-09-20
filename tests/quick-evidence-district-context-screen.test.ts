@@ -6,6 +6,7 @@ import {
   fitDistrictContextOffsetRidge,
   fitDistrictContextStandardization,
   standardizeDistrictContext,
+  type DistrictContextVector,
 } from '../src/evaluation/quick-evidence-district-context-screen.js';
 
 test('district context feature vector is neutral and deterministic', () => {
@@ -23,11 +24,11 @@ test('district context feature vector is neutral and deterministic', () => {
 });
 
 test('district context standardization is fitted only from supplied training vectors', () => {
-  const vectors = [
+  const vectors: DistrictContextVector[] = [
     [10, 8, 1, 0],
     [20, 10, 3, 0],
     [30, 12, 5, 0],
-  ] as const;
+  ];
   const fitted = fitDistrictContextStandardization(vectors);
   assert.deepEqual(fitted.mean, [20, 10, 3, 0]);
   const centered = standardizeDistrictContext([20, 10, 3, 0], fitted);
