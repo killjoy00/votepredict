@@ -236,4 +236,13 @@ test('Session Daily publication date parser preserves day granularity for as-of 
     ),
     '2023-05-16',
   );
+
+  const live2021Shape = 'Navigation '.repeat(500)
+    + ' January 5, 2021 5:11 PM '
+    + 'Session’s first day brings a different kind of divided House '
+    + 'By Rob Hubbard Related Articles January 11, 2021';
+  assert.equal(
+    sessionDailyPublishedDay(live2021Shape),
+    '2021-01-05',
+  );
 });
