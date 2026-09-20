@@ -6,6 +6,13 @@ export interface OfficialBillResourceLink {
   label: string;
 }
 
+export interface HouseResearchSummaryRow {
+  billIdentifier: string;
+  latestVersion: string;
+  subject: string;
+  hasPriorSummaries: boolean;
+}
+
 export interface FiscalNoteSummary {
   billIdentifier: string;
   noteCount: number;
@@ -21,6 +28,37 @@ function decode(value: string): string {
     .replace(/<[^>]+>/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+
+function tableRows(html: string): string[][] {
+  const rows: string[][] = [];
+  for (const row of html.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)) {
+    const cells = [...row[1].matchAll(/<t[dh]\b[^>]*>([\s\S]*?)<\/t[dh]>/gi)]
+      .map((match) => decode(match[1]));
+    if (cells.some(Boolean)) rows.push(cells);
+  }
+  return rows;
+}
+
+export function parseHouseResearchSummaryIndex(html: string): HouseResearchSummaryRow[] {
+  const rows: HouseResearchSummaryRow[] = [];
+  for (const cells of tableRows(html)) {
+    const billIndex = cells.findIndex((cell) => /^(?:HF|SF)\s*\d+$/i.test(cell));
+    if (billIndex < 0) continue;
+    const billIdentifier = cells[billIndex].toUpperCase().replace(/\s+/g, '');
+    const latestVersion = cells[billIndex + 1]?.trim() ?? '';
+    const subject = cells[billIndex + 2]?.trim() ?? '';
+    const prior = cells[billIndex + 3]?.trim() ?? '';
+    if (!latestVersion && !subject) continue;
+    rows.push({
+      billIdentifier,
+      latestVersion,
+      subject,
+      hasPriorSummaries: Boolean(prior) && !/^(?:none|n\/a|—|-)$/i.test(prior),
+    });
+  }
+  return rows;
 }
 
 export function extractOfficialBillResourceLinks(
