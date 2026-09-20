@@ -99,12 +99,14 @@ export function parseHouseRecordedFloorVotes(
     const naysRow = numericIndexes[Math.max(1, numericIndexes.length - 2)] ?? numericIndexes[1];
     const yeas = yeasRow.value as number;
     const nays = naysRow.value as number;
-    const amendmentRef = cells.find((cell) => /^(?:H|S)?\d+[A-Z]\d+[A-Z0-9-]*$/i.test(cell)
-      || /^(?:HF|SF)\d+[A-Z]\d+/i.test(cell));
+    const amendmentCell = cells.find((cell) => /\b(?:H|S)?\d+[A-Z]\d+[A-Z0-9-]*\b/i.test(cell)
+      || /\b(?:HF|SF)\d+[A-Z]\d+\b/i.test(cell));
+    const amendmentMatch = amendmentCell?.match(/\b((?:H|S)?\d+[A-Z]\d+[A-Z0-9-]*|(?:HF|SF)\d+[A-Z]\d+)\b(?:\s+(.+))?/i);
+    const amendmentRef = amendmentMatch?.[1];
     const description = cells[billIndex + 1] ?? '';
-    const proposerName = amendmentRef
-      ? cells[cells.indexOf(amendmentRef) + 1]
-      : undefined;
+    const amendmentIndex = amendmentCell ? cells.indexOf(amendmentCell) : -1;
+    const proposerName = amendmentMatch?.[2]?.trim()
+      || (amendmentIndex >= 0 ? cells[amendmentIndex + 1] : undefined);
     const journalCandidate = numericIndexes.at(-1);
     const journalPage = journalCandidate && journalCandidate.index > naysRow.index
       ? String(journalCandidate.value)
