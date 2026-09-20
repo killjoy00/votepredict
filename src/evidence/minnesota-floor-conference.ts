@@ -48,7 +48,6 @@ export function parseHouseJournalConferenceAppointments(text: string): HouseJour
     const protectedInitials = bounded.replace(/,\s*([A-Z])\./g, '§$1§');
     const sentenceEnd = protectedInitials.indexOf('.');
     const listText = (sentenceEnd >= 0 ? protectedInitials.slice(0, sentenceEnd) : protectedInitials)
-      .replace(/§([A-Z])§/g, ', $1.')
       .replace(/^[^A-Za-zÀ-ÖØ-öø-ÿ]+/, '')
       .trim();
 
@@ -56,7 +55,7 @@ export function parseHouseJournalConferenceAppointments(text: string): HouseJour
       .split(/\s*;\s*|\s*,\s*|\s+and\s+/i)
       .map((value) => value.trim())
       .filter(Boolean)) {
-      const memberName = rawName.replace(/[.;]+$/, '');
+      const memberName = rawName.replace(/§([A-Z])§/g, ', $1.').trim();
       if (!/^[A-ZÀ-ÖØ-Þ][A-Za-zÀ-ÖØ-öø-ÿ'’.-]*(?:,\s*[A-Z]\.)?$/.test(memberName)) continue;
       results.push({ billIdentifier: bill, memberName });
     }
