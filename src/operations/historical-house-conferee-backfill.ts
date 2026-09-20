@@ -13,6 +13,8 @@ import {
   resolveRevisorAuthor,
   type AuthorshipRosterMember,
 } from '@/sources/minnesota/revisor-author-resolution';
+import { loadHistoricalQuickReplayDataset } from '@/evaluation/historical-quick-replay-dataset';
+import { runHistoricalQuickDecayShadowReplay } from '@/evaluation/historical-quick-decay-shadow-replay';
 
 export const HISTORICAL_HOUSE_CONFEREE_BACKFILL_VERSION = 'historical-house-conferee-v3' as const;
 
@@ -333,7 +335,91 @@ export async function backfillHistoricalHouseConferees(
   return totals;
 }
 
-export async function verifyHistoricalHouseConferees() {
+type ConfereeCoverageSession = '2021-2022' | '2023-2024' | '2025-2026';
+
+async function measureHistoricalHouseConfereeReplayCoverage() {
+  const dataset = await loadHistoricalQuickReplayDataset(pool);
+  const baseline = runHistoricalQuickDecayShadowReplay(
+    dataset.targets,
+    dataset.targetVersionByEvent,
+    dataset.analogueSupportByEvent,
+    dataset.memberships,
+    dataset.historicalVotes,
+    180,
+  );
+  const targets = new Map(dataset.targets.map((target) => [target.voteEventId, target]));
+  const evidence = await pool.query<{
+    membership_id: string;
+    bill_id: string;
+    appointment_on: string;
+  }>(`
+    SELECT ei.membership_id::text,
+           ei.bill_id::text,
+           min(ei.published_at::date)::text AS appointment_on
+      FROM evidence_items ei
+      JOIN memberships m ON m.id=ei.membership_id
+      JOIN legislative_sessions s ON s.id=m.session_id
+      JOIN jurisdictions j ON j.id=s.jurisdiction_id
+     WHERE j.slug='us-mn'
+       AND ei.metadata->>'subtype'='conference_conferee'
+       AND ei.membership_id IS NOT NULL
+       AND ei.bill_id IS NOT NULL
+       AND ei.published_at IS NOT NULL
+       AND s.slug IN ('2021-2022','2023-2024','2025-2026')
+     GROUP BY ei.membership_id,ei.bill_id
+  `);
+  const appointmentByAssignment = new Map(
+    evidence.rows.map((row) => [row.bill_id + '|' + row.membership_id, row.appointment_on]),
+  );
+  const buckets = new Map<ConfereeCoverageSession, {
+    memberOutcomes: number;
+    confereeMemberOutcomes: number;
+    eventsWithConfereeObservations: Set<string>;
+  }>([
+    ['2021-2022', { memberOutcomes: 0, confereeMemberOutcomes: 0, eventsWithConfereeObservations: new Set() }],
+    ['2023-2024', { memberOutcomes: 0, confereeMemberOutcomes: 0, eventsWithConfereeObservations: new Set() }],
+    ['2025-2026', { memberOutcomes: 0, confereeMemberOutcomes: 0, eventsWithConfereeObservations: new Set() }],
+  ]);
+
+  for (const event of baseline) {
+    if (!buckets.has(event.session as ConfereeCoverageSession)) continue;
+    const target = targets.get(event.voteEventId);
+    if (!target) continue;
+    const bucket = buckets.get(event.session as ConfereeCoverageSession)!;
+    for (const member of event.memberPredictions) {
+      if (member.yesProbability === undefined || member.actualOutcome === undefined) continue;
+      bucket.memberOutcomes += 1;
+      const appointmentOn = appointmentByAssignment.get(target.billId + '|' + member.membershipId);
+      if (!appointmentOn || appointmentOn >= event.occurredOn) continue;
+      bucket.confereeMemberOutcomes += 1;
+      bucket.eventsWithConfereeObservations.add(event.voteEventId);
+    }
+  }
+
+  const serializable = (session: ConfereeCoverageSession) => {
+    const bucket = buckets.get(session)!;
+    return {
+      memberOutcomes: bucket.memberOutcomes,
+      confereeMemberOutcomes: bucket.confereeMemberOutcomes,
+      eventsWithConfereeObservations: bucket.eventsWithConfereeObservations.size,
+    };
+  };
+  const training = serializable('2021-2022');
+  const validation = serializable('2023-2024');
+  return {
+    minimumPositiveOutcomesPerTrainValidationSession: 50,
+    sameDayAppointmentsExcluded: true,
+    training,
+    validation,
+    descriptiveTest: serializable('2025-2026'),
+    sufficientForFrozenDiagnostic:
+      training.confereeMemberOutcomes >= 50 && validation.confereeMemberOutcomes >= 50,
+  };
+}
+
+export async function verifyHistoricalHouseConferees(
+  options: { includeReplayCoverage?: boolean } = {},
+) {
   const result = await pool.query<{
     session_slug: SupportedSession;
     evidence_rows: string;
@@ -371,6 +457,9 @@ export async function verifyHistoricalHouseConferees() {
       bills: Number(row.bills),
       sourcePages: Number(row.source_pages),
     })),
+    replayCoverage: options.includeReplayCoverage
+      ? await measureHistoricalHouseConfereeReplayCoverage()
+      : undefined,
     allNewFeatureWeights: 0 as const,
     servingProbabilityChange: 'none' as const,
   };
