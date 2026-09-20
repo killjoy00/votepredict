@@ -20,7 +20,9 @@ export async function POST(request: Request) {
   try {
     const url = new URL(request.url);
     if (url.searchParams.get('verify') === '1') {
-      return NextResponse.json(await verifyHistoricalHouseConferees());
+      return NextResponse.json(await verifyHistoricalHouseConferees({
+        includeReplayCoverage: url.searchParams.get('replay') === '1',
+      }));
     }
 
     const session = url.searchParams.get('session');

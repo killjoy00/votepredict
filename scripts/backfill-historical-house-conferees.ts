@@ -30,6 +30,15 @@ async function post(secret: string, suffix: string): Promise<Response> {
   throw lastError instanceof Error ? lastError : new Error('Historical House conferee request failed');
 }
 
+async function verify(secret: string, includeReplayCoverage = false) {
+  const response = await post(secret, includeReplayCoverage ? '?verify=1&replay=1' : '?verify=1');
+  const body = await response.text();
+  if (!response.ok) {
+    throw new Error(`Historical House conferee verification HTTP ${response.status}: ${safeMessage(body).slice(0, 1800)}`);
+  }
+  return JSON.parse(body);
+}
+
 async function main() {
   const envPath = process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
   if (!envPath) throw new Error('Production environment file is required');
@@ -38,12 +47,7 @@ async function main() {
   if (!secret) throw new Error('Production CRON_SECRET is unavailable');
   console.log(`::add-mask::${secret.replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A')}`);
 
-  const initialVerificationResponse = await post(secret, '?verify=1');
-  const initialVerificationBody = await initialVerificationResponse.text();
-  if (!initialVerificationResponse.ok) {
-    throw new Error(`Historical House conferee initial verification HTTP ${initialVerificationResponse.status}: ${safeMessage(initialVerificationBody).slice(0, 1800)}`);
-  }
-  const initialVerification = JSON.parse(initialVerificationBody);
+  const initialVerification = await verify(secret);
   const initialCoverage = Array.isArray(initialVerification.coverage) ? initialVerification.coverage : [];
   const alreadyComplete = SESSIONS.every((session) =>
     initialCoverage.some((row: { session?: string; evidenceRows?: number }) =>
@@ -51,7 +55,8 @@ async function main() {
     ),
   );
   if (alreadyComplete) {
-    console.log(JSON.stringify({ historicalHouseConfereeBackfill: { skipped: true, verification: initialVerification } }));
+    const measuredVerification = await verify(secret, true);
+    console.log(JSON.stringify({ historicalHouseConfereeBackfill: { skipped: true, verification: measuredVerification } }));
     return;
   }
 
@@ -67,12 +72,7 @@ async function main() {
     console.log(JSON.stringify({ session, result }));
   }
 
-  const verificationResponse = await post(secret, '?verify=1');
-  const verificationBody = await verificationResponse.text();
-  if (!verificationResponse.ok) {
-    throw new Error(`Historical House conferee verification HTTP ${verificationResponse.status}: ${safeMessage(verificationBody).slice(0, 1800)}`);
-  }
-  const verification = JSON.parse(verificationBody);
+  const verification = await verify(secret, true);
   console.log(JSON.stringify({ historicalHouseConfereeBackfill: { results, verification } }));
 
   const totalRows = Array.isArray(verification.coverage)
