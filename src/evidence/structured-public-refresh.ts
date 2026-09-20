@@ -24,7 +24,7 @@ import {
 } from './legislative-speech';
 import { resolveRevisorAuthor, type AuthorshipRosterMember } from '@/sources/minnesota/revisor-author-resolution';
 
-export const STRUCTURED_PUBLIC_REFRESH_VERSION = 'structured-public-v2' as const;
+export const STRUCTURED_PUBLIC_REFRESH_VERSION = 'structured-public-v3' as const;
 
 const CONFERENCE_URL = 'https://www.leg.mn.gov/leg/cc/';
 const SESSION_DAILY_URL = 'https://www.house.mn.gov/SessionDaily';
@@ -125,7 +125,7 @@ async function loadAllBills(session: CurrentSession): Promise<BillRow[]> {
 
 async function loadActivityBills(session: CurrentSession): Promise<BillRow[]> {
   const year = Number(session.starts_on.slice(0, 4));
-  const sql = "SELECT b.id::text AS bill_id,b.identifier FROM bills b WHERE b.session_id=$1::uuid AND b.identifier ~ '^(HF|SF)[0-9]+$' AND (EXISTS (SELECT 1 FROM vote_events ve WHERE ve.bill_id=b.id) OR b.latest_action_at >= current_date - interval '45 days') ORDER BY COALESCE((SELECT max(ve.occurred_on)::timestamptz FROM vote_events ve WHERE ve.bill_id=b.id),b.latest_action_at,b.introduced_at,b.created_at) DESC,b.identifier";
+  const sql = "WITH eligible AS (SELECT b.id::text AS bill_id,b.identifier,left(b.identifier,2) AS prefix,COALESCE((SELECT max(ve.occurred_on)::timestamptz FROM vote_events ve WHERE ve.bill_id=b.id),b.latest_action_at,b.introduced_at,b.created_at) AS activity_at FROM bills b WHERE b.session_id=$1::uuid AND b.identifier ~ '^(HF|SF)[0-9]+$' AND (EXISTS (SELECT 1 FROM vote_events ve WHERE ve.bill_id=b.id) OR b.latest_action_at >= current_date - interval '45 days')), ranked AS (SELECT bill_id,identifier,prefix,row_number() OVER (PARTITION BY prefix ORDER BY activity_at DESC,identifier) AS chamber_rank FROM eligible) SELECT bill_id,identifier FROM ranked ORDER BY chamber_rank,prefix,identifier";
   const rows = (await pool.query<{ bill_id: string; identifier: string }>(sql, [session.id])).rows;
   return rows.map((row) => ({
     ...row,
