@@ -1,4 +1,5 @@
 export const MN_BILL_CONTEXT_PARSER_VERSION = 'mn-bill-context-v1' as const;
+export const HOUSE_RESEARCH_SUMMARY_PDF_PARSER_VERSION = 'house-research-summary-pdf-v1' as const;
 
 export interface OfficialBillResourceLink {
   kind: 'house_research_summary' | 'fiscal_notes';
@@ -17,6 +18,18 @@ export interface FiscalNoteSummary {
   billIdentifier: string;
   noteCount: number;
   completedDates: string[];
+}
+
+export interface HouseResearchSummaryPdfLink {
+  url: string;
+  label: string;
+}
+
+export interface HouseResearchSummaryDocument {
+  billIdentifier: string;
+  version: string;
+  subject: string;
+  summaryDate: string;
 }
 
 function decode(value: string): string {
@@ -59,6 +72,62 @@ export function parseHouseResearchSummaryIndex(html: string): HouseResearchSumma
     });
   }
   return rows;
+}
+
+const MONTHS = new Map([
+  ['january', 1], ['february', 2], ['march', 3], ['april', 4], ['may', 5], ['june', 6],
+  ['july', 7], ['august', 8], ['september', 9], ['october', 10], ['november', 11], ['december', 12],
+]);
+
+function longDateIso(monthName: string, dayText: string, yearText: string): string | undefined {
+  const month = MONTHS.get(monthName.toLowerCase());
+  const day = Number(dayText);
+  const year = Number(yearText);
+  if (!month || !Number.isInteger(day) || day < 1 || day > 31 || !Number.isInteger(year)) return undefined;
+  const date = new Date(Date.UTC(year, month - 1, day));
+  if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return undefined;
+  return date.toISOString().slice(0, 10);
+}
+
+export function extractHouseResearchSummaryPdfLinks(
+  html: string,
+  baseUrl: string,
+  legislature: number,
+): HouseResearchSummaryPdfLink[] {
+  const links = new Map<string, HouseResearchSummaryPdfLink>();
+  for (const match of html.matchAll(/<a\b[^>]*href\s*=\s*["']([^"'#]+)["'][^>]*>([\s\S]*?)<\/a>/gi)) {
+    try {
+      const url = new URL(match[1], baseUrl);
+      if (!['house.mn.gov', 'www.house.mn.gov'].includes(url.hostname.toLowerCase())) continue;
+      if (!new RegExp('^/hrd/bs/' + legislature + '/[^/]+\\.pdf$', 'i').test(url.pathname)) continue;
+      const canonical = 'https://www.house.mn.gov' + url.pathname;
+      links.set(canonical, { url: canonical, label: decode(match[2]) });
+    } catch {
+      // Ignore malformed/non-official links.
+    }
+  }
+  return [...links.values()];
+}
+
+export function parseHouseResearchSummaryPdfText(text: string): HouseResearchSummaryDocument | undefined {
+  const compact = text.replace(/\s+/g, ' ').trim();
+  const billMatch = compact.match(/\b([HS])\.?\s*F\.?\s*(\d+)\b/i);
+  const dateMatch = compact.match(/\bDate\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),\s+(\d{4})\b/i);
+  if (!billMatch || !dateMatch) return undefined;
+  const summaryDate = longDateIso(dateMatch[1], dateMatch[2], dateMatch[3]);
+  if (!summaryDate) return undefined;
+
+  const header = compact.slice(0, Math.min(compact.length, Math.max(1800, dateMatch.index ?? 0 + 200)));
+  const versionMatch = header.match(/\b[HS]\.?\s*F\.?\s*\d+\s+(.{1,160}?)\s+Subject\s+/i);
+  const subjectMatch = header.match(/\bSubject\s+(.{1,500}?)\s+(?:Authors?|Analyst)\s+/i);
+  if (!versionMatch || !subjectMatch) return undefined;
+
+  return {
+    billIdentifier: billMatch[1].toUpperCase() + 'F' + String(Number(billMatch[2])),
+    version: versionMatch[1].trim(),
+    subject: subjectMatch[1].trim(),
+    summaryDate,
+  };
 }
 
 export function extractOfficialBillResourceLinks(
