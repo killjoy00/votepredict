@@ -24,7 +24,7 @@ import {
 } from './legislative-speech';
 import { resolveRevisorAuthor, type AuthorshipRosterMember } from '@/sources/minnesota/revisor-author-resolution';
 
-export const STRUCTURED_PUBLIC_REFRESH_VERSION = 'structured-public-v3' as const;
+export const STRUCTURED_PUBLIC_REFRESH_VERSION = 'structured-public-v4' as const;
 
 const CONFERENCE_URL = 'https://www.leg.mn.gov/leg/cc/';
 const SESSION_DAILY_URL = 'https://www.house.mn.gov/SessionDaily';
@@ -87,6 +87,22 @@ async function loadCurrentSession(): Promise<CurrentSession> {
   const result = await pool.query<CurrentSession>(sql);
   if (result.rows.length !== 1) throw new Error('Current Minnesota legislative session is not uniquely resolved');
   return result.rows[0];
+}
+
+async function loadHistoricalBackfillSessions(): Promise<CurrentSession[]> {
+  const sql = "SELECT s.id::text,s.slug,s.starts_on::text FROM legislative_sessions s JOIN jurisdictions j ON j.id=s.jurisdiction_id WHERE j.slug='us-mn' AND s.slug IN ('2021-2022','2023-2024') ORDER BY s.starts_on";
+  return (await pool.query<CurrentSession>(sql)).rows;
+}
+
+async function loadSessionMembers(sessionId: string): Promise<MemberRow[]> {
+  const sql = "SELECT m.id::text AS membership_id,m.legislator_id::text AS legislator_id,l.name,c.slug AS chamber_slug,m.district FROM memberships m JOIN legislators l ON l.id=m.legislator_id JOIN chambers c ON c.id=m.chamber_id WHERE m.session_id=$1::uuid ORDER BY c.slug,l.normalized_name,m.id";
+  return (await pool.query<MemberRow>(sql, [sessionId])).rows;
+}
+
+async function historicalElectionBackfillComplete(sessionId: string): Promise<boolean> {
+  const sql = "SELECT count(*)::int AS rows FROM evidence_items ei JOIN memberships m ON m.id=ei.membership_id WHERE m.session_id=$1::uuid AND ei.metadata->>'subtype'='district_election_context' AND ei.extraction_version=$2";
+  const result = await pool.query<{ rows: number }>(sql, [sessionId, MN_SOS_LEGISLATIVE_RESULTS_PARSER_VERSION]);
+  return (result.rows[0]?.rows ?? 0) >= 100;
 }
 
 async function loadCurrentMembers(sessionId: string): Promise<MemberRow[]> {
@@ -582,6 +598,37 @@ async function refreshFiscalNotes(bill: BillRow, counts: StreamCounts): Promise<
   }, drafts));
 }
 
+async function backfillHistoricalElectionContexts(): Promise<Array<{
+  session: string;
+  skipped: boolean;
+  counts: StreamCounts;
+  warning?: string;
+}>> {
+  const sessions = await loadHistoricalBackfillSessions();
+  const results: Array<{ session: string; skipped: boolean; counts: StreamCounts; warning?: string }> = [];
+  for (const session of sessions) {
+    const counts = emptyCounts();
+    if (await historicalElectionBackfillComplete(session.id)) {
+      results.push({ session: session.slug, skipped: true, counts });
+      continue;
+    }
+    try {
+      const members = await loadSessionMembers(session.id);
+      await refreshElection(session, members, counts);
+      results.push({ session: session.slug, skipped: false, counts });
+    } catch (error) {
+      counts.failures += 1;
+      results.push({
+        session: session.slug,
+        skipped: false,
+        counts,
+        warning: safeMessage(error),
+      });
+    }
+  }
+  return results;
+}
+
 export async function runStructuredPublicRefresh(options: StructuredPublicRefreshOptions = {}) {
   const now = options.now ?? new Date();
   const billBatchSize = Math.min(MAX_BILL_BATCH, Math.max(1, Math.trunc(options.billBatchSize ?? DEFAULT_BILL_BATCH)));
@@ -607,6 +654,10 @@ export async function runStructuredPublicRefresh(options: StructuredPublicRefres
     } catch (error) {
       election.failures += 1;
       warnings.push('election context: ' + safeMessage(error));
+    }
+    const historicalElection = await backfillHistoricalElectionContexts();
+    for (const row of historicalElection) {
+      if (row.warning) warnings.push('historical election context ' + row.session + ': ' + row.warning);
     }
     try {
       await refreshConference(
@@ -657,6 +708,7 @@ export async function runStructuredPublicRefresh(options: StructuredPublicRefres
       activityBills: selection.total,
       billBatch: selection.rows.map((bill) => bill.identifier),
       election,
+      historicalElection,
       conference,
       speech,
       floor,
