@@ -1,4 +1,4 @@
-export const MN_FLOOR_CONFERENCE_PARSER_VERSION = 'mn-floor-conference-v3' as const;
+export const MN_FLOOR_CONFERENCE_PARSER_VERSION = 'mn-floor-conference-v4' as const;
 
 export interface HouseFloorRollCall {
   billIdentifier: string;
@@ -19,7 +19,10 @@ export interface HouseJournalConferenceAppointment {
 }
 
 export function parseHouseJournalConferenceAppointments(text: string): HouseJournalConferenceAppointment[] {
-  const normalized = decodeEntities(text).replace(/\s+/g, ' ').trim();
+  const normalized = decodeEntities(text)
+    .replace(/\uFFFD/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
   const results: HouseJournalConferenceAppointment[] = [];
   const lead = /The Speaker announced the appointment of the following members of the House to a Conference Committee on\s+((?:H|S)\.?\s*F\.?\s*(?:No\.?\s*)?\d+)\s*:/gi;
   const matches = [...normalized.matchAll(lead)];
@@ -28,20 +31,34 @@ export function parseHouseJournalConferenceAppointments(text: string): HouseJour
     const bill = match[1].toUpperCase().replace(/\./g, '').replace(/\s+/g, '').replace('NO', '');
     const start = (match.index ?? 0) + match[0].length;
     const nextLead = matches[index + 1]?.index ?? normalized.length;
+    const trailing = normalized.slice(start, nextLead);
     const stopCandidates = [
-      normalized.slice(start, nextLead).search(/\b(?:MOTIONS AND RESOLUTIONS|CALENDAR FOR THE DAY|MESSAGES FROM THE SENATE|ANNOUNCEMENTS? BY THE SPEAKER|ANNOUNCEMENT BY THE SPEAKER|ADJOURNMENT|RECESS)\b/i),
-      normalized.slice(start, nextLead).search(/\bThe Speaker announced the appointment\b/i),
+      trailing.search(/\b(?:MOTIONS AND RESOLUTIONS|CALENDAR FOR THE DAY|MESSAGES FROM THE SENATE|ANNOUNCEMENTS? BY THE SPEAKER|ANNOUNCEMENT BY THE SPEAKER|ADJOURNMENT|RECESS|REPORT FROM THE COMMITTEE|FISCAL CALENDAR)\b/i),
+      trailing.search(/\bJournal of the House\b/i),
+      trailing.search(/\bTop of Page\b/i),
+      trailing.search(/\bThere being no objection\b/i),
+      trailing.search(/\bThe motion prevailed\b/i),
+      trailing.search(/\bThe Speaker announced the appointment\b/i),
     ].filter((value) => value >= 0);
-    const stop = stopCandidates.length > 0 ? Math.min(...stopCandidates) : Math.min(nextLead - start, 700);
-    const body = normalized.slice(start, start + stop).trim().slice(0, 700);
-    for (const rawName of body
-      .split(/\s*;\s*|\s*,\s*(?=[A-Z][A-Za-z'’-]+(?:\s|$))|\s+and\s+/i)
+    const bounded = trailing
+      .slice(0, stopCandidates.length > 0 ? Math.min(...stopCandidates) : Math.min(trailing.length, 700))
+      .trim()
+      .slice(0, 700);
+
+    const protectedInitials = bounded.replace(/,\s*([A-Z])\./g, '§$1§');
+    const sentenceEnd = protectedInitials.indexOf('.');
+    const listText = (sentenceEnd >= 0 ? protectedInitials.slice(0, sentenceEnd) : protectedInitials)
+      .replace(/§([A-Z])§/g, ', $1.')
+      .replace(/^[^A-Za-zÀ-ÖØ-öø-ÿ]+/, '')
+      .trim();
+
+    for (const rawName of listText
+      .split(/\s*;\s*|\s*,\s*|\s+and\s+/i)
       .map((value) => value.trim())
       .filter(Boolean)) {
-      const memberName = /,\s*[A-Z]\.$/.test(rawName)
-        ? rawName
-        : rawName.replace(/[.;]+$/, '');
-      if (memberName) results.push({ billIdentifier: bill, memberName });
+      const memberName = rawName.replace(/[.;]+$/, '');
+      if (!/^[A-ZÀ-ÖØ-Þ][A-Za-zÀ-ÖØ-öø-ÿ'’.-]*(?:,\s*[A-Z]\.)?$/.test(memberName)) continue;
+      results.push({ billIdentifier: bill, memberName });
     }
   }
   const unique = new Map<string, HouseJournalConferenceAppointment>();
