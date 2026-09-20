@@ -53,10 +53,12 @@ export function extractSessionDailyStoryLinks(links: readonly string[]): string[
 
 export function sessionDailyPublishedDay(text: string, metaPublishedAt?: string): string | undefined {
   if (metaPublishedAt) {
+    const explicitDay = metaPublishedAt.match(/^(\d{4}-\d{2}-\d{2})\b/);
+    if (explicitDay) return explicitDay[1];
     const parsed = new Date(metaPublishedAt);
     if (!Number.isNaN(parsed.getTime())) return parsed.toISOString().slice(0, 10);
   }
-  const match = text.match(
+  const match = text.slice(0, 1000).match(
     /\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sep\.?|Sept\.?|Oct\.?|Nov\.?|Dec\.?)\s+(\d{1,2}),\s+(\d{4})\b/i,
   );
   if (!match) return undefined;
