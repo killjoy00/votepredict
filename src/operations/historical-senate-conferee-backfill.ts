@@ -540,9 +540,15 @@ export async function verifyHistoricalSenateConferees(
       members: Number(row?.members ?? 0),
       bills: Number(row?.bills ?? 0),
       sourcePages: Number(row?.source_pages ?? 0),
-      crossCheckComplete:
+      crossCheckRole: 'diagnostic_only' as const,
+      crossCheckMatchedShareOfJournalEvidence:
+        Number(row?.evidence_rows ?? 0) > 0
+          ? Number(row?.cross_check_matched ?? 0) / Number(row?.evidence_rows ?? 0)
+          : 0,
+      crossCheckMatchedShareOfReference:
         crossCheck.assignmentKeys.size > 0
-        && Number(row?.cross_check_matched ?? 0) >= crossCheck.assignmentKeys.size,
+          ? Number(row?.cross_check_matched ?? 0) / crossCheck.assignmentKeys.size
+          : 0,
     });
   }
 
