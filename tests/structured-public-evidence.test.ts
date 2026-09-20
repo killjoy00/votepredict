@@ -221,4 +221,19 @@ test('Session Daily publication date parser preserves day granularity for as-of 
   assert.equal(sessionDailyPublishedDay('May 16, 2023 2:23 PM By Tim Walker'), '2023-05-16');
   assert.equal(sessionDailyPublishedDay('ignored', '2024-04-25T19:30:00.000Z'), '2024-04-25');
   assert.equal(sessionDailyPublishedDay('No publication date here'), undefined);
+
+  const articleTitle = 'Cannabis legalization conferees agree to 10% sales tax';
+  const longNavigation = 'Navigation '.repeat(220);
+  const pageText = longNavigation
+    + ' May 16, 2023 2:23 PM '
+    + articleTitle
+    + ' By Tim Walker Related Articles May 12, 2026';
+  assert.equal(
+    sessionDailyPublishedDay(
+      pageText,
+      undefined,
+      articleTitle + ' - Session Daily - Minnesota House of Representatives',
+    ),
+    '2023-05-16',
+  );
 });

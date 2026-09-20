@@ -85,9 +85,10 @@ async function loadCursor(): Promise<Cursor> {
       FROM ingestion_runs
      WHERE source_system='session-daily-historical-backfill'
        AND status='complete'
+       AND metadata->>'version'=$1
      ORDER BY finished_at DESC NULLS LAST, started_at DESC
      LIMIT 1
-  `);
+  `, [SESSION_DAILY_HISTORICAL_BACKFILL_VERSION]);
   const row = result.rows[0];
   if (!row) return { year: START_YEAR, page: 1, done: false };
   if (row.done) return { year: END_YEAR + 1, page: 1, done: true };
@@ -210,7 +211,7 @@ async function processStory(input: {
   billMap: ReadonlyMap<string, BillRow>;
 }) {
   const page = await fetchStory(input.url);
-  const publicationDay = sessionDailyPublishedDay(page.text, page.publishedAt);
+  const publicationDay = sessionDailyPublishedDay(page.text, page.publishedAt, page.title);
   if (!publicationDay) {
     return { missingPublicationDay: 1, storiesWithBills: 0, storiesWithMentions: 0, inserted: 0, reused: 0, unresolved: 0 };
   }
