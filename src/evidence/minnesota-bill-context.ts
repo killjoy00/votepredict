@@ -117,7 +117,7 @@ export function parseHouseResearchSummaryPdfText(text: string): HouseResearchSum
   const summaryDate = longDateIso(dateMatch[1], dateMatch[2], dateMatch[3]);
   if (!summaryDate) return undefined;
 
-  const header = compact.slice(0, Math.min(compact.length, Math.max(1800, dateMatch.index ?? 0 + 200)));
+  const header = compact.slice(0, Math.min(compact.length, Math.max(1800, (dateMatch.index ?? 0) + 200)));
   const versionMatch = header.match(/\b[HS]\.?\s*F\.?\s*\d+\s+(.{1,160}?)\s+Subject\s+/i);
   const subjectMatch = header.match(/\bSubject\s+(.{1,500}?)\s+(?:Authors?|Analyst)\s+/i);
   if (!versionMatch || !subjectMatch) return undefined;
