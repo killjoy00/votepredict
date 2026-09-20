@@ -50,8 +50,14 @@ async function main(){
  if(deep.status!==200)throw new Error(`Deep research check returned HTTP ${deep.status}`);
  const research=await deep.json();
  console.log(JSON.stringify({deepResearch:research}));
- if(research.mode!=='deep'||research.failure||research.evidenceCount<1||research.sourceCount<1)
+ if(research.failure==='billing_required'){
+  console.warn(JSON.stringify({
+   warning:'deep_research_billing_required',
+   message:'Deep Research is unavailable because AI Gateway billing is not enabled; core production runtime smoke remains healthy.'
+  }));
+ }else if(research.mode!=='deep'||research.failure||research.evidenceCount<1||research.sourceCount<1){
   throw new Error(`Deep research is not ready: ${research.failure??'no_persisted_evidence'}`);
+ }
 
 }
 main().catch(error=>{console.error(JSON.stringify(safeError(error)));process.exitCode=1;});
