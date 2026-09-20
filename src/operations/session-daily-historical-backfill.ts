@@ -259,7 +259,9 @@ async function processStory(input: {
       publicationDay,
       dateGranularity: 'day',
       sameDayAsTargetExcluded: true,
-      asOfEligible: true,
+      asOfEligible: false,
+      asOfEligibilityReason: 'historical archive page has publication day but no immutable revision history',
+      historicalPageReconstruction: true,
       contextOnly: true,
       mechanicallyActionable: false,
       quickEvidenceStructured: true,
@@ -283,6 +285,8 @@ async function processStory(input: {
       extractorVersion: LEGISLATIVE_SPEECH_EXTRACTOR_VERSION,
       directionalLanguageStoredAsContextOnly: true,
       sameDayAsTargetExcluded: true,
+      historicalPageReconstruction: true,
+      retrospectivelyModelEligible: false,
     },
   }, drafts);
 
