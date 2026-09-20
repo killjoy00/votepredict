@@ -5,7 +5,7 @@ import {
   parseCampaignSiteFilings,
   selectCampaignContentLinks,
 } from '../src/evidence/campaign-site-discovery';
-import { canonicalPublicUrl, publicPageMentionsPerson, type PublicPage } from '../src/evidence/public-http';
+import { canonicalPublicUrl, decodePublicTextBytes, publicPageMentionsPerson, type PublicPage } from '../src/evidence/public-http';
 import {
   bingNewsQuery,
   gdeltBatchQuery,
@@ -96,6 +96,19 @@ test('campaign filing parser ignores registry navigation cells before the candid
   assert.equal(rows[0].candidateName, 'Aaron Repinski');
   assert.equal(rows[0].website, 'https://repinskiformn.com/');
   assert.equal(filingMatchesMember(rows[0], { name: 'Aaron Repinski', chamber: 'house', district: '026A' }), true);
+});
+
+test('public text decoding handles UTF-16LE BOM feeds used by official data exports', () => {
+  const payload = 'MN;;;101;State Representative;34B';
+  const encoded = new TextEncoder().encode(payload);
+  const utf16 = new Uint8Array(2 + encoded.length * 2);
+  utf16[0] = 0xff;
+  utf16[1] = 0xfe;
+  for (let i = 0; i < encoded.length; i += 1) {
+    utf16[2 + i * 2] = encoded[i];
+    utf16[3 + i * 2] = 0;
+  }
+  assert.equal(decodePublicTextBytes(utf16, 'text/plain'), payload);
 });
 
 test('public URL canonicalization removes tracking but preserves substantive query state', () => {
