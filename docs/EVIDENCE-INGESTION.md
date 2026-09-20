@@ -144,6 +144,20 @@ The screen records six feature families: amendment YEA/NAY, motion-or-procedural
 `data/evidence/gambling-curated-v1.json` contains sourced member statements, official Revisor authorship records, and documented MIGA/SMSC gaming-policy positions. All remain inspectable and non-mechanical unless a separate evaluated model says otherwise.
 
 `data/evidence/legislator-context-v1.json` adds official 2025-2026 House member profiles and Senate committee rosters for the initial identity-gap cohort. Committee assignments and leadership roles remain neutral context and do not imply support or opposition.
+### Structured public-data expansion
+
+VotePredict captures five additional official public-data families through `structured-public-v1`:
+
+- recorded House floor-amendment proposer and disposition context;
+- House/Senate conference-committee appointments;
+- named-member, exact-bill remarks attributed in official legislative reporting, with the extractor compatible with caption/transcript text when a verified source is available;
+- Minnesota Secretary of State prior-general-election district contest context;
+- nonpartisan House Research bill summaries and official Legislative Budget Office fiscal-note context.
+
+Every item is stored through the durable evidence layer with a source hash, capture time, exact bill/member resolution where applicable, and `mechanicallyActionable=false`. The unified `quick-evidence-v1` vector records counts/flags for these families at zero directional weight. Amendment outcomes do not imply final-passage stance; conference appointment does not imply support; district election margins are electoral context rather than ideology; fiscal magnitude does not imply support/opposition; and generic speech/reporting mentions are not promoted to directional evidence.
+
+The recurring public-evidence refresh rotates a bounded bill batch so bill-specific House/fiscal sources do not create an unbounded crawl. Election and conference sources are hash-deduplicated. Official Session Daily is the initial recurring speech/reporting source. Senate video-caption parsing remains conservative because the Legislative Reference Library warns that the automatically generated captions can contain errors and misprints; caption-derived content must retain that provenance and remains non-mechanical.
+
 ### Committee-action expansion
 
-Committee-member action is the next structured Quick Evidence source that requires additional recurring public capture. The implementation should reuse official Minnesota House committee-minute pages and Senate committee/hearing minutes, persist exact source hashes and meeting dates, resolve named roll calls to the contemporaneous committee roster, and initially record bill-level committee motion votes at zero weight. Amendment votes and generic procedural YEA/NAY must not be reinterpreted as final-passage support. House online minutes are a useful official-hosted source but are not the complete official record; Senate official digital minutes are filed with the Legislative Reference Library on a delayed schedule, so prospective collection should preserve the exact Senate-hosted observation and later official-filed provenance when available.
+House/Senate committee-minute ingestion remains a possible later structured source, but it is no longer the next default expansion. Its incremental value should be reconsidered after the five structured public-data families above have prospective coverage and scoring. If implemented, named-member bill-motion extraction should remain zero-weight until separately validated. House online minutes are useful official-hosted material but are not the complete official record; Senate official digital minutes are filed with the Legislative Reference Library on a delayed schedule, so prospective collection must preserve exact observation and later-filed provenance when available.
