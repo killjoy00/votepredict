@@ -1,4 +1,5 @@
 export const MN_FLOOR_CONFERENCE_PARSER_VERSION = 'mn-floor-conference-v4' as const;
+export const MN_SENATE_CONFERENCE_PARSER_VERSION = 'mn-senate-conference-v1' as const;
 
 export interface HouseFloorRollCall {
   billIdentifier: string;
@@ -61,6 +62,54 @@ export function parseHouseJournalConferenceAppointments(text: string): HouseJour
     }
   }
   const unique = new Map<string, HouseJournalConferenceAppointment>();
+  for (const row of results) unique.set(row.billIdentifier + '|' + row.memberName, row);
+  return [...unique.values()];
+}
+
+export interface SenateJournalConferenceAppointment {
+  billIdentifier: string;
+  memberName: string;
+}
+
+export function parseSenateJournalConferenceAppointments(text: string): SenateJournalConferenceAppointment[] {
+  const normalized = decodeEntities(text)
+    .replace(/\uFFFD/g, ' ')
+    .replace(/\u200B/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const results: SenateJournalConferenceAppointment[] = [];
+  const lead = /recommends that the following Senators be and they hereby are appointed as a Conference Committee on\s*:/gi;
+  const leads = [...normalized.matchAll(lead)];
+
+  for (let index = 0; index < leads.length; index += 1) {
+    const match = leads[index];
+    const start = (match.index ?? 0) + match[0].length;
+    const nextLead = leads[index + 1]?.index ?? normalized.length;
+    const trailing = normalized.slice(start, nextLead);
+    const stopCandidates = [
+      trailing.search(/\bSenator\s+[A-ZÀ-ÖØ-Þ][A-Za-zÀ-ÖØ-öø-ÿ'’.-]*(?:\s+[A-ZÀ-ÖØ-Þ][A-Za-zÀ-ÖØ-öø-ÿ'’.-]*)*\s+moved that the foregoing appointments be approved\b/i),
+      trailing.search(/\b(?:CONFERENCE COMMITTEE EXCUSED|MOTIONS AND RESOLUTIONS|MEMBERS EXCUSED|SPECIAL ORDERS|ADJOURNMENT|RECESS)\b/i),
+      trailing.search(/\bJOURNAL OF THE SENATE\b/i),
+    ].filter((value) => value >= 0);
+    const bounded = trailing
+      .slice(0, stopCandidates.length > 0 ? Math.min(...stopCandidates) : Math.min(trailing.length, 1800))
+      .trim()
+      .slice(0, 1800);
+
+    const rowPattern = /((?:H|S)\.?\s*F\.?\s*(?:No\.?\s*)?\d+)\s*:\s*Senators?\s+([\s\S]*?)(?=\.\s*(?:(?:H|S)\.?\s*F\.?\s*(?:No\.?\s*)?\d+\s*:|Senator\b|$))/gi;
+    for (const row of bounded.matchAll(rowPattern)) {
+      const billIdentifier = row[1].toUpperCase().replace(/\./g, '').replace(/\s+/g, '').replace('NO', '');
+      for (const rawName of row[2]
+        .split(/\s*,\s*(?:and\s+)?|\s+and\s+/i)
+        .map((value) => value.trim().replace(/[.;]+$/, ''))
+        .filter(Boolean)) {
+        if (!/^[A-ZÀ-ÖØ-Þ][A-Za-zÀ-ÖØ-öø-ÿ'’.-]*(?:\s+[A-ZÀ-ÖØ-Þ][A-Za-zÀ-ÖØ-öø-ÿ'’.-]*)*$/.test(rawName)) continue;
+        results.push({ billIdentifier, memberName: rawName });
+      }
+    }
+  }
+
+  const unique = new Map<string, SenateJournalConferenceAppointment>();
   for (const row of results) unique.set(row.billIdentifier + '|' + row.memberName, row);
   return [...unique.values()];
 }
