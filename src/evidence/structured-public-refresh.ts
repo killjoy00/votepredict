@@ -24,13 +24,14 @@ import {
 } from './legislative-speech';
 import { resolveRevisorAuthor, type AuthorshipRosterMember } from '@/sources/minnesota/revisor-author-resolution';
 
-export const STRUCTURED_PUBLIC_REFRESH_VERSION = 'structured-public-v1' as const;
+export const STRUCTURED_PUBLIC_REFRESH_VERSION = 'structured-public-v2' as const;
 
 const CONFERENCE_URL = 'https://www.leg.mn.gov/leg/cc/';
 const SESSION_DAILY_URL = 'https://www.house.mn.gov/SessionDaily';
 const DEFAULT_BILL_BATCH = 6;
 const MAX_BILL_BATCH = 12;
-const SESSION_DAILY_ARTICLES = 8;
+const SESSION_DAILY_PAGES = 3;
+const SESSION_DAILY_ARTICLES = 24;
 
 type CurrentSession = { id: string; slug: string; starts_on: string };
 type MemberRow = {
@@ -122,6 +123,17 @@ async function loadAllBills(session: CurrentSession): Promise<BillRow[]> {
   }));
 }
 
+async function loadActivityBills(session: CurrentSession): Promise<BillRow[]> {
+  const year = Number(session.starts_on.slice(0, 4));
+  const sql = "SELECT b.id::text AS bill_id,b.identifier FROM bills b WHERE b.session_id=$1::uuid AND b.identifier ~ '^(HF|SF)[0-9]+$' AND (EXISTS (SELECT 1 FROM vote_events ve WHERE ve.bill_id=b.id) OR b.latest_action_at >= current_date - interval '45 days') ORDER BY COALESCE((SELECT max(ve.occurred_on)::timestamptz FROM vote_events ve WHERE ve.bill_id=b.id),b.latest_action_at,b.introduced_at,b.created_at) DESC,b.identifier";
+  const rows = (await pool.query<{ bill_id: string; identifier: string }>(sql, [session.id])).rows;
+  return rows.map((row) => ({
+    ...row,
+    session_slug: session.slug,
+    session_start_year: year,
+  }));
+}
+
 async function billBatch(allBills: readonly BillRow[], limit: number) {
   if (allBills.length === 0) return { rows: [] as BillRow[], offset: 0, nextOffset: 0, total: 0 };
   const sql = "SELECT CASE WHEN metadata->>'billRotationNextOffset' ~ '^[0-9]+$' THEN (metadata->>'billRotationNextOffset')::int ELSE 0 END AS next_offset FROM ingestion_runs WHERE source_system='structured-public-data' AND status='complete' ORDER BY finished_at DESC NULLS LAST LIMIT 1";
@@ -166,6 +178,7 @@ async function refreshElection(
     allowContentTypes: ['text/plain', 'application/octet-stream'],
   });
   const rows = parseSosLegislativeByDistrict(page.rawContent);
+  if (rows.length === 0) throw new Error('Minnesota SOS legislative result export parsed zero rows');
   const drafts: DurableEvidenceDraft[] = [];
   for (const member of members) {
     const office: MinnesotaLegislativeOffice = member.chamber_slug === 'house'
@@ -204,6 +217,9 @@ async function refreshElection(
         evidenceSeriesKey: 'district_election_context:membership:' + member.membership_id,
       },
     });
+  }
+  if (drafts.length === 0 && members.length > 0) {
+    throw new Error('Minnesota SOS legislative results did not match any current memberships');
   }
   const persisted = await persistDurableEvidence({
     sourceKind: 'mn_sos_legislative_results',
@@ -296,22 +312,29 @@ async function refreshSpeech(
   allBills: readonly BillRow[],
   counts: StreamCounts,
 ): Promise<void> {
-  counts.attempted += 1;
-  const index = await fetchPublicPage(SESSION_DAILY_URL, {
-    timeoutMs: 15_000,
-    maxBytes: 2_000_000,
-    userAgent: 'VotePredict/2.0 structured-public-data',
-  });
-  const storyLinks = index.links
-    .filter((url) => /\/SessionDaily\/Story\/\d+/i.test(new URL(url).pathname))
-    .slice(0, SESSION_DAILY_ARTICLES);
+  const storyLinks = new Set<string>();
+  for (let pageNumber = 1; pageNumber <= SESSION_DAILY_PAGES; pageNumber += 1) {
+    counts.attempted += 1;
+    const indexUrl = pageNumber === 1 ? SESSION_DAILY_URL : SESSION_DAILY_URL + '/Page/' + pageNumber;
+    const index = await fetchPublicPage(indexUrl, {
+      timeoutMs: 15_000,
+      maxBytes: 2_000_000,
+      userAgent: 'VotePredict/2.0 structured-public-data',
+    });
+    for (const url of index.links) {
+      if (/\/SessionDaily\/Story\/\d+/i.test(new URL(url).pathname)) storyLinks.add(url);
+      if (storyLinks.size >= SESSION_DAILY_ARTICLES) break;
+    }
+    if (storyLinks.size >= SESSION_DAILY_ARTICLES) break;
+  }
+
   const billMap = new Map(allBills.map((bill) => [bill.identifier.toUpperCase(), bill]));
   const speechMembers = members.map((member) => ({
     membershipId: member.membership_id,
     name: member.name,
     chamber: member.chamber_slug,
   }));
-  for (const url of storyLinks) {
+  for (const url of [...storyLinks].slice(0, SESSION_DAILY_ARTICLES)) {
     counts.attempted += 1;
     try {
       const page = await fetchPublicPage(url, {
@@ -515,6 +538,10 @@ async function refreshFiscalNotes(bill: BillRow, counts: StreamCounts): Promise<
     maxBytes: 2_000_000,
     userAgent: 'VotePredict/2.0 structured-public-data',
   });
+  const fiscalHost = new URL(page.canonicalUrl).hostname.toLowerCase();
+  if (!(fiscalHost === 'mn.gov' || fiscalHost.endsWith('.mn.gov'))) {
+    throw new Error('Fiscal-note source redirected away from mn.gov to ' + fiscalHost);
+  }
   const summary = summarizeFiscalNoteSearch(page.text, bill.identifier);
   const drafts: DurableEvidenceDraft[] = summary.noteCount > 0 ? [{
     target: { billId: bill.bill_id },
@@ -559,12 +586,13 @@ export async function runStructuredPublicRefresh(options: StructuredPublicRefres
   const now = options.now ?? new Date();
   const billBatchSize = Math.min(MAX_BILL_BATCH, Math.max(1, Math.trunc(options.billBatchSize ?? DEFAULT_BILL_BATCH)));
   const session = await loadCurrentSession();
-  const [members, roster, allBills] = await Promise.all([
+  const [members, roster, allBills, activityBills] = await Promise.all([
     loadCurrentMembers(session.id),
     loadRoster(session.id),
     loadAllBills(session),
+    loadActivityBills(session),
   ]);
-  const selection = await billBatch(allBills, billBatchSize);
+  const selection = await billBatch(activityBills, billBatchSize);
   const runId = await startRun('session:' + session.slug + ':bill-batch:' + billBatchSize);
   const election = emptyCounts();
   const conference = emptyCounts();
@@ -625,7 +653,8 @@ export async function runStructuredPublicRefresh(options: StructuredPublicRefres
       session: session.slug,
       billRotationOffset: selection.offset,
       billRotationNextOffset: selection.nextOffset,
-      totalBills: selection.total,
+      totalBills: allBills.length,
+      activityBills: selection.total,
       billBatch: selection.rows.map((bill) => bill.identifier),
       election,
       conference,

@@ -1,4 +1,4 @@
-export const MN_FLOOR_CONFERENCE_PARSER_VERSION = 'mn-floor-conference-v1' as const;
+export const MN_FLOOR_CONFERENCE_PARSER_VERSION = 'mn-floor-conference-v2' as const;
 
 export interface HouseFloorRollCall {
   billIdentifier: string;
@@ -62,14 +62,13 @@ function integer(value: string): number | undefined {
 export function extractHouseRecordedVoteLinks(html: string, baseUrl: string): string[] {
   const urls: string[] = [];
   for (const match of html.matchAll(/<a\b[^>]*href\s*=\s*["']([^"'#]+)["'][^>]*>([\s\S]*?)<\/a>/gi)) {
-    const href = match[1];
-    const label = cellText(match[2]);
-    if (!/\/votes\/details/i.test(href) && !/recorded.*(?:roll\s+call|floor\s+vote)/i.test(label)) continue;
     try {
-      const url = new URL(href, baseUrl).toString();
-      if (/^https?:/i.test(url)) urls.push(url);
+      const url = new URL(match[1], baseUrl);
+      if (!/^\/votes\/details$/i.test(url.pathname)) continue;
+      if (!/^https?:$/i.test(url.protocol)) continue;
+      urls.push(url.toString());
     } catch {
-      // Ignore malformed official links.
+      // Ignore malformed/non-HTTP links.
     }
   }
   return [...new Set(urls)];
@@ -99,12 +98,14 @@ export function parseHouseRecordedFloorVotes(
     const naysRow = numericIndexes[Math.max(1, numericIndexes.length - 2)] ?? numericIndexes[1];
     const yeas = yeasRow.value as number;
     const nays = naysRow.value as number;
-    const amendmentRef = cells.find((cell) => /^(?:H|S)?\d+[A-Z]\d+[A-Z0-9-]*$/i.test(cell)
-      || /^(?:HF|SF)\d+[A-Z]\d+/i.test(cell));
+    const amendmentCell = cells.find((cell) => /\b(?:H|S)?\d+[A-Z]\d+[A-Z0-9-]*\b/i.test(cell)
+      || /\b(?:HF|SF)\d+[A-Z]\d+\b/i.test(cell));
+    const amendmentMatch = amendmentCell?.match(/\b((?:H|S)?\d+[A-Z]\d+[A-Z0-9-]*|(?:HF|SF)\d+[A-Z]\d+)\b(?:\s+(.+))?/i);
+    const amendmentRef = amendmentMatch?.[1];
     const description = cells[billIndex + 1] ?? '';
-    const proposerName = amendmentRef
-      ? cells[cells.indexOf(amendmentRef) + 1]
-      : undefined;
+    const amendmentIndex = amendmentCell ? cells.indexOf(amendmentCell) : -1;
+    const proposerName = amendmentMatch?.[2]?.trim()
+      || (amendmentIndex >= 0 ? cells[amendmentIndex + 1] : undefined);
     const journalCandidate = numericIndexes.at(-1);
     const journalPage = journalCandidate && journalCandidate.index > naysRow.index
       ? String(journalCandidate.value)
@@ -133,24 +134,67 @@ function names(value: string): string[] {
     .filter(Boolean);
 }
 
-export function parseConferenceCommitteeAppointments(html: string): ConferenceAppointment[] {
-  const rows = tableRows(html);
+function conferenceAppointmentsForRows(
+  billIdentifiers: readonly string[],
+  rows: readonly string[][],
+): ConferenceAppointment[] {
   const results: ConferenceAppointment[] = [];
-  let currentBills: string[] = [];
   for (const cells of rows) {
-    const billIds = cells.flatMap((cell) => [...cell.matchAll(/\b(?:HF|SF)\s*\d+\b/gi)]
-      .map((match) => match[0].toUpperCase().replace(/\s+/g, '')));
-    if (billIds.length > 0) currentBills = [...new Set(billIds)];
     const labelIndex = cells.findIndex((cell) => /conferees?\s+appointed/i.test(cell));
-    if (labelIndex < 0 || currentBills.length === 0) continue;
+    if (labelIndex < 0) continue;
     const houseCell = cells[labelIndex + 1] ?? '';
     const senateCell = cells[labelIndex + 2] ?? '';
     for (const memberName of names(houseCell)) {
-      results.push({ billIdentifiers: currentBills, chamber: 'house', memberName });
+      results.push({ billIdentifiers: [...billIdentifiers], chamber: 'house', memberName });
     }
     for (const memberName of names(senateCell)) {
-      results.push({ billIdentifiers: currentBills, chamber: 'senate', memberName });
+      results.push({ billIdentifiers: [...billIdentifiers], chamber: 'senate', memberName });
     }
   }
   return results;
+}
+
+export function parseConferenceCommitteeAppointments(html: string): ConferenceAppointment[] {
+  const results: ConferenceAppointment[] = [];
+  const billHeadings = [...html.matchAll(/<h([1-4])\b[^>]*>([\s\S]*?)<\/h\1>/gi)]
+    .map((match) => ({
+      start: match.index ?? 0,
+      end: (match.index ?? 0) + match[0].length,
+      text: cellText(match[2]),
+    }))
+    .map((heading) => ({
+      ...heading,
+      billIdentifiers: [...heading.text.matchAll(/\b(?:HF|SF)\s*\d+\b/gi)]
+        .map((match) => match[0].toUpperCase().replace(/\s+/g, '')),
+    }))
+    .filter((heading) => heading.billIdentifiers.length > 0);
+
+  for (let index = 0; index < billHeadings.length; index += 1) {
+    const heading = billHeadings[index];
+    const next = billHeadings[index + 1];
+    const sectionHtml = html.slice(heading.end, next?.start ?? html.length);
+    results.push(...conferenceAppointmentsForRows(
+      [...new Set(heading.billIdentifiers)],
+      tableRows(sectionHtml),
+    ));
+  }
+
+  if (results.length === 0) {
+    let currentBills: string[] = [];
+    for (const cells of tableRows(html)) {
+      const billIds = cells.flatMap((cell) => [...cell.matchAll(/\b(?:HF|SF)\s*\d+\b/gi)]
+        .map((match) => match[0].toUpperCase().replace(/\s+/g, '')));
+      if (billIds.length > 0) currentBills = [...new Set(billIds)];
+      if (currentBills.length > 0) {
+        results.push(...conferenceAppointmentsForRows(currentBills, [cells]));
+      }
+    }
+  }
+
+  const unique = new Map<string, ConferenceAppointment>();
+  for (const row of results) {
+    const key = row.billIdentifiers.join('|') + '|' + row.chamber + '|' + row.memberName;
+    if (!unique.has(key)) unique.set(key, row);
+  }
+  return [...unique.values()];
 }

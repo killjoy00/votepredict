@@ -40,7 +40,9 @@ function numeric(value: string): number {
 }
 
 export function normalizeMinnesotaDistrict(value: string): string {
-  return value.toUpperCase().replace(/[^0-9A-Z]/g, '');
+  const compact = value.toUpperCase().replace(/[^0-9A-Z]/g, '');
+  const match = compact.match(/^0*(\d+)([A-Z]*)$/);
+  return match ? String(Number(match[1])) + match[2] : compact;
 }
 
 export function parseSosLegislativeByDistrict(text: string): SosLegislativeResultRow[] {

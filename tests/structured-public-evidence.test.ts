@@ -19,8 +19,8 @@ import {
 
 test('SOS legislative flat-file parser produces neutral district contest context', () => {
   const text = [
-    'MN;;;101;State Representative;34B;1;Alpha Candidate;;Y;DFL;12;12;10000;52.50;19000',
-    'MN;;;101;State Representative;34B;2;Beta Candidate;;;R;12;12;9000;47.50;19000',
+    'MN;;;101;State Representative;034B;1;Alpha Candidate;;Y;DFL;12;12;10000;52.50;19000',
+    'MN;;;101;State Representative;034B;2;Beta Candidate;;;R;12;12;9000;47.50;19000',
     'MN;;;201;State Senator;34;1;Gamma Candidate;;;R;24;24;21000;60.00;35000',
     'MN;;;201;State Senator;34;2;Delta Candidate;;;DFL;24;24;14000;40.00;35000',
   ].join('\n');
@@ -41,6 +41,26 @@ test('SOS legislative flat-file parser produces neutral district contest context
   });
 });
 
+test('House recorded floor vote parser handles live combined amendment and proposer cell', () => {
+  const html = [
+    '<table>',
+    '<tr><th>Bill #</th><th>Description</th><th>Amendment</th><th>Yeas</th><th>Nays</th><th>J pg.</th><th>Date</th></tr>',
+    '<tr><td>HF2438</td><td>H.F. NO. 2438 CALENDAR FOR THE DAY Amendment</td><td>H2438A22 Kraft</td><td>67</td><td>67</td><td>2660</td><td>04/28/2025</td></tr>',
+    '</table>',
+  ].join('');
+  assert.deepEqual(parseHouseRecordedFloorVotes(html, 'HF2438'), [{
+    billIdentifier: 'HF2438',
+    description: 'H.F. NO. 2438 CALENDAR FOR THE DAY Amendment',
+    amendmentRef: 'H2438A22',
+    proposerName: 'Kraft',
+    yeas: 67,
+    nays: 67,
+    journalPage: '2660',
+    occurredOn: '2025-04-28',
+    rollCallWon: false,
+  }]);
+});
+
 test('House recorded floor vote parser captures amendment roll call without inferring passage stance', () => {
   const html = [
     '<table>',
@@ -59,6 +79,30 @@ test('House recorded floor vote parser captures amendment roll call without infe
     occurredOn: '2025-04-28',
     rollCallWon: false,
   }]);
+});
+
+test('conference committee parser follows live heading-plus-actions layout', () => {
+  const html = [
+    '<h2>HF2438/SF2082</h2>',
+    '<h2>Taxation bill</h2>',
+    '<table>',
+    '<tr><th>Actions</th><th>House</th><th>Senate</th></tr>',
+    '<tr><td>Motion for Conference Committee</td><td>05/16/2026</td><td>05/06/2025</td></tr>',
+    '<tr><td>Conferees Appointed</td><td>Davids; Joy; Gomez; Agbaje</td><td>Rest; Dibble; Hemmingsen-Jaeger; Hauschild; Weber</td></tr>',
+    '</table>',
+    '<h2>HF2442/SF2393</h2>',
+    '<table>',
+    '<tr><td>Conferees Appointed</td><td>Acomb; Kraft; Swedzinski; Sexton</td><td>Frentz; Xiong; Mathews</td></tr>',
+    '</table>',
+  ].join('');
+  const appointments = parseConferenceCommitteeAppointments(html);
+  assert.equal(appointments.length, 16);
+  assert.ok(appointments.some((row) => row.billIdentifiers.join('/') === 'HF2438/SF2082'
+    && row.chamber === 'house'
+    && row.memberName === 'Davids'));
+  assert.ok(appointments.some((row) => row.billIdentifiers.join('/') === 'HF2442/SF2393'
+    && row.chamber === 'senate'
+    && row.memberName === 'Mathews'));
 });
 
 test('conference committee parser resolves House and Senate appointment lists separately', () => {
