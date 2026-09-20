@@ -156,15 +156,26 @@ function conferenceAppointmentsForRows(
 
 export function parseConferenceCommitteeAppointments(html: string): ConferenceAppointment[] {
   const results: ConferenceAppointment[] = [];
+  const billHeadings = [...html.matchAll(/<h([1-4])\b[^>]*>([\s\S]*?)<\/h\1>/gi)]
+    .map((match) => ({
+      start: match.index ?? 0,
+      end: (match.index ?? 0) + match[0].length,
+      text: cellText(match[2]),
+    }))
+    .map((heading) => ({
+      ...heading,
+      billIdentifiers: [...heading.text.matchAll(/\b(?:HF|SF)\s*\d+\b/gi)]
+        .map((match) => match[0].toUpperCase().replace(/\s+/g, '')),
+    }))
+    .filter((heading) => heading.billIdentifiers.length > 0);
 
-  const sectionPattern = /<h[1-4]\b[^>]*>([\s\S]*?\b(?:HF|SF)\s*\d+[\s\S]*?)<\/h[1-4]>([\s\S]*?)(?=<h[1-4]\b[^>]*>[\s\S]*?\b(?:HF|SF)\s*\d+\b|$)/gi;
-  for (const section of html.matchAll(sectionPattern)) {
-    const billIdentifiers = [...section[1].matchAll(/\b(?:HF|SF)\s*\d+\b/gi)]
-      .map((match) => match[0].toUpperCase().replace(/\s+/g, ''));
-    if (billIdentifiers.length === 0) continue;
+  for (let index = 0; index < billHeadings.length; index += 1) {
+    const heading = billHeadings[index];
+    const next = billHeadings[index + 1];
+    const sectionHtml = html.slice(heading.end, next?.start ?? html.length);
     results.push(...conferenceAppointmentsForRows(
-      [...new Set(billIdentifiers)],
-      tableRows(section[2]),
+      [...new Set(heading.billIdentifiers)],
+      tableRows(sectionHtml),
     ));
   }
 
