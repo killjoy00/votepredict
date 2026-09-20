@@ -8,6 +8,7 @@ import {
   type QuickEvidenceAvailabilityRow,
   type QuickEvidencePriorVoteRow,
   type QuickEvidenceStoredRow,
+  type QuickEvidenceStructuredPublicRow,
 } from '../src/forecasting/quick-evidence-shadow.js';
 
 function stored(overrides: Partial<QuickEvidenceStoredRow> = {}): QuickEvidenceStoredRow {
@@ -151,6 +152,38 @@ test('reconstructed bill authorship is recorded but remains zero-weight pending 
   assert.ok(Math.abs((shadow.candidateProbability ?? 0) - 0.61) < 1e-12);
 });
 
+
+test('five structured public-data families are recorded but remain zero-weight pending validation', () => {
+  const structuredPublic: QuickEvidenceStructuredPublicRow = {
+    membership_id: 'member-1',
+    floor_amendment_offers: 2,
+    floor_amendment_wins: 1,
+    conference_conferee: true,
+    legislative_speech_items: 3,
+    district_election_context_available: true,
+    district_election_top_two_margin_pct: 5.25,
+    district_election_uncontested: false,
+    bill_summary_items: 1,
+    fiscal_note_items: 2,
+  };
+  const shadow = buildQuickEvidenceMemberShadow({
+    baseProbability: 0.61,
+    structuredPublic,
+    capturedAt: '2027-02-10T12:00:00.000Z',
+  });
+  assert.equal(shadow.features.floorAmendmentOffers, 2);
+  assert.equal(shadow.features.floorAmendmentWins, 1);
+  assert.equal(shadow.features.conferenceConferee, true);
+  assert.equal(shadow.features.legislativeSpeechItems, 3);
+  assert.equal(shadow.features.districtElectionContextAvailable, true);
+  assert.equal(shadow.features.districtElectionTopTwoMarginPct, 5.25);
+  assert.equal(shadow.features.districtElectionUncontested, false);
+  assert.equal(shadow.features.billSummaryItems, 1);
+  assert.equal(shadow.features.fiscalNoteItems, 2);
+  assert.equal(shadow.appliedEvidenceItems, 0);
+  assert.ok(Math.abs((shadow.candidateProbability ?? 0) - 0.61) < 1e-12);
+});
+
 test('availability features are recorded but do not move probability by themselves', () => {
   const vector = buildQuickEvidenceFeatureVector({
     availability,
@@ -189,6 +222,16 @@ test('frozen unified Quick Evidence plan remains single-candidate and non-servin
   assert.equal(plan.authorshipAmendment.verifiedPreActivationState.quickRevisions, 0);
   assert.equal(plan.authorshipAmendment.verifiedPreActivationState.quickEvidenceCapturedRevisions, 0);
   assert.equal(plan.authorshipAmendment.activeWeightChange, 'none');
+  assert.equal(plan.structuredPublicAmendment.verifiedPreActivationState.quickRevisions, 0);
+  assert.equal(plan.structuredPublicAmendment.verifiedPreActivationState.quickEvidenceCapturedRevisions, 0);
+  assert.equal(plan.structuredPublicAmendment.activeWeightChange, 'none');
+  assert.equal(plan.structuredPublicAmendment.automaticPromotion, false);
+  assert.ok(plan.capture.features.includes('floorAmendmentOffers'));
+  assert.ok(plan.capture.features.includes('conferenceConferee'));
+  assert.ok(plan.capture.features.includes('legislativeSpeechItems'));
+  assert.ok(plan.capture.features.includes('districtElectionTopTwoMarginPct'));
+  assert.ok(plan.capture.features.includes('billSummaryItems'));
+  assert.ok(plan.capture.features.includes('fiscalNoteItems'));
   assert.equal(plan.capture.probabilityWriteToServingQuick, false);
   assert.equal(plan.guardrails.historicalWebBackfill, false);
   assert.equal(plan.guardrails.automaticPromotion, false);
