@@ -62,14 +62,13 @@ function integer(value: string): number | undefined {
 export function extractHouseRecordedVoteLinks(html: string, baseUrl: string): string[] {
   const urls: string[] = [];
   for (const match of html.matchAll(/<a\b[^>]*href\s*=\s*["']([^"'#]+)["'][^>]*>([\s\S]*?)<\/a>/gi)) {
-    const href = match[1];
-    const label = cellText(match[2]);
-    if (!/\/votes\/details/i.test(href) && !/recorded.*(?:roll\s+call|floor\s+vote)/i.test(label)) continue;
     try {
-      const url = new URL(href, baseUrl).toString();
-      if (/^https?:/i.test(url)) urls.push(url);
+      const url = new URL(match[1], baseUrl);
+      if (!/^\/votes\/details$/i.test(url.pathname)) continue;
+      if (!/^https?:$/i.test(url.protocol)) continue;
+      urls.push(url.toString());
     } catch {
-      // Ignore malformed official links.
+      // Ignore malformed/non-HTTP links.
     }
   }
   return [...new Set(urls)];
