@@ -1,4 +1,4 @@
-export const MN_FLOOR_CONFERENCE_PARSER_VERSION = 'mn-floor-conference-v2' as const;
+export const MN_FLOOR_CONFERENCE_PARSER_VERSION = 'mn-floor-conference-v3' as const;
 
 export interface HouseFloorRollCall {
   billIdentifier: string;
@@ -10,6 +10,43 @@ export interface HouseFloorRollCall {
   journalPage?: string;
   occurredOn: string;
   rollCallWon: boolean;
+}
+
+
+export interface HouseJournalConferenceAppointment {
+  billIdentifier: string;
+  memberName: string;
+}
+
+export function parseHouseJournalConferenceAppointments(text: string): HouseJournalConferenceAppointment[] {
+  const normalized = decodeEntities(text).replace(/\s+/g, ' ').trim();
+  const results: HouseJournalConferenceAppointment[] = [];
+  const lead = /The Speaker announced the appointment of the following members of the House to a Conference Committee on\s+((?:H|S)\.?\s*F\.?\s*(?:No\.?\s*)?\d+)\s*:/gi;
+  const matches = [...normalized.matchAll(lead)];
+  for (let index = 0; index < matches.length; index += 1) {
+    const match = matches[index];
+    const bill = match[1].toUpperCase().replace(/\./g, '').replace(/\s+/g, '').replace('NO', '');
+    const start = (match.index ?? 0) + match[0].length;
+    const nextLead = matches[index + 1]?.index ?? normalized.length;
+    const stopCandidates = [
+      normalized.slice(start, nextLead).search(/\b(?:MOTIONS AND RESOLUTIONS|CALENDAR FOR THE DAY|MESSAGES FROM THE SENATE|ANNOUNCEMENTS? BY THE SPEAKER|ANNOUNCEMENT BY THE SPEAKER|ADJOURNMENT|RECESS)\b/i),
+      normalized.slice(start, nextLead).search(/\bThe Speaker announced the appointment\b/i),
+    ].filter((value) => value >= 0);
+    const stop = stopCandidates.length > 0 ? Math.min(...stopCandidates) : Math.min(nextLead - start, 700);
+    const body = normalized.slice(start, start + stop).trim().slice(0, 700);
+    for (const rawName of body
+      .split(/\s*;\s*|\s*,\s*(?=[A-Z][A-Za-z'’-]+(?:\s|$))|\s+and\s+/i)
+      .map((value) => value.trim())
+      .filter(Boolean)) {
+      const memberName = /,\s*[A-Z]\.$/.test(rawName)
+        ? rawName
+        : rawName.replace(/[.;]+$/, '');
+      if (memberName) results.push({ billIdentifier: bill, memberName });
+    }
+  }
+  const unique = new Map<string, HouseJournalConferenceAppointment>();
+  for (const row of results) unique.set(row.billIdentifier + '|' + row.memberName, row);
+  return [...unique.values()];
 }
 
 export interface ConferenceAppointment {
