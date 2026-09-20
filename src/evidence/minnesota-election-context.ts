@@ -1,4 +1,4 @@
-export const MN_SOS_LEGISLATIVE_RESULTS_PARSER_VERSION = 'mn-sos-legislative-results-v1' as const;
+export const MN_SOS_LEGISLATIVE_RESULTS_PARSER_VERSION = 'mn-sos-legislative-results-v2' as const;
 
 export type MinnesotaLegislativeOffice = 'State Representative' | 'State Senator';
 
@@ -82,8 +82,11 @@ export function summarizeLegislativeDistrict(
   district: string,
 ): DistrictElectionContext | undefined {
   const normalizedDistrict = normalizeMinnesotaDistrict(district);
+  const officePattern = office === 'State Representative'
+    ? /^state\s+representative(?:\s+district\b.*)?$/i
+    : /^state\s+senator(?:\s+district\b.*)?$/i;
   const candidates = rows
-    .filter((row) => row.officeName.toLowerCase() === office.toLowerCase()
+    .filter((row) => officePattern.test(row.officeName.trim())
       && row.district === normalizedDistrict)
     .sort((left, right) => right.votes - left.votes || left.candidateOrder - right.candidateOrder);
   if (candidates.length === 0) return undefined;
