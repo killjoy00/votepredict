@@ -10,6 +10,7 @@ import {
 } from '../src/evidence/minnesota-floor-conference.js';
 import {
   extractOfficialBillResourceLinks,
+  parseHouseResearchSummaryIndex,
   summarizeFiscalNoteSearch,
 } from '../src/evidence/minnesota-bill-context.js';
 import {
@@ -79,6 +80,30 @@ test('conference committee parser resolves House and Senate appointment lists se
     chamber: 'senate',
     memberName: 'Weber',
   });
+});
+
+test('House Research summary index preserves latest version and prior-version availability', () => {
+  const html = [
+    '<table>',
+    '<tr><th>Bill</th><th>Latest Summary</th><th>Subject</th><th>Prior Summaries</th></tr>',
+    '<tr><td>HF 1</td><td>As introduced</td><td>Protect Reproductive Options Act</td><td></td></tr>',
+    '<tr><td>HF 2</td><td>Eighth Engrossment</td><td>Paid Family and Medical Leave</td><td>All versions</td></tr>',
+    '</table>',
+  ].join('');
+  assert.deepEqual(parseHouseResearchSummaryIndex(html), [
+    {
+      billIdentifier: 'HF1',
+      latestVersion: 'As introduced',
+      subject: 'Protect Reproductive Options Act',
+      hasPriorSummaries: false,
+    },
+    {
+      billIdentifier: 'HF2',
+      latestVersion: 'Eighth Engrossment',
+      subject: 'Paid Family and Medical Leave',
+      hasPriorSummaries: true,
+    },
+  ]);
 });
 
 test('bill info discovery keeps official summary and fiscal-note resources typed', () => {
