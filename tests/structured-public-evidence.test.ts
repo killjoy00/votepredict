@@ -21,6 +21,11 @@ import {
   extractSessionDailyStoryLinks,
   sessionDailyPublishedDay,
 } from '../src/evidence/session-daily-archive.js';
+import {
+  extractHouseResearchSummaryVersionLinks,
+  houseResearchDetailUrl,
+  parseHouseResearchSummaryHeader,
+} from '../src/evidence/house-research-historical.js';
 
 test('SOS legislative flat-file parser produces neutral district contest context', () => {
   const text = [
@@ -244,5 +249,63 @@ test('Session Daily publication date parser preserves day granularity for as-of 
   assert.equal(
     sessionDailyPublishedDay(live2021Shape),
     '2021-01-05',
+  );
+});
+
+
+test('House Research historical detail URL uses session legislature and padded bill', () => {
+  assert.equal(
+    houseResearchDetailUrl('2023-2024', 'HF2'),
+    'https://www.house.mn.gov/hrd/billsumdetail.aspx?bill=HF0002&filter=Detail&ls=93',
+  );
+  assert.equal(
+    houseResearchDetailUrl('2021-2022', 'SF123'),
+    'https://www.house.mn.gov/hrd/billsumdetail.aspx?bill=SF0123&filter=Detail&ls=92',
+  );
+});
+
+test('House Research version discovery keeps only official session PDFs', () => {
+  const html = [
+    '<a href="/hrd/bs/93/hf0002.pdf">Eighth Engrossment</a>',
+    '<a href="/hrd/bs/93/hf0002e7.pdf">Seventh Engrossment</a>',
+    '<a href="/hrd/bs/92/hf0002.pdf">Wrong session</a>',
+    '<a href="https://example.com/hrd/bs/93/hf0002.pdf">Wrong host</a>',
+  ].join('');
+  assert.deepEqual(extractHouseResearchSummaryVersionLinks(html, '2023-2024'), [
+    {
+      label: 'Eighth Engrossment',
+      url: 'https://www.house.mn.gov/hrd/bs/93/hf0002.pdf',
+    },
+    {
+      label: 'Seventh Engrossment',
+      url: 'https://www.house.mn.gov/hrd/bs/93/hf0002e7.pdf',
+    },
+  ]);
+});
+
+test('House Research PDF header parser requires matching bill and embedded date', () => {
+  const text = [
+    'Bill Summary',
+    'H.F. 2',
+    'Eighth Engrossment',
+    'Subject Paid Family and Medical Leave Benefit Insurance Program',
+    'Authors Richardson and Others',
+    'Analyst Marta James',
+    'Date May 3, 2023',
+    'Article 1: Family and Medical Benefits',
+  ].join('\n');
+  assert.deepEqual(parseHouseResearchSummaryHeader(text, 'Eighth Engrossment', 'HF2'), {
+    billIdentifier: 'HF2',
+    versionLabel: 'Eighth Engrossment',
+    subject: 'Paid Family and Medical Leave Benefit Insurance Program',
+    publishedOn: '2023-05-03',
+  });
+  assert.throws(
+    () => parseHouseResearchSummaryHeader(text, 'Eighth Engrossment', 'HF3'),
+    /bill mismatch/i,
+  );
+  assert.throws(
+    () => parseHouseResearchSummaryHeader(text.replace('Date May 3, 2023', ''), 'Eighth Engrossment', 'HF2'),
+    /summary date/i,
   );
 });
