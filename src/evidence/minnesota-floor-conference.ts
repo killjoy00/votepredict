@@ -33,13 +33,15 @@ export function parseHouseJournalConferenceAppointments(text: string): HouseJour
       normalized.slice(start, nextLead).search(/\bThe Speaker announced the appointment\b/i),
     ].filter((value) => value >= 0);
     const stop = stopCandidates.length > 0 ? Math.min(...stopCandidates) : Math.min(nextLead - start, 700);
-    const body = normalized.slice(start, start + stop).trim();
-    const sentence = body.match(/^([^.!?]{1,700})[.!?]/)?.[1] ?? body.slice(0, 700);
-    for (const memberName of sentence
+    const body = normalized.slice(start, start + stop).trim().slice(0, 700);
+    for (const rawName of body
       .split(/\s*;\s*|\s*,\s*(?=[A-Z][A-Za-z'’-]+(?:\s|$))|\s+and\s+/i)
-      .map((value) => value.trim().replace(/[.;]+$/, ''))
+      .map((value) => value.trim())
       .filter(Boolean)) {
-      results.push({ billIdentifier: bill, memberName });
+      const memberName = /,\s*[A-Z]\.$/.test(rawName)
+        ? rawName
+        : rawName.replace(/[.;]+$/, '');
+      if (memberName) results.push({ billIdentifier: bill, memberName });
     }
   }
   const unique = new Map<string, HouseJournalConferenceAppointment>();
