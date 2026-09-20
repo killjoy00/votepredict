@@ -10,8 +10,10 @@ import {
   parseHouseRecordedFloorVotes,
 } from '../src/evidence/minnesota-floor-conference.js';
 import {
+  extractHouseResearchSummaryPdfLinks,
   extractOfficialBillResourceLinks,
   parseHouseResearchSummaryIndex,
+  parseHouseResearchSummaryPdfText,
   summarizeFiscalNoteSearch,
 } from '../src/evidence/minnesota-bill-context.js';
 import {
@@ -270,4 +272,40 @@ test('House Journal conference parser preserves bill and conferee names', () => 
     { billIdentifier: 'SF4062', memberName: 'Lippert' },
     { billIdentifier: 'SF4062', memberName: 'Heintzeman' },
   ]);
+});
+
+
+test('House Research detail parser keeps official summary PDF versions only', () => {
+  const html = [
+    '<a href="/hrd/bs/93/hf0002.pdf">Eighth Engrossment</a>',
+    '<a href="/hrd/bs/93/hf0002e7.pdf">Seventh Engrossment</a>',
+    '<a href="/hrd/bs/92/hf0002.pdf">wrong legislature</a>',
+    '<a href="https://example.com/hrd/bs/93/hf0002.pdf">wrong host</a>',
+  ].join('');
+  assert.deepEqual(
+    extractHouseResearchSummaryPdfLinks(html, 'https://www.house.mn.gov/hrd/billsumdetail.aspx', 93),
+    [
+      { url: 'https://www.house.mn.gov/hrd/bs/93/hf0002.pdf', label: 'Eighth Engrossment' },
+      { url: 'https://www.house.mn.gov/hrd/bs/93/hf0002e7.pdf', label: 'Seventh Engrossment' },
+    ],
+  );
+});
+
+test('House Research summary PDF header parser preserves bill version subject and date', () => {
+  const text = [
+    'Bill Summary',
+    'H.F. 2',
+    'Seventh Engrossment',
+    'Subject Paid Family and Medical Leave Benefit Insurance Program',
+    'Authors Richardson and Others',
+    'Analyst Marta James',
+    'Date April 28, 2023',
+    'Article 1: Family and Medical Benefits',
+  ].join('\n');
+  assert.deepEqual(parseHouseResearchSummaryPdfText(text), {
+    billIdentifier: 'HF2',
+    version: 'Seventh Engrossment',
+    subject: 'Paid Family and Medical Leave Benefit Insurance Program',
+    summaryDate: '2023-04-28',
+  });
 });
