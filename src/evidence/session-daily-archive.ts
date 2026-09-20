@@ -1,4 +1,4 @@
-export const SESSION_DAILY_HISTORICAL_BACKFILL_VERSION = 'session-daily-historical-v2' as const;
+export const SESSION_DAILY_HISTORICAL_BACKFILL_VERSION = 'session-daily-historical-v3' as const;
 
 const MONTHS = new Map([
   ['jan', 0], ['january', 0],
@@ -63,6 +63,11 @@ export function sessionDailyPublishedDay(
     if (!Number.isNaN(parsed.getTime())) return parsed.toISOString().slice(0, 10);
   }
 
+  const publicationWithTime = text.match(
+    /\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sep\.?|Sept\.?|Oct\.?|Nov\.?|Dec\.?)\s+(\d{1,2}),\s+(\d{4})\s+\d{1,2}:\d{2}\s*(?:AM|PM)\b/i,
+  );
+  if (publicationWithTime) return isoDay(publicationWithTime);
+
   let candidateText = text.slice(0, 1000);
   if (pageTitle) {
     const articleTitle = pageTitle.replace(/\s+-\s+Session Daily(?:\s+-\s+Minnesota House of Representatives)?\s*$/i, '').trim();
@@ -74,10 +79,13 @@ export function sessionDailyPublishedDay(
     }
   }
 
-  const match = candidateText.match(
+  const fallback = candidateText.match(
     /\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sep\.?|Sept\.?|Oct\.?|Nov\.?|Dec\.?)\s+(\d{1,2}),\s+(\d{4})\b/i,
   );
-  if (!match) return undefined;
+  return fallback ? isoDay(fallback) : undefined;
+}
+
+function isoDay(match: RegExpMatchArray): string | undefined {
   const month = MONTHS.get(match[1].toLowerCase().replace(/\.$/, ''));
   const day = Number(match[2]);
   const year = Number(match[3]);
