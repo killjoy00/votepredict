@@ -1,25 +1,24 @@
 name: Historical House conferee backfill
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-house-conferee-backfill.yml
-      - scripts/backfill-historical-house-conferees.ts
-      - src/evidence/minnesota-floor-conference.ts
-      - tests/structured-public-evidence.test.ts
   workflow_dispatch:
+  workflow_run:
+    workflows: [Deploy production]
+    types: [completed]
 
 permissions:
   contents: read
 
 concurrency:
-  group: historical-house-conferee-backfill-v1
+  group: historical-house-conferee-backfill-v2
   cancel-in-progress: false
 
 jobs:
   backfill:
-    if: github.ref == 'refs/heads/main'
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -29,6 +28,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
 
       - uses: actions/setup-node@v7
         with:
