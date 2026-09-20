@@ -1,4 +1,4 @@
-export const MN_FLOOR_CONFERENCE_PARSER_VERSION = 'mn-floor-conference-v1' as const;
+export const MN_FLOOR_CONFERENCE_PARSER_VERSION = 'mn-floor-conference-v2' as const;
 
 export interface HouseFloorRollCall {
   billIdentifier: string;
@@ -133,24 +133,56 @@ function names(value: string): string[] {
     .filter(Boolean);
 }
 
-export function parseConferenceCommitteeAppointments(html: string): ConferenceAppointment[] {
-  const rows = tableRows(html);
+function conferenceAppointmentsForRows(
+  billIdentifiers: readonly string[],
+  rows: readonly string[][],
+): ConferenceAppointment[] {
   const results: ConferenceAppointment[] = [];
-  let currentBills: string[] = [];
   for (const cells of rows) {
-    const billIds = cells.flatMap((cell) => [...cell.matchAll(/\b(?:HF|SF)\s*\d+\b/gi)]
-      .map((match) => match[0].toUpperCase().replace(/\s+/g, '')));
-    if (billIds.length > 0) currentBills = [...new Set(billIds)];
     const labelIndex = cells.findIndex((cell) => /conferees?\s+appointed/i.test(cell));
-    if (labelIndex < 0 || currentBills.length === 0) continue;
+    if (labelIndex < 0) continue;
     const houseCell = cells[labelIndex + 1] ?? '';
     const senateCell = cells[labelIndex + 2] ?? '';
     for (const memberName of names(houseCell)) {
-      results.push({ billIdentifiers: currentBills, chamber: 'house', memberName });
+      results.push({ billIdentifiers: [...billIdentifiers], chamber: 'house', memberName });
     }
     for (const memberName of names(senateCell)) {
-      results.push({ billIdentifiers: currentBills, chamber: 'senate', memberName });
+      results.push({ billIdentifiers: [...billIdentifiers], chamber: 'senate', memberName });
     }
   }
   return results;
+}
+
+export function parseConferenceCommitteeAppointments(html: string): ConferenceAppointment[] {
+  const results: ConferenceAppointment[] = [];
+
+  const sectionPattern = /<h[1-4]\b[^>]*>([\s\S]*?\b(?:HF|SF)\s*\d+[\s\S]*?)<\/h[1-4]>([\s\S]*?)(?=<h[1-4]\b[^>]*>[\s\S]*?\b(?:HF|SF)\s*\d+\b|$)/gi;
+  for (const section of html.matchAll(sectionPattern)) {
+    const billIdentifiers = [...section[1].matchAll(/\b(?:HF|SF)\s*\d+\b/gi)]
+      .map((match) => match[0].toUpperCase().replace(/\s+/g, ''));
+    if (billIdentifiers.length === 0) continue;
+    results.push(...conferenceAppointmentsForRows(
+      [...new Set(billIdentifiers)],
+      tableRows(section[2]),
+    ));
+  }
+
+  if (results.length === 0) {
+    let currentBills: string[] = [];
+    for (const cells of tableRows(html)) {
+      const billIds = cells.flatMap((cell) => [...cell.matchAll(/\b(?:HF|SF)\s*\d+\b/gi)]
+        .map((match) => match[0].toUpperCase().replace(/\s+/g, '')));
+      if (billIds.length > 0) currentBills = [...new Set(billIds)];
+      if (currentBills.length > 0) {
+        results.push(...conferenceAppointmentsForRows(currentBills, [cells]));
+      }
+    }
+  }
+
+  const unique = new Map<string, ConferenceAppointment>();
+  for (const row of results) {
+    const key = row.billIdentifiers.join('|') + '|' + row.chamber + '|' + row.memberName;
+    if (!unique.has(key)) unique.set(key, row);
+  }
+  return [...unique.values()];
 }
