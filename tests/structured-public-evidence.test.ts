@@ -61,6 +61,30 @@ test('House recorded floor vote parser captures amendment roll call without infe
   }]);
 });
 
+test('conference committee parser follows live heading-plus-actions layout', () => {
+  const html = [
+    '<h2>HF2438/SF2082</h2>',
+    '<h2>Taxation bill</h2>',
+    '<table>',
+    '<tr><th>Actions</th><th>House</th><th>Senate</th></tr>',
+    '<tr><td>Motion for Conference Committee</td><td>05/16/2026</td><td>05/06/2025</td></tr>',
+    '<tr><td>Conferees Appointed</td><td>Davids; Joy; Gomez; Agbaje</td><td>Rest; Dibble; Hemmingsen-Jaeger; Hauschild; Weber</td></tr>',
+    '</table>',
+    '<h2>HF2442/SF2393</h2>',
+    '<table>',
+    '<tr><td>Conferees Appointed</td><td>Acomb; Kraft; Swedzinski; Sexton</td><td>Frentz; Xiong; Mathews</td></tr>',
+    '</table>',
+  ].join('');
+  const appointments = parseConferenceCommitteeAppointments(html);
+  assert.equal(appointments.length, 16);
+  assert.ok(appointments.some((row) => row.billIdentifiers.join('/') === 'HF2438/SF2082'
+    && row.chamber === 'house'
+    && row.memberName === 'Davids'));
+  assert.ok(appointments.some((row) => row.billIdentifiers.join('/') === 'HF2442/SF2393'
+    && row.chamber === 'senate'
+    && row.memberName === 'Mathews'));
+});
+
 test('conference committee parser resolves House and Senate appointment lists separately', () => {
   const html = [
     '<table>',
