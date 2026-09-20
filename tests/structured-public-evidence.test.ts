@@ -19,8 +19,8 @@ import {
 
 test('SOS legislative flat-file parser produces neutral district contest context', () => {
   const text = [
-    'MN;;;101;State Representative;34B;1;Alpha Candidate;;Y;DFL;12;12;10000;52.50;19000',
-    'MN;;;101;State Representative;34B;2;Beta Candidate;;;R;12;12;9000;47.50;19000',
+    'MN;;;101;State Representative;034B;1;Alpha Candidate;;Y;DFL;12;12;10000;52.50;19000',
+    'MN;;;101;State Representative;034B;2;Beta Candidate;;;R;12;12;9000;47.50;19000',
     'MN;;;201;State Senator;34;1;Gamma Candidate;;;R;24;24;21000;60.00;35000',
     'MN;;;201;State Senator;34;2;Delta Candidate;;;DFL;24;24;14000;40.00;35000',
   ].join('\n');
