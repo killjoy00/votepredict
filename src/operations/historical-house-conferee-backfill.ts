@@ -120,7 +120,7 @@ async function fetchJournal(url: string) {
     try {
       return await fetchPublicPage(url, {
         timeoutMs: 45_000,
-        maxBytes: 3_000_000,
+        maxBytes: 8_000_000,
         userAgent: 'VotePredict/2.0 historical-house-conferee-backfill',
       });
     } catch (error) {
@@ -162,7 +162,7 @@ export async function backfillHistoricalHouseConferees(
     servingProbabilityChange: 'none',
   };
 
-  const results = await mapConcurrent(parsedIndex.links, 6, async (link) => {
+  const results = await mapConcurrent(parsedIndex.links, 3, async (link) => {
     try {
       const page = await fetchJournal(link.url);
       const pageDate = parseHistoricalDeepHouseJournalDate(page.rawContent);
@@ -316,11 +316,17 @@ export async function backfillHistoricalHouseConferees(
   totals.unresolvedExamples = totals.unresolvedExamples.slice(0, 100);
 
   if (totals.dateMismatches > 0 || totals.fetchFailures > 0) {
+    const diagnostics = totals.unresolvedExamples
+      .filter((row) => row.kind === 'date_mismatch' || row.kind === 'fetch_failure')
+      .slice(0, 6)
+      .map((row) => JSON.stringify(row))
+      .join(' | ');
     throw new Error(
       'Historical House conferee source integrity failure: dateMismatches='
       + totals.dateMismatches
       + ', fetchFailures='
-      + totals.fetchFailures,
+      + totals.fetchFailures
+      + (diagnostics ? ', samples=' + diagnostics : ''),
     );
   }
 
