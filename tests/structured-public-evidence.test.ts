@@ -8,6 +8,7 @@ import {
   parseConferenceCommitteeAppointments,
   parseHouseJournalConferenceAppointments,
   parseHouseRecordedFloorVotes,
+  parseSenateJournalConferenceAppointments,
 } from '../src/evidence/minnesota-floor-conference.js';
 import {
   extractOfficialBillResourceLinks,
@@ -292,5 +293,40 @@ test('House Journal conference parser handles live comma lists and page-header n
     { billIdentifier: 'SF975', memberName: 'Keeler' },
     { billIdentifier: 'SF975', memberName: 'Pryor' },
     { billIdentifier: 'SF975', memberName: "O'Neill" },
+  ]);
+});
+
+
+test('Senate Journal conference parser captures multiple bill appointments with Oxford commas', () => {
+  const text = [
+    'APPOINTMENTS',
+    'Senator Miller from the Subcommittee on Conference Committees recommends that the following Senators be and they hereby are appointed as a Conference Committee on:',
+    'S.F. No. 4476: Senators Johnson, Kiffmeyer, and Isaacson.',
+    'H.F. No. 961: Senators Howe, Duckworth, and Dziedzic.',
+    'Senator Miller moved that the foregoing appointments be approved. The motion prevailed.',
+    'CONFERENCE COMMITTEE EXCUSED',
+  ].join(' ');
+  assert.deepEqual(parseSenateJournalConferenceAppointments(text), [
+    { billIdentifier: 'SF4476', memberName: 'Johnson' },
+    { billIdentifier: 'SF4476', memberName: 'Kiffmeyer' },
+    { billIdentifier: 'SF4476', memberName: 'Isaacson' },
+    { billIdentifier: 'HF961', memberName: 'Howe' },
+    { billIdentifier: 'HF961', memberName: 'Duckworth' },
+    { billIdentifier: 'HF961', memberName: 'Dziedzic' },
+  ]);
+});
+
+test('Senate Journal conference parser preserves multiword senator names', () => {
+  const text = [
+    'APPOINTMENTS',
+    'Senator Murphy from the Subcommittee on Conference Committees recommends that the following Senators be and they hereby are appointed as a Conference Committee on:',
+    'H.F. No. 3489: Senators Westlin, Oumou Verbeten, and Abeler.',
+    'Senator Murphy moved that the foregoing appointments be approved. The motion prevailed.',
+    'MEMBERS EXCUSED',
+  ].join(' ');
+  assert.deepEqual(parseSenateJournalConferenceAppointments(text), [
+    { billIdentifier: 'HF3489', memberName: 'Westlin' },
+    { billIdentifier: 'HF3489', memberName: 'Oumou Verbeten' },
+    { billIdentifier: 'HF3489', memberName: 'Abeler' },
   ]);
 });
