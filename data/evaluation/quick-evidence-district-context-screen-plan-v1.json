@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "quick-evidence-district-context-screen-plan-v1",
+  "frozenAt": "2026-09-20T17:05:00Z",
+  "purpose": "Frozen retrospective diagnostic of prior-general-election district context as a non-directional incremental offset to the serving Quick member model.",
+  "scope": {
+    "candidateVersion": "quick-evidence-v1",
+    "servingBaseline": "member-eb-v1.2-decay180",
+    "trainSession": "2021-2022",
+    "validationSession": "2023-2024",
+    "descriptiveSession": "2025-2026"
+  },
+  "source": {
+    "provider": "Minnesota Secretary of State",
+    "dataset": "official prior-general-election legislative district results",
+    "strictlyBeforeTargetVote": true,
+    "candidateIdentityUsed": false,
+    "partyUsed": false,
+    "endorsementsUsed": false,
+    "ideologyUsed": false,
+    "donorIdentityUsed": false
+  },
+  "features": [
+    "topTwoMarginPct",
+    "logTotalVotes",
+    "logCandidateCount",
+    "uncontested"
+  ],
+  "fit": {
+    "model": "ridge logistic offset on serving Quick logit",
+    "lambdas": [0.1, 1, 5, 20, 100],
+    "standardization": "training-session observations only",
+    "selectionMetricOrder": [
+      "validation member Brier",
+      "validation member log loss",
+      "validation chamber mean absolute yes-vote error",
+      "lambda"
+    ],
+    "maximumAbsoluteLogitDelta": 1
+  },
+  "validationGate": {
+    "memberBrierDeltaMax": -0.0005,
+    "memberLogLossDeltaMax": 0,
+    "chamberMeanAbsoluteYesErrorDeltaMax": 0.25,
+    "passageBrierDeltaMax": 0.002
+  },
+  "guardrails": {
+    "descriptiveSessionCannotSelectConfiguration": true,
+    "automaticPromotion": false,
+    "servingProbabilityChange": "none",
+    "quickEvidenceFrozenWeightChange": "none",
+    "productionAction": "none"
+  }
+}
