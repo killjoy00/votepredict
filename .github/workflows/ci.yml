@@ -45,3 +45,64 @@ jobs:
         run: npm run db:migrate
       - run: npm run check
       - run: npm audit --omit=dev --audit-level=high
+
+
+  ops_structured_public_release:
+    name: ops-structured-public-v1-release
+    if: github.event_name == 'pull_request' && github.head_ref == 'ops/structured-public-v1-release-20260920'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RELEASE_SHA: 896f846b455e167ff51de2d1572fbc0122916265
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_PUBLIC_EVIDENCE_BATCH: '24'
+    steps:
+      - name: Checkout exact merged main SHA
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.RELEASE_SHA }}
+
+      - name: Verify release is still current main
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          current="$(git ls-remote origin refs/heads/main | awk '{print $1}')"
+          test "$actual" = "$RELEASE_SHA"
+          test "$current" = "$RELEASE_SHA"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-fund --no-audit
+
+      - name: Read production authentication privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${VERCEL_TOKEN:-}"
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+
+      - name: Deploy exact merged main SHA to Vercel production
+        shell: bash
+        run: |
+          set -euo pipefail
+          current="$(git ls-remote origin refs/heads/main | awk '{print $1}')"
+          test "$current" = "$RELEASE_SHA"
+          npx --yes vercel@59.13.1 deploy --prod --yes --build-env VOTEPREDICT_REQUIRE_MIGRATION_LEDGER=1 --token "$VERCEL_TOKEN"
+
+      - name: Run authenticated production public-evidence refresh
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/run-production-public-evidence-refresh.ts
+
+      - name: Remove temporary credentials
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log"
