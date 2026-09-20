@@ -13,6 +13,7 @@ import {
   type SenateMemberPrimaryDirectories,
 } from './member-primary';
 import { fetchPublicPage, publicPageMentionsPerson, type PublicPage } from './public-http';
+import { runStructuredPublicRefresh } from './structured-public-refresh';
 import {
   discoverMemberNewsBatch,
   fetchNewsLeadPage,
@@ -21,7 +22,7 @@ import {
   type NewsLead,
 } from './public-news';
 
-const PIPELINE_VERSION = 'public-evidence-v3';
+const PIPELINE_VERSION = 'public-evidence-v4';
 const DEFAULT_BATCH = 12;
 const MAX_BATCH = 24;
 const NEWS_PER_MEMBER = 3;
@@ -725,6 +726,14 @@ export async function runPublicEvidenceRefresh(options: PublicEvidenceRefreshOpt
       addStream(news, await refreshNewsGroup(group, now, newsFailures, newsNoLeadMembers, warnings));
     }
 
+    let structuredPublic: Record<string, unknown> | { skipped: true; reason: string };
+    try {
+      structuredPublic = await runStructuredPublicRefresh({ now, billBatchSize: 6 }) as Record<string, unknown>;
+    } catch (error) {
+      structuredPublic = { skipped: true, reason: `refresh failed: ${safeMessage(error)}` };
+      warnings.push(`structured public data: ${safeMessage(error)}`);
+    }
+
     let campaignFinance: Record<string, unknown> | { skipped: true; reason: string };
     if (await campaignFinanceDue(now, options.forceCampaignFinance ?? false)) {
       try {
@@ -770,6 +779,7 @@ export async function runPublicEvidenceRefresh(options: PublicEvidenceRefreshOpt
         newsNoLeadMembers,
       },
       campaignFinance,
+      structuredPublic,
       warnings,
     };
     await finishRun(runId, 'complete', result);

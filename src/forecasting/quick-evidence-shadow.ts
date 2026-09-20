@@ -55,6 +55,18 @@ export type QuickEvidencePriorVoteRow = {
   same_other_no: number;
 };
 
+export type QuickEvidenceStructuredPublicRow = {
+  membership_id: string;
+  floor_amendment_offers: number;
+  floor_amendment_wins: number;
+  conference_conferee: boolean;
+  legislative_speech_items: number;
+  district_election_context_available: boolean;
+  district_election_top_two_margin_pct: number | null;
+  district_election_uncontested: boolean | null;
+  bill_summary_items: number;
+  fiscal_note_items: number;
+};
 export interface QuickEvidenceFeatureVector {
   directSupport: number;
   directOppose: number;
@@ -74,6 +86,15 @@ export interface QuickEvidenceFeatureVector {
   priorSameBillOtherNo: number;
   billAuthor: boolean;
   authorshipAvailable: boolean;
+  floorAmendmentOffers: number;
+  floorAmendmentWins: number;
+  conferenceConferee: boolean;
+  legislativeSpeechItems: number;
+  districtElectionContextAvailable: boolean;
+  districtElectionTopTwoMarginPct: number | null;
+  districtElectionUncontested: boolean | null;
+  billSummaryItems: number;
+  fiscalNoteItems: number;
   candidateEvidenceItems: number;
   conflictingDirectionalEvidence: boolean;
   totalEvidenceItems: number;
@@ -198,6 +219,7 @@ export function buildQuickEvidenceFeatureVector(input: {
   priorVotes?: QuickEvidencePriorVoteRow;
   billAuthor?: boolean;
   authorshipAvailable?: boolean;
+  structuredPublic?: QuickEvidenceStructuredPublicRow;
   capturedAt: string;
 }): QuickEvidenceFeatureVector {
   const rows = input.evidenceRows ?? [];
@@ -228,6 +250,15 @@ export function buildQuickEvidenceFeatureVector(input: {
     priorSameBillOtherNo: count(prior?.same_other_no),
     billAuthor: input.billAuthor === true,
     authorshipAvailable: input.authorshipAvailable === true,
+    floorAmendmentOffers: count(input.structuredPublic?.floor_amendment_offers),
+    floorAmendmentWins: count(input.structuredPublic?.floor_amendment_wins),
+    conferenceConferee: input.structuredPublic?.conference_conferee === true,
+    legislativeSpeechItems: count(input.structuredPublic?.legislative_speech_items),
+    districtElectionContextAvailable: input.structuredPublic?.district_election_context_available === true,
+    districtElectionTopTwoMarginPct: input.structuredPublic?.district_election_top_two_margin_pct ?? null,
+    districtElectionUncontested: input.structuredPublic?.district_election_uncontested ?? null,
+    billSummaryItems: count(input.structuredPublic?.bill_summary_items),
+    fiscalNoteItems: count(input.structuredPublic?.fiscal_note_items),
     candidateEvidenceItems: directional.length,
     conflictingDirectionalEvidence: supportCount > 0 && opposeCount > 0,
     totalEvidenceItems: count(input.availability?.total_items),
@@ -248,6 +279,7 @@ export function buildQuickEvidenceMemberShadow(input: {
   priorVotes?: QuickEvidencePriorVoteRow;
   billAuthor?: boolean;
   authorshipAvailable?: boolean;
+  structuredPublic?: QuickEvidenceStructuredPublicRow;
   capturedAt: string;
   prospective?: boolean;
 }): QuickEvidenceMemberShadow {
@@ -282,6 +314,7 @@ export function buildQuickEvidenceMemberShadow(input: {
       priorVotes: input.priorVotes,
       billAuthor: input.billAuthor,
       authorshipAvailable: input.authorshipAvailable,
+      structuredPublic: input.structuredPublic,
       capturedAt: input.capturedAt,
     }),
   };
@@ -357,6 +390,68 @@ async function loadDirectionalEvidence(
   return byMembership;
 }
 
+async function loadStructuredPublic(
+  membershipIds: readonly string[],
+  billId: string,
+  asOf: string,
+): Promise<Map<string, QuickEvidenceStructuredPublicRow>> {
+  const result = await pool.query<QuickEvidenceStructuredPublicRow>(`
+    WITH eligible AS (
+      SELECT ei.*, sd.fetched_at
+        FROM evidence_items ei
+        JOIN source_documents sd ON sd.id=ei.source_document_id
+       WHERE sd.fetched_at <= $3::timestamptz
+         AND (ei.published_at IS NULL OR ei.published_at <= $3::timestamptz)
+         AND NOT EXISTS (
+           SELECT 1 FROM evidence_relationships er
+            WHERE er.to_evidence_id=ei.id
+              AND er.relation_kind='supersedes'
+         )
+    ), member_bill AS (
+      SELECT membership_id,
+             count(*) FILTER (WHERE metadata->>'subtype'='floor_amendment_offer')::int AS floor_amendment_offers,
+             count(*) FILTER (
+               WHERE metadata->>'subtype'='floor_amendment_offer'
+                 AND metadata->>'rollCallWon'='true'
+             )::int AS floor_amendment_wins,
+             bool_or(metadata->>'subtype'='conference_conferee') AS conference_conferee,
+             count(*) FILTER (WHERE metadata->>'subtype'='legislative_speech')::int AS legislative_speech_items
+        FROM eligible
+       WHERE membership_id = ANY($1::uuid[])
+         AND bill_id=$2::uuid
+       GROUP BY membership_id
+    ), district_latest AS (
+      SELECT DISTINCT ON (membership_id)
+             membership_id,
+             true AS district_election_context_available,
+             NULLIF(metadata->>'topTwoMarginPct','')::double precision AS district_election_top_two_margin_pct,
+             NULLIF(metadata->>'uncontested','')::boolean AS district_election_uncontested
+        FROM eligible
+       WHERE membership_id = ANY($1::uuid[])
+         AND metadata->>'subtype'='district_election_context'
+       ORDER BY membership_id,fetched_at DESC,id DESC
+    ), bill_context AS (
+      SELECT count(*) FILTER (WHERE metadata->>'subtype'='bill_summary')::int AS bill_summary_items,
+             count(*) FILTER (WHERE metadata->>'subtype'='fiscal_note_context')::int AS fiscal_note_items
+        FROM eligible
+       WHERE bill_id=$2::uuid
+    )
+    SELECT target.membership_id::text,
+           COALESCE(mb.floor_amendment_offers,0)::int AS floor_amendment_offers,
+           COALESCE(mb.floor_amendment_wins,0)::int AS floor_amendment_wins,
+           COALESCE(mb.conference_conferee,false) AS conference_conferee,
+           COALESCE(mb.legislative_speech_items,0)::int AS legislative_speech_items,
+           COALESCE(dl.district_election_context_available,false) AS district_election_context_available,
+           dl.district_election_top_two_margin_pct,
+           dl.district_election_uncontested,
+           COALESCE(bc.bill_summary_items,0)::int AS bill_summary_items,
+           COALESCE(bc.fiscal_note_items,0)::int AS fiscal_note_items
+      FROM unnest($1::uuid[]) AS target(membership_id)
+      LEFT JOIN member_bill mb ON mb.membership_id=target.membership_id
+      LEFT JOIN district_latest dl ON dl.membership_id=target.membership_id
+      CROSS JOIN bill_context bc`, [membershipIds, billId, asOf]);
+  return new Map(result.rows.map((row) => [row.membership_id, row]));
+}
 async function loadAuthorship(
   billId: string,
   asOf: string,
@@ -460,11 +555,12 @@ export async function captureQuickEvidenceShadow(
 
   const membershipIds = quick.members.map((member) => member.membershipId);
   const prospectiveEligible = request.subject.sessionSlug === QUICK_EVIDENCE_PROSPECTIVE_SESSION;
-  const [availability, evidence, priorVotes, authorship] = await Promise.all([
+  const [availability, evidence, priorVotes, authorship, structuredPublic] = await Promise.all([
     loadAvailability(membershipIds, quick.asOf),
     loadDirectionalEvidence(membershipIds, request.subject.billId, quick.asOf),
     loadPriorVotes(membershipIds, request.subject.billId, quick.asOf),
     loadAuthorship(request.subject.billId, quick.asOf),
+    loadStructuredPublic(membershipIds, request.subject.billId, quick.asOf),
   ]);
   const shadows = quick.members.map((member) => ({
     membershipId: member.membershipId,
@@ -475,6 +571,7 @@ export async function captureQuickEvidenceShadow(
       priorVotes: priorVotes.get(member.membershipId),
       billAuthor: authorship.membershipIds?.has(member.membershipId) ?? false,
       authorshipAvailable: authorship.available,
+      structuredPublic: structuredPublic.get(member.membershipId),
       capturedAt: quick.asOf,
       prospective: prospectiveEligible,
     }),

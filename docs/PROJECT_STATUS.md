@@ -141,7 +141,12 @@ The production reconciliation repaired the release-integrity drift found during 
 - [x] Record historically reconstructable prior same-bill amendment/motion/procedural/other vote counts in the unified Quick Evidence vector at zero weight, with same-day rows excluded.
 - [x] Add a frozen retrospective structured-legislative component diagnostic using 2021-22 training, 2023-24 validation, and 2025-26 descriptive scoring.
 - [x] Add fail-closed dated sponsorship reconstruction from official Revisor current-author state plus dated author additions/strikes, record `billAuthor` inside the single Quick Evidence vector at zero weight, and freeze an authorship component diagnostic.
-- [ ] Add recurring House/Senate committee-minute ingestion with named-member bill-motion extraction; this is the remaining structured source that requires additional public-data capture.
+- [x] Add official House floor-amendment proposer/disposition capture at zero weight.
+- [x] Add official conference-committee appointment capture at zero weight.
+- [x] Add exact-bill named-member legislative speech/reporting capture at zero weight.
+- [x] Add official Minnesota Secretary of State district election context at zero weight.
+- [x] Add nonpartisan House Research summary and official fiscal-note context at zero weight.
+- [ ] Reconsider recurring House/Senate committee-minute ingestion only after the five structured public-data families above accumulate enough prospective coverage to compare incremental value.
 - [ ] Accumulate enough prospective/as-of forecasts and outcomes to score `quick-evidence-prospective-v1`.
 
 ### P1 — prepare 2027-28

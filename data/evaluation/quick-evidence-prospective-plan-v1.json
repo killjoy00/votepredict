@@ -42,7 +42,12 @@
       "prior same-bill amendment YEA/NAY counts",
       "prior same-bill motion/procedural YEA/NAY counts",
       "prior same-bill other recorded YEA/NAY counts",
-      "bill authorship reconstructed as-of the forecast date from official Revisor current-author state plus dated author additions/strikes"
+      "bill authorship reconstructed as-of the forecast date from official Revisor current-author state plus dated author additions/strikes",
+      "official floor-amendment proposer and disposition context",
+      "official conference-committee appointment context",
+      "official legislative speech/reporting mentions tied to an exact bill",
+      "official prior general-election district contest context",
+      "nonpartisan House Research summary availability and official fiscal-note context"
     ],
     "forbiddenAutomaticInferences": [
       "party implies stance",
@@ -84,7 +89,16 @@
       "memberPrimaryItems",
       "newsItems",
       "newestFetchedAt",
-      "newestEvidenceAgeDays"
+      "newestEvidenceAgeDays",
+      "floorAmendmentOffers",
+      "floorAmendmentWins",
+      "conferenceConferee",
+      "legislativeSpeechItems",
+      "districtElectionContextAvailable",
+      "districtElectionTopTwoMarginPct",
+      "districtElectionUncontested",
+      "billSummaryItems",
+      "fiscalNoteItems"
     ],
     "storedOutputs": [
       "baseProbability",
@@ -142,5 +156,18 @@
     },
     "servingProbabilityChange": "none",
     "activeWeightChange": "none"
+  },
+  "structuredPublicAmendment": {
+    "reason": "Before any 2027-2028 Quick revision existed, add five factual structured public-data families to the single Quick Evidence feature vector at zero weight: floor amendment proposer/disposition context, conference appointments, official legislative speech/reporting mentions, district election context, and bill-summary/fiscal-note context.",
+    "verifiedPreActivationState": {
+      "quickRevisions": 0,
+      "quickEvidenceCapturedRevisions": 0,
+      "verifiedOn": "2026-09-19"
+    },
+    "sourcePolicy": "official Minnesota legislative, Legislative Reference Library, Secretary of State, House Research, and Legislative Budget Office sources only; all source observations require fetched_at no later than forecast as-of, and published_at no later than as-of when present",
+    "interpretationBoundary": "amendment outcomes, conference appointments, electoral margins, fiscal context, and generic speech mentions do not by themselves establish final-passage support or opposition",
+    "servingProbabilityChange": "none",
+    "activeWeightChange": "none",
+    "automaticPromotion": false
   }
 }
