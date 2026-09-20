@@ -271,3 +271,26 @@ test('House Journal conference parser preserves bill and conferee names', () => 
     { billIdentifier: 'SF4062', memberName: 'Heintzeman' },
   ]);
 });
+
+
+test('House Journal conference parser handles live comma lists and page-header noise', () => {
+  const text = [
+    'The Speaker announced the appointment of the following members of the House to a Conference Committee on H. F. No. 4366:',
+    '\uFFFD\uFFFD\uFFFD Sundin, Hausman, Howard, Vang and Theis.',
+    'Journal of the House - 101st Day - Tuesday, May 3, 2022 - Top of Page 12685',
+    'The Speaker announced the appointment of the following members of the House to a Conference Committee on S. F. No. 975:',
+    '\uFFFD\uFFFD Bernardy, Christensen, Keeler, Pryor and O\'Neill. There being no objection, the order of business reverted to Motions and Resolutions.',
+  ].join(' ');
+  assert.deepEqual(parseHouseJournalConferenceAppointments(text), [
+    { billIdentifier: 'HF4366', memberName: 'Sundin' },
+    { billIdentifier: 'HF4366', memberName: 'Hausman' },
+    { billIdentifier: 'HF4366', memberName: 'Howard' },
+    { billIdentifier: 'HF4366', memberName: 'Vang' },
+    { billIdentifier: 'HF4366', memberName: 'Theis' },
+    { billIdentifier: 'SF975', memberName: 'Bernardy' },
+    { billIdentifier: 'SF975', memberName: 'Christensen' },
+    { billIdentifier: 'SF975', memberName: 'Keeler' },
+    { billIdentifier: 'SF975', memberName: 'Pryor' },
+    { billIdentifier: 'SF975', memberName: "O'Neill" },
+  ]);
+});
