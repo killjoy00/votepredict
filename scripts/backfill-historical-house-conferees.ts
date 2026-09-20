@@ -38,6 +38,23 @@ async function main() {
   if (!secret) throw new Error('Production CRON_SECRET is unavailable');
   console.log(`::add-mask::${secret.replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A')}`);
 
+  const initialVerificationResponse = await post(secret, '?verify=1');
+  const initialVerificationBody = await initialVerificationResponse.text();
+  if (!initialVerificationResponse.ok) {
+    throw new Error(`Historical House conferee initial verification HTTP ${initialVerificationResponse.status}: ${safeMessage(initialVerificationBody).slice(0, 1800)}`);
+  }
+  const initialVerification = JSON.parse(initialVerificationBody);
+  const initialCoverage = Array.isArray(initialVerification.coverage) ? initialVerification.coverage : [];
+  const alreadyComplete = SESSIONS.every((session) =>
+    initialCoverage.some((row: { session?: string; evidenceRows?: number }) =>
+      row.session === session && Number(row.evidenceRows ?? 0) >= 20,
+    ),
+  );
+  if (alreadyComplete) {
+    console.log(JSON.stringify({ historicalHouseConfereeBackfill: { skipped: true, verification: initialVerification } }));
+    return;
+  }
+
   const results = [];
   for (const session of SESSIONS) {
     const response = await post(secret, '?session=' + encodeURIComponent(session));
