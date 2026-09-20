@@ -433,7 +433,6 @@ async function refreshFloorAndSummary(
   bill: BillRow,
   roster: readonly AuthorshipRosterMember[],
   floor: StreamCounts,
-  context: StreamCounts,
 ): Promise<void> {
   if (!bill.identifier.startsWith('HF')) return;
   const infoUrl = 'https://www.house.mn.gov/bills/Info/' + bill.identifier;
@@ -607,7 +606,7 @@ export async function runStructuredPublicRefresh(options: StructuredPublicRefres
 
     for (const bill of selection.rows) {
       try {
-        await refreshFloorAndSummary(bill, roster, floor, billContext);
+        await refreshFloorAndSummary(bill, roster, floor);
       } catch (error) {
         floor.failures += 1;
         warnings.push('floor/summary ' + bill.identifier + ': ' + safeMessage(error));
