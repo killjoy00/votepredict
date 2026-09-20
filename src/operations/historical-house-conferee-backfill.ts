@@ -337,29 +337,36 @@ export async function verifyHistoricalHouseConferees() {
   const result = await pool.query<{
     session_slug: SupportedSession;
     evidence_rows: string;
+    assignment_series: string;
     members: string;
     bills: string;
     source_pages: string;
   }>(`
     SELECT s.slug AS session_slug,
            count(ei.id)::text AS evidence_rows,
+           count(DISTINCT ei.metadata->>'evidenceSeriesKey')::text AS assignment_series,
            count(DISTINCT ei.membership_id)::text AS members,
            count(DISTINCT ei.bill_id)::text AS bills,
            count(DISTINCT ei.source_document_id)::text AS source_pages
       FROM evidence_items ei
-      JOIN source_documents sd ON sd.id=ei.source_document_id
-      JOIN legislative_sessions s ON s.id=sd.session_id
-     WHERE sd.source_kind='house_journal_conference_appointment'
+      JOIN memberships m ON m.id=ei.membership_id
+      JOIN legislative_sessions s ON s.id=m.session_id
+      JOIN jurisdictions j ON j.id=s.jurisdiction_id
+     WHERE j.slug='us-mn'
+       AND ei.metadata->>'subtype'='conference_conferee'
        AND ei.metadata->>'historicalBackfill'='true'
+       AND ei.extraction_version=$1
        AND s.slug IN ('2021-2022','2023-2024')
      GROUP BY s.slug,s.starts_on
      ORDER BY s.starts_on
-  `);
+  `, [MN_FLOOR_CONFERENCE_PARSER_VERSION]);
   return {
     version: HISTORICAL_HOUSE_CONFEREE_BACKFILL_VERSION,
+    parserVersion: MN_FLOOR_CONFERENCE_PARSER_VERSION,
     coverage: result.rows.map((row) => ({
       session: row.session_slug,
       evidenceRows: Number(row.evidence_rows),
+      assignmentSeries: Number(row.assignment_series),
       members: Number(row.members),
       bills: Number(row.bills),
       sourcePages: Number(row.source_pages),
