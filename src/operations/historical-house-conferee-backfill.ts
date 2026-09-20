@@ -120,7 +120,7 @@ async function fetchJournal(url: string) {
     try {
       return await fetchPublicPage(url, {
         timeoutMs: 45_000,
-        maxBytes: 8_000_000,
+        maxBytes: 16_000_000,
         userAgent: 'VotePredict/2.0 historical-house-conferee-backfill',
       });
     } catch (error) {
@@ -162,7 +162,7 @@ export async function backfillHistoricalHouseConferees(
     servingProbabilityChange: 'none',
   };
 
-  const results = await mapConcurrent(parsedIndex.links, 3, async (link) => {
+  const results = await mapConcurrent(parsedIndex.links, 2, async (link) => {
     try {
       const page = await fetchJournal(link.url);
       const pageDate = parseHistoricalDeepHouseJournalDate(page.rawContent);
