@@ -6,6 +6,7 @@ import {
 } from '../src/evidence/minnesota-election-context.js';
 import {
   parseConferenceCommitteeAppointments,
+  parseHouseJournalConferenceAppointments,
   parseHouseRecordedFloorVotes,
 } from '../src/evidence/minnesota-floor-conference.js';
 import {
@@ -245,4 +246,28 @@ test('Session Daily publication date parser preserves day granularity for as-of 
     sessionDailyPublishedDay(live2021Shape),
     '2021-01-05',
   );
+});
+
+
+test('House Journal conference parser preserves bill and conferee names', () => {
+  const text = [
+    'ANNOUNCEMENTS BY THE SPEAKER',
+    'The Speaker announced the appointment of the following members of the House to a Conference Committee on H. F. No. 4293:',
+    'Nelson, M.; Hornstein; Murphy; Koegel and Nash.',
+    'The Speaker announced the appointment of the following members of the House to a Conference Committee on S. F. No. 4062:',
+    'Hansen, R.; Wazlawik; Morrison; Lippert and Heintzeman.',
+    'MOTIONS AND RESOLUTIONS',
+  ].join(' ');
+  assert.deepEqual(parseHouseJournalConferenceAppointments(text), [
+    { billIdentifier: 'HF4293', memberName: 'Nelson, M.' },
+    { billIdentifier: 'HF4293', memberName: 'Hornstein' },
+    { billIdentifier: 'HF4293', memberName: 'Murphy' },
+    { billIdentifier: 'HF4293', memberName: 'Koegel' },
+    { billIdentifier: 'HF4293', memberName: 'Nash' },
+    { billIdentifier: 'SF4062', memberName: 'Hansen, R.' },
+    { billIdentifier: 'SF4062', memberName: 'Wazlawik' },
+    { billIdentifier: 'SF4062', memberName: 'Morrison' },
+    { billIdentifier: 'SF4062', memberName: 'Lippert' },
+    { billIdentifier: 'SF4062', memberName: 'Heintzeman' },
+  ]);
 });
