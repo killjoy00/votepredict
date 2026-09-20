@@ -41,6 +41,26 @@ test('SOS legislative flat-file parser produces neutral district contest context
   });
 });
 
+test('House recorded floor vote parser handles live combined amendment and proposer cell', () => {
+  const html = [
+    '<table>',
+    '<tr><th>Bill #</th><th>Description</th><th>Amendment</th><th>Yeas</th><th>Nays</th><th>J pg.</th><th>Date</th></tr>',
+    '<tr><td>HF2438</td><td>H.F. NO. 2438 CALENDAR FOR THE DAY Amendment</td><td>H2438A22 Kraft</td><td>67</td><td>67</td><td>2660</td><td>04/28/2025</td></tr>',
+    '</table>',
+  ].join('');
+  assert.deepEqual(parseHouseRecordedFloorVotes(html, 'HF2438'), [{
+    billIdentifier: 'HF2438',
+    description: 'H.F. NO. 2438 CALENDAR FOR THE DAY Amendment',
+    amendmentRef: 'H2438A22',
+    proposerName: 'Kraft',
+    yeas: 67,
+    nays: 67,
+    journalPage: '2660',
+    occurredOn: '2025-04-28',
+    rollCallWon: false,
+  }]);
+});
+
 test('House recorded floor vote parser captures amendment roll call without inferring passage stance', () => {
   const html = [
     '<table>',
