@@ -114,7 +114,26 @@ async function loadRoster(sessionId: string): Promise<AuthorshipRosterMember[]> 
 
 async function loadAllBills(session: CurrentSession): Promise<BillRow[]> {
   const year = Number(session.starts_on.slice(0, 4));
-  const sql = "SELECT id::text AS bill_id,identifier FROM bills WHERE session_id=$1::uuid AND identifier ~ '^(HF|SF)[0-9]+
+  const sql = "SELECT id::text AS bill_id,identifier FROM bills WHERE session_id=$1::uuid AND identifier ~ '^(HF|SF)[0-9]+$' ORDER BY COALESCE(latest_action_at,introduced_at,created_at) DESC,identifier";
+  const rows = (await pool.query<{ bill_id: string; identifier: string }>(sql, [session.id])).rows;
+  return rows.map((row) => ({
+    ...row,
+    session_slug: session.slug,
+    session_start_year: year,
+  }));
+}
+
+async function loadActivityBills(session: CurrentSession): Promise<BillRow[]> {
+  const year = Number(session.starts_on.slice(0, 4));
+  const sql = "SELECT b.id::text AS bill_id,b.identifier FROM bills b WHERE b.session_id=$1::uuid AND b.identifier ~ '^(HF|SF)[0-9]+$' AND (EXISTS (SELECT 1 FROM vote_events ve WHERE ve.bill_id=b.id) OR b.latest_action_at >= current_date - interval '45 days') ORDER BY COALESCE((SELECT max(ve.occurred_on)::timestamptz FROM vote_events ve WHERE ve.bill_id=b.id),b.latest_action_at,b.introduced_at,b.created_at) DESC,b.identifier";
+  const rows = (await pool.query<{ bill_id: string; identifier: string }>(sql, [session.id])).rows;
+  return rows.map((row) => ({
+    ...row,
+    session_slug: session.slug,
+    session_start_year: year,
+  }));
+}
+
 async function billBatch(allBills: readonly BillRow[], limit: number) {
   if (allBills.length === 0) return { rows: [] as BillRow[], offset: 0, nextOffset: 0, total: 0 };
   const sql = "SELECT CASE WHEN metadata->>'billRotationNextOffset' ~ '^[0-9]+$' THEN (metadata->>'billRotationNextOffset')::int ELSE 0 END AS next_offset FROM ingestion_runs WHERE source_system='structured-public-data' AND status='complete' ORDER BY finished_at DESC NULLS LAST LIMIT 1";
@@ -519,6 +538,10 @@ async function refreshFiscalNotes(bill: BillRow, counts: StreamCounts): Promise<
     maxBytes: 2_000_000,
     userAgent: 'VotePredict/2.0 structured-public-data',
   });
+  const fiscalHost = new URL(page.canonicalUrl).hostname.toLowerCase();
+  if (!(fiscalHost === 'mn.gov' || fiscalHost.endsWith('.mn.gov'))) {
+    throw new Error('Fiscal-note source redirected away from mn.gov to ' + fiscalHost);
+  }
   const fiscalHost = new URL(page.canonicalUrl).hostname.toLowerCase();
   if (!(fiscalHost === 'mn.gov' || fiscalHost.endsWith('.mn.gov'))) {
     throw new Error('Fiscal-note source redirected away from mn.gov to ' + fiscalHost);
@@ -1110,12 +1133,13 @@ export async function runStructuredPublicRefresh(options: StructuredPublicRefres
   const now = options.now ?? new Date();
   const billBatchSize = Math.min(MAX_BILL_BATCH, Math.max(1, Math.trunc(options.billBatchSize ?? DEFAULT_BILL_BATCH)));
   const session = await loadCurrentSession();
-  const [members, roster, allBills] = await Promise.all([
+  const [members, roster, allBills, activityBills] = await Promise.all([
     loadCurrentMembers(session.id),
     loadRoster(session.id),
     loadAllBills(session),
+    loadActivityBills(session),
   ]);
-  const selection = await billBatch(allBills, billBatchSize);
+  const selection = await billBatch(activityBills, billBatchSize);
   const runId = await startRun('session:' + session.slug + ':bill-batch:' + billBatchSize);
   const election = emptyCounts();
   const conference = emptyCounts();
@@ -1176,7 +1200,8 @@ export async function runStructuredPublicRefresh(options: StructuredPublicRefres
       session: session.slug,
       billRotationOffset: selection.offset,
       billRotationNextOffset: selection.nextOffset,
-      totalBills: selection.total,
+      totalBills: allBills.length,
+      activityBills: selection.total,
       billBatch: selection.rows.map((bill) => bill.identifier),
       election,
       conference,
