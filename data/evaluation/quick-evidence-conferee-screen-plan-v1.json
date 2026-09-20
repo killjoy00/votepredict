@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "quick-evidence-conferee-screen-plan-v1",
+  "frozenAt": "2026-09-20T23:40:00Z",
+  "purpose": "Evaluate official dated Minnesota legislative conference-committee appointments as a zero-weight component of the single quick-evidence-v1 candidate.",
+  "scope": {
+    "candidateVersion": "quick-evidence-v1",
+    "servingBaseline": "member-eb-v1.2-decay180",
+    "trainSession": "2021-2022",
+    "validationSession": "2023-2024",
+    "descriptiveSession": "2025-2026"
+  },
+  "source": {
+    "system": "Official Minnesota House and Senate Journals",
+    "subtype": "conference_conferee",
+    "authorityPolicy": "dated chamber journal appointment is authoritative; Legislature conference-committee activity pages are diagnostic cross-checks only"
+  },
+  "asOfPolicy": {
+    "match": "exact bill ID plus membership ID",
+    "appointmentTiming": "earliest official appointment date for that bill/member assignment",
+    "sameDayExcluded": true,
+    "reason": "journal appointment evidence is date-granular and does not prove ordering within a day"
+  },
+  "feature": {
+    "name": "conferenceConferee",
+    "type": "binary",
+    "activeWeightBeforeTest": 0,
+    "automaticDirectionalEvidence": false
+  },
+  "coverageGate": {
+    "minimumTrainingConfereeOutcomes": 50,
+    "minimumValidationConfereeOutcomes": 50,
+    "observedBeforeFreeze": {
+      "trainingConfereeOutcomes": 97,
+      "trainingEventsWithConfereeObservations": 23,
+      "validationConfereeOutcomes": 314,
+      "validationEventsWithConfereeObservations": 85,
+      "descriptiveConfereeOutcomes": 0,
+      "descriptiveEventsWithConfereeObservations": 0
+    }
+  },
+  "fit": {
+    "model": "single ridge logistic offset on serving Quick logit",
+    "trainingRows": "feature-positive 2021-2022 member outcomes only",
+    "lambdas": [0.1, 1, 5, 20, 100],
+    "maximumAbsoluteLogitDelta": 1,
+    "selectionMetricOrder": [
+      "validation member Brier",
+      "validation member log loss",
+      "validation chamber mean absolute yes-vote error",
+      "lambda"
+    ],
+    "validationOnlyForSelection": true
+  },
+  "diagnosticThresholds": {
+    "validationMemberBrierDeltaAtMost": -0.0005,
+    "validationMemberLogLossDeltaAtMost": 0,
+    "validationChamberYesMaeDeltaAtMost": 0.25,
+    "validationPassageBrierDeltaAtMost": 0.002,
+    "descriptiveStabilityMinimumPositiveOutcomes": 50,
+    "descriptiveMemberBrierDeltaAtMostWhenAvailable": 0.0005
+  },
+  "descriptivePolicy": {
+    "requiredForSelection": false,
+    "requiredForHypothesisSignal": false,
+    "emptySliceInterpretation": "No 2025-2026 conferee-positive replay observations are available. The descriptive slice cannot support a stability claim and must not strengthen the diagnostic."
+  },
+  "interpretation": {
+    "confereeStatusIsNotVoteGuarantee": true,
+    "positiveSignalMeaning": "may justify continued prospective measurement inside quick-evidence-v1 only",
+    "productionAction": "none",
+    "servingProbabilityChange": "none",
+    "quickEvidenceFrozenWeightChange": "none",
+    "automaticPromotion": false
+  }
+}

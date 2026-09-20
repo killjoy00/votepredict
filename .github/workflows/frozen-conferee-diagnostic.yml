@@ -1,0 +1,88 @@
+name: Frozen conferee diagnostic
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frozen-conferee-diagnostic-v1
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_QUICK_EVIDENCE_CONFEREE_OUTPUT: artifacts/quick-evidence-conferee-screen-v1.json
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Verify frozen conferee diagnostic boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          plan='data/evaluation/quick-evidence-conferee-screen-plan-v1.json'
+          test "$(jq -r '.schemaVersion' "$plan")" = 'quick-evidence-conferee-screen-plan-v1'
+          test "$(jq -r '.scope.candidateVersion' "$plan")" = 'quick-evidence-v1'
+          test "$(jq -r '.asOfPolicy.sameDayExcluded' "$plan")" = 'true'
+          test "$(jq -r '.feature.activeWeightBeforeTest' "$plan")" = '0'
+          test "$(jq -r '.fit.validationOnlyForSelection' "$plan")" = 'true'
+          test "$(jq -r '.descriptivePolicy.requiredForSelection' "$plan")" = 'false'
+          test "$(jq -r '.descriptivePolicy.requiredForHypothesisSignal' "$plan")" = 'false'
+          test "$(jq -r '.interpretation.productionAction' "$plan")" = 'none'
+          test "$(jq -r '.interpretation.automaticPromotion' "$plan")" = 'false'
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-fund --no-audit
+
+      - name: Read production authentication privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${VERCEL_TOKEN:-}"
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+
+      - name: Run frozen Quick Evidence conferee diagnostic
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/evaluate-quick-evidence-conferee-screen.ts
+
+      - name: Verify diagnostic-only conferee artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$VOTEPREDICT_QUICK_EVIDENCE_CONFEREE_OUTPUT"
+          test "$(jq -r '.schemaVersion' "$file")" = 'quick-evidence-conferee-screen-v1'
+          test "$(jq -r '.metadata.quickEvidenceCandidate' "$file")" = 'quick-evidence-v1'
+          test "$(jq -r '.metadata.productionAction' "$file")" = 'none'
+          test "$(jq -r '.conclusion.productionAction' "$file")" = 'none'
+          test "$(jq -r '.conclusion.servingQuickChanged' "$file")" = 'false'
+          test "$(jq -r '.conclusion.quickEvidenceWeightChanged' "$file")" = 'false'
+          test "$(jq -r '.descriptiveStability.available' "$file")" = 'false'
+          jq -e '.coverage.training.confereeMemberOutcomes >= 50' "$file" >/dev/null
+          jq -e '.coverage.validation.confereeMemberOutcomes >= 50' "$file" >/dev/null
+
+      - name: Upload immutable conferee screen
+        uses: actions/upload-artifact@v4
+        with:
+          name: quick-evidence-conferee-screen-v1-${{ github.sha }}
+          path: artifacts/quick-evidence-conferee-screen-v1.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Remove temporary credentials
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log"
