@@ -14,7 +14,7 @@ import {
   MN_FLOOR_CONFERENCE_PARSER_VERSION,
 } from './minnesota-floor-conference';
 import {
-  extractOfficialBillResourceLinks,
+  parseHouseResearchSummaryIndex,
   summarizeFiscalNoteSearch,
   MN_BILL_CONTEXT_PARSER_VERSION,
 } from './minnesota-bill-context';
@@ -369,6 +369,66 @@ async function refreshSpeech(
   }
 }
 
+async function refreshSummaryIndex(
+  session: CurrentSession,
+  bills: readonly BillRow[],
+  counts: StreamCounts,
+): Promise<void> {
+  const startYear = Number(session.starts_on.slice(0, 4));
+  const legislature = Math.round((startYear - 1837) / 2);
+  const url = 'https://www.house.mn.gov/hrd/billsum.aspx?ls=' + legislature;
+  counts.attempted += 1;
+  const page = await fetchPublicPage(url, {
+    timeoutMs: 15_000,
+    maxBytes: 3_000_000,
+    userAgent: 'VotePredict/2.0 structured-public-data',
+  });
+  const summaries = parseHouseResearchSummaryIndex(page.rawContent);
+  const byBill = new Map(summaries.map((row) => [row.billIdentifier, row]));
+  const drafts: DurableEvidenceDraft[] = [];
+  for (const bill of bills) {
+    const summary = byBill.get(bill.identifier.toUpperCase());
+    if (!summary) continue;
+    drafts.push({
+      target: { billId: bill.bill_id },
+      kind: 'context',
+      stance: 'neutral',
+      claim: 'Nonpartisan House Research lists a bill summary for ' + bill.identifier + ' at version ' + summary.latestVersion + '.',
+      sourceQuality: 'official',
+      relevance: 'high',
+      freshness: 'current',
+      extractionMethod: 'deterministic-house-research-summary-index',
+      extractionVersion: MN_BILL_CONTEXT_PARSER_VERSION,
+      confidence: 1,
+      metadata: {
+        contextType: 'structured_public',
+        subtype: 'bill_summary',
+        latestVersion: summary.latestVersion,
+        subject: summary.subject,
+        hasPriorSummaries: summary.hasPriorSummaries,
+        contextOnly: true,
+        mechanicallyActionable: false,
+        quickEvidenceStructured: true,
+        evidenceSeriesKey: 'bill_summary:bill:' + bill.bill_id,
+      },
+    });
+  }
+  addPersisted(counts, await persistDurableEvidence({
+    sourceKind: 'house_research_bill_summary_index',
+    sourceUrl: page.canonicalUrl,
+    contentSha256: page.contentSha256,
+    sessionSlug: session.slug,
+    fetchedAt: page.fetchedAt,
+    httpStatus: page.httpStatus,
+    metadata: {
+      pipelineVersion: STRUCTURED_PUBLIC_REFRESH_VERSION,
+      parserVersion: MN_BILL_CONTEXT_PARSER_VERSION,
+      legislature,
+      summaryRows: summaries.length,
+    },
+  }, drafts));
+}
+
 async function refreshFloorAndSummary(
   bill: BillRow,
   roster: readonly AuthorshipRosterMember[],
@@ -444,57 +504,6 @@ async function refreshFloorAndSummary(
     }, drafts));
   }
 
-  const summaryLinks = extractOfficialBillResourceLinks(info.rawContent, info.canonicalUrl)
-    .filter((row) => row.kind === 'house_research_summary')
-    .slice(0, 1);
-  for (const resource of summaryLinks) {
-    context.attempted += 1;
-    try {
-      const page = await fetchPublicPage(resource.url, {
-        timeoutMs: 15_000,
-        maxBytes: 2_000_000,
-        userAgent: 'VotePredict/2.0 structured-public-data',
-      });
-      addPersisted(context, await persistDurableEvidence({
-        sourceKind: 'house_research_bill_summary',
-        sourceUrl: page.canonicalUrl,
-        contentSha256: page.contentSha256,
-        sessionSlug: bill.session_slug,
-        chamberSlug: 'house',
-        fetchedAt: page.fetchedAt,
-        httpStatus: page.httpStatus,
-        metadata: {
-          pipelineVersion: STRUCTURED_PUBLIC_REFRESH_VERSION,
-          parserVersion: MN_BILL_CONTEXT_PARSER_VERSION,
-          billIdentifier: bill.identifier,
-          title: page.title,
-        },
-      }, [{
-        target: { billId: bill.bill_id },
-        kind: 'context',
-        stance: 'neutral',
-        claim: 'Nonpartisan House Research bill summary is available for ' + bill.identifier + '.',
-        excerpt: page.excerpt,
-        publishedAt: page.publishedAt,
-        sourceQuality: 'official',
-        relevance: 'high',
-        freshness: 'current',
-        extractionMethod: 'official-house-research-summary-capture',
-        extractionVersion: MN_BILL_CONTEXT_PARSER_VERSION,
-        confidence: 1,
-        metadata: {
-          contextType: 'structured_public',
-          subtype: 'bill_summary',
-          contextOnly: true,
-          mechanicallyActionable: false,
-          quickEvidenceStructured: true,
-          evidenceSeriesKey: 'bill_summary:bill:' + bill.bill_id,
-        },
-      }]));
-    } catch {
-      context.failures += 1;
-    }
-  }
 }
 
 async function refreshFiscalNotes(bill: BillRow, counts: StreamCounts): Promise<void> {
@@ -588,6 +597,12 @@ export async function runStructuredPublicRefresh(options: StructuredPublicRefres
     } catch (error) {
       speech.failures += 1;
       warnings.push('legislative speech: ' + safeMessage(error));
+    }
+    try {
+      await refreshSummaryIndex(session, selection.rows, billContext);
+    } catch (error) {
+      billContext.failures += 1;
+      warnings.push('House Research summaries: ' + safeMessage(error));
     }
 
     for (const bill of selection.rows) {
