@@ -40,13 +40,22 @@ interface ExcludedProcessBill extends ProcessBackfillBillRow {
   failureMessage: string;
 }
 
-type ProcessBackfillFetchResult = FetchedProcessBill | ExcludedProcessBill;
+interface DeferredProcessBill extends ProcessBackfillBillRow {
+  status: 'deferred';
+  fetchedAt: string;
+  attemptedSourceUrls: string[];
+  failureMessage: string;
+}
+
+type ProcessBackfillFetchResult = FetchedProcessBill | ExcludedProcessBill | DeferredProcessBill;
 
 export interface RevisorProcessBackfillBatchResult {
   requested: number;
   processed: number;
   excluded: number;
   excludedIdentifiers: string[];
+  deferred: number;
+  deferredIdentifiers: string[];
   classifiedActions: number;
   stageEvents: number;
   done: boolean;
@@ -85,6 +94,11 @@ async function selectBatch(limit: number): Promise<ProcessBackfillBillRow[]> {
        AND b.identifier ~ '^(HF|SF)[0-9]+$'
        AND b.metadata #>> '{revisorProcessHistory,parserVersion}' IS DISTINCT FROM $1
        AND b.metadata #>> '{revisorProcessHistory,exclusionVersion}' IS DISTINCT FROM $1
+       AND (
+         b.metadata #>> '{revisorProcessHistory,deferredAt}' IS NULL
+         OR NULLIF(b.metadata #>> '{revisorProcessHistory,deferredAt}', '')::timestamptz
+              < now() - interval '6 hours'
+       )
      ORDER BY s.starts_on, b.identifier
      LIMIT $2`, [REVISOR_PROCESS_PARSER_VERSION, limit]);
   return result.rows;
@@ -111,6 +125,7 @@ async function fetchBill(row: ProcessBackfillBillRow): Promise<ProcessBackfillFe
   let lastPermanentFailure:
     | { reason: RevisorProcessSourceExclusionReason; message: string }
     | undefined;
+  let lastTransientFailure: string | undefined;
 
   for (const sourceUrl of attemptedSourceUrls) {
     try {
@@ -127,14 +142,30 @@ async function fetchBill(row: ProcessBackfillBillRow): Promise<ProcessBackfillFe
     } catch (error) {
       const policy = classifyRevisorProcessSourceFailure(error);
       if (!policy.permanent || !policy.reason) {
-        throw new Error(`${row.identifier}: ${policy.message}`);
+        lastTransientFailure = policy.message;
+        continue;
       }
       lastPermanentFailure = { reason: policy.reason, message: policy.message };
     }
   }
 
+  if (lastTransientFailure) {
+    return {
+      ...row,
+      status: 'deferred',
+      fetchedAt,
+      attemptedSourceUrls,
+      failureMessage: lastTransientFailure,
+    };
+  }
   if (!lastPermanentFailure) {
-    throw new Error(`${row.identifier}: no Revisor status URL candidates were available`);
+    return {
+      ...row,
+      status: 'deferred',
+      fetchedAt,
+      attemptedSourceUrls,
+      failureMessage: 'No Revisor status URL candidates were available',
+    };
   }
   return {
     ...row,
@@ -332,6 +363,32 @@ async function persistExclusion(row: ExcludedProcessBill): Promise<void> {
   ]);
 }
 
+async function persistDeferral(row: DeferredProcessBill): Promise<void> {
+  await pool.query(`
+    UPDATE bills
+       SET metadata = metadata || jsonb_build_object(
+         'revisorProcessHistory',
+         COALESCE(metadata->'revisorProcessHistory','{}'::jsonb)
+         || jsonb_build_object(
+           'status', 'deferred',
+           'deferredAt', $2::timestamptz,
+           'deferredAttempts',
+             COALESCE(NULLIF(metadata #>> '{revisorProcessHistory,deferredAttempts}', '')::integer, 0) + 1,
+           'attemptedSourceUrls', $3::jsonb,
+           'failureMessage', $4::text,
+           'currentAuthorsModelEligible', false,
+           'currentCompanionModelEligible', false
+         )
+       ),
+           updated_at = now()
+     WHERE id = $1::uuid`, [
+    row.bill_id,
+    row.fetchedAt,
+    JSON.stringify(row.attemptedSourceUrls),
+    row.failureMessage,
+  ]);
+}
+
 export async function backfillRevisorProcessBatch(
   requestedLimit = 12,
 ): Promise<RevisorProcessBackfillBatchResult> {
@@ -343,6 +400,8 @@ export async function backfillRevisorProcessBatch(
       processed: 0,
       excluded: 0,
       excludedIdentifiers: [],
+      deferred: 0,
+      deferredIdentifiers: [],
       classifiedActions: 0,
       stageEvents: 0,
       done: true,
@@ -351,14 +410,18 @@ export async function backfillRevisorProcessBatch(
   const results = await fetchBatch(rows);
   const parsed = results.filter((row): row is FetchedProcessBill => row.status === 'parsed');
   const excluded = results.filter((row): row is ExcludedProcessBill => row.status === 'excluded');
+  const deferred = results.filter((row): row is DeferredProcessBill => row.status === 'deferred');
   let stageEvents = 0;
   for (const row of parsed) stageEvents += await persistBill(row);
   for (const row of excluded) await persistExclusion(row);
+  for (const row of deferred) await persistDeferral(row);
   return {
     requested: limit,
     processed: results.length,
     excluded: excluded.length,
     excludedIdentifiers: excluded.map((row) => row.identifier),
+    deferred: deferred.length,
+    deferredIdentifiers: deferred.map((row) => row.identifier),
     classifiedActions: parsed.reduce((sum, row) => sum + row.events.length, 0),
     stageEvents,
     done: results.length < limit,
