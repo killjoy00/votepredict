@@ -334,13 +334,15 @@ Bulk historical research must not run inside Vercel production functions.
 
 Use this separation:
 
-- **Vercel:** serving application, lightweight production endpoints, forecast scheduler, and genuinely prospective ingestion that needs the deployed application boundary.
-- **GitHub Actions:** bounded historical crawls, corpus reconstruction, offline evaluation, and research artifacts.
+- **Vercel:** serving application, lightweight production endpoints, forecast scheduler, and only ingestion that truly requires the deployed application boundary.
+- **GitHub Actions:** bounded historical crawls, corpus reconstruction, offline evaluation, research artifacts, and heavy prospective ingestion that can safely execute as ordinary Node/database work.
 - **Neon:** canonical production/research data store. Historical GitHub jobs may write directly through the production database connection when the operation is explicitly idempotent, source-lineaged, bounded, and covered by verification queries.
 - **Deep historical workflows:** manual-only while Deep remains out of scope.
 - **Completed historical backfills/evaluations:** manual-only. Production deploys must not retrigger them.
 
 The lifecycle Revisor backfill is the reference pattern: GitHub Actions reads the database credential privately, executes the existing parser/backfill code on the runner, uses low external-source concurrency, records transient failures as retryable deferrals, and verifies corpus coverage after each bounded chunk. It does not invoke a Vercel function.
+
+The prospective public-evidence refresh follows the same execution boundary: its six-hour rotation, source collection, structured-public refresh, campaign-finance refresh, and durable evidence writes run on GitHub Actions directly against Neon. The production route remains available as an emergency/manual surface, but scheduled ingestion does not consume Vercel function CPU.
 
 This boundary is both a cost control and a reliability rule. Production function CPU/memory limits must not determine whether an offline historical corpus can be reconstructed.
 
