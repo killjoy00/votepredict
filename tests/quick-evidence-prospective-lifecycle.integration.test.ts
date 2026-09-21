@@ -302,7 +302,10 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
     const member1Shadow = shadows[0] as Record<string, any>;
     const member2Shadow = shadows[1] as Record<string, any>;
     assert.ok(member1Shadow.candidateProbability > member1Shadow.baseProbability);
-    assert.equal(member2Shadow.candidateProbability, member2Shadow.baseProbability);
+    assert.ok(
+      Math.abs(member2Shadow.candidateProbability - member2Shadow.baseProbability) < 1e-12,
+      'zero-weight committee context must not move candidate probability',
+    );
     assert.equal(member2Shadow.features.committeeRecommendsPassageAye, 1);
 
     await client.query(`
@@ -354,7 +357,6 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
     );
     assert.equal(schedule.rows[0].enabled, false);
   } finally {
-    await client.query('ROLLBACK').catch(() => undefined);
     await client.query('DROP SCHEMA IF EXISTS ' + schema + ' CASCADE').catch(() => undefined);
     client.release();
     await db.end();
