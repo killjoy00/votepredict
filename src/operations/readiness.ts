@@ -37,6 +37,13 @@ export type ProductionReadiness = {
     publicEvidenceMembers: number;
     quickEvidenceCandidateItems: number;
     quickEvidenceCandidateMembers: number;
+    structuredFamilies: {
+      districtContext: { items: number; members: number; bills: number };
+      floorActivity: { items: number; members: number; bills: number };
+      sessionDailySpeech: { items: number; members: number; bills: number };
+      conferenceConferee: { items: number; members: number; bills: number };
+      billContext: { items: number; members: number; bills: number };
+    };
     mechanicallyActionableItems: number;
     latestCampaignFinanceFetch?: string;
     latestPublicEvidenceRun?: string;
@@ -95,6 +102,21 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
       public_evidence_members: number;
       quick_evidence_candidate_items: number;
       quick_evidence_candidate_members: number;
+      structured_district_items: number;
+      structured_district_members: number;
+      structured_district_bills: number;
+      structured_floor_items: number;
+      structured_floor_members: number;
+      structured_floor_bills: number;
+      structured_speech_items: number;
+      structured_speech_members: number;
+      structured_speech_bills: number;
+      structured_conferee_items: number;
+      structured_conferee_members: number;
+      structured_conferee_bills: number;
+      structured_bill_context_items: number;
+      structured_bill_context_members: number;
+      structured_bill_context_bills: number;
       mechanically_actionable_items: number;
       latest_campaign_finance_fetch: string | null;
       latest_public_evidence_run: string | null;
@@ -169,6 +191,66 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
         )::int AS public_evidence_members,
         count(*) FILTER (WHERE metadata->>'quickEvidenceCandidate'='true')::int AS quick_evidence_candidate_items,
         count(DISTINCT membership_id) FILTER (WHERE metadata->>'quickEvidenceCandidate'='true')::int AS quick_evidence_candidate_members,
+        count(*) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype'='district_election_context'
+        )::int AS structured_district_items,
+        count(DISTINCT membership_id) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype'='district_election_context'
+        )::int AS structured_district_members,
+        count(DISTINCT bill_id) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype'='district_election_context'
+        )::int AS structured_district_bills,
+        count(*) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype'='floor_amendment_offer'
+        )::int AS structured_floor_items,
+        count(DISTINCT membership_id) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype'='floor_amendment_offer'
+        )::int AS structured_floor_members,
+        count(DISTINCT bill_id) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype'='floor_amendment_offer'
+        )::int AS structured_floor_bills,
+        count(*) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype'='legislative_speech'
+        )::int AS structured_speech_items,
+        count(DISTINCT membership_id) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype'='legislative_speech'
+        )::int AS structured_speech_members,
+        count(DISTINCT bill_id) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype'='legislative_speech'
+        )::int AS structured_speech_bills,
+        count(*) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype'='conference_conferee'
+        )::int AS structured_conferee_items,
+        count(DISTINCT membership_id) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype'='conference_conferee'
+        )::int AS structured_conferee_members,
+        count(DISTINCT bill_id) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype'='conference_conferee'
+        )::int AS structured_conferee_bills,
+        count(*) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype' IN ('bill_summary_version','fiscal_note_context')
+        )::int AS structured_bill_context_items,
+        count(DISTINCT membership_id) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype' IN ('bill_summary_version','fiscal_note_context')
+        )::int AS structured_bill_context_members,
+        count(DISTINCT bill_id) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype' IN ('bill_summary_version','fiscal_note_context')
+        )::int AS structured_bill_context_bills,
         count(*) FILTER (WHERE metadata->>'mechanicallyActionable'='true')::int AS mechanically_actionable_items,
         max(fetched_at) FILTER (WHERE source_kind='campaign_finance_bulk')::text AS latest_campaign_finance_fetch,
         (SELECT finished_at::text FROM ingestion_runs WHERE source_system='public-evidence-pipeline' ORDER BY created_at DESC LIMIT 1) AS latest_public_evidence_run,
@@ -213,6 +295,21 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
     public_evidence_members: 0,
     quick_evidence_candidate_items: 0,
     quick_evidence_candidate_members: 0,
+    structured_district_items: 0,
+    structured_district_members: 0,
+    structured_district_bills: 0,
+    structured_floor_items: 0,
+    structured_floor_members: 0,
+    structured_floor_bills: 0,
+    structured_speech_items: 0,
+    structured_speech_members: 0,
+    structured_speech_bills: 0,
+    structured_conferee_items: 0,
+    structured_conferee_members: 0,
+    structured_conferee_bills: 0,
+    structured_bill_context_items: 0,
+    structured_bill_context_members: 0,
+    structured_bill_context_bills: 0,
     mechanically_actionable_items: 0,
     latest_campaign_finance_fetch: null,
     latest_public_evidence_run: null,
@@ -254,6 +351,33 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
       publicEvidenceMembers: Number(evidence.public_evidence_members),
       quickEvidenceCandidateItems: Number(evidence.quick_evidence_candidate_items),
       quickEvidenceCandidateMembers: Number(evidence.quick_evidence_candidate_members),
+      structuredFamilies: {
+        districtContext: {
+          items: Number(evidence.structured_district_items),
+          members: Number(evidence.structured_district_members),
+          bills: Number(evidence.structured_district_bills),
+        },
+        floorActivity: {
+          items: Number(evidence.structured_floor_items),
+          members: Number(evidence.structured_floor_members),
+          bills: Number(evidence.structured_floor_bills),
+        },
+        sessionDailySpeech: {
+          items: Number(evidence.structured_speech_items),
+          members: Number(evidence.structured_speech_members),
+          bills: Number(evidence.structured_speech_bills),
+        },
+        conferenceConferee: {
+          items: Number(evidence.structured_conferee_items),
+          members: Number(evidence.structured_conferee_members),
+          bills: Number(evidence.structured_conferee_bills),
+        },
+        billContext: {
+          items: Number(evidence.structured_bill_context_items),
+          members: Number(evidence.structured_bill_context_members),
+          bills: Number(evidence.structured_bill_context_bills),
+        },
+      },
       mechanicallyActionableItems: Number(evidence.mechanically_actionable_items),
       latestCampaignFinanceFetch: evidence.latest_campaign_finance_fetch ?? undefined,
       latestPublicEvidenceRun: evidence.latest_public_evidence_run ?? undefined,
