@@ -1,20 +1,6 @@
 name: Historical Deep target audit
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-target-audit.yml
-      - scripts/run-production-historical-deep-target-audit.ts
-      - src/app/api/operations/historical-deep-target-audit/route.ts
-      - src/evaluation/historical-deep-target-audit.ts
-      - src/evaluation/historical-deep-targets.ts
-      - src/evaluation/historical-quick-runtime.ts
-      - src/evaluation/historical-quick-replay-dataset.ts
-      - src/evaluation/historical-quick-replay.ts
-      - src/evidence/targeting.ts
-      - src/forecasting/member-model.ts
-      - src/forecasting/minnesota-rules.ts
   workflow_dispatch:
 
 permissions:
