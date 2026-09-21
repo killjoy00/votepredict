@@ -310,8 +310,16 @@ export function evaluateQuickEvidenceProspectiveCases(
   cases: readonly QuickEvidenceProspectiveCase[],
   options: { revealMetrics?: boolean } = {},
 ) {
-  const raw = scoreCases(cases);
   const resolvedForecasts = new Set(cases.map((item) => item.forecastId)).size;
+  let memberOutcomes = 0;
+  const directionalMembers = new Set<string>();
+  for (const item of cases) {
+    for (const member of item.members) {
+      if (member.outcome !== undefined) memberOutcomes += 1;
+      if (member.directionalEvidenceItems > 0) directionalMembers.add(member.membershipId);
+    }
+  }
+
   const minimums = {
     resolvedForecasts: {
       observed: resolvedForecasts,
@@ -319,14 +327,14 @@ export function evaluateQuickEvidenceProspectiveCases(
       met: resolvedForecasts >= MIN_RESOLVED_FORECASTS,
     },
     memberOutcomes: {
-      observed: raw.memberOutcomes,
+      observed: memberOutcomes,
       required: MIN_MEMBER_OUTCOMES,
-      met: raw.memberOutcomes >= MIN_MEMBER_OUTCOMES,
+      met: memberOutcomes >= MIN_MEMBER_OUTCOMES,
     },
     membersWithAppliedDirectionalEvidence: {
-      observed: raw.distinctMembersWithDirectionalEvidence,
+      observed: directionalMembers.size,
       required: MIN_DIRECTIONAL_MEMBERS,
-      met: raw.distinctMembersWithDirectionalEvidence >= MIN_DIRECTIONAL_MEMBERS,
+      met: directionalMembers.size >= MIN_DIRECTIONAL_MEMBERS,
     },
   };
   const primaryScoringAllowed = Object.values(minimums).every((item) => item.met);
@@ -341,7 +349,7 @@ export function evaluateQuickEvidenceProspectiveCases(
       : primaryScoringAllowed
         ? 'ready_for_primary_scoring'
         : 'accruing',
-    metrics: reveal ? raw : null,
+    metrics: reveal ? scoreCases(cases) : null,
   } as const;
 }
 
