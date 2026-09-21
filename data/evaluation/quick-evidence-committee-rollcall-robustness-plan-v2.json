@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "quick-evidence-committee-rollcall-robustness-plan-v2",
+  "frozenAt": "2026-09-21T19:27:00Z",
+  "issue": 304,
+  "purpose": "Robustness audit of the previously frozen standalone House committee roll-call hypothesis after correcting historical Quick replay availability boundaries. This is not a new independent validation set.",
+  "inheritsHypothesisFrom": "quick-evidence-committee-rollcall-screen-plan-v1",
+  "scope": {
+    "candidateVersion": "quick-evidence-v1",
+    "servingBaseline": "member-eb-v1.2-decay180",
+    "historicalReplay": "historical-quick-replay-v2",
+    "chamber": "house",
+    "trainSession": "2021-2022",
+    "validationSession": "2023-2024",
+    "descriptiveSession": "2025-2026"
+  },
+  "availabilityCorrections": {
+    "mutableCurrentBillTitleUsed": false,
+    "persistedHistoricalFeatureSetsUsed": false,
+    "currentCompanionMetadataUsed": false,
+    "datedBillTextOnly": true,
+    "sameDayTargetBillTextExcluded": true,
+    "sameDayPassageHistoryExcluded": true
+  },
+  "candidateArtifact": {
+    "policy": "reuse the exact outcome-blind frozen broad House committee roll-call candidate artifact from the original diagnostic",
+    "parser": "deterministic-house-committee-roll-call-v2",
+    "mechanicsTaxonomy": "mn-house-procedural-mechanics-v1"
+  },
+  "fitAndThresholdPolicy": {
+    "selectionRule": "unchanged from quick-evidence-committee-rollcall-screen-plan-v1",
+    "candidateLambdas": [0.1, 1, 5, 20, 100],
+    "maximumAbsoluteLogitDelta": 1,
+    "validationMemberBrierDeltaMaximum": -0.0005,
+    "validationMemberLogLossDeltaMaximum": 0,
+    "validationChamberYesMaeDeltaMaximum": 0.25,
+    "validationPassageBrierDeltaMaximum": 0.002,
+    "descriptiveMemberBrierDeltaMaximum": 0.0005
+  },
+  "interpretation": {
+    "independentValidationSet": false,
+    "resultType": "robustness_audit",
+    "productionAction": "none",
+    "automaticPromotion": false,
+    "servingQuickChanged": false,
+    "note": "Because the 2023-2024 outcomes were already inspected under v1, this audit can confirm or weaken robustness but cannot provide fresh independent validation."
+  }
+}
