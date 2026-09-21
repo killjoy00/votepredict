@@ -32,8 +32,8 @@ async function post(secret: string, suffix: string): Promise<Response> {
   throw lastError instanceof Error ? lastError : new Error('House Research summary backfill request failed');
 }
 
-async function verify(secret: string) {
-  const response = await post(secret, '?verify=1');
+async function verify(secret: string, includeReplayCoverage = false) {
+  const response = await post(secret, includeReplayCoverage ? '?verify=1&replay=1' : '?verify=1');
   const body = await response.text();
   if (!response.ok) {
     throw new Error(`House Research summary verification HTTP ${response.status}: ${safeMessage(body).slice(0, 1800)}`);
@@ -121,7 +121,7 @@ async function main() {
     }
   }
 
-  const verification = await verify(secret);
+  const verification = await verify(secret, true);
   console.log(JSON.stringify({ historicalHouseResearchSummaryBackfill: { totals, verification } }));
   if (!verification.complete) {
     throw new Error('House Research summary backfill verification is incomplete');
