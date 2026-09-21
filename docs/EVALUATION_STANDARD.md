@@ -92,6 +92,19 @@ At introduction, also exclude unless historically proven as available at that ex
 
 The current Minnesota v4 model may use official title/description and introduction-eligible zero-engrossment purpose text only. The single late-posted initial document uses the evaluated title-only fallback.
 
+### Current/floor historical replay boundary
+
+Historical current/floor replay must use only information whose availability can be reconstructed at the target cutoff.
+
+- Bill identity/features must come from the selected dated official bill version. A mutable current `bills.title` may not be injected into historical deterministic features, lexical prefiltering, or analogue similarity.
+- Persisted historical feature sets may be reused only when their provenance proves they were derived exclusively from cutoff-eligible inputs. Otherwise recompute from the dated raw bill text.
+- Current Revisor companion state is not historical companion evidence. Companion relationships must come from dated official process events strictly before the target vote, or remain unavailable.
+- Evidence explicitly marked `asOfEligible=false` is ineligible for historical model fitting.
+- Reconstructed bill evidence must pass date sanity checks. It may not predate the session start, the bill's introduction date, or the target cutoff; same-day material is excluded when intraday ordering is not provable.
+- When passage outcomes are highly imbalanced, pooled passage Brier must be accompanied by chamber slices and robustness checks. Member-level results should also report event-balanced and chamber-balanced summaries so a handful of large events or one chamber cannot silently dominate the conclusion.
+
+A correction to a historical replay after validation outcomes have already been inspected is a robustness audit, not a fresh independent validation set. It may invalidate or qualify a prior result, but it cannot by itself create new promotion evidence.
+
 ## Train/validation/test strategy
 
 Random observation splits are generally inappropriate when related legislative observations share political context.
