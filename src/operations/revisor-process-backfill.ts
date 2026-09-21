@@ -208,7 +208,7 @@ async function persistBill(row: FetchedProcessBill): Promise<number> {
         metadata = source_documents.metadata || EXCLUDED.metadata
       RETURNING id::text`, [
       row.session_id,
-      row.source_url,
+      row.resolvedSourceUrl,
       row.fetchedAt,
       row.contentSha256,
       row.identifier,
@@ -257,7 +257,7 @@ async function persistBill(row: FetchedProcessBill): Promise<number> {
         chamberId,
         group.stageKind,
         stageTimestamp(group.occurredOn, group.chamber),
-        row.source_url,
+        row.resolvedSourceUrl,
         sourceDocumentId,
         REVISOR_PROCESS_PARSER_VERSION,
         JSON.stringify(descriptions),
@@ -286,7 +286,7 @@ async function persistBill(row: FetchedProcessBill): Promise<number> {
        WHERE id = $1::uuid`, [
       row.bill_id,
       REVISOR_PROCESS_PARSER_VERSION,
-      row.source_url,
+      row.resolvedSourceUrl,
       row.contentSha256,
       row.fetchedAt,
       row.events.length,
@@ -325,7 +325,7 @@ async function persistExclusion(row: ExcludedProcessBill): Promise<void> {
      WHERE id = $1::uuid`, [
     row.bill_id,
     REVISOR_PROCESS_PARSER_VERSION,
-    row.source_url,
+    row.attemptedSourceUrls[0] ?? row.source_url,
     row.fetchedAt,
     row.exclusionReason,
     row.failureMessage,
@@ -373,12 +373,120 @@ export async function verifyRevisorProcessBackfill(): Promise<RevisorProcessBack
     stage_events: string;
   }>(`
     WITH target AS (
-      SELECT DISTINCT b.id
+      SELECT b.id
         FROM bills b
-        JOIN vote_events ve ON ve.bill_id = b.id AND ve.is_passage = true
         JOIN legislative_sessions s ON s.id = b.session_id
         JOIN jurisdictions j ON j.id = s.jurisdiction_id AND j.slug = 'us-mn'
        WHERE s.slug IN ('2021-2022', '2023-2024', '2025-2026')
+         AND b.identifier ~ '^(HF|SF)[0-9]+
+    SELECT (SELECT count(*) FROM target)::text AS target_bills,
+           (SELECT count(*) FROM bills b JOIN target t ON t.id = b.id
+             WHERE b.metadata #>> '{revisorProcessHistory,parserVersion}' = $1)::text AS parsed_bills,
+           (SELECT count(*) FROM bills b JOIN target t ON t.id = b.id
+             WHERE b.metadata #>> '{revisorProcessHistory,exclusionVersion}' = $1)::text AS excluded_bills,
+           (SELECT count(*) FROM legislative_stage_events se JOIN target t ON t.id = se.bill_id
+             WHERE se.metadata ->> 'parserVersion' = $1)::text AS stage_events`, [REVISOR_PROCESS_PARSER_VERSION]);
+  const kinds = await pool.query<{ stage_kind: string; n: string }>(`
+    SELECT stage_kind, count(*)::text AS n
+      FROM legislative_stage_events
+     WHERE metadata ->> 'parserVersion' = $1
+     GROUP BY stage_kind
+     ORDER BY stage_kind`, [REVISOR_PROCESS_PARSER_VERSION]);
+  const sessions = await pool.query<{
+    session_slug: string;
+    target_bills: string;
+    parsed_bills: string;
+    excluded_bills: string;
+  }>(`
+    SELECT s.slug AS session_slug,
+           count(*)::text AS target_bills,
+           count(*) FILTER (
+             WHERE b.metadata #>> '{revisorProcessHistory,parserVersion}' = $1
+           )::text AS parsed_bills,
+           count(*) FILTER (
+             WHERE b.metadata #>> '{revisorProcessHistory,exclusionVersion}' = $1
+           )::text AS excluded_bills
+      FROM bills b
+      JOIN legislative_sessions s ON s.id=b.session_id
+      JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'
+     WHERE s.slug IN ('2021-2022','2023-2024','2025-2026')
+       AND b.identifier ~ '^(HF|SF)[0-9]+
+    targetBills,
+    parsedBills,
+    excludedBills,
+    completedBills,
+    coverage: targetBills > 0 ? parsedBills / targetBills : 0,
+    stageEvents: Number(summary.rows[0]?.stage_events ?? 0),
+    stageKinds: Object.fromEntries(kinds.rows.map((row) => [row.stage_kind, Number(row.n)])),
+    pendingBills,
+    bySession,
+    complete: targetBills > 0 && completedBills === targetBills,
+  };
+}
+
+    )
+    SELECT (SELECT count(*) FROM target)::text AS target_bills,
+           (SELECT count(*) FROM bills b JOIN target t ON t.id = b.id
+             WHERE b.metadata #>> '{revisorProcessHistory,parserVersion}' = $1)::text AS parsed_bills,
+           (SELECT count(*) FROM bills b JOIN target t ON t.id = b.id
+             WHERE b.metadata #>> '{revisorProcessHistory,exclusionVersion}' = $1)::text AS excluded_bills,
+           (SELECT count(*) FROM legislative_stage_events se JOIN target t ON t.id = se.bill_id
+             WHERE se.metadata ->> 'parserVersion' = $1)::text AS stage_events`, [REVISOR_PROCESS_PARSER_VERSION]);
+  const kinds = await pool.query<{ stage_kind: string; n: string }>(`
+    SELECT stage_kind, count(*)::text AS n
+      FROM legislative_stage_events
+     WHERE metadata ->> 'parserVersion' = $1
+     GROUP BY stage_kind
+     ORDER BY stage_kind`, [REVISOR_PROCESS_PARSER_VERSION]);
+  const targetBills = Number(summary.rows[0]?.target_bills ?? 0);
+  const parsedBills = Number(summary.rows[0]?.parsed_bills ?? 0);
+  const excludedBills = Number(summary.rows[0]?.excluded_bills ?? 0);
+  const completedBills = parsedBills + excludedBills;
+  return {
+    targetBills,
+    parsedBills,
+    excludedBills,
+    completedBills,
+    coverage: targetBills > 0 ? parsedBills / targetBills : 0,
+    stageEvents: Number(summary.rows[0]?.stage_events ?? 0),
+    stageKinds: Object.fromEntries(kinds.rows.map((row) => [row.stage_kind, Number(row.n)])),
+    complete: targetBills > 0 && completedBills === targetBills,
+  };
+}
+
+     GROUP BY s.slug
+     ORDER BY s.slug`, [REVISOR_PROCESS_PARSER_VERSION]);
+
+  const targetBills = Number(summary.rows[0]?.target_bills ?? 0);
+  const parsedBills = Number(summary.rows[0]?.parsed_bills ?? 0);
+  const excludedBills = Number(summary.rows[0]?.excluded_bills ?? 0);
+  const completedBills = parsedBills + excludedBills;
+  const pendingBills = Math.max(0, targetBills - completedBills);
+  const bySession = Object.fromEntries(sessions.rows.map((row) => {
+    const target = Number(row.target_bills);
+    const parsed = Number(row.parsed_bills);
+    const excluded = Number(row.excluded_bills);
+    const completed = parsed + excluded;
+    return [row.session_slug, {
+      targetBills: target,
+      parsedBills: parsed,
+      excludedBills: excluded,
+      completedBills: completed,
+      coverage: target > 0 ? parsed / target : 0,
+    }];
+  }));
+  return {
+    targetBills,
+    parsedBills,
+    excludedBills,
+    completedBills,
+    coverage: targetBills > 0 ? parsedBills / targetBills : 0,
+    stageEvents: Number(summary.rows[0]?.stage_events ?? 0),
+    stageKinds: Object.fromEntries(kinds.rows.map((row) => [row.stage_kind, Number(row.n)])),
+    complete: targetBills > 0 && completedBills === targetBills,
+  };
+}
+
     )
     SELECT (SELECT count(*) FROM target)::text AS target_bills,
            (SELECT count(*) FROM bills b JOIN target t ON t.id = b.id
