@@ -84,7 +84,14 @@ The five structured public-data families have now been reassessed against the sa
 - **Conference conferees:** combined House/Senate historical coverage cleared the predeclared coverage gate (97 training positives; 314 validation), but the frozen diagnostic did not improve validation member Brier/log loss and returned no hypothesis signal. Keep at zero weight.
 - **Bill context:** House Research backfill is complete for all targeted historical passage bills (196/196 in 2021-22; 205/205 in 2023-24). Replay overlap was ample (17,674 covered training member outcomes across 169 events; 33,537 validation outcomes across 314 events), but the frozen diagnostic failed because validation passage Brier worsened by +0.0058624, above the +0.002 limit. Keep at zero weight.
 
-No family earned a serving change or automatic promotion. The structured public-data program therefore returns to prospective accumulation: preserve all five families as zero-weight durable evidence, score them only after genuinely prospective outcomes accrue, and do not make committee-minute ingestion the next default expansion.
+No original five-family screen earned a serving change or automatic promotion.
+
+Two final pre-prospective experiments were then frozen before results were observed:
+
+- **Broad House committee roll calls:** official exact-bill named-member committee AYE/NAY records cleared the frozen standalone diagnostic. Validation member Brier improved by 0.0016106, member log loss by 0.0035019, chamber Yes-count MAE by 0.2756 votes, and passage Brier worsened by only 0.0002092, inside the +0.002 guardrail. The 2025-26 descriptive member Brier also improved by 0.0003784. This authorizes zero-weight prospective measurement, not a serving change.
+- **All reconstructable evidence together:** the frozen 32-feature combined diagnostic materially improved validation member Brier (-0.0039247), log loss (-0.0077923), calibration error (-0.0210479), and chamber Yes-count MAE (-0.7461 votes), but validation passage Brier worsened by +0.0028687 and failed the frozen +0.002 safety limit. The failure is chamber-dependent: House member Brier improved by 0.0074259 while House passage Brier worsened by 0.0079293; Senate member Brier worsened by 0.0068612 while Senate passage Brier improved by 0.0051009. Fixed leave-one-family-out ablations show that bill context, district context, and non-passage votes drive much of the member-vs-passage tradeoff; committee roll calls remain a smaller positive member-level contributor.
+
+The retrospective evidence phase is therefore complete. Serving Quick remains unchanged and all new evidence weights remain non-serving. Broad feature searching on the same 2021-26 outcomes should stop; the next phase is prospective accumulation, with special attention to whether member-level evidence lift translates safely through chamber/passage aggregation.
 
 ## 2027-28 Opening Day readiness evidence
 
@@ -158,7 +165,7 @@ The production reconciliation repaired the release-integrity drift found during 
 - [x] Add exact-bill named-member legislative speech/reporting capture at zero weight.
 - [x] Add official Minnesota Secretary of State district election context at zero weight.
 - [x] Add nonpartisan House Research summary and official fiscal-note context at zero weight.
-- [ ] Reconsider recurring House/Senate committee-minute ingestion only after the five structured public-data families above accumulate enough prospective coverage to compare incremental value.
+- [ ] Add zero-weight prospective House committee-roll-call capture to the future Quick Evidence corpus under a newly frozen pre-activation protocol; the standalone historical screen cleared, but no serving weight is authorized.
 - [ ] Accumulate enough prospective/as-of forecasts and outcomes to score `quick-evidence-prospective-v1`.
 
 ### P1 — prepare 2027-28
