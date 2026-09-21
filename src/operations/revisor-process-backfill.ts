@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { pool } from '@/lib/db';
 import { fetchRevisorStatusXml } from '@/sources/minnesota/revisor-actions';
+import { buildRevisorRegularSessionStatusXmlUrls } from '@/sources/minnesota/revisor-introduction';
 import {
   parseRevisorProcessEvents,
   REVISOR_PROCESS_PARSER_VERSION,
@@ -17,13 +18,16 @@ const FETCH_CONCURRENCY = 3;
 interface ProcessBackfillBillRow {
   bill_id: string;
   session_id: string;
+  session_slug: string;
   identifier: string;
-  source_url: string;
+  source_url: string | null;
 }
 
 interface FetchedProcessBill extends ProcessBackfillBillRow {
   status: 'parsed';
   fetchedAt: string;
+  resolvedSourceUrl: string;
+  attemptedSourceUrls: string[];
   contentSha256: string;
   events: RevisorProcessEvent[];
 }
@@ -31,6 +35,7 @@ interface FetchedProcessBill extends ProcessBackfillBillRow {
 interface ExcludedProcessBill extends ProcessBackfillBillRow {
   status: 'excluded';
   fetchedAt: string;
+  attemptedSourceUrls: string[];
   exclusionReason: RevisorProcessSourceExclusionReason;
   failureMessage: string;
 }
@@ -55,6 +60,14 @@ export interface RevisorProcessBackfillVerification {
   coverage: number;
   stageEvents: number;
   stageKinds: Record<string, number>;
+  pendingBills: number;
+  bySession: Record<string, {
+    targetBills: number;
+    parsedBills: number;
+    excludedBills: number;
+    completedBills: number;
+    coverage: number;
+  }>;
   complete: boolean;
 }
 
@@ -62,50 +75,75 @@ async function selectBatch(limit: number): Promise<ProcessBackfillBillRow[]> {
   const result = await pool.query<ProcessBackfillBillRow>(`
     SELECT b.id::text AS bill_id,
            b.session_id::text AS session_id,
+           s.slug AS session_slug,
            b.identifier,
            b.source_url
       FROM bills b
       JOIN legislative_sessions s ON s.id = b.session_id
       JOIN jurisdictions j ON j.id = s.jurisdiction_id AND j.slug = 'us-mn'
      WHERE s.slug IN ('2021-2022', '2023-2024', '2025-2026')
-       AND b.source_url IS NOT NULL
+       AND b.identifier ~ '^(HF|SF)[0-9]+$'
        AND b.metadata #>> '{revisorProcessHistory,parserVersion}' IS DISTINCT FROM $1
        AND b.metadata #>> '{revisorProcessHistory,exclusionVersion}' IS DISTINCT FROM $1
-       AND EXISTS (
-         SELECT 1
-           FROM vote_events ve
-          WHERE ve.bill_id = b.id
-            AND ve.is_passage = true
-       )
-     ORDER BY b.id
+     ORDER BY s.starts_on, b.identifier
      LIMIT $2`, [REVISOR_PROCESS_PARSER_VERSION, limit]);
   return result.rows;
 }
 
+export function revisorProcessStatusUrls(
+  sessionSlug: string,
+  identifier: string,
+  storedSourceUrl?: string | null,
+): string[] {
+  return [...new Set([
+    ...(storedSourceUrl ? [storedSourceUrl] : []),
+    ...buildRevisorRegularSessionStatusXmlUrls(sessionSlug, identifier),
+  ])];
+}
+
 async function fetchBill(row: ProcessBackfillBillRow): Promise<ProcessBackfillFetchResult> {
   const fetchedAt = new Date().toISOString();
-  try {
-    const xml = await fetchRevisorStatusXml(row.source_url);
-    return {
-      ...row,
-      status: 'parsed',
-      fetchedAt,
-      contentSha256: createHash('sha256').update(xml).digest('hex'),
-      events: parseRevisorProcessEvents({ xml, identifier: row.identifier }),
-    };
-  } catch (error) {
-    const policy = classifyRevisorProcessSourceFailure(error);
-    if (policy.permanent && policy.reason) {
+  const attemptedSourceUrls = revisorProcessStatusUrls(
+    row.session_slug,
+    row.identifier,
+    row.source_url,
+  );
+  let lastPermanentFailure:
+    | { reason: RevisorProcessSourceExclusionReason; message: string }
+    | undefined;
+
+  for (const sourceUrl of attemptedSourceUrls) {
+    try {
+      const xml = await fetchRevisorStatusXml(sourceUrl);
       return {
         ...row,
-        status: 'excluded',
+        status: 'parsed',
         fetchedAt,
-        exclusionReason: policy.reason,
-        failureMessage: policy.message,
+        resolvedSourceUrl: sourceUrl,
+        attemptedSourceUrls,
+        contentSha256: createHash('sha256').update(xml).digest('hex'),
+        events: parseRevisorProcessEvents({ xml, identifier: row.identifier }),
       };
+    } catch (error) {
+      const policy = classifyRevisorProcessSourceFailure(error);
+      if (!policy.permanent || !policy.reason) {
+        throw new Error(`${row.identifier}: ${policy.message}`);
+      }
+      lastPermanentFailure = { reason: policy.reason, message: policy.message };
     }
-    throw new Error(`${row.identifier}: ${policy.message}`);
   }
+
+  if (!lastPermanentFailure) {
+    throw new Error(`${row.identifier}: no Revisor status URL candidates were available`);
+  }
+  return {
+    ...row,
+    status: 'excluded',
+    fetchedAt,
+    attemptedSourceUrls,
+    exclusionReason: lastPermanentFailure.reason,
+    failureMessage: lastPermanentFailure.message,
+  };
 }
 
 async function fetchBatch(rows: readonly ProcessBackfillBillRow[]): Promise<ProcessBackfillFetchResult[]> {
@@ -170,7 +208,7 @@ async function persistBill(row: FetchedProcessBill): Promise<number> {
         metadata = source_documents.metadata || EXCLUDED.metadata
       RETURNING id::text`, [
       row.session_id,
-      row.source_url,
+      row.resolvedSourceUrl,
       row.fetchedAt,
       row.contentSha256,
       row.identifier,
@@ -219,7 +257,7 @@ async function persistBill(row: FetchedProcessBill): Promise<number> {
         chamberId,
         group.stageKind,
         stageTimestamp(group.occurredOn, group.chamber),
-        row.source_url,
+        row.resolvedSourceUrl,
         sourceDocumentId,
         REVISOR_PROCESS_PARSER_VERSION,
         JSON.stringify(descriptions),
@@ -248,7 +286,7 @@ async function persistBill(row: FetchedProcessBill): Promise<number> {
        WHERE id = $1::uuid`, [
       row.bill_id,
       REVISOR_PROCESS_PARSER_VERSION,
-      row.source_url,
+      row.resolvedSourceUrl,
       row.contentSha256,
       row.fetchedAt,
       row.events.length,
@@ -287,7 +325,7 @@ async function persistExclusion(row: ExcludedProcessBill): Promise<void> {
      WHERE id = $1::uuid`, [
     row.bill_id,
     REVISOR_PROCESS_PARSER_VERSION,
-    row.source_url,
+    row.attemptedSourceUrls[0] ?? row.source_url,
     row.fetchedAt,
     row.exclusionReason,
     row.failureMessage,
@@ -335,12 +373,12 @@ export async function verifyRevisorProcessBackfill(): Promise<RevisorProcessBack
     stage_events: string;
   }>(`
     WITH target AS (
-      SELECT DISTINCT b.id
+      SELECT b.id
         FROM bills b
-        JOIN vote_events ve ON ve.bill_id = b.id AND ve.is_passage = true
         JOIN legislative_sessions s ON s.id = b.session_id
         JOIN jurisdictions j ON j.id = s.jurisdiction_id AND j.slug = 'us-mn'
        WHERE s.slug IN ('2021-2022', '2023-2024', '2025-2026')
+         AND b.identifier ~ '^(HF|SF)[0-9]+$'
     )
     SELECT (SELECT count(*) FROM target)::text AS target_bills,
            (SELECT count(*) FROM bills b JOIN target t ON t.id = b.id
@@ -349,16 +387,55 @@ export async function verifyRevisorProcessBackfill(): Promise<RevisorProcessBack
              WHERE b.metadata #>> '{revisorProcessHistory,exclusionVersion}' = $1)::text AS excluded_bills,
            (SELECT count(*) FROM legislative_stage_events se JOIN target t ON t.id = se.bill_id
              WHERE se.metadata ->> 'parserVersion' = $1)::text AS stage_events`, [REVISOR_PROCESS_PARSER_VERSION]);
+
   const kinds = await pool.query<{ stage_kind: string; n: string }>(`
     SELECT stage_kind, count(*)::text AS n
       FROM legislative_stage_events
      WHERE metadata ->> 'parserVersion' = $1
      GROUP BY stage_kind
      ORDER BY stage_kind`, [REVISOR_PROCESS_PARSER_VERSION]);
+
+  const sessions = await pool.query<{
+    session_slug: string;
+    target_bills: string;
+    parsed_bills: string;
+    excluded_bills: string;
+  }>(`
+    SELECT s.slug AS session_slug,
+           count(*)::text AS target_bills,
+           count(*) FILTER (
+             WHERE b.metadata #>> '{revisorProcessHistory,parserVersion}' = $1
+           )::text AS parsed_bills,
+           count(*) FILTER (
+             WHERE b.metadata #>> '{revisorProcessHistory,exclusionVersion}' = $1
+           )::text AS excluded_bills
+      FROM bills b
+      JOIN legislative_sessions s ON s.id=b.session_id
+      JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'
+     WHERE s.slug IN ('2021-2022','2023-2024','2025-2026')
+       AND b.identifier ~ '^(HF|SF)[0-9]+$'
+     GROUP BY s.slug
+     ORDER BY s.slug`, [REVISOR_PROCESS_PARSER_VERSION]);
+
   const targetBills = Number(summary.rows[0]?.target_bills ?? 0);
   const parsedBills = Number(summary.rows[0]?.parsed_bills ?? 0);
   const excludedBills = Number(summary.rows[0]?.excluded_bills ?? 0);
   const completedBills = parsedBills + excludedBills;
+  const pendingBills = Math.max(0, targetBills - completedBills);
+  const bySession = Object.fromEntries(sessions.rows.map((row) => {
+    const target = Number(row.target_bills);
+    const parsed = Number(row.parsed_bills);
+    const excluded = Number(row.excluded_bills);
+    const completed = parsed + excluded;
+    return [row.session_slug, {
+      targetBills: target,
+      parsedBills: parsed,
+      excludedBills: excluded,
+      completedBills: completed,
+      coverage: target > 0 ? parsed / target : 0,
+    }];
+  }));
+
   return {
     targetBills,
     parsedBills,
@@ -367,6 +444,8 @@ export async function verifyRevisorProcessBackfill(): Promise<RevisorProcessBack
     coverage: targetBills > 0 ? parsedBills / targetBills : 0,
     stageEvents: Number(summary.rows[0]?.stage_events ?? 0),
     stageKinds: Object.fromEntries(kinds.rows.map((row) => [row.stage_kind, Number(row.n)])),
+    pendingBills,
+    bySession,
     complete: targetBills > 0 && completedBills === targetBills,
   };
 }

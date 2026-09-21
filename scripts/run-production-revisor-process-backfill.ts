@@ -71,7 +71,14 @@ async function main(): Promise<void> {
     for (const identifier of result.excludedIdentifiers) excludedIdentifiers.add(identifier);
     console.log(JSON.stringify({ batch, ...result }));
     if (result.done || result.processed === 0) break;
-    if (batch === MAX_BATCHES) throw new Error('Process backfill exceeded maximum batch count');
+    if (batch === MAX_BATCHES) {
+      console.log(JSON.stringify({
+        chunkLimitReached: true,
+        maxBatches: MAX_BATCHES,
+        batchLimit: BATCH_LIMIT,
+      }));
+      break;
+    }
   }
 
   const verificationResponse = await post(secret, '?verify=1');
@@ -86,6 +93,14 @@ async function main(): Promise<void> {
     coverage: number;
     stageEvents: number;
     stageKinds: Record<string, number>;
+    pendingBills: number;
+    bySession: Record<string, {
+      targetBills: number;
+      parsedBills: number;
+      excludedBills: number;
+      completedBills: number;
+      coverage: number;
+    }>;
     complete: boolean;
   };
   console.log(JSON.stringify({
@@ -99,8 +114,21 @@ async function main(): Promise<void> {
     verification,
     minimumResearchCoverage: MIN_REVISOR_PROCESS_RESEARCH_COVERAGE,
   }));
+  const requireComplete = process.env.VOTEPREDICT_REVISOR_PROCESS_REQUIRE_COMPLETE === 'true';
   if (!verification.complete) {
-    throw new Error(`Process backfill incomplete: ${verification.completedBills}/${verification.targetBills} classified or explicitly excluded`);
+    console.log(JSON.stringify({
+      status: 'partial',
+      completedBills: verification.completedBills,
+      targetBills: verification.targetBills,
+      pendingBills: verification.pendingBills,
+      bySession: verification.bySession,
+    }));
+    if (requireComplete) {
+      throw new Error(
+        `Process backfill incomplete: ${verification.completedBills}/${verification.targetBills} classified or explicitly excluded`,
+      );
+    }
+    return;
   }
   if (verification.coverage < MIN_REVISOR_PROCESS_RESEARCH_COVERAGE) {
     throw new Error(

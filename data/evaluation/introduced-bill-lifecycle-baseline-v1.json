@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "introduced-bill-lifecycle-baseline-v1",
+  "capturedAt": "2026-09-21",
+  "trackingIssue": 310,
+  "population": {
+    "sessions": ["2021-2022", "2023-2024", "2025-2026"],
+    "introducedBills": 31010,
+    "primaryOutcome": "strict bill-number source-chamber passage during the biennium"
+  },
+  "preExpansionProcessCoverage": {
+    "billsWithStoredSourceUrl": 712,
+    "parsedBills": 659,
+    "excludedBills": 1,
+    "completedBills": 660,
+    "pendingBills": 30350,
+    "parsedCoverage": 0.02125120928732667,
+    "parserStageEvents": 7819,
+    "stageKinds": {
+      "amendment_activity": 1666,
+      "committee_referral": 1508,
+      "committee_report": 1538,
+      "companion_reference": 218,
+      "cross_chamber_received": 1018,
+      "floor_scheduled": 706,
+      "second_reading": 1165
+    }
+  },
+  "terminalReference": {
+    "billsWithAnyRecordedPassageVote": 660,
+    "sessionExpirationEvents": 30345
+  },
+  "diagnosis": "The dated Revisor process corpus was previously selected around passage-voted bills. It is therefore unsuitable as a lifecycle corpus until process history is reconstructed across the full introduced-bill universe.",
+  "productionAction": "none"
+}
