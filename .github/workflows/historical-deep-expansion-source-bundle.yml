@@ -1,15 +1,6 @@
 name: Historical Deep expansion source bundle
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-expansion-source-bundle.yml
-      - data/evaluation/historical-deep-expansion-source-lineage-v1.json
-      - scripts/collect-historical-deep-expansion-sources.ts
-      - src/evaluation/historical-deep-expansion-source-bundle.ts
-      - src/evaluation/historical-deep-expansion-cohort.ts
-      - tests/historical-deep-expansion-source-bundle.test.ts
   workflow_dispatch:
 
 permissions:

@@ -1,16 +1,6 @@
 name: Member history decay-180 passage safety audit
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/member-history-decay180-passage-safety.yml
-      - data/evaluation/member-history-decay180-passage-safety-plan-v1.json
-      - scripts/run-production-member-history-decay180-passage-safety.ts
-      - src/app/api/operations/member-history-decay180-passage-safety/route.ts
-      - src/evaluation/member-history-decay180-passage-safety.ts
-      - src/evaluation/historical-quick-decay-shadow-replay.ts
-      - src/evaluation/historical-quick-replay-dataset.ts
   workflow_dispatch:
 
 permissions:

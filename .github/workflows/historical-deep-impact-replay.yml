@@ -1,16 +1,6 @@
 name: Historical Deep impact replay
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-impact-replay.yml
-      - data/evaluation/historical-deep-impact-replay-lineage-v1.json
-      - scripts/evaluate-historical-deep-impact-replay.ts
-      - src/evaluation/historical-deep-impact-replay.ts
-      - src/evidence/historical-archive-provider.ts
-      - src/evidence/policy.ts
-      - src/evidence/impact.ts
   workflow_dispatch:
 
 permissions:

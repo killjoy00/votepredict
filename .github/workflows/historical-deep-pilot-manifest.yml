@@ -1,20 +1,6 @@
 name: Historical Deep pilot manifest
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-pilot-manifest.yml
-      - scripts/run-production-historical-deep-pilot-manifest.ts
-      - src/app/api/operations/historical-deep-pilot-manifest/route.ts
-      - src/evaluation/historical-deep-pilot.ts
-      - src/evaluation/historical-deep-targets.ts
-      - src/evaluation/historical-quick-runtime.ts
-      - src/evaluation/historical-quick-replay-dataset.ts
-      - src/evaluation/historical-quick-replay.ts
-      - src/evidence/targeting.ts
-      - src/forecasting/member-model.ts
-      - src/forecasting/minnesota-rules.ts
   workflow_dispatch:
 
 permissions:

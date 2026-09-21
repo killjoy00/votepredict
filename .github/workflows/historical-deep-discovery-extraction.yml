@@ -1,13 +1,6 @@
 name: Historical Deep discovery extraction
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-discovery-extraction.yml
-      - scripts/extract-historical-deep-discovery-candidates.ts
-      - src/evaluation/historical-deep-discovery-extractor.ts
-      - data/evaluation/historical-deep-artifact-lineage-v1.json
   workflow_dispatch:
 
 permissions:

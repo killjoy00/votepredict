@@ -1,29 +1,6 @@
 name: Historical Deep expansion impact replay
 
 on:
-  pull_request:
-    paths:
-      - .github/workflows/historical-deep-expansion-impact-replay.yml
-      - data/evaluation/historical-deep-expansion-impact-lineage-v1.json
-      - scripts/evaluate-historical-deep-expansion-impact-replay.ts
-      - src/evaluation/historical-deep-expansion-impact-replay.ts
-      - src/evaluation/historical-deep-impact-replay.ts
-      - src/evidence/historical-archive-provider.ts
-      - src/evidence/policy.ts
-      - src/evidence/impact.ts
-      - tests/historical-deep-expansion-impact-replay.test.ts
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-expansion-impact-replay.yml
-      - data/evaluation/historical-deep-expansion-impact-lineage-v1.json
-      - scripts/evaluate-historical-deep-expansion-impact-replay.ts
-      - src/evaluation/historical-deep-expansion-impact-replay.ts
-      - src/evaluation/historical-deep-impact-replay.ts
-      - src/evidence/historical-archive-provider.ts
-      - src/evidence/policy.ts
-      - src/evidence/impact.ts
-      - tests/historical-deep-expansion-impact-replay.test.ts
   workflow_dispatch:
 
 permissions:

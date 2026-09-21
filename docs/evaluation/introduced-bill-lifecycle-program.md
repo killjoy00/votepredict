@@ -328,6 +328,22 @@ A serving change requires:
 
 The 2027-28 lifecycle snapshots should be captured under the frozen contract before outcomes accrue.
 
+## Execution infrastructure
+
+Bulk historical research must not run inside Vercel production functions.
+
+Use this separation:
+
+- **Vercel:** serving application, lightweight production endpoints, forecast scheduler, and genuinely prospective ingestion that needs the deployed application boundary.
+- **GitHub Actions:** bounded historical crawls, corpus reconstruction, offline evaluation, and research artifacts.
+- **Neon:** canonical production/research data store. Historical GitHub jobs may write directly through the production database connection when the operation is explicitly idempotent, source-lineaged, bounded, and covered by verification queries.
+- **Deep historical workflows:** manual-only while Deep remains out of scope.
+- **Completed historical backfills/evaluations:** manual-only. Production deploys must not retrigger them.
+
+The lifecycle Revisor backfill is the reference pattern: GitHub Actions reads the database credential privately, executes the existing parser/backfill code on the runner, uses low external-source concurrency, records transient failures as retryable deferrals, and verifies corpus coverage after each bounded chunk. It does not invoke a Vercel function.
+
+This boundary is both a cost control and a reliability rule. Production function CPU/memory limits must not determine whether an offline historical corpus can be reconstructed.
+
 ## Execution plan
 
 ### P0 — contract and inventory

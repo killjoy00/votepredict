@@ -1,23 +1,6 @@
 name: Historical Deep expansion candidate extraction
 
 on:
-  pull_request:
-    paths:
-      - .github/workflows/historical-deep-expansion-candidate-extraction.yml
-      - data/evaluation/historical-deep-expansion-candidate-lineage-v1.json
-      - scripts/extract-historical-deep-expansion-candidates.ts
-      - src/evaluation/historical-deep-expansion-extractor.ts
-      - src/evaluation/historical-deep-discovery-extractor.ts
-      - tests/historical-deep-expansion-extractor.test.ts
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-expansion-candidate-extraction.yml
-      - data/evaluation/historical-deep-expansion-candidate-lineage-v1.json
-      - scripts/extract-historical-deep-expansion-candidates.ts
-      - src/evaluation/historical-deep-expansion-extractor.ts
-      - src/evaluation/historical-deep-discovery-extractor.ts
-      - tests/historical-deep-expansion-extractor.test.ts
   workflow_dispatch:
 
 permissions:

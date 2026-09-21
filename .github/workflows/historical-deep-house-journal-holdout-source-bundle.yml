@@ -1,25 +1,6 @@
 name: Historical Deep House Journal holdout source bundle
 
 on:
-  pull_request:
-    paths:
-      - .github/workflows/historical-deep-house-journal-holdout-source-bundle.yml
-      - data/evaluation/historical-deep-house-journal-holdout-source-lineage-v1.json
-      - scripts/collect-historical-deep-house-journal-holdout-sources.ts
-      - src/evaluation/historical-deep-house-journal-holdout-source-bundle.ts
-      - src/evaluation/historical-deep-house-journal-source-bundle.ts
-      - src/evaluation/historical-deep-house-journal-holdout-cohort.ts
-      - tests/historical-deep-house-journal-holdout-source-bundle.test.ts
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-house-journal-holdout-source-bundle.yml
-      - data/evaluation/historical-deep-house-journal-holdout-source-lineage-v1.json
-      - scripts/collect-historical-deep-house-journal-holdout-sources.ts
-      - src/evaluation/historical-deep-house-journal-holdout-source-bundle.ts
-      - src/evaluation/historical-deep-house-journal-source-bundle.ts
-      - src/evaluation/historical-deep-house-journal-holdout-cohort.ts
-      - tests/historical-deep-house-journal-holdout-source-bundle.test.ts
   workflow_dispatch:
 
 permissions:

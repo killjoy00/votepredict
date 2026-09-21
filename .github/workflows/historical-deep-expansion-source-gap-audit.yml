@@ -1,21 +1,6 @@
 name: Historical Deep expansion source-gap audit
 
 on:
-  pull_request:
-    paths:
-      - .github/workflows/historical-deep-expansion-source-gap-audit.yml
-      - data/evaluation/historical-deep-expansion-source-gap-audit-lineage-v1.json
-      - scripts/audit-historical-deep-expansion-source-gaps.ts
-      - src/evaluation/historical-deep-expansion-source-gap-audit.ts
-      - tests/historical-deep-expansion-source-gap-audit.test.ts
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-expansion-source-gap-audit.yml
-      - data/evaluation/historical-deep-expansion-source-gap-audit-lineage-v1.json
-      - scripts/audit-historical-deep-expansion-source-gaps.ts
-      - src/evaluation/historical-deep-expansion-source-gap-audit.ts
-      - tests/historical-deep-expansion-source-gap-audit.test.ts
   workflow_dispatch:
 
 permissions:

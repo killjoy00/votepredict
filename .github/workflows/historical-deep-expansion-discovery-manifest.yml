@@ -1,19 +1,6 @@
 name: Historical Deep expansion discovery manifest
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-expansion-discovery-manifest.yml
-      - data/evaluation/historical-deep-expansion-discovery-lineage-v1.json
-      - scripts/run-production-historical-deep-expansion-discovery-manifest.ts
-      - src/app/api/operations/historical-deep-expansion-discovery-manifest/route.ts
-      - src/evaluation/historical-deep-expansion-discovery.ts
-      - src/evaluation/historical-deep-expansion-cohort.ts
-      - src/evaluation/historical-deep-target-strategies.ts
-      - src/evaluation/historical-quick-runtime.ts
-      - src/evaluation/historical-quick-replay-dataset.ts
-      - src/evaluation/historical-quick-replay.ts
   workflow_dispatch:
 
 permissions:

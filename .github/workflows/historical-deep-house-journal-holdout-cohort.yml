@@ -1,23 +1,6 @@
 name: Historical Deep House Journal holdout cohort
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-house-journal-holdout-cohort.yml
-      - data/evaluation/historical-deep-house-journal-holdout-plan-v1.json
-      - scripts/run-production-historical-deep-house-journal-holdout-cohort.ts
-      - src/app/api/operations/historical-deep-house-journal-holdout-cohort/route.ts
-      - src/evaluation/historical-deep-house-journal-holdout-cohort.ts
-      - src/evaluation/historical-deep-expansion-cohort.ts
-      - src/evaluation/historical-deep-target-strategies.ts
-      - src/evaluation/historical-deep-targets.ts
-      - src/evaluation/historical-quick-runtime.ts
-      - src/evaluation/historical-quick-replay-dataset.ts
-      - src/evaluation/historical-quick-replay.ts
-      - src/evidence/targeting.ts
-      - tests/historical-deep-house-journal-holdout-cohort.test.ts
-      - docs/evaluation/historical-deep-house-journal-holdout-validation-v1.md
   workflow_dispatch:
 
 permissions:
