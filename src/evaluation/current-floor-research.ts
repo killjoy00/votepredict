@@ -13,6 +13,7 @@ import {
   type RateEvidence,
 } from '../forecasting/member-model';
 import {
+  historicalBillIdentityTitle,
   scoreHistoricalQuickReplay,
   selectCandidateVersionAsOfVote,
   selectStrictTargetVersion,
@@ -196,7 +197,10 @@ function activeOn(membership: QuickReplayMembership, date: string): boolean {
 }
 
 function featuresFor(version: QuickReplayVersion, event: QuickReplayEvent): DeterministicBillFeatures {
-  return version.features ?? extractDeterministicBillFeatures({ title: event.title, text: version.rawText });
+  return extractDeterministicBillFeatures({
+    title: historicalBillIdentityTitle(version.rawText, event.identifier),
+    text: version.rawText,
+  });
 }
 
 function policyAreasFor(version: QuickReplayVersion, event: QuickReplayEvent): string[] {
@@ -322,7 +326,7 @@ export function buildResearchAnalogueSupport(
         billVersionId: targetVersion.id,
         identifier: event.identifier,
         session: event.session,
-        title: event.title,
+        title: historicalBillIdentityTitle(targetVersion.rawText, event.identifier),
         publishedAt: targetVersion.publishedAt,
         companionIdentifier: event.companionIdentifier,
         features: featuresFor(targetVersion, event),
@@ -359,7 +363,7 @@ export function buildResearchAnalogueSupport(
         billVersionId: candidateVersion.id,
         identifier: event.identifier,
         session: event.session,
-        title: event.title,
+        title: historicalBillIdentityTitle(candidateVersion.rawText, event.identifier),
         publishedAt: candidateVersion.publishedAt,
         companionIdentifier: event.companionIdentifier,
         features: featuresFor(candidateVersion, event),
