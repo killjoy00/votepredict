@@ -1,16 +1,6 @@
 name: Historical Deep expansion discovery score
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-expansion-discovery-score.yml
-      - data/evaluation/historical-deep-expansion-scoring-lineage-v1.json
-      - scripts/run-production-historical-deep-expansion-outcome-snapshot.ts
-      - scripts/score-historical-deep-expansion-discovery.ts
-      - src/app/api/operations/historical-deep-expansion-outcome-snapshot/route.ts
-      - src/evaluation/historical-deep-expansion-outcome-scorer.ts
-      - tests/historical-deep-expansion-outcome-scorer.test.ts
   workflow_dispatch:
 
 permissions:
