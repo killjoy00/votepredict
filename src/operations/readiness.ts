@@ -122,10 +122,22 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
       latest_public_evidence_run: string | null;
       latest_public_evidence_status: string | null;
     }>(`
-      WITH current_evidence AS (
-        SELECT ei.*, sd.source_kind, sd.fetched_at
+      WITH current_session AS (
+        SELECT s.id
+          FROM legislative_sessions s
+          JOIN jurisdictions j ON j.id=s.jurisdiction_id
+         WHERE j.slug='us-mn'
+           AND s.is_current=true
+         ORDER BY s.starts_on DESC
+         LIMIT 1
+      ), current_evidence AS (
+        SELECT ei.*, sd.source_kind, sd.fetched_at,
+               em.session_id AS membership_session_id,
+               eb.session_id AS bill_session_id
           FROM evidence_items ei
           JOIN source_documents sd ON sd.id=ei.source_document_id
+          LEFT JOIN memberships em ON em.id=ei.membership_id
+          LEFT JOIN bills eb ON eb.id=ei.bill_id
          WHERE NOT EXISTS (
            SELECT 1
              FROM evidence_relationships er
@@ -194,62 +206,77 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
         count(*) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype'='district_election_context'
+            AND membership_session_id=(SELECT id FROM current_session)
         )::int AS structured_district_items,
         count(DISTINCT membership_id) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype'='district_election_context'
+            AND membership_session_id=(SELECT id FROM current_session)
         )::int AS structured_district_members,
         count(DISTINCT bill_id) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype'='district_election_context'
+            AND membership_session_id=(SELECT id FROM current_session)
         )::int AS structured_district_bills,
         count(*) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype'='floor_amendment_offer'
+            AND bill_session_id=(SELECT id FROM current_session)
         )::int AS structured_floor_items,
         count(DISTINCT membership_id) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype'='floor_amendment_offer'
+            AND bill_session_id=(SELECT id FROM current_session)
         )::int AS structured_floor_members,
         count(DISTINCT bill_id) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype'='floor_amendment_offer'
+            AND bill_session_id=(SELECT id FROM current_session)
         )::int AS structured_floor_bills,
         count(*) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype'='legislative_speech'
+            AND bill_session_id=(SELECT id FROM current_session)
         )::int AS structured_speech_items,
         count(DISTINCT membership_id) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype'='legislative_speech'
+            AND bill_session_id=(SELECT id FROM current_session)
         )::int AS structured_speech_members,
         count(DISTINCT bill_id) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype'='legislative_speech'
+            AND bill_session_id=(SELECT id FROM current_session)
         )::int AS structured_speech_bills,
         count(*) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype'='conference_conferee'
+            AND bill_session_id=(SELECT id FROM current_session)
         )::int AS structured_conferee_items,
         count(DISTINCT membership_id) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype'='conference_conferee'
+            AND bill_session_id=(SELECT id FROM current_session)
         )::int AS structured_conferee_members,
         count(DISTINCT bill_id) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype'='conference_conferee'
+            AND bill_session_id=(SELECT id FROM current_session)
         )::int AS structured_conferee_bills,
         count(*) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype' IN ('bill_summary_version','fiscal_note_context')
+            AND bill_session_id=(SELECT id FROM current_session)
         )::int AS structured_bill_context_items,
         count(DISTINCT membership_id) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype' IN ('bill_summary_version','fiscal_note_context')
+            AND bill_session_id=(SELECT id FROM current_session)
         )::int AS structured_bill_context_members,
         count(DISTINCT bill_id) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype' IN ('bill_summary_version','fiscal_note_context')
+            AND bill_session_id=(SELECT id FROM current_session)
         )::int AS structured_bill_context_bills,
         count(*) FILTER (WHERE metadata->>'mechanicallyActionable'='true')::int AS mechanically_actionable_items,
         max(fetched_at) FILTER (WHERE source_kind='campaign_finance_bulk')::text AS latest_campaign_finance_fetch,
