@@ -1,23 +1,6 @@
 name: Historical Deep expansion impact replay v2
 
 on:
-  pull_request:
-    paths:
-      - .github/workflows/historical-deep-expansion-impact-replay-v2.yml
-      - data/evaluation/historical-deep-expansion-impact-lineage-v2.json
-      - scripts/evaluate-historical-deep-expansion-impact-replay-v2.ts
-      - src/evaluation/historical-deep-expansion-impact-replay-v2.ts
-      - tests/historical-deep-expansion-impact-replay-v2.test.ts
-      - docs/evaluation/historical-deep-expansion-impact-replay-v2.md
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-expansion-impact-replay-v2.yml
-      - data/evaluation/historical-deep-expansion-impact-lineage-v2.json
-      - scripts/evaluate-historical-deep-expansion-impact-replay-v2.ts
-      - src/evaluation/historical-deep-expansion-impact-replay-v2.ts
-      - tests/historical-deep-expansion-impact-replay-v2.test.ts
-      - docs/evaluation/historical-deep-expansion-impact-replay-v2.md
   workflow_dispatch:
 
 permissions:
