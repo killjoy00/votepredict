@@ -164,15 +164,16 @@ jobs:
           test "$(jq -r '.conclusion.servingQuickChanged' "$file")" = 'false'
           test "$(jq -r '.conclusion.quickEvidenceWeightChanged' "$file")" = 'false'
           test "$(jq '.metadata.featureNames | length' "$file")" = '32'
-          test "$(jq '.ablations | length' "$file")" = '9'
-          test "$(jq -r '.robustness.selectionRetunedForRobustness' "$file")" = 'false'
-          test "$(jq -r '.robustness.memberMetrics.eventBalanced.events > 0' "$file")" = 'true'
-          test "$(jq -r '.robustness.memberMetrics.chamberBalanced.chambers > 0' "$file")" = 'true'
           gate="$(jq -r '.coverageGate.passed' "$file")"
           if [ "$gate" = 'true' ]; then
             test "$(jq -r '.selected == null' "$file")" = 'false'
+            test "$(jq '.ablations | length' "$file")" = '9'
+            test "$(jq -r '.robustness.selectionRetunedForRobustness' "$file")" = 'false'
+            test "$(jq -r '.robustness.memberMetrics.eventBalanced.events > 0' "$file")" = 'true'
+            test "$(jq -r '.robustness.memberMetrics.chamberBalanced.chambers > 0' "$file")" = 'true'
           else
             test "$(jq -r '.selected == null' "$file")" = 'true'
+            test "$(jq '.ablations | length' "$file")" = '0'
             test "$(jq -r '.conclusion.reason' "$file")" = 'coverage_gate_failed'
           fi
 
