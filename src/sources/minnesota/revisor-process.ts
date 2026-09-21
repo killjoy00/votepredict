@@ -1,6 +1,6 @@
 import { parseRevisorOfficialActions, type RevisorActionChamber } from './revisor-actions';
 
-export const REVISOR_PROCESS_PARSER_VERSION = 'revisor-process-v1' as const;
+export const REVISOR_PROCESS_PARSER_VERSION = 'revisor-process-v2' as const;
 
 export type RevisorProcessStageKind =
   | 'committee_referral'
