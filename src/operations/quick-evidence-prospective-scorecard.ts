@@ -345,7 +345,10 @@ export function evaluateQuickEvidenceProspectiveCases(
   } as const;
 }
 
-export async function getQuickEvidenceProspectiveScorecard(db: Queryable) {
+export async function getQuickEvidenceProspectiveScorecard(
+  db: Queryable,
+  options: { revealMetrics?: boolean } = {},
+) {
   const revisions = await db.query<RevisionRow>(\`
     SELECT f.id::text AS forecast_id,
            b.identifier,
@@ -535,7 +538,9 @@ export async function getQuickEvidenceProspectiveScorecard(db: Queryable) {
     });
   }
 
-  const evaluated = evaluateQuickEvidenceProspectiveCases(cases);
+  const evaluated = evaluateQuickEvidenceProspectiveCases(cases, {
+    revealMetrics: options.revealMetrics === true,
+  });
   return {
     schemaVersion: QUICK_EVIDENCE_PROSPECTIVE_SCORECARD_SCHEMA,
     generatedAt: new Date().toISOString(),
