@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   buildHistoricalQuickAnalogueSupport,
+  historicalBillIdentityTitle,
   runHistoricalQuickReplay,
   scoreHistoricalQuickReplay,
   selectCandidateVersionAsOfVote,
@@ -194,4 +195,100 @@ test('Quick replay scorecard scores member and chamber outcomes only for replaya
   assert.equal(score.memberPredictions, 1);
   assert.equal(score.chamberForecasts, 1);
   assert.equal(score.passageForecasts, 1);
+});
+
+
+test('historical v2 derives bill identity from dated text and never needs current title', () => {
+  const text = [
+    'A bill for an act relating to elections; restoring voting rights; appropriating money.',
+    'BE IT ENACTED BY THE LEGISLATURE OF THE STATE OF MINNESOTA:',
+    'Section 1. The right to vote is restored.',
+  ].join(' ');
+  assert.equal(
+    historicalBillIdentityTitle(text, 'HF28'),
+    'relating to elections; restoring voting rights; appropriating money',
+  );
+  assert.equal(historicalBillIdentityTitle('Section 1. No long title is present.', 'HF28'), 'HF28');
+});
+
+test('changing mutable current bill titles cannot change historical analogue support', () => {
+  const priorText = 'A bill for an act relating to health; establishing a hospital grant program. BE IT ENACTED BY THE LEGISLATURE OF THE STATE OF MINNESOTA: Section 1. A hospital grant program is established.';
+  const targetText = 'A bill for an act relating to health; establishing medical grants. BE IT ENACTED BY THE LEGISLATURE OF THE STATE OF MINNESOTA: Section 1. Medical grants are established.';
+  const prior = event({
+    voteEventId: 'prior-vote',
+    billId: 'prior-bill',
+    identifier: 'HF90',
+    title: 'MUTABLE CURRENT TITLE ONE',
+    occurredOn: '2026-03-08',
+  });
+  const targetA = event({
+    voteEventId: 'target-vote',
+    billId: 'target-bill',
+    identifier: 'HF100',
+    title: 'MUTABLE CURRENT TITLE TWO',
+    occurredOn: '2026-03-10',
+  });
+  const targetB = { ...targetA, title: 'COMPLETELY DIFFERENT LATER TITLE' };
+  const versions = new Map<string, QuickReplayVersion[]>([
+    ['prior-bill', [version({
+      id: 'prior-version',
+      billId: 'prior-bill',
+      publishedAt: '2026-03-07T00:00:00.000Z',
+      rawText: priorText,
+    })]],
+    ['target-bill', [version({
+      id: 'target-version',
+      billId: 'target-bill',
+      publishedAt: '2026-03-09T00:00:00.000Z',
+      rawText: targetText,
+    })]],
+  ]);
+  const votes = new Map<string, Map<string, 'yea' | 'nay'>>([
+    ['prior-vote', new Map([['legislator-1', 'yea']])],
+  ]);
+
+  const first = buildHistoricalQuickAnalogueSupport([prior, targetA], versions, votes);
+  const second = buildHistoricalQuickAnalogueSupport([prior, targetB], versions, votes);
+  assert.deepEqual(
+    first.supportByEvent.get('target-vote')?.selectedAnalogueIds,
+    second.supportByEvent.get('target-vote')?.selectedAnalogueIds,
+  );
+  assert.deepEqual(
+    first.supportByEvent.get('target-vote')?.member,
+    second.supportByEvent.get('target-vote')?.member,
+  );
+});
+
+test('historical v2 ignores persisted feature sets that could contain mutable-title inputs', () => {
+  const rawText = 'A bill for an act relating to health; establishing grants. BE IT ENACTED BY THE LEGISLATURE OF THE STATE OF MINNESOTA: Section 1. Grants are established for hospitals.';
+  const malicious = {
+    schemaVersion: 'bill-features-v2',
+    bodyHash: 'unsafe',
+    tokenCount: 1,
+    lineCount: 1,
+    sectionCount: 0,
+    titleTokens: ['zzzzleakedtoken'],
+    keywords: ['zzzzleakedtoken'],
+    policyAreas: [],
+    actionTypes: [],
+    affectedEntities: [],
+    fiscal: { appropriation: false, taxChange: false, bonding: false, direction: 'unknown' },
+  } as QuickReplayVersion['features'];
+  const prior = event({ voteEventId: 'prior', billId: 'prior', identifier: 'HF1', occurredOn: '2026-03-08' });
+  const target = event({ voteEventId: 'target', billId: 'target', identifier: 'HF2', occurredOn: '2026-03-10' });
+  const plainVersions = new Map<string, QuickReplayVersion[]>([
+    ['prior', [version({ id: 'pv', billId: 'prior', rawText, publishedAt: '2026-03-07T00:00:00.000Z' })]],
+    ['target', [version({ id: 'tv', billId: 'target', rawText, publishedAt: '2026-03-09T00:00:00.000Z' })]],
+  ]);
+  const unsafeVersions = new Map<string, QuickReplayVersion[]>([
+    ['prior', [version({ id: 'pv', billId: 'prior', rawText, publishedAt: '2026-03-07T00:00:00.000Z', features: malicious })]],
+    ['target', [version({ id: 'tv', billId: 'target', rawText, publishedAt: '2026-03-09T00:00:00.000Z', features: malicious })]],
+  ]);
+  const votes = new Map<string, Map<string, 'yea' | 'nay'>>([
+    ['prior', new Map([['legislator-1', 'yea']])],
+  ]);
+  assert.deepEqual(
+    buildHistoricalQuickAnalogueSupport([prior, target], plainVersions, votes).supportByEvent.get('target')?.selectedAnalogueIds,
+    buildHistoricalQuickAnalogueSupport([prior, target], unsafeVersions, votes).supportByEvent.get('target')?.selectedAnalogueIds,
+  );
 });
