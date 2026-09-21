@@ -13,6 +13,7 @@ import {
 import {
   extractHouseResearchSummaryPdfLinks,
   extractOfficialBillResourceLinks,
+  parseHouseResearchSummaryDetailSubject,
   parseHouseResearchSummaryIndex,
   parseHouseResearchSummaryPdfText,
   summarizeFiscalNoteSearch,
@@ -377,4 +378,63 @@ test('House Research summary PDF date parser rejects impossible calendar dates',
     'Date February 30, 2023',
   ].join(' ');
   assert.equal(parseHouseResearchSummaryPdfText(text), undefined);
+});
+
+
+test('House Research detail parser supplies subject for comparison summaries', () => {
+  const html = [
+    '<div>Bill: H.F. 1065</div>',
+    '<div>Subject:</div><div>Education omnibus</div>',
+    '<div>Latest Summary:</div>',
+    '<a href="/hrd/bs/92/hf1065.pdf">Comparison summary HF 1065, 1UE/SF 960 2E</a>',
+  ].join('');
+  assert.equal(parseHouseResearchSummaryDetailSubject(html), 'Education omnibus');
+});
+
+test('House Research comparison summary parser accepts official House File title and prepared date', () => {
+  const text = [
+    'Bill Comparison Summary of',
+    'House File 1065, First Unofficial Engrossment/Senate File 960, Second Engrossment',
+    'Prepared by:',
+    'House Research and Senate Counsel, Research and Fiscal Analysis',
+    'April 30, 2021',
+    'Table of Contents',
+  ].join('\n');
+  assert.deepEqual(parseHouseResearchSummaryPdfText(text, {
+    fallbackSubject: 'Education omnibus',
+    fallbackVersion: 'Comparison summary HF 1065, 1UE/SF 960 2E',
+  }), {
+    billIdentifier: 'HF1065',
+    version: 'Comparison summary HF 1065, 1UE/SF 960 2E',
+    subject: 'Education omnibus',
+    summaryDate: '2021-04-30',
+  });
+});
+
+test('House Research comparison summary parser fails closed without detail metadata', () => {
+  const text = [
+    'Bill Comparison Summary of',
+    'House File 991, Second Engrossment/House File 991, First Unofficial Engrossment',
+    'Prepared by: House Research and Senate Counsel, Research and Fiscal Analysis',
+    'May 3, 2021',
+  ].join(' ');
+  assert.equal(parseHouseResearchSummaryPdfText(text), undefined);
+});
+
+test('House Research summary parser accepts colon-separated official labels', () => {
+  const text = [
+    'Bill Summary',
+    'H.F. 4300',
+    'Third Engrossment',
+    'Subject: Omnibus Education Finance and Policy Bill',
+    'Authors: Davnie and others',
+    'Analyst: Tim Strom',
+    'Date: April 21, 2022',
+  ].join('\n');
+  assert.deepEqual(parseHouseResearchSummaryPdfText(text), {
+    billIdentifier: 'HF4300',
+    version: 'Third Engrossment',
+    subject: 'Omnibus Education Finance and Policy Bill',
+    summaryDate: '2022-04-21',
+  });
 });
