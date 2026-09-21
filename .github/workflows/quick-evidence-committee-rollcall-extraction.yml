@@ -1,0 +1,101 @@
+name: Quick Evidence committee roll-call extraction
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/quick-evidence-committee-rollcall-extraction.yml
+      - scripts/extract-quick-evidence-committee-rollcalls.ts
+      - src/evaluation/quick-evidence-committee-rollcall-extractor.ts
+      - src/evaluation/historical-deep-expansion-extractor-v2.ts
+      - src/evaluation/historical-deep-procedural-mechanics.ts
+      - data/evaluation/quick-evidence-committee-rollcall-source-lineage-v1.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: quick-evidence-committee-rollcall-extraction
+  cancel-in-progress: false
+
+jobs:
+  extract:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify frozen source lineage
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          lineage='data/evaluation/quick-evidence-committee-rollcall-source-lineage-v1.json'
+          test "$(jq -r '.schemaVersion' "$lineage")" = 'quick-evidence-committee-rollcall-source-lineage-v1'
+          test "$(jq -r '.sourceRunId' "$lineage")" = '35625431864'
+          test "$(jq -r '.sourceHeadSha' "$lineage")" = 'cd6b3a29073688d33ad1d3ae0eaf063b93188949'
+          test "$(jq -r '.policy.outcomeUse' "$lineage")" = 'none'
+          test "$(jq -r '.policy.productionAction' "$lineage")" = 'none'
+
+          gh api repos/${GITHUB_REPOSITORY}/actions/runs/35625431864/artifacts --paginate > "$RUNNER_TEMP/source-artifacts.json"
+          for kind in manifestArtifact sourceArtifact; do
+            name="$(jq -r ".${kind}.name" "$lineage")"
+            expected_id="$(jq -r ".${kind}.id" "$lineage")"
+            expected_digest="$(jq -r ".${kind}.digest" "$lineage")"
+            test "$expected_id" != 'null'
+            test "$expected_digest" != 'null'
+            actual="$(jq -c --arg name "$name" '.artifacts[] | select(.name == $name)' "$RUNNER_TEMP/source-artifacts.json")"
+            test -n "$actual"
+            test "$(printf '%s' "$actual" | jq -r '.id')" = "$expected_id"
+            test "$(printf '%s' "$actual" | jq -r '.digest')" = "$expected_digest"
+            test "$(printf '%s' "$actual" | jq -r '.expired')" = 'false'
+          done
+      - name: Download frozen manifest
+        uses: actions/download-artifact@v4
+        with:
+          name: quick-evidence-committee-rollcall-manifest-cd6b3a29073688d33ad1d3ae0eaf063b93188949
+          path: inputs/manifest
+          github-token: ${{ github.token }}
+          run-id: 35625431864
+      - name: Download frozen source corpus
+        uses: actions/download-artifact@v4
+        with:
+          name: quick-evidence-committee-rollcall-sources-cd6b3a29073688d33ad1d3ae0eaf063b93188949
+          path: inputs/sources
+          github-token: ${{ github.token }}
+          run-id: 35625431864
+      - name: Extract frozen committee roll-call features
+        run: |
+          node --import tsx scripts/extract-quick-evidence-committee-rollcalls.ts \
+            --manifest inputs/manifest/quick-evidence-committee-rollcall-manifest-v1.json \
+            --sources inputs/sources/quick-evidence-committee-rollcall-source-bundle-v1.json \
+            --output artifacts/quick-evidence-committee-rollcall-candidates-v1.json
+      - name: Verify outcome-blind candidate artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          file='artifacts/quick-evidence-committee-rollcall-candidates-v1.json'
+          test "$(jq -r '.schemaVersion' "$file")" = 'quick-evidence-committee-rollcall-candidates-v1'
+          test "$(jq -r '.metadata.parser' "$file")" = 'deterministic-house-committee-roll-call-v2'
+          test "$(jq -r '.metadata.mechanicsPolicy' "$file")" = 'mn-house-procedural-mechanics-v1'
+          test "$(jq -r '.metadata.outcomeUse' "$file")" = 'none'
+          test "$(jq -r '.metadata.probabilityAction' "$file")" = 'none'
+          if grep -Eq '"(actualOutcome|passed|yeaCount|nayCount)"' "$file"; then
+            echo 'Outcome field leaked into committee-rollcall candidate artifact.'
+            exit 1
+          fi
+      - name: Upload frozen candidate artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: quick-evidence-committee-rollcall-candidates-${{ github.sha }}
+          path: artifacts/quick-evidence-committee-rollcall-candidates-v1.json
+          if-no-files-found: error
+          retention-days: 90

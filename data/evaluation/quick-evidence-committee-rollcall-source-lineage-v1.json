@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "quick-evidence-committee-rollcall-source-lineage-v1",
+  "sourceRunId": 35625431864,
+  "sourceHeadSha": "cd6b3a29073688d33ad1d3ae0eaf063b93188949",
+  "manifestArtifact": {
+    "name": "quick-evidence-committee-rollcall-manifest-cd6b3a29073688d33ad1d3ae0eaf063b93188949",
+    "id": 10652048096,
+    "digest": "sha256:b92591980632ea9562da68fb351d43f44952bbce8552b1b6efae19113ed5347e"
+  },
+  "sourceArtifact": {
+    "name": "quick-evidence-committee-rollcall-sources-cd6b3a29073688d33ad1d3ae0eaf063b93188949",
+    "id": 10652282889,
+    "digest": "sha256:93cb3313f1905d76a97eadeb4cbefd18dd84cdb93225cccbe99e56bbe12e9fce"
+  },
+  "policy": {
+    "parser": "deterministic-house-committee-roll-call-v2",
+    "mechanics": "mn-house-procedural-mechanics-v1",
+    "outcomeUse": "none",
+    "productionAction": "none"
+  }
+}
