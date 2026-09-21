@@ -71,7 +71,7 @@ export async function getQuickEvidenceAccrualHealth(input: {
   capturedRevisions: number;
   failedRevisions: number;
 }) {
-  const shadowResult = await pool.query<CountRow>(\`
+  const shadowResult = await pool.query<CountRow>(`
     WITH shadows AS (
       SELECT r.id AS revision_id,
              fmp.membership_id,
@@ -151,14 +151,14 @@ export async function getQuickEvidenceAccrualHealth(input: {
                  + COALESCE((shadow #>> '{features,unclassifiedCommitteeMotionNay}')::int,0) > 0
            )::int AS committee_rollcall
       FROM shadows
-  \`, [
+  `, [
     QUICK_EVIDENCE_PROSPECTIVE_SESSION,
     QUICK_EVIDENCE_BASE_MODEL_VERSION,
     QUICK_EVIDENCE_PROSPECTIVE_EXPERIMENT,
     [...QUICK_EVIDENCE_REQUIRED_FEATURE_KEYS],
   ]);
 
-  const sourceResult = await pool.query<CountRow>(\`
+  const sourceResult = await pool.query<CountRow>(`
     WITH target_session AS (
       SELECT id FROM legislative_sessions
        WHERE slug=$1 ORDER BY starts_on DESC NULLS LAST LIMIT 1
@@ -200,7 +200,7 @@ export async function getQuickEvidenceAccrualHealth(input: {
       count(*) FILTER (WHERE metadata->>'subtype' IN ('bill_summary_version','fiscal_note_context'))::int AS bill_context,
       count(*) FILTER (WHERE metadata->>'subtype'='committee_rollcall')::int AS committee_rollcall
     FROM evidence
-  \`, [QUICK_EVIDENCE_PROSPECTIVE_SESSION]);
+  `, [QUICK_EVIDENCE_PROSPECTIVE_SESSION]);
 
   const shadow = shadowResult.rows[0] ?? {};
   const source = sourceResult.rows[0] ?? {};
