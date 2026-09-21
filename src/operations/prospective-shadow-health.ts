@@ -18,6 +18,7 @@ import {
   PROSPECTIVE_EVIDENCE_OWNER_USER_ID,
   PROSPECTIVE_EVIDENCE_SESSION,
 } from './prospective-evidence-plan';
+import { getQuickEvidenceAccrualHealth } from './quick-evidence-accrual-health';
 
 const CAP20_FROZEN_BASELINE_MODEL_VERSION = 'member-eb-v1.1';
 const FAILURE_GRACE_HOURS = 2;
@@ -47,7 +48,9 @@ export interface ProspectiveShadowCaptureHealth {
   generatedAt: string;
   failureGraceHours: number;
   productionEvidence: ProspectiveProductionEvidenceStatus;
-  quickEvidence: ProspectiveShadowCaptureStatus & {
+  quickEvidence: ProspectiveShadowCaptureStatus
+    & Awaited<ReturnType<typeof getQuickEvidenceAccrualHealth>>
+    & {
     experiment: typeof QUICK_EVIDENCE_PROSPECTIVE_EXPERIMENT;
     session: typeof QUICK_EVIDENCE_PROSPECTIVE_SESSION;
     chambers: readonly ['house', 'senate'];
@@ -273,6 +276,20 @@ export async function getProspectiveShadowCaptureHealth(): Promise<ProspectiveSh
   ]);
   const quickEvidence = quickEvidenceResult.rows[0];
   if (!quickEvidence) throw new Error('Quick Evidence prospective capture health query returned no row');
+  const quickEvidenceStatus = status({
+    scope: quickEvidence.scope,
+    eligible: quickEvidence.eligible,
+    captured: quickEvidence.captured,
+    excluded: quickEvidence.excluded,
+    failed: quickEvidence.failed,
+    latestEligibleAt: quickEvidence.latest_eligible_at,
+    latestCapturedAt: quickEvidence.latest_captured_at,
+  });
+  const quickEvidenceAccrual = await getQuickEvidenceAccrualHealth({
+    eligibleRevisions: quickEvidenceStatus.eligibleRevisions,
+    capturedRevisions: quickEvidenceStatus.capturedRevisions,
+    failedRevisions: quickEvidenceStatus.failedRevisions,
+  });
 
   return {
     generatedAt: new Date().toISOString(),
@@ -292,15 +309,8 @@ export async function getProspectiveShadowCaptureHealth(): Promise<ProspectiveSh
       session: QUICK_EVIDENCE_PROSPECTIVE_SESSION,
       chambers: ['house', 'senate'],
       servingMemberModelVersion: QUICK_EVIDENCE_BASE_MODEL_VERSION,
-      ...status({
-        scope: quickEvidence.scope,
-        eligible: quickEvidence.eligible,
-        captured: quickEvidence.captured,
-        excluded: quickEvidence.excluded,
-        failed: quickEvidence.failed,
-        latestEligibleAt: quickEvidence.latest_eligible_at,
-        latestCapturedAt: quickEvidence.latest_captured_at,
-      }),
+      ...quickEvidenceStatus,
+      ...quickEvidenceAccrual,
     },
     cap20: {
       experiment: MEMBER_HISTORY_CAP20_PROSPECTIVE_EXPERIMENT,
