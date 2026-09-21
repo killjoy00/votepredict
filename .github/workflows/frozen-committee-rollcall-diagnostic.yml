@@ -1,15 +1,6 @@
 name: Frozen committee roll-call diagnostic
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/frozen-committee-rollcall-diagnostic.yml
-      - data/evaluation/quick-evidence-committee-rollcall-candidate-lineage-v1.json
-      - data/evaluation/quick-evidence-committee-rollcall-screen-plan-v1.json
-      - scripts/evaluate-quick-evidence-committee-rollcall-screen.ts
-      - src/app/api/operations/quick-evidence-committee-rollcall-screen/route.ts
-      - src/evaluation/quick-evidence-committee-rollcall-screen.ts
   workflow_dispatch:
 
 permissions:
