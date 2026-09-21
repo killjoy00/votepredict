@@ -17,8 +17,20 @@ test('combined Quick Evidence evaluator matches the frozen feature inventory', (
     fit: { maximumAbsoluteLogitDelta: number };
     interpretation: { productionAction: string; automaticPromotion: boolean };
   };
+  const robustness = JSON.parse(
+    readFileSync('data/evaluation/quick-evidence-combined-historical-robustness-plan-v2.json', 'utf8'),
+  ) as {
+    schemaVersion: string;
+    scope: { historicalReplay: string };
+    interpretation: { independentValidationSet: boolean; productionAction: string; automaticPromotion: boolean };
+  };
 
   assert.equal(plan.schemaVersion, 'quick-evidence-combined-historical-screen-plan-v1');
+  assert.equal(robustness.schemaVersion, 'quick-evidence-combined-historical-robustness-plan-v2');
+  assert.equal(robustness.scope.historicalReplay, 'historical-quick-replay-v2');
+  assert.equal(robustness.interpretation.independentValidationSet, false);
+  assert.equal(robustness.interpretation.productionAction, 'none');
+  assert.equal(robustness.interpretation.automaticPromotion, false);
   assert.deepEqual([...QUICK_EVIDENCE_COMBINED_FEATURES], plan.primaryFeatureInventory);
   assert.equal(QUICK_EVIDENCE_COMBINED_FEATURES.length, 32);
   assert.equal(plan.excludedFromPrimaryHistoricalFit.length, 4);
@@ -26,5 +38,5 @@ test('combined Quick Evidence evaluator matches the frozen feature inventory', (
   assert.equal(plan.interpretation.productionAction, 'none');
   assert.equal(plan.interpretation.automaticPromotion, false);
   assert.equal(QUICK_EVIDENCE_COMBINED_SCREEN_INPUT_SCHEMA, 'quick-evidence-combined-historical-screen-input-v1');
-  assert.equal(QUICK_EVIDENCE_COMBINED_SCREEN_SCHEMA, 'quick-evidence-combined-historical-screen-v1');
+  assert.equal(QUICK_EVIDENCE_COMBINED_SCREEN_SCHEMA, 'quick-evidence-combined-historical-robustness-v2');
 });
