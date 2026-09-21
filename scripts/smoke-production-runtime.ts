@@ -18,6 +18,7 @@ async function main(){
  // Mask before loading modules or reporting errors. Never print the file or a connection URL.
  for(const [key,value] of Object.entries(env))if(value && /SECRET|PASSWORD|TOKEN|KEY|DATABASE_URL|POSTGRES_URL/i.test(key))console.log(`::add-mask::${value.replaceAll('%','%25').replaceAll('\r','%0D').replaceAll('\n','%0A')}`);
  console.log(JSON.stringify({configuration:{databasePresent:Boolean(env.DATABASE_URL),cronSecretPresent:Boolean(env.CRON_SECRET),batchSize:Number(env.FORECAST_BATCH_SIZE??10)}}));
+ console.log(JSON.stringify({gatewayAuthConfiguration:{aiGatewayApiKeyPresent:Boolean(env.AI_GATEWAY_API_KEY),vercelOidcTokenPresent:Boolean(env.VERCEL_OIDC_TOKEN),effectivePreference:env.AI_GATEWAY_API_KEY?'api_key':env.VERCEL_OIDC_TOKEN?'oidc':'none'}}));
  const projectResponse=await fetch(`https://api.vercel.com/v9/projects/${process.env.VERCEL_PROJECT_ID}?teamId=${process.env.VERCEL_ORG_ID}`,{headers:{Authorization:`Bearer ${process.env.VERCEL_TOKEN}`},signal:AbortSignal.timeout(30000)});
  if(!projectResponse.ok)throw new Error('Project configuration lookup failed');
  const project=await projectResponse.json();
