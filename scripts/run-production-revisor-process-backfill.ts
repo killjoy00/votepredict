@@ -48,9 +48,11 @@ async function main(): Promise<void> {
 
   let totalProcessed = 0;
   let totalExcluded = 0;
+  let totalDeferred = 0;
   let totalClassifiedActions = 0;
   let totalStageEvents = 0;
   const excludedIdentifiers = new Set<string>();
+  const deferredIdentifiers = new Set<string>();
   for (let batch = 1; batch <= MAX_BATCHES; batch += 1) {
     const response = await post(secret, `?limit=${BATCH_LIMIT}`);
     if (!response.ok) {
@@ -60,15 +62,19 @@ async function main(): Promise<void> {
       processed: number;
       excluded: number;
       excludedIdentifiers: string[];
+      deferred: number;
+      deferredIdentifiers: string[];
       classifiedActions: number;
       stageEvents: number;
       done: boolean;
     };
     totalProcessed += result.processed;
     totalExcluded += result.excluded;
+    totalDeferred += result.deferred;
     totalClassifiedActions += result.classifiedActions;
     totalStageEvents += result.stageEvents;
     for (const identifier of result.excludedIdentifiers) excludedIdentifiers.add(identifier);
+    for (const identifier of result.deferredIdentifiers) deferredIdentifiers.add(identifier);
     console.log(JSON.stringify({ batch, ...result }));
     if (result.done || result.processed === 0) break;
     if (batch === MAX_BATCHES) {
@@ -107,9 +113,11 @@ async function main(): Promise<void> {
     totals: {
       totalProcessed,
       totalExcluded,
+      totalDeferred,
       totalClassifiedActions,
       totalStageEvents,
       excludedIdentifiers: [...excludedIdentifiers].sort(),
+      deferredIdentifiers: [...deferredIdentifiers].sort(),
     },
     verification,
     minimumResearchCoverage: MIN_REVISOR_PROCESS_RESEARCH_COVERAGE,
