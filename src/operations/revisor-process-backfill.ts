@@ -155,10 +155,7 @@ async function fetchBill(row: ProcessBackfillBillRow): Promise<ProcessBackfillFe
       const xml = await fetchRevisorStatusXml(sourceUrl);
       const events = parseRevisorProcessEvents({ xml, identifier: row.identifier });
       if (revisorProcessCandidateHasImpossiblePreIntroductionEvent(events, row.existing_introduced_at)) {
-        lastPermanentFailure = {
-          reason: 'malformed',
-          message: `${row.identifier}: Revisor status candidate contains a procedural event before the stored introduction date`,
-        };
+        lastTransientFailure = `${row.identifier}: Revisor status candidate contains a procedural event before the stored introduction date`;
         continue;
       }
       return {
