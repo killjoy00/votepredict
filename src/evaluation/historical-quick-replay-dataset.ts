@@ -10,6 +10,8 @@ import {
 } from './historical-quick-replay';
 
 export interface HistoricalQuickReplayDataset {
+  events: QuickReplayEvent[];
+  versionsByBill: Map<string, QuickReplayVersion[]>;
   targets: QuickReplayEvent[];
   targetVersionByEvent: Map<string, QuickReplayVersion>;
   analogueSupportByEvent: Map<string, QuickReplayAnalogueSupport>;
@@ -202,6 +204,8 @@ export async function loadHistoricalQuickReplayDataset(pool: Pool): Promise<Hist
   }));
 
   return {
+    events,
+    versionsByBill,
     targets,
     targetVersionByEvent: analogueBuild.targetVersionByEvent,
     analogueSupportByEvent: analogueBuild.supportByEvent,
