@@ -438,3 +438,74 @@ test('House Research summary parser accepts colon-separated official labels', ()
     summaryDate: '2022-04-21',
   });
 });
+
+
+test('House Research Revisor side-by-side parser accepts H.F. No. bill form and long date', () => {
+  const text = [
+    'Revisor side-by-side “Housing” May 1, 2023',
+    '12:17 PM',
+    'Laura Paynter Senate Counsel, Research and Fiscal Analysis',
+    'Justin Cope House Research Department',
+    'H.F. No. 2335: Housing Non-appropriations Articles',
+    'Same, Similar, and Different',
+  ].join(' ');
+  assert.deepEqual(parseHouseResearchSummaryPdfText(text, {
+    fallbackSubject: 'Major policy and finance housing bill',
+    fallbackVersion: 'Comparison summary non-appropriation articles',
+  }), {
+    billIdentifier: 'HF2335',
+    version: 'Comparison summary non-appropriation articles',
+    subject: 'Major policy and finance housing bill',
+    summaryDate: '2023-05-01',
+  });
+});
+
+test('House Research omnibus comparison parser accepts HF and SF title with numeric footer date', () => {
+  const text = [
+    'COMPARISON – 2023 OMNIBUS LOCAL GOVERNMENT POLICY ARTICLES – HF 1826 AND SF 1424 (UEH1826-1)',
+    'Description/Notes Topic Side-by-Side Stat. Section House Section(s) – HF 1826',
+    'Chelsea Griffin, House Research Joan White, Senate Counsel, Research, and Fiscal Analysis',
+    'Page 2 of 4 5/1/2023 3:24 PM',
+  ].join(' ');
+  assert.deepEqual(parseHouseResearchSummaryPdfText(text, {
+    fallbackSubject: 'State and local government policy bill',
+    fallbackVersion: 'Comparison summary',
+  }), {
+    billIdentifier: 'HF1826',
+    version: 'Comparison summary',
+    subject: 'State and local government policy bill',
+    summaryDate: '2023-05-01',
+  });
+});
+
+test('House Research conference comparison parser accepts House File title with numeric footer date', () => {
+  const text = [
+    'Transportation Finance Conference Committee',
+    'Comparison Summary of House File 2887 / Senate File 3157',
+    'Side-by-Side Part Page HOUSE Art. Sections SENATE Art. Sections Comparison Summary',
+    'Prepared by: House Research Department; Senate Counsel, Research and Fiscal Analysis',
+    '- Page 1 - 5/3/2023 9:16 AM',
+  ].join(' ');
+  assert.deepEqual(parseHouseResearchSummaryPdfText(text, {
+    fallbackSubject: 'Transportation finance major policy and finance',
+    fallbackVersion: 'Comparison summary HF 2887/SF 3157',
+  }), {
+    billIdentifier: 'HF2887',
+    version: 'Comparison summary HF 2887/SF 3157',
+    subject: 'Transportation finance major policy and finance',
+    summaryDate: '2023-05-03',
+  });
+});
+
+test('House Research comparison parser rejects impossible numeric footer date', () => {
+  const text = [
+    'Transportation Finance Conference Committee',
+    'Comparison Summary of House File 2887 / Senate File 3157',
+    'Prepared by: House Research Department; Senate Counsel, Research and Fiscal Analysis',
+    '13/40/2023 9:16 AM',
+  ].join(' ');
+  assert.equal(parseHouseResearchSummaryPdfText(text, {
+    fallbackSubject: 'Transportation finance major policy and finance',
+    fallbackVersion: 'Comparison summary HF 2887/SF 3157',
+  }), undefined);
+});

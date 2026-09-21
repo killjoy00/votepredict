@@ -10,7 +10,7 @@ import {
 } from '@/evidence/minnesota-bill-context';
 
 export const HISTORICAL_HOUSE_RESEARCH_SUMMARY_BACKFILL_VERSION =
-  'historical-house-research-summary-v4' as const;
+  'historical-house-research-summary-v5' as const;
 
 const SESSION_LEGISLATURE = {
   '2021-2022': 92,
