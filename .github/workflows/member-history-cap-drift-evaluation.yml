@@ -1,19 +1,6 @@
 name: Member history cap drift evaluation
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/member-history-cap-drift-evaluation.yml
-      - data/evaluation/member-history-cap-drift-plan-v1.json
-      - scripts/evaluate-member-history-cap.ts
-      - scripts/run-production-member-history-cap-drift-evaluation.ts
-      - scripts/select-member-history-cap-drift.ts
-      - src/app/api/operations/member-history-cap-drift-evaluation/route.ts
-      - src/evaluation/member-history-cap-grid.ts
-      - src/evaluation/member-model.ts
-      - src/forecasting/member-model.ts
-      - src/operations/environment-file.ts
   workflow_dispatch:
 
 permissions:
