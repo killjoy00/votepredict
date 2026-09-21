@@ -1,6 +1,6 @@
 # VotePredict project status
 
-_Last updated: 2026-09-18_
+_Last updated: 2026-09-21_
 
 VotePredict V2 is no longer a rebuild project. The clean-slate V2 sequence is complete through production hardening, introduction forecasting, current/floor forecasting, immutable revisions, evidence storage, scheduled production forecasting, forecast-vs-actual scoring infrastructure, and the automated 2027-28 Opening Day transition path. The **2027 Opening Day Ready** release-integrity milestone is now complete; the project is in **operate, validate prospectively, and selectively expand** mode.
 
