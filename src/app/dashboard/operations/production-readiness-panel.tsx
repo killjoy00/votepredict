@@ -116,6 +116,15 @@ export function ProductionReadinessPanel(props: Props) {
         Public evidence is stored independently of serving model impact. Quick Evidence candidate corpus: <strong>{readiness.evidence.quickEvidenceCandidateItems} items across {readiness.evidence.quickEvidenceCandidateMembers} members</strong>. Serving mechanical public-evidence items: <strong>{readiness.evidence.mechanicallyActionableItems}</strong>. Curated legacy items: <strong>{readiness.evidence.currentCuratedItems}</strong>. Campaign-finance members: <strong>{readiness.evidence.campaignFinanceMembers}</strong>. Member-primary source members: <strong>{readiness.evidence.memberPrimaryMembers}</strong>. Latest news batch: <strong>{readiness.evidence.latestNewsInserted} inserted</strong>, <strong>{readiness.evidence.latestNewsFailures} failures</strong>, <strong>{readiness.evidence.latestNewsNoLeadMembers} no-lead members</strong>. Prospective capture began <strong>{ageLabel(readiness.evidence.prospectiveEvidenceSince)}</strong>.
       </div>
 
+      <div className="evidence-footnote structured-family-footnote">
+        Current structured zero-weight corpus (historical backfills excluded):
+        {' '}district <strong>{readiness.evidence.structuredFamilies.districtContext.items} items / {readiness.evidence.structuredFamilies.districtContext.members} members</strong>
+        {' '}· floor <strong>{readiness.evidence.structuredFamilies.floorActivity.items} items / {readiness.evidence.structuredFamilies.floorActivity.members} members / {readiness.evidence.structuredFamilies.floorActivity.bills} bills</strong>
+        {' '}· speech <strong>{readiness.evidence.structuredFamilies.sessionDailySpeech.items} items / {readiness.evidence.structuredFamilies.sessionDailySpeech.members} members / {readiness.evidence.structuredFamilies.sessionDailySpeech.bills} bills</strong>
+        {' '}· conferees <strong>{readiness.evidence.structuredFamilies.conferenceConferee.items} items / {readiness.evidence.structuredFamilies.conferenceConferee.members} members / {readiness.evidence.structuredFamilies.conferenceConferee.bills} bills</strong>
+        {' '}· bill context <strong>{readiness.evidence.structuredFamilies.billContext.items} items / {readiness.evidence.structuredFamilies.billContext.bills} bills</strong>.
+      </div>
+
       <style>{`
         .readiness-panel { margin-bottom: 16px; border: 1px solid #d9dfda; border-radius: 14px; padding: 16px; background: #19251e; color: #f4f7f4; box-shadow: 0 10px 28px rgba(27, 40, 31, .08); }
         .readiness-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
@@ -137,6 +146,7 @@ export function ProductionReadinessPanel(props: Props) {
         .state-dot.planned { background: #87948b; }
         .evidence-footnote { margin-top: 10px; border-top: 1px solid #34453a; padding-top: 9px; color: #aab8ae; font-size: 7.5px; line-height: 1.4; }
         .evidence-footnote strong { color: #e7ede9; }
+        .structured-family-footnote { margin-top: 6px; }
         @media (max-width: 980px) { .readiness-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
         @media (max-width: 560px) { .readiness-heading { display: grid; } .overall-state { width: fit-content; } .readiness-grid { grid-template-columns: 1fr; } }
       `}</style>
