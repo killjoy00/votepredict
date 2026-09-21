@@ -47,7 +47,8 @@
       "official conference-committee appointment context",
       "official legislative speech/reporting mentions tied to an exact bill",
       "official prior general-election district contest context",
-      "nonpartisan House Research summary availability and official fiscal-note context"
+      "nonpartisan House Research summary availability and official fiscal-note context",
+      "official exact-bill named-member House committee roll-call counts classified by the frozen procedural-mechanics taxonomy"
     ],
     "forbiddenAutomaticInferences": [
       "party implies stance",
@@ -98,7 +99,19 @@
       "districtElectionTopTwoMarginPct",
       "districtElectionUncontested",
       "billSummaryItems",
-      "fiscalNoteItems"
+      "fiscalNoteItems",
+      "committeeRecommendsPassageAye",
+      "committeeRecommendsPassageNay",
+      "advancesTowardFloorEligibilityAye",
+      "advancesTowardFloorEligibilityNay",
+      "continuesCommitteeReviewAye",
+      "continuesCommitteeReviewNay",
+      "impedesCurrentBillProgressAye",
+      "impedesCurrentBillProgressNay",
+      "defersCurrentBillActionAye",
+      "defersCurrentBillActionNay",
+      "unclassifiedCommitteeMotionAye",
+      "unclassifiedCommitteeMotionNay"
     ],
     "storedOutputs": [
       "baseProbability",
@@ -166,6 +179,30 @@
     },
     "sourcePolicy": "official Minnesota legislative, Legislative Reference Library, Secretary of State, House Research, and Legislative Budget Office sources only; all source observations require fetched_at no later than forecast as-of, and published_at no later than as-of when present",
     "interpretationBoundary": "amendment outcomes, conference appointments, electoral margins, fiscal context, and generic speech mentions do not by themselves establish final-passage support or opposition",
+    "servingProbabilityChange": "none",
+    "activeWeightChange": "none",
+    "automaticPromotion": false
+  },
+  "committeeRollcallAmendment": {
+    "reason": "Before any 2027-2028 Quick revision existed, add the historically validated House committee-roll-call family to the unified Quick Evidence feature vector at zero weight for prospective measurement.",
+    "historicalDiagnostic": {
+      "issue": 288,
+      "result": "frozen_thresholds_cleared",
+      "workflowRunId": 35630410998,
+      "artifactId": 10653939032
+    },
+    "source": "Official Minnesota House committee minutes enumerated from the House committee-minutes index and exact committee meeting pages",
+    "parser": "deterministic-house-committee-roll-call-v2",
+    "mechanicsTaxonomy": "mn-house-procedural-mechanics-v1",
+    "memberVotePolicy": "named AYE/NAY only; voice votes, amendment roll calls, and motion-result text without member names are excluded",
+    "asOfPolicy": "official committee meeting date must be strictly before the forecast UTC calendar date; same-day committee records are excluded because historical/current minute timestamps are date-granular",
+    "interpretationBoundary": "AYE/NAY describes support/opposition to the recorded committee motion only and does not automatically establish a final-passage stance",
+    "verifiedPreActivationState": {
+      "session": "2027-2028",
+      "quickRevisions": 0,
+      "quickEvidenceCapturedRevisions": 0,
+      "verifiedOn": "2026-09-21"
+    },
     "servingProbabilityChange": "none",
     "activeWeightChange": "none",
     "automaticPromotion": false
