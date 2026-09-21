@@ -1,19 +1,7 @@
 name: Historical Deep House Journal holdout score
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-house-journal-holdout-score.yml
-      - data/evaluation/historical-deep-house-journal-holdout-score-lineage-v1.json
-      - data/evaluation/historical-deep-house-journal-holdout-plan-v1.json
-      - scripts/run-production-historical-deep-house-journal-holdout-score.ts
-      - src/app/api/operations/historical-deep-house-journal-holdout-score/route.ts
-      - src/evaluation/historical-deep-house-journal-holdout-score.ts
-      - src/evaluation/historical-deep-house-journal-holdout-cohort.ts
-      - src/evaluation/historical-deep-house-journal-holdout-mechanics.ts
-      - src/evaluation/historical-deep-expansion-discovery.ts
-      - tests/historical-deep-house-journal-holdout-score.test.ts
+  workflow_dispatch:
 
 permissions:
   actions: read
