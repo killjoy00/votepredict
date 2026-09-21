@@ -1,15 +1,6 @@
 name: Introduction scorecard production audit
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/introduction-scorecard-production-audit.yml
-      - scripts/run-production-introduction-scorecard-audit.ts
-      - src/app/api/operations/introduction-scorecard-audit/route.ts
-      - src/app/dashboard/operations/page.tsx
-      - src/operations/introduction-scorecard.ts
-      - src/forecasting/introduction-prior-runtime.ts
   workflow_dispatch:
 
 permissions:
