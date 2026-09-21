@@ -1,20 +1,6 @@
 name: Public evidence Quick screen
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/public-evidence-quick-screen.yml
-      - scripts/evaluate-public-evidence-quick-screen.ts
-      - src/app/api/operations/public-evidence-quick-screen/route.ts
-      - src/evaluation/public-evidence-quick-screen.ts
-      - tests/public-evidence-quick-screen.test.ts
-      - data/evaluation/quick-evidence-prospective-plan-v1.json
-      - data/evaluation/quick-evidence-legislative-screen-plan-v1.json
-      - scripts/evaluate-quick-evidence-legislative-screen.ts
-      - src/app/api/operations/quick-evidence-legislative-screen/route.ts
-      - src/evaluation/quick-evidence-legislative-screen.ts
-      - tests/quick-evidence-legislative-screen.test.ts
   workflow_dispatch:
 
 permissions:
