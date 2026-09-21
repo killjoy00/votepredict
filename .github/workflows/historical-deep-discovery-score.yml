@@ -1,15 +1,6 @@
 name: Historical Deep discovery score
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-discovery-score.yml
-      - data/evaluation/historical-deep-scoring-lineage-v1.json
-      - scripts/run-production-historical-deep-outcome-snapshot.ts
-      - scripts/score-historical-deep-discovery.ts
-      - src/app/api/operations/historical-deep-outcome-snapshot/route.ts
-      - src/evaluation/historical-deep-outcome-scorer.ts
   workflow_dispatch:
 
 permissions:
