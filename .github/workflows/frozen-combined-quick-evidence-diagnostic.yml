@@ -1,6 +1,16 @@
-name: Frozen combined Quick Evidence diagnostic
+name: Historical Quick v2 robustness audit
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'data/evaluation/quick-evidence-combined-historical-robustness-plan-v2.json'
+      - 'src/evaluation/historical-quick-replay.ts'
+      - 'src/evaluation/historical-quick-replay-dataset.ts'
+      - 'src/evaluation/quick-evidence-combined-historical-screen.ts'
+      - 'scripts/evaluate-quick-evidence-combined-historical-screen.ts'
+      - '.github/workflows/frozen-combined-quick-evidence-diagnostic.yml'
   workflow_dispatch:
 
 permissions:
@@ -8,7 +18,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: frozen-combined-quick-evidence-diagnostic-v1
+  group: historical-quick-v2-robustness-audit
   cancel-in-progress: false
 
 jobs:
@@ -20,18 +30,19 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
       VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
-      VOTEPREDICT_COMBINED_EVIDENCE_SCREEN_OUTPUT: artifacts/quick-evidence-combined-historical-screen-v1.json
+      VOTEPREDICT_COMBINED_EVIDENCE_SCREEN_OUTPUT: artifacts/quick-evidence-combined-historical-robustness-v2.json
 
     steps:
       - uses: actions/checkout@v7
 
-      - name: Verify frozen combined plan and committee lineage
+      - name: Verify frozen hypothesis, robustness plan, and committee lineage
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
           plan='data/evaluation/quick-evidence-combined-historical-screen-plan-v1.json'
+          robustness='data/evaluation/quick-evidence-combined-historical-robustness-plan-v2.json'
           lineage='data/evaluation/quick-evidence-committee-rollcall-candidate-lineage-v1.json'
 
           test "$(jq -r '.schemaVersion' "$plan")" = 'quick-evidence-combined-historical-screen-plan-v1'
@@ -44,6 +55,11 @@ jobs:
           test "$(jq -r '.interpretation.automaticPromotion' "$plan")" = 'false'
           test "$(jq '.primaryFeatureInventory | length' "$plan")" = '32'
           test "$(jq '.excludedFromPrimaryHistoricalFit | length' "$plan")" = '4'
+          test "$(jq -r '.schemaVersion' "$robustness")" = 'quick-evidence-combined-historical-robustness-plan-v2'
+          test "$(jq -r '.scope.historicalReplay' "$robustness")" = 'historical-quick-replay-v2'
+          test "$(jq -r '.interpretation.independentValidationSet' "$robustness")" = 'false'
+          test "$(jq -r '.interpretation.productionAction' "$robustness")" = 'none'
+          test "$(jq -r '.interpretation.automaticPromotion' "$robustness")" = 'false'
 
           test "$(jq -r '.schemaVersion' "$lineage")" = 'quick-evidence-committee-rollcall-candidate-lineage-v1'
           run_id="$(jq -r '.extractionRunId' "$lineage")"
@@ -124,26 +140,34 @@ jobs:
           echo 'Could not read the VotePredict production environment. No combined diagnostic was run.'
           exit 1
 
-      - name: Run frozen combined Quick Evidence diagnostic
+      - name: Run corrected historical Quick v2 robustness audit
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: |
           node --import tsx scripts/evaluate-quick-evidence-combined-historical-screen.ts             --committee-candidates inputs/committee/quick-evidence-committee-rollcall-candidates-v1.json             --committee-lineage data/evaluation/quick-evidence-committee-rollcall-candidate-lineage-v1.json
 
-      - name: Verify diagnostic-only result
+      - name: Verify robustness-only result
         shell: bash
         run: |
           set -euo pipefail
           file="$VOTEPREDICT_COMBINED_EVIDENCE_SCREEN_OUTPUT"
-          test "$(jq -r '.schemaVersion' "$file")" = 'quick-evidence-combined-historical-screen-v1'
+          test "$(jq -r '.schemaVersion' "$file")" = 'quick-evidence-combined-historical-robustness-v2'
           test "$(jq -r '.metadata.quickEvidenceCandidate' "$file")" = 'quick-evidence-v1'
           test "$(jq -r '.metadata.servingBaseline' "$file")" = 'member-eb-v1.2-decay180'
           test "$(jq -r '.metadata.productionAction' "$file")" = 'none'
+          test "$(jq -r '.metadata.historicalReplayVersion' "$file")" = 'historical-quick-replay-v2'
+          test "$(jq -r '.metadata.independentValidationSet' "$file")" = 'false'
+          test "$(jq -r '.metadata.historicalAvailabilityCorrections.mutableCurrentBillTitleUsed' "$file")" = 'false'
+          test "$(jq -r '.metadata.historicalAvailabilityCorrections.currentCompanionMetadataUsed' "$file")" = 'false'
+          test "$(jq -r '.metadata.historicalAvailabilityCorrections.asOfEligibleFalseEvidenceExcluded' "$file")" = 'true'
           test "$(jq -r '.conclusion.productionAction' "$file")" = 'none'
           test "$(jq -r '.conclusion.servingQuickChanged' "$file")" = 'false'
           test "$(jq -r '.conclusion.quickEvidenceWeightChanged' "$file")" = 'false'
           test "$(jq '.metadata.featureNames | length' "$file")" = '32'
           test "$(jq '.ablations | length' "$file")" = '9'
+          test "$(jq -r '.robustness.selectionRetunedForRobustness' "$file")" = 'false'
+          test "$(jq -r '.robustness.memberMetrics.eventBalanced.events > 0' "$file")" = 'true'
+          test "$(jq -r '.robustness.memberMetrics.chamberBalanced.chambers > 0' "$file")" = 'true'
           gate="$(jq -r '.coverageGate.passed' "$file")"
           if [ "$gate" = 'true' ]; then
             test "$(jq -r '.selected == null' "$file")" = 'false'
@@ -152,11 +176,11 @@ jobs:
             test "$(jq -r '.conclusion.reason' "$file")" = 'coverage_gate_failed'
           fi
 
-      - name: Upload immutable combined diagnostic
+      - name: Upload immutable corrected robustness audit
         uses: actions/upload-artifact@v4
         with:
-          name: quick-evidence-combined-historical-screen-v1-${{ github.sha }}
-          path: artifacts/quick-evidence-combined-historical-screen-v1.json
+          name: quick-evidence-combined-historical-robustness-v2-${{ github.sha }}
+          path: artifacts/quick-evidence-combined-historical-robustness-v2.json
           if-no-files-found: error
           retention-days: 90
 
