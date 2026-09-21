@@ -74,6 +74,18 @@ The project should therefore reduce broad retrospective feature searching on the
 
 The frozen `member-history-cap20-prospective-v1` experiment remains intentionally bound to its declared `member-eb-v1.1` baseline. The current `member-eb-v1.2-decay180` serving model is ineligible for that old experiment; any decay180 cap candidate must be a newly frozen protocol rather than a redefinition of the existing one.
 
+## Structured public-data reassessment
+
+The five structured public-data families have now been reassessed against the same 2021-22 training / 2023-24 validation / 2025-26 descriptive historical Quick replay framework, with strict pre-vote timing and no production weight changes.
+
+- **District context:** the frozen diagnostic did not improve validation enough to clear its gate. Keep at zero weight.
+- **Floor activity:** the broader frozen prior same-bill non-passage vote screen had 1,431 covered training member outcomes and 7,454 validation outcomes. It materially improved member-level validation metrics, but validation passage Brier worsened by +0.0029549, above the frozen +0.002 limit, so the signal failed. The narrower official floor-amendment proposer evidence is too sparse for its own member-level frozen screen (5 strict pre-vote training outcomes; 39 validation).
+- **Session Daily speech:** historical backfill produced 868 durable evidence rows, but strict member/bill pre-vote overlap is still too sparse for a frozen member-level diagnostic (34 training outcomes; 111 validation; 0 descriptive).
+- **Conference conferees:** combined House/Senate historical coverage cleared the predeclared coverage gate (97 training positives; 314 validation), but the frozen diagnostic did not improve validation member Brier/log loss and returned no hypothesis signal. Keep at zero weight.
+- **Bill context:** House Research backfill is complete for all targeted historical passage bills (196/196 in 2021-22; 205/205 in 2023-24). Replay overlap was ample (17,674 covered training member outcomes across 169 events; 33,537 validation outcomes across 314 events), but the frozen diagnostic failed because validation passage Brier worsened by +0.0058624, above the +0.002 limit. Keep at zero weight.
+
+No family earned a serving change or automatic promotion. The structured public-data program therefore returns to prospective accumulation: preserve all five families as zero-weight durable evidence, score them only after genuinely prospective outcomes accrue, and do not make committee-minute ingestion the next default expansion.
+
 ## 2027-28 Opening Day readiness evidence
 
 The application-level transition path is now rehearsed before any 2027 outcomes exist:
