@@ -9,6 +9,7 @@ on:
       - scripts/evaluate-historical-quick-replay.ts
       - src/app/api/operations/historical-quick-replay/route.ts
       - src/evaluation/historical-quick-runtime.ts
+      - src/evaluation/historical-quick-replay-dataset.ts
       - src/evaluation/historical-quick-replay.ts
       - src/evaluation/deep-replay.ts
       - src/forecasting/member-model.ts
