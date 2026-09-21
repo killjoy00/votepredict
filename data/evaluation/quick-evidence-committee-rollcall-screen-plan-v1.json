@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "quick-evidence-committee-rollcall-screen-plan-v1",
+  "frozenAt": "2026-09-21T16:15:00Z",
+  "issue": 288,
+  "purpose": "Evaluate broad exact-bill named-member Minnesota House committee roll calls as a zero-weight component of the single quick-evidence-v1 program before any broad historical result is observed.",
+  "scope": {
+    "candidateVersion": "quick-evidence-v1",
+    "servingBaseline": "member-eb-v1.2-decay180",
+    "trainSession": "2021-2022",
+    "validationSession": "2023-2024",
+    "descriptiveSession": "2025-2026",
+    "chamber": "house"
+  },
+  "source": {
+    "system": "Official Minnesota House committee minutes",
+    "sourcePolicy": "exact official committee-minute pages enumerated without using floor outcomes",
+    "parser": "deterministic-house-committee-roll-call-v2",
+    "mechanicsTaxonomy": "mn-house-procedural-mechanics-v1",
+    "memberVotePolicy": "named AYE/NAY only; voice votes and motion-result text without member names excluded"
+  },
+  "asOfPolicy": {
+    "billMatch": "exact bill identifier",
+    "meetingTiming": "committee meeting date must be strictly before the target floor-vote date",
+    "sameDayExcluded": true,
+    "reason": "historical committee and floor records are date-granular and do not prove ordering within a day",
+    "floorOutcomeUseDuringDiscoveryOrExtraction": "none"
+  },
+  "features": {
+    "transform": "log1p count per member/event before target vote",
+    "activeWeightBeforeTest": 0,
+    "automaticDirectionalEvidence": false,
+    "names": [
+      "committeeRecommendsPassageAye",
+      "committeeRecommendsPassageNay",
+      "advancesTowardFloorEligibilityAye",
+      "advancesTowardFloorEligibilityNay",
+      "continuesCommitteeReviewAye",
+      "continuesCommitteeReviewNay",
+      "impedesCurrentBillProgressAye",
+      "impedesCurrentBillProgressNay",
+      "defersCurrentBillActionAye",
+      "defersCurrentBillActionNay",
+      "unclassifiedCommitteeMotionAye",
+      "unclassifiedCommitteeMotionNay"
+    ],
+    "multiLabelPolicy": "one recorded vote may contribute to more than one mechanics pair when the frozen taxonomy assigns multiple mechanics"
+  },
+  "coverageGate": {
+    "minimumTrainingMemberOutcomesWithFeature": 500,
+    "minimumValidationMemberOutcomesWithFeature": 500,
+    "minimumTrainingEventsWithFeature": 20,
+    "minimumValidationEventsWithFeature": 20,
+    "failureAction": "stop after coverage artifact; do not fit or score a predictive candidate"
+  },
+  "fit": {
+    "model": "multivariable ridge logistic offset on serving Quick logit",
+    "lambdas": [0.1, 1, 5, 20, 100],
+    "maximumAbsoluteLogitDelta": 1,
+    "selectionMetricOrder": [
+      "validation member Brier",
+      "validation member log loss",
+      "validation chamber mean absolute yes-vote error",
+      "lambda"
+    ],
+    "configurationSelectionUsesDescriptiveSession": false
+  },
+  "diagnosticThresholds": {
+    "validationMemberBrierDeltaAtMost": -0.0005,
+    "validationMemberLogLossDeltaAtMost": 0,
+    "validationChamberYesMaeDeltaAtMost": 0.25,
+    "validationPassageBrierDeltaAtMost": 0.002,
+    "descriptiveMemberBrierDeltaAtMost": 0.0005
+  },
+  "interpretation": {
+    "committeeVoteIsNotFinalPassageVote": true,
+    "productionAction": "none",
+    "servingProbabilityChange": "none",
+    "quickEvidenceFrozenWeightChange": "none",
+    "automaticPromotion": false
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "quick-evidence-combined-historical-screen-plan-v1",
+  "frozenAt": "2026-09-21T16:15:00Z",
+  "issue": 289,
+  "purpose": "Test all leakage-safe historically reconstructable Quick Evidence families together in one regularized offset rather than relying only on separate component screens.",
+  "scope": {
+    "candidateVersion": "quick-evidence-v1",
+    "servingBaseline": "member-eb-v1.2-decay180",
+    "trainSession": "2021-2022",
+    "validationSession": "2023-2024",
+    "descriptiveSession": "2025-2026"
+  },
+  "asOfPolicy": {
+    "strictlyPreVoteOnly": true,
+    "sameDayExcludedWhenOrderingIsNotProvable": true,
+    "missingFeaturePolicy": "zero only when the source family is known to be observable and the member/event has no qualifying evidence; otherwise use an explicit availability indicator or exclude the family under the frozen source boundary",
+    "configurationSelectionUsesDescriptiveSession": false
+  },
+  "primaryFeatureInventory": [
+    "priorSameBillYes",
+    "priorSameBillNo",
+    "priorCompanionYes",
+    "priorCompanionNo",
+    "billAuthor",
+    "authorshipAvailable",
+    "priorSameBillAmendmentYes",
+    "priorSameBillAmendmentNo",
+    "priorSameBillMotionProceduralYes",
+    "priorSameBillMotionProceduralNo",
+    "priorSameBillOtherYes",
+    "priorSameBillOtherNo",
+    "floorAmendmentOffers",
+    "floorAmendmentWins",
+    "conferenceConferee",
+    "legislativeSpeechItems",
+    "districtElectionContextAvailable",
+    "districtElectionTopTwoMarginPct",
+    "districtElectionUncontested",
+    "billSummaryAvailable",
+    "committeeRecommendsPassageAye",
+    "committeeRecommendsPassageNay",
+    "advancesTowardFloorEligibilityAye",
+    "advancesTowardFloorEligibilityNay",
+    "continuesCommitteeReviewAye",
+    "continuesCommitteeReviewNay",
+    "impedesCurrentBillProgressAye",
+    "impedesCurrentBillProgressNay",
+    "defersCurrentBillActionAye",
+    "defersCurrentBillActionNay",
+    "unclassifiedCommitteeMotionAye",
+    "unclassifiedCommitteeMotionNay"
+  ],
+  "excludedFromPrimaryHistoricalFit": [
+    {
+      "family": "campaignFinance",
+      "reason": "ordinary transaction dates do not prove historical filing/public availability at the target forecast cutoff"
+    },
+    {
+      "family": "campaignSiteMemberPrimaryNewsAvailabilityCounts",
+      "reason": "the present-day crawler does not provide a broad outcome-blind historical capture process for 2021-2024"
+    },
+    {
+      "family": "genericDirectionalCrawlerEvidence",
+      "reason": "no broad frozen historical acquisition corpus exists across the replay universe; selected or surviving present-day pages would create an inconsistent historical source boundary"
+    },
+    {
+      "family": "fiscalNoteContext",
+      "reason": "historical source coverage is not complete enough to treat absence as an interpretable zero in the primary combined fit"
+    }
+  ],
+  "transform": {
+    "countFeatures": "log1p",
+    "binaryFeatures": "0/1",
+    "continuousFeatures": "training-session standardization with parameters frozen and applied unchanged to validation/descriptive",
+    "missingContinuousFeatures": "0 after standardization plus retained availability indicator"
+  },
+  "coverageGate": {
+    "minimumTrainingMemberOutcomesWithAnyEvidence": 1000,
+    "minimumValidationMemberOutcomesWithAnyEvidence": 1000,
+    "minimumTrainingEventsWithAnyEvidence": 20,
+    "minimumValidationEventsWithAnyEvidence": 20
+  },
+  "fit": {
+    "model": "multivariable ridge logistic offset on serving Quick logit",
+    "lambdas": [0.1, 1, 5, 20, 100],
+    "maximumAbsoluteLogitDelta": 1,
+    "selectionMetricOrder": [
+      "validation member Brier",
+      "validation member log loss",
+      "validation chamber mean absolute yes-vote error",
+      "lambda"
+    ]
+  },
+  "reporting": {
+    "requiredSlices": [
+      "all replayable observations",
+      "member outcomes with at least one nonzero combined feature",
+      "member outcomes whose candidate probability moves",
+      "house",
+      "senate"
+    ],
+    "componentAblations": "report leave-one-family-out deltas after the primary combined fit without using them to retune or select the primary model"
+  },
+  "diagnosticThresholds": {
+    "validationMemberBrierDeltaAtMost": -0.0005,
+    "validationMemberLogLossDeltaAtMost": 0,
+    "validationChamberYesMaeDeltaAtMost": 0.25,
+    "validationPassageBrierDeltaAtMost": 0.002,
+    "descriptiveMemberBrierDeltaAtMost": 0.0005
+  },
+  "interpretation": {
+    "productionAction": "none",
+    "servingProbabilityChange": "none",
+    "automaticPromotion": false,
+    "note": "A positive historical result can justify prospective measurement or a separately frozen future promotion protocol, but cannot change serving Quick by itself."
+  }
+}
