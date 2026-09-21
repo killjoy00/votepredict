@@ -845,7 +845,11 @@ export async function evaluateQuickEvidenceCombinedHistoricalScreen(
       }
 
       rawByPair.set(`${event.voteEventId}|${member.membershipId}`, raw);
-      if (member.yesProbability === undefined || member.actualOutcome === undefined) continue;
+      if (
+        event.status !== 'replayable'
+        || member.yesProbability === undefined
+        || member.actualOutcome === undefined
+      ) continue;
       rawObservations.push({
         eventId: event.voteEventId,
         membershipId: member.membershipId,
@@ -937,6 +941,7 @@ export async function evaluateQuickEvidenceCombinedHistoricalScreen(
         companionSource: 'dated legislative_stage_events companion_reference strictly before target vote',
         asOfEligibleFalseEvidenceExcluded: true,
         billEvidenceMustNotPredateSessionOrIntroduction: true,
+        fittedMemberCohortMatchesReplayableScoreCohort: true,
       },
       productionAction: 'none',
       servingQuickChanged: false,
