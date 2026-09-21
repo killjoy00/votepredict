@@ -1,15 +1,6 @@
 name: District context frozen screen
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/district-context-frozen-screen.yml
-      - data/evaluation/quick-evidence-district-context-screen-plan-v1.json
-      - scripts/evaluate-quick-evidence-district-context-screen.ts
-      - src/app/api/operations/quick-evidence-district-context-screen/route.ts
-      - src/evaluation/quick-evidence-district-context-screen.ts
-      - tests/quick-evidence-district-context-screen.test.ts
   workflow_dispatch:
 
 permissions:
