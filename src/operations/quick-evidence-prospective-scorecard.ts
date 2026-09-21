@@ -357,7 +357,7 @@ export async function getQuickEvidenceProspectiveScorecard(
   db: Queryable,
   options: { revealMetrics?: boolean } = {},
 ) {
-  const revisions = await db.query<RevisionRow>(\`
+  const revisions = await db.query<RevisionRow>(`
     SELECT f.id::text AS forecast_id,
            b.identifier,
            c.slug AS chamber_slug,
@@ -392,7 +392,7 @@ export async function getQuickEvidenceProspectiveScorecard(
        AND f.target_type='bill'
        AND s.slug=$2
      ORDER BY ve.occurred_on, f.id
-  \`, [PROSPECTIVE_EVIDENCE_OWNER_USER_ID, QUICK_EVIDENCE_PROSPECTIVE_SESSION]);
+  `, [PROSPECTIVE_EVIDENCE_OWNER_USER_ID, QUICK_EVIDENCE_PROSPECTIVE_SESSION]);
 
   const exclusions: Array<{
     forecastId: string;
@@ -406,7 +406,7 @@ export async function getQuickEvidenceProspectiveScorecard(
 
   const members = selectedIds.length === 0
     ? { rows: [] as MemberRow[] }
-    : await db.query<MemberRow>(\`
+    : await db.query<MemberRow>(`
         SELECT fmp.revision_id::text,
                fmp.membership_id::text,
                fmp.yes_probability AS serving_probability,
@@ -428,7 +428,7 @@ export async function getQuickEvidenceProspectiveScorecard(
           ) shadow ON true
          WHERE fmp.revision_id=ANY($1::uuid[])
          ORDER BY fmp.revision_id, fmp.membership_id
-      \`, [selectedIds, QUICK_EVIDENCE_PROSPECTIVE_EXPERIMENT]);
+      `, [selectedIds, QUICK_EVIDENCE_PROSPECTIVE_EXPERIMENT]);
 
   const byRevision = new Map<string, MemberRow[]>();
   for (const member of members.rows) {
