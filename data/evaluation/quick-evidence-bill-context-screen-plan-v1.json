@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "quick-evidence-bill-context-screen-plan-v1",
+  "frozenAt": "2026-09-21T02:05:00Z",
+  "purpose": "Evaluate whether an official dated Minnesota House Research bill summary existed strictly before a target vote as a zero-weight component of the single quick-evidence-v1 candidate.",
+  "scope": {
+    "candidateVersion": "quick-evidence-v1",
+    "servingBaseline": "member-eb-v1.2-decay180",
+    "trainSession": "2021-2022",
+    "validationSession": "2023-2024",
+    "descriptiveSession": "2025-2026"
+  },
+  "source": {
+    "system": "Official Minnesota House Research bill summaries",
+    "subtype": "bill_summary_version",
+    "authorityPolicy": "dated official House Research summary PDF is authoritative"
+  },
+  "asOfPolicy": {
+    "match": "exact bill ID",
+    "summaryTiming": "earliest official summary publication date for that bill",
+    "sameDayExcluded": true,
+    "reason": "summary evidence is date-granular and does not prove ordering within a day"
+  },
+  "feature": {
+    "name": "priorHouseResearchSummary",
+    "type": "binary event-level",
+    "activeWeightBeforeTest": 0,
+    "automaticDirectionalEvidence": false
+  },
+  "coverageGate": {
+    "minimumCoveredEventsPerTrainValidationSession": 20,
+    "minimumCoveredMemberOutcomesPerTrainValidationSession": 1000,
+    "observedBeforeFreeze": {
+      "trainingCoveredEvents": 169,
+      "trainingCoveredMemberOutcomes": 17674,
+      "validationCoveredEvents": 314,
+      "validationCoveredMemberOutcomes": 33537,
+      "descriptiveCoveredEvents": 0,
+      "descriptiveCoveredMemberOutcomes": 0
+    }
+  },
+  "fit": {
+    "model": "single ridge logistic offset on serving Quick logit",
+    "trainingRows": "feature-positive 2021-2022 member outcomes only",
+    "lambdas": [0.1, 1, 5, 20, 100],
+    "maximumAbsoluteLogitDelta": 1,
+    "selectionMetricOrder": [
+      "validation member Brier",
+      "validation member log loss",
+      "validation chamber mean absolute yes-vote error",
+      "lambda"
+    ],
+    "validationOnlyForSelection": true
+  },
+  "diagnosticThresholds": {
+    "validationMemberBrierDeltaAtMost": -0.0005,
+    "validationMemberLogLossDeltaAtMost": 0,
+    "validationChamberYesMaeDeltaAtMost": 0.25,
+    "validationPassageBrierDeltaAtMost": 0.002,
+    "descriptiveStabilityMinimumPositiveOutcomes": 1000,
+    "descriptiveMemberBrierDeltaAtMostWhenAvailable": 0.0005
+  },
+  "descriptivePolicy": {
+    "requiredForSelection": false,
+    "requiredForHypothesisSignal": false,
+    "emptySliceInterpretation": "No 2025-2026 replay events currently have prior House Research summary coverage. The descriptive slice cannot support a stability claim and must not strengthen the diagnostic."
+  },
+  "interpretation": {
+    "summaryPresenceIsNotVoteGuarantee": true,
+    "positiveSignalMeaning": "may justify continued prospective measurement inside quick-evidence-v1 only",
+    "productionAction": "none",
+    "servingProbabilityChange": "none",
+    "quickEvidenceFrozenWeightChange": "none",
+    "automaticPromotion": false
+  }
+}
