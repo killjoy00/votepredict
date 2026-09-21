@@ -1,15 +1,6 @@
 name: Passage fragility screen
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/passage-fragility-screen.yml
-      - data/evaluation/passage-fragility-screen-plan-v1.json
-      - scripts/run-production-passage-fragility-screen.ts
-      - src/app/api/operations/passage-fragility-screen/route.ts
-      - src/evaluation/passage-fragility-screen.ts
-      - tests/passage-fragility-screen.test.ts
   workflow_dispatch:
 
 permissions:
