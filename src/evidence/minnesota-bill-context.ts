@@ -1,5 +1,5 @@
 export const MN_BILL_CONTEXT_PARSER_VERSION = 'mn-bill-context-v1' as const;
-export const HOUSE_RESEARCH_SUMMARY_PDF_PARSER_VERSION = 'house-research-summary-pdf-v1' as const;
+export const HOUSE_RESEARCH_SUMMARY_PDF_PARSER_VERSION = 'house-research-summary-pdf-v2' as const;
 
 export interface OfficialBillResourceLink {
   kind: 'house_research_summary' | 'fiscal_notes';
@@ -109,21 +109,55 @@ export function extractHouseResearchSummaryPdfLinks(
   return [...links.values()];
 }
 
-export function parseHouseResearchSummaryPdfText(text: string): HouseResearchSummaryDocument | undefined {
+export function parseHouseResearchSummaryDetailSubject(html: string): string | undefined {
+  const text = decode(html);
+  const match = text.match(/\bSubject:\s*(.{1,500}?)\s+Latest Summary:/i);
+  return match?.[1]?.trim() || undefined;
+}
+
+export function parseHouseResearchSummaryPdfText(
+  text: string,
+  options: { fallbackSubject?: string; fallbackVersion?: string } = {},
+): HouseResearchSummaryDocument | undefined {
   const compact = text.replace(/\s+/g, ' ').trim();
-  const billMatch = compact.match(/\b([HS])\.?\s*F\.?\s*(\d+)\b/i);
-  const dateMatch = compact.match(/\bDate\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),\s+(\d{4})\b/i);
-  if (!billMatch || !dateMatch) return undefined;
+  const comparison = /\b(?:Bill\s+)?Comparison Summary\b/i.test(compact);
+  const header = compact.slice(0, 2200);
+  const shortBill = header.match(/\b([HS])\.?\s*F\.?\s*(\d+)\b/i);
+  const longBill = header.match(/\b(House|Senate)\s+File\s+(\d+)\b/i);
+  const billPrefix = shortBill?.[1]?.toUpperCase()
+    ?? (longBill?.[1]?.toLowerCase() === 'house' ? 'H' : longBill ? 'S' : undefined);
+  const billNumber = shortBill?.[2] ?? longBill?.[2];
+  if (!billPrefix || !billNumber) return undefined;
+
+  const labeledDate = header.match(/\bDate\s*:?\s*(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),\s+(\d{4})\b/i);
+  const comparisonDate = comparison
+    ? header.match(/\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),\s+(\d{4})\b/i)
+    : undefined;
+  const dateMatch = labeledDate ?? comparisonDate;
+  if (!dateMatch) return undefined;
   const summaryDate = longDateIso(dateMatch[1], dateMatch[2], dateMatch[3]);
   if (!summaryDate) return undefined;
 
-  const header = compact.slice(0, Math.min(compact.length, Math.max(1800, (dateMatch.index ?? 0) + 200)));
-  const versionMatch = header.match(/\b[HS]\.?\s*F\.?\s*\d+\s+(.{1,160}?)\s+Subject\s+/i);
-  const subjectMatch = header.match(/\bSubject\s+(.{1,500}?)\s+(?:Authors?|Analyst)\s+/i);
+  if (comparison) {
+    const subject = options.fallbackSubject?.trim();
+    const version = options.fallbackVersion?.trim();
+    if (!subject || !version) return undefined;
+    return {
+      billIdentifier: billPrefix + 'F' + String(Number(billNumber)),
+      version,
+      subject,
+      summaryDate,
+    };
+  }
+
+  const versionMatch = header.match(
+    /\b(?:[HS]\.?\s*F\.?\s*\d+|(?:House|Senate)\s+File\s+\d+)\s+(.{1,160}?)\s+Subject\s*:?\s+/i,
+  );
+  const subjectMatch = header.match(/\bSubject\s*:?\s*(.{1,500}?)\s+(?:Authors?|Analyst)\s*:?\s+/i);
   if (!versionMatch || !subjectMatch) return undefined;
 
   return {
-    billIdentifier: billMatch[1].toUpperCase() + 'F' + String(Number(billMatch[2])),
+    billIdentifier: billPrefix + 'F' + String(Number(billNumber)),
     version: versionMatch[1].trim(),
     subject: subjectMatch[1].trim(),
     summaryDate,
