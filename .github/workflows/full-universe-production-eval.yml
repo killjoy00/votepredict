@@ -1,15 +1,6 @@
 name: Full-universe production evaluation
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/full-universe-production-eval.yml
-      - scripts/run-production-full-universe-evaluation.ts
-      - scripts/evaluate-full-universe-stage-baseline.ts
-      - src/app/api/operations/full-universe-evaluation/route.ts
-      - src/evaluation/full-universe.ts
-      - src/evaluation/stages.ts
   workflow_dispatch:
 
 permissions:

@@ -1,18 +1,6 @@
 name: Member history decay evaluation
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/member-history-decay-evaluation.yml
-      - data/evaluation/member-history-decay-plan-v1.json
-      - scripts/run-production-member-history-decay-evaluation.ts
-      - src/app/api/operations/member-history-decay-evaluation/route.ts
-      - src/evaluation/member-history-decay-grid.ts
-      - src/evaluation/member-model.ts
-      - src/forecasting/member-model.ts
-      - src/operations/environment-file.ts
-      - tests/member-history-decay-grid.test.ts
   workflow_dispatch:
 
 permissions:

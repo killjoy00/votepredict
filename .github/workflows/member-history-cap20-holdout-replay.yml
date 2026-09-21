@@ -1,16 +1,6 @@
 name: Member history cap-20 exact holdout replay
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/member-history-cap20-holdout-replay.yml
-      - data/evaluation/member-history-cap20-holdout-replay-plan-v1.json
-      - scripts/run-production-member-history-cap20-holdout-replay.ts
-      - src/app/api/operations/member-history-cap20-holdout-replay/route.ts
-      - src/evaluation/historical-quick-shadow-replay.ts
-      - src/evaluation/member-history-cap20-holdout-replay.ts
-      - tests/historical-quick-shadow-replay.test.ts
   workflow_dispatch:
 
 permissions:

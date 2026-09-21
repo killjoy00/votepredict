@@ -1,16 +1,6 @@
 name: Historical Quick v2 committee roll-call robustness audit
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'data/evaluation/quick-evidence-committee-rollcall-robustness-plan-v2.json'
-      - 'src/evaluation/historical-quick-replay.ts'
-      - 'src/evaluation/historical-quick-replay-dataset.ts'
-      - 'src/evaluation/quick-evidence-committee-rollcall-screen.ts'
-      - 'scripts/evaluate-quick-evidence-committee-rollcall-screen.ts'
-      - '.github/workflows/frozen-committee-rollcall-diagnostic.yml'
   workflow_dispatch:
 
 permissions:

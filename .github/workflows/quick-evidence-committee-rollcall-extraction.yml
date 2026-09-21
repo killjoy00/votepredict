@@ -1,15 +1,6 @@
 name: Quick Evidence committee roll-call extraction
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/quick-evidence-committee-rollcall-extraction.yml
-      - scripts/extract-quick-evidence-committee-rollcalls.ts
-      - src/evaluation/quick-evidence-committee-rollcall-extractor.ts
-      - src/evaluation/historical-deep-expansion-extractor-v2.ts
-      - src/evaluation/historical-deep-procedural-mechanics.ts
-      - data/evaluation/quick-evidence-committee-rollcall-source-lineage-v1.json
   workflow_dispatch:
 
 permissions:

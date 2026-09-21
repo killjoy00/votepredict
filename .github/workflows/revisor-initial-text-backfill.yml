@@ -1,12 +1,6 @@
 name: Revisor initial text production backfill
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/revisor-initial-text-backfill.yml
-      - scripts/run-production-revisor-initial-text-backfill.ts
-      - src/operations/revisor-initial-text-backfill.ts
   workflow_dispatch:
 
 permissions:

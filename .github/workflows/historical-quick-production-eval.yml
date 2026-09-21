@@ -1,21 +1,6 @@
 name: Historical Quick production evaluation
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-quick-production-eval.yml
-      - scripts/run-production-historical-quick-replay.ts
-      - scripts/evaluate-historical-quick-replay.ts
-      - src/app/api/operations/historical-quick-replay/route.ts
-      - src/evaluation/historical-quick-runtime.ts
-      - src/evaluation/historical-quick-replay-dataset.ts
-      - src/evaluation/historical-quick-replay.ts
-      - src/evaluation/deep-replay.ts
-      - src/forecasting/member-model.ts
-      - src/forecasting/chamber.ts
-      - src/forecasting/minnesota-rules.ts
-      - src/features/bills.ts
   workflow_dispatch:
 
 permissions:
