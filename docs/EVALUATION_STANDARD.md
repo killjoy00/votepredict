@@ -32,6 +32,34 @@ Required secondary review:
 
 Simple accuracy is not a governing metric for this target because source-chamber passage is rare.
 
+### Lifecycle/current-state source-chamber passage
+
+Target: **Given the public information available at an as-of time for an introduced bill, what is the probability that it will advance through the remaining source-chamber process and ultimately pass its originating chamber during the biennium?**
+
+Population: the complete authoritative introduced-bill universe, not only bills that later receive a passage vote.
+
+This target sits between the introduction prior and the conditional floor-vote model. Its job is to model legislative selection/advancement rather than silently condition on successful agenda access.
+
+The lifecycle evaluation must keep two components conceptually distinct:
+
+1. floor/process access over all introduced bills; and
+2. member/chamber voting conditional on an actual passage vote occurring.
+
+A bill that never receives a passage vote supplies a lifecycle outcome but **does not** supply synthetic member NAY outcomes.
+
+The preferred historical representation is a leakage-safe event-time or multi-state dataset built from dated official process actions. Initial states include introduction, committee/process engagement, floor eligibility/scheduling, passage-vote reached, source-chamber passage, observed passage-vote failure, and terminal session expiration. State names must not claim semantics the source does not prove; for example, a committee referral is not automatically a committee hearing.
+
+Primary lifecycle metrics include:
+
+- all-bill source-chamber-passage Brier score and log loss;
+- calibration / ECE and average precision;
+- reach-floor Brier/log loss/calibration;
+- state/transition probability quality;
+- House/Senate, session, lifecycle-state, elapsed-time, and time-remaining slices;
+- source/parser coverage and censoring diagnostics.
+
+The accepted introduction model is a required all-bill baseline. Simple stage-only and stage-plus-elapsed-time models must be evaluated before richer evidence models.
+
 ### Current/floor chamber forecast
 
 Target: **Given the information available at forecast time, will the selected chamber vote pass?**
@@ -59,6 +87,8 @@ For introduction-stage evaluation, the current authoritative regular-session cor
 - 0 unknown labels;
 - 2021-22, 2023-24, and 2025-26;
 - House and Senate.
+
+For lifecycle evaluation, use the same complete introduced-bill population as the introduction target, plus dated official process actions and terminal session-expiration/source-chamber outcomes. Missing process history must be measured as missingness; it may not be interpreted as proof that no action occurred.
 
 For current/floor member evaluation, retain official vote events, member votes, historical roster state, bill/version identity, and only evidence/features available by the forecast cutoff.
 
@@ -244,6 +274,21 @@ A candidate may become the accepted introduction default only when:
 8. the serving artifact is trained only on eligible completed history;
 9. serialized serving predictions reproduce the evaluated model exactly before runtime integration;
 10. production serving is changed only in a separate reviewed integration after promotion is earned.
+
+### Lifecycle/current-state promotion
+
+A lifecycle candidate may affect a serving bill-level probability only when:
+
+1. the full introduced-bill population and terminal outcome contract are frozen;
+2. dated process-history coverage is sufficient and documented;
+3. state derivation and cutoff eligibility are reproducible;
+4. no non-vote bill is converted into a synthetic member-vote label;
+5. end-to-end all-bill Brier/log loss/calibration are compared with the accepted introduction prior and simple lifecycle baselines;
+6. floor-access and conditional member/chamber components are scored separately as diagnostics;
+7. House/Senate and lifecycle-state regressions are reviewed;
+8. companion/substantive-vehicle outcomes, if used, are separately frozen and never substituted silently for strict bill-number passage;
+9. retrospective already-inspected outcomes are described as development/robustness evidence;
+10. production serving changes occur only through a separate reviewed integration.
 
 ### Current/floor promotion
 
