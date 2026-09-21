@@ -1,15 +1,6 @@
 name: Passage tail-risk screen
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/passage-tail-risk-screen.yml
-      - data/evaluation/passage-tail-risk-screen-plan-v1.json
-      - scripts/run-production-passage-tail-risk-screen.ts
-      - src/app/api/operations/passage-tail-risk-screen/route.ts
-      - src/evaluation/passage-tail-risk-screen.ts
-      - tests/passage-tail-risk-screen.test.ts
   workflow_dispatch:
 
 permissions:
