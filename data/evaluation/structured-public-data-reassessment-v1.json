@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "structured-public-data-reassessment-v1",
+  "generatedAt": "2026-09-21T04:20:00Z",
+  "servingBaseline": "member-eb-v1.2-decay180",
+  "quickEvidenceCandidate": "quick-evidence-v1",
+  "sessions": {
+    "training": "2021-2022",
+    "validation": "2023-2024",
+    "descriptive": "2025-2026"
+  },
+  "policy": {
+    "strictlyPreVoteOnly": true,
+    "sameDayExcludedWhenOrderingIsNotProvable": true,
+    "automaticPromotion": false,
+    "productionAction": "none",
+    "allStructuredFamilyWeightsRemainZero": true
+  },
+  "families": {
+    "districtContext": {
+      "status": "frozen_diagnostic_no_signal",
+      "productionWeight": 0
+    },
+    "floorActivity": {
+      "status": "frozen_diagnostic_no_signal",
+      "productionWeight": 0,
+      "broadStructuredVoteScreen": {
+        "trainingCoveredMemberOutcomes": 1431,
+        "validationCoveredMemberOutcomes": 7454,
+        "descriptiveCoveredMemberOutcomes": 2124,
+        "validationMemberBrierDelta": -0.00427470623332836,
+        "validationMemberLogLossDelta": -0.00929709234388093,
+        "validationChamberYesMaeDelta": -0.7774170862531129,
+        "validationPassageBrierDelta": 0.0029549202002672505,
+        "hypothesisSignal": false
+      },
+      "narrowFloorAmendmentProposer": {
+        "status": "insufficient_historical_member_overlap",
+        "trainingCoveredMemberOutcomes": 5,
+        "validationCoveredMemberOutcomes": 39,
+        "descriptiveCoveredMemberOutcomes": 5
+      }
+    },
+    "sessionDailySpeech": {
+      "status": "insufficient_historical_member_overlap",
+      "productionWeight": 0,
+      "durableHistoricalEvidenceRows": 868,
+      "trainingCoveredMemberOutcomes": 34,
+      "validationCoveredMemberOutcomes": 111,
+      "descriptiveCoveredMemberOutcomes": 0
+    },
+    "conferenceConferee": {
+      "status": "frozen_diagnostic_no_signal",
+      "productionWeight": 0,
+      "trainingPositiveMemberOutcomes": 97,
+      "validationPositiveMemberOutcomes": 314,
+      "descriptivePositiveMemberOutcomes": 0,
+      "validationMemberBrierDelta": 0.000003403640261745444,
+      "validationMemberLogLossDelta": 0.000005264364558554835,
+      "validationChamberYesMaeDelta": 0.0008212603366715143,
+      "validationPassageBrierDelta": -0.000005219345134369752,
+      "hypothesisSignal": false
+    },
+    "billContext": {
+      "status": "frozen_diagnostic_no_signal",
+      "productionWeight": 0,
+      "historicalBackfill": {
+        "trainingTargetBillsProcessed": "196/196",
+        "validationTargetBillsProcessed": "205/205",
+        "trainingEvidenceRows": 213,
+        "validationEvidenceRows": 373
+      },
+      "trainingCoveredEvents": 169,
+      "trainingCoveredMemberOutcomes": 17674,
+      "validationCoveredEvents": 314,
+      "validationCoveredMemberOutcomes": 33537,
+      "descriptiveCoveredEvents": 0,
+      "descriptiveCoveredMemberOutcomes": 0,
+      "validationMemberBrierDelta": -0.001827048119610264,
+      "validationMemberLogLossDelta": -0.0033926577537224945,
+      "validationChamberYesMaeDelta": -0.3456591220849887,
+      "validationPassageBrierDelta": 0.0058624372452305284,
+      "hypothesisSignal": false
+    }
+  },
+  "conclusion": {
+    "servingProbabilityChange": "none",
+    "nextDefaultExpansion": "prospective accrual and scoring, not committee-minute ingestion",
+    "committeeMinuteExpansionDeferred": true
+  }
+}
