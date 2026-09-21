@@ -1,6 +1,7 @@
 import { fetchRevisorStatusXml, parseRevisorOfficialActions } from '../src/sources/minnesota/revisor-actions.js';
 import { buildRevisorRegularSessionStatusXmlUrls, parseRevisorIntroductionMetadata } from '../src/sources/minnesota/revisor-introduction.js';
 
+// Compare both calendar-year endpoints for the same biennium bill identifier.
 const samples = [
   { session: '2021-2022', identifier: 'HF11' },
   { session: '2021-2022', identifier: 'HF2632' },
