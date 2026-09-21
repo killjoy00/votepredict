@@ -43,6 +43,7 @@ export type ProductionReadiness = {
       floorActivity: { items: number; members: number; bills: number };
       sessionDailySpeech: { items: number; members: number; bills: number };
       conferenceConferee: { items: number; members: number; bills: number };
+      committeeRollcall: { items: number; members: number; bills: number };
       billContext: { items: number; members: number; bills: number };
     };
     mechanicallyActionableItems: number;
@@ -116,6 +117,9 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
       structured_conferee_items: number;
       structured_conferee_members: number;
       structured_conferee_bills: number;
+      structured_committee_rollcall_items: number;
+      structured_committee_rollcall_members: number;
+      structured_committee_rollcall_bills: number;
       structured_bill_context_items: number;
       structured_bill_context_members: number;
       structured_bill_context_bills: number;
@@ -268,6 +272,21 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
         )::int AS structured_conferee_bills,
         count(*) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype'='committee_rollcall'
+            AND bill_session_id=(SELECT id FROM current_session)
+        )::int AS structured_committee_rollcall_items,
+        count(DISTINCT membership_id) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype'='committee_rollcall'
+            AND bill_session_id=(SELECT id FROM current_session)
+        )::int AS structured_committee_rollcall_members,
+        count(DISTINCT bill_id) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
+            AND metadata->>'subtype'='committee_rollcall'
+            AND bill_session_id=(SELECT id FROM current_session)
+        )::int AS structured_committee_rollcall_bills,
+        count(*) FILTER (
+          WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype' IN ('bill_summary_version','fiscal_note_context')
             AND bill_session_id=(SELECT id FROM current_session)
         )::int AS structured_bill_context_items,
@@ -338,6 +357,9 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
     structured_conferee_items: 0,
     structured_conferee_members: 0,
     structured_conferee_bills: 0,
+    structured_committee_rollcall_items: 0,
+    structured_committee_rollcall_members: 0,
+    structured_committee_rollcall_bills: 0,
     structured_bill_context_items: 0,
     structured_bill_context_members: 0,
     structured_bill_context_bills: 0,
@@ -403,6 +425,11 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
           items: Number(evidence.structured_conferee_items),
           members: Number(evidence.structured_conferee_members),
           bills: Number(evidence.structured_conferee_bills),
+        },
+        committeeRollcall: {
+          items: Number(evidence.structured_committee_rollcall_items),
+          members: Number(evidence.structured_committee_rollcall_members),
+          bills: Number(evidence.structured_committee_rollcall_bills),
         },
         billContext: {
           items: Number(evidence.structured_bill_context_items),
