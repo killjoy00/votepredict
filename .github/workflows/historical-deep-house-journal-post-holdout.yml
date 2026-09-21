@@ -1,19 +1,6 @@
 name: Historical Deep House Journal post-holdout sensitivity
 
 on:
-  pull_request:
-    paths:
-      - .github/workflows/historical-deep-house-journal-post-holdout.yml
-      - data/evaluation/historical-deep-house-journal-post-holdout-plan-v1.json
-      - scripts/analyze-historical-deep-house-journal-post-holdout.ts
-      - src/evaluation/historical-deep-house-journal-post-holdout.ts
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-house-journal-post-holdout.yml
-      - data/evaluation/historical-deep-house-journal-post-holdout-plan-v1.json
-      - scripts/analyze-historical-deep-house-journal-post-holdout.ts
-      - src/evaluation/historical-deep-house-journal-post-holdout.ts
   workflow_dispatch:
 
 permissions:
