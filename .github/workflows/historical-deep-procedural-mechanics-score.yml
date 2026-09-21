@@ -1,23 +1,6 @@
 name: Historical Deep procedural mechanics score
 
 on:
-  pull_request:
-    paths:
-      - .github/workflows/historical-deep-procedural-mechanics-score.yml
-      - data/evaluation/historical-deep-procedural-mechanics-score-lineage-v1.json
-      - scripts/score-historical-deep-procedural-mechanics.ts
-      - src/evaluation/historical-deep-procedural-mechanics-score.ts
-      - tests/historical-deep-procedural-mechanics-score.test.ts
-      - docs/evaluation/historical-deep-procedural-mechanics-score-v1.md
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-procedural-mechanics-score.yml
-      - data/evaluation/historical-deep-procedural-mechanics-score-lineage-v1.json
-      - scripts/score-historical-deep-procedural-mechanics.ts
-      - src/evaluation/historical-deep-procedural-mechanics-score.ts
-      - tests/historical-deep-procedural-mechanics-score.test.ts
-      - docs/evaluation/historical-deep-procedural-mechanics-score-v1.md
   workflow_dispatch:
 
 permissions:
