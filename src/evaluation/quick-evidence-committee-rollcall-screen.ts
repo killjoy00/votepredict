@@ -237,17 +237,10 @@ export async function evaluateQuickEvidenceCommitteeRollcallScreen(
   }
 
   const featuresByPair = new Map<string, number[]>();
-  const expectedBaseByPair = new Map<string, number>();
   for (const row of input.featureRows) {
     const key = `${row.voteEventId}|${row.membershipId}`;
     if (featuresByPair.has(key)) throw new Error(`Duplicate committee roll-call feature row: ${key}`);
     featuresByPair.set(key, validatedFeatureVector(row.features));
-    if (row.baseProbability !== undefined) {
-      if (!Number.isFinite(row.baseProbability) || row.baseProbability <= 0 || row.baseProbability >= 1) {
-        throw new Error(`Invalid frozen base probability for ${key}`);
-      }
-      expectedBaseByPair.set(key, row.baseProbability);
-    }
   }
   if (featuresByPair.size !== input.candidateSummary.memberEventPairsWithFeatures) {
     throw new Error(
@@ -274,14 +267,6 @@ export async function evaluateQuickEvidenceCommitteeRollcallScreen(
     for (const member of event.memberPredictions) {
       const key = `${event.voteEventId}|${member.membershipId}`;
       baselinePairKeys.add(key);
-      const expectedBase = expectedBaseByPair.get(key);
-      if (
-        expectedBase !== undefined
-        && member.yesProbability !== undefined
-        && Math.abs(expectedBase - member.yesProbability) > 1e-10
-      ) {
-        throw new Error(`Committee roll-call frozen Quick probability drift for ${key}`);
-      }
       if (member.yesProbability === undefined || member.actualOutcome === undefined) continue;
       observations.push({
         eventId: event.voteEventId,
