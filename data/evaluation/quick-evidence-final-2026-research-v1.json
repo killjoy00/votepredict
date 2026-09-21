@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "quick-evidence-final-2026-research-v1",
+  "recordedAt": "2026-09-21T17:22:00Z",
+  "servingBaseline": "member-eb-v1.2-decay180",
+  "quickEvidenceCandidate": "quick-evidence-v1",
+  "productionAction": "none",
+  "committeeRollcall": {
+    "issue": 288,
+    "workflowRunId": 35630410998,
+    "artifactId": 10653939032,
+    "artifactDigest": "sha256:f39fd818227051705972ea5c7f7fd5679c435ad8be1555be6e689da627ef5d76",
+    "selectedLambda": 5,
+    "coverage": {
+      "training": { "memberOutcomes": 20231, "memberOutcomesWithFeature": 3045, "eventsWithFeature": 107 },
+      "validation": { "memberOutcomes": 33751, "memberOutcomesWithFeature": 1173, "eventsWithFeature": 62 },
+      "descriptive": { "memberOutcomes": 35010, "memberOutcomesWithFeature": 525, "eventsWithFeature": 30 }
+    },
+    "validationDeltaCandidateMinusBaseline": {
+      "memberBrier": -0.0016105994411769187,
+      "memberLogLoss": -0.003501894892814661,
+      "memberExpectedCalibrationError": -0.0023576004685175456,
+      "chamberMeanAbsoluteYesError": -0.27555770296126525,
+      "passageBrier": 0.0002092132549589617
+    },
+    "descriptiveDeltaCandidateMinusBaseline": {
+      "memberBrier": -0.00037835919663836703,
+      "memberLogLoss": -0.001597550813620341,
+      "memberExpectedCalibrationError": -0.0013896497650876943,
+      "chamberMeanAbsoluteYesError": 0.008294732624877454,
+      "passageBrier": -0.000100723694483381
+    },
+    "hypothesisSignal": true,
+    "reason": "frozen_thresholds_cleared",
+    "interpretation": "Broad exact-bill named-member House committee roll calls cleared every frozen historical threshold. This justifies prospective measurement only; serving Quick and evidence weights remain unchanged."
+  },
+  "combinedHistorical": {
+    "issue": 289,
+    "workflowRunId": 35630844438,
+    "artifactId": 10653994997,
+    "artifactDigest": "sha256:66d97208eb4c20f2408703f21552cef53dabd77d0b0c919259d24cf84fff78fc",
+    "selectedLambda": 100,
+    "featureCount": 32,
+    "coverage": {
+      "training": { "memberOutcomes": 32616, "memberOutcomesWithAnyEvidence": 32616, "eventsWithAnyEvidence": 342 },
+      "validation": { "memberOutcomes": 44790, "memberOutcomesWithAnyEvidence": 44723, "eventsWithAnyEvidence": 432 },
+      "descriptive": { "memberOutcomes": 46938, "memberOutcomesWithAnyEvidence": 46938, "eventsWithAnyEvidence": 446 }
+    },
+    "validationDeltaCandidateMinusBaseline": {
+      "memberBrier": -0.003924710633909506,
+      "memberLogLoss": -0.007792257756655263,
+      "memberExpectedCalibrationError": -0.02104792110808277,
+      "chamberMeanAbsoluteYesError": -0.7460871609417126,
+      "passageBrier": 0.0028687041695764116
+    },
+    "descriptiveDeltaCandidateMinusBaseline": {
+      "memberBrier": -0.002993283676216027,
+      "memberLogLoss": -0.008785744908870685,
+      "memberExpectedCalibrationError": -0.022132339386701866,
+      "chamberMeanAbsoluteYesError": -0.908790629846921,
+      "passageBrier": -0.004212482181455132
+    },
+    "validationSlices": {
+      "house": {
+        "memberBrierDelta": -0.007425907889925976,
+        "memberLogLossDelta": -0.01552830637170799,
+        "chamberMeanAbsoluteYesErrorDelta": -1.6755265692912644,
+        "passageBrierDelta": 0.007929251054473485
+      },
+      "senate": {
+        "memberBrierDelta": 0.006861209878419122,
+        "memberLogLossDelta": 0.016039705808781057,
+        "chamberMeanAbsoluteYesErrorDelta": 0.7176407695728386,
+        "passageBrierDelta": -0.005100899607237495
+      },
+      "movedMembers": {
+        "observations": 39514,
+        "memberBrierDelta": -0.004445663230048608,
+        "memberLogLossDelta": -0.008815345325073498,
+        "memberExpectedCalibrationErrorDelta": -0.023679622530171713,
+        "accuracyDelta": 0.019967606417978456
+      }
+    },
+    "fixedLeaveOneFamilyOut": {
+      "billContext": { "memberBrierDeltaVsCombined": 0.0041821048123252685, "passageBrierDeltaVsCombined": -0.008756734011727121 },
+      "districtContext": { "memberBrierDeltaVsCombined": 0.0014256330325187194, "passageBrierDeltaVsCombined": -0.0027053508490666837 },
+      "nonPassageVotes": { "memberBrierDeltaVsCombined": 0.0021932992820374447, "passageBrierDeltaVsCombined": -0.002493375690945744 },
+      "committeeRollcall": { "memberBrierDeltaVsCombined": 0.00035693121552621276, "passageBrierDeltaVsCombined": -0.00006245541035585292 },
+      "authorship": { "memberBrierDeltaVsCombined": 0.0005846482904261069, "passageBrierDeltaVsCombined": 0.016377482722230285 }
+    },
+    "hypothesisSignal": false,
+    "reason": "frozen_thresholds_not_cleared",
+    "failedThreshold": "validation passage Brier delta exceeded +0.002",
+    "interpretation": "The pooled historical evidence offset materially improves member prediction and calibration but fails passage safety. The primary observed failure pattern is chamber-dependent: House member forecasts improve strongly while House passage calibration worsens; Senate moves in the opposite direction. Do not promote or retune on the same historical outcomes."
+  },
+  "nextPhase": {
+    "mode": "prospective measurement",
+    "broadRetrospectiveFeatureSearch": "stop",
+    "servingModelChange": "none",
+    "committeeRollcall": "eligible for zero-weight prospective capture because its standalone frozen diagnostic cleared",
+    "failurePatternToMonitorProspectively": "member-level evidence lift versus chamber/passage calibration, especially House passage aggregation",
+    "automaticPromotion": false
+  }
+}
