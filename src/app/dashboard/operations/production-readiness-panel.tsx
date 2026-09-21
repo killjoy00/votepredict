@@ -117,7 +117,7 @@ export function ProductionReadinessPanel(props: Props) {
       </div>
 
       <div className="evidence-footnote structured-family-footnote">
-        Current unsuperseded structured zero-weight corpus (historical backfills excluded):
+        Current-session structured zero-weight corpus (historical backfills excluded):
         {' '}district <strong>{readiness.evidence.structuredFamilies.districtContext.items} items / {readiness.evidence.structuredFamilies.districtContext.members} members</strong>
         {' '}· floor <strong>{readiness.evidence.structuredFamilies.floorActivity.items} items / {readiness.evidence.structuredFamilies.floorActivity.members} members / {readiness.evidence.structuredFamilies.floorActivity.bills} bills</strong>
         {' '}· speech <strong>{readiness.evidence.structuredFamilies.sessionDailySpeech.items} items / {readiness.evidence.structuredFamilies.sessionDailySpeech.members} members / {readiness.evidence.structuredFamilies.sessionDailySpeech.bills} bills</strong>
