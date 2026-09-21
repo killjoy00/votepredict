@@ -1,23 +1,6 @@
 name: Historical Deep House Journal mechanics score
 
 on:
-  pull_request:
-    paths:
-      - .github/workflows/historical-deep-house-journal-mechanics-score.yml
-      - data/evaluation/historical-deep-house-journal-mechanics-score-lineage-v1.json
-      - scripts/score-historical-deep-house-journal-mechanics.ts
-      - src/evaluation/historical-deep-house-journal-mechanics-score.ts
-      - tests/historical-deep-house-journal-mechanics-score.test.ts
-      - docs/evaluation/historical-deep-house-journal-mechanics-score-v1.md
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-house-journal-mechanics-score.yml
-      - data/evaluation/historical-deep-house-journal-mechanics-score-lineage-v1.json
-      - scripts/score-historical-deep-house-journal-mechanics.ts
-      - src/evaluation/historical-deep-house-journal-mechanics-score.ts
-      - tests/historical-deep-house-journal-mechanics-score.test.ts
-      - docs/evaluation/historical-deep-house-journal-mechanics-score-v1.md
   workflow_dispatch:
 
 permissions:
