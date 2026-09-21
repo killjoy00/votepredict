@@ -5,11 +5,12 @@ import { persistDurableEvidence, type DurableEvidenceDraft } from '@/evidence/du
 import {
   extractHouseResearchSummaryPdfLinks,
   HOUSE_RESEARCH_SUMMARY_PDF_PARSER_VERSION,
+  parseHouseResearchSummaryDetailSubject,
   parseHouseResearchSummaryPdfText,
 } from '@/evidence/minnesota-bill-context';
 
 export const HISTORICAL_HOUSE_RESEARCH_SUMMARY_BACKFILL_VERSION =
-  'historical-house-research-summary-v2' as const;
+  'historical-house-research-summary-v3' as const;
 
 const SESSION_LEGISLATURE = {
   '2021-2022': 92,
@@ -155,6 +156,7 @@ async function processBill(session: SupportedSession, legislature: number, bill:
     userAgent: 'VotePredict/2.0 historical-house-research-summary-backfill',
   });
   const links = extractHouseResearchSummaryPdfLinks(detail.rawContent, detail.canonicalUrl, legislature);
+  const detailSubject = parseHouseResearchSummaryDetailSubject(detail.rawContent);
 
   let inserted = 0;
   let reused = 0;
@@ -163,7 +165,10 @@ async function processBill(session: SupportedSession, legislature: number, bill:
 
   for (const link of links) {
     const pdf = await fetchSummaryPdf(link.url, legislature);
-    const parsed = parseHouseResearchSummaryPdfText(pdf.text);
+    const parsed = parseHouseResearchSummaryPdfText(pdf.text, {
+      fallbackSubject: detailSubject,
+      fallbackVersion: link.label,
+    });
     if (!parsed) throw new Error('Could not parse House Research summary PDF header: ' + link.url);
     if (parsed.billIdentifier !== bill.identifier.toUpperCase().replace(/\s+/g, '')) {
       throw new Error(
