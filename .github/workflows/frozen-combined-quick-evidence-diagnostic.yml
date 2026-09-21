@@ -1,15 +1,6 @@
 name: Frozen combined Quick Evidence diagnostic
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/frozen-combined-quick-evidence-diagnostic.yml
-      - data/evaluation/quick-evidence-combined-historical-screen-plan-v1.json
-      - data/evaluation/quick-evidence-committee-rollcall-candidate-lineage-v1.json
-      - scripts/evaluate-quick-evidence-combined-historical-screen.ts
-      - src/app/api/operations/quick-evidence-combined-historical-screen/route.ts
-      - src/evaluation/quick-evidence-combined-historical-screen.ts
   workflow_dispatch:
 
 permissions:
