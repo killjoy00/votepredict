@@ -16,12 +16,19 @@
     "billFeatures": "recompute deterministic features from dated raw bill text plus the dated-text-derived identity title; ignore persisted historical feature sets that may contain mutable-title inputs",
     "companionState": "use only dated legislative_stage_events companion_reference rows strictly before the target vote; never use current Revisor companion metadata",
     "evidenceEligibility": "exclude rows explicitly marked asOfEligible=false",
-    "billEvidenceDateSanity": "exclude reconstructed bill evidence dated before the legislative session start or before the bill introduction date; target-day evidence remains excluded when intraday ordering is unavailable"
+    "billEvidenceDateSanity": "exclude reconstructed bill evidence dated before the legislative session start or before the bill introduction date; target-day evidence remains excluded when intraday ordering is unavailable",
+    "fitPopulation": "fit member observations only from events the serving Quick replay marks replayable; scoring and fit populations must align"
   },
   "fit": {
     "unchangedFromV1": true,
     "model": "multivariable ridge logistic offset on corrected serving Quick replay logit",
-    "lambdas": [0.1, 1, 5, 20, 100],
+    "lambdas": [
+      0.1,
+      1,
+      5,
+      20,
+      100
+    ],
     "maximumAbsoluteLogitDelta": 1,
     "selectionMetricOrder": [
       "validation member Brier",
