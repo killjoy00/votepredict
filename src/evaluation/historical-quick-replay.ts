@@ -218,9 +218,9 @@ function candidateTokens(identity: BillFeatureIdentity): string[] {
   return [...new Set(values)].slice(0, 18);
 }
 
-function lexicalHits(title: string, tokens: readonly string[]): number {
-  const lower = title.toLowerCase();
-  return tokens.filter((token) => lower.includes(token)).length;
+function featureTokenHits(candidate: BillFeatureIdentity, tokens: readonly string[]): number {
+  const candidateSet = new Set(candidateTokens(candidate));
+  return tokens.filter((token) => candidateSet.has(token)).length;
 }
 
 function prefilterCandidates(
@@ -232,7 +232,7 @@ function prefilterCandidates(
   return priorCandidates
     .map((candidate) => ({
       candidate,
-      hits: lexicalHits(candidate.title, tokens),
+      hits: featureTokenHits(candidate, tokens),
       priority: candidate.billId === targetEvent.billId
         ? 3
         : target.companionIdentifier && candidate.identifier === target.companionIdentifier
