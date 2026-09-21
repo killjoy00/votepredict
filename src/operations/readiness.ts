@@ -37,6 +37,7 @@ export type ProductionReadiness = {
     publicEvidenceMembers: number;
     quickEvidenceCandidateItems: number;
     quickEvidenceCandidateMembers: number;
+    structuredSessionSlug?: string;
     structuredFamilies: {
       districtContext: { items: number; members: number; bills: number };
       floorActivity: { items: number; members: number; bills: number };
@@ -102,6 +103,7 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
       public_evidence_members: number;
       quick_evidence_candidate_items: number;
       quick_evidence_candidate_members: number;
+      structured_session_slug: string | null;
       structured_district_items: number;
       structured_district_members: number;
       structured_district_bills: number;
@@ -123,7 +125,7 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
       latest_public_evidence_status: string | null;
     }>(`
       WITH current_session AS (
-        SELECT s.id
+        SELECT s.id, s.slug
           FROM legislative_sessions s
           JOIN jurisdictions j ON j.id=s.jurisdiction_id
          WHERE j.slug='us-mn'
@@ -203,6 +205,7 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
         )::int AS public_evidence_members,
         count(*) FILTER (WHERE metadata->>'quickEvidenceCandidate'='true')::int AS quick_evidence_candidate_items,
         count(DISTINCT membership_id) FILTER (WHERE metadata->>'quickEvidenceCandidate'='true')::int AS quick_evidence_candidate_members,
+        (SELECT slug FROM current_session) AS structured_session_slug,
         count(*) FILTER (
           WHERE metadata->>'historicalBackfill' IS DISTINCT FROM 'true'
             AND metadata->>'subtype'='district_election_context'
@@ -322,6 +325,7 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
     public_evidence_members: 0,
     quick_evidence_candidate_items: 0,
     quick_evidence_candidate_members: 0,
+    structured_session_slug: null,
     structured_district_items: 0,
     structured_district_members: 0,
     structured_district_bills: 0,
@@ -378,6 +382,7 @@ export async function getProductionReadiness(): Promise<ProductionReadiness> {
       publicEvidenceMembers: Number(evidence.public_evidence_members),
       quickEvidenceCandidateItems: Number(evidence.quick_evidence_candidate_items),
       quickEvidenceCandidateMembers: Number(evidence.quick_evidence_candidate_members),
+      structuredSessionSlug: evidence.structured_session_slug ?? undefined,
       structuredFamilies: {
         districtContext: {
           items: Number(evidence.structured_district_items),
