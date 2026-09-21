@@ -41,12 +41,39 @@ type ProductionEvidenceStatus = {
   latestRevisionAt?: string;
 };
 
+type QuickAccrualAlert = {
+  severity: 'warning' | 'error';
+  code: string;
+  message: string;
+  family?: string;
+};
+
 type ShadowHealth = {
   failureGraceHours: number;
   productionEvidence: ProductionEvidenceStatus;
-  quickEvidence: ShadowStatus & { session: string; servingMemberModelVersion: string };
+  quickEvidence: ShadowStatus & {
+    session: string;
+    servingMemberModelVersion: string;
+    state: 'armed' | 'active' | 'attention';
+    memberShadows: number;
+    movedMemberShadows: number;
+    distinctMembersWithDirectionalEvidence: number;
+    schemaMissingMemberShadows: number;
+    alerts: QuickAccrualAlert[];
+  };
   cap20: ShadowStatus & { session: string; frozenBaselineModelVersion: string };
   passageFragility: ShadowStatus & { session: string; servingMemberModelVersion: string };
+};
+
+type QuickScorecardGate = {
+  status: 'awaiting_resolved_forecasts' | 'accruing' | 'ready_for_primary_scoring';
+  primaryScoringAllowed: boolean;
+  minimums: {
+    resolvedForecasts: { observed: number; required: number; met: boolean };
+    memberOutcomes: { observed: number; required: number; met: boolean };
+    membersWithAppliedDirectionalEvidence: { observed: number; required: number; met: boolean };
+  };
+  metrics: unknown | null;
 };
 
 function percent(value: number | undefined) {
@@ -55,15 +82,24 @@ function percent(value: number | undefined) {
 
 function ProspectiveShadowCapturePanel() {
   const [health, setHealth] = useState<ShadowHealth | null>(null);
+  const [scorecard, setScorecard] = useState<QuickScorecardGate | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
-    void fetch('/api/operations/prospective-shadow-health')
-      .then(async (response) => {
-        const payload = await response.json() as ShadowHealth & { error?: string };
-        if (!response.ok) throw new Error(payload.error || 'Could not load prospective validation health.');
-        if (active) setHealth(payload);
+    void Promise.all([
+      fetch('/api/operations/prospective-shadow-health'),
+      fetch('/api/operations/quick-evidence-prospective-scorecard'),
+    ])
+      .then(async ([healthResponse, scoreResponse]) => {
+        const healthPayload = await healthResponse.json() as ShadowHealth & { error?: string };
+        const scorePayload = await scoreResponse.json() as QuickScorecardGate & { error?: string };
+        if (!healthResponse.ok) throw new Error(healthPayload.error || 'Could not load prospective validation health.');
+        if (!scoreResponse.ok) throw new Error(scorePayload.error || 'Could not load Quick Evidence scorecard gate.');
+        if (active) {
+          setHealth(healthPayload);
+          setScorecard(scorePayload);
+        }
       })
       .catch((reason) => {
         if (active) setError(reason instanceof Error ? reason.message : 'Could not load prospective validation health.');
@@ -91,14 +127,41 @@ function ProspectiveShadowCapturePanel() {
               <small>{health.productionEvidence.enabledSchedules} active schedules. Eligible future bills are discovered hourly; immutable Quick revisions retain a 24-hour cadence until official resolution.</small>
             </div>
             <div className="shadow-experiment">
-              <div><strong>Quick Evidence</strong><small>{health.quickEvidence.session} · House + Senate · {health.quickEvidence.scopeRevisions} in scope</small></div>
+              <div>
+                <strong>Quick Evidence · {health.quickEvidence.state}</strong>
+                <small>{health.quickEvidence.session} · House + Senate · {health.quickEvidence.scopeRevisions} in scope</small>
+              </div>
               <div className="shadow-counts">
                 <span>Eligible<strong>{health.quickEvidence.eligibleRevisions}</strong></span>
                 <span>Captured<strong>{health.quickEvidence.capturedRevisions}</strong></span>
-                <span>Excluded<strong>{health.quickEvidence.excludedRevisions}</strong></span>
-                <span>Failed &gt;{health.failureGraceHours}h<strong className={health.quickEvidence.failedRevisions ? 'bad' : ''}>{health.quickEvidence.failedRevisions}</strong></span>
+                <span>Member shadows<strong>{health.quickEvidence.memberShadows}</strong></span>
+                <span>Moved<strong>{health.quickEvidence.movedMemberShadows}</strong></span>
               </div>
-              <small>One unified non-serving evidence candidate under {health.quickEvidence.servingMemberModelVersion}: bill-specific directional evidence, prior official bill votes, and the broader evidence feature vector. Serving Quick is unchanged.</small>
+              <small>
+                Directional-evidence members: <strong>{health.quickEvidence.distinctMembersWithDirectionalEvidence}</strong>.
+                {' '}Schema gaps: <strong className={health.quickEvidence.schemaMissingMemberShadows ? 'bad' : ''}>{health.quickEvidence.schemaMissingMemberShadows}</strong>.
+                {' '}Failed &gt;{health.failureGraceHours}h: <strong className={health.quickEvidence.failedRevisions ? 'bad' : ''}>{health.quickEvidence.failedRevisions}</strong>.
+              </small>
+              {scorecard ? (
+                <small>
+                  Primary scoring gate: forecasts {scorecard.minimums.resolvedForecasts.observed}/{scorecard.minimums.resolvedForecasts.required}
+                  {' '}· member outcomes {scorecard.minimums.memberOutcomes.observed}/{scorecard.minimums.memberOutcomes.required}
+                  {' '}· directional members {scorecard.minimums.membersWithAppliedDirectionalEvidence.observed}/{scorecard.minimums.membersWithAppliedDirectionalEvidence.required}
+                  {' '}· {scorecard.primaryScoringAllowed ? 'READY' : 'sealed while accruing'}.
+                </small>
+              ) : null}
+              {health.quickEvidence.alerts.length > 0 ? (
+                <div className="shadow-alerts">
+                  {health.quickEvidence.alerts.map((alert, index) => (
+                    <small className={alert.severity === 'error' ? 'bad' : ''} key={alert.code + index}>
+                      {alert.message}
+                    </small>
+                  ))}
+                </div>
+              ) : (
+                <small>No Quick Evidence accrual alerts.</small>
+              )}
+              <small>Serving Quick remains {health.quickEvidence.servingMemberModelVersion}; the candidate is non-serving and metrics stay sealed until the frozen minimums are met.</small>
             </div>
             <div className="shadow-experiment">
               <div><strong>Member-history cap 20</strong><small>{health.cap20.session} · House + Senate · {health.cap20.scopeRevisions} in scope</small></div>
@@ -218,7 +281,10 @@ export function OutcomeResolutionQueue({ rows }: { rows: QueueRow[] }) {
         .shadow-experiment { min-width: 0; border: 1px solid #e2e6e2; border-radius: 8px; padding: 9px; background: #fff; }
         .shadow-experiment > div:first-child { display: grid; gap: 2px; }
         .shadow-experiment > div:first-child strong { font-size: 9px; }
-        .shadow-experiment small { color: #7b857e; font-size: 7px; line-height: 1.4; }
+        .shadow-experiment small { display: block; margin-top: 4px; color: #7b857e; font-size: 7px; line-height: 1.4; }
+        .shadow-experiment small strong { color: #34473b; }
+        .shadow-experiment .bad { color: #9a4138; }
+        .shadow-alerts { display: grid; gap: 2px; margin-top: 6px; }
         .shadow-counts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; overflow: hidden; margin: 8px 0; border: 1px solid #e5e9e5; border-radius: 7px; background: #e5e9e5; }
         .shadow-counts span { padding: 6px; color: #818b84; background: #fafbf9; font-size: 6.5px; }
         .shadow-counts strong { display: block; margin-top: 2px; color: #25372c; font-size: 10px; }
