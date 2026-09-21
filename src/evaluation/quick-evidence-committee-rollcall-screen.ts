@@ -9,6 +9,7 @@ import {
 import { loadHistoricalQuickReplayDataset } from './historical-quick-replay-dataset';
 import { runHistoricalQuickDecayShadowReplay } from './historical-quick-decay-shadow-replay';
 import {
+  HISTORICAL_QUICK_REPLAY_VERSION,
   scoreHistoricalQuickReplay,
   type HistoricalQuickReplayEventResult,
   type HistoricalQuickReplayScorecard,
@@ -17,7 +18,7 @@ import {
 export const QUICK_EVIDENCE_COMMITTEE_ROLLCALL_SCREEN_INPUT_SCHEMA =
   'quick-evidence-committee-rollcall-screen-input-v1' as const;
 export const QUICK_EVIDENCE_COMMITTEE_ROLLCALL_SCREEN_SCHEMA =
-  'quick-evidence-committee-rollcall-screen-v1' as const;
+  'quick-evidence-committee-rollcall-robustness-v2' as const;
 
 const HALF_LIFE_DAYS = 180;
 const LAMBDAS = [0.1, 1, 5, 20, 100] as const;
@@ -309,12 +310,21 @@ export async function evaluateQuickEvidenceCommitteeRollcallScreen(
   const common = {
     schemaVersion: QUICK_EVIDENCE_COMMITTEE_ROLLCALL_SCREEN_SCHEMA,
     generatedAt: new Date().toISOString(),
-    purpose: 'frozen retrospective diagnostic for broad exact-bill named-member Minnesota House committee roll calls as a zero-weight component of quick-evidence-v1',
+    purpose: 'historical Quick replay v2 robustness audit of the previously frozen broad House committee roll-call hypothesis; not a new independent validation set',
     metadata: {
       codeSha: options.codeSha ?? null,
       servingBaseline: 'member-eb-v1.2-decay180',
       quickEvidenceCandidate: 'quick-evidence-v1',
-      sourcePlan: 'quick-evidence-committee-rollcall-screen-plan-v1',
+      sourcePlan: 'quick-evidence-committee-rollcall-robustness-plan-v2',
+      inheritedHypothesisPlan: 'quick-evidence-committee-rollcall-screen-plan-v1',
+      historicalReplayVersion: HISTORICAL_QUICK_REPLAY_VERSION,
+      independentValidationSet: false,
+      historicalAvailabilityCorrections: {
+        mutableCurrentBillTitleUsed: false,
+        persistedHistoricalFeatureSetsUsed: false,
+        currentCompanionMetadataUsed: false,
+        datedBillTextOnly: true,
+      },
       parser: 'deterministic-house-committee-roll-call-v2',
       mechanicsPolicy: 'mn-house-procedural-mechanics-v1',
       memberHistoryHalfLifeDays: HALF_LIFE_DAYS,
@@ -406,8 +416,8 @@ export async function evaluateQuickEvidenceCommitteeRollcallScreen(
       hypothesisSignal,
       reason: hypothesisSignal ? 'frozen_thresholds_cleared' : 'frozen_thresholds_not_cleared',
       note: hypothesisSignal
-        ? 'Broad committee roll-call features cleared the frozen historical diagnostic thresholds. This authorizes continued prospective measurement only; it does not change serving Quick or evidence weights.'
-        : 'Broad committee roll-call features did not clear every frozen historical diagnostic threshold. Keep them zero-weight/non-serving.',
+        ? 'Broad committee roll-call features still clear the old frozen thresholds under historical Quick replay v2. This is robustness evidence only, not a fresh independent validation set, and it does not change serving Quick or evidence weights.'
+        : 'Broad committee roll-call features no longer clear every old frozen threshold under historical Quick replay v2. Keep them zero-weight/non-serving.',
     },
   };
 }
