@@ -23,11 +23,27 @@ import {
   LEGISLATIVE_SPEECH_EXTRACTOR_VERSION,
 } from './legislative-speech';
 import { resolveRevisorAuthor, type AuthorshipRosterMember } from '@/sources/minnesota/revisor-author-resolution';
+import {
+  parseHistoricalDeepCommitteeHome,
+  parseHistoricalDeepMinuteDate,
+} from '@/evaluation/historical-deep-expansion-source-bundle';
+import {
+  extractCurrentHouseCommitteeIds,
+  extractProspectiveCommitteeRollcalls,
+  minnesotaLegislatureForSessionStart,
+  MN_HOUSE_COMMITTEE_ROLLCALL_MECHANICS,
+  MN_HOUSE_COMMITTEE_ROLLCALL_PARSER,
+  MN_HOUSE_COMMITTEE_ROLLCALL_PROSPECTIVE_VERSION,
+} from './minnesota-committee-rollcall';
 
-export const STRUCTURED_PUBLIC_REFRESH_VERSION = 'structured-public-v4' as const;
+export const STRUCTURED_PUBLIC_REFRESH_VERSION = 'structured-public-v5' as const;
 
 const CONFERENCE_URL = 'https://www.leg.mn.gov/leg/cc/';
 const SESSION_DAILY_URL = 'https://www.house.mn.gov/SessionDaily';
+const HOUSE_COMMITTEE_MINUTES_LIST_URL = 'https://www.house.mn.gov/committees/minutes/list';
+const COMMITTEE_MINUTE_LOOKBACK_DAYS = 21;
+const COMMITTEE_MINUTE_MAX_PAGES = 120;
+const COMMITTEE_FETCH_CONCURRENCY = 6;
 const DEFAULT_BILL_BATCH = 6;
 const MAX_BILL_BATCH = 12;
 const SESSION_DAILY_PAGES = 3;
@@ -408,6 +424,212 @@ async function refreshSpeech(
   }
 }
 
+async function mapConcurrent<T, R>(
+  items: readonly T[],
+  limit: number,
+  worker: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const results = new Array<R>(items.length);
+  let next = 0;
+  async function run(): Promise<void> {
+    while (true) {
+      const index = next;
+      next += 1;
+      if (index >= items.length) return;
+      results[index] = await worker(items[index]);
+    }
+  }
+  await Promise.all(
+    Array.from({ length: Math.min(limit, Math.max(1, items.length)) }, () => run()),
+  );
+  return results;
+}
+
+async function refreshCommitteeRollcalls(
+  session: CurrentSession,
+  members: readonly MemberRow[],
+  allBills: readonly BillRow[],
+  now: Date,
+  counts: StreamCounts,
+): Promise<void> {
+  const houseMembers = members
+    .filter((member) => member.chamber_slug === 'house')
+    .map((member) => ({
+      membershipId: member.membership_id,
+      memberName: member.name,
+    }));
+  if (houseMembers.length === 0 || allBills.length === 0) return;
+
+  counts.attempted += 1;
+  const committeeIndex = await fetchPublicPage(HOUSE_COMMITTEE_MINUTES_LIST_URL, {
+    timeoutMs: 15_000,
+    maxBytes: 2_000_000,
+    userAgent: 'VotePredict/2.0 structured-public-data',
+  });
+  const legislature = minnesotaLegislatureForSessionStart(Number(session.starts_on.slice(0, 4)));
+  const committeeIds = extractCurrentHouseCommitteeIds(committeeIndex.rawContent, legislature);
+  if (committeeIds.length < 5) {
+    throw new Error(
+      'Minnesota House committee minutes index exposed only '
+      + committeeIds.length
+      + ' committees for legislature '
+      + legislature,
+    );
+  }
+
+  const linkGroups = await mapConcurrent(
+    committeeIds,
+    COMMITTEE_FETCH_CONCURRENCY,
+    async (committeeId) => {
+      counts.attempted += 1;
+      try {
+        const page = await fetchPublicPage(
+          'https://www.house.mn.gov/Committees/minutes/' + committeeId,
+          {
+            timeoutMs: 15_000,
+            maxBytes: 2_000_000,
+            userAgent: 'VotePredict/2.0 structured-public-data',
+          },
+        );
+        const parsed = parseHistoricalDeepCommitteeHome(
+          page.rawContent,
+          session.slug,
+          committeeId,
+        );
+        return parsed.sessionMatched ? parsed.links : [];
+      } catch {
+        counts.failures += 1;
+        return [];
+      }
+    },
+  );
+
+  const newestEligibleDate = now.toISOString().slice(0, 10);
+  const oldest = new Date(now.getTime() - COMMITTEE_MINUTE_LOOKBACK_DAYS * 86_400_000);
+  const oldestEligibleDate = oldest.toISOString().slice(0, 10);
+  const minuteLinks = [...new Map(
+    linkGroups.flat()
+      .filter((link) =>
+        link.indexDate >= oldestEligibleDate
+        && link.indexDate <= newestEligibleDate)
+      .map((link) => [
+        link.committeeId + '|' + link.meetingId,
+        link,
+      ] as const),
+  ).values()]
+    .sort((left, right) => right.indexDate.localeCompare(left.indexDate)
+      || left.committeeId.localeCompare(right.committeeId)
+      || Number(right.meetingId) - Number(left.meetingId))
+    .slice(0, COMMITTEE_MINUTE_MAX_PAGES);
+
+  const bills = allBills.map((bill) => ({
+    billId: bill.bill_id,
+    identifier: bill.identifier,
+  }));
+
+  await mapConcurrent(
+    minuteLinks,
+    COMMITTEE_FETCH_CONCURRENCY,
+    async (link) => {
+      counts.attempted += 1;
+      try {
+        const page = await fetchPublicPage(link.url, {
+          timeoutMs: 15_000,
+          maxBytes: 5_000_000,
+          userAgent: 'VotePredict/2.0 structured-public-data',
+        });
+        const meetingDate = parseHistoricalDeepMinuteDate(page.rawContent, session.slug);
+        if (!meetingDate || meetingDate !== link.indexDate) {
+          counts.unresolved += 1;
+          return;
+        }
+
+        const extracted = extractProspectiveCommitteeRollcalls({
+          html: page.rawContent,
+          bills,
+          members: houseMembers,
+        });
+        counts.unresolved += extracted.diagnostics.length;
+        if (extracted.observations.length === 0) return;
+
+        const drafts: DurableEvidenceDraft[] = extracted.observations.map((observation) => ({
+          target: {
+            membershipId: observation.membershipId,
+            billId: observation.billId,
+          },
+          kind: 'context',
+          stance: 'neutral',
+          claim: observation.memberName
+            + ' cast an '
+            + observation.voteSide.toUpperCase()
+            + ' vote on a recorded House committee motion concerning '
+            + observation.identifier
+            + '.',
+          excerpt: observation.excerpt,
+          publishedAt: meetingDate + 'T00:00:00.000Z',
+          sourceQuality: 'official',
+          relevance: 'high',
+          freshness: 'current',
+          extractionMethod: MN_HOUSE_COMMITTEE_ROLLCALL_PARSER,
+          extractionVersion: MN_HOUSE_COMMITTEE_ROLLCALL_PROSPECTIVE_VERSION,
+          confidence: 1,
+          metadata: {
+            contextType: 'structured_public',
+            subtype: 'committee_rollcall',
+            chamber: 'house',
+            committeeId: link.committeeId,
+            meetingId: link.meetingId,
+            meetingDate,
+            voteSide: observation.voteSide,
+            motionText: observation.motionText,
+            mechanics: observation.mechanics,
+            extractionRule: observation.extractionRule,
+            blockIndex: observation.blockIndex,
+            outcomeMeaning: 'committee motion vote only; not a final-passage stance',
+            contextOnly: true,
+            mechanicallyActionable: false,
+            quickEvidenceStructured: true,
+            asOfEligible: true,
+            evidenceSeriesKey:
+              'committee_rollcall:'
+              + link.committeeId
+              + ':'
+              + link.meetingId
+              + ':bill:'
+              + observation.billId
+              + ':block:'
+              + observation.blockIndex
+              + ':membership:'
+              + observation.membershipId,
+          },
+        }));
+
+        addPersisted(counts, await persistDurableEvidence({
+          sourceKind: 'house_committee_minutes',
+          sourceUrl: page.canonicalUrl,
+          contentSha256: page.contentSha256,
+          sessionSlug: session.slug,
+          chamberSlug: 'house',
+          fetchedAt: page.fetchedAt,
+          httpStatus: page.httpStatus,
+          metadata: {
+            pipelineVersion: STRUCTURED_PUBLIC_REFRESH_VERSION,
+            parserVersion: MN_HOUSE_COMMITTEE_ROLLCALL_PARSER,
+            mechanicsPolicy: MN_HOUSE_COMMITTEE_ROLLCALL_MECHANICS,
+            committeeId: link.committeeId,
+            meetingId: link.meetingId,
+            meetingDate,
+            observationCount: extracted.observations.length,
+            unresolvedVoteNames: extracted.diagnostics.length,
+          },
+        }, drafts));
+      } catch {
+        counts.failures += 1;
+      }
+    },
+  );
+}
+
 async function refreshSummaryIndex(
   session: CurrentSession,
   bills: readonly BillRow[],
@@ -644,6 +866,7 @@ export async function runStructuredPublicRefresh(options: StructuredPublicRefres
   const election = emptyCounts();
   const conference = emptyCounts();
   const speech = emptyCounts();
+  const committeeRollcall = emptyCounts();
   const floor = emptyCounts();
   const billContext = emptyCounts();
   const warnings: string[] = [];
@@ -675,6 +898,12 @@ export async function runStructuredPublicRefresh(options: StructuredPublicRefres
     } catch (error) {
       speech.failures += 1;
       warnings.push('legislative speech: ' + safeMessage(error));
+    }
+    try {
+      await refreshCommitteeRollcalls(session, members, allBills, now, committeeRollcall);
+    } catch (error) {
+      committeeRollcall.failures += 1;
+      warnings.push('House committee roll calls: ' + safeMessage(error));
     }
     try {
       await refreshSummaryIndex(session, selection.rows, billContext);
@@ -711,6 +940,7 @@ export async function runStructuredPublicRefresh(options: StructuredPublicRefres
       historicalElection,
       conference,
       speech,
+      committeeRollcall,
       floor,
       billContext,
       warnings,
@@ -725,6 +955,7 @@ export async function runStructuredPublicRefresh(options: StructuredPublicRefres
       election,
       conference,
       speech,
+      committeeRollcall,
       floor,
       billContext,
       warnings,

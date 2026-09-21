@@ -66,6 +66,18 @@ export type QuickEvidenceStructuredPublicRow = {
   district_election_uncontested: boolean | null;
   bill_summary_items: number;
   fiscal_note_items: number;
+  committee_recommends_passage_aye?: number;
+  committee_recommends_passage_nay?: number;
+  advances_toward_floor_eligibility_aye?: number;
+  advances_toward_floor_eligibility_nay?: number;
+  continues_committee_review_aye?: number;
+  continues_committee_review_nay?: number;
+  impedes_current_bill_progress_aye?: number;
+  impedes_current_bill_progress_nay?: number;
+  defers_current_bill_action_aye?: number;
+  defers_current_bill_action_nay?: number;
+  unclassified_committee_motion_aye?: number;
+  unclassified_committee_motion_nay?: number;
 };
 export interface QuickEvidenceFeatureVector {
   directSupport: number;
@@ -95,6 +107,18 @@ export interface QuickEvidenceFeatureVector {
   districtElectionUncontested: boolean | null;
   billSummaryItems: number;
   fiscalNoteItems: number;
+  committeeRecommendsPassageAye: number;
+  committeeRecommendsPassageNay: number;
+  advancesTowardFloorEligibilityAye: number;
+  advancesTowardFloorEligibilityNay: number;
+  continuesCommitteeReviewAye: number;
+  continuesCommitteeReviewNay: number;
+  impedesCurrentBillProgressAye: number;
+  impedesCurrentBillProgressNay: number;
+  defersCurrentBillActionAye: number;
+  defersCurrentBillActionNay: number;
+  unclassifiedCommitteeMotionAye: number;
+  unclassifiedCommitteeMotionNay: number;
   candidateEvidenceItems: number;
   conflictingDirectionalEvidence: boolean;
   totalEvidenceItems: number;
@@ -259,6 +283,18 @@ export function buildQuickEvidenceFeatureVector(input: {
     districtElectionUncontested: input.structuredPublic?.district_election_uncontested ?? null,
     billSummaryItems: count(input.structuredPublic?.bill_summary_items),
     fiscalNoteItems: count(input.structuredPublic?.fiscal_note_items),
+    committeeRecommendsPassageAye: count(input.structuredPublic?.committee_recommends_passage_aye),
+    committeeRecommendsPassageNay: count(input.structuredPublic?.committee_recommends_passage_nay),
+    advancesTowardFloorEligibilityAye: count(input.structuredPublic?.advances_toward_floor_eligibility_aye),
+    advancesTowardFloorEligibilityNay: count(input.structuredPublic?.advances_toward_floor_eligibility_nay),
+    continuesCommitteeReviewAye: count(input.structuredPublic?.continues_committee_review_aye),
+    continuesCommitteeReviewNay: count(input.structuredPublic?.continues_committee_review_nay),
+    impedesCurrentBillProgressAye: count(input.structuredPublic?.impedes_current_bill_progress_aye),
+    impedesCurrentBillProgressNay: count(input.structuredPublic?.impedes_current_bill_progress_nay),
+    defersCurrentBillActionAye: count(input.structuredPublic?.defers_current_bill_action_aye),
+    defersCurrentBillActionNay: count(input.structuredPublic?.defers_current_bill_action_nay),
+    unclassifiedCommitteeMotionAye: count(input.structuredPublic?.unclassified_committee_motion_aye),
+    unclassifiedCommitteeMotionNay: count(input.structuredPublic?.unclassified_committee_motion_nay),
     candidateEvidenceItems: directional.length,
     conflictingDirectionalEvidence: supportCount > 0 && opposeCount > 0,
     totalEvidenceItems: count(input.availability?.total_items),
@@ -415,7 +451,79 @@ async function loadStructuredPublic(
                  AND metadata->>'rollCallWon'='true'
              )::int AS floor_amendment_wins,
              bool_or(metadata->>'subtype'='conference_conferee') AS conference_conferee,
-             count(*) FILTER (WHERE metadata->>'subtype'='legislative_speech')::int AS legislative_speech_items
+             count(*) FILTER (WHERE metadata->>'subtype'='legislative_speech')::int AS legislative_speech_items,
+             count(*) FILTER (
+               WHERE metadata->>'subtype'='committee_rollcall'
+                 AND published_at::date < $3::timestamptz::date
+                 AND metadata->>'voteSide'='aye'
+                 AND COALESCE(metadata->'mechanics','[]'::jsonb) ? 'committee_recommends_passage'
+             )::int AS committee_recommends_passage_aye,
+             count(*) FILTER (
+               WHERE metadata->>'subtype'='committee_rollcall'
+                 AND published_at::date < $3::timestamptz::date
+                 AND metadata->>'voteSide'='nay'
+                 AND COALESCE(metadata->'mechanics','[]'::jsonb) ? 'committee_recommends_passage'
+             )::int AS committee_recommends_passage_nay,
+             count(*) FILTER (
+               WHERE metadata->>'subtype'='committee_rollcall'
+                 AND published_at::date < $3::timestamptz::date
+                 AND metadata->>'voteSide'='aye'
+                 AND COALESCE(metadata->'mechanics','[]'::jsonb) ? 'advances_toward_floor_eligibility'
+             )::int AS advances_toward_floor_eligibility_aye,
+             count(*) FILTER (
+               WHERE metadata->>'subtype'='committee_rollcall'
+                 AND published_at::date < $3::timestamptz::date
+                 AND metadata->>'voteSide'='nay'
+                 AND COALESCE(metadata->'mechanics','[]'::jsonb) ? 'advances_toward_floor_eligibility'
+             )::int AS advances_toward_floor_eligibility_nay,
+             count(*) FILTER (
+               WHERE metadata->>'subtype'='committee_rollcall'
+                 AND published_at::date < $3::timestamptz::date
+                 AND metadata->>'voteSide'='aye'
+                 AND COALESCE(metadata->'mechanics','[]'::jsonb) ? 'continues_committee_review'
+             )::int AS continues_committee_review_aye,
+             count(*) FILTER (
+               WHERE metadata->>'subtype'='committee_rollcall'
+                 AND published_at::date < $3::timestamptz::date
+                 AND metadata->>'voteSide'='nay'
+                 AND COALESCE(metadata->'mechanics','[]'::jsonb) ? 'continues_committee_review'
+             )::int AS continues_committee_review_nay,
+             count(*) FILTER (
+               WHERE metadata->>'subtype'='committee_rollcall'
+                 AND published_at::date < $3::timestamptz::date
+                 AND metadata->>'voteSide'='aye'
+                 AND COALESCE(metadata->'mechanics','[]'::jsonb) ? 'impedes_current_bill_progress'
+             )::int AS impedes_current_bill_progress_aye,
+             count(*) FILTER (
+               WHERE metadata->>'subtype'='committee_rollcall'
+                 AND published_at::date < $3::timestamptz::date
+                 AND metadata->>'voteSide'='nay'
+                 AND COALESCE(metadata->'mechanics','[]'::jsonb) ? 'impedes_current_bill_progress'
+             )::int AS impedes_current_bill_progress_nay,
+             count(*) FILTER (
+               WHERE metadata->>'subtype'='committee_rollcall'
+                 AND published_at::date < $3::timestamptz::date
+                 AND metadata->>'voteSide'='aye'
+                 AND COALESCE(metadata->'mechanics','[]'::jsonb) ? 'defers_current_bill_action'
+             )::int AS defers_current_bill_action_aye,
+             count(*) FILTER (
+               WHERE metadata->>'subtype'='committee_rollcall'
+                 AND published_at::date < $3::timestamptz::date
+                 AND metadata->>'voteSide'='nay'
+                 AND COALESCE(metadata->'mechanics','[]'::jsonb) ? 'defers_current_bill_action'
+             )::int AS defers_current_bill_action_nay,
+             count(*) FILTER (
+               WHERE metadata->>'subtype'='committee_rollcall'
+                 AND published_at::date < $3::timestamptz::date
+                 AND metadata->>'voteSide'='aye'
+                 AND jsonb_array_length(COALESCE(metadata->'mechanics','[]'::jsonb))=0
+             )::int AS unclassified_committee_motion_aye,
+             count(*) FILTER (
+               WHERE metadata->>'subtype'='committee_rollcall'
+                 AND published_at::date < $3::timestamptz::date
+                 AND metadata->>'voteSide'='nay'
+                 AND jsonb_array_length(COALESCE(metadata->'mechanics','[]'::jsonb))=0
+             )::int AS unclassified_committee_motion_nay
         FROM eligible
        WHERE membership_id = ANY($1::uuid[])
          AND bill_id=$2::uuid
@@ -441,6 +549,18 @@ async function loadStructuredPublic(
            COALESCE(mb.floor_amendment_wins,0)::int AS floor_amendment_wins,
            COALESCE(mb.conference_conferee,false) AS conference_conferee,
            COALESCE(mb.legislative_speech_items,0)::int AS legislative_speech_items,
+           COALESCE(mb.committee_recommends_passage_aye,0)::int AS committee_recommends_passage_aye,
+           COALESCE(mb.committee_recommends_passage_nay,0)::int AS committee_recommends_passage_nay,
+           COALESCE(mb.advances_toward_floor_eligibility_aye,0)::int AS advances_toward_floor_eligibility_aye,
+           COALESCE(mb.advances_toward_floor_eligibility_nay,0)::int AS advances_toward_floor_eligibility_nay,
+           COALESCE(mb.continues_committee_review_aye,0)::int AS continues_committee_review_aye,
+           COALESCE(mb.continues_committee_review_nay,0)::int AS continues_committee_review_nay,
+           COALESCE(mb.impedes_current_bill_progress_aye,0)::int AS impedes_current_bill_progress_aye,
+           COALESCE(mb.impedes_current_bill_progress_nay,0)::int AS impedes_current_bill_progress_nay,
+           COALESCE(mb.defers_current_bill_action_aye,0)::int AS defers_current_bill_action_aye,
+           COALESCE(mb.defers_current_bill_action_nay,0)::int AS defers_current_bill_action_nay,
+           COALESCE(mb.unclassified_committee_motion_aye,0)::int AS unclassified_committee_motion_aye,
+           COALESCE(mb.unclassified_committee_motion_nay,0)::int AS unclassified_committee_motion_nay,
            COALESCE(dl.district_election_context_available,false) AS district_election_context_available,
            dl.district_election_top_two_margin_pct,
            dl.district_election_uncontested,
