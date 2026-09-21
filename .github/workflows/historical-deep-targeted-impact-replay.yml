@@ -1,37 +1,6 @@
 name: Historical Deep targeted impact replay
 
 on:
-  pull_request:
-    paths:
-      - .github/workflows/historical-deep-targeted-impact-replay.yml
-      - data/evaluation/historical-deep-targeted-impact-replay-lineage-v1.json
-      - scripts/evaluate-historical-deep-targeted-impact-replay.ts
-      - src/evaluation/historical-deep-targeted-impact-replay.ts
-      - src/evaluation/historical-deep-impact-replay.ts
-      - src/evaluation/historical-deep-target-strategies.ts
-      - src/evaluation/historical-deep-discovery.ts
-      - src/evaluation/historical-deep-discovery-extractor.ts
-      - src/evaluation/historical-deep-outcome-scorer.ts
-      - src/evidence/historical-archive-provider.ts
-      - src/evidence/policy.ts
-      - src/evidence/impact.ts
-      - tests/historical-deep-targeted-impact-replay.test.ts
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-targeted-impact-replay.yml
-      - data/evaluation/historical-deep-targeted-impact-replay-lineage-v1.json
-      - scripts/evaluate-historical-deep-targeted-impact-replay.ts
-      - src/evaluation/historical-deep-targeted-impact-replay.ts
-      - src/evaluation/historical-deep-impact-replay.ts
-      - src/evaluation/historical-deep-target-strategies.ts
-      - src/evaluation/historical-deep-discovery.ts
-      - src/evaluation/historical-deep-discovery-extractor.ts
-      - src/evaluation/historical-deep-outcome-scorer.ts
-      - src/evidence/historical-archive-provider.ts
-      - src/evidence/policy.ts
-      - src/evidence/impact.ts
-      - tests/historical-deep-targeted-impact-replay.test.ts
   workflow_dispatch:
 
 permissions:
