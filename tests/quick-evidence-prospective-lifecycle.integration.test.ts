@@ -148,42 +148,61 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
     const evidence2 = '10000000-0000-0000-0000-000000000013';
     const voteId = '10000000-0000-0000-0000-000000000014';
 
+    await client.query(
+      "INSERT INTO legislative_sessions VALUES ($1, '2027-2028', '2027-01-01')",
+      [sessionId],
+    );
+    await client.query(
+      "INSERT INTO chambers VALUES ($1, 'house', 'House')",
+      [chamberId],
+    );
+    await client.query(
+      "INSERT INTO bills VALUES ($1, $2, 'HF1', '{}')",
+      [billId, sessionId],
+    );
     await client.query(`
-      INSERT INTO legislative_sessions VALUES ($1, '2027-2028', '2027-01-01');
-      INSERT INTO chambers VALUES ($2, 'house', 'House');
-      INSERT INTO bills VALUES ($3, $1, 'HF1', '{}');
       INSERT INTO memberships(id,session_id,chamber_id,legislator_id,party) VALUES
-        ($4,$1,$2,$6,'A'),($5,$1,$2,$7,'B');
+        ($1,$3,$4,$5,'A'),($2,$3,$4,$6,'B')
+    `, [member1, member2, sessionId, chamberId, legislator1, legislator2]);
+    await client.query(`
       INSERT INTO source_documents VALUES
-        ($10,'member_primary_article','2027-01-31T10:00:00Z'),
-        ($11,'house_committee_minutes','2027-01-31T11:00:00Z');
+        ($1,'member_primary_article','2027-01-31T10:00:00Z'),
+        ($2,'house_committee_minutes','2027-01-31T11:00:00Z')
+    `, [source1, source2]);
+    await client.query(`
       INSERT INTO evidence_items(
         id,source_document_id,membership_id,bill_id,evidence_kind,stance,
         source_quality,relevance,freshness,confidence,published_at,metadata
       ) VALUES
-        ($12,$10,$4,$3,'direct_statement','supports','official','direct','current',0.99,
+        ($1,$3,$5,$7,'direct_statement','supports','official','direct','current',0.99,
          '2027-01-31T09:00:00Z',
          '{"quickEvidenceCandidate":true,"sourceVerified":true,"mechanicallyActionable":false}'),
-        ($13,$11,$5,$3,'context','neutral','official','high','current',1,
+        ($2,$4,$6,$7,'context','neutral','official','high','current',1,
          '2027-01-31T00:00:00Z',
-         '{"subtype":"committee_rollcall","voteSide":"aye","mechanics":["committee_recommends_passage"],"asOfEligible":true,"mechanicallyActionable":false}');
+         '{"subtype":"committee_rollcall","voteSide":"aye","mechanics":["committee_recommends_passage"],"asOfEligible":true,"mechanicallyActionable":false}')
+    `, [evidence1, evidence2, source1, source2, member1, member2, billId]);
+    await client.query(`
       INSERT INTO forecasts(
         id,owner_user_id,target_type,target_kind,bill_id,target_chamber_id,session_id,created_at
       ) VALUES
-        ($8,'system:prospective-evidence-v1','bill','house_floor_passage',$3,$2,$1,'2027-01-30T12:00:00Z');
+        ($1,'system:prospective-evidence-v1','bill','house_floor_passage',$2,$3,$4,'2027-01-30T12:00:00Z')
+    `, [forecastId, billId, chamberId, sessionId]);
+    await client.query(`
       INSERT INTO forecast_revisions(
         id,forecast_id,revision_number,research_mode,model_version,generated_at,metadata,
         passage_probability,expected_yes
       ) VALUES
-        ($9,$8,1,'quick','member-eb-v1.2-decay180','2027-02-01T12:00:00Z',
-         '{"passageRule":{"kind":"fixed","requiredYes":1}}',0.75,1.0);
+        ($1,$2,1,'quick','member-eb-v1.2-decay180','2027-02-01T12:00:00Z',
+         '{"passageRule":{"kind":"fixed","requiredYes":1}}',0.75,1.0)
+    `, [revisionId, forecastId]);
+    await client.query(`
       INSERT INTO forecast_member_predictions(revision_id,membership_id,yes_probability,context) VALUES
-        ($9,$4,0.55,'[]'),($9,$5,0.45,'[]');
-      INSERT INTO forecast_schedules(forecast_id,enabled) VALUES ($8,true);
-    `, [
-      sessionId,chamberId,billId,member1,member2,legislator1,legislator2,
-      forecastId,revisionId,source1,source2,evidence1,evidence2,
-    ]);
+        ($1,$2,0.55,'[]'),($1,$3,0.45,'[]')
+    `, [revisionId, member1, member2]);
+    await client.query(
+      'INSERT INTO forecast_schedules(forecast_id,enabled) VALUES ($1,true)',
+      [forecastId],
+    );
 
     const query = client.query.bind(client);
     const connect = async () => ({ query, release() {} });
@@ -289,10 +308,12 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
     await client.query(`
       INSERT INTO vote_events(
         id,session_id,chamber_id,bill_id,is_passage,vote_kind,occurred_on,passed,yea_count,nay_count
-      ) VALUES ($1,$2,$3,$4,true,'passage','2027-02-05',true,1,1);
+      ) VALUES ($1,$2,$3,$4,true,'passage','2027-02-05',true,1,1)
+    `, [voteId, sessionId, chamberId, billId]);
+    await client.query(`
       INSERT INTO member_votes VALUES
-        ($1,$5,'yea'),($1,$6,'nay');
-    `, [voteId,sessionId,chamberId,billId,member1,member2]);
+        ($1,$2,'yea'),($1,$3,'nay')
+    `, [voteId, member1, member2]);
 
     await resolveSafeForecastOutcome({
       forecastId,
