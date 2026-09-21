@@ -20,7 +20,9 @@ export async function POST(request: Request) {
   try {
     const url = new URL(request.url);
     if (url.searchParams.get('verify') === '1') {
-      return NextResponse.json(await verifyHistoricalHouseResearchSummaryBackfill());
+      return NextResponse.json(await verifyHistoricalHouseResearchSummaryBackfill({
+        includeReplayCoverage: url.searchParams.get('replay') === '1',
+      }));
     }
 
     const session = url.searchParams.get('session');
