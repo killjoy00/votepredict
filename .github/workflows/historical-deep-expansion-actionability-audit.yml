@@ -1,21 +1,6 @@
 name: Historical Deep expansion actionability audit
 
 on:
-  pull_request:
-    paths:
-      - .github/workflows/historical-deep-expansion-actionability-audit.yml
-      - data/evaluation/historical-deep-expansion-actionability-audit-lineage-v1.json
-      - scripts/audit-historical-deep-expansion-actionability.ts
-      - src/evaluation/historical-deep-expansion-actionability-audit.ts
-      - tests/historical-deep-expansion-actionability-audit.test.ts
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-expansion-actionability-audit.yml
-      - data/evaluation/historical-deep-expansion-actionability-audit-lineage-v1.json
-      - scripts/audit-historical-deep-expansion-actionability.ts
-      - src/evaluation/historical-deep-expansion-actionability-audit.ts
-      - tests/historical-deep-expansion-actionability-audit.test.ts
   workflow_dispatch:
 
 permissions:
