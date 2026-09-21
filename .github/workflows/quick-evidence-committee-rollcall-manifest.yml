@@ -1,4 +1,4 @@
-name: Quick Evidence committee roll-call manifest
+name: Quick Evidence committee roll-call source freeze
 
 on:
   push:
@@ -6,8 +6,11 @@ on:
     paths:
       - .github/workflows/quick-evidence-committee-rollcall-manifest.yml
       - scripts/run-production-quick-evidence-committee-rollcall-manifest.ts
+      - scripts/collect-quick-evidence-committee-rollcall-sources.ts
       - src/app/api/operations/quick-evidence-committee-rollcall-manifest/route.ts
       - src/evaluation/quick-evidence-committee-rollcall-manifest.ts
+      - src/evaluation/quick-evidence-committee-rollcall-source-bundle.ts
+      - src/evaluation/historical-deep-expansion-source-bundle.ts
       - src/evaluation/historical-quick-runtime.ts
       - src/evaluation/historical-quick-replay.ts
       - src/evaluation/historical-deep-targets.ts
@@ -25,12 +28,13 @@ jobs:
   manifest:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
       VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
       VOTEPREDICT_COMMITTEE_ROLLCALL_MANIFEST_OUTPUT: artifacts/quick-evidence-committee-rollcall-manifest-v1.json
+      VOTEPREDICT_COMMITTEE_ROLLCALL_SOURCE_OUTPUT: artifacts/quick-evidence-committee-rollcall-source-bundle-v1.json
     steps:
       - uses: actions/checkout@v7
       - name: Verify frozen plan
@@ -105,6 +109,28 @@ jobs:
             echo 'Outcome field leaked into committee-rollcall manifest.'
             exit 1
           fi
+      - name: Enumerate and freeze broad official House committee minutes
+        run: |
+          node --import tsx scripts/collect-quick-evidence-committee-rollcall-sources.ts \
+            --manifest "$VOTEPREDICT_COMMITTEE_ROLLCALL_MANIFEST_OUTPUT" \
+            --output "$VOTEPREDICT_COMMITTEE_ROLLCALL_SOURCE_OUTPUT" \
+            --code-sha "$GITHUB_SHA"
+      - name: Verify frozen source bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$VOTEPREDICT_COMMITTEE_ROLLCALL_SOURCE_OUTPUT"
+          test "$(jq -r '.schemaVersion' "$file")" = 'quick-evidence-committee-rollcall-source-bundle-v1'
+          test "$(jq -r '.metadata.sourcePlan' "$file")" = 'quick-evidence-committee-rollcall-screen-plan-v1'
+          test "$(jq -r '.metadata.codeSha' "$file")" = "$GITHUB_SHA"
+          test "$(jq -r '.summary.matchedSourcePages' "$file")" -gt 0
+      - name: Upload broad House source bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: quick-evidence-committee-rollcall-sources-${{ github.sha }}
+          path: artifacts/quick-evidence-committee-rollcall-source-bundle-v1.json
+          if-no-files-found: error
+          retention-days: 90
       - name: Upload broad House target manifest
         uses: actions/upload-artifact@v4
         with:
