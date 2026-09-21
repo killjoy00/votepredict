@@ -164,7 +164,9 @@ function versionSort(a: QuickReplayVersion, b: QuickReplayVersion): number {
  * The current mutable bill title is deliberately excluded from historical-v2.
  */
 export function historicalBillIdentityTitle(rawText: string, identifier: string): string {
-  const compact = rawText.replace(/\s+/g, ' ').trim();
+  // The official long title is at the front of the bill. Bound the scan so omnibus
+  // bodies do not need to be duplicated just to reconstruct historical identity.
+  const compact = rawText.slice(0, 12_000).replace(/\s+/g, ' ').trim();
   const marker = /\ba bill for an act\b/i.exec(compact);
   if (!marker) return identifier;
   const after = compact.slice((marker.index ?? 0) + marker[0].length).trim();
@@ -200,11 +202,19 @@ export function selectCandidateVersionAsOfVote(
     .sort(versionSort)[0];
 }
 
-function featuresFor(version: QuickReplayVersion, identifier: string): DeterministicBillFeatures {
-  return extractDeterministicBillFeatures({
+function featuresFor(
+  version: QuickReplayVersion,
+  identifier: string,
+  cache?: Map<string, DeterministicBillFeatures>,
+): DeterministicBillFeatures {
+  const cached = cache?.get(version.id);
+  if (cached) return cached;
+  const features = extractDeterministicBillFeatures({
     title: historicalBillIdentityTitle(version.rawText, identifier),
     text: version.rawText,
   });
+  cache?.set(version.id, features);
+  return features;
 }
 
 function candidateTokens(identity: BillFeatureIdentity): string[] {
@@ -256,6 +266,7 @@ export function buildHistoricalQuickAnalogueSupport(
   const targetVersionByEvent = new Map<string, QuickReplayVersion>();
   const supportByEvent = new Map<string, QuickReplayAnalogueSupport>();
   const priorCandidates: HistoricalAnalogueCandidate[] = [];
+  const featureCache = new Map<string, DeterministicBillFeatures>();
   const sorted = [...events].sort((a, b) => a.occurredOn.localeCompare(b.occurredOn) || a.voteEventId.localeCompare(b.voteEventId));
 
   for (const event of sorted) {
@@ -270,7 +281,7 @@ export function buildHistoricalQuickAnalogueSupport(
         title: historicalBillIdentityTitle(targetVersion.rawText, event.identifier),
         publishedAt: targetVersion.publishedAt,
         companionIdentifier: event.companionIdentifier,
-        features: featuresFor(targetVersion, event.identifier),
+        features: featuresFor(targetVersion, event.identifier, featureCache),
       };
       const prefiltered = prefilterCandidates(target, event, priorCandidates);
       const asOf = `${event.occurredOn}T00:00:00.000Z`;
@@ -304,7 +315,7 @@ export function buildHistoricalQuickAnalogueSupport(
         title: historicalBillIdentityTitle(candidateVersion.rawText, event.identifier),
         publishedAt: candidateVersion.publishedAt,
         companionIdentifier: event.companionIdentifier,
-        features: featuresFor(candidateVersion, event.identifier),
+        features: featuresFor(candidateVersion, event.identifier, featureCache),
         voteEventId: event.voteEventId,
         occurredAt: `${event.occurredOn}T23:59:59.000Z`,
         chamber: event.chamber,
