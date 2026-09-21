@@ -1,17 +1,6 @@
 name: Revisor process-history production backfill
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'docs/evaluation/introduced-bill-lifecycle-program.md'
-      - 'src/operations/revisor-process-backfill.ts'
-      - 'src/sources/minnesota/revisor-process.ts'
-      - 'scripts/run-production-revisor-process-backfill.ts'
-      - '.github/workflows/revisor-process-backfill.yml'
-  schedule:
-    - cron: '17 */6 * * *'
   workflow_dispatch:
 
 permissions:
