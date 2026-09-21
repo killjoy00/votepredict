@@ -1,0 +1,159 @@
+{
+  "schemaVersion": "quick-evidence-historical-robustness-v2-results",
+  "recordedAt": "2026-09-21T19:36:00Z",
+  "purpose": "Durable record of the corrected historical Quick replay v2 robustness audits after removing unsafe mutable-title and historical-availability paths. These are robustness results on already-inspected outcomes, not fresh independent validation.",
+  "historicalReplayVersion": "historical-quick-replay-v2",
+  "servingBaseline": "member-eb-v1.2-decay180",
+  "productionAction": "none",
+  "servingQuickChanged": false,
+  "automaticPromotion": false,
+  "availabilityCorrections": {
+    "mutableCurrentBillTitleUsed": false,
+    "persistedHistoricalFeatureSetsUsed": false,
+    "currentCompanionMetadataUsed": false,
+    "datedBillTextOnly": true,
+    "asOfEligibleFalseEvidenceExcluded": true,
+    "billEvidenceMustNotPredateSessionOrIntroduction": true,
+    "fittedMemberCohortMatchesReplayableScoreCohort": true
+  },
+  "combinedEvidence": {
+    "issue": 304,
+    "workflowRunId": 35644055220,
+    "artifactId": 10660140930,
+    "artifactDigest": "sha256:c92989a2e3919bb2b8da6b0084b648b3e7faa10c5985e1e43622ee475a0ef38e",
+    "schemaVersion": "quick-evidence-combined-historical-robustness-v2",
+    "independentValidationSet": false,
+    "selectedLambda": 20,
+    "coverage": {
+      "training": {
+        "memberOutcomes": 32415,
+        "memberOutcomesWithAnyEvidence": 32415,
+        "eventsWithAnyEvidence": 340
+      },
+      "validation": {
+        "memberOutcomes": 44790,
+        "memberOutcomesWithAnyEvidence": 44723,
+        "eventsWithAnyEvidence": 432
+      },
+      "descriptive": {
+        "memberOutcomes": 46872,
+        "memberOutcomesWithAnyEvidence": 46872,
+        "eventsWithAnyEvidence": 445
+      }
+    },
+    "validationDeltaCandidateMinusBaseline": {
+      "memberBrier": -0.004941376203453002,
+      "memberLogLoss": -0.010240685373116287,
+      "memberExpectedCalibrationError": -0.01838924136443259,
+      "chamberMeanAbsoluteYesError": -0.9100924797689842,
+      "passageBrier": 0.0022186624927227686
+    },
+    "descriptiveDeltaCandidateMinusBaseline": {
+      "memberBrier": -0.002969290021913748,
+      "memberLogLoss": -0.00863497339778635,
+      "memberExpectedCalibrationError": -0.020954877590056716,
+      "chamberMeanAbsoluteYesError": -0.957681811287939,
+      "passageBrier": -0.004089370863607902
+    },
+    "robustness": {
+      "eventBalancedValidation": {
+        "memberBrierDelta": -0.0022445701507129126,
+        "memberLogLossDelta": -0.004204027013352098
+      },
+      "chamberBalancedValidation": {
+        "memberBrierDelta": -0.00019648812752456196,
+        "memberLogLossDelta": 0.00043655342705500866
+      },
+      "houseValidation": {
+        "memberBrierDelta": -0.009553811873565035,
+        "memberLogLossDelta": -0.02061987162839496,
+        "chamberMeanAbsoluteYesErrorDelta": -2.066093220841168,
+        "passageBrierDelta": 0.007763602945581407
+      },
+      "senateValidation": {
+        "memberBrierDelta": 0.009160835618515911,
+        "memberLogLossDelta": 0.021492978482504976,
+        "chamberMeanAbsoluteYesErrorDelta": 0.8957311630893496,
+        "passageBrierDelta": -0.006443256321210254
+      },
+      "leaveOneFailedPassageEventOut": [
+        {
+          "identifier": "HF669",
+          "chamber": "senate",
+          "occurredOn": "2023-03-16",
+          "passageBrierDelta": 0.0022442421362334486
+        },
+        {
+          "identifier": "HF3276",
+          "chamber": "house",
+          "occurredOn": "2024-05-19",
+          "passageBrierDelta": 0.002428832386332243
+        }
+      ]
+    },
+    "oldFrozenThresholdResult": {
+      "hypothesisSignal": false,
+      "reason": "validation passage Brier delta +0.0022186624927227686 exceeds the old +0.002 maximum",
+      "marginBeyondPassageGuardrail": 0.00021866249272276855
+    },
+    "interpretation": "The corrected replay preserves strong member-weighted and House member-level lift but exposes chamber instability: Senate member performance worsens while House improves, and the pooled candidate still narrowly misses the old passage-safety rule. This does not justify retrospective promotion or retuning on the same outcomes."
+  },
+  "committeeRollcall": {
+    "issue": 304,
+    "originalHypothesisIssue": 288,
+    "workflowRunId": 35645177297,
+    "artifactId": 10659757745,
+    "artifactDigest": "sha256:a603569662891b97cdb6b9fe401e60f675d6b6b7a34aa21eea62468c2ed4afc6",
+    "schemaVersion": "quick-evidence-committee-rollcall-robustness-v2",
+    "independentValidationSet": false,
+    "selectedLambda": 5,
+    "coverage": {
+      "training": {
+        "memberOutcomes": 20231,
+        "memberOutcomesWithFeature": 3045,
+        "eventsWithFeature": 107
+      },
+      "validation": {
+        "memberOutcomes": 33751,
+        "memberOutcomesWithFeature": 1173,
+        "eventsWithFeature": 62
+      },
+      "descriptive": {
+        "memberOutcomes": 35010,
+        "memberOutcomesWithFeature": 525,
+        "eventsWithFeature": 30
+      }
+    },
+    "validationDeltaCandidateMinusBaseline": {
+      "memberBrier": -0.0016150465033879652,
+      "memberLogLoss": -0.003512128514207069,
+      "memberExpectedCalibrationError": -0.002320969976419965,
+      "chamberMeanAbsoluteYesError": -0.2749734652957443,
+      "passageBrier": 0.0002049712791079147
+    },
+    "descriptiveDeltaCandidateMinusBaseline": {
+      "memberBrier": -0.0003697341571786694,
+      "memberLogLoss": -0.0015738216513901948,
+      "memberExpectedCalibrationError": -0.000646399670797819,
+      "chamberMeanAbsoluteYesError": 0.009408215184739888,
+      "passageBrier": -0.00010626658054893948
+    },
+    "oldFrozenThresholdResult": {
+      "hypothesisSignal": true,
+      "reason": "all original standalone committee thresholds still clear under historical Quick replay v2"
+    },
+    "interpretation": "The standalone exact-bill named-member House committee-roll-call signal is robust to the corrected historical baseline. It remains suitable for zero-weight prospective measurement only; no serving weight is authorized."
+  },
+  "supersession": {
+    "exactHistoricalMetricsSupersede": "quick-evidence-final-2026-research-v1 exact retrospective lift estimates",
+    "preserveOriginalRecord": true,
+    "note": "The v1 record remains as experiment history, but exact historical effect-size references should use this v2 robustness record. Neither v1 nor v2 is a fresh independent validation set."
+  },
+  "nextPhase": {
+    "mode": "prospective measurement",
+    "historicalRetuningOn2021To2026Outcomes": "stop",
+    "committeeRollcall": "continue zero-weight prospective capture",
+    "combinedEvidence": "do not promote; monitor chamber-specific prospective behavior",
+    "definitiveEvidence": "quick-evidence-prospective-v1 after the frozen 40 resolved forecasts / 2000 member outcomes / 50 directional-evidence members gate"
+  }
+}
