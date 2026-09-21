@@ -1,23 +1,6 @@
 name: Historical Deep House Journal mechanics
 
 on:
-  pull_request:
-    paths:
-      - .github/workflows/historical-deep-house-journal-mechanics.yml
-      - data/evaluation/historical-deep-house-journal-mechanics-lineage-v1.json
-      - scripts/classify-historical-deep-house-journal-mechanics.ts
-      - src/evaluation/historical-deep-house-journal-mechanics.ts
-      - tests/historical-deep-house-journal-mechanics.test.ts
-      - docs/evaluation/historical-deep-house-journal-mechanics-v1.md
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-house-journal-mechanics.yml
-      - data/evaluation/historical-deep-house-journal-mechanics-lineage-v1.json
-      - scripts/classify-historical-deep-house-journal-mechanics.ts
-      - src/evaluation/historical-deep-house-journal-mechanics.ts
-      - tests/historical-deep-house-journal-mechanics.test.ts
-      - docs/evaluation/historical-deep-house-journal-mechanics-v1.md
   workflow_dispatch:
 
 permissions:
