@@ -1,15 +1,6 @@
 name: Passage fragility reference
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/passage-fragility-reference.yml
-      - data/evaluation/passage-fragility-reference-plan-v1.json
-      - scripts/run-production-passage-fragility-reference.ts
-      - src/app/api/operations/passage-fragility-reference/route.ts
-      - src/evaluation/passage-fragility-reference.ts
-      - tests/passage-fragility-reference.test.ts
   workflow_dispatch:
 
 permissions:
