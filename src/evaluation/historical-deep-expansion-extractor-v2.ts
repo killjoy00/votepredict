@@ -17,7 +17,7 @@ import type {
 export const HISTORICAL_DEEP_EXPANSION_CANDIDATE_V2_SCHEMA = 'historical-deep-expansion-discovery-candidates-v2' as const;
 export const HISTORICAL_DEEP_EXPANSION_PARSER_V2 = 'deterministic-house-committee-roll-call-v2' as const;
 
-type ExtractionRule =
+export type ExtractionRule =
   | 'v1-baseline'
   | 'general-register-roll-call'
   | 'alternate-roll-trigger'
@@ -102,7 +102,7 @@ function stripVoteNameDecorations(value: string): string {
     .trim();
 }
 
-type PageAliasMap = ReadonlyMap<string, HistoricalDeepExpansionDiscoveryMember | null>;
+export type PageAliasMap = ReadonlyMap<string, HistoricalDeepExpansionDiscoveryMember | null>;
 
 function resolveExplicitCommaName(
   cleaned: string,
@@ -123,7 +123,7 @@ function resolveExplicitCommaName(
   return { ambiguous: candidates.length > 1, alias: lastTokens.join(' ') };
 }
 
-function buildPageAliases(
+export function buildPageAliases(
   lines: readonly string[],
   members: readonly HistoricalDeepExpansionDiscoveryMember[],
 ): Map<string, HistoricalDeepExpansionDiscoveryMember | null> {
@@ -142,7 +142,7 @@ function buildPageAliases(
   return aliases;
 }
 
-function resolveVoteName(
+export function resolveVoteName(
   rawName: string,
   members: readonly HistoricalDeepExpansionDiscoveryMember[],
   pageAliases: PageAliasMap,
@@ -209,7 +209,7 @@ function looksLikeVoteName(value: string): boolean {
   return /^[A-Za-zÀ-ÖØ-öø-ÿ’'\-. ]+(?:,\s*[A-Za-zÀ-ÖØ-öø-ÿ’'\-. ]+)?(?:\s*\([^)]*\))?$/.test(value);
 }
 
-interface ExpandedRollCallBlock {
+export interface ExpandedRollCallBlock {
   motionText: string;
   excerpt: string;
   ayes: string[];
@@ -217,7 +217,7 @@ interface ExpandedRollCallBlock {
   extractionRule: Exclude<ExtractionRule, 'v1-baseline'>;
 }
 
-function findExpandedRollCalls(lines: readonly string[], identifier: string): ExpandedRollCallBlock[] {
+export function findExpandedRollCalls(lines: readonly string[], identifier: string): ExpandedRollCallBlock[] {
   const blocks: ExpandedRollCallBlock[] = [];
   for (let motionIndex = 0; motionIndex < lines.length; motionIndex += 1) {
     const motionText = lines[motionIndex];
