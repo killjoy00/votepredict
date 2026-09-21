@@ -1,0 +1,176 @@
+name: Frozen combined Quick Evidence diagnostic
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/frozen-combined-quick-evidence-diagnostic.yml
+      - data/evaluation/quick-evidence-combined-historical-screen-plan-v1.json
+      - data/evaluation/quick-evidence-committee-rollcall-candidate-lineage-v1.json
+      - scripts/evaluate-quick-evidence-combined-historical-screen.ts
+      - src/app/api/operations/quick-evidence-combined-historical-screen/route.ts
+      - src/evaluation/quick-evidence-combined-historical-screen.ts
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: frozen-combined-quick-evidence-diagnostic-v1
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_COMBINED_EVIDENCE_SCREEN_OUTPUT: artifacts/quick-evidence-combined-historical-screen-v1.json
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Verify frozen combined plan and committee lineage
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          plan='data/evaluation/quick-evidence-combined-historical-screen-plan-v1.json'
+          lineage='data/evaluation/quick-evidence-committee-rollcall-candidate-lineage-v1.json'
+
+          test "$(jq -r '.schemaVersion' "$plan")" = 'quick-evidence-combined-historical-screen-plan-v1'
+          test "$(jq -r '.scope.candidateVersion' "$plan")" = 'quick-evidence-v1'
+          test "$(jq -r '.scope.servingBaseline' "$plan")" = 'member-eb-v1.2-decay180'
+          test "$(jq -r '.asOfPolicy.strictlyPreVoteOnly' "$plan")" = 'true'
+          test "$(jq -r '.asOfPolicy.sameDayExcludedWhenOrderingIsNotProvable' "$plan")" = 'true'
+          test "$(jq -r '.fit.maximumAbsoluteLogitDelta' "$plan")" = '1'
+          test "$(jq -r '.interpretation.productionAction' "$plan")" = 'none'
+          test "$(jq -r '.interpretation.automaticPromotion' "$plan")" = 'false'
+          test "$(jq '.primaryFeatureInventory | length' "$plan")" = '32'
+          test "$(jq '.excludedFromPrimaryHistoricalFit | length' "$plan")" = '4'
+
+          test "$(jq -r '.schemaVersion' "$lineage")" = 'quick-evidence-committee-rollcall-candidate-lineage-v1'
+          run_id="$(jq -r '.extractionRunId' "$lineage")"
+          artifact_id="$(jq -r '.candidateArtifact.id' "$lineage")"
+          artifact_name="$(jq -r '.candidateArtifact.name' "$lineage")"
+          expected_digest="$(jq -r '.candidateArtifact.digest' "$lineage")"
+          expected_sha="$(jq -r '.extractionHeadSha' "$lineage")"
+          test "$(jq -r '.policy.outcomeUseBeforeThisStage' "$lineage")" = 'none'
+          test "$(jq -r '.policy.productionAction' "$lineage")" = 'none'
+
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}" > "$RUNNER_TEMP/committee-run.json"
+          test "$(jq -r '.head_sha' "$RUNNER_TEMP/committee-run.json")" = "$expected_sha"
+          test "$(jq -r '.conclusion' "$RUNNER_TEMP/committee-run.json")" = 'success'
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/artifacts" > "$RUNNER_TEMP/committee-artifacts.json"
+          actual="$(jq -c --argjson id "$artifact_id" '.artifacts[] | select(.id == $id)' "$RUNNER_TEMP/committee-artifacts.json")"
+          test -n "$actual"
+          test "$(printf '%s' "$actual" | jq -r '.name')" = "$artifact_name"
+          test "$(printf '%s' "$actual" | jq -r '.digest')" = "$expected_digest"
+          test "$(printf '%s' "$actual" | jq -r '.expired')" = 'false'
+
+          echo "committee_run_id=$run_id" >> "$GITHUB_ENV"
+          echo "committee_artifact_name=$artifact_name" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-fund --no-audit
+
+      - name: Download frozen committee feature corpus
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.committee_artifact_name }}
+          path: inputs/committee
+          github-token: ${{ github.token }}
+          run-id: ${{ env.committee_run_id }}
+
+      - name: Wait for this exact main SHA to be live in production
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            http_code="$(curl               --silent               --show-error               --output "$RUNNER_TEMP/vercel-deployments.json"               --write-out '%{http_code}'               --header "Authorization: Bearer ${VERCEL_TOKEN}"               "https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&target=production&limit=20&teamId=${VERCEL_ORG_ID}")"
+            if [ "$http_code" != "200" ]; then
+              echo "Vercel deployment lookup returned HTTP ${http_code}."
+              exit 1
+            fi
+            match="$(jq -c --arg sha "$GITHUB_SHA" '[.deployments[]? | select(.target == "production" and .meta.githubCommitSha == $sha)] | first // empty' "$RUNNER_TEMP/vercel-deployments.json")"
+            if [ -n "$match" ]; then
+              state="$(printf '%s' "$match" | jq -r '.state // "UNKNOWN"')"
+              if [ "$state" = "READY" ]; then
+                echo "Exact main SHA ${GITHUB_SHA} is READY in production."
+                exit 0
+              fi
+              if [ "$state" = "ERROR" ] || [ "$state" = "CANCELED" ]; then
+                echo "Production deployment for ${GITHUB_SHA} entered ${state}."
+                exit 1
+              fi
+            fi
+            sleep 5
+          done
+          echo "Exact main SHA ${GITHUB_SHA} did not become READY before the combined diagnostic deadline."
+          exit 1
+
+      - name: Read production authentication privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${VERCEL_TOKEN:-}"
+          umask 077
+          for attempt in 1 2 3; do
+            if npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1; then
+              exit 0
+            fi
+            if [ "$attempt" != 3 ]; then sleep 5; fi
+          done
+          echo 'Could not read the VotePredict production environment. No combined diagnostic was run.'
+          exit 1
+
+      - name: Run frozen combined Quick Evidence diagnostic
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: |
+          node --import tsx scripts/evaluate-quick-evidence-combined-historical-screen.ts             --committee-candidates inputs/committee/quick-evidence-committee-rollcall-candidates-v1.json             --committee-lineage data/evaluation/quick-evidence-committee-rollcall-candidate-lineage-v1.json
+
+      - name: Verify diagnostic-only result
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$VOTEPREDICT_COMBINED_EVIDENCE_SCREEN_OUTPUT"
+          test "$(jq -r '.schemaVersion' "$file")" = 'quick-evidence-combined-historical-screen-v1'
+          test "$(jq -r '.metadata.quickEvidenceCandidate' "$file")" = 'quick-evidence-v1'
+          test "$(jq -r '.metadata.servingBaseline' "$file")" = 'member-eb-v1.2-decay180'
+          test "$(jq -r '.metadata.productionAction' "$file")" = 'none'
+          test "$(jq -r '.conclusion.productionAction' "$file")" = 'none'
+          test "$(jq -r '.conclusion.servingQuickChanged' "$file")" = 'false'
+          test "$(jq -r '.conclusion.quickEvidenceWeightChanged' "$file")" = 'false'
+          test "$(jq '.metadata.featureNames | length' "$file")" = '32'
+          test "$(jq '.ablations | length' "$file")" = '9'
+          gate="$(jq -r '.coverageGate.passed' "$file")"
+          if [ "$gate" = 'true' ]; then
+            test "$(jq -r '.selected == null' "$file")" = 'false'
+          else
+            test "$(jq -r '.selected == null' "$file")" = 'true'
+            test "$(jq -r '.conclusion.reason' "$file")" = 'coverage_gate_failed'
+          fi
+
+      - name: Upload immutable combined diagnostic
+        uses: actions/upload-artifact@v4
+        with:
+          name: quick-evidence-combined-historical-screen-v1-${{ github.sha }}
+          path: artifacts/quick-evidence-combined-historical-screen-v1.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Remove temporary credentials and lookups
+        if: always()
+        shell: bash
+        run: |
+          rm -f             "$RUNNER_TEMP/votepredict-production.env"             "$RUNNER_TEMP/vercel-pull.log"             "$RUNNER_TEMP/vercel-deployments.json"             "$RUNNER_TEMP/committee-run.json"             "$RUNNER_TEMP/committee-artifacts.json"
