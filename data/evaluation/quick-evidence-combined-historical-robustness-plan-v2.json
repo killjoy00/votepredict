@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "quick-evidence-combined-historical-robustness-plan-v2",
+  "frozenAt": "2026-09-21T18:50:00Z",
+  "issue": 304,
+  "purpose": "Robustness audit of the previously frozen combined Quick Evidence hypothesis after correcting historical replay availability boundaries. This is not a new independent validation set.",
+  "scope": {
+    "candidateVersion": "quick-evidence-v1",
+    "servingBaseline": "member-eb-v1.2-decay180",
+    "historicalReplay": "historical-quick-replay-v2",
+    "trainSession": "2021-2022",
+    "validationSession": "2023-2024",
+    "descriptiveSession": "2025-2026"
+  },
+  "corrections": {
+    "billIdentity": "derive historical identity title only from the dated official bill text; never use mutable current bills.title",
+    "billFeatures": "recompute deterministic features from dated raw bill text plus the dated-text-derived identity title; ignore persisted historical feature sets that may contain mutable-title inputs",
+    "companionState": "use only dated legislative_stage_events companion_reference rows strictly before the target vote; never use current Revisor companion metadata",
+    "evidenceEligibility": "exclude rows explicitly marked asOfEligible=false",
+    "billEvidenceDateSanity": "exclude reconstructed bill evidence dated before the legislative session start or before the bill introduction date; target-day evidence remains excluded when intraday ordering is unavailable"
+  },
+  "fit": {
+    "unchangedFromV1": true,
+    "model": "multivariable ridge logistic offset on corrected serving Quick replay logit",
+    "lambdas": [0.1, 1, 5, 20, 100],
+    "maximumAbsoluteLogitDelta": 1,
+    "selectionMetricOrder": [
+      "validation member Brier",
+      "validation member log loss",
+      "validation chamber mean absolute yes-vote error",
+      "lambda"
+    ]
+  },
+  "robustnessReporting": {
+    "pooledMetrics": true,
+    "eventBalancedMemberMetrics": true,
+    "chamberBalancedMemberMetrics": true,
+    "passageByChamber": true,
+    "leaveOneFailedPassageEventOut": true,
+    "note": "Sensitivity outputs are descriptive robustness checks and do not retune the selected lambda."
+  },
+  "interpretation": {
+    "independentValidationSet": false,
+    "productionAction": "none",
+    "servingProbabilityChange": "none",
+    "automaticPromotion": false,
+    "note": "The v2 rerun can invalidate or qualify the old retrospective result, but it cannot promote the candidate because the validation outcomes were already observed during the original research."
+  }
+}
