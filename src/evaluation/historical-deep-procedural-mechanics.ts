@@ -99,7 +99,7 @@ const MECHANIC_ORDER: HistoricalDeepProceduralMechanic[] = [
   'defers_current_bill_action',
 ];
 
-function classifyMotion(motionText: string): HistoricalDeepProceduralMechanic[] {
+export function classifyMotion(motionText: string): HistoricalDeepProceduralMechanic[] {
   const mechanics = new Set<HistoricalDeepProceduralMechanic>();
 
   if (/\brecommend(?:ed)?\s+to\s+pass\b/i.test(motionText)) {
