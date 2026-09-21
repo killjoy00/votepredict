@@ -40,7 +40,14 @@ export async function loadHistoricalQuickReplayDataset(pool: Pool): Promise<Hist
       FROM bill_versions bv
      WHERE bv.published_at IS NOT NULL
        AND bv.raw_text IS NOT NULL
-       AND length(bv.raw_text) >= 100`);
+       AND length(bv.raw_text) >= 100
+       AND EXISTS (
+         SELECT 1
+           FROM vote_events passage
+          WHERE passage.bill_id=bv.bill_id
+            AND passage.is_passage=true
+            AND passage.occurred_on < CURRENT_DATE
+       )`);
 
   const versionsByBill = new Map<string, QuickReplayVersion[]>();
   for (const row of versionResult.rows) {
