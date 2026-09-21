@@ -614,7 +614,10 @@ export async function evaluateQuickEvidenceCombinedHistoricalScreen(
          AND ei.membership_id IS NOT NULL
          AND ei.published_at IS NOT NULL
          AND ei.metadata->>'subtype' IN ('floor_amendment_offer','conference_conferee','legislative_speech')
-         AND ei.metadata->>'asOfEligible'='true'
+         AND (
+           ei.metadata->>'asOfEligible'='true'
+           OR ei.metadata->>'subtype'='legislative_speech'
+         )
          AND s.slug IN ('2021-2022','2023-2024','2025-2026')
        ORDER BY ei.bill_id,ei.membership_id,ei.published_at,ei.id
     `, [targetBillIds]),
