@@ -1,11 +1,7 @@
 import type { Pool } from 'pg';
 import {
-  BILL_FEATURE_SCHEMA_VERSION,
-  DETERMINISTIC_EXTRACTOR_VERSION,
-  type DeterministicBillFeatures,
-} from '../features/bills';
-import {
   buildHistoricalQuickAnalogueSupport,
+  historicalBillIdentityTitle,
   type QuickReplayAnalogueSupport,
   type QuickReplayEvent,
   type QuickReplayMembership,
@@ -33,22 +29,16 @@ export async function loadHistoricalQuickReplayDataset(pool: Pool): Promise<Hist
     published_at: string;
     created_at: string;
     raw_text: string;
-    features: DeterministicBillFeatures | null;
   }>(`
     SELECT bv.id,
            bv.bill_id,
            to_char(bv.published_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') AS published_at,
            to_char(bv.created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') AS created_at,
-           bv.raw_text,
-           bfs.features
+           bv.raw_text
       FROM bill_versions bv
-      LEFT JOIN bill_feature_sets bfs
-        ON bfs.bill_version_id = bv.id
-       AND bfs.feature_schema_version = $1
-       AND bfs.extractor_version = $2
      WHERE bv.published_at IS NOT NULL
        AND bv.raw_text IS NOT NULL
-       AND length(bv.raw_text) >= 100`, [BILL_FEATURE_SCHEMA_VERSION, DETERMINISTIC_EXTRACTOR_VERSION]);
+       AND length(bv.raw_text) >= 100`);
 
   const versionsByBill = new Map<string, QuickReplayVersion[]>();
   for (const row of versionResult.rows) {
@@ -59,7 +49,6 @@ export async function loadHistoricalQuickReplayDataset(pool: Pool): Promise<Hist
       publishedAt: row.published_at,
       createdAt: row.created_at,
       rawText: row.raw_text,
-      features: row.features ?? undefined,
     });
     versionsByBill.set(row.bill_id, rows);
   }
@@ -68,7 +57,6 @@ export async function loadHistoricalQuickReplayDataset(pool: Pool): Promise<Hist
     vote_event_id: string;
     bill_id: string;
     identifier: string;
-    title: string;
     session_id: string;
     session_slug: string;
     chamber_id: string;
@@ -82,7 +70,6 @@ export async function loadHistoricalQuickReplayDataset(pool: Pool): Promise<Hist
     SELECT ve.id AS vote_event_id,
            b.id AS bill_id,
            b.identifier,
-           b.title,
            s.id AS session_id,
            s.slug AS session_slug,
            c.id AS chamber_id,
@@ -91,12 +78,25 @@ export async function loadHistoricalQuickReplayDataset(pool: Pool): Promise<Hist
            ve.yea_count,
            ve.nay_count,
            ve.passed,
-           b.metadata #>> '{revisor,companionIdentifier}' AS companion_identifier
+           companion.companion_identifier
       FROM vote_events ve
       JOIN bills b ON b.id = ve.bill_id
       JOIN legislative_sessions s ON s.id = ve.session_id
       JOIN chambers c ON c.id = ve.chamber_id
       JOIN jurisdictions j ON j.id = s.jurisdiction_id AND j.slug = 'us-mn'
+      LEFT JOIN LATERAL (
+        SELECT candidate.identifier AS companion_identifier
+          FROM legislative_stage_events lse
+          CROSS JOIN LATERAL jsonb_array_elements_text(
+            COALESCE(lse.metadata->'companionIdentifiers', '[]'::jsonb)
+          ) candidate(identifier)
+         WHERE lse.bill_id=b.id
+           AND lse.stage_kind='companion_reference'
+           AND lse.occurred_at::date < ve.occurred_on
+           AND lse.metadata->>'modelEligibility'='strictly before target vote date only'
+         ORDER BY lse.occurred_at DESC,lse.id DESC,candidate.identifier
+         LIMIT 1
+      ) companion ON true
      WHERE ve.is_passage = true
        AND ve.bill_id IS NOT NULL
        AND ve.occurred_on < CURRENT_DATE
@@ -106,7 +106,14 @@ export async function loadHistoricalQuickReplayDataset(pool: Pool): Promise<Hist
     voteEventId: row.vote_event_id,
     billId: row.bill_id,
     identifier: row.identifier,
-    title: row.title,
+    title: historicalBillIdentityTitle(
+      (versionsByBill.get(row.bill_id) ?? [])
+        .filter((version) => version.publishedAt.slice(0, 10) < row.occurred_on)
+        .sort((left, right) => right.publishedAt.localeCompare(left.publishedAt)
+          || right.createdAt.localeCompare(left.createdAt)
+          || right.id.localeCompare(left.id))[0]?.rawText ?? '',
+      row.identifier,
+    ),
     sessionId: row.session_id,
     session: row.session_slug,
     chamberId: row.chamber_id,
