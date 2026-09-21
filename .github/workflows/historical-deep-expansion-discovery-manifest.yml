@@ -12,6 +12,7 @@ on:
       - src/evaluation/historical-deep-expansion-cohort.ts
       - src/evaluation/historical-deep-target-strategies.ts
       - src/evaluation/historical-quick-runtime.ts
+      - src/evaluation/historical-quick-replay-dataset.ts
       - src/evaluation/historical-quick-replay.ts
   workflow_dispatch:
 

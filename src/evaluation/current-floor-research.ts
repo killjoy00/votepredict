@@ -13,6 +13,7 @@ import {
   type RateEvidence,
 } from '../forecasting/member-model';
 import {
+  historicalBillIdentityTitle,
   scoreHistoricalQuickReplay,
   selectCandidateVersionAsOfVote,
   selectStrictTargetVersion,
@@ -196,7 +197,10 @@ function activeOn(membership: QuickReplayMembership, date: string): boolean {
 }
 
 function featuresFor(version: QuickReplayVersion, event: QuickReplayEvent): DeterministicBillFeatures {
-  return version.features ?? extractDeterministicBillFeatures({ title: event.title, text: version.rawText });
+  return extractDeterministicBillFeatures({
+    title: historicalBillIdentityTitle(version.rawText, event.identifier),
+    text: version.rawText,
+  });
 }
 
 function policyAreasFor(version: QuickReplayVersion, event: QuickReplayEvent): string[] {
@@ -215,9 +219,9 @@ function candidateTokens(identity: BillFeatureIdentity): string[] {
   return [...new Set(values)].slice(0, 18);
 }
 
-function lexicalHits(title: string, tokens: readonly string[]): number {
-  const lower = title.toLowerCase();
-  return tokens.filter((token) => lower.includes(token)).length;
+function featureTokenHits(candidate: BillFeatureIdentity, tokens: readonly string[]): number {
+  const candidateSet = new Set(candidateTokens(candidate));
+  return tokens.filter((token) => candidateSet.has(token)).length;
 }
 
 function prefilterCandidates(
@@ -230,7 +234,7 @@ function prefilterCandidates(
   return priorCandidates
     .map((candidate) => ({
       candidate,
-      hits: lexicalHits(candidate.title, tokens),
+      hits: featureTokenHits(candidate, tokens),
       priority: candidate.billId === targetEvent.billId
         ? 3
         : target.companionIdentifier && candidate.identifier === target.companionIdentifier
@@ -322,7 +326,7 @@ export function buildResearchAnalogueSupport(
         billVersionId: targetVersion.id,
         identifier: event.identifier,
         session: event.session,
-        title: event.title,
+        title: historicalBillIdentityTitle(targetVersion.rawText, event.identifier),
         publishedAt: targetVersion.publishedAt,
         companionIdentifier: event.companionIdentifier,
         features: featuresFor(targetVersion, event),
@@ -359,7 +363,7 @@ export function buildResearchAnalogueSupport(
         billVersionId: candidateVersion.id,
         identifier: event.identifier,
         session: event.session,
-        title: event.title,
+        title: historicalBillIdentityTitle(candidateVersion.rawText, event.identifier),
         publishedAt: candidateVersion.publishedAt,
         companionIdentifier: event.companionIdentifier,
         features: featuresFor(candidateVersion, event),

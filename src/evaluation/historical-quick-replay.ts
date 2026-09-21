@@ -11,6 +11,7 @@ import { simulateChamber } from '../forecasting/chamber';
 import { estimateMemberProbability, MEMBER_MODEL_VERSION, type RateEvidence } from '../forecasting/member-model';
 import { strictPreVoteCutoff } from './deep-replay';
 
+export const HISTORICAL_QUICK_REPLAY_VERSION = 'historical-quick-replay-v2' as const;
 export const QUICK_REPLAY_MAX_PREFILTER_EVENTS = 30;
 export const QUICK_REPLAY_MAX_ANALOGUES = 10;
 
@@ -20,6 +21,11 @@ export interface QuickReplayVersion {
   publishedAt: string;
   createdAt: string;
   rawText: string;
+  /**
+   * Historical-v2 never trusts persisted feature sets because older materializations
+   * could have been derived with mutable current bill titles. This field remains only
+   * for compatibility with older fixture/build callers and is ignored by the replay.
+   */
   features?: DeterministicBillFeatures;
 }
 
@@ -153,6 +159,24 @@ function versionSort(a: QuickReplayVersion, b: QuickReplayVersion): number {
     || b.id.localeCompare(a.id);
 }
 
+/**
+ * Reconstruct a safe historical identity label only from the dated official bill text.
+ * The current mutable bill title is deliberately excluded from historical-v2.
+ */
+export function historicalBillIdentityTitle(rawText: string, identifier: string): string {
+  const compact = rawText.replace(/\s+/g, ' ').trim();
+  const marker = /\ba bill for an act\b/i.exec(compact);
+  if (!marker) return identifier;
+  const after = compact.slice((marker.index ?? 0) + marker[0].length).trim();
+  const enactedIndex = after.search(/\bbe it enacted\b/i);
+  const subject = (enactedIndex >= 0 ? after.slice(0, enactedIndex) : after)
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/[.;:,\s]+$/, '');
+  if (subject.length < 12) return identifier;
+  return subject.slice(0, 4000);
+}
+
 /** Target bill text must be provably available before the target vote date. */
 export function selectStrictTargetVersion(
   versions: readonly QuickReplayVersion[] | undefined,
@@ -176,8 +200,11 @@ export function selectCandidateVersionAsOfVote(
     .sort(versionSort)[0];
 }
 
-function featuresFor(version: QuickReplayVersion, event: QuickReplayEvent): DeterministicBillFeatures {
-  return version.features ?? extractDeterministicBillFeatures({ title: event.title, text: version.rawText });
+function featuresFor(version: QuickReplayVersion, identifier: string): DeterministicBillFeatures {
+  return extractDeterministicBillFeatures({
+    title: historicalBillIdentityTitle(version.rawText, identifier),
+    text: version.rawText,
+  });
 }
 
 function candidateTokens(identity: BillFeatureIdentity): string[] {
@@ -191,9 +218,9 @@ function candidateTokens(identity: BillFeatureIdentity): string[] {
   return [...new Set(values)].slice(0, 18);
 }
 
-function lexicalHits(title: string, tokens: readonly string[]): number {
-  const lower = title.toLowerCase();
-  return tokens.filter((token) => lower.includes(token)).length;
+function featureTokenHits(candidate: BillFeatureIdentity, tokens: readonly string[]): number {
+  const candidateSet = new Set(candidateTokens(candidate));
+  return tokens.filter((token) => candidateSet.has(token)).length;
 }
 
 function prefilterCandidates(
@@ -205,7 +232,7 @@ function prefilterCandidates(
   return priorCandidates
     .map((candidate) => ({
       candidate,
-      hits: lexicalHits(candidate.title, tokens),
+      hits: featureTokenHits(candidate, tokens),
       priority: candidate.billId === targetEvent.billId
         ? 3
         : target.companionIdentifier && candidate.identifier === target.companionIdentifier
@@ -240,10 +267,10 @@ export function buildHistoricalQuickAnalogueSupport(
         billVersionId: targetVersion.id,
         identifier: event.identifier,
         session: event.session,
-        title: event.title,
+        title: historicalBillIdentityTitle(targetVersion.rawText, event.identifier),
         publishedAt: targetVersion.publishedAt,
         companionIdentifier: event.companionIdentifier,
-        features: featuresFor(targetVersion, event),
+        features: featuresFor(targetVersion, event.identifier),
       };
       const prefiltered = prefilterCandidates(target, event, priorCandidates);
       const asOf = `${event.occurredOn}T00:00:00.000Z`;
@@ -274,10 +301,10 @@ export function buildHistoricalQuickAnalogueSupport(
         billVersionId: candidateVersion.id,
         identifier: event.identifier,
         session: event.session,
-        title: event.title,
+        title: historicalBillIdentityTitle(candidateVersion.rawText, event.identifier),
         publishedAt: candidateVersion.publishedAt,
         companionIdentifier: event.companionIdentifier,
-        features: featuresFor(candidateVersion, event),
+        features: featuresFor(candidateVersion, event.identifier),
         voteEventId: event.voteEventId,
         occurredAt: `${event.occurredOn}T23:59:59.000Z`,
         chamber: event.chamber,

@@ -68,7 +68,7 @@ async function main(): Promise<void> {
   const outputPath = resolve(
     argumentValue('--output')
       ?? process.env.VOTEPREDICT_COMBINED_EVIDENCE_SCREEN_OUTPUT
-      ?? 'artifacts/quick-evidence-combined-historical-screen-v1.json',
+      ?? 'artifacts/quick-evidence-combined-historical-robustness-v2.json',
   );
   const envPath = process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
   if (!envPath) throw new Error('Production environment file is required');
