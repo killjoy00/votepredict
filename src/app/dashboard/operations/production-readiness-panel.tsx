@@ -122,6 +122,7 @@ export function ProductionReadinessPanel(props: Props) {
         {' '}· floor <strong>{readiness.evidence.structuredFamilies.floorActivity.items} items / {readiness.evidence.structuredFamilies.floorActivity.members} members / {readiness.evidence.structuredFamilies.floorActivity.bills} bills</strong>
         {' '}· speech <strong>{readiness.evidence.structuredFamilies.sessionDailySpeech.items} items / {readiness.evidence.structuredFamilies.sessionDailySpeech.members} members / {readiness.evidence.structuredFamilies.sessionDailySpeech.bills} bills</strong>
         {' '}· conferees <strong>{readiness.evidence.structuredFamilies.conferenceConferee.items} items / {readiness.evidence.structuredFamilies.conferenceConferee.members} members / {readiness.evidence.structuredFamilies.conferenceConferee.bills} bills</strong>
+        {' '}· committee rolls <strong>{readiness.evidence.structuredFamilies.committeeRollcall.items} items / {readiness.evidence.structuredFamilies.committeeRollcall.members} members / {readiness.evidence.structuredFamilies.committeeRollcall.bills} bills</strong>
         {' '}· bill context <strong>{readiness.evidence.structuredFamilies.billContext.items} items / {readiness.evidence.structuredFamilies.billContext.bills} bills</strong>.
       </div>
 
