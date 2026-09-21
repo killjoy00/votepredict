@@ -1,23 +1,6 @@
 name: Historical Deep procedural mechanics taxonomy
 
 on:
-  pull_request:
-    paths:
-      - .github/workflows/historical-deep-procedural-mechanics.yml
-      - data/evaluation/historical-deep-procedural-mechanics-lineage-v1.json
-      - scripts/classify-historical-deep-procedural-mechanics.ts
-      - src/evaluation/historical-deep-procedural-mechanics.ts
-      - tests/historical-deep-procedural-mechanics.test.ts
-      - docs/evaluation/historical-deep-procedural-mechanics-v1.md
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/historical-deep-procedural-mechanics.yml
-      - data/evaluation/historical-deep-procedural-mechanics-lineage-v1.json
-      - scripts/classify-historical-deep-procedural-mechanics.ts
-      - src/evaluation/historical-deep-procedural-mechanics.ts
-      - tests/historical-deep-procedural-mechanics.test.ts
-      - docs/evaluation/historical-deep-procedural-mechanics-v1.md
   workflow_dispatch:
 
 permissions:
