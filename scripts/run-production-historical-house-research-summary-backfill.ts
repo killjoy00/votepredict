@@ -51,7 +51,8 @@ async function main() {
 
   const initial = await verify(secret);
   if (initial.complete) {
-    console.log(JSON.stringify({ historicalHouseResearchSummaryBackfill: { skipped: true, verification: initial } }));
+    const verification = await verify(secret, true);
+    console.log(JSON.stringify({ historicalHouseResearchSummaryBackfill: { skipped: true, verification } }));
     return;
   }
 
