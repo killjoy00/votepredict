@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto';
 import { pool } from '@/lib/db';
 import { fetchPublicPage } from '@/evidence/public-http';
 import { persistDurableEvidence, type DurableEvidenceDraft } from '@/evidence/durable-ingestion';
+import { loadHistoricalQuickReplayDataset } from '@/evaluation/historical-quick-replay-dataset';
+import { runHistoricalQuickDecayShadowReplay } from '@/evaluation/historical-quick-decay-shadow-replay';
 import {
   extractHouseResearchSummaryPdfLinks,
   HOUSE_RESEARCH_SUMMARY_PDF_PARSER_VERSION,
@@ -372,7 +374,97 @@ export async function backfillHistoricalHouseResearchSummaryBatch(
   return result;
 }
 
-export async function verifyHistoricalHouseResearchSummaryBackfill() {
+type BillContextCoverageSession = '2021-2022' | '2023-2024' | '2025-2026';
+
+async function measureHistoricalHouseResearchReplayCoverage() {
+  const dataset = await loadHistoricalQuickReplayDataset(pool);
+  const baseline = runHistoricalQuickDecayShadowReplay(
+    dataset.targets,
+    dataset.targetVersionByEvent,
+    dataset.analogueSupportByEvent,
+    dataset.memberships,
+    dataset.historicalVotes,
+    180,
+  );
+  const targets = new Map(dataset.targets.map((target) => [target.voteEventId, target]));
+  const summaries = await pool.query<{
+    bill_id: string;
+    summary_on: string;
+  }>(`
+    SELECT ei.bill_id::text,
+           min(ei.published_at::date)::text AS summary_on
+      FROM evidence_items ei
+      JOIN bills b ON b.id=ei.bill_id
+      JOIN legislative_sessions s ON s.id=b.session_id
+      JOIN jurisdictions j ON j.id=s.jurisdiction_id
+     WHERE j.slug='us-mn'
+       AND ei.metadata->>'subtype'='bill_summary_version'
+       AND ei.metadata->>'asOfEligible'='true'
+       AND ei.bill_id IS NOT NULL
+       AND ei.published_at IS NOT NULL
+       AND s.slug IN ('2021-2022','2023-2024','2025-2026')
+     GROUP BY ei.bill_id
+  `);
+  const firstSummaryByBill = new Map(
+    summaries.rows.map((row) => [row.bill_id, row.summary_on]),
+  );
+  const buckets = new Map<BillContextCoverageSession, {
+    memberOutcomes: number;
+    contextMemberOutcomes: number;
+    replayEvents: Set<string>;
+    eventsWithPriorSummary: Set<string>;
+  }>([
+    ['2021-2022', { memberOutcomes: 0, contextMemberOutcomes: 0, replayEvents: new Set(), eventsWithPriorSummary: new Set() }],
+    ['2023-2024', { memberOutcomes: 0, contextMemberOutcomes: 0, replayEvents: new Set(), eventsWithPriorSummary: new Set() }],
+    ['2025-2026', { memberOutcomes: 0, contextMemberOutcomes: 0, replayEvents: new Set(), eventsWithPriorSummary: new Set() }],
+  ]);
+
+  for (const event of baseline) {
+    if (!buckets.has(event.session as BillContextCoverageSession)) continue;
+    const target = targets.get(event.voteEventId);
+    if (!target) continue;
+    const bucket = buckets.get(event.session as BillContextCoverageSession)!;
+    const validMembers = event.memberPredictions.filter(
+      (member) => member.yesProbability !== undefined && member.actualOutcome !== undefined,
+    );
+    if (validMembers.length === 0) continue;
+    bucket.replayEvents.add(event.voteEventId);
+    bucket.memberOutcomes += validMembers.length;
+    const summaryOn = firstSummaryByBill.get(target.billId);
+    if (!summaryOn || summaryOn >= event.occurredOn) continue;
+    bucket.eventsWithPriorSummary.add(event.voteEventId);
+    bucket.contextMemberOutcomes += validMembers.length;
+  }
+
+  const serializable = (session: BillContextCoverageSession) => {
+    const bucket = buckets.get(session)!;
+    return {
+      memberOutcomes: bucket.memberOutcomes,
+      contextMemberOutcomes: bucket.contextMemberOutcomes,
+      replayEvents: bucket.replayEvents.size,
+      eventsWithPriorSummary: bucket.eventsWithPriorSummary.size,
+    };
+  };
+  const training = serializable('2021-2022');
+  const validation = serializable('2023-2024');
+  return {
+    minimumCoveredEventsPerTrainValidationSession: 20,
+    minimumCoveredMemberOutcomesPerTrainValidationSession: 1000,
+    sameDaySummariesExcluded: true,
+    training,
+    validation,
+    descriptiveTest: serializable('2025-2026'),
+    sufficientForFrozenDiagnostic:
+      training.eventsWithPriorSummary >= 20
+      && validation.eventsWithPriorSummary >= 20
+      && training.contextMemberOutcomes >= 1000
+      && validation.contextMemberOutcomes >= 1000,
+  };
+}
+
+export async function verifyHistoricalHouseResearchSummaryBackfill(
+  options: { includeReplayCoverage?: boolean } = {},
+) {
   const result = await pool.query<{
     session_slug: SupportedSession;
     target_bills: string;
@@ -444,6 +536,9 @@ export async function verifyHistoricalHouseResearchSummaryBackfill() {
     complete: coverage.length === 2
       && coverage.every((row) => row.processedBills === row.targetBills),
     coverage,
+    replayCoverage: options.includeReplayCoverage
+      ? await measureHistoricalHouseResearchReplayCoverage()
+      : undefined,
     servingProbabilityChange: 'none' as const,
     allNewFeatureWeights: 0 as const,
   };
