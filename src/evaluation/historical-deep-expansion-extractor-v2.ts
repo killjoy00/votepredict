@@ -90,7 +90,12 @@ function normalizeName(value: string): string {
     .trim();
 }
 
-function memberTokens(member: HistoricalDeepExpansionDiscoveryMember): string[] {
+export interface HistoricalCommitteeVoteMember {
+  membershipId: string;
+  memberName: string;
+}
+
+function memberTokens(member: HistoricalCommitteeVoteMember): string[] {
   return normalizeName(member.memberName).split(' ').filter(Boolean);
 }
 
@@ -102,12 +107,13 @@ function stripVoteNameDecorations(value: string): string {
     .trim();
 }
 
-export type PageAliasMap = ReadonlyMap<string, HistoricalDeepExpansionDiscoveryMember | null>;
+export type PageAliasMap<T extends HistoricalCommitteeVoteMember = HistoricalDeepExpansionDiscoveryMember> =
+  ReadonlyMap<string, T | null>;
 
-function resolveExplicitCommaName(
+function resolveExplicitCommaName<T extends HistoricalCommitteeVoteMember>(
   cleaned: string,
-  members: readonly HistoricalDeepExpansionDiscoveryMember[],
-): { member?: HistoricalDeepExpansionDiscoveryMember; ambiguous: boolean; alias?: string } {
+  members: readonly T[],
+): { member?: T; ambiguous: boolean; alias?: string } {
   const comma = cleaned.indexOf(',');
   if (comma < 1) return { ambiguous: false };
   const lastTokens = normalizeName(cleaned.slice(0, comma)).split(' ').filter(Boolean);
@@ -123,11 +129,11 @@ function resolveExplicitCommaName(
   return { ambiguous: candidates.length > 1, alias: lastTokens.join(' ') };
 }
 
-export function buildPageAliases(
+export function buildPageAliases<T extends HistoricalCommitteeVoteMember>(
   lines: readonly string[],
-  members: readonly HistoricalDeepExpansionDiscoveryMember[],
-): Map<string, HistoricalDeepExpansionDiscoveryMember | null> {
-  const aliases = new Map<string, HistoricalDeepExpansionDiscoveryMember | null>();
+  members: readonly T[],
+): Map<string, T | null> {
+  const aliases = new Map<string, T | null>();
   for (const line of lines) {
     if (!line.includes(',') || line.length > 120) continue;
     const resolved = resolveExplicitCommaName(stripVoteNameDecorations(line), members);
@@ -142,11 +148,11 @@ export function buildPageAliases(
   return aliases;
 }
 
-export function resolveVoteName(
+export function resolveVoteName<T extends HistoricalCommitteeVoteMember>(
   rawName: string,
-  members: readonly HistoricalDeepExpansionDiscoveryMember[],
-  pageAliases: PageAliasMap,
-): { member?: HistoricalDeepExpansionDiscoveryMember; ambiguous: boolean } {
+  members: readonly T[],
+  pageAliases: PageAliasMap<T>,
+): { member?: T; ambiguous: boolean } {
   const cleaned = stripVoteNameDecorations(rawName);
   if (!cleaned) return { ambiguous: false };
   if (cleaned.includes(',')) return resolveExplicitCommaName(cleaned, members);
