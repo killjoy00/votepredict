@@ -1,6 +1,14 @@
 name: Revisor process-history direct backfill
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/run-direct-revisor-process-backfill.ts'
+      - 'src/operations/revisor-process-backfill.ts'
+      - 'src/sources/minnesota/revisor-process.ts'
+      - '.github/workflows/revisor-process-backfill.yml'
   workflow_dispatch:
 
 permissions:
