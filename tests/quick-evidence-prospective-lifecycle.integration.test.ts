@@ -28,7 +28,7 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
   try {
     await client.query('CREATE SCHEMA ' + schema);
     await client.query('SET search_path TO ' + schema);
-    await client.query(\`
+    await client.query(`
       CREATE TABLE legislative_sessions (
         id uuid PRIMARY KEY,
         slug text NOT NULL,
@@ -131,7 +131,7 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
         resolved_at timestamptz NOT NULL DEFAULT now(),
         metadata jsonb NOT NULL DEFAULT '{}'
       );
-    \`);
+    `);
 
     const sessionId = '10000000-0000-0000-0000-000000000001';
     const chamberId = '10000000-0000-0000-0000-000000000002';
@@ -148,7 +148,7 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
     const evidence2 = '10000000-0000-0000-0000-000000000013';
     const voteId = '10000000-0000-0000-0000-000000000014';
 
-    await client.query(\`
+    await client.query(`
       INSERT INTO legislative_sessions VALUES ($1, '2027-2028', '2027-01-01');
       INSERT INTO chambers VALUES ($2, 'house', 'House');
       INSERT INTO bills VALUES ($3, $1, 'HF1', '{}');
@@ -180,7 +180,7 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
       INSERT INTO forecast_member_predictions(revision_id,membership_id,yes_probability,context) VALUES
         ($9,$4,0.55,'[]'),($9,$5,0.45,'[]');
       INSERT INTO forecast_schedules(forecast_id,enabled) VALUES ($8,true);
-    \`, [
+    `, [
       sessionId,chamberId,billId,member1,member2,legislator1,legislator2,
       forecastId,revisionId,source1,source2,evidence1,evidence2,
     ]);
@@ -269,12 +269,12 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
     assert.equal(capture.changedMembers, 1);
     assert.equal(capture.membersWithDirectionalEvidence, 1);
 
-    const captured = await client.query(\`
+    const captured = await client.query(`
       SELECT membership_id::text, context
         FROM forecast_member_predictions
        WHERE revision_id=$1::uuid
        ORDER BY membership_id
-    \`, [revisionId]);
+    `, [revisionId]);
     assert.equal(captured.rows.length, 2);
     const shadows = captured.rows.map((row) =>
       (row.context as Array<Record<string, unknown>>)
@@ -286,13 +286,13 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
     assert.equal(member2Shadow.candidateProbability, member2Shadow.baseProbability);
     assert.equal(member2Shadow.features.committeeRecommendsPassageAye, 1);
 
-    await client.query(\`
+    await client.query(`
       INSERT INTO vote_events(
         id,session_id,chamber_id,bill_id,is_passage,vote_kind,occurred_on,passed,yea_count,nay_count
       ) VALUES ($1,$2,$3,$4,true,'passage','2027-02-05',true,1,1);
       INSERT INTO member_votes VALUES
         ($1,$5,'yea'),($1,$6,'nay');
-    \`, [voteId,sessionId,chamberId,billId,member1,member2]);
+    `, [voteId,sessionId,chamberId,billId,member1,member2]);
 
     await resolveSafeForecastOutcome({
       forecastId,
