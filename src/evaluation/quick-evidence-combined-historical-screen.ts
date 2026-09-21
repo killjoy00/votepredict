@@ -200,8 +200,9 @@ function targetByEvent(targets: readonly QuickReplayEvent[]): Map<string, QuickR
 }
 
 function emptyRaw(): Record<QuickEvidenceCombinedFeatureName, number> {
-  return Object.fromEntries(QUICK_EVIDENCE_COMBINED_FEATURES.map((name) => [name, 0]))
-    as Record<QuickEvidenceCombinedFeatureName, number>;
+  return Object.fromEntries(
+    QUICK_EVIDENCE_COMBINED_FEATURES.map((name) => [name, 0]),
+  ) as Record<QuickEvidenceCombinedFeatureName, number>;
 }
 
 function numericMetadata(value: unknown): number | undefined {
