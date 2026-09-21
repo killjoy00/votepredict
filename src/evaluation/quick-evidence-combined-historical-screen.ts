@@ -14,6 +14,7 @@ import {
 import { loadHistoricalQuickReplayDataset } from './historical-quick-replay-dataset';
 import { runHistoricalQuickDecayShadowReplay } from './historical-quick-decay-shadow-replay';
 import {
+  HISTORICAL_QUICK_REPLAY_VERSION,
   scoreHistoricalQuickReplay,
   type HistoricalQuickReplayEventResult,
   type HistoricalQuickReplayScorecard,
@@ -23,7 +24,7 @@ import {
 export const QUICK_EVIDENCE_COMBINED_SCREEN_INPUT_SCHEMA =
   'quick-evidence-combined-historical-screen-input-v1' as const;
 export const QUICK_EVIDENCE_COMBINED_SCREEN_SCHEMA =
-  'quick-evidence-combined-historical-screen-v1' as const;
+  'quick-evidence-combined-historical-robustness-v2' as const;
 
 const HALF_LIFE_DAYS = 180;
 const TRAIN_SESSION = '2021-2022' as const;
@@ -504,6 +505,99 @@ function memberSlice(
   };
 }
 
+function average(values: readonly number[]): number | null {
+  return values.length > 0 ? values.reduce((sum, value) => sum + value, 0) / values.length : null;
+}
+
+function robustnessMemberMetrics(
+  observations: readonly Observation[],
+  beta: readonly number[],
+) {
+  const eventGroups = new Map<string, Observation[]>();
+  const chamberGroups = new Map<string, Observation[]>();
+  for (const row of observations) {
+    const byEvent = eventGroups.get(row.eventId) ?? [];
+    byEvent.push(row);
+    eventGroups.set(row.eventId, byEvent);
+    const byChamber = chamberGroups.get(row.chamber) ?? [];
+    byChamber.push(row);
+    chamberGroups.set(row.chamber, byChamber);
+  }
+
+  const scoreGroup = (rows: readonly Observation[]) => {
+    const baseline = rows.map((row) => ({ probability: row.baseProbability, outcome: row.outcome }));
+    const candidate = rows.map((row) => ({
+      probability: applyOffset(row.baseProbability, row.features, beta),
+      outcome: row.outcome,
+    }));
+    return {
+      observations: rows.length,
+      baselineBrier: brierScore(baseline),
+      candidateBrier: brierScore(candidate),
+      brierDelta: brierScore(candidate) - brierScore(baseline),
+      baselineLogLoss: logLoss(baseline),
+      candidateLogLoss: logLoss(candidate),
+      logLossDelta: logLoss(candidate) - logLoss(baseline),
+    };
+  };
+
+  const eventScores = [...eventGroups.entries()].map(([eventId, rows]) => ({
+    eventId,
+    ...scoreGroup(rows),
+  }));
+  const chamberScores = [...chamberGroups.entries()].sort(([left], [right]) => left.localeCompare(right))
+    .map(([chamber, rows]) => ({ chamber, ...scoreGroup(rows) }));
+
+  return {
+    eventBalanced: {
+      events: eventScores.length,
+      baselineBrier: average(eventScores.map((row) => row.baselineBrier)),
+      candidateBrier: average(eventScores.map((row) => row.candidateBrier)),
+      brierDelta: average(eventScores.map((row) => row.brierDelta)),
+      baselineLogLoss: average(eventScores.map((row) => row.baselineLogLoss)),
+      candidateLogLoss: average(eventScores.map((row) => row.candidateLogLoss)),
+      logLossDelta: average(eventScores.map((row) => row.logLossDelta)),
+    },
+    chamberBalanced: {
+      chambers: chamberScores.length,
+      baselineBrier: average(chamberScores.map((row) => row.baselineBrier)),
+      candidateBrier: average(chamberScores.map((row) => row.candidateBrier)),
+      brierDelta: average(chamberScores.map((row) => row.brierDelta)),
+      baselineLogLoss: average(chamberScores.map((row) => row.baselineLogLoss)),
+      candidateLogLoss: average(chamberScores.map((row) => row.candidateLogLoss)),
+      logLossDelta: average(chamberScores.map((row) => row.logLossDelta)),
+      byChamber: chamberScores,
+    },
+  };
+}
+
+function leaveOneFailedPassageEventOut(
+  baseline: readonly HistoricalQuickReplayEventResult[],
+  candidate: readonly HistoricalQuickReplayEventResult[],
+  targets: ReadonlyMap<string, QuickReplayEvent>,
+) {
+  const failures = baseline.filter((event) =>
+    event.session === VALIDATION_SESSION && event.status === 'replayable' && event.passed === false);
+  return failures.map((failure) => {
+    const baselineWithout = baseline.filter((event) =>
+      event.session === VALIDATION_SESSION && event.voteEventId !== failure.voteEventId);
+    const candidateWithout = candidate.filter((event) =>
+      event.session === VALIDATION_SESSION && event.voteEventId !== failure.voteEventId);
+    const baselineScore = scoreHistoricalQuickReplay(baselineWithout).overall;
+    const candidateScore = scoreHistoricalQuickReplay(candidateWithout).overall;
+    const target = targets.get(failure.voteEventId);
+    return {
+      omittedVoteEventId: failure.voteEventId,
+      identifier: target?.identifier ?? null,
+      chamber: failure.chamber,
+      occurredOn: failure.occurredOn,
+      baseline: baselineScore,
+      candidate: candidateScore,
+      deltaCandidateMinusBaseline: scoreDelta(candidateScore, baselineScore),
+    };
+  });
+}
+
 function coefficientObject(beta: readonly number[]) {
   return Object.fromEntries(QUICK_EVIDENCE_COMBINED_FEATURES.map((name, index) => [name, beta[index]]));
 }
@@ -615,10 +709,9 @@ export async function evaluateQuickEvidenceCombinedHistoricalScreen(
          AND ei.membership_id IS NOT NULL
          AND ei.published_at IS NOT NULL
          AND ei.metadata->>'subtype' IN ('floor_amendment_offer','conference_conferee','legislative_speech')
-         AND (
-           ei.metadata->>'asOfEligible'='true'
-           OR ei.metadata->>'subtype'='legislative_speech'
-         )
+         AND ei.metadata->>'asOfEligible' IS DISTINCT FROM 'false'
+         AND ei.published_at::date >= s.starts_on
+         AND (b.introduced_at IS NULL OR ei.published_at::date >= b.introduced_at::date)
          AND s.slug IN ('2021-2022','2023-2024','2025-2026')
        ORDER BY ei.bill_id,ei.membership_id,ei.published_at,ei.id
     `, [targetBillIds]),
@@ -643,6 +736,8 @@ export async function evaluateQuickEvidenceCombinedHistoricalScreen(
          AND ei.published_at IS NOT NULL
          AND ei.metadata->>'subtype'='bill_summary_version'
          AND ei.metadata->>'asOfEligible'='true'
+         AND ei.published_at::date >= s.starts_on
+         AND (b.introduced_at IS NULL OR ei.published_at::date >= b.introduced_at::date)
          AND s.slug IN ('2021-2022','2023-2024','2025-2026')
        GROUP BY ei.bill_id
     `, [targetBillIds]),
@@ -811,12 +906,14 @@ export async function evaluateQuickEvidenceCombinedHistoricalScreen(
   const common = {
     schemaVersion: QUICK_EVIDENCE_COMBINED_SCREEN_SCHEMA,
     generatedAt: new Date().toISOString(),
-    purpose: 'frozen combined retrospective diagnostic for all leakage-safe historically reconstructable Quick Evidence families under quick-evidence-v1',
+    purpose: 'historical Quick replay v2 robustness audit of the previously frozen combined Quick Evidence hypothesis; not a new independent validation set',
     metadata: {
       codeSha: options.codeSha ?? null,
       servingBaseline: 'member-eb-v1.2-decay180',
       quickEvidenceCandidate: 'quick-evidence-v1',
-      sourcePlan: 'quick-evidence-combined-historical-screen-plan-v1',
+      sourcePlan: 'quick-evidence-combined-historical-robustness-plan-v2',
+      historicalReplayVersion: HISTORICAL_QUICK_REPLAY_VERSION,
+      independentValidationSet: false,
       memberHistoryHalfLifeDays: HALF_LIFE_DAYS,
       trainSession: TRAIN_SESSION,
       validationSession: VALIDATION_SESSION,
@@ -833,6 +930,14 @@ export async function evaluateQuickEvidenceCombinedHistoricalScreen(
         'fiscalNoteContext',
       ],
       sameDayPolicy: 'strictly excluded where historical ordering is date-granular',
+      historicalAvailabilityCorrections: {
+        mutableCurrentBillTitleUsed: false,
+        persistedHistoricalFeatureSetsUsed: false,
+        currentCompanionMetadataUsed: false,
+        companionSource: 'dated legislative_stage_events companion_reference strictly before target vote',
+        asOfEligibleFalseEvidenceExcluded: true,
+        billEvidenceMustNotPredateSessionOrIntroduction: true,
+      },
       productionAction: 'none',
       servingQuickChanged: false,
       automaticPromotion: false,
@@ -887,6 +992,12 @@ export async function evaluateQuickEvidenceCombinedHistoricalScreen(
     descriptiveTest: scoreDelta(candidateScores.descriptiveTest, baselineScores.descriptiveTest),
   };
   const validationObservations = observations.filter((row) => row.session === VALIDATION_SESSION);
+  const robustnessMember = robustnessMemberMetrics(validationObservations, selected.beta);
+  const leaveOneFailedPassageOut = leaveOneFailedPassageEventOut(
+    baseline,
+    selected.replay,
+    targets,
+  );
   const hypothesisSignal = deltas.validation.memberBrier <= -0.0005
     && deltas.validation.memberLogLoss <= 0
     && deltas.validation.chamberMeanAbsoluteYesError <= 0.25
@@ -952,6 +1063,29 @@ export async function evaluateQuickEvidenceCombinedHistoricalScreen(
         candidate: scoreBySessionChamber(selected.replay, VALIDATION_SESSION, 'senate'),
       },
     },
+    robustness: {
+      memberMetrics: robustnessMember,
+      passageByChamber: {
+        house: {
+          baseline: scoreBySessionChamber(baseline, VALIDATION_SESSION, 'house'),
+          candidate: scoreBySessionChamber(selected.replay, VALIDATION_SESSION, 'house'),
+          deltaCandidateMinusBaseline: scoreDelta(
+            scoreBySessionChamber(selected.replay, VALIDATION_SESSION, 'house'),
+            scoreBySessionChamber(baseline, VALIDATION_SESSION, 'house'),
+          ),
+        },
+        senate: {
+          baseline: scoreBySessionChamber(baseline, VALIDATION_SESSION, 'senate'),
+          candidate: scoreBySessionChamber(selected.replay, VALIDATION_SESSION, 'senate'),
+          deltaCandidateMinusBaseline: scoreDelta(
+            scoreBySessionChamber(selected.replay, VALIDATION_SESSION, 'senate'),
+            scoreBySessionChamber(baseline, VALIDATION_SESSION, 'senate'),
+          ),
+        },
+      },
+      leaveOneFailedPassageEventOut: leaveOneFailedPassageOut,
+      selectionRetunedForRobustness: false,
+    },
     ablations,
     conclusion: {
       productionAction: 'none',
@@ -960,8 +1094,8 @@ export async function evaluateQuickEvidenceCombinedHistoricalScreen(
       hypothesisSignal,
       reason: hypothesisSignal ? 'frozen_thresholds_cleared' : 'frozen_thresholds_not_cleared',
       note: hypothesisSignal
-        ? 'The combined historical evidence candidate cleared the frozen diagnostic thresholds. This can justify prospective measurement or a separately frozen promotion protocol only; it does not change serving Quick.'
-        : 'The combined historical evidence candidate did not clear every frozen diagnostic threshold. Serving Quick remains unchanged.',
+        ? 'The corrected historical-v2 robustness audit clears the old frozen thresholds, but the validation outcomes were already observed; this is not independent promotion evidence and cannot change serving Quick.'
+        : 'The corrected historical-v2 robustness audit does not clear every old frozen threshold. Serving Quick remains unchanged.',
     },
   };
 }
