@@ -21,6 +21,7 @@ interface ProcessBackfillBillRow {
   session_slug: string;
   identifier: string;
   source_url: string | null;
+  existing_introduced_at: string | null;
 }
 
 interface FetchedProcessBill extends ProcessBackfillBillRow {
@@ -86,7 +87,8 @@ async function selectBatch(limit: number): Promise<ProcessBackfillBillRow[]> {
            b.session_id::text AS session_id,
            s.slug AS session_slug,
            b.identifier,
-           b.source_url
+           b.source_url,
+           b.introduced_at::text AS existing_introduced_at
       FROM bills b
       JOIN legislative_sessions s ON s.id = b.session_id
       JOIN jurisdictions j ON j.id = s.jurisdiction_id AND j.slug = 'us-mn'
@@ -115,6 +117,27 @@ export function revisorProcessStatusUrls(
   ])];
 }
 
+const PRE_INTRO_FORBIDDEN_STAGE_KINDS = new Set<RevisorProcessEvent['stageKind']>([
+  'committee_referral',
+  'committee_report',
+  'second_reading',
+  'floor_scheduled',
+  'amendment_activity',
+  'rules_referral',
+  'cross_chamber_received',
+  'companion_reference',
+]);
+
+export function revisorProcessCandidateHasImpossiblePreIntroductionEvent(
+  events: readonly RevisorProcessEvent[],
+  existingIntroducedAt: string | null,
+): boolean {
+  const introducedOn = existingIntroducedAt?.match(/^(20\d{2}-\d{2}-\d{2})/)?.[1];
+  if (!introducedOn) return false;
+  return events.some((event) =>
+    PRE_INTRO_FORBIDDEN_STAGE_KINDS.has(event.stageKind) && event.occurredOn < introducedOn);
+}
+
 async function fetchBill(row: ProcessBackfillBillRow): Promise<ProcessBackfillFetchResult> {
   const fetchedAt = new Date().toISOString();
   const attemptedSourceUrls = revisorProcessStatusUrls(
@@ -130,6 +153,14 @@ async function fetchBill(row: ProcessBackfillBillRow): Promise<ProcessBackfillFe
   for (const sourceUrl of attemptedSourceUrls) {
     try {
       const xml = await fetchRevisorStatusXml(sourceUrl);
+      const events = parseRevisorProcessEvents({ xml, identifier: row.identifier });
+      if (revisorProcessCandidateHasImpossiblePreIntroductionEvent(events, row.existing_introduced_at)) {
+        lastPermanentFailure = {
+          reason: 'malformed',
+          message: `${row.identifier}: Revisor status candidate contains a procedural event before the stored introduction date`,
+        };
+        continue;
+      }
       return {
         ...row,
         status: 'parsed',
@@ -137,7 +168,7 @@ async function fetchBill(row: ProcessBackfillBillRow): Promise<ProcessBackfillFe
         resolvedSourceUrl: sourceUrl,
         attemptedSourceUrls,
         contentSha256: createHash('sha256').update(xml).digest('hex'),
-        events: parseRevisorProcessEvents({ xml, identifier: row.identifier }),
+        events,
       };
     } catch (error) {
       const policy = classifyRevisorProcessSourceFailure(error);
@@ -254,6 +285,11 @@ async function persistBill(row: FetchedProcessBill): Promise<number> {
         JOIN jurisdictions j ON j.id = c.jurisdiction_id AND j.slug = 'us-mn'
        WHERE c.slug IN ('house', 'senate')`);
     const chamberIds = new Map(chamberResult.rows.map((item) => [item.slug, item.id]));
+
+    await client.query(`
+      DELETE FROM legislative_stage_events
+       WHERE bill_id = $1::uuid
+         AND metadata ->> 'parserVersion' IN ('revisor-process-v1', 'revisor-process-v2')`, [row.bill_id]);
 
     let stageEvents = 0;
     for (const group of groupedEvents(row.events)) {
