@@ -25,7 +25,7 @@ test('permanent malformed Revisor documents are excludable', () => {
   assert.equal(missing.reason, 'not_found');
 });
 
-test('transient Revisor failures still stop the backfill', () => {
+test('transient Revisor failures remain retryable rather than permanent exclusions', () => {
   for (const error of [
     new Error('Minnesota Revisor bill status returned 500: https://api.revisor.mn.gov/example'),
     new Error('fetch failed'),
