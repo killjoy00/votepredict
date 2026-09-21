@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "quick-evidence-committee-rollcall-candidate-lineage-v1",
+  "extractionRunId": 35627060388,
+  "extractionHeadSha": "e5efa12f6e68daba06a241a22deabebe0892e365",
+  "candidateArtifact": {
+    "name": "quick-evidence-committee-rollcall-candidates-e5efa12f6e68daba06a241a22deabebe0892e365",
+    "id": 10652783041,
+    "digest": "sha256:0fdea28f30cb88f4d0df30e567f694d8c7ae124515a65ece802c871518c71f92"
+  },
+  "coverageObservedBeforeOutcomeScoring": {
+    "trainingMemberEventPairsWithFeatures": 3098,
+    "trainingEventsWithFeatures": 107,
+    "validationMemberEventPairsWithFeatures": 1201,
+    "validationEventsWithFeatures": 62,
+    "descriptiveMemberEventPairsWithFeatures": 531,
+    "descriptiveEventsWithFeatures": 30
+  },
+  "policy": {
+    "plan": "quick-evidence-committee-rollcall-screen-plan-v1",
+    "parser": "deterministic-house-committee-roll-call-v2",
+    "mechanicsPolicy": "mn-house-procedural-mechanics-v1",
+    "outcomeUseBeforeThisStage": "none",
+    "productionAction": "none"
+  }
+}
