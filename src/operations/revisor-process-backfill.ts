@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { pool } from '@/lib/db';
 import { fetchRevisorStatusXml } from '@/sources/minnesota/revisor-actions';
+import { buildRevisorRegularSessionStatusXmlUrls } from '@/sources/minnesota/revisor-introduction';
 import {
   parseRevisorProcessEvents,
   REVISOR_PROCESS_PARSER_VERSION,
@@ -17,13 +18,16 @@ const FETCH_CONCURRENCY = 3;
 interface ProcessBackfillBillRow {
   bill_id: string;
   session_id: string;
+  session_slug: string;
   identifier: string;
-  source_url: string;
+  source_url: string | null;
 }
 
 interface FetchedProcessBill extends ProcessBackfillBillRow {
   status: 'parsed';
   fetchedAt: string;
+  resolvedSourceUrl: string;
+  attemptedSourceUrls: string[];
   contentSha256: string;
   events: RevisorProcessEvent[];
 }
@@ -31,6 +35,7 @@ interface FetchedProcessBill extends ProcessBackfillBillRow {
 interface ExcludedProcessBill extends ProcessBackfillBillRow {
   status: 'excluded';
   fetchedAt: string;
+  attemptedSourceUrls: string[];
   exclusionReason: RevisorProcessSourceExclusionReason;
   failureMessage: string;
 }
@@ -55,6 +60,14 @@ export interface RevisorProcessBackfillVerification {
   coverage: number;
   stageEvents: number;
   stageKinds: Record<string, number>;
+  pendingBills: number;
+  bySession: Record<string, {
+    targetBills: number;
+    parsedBills: number;
+    excludedBills: number;
+    completedBills: number;
+    coverage: number;
+  }>;
   complete: boolean;
 }
 
@@ -62,50 +75,75 @@ async function selectBatch(limit: number): Promise<ProcessBackfillBillRow[]> {
   const result = await pool.query<ProcessBackfillBillRow>(`
     SELECT b.id::text AS bill_id,
            b.session_id::text AS session_id,
+           s.slug AS session_slug,
            b.identifier,
            b.source_url
       FROM bills b
       JOIN legislative_sessions s ON s.id = b.session_id
       JOIN jurisdictions j ON j.id = s.jurisdiction_id AND j.slug = 'us-mn'
      WHERE s.slug IN ('2021-2022', '2023-2024', '2025-2026')
-       AND b.source_url IS NOT NULL
+       AND b.identifier ~ '^(HF|SF)[0-9]+$'
        AND b.metadata #>> '{revisorProcessHistory,parserVersion}' IS DISTINCT FROM $1
        AND b.metadata #>> '{revisorProcessHistory,exclusionVersion}' IS DISTINCT FROM $1
-       AND EXISTS (
-         SELECT 1
-           FROM vote_events ve
-          WHERE ve.bill_id = b.id
-            AND ve.is_passage = true
-       )
-     ORDER BY b.id
+     ORDER BY s.starts_on, b.identifier
      LIMIT $2`, [REVISOR_PROCESS_PARSER_VERSION, limit]);
   return result.rows;
 }
 
+export function revisorProcessStatusUrls(
+  sessionSlug: string,
+  identifier: string,
+  storedSourceUrl?: string | null,
+): string[] {
+  return [...new Set([
+    ...(storedSourceUrl ? [storedSourceUrl] : []),
+    ...buildRevisorRegularSessionStatusXmlUrls(sessionSlug, identifier),
+  ])];
+}
+
 async function fetchBill(row: ProcessBackfillBillRow): Promise<ProcessBackfillFetchResult> {
   const fetchedAt = new Date().toISOString();
-  try {
-    const xml = await fetchRevisorStatusXml(row.source_url);
-    return {
-      ...row,
-      status: 'parsed',
-      fetchedAt,
-      contentSha256: createHash('sha256').update(xml).digest('hex'),
-      events: parseRevisorProcessEvents({ xml, identifier: row.identifier }),
-    };
-  } catch (error) {
-    const policy = classifyRevisorProcessSourceFailure(error);
-    if (policy.permanent && policy.reason) {
+  const attemptedSourceUrls = revisorProcessStatusUrls(
+    row.session_slug,
+    row.identifier,
+    row.source_url,
+  );
+  let lastPermanentFailure:
+    | { reason: RevisorProcessSourceExclusionReason; message: string }
+    | undefined;
+
+  for (const sourceUrl of attemptedSourceUrls) {
+    try {
+      const xml = await fetchRevisorStatusXml(sourceUrl);
       return {
         ...row,
-        status: 'excluded',
+        status: 'parsed',
         fetchedAt,
-        exclusionReason: policy.reason,
-        failureMessage: policy.message,
+        resolvedSourceUrl: sourceUrl,
+        attemptedSourceUrls,
+        contentSha256: createHash('sha256').update(xml).digest('hex'),
+        events: parseRevisorProcessEvents({ xml, identifier: row.identifier }),
       };
+    } catch (error) {
+      const policy = classifyRevisorProcessSourceFailure(error);
+      if (!policy.permanent || !policy.reason) {
+        throw new Error(`${row.identifier}: ${policy.message}`);
+      }
+      lastPermanentFailure = { reason: policy.reason, message: policy.message };
     }
-    throw new Error(`${row.identifier}: ${policy.message}`);
   }
+
+  if (!lastPermanentFailure) {
+    throw new Error(`${row.identifier}: no Revisor status URL candidates were available`);
+  }
+  return {
+    ...row,
+    status: 'excluded',
+    fetchedAt,
+    attemptedSourceUrls,
+    exclusionReason: lastPermanentFailure.reason,
+    failureMessage: lastPermanentFailure.message,
+  };
 }
 
 async function fetchBatch(rows: readonly ProcessBackfillBillRow[]): Promise<ProcessBackfillFetchResult[]> {
