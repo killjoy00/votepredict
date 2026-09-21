@@ -378,7 +378,8 @@ export async function verifyRevisorProcessBackfill(): Promise<RevisorProcessBack
         JOIN legislative_sessions s ON s.id = b.session_id
         JOIN jurisdictions j ON j.id = s.jurisdiction_id AND j.slug = 'us-mn'
        WHERE s.slug IN ('2021-2022', '2023-2024', '2025-2026')
-         AND b.identifier ~ '^(HF|SF)[0-9]+
+         AND b.identifier ~ '^(HF|SF)[0-9]+$'
+    )
     SELECT (SELECT count(*) FROM target)::text AS target_bills,
            (SELECT count(*) FROM bills b JOIN target t ON t.id = b.id
              WHERE b.metadata #>> '{revisorProcessHistory,parserVersion}' = $1)::text AS parsed_bills,
@@ -386,12 +387,14 @@ export async function verifyRevisorProcessBackfill(): Promise<RevisorProcessBack
              WHERE b.metadata #>> '{revisorProcessHistory,exclusionVersion}' = $1)::text AS excluded_bills,
            (SELECT count(*) FROM legislative_stage_events se JOIN target t ON t.id = se.bill_id
              WHERE se.metadata ->> 'parserVersion' = $1)::text AS stage_events`, [REVISOR_PROCESS_PARSER_VERSION]);
+
   const kinds = await pool.query<{ stage_kind: string; n: string }>(`
     SELECT stage_kind, count(*)::text AS n
       FROM legislative_stage_events
      WHERE metadata ->> 'parserVersion' = $1
      GROUP BY stage_kind
      ORDER BY stage_kind`, [REVISOR_PROCESS_PARSER_VERSION]);
+
   const sessions = await pool.query<{
     session_slug: string;
     target_bills: string;
@@ -410,50 +413,7 @@ export async function verifyRevisorProcessBackfill(): Promise<RevisorProcessBack
       JOIN legislative_sessions s ON s.id=b.session_id
       JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'
      WHERE s.slug IN ('2021-2022','2023-2024','2025-2026')
-       AND b.identifier ~ '^(HF|SF)[0-9]+
-    targetBills,
-    parsedBills,
-    excludedBills,
-    completedBills,
-    coverage: targetBills > 0 ? parsedBills / targetBills : 0,
-    stageEvents: Number(summary.rows[0]?.stage_events ?? 0),
-    stageKinds: Object.fromEntries(kinds.rows.map((row) => [row.stage_kind, Number(row.n)])),
-    pendingBills,
-    bySession,
-    complete: targetBills > 0 && completedBills === targetBills,
-  };
-}
-
-    )
-    SELECT (SELECT count(*) FROM target)::text AS target_bills,
-           (SELECT count(*) FROM bills b JOIN target t ON t.id = b.id
-             WHERE b.metadata #>> '{revisorProcessHistory,parserVersion}' = $1)::text AS parsed_bills,
-           (SELECT count(*) FROM bills b JOIN target t ON t.id = b.id
-             WHERE b.metadata #>> '{revisorProcessHistory,exclusionVersion}' = $1)::text AS excluded_bills,
-           (SELECT count(*) FROM legislative_stage_events se JOIN target t ON t.id = se.bill_id
-             WHERE se.metadata ->> 'parserVersion' = $1)::text AS stage_events`, [REVISOR_PROCESS_PARSER_VERSION]);
-  const kinds = await pool.query<{ stage_kind: string; n: string }>(`
-    SELECT stage_kind, count(*)::text AS n
-      FROM legislative_stage_events
-     WHERE metadata ->> 'parserVersion' = $1
-     GROUP BY stage_kind
-     ORDER BY stage_kind`, [REVISOR_PROCESS_PARSER_VERSION]);
-  const targetBills = Number(summary.rows[0]?.target_bills ?? 0);
-  const parsedBills = Number(summary.rows[0]?.parsed_bills ?? 0);
-  const excludedBills = Number(summary.rows[0]?.excluded_bills ?? 0);
-  const completedBills = parsedBills + excludedBills;
-  return {
-    targetBills,
-    parsedBills,
-    excludedBills,
-    completedBills,
-    coverage: targetBills > 0 ? parsedBills / targetBills : 0,
-    stageEvents: Number(summary.rows[0]?.stage_events ?? 0),
-    stageKinds: Object.fromEntries(kinds.rows.map((row) => [row.stage_kind, Number(row.n)])),
-    complete: targetBills > 0 && completedBills === targetBills,
-  };
-}
-
+       AND b.identifier ~ '^(HF|SF)[0-9]+$'
      GROUP BY s.slug
      ORDER BY s.slug`, [REVISOR_PROCESS_PARSER_VERSION]);
 
@@ -475,36 +435,7 @@ export async function verifyRevisorProcessBackfill(): Promise<RevisorProcessBack
       coverage: target > 0 ? parsed / target : 0,
     }];
   }));
-  return {
-    targetBills,
-    parsedBills,
-    excludedBills,
-    completedBills,
-    coverage: targetBills > 0 ? parsedBills / targetBills : 0,
-    stageEvents: Number(summary.rows[0]?.stage_events ?? 0),
-    stageKinds: Object.fromEntries(kinds.rows.map((row) => [row.stage_kind, Number(row.n)])),
-    complete: targetBills > 0 && completedBills === targetBills,
-  };
-}
 
-    )
-    SELECT (SELECT count(*) FROM target)::text AS target_bills,
-           (SELECT count(*) FROM bills b JOIN target t ON t.id = b.id
-             WHERE b.metadata #>> '{revisorProcessHistory,parserVersion}' = $1)::text AS parsed_bills,
-           (SELECT count(*) FROM bills b JOIN target t ON t.id = b.id
-             WHERE b.metadata #>> '{revisorProcessHistory,exclusionVersion}' = $1)::text AS excluded_bills,
-           (SELECT count(*) FROM legislative_stage_events se JOIN target t ON t.id = se.bill_id
-             WHERE se.metadata ->> 'parserVersion' = $1)::text AS stage_events`, [REVISOR_PROCESS_PARSER_VERSION]);
-  const kinds = await pool.query<{ stage_kind: string; n: string }>(`
-    SELECT stage_kind, count(*)::text AS n
-      FROM legislative_stage_events
-     WHERE metadata ->> 'parserVersion' = $1
-     GROUP BY stage_kind
-     ORDER BY stage_kind`, [REVISOR_PROCESS_PARSER_VERSION]);
-  const targetBills = Number(summary.rows[0]?.target_bills ?? 0);
-  const parsedBills = Number(summary.rows[0]?.parsed_bills ?? 0);
-  const excludedBills = Number(summary.rows[0]?.excluded_bills ?? 0);
-  const completedBills = parsedBills + excludedBills;
   return {
     targetBills,
     parsedBills,
@@ -513,6 +444,8 @@ export async function verifyRevisorProcessBackfill(): Promise<RevisorProcessBack
     coverage: targetBills > 0 ? parsedBills / targetBills : 0,
     stageEvents: Number(summary.rows[0]?.stage_events ?? 0),
     stageKinds: Object.fromEntries(kinds.rows.map((row) => [row.stage_kind, Number(row.n)])),
+    pendingBills,
+    bySession,
     complete: targetBills > 0 && completedBills === targetBills,
   };
 }
