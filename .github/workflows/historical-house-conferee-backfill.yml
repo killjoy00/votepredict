@@ -2,9 +2,6 @@ name: Historical House conferee backfill
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: [Deploy production]
-    types: [completed]
 
 permissions:
   contents: read
