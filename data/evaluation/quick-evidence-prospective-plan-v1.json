@@ -205,6 +205,24 @@
     },
     "servingProbabilityChange": "none",
     "activeWeightChange": "none",
-    "automaticPromotion": false
+    "automaticPromotion": false,
+    "historicalRobustnessAudit": {
+      "issue": 304,
+      "result": "frozen_thresholds_cleared_under_historical_quick_replay_v2",
+      "historicalReplayVersion": "historical-quick-replay-v2",
+      "workflowRunId": 35645177297,
+      "artifactId": 10659757745,
+      "artifactDigest": "sha256:a603569662891b97cdb6b9fe401e60f675d6b6b7a34aa21eea62468c2ed4afc6",
+      "independentValidationSet": false,
+      "interpretation": "Confirms the standalone committee signal survives corrected historical availability boundaries; does not authorize a serving weight or automatic promotion."
+    }
+  },
+  "historicalRobustnessAudit": {
+    "issue": 304,
+    "resultFile": "data/evaluation/quick-evidence-historical-robustness-v2-results.json",
+    "historicalReplayVersion": "historical-quick-replay-v2",
+    "independentValidationSet": false,
+    "combinedEvidenceResult": "old frozen passage-safety threshold still not cleared",
+    "implication": "Do not retune on the already-seen historical outcomes; use the prospective 40/2000/50 gate for definitive evaluation."
   }
 }
