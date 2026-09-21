@@ -10,7 +10,7 @@ import {
 } from '@/evidence/minnesota-bill-context';
 
 export const HISTORICAL_HOUSE_RESEARCH_SUMMARY_BACKFILL_VERSION =
-  'historical-house-research-summary-v3' as const;
+  'historical-house-research-summary-v4' as const;
 
 const SESSION_LEGISLATURE = {
   '2021-2022': 92,
@@ -67,13 +67,23 @@ async function loadPendingBills(session: SupportedSession, limit: number): Promi
      WHERE j.slug='us-mn'
        AND s.slug=$1
        AND b.identifier ~ '^(HF|SF)[0-9]+$'
-       AND NOT EXISTS (
-         SELECT 1
-           FROM source_documents sd
-          WHERE sd.session_id=s.id
-            AND sd.metadata->>'historicalBackfill'='true'
-            AND sd.metadata->>'sourcePolicy'='house-research-dated-summary-pdf-v1'
-            AND sd.metadata->>'billIdentifier'=b.identifier
+       AND NOT (
+         EXISTS (
+           SELECT 1
+             FROM source_documents sd
+            WHERE sd.session_id=s.id
+              AND sd.metadata->>'historicalBackfill'='true'
+              AND sd.metadata->>'sourcePolicy'='house-research-dated-summary-pdf-v1'
+              AND sd.metadata->>'billIdentifier'=b.identifier
+         )
+         OR EXISTS (
+           SELECT 1
+             FROM evidence_items marker
+            WHERE marker.bill_id=b.id
+              AND marker.metadata->>'subtype'='bill_summary_scan_marker'
+              AND marker.metadata->>'historicalBackfill'='true'
+              AND marker.metadata->>'sourcePolicy'='house-research-dated-summary-pdf-v1'
+         )
        )
      GROUP BY b.id,b.identifier
      ORDER BY min(ve.occurred_on),b.identifier
@@ -92,13 +102,23 @@ async function remainingBills(session: SupportedSession): Promise<number> {
        AND s.slug=$1
        AND b.identifier ~ '^(HF|SF)[0-9]+$'
        AND EXISTS (SELECT 1 FROM vote_events ve WHERE ve.bill_id=b.id AND ve.is_passage=true)
-       AND NOT EXISTS (
-         SELECT 1
-           FROM source_documents sd
-          WHERE sd.session_id=s.id
-            AND sd.metadata->>'historicalBackfill'='true'
-            AND sd.metadata->>'sourcePolicy'='house-research-dated-summary-pdf-v1'
-            AND sd.metadata->>'billIdentifier'=b.identifier
+       AND NOT (
+         EXISTS (
+           SELECT 1
+             FROM source_documents sd
+            WHERE sd.session_id=s.id
+              AND sd.metadata->>'historicalBackfill'='true'
+              AND sd.metadata->>'sourcePolicy'='house-research-dated-summary-pdf-v1'
+              AND sd.metadata->>'billIdentifier'=b.identifier
+         )
+         OR EXISTS (
+           SELECT 1
+             FROM evidence_items marker
+            WHERE marker.bill_id=b.id
+              AND marker.metadata->>'subtype'='bill_summary_scan_marker'
+              AND marker.metadata->>'historicalBackfill'='true'
+              AND marker.metadata->>'sourcePolicy'='house-research-dated-summary-pdf-v1'
+         )
        )
   `, [session]);
   return result.rows[0]?.remaining ?? 0;
@@ -245,6 +265,34 @@ async function processBill(session: SupportedSession, legislature: number, bill:
     unresolvedTargets += persisted.unresolvedTargets.length;
   }
 
+  const markerDraft: DurableEvidenceDraft = {
+    target: { billId: bill.id },
+    kind: 'context',
+    stance: 'neutral',
+    claim: 'Historical House Research summary coverage was checked for ' + bill.identifier + '.',
+    publishedAt: detail.fetchedAt,
+    sourceQuality: 'official',
+    relevance: 'low',
+    freshness: 'stale',
+    extractionMethod: 'deterministic-house-research-summary-scan-marker',
+    extractionVersion: HOUSE_RESEARCH_SUMMARY_PDF_PARSER_VERSION,
+    confidence: 1,
+    metadata: {
+      contextType: 'structured_public',
+      subtype: 'bill_summary_scan_marker',
+      historicalBackfill: true,
+      billIdentifier: bill.identifier,
+      summaryLinkCount: links.length,
+      asOfEligible: false,
+      contextOnly: true,
+      mechanicallyActionable: false,
+      quickEvidenceStructured: false,
+      modelWeight: 0,
+      sourcePolicy: 'house-research-dated-summary-pdf-v1',
+      evidenceSeriesKey: 'bill_summary_scan_marker:bill:' + bill.id,
+    },
+  };
+
   await persistDurableEvidence({
     sourceKind: 'house_research_bill_summary_detail_index',
     sourceUrl: detail.canonicalUrl,
@@ -260,7 +308,7 @@ async function processBill(session: SupportedSession, legislature: number, bill:
       parserVersion: HOUSE_RESEARCH_SUMMARY_PDF_PARSER_VERSION,
       sourcePolicy: 'house-research-dated-summary-pdf-v1',
     },
-  }, []);
+  }, [markerDraft]);
 
   return {
     summaryDocuments: links.length,
@@ -352,6 +400,13 @@ export async function verifyHistoricalHouseResearchSummaryBackfill() {
                   AND sd.metadata->>'historicalBackfill'='true'
                   AND sd.metadata->>'sourcePolicy'='house-research-dated-summary-pdf-v1'
                   AND sd.metadata->>'billIdentifier'=t.identifier
+             )
+             OR EXISTS (
+               SELECT 1 FROM evidence_items marker
+                WHERE marker.bill_id=t.bill_id
+                  AND marker.metadata->>'subtype'='bill_summary_scan_marker'
+                  AND marker.metadata->>'historicalBackfill'='true'
+                  AND marker.metadata->>'sourcePolicy'='house-research-dated-summary-pdf-v1'
              )
            )::text AS processed_bills,
            count(DISTINCT t.bill_id) FILTER (
