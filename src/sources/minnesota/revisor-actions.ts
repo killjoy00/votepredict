@@ -82,7 +82,7 @@ function descriptionFromFields(fields: Record<string, string>): string {
     .trim();
 }
 
-function isPassagePositive(description: string): boolean {
+export function isRevisorPassagePositive(description: string): boolean {
   const text = description.toLowerCase();
   if (/\b(?:not|never) passed\b/.test(text)) return false;
   return /\bbill was (?:re)?passed\b/.test(text)
@@ -91,7 +91,7 @@ function isPassagePositive(description: string): boolean {
     || /\bthird reading passed as amended\b/.test(text);
 }
 
-function isPassageNegative(description: string): boolean {
+export function isRevisorPassageNegative(description: string): boolean {
   const text = description.toLowerCase();
   return /\bbill was not passed\b/.test(text)
     || /\bthird reading (?:failed|not passed)\b/.test(text)
@@ -142,12 +142,12 @@ export function auditRevisorSourceChamberPassage(input: {
   const sourceChamber = input.identifier.trim().toUpperCase().startsWith('HF') ? 'house' : 'senate';
   const actions = parseRevisorOfficialActions(input.xml);
   const sourceActions = actions.filter((action) => action.chamber === sourceChamber);
-  const passageActions = sourceActions.filter((action) => isPassagePositive(action.description) || isPassageNegative(action.description));
+  const passageActions = sourceActions.filter((action) => isRevisorPassagePositive(action.description) || isRevisorPassageNegative(action.description));
   return {
     sourceChamber,
-    sourceChamberPassed: passageActions.some((action) => isPassagePositive(action.description)),
-    sourceChamberFailed: !passageActions.some((action) => isPassagePositive(action.description))
-      && passageActions.some((action) => isPassageNegative(action.description)),
+    sourceChamberPassed: passageActions.some((action) => isRevisorPassagePositive(action.description)),
+    sourceChamberFailed: !passageActions.some((action) => isRevisorPassagePositive(action.description))
+      && passageActions.some((action) => isRevisorPassageNegative(action.description)),
     classifiedActions: actions.filter((action) => action.chamber !== null).length,
     unclassifiedActions: actions.filter((action) => action.chamber === null).length,
     passageActions,
