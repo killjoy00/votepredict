@@ -50,6 +50,7 @@ interface DeferredProcessBill extends ProcessBackfillBillRow {
   fetchedAt: string;
   attemptedSourceUrls: string[];
   failureMessage: string;
+  invalidateLegacyProcessEvents: boolean;
 }
 
 type ProcessBackfillFetchResult = FetchedProcessBill | ExcludedProcessBill | DeferredProcessBill;
@@ -107,6 +108,14 @@ async function selectBatch(limit: number): Promise<ProcessBackfillBillRow[]> {
          b.metadata #>> '{revisorProcessHistory,deferredAt}' IS NULL
          OR NULLIF(b.metadata #>> '{revisorProcessHistory,deferredAt}', '')::timestamptz
               < now() - interval '6 hours'
+         OR EXISTS (
+           SELECT 1
+             FROM legislative_stage_events legacy
+            WHERE legacy.bill_id = b.id
+              AND legacy.metadata ->> 'parserVersion' = 'revisor-process-v1'
+              AND b.introduced_at IS NOT NULL
+              AND legacy.occurred_at::date < b.introduced_at::date
+         )
        )
      ORDER BY s.starts_on, b.identifier
      LIMIT $3`, [REVISOR_PROCESS_PARSER_VERSION, REVISOR_PROCESS_AUDIT_VERSION, limit]);
@@ -156,6 +165,7 @@ async function fetchBill(row: ProcessBackfillBillRow): Promise<ProcessBackfillFe
     | { reason: RevisorProcessSourceExclusionReason; message: string }
     | undefined;
   let lastTransientFailure: string | undefined;
+  let rejectedImpossibleDate = false;
 
   for (const sourceUrl of attemptedSourceUrls) {
     try {
@@ -163,6 +173,7 @@ async function fetchBill(row: ProcessBackfillBillRow): Promise<ProcessBackfillFe
       const events = parseRevisorProcessEvents({ xml, identifier: row.identifier });
       const audit = auditRevisorProcessActions({ xml, identifier: row.identifier });
       if (revisorProcessCandidateHasImpossiblePreIntroductionEvent(events, row.existing_introduced_at)) {
+        rejectedImpossibleDate = true;
         lastTransientFailure = `${row.identifier}: Revisor status candidate contains a procedural event before the stored introduction date`;
         continue;
       }
@@ -193,6 +204,7 @@ async function fetchBill(row: ProcessBackfillBillRow): Promise<ProcessBackfillFe
       fetchedAt,
       attemptedSourceUrls,
       failureMessage: lastTransientFailure,
+      invalidateLegacyProcessEvents: rejectedImpossibleDate,
     };
   }
   if (!lastPermanentFailure) {
@@ -202,6 +214,7 @@ async function fetchBill(row: ProcessBackfillBillRow): Promise<ProcessBackfillFe
       fetchedAt,
       attemptedSourceUrls,
       failureMessage: 'No Revisor status URL candidates were available',
+      invalidateLegacyProcessEvents: rejectedImpossibleDate,
     };
   }
   return {
@@ -436,29 +449,55 @@ async function persistExclusion(row: ExcludedProcessBill): Promise<void> {
 }
 
 async function persistDeferral(row: DeferredProcessBill): Promise<void> {
-  await pool.query(`
-    UPDATE bills
-       SET metadata = metadata || jsonb_build_object(
-         'revisorProcessHistory',
-         COALESCE(metadata->'revisorProcessHistory','{}'::jsonb)
-         || jsonb_build_object(
-           'status', 'deferred',
-           'deferredAt', $2::timestamptz,
-           'deferredAttempts',
-             COALESCE(NULLIF(metadata #>> '{revisorProcessHistory,deferredAttempts}', '')::integer, 0) + 1,
-           'attemptedSourceUrls', $3::jsonb,
-           'failureMessage', $4::text,
-           'currentAuthorsModelEligible', false,
-           'currentCompanionModelEligible', false
-         )
-       ),
-           updated_at = now()
-     WHERE id = $1::uuid`, [
-    row.bill_id,
-    row.fetchedAt,
-    JSON.stringify(row.attemptedSourceUrls),
-    row.failureMessage,
-  ]);
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    if (row.invalidateLegacyProcessEvents) {
+      await client.query(`
+        DELETE FROM legislative_stage_events
+         WHERE bill_id = $1::uuid
+           AND metadata ->> 'parserVersion' IN ('revisor-process-v1', 'revisor-process-v2')`, [row.bill_id]);
+    }
+    await client.query(`
+      UPDATE bills
+         SET metadata = metadata || jsonb_build_object(
+           'revisorProcessHistory',
+           (
+             CASE WHEN $5::boolean
+               THEN COALESCE(metadata->'revisorProcessHistory','{}'::jsonb)
+                    - 'parserVersion' - 'auditVersion' - 'contentSha256'
+               ELSE COALESCE(metadata->'revisorProcessHistory','{}'::jsonb)
+             END
+           )
+           || jsonb_build_object(
+             'status', 'deferred',
+             'deferredAt', $2::timestamptz,
+             'deferredAttempts',
+               COALESCE(NULLIF(metadata #>> '{revisorProcessHistory,deferredAttempts}', '')::integer, 0) + 1,
+             'attemptedSourceUrls', $3::jsonb,
+             'failureMessage', $4::text,
+             'legacyProcessEventsInvalidated', $5::boolean,
+             'classifiedActions', CASE WHEN $5::boolean THEN 0 ELSE COALESCE(NULLIF(metadata #>> '{revisorProcessHistory,classifiedActions}', '')::integer, 0) END,
+             'stageEvents', CASE WHEN $5::boolean THEN 0 ELSE COALESCE(NULLIF(metadata #>> '{revisorProcessHistory,stageEvents}', '')::integer, 0) END,
+             'currentAuthorsModelEligible', false,
+             'currentCompanionModelEligible', false
+           )
+         ),
+             updated_at = now()
+       WHERE id = $1::uuid`, [
+      row.bill_id,
+      row.fetchedAt,
+      JSON.stringify(row.attemptedSourceUrls),
+      row.failureMessage,
+      row.invalidateLegacyProcessEvents,
+    ]);
+    await client.query('COMMIT');
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 export async function backfillRevisorProcessBatch(
