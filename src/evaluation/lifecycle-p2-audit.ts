@@ -60,6 +60,9 @@ export interface LifecycleP2AuditReport {
   };
   lifecycle: {
     processStageEvents: number;
+    legacyProcessStageEvents: number;
+    legacyEventsOnParsedV2Bills: number;
+    legacyEventsBeforeIntroduction: number;
     parsedBillsWithNoClassifiedProcessEvents: number;
     eventsBeforeIntroduction: number;
     eventsAfterSessionExpiration: number;
@@ -117,6 +120,9 @@ export async function buildLifecycleP2Audit(): Promise<LifecycleP2AuditReport> {
     bills_with_other_unclassified_dated_actions: string;
     unclassified_chamber_dated_actions: string;
     process_stage_events: string;
+    legacy_process_stage_events: string;
+    legacy_events_on_parsed_v2_bills: string;
+    legacy_events_before_introduction: string;
     parsed_bills_with_no_classified_process_events: string;
     events_before_introduction: string;
     events_after_session_expiration: string;
@@ -193,6 +199,20 @@ export async function buildLifecycleP2Audit(): Promise<LifecycleP2AuditReport> {
         WHERE coalesce(NULLIF(metadata #>> '{revisorProcessHistory,otherUnclassifiedDatedActions}','')::integer,0) > 0)::text AS bills_with_other_unclassified_dated_actions,
       (SELECT coalesce(sum(NULLIF(metadata #>> '{revisorProcessHistory,unclassifiedChamberDatedActions}','')::integer),0) FROM audited)::text AS unclassified_chamber_dated_actions,
       (SELECT count(*) FROM process_events)::text AS process_stage_events,
+      (SELECT count(*)
+         FROM legislative_stage_events se
+         JOIN target t ON t.id=se.bill_id
+        WHERE se.metadata ->> 'parserVersion' = 'revisor-process-v1')::text AS legacy_process_stage_events,
+      (SELECT count(*)
+         FROM legislative_stage_events se
+         JOIN parsed p ON p.id=se.bill_id
+        WHERE se.metadata ->> 'parserVersion' = 'revisor-process-v1')::text AS legacy_events_on_parsed_v2_bills,
+      (SELECT count(*)
+         FROM legislative_stage_events se
+         JOIN target t ON t.id=se.bill_id
+        WHERE se.metadata ->> 'parserVersion' = 'revisor-process-v1'
+          AND t.introduced_at IS NOT NULL
+          AND se.occurred_at::date < t.introduced_at::date)::text AS legacy_events_before_introduction,
       (SELECT count(*) FROM parsed p
         WHERE NOT EXISTS (SELECT 1 FROM process_events pe WHERE pe.bill_id = p.id))::text AS parsed_bills_with_no_classified_process_events,
       (SELECT count(*) FROM process_events pe
@@ -393,6 +413,9 @@ export async function buildLifecycleP2Audit(): Promise<LifecycleP2AuditReport> {
 
   const lifecycle = {
     processStageEvents: Number(row.process_stage_events),
+    legacyProcessStageEvents: Number(row.legacy_process_stage_events),
+    legacyEventsOnParsedV2Bills: Number(row.legacy_events_on_parsed_v2_bills),
+    legacyEventsBeforeIntroduction: Number(row.legacy_events_before_introduction),
     parsedBillsWithNoClassifiedProcessEvents: Number(row.parsed_bills_with_no_classified_process_events),
     eventsBeforeIntroduction: Number(row.events_before_introduction),
     eventsAfterSessionExpiration: Number(row.events_after_session_expiration),
@@ -426,7 +449,13 @@ export async function buildLifecycleP2Audit(): Promise<LifecycleP2AuditReport> {
     hardFailures.push(`Action-audit coverage ${(auditCoverageOfParsed * 100).toFixed(2)}% of parsed bills is below the frozen ${(MIN_REVISOR_PROCESS_RESEARCH_COVERAGE * 100).toFixed(2)}% gate`);
   }
   if (lifecycle.eventsBeforeIntroduction > 0) {
-    hardFailures.push(`${lifecycle.eventsBeforeIntroduction} process stage event(s) occur before introduction`);
+    hardFailures.push(`${lifecycle.eventsBeforeIntroduction} v2 process stage event(s) occur before introduction`);
+  }
+  if (lifecycle.legacyEventsBeforeIntroduction > 0) {
+    hardFailures.push(`${lifecycle.legacyEventsBeforeIntroduction} legacy v1 process stage event(s) still occur before introduction`);
+  }
+  if (lifecycle.legacyEventsOnParsedV2Bills > 0) {
+    hardFailures.push(`${lifecycle.legacyEventsOnParsedV2Bills} legacy v1 process stage event(s) remain on bills already parsed by v2`);
   }
   if (lifecycle.eventsAfterSessionExpiration > 0) {
     hardFailures.push(`${lifecycle.eventsAfterSessionExpiration} process stage event(s) occur after session expiration`);
