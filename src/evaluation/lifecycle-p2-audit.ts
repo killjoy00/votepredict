@@ -72,6 +72,8 @@ export interface LifecycleP2AuditReport {
     authoritativePassagesMissingProcessPassage: number;
     authoritativeNonPassagesWithProcessPassage: number;
     authoritativeNonPassagesMissingSessionExpiration: number;
+    authoritativeNonPassagesWithFailedSourceVoteNoExpiration: number;
+    authoritativeNonPassagesMissingTerminalEvidence: number;
     authoritativePassagesWithSessionExpiration: number;
   };
   stageCounts: Array<{
@@ -132,6 +134,8 @@ export async function buildLifecycleP2Audit(): Promise<LifecycleP2AuditReport> {
     authoritative_passages_missing_process_passage: string;
     authoritative_non_passages_with_process_passage: string;
     authoritative_non_passages_missing_session_expiration: string;
+    authoritative_non_passages_with_failed_source_vote_no_expiration: string;
+    authoritative_non_passages_missing_terminal_evidence: string;
     authoritative_passages_with_session_expiration: string;
   }>(`
     WITH target AS (
@@ -172,6 +176,16 @@ export async function buildLifecycleP2Audit(): Promise<LifecycleP2AuditReport> {
         FROM legislative_stage_events se
         JOIN target t ON t.id = se.bill_id
        WHERE se.metadata ->> 'parserVersion' = $1
+    ),
+    failed_source_votes AS (
+      SELECT DISTINCT ve.bill_id
+        FROM vote_events ve
+        JOIN target t ON t.id=ve.bill_id
+       WHERE ve.is_passage=true
+         AND ve.chamber_id = (
+           SELECT b.originating_chamber_id FROM bills b WHERE b.id=ve.bill_id
+         )
+         AND ve.passed=false
     )
     SELECT
       (SELECT count(*) FROM target)::text AS target_bills,
@@ -240,6 +254,14 @@ export async function buildLifecycleP2Audit(): Promise<LifecycleP2AuditReport> {
       (SELECT count(*) FROM target t
         WHERE t.metadata #>> '{sourceChamberPassage,outcome}' = 'false'
           AND NOT EXISTS (SELECT 1 FROM expirations e WHERE e.bill_id = t.id))::text AS authoritative_non_passages_missing_session_expiration,
+      (SELECT count(*) FROM target t
+        WHERE t.metadata #>> '{sourceChamberPassage,outcome}' = 'false'
+          AND NOT EXISTS (SELECT 1 FROM expirations e WHERE e.bill_id = t.id)
+          AND EXISTS (SELECT 1 FROM failed_source_votes fv WHERE fv.bill_id=t.id))::text AS authoritative_non_passages_with_failed_source_vote_no_expiration,
+      (SELECT count(*) FROM target t
+        WHERE t.metadata #>> '{sourceChamberPassage,outcome}' = 'false'
+          AND NOT EXISTS (SELECT 1 FROM expirations e WHERE e.bill_id = t.id)
+          AND NOT EXISTS (SELECT 1 FROM failed_source_votes fv WHERE fv.bill_id=t.id))::text AS authoritative_non_passages_missing_terminal_evidence,
       (SELECT count(*) FROM target t
         WHERE t.metadata #>> '{sourceChamberPassage,outcome}' = 'true'
           AND EXISTS (SELECT 1 FROM expirations e WHERE e.bill_id = t.id))::text AS authoritative_passages_with_session_expiration
@@ -425,6 +447,8 @@ export async function buildLifecycleP2Audit(): Promise<LifecycleP2AuditReport> {
     authoritativePassagesMissingProcessPassage: Number(row.authoritative_passages_missing_process_passage),
     authoritativeNonPassagesWithProcessPassage: Number(row.authoritative_non_passages_with_process_passage),
     authoritativeNonPassagesMissingSessionExpiration: Number(row.authoritative_non_passages_missing_session_expiration),
+    authoritativeNonPassagesWithFailedSourceVoteNoExpiration: Number(row.authoritative_non_passages_with_failed_source_vote_no_expiration),
+    authoritativeNonPassagesMissingTerminalEvidence: Number(row.authoritative_non_passages_missing_terminal_evidence),
     authoritativePassagesWithSessionExpiration: Number(row.authoritative_passages_with_session_expiration),
   };
 
@@ -466,8 +490,8 @@ export async function buildLifecycleP2Audit(): Promise<LifecycleP2AuditReport> {
   if (lifecycle.authoritativeNonPassagesWithProcessPassage > 0) {
     hardFailures.push(`${lifecycle.authoritativeNonPassagesWithProcessPassage} authoritative non-passage label(s) conflict with a source-chamber passage action in audited process history`);
   }
-  if (lifecycle.authoritativeNonPassagesMissingSessionExpiration > 0) {
-    hardFailures.push(`${lifecycle.authoritativeNonPassagesMissingSessionExpiration} authoritative non-passage bill(s) lack a session-expiration terminal event`);
+  if (lifecycle.authoritativeNonPassagesMissingTerminalEvidence > 0) {
+    hardFailures.push(`${lifecycle.authoritativeNonPassagesMissingTerminalEvidence} authoritative non-passage bill(s) lack both session-expiration and an explicit failed source-chamber passage vote`);
   }
 
   return {
@@ -510,7 +534,8 @@ export async function buildLifecycleP2Audit(): Promise<LifecycleP2AuditReport> {
       taxonomyReviewRequired: actionAudit.otherUnclassifiedDatedActions > 0
         || actionAudit.unclassifiedChamberDatedActions > 0,
       postTerminalReviewRequired: lifecycle.eventsAfterSourceChamberPassage > 0
-        || lifecycle.authoritativePassagesWithSessionExpiration > 0,
+        || lifecycle.authoritativePassagesWithSessionExpiration > 0
+        || lifecycle.authoritativeNonPassagesWithFailedSourceVoteNoExpiration > 0,
       passed: hardFailures.length === 0,
     },
   };
