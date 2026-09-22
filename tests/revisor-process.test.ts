@@ -100,7 +100,7 @@ test('process action audit separates known boundaries from genuinely unclassifie
   assert.equal(audit.officialActions, 5);
   assert.equal(audit.datedOfficialActions, 4);
   assert.equal(audit.undatedOfficialActions, 1);
-  assert.equal(audit.processClassifiedDatedActions, 2);
+  assert.equal(audit.processClassifiedDatedActions, 3);
   assert.equal(audit.introductionActions, 1);
   assert.equal(audit.sourceChamberPassageActions, 1);
   assert.equal(audit.sourceChamberFailedPassageActions, 0);
