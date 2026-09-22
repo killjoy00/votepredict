@@ -3,8 +3,11 @@ import { pool } from '@/lib/db';
 import { fetchRevisorStatusXml } from '@/sources/minnesota/revisor-actions';
 import { buildRevisorRegularSessionStatusXmlUrls } from '@/sources/minnesota/revisor-introduction';
 import {
+  auditRevisorProcessActions,
   parseRevisorProcessEvents,
+  REVISOR_PROCESS_AUDIT_VERSION,
   REVISOR_PROCESS_PARSER_VERSION,
+  type RevisorProcessActionAudit,
   type RevisorProcessEvent,
 } from '@/sources/minnesota/revisor-process';
 import {
@@ -31,6 +34,7 @@ interface FetchedProcessBill extends ProcessBackfillBillRow {
   attemptedSourceUrls: string[];
   contentSha256: string;
   events: RevisorProcessEvent[];
+  audit: RevisorProcessActionAudit;
 }
 
 interface ExcludedProcessBill extends ProcessBackfillBillRow {
@@ -94,7 +98,10 @@ async function selectBatch(limit: number): Promise<ProcessBackfillBillRow[]> {
       JOIN jurisdictions j ON j.id = s.jurisdiction_id AND j.slug = 'us-mn'
      WHERE s.slug IN ('2021-2022', '2023-2024', '2025-2026')
        AND b.identifier ~ '^(HF|SF)[0-9]+$'
-       AND b.metadata #>> '{revisorProcessHistory,parserVersion}' IS DISTINCT FROM $1
+       AND (
+         b.metadata #>> '{revisorProcessHistory,parserVersion}' IS DISTINCT FROM $1
+         OR b.metadata #>> '{revisorProcessHistory,auditVersion}' IS DISTINCT FROM $2
+       )
        AND b.metadata #>> '{revisorProcessHistory,exclusionVersion}' IS DISTINCT FROM $1
        AND (
          b.metadata #>> '{revisorProcessHistory,deferredAt}' IS NULL
@@ -102,7 +109,7 @@ async function selectBatch(limit: number): Promise<ProcessBackfillBillRow[]> {
               < now() - interval '6 hours'
        )
      ORDER BY s.starts_on, b.identifier
-     LIMIT $2`, [REVISOR_PROCESS_PARSER_VERSION, limit]);
+     LIMIT $3`, [REVISOR_PROCESS_PARSER_VERSION, REVISOR_PROCESS_AUDIT_VERSION, limit]);
   return result.rows;
 }
 
@@ -154,6 +161,7 @@ async function fetchBill(row: ProcessBackfillBillRow): Promise<ProcessBackfillFe
     try {
       const xml = await fetchRevisorStatusXml(sourceUrl);
       const events = parseRevisorProcessEvents({ xml, identifier: row.identifier });
+      const audit = auditRevisorProcessActions({ xml, identifier: row.identifier });
       if (revisorProcessCandidateHasImpossiblePreIntroductionEvent(events, row.existing_introduced_at)) {
         lastTransientFailure = `${row.identifier}: Revisor status candidate contains a procedural event before the stored introduction date`;
         continue;
@@ -166,6 +174,7 @@ async function fetchBill(row: ProcessBackfillBillRow): Promise<ProcessBackfillFe
         attemptedSourceUrls,
         contentSha256: createHash('sha256').update(xml).digest('hex'),
         events,
+        audit,
       };
     } catch (error) {
       const policy = classifyRevisorProcessSourceFailure(error);
@@ -336,12 +345,27 @@ async function persistBill(row: FetchedProcessBill): Promise<number> {
          SET metadata = metadata || jsonb_build_object(
            'revisorProcessHistory', jsonb_build_object(
              'parserVersion', $2::text,
+             'auditVersion', $8::text,
              'status', 'parsed',
              'sourceUrl', $3::text,
              'contentSha256', $4::text,
              'fetchedAt', $5::timestamptz,
              'classifiedActions', $6::integer,
              'stageEvents', $7::integer,
+             'officialActions', $9::integer,
+             'datedOfficialActions', $10::integer,
+             'undatedOfficialActions', $11::integer,
+             'processClassifiedDatedActions', $12::integer,
+             'introductionActions', $13::integer,
+             'sourceChamberPassageActions', $14::integer,
+             'sourceChamberFailedPassageActions', $15::integer,
+             'otherUnclassifiedDatedActions', $16::integer,
+             'unclassifiedChamberDatedActions', $17::integer,
+             'sourceChamberPassed', $18::boolean,
+             'sourceChamberFailed', $19::boolean,
+             'sourceChamberPassageOn', $20::text,
+             'sourceChamberFailureOn', $21::text,
+             'otherUnclassifiedDatedActionDescriptions', $22::jsonb,
              'currentAuthorsModelEligible', false,
              'currentCompanionModelEligible', false
            )
@@ -355,6 +379,21 @@ async function persistBill(row: FetchedProcessBill): Promise<number> {
       row.fetchedAt,
       row.events.length,
       stageEvents,
+      REVISOR_PROCESS_AUDIT_VERSION,
+      row.audit.officialActions,
+      row.audit.datedOfficialActions,
+      row.audit.undatedOfficialActions,
+      row.audit.processClassifiedDatedActions,
+      row.audit.introductionActions,
+      row.audit.sourceChamberPassageActions,
+      row.audit.sourceChamberFailedPassageActions,
+      row.audit.otherUnclassifiedDatedActions,
+      row.audit.unclassifiedChamberDatedActions,
+      row.audit.sourceChamberPassed,
+      row.audit.sourceChamberFailed,
+      row.audit.sourceChamberPassageOn,
+      row.audit.sourceChamberFailureOn,
+      JSON.stringify(row.audit.otherUnclassifiedDatedActionDescriptions),
     ]);
 
     await client.query('COMMIT');
