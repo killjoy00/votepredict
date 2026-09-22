@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { parseRevisorProcessEvents } from '../src/sources/minnesota/revisor-process.js';
+import { auditRevisorProcessActions, parseRevisorProcessEvents } from '../src/sources/minnesota/revisor-process.js';
 
 const xml = `<?xml version="1.0"?>
 <BILL>
@@ -79,4 +79,46 @@ test('an explicitly dated substitute reference can prove historical companion co
   const events = parseRevisorProcessEvents({ xml: substitute, identifier: 'SF77' });
   const companion = events.find((event) => event.stageKind === 'companion_reference');
   assert.deepEqual(companion?.companionIdentifiers, ['HF123']);
+});
+
+
+test('process action audit separates known boundaries from genuinely unclassified dated actions', () => {
+  const auditXml = `<BILL>
+    <ACTIONS>
+      <HOUSE>
+        <ACTION><ACTION_DATE>2023-01-10</ACTION_DATE><ACTION_TEXT>Introduction and first reading, referred to Judiciary</ACTION_TEXT></ACTION>
+        <ACTION><ACTION_DATE>2023-02-10</ACTION_DATE><ACTION_TEXT>Committee report, to adopt as amended</ACTION_TEXT></ACTION>
+        <ACTION><ACTION_DATE>2023-03-10</ACTION_DATE><ACTION_TEXT>Bill was passed as amended</ACTION_TEXT></ACTION>
+        <ACTION><ACTION_DATE>2023-03-11</ACTION_DATE><ACTION_TEXT>Administrative status notation</ACTION_TEXT></ACTION>
+        <ACTION><ACTION_TEXT>Undated current status note</ACTION_TEXT></ACTION>
+      </HOUSE>
+    </ACTIONS>
+  </BILL>`;
+
+  const audit = auditRevisorProcessActions({ xml: auditXml, identifier: 'HF42' });
+
+  assert.equal(audit.officialActions, 5);
+  assert.equal(audit.datedOfficialActions, 4);
+  assert.equal(audit.undatedOfficialActions, 1);
+  assert.equal(audit.processClassifiedDatedActions, 3);
+  assert.equal(audit.introductionActions, 1);
+  assert.equal(audit.sourceChamberPassageActions, 1);
+  assert.equal(audit.sourceChamberFailedPassageActions, 0);
+  assert.equal(audit.sourceChamberPassed, true);
+  assert.equal(audit.sourceChamberPassageOn, '2023-03-10');
+  assert.equal(audit.otherUnclassifiedDatedActions, 1);
+  assert.deepEqual(audit.otherUnclassifiedDatedActionDescriptions, ['Administrative status notation']);
+});
+
+test('failed source-chamber passage is retained as a terminal audit fact without becoming a positive passage', () => {
+  const auditXml = `<BILL><ACTIONS><SENATE>
+    <ACTION><ACTION_DATE>2024-05-01</ACTION_DATE><ACTION_TEXT>Third reading failed</ACTION_TEXT></ACTION>
+  </SENATE></ACTIONS></BILL>`;
+  const audit = auditRevisorProcessActions({ xml: auditXml, identifier: 'SF77' });
+
+  assert.equal(audit.sourceChamberPassed, false);
+  assert.equal(audit.sourceChamberFailed, true);
+  assert.equal(audit.sourceChamberFailedPassageActions, 1);
+  assert.equal(audit.sourceChamberFailureOn, '2024-05-01');
+  assert.equal(audit.otherUnclassifiedDatedActions, 0);
 });
