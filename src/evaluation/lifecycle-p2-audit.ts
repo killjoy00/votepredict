@@ -142,6 +142,7 @@ export async function buildLifecycleP2Audit(): Promise<LifecycleP2AuditReport> {
       SELECT b.id,
              b.identifier,
              b.introduced_at,
+             b.originating_chamber_id,
              b.metadata,
              s.slug AS session_slug,
              s.starts_on,
@@ -182,9 +183,7 @@ export async function buildLifecycleP2Audit(): Promise<LifecycleP2AuditReport> {
         FROM vote_events ve
         JOIN target t ON t.id=ve.bill_id
        WHERE ve.is_passage=true
-         AND ve.chamber_id = (
-           SELECT b.originating_chamber_id FROM bills b WHERE b.id=ve.bill_id
-         )
+         AND ve.chamber_id = t.originating_chamber_id
          AND ve.passed=false
     )
     SELECT
