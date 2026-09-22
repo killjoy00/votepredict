@@ -41,7 +41,8 @@
     "eval:historical-quick-replay": "tsx scripts/evaluate-historical-quick-replay.ts",
     "forecasts:scheduled": "tsx scripts/run-scheduled-forecasts.ts",
     "eval:coalition-chamber": "tsx scripts/evaluate-coalition-chamber.ts",
-    "eval:gambling:diagnose": "tsx scripts/diagnose-gambling-model.ts"
+    "eval:gambling:diagnose": "tsx scripts/diagnose-gambling-model.ts",
+    "audit:lifecycle:p2": "tsx scripts/audit-lifecycle-p2.ts"
   },
   "dependencies": {
     "@neondatabase/auth": "0.5.0-beta",

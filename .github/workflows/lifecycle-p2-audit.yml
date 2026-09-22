@@ -1,0 +1,53 @@
+name: Lifecycle P2 audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      enforce_gate:
+        description: Fail the run when frozen P2 data-quality gates are not met
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-fund --no-audit
+
+      - name: Read production database environment privately
+        run: npx vercel env pull "${{ runner.temp }}/votepredict-production.env" --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Run read-only lifecycle P2 audit
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+          VOTEPREDICT_P2_AUDIT_OUTPUT: artifacts/lifecycle-p2-audit.json
+          VOTEPREDICT_P2_ENFORCE_GATE: ${{ inputs.enforce_gate }}
+        run: node --import tsx scripts/audit-lifecycle-p2.ts
+
+      - name: Upload lifecycle P2 audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lifecycle-p2-audit-${{ github.sha }}
+          path: artifacts/lifecycle-p2-audit.json
+          if-no-files-found: warn
+
+      - name: Remove temporary credentials
+        if: always()
+        run: rm -f "${{ runner.temp }}/votepredict-production.env"
