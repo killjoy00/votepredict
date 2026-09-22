@@ -368,6 +368,17 @@ This boundary is both a cost control and a reliability rule. Production function
 - [ ] Audit impossible dates and post-terminal events.
 - [ ] Freeze the canonical state derivation.
 
+The reproducible audit entry point is `npm run audit:lifecycle:p2`. Production-data execution uses the manual
+`Lifecycle P2 audit` GitHub Action, which pulls the production environment privately, connects directly to Neon,
+writes `artifacts/lifecycle-p2-audit.json`, and never invokes a Vercel application function. The default mode enforces
+the frozen coverage/date/passage gates; report-only mode is allowed while corpus reconstruction is incomplete.
+
+`revisor-process-v2` stores a separate `revisor-process-audit-v1` marker and bounded action-audit metadata so P2 can
+report unclassified dated actions without refetching the entire source corpus. Introduction actions, source-chamber
+passage/failure actions, process-classified actions, and other dated actions remain distinct categories. Explicit failed
+source-chamber passage votes without a synthetic expiration row are reported for terminal-state policy review rather
+than treated as unexplained missing terminal evidence.
+
 ### P3 — lifecycle snapshot dataset
 
 - [ ] Build immutable event-time snapshots for every introduced bill.
