@@ -160,9 +160,169 @@ async function main(): Promise<void> {
           JOIN bill_versions bv
             ON bv.bill_id=b.id
            AND bv.version_key=b.metadata #>> '{revisorIntroduction,initialDocument,documentName}'
-         WHERE s.slug IN ('2021-2022','2023-2024','2025-2026')
-           AND b.identifier ~ '^(HF|SF)[0-9]+$'
-         ORDER BY s.starts_on,c.slug,b.identifier`),
+         WHERE s.starts_on < '2027-01-01'::date
+           AND b.metadata ? 'revisorUniverse'
+           AND b.metadata #>> '{sourceChamberPassage,outcome}' IN ('true','false')
+           AND b.metadata #>> '{sourceChamberPassage,targetStage}' = 'source_chamber_passage'
+         ORDER BY s.starts_on,
+                  c.slug,
+                  substring(b.identifier from '[0-9]+,
+      pool.query<PreActivationRow>(`
+        SELECT
+          (SELECT count(*)
+             FROM bills b
+             JOIN legislative_sessions s ON s.id=b.session_id
+             JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'
+            WHERE s.slug='2027-2028')::text AS target_session_bills,
+          (SELECT count(*)
+             FROM bills b
+             JOIN legislative_sessions s ON s.id=b.session_id
+             JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'
+            WHERE s.slug='2027-2028'
+              AND b.metadata #>> '{sourceChamberPassage,outcome}' IS NOT NULL)::text AS strict_outcome_labels,
+          (SELECT count(*)
+             FROM forecast_revisions r
+             JOIN forecasts f ON f.id=r.forecast_id
+             JOIN legislative_sessions s ON s.id=f.session_id
+            WHERE s.slug='2027-2028')::text AS forecast_revisions,
+          (SELECT count(*)
+             FROM vote_events ve
+             JOIN legislative_sessions s ON s.id=ve.session_id
+            WHERE s.slug='2027-2028')::text AS vote_events,
+          (SELECT count(*)
+             FROM legislative_stage_events se
+             JOIN legislative_sessions s ON s.id=se.session_id
+            WHERE s.slug='2027-2028')::text AS stage_events`),
+    ]);
+
+    if (intro.rows.length !== 31_010) {
+      throw new Error(`Lifecycle P8 historical introduction population drift: ${intro.rows.length}/31010`);
+    }
+    if (intro.rows.some((row) => !row.raw_text || !row.text_hash)) {
+      throw new Error('Lifecycle P8 historical introduction corpus has missing text/hash');
+    }
+
+    const observations = intro.rows.map((row) => ({
+      billId: row.bill_id,
+      sessionSlug: row.session_slug,
+      sessionStart: row.session_start,
+      chamber: row.chamber_slug,
+      title: row.title,
+      billNumber: parseBillNumber(row.identifier),
+      outcome: row.outcome ? 1 as const : 0 as const,
+      initialText: row.model_eligible === 'true' ? row.raw_text : null,
+      initialTextAvailableAtIntroduction: row.model_eligible === 'true',
+    }));
+
+    const corpusLines = intro.rows.map((row) => [
+      row.bill_id,
+      row.session_slug,
+      row.chamber_slug,
+      row.identifier,
+      row.text_hash,
+      row.model_eligible,
+      row.outcome ? '1' : '0',
+    ].join(':'));
+    const introductionTrainingCorpusSha256 =
+      createHash('sha256').update(corpusLines.join('\n')).digest('hex');
+    if (introductionTrainingCorpusSha256 !== LIFECYCLE_P8_INTRO_TRAINING_CORPUS_SHA256) {
+      throw new Error(`Lifecycle P8 introduction training corpus changed before model freeze: ${introductionTrainingCorpusSha256}`);
+    }
+
+    const introductionModel = trainIntroductionTextModel(observations);
+    const serialized = serializeIntroductionPriorModelV4(introductionModel, {
+      targetSessionSlug: '2027-2028',
+      targetSessionStart: '2027-01-01',
+      trainedThroughSessionSlug: '2025-2026',
+      trainingSessions: ['2021-2022', '2023-2024', '2025-2026'],
+      trainingRows: intro.rows.length,
+      trainingPositives: intro.rows.filter((row) => row.outcome).length,
+      provenance: {
+        authoritativeUniverse: intro.rows.length,
+        generatedAt: new Date().toISOString(),
+        codeSha: process.env.GITHUB_SHA ?? null,
+        evaluationCommit: '7826d9696e0766abce3b58bf4ae2e4a155b7a000',
+      },
+    });
+    const { provenance: _provenance, ...introductionModelContent } = serialized;
+
+    const historicalIntroductionPredictions =
+      evaluateIntroductionTextModelChronologically(observations);
+    const stage = buildForwardChainedStagePassagePredictions(p3.snapshots);
+    const stageKeys = new Set(stage.map((row) => `${row.billId}|${row.cutoffDateExclusive}`));
+    const introduction = applyStaticIntroductionBenchmark(
+      p3.snapshots,
+      historicalIntroductionPredictions,
+    ).filter((row) => stageKeys.has(`${row.billId}|${row.cutoffDateExclusive}`));
+    const historicalP4PredictionSha256 = hashRows([...introduction, ...stage]);
+
+    const p5Rows = buildLifecycleP5Rows(p3.snapshots);
+    const p5Retained = buildForwardChainedLifecycleP5Predictions(p5Rows, {
+      model: 'core_minus_companion',
+      families: ['process_detail', 'bill_version'],
+    });
+    const historicalP5PredictionSha256 = hashRows(p5Retained);
+
+    const pre = preActivation.rows[0];
+    if (!pre) throw new Error('Lifecycle P8 pre-activation audit query returned no row');
+    const planContents = readFileSync(PLAN_PATH, 'utf8');
+    const artifact = buildLifecycleP8ProspectiveModelArtifact({
+      snapshots: p3.snapshots,
+      p3ObservedSha256: p3.manifest.snapshotContentSha256,
+      introductionModel: introductionModelContent,
+      introductionTrainingCorpusSha256,
+      historicalP4PredictionSha256,
+      historicalP5PredictionSha256,
+      planSha256: createHash('sha256').update(planContents).digest('hex'),
+      preActivation: {
+        targetSessionBills: Number(pre.target_session_bills),
+        strictOutcomeLabels: Number(pre.strict_outcome_labels),
+        forecastRevisions: Number(pre.forecast_revisions),
+        voteEvents: Number(pre.vote_events),
+        stageEvents: Number(pre.stage_events),
+      },
+      generatedAt: new Date().toISOString(),
+      codeSha: process.env.GITHUB_SHA ?? null,
+    });
+
+    const outputDir = process.env.VOTEPREDICT_P8_MODEL_OUTPUT_DIR?.trim() || DEFAULT_OUTPUT_DIR;
+    await mkdir(outputDir, { recursive: true });
+    await writeFile(join(outputDir, 'model.json'), JSON.stringify(artifact, null, 2) + '\n', 'utf8');
+    const summary = {
+      schemaVersion: artifact.schemaVersion,
+      targetSession: artifact.modelContent.targetSession,
+      planSha256: artifact.planSha256,
+      modelContentSha256: artifact.modelContentSha256,
+      p3SnapshotContentSha256: artifact.frozenUpstream.p3SnapshotContentSha256,
+      p4HistoricalPredictionSha256: artifact.frozenUpstream.p4HistoricalPredictionSha256,
+      p5HistoricalPredictionSha256: artifact.frozenUpstream.p5HistoricalPredictionSha256,
+      introductionTrainingCorpusSha256:
+        artifact.modelContent.introduction.trainingCorpusSha256,
+      introductionModelContentSha256:
+        artifact.modelContent.introduction.modelContentSha256,
+      p4TrainingRows: artifact.modelContent.p4Stage.trainingRows,
+      p5TrainingRows: Object.fromEntries(
+        Object.entries(artifact.modelContent.p5Retained.targets)
+          .map(([target, value]) => [target, value.trainingRows]),
+      ),
+      preActivation: artifact.preActivation,
+      revealNotBefore: artifact.policy.revealNotBefore,
+      servingChanged: false,
+      automaticPromotionAllowed: false,
+    };
+    await writeFile(join(outputDir, 'summary.json'), JSON.stringify(summary, null, 2) + '\n', 'utf8');
+    console.log(JSON.stringify({ lifecycleP8ProspectiveModel: summary }, null, 2));
+  } finally {
+    await pool.end();
+  }
+}
+
+main().catch((error) => {
+  console.error(safeMessage(error));
+  process.exitCode = 1;
+});
+)::integer,
+                  b.identifier`),
       pool.query<PreActivationRow>(`
         SELECT
           (SELECT count(*)
