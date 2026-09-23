@@ -390,10 +390,10 @@ synthetic expiration row. The frozen audit artifact is `lifecycle-p2-audit-v1` u
 
 ### P3 — lifecycle snapshot dataset
 
-- [ ] Build immutable event-time snapshots for every introduced bill.
-- [ ] Enforce strict cutoff eligibility in code/tests.
-- [ ] Represent terminal expiration without manufacturing member-vote labels.
-- [ ] Freeze dataset schema/version and lineage.
+- [x] Build immutable event-time snapshots for every introduced bill.
+- [x] Enforce strict cutoff eligibility in code/tests.
+- [x] Represent terminal expiration without manufacturing member-vote labels.
+- [x] Freeze dataset schema/version and lineage.
 
 P3 is implemented as a read-only artifact builder. The frozen initial schema is
 `lifecycle-p3-snapshot-v1` / `mn-2021-2026-event-time-v1`. Every feature row uses an explicit
@@ -402,6 +402,21 @@ The snapshot schema separates cutoff-safe `features` from future `targets`, keep
 all-bill lifecycle population, and records process/source lineage. Production-data execution is manual-only through
 the `Lifecycle P3 snapshot dataset` GitHub Action and writes an immutable manifest plus NDJSON snapshots; it does
 not write to Neon or change serving behavior.
+
+Frozen P3 result (2026-09-23): production-data run `35884352014` on code SHA
+`68e80e8848d6e5e4e91b1132b88a04aac82ccdc0` produced **63,974** snapshots over all **31,010** frozen bills.
+Process-parser coverage remained **30,964 / 31,010 (99.8517%)**, with the same 46 source-deferred bills retained as
+explicit missing process history rather than silently interpreted as no action. The terminal bill outcomes are
+30,345 session expirations without source-chamber passage, 11 observed source-chamber passage-vote failures without
+a synthetic expiration row, and 654 source-chamber passages. The snapshot-content SHA-256 is
+`45030a9780ce76690ea960605385f501c24047b461a82e1368a427a7267be39d`; the uploaded GitHub artifact digest is
+`sha256:8dfa18fc6734a45f9a0b25ba7a77a76d42ce7a5f5ebda8aaae8e6bd35b92c576`.
+
+The artifact contains 54,912 snapshots with a strictly cutoff-eligible dated bill-text version and 1,963 snapshots
+with reconstructable dated authorship. It contains **zero** cutoff-eligible external-evidence snapshots under the
+initial fail-closed rule requiring both durable-source fetch availability and publication availability before the
+historical cutoff. P5 may only change that zero after a source-specific historical-availability rule is separately
+proved and frozen; current/mutable evidence may not be retroactively treated as historically available.
 
 ### P4 — lifecycle baselines
 
