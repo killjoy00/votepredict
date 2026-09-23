@@ -420,10 +420,10 @@ proved and frozen; current/mutable evidence may not be retroactively treated as 
 
 ### P4 — lifecycle baselines
 
-- [ ] Score the frozen introduction prior on the exact lifecycle population.
-- [ ] Fit stage-only empirical baseline.
-- [ ] Fit stage + elapsed-time hazard baseline.
-- [ ] Compare with chronological forward-chaining.
+- [x] Score the frozen introduction prior on the exact lifecycle population.
+- [x] Fit stage-only empirical baseline.
+- [x] Fit stage + elapsed-time hazard baseline.
+- [x] Compare with chronological forward-chaining.
 
 The reproducible P4 evaluator is `npm run eval:lifecycle:p4` and the manual-only
 `Lifecycle P4 baselines` GitHub Action. It first rebuilds P3 read-only and refuses to score unless the snapshot
@@ -437,6 +437,33 @@ including the synthetic expiration event in the same binary hazard makes days-re
 sine die and would overstate legislative-process predictability. The first exploratory combined-event P4 run
 (35887005599) demonstrated that failure mode and is superseded by the competing-risk formulation before P4 is
 frozen. P4 is research-only and cannot change serving behavior.
+
+Frozen P4 result (2026-09-23): run `35888230161` on code SHA
+`1eac79a2afba0aadeb6c94522335d5586f396e33` produced the accepted
+`lifecycle-p4-baselines-v2` artifact against the exact frozen P3 snapshot hash. The forward-chained holdouts contain
+21,495 bills and 44,299 event-time snapshots. The 2025-26 v4 introduction predictions match the frozen serving
+artifact exactly (maximum delta 0).
+
+For eventual source-chamber passage across all holdout event-time snapshots, the immutable accepted introduction
+prior has Brier **0.0296529**, log loss **0.133532**, ECE **0.0119768**, AP **0.195297**, and ROC-AUC **0.779445**.
+The chamber+state empirical lifecycle baseline improves the proper probability scores to Brier **0.0269373**, log
+loss **0.119133**, and ECE **0.00283910**, while ranking falls to AP **0.165479** and ROC-AUC **0.688442**. At the
+introduction snapshot itself, v4 remains better on Brier/log loss and ranking; the lifecycle gain appears after
+process state becomes known, especially at floor-eligibility/scheduling where the observed passage rate is 34.3%.
+This is therefore evidence that coarse state is useful for probability updating, not evidence that the stage-only
+baseline should replace the accepted introduction model.
+
+For 30-day **process-progression** risk sets, stage-only yields Brier **0.00756840**, log loss **0.0428658**, AP
+**0.0256413**, and ROC-AUC **0.633180**. Adding elapsed-time + days-remaining buckets improves Brier to
+**0.00707792**, log loss to **0.0329923**, AP to **0.129082**, and ROC-AUC to **0.910342** across both later
+biennia. The separate expiration-clock diagnostic confirms why it must remain a competing terminal outcome:
+21,025 of 22,043 risk rows with <=30 days remaining terminate by session expiration, versus zero expiration positives
+outside that bucket. The earlier combined-event run `35887005599` is superseded and is not a P4 result.
+
+Frozen prediction digests are passage
+`3f64819a302de71e2d70bc5ea0f972ab1b00cf09819bdf029ce30b3f979624c7` and progression hazard
+`416d4da8c8bf159a03893499b077e2617c662cfa3368b2f728224157746a13f4`. The GitHub artifact digest is
+`sha256:e13fa73dc2e8d239e187d307b0b8cf6da024ce0c9152ca8f9ad7aab611fd8a42`.
 
 ### P5 — evidence allocation
 
