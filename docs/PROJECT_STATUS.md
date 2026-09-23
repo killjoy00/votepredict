@@ -24,7 +24,7 @@ The owner Operations page is the live production source of truth. Its Production
 
 The authoritative Minnesota introduced-bill universe contains 31,010 bills across the 2021-22, 2023-24, and 2025-26 biennia. The current/floor historical corpus contains 1,264 official passage vote events.
 
-The dated Revisor process-history corpus was originally scoped to passage-voted bills and therefore covered only 660 of the 31,010 introduced bills (659 parsed plus one explicit exclusion), with 7,819 dated process events. That selection is now being corrected under #310: process-history ingestion is being expanded to the complete introduced-bill universe so lifecycle/floor-access can be modeled separately from conditional member voting. The original floor-vote process-history screen remains a component diagnostic and did not justify changing serving probabilities.
+The dated Revisor process-history corpus has now been reconstructed across the full 31,010-bill universe under #310. The frozen P2 gate passed with 30,964 parsed/audited bills (99.8517% parser coverage), 46 explicitly source-deferred bills, zero permanent exclusions, zero pre-introduction/post-expiration hard failures, and zero passage-label mismatches. The frozen P3 artifact contains 63,974 leakage-safe event-time lifecycle snapshots with strict calendar-date-exclusive cutoffs. This is research infrastructure only and does not change serving probabilities.
 
 ## Durable public evidence
 
@@ -126,7 +126,7 @@ The production reconciliation repaired the release-integrity drift found during 
 
 ## Current gaps
 
-1. **Full-universe lifecycle coverage.** The current dated Revisor process corpus is selected around the small floor-voted subset. #310 expands official process histories to all 31,010 introduced bills, then builds leakage-safe event-time lifecycle snapshots so reach-floor probability and conditional member voting can be evaluated separately.
+1. **Lifecycle baselines and end-to-end evaluation.** Full-universe process reconstruction and the frozen P3 snapshot dataset are complete under #310. The next lifecycle step is P4: score the accepted introduction prior on the exact snapshot population, then fit stage-only and stage+elapsed-time baselines before richer evidence is considered.
 2. **Deep availability.** Deep is explicitly unavailable while AI Gateway returns `billing_required`. If Deep remains a core product mode, billing must be enabled and a successful persisted evidence/revision smoke should be required before re-enabling it.
 3. **Prospective production evidence.** The production scorecard infrastructure is built and the single unified `quick-evidence-v1` candidate is frozen for 2027-28 Quick revisions. It records the serving base probability, a bounded non-serving evidence candidate probability, and the complete as-of feature vector. The project still needs real pre-outcome forecasts that later resolve to official votes before promotion-quality scoring is possible.
 4. **Durable external-evidence breadth.** Campaign finance, campaign-site ingestion, and systematic House/Senate member-primary publication capture are durable. Generic publisher-verified news remains supplemental, but its discovery path now expands common member-name variants, allocates Bing results fairly per member, unions GDELT and Bing leads, and backs off GDELT cleanly when rate-limited. Operations now exposes news coverage and prospective-corpus accrual metrics so remaining yield gaps are measurable.
@@ -187,9 +187,9 @@ The production reconciliation repaired the release-integrity drift found during 
 
 - [x] Define the lifecycle target decomposition, state-machine rules, leakage policy, metrics, and promotion boundaries in `docs/evaluation/introduced-bill-lifecycle-program.md`.
 - [x] Record the pre-expansion process-history baseline: 31,010 introduced bills, only 660 previously classified/excluded by the process crawler, and 7,819 parser stage events.
-- [ ] Expand dated Revisor process-history ingestion from passage-voted bills to all introduced bills, deriving official status endpoints when stored URLs are absent.
-- [ ] Reach and audit the process-source coverage gate, including per-session stage counts, source exclusions, date sanity, and reconciliation with known passage/expiration outcomes.
-- [ ] Freeze and build event-time lifecycle snapshots over the complete introduced-bill universe.
+- [x] Expand dated Revisor process-history ingestion from passage-voted bills to all introduced bills, deriving official status endpoints when stored URLs are absent.
+- [x] Reach and audit the process-source coverage gate, including per-session stage counts, source exclusions, date sanity, and reconciliation with known passage/expiration outcomes.
+- [x] Freeze and build event-time lifecycle snapshots over the complete introduced-bill universe.
 - [ ] Establish stage-only and stage+elapsed-time lifecycle baselines before adding public evidence.
 - [ ] Test evidence families against the lifecycle stage they actually predict rather than forcing every signal into the conditional floor-vote model.
 - [ ] Combine lifecycle/floor-access probability with conditional member/chamber passage and score strict source-chamber passage across all introduced bills.
