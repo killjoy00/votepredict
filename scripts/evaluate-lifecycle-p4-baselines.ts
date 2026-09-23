@@ -11,7 +11,7 @@ const DATABASE_CANDIDATES = [
   'POSTGRES_URL',
 ] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
-const DEFAULT_OUTPUT_DIR = 'artifacts/lifecycle-p4-baselines-v1';
+const DEFAULT_OUTPUT_DIR = 'artifacts/lifecycle-p4-baselines-v2';
 let secretValues: string[] = [];
 
 type IntroRow = {
@@ -231,7 +231,8 @@ async function main(): Promise<void> {
         holdoutSnapshots: result.report.passage.holdoutEventTimeSnapshots,
         introductionServingParity2025MaxDelta: servingParity2025MaxDelta,
         passageAllEventTimeSnapshots: result.report.passage.allEventTimeSnapshots,
-        hazard30Day: result.report.hazard30Day.allHoldouts,
+        processProgressionHazard30Day: result.report.processProgressionHazard30Day.allHoldouts,
+        sessionExpirationClockDiagnostic: result.report.sessionExpirationClockDiagnostic,
         predictionDigests: result.report.predictionDigests,
         servingChanged: false,
       },
