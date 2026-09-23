@@ -730,16 +730,18 @@ export async function buildLifecycleP3SnapshotDataset(codeSha: string | null = n
       .sort()
       .map((state) => [state, snapshots.filter((snapshot) => snapshot.features.lifecycleState === state).length]),
   );
+  const terminalByBill = new Map<string, LifecycleTerminalOutcome>();
+  for (const snapshot of snapshots) {
+    if (!terminalByBill.has(snapshot.bill.billId)) {
+      terminalByBill.set(snapshot.bill.billId, snapshot.targets.terminalOutcome);
+    }
+  }
   const terminalCounts = Object.fromEntries(
-    [...new Set(snapshots.map((snapshot) => snapshot.targets.terminalOutcome))]
+    [...new Set(terminalByBill.values())]
       .sort()
       .map((terminalOutcome) => [
         terminalOutcome,
-        billResult.rows.filter((row) => {
-          if (terminalOutcome === 'source_chamber_passed') return row.authoritative_passage === true;
-          const billSnapshots = snapshots.filter((snapshot) => snapshot.bill.billId === row.bill_id);
-          return billSnapshots[0]?.targets.terminalOutcome === terminalOutcome;
-        }).length,
+        [...terminalByBill.values()].filter((value) => value === terminalOutcome).length,
       ]),
   );
 
