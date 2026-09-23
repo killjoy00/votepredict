@@ -1,6 +1,8 @@
 name: Lifecycle P2 audit
 
 on:
+  issue_comment:
+    types: [created, edited]
   workflow_dispatch:
     inputs:
       enforce_gate:
@@ -14,6 +16,13 @@ permissions:
 
 jobs:
   audit:
+    if: >-
+      github.event_name != 'issue_comment' ||
+      (
+        github.event.issue.number == 310 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        startsWith(github.event.comment.body, '[lifecycle-p2-audit]')
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -37,7 +46,7 @@ jobs:
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
           VOTEPREDICT_P2_AUDIT_OUTPUT: artifacts/lifecycle-p2-audit.json
-          VOTEPREDICT_P2_ENFORCE_GATE: ${{ inputs.enforce_gate }}
+          VOTEPREDICT_P2_ENFORCE_GATE: ${{ github.event_name == 'issue_comment' && 'true' || inputs.enforce_gate }}
         run: node --import tsx scripts/audit-lifecycle-p2.ts
 
       - name: Upload lifecycle P2 audit
