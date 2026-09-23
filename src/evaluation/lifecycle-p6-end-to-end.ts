@@ -905,8 +905,8 @@ export function summarizeLifecycleP6EndToEnd(input: {
           )
         : stagePrediction.probability,
       lifecycleCombinationSource: decomposed
-        ? 'decomposed'
-        : 'p4-stage-fallback',
+        ? 'decomposed' as const
+        : 'p4-stage-fallback' as const,
       passageVoteCutoff:
         snapshot.targets.transitionOnCutoffDate.toState
           === 'source_chamber_passage_vote_reached',
