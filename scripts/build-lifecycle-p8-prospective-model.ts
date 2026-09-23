@@ -160,9 +160,14 @@ async function main(): Promise<void> {
           JOIN bill_versions bv
             ON bv.bill_id=b.id
            AND bv.version_key=b.metadata #>> '{revisorIntroduction,initialDocument,documentName}'
-         WHERE s.slug IN ('2021-2022','2023-2024','2025-2026')
-           AND b.identifier ~ '^(HF|SF)[0-9]+$'
-         ORDER BY s.starts_on,c.slug,b.identifier`),
+         WHERE s.starts_on < '2027-01-01'::date
+           AND b.metadata ? 'revisorUniverse'
+           AND b.metadata #>> '{sourceChamberPassage,outcome}' IN ('true','false')
+           AND b.metadata #>> '{sourceChamberPassage,targetStage}' = 'source_chamber_passage'
+         ORDER BY s.starts_on,
+                  c.slug,
+                  substring(b.identifier from '[0-9]+$')::integer,
+                  b.identifier`),
       pool.query<PreActivationRow>(`
         SELECT
           (SELECT count(*)
@@ -222,7 +227,7 @@ async function main(): Promise<void> {
     const introductionTrainingCorpusSha256 =
       createHash('sha256').update(corpusLines.join('\n')).digest('hex');
     if (introductionTrainingCorpusSha256 !== LIFECYCLE_P8_INTRO_TRAINING_CORPUS_SHA256) {
-      throw new Error('Lifecycle P8 introduction training corpus changed before model freeze');
+      throw new Error(`Lifecycle P8 introduction training corpus changed before model freeze: ${introductionTrainingCorpusSha256}`);
     }
 
     const introductionModel = trainIntroductionTextModel(observations);
