@@ -425,6 +425,15 @@ proved and frozen; current/mutable evidence may not be retroactively treated as 
 - [ ] Fit stage + elapsed-time hazard baseline.
 - [ ] Compare with chronological forward-chaining.
 
+The reproducible P4 evaluator is `npm run eval:lifecycle:p4` and the manual-only
+`Lifecycle P4 baselines` GitHub Action. It first rebuilds P3 read-only and refuses to score unless the snapshot
+content SHA-256 exactly matches the frozen P3 hash. The accepted `intro-title-text-eb-v4` model family is evaluated
+with the already-frozen chronological contract (2023-24 from 2021-22; 2025-26 from completed earlier biennia), then
+carried forward unchanged as the benchmark prior at later lifecycle snapshots. Its pre-existing introduction input
+contract is not imported into P3 features. The lifecycle stage baseline uses only source chamber + canonical state,
+and the elapsed-time baseline is a separate 30-day discrete hazard over next lifecycle transition/terminal-event
+risk sets beginning the day after a known transition. P4 is research-only and cannot change serving behavior.
+
 ### P5 — evidence allocation
 
 - [ ] Test evidence families against the lifecycle stage(s) they can plausibly predict.
