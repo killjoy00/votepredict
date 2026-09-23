@@ -27,6 +27,10 @@ export const LIFECYCLE_P8_INTRO_TRAINING_CORPUS_SHA256 =
   '94f0702073a9fe7afe9b86f8df10b715be28e9386e99bfb0159ae2cafaab3963' as const;
 export const LIFECYCLE_P8_INTRO_MODEL_CONTENT_SHA256 =
   '6071eec2ff48579652586dbb9e077e522f126bca4b6ff0d1f246794a779f60c3' as const;
+export const LIFECYCLE_P8_FROZEN_PLAN_SHA256 =
+  '2f4e936fe0977049a8f4212c48ee93405dd7b6dff59ee4f801f402a05f3dfd6d' as const;
+export const LIFECYCLE_P8_FROZEN_MODEL_CONTENT_SHA256 =
+  'abcf583153939d46aa021dccf2afe61d698ad4538a981059cdee265c03166a65' as const;
 
 export type LifecycleP8IntroductionModel =
   Omit<SerializedIntroductionPriorModelV4, 'provenance'>;
@@ -111,6 +115,9 @@ export function buildLifecycleP8ProspectiveModelArtifact(input: {
   if (input.historicalP5PredictionSha256 !== FROZEN_LIFECYCLE_P5_RETAINED_SHA256) {
     throw new Error('Lifecycle P8 refuses P5 retained-vector drift');
   }
+  if (input.planSha256 !== LIFECYCLE_P8_FROZEN_PLAN_SHA256) {
+    throw new Error('Lifecycle P8 refuses prospective-plan drift');
+  }
   if (input.introductionTrainingCorpusSha256 !== LIFECYCLE_P8_INTRO_TRAINING_CORPUS_SHA256) {
     throw new Error('Lifecycle P8 refuses 2027 introduction training-corpus drift');
   }
@@ -148,6 +155,13 @@ export function buildLifecycleP8ProspectiveModelArtifact(input: {
     },
   };
 
+  const modelContentSha256 = lifecycleP8JsonSha256(modelContent);
+  if (modelContentSha256 !== LIFECYCLE_P8_FROZEN_MODEL_CONTENT_SHA256) {
+    throw new Error(
+      `Lifecycle P8 refuses frozen model-content drift: ${modelContentSha256} != ${LIFECYCLE_P8_FROZEN_MODEL_CONTENT_SHA256}`,
+    );
+  }
+
   return {
     schemaVersion: LIFECYCLE_P8_MODEL_SCHEMA_VERSION,
     generatedAt: input.generatedAt,
@@ -160,7 +174,7 @@ export function buildLifecycleP8ProspectiveModelArtifact(input: {
     },
     preActivation: input.preActivation,
     modelContent,
-    modelContentSha256: lifecycleP8JsonSha256(modelContent),
+    modelContentSha256,
     policy: {
       retrospectiveInputsEndWith2026: true,
       targetSessionOutcomesUsedForFit: false,
