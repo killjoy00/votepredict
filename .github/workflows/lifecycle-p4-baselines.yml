@@ -54,15 +54,15 @@ jobs:
       - name: Evaluate frozen lifecycle P4 baselines
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
-          VOTEPREDICT_P4_OUTPUT_DIR: artifacts/lifecycle-p4-baselines-v1
+          VOTEPREDICT_P4_OUTPUT_DIR: artifacts/lifecycle-p4-baselines-v2
         run: node --import tsx scripts/evaluate-lifecycle-p4-baselines.ts
 
       - name: Upload lifecycle P4 baseline artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: lifecycle-p4-baselines-v1-${{ github.sha }}
-          path: artifacts/lifecycle-p4-baselines-v1
+          name: lifecycle-p4-baselines-v2-${{ github.sha }}
+          path: artifacts/lifecycle-p4-baselines-v2
           if-no-files-found: warn
 
       - name: Remove temporary credentials and logs
