@@ -162,10 +162,10 @@ async function main(): Promise<void> {
     }));
     const introductionPredictions = evaluateIntroductionTextModelChronologically(introObservations);
 
+    const sessionByBill = new Map(intro.rows.map((row) => [row.bill_id, row.session_slug]));
     const forward2025 = new Map(
       introductionPredictions
-        .filter((row) => intro.rows.find((candidate) =>
-          candidate.bill_id === row.billId)?.session_slug === '2025-2026')
+        .filter((row) => sessionByBill.get(row.billId) === '2025-2026')
         .map((row) => [row.billId, row.probability]),
     );
     let servingParity2025MaxDelta = 0;
