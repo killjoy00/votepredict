@@ -338,19 +338,6 @@ function prefilterCandidates(
     .map(({ row }) => row.candidate);
 }
 
-function priorGlobalPassRate(
-  passageEvents: readonly QuickReplayEvent[],
-  cutoffDateExclusive: string,
-): number {
-  const prior = passageEvents.filter((event) =>
-    event.passed !== null && event.occurredOn < cutoffDateExclusive);
-  if (!prior.length) return 0.5;
-  return empiricalJeffreys(
-    prior.filter((event) => event.passed === true).length,
-    prior.length,
-  );
-}
-
 function fallbackConditional(
   snapshot: LifecycleP3Snapshot,
   fallbackProbability: number,
@@ -436,11 +423,20 @@ export function buildLifecycleP6ConditionalPredictions(
       || left.membershipId.localeCompare(right.membershipId));
   }
 
+  const chamberIdBySlug = new Map<Chamber, string>();
+  for (const ref of input.sessionChamberRefs.values()) {
+    const existing = chamberIdBySlug.get(ref.chamber);
+    if (existing && existing !== ref.chamberId) {
+      throw new Error(
+        `Lifecycle P6 expected one stable Minnesota chamber id for ${ref.chamber}`,
+      );
+    }
+    chamberIdBySlug.set(ref.chamber, ref.chamberId);
+  }
   const passageByChamber = new Map<string, QuickReplayEvent[]>();
   for (const event of input.passageEvents) {
-    const ref = [...input.sessionChamberRefs.values()].find((candidate) =>
-      candidate.sessionSlug === event.session && candidate.chamber === event.chamber);
-    const chamberId = ref?.chamberId;
+    if (event.chamber !== 'house' && event.chamber !== 'senate') continue;
+    const chamberId = chamberIdBySlug.get(event.chamber);
     if (!chamberId) continue;
     const values = passageByChamber.get(chamberId) ?? [];
     values.push(event);
@@ -494,7 +490,7 @@ export function buildLifecycleP6ConditionalPredictions(
 
       const fallbackProbability = priorPassageTotal > 0
         ? empiricalJeffreys(priorPassed, priorPassageTotal)
-        : priorGlobalPassRate(input.passageEvents, cutoffDate);
+        : 0.5;
 
       const version = selectStrictVersion(
         input.versionsByBill.get(snapshot.bill.billId),
