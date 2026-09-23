@@ -11,7 +11,7 @@ const DATABASE_CANDIDATES = [
   'POSTGRES_URL',
 ] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
-const DEFAULT_OUTPUT_DIR = 'artifacts/lifecycle-p5-evidence-allocation-v1';
+const DEFAULT_OUTPUT_DIR = 'artifacts/lifecycle-p5-evidence-allocation-v2';
 let secretValues: string[] = [];
 
 function mask(value: string): void {
