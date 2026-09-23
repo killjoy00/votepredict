@@ -59,6 +59,37 @@ export interface LifecycleP5Prediction {
   outcome: 0 | 1;
 }
 
+export type LifecycleP5ProspectiveRow = Omit<LifecycleP5Row, 'outcome'>;
+
+export interface LifecycleP5SerializedBaseline {
+  overall: number;
+  chamber: Partial<Record<'house' | 'senate', number>>;
+  stage: Record<string, number>;
+  group: Record<string, number>;
+}
+
+export interface LifecycleP5SerializedTokenStat {
+  key: string;
+  positives: number;
+  total: number;
+}
+
+export interface LifecycleP5RetainedProspectiveTargetModel {
+  target: LifecycleP5Target;
+  trainingRows: number;
+  trainingPositives: number;
+  baseline: LifecycleP5SerializedBaseline;
+  tokenStats: LifecycleP5SerializedTokenStat[];
+}
+
+export interface LifecycleP5RetainedProspectiveModel {
+  schemaVersion: 'lifecycle-p5-retained-prospective-v1';
+  model: 'core_minus_companion';
+  families: ['process_detail', 'bill_version'];
+  fittedThroughSession: string;
+  targets: Record<LifecycleP5Target, LifecycleP5RetainedProspectiveTargetModel>;
+}
+
 type ModelDefinition = {
   model: LifecycleP5Model;
   families: LifecycleP5EvidenceFamily[];
@@ -400,6 +431,95 @@ function candidateProbability(
     PROBABILITY_FLOOR,
     PROBABILITY_CEILING,
   );
+}
+
+const RETAINED_PROSPECTIVE_DEFINITION: ModelDefinition = {
+  model: 'core_minus_companion',
+  families: ['process_detail', 'bill_version'],
+};
+
+function serializeBaseline(model: BaselineModel): LifecycleP5SerializedBaseline {
+  return {
+    overall: model.overall,
+    chamber: Object.fromEntries([...model.chamber.entries()].sort(([a], [b]) => a.localeCompare(b))),
+    stage: Object.fromEntries([...model.stage.entries()].sort(([a], [b]) => a.localeCompare(b))),
+    group: Object.fromEntries([...model.group.entries()].sort(([a], [b]) => a.localeCompare(b))),
+  };
+}
+
+function serializedBaselineProbability(
+  model: LifecycleP5SerializedBaseline,
+  row: LifecycleP5ProspectiveRow,
+): number {
+  return model.group[baseKey(row as LifecycleP5Row)]
+    ?? model.stage[stageKey(row as LifecycleP5Row)]
+    ?? model.chamber[row.chamber]
+    ?? model.overall;
+}
+
+export function fitLifecycleP5RetainedProspectiveModel(
+  rows: readonly LifecycleP5Row[],
+): LifecycleP5RetainedProspectiveModel {
+  if (!rows.length) throw new Error('Cannot fit lifecycle P5 prospective model without rows');
+  const targets = {} as Record<LifecycleP5Target, LifecycleP5RetainedProspectiveTargetModel>;
+  for (const target of [
+    'reach_floor_eligibility',
+    'reach_source_chamber_passage_vote',
+    'source_chamber_passage',
+  ] as const) {
+    const training = rows.filter((row) =>
+      row.target === target && rowEligibleForModel(row, RETAINED_PROSPECTIVE_DEFINITION));
+    if (!training.length) throw new Error(`Lifecycle P5 prospective target ${target} has no eligible training rows`);
+    const baseline = fitBaseline(training);
+    const tokens = fitTokenModel(training, RETAINED_PROSPECTIVE_DEFINITION);
+    targets[target] = {
+      target,
+      trainingRows: training.length,
+      trainingPositives: training.reduce((sum, row) => sum + row.outcome, 0),
+      baseline: serializeBaseline(baseline),
+      tokenStats: [...tokens.entries()]
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, stat]) => ({ key, positives: stat.positives, total: stat.total })),
+    };
+  }
+  return {
+    schemaVersion: 'lifecycle-p5-retained-prospective-v1',
+    model: 'core_minus_companion',
+    families: ['process_detail', 'bill_version'],
+    fittedThroughSession: [...new Set(rows.map((row) => row.session))].sort().at(-1)!,
+    targets,
+  };
+}
+
+export function predictLifecycleP5RetainedProspectiveModel(
+  model: LifecycleP5RetainedProspectiveModel,
+  row: LifecycleP5ProspectiveRow,
+): { baselineProbability: number; candidateProbability: number } | undefined {
+  if (!RETAINED_PROSPECTIVE_DEFINITION.families.every((family) => row.eligibleFamilies[family])) {
+    return undefined;
+  }
+  const targetModel = model.targets[row.target];
+  if (!targetModel) return undefined;
+  const base = serializedBaselineProbability(targetModel.baseline, row);
+  const tokenMap = new Map(
+    targetModel.tokenStats.map((stat) => [stat.key, { positives: stat.positives, total: stat.total }]),
+  );
+  const scoringRow = { ...row, outcome: 0 as const };
+  const deltas = [...new Set(
+    RETAINED_PROSPECTIVE_DEFINITION.families.flatMap((family) => row.tokens[family]),
+  )]
+    .map((token) => tokenDelta(base, tokenMap.get(tokenKey(scoringRow, token))))
+    .filter((delta) => Number.isFinite(delta) && delta !== 0)
+    .sort((left, right) => Math.abs(right) - Math.abs(left))
+    .slice(0, MAX_TOKEN_DELTAS);
+  const candidate = deltas.length
+    ? clamp(
+        logistic(logit(base) + TOKEN_SCALE * (deltas.reduce((sum, delta) => sum + delta, 0) / deltas.length)),
+        PROBABILITY_FLOOR,
+        PROBABILITY_CEILING,
+      )
+    : base;
+  return { baselineProbability: base, candidateProbability: candidate };
 }
 
 export function buildForwardChainedLifecycleP5Predictions(

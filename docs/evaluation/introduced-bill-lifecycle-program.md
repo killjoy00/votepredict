@@ -742,6 +742,42 @@ promote a model automatically.
 
 ### P8 — 2027 prospective validation
 
-- [ ] Activate lifecycle snapshots before 2027-28 outcomes.
+- [x] Freeze the prospective capture/evaluation contract before 2027-28 outcomes.
+- [ ] Freeze the exact 2027 prospective model artifact from completed 2021-26 history.
+- [ ] Activate immutable daily lifecycle capture before 2027-28 outcomes.
 - [ ] Preserve the serving models while observations accrue.
-- [ ] Score only after frozen prospective gates are met.
+- [ ] Score only after the frozen prospective reveal/coverage gates are met.
+
+The governing P8 protocol is `lifecycle-p8-prospective-plan-v1`. It deliberately separates model freeze from
+production capture activation. The model package must be built entirely from the completed 2021-26 corpus and must
+reproduce the frozen P3 snapshot hash plus the accepted P4 and retained-P5 historical prediction vectors before it
+can be accepted for 2027. The accepted introduction architecture is fit once on all completed 2021-26
+introduction-safe observations; its training-corpus and model-content hashes are part of the P8 gate. The conditional
+component remains `member-eb-v1.2-decay180` with only strictly pre-cutoff member/vote/analogue history. No 2027
+outcome or 2027 production forecast may enter model fitting.
+
+Prospective lifecycle capture is **daily and immutable**, using the Minnesota calendar date as a date-exclusive
+cutoff. Official process events, bill versions, and member/vote history dated on the cutoff date are excluded because
+intraday ordering is not assumed. An existing capture is never rewritten after later source discovery; missingness
+at the original capture remains observable. This is intentional: P8 measures what the system actually had available,
+not what can be reconstructed later with hindsight.
+
+Daily rows are the source record, not the evaluation unit. After the sealed reveal gate opens, evaluation collapses
+them to event-time observations by taking the latest captured row whose cutoff date is **strictly before** each
+observed transition or terminal date. A capture from the same calendar date as a transition is ineligible. The
+frozen introduction v4 prediction is scored separately at the bill level because a bill first discovered after its
+introduction date must not be relabeled as an introduction-time lifecycle snapshot.
+
+The primary target remains strict bill-number source-chamber passage. P7
+`substantive_vehicle_passage_v1` is reported separately and requires the same outcome-blind direct-edge lineage
+contract to be frozen for 2027-28 before outcome labels are joined. Connected-component transitivity remains
+forbidden. Bills without member passage votes remain lifecycle observations only; P8 never manufactures member NAY
+labels.
+
+The reveal gate is sealed until **2028-07-01T00:00:00Z** and also requires complete strict outcome labels plus
+minimum prospective coverage (95% introduction prediction coverage, 90% lifecycle capture coverage, and 95%
+process-source coverage on scored lifecycle rows). Before that gate, operations may report capture/source coverage
+and failures but not prospective performance metrics. The governing comparison is frozen 2027 introduction v4 vs
+P4 stage-only vs P5 retained direct passage vs P6 decomposed end-to-end, with component and chamber/state slices.
+No result can automatically promote a model or alter serving behavior; any serving change still requires separate
+human review and integration.
