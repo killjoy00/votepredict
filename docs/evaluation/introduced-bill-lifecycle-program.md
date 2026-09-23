@@ -543,6 +543,30 @@ snapshots would violate the as-of contract.
 - [ ] Score strict source-chamber passage across all introduced bills.
 - [ ] Compare directly with the introduction prior and simpler lifecycle baselines.
 
+P6 freezes the decomposition before inspecting its end-to-end result:
+
+`P(strict source-chamber passage) = P(reach source-chamber passage vote) × P(pass that chamber vote | current information)`.
+
+The lifecycle arm is the P5-retained time-controlled process-detail + bill-version candidate for
+`reach_source_chamber_passage_vote`. The conditional arm replays the promoted serving default
+`member-eb-v1.2-decay180`: active historical roster, 180-day-decayed member passage history, prior chamber/party
+history, strictly pre-cutoff substantive analogues, and the existing member-derived chamber simulation. Same-biennium
+prior floor votes are allowed only when strictly earlier than the event-time cutoff, matching information that would
+have been public then.
+
+P6 is required to score the complete later-biennium introduced-bill population. When the member-derived floor model
+cannot be replayed safely at a historical cutoff (for example no strictly prior usable bill text or no direct member
+vote on the selected analogues), the conditional term falls back explicitly to the source chamber's empirical
+passage rate from passage votes strictly earlier than the cutoff. When a bill is one of the frozen process-deferred
+cases and therefore has no leakage-safe P5 reach-vote row, the end-to-end candidate retains the P4 direct stage
+probability instead of interpreting missing process history as no advancement.
+
+Before scoring, P6 must reproduce three upstream contracts exactly: the P3 snapshot SHA-256, the frozen P4 passage
+prediction digest, and the frozen P5 retained-arm digest. It reports member-derived conditional coverage separately,
+scores the conditional chamber component at actual passage-vote cutoffs, and compares the end-to-end probability
+with the accepted introduction prior, P4 stage-only baseline, and P5 direct-passage arm on identical observations.
+This remains retrospective development/robustness work; no result can automatically change serving behavior.
+
 ### P7 — secondary vehicle/companion outcome
 
 - [ ] Define an outcome-blind text/companion lineage rule.
