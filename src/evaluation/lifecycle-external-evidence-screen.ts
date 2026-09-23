@@ -139,6 +139,10 @@ function score(rows: readonly Observation[], beta?: readonly number[]) {
   };
 }
 
+function scoreOrNull(rows: readonly Observation[], beta: readonly number[]) {
+  return rows.length ? score(rows, beta) : null;
+}
+
 function coefficientObject(beta: readonly number[]) {
   return Object.fromEntries(
     LIFECYCLE_EXTERNAL_AVAILABILITY_FAMILIES.map((family, index) => [family, beta[index]]),
@@ -262,16 +266,16 @@ export function evaluateLifecycleExternalEvidenceScreen(
     const byChamber = Object.fromEntries(['house', 'senate'].map((chamber) => [
       chamber,
       {
-        validation: score(validation.filter((row) => row.chamber === chamber), selected.beta),
-        descriptive: score(descriptive.filter((row) => row.chamber === chamber), selected.beta),
+        validation: scoreOrNull(validation.filter((row) => row.chamber === chamber), selected.beta),
+        descriptive: scoreOrNull(descriptive.filter((row) => row.chamber === chamber), selected.beta),
       },
     ]));
     const byState = Object.fromEntries(
       [...new Set(rows.map((row) => row.lifecycleState))].sort().map((state) => [
         state,
         {
-          validation: score(validation.filter((row) => row.lifecycleState === state), selected.beta),
-          descriptive: score(descriptive.filter((row) => row.lifecycleState === state), selected.beta),
+          validation: scoreOrNull(validation.filter((row) => row.lifecycleState === state), selected.beta),
+          descriptive: scoreOrNull(descriptive.filter((row) => row.lifecycleState === state), selected.beta),
         },
       ]),
     );
