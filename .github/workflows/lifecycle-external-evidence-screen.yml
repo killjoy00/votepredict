@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: lifecycle-external-evidence-screen
@@ -34,6 +35,15 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
+      - name: Materialize frozen external availability artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api repos/${GITHUB_REPOSITORY}/actions/artifacts/10777594276/zip > "$RUNNER_TEMP/lifecycle-external-availability.zip"
+          unzip -p "$RUNNER_TEMP/lifecycle-external-availability.zip" accepted.ndjson > "$RUNNER_TEMP/lifecycle-external-availability-v1.ndjson"
+          test "$(wc -l < "$RUNNER_TEMP/lifecycle-external-availability-v1.ndjson")" -eq 3525
       - name: Read production database environment privately
         shell: bash
         run: |
@@ -43,6 +53,7 @@ jobs:
       - name: Evaluate lifecycle external evidence
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+          VOTEPREDICT_EXTERNAL_AVAILABILITY_FILE: ${{ runner.temp }}/lifecycle-external-availability-v1.ndjson
           VOTEPREDICT_EXTERNAL_SCREEN_OUTPUT_DIR: artifacts/lifecycle-external-evidence-screen-v1
         run: node --import tsx scripts/evaluate-lifecycle-external-evidence-screen.ts
       - name: Upload result
@@ -59,6 +70,6 @@ jobs:
           python - <<'PYTHON'
           import os
           from pathlib import Path
-          for name in ['votepredict-production.env','vercel-pull.log']:
+          for name in ['votepredict-production.env','vercel-pull.log','lifecycle-external-availability.zip','lifecycle-external-availability-v1.ndjson']:
               Path(os.environ['RUNNER_TEMP'],name).unlink(missing_ok=True)
           PYTHON
