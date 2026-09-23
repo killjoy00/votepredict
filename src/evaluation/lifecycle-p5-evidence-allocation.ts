@@ -231,6 +231,24 @@ function familyEligibility(
   };
 }
 
+export function buildLifecycleP5ProspectiveRow(
+  snapshot: LifecycleP3Snapshot,
+  target: LifecycleP5Target,
+): LifecycleP5ProspectiveRow {
+  return {
+    billId: snapshot.bill.billId,
+    session: snapshot.bill.session,
+    chamber: snapshot.bill.chamber,
+    cutoffDateExclusive: snapshot.cutoff.asOfDateExclusive,
+    lifecycleState: snapshot.features.lifecycleState,
+    daysSinceIntroduction: snapshot.features.daysSinceIntroduction,
+    daysRemainingInBiennium: snapshot.features.daysRemainingInBiennium,
+    target,
+    eligibleFamilies: familyEligibility(snapshot),
+    tokens: evidenceFamilyTokens(snapshot),
+  };
+}
+
 function billReachedFloorEligibility(snapshots: readonly LifecycleP3Snapshot[]): boolean {
   return snapshots.some((snapshot) =>
     stateRank(snapshot.features.lifecycleState) >= 2
