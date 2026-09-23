@@ -175,7 +175,12 @@ function textLengthBucket(value: number | null): string {
   return '20k+';
 }
 
-export type LifecycleP5FeatureSnapshot = Pick<LifecycleP3Snapshot, 'bill' | 'cutoff' | 'features' | 'lineage'>;
+export type LifecycleP5FeatureSnapshot = {
+  bill: LifecycleP3Snapshot['bill'];
+  cutoff: Pick<LifecycleP3Snapshot['cutoff'], 'asOfDateExclusive' | 'granularity' | 'sameDayExcluded'>;
+  features: LifecycleP3Snapshot['features'];
+  lineage: LifecycleP3Snapshot['lineage'];
+};
 
 export function evidenceFamilyTokens(
   snapshot: LifecycleP5FeatureSnapshot,
