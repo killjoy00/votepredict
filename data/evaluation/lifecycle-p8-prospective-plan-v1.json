@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "lifecycle-p8-prospective-plan-v1",
+  "frozenAt": "2026-09-23T19:08:00Z",
+  "purpose": "Governing prospective 2027-28 evaluation of the frozen VotePredict lifecycle program without changing serving probabilities.",
+  "scope": {
+    "jurisdiction": "us-mn",
+    "session": "2027-2028",
+    "strictTarget": "source_chamber_passage",
+    "secondaryTarget": "substantive_vehicle_passage_v1",
+    "historicalFitSessions": [
+      "2021-2022",
+      "2023-2024",
+      "2025-2026"
+    ]
+  },
+  "modelFreeze": {
+    "introduction": "intro-title-text-eb-v4 fitted only on completed 2021-2026 authoritative introduction-safe rows",
+    "p4": "lifecycle-stage-empirical-v1 final fit on frozen P3 2021-2026 snapshots",
+    "p5": "core_minus_companion final fit using only process_detail + bill_version under the frozen P5 v2 formula",
+    "p6": "reach-source-chamber-passage-vote from frozen P5 retained arm multiplied by the unchanged member-eb-v1.2-decay180 conditional chamber model; P4 stage fallback remains explicit when decomposition is unavailable",
+    "targetSessionOutcomesUsedForFit": false,
+    "targetSessionForecastsUsedForFit": false,
+    "noRetuningAfterActivation": true
+  },
+  "preActivationGate": {
+    "strictOutcomeLabels2027": 0,
+    "forecastRevisions2027": 0,
+    "verification": "production-data model builder must fail closed if either count is nonzero before the P8 model artifact is frozen"
+  },
+  "capture": {
+    "unit": "one immutable row per authoritative introduced bill per Minnesota calendar date when eligible",
+    "cadence": "daily",
+    "cutoff": "calendar-date-exclusive in America/Chicago",
+    "sameDayEventsExcluded": true,
+    "lateSourceDiscovery": "never rewrites an existing captured row; missingness at capture remains visible",
+    "processFeatures": "only persisted official dated process events with occurred_on strictly before cutoff",
+    "billVersions": "only official versions published strictly before cutoff",
+    "memberHistory": "only member votes and passage events strictly before cutoff",
+    "introductionPrediction": "session-pinned frozen 2027 v4 model; introduction-safe source state only",
+    "rawOutcomeReadAtCapture": false,
+    "targetSessionOutcomeMetadataReadAtCapture": false
+  },
+  "eventTimeEvaluationSelection": {
+    "rule": "daily capture is the immutable source; evaluation collapses it to the latest captured row with cutoff_date strictly before each observed transition/terminal date",
+    "sameDayCaptureForTransitionForbidden": true,
+    "introductionBenchmark": "score the frozen introduction prediction separately at bill level rather than treating a later-discovered daily lifecycle row as an introduction-time lifecycle snapshot",
+    "dailyRowsNotEquallyWeightedAsOutcomes": true
+  },
+  "targets": {
+    "strict": {
+      "name": "source_chamber_passage",
+      "primary": true,
+      "completeAuthoritativeUniverseRequired": true
+    },
+    "substantiveVehicle": {
+      "name": "substantive_vehicle_passage_v1",
+      "primary": false,
+      "relationshipRule": "same P7 v1 outcome-blind direct-edge lineage contract, frozen for 2027-28 before joining outcomes",
+      "reportSeparately": true,
+      "noTransitiveClosure": true
+    },
+    "conditionalMember": {
+      "actualMemberVotesOnly": true,
+      "syntheticMemberVotesForNonVoteBills": false
+    }
+  },
+  "revealGate": {
+    "notBeforeUtc": "2028-07-01T00:00:00.000Z",
+    "completeStrictLabelsRequired": true,
+    "minimumIntroductionPredictionCoverage": 0.95,
+    "minimumLifecycleCaptureCoverage": 0.9,
+    "minimumProcessSourceCoverageOnScoredLifecycleRows": 0.95,
+    "metricsBeforeGate": "withheld; readiness/coverage only",
+    "humanReviewBeforeAnyPromotion": true
+  },
+  "metrics": {
+    "strictPrimary": [
+      "Brier score",
+      "log loss",
+      "expected calibration error",
+      "average precision"
+    ],
+    "rankingSecondary": [
+      "ROC-AUC"
+    ],
+    "comparisons": [
+      "frozen 2027 introduction v4",
+      "P4 stage-only",
+      "P5 retained direct passage",
+      "P6 decomposed end-to-end"
+    ],
+    "slices": [
+      "House/Senate",
+      "lifecycle state",
+      "elapsed-time band",
+      "time-remaining band",
+      "process-source coverage"
+    ],
+    "componentDiagnostics": [
+      "reach floor eligibility",
+      "reach source-chamber passage vote",
+      "conditional member/chamber passage"
+    ],
+    "secondaryVehicleTarget": "same metrics, separately labeled and never substituted for strict passage"
+  },
+  "guardrails": {
+    "servingProbabilityChange": "none",
+    "automaticPromotion": false,
+    "historicalProcessCrawlerRestart": false,
+    "deepHistoricalWorkflows": false,
+    "outcomeAwareMatching": false,
+    "postActivationRetuning": false,
+    "memberVoteLabelManufacture": false,
+    "productionAction": "none"
+  }
+}

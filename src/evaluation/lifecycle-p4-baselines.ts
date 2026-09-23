@@ -60,6 +60,17 @@ export interface LifecycleP4BinaryScore {
   rocAuc: number | null;
 }
 
+export interface LifecycleP4ProspectiveStageModel {
+  schemaVersion: 'lifecycle-p4-prospective-stage-v1';
+  model: 'lifecycle-stage-empirical-v1';
+  fittedThroughSession: string;
+  trainingRows: number;
+  trainingPositives: number;
+  overallProbability: number;
+  chamberProbabilities: Partial<Record<'house' | 'senate', number>>;
+  chamberStateProbabilities: Record<string, number>;
+}
+
 function finiteOrNull(value: number): number | null {
   return Number.isFinite(value) ? value : null;
 }
@@ -110,6 +121,48 @@ function rate(rows: readonly { outcome: 0 | 1 }[]): number {
 
 function passageGroupKey(row: Pick<LifecycleP3Snapshot, 'bill' | 'features'>): string {
   return `${row.bill.chamber}|${row.features.lifecycleState}`;
+}
+
+export function fitLifecycleP4ProspectiveStageModel(
+  snapshots: readonly LifecycleP3Snapshot[],
+): LifecycleP4ProspectiveStageModel {
+  if (!snapshots.length) throw new Error('Cannot fit lifecycle P4 prospective stage model without snapshots');
+  const training = snapshots.map((row) => ({
+    row,
+    outcome: row.targets.eventualSourceChamberPassage ? 1 as const : 0 as const,
+  }));
+  const chamberProbabilities: Partial<Record<'house' | 'senate', number>> = {};
+  for (const chamber of ['house', 'senate'] as const) {
+    const rows = training.filter(({ row }) => row.bill.chamber === chamber);
+    if (rows.length) chamberProbabilities[chamber] = rate(rows);
+  }
+  const chamberStateProbabilities = Object.fromEntries(
+    [...new Set(training.map(({ row }) => passageGroupKey(row)))]
+      .sort()
+      .map((key) => [
+        key,
+        rate(training.filter(({ row }) => passageGroupKey(row) === key)),
+      ]),
+  );
+  return {
+    schemaVersion: 'lifecycle-p4-prospective-stage-v1',
+    model: 'lifecycle-stage-empirical-v1',
+    fittedThroughSession: [...new Set(snapshots.map((row) => row.bill.session))].sort().at(-1)!,
+    trainingRows: training.length,
+    trainingPositives: training.reduce((sum, row) => sum + row.outcome, 0),
+    overallProbability: rate(training),
+    chamberProbabilities,
+    chamberStateProbabilities,
+  };
+}
+
+export function predictLifecycleP4ProspectiveStageModel(
+  model: LifecycleP4ProspectiveStageModel,
+  row: Pick<LifecycleP3Snapshot, 'bill' | 'features'>,
+): number {
+  return model.chamberStateProbabilities[passageGroupKey(row)]
+    ?? model.chamberProbabilities[row.bill.chamber]
+    ?? model.overallProbability;
 }
 
 export function buildForwardChainedStagePassagePredictions(
