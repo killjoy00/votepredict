@@ -43,7 +43,8 @@
     "eval:coalition-chamber": "tsx scripts/evaluate-coalition-chamber.ts",
     "eval:gambling:diagnose": "tsx scripts/diagnose-gambling-model.ts",
     "audit:lifecycle:p2": "tsx scripts/audit-lifecycle-p2.ts",
-    "build:lifecycle:p3": "tsx scripts/build-lifecycle-p3-snapshot-dataset.ts"
+    "build:lifecycle:p3": "tsx scripts/build-lifecycle-p3-snapshot-dataset.ts",
+    "eval:lifecycle:p4": "tsx scripts/evaluate-lifecycle-p4-baselines.ts"
   },
   "dependencies": {
     "@neondatabase/auth": "0.5.0-beta",
