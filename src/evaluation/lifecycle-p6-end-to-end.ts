@@ -115,10 +115,12 @@ type PreparedCandidate = {
   tokens: string[];
 };
 
-export type LifecycleP6ScoringSnapshot = Pick<
-  LifecycleP3Snapshot,
-  'snapshotId' | 'bill' | 'cutoff' | 'features'
->;
+export type LifecycleP6ScoringSnapshot = {
+  snapshotId: LifecycleP3Snapshot['snapshotId'];
+  bill: LifecycleP3Snapshot['bill'];
+  cutoff: Pick<LifecycleP3Snapshot['cutoff'], 'asOfDateExclusive' | 'granularity' | 'sameDayExcluded'>;
+  features: LifecycleP3Snapshot['features'];
+};
 
 type ConditionalBuildInput = {
   snapshots: readonly LifecycleP6ScoringSnapshot[];
