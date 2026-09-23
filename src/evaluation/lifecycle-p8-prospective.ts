@@ -92,31 +92,16 @@ export function lifecycleP8JsonSha256(value: unknown): string {
   return createHash('sha256').update(JSON.stringify(value)).digest('hex');
 }
 
-export function buildLifecycleP8ProspectiveModelArtifact(input: {
+export function buildLifecycleP8FrozenModelContent(input: {
   snapshots: readonly LifecycleP3Snapshot[];
   p3ObservedSha256: string;
   introductionModel: LifecycleP8IntroductionModel;
   introductionTrainingCorpusSha256: string;
-  historicalP4PredictionSha256: string;
-  historicalP5PredictionSha256: string;
-  planSha256: string;
-  preActivation: LifecycleP8PreActivationState;
-  generatedAt: string;
-  codeSha: string | null;
-}): LifecycleP8ProspectiveModelArtifact {
+}): { modelContent: LifecycleP8ModelContent; modelContentSha256: string } {
   if (input.p3ObservedSha256 !== FROZEN_LIFECYCLE_P3_CONTENT_SHA256) {
     throw new Error(
       `Lifecycle P8 refuses P3 drift: ${input.p3ObservedSha256} != ${FROZEN_LIFECYCLE_P3_CONTENT_SHA256}`,
     );
-  }
-  if (input.historicalP4PredictionSha256 !== FROZEN_LIFECYCLE_P4_PASSAGE_SHA256) {
-    throw new Error('Lifecycle P8 refuses P4 historical-vector drift');
-  }
-  if (input.historicalP5PredictionSha256 !== FROZEN_LIFECYCLE_P5_RETAINED_SHA256) {
-    throw new Error('Lifecycle P8 refuses P5 retained-vector drift');
-  }
-  if (input.planSha256 !== LIFECYCLE_P8_FROZEN_PLAN_SHA256) {
-    throw new Error('Lifecycle P8 refuses prospective-plan drift');
   }
   if (input.introductionTrainingCorpusSha256 !== LIFECYCLE_P8_INTRO_TRAINING_CORPUS_SHA256) {
     throw new Error('Lifecycle P8 refuses 2027 introduction training-corpus drift');
@@ -126,12 +111,6 @@ export function buildLifecycleP8ProspectiveModelArtifact(input: {
     throw new Error(
       `Lifecycle P8 refuses 2027 introduction-model drift: ${introSha} != ${LIFECYCLE_P8_INTRO_MODEL_CONTENT_SHA256}`,
     );
-  }
-  if (input.preActivation.strictOutcomeLabels !== 0) {
-    throw new Error('Lifecycle P8 protocol must freeze before any 2027-28 strict outcome label exists');
-  }
-  if (input.preActivation.forecastRevisions !== 0) {
-    throw new Error('Lifecycle P8 protocol must freeze before any 2027-28 forecast revision exists');
   }
 
   const modelContent: LifecycleP8ModelContent = {
@@ -154,14 +133,44 @@ export function buildLifecycleP8ProspectiveModelArtifact(input: {
       fallback: 'prior-source-chamber-passage-vote-rate',
     },
   };
-
   const modelContentSha256 = lifecycleP8JsonSha256(modelContent);
   if (modelContentSha256 !== LIFECYCLE_P8_FROZEN_MODEL_CONTENT_SHA256) {
     throw new Error(
       `Lifecycle P8 refuses frozen model-content drift: ${modelContentSha256} != ${LIFECYCLE_P8_FROZEN_MODEL_CONTENT_SHA256}`,
     );
   }
+  return { modelContent, modelContentSha256 };
+}
 
+export function buildLifecycleP8ProspectiveModelArtifact(input: {
+  snapshots: readonly LifecycleP3Snapshot[];
+  p3ObservedSha256: string;
+  introductionModel: LifecycleP8IntroductionModel;
+  introductionTrainingCorpusSha256: string;
+  historicalP4PredictionSha256: string;
+  historicalP5PredictionSha256: string;
+  planSha256: string;
+  preActivation: LifecycleP8PreActivationState;
+  generatedAt: string;
+  codeSha: string | null;
+}): LifecycleP8ProspectiveModelArtifact {
+  if (input.historicalP4PredictionSha256 !== FROZEN_LIFECYCLE_P4_PASSAGE_SHA256) {
+    throw new Error('Lifecycle P8 refuses P4 historical-vector drift');
+  }
+  if (input.historicalP5PredictionSha256 !== FROZEN_LIFECYCLE_P5_RETAINED_SHA256) {
+    throw new Error('Lifecycle P8 refuses P5 retained-vector drift');
+  }
+  if (input.planSha256 !== LIFECYCLE_P8_FROZEN_PLAN_SHA256) {
+    throw new Error('Lifecycle P8 refuses prospective-plan drift');
+  }
+  if (input.preActivation.strictOutcomeLabels !== 0) {
+    throw new Error('Lifecycle P8 protocol must freeze before any 2027-28 strict outcome label exists');
+  }
+  if (input.preActivation.forecastRevisions !== 0) {
+    throw new Error('Lifecycle P8 protocol must freeze before any 2027-28 forecast revision exists');
+  }
+
+  const frozen = buildLifecycleP8FrozenModelContent(input);
   return {
     schemaVersion: LIFECYCLE_P8_MODEL_SCHEMA_VERSION,
     generatedAt: input.generatedAt,
@@ -173,8 +182,8 @@ export function buildLifecycleP8ProspectiveModelArtifact(input: {
       p5HistoricalPredictionSha256: FROZEN_LIFECYCLE_P5_RETAINED_SHA256,
     },
     preActivation: input.preActivation,
-    modelContent,
-    modelContentSha256,
+    modelContent: frozen.modelContent,
+    modelContentSha256: frozen.modelContentSha256,
     policy: {
       retrospectiveInputsEndWith2026: true,
       targetSessionOutcomesUsedForFit: false,
