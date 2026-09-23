@@ -117,14 +117,27 @@ test('hazard risk set begins the day after a known transition and uses 30-day la
       session: '2021-2022',
       cutoff: '2021-03-12',
       state: 'committee_process_engagement',
-      terminal: 'session_expired_without_source_chamber_passage',
+      toState: 'floor_eligibility_or_scheduling',
       daysRemaining: 295,
+    }),
+    snapshot({
+      billId: 'bill',
+      session: '2021-2022',
+      cutoff: '2021-05-01',
+      state: 'floor_eligibility_or_scheduling',
+      terminal: 'session_expired_without_source_chamber_passage',
+      daysRemaining: 245,
     }),
   ];
   const risk = buildLifecycleHazardRiskRows(rows);
-  assert.deepEqual(risk.map((row) => row.cutoffDateExclusive), ['2021-01-02', '2021-02-01', '2021-03-03']);
-  assert.deepEqual(risk.map((row) => row.nextEventWithin30Days), [0, 0, 1]);
-  assert.equal(risk[0].lifecycleState, 'committee_process_engagement');
+  const firstInterval = risk.filter((row) => row.nextEventDate === '2021-03-12');
+  assert.deepEqual(firstInterval.map((row) => row.cutoffDateExclusive), ['2021-01-02', '2021-02-01', '2021-03-03']);
+  assert.deepEqual(firstInterval.map((row) => row.processProgressionWithin30Days), [0, 0, 1]);
+  assert.equal(firstInterval[0].lifecycleState, 'committee_process_engagement');
+  const expirationInterval = risk.filter((row) => row.nextEventClass === 'session_expiration');
+  assert.ok(expirationInterval.length > 0);
+  assert.equal(expirationInterval.some((row) => row.processProgressionWithin30Days === 1), false);
+  assert.equal(expirationInterval.some((row) => row.sessionExpirationWithin30Days === 1), true);
 });
 
 test('elapsed-time hazard predictions remain forward chained', () => {
