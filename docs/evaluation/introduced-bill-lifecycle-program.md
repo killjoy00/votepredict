@@ -467,10 +467,10 @@ Frozen prediction digests are passage
 
 ### P5 — evidence allocation
 
-- [ ] Test evidence families against the lifecycle stage(s) they can plausibly predict.
-- [ ] Keep floor-vote member scoring separate.
-- [ ] Run family ablations and chamber/state slices.
-- [ ] Do not describe predictive associations as causal effects.
+- [x] Test evidence families against the lifecycle stage(s) they can plausibly predict.
+- [x] Keep floor-vote member scoring separate.
+- [x] Run family ablations and chamber/state slices.
+- [x] Do not describe predictive associations as causal effects.
 
 P5 is a forward-chained ablation study over the exact frozen P3 snapshot hash. The first retrospective allocation
 tests only families whose historical cutoff availability is proved by P3: dated process detail, dated companion
@@ -490,6 +490,52 @@ authorship is not treated as predictive missingness. The full-coverage core comb
 companion + bill-version structure, with single-family and leave-one-family-out ablations. Conditional member-vote
 scoring remains outside P5. All associations are descriptive/predictive, not causal, and no P5 result can
 automatically change serving behavior.
+
+Frozen P5 result (2026-09-23): time-controlled run `35892309907` on code SHA
+`366b55ee6d862662ca81862f22be6150450cbf3b` produced the accepted
+`lifecycle-p5-evidence-allocation-v2` artifact against the exact frozen P3 hash. The earlier v1 screening run
+`35891414803` is superseded because it did not explicitly control the matched baseline for elapsed time and time
+remaining.
+
+The time-controlled allocation is:
+
+- **Dated process detail:** retain as a development feature primarily for floor-access/process-state updating. On
+  reach-floor-eligibility it improves Brier by **0.0000530**, log loss by **0.001938**, ECE by **0.000427**, AP by
+  **0.000590**, and ROC-AUC by **0.00321** versus its matched clock-controlled baseline. The proper-score improvement
+  is present in both later biennia and both chambers, but its incremental effect on final passage is much smaller
+  and some final-stage slices regress. It is not treated as a standalone final-passage model.
+- **Cutoff-eligible bill-version/text structure:** retain as a development floor-access feature. On
+  reach-floor-eligibility it improves Brier by **0.0001079**, log loss by **0.001216**, ECE by **0.001006**, AP by
+  **0.02605**, and ROC-AUC by **0.00436**; the proper-score gains are present in both later biennia and both chambers.
+  Final-passage improvements are much smaller and mixed by state.
+- **Companion references:** do not carry as a historical lifecycle feature. Only **2** frozen snapshots have a dated
+  pre-cutoff companion reference, and the companion-only candidate is effectively flat or worse on vote-reach and
+  strict-passage metrics.
+- **Authorship:** do not carry as a full-universe historical feature. Only **1,963 / 63,974 (3.07%)** snapshots are
+  reconstructable; the holdout subset covers just **462** bills and is severely selected (all eligible floor-access
+  and vote-reach rows are positive, with 97.8% strict-passage prevalence). That subset cannot support a general
+  historical lifecycle allocation.
+- **Durable external evidence:** remains prospective-only. The frozen P3 dataset has **0** historically
+  cutoff-eligible external-evidence snapshots, so finance/news/campaign/member-primary families are not
+  retrospectively scored or backfilled from later fetches.
+
+The retained P6 development arm is therefore the time-controlled baseline plus **process detail + bill-version
+structure**, excluding companion, authorship, and later-fetched external evidence. In the leave-companion-out
+ablation this arm improves reach-floor-eligibility Brier from **0.03178835** to **0.03168134**, log loss from
+**0.13257067** to **0.13059783**, ECE from **0.00226851** to **0.00132585**, AP from **0.554180** to **0.578575**,
+and ROC-AUC from **0.853490** to **0.859209**. On strict source-chamber passage it produces only a modest
+development association: Brier **0.02084032 -> 0.02082469**, log loss **0.08797481 -> 0.08737849**, AP
+**0.437933 -> 0.444600**, and ROC-AUC **0.866162 -> 0.873807**, while ECE worsens
+**0.00403345 -> 0.00451352**. P6 must therefore score the end-to-end combination rather than infer a serving
+improvement from this component screen.
+
+The retained arm prediction digest is
+`ed877b070c9f2b93da30e30482869ad5adc7c4f32f28ab6ae481d513a1f66c0e`; the P5 artifact digest is
+`sha256:5d398244a40a86c0a838facef61759203b28ee2a6fdc9cac5bc5caf25f2b0d77`.
+
+P5 does not retrofit these families onto the P4 30-day hazard landmarks because P3 v1 freezes family availability
+at event-time cutoffs, not at arbitrary intervening daily landmarks. Filling those daily family states from later
+snapshots would violate the as-of contract.
 
 ### P6 — end-to-end combination
 

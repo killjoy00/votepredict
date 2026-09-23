@@ -126,7 +126,7 @@ The production reconciliation repaired the release-integrity drift found during 
 
 ## Current gaps
 
-1. **Lifecycle evidence allocation and end-to-end evaluation.** Full-universe process reconstruction, frozen P3 snapshots, and P4 chronological baselines are complete under #310. The next lifecycle step is P5: determine which public-evidence families have historically provable cutoff availability, then test only those families against the lifecycle stage they can legitimately predict.
+1. **Lifecycle end-to-end evaluation.** Full-universe process reconstruction plus P3, P4, and P5 are frozen under #310. P5 retains only a development floor-access arm using time-controlled process detail + cutoff-eligible bill-version structure; historical companion evidence is too sparse, authorship is too selected, and durable external evidence is prospective-only. The next lifecycle step is P6: combine lifecycle/floor-access probability with the separate conditional member/chamber passage model and score strict source-chamber passage across all introduced bills.
 2. **Deep availability.** Deep is explicitly unavailable while AI Gateway returns `billing_required`. If Deep remains a core product mode, billing must be enabled and a successful persisted evidence/revision smoke should be required before re-enabling it.
 3. **Prospective production evidence.** The production scorecard infrastructure is built and the single unified `quick-evidence-v1` candidate is frozen for 2027-28 Quick revisions. It records the serving base probability, a bounded non-serving evidence candidate probability, and the complete as-of feature vector. The project still needs real pre-outcome forecasts that later resolve to official votes before promotion-quality scoring is possible.
 4. **Durable external-evidence breadth.** Campaign finance, campaign-site ingestion, and systematic House/Senate member-primary publication capture are durable. Generic publisher-verified news remains supplemental, but its discovery path now expands common member-name variants, allocates Bing results fairly per member, unions GDELT and Bing leads, and backs off GDELT cleanly when rate-limited. Operations now exposes news coverage and prospective-corpus accrual metrics so remaining yield gaps are measurable.
@@ -191,7 +191,7 @@ The production reconciliation repaired the release-integrity drift found during 
 - [x] Reach and audit the process-source coverage gate, including per-session stage counts, source exclusions, date sanity, and reconciliation with known passage/expiration outcomes.
 - [x] Freeze and build event-time lifecycle snapshots over the complete introduced-bill universe.
 - [x] Establish stage-only and stage+elapsed-time lifecycle baselines before adding public evidence.
-- [ ] Test evidence families against the lifecycle stage they actually predict rather than forcing every signal into the conditional floor-vote model.
+- [x] Test evidence families against the lifecycle stage they actually predict rather than forcing every signal into the conditional floor-vote model.
 - [ ] Combine lifecycle/floor-access probability with conditional member/chamber passage and score strict source-chamber passage across all introduced bills.
 - [ ] Define any companion/substantive-vehicle outcome separately with an outcome-blind frozen lineage rule.
 - [ ] Activate the lifecycle snapshot contract prospectively for 2027-28 before outcomes accrue.
