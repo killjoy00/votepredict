@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto';
 
 export const LIFECYCLE_EXTERNAL_AVAILABILITY_SCHEMA_VERSION =
   'lifecycle-external-availability-v1' as const;
+export const LIFECYCLE_EXTERNAL_AVAILABILITY_FROZEN_CONTENT_SHA256 =
+  '736206dcb60e88785c5b067e7f1084badfed09a70a2137cdf8deb9edf3460bb8' as const;
 
 export const LIFECYCLE_EXTERNAL_AVAILABILITY_FAMILIES = [
   'official_bill_summary',
