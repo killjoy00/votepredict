@@ -516,7 +516,7 @@ export function buildLifecycleSnapshotsForBill(input: LifecycleP3BillInput): Lif
         processStatus: input.processStatus,
         passageLabelVersion: input.passageLabelVersion,
         priorProcessSourceDocumentSha256: priorSourceHashes,
-        priorProcessSourceUrls,
+        priorProcessSourceUrls: priorSourceUrls,
       },
     });
 
