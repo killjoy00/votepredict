@@ -16,50 +16,37 @@ function safeMessage(error:unknown){let message=error instanceof Error?(error.st
 async function canConnect(value:string){const probe=new Pool({connectionString:value,max:1,connectionTimeoutMillis:8000});try{await probe.query('SELECT 1');return true;}catch{return false;}finally{await probe.end().catch(()=>undefined);}}
 async function chooseDatabaseUrl(env:Record<string,string|undefined>){for(const key of DATABASE_CANDIDATES){const value=env[key]?.trim();if(value&&await canConnect(value))return value;}const secret=env.CRON_SECRET?.trim();if(!secret)throw new Error('CRON_SECRET unavailable');const response=await fetch(DATABASE_BRIDGE_URL,{method:'POST',headers:{authorization:'Bearer '+secret}});if(!response.ok)throw new Error('Database bridge HTTP '+response.status);const value=(await response.text()).trim();secretValues.push(value);mask(value);if(!await canConnect(value))throw new Error('Database bridge returned non-portable URL');return value;}
 
-async function loadAccepted(pool:Pool){
-  const result=await pool.query<EvidenceRow>(`
-    SELECT ei.id::text AS evidence_id,ei.source_document_id::text,ei.bill_id::text,ei.membership_id::text,
-           COALESCE(bs.slug,ms.slug) AS session_slug,sd.source_kind,ei.evidence_kind,ei.stance,
-           ei.published_at::text,sd.fetched_at::text,ei.metadata,
-           COALESCE(ei.metadata->>'publicationDateSource',news_context.publication_date_source) AS news_publication_date_source
-      FROM evidence_items ei JOIN source_documents sd ON sd.id=ei.source_document_id
-      LEFT JOIN bills b ON b.id=ei.bill_id LEFT JOIN legislative_sessions bs ON bs.id=b.session_id
-      LEFT JOIN memberships m ON m.id=ei.membership_id LEFT JOIN legislative_sessions ms ON ms.id=m.session_id
-      LEFT JOIN LATERAL (
-        SELECT nx.metadata->>'publicationDateSource' AS publication_date_source
-          FROM evidence_items nx
-         WHERE nx.source_document_id=ei.source_document_id
-           AND nx.metadata->>'subtype'='news_article'
-           AND nx.metadata->>'publicationDateSource' IS NOT NULL
-         ORDER BY nx.id LIMIT 1
-      ) news_context ON true
-     WHERE COALESCE(bs.slug,ms.slug) IN ('2021-2022','2023-2024','2025-2026')
-     ORDER BY COALESCE(bs.slug,ms.slug),ei.bill_id,ei.membership_id,ei.published_at,ei.id`);
-  const {classifyLifecycleExternalAvailability,lifecycleExternalAvailabilityContentSha256,LIFECYCLE_EXTERNAL_AVAILABILITY_FROZEN_CONTENT_SHA256}=await import('../src/evaluation/lifecycle-external-availability.js');
-  const accepted=[];
-  for(const row of result.rows){
-    const decision=classifyLifecycleExternalAvailability({
-      evidenceId:row.evidence_id,sourceDocumentId:row.source_document_id,billId:row.bill_id,membershipId:row.membership_id,
-      session:row.session_slug,sourceKind:row.source_kind,evidenceKind:row.evidence_kind,stance:row.stance,
-      publishedAt:row.published_at,fetchedAt:row.fetched_at,metadata:row.metadata,newsPublicationDateSource:row.news_publication_date_source,
-    });
-    if(decision.accepted)accepted.push(decision.row);
-  }
+function loadAcceptedFromFrozenFile(path:string){
+  const {
+    lifecycleExternalAvailabilityContentSha256,
+    LIFECYCLE_EXTERNAL_AVAILABILITY_FROZEN_CONTENT_SHA256,
+  }=requireAvailability();
+  const accepted=readFileSync(path,'utf8').split(/\r?\n/).filter(Boolean).map((line)=>JSON.parse(line));
   const hash=lifecycleExternalAvailabilityContentSha256(accepted);
-  if(hash!==LIFECYCLE_EXTERNAL_AVAILABILITY_FROZEN_CONTENT_SHA256)throw new Error('Frozen external availability drift before outcome read: '+hash);
+  if(hash!==LIFECYCLE_EXTERNAL_AVAILABILITY_FROZEN_CONTENT_SHA256){
+    throw new Error('Frozen external availability artifact drift before outcome read: '+hash);
+  }
   return {accepted,hash};
+}
+let availabilityModule:any;
+function requireAvailability(){
+  if(!availabilityModule) throw new Error('Availability module was not initialized');
+  return availabilityModule;
 }
 
 async function main(){
   const envPath=process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;if(!envPath)throw new Error('Production environment file required');
   const env=parseRuntimeEnvironment(readFileSync(envPath,'utf8'));secretValues=Object.entries(env).filter(([k])=>/SECRET|PASSWORD|TOKEN|KEY|DATABASE_URL|POSTGRES_URL/i.test(k)).map(([,v])=>v).filter((v):v is string=>typeof v==='string');for(const v of secretValues)mask(v);
   const databaseUrl=await chooseDatabaseUrl(env);secretValues.push(databaseUrl);process.env.DATABASE_URL=databaseUrl;delete process.env.POSTGRES_URL;delete process.env.DATABASE_URL_UNPOOLED;delete process.env.POSTGRES_URL_NON_POOLING;
+  availabilityModule=await import('../src/evaluation/lifecycle-external-availability.js');
+  const frozenAvailabilityPath=process.env.VOTEPREDICT_EXTERNAL_AVAILABILITY_FILE;
+  if(!frozenAvailabilityPath)throw new Error('Frozen external availability file required');
+  // Phase 1: exact outcome-blind artifact reproduction, independent of the mutable evidence tables.
+  const availability=loadAcceptedFromFrozenFile(frozenAvailabilityPath);
+
   const {pool}=await import('../src/lib/db/index.js');
   try{
-    // Phase 1: exact outcome-blind availability reproduction.
-    const availability=await loadAccepted(pool);
-
-    // Phase 2 starts only after the frozen availability gate.
+    // Phase 2 starts only after the frozen availability artifact gate.
     const {buildLifecycleP3SnapshotDataset}=await import('../src/evaluation/lifecycle-p3-snapshot-dataset.js');
     const {FROZEN_LIFECYCLE_P3_CONTENT_SHA256,fitLifecycleP4ProspectiveStageModel,predictLifecycleP4ProspectiveStageModel}=await import('../src/evaluation/lifecycle-p4-baselines.js');
     const {buildLifecycleExternalFeatureRows,evaluateLifecycleExternalEvidenceScreen}=await import('../src/evaluation/lifecycle-external-evidence-screen.js');
