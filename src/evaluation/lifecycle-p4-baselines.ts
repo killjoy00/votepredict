@@ -372,18 +372,15 @@ export function summarizeLifecycleP4Baselines(input: {
   const hazard = buildForwardChainedHazardPredictions(riskRows);
   const stageHazard = hazard.filter((row) => row.model === 'lifecycle-stage-hazard-30d-v1');
   const elapsedHazard = hazard.filter((row) => row.model === 'lifecycle-stage-elapsed-hazard-30d-v1');
-  const introAtIntroduction = introductionMatched.filter((row) => {
-    const snapshot = input.snapshots.find((candidate) =>
-      candidate.bill.billId === row.billId
-      && candidate.cutoff.asOfDateExclusive === row.cutoffDateExclusive);
-    return snapshot?.cutoff.reason === 'introduction';
-  });
-  const stageAtIntroduction = stage.filter((row) => {
-    const snapshot = input.snapshots.find((candidate) =>
-      candidate.bill.billId === row.billId
-      && candidate.cutoff.asOfDateExclusive === row.cutoffDateExclusive);
-    return snapshot?.cutoff.reason === 'introduction';
-  });
+  const introductionSnapshotKeys = new Set(
+    input.snapshots
+      .filter((snapshot) => snapshot.cutoff.reason === 'introduction')
+      .map((snapshot) => `${snapshot.bill.billId}|${snapshot.cutoff.asOfDateExclusive}`),
+  );
+  const introAtIntroduction = introductionMatched.filter((row) =>
+    introductionSnapshotKeys.has(`${row.billId}|${row.cutoffDateExclusive}`));
+  const stageAtIntroduction = stage.filter((row) =>
+    introductionSnapshotKeys.has(`${row.billId}|${row.cutoffDateExclusive}`));
 
   const introAllScore = scoreLifecycleBinary(introductionMatched);
   const stageAllScore = scoreLifecycleBinary(stage);
