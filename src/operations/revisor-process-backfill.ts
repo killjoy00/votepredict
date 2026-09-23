@@ -492,11 +492,15 @@ async function persistDeferral(row: DeferredProcessBill): Promise<void> {
          SET metadata = metadata || jsonb_build_object(
            'revisorProcessHistory',
            (
-             CASE WHEN $5::boolean
-               THEN COALESCE(metadata->'revisorProcessHistory','{}'::jsonb)
-                    - 'parserVersion' - 'auditVersion' - 'contentSha256'
-               ELSE COALESCE(metadata->'revisorProcessHistory','{}'::jsonb)
-             END
+             (
+               CASE WHEN $5::boolean
+                 THEN COALESCE(metadata->'revisorProcessHistory','{}'::jsonb)
+                      - 'parserVersion' - 'auditVersion' - 'contentSha256'
+                 ELSE COALESCE(metadata->'revisorProcessHistory','{}'::jsonb)
+               END
+             )
+             - 'exclusionVersion'
+             - 'exclusionReason'
            )
            || jsonb_build_object(
              'status', 'deferred',
