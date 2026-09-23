@@ -16,6 +16,8 @@ export interface LifecycleP7Bill {
   identifier: string;
   currentCompanionIdentifier: string | null;
   currentCompanionObservedAt: string | null;
+  currentCompanionSourceUrl: string | null;
+  currentCompanionSourceSha256: string | null;
 }
 
 export interface LifecycleP7ProcessReference {
@@ -35,6 +37,7 @@ export interface LifecycleP7BillVersion {
   versionKey: string;
   publishedOn: string | null;
   sourceUrl: string | null;
+  textSha256: string | null;
   rawText: string;
 }
 
@@ -42,8 +45,10 @@ export type LifecycleP7EvidenceKind =
   | 'dated-substitution'
   | 'dated-explicit-companion'
   | 'dated-comparison'
+  | 'dated-reference-unlineaged'
   | 'reciprocal-current-companion'
   | 'current-companion-one-sided'
+  | 'current-companion-unlineaged'
   | 'exact-substantive-text';
 
 export interface LifecycleP7EdgeEvidence {
@@ -277,6 +282,18 @@ function buildComponents(
       .localeCompare(b.session + '|' + b.bills.map((bill) => bill.identifier).join('|')));
 }
 
+export function lifecycleP7DirectVehicleIds(
+  billId: string,
+  edges: readonly LifecycleP7LineageEdge[],
+): string[] {
+  const ids = new Set<string>([billId]);
+  for (const edge of edges) {
+    if (edge.left.billId === billId) ids.add(edge.right.billId);
+    if (edge.right.billId === billId) ids.add(edge.left.billId);
+  }
+  return [...ids].sort();
+}
+
 export function buildLifecycleP7Lineage(input: {
   bills: readonly LifecycleP7Bill[];
   processReferences: readonly LifecycleP7ProcessReference[];
@@ -327,17 +344,34 @@ export function buildLifecycleP7Lineage(input: {
           descriptions: [...reference.descriptions].sort(),
         },
       };
+      const sourceLineaged = Boolean(
+        reference.sourceUrl && reference.sourceDocumentId && reference.sourceContentSha256,
+      );
       if (kinds.substitution) {
-        addEvidence(candidates, source, target, {
+        addEvidence(candidates, source, target, sourceLineaged ? {
           kind: 'dated-substitution',
           ...common,
-        }, 'dated-substitution');
+        } : {
+          kind: 'dated-reference-unlineaged',
+          ...common,
+          details: {
+            ...common.details,
+            intendedKind: 'dated-substitution',
+          },
+        }, sourceLineaged ? 'dated-substitution' : undefined);
       }
       if (kinds.explicitCompanion) {
-        addEvidence(candidates, source, target, {
+        addEvidence(candidates, source, target, sourceLineaged ? {
           kind: 'dated-explicit-companion',
           ...common,
-        }, 'dated-explicit-companion');
+        } : {
+          kind: 'dated-reference-unlineaged',
+          ...common,
+          details: {
+            ...common.details,
+            intendedKind: 'dated-explicit-companion',
+          },
+        }, sourceLineaged ? 'dated-explicit-companion' : undefined);
       }
       if (kinds.comparison && !kinds.substitution && !kinds.explicitCompanion) {
         addEvidence(candidates, source, target, {
@@ -366,20 +400,33 @@ export function buildLifecycleP7Lineage(input: {
       continue;
     }
     const reciprocal = normalizeLifecycleP7Identifier(target.currentCompanionIdentifier) === source.identifier;
+    const sourceLineaged = Boolean(
+      source.currentCompanionSourceUrl &&
+      source.currentCompanionSourceSha256 &&
+      target.currentCompanionSourceUrl &&
+      target.currentCompanionSourceSha256
+    );
+    const acceptedReciprocal = reciprocal && sourceLineaged;
     addEvidence(candidates, source, target, {
-      kind: reciprocal ? 'reciprocal-current-companion' : 'current-companion-one-sided',
+      kind: acceptedReciprocal
+        ? 'reciprocal-current-companion'
+        : reciprocal
+          ? 'current-companion-unlineaged'
+          : 'current-companion-one-sided',
       sourceBillIdentifier: source.identifier,
       targetBillIdentifier: target.identifier,
       occurredOn: null,
-      sourceUrl: null,
+      sourceUrl: source.currentCompanionSourceUrl,
       sourceDocumentId: null,
-      sourceContentSha256: null,
+      sourceContentSha256: source.currentCompanionSourceSha256,
       details: {
         observedAt: source.currentCompanionObservedAt,
+        targetSourceUrl: target.currentCompanionSourceUrl,
+        targetSourceSha256: target.currentCompanionSourceSha256,
         retrospectiveRelationshipOnly: true,
         eventTimeFeatureEligible: false,
       },
-    }, reciprocal ? 'reciprocal-current-companion' : undefined);
+    }, acceptedReciprocal ? 'reciprocal-current-companion' : undefined);
   }
 
   const textGroups = new Map<string, Map<string, {
@@ -388,12 +435,19 @@ export function buildLifecycleP7Lineage(input: {
     canonicalSha256: string;
   }>>();
   let canonicalizableVersions = 0;
+  let sourceLineagedVersions = 0;
+  let unlineagedCanonicalVersions = 0;
   for (const version of input.billVersions) {
     const bill = billsById.get(version.billId);
     if (!bill) continue;
     const canonicalSha256 = lifecycleP7SubstantiveTextSha256(version.rawText);
     if (!canonicalSha256) continue;
     canonicalizableVersions += 1;
+    if (!version.sourceUrl || !version.textSha256) {
+      unlineagedCanonicalVersions += 1;
+      continue;
+    }
+    sourceLineagedVersions += 1;
     const key = bill.session + '|' + canonicalSha256;
     const byBill = textGroups.get(key) ?? new Map();
     const current = byBill.get(bill.billId);
@@ -453,9 +507,11 @@ export function buildLifecycleP7Lineage(input: {
         leftVersionId: rows[0].version.billVersionId,
         leftVersionKey: rows[0].version.versionKey,
         leftPublishedOn: rows[0].version.publishedOn,
+        leftStoredTextSha256: rows[0].version.textSha256,
         rightVersionId: rows[1].version.billVersionId,
         rightVersionKey: rows[1].version.versionKey,
         rightPublishedOn: rows[1].version.publishedOn,
+        rightStoredTextSha256: rows[1].version.textSha256,
       },
     }, 'exact-substantive-text');
   }
@@ -532,8 +588,10 @@ export function buildLifecycleP7Lineage(input: {
       'dated-substitution',
       'dated-explicit-companion',
       'dated-comparison',
+      'dated-reference-unlineaged',
       'reciprocal-current-companion',
       'current-companion-one-sided',
+      'current-companion-unlineaged',
       'exact-substantive-text',
     ] as LifecycleP7EvidenceKind[]).map((kind) => [
       kind,
@@ -567,17 +625,22 @@ export function buildLifecycleP7Lineage(input: {
       contract: {
         horizon: 'same-biennium',
         graphDirection: 'undirected',
+        outcomeClosure: 'direct-edges-only',
+        componentsAreAuditOnly: true,
         acceptedIndependentProof: [
-          'dated official substitution reference',
-          'dated official action explicitly naming a companion',
-          'reciprocal final official companion metadata',
-          'unambiguous exact canonical substantive text across opposite chambers',
+          'source-lineaged dated official substitution reference',
+          'source-lineaged dated official action explicitly naming a companion',
+          'reciprocal final official companion metadata with source URL and content hash on both sides',
+          'source-lineaged unambiguous exact canonical substantive text across opposite chambers',
         ],
         insufficientAlone: [
           'comparison-with action without independent corroboration',
           'one-sided final current companion metadata',
+          'reciprocal current companion metadata missing frozen source lineage',
+          'dated companion/substitution reference missing frozen source lineage',
           'same-chamber exact text',
           'exact-text groups spanning more than two bills',
+          'multi-edge transitive connectivity without a direct accepted edge',
         ],
         excludedFromV1: [
           'fuzzy or near-identical text thresholds',
@@ -592,8 +655,15 @@ export function buildLifecycleP7Lineage(input: {
         processReferenceEvents: input.processReferences.length,
         billVersions: input.billVersions.length,
         canonicalizableVersions,
+        sourceLineagedVersions,
+        unlineagedCanonicalVersions,
         edges: edges.length,
         linkedComponents: components.length,
+        multiBillComponents: components.filter((component) => component.bills.length > 2).length,
+        maxComponentSize: components.reduce(
+          (max, component) => Math.max(max, component.bills.length),
+          0,
+        ),
         matchedBills: matchedBillIds.size,
         unmatchedBills: bills.length - matchedBillIds.size,
         ambiguousExactTextGroups,
@@ -616,6 +686,8 @@ export function buildLifecycleP7Lineage(input: {
         historicalRelationshipMetadataEventTimeFeatureEligible: false,
         fuzzyMatchingEnabled: false,
         ambiguityForcedIntoLineage: false,
+        acceptedEvidenceRequiresStoredLineage: true,
+        componentsTransitiveForOutcome: false,
         servingChanged: false,
         productionAction: 'none',
         automaticPromotionAllowed: false,
