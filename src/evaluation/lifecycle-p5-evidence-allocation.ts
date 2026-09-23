@@ -7,7 +7,7 @@ import {
 } from './lifecycle-p4-baselines';
 import { REVISOR_PROCESS_PARSER_VERSION } from '../sources/minnesota/revisor-process';
 
-export const LIFECYCLE_P5_SCHEMA_VERSION = 'lifecycle-p5-evidence-allocation-v1' as const;
+export const LIFECYCLE_P5_SCHEMA_VERSION = 'lifecycle-p5-evidence-allocation-v2' as const;
 
 export type LifecycleP5Target =
   | 'reach_floor_eligibility'
@@ -38,6 +38,8 @@ export interface LifecycleP5Row {
   chamber: Chamber;
   cutoffDateExclusive: string;
   lifecycleState: LifecycleState;
+  daysSinceIntroduction: number;
+  daysRemainingInBiennium: number;
   target: LifecycleP5Target;
   outcome: 0 | 1;
   eligibleFamilies: Record<LifecycleP5EvidenceFamily, boolean>;
@@ -108,6 +110,22 @@ function countBucket(value: number): string {
   if (value <= 3) return '2-3';
   if (value <= 7) return '4-7';
   return '8+';
+}
+
+function elapsedBucket(value: number): string {
+  if (value < 30) return '00-29';
+  if (value < 90) return '30-89';
+  if (value < 180) return '90-179';
+  if (value < 365) return '180-364';
+  return '365+';
+}
+
+function remainingBucket(value: number): string {
+  if (value <= 30) return '000-030';
+  if (value <= 90) return '031-090';
+  if (value <= 180) return '091-180';
+  if (value <= 365) return '181-365';
+  return '366+';
 }
 
 function authorCountBucket(value: number): string {
@@ -209,6 +227,8 @@ function buildRowsForBill(snapshots: readonly LifecycleP3Snapshot[]): LifecycleP
       chamber: snapshot.bill.chamber,
       cutoffDateExclusive: snapshot.cutoff.asOfDateExclusive,
       lifecycleState: snapshot.features.lifecycleState,
+      daysSinceIntroduction: snapshot.features.daysSinceIntroduction,
+      daysRemainingInBiennium: snapshot.features.daysRemainingInBiennium,
       eligibleFamilies: familyEligibility(snapshot),
       tokens: evidenceFamilyTokens(snapshot),
     };
@@ -260,8 +280,16 @@ function rowEligibleForModel(row: LifecycleP5Row, definition: ModelDefinition): 
   return definition.families.every((family) => row.eligibleFamilies[family]);
 }
 
-function baseKey(row: LifecycleP5Row): string {
+function stageKey(row: LifecycleP5Row): string {
   return `${row.chamber}|${row.lifecycleState}`;
+}
+
+function baseKey(row: LifecycleP5Row): string {
+  return [
+    stageKey(row),
+    elapsedBucket(row.daysSinceIntroduction),
+    remainingBucket(row.daysRemainingInBiennium),
+  ].join('|');
 }
 
 type RateStats = { positives: number; total: number };
@@ -280,6 +308,7 @@ function jeffreys(stat: RateStats): number {
 type BaselineModel = {
   overall: number;
   chamber: Map<Chamber, number>;
+  stage: Map<string, number>;
   group: Map<string, number>;
 };
 
@@ -287,22 +316,26 @@ function fitBaseline(rows: readonly LifecycleP5Row[]): BaselineModel {
   if (!rows.length) throw new Error('Cannot fit lifecycle P5 baseline without rows');
   const overallStat: RateStats = { positives: 0, total: 0 };
   const chamberStats = new Map<string, RateStats>();
+  const stageStats = new Map<string, RateStats>();
   const groupStats = new Map<string, RateStats>();
   for (const row of rows) {
     overallStat.total += 1;
     overallStat.positives += row.outcome;
     addStat(chamberStats, row.chamber, row.outcome);
+    addStat(stageStats, stageKey(row), row.outcome);
     addStat(groupStats, baseKey(row), row.outcome);
   }
   return {
     overall: jeffreys(overallStat),
     chamber: new Map([...chamberStats.entries()].map(([key, stat]) => [key as Chamber, jeffreys(stat)])),
+    stage: new Map([...stageStats.entries()].map(([key, stat]) => [key, jeffreys(stat)])),
     group: new Map([...groupStats.entries()].map(([key, stat]) => [key, jeffreys(stat)])),
   };
 }
 
 function baselineProbability(model: BaselineModel, row: LifecycleP5Row): number {
   return model.group.get(baseKey(row))
+    ?? model.stage.get(stageKey(row))
     ?? model.chamber.get(row.chamber)
     ?? model.overall;
 }
@@ -578,7 +611,7 @@ export function summarizeLifecycleP5EvidenceAllocation(input: {
       tokenScale: TOKEN_SCALE,
       probabilityFloor: PROBABILITY_FLOOR,
       probabilityCeiling: PROBABILITY_CEILING,
-      baseline: 'source chamber + canonical lifecycle state empirical rate',
+      baseline: 'source chamber + canonical lifecycle state + elapsed-since-introduction + days-remaining empirical rate, with stage/chamber/overall fallbacks',
       tokenSemantics: 'Low-dimensional categorical evidence summaries only; no member IDs, companion bill IDs, text hashes, or outcome-derived labels are used as candidate tokens.',
     },
     familyEligibility: {

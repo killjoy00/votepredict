@@ -156,6 +156,8 @@ function p5Row(input: {
     chamber: 'house',
     cutoffDateExclusive: `${input.session.slice(0, 4)}-01-01`,
     lifecycleState: 'introduced',
+    daysSinceIntroduction: 0,
+    daysRemainingInBiennium: 400,
     target: 'source_chamber_passage',
     outcome: input.outcome,
     eligibleFamilies: {

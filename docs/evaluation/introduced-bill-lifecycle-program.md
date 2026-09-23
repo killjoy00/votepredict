@@ -481,8 +481,10 @@ proved and frozen; P3 currently contains zero cutoff-eligible external-evidence 
 
 The stage-specific outcomes are (1) eventual reach of floor eligibility/scheduling while the bill is still earlier
 in the lifecycle, (2) eventual reach of a source-chamber passage vote, and (3) strict bill-number source-chamber
-passage. Each candidate is compared with a matched source-chamber + canonical-state empirical baseline using only
-earlier completed biennia. P5 uses low-dimensional family summaries rather than member IDs, specific companion
+passage. Each candidate is compared with a matched source-chamber + canonical-state + elapsed-time + days-remaining
+empirical baseline using only earlier completed biennia. This explicit clock control is required because the first
+exploratory P5 run (35891414803) showed that process depth and bill-version availability can partly proxy elapsed
+time when compared only with chamber + coarse state; that v1 run is superseded before P5 is frozen. P5 uses low-dimensional family summaries rather than member IDs, specific companion
 identities, text hashes, or outcome-derived labels. Authorship is a matched-subset analysis because unreconstructable
 authorship is not treated as predictive missingness. The full-coverage core combination is process detail +
 companion + bill-version structure, with single-family and leave-one-family-out ablations. Conditional member-vote

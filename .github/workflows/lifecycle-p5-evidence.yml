@@ -54,15 +54,15 @@ jobs:
       - name: Evaluate lifecycle P5 evidence allocation
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
-          VOTEPREDICT_P5_OUTPUT_DIR: artifacts/lifecycle-p5-evidence-allocation-v1
+          VOTEPREDICT_P5_OUTPUT_DIR: artifacts/lifecycle-p5-evidence-allocation-v2
         run: node --import tsx scripts/evaluate-lifecycle-p5-evidence.ts
 
       - name: Upload lifecycle P5 evidence artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: lifecycle-p5-evidence-allocation-v1-${{ github.sha }}
-          path: artifacts/lifecycle-p5-evidence-allocation-v1
+          name: lifecycle-p5-evidence-allocation-v2-${{ github.sha }}
+          path: artifacts/lifecycle-p5-evidence-allocation-v2
           if-no-files-found: warn
 
       - name: Remove temporary credentials and logs
