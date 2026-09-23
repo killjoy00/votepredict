@@ -69,7 +69,7 @@ function snapshot(cutoff: string): LifecycleP3Snapshot {
 }
 
 test('P6 end-to-end composition is the lifecycle reach probability times conditional chamber passage', () => {
-  assert.equal(combineLifecycleAndConditional(0.2, 0.75), 0.15);
+  assert.ok(Math.abs(combineLifecycleAndConditional(0.2, 0.75) - 0.15) < 1e-12);
 });
 
 test('P6 conditional fallback excludes same-day passage outcomes', () => {
