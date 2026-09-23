@@ -743,7 +743,7 @@ promote a model automatically.
 ### P8 — 2027 prospective validation
 
 - [x] Freeze the prospective capture/evaluation contract before 2027-28 outcomes.
-- [ ] Freeze the exact 2027 prospective model artifact from completed 2021-26 history.
+- [x] Freeze the exact 2027 prospective model artifact from completed 2021-26 history.
 - [ ] Activate immutable daily lifecycle capture before 2027-28 outcomes.
 - [ ] Preserve the serving models while observations accrue.
 - [ ] Score only after the frozen prospective reveal/coverage gates are met.
@@ -755,6 +755,18 @@ can be accepted for 2027. The accepted introduction architecture is fit once on 
 introduction-safe observations; its training-corpus and model-content hashes are part of the P8 gate. The conditional
 component remains `member-eb-v1.2-decay180` with only strictly pre-cutoff member/vote/analogue history. No 2027
 outcome or 2027 production forecast may enter model fitting.
+
+Frozen P8 model result (2026-09-23): production run `35910925882` on code SHA
+`2733a6c8f96e88e1028dbcea7c5d9caac212ab08` passed with **0** 2027-28 bills, strict outcomes,
+forecast revisions, vote events, and stage events. It reproduced the frozen P3/P4/P5 historical hashes and the
+pinned 2027 introduction corpus/model hashes before emitting `lifecycle-p8-prospective-model-v1`. The frozen
+prospective-plan SHA-256 is `2f4e936fe0977049a8f4212c48ee93405dd7b6dff59ee4f801f402a05f3dfd6d`; the
+frozen model-content SHA-256 is `abcf583153939d46aa021dccf2afe61d698ad4538a981059cdee265c03166a65`; and
+the GitHub artifact digest is
+`sha256:72a42063a028114b4f6cbd8a356e74940eb00bdcda28a83cadf884aaa346061e`. The model package contains the
+2027 v4 introduction model, the final P4 stage fit over 63,974 frozen P3 snapshots, the retained P5 fits, and the
+unchanged `member-eb-v1.2-decay180` P6 conditional contract. These hashes are now fail-closed gates for every
+future P8 capture/reproduction run.
 
 Prospective lifecycle capture is **daily and immutable**, using the Minnesota calendar date as a date-exclusive
 cutoff. Official process events, bill versions, and member/vote history dated on the cutoff date are excluded because
