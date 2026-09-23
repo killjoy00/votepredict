@@ -882,7 +882,7 @@ export function summarizeLifecycleP6EndToEnd(input: {
       cutoffDateExclusive: snapshot.cutoff.asOfDateExclusive,
       lifecycleState: snapshot.features.lifecycleState,
       cutoffReason: snapshot.cutoff.reason,
-      outcome: snapshot.targets.eventualSourceChamberPassage ? 1 : 0,
+      outcome: snapshot.targets.eventualSourceChamberPassage ? 1 as const : 0 as const,
       acceptedIntroductionPrior: intro.probability,
       p4StageOnly: stagePrediction.probability,
       p5DirectPassage: direct?.candidateProbability ?? stagePrediction.probability,
