@@ -45,7 +45,8 @@
     "audit:lifecycle:p2": "tsx scripts/audit-lifecycle-p2.ts",
     "build:lifecycle:p3": "tsx scripts/build-lifecycle-p3-snapshot-dataset.ts",
     "eval:lifecycle:p4": "tsx scripts/evaluate-lifecycle-p4-baselines.ts",
-    "eval:lifecycle:p5": "tsx scripts/evaluate-lifecycle-p5-evidence.ts"
+    "eval:lifecycle:p5": "tsx scripts/evaluate-lifecycle-p5-evidence.ts",
+    "eval:lifecycle:p6": "tsx scripts/evaluate-lifecycle-p6-end-to-end.ts"
   },
   "dependencies": {
     "@neondatabase/auth": "0.5.0-beta",
