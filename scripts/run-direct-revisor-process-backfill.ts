@@ -125,6 +125,15 @@ async function main(): Promise<void> {
   } = await import('../src/operations/revisor-process-backfill.js');
   const { pool } = await import('../src/lib/db/index.js');
 
+  const forceRetryUnresolved = process.env.VOTEPREDICT_PROCESS_FORCE_RETRY_UNRESOLVED
+    ?.trim()
+    .toLowerCase() === 'true';
+  const forceRetryBefore = forceRetryUnresolved ? new Date().toISOString() : null;
+  console.log(JSON.stringify({
+    directProcessBackfillMode: forceRetryUnresolved ? 'force-retry-unresolved' : 'normal',
+    forceRetryBefore,
+  }));
+
   let totalProcessed = 0;
   let totalExcluded = 0;
   let totalDeferred = 0;
@@ -135,7 +144,7 @@ async function main(): Promise<void> {
 
   try {
     for (let batch = 1; batch <= MAX_BATCHES; batch += 1) {
-      const result = await backfillRevisorProcessBatch(BATCH_LIMIT);
+      const result = await backfillRevisorProcessBatch(BATCH_LIMIT, { forceRetryBefore });
       totalProcessed += result.processed;
       totalExcluded += result.excluded;
       totalDeferred += result.deferred;

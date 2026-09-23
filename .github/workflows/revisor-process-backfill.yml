@@ -23,7 +23,10 @@ jobs:
         (
           github.event.issue.number == 310 &&
           github.event.comment.user.login == 'killjoy00' &&
-          startsWith(github.event.comment.body, '[lifecycle-crawl-backstop]')
+          (
+            startsWith(github.event.comment.body, '[lifecycle-crawl-backstop]') ||
+            startsWith(github.event.comment.body, '[lifecycle-crawl-retry-all]')
+          )
         )
       )
     runs-on: ubuntu-latest
@@ -59,6 +62,7 @@ jobs:
       - name: Backfill Revisor process history directly from GitHub Actions
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+          VOTEPREDICT_PROCESS_FORCE_RETRY_UNRESOLVED: ${{ github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '[lifecycle-crawl-retry-all]') }}
         run: node --import tsx scripts/run-direct-revisor-process-backfill.ts
 
       - name: Remove temporary credentials and logs

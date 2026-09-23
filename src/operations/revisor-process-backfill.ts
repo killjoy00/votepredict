@@ -86,7 +86,10 @@ export interface RevisorProcessBackfillVerification {
   complete: boolean;
 }
 
-async function selectBatch(limit: number): Promise<ProcessBackfillBillRow[]> {
+async function selectBatch(
+  limit: number,
+  forceRetryBefore: string | null,
+): Promise<ProcessBackfillBillRow[]> {
   const result = await pool.query<ProcessBackfillBillRow>(`
     SELECT b.id::text AS bill_id,
            b.session_id::text AS session_id,
@@ -103,22 +106,48 @@ async function selectBatch(limit: number): Promise<ProcessBackfillBillRow[]> {
          b.metadata #>> '{revisorProcessHistory,parserVersion}' IS DISTINCT FROM $1
          OR b.metadata #>> '{revisorProcessHistory,auditVersion}' IS DISTINCT FROM $2
        )
-       AND b.metadata #>> '{revisorProcessHistory,exclusionVersion}' IS DISTINCT FROM $1
        AND (
-         b.metadata #>> '{revisorProcessHistory,deferredAt}' IS NULL
-         OR NULLIF(b.metadata #>> '{revisorProcessHistory,deferredAt}', '')::timestamptz
-              < now() - interval '6 hours'
-         OR EXISTS (
-           SELECT 1
-             FROM legislative_stage_events legacy
-            WHERE legacy.bill_id = b.id
-              AND legacy.metadata ->> 'parserVersion' = 'revisor-process-v1'
-              AND b.introduced_at IS NOT NULL
-              AND legacy.occurred_at::date < b.introduced_at::date
+         b.metadata #>> '{revisorProcessHistory,exclusionVersion}' IS DISTINCT FROM $1
+         OR (
+           $4::timestamptz IS NOT NULL
+           AND COALESCE(
+             NULLIF(b.metadata #>> '{revisorProcessHistory,fetchedAt}', '')::timestamptz,
+             '-infinity'::timestamptz
+           ) < $4::timestamptz
+         )
+       )
+       AND (
+         (
+           $4::timestamptz IS NOT NULL
+           AND COALESCE(
+             NULLIF(b.metadata #>> '{revisorProcessHistory,deferredAt}', '')::timestamptz,
+             '-infinity'::timestamptz
+           ) < $4::timestamptz
+         )
+         OR (
+           $4::timestamptz IS NULL
+           AND (
+             b.metadata #>> '{revisorProcessHistory,deferredAt}' IS NULL
+             OR NULLIF(b.metadata #>> '{revisorProcessHistory,deferredAt}', '')::timestamptz
+                  < now() - interval '6 hours'
+             OR EXISTS (
+               SELECT 1
+                 FROM legislative_stage_events legacy
+                WHERE legacy.bill_id = b.id
+                  AND legacy.metadata ->> 'parserVersion' = 'revisor-process-v1'
+                  AND b.introduced_at IS NOT NULL
+                  AND legacy.occurred_at::date < b.introduced_at::date
+             )
+           )
          )
        )
      ORDER BY s.starts_on, b.identifier
-     LIMIT $3`, [REVISOR_PROCESS_PARSER_VERSION, REVISOR_PROCESS_AUDIT_VERSION, limit]);
+     LIMIT $3`, [
+       REVISOR_PROCESS_PARSER_VERSION,
+       REVISOR_PROCESS_AUDIT_VERSION,
+       limit,
+       forceRetryBefore,
+     ]);
   return result.rows;
 }
 
@@ -502,9 +531,10 @@ async function persistDeferral(row: DeferredProcessBill): Promise<void> {
 
 export async function backfillRevisorProcessBatch(
   requestedLimit = 12,
+  options: { forceRetryBefore?: string | null } = {},
 ): Promise<RevisorProcessBackfillBatchResult> {
   const limit = Math.min(REVISOR_PROCESS_BACKFILL_MAX_BATCH, Math.max(1, Math.floor(requestedLimit)));
-  const rows = await selectBatch(limit);
+  const rows = await selectBatch(limit, options.forceRetryBefore ?? null);
   if (rows.length === 0) {
     return {
       requested: limit,
