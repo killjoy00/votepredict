@@ -50,7 +50,8 @@
     "build:lifecycle:p7-lineage": "tsx scripts/build-lifecycle-p7-lineage.ts",
     "eval:lifecycle:p7-outcome": "tsx scripts/evaluate-lifecycle-p7-outcome.ts",
     "build:lifecycle:p8-model": "tsx scripts/build-lifecycle-p8-prospective-model.ts",
-    "audit:lifecycle:external-availability": "tsx scripts/audit-lifecycle-external-availability.ts"
+    "audit:lifecycle:external-availability": "tsx scripts/audit-lifecycle-external-availability.ts",
+    "eval:lifecycle:external-screen": "tsx scripts/evaluate-lifecycle-external-evidence-screen.ts"
   },
   "dependencies": {
     "@neondatabase/auth": "0.5.0-beta",
