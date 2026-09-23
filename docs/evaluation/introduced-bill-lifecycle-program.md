@@ -622,7 +622,7 @@ lift over P5 is small and reverses in 2025-26, and v4 remains superior at introd
 
 - [x] Define an outcome-blind text/companion lineage rule.
 - [x] Freeze the production lineage artifact before joining final outcome labels.
-- [ ] Report the frozen secondary outcome separately from strict bill-number passage.
+- [x] Report the frozen secondary outcome separately from strict bill-number passage.
 
 P7 v1 deliberately starts with the narrowest high-precision lineage contract that can be reproduced without reading
 a passage result. The fixed population remains the 31,010 P3 bills and the relationship horizon is the same biennium.
@@ -693,6 +693,44 @@ Frozen hashes:
 
 The first production audit run `35901402339` is superseded by the hardened direct-edge/provenance contract above.
 Historical P7 outcome scoring may proceed only if the evaluator reproduces the frozen lineage-content hash exactly.
+
+Frozen P7 outcome result (2026-09-23): production run `35905423205` on code SHA
+`093c080a87450211e4d498c117873c38202cd166` reproduced the frozen lineage SHA exactly **before** executing the
+first outcome-bearing query, then evaluated `substantive_vehicle_passage_v1` without changing the strict target.
+The result contains **654 strict bill-number positives** and **1,305 substantive-vehicle positives** across all
+31,010 bills, so **651 bills** are incremental positives because a direct accepted vehicle passed while the original
+number did not. Every incremental positive has exactly one successful direct neighbor; graph transitivity contributes
+zero labels.
+
+The incremental positives are overwhelmingly supported by the strongest relationship evidence: **597 / 651** use
+an edge backed by both exact substantive text and reciprocal official companion metadata, **46** use reciprocal
+official companion metadata only, and **8** use exact substantive text only. By biennium, incremental positives are
+192 in 2021-22, 206 in 2023-24, and 253 in 2025-26. By originating chamber they are 230 House and 421 Senate. These
+counts are descriptive vehicle-lineage outcomes; they do not imply that every provision survived unchanged or that
+the companion relationship caused passage.
+
+The accepted introduction-stage v4 probabilities were then **rescored without retraining** on the later-biennium
+21,495-bill holdout population. On the original strict target they reproduce the frozen baseline exactly:
+Brier **0.02060092**, log loss **0.09802744**, ECE **0.00260184**, AP **0.16436**, and ROC-AUC **0.78224**. On the
+separate P7 target the same unchanged probabilities have Brier **0.04094816**, log loss **0.17802795**, ECE
+**0.02395564**, AP **0.28022**, and ROC-AUC **0.78341**. The substantive target positive rate is **4.2615%** while
+the unchanged v4 mean probability is **1.8659%**. Therefore v4 retains similar ranking information for the broader
+vehicle outcome, but it is materially under-calibrated for that different target. The higher AP must be interpreted
+against the roughly doubled positive base rate and is not evidence that v4 was trained for the secondary target.
+
+Frozen P7 result hashes:
+- label NDJSON / label-content SHA-256:
+  `5b18378725c736dd4eceb37992fd4295cbd779e24e3cdd92123f28192ab75eec`;
+- unchanged-v4 transfer NDJSON SHA-256:
+  `1edb9e1466e5449fec5d382cfac6bcffa01c67be1cc0da52981506cb43fab8a6`;
+- report file SHA-256: `aafdfc01fd60454706db399648b2968ce4fa723b356ed3c786eb4a3e5071b9e1`;
+- GitHub artifact digest:
+  `sha256:df026d3bc0d14c599c6dab4ea953fee2f6e12f7ac0ac700eb3a29f9d454b20b0`.
+
+P7 is therefore **complete and frozen** as a retrospective development/robustness phase. It establishes a useful
+separate vehicle-level label and shows that the accepted strict-target v4 ranking signal transfers to it, but it does
+not authorize recalibration, retuning, or serving changes. Production action remains **none**. The governing next
+phase is P8 prospective 2027-28 validation under separately reported strict and substantive-vehicle outcomes.
 
 The reproducible outcome-blind entry point is `npm run build:lifecycle:p7-lineage` and the manual
 `Lifecycle P7 lineage freeze` GitHub Action. It writes `report.json`, `edges.ndjson`, `components.ndjson`, and
