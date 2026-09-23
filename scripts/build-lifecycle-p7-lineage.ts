@@ -29,6 +29,8 @@ type BillRow = {
   identifier: string;
   current_companion_identifier: string | null;
   current_companion_observed_at: string | null;
+  current_companion_source_url: string | null;
+  current_companion_source_sha256: string | null;
 };
 
 type ProcessRow = {
@@ -48,6 +50,7 @@ type VersionRow = {
   version_key: string;
   published_on: string | null;
   source_url: string | null;
+  text_sha256: string | null;
   raw_text: string;
 };
 
@@ -148,7 +151,15 @@ async function main(): Promise<void> {
                  b.metadata #>> '{revisorIntroduction,currentCompanion,identifier}',
                  b.metadata #>> '{revisor,companionIdentifier}'
                ), ' ', '')) AS current_companion_identifier,
-               b.metadata #>> '{revisorIntroduction,currentCompanion,observedAt}' AS current_companion_observed_at
+               b.metadata #>> '{revisorIntroduction,currentCompanion,observedAt}' AS current_companion_observed_at,
+               COALESCE(
+                 b.metadata #>> '{revisorIntroduction,statusXmlUrl}',
+                 b.metadata #>> '{revisorIntroduction,statusHtmlUrl}'
+               ) AS current_companion_source_url,
+               COALESCE(
+                 b.metadata #>> '{revisorIntroduction,statusXmlSha256}',
+                 b.metadata #>> '{revisorIntroduction,statusHtmlSha256}'
+               ) AS current_companion_source_sha256
           FROM bills b
           JOIN legislative_sessions s ON s.id=b.session_id
           JOIN jurisdictions j ON j.id=s.jurisdiction_id AND j.slug='us-mn'
@@ -181,6 +192,7 @@ async function main(): Promise<void> {
                bv.version_key,
                bv.published_at::date::text AS published_on,
                bv.source_url,
+               bv.text_hash AS text_sha256,
                bv.raw_text
           FROM bill_versions bv
           JOIN bills b ON b.id=bv.bill_id
@@ -208,6 +220,8 @@ async function main(): Promise<void> {
       identifier: row.identifier,
       currentCompanionIdentifier: row.current_companion_identifier,
       currentCompanionObservedAt: row.current_companion_observed_at,
+      currentCompanionSourceUrl: row.current_companion_source_url,
+      currentCompanionSourceSha256: row.current_companion_source_sha256,
     }));
     const processReferences: LifecycleP7ProcessReference[] = processResult.rows.map((row) => ({
       eventId: row.event_id,
@@ -225,6 +239,7 @@ async function main(): Promise<void> {
       versionKey: row.version_key,
       publishedOn: row.published_on,
       sourceUrl: row.source_url,
+      textSha256: row.text_sha256,
       rawText: row.raw_text,
     }));
 

@@ -635,14 +635,16 @@ An undirected P7 v1 relationship edge is admitted only by at least one outcome-i
 
 1. a dated official Revisor action explicitly records substitution of the other bill;
 2. a dated official Revisor action explicitly calls the other bill a companion;
-3. final official Revisor companion metadata is reciprocal within the same biennium; or
-4. an official text version has an exact canonical substantive-text hash shared by exactly two bills in that
-   biennium and those bills originate in opposite chambers.
+3. final official Revisor companion metadata is reciprocal within the same biennium **and both directions retain
+   the official status source URL plus content hash**; or
+4. a source-lineaged official text version has an exact canonical substantive-text hash shared by exactly two bills
+   in that biennium and those bills originate in opposite chambers.
 
 A bare `comparison with` action is retained as audit evidence but is not sufficient by itself because official
-history can later state that compared bills are not identical. One-sided final companion metadata is likewise audit
-evidence unless another accepted proof corroborates the pair. Exact-text groups spanning more than two bills and
-same-chamber duplicates remain visible and unresolved rather than being forced into pairwise lineage.
+history can later state that compared bills are not identical. One-sided final companion metadata, reciprocal
+metadata without frozen source/hash lineage, and unlineaged dated relationship rows are likewise audit evidence
+unless another accepted proof corroborates the pair. Exact-text groups spanning more than two bills and same-chamber
+duplicates remain visible and unresolved rather than being forced into pairwise lineage.
 
 P7 v1 explicitly excludes fuzzy/near-identical thresholds, title similarity, omnibus section containment, and
 cross-biennium reintroduction/successor inference. Those evidence classes require separately frozen precision and
@@ -653,6 +655,12 @@ Final/current companion metadata is permitted only for retrospective **label lin
 becomes an event-time historical feature. Any dated relationship used prospectively remains subject to the existing
 date-exclusive chronology rule; same-day evidence cannot be moved before a forecast cutoff when ordering is
 unproved.
+
+P7 outcome closure is **direct-edge only**. Connected components are emitted for audit, but transitive connectivity
+does not by itself make two bills substantive vehicles for one another. This is required because a bill can acquire
+different exact-text counterparts across different versions over time; automatically taking graph transitive closure
+would merge those distinct version relationships. A P7 outcome may therefore inspect the bill itself plus only bills
+joined to it by a direct accepted edge.
 
 The reproducible outcome-blind entry point is `npm run build:lifecycle:p7-lineage` and the manual
 `Lifecycle P7 lineage freeze` GitHub Action. It writes `report.json`, `edges.ndjson`, `components.ndjson`, and

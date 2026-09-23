@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   buildLifecycleP7Lineage,
   canonicalizeLifecycleP7SubstantiveText,
+  lifecycleP7DirectVehicleIds,
   lifecycleP7SubstantiveTextSha256,
   type LifecycleP7Bill,
   type LifecycleP7BillVersion,
@@ -22,6 +23,8 @@ function bill(
     identifier,
     currentCompanionIdentifier: companion,
     currentCompanionObservedAt: companion ? '2026-06-01T12:00:00Z' : null,
+    currentCompanionSourceUrl: companion ? 'https://www.revisor.mn.gov/status/' + identifier : null,
+    currentCompanionSourceSha256: companion ? 'source-sha-' + identifier : null,
   };
 }
 
@@ -43,6 +46,7 @@ function version(
     versionKey: '0',
     publishedOn: '2025-02-01',
     sourceUrl: 'https://www.revisor.mn.gov/example/' + identifier,
+    textSha256: 'stored-text-sha-' + billVersionId,
     rawText: text(identifier, body),
   };
 }
@@ -178,4 +182,42 @@ test('same-chamber exact duplicates do not create P7 v1 lineage without official
   });
   assert.equal(result.edges.length, 0);
   assert.equal(result.report.coverage.sameChamberExactTextGroups, 1);
+});
+
+
+test('reciprocal current companion metadata without frozen source lineage does not create lineage', () => {
+  const left = bill('h', 'HF10', 'house', 'SF20');
+  const right = bill('s', 'SF20', 'senate', 'HF10');
+  right.currentCompanionSourceSha256 = null;
+  const result = buildLifecycleP7Lineage({
+    bills: [left, right],
+    processReferences: [],
+    billVersions: [],
+  });
+  assert.equal(result.edges.length, 0);
+  assert.ok(result.unresolved.some((row) =>
+    row.kind === 'weak-unconfirmed-pair' &&
+    (row.details.evidenceKinds as string[]).includes('current-companion-unlineaged')));
+});
+
+test('multi-bill components are audit-only; P7 outcome closure remains direct edges only', () => {
+  const bills = [
+    bill('h1', 'HF10', 'house'),
+    bill('s1', 'SF20', 'senate'),
+    bill('h2', 'HF30', 'house'),
+  ];
+  const result = buildLifecycleP7Lineage({
+    bills,
+    processReferences: [
+      processReference('h1', 'Companion bill SF20 referred for further action', 'SF20'),
+      processReference('h2', 'Companion bill SF20 referred for further action', 'SF20'),
+    ],
+    billVersions: [],
+  });
+  assert.equal(result.components.length, 1);
+  assert.equal(result.components[0].bills.length, 3);
+  assert.deepEqual(lifecycleP7DirectVehicleIds('h1', result.edges), ['h1', 's1']);
+  assert.ok(!lifecycleP7DirectVehicleIds('h1', result.edges).includes('h2'));
+  assert.equal(result.report.contract.outcomeClosure, 'direct-edges-only');
+  assert.equal(result.report.policy.componentsTransitiveForOutcome, false);
 });
