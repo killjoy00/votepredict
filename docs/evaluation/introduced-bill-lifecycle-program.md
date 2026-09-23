@@ -472,6 +472,23 @@ Frozen prediction digests are passage
 - [ ] Run family ablations and chamber/state slices.
 - [ ] Do not describe predictive associations as causal effects.
 
+P5 is a forward-chained ablation study over the exact frozen P3 snapshot hash. The first retrospective allocation
+tests only families whose historical cutoff availability is proved by P3: dated process detail, dated companion
+references, strictly pre-cutoff bill-version/text structure, and reconstructable dated authorship. The durable
+external-evidence layer (finance, campaign/member-primary material, news, and other later-fetched evidence) remains
+**prospective-only** for lifecycle evaluation unless a source-specific historical-availability rule is separately
+proved and frozen; P3 currently contains zero cutoff-eligible external-evidence snapshots.
+
+The stage-specific outcomes are (1) eventual reach of floor eligibility/scheduling while the bill is still earlier
+in the lifecycle, (2) eventual reach of a source-chamber passage vote, and (3) strict bill-number source-chamber
+passage. Each candidate is compared with a matched source-chamber + canonical-state empirical baseline using only
+earlier completed biennia. P5 uses low-dimensional family summaries rather than member IDs, specific companion
+identities, text hashes, or outcome-derived labels. Authorship is a matched-subset analysis because unreconstructable
+authorship is not treated as predictive missingness. The full-coverage core combination is process detail +
+companion + bill-version structure, with single-family and leave-one-family-out ablations. Conditional member-vote
+scoring remains outside P5. All associations are descriptive/predictive, not causal, and no P5 result can
+automatically change serving behavior.
+
 ### P6 — end-to-end combination
 
 - [ ] Combine floor-access/lifecycle probability with conditional member/chamber passage.
