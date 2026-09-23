@@ -49,3 +49,29 @@ export const externalUsageEvents = pgTable('external_usage_events', { id: uuid('
 export const forecastSchedules = pgTable('forecast_schedules', { forecastId: uuid('forecast_id').primaryKey().references(() => forecasts.id, { onDelete: 'cascade' }), enabled: boolean('enabled').notNull().default(true), cadenceHours: integer('cadence_hours').notNull().default(24), researchMode: text('research_mode').notNull().default('quick'), nextRunAt: timestamp('next_run_at', { withTimezone: true }).notNull().defaultNow(), lastRunAt: timestamp('last_run_at', { withTimezone: true }), consecutiveFailures: integer('consecutive_failures').notNull().default(0), createdAt: createdAt(), updatedAt: updatedAt() }, (table) => [index('forecast_schedules_due_idx').on(table.nextRunAt)]);
 export const forecastSnapshotRuns = pgTable('forecast_snapshot_runs', { id: uuid('id').primaryKey().defaultRandom(), forecastId: uuid('forecast_id').notNull().references(() => forecasts.id, { onDelete: 'cascade' }), scheduledFor: timestamp('scheduled_for', { withTimezone: true }).notNull(), startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(), finishedAt: timestamp('finished_at', { withTimezone: true }), status: text('status').notNull(), revisionId: uuid('revision_id').references(() => forecastRevisions.id, { onDelete: 'set null' }), resolutionId: uuid('resolution_id').references(() => forecastResolutions.id, { onDelete: 'set null' }), errorSummary: text('error_summary'), metadata: jsonb('metadata').notNull().default({}) }, (table) => [uniqueIndex('forecast_snapshot_runs_forecast_scheduled_uq').on(table.forecastId, table.scheduledFor), index('forecast_snapshot_runs_forecast_idx').on(table.forecastId, table.startedAt)]);
 export const modelDriftAlerts = pgTable('model_drift_alerts', { id: uuid('id').primaryKey().defaultRandom(), modelVersion: text('model_version').notNull(), sliceKey: text('slice_key').notNull(), metric: text('metric').notNull(), baselineValue: doublePrecision('baseline_value').notNull(), observedValue: doublePrecision('observed_value').notNull(), threshold: doublePrecision('threshold').notNull(), sampleSize: integer('sample_size').notNull(), status: text('status').notNull().default('open'), detectedAt: timestamp('detected_at', { withTimezone: true }).notNull().defaultNow(), resolvedAt: timestamp('resolved_at', { withTimezone: true }), metadata: jsonb('metadata').notNull().default({}) }, (table) => [index('model_drift_alerts_status_idx').on(table.status, table.detectedAt)]);
+
+
+export const lifecycleP8ProspectiveCaptures = pgTable('lifecycle_p8_prospective_captures', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  billId: uuid('bill_id').notNull().references(() => bills.id, { onDelete: 'cascade' }),
+  sessionId: uuid('session_id').notNull().references(() => legislativeSessions.id, { onDelete: 'cascade' }),
+  cutoffDate: date('cutoff_date').notNull(),
+  capturedAt: timestamp('captured_at', { withTimezone: true }).notNull().defaultNow(),
+  schemaVersion: text('schema_version').notNull(),
+  modelContentSha256: text('model_content_sha256').notNull(),
+  lifecycleState: text('lifecycle_state').notNull(),
+  introductionProbability: doublePrecision('introduction_probability'),
+  p4StageProbability: doublePrecision('p4_stage_probability').notNull(),
+  p5DirectProbability: doublePrecision('p5_direct_probability'),
+  p5ReachVoteProbability: doublePrecision('p5_reach_vote_probability'),
+  p6ConditionalProbability: doublePrecision('p6_conditional_probability').notNull(),
+  p6EndToEndProbability: doublePrecision('p6_end_to_end_probability').notNull(),
+  processSourceCovered: boolean('process_source_covered').notNull(),
+  capture: jsonb('capture').notNull(),
+  contentSha256: text('content_sha256').notNull(),
+  createdAt: createdAt(),
+}, (table) => [
+  uniqueIndex('lifecycle_p8_capture_bill_cutoff_uq').on(table.billId, table.cutoffDate),
+  index('lifecycle_p8_capture_session_cutoff_idx').on(table.sessionId, table.cutoffDate),
+  index('lifecycle_p8_capture_state_cutoff_idx').on(table.lifecycleState, table.cutoffDate),
+]);

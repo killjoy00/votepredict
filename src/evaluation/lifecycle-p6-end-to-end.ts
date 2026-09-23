@@ -115,13 +115,21 @@ type PreparedCandidate = {
   tokens: string[];
 };
 
+export type LifecycleP6ScoringSnapshot = {
+  snapshotId: LifecycleP3Snapshot['snapshotId'];
+  bill: LifecycleP3Snapshot['bill'];
+  cutoff: Pick<LifecycleP3Snapshot['cutoff'], 'asOfDateExclusive' | 'granularity' | 'sameDayExcluded'>;
+  features: LifecycleP3Snapshot['features'];
+};
+
 type ConditionalBuildInput = {
-  snapshots: readonly LifecycleP3Snapshot[];
+  snapshots: readonly LifecycleP6ScoringSnapshot[];
   versionsByBill: ReadonlyMap<string, readonly QuickReplayVersion[]>;
   passageEvents: readonly QuickReplayEvent[];
   memberships: readonly QuickReplayMembership[];
   historicalVotes: readonly QuickReplayVote[];
   sessionChamberRefs: ReadonlyMap<string, LifecycleP6SessionChamberRef>;
+  targetSessions?: readonly string[];
 };
 
 function snapshotKey(billId: string, cutoffDateExclusive: string): string {
@@ -339,7 +347,7 @@ function prefilterCandidates(
 }
 
 function fallbackConditional(
-  snapshot: LifecycleP3Snapshot,
+  snapshot: LifecycleP6ScoringSnapshot,
   fallbackProbability: number,
   reason: Exclude<LifecycleP6ConditionalReason, 'member-derived'>,
   targetVersionId: string | null,
@@ -368,8 +376,9 @@ function fallbackConditional(
 export function buildLifecycleP6ConditionalPredictions(
   input: ConditionalBuildInput,
 ): LifecycleP6ConditionalPrediction[] {
+  const targetSessions = input.targetSessions ? new Set(input.targetSessions) : HOLDOUT_SESSIONS;
   const targets = input.snapshots
-    .filter((snapshot) => HOLDOUT_SESSIONS.has(snapshot.bill.session))
+    .filter((snapshot) => targetSessions.has(snapshot.bill.session))
     .sort((left, right) =>
       left.cutoff.asOfDateExclusive.localeCompare(right.cutoff.asOfDateExclusive)
       || left.bill.chamber.localeCompare(right.bill.chamber)
@@ -395,7 +404,7 @@ export function buildLifecycleP6ConditionalPredictions(
     membershipsBySessionChamber.set(key, values);
   }
 
-  const targetsByChamber = new Map<string, LifecycleP3Snapshot[]>();
+  const targetsByChamber = new Map<string, LifecycleP6ScoringSnapshot[]>();
   for (const target of targets) {
     const ref = input.sessionChamberRefs.get(
       sessionChamberKey(target.bill.session, target.bill.chamber),
