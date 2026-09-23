@@ -539,9 +539,9 @@ snapshots would violate the as-of contract.
 
 ### P6 — end-to-end combination
 
-- [ ] Combine floor-access/lifecycle probability with conditional member/chamber passage.
-- [ ] Score strict source-chamber passage across all introduced bills.
-- [ ] Compare directly with the introduction prior and simpler lifecycle baselines.
+- [x] Combine floor-access/lifecycle probability with conditional member/chamber passage.
+- [x] Score strict source-chamber passage across all introduced bills.
+- [x] Compare directly with the introduction prior and simpler lifecycle baselines.
 
 P6 freezes the decomposition before inspecting its end-to-end result:
 
@@ -566,6 +566,57 @@ prediction digest, and the frozen P5 retained-arm digest. It reports member-deri
 scores the conditional chamber component at actual passage-vote cutoffs, and compares the end-to-end probability
 with the accepted introduction prior, P4 stage-only baseline, and P5 direct-passage arm on identical observations.
 This remains retrospective development/robustness work; no result can automatically change serving behavior.
+
+Frozen P6 result (2026-09-23): run `35895940041` on code SHA
+`576ea1cc793e471822951eef8b0bc08cf8b62986` produced
+`lifecycle-p6-end-to-end-v1` after reproducing all three upstream gates exactly:
+
+- P3 snapshot SHA-256
+  `45030a9780ce76690ea960605385f501c24047b461a82e1368a427a7267be39d`;
+- P4 passage-vector SHA-256
+  `3f64819a302de71e2d70bc5ea0f972ab1b00cf09819bdf029ce30b3f979624c7`;
+- P5 retained-arm SHA-256
+  `ed877b070c9f2b93da30e30482869ad5adc7c4f32f28ab6ae481d513a1f66c0e`.
+
+The later-biennium scoring population is **21,495 bills / 44,299 event-time snapshots**. The lifecycle decomposition
+is available on **44,235** rows covering **21,463** bills; the remaining 64 rows / 32 process-deferred bills retain
+the P4 direct-stage probability rather than treating missing process history as no advancement. The promoted
+`member-eb-v1.2-decay180` conditional chamber model is replayable on **39,905 / 44,299 (90.1%)** rows. The
+4,394 explicit conditional fallbacks consist of 4,382 rows without strictly pre-cutoff usable target text, 8 without
+safe analogues, and 4 without direct active-member analogue support. Member-derived conditional coverage is 79.6%
+while the bill is still in the introduced state and above 99.9% after committee engagement.
+
+At the **467 actual source-chamber passage-vote cutoffs** (457 passed, 10 failed), the accepted member-derived
+conditional model is available on 465. It has more ranking discrimination than the earlier-vote chamber passage-rate
+prior (AP **0.99269 vs 0.98706**, ROC-AUC **0.71028 vs 0.60066**) but materially worse proper probability scores and
+calibration (Brier **0.02884 vs 0.02102**, log loss **0.13492 vs 0.10593**, ECE **0.05853 vs 0.01010**). The slice
+diagnostic matters: the member model beats the prior on House Brier/log loss, while all 123 Senate cutoff votes in
+this cohort pass and the near-one prior therefore dominates there. This is evidence that the conditional model
+contains discrimination signal but is underconfident relative to the extremely high selected pass rate; it does not
+justify replacing the accepted serving member model from this retrospective cohort.
+
+Across **all 44,299 event-time snapshots**, the P6 evidence decomposition modestly improves the strongest P5
+direct-passage arm: Brier **0.02083876 -> 0.02072180**, log loss **0.08746306 -> 0.08714066**, AP
+**0.44401 -> 0.47265**, and ROC-AUC **0.87341 -> 0.87888**, while ECE worsens
+**0.00452173 -> 0.00556200**. It also substantially improves the P4 stage-only and immutable introduction-prior
+scores once later process states are included.
+
+That aggregate lift is **not stable enough for promotion**. In 2023-24 the P6 evidence decomposition improves P5
+Brier (**0.01795661 -> 0.01760599**) and log loss (**0.07681186 -> 0.07582757**), but in 2025-26 it regresses both
+Brier (**0.02388678 -> 0.02401691**) and log loss (**0.09872721 -> 0.09910479**). At the introduction snapshot
+itself, the accepted v4 prior remains clearly better: v4 Brier/log loss are **0.02060092 / 0.09802744** versus
+P6 **0.02083770 / 0.10328141**, with much stronger ranking (AP **0.16436 vs 0.02618**, ROC-AUC
+**0.78224 vs 0.56018**). P6 therefore does not replace the introduction model.
+
+The frozen P6 prediction SHA-256 is
+`3dd4f37ce0433311d88a978f9d6081570b62a5dc0e66996f569acfa1b174e795`; the GitHub artifact digest is
+`sha256:8eb07292132743a0894ba7d42433760cf341bd66484105191027c73243d5709c`.
+
+**P6 conclusion:** the lifecycle × conditional-chamber decomposition is technically valid and adds useful
+development signal after bills advance, but the current retrospective result does not clear a serving-change bar:
+the conditional probability is miscalibrated on the highly selected passage-vote cohort, the incremental end-to-end
+lift over P5 is small and reverses in 2025-26, and v4 remains superior at introduction. Production action remains
+**none**; 2027-28 prospective confirmation remains governing.
 
 ### P7 — secondary vehicle/companion outcome
 
