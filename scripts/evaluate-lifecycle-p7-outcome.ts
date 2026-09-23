@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -12,6 +13,8 @@ import {
   type LifecycleP7ProcessReference,
 } from '../src/evaluation/lifecycle-p7-lineage.js';
 import {
+  LIFECYCLE_P7_FROZEN_INTRO_V4_TRANSFER_SHA256,
+  LIFECYCLE_P7_FROZEN_LABEL_SHA256,
   buildLifecycleP7Outcome,
   scoreLifecycleP7Probabilities,
   type LifecycleP7OutcomeBill,
@@ -144,6 +147,12 @@ function parseBillNumber(identifier: string): number | null {
 
 function ndjson(rows: readonly unknown[]): string {
   return rows.map((row) => JSON.stringify(row)).join('\n') + (rows.length ? '\n' : '');
+}
+
+function hashRows(rows: readonly unknown[]): string {
+  const digest = createHash('sha256');
+  for (const row of rows) digest.update(JSON.stringify(row) + '\n');
+  return digest.digest('hex');
 }
 
 function scoreSlices(
@@ -354,6 +363,13 @@ async function main(): Promise<void> {
       edges: lineage.edges,
     });
 
+    if (outcome.report.labelSha256 !== LIFECYCLE_P7_FROZEN_LABEL_SHA256) {
+      throw new Error(
+        'Lifecycle P7 frozen label hash mismatch: expected ' +
+        LIFECYCLE_P7_FROZEN_LABEL_SHA256 + ', observed ' + outcome.report.labelSha256,
+      );
+    }
+
     const introObservations = outcomeIntro.rows.map((row) => ({
       billId: row.bill_id,
       sessionSlug: row.session_slug,
@@ -395,6 +411,15 @@ async function main(): Promise<void> {
       };
     });
 
+    const introductionV4TransferSha256 = hashRows(predictionRows);
+    if (introductionV4TransferSha256 !== LIFECYCLE_P7_FROZEN_INTRO_V4_TRANSFER_SHA256) {
+      throw new Error(
+        'Lifecycle P7 frozen introduction-v4 transfer hash mismatch: expected ' +
+        LIFECYCLE_P7_FROZEN_INTRO_V4_TRANSFER_SHA256 + ', observed ' +
+        introductionV4TransferSha256,
+      );
+    }
+
     const report = {
       ...outcome.report,
       generatedAt: new Date().toISOString(),
@@ -404,6 +429,10 @@ async function main(): Promise<void> {
         observedSha256: lineage.report.hashes.lineageContentSha256,
         exactMatch: true,
         outcomeQueryExecutedOnlyAfterGate: true,
+      },
+      frozenResultGates: {
+        labelSha256: LIFECYCLE_P7_FROZEN_LABEL_SHA256,
+        introductionV4TransferSha256: LIFECYCLE_P7_FROZEN_INTRO_V4_TRANSFER_SHA256,
       },
       acceptedIntroductionV4Transfer: {
         note:

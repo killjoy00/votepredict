@@ -13,6 +13,10 @@ import {
 
 export const LIFECYCLE_P7_OUTCOME_SCHEMA_VERSION = 'lifecycle-p7-outcome-v1' as const;
 export const LIFECYCLE_P7_OUTCOME_TARGET_VERSION = 'substantive_vehicle_passage_v1' as const;
+export const LIFECYCLE_P7_FROZEN_LABEL_SHA256 =
+  '5b18378725c736dd4eceb37992fd4295cbd779e24e3cdd92123f28192ab75eec';
+export const LIFECYCLE_P7_FROZEN_INTRO_V4_TRANSFER_SHA256 =
+  '1edb9e1466e5449fec5d382cfac6bcffa01c67be1cc0da52981506cb43fab8a6';
 
 export interface LifecycleP7OutcomeBill {
   billId: string;
