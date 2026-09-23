@@ -620,9 +620,47 @@ lift over P5 is small and reverses in 2025-26, and v4 remains superior at introd
 
 ### P7 — secondary vehicle/companion outcome
 
-- [ ] Define an outcome-blind text/companion lineage rule.
-- [ ] Freeze it before joining final outcome labels.
-- [ ] Report it separately from strict bill-number passage.
+- [x] Define an outcome-blind text/companion lineage rule.
+- [ ] Freeze the production lineage artifact before joining final outcome labels.
+- [ ] Report the frozen secondary outcome separately from strict bill-number passage.
+
+P7 v1 deliberately starts with the narrowest high-precision lineage contract that can be reproduced without reading
+a passage result. The fixed population remains the 31,010 P3 bills and the relationship horizon is the same biennium.
+The lineage builder is read-only and may inspect only bill identity/chamber/session, final official companion metadata,
+dated `revisor-process-v2` companion-reference actions plus their source-document hashes, and dated official bill
+text versions. It does **not** read `sourceChamberPassage`, `vote_events`, `member_votes`, forecast outcomes, or
+any other success/failure label.
+
+An undirected P7 v1 relationship edge is admitted only by at least one outcome-independent proof:
+
+1. a dated official Revisor action explicitly records substitution of the other bill;
+2. a dated official Revisor action explicitly calls the other bill a companion;
+3. final official Revisor companion metadata is reciprocal within the same biennium; or
+4. an official text version has an exact canonical substantive-text hash shared by exactly two bills in that
+   biennium and those bills originate in opposite chambers.
+
+A bare `comparison with` action is retained as audit evidence but is not sufficient by itself because official
+history can later state that compared bills are not identical. One-sided final companion metadata is likewise audit
+evidence unless another accepted proof corroborates the pair. Exact-text groups spanning more than two bills and
+same-chamber duplicates remain visible and unresolved rather than being forced into pairwise lineage.
+
+P7 v1 explicitly excludes fuzzy/near-identical thresholds, title similarity, omnibus section containment, and
+cross-biennium reintroduction/successor inference. Those evidence classes require separately frozen precision and
+time-horizon contracts; omitting them produces false negatives rather than post-hoc successful-vehicle matches. This
+means P7 v1 is a high-precision secondary outcome, not a claim of complete substantive-policy tracing.
+
+Final/current companion metadata is permitted only for retrospective **label lineage** after the biennium. It never
+becomes an event-time historical feature. Any dated relationship used prospectively remains subject to the existing
+date-exclusive chronology rule; same-day evidence cannot be moved before a forecast cutoff when ordering is
+unproved.
+
+The reproducible outcome-blind entry point is `npm run build:lifecycle:p7-lineage` and the manual
+`Lifecycle P7 lineage freeze` GitHub Action. It writes `report.json`, `edges.ndjson`, `components.ndjson`, and
+`unresolved.ndjson`. The report records separate edge/component/unresolved hashes plus a combined lineage hash,
+coverage by evidence class, ambiguities, unmatched bills, and an explicit declaration of prohibited outcome reads.
+Only after that production-data artifact is reviewed and its hash is frozen in the repository may a separate P7
+evaluator join the pre-existing strict source-chamber passage labels. No P7 result can alter serving behavior or
+promote a model automatically.
 
 ### P8 — 2027 prospective validation
 
