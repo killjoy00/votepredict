@@ -430,9 +430,13 @@ The reproducible P4 evaluator is `npm run eval:lifecycle:p4` and the manual-only
 content SHA-256 exactly matches the frozen P3 hash. The accepted `intro-title-text-eb-v4` model family is evaluated
 with the already-frozen chronological contract (2023-24 from 2021-22; 2025-26 from completed earlier biennia), then
 carried forward unchanged as the benchmark prior at later lifecycle snapshots. Its pre-existing introduction input
-contract is not imported into P3 features. The lifecycle stage baseline uses only source chamber + canonical state,
-and the elapsed-time baseline is a separate 30-day discrete hazard over next lifecycle transition/terminal-event
-risk sets beginning the day after a known transition. P4 is research-only and cannot change serving behavior.
+contract is not imported into P3 features. The lifecycle stage baseline uses only source chamber + canonical state.
+The elapsed-time baseline is a separate 30-day discrete **process-progression** hazard over risk sets beginning the
+day after a known transition. Session expiration is treated as a competing terminal clock and reported separately:
+including the synthetic expiration event in the same binary hazard makes days-remaining nearly deterministic near
+sine die and would overstate legislative-process predictability. The first exploratory combined-event P4 run
+(35887005599) demonstrated that failure mode and is superseded by the competing-risk formulation before P4 is
+frozen. P4 is research-only and cannot change serving behavior.
 
 ### P5 — evidence allocation
 

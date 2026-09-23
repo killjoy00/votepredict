@@ -9,7 +9,7 @@ import {
 import type { LifecycleP3Snapshot, LifecycleState } from './lifecycle-p3-snapshot-dataset';
 import type { BillStagePrediction } from './stages';
 
-export const LIFECYCLE_P4_BASELINE_SCHEMA_VERSION = 'lifecycle-p4-baselines-v1' as const;
+export const LIFECYCLE_P4_BASELINE_SCHEMA_VERSION = 'lifecycle-p4-baselines-v2' as const;
 export const FROZEN_LIFECYCLE_P3_CONTENT_SHA256 =
   '45030a9780ce76690ea960605385f501c24047b461a82e1368a427a7267be39d' as const;
 export const LIFECYCLE_P4_HAZARD_HORIZON_DAYS = 30 as const;
@@ -37,12 +37,17 @@ export interface LifecycleP4HazardRiskRow {
   daysSincePreviousTransition: number;
   daysRemainingInBiennium: number;
   nextEventDate: string;
+  nextEventClass: 'process_progression' | 'session_expiration';
   nextEventWithin30Days: 0 | 1;
+  processProgressionWithin30Days: 0 | 1;
+  sessionExpirationWithin30Days: 0 | 1;
 }
 
 export interface LifecycleP4HazardPrediction extends LifecycleP4HazardRiskRow {
+  outcome: 0 | 1;
+  target: 'process_progression_30d';
   probability: number;
-  model: 'lifecycle-stage-hazard-30d-v1' | 'lifecycle-stage-elapsed-hazard-30d-v1';
+  model: 'lifecycle-stage-progression-hazard-30d-v1' | 'lifecycle-stage-elapsed-progression-hazard-30d-v1';
 }
 
 export interface LifecycleP4BinaryScore {
@@ -215,9 +220,14 @@ export function buildLifecycleHazardRiskRows(
       if (nextDate <= currentDate) throw new Error(`${current.bill.identifier}: non-increasing lifecycle snapshot dates`);
 
       const state = stateAfter(current);
+      const nextEventClass = next.targets.transitionOnCutoffDate.terminalOutcome
+        === 'session_expired_without_source_chamber_passage'
+        ? 'session_expiration'
+        : 'process_progression';
       let anchor = addDays(currentDate, 1);
       while (anchor <= nextDate && anchor <= adjournmentOn) {
         const untilNext = daysBetween(anchor, nextDate);
+        const nextEventWithin30Days = untilNext < horizonDays ? 1 as const : 0 as const;
         rows.push({
           billId: current.bill.billId,
           session: current.bill.session,
@@ -228,7 +238,12 @@ export function buildLifecycleHazardRiskRows(
           daysSincePreviousTransition: Math.max(0, daysBetween(currentDate, anchor)),
           daysRemainingInBiennium: Math.max(0, daysBetween(anchor, adjournmentOn)),
           nextEventDate: nextDate,
-          nextEventWithin30Days: untilNext < horizonDays ? 1 : 0,
+          nextEventClass,
+          nextEventWithin30Days,
+          processProgressionWithin30Days:
+            nextEventWithin30Days === 1 && nextEventClass === 'process_progression' ? 1 : 0,
+          sessionExpirationWithin30Days:
+            nextEventWithin30Days === 1 && nextEventClass === 'session_expiration' ? 1 : 0,
         });
         anchor = addDays(anchor, horizonDays);
       }
@@ -303,23 +318,27 @@ export function buildForwardChainedHazardPredictions(
     if (!training.length || !holdout.length) continue;
 
     const overall = empiricalJeffreys(
-      training.reduce((sum, row) => sum + row.nextEventWithin30Days, 0),
+      training.reduce((sum, row) => sum + row.processProgressionWithin30Days, 0),
       training.length,
     );
-    const stageRates = fitRateMap(training, hazardStageKey, (row) => row.nextEventWithin30Days);
-    const timeRates = fitRateMap(training, hazardTimeKey, (row) => row.nextEventWithin30Days);
+    const stageRates = fitRateMap(training, hazardStageKey, (row) => row.processProgressionWithin30Days);
+    const timeRates = fitRateMap(training, hazardTimeKey, (row) => row.processProgressionWithin30Days);
 
     for (const row of holdout) {
       const stageProbability = stageRates.get(hazardStageKey(row)) ?? overall;
       predictions.push({
         ...row,
+        outcome: row.processProgressionWithin30Days,
+        target: 'process_progression_30d',
         probability: stageProbability,
-        model: 'lifecycle-stage-hazard-30d-v1',
+        model: 'lifecycle-stage-progression-hazard-30d-v1',
       });
       predictions.push({
         ...row,
+        outcome: row.processProgressionWithin30Days,
+        target: 'process_progression_30d',
         probability: timeRates.get(hazardTimeKey(row)) ?? stageProbability,
-        model: 'lifecycle-stage-elapsed-hazard-30d-v1',
+        model: 'lifecycle-stage-elapsed-progression-hazard-30d-v1',
       });
     }
   }
@@ -370,8 +389,10 @@ export function summarizeLifecycleP4Baselines(input: {
 
   const riskRows = buildLifecycleHazardRiskRows(input.snapshots);
   const hazard = buildForwardChainedHazardPredictions(riskRows);
-  const stageHazard = hazard.filter((row) => row.model === 'lifecycle-stage-hazard-30d-v1');
-  const elapsedHazard = hazard.filter((row) => row.model === 'lifecycle-stage-elapsed-hazard-30d-v1');
+  const stageHazard = hazard.filter((row) => row.model === 'lifecycle-stage-progression-hazard-30d-v1');
+  const elapsedHazard = hazard.filter((row) => row.model === 'lifecycle-stage-elapsed-progression-hazard-30d-v1');
+  const holdoutSessions = new Set(stage.map((row) => row.session));
+  const holdoutRiskRows = riskRows.filter((row) => holdoutSessions.has(row.session));
   const introductionSnapshotKeys = new Set(
     input.snapshots
       .filter((snapshot) => snapshot.cutoff.reason === 'introduction')
@@ -384,11 +405,20 @@ export function summarizeLifecycleP4Baselines(input: {
 
   const introAllScore = scoreLifecycleBinary(introductionMatched);
   const stageAllScore = scoreLifecycleBinary(stage);
-  const stageHazardScore = scoreLifecycleBinary(
-    stageHazard.map((row) => ({ probability: row.probability, outcome: row.nextEventWithin30Days })),
-  );
-  const elapsedHazardScore = scoreLifecycleBinary(
-    elapsedHazard.map((row) => ({ probability: row.probability, outcome: row.nextEventWithin30Days })),
+  const stageHazardScore = scoreLifecycleBinary(stageHazard);
+  const elapsedHazardScore = scoreLifecycleBinary(elapsedHazard);
+  const expirationByRemainingBucket = Object.fromEntries(
+    [...new Set(holdoutRiskRows.map((row) => remainingBucket(row.daysRemainingInBiennium)))]
+      .sort()
+      .map((bucket) => {
+        const rows = holdoutRiskRows.filter((row) => remainingBucket(row.daysRemainingInBiennium) === bucket);
+        const positives = rows.reduce((sum, row) => sum + row.sessionExpirationWithin30Days, 0);
+        return [bucket, {
+          observations: rows.length,
+          expirationsWithin30Days: positives,
+          rate: positives / rows.length,
+        }];
+      }),
   );
 
   return {
@@ -441,8 +471,8 @@ export function summarizeLifecycleP4Baselines(input: {
           stageOnly: scoreSlices(stage, (row) => row.lifecycleState),
         },
       },
-      hazard30Day: {
-        definition: 'At 30-day risk-set landmarks beginning the day after a known lifecycle transition, predict whether the next lifecycle transition or terminal event occurs within the next 30 calendar days.',
+      processProgressionHazard30Day: {
+        definition: 'At 30-day risk-set landmarks beginning the day after a known lifecycle transition, predict whether the next non-expiration lifecycle progression event occurs within the next 30 calendar days. Session expiration is a separate competing terminal clock.',
         allHoldouts: {
           stageOnly: stageHazardScore,
           stageElapsedTime: elapsedHazardScore,
@@ -454,24 +484,34 @@ export function summarizeLifecycleP4Baselines(input: {
         },
         bySession: {
           stageOnly: scoreSlices(
-            stageHazard.map((row) => ({ ...row, outcome: row.nextEventWithin30Days })),
+            stageHazard,
             (row) => row.session,
           ),
           stageElapsedTime: scoreSlices(
-            elapsedHazard.map((row) => ({ ...row, outcome: row.nextEventWithin30Days })),
+            elapsedHazard,
             (row) => row.session,
           ),
         },
         byState: {
           stageOnly: scoreSlices(
-            stageHazard.map((row) => ({ ...row, outcome: row.nextEventWithin30Days })),
+            stageHazard,
             (row) => row.lifecycleState,
           ),
           stageElapsedTime: scoreSlices(
-            elapsedHazard.map((row) => ({ ...row, outcome: row.nextEventWithin30Days })),
+            elapsedHazard,
             (row) => row.lifecycleState,
           ),
         },
+      },
+      sessionExpirationClockDiagnostic: {
+        definition: 'Session expiration is reported separately because official sine-die timing makes the expiration hazard nearly deterministic near the known biennium end and would otherwise dominate the progression hazard.',
+        holdoutRiskRows: holdoutRiskRows.length,
+        expirationsWithin30Days: holdoutRiskRows.reduce(
+          (sum, row) => sum + row.sessionExpirationWithin30Days,
+          0,
+        ),
+        byDaysRemainingBucket: expirationByRemainingBucket,
+        supersededCombinedEventRun: 35887005599,
       },
       predictionDigests: {
         passageNdjsonSha256: predictionDigest([...introductionMatched, ...stage]),
