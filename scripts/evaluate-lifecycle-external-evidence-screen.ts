@@ -16,7 +16,7 @@ function safeMessage(error:unknown){let message=error instanceof Error?(error.st
 async function canConnect(value:string){const probe=new Pool({connectionString:value,max:1,connectionTimeoutMillis:8000});try{await probe.query('SELECT 1');return true;}catch{return false;}finally{await probe.end().catch(()=>undefined);}}
 async function chooseDatabaseUrl(env:Record<string,string|undefined>){for(const key of DATABASE_CANDIDATES){const value=env[key]?.trim();if(value&&await canConnect(value))return value;}const secret=env.CRON_SECRET?.trim();if(!secret)throw new Error('CRON_SECRET unavailable');const response=await fetch(DATABASE_BRIDGE_URL,{method:'POST',headers:{authorization:'Bearer '+secret}});if(!response.ok)throw new Error('Database bridge HTTP '+response.status);const value=(await response.text()).trim();secretValues.push(value);mask(value);if(!await canConnect(value))throw new Error('Database bridge returned non-portable URL');return value;}
 
-async function loadAccepted(pool:any){
+async function loadAccepted(pool:Pool){
   const result=await pool.query<EvidenceRow>(`
     SELECT ei.id::text AS evidence_id,ei.source_document_id::text,ei.bill_id::text,ei.membership_id::text,
            COALESCE(bs.slug,ms.slug) AS session_slug,sd.source_kind,ei.evidence_kind,ei.stance,
