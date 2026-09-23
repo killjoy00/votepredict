@@ -129,11 +129,13 @@ function textLengthBucket(value: number | null): string {
 export function evidenceFamilyTokens(
   snapshot: LifecycleP3Snapshot,
 ): Record<LifecycleP5EvidenceFamily, string[]> {
+  const processEntries = Object.entries(snapshot.features.priorProcessStageCounts)
+    .filter(([stageKind]) => stageKind !== 'companion_reference' && stageKind !== 'author_added')
+    .sort(([a], [b]) => a.localeCompare(b));
   const processTokens = [
-    `process:event-count:${countBucket(snapshot.features.priorProcessEventCount)}`,
+    `process:event-count:${countBucket(processEntries.reduce((sum, [, count]) => sum + count, 0))}`,
   ];
-  for (const [stageKind, count] of Object.entries(snapshot.features.priorProcessStageCounts).sort(([a], [b]) =>
-    a.localeCompare(b))) {
+  for (const [stageKind, count] of processEntries) {
     processTokens.push(`process:stage:${stageKind}:${countBucket(count)}`);
   }
 
@@ -192,6 +194,8 @@ function buildRowsForBill(snapshots: readonly LifecycleP3Snapshot[]): LifecycleP
   if (!snapshots.length) return [];
   const ordered = [...snapshots].sort((left, right) =>
     left.cutoff.asOfDateExclusive.localeCompare(right.cutoff.asOfDateExclusive));
+  const processKnown = ordered.some((snapshot) =>
+    snapshot.lineage.processParserVersion === REVISOR_PROCESS_PARSER_VERSION);
   const reachedFloor = billReachedFloorEligibility(ordered);
   const reachedVote = ordered[0].targets.eventualReachesSourceChamberPassageVote;
   const passed = ordered[0].targets.eventualSourceChamberPassage;
@@ -209,14 +213,14 @@ function buildRowsForBill(snapshots: readonly LifecycleP3Snapshot[]): LifecycleP
       tokens: evidenceFamilyTokens(snapshot),
     };
 
-    if (rank < 2) {
+    if (processKnown && rank < 2) {
       rows.push({
         ...common,
         target: 'reach_floor_eligibility',
         outcome: reachedFloor ? 1 : 0,
       });
     }
-    if (rank < 3) {
+    if (processKnown && rank < 3) {
       rows.push({
         ...common,
         target: 'reach_source_chamber_passage_vote',
