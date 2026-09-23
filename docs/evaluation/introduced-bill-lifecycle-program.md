@@ -621,7 +621,7 @@ lift over P5 is small and reverses in 2025-26, and v4 remains superior at introd
 ### P7 — secondary vehicle/companion outcome
 
 - [x] Define an outcome-blind text/companion lineage rule.
-- [ ] Freeze the production lineage artifact before joining final outcome labels.
+- [x] Freeze the production lineage artifact before joining final outcome labels.
 - [ ] Report the frozen secondary outcome separately from strict bill-number passage.
 
 P7 v1 deliberately starts with the narrowest high-precision lineage contract that can be reproduced without reading
@@ -661,6 +661,38 @@ does not by itself make two bills substantive vehicles for one another. This is 
 different exact-text counterparts across different versions over time; automatically taking graph transitive closure
 would merge those distinct version relationships. A P7 outcome may therefore inspect the bill itself plus only bills
 joined to it by a direct accepted edge.
+
+The frozen secondary label is **`substantive_vehicle_passage_v1`**. A bill is positive only when either (a) its
+own strict bill-number source-chamber passage label is positive, or (b) at least one **direct accepted P7 v1 lineage
+neighbor** has a positive strict bill-number source-chamber passage label in the same biennium. Unmatched bills
+therefore reduce to their own strict label. Audit-only connected components do not expand the label transitively.
+This is a vehicle-lineage outcome, not a claim that every provision passed intact and not a causal attribution.
+
+Frozen P7 lineage result (2026-09-23): production-data run `35902569738` on code SHA
+`519511f67326a35386cf488694aafee980733556` produced the hardened
+`lifecycle-p7-lineage-v1` artifact without reading passage/vote outcomes. It contains **13,508 direct accepted
+House-Senate edges** linking **27,011 / 31,010 bills**, with **3,999 unmatched bills**. There are 13,503 connected
+audit components; four components contain 3-4 bills because distinct bill versions can create different direct
+counterparts, which is why outcome closure remains direct-edge only.
+
+The precision/ambiguity audit is strongly corroborated: **12,790 / 13,508 edges (94.6846%)** are independently
+supported by both reciprocal official companion metadata and exact canonical substantive text. A further **632**
+edges are reciprocal-official-companion-only and **86** are exact-text-only. The artifact keeps **340 unresolved
+rows** visible: 315 ambiguous exact-text groups, 19 same-chamber exact-text groups, and 6 weak one-sided companion
+pairs. All 32,351 canonicalizable stored official versions used by the matcher retain source lineage. No fuzzy
+matching, omnibus containment, title similarity, transitive closure, passage outcome, vote event, or member-vote
+label entered the lineage build.
+
+Frozen hashes:
+- edge content: `20a196652e89adb6888dcd80a61dc760c965a94391ceff2809036a8939998904`;
+- component audit content: `175f4f1efd2d327e1a68a38a95b7a05a744bf0e0d0e5180b299dcd3f4371db73`;
+- unresolved content: `38e82f85204c432a939c19279e73bf54c5891ce453d1e23d16270a8346f2be86`;
+- frozen lineage content: `f7aa44574c109fc5a26968e0f7e5b6fd66d0ac9aa6705fdd41abb2cd798a4112`;
+- complete artifact content: `e529128ed20c7a096f5ef639407924a7526b002e9382121f97a353ec8808fc49`;
+- GitHub artifact digest: `sha256:abec75e1923ddd3aa69b244c369295527c4857da3fd92d6169d4c322c0596cb0`.
+
+The first production audit run `35901402339` is superseded by the hardened direct-edge/provenance contract above.
+Historical P7 outcome scoring may proceed only if the evaluator reproduces the frozen lineage-content hash exactly.
 
 The reproducible outcome-blind entry point is `npm run build:lifecycle:p7-lineage` and the manual
 `Lifecycle P7 lineage freeze` GitHub Action. It writes `report.json`, `edges.ndjson`, `components.ndjson`, and

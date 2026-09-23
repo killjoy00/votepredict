@@ -126,7 +126,7 @@ The production reconciliation repaired the release-integrity drift found during 
 
 ## Current gaps
 
-1. **Lifecycle secondary-outcome and prospective validation.** Full-universe process reconstruction plus P3-P6 are frozen under #310. P6 confirms that lifecycle × conditional-chamber decomposition adds development signal after advancement, but it does not support a serving change: the incremental lift over P5 reverses in 2025-26, the conditional floor probability is poorly calibrated on the selected vote cohort, and the accepted v4 prior remains superior at introduction. The next lifecycle steps are P7 (a separately frozen, outcome-blind substantive-vehicle/companion outcome) and P8 (clean 2027-28 prospective validation).
+1. **Lifecycle secondary-outcome and prospective validation.** Full-universe process reconstruction plus P3-P6 are frozen under #310. P7 v1 outcome-blind direct vehicle lineage is now frozen from production run `35902569738` with lineage SHA-256 `f7aa44574c109fc5a26968e0f7e5b6fd66d0ac9aa6705fdd41abb2cd798a4112`; its separate `substantive_vehicle_passage_v1` label is defined as strict passage of the bill itself or a direct accepted lineage neighbor. Historical P7 outcome scoring remains development/robustness work only. P8 remains the clean 2027-28 governing prospective validation, and serving behavior remains unchanged.
 2. **Deep availability.** Deep is explicitly unavailable while AI Gateway returns `billing_required`. If Deep remains a core product mode, billing must be enabled and a successful persisted evidence/revision smoke should be required before re-enabling it.
 3. **Prospective production evidence.** The production scorecard infrastructure is built and the single unified `quick-evidence-v1` candidate is frozen for 2027-28 Quick revisions. It records the serving base probability, a bounded non-serving evidence candidate probability, and the complete as-of feature vector. The project still needs real pre-outcome forecasts that later resolve to official votes before promotion-quality scoring is possible.
 4. **Durable external-evidence breadth.** Campaign finance, campaign-site ingestion, and systematic House/Senate member-primary publication capture are durable. Generic publisher-verified news remains supplemental, but its discovery path now expands common member-name variants, allocates Bing results fairly per member, unions GDELT and Bing leads, and backs off GDELT cleanly when rate-limited. Operations now exposes news coverage and prospective-corpus accrual metrics so remaining yield gaps are measurable.
@@ -193,7 +193,7 @@ The production reconciliation repaired the release-integrity drift found during 
 - [x] Establish stage-only and stage+elapsed-time lifecycle baselines before adding public evidence.
 - [x] Test evidence families against the lifecycle stage they actually predict rather than forcing every signal into the conditional floor-vote model.
 - [x] Combine lifecycle/floor-access probability with conditional member/chamber passage and score strict source-chamber passage across all introduced bills.
-- [ ] Define any companion/substantive-vehicle outcome separately with an outcome-blind frozen lineage rule.
+- [x] Define any companion/substantive-vehicle outcome separately with an outcome-blind frozen lineage rule.
 - [ ] Activate the lifecycle snapshot contract prospectively for 2027-28 before outcomes accrue.
 
 ### P2 — measure rather than tune
