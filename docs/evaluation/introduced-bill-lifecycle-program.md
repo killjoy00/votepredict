@@ -351,22 +351,22 @@ This boundary is both a cost control and a reliability rule. Production function
 - [x] Define the lifecycle target decomposition and evaluation rules.
 - [x] Identify the current selection problem in the floor-vote-only replay.
 - [x] Reuse the 31,010-bill authoritative introduction universe as the population contract.
-- [ ] Record reproducible baseline counts for lifecycle source coverage.
+- [x] Record reproducible baseline counts for lifecycle source coverage.
 
 ### P1 — full-universe process history
 
-- [ ] Expand dated Revisor process-history ingestion from passage-voted bills to all introduced bills.
-- [ ] Derive official status API URLs when historical bill rows do not already store one.
-- [ ] Keep network ingestion bounded/retryable and source-hash-backed.
-- [ ] Reach the frozen process-source coverage gate or explicitly document exclusions.
+- [x] Expand dated Revisor process-history ingestion from passage-voted bills to all introduced bills.
+- [x] Derive official status API URLs when historical bill rows do not already store one.
+- [x] Keep network ingestion bounded/retryable and source-hash-backed.
+- [x] Reach the frozen process-source coverage gate or explicitly document exclusions.
 
 ### P2 — process/history audit
 
-- [ ] Report stage-kind counts by session/chamber.
-- [ ] Audit unclassified official actions before expanding the taxonomy.
-- [ ] Reconcile process passage actions with authoritative source-chamber outcomes.
-- [ ] Audit impossible dates and post-terminal events.
-- [ ] Freeze the canonical state derivation.
+- [x] Report stage-kind counts by session/chamber.
+- [x] Audit unclassified official actions before expanding the taxonomy.
+- [x] Reconcile process passage actions with authoritative source-chamber outcomes.
+- [x] Audit impossible dates and post-terminal events.
+- [x] Freeze the canonical state derivation.
 
 The reproducible audit entry point is `npm run audit:lifecycle:p2`. Production-data execution uses the manual
 `Lifecycle P2 audit` GitHub Action, which pulls the production environment privately, connects directly to Neon,
@@ -379,12 +379,29 @@ passage/failure actions, process-classified actions, and other dated actions rem
 source-chamber passage votes without a synthetic expiration row are reported for terminal-state policy review rather
 than treated as unexplained missing terminal evidence.
 
+Frozen P2 result (2026-09-23): enforced run `35878777102` passed on the 31,010-bill population with
+30,964 parsed/audited bills (99.8517% parser coverage), 46 source-deferred bills after a deliberate confirmation
+retry, zero permanent exclusions, zero v2 pre-introduction events, zero post-expiration events, zero passage-label
+mismatches, and zero hard gate failures. The retained review flags are descriptive rather than gate failures:
+26,418 dated official actions remain outside the initial process taxonomy, 3,188 process events occur after
+source-chamber passage, and 11 authoritative non-passages have an explicit failed source-chamber vote instead of a
+synthetic expiration row. The frozen audit artifact is `lifecycle-p2-audit-v1` using
+`revisor-process-v2` + `revisor-process-audit-v1`.
+
 ### P3 — lifecycle snapshot dataset
 
 - [ ] Build immutable event-time snapshots for every introduced bill.
 - [ ] Enforce strict cutoff eligibility in code/tests.
 - [ ] Represent terminal expiration without manufacturing member-vote labels.
 - [ ] Freeze dataset schema/version and lineage.
+
+P3 is implemented as a read-only artifact builder. The frozen initial schema is
+`lifecycle-p3-snapshot-v1` / `mn-2021-2026-event-time-v1`. Every feature row uses an explicit
+calendar-date-exclusive cutoff: same-day source items are excluded when ordering is not independently provable.
+The snapshot schema separates cutoff-safe `features` from future `targets`, keeps member-vote labels null for the
+all-bill lifecycle population, and records process/source lineage. Production-data execution is manual-only through
+the `Lifecycle P3 snapshot dataset` GitHub Action and writes an immutable manifest plus NDJSON snapshots; it does
+not write to Neon or change serving behavior.
 
 ### P4 — lifecycle baselines
 
