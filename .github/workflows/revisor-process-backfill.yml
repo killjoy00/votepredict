@@ -1,8 +1,6 @@
 name: Revisor process-history direct backfill
 
 on:
-  schedule:
-    - cron: '17 * * * *'
   issue_comment:
     types: [created, edited]
   workflow_dispatch:
