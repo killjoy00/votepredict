@@ -78,6 +78,24 @@ function stableJson(value: unknown): string {
   return JSON.stringify(value) ?? 'null';
 }
 
+export function normalizeDurableEvidenceDraftForSource(
+  source: Pick<DurableSourceDescriptor, 'sourceKind'>,
+  draft: DurableEvidenceDraft,
+): DurableEvidenceDraft {
+  if (source.sourceKind !== 'campaign_finance_bulk') return draft;
+
+  return {
+    ...draft,
+    publishedAt: undefined,
+    metadata: {
+      ...(draft.metadata ?? {}),
+      asOfEligible: false,
+      availabilityStatus: 'awaiting_regulatory_disclosure_proof',
+      transactionDateIsAvailability: false,
+    },
+  };
+}
+
 export function evidenceIngestionKey(input: {
   sourceUrl: string;
   contentSha256: string;
@@ -285,7 +303,8 @@ export async function persistDurableEvidence(
     let reused = 0;
     let supersessionRelationships = 0;
 
-    for (const draft of drafts) {
+    for (const inputDraft of drafts) {
+      const draft = normalizeDurableEvidenceDraftForSource(source, inputDraft);
       const membershipId = await resolveMembership(client, draft.target, draft.publishedAt);
       const billId = await resolveBill(client, draft.target);
       if ((draft.target?.memberName || draft.target?.legislatorExternalKey) && !membershipId) {
