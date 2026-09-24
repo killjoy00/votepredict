@@ -4,7 +4,7 @@ function exactDate(value:string,label:string):string{
   const date=value?.slice(0,10);
   if(!/^\d{4}-\d{2}-\d{2}$/.test(date??''))throw new Error(`${label} must be YYYY-MM-DD`);
   const parsed=new Date(date+'T00:00:00Z');
-  if(Number.isNaN(parsed.getTime())||parsed.toISOString().slice(0,10)!==date)throw new Error(`Invalid ${label.toLowerCase()}`);
+  if(Number.isNaN(parsed.getTime())||parsed.toISOString().slice(0,10)!==date)throw new Error(`Invalid ${label}`);
   return date;
 }
 
