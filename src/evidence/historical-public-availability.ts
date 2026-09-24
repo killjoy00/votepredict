@@ -42,7 +42,15 @@ export function historicalAvailabilityErrors(row:HistoricalAvailabilityRecord):s
   }
   if(row.proof==='official_publication_timestamp' && !row.publishedAt)errors.push('official publication requires publishedAt');
   if(row.proof==='publisher_page_metadata' && !row.publishedAt)errors.push('publisher metadata requires publishedAt');
-  if(row.proof==='regulatory_filing_or_disclosure_timestamp' && !row.filingAt)errors.push('regulatory disclosure requires filingAt');
+  if(row.proof==='regulatory_filing_or_disclosure_timestamp'){
+    if(!row.filingAt)errors.push('regulatory disclosure requires filingAt');
+    else{
+      try{
+        const filing=instant(row.filingAt,'filingAt');
+        if(available!==undefined&&available<filing)errors.push('regulatory availableAt cannot precede filingAt');
+      }catch(e){errors.push((e as Error).message);}
+    }
+  }
   return errors;
 }
 
