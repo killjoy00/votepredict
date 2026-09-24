@@ -15,7 +15,7 @@ export function canonicalHouseCommitteeAttachmentPdfUrl(value: string): string {
   return canonical;
 }
 
-export function officialHouseCommitteeAttachmentPublishedAt(postedOn: string): string {
+export function officialHouseCommitteeAttachmentListedAt(postedOn: string): string {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(postedOn)) {
     throw new Error('House committee attachment posted date must be YYYY-MM-DD');
   }
