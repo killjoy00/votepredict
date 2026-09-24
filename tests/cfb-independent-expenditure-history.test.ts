@@ -1,7 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parseCfbIndependentExpenditureCsv,sessionForIndependentExpenditureYear } from '../src/evidence/cfb-independent-expenditure-history.js';
-import { buildCfbLargeContributionNoticeProof,buildCfbReportDisclosureProof,cfbElectronicReportAvailableOn } from '../src/evidence/cfb-report-availability.js';
+import {
+  CFB_SPECIFIC_LOBBYING_SUBJECT_FIRST_REPORT_YEAR,
+  buildCfbLargeContributionNoticeProof,
+  buildCfbLobbyistActivityDisclosureProof,
+  buildCfbReportDisclosureProof,
+  cfbElectronicReportAvailableOn,
+} from '../src/evidence/cfb-report-availability.js';
 
 test('parses granular independent expenditure records',()=>{
   const csv=[
@@ -58,5 +64,42 @@ test('large-contribution notice publication cannot predate filing',()=>{
     filedOn:'2024-07-22',
     publishedOn:'2024-07-21',
     proofUrl:'https://cfb.mn.gov/notice/40001',
+  }),/cannot precede filing date/);
+});
+
+test('specific lobbying subject history begins with 2024 activity reports',()=>{
+  assert.equal(CFB_SPECIFIC_LOBBYING_SUBJECT_FIRST_REPORT_YEAR,2024);
+});
+
+test('lobbyist activity proof requires separately proven filing and publication dates',()=>{
+  const proof=buildCfbLobbyistActivityDisclosureProof({
+    registrationNumber:'1234',
+    reportName:'2024 Jan-May lobbyist activity report',
+    filedOn:'2024-06-14',
+    publishedOn:'2024-06-18',
+    proofUrl:'https://register.cfb.mn.gov/example/lobbyist-report',
+  });
+  assert.equal(proof.filedOn,'2024-06-14');
+  assert.equal(proof.availableOn,'2024-06-18');
+  assert.equal(proof.proofKind,'cfb_lobbyist_activity_report');
+});
+
+test('lobbyist activity proof fails closed when only report/activity timing is supplied',()=>{
+  assert.throws(()=>buildCfbLobbyistActivityDisclosureProof({
+    registrationNumber:'1234',
+    reportName:'2024 Jan-May lobbyist activity report',
+    reportPeriodEnd:'2024-05-31',
+    dueOn:'2024-06-17',
+    proofUrl:'https://register.cfb.mn.gov/example/lobbyist-report',
+  } as never),/CFB lobbyist report filing date must be YYYY-MM-DD/);
+});
+
+test('lobbyist activity publication cannot predate filing',()=>{
+  assert.throws(()=>buildCfbLobbyistActivityDisclosureProof({
+    registrationNumber:'1234',
+    reportName:'2024 Jan-May lobbyist activity report',
+    filedOn:'2024-06-18',
+    publishedOn:'2024-06-17',
+    proofUrl:'https://register.cfb.mn.gov/example/lobbyist-report',
   }),/cannot precede filing date/);
 });
