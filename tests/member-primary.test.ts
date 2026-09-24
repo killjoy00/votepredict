@@ -82,7 +82,7 @@ test('Senate DFL fallback profile URLs follow the live senator-first-last slug a
 test('Senate DFL profile discovery may use the verify-before-use fallback when the directory is unavailable', () => {
   assert.equal(
     senateMemberProfileCandidateUrl(dflMember, {}),
-    'https://senatedfl.mn/home/members/senator-d-scott-dibble/',
+    'https://senatedfl.mn/home/members/senator-scott-dibble/',
   );
   assert.equal(senateMemberProfileCandidateUrl(republicanMember, {}), undefined);
 });
