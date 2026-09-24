@@ -111,6 +111,11 @@ test('public text decoding handles UTF-16LE BOM feeds used by official data expo
   assert.equal(decodePublicTextBytes(utf16, 'text/plain'), payload);
 });
 
+test('public text decoding strips NUL characters that PostgreSQL text cannot store', () => {
+  const bytes = new TextEncoder().encode('Minnesota\u0000 Legislature\u0000 HF 123');
+  assert.equal(decodePublicTextBytes(bytes, 'text/html; charset=utf-8'), 'Minnesota Legislature HF 123');
+});
+
 test('public URL canonicalization removes tracking but preserves substantive query state', () => {
   assert.equal(
     canonicalPublicUrl('HTTPS://Example.COM:443/issues/?utm_source=x&bill=HF123&fbclid=abc#top'),
