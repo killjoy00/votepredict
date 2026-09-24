@@ -32,7 +32,10 @@ export function waybackSnapshotUrl(timestamp:string,original:string):string{
   return 'https://web.archive.org/web/'+timestamp+'id_/'+url.toString();
 }
 
-export function parseWaybackCdxJson(payload:unknown):WaybackCapture[]{
+function parseWaybackCdxJsonWhere(
+  payload:unknown,
+  acceptsMimetype:(mimetype:string)=>boolean,
+):WaybackCapture[]{
   if(!Array.isArray(payload)||payload.length<1||!Array.isArray(payload[0]))return [];
   const header=(payload[0] as unknown[]).map(String);
   const index=new Map(header.map((name,i)=>[name,i]));
@@ -47,8 +50,7 @@ export function parseWaybackCdxJson(payload:unknown):WaybackCapture[]{
     const statuscode=value('statuscode');
     const mimetype=value('mimetype').toLowerCase();
     const digest=value('digest');
-    if(!timestamp||!original||statuscode!=='200')continue;
-    if(!(mimetype.includes('html')||mimetype.startsWith('text/')))continue;
+    if(!timestamp||!original||statuscode!=='200'||!acceptsMimetype(mimetype))continue;
     const lengthText=value('length');
     const length=Number(lengthText);
     captures.push({
@@ -61,14 +63,22 @@ export function parseWaybackCdxJson(payload:unknown):WaybackCapture[]{
   return captures.sort((a,b)=>a.timestamp.localeCompare(b.timestamp));
 }
 
-export async function discoverWaybackCaptures(input:{
+export function parseWaybackCdxJson(payload:unknown):WaybackCapture[]{
+  return parseWaybackCdxJsonWhere(payload,mimetype=>mimetype.includes('html')||mimetype.startsWith('text/'));
+}
+
+export function parseWaybackPdfCdxJson(payload:unknown):WaybackCapture[]{
+  return parseWaybackCdxJsonWhere(payload,mimetype=>mimetype==='application/pdf');
+}
+
+async function discoverWaybackCapturesWithParser(input:{
   url:string;
   from?:string;
   to?:string;
   limit?:number;
   prefix?:boolean;
   fetchImpl?:typeof fetch;
-}):Promise<WaybackCapture[]>{
+},parser:(payload:unknown)=>WaybackCapture[]):Promise<WaybackCapture[]>{
   const source=new URL(input.url);
   if(!['http:','https:'].includes(source.protocol))throw new Error('Wayback discovery requires http(s) URL');
   const params=new URLSearchParams({
@@ -90,7 +100,7 @@ export async function discoverWaybackCaptures(input:{
         headers:{accept:'application/json','user-agent':'VotePredict/2.0 historical-public-evidence'},
         signal:AbortSignal.timeout(30_000),
       });
-      if(response.ok)return parseWaybackCdxJson(await response.json());
+      if(response.ok)return parser(await response.json());
       const error=new Error('Wayback CDX returned HTTP '+response.status);
       if(![429,500,502,503,504].includes(response.status))throw error;
       lastError=error;
@@ -100,6 +110,28 @@ export async function discoverWaybackCaptures(input:{
     if(attempt<2)await new Promise(resolve=>setTimeout(resolve,attempt===0?1500:4000));
   }
   throw lastError instanceof Error?lastError:new Error('Wayback CDX discovery failed');
+}
+
+export async function discoverWaybackCaptures(input:{
+  url:string;
+  from?:string;
+  to?:string;
+  limit?:number;
+  prefix?:boolean;
+  fetchImpl?:typeof fetch;
+}):Promise<WaybackCapture[]>{
+  return discoverWaybackCapturesWithParser(input,parseWaybackCdxJson);
+}
+
+export async function discoverWaybackPdfCaptures(input:{
+  url:string;
+  from?:string;
+  to?:string;
+  limit?:number;
+  prefix?:boolean;
+  fetchImpl?:typeof fetch;
+}):Promise<WaybackCapture[]>{
+  return discoverWaybackCapturesWithParser(input,parseWaybackPdfCdxJson);
 }
 
 export function capturesStrictlyBefore(
