@@ -1,0 +1,33 @@
+# Public source expansion program
+
+Tracking: issue #355.
+
+## Goal
+
+Expand VotePredict's durable public-information corpus across eight source families while preserving the same strict event-time rule used by lifecycle research: a historical model may use an item only when an independent source proves it was public before the model cutoff.
+
+The expansion does not change serving probabilities. All new evidence defaults to context / non-mechanical until separately evaluated.
+
+## Frozen availability hierarchy
+
+1. **Official publication timestamp** — dated government/legislative source intended as a historical record.
+2. **Independent archive capture** — exact Internet Archive capture timestamp; the capture timestamp is the availability bound.
+3. **Regulatory filing/disclosure timestamp** — filed report/notice/publication date from the regulator; transaction/event dates alone do not qualify.
+4. **Publisher page metadata** — accepted for verified publisher/member-primary pages when the publication timestamp is internally carried by the source.
+
+For date-granular lifecycle replay, evidence must satisfy `available_date < cutoff_date`. Same-day material is excluded unless the historical source proves ordering precisely enough for the relevant model.
+
+## Eight families
+
+1. **Wayback campaign sites.** Backfill SOS-filed campaign home/issues/news/about pages using CDX capture timestamps and preserve original URL, archive URL, capture time, digest, fetched content hash, and supersession.
+2. **Independent expenditures.** Preserve candidate, spender, amount, support/oppose designation where reported, entity type, reporting source, and disclosure availability. Money remains context and never becomes an inferred legislative stance.
+3. **Finance disclosure timing.** Reconstruct report/notice availability from CFB historical disclosure calendars, filed reports, and large-contribution notices. Never use transaction date as public-availability date.
+4. **Endorsements/questionnaires/scorecards.** Preserve organization, candidate/member, question/response or endorsement record, publication/archive date, source hash, and neutral provenance. Do not infer legislative votes from an endorsement.
+5. **Lobbying subjects/associations.** Preserve association/principal, lobbyist, specific subject/category, spend/report period, filing/publication date, and source. Do not infer member stance from lobbying relationships.
+6. **Committee/hearing material.** Ingest agendas, schedules, testifier lists, written testimony/handouts, amendments, minutes, roll calls, bill summaries, and fiscal-note revisions with official dates and bill resolution.
+7. **Member/caucus archives.** Backfill House/Senate/caucus publications natively where historical dates survive, otherwise require pre-cutoff archive captures.
+8. **Targeted local/trade news.** Expand curated publisher discovery around Minnesota legislators/bills/issues; historical use requires publisher metadata or a pre-cutoff archive capture.
+
+## Modeling boundary
+
+The source expansion may support new research feature matrices, but retrospective 2021-26 results remain development/robustness evidence. Governing confirmation stays prospective. No automatic model promotion or serving change is allowed.
