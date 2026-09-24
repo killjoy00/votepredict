@@ -160,7 +160,7 @@ async function main() {
 
   const { pool } = await import('../src/lib/db/index.js');
   const { persistDurableEvidence } = await import('../src/evidence/durable-ingestion.js');
-  const { canonicalHouseCommitteeAttachmentPdfUrl, houseAttachmentCaptureIsOnOrAfterListing, normalizeHouseCommitteeAttachmentExcerpt } =
+  const { canonicalHouseCommitteeAttachmentPdfUrl, houseAttachmentCaptureIsAfterListingDate, normalizeHouseCommitteeAttachmentExcerpt } =
     await import('../src/evidence/house-committee-attachment-content.js');
   const { HOUSE_COMMITTEE_ARCHIVE_PARSER_VERSION } = await import('../src/evidence/house-committee-archive.js');
   const { discoverWaybackPdfCaptures } = await import('../src/evidence/wayback.js');
@@ -273,7 +273,7 @@ async function main() {
         scanned += 1;
         capturesDiscovered += discoveredCaptures.length;
         const captures = discoveredCaptures.filter(capture =>
-          houseAttachmentCaptureIsOnOrAfterListing(capture.capturedAt, candidate.official_posted_on)
+          houseAttachmentCaptureIsAfterListingDate(capture.capturedAt, candidate.official_posted_on)
         );
 
         if (captures.length === 0) {
@@ -424,7 +424,7 @@ async function main() {
       failureExamples,
       remainingAfter,
       policy: {
-        availability: 'exact Wayback capture timestamp for archived PDF bytes captured on or after the official attachment listing date',
+        availability: 'exact Wayback capture timestamp for archived PDF bytes captured on a later calendar date than the date-granular official attachment listing',
         currentFetchIsHistoricalAvailability: false,
         archiveListingDateIsContentAvailability: false,
         transactionOrEventDateIsAvailability: false,
