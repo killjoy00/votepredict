@@ -6,6 +6,7 @@ import {
   houseArchiveMatchesMember,
   houseMemberNewsUrl,
   senateDflFallbackProfileUrl,
+  senateMemberProfileCandidateUrl,
   memberPrimaryArticleMatches,
   memberPrimaryPublishedAt,
   parseHouseMemberNewsArchiveEntries,
@@ -76,6 +77,14 @@ test('Senate DFL fallback profile URLs follow the live senator-first-last slug a
   assert.equal(senateDflFallbackProfileUrl('Omar Fateh'), 'https://senatedfl.mn/home/members/senator-omar-fateh/');
   assert.equal(senateDflFallbackProfileUrl('Bobby Joe Champion'), 'https://senatedfl.mn/home/members/senator-bobby-joe-champion/');
   assert.equal(senateDflFallbackProfileUrl('Erin Maye Quade'), 'https://senatedfl.mn/home/members/senator-erin-maye-quade/');
+});
+
+test('Senate DFL profile discovery may use the verify-before-use fallback when the directory is unavailable', () => {
+  assert.equal(
+    senateMemberProfileCandidateUrl(dflMember, {}),
+    'https://senatedfl.mn/home/members/senator-d-scott-dibble/',
+  );
+  assert.equal(senateMemberProfileCandidateUrl(republicanMember, {}), undefined);
 });
 
 test('Senate DFL directory matching can resolve public-name variants from the canonical profile path', () => {
