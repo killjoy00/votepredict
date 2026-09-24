@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   canonicalHouseCommitteeAttachmentPdfUrl,
   HOUSE_COMMITTEE_ATTACHMENT_CONTENT_VERSION,
+  houseAttachmentCaptureIsOnOrAfterListing,
   normalizeHouseCommitteeAttachmentExcerpt,
   officialHouseCommitteeAttachmentListedAt,
 } from '../src/evidence/house-committee-attachment-content.js';
@@ -39,4 +40,12 @@ test('normalizes extracted PDF text without manufacturing content', () => {
   assert.equal(normalizeHouseCommitteeAttachmentExcerpt('  HF 400\n\ncommittee   summary  '), 'HF 400 committee summary');
   assert.equal(normalizeHouseCommitteeAttachmentExcerpt('   '), undefined);
   assert.equal(HOUSE_COMMITTEE_ATTACHMENT_CONTENT_VERSION, 'house-committee-attachment-content-v1');
+});
+
+
+test('archived attachment bytes cannot inherit a later bill mapping from a pre-listing capture', () => {
+  assert.equal(houseAttachmentCaptureIsOnOrAfterListing('2024-03-14T12:00:00.000Z', '2024-03-14'), true);
+  assert.equal(houseAttachmentCaptureIsOnOrAfterListing('2024-03-15T00:00:00.000Z', '2024-03-14'), true);
+  assert.equal(houseAttachmentCaptureIsOnOrAfterListing('2024-03-14T11:59:59.000Z', '2024-03-14'), false);
+  assert.equal(houseAttachmentCaptureIsOnOrAfterListing('2024-03-13T23:59:59.000Z', '2024-03-14'), false);
 });
