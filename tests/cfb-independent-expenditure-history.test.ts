@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parseCfbIndependentExpenditureCsv,sessionForIndependentExpenditureYear } from '../src/evidence/cfb-independent-expenditure-history.js';
-import { buildCfbReportDisclosureProof,cfbElectronicReportAvailableOn } from '../src/evidence/cfb-report-availability.js';
+import { buildCfbLargeContributionNoticeProof,buildCfbReportDisclosureProof,cfbElectronicReportAvailableOn } from '../src/evidence/cfb-report-availability.js';
 
 test('parses granular independent expenditure records',()=>{
   const csv=[
@@ -26,4 +26,37 @@ test('CFB report availability requires filing date and publishes next day',()=>{
   });
   assert.equal(proof.availableOn,'2024-07-30');
   assert.equal(proof.proofKind,'cfb_report_filing');
+});
+
+test('CFB report availability rejects impossible calendar dates',()=>{
+  assert.throws(()=>cfbElectronicReportAvailableOn('2024-02-30'),/Invalid CFB filing date/);
+});
+
+test('large-contribution notice proof requires separately proven filing and publication dates',()=>{
+  const proof=buildCfbLargeContributionNoticeProof({
+    registrationNumber:'40001',
+    filedOn:'2024-07-22',
+    publishedOn:'2024-07-22',
+    proofUrl:'https://cfb.mn.gov/notice/40001',
+  });
+  assert.equal(proof.filedOn,'2024-07-22');
+  assert.equal(proof.availableOn,'2024-07-22');
+  assert.equal(proof.proofKind,'cfb_large_contribution_notice');
+});
+
+test('large-contribution notice proof fails closed if only an event/notice date is supplied',()=>{
+  assert.throws(()=>buildCfbLargeContributionNoticeProof({
+    registrationNumber:'40001',
+    noticeDate:'2024-07-20',
+    proofUrl:'https://cfb.mn.gov/notice/40001',
+  } as never),/CFB notice filing date must be YYYY-MM-DD/);
+});
+
+test('large-contribution notice publication cannot predate filing',()=>{
+  assert.throws(()=>buildCfbLargeContributionNoticeProof({
+    registrationNumber:'40001',
+    filedOn:'2024-07-22',
+    publishedOn:'2024-07-21',
+    proofUrl:'https://cfb.mn.gov/notice/40001',
+  }),/cannot precede filing date/);
 });
