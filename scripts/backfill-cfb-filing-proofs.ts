@@ -123,6 +123,7 @@ async function main() {
   const {
     CFB_BOARD_AGENDAS_URL,
     CFB_BOARD_FILING_HISTORY_VERSION,
+    cfbBoardFilingHistoryDateInScope,
     discoverCfbBoardMaterialsLinks,
     parseCfbBoardMaterialsFilingProofs,
   } = await import('../src/evidence/cfb-board-filing-history.js');
@@ -134,7 +135,7 @@ async function main() {
       userAgent: 'VotePredict/2.0 cfb-filing-proof-backfill',
     });
     const links = discoverCfbBoardMaterialsLinks(agendaPage.rawContent, agendaPage.canonicalUrl)
-      .filter(link => link.meetingDate >= '2023-01-01' && link.meetingDate <= '2026-12-31');
+      .filter(link => cfbBoardFilingHistoryDateInScope(link.meetingDate));
 
     if (!links.length) throw new Error('No CFB Board meeting-material PDFs discovered');
 
