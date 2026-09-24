@@ -58,8 +58,23 @@ async function main(){
       seedUrl:row.campaign_website||row.source_url,
       prefix:row.subtype==='campaign_site_registry'||row.subtype==='member_primary_registry',
       quality:row.source_quality==='official'?'official' as const:'member_primary' as const,
+      registrySeed:row.subtype==='campaign_site_registry'||row.subtype==='member_primary_registry',
     })).filter(row=>/^https?:\/\//i.test(row.seedUrl));
-    const deduped=[...new Map(seedRows.map(row=>[row.membership_id+'|'+row.seedKind+'|'+row.seedUrl,row])).values()];
+    // One seed per member/source family/host. Prefer a registry/root seed because prefix
+    // discovery can recover historical child pages without repeatedly querying every current article.
+    const hostSeeds=new Map<string,(typeof seedRows)[number]>();
+    for(const row of seedRows){
+      let host:string;
+      try{host=new URL(row.seedUrl).hostname.toLowerCase();}catch{continue;}
+      const key=row.membership_id+'|'+row.seedKind+'|'+host;
+      const prior=hostSeeds.get(key);
+      if(!prior||(!prior.registrySeed&&row.registrySeed))hostSeeds.set(key,row);
+    }
+    const deduped=[...hostSeeds.values()].sort((a,b)=>
+      a.session_slug.localeCompare(b.session_slug)
+      || a.member_name.localeCompare(b.member_name)
+      || a.seedKind.localeCompare(b.seedKind)
+      || a.seedUrl.localeCompare(b.seedUrl));
 
     const prior=await pool.query<{next_offset:number|null}>(`
       SELECT CASE WHEN metadata->>'nextOffset' ~ '^[0-9]+$' THEN (metadata->>'nextOffset')::int ELSE 0 END AS next_offset
