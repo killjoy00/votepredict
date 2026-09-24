@@ -26,10 +26,16 @@ function decodeHtml(value: string): string {
 function isoDateFromUs(value: string): string | undefined {
   const match = value.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/);
   if (!match) return undefined;
+  const month = Number(match[1]);
+  const day = Number(match[2]);
   const year = match[3].length === 2 ? 2000 + Number(match[3]) : Number(match[3]);
-  const result = `${year.toString().padStart(4, '0')}-${match[1].padStart(2, '0')}-${match[2].padStart(2, '0')}`;
-  const parsed = new Date(result + 'T00:00:00Z');
-  return Number.isNaN(parsed.getTime()) ? undefined : result;
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  if (
+    parsed.getUTCFullYear() !== year
+    || parsed.getUTCMonth() !== month - 1
+    || parsed.getUTCDate() !== day
+  ) return undefined;
+  return `${year.toString().padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
 function meetingDateFromHref(href: string): string | undefined {
@@ -65,6 +71,15 @@ export function discoverCfbBoardMaterialsLinks(
 
 function normalizeWhitespace(value: string): string {
   return value.replace(/\f/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function normalizePdfLayout(value: string): string {
+  return value
+    .replace(/\f/g, '\n')
+    .replace(/\r/g, '\n')
+    .replace(/[\t ]+/g, ' ')
+    .replace(/\n{2,}/g, '\n')
+    .trim();
 }
 
 function normalizeEntityName(value: string): string {
