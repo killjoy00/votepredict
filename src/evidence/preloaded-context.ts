@@ -185,7 +185,6 @@ function campaignFinanceSnapshotItems(request: DeepResearchRequest): { contexts:
       items.push({
         sourceUrl: contributions.sourceUrl,
         title: `CFB 2025-26 candidate contributions — ${context.memberName}`,
-        publishedAt: contributions.latestReceiptDate ? `${contributions.latestReceiptDate}T00:00:00.000Z` : undefined,
         targetMembershipId: context.membershipId,
         targetMemberName: context.memberName,
         sourceKind: 'campaign_finance_snapshot',
@@ -195,6 +194,7 @@ function campaignFinanceSnapshotItems(request: DeepResearchRequest): { contexts:
           topContributors ? `Top contributors by aggregate amount: ${topContributors}.` : '',
           contributorTypes ? `Source types: ${contributorTypes}.` : '',
           employers ? `Top disclosed employers on individual records: ${employers}.` : '',
+          'Receipt dates are transaction dates, not disclosure or publication dates; no historical availability is asserted.',
           'Financial relationships are context only and do not establish a vote position.',
         ].filter(Boolean).join(' '),
       });
@@ -205,7 +205,6 @@ function campaignFinanceSnapshotItems(request: DeepResearchRequest): { contexts:
       items.push({
         sourceUrl: independent.sourceUrl,
         title: `CFB 2025-26 independent expenditures — ${context.memberName}`,
-        publishedAt: independent.latestDate ? `${independent.latestDate}T00:00:00.000Z` : undefined,
         targetMembershipId: context.membershipId,
         targetMemberName: context.memberName,
         sourceKind: 'campaign_finance_snapshot',
@@ -213,6 +212,7 @@ function campaignFinanceSnapshotItems(request: DeepResearchRequest): { contexts:
           `Deterministic aggregate of the official CFB independent-expenditure bulk file for ${context.committeeName}.`,
           `${independent.transactionCount} records totaling ${formatMoney(independent.totalAmount)}: ${formatMoney(independent.forAmount)} supporting and ${formatMoney(independent.againstAmount)} opposing${independent.latestDate ? `; latest ${independent.latestDate}` : ''}.`,
           topSpenders ? `Top spenders: ${topSpenders}.` : '',
+          'Expenditure dates are transaction or event dates, not disclosure or publication dates; no historical availability is asserted.',
           'Independent spending is context only and does not establish the candidate’s own vote position.',
         ].filter(Boolean).join(' '),
       });
