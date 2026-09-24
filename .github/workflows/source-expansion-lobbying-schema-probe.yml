@@ -1,0 +1,54 @@
+name: Lobbying principal schema probe
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/source-expansion-lobbying-schema-probe.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Inspect official CFB principal bulk schema
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://register.cfb.mn.gov/reports-and-data/self-help/data-downloads/lobbying/?download=-728390027'
+          curl --fail --location --retry 3 --retry-all-errors --max-time 120 \
+            --user-agent 'VotePredict/2.0 lobbying-schema-probe' \
+            "$url" -o "$RUNNER_TEMP/cfb-principal.csv"
+          python - <<'PYTHON'
+          import csv, hashlib, json, os, re
+          from pathlib import Path
+          path=Path(os.environ['RUNNER_TEMP'])/'cfb-principal.csv'
+          raw=path.read_bytes()
+          text=raw.decode('utf-8-sig')
+          rows=csv.reader(text.splitlines())
+          header=next(rows)
+          first=next(rows, [])
+          count=2 if first else 1
+          for _ in rows:
+              count += 1
+          def shape(value):
+              value=value.strip()
+              if not value:
+                  return 'empty'
+              if re.fullmatch(r'[-+$,().0-9]+', value):
+                  return 'numeric-like'
+              if re.fullmatch(r'\d{1,2}/\d{1,2}/\d{2,4}', value):
+                  return 'date-like'
+              if re.fullmatch(r'\d{4}', value):
+                  return 'year-like'
+              return f'text:{min(len(value),99)}'
+          print(json.dumps({
+              'bytes': len(raw),
+              'sha256': hashlib.sha256(raw).hexdigest(),
+              'csvRowsIncludingHeader': count,
+              'columns': header,
+              'firstRowShapes': [shape(v) for v in first],
+          }, indent=2))
+          PYTHON
