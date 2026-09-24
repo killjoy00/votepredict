@@ -12,6 +12,14 @@ const base={
   contentSha256:'a'.repeat(64),
 };
 
+const regulatoryBase={
+  proof:'regulatory_filing_or_disclosure_timestamp' as const,
+  availableAt:'2024-07-23T00:00:00.000Z',
+  canonicalUrl:'https://register.cfb.mn.gov/reports/example',
+  filingAt:'2024-07-22T00:00:00.000Z',
+  contentSha256:'b'.repeat(64),
+};
+
 test('archive availability is capture time and must be strictly before cutoff',()=>{
   assert.deepEqual(historicalAvailabilityErrors(base),[]);
   assert.equal(isHistoricallyAvailableBefore(base,'2024-02-03T04:05:07Z'),true);
@@ -22,6 +30,20 @@ test('archive availability is capture time and must be strictly before cutoff',(
 
 test('archive availability fails closed when capture and availableAt differ',()=>{
   assert.match(historicalAvailabilityErrors({...base,availableAt:'2024-02-02T00:00:00Z'}).join(' '),/must equal capturedAt/);
+});
+
+test('regulatory availability accepts disclosure at or after the proven filing time',()=>{
+  assert.deepEqual(historicalAvailabilityErrors(regulatoryBase),[]);
+});
+
+test('regulatory availability rejects an event date before the proven filing time',()=>{
+  const row={...regulatoryBase,availableAt:'2024-07-20T00:00:00.000Z'};
+  assert.match(historicalAvailabilityErrors(row).join(' '),/cannot precede filingAt/);
+  assert.equal(isHistoricallyAvailableBefore(row,'2024-07-21T00:00:00.000Z'),false);
+});
+
+test('regulatory availability rejects malformed filing timestamps',()=>{
+  assert.match(historicalAvailabilityErrors({...regulatoryBase,filingAt:'not-a-date'}).join(' '),/filingAt must be a valid timestamp/);
 });
 
 test('Wayback CDX parser retains only successful text captures',()=>{
