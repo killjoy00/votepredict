@@ -35,24 +35,28 @@ function sha256(value: Uint8Array): string {
   return createHash('sha256').update(value).digest('hex');
 }
 
+function stripPostgresIncompatibleNulls(value: string): string {
+  return value.replace(/\u0000/g, '');
+}
+
 export function decodePublicTextBytes(bytes: Uint8Array, contentTypeHeader = ''): string {
   const lower = contentTypeHeader.toLowerCase();
   if (bytes.length >= 2 && bytes[0] === 0xff && bytes[1] === 0xfe) {
-    return new TextDecoder('utf-16le').decode(bytes.subarray(2));
+    return stripPostgresIncompatibleNulls(new TextDecoder('utf-16le').decode(bytes.subarray(2)));
   }
   if (bytes.length >= 2 && bytes[0] === 0xfe && bytes[1] === 0xff) {
-    return new TextDecoder('utf-16be').decode(bytes.subarray(2));
+    return stripPostgresIncompatibleNulls(new TextDecoder('utf-16be').decode(bytes.subarray(2)));
   }
   if (/charset\s*=\s*["']?utf-16le\b/.test(lower)) {
-    return new TextDecoder('utf-16le').decode(bytes);
+    return stripPostgresIncompatibleNulls(new TextDecoder('utf-16le').decode(bytes));
   }
   if (/charset\s*=\s*["']?utf-16be\b/.test(lower)) {
-    return new TextDecoder('utf-16be').decode(bytes);
+    return stripPostgresIncompatibleNulls(new TextDecoder('utf-16be').decode(bytes));
   }
   if (/charset\s*=\s*["']?utf-16\b/.test(lower)) {
     return new TextDecoder('utf-16le').decode(bytes);
   }
-  return new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+  return stripPostgresIncompatibleNulls(new TextDecoder('utf-8', { fatal: false }).decode(bytes));
 }
 
 function decodeEntities(value: string): string {
