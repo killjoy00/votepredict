@@ -22,7 +22,7 @@ jobs:
         startsWith(github.event.comment.body, '[source-expansion-house-archive]')
       )
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
