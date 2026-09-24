@@ -301,6 +301,20 @@ function dflSearchUrl(memberName: string): string {
   return url.toString();
 }
 
+export function senateMemberProfileCandidateUrl(
+  member: MemberPrimaryMember,
+  directories: SenateMemberPrimaryDirectories = {},
+): string | undefined {
+  const party = member.party.trim().toUpperCase();
+  const dfl = party === 'DFL';
+  const republican = party === 'R' || party === 'GOP' || party === 'REPUBLICAN';
+  if (!dfl && !republican) return undefined;
+  const directory = dfl ? directories.dfl : directories.republican;
+  const directoryProfileUrl = directory ? findSenateMemberProfileUrl(directory, member) : undefined;
+  if (directoryProfileUrl) return directoryProfileUrl;
+  return dfl ? senateDflFallbackProfileUrl(member.name) : undefined;
+}
+
 export async function discoverMemberPrimarySource(
   member: MemberPrimaryMember,
   directories: SenateMemberPrimaryDirectories = {},
@@ -331,8 +345,7 @@ export async function discoverMemberPrimarySource(
   if (!directory && republican) throw new Error('Minnesota Senate Republican directory is unavailable');
 
   const directoryProfileUrl = directory ? findSenateMemberProfileUrl(directory, member) : undefined;
-  let profileUrl = directoryProfileUrl;
-  if (!profileUrl && dfl) profileUrl = senateDflFallbackProfileUrl(member.name);
+  const profileUrl = senateMemberProfileCandidateUrl(member, directories);
   if (!profileUrl) throw new Error(`No unique caucus profile matched ${member.name}`);
   const registryPage = await fetchPublicPage(profileUrl, {
     timeoutMs: 15_000,
