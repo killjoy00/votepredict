@@ -160,7 +160,7 @@ async function main() {
 
   const { pool } = await import('../src/lib/db/index.js');
   const { persistDurableEvidence } = await import('../src/evidence/durable-ingestion.js');
-  const { canonicalHouseCommitteeAttachmentPdfUrl, normalizeHouseCommitteeAttachmentExcerpt } =
+  const { canonicalHouseCommitteeAttachmentPdfUrl, houseAttachmentCaptureIsOnOrAfterListing, normalizeHouseCommitteeAttachmentExcerpt } =
     await import('../src/evidence/house-committee-attachment-content.js');
   const { HOUSE_COMMITTEE_ARCHIVE_PARSER_VERSION } = await import('../src/evidence/house-committee-archive.js');
   const { discoverWaybackPdfCaptures } = await import('../src/evidence/wayback.js');
@@ -264,14 +264,17 @@ async function main() {
         const originalUrl = canonicalHouseCommitteeAttachmentPdfUrl(candidate.attachment_url);
         const window = SESSION_WINDOWS[candidate.session_slug];
         if (!window) throw new Error('Unsupported House attachment session: ' + candidate.session_slug);
-        const captures = await discoverWaybackPdfCaptures({
+        const discoveredCaptures = await discoverWaybackPdfCaptures({
           url: originalUrl,
           from: window.from,
           to: window.to,
           limit: 50,
         });
         scanned += 1;
-        capturesDiscovered += captures.length;
+        capturesDiscovered += discoveredCaptures.length;
+        const captures = discoveredCaptures.filter(capture =>
+          houseAttachmentCaptureIsOnOrAfterListing(capture.capturedAt, candidate.official_posted_on)
+        );
 
         if (captures.length === 0) {
           const scanHash = createHash('sha256')
@@ -292,10 +295,13 @@ async function main() {
               archivePageSha256: candidate.archive_page_sha256,
               originalUrl,
               officialPostedOn: candidate.official_posted_on,
-              captureCount: 0,
+              captureCount: discoveredCaptures.length,
+              eligibleCaptureCount: 0,
               historicalContentIdentityProven: false,
               asOfEligible: false,
-              availabilityStatus: 'no_wayback_pdf_capture_found',
+              availabilityStatus: discoveredCaptures.length === 0
+                ? 'no_wayback_pdf_capture_found'
+                : 'only_pre_listing_wayback_pdf_captures_found',
             },
           }, []);
           noCapture += 1;
@@ -418,7 +424,7 @@ async function main() {
       failureExamples,
       remainingAfter,
       policy: {
-        availability: 'exact Wayback capture timestamp for archived PDF bytes',
+        availability: 'exact Wayback capture timestamp for archived PDF bytes captured on or after the official attachment listing date',
         currentFetchIsHistoricalAvailability: false,
         archiveListingDateIsContentAvailability: false,
         transactionOrEventDateIsAvailability: false,
