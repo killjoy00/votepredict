@@ -87,13 +87,13 @@ function pathPriority(value: string): number {
   } catch {
     return -100;
   }
-  let score = 0;
+  let topicalScore = 0;
   for (const term of TARGET_PATH_TERMS) {
-    if (pathname.includes(term)) score += 20;
+    if (pathname.includes(term)) topicalScore += 20;
   }
-  if (/\/(?:20(?:21|22|23|24|25|26))\//.test(pathname)) score += 5;
-  if (/\b(?:hf|sf)[-_]?\d+\b/i.test(pathname)) score += 40;
-  return score;
+  if (/\b(?:hf|sf)[-_]?\d+\b/i.test(pathname)) topicalScore += 40;
+  if (topicalScore === 0) return 0;
+  return topicalScore + (/\/(?:20(?:21|22|23|24|25|26))\//.test(pathname) ? 5 : 0);
 }
 
 export function selectLocalTradeNewsCaptures(
