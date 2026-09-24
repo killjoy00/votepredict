@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   canonicalHouseCommitteeAttachmentPdfUrl,
   HOUSE_COMMITTEE_ATTACHMENT_CONTENT_VERSION,
-  houseAttachmentCaptureIsOnOrAfterListing,
+  houseAttachmentCaptureIsAfterListingDate,
   normalizeHouseCommitteeAttachmentExcerpt,
   officialHouseCommitteeAttachmentListedAt,
 } from '../src/evidence/house-committee-attachment-content.js';
@@ -43,9 +43,9 @@ test('normalizes extracted PDF text without manufacturing content', () => {
 });
 
 
-test('archived attachment bytes cannot inherit a later bill mapping from a pre-listing capture', () => {
-  assert.equal(houseAttachmentCaptureIsOnOrAfterListing('2024-03-14T12:00:00.000Z', '2024-03-14'), true);
-  assert.equal(houseAttachmentCaptureIsOnOrAfterListing('2024-03-15T00:00:00.000Z', '2024-03-14'), true);
-  assert.equal(houseAttachmentCaptureIsOnOrAfterListing('2024-03-14T11:59:59.000Z', '2024-03-14'), false);
-  assert.equal(houseAttachmentCaptureIsOnOrAfterListing('2024-03-13T23:59:59.000Z', '2024-03-14'), false);
+test('archived attachment bytes require a capture on a later date than the date-granular listing', () => {
+  assert.equal(houseAttachmentCaptureIsAfterListingDate('2024-03-15T00:00:00.000Z', '2024-03-14'), true);
+  assert.equal(houseAttachmentCaptureIsAfterListingDate('2024-03-14T23:59:59.000Z', '2024-03-14'), false);
+  assert.equal(houseAttachmentCaptureIsAfterListingDate('2024-03-14T00:00:00.000Z', '2024-03-14'), false);
+  assert.equal(houseAttachmentCaptureIsAfterListingDate('2024-03-13T23:59:59.000Z', '2024-03-14'), false);
 });
