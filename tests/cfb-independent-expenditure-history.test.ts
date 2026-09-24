@@ -34,6 +34,28 @@ test('CFB report availability requires filing date and publishes next day',()=>{
   assert.equal(proof.proofKind,'cfb_report_filing');
 });
 
+test('CFB disclosure proofs require an official CFB provenance URL',()=>{
+  assert.throws(()=>buildCfbReportDisclosureProof({
+    registrationNumber:'19001',
+    reportName:'2024 Pre-Primary',
+    filedOn:'2024-07-29',
+    proofUrl:'https://example.com/cfb-report',
+  }),/official https CFB URL/);
+  assert.throws(()=>buildCfbLargeContributionNoticeProof({
+    registrationNumber:'40001',
+    filedOn:'2024-07-22',
+    publishedOn:'2024-07-22',
+    proofUrl:'https://example.com/notice/40001',
+  }),/official https CFB URL/);
+  assert.throws(()=>buildCfbLobbyistActivityDisclosureProof({
+    registrationNumber:'1234',
+    reportName:'2024 Jan-May lobbyist activity report',
+    filedOn:'2024-06-14',
+    publishedOn:'2024-06-18',
+    proofUrl:'https://example.com/lobbyist-report',
+  }),/official https CFB URL/);
+});
+
 test('CFB report availability rejects impossible calendar dates',()=>{
   assert.throws(()=>cfbElectronicReportAvailableOn('2024-02-30'),/Invalid CFB filing date/);
 });

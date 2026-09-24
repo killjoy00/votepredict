@@ -1,4 +1,4 @@
-export const CFB_REPORT_AVAILABILITY_VERSION='mn-cfb-report-availability-v3' as const;
+export const CFB_REPORT_AVAILABILITY_VERSION='mn-cfb-report-availability-v4' as const;
 export const CFB_SPECIFIC_LOBBYING_SUBJECT_FIRST_REPORT_YEAR=2024 as const;
 
 function exactDate(value:string,label:string):string{
@@ -7,6 +7,19 @@ function exactDate(value:string,label:string):string{
   const parsed=new Date(date+'T00:00:00Z');
   if(Number.isNaN(parsed.getTime())||parsed.toISOString().slice(0,10)!==date)throw new Error(`Invalid ${label}`);
   return date;
+}
+
+function requireOfficialCfbProofUrl(value:string):void{
+  let url:URL;
+  try{
+    url=new URL(value);
+  }catch{
+    throw new Error('CFB proof URL must be an official https CFB URL');
+  }
+  const host=url.hostname.toLowerCase();
+  if(url.protocol!=='https:'||(host!=='cfb.mn.gov'&&!host.endsWith('.cfb.mn.gov'))){
+    throw new Error('CFB proof URL must be an official https CFB URL');
+  }
 }
 
 // CFB board records state that electronically filed CFRO campaign-finance reports
@@ -34,7 +47,7 @@ export function buildCfbReportDisclosureProof(input:{
   proofUrl:string;
 }):CfbDisclosureProof{
   if(!input.registrationNumber.trim())throw new Error('CFB registration number required');
-  if(!/^https:\/\//i.test(input.proofUrl))throw new Error('CFB proof URL must be https');
+  requireOfficialCfbProofUrl(input.proofUrl);
   const filedOn=exactDate(input.filedOn,'CFB filing date');
   return {
     registrationNumber:input.registrationNumber.trim(),
@@ -57,7 +70,7 @@ export function buildCfbLargeContributionNoticeProof(input:{
   proofUrl:string;
 }):CfbDisclosureProof{
   if(!input.registrationNumber.trim())throw new Error('CFB registration number required');
-  if(!/^https:\/\//i.test(input.proofUrl))throw new Error('CFB proof URL must be https');
+  requireOfficialCfbProofUrl(input.proofUrl);
   const filedOn=exactDate(input.filedOn,'CFB notice filing date');
   const publishedOn=exactDate(input.publishedOn,'CFB notice publication date');
   if(publishedOn<filedOn)throw new Error('CFB notice publication date cannot precede filing date');
@@ -87,7 +100,7 @@ export function buildCfbLobbyistActivityDisclosureProof(input:{
 }):CfbDisclosureProof{
   if(!input.registrationNumber.trim())throw new Error('CFB registration number required');
   if(!input.reportName.trim())throw new Error('CFB lobbyist report name required');
-  if(!/^https:\/\//i.test(input.proofUrl))throw new Error('CFB proof URL must be https');
+  requireOfficialCfbProofUrl(input.proofUrl);
   const filedOn=exactDate(input.filedOn,'CFB lobbyist report filing date');
   const publishedOn=exactDate(input.publishedOn,'CFB lobbyist report publication date');
   if(publishedOn<filedOn)throw new Error('CFB lobbyist report publication date cannot precede filing date');
