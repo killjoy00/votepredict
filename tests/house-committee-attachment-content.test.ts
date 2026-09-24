@@ -4,7 +4,7 @@ import {
   canonicalHouseCommitteeAttachmentPdfUrl,
   HOUSE_COMMITTEE_ATTACHMENT_CONTENT_VERSION,
   normalizeHouseCommitteeAttachmentExcerpt,
-  officialHouseCommitteeAttachmentPublishedAt,
+  officialHouseCommitteeAttachmentListedAt,
 } from '../src/evidence/house-committee-attachment-content.js';
 
 test('accepts only official Minnesota House HTTPS PDF attachment URLs', () => {
@@ -26,13 +26,13 @@ test('accepts only official Minnesota House HTTPS PDF attachment URLs', () => {
   );
 });
 
-test('derives historical availability only from the official archive posted date', () => {
+test('normalizes the official archive listing date without treating it as content availability', () => {
   assert.equal(
-    officialHouseCommitteeAttachmentPublishedAt('2024-03-14'),
+    officialHouseCommitteeAttachmentListedAt('2024-03-14'),
     '2024-03-14T12:00:00.000Z',
   );
-  assert.throws(() => officialHouseCommitteeAttachmentPublishedAt('2024-02-30'), /real calendar date/);
-  assert.throws(() => officialHouseCommitteeAttachmentPublishedAt('03/14/2024'), /YYYY-MM-DD/);
+  assert.throws(() => officialHouseCommitteeAttachmentListedAt('2024-02-30'), /real calendar date/);
+  assert.throws(() => officialHouseCommitteeAttachmentListedAt('03/14/2024'), /YYYY-MM-DD/);
 });
 
 test('normalizes extracted PDF text without manufacturing content', () => {
