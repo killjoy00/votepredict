@@ -328,9 +328,9 @@ export async function discoverMemberPrimarySource(
   const republican = party === 'R' || party === 'GOP' || party === 'REPUBLICAN';
   if (!dfl && !republican) throw new Error(`Unsupported Minnesota Senate party for member-primary discovery: ${member.party}`);
   const directory = dfl ? directories.dfl : directories.republican;
-  if (!directory) throw new Error(`Minnesota Senate ${dfl ? 'DFL' : 'Republican'} directory is unavailable`);
+  if (!directory && republican) throw new Error('Minnesota Senate Republican directory is unavailable');
 
-  const directoryProfileUrl = findSenateMemberProfileUrl(directory, member);
+  const directoryProfileUrl = directory ? findSenateMemberProfileUrl(directory, member) : undefined;
   let profileUrl = directoryProfileUrl;
   if (!profileUrl && dfl) profileUrl = senateDflFallbackProfileUrl(member.name);
   if (!profileUrl) throw new Error(`No unique caucus profile matched ${member.name}`);
