@@ -537,6 +537,39 @@ P5 does not retrofit these families onto the P4 30-day hazard landmarks because 
 at event-time cutoffs, not at arbitrary intervening daily landmarks. Filling those daily family states from later
 snapshots would violate the as-of contract.
 
+#### Post-freeze bill-language robustness screen
+
+After P5 was frozen, run `35941525382` on code SHA
+`048baa43d9add3f6789d463b8db88a3650e3bf7a` tested whether the **actual text of the latest bill version already
+available strictly before each P3 cutoff** adds information beyond the retained P5 process + bill-version-structure
+baseline. The protocol was frozen before scoring: fit on 2021-22 only, select lexical scale / structural ridge
+regularization on 2023-24 only, and keep 2025-26 descriptive. The run reproduced the exact frozen P3 content SHA
+`45030a9780ce76690ea960605385f501c24047b461a82e1368a427a7267be39d` and matched all **31,566** referenced
+bill-version IDs. P5-compatible coverage is 63,882 snapshots / 30,964 bills, with cutoff-safe raw text on 54,845
+snapshots / 30,961 bills.
+
+Two findings should be kept separate:
+
+- **Open-vocabulary substantive words do not clear the proper-score screen.** The validation selector chose lexical
+  scale **0**. Nonzero lexical scales slightly improved ranking but worsened Brier score and log loss in 2023-24, so
+  the individual high/low-association words are descriptive only and should not be turned into model weights.
+- **Structural bill-language features add a small, more stable signal.** The selected structural arm improves
+  2023-24 Brier **0.01789196 -> 0.01767628**, log loss **0.07652651 -> 0.07493558**, ECE
+  **0.00715302 -> 0.00605408**, AP **0.46647 -> 0.50397**, and ROC-AUC **0.86579 -> 0.88662**. The same frozen arm
+  remains directionally positive in 2025-26, but much more modestly: Brier **0.02413796 -> 0.02409140**, log loss
+  **0.10030001 -> 0.10010330**, ECE **0.00855590 -> 0.00756209**, AP **0.42604 -> 0.45115**, and ROC-AUC
+  **0.85724 -> 0.85868**.
+
+The structural features are counts/density cues for sections, subdivisions, amendments, added sections, repeals,
+appropriations, effective-date clauses, definitions, penalties, tax language, grants, and bonds. These are predictive
+associations only; the screen does not support a causal interpretation. The frozen feature-row SHA-256 is
+`4184b0ccc1e8cf0b62f2567990dc37d5418e1076bc68f546ea959e1a4c939991`; report-file SHA-256 is
+`dc639d28207a697c7aa3de9e5e647175ebe8af6b4a47adfc5028faeea8d7dffd`; artifact digest is
+`sha256:89b77b29e6f16e825c4874582b2ca14e88477716096e67b49c6020548df0a667`.
+
+This is retrospective development/robustness evidence only. It does **not** modify the frozen P5/P8 models, authorize
+a serving change, or justify promoting the lexical term associations. Production action remains **none**.
+
 ### P6 — end-to-end combination
 
 - [x] Combine floor-access/lifecycle probability with conditional member/chamber passage.
