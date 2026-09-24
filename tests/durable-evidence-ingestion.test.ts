@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { evidenceIngestionKey, evidenceSeriesKey, type DurableEvidenceDraft } from '../src/evidence/durable-ingestion';
+import {
+  evidenceIngestionKey,
+  evidenceSeriesKey,
+  normalizeDurableEvidenceDraftForSource,
+  type DurableEvidenceDraft,
+} from '../src/evidence/durable-ingestion';
 
 const draft: DurableEvidenceDraft = {
   kind: 'context',
@@ -53,6 +58,28 @@ test('durable evidence ingestion key changes for a materially different claim', 
     evidenceIngestionKey(base),
     evidenceIngestionKey({ ...base, draft: { ...draft, claim: 'A different sourced claim.' } }),
   );
+});
+
+test('legacy campaign-finance bulk transaction dates are not persisted as publication dates', () => {
+  const normalized = normalizeDurableEvidenceDraftForSource({ sourceKind: 'campaign_finance_bulk' }, {
+    ...draft,
+    metadata: {
+      contextType: 'campaign_finance',
+      subtype: 'candidate_contributions',
+      latestReceiptDate: '2026-07-01',
+    },
+  });
+
+  assert.equal(normalized.publishedAt, undefined);
+  assert.equal(normalized.metadata?.asOfEligible, false);
+  assert.equal(normalized.metadata?.availabilityStatus, 'awaiting_regulatory_disclosure_proof');
+  assert.equal(normalized.metadata?.transactionDateIsAvailability, false);
+  assert.equal(normalized.metadata?.latestReceiptDate, '2026-07-01');
+});
+
+test('non-finance durable evidence keeps its proven publication timestamp unchanged', () => {
+  const normalized = normalizeDurableEvidenceDraftForSource({ sourceKind: 'official_committee_archive' }, draft);
+  assert.equal(normalized, draft);
 });
 
 test('campaign-finance series key is stable across changing aggregate claims', () => {
