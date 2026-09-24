@@ -2,7 +2,8 @@ import { createHash } from 'node:crypto';
 import fallbackSnapshotJson from '../../data/cfb-2025-2026-snapshot.json';
 import type { CampaignFinanceSnapshot, CandidateSnapshot, RankedAmount } from './campaign-finance-snapshot';
 
-const PAGE_URL = 'https://register.cfb.mn.gov/reports-and-data/self-help/data-downloads/campaign-finance/';
+export const CAMPAIGN_FINANCE_PAGE_URL = 'https://register.cfb.mn.gov/reports-and-data/self-help/data-downloads/campaign-finance/';
+const PAGE_URL = CAMPAIGN_FINANCE_PAGE_URL;
 const FALLBACK_CONTRIBUTIONS_URL = `${PAGE_URL}?download=-2026985457`;
 const FALLBACK_EXPENDITURES_URL = `${PAGE_URL}?download=-1315784544`;
 const FALLBACK_INDEPENDENT_URL = `${PAGE_URL}?download=-617535497`;
@@ -53,7 +54,7 @@ interface CandidateAccumulator extends Omit<CandidateSnapshot, 'contributions' |
 
 type FetchLike = typeof fetch;
 
-type DownloadUrls = {
+export type CampaignFinanceDownloadUrls = {
   contributions: string;
   expenditures: string;
   independentExpenditures: string;
@@ -132,7 +133,7 @@ export function candidateIdentityFromCommitteeName(committeeName: string): Candi
   return undefined;
 }
 
-async function discoverDownloadUrls(fetchImpl: FetchLike): Promise<DownloadUrls> {
+export async function discoverCampaignFinanceDownloadUrls(fetchImpl: FetchLike = fetch): Promise<CampaignFinanceDownloadUrls> {
   const response = await fetchImpl(PAGE_URL, {
     headers: { 'user-agent': 'VotePredict/2.0 campaign-finance-snapshot' },
     signal: AbortSignal.timeout(30_000),
@@ -149,7 +150,7 @@ async function discoverDownloadUrls(fetchImpl: FetchLike): Promise<DownloadUrls>
   };
 }
 
-async function fetchText(fetchImpl: FetchLike, url: string): Promise<string> {
+export async function fetchCampaignFinanceBulkText(url: string, fetchImpl: FetchLike = fetch): Promise<string> {
   const response = await fetchImpl(url, {
     headers: { 'user-agent': 'VotePredict/2.0 campaign-finance-snapshot' },
     signal: AbortSignal.timeout(180_000),
@@ -468,15 +469,15 @@ export function buildCampaignFinanceSnapshotFromTexts(input: {
 }
 
 export async function fetchCurrentCampaignFinanceSnapshot(fetchImpl: FetchLike = fetch): Promise<CampaignFinanceSnapshot> {
-  const urls = await discoverDownloadUrls(fetchImpl);
+  const urls = await discoverCampaignFinanceDownloadUrls(fetchImpl);
   const [contributionsText, independentExpendituresText] = await Promise.all([
-    fetchText(fetchImpl, urls.contributions),
-    fetchText(fetchImpl, urls.independentExpenditures),
+    fetchCampaignFinanceBulkText(urls.contributions, fetchImpl),
+    fetchCampaignFinanceBulkText(urls.independentExpenditures, fetchImpl),
   ]);
 
   let expendituresText: string | undefined;
   try {
-    expendituresText = await fetchText(fetchImpl, urls.expenditures);
+    expendituresText = await fetchCampaignFinanceBulkText(urls.expenditures, fetchImpl);
   } catch (error) {
     console.warn('CFB candidate-expenditure bulk download unavailable; continuing without supplemental spending data', error instanceof Error ? error.name : 'Error');
   }
