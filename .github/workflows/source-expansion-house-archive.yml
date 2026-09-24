@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: source-expansion-house-committee-archive
+  group: ${{ github.event_name == 'issue_comment' && (github.event.issue.number != 355 || github.event.comment.user.login != 'killjoy00' || !startsWith(github.event.comment.body, '[source-expansion-house-archive]')) && format('source-expansion-house-committee-archive-skip-{0}', github.run_id) || 'source-expansion-house-committee-archive' }}
   cancel-in-progress: false
 
 jobs:

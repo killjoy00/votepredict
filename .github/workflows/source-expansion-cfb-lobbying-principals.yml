@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: source-expansion-cfb-lobbying-principals
+  group: ${{ github.event_name == 'issue_comment' && (github.event.issue.number != 355 || github.event.comment.user.login != 'killjoy00' || !startsWith(github.event.comment.body, '[source-expansion-cfb-lobbying-principals]')) && format('source-expansion-cfb-lobbying-principals-skip-{0}', github.run_id) || 'source-expansion-cfb-lobbying-principals' }}
   cancel-in-progress: false
 
 jobs:

@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: source-expansion-cfb-ie
+  group: ${{ github.event_name == 'issue_comment' && (github.event.issue.number != 355 || github.event.comment.user.login != 'killjoy00' || !startsWith(github.event.comment.body, '[source-expansion-cfb-ie]')) && format('source-expansion-cfb-ie-skip-{0}', github.run_id) || 'source-expansion-cfb-ie' }}
   cancel-in-progress: false
 
 jobs:
