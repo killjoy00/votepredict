@@ -250,11 +250,18 @@ async function main() {
     ]);
     runId = run.rows[0].id;
 
-    const [dflDirectory, republicanDirectory] = await Promise.all([
+    const [dflDirectoryResult, republicanDirectoryResult] = await Promise.allSettled([
       fetchWithRetry(MN_SENATE_DFL_DIRECTORY_URL, fetchPublicPage, 'VotePredict/2.0 Senate DFL historical member directory'),
       fetchWithRetry(MN_SENATE_REPUBLICAN_DIRECTORY_URL, fetchPublicPage, 'VotePredict/2.0 Senate Republican historical member directory'),
     ]);
-    const directories = { dfl: dflDirectory, republican: republicanDirectory };
+    const directories = {
+      dfl: dflDirectoryResult.status === 'fulfilled' ? dflDirectoryResult.value : undefined,
+      republican: republicanDirectoryResult.status === 'fulfilled' ? republicanDirectoryResult.value : undefined,
+    };
+    const directoryFailures = [
+      ...(dflDirectoryResult.status === 'rejected' ? [{ directory: 'dfl', error: safe(dflDirectoryResult.reason) }] : []),
+      ...(republicanDirectoryResult.status === 'rejected' ? [{ directory: 'republican', error: safe(republicanDirectoryResult.reason) }] : []),
+    ];
 
     const billRows = (await pool.query<{ id: string; identifier: string; session_slug: string }>(`
       SELECT b.id::text,b.identifier,s.slug AS session_slug
@@ -344,6 +351,9 @@ async function main() {
           if (Number.isNaN(parsedPublished.getTime())) {
             skippedMissingDate += 1;
             continue;
+          }
+          if (parsedPublished.getTime() > Date.now() + 86_400_000) {
+            throw new Error('Senate historical article publication timestamp is implausibly in the future');
           }
           if (publishedAt.slice(0, 10) < '2021-01-01' || publishedAt.slice(0, 10) > '2026-12-31') {
             skippedOutsideMembership += 1;
@@ -490,6 +500,7 @@ async function main() {
       nextOffset,
       memberBatchSize,
       articlesPerMember,
+      directoryFailures,
       sourceDiscoveries,
       candidatesDiscovered,
       articleAttempts,
