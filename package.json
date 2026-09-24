@@ -55,6 +55,7 @@
     "eval:lifecycle:external-selection-control": "tsx scripts/evaluate-lifecycle-external-selection-control.ts",
     "eval:lifecycle:bill-language": "tsx scripts/evaluate-lifecycle-bill-language-screen.ts",
     "backfill:cfb:independent-expenditures": "tsx scripts/backfill-cfb-independent-expenditures.ts",
+    "backfill:cfb:filing-proofs": "tsx scripts/backfill-cfb-filing-proofs.ts",
     "backfill:house:committee-archive": "tsx scripts/backfill-house-committee-archive.ts",
     "backfill:wayback:public-evidence": "tsx scripts/backfill-wayback-public-evidence.ts"
   },
