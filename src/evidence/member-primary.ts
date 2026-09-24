@@ -32,6 +32,12 @@ export interface MemberPrimaryDiscovery {
   articleIndexPage: PublicPage;
 }
 
+export interface HouseMemberNewsArchiveEntry {
+  url: string;
+  title: string;
+  publishedOn: string;
+}
+
 type Anchor = {
   url: string;
   text: string;
@@ -117,6 +123,66 @@ function isRepublicanProfilePath(pathname: string): boolean {
 export function houseMemberNewsUrl(externalKey: string): string | undefined {
   const match = externalKey.match(/^lrl:(\d+)$/i);
   return match ? `${MN_HOUSE_MEMBER_NEWS_ROOT}/${match[1]}` : undefined;
+}
+
+const LONG_MONTHS = new Map([
+  ['january', 1], ['february', 2], ['march', 3], ['april', 4],
+  ['may', 5], ['june', 6], ['july', 7], ['august', 8],
+  ['september', 9], ['october', 10], ['november', 11], ['december', 12],
+]);
+
+function isoDateFromHouseArchiveLabel(value: string): string | undefined {
+  const match = value.match(
+    /(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)?\s*,?\s*(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),\s+(\d{4})/i,
+  );
+  if (!match) return undefined;
+  const month = LONG_MONTHS.get(match[1].toLowerCase());
+  const day = Number(match[2]);
+  const year = Number(match[3]);
+  if (!month || !Number.isInteger(day) || !Number.isInteger(year)) return undefined;
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  if (
+    parsed.getUTCFullYear() !== year
+    || parsed.getUTCMonth() !== month - 1
+    || parsed.getUTCDate() !== day
+  ) return undefined;
+  return `${year.toString().padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
+export function parseHouseMemberNewsArchiveEntries(
+  page: Pick<PublicPage, 'rawContent' | 'canonicalUrl'>,
+  externalKey: string,
+): HouseMemberNewsArchiveEntry[] {
+  const lrlId = externalKey.match(/^lrl:(\d+)$/i)?.[1];
+  if (!lrlId) return [];
+
+  const expectedPath = new RegExp('^/members/profile/news/' + lrlId + '/\\d+/?$', 'i');
+  const entries = new Map<string, HouseMemberNewsArchiveEntry>();
+  for (const match of page.rawContent.matchAll(/<a\b[^>]*href\s*=\s*["']([^"'#]+)["'][^>]*>([\s\S]*?)<\/a>/gi)) {
+    let url: string;
+    try {
+      url = canonicalPublicUrl(decodeEntities(match[1]), page.canonicalUrl);
+    } catch {
+      continue;
+    }
+    const parsedUrl = new URL(url);
+    if (parsedUrl.hostname.toLowerCase() !== 'www.house.mn.gov' || !expectedPath.test(parsedUrl.pathname)) continue;
+
+    const end = (match.index ?? 0) + match[0].length;
+    const tail = page.rawContent.slice(end, end + 420);
+    const boundary = tail.search(/<\/li\s*>|<a\b/i);
+    const dateRegion = boundary >= 0 ? tail.slice(0, boundary) : tail;
+    const publishedOn = isoDateFromHouseArchiveLabel(anchorText(dateRegion));
+    if (!publishedOn) continue;
+
+    const title = anchorText(match[2]);
+    if (!title) continue;
+    entries.set(url, { url, title, publishedOn });
+  }
+
+  return [...entries.values()].sort(
+    (left, right) => left.publishedOn.localeCompare(right.publishedOn) || left.url.localeCompare(right.url),
+  );
 }
 
 export function senateDflFallbackProfileUrl(memberName: string): string | undefined {

@@ -8,6 +8,7 @@ import {
   senateDflFallbackProfileUrl,
   memberPrimaryArticleMatches,
   memberPrimaryPublishedAt,
+  parseHouseMemberNewsArchiveEntries,
   selectMemberPrimaryArticleCandidates,
   type MemberPrimaryDiscovery,
   type MemberPrimaryMember,
@@ -246,4 +247,34 @@ test('member-primary publication date falls back to a visible article date', () 
     text: 'Legislative update Wednesday, May 20, 2026 Dear neighbors...',
   });
   assert.equal(memberPrimaryPublishedAt(article), '2026-05-20T12:00:00.000Z');
+});
+
+
+test('House historical news archive parser preserves official article dates and member scope', () => {
+  const archive = page({
+    canonicalUrl: 'https://www.house.mn.gov/members/profile/news/15347',
+    rawContent: [
+      '<ul>',
+      '<li><a href="/members/profile/news/15347/50001"><strong>First update</strong></a> - (Friday, May 10, 2024)</li>',
+      '<li><a href="https://www.house.mn.gov/members/profile/news/15347/50002">Second update</a> - (Wednesday, January 5, 2022)</li>',
+      '<li><a href="/members/profile/news/99999/1">Other member</a> - (Monday, May 1, 2023)</li>',
+      '<li><a href="/members/profile/news/15347/50003">Impossible date</a> - (Friday, February 31, 2024)</li>',
+      '</ul>',
+    ].join(''),
+    text: 'archive',
+  });
+
+  assert.deepEqual(parseHouseMemberNewsArchiveEntries(archive, 'lrl:15347'), [
+    {
+      url: 'https://www.house.mn.gov/members/profile/news/15347/50002',
+      title: 'Second update',
+      publishedOn: '2022-01-05',
+    },
+    {
+      url: 'https://www.house.mn.gov/members/profile/news/15347/50001',
+      title: 'First update',
+      publishedOn: '2024-05-10',
+    },
+  ]);
+  assert.deepEqual(parseHouseMemberNewsArchiveEntries(archive, 'other:15347'), []);
 });
