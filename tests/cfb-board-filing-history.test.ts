@@ -1,18 +1,32 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  cfbBoardFilingHistoryDateInScope,
   discoverCfbBoardMaterialsLinks,
   parseCfbBoardMaterialsFilingProofs,
 } from '../src/evidence/cfb-board-filing-history.js';
 
+test('uses the complete 2021-2026 CFB Board filing-proof window', () => {
+  assert.equal(cfbBoardFilingHistoryDateInScope('2020-12-31'), false);
+  assert.equal(cfbBoardFilingHistoryDateInScope('2021-01-01'), true);
+  assert.equal(cfbBoardFilingHistoryDateInScope('2022-04-06'), true);
+  assert.equal(cfbBoardFilingHistoryDateInScope('2026-12-31'), true);
+  assert.equal(cfbBoardFilingHistoryDateInScope('2027-01-01'), false);
+});
+
 test('discovers dated CFB Board meeting-material PDFs', () => {
   const html = [
+    '<a href="/pdf/bdinfo/agendas/2021_01_08_materials.pdf">1/8/2021 materials</a>',
     '<a href="/pdf/bdinfo/agendas/2025_01_13_materials.pdf?t=1749772800">1/13/2025 materials</a>',
     '<a href="https://register.cfb.mn.gov/pdf/bdinfo/agendas/2024_06_05_materials.pdf">6/5/2024 materials</a>',
     '<a href="/pdf/bdinfo/minutes/2024_06_05_regular_session.pdf">minutes</a>',
   ].join('\n');
 
   assert.deepEqual(discoverCfbBoardMaterialsLinks(html), [
+    {
+      sourceUrl: 'https://register.cfb.mn.gov/pdf/bdinfo/agendas/2021_01_08_materials.pdf',
+      meetingDate: '2021-01-08',
+    },
     {
       sourceUrl: 'https://register.cfb.mn.gov/pdf/bdinfo/agendas/2024_06_05_materials.pdf',
       meetingDate: '2024-06-05',

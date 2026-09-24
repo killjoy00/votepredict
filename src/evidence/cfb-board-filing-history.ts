@@ -3,6 +3,8 @@ import { buildCfbReportDisclosureProof, type CfbDisclosureProof } from './cfb-re
 export const CFB_BOARD_FILING_HISTORY_VERSION = 'mn-cfb-board-filing-history-v1' as const;
 export const CFB_BOARD_AGENDAS_URL =
   'https://register.cfb.mn.gov/citizen-resources/the-board/meetings/agendas/';
+export const CFB_BOARD_FILING_HISTORY_START_DATE = '2021-01-01' as const;
+export const CFB_BOARD_FILING_HISTORY_END_DATE = '2026-12-31' as const;
 
 export interface CfbBoardMaterialsLink {
   sourceUrl: string;
@@ -43,6 +45,11 @@ function meetingDateFromHref(href: string): string | undefined {
   const match = path.match(/\/(20\d{2})[_-](\d{2})[_-](\d{2})[^/]*materials[^/]*\.pdf$/i);
   if (!match) return undefined;
   return `${match[1]}-${match[2]}-${match[3]}`;
+}
+
+export function cfbBoardFilingHistoryDateInScope(meetingDate: string): boolean {
+  return meetingDate >= CFB_BOARD_FILING_HISTORY_START_DATE
+    && meetingDate <= CFB_BOARD_FILING_HISTORY_END_DATE;
 }
 
 export function discoverCfbBoardMaterialsLinks(
