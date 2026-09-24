@@ -20,6 +20,22 @@ const regulatoryBase={
   contentSha256:'b'.repeat(64),
 };
 
+const officialPublicationBase={
+  proof:'official_publication_timestamp' as const,
+  availableAt:'2024-03-15T15:30:00.000Z',
+  canonicalUrl:'https://www.house.mn.gov/committees/example',
+  publishedAt:'2024-03-15T15:30:00.000Z',
+  contentSha256:'c'.repeat(64),
+};
+
+const publisherMetadataBase={
+  proof:'publisher_page_metadata' as const,
+  availableAt:'2024-04-10T13:00:00.000Z',
+  canonicalUrl:'https://example.org/news/article',
+  publishedAt:'2024-04-10T12:00:00.000Z',
+  contentSha256:'d'.repeat(64),
+};
+
 test('archive availability is capture time and must be strictly before cutoff',()=>{
   assert.deepEqual(historicalAvailabilityErrors(base),[]);
   assert.equal(isHistoricallyAvailableBefore(base,'2024-02-03T04:05:07Z'),true);
@@ -44,6 +60,26 @@ test('regulatory availability rejects an event date before the proven filing tim
 
 test('regulatory availability rejects malformed filing timestamps',()=>{
   assert.match(historicalAvailabilityErrors({...regulatoryBase,filingAt:'not-a-date'}).join(' '),/filingAt must be a valid timestamp/);
+});
+
+test('official publication availability accepts the proven publication time',()=>{
+  assert.deepEqual(historicalAvailabilityErrors(officialPublicationBase),[]);
+});
+
+test('official publication availability cannot predate the proven publication time',()=>{
+  const row={...officialPublicationBase,availableAt:'2024-03-15T15:29:59.000Z'};
+  assert.match(historicalAvailabilityErrors(row).join(' '),/official publication availableAt cannot precede publishedAt/);
+  assert.equal(isHistoricallyAvailableBefore(row,'2024-03-15T15:30:00.000Z'),false);
+});
+
+test('publisher metadata availability cannot predate the proven publication time',()=>{
+  const row={...publisherMetadataBase,availableAt:'2024-04-10T11:59:59.000Z'};
+  assert.match(historicalAvailabilityErrors(row).join(' '),/publisher metadata availableAt cannot precede publishedAt/);
+});
+
+test('publication availability rejects malformed publication timestamps',()=>{
+  assert.match(historicalAvailabilityErrors({...officialPublicationBase,publishedAt:'not-a-date'}).join(' '),/publishedAt must be a valid timestamp/);
+  assert.match(historicalAvailabilityErrors({...publisherMetadataBase,publishedAt:'not-a-date'}).join(' '),/publishedAt must be a valid timestamp/);
 });
 
 test('Wayback CDX parser retains only successful text captures',()=>{
