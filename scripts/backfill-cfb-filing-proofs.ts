@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
+import type { DurableEvidenceDraft } from '../src/evidence/durable-ingestion.js';
 
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
@@ -142,8 +143,8 @@ async function main() {
     let skippedDocuments = 0;
     let documentsWithProofs = 0;
     let proofsFound = 0;
-    let proofsInserted = 0;
-    let reused = 0;
+    let evidenceInserted = 0;
+    let evidenceReused = 0;
     let failures = 0;
     const failureExamples: Array<{ meetingDate: string; error: string }> = [];
 
@@ -169,7 +170,7 @@ async function main() {
         const proofs = parseCfbBoardMaterialsFilingProofs(pdf.text, link.sourceUrl)
           .filter(proof => proof.filedOn >= '2021-01-01' && proof.filedOn <= '2026-12-31');
 
-        const drafts = proofs.map(proof => ({
+        const drafts: DurableEvidenceDraft[] = proofs.map(proof => ({
           kind: 'context' as const,
           stance: 'neutral' as const,
           claim:
@@ -249,8 +250,8 @@ async function main() {
         processedDocuments += 1;
         if (proofs.length) documentsWithProofs += 1;
         proofsFound += proofs.length;
-        proofsInserted += Math.min(persisted.inserted, proofs.length);
-        reused += persisted.reused;
+        evidenceInserted += persisted.inserted;
+        evidenceReused += persisted.reused;
 
         console.log(JSON.stringify({
           cfbFilingProofProgress: {
@@ -259,8 +260,8 @@ async function main() {
             batchSize: size,
             proofCount: proofs.length,
             proofsFound,
-            proofsInserted,
-            reused,
+            evidenceInserted,
+            evidenceReused,
           },
         }));
       } catch (error) {
@@ -287,8 +288,8 @@ async function main() {
         remainingDocuments: remaining,
         documentsWithProofs,
         proofsFound,
-        proofsInserted,
-        reused,
+        evidenceInserted,
+        evidenceReused,
         failures,
         failureExamples,
         policy: {
