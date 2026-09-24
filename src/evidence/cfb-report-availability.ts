@@ -1,13 +1,18 @@
-export const CFB_REPORT_AVAILABILITY_VERSION='mn-cfb-report-availability-v1' as const;
+export const CFB_REPORT_AVAILABILITY_VERSION='mn-cfb-report-availability-v2' as const;
+
+function exactDate(value:string,label:string):string{
+  const date=value?.slice(0,10);
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date??''))throw new Error(`${label} must be YYYY-MM-DD`);
+  const parsed=new Date(date+'T00:00:00Z');
+  if(Number.isNaN(parsed.getTime())||parsed.toISOString().slice(0,10)!==date)throw new Error(`Invalid ${label}`);
+  return date;
+}
 
 // CFB board records state that electronically filed CFRO campaign-finance reports
 // are published on the Board website the day after filing. This helper deliberately
 // requires a proven filing date; report due dates are never substituted.
 export function cfbElectronicReportAvailableOn(filedOn:string):string{
-  const match=filedOn.match(/^(\d{4}-\d{2}-\d{2})/);
-  if(!match)throw new Error('CFB filing date must be YYYY-MM-DD');
-  const date=new Date(match[1]+'T00:00:00Z');
-  if(Number.isNaN(date.getTime()))throw new Error('Invalid CFB filing date');
+  const date=new Date(exactDate(filedOn,'CFB filing date')+'T00:00:00Z');
   date.setUTCDate(date.getUTCDate()+1);
   return date.toISOString().slice(0,10);
 }
@@ -29,30 +34,37 @@ export function buildCfbReportDisclosureProof(input:{
 }):CfbDisclosureProof{
   if(!input.registrationNumber.trim())throw new Error('CFB registration number required');
   if(!/^https:\/\//i.test(input.proofUrl))throw new Error('CFB proof URL must be https');
+  const filedOn=exactDate(input.filedOn,'CFB filing date');
   return {
     registrationNumber:input.registrationNumber.trim(),
     reportName:input.reportName.trim(),
-    filedOn:input.filedOn.slice(0,10),
-    availableOn:cfbElectronicReportAvailableOn(input.filedOn),
+    filedOn,
+    availableOn:cfbElectronicReportAvailableOn(filedOn),
     proofUrl:input.proofUrl,
     proofKind:'cfb_report_filing',
   };
 }
 
+// Large-contribution notice rows often carry a contribution/receipt date. That is an
+// event date, not proof that the notice was public. Callers must separately prove both
+// the actual filing date and the official publication/availability date. No derivation
+// from transaction, contribution, receipt, due, or reporting-period dates is allowed.
 export function buildCfbLargeContributionNoticeProof(input:{
   registrationNumber:string;
-  noticeDate:string;
+  filedOn:string;
+  publishedOn:string;
   proofUrl:string;
 }):CfbDisclosureProof{
   if(!input.registrationNumber.trim())throw new Error('CFB registration number required');
   if(!/^https:\/\//i.test(input.proofUrl))throw new Error('CFB proof URL must be https');
-  const date=input.noticeDate.slice(0,10);
-  if(!/^\d{4}-\d{2}-\d{2}$/.test(date))throw new Error('CFB notice date must be YYYY-MM-DD');
+  const filedOn=exactDate(input.filedOn,'CFB notice filing date');
+  const publishedOn=exactDate(input.publishedOn,'CFB notice publication date');
+  if(publishedOn<filedOn)throw new Error('CFB notice publication date cannot precede filing date');
   return {
     registrationNumber:input.registrationNumber.trim(),
     reportName:'large_contribution_notice',
-    filedOn:date,
-    availableOn:date,
+    filedOn,
+    availableOn:publishedOn,
     proofUrl:input.proofUrl,
     proofKind:'cfb_large_contribution_notice',
   };
