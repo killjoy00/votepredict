@@ -160,7 +160,7 @@ async function main() {
     canonicalHouseCommitteeAttachmentPdfUrl,
     HOUSE_COMMITTEE_ATTACHMENT_CONTENT_VERSION,
     normalizeHouseCommitteeAttachmentExcerpt,
-    officialHouseCommitteeAttachmentPublishedAt,
+    officialHouseCommitteeAttachmentListedAt,
   } = await import('../src/evidence/house-committee-attachment-content.js');
   const { HOUSE_COMMITTEE_ARCHIVE_PARSER_VERSION } = await import('../src/evidence/house-committee-archive.js');
 
@@ -249,7 +249,7 @@ async function main() {
 
     for (const candidate of candidates) {
       try {
-        const publishedAt = officialHouseCommitteeAttachmentPublishedAt(candidate.official_posted_on);
+        const archiveListedAt = officialHouseCommitteeAttachmentListedAt(candidate.official_posted_on);
         const listedUrl = canonicalHouseCommitteeAttachmentPdfUrl(candidate.attachment_url);
         const pdf = await fetchPdf(listedUrl, canonicalHouseCommitteeAttachmentPdfUrl);
         const excerpt = normalizeHouseCommitteeAttachmentExcerpt(pdf.text);
@@ -274,8 +274,10 @@ async function main() {
             listedAttachmentUrl: listedUrl,
             finalAttachmentUrl: pdf.finalUrl,
             officialPostedOn: candidate.official_posted_on,
-            availabilityProof: 'official_publication_timestamp',
-            availableOn: candidate.official_posted_on,
+            archiveListingTimestamp: archiveListedAt,
+            historicalContentIdentityProven: false,
+            asOfEligible: false,
+            availabilityStatus: 'awaiting_historical_content_identity_proof',
             bytes: pdf.bytes,
             textExtracted: Boolean(excerpt),
           },
@@ -289,7 +291,6 @@ async function main() {
           stance: 'neutral',
           claim: `Official Minnesota House committee attachment content: ${candidate.attachment_name}`,
           excerpt,
-          publishedAt,
           sourceQuality: 'official',
           relevance: 'high',
           freshness: freshness(candidate.official_posted_on),
@@ -306,11 +307,14 @@ async function main() {
             listedAttachmentUrl: listedUrl,
             finalAttachmentUrl: pdf.finalUrl,
             officialPostedOn: candidate.official_posted_on,
-            availabilityProof: 'official_publication_timestamp',
-            availableOn: candidate.official_posted_on,
+            archiveListingTimestamp: archiveListedAt,
+            historicalContentIdentityProven: false,
+            asOfEligible: false,
+            availabilityStatus: 'awaiting_historical_content_identity_proof',
             dateGranularity: 'date',
             sameDayEligible: false,
             eventDateIsAvailability: false,
+            currentFetchIsHistoricalAvailability: false,
             contextOnly: true,
             mechanicallyActionable: false,
             modelWeight: 0,
@@ -367,7 +371,8 @@ async function main() {
       failureExamples,
       remainingAfter,
       policy: {
-        availability: 'official House archive attachment posted date',
+        availability: 'fail closed until the exact attachment bytes are independently proven public before cutoff; archive listing date is provenance only for current fetched bytes',
+        archiveListingDateIsContentAvailability: false,
         transactionOrEventDateIsAvailability: false,
         sameDayEligible: false,
         contextOnly: true,
