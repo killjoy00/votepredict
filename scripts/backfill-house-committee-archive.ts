@@ -62,6 +62,26 @@ function freshness(date: string) {
   return age <= 365 ? 'current' as const : age <= 1095 ? 'recent' as const : 'stale' as const;
 }
 
+async function fetchArchivePage(
+  url: string,
+  fetchPublicPage: typeof import('../src/evidence/public-http.js').fetchPublicPage,
+) {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      return await fetchPublicPage(url, {
+        timeoutMs: 20_000,
+        maxBytes: 4_000_000,
+        userAgent: 'VotePredict/2.0 house-committee-archive-backfill',
+      });
+    } catch (error) {
+      lastError = error;
+      if (attempt < 3) await new Promise(resolve => setTimeout(resolve, attempt * 1_000));
+    }
+  }
+  throw lastError;
+}
+
 async function main() {
   const envFile = process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
   if (!envFile) throw new Error('Production env file required');
@@ -89,6 +109,8 @@ async function main() {
   try {
     let pages = 0;
     let pagesSkippedExact = 0;
+    let failedPages = 0;
+    const pageFailureExamples: Array<{ session: string; page: number; error: string }> = [];
     let attachments = 0;
     let billTargeted = 0;
     let inserted = 0;
@@ -99,22 +121,51 @@ async function main() {
 
     for (const session of SESSION_MAP) {
       const firstUrl = `https://www.house.mn.gov/Committees/archives/Page/1/LSYear/${session.lsYear}`;
-      const first = await fetchPublicPage(firstUrl, {
-        timeoutMs: 20_000,
-        maxBytes: 4_000_000,
-        userAgent: 'VotePredict/2.0 house-committee-archive-backfill',
-      });
+      let first: Awaited<ReturnType<typeof fetchArchivePage>>;
+      try {
+        first = await fetchArchivePage(firstUrl, fetchPublicPage);
+      } catch (error) {
+        failedPages += 1;
+        if (pageFailureExamples.length < 12) {
+          pageFailureExamples.push({ session: session.slug, page: 1, error: safe(error).slice(0, 500) });
+        }
+        console.warn(JSON.stringify({
+          houseCommitteeArchivePageFailure: {
+            session: session.slug,
+            page: 1,
+            afterAttempts: 3,
+            error: safe(error).slice(0, 500),
+          },
+        }));
+        continue;
+      }
       const totalPages = Math.min(100, parseHouseCommitteeArchiveTotalPages(first.text));
 
       for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
-        const page = pageNumber === 1 ? first : await fetchPublicPage(
-          `https://www.house.mn.gov/Committees/archives/Page/${pageNumber}/LSYear/${session.lsYear}`,
-          {
-            timeoutMs: 20_000,
-            maxBytes: 4_000_000,
-            userAgent: 'VotePredict/2.0 house-committee-archive-backfill',
-          },
-        );
+        let page = first;
+        if (pageNumber !== 1) {
+          try {
+            page = await fetchArchivePage(
+              `https://www.house.mn.gov/Committees/archives/Page/${pageNumber}/LSYear/${session.lsYear}`,
+              fetchPublicPage,
+            );
+          } catch (error) {
+            failedPages += 1;
+            if (pageFailureExamples.length < 12) {
+              pageFailureExamples.push({ session: session.slug, page: pageNumber, error: safe(error).slice(0, 500) });
+            }
+            console.warn(JSON.stringify({
+              houseCommitteeArchivePageFailure: {
+                session: session.slug,
+                page: pageNumber,
+                totalPages,
+                afterAttempts: 3,
+                error: safe(error).slice(0, 500),
+              },
+            }));
+            continue;
+          }
+        }
 
         pages += 1;
         const rows = parseHouseCommitteeArchiveAttachments(page.rawContent, page.canonicalUrl);
@@ -239,6 +290,8 @@ async function main() {
       houseCommitteeArchiveBackfill: {
         pages,
         pagesSkippedExact,
+        failedPages,
+        pageFailureExamples,
         attachments,
         billTargeted,
         inserted,
@@ -249,6 +302,7 @@ async function main() {
         policy: {
           availability: 'official attachment posted date; same-day excluded',
           attachmentContentFetch: 'separate follow-up',
+          transientFetchRetries: 3,
           servingChanged: false,
           productionAction: 'none',
         },
