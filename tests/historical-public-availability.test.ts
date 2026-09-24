@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { dateExclusiveAvailable,historicalAvailabilityErrors,isHistoricallyAvailableBefore } from '../src/evidence/historical-public-availability.js';
-import { capturesStrictlyBefore,parseWaybackCdxJson,waybackSnapshotUrl } from '../src/evidence/wayback.js';
+import { capturesStrictlyBefore,parseWaybackCdxJson,parseWaybackPdfCdxJson,waybackSnapshotUrl } from '../src/evidence/wayback.js';
 
 const base={
   proof:'independent_archive_capture' as const,
@@ -93,4 +93,16 @@ test('Wayback CDX parser retains only successful text captures',()=>{
   assert.equal(rows[0].capturedAt,'2024-01-02T03:04:05.000Z');
   assert.equal(rows[0].archiveUrl,waybackSnapshotUrl(rows[0].timestamp,rows[0].original));
   assert.equal(capturesStrictlyBefore(rows,'2024-01-03T00:00:00Z').length,1);
+});
+
+test('Wayback PDF CDX parser retains only successful PDF captures',()=>{
+  const rows=parseWaybackPdfCdxJson([
+    ['timestamp','original','mimetype','statuscode','digest','length'],
+    ['20240202030405','https://www.house.mn.gov/comm/docs/HF400.pdf','application/pdf','200','PDF1','4321'],
+    ['20240203030405','https://www.house.mn.gov/comm/docs/HF400.pdf','text/html','200','HTML1','1234'],
+    ['20240204030405','https://www.house.mn.gov/comm/docs/HF400.pdf','application/pdf','404','PDF2','4321'],
+  ]);
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].mimetype,'application/pdf');
+  assert.equal(rows[0].capturedAt,'2024-02-02T03:04:05.000Z');
 });
