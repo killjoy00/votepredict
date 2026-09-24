@@ -26,7 +26,7 @@ For date-granular lifecycle replay, evidence must satisfy `available_date < cuto
 5. **Lobbying subjects/associations.** Preserve association/principal, lobbyist, specific subject/category, spend/report period, filing/publication date, and source. Do not infer member stance from lobbying relationships.
 6. **Committee/hearing material.** Ingest agendas, schedules, testifier lists, written testimony/handouts, amendments, minutes, roll calls, bill summaries, and fiscal-note revisions with official dates and bill resolution.
 7. **Member/caucus archives.** Backfill House/Senate/caucus publications natively where historical dates survive, otherwise require pre-cutoff archive captures.
-8. **Targeted local/trade news.** Expand curated publisher discovery around Minnesota legislators/bills/issues; historical use requires publisher metadata or a pre-cutoff archive capture.
+8. **Targeted local/trade news.** Expand curated publisher discovery around Minnesota legislators/bills/issues; historical use requires publisher metadata or a pre-cutoff archive capture. The initial archive collector rotates bounded MPR News, Minnesota Reformer, MinnPost state-government, and Finance & Commerce publisher prefixes. It rejects fetched snapshots that do not contain explicit Minnesota legislative language or an HF/SF identifier. For archived pages, the exact Wayback capture timestamp is the availability bound; publisher dates are preserved separately as provenance and never substitute for archive availability. These records remain neutral context with `modelWeight=0`, `sameDayEligible=false`, and no inferred member or bill stance.
 
 ## Modeling boundary
 
