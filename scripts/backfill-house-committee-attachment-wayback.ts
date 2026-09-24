@@ -178,17 +178,21 @@ async function main() {
        AND ei.bill_id IS NOT NULL
        AND ei.metadata->>'attachmentUrl' IS NOT NULL
        AND lower(split_part(ei.metadata->>'attachmentUrl','?',1)) LIKE '%.pdf'
-       AND NOT EXISTS (
-         SELECT 1
-           FROM source_documents processed
-          WHERE processed.metadata->>'archiveEvidenceId' = ei.id::text
-            AND (
-              (processed.source_kind = 'house_committee_attachment_wayback_pdf'
-               AND processed.metadata->>'attachmentWaybackVersion' = $2)
-              OR
-              (processed.source_kind = 'house_committee_attachment_wayback_scan'
-               AND processed.metadata->>'attachmentWaybackVersion' = $2)
-            )
+       AND NOT (
+         EXISTS (
+           SELECT 1
+             FROM source_documents processed
+            WHERE processed.source_kind = 'house_committee_attachment_wayback_pdf'
+              AND processed.metadata->>'archiveEvidenceId' = ei.id::text
+              AND processed.metadata->>'attachmentWaybackVersion' = $2
+         )
+         OR EXISTS (
+           SELECT 1
+             FROM evidence_items marker
+            WHERE marker.metadata->>'subtype' = 'committee_attachment_wayback_scan_marker'
+              AND marker.metadata->>'archiveEvidenceId' = ei.id::text
+              AND marker.extraction_version = $2
+         )
        )
   `;
 
@@ -277,19 +281,34 @@ async function main() {
         );
 
         if (captures.length === 0) {
-          const scanHash = createHash('sha256')
-            .update(VERSION + '|no-capture|' + candidate.archive_evidence_id + '|' + originalUrl)
-            .digest('hex');
           await persistDurableEvidence({
-            sourceKind: 'house_committee_attachment_wayback_scan',
-            sourceUrl: originalUrl,
-            contentSha256: scanHash,
+            sourceKind: 'house_committee_archive_page',
+            sourceUrl: candidate.archive_page_url,
+            contentSha256: candidate.archive_page_sha256,
             sessionSlug: candidate.session_slug,
             chamberSlug: 'house',
-            fetchedAt: new Date().toISOString(),
             metadata: {
-              publisher: 'Internet Archive',
-              attachmentWaybackVersion: VERSION,
+              archiveParserVersion: HOUSE_COMMITTEE_ARCHIVE_PARSER_VERSION,
+              attachmentWaybackScanVersion: VERSION,
+            },
+          }, [{
+            target: {
+              billId: candidate.bill_id,
+              sessionSlug: candidate.session_slug,
+              chamberSlug: 'house',
+            },
+            kind: 'context',
+            stance: 'neutral',
+            claim: `Internet Archive PDF coverage was checked for House committee attachment ${candidate.attachment_name}.`,
+            sourceQuality: 'official',
+            relevance: 'low',
+            freshness: 'unknown',
+            extractionMethod: 'deterministic-house-committee-attachment-wayback-scan-marker',
+            extractionVersion: VERSION,
+            confidence: 1,
+            metadata: {
+              contextType: 'structured_public',
+              subtype: 'committee_attachment_wayback_scan_marker',
               archiveEvidenceId: candidate.archive_evidence_id,
               archivePageUrl: candidate.archive_page_url,
               archivePageSha256: candidate.archive_page_sha256,
@@ -302,8 +321,13 @@ async function main() {
               availabilityStatus: discoveredCaptures.length === 0
                 ? 'no_wayback_pdf_capture_found'
                 : 'only_pre_listing_wayback_pdf_captures_found',
+              sameDayEligible: false,
+              contextOnly: true,
+              mechanicallyActionable: false,
+              modelWeight: 0,
+              evidenceSeriesKey: `house_committee_attachment_wayback_scan:${candidate.archive_evidence_id}`,
             },
-          }, []);
+          }]);
           noCapture += 1;
           continue;
         }
