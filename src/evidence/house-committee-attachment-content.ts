@@ -30,3 +30,13 @@ export function normalizeHouseCommitteeAttachmentExcerpt(value: string, maxLengt
   const normalized = value.replace(/\s+/g, ' ').trim();
   return normalized ? normalized.slice(0, maxLength) : undefined;
 }
+
+export function houseAttachmentCaptureIsOnOrAfterListing(
+  capturedAt: string,
+  postedOn: string,
+): boolean {
+  const capture = new Date(capturedAt);
+  const listed = new Date(officialHouseCommitteeAttachmentListedAt(postedOn));
+  if (Number.isNaN(capture.getTime())) throw new Error('House attachment capture timestamp must be valid');
+  return capture.getTime() >= listed.getTime();
+}
