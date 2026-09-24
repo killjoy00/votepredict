@@ -222,17 +222,21 @@ async function main() {
          AND ei.bill_id IS NOT NULL
          AND ei.metadata->>'attachmentUrl' IS NOT NULL
          AND lower(split_part(ei.metadata->>'attachmentUrl','?',1)) LIKE '%.pdf'
-         AND NOT EXISTS (
-           SELECT 1
-             FROM source_documents processed
-            WHERE processed.metadata->>'archiveEvidenceId' = ei.id::text
-              AND (
-                (processed.source_kind = 'house_committee_attachment_wayback_pdf'
-                 AND processed.metadata->>'attachmentWaybackVersion' = $2)
-                OR
-                (processed.source_kind = 'house_committee_attachment_wayback_scan'
-                 AND processed.metadata->>'attachmentWaybackVersion' = $2)
-              )
+         AND NOT (
+           EXISTS (
+             SELECT 1
+               FROM source_documents processed
+              WHERE processed.source_kind = 'house_committee_attachment_wayback_pdf'
+                AND processed.metadata->>'archiveEvidenceId' = ei.id::text
+                AND processed.metadata->>'attachmentWaybackVersion' = $2
+           )
+           OR EXISTS (
+             SELECT 1
+               FROM evidence_items marker
+              WHERE marker.metadata->>'subtype' = 'committee_attachment_wayback_scan_marker'
+                AND marker.metadata->>'archiveEvidenceId' = ei.id::text
+                AND marker.extraction_version = $2
+           )
          )
        ORDER BY ei.published_at NULLS LAST, ei.id
        LIMIT $3
