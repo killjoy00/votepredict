@@ -159,17 +159,25 @@ async function main() {
           };
         });
 
-        const alreadyPersisted = await pool.query<{ id: string }>(`
-          SELECT id::text
-            FROM source_documents
-           WHERE source_kind = 'house_committee_archive_page'
-             AND source_url = $1
-             AND content_sha256 = $2
-             AND metadata->>'archiveParserVersion' = $3
+        const alreadyPersisted = await pool.query<{ id: string; evidence_count: string }>(`
+          SELECT sd.id::text,
+                 (
+                   SELECT count(*)::text
+                     FROM evidence_items ei
+                    WHERE ei.source_document_id = sd.id
+                      AND ei.extraction_version = $3
+                 ) AS evidence_count
+            FROM source_documents sd
+           WHERE sd.source_kind = 'house_committee_archive_page'
+             AND sd.source_url = $1
+             AND sd.content_sha256 = $2
+             AND sd.metadata->>'archiveParserVersion' = $3
            LIMIT 1
         `, [page.canonicalUrl, page.contentSha256, HOUSE_COMMITTEE_ARCHIVE_PARSER_VERSION]);
 
-        if (alreadyPersisted.rows[0]) {
+        const exactPageComplete = alreadyPersisted.rows[0]
+          && Number(alreadyPersisted.rows[0].evidence_count) === rows.length;
+        if (exactPageComplete) {
           pagesSkippedExact += 1;
           console.log(JSON.stringify({
             houseCommitteeArchiveProgress: {
