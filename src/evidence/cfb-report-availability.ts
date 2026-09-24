@@ -1,4 +1,5 @@
-export const CFB_REPORT_AVAILABILITY_VERSION='mn-cfb-report-availability-v2' as const;
+export const CFB_REPORT_AVAILABILITY_VERSION='mn-cfb-report-availability-v3' as const;
+export const CFB_SPECIFIC_LOBBYING_SUBJECT_FIRST_REPORT_YEAR=2024 as const;
 
 function exactDate(value:string,label:string):string{
   const date=value?.slice(0,10);
@@ -23,7 +24,7 @@ export interface CfbDisclosureProof {
   filedOn:string;
   availableOn:string;
   proofUrl:string;
-  proofKind:'cfb_report_filing'|'cfb_large_contribution_notice';
+  proofKind:'cfb_report_filing'|'cfb_large_contribution_notice'|'cfb_lobbyist_activity_report';
 }
 
 export function buildCfbReportDisclosureProof(input:{
@@ -67,5 +68,35 @@ export function buildCfbLargeContributionNoticeProof(input:{
     availableOn:publishedOn,
     proofUrl:input.proofUrl,
     proofKind:'cfb_large_contribution_notice',
+  };
+}
+
+// Specific lobbying subjects are activity-report content, not dated transactions. The
+// Board's July 10, 2024 minutes identify the Jan-May 2024 lobbyist activity report as
+// the first report to disclose specific lobbying subjects. For historical replay, a
+// reporting period, activity date, category date, or statutory due date still does not
+// prove public availability. Callers must separately prove the actual filing date and
+// the date the regulator made that filing public; no campaign-finance next-day rule is
+// assumed for lobbyist reports.
+export function buildCfbLobbyistActivityDisclosureProof(input:{
+  registrationNumber:string;
+  reportName:string;
+  filedOn:string;
+  publishedOn:string;
+  proofUrl:string;
+}):CfbDisclosureProof{
+  if(!input.registrationNumber.trim())throw new Error('CFB registration number required');
+  if(!input.reportName.trim())throw new Error('CFB lobbyist report name required');
+  if(!/^https:\/\//i.test(input.proofUrl))throw new Error('CFB proof URL must be https');
+  const filedOn=exactDate(input.filedOn,'CFB lobbyist report filing date');
+  const publishedOn=exactDate(input.publishedOn,'CFB lobbyist report publication date');
+  if(publishedOn<filedOn)throw new Error('CFB lobbyist report publication date cannot precede filing date');
+  return {
+    registrationNumber:input.registrationNumber.trim(),
+    reportName:input.reportName.trim(),
+    filedOn,
+    availableOn:publishedOn,
+    proofUrl:input.proofUrl,
+    proofKind:'cfb_lobbyist_activity_report',
   };
 }
