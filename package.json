@@ -66,8 +66,8 @@
   },
   "dependencies": {
     "@neondatabase/auth": "0.5.0-beta",
-    "@vercel/functions": "3.9.7",
-    "ai": "7.0.99",
+    "@vercel/functions": "3.9.8",
+    "ai": "7.0.107",
     "drizzle-orm": "0.45.2",
     "next": "16.3.5",
     "pdf-parse": "2.4.5",
