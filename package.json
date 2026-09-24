@@ -54,7 +54,8 @@
     "eval:lifecycle:external-screen": "tsx scripts/evaluate-lifecycle-external-evidence-screen.ts",
     "eval:lifecycle:external-selection-control": "tsx scripts/evaluate-lifecycle-external-selection-control.ts",
     "eval:lifecycle:bill-language": "tsx scripts/evaluate-lifecycle-bill-language-screen.ts",
-    "backfill:cfb:independent-expenditures": "tsx scripts/backfill-cfb-independent-expenditures.ts"
+    "backfill:cfb:independent-expenditures": "tsx scripts/backfill-cfb-independent-expenditures.ts",
+    "backfill:house:committee-archive": "tsx scripts/backfill-house-committee-archive.ts"
   },
   "dependencies": {
     "@neondatabase/auth": "0.5.0-beta",
