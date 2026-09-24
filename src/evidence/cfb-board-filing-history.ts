@@ -93,7 +93,10 @@ export function parseCfbBoardMaterialsFilingProofs(
   proofUrl: string,
 ): CfbHistoricalReportFiling[] {
   const normalized = normalizeWhitespace(text);
-  const headings = [...normalized.matchAll(/(?:^|\s)(?:\d+\.\s*)?([^()]{3,120}?)\s*\((\d{4,6})\)\s+(?=Report\(s\)|Reports?\b)/gi)];
+  const numberedHeadings = [...normalized.matchAll(/(?:^|\s)\d+\.\s+(.{3,160}?)\s*\((\d{4,6})\)\s+(?=Report\(s\)|Reports?\b)/gi)];
+  const headings = numberedHeadings.length > 0
+    ? numberedHeadings
+    : [...normalized.matchAll(/(?:^|\s)([^()]{3,120}?)\s*\((\d{4,6})\)\s+(?=Report\(s\)|Reports?\b)/gi)];
   const proofs: CfbHistoricalReportFiling[] = [];
 
   for (let index = 0; index < headings.length; index += 1) {
