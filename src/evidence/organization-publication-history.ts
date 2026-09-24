@@ -22,6 +22,14 @@ export const ORGANIZATION_PUBLICATION_SEEDS: readonly OrganizationPublicationSee
     to: '20261231',
   },
   {
+    id: 'mn-chamber-2025-26-voting-record',
+    organization: 'Minnesota Chamber of Commerce',
+    publicationKind: 'legislative_voting_record',
+    url: 'https://www.mnchamber.com/2025-2026-legislative-voting-record',
+    from: '20250101',
+    to: '20261231',
+  },
+  {
     id: 'mn-chamber-2023-voting-record',
     organization: 'Minnesota Chamber of Commerce',
     publicationKind: 'legislative_voting_record',
@@ -51,14 +59,6 @@ export const ORGANIZATION_PUBLICATION_SEEDS: readonly OrganizationPublicationSee
     publicationKind: 'legislative_scorecard_index',
     url: 'https://www.mnabc.com/Government-Advocacy/Legislative-Scorecard',
     from: '20210101',
-    to: '20261231',
-  },
-  {
-    id: 'mn-chamber-2025-26-voting-record',
-    organization: 'Minnesota Chamber of Commerce',
-    publicationKind: 'legislative_voting_record',
-    url: 'https://www.mnchamber.com/2025-2026-legislative-voting-record',
-    from: '20250101',
     to: '20261231',
   },
 ] as const;
