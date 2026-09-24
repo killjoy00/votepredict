@@ -26,10 +26,17 @@ function capture(original: string, timestamp: string): WaybackCapture {
 
 test('local/trade news seeds are unique HTTPS prefixes bounded to the research window', () => {
   validateLocalTradeNewsSeeds();
-  assert.equal(LOCAL_TRADE_NEWS_SEEDS.length, 4);
+  assert.equal(LOCAL_TRADE_NEWS_SEEDS.length, 6);
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.url.startsWith('https://')));
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.prefix));
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.from === '20210101' && seed.to === '20261231'));
+  assert.deepEqual(
+    LOCAL_TRADE_NEWS_SEEDS.slice(0, 2).map(seed => [seed.id, seed.publisherKind]),
+    [
+      ['duluth-news-tribune-minnesota-archive', 'local_news'],
+      ['minnesota-lawyer-article-archive', 'trade_news'],
+    ],
+  );
 });
 
 test('capture selection is deterministic, topical, and keeps only the latest capture per URL/year', () => {

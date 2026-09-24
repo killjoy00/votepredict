@@ -16,6 +16,24 @@ export interface LocalTradeNewsSeed {
 
 export const LOCAL_TRADE_NEWS_SEEDS: readonly LocalTradeNewsSeed[] = [
   {
+    id: 'duluth-news-tribune-minnesota-archive',
+    publisher: 'Duluth News Tribune',
+    publisherKind: 'local_news',
+    url: 'https://www.duluthnewstribune.com/news/minnesota/',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+  },
+  {
+    id: 'minnesota-lawyer-article-archive',
+    publisher: 'Minnesota Lawyer',
+    publisherKind: 'trade_news',
+    url: 'https://minnlawyer.com/202',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+  },
+  {
     id: 'mpr-news-story-archive',
     publisher: 'MPR News',
     publisherKind: 'local_news',
