@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "public-source-expansion-v1",
+  "issue": 355,
+  "policy": {
+    "servingChanged": false,
+    "mechanicallyActionableByDefault": false,
+    "historicalRule": "source must independently prove public availability strictly before model cutoff",
+    "retrospectiveUse": "development/robustness only",
+    "prospectiveUse": "capture source publication/fetch/archive/filing timestamps before outcomes"
+  },
+  "families": [
+    {
+      "id": "wayback_campaign_sites",
+      "number": 1,
+      "status": "build",
+      "availabilityProof": "independent_archive_capture",
+      "sources": [
+        "Internet Archive Wayback CDX",
+        "Minnesota SOS-filed campaign websites"
+      ],
+      "historical": true,
+      "prospective": true
+    },
+    {
+      "id": "independent_expenditure_support_opposition",
+      "number": 2,
+      "status": "build",
+      "availabilityProof": "regulatory_filing_or_disclosure_timestamp",
+      "sources": [
+        "Minnesota Campaign Finance and Public Disclosure Board independent expenditure downloads",
+        "party units",
+        "independent expenditure committees/funds"
+      ],
+      "historical": true,
+      "prospective": true
+    },
+    {
+      "id": "campaign_finance_disclosure_timing",
+      "number": 3,
+      "status": "build",
+      "availabilityProof": "regulatory_filing_or_disclosure_timestamp",
+      "sources": [
+        "Minnesota CFB disclosure calendars",
+        "filed reports",
+        "large-contribution notices"
+      ],
+      "historical": true,
+      "prospective": true
+    },
+    {
+      "id": "endorsements_questionnaires_scorecards",
+      "number": 4,
+      "status": "build",
+      "availabilityProof": "publisher_page_metadata_or_archive_capture",
+      "sources": [
+        "organization endorsement pages",
+        "candidate questionnaires",
+        "organizational scorecards"
+      ],
+      "historical": true,
+      "prospective": true
+    },
+    {
+      "id": "lobbying_subjects_associations",
+      "number": 5,
+      "status": "build",
+      "availabilityProof": "regulatory_filing_or_disclosure_timestamp",
+      "sources": [
+        "Minnesota CFB lobbying downloads",
+        "specific lobbying subjects",
+        "lobbying categories",
+        "principal expenditures"
+      ],
+      "historical": true,
+      "prospective": true
+    },
+    {
+      "id": "committee_hearing_materials",
+      "number": 6,
+      "status": "build",
+      "availabilityProof": "official_publication_timestamp",
+      "sources": [
+        "Minnesota House committee archive",
+        "agendas",
+        "testimony/handouts",
+        "testifier lists",
+        "amendments",
+        "minutes",
+        "fiscal notes"
+      ],
+      "historical": true,
+      "prospective": true
+    },
+    {
+      "id": "member_caucus_archives",
+      "number": 7,
+      "status": "build",
+      "availabilityProof": "official_publication_timestamp_or_archive_capture",
+      "sources": [
+        "House member news",
+        "Senate DFL publications",
+        "Senate Republican publications",
+        "caucus press releases",
+        "Wayback"
+      ],
+      "historical": true,
+      "prospective": true
+    },
+    {
+      "id": "targeted_local_trade_news",
+      "number": 8,
+      "status": "build",
+      "availabilityProof": "publisher_page_metadata_or_archive_capture",
+      "sources": [
+        "Minnesota local newspapers",
+        "political reporters",
+        "trade publications",
+        "issue-specific outlets"
+      ],
+      "historical": true,
+      "prospective": true
+    }
+  ]
+}

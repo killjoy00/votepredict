@@ -131,6 +131,10 @@ The screen records six feature families: amendment YEA/NAY, motion-or-procedural
 
 `public-evidence-quick-screen-v1` remains an exploratory component diagnostic inside this single Quick Evidence program. It tests whether aggregate campaign-finance activity may contain incremental signal, but it is not a second candidate and cannot promote independently. The screen is not leakage-safe for historical public availability because transaction dates do not establish item-level filing/publication timestamps. It therefore remains hypothesis-only with `productionAction=none`.
 
+## Public source expansion
+
+The eight-family historical/public source expansion is tracked in issue #355 and specified in `docs/evaluation/public-source-expansion-program.md`. Shared historical availability and Internet Archive CDX handling live in `src/evidence/historical-public-availability.ts` and `src/evidence/wayback.ts`. Archive capture time, regulator filing/disclosure time, official publication time, or verified publisher metadata—not the underlying event date—controls historical eligibility.
+
 ## Existing commands
 
 - `npm run data:cfb:snapshot` builds the normalized Minnesota Campaign Finance and Public Disclosure Board snapshot through the shared TypeScript live-source parser.

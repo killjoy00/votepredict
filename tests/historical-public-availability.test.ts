@@ -1,0 +1,38 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { dateExclusiveAvailable,historicalAvailabilityErrors,isHistoricallyAvailableBefore } from '../src/evidence/historical-public-availability.js';
+import { capturesStrictlyBefore,parseWaybackCdxJson,waybackSnapshotUrl } from '../src/evidence/wayback.js';
+
+const base={
+  proof:'independent_archive_capture' as const,
+  availableAt:'2024-02-03T04:05:06.000Z',
+  canonicalUrl:'https://example.org/issues',
+  archiveUrl:'https://web.archive.org/web/20240203040506id_/https://example.org/issues',
+  capturedAt:'2024-02-03T04:05:06.000Z',
+  contentSha256:'a'.repeat(64),
+};
+
+test('archive availability is capture time and must be strictly before cutoff',()=>{
+  assert.deepEqual(historicalAvailabilityErrors(base),[]);
+  assert.equal(isHistoricallyAvailableBefore(base,'2024-02-03T04:05:07Z'),true);
+  assert.equal(isHistoricallyAvailableBefore(base,'2024-02-03T04:05:06Z'),false);
+  assert.equal(dateExclusiveAvailable(base,'2024-02-04'),true);
+  assert.equal(dateExclusiveAvailable(base,'2024-02-03'),false);
+});
+
+test('archive availability fails closed when capture and availableAt differ',()=>{
+  assert.match(historicalAvailabilityErrors({...base,availableAt:'2024-02-02T00:00:00Z'}).join(' '),/must equal capturedAt/);
+});
+
+test('Wayback CDX parser retains only successful text captures',()=>{
+  const rows=parseWaybackCdxJson([
+    ['timestamp','original','mimetype','statuscode','digest','length'],
+    ['20240102030405','https://example.org/a','text/html','200','ABC','1234'],
+    ['20240103030405','https://example.org/a','image/png','200','DEF','100'],
+    ['20240104030405','https://example.org/a','text/html','404','GHI','100'],
+  ]);
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].capturedAt,'2024-01-02T03:04:05.000Z');
+  assert.equal(rows[0].archiveUrl,waybackSnapshotUrl(rows[0].timestamp,rows[0].original));
+  assert.equal(capturesStrictlyBefore(rows,'2024-01-03T00:00:00Z').length,1);
+});
