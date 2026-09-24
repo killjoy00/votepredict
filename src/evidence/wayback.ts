@@ -82,12 +82,24 @@ export async function discoverWaybackCaptures(input:{
   if(input.from)params.set('from',input.from.replace(/\D/g,'').slice(0,14));
   if(input.to)params.set('to',input.to.replace(/\D/g,'').slice(0,14));
   if(input.prefix)params.set('matchType','prefix');
-  const response=await (input.fetchImpl??fetch)(WAYBACK_CDX_URL+'?'+params.toString(),{
-    headers:{accept:'application/json','user-agent':'VotePredict/2.0 historical-public-evidence'},
-    signal:AbortSignal.timeout(30_000),
-  });
-  if(!response.ok)throw new Error('Wayback CDX returned HTTP '+response.status);
-  return parseWaybackCdxJson(await response.json());
+  const fetchImpl=input.fetchImpl??fetch;
+  let lastError:unknown;
+  for(let attempt=0;attempt<3;attempt+=1){
+    try{
+      const response=await fetchImpl(WAYBACK_CDX_URL+'?'+params.toString(),{
+        headers:{accept:'application/json','user-agent':'VotePredict/2.0 historical-public-evidence'},
+        signal:AbortSignal.timeout(30_000),
+      });
+      if(response.ok)return parseWaybackCdxJson(await response.json());
+      const error=new Error('Wayback CDX returned HTTP '+response.status);
+      if(![429,500,502,503,504].includes(response.status))throw error;
+      lastError=error;
+    }catch(error){
+      lastError=error;
+    }
+    if(attempt<2)await new Promise(resolve=>setTimeout(resolve,attempt===0?1500:4000));
+  }
+  throw lastError instanceof Error?lastError:new Error('Wayback CDX discovery failed');
 }
 
 export function capturesStrictlyBefore(
