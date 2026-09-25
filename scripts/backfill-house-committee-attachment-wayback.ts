@@ -344,7 +344,7 @@ async function main() {
             },
           }]);
           noCapture += 1;
-          continue;
+          return;
         }
 
         const capture = captures[0];
