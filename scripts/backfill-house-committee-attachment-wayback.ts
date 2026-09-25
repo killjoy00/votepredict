@@ -7,8 +7,11 @@ const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute
 const VERSION = 'house-committee-attachment-wayback-v1';
 const DEFAULT_BATCH_SIZE = 8;
 const MAX_BATCH_SIZE = 96;
-const DEFAULT_CONCURRENCY = 2;
-const MAX_CONCURRENCY = 2;
+const DEFAULT_INITIAL_CONCURRENCY = 2;
+const DEFAULT_MAX_CONCURRENCY = 4;
+const HARD_MAX_CONCURRENCY = 4;
+const MIN_CANDIDATE_START_GAP_MS = 250;
+const RAMP_SUCCESS_THRESHOLD = 12;
 const MAX_PDF_BYTES = 25_000_000;
 const MAX_REDIRECTS = 4;
 let secrets: string[] = [];
@@ -55,10 +58,94 @@ function batchSize(): number {
   return Math.min(MAX_BATCH_SIZE, Math.max(1, requested));
 }
 
-function workerConcurrency(): number {
-  const requested = Number.parseInt(process.env.VOTEPREDICT_HOUSE_ATTACHMENT_WAYBACK_CONCURRENCY ?? '', 10);
-  if (!Number.isFinite(requested)) return DEFAULT_CONCURRENCY;
-  return Math.min(MAX_CONCURRENCY, Math.max(1, requested));
+function maxWorkerConcurrency(): number {
+  const requested = Number.parseInt(process.env.VOTEPREDICT_HOUSE_ATTACHMENT_WAYBACK_MAX_CONCURRENCY ?? '', 10);
+  if (!Number.isFinite(requested)) return DEFAULT_MAX_CONCURRENCY;
+  return Math.min(HARD_MAX_CONCURRENCY, Math.max(1, requested));
+}
+
+function initialWorkerConcurrency(maxConcurrency: number): number {
+  const requested = Number.parseInt(process.env.VOTEPREDICT_HOUSE_ATTACHMENT_WAYBACK_INITIAL_CONCURRENCY ?? '', 10);
+  if (!Number.isFinite(requested)) return Math.min(DEFAULT_INITIAL_CONCURRENCY, maxConcurrency);
+  return Math.min(maxConcurrency, Math.max(1, requested));
+}
+
+type CandidateOutcome = 'success' | 'transient-failure' | 'hard-failure';
+
+function isTransientWaybackFailure(error: unknown): boolean {
+  const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+  return /fetch failed|TimeoutError|Wayback CDX returned HTTP (429|500|502|503|504)|Wayback PDF HTTP (429|500|502|503|504)/i.test(message);
+}
+
+class AdaptiveCandidateController {
+  private active = 0;
+  private currentLimit: number;
+  private successStreak = 0;
+  private transientPenalty = 0;
+  private backoffUntil = 0;
+  private nextStartAt = 0;
+  rampUps = 0;
+  backoffEvents = 0;
+  maxObservedConcurrency = 0;
+
+  constructor(
+    readonly initialLimit: number,
+    readonly maxLimit: number,
+  ) {
+    this.currentLimit = initialLimit;
+  }
+
+  async acquire() {
+    while (true) {
+      const now = Date.now();
+      const readyAt = Math.max(this.backoffUntil, this.nextStartAt);
+      if (this.active < this.currentLimit && now >= readyAt) {
+        this.active += 1;
+        this.maxObservedConcurrency = Math.max(this.maxObservedConcurrency, this.active);
+        this.nextStartAt = now + MIN_CANDIDATE_START_GAP_MS;
+        return;
+      }
+      const waitMs = Math.max(100, Math.min(500, readyAt > now ? readyAt - now : 100));
+      await new Promise(resolve => setTimeout(resolve, waitMs));
+    }
+  }
+
+  release(outcome: CandidateOutcome) {
+    this.active = Math.max(0, this.active - 1);
+    if (outcome === 'transient-failure') {
+      this.successStreak = 0;
+      this.transientPenalty = Math.min(4, this.transientPenalty + 1);
+      this.currentLimit = Math.max(1, this.currentLimit - 1);
+      const backoffMs = Math.min(30_000, 2_000 * (2 ** (this.transientPenalty - 1)));
+      this.backoffUntil = Math.max(this.backoffUntil, Date.now() + backoffMs);
+      this.backoffEvents += 1;
+      return;
+    }
+    if (outcome === 'hard-failure') {
+      this.successStreak = 0;
+      return;
+    }
+    this.successStreak += 1;
+    if (this.successStreak % 8 === 0) {
+      this.transientPenalty = Math.max(0, this.transientPenalty - 1);
+    }
+    if (this.successStreak >= RAMP_SUCCESS_THRESHOLD && this.currentLimit < this.maxLimit) {
+      this.currentLimit += 1;
+      this.successStreak = 0;
+      this.rampUps += 1;
+    }
+  }
+
+  snapshot() {
+    return {
+      initialConcurrency: this.initialLimit,
+      maxConcurrency: this.maxLimit,
+      finalConcurrency: this.currentLimit,
+      maxObservedConcurrency: this.maxObservedConcurrency,
+      rampUps: this.rampUps,
+      backoffEvents: this.backoffEvents,
+    };
+  }
 }
 
 function freshness(capturedAt: string) {
@@ -175,7 +262,9 @@ async function main() {
   const { discoverWaybackPdfCaptures } = await import('../src/evidence/wayback.js');
 
   const limit = batchSize();
-  const concurrency = Math.min(workerConcurrency(), limit);
+  const maxConcurrency = Math.min(maxWorkerConcurrency(), limit);
+  const initialConcurrency = initialWorkerConcurrency(maxConcurrency);
+  const controller = new AdaptiveCandidateController(initialConcurrency, maxConcurrency);
   let runId: string | undefined;
   const failureExamples: Array<{ attachment: string; stage: string; error: string }> = [];
 
@@ -263,7 +352,7 @@ async function main() {
         archiveParserVersion: HOUSE_COMMITTEE_ARCHIVE_PARSER_VERSION,
         remainingBefore,
         selected: candidates.length,
-        concurrency,
+        adaptiveConcurrency: controller.snapshot(),
       }),
     ]);
     runId = run.rows[0].id;
@@ -278,7 +367,7 @@ async function main() {
     let textExtracted = 0;
     let failures = 0;
 
-    async function processCandidate(candidate: Candidate) {
+    async function processCandidate(candidate: Candidate): Promise<CandidateOutcome> {
       try {
         const originalUrl = canonicalHouseCommitteeAttachmentPdfUrl(candidate.attachment_url);
         const window = SESSION_WINDOWS[candidate.session_slug];
@@ -344,7 +433,7 @@ async function main() {
             },
           }]);
           noCapture += 1;
-          return;
+          return 'success';
         }
 
         const capture = captures[0];
@@ -428,6 +517,7 @@ async function main() {
         inserted += persisted.inserted;
         reused += persisted.reused;
         unresolved += persisted.unresolvedTargets.length;
+        return 'success';
       } catch (error) {
         failures += 1;
         if (failureExamples.length < 16) {
@@ -437,6 +527,7 @@ async function main() {
             error: safe(error),
           });
         }
+        return isTransientWaybackFailure(error) ? 'transient-failure' : 'hard-failure';
       }
     }
 
@@ -447,12 +538,14 @@ async function main() {
         nextCandidateIndex += 1;
         const candidate = candidates[index];
         if (!candidate) return;
-        await processCandidate(candidate);
+        await controller.acquire();
+        const outcome = await processCandidate(candidate);
+        controller.release(outcome);
       }
     }
 
     await Promise.all(
-      Array.from({ length: Math.min(concurrency, Math.max(1, candidates.length)) }, () => worker()),
+      Array.from({ length: Math.min(maxConcurrency, Math.max(1, candidates.length)) }, () => worker()),
     );
 
     const remainingAfter = (await pool.query<{ remaining: number }>(
@@ -464,7 +557,7 @@ async function main() {
       version: VERSION,
       archiveParserVersion: HOUSE_COMMITTEE_ARCHIVE_PARSER_VERSION,
       batchSize: limit,
-      concurrency,
+      adaptiveConcurrency: controller.snapshot(),
       remainingBefore,
       selected: candidates.length,
       scanned,
