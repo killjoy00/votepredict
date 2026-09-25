@@ -7,9 +7,17 @@ import {
 
 test('organization publication seeds are HTTPS, unique and bounded to the research window', () => {
   validateOrganizationPublicationSeeds();
-  assert.equal(ORGANIZATION_PUBLICATION_SEEDS.length, 6);
+  assert.equal(ORGANIZATION_PUBLICATION_SEEDS.length, 12);
   assert.ok(ORGANIZATION_PUBLICATION_SEEDS.every(seed => seed.url.startsWith('https://')));
   assert.ok(ORGANIZATION_PUBLICATION_SEEDS.every(seed => seed.to === '20261231'));
+  assert.deepEqual(
+    ORGANIZATION_PUBLICATION_SEEDS.slice(0, 3).map(seed => [seed.id, seed.publicationKind]),
+    [
+      ['mn-afl-cio-2024-legislative-report', 'legislative_voting_record'],
+      ['mn-farm-bureau-2024-legislative-recap', 'legislative_recap'],
+      ['education-minnesota-2024-legislative-recap', 'legislative_recap'],
+    ],
+  );
 });
 
 test('organization publication seed validation fails closed on duplicate ids', () => {
