@@ -4,6 +4,8 @@ import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 const DATABASE_CANDIDATES=['DATABASE_URL_UNPOOLED','POSTGRES_URL_NON_POOLING','DATABASE_URL','POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL='https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const DEFAULT_BATCH=12;
+const SELECTION_PASS='deepening-v2';
+const CAPTURES_PER_SEED=20;
 let secrets:string[]=[];
 function mask(v:string){if(v.length>3)console.log('::add-mask::'+v.replaceAll('%','%25').replaceAll('\r','%0D').replaceAll('\n','%0A'));}
 function safe(e:unknown){let m=e instanceof Error?(e.stack??e.message):String(e);for(const v of secrets.filter(x=>x.length>3).sort((a,b)=>b.length-a.length))m=m.split(v).join('[redacted]');return m.replace(/postgres(?:ql)?:\/\/\S+/gi,'[redacted database URL]').replace(/https?:\/\/\S+/gi,'[source URL]');}
@@ -79,8 +81,10 @@ async function main(){
     const prior=await pool.query<{next_offset:number|null}>(`
       SELECT CASE WHEN metadata->>'nextOffset' ~ '^[0-9]+$' THEN (metadata->>'nextOffset')::int ELSE 0 END AS next_offset
         FROM ingestion_runs
-       WHERE source_system='wayback-public-evidence' AND status='complete'
-       ORDER BY finished_at DESC NULLS LAST LIMIT 1`);
+       WHERE source_system='wayback-public-evidence'
+         AND status='complete'
+         AND metadata->>'selectionPass'=$1
+       ORDER BY finished_at DESC NULLS LAST LIMIT 1`, [SELECTION_PASS]);
     const batchSize=Math.max(1,Math.min(24,Number(process.env.VOTEPREDICT_WAYBACK_BATCH??DEFAULT_BATCH)||DEFAULT_BATCH));
     const offset=deduped.length?((prior.rows[0]?.next_offset??0)%deduped.length):0;
     const batch=deduped.length<=batchSize?deduped:[...deduped.slice(offset,offset+batchSize),...deduped.slice(0,Math.max(0,offset+batchSize-deduped.length))];
@@ -88,7 +92,7 @@ async function main(){
     const run=await pool.query<{id:string}>(`
       INSERT INTO ingestion_runs(source_system,scope,status,metadata)
       VALUES('wayback-public-evidence',$1,'running',$2::jsonb) RETURNING id::text`,
-      [`batch:${batchSize}`,JSON.stringify({version:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,offset,nextOffset,totalSeeds:deduped.length})]);
+      [`batch:${batchSize}`,JSON.stringify({version:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,selectionPass:SELECTION_PASS,capturesPerSeed:CAPTURES_PER_SEED,offset,nextOffset,totalSeeds:deduped.length})]);
     const runId=run.rows[0].id;
     const bills=(await pool.query<{id:string;identifier:string}>(`
       SELECT b.id::text,b.identifier FROM bills b JOIN legislative_sessions s ON s.id=b.session_id
@@ -100,7 +104,7 @@ async function main(){
         const window=sessionArchiveWindow(seed.session_slug);
         const captures=await discoverWaybackCaptures({url:seed.seedUrl,from:window.from,to:window.to,limit:400,prefix:seed.prefix});
         capturesDiscovered+=captures.length;
-        const selected=selectWaybackEvidenceCaptures(captures,{maxCaptures:12});
+        const selected=selectWaybackEvidenceCaptures(captures,{maxCaptures:CAPTURES_PER_SEED});
         capturesSelected+=selected.length;
         for(const capture of selected){
           try{
@@ -156,7 +160,7 @@ async function main(){
         }
       }catch(error){failures++;if(failureSamples.length<20)failureSamples.push(seed.member_name+': discovery: '+safe(error).slice(0,250));}
     }
-    const result={version:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,totalSeeds:deduped.length,batchSeeds:batch.length,offset,nextOffset,capturesDiscovered,capturesSelected,fetched,inserted,reused,explicitBillStatements:statements,failures,failureSamples,policy:{availability:'exact Wayback capture timestamp',sameDayEligible:false,servingChanged:false,productionAction:'none'}};
+    const result={version:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,selectionPass:SELECTION_PASS,capturesPerSeed:CAPTURES_PER_SEED,totalSeeds:deduped.length,batchSeeds:batch.length,offset,nextOffset,capturesDiscovered,capturesSelected,fetched,inserted,reused,explicitBillStatements:statements,failures,failureSamples,policy:{availability:'exact Wayback capture timestamp',sameDayEligible:false,servingChanged:false,productionAction:'none'}};
     await pool.query(`UPDATE ingestion_runs SET status='complete',finished_at=now(),source_documents=$2,metadata=metadata||$3::jsonb WHERE id=$1::uuid`,[runId,fetched,JSON.stringify(result)]);
     console.log(JSON.stringify({waybackPublicEvidenceBackfill:result},null,2));
   }finally{await pool.end();}
