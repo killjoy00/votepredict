@@ -6,6 +6,9 @@ const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING'
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const VERSION = 'house-committee-attachment-wayback-v1';
 const DEFAULT_BATCH_SIZE = 8;
+const MAX_BATCH_SIZE = 64;
+const DEFAULT_CONCURRENCY = 2;
+const MAX_CONCURRENCY = 2;
 const MAX_PDF_BYTES = 25_000_000;
 const MAX_REDIRECTS = 4;
 let secrets: string[] = [];
@@ -49,7 +52,13 @@ function safe(error: unknown) {
 function batchSize(): number {
   const requested = Number.parseInt(process.env.VOTEPREDICT_HOUSE_ATTACHMENT_WAYBACK_BATCH ?? '', 10);
   if (!Number.isFinite(requested)) return DEFAULT_BATCH_SIZE;
-  return Math.min(24, Math.max(1, requested));
+  return Math.min(MAX_BATCH_SIZE, Math.max(1, requested));
+}
+
+function workerConcurrency(): number {
+  const requested = Number.parseInt(process.env.VOTEPREDICT_HOUSE_ATTACHMENT_WAYBACK_CONCURRENCY ?? '', 10);
+  if (!Number.isFinite(requested)) return DEFAULT_CONCURRENCY;
+  return Math.min(MAX_CONCURRENCY, Math.max(1, requested));
 }
 
 function freshness(capturedAt: string) {
@@ -166,6 +175,7 @@ async function main() {
   const { discoverWaybackPdfCaptures } = await import('../src/evidence/wayback.js');
 
   const limit = batchSize();
+  const concurrency = Math.min(workerConcurrency(), limit);
   let runId: string | undefined;
   const failureExamples: Array<{ attachment: string; stage: string; error: string }> = [];
 
@@ -253,6 +263,7 @@ async function main() {
         archiveParserVersion: HOUSE_COMMITTEE_ARCHIVE_PARSER_VERSION,
         remainingBefore,
         selected: candidates.length,
+        concurrency,
       }),
     ]);
     runId = run.rows[0].id;
@@ -267,7 +278,7 @@ async function main() {
     let textExtracted = 0;
     let failures = 0;
 
-    for (const candidate of candidates) {
+    async function processCandidate(candidate: Candidate) {
       try {
         const originalUrl = canonicalHouseCommitteeAttachmentPdfUrl(candidate.attachment_url);
         const window = SESSION_WINDOWS[candidate.session_slug];
@@ -429,6 +440,21 @@ async function main() {
       }
     }
 
+    let nextCandidateIndex = 0;
+    async function worker() {
+      while (true) {
+        const index = nextCandidateIndex;
+        nextCandidateIndex += 1;
+        const candidate = candidates[index];
+        if (!candidate) return;
+        await processCandidate(candidate);
+      }
+    }
+
+    await Promise.all(
+      Array.from({ length: Math.min(concurrency, Math.max(1, candidates.length)) }, () => worker()),
+    );
+
     const remainingAfter = (await pool.query<{ remaining: number }>(
       remainingSql,
       [HOUSE_COMMITTEE_ARCHIVE_PARSER_VERSION, VERSION],
@@ -438,6 +464,7 @@ async function main() {
       version: VERSION,
       archiveParserVersion: HOUSE_COMMITTEE_ARCHIVE_PARSER_VERSION,
       batchSize: limit,
+      concurrency,
       remainingBefore,
       selected: candidates.length,
       scanned,
