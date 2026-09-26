@@ -164,7 +164,15 @@ async function fetchPrefixPage(input: {
   });
   params.append('filter', 'statuscode:200');
   params.append('filter', 'mimetype:application/pdf');
-  if (input.resumeKey) params.set('resumeKey', input.resumeKey);
+  if (input.resumeKey) {
+    let resumeKey = input.resumeKey;
+    try {
+      resumeKey = decodeURIComponent(input.resumeKey.replace(/\+/g, '%20'));
+    } catch {
+      // Fail closed on the request itself if the server rejects an opaque key.
+    }
+    params.set('resumeKey', resumeKey);
+  }
 
   let lastError: unknown;
   for (let attempt = 0; attempt < 3; attempt += 1) {
