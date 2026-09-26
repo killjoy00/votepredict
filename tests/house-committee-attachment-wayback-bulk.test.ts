@@ -43,12 +43,12 @@ test('parses Wayback JSON resumption keys without treating them as captures', ()
     ['timestamp', 'original', 'mimetype', 'statuscode', 'digest', 'length'],
     ['20240315010101', 'http://www.house.mn.gov/comm/docs/HF0400.pdf', 'application/pdf', '200', 'ABC', '1234'],
     [],
-    ['resume-key-1'],
+    ['org%2Carchive%29%2F+2024%21'],
   ]);
 
   assert.equal(page.captures.length, 1);
   assert.equal(page.captures[0]?.capturedAt, '2024-03-15T01:01:01.000Z');
-  assert.equal(page.resumeKey, 'resume-key-1');
+  assert.equal(page.resumeKey, 'org%2Carchive%29%2F+2024%21');
 });
 
 test('walks Wayback resume keys until a complete prefix result is proven', async () => {
@@ -61,7 +61,7 @@ test('walks Wayback resume keys until a complete prefix result is proven', async
         ['timestamp', 'original', 'mimetype', 'statuscode', 'digest', 'length'],
         ['20240315010101', 'http://www.house.mn.gov/comm/docs/HF0400.pdf', 'application/pdf', '200', 'ABC', '1234'],
         [],
-        ['resume-key-1'],
+        ['org%2Carchive%29%2F+2024%21'],
       ]), { status: 200, headers: { 'content-type': 'application/json' } });
     }
     return new Response(JSON.stringify([
@@ -78,7 +78,7 @@ test('walks Wayback resume keys until a complete prefix result is proven', async
     fetchImpl,
   });
 
-  assert.deepEqual(seen, ['', 'resume-key-1']);
+  assert.deepEqual(seen, ['', 'org,archive)/ 2024!']);
   assert.equal(result.pages, 2);
   assert.equal(result.captures.length, 2);
 });
