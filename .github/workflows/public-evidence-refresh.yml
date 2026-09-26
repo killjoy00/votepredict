@@ -1,12 +1,17 @@
 name: Public evidence refresh
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/run-direct-public-evidence-refresh.ts'
+      - 'src/evidence/public-evidence-refresh.ts'
+      - 'src/evidence/structured-public-refresh.ts'
+      - '.github/workflows/public-evidence-refresh.yml'
   schedule:
     - cron: '37 */6 * * *'
   workflow_dispatch:
-  workflow_run:
-    workflows: [Deploy production]
-    types: [completed]
 
 permissions:
   contents: read
@@ -17,12 +22,9 @@ concurrency:
 
 jobs:
   refresh:
-    if: >-
-      github.event_name != 'workflow_run' ||
-      (github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.head_branch == 'main')
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
@@ -31,8 +33,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
 
       - uses: actions/setup-node@v7
         with:
@@ -41,31 +41,26 @@ jobs:
 
       - run: npm ci --no-fund --no-audit
 
-      - name: Require Vercel credential
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [ -z "${VERCEL_TOKEN:-}" ]; then
-            echo '::error::VERCEL_TOKEN is unavailable. Public evidence refresh was not attempted.'
-            exit 1
-          fi
-
       - name: Read production environment privately
         shell: bash
         run: |
           set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ]; then
+            echo '::error::VERCEL_TOKEN is unavailable. Production database credentials were not read.'
+            exit 1
+          fi
           umask 077
           if ! npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1; then
             echo '::error::Could not read the VotePredict production environment. Public evidence refresh was not run.'
             exit 1
           fi
 
-      - name: Run authenticated public evidence refresh
+      - name: Run public evidence refresh directly from GitHub Actions
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
-        run: node --import tsx scripts/run-production-public-evidence-refresh.ts
+        run: node --import tsx scripts/run-direct-public-evidence-refresh.ts
 
-      - name: Remove temporary credentials and Vercel logs
+      - name: Remove temporary credentials and logs
         if: always()
         shell: bash
         run: |
