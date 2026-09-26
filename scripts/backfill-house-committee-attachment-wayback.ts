@@ -5,8 +5,8 @@ import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const VERSION = 'house-committee-attachment-wayback-v1';
-const DEFAULT_BATCH_SIZE = 8;
-const MAX_BATCH_SIZE = 96;
+const DEFAULT_BATCH_SIZE = 1000;
+const MAX_BATCH_SIZE = 5000;
 const DEFAULT_INITIAL_CONCURRENCY = 2;
 const DEFAULT_MAX_CONCURRENCY = 4;
 const HARD_MAX_CONCURRENCY = 4;
@@ -259,7 +259,12 @@ async function main() {
   const { canonicalHouseCommitteeAttachmentPdfUrl, houseAttachmentCaptureIsAfterListingDate, normalizeHouseCommitteeAttachmentExcerpt } =
     await import('../src/evidence/house-committee-attachment-content.js');
   const { HOUSE_COMMITTEE_ARCHIVE_PARSER_VERSION } = await import('../src/evidence/house-committee-archive.js');
-  const { discoverWaybackPdfCaptures } = await import('../src/evidence/wayback.js');
+  const {
+    discoverCompleteWaybackPdfPrefix,
+    houseAttachmentWaybackMatchKey,
+    planHouseAttachmentPrefixShards,
+    HOUSE_ATTACHMENT_WAYBACK_BULK_VERSION,
+  } = await import('../src/evidence/house-committee-attachment-wayback-bulk.js');
 
   const limit = batchSize();
   const maxConcurrency = Math.min(maxWorkerConcurrency(), limit);
@@ -341,17 +346,33 @@ async function main() {
        LIMIT $3
     `, [HOUSE_COMMITTEE_ARCHIVE_PARSER_VERSION, VERSION, limit])).rows;
 
+    const prefixShards = planHouseAttachmentPrefixShards(
+      candidates.map(candidate => ({
+        sessionSlug: candidate.session_slug,
+        originalUrl: canonicalHouseCommitteeAttachmentPdfUrl(candidate.attachment_url),
+      })),
+      { maxCandidatesPerShard: 250, minBasenameChars: 4 },
+    );
+    const candidateCountByKey = new Map<string, number>();
+    for (const candidate of candidates) {
+      const originalUrl = canonicalHouseCommitteeAttachmentPdfUrl(candidate.attachment_url);
+      const key = candidate.session_slug + '\u0000' + houseAttachmentWaybackMatchKey(originalUrl);
+      candidateCountByKey.set(key, (candidateCountByKey.get(key) ?? 0) + 1);
+    }
+
     const run = await pool.query<{ id: string }>(`
       INSERT INTO ingestion_runs (source_system,scope,status,metadata)
       VALUES ('house-committee-attachment-wayback',$1,'running',$2::jsonb)
       RETURNING id::text
     `, [
-      `pdf-batch:${limit}`,
+      `pdf-bulk-batch:${limit}`,
       JSON.stringify({
         version: VERSION,
+        bulkDiscoveryVersion: HOUSE_ATTACHMENT_WAYBACK_BULK_VERSION,
         archiveParserVersion: HOUSE_COMMITTEE_ARCHIVE_PARSER_VERSION,
         remainingBefore,
         selected: candidates.length,
+        prefixShards: prefixShards.length,
         adaptiveConcurrency: controller.snapshot(),
       }),
     ]);
@@ -366,20 +387,76 @@ async function main() {
     let unresolved = 0;
     let textExtracted = 0;
     let failures = 0;
+    let prefixPages = 0;
+    let prefixShardFailures = 0;
+    let deferredCandidates = 0;
+    const capturesByCandidateKey = new Map<string, import('../src/evidence/wayback.js').WaybackCapture[]>();
+    const completeCandidateKeys = new Set<string>();
+
+    for (const shard of prefixShards) {
+      const window = SESSION_WINDOWS[shard.sessionSlug];
+      if (!window) throw new Error('Unsupported House attachment session: ' + shard.sessionSlug);
+      try {
+        const discovered = await discoverCompleteWaybackPdfPrefix({
+          prefix: shard.prefix,
+          from: window.from,
+          to: window.to,
+          pageLimit: 1000,
+          maxPages: 200,
+        });
+        prefixPages += discovered.pages;
+        capturesDiscovered += discovered.captures.length;
+
+        const byUrl = new Map<string, import('../src/evidence/wayback.js').WaybackCapture[]>();
+        for (const capture of discovered.captures) {
+          let key: string;
+          try {
+            key = houseAttachmentWaybackMatchKey(capture.original);
+          } catch {
+            continue;
+          }
+          if (!shard.candidateKeys.includes(key)) continue;
+          const rows = byUrl.get(key) ?? [];
+          rows.push(capture);
+          byUrl.set(key, rows);
+        }
+
+        for (const key of shard.candidateKeys) {
+          const compositeKey = shard.sessionSlug + '\u0000' + key;
+          completeCandidateKeys.add(compositeKey);
+          capturesByCandidateKey.set(
+            compositeKey,
+            (byUrl.get(key) ?? []).sort((a, b) => a.timestamp.localeCompare(b.timestamp)),
+          );
+        }
+      } catch (error) {
+        prefixShardFailures += 1;
+        for (const key of shard.candidateKeys) {
+          deferredCandidates += candidateCountByKey.get(shard.sessionSlug + '\u0000' + key) ?? 0;
+        }
+        if (failureExamples.length < 16) {
+          failureExamples.push({
+            attachment: shard.prefix,
+            stage: 'bulk-prefix-discovery',
+            error: safe(error),
+          });
+        }
+      }
+    }
+
+    const processableCandidates = candidates.filter(candidate => {
+      const originalUrl = canonicalHouseCommitteeAttachmentPdfUrl(candidate.attachment_url);
+      const key = candidate.session_slug + '\u0000' + houseAttachmentWaybackMatchKey(originalUrl);
+      return completeCandidateKeys.has(key);
+    });
+    const pdfCache = new Map<string, ReturnType<typeof fetchArchivedPdf>>();
 
     async function processCandidate(candidate: Candidate): Promise<CandidateOutcome> {
       try {
         const originalUrl = canonicalHouseCommitteeAttachmentPdfUrl(candidate.attachment_url);
-        const window = SESSION_WINDOWS[candidate.session_slug];
-        if (!window) throw new Error('Unsupported House attachment session: ' + candidate.session_slug);
-        const discoveredCaptures = await discoverWaybackPdfCaptures({
-          url: originalUrl,
-          from: window.from,
-          to: window.to,
-          limit: 50,
-        });
+        const candidateKey = candidate.session_slug + '\u0000' + houseAttachmentWaybackMatchKey(originalUrl);
+        const discoveredCaptures = capturesByCandidateKey.get(candidateKey) ?? [];
         scanned += 1;
-        capturesDiscovered += discoveredCaptures.length;
         const captures = discoveredCaptures.filter(capture =>
           houseAttachmentCaptureIsAfterListingDate(capture.capturedAt, candidate.official_posted_on)
         );
@@ -437,7 +514,13 @@ async function main() {
         }
 
         const capture = captures[0];
-        const pdf = await fetchArchivedPdf(capture);
+        const pdfKey = [houseAttachmentWaybackMatchKey(originalUrl), capture.timestamp, capture.digest].join('\u0000');
+        let pdfPromise = pdfCache.get(pdfKey);
+        if (!pdfPromise) {
+          pdfPromise = fetchArchivedPdf(capture);
+          pdfCache.set(pdfKey, pdfPromise);
+        }
+        const pdf = await pdfPromise;
         const excerpt = normalizeHouseCommitteeAttachmentExcerpt(pdf.text);
         if (excerpt) textExtracted += 1;
 
@@ -536,7 +619,7 @@ async function main() {
       while (true) {
         const index = nextCandidateIndex;
         nextCandidateIndex += 1;
-        const candidate = candidates[index];
+        const candidate = processableCandidates[index];
         if (!candidate) return;
         await controller.acquire();
         const outcome = await processCandidate(candidate);
@@ -545,7 +628,7 @@ async function main() {
     }
 
     await Promise.all(
-      Array.from({ length: Math.min(maxConcurrency, Math.max(1, candidates.length)) }, () => worker()),
+      Array.from({ length: Math.min(maxConcurrency, Math.max(1, processableCandidates.length)) }, () => worker()),
     );
 
     const remainingAfter = (await pool.query<{ remaining: number }>(
@@ -557,6 +640,14 @@ async function main() {
       version: VERSION,
       archiveParserVersion: HOUSE_COMMITTEE_ARCHIVE_PARSER_VERSION,
       batchSize: limit,
+      bulkDiscovery: {
+        version: HOUSE_ATTACHMENT_WAYBACK_BULK_VERSION,
+        prefixShards: prefixShards.length,
+        prefixPages,
+        prefixShardFailures,
+        deferredCandidates,
+        processableCandidates: processableCandidates.length,
+      },
       adaptiveConcurrency: controller.snapshot(),
       remainingBefore,
       selected: candidates.length,
