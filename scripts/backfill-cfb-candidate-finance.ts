@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { appendFileSync, readFileSync } from 'node:fs';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
@@ -68,12 +68,23 @@ function freshness(date: string | null) {
 }
 
 async function main() {
-  const { resolveCfbCandidateFinanceTargetBatch } =
-    await import('../src/evidence/cfb-candidate-finance-target-batches.js');
-  const targetBatch = resolveCfbCandidateFinanceTargetBatch(
-    process.env.VOTEPREDICT_CFB_CANDIDATE_FINANCE_BATCH_REQUEST,
-  );
-  const TARGETS = targetBatch.targets;
+  const {
+    cfbCandidateFinanceTargetBatchNames,
+    resolveCfbCandidateFinanceTargetBatch,
+  } = await import('../src/evidence/cfb-candidate-finance-target-batches.js');
+  const {
+    cfbCandidateFinanceTargetKey,
+    selectCfbCandidateFinanceMembershipTail,
+  } = await import('../src/evidence/cfb-candidate-finance-membership-tail.js');
+  const targetRequest = process.env.VOTEPREDICT_CFB_CANDIDATE_FINANCE_BATCH_REQUEST ?? '';
+  const membershipTailMode = /(?:^|\\s)batch=membership-tail(?:\\s|$)/i.test(targetRequest);
+  const staticTargetBatch = membershipTailMode
+    ? null
+    : resolveCfbCandidateFinanceTargetBatch(targetRequest);
+  let targetBatchName = staticTargetBatch?.name ?? 'membership-tail';
+  let TARGETS: readonly { registrationNumber: string; segmentEndYear: number }[] =
+    staticTargetBatch?.targets ?? [];
+  let tailSelection: Record<string, unknown> | null = null;
 
   const envFile = process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
   if (!envFile) throw new Error('Production env file required');
@@ -118,6 +129,170 @@ async function main() {
       ...parseCfbCandidateContributionCsv(contributionText, { fromYear: 2021, toYear: 2026 }),
       ...parseCfbCandidateExpenditureCsv(expenditureText, { fromYear: 2021, toYear: 2026 }),
     ].filter(row => Boolean(row.candidateName && row.chamber && row.filerRegistrationNumber));
+
+    if (membershipTailMode) {
+      type SelectionMembershipCandidate = {
+        membershipId: string;
+        memberName: string;
+        sessionSlug: string;
+        chamberSlug: string;
+        membershipStartsOn: string | null;
+        membershipEndsOn: string | null;
+        sessionStartsOn: string | null;
+        sessionEndsOn: string | null;
+      };
+      const selectionMembershipRows = await pool.query<SelectionMembershipCandidate>(`
+        SELECT m.id::text AS "membershipId",
+               l.name AS "memberName",
+               s.slug AS "sessionSlug",
+               c.slug AS "chamberSlug",
+               m.starts_on::text AS "membershipStartsOn",
+               m.ends_on::text AS "membershipEndsOn",
+               s.starts_on::text AS "sessionStartsOn",
+               s.ends_on::text AS "sessionEndsOn"
+          FROM memberships m
+          JOIN legislators l ON l.id=m.legislator_id
+          JOIN legislative_sessions s ON s.id=m.session_id
+          JOIN chambers c ON c.id=m.chamber_id
+         WHERE s.slug IN ('2021-2022','2023-2024','2025-2026')
+           AND c.slug IN ('house','senate')
+      `);
+      const persisted = await pool.query<{ rowKey: string }>(`
+        SELECT DISTINCT ei.metadata->>'rowKey' AS "rowKey"
+          FROM evidence_items ei
+          JOIN source_documents sd ON sd.id=ei.source_document_id
+         WHERE sd.source_kind IN (
+           'campaign_finance_candidate_contribution_bulk',
+           'campaign_finance_candidate_expenditure_bulk'
+         )
+           AND ei.metadata->>'rowKey' IS NOT NULL
+      `);
+      const persistedRowKeys = new Set(persisted.rows.map(row => row.rowKey));
+
+      type TailGroupInternal = {
+        registrationNumber: string;
+        segmentEndYear: number;
+        candidateName: string;
+        chamber: string;
+        totalRows: number;
+        resolvedRows: number;
+        rowKeys: string[];
+      };
+      const groups = new Map<string, TailGroupInternal>();
+      for (const row of allRows) {
+        const registrationNumber = row.filerRegistrationNumber;
+        const segmentEndYear = cfbCandidateSegmentEndYear(row.year);
+        if (!registrationNumber || segmentEndYear === null || !row.candidateName || !row.chamber) continue;
+        const key = registrationNumber + ':' + segmentEndYear;
+        let group = groups.get(key);
+        if (!group) {
+          group = {
+            registrationNumber,
+            segmentEndYear,
+            candidateName: row.candidateName,
+            chamber: row.chamber,
+            totalRows: 0,
+            resolvedRows: 0,
+            rowKeys: [],
+          };
+          groups.set(key, group);
+        }
+        group.totalRows += 1;
+        group.rowKeys.push(row.rowKey);
+        const session = sessionForCandidateFinanceYear(row.year);
+        if (!session || !row.transactionDate) continue;
+        const candidates = selectionMembershipRows.rows.filter(candidate =>
+          candidate.sessionSlug === session
+          && candidate.chamberSlug === row.chamber
+          && (!candidate.membershipStartsOn || candidate.membershipStartsOn <= row.transactionDate!)
+          && (!candidate.membershipEndsOn || candidate.membershipEndsOn >= row.transactionDate!)
+          && (!candidate.sessionStartsOn || candidate.sessionStartsOn <= row.transactionDate!)
+          && (!candidate.sessionEndsOn || candidate.sessionEndsOn >= row.transactionDate!)
+        );
+        if (resolveCandidateFinanceMembership(row.candidateName, candidates)) {
+          group.resolvedRows += 1;
+        }
+      }
+
+      const fullyPersistedKeys = new Set<string>();
+      for (const group of groups.values()) {
+        if (group.rowKeys.length > 0 && group.rowKeys.every(rowKey => persistedRowKeys.has(rowKey))) {
+          fullyPersistedKeys.add(cfbCandidateFinanceTargetKey(group));
+        }
+      }
+      const reviewedKeys = new Set<string>();
+      for (const name of cfbCandidateFinanceTargetBatchNames()) {
+        for (const target of resolveCfbCandidateFinanceTargetBatch('batch=' + name).targets) {
+          reviewedKeys.add(cfbCandidateFinanceTargetKey(target));
+        }
+      }
+      for (const key of reviewedKeys) {
+        const group = groups.get(key);
+        if (group?.rowKeys.every(rowKey => persistedRowKeys.has(rowKey))) {
+          fullyPersistedKeys.add(key);
+        }
+      }
+
+      const targetableGroups = [...groups.values()].filter(group => group.resolvedRows > 0);
+      const remainingBefore = targetableGroups.filter(group =>
+        !fullyPersistedKeys.has(cfbCandidateFinanceTargetKey(group))).length;
+      const requestedTailGroups = Number.parseInt(
+        process.env.VOTEPREDICT_CFB_CANDIDATE_FINANCE_TAIL_GROUPS ?? '',
+        10,
+      );
+      const tailGroupLimit = Number.isFinite(requestedTailGroups)
+        ? Math.min(32, Math.max(1, requestedTailGroups))
+        : 24;
+      const selectedGroups = selectCfbCandidateFinanceMembershipTail(
+        targetableGroups,
+        fullyPersistedKeys,
+        tailGroupLimit,
+      );
+      TARGETS = selectedGroups.map(group => ({
+        registrationNumber: group.registrationNumber,
+        segmentEndYear: group.segmentEndYear,
+      }));
+      const remainingAfter = Math.max(0, remainingBefore - selectedGroups.length);
+      tailSelection = {
+        tailGroupLimit,
+        membershipRowsLoaded: selectionMembershipRows.rows.length,
+        persistedRowKeys: persistedRowKeys.size,
+        targetableGroups: targetableGroups.length,
+        fullyPersistedGroups: targetableGroups.length - remainingBefore,
+        remainingBefore,
+        selectedGroups: selectedGroups.map(group => ({
+          registrationNumber: group.registrationNumber,
+          segmentEndYear: group.segmentEndYear,
+          candidateName: group.candidateName,
+          chamber: group.chamber,
+          totalRows: group.totalRows,
+          resolvedRows: group.resolvedRows,
+        })),
+        remainingAfter,
+      };
+      if (process.env.GITHUB_OUTPUT) {
+        appendFileSync(process.env.GITHUB_OUTPUT, 'tail_remaining_groups=' + remainingAfter + '\\n');
+        appendFileSync(process.env.GITHUB_OUTPUT, 'tail_selected_groups=' + selectedGroups.length + '\\n');
+      }
+      if (!TARGETS.length) {
+        console.log(JSON.stringify({
+          cfbCandidateFinanceBackfill: {
+            targetBatch: targetBatchName,
+            tailSelection,
+            collectionComplete: true,
+            policy: {
+              transactionDateIsAvailability: false,
+              contextOnly: true,
+              mechanicallyActionable: false,
+              modelWeight: 0,
+              servingChanged: false,
+              productionAction: 'none',
+            },
+          },
+        }, null, 2));
+        return;
+      }
+    }
 
     const targetKeys = new Set(TARGETS.map(target => target.registrationNumber + ':' + target.segmentEndYear));
     const rows = allRows.filter(row => {
@@ -329,7 +504,7 @@ async function main() {
           metadata: {
             publisher: 'Minnesota Campaign Finance and Public Disclosure Board',
             dataset: kind === 'contribution' ? 'candidate_contributions' : 'candidate_expenditures',
-            targetBatch: targetBatch.name,
+            targetBatch: targetBatchName,
             boundedTargetRegistrations: [...new Set(TARGETS.map(target => target.registrationNumber))],
             years: [2021, 2022, 2023, 2024, 2025, 2026],
             boundedRowCount: selected.length,
@@ -439,8 +614,9 @@ async function main() {
 
     console.log(JSON.stringify({
       cfbCandidateFinanceBackfill: {
-        targetBatch: targetBatch.name,
+        targetBatch: targetBatchName,
         boundedTargets: TARGETS,
+        ...(tailSelection ? { tailSelection } : {}),
         rows: rows.length,
         contributionRows: contributionRows.length,
         expenditureRows: expenditureRows.length,
