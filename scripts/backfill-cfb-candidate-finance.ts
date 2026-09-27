@@ -235,7 +235,7 @@ async function main() {
       return resolveCandidateFinanceMembership(row.candidateName, candidates);
     }
 
-    const drafts = rows.map(row => {
+    const draftCandidates = rows.map(row => {
       const disclosure = mappingByRowKey.get(row.rowKey);
       const membership = membershipForRow(row);
       const total = row.kind === 'expenditure' ? row.totalAmount : row.amount;
@@ -310,6 +310,10 @@ async function main() {
       };
     });
 
+    const drafts = draftCandidates.filter(item => Boolean(item.draft.target?.membershipId));
+    const resolvedRowKeys = new Set(drafts.map(item => item.row.rowKey));
+    const resolvedMappings = mappings.filter(mapping => resolvedRowKeys.has(mapping.rowKey));
+
     const size = batchSize();
     let inserted = 0;
     let reused = 0;
@@ -344,8 +348,8 @@ async function main() {
 
     let promotedThisRun = 0;
     const promotionBatchSize = 500;
-    for (let offset = 0; offset < mappings.length; offset += promotionBatchSize) {
-      const batch = mappings.slice(offset, offset + promotionBatchSize).map(mapping => ({
+    for (let offset = 0; offset < resolvedMappings.length; offset += promotionBatchSize) {
+      const batch = resolvedMappings.slice(offset, offset + promotionBatchSize).map(mapping => ({
         row_key: mapping.rowKey,
         available_on: mapping.availableOn,
         filed_on: mapping.filedOn,
@@ -442,17 +446,19 @@ async function main() {
         contributionRows: contributionRows.length,
         expenditureRows: expenditureRows.length,
         disclosureMappedRows: mappings.length,
+        resolvedDisclosureMappedRows: resolvedMappings.length,
+        uniqueDisclosureMappedRowKeys: new Set(mappings.map(mapping => mapping.rowKey)).size,
+        uniqueResolvedDisclosureMappedRowKeys: new Set(resolvedMappings.map(mapping => mapping.rowKey)).size,
         inserted,
         reused,
         unresolved,
         promotedThisRun,
         asOfEligibleRows: eligible.rows[0]?.count ?? 0,
         membershipResolution: {
-          rowsResolved: drafts.filter(item => Boolean(item.draft.target?.membershipId)).length,
-          rowsUnresolved: drafts.filter(item => !item.draft.target?.membershipId).length,
-          mappedRowsResolved: drafts.filter(item =>
-            Boolean(mappingByRowKey.get(item.row.rowKey))
-            && Boolean(item.draft.target?.membershipId)).length,
+          rowsResolved: drafts.length,
+          rowsUnresolved: draftCandidates.length - drafts.length,
+          mappedRowsResolved: resolvedMappings.length,
+          unresolvedRowsPersisted: false,
         },
         acquisition,
         policy: {
