@@ -53,6 +53,51 @@ test('parses CFB report coverage and derives next-day availability from received
   assert.equal(proof.window.proofKind, 'cfb_report_filing');
 });
 
+test('parses legacy CFB committee registration header from historical reports', () => {
+  const reference: CfbReportViewerReference = {
+    filingYear: 2022,
+    reportName: 'Pre-General Report',
+    year: '22',
+    type: 'pcc',
+    period: 'E',
+    se: '0',
+    registrationNumber: '15677',
+    amendment: 0,
+  };
+  const text = [
+    'Report of Receipts and Expenditures for Principal Campaign Committee',
+    'Period Covered: 1/1/2022 through 10/24/2022',
+    'Hortman, Melissa A House Dist.34B Committee 15677',
+    'Registration number: Committee name: Candidate name:',
+    'Received by the Board October 31, 2022',
+  ].join(' ');
+  const proof = parseCfbReportPdfAvailability(reference, text);
+  assert.ok(proof);
+  assert.equal(proof.filedOn, '2022-10-31');
+  assert.equal(proof.window.coverageStartOn, '2022-01-01');
+  assert.equal(proof.window.coverageEndOn, '2022-10-24');
+  assert.equal(proof.window.availableOn, '2022-11-01');
+});
+
+test('legacy CFB committee registration fallback must match the report reference', () => {
+  const reference: CfbReportViewerReference = {
+    filingYear: 2022,
+    reportName: 'Pre-General Report',
+    year: '22',
+    type: 'pcc',
+    period: 'E',
+    se: '0',
+    registrationNumber: '15677',
+    amendment: 0,
+  };
+  const text = [
+    'Period Covered: 1/1/2022 through 10/24/2022',
+    'Example Candidate Committee 99999',
+    'Received by the Board October 31, 2022',
+  ].join(' ');
+  assert.equal(parseCfbReportPdfAvailability(reference, text), null);
+});
+
 test('finance row mapping requires the report to demonstrate the specific row', () => {
   const reference: CfbReportViewerReference = {
     filingYear: 2026,
