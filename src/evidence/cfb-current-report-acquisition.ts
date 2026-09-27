@@ -199,7 +199,7 @@ export async function acquireCfbCurrentReportProofs(input: {
   registrationNumbers?: readonly string[];
 }) {
   const grid = await fetchCfbCurrentReportGrid(input.kind);
-  const maxReports = Math.min(20, Math.max(1, input.maxReports));
+  const maxReports = Math.min(100, Math.max(1, input.maxReports));
   const allowed = input.registrationNumbers?.length
     ? new Set(input.registrationNumbers.map(value => value.trim()).filter(Boolean))
     : null;
