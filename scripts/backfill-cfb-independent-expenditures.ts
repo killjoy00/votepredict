@@ -147,6 +147,10 @@ async function main() {
       proofKind: 'cfb_public_disclosure' | 'cfb_report_filing';
       proofUrl: string;
       source: 'bulk_direct' | 'current_report_pdf';
+      proofTextSha256: string | null;
+      proofContentSha256: string | null;
+      proofFetchedAt: string | null;
+      proofBytes: number | null;
     };
 
     const disclosureMappings: DisclosureMapping[] = [];
@@ -170,6 +174,10 @@ async function main() {
           proofKind: proof.proofKind,
           proofUrl: proof.proofUrl,
           source: 'bulk_direct',
+          proofTextSha256: null,
+          proofContentSha256: null,
+          proofFetchedAt: null,
+          proofBytes: null,
         });
         continue;
       }
@@ -190,6 +198,10 @@ async function main() {
           proofKind: 'cfb_report_filing',
           proofUrl: proof.proofUrl,
           source: 'bulk_direct',
+          proofTextSha256: null,
+          proofContentSha256: null,
+          proofFetchedAt: null,
+          proofBytes: null,
         });
         continue;
       }
@@ -207,6 +219,9 @@ async function main() {
             affectedCommitteeRegistrationNumber: row.affectedCommitteeRegistrationNumber,
           }, reports);
           if (match) {
+            const acquiredProof = currentReports.reports.find(report =>
+              report.proof.textSha256 === match.proof.textSha256
+              && report.proof.window.proofUrl === match.window.proofUrl);
             disclosureMappings.push({
               rowKey: row.rowKey,
               availableOn: match.window.availableOn,
@@ -216,6 +231,10 @@ async function main() {
               proofKind: 'cfb_report_filing',
               proofUrl: match.window.proofUrl,
               source: 'current_report_pdf',
+              proofTextSha256: match.proof.textSha256,
+              proofContentSha256: acquiredProof?.contentSha256 ?? null,
+              proofFetchedAt: acquiredProof?.fetchedAt ?? null,
+              proofBytes: acquiredProof?.bytes ?? null,
             });
           }
         }
@@ -298,7 +317,7 @@ async function main() {
           rowCount: rows.length,
           rowContentSha256,
           historicalAvailability: disclosureMappings.length
-            ? 'official_disclosure_date_when_row_level_proven'
+            ? 'official_disclosure_or_filing_derived_availability_when_row_level_proven'
             : 'pending_disclosure_proof',
           availabilityPolicyVersion: CFB_REPORT_AVAILABILITY_VERSION,
         },
@@ -335,6 +354,10 @@ async function main() {
           report_name: mapping.reportName,
           proof_kind: mapping.proofKind,
           proof_url: mapping.proofUrl,
+          proof_text_sha256: mapping.proofTextSha256,
+          proof_content_sha256: mapping.proofContentSha256,
+          proof_fetched_at: mapping.proofFetchedAt,
+          proof_bytes: mapping.proofBytes,
         }));
         const promoted = await pool.query<{ row_key: string }>(`
           WITH disclosure AS (
@@ -346,7 +369,11 @@ async function main() {
                 filed_on date,
                 report_name text,
                 proof_kind text,
-                proof_url text
+                proof_url text,
+                proof_text_sha256 text,
+                proof_content_sha256 text,
+                proof_fetched_at timestamptz,
+                proof_bytes integer
               )
           )
           UPDATE evidence_items ei
@@ -361,6 +388,10 @@ async function main() {
                    'reportName', disclosure.report_name,
                    'availabilityProofKind', disclosure.proof_kind,
                    'availabilityProofUrl', disclosure.proof_url,
+                   'availabilityProofTextSha256', disclosure.proof_text_sha256,
+                   'availabilityProofContentSha256', disclosure.proof_content_sha256,
+                   'availabilityProofFetchedAt', disclosure.proof_fetched_at::text,
+                   'availabilityProofBytes', disclosure.proof_bytes,
                    'disclosureDateIsAvailability', disclosure.proof_kind = 'cfb_public_disclosure',
                    'filingDateDerivedAvailability', disclosure.proof_kind = 'cfb_report_filing',
                    'transactionDateIsAvailability', false,
