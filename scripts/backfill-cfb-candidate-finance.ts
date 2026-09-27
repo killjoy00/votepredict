@@ -104,6 +104,8 @@ async function main() {
     await import('../src/evidence/cfb-candidate-report-history.js');
   const { firstProvenCfbFinanceAvailability } =
     await import('../src/evidence/cfb-report-finance-mapper.js');
+  const { resolveCandidateFinanceMembership } =
+    await import('../src/evidence/cfb-candidate-membership-resolution.js');
 
   try {
     const urls = await discoverCampaignFinanceDownloadUrls();
@@ -192,9 +194,50 @@ async function main() {
     const expenditureSourceSha256 = createHash('sha256').update(expenditureText).digest('hex');
     const fetchedAt = new Date().toISOString();
 
+    type MembershipCandidate = {
+      membershipId: string;
+      memberName: string;
+      sessionSlug: string;
+      chamberSlug: string;
+      membershipStartsOn: string | null;
+      membershipEndsOn: string | null;
+      sessionStartsOn: string | null;
+      sessionEndsOn: string | null;
+    };
+    const membershipRows = await pool.query<MembershipCandidate>(`
+      SELECT m.id::text AS "membershipId",
+             l.name AS "memberName",
+             s.slug AS "sessionSlug",
+             c.slug AS "chamberSlug",
+             m.starts_on::text AS "membershipStartsOn",
+             m.ends_on::text AS "membershipEndsOn",
+             s.starts_on::text AS "sessionStartsOn",
+             s.ends_on::text AS "sessionEndsOn"
+        FROM memberships m
+        JOIN legislators l ON l.id=m.legislator_id
+        JOIN legislative_sessions s ON s.id=m.session_id
+        JOIN chambers c ON c.id=m.chamber_id
+       WHERE s.slug IN ('2021-2022','2023-2024','2025-2026')
+         AND c.slug IN ('house','senate')
+    `);
+
+    function membershipForRow(row: (typeof rows)[number]) {
+      const session = sessionForCandidateFinanceYear(row.year);
+      if (!row.candidateName || !row.chamber || !session || !row.transactionDate) return null;
+      const candidates = membershipRows.rows.filter(candidate =>
+        candidate.sessionSlug === session
+        && candidate.chamberSlug === row.chamber
+        && (!candidate.membershipStartsOn || candidate.membershipStartsOn <= row.transactionDate!)
+        && (!candidate.membershipEndsOn || candidate.membershipEndsOn >= row.transactionDate!)
+        && (!candidate.sessionStartsOn || candidate.sessionStartsOn <= row.transactionDate!)
+        && (!candidate.sessionEndsOn || candidate.sessionEndsOn >= row.transactionDate!)
+      );
+      return resolveCandidateFinanceMembership(row.candidateName, candidates);
+    }
+
     const drafts = rows.map(row => {
       const disclosure = mappingByRowKey.get(row.rowKey);
-      const session = sessionForCandidateFinanceYear(row.year);
+      const membership = membershipForRow(row);
       const total = row.kind === 'expenditure' ? row.totalAmount : row.amount;
       const counterparty = row.kind === 'contribution'
         ? row.contributor
@@ -207,11 +250,8 @@ async function main() {
         sourceUrl: row.kind === 'contribution' ? urls.contributions : urls.expenditures,
         sourceSha256: row.kind === 'contribution' ? contributionSourceSha256 : expenditureSourceSha256,
         draft: {
-          target: row.candidateName && row.chamber && session ? {
-            memberName: row.candidateName,
-            sessionSlug: session,
-            chamberSlug: row.chamber,
-            occurredOn: row.transactionDate ?? undefined,
+          target: membership ? {
+            membershipId: membership.membershipId,
           } : undefined,
           kind: 'context' as const,
           stance: 'neutral' as const,
@@ -407,6 +447,13 @@ async function main() {
         unresolved,
         promotedThisRun,
         asOfEligibleRows: eligible.rows[0]?.count ?? 0,
+        membershipResolution: {
+          rowsResolved: drafts.filter(item => Boolean(item.draft.target?.membershipId)).length,
+          rowsUnresolved: drafts.filter(item => !item.draft.target?.membershipId).length,
+          mappedRowsResolved: drafts.filter(item =>
+            Boolean(mappingByRowKey.get(item.row.rowKey))
+            && Boolean(item.draft.target?.membershipId)).length,
+        },
         acquisition,
         policy: {
           transactionDateIsAvailability: false,
