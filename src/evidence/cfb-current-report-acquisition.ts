@@ -196,10 +196,17 @@ export async function fetchCfbReportViewerText(reference: CfbReportViewerReferen
 export async function acquireCfbCurrentReportProofs(input: {
   kind: CfbCurrentReportKind;
   maxReports: number;
+  registrationNumbers?: readonly string[];
 }) {
   const grid = await fetchCfbCurrentReportGrid(input.kind);
   const maxReports = Math.min(20, Math.max(1, input.maxReports));
-  const selected = grid.references.slice(0, maxReports);
+  const allowed = input.registrationNumbers?.length
+    ? new Set(input.registrationNumbers.map(value => value.trim()).filter(Boolean))
+    : null;
+  const eligibleReferences = allowed
+    ? grid.references.filter(reference => allowed.has(reference.registrationNumber))
+    : grid.references;
+  const selected = eligibleReferences.slice(0, maxReports);
   const reports: CfbAcquiredCurrentReport[] = [];
   const failures: Array<{ registrationNumber: string; reportName: string; error: string }> = [];
 
@@ -222,6 +229,7 @@ export async function acquireCfbCurrentReportProofs(input: {
     kind: input.kind,
     entitiesDiscovered: grid.entityCount,
     referencesDiscovered: grid.references.length,
+    eligibleReferences: eligibleReferences.length,
     selectedReports: selected.length,
     reports,
     failures,
