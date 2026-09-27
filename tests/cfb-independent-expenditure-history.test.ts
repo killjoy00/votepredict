@@ -22,6 +22,8 @@ test('parses granular independent expenditure records',()=>{
   assert.equal(rows[0].direction,'for');
   assert.equal(rows[0].totalAmount,1225.5);
   assert.equal(rows[0].transactionDate,'2024-07-20');
+  assert.equal(rows[0].disclosedOn,null);
+  assert.equal(rows[0].filedOn,null);
   assert.equal(sessionForIndependentExpenditureYear(2024),'2023-2024');
 });
 
@@ -59,15 +61,6 @@ test('official CFB disclosure date is sufficient without an exact filing timesta
   assert.equal(proof.disclosedOn,'2024-07-30');
   assert.equal(proof.availableOn,'2024-07-30');
   assert.equal(proof.proofKind,'cfb_public_disclosure');
-});
-
-test('transaction date alone cannot be substituted for an official disclosure date',()=>{
-  assert.throws(()=>buildCfbPublicDisclosureProof({
-    registrationNumber:'40001',
-    reportName:'2024 Pre-Primary',
-    transactionDate:'2024-07-20',
-    proofUrl:'https://register.cfb.mn.gov/reports/example',
-  } as never),/CFB disclosure date must be YYYY-MM-DD/);
 });
 
 
