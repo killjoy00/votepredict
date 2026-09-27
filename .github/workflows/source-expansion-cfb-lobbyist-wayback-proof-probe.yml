@@ -1,0 +1,32 @@
+name: Source expansion CFB lobbyist Wayback proof probe
+
+on:
+  issue_comment:
+    types: [created, edited]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.event_name == 'issue_comment' && (github.event.issue.number != 355 || github.event.comment.user.login != 'killjoy00' || !startsWith(github.event.comment.body, '[source-expansion-cfb-lobbyist-wayback-proof-probe]')) && format('source-expansion-cfb-lobbyist-wayback-proof-probe-skip-{0}', github.run_id) || 'source-expansion-cfb-lobbyist-wayback-proof-probe' }}
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    if: >-
+      github.event_name != 'issue_comment' ||
+      (
+        github.event.issue.number == 355 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        startsWith(github.event.comment.body, '[source-expansion-cfb-lobbyist-wayback-proof-probe]')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+      - name: Probe exact Wayback captures for official 2024 lobbyist reports
+        run: node --import tsx scripts/probe-cfb-lobbyist-wayback-proof.ts
