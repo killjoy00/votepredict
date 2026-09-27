@@ -311,6 +311,51 @@ async function probeReportApiVariants(operation: 'grid_info' | 'grid_data', rout
   return { operation, routeAction, variants };
 }
 
+function reportFormSnapshot(html: string) {
+  const formMatch = html.match(/<form\b[^>]*(?:id|name)=["']theForm["'][^>]*>[\s\S]*?<\/form>/i);
+  if (!formMatch) return null;
+  const formHtml = formMatch[0];
+  const openTag = formHtml.match(/^<form\b[^>]*>/i)?.[0] ?? '';
+  const action = openTag.match(/\baction=["']([^"']*)["']/i)?.[1] ?? '';
+  const method = openTag.match(/\bmethod=["']([^"']*)["']/i)?.[1] ?? '';
+  const inputs = [...formHtml.matchAll(/<input\b([^>]*)>/gi)].map(match => {
+    const attrs = match[1] ?? '';
+    return {
+      name: attrs.match(/\bname=["']([^"']+)["']/i)?.[1] ?? '',
+      type: attrs.match(/\btype=["']([^"']+)["']/i)?.[1] ?? '',
+      value: attrs.match(/\bvalue=["']([^"']*)["']/i)?.[1] ?? '',
+    };
+  }).filter(input => input.name);
+  return { action, method, inputs: inputs.slice(0, 80) };
+}
+
+async function fetchCookieSession(url: string) {
+  const response = await fetch(url, {
+    headers: {
+      'user-agent': 'Mozilla/5.0 VotePredict/2.0 cfb-disclosure-audit',
+      accept: 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.1',
+    },
+    redirect: 'follow',
+    signal: AbortSignal.timeout(30_000),
+  });
+  await response.arrayBuffer();
+  const getSetCookie = (response.headers as Headers & { getSetCookie?: () => string[] }).getSetCookie;
+  const setCookies = typeof getSetCookie === 'function'
+    ? getSetCookie.call(response.headers)
+    : [response.headers.get('set-cookie') ?? ''].filter(Boolean);
+  return {
+    cookie: setCookies
+      .map(value => value.split(';', 1)[0]?.trim())
+      .filter(Boolean)
+      .join('; '),
+    cookieNames: setCookies
+      .map(value => value.split('=', 1)[0]?.trim())
+      .filter(Boolean),
+    status: response.status,
+    finalUrl: response.url,
+  };
+}
+
 function reportDateSnippets(text: string): string[] {
   const normalized = text.replace(/\u0000/g, '');
   const patterns = [
@@ -338,36 +383,7 @@ function reportDateSnippets(text: string): string[] {
   return snippets;
 }
 
-async function probeReportViewer(input: {
-  label: string;
-  year: string;
-  type: string;
-  period: string;
-  se: string;
-  regnum: string;
-  amend: string;
-}) {
-  const form = new URLSearchParams({
-    downloadpdf: 'false',
-    year: input.year,
-    type: input.type,
-    period: input.period,
-    se: input.se,
-    regnum: input.regnum,
-    amend: input.amend,
-  });
-  const response = await fetch(CFB_REPORT_VIEWER_URL, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/x-www-form-urlencoded',
-      'user-agent': 'Mozilla/5.0 VotePredict/2.0 cfb-disclosure-audit',
-      referer: CFB_CURRENT_LISTS_APP_URL + '#/candidate-reports/all/',
-      accept: 'application/pdf,text/html;q=0.9,*/*;q=0.1',
-    },
-    body: form.toString(),
-    redirect: 'follow',
-    signal: AbortSignal.timeout(45_000),
-  });
+async function decodeReportViewerResponse(response: Response) {
   const finalUrl = new URL(response.url);
   if (
     finalUrl.protocol !== 'https:'
@@ -394,7 +410,6 @@ async function probeReportViewer(input: {
     text = new TextDecoder('utf-8').decode(bytes);
   }
   return {
-    label: input.label,
     status: response.status,
     finalUrl: response.url,
     contentType: response.headers.get('content-type'),
@@ -402,6 +417,85 @@ async function probeReportViewer(input: {
     isPdf,
     dateSnippets: reportDateSnippets(text),
     textSample: text.replace(/\s+/g, ' ').trim().slice(0, 8000),
+  };
+}
+
+async function probeReportViewer(input: {
+  label: string;
+  year: string;
+  type: string;
+  period: string;
+  se: string;
+  regnum: string;
+  amend: string;
+}) {
+  const form = new URLSearchParams({
+    downloadpdf: 'false',
+    year: input.year,
+    type: input.type,
+    period: input.period,
+    se: input.se,
+    regnum: input.regnum,
+    amend: input.amend,
+  });
+  const registerSession = await fetchReportAppSession();
+  const cfbSession = await fetchCookieSession('https://cfb.mn.gov/');
+  const variants: Array<Record<string, unknown>> = [];
+  const commonHeaders: Record<string, string> = {
+    'content-type': 'application/x-www-form-urlencoded',
+    'user-agent': 'Mozilla/5.0 VotePredict/2.0 cfb-disclosure-audit',
+    referer: CFB_CURRENT_LISTS_APP_URL + '#/candidate-reports/all/',
+    origin: CFB_ORIGIN,
+    accept: 'application/pdf,text/html;q=0.9,*/*;q=0.1',
+  };
+
+  for (const session of [
+    { name: 'none', cookie: '', cookieNames: [] as string[] },
+    { name: 'register-session', cookie: registerSession.cookie, cookieNames: registerSession.cookieNames },
+    { name: 'cfb-session', cookie: cfbSession.cookie, cookieNames: cfbSession.cookieNames },
+  ]) {
+    const headers = { ...commonHeaders };
+    if (session.cookie) headers.cookie = session.cookie;
+    const response = await fetch(CFB_REPORT_VIEWER_URL, {
+      method: 'POST',
+      headers,
+      body: form.toString(),
+      redirect: 'follow',
+      signal: AbortSignal.timeout(45_000),
+    });
+    variants.push({
+      method: 'POST',
+      session: session.name,
+      cookieNames: session.cookieNames,
+      ...(await decodeReportViewerResponse(response)),
+    });
+  }
+
+  const getUrl = new URL(CFB_REPORT_VIEWER_URL);
+  for (const [key, value] of form) getUrl.searchParams.set(key, value);
+  const getResponse = await fetch(getUrl, {
+    headers: {
+      'user-agent': commonHeaders['user-agent'],
+      referer: commonHeaders.referer,
+      accept: commonHeaders.accept,
+    },
+    redirect: 'follow',
+    signal: AbortSignal.timeout(45_000),
+  });
+  variants.push({
+    method: 'GET',
+    session: 'none',
+    cookieNames: [],
+    ...(await decodeReportViewerResponse(getResponse)),
+  });
+
+  return {
+    label: input.label,
+    registerCookieNames: registerSession.cookieNames,
+    cfbCookieNames: cfbSession.cookieNames,
+    cfbSessionStatus: cfbSession.status,
+    cfbSessionFinalUrl: cfbSession.finalUrl,
+    variants,
   };
 }
 
@@ -496,6 +590,10 @@ async function auditReportLists() {
       ...viewPdfContexts(reportsAppHtml),
       ...viewPdfContexts(currentListsAppHtml),
     ].slice(0, 20),
+    reportForms: {
+      reports: reportFormSnapshot(reportsAppHtml),
+      currentLists: reportFormSnapshot(currentListsAppHtml),
+    },
     scriptUrls: scripts,
     scriptResults,
     reportApiProbes,
