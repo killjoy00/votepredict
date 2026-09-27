@@ -175,6 +175,44 @@ function serverActionCalls(text: string): Array<{ action: string; snippet: strin
   return rows;
 }
 
+async function probeReportApi(operation: 'grid_info' | 'grid_data', routeAction: string) {
+  const params = new URLSearchParams();
+  params.set('action', operation);
+  params.set('data[action]', routeAction);
+  params.set('data[type]', 'current-lists');
+  params.set('data[params][0]', 'all');
+
+  const response = await fetch(CFB_ORIGIN + '/reports/api/', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded',
+      'user-agent': 'VotePredict/2.0 cfb-disclosure-audit',
+      accept: 'application/json,text/plain;q=0.8,*/*;q=0.1',
+    },
+    body: params.toString(),
+    signal: AbortSignal.timeout(30_000),
+  });
+  const text = await response.text();
+  let parsed: unknown = null;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    // Preserve a bounded public response snippet for diagnostics.
+  }
+  const serialized = parsed === null ? text : JSON.stringify(parsed);
+  return {
+    operation,
+    routeAction,
+    status: response.status,
+    contentType: response.headers.get('content-type'),
+    responseBytes: text.length,
+    topLevelKeys: parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      ? Object.keys(parsed as Record<string, unknown>).slice(0, 80)
+      : [],
+    responseSample: serialized.slice(0, 24_000),
+  };
+}
+
 async function auditReportLists() {
   const homeHtml = await fetchOfficialText(CFB_ORIGIN + '/');
   const listsHtml = await fetchOfficialText(CFB_CURRENT_LISTS_URL);
@@ -215,6 +253,21 @@ async function auditReportLists() {
     }
   }
 
+  const reportApiProbes = [];
+  for (const routeAction of ['candidate-reports', 'pcf-reports']) {
+    for (const operation of ['grid_info', 'grid_data'] as const) {
+      try {
+        reportApiProbes.push(await probeReportApi(operation, routeAction));
+      } catch (error) {
+        reportApiProbes.push({
+          operation,
+          routeAction,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
+  }
+
   return {
     currentListsUrl: CFB_CURRENT_LISTS_URL,
     homeReportAnchors: reportAnchors(homeHtml),
@@ -231,6 +284,7 @@ async function auditReportLists() {
     ].slice(0, 260),
     scriptUrls: scripts,
     scriptResults,
+    reportApiProbes,
   };
 }
 
