@@ -1,0 +1,25 @@
+name: Source expansion CFB finance tail handoff
+
+on:
+  workflow_run:
+    workflows: ["Source expansion CFB candidate finance historical tranches"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  continue:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Start serialized membership tail
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh workflow run source-expansion-cfb-candidate-finance.yml             --repo "$GITHUB_REPOSITORY"             --ref main             -f batch=membership-tail             -f continuation=0
