@@ -107,7 +107,17 @@ async function main() {
     const rowContentSha256 = independentExpenditureContentSha256(rows);
     const fetchedAt = new Date().toISOString();
 
-    const disclosureMappings = rows.flatMap(row => {
+    type DisclosureMapping = {
+      rowKey: string;
+      availableOn: string;
+      disclosedOn: string | null;
+      filedOn: string | null;
+      reportName: string;
+      proofKind: 'cfb_public_disclosure' | 'cfb_report_filing';
+      proofUrl: string;
+    };
+
+    const disclosureMappings: DisclosureMapping[] = rows.flatMap<DisclosureMapping>(row => {
       const registrationNumber = row.spenderRegistrationNumber;
       if (!registrationNumber) return [];
 
