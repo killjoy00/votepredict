@@ -333,7 +333,7 @@ async function auditReportLists() {
     try {
       const body = await fetchOfficialText(url);
       const candidates = endpointCandidates(body);
-      if (candidates.length > 0 || /current-lists|Current candidate reports|report_date|filed/i.test(body)) {
+      if (candidates.length > 0 || /current-lists|Current candidate reports|report_date|filed|viewPDF/i.test(body)) {
         scriptResults.push({
           url,
           endpointCandidates: candidates.slice(0, 80),
