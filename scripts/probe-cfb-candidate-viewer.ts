@@ -45,6 +45,10 @@ function snippets(text: string): string[] {
     /searchType/gi,
     /ajaxSetup/gi,
     /\.ajax\s*\(/gi,
+    /\btab_content\b/gi,
+    /\bdata_name\b/gi,
+    /\bextra_data\b/gi,
+    /\bstore_name\b/gi,
     /viewPDF\s*\(/gi,
     /reports\s+and\s+data/gi,
   ];
@@ -88,6 +92,10 @@ function focusedContexts(text: string): string[] {
     /\bsearchType\b/gi,
     /\$\.ajaxSetup\s*\(/gi,
     /\$\.ajax\s*\(/gi,
+    /\btab_content\b/gi,
+    /\bdata_name\b/gi,
+    /\bextra_data\b/gi,
+    /\bstore_name\b/gi,
   ];
   const rows: string[] = [];
   for (const pattern of patterns) {
