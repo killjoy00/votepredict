@@ -29,6 +29,12 @@ function batchSize(): number {
   return Math.min(500, Math.max(25, requested));
 }
 
+function currentReportProofLimit(): number {
+  const requested = Number.parseInt(process.env.VOTEPREDICT_CFB_CURRENT_REPORT_PROOF_LIMIT ?? '', 10);
+  if (!Number.isFinite(requested)) return 50;
+  return Math.min(100, Math.max(1, requested));
+}
+
 async function chooseDb(env: Record<string, string | undefined>) {
   const { Pool } = await import('pg');
   async function works(value: string) {
@@ -90,6 +96,10 @@ async function main() {
   } = await import('../src/evidence/cfb-report-availability.js');
   const { discoverCampaignFinanceDownloadUrls, fetchCampaignFinanceBulkText } =
     await import('../src/evidence/campaign-finance-live.js');
+  const { acquireCfbCurrentReportProofs } =
+    await import('../src/evidence/cfb-current-report-acquisition.js');
+  const { firstProvenCfbFinanceAvailability } =
+    await import('../src/evidence/cfb-report-finance-mapper.js');
   const {
     parseCfbIndependentExpenditureCsv,
     sessionForIndependentExpenditureYear,
@@ -115,7 +125,34 @@ async function main() {
       reportName: string;
       proofKind: 'cfb_public_disclosure' | 'cfb_report_filing';
       proofUrl: string;
+      proofTextSha256: string | null;
     };
+
+    const currentReportRows = rows.filter(row =>
+      row.year === 2026
+      && Boolean(row.spenderRegistrationNumber)
+      && !row.disclosedOn
+      && !(row.filedOn && row.reportName));
+    const currentReportRegistrations = [...new Set(
+      currentReportRows
+        .map(row => row.spenderRegistrationNumber)
+        .filter((value): value is string => Boolean(value)),
+    )];
+    const currentReportProofs = await acquireCfbCurrentReportProofs({
+      kind: 'pcf-reports',
+      maxReports: currentReportProofLimit(),
+      registrationNumbers: currentReportRegistrations,
+    });
+    const currentReportsByRegistration = new Map<string, Array<{
+      proof: (typeof currentReportProofs.reports)[number]['proof'];
+      text: string;
+    }>>();
+    for (const report of currentReportProofs.reports) {
+      const registrationNumber = report.proof.reference.registrationNumber;
+      const reports = currentReportsByRegistration.get(registrationNumber) ?? [];
+      reports.push({ proof: report.proof, text: report.text });
+      currentReportsByRegistration.set(registrationNumber, reports);
+    }
 
     const disclosureMappings: DisclosureMapping[] = [];
     for (const row of rows) {
@@ -137,6 +174,7 @@ async function main() {
           reportName: proof.reportName,
           proofKind: proof.proofKind,
           proofUrl: proof.proofUrl,
+          proofTextSha256: null,
         });
         continue;
       }
@@ -156,10 +194,39 @@ async function main() {
           reportName: proof.reportName,
           proofKind: 'cfb_report_filing',
           proofUrl: proof.proofUrl,
+          proofTextSha256: null,
         });
       }
     }
     const disclosureByRowKey = new Map(disclosureMappings.map(mapping => [mapping.rowKey, mapping]));
+
+    for (const row of currentReportRows) {
+      if (disclosureByRowKey.has(row.rowKey) || !row.spenderRegistrationNumber) continue;
+      const reports = currentReportsByRegistration.get(row.spenderRegistrationNumber);
+      if (!reports?.length) continue;
+      const match = firstProvenCfbFinanceAvailability({
+        registrationNumber: row.spenderRegistrationNumber,
+        transactionDate: row.transactionDate,
+        kind: 'expenditure',
+        amount: row.amount,
+        totalAmount: row.totalAmount,
+        affectedCommitteeName: row.affectedCommitteeName,
+        affectedCommitteeRegistrationNumber: row.affectedCommitteeRegistrationNumber,
+      }, reports);
+      if (!match) continue;
+      const mapping: DisclosureMapping = {
+        rowKey: row.rowKey,
+        availableOn: match.window.availableOn,
+        disclosedOn: null,
+        filedOn: match.proof.filedOn,
+        reportName: match.window.reportName,
+        proofKind: 'cfb_report_filing',
+        proofUrl: match.window.proofUrl,
+        proofTextSha256: match.proof.textSha256,
+      };
+      disclosureMappings.push(mapping);
+      disclosureByRowKey.set(mapping.rowKey, mapping);
+    }
 
     const drafts = rows.map(row => {
       const disclosure = disclosureByRowKey.get(row.rowKey);
@@ -271,6 +338,7 @@ async function main() {
           report_name: mapping.reportName,
           proof_kind: mapping.proofKind,
           proof_url: mapping.proofUrl,
+          proof_text_sha256: mapping.proofTextSha256,
         }));
         const promoted = await pool.query<{ row_key: string }>(`
           WITH disclosure AS (
@@ -282,7 +350,8 @@ async function main() {
                 filed_on date,
                 report_name text,
                 proof_kind text,
-                proof_url text
+                proof_url text,
+                proof_text_sha256 text
               )
           )
           UPDATE evidence_items ei
@@ -297,7 +366,9 @@ async function main() {
                    'reportName', disclosure.report_name,
                    'availabilityProofKind', disclosure.proof_kind,
                    'availabilityProofUrl', disclosure.proof_url,
-                   'disclosureDateIsAvailability', true,
+                   'availabilityProofTextSha256', disclosure.proof_text_sha256,
+                   'disclosureDateIsAvailability', disclosure.proof_kind = 'cfb_public_disclosure',
+                   'filingDateDerivedAvailability', disclosure.proof_kind = 'cfb_report_filing',
                    'transactionDateIsAvailability', false
                  ))
             FROM source_documents sd, disclosure
@@ -341,6 +412,15 @@ async function main() {
         filingDerivedRows: disclosureMappings.filter(row => row.proofKind === 'cfb_report_filing').length,
         promotedThisRun,
         asOfEligibleRows: eligible.rows[0]?.count ?? 0,
+        currentReportProofs: {
+          entitiesDiscovered: currentReportProofs.entitiesDiscovered,
+          referencesDiscovered: currentReportProofs.referencesDiscovered,
+          eligibleReferences: currentReportProofs.eligibleReferences,
+          selectedReports: currentReportProofs.selectedReports,
+          proofsParsed: currentReportProofs.reports.length,
+          failures: currentReportProofs.failures.length,
+          mappedRows: disclosureMappings.filter(row => row.proofTextSha256).length,
+        },
         policy: {
           directOfficialDisclosureDateIsAvailability: true,
           exactFilingTimestampRequiredWhenDisclosureDateKnown: false,
