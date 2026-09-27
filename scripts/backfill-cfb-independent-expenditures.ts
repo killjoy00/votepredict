@@ -407,6 +407,16 @@ async function main() {
                ei.published_at IS DISTINCT FROM (disclosure.available_on::text || 'T12:00:00Z')::timestamptz
                OR ei.metadata->>'asOfEligible' IS DISTINCT FROM 'true'
                OR ei.metadata->>'availableOn' IS DISTINCT FROM disclosure.available_on::text
+               OR (
+                 disclosure.proof_content_sha256 IS NOT NULL
+                 AND ei.metadata->>'availabilityProofContentSha256'
+                   IS DISTINCT FROM disclosure.proof_content_sha256
+               )
+               OR (
+                 disclosure.proof_text_sha256 IS NOT NULL
+                 AND ei.metadata->>'availabilityProofTextSha256'
+                   IS DISTINCT FROM disclosure.proof_text_sha256
+               )
              )
           RETURNING ei.metadata->>'rowKey' AS row_key
         `, [JSON.stringify(batch), CFB_REPORT_AVAILABILITY_VERSION]);
