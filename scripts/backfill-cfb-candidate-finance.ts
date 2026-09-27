@@ -74,10 +74,11 @@ async function main() {
   } = await import('../src/evidence/cfb-candidate-finance-target-batches.js');
   const {
     cfbCandidateFinanceTargetKey,
+    isCfbCandidateFinanceMembershipTailRequest,
     selectCfbCandidateFinanceMembershipTail,
   } = await import('../src/evidence/cfb-candidate-finance-membership-tail.js');
   const targetRequest = process.env.VOTEPREDICT_CFB_CANDIDATE_FINANCE_BATCH_REQUEST ?? '';
-  const membershipTailMode = /(?:^|\\s)batch=membership-tail(?:\\s|$)/i.test(targetRequest);
+  const membershipTailMode = isCfbCandidateFinanceMembershipTailRequest(targetRequest);
   const staticTargetBatch = membershipTailMode
     ? null
     : resolveCfbCandidateFinanceTargetBatch(targetRequest);
@@ -271,8 +272,8 @@ async function main() {
         remainingAfter,
       };
       if (process.env.GITHUB_OUTPUT) {
-        appendFileSync(process.env.GITHUB_OUTPUT, 'tail_remaining_groups=' + remainingAfter + '\\n');
-        appendFileSync(process.env.GITHUB_OUTPUT, 'tail_selected_groups=' + selectedGroups.length + '\\n');
+        appendFileSync(process.env.GITHUB_OUTPUT, 'tail_remaining_groups=' + remainingAfter + '\n');
+        appendFileSync(process.env.GITHUB_OUTPUT, 'tail_selected_groups=' + selectedGroups.length + '\n');
       }
       if (!TARGETS.length) {
         console.log(JSON.stringify({
