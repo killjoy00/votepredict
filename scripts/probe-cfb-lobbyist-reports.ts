@@ -151,6 +151,233 @@ function forms(html: string) {
   return rows;
 }
 
+
+type LobbyistPdfReference = {
+  year: string;
+  type: string;
+  period: string;
+  assoc: string;
+  lob: string;
+  amend: string;
+};
+
+function parsedViewPdfReferences(text: string): LobbyistPdfReference[] {
+  const rows: LobbyistPdfReference[] = [];
+  const seen = new Set<string>();
+  const pattern = /viewPDF\s*\(\s*['"]([^'"]*)['"]\s*,\s*['"]([^'"]*)['"]\s*,\s*['"]([^'"]*)['"]\s*,\s*['"]([^'"]*)['"]\s*,\s*['"]([^'"]*)['"]\s*,\s*['"]?(\d+)['"]?\s*\)/gi;
+  for (const match of text.matchAll(pattern)) {
+    const row = {
+      year: match[1] ?? '',
+      type: match[2] ?? '',
+      period: match[3] ?? '',
+      assoc: match[4] ?? '',
+      lob: match[5] ?? '',
+      amend: match[6] ?? '',
+    };
+    const key = Object.values(row).join('|');
+    if (!seen.has(key)) {
+      seen.add(key);
+      rows.push(row);
+    }
+    if (rows.length >= 40) break;
+  }
+  return rows;
+}
+
+async function fetchPageSession(url: string) {
+  const target = new URL(url);
+  assertOfficial(target);
+  const response = await fetch(target, {
+    headers: {
+      'user-agent': 'Mozilla/5.0 VotePredict/2.0 cfb-lobbyist-tab-probe',
+      accept: 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.1',
+    },
+    redirect: 'follow',
+    signal: AbortSignal.timeout(30_000),
+  });
+  const finalUrl = new URL(response.url);
+  assertOfficial(finalUrl);
+  await response.arrayBuffer();
+  const headers = response.headers as Headers & { getSetCookie?: () => string[] };
+  const setCookies = typeof headers.getSetCookie === 'function'
+    ? headers.getSetCookie()
+    : [response.headers.get('set-cookie') ?? ''].filter(Boolean);
+  return {
+    finalUrl: response.url,
+    cookie: setCookies
+      .map(value => value.split(';', 1)[0]?.trim())
+      .filter(Boolean)
+      .join('; '),
+    cookieNames: setCookies
+      .map(value => value.split('=', 1)[0]?.trim())
+      .filter(Boolean),
+  };
+}
+
+async function probeLobbyistTab(input: {
+  id: string;
+  year: string;
+  period: string;
+  tabname: 'reports_data' | 'categories';
+}) {
+  const pageUrl =
+    'https://register.cfb.mn.gov/reports-and-data/viewers/lobbying/lobbying-organizations/'
+    + input.id + '/' + input.year + '.' + input.period + '/';
+  const session = await fetchPageSession(pageUrl);
+  const endpoint = new URL(
+    '/reports-and-data/viewers/lobbying/lobbying-organizations/api',
+    'https://register.cfb.mn.gov',
+  );
+  const body = new URLSearchParams({
+    id: input.id,
+    year: input.year,
+    period: input.period,
+    tabname: input.tabname,
+  });
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'user-agent': 'Mozilla/5.0 VotePredict/2.0 cfb-lobbyist-tab-probe',
+      accept: 'application/json,text/javascript,*/*;q=0.1',
+      'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      referer: session.finalUrl,
+      origin: 'https://register.cfb.mn.gov',
+      'x-requested-with': 'XMLHttpRequest',
+      ...(session.cookie ? { cookie: session.cookie } : {}),
+    },
+    body: body.toString(),
+    redirect: 'follow',
+    signal: AbortSignal.timeout(30_000),
+  });
+  const finalUrl = new URL(response.url);
+  assertOfficial(finalUrl);
+  const raw = await response.text();
+  if (raw.length > 8_000_000) throw new Error('CFB lobbyist tab response exceeded 8 MB');
+  let tabcontent = '';
+  try {
+    const parsed = JSON.parse(raw) as { tabcontent?: unknown };
+    if (typeof parsed.tabcontent === 'string') tabcontent = parsed.tabcontent;
+  } catch {
+    // Non-JSON responses are retained only as a bounded diagnostic sample.
+  }
+  return {
+    id: input.id,
+    year: input.year,
+    period: input.period,
+    tabname: input.tabname,
+    status: response.status,
+    finalUrl: response.url,
+    contentType: response.headers.get('content-type'),
+    cookieNames: session.cookieNames,
+    responseBytes: raw.length,
+    tabcontentBytes: tabcontent.length,
+    viewPdfReferences: parsedViewPdfReferences(tabcontent),
+    contexts: contexts(tabcontent),
+    responseSample: (tabcontent || raw).replace(/\s+/g, ' ').trim().slice(0, 24000),
+  };
+}
+
+function pdfDateAndSubjectContexts(text: string): string[] {
+  const normalized = text.replace(/\u0000/g, '');
+  const patterns = [
+    /\breceived\b/gi,
+    /\bfiled\b/gi,
+    /\bsubmitted\b/gi,
+    /\bperiod covered\b/gi,
+    /\breporting period\b/gi,
+    /specific lobbying subject/gi,
+    /specific subject/gi,
+    /lobbying subject/gi,
+    /\bsubject\b/gi,
+  ];
+  const rows: string[] = [];
+  for (const pattern of patterns) {
+    for (const match of normalized.matchAll(pattern)) {
+      const index = match.index ?? 0;
+      const value = normalized
+        .slice(Math.max(0, index - 500), Math.min(normalized.length, index + 1400))
+        .replace(/\s+/g, ' ')
+        .trim();
+      if (value && !rows.includes(value)) rows.push(value);
+      if (rows.length >= 36) return rows;
+    }
+  }
+  return rows;
+}
+
+async function fetchLobbyistReportPdf(reference: LobbyistPdfReference, referer: string) {
+  const endpoint = new URL('https://cfb.mn.gov/rptViewer/Main.php?do=viewPDF');
+  const form = new URLSearchParams({
+    downloadpdf: 'false',
+    year: reference.year,
+    type: reference.type,
+    period: reference.period,
+    assoc: reference.assoc,
+    lob: reference.lob,
+    amend: reference.amend,
+  });
+  const commonHeaders: Record<string, string> = {
+    'user-agent': 'Mozilla/5.0 VotePredict/2.0 cfb-lobbyist-pdf-probe',
+    accept: 'application/pdf,text/html;q=0.9,*/*;q=0.1',
+    referer,
+  };
+  let response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      ...commonHeaders,
+      'content-type': 'application/x-www-form-urlencoded',
+    },
+    body: form.toString(),
+    redirect: 'follow',
+    signal: AbortSignal.timeout(45_000),
+  });
+  let method = 'POST';
+  if (response.status === 403) {
+    const getUrl = new URL(endpoint);
+    for (const [key, value] of form) getUrl.searchParams.set(key, value);
+    response = await fetch(getUrl, {
+      headers: commonHeaders,
+      redirect: 'follow',
+      signal: AbortSignal.timeout(45_000),
+    });
+    method = 'GET-after-403';
+  }
+  const finalUrl = new URL(response.url);
+  assertOfficial(finalUrl);
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  if (bytes.byteLength > 30_000_000) throw new Error('CFB lobbyist PDF response exceeded 30 MB');
+  const header = new TextDecoder('ascii').decode(bytes.subarray(0, Math.min(5, bytes.byteLength)));
+  const isPdf = header === '%PDF-';
+  let text = '';
+  if (isPdf && bytes.byteLength >= 300) {
+    const { CanvasFactory } = await import('pdf-parse/worker');
+    const { PDFParse } = await import('pdf-parse');
+    const parser = new PDFParse({ data: bytes, CanvasFactory });
+    try {
+      const parsed = await parser.getText();
+      text = parsed.text ?? '';
+    } finally {
+      await parser.destroy();
+    }
+  } else {
+    text = new TextDecoder('utf-8').decode(bytes);
+  }
+  const { createHash } = await import('node:crypto');
+  return {
+    reference,
+    method,
+    status: response.status,
+    finalUrl: response.url,
+    contentType: response.headers.get('content-type'),
+    bytes: bytes.byteLength,
+    isPdf,
+    contentSha256: createHash('sha256').update(bytes).digest('hex'),
+    textLength: text.length,
+    contexts: pdfDateAndSubjectContexts(text),
+    textSample: text.replace(/\s+/g, ' ').trim().slice(0, 12000),
+  };
+}
+
 async function main() {
   const pages: Array<Record<string,unknown>> = [];
   const scriptSet = new Set<string>();
@@ -205,10 +432,52 @@ async function main() {
     }
   }
 
+  const tabProbes: Array<Record<string, unknown>> = [];
+  const pdfReferences = new Map<string, { reference: LobbyistPdfReference; referer: string }>();
+  for (const period of ['1', '2'] as const) {
+    for (const tabname of ['reports_data', 'categories'] as const) {
+      try {
+        const probe = await probeLobbyistTab({ id: '418', year: '2024', period, tabname });
+        tabProbes.push(probe);
+        if (tabname === 'reports_data') {
+          const referer =
+            'https://register.cfb.mn.gov/reports-and-data/viewers/lobbying/lobbying-organizations/418/2024.'
+            + period + '/';
+          for (const reference of probe.viewPdfReferences) {
+            const key = Object.values(reference).join('|');
+            pdfReferences.set(key, { reference, referer });
+          }
+        }
+      } catch (error) {
+        tabProbes.push({
+          id: '418',
+          year: '2024',
+          period,
+          tabname,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
+  }
+
+  const pdfProbes: Array<Record<string, unknown>> = [];
+  for (const { reference, referer } of [...pdfReferences.values()].slice(0, 12)) {
+    try {
+      pdfProbes.push(await fetchLobbyistReportPdf(reference, referer));
+    } catch (error) {
+      pdfProbes.push({
+        reference,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
   console.log(JSON.stringify({
     cfbLobbyistReportProbe: {
       pages,
       scripts,
+      tabProbes,
+      pdfProbes,
       policy: {
         readOnly: true,
         databaseAccess: false,
