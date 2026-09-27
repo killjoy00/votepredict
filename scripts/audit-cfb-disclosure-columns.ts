@@ -150,6 +150,22 @@ function contextSnippets(text: string): string[] {
   return snippets;
 }
 
+function viewPdfContexts(text: string): string[] {
+  const contexts: string[] = [];
+  const pattern = /viewPDF/gi;
+  for (const match of text.matchAll(pattern)) {
+    const index = match.index ?? 0;
+    const snippet = text
+      .slice(Math.max(0, index - 1800), Math.min(text.length, index + 3200))
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (!snippet || contexts.includes(snippet)) continue;
+    contexts.push(snippet);
+    if (contexts.length >= 20) break;
+  }
+  return contexts;
+}
+
 function serverActionCalls(text: string): Array<{ action: string; snippet: string }> {
   const rows: Array<{ action: string; snippet: string }> = [];
   const seen = new Set<string>();
@@ -311,6 +327,7 @@ async function auditReportLists() {
     endpointCandidates: string[];
     contextSnippets: string[];
     serverActionCalls: Array<{ action: string; snippet: string }>;
+    viewPdfContexts: string[];
   }> = [];
   for (const url of scripts) {
     try {
@@ -322,6 +339,7 @@ async function auditReportLists() {
           endpointCandidates: candidates.slice(0, 80),
           contextSnippets: contextSnippets(body),
           serverActionCalls: serverActionCalls(body),
+          viewPdfContexts: viewPdfContexts(body),
         });
       }
     } catch (error) {
@@ -330,6 +348,7 @@ async function auditReportLists() {
         endpointCandidates: [`audit-error:${error instanceof Error ? error.message : String(error)}`],
         contextSnippets: [],
         serverActionCalls: [],
+        viewPdfContexts: [],
       });
     }
   }
