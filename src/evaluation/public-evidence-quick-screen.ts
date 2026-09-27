@@ -58,9 +58,9 @@ export function publicFinanceMemberMatchKey(name: string): string | undefined {
   return `${first}|${last}`;
 }
 
-function sessionStart(session: string): string | undefined {
+function financeWindowStart(session: string): string | undefined {
   const year = Number(session.slice(0, 4));
-  return Number.isInteger(year) && year >= 2000 ? `${year}-01-01` : undefined;
+  return Number.isInteger(year) && year >= 2002 ? `${year - 2}-01-01` : undefined;
 }
 
 export function publicFinanceFeatures(
@@ -68,7 +68,7 @@ export function publicFinanceFeatures(
   session: string,
   cutoffOn: string,
 ): Vector | undefined {
-  const start = sessionStart(session);
+  const start = financeWindowStart(session);
   if (!start) return undefined;
   let receipts = 0;
   let spending = 0;
