@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   cfbCandidateFinanceTargetKey,
+  isCfbCandidateFinanceMembershipTailRequest,
   selectCfbCandidateFinanceMembershipTail,
 } from '../src/evidence/cfb-candidate-finance-membership-tail.js';
 
@@ -30,4 +31,16 @@ test('membership tail enforces a bounded selection size', () => {
     resolvedRows: 100 - index,
   }));
   assert.equal(selectCfbCandidateFinanceMembershipTail(groups, new Set(), 1000).length, 32);
+});
+
+
+test('membership tail trigger recognizes issue-comment and dispatch batch syntax', () => {
+  assert.equal(
+    isCfbCandidateFinanceMembershipTailRequest(
+      '[source-expansion-cfb-candidate-finance] batch=membership-tail continue',
+    ),
+    true,
+  );
+  assert.equal(isCfbCandidateFinanceMembershipTailRequest('batch=membership-tail'), true);
+  assert.equal(isCfbCandidateFinanceMembershipTailRequest('batch=core'), false);
 });
