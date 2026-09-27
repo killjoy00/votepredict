@@ -9,6 +9,9 @@ export interface CfbIndependentExpenditureRow {
   rowKey: string;
   year: number;
   transactionDate: string | null;
+  reportName: string | null;
+  filedOn: string | null;
+  disclosedOn: string | null;
   spender: string;
   spenderRegistrationNumber: string | null;
   affectedCommitteeName: string;
@@ -100,6 +103,11 @@ export function parseCfbIndependentExpenditureCsv(
     const direction:IndependentExpenditureDirection =
       directionRaw==='for'?'for':directionRaw==='against'?'against':'other';
     const transactionDate=normalizeDate(value(rawRow,index,['Date','Expenditure date']));
+    const reportName=value(rawRow,index,['Report name','Report','Report type','Filing type'])||null;
+    const filedOn=normalizeDate(value(rawRow,index,['Filed date','Filing date','Date filed']));
+    const disclosedOn=normalizeDate(value(rawRow,index,[
+      'Disclosure date','Disclosed date','Date disclosed','Public date','Published date','Date published',
+    ]));
     const amount=money(value(rawRow,index,['Amount']));
     const unpaidAmount=money(value(rawRow,index,['Unpaid amount','Unpaid Amount']));
     const affectedCommitteeRegistrationNumber=value(rawRow,index,['Affected Cmte Reg Num','Affected Committee Reg Num'])||null;
@@ -111,7 +119,7 @@ export function parseCfbIndependentExpenditureCsv(
       affectedCommitteeRegistrationNumber,candidateName:identity.candidateName,chamber:identity.chamber,
       direction,amount,unpaidAmount,totalAmount:Number((amount+unpaidAmount).toFixed(2)),
     };
-    rows.push({...core,rowKey:stableRowKey(core),raw});
+    rows.push({...core,reportName,filedOn,disclosedOn,rowKey:stableRowKey(core),raw});
   });
   return rows.sort((a,b)=>
     a.year-b.year
