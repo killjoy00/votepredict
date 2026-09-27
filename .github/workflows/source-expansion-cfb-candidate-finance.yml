@@ -42,6 +42,7 @@ jobs:
       - name: Backfill bounded CFB candidate finance rows
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+          VOTEPREDICT_CFB_CANDIDATE_FINANCE_BATCH_REQUEST: ${{ github.event_name == 'issue_comment' && github.event.comment.body || '' }}
         run: node --import tsx scripts/backfill-cfb-candidate-finance.ts
       - name: Remove temporary credentials and logs
         if: always()
