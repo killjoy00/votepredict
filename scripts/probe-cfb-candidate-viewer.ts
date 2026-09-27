@@ -220,6 +220,89 @@ function tabContentContexts(text: string): string[] {
   return rows;
 }
 
+
+function viewPdfReferencesFromText(text: string): string[] {
+  const values = new Set<string>();
+  const pattern = /viewPDF\('([^']+)','([^']+)','([^']+)','([^']+)','([^']+)',(\d+)\)/gi;
+  for (const match of text.matchAll(pattern)) {
+    values.add([match[1], match[2], match[3], match[4], match[5], match[6]].join('|'));
+    if (values.size >= 100) break;
+  }
+  return [...values];
+}
+
+async function fetchPageSessionCookie(url: string): Promise<string> {
+  const response = await fetch(url, {
+    headers: { 'user-agent': 'Mozilla/5.0 VotePredict/2.0 cfb-candidate-reports-tab-probe' },
+    redirect: 'follow',
+    signal: AbortSignal.timeout(30_000),
+  });
+  await response.arrayBuffer();
+  const headers = response.headers as Headers & { getSetCookie?: () => string[] };
+  const setCookies = typeof headers.getSetCookie === 'function'
+    ? headers.getSetCookie()
+    : [response.headers.get('set-cookie') ?? ''].filter(Boolean);
+  return setCookies
+    .map(value => value.split(';', 1)[0]?.trim())
+    .filter(Boolean)
+    .join('; ');
+}
+
+async function probeReportsDataTab(input: {
+  pageUrl: string;
+  registrationNumber: string;
+  year: string;
+}) {
+  const year = Number(input.year);
+  if (!Number.isFinite(year)) throw new Error('Candidate reports-tab probe requires numeric segment year');
+  const params = new URLSearchParams();
+  params.set('id', input.registrationNumber);
+  params.set('year', input.year);
+  params.set('year_data[ElectionSegmentEndDate]', input.year);
+  params.set('year_data[ElectionSegmentStartDate]', String(year - 1));
+  params.set('tabname', 'reports_data');
+
+  const cookie = await fetchPageSessionCookie(input.pageUrl);
+  const endpoint = new URL('/reports-and-data/viewers/campaign-finance/candidates/api', ORIGIN);
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'user-agent': 'Mozilla/5.0 VotePredict/2.0 cfb-candidate-reports-tab-probe',
+      accept: 'application/json,text/javascript,*/*;q=0.1',
+      'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      referer: input.pageUrl,
+      origin: ORIGIN,
+      'x-requested-with': 'XMLHttpRequest',
+      ...(cookie ? { cookie } : {}),
+    },
+    body: params.toString(),
+    redirect: 'follow',
+    signal: AbortSignal.timeout(30_000),
+  });
+  const finalUrl = new URL(response.url);
+  if (finalUrl.protocol !== 'https:' || finalUrl.hostname !== 'register.cfb.mn.gov') {
+    throw new Error('Candidate reports-tab probe redirected off register.cfb.mn.gov');
+  }
+  const text = await response.text();
+  if (text.length > 8_000_000) throw new Error('Candidate reports-tab probe response exceeded 8 MB');
+  let tabcontent = '';
+  try {
+    const parsed = JSON.parse(text) as { tabcontent?: unknown };
+    if (typeof parsed.tabcontent === 'string') tabcontent = parsed.tabcontent;
+  } catch {
+    // Keep the bounded raw sample below; a non-JSON response is not evidence.
+  }
+  const refs = viewPdfReferencesFromText(tabcontent);
+  return {
+    status: response.status,
+    contentType: response.headers.get('content-type'),
+    bytes: text.length,
+    tabcontentBytes: tabcontent.length,
+    viewPdfReferences: refs,
+    responseSample: (tabcontent || text).replace(/\s+/g, ' ').trim().slice(0, 16000),
+  };
+}
+
 async function main() {
   const pages = [];
   for (const path of TARGETS) {
@@ -260,6 +343,7 @@ async function main() {
       }
       const identity = pageIdentity(path, page.text);
       const apiProbes: Array<Record<string, unknown>> = [];
+      let reportsDataTabProbe: Record<string, unknown> | null = null;
       if (identity) {
         for (const searchType of [...combinedSearchTypes].slice(0, 4)) {
           for (const method of ['GET', 'POST'] as const) {
@@ -275,6 +359,19 @@ async function main() {
           }
         }
       }
+      if (identity) {
+        try {
+          reportsDataTabProbe = await probeReportsDataTab({
+            pageUrl: page.url,
+            registrationNumber: identity.registrationNumber,
+            year: identity.year,
+          });
+        } catch (error) {
+          reportsDataTabProbe = {
+            error: error instanceof Error ? error.message : String(error),
+          };
+        }
+      }
       pages.push({
         path,
         finalUrl: page.url,
@@ -288,6 +385,7 @@ async function main() {
         pageTabContentContexts,
         pageContextSnippets: snippets(page.text),
         apiProbes,
+        reportsDataTabProbe,
         scripts,
         scriptResults,
       });
