@@ -150,14 +150,35 @@ export function cfbReportViewerUrl(reference: CfbReportViewerReference): string 
   return url.toString();
 }
 
-export async function fetchCfbReportViewerText(reference: CfbReportViewerReference) {
+function cfbReportViewerFormBody(reference: CfbReportViewerReference): string {
+  const params = new URLSearchParams();
+  params.set('downloadpdf', 'false');
+  params.set('year', reference.year);
+  params.set('type', reference.type);
+  params.set('period', reference.period);
+  params.set('se', reference.se);
+  params.set('regnum', reference.registrationNumber);
+  params.set('amend', String(reference.amendment));
+  return params.toString();
+}
+
+export async function fetchCfbReportViewerText(
+  reference: CfbReportViewerReference,
+  options: { method?: 'GET' | 'POST'; referer?: string } = {},
+) {
   const sourceUrl = cfbReportViewerUrl(reference);
-  const response = await fetch(sourceUrl, {
+  const method = options.method ?? 'GET';
+  const response = await fetch(method === 'POST' ? CFB_REPORT_VIEWER_URL : sourceUrl, {
+    method,
     headers: {
       'user-agent': 'Mozilla/5.0 VotePredict/2.0 cfb-current-report-validation',
-      referer: CFB_CURRENT_LISTS_APP_URL + '#/candidate-reports/all/',
+      referer: options.referer ?? CFB_CURRENT_LISTS_APP_URL + '#/candidate-reports/all/',
       accept: 'application/pdf,text/html;q=0.9,*/*;q=0.1',
+      ...(method === 'POST'
+        ? { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' }
+        : {}),
     },
+    ...(method === 'POST' ? { body: cfbReportViewerFormBody(reference) } : {}),
     redirect: 'follow',
     signal: AbortSignal.timeout(45_000),
   });
