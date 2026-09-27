@@ -117,6 +117,20 @@ async function main() {
     });
   }
 
+  console.log(JSON.stringify({
+    cfbCandidateHistoricalReportDiagnostic: {
+      targets: targetResults.map(result => ({
+        registrationNumber: result.registrationNumber,
+        segmentEndYear: result.segmentEndYear,
+        referencesDiscovered: result.referencesDiscovered,
+        selectedReports: result.selectedReports,
+        proofsParsed: result.proofsParsed,
+        failures: result.failures,
+        failureExamples: result.failureExamples,
+      })),
+    },
+  }, null, 2));
+
   if (!targetResults.some(result => result.proofsParsed > 0)) {
     throw new Error('Historical CFB candidate report validation parsed zero official report proofs');
   }
