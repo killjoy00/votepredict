@@ -31,3 +31,8 @@ export function selectCfbCandidateFinanceMembershipTail(
       || left.registrationNumber.localeCompare(right.registrationNumber))
     .slice(0, boundedLimit);
 }
+
+
+export function isCfbCandidateFinanceMembershipTailRequest(request?: string | null): boolean {
+  return /(?:^|\s)batch=membership-tail(?:\s|$)/i.test(request ?? '');
+}
