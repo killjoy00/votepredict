@@ -51,6 +51,113 @@ function hasAny(headers: readonly string[], patterns: readonly RegExp[]): boolea
   return headers.some(header => patterns.some(pattern => pattern.test(header)));
 }
 
+
+const CFB_ORIGIN = 'https://register.cfb.mn.gov';
+const CFB_CURRENT_LISTS_URL =
+  CFB_ORIGIN + '/reports-and-data/searches-and-lists/other-reports-and-lists/current-lists/';
+
+async function fetchOfficialText(url: string): Promise<string> {
+  const target = new URL(url);
+  if (target.protocol !== 'https:' || target.hostname !== 'register.cfb.mn.gov') {
+    throw new Error('CFB report-list audit only allows the official register.cfb.mn.gov host');
+  }
+  const response = await fetch(target, {
+    headers: { 'user-agent': 'VotePredict/2.0 cfb-disclosure-audit' },
+    signal: AbortSignal.timeout(30_000),
+  });
+  if (!response.ok) throw new Error(`CFB report-list audit returned HTTP ${response.status} for ${target}`);
+  const text = await response.text();
+  if (text.length > 8_000_000) throw new Error(`CFB report-list audit response too large: ${target}`);
+  return text;
+}
+
+function htmlText(value: string): string {
+  return value
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function reportAnchors(html: string): Array<{ text: string; href: string }> {
+  const anchors: Array<{ text: string; href: string }> = [];
+  const pattern = /<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  for (const match of html.matchAll(pattern)) {
+    const text = htmlText(match[2] ?? '');
+    const href = (match[1] ?? '').trim();
+    if (!text || !href) continue;
+    if (!/(candidate|committee|fund|party|report|filing|current list)/i.test(text)) continue;
+    anchors.push({ text, href: new URL(href, CFB_ORIGIN).toString() });
+  }
+  return [...new Map(anchors.map(row => [`${row.text}|\u0000|${row.href}`, row])).values()]
+    .slice(0, 120);
+}
+
+function scriptUrls(html: string): string[] {
+  const urls: string[] = [];
+  for (const match of html.matchAll(/<script\b[^>]*src=["']([^"']+)["'][^>]*>/gi)) {
+    const href = (match[1] ?? '').trim();
+    if (!href) continue;
+    const url = new URL(href, CFB_ORIGIN);
+    if (url.protocol === 'https:' && url.hostname === 'register.cfb.mn.gov') urls.push(url.toString());
+  }
+  return [...new Set(urls)].slice(0, 24);
+}
+
+function endpointCandidates(text: string): string[] {
+  const values = new Set<string>();
+  const patterns = [
+    /["'`](\/[^"'\`\s]{1,220}(?:api|ajax|report|list|data)[^"'\`\s]{0,220})["'`]/gi,
+    /["'`](https:\/\/register\.cfb\.mn\.gov\/[^"'\`\s]{1,420})["'`]/gi,
+  ];
+  for (const pattern of patterns) {
+    for (const match of text.matchAll(pattern)) {
+      const raw = (match[1] ?? '').replace(/\\\//g, '/').trim();
+      if (!raw || /\.(?:png|jpe?g|gif|svg|css|woff2?)(?:\?|$)/i.test(raw)) continue;
+      values.add(raw);
+      if (values.size >= 160) break;
+    }
+    if (values.size >= 160) break;
+  }
+  return [...values];
+}
+
+async function auditReportLists() {
+  const homeHtml = await fetchOfficialText(CFB_ORIGIN + '/');
+  const listsHtml = await fetchOfficialText(CFB_CURRENT_LISTS_URL);
+  const scripts = [...new Set([...scriptUrls(homeHtml), ...scriptUrls(listsHtml)])];
+
+  const scriptResults: Array<{ url: string; endpointCandidates: string[] }> = [];
+  for (const url of scripts) {
+    try {
+      const body = await fetchOfficialText(url);
+      const candidates = endpointCandidates(body);
+      if (candidates.length > 0 || /current-lists|Current candidate reports|report_date|filed/i.test(body)) {
+        scriptResults.push({ url, endpointCandidates: candidates.slice(0, 80) });
+      }
+    } catch (error) {
+      scriptResults.push({
+        url,
+        endpointCandidates: [`audit-error:${error instanceof Error ? error.message : String(error)}`],
+      });
+    }
+  }
+
+  return {
+    currentListsUrl: CFB_CURRENT_LISTS_URL,
+    homeReportAnchors: reportAnchors(homeHtml),
+    currentListReportAnchors: reportAnchors(listsHtml),
+    inlineEndpointCandidates: [
+      ...endpointCandidates(homeHtml),
+      ...endpointCandidates(listsHtml),
+    ].slice(0, 160),
+    scriptUrls: scripts,
+    scriptResults,
+  };
+}
+
 async function main() {
   const urls = await discoverCampaignFinanceDownloadUrls();
   const sources = [
@@ -79,10 +186,13 @@ async function main() {
     };
   }
 
+  const reportListAudit = await auditReportLists();
+
   console.log(JSON.stringify({
     cfbDisclosureColumnAudit: {
       discoveredDownloadUrls: urls.discovered,
       sources: result,
+      reportListAudit,
       productionAction: 'none',
     },
   }, null, 2));
