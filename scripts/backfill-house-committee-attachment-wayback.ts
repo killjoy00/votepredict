@@ -10,6 +10,8 @@ const MAX_BATCH_SIZE = 5000;
 const DEFAULT_INITIAL_CONCURRENCY = 2;
 const DEFAULT_MAX_CONCURRENCY = 4;
 const HARD_MAX_CONCURRENCY = 4;
+const DEFAULT_TIME_BUDGET_MINUTES = 105;
+const MAX_TIME_BUDGET_MINUTES = 115;
 const MIN_CANDIDATE_START_GAP_MS = 250;
 const RAMP_SUCCESS_THRESHOLD = 12;
 const MAX_PDF_BYTES = 25_000_000;
@@ -56,6 +58,12 @@ function batchSize(): number {
   const requested = Number.parseInt(process.env.VOTEPREDICT_HOUSE_ATTACHMENT_WAYBACK_BATCH ?? '', 10);
   if (!Number.isFinite(requested)) return DEFAULT_BATCH_SIZE;
   return Math.min(MAX_BATCH_SIZE, Math.max(1, requested));
+}
+
+function timeBudgetMinutes(): number {
+  const requested = Number.parseInt(process.env.VOTEPREDICT_HOUSE_ATTACHMENT_WAYBACK_TIME_BUDGET_MINUTES ?? '', 10);
+  if (!Number.isFinite(requested)) return DEFAULT_TIME_BUDGET_MINUTES;
+  return Math.min(MAX_TIME_BUDGET_MINUTES, Math.max(5, requested));
 }
 
 function maxWorkerConcurrency(): number {
@@ -267,6 +275,8 @@ async function main() {
   } = await import('../src/evidence/house-committee-attachment-wayback-bulk.js');
 
   const limit = batchSize();
+  const budgetMinutes = timeBudgetMinutes();
+  const deadlineMs = Date.now() + budgetMinutes * 60_000;
   const maxConcurrency = Math.min(maxWorkerConcurrency(), limit);
   const initialConcurrency = initialWorkerConcurrency(maxConcurrency);
   const controller = new AdaptiveCandidateController(initialConcurrency, maxConcurrency);
@@ -373,6 +383,7 @@ async function main() {
         remainingBefore,
         selected: candidates.length,
         prefixShards: prefixShards.length,
+        timeBudgetMinutes: budgetMinutes,
         adaptiveConcurrency: controller.snapshot(),
       }),
     ]);
@@ -390,10 +401,24 @@ async function main() {
     let prefixPages = 0;
     let prefixShardFailures = 0;
     let deferredCandidates = 0;
+    let timeBudgetDeferredCandidates = 0;
+    let stoppedForTimeBudget = false;
     const capturesByCandidateKey = new Map<string, import('../src/evidence/wayback.js').WaybackCapture[]>();
     const completeCandidateKeys = new Set<string>();
 
-    for (const shard of prefixShards) {
+    for (let shardIndex = 0; shardIndex < prefixShards.length; shardIndex += 1) {
+      const shard = prefixShards[shardIndex];
+      if (Date.now() >= deadlineMs) {
+        stoppedForTimeBudget = true;
+        for (const deferredShard of prefixShards.slice(shardIndex)) {
+          for (const key of deferredShard.candidateKeys) {
+            const count = candidateCountByKey.get(deferredShard.sessionSlug + '\u0000' + key) ?? 0;
+            deferredCandidates += count;
+            timeBudgetDeferredCandidates += count;
+          }
+        }
+        break;
+      }
       const window = SESSION_WINDOWS[shard.sessionSlug];
       if (!window) throw new Error('Unsupported House attachment session: ' + shard.sessionSlug);
       try {
@@ -617,11 +642,20 @@ async function main() {
     let nextCandidateIndex = 0;
     async function worker() {
       while (true) {
+        if (Date.now() >= deadlineMs) {
+          stoppedForTimeBudget = true;
+          return;
+        }
         const index = nextCandidateIndex;
         nextCandidateIndex += 1;
         const candidate = processableCandidates[index];
         if (!candidate) return;
         await controller.acquire();
+        if (Date.now() >= deadlineMs) {
+          controller.release('success');
+          stoppedForTimeBudget = true;
+          return;
+        }
         const outcome = await processCandidate(candidate);
         controller.release(outcome);
       }
@@ -630,6 +664,12 @@ async function main() {
     await Promise.all(
       Array.from({ length: Math.min(maxConcurrency, Math.max(1, processableCandidates.length)) }, () => worker()),
     );
+
+    const unscannedProcessable = Math.max(0, processableCandidates.length - scanned);
+    if (unscannedProcessable > 0 && stoppedForTimeBudget) {
+      deferredCandidates += unscannedProcessable;
+      timeBudgetDeferredCandidates += unscannedProcessable;
+    }
 
     const remainingAfter = (await pool.query<{ remaining: number }>(
       remainingSql,
@@ -646,7 +686,13 @@ async function main() {
         prefixPages,
         prefixShardFailures,
         deferredCandidates,
+        timeBudgetDeferredCandidates,
         processableCandidates: processableCandidates.length,
+      },
+      timeBudget: {
+        minutes: budgetMinutes,
+        stoppedEarly: stoppedForTimeBudget,
+        deferredCandidates: timeBudgetDeferredCandidates,
       },
       adaptiveConcurrency: controller.snapshot(),
       remainingBefore,
