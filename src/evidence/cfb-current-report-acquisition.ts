@@ -175,12 +175,15 @@ export async function fetchCfbReportViewerText(
 ) {
   const sourceUrl = cfbReportViewerUrl(reference);
   const method = options.method ?? 'GET';
-  const response = await fetch(method === 'POST' ? CFB_REPORT_VIEWER_URL : sourceUrl, {
+  const requestHeaders = {
+    'user-agent': 'Mozilla/5.0 VotePredict/2.0 cfb-current-report-validation',
+    referer: options.referer ?? CFB_CURRENT_LISTS_APP_URL + '#/candidate-reports/all/',
+    accept: 'application/pdf,text/html;q=0.9,*/*;q=0.1',
+  };
+  let response = await fetch(method === 'POST' ? CFB_REPORT_VIEWER_URL : sourceUrl, {
     method,
     headers: {
-      'user-agent': 'Mozilla/5.0 VotePredict/2.0 cfb-current-report-validation',
-      referer: options.referer ?? CFB_CURRENT_LISTS_APP_URL + '#/candidate-reports/all/',
-      accept: 'application/pdf,text/html;q=0.9,*/*;q=0.1',
+      ...requestHeaders,
       ...(method === 'POST'
         ? { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' }
         : {}),
@@ -191,6 +194,14 @@ export async function fetchCfbReportViewerText(
     redirect: 'follow',
     signal: AbortSignal.timeout(45_000),
   });
+  if (method === 'POST' && response.status === 403) {
+    response = await fetch(sourceUrl, {
+      method: 'GET',
+      headers: requestHeaders,
+      redirect: 'follow',
+      signal: AbortSignal.timeout(45_000),
+    });
+  }
   if (!response.ok) throw new Error('CFB report viewer HTTP ' + response.status);
   const finalUrl = new URL(response.url);
   if (finalUrl.protocol !== 'https:' || !['cfb.mn.gov', 'www.cfb.mn.gov'].includes(finalUrl.hostname.toLowerCase())) {
