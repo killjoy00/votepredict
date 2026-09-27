@@ -21,13 +21,33 @@ test('member finance identity uses stable first/last matching', () => {
   assert.equal(publicFinanceMemberMatchKey('John A. Smith Jr.'), 'john|smith');
 });
 
-test('public finance features are strictly pre-vote and session bounded', () => {
+test('public finance features use disclosure time, not transaction time', () => {
   const rows: PublicFinanceTransaction[] = [
-    { chamber: 'house', matchKey: 'a|b', candidateName: 'A B', occurredOn: '2025-01-01', kind: 'receipts', amount: 100 },
-    { chamber: 'house', matchKey: 'a|b', candidateName: 'A B', occurredOn: '2025-02-01', kind: 'spending', amount: 50 },
-    { chamber: 'house', matchKey: 'a|b', candidateName: 'A B', occurredOn: '2025-03-01', kind: 'independent', amount: -25 },
-    { chamber: 'house', matchKey: 'a|b', candidateName: 'A B', occurredOn: '2025-04-01', kind: 'receipts', amount: 9999 },
-    { chamber: 'house', matchKey: 'a|b', candidateName: 'A B', occurredOn: '2024-12-31', kind: 'receipts', amount: 9999 },
+    {
+      chamber: 'house', matchKey: 'a|b', candidateName: 'A B',
+      occurredOn: '2024-10-01', availableOn: '2025-01-30', availabilitySource: 'direct_disclosure',
+      kind: 'receipts', amount: 100,
+    },
+    {
+      chamber: 'house', matchKey: 'a|b', candidateName: 'A B',
+      occurredOn: '2025-02-01', availableOn: '2025-02-10', availabilitySource: 'filed_plus_one',
+      kind: 'spending', amount: 50,
+    },
+    {
+      chamber: 'house', matchKey: 'a|b', candidateName: 'A B',
+      occurredOn: '2025-03-01', availableOn: '2025-03-15', availabilitySource: 'direct_disclosure',
+      kind: 'independent', amount: -25,
+    },
+    {
+      chamber: 'house', matchKey: 'a|b', candidateName: 'A B',
+      occurredOn: '2025-01-15', availableOn: '2025-04-01', availabilitySource: 'direct_disclosure',
+      kind: 'receipts', amount: 9999,
+    },
+    {
+      chamber: 'house', matchKey: 'a|b', candidateName: 'A B',
+      occurredOn: '2025-01-10', availableOn: null, availabilitySource: null,
+      kind: 'receipts', amount: 9999,
+    },
   ];
   const features = publicFinanceFeatures(rows, '2025-2026', '2025-04-01');
   assert.ok(features);
