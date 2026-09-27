@@ -69,6 +69,28 @@ export function parseCfbCandidateReportsTabResponse(
   return parseCfbReportViewerReferences(endYear, registration, tabcontent);
 }
 
+async function fetchCandidateViewerSession(referer: string): Promise<string> {
+  const page = await fetch(referer, {
+    headers: { 'user-agent': 'Mozilla/5.0 VotePredict/2.0 cfb-candidate-history-validation' },
+    redirect: 'follow',
+    signal: AbortSignal.timeout(30_000),
+  });
+  if (!page.ok) throw new Error('CFB candidate viewer page HTTP ' + page.status);
+  const finalUrl = new URL(page.url);
+  if (finalUrl.protocol !== 'https:' || finalUrl.hostname !== 'register.cfb.mn.gov') {
+    throw new Error('CFB candidate viewer page redirected off register.cfb.mn.gov');
+  }
+  await page.arrayBuffer();
+  const headers = page.headers as Headers & { getSetCookie?: () => string[] };
+  const setCookies = typeof headers.getSetCookie === 'function'
+    ? headers.getSetCookie()
+    : [page.headers.get('set-cookie') ?? ''].filter(Boolean);
+  return setCookies
+    .map(value => value.split(';', 1)[0]?.trim())
+    .filter(Boolean)
+    .join('; ');
+}
+
 export async function fetchCfbCandidateHistoricalReportReferences(
   registrationNumber: string,
   segmentEndYear: number,
@@ -78,6 +100,7 @@ export async function fetchCfbCandidateHistoricalReportReferences(
   const referer =
     CFB_ORIGIN + '/reports-and-data/viewers/campaign-finance/candidates/'
     + registration + '/' + endYear + '/';
+  const cookie = await fetchCandidateViewerSession(referer);
   const response = await fetch(CFB_CANDIDATE_API_URL, {
     method: 'POST',
     headers: {
@@ -87,6 +110,7 @@ export async function fetchCfbCandidateHistoricalReportReferences(
       referer,
       origin: CFB_ORIGIN,
       'x-requested-with': 'XMLHttpRequest',
+      ...(cookie ? { cookie } : {}),
     },
     body: cfbCandidateReportsTabForm(registration, endYear).toString(),
     redirect: 'follow',
