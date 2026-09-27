@@ -30,6 +30,16 @@ const TARGET_BATCHES = {
     { registrationNumber: '19205', segmentEndYear: 2026 },
     { registrationNumber: '19227', segmentEndYear: 2026 },
   ],
+  'recent-high-volume-3': [
+    { registrationNumber: '19193', segmentEndYear: 2026 },
+    { registrationNumber: '18332', segmentEndYear: 2026 },
+    { registrationNumber: '19199', segmentEndYear: 2026 },
+    { registrationNumber: '19281', segmentEndYear: 2026 },
+    { registrationNumber: '18727', segmentEndYear: 2026 },
+    { registrationNumber: '18550', segmentEndYear: 2026 },
+    { registrationNumber: '18917', segmentEndYear: 2026 },
+    { registrationNumber: '17316', segmentEndYear: 2026 },
+  ],
 } as const satisfies Record<string, readonly CfbCandidateFinanceTarget[]>;
 
 export type CfbCandidateFinanceTargetBatchName = keyof typeof TARGET_BATCHES;

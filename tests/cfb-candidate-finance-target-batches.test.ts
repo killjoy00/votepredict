@@ -35,12 +35,23 @@ test('CFB candidate finance target batches accept the second reviewed recent hig
   assert.ok(batch.targets.every(target => target.segmentEndYear === 2026));
 });
 
+test('CFB candidate finance target batches accept the third reviewed recent high-volume batch', () => {
+  const batch = resolveCfbCandidateFinanceTargetBatch(
+    '[source-expansion-cfb-candidate-history-validation] batch=recent-high-volume-3 read-only',
+  );
+  assert.equal(batch.name, 'recent-high-volume-3');
+  assert.deepEqual(batch.targets.map(target => target.registrationNumber), [
+    '19193', '18332', '19199', '19281', '18727', '18550', '18917', '17316',
+  ]);
+  assert.ok(batch.targets.every(target => target.segmentEndYear === 2026));
+});
+
 test('CFB candidate finance target batches fail closed for unknown batch names', () => {
   assert.throws(
     () => resolveCfbCandidateFinanceTargetBatch('batch=anything-user-supplied'),
     /Unknown CFB candidate-finance target batch/,
   );
   assert.deepEqual(cfbCandidateFinanceTargetBatchNames(), [
-    'core', 'recent-high-volume-1', 'recent-high-volume-2',
+    'core', 'recent-high-volume-1', 'recent-high-volume-2', 'recent-high-volume-3',
   ]);
 });
