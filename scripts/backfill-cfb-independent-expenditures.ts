@@ -83,6 +83,11 @@ async function main() {
 
   const { pool } = await import('../src/lib/db/index.js');
   const { persistDurableEvidence } = await import('../src/evidence/durable-ingestion.js');
+  const {
+    CFB_REPORT_AVAILABILITY_VERSION,
+    buildCfbPublicDisclosureProof,
+    buildCfbReportDisclosureProof,
+  } = await import('../src/evidence/cfb-report-availability.js');
   const { discoverCampaignFinanceDownloadUrls, fetchCampaignFinanceBulkText } =
     await import('../src/evidence/campaign-finance-live.js');
   const {
@@ -101,7 +106,63 @@ async function main() {
     const sourceHash = createHash('sha256').update(text).digest('hex');
     const rowContentSha256 = independentExpenditureContentSha256(rows);
     const fetchedAt = new Date().toISOString();
+
+    type DisclosureMapping = {
+      rowKey: string;
+      availableOn: string;
+      disclosedOn: string | null;
+      filedOn: string | null;
+      reportName: string;
+      proofKind: 'cfb_public_disclosure' | 'cfb_report_filing';
+      proofUrl: string;
+    };
+
+    const disclosureMappings: DisclosureMapping[] = [];
+    for (const row of rows) {
+      const registrationNumber = row.spenderRegistrationNumber;
+      if (!registrationNumber) continue;
+
+      if (row.disclosedOn) {
+        const proof = buildCfbPublicDisclosureProof({
+          registrationNumber,
+          reportName: row.reportName ?? 'CFB public disclosure',
+          disclosedOn: row.disclosedOn,
+          proofUrl: urls.independentExpenditures,
+        });
+        disclosureMappings.push({
+          rowKey: row.rowKey,
+          availableOn: proof.availableOn,
+          disclosedOn: proof.disclosedOn,
+          filedOn: row.filedOn,
+          reportName: proof.reportName,
+          proofKind: proof.proofKind,
+          proofUrl: proof.proofUrl,
+        });
+        continue;
+      }
+
+      if (row.filedOn && row.reportName) {
+        const proof = buildCfbReportDisclosureProof({
+          registrationNumber,
+          reportName: row.reportName,
+          filedOn: row.filedOn,
+          proofUrl: urls.independentExpenditures,
+        });
+        disclosureMappings.push({
+          rowKey: row.rowKey,
+          availableOn: proof.availableOn,
+          disclosedOn: null,
+          filedOn: proof.filedOn,
+          reportName: proof.reportName,
+          proofKind: 'cfb_report_filing',
+          proofUrl: proof.proofUrl,
+        });
+      }
+    }
+    const disclosureByRowKey = new Map(disclosureMappings.map(mapping => [mapping.rowKey, mapping]));
+
     const drafts = rows.map(row => {
+      const disclosure = disclosureByRowKey.get(row.rowKey);
       const session = sessionForIndependentExpenditureYear(row.year);
       return {
         target: row.candidateName && row.chamber && session ? {
@@ -126,8 +187,15 @@ async function main() {
           contextOnly: true,
           mechanicallyActionable: false,
           asOfEligible: false,
-          availabilityStatus: 'awaiting_regulatory_disclosure_proof',
+          availabilityStatus: disclosure
+            ? 'pending_regulatory_disclosure_promotion'
+            : 'awaiting_regulatory_disclosure_proof',
+          transactionDateIsAvailability: false,
+          disclosureDateIsAvailability: Boolean(disclosure),
           transactionDate: row.transactionDate,
+          reportName: row.reportName,
+          filedOn: row.filedOn,
+          disclosedOn: row.disclosedOn,
           year: row.year,
           spender: row.spender,
           spenderRegistrationNumber: row.spenderRegistrationNumber,
@@ -165,7 +233,10 @@ async function main() {
           years: [2021, 2022, 2023, 2024, 2025, 2026],
           rowCount: rows.length,
           rowContentSha256,
-          historicalAvailability: 'pending_disclosure_proof',
+          historicalAvailability: disclosureMappings.length
+            ? 'official_disclosure_date_when_row_level_proven'
+            : 'pending_disclosure_proof',
+          availabilityPolicyVersion: CFB_REPORT_AVAILABILITY_VERSION,
         },
       }, batch);
 
@@ -188,6 +259,72 @@ async function main() {
       }));
     }
 
+    let promotedThisRun = 0;
+    if (disclosureMappings.length > 0) {
+      const promotionBatchSize = 500;
+      for (let offset = 0; offset < disclosureMappings.length; offset += promotionBatchSize) {
+        const batch = disclosureMappings.slice(offset, offset + promotionBatchSize).map(mapping => ({
+          row_key: mapping.rowKey,
+          available_on: mapping.availableOn,
+          disclosed_on: mapping.disclosedOn,
+          filed_on: mapping.filedOn,
+          report_name: mapping.reportName,
+          proof_kind: mapping.proofKind,
+          proof_url: mapping.proofUrl,
+        }));
+        const promoted = await pool.query<{ row_key: string }>(`
+          WITH disclosure AS (
+            SELECT *
+              FROM jsonb_to_recordset($1::jsonb) AS d(
+                row_key text,
+                available_on date,
+                disclosed_on date,
+                filed_on date,
+                report_name text,
+                proof_kind text,
+                proof_url text
+              )
+          )
+          UPDATE evidence_items ei
+             SET published_at = (disclosure.available_on::text || 'T12:00:00Z')::timestamptz,
+                 metadata = ei.metadata || jsonb_strip_nulls(jsonb_build_object(
+                   'asOfEligible', true,
+                   'availabilityStatus', 'regulatory_disclosure_date_proven',
+                   'availabilityPolicyVersion', $2::text,
+                   'availableOn', disclosure.available_on::text,
+                   'disclosedOn', disclosure.disclosed_on::text,
+                   'filedOn', disclosure.filed_on::text,
+                   'reportName', disclosure.report_name,
+                   'availabilityProofKind', disclosure.proof_kind,
+                   'availabilityProofUrl', disclosure.proof_url,
+                   'disclosureDateIsAvailability', true,
+                   'transactionDateIsAvailability', false
+                 ))
+            FROM source_documents sd, disclosure
+           WHERE sd.id = ei.source_document_id
+             AND sd.source_kind = 'campaign_finance_independent_expenditure_bulk'
+             AND ei.metadata->>'rowKey' = disclosure.row_key
+             AND (
+               ei.published_at IS DISTINCT FROM (disclosure.available_on::text || 'T12:00:00Z')::timestamptz
+               OR ei.metadata->>'asOfEligible' IS DISTINCT FROM 'true'
+               OR ei.metadata->>'availableOn' IS DISTINCT FROM disclosure.available_on::text
+             )
+          RETURNING ei.metadata->>'rowKey' AS row_key
+        `, [JSON.stringify(batch), CFB_REPORT_AVAILABILITY_VERSION]);
+        promotedThisRun += promoted.rowCount ?? promoted.rows.length;
+      }
+    }
+
+    const eligible = await pool.query<{ count: number }>(`
+      SELECT count(DISTINCT ei.metadata->>'rowKey')::int AS count
+        FROM evidence_items ei
+        JOIN source_documents sd ON sd.id = ei.source_document_id
+       WHERE sd.source_kind = 'campaign_finance_independent_expenditure_bulk'
+         AND ei.metadata->>'asOfEligible' = 'true'
+         AND ei.published_at IS NOT NULL
+         AND ei.metadata->>'transactionDateIsAvailability' = 'false'
+    `);
+
     console.log(JSON.stringify({
       cfbIndependentExpenditureBackfill: {
         rows: rows.length,
@@ -199,8 +336,14 @@ async function main() {
         reused,
         unresolved,
         sourceDocumentId,
-        asOfEligibleRows: 0,
+        disclosureMappedRows: disclosureMappings.length,
+        directDisclosureRows: disclosureMappings.filter(row => row.proofKind === 'cfb_public_disclosure').length,
+        filingDerivedRows: disclosureMappings.filter(row => row.proofKind === 'cfb_report_filing').length,
+        promotedThisRun,
+        asOfEligibleRows: eligible.rows[0]?.count ?? 0,
         policy: {
+          directOfficialDisclosureDateIsAvailability: true,
+          exactFilingTimestampRequiredWhenDisclosureDateKnown: false,
           transactionDateIsAvailability: false,
           servingChanged: false,
           productionAction: 'none',

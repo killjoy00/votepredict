@@ -10,7 +10,7 @@ import {
 } from './historical-quick-replay';
 import { loadPublicFinanceDataset, type PublicFinanceTransaction } from './public-finance-data';
 
-export const PUBLIC_EVIDENCE_QUICK_SCREEN_SCHEMA = 'public-evidence-quick-screen-v1' as const;
+export const PUBLIC_EVIDENCE_QUICK_SCREEN_SCHEMA = 'public-evidence-quick-screen-v2' as const;
 const HALF_LIFE_DAYS = 180;
 const FEATURE_NAMES = ['logReceipts', 'logCampaignSpending', 'logIndependentSpending', 'logTransactions'] as const;
 const LAMBDAS = [0.1, 1, 5, 20, 100] as const;
@@ -58,24 +58,24 @@ export function publicFinanceMemberMatchKey(name: string): string | undefined {
   return `${first}|${last}`;
 }
 
-function sessionStart(session: string): string | undefined {
+function financeWindowStart(session: string): string | undefined {
   const year = Number(session.slice(0, 4));
-  return Number.isInteger(year) && year >= 2000 ? `${year}-01-01` : undefined;
+  return Number.isInteger(year) && year >= 2002 ? `${year - 2}-01-01` : undefined;
 }
 
 export function publicFinanceFeatures(
   transactions: readonly PublicFinanceTransaction[],
   session: string,
-  occurredOn: string,
+  cutoffOn: string,
 ): Vector | undefined {
-  const start = sessionStart(session);
+  const start = financeWindowStart(session);
   if (!start) return undefined;
   let receipts = 0;
   let spending = 0;
   let independent = 0;
   let count = 0;
   for (const row of transactions) {
-    if (row.occurredOn < start || row.occurredOn >= occurredOn) continue;
+    if (!row.availableOn || row.availableOn < start || row.availableOn >= cutoffOn) continue;
     count += 1;
     if (row.kind === 'receipts') receipts += row.amount;
     else if (row.kind === 'spending') spending += row.amount;
@@ -169,7 +169,9 @@ function groupedTransactions(rows: readonly PublicFinanceTransaction[]): Map<str
     bucket.push(row);
     grouped.set(key, bucket);
   }
-  for (const bucket of grouped.values()) bucket.sort((a, b) => a.occurredOn.localeCompare(b.occurredOn));
+  for (const bucket of grouped.values()) bucket.sort((a, b) =>
+    (a.availableOn ?? '9999-12-31').localeCompare(b.availableOn ?? '9999-12-31')
+    || a.occurredOn.localeCompare(b.occurredOn));
   return grouped;
 }
 
@@ -339,7 +341,7 @@ export async function evaluatePublicEvidenceQuickScreen(pool: Pool, options: { c
   return {
     schemaVersion: PUBLIC_EVIDENCE_QUICK_SCREEN_SCHEMA,
     generatedAt: new Date().toISOString(),
-    purpose: 'retrospective leakage-safe screen of non-directional dated campaign-finance activity as an incremental offset to serving Quick member probabilities; news and campaign-site content remain prospective-only because comparable historical web capture is unavailable',
+    purpose: 'retrospective leakage-safe screen of non-directional campaign-finance activity using only records with independently established public-availability dates before each vote; transaction dates remain provenance only',
     metadata: {
       codeSha: options.codeSha ?? null,
       servingBaseline: 'member-eb-v1.2-decay180',
@@ -349,7 +351,7 @@ export async function evaluatePublicEvidenceQuickScreen(pool: Pool, options: { c
       descriptiveTestSession: '2025-2026',
       featureNames: FEATURE_NAMES,
       candidateLambdas: LAMBDAS,
-      sourceBoundary: 'official Minnesota CFB transaction rows dated strictly before each target floor-vote date; only aggregate activity amounts/counts are used; donor identities, employers, donor categories, and inferred issue positions are excluded',
+      sourceBoundary: 'official Minnesota CFB rows count only when an official disclosure/publication date is strictly before the target floor-vote date; transaction dates alone never establish availability; only aggregate activity amounts/counts are used and donor identities, employers, donor categories, and inferred issue positions are excluded',
       probabilityWrite: false,
       servingChange: false,
       selectionGuard: 'lambda selected on 2023-2024 only; 2025-2026 is reported descriptively and cannot select configuration',

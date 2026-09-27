@@ -5,6 +5,7 @@ import {
   CFB_SPECIFIC_LOBBYING_SUBJECT_FIRST_REPORT_YEAR,
   buildCfbLargeContributionNoticeProof,
   buildCfbLobbyistActivityDisclosureProof,
+  buildCfbPublicDisclosureProof,
   buildCfbReportDisclosureProof,
   cfbElectronicReportAvailableOn,
 } from '../src/evidence/cfb-report-availability.js';
@@ -21,8 +22,24 @@ test('parses granular independent expenditure records',()=>{
   assert.equal(rows[0].direction,'for');
   assert.equal(rows[0].totalAmount,1225.5);
   assert.equal(rows[0].transactionDate,'2024-07-20');
+  assert.equal(rows[0].disclosedOn,null);
+  assert.equal(rows[0].filedOn,null);
   assert.equal(sessionForIndependentExpenditureYear(2024),'2023-2024');
 });
+
+test('parses official CFB disclosure timing separately from transaction timing',()=>{
+  const csv=[
+    'Year,Date,Report Name,Filed Date,Disclosure Date,Spender,Spender Reg Num,Affected Comte Name,Affected Cmte Reg Num,For /Against,Amount,Unpaid amount',
+    '2024,7/20/2024,2024 Pre-Primary,7/29/2024,7/30/2024,Example PAC,40001,"Doe, Jane House Committee",19001,For,1200.50,25.00',
+  ].join('\n');
+  const rows=parseCfbIndependentExpenditureCsv(csv,{fromYear:2021,toYear:2026});
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].transactionDate,'2024-07-20');
+  assert.equal(rows[0].reportName,'2024 Pre-Primary');
+  assert.equal(rows[0].filedOn,'2024-07-29');
+  assert.equal(rows[0].disclosedOn,'2024-07-30');
+});
+
 
 test('CFB report availability requires filing date and publishes next day',()=>{
   assert.equal(cfbElectronicReportAvailableOn('2024-07-29'),'2024-07-30');
@@ -33,6 +50,19 @@ test('CFB report availability requires filing date and publishes next day',()=>{
   assert.equal(proof.availableOn,'2024-07-30');
   assert.equal(proof.proofKind,'cfb_report_filing');
 });
+
+test('official CFB disclosure date is sufficient without an exact filing timestamp',()=>{
+  const proof=buildCfbPublicDisclosureProof({
+    registrationNumber:'40001',
+    reportName:'2024 Pre-Primary',
+    disclosedOn:'2024-07-30',
+    proofUrl:'https://register.cfb.mn.gov/reports/example',
+  });
+  assert.equal(proof.disclosedOn,'2024-07-30');
+  assert.equal(proof.availableOn,'2024-07-30');
+  assert.equal(proof.proofKind,'cfb_public_disclosure');
+});
+
 
 test('CFB disclosure proofs require an official CFB provenance URL',()=>{
   assert.throws(()=>buildCfbReportDisclosureProof({

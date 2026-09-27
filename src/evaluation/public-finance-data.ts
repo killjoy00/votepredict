@@ -1,4 +1,5 @@
 import { candidateIdentityFromCommitteeName } from '@/evidence/campaign-finance-live';
+import { cfbElectronicReportAvailableOn } from '@/evidence/cfb-report-availability';
 
 const PAGE_URL = 'https://register.cfb.mn.gov/reports-and-data/self-help/data-downloads/campaign-finance/';
 const FALLBACK_CONTRIBUTIONS_URL = `${PAGE_URL}?download=-2026985457`;
@@ -13,6 +14,8 @@ export interface PublicFinanceTransaction {
   matchKey: string;
   candidateName: string;
   occurredOn: string;
+  availableOn: string | null;
+  availabilitySource: 'direct_disclosure' | 'filed_plus_one' | null;
   kind: PublicFinanceKind;
   amount: number;
 }
@@ -23,6 +26,7 @@ export interface PublicFinanceDataset {
     discoveredDownloads: boolean;
     rawRows: Record<PublicFinanceKind, number>;
     datedRows: Record<PublicFinanceKind, number>;
+    availabilityDatedRows: Record<PublicFinanceKind, number>;
     matchedCandidateRows: Record<PublicFinanceKind, number>;
     candidates: number;
   };
@@ -127,10 +131,17 @@ export function normalizeFinanceDate(valueText: string): string | undefined {
   return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString().slice(0, 10);
 }
 
-function parseTransactions(text: string, kind: PublicFinanceKind): { rawRows: number; datedRows: number; matchedCandidateRows: number; transactions: PublicFinanceTransaction[] } {
+function parseTransactions(text: string, kind: PublicFinanceKind): {
+  rawRows: number;
+  datedRows: number;
+  availabilityDatedRows: number;
+  matchedCandidateRows: number;
+  transactions: PublicFinanceTransaction[];
+} {
   let indexes: Map<string, number> | undefined;
   let rawRows = 0;
   let datedRows = 0;
+  let availabilityDatedRows = 0;
   let matchedCandidateRows = 0;
   const transactions: PublicFinanceTransaction[] = [];
   parseCsv(text, (row) => {
@@ -149,6 +160,29 @@ function parseTransactions(text: string, kind: PublicFinanceKind): { rawRows: nu
     const occurredOn = normalizeFinanceDate(dateText);
     if (!occurredOn || occurredOn < MIN_DATE) return;
     datedRows += 1;
+
+    const directDisclosureOn = normalizeFinanceDate(firstValue(row, indexes, [
+      'Disclosure date',
+      'Disclosed date',
+      'Date disclosed',
+      'Public date',
+      'Published date',
+      'Date published',
+    ]));
+    const filedOn = normalizeFinanceDate(firstValue(row, indexes, [
+      'Filed date',
+      'Filing date',
+      'Date filed',
+    ]));
+    const availableOn = directDisclosureOn
+      ?? (filedOn ? cfbElectronicReportAvailableOn(filedOn) : undefined);
+    const availabilitySource = directDisclosureOn
+      ? 'direct_disclosure' as const
+      : filedOn
+        ? 'filed_plus_one' as const
+        : null;
+    if (availableOn) availabilityDatedRows += 1;
+
     const identity = candidateIdentityFromCommitteeName(committee);
     if (!identity) return;
     matchedCandidateRows += 1;
@@ -160,11 +194,13 @@ function parseTransactions(text: string, kind: PublicFinanceKind): { rawRows: nu
       matchKey: identity.matchKey,
       candidateName: identity.candidateName,
       occurredOn,
+      availableOn: availableOn ?? null,
+      availabilitySource,
       kind,
       amount: rowAmount,
     });
   });
-  return { rawRows, datedRows, matchedCandidateRows, transactions };
+  return { rawRows, datedRows, availabilityDatedRows, matchedCandidateRows, transactions };
 }
 
 export async function loadPublicFinanceDataset(): Promise<PublicFinanceDataset> {
@@ -178,7 +214,10 @@ export async function loadPublicFinanceDataset(): Promise<PublicFinanceDataset> 
   const spending = parseTransactions(expendituresText, 'spending');
   const independent = parseTransactions(independentText, 'independent');
   const transactions = [...receipts.transactions, ...spending.transactions, ...independent.transactions]
-    .sort((a, b) => a.occurredOn.localeCompare(b.occurredOn) || a.matchKey.localeCompare(b.matchKey) || a.kind.localeCompare(b.kind));
+    .sort((a, b) => (a.availableOn ?? '9999-12-31').localeCompare(b.availableOn ?? '9999-12-31')
+      || a.occurredOn.localeCompare(b.occurredOn)
+      || a.matchKey.localeCompare(b.matchKey)
+      || a.kind.localeCompare(b.kind));
   const candidateKeys = new Set(transactions.map((row) => `${row.chamber}|${row.matchKey}`));
   return {
     transactions,
@@ -186,6 +225,11 @@ export async function loadPublicFinanceDataset(): Promise<PublicFinanceDataset> 
       discoveredDownloads: urls.discovered,
       rawRows: { receipts: receipts.rawRows, spending: spending.rawRows, independent: independent.rawRows },
       datedRows: { receipts: receipts.datedRows, spending: spending.datedRows, independent: independent.datedRows },
+      availabilityDatedRows: {
+        receipts: receipts.availabilityDatedRows,
+        spending: spending.availabilityDatedRows,
+        independent: independent.availabilityDatedRows,
+      },
       matchedCandidateRows: {
         receipts: receipts.matchedCandidateRows,
         spending: spending.matchedCandidateRows,

@@ -7,7 +7,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: public-evidence-quick-screen-v1
+  group: public-evidence-quick-screen-v2
   cancel-in-progress: false
 
 jobs:
@@ -19,7 +19,7 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
       VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
-      VOTEPREDICT_PUBLIC_EVIDENCE_SCREEN_OUTPUT: artifacts/public-evidence-quick-screen-v1.json
+      VOTEPREDICT_PUBLIC_EVIDENCE_SCREEN_OUTPUT: artifacts/public-evidence-quick-screen-v2.json
       VOTEPREDICT_QUICK_EVIDENCE_LEGISLATIVE_OUTPUT: artifacts/quick-evidence-legislative-screen-v1.json
 
     steps:
@@ -91,7 +91,7 @@ jobs:
         run: |
           set -euo pipefail
           file="$VOTEPREDICT_PUBLIC_EVIDENCE_SCREEN_OUTPUT"
-          test "$(jq -r '.schemaVersion' "$file")" = 'public-evidence-quick-screen-v1'
+          test "$(jq -r '.schemaVersion' "$file")" = 'public-evidence-quick-screen-v2'
           test "$(jq -r '.metadata.codeSha' "$file")" = "$GITHUB_SHA"
           test "$(jq -r '.metadata.promotionEligible' "$file")" = 'false'
           test "$(jq -r '.metadata.shadowNominationEligible' "$file")" = 'false'
@@ -125,8 +125,8 @@ jobs:
       - name: Upload immutable public-evidence screen
         uses: actions/upload-artifact@v4
         with:
-          name: public-evidence-quick-screen-v1-${{ github.sha }}
-          path: artifacts/public-evidence-quick-screen-v1.json
+          name: public-evidence-quick-screen-v2-${{ github.sha }}
+          path: artifacts/public-evidence-quick-screen-v2.json
           if-no-files-found: error
           retention-days: 90
 
