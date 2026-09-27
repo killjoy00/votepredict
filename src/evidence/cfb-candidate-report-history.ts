@@ -144,7 +144,22 @@ export async function acquireCfbCandidateHistoricalReportProofs(input: {
   const maxReports = Math.min(16, Math.max(1, input.maxReports ?? 12));
   const selected = references.slice(0, maxReports);
   const reports: CfbCandidateHistoricalReport[] = [];
-  const failures: Array<{ reportName: string; error: string }> = [];
+  const failures: Array<{ reportName: string; error: string; diagnostic?: Record<string, unknown> }> = [];
+
+  function proofDiagnostic(text: string) {
+    const normalized = text.replace(/\u0000/g, '').replace(/\s+/g, ' ').trim();
+    const snippets = ['Period', 'Received', 'Registration', 'Campaign Finance']
+      .map(term => {
+        const index = normalized.toLowerCase().indexOf(term.toLowerCase());
+        if (index < 0) return null;
+        return normalized.slice(Math.max(0, index - 220), Math.min(normalized.length, index + 520));
+      })
+      .filter((value): value is string => Boolean(value));
+    return {
+      textLength: normalized.length,
+      snippets: [...new Set(snippets)].slice(0, 4),
+    };
+  }
   const registration = requireRegistrationNumber(input.registrationNumber);
   const endYear = requireSegmentEndYear(input.segmentEndYear);
   const referer =
@@ -159,7 +174,14 @@ export async function acquireCfbCandidateHistoricalReportProofs(input: {
         searchType: 'Candidate',
       });
       const proof = parseCfbReportPdfAvailability(reference, fetched.text);
-      if (!proof) throw new Error('CFB historical candidate report lacked required availability proof');
+      if (!proof) {
+        failures.push({
+          reportName: reference.reportName,
+          error: 'CFB historical candidate report lacked required availability proof',
+          diagnostic: proofDiagnostic(fetched.text),
+        });
+        continue;
+      }
       reports.push({
         proof,
         text: fetched.text,
