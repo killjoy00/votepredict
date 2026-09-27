@@ -66,7 +66,13 @@ export function parseCfbCandidateReportsTabResponse(
   if (typeof tabcontent !== 'string') {
     throw new Error('CFB candidate reports tab response missing tabcontent');
   }
-  return parseCfbReportViewerReferences(endYear, registration, tabcontent);
+  const segmentStartYear = endYear - 1;
+  return parseCfbReportViewerReferences(endYear, registration, tabcontent)
+    .filter(reference => {
+      if (!/^\d{2}$/.test(reference.year)) return false;
+      const calendarYear = 2000 + Number(reference.year);
+      return calendarYear === segmentStartYear || calendarYear === endYear;
+    });
 }
 
 async function fetchCandidateViewerSession(referer: string): Promise<string> {
@@ -139,10 +145,15 @@ export async function acquireCfbCandidateHistoricalReportProofs(input: {
   const selected = references.slice(0, maxReports);
   const reports: CfbCandidateHistoricalReport[] = [];
   const failures: Array<{ reportName: string; error: string }> = [];
+  const registration = requireRegistrationNumber(input.registrationNumber);
+  const endYear = requireSegmentEndYear(input.segmentEndYear);
+  const referer =
+    CFB_ORIGIN + '/reports-and-data/viewers/campaign-finance/candidates/'
+    + registration + '/' + endYear + '/';
 
   for (const reference of selected) {
     try {
-      const fetched = await fetchCfbReportViewerText(reference);
+      const fetched = await fetchCfbReportViewerText(reference, { method: 'POST', referer });
       const proof = parseCfbReportPdfAvailability(reference, fetched.text);
       if (!proof) throw new Error('CFB historical candidate report lacked required availability proof');
       reports.push({
