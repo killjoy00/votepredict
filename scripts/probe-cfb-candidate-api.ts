@@ -1,3 +1,5 @@
+export {};
+
 const ORIGIN = 'https://register.cfb.mn.gov';
 const API_URL = ORIGIN + '/reports-and-data/viewers/campaign-finance/candidates/api';
 
