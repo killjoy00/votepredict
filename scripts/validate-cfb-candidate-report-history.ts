@@ -13,13 +13,7 @@ import {
   discoverCampaignFinanceDownloadUrls,
   fetchCampaignFinanceBulkText,
 } from '../src/evidence/campaign-finance-live.js';
-
-const TARGETS = [
-  { registrationNumber: '15677', segmentEndYear: 2022 },
-  { registrationNumber: '15677', segmentEndYear: 2024 },
-  { registrationNumber: '15677', segmentEndYear: 2026 },
-  { registrationNumber: '19238', segmentEndYear: 2026 },
-] as const;
+import { resolveCfbCandidateFinanceTargetBatch } from '../src/evidence/cfb-candidate-finance-target-batches.js';
 
 function reportMap(reports: readonly CfbCandidateHistoricalReport[]) {
   return reports.map(report => ({ proof: report.proof, text: report.text }));
@@ -43,6 +37,10 @@ function mapperInput(row: CfbCandidateFinanceRow) {
 }
 
 async function main() {
+  const targetBatch = resolveCfbCandidateFinanceTargetBatch(
+    process.env.VOTEPREDICT_CFB_CANDIDATE_FINANCE_BATCH_REQUEST,
+  );
+  const TARGETS = targetBatch.targets;
   const urls = await discoverCampaignFinanceDownloadUrls();
   const [contributionText, expenditureText] = await Promise.all([
     fetchCampaignFinanceBulkText(urls.contributions),
@@ -119,6 +117,7 @@ async function main() {
 
   console.log(JSON.stringify({
     cfbCandidateHistoricalReportDiagnostic: {
+      targetBatch: targetBatch.name,
       targets: targetResults.map(result => ({
         registrationNumber: result.registrationNumber,
         segmentEndYear: result.segmentEndYear,
@@ -137,6 +136,7 @@ async function main() {
 
   console.log(JSON.stringify({
     cfbCandidateHistoricalReportValidation: {
+      targetBatch: targetBatch.name,
       targets: targetResults,
       rowsExamined,
       rowsMatched,

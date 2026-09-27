@@ -5,12 +5,6 @@ import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const DEFAULT_BATCH_SIZE = 100;
-const TARGETS = [
-  { registrationNumber: '15677', segmentEndYear: 2022 },
-  { registrationNumber: '15677', segmentEndYear: 2024 },
-  { registrationNumber: '15677', segmentEndYear: 2026 },
-  { registrationNumber: '19238', segmentEndYear: 2026 },
-] as const;
 let secrets: string[] = [];
 
 function mask(value: string) {
@@ -74,6 +68,13 @@ function freshness(date: string | null) {
 }
 
 async function main() {
+  const { resolveCfbCandidateFinanceTargetBatch } =
+    await import('../src/evidence/cfb-candidate-finance-target-batches.js');
+  const targetBatch = resolveCfbCandidateFinanceTargetBatch(
+    process.env.VOTEPREDICT_CFB_CANDIDATE_FINANCE_BATCH_REQUEST,
+  );
+  const TARGETS = targetBatch.targets;
+
   const envFile = process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
   if (!envFile) throw new Error('Production env file required');
   const env = parseRuntimeEnvironment(readFileSync(envFile, 'utf8'));
@@ -328,6 +329,7 @@ async function main() {
           metadata: {
             publisher: 'Minnesota Campaign Finance and Public Disclosure Board',
             dataset: kind === 'contribution' ? 'candidate_contributions' : 'candidate_expenditures',
+            targetBatch: targetBatch.name,
             boundedTargetRegistrations: [...new Set(TARGETS.map(target => target.registrationNumber))],
             years: [2021, 2022, 2023, 2024, 2025, 2026],
             boundedRowCount: selected.length,
@@ -437,6 +439,7 @@ async function main() {
 
     console.log(JSON.stringify({
       cfbCandidateFinanceBackfill: {
+        targetBatch: targetBatch.name,
         boundedTargets: TARGETS,
         rows: rows.length,
         contributionRows: contributionRows.length,
