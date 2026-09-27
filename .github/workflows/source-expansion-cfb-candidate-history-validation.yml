@@ -29,4 +29,6 @@ jobs:
         with: { node-version: 22, cache: npm }
       - run: npm ci --no-fund --no-audit
       - name: Validate historical CFB legislative candidate report proofs
+        env:
+          VOTEPREDICT_CFB_CANDIDATE_FINANCE_BATCH_REQUEST: ${{ github.event_name == 'issue_comment' && github.event.comment.body || '' }}
         run: node --import tsx scripts/validate-cfb-candidate-report-history.ts
