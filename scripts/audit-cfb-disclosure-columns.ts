@@ -175,23 +175,7 @@ function serverActionCalls(text: string): Array<{ action: string; snippet: strin
   return rows;
 }
 
-async function probeReportApi(operation: 'grid_info' | 'grid_data', routeAction: string) {
-  const params = new URLSearchParams();
-  params.set('action', operation);
-  params.set('data[action]', routeAction);
-  params.set('data[type]', 'current-lists');
-  params.set('data[params][0]', 'all');
-
-  const response = await fetch(CFB_ORIGIN + '/reports/api/', {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/x-www-form-urlencoded',
-      'user-agent': 'VotePredict/2.0 cfb-disclosure-audit',
-      accept: 'application/json,text/plain;q=0.8,*/*;q=0.1',
-    },
-    body: params.toString(),
-    signal: AbortSignal.timeout(30_000),
-  });
+async function readResponseSample(response: Response) {
   const text = await response.text();
   let parsed: unknown = null;
   try {
@@ -201,8 +185,6 @@ async function probeReportApi(operation: 'grid_info' | 'grid_data', routeAction:
   }
   const serialized = parsed === null ? text : JSON.stringify(parsed);
   return {
-    operation,
-    routeAction,
     status: response.status,
     contentType: response.headers.get('content-type'),
     responseBytes: text.length,
@@ -211,6 +193,105 @@ async function probeReportApi(operation: 'grid_info' | 'grid_data', routeAction:
       : [],
     responseSample: serialized.slice(0, 24_000),
   };
+}
+
+function browserFormBody(operation: 'grid_info' | 'grid_data', routeAction: string, arrayStyle: 'indexed' | 'brackets') {
+  const params = new URLSearchParams();
+  params.set('action', operation);
+  params.set('data[action]', routeAction);
+  params.set('data[type]', 'current-lists');
+  params.set(arrayStyle === 'indexed' ? 'data[params][0]' : 'data[params][]', 'all');
+  return params.toString();
+}
+
+async function fetchReportAppSession() {
+  const response = await fetch(CFB_CURRENT_LISTS_APP_URL, {
+    headers: { 'user-agent': 'Mozilla/5.0 VotePredict/2.0 cfb-disclosure-audit' },
+    signal: AbortSignal.timeout(30_000),
+  });
+  await response.arrayBuffer();
+  const getSetCookie = (response.headers as Headers & { getSetCookie?: () => string[] }).getSetCookie;
+  const setCookies = typeof getSetCookie === 'function'
+    ? getSetCookie.call(response.headers)
+    : [response.headers.get('set-cookie') ?? ''].filter(Boolean);
+  const cookie = setCookies
+    .map(value => value.split(';', 1)[0]?.trim())
+    .filter(Boolean)
+    .join('; ');
+  return {
+    cookie,
+    cookieNames: setCookies
+      .map(value => value.split('=', 1)[0]?.trim())
+      .filter(Boolean),
+  };
+}
+
+async function probeReportApiVariants(operation: 'grid_info' | 'grid_data', routeAction: string) {
+  const referer = CFB_CURRENT_LISTS_APP_URL + '#/' + routeAction + '/all/';
+  const session = await fetchReportAppSession();
+  const commonHeaders: Record<string, string> = {
+    'user-agent': 'Mozilla/5.0 VotePredict/2.0 cfb-disclosure-audit',
+    accept: 'application/json,text/plain;q=0.8,*/*;q=0.1',
+    referer,
+    origin: CFB_ORIGIN,
+    'x-requested-with': 'XMLHttpRequest',
+  };
+  if (session.cookie) commonHeaders.cookie = session.cookie;
+
+  const variants: Array<Record<string, unknown>> = [];
+
+  for (const arrayStyle of ['indexed', 'brackets'] as const) {
+    const response = await fetch(CFB_ORIGIN + '/reports/api/', {
+      method: 'POST',
+      headers: {
+        ...commonHeaders,
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+      body: browserFormBody(operation, routeAction, arrayStyle),
+      signal: AbortSignal.timeout(30_000),
+    });
+    variants.push({
+      method: 'POST',
+      arrayStyle,
+      cookieNames: session.cookieNames,
+      ...(await readResponseSample(response)),
+    });
+  }
+
+  const payload = encodeURIComponent(JSON.stringify({
+    action: routeAction,
+    type: 'current-lists',
+    params: ['all'],
+  }));
+  const uriJsonResponse = await fetch(
+    CFB_ORIGIN + '/reports/api/' + operation + '/' + payload,
+    {
+      headers: commonHeaders,
+      signal: AbortSignal.timeout(30_000),
+    },
+  );
+  variants.push({
+    method: 'URIJSON',
+    cookieNames: session.cookieNames,
+    ...(await readResponseSample(uriJsonResponse)),
+  });
+
+  const query = new URLSearchParams();
+  query.set('action', operation);
+  query.set('data[action]', routeAction);
+  query.set('data[type]', 'current-lists');
+  query.set('data[params][]', 'all');
+  const getResponse = await fetch(CFB_ORIGIN + '/reports/api/?' + query.toString(), {
+    headers: commonHeaders,
+    signal: AbortSignal.timeout(30_000),
+  });
+  variants.push({
+    method: 'GET',
+    cookieNames: session.cookieNames,
+    ...(await readResponseSample(getResponse)),
+  });
+
+  return { operation, routeAction, variants };
 }
 
 async function auditReportLists() {
@@ -257,7 +338,7 @@ async function auditReportLists() {
   for (const routeAction of ['candidate-reports', 'pcf-reports']) {
     for (const operation of ['grid_info', 'grid_data'] as const) {
       try {
-        reportApiProbes.push(await probeReportApi(operation, routeAction));
+        reportApiProbes.push(await probeReportApiVariants(operation, routeAction));
       } catch (error) {
         reportApiProbes.push({
           operation,
