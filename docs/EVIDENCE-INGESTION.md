@@ -129,7 +129,7 @@ The screen records six feature families: amendment YEA/NAY, motion-or-procedural
 
 ### Finance diagnostic
 
-`public-evidence-quick-screen-v1` remains an exploratory component diagnostic inside this single Quick Evidence program. It tests whether aggregate campaign-finance activity may contain incremental signal, but it is not a second candidate and cannot promote independently. The screen is not leakage-safe for historical public availability because transaction dates do not establish item-level filing/publication timestamps. It therefore remains hypothesis-only with `productionAction=none`.
+`public-evidence-quick-screen-v1` is retained as a superseded hypothesis-only diagnostic because it keyed historical finance activity to transaction dates, which do not establish public availability. `public-evidence-quick-screen-v2` corrects that boundary: finance rows enter historical features only when an independently established official disclosure/publication date is strictly before the target vote date. The underlying transaction date remains provenance only, and rows without a proven disclosure date are unavailable rather than guessed. The screen remains diagnostic-only and cannot promote independently; `productionAction=none`.
 
 ## Public source expansion
 
