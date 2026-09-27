@@ -90,7 +90,9 @@ export function parseCfbReportPdfAvailability(
   const normalized = text.replace(/\u0000/g, '').replace(/\s+/g, ' ').trim();
   const period = normalized.match(/Period Covered:\s*(\d{1,2}\/\d{1,2}\/\d{4})\s+through\s+(\d{1,2}\/\d{1,2}\/\d{4})/i);
   const received = normalized.match(/Received by the Board\s+([A-Za-z]+\s+\d{1,2},\s+\d{4})/i);
-  const registration = normalized.match(/Registration Number:\s*(\d+)/i);
+  const registration =
+    normalized.match(/Registration Number:\s*(\d+)/i)
+    ?? normalized.match(/\bCommittee\s+(\d{4,})\b/i);
   if (!period || !received || !registration) return null;
   if ((registration[1] ?? '').trim() !== reference.registrationNumber) return null;
 
