@@ -129,23 +129,50 @@ function endpointCandidates(text: string): string[] {
 function contextSnippets(text: string): string[] {
   const patterns = [
     /\/reports\/api\//gi,
-    /candidate-reports/gi,
-    /pcf-reports/gi,
-    /report_date/gi,
-    /filed/gi,
+    /candidate[-_]?reports/gi,
+    /pcf[-_]?reports/gi,
+    /current[-_]?reports/gi,
+    /report[-_]?date/gi,
+    /fil(?:ed|ing)/gi,
+    /\.send\s*\(/gi,
   ];
   const snippets: string[] = [];
   for (const pattern of patterns) {
     for (const match of text.matchAll(pattern)) {
       const index = match.index ?? 0;
-      const start = Math.max(0, index - 600);
-      const end = Math.min(text.length, index + 1200);
+      const start = Math.max(0, index - 900);
+      const end = Math.min(text.length, index + 1800);
       const snippet = text.slice(start, end).replace(/\s+/g, ' ').trim();
       if (snippet && !snippets.includes(snippet)) snippets.push(snippet);
-      if (snippets.length >= 24) return snippets;
+      if (snippets.length >= 40) return snippets;
     }
   }
   return snippets;
+}
+
+function serverActionCalls(text: string): Array<{ action: string; snippet: string }> {
+  const rows: Array<{ action: string; snippet: string }> = [];
+  const seen = new Set<string>();
+  const patterns = [
+    /(?:server|srv|api)\.send\s*\(\s*["'`]([^"'`]{1,160})["'`]/gi,
+    /\.send\s*\(\s*["'`]([^"'`]{1,160})["'`]/gi,
+  ];
+  for (const pattern of patterns) {
+    for (const match of text.matchAll(pattern)) {
+      const action = (match[1] ?? '').trim();
+      if (!action || seen.has(action)) continue;
+      seen.add(action);
+      const index = match.index ?? 0;
+      rows.push({
+        action,
+        snippet: text.slice(Math.max(0, index - 500), Math.min(text.length, index + 1500))
+          .replace(/\s+/g, ' ')
+          .trim(),
+      });
+      if (rows.length >= 120) return rows;
+    }
+  }
+  return rows;
 }
 
 async function auditReportLists() {
@@ -160,7 +187,12 @@ async function auditReportLists() {
     ...scriptUrls(currentListsAppHtml),
   ])];
 
-  const scriptResults: Array<{ url: string; endpointCandidates: string[]; contextSnippets: string[] }> = [];
+  const scriptResults: Array<{
+    url: string;
+    endpointCandidates: string[];
+    contextSnippets: string[];
+    serverActionCalls: Array<{ action: string; snippet: string }>;
+  }> = [];
   for (const url of scripts) {
     try {
       const body = await fetchOfficialText(url);
@@ -170,6 +202,7 @@ async function auditReportLists() {
           url,
           endpointCandidates: candidates.slice(0, 80),
           contextSnippets: contextSnippets(body),
+          serverActionCalls: serverActionCalls(body),
         });
       }
     } catch (error) {
@@ -177,6 +210,7 @@ async function auditReportLists() {
         url,
         endpointCandidates: [`audit-error:${error instanceof Error ? error.message : String(error)}`],
         contextSnippets: [],
+        serverActionCalls: [],
       });
     }
   }
