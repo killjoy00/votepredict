@@ -1,3 +1,5 @@
+export {};
+
 const ALLOWED_HOSTS = new Set(['register.cfb.mn.gov', 'cfb.mn.gov', 'www.cfb.mn.gov']);
 const TARGETS = [
   'https://register.cfb.mn.gov/reports/current-lists/',
