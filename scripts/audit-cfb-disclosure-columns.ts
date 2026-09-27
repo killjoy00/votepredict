@@ -55,6 +55,8 @@ function hasAny(headers: readonly string[], patterns: readonly RegExp[]): boolea
 const CFB_ORIGIN = 'https://register.cfb.mn.gov';
 const CFB_CURRENT_LISTS_URL =
   CFB_ORIGIN + '/reports-and-data/searches-and-lists/other-reports-and-lists/current-lists/';
+const CFB_REPORTS_APP_URL = CFB_ORIGIN + '/reports/';
+const CFB_CURRENT_LISTS_APP_URL = CFB_ORIGIN + '/reports/current-lists/';
 
 async function fetchOfficialText(url: string): Promise<string> {
   const target = new URL(url);
@@ -127,7 +129,14 @@ function endpointCandidates(text: string): string[] {
 async function auditReportLists() {
   const homeHtml = await fetchOfficialText(CFB_ORIGIN + '/');
   const listsHtml = await fetchOfficialText(CFB_CURRENT_LISTS_URL);
-  const scripts = [...new Set([...scriptUrls(homeHtml), ...scriptUrls(listsHtml)])];
+  const reportsAppHtml = await fetchOfficialText(CFB_REPORTS_APP_URL);
+  const currentListsAppHtml = await fetchOfficialText(CFB_CURRENT_LISTS_APP_URL);
+  const scripts = [...new Set([
+    ...scriptUrls(homeHtml),
+    ...scriptUrls(listsHtml),
+    ...scriptUrls(reportsAppHtml),
+    ...scriptUrls(currentListsAppHtml),
+  ])];
 
   const scriptResults: Array<{ url: string; endpointCandidates: string[] }> = [];
   for (const url of scripts) {
@@ -149,10 +158,16 @@ async function auditReportLists() {
     currentListsUrl: CFB_CURRENT_LISTS_URL,
     homeReportAnchors: reportAnchors(homeHtml),
     currentListReportAnchors: reportAnchors(listsHtml),
+    reportsAppUrl: CFB_REPORTS_APP_URL,
+    currentListsAppUrl: CFB_CURRENT_LISTS_APP_URL,
+    reportsAppReportAnchors: reportAnchors(reportsAppHtml),
+    currentListsAppReportAnchors: reportAnchors(currentListsAppHtml),
     inlineEndpointCandidates: [
       ...endpointCandidates(homeHtml),
       ...endpointCandidates(listsHtml),
-    ].slice(0, 160),
+      ...endpointCandidates(reportsAppHtml),
+      ...endpointCandidates(currentListsAppHtml),
+    ].slice(0, 260),
     scriptUrls: scripts,
     scriptResults,
   };
