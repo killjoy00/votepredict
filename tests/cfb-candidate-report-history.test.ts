@@ -28,14 +28,17 @@ test('builds the exact candidate reports_data tab form contract', () => {
 test('parses historical candidate tabcontent into report viewer references', () => {
   const response = {
     tabcontent:
-      '<a title="Year-End Report" href="javascript:viewPDF(\'24\',\'pcc\',\'A\',\'0\',\'15677\',0)">Year-End Report</a>'
-      + '<a title="Pre-General Report" href="javascript:viewPDF(\'24\',\'pcc\',\'C\',\'0\',\'15677\',0)">Pre-General Report</a>',
+      '<a title="2025 Year-End Report" href="javascript:viewPDF(\'25\',\'pcc\',\'YE\',\'0\',\'15677\',0)">2025 Year-End Report</a>'
+      + '<a title="Year-End Report" href="javascript:viewPDF(\'24\',\'pcc\',\'A\',\'0\',\'15677\',0)">Year-End Report</a>'
+      + '<a title="Pre-General Report" href="javascript:viewPDF(\'24\',\'pcc\',\'C\',\'0\',\'15677\',0)">Pre-General Report</a>'
+      + '<a title="2023 Year-End Report" href="javascript:viewPDF(\'23\',\'pcc\',\'YE\',\'0\',\'15677\',0)">2023 Year-End Report</a>',
   };
   const refs = parseCfbCandidateReportsTabResponse(response, '15677', 2024);
-  assert.equal(refs.length, 2);
+  assert.equal(refs.length, 3);
   assert.deepEqual(
     refs.map(ref => [ref.reportName, ref.year, ref.type, ref.period, ref.registrationNumber]),
     [
+      ['2023 Year-End Report', '23', 'pcc', 'YE', '15677'],
       ['Pre-General Report', '24', 'pcc', 'C', '15677'],
       ['Year-End Report', '24', 'pcc', 'A', '15677'],
     ],
