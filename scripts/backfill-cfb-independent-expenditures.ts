@@ -29,6 +29,12 @@ function batchSize(): number {
   return Math.min(500, Math.max(25, requested));
 }
 
+function currentReportLimit(): number {
+  const requested = Number.parseInt(process.env.VOTEPREDICT_CFB_IE_CURRENT_REPORTS ?? '', 10);
+  if (!Number.isFinite(requested)) return 6;
+  return Math.min(20, Math.max(1, requested));
+}
+
 async function chooseDb(env: Record<string, string | undefined>) {
   const { Pool } = await import('pg');
   async function works(value: string) {
@@ -96,12 +102,37 @@ async function main() {
     independentExpenditureContentSha256,
     CFB_INDEPENDENT_EXPENDITURE_HISTORY_VERSION,
   } = await import('../src/evidence/cfb-independent-expenditure-history.js');
+  const { acquireCfbCurrentReportProofs } =
+    await import('../src/evidence/cfb-current-report-acquisition.js');
+  const { firstProvenCfbFinanceAvailability } =
+    await import('../src/evidence/cfb-report-finance-mapper.js');
 
   try {
     const urls = await discoverCampaignFinanceDownloadUrls();
     const text = await fetchCampaignFinanceBulkText(urls.independentExpenditures);
     const rows = parseCfbIndependentExpenditureCsv(text, { fromYear: 2021, toYear: 2026 });
     if (!rows.length) throw new Error('CFB historical IE parser returned zero 2021-2026 rows');
+
+    const currentRegistrationNumbers = [...new Set(rows
+      .filter(row => row.year === 2026)
+      .map(row => row.spenderRegistrationNumber)
+      .filter((value): value is string => Boolean(value?.trim()))
+      .map(value => value.trim()))];
+    const currentReports = await acquireCfbCurrentReportProofs({
+      kind: 'pcf-reports',
+      maxReports: currentReportLimit(),
+      registrationNumbers: currentRegistrationNumbers,
+    });
+    const currentReportTexts = new Map<string, Array<{
+      proof: (typeof currentReports.reports)[number]['proof'];
+      text: string;
+    }>>();
+    for (const report of currentReports.reports) {
+      const registrationNumber = report.proof.reference.registrationNumber;
+      const values = currentReportTexts.get(registrationNumber) ?? [];
+      values.push({ proof: report.proof, text: report.text });
+      currentReportTexts.set(registrationNumber, values);
+    }
 
     const sourceHash = createHash('sha256').update(text).digest('hex');
     const rowContentSha256 = independentExpenditureContentSha256(rows);
@@ -115,6 +146,7 @@ async function main() {
       reportName: string;
       proofKind: 'cfb_public_disclosure' | 'cfb_report_filing';
       proofUrl: string;
+      source: 'bulk_direct' | 'current_report_pdf';
     };
 
     const disclosureMappings: DisclosureMapping[] = [];
@@ -137,6 +169,7 @@ async function main() {
           reportName: proof.reportName,
           proofKind: proof.proofKind,
           proofUrl: proof.proofUrl,
+          source: 'bulk_direct',
         });
         continue;
       }
@@ -156,7 +189,36 @@ async function main() {
           reportName: proof.reportName,
           proofKind: 'cfb_report_filing',
           proofUrl: proof.proofUrl,
+          source: 'bulk_direct',
         });
+        continue;
+      }
+
+      if (row.year === 2026) {
+        const reports = currentReportTexts.get(registrationNumber);
+        if (reports?.length) {
+          const match = firstProvenCfbFinanceAvailability({
+            registrationNumber,
+            transactionDate: row.transactionDate,
+            kind: 'expenditure',
+            amount: row.amount,
+            totalAmount: row.totalAmount,
+            affectedCommitteeName: row.affectedCommitteeName,
+            affectedCommitteeRegistrationNumber: row.affectedCommitteeRegistrationNumber,
+          }, reports);
+          if (match) {
+            disclosureMappings.push({
+              rowKey: row.rowKey,
+              availableOn: match.window.availableOn,
+              disclosedOn: null,
+              filedOn: match.proof.filedOn,
+              reportName: match.window.reportName,
+              proofKind: 'cfb_report_filing',
+              proofUrl: match.window.proofUrl,
+              source: 'current_report_pdf',
+            });
+          }
+        }
       }
     }
     const disclosureByRowKey = new Map(disclosureMappings.map(mapping => [mapping.rowKey, mapping]));
@@ -186,16 +248,18 @@ async function main() {
           subtype: 'independent_expenditure_record',
           contextOnly: true,
           mechanicallyActionable: false,
+          modelWeight: 0,
           asOfEligible: false,
           availabilityStatus: disclosure
             ? 'pending_regulatory_disclosure_promotion'
             : 'awaiting_regulatory_disclosure_proof',
           transactionDateIsAvailability: false,
-          disclosureDateIsAvailability: Boolean(disclosure),
+          disclosureDateIsAvailability: disclosure?.proofKind === 'cfb_public_disclosure',
+          filingDateDerivedAvailability: disclosure?.proofKind === 'cfb_report_filing',
           transactionDate: row.transactionDate,
-          reportName: row.reportName,
-          filedOn: row.filedOn,
-          disclosedOn: row.disclosedOn,
+          reportName: disclosure?.reportName ?? row.reportName,
+          filedOn: disclosure?.filedOn ?? row.filedOn,
+          disclosedOn: disclosure?.disclosedOn ?? row.disclosedOn,
           year: row.year,
           spender: row.spender,
           spenderRegistrationNumber: row.spenderRegistrationNumber,
@@ -297,8 +361,12 @@ async function main() {
                    'reportName', disclosure.report_name,
                    'availabilityProofKind', disclosure.proof_kind,
                    'availabilityProofUrl', disclosure.proof_url,
-                   'disclosureDateIsAvailability', true,
-                   'transactionDateIsAvailability', false
+                   'disclosureDateIsAvailability', disclosure.proof_kind = 'cfb_public_disclosure',
+                   'filingDateDerivedAvailability', disclosure.proof_kind = 'cfb_report_filing',
+                   'transactionDateIsAvailability', false,
+                   'contextOnly', true,
+                   'mechanicallyActionable', false,
+                   'modelWeight', 0
                  ))
             FROM source_documents sd, disclosure
            WHERE sd.id = ei.source_document_id
@@ -339,6 +407,17 @@ async function main() {
         disclosureMappedRows: disclosureMappings.length,
         directDisclosureRows: disclosureMappings.filter(row => row.proofKind === 'cfb_public_disclosure').length,
         filingDerivedRows: disclosureMappings.filter(row => row.proofKind === 'cfb_report_filing').length,
+        currentReportMappedRows: disclosureMappings.filter(row => row.source === 'current_report_pdf').length,
+        currentReportAcquisition: {
+          reportLimit: currentReportLimit(),
+          entitiesDiscovered: currentReports.entitiesDiscovered,
+          referencesDiscovered: currentReports.referencesDiscovered,
+          eligibleReferences: currentReports.eligibleReferences,
+          selectedReports: currentReports.selectedReports,
+          proofsParsed: currentReports.reports.length,
+          failures: currentReports.failures.length,
+          failureExamples: currentReports.failures.slice(0, 6),
+        },
         promotedThisRun,
         asOfEligibleRows: eligible.rows[0]?.count ?? 0,
         policy: {
