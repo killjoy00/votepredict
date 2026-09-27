@@ -1,0 +1,33 @@
+export type CfbCandidateFinanceMembershipTailGroup = {
+  registrationNumber: string;
+  segmentEndYear: number;
+  candidateName: string;
+  chamber: string;
+  totalRows: number;
+  resolvedRows: number;
+};
+
+export function cfbCandidateFinanceTargetKey(input: {
+  registrationNumber: string;
+  segmentEndYear: number;
+}): string {
+  return input.registrationNumber + ':' + input.segmentEndYear;
+}
+
+export function selectCfbCandidateFinanceMembershipTail(
+  groups: readonly CfbCandidateFinanceMembershipTailGroup[],
+  excludedKeys: ReadonlySet<string>,
+  limit: number,
+): CfbCandidateFinanceMembershipTailGroup[] {
+  const boundedLimit = Math.max(1, Math.min(32, Math.trunc(limit) || 1));
+  return groups
+    .filter(group =>
+      group.resolvedRows > 0
+      && !excludedKeys.has(cfbCandidateFinanceTargetKey(group)))
+    .sort((left, right) =>
+      right.resolvedRows - left.resolvedRows
+      || right.totalRows - left.totalRows
+      || left.segmentEndYear - right.segmentEndYear
+      || left.registrationNumber.localeCompare(right.registrationNumber))
+    .slice(0, boundedLimit);
+}
