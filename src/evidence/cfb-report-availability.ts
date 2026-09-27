@@ -1,4 +1,4 @@
-export const CFB_REPORT_AVAILABILITY_VERSION='mn-cfb-report-availability-v4' as const;
+export const CFB_REPORT_AVAILABILITY_VERSION='mn-cfb-report-availability-v5' as const;
 export const CFB_SPECIFIC_LOBBYING_SUBJECT_FIRST_REPORT_YEAR=2024 as const;
 
 function exactDate(value:string,label:string):string{
@@ -38,6 +38,40 @@ export interface CfbDisclosureProof {
   availableOn:string;
   proofUrl:string;
   proofKind:'cfb_report_filing'|'cfb_large_contribution_notice'|'cfb_lobbyist_activity_report';
+}
+
+export interface CfbPublicDisclosureProof {
+  registrationNumber:string;
+  reportName:string;
+  disclosedOn:string;
+  availableOn:string;
+  proofUrl:string;
+  proofKind:'cfb_public_disclosure';
+}
+
+// If an official CFB source directly carries the date a report, notice, or row was
+// publicly disclosed, that date is sufficient for historical availability. An exact
+// filing timestamp is not required. Transaction/event/report-period dates still do
+// not qualify unless the official source explicitly identifies them as the public
+// disclosure date.
+export function buildCfbPublicDisclosureProof(input:{
+  registrationNumber:string;
+  reportName:string;
+  disclosedOn:string;
+  proofUrl:string;
+}):CfbPublicDisclosureProof{
+  if(!input.registrationNumber.trim())throw new Error('CFB registration number required');
+  if(!input.reportName.trim())throw new Error('CFB report name required');
+  requireOfficialCfbProofUrl(input.proofUrl);
+  const disclosedOn=exactDate(input.disclosedOn,'CFB disclosure date');
+  return {
+    registrationNumber:input.registrationNumber.trim(),
+    reportName:input.reportName.trim(),
+    disclosedOn,
+    availableOn:disclosedOn,
+    proofUrl:input.proofUrl,
+    proofKind:'cfb_public_disclosure',
+  };
 }
 
 export function buildCfbReportDisclosureProof(input:{
