@@ -195,6 +195,31 @@ async function probeCandidateApi(input: {
   };
 }
 
+
+function tabContentContexts(text: string): string[] {
+  const patterns = [
+    /\btab_content\b/gi,
+    /\bdata_name\b/gi,
+    /\bextra_data\b/gi,
+    /\bstore_name\b/gi,
+    /candidate_viewer-tabs/gi,
+    /\bcandidtab\b/gi,
+  ];
+  const rows: string[] = [];
+  for (const pattern of patterns) {
+    for (const match of text.matchAll(pattern)) {
+      const index = match.index ?? 0;
+      const value = text
+        .slice(Math.max(0, index - 2600), Math.min(text.length, index + 6200))
+        .replace(/\s+/g, ' ')
+        .trim();
+      if (value && !rows.includes(value)) rows.push(value);
+      if (rows.length >= 30) return rows;
+    }
+  }
+  return rows;
+}
+
 async function main() {
   const pages = [];
   for (const path of TARGETS) {
@@ -204,20 +229,23 @@ async function main() {
       const scriptResults = [];
       const combinedSearchTypes = new Set(searchTypeValues(page.text));
       const pageFocusedContexts = focusedContexts(page.text);
+      const pageTabContentContexts = tabContentContexts(page.text);
       for (const url of scripts) {
         try {
           const script = await fetchOfficial(url);
           const context = snippets(script.text);
           const endpoints = endpointCandidates(script.text);
           const focused = focusedContexts(script.text);
+          const tabContexts = tabContentContexts(script.text);
           for (const value of searchTypeValues(script.text)) combinedSearchTypes.add(value);
-          if (context.length || endpoints.length || focused.length) {
+          if (context.length || endpoints.length || focused.length || tabContexts.length) {
             scriptResults.push({
               url,
               bytes: script.text.length,
               endpointCandidates: endpoints.slice(0, 80),
               searchTypeValues: searchTypeValues(script.text),
               focusedContexts: focused,
+              tabContentContexts: tabContexts,
               contextSnippets: context,
             });
           }
@@ -257,6 +285,7 @@ async function main() {
         pageSearchTypeValues: searchTypeValues(page.text),
         combinedSearchTypeValues: [...combinedSearchTypes],
         pageFocusedContexts,
+        pageTabContentContexts,
         pageContextSnippets: snippets(page.text),
         apiProbes,
         scripts,
