@@ -63,9 +63,10 @@ async function main() {
   const contributions = parseCfbCandidateContributionCsv(contributionText, { fromYear: 2026, toYear: 2026 });
   const expenditures = parseCfbCandidateExpenditureCsv(expenditureText, { fromYear: 2026, toYear: 2026 });
   const candidateRows: CfbCandidateFinanceRow[] = [...contributions, ...expenditures];
+  const legislativeCandidateRows = candidateRows.filter(row => Boolean(row.candidateName && row.chamber));
   const ieRows = parseCfbIndependentExpenditureCsv(ieText, { fromYear: 2026, toYear: 2026 });
 
-  const candidateRegistrations = unique(candidateRows.map(row => row.filerRegistrationNumber));
+  const candidateRegistrations = unique(legislativeCandidateRows.map(row => row.filerRegistrationNumber));
   const pcfRegistrations = unique(ieRows.map(row => row.spenderRegistrationNumber));
 
   const candidate = await acquireCfbCurrentReportProofs({
@@ -91,7 +92,7 @@ async function main() {
   let ieRowsMatched = 0;
   const samples: Array<Record<string, unknown>> = [];
 
-  for (const row of candidateRows) {
+  for (const row of legislativeCandidateRows) {
     const registrationNumber = row.filerRegistrationNumber;
     if (!registrationNumber) continue;
     const reports = candidateReports.get(registrationNumber);
@@ -149,6 +150,8 @@ async function main() {
       bulkRows: {
         contributions2026: contributions.length,
         candidateExpenditures2026: expenditures.length,
+        legislativeCandidateRows2026: legislativeCandidateRows.length,
+        legislativeCandidateRegistrations2026: candidateRegistrations.length,
         independentExpenditures2026: ieRows.length,
       },
       candidateReports: {
