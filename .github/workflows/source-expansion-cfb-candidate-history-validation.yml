@@ -1,0 +1,32 @@
+name: Source expansion CFB candidate history validation
+
+on:
+  issue_comment:
+    types: [created, edited]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.event_name == 'issue_comment' && (github.event.issue.number != 355 || github.event.comment.user.login != 'killjoy00' || !startsWith(github.event.comment.body, '[source-expansion-cfb-candidate-history-validation]')) && format('source-expansion-cfb-candidate-history-validation-skip-{0}', github.run_id) || 'source-expansion-cfb-candidate-history-validation' }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: >-
+      github.event_name != 'issue_comment' ||
+      (
+        github.event.issue.number == 355 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        startsWith(github.event.comment.body, '[source-expansion-cfb-candidate-history-validation]')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+      - name: Validate historical CFB legislative candidate report proofs
+        run: node --import tsx scripts/validate-cfb-candidate-report-history.ts
