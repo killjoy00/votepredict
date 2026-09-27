@@ -1,122 +1,3 @@
-import { createHash } from 'node:crypto';
-import {
-  parseCfbReportPdfAvailability,
-  parseCfbReportViewerReferences,
-  type CfbParsedReportProof,
-  type CfbReportViewerReference,
-} from './cfb-report-pdf-proof.js';
-
-const CFB_ORIGIN = 'https://register.cfb.mn.gov';
-const CFB_CURRENT_LISTS_APP_URL = CFB_ORIGIN + '/reports/current-lists/';
-const CFB_REPORT_API_URL = CFB_ORIGIN + '/reports/api/';
-const CFB_REPORT_VIEWER_URL = 'https://cfb.mn.gov/rptViewer/Main.php?do=viewPDF';
-const MAX_REPORT_BYTES = 30_000_000;
-
-export type CfbCurrentReportKind = 'candidate-reports' | 'pcf-reports';
-
-export interface CfbCurrentReportGrid {
-  columns: string[];
-  entityCount: number;
-  references: CfbReportViewerReference[];
-}
-
-export interface CfbAcquiredCurrentReport {
-  proof: CfbParsedReportProof;
-  text: string;
-  contentSha256: string;
-  fetchedAt: string;
-  bytes: number;
-}
-
-function objectValue(value: unknown): Record<string, unknown> | null {
-  return value && typeof value === 'object' && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : null;
-}
-
-export function parseCfbCurrentReportGrid(payload: string | unknown): CfbCurrentReportGrid {
-  const parsed = typeof payload === 'string' ? JSON.parse(payload) as unknown : payload;
-  const root = objectValue(parsed);
-  if (!root) throw new Error('CFB current-report grid response must be an object');
-
-  const columns = Array.isArray(root.cols)
-    ? root.cols.filter((value): value is string => typeof value === 'string')
-    : [];
-  const data = objectValue(root.data);
-  if (!columns.length || !data) throw new Error('CFB current-report grid response missing cols/data');
-
-  const filingYearIndex = columns.indexOf('FilingYear');
-  const reportTypeIndex = columns.indexOf('ReportType');
-  const registrationIndex = columns.indexOf('RegisteredEntityID');
-  if (filingYearIndex < 0 || reportTypeIndex < 0 || registrationIndex < 0) {
-    throw new Error('CFB current-report grid missing required filing/report/registration columns');
-  }
-
-  const references: CfbReportViewerReference[] = [];
-  const seen = new Set<string>();
-  for (const rows of Object.values(data)) {
-    if (!Array.isArray(rows)) continue;
-    for (const row of rows) {
-      if (!Array.isArray(row)) continue;
-      const filingYear = Number(row[filingYearIndex]);
-      const reportHtml = typeof row[reportTypeIndex] === 'string' ? row[reportTypeIndex] : '';
-      const registrationNumber = typeof row[registrationIndex] === 'string'
-        ? row[registrationIndex].trim()
-        : String(row[registrationIndex] ?? '').trim();
-      if (!Number.isFinite(filingYear) || !registrationNumber || !reportHtml) continue;
-
-      for (const reference of parseCfbReportViewerReferences(filingYear, registrationNumber, reportHtml)) {
-        const key = [
-          reference.year,
-          reference.type,
-          reference.period,
-          reference.se,
-          reference.registrationNumber,
-          reference.amendment,
-        ].join('|');
-        if (seen.has(key)) continue;
-        seen.add(key);
-        references.push(reference);
-      }
-    }
-  }
-
-  references.sort((left, right) =>
-    right.filingYear - left.filingYear
-    || left.registrationNumber.localeCompare(right.registrationNumber)
-    || left.reportName.localeCompare(right.reportName)
-    || left.amendment - right.amendment);
-
-  return { columns, entityCount: Object.keys(data).length, references };
-}
-
-async function fetchReportAppSession() {
-  const response = await fetch(CFB_CURRENT_LISTS_APP_URL, {
-    headers: { 'user-agent': 'Mozilla/5.0 VotePredict/2.0 cfb-current-report-validation' },
-    signal: AbortSignal.timeout(30_000),
-  });
-  if (!response.ok) throw new Error('CFB current-list app HTTP ' + response.status);
-  await response.arrayBuffer();
-  const headers = response.headers as Headers & { getSetCookie?: () => string[] };
-  const setCookies = typeof headers.getSetCookie === 'function'
-    ? headers.getSetCookie()
-    : [response.headers.get('set-cookie') ?? ''].filter(Boolean);
-  return setCookies
-    .map(value => value.split(';', 1)[0]?.trim())
-    .filter(Boolean)
-    .join('; ');
-}
-
-function gridBody(kind: CfbCurrentReportKind): string {
-  const params = new URLSearchParams();
-  params.set('action', 'grid_data');
-  params.set('data[action]', kind);
-  params.set('data[type]', 'current-lists');
-  params.set('data[params][0]', 'all');
-  return params.toString();
-}
-
-export async function fetchCfbCurrentReportGrid(kind: CfbCurrentReportKind): Promise<CfbCurrentReportGrid> {
   const cookie = await fetchReportAppSession();
   const response = await fetch(CFB_REPORT_API_URL, {
     method: 'POST',
@@ -150,8 +31,12 @@ export function cfbReportViewerUrl(reference: CfbReportViewerReference): string 
   return url.toString();
 }
 
-function cfbReportViewerFormBody(reference: CfbReportViewerReference): string {
+function cfbReportViewerFormBody(
+  reference: CfbReportViewerReference,
+  searchType?: string,
+): string {
   const params = new URLSearchParams();
+  if (searchType) params.set('searchType', searchType);
   params.set('downloadpdf', 'false');
   params.set('year', reference.year);
   params.set('type', reference.type);
@@ -159,12 +44,15 @@ function cfbReportViewerFormBody(reference: CfbReportViewerReference): string {
   params.set('se', reference.se);
   params.set('regnum', reference.registrationNumber);
   params.set('amend', String(reference.amendment));
+  params.set('disc', '');
+  params.set('date', '');
+  params.set('show', '0');
   return params.toString();
 }
 
 export async function fetchCfbReportViewerText(
   reference: CfbReportViewerReference,
-  options: { method?: 'GET' | 'POST'; referer?: string } = {},
+  options: { method?: 'GET' | 'POST'; referer?: string; searchType?: string } = {},
 ) {
   const sourceUrl = cfbReportViewerUrl(reference);
   const method = options.method ?? 'GET';
@@ -178,7 +66,9 @@ export async function fetchCfbReportViewerText(
         ? { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' }
         : {}),
     },
-    ...(method === 'POST' ? { body: cfbReportViewerFormBody(reference) } : {}),
+    ...(method === 'POST'
+      ? { body: cfbReportViewerFormBody(reference, options.searchType) }
+      : {}),
     redirect: 'follow',
     signal: AbortSignal.timeout(45_000),
   });
