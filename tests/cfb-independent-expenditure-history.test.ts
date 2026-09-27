@@ -8,6 +8,7 @@ import {
   buildCfbPublicDisclosureProof,
   buildCfbReportDisclosureProof,
   cfbElectronicReportAvailableOn,
+  firstCfbReportAvailabilityForTransaction,
 } from '../src/evidence/cfb-report-availability.js';
 
 test('parses granular independent expenditure records',()=>{
@@ -63,6 +64,79 @@ test('official CFB disclosure date is sufficient without an exact filing timesta
   assert.equal(proof.proofKind,'cfb_public_disclosure');
 });
 
+
+test('transaction becomes available on the first covering disclosed report',()=>{
+  const report=firstCfbReportAvailabilityForTransaction({
+    registrationNumber:'19001',
+    occurredOn:'2024-10-01',
+  },[
+    {
+      registrationNumber:'19001',
+      reportName:'2024 Pre-General',
+      coverageStartOn:'2024-01-01',
+      coverageEndOn:'2024-10-19',
+      availableOn:'2024-10-27',
+      proofUrl:'https://register.cfb.mn.gov/reports/pre-general',
+      proofKind:'cfb_public_disclosure',
+    },
+    {
+      registrationNumber:'19001',
+      reportName:'2024 Year-End',
+      coverageStartOn:'2024-01-01',
+      coverageEndOn:'2024-12-31',
+      availableOn:'2025-01-30',
+      proofUrl:'https://register.cfb.mn.gov/reports/year-end',
+      proofKind:'cfb_public_disclosure',
+    },
+  ]);
+  assert.equal(report?.reportName,'2024 Pre-General');
+  assert.equal(report?.availableOn,'2024-10-27');
+});
+
+test('october donation disclosed by year-end report is available in january, not october',()=>{
+  const report=firstCfbReportAvailabilityForTransaction({
+    registrationNumber:'19001',
+    occurredOn:'2024-10-25',
+  },[
+    {
+      registrationNumber:'19001',
+      reportName:'2024 Pre-General',
+      coverageStartOn:'2024-01-01',
+      coverageEndOn:'2024-10-19',
+      availableOn:'2024-10-27',
+      proofUrl:'https://register.cfb.mn.gov/reports/pre-general',
+      proofKind:'cfb_public_disclosure',
+    },
+    {
+      registrationNumber:'19001',
+      reportName:'2024 Year-End',
+      coverageStartOn:'2024-01-01',
+      coverageEndOn:'2024-12-31',
+      availableOn:'2025-01-30',
+      proofUrl:'https://register.cfb.mn.gov/reports/year-end',
+      proofKind:'cfb_public_disclosure',
+    },
+  ]);
+  assert.equal(report?.availableOn,'2025-01-30');
+});
+
+test('report mapper fails closed when no proven report covers the transaction',()=>{
+  const report=firstCfbReportAvailabilityForTransaction({
+    registrationNumber:'19001',
+    occurredOn:'2024-10-25',
+  },[
+    {
+      registrationNumber:'19001',
+      reportName:'2024 Pre-General',
+      coverageStartOn:'2024-01-01',
+      coverageEndOn:'2024-10-19',
+      availableOn:'2024-10-27',
+      proofUrl:'https://register.cfb.mn.gov/reports/pre-general',
+      proofKind:'cfb_public_disclosure',
+    },
+  ]);
+  assert.equal(report,null);
+});
 
 test('CFB disclosure proofs require an official CFB provenance URL',()=>{
   assert.throws(()=>buildCfbReportDisclosureProof({
