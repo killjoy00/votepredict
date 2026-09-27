@@ -58,6 +58,10 @@ const CFB_CURRENT_LISTS_URL =
 const CFB_REPORTS_APP_URL = CFB_ORIGIN + '/reports/';
 const CFB_CURRENT_LISTS_APP_URL = CFB_ORIGIN + '/reports/current-lists/';
 const CFB_REPORT_VIEWER_URL = 'https://cfb.mn.gov/rptViewer/Main.php?do=viewPDF';
+const CFB_LEGISLATIVE_CANDIDATE_VIEWER_URLS = [
+  CFB_ORIGIN + '/reports-and-data/viewers/campaign-finance/candidates/15719/2026/',
+  CFB_ORIGIN + '/reports-and-data/viewers/campaign-finance/candidates/19238/2026/',
+] as const;
 
 async function fetchOfficialText(url: string): Promise<string> {
   const target = new URL(url);
@@ -131,6 +135,10 @@ function contextSnippets(text: string): string[] {
   const patterns = [
     /\/reports\/api\//gi,
     /candidate[-_]?reports/gi,
+    /candidate[-_]?viewer/gi,
+    /candidate[-_]?info/gi,
+    /reports?[-_]?and[-_]?data/gi,
+    /financial[-_]?summary/gi,
     /pcf[-_]?reports/gi,
     /current[-_]?reports/gi,
     /report[-_]?date/gi,
@@ -504,11 +512,36 @@ async function auditReportLists() {
   const listsHtml = await fetchOfficialText(CFB_CURRENT_LISTS_URL);
   const reportsAppHtml = await fetchOfficialText(CFB_REPORTS_APP_URL);
   const currentListsAppHtml = await fetchOfficialText(CFB_CURRENT_LISTS_APP_URL);
+  const candidateViewerPages = [];
+  for (const url of CFB_LEGISLATIVE_CANDIDATE_VIEWER_URLS) {
+    try {
+      const html = await fetchOfficialText(url);
+      candidateViewerPages.push({
+        url,
+        scriptUrls: scriptUrls(html),
+        endpointCandidates: endpointCandidates(html),
+        contextSnippets: contextSnippets(html),
+        serverActionCalls: serverActionCalls(html),
+        viewPdfContexts: viewPdfContexts(html),
+      });
+    } catch (error) {
+      candidateViewerPages.push({
+        url,
+        error: error instanceof Error ? error.message : String(error),
+        scriptUrls: [],
+        endpointCandidates: [],
+        contextSnippets: [],
+        serverActionCalls: [],
+        viewPdfContexts: [],
+      });
+    }
+  }
   const scripts = [...new Set([
     ...scriptUrls(homeHtml),
     ...scriptUrls(listsHtml),
     ...scriptUrls(reportsAppHtml),
     ...scriptUrls(currentListsAppHtml),
+    ...candidateViewerPages.flatMap(page => page.scriptUrls),
   ])];
 
   const scriptResults: Array<{
@@ -578,6 +611,7 @@ async function auditReportLists() {
     currentListReportAnchors: reportAnchors(listsHtml),
     reportsAppUrl: CFB_REPORTS_APP_URL,
     currentListsAppUrl: CFB_CURRENT_LISTS_APP_URL,
+    legislativeCandidateViewerPages: candidateViewerPages,
     reportsAppReportAnchors: reportAnchors(reportsAppHtml),
     currentListsAppReportAnchors: reportAnchors(currentListsAppHtml),
     inlineEndpointCandidates: [
