@@ -21,11 +21,11 @@ test('member finance identity uses stable first/last matching', () => {
   assert.equal(publicFinanceMemberMatchKey('John A. Smith Jr.'), 'john|smith');
 });
 
-test('public finance features use disclosure time, not transaction time', () => {
+test('public finance features use disclosure time and carry pre-session disclosures forward', () => {
   const rows: PublicFinanceTransaction[] = [
     {
       chamber: 'house', matchKey: 'a|b', candidateName: 'A B',
-      occurredOn: '2024-10-01', availableOn: '2025-01-30', availabilitySource: 'direct_disclosure',
+      occurredOn: '2024-10-01', availableOn: '2024-10-28', availabilitySource: 'direct_disclosure',
       kind: 'receipts', amount: 100,
     },
     {
