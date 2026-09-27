@@ -1,4 +1,4 @@
-export const CFB_REPORT_AVAILABILITY_VERSION='mn-cfb-report-availability-v5' as const;
+export const CFB_REPORT_AVAILABILITY_VERSION='mn-cfb-report-availability-v6' as const;
 export const CFB_SPECIFIC_LOBBYING_SUBJECT_FIRST_REPORT_YEAR=2024 as const;
 
 function exactDate(value:string,label:string):string{
@@ -72,6 +72,61 @@ export function buildCfbPublicDisclosureProof(input:{
     proofUrl:input.proofUrl,
     proofKind:'cfb_public_disclosure',
   };
+}
+
+export interface CfbReportAvailabilityWindow {
+  registrationNumber:string;
+  reportName:string;
+  coverageStartOn:string;
+  coverageEndOn:string;
+  availableOn:string;
+  proofUrl:string;
+  proofKind:'cfb_public_disclosure'|'cfb_report_filing'|'cfb_large_contribution_notice';
+}
+
+export interface CfbTransactionAvailabilityInput {
+  registrationNumber:string;
+  occurredOn:string;
+}
+
+// Map an underlying finance transaction to the first proven public filing that
+// actually covers it. This is intentionally availability-time semantics:
+// transaction/event time is provenance only and never becomes availableOn.
+export function firstCfbReportAvailabilityForTransaction(
+  input:CfbTransactionAvailabilityInput,
+  reports:readonly CfbReportAvailabilityWindow[],
+):CfbReportAvailabilityWindow|null{
+  const registrationNumber=input.registrationNumber.trim();
+  if(!registrationNumber)throw new Error('CFB transaction registration number required');
+  const occurredOn=exactDate(input.occurredOn,'CFB transaction date');
+
+  const eligible=reports.flatMap(report=>{
+    if(report.registrationNumber.trim()!==registrationNumber)return [];
+    if(!report.reportName.trim())throw new Error('CFB report name required');
+    requireOfficialCfbProofUrl(report.proofUrl);
+    const coverageStartOn=exactDate(report.coverageStartOn,'CFB report coverage start date');
+    const coverageEndOn=exactDate(report.coverageEndOn,'CFB report coverage end date');
+    const availableOn=exactDate(report.availableOn,'CFB report availability date');
+    if(coverageEndOn<coverageStartOn)throw new Error('CFB report coverage end date cannot precede start date');
+    if(availableOn<coverageEndOn)throw new Error('CFB report availability date cannot precede coverage end date');
+    if(occurredOn<coverageStartOn||occurredOn>coverageEndOn)return [];
+    return [{
+      ...report,
+      registrationNumber,
+      reportName:report.reportName.trim(),
+      coverageStartOn,
+      coverageEndOn,
+      availableOn,
+    }];
+  });
+
+  eligible.sort((left,right)=>
+    left.availableOn.localeCompare(right.availableOn)
+    || left.coverageEndOn.localeCompare(right.coverageEndOn)
+    || left.reportName.localeCompare(right.reportName)
+    || left.proofUrl.localeCompare(right.proofUrl));
+
+  return eligible[0]??null;
 }
 
 export function buildCfbReportDisclosureProof(input:{
