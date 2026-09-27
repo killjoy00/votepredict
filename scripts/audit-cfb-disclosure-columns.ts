@@ -126,6 +126,28 @@ function endpointCandidates(text: string): string[] {
   return [...values];
 }
 
+function contextSnippets(text: string): string[] {
+  const patterns = [
+    /\/reports\/api\//gi,
+    /candidate-reports/gi,
+    /pcf-reports/gi,
+    /report_date/gi,
+    /filed/gi,
+  ];
+  const snippets: string[] = [];
+  for (const pattern of patterns) {
+    for (const match of text.matchAll(pattern)) {
+      const index = match.index ?? 0;
+      const start = Math.max(0, index - 600);
+      const end = Math.min(text.length, index + 1200);
+      const snippet = text.slice(start, end).replace(/\s+/g, ' ').trim();
+      if (snippet && !snippets.includes(snippet)) snippets.push(snippet);
+      if (snippets.length >= 24) return snippets;
+    }
+  }
+  return snippets;
+}
+
 async function auditReportLists() {
   const homeHtml = await fetchOfficialText(CFB_ORIGIN + '/');
   const listsHtml = await fetchOfficialText(CFB_CURRENT_LISTS_URL);
@@ -138,18 +160,23 @@ async function auditReportLists() {
     ...scriptUrls(currentListsAppHtml),
   ])];
 
-  const scriptResults: Array<{ url: string; endpointCandidates: string[] }> = [];
+  const scriptResults: Array<{ url: string; endpointCandidates: string[]; contextSnippets: string[] }> = [];
   for (const url of scripts) {
     try {
       const body = await fetchOfficialText(url);
       const candidates = endpointCandidates(body);
       if (candidates.length > 0 || /current-lists|Current candidate reports|report_date|filed/i.test(body)) {
-        scriptResults.push({ url, endpointCandidates: candidates.slice(0, 80) });
+        scriptResults.push({
+          url,
+          endpointCandidates: candidates.slice(0, 80),
+          contextSnippets: contextSnippets(body),
+        });
       }
     } catch (error) {
       scriptResults.push({
         url,
         endpointCandidates: [`audit-error:${error instanceof Error ? error.message : String(error)}`],
+        contextSnippets: [],
       });
     }
   }
