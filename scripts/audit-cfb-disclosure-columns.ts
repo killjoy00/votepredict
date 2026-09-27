@@ -382,6 +382,10 @@ async function auditReportLists() {
       ...endpointCandidates(reportsAppHtml),
       ...endpointCandidates(currentListsAppHtml),
     ].slice(0, 260),
+    inlineViewPdfContexts: [
+      ...viewPdfContexts(reportsAppHtml),
+      ...viewPdfContexts(currentListsAppHtml),
+    ].slice(0, 20),
     scriptUrls: scripts,
     scriptResults,
     reportApiProbes,
