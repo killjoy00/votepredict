@@ -154,7 +154,7 @@ async function main() {
           disclosedOn: null,
           filedOn: proof.filedOn,
           reportName: proof.reportName,
-          proofKind: proof.proofKind,
+          proofKind: 'cfb_report_filing',
           proofUrl: proof.proofUrl,
         });
       }
