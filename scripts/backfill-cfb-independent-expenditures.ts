@@ -117,9 +117,10 @@ async function main() {
       proofUrl: string;
     };
 
-    const disclosureMappings: DisclosureMapping[] = rows.flatMap<DisclosureMapping>(row => {
+    const disclosureMappings: DisclosureMapping[] = [];
+    for (const row of rows) {
       const registrationNumber = row.spenderRegistrationNumber;
-      if (!registrationNumber) return [];
+      if (!registrationNumber) continue;
 
       if (row.disclosedOn) {
         const proof = buildCfbPublicDisclosureProof({
@@ -128,7 +129,7 @@ async function main() {
           disclosedOn: row.disclosedOn,
           proofUrl: urls.independentExpenditures,
         });
-        return [{
+        disclosureMappings.push({
           rowKey: row.rowKey,
           availableOn: proof.availableOn,
           disclosedOn: proof.disclosedOn,
@@ -136,7 +137,8 @@ async function main() {
           reportName: proof.reportName,
           proofKind: proof.proofKind,
           proofUrl: proof.proofUrl,
-        }];
+        });
+        continue;
       }
 
       if (row.filedOn && row.reportName) {
@@ -146,7 +148,7 @@ async function main() {
           filedOn: row.filedOn,
           proofUrl: urls.independentExpenditures,
         });
-        return [{
+        disclosureMappings.push({
           rowKey: row.rowKey,
           availableOn: proof.availableOn,
           disclosedOn: null,
@@ -154,11 +156,9 @@ async function main() {
           reportName: proof.reportName,
           proofKind: proof.proofKind,
           proofUrl: proof.proofUrl,
-        }];
+        });
       }
-
-      return [];
-    });
+    }
     const disclosureByRowKey = new Map(disclosureMappings.map(mapping => [mapping.rowKey, mapping]));
 
     const drafts = rows.map(row => {
