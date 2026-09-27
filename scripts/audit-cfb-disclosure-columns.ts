@@ -57,6 +57,7 @@ const CFB_CURRENT_LISTS_URL =
   CFB_ORIGIN + '/reports-and-data/searches-and-lists/other-reports-and-lists/current-lists/';
 const CFB_REPORTS_APP_URL = CFB_ORIGIN + '/reports/';
 const CFB_CURRENT_LISTS_APP_URL = CFB_ORIGIN + '/reports/current-lists/';
+const CFB_REPORT_VIEWER_URL = 'https://cfb.mn.gov/rptViewer/Main.php?do=viewPDF';
 
 async function fetchOfficialText(url: string): Promise<string> {
   const target = new URL(url);
@@ -310,6 +311,100 @@ async function probeReportApiVariants(operation: 'grid_info' | 'grid_data', rout
   return { operation, routeAction, variants };
 }
 
+function reportDateSnippets(text: string): string[] {
+  const normalized = text.replace(/\u0000/g, '');
+  const patterns = [
+    /\bfiled\b/gi,
+    /\breceived\b/gi,
+    /\bsubmitted\b/gi,
+    /\bfiling date\b/gi,
+    /\breport date\b/gi,
+    /\bperiod (?:ending|end)\b/gi,
+    /\bthrough\b/gi,
+    /\bSeptember Report\b/gi,
+  ];
+  const snippets: string[] = [];
+  for (const pattern of patterns) {
+    for (const match of normalized.matchAll(pattern)) {
+      const index = match.index ?? 0;
+      const snippet = normalized
+        .slice(Math.max(0, index - 350), Math.min(normalized.length, index + 850))
+        .replace(/\s+/g, ' ')
+        .trim();
+      if (snippet && !snippets.includes(snippet)) snippets.push(snippet);
+      if (snippets.length >= 30) return snippets;
+    }
+  }
+  return snippets;
+}
+
+async function probeReportViewer(input: {
+  label: string;
+  year: string;
+  type: string;
+  period: string;
+  se: string;
+  regnum: string;
+  amend: string;
+}) {
+  const form = new URLSearchParams({
+    downloadpdf: 'false',
+    year: input.year,
+    type: input.type,
+    period: input.period,
+    se: input.se,
+    regnum: input.regnum,
+    amend: input.amend,
+  });
+  const response = await fetch(CFB_REPORT_VIEWER_URL, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded',
+      'user-agent': 'Mozilla/5.0 VotePredict/2.0 cfb-disclosure-audit',
+      referer: CFB_CURRENT_LISTS_APP_URL + '#/candidate-reports/all/',
+      accept: 'application/pdf,text/html;q=0.9,*/*;q=0.1',
+    },
+    body: form.toString(),
+    redirect: 'follow',
+    signal: AbortSignal.timeout(45_000),
+  });
+  const finalUrl = new URL(response.url);
+  if (
+    finalUrl.protocol !== 'https:'
+    || !['cfb.mn.gov', 'www.cfb.mn.gov'].includes(finalUrl.hostname.toLowerCase())
+  ) {
+    throw new Error('CFB report viewer redirected off the official cfb.mn.gov host');
+  }
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  if (bytes.byteLength > 30_000_000) throw new Error('CFB report viewer response exceeded 30 MB');
+  const header = new TextDecoder('ascii').decode(bytes.subarray(0, Math.min(5, bytes.byteLength)));
+  const isPdf = header === '%PDF-';
+  let text = '';
+  if (isPdf && bytes.byteLength >= 300) {
+    const { CanvasFactory } = await import('pdf-parse/worker');
+    const { PDFParse } = await import('pdf-parse');
+    const parser = new PDFParse({ data: bytes, CanvasFactory });
+    try {
+      const parsed = await parser.getText();
+      text = parsed.text ?? '';
+    } finally {
+      await parser.destroy();
+    }
+  } else {
+    text = new TextDecoder('utf-8').decode(bytes);
+  }
+  return {
+    label: input.label,
+    status: response.status,
+    finalUrl: response.url,
+    contentType: response.headers.get('content-type'),
+    bytes: bytes.byteLength,
+    isPdf,
+    dateSnippets: reportDateSnippets(text),
+    textSample: text.replace(/\s+/g, ' ').trim().slice(0, 8000),
+  };
+}
+
 async function auditReportLists() {
   const homeHtml = await fetchOfficialText(CFB_ORIGIN + '/');
   const listsHtml = await fetchOfficialText(CFB_CURRENT_LISTS_URL);
@@ -353,6 +448,21 @@ async function auditReportLists() {
     }
   }
 
+  const reportViewerProbes = [];
+  for (const report of [
+    { label: 'candidate-17653-2026-september', year: '26', type: 'pcc', period: 'D', se: '0', regnum: '17653', amend: '0' },
+    { label: 'pcf-30019-2026-september', year: '26', type: 'pcf', period: 'D', se: '0', regnum: '30019', amend: '0' },
+  ]) {
+    try {
+      reportViewerProbes.push(await probeReportViewer(report));
+    } catch (error) {
+      reportViewerProbes.push({
+        label: report.label,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
   const reportApiProbes = [];
   for (const routeAction of ['candidate-reports', 'pcf-reports']) {
     for (const operation of ['grid_info', 'grid_data'] as const) {
@@ -389,6 +499,7 @@ async function auditReportLists() {
     scriptUrls: scripts,
     scriptResults,
     reportApiProbes,
+    reportViewerProbes,
   };
 }
 
