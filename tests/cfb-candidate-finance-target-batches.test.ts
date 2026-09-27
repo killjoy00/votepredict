@@ -53,10 +53,15 @@ test('CFB candidate finance historical tranches cover the top 120 audited member
     'historical-high-volume-3',
     'historical-high-volume-4',
     'historical-high-volume-5',
+    'historical-high-volume-6',
+    'historical-high-volume-7',
+    'historical-high-volume-8',
+    'historical-high-volume-9',
+    'historical-high-volume-10',
   ] as const;
   const targets = names.flatMap(name => resolveCfbCandidateFinanceTargetBatch('batch=' + name).targets);
   assert.equal(targets.length, 120);
-  assert.ok(names.every(name => resolveCfbCandidateFinanceTargetBatch('batch=' + name).targets.length === 24));
+  assert.ok(names.every(name => resolveCfbCandidateFinanceTargetBatch('batch=' + name).targets.length === 12));
   assert.equal(
     new Set(targets.map(target => target.registrationNumber + ':' + target.segmentEndYear)).size,
     120,
@@ -70,7 +75,15 @@ test('CFB candidate finance target batches fail closed for unknown batch names',
   );
   assert.deepEqual(cfbCandidateFinanceTargetBatchNames(), [
     'core', 'recent-high-volume-1', 'recent-high-volume-2', 'recent-high-volume-3',
-    'historical-high-volume-1', 'historical-high-volume-2', 'historical-high-volume-3',
-    'historical-high-volume-4', 'historical-high-volume-5',
+    'historical-high-volume-1',
+    'historical-high-volume-2',
+    'historical-high-volume-3',
+    'historical-high-volume-4',
+    'historical-high-volume-5',
+    'historical-high-volume-6',
+    'historical-high-volume-7',
+    'historical-high-volume-8',
+    'historical-high-volume-9',
+    'historical-high-volume-10',
   ]);
 });
