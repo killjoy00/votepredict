@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { appendFileSync, readFileSync } from 'node:fs';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 
@@ -9,6 +10,8 @@ const DATABASE_CANDIDATES = [
 ] as const;
 const DATABASE_BRIDGE_URL =
   'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
+const FISCAL_SEARCH_BASE_URL = 'https://mn.gov/mmbapps/fnsearchlbo/';
+const MAX_FISCAL_PAGE_BYTES = 20_000_000;
 const TARGET_SESSIONS = [
   { slug: '2021-2022', startYear: 2021 },
   { slug: '2023-2024', startYear: 2023 },
@@ -22,6 +25,15 @@ type TargetBill = {
   session_slug: (typeof TARGET_SESSIONS)[number]['slug'];
   session_start_year: number;
   first_vote_on: string;
+};
+
+type FiscalHtmlPage = {
+  sourceUrl: string;
+  rawContent: string;
+  contentSha256: string;
+  fetchedAt: string;
+  httpStatus: number;
+  cookieHeader?: string;
 };
 
 function mask(value: string) {
@@ -86,34 +98,109 @@ function freshness(date: string) {
   return ageDays <= 365 ? 'current' as const : ageDays <= 1095 ? 'recent' as const : 'stale' as const;
 }
 
-function fiscalSearchFormDiagnostic(html: string) {
-  const compact = (value: string) => value.replace(/\s+/g, ' ').trim().slice(0, 300);
-  const forms = [...html.matchAll(/<form\b([^>]*)>/gi)].map((match) => compact(match[1]));
-  const inputs = [...html.matchAll(/<input\b([^>]*)>/gi)].map((match) => compact(match[1]));
-  const selects = [...html.matchAll(/<select\b([^>]*)>([\s\S]*?)<\/select>/gi)].map((match) => ({
-    attributes: compact(match[1]),
-    options: [...match[2].matchAll(/<option\b([^>]*)>([\s\S]*?)<\/option>/gi)]
-      .map((option) => ({
-        attributes: compact(option[1]),
-        label: compact(option[2].replace(/<[^>]+>/g, ' ')),
-      }))
-      .slice(0, 40),
-  }));
-  const buttons = [...html.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/gi)].map((match) => ({
-    attributes: compact(match[1]),
-    label: compact(match[2].replace(/<[^>]+>/g, ' ')),
-  }));
-  const anchors = [...html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)]
-    .map((match) => ({
-      attributes: compact(match[1]),
-      label: compact(match[2].replace(/<[^>]+>/g, ' ')),
-    }))
-    .filter((anchor) =>
-      /__doPostBack/i.test(anchor.attributes)
-      || /search|clear/i.test(anchor.label)
-      || /search|clear/i.test(anchor.attributes))
-    .slice(0, 40);
-  return { forms, inputs, selects, buttons, anchors };
+function assertFiscalHost(value: string) {
+  const url = new URL(value);
+  const host = url.hostname.toLowerCase();
+  if (!(host === 'mn.gov' || host.endsWith('.mn.gov'))) {
+    throw new Error('Fiscal-note source redirected away from mn.gov to ' + host);
+  }
+  if (url.protocol !== 'https:') throw new Error('Fiscal-note source must use HTTPS');
+  return url;
+}
+
+async function readLimitedBody(response: Response): Promise<Uint8Array> {
+  const declared = Number(response.headers.get('content-length'));
+  if (Number.isFinite(declared) && declared > MAX_FISCAL_PAGE_BYTES) {
+    throw new Error('Fiscal-note response exceeds maximum expected size');
+  }
+  if (!response.body) return new Uint8Array();
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  while (true) {
+    const result = await reader.read();
+    if (result.done) break;
+    total += result.value.byteLength;
+    if (total > MAX_FISCAL_PAGE_BYTES) {
+      await reader.cancel().catch(() => undefined);
+      throw new Error('Fiscal-note response exceeds maximum expected size');
+    }
+    chunks.push(result.value);
+  }
+  const bytes = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return bytes;
+}
+
+function responseCookies(response: Response): string | undefined {
+  const headers = response.headers as Headers & { getSetCookie?: () => string[] };
+  let values = headers.getSetCookie?.() ?? [];
+  if (values.length === 0) {
+    const combined = response.headers.get('set-cookie');
+    if (combined) values = combined.split(/,(?=\s*[^;,=]+=[^;,]+)/);
+  }
+  const pairs = values
+    .map(value => value.split(';', 1)[0]?.trim())
+    .filter((value): value is string => Boolean(value && value.includes('=')));
+  return pairs.length > 0 ? pairs.join('; ') : undefined;
+}
+
+async function fetchFiscalHtml(input: {
+  url: string;
+  method: 'GET' | 'POST';
+  body?: string;
+  cookieHeader?: string;
+  referer?: string;
+}): Promise<FiscalHtmlPage> {
+  const url = assertFiscalHost(input.url);
+  const headers: Record<string, string> = {
+    'user-agent': 'VotePredict/2.0 historical-fiscal-note-session-snapshot',
+    accept: 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.1',
+  };
+  if (input.cookieHeader) headers.cookie = input.cookieHeader;
+  if (input.referer) headers.referer = input.referer;
+  if (input.method === 'POST') {
+    headers['content-type'] = 'application/x-www-form-urlencoded';
+    headers.origin = 'https://mn.gov';
+  }
+
+  const response = await fetch(url, {
+    method: input.method,
+    headers,
+    body: input.method === 'POST' ? input.body : undefined,
+    redirect: 'manual',
+    signal: AbortSignal.timeout(45_000),
+  });
+
+  if ([301, 302, 303, 307, 308].includes(response.status)) {
+    const location = response.headers.get('location');
+    if (!location) throw new Error('Fiscal-note source redirected without Location');
+    const redirected = new URL(location, url).toString();
+    assertFiscalHost(redirected);
+    throw new Error('Fiscal-note search returned unexpected redirect');
+  }
+  if (!response.ok) throw new Error('Fiscal-note search returned HTTP ' + response.status);
+  const contentType = (response.headers.get('content-type') ?? '').toLowerCase();
+  if (!contentType.includes('text/html') && !contentType.includes('application/xhtml+xml')) {
+    throw new Error('Fiscal-note search returned unexpected content type');
+  }
+  const bytes = await readLimitedBody(response);
+  if (bytes.byteLength < 200) throw new Error('Fiscal-note search returned too little content');
+  const rawContent = new TextDecoder('utf-8', { fatal: false })
+    .decode(bytes)
+    .replace(/\u0000/g, '');
+  return {
+    sourceUrl: url.toString(),
+    rawContent,
+    contentSha256: createHash('sha256').update(bytes).digest('hex'),
+    fetchedAt: new Date().toISOString(),
+    httpStatus: response.status,
+    cookieHeader: responseCookies(response),
+  };
 }
 
 async function main() {
@@ -132,13 +219,14 @@ async function main() {
   delete process.env.POSTGRES_URL_NON_POOLING;
 
   const { pool } = await import('../src/lib/db/index.js');
-  const { fetchPublicPage } = await import('../src/evidence/public-http.js');
   const { persistDurableEvidence } = await import('../src/evidence/durable-ingestion.js');
   const {
     HISTORICAL_FISCAL_NOTE_PARSER_VERSION,
     HISTORICAL_FISCAL_NOTE_PUBLICATION_POLICY_URL,
     HISTORICAL_FISCAL_NOTE_SOURCE_POLICY,
+    buildHistoricalFiscalNoteSearchPostBody,
     parseHistoricalFiscalNoteRecordCount,
+    parseHistoricalFiscalNoteSearchForm,
     parseHistoricalFiscalNoteSearchRows,
   } = await import('../src/evidence/historical-fiscal-note.js');
 
@@ -207,23 +295,22 @@ async function main() {
     }
 
     const { config, bills } = selected;
-    const url = 'https://mn.gov/mmbapps/fnsearchlbo/?year=' + config.startYear;
-    const page = await fetchPublicPage(url, {
-      timeoutMs: 45_000,
-      maxBytes: 20_000_000,
-      userAgent: 'VotePredict/2.0 historical-fiscal-note-session-snapshot',
+    const initialUrl = FISCAL_SEARCH_BASE_URL + '?year=' + config.startYear;
+    const initial = await fetchFiscalHtml({ url: initialUrl, method: 'GET' });
+    const form = parseHistoricalFiscalNoteSearchForm(initial.rawContent, config.startYear);
+    const postUrl = new URL(form.action, initial.sourceUrl).toString();
+    assertFiscalHost(postUrl);
+    const page = await fetchFiscalHtml({
+      url: postUrl,
+      method: 'POST',
+      body: buildHistoricalFiscalNoteSearchPostBody(form),
+      cookieHeader: initial.cookieHeader,
+      referer: initial.sourceUrl,
     });
-    const host = new URL(page.canonicalUrl).hostname.toLowerCase();
-    if (!(host === 'mn.gov' || host.endsWith('.mn.gov'))) {
-      throw new Error('Fiscal-note source redirected away from mn.gov to ' + host);
-    }
 
     const recordCount = parseHistoricalFiscalNoteRecordCount(page.rawContent);
     if (recordCount === undefined) {
-      console.log(JSON.stringify({
-        fiscalNoteSearchFormDiagnostic: fiscalSearchFormDiagnostic(page.rawContent),
-      }, null, 2));
-      throw new Error('Official fiscal-note session search did not expose a Record Count');
+      throw new Error('Official fiscal-note WebForms POST did not expose a Record Count');
     }
     if (recordCount === 0) {
       throw new Error(
@@ -282,7 +369,7 @@ async function main() {
             sourceQuality: 'official' as const,
             relevance: 'high' as const,
             freshness: freshness(row.availableOn),
-            extractionMethod: 'deterministic-lbo-historical-fiscal-note-session-snapshot',
+            extractionMethod: 'deterministic-lbo-historical-fiscal-note-webforms-session-snapshot',
             extractionVersion: HISTORICAL_FISCAL_NOTE_PARSER_VERSION,
             confidence: 1,
             metadata: {
@@ -347,7 +434,7 @@ async function main() {
 
         const persisted = await persistDurableEvidence({
           sourceKind: 'mn_lbo_historical_fiscal_note_session_search',
-          sourceUrl: page.canonicalUrl,
+          sourceUrl: page.sourceUrl,
           contentSha256: page.contentSha256,
           sessionSlug: bill.session_slug,
           fetchedAt: page.fetchedAt,
@@ -360,6 +447,8 @@ async function main() {
             targetBills: bills.length,
             parserVersion: HISTORICAL_FISCAL_NOTE_PARSER_VERSION,
             sourcePolicy: HISTORICAL_FISCAL_NOTE_SOURCE_POLICY,
+            searchMethod: 'webforms_post',
+            searchEventTarget: form.searchEventTarget,
             availabilityPolicyUrl: HISTORICAL_FISCAL_NOTE_PUBLICATION_POLICY_URL,
           },
         }, [...drafts, marker]);
@@ -429,10 +518,11 @@ async function main() {
         remainingBills,
         remainingSessions,
         policy: {
+          acquisition: 'one official WebForms GET + one official WebForms POST per biennium',
+          searchEventTarget: form.searchEventTarget,
           historicalAvailability: 'official Complete Date + 1 calendar day',
           publicationBasis:
             'official LBO procedure: regular fiscal notes become public-searchable within 24 hours of analyst signoff',
-          collectionBoundary: 'one complete official LBO search snapshot per biennium',
           sameDayEligible: false,
           contextOnly: true,
           mechanicallyActionable: false,
