@@ -9,15 +9,17 @@ const DATABASE_CANDIDATES = [
 ] as const;
 const DATABASE_BRIDGE_URL =
   'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
-const DEFAULT_BATCH_SIZE = 40;
-const MAX_BATCH_SIZE = 80;
-const TARGET_SESSIONS = ['2021-2022', '2023-2024', '2025-2026'] as const;
+const TARGET_SESSIONS = [
+  { slug: '2021-2022', startYear: 2021 },
+  { slug: '2023-2024', startYear: 2023 },
+  { slug: '2025-2026', startYear: 2025 },
+] as const;
 let secrets: string[] = [];
 
 type TargetBill = {
   bill_id: string;
   identifier: string;
-  session_slug: (typeof TARGET_SESSIONS)[number];
+  session_slug: (typeof TARGET_SESSIONS)[number]['slug'];
   session_start_year: number;
   first_vote_on: string;
 };
@@ -79,15 +81,6 @@ async function chooseDb(env: Record<string, string | undefined>) {
   return value;
 }
 
-function batchSize(): number {
-  const requested = Number.parseInt(
-    process.env.VOTEPREDICT_HISTORICAL_FISCAL_NOTE_BATCH_SIZE ?? '',
-    10,
-  );
-  if (!Number.isFinite(requested)) return DEFAULT_BATCH_SIZE;
-  return Math.min(MAX_BATCH_SIZE, Math.max(1, requested));
-}
-
 function freshness(date: string) {
   const ageDays = (Date.now() - new Date(date + 'T00:00:00.000Z').getTime()) / 86_400_000;
   return ageDays <= 365 ? 'current' as const : ageDays <= 1095 ? 'recent' as const : 'stale' as const;
@@ -116,42 +109,107 @@ async function main() {
     HISTORICAL_FISCAL_NOTE_PUBLICATION_POLICY_URL,
     HISTORICAL_FISCAL_NOTE_SOURCE_POLICY,
     parseHistoricalFiscalNoteRecordCount,
-    parseHistoricalFiscalNoteSearch,
+    parseHistoricalFiscalNoteSearchRows,
   } = await import('../src/evidence/historical-fiscal-note.js');
 
   try {
-    const limit = batchSize();
-    const pending = await pool.query<TargetBill>(`
-      SELECT b.id::text AS bill_id,
-             b.identifier,
-             s.slug AS session_slug,
-             EXTRACT(YEAR FROM s.starts_on)::int AS session_start_year,
-             min(ve.occurred_on)::date::text AS first_vote_on
-        FROM bills b
-        JOIN legislative_sessions s ON s.id=b.session_id
-        JOIN jurisdictions j ON j.id=s.jurisdiction_id
-        JOIN vote_events ve ON ve.bill_id=b.id
-       WHERE j.slug='us-mn'
-         AND s.slug = ANY($1::text[])
-         AND b.identifier ~ '^(HF|SF)[0-9]+$'
-         AND NOT EXISTS (
-           SELECT 1
-             FROM evidence_items marker
-            WHERE marker.bill_id=b.id
-              AND marker.metadata->>'subtype'='fiscal_note_scan_marker'
-              AND marker.metadata->>'historicalBackfill'='true'
-              AND marker.metadata->>'sourcePolicy'=$2
-         )
-       GROUP BY b.id,b.identifier,s.slug,s.starts_on
-       ORDER BY CASE s.slug
-                  WHEN '2021-2022' THEN 1
-                  WHEN '2023-2024' THEN 2
-                  ELSE 3
-                END,
-                min(ve.occurred_on),
-                b.identifier
-       LIMIT $3
-    `, [[...TARGET_SESSIONS], HISTORICAL_FISCAL_NOTE_SOURCE_POLICY, limit]);
+    let selected:
+      | { config: (typeof TARGET_SESSIONS)[number]; bills: TargetBill[] }
+      | undefined;
+
+    for (const config of TARGET_SESSIONS) {
+      const pending = await pool.query<TargetBill>(`
+        SELECT b.id::text AS bill_id,
+               b.identifier,
+               s.slug AS session_slug,
+               EXTRACT(YEAR FROM s.starts_on)::int AS session_start_year,
+               min(ve.occurred_on)::date::text AS first_vote_on
+          FROM bills b
+          JOIN legislative_sessions s ON s.id=b.session_id
+          JOIN jurisdictions j ON j.id=s.jurisdiction_id
+          JOIN vote_events ve ON ve.bill_id=b.id
+         WHERE j.slug='us-mn'
+           AND s.slug=$1
+           AND b.identifier ~ '^(HF|SF)[0-9]+$'
+           AND NOT EXISTS (
+             SELECT 1
+               FROM evidence_items marker
+              WHERE marker.bill_id=b.id
+                AND marker.metadata->>'subtype'='fiscal_note_scan_marker'
+                AND marker.metadata->>'historicalBackfill'='true'
+                AND marker.metadata->>'sourcePolicy'=$2
+           )
+         GROUP BY b.id,b.identifier,s.slug,s.starts_on
+         ORDER BY min(ve.occurred_on),b.identifier
+      `, [config.slug, HISTORICAL_FISCAL_NOTE_SOURCE_POLICY]);
+      if (pending.rows.length > 0) {
+        selected = { config, bills: pending.rows };
+        break;
+      }
+    }
+
+    if (!selected) {
+      if (process.env.GITHUB_OUTPUT) {
+        appendFileSync(process.env.GITHUB_OUTPUT, 'remaining_sessions=0\n');
+        appendFileSync(process.env.GITHUB_OUTPUT, 'remaining_bills=0\n');
+        appendFileSync(process.env.GITHUB_OUTPUT, 'selected_session=\n');
+        appendFileSync(process.env.GITHUB_OUTPUT, 'failures=0\n');
+      }
+      console.log(JSON.stringify({
+        historicalFiscalNoteBackfill: {
+          parserVersion: HISTORICAL_FISCAL_NOTE_PARSER_VERSION,
+          sourcePolicy: HISTORICAL_FISCAL_NOTE_SOURCE_POLICY,
+          collectionComplete: true,
+          remainingSessions: 0,
+          remainingBills: 0,
+          policy: {
+            historicalAvailability: 'official Complete Date + 1 calendar day',
+            sameDayEligible: false,
+            contextOnly: true,
+            mechanicallyActionable: false,
+            modelWeight: 0,
+            servingChanged: false,
+            productionAction: 'none',
+          },
+        },
+      }, null, 2));
+      return;
+    }
+
+    const { config, bills } = selected;
+    const url = 'https://mn.gov/mmbapps/fnsearchlbo/?year=' + config.startYear;
+    const page = await fetchPublicPage(url, {
+      timeoutMs: 45_000,
+      maxBytes: 20_000_000,
+      userAgent: 'VotePredict/2.0 historical-fiscal-note-session-snapshot',
+    });
+    const host = new URL(page.canonicalUrl).hostname.toLowerCase();
+    if (!(host === 'mn.gov' || host.endsWith('.mn.gov'))) {
+      throw new Error('Fiscal-note source redirected away from mn.gov to ' + host);
+    }
+
+    const recordCount = parseHistoricalFiscalNoteRecordCount(page.rawContent);
+    if (recordCount === undefined) {
+      throw new Error('Official fiscal-note session search did not expose a Record Count');
+    }
+    const sessionRows = parseHistoricalFiscalNoteSearchRows(page.rawContent);
+    if (sessionRows.length !== recordCount) {
+      throw new Error(
+        'Historical fiscal-note session parser resolved '
+        + sessionRows.length
+        + '/'
+        + recordCount
+        + ' result rows for '
+        + config.slug,
+      );
+    }
+
+    const rowsByBill = new Map<string, typeof sessionRows>();
+    for (const row of sessionRows) {
+      const rows = rowsByBill.get(row.billIdentifier) ?? [];
+      rows.push(row);
+      rowsByBill.set(row.billIdentifier, rows);
+    }
 
     let processedBills = 0;
     let billsWithNotes = 0;
@@ -162,45 +220,10 @@ async function main() {
     let unresolved = 0;
     let failures = 0;
     const failureExamples: Array<{ billIdentifier: string; error: string }> = [];
-    const bySession: Record<string, {
-      processedBills: number;
-      billsWithNotes: number;
-      notes: number;
-      preFirstVoteNotes: number;
-    }> = {};
 
-    for (const bill of pending.rows) {
+    for (const bill of bills) {
       try {
-        const url = 'https://mn.gov/mmbapps/fnsearchlbo/?number='
-          + encodeURIComponent(bill.identifier)
-          + '&year='
-          + bill.session_start_year;
-        const page = await fetchPublicPage(url, {
-          timeoutMs: 20_000,
-          maxBytes: 2_500_000,
-          userAgent: 'VotePredict/2.0 historical-fiscal-note-backfill',
-        });
-        const host = new URL(page.canonicalUrl).hostname.toLowerCase();
-        if (!(host === 'mn.gov' || host.endsWith('.mn.gov'))) {
-          throw new Error('Fiscal-note source redirected away from mn.gov to ' + host);
-        }
-
-        const recordCount = parseHistoricalFiscalNoteRecordCount(page.rawContent);
-        if (recordCount === undefined) {
-          throw new Error('Official fiscal-note search did not expose a Record Count');
-        }
-        const rows = parseHistoricalFiscalNoteSearch(page.rawContent, bill.identifier);
-        if (rows.length !== recordCount) {
-          throw new Error(
-            'Historical fiscal-note parser resolved '
-            + rows.length
-            + '/'
-            + recordCount
-            + ' result rows for '
-            + bill.identifier,
-          );
-        }
-
+        const rows = rowsByBill.get(bill.identifier.toUpperCase()) ?? [];
         const drafts = rows.map(row => {
           const preFirstVote = row.availableOn < bill.first_vote_on;
           return {
@@ -220,7 +243,7 @@ async function main() {
             sourceQuality: 'official' as const,
             relevance: 'high' as const,
             freshness: freshness(row.availableOn),
-            extractionMethod: 'deterministic-lbo-historical-fiscal-note-search',
+            extractionMethod: 'deterministic-lbo-historical-fiscal-note-session-snapshot',
             extractionVersion: HISTORICAL_FISCAL_NOTE_PARSER_VERSION,
             confidence: 1,
             metadata: {
@@ -240,6 +263,7 @@ async function main() {
               availabilityPolicyUrl: HISTORICAL_FISCAL_NOTE_PUBLICATION_POLICY_URL,
               publicAvailabilityLagDays: 1,
               sourcePolicy: HISTORICAL_FISCAL_NOTE_SOURCE_POLICY,
+              sessionSnapshotRecordCount: recordCount,
               asOfEligible: true,
               dateGranularity: 'day',
               sameDayEligible: false,
@@ -270,7 +294,8 @@ async function main() {
             subtype: 'fiscal_note_scan_marker',
             historicalBackfill: true,
             billIdentifier: bill.identifier,
-            recordCount,
+            billRecordCount: rows.length,
+            sessionRecordCount: recordCount,
             sourcePolicy: HISTORICAL_FISCAL_NOTE_SOURCE_POLICY,
             asOfEligible: false,
             contextOnly: true,
@@ -282,7 +307,7 @@ async function main() {
         };
 
         const persisted = await persistDurableEvidence({
-          sourceKind: 'mn_lbo_historical_fiscal_note_search',
+          sourceKind: 'mn_lbo_historical_fiscal_note_session_search',
           sourceUrl: page.canonicalUrl,
           contentSha256: page.contentSha256,
           sessionSlug: bill.session_slug,
@@ -290,9 +315,10 @@ async function main() {
           httpStatus: page.httpStatus,
           metadata: {
             historicalBackfill: true,
-            billIdentifier: bill.identifier,
-            sessionStartYear: bill.session_start_year,
-            recordCount,
+            sessionSlug: config.slug,
+            sessionStartYear: config.startYear,
+            sessionRecordCount: recordCount,
+            targetBills: bills.length,
             parserVersion: HISTORICAL_FISCAL_NOTE_PARSER_VERSION,
             sourcePolicy: HISTORICAL_FISCAL_NOTE_SOURCE_POLICY,
             availabilityPolicyUrl: HISTORICAL_FISCAL_NOTE_PUBLICATION_POLICY_URL,
@@ -306,50 +332,17 @@ async function main() {
         inserted += persisted.inserted;
         reused += persisted.reused;
         unresolved += persisted.unresolvedTargets.length;
-
-        const session = bySession[bill.session_slug] ?? {
-          processedBills: 0,
-          billsWithNotes: 0,
-          notes: 0,
-          preFirstVoteNotes: 0,
-        };
-        session.processedBills += 1;
-        if (rows.length > 0) session.billsWithNotes += 1;
-        session.notes += rows.length;
-        session.preFirstVoteNotes += rows.filter(row => row.availableOn < bill.first_vote_on).length;
-        bySession[bill.session_slug] = session;
-
-        console.log(JSON.stringify({
-          historicalFiscalNoteProgress: {
-            session: bill.session_slug,
-            billIdentifier: bill.identifier,
-            recordCount,
-            preFirstVoteNotes: rows.filter(row => row.availableOn < bill.first_vote_on).length,
-            inserted: persisted.inserted,
-            reused: persisted.reused,
-            unresolved: persisted.unresolvedTargets.length,
-          },
-        }));
       } catch (error) {
         failures += 1;
         if (failureExamples.length < 12) {
-          failureExamples.push({
-            billIdentifier: bill.identifier,
-            error: safe(error),
-          });
+          failureExamples.push({ billIdentifier: bill.identifier, error: safe(error) });
         }
-        console.warn(JSON.stringify({
-          historicalFiscalNoteFailure: {
-            session: bill.session_slug,
-            billIdentifier: bill.identifier,
-            error: safe(error),
-          },
-        }));
       }
     }
 
-    const remainingResult = await pool.query<{ remaining: number }>(`
-      SELECT count(*)::int AS remaining
+    const remaining = await pool.query<{ remaining_bills: number; remaining_sessions: number }>(`
+      SELECT count(*)::int AS remaining_bills,
+             count(DISTINCT s.slug)::int AS remaining_sessions
         FROM bills b
         JOIN legislative_sessions s ON s.id=b.session_id
         JOIN jurisdictions j ON j.id=s.jurisdiction_id
@@ -365,12 +358,15 @@ async function main() {
               AND marker.metadata->>'historicalBackfill'='true'
               AND marker.metadata->>'sourcePolicy'=$2
          )
-    `, [[...TARGET_SESSIONS], HISTORICAL_FISCAL_NOTE_SOURCE_POLICY]);
-    const remainingBills = remainingResult.rows[0]?.remaining ?? 0;
+    `, [TARGET_SESSIONS.map(item => item.slug), HISTORICAL_FISCAL_NOTE_SOURCE_POLICY]);
+    const remainingBills = remaining.rows[0]?.remaining_bills ?? 0;
+    const remainingSessions = remaining.rows[0]?.remaining_sessions ?? 0;
 
     if (process.env.GITHUB_OUTPUT) {
+      appendFileSync(process.env.GITHUB_OUTPUT, 'remaining_sessions=' + remainingSessions + '\n');
       appendFileSync(process.env.GITHUB_OUTPUT, 'remaining_bills=' + remainingBills + '\n');
-      appendFileSync(process.env.GITHUB_OUTPUT, 'selected_bills=' + pending.rows.length + '\n');
+      appendFileSync(process.env.GITHUB_OUTPUT, 'selected_session=' + config.slug + '\n');
+      appendFileSync(process.env.GITHUB_OUTPUT, 'failures=' + failures + '\n');
     }
 
     console.log(JSON.stringify({
@@ -378,7 +374,10 @@ async function main() {
         parserVersion: HISTORICAL_FISCAL_NOTE_PARSER_VERSION,
         sourcePolicy: HISTORICAL_FISCAL_NOTE_SOURCE_POLICY,
         availabilityPolicyUrl: HISTORICAL_FISCAL_NOTE_PUBLICATION_POLICY_URL,
-        selectedBills: pending.rows.length,
+        selectedSession: config.slug,
+        sessionStartYear: config.startYear,
+        sessionRecordCount: recordCount,
+        targetBills: bills.length,
         processedBills,
         billsWithNotes,
         notes,
@@ -389,11 +388,12 @@ async function main() {
         failures,
         failureExamples,
         remainingBills,
-        bySession: Object.fromEntries(Object.entries(bySession).sort()),
+        remainingSessions,
         policy: {
           historicalAvailability: 'official Complete Date + 1 calendar day',
           publicationBasis:
             'official LBO procedure: regular fiscal notes become public-searchable within 24 hours of analyst signoff',
+          collectionBoundary: 'one complete official LBO search snapshot per biennium',
           sameDayEligible: false,
           contextOnly: true,
           mechanicallyActionable: false,
@@ -403,6 +403,14 @@ async function main() {
         },
       },
     }, null, 2));
+
+    if (failures > 0) {
+      throw new Error(
+        'Historical fiscal-note persistence had '
+        + failures
+        + ' bill-level failures; automatic continuation stopped',
+      );
+    }
   } finally {
     await pool.end();
   }
