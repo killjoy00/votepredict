@@ -1,8 +1,8 @@
 export const HISTORICAL_FISCAL_NOTE_PARSER_VERSION =
-  'historical-fiscal-note-search-v1' as const;
+  'historical-fiscal-note-search-v2' as const;
 
 export const HISTORICAL_FISCAL_NOTE_SOURCE_POLICY =
-  'lbo-complete-date-plus-1-day-publication-v1' as const;
+  'lbo-session-snapshot-complete-date-plus-1-day-v2' as const;
 
 export const HISTORICAL_FISCAL_NOTE_PUBLICATION_POLICY_URL =
   'https://www.lrl.mn.gov/docs/2020/Other/201132.pdf' as const;
@@ -87,18 +87,14 @@ export function parseHistoricalFiscalNoteRecordCount(html: string): number | und
   return Number.isSafeInteger(value) && value >= 0 ? value : undefined;
 }
 
-export function parseHistoricalFiscalNoteSearch(
+export function parseHistoricalFiscalNoteSearchRows(
   html: string,
-  expectedBillIdentifier: string,
 ): HistoricalFiscalNoteRow[] {
-  const expected = normalizeBillIdentifier(expectedBillIdentifier);
-  if (!expected) throw new Error('Unsupported historical fiscal-note bill identifier');
-
   const rows: HistoricalFiscalNoteRow[] = [];
   for (const cells of tableRows(html)) {
     if (cells.length < 5) continue;
     const billIdentifier = normalizeBillIdentifier(cells[0]);
-    if (!billIdentifier || billIdentifier !== expected) continue;
+    if (!billIdentifier) continue;
 
     const versionMatch = cells[0].match(/-\s*([^|]+?)\s*$/);
     const version = versionMatch?.[1]?.trim();
@@ -124,6 +120,17 @@ export function parseHistoricalFiscalNoteSearch(
     );
   }
   return [...unique.values()].sort((left, right) =>
-    left.completeDate.localeCompare(right.completeDate)
+    left.billIdentifier.localeCompare(right.billIdentifier)
+    || left.completeDate.localeCompare(right.completeDate)
     || left.version.localeCompare(right.version));
+}
+
+export function parseHistoricalFiscalNoteSearch(
+  html: string,
+  expectedBillIdentifier: string,
+): HistoricalFiscalNoteRow[] {
+  const expected = normalizeBillIdentifier(expectedBillIdentifier);
+  if (!expected) throw new Error('Unsupported historical fiscal-note bill identifier');
+  return parseHistoricalFiscalNoteSearchRows(html)
+    .filter((row) => row.billIdentifier === expected);
 }
