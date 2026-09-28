@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       continuation:
-        description: Internal historical fiscal-note session continuation number
+        description: Internal bounded historical fiscal-note continuation number
         required: false
         default: '0'
         type: string
@@ -34,6 +34,8 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
       VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_HISTORICAL_FISCAL_NOTE_BATCH_SIZE: '20'
+      VOTEPREDICT_HISTORICAL_FISCAL_NOTE_DELAY_MS: '4000'
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -45,30 +47,30 @@ jobs:
           set -euo pipefail
           umask 077
           npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
-      - name: Backfill one historical fiscal-note session snapshot
+      - name: Backfill paced historical fiscal-note bills
         id: backfill
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: node --import tsx scripts/backfill-historical-fiscal-notes.ts
-      - name: Continue historical fiscal-note sessions
+      - name: Continue historical fiscal-note tail
         if: >-
           success() &&
-          steps.backfill.outputs.failures == '0' &&
-          steps.backfill.outputs.selected_session != '' &&
-          steps.backfill.outputs.remaining_sessions != '0'
+          steps.backfill.outputs.selected_bills != '' &&
+          steps.backfill.outputs.selected_bills != '0' &&
+          steps.backfill.outputs.remaining_bills != '0'
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
           CURRENT_CONTINUATION: ${{ github.event_name == 'workflow_dispatch' && inputs.continuation || '0' }}
-          REMAINING_SESSIONS: ${{ steps.backfill.outputs.remaining_sessions }}
+          REMAINING_BILLS: ${{ steps.backfill.outputs.remaining_bills }}
         run: |
           set -euo pipefail
           current="${CURRENT_CONTINUATION:-0}"
           if ! [[ "$current" =~ ^[0-9]+$ ]]; then
             current=0
           fi
-          if (( current >= 4 )); then
-            echo "Historical fiscal-note continuation cap reached with ${REMAINING_SESSIONS} sessions still reported."
+          if (( current >= 39 )); then
+            echo "Historical fiscal-note continuation cap reached with ${REMAINING_BILLS} bills still reported."
             exit 0
           fi
           next=$((current + 1))
