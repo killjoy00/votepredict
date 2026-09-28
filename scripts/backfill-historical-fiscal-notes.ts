@@ -192,6 +192,12 @@ async function main() {
     if (recordCount === undefined) {
       throw new Error('Official fiscal-note session search did not expose a Record Count');
     }
+    if (recordCount === 0) {
+      throw new Error(
+        'Official fiscal-note session search returned an implausible zero-record result for '
+        + config.slug,
+      );
+    }
     const sessionRows = parseHistoricalFiscalNoteSearchRows(page.rawContent);
     if (sessionRows.length !== recordCount) {
       throw new Error(
