@@ -103,7 +103,18 @@ function fiscalSearchFormDiagnostic(html: string) {
     attributes: compact(match[1]),
     label: compact(match[2].replace(/<[^>]+>/g, ' ')),
   }));
-  return { forms, inputs, selects, buttons };
+  const anchors = [...html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)]
+    .map((match) => ({
+      attributes: compact(match[1]),
+      label: compact(match[2].replace(/<[^>]+>/g, ' ')),
+    }))
+    .filter((item) =>
+      /search|clear|postback|btnsearch|btnclear/i.test(item.attributes + ' ' + item.label))
+    .slice(0, 20);
+  const postbackSnippets = [...html.matchAll(/.{0,160}(?:__doPostBack|btnSearch|btnClear|Search).{0,240}/gi)]
+    .map((match) => compact(match[0]))
+    .slice(0, 30);
+  return { forms, inputs, selects, buttons, anchors, postbackSnippets };
 }
 
 async function main() {
