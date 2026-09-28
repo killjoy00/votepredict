@@ -86,6 +86,26 @@ function freshness(date: string) {
   return ageDays <= 365 ? 'current' as const : ageDays <= 1095 ? 'recent' as const : 'stale' as const;
 }
 
+function fiscalSearchFormDiagnostic(html: string) {
+  const compact = (value: string) => value.replace(/\s+/g, ' ').trim().slice(0, 300);
+  const forms = [...html.matchAll(/<form\b([^>]*)>/gi)].map((match) => compact(match[1]));
+  const inputs = [...html.matchAll(/<input\b([^>]*)>/gi)].map((match) => compact(match[1]));
+  const selects = [...html.matchAll(/<select\b([^>]*)>([\s\S]*?)<\/select>/gi)].map((match) => ({
+    attributes: compact(match[1]),
+    options: [...match[2].matchAll(/<option\b([^>]*)>([\s\S]*?)<\/option>/gi)]
+      .map((option) => ({
+        attributes: compact(option[1]),
+        label: compact(option[2].replace(/<[^>]+>/g, ' ')),
+      }))
+      .slice(0, 40),
+  }));
+  const buttons = [...html.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/gi)].map((match) => ({
+    attributes: compact(match[1]),
+    label: compact(match[2].replace(/<[^>]+>/g, ' ')),
+  }));
+  return { forms, inputs, selects, buttons };
+}
+
 async function main() {
   const envFile = process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
   if (!envFile) throw new Error('Production env file required');
@@ -190,6 +210,9 @@ async function main() {
 
     const recordCount = parseHistoricalFiscalNoteRecordCount(page.rawContent);
     if (recordCount === undefined) {
+      console.log(JSON.stringify({
+        fiscalNoteSearchFormDiagnostic: fiscalSearchFormDiagnostic(page.rawContent),
+      }, null, 2));
       throw new Error('Official fiscal-note session search did not expose a Record Count');
     }
     if (recordCount === 0) {
