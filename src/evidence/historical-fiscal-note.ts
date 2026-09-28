@@ -1,8 +1,8 @@
 export const HISTORICAL_FISCAL_NOTE_PARSER_VERSION =
-  'historical-fiscal-note-search-v2' as const;
+  'historical-fiscal-note-search-v3' as const;
 
 export const HISTORICAL_FISCAL_NOTE_SOURCE_POLICY =
-  'lbo-session-snapshot-complete-date-plus-1-day-v2' as const;
+  'lbo-stateful-bill-search-complete-date-plus-1-day-v3' as const;
 
 export const HISTORICAL_FISCAL_NOTE_PUBLICATION_POLICY_URL =
   'https://www.lrl.mn.gov/docs/2020/Other/201132.pdf' as const;
