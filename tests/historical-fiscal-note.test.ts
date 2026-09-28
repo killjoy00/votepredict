@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  buildHistoricalFiscalNoteSearchPostBody,
   historicalFiscalNoteAvailableOn,
   parseHistoricalFiscalNoteRecordCount,
   parseHistoricalFiscalNoteSearch,
+  parseHistoricalFiscalNoteSearchForm,
   parseHistoricalFiscalNoteSearchRows,
 } from '../src/evidence/historical-fiscal-note.js';
 
@@ -34,6 +36,24 @@ const SAMPLE = `
   </table>
 `;
 
+const FORM_SAMPLE = `
+  <form method="post" action="./?year=2021" id="form1">
+    <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="view+state/123" />
+    <input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="5FD87952" />
+    <input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="" />
+    <input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="event&amp;validation" />
+    <input name="ctl00$cpContent$txtBillNbr" type="text" id="cpContent_txtBillNbr" />
+    <input name="ctl00$cpContent$txtTitle" type="text" id="cpContent_txtTitle" />
+    <select name="ctl00$cpContent$ddlLeg" id="cpContent_ddlLeg">
+      <option selected="selected" value="-1">Select (15)...</option>
+      <option value="2025">2025-26</option>
+      <option value="2023">2023-24</option>
+      <option value="2021">2021-22</option>
+    </select>
+    <a id="cpContent_lbSearch" href="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;ctl00$cpContent$lbSearch&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, true))">Search</a>
+  </form>
+`;
+
 test('parses official historical fiscal-note rows and applies conservative public lag', () => {
   assert.equal(parseHistoricalFiscalNoteRecordCount(SAMPLE), 2);
   assert.deepEqual(parseHistoricalFiscalNoteSearch(SAMPLE, 'HF23'), [
@@ -56,6 +76,39 @@ test('parses official historical fiscal-note rows and applies conservative publi
       availableOn: '2023-03-25',
     },
   ]);
+});
+
+test('parses the official LBO WebForms search contract', () => {
+  const form = parseHistoricalFiscalNoteSearchForm(FORM_SAMPLE, 2021);
+  assert.equal(form.method, 'post');
+  assert.equal(form.action, './?year=2021');
+  assert.equal(form.sessionFieldName, 'ctl00$cpContent$ddlLeg');
+  assert.equal(form.sessionValue, '2021');
+  assert.equal(form.billNumberFieldName, 'ctl00$cpContent$txtBillNbr');
+  assert.equal(form.titleFieldName, 'ctl00$cpContent$txtTitle');
+  assert.equal(form.searchEventTarget, 'ctl00$cpContent$lbSearch');
+  assert.equal(form.hiddenFields.__VIEWSTATE, 'view+state/123');
+  assert.equal(form.hiddenFields.__EVENTVALIDATION, 'event&validation');
+});
+
+test('builds a WebForms postback body for a session-wide search', () => {
+  const form = parseHistoricalFiscalNoteSearchForm(FORM_SAMPLE, 2021);
+  const body = new URLSearchParams(buildHistoricalFiscalNoteSearchPostBody(form));
+  assert.equal(body.get('__VIEWSTATE'), 'view+state/123');
+  assert.equal(body.get('__EVENTVALIDATION'), 'event&validation');
+  assert.equal(body.get('__EVENTTARGET'), 'ctl00$cpContent$lbSearch');
+  assert.equal(body.get('__EVENTARGUMENT'), '');
+  assert.equal(body.get('ctl00$cpContent$ddlLeg'), '2021');
+  assert.equal(body.get('ctl00$cpContent$txtBillNbr'), '');
+  assert.equal(body.get('ctl00$cpContent$txtTitle'), '');
+});
+
+test('fails closed when the requested session or search postback is missing', () => {
+  assert.throws(() => parseHistoricalFiscalNoteSearchForm(FORM_SAMPLE, 2019));
+  assert.throws(() => parseHistoricalFiscalNoteSearchForm(
+    FORM_SAMPLE.replace('>Search</a>', '>Lookup</a>'),
+    2021,
+  ));
 });
 
 test('parses a complete session snapshot before filtering to target bills', () => {

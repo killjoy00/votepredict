@@ -1,8 +1,8 @@
 export const HISTORICAL_FISCAL_NOTE_PARSER_VERSION =
-  'historical-fiscal-note-search-v2' as const;
+  'historical-fiscal-note-search-v3' as const;
 
 export const HISTORICAL_FISCAL_NOTE_SOURCE_POLICY =
-  'lbo-session-snapshot-complete-date-plus-1-day-v2' as const;
+  'lbo-webforms-session-snapshot-complete-date-plus-1-day-v3' as const;
 
 export const HISTORICAL_FISCAL_NOTE_PUBLICATION_POLICY_URL =
   'https://www.lrl.mn.gov/docs/2020/Other/201132.pdf' as const;
@@ -15,6 +15,17 @@ export interface HistoricalFiscalNoteRow {
   author: string;
   completeDate: string;
   availableOn: string;
+}
+
+export interface HistoricalFiscalNoteSearchForm {
+  method: 'post';
+  action: string;
+  hiddenFields: Record<string, string>;
+  sessionFieldName: string;
+  sessionValue: string;
+  billNumberFieldName: string;
+  titleFieldName: string;
+  searchEventTarget: string;
 }
 
 function decode(value: string): string {
@@ -32,6 +43,17 @@ function decode(value: string): string {
 
 function text(value: string): string {
   return decode(value.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
+}
+
+function attributeValue(attributes: string, name: string): string | undefined {
+  const escaped = name.replace(/[.*+?^$()|[\]{}\\]/g, '\\$&');
+  const quoted = attributes.match(new RegExp(
+    '(?:^|\\s)' + escaped + '\\s*=\\s*(["\\\'])([\\s\\S]*?)\\1',
+    'i',
+  ));
+  if (quoted?.[2] !== undefined) return decode(quoted[2]);
+  const bare = attributes.match(new RegExp('(?:^|\\s)' + escaped + '\\s*=\\s*([^\\s>]+)', 'i'));
+  return bare?.[1] ? decode(bare[1]) : undefined;
 }
 
 function tableRows(html: string): string[][] {
@@ -77,6 +99,95 @@ export function historicalFiscalNoteAvailableOn(completeDate: string): string {
   }
   date.setUTCDate(date.getUTCDate() + 1);
   return date.toISOString().slice(0, 10);
+}
+
+export function parseHistoricalFiscalNoteSearchForm(
+  html: string,
+  startYear: number,
+): HistoricalFiscalNoteSearchForm {
+  const formMatch = html.match(/<form\b([^>]*)>/i);
+  if (!formMatch) throw new Error('Fiscal-note search form is missing');
+  const method = attributeValue(formMatch[1], 'method')?.toLowerCase();
+  if (method !== 'post') throw new Error('Fiscal-note search form must use POST');
+  const action = attributeValue(formMatch[1], 'action');
+  if (!action) throw new Error('Fiscal-note search form action is missing');
+
+  const hiddenFields: Record<string, string> = {};
+  let billNumberFieldName: string | undefined;
+  let titleFieldName: string | undefined;
+  for (const input of html.matchAll(/<input\b([^>]*)>/gi)) {
+    const attributes = input[1];
+    const name = attributeValue(attributes, 'name');
+    if (!name) continue;
+    const type = attributeValue(attributes, 'type')?.toLowerCase() ?? 'text';
+    const id = attributeValue(attributes, 'id') ?? '';
+    if (type === 'hidden') hiddenFields[name] = attributeValue(attributes, 'value') ?? '';
+    if (id === 'cpContent_txtBillNbr') billNumberFieldName = name;
+    if (id === 'cpContent_txtTitle') titleFieldName = name;
+  }
+  for (const required of ['__VIEWSTATE', '__EVENTVALIDATION']) {
+    if (!Object.hasOwn(hiddenFields, required) || !hiddenFields[required]) {
+      throw new Error('Fiscal-note search form is missing ' + required);
+    }
+  }
+  if (!billNumberFieldName || !titleFieldName) {
+    throw new Error('Fiscal-note search form bill/title inputs are missing');
+  }
+
+  let sessionFieldName: string | undefined;
+  let sessionValue: string | undefined;
+  for (const select of html.matchAll(/<select\b([^>]*)>([\s\S]*?)<\/select>/gi)) {
+    const id = attributeValue(select[1], 'id');
+    if (id !== 'cpContent_ddlLeg') continue;
+    sessionFieldName = attributeValue(select[1], 'name');
+    const expected = String(startYear);
+    for (const option of select[2].matchAll(/<option\b([^>]*)>([\s\S]*?)<\/option>/gi)) {
+      const value = attributeValue(option[1], 'value');
+      if (value === expected) {
+        sessionValue = value;
+        break;
+      }
+    }
+    break;
+  }
+  if (!sessionFieldName || !sessionValue) {
+    throw new Error('Fiscal-note search form does not expose requested legislative session');
+  }
+
+  let searchEventTarget: string | undefined;
+  for (const anchor of html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
+    if (!/^Search$/i.test(text(anchor[2]))) continue;
+    const href = attributeValue(anchor[1], 'href') ?? '';
+    const options = href.match(/WebForm_PostBackOptions\("([^"]+)"/i);
+    const direct = href.match(/__doPostBack\('([^']+)'/i);
+    searchEventTarget = options?.[1] ?? direct?.[1];
+    if (searchEventTarget) break;
+  }
+  if (!searchEventTarget) throw new Error('Fiscal-note search postback target is missing');
+
+  return {
+    method: 'post',
+    action,
+    hiddenFields,
+    sessionFieldName,
+    sessionValue,
+    billNumberFieldName,
+    titleFieldName,
+    searchEventTarget,
+  };
+}
+
+export function buildHistoricalFiscalNoteSearchPostBody(
+  form: HistoricalFiscalNoteSearchForm,
+): string {
+  const body = new URLSearchParams();
+  for (const [name, value] of Object.entries(form.hiddenFields)) body.set(name, value);
+  body.set('__EVENTTARGET', form.searchEventTarget);
+  body.set('__EVENTARGUMENT', '');
+  body.set(form.sessionFieldName, form.sessionValue);
+  body.set(form.billNumberFieldName, '');
+  body.set(form.titleFieldName, '');
+  return body.toString();
 }
 
 export function parseHistoricalFiscalNoteRecordCount(html: string): number | undefined {
