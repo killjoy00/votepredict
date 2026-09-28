@@ -4,6 +4,7 @@ import {
   historicalFiscalNoteAvailableOn,
   parseHistoricalFiscalNoteRecordCount,
   parseHistoricalFiscalNoteSearch,
+  parseHistoricalFiscalNoteSearchRows,
 } from '../src/evidence/historical-fiscal-note.js';
 
 const SAMPLE = `
@@ -19,15 +20,15 @@ const SAMPLE = `
     <tr>
       <td>HF23 - 1A</td>
       <td>Policy change</td>
-      <td>Fiscal Note</td>
-      <td>Department A</td>
+      <td>Regular Fiscal Note</td>
+      <td>Wolgamott, Dan</td>
       <td>03/01/2023</td>
     </tr>
     <tr>
       <td>HF23 - 3E</td>
       <td>Policy change</td>
-      <td>Fiscal Note</td>
-      <td>Department B</td>
+      <td>Regular Fiscal Note</td>
+      <td>Wolgamott, Dan</td>
       <td>03/24/2023</td>
     </tr>
   </table>
@@ -40,8 +41,8 @@ test('parses official historical fiscal-note rows and applies conservative publi
       billIdentifier: 'HF23',
       version: '1A',
       title: 'Policy change',
-      noteType: 'Fiscal Note',
-      author: 'Department A',
+      noteType: 'Regular Fiscal Note',
+      author: 'Wolgamott, Dan',
       completeDate: '2023-03-01',
       availableOn: '2023-03-02',
     },
@@ -49,27 +50,31 @@ test('parses official historical fiscal-note rows and applies conservative publi
       billIdentifier: 'HF23',
       version: '3E',
       title: 'Policy change',
-      noteType: 'Fiscal Note',
-      author: 'Department B',
+      noteType: 'Regular Fiscal Note',
+      author: 'Wolgamott, Dan',
       completeDate: '2023-03-24',
       availableOn: '2023-03-25',
     },
   ]);
 });
 
-test('filters rows to the exact requested bill identifier', () => {
-  const html = SAMPLE.replace('</table>', `
-    <tr>
-      <td>SF23 - 2A</td>
-      <td>Other bill</td>
-      <td>Fiscal Note</td>
-      <td>Department C</td>
-      <td>03/05/2023</td>
-    </tr>
-  </table>`);
-  const rows = parseHistoricalFiscalNoteSearch(html, 'HF 0023');
-  assert.equal(rows.length, 2);
-  assert.ok(rows.every((row) => row.billIdentifier === 'HF23'));
+test('parses a complete session snapshot before filtering to target bills', () => {
+  const html = SAMPLE
+    .replace('Record Count: 2', 'Record Count: 3')
+    .replace('</table>', `
+      <tr>
+        <td>SF23 - 2A</td>
+        <td>Other bill</td>
+        <td>Regular Fiscal Note</td>
+        <td>Example, Alex</td>
+        <td>03/05/2023</td>
+      </tr>
+    </table>`);
+  assert.deepEqual(
+    parseHistoricalFiscalNoteSearchRows(html).map((row) => row.billIdentifier),
+    ['HF23', 'HF23', 'SF23'],
+  );
+  assert.equal(parseHistoricalFiscalNoteSearch(html, 'HF 0023').length, 2);
 });
 
 test('availability lag crosses month and year boundaries safely', () => {
