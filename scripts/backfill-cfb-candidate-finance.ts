@@ -73,6 +73,7 @@ async function main() {
     resolveCfbCandidateFinanceTargetBatch,
   } = await import('../src/evidence/cfb-candidate-finance-target-batches.js');
   const {
+    areResolvableCfbCandidateFinanceRowsPersisted,
     cfbCandidateFinanceTargetKey,
     isCfbCandidateFinanceMembershipTailRequest,
     selectCfbCandidateFinanceMembershipTail,
@@ -221,8 +222,10 @@ async function main() {
       const fullyPersistedKeys = new Set<string>();
       for (const group of groups.values()) {
         if (
-          group.resolvableRowKeys.length > 0
-          && group.resolvableRowKeys.every(rowKey => persistedRowKeys.has(rowKey))
+          areResolvableCfbCandidateFinanceRowsPersisted(
+            group.resolvableRowKeys,
+            persistedRowKeys,
+          )
         ) {
           fullyPersistedKeys.add(cfbCandidateFinanceTargetKey(group));
         }
@@ -236,8 +239,11 @@ async function main() {
       for (const key of reviewedKeys) {
         const group = groups.get(key);
         if (
-          group?.resolvableRowKeys.length
-          && group.resolvableRowKeys.every(rowKey => persistedRowKeys.has(rowKey))
+          group
+          && areResolvableCfbCandidateFinanceRowsPersisted(
+            group.resolvableRowKeys,
+            persistedRowKeys,
+          )
         ) {
           fullyPersistedKeys.add(key);
         }
