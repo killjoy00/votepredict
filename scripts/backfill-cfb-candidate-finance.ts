@@ -5,6 +5,8 @@ import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const DEFAULT_BATCH_SIZE = 100;
+const TAIL_GROUP_CHECKPOINT_SOURCE = 'cfb-candidate-finance-membership-tail-group';
+const TAIL_GROUP_CHECKPOINT_VERSION = 'membership-tail-group-v1';
 let secrets: string[] = [];
 
 function mask(value: string) {
@@ -159,6 +161,15 @@ async function main() {
          WHERE s.slug IN ('2021-2022','2023-2024','2025-2026')
            AND c.slug IN ('house','senate')
       `);
+      const checkpoints = await pool.query<{ scope: string }>(`
+        SELECT DISTINCT scope
+          FROM ingestion_runs
+         WHERE source_system = $1
+           AND status = 'complete'
+           AND metadata->>'checkpointVersion' = $2
+      `, [TAIL_GROUP_CHECKPOINT_SOURCE, TAIL_GROUP_CHECKPOINT_VERSION]);
+      const checkpointedGroupKeys = new Set(checkpoints.rows.map(row => row.scope));
+
       const persisted = await pool.query<{ rowKey: string }>(`
         SELECT DISTINCT ei.metadata->>'rowKey' AS "rowKey"
           FROM evidence_items ei
@@ -219,7 +230,7 @@ async function main() {
         }
       }
 
-      const fullyPersistedKeys = new Set<string>();
+      const fullyPersistedKeys = new Set<string>(checkpointedGroupKeys);
       for (const group of groups.values()) {
         if (
           areResolvableCfbCandidateFinanceRowsPersisted(
@@ -273,6 +284,7 @@ async function main() {
         tailGroupLimit,
         membershipRowsLoaded: selectionMembershipRows.rows.length,
         persistedRowKeys: persistedRowKeys.size,
+        checkpointedGroups: checkpointedGroupKeys.size,
         targetableGroups: targetableGroups.length,
         fullyPersistedGroups: targetableGroups.length - remainingBefore,
         remainingBefore,
@@ -628,6 +640,93 @@ async function main() {
       };
     });
 
+    const groupCheckpoints: Array<{
+      scope: string;
+      disposition: string;
+      rows: number;
+      resolvedRows: number;
+      disclosureMappedRows: number;
+      proofFailures: number;
+    }> = [];
+    if (membershipTailMode) {
+      for (const target of TARGETS) {
+        const scope = cfbCandidateFinanceTargetKey(target);
+        const groupRows = rows.filter(row =>
+          row.filerRegistrationNumber === target.registrationNumber
+          && cfbCandidateSegmentEndYear(row.year) === target.segmentEndYear);
+        const groupDrafts = drafts.filter(item =>
+          item.row.filerRegistrationNumber === target.registrationNumber
+          && cfbCandidateSegmentEndYear(item.row.year) === target.segmentEndYear);
+        const acquired = acquiredByTarget.get(scope);
+        const proofFailures = acquired?.failures.length ?? 0;
+        const resolvedRows = groupDrafts.filter(item => Boolean(item.draft.target?.membershipId)).length;
+        const disclosureMappedRows = groupDrafts.filter(item =>
+          Boolean(mappingByRowKey.get(item.row.rowKey))
+          && Boolean(item.draft.target?.membershipId)).length;
+        const disposition = proofFailures > 0
+          ? 'complete_with_fail_closed_proof_exclusions'
+          : 'complete';
+        const metadata = {
+          checkpointVersion: TAIL_GROUP_CHECKPOINT_VERSION,
+          registrationNumber: target.registrationNumber,
+          segmentEndYear: target.segmentEndYear,
+          disposition,
+          rows: groupRows.length,
+          resolvedRows,
+          unresolvedRows: groupDrafts.length - resolvedRows,
+          disclosureMappedRows,
+          sourceContentSha256: candidateFinanceContentSha256(groupRows),
+          referencesDiscovered: acquired?.referencesDiscovered ?? 0,
+          selectedReports: acquired?.selectedReports ?? 0,
+          proofsParsed: acquired?.reports.length ?? 0,
+          proofFailures,
+          proofFailureExamples: (acquired?.failures ?? []).slice(0, 8).map(failure => ({
+            reportName: failure.reportName,
+            error: safe(failure.error),
+          })),
+          availabilityPolicyVersion: CFB_REPORT_AVAILABILITY_VERSION,
+          historyVersion: CFB_CANDIDATE_FINANCE_HISTORY_VERSION,
+          transactionDateIsAvailability: false,
+          contextOnly: true,
+          mechanicallyActionable: false,
+          modelWeight: 0,
+          servingChanged: false,
+          productionAction: 'none',
+        };
+        await pool.query(`
+          INSERT INTO ingestion_runs (
+            source_system,
+            scope,
+            status,
+            finished_at,
+            metadata
+          )
+          SELECT $1, $2, 'complete', now(), $3::jsonb
+           WHERE NOT EXISTS (
+             SELECT 1
+               FROM ingestion_runs
+              WHERE source_system = $1
+                AND scope = $2
+                AND status = 'complete'
+                AND metadata->>'checkpointVersion' = $4
+           )
+        `, [
+          TAIL_GROUP_CHECKPOINT_SOURCE,
+          scope,
+          JSON.stringify(metadata),
+          TAIL_GROUP_CHECKPOINT_VERSION,
+        ]);
+        groupCheckpoints.push({
+          scope,
+          disposition,
+          rows: groupRows.length,
+          resolvedRows,
+          disclosureMappedRows,
+          proofFailures,
+        });
+      }
+    }
+
     console.log(JSON.stringify({
       cfbCandidateFinanceBackfill: {
         targetBatch: targetBatchName,
@@ -650,6 +749,15 @@ async function main() {
             && Boolean(item.draft.target?.membershipId)).length,
         },
         acquisition,
+        ...(membershipTailMode ? {
+          groupCheckpoints,
+          checkpointPolicy: {
+            sourceSystem: TAIL_GROUP_CHECKPOINT_SOURCE,
+            version: TAIL_GROUP_CHECKPOINT_VERSION,
+            terminalAfterSuccessfulBoundedPass: true,
+            proofFailuresRemainFailClosed: true,
+          },
+        } : {}),
         policy: {
           transactionDateIsAvailability: false,
           reportMustDemonstrateRow: true,
