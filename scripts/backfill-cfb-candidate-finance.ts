@@ -178,6 +178,7 @@ async function main() {
         totalRows: number;
         resolvedRows: number;
         rowKeys: string[];
+        resolvableRowKeys: string[];
       };
       const groups = new Map<string, TailGroupInternal>();
       for (const row of allRows) {
@@ -195,6 +196,7 @@ async function main() {
             totalRows: 0,
             resolvedRows: 0,
             rowKeys: [],
+            resolvableRowKeys: [],
           };
           groups.set(key, group);
         }
@@ -212,12 +214,16 @@ async function main() {
         );
         if (resolveCandidateFinanceMembership(row.candidateName, candidates)) {
           group.resolvedRows += 1;
+          group.resolvableRowKeys.push(row.rowKey);
         }
       }
 
       const fullyPersistedKeys = new Set<string>();
       for (const group of groups.values()) {
-        if (group.rowKeys.length > 0 && group.rowKeys.every(rowKey => persistedRowKeys.has(rowKey))) {
+        if (
+          group.resolvableRowKeys.length > 0
+          && group.resolvableRowKeys.every(rowKey => persistedRowKeys.has(rowKey))
+        ) {
           fullyPersistedKeys.add(cfbCandidateFinanceTargetKey(group));
         }
       }
@@ -229,7 +235,10 @@ async function main() {
       }
       for (const key of reviewedKeys) {
         const group = groups.get(key);
-        if (group?.rowKeys.every(rowKey => persistedRowKeys.has(rowKey))) {
+        if (
+          group?.resolvableRowKeys.length
+          && group.resolvableRowKeys.every(rowKey => persistedRowKeys.has(rowKey))
+        ) {
           fullyPersistedKeys.add(key);
         }
       }
