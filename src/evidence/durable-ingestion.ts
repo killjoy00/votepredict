@@ -119,7 +119,7 @@ export function evidenceIngestionKey(input: {
     publishedAt: input.draft.publishedAt ?? null,
     extractionMethod: input.draft.extractionMethod,
     extractionVersion: input.draft.extractionVersion ?? null,
-    ingestionIdentityKey,
+    ...(ingestionIdentityKey ? { ingestionIdentityKey } : {}),
   }));
 }
 
