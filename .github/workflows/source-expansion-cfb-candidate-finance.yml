@@ -50,9 +50,21 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          diagnostic_once=false
+          if [[ "${GITHUB_EVENT_NAME}" == "issue_comment" ]]; then
+            body="$(jq -r '.comment.body // ""' "$GITHUB_EVENT_PATH")"
+            if [[ "$body" == *"diagnostic=once"* ]]; then
+              diagnostic_once=true
+            fi
+          fi
+          echo "diagnostic_once=$diagnostic_once" >> "$GITHUB_OUTPUT"
+
           paused="$(gh api "repos/$GITHUB_REPOSITORY/issues/459/comments?per_page=100" --jq '[.[] | select(.body | startswith("[candidate-finance-paused]"))] | length')"
-          if [[ "$paused" == "0" ]]; then
+          if [[ "$paused" == "0" || "$diagnostic_once" == "true" ]]; then
             echo "paused=false" >> "$GITHUB_OUTPUT"
+            if [[ "$diagnostic_once" == "true" && "$paused" != "0" ]]; then
+              echo "Running one diagnostic slice through the pause marker."
+            fi
           else
             echo "paused=true" >> "$GITHUB_OUTPUT"
             echo "Candidate-finance is paused by issue #459 control marker."
@@ -81,6 +93,7 @@ jobs:
       - name: Continue membership-prioritized tail
         if: >-
           steps.pause.outputs.paused != 'true' &&
+          steps.pause.outputs.diagnostic_once != 'true' &&
           success() &&
           steps.backfill.outputs.tail_selected_groups != '' &&
           steps.backfill.outputs.tail_selected_groups != '0' &&
