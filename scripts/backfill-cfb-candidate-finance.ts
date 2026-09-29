@@ -547,6 +547,76 @@ async function main() {
       }
     }
 
+    const eligibleBefore = await pool.query<{ count: number }>(`
+      SELECT count(DISTINCT ei.metadata->>'rowKey')::int AS count
+        FROM evidence_items ei
+        JOIN source_documents sd ON sd.id = ei.source_document_id
+       WHERE sd.source_kind IN (
+         'campaign_finance_candidate_contribution_bulk',
+         'campaign_finance_candidate_expenditure_bulk'
+       )
+         AND ei.metadata->>'asOfEligible' = 'true'
+         AND ei.published_at IS NOT NULL
+         AND ei.metadata->>'transactionDateIsAvailability' = 'false'
+    `);
+    const mappedRowKeys = [...new Set(mappings.map(mapping => mapping.rowKey))];
+    const promotionCoverageBefore = mappedRowKeys.length
+      ? await pool.query<{
+          mappedRows: number;
+          persistedAny: number;
+          persistedCandidateKinds: number;
+          eligibleMappedRows: number;
+        }>(`
+          WITH mapped AS (
+            SELECT DISTINCT row_key
+              FROM jsonb_to_recordset($1::jsonb) AS d(row_key text)
+          )
+          SELECT
+            (SELECT count(*)::int FROM mapped) AS "mappedRows",
+            count(DISTINCT CASE WHEN ei.id IS NOT NULL THEN mapped.row_key END)::int AS "persistedAny",
+            count(DISTINCT CASE
+              WHEN sd.source_kind IN (
+                'campaign_finance_candidate_contribution_bulk',
+                'campaign_finance_candidate_expenditure_bulk'
+              ) THEN mapped.row_key END)::int AS "persistedCandidateKinds",
+            count(DISTINCT CASE
+              WHEN sd.source_kind IN (
+                'campaign_finance_candidate_contribution_bulk',
+                'campaign_finance_candidate_expenditure_bulk'
+              )
+               AND ei.metadata->>'asOfEligible'='true'
+               AND ei.published_at IS NOT NULL
+              THEN mapped.row_key END)::int AS "eligibleMappedRows"
+          FROM mapped
+          LEFT JOIN evidence_items ei
+            ON ei.metadata->>'rowKey'=mapped.row_key
+          LEFT JOIN source_documents sd
+            ON sd.id=ei.source_document_id
+        `, [JSON.stringify(mappedRowKeys.map(row_key => ({ row_key })))])
+      : null;
+    const sourceKindCoverageBefore = mappedRowKeys.length
+      ? await pool.query<{ sourceKind: string; mappedRowKeys: number; eligibleMappedRowKeys: number }>(`
+          WITH mapped AS (
+            SELECT DISTINCT row_key
+              FROM jsonb_to_recordset($1::jsonb) AS d(row_key text)
+          )
+          SELECT
+            sd.source_kind AS "sourceKind",
+            count(DISTINCT mapped.row_key)::int AS "mappedRowKeys",
+            count(DISTINCT CASE
+              WHEN ei.metadata->>'asOfEligible'='true' AND ei.published_at IS NOT NULL
+              THEN mapped.row_key END)::int AS "eligibleMappedRowKeys"
+          FROM mapped
+          JOIN evidence_items ei
+            ON ei.metadata->>'rowKey'=mapped.row_key
+          JOIN source_documents sd
+            ON sd.id=ei.source_document_id
+         WHERE sd.source_kind LIKE 'campaign_finance%'
+         GROUP BY sd.source_kind
+         ORDER BY sd.source_kind
+        `, [JSON.stringify(mappedRowKeys.map(row_key => ({ row_key })))])
+      : null;
+
     let promotedThisRun = 0;
     const promotionBatchSize = 500;
     for (let offset = 0; offset < mappings.length; offset += promotionBatchSize) {
@@ -628,6 +698,37 @@ async function main() {
          AND ei.published_at IS NOT NULL
          AND ei.metadata->>'transactionDateIsAvailability' = 'false'
     `);
+
+    const eligibleBeforeCount = eligibleBefore.rows[0]?.count ?? 0;
+    const eligibleAfterCount = eligible.rows[0]?.count ?? 0;
+    const coverageBefore = promotionCoverageBefore?.rows[0] ?? {
+      mappedRows: 0,
+      persistedAny: 0,
+      persistedCandidateKinds: 0,
+      eligibleMappedRows: 0,
+    };
+    const promotionCoverage = {
+      mappedRows: coverageBefore.mappedRows,
+      persistedAny: coverageBefore.persistedAny,
+      persistedCandidateKinds: coverageBefore.persistedCandidateKinds,
+      eligibleMappedRowsBefore: coverageBefore.eligibleMappedRows,
+      sourceKindsBefore: sourceKindCoverageBefore?.rows ?? [],
+      eligibleRowsBefore: eligibleBeforeCount,
+      eligibleRowsAfter: eligibleAfterCount,
+      newlyEligibleDistinctRows: eligibleAfterCount - eligibleBeforeCount,
+      promotedEvidenceItems: promotedThisRun,
+    };
+    if (
+      coverageBefore.mappedRows > coverageBefore.eligibleMappedRows
+      && eligibleAfterCount <= eligibleBeforeCount
+    ) {
+      console.log(JSON.stringify({
+        cfbCandidateFinancePromotionInvariantFailure: promotionCoverage,
+      }, null, 2));
+      throw new Error(
+        'Candidate-finance promotion produced no new distinct as-of-eligible row keys despite mapped rows that were not already eligible; refusing to checkpoint this tranche',
+      );
+    }
 
     const acquisition = TARGETS.map(target => {
       const acquired = acquiredByTarget.get(target.registrationNumber + ':' + target.segmentEndYear);
@@ -740,7 +841,8 @@ async function main() {
         reused,
         unresolved,
         promotedThisRun,
-        asOfEligibleRows: eligible.rows[0]?.count ?? 0,
+        asOfEligibleRows: eligibleAfterCount,
+        promotionCoverage,
         membershipResolution: {
           rowsResolved: drafts.filter(item => Boolean(item.draft.target?.membershipId)).length,
           rowsUnresolved: drafts.filter(item => !item.draft.target?.membershipId).length,

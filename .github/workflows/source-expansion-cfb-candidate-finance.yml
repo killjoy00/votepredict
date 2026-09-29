@@ -43,17 +43,36 @@ jobs:
       VOTEPREDICT_CFB_CANDIDATE_FINANCE_BATCH_SIZE: '100'
       VOTEPREDICT_CFB_CANDIDATE_FINANCE_TAIL_GROUPS: '8'
     steps:
+      - name: Check candidate-finance pause marker
+        id: pause
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          paused="$(gh api "repos/$GITHUB_REPOSITORY/issues/459/comments?per_page=100" --jq '[.[] | select(.body | startswith("[candidate-finance-paused]"))] | length')"
+          if [[ "$paused" == "0" ]]; then
+            echo "paused=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "paused=true" >> "$GITHUB_OUTPUT"
+            echo "Candidate-finance is paused by issue #459 control marker."
+          fi
       - uses: actions/checkout@v7
+        if: steps.pause.outputs.paused != 'true'
       - uses: actions/setup-node@v7
+        if: steps.pause.outputs.paused != 'true'
         with: { node-version: 22, cache: npm }
-      - run: npm ci --no-fund --no-audit
+      - if: steps.pause.outputs.paused != 'true'
+        run: npm ci --no-fund --no-audit
       - name: Read production environment privately
+        if: steps.pause.outputs.paused != 'true'
         shell: bash
         run: |
           set -euo pipefail
           umask 077
           npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
       - name: Backfill bounded CFB candidate finance rows
+        if: steps.pause.outputs.paused != 'true'
         id: backfill
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
@@ -61,6 +80,7 @@ jobs:
         run: node --import tsx scripts/backfill-cfb-candidate-finance.ts
       - name: Continue membership-prioritized tail
         if: >-
+          steps.pause.outputs.paused != 'true' &&
           success() &&
           steps.backfill.outputs.tail_selected_groups != '' &&
           steps.backfill.outputs.tail_selected_groups != '0' &&
@@ -88,6 +108,7 @@ jobs:
             -f continuation="$next"
       - name: Record candidate-finance completion
         if: >-
+          steps.pause.outputs.paused != 'true' &&
           success() &&
           steps.backfill.outputs.tail_selected_groups == '0' &&
           steps.backfill.outputs.tail_remaining_groups == '0'
