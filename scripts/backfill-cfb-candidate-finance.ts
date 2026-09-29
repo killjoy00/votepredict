@@ -6,7 +6,7 @@ const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING'
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const DEFAULT_BATCH_SIZE = 100;
 const TAIL_GROUP_CHECKPOINT_SOURCE = 'cfb-candidate-finance-membership-tail-group';
-const TAIL_GROUP_CHECKPOINT_VERSION = 'membership-tail-group-v1';
+const TAIL_GROUP_CHECKPOINT_VERSION = 'membership-tail-group-v2-row-identity';
 let secrets: string[] = [];
 
 function mask(value: string) {
@@ -71,11 +71,9 @@ function freshness(date: string | null) {
 
 async function main() {
   const {
-    cfbCandidateFinanceTargetBatchNames,
     resolveCfbCandidateFinanceTargetBatch,
   } = await import('../src/evidence/cfb-candidate-finance-target-batches.js');
   const {
-    areResolvableCfbCandidateFinanceRowsPersisted,
     cfbCandidateFinanceTargetKey,
     isCfbCandidateFinanceMembershipTailRequest,
     selectCfbCandidateFinanceMembershipTail,
@@ -230,35 +228,10 @@ async function main() {
         }
       }
 
+      // Explicit versioned checkpoints are the only completion authority.
+      // Row-key presence is diagnostic only: historical ingestion collisions proved
+      // that it cannot safely establish that a group completed its bounded pass.
       const fullyPersistedKeys = new Set<string>(checkpointedGroupKeys);
-      for (const group of groups.values()) {
-        if (
-          areResolvableCfbCandidateFinanceRowsPersisted(
-            group.resolvableRowKeys,
-            persistedRowKeys,
-          )
-        ) {
-          fullyPersistedKeys.add(cfbCandidateFinanceTargetKey(group));
-        }
-      }
-      const reviewedKeys = new Set<string>();
-      for (const name of cfbCandidateFinanceTargetBatchNames()) {
-        for (const target of resolveCfbCandidateFinanceTargetBatch('batch=' + name).targets) {
-          reviewedKeys.add(cfbCandidateFinanceTargetKey(target));
-        }
-      }
-      for (const key of reviewedKeys) {
-        const group = groups.get(key);
-        if (
-          group
-          && areResolvableCfbCandidateFinanceRowsPersisted(
-            group.resolvableRowKeys,
-            persistedRowKeys,
-          )
-        ) {
-          fullyPersistedKeys.add(key);
-        }
-      }
 
       const targetableGroups = [...groups.values()].filter(group => group.resolvedRows > 0);
       const remainingBefore = targetableGroups.filter(group =>
@@ -508,18 +481,52 @@ async function main() {
               affectedCommitteeRegistrationNumber: row.affectedCommitteeRegistrationNumber,
             }),
             rowKey: row.rowKey,
+            ingestionIdentityKey: row.rowKey,
             evidenceSeriesKey: `cfb_candidate_finance_row:${row.rowKey}`,
           },
         },
       };
     });
 
+    const desiredIdentities = drafts.map(item => ({
+      row_key: item.row.rowKey,
+      membership_id: item.draft.target?.membershipId ?? null,
+    }));
+    const existingIdentities = desiredIdentities.length
+      ? await pool.query<{ rowKey: string; membershipId: string | null }>(`
+          WITH desired AS (
+            SELECT DISTINCT row_key, membership_id
+              FROM jsonb_to_recordset($1::jsonb) AS d(row_key text, membership_id text)
+          )
+          SELECT DISTINCT
+            desired.row_key AS "rowKey",
+            ei.membership_id::text AS "membershipId"
+          FROM desired
+          JOIN evidence_items ei
+            ON ei.metadata->>'rowKey' = desired.row_key
+           AND ei.membership_id IS NOT DISTINCT FROM desired.membership_id::uuid
+          JOIN source_documents sd
+            ON sd.id = ei.source_document_id
+         WHERE sd.source_kind IN (
+           'campaign_finance_candidate_contribution_bulk',
+           'campaign_finance_candidate_expenditure_bulk'
+         )
+        `, [JSON.stringify(desiredIdentities)])
+      : { rows: [] as Array<{ rowKey: string; membershipId: string | null }> };
+    const existingIdentityKeys = new Set(existingIdentities.rows.map(item =>
+      item.rowKey + ':' + (item.membershipId ?? '')));
+    const identityKeyForDraft = (item: (typeof drafts)[number]) =>
+      item.row.rowKey + ':' + (item.draft.target?.membershipId ?? '');
+
     const size = batchSize();
     let inserted = 0;
     let reused = 0;
     let unresolved = 0;
+    let skippedExistingIdentity = 0;
     for (const kind of ['contribution', 'expenditure'] as const) {
-      const selected = drafts.filter(item => item.row.kind === kind);
+      const kindDrafts = drafts.filter(item => item.row.kind === kind);
+      const selected = kindDrafts.filter(item => !existingIdentityKeys.has(identityKeyForDraft(item)));
+      skippedExistingIdentity += kindDrafts.length - selected.length;
       for (let offset = 0; offset < selected.length; offset += size) {
         const batch = selected.slice(offset, offset + size);
         if (!batch.length) continue;
@@ -719,7 +726,7 @@ async function main() {
       promotedEvidenceItems: promotedThisRun,
     };
     if (
-      coverageBefore.mappedRows > coverageBefore.eligibleMappedRows
+      coverageBefore.persistedCandidateKinds > coverageBefore.eligibleMappedRows
       && eligibleAfterCount <= eligibleBeforeCount
     ) {
       console.log(JSON.stringify({
@@ -840,6 +847,7 @@ async function main() {
         inserted,
         reused,
         unresolved,
+        skippedExistingIdentity,
         promotedThisRun,
         asOfEligibleRows: eligibleAfterCount,
         promotionCoverage,
@@ -858,6 +866,7 @@ async function main() {
             version: TAIL_GROUP_CHECKPOINT_VERSION,
             terminalAfterSuccessfulBoundedPass: true,
             proofFailuresRemainFailClosed: true,
+            rowIdentityRepair: 'ingestionIdentityKey=rowKey',
           },
         } : {}),
         policy: {

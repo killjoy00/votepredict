@@ -60,6 +60,18 @@ test('durable evidence ingestion key changes for a materially different claim', 
   );
 });
 
+test('durable evidence ingestion key honors an explicit ingestion identity key', () => {
+  const first = evidenceIngestionKey({
+    ...base,
+    draft: { ...draft, metadata: { ingestionIdentityKey: 'row-a', ignoredByKey: true } },
+  });
+  const second = evidenceIngestionKey({
+    ...base,
+    draft: { ...draft, metadata: { ingestionIdentityKey: 'row-b', ignoredByKey: true } },
+  });
+  assert.notEqual(first, second);
+});
+
 test('legacy campaign-finance bulk transaction dates are not persisted as publication dates', () => {
   const normalized = normalizeDurableEvidenceDraftForSource({ sourceKind: 'campaign_finance_bulk' }, {
     ...draft,

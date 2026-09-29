@@ -103,6 +103,11 @@ export function evidenceIngestionKey(input: {
   billId?: string;
   draft: DurableEvidenceDraft;
 }): string {
+  const ingestionIdentityKey =
+    typeof input.draft.metadata?.ingestionIdentityKey === 'string'
+      && input.draft.metadata.ingestionIdentityKey.trim()
+      ? input.draft.metadata.ingestionIdentityKey.trim()
+      : null;
   return sha256(stableJson({
     sourceUrl: input.sourceUrl,
     contentSha256: input.contentSha256,
@@ -114,6 +119,7 @@ export function evidenceIngestionKey(input: {
     publishedAt: input.draft.publishedAt ?? null,
     extractionMethod: input.draft.extractionMethod,
     extractionVersion: input.draft.extractionVersion ?? null,
+    ...(ingestionIdentityKey ? { ingestionIdentityKey } : {}),
   }));
 }
 
