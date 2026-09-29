@@ -33,6 +33,14 @@ export function selectCfbCandidateFinanceMembershipTail(
 }
 
 
+export function areResolvableCfbCandidateFinanceRowsPersisted(
+  resolvableRowKeys: readonly string[],
+  persistedRowKeys: ReadonlySet<string>,
+): boolean {
+  return resolvableRowKeys.length > 0
+    && resolvableRowKeys.every(rowKey => persistedRowKeys.has(rowKey));
+}
+
 export function isCfbCandidateFinanceMembershipTailRequest(request?: string | null): boolean {
   return /(?:^|\s)batch=membership-tail(?:\s|$)/i.test(request ?? '');
 }
