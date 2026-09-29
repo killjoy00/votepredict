@@ -26,6 +26,13 @@ jobs:
         run: |
           set -euo pipefail
 
+          paused="$(gh api "repos/$GITHUB_REPOSITORY/issues/459/comments?per_page=100" \
+            --jq '[.[] | select(.body | startswith("[candidate-finance-paused]"))] | length')"
+          if [[ "$paused" != "0" ]]; then
+            echo "Candidate-finance pause marker exists; watchdog is idle."
+            exit 0
+          fi
+
           complete="$(gh api "repos/$GITHUB_REPOSITORY/issues/459/comments?per_page=100"             --jq '[.[] | select(.body | startswith("[candidate-finance-complete]"))] | length')"
           if [[ "$complete" != "0" ]]; then
             echo "Candidate-finance completion marker exists; watchdog is idle."
