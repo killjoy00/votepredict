@@ -127,6 +127,172 @@ async function main() {
         AND metadata->>'checkpointVersion'='membership-tail-group-v1'
     `);
 
+    const checkpointEligibility=await pool.query(`
+      WITH checkpoint_groups AS (
+        SELECT DISTINCT ON (scope)
+          scope,
+          metadata->>'registrationNumber' AS registration_number,
+          (metadata->>'segmentEndYear')::int AS segment_end_year,
+          coalesce((metadata->>'disclosureMappedRows')::int,0) AS disclosure_mapped_rows,
+          coalesce((metadata->>'resolvedRows')::int,0) AS resolved_rows,
+          metadata->>'disposition' AS disposition
+        FROM ingestion_runs
+        WHERE source_system='cfb-candidate-finance-membership-tail-group'
+          AND status='complete'
+          AND metadata->>'checkpointVersion'='membership-tail-group-v1'
+        ORDER BY scope, finished_at DESC NULLS LAST
+      ),
+      candidate_rows AS (
+        SELECT
+          ei.metadata->>'rowKey' AS row_key,
+          ei.metadata->>'filerRegistrationNumber' AS registration_number,
+          CASE
+            WHEN (ei.metadata->>'year')::int IN (2021,2022) THEN 2022
+            WHEN (ei.metadata->>'year')::int IN (2023,2024) THEN 2024
+            WHEN (ei.metadata->>'year')::int IN (2025,2026) THEN 2026
+            ELSE NULL
+          END AS segment_end_year,
+          bool_or(ei.metadata->>'asOfEligible'='true' AND ei.published_at IS NOT NULL) AS eligible
+        FROM evidence_items ei
+        JOIN source_documents sd ON sd.id=ei.source_document_id
+        WHERE ei.metadata->>'subtype' IN ('candidate_contribution_record','candidate_expenditure_record')
+          AND ei.metadata->>'rowKey' IS NOT NULL
+          AND ei.metadata->>'filerRegistrationNumber' IS NOT NULL
+          AND ei.metadata->>'year' ~ '^[0-9]{4}
+        bySourceKind: bySourceKind.rows,
+        totals: totals.rows[0],
+        duplicatePlacement: duplicatePlacement.rows[0],
+        checkpoints: checkpoints.rows[0],
+        checkpointEligibility: checkpointEligibility.rows[0],
+        checkpointEligibilityGaps: checkpointEligibilityGaps.rows,
+        interpretation: {
+          readOnly: true,
+          noEvidenceWrites: true,
+          noServingChanges: true,
+        },
+      },
+    },null,2));
+  } finally {
+    await pool.end();
+  }
+}
+main().catch(error=>{ console.error(safe(error)); process.exitCode=1; });
+
+        GROUP BY
+          ei.metadata->>'rowKey',
+          ei.metadata->>'filerRegistrationNumber',
+          CASE
+            WHEN (ei.metadata->>'year')::int IN (2021,2022) THEN 2022
+            WHEN (ei.metadata->>'year')::int IN (2023,2024) THEN 2024
+            WHEN (ei.metadata->>'year')::int IN (2025,2026) THEN 2026
+            ELSE NULL
+          END
+      ),
+      per_group AS (
+        SELECT
+          cg.scope,
+          cg.registration_number,
+          cg.segment_end_year,
+          cg.disclosure_mapped_rows,
+          cg.resolved_rows,
+          cg.disposition,
+          count(DISTINCT cr.row_key)::int AS persisted_row_keys,
+          count(DISTINCT cr.row_key) FILTER (WHERE cr.eligible)::int AS eligible_row_keys
+        FROM checkpoint_groups cg
+        LEFT JOIN candidate_rows cr
+          ON cr.registration_number=cg.registration_number
+         AND cr.segment_end_year=cg.segment_end_year
+        GROUP BY
+          cg.scope,cg.registration_number,cg.segment_end_year,
+          cg.disclosure_mapped_rows,cg.resolved_rows,cg.disposition
+      )
+      SELECT
+        count(*)::int AS "groups",
+        coalesce(sum(disclosure_mapped_rows),0)::int AS "disclosureMappedRows",
+        coalesce(sum(persisted_row_keys),0)::int AS "persistedRowKeysAcrossGroups",
+        coalesce(sum(eligible_row_keys),0)::int AS "eligibleRowKeysAcrossGroups",
+        count(*) FILTER (WHERE disclosure_mapped_rows>0)::int AS "groupsWithMappings",
+        count(*) FILTER (WHERE disclosure_mapped_rows>0 AND eligible_row_keys=0)::int AS "mappedGroupsWithZeroEligible",
+        count(*) FILTER (WHERE eligible_row_keys < disclosure_mapped_rows)::int AS "groupsEligibleBelowMapped"
+      FROM per_group
+    `);
+
+    const checkpointEligibilityGaps=await pool.query(`
+      WITH checkpoint_groups AS (
+        SELECT DISTINCT ON (scope)
+          scope,
+          metadata->>'registrationNumber' AS registration_number,
+          (metadata->>'segmentEndYear')::int AS segment_end_year,
+          coalesce((metadata->>'disclosureMappedRows')::int,0) AS disclosure_mapped_rows,
+          metadata->>'disposition' AS disposition
+        FROM ingestion_runs
+        WHERE source_system='cfb-candidate-finance-membership-tail-group'
+          AND status='complete'
+          AND metadata->>'checkpointVersion'='membership-tail-group-v1'
+        ORDER BY scope, finished_at DESC NULLS LAST
+      ),
+      candidate_rows AS (
+        SELECT
+          ei.metadata->>'rowKey' AS row_key,
+          ei.metadata->>'filerRegistrationNumber' AS registration_number,
+          CASE
+            WHEN (ei.metadata->>'year')::int IN (2021,2022) THEN 2022
+            WHEN (ei.metadata->>'year')::int IN (2023,2024) THEN 2024
+            WHEN (ei.metadata->>'year')::int IN (2025,2026) THEN 2026
+            ELSE NULL
+          END AS segment_end_year,
+          bool_or(ei.metadata->>'asOfEligible'='true' AND ei.published_at IS NOT NULL) AS eligible
+        FROM evidence_items ei
+        JOIN source_documents sd ON sd.id=ei.source_document_id
+        WHERE ei.metadata->>'subtype' IN ('candidate_contribution_record','candidate_expenditure_record')
+          AND ei.metadata->>'rowKey' IS NOT NULL
+          AND ei.metadata->>'filerRegistrationNumber' IS NOT NULL
+          AND ei.metadata->>'year' ~ '^[0-9]{4}
+        bySourceKind: bySourceKind.rows,
+        totals: totals.rows[0],
+        duplicatePlacement: duplicatePlacement.rows[0],
+        checkpoints: checkpoints.rows[0],
+        interpretation: {
+          readOnly: true,
+          noEvidenceWrites: true,
+          noServingChanges: true,
+        },
+      },
+    },null,2));
+  } finally {
+    await pool.end();
+  }
+}
+main().catch(error=>{ console.error(safe(error)); process.exitCode=1; });
+
+        GROUP BY
+          ei.metadata->>'rowKey',
+          ei.metadata->>'filerRegistrationNumber',
+          CASE
+            WHEN (ei.metadata->>'year')::int IN (2021,2022) THEN 2022
+            WHEN (ei.metadata->>'year')::int IN (2023,2024) THEN 2024
+            WHEN (ei.metadata->>'year')::int IN (2025,2026) THEN 2026
+            ELSE NULL
+          END
+      )
+      SELECT
+        cg.scope,
+        cg.disclosure_mapped_rows AS "disclosureMappedRows",
+        count(DISTINCT cr.row_key)::int AS "persistedRowKeys",
+        count(DISTINCT cr.row_key) FILTER (WHERE cr.eligible)::int AS "eligibleRowKeys",
+        cg.disposition
+      FROM checkpoint_groups cg
+      LEFT JOIN candidate_rows cr
+        ON cr.registration_number=cg.registration_number
+       AND cr.segment_end_year=cg.segment_end_year
+      GROUP BY cg.scope,cg.disclosure_mapped_rows,cg.disposition
+      HAVING count(DISTINCT cr.row_key) FILTER (WHERE cr.eligible) < cg.disclosure_mapped_rows
+      ORDER BY
+        (cg.disclosure_mapped_rows - count(DISTINCT cr.row_key) FILTER (WHERE cr.eligible)) DESC,
+        cg.scope
+      LIMIT 20
+    `);
+
     console.log(JSON.stringify({
       cfbCandidateFinanceEligibilityAudit: {
         bySourceKind: bySourceKind.rows,
