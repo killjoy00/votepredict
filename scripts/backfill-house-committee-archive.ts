@@ -82,6 +82,16 @@ async function fetchArchivePage(
   throw lastError;
 }
 
+function requestedArchiveSlice(value?: string | null): { session?: string; page?: number } {
+  const session = value?.match(/(?:^|\s)session=(2021-2022|2023-2024|2025-2026)(?:\s|$)/i)?.[1];
+  const rawPage = value?.match(/(?:^|\s)page=(\d+)(?:\s|$)/i)?.[1];
+  const page = rawPage ? Number.parseInt(rawPage, 10) : undefined;
+  if (page !== undefined && (!Number.isSafeInteger(page) || page < 1 || page > 100)) {
+    throw new Error('House committee archive page must be an integer from 1 through 100');
+  }
+  return { session, page };
+}
+
 async function main() {
   const envFile = process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
   if (!envFile) throw new Error('Production env file required');
@@ -107,6 +117,7 @@ async function main() {
   } = await import('../src/evidence/house-committee-archive.js');
 
   try {
+    const request = requestedArchiveSlice(process.env.VOTEPREDICT_HOUSE_COMMITTEE_ARCHIVE_REQUEST);
     let pages = 0;
     let pagesSkippedExact = 0;
     let failedPages = 0;
@@ -120,6 +131,7 @@ async function main() {
     const bySession: Record<string, number> = {};
 
     for (const session of SESSION_MAP) {
+      if (request.session && request.session !== session.slug) continue;
       const firstUrl = `https://www.house.mn.gov/Committees/archives/Page/1/LSYear/${session.lsYear}`;
       let first: Awaited<ReturnType<typeof fetchArchivePage>>;
       try {
@@ -140,8 +152,20 @@ async function main() {
         continue;
       }
       const totalPages = Math.min(100, parseHouseCommitteeArchiveTotalPages(first.text));
+      if (request.page && request.page > totalPages) {
+        throw new Error(
+          'Requested House committee archive page '
+          + request.page
+          + ' exceeds '
+          + totalPages
+          + ' pages for '
+          + session.slug,
+        );
+      }
+      const firstPage = request.page ?? 1;
+      const lastPage = request.page ?? totalPages;
 
-      for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
+      for (let pageNumber = firstPage; pageNumber <= lastPage; pageNumber += 1) {
         let page = first;
         if (pageNumber !== 1) {
           try {
@@ -303,6 +327,8 @@ async function main() {
           availability: 'official attachment posted date; same-day excluded',
           attachmentContentFetch: 'separate follow-up',
           transientFetchRetries: 3,
+          requestedSession: request.session ?? null,
+          requestedPage: request.page ?? null,
           servingChanged: false,
           productionAction: 'none',
         },
