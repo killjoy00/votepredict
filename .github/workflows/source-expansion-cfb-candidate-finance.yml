@@ -114,7 +114,7 @@ jobs:
           if ! [[ "$current" =~ ^[0-9]+$ ]]; then
             current=0
           fi
-          if (( current >= 29 )); then
+          if (( current >= 99 )); then
             echo "Membership-tail continuation cap reached with ${TAIL_REMAINING_GROUPS} groups still reported."
             exit 0
           fi
