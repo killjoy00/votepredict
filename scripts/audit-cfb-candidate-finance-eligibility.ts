@@ -147,9 +147,9 @@ async function main() {
           ei.metadata->>'rowKey' AS row_key,
           ei.metadata->>'filerRegistrationNumber' AS registration_number,
           CASE
-            WHEN (ei.metadata->>'year')::int IN (2021,2022) THEN 2022
-            WHEN (ei.metadata->>'year')::int IN (2023,2024) THEN 2024
-            WHEN (ei.metadata->>'year')::int IN (2025,2026) THEN 2026
+            WHEN ei.metadata->>'year' IN ('2021','2022') THEN 2022
+            WHEN ei.metadata->>'year' IN ('2023','2024') THEN 2024
+            WHEN ei.metadata->>'year' IN ('2025','2026') THEN 2026
             ELSE NULL
           END AS segment_end_year,
           bool_or(ei.metadata->>'asOfEligible'='true' AND ei.published_at IS NOT NULL) AS eligible
@@ -158,33 +158,14 @@ async function main() {
         WHERE ei.metadata->>'subtype' IN ('candidate_contribution_record','candidate_expenditure_record')
           AND ei.metadata->>'rowKey' IS NOT NULL
           AND ei.metadata->>'filerRegistrationNumber' IS NOT NULL
-          AND ei.metadata->>'year' ~ '^[0-9]{4}
-        bySourceKind: bySourceKind.rows,
-        totals: totals.rows[0],
-        duplicatePlacement: duplicatePlacement.rows[0],
-        checkpoints: checkpoints.rows[0],
-        checkpointEligibility: checkpointEligibility.rows[0],
-        checkpointEligibilityGaps: checkpointEligibilityGaps.rows,
-        interpretation: {
-          readOnly: true,
-          noEvidenceWrites: true,
-          noServingChanges: true,
-        },
-      },
-    },null,2));
-  } finally {
-    await pool.end();
-  }
-}
-main().catch(error=>{ console.error(safe(error)); process.exitCode=1; });
-
+          AND ei.metadata->>'year' IN ('2021','2022','2023','2024','2025','2026')
         GROUP BY
           ei.metadata->>'rowKey',
           ei.metadata->>'filerRegistrationNumber',
           CASE
-            WHEN (ei.metadata->>'year')::int IN (2021,2022) THEN 2022
-            WHEN (ei.metadata->>'year')::int IN (2023,2024) THEN 2024
-            WHEN (ei.metadata->>'year')::int IN (2025,2026) THEN 2026
+            WHEN ei.metadata->>'year' IN ('2021','2022') THEN 2022
+            WHEN ei.metadata->>'year' IN ('2023','2024') THEN 2024
+            WHEN ei.metadata->>'year' IN ('2025','2026') THEN 2026
             ELSE NULL
           END
       ),
@@ -236,9 +217,9 @@ main().catch(error=>{ console.error(safe(error)); process.exitCode=1; });
           ei.metadata->>'rowKey' AS row_key,
           ei.metadata->>'filerRegistrationNumber' AS registration_number,
           CASE
-            WHEN (ei.metadata->>'year')::int IN (2021,2022) THEN 2022
-            WHEN (ei.metadata->>'year')::int IN (2023,2024) THEN 2024
-            WHEN (ei.metadata->>'year')::int IN (2025,2026) THEN 2026
+            WHEN ei.metadata->>'year' IN ('2021','2022') THEN 2022
+            WHEN ei.metadata->>'year' IN ('2023','2024') THEN 2024
+            WHEN ei.metadata->>'year' IN ('2025','2026') THEN 2026
             ELSE NULL
           END AS segment_end_year,
           bool_or(ei.metadata->>'asOfEligible'='true' AND ei.published_at IS NOT NULL) AS eligible
@@ -247,31 +228,14 @@ main().catch(error=>{ console.error(safe(error)); process.exitCode=1; });
         WHERE ei.metadata->>'subtype' IN ('candidate_contribution_record','candidate_expenditure_record')
           AND ei.metadata->>'rowKey' IS NOT NULL
           AND ei.metadata->>'filerRegistrationNumber' IS NOT NULL
-          AND ei.metadata->>'year' ~ '^[0-9]{4}
-        bySourceKind: bySourceKind.rows,
-        totals: totals.rows[0],
-        duplicatePlacement: duplicatePlacement.rows[0],
-        checkpoints: checkpoints.rows[0],
-        interpretation: {
-          readOnly: true,
-          noEvidenceWrites: true,
-          noServingChanges: true,
-        },
-      },
-    },null,2));
-  } finally {
-    await pool.end();
-  }
-}
-main().catch(error=>{ console.error(safe(error)); process.exitCode=1; });
-
+          AND ei.metadata->>'year' IN ('2021','2022','2023','2024','2025','2026')
         GROUP BY
           ei.metadata->>'rowKey',
           ei.metadata->>'filerRegistrationNumber',
           CASE
-            WHEN (ei.metadata->>'year')::int IN (2021,2022) THEN 2022
-            WHEN (ei.metadata->>'year')::int IN (2023,2024) THEN 2024
-            WHEN (ei.metadata->>'year')::int IN (2025,2026) THEN 2026
+            WHEN ei.metadata->>'year' IN ('2021','2022') THEN 2022
+            WHEN ei.metadata->>'year' IN ('2023','2024') THEN 2024
+            WHEN ei.metadata->>'year' IN ('2025','2026') THEN 2026
             ELSE NULL
           END
       )
@@ -299,6 +263,8 @@ main().catch(error=>{ console.error(safe(error)); process.exitCode=1; });
         totals: totals.rows[0],
         duplicatePlacement: duplicatePlacement.rows[0],
         checkpoints: checkpoints.rows[0],
+        checkpointEligibility: checkpointEligibility.rows[0],
+        checkpointEligibilityGaps: checkpointEligibilityGaps.rows,
         interpretation: {
           readOnly: true,
           noEvidenceWrites: true,
