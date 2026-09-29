@@ -41,6 +41,7 @@ jobs:
       - name: Backfill House committee archive metadata
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+          VOTEPREDICT_HOUSE_COMMITTEE_ARCHIVE_REQUEST: ${{ github.event_name == 'issue_comment' && github.event.comment.body || '' }}
         run: node --import tsx scripts/backfill-house-committee-archive.ts
       - name: Remove temporary credentials and logs
         if: always()

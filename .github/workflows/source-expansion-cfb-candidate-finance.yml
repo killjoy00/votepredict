@@ -34,13 +34,13 @@ jobs:
         startsWith(github.event.comment.body, '[source-expansion-cfb-candidate-finance]')
       )
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
       VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
       VOTEPREDICT_CFB_CANDIDATE_FINANCE_BATCH_SIZE: '100'
-      VOTEPREDICT_CFB_CANDIDATE_FINANCE_TAIL_GROUPS: '24'
+      VOTEPREDICT_CFB_CANDIDATE_FINANCE_TAIL_GROUPS: '8'
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
