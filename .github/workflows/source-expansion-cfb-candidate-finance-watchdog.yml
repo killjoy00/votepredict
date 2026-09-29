@@ -1,0 +1,42 @@
+name: Candidate finance watchdog
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  issues: read
+  contents: read
+
+concurrency:
+  group: candidate-finance-watchdog
+  cancel-in-progress: true
+
+jobs:
+  resume-if-idle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Resume candidate-finance tail if idle
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          complete="$(gh api "repos/$GITHUB_REPOSITORY/issues/459/comments?per_page=100"             --jq '[.[] | select(.body | startswith("[candidate-finance-complete]"))] | length')"
+          if [[ "$complete" != "0" ]]; then
+            echo "Candidate-finance completion marker exists; watchdog is idle."
+            exit 0
+          fi
+
+          active="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/source-expansion-cfb-candidate-finance.yml/runs?per_page=30"             --jq '[.workflow_runs[] | select(.status == "queued" or .status == "in_progress" or .status == "waiting" or .status == "pending")] | length')"
+          if [[ "$active" != "0" ]]; then
+            echo "Candidate-finance already has an active or queued run; no dispatch needed."
+            exit 0
+          fi
+
+          echo "No candidate-finance run is active; resuming membership tail from persisted state."
+          gh workflow run source-expansion-cfb-candidate-finance.yml             --repo "$GITHUB_REPOSITORY"             --ref main             -f batch=membership-tail             -f continuation=0

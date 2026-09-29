@@ -19,6 +19,7 @@ on:
 permissions:
   contents: read
   actions: write
+  issues: write
 
 concurrency:
   group: ${{ github.event_name == 'issue_comment' && (github.event.issue.number != 355 || github.event.comment.user.login != 'killjoy00' || !startsWith(github.event.comment.body, '[source-expansion-cfb-candidate-finance]')) && format('source-expansion-cfb-candidate-finance-skip-{0}', github.run_id) || 'source-expansion-cfb-candidate-finance' }}
@@ -85,6 +86,22 @@ jobs:
             --ref main \
             -f batch=membership-tail \
             -f continuation="$next"
+      - name: Record candidate-finance completion
+        if: >-
+          success() &&
+          steps.backfill.outputs.tail_selected_groups == '0' &&
+          steps.backfill.outputs.tail_remaining_groups == '0'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          marker='[candidate-finance-complete]'
+          existing="$(gh api "repos/$GITHUB_REPOSITORY/issues/459/comments?per_page=100" --jq "[.[] | select(.body | startswith(\"$marker\"))] | length")"
+          if [[ "$existing" == "0" ]]; then
+            gh issue comment 459 --repo "$GITHUB_REPOSITORY" --body "$marker Membership-prioritized CFB candidate-finance collection reached zero remaining resolvable groups under the frozen issue #355 source boundary. The hourly watchdog may now remain idle."
+          fi
+
       - name: Remove temporary credentials and logs
         if: always()
         shell: bash
