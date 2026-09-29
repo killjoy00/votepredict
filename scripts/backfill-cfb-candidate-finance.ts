@@ -71,11 +71,9 @@ function freshness(date: string | null) {
 
 async function main() {
   const {
-    cfbCandidateFinanceTargetBatchNames,
     resolveCfbCandidateFinanceTargetBatch,
   } = await import('../src/evidence/cfb-candidate-finance-target-batches.js');
   const {
-    areResolvableCfbCandidateFinanceRowsPersisted,
     cfbCandidateFinanceTargetKey,
     isCfbCandidateFinanceMembershipTailRequest,
     selectCfbCandidateFinanceMembershipTail,
@@ -230,35 +228,10 @@ async function main() {
         }
       }
 
+      // Explicit versioned checkpoints are the only completion authority.
+      // Row-key presence is diagnostic only: historical ingestion collisions proved
+      // that it cannot safely establish that a group completed its bounded pass.
       const fullyPersistedKeys = new Set<string>(checkpointedGroupKeys);
-      for (const group of groups.values()) {
-        if (
-          areResolvableCfbCandidateFinanceRowsPersisted(
-            group.resolvableRowKeys,
-            persistedRowKeys,
-          )
-        ) {
-          fullyPersistedKeys.add(cfbCandidateFinanceTargetKey(group));
-        }
-      }
-      const reviewedKeys = new Set<string>();
-      for (const name of cfbCandidateFinanceTargetBatchNames()) {
-        for (const target of resolveCfbCandidateFinanceTargetBatch('batch=' + name).targets) {
-          reviewedKeys.add(cfbCandidateFinanceTargetKey(target));
-        }
-      }
-      for (const key of reviewedKeys) {
-        const group = groups.get(key);
-        if (
-          group
-          && areResolvableCfbCandidateFinanceRowsPersisted(
-            group.resolvableRowKeys,
-            persistedRowKeys,
-          )
-        ) {
-          fullyPersistedKeys.add(key);
-        }
-      }
 
       const targetableGroups = [...groups.values()].filter(group => group.resolvedRows > 0);
       const remainingBefore = targetableGroups.filter(group =>
