@@ -92,6 +92,11 @@ jobs:
           TAIL_REMAINING_GROUPS: ${{ steps.backfill.outputs.tail_remaining_groups }}
         run: |
           set -euo pipefail
+          paused="$(gh api "repos/$GITHUB_REPOSITORY/issues/459/comments?per_page=100" --jq '[.[] | select(.body | startswith("[candidate-finance-paused]"))] | length')"
+          if [[ "$paused" != "0" ]]; then
+            echo "Candidate-finance pause marker appeared during this run; suppressing continuation dispatch."
+            exit 0
+          fi
           current="${CURRENT_CONTINUATION:-0}"
           if ! [[ "$current" =~ ^[0-9]+$ ]]; then
             current=0
