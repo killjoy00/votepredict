@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  areResolvableCfbCandidateFinanceRowsPersisted,
   cfbCandidateFinanceTargetKey,
   isCfbCandidateFinanceMembershipTailRequest,
   selectCfbCandidateFinanceMembershipTail,
@@ -43,4 +44,27 @@ test('membership tail trigger recognizes issue-comment and dispatch batch syntax
   );
   assert.equal(isCfbCandidateFinanceMembershipTailRequest('batch=membership-tail'), true);
   assert.equal(isCfbCandidateFinanceMembershipTailRequest('batch=core'), false);
+});
+
+
+test('membership tail completion ignores permanently unresolved raw rows', () => {
+  const persisted = new Set(['resolved-a', 'resolved-b']);
+  assert.equal(
+    areResolvableCfbCandidateFinanceRowsPersisted(
+      ['resolved-a', 'resolved-b'],
+      persisted,
+    ),
+    true,
+  );
+  assert.equal(
+    areResolvableCfbCandidateFinanceRowsPersisted(
+      ['resolved-a', 'missing-resolved'],
+      persisted,
+    ),
+    false,
+  );
+  assert.equal(
+    areResolvableCfbCandidateFinanceRowsPersisted([], persisted),
+    false,
+  );
 });
