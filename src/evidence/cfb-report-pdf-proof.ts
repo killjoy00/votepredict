@@ -100,6 +100,7 @@ export function parseCfbReportPdfAvailability(
   const coverageEndOn = usDate(period[2] ?? '');
   const filedOn = longDate(received[1] ?? '');
   if (!coverageStartOn || !coverageEndOn || !filedOn) return null;
+  if (coverageEndOn < coverageStartOn) return null;
 
   const proofUrl = viewerProofUrl(reference);
   const filingProof = buildCfbReportDisclosureProof({
@@ -108,6 +109,7 @@ export function parseCfbReportPdfAvailability(
     filedOn,
     proofUrl,
   });
+  if (filingProof.availableOn < coverageEndOn) return null;
   return {
     reference,
     filedOn,
