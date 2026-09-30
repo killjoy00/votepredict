@@ -53,6 +53,44 @@ test('parses CFB report coverage and derives next-day availability from received
   assert.equal(proof.window.proofKind, 'cfb_report_filing');
 });
 
+test('rejects CFB report windows whose proven availability predates coverage end', () => {
+  const reference: CfbReportViewerReference = {
+    filingYear: 2026,
+    reportName: 'Malformed Report',
+    year: '26',
+    type: 'pcc',
+    period: 'D',
+    se: '0',
+    registrationNumber: '17653',
+    amendment: 0,
+  };
+  const text = [
+    'Registration Number: 17653',
+    'Period Covered: 01/01/2026 through 09/30/2026',
+    'Received by the Board September 20, 2026',
+  ].join(' ');
+  assert.equal(parseCfbReportPdfAvailability(reference, text), null);
+});
+
+test('rejects CFB report windows whose coverage end predates coverage start', () => {
+  const reference: CfbReportViewerReference = {
+    filingYear: 2026,
+    reportName: 'Malformed Report',
+    year: '26',
+    type: 'pcc',
+    period: 'D',
+    se: '0',
+    registrationNumber: '17653',
+    amendment: 0,
+  };
+  const text = [
+    'Registration Number: 17653',
+    'Period Covered: 09/30/2026 through 01/01/2026',
+    'Received by the Board October 10, 2026',
+  ].join(' ');
+  assert.equal(parseCfbReportPdfAvailability(reference, text), null);
+});
+
 test('parses legacy CFB committee registration header from historical reports', () => {
   const reference: CfbReportViewerReference = {
     filingYear: 2022,
