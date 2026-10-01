@@ -37,7 +37,7 @@ jobs:
           echo "candidate_run_id=$(jq -r '.candidateArtifact.workflowRunId' "$lineage")" >> "$GITHUB_ENV"
           echo "candidate_name=$(jq -r '.candidateArtifact.artifactName' "$lineage")" >> "$GITHUB_ENV"
       - name: Download frozen guarded parser-v2 candidates
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}

@@ -45,7 +45,7 @@ jobs:
           verify_artifact candidateArtifact
           verify_artifact outcomeArtifact
       - name: Download frozen guarded parser-v2 candidates
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -53,7 +53,7 @@ jobs:
           name: ${{ env.candidateArtifact_name }}
           path: artifacts/frozen/candidates-v2
       - name: Download preexisting frozen expansion outcomes
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}

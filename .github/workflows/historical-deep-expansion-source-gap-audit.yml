@@ -41,7 +41,7 @@ jobs:
           echo "candidate_run_id=$(jq -r '.candidateBundleArtifact.workflowRunId' "$lineage")" >> "$GITHUB_ENV"
           echo "candidate_name=$(jq -r '.candidateBundleArtifact.artifactName' "$lineage")" >> "$GITHUB_ENV"
       - name: Download frozen source bundle
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -49,7 +49,7 @@ jobs:
           name: ${{ env.source_name }}
           path: artifacts/frozen/source
       - name: Download frozen parser-v2 candidates
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}

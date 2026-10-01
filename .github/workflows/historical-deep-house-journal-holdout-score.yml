@@ -66,7 +66,7 @@ jobs:
             echo "${kind}_artifact_name=$(jq -r ".${kind}Artifact.artifactName" "$lineage")" >> "$GITHUB_ENV"
           done
       - name: Download immutable holdout cohort
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -74,7 +74,7 @@ jobs:
           name: ${{ env.cohort_artifact_name }}
           path: artifacts/frozen/holdout-cohort
       - name: Download immutable holdout mechanics
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}

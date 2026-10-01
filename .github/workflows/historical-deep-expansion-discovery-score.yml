@@ -59,7 +59,7 @@ jobs:
           verify_artifact candidateArtifact
           verify_artifact discoveryManifest
       - name: Download frozen candidate artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -67,7 +67,7 @@ jobs:
           name: ${{ env.candidateArtifact_name }}
           path: artifacts/frozen/candidates
       - name: Download frozen discovery manifest
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}

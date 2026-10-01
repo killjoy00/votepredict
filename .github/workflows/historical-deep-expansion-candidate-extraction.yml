@@ -45,7 +45,7 @@ jobs:
           verify_artifact discoveryManifest
           verify_artifact sourceBundle
       - name: Download frozen expansion discovery manifest
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -53,7 +53,7 @@ jobs:
           name: ${{ env.discoveryManifest_name }}
           path: artifacts/frozen/discovery
       - name: Download frozen expansion source bundle
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}

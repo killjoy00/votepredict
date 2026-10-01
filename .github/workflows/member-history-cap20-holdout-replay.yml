@@ -50,7 +50,7 @@ jobs:
             echo "${key}_name=$(jq -r ".${key}.artifactName" "$plan")" >> "$GITHUB_ENV"
           done
       - name: Download immutable cap evaluation
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -58,7 +58,7 @@ jobs:
           name: ${{ env.capEvaluationArtifact_name }}
           path: artifacts/frozen/cap-evaluation
       - name: Download immutable holdout cohort
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -66,7 +66,7 @@ jobs:
           name: ${{ env.holdoutCohortArtifact_name }}
           path: artifacts/frozen/cohort
       - name: Download immutable uncapped holdout score
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}

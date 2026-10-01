@@ -64,7 +64,7 @@ jobs:
           verify_artifact discoveryManifest
           verify_artifact sourceBundle
       - name: Download frozen chamber-wide discovery manifest
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -72,7 +72,7 @@ jobs:
           name: ${{ steps.lineage.outputs.discovery_name }}
           path: artifacts/frozen/discovery
       - name: Download frozen official source bundle
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
