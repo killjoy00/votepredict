@@ -167,7 +167,7 @@ The motion did not prevail. So the vote was not reconsidered.`;
   assert.equal(events[0].passed, false);
 });
 
-test('Senate journal parser leaves non-bill procedural roll calls out of the bill-linked durable schema', () => {
+test('Senate journal parser captures non-bill procedural roll calls without fabricating a bill target', () => {
   const text = `Senator Rasmusson appealed the decision of the President.
 The question was taken on "Shall the decision of the President be the judgment of the Senate?"
 The roll was called, and there were yeas 2 and nays 1, as follows:
@@ -184,5 +184,13 @@ The motion prevailed.`;
     occurredOn: '2025-03-27',
     knownMemberNames: ['Abeler', 'Boldon', 'Carlson'],
   });
-  assert.deepEqual(events, []);
+  assert.equal(events.length, 1);
+  assert.equal(events[0].billIdentifier, undefined);
+  assert.equal(events[0].voteKind, 'other');
+  assert.equal(events[0].isPassage, false);
+  assert.equal(events[0].passed, true);
+  assert.match(events[0].externalKey, /:none:2025-03-27:senate:roll:/);
+  assert.deepEqual(events[0].memberVotes.map((vote) => [vote.sourceName, vote.choice]), [
+    ['Boldon', 'yea'], ['Carlson', 'yea'], ['Abeler', 'nay'],
+  ]);
 });

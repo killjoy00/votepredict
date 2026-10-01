@@ -10,7 +10,7 @@ export interface NormalizedMemberVote {
 
 export interface NormalizedVoteEvent {
   externalKey: string;
-  billIdentifier: string;
+  billIdentifier?: string;
   voteKind: NormalizedVoteKind;
   isPassage: boolean;
   passed?: boolean;
