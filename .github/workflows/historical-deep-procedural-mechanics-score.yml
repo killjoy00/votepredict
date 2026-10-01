@@ -46,7 +46,7 @@ jobs:
           verify_artifact taxonomyArtifact
           verify_artifact outcomeArtifact
       - name: Download frozen parser-v2 candidates
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -54,7 +54,7 @@ jobs:
           name: ${{ env.candidateArtifact_name }}
           path: artifacts/frozen/candidates-v2
       - name: Download frozen mechanics taxonomy
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -62,7 +62,7 @@ jobs:
           name: ${{ env.taxonomyArtifact_name }}
           path: artifacts/frozen/mechanics
       - name: Download preexisting frozen development outcomes
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}

@@ -48,7 +48,7 @@ jobs:
           verify_artifact candidateArtifact
           verify_artifact outcomeArtifact
       - name: Download frozen target-strategy bakeoff
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -56,7 +56,7 @@ jobs:
           name: ${{ env.targetStrategyBakeoff_name }}
           path: artifacts/frozen/strategies
       - name: Download frozen chamber-wide Quick discovery manifest
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -64,7 +64,7 @@ jobs:
           name: ${{ env.discoveryManifest_name }}
           path: artifacts/frozen/discovery
       - name: Download frozen official source bundle
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -72,7 +72,7 @@ jobs:
           name: ${{ env.sourceBundle_name }}
           path: artifacts/frozen/sources
       - name: Download frozen discovery candidates
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -80,7 +80,7 @@ jobs:
           name: ${{ env.candidateArtifact_name }}
           path: artifacts/frozen/candidates
       - name: Download frozen post-discovery outcomes
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}

@@ -41,7 +41,7 @@ jobs:
           echo "taxonomy_run_id=$(jq -r '.mechanicsTaxonomyArtifact.workflowRunId' "$lineage")" >> "$GITHUB_ENV"
           echo "taxonomy_name=$(jq -r '.mechanicsTaxonomyArtifact.artifactName' "$lineage")" >> "$GITHUB_ENV"
       - name: Download frozen parser-v2 impact replay
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -49,7 +49,7 @@ jobs:
           name: ${{ env.replay_name }}
           path: artifacts/frozen/replay
       - name: Download frozen outcome-blind mechanics taxonomy
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}

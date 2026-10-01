@@ -42,7 +42,7 @@ jobs:
           echo "source_artifact_id=${artifact_id}" >> "$GITHUB_ENV"
           echo "source_artifact_sha256=${artifact_sha256}" >> "$GITHUB_ENV"
       - name: Download frozen House Journal source bundle
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}

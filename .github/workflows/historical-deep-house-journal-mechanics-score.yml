@@ -47,7 +47,7 @@ jobs:
           verify_artifact mechanicsArtifact
           verify_artifact outcomeArtifact
       - name: Download frozen outcome-blind Quick manifest
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -55,7 +55,7 @@ jobs:
           name: ${{ env.discoveryManifest_name }}
           path: artifacts/frozen/discovery
       - name: Download frozen House Journal mechanics
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -63,7 +63,7 @@ jobs:
           name: ${{ env.mechanicsArtifact_name }}
           path: artifacts/frozen/mechanics
       - name: Download preexisting frozen development outcomes
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}

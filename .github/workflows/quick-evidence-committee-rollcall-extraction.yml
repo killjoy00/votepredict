@@ -50,14 +50,14 @@ jobs:
             test "$(printf '%s' "$actual" | jq -r '.expired')" = 'false'
           done
       - name: Download frozen manifest
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: quick-evidence-committee-rollcall-manifest-cd6b3a29073688d33ad1d3ae0eaf063b93188949
           path: inputs/manifest
           github-token: ${{ github.token }}
           run-id: 35625431864
       - name: Download frozen source corpus
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: quick-evidence-committee-rollcall-sources-cd6b3a29073688d33ad1d3ae0eaf063b93188949
           path: inputs/sources

@@ -47,7 +47,7 @@ jobs:
           verify_artifact candidateArtifact
           verify_artifact outcomeScoreArtifact
       - name: Download frozen expansion discovery manifest
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -55,7 +55,7 @@ jobs:
           name: ${{ env.discoveryManifest_name }}
           path: artifacts/frozen/discovery
       - name: Download frozen official expansion source bundle
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -63,7 +63,7 @@ jobs:
           name: ${{ env.sourceBundle_name }}
           path: artifacts/frozen/sources
       - name: Download frozen expansion candidates
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
@@ -71,7 +71,7 @@ jobs:
           name: ${{ env.candidateArtifact_name }}
           path: artifacts/frozen/candidates
       - name: Download frozen post-discovery outcomes and signal score
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           repository: ${{ github.repository }}
