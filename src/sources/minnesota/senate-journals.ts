@@ -4,6 +4,7 @@ import type { NormalizedMemberVote, NormalizedVoteEvent, NormalizedVoteKind } fr
 
 const SENATE_BASE = 'https://www.senate.mn';
 const SENATE_JOURNAL_INDEX = `${SENATE_BASE}/journals/journal_list.html`;
+export const SENATE_JOURNAL_VOTE_PARSER_VERSION = 'mn-senate-journal-rollcalls-v2' as const;
 const SENATE_LEGISLATURE_BY_SESSION: Readonly<Record<string, number>> = {
   '2021-2022': 92,
   '2023-2024': 93,
@@ -204,11 +205,42 @@ function splitNames(
   }));
 }
 
-function explicitPassageOutcome(resultText: string): boolean | undefined {
+function explicitRollCallOutcome(resultText: string): boolean | undefined {
   const compact = resultText.replace(/\s+/g, ' ').trim();
   if (/\bfailed to (?:re)?pass\b/i.test(compact)) return false;
   if (/\bSo,?\s+(?:the bill|the bill, as amended)[\s\S]{0,120}\b(?:re)?passed\b/i.test(compact)) return true;
+  if (/\b(?:motion|amendment)\s+(?:did\s+not\s+prevail|was\s+not\s+adopted)\b/i.test(compact)) return false;
+  if (/\b(?:motion\s+prevailed|amendment\s+was\s+adopted)\b/i.test(compact)) return true;
+  if (/\bvote\s+was\s+not\s+reconsidered\b/i.test(compact)) return false;
+  if (/\bvote\s+was\s+reconsidered\b/i.test(compact)) return true;
   return undefined;
+}
+
+function nearestBillIdentifier(context: string): string | undefined {
+  const billMatches = [...context.matchAll(/(?:S\.?F\.?|H\.?F\.?)\s*(?:No\.?)?\s*\d+/gi)];
+  return billMatches.length ? canonicalBill(billMatches[billMatches.length - 1][0]) : undefined;
+}
+
+function rollCallQuestionContext(context: string): string {
+  const markers = [
+    'The question was taken on',
+    'The question recurred on',
+    'The question was taken:',
+  ];
+  let start = -1;
+  for (const marker of markers) {
+    const index = context.toLowerCase().lastIndexOf(marker.toLowerCase());
+    if (index > start) start = index;
+  }
+  const sliceStart = start >= 0 ? start : Math.max(0, context.length - 900);
+  return context.slice(sliceStart).replace(/\s+/g, ' ').trim();
+}
+
+function amendmentReference(context: string): string | undefined {
+  const matches = [...context.matchAll(/\(([A-Z]+-?\d+[A-Z]?)\)/g)];
+  if (matches.length > 0) return matches[matches.length - 1][1];
+  const named = context.match(/\b(?:the\s+)?([A-Z][A-Za-z'.-]+)\s+amendment\b/i);
+  return named?.[1];
 }
 
 export function parseSenateJournalText(input: {
@@ -220,39 +252,60 @@ export function parseSenateJournalText(input: {
 }): NormalizedVoteEvent[] {
   const text = input.text.replace(/\r/g, '');
   const events: NormalizedVoteEvent[] = [];
-  const rollPattern = /The question was taken on the (re)?passage of the bill[^.]*\.\s*The roll was called, and there were yeas\s+(\d+)\s+and nays\s+(\d+), as follows:\s*Those who voted in the affirmative were:\s*([\s\S]*?)(?=Those who voted in the negative were:|So the bill)/gi;
+  const occurredOn = input.occurredOn ?? '1900-01-01';
+  const sourceKey = createHash('sha256').update(input.sourceUrl).digest('hex').slice(0, 12);
+  let passageOrdinal = 0;
+  let rollOrdinal = 0;
+
+  const rollPattern = /The roll was called,\s*and there were yeas\s+(\d+)\s+and nays\s+(\d+), as follows:\s*Those who voted in the affirmative were:\s*([\s\S]*?)(?=Those who voted in the negative were:|The motion|So(?:\s|,)|The amendment|RECONSIDERATION|MOTIONS|SPECIAL|MESSAGES|CALENDAR|CONSENT|GENERAL ORDERS|MEMBERS EXCUSED|ADJOURNMENT)/gi;
 
   for (const match of text.matchAll(rollPattern)) {
+    rollOrdinal += 1;
     const start = match.index ?? 0;
-    const context = text.slice(Math.max(0, start - 1600), start);
-    const billMatches = [...context.matchAll(/(?:S\.?F\.?|H\.?F\.?)\s*(?:No\.?)?\s*\d+/gi)];
-    const billIdentifier = billMatches.length ? canonicalBill(billMatches[billMatches.length - 1][0]) : undefined;
+    const context = text.slice(Math.max(0, start - 2600), start);
+    const billIdentifier = nearestBillIdentifier(context);
+    // The durable vote schema is bill-linked today. Preserve non-bill procedural
+    // rolls in the source document for a later schema expansion rather than
+    // fabricating a bill target.
     if (!billIdentifier) continue;
 
-    const yeaCount = Number(match[2]);
-    const nayCount = Number(match[3]);
+    const yeaCount = Number(match[1]);
+    const nayCount = Number(match[2]);
     const after = text.slice(start + match[0].length, start + match[0].length + 5000);
-    const negative = after.match(/^\s*Those who voted in the negative were:\s*([\s\S]*?)(?=So(?:\s|,)|RECONSIDERATION|MOTIONS|SPECIAL|MESSAGES|CALENDAR|CONSENT|GENERAL ORDERS|MEMBERS EXCUSED|ADJOURNMENT)/i);
+    const negative = after.match(/^\s*Those who voted in the negative were:\s*([\s\S]*?)(?=The motion|So(?:\s|,)|The amendment|RECONSIDERATION|MOTIONS|SPECIAL|MESSAGES|CALENDAR|CONSENT|GENERAL ORDERS|MEMBERS EXCUSED|ADJOURNMENT)/i);
     const knownMemberNames = input.knownMemberNames ?? [];
-    const yeaVotes = splitNames(match[4], 'yea', 0, knownMemberNames).slice(0, yeaCount);
-    const nayVotes = nayCount === 0 ? [] : splitNames(negative?.[1] ?? '', 'nay', yeaVotes.length, knownMemberNames).slice(0, nayCount);
+    const yeaVotes = splitNames(match[3], 'yea', 0, knownMemberNames).slice(0, yeaCount);
+    const nayVotes = nayCount === 0
+      ? []
+      : splitNames(negative?.[1] ?? '', 'nay', yeaVotes.length, knownMemberNames).slice(0, nayCount);
+
     if (yeaVotes.length !== yeaCount || nayVotes.length !== nayCount) {
       throw new Error(`Senate journal roster mismatch for ${billIdentifier}: expected ${yeaCount}-${nayCount}, parsed ${yeaVotes.length}-${nayVotes.length}`);
     }
 
+    const questionContext = rollCallQuestionContext(context);
+    const motionText = questionContext || context.slice(Math.max(0, context.length - 900)).replace(/\s+/g, ' ').trim();
+    const voteKind = classifySenateVoteKind(motionText);
+    const isPassage = voteKind === 'passage';
     const resultOffset = negative ? (negative.index ?? 0) + negative[0].length : 0;
-    const resultText = after.slice(resultOffset, resultOffset + 500);
-    const passed = explicitPassageOutcome(resultText);
-    const motionText = text.slice(Math.max(0, start - 500), start + 120).replace(/\s+/g, ' ').trim();
-    const voteKind = classifySenateVoteKind(match[1] ? 'repassage' : 'passage');
-    const occurredOn = input.occurredOn ?? '1900-01-01';
+    const resultText = after.slice(resultOffset, resultOffset + 700);
+    const passed = explicitRollCallOutcome(resultText);
+
+    if (isPassage) passageOrdinal += 1;
+    const externalKey = isPassage
+      // Preserve the historical passage key namespace so a v2 re-read updates
+      // existing passage events instead of duplicating them.
+      ? `${input.sessionKey}:${billIdentifier}:${occurredOn}:senate:${passageOrdinal}`
+      : `${input.sessionKey}:${billIdentifier}:${occurredOn}:senate:roll:${sourceKey}:${rollOrdinal}`;
+
     events.push({
-      externalKey: `${input.sessionKey}:${billIdentifier}:${occurredOn}:senate:${events.length + 1}`,
+      externalKey,
       billIdentifier,
       voteKind,
-      isPassage: voteKind === 'passage',
+      isPassage,
       passed,
       motionText,
+      ...(voteKind === 'amendment' ? { amendmentRef: amendmentReference(context) } : {}),
       occurredOn,
       yeaCount,
       nayCount,
