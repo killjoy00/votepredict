@@ -132,6 +132,7 @@ async function hasCompletePersistedJournal(client: PoolClient, context: Context,
          SELECT 1 FROM source_documents sd
           WHERE sd.session_id=$1 AND sd.chamber_id=$2
             AND sd.source_kind='senate_journal_pdf' AND sd.source_url=$3
+            AND sd.metadata->>'parserVersion'=$4
        )
        AND NOT EXISTS (
          SELECT 1
@@ -303,7 +304,7 @@ async function runSession(pool: Pool | undefined, session: MinnesotaHouseSession
            status=$2,finished_at=now(),source_documents=$3,vote_events=$4,member_votes=$5,
            unresolved_members=$6,error_summary=$7,metadata=metadata||$8::jsonb
          WHERE id=$1`,
-        [runId, failures.length ? 'failed' : 'complete', journals.length - failures.length, votes, memberVotes, unresolved, failures[0] ?? null, JSON.stringify({ failures: failures.slice(0, 100), skippedExisting })],
+        [runId, failures.length ? 'failed' : 'complete', journals.length - failures.length, votes, memberVotes, unresolved, failures[0] ?? null, JSON.stringify({ failures: failures.slice(0, 100), skippedExisting, parserVersion: SENATE_JOURNAL_VOTE_PARSER_VERSION })],
       );
     }
   } finally {
