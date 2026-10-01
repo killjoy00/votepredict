@@ -91,3 +91,98 @@ test('Senate vote kind treats repassage and plural motions correctly', () => {
   assert.equal(classifySenateVoteKind('The question was taken on the repassage of the bill'), 'passage');
   assert.equal(classifySenateVoteKind('MOTIONS AND RESOLUTIONS'), 'motion');
 });
+
+
+test('Senate journal parser captures bill-linked amendment roll calls without treating them as passage', () => {
+  const text = `SPECIAL ORDERS
+H.F. No. 2563 was reported to the Senate.
+Senator Drazkowski moved to amend H.F. No. 2563 as follows (A-7):
+Page 45, after line 23, insert: "example".
+The question was taken on the adoption of the amendment.
+The roll was called, and there were yeas 2 and nays 2, as follows:
+Those who voted in the affirmative were:
+Abeler
+Anderson
+Those who voted in the negative were:
+Boldon
+Carlson
+The motion did not prevail. So the amendment was not adopted.
+H.F. No. 2563 was read the third time, as amended, and placed on its final passage.
+The question was taken on the passage of the bill, as amended.
+The roll was called, and there were yeas 3 and nays 1, as follows:
+Those who voted in the affirmative were:
+Abeler
+Anderson
+Boldon
+Those who voted in the negative were:
+Carlson
+So the bill, as amended, was passed and its title was agreed to.`;
+  const events = parseSenateJournalText({
+    text,
+    sessionKey: '303',
+    sourceUrl: 'https://www.senate.mn/journals/2025-2026/example.pdf',
+    occurredOn: '2025-04-30',
+    knownMemberNames: ['Abeler', 'Anderson', 'Boldon', 'Carlson'],
+  });
+  assert.equal(events.length, 2);
+  assert.equal(events[0].billIdentifier, 'HF2563');
+  assert.equal(events[0].voteKind, 'amendment');
+  assert.equal(events[0].isPassage, false);
+  assert.equal(events[0].passed, false);
+  assert.equal(events[0].amendmentRef, 'A-7');
+  assert.deepEqual(events[0].memberVotes.map((vote) => [vote.sourceName, vote.choice]), [
+    ['Abeler', 'yea'], ['Anderson', 'yea'], ['Boldon', 'nay'], ['Carlson', 'nay'],
+  ]);
+
+  assert.equal(events[1].voteKind, 'passage');
+  assert.equal(events[1].isPassage, true);
+  assert.equal(events[1].passed, true);
+  assert.match(events[0].externalKey, /:senate:roll:/);
+  assert.equal(events[1].externalKey, '303:HF2563:2025-04-30:senate:1');
+});
+
+test('Senate journal parser captures bill-linked reconsideration motion roll calls', () => {
+  const text = `RECONSIDERATION
+Having voted on the prevailing side, Senator Knutson moved that the vote whereby the second Kleis amendment to S.F. No. 2360 was not adopted be now reconsidered.
+The question was taken on the adoption of the motion.
+The roll was called, and there were yeas 2 and nays 2, as follows:
+Those who voted in the affirmative were:
+Abeler
+Anderson
+Those who voted in the negative were:
+Boldon
+Carlson
+The motion did not prevail. So the vote was not reconsidered.`;
+  const events = parseSenateJournalText({
+    text,
+    sessionKey: '257',
+    sourceUrl: 'https://www.senate.mn/journals/2021-2022/reconsider.pdf',
+    occurredOn: '2022-04-30',
+    knownMemberNames: ['Abeler', 'Anderson', 'Boldon', 'Carlson'],
+  });
+  assert.equal(events.length, 1);
+  assert.equal(events[0].billIdentifier, 'SF2360');
+  assert.equal(events[0].voteKind, 'motion');
+  assert.equal(events[0].isPassage, false);
+  assert.equal(events[0].passed, false);
+});
+
+test('Senate journal parser leaves non-bill procedural roll calls out of the bill-linked durable schema', () => {
+  const text = `Senator Rasmusson appealed the decision of the President.
+The question was taken on "Shall the decision of the President be the judgment of the Senate?"
+The roll was called, and there were yeas 2 and nays 1, as follows:
+Those who voted in the affirmative were:
+Boldon
+Carlson
+Those who voted in the negative were:
+Abeler
+The motion prevailed.`;
+  const events = parseSenateJournalText({
+    text,
+    sessionKey: '303',
+    sourceUrl: 'https://www.senate.mn/journals/2025-2026/procedural.pdf',
+    occurredOn: '2025-03-27',
+    knownMemberNames: ['Abeler', 'Boldon', 'Carlson'],
+  });
+  assert.deepEqual(events, []);
+});
