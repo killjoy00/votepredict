@@ -64,7 +64,13 @@ function parseWaybackCdxJsonWhere(
 }
 
 export function parseWaybackCdxJson(payload:unknown):WaybackCapture[]{
-  return parseWaybackCdxJsonWhere(payload,mimetype=>mimetype.includes('html')||mimetype.startsWith('text/'));
+  return parseWaybackCdxJsonWhere(
+    payload,
+    mimetype=>
+      mimetype==='text/html'
+      || mimetype==='text/plain'
+      || mimetype==='application/xhtml+xml',
+  );
 }
 
 export function parseWaybackPdfCdxJson(payload:unknown):WaybackCapture[]{
@@ -143,13 +149,27 @@ export function capturesStrictlyBefore(
   return captures.filter(row=>new Date(row.capturedAt).getTime()<cutoffMs);
 }
 
+function retryableWaybackSnapshotError(error:unknown):boolean{
+  const message=error instanceof Error?error.message:String(error);
+  return /fetch failed|timed? out|abort|HTTP (?:429|500|502|503|504)\b/i.test(message);
+}
+
 export async function fetchWaybackSnapshot(
   capture:WaybackCapture,
 ):Promise<PublicPage>{
-  const page=await fetchPublicPage(capture.archiveUrl,{
-    timeoutMs:20_000,
-    maxBytes:2_500_000,
-    userAgent:'VotePredict/2.0 historical-public-evidence',
-  });
-  return page;
+  let lastError:unknown;
+  for(let attempt=0;attempt<3;attempt+=1){
+    try{
+      return await fetchPublicPage(capture.archiveUrl,{
+        timeoutMs:20_000,
+        maxBytes:2_500_000,
+        userAgent:'VotePredict/2.0 historical-public-evidence',
+      });
+    }catch(error){
+      lastError=error;
+      if(!retryableWaybackSnapshotError(error)||attempt===2)throw error;
+      await new Promise(resolve=>setTimeout(resolve,attempt===0?1250:3500));
+    }
+  }
+  throw lastError instanceof Error?lastError:new Error('Wayback snapshot fetch failed');
 }
