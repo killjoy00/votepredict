@@ -84,7 +84,7 @@ jobs:
             exit 1
           fi
       - name: Upload frozen candidate artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: quick-evidence-committee-rollcall-candidates-${{ github.sha }}
           path: artifacts/quick-evidence-committee-rollcall-candidates-v1.json

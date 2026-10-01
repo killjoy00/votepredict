@@ -91,7 +91,7 @@ jobs:
           test "$(jq -r '.primarySlice.key' "$file")" = '2025-2026/house'
           test "$(jq -r '.decision.productionAction' "$file")" = 'none'
       - name: Upload immutable fragility artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: passage-fragility-screen-v1-${{ github.sha }}
           path: artifacts/passage-fragility-screen-v1.json

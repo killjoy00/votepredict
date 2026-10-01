@@ -115,7 +115,7 @@ jobs:
             exit 1
           fi
       - name: Upload immutable passage safety audit
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: member-history-decay180-passage-safety-v1-${{ github.sha }}
           path: artifacts/member-history-decay180-passage-safety-v1.json

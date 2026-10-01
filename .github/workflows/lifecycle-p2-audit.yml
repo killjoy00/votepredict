@@ -51,7 +51,7 @@ jobs:
 
       - name: Upload lifecycle P2 audit
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lifecycle-p2-audit-${{ github.sha }}
           path: artifacts/lifecycle-p2-audit.json

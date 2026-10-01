@@ -140,7 +140,7 @@ jobs:
           test "$(jq -r '.scenarios["current-targets"].requestedTargets' "$file")" = '288'
           test "$(jq -r '.scenarios["need-only-targets"].requestedTargets' "$file")" = '288'
       - name: Upload parser-v2 expansion impact replay
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: historical-deep-expansion-impact-replay-v2-${{ github.sha }}
           path: artifacts/historical-deep-expansion-impact-replay-v2.json

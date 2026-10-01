@@ -67,7 +67,7 @@ jobs:
           jq -e '.coverage.training.authorMemberOutcomes >= 50' "$file" >/dev/null
           jq -e '.coverage.validation.authorMemberOutcomes >= 50' "$file" >/dev/null
       - name: Upload immutable authorship screen
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: quick-evidence-authorship-screen-v1-${{ github.sha }}
           path: artifacts/quick-evidence-authorship-screen-v1.json

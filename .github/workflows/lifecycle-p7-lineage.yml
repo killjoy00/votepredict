@@ -59,7 +59,7 @@ jobs:
 
       - name: Upload lifecycle P7 lineage artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lifecycle-p7-lineage-v1-${{ github.sha }}
           path: artifacts/lifecycle-p7-lineage-v1

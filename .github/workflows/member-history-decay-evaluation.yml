@@ -113,7 +113,7 @@ jobs:
             exit 1
           fi
       - name: Upload immutable decay evaluation
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: member-history-decay-evaluation-v1-${{ github.sha }}
           path: artifacts/member-history-decay-evaluation-v1.json

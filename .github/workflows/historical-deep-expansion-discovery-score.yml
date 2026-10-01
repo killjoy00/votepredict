@@ -152,7 +152,7 @@ jobs:
             artifacts/historical-deep-expansion-outcome-snapshot.json \
             artifacts/historical-deep-expansion-discovery-score.json
       - name: Upload frozen outcomes and score
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: historical-deep-expansion-discovery-score-${{ github.sha }}
           path: |

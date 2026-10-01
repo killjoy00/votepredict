@@ -45,7 +45,7 @@ jobs:
         run: node --import tsx scripts/evaluate-lifecycle-bill-language-screen.ts
       - name: Upload result
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lifecycle-bill-language-screen-v1-${{ github.sha }}
           path: artifacts/lifecycle-bill-language-screen-v1

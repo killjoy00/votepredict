@@ -160,7 +160,7 @@ jobs:
           fi
 
       - name: Upload immutable committee roll-call robustness audit
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: quick-evidence-committee-rollcall-robustness-v2-${{ github.sha }}
           path: artifacts/quick-evidence-committee-rollcall-robustness-v2.json

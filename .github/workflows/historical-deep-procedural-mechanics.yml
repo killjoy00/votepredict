@@ -75,7 +75,7 @@ jobs:
           test "$(jq '[.pairs[] | select(.mechanicallyActionable != false or .finalPassageInference != "none")] | length' "$file")" = '0'
           test "$(jq '[.. | objects | select(has("actualOutcome") or has("actualYes") or has("passed") or has("yeaCount") or has("nayCount"))] | length' "$file")" = '0'
       - name: Upload frozen mechanics taxonomy
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: historical-deep-procedural-mechanics-v1-${{ github.sha }}
           path: artifacts/historical-deep-procedural-mechanics-v1.json

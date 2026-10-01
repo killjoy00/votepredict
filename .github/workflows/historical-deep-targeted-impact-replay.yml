@@ -97,7 +97,7 @@ jobs:
             artifacts/frozen/outcomes/historical-deep-outcome-snapshot.json \
             artifacts/historical-deep-targeted-impact-replay.json
       - name: Upload targeted historical Deep replay
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: historical-deep-targeted-impact-replay-${{ github.sha }}
           path: artifacts/historical-deep-targeted-impact-replay.json

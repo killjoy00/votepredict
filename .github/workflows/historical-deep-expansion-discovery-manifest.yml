@@ -115,7 +115,7 @@ jobs:
           test "$(jq '[.. | objects | select(has("actualOutcome") or has("actualYes") or has("passed") or has("yeaCount") or has("nayCount"))] | length' "$file")" = '0'
           test "$(jq '[.cases[] | select((.currentDeepTargetIds | length) != 12 or (.candidateDeepTargetIds | length) != 12)] | length' "$file")" = '0'
       - name: Upload frozen expansion discovery manifest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: historical-deep-expansion-discovery-manifest-${{ github.sha }}
           path: artifacts/historical-deep-expansion-discovery-manifest.json

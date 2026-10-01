@@ -52,7 +52,7 @@ jobs:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: node --import tsx scripts/prepare-2027-introduction-serving-artifact.ts
       - name: Upload 2027-2028 candidate and integrity summary
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: introduction-v4-2027-2028-candidate
           path: |

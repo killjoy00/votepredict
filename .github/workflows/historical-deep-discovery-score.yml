@@ -76,7 +76,7 @@ jobs:
       - name: Score frozen discovery candidates
         run: node --import tsx scripts/score-historical-deep-discovery.ts artifacts/frozen/candidates/historical-deep-discovery-candidates.json artifacts/historical-deep-outcome-snapshot.json artifacts/historical-deep-discovery-score.json
       - name: Upload outcome snapshot and score
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: historical-deep-discovery-score-${{ github.sha }}
           path: |

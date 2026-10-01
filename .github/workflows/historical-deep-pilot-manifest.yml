@@ -81,7 +81,7 @@ jobs:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: node --import tsx scripts/run-production-historical-deep-pilot-manifest.ts
       - name: Upload historical Deep pilot manifest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: historical-deep-pilot-manifest-${{ github.sha }}
           path: artifacts/historical-deep-pilot-manifest.json
