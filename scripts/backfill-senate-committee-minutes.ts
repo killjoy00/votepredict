@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { Pool } from 'pg';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
@@ -153,7 +154,8 @@ async function main():Promise<void>{
     const runId=run.rows[0].id;
 
     const rosterCache=new Map<string,Candidate[]>();
-    const billsCache=new Map<string,Set<string>>();
+    const billsCache=new Map<string,Map<string,string>>();
+    const contextCache=new Map<string,{sessionId:string;chamberId:string}>();
     let documentsFetched=0,observations=0,namedObservations=0,countOnlyObservations=0;
     let memberVotes=0,inserted=0,reused=0,unresolvedMembers=0,unresolvedBills=0,failures=0;
     const failureSamples:string[]=[];
@@ -169,12 +171,24 @@ async function main():Promise<void>{
         }
         let bills=billsCache.get(sessionSlug);
         if(!bills){
-          const result=await pool.query<{identifier:string}>(`
-            SELECT upper(b.identifier) identifier
+          const result=await pool.query<{id:string;identifier:string}>(`
+            SELECT b.id::text,upper(b.identifier) identifier
               FROM bills b JOIN legislative_sessions s ON s.id=b.session_id
              WHERE s.slug=$1`,[sessionSlug]);
-          bills=new Set(result.rows.map(row=>row.identifier));
+          bills=new Map(result.rows.map(row=>[row.identifier,row.id]));
           billsCache.set(sessionSlug,bills);
+        }
+        let context=contextCache.get(sessionSlug);
+        if(!context){
+          const result=await pool.query<{session_id:string;chamber_id:string}>(`
+            SELECT s.id::text session_id,c.id::text chamber_id
+              FROM legislative_sessions s
+              JOIN jurisdictions j ON j.id=s.jurisdiction_id
+              JOIN chambers c ON c.jurisdiction_id=j.id AND c.slug='senate'
+             WHERE j.slug='us-mn' AND s.slug=$1`,[sessionSlug]);
+          if(result.rows.length!==1)throw new Error('Senate session context could not be resolved for '+sessionSlug);
+          context={sessionId:result.rows[0].session_id,chamberId:result.rows[0].chamber_id};
+          contextCache.set(sessionSlug,context);
         }
 
         const pdf=await fetchSenateCommitteeMinutePdf({url:doc.url});
@@ -182,6 +196,8 @@ async function main():Promise<void>{
         const parsed=parseSenateCommitteeMinuteVotes(pdf.text);
         observations+=parsed.length;
         const drafts:Array<any>=[];
+        const resolvedVotes:Array<Array<{membershipId:string;sourceName:string;normalizedName:string;choice:'yea'|'nay';reason:string}>>=
+          parsed.map(()=>[]);
 
         for(const [observationIndex,observation] of parsed.entries()){
           const knownBill=observation.billIdentifier&&bills.has(observation.billIdentifier.toUpperCase())
@@ -203,6 +219,13 @@ async function main():Promise<void>{
               }
               const candidate=active.find(row=>row.membershipId===resolution.membershipId);
               memberVotes+=1;
+              resolvedVotes[observationIndex].push({
+                membershipId:resolution.membershipId,
+                sourceName:vote.sourceName,
+                normalizedName:vote.normalizedName,
+                choice:vote.choice,
+                reason:resolution.reason,
+              });
               drafts.push({
                 target:{
                   membershipId:resolution.membershipId,
@@ -277,6 +300,48 @@ async function main():Promise<void>{
           },
         },drafts);
         inserted+=persisted.inserted;reused+=persisted.reused;
+
+        const sourceKey=createHash('sha256').update(doc.url).digest('hex').slice(0,16);
+        for(const [observationIndex,observation] of parsed.entries()){
+          const billId=observation.billIdentifier
+            ? (bills.get(observation.billIdentifier.toUpperCase())??null)
+            : null;
+          const externalKey=`senate-committee:${sourceKey}:${observationIndex}`;
+          const event=await pool.query<{id:string}>(`
+            INSERT INTO vote_events(
+              session_id,chamber_id,bill_id,source_document_id,external_key,vote_kind,motion_text,
+              amendment_ref,occurred_on,yea_count,nay_count,other_count,passed,is_passage,metadata
+            ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,0,$12,false,$13::jsonb)
+            ON CONFLICT(session_id,chamber_id,external_key)
+            DO UPDATE SET
+              bill_id=EXCLUDED.bill_id,source_document_id=EXCLUDED.source_document_id,
+              vote_kind=EXCLUDED.vote_kind,motion_text=EXCLUDED.motion_text,
+              amendment_ref=EXCLUDED.amendment_ref,occurred_on=EXCLUDED.occurred_on,
+              yea_count=EXCLUDED.yea_count,nay_count=EXCLUDED.nay_count,passed=EXCLUDED.passed,
+              metadata=vote_events.metadata||EXCLUDED.metadata
+            RETURNING id::text`,[
+            context.sessionId,context.chamberId,billId,persisted.sourceDocumentId,externalKey,
+            `committee_${observation.voteKind}`,observation.motionText,observation.amendmentRef??null,
+            doc.meetingDate,observation.yeaCount,observation.nayCount,observation.passed??null,
+            JSON.stringify({
+              source:'Minnesota Legislative Reference Library committee minutes',
+              committeeName:doc.committeeName,committeeVote:true,
+              individualVotesAvailable:observation.individualVotesAvailable,
+              finalPassageStanceInferred:false,parserVersion:MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,
+            }),
+          ]);
+          for(const [ordinal,vote] of resolvedVotes[observationIndex].entries()){
+            await pool.query(`
+              INSERT INTO member_votes(
+                vote_event_id,membership_id,source_member_name,normalized_member_name,choice,source_ordinal,metadata
+              ) VALUES($1,$2,$3,$4,$5,$6,$7::jsonb)
+              ON CONFLICT(vote_event_id,normalized_member_name)
+              DO UPDATE SET membership_id=EXCLUDED.membership_id,choice=EXCLUDED.choice,metadata=member_votes.metadata||EXCLUDED.metadata`,[
+              event.rows[0].id,vote.membershipId,vote.sourceName,vote.normalizedName,vote.choice,ordinal,
+              JSON.stringify({committeeVote:true,reconciliationReason:vote.reason}),
+            ]);
+          }
+        }
       }catch(error){
         failures+=1;
         if(failureSamples.length<30)failureSamples.push(`${doc.meetingDate} ${doc.committeeName}: ${safeMessage(error).slice(0,320)}`);
@@ -303,10 +368,11 @@ async function main():Promise<void>{
     };
     await pool.query(`
       UPDATE ingestion_runs SET status=$2,finished_at=now(),source_documents=$3,
-             evidence_items=$4,unresolved_members=$5,error_summary=$6,metadata=metadata||$7::jsonb
+             vote_events=$4,member_votes=$5,unresolved_members=$6,error_summary=$7,
+             metadata=metadata||$8::jsonb
        WHERE id=$1::uuid`,[
-      runId,failures?'complete_with_warnings':'complete',documentsFetched,inserted+reused,
-      unresolvedMembers,failureSamples[0]??null,JSON.stringify(result),
+      runId,failures?'complete_with_warnings':'complete',documentsFetched,observations,
+      memberVotes,unresolvedMembers,failureSamples[0]??null,JSON.stringify(result),
     ]);
     console.log(JSON.stringify({senateCommitteeMinutesBackfill:result},null,2));
   }finally{
