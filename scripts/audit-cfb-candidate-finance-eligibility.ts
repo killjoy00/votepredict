@@ -120,11 +120,14 @@ async function main() {
         count(*)::int AS "checkpointRows",
         count(DISTINCT scope)::int AS "checkpointedGroups",
         count(*) FILTER (WHERE metadata->>'disposition'='complete_with_fail_closed_proof_exclusions')::int AS "checkpointGroupsWithProofExclusions",
-        coalesce(sum((metadata->>'disclosureMappedRows')::int),0)::int AS "checkpointDisclosureMappedRows"
+        coalesce(sum((metadata->>'resolvedRows')::int),0)::int AS "checkpointResolvedRows",
+        coalesce(sum((metadata->>'unresolvedRows')::int),0)::int AS "checkpointUnresolvedRows",
+        coalesce(sum((metadata->>'disclosureMappedRows')::int),0)::int AS "checkpointDisclosureMappedRows",
+        coalesce(sum((metadata->>'proofFailures')::int),0)::int AS "checkpointReportProofFailures"
       FROM ingestion_runs
       WHERE source_system='cfb-candidate-finance-membership-tail-group'
         AND status='complete'
-        AND metadata->>'checkpointVersion'='membership-tail-group-v1'
+        AND metadata->>'checkpointVersion'='membership-tail-group-v2-row-identity'
     `);
 
     const checkpointEligibility=await pool.query(`
@@ -139,7 +142,7 @@ async function main() {
         FROM ingestion_runs
         WHERE source_system='cfb-candidate-finance-membership-tail-group'
           AND status='complete'
-          AND metadata->>'checkpointVersion'='membership-tail-group-v1'
+          AND metadata->>'checkpointVersion'='membership-tail-group-v2-row-identity'
         ORDER BY scope, finished_at DESC NULLS LAST
       ),
       candidate_rows AS (
@@ -209,7 +212,7 @@ async function main() {
         FROM ingestion_runs
         WHERE source_system='cfb-candidate-finance-membership-tail-group'
           AND status='complete'
-          AND metadata->>'checkpointVersion'='membership-tail-group-v1'
+          AND metadata->>'checkpointVersion'='membership-tail-group-v2-row-identity'
         ORDER BY scope, finished_at DESC NULLS LAST
       ),
       candidate_rows AS (
@@ -269,6 +272,11 @@ async function main() {
           readOnly: true,
           noEvidenceWrites: true,
           noServingChanges: true,
+          checkpointVersion: 'membership-tail-group-v2-row-identity',
+          v1CheckpointsAreAuditHistoryOnly: true,
+          completionAuthority: 'v2 row-identity checkpoints only',
+          transactionDateIsAvailability: false,
+          productionAction: 'none',
         },
       },
     },null,2));
