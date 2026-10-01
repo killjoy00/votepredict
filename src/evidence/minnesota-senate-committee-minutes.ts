@@ -128,8 +128,12 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
     }
   }
 
-  const countOnly = /(?:roll call vote[^\n]{0,220}?)?(?:vote was|roll call(?: vote)?(?: was)?)\s*(\d+)\s*[-–]\s*(\d+)\b/gi;
-  for (const match of text.matchAll(countOnly)) {
+  const countOnlyPatterns = [
+    /(?:roll call vote[^\n]{0,220}?)?(?:vote was|roll call(?: vote)?(?: was)?)\s*(\d+)\s*[-–]\s*(\d+)\b/gi,
+    /there were\s+(\d+)\s+(?:hands\s+shown\s+for\s+)?(?:yes|ayes?)\s+and\s+(\d+)\s+(?:hands\s+shown\s+for\s+)?(?:no|nays?)\b/gi,
+  ];
+  for (const countOnly of countOnlyPatterns) {
+    for (const match of text.matchAll(countOnly)) {
     const start = match.index ?? 0;
     const context = text.slice(Math.max(0, start - 900), start + match[0].length + 180);
     const billIdentifier = nearestBill(context);
@@ -141,17 +145,18 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
       && row.amendmentRef === amendmentRef
       && row.yeaCount === yeaCount
       && row.nayCount === nayCount)) continue;
-    observations.push({
-      billIdentifier,
-      amendmentRef,
-      motionText: context.replace(/\s+/g, ' ').trim().slice(-900),
-      voteKind: voteKind(context),
-      yeaCount,
-      nayCount,
-      passed: explicitOutcome(context),
-      memberVotes: [],
-      individualVotesAvailable: false,
-    });
+      observations.push({
+        billIdentifier,
+        amendmentRef,
+        motionText: context.replace(/\s+/g, ' ').trim().slice(-900),
+        voteKind: voteKind(context),
+        yeaCount,
+        nayCount,
+        passed: explicitOutcome(context),
+        memberVotes: [],
+        individualVotesAvailable: false,
+      });
+    }
   }
 
   return observations;

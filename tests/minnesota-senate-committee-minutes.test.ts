@@ -77,3 +77,20 @@ test('Senate committee minute parser fails closed when a named list does not mat
   `;
   assert.deepEqual(parseSenateCommitteeMinuteVotes(html), []);
 });
+
+
+test('Senate committee minute parser captures official hands-shown count-only divisions', () => {
+  const html = `
+    <p>S.F. 3507 was before the Finance Committee.</p>
+    <p>Senator Frentz moved that S.F. 3507 be recommended to pass.</p>
+    <p>Senator Pratt called for division.</p>
+    <p>There were 6 hands shown for yes and 5 hands shown for no.</p>
+    <p>Motion prevailed.</p>
+  `;
+  const rows = parseSenateCommitteeMinuteVotes(html);
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].billIdentifier, 'SF3507');
+  assert.equal(rows[0].individualVotesAvailable, false);
+  assert.deepEqual([rows[0].yeaCount, rows[0].nayCount], [6, 5]);
+  assert.equal(rows[0].passed, true);
+});
