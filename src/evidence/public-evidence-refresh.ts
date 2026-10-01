@@ -38,6 +38,7 @@ export interface PublicEvidenceRefreshOptions {
   batchSize?: number;
   forceCampaignFinance?: boolean;
   now?: Date;
+  execution?: 'vercel-runtime' | 'github-actions-direct-neon' | 'node-runtime';
 }
 
 type MembershipRow = {
@@ -94,13 +95,16 @@ function freshness(value: string | undefined, now: Date): DurableEvidenceFreshne
   return 'stale';
 }
 
-async function startRun(batchSize: number): Promise<string> {
+async function startRun(
+  batchSize: number,
+  execution: NonNullable<PublicEvidenceRefreshOptions['execution']>,
+): Promise<string> {
   const result = await pool.query<{ id: string }>(`
     INSERT INTO ingestion_runs (source_system, scope, status, metadata)
     VALUES ('public-evidence-pipeline',$1,'running',$2::jsonb)
     RETURNING id::text`, [
     `current-members:batch-${batchSize}`,
-    JSON.stringify({ pipelineVersion: PIPELINE_VERSION, execution: 'vercel-runtime' }),
+    JSON.stringify({ pipelineVersion: PIPELINE_VERSION, execution }),
   ]);
   return result.rows[0].id;
 }
@@ -623,7 +627,9 @@ function addStream(target: StreamResult, addition: StreamResult): void {
 export async function runPublicEvidenceRefresh(options: PublicEvidenceRefreshOptions = {}) {
   const now = options.now ?? new Date();
   const batchSize = Math.min(MAX_BATCH, Math.max(1, Math.trunc(options.batchSize ?? DEFAULT_BATCH)));
-  const runId = await startRun(batchSize);
+  const execution = options.execution
+    ?? (process.env.VERCEL ? 'vercel-runtime' : 'node-runtime');
+  const runId = await startRun(batchSize, execution);
   const warnings: string[] = [];
   const campaign = emptyStream();
   const memberPrimary = emptyStream();
@@ -748,6 +754,7 @@ export async function runPublicEvidenceRefresh(options: PublicEvidenceRefreshOpt
 
     const result = {
       pipelineVersion: PIPELINE_VERSION,
+      execution,
       generatedAt: now.toISOString(),
       batchSize,
       membershipsProcessed: memberships.length,
@@ -787,6 +794,7 @@ export async function runPublicEvidenceRefresh(options: PublicEvidenceRefreshOpt
   } catch (error) {
     await finishRun(runId, 'failed', {
       pipelineVersion: PIPELINE_VERSION,
+      execution,
       batchSize,
       campaign,
       memberPrimary,

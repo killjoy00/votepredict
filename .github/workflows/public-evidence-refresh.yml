@@ -22,7 +22,7 @@ jobs:
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
@@ -60,10 +60,10 @@ jobs:
             exit 1
           fi
 
-      - name: Run authenticated public evidence refresh
+      - name: Run public evidence refresh directly from GitHub Actions
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
-        run: node --import tsx scripts/run-production-public-evidence-refresh.ts
+        run: node --import tsx scripts/run-direct-public-evidence-refresh.ts
 
       - name: Remove temporary credentials and Vercel logs
         if: always()
