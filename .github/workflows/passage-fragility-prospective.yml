@@ -112,7 +112,7 @@ jobs:
           test "$(jq -r '.schemaVersion' "$file")" = 'passage-fragility-shadow-capture-v1'
           test "$(jq -r '.productionAction' "$file")" = 'none'
           jq -e '.eligibleRevisions >= 0 and .capturedRevisions >= 0 and .flaggedRevisions >= 0' "$file" >/dev/null
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: passage-fragility-shadow-capture-v1-${{ github.sha }}-${{ github.run_id }}
           path: artifacts/passage-fragility-shadow-capture-v1.json
@@ -196,7 +196,7 @@ jobs:
           test "$(jq -r '.decision.productionAction' "$file")" = 'none'
           test "$(jq -r '.decision.automaticPromotion' "$file")" = 'false'
           jq -e '.input.resolvedVotes >= 0 and .input.failedVotes >= 0 and .input.flaggedVotes >= 0' "$file" >/dev/null
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: passage-fragility-prospective-score-v1-${{ github.sha }}-${{ github.run_id }}
           path: artifacts/passage-fragility-prospective-score-v1.json

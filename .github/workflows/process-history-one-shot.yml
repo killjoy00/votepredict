@@ -57,7 +57,7 @@ jobs:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: node --import tsx scripts/evaluate-process-history-research.ts
       - name: Upload research artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: process-history-model-research-${{ github.sha }}
           path: artifacts/process-history-model-research.json

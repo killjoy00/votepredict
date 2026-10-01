@@ -88,7 +88,7 @@ jobs:
             exit 1
           fi
       - name: Upload frozen House Journal holdout source bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: historical-deep-house-journal-holdout-source-bundle-v1-${{ github.sha }}
           path: artifacts/historical-deep-house-journal-holdout-source-bundle-v1.json

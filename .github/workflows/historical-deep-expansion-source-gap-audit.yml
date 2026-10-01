@@ -108,7 +108,7 @@ jobs:
           test "$(jq -r '.summary.byBillPrefix.SF.sourceWithoutCandidate' "$file")" = '2'
           test "$(jq -r '.summary.byBillPrefix.SF.candidateCovered' "$file")" = '0'
       - name: Upload immutable source-gap audit
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: historical-deep-expansion-source-gap-audit-v1-${{ github.sha }}
           path: artifacts/historical-deep-expansion-source-gap-audit-v1.json

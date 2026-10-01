@@ -85,7 +85,7 @@ jobs:
             --discovery artifacts/frozen/discovery/historical-deep-discovery-manifest.json \
             --sources artifacts/frozen/sources/historical-deep-pilot-source-bundle.json
       - name: Upload frozen discovery candidate artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: historical-deep-discovery-candidates-${{ github.sha }}
           path: artifacts/historical-deep-discovery-candidates.json

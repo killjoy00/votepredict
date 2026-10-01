@@ -60,7 +60,7 @@ jobs:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: node --import tsx scripts/export-introduction-v4-serving-model.ts
       - name: Upload frozen v4 serving artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: introduction-v4-2025-2026-serving-model
           path: artifacts/introduction-v4-2025-2026.json

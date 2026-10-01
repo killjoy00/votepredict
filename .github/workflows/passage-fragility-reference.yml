@@ -95,7 +95,7 @@ jobs:
           test "$(jq -r '.featureValues.analogueWeightRisk | length' "$file")" = '263'
           test "$(jq -r '.evidenceRiskScores | length' "$file")" = '263'
       - name: Upload immutable reference
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: passage-fragility-reference-v1-${{ github.sha }}
           path: artifacts/passage-fragility-reference-v1.json

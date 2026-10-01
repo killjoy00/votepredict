@@ -27,7 +27,7 @@ jobs:
       - name: Collect and validate official pre-vote source corpus
         run: node --import tsx scripts/collect-historical-deep-pilot-sources.ts
       - name: Upload frozen source bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: historical-deep-pilot-source-bundle-${{ github.sha }}
           path: artifacts/historical-deep-pilot-source-bundle.json

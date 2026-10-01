@@ -92,7 +92,7 @@ jobs:
           test "$pages" -ge 80
           test "$matches" -ge 1
       - name: Upload frozen House Journal source bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: historical-deep-house-journal-source-bundle-v1-${{ github.sha }}
           path: artifacts/historical-deep-house-journal-source-bundle.json

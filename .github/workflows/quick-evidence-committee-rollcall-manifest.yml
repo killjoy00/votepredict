@@ -111,14 +111,14 @@ jobs:
           test "$(jq -r '.metadata.codeSha' "$file")" = "$GITHUB_SHA"
           test "$(jq -r '.summary.matchedSourcePages' "$file")" -gt 0
       - name: Upload broad House source bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: quick-evidence-committee-rollcall-sources-${{ github.sha }}
           path: artifacts/quick-evidence-committee-rollcall-source-bundle-v1.json
           if-no-files-found: error
           retention-days: 90
       - name: Upload broad House target manifest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: quick-evidence-committee-rollcall-manifest-${{ github.sha }}
           path: artifacts/quick-evidence-committee-rollcall-manifest-v1.json

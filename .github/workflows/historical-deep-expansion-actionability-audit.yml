@@ -99,7 +99,7 @@ jobs:
             test "$(jq -r ".scenarios[\"${scenario}\"].gated.delta.logLoss" "$file")" = '0'
           done
       - name: Upload immutable actionability audit
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: historical-deep-expansion-actionability-audit-v1-${{ github.sha }}
           path: artifacts/historical-deep-expansion-actionability-audit-v1.json

@@ -58,7 +58,7 @@ jobs:
             --code-sha "$GITHUB_SHA" \
             --output artifacts/historical-deep-expansion-source-bundle.json
       - name: Upload frozen expansion source bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: historical-deep-expansion-source-bundle-${{ github.sha }}
           path: artifacts/historical-deep-expansion-source-bundle.json

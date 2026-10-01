@@ -81,7 +81,7 @@ jobs:
           test "$(jq -r '.summary.observations' "$file")" -ge 1
           test "$(jq -r '.summary.casesWithMechanics' "$file")" -ge 1
       - name: Upload frozen House Journal mechanics artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: historical-deep-house-journal-mechanics-v1-${{ github.sha }}
           path: artifacts/historical-deep-house-journal-mechanics-v1.json

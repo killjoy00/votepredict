@@ -59,7 +59,7 @@ jobs:
 
       - name: Upload lifecycle P5 evidence artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lifecycle-p5-evidence-allocation-v2-${{ github.sha }}
           path: artifacts/lifecycle-p5-evidence-allocation-v2
