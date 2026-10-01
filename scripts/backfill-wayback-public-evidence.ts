@@ -4,8 +4,8 @@ import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 const DATABASE_CANDIDATES=['DATABASE_URL_UNPOOLED','POSTGRES_URL_NON_POOLING','DATABASE_URL','POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL='https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const DEFAULT_BATCH=12;
-const SELECTION_PASS='deepening-v2';
-const CAPTURES_PER_SEED=20;
+const SELECTION_PASS=process.env.VOTEPREDICT_WAYBACK_SELECTION_PASS?.trim()||'deepening-v2';
+const CAPTURES_PER_SEED=Math.max(1,Math.min(50,Number(process.env.VOTEPREDICT_WAYBACK_CAPTURES_PER_SEED??20)||20));
 let secrets:string[]=[];
 function mask(v:string){if(v.length>3)console.log('::add-mask::'+v.replaceAll('%','%25').replaceAll('\r','%0D').replaceAll('\n','%0A'));}
 function safe(e:unknown){let m=e instanceof Error?(e.stack??e.message):String(e);for(const v of secrets.filter(x=>x.length>3).sort((a,b)=>b.length-a.length))m=m.split(v).join('[redacted]');return m.replace(/postgres(?:ql)?:\/\/\S+/gi,'[redacted database URL]').replace(/https?:\/\/\S+/gi,'[source URL]');}
@@ -36,6 +36,7 @@ async function main(){
   const {discoverWaybackCaptures,fetchWaybackSnapshot}=await import('../src/evidence/wayback.js');
   const {selectWaybackEvidenceCaptures,sessionArchiveWindow,WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION}=await import('../src/evidence/wayback-public-evidence-backfill.js');
   const {extractExplicitBillStatements}=await import('../src/evidence/bill-statement-extractor.js');
+  const {extractIssuePositions,ISSUE_POSITION_EXTRACTOR_VERSION}=await import('../src/evidence/issue-position-extractor.js');
   try{
     const seedResult=await pool.query<SeedRow>(`
       SELECT DISTINCT ON (ei.membership_id,ei.metadata->>'subtype',COALESCE(ei.metadata->>'campaignWebsite',sd.source_url))
@@ -97,7 +98,7 @@ async function main(){
     const bills=(await pool.query<{id:string;identifier:string}>(`
       SELECT b.id::text,b.identifier FROM bills b JOIN legislative_sessions s ON s.id=b.session_id
        WHERE s.slug IN ('2021-2022','2023-2024','2025-2026') AND b.identifier ~ '^(HF|SF)[0-9]+$'`)).rows;
-    let capturesDiscovered=0,capturesSelected=0,fetched=0,inserted=0,reused=0,statements=0,failures=0;
+    let capturesDiscovered=0,capturesSelected=0,fetched=0,inserted=0,reused=0,statements=0,issuePositions=0,failures=0;
     const failureSamples:string[]=[];
     for(const seed of batch){
       try{
@@ -115,6 +116,11 @@ async function main(){
               publishedAt:capture.capturedAt,fetchedAt:page.fetchedAt,bills,sourceSubtype,
             });
             statements+=extracted.length;
+            const positions=extractIssuePositions({
+              membershipId:seed.membership_id,memberName:seed.member_name,text:page.text,
+              publishedAt:capture.capturedAt,fetchedAt:page.fetchedAt,sourceSubtype,
+            });
+            issuePositions+=positions.length;
             const path=new URL(capture.original).pathname.replace(/\/+$/,'')||'/';
             const drafts=[
               {
@@ -135,12 +141,13 @@ async function main(){
                   evidenceSeriesKey:`wayback:${seed.membership_id}:${capture.original}:${capture.timestamp}`,
                 },
               },
-              ...extracted.map(draft=>({
+              ...[...extracted,...positions].map(draft=>({
                 ...draft,
                 metadata:{
                   ...(draft.metadata??{}),
                   originalUrl:capture.original,archiveUrl:capture.archiveUrl,archiveCapturedAt:capture.capturedAt,
                   availabilityProof:'independent_archive_capture',availableAt:capture.capturedAt,
+                  sameDayEligible:false,
                   mechanicallyActionable:false,
                 },
               })),
@@ -153,6 +160,7 @@ async function main(){
                 publisher:'Internet Archive',waybackVersion:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,
                 originalUrl:capture.original,archiveCapturedAt:capture.capturedAt,archiveDigest:capture.digest,
                 availabilityProof:'independent_archive_capture',availableAt:capture.capturedAt,
+                issuePositionExtractorVersion:ISSUE_POSITION_EXTRACTOR_VERSION,
               },
             },drafts);
             inserted+=persisted.inserted;reused+=persisted.reused;
@@ -160,7 +168,7 @@ async function main(){
         }
       }catch(error){failures++;if(failureSamples.length<20)failureSamples.push(seed.member_name+': discovery: '+safe(error).slice(0,250));}
     }
-    const result={version:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,selectionPass:SELECTION_PASS,capturesPerSeed:CAPTURES_PER_SEED,totalSeeds:deduped.length,batchSeeds:batch.length,offset,nextOffset,capturesDiscovered,capturesSelected,fetched,inserted,reused,explicitBillStatements:statements,failures,failureSamples,policy:{availability:'exact Wayback capture timestamp',sameDayEligible:false,servingChanged:false,productionAction:'none'}};
+    const result={version:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,selectionPass:SELECTION_PASS,capturesPerSeed:CAPTURES_PER_SEED,totalSeeds:deduped.length,batchSeeds:batch.length,offset,nextOffset,capturesDiscovered,capturesSelected,fetched,inserted,reused,explicitBillStatements:statements,issuePositions,issuePositionExtractorVersion:ISSUE_POSITION_EXTRACTOR_VERSION,failures,failureSamples,policy:{availability:'exact Wayback capture timestamp',sameDayEligible:false,issuePositionsAreExactBillPositions:false,mechanicallyActionable:false,modelWeight:0,servingChanged:false,productionAction:'none'}};
     await pool.query(`UPDATE ingestion_runs SET status='complete',finished_at=now(),source_documents=$2,metadata=metadata||$3::jsonb WHERE id=$1::uuid`,[runId,fetched,JSON.stringify(result)]);
     console.log(JSON.stringify({waybackPublicEvidenceBackfill:result},null,2));
   }finally{await pool.end();}
