@@ -39,7 +39,7 @@ export interface ExtractIssuePositionsInput {
 
 const FAMILY_PATTERNS: ReadonlyArray<{ family: IssuePositionFamily; pattern: RegExp }> = [
   { family: 'education', pattern: /\b(?:education|schools?|teachers?|students?|colleges?|universit(?:y|ies)|tuition|literacy)\b/i },
-  { family: 'health', pattern: /\b(?:health(?:care)?|medical|hospital|patient|pharmacy|medicaid|mncare|insurance coverage)\b/i },
+  { family: 'health', pattern: /\b(?:health(?:\s*care)?|hospital|patient|pharmacy|medicaid|mncare|insurance coverage|medical (?:care|costs?|coverage|treatment|services?))\b/i },
   { family: 'human_services', pattern: /\b(?:human services|child care|childcare|disabilit(?:y|ies)|foster care|public assistance|long-term care)\b/i },
   { family: 'taxes_revenue', pattern: /\b(?:tax(?:es|ation)?|revenue|tax credit|deduction|exemption|property tax)\b/i },
   { family: 'public_safety', pattern: /\b(?:public safety|police|law enforcement|crime|criminal|correction|firearm|gun|violence)\b/i },
