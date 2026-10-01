@@ -175,8 +175,15 @@ function textLengthBucket(value: number | null): string {
   return '20k+';
 }
 
+export type LifecycleP5FeatureSnapshot = {
+  bill: LifecycleP3Snapshot['bill'];
+  cutoff: Pick<LifecycleP3Snapshot['cutoff'], 'asOfDateExclusive' | 'granularity' | 'sameDayExcluded'>;
+  features: LifecycleP3Snapshot['features'];
+  lineage: Pick<LifecycleP3Snapshot['lineage'], 'processParserVersion'>;
+};
+
 export function evidenceFamilyTokens(
-  snapshot: LifecycleP3Snapshot,
+  snapshot: LifecycleP5FeatureSnapshot,
 ): Record<LifecycleP5EvidenceFamily, string[]> {
   const processEntries = Object.entries(snapshot.features.priorProcessStageCounts)
     .filter(([stageKind]) => stageKind !== 'companion_reference' && stageKind !== 'author_added')
@@ -218,8 +225,8 @@ export function evidenceFamilyTokens(
   };
 }
 
-function familyEligibility(
-  snapshot: LifecycleP3Snapshot,
+export function lifecycleP5FamilyEligibility(
+  snapshot: LifecycleP5FeatureSnapshot,
 ): Record<LifecycleP5EvidenceFamily, boolean> {
   const processAvailable = snapshot.lineage.processParserVersion === REVISOR_PROCESS_PARSER_VERSION;
   return {
@@ -232,7 +239,7 @@ function familyEligibility(
 }
 
 export function buildLifecycleP5ProspectiveRow(
-  snapshot: LifecycleP3Snapshot,
+  snapshot: LifecycleP5FeatureSnapshot,
   target: LifecycleP5Target,
 ): LifecycleP5ProspectiveRow {
   return {
@@ -244,7 +251,7 @@ export function buildLifecycleP5ProspectiveRow(
     daysSinceIntroduction: snapshot.features.daysSinceIntroduction,
     daysRemainingInBiennium: snapshot.features.daysRemainingInBiennium,
     target,
-    eligibleFamilies: familyEligibility(snapshot),
+    eligibleFamilies: lifecycleP5FamilyEligibility(snapshot),
     tokens: evidenceFamilyTokens(snapshot),
   };
 }
@@ -278,7 +285,7 @@ function buildRowsForBill(snapshots: readonly LifecycleP3Snapshot[]): LifecycleP
       lifecycleState: snapshot.features.lifecycleState,
       daysSinceIntroduction: snapshot.features.daysSinceIntroduction,
       daysRemainingInBiennium: snapshot.features.daysRemainingInBiennium,
-      eligibleFamilies: familyEligibility(snapshot),
+      eligibleFamilies: lifecycleP5FamilyEligibility(snapshot),
       tokens: evidenceFamilyTokens(snapshot),
     };
 
