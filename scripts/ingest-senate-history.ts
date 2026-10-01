@@ -1,6 +1,6 @@
 import { setTimeout as sleep } from 'node:timers/promises';
 import { Pool, type PoolClient } from 'pg';
-import { fetchSenateJournal, listSenateJournalLinks, parseSenateJournalText } from '../src/sources/minnesota/senate-journals.js';
+import { fetchSenateJournal, listSenateJournalLinks, parseSenateJournalText, SENATE_JOURNAL_VOTE_PARSER_VERSION } from '../src/sources/minnesota/senate-journals.js';
 import { activeMembershipCandidates, reconcileHouseMemberName, type MembershipCandidate } from '../src/sources/minnesota/member-reconciliation.js';
 import { getMinnesotaHouseSession, MINNESOTA_HOUSE_HISTORICAL_SESSIONS, type MinnesotaHouseSession } from '../src/sources/minnesota/sessions.js';
 
@@ -141,7 +141,7 @@ async function hasCompletePersistedJournal(client: PoolClient, context: Context,
             AND sd.source_kind='senate_journal_pdf' AND sd.source_url=$3
             AND ve.is_passage AND ve.passed IS NULL
        ) AS complete`,
-    [context.sessionId, context.chamberId, sourceUrl],
+    [context.sessionId, context.chamberId, sourceUrl, SENATE_JOURNAL_VOTE_PARSER_VERSION],
   );
   return result.rows[0]?.complete ?? false;
 }
@@ -170,7 +170,14 @@ async function persistJournal(
        ON CONFLICT (source_url,content_sha256) DO UPDATE SET
          fetched_at=now(),metadata=source_documents.metadata||EXCLUDED.metadata
        RETURNING id`,
-      [context.jurisdictionId, context.sessionId, context.chamberId, sourceUrl, pdfSha256, JSON.stringify({ sourceSystem: 'mn_senate_journals', byteLength, parsedPassageVotes: events.length })],
+      [context.jurisdictionId, context.sessionId, context.chamberId, sourceUrl, pdfSha256, JSON.stringify({
+        sourceSystem: 'mn_senate_journals',
+        parserVersion: SENATE_JOURNAL_VOTE_PARSER_VERSION,
+        byteLength,
+        parsedRollCalls: events.length,
+        parsedPassageVotes: events.filter((event) => event.isPassage).length,
+        parsedNonPassageVotes: events.filter((event) => !event.isPassage).length,
+      })],
     );
     let memberVotes = 0;
     let unresolved = 0;
@@ -201,7 +208,12 @@ async function persistJournal(
           event.otherCount,
           event.passed ?? null,
           event.isPassage,
-          JSON.stringify({ sourceSystem: 'mn_senate_journals' }),
+          JSON.stringify({
+            sourceSystem: 'mn_senate_journals',
+            parserVersion: SENATE_JOURNAL_VOTE_PARSER_VERSION,
+            motionSemanticsPreserved: true,
+            nonPassageDoesNotImplyFinalPassageStance: !event.isPassage,
+          }),
         ],
       );
       await client.query('DELETE FROM member_votes WHERE vote_event_id=$1', [inserted.rows[0].id]);
@@ -247,7 +259,12 @@ async function runSession(pool: Pool | undefined, session: MinnesotaHouseSession
       const run = await client.query<{ id: string }>(
         `INSERT INTO ingestion_runs (source_system,scope,status,metadata)
          VALUES ('mn_senate_journals',$1,'running',$2::jsonb) RETURNING id`,
-        [session.slug, JSON.stringify({ discoveredJournals: allJournals.length, selectedJournals: journals.length, skipExisting: options.skipExisting })],
+        [session.slug, JSON.stringify({
+          discoveredJournals: allJournals.length,
+          selectedJournals: journals.length,
+          skipExisting: options.skipExisting,
+          parserVersion: SENATE_JOURNAL_VOTE_PARSER_VERSION,
+        })],
       );
       runId = run.rows[0].id;
     }
@@ -275,7 +292,7 @@ async function runSession(pool: Pool | undefined, session: MinnesotaHouseSession
         failures.push(`${journal.sourceUrl}: ${error instanceof Error ? error.message : error}`);
       }
       if ((index + 1) % 20 === 0 || index === journals.length - 1) {
-        console.log(`[${session.slug}] ${index + 1}/${journals.length} journals; ${votes} new passage votes; ${skippedExisting} complete journals skipped; ${unresolved} unresolved new member votes`);
+        console.log(`[${session.slug}] ${index + 1}/${journals.length} journals; ${votes} parsed bill-linked roll calls; ${skippedExisting} parser-current journals skipped; ${unresolved} unresolved new member votes`);
       }
       if (fetched && index < journals.length - 1) await sleep(options.delayMs);
     }
