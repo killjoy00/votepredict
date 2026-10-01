@@ -207,12 +207,14 @@ function splitNames(
 
 function explicitRollCallOutcome(resultText: string): boolean | undefined {
   const compact = resultText.replace(/\s+/g, ' ').trim();
-  if (/\bfailed to (?:re)?pass\b/i.test(compact)) return false;
-  if (/\bSo,?\s+(?:the bill|the bill, as amended)[\s\S]{0,120}\b(?:re)?passed\b/i.test(compact)) return true;
+  // Evaluate the immediate motion/amendment disposition before any later bill
+  // passage language that may appear in the bounded post-roll window.
   if (/\b(?:motion|amendment)\s+(?:did\s+not\s+prevail|was\s+not\s+adopted)\b/i.test(compact)) return false;
   if (/\b(?:motion\s+prevailed|amendment\s+was\s+adopted)\b/i.test(compact)) return true;
   if (/\bvote\s+was\s+not\s+reconsidered\b/i.test(compact)) return false;
   if (/\bvote\s+was\s+reconsidered\b/i.test(compact)) return true;
+  if (/\bfailed to (?:re)?pass\b/i.test(compact)) return false;
+  if (/\bSo,?\s+(?:the bill|the bill, as amended)[\s\S]{0,120}\b(?:re)?passed\b/i.test(compact)) return true;
   return undefined;
 }
 
