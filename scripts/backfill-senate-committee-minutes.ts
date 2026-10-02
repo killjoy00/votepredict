@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { Pool } from 'pg';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
-import { planLinearBatch } from '../src/evidence/linear-batch-cursor.js';
+import { finalizeLinearBatch, planLinearBatch } from '../src/evidence/linear-batch-cursor.js';
 
 const DATABASE_CANDIDATES=[
   'DATABASE_URL_UNPOOLED','POSTGRES_URL_NON_POOLING','DATABASE_URL','POSTGRES_URL',
@@ -409,8 +409,7 @@ async function main():Promise<void>{
       }
     }
 
-    const nextOffset=failures>0?offset:plannedNextOffset;
-    const complete=failures===0&&plan.completesPass;
+    const {nextOffset,complete}=finalizeLinearBatch(plan,failures>0);
     const result={
       selectionPass:SELECTION_PASS,parserVersion:MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,
       actionsParserVersion:MN_SENATE_COMMITTEE_ACTIONS_PARSER_VERSION,
