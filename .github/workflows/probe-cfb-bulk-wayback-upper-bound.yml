@@ -10,7 +10,7 @@ permissions:
 
 concurrency:
   group: probe-514-cfb-bulk-wayback-upper-bounds
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   probe:
