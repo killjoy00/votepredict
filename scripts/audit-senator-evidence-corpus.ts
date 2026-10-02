@@ -91,7 +91,9 @@ async function main(){
                count(*) FILTER (WHERE ei.stance='unclear')::int unclear
           FROM evidence_items ei
           JOIN memberships m ON m.id=ei.membership_id
-         WHERE ei.metadata->>'contextType'='issue_position'
+          JOIN chambers c ON c.id=m.chamber_id
+         WHERE c.slug='senate'
+           AND ei.metadata->>'contextType'='issue_position'
          GROUP BY m.session_id
       ),
       finance AS (
@@ -104,7 +106,9 @@ async function main(){
           FROM evidence_items ei
           JOIN source_documents sd ON sd.id=ei.source_document_id
           JOIN memberships m ON m.id=ei.membership_id
-         WHERE ei.metadata->>'subtype'='candidate_contribution_record'
+          JOIN chambers c ON c.id=m.chamber_id
+         WHERE c.slug='senate'
+           AND ei.metadata->>'subtype'='candidate_contribution_record'
            AND ei.metadata->>'rowKey' IS NOT NULL
            AND sd.source_kind IN ('campaign_finance_candidate_contribution_bulk','campaign_finance_bulk')
          GROUP BY m.session_id
@@ -116,9 +120,13 @@ async function main(){
           FROM evidence_items ei
           JOIN source_documents sd ON sd.id=ei.source_document_id
           JOIN memberships m ON m.id=ei.membership_id
-         WHERE sd.source_kind ILIKE '%caption%'
+          JOIN chambers c ON c.id=m.chamber_id
+         WHERE c.slug='senate'
+           AND (
+             sd.source_kind ILIKE '%caption%'
             OR ei.metadata->>'contextType' IN ('senate_floor_remark','senate_committee_remark')
             OR ei.metadata->>'subtype' ILIKE '%caption%'
+           )
          GROUP BY m.session_id
       )
       SELECT s.slug AS "session",
@@ -235,7 +243,7 @@ async function main(){
        WHERE source_system IN ('mn_senate_journals','mn_senate_committee_minutes','wayback-public-evidence')
          AND (
            source_system<>'wayback-public-evidence'
-           OR metadata->>'selectionPass'='issue-positions-v1'
+           OR metadata->>'selectionPass' IN ('issue-positions-v1','senate-issue-positions-v2')
          )
        ORDER BY started_at DESC
        LIMIT 20
@@ -249,7 +257,7 @@ async function main(){
         interpretation:{
           readOnly:true,
           sessions:['2021-2022','2023-2024','2025-2026'],
-          financeScope:'publicly itemized candidate contribution rows only',
+          financeScope:'publicly itemized Senate candidate contribution rows only',
           missingMeans:'unobserved_or_unavailable_not_no_position',
           committeeCountOnlyPolicy:'never fabricate individual senator votes',
           remarksScope:'caption-derived remarks only; current count may be zero until Track D lands',

@@ -29,7 +29,8 @@ jobs:
       VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
       VOTEPREDICT_WAYBACK_BATCH: '12'
       VOTEPREDICT_WAYBACK_CAPTURES_PER_SEED: '40'
-      VOTEPREDICT_WAYBACK_SELECTION_PASS: issue-positions-v1
+      VOTEPREDICT_WAYBACK_TARGET_CHAMBER: senate
+      VOTEPREDICT_WAYBACK_SELECTION_PASS: senate-issue-positions-v2
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
