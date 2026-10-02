@@ -30,7 +30,7 @@ jobs:
       VOTEPREDICT_WAYBACK_BATCH: '12'
       VOTEPREDICT_WAYBACK_CAPTURES_PER_SEED: '40'
       VOTEPREDICT_WAYBACK_TARGET_CHAMBER: senate
-      VOTEPREDICT_WAYBACK_SELECTION_PASS: senate-issue-positions-v2
+      VOTEPREDICT_WAYBACK_SELECTION_PASS: senate-issue-positions-v3
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
