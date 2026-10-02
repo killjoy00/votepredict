@@ -94,3 +94,75 @@ test('Senate committee minute parser captures official hands-shown count-only di
   assert.deepEqual([rows[0].yeaCount, rows[0].nayCount], [6, 5]);
   assert.equal(rows[0].passed, true);
 });
+
+
+test('Senate committee parser captures official AYES/NAYS result blocks with role prefixes', () => {
+  const html = `
+    <p>S.F. 70 was before the committee.</p>
+    <p>Senator Abeler moved the A8 Amendment.</p>
+    <p>The results are as follows:</p>
+    <p>AYES: Senator Abeler, Senator Utke, Senator Lieske</p>
+    <p>NAYS: Chair Wiklund, Vice Chair Mann, Senator Boldon, Senator Hoffman, Senator Kupec, Senator Morrison</p>
+    <p>ABSENT:</p>
+    <p>On a vote of 3 AYES and 6 NAYS, THE MOTION DID NOT PREVAIL AND THE A8 AMENDMENT WAS NOT ADOPTED.</p>
+  `;
+  const rows=parseSenateCommitteeMinuteVotes(html);
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].billIdentifier,'SF70');
+  assert.equal(rows[0].amendmentRef,'A8');
+  assert.equal(rows[0].individualVotesAvailable,true);
+  assert.equal(rows[0].passed,false);
+  assert.deepEqual([rows[0].yeaCount,rows[0].nayCount],[3,6]);
+  assert.deepEqual(rows[0].memberVotes.map(row=>[row.sourceName,row.choice]),[
+    ['Abeler','yea'],['Utke','yea'],['Lieske','yea'],
+    ['Wiklund','nay'],['Mann','nay'],['Boldon','nay'],['Hoffman','nay'],['Kupec','nay'],['Morrison','nay'],
+  ]);
+});
+
+test('Senate committee parser captures compact ayes/nays parenthetical roll calls', () => {
+  const html = `
+    <p>S.F. 4736 was before the committee.</p>
+    <p>Senator Kreun requested a roll call.</p>
+    <p>Roll call - 3 ayes, 5 nays, 2 Absent
+    (Ayes – Limmer, Eichorn, Kreun; Nays – Latz, Oumou Verbeten, Carlson, Seeberger, Westlin; Absent – Howe, Pappas)
+    - motion failed.</p>
+  `;
+  const rows=parseSenateCommitteeMinuteVotes(html);
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].billIdentifier,'SF4736');
+  assert.equal(rows[0].individualVotesAvailable,true);
+  assert.deepEqual([rows[0].yeaCount,rows[0].nayCount],[3,5]);
+  assert.equal(rows[0].memberVotes.length,8);
+  assert.equal(rows[0].passed,false);
+});
+
+test('Senate committee parser keeps terse division counts count-only', () => {
+  const html = `
+    <p>S.F. 5301 was before the committee.</p>
+    <p>Senator Dahms offered an oral amendment to the A4.</p>
+    <p>Senator Dahms requested division. 4 yes, 5 no.</p>
+  `;
+  const rows=parseSenateCommitteeMinuteVotes(html);
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].billIdentifier,'SF5301');
+  assert.equal(rows[0].amendmentRef,'A4');
+  assert.equal(rows[0].individualVotesAvailable,false);
+  assert.deepEqual(rows[0].memberVotes,[]);
+  assert.deepEqual([rows[0].yeaCount,rows[0].nayCount],[4,5]);
+});
+
+test('Senate committee parser falls back to aggregate counts when a results-block name list does not reconcile', () => {
+  const html = `
+    <p>S.F. 1000 was before the committee.</p>
+    <p>Senator Doe moved the A1 Amendment.</p>
+    <p>AYES: Senator Alpha, Senator Beta</p>
+    <p>NAYS: Senator Gamma, Senator Delta</p>
+    <p>ABSENT:</p>
+    <p>On a vote of 3 AYES and 2 NAYS, THE MOTION DID NOT PREVAIL.</p>
+  `;
+  const rows=parseSenateCommitteeMinuteVotes(html);
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].individualVotesAvailable,false);
+  assert.deepEqual(rows[0].memberVotes,[]);
+  assert.deepEqual([rows[0].yeaCount,rows[0].nayCount],[3,2]);
+});
