@@ -214,6 +214,8 @@ export async function fetchCfbReportViewerText(
   }
   const header = new TextDecoder('ascii').decode(bytes.subarray(0, 5));
   if (header !== '%PDF-') throw new Error('CFB report viewer response was not a PDF');
+  const byteLength = bytes.byteLength;
+  const contentSha256 = createHash('sha256').update(bytes).digest('hex');
 
   const { CanvasFactory } = await import('pdf-parse/worker');
   const { PDFParse } = await import('pdf-parse');
@@ -225,9 +227,9 @@ export async function fetchCfbReportViewerText(
     return {
       sourceUrl,
       text,
-      contentSha256: createHash('sha256').update(bytes).digest('hex'),
+      contentSha256,
       fetchedAt: new Date().toISOString(),
-      bytes: bytes.byteLength,
+      bytes: byteLength,
     };
   } finally {
     await parser.destroy();
