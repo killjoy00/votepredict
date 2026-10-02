@@ -110,7 +110,7 @@ async function main():Promise<void>{
     {pool},
     {persistDurableEvidence},
     {activeMembershipCandidates,reconcileHouseMemberName},
-    {parseSenateCommitteeMinuteVotes,MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION},
+    {parseSenateCommitteeMinuteVotes,MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,normalizeSenateCommitteeMemberSourceName},
     {discoverSenateCommitteeMinuteDocuments,fetchSenateCommitteeMinutePdf,MN_SENATE_COMMITTEE_SOURCE_VERSION},
   ]=await Promise.all([
     import('../src/lib/db/index.js'),
@@ -213,7 +213,8 @@ async function main():Promise<void>{
             namedObservations+=1;
             const active=activeMembershipCandidates(roster,doc.meetingDate);
             for(const vote of observation.memberVotes){
-              const resolution=reconcileHouseMemberName(vote.sourceName,active);
+              const reconciliationSourceName=normalizeSenateCommitteeMemberSourceName(vote.sourceName);
+              const resolution=reconcileHouseMemberName(reconciliationSourceName,active);
               if(resolution.status!=='matched'){
                 unresolvedMembers+=1;
                 if(unresolvedMemberSamples.length<30){
@@ -255,6 +256,8 @@ async function main():Promise<void>{
                   sameDayEligible:false,finalPassageStanceInferred:false,
                   mechanicallyActionable:false,modelWeight:0,
                   reconciliationReason:resolution.reason,
+                  reconciliationSourceName,
+                  sourceAliasApplied:reconciliationSourceName!==vote.sourceName,
                   ingestionIdentityKey:`${doc.url}|obs:${observationIndex}|member:${resolution.membershipId}|choice:${vote.choice}`,
                 },
               });
@@ -325,7 +328,7 @@ async function main():Promise<void>{
               metadata=vote_events.metadata||EXCLUDED.metadata
             RETURNING id::text`,[
             context.sessionId,context.chamberId,billId,persisted.sourceDocumentId,externalKey,
-            `committee_${observation.voteKind}`,observation.motionText,observation.amendmentRef??null,
+            observation.voteKind,observation.motionText,observation.amendmentRef??null,
             doc.meetingDate,observation.yeaCount,observation.nayCount,observation.passed??null,
             JSON.stringify({
               source:'Minnesota Legislative Reference Library committee minutes',
