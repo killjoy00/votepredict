@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.event_name == 'issue_comment' && (github.event.issue.number != 355 || github.event.comment.user.login != 'killjoy00' || !startsWith(github.event.comment.body, '[source-expansion-senate-member-history]')) && format('source-expansion-senate-member-history-skip-{0}', github.run_id) || 'source-expansion-senate-member-history' }}
+  group: ${{ github.event_name == 'issue_comment' && ((github.event.issue.number != 355 && github.event.issue.number != 514) || github.event.comment.user.login != 'killjoy00' || !startsWith(github.event.comment.body, '[source-expansion-senate-member-history]')) && format('source-expansion-senate-member-history-skip-{0}', github.run_id) || 'source-expansion-senate-member-history' }}
   cancel-in-progress: false
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
     if: >-
       github.event_name != 'issue_comment' ||
       (
-        github.event.issue.number == 355 &&
+        (github.event.issue.number == 355 || github.event.issue.number == 514) &&
         github.event.comment.user.login == 'killjoy00' &&
         startsWith(github.event.comment.body, '[source-expansion-senate-member-history]')
       )
