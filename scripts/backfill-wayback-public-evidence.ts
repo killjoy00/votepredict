@@ -6,6 +6,7 @@ const DATABASE_BRIDGE_URL='https://br-billowing-wave-aecfbwky-dbbridge.compute.c
 const DEFAULT_BATCH=12;
 const SELECTION_PASS=process.env.VOTEPREDICT_WAYBACK_SELECTION_PASS?.trim()||'deepening-v2';
 const CAPTURES_PER_SEED=Math.max(1,Math.min(50,Number(process.env.VOTEPREDICT_WAYBACK_CAPTURES_PER_SEED??20)||20));
+const TARGET_CHAMBER=process.env.VOTEPREDICT_WAYBACK_TARGET_CHAMBER?.trim().toLowerCase()||'';
 let secrets:string[]=[];
 function mask(v:string){if(v.length>3)console.log('::add-mask::'+v.replaceAll('%','%25').replaceAll('\r','%0D').replaceAll('\n','%0A'));}
 function safe(e:unknown){let m=e instanceof Error?(e.stack??e.message):String(e);for(const v of secrets.filter(x=>x.length>3).sort((a,b)=>b.length-a.length))m=m.split(v).join('[redacted]');return m.replace(/postgres(?:ql)?:\/\/\S+/gi,'[redacted database URL]').replace(/https?:\/\/\S+/gi,'[source URL]');}
@@ -38,7 +39,48 @@ async function main(){
   const {extractExplicitBillStatements}=await import('../src/evidence/bill-statement-extractor.js');
   const {extractIssuePositions,ISSUE_POSITION_EXTRACTOR_VERSION}=await import('../src/evidence/issue-position-extractor.js');
   try{
-    const seedResult=await pool.query<SeedRow>(`
+    const seedSql=TARGET_CHAMBER==='senate' ? `
+      SELECT DISTINCT ON (
+               target_m.id,
+               ei.metadata->>'subtype',
+               COALESCE(ei.metadata->>'campaignWebsite',sd.source_url)
+             )
+             target_m.id::text AS membership_id,
+             l.name AS member_name,
+             target_s.slug AS session_slug,
+             target_c.slug AS chamber_slug,
+             ei.metadata->>'subtype' AS subtype,
+             sd.source_kind,
+             sd.source_url,
+             ei.source_quality,
+             ei.metadata->>'campaignWebsite' AS campaign_website
+        FROM memberships target_m
+        JOIN legislators l ON l.id=target_m.legislator_id
+        JOIN legislative_sessions target_s ON target_s.id=target_m.session_id
+        JOIN chambers target_c ON target_c.id=target_m.chamber_id
+        JOIN memberships source_m ON source_m.legislator_id=target_m.legislator_id
+        JOIN chambers source_c ON source_c.id=source_m.chamber_id
+        JOIN evidence_items ei ON ei.membership_id=source_m.id
+        JOIN source_documents sd ON sd.id=ei.source_document_id
+       WHERE target_c.slug='senate'
+         AND target_s.slug IN ('2021-2022','2023-2024','2025-2026')
+         AND (
+           ei.metadata->>'subtype'='campaign_site_registry'
+           OR sd.source_kind='campaign_site'
+           OR (
+             source_c.slug='senate'
+             AND (
+               ei.metadata->>'subtype'='member_primary_registry'
+               OR sd.source_kind='member_primary_article'
+             )
+           )
+         )
+       ORDER BY
+         target_m.id,
+         ei.metadata->>'subtype',
+         COALESCE(ei.metadata->>'campaignWebsite',sd.source_url),
+         sd.fetched_at DESC
+    ` : `
       SELECT DISTINCT ON (ei.membership_id,ei.metadata->>'subtype',COALESCE(ei.metadata->>'campaignWebsite',sd.source_url))
              ei.membership_id::text,l.name AS member_name,s.slug AS session_slug,c.slug AS chamber_slug,
              ei.metadata->>'subtype' AS subtype,sd.source_kind,sd.source_url,ei.source_quality,
@@ -54,7 +96,9 @@ async function main(){
            ei.metadata->>'subtype' IN ('campaign_site_registry','member_primary_registry')
            OR sd.source_kind IN ('campaign_site','member_primary_article')
          )
-       ORDER BY ei.membership_id,ei.metadata->>'subtype',COALESCE(ei.metadata->>'campaignWebsite',sd.source_url),sd.fetched_at DESC`);
+       ORDER BY ei.membership_id,ei.metadata->>'subtype',COALESCE(ei.metadata->>'campaignWebsite',sd.source_url),sd.fetched_at DESC
+    `;
+    const seedResult=await pool.query<SeedRow>(seedSql);
     const seedRows=seedResult.rows.map(row=>({
       ...row,
       seedKind:(row.subtype==='campaign_site_registry'||row.source_kind==='campaign_site')?'campaign' as const:'member_primary' as const,
@@ -93,7 +137,7 @@ async function main(){
     const run=await pool.query<{id:string}>(`
       INSERT INTO ingestion_runs(source_system,scope,status,metadata)
       VALUES('wayback-public-evidence',$1,'running',$2::jsonb) RETURNING id::text`,
-      [`batch:${batchSize}`,JSON.stringify({version:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,selectionPass:SELECTION_PASS,capturesPerSeed:CAPTURES_PER_SEED,offset,nextOffset,totalSeeds:deduped.length})]);
+      [`batch:${batchSize}`,JSON.stringify({version:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,selectionPass:SELECTION_PASS,targetChamber:TARGET_CHAMBER||null,capturesPerSeed:CAPTURES_PER_SEED,offset,nextOffset,totalSeeds:deduped.length})]);
     const runId=run.rows[0].id;
     const bills=(await pool.query<{id:string;identifier:string}>(`
       SELECT b.id::text,b.identifier FROM bills b JOIN legislative_sessions s ON s.id=b.session_id
@@ -168,7 +212,7 @@ async function main(){
         }
       }catch(error){failures++;if(failureSamples.length<20)failureSamples.push(seed.member_name+': discovery: '+safe(error).slice(0,250));}
     }
-    const result={version:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,selectionPass:SELECTION_PASS,capturesPerSeed:CAPTURES_PER_SEED,totalSeeds:deduped.length,batchSeeds:batch.length,offset,nextOffset,capturesDiscovered,capturesSelected,fetched,inserted,reused,explicitBillStatements:statements,issuePositions,issuePositionExtractorVersion:ISSUE_POSITION_EXTRACTOR_VERSION,failures,failureSamples,policy:{availability:'exact Wayback capture timestamp',sameDayEligible:false,issuePositionsAreExactBillPositions:false,mechanicallyActionable:false,modelWeight:0,servingChanged:false,productionAction:'none'}};
+    const result={version:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,selectionPass:SELECTION_PASS,targetChamber:TARGET_CHAMBER||null,capturesPerSeed:CAPTURES_PER_SEED,totalSeeds:deduped.length,batchSeeds:batch.length,offset,nextOffset,capturesDiscovered,capturesSelected,fetched,inserted,reused,explicitBillStatements:statements,issuePositions,issuePositionExtractorVersion:ISSUE_POSITION_EXTRACTOR_VERSION,failures,failureSamples,policy:{availability:'exact Wayback capture timestamp',sameDayEligible:false,issuePositionsAreExactBillPositions:false,mechanicallyActionable:false,modelWeight:0,servingChanged:false,productionAction:'none'}};
     await pool.query(`UPDATE ingestion_runs SET status='complete',finished_at=now(),source_documents=$2,metadata=metadata||$3::jsonb WHERE id=$1::uuid`,[runId,fetched,JSON.stringify(result)]);
     console.log(JSON.stringify({waybackPublicEvidenceBackfill:result},null,2));
   }finally{await pool.end();}
