@@ -11,7 +11,7 @@ import {
   fetchCampaignFinanceBulkText,
 } from '../src/evidence/campaign-finance-live.js';
 
-const TARGET_REGISTRATIONS=['40712','41337','30623','30703','30037'] as const;
+const TARGET_REGISTRATIONS=['40712','30703','30558','40742'] as const;
 
 async function main(){
   const urls=await discoverCampaignFinanceDownloadUrls();
