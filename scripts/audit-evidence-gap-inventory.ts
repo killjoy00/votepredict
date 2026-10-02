@@ -200,6 +200,48 @@ async function main() {
       ORDER BY s.slug,c.slug
     `);
 
+    const financeTimingDebt = await pool.query(`
+      WITH identities AS (
+        SELECT
+          ei.metadata->>'rowKey' AS row_key,
+          ei.metadata->>'filerRegistrationNumber' AS registration_number,
+          max(ei.metadata->>'candidateName') AS candidate_name,
+          s.slug AS session_slug,
+          c.slug AS chamber_slug,
+          bool_or(ei.metadata->>'asOfEligible'='true' AND ei.published_at IS NOT NULL) AS eligible
+        FROM evidence_items ei
+        JOIN source_documents sd ON sd.id=ei.source_document_id
+        JOIN memberships m ON m.id=ei.membership_id
+        JOIN legislative_sessions s ON s.id=m.session_id
+        JOIN chambers c ON c.id=m.chamber_id
+        WHERE sd.source_kind IN (
+          'campaign_finance_candidate_contribution_bulk',
+          'campaign_finance_candidate_expenditure_bulk'
+        )
+          AND ei.metadata->>'rowKey' IS NOT NULL
+          AND ei.metadata->>'filerRegistrationNumber' IS NOT NULL
+          AND s.slug IN ('2021-2022','2023-2024','2025-2026')
+        GROUP BY
+          ei.metadata->>'rowKey',
+          ei.metadata->>'filerRegistrationNumber',
+          s.slug,
+          c.slug
+      )
+      SELECT
+        session_slug AS "session",
+        chamber_slug AS "chamber",
+        registration_number AS "registrationNumber",
+        max(candidate_name) AS "candidateName",
+        count(*)::int AS "persistedRowKeys",
+        count(*) FILTER (WHERE eligible)::int AS "eligibleRowKeys",
+        count(*) FILTER (WHERE NOT eligible)::int AS "timingUnprovenRowKeys"
+      FROM identities
+      GROUP BY session_slug,chamber_slug,registration_number
+      HAVING count(*) FILTER (WHERE NOT eligible)>0
+      ORDER BY "timingUnprovenRowKeys" DESC,session_slug,chamber_slug,registration_number
+      LIMIT 60
+    `);
+
     const financeCompletion = await pool.query(`
       SELECT
         count(*)::int AS "checkpointRows",
@@ -233,6 +275,39 @@ async function main() {
         AND ei.metadata->>'subtype'='independent_expenditure_record'
     `);
 
+    const independentExpenditureTimingDebt = await pool.query(`
+      WITH identities AS (
+        SELECT
+          ei.metadata->>'rowKey' AS row_key,
+          ei.metadata->>'spenderRegistrationNumber' AS spender_registration_number,
+          max(ei.metadata->>'spender') AS spender,
+          max(ei.metadata->>'year') AS year,
+          bool_or(ei.metadata->>'asOfEligible'='true' AND ei.published_at IS NOT NULL) AS eligible,
+          bool_or(ei.membership_id IS NOT NULL) AS membership_resolved
+        FROM evidence_items ei
+        JOIN source_documents sd ON sd.id=ei.source_document_id
+        WHERE sd.source_kind='campaign_finance_independent_expenditure_bulk'
+          AND ei.metadata->>'subtype'='independent_expenditure_record'
+          AND ei.metadata->>'rowKey' IS NOT NULL
+        GROUP BY
+          ei.metadata->>'rowKey',
+          ei.metadata->>'spenderRegistrationNumber'
+      )
+      SELECT
+        coalesce(spender_registration_number,'unresolved') AS "spenderRegistrationNumber",
+        max(spender) AS "spender",
+        max(year) AS "latestYear",
+        count(*)::int AS "persistedRowKeys",
+        count(*) FILTER (WHERE eligible)::int AS "eligibleRowKeys",
+        count(*) FILTER (WHERE NOT eligible)::int AS "timingUnprovenRowKeys",
+        count(*) FILTER (WHERE NOT membership_resolved)::int AS "membershipUnresolvedRowKeys"
+      FROM identities
+      GROUP BY spender_registration_number
+      HAVING count(*) FILTER (WHERE NOT eligible)>0
+      ORDER BY "timingUnprovenRowKeys" DESC,"membershipUnresolvedRowKeys" DESC
+      LIMIT 60
+    `);
+
     const lobbying = await pool.query(`
       SELECT
         count(DISTINCT sd.id)::int AS "sourceDocuments",
@@ -260,28 +335,90 @@ async function main() {
           ei.id,
           ei.bill_id,
           ei.metadata->>'subtype' AS subtype,
-          ei.metadata->>'attachmentUrl' AS attachment_url
+          ei.metadata->>'attachmentUrl' AS attachment_url,
+          ei.metadata->>'officialPostedOn' AS official_posted_on
         FROM evidence_items ei
         JOIN source_documents sd ON sd.id=ei.source_document_id
         WHERE sd.source_kind='house_committee_archive_page'
+          AND ei.extraction_version='house-committee-archive-v1'
           AND ei.metadata->>'subtype' LIKE 'committee_archive_%'
           AND coalesce(ei.metadata->>'attachmentUrl','') <> ''
       ),
-      body_links AS (
+      pdf_candidates AS (
+        SELECT *
+        FROM archive
+        WHERE bill_id IS NOT NULL
+          AND official_posted_on IS NOT NULL
+          AND lower(split_part(attachment_url,'?',1)) LIKE '%.pdf'
+      ),
+      current_body AS (
         SELECT DISTINCT sd.metadata->>'archiveEvidenceId' AS archive_evidence_id
         FROM source_documents sd
-        WHERE sd.source_kind IN ('house_committee_attachment_pdf','house_committee_attachment_wayback_pdf')
+        WHERE sd.source_kind='house_committee_attachment_pdf'
+          AND sd.metadata->>'attachmentContentVersion'='house-committee-attachment-content-v1'
           AND coalesce(sd.metadata->>'archiveEvidenceId','') <> ''
+      ),
+      wayback_body AS (
+        SELECT DISTINCT sd.metadata->>'archiveEvidenceId' AS archive_evidence_id
+        FROM source_documents sd
+        WHERE sd.source_kind='house_committee_attachment_wayback_pdf'
+          AND sd.metadata->>'attachmentWaybackVersion'='house-committee-attachment-wayback-bulk-v1'
+          AND coalesce(sd.metadata->>'archiveEvidenceId','') <> ''
+      ),
+      wayback_markers AS (
+        SELECT DISTINCT ei.metadata->>'archiveEvidenceId' AS archive_evidence_id
+        FROM evidence_items ei
+        WHERE ei.metadata->>'subtype'='committee_attachment_wayback_scan_marker'
+          AND ei.extraction_version='house-committee-attachment-wayback-bulk-v1'
+          AND coalesce(ei.metadata->>'archiveEvidenceId','') <> ''
       )
       SELECT
-        count(*)::int AS "archiveAttachmentItems",
-        count(DISTINCT attachment_url)::int AS "uniqueAttachmentUrls",
-        count(DISTINCT bill_id)::int AS "distinctBills",
-        count(*) FILTER (WHERE subtype='committee_archive_fiscal_note')::int AS "fiscalNoteItems",
-        count(*) FILTER (WHERE body_links.archive_evidence_id IS NOT NULL)::int AS "attachmentsWithBodyEvidence",
-        count(*) FILTER (WHERE body_links.archive_evidence_id IS NULL)::int AS "attachmentsWithoutBodyEvidence"
-      FROM archive
-      LEFT JOIN body_links ON body_links.archive_evidence_id=archive.id::text
+        (SELECT count(*)::int FROM archive) AS "archiveAttachmentItems",
+        (SELECT count(DISTINCT attachment_url)::int FROM archive) AS "uniqueAttachmentUrls",
+        (SELECT count(DISTINCT bill_id)::int FROM archive) AS "distinctBills",
+        (SELECT count(*)::int FROM archive WHERE subtype='committee_archive_fiscal_note') AS "fiscalNoteItems",
+        (SELECT count(*)::int FROM pdf_candidates) AS "billTargetedPdfCandidates",
+        (SELECT count(*)::int FROM current_body) AS "currentBodySources",
+        (SELECT count(*)::int FROM wayback_body) AS "waybackBodySources",
+        (SELECT count(*)::int FROM wayback_markers) AS "waybackScanMarkers",
+        (
+          SELECT count(*)::int
+          FROM pdf_candidates p
+          WHERE EXISTS (
+            SELECT 1 FROM current_body b WHERE b.archive_evidence_id=p.id::text
+          )
+        ) AS "pdfCandidatesWithCurrentBody",
+        (
+          SELECT count(*)::int
+          FROM pdf_candidates p
+          WHERE EXISTS (
+            SELECT 1 FROM wayback_body b WHERE b.archive_evidence_id=p.id::text
+          )
+        ) AS "pdfCandidatesWithWaybackBody",
+        (
+          SELECT count(*)::int
+          FROM pdf_candidates p
+          WHERE EXISTS (
+            SELECT 1 FROM wayback_markers m WHERE m.archive_evidence_id=p.id::text
+          )
+        ) AS "pdfCandidatesWithWaybackScanMarker",
+        (
+          SELECT count(*)::int
+          FROM pdf_candidates p
+          WHERE NOT EXISTS (
+            SELECT 1 FROM wayback_body b WHERE b.archive_evidence_id=p.id::text
+          )
+            AND NOT EXISTS (
+              SELECT 1 FROM wayback_markers m WHERE m.archive_evidence_id=p.id::text
+            )
+        ) AS "waybackCandidatesRemaining",
+        (
+          SELECT count(*)::int
+          FROM pdf_candidates p
+          WHERE NOT EXISTS (
+            SELECT 1 FROM current_body b WHERE b.archive_evidence_id=p.id::text
+          )
+        ) AS "currentBodyCandidatesRemaining"
     `);
 
     const fiscalNotes = await pool.query(`
@@ -476,11 +613,13 @@ async function main() {
           },
           D_candidateFinance: {
             bySessionChamber: finance.rows,
+            topTimingDebtGroups: financeTimingDebt.rows,
             completionAuthority: financeCompletion.rows[0],
             gapClass: 'collected_with_partial_historical_timing_and_identity_gaps',
           },
           E_independentExpenditures: {
             observed: independentExpenditures.rows[0],
+            topTimingDebtGroups: independentExpenditureTimingDebt.rows,
             gapClass: 'collected_with_partial_historical_disclosure_proof',
           },
           F_houseAttachmentBodies: {
