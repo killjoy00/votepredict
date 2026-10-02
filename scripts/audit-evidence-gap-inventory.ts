@@ -1,4 +1,5 @@
-import { readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 
 const DATABASE_CANDIDATES = [
@@ -11,6 +12,14 @@ const DATABASE_BRIDGE_URL =
   'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const SESSIONS = ['2021-2022','2023-2024','2025-2026'] as const;
 let secrets: string[] = [];
+
+function argumentValue(name: string): string | undefined {
+  const args = process.argv.slice(2);
+  const inline = args.find((arg) => arg.startsWith(name + '='));
+  if (inline) return inline.slice(name.length + 1);
+  const index = args.indexOf(name);
+  return index >= 0 ? args[index + 1] : undefined;
+}
 
 function mask(value: string) {
   if (value.length > 3) {
@@ -613,8 +622,9 @@ async function main() {
       LIMIT 40
     `);
 
-    console.log(JSON.stringify({
+    const report = {
       evidenceGapInventoryV1: {
+        schemaVersion: 'evidence-gap-inventory-v1',
         generatedAt: new Date().toISOString(),
         sessions: SESSIONS,
         workstreams: {
@@ -678,7 +688,15 @@ async function main() {
           productionAction: 'none',
         },
       },
-    }, null, 2));
+    };
+    const serialized = JSON.stringify(report, null, 2) + '\n';
+    const output = argumentValue('--output');
+    if (output) {
+      const outputPath = resolve(output);
+      mkdirSync(dirname(outputPath), { recursive: true });
+      writeFileSync(outputPath, serialized, { mode: 0o600 });
+    }
+    console.log(serialized.trimEnd());
   } finally {
     await pool.end().catch(() => undefined);
   }
