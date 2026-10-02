@@ -94,3 +94,63 @@ test('Senate committee minute parser captures official hands-shown count-only di
   assert.deepEqual([rows[0].yeaCount, rows[0].nayCount], [6, 5]);
   assert.equal(rows[0].passed, true);
 });
+
+
+test('Senate committee minute parser captures labeled roll-call totals followed by named lists', () => {
+  const html = [
+    'S.F. 2149 was before the Labor Committee.',
+    'Senator Dornink offered the A8 amendment - adopted by roll call (6 aye, 4 nay)',
+    'Senator Dornink requested a roll call',
+    'Ayes: Dornink, Gruenhagen, Kupec, Lieske, Hauschild, Wesenberg',
+    'Nays: McEwen, Marty, Pappas, Oumou Verbeten',
+    'MOTION ADOPTED',
+  ].join('\n');
+  const rows = parseSenateCommitteeMinuteVotes(html);
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].billIdentifier, 'SF2149');
+  assert.equal(rows[0].amendmentRef, 'A8');
+  assert.equal(rows[0].individualVotesAvailable, true);
+  assert.deepEqual([rows[0].yeaCount, rows[0].nayCount], [6, 4]);
+  assert.equal(rows[0].memberVotes.length, 10);
+  assert.equal(rows[0].passed, true);
+});
+
+test('Senate committee minute parser accepts an omitted Nay list only when the reported Nay count is zero', () => {
+  const html = [
+    'S.F. 3748 was before the Judiciary Committee.',
+    'Senator Kreun requested a journal-entry roll call.',
+    'Roll call - 10 ayes, 0 nays (Ayes – Limmer, Eichorn, Howe, Kreun, Latz, Oumou Verbeten, Carlson, Pappas, Seeberger, Westlin) - motion prevailed.',
+  ].join('\n');
+  const rows = parseSenateCommitteeMinuteVotes(html);
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].billIdentifier, 'SF3748');
+  assert.equal(rows[0].individualVotesAvailable, true);
+  assert.deepEqual([rows[0].yeaCount, rows[0].nayCount], [10, 0]);
+  assert.equal(rows[0].memberVotes.length, 10);
+  assert.equal(rows[0].passed, true);
+});
+
+test('Senate committee minute parser keeps labeled roll-call totals count-only when names are absent', () => {
+  const html = [
+    'S.F. 2000 was before the committee.',
+    'The amendment was adopted by roll call (7 aye, 3 nay).',
+  ].join('\n');
+  const rows = parseSenateCommitteeMinuteVotes(html);
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].billIdentifier, 'SF2000');
+  assert.equal(rows[0].individualVotesAvailable, false);
+  assert.deepEqual([rows[0].yeaCount, rows[0].nayCount], [7, 3]);
+  assert.deepEqual(rows[0].memberVotes, []);
+});
+
+test('Senate committee minute parser fails closed when a positive Nay total has no named Nay list', () => {
+  const html = [
+    'S.F. 3000 was before the committee.',
+    'Roll call - 6 ayes, 2 nays',
+    'Ayes: Alpha, Beta, Gamma, Delta, Epsilon, Zeta',
+  ].join('\n');
+  const rows = parseSenateCommitteeMinuteVotes(html);
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].individualVotesAvailable, false);
+  assert.deepEqual(rows[0].memberVotes, []);
+});
