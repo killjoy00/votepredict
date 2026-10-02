@@ -61,6 +61,13 @@ function nearestAmendment(context: string): string | undefined {
   return matches.length ? matches[matches.length - 1][1].toUpperCase() : undefined;
 }
 
+export function normalizeSenateCommitteeMemberSourceName(value:string):string{
+  const compact=value.replace(/\s+/g,' ').trim();
+  // Official 2022 Senate Finance minutes repeatedly use this misspelling for Bill Ingebrigtsen.
+  if(/^Ingebrightsen$/i.test(compact))return 'Ingebrigtsen';
+  return compact;
+}
+
 function names(value: string, choice: 'yea' | 'nay'): SenateCommitteeMemberVote[] {
   return value
     .split(/\s*(?:,|;|\band\b)\s*/i)
