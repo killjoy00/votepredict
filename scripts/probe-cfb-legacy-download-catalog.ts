@@ -14,6 +14,7 @@ const DATABASE_BRIDGE_URL =
 const LEGACY_PREFIX =
   'https://cfb.mn.gov/reports-and-data/self-help/data-downloads/campaign-finance/';
 const MAX_ARCHIVED_CSV_BYTES = 120_000_000;
+const CFB_IE_LEGACY_BULK_UPPER_BOUND_VERSION = 'cfb-ie-legacy-bulk-upper-bound-v1';
 const ANCHORS = [
   '2022-03-01T00:00:00.000Z',
   '2022-07-01T00:00:00.000Z',
@@ -303,6 +304,114 @@ async function main(): Promise<void> {
     }
 
     const resolvedRecovered = [...earliest.keys()].filter(rowKey => debt.get(rowKey));
+    const write = process.env.VOTEPREDICT_CFB_LEGACY_IE_UPPER_BOUND_WRITE === '1';
+    let promotedItemRows = 0;
+    let promotedDistinctRowKeys = 0;
+    let promotedMembershipResolvedDistinctRowKeys = 0;
+
+    if (write && earliest.size > 0) {
+      if (debt.size >= 1600 && earliest.size < 1400) {
+        throw new Error(
+          'Refusing IE upper-bound write because exact-row recoverable proof unexpectedly fell below 1,400 rows',
+        );
+      }
+      const proofs = [...earliest.entries()].map(([rowKey, proof]) => ({ rowKey, ...proof }));
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        for (let offset = 0; offset < proofs.length; offset += 500) {
+          const batch = proofs.slice(offset, offset + 500);
+          const result = await client.query(`
+            WITH proof AS (
+              SELECT *
+                FROM jsonb_to_recordset($1::jsonb) AS p(
+                  "rowKey" text,
+                  "capturedAt" timestamptz,
+                  "archiveUrl" text,
+                  original text,
+                  digest text
+                )
+            ), targets AS (
+              SELECT ei.id,
+                     p."rowKey",
+                     p."capturedAt",
+                     p."archiveUrl",
+                     p.original,
+                     p.digest
+                FROM proof p
+                JOIN evidence_items ei ON ei.metadata->>'rowKey'=p."rowKey"
+                JOIN source_documents sd ON sd.id=ei.source_document_id
+               WHERE sd.source_kind='campaign_finance_independent_expenditure_bulk'
+                 AND ei.metadata->>'subtype'='independent_expenditure_record'
+                 AND coalesce((ei.metadata->>'year')::int,0) IN (2021,2022)
+                 AND (
+                   ei.metadata->>'asOfEligible' IS DISTINCT FROM 'true'
+                   OR ei.published_at IS NULL
+                 )
+            )
+            UPDATE evidence_items ei
+               SET published_at=t."capturedAt",
+                   metadata=ei.metadata || jsonb_build_object(
+                     'asOfEligible', true,
+                     'availabilityStatus', 'proven_by_archived_official_ie_bulk_upper_bound',
+                     'availabilityProof', 'independent_archive_capture_exact_row',
+                     'availableAt', t."capturedAt",
+                     'availabilityBoundKind', 'conservative_upper_bound',
+                     'exactFirstPublicationKnown', false,
+                     'availabilityProofUrl', t."archiveUrl",
+                     'availabilitySourceUrl', t.original,
+                     'archiveCapturedAt', t."capturedAt",
+                     'archiveDigest', t.digest,
+                     'transactionDateIsAvailability', false,
+                     'sameDayEligible', false,
+                     'contextOnly', true,
+                     'mechanicallyActionable', false,
+                     'modelWeight', 0,
+                     'cfbIeLegacyBulkUpperBoundVersion', $2::text
+                   )
+              FROM targets t
+             WHERE ei.id=t.id
+            RETURNING ei.metadata->>'rowKey' AS "rowKey"
+          `, [JSON.stringify(batch), CFB_IE_LEGACY_BULK_UPPER_BOUND_VERSION]);
+          promotedItemRows += result.rowCount ?? result.rows.length;
+        }
+
+        const verify = await client.query<{ rowKeys: number; memberResolvedRowKeys: number }>(`
+          SELECT
+            count(DISTINCT ei.metadata->>'rowKey')::int AS "rowKeys",
+            count(DISTINCT ei.metadata->>'rowKey') FILTER (
+              WHERE ei.membership_id IS NOT NULL
+            )::int AS "memberResolvedRowKeys"
+          FROM evidence_items ei
+          JOIN source_documents sd ON sd.id=ei.source_document_id
+         WHERE sd.source_kind='campaign_finance_independent_expenditure_bulk'
+           AND ei.metadata->>'subtype'='independent_expenditure_record'
+           AND ei.metadata->>'cfbIeLegacyBulkUpperBoundVersion'=$1
+           AND ei.metadata->>'asOfEligible'='true'
+           AND ei.published_at IS NOT NULL
+        `, [CFB_IE_LEGACY_BULK_UPPER_BOUND_VERSION]);
+        promotedDistinctRowKeys = verify.rows[0]?.rowKeys ?? 0;
+        promotedMembershipResolvedDistinctRowKeys = verify.rows[0]?.memberResolvedRowKeys ?? 0;
+
+        if (promotedDistinctRowKeys < proofs.length) {
+          throw new Error(
+            `IE upper-bound promotion invariant failed: expected at least ${proofs.length} exact row keys, found ${promotedDistinctRowKeys}`,
+          );
+        }
+        if (promotedMembershipResolvedDistinctRowKeys < resolvedRecovered.length) {
+          throw new Error(
+            `IE member-resolved promotion invariant failed: expected at least ${resolvedRecovered.length}, found ${promotedMembershipResolvedDistinctRowKeys}`,
+          );
+        }
+        await client.query('COMMIT');
+      } catch (error) {
+        await client.query('ROLLBACK').catch(() => undefined);
+        throw error;
+      } finally {
+        client.release();
+      }
+    }
+
     console.log(JSON.stringify({
       cfbLegacyDownloadCatalogProbe: {
         catalogCapturesDiscovered: catalog.length,
@@ -310,6 +419,13 @@ async function main(): Promise<void> {
         targetDebt: {
           independentExpenditure2021_22RowKeys: debt.size,
           membershipResolvedRowKeys: [...debt.values()].filter(Boolean).length,
+        },
+        write,
+        promotion: {
+          version: CFB_IE_LEGACY_BULK_UPPER_BOUND_VERSION,
+          promotedItemRows,
+          promotedDistinctRowKeys,
+          promotedMembershipResolvedDistinctRowKeys,
         },
         recoverable: {
           exactRowKeys: earliest.size,
@@ -324,7 +440,7 @@ async function main(): Promise<void> {
           transactionDateIsAvailability: false,
           arbitraryCalendarYearEndIsAvailability: false,
           sameDayEligible: false,
-          evidenceWrites: false,
+          evidenceWrites: write,
           servingChanged: false,
           productionAction: 'none',
         },
