@@ -1,4 +1,4 @@
-name: Probe #514 CFB lobbyist Wayback proof
+name: "Probe #514 CFB lobbyist Wayback proof"
 
 on:
   issue_comment:
