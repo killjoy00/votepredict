@@ -34,6 +34,20 @@ const PROBE_ANCHORS = [
   '2023-08-01T00:00:00.000Z',
 ] as const;
 const MAX_ARCHIVED_CSV_BYTES = 120_000_000;
+const LEGACY_OFFICIAL_DOWNLOADS = [
+  {
+    stream: 'contributions' as const,
+    url: 'https://cfb.mn.gov/reports-and-data/self-help/data-downloads/campaign-finance/?download=-2113865252',
+    documentedAt: '2023-02-27T16:38:25.000Z',
+    documentationUrl: 'https://github.com/irworkshop/accountability_datacleaning/commit/13fc9173fd4fd586bceaa86be760cde0f4a7d3d2',
+  },
+  {
+    stream: 'expenditures' as const,
+    url: 'https://cfb.mn.gov/reports-and-data/self-help/data-downloads/campaign-finance/?download=-1890073264',
+    documentedAt: '2023-02-27T17:18:19.000Z',
+    documentationUrl: 'https://github.com/irworkshop/accountability_datacleaning/commit/4d94473193a14eb58bf4e689345a8bdaa45de5e5',
+  },
+] as const;
 let secrets: string[] = [];
 
 interface DataCapture extends WaybackCapture {
@@ -168,6 +182,7 @@ async function discoverDataCaptures(
   url: string,
   landingCapturedAt: string,
   stream: DataCapture['stream'],
+  range?: { from: string; to: string },
 ): Promise<DataCapture[]> {
   const params = new URLSearchParams({
     url,
@@ -176,8 +191,8 @@ async function discoverDataCaptures(
     filter: 'statuscode:200',
     collapse: 'digest',
     limit: '30',
-    from: addDays(landingCapturedAt, -7),
-    to: addDays(landingCapturedAt, 45),
+    from: range?.from ?? addDays(landingCapturedAt, -7),
+    to: range?.to ?? addDays(landingCapturedAt, 45),
   });
   let lastError: unknown;
   for (let attempt = 0; attempt < 3; attempt += 1) {
@@ -435,6 +450,79 @@ async function main(): Promise<void> {
       probes.push(landingProbe);
     }
 
+    const legacyOfficialProbes: Array<Record<string, unknown>> = [];
+    for (const legacy of LEGACY_OFFICIAL_DOWNLOADS) {
+      let captures: DataCapture[] = [];
+      try {
+        captures = await discoverDataCaptures(
+          legacy.url,
+          legacy.documentedAt,
+          legacy.stream,
+          { from: '20220101', to: '20231231' },
+        );
+      } catch (error) {
+        legacyOfficialProbes.push({
+          stream: legacy.stream,
+          url: legacy.url,
+          documentedAt: legacy.documentedAt,
+          documentationUrl: legacy.documentationUrl,
+          status: 'legacy_data_cdx_failed',
+          error: safe(error),
+        });
+        continue;
+      }
+
+      const attempts: Array<Record<string, unknown>> = [];
+      let accepted = false;
+      for (const capture of captures) {
+        try {
+          const csv = await fetchArchivedCsv(capture);
+          const rows = legacy.stream === 'contributions'
+            ? parseCfbCandidateContributionCsv(csv, { fromYear: 2021, toYear: 2022 })
+            : parseCfbCandidateExpenditureCsv(csv, { fromYear: 2021, toYear: 2022 });
+          if (rows.length < 25) throw new Error('Legacy archived candidate CSV parsed fewer than 25 2021-22 rows');
+          let debtMatches = 0;
+          for (const row of rows) {
+            if (!candidateDebt.has(row.rowKey)) continue;
+            debtMatches += 1;
+            const prior = earliestCandidate.get(row.rowKey);
+            if (!prior || capture.capturedAt < prior.capturedAt) {
+              earliestCandidate.set(row.rowKey, {
+                capturedAt: capture.capturedAt,
+                stream: legacy.stream,
+                archiveUrl: capture.archiveUrl,
+              });
+            }
+          }
+          attempts.push({
+            capturedAt: capture.capturedAt,
+            mimetype: capture.mimetype,
+            parsedRows2021_22: rows.length,
+            timingDebtExactMatches: debtMatches,
+            status: 'parsed',
+          });
+          accepted = true;
+          break;
+        } catch (error) {
+          attempts.push({
+            capturedAt: capture.capturedAt,
+            mimetype: capture.mimetype,
+            status: 'fetch_or_parse_failed',
+            error: safe(error),
+          });
+        }
+      }
+      legacyOfficialProbes.push({
+        stream: legacy.stream,
+        url: legacy.url,
+        documentedAt: legacy.documentedAt,
+        documentationUrl: legacy.documentationUrl,
+        capturesDiscovered: captures.length,
+        accepted,
+        attempts,
+      });
+    }
+
     function byDate(values: Iterable<{ capturedAt: string }>) {
       const counts = new Map<string, number>();
       for (const value of values) {
@@ -469,6 +557,7 @@ async function main(): Promise<void> {
           independentExpenditureByEarliestUpperBoundDate: byDate(earliestIe.values()),
         },
         probes,
+        legacyOfficialProbes,
         policy: {
           exactRowContainmentRequired: true,
           archiveCaptureIsConservativeAvailableByBound: true,
