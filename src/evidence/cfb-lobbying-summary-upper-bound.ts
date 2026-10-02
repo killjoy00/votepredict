@@ -63,9 +63,6 @@ function tokenRegex(value: string): RegExp {
   return new RegExp('(?:^| )' + escapeRegex(value) + '(?: |$)', 'g');
 }
 
-function numericTokenPresent(text: string, value: string): boolean {
-  return new RegExp('(?:^|[^0-9])' + escapeRegex(value) + '(?:[^0-9]|$)').test(text);
-}
 
 export function lobbyingSummaryDemonstratesPrincipalRow(
   row: LobbyingPrincipalSummaryRow,
