@@ -16,6 +16,24 @@ test('Wayback selection prioritizes issue/news pages and limits yearly duplicate
   assert.equal(rows.filter(row=>row.original.includes('/issues/health')).length,1);
 });
 
+test('Wayback selection rejects infrastructure and static assets without excluding PDFs',()=>{
+  const capture=(timestamp:string,original:string,mimetype='text/html')=>({timestamp,original,mimetype,statuscode:'200',digest:timestamp,length:100,capturedAt:timestamp.slice(0,4)+'-'+timestamp.slice(4,6)+'-'+timestamp.slice(6,8)+'T00:00:00.000Z',archiveUrl:'https://web.archive.org/'+timestamp}) as any;
+  const rows=selectWaybackEvidenceCaptures([
+    capture('20250306191317','https://www.voteduckworth.com/cdn-cgi/challenge-platform/h/g/jsd/r/token'),
+    capture('20250307191317','https://www.voteduckworth.com/assets/site.css','text/css'),
+    capture('20250308191317','https://www.voteduckworth.com/app.js','application/javascript'),
+    capture('20250309191317','https://www.voteduckworth.com/issues'),
+    capture('20250310191317','https://www.voteduckworth.com/policy.pdf','application/pdf'),
+  ],{maxCaptures:10});
+  assert.deepEqual(
+    rows.map(row=>row.original),
+    [
+      'https://www.voteduckworth.com/issues',
+      'https://www.voteduckworth.com/policy.pdf',
+    ],
+  );
+});
+
 test('archive windows include lead-in year but end with biennium',()=>{
   assert.deepEqual(sessionArchiveWindow('2021-2022'),{from:'20200101',to:'20221231'});
   assert.deepEqual(sessionArchiveWindow('2025-2026'),{from:'20240101',to:'20261231'});
