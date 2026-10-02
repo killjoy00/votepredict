@@ -21,6 +21,19 @@ export interface SenateCommitteeVoteObservation {
   individualVotesAvailable: boolean;
 }
 
+export const MN_SENATE_COMMITTEE_ACTIONS_PARSER_VERSION =
+  'mn-senate-committee-actions-v1' as const;
+
+export interface SenateCommitteeContextAction {
+  billIdentifier?: string;
+  amendmentRef?: string;
+  motionText: string;
+  voteKind: 'amendment' | 'motion' | 'other';
+  actionKind: 'voice_vote' | 'unanimous_action' | 'motion_result_only';
+  passed: boolean;
+  individualVotesAvailable: false;
+}
+
 function decodeHtml(value: string): string {
   return value
     .replace(/&#(\d+);/g, (_match, code: string) => String.fromCodePoint(Number(code)))
@@ -87,10 +100,10 @@ function voteKind(context: string): SenateCommitteeVoteObservation['voteKind'] {
 }
 
 function explicitOutcome(value: string): boolean | undefined {
-  if (/\b(?:motion|amendment)\s+(?:failed|did not prevail|was not adopted)\b/i.test(value)) return false;
-  if (/\b(?:motion|amendment)(?:\s+for\s+final\s+passage)?\s+(?:passed|prevails|prevailed|was adopted)\b/i.test(value)) return true;
-  if (/\bnot adopted\b|\bmotion failed\b/i.test(value)) return false;
-  if (/\badopted\b|\bmotion passed\b/i.test(value)) return true;
+  if (/\b(?:motion|amendment)\s+(?:failed|did not prevail|was not adopted|did not carry)\b/i.test(value)) return false;
+  if (/\b(?:motion|amendment)(?:\s+for\s+final\s+passage)?\s+(?:passed|prevails|prevailed|was adopted|carried)\b/i.test(value)) return true;
+  if (/\bnot adopted\b|\bmotion failed\b|\bdid not carry\b/i.test(value)) return false;
+  if (/\badopted\b|\bmotion passed\b|\bmotion carried\b/i.test(value)) return true;
   return undefined;
 }
 
@@ -295,4 +308,59 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
   }
 
   return observations;
+}
+
+
+function recordedVoteSignal(value:string):boolean{
+  return /\broll\s+call\b|\bAyes?\s*[:\-–—]|\bNays?\s*[:\-–—]|\b(?:vote\s+was|vote\s+of)\s*\d+|\b\d+\s*\/\s*\d+\b|\bdivision\b[^\n]{0,160}\d+\s+(?:yes|ayes?)/i.test(value);
+}
+
+export function parseSenateCommitteeMinuteContextActions(html:string):SenateCommitteeContextAction[]{
+  const text=textFromHtml(html);
+  const lines=text.split('\n').map(line=>line.replace(/\s+/g,' ').trim()).filter(Boolean);
+  const actions:SenateCommitteeContextAction[]=[];
+  const seen=new Set<string>();
+
+  for(let index=0;index<lines.length;index+=1){
+    const line=lines[index];
+    const context=lines.slice(Math.max(0,index-2),Math.min(lines.length,index+2)).join(' ');
+    const passed=explicitOutcome(line);
+    if(passed===undefined)continue;
+
+    let actionKind:SenateCommitteeContextAction['actionKind']|undefined;
+    if(/\bvoice\s+vote\b/i.test(line)){
+      actionKind='voice_vote';
+    }else if(/\bunanimous(?:ly)?\b/i.test(line)){
+      actionKind='unanimous_action';
+    }else if(
+      /\b(?:motion|amendment)\b/i.test(line)
+      && !recordedVoteSignal(context)
+    ){
+      actionKind='motion_result_only';
+    }
+    if(!actionKind)continue;
+
+    const billIdentifier=nearestBill(context);
+    const amendmentRef=nearestAmendment(context);
+    const compact=context.slice(-900);
+    const key=[
+      billIdentifier??'none',
+      amendmentRef??'none',
+      actionKind,
+      passed?'passed':'failed',
+      compact.toLowerCase(),
+    ].join('|');
+    if(seen.has(key))continue;
+    seen.add(key);
+    actions.push({
+      billIdentifier,
+      amendmentRef,
+      motionText:compact,
+      voteKind:voteKind(context),
+      actionKind,
+      passed,
+      individualVotesAvailable:false,
+    });
+  }
+  return actions;
 }

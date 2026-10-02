@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizeSenateCommitteeMemberSourceName, parseSenateCommitteeMinuteVotes } from '../src/evidence/minnesota-senate-committee-minutes.js';
+import { normalizeSenateCommitteeMemberSourceName, parseSenateCommitteeMinuteContextActions, parseSenateCommitteeMinuteVotes } from '../src/evidence/minnesota-senate-committee-minutes.js';
 
 test('Senate committee minute parser captures explicit named Aye/Nay lists', () => {
   const html = `
@@ -241,4 +241,72 @@ test('Senate committee source-name normalization fixes only the documented Ingeb
   assert.equal(normalizeSenateCommitteeMemberSourceName('Ingebrightsen'),'Ingebrigtsen');
   assert.equal(normalizeSenateCommitteeMemberSourceName('  Ingebrightsen  '),'Ingebrigtsen');
   assert.equal(normalizeSenateCommitteeMemberSourceName('Limmer'),'Limmer');
+});
+
+
+test('Senate committee action parser preserves voice votes as context without member votes', () => {
+  const html = [
+    '<p>S.F. 4784 was before the committee.</p>',
+    '<p>Senator Frentz moved the A4 amendment. It was adopted via voice vote.</p>',
+  ].join('');
+  assert.deepEqual(parseSenateCommitteeMinuteVotes(html),[]);
+  const rows=parseSenateCommitteeMinuteContextActions(html);
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].billIdentifier,'SF4784');
+  assert.equal(rows[0].amendmentRef,'A4');
+  assert.equal(rows[0].actionKind,'voice_vote');
+  assert.equal(rows[0].passed,true);
+  assert.equal(rows[0].individualVotesAvailable,false);
+});
+
+test('Senate committee action parser preserves unanimous actions without inventing counts', () => {
+  const html = [
+    '<p>S.F. 2200 was before the committee.</p>',
+    '<p>Senator Doe moved that S.F. 2200 be recommended to pass.</p>',
+    '<p>The motion prevailed unanimously.</p>',
+  ].join('');
+  const rows=parseSenateCommitteeMinuteContextActions(html);
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].billIdentifier,'SF2200');
+  assert.equal(rows[0].actionKind,'unanimous_action');
+  assert.equal(rows[0].passed,true);
+});
+
+test('Senate committee action parser preserves result-only motion outcomes', () => {
+  const html = [
+    '<p>S.F. 3300 was before the committee.</p>',
+    '<p>Senator Doe moved the A2 amendment.</p>',
+    '<p>The motion failed.</p>',
+  ].join('');
+  const rows=parseSenateCommitteeMinuteContextActions(html);
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].billIdentifier,'SF3300');
+  assert.equal(rows[0].amendmentRef,'A2');
+  assert.equal(rows[0].actionKind,'motion_result_only');
+  assert.equal(rows[0].passed,false);
+});
+
+test('Senate committee action parser does not duplicate explicit recorded roll calls as result-only actions', () => {
+  const html = [
+    '<p>S.F. 4400 was before the committee.</p>',
+    '<p>Senator Doe requested a roll call vote.</p>',
+    '<p>Vote was 5-4. Motion prevailed.</p>',
+  ].join('');
+  assert.equal(parseSenateCommitteeMinuteVotes(html).length,1);
+  assert.deepEqual(parseSenateCommitteeMinuteContextActions(html),[]);
+});
+
+test('Senate committee action parser recognizes explicit carried and did-not-carry outcomes', () => {
+  const html = [
+    '<p>S.F. 5500 was before the committee.</p>',
+    '<p>The motion carried unanimously.</p>',
+    '<p>Senator Doe moved the A3 amendment.</p>',
+    '<p>The motion did not carry.</p>',
+  ].join('');
+  const rows=parseSenateCommitteeMinuteContextActions(html);
+  assert.equal(rows.length,2);
+  assert.deepEqual(rows.map(row=>[row.actionKind,row.passed]),[
+    ['unanimous_action',true],
+    ['motion_result_only',false],
+  ]);
 });

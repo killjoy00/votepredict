@@ -8,7 +8,7 @@ const DATABASE_CANDIDATES=[
 ] as const;
 const DATABASE_BRIDGE_URL='https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const SOURCE_SYSTEM='mn_senate_committee_minutes';
-const SELECTION_PASS='senator-corpus-v2';
+const SELECTION_PASS='senator-corpus-v3';
 const BATCH_SIZE=Math.max(1,Math.min(60,Number(process.env.VOTEPREDICT_SENATE_COMMITTEE_BATCH??30)||30));
 let secretValues:string[]=[];
 
@@ -110,7 +110,7 @@ async function main():Promise<void>{
     {pool},
     {persistDurableEvidence},
     {activeMembershipCandidates,reconcileHouseMemberName},
-    {parseSenateCommitteeMinuteVotes,MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,normalizeSenateCommitteeMemberSourceName},
+    {parseSenateCommitteeMinuteVotes,parseSenateCommitteeMinuteContextActions,MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,MN_SENATE_COMMITTEE_ACTIONS_PARSER_VERSION,normalizeSenateCommitteeMemberSourceName},
     {discoverSenateCommitteeMinuteDocuments,fetchSenateCommitteeMinutePdf,MN_SENATE_COMMITTEE_SOURCE_VERSION},
   ]=await Promise.all([
     import('../src/lib/db/index.js'),
@@ -149,6 +149,7 @@ async function main():Promise<void>{
       VALUES($1,$2,'running',$3::jsonb) RETURNING id::text`,[
       SOURCE_SYSTEM,`batch:${BATCH_SIZE}`,JSON.stringify({
         selectionPass:SELECTION_PASS,parserVersion:MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,
+        actionsParserVersion:MN_SENATE_COMMITTEE_ACTIONS_PARSER_VERSION,
         sourceVersion:MN_SENATE_COMMITTEE_SOURCE_VERSION,totalDocuments:discovered.length,
         batchDocuments:batch.length,offset,nextOffset:offset,plannedNextOffset,discoveryByYear,
         electronicCoverage:{availableYears:[2022,2023,2024,2025,2026],unavailableYears:[2021]},
@@ -160,6 +161,7 @@ async function main():Promise<void>{
     const billsCache=new Map<string,Map<string,string>>();
     const contextCache=new Map<string,{sessionId:string;chamberId:string}>();
     let documentsFetched=0,ocrDocuments=0,observations=0,namedObservations=0,countOnlyObservations=0;
+    let contextActions=0,voiceVoteActions=0,unanimousActions=0,resultOnlyActions=0;
     let memberVotes=0,inserted=0,reused=0,unresolvedMembers=0,unresolvedBills=0,failures=0;
     const failureSamples:string[]=[];
     const unresolvedMemberSamples:string[]=[];
@@ -198,7 +200,12 @@ async function main():Promise<void>{
         documentsFetched+=1;
         if(pdf.extractionMethod==='ocr_tesseract')ocrDocuments+=1;
         const parsed=parseSenateCommitteeMinuteVotes(pdf.text);
+        const contextOnlyActions=parseSenateCommitteeMinuteContextActions(pdf.text);
         observations+=parsed.length;
+        contextActions+=contextOnlyActions.length;
+        voiceVoteActions+=contextOnlyActions.filter(action=>action.actionKind==='voice_vote').length;
+        unanimousActions+=contextOnlyActions.filter(action=>action.actionKind==='unanimous_action').length;
+        resultOnlyActions+=contextOnlyActions.filter(action=>action.actionKind==='motion_result_only').length;
         const drafts:Array<any>=[];
         const resolvedVotes:Array<Array<{membershipId:string;sourceName:string;normalizedName:string;choice:'yea'|'nay';reason:string}>>=
           parsed.map(()=>[]);
@@ -290,6 +297,48 @@ async function main():Promise<void>{
           }
         }
 
+        for(const action of contextOnlyActions){
+          const knownBill=action.billIdentifier&&bills.has(action.billIdentifier.toUpperCase())
+            ? action.billIdentifier.toUpperCase()
+            : undefined;
+          if(action.billIdentifier&&!knownBill)unresolvedBills+=1;
+          const sourceBill=knownBill??action.billIdentifier;
+          const subject=[
+            sourceBill??null,
+            action.amendmentRef??null,
+          ].filter(Boolean).join(' ');
+          const methodLabel=action.actionKind==='voice_vote'
+            ? 'voice-vote'
+            : action.actionKind==='unanimous_action'
+              ? 'unanimous'
+              : 'result-only';
+          const outcomeLabel=action.passed?'prevailed':'failed';
+          const actionHash=createHash('sha256').update(action.motionText).digest('hex').slice(0,20);
+          drafts.push({
+            target:knownBill?{billIdentifier:knownBill,sessionSlug,occurredOn:doc.meetingDate}:undefined,
+            kind:'context',stance:'neutral',
+            claim:`Minnesota Senate ${doc.committeeName} committee minutes record a ${methodLabel} ${action.voteKind} action${subject?' on '+subject:''} that ${outcomeLabel} on ${doc.meetingDate}; the minutes do not provide member-resolved YEA/NAY votes for this action.`,
+            excerpt:action.motionText.slice(0,600),
+            sourceQuality:'official',relevance:'medium',freshness:freshness(doc.year),
+            extractionMethod:'deterministic-senate-committee-action-context',
+            extractionVersion:MN_SENATE_COMMITTEE_ACTIONS_PARSER_VERSION,
+            confidence:pdf.extractionMethod==='ocr_tesseract'?0.9:1,
+            metadata:{
+              contextType:'senate_committee_action',subtype:action.actionKind,
+              committeeName:doc.committeeName,meetingDate:doc.meetingDate,
+              billIdentifier:action.billIdentifier??null,amendmentRef:action.amendmentRef??null,
+              voteKind:action.voteKind,motionPassed:action.passed,motionText:action.motionText,
+              individualVotesAvailable:false,committeeActionOnly:true,sourceVerified:true,
+              textExtractionMethod:pdf.extractionMethod,
+              meetingDateIsAvailability:false,asOfEligible:false,
+              availabilityStatus:'official_archive_current_bytes_no_publication_timestamp',
+              sameDayEligible:false,finalPassageStanceInferred:false,
+              mechanicallyActionable:false,modelWeight:0,
+              ingestionIdentityKey:`${doc.url}|action:${action.actionKind}|${actionHash}`,
+            },
+          });
+        }
+
         const persisted=await persistDurableEvidence({
           sourceKind:'senate_committee_minutes',
           sourceUrl:doc.url,
@@ -302,6 +351,7 @@ async function main():Promise<void>{
             publisher:'Minnesota Legislative Reference Library',
             committeeName:doc.committeeName,meetingDate:doc.meetingDate,
             parserVersion:MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,
+            actionsParserVersion:MN_SENATE_COMMITTEE_ACTIONS_PARSER_VERSION,
             sourceVersion:MN_SENATE_COMMITTEE_SOURCE_VERSION,
             officialArchive:true,textExtractionMethod:pdf.extractionMethod,meetingDateIsAvailability:false,asOfEligible:false,
           },
@@ -358,9 +408,11 @@ async function main():Promise<void>{
     const nextOffset=failures>0?offset:plannedNextOffset;
     const result={
       selectionPass:SELECTION_PASS,parserVersion:MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,
+      actionsParserVersion:MN_SENATE_COMMITTEE_ACTIONS_PARSER_VERSION,
       sourceVersion:MN_SENATE_COMMITTEE_SOURCE_VERSION,totalDocuments:discovered.length,
       batchDocuments:batch.length,offset,nextOffset,plannedNextOffset,retryRequired:failures>0,discoveryByYear,documentsFetched,ocrDocuments,
-      observations,namedObservations,countOnlyObservations,memberVotes,inserted,reused,
+      observations,namedObservations,countOnlyObservations,contextActions,voiceVoteActions,unanimousActions,resultOnlyActions,
+      memberVotes,inserted,reused,
       unresolvedMembers,unresolvedBills,failures,failureSamples,unresolvedMemberSamples,
       sourceBoundary:{
         electronicMinutesBegin:2022,
@@ -371,7 +423,7 @@ async function main():Promise<void>{
       policy:{
         meetingDateIsAvailability:false,asOfEligible:false,sameDayEligible:false,
         finalPassageStanceInferred:false,mechanicallyActionable:false,modelWeight:0,
-        productionAction:'none',
+        committeeActionsAreMemberVotes:false,productionAction:'none',
       },
     };
     await pool.query(`
