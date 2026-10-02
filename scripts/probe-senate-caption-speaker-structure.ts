@@ -59,7 +59,7 @@ async function main(){
     const pageHtml=await pageResponse.text();
     const requests=extractSenateCaptionRequests(pageHtml,pageUrl);
     const payloads=[];
-    for(const request of requests){
+    for(const request of requests.slice(0,3)){
       const response=await fetch(request.endpointUrl,{
         headers:{accept:'text/html,application/xhtml+xml',referer:pageUrl,'user-agent':'VotePredict/2.0 senator-caption-structure-probe'},
         signal:AbortSignal.timeout(30_000),
