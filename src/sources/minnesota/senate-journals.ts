@@ -136,6 +136,7 @@ function segmentKnownNames(token: string, knownMemberNames: readonly string[]): 
     .map(([compact, sourceName]) => ({ compact, sourceName }))
     .sort((a, b) => b.compact.length - a.compact.length || a.sourceName.localeCompare(b.sourceName));
   const memo = new Map<number, string[][]>();
+  const maxSolutions = 32;
   const walk = (offset: number): string[][] => {
     if (offset === target.length) return [[]];
     const cached = memo.get(offset);
@@ -145,9 +146,9 @@ function segmentKnownNames(token: string, knownMemberNames: readonly string[]): 
       if (!target.startsWith(candidate.compact, offset)) continue;
       for (const tail of walk(offset + candidate.compact.length)) {
         results.push([candidate.sourceName, ...tail]);
-        if (results.length > 1) {
-          memo.set(offset, results.slice(0, 2));
-          return results.slice(0, 2);
+        if (results.length >= maxSolutions) {
+          memo.set(offset, results.slice(0, maxSolutions));
+          return results.slice(0, maxSolutions);
         }
       }
     }
@@ -155,7 +156,14 @@ function segmentKnownNames(token: string, knownMemberNames: readonly string[]): 
     return results;
   };
   const solutions = walk(0);
-  return solutions.length === 1 && solutions[0].length > 1 ? solutions[0] : undefined;
+  if (solutions.length === 0) return undefined;
+  const shortestLength = Math.min(...solutions.map((solution) => solution.length));
+  const shortest = new Map<string, string[]>();
+  for (const solution of solutions.filter((candidate) => candidate.length === shortestLength)) {
+    shortest.set(solution.join('\u0000'), solution);
+  }
+  const best = [...shortest.values()];
+  return best.length === 1 && best[0].length > 1 ? best[0] : undefined;
 }
 
 function exactKnownName(token: string, knownMemberNames: readonly string[]): string | undefined {
