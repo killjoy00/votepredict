@@ -8,7 +8,7 @@ import {
 
 test('organization publication seeds are HTTPS, unique and bounded to the research window', () => {
   validateOrganizationPublicationSeeds();
-  assert.equal(ORGANIZATION_PUBLICATION_SEEDS.length, 16);
+  assert.equal(ORGANIZATION_PUBLICATION_SEEDS.length, 24);
   assert.ok(ORGANIZATION_PUBLICATION_SEEDS.every(seed => seed.url.startsWith('https://')));
   assert.ok(ORGANIZATION_PUBLICATION_SEEDS.every(seed => seed.to === '20261231'));
   assert.deepEqual(
