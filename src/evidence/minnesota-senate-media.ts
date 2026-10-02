@@ -1,9 +1,23 @@
 export const MN_SENATE_MEDIA_CAPTION_SOURCE_PROBE_VERSION =
-  'mn-senate-media-caption-source-probe-v1' as const;
+  'mn-senate-media-caption-source-probe-v2' as const;
 
 export interface CaptionSourceCandidate {
   kind: 'track' | 'url_attribute' | 'quoted_url' | 'caption_markup';
   value: string;
+}
+
+export interface SenateCaptionRequest {
+  mp4: string;
+  videoIndex: number | null;
+  endpointUrl: string;
+}
+
+export interface SenateCaptionPayloadSummary {
+  dataTimeCount: number;
+  tableRowCount: number;
+  tableCellCount: number;
+  textChars: number;
+  firstDataTimeValues: string[];
 }
 
 function decodeHtml(value:string):string{
@@ -15,8 +29,53 @@ function decodeHtml(value:string):string{
     .replace(/&#39;|&apos;/gi,"'");
 }
 
+function stripTags(value:string):string{
+  return decodeHtml(value.replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').trim();
+}
+
 function absolute(value:string,pageUrl:string):string{
   try{return new URL(decodeHtml(value),pageUrl).toString();}catch{return decodeHtml(value);}
+}
+
+function dataAttribute(tag:string,name:'data-id'|'data-num'):string|undefined{
+  const match=name==='data-id'
+    ? tag.match(/\bdata-id\s*=\s*["']([^"']+)["']/i)
+    : tag.match(/\bdata-num\s*=\s*["']([^"']+)["']/i);
+  return match?.[1];
+}
+
+export function extractSenateCaptionRequests(html:string,pageUrl:string):SenateCaptionRequest[]{
+  const rows:SenateCaptionRequest[]=[];
+  const seen=new Set<string>();
+  for(const match of html.matchAll(/<[^>]*\bclass\s*=\s*["'][^"']*\bshowcaptions\b[^"']*["'][^>]*>/gi)){
+    const tag=match[0];
+    const mp4=decodeHtml(dataAttribute(tag,'data-id')??'').trim();
+    if(!mp4||!/\.mp4$/i.test(mp4))continue;
+    const rawIndex=dataAttribute(tag,'data-num');
+    const videoIndex=rawIndex&&/^\d+$/.test(rawIndex)?Number(rawIndex):null;
+    const endpoint=new URL('media_functions',pageUrl);
+    endpoint.searchParams.set('type','getCaption');
+    endpoint.searchParams.set('captionid','');
+    endpoint.searchParams.set('strmp4',mp4);
+    const endpointUrl=endpoint.toString();
+    if(seen.has(endpointUrl))continue;
+    seen.add(endpointUrl);
+    rows.push({mp4,videoIndex,endpointUrl});
+  }
+  return rows;
+}
+
+export function summarizeSenateCaptionPayload(html:string):SenateCaptionPayloadSummary{
+  const times=[...html.matchAll(/\bdata-time\s*=\s*["']([^"']+)["']/gi)]
+    .map(match=>decodeHtml(match[1]).trim())
+    .filter(Boolean);
+  return {
+    dataTimeCount:times.length,
+    tableRowCount:(html.match(/<tr\b/gi)??[]).length,
+    tableCellCount:(html.match(/<td\b/gi)??[]).length,
+    textChars:stripTags(html).length,
+    firstDataTimeValues:[...new Set(times)].slice(0,10),
+  };
 }
 
 export function extractSenateCaptionSourceCandidates(html:string,pageUrl:string):CaptionSourceCandidate[]{
