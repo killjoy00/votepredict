@@ -4,7 +4,7 @@ import type { NormalizedMemberVote, NormalizedVoteEvent, NormalizedVoteKind } fr
 
 const SENATE_BASE = 'https://www.senate.mn';
 const SENATE_JOURNAL_INDEX = `${SENATE_BASE}/journals/journal_list.html`;
-export const SENATE_JOURNAL_VOTE_PARSER_VERSION = 'mn-senate-journal-rollcalls-v2' as const;
+export const SENATE_JOURNAL_VOTE_PARSER_VERSION = 'mn-senate-journal-rollcalls-v3' as const;
 const SENATE_LEGISLATURE_BY_SESSION: Readonly<Record<string, number>> = {
   '2021-2022': 92,
   '2023-2024': 93,
@@ -266,10 +266,6 @@ export function parseSenateJournalText(input: {
     const start = match.index ?? 0;
     const context = text.slice(Math.max(0, start - 2600), start);
     const billIdentifier = nearestBillIdentifier(context);
-    // The durable vote schema is bill-linked today. Preserve non-bill procedural
-    // rolls in the source document for a later schema expansion rather than
-    // fabricating a bill target.
-    if (!billIdentifier) continue;
 
     const yeaCount = Number(match[1]);
     const nayCount = Number(match[2]);
@@ -282,7 +278,7 @@ export function parseSenateJournalText(input: {
       : splitNames(negative?.[1] ?? '', 'nay', yeaVotes.length, knownMemberNames).slice(0, nayCount);
 
     if (yeaVotes.length !== yeaCount || nayVotes.length !== nayCount) {
-      throw new Error(`Senate journal roster mismatch for ${billIdentifier}: expected ${yeaCount}-${nayCount}, parsed ${yeaVotes.length}-${nayVotes.length}`);
+      throw new Error(`Senate journal roster mismatch for ${billIdentifier ?? 'non-bill roll call'}: expected ${yeaCount}-${nayCount}, parsed ${yeaVotes.length}-${nayVotes.length}`);
     }
 
     const questionContext = rollCallQuestionContext(context);
@@ -298,11 +294,11 @@ export function parseSenateJournalText(input: {
       // Preserve the historical passage key namespace so a v2 re-read updates
       // existing passage events instead of duplicating them.
       ? `${input.sessionKey}:${billIdentifier}:${occurredOn}:senate:${passageOrdinal}`
-      : `${input.sessionKey}:${billIdentifier}:${occurredOn}:senate:roll:${sourceKey}:${rollOrdinal}`;
+      : `${input.sessionKey}:${billIdentifier ?? 'none'}:${occurredOn}:senate:roll:${sourceKey}:${rollOrdinal}`;
 
     events.push({
       externalKey,
-      billIdentifier,
+      ...(billIdentifier ? { billIdentifier } : {}),
       voteKind,
       isPassage,
       passed,

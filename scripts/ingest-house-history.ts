@@ -188,6 +188,7 @@ async function persistVotePage(
     counters.sourceDocuments += 1;
 
     for (const event of events) {
+      if (!event.billIdentifier) throw new Error('House vote event is missing its required bill identifier');
       const billId = await ensureBill(client, context, event.billIdentifier, sourceUrl);
       const voteResult = await client.query<{ id: string }>(
         `INSERT INTO vote_events (

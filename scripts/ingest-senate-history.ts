@@ -178,12 +178,16 @@ async function persistJournal(
         parsedRollCalls: events.length,
         parsedPassageVotes: events.filter((event) => event.isPassage).length,
         parsedNonPassageVotes: events.filter((event) => !event.isPassage).length,
+        parsedBillLinkedRollCalls: events.filter((event) => Boolean(event.billIdentifier)).length,
+        parsedNonBillRollCalls: events.filter((event) => !event.billIdentifier).length,
       })],
     );
     let memberVotes = 0;
     let unresolved = 0;
     for (const event of events) {
-      const billId = await ensureBill(client, context, event.billIdentifier, sourceUrl);
+      const billId = event.billIdentifier
+        ? await ensureBill(client, context, event.billIdentifier, sourceUrl)
+        : null;
       const inserted = await client.query<{ id: string }>(
         `INSERT INTO vote_events (
            session_id,chamber_id,bill_id,source_document_id,external_key,vote_kind,motion_text,
@@ -293,7 +297,7 @@ async function runSession(pool: Pool | undefined, session: MinnesotaHouseSession
         failures.push(`${journal.sourceUrl}: ${error instanceof Error ? error.message : error}`);
       }
       if ((index + 1) % 20 === 0 || index === journals.length - 1) {
-        console.log(`[${session.slug}] ${index + 1}/${journals.length} journals; ${votes} parsed bill-linked roll calls; ${skippedExisting} parser-current journals skipped; ${unresolved} unresolved new member votes`);
+        console.log(`[${session.slug}] ${index + 1}/${journals.length} journals; ${votes} parsed named roll calls; ${skippedExisting} parser-current journals skipped; ${unresolved} unresolved new member votes`);
       }
       if (fetched && index < journals.length - 1) await sleep(options.delayMs);
     }
