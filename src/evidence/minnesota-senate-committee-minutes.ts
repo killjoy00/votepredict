@@ -1,7 +1,7 @@
 import { normalizeMemberName } from '@/sources/minnesota/house-votes';
 
 export const MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION =
-  'mn-senate-committee-minutes-v1' as const;
+  'mn-senate-committee-minutes-v2' as const;
 
 export interface SenateCommitteeMemberVote {
   sourceName: string;
@@ -128,8 +128,44 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
     }
   }
 
+  const labeledRollCallPattern =
+    /(?:roll\s+call(?:\s+vote)?[\s\S]{0,100}?|adopted\s+by\s+roll\s+call\s*\(?)(\d+)\s+(?:aye|ayes|yes)\s*(?:,|and)\s*(\d+)\s+(?:nay|nays|no)\b/gi;
+  for (const match of text.matchAll(labeledRollCallPattern)) {
+    const start = match.index ?? 0;
+    const after = text.slice(start, start + match[0].length + 700);
+    const context = text.slice(Math.max(0, start - 900), start + match[0].length + 700);
+    const yeaCount = Number(match[1]);
+    const nayCount = Number(match[2]);
+    const ayeLabel = after.match(/\bAyes?\s*[:\-–—]\s*([^\n\r)]+)/i);
+    const nayLabel = after.match(/\bNays?\s*[:\-–—]\s*([^\n\r)]+)/i);
+    if ((yeaCount > 0 && !ayeLabel) || (nayCount > 0 && !nayLabel)) continue;
+    const yeaVotes = ayeLabel ? names(ayeLabel[1], 'yea') : [];
+    const nayVotes = nayLabel ? names(nayLabel[1], 'nay') : [];
+    if (yeaVotes.length !== yeaCount || nayVotes.length !== nayCount) continue;
+    const key = [
+      nearestBill(context) ?? 'none',
+      nearestAmendment(context) ?? 'none',
+      yeaVotes.map((row) => row.normalizedName).join(','),
+      nayVotes.map((row) => row.normalizedName).join(','),
+    ].join('|');
+    if (seen.has(key)) continue;
+    seen.add(key);
+    observations.push({
+      billIdentifier: nearestBill(context),
+      amendmentRef: nearestAmendment(context),
+      motionText: context.replace(/\s+/g, ' ').trim().slice(-900),
+      voteKind: voteKind(context),
+      yeaCount,
+      nayCount,
+      passed: explicitOutcome(context),
+      memberVotes: [...yeaVotes, ...nayVotes],
+      individualVotesAvailable: true,
+    });
+  }
+
   const countOnlyPatterns = [
     /(?:roll call vote[^\n]{0,220}?)?(?:vote was|roll call(?: vote)?(?: was)?)\s*(\d+)\s*[-–]\s*(\d+)\b/gi,
+    /(?:roll\s+call(?:\s+vote)?[\s\S]{0,100}?|adopted\s+by\s+roll\s+call\s*\(?)(\d+)\s+(?:aye|ayes|yes)\s*(?:,|and)\s*(\d+)\s+(?:nay|nays|no)\b/gi,
     /there were\s+(\d+)\s+(?:hands\s+shown\s+for\s+)?(?:yes|ayes?)\s+and\s+(\d+)\s+(?:hands\s+shown\s+for\s+)?(?:no|nays?)\b/gi,
   ];
   for (const countOnly of countOnlyPatterns) {
