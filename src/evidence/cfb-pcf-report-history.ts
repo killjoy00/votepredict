@@ -140,7 +140,7 @@ export async function acquireCfbPcfHistoricalReportProofs(input:{
   const registration=requireRegistrationNumber(input.registrationNumber);
   const endYear=requireSegmentEndYear(input.segmentEndYear);
   const references=await fetchCfbPcfHistoricalReportReferences(registration,endYear);
-  const maxReports=Math.min(16,Math.max(1,input.maxReports??12));
+  const maxReports=Math.min(24,Math.max(1,input.maxReports??12));
   const selected=references.slice(0,maxReports);
   const reports:CfbPcfHistoricalReport[]=[];
   const failures:Array<{reportName:string;error:string}>=[];
