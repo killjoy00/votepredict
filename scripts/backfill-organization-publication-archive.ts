@@ -73,6 +73,7 @@ async function main() {
   const {
     ORGANIZATION_PUBLICATION_HISTORY_VERSION,
     ORGANIZATION_PUBLICATION_SEEDS,
+    selectOrganizationPublicationBatch,
     validateOrganizationPublicationSeeds,
   } = await import('../src/evidence/organization-publication-history.js');
 
@@ -88,16 +89,29 @@ async function main() {
     const requested = Number.parseInt(process.env.VOTEPREDICT_ORGANIZATION_PUBLICATION_BATCH ?? '', 10);
     const batchSize = Number.isFinite(requested) ? Math.min(4, Math.max(1, requested)) : DEFAULT_BATCH;
     const seeds = [...ORGANIZATION_PUBLICATION_SEEDS];
-    const offset = seeds.length ? ((prior.rows[0]?.next_offset ?? 0) % seeds.length) : 0;
-    const batch = seeds.length <= batchSize
-      ? seeds
-      : [...seeds.slice(offset, offset + batchSize), ...seeds.slice(0, Math.max(0, offset + batchSize - seeds.length))];
-    const nextOffset = seeds.length ? (offset + batch.length) % seeds.length : 0;
+    const requestedSeedIds = (process.env.VOTEPREDICT_ORGANIZATION_PUBLICATION_SEED_IDS ?? '')
+      .split(',')
+      .map(id => id.trim())
+      .filter(Boolean);
+    const selection = selectOrganizationPublicationBatch({
+      priorNextOffset: prior.rows[0]?.next_offset ?? 0,
+      batchSize,
+      requestedSeedIds,
+      seeds,
+    });
+    const { batch, offset, nextOffset, targetedRetry } = selection;
     const run = await pool.query<{ id: string }>(`
       INSERT INTO ingestion_runs(source_system,scope,status,metadata)
       VALUES('organization-publication-archive',$1,'running',$2::jsonb) RETURNING id::text`, [
-      `batch:${batchSize}`,
-      JSON.stringify({ version: ORGANIZATION_PUBLICATION_HISTORY_VERSION, offset, nextOffset, totalSeeds: seeds.length }),
+      targetedRetry ? `retry:${selection.requestedSeedIds.join(',')}` : `batch:${batchSize}`,
+      JSON.stringify({
+        version: ORGANIZATION_PUBLICATION_HISTORY_VERSION,
+        mode: targetedRetry ? 'targeted_retry' : 'rotation',
+        retrySeedIds: selection.requestedSeedIds,
+        offset,
+        nextOffset,
+        totalSeeds: seeds.length,
+      }),
     ]);
     const runId = run.rows[0].id;
 
@@ -188,6 +202,8 @@ async function main() {
       totalSeeds: seeds.length,
       batchSeeds: batch.length,
       batchSectors: [...new Set(batch.map(seed => seed.sector))].sort(),
+      mode: targetedRetry ? 'targeted_retry' : 'rotation',
+      retrySeedIds: selection.requestedSeedIds,
       offset,
       nextOffset,
       capturesDiscovered,
