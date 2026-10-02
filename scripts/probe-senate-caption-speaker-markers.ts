@@ -44,7 +44,7 @@ async function fetchText(url:string,referer?:string){
       ...(referer?{referer}:{}),
       'user-agent':'VotePredict/2.0 senator-caption-speaker-marker-probe',
     },
-    signal:AbortSignal.timeout(30_000),
+    signal:AbortSignal.timeout(90_000),
   });
   const body=await response.text();
   if(!response.ok)throw new Error('LRL caption probe returned HTTP '+response.status);
