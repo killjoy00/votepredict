@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "quick-evidence-finance-enriched-historical-plan-v1",
+  "issue": 459,
+  "frozenAt": "2026-10-02T21:05:00Z",
+  "purpose": "One fixed pre-prospective diagnostic of whether strictly disclosure-timed candidate-finance context adds incremental historical signal to the corrected frozen Quick Evidence framework.",
+  "scope": {
+    "servingBaseline": "member-eb-v1.2-decay180",
+    "historicalReplay": "historical-quick-replay-v2",
+    "trainSession": "2021-2022",
+    "validationSession": "2023-2024",
+    "descriptiveSession": "2025-2026",
+    "independentValidationSet": false
+  },
+  "fit": {
+    "model": "ridge logistic offset on serving Quick logit",
+    "lambda": 20,
+    "lambdaSource": "fixed from the previously recorded corrected combined-v2 historical result; not reselected for this diagnostic",
+    "maximumAbsoluteLogitDelta": 1,
+    "retuningAfterValidation": false
+  },
+  "baseFeatures": {
+    "source": "the frozen corrected 32-feature combined Quick Evidence matrix",
+    "count": 32
+  },
+  "financeFeatures": [
+    {
+      "name": "candidateFinanceAvailable",
+      "transform": "binary"
+    },
+    {
+      "name": "candidateContributionCount",
+      "transform": "log1p"
+    },
+    {
+      "name": "candidateContributionAmount",
+      "transform": "log1p dollars"
+    },
+    {
+      "name": "candidateExpenditureCount",
+      "transform": "log1p"
+    },
+    {
+      "name": "candidateExpenditureAmount",
+      "transform": "log1p dollars"
+    }
+  ],
+  "financeAvailability": {
+    "sourceKinds": [
+      "campaign_finance_candidate_contribution_bulk",
+      "campaign_finance_candidate_expenditure_bulk"
+    ],
+    "requireAsOfEligible": true,
+    "requirePublishedAt": true,
+    "requireTransactionDateIsAvailabilityFalse": true,
+    "strictPreVoteOnly": true,
+    "sameDayExcluded": true,
+    "rowContainmentRequired": true,
+    "transactionDateNeverAvailability": true
+  },
+  "comparisons": [
+    "finance-enriched 37-feature fixed-lambda candidate vs serving Quick baseline",
+    "finance-enriched 37-feature fixed-lambda candidate vs the same fixed-lambda 32-feature combined candidate"
+  ],
+  "reporting": [
+    "member Brier/log loss/ECE/accuracy",
+    "chamber Yes-count mean absolute error",
+    "passage Brier/accuracy",
+    "finance-moved member slice",
+    "House/Senate validation slices",
+    "event-balanced and chamber-balanced validation member sensitivity",
+    "finance availability and missingness coverage"
+  ],
+  "interpretation": {
+    "retrospectiveDevelopmentEvidenceOnly": true,
+    "productionAction": "none",
+    "servingProbabilityChange": "none",
+    "automaticPromotion": false,
+    "prospectiveConfirmation": "issue #287"
+  }
+}
