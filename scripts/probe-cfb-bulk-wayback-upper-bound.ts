@@ -502,7 +502,6 @@ async function main(): Promise<void> {
             status: 'parsed',
           });
           accepted = true;
-          break;
         } catch (error) {
           attempts.push({
             capturedAt: capture.capturedAt,
