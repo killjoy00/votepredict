@@ -52,6 +52,7 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
 
   const member = profile.currentMembership;
   const finance = profile.campaignFinance;
+  const priorCycleFinance = profile.priorCycleFinance;
   const financeSource = finance?.contributions?.sourceUrl
     ?? finance?.expenditures?.sourceUrl
     ?? finance?.independentExpenditures?.sourceUrl;
@@ -433,6 +434,40 @@ export default async function LegislatorProfilePage({ params }: PageProps) {
                 <p className={styles.note}>Current records come from the persisted CFB evidence refresh. Campaign-finance relationships are context only and are not treated as evidence that a legislator supports or opposes a bill.</p>
               </>
             ) : <p className={styles.note}>No current 2025–26 campaign-finance evidence is available for this legislator.</p>}
+          </section>
+
+          <section className={styles.panel}>
+            <header className={styles.panelHeader}>
+              <div>
+                <span className={styles.kicker}>Prior-cycle CFB context</span>
+                <h3>Proven before the current session</h3>
+              </div>
+            </header>
+            {priorCycleFinance.length > 0 ? (
+              <div className={styles.financeList}>
+                {priorCycleFinance.map((cycle) => (
+                  <div className={styles.financeItem} key={cycle.sourceSession}>
+                    <strong>{cycle.sourceSession}</strong>
+                    <span>
+                      {cycle.contributionRows} contribution rows · {money(cycle.contributionAmount)} receipts
+                      {' · '}{cycle.expenditureRows} expenditure rows · {money(cycle.expenditureAmount)} spending
+                      {' · '}{cycle.independentExpenditureRows} IE rows · {money(cycle.independentExpenditureAmount)}
+                    </span>
+                    <span>
+                      Proven public {cycle.earliestProvenAvailableOn ? 'from ' + date(cycle.earliestProvenAvailableOn) : ''}
+                      {cycle.latestProvenAvailableOn ? ' through ' + date(cycle.latestProvenAvailableOn) : ''}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className={styles.note}>No prior-cycle CFB rows have a proven pre-cutoff availability date for this current legislator.</p>
+            )}
+            <p className={styles.note}>
+              Prior-cycle rows stay attached to their original membership and are shown separately from current-cycle totals.
+              Only rows with independently proven public availability before the cutoff are included. Transaction dates, year-end dates
+              and filing deadlines are not treated as publication dates. This context does not mechanically change forecast probabilities.
+            </p>
           </section>
 
           <section className={styles.panel}>
