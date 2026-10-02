@@ -33,6 +33,19 @@ jobs:
       - uses: actions/setup-node@v7
         with: { node-version: 22, cache: npm }
       - run: npm ci --no-fund --no-audit
+      - name: Resolve optional bounded retry seeds
+        if: github.event_name == 'issue_comment' && contains(github.event.comment.body, 'retry-seeds=')
+        shell: bash
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          set -euo pipefail
+          retry="$(printf '%s\n' "$COMMENT_BODY" | sed -nE 's/.*retry-seeds=([^[:space:]]+).*/\1/p' | head -n 1)"
+          if [[ ! "$retry" =~ ^[a-z0-9-]+(,[a-z0-9-]+)?$ ]]; then
+            echo "Malformed retry-seeds directive; provide one or two exact registered seed ids" >&2
+            exit 1
+          fi
+          echo "VOTEPREDICT_ORGANIZATION_PUBLICATION_SEED_IDS=$retry" >> "$GITHUB_ENV"
       - name: Read production environment privately
         shell: bash
         run: |

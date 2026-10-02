@@ -174,6 +174,67 @@ export const ORGANIZATION_PUBLICATION_SEEDS: readonly OrganizationPublicationSee
   },
 ] as const;
 
+
+export interface OrganizationPublicationBatchSelection {
+  batch: OrganizationPublicationSeed[];
+  offset: number;
+  nextOffset: number;
+  targetedRetry: boolean;
+  requestedSeedIds: string[];
+}
+
+export function selectOrganizationPublicationBatch({
+  priorNextOffset,
+  batchSize,
+  requestedSeedIds = [],
+  seeds = ORGANIZATION_PUBLICATION_SEEDS,
+}: {
+  priorNextOffset: number;
+  batchSize: number;
+  requestedSeedIds?: readonly string[];
+  seeds?: readonly OrganizationPublicationSeed[];
+}): OrganizationPublicationBatchSelection {
+  validateOrganizationPublicationSeeds(seeds);
+  if (!Number.isInteger(batchSize) || batchSize < 1 || batchSize > 4) {
+    throw new Error(`Organization publication batch size must be an integer from 1 through 4: ${batchSize}`);
+  }
+  const offset = seeds.length
+    ? (((priorNextOffset % seeds.length) + seeds.length) % seeds.length)
+    : 0;
+  const requested = requestedSeedIds.map(id => id.trim()).filter(Boolean);
+  if (requested.length > 2) {
+    throw new Error('Targeted organization publication retry may include at most 2 seed ids');
+  }
+  if (new Set(requested).size !== requested.length) {
+    throw new Error('Targeted organization publication retry seed ids must be unique');
+  }
+  if (requested.length) {
+    const byId = new Map(seeds.map(seed => [seed.id, seed]));
+    const batch = requested.map(id => {
+      const seed = byId.get(id);
+      if (!seed) throw new Error(`Unknown organization publication retry seed id: ${id}`);
+      return seed;
+    });
+    return {
+      batch,
+      offset,
+      nextOffset: offset,
+      targetedRetry: true,
+      requestedSeedIds: requested,
+    };
+  }
+  const batch = seeds.length <= batchSize
+    ? [...seeds]
+    : [...seeds.slice(offset, offset + batchSize), ...seeds.slice(0, Math.max(0, offset + batchSize - seeds.length))];
+  return {
+    batch,
+    offset,
+    nextOffset: seeds.length ? (offset + batch.length) % seeds.length : 0,
+    targetedRetry: false,
+    requestedSeedIds: [],
+  };
+}
+
 export function validateOrganizationPublicationSeeds(
   seeds: readonly OrganizationPublicationSeed[] = ORGANIZATION_PUBLICATION_SEEDS,
 ): void {
