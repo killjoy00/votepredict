@@ -194,3 +194,32 @@ The motion prevailed.`;
     ['Boldon', 'yea'], ['Carlson', 'yea'], ['Abeler', 'nay'],
   ]);
 });
+
+
+test('Senate journal parser prefers compound surname segmentation for collapsed roster text', () => {
+  const text = [
+    'The question was taken on the adoption of the amendment.',
+    'The roll was called, and there were yeas 1 and nays 8, as follows:',
+    'Those who voted in the affirmative were:',
+    'Abeler',
+    'Those who voted in the negative were:',
+    'BakkFatehJohnson StewartKentKiffmeyerMartyMcEwenUtke',
+    'The motion prevailed.',
+  ].join('\n');
+  const events=parseSenateJournalText({
+    text,
+    sessionKey:'257',
+    sourceUrl:'https://www.senate.mn/journals/2021-2022/20210419042.pdf',
+    occurredOn:'2021-04-19',
+    knownMemberNames:[
+      'Abeler','Bakk','Fateh','Johnson','Stewart','Johnson Stewart',
+      'Kent','Kiffmeyer','Marty','McEwen','Utke',
+    ],
+  });
+  assert.equal(events.length,1);
+  assert.deepEqual(events[0].memberVotes.filter(vote=>vote.choice==='nay').map(vote=>vote.sourceName),[
+    'Bakk','Fateh','Johnson Stewart','Kent','Kiffmeyer','Marty','McEwen','Utke',
+  ]);
+  assert.deepEqual([events[0].yeaCount,events[0].nayCount],[1,8]);
+  assert.equal(events[0].passed,true);
+});
