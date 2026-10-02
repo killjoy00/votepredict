@@ -49,6 +49,16 @@ test('strict principal-row proof requires exact normalized name and nearby amoun
     reportYear: 2022,
     totalSpent: 1_840_000,
   }, text), false);
+  assert.equal(lobbyingSummaryDemonstratesPrincipalRow({
+    principal: 'MN Chamber of Commerce',
+    reportYear: 2022,
+    totalSpent: 840_000,
+  }, text), false);
+  assert.equal(lobbyingSummaryDemonstratesPrincipalRow({
+    principal: 'MN Chamber of Commerce Foundation',
+    reportYear: 2022,
+    totalSpent: 1_840_000,
+  }, text), false);
 });
 
 test('normalization is punctuation tolerant but does not invent identity', () => {
