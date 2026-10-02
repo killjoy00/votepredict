@@ -1,0 +1,32 @@
+name: "Probe #514 IE historical report contract"
+
+on:
+  issue_comment:
+    types: [created, edited]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.event_name == 'issue_comment' && (github.event.issue.number != 514 || github.event.comment.user.login != 'killjoy00' || !startsWith(github.event.comment.body, '[cfb-ie-historical-report-contract-probe]')) && format('probe-514-ie-historical-report-contract-skip-{0}', github.run_id) || 'probe-514-ie-historical-report-contract' }}
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    if: >-
+      github.event_name != 'issue_comment' ||
+      (
+        github.event.issue.number == 514 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        startsWith(github.event.comment.body, '[cfb-ie-historical-report-contract-probe]')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+      - name: Probe official CFB committee/fund historical report contract
+        run: node --import tsx scripts/probe-cfb-ie-historical-report-contract.ts
