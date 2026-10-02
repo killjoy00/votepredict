@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
-import { planLinearBatch } from '../src/evidence/linear-batch-cursor.js';
+import { finalizeLinearBatch, planLinearBatch } from '../src/evidence/linear-batch-cursor.js';
 
 const DATABASE_CANDIDATES=['DATABASE_URL_UNPOOLED','POSTGRES_URL_NON_POOLING','DATABASE_URL','POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL='https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
@@ -139,16 +139,16 @@ async function main(){
     });
     const offset=plan.offset;
     const batch=deduped.slice(plan.offset,plan.end);
-    const nextOffset=plan.nextOffset;
+    const plannedNextOffset=plan.nextOffset;
     const run=await pool.query<{id:string}>(`
       INSERT INTO ingestion_runs(source_system,scope,status,metadata)
       VALUES('wayback-public-evidence',$1,'running',$2::jsonb) RETURNING id::text`,
-      [`batch:${batchSize}`,JSON.stringify({version:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,selectionPass:SELECTION_PASS,targetChamber:TARGET_CHAMBER||null,capturesPerSeed:CAPTURES_PER_SEED,offset,nextOffset,totalSeeds:deduped.length})]);
+      [`batch:${batchSize}`,JSON.stringify({version:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,selectionPass:SELECTION_PASS,targetChamber:TARGET_CHAMBER||null,capturesPerSeed:CAPTURES_PER_SEED,offset,nextOffset:offset,plannedNextOffset,totalSeeds:deduped.length})]);
     const runId=run.rows[0].id;
     const bills=(await pool.query<{id:string;identifier:string}>(`
       SELECT b.id::text,b.identifier FROM bills b JOIN legislative_sessions s ON s.id=b.session_id
        WHERE s.slug IN ('2021-2022','2023-2024','2025-2026') AND b.identifier ~ '^(HF|SF)[0-9]+$'`)).rows;
-    let capturesDiscovered=0,capturesSelected=0,fetched=0,inserted=0,reused=0,statements=0,issuePositions=0,failures=0;
+    let capturesDiscovered=0,capturesSelected=0,fetched=0,inserted=0,reused=0,statements=0,issuePositions=0,failures=0,discoveryFailures=0;
     const failureSamples:string[]=[];
     for(const seed of batch){
       try{
@@ -216,10 +216,11 @@ async function main(){
             inserted+=persisted.inserted;reused+=persisted.reused;
           }catch(error){failures++;if(failureSamples.length<20)failureSamples.push(seed.member_name+': snapshot: '+safe(error).slice(0,250));}
         }
-      }catch(error){failures++;if(failureSamples.length<20)failureSamples.push(seed.member_name+': discovery: '+safe(error).slice(0,250));}
+      }catch(error){failures++;discoveryFailures++;if(failureSamples.length<20)failureSamples.push(seed.member_name+': discovery: '+safe(error).slice(0,250));}
     }
-    const complete=plan.completesPass;
-    const result={version:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,selectionPass:SELECTION_PASS,targetChamber:TARGET_CHAMBER||null,capturesPerSeed:CAPTURES_PER_SEED,totalSeeds:deduped.length,batchSeeds:batch.length,offset,nextOffset,complete,capturesDiscovered,capturesSelected,fetched,inserted,reused,explicitBillStatements:statements,issuePositions,issuePositionExtractorVersion:ISSUE_POSITION_EXTRACTOR_VERSION,failures,failureSamples,policy:{availability:'exact Wayback capture timestamp',sameDayEligible:false,issuePositionsAreExactBillPositions:false,mechanicallyActionable:false,modelWeight:0,servingChanged:false,productionAction:'none'}};
+    const retryRequired=discoveryFailures>0;
+    const {nextOffset,complete}=finalizeLinearBatch(plan,retryRequired);
+    const result={version:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,selectionPass:SELECTION_PASS,targetChamber:TARGET_CHAMBER||null,capturesPerSeed:CAPTURES_PER_SEED,totalSeeds:deduped.length,batchSeeds:batch.length,offset,nextOffset,plannedNextOffset,complete,retryRequired,discoveryFailures,capturesDiscovered,capturesSelected,fetched,inserted,reused,explicitBillStatements:statements,issuePositions,issuePositionExtractorVersion:ISSUE_POSITION_EXTRACTOR_VERSION,failures,failureSamples,policy:{availability:'exact Wayback capture timestamp',sameDayEligible:false,issuePositionsAreExactBillPositions:false,mechanicallyActionable:false,modelWeight:0,servingChanged:false,productionAction:'none'}};
     await pool.query(`UPDATE ingestion_runs SET status='complete',finished_at=now(),source_documents=$2,metadata=metadata||$3::jsonb WHERE id=$1::uuid`,[runId,fetched,JSON.stringify(result)]);
     const stateFile=process.env.VOTEPREDICT_BACKFILL_STATE_FILE?.trim();
     if(stateFile){
@@ -228,7 +229,7 @@ async function main(){
         selectionPass:SELECTION_PASS,
         totalSeeds:deduped.length,
         batchSeeds:batch.length,
-        offset,nextOffset,failures,complete,
+        offset,nextOffset,plannedNextOffset,failures,discoveryFailures,retryRequired,complete,
       })+'\n',{encoding:'utf8',mode:0o600});
     }
     console.log(JSON.stringify({waybackPublicEvidenceBackfill:result},null,2));
