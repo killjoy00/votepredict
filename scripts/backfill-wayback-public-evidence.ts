@@ -1,5 +1,6 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
+import { planLinearBatch } from '../src/evidence/linear-batch-cursor.js';
 
 const DATABASE_CANDIDATES=['DATABASE_URL_UNPOOLED','POSTGRES_URL_NON_POOLING','DATABASE_URL','POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL='https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
@@ -131,9 +132,14 @@ async function main(){
          AND metadata->>'selectionPass'=$1
        ORDER BY finished_at DESC NULLS LAST LIMIT 1`, [SELECTION_PASS]);
     const batchSize=Math.max(1,Math.min(24,Number(process.env.VOTEPREDICT_WAYBACK_BATCH??DEFAULT_BATCH)||DEFAULT_BATCH));
-    const offset=deduped.length?((prior.rows[0]?.next_offset??0)%deduped.length):0;
-    const batch=deduped.length<=batchSize?deduped:[...deduped.slice(offset,offset+batchSize),...deduped.slice(0,Math.max(0,offset+batchSize-deduped.length))];
-    const nextOffset=deduped.length?(offset+batch.length)%deduped.length:0;
+    const plan=planLinearBatch({
+      total:deduped.length,
+      priorOffset:prior.rows[0]?.next_offset??0,
+      batchSize,
+    });
+    const offset=plan.offset;
+    const batch=deduped.slice(plan.offset,plan.end);
+    const nextOffset=plan.nextOffset;
     const run=await pool.query<{id:string}>(`
       INSERT INTO ingestion_runs(source_system,scope,status,metadata)
       VALUES('wayback-public-evidence',$1,'running',$2::jsonb) RETURNING id::text`,
@@ -212,8 +218,19 @@ async function main(){
         }
       }catch(error){failures++;if(failureSamples.length<20)failureSamples.push(seed.member_name+': discovery: '+safe(error).slice(0,250));}
     }
-    const result={version:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,selectionPass:SELECTION_PASS,targetChamber:TARGET_CHAMBER||null,capturesPerSeed:CAPTURES_PER_SEED,totalSeeds:deduped.length,batchSeeds:batch.length,offset,nextOffset,capturesDiscovered,capturesSelected,fetched,inserted,reused,explicitBillStatements:statements,issuePositions,issuePositionExtractorVersion:ISSUE_POSITION_EXTRACTOR_VERSION,failures,failureSamples,policy:{availability:'exact Wayback capture timestamp',sameDayEligible:false,issuePositionsAreExactBillPositions:false,mechanicallyActionable:false,modelWeight:0,servingChanged:false,productionAction:'none'}};
+    const complete=plan.completesPass;
+    const result={version:WAYBACK_PUBLIC_EVIDENCE_BACKFILL_VERSION,selectionPass:SELECTION_PASS,targetChamber:TARGET_CHAMBER||null,capturesPerSeed:CAPTURES_PER_SEED,totalSeeds:deduped.length,batchSeeds:batch.length,offset,nextOffset,complete,capturesDiscovered,capturesSelected,fetched,inserted,reused,explicitBillStatements:statements,issuePositions,issuePositionExtractorVersion:ISSUE_POSITION_EXTRACTOR_VERSION,failures,failureSamples,policy:{availability:'exact Wayback capture timestamp',sameDayEligible:false,issuePositionsAreExactBillPositions:false,mechanicallyActionable:false,modelWeight:0,servingChanged:false,productionAction:'none'}};
     await pool.query(`UPDATE ingestion_runs SET status='complete',finished_at=now(),source_documents=$2,metadata=metadata||$3::jsonb WHERE id=$1::uuid`,[runId,fetched,JSON.stringify(result)]);
+    const stateFile=process.env.VOTEPREDICT_BACKFILL_STATE_FILE?.trim();
+    if(stateFile){
+      writeFileSync(stateFile,JSON.stringify({
+        kind:'senate_issue_positions',
+        selectionPass:SELECTION_PASS,
+        totalSeeds:deduped.length,
+        batchSeeds:batch.length,
+        offset,nextOffset,failures,complete,
+      })+'\n',{encoding:'utf8',mode:0o600});
+    }
     console.log(JSON.stringify({waybackPublicEvidenceBackfill:result},null,2));
   }finally{await pool.end();}
 }

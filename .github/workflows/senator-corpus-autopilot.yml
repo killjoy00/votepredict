@@ -1,0 +1,306 @@
+name: Senator corpus autopilot
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      continue_only:
+        description: Skip the floor retry on chained continuation runs
+        required: false
+        default: false
+        type: boolean
+      remaining_cycles:
+        description: Safety cap for self-dispatched continuation runs
+        required: false
+        default: '12'
+        type: string
+
+permissions:
+  contents: read
+  actions: write
+  issues: write
+
+concurrency:
+  group: senator-corpus-autopilot
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.issue.number == 477 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        startsWith(github.event.comment.body, '[senator-corpus-autopilot]')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 125
+    steps:
+      - name: Wait for older corpus backfills to clear
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 24); do
+            active="$(
+              gh api "repos/$REPO/actions/runs?per_page=100" --jq '
+                [.workflow_runs[]
+                  | select(.status == "queued" or .status == "in_progress")
+                  | select(
+                      .path == ".github/workflows/senator-floor-rollcall-backfill.yml" or
+                      .path == ".github/workflows/senator-committee-minutes-backfill.yml" or
+                      .path == ".github/workflows/senator-issue-position-backfill.yml"
+                    )
+                  | {id,path,status}
+                ]'
+            )"
+            if [ "$active" = "[]" ]; then
+              exit 0
+            fi
+            echo "Existing corpus backfills are still active; waiting before autopilot starts."
+            sleep 300
+          done
+          echo "::error::Existing corpus backfills did not clear within the gate window."
+          exit 1
+
+  floor:
+    needs: gate
+    if: >-
+      needs.gate.result == 'success' &&
+      (
+        github.event_name != 'workflow_dispatch' ||
+        inputs.continue_only != true
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+      - name: Read production environment privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+      - name: Retry incomplete Senate journals only
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/run-production-senate-rollcall-backfill.ts --skip-existing
+      - name: Remove temporary credentials and logs
+        if: always()
+        shell: bash
+        run: |
+          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log"
+
+  committee:
+    needs: gate
+    if: needs.gate.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    outputs:
+      complete: ${{ steps.batches.outputs.complete }}
+      next_offset: ${{ steps.batches.outputs.next_offset }}
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_SENATE_COMMITTEE_BATCH: '30'
+      VOTEPREDICT_SENATE_COMMITTEE_OCR: '1'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+      - name: Ensure OCR tools for scanned Senate minutes
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v pdftoppm >/dev/null || ! command -v tesseract >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+          fi
+      - name: Read production environment privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+      - id: batches
+        name: Advance up to eight committee batches
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        shell: bash
+        run: |
+          set -euo pipefail
+          state="$RUNNER_TEMP/committee-state.json"
+          complete=false
+          next_offset=""
+          for batch in $(seq 1 8); do
+            rm -f "$state"
+            VOTEPREDICT_BACKFILL_STATE_FILE="$state" node --import tsx scripts/backfill-senate-committee-minutes.ts
+            test -s "$state"
+            failures="$(node -e "const fs=require('fs');const s=JSON.parse(fs.readFileSync(process.argv[1],'utf8'));process.stdout.write(String(s.failures));" "$state")"
+            complete="$(node -e "const fs=require('fs');const s=JSON.parse(fs.readFileSync(process.argv[1],'utf8'));process.stdout.write(String(s.complete));" "$state")"
+            next_offset="$(node -e "const fs=require('fs');const s=JSON.parse(fs.readFileSync(process.argv[1],'utf8'));process.stdout.write(String(s.nextOffset));" "$state")"
+            echo "Committee batch $batch: failures=$failures nextOffset=$next_offset complete=$complete"
+            if [ "$failures" != "0" ]; then
+              echo "::error::Committee batch failed closed; cursor was retained."
+              exit 1
+            fi
+            if [ "$complete" = "true" ]; then
+              break
+            fi
+          done
+          echo "complete=$complete" >> "$GITHUB_OUTPUT"
+          echo "next_offset=$next_offset" >> "$GITHUB_OUTPUT"
+      - name: Remove temporary credentials and logs
+        if: always()
+        shell: bash
+        run: |
+          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/committee-state.json"
+
+  issue_positions:
+    needs: gate
+    if: needs.gate.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    outputs:
+      complete: ${{ steps.batches.outputs.complete }}
+      next_offset: ${{ steps.batches.outputs.next_offset }}
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      VOTEPREDICT_WAYBACK_BATCH: '12'
+      VOTEPREDICT_WAYBACK_CAPTURES_PER_SEED: '40'
+      VOTEPREDICT_WAYBACK_TARGET_CHAMBER: senate
+      VOTEPREDICT_WAYBACK_SELECTION_PASS: senate-issue-positions-v2
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+      - name: Read production environment privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+      - id: batches
+        name: Advance up to four issue-position batches
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        shell: bash
+        run: |
+          set -euo pipefail
+          state="$RUNNER_TEMP/issue-state.json"
+          complete=false
+          next_offset=""
+          for batch in $(seq 1 4); do
+            rm -f "$state"
+            VOTEPREDICT_BACKFILL_STATE_FILE="$state" node --import tsx scripts/backfill-wayback-public-evidence.ts
+            test -s "$state"
+            complete="$(node -e "const fs=require('fs');const s=JSON.parse(fs.readFileSync(process.argv[1],'utf8'));process.stdout.write(String(s.complete));" "$state")"
+            next_offset="$(node -e "const fs=require('fs');const s=JSON.parse(fs.readFileSync(process.argv[1],'utf8'));process.stdout.write(String(s.nextOffset));" "$state")"
+            failures="$(node -e "const fs=require('fs');const s=JSON.parse(fs.readFileSync(process.argv[1],'utf8'));process.stdout.write(String(s.failures));" "$state")"
+            echo "Issue-position batch $batch: rejected/fail-closed captures=$failures nextOffset=$next_offset complete=$complete"
+            if [ "$complete" = "true" ]; then
+              break
+            fi
+          done
+          echo "complete=$complete" >> "$GITHUB_OUTPUT"
+          echo "next_offset=$next_offset" >> "$GITHUB_OUTPUT"
+      - name: Remove temporary credentials and logs
+        if: always()
+        shell: bash
+        run: |
+          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/issue-state.json"
+
+  final_audit:
+    needs: [floor, committee, issue_positions]
+    if: >-
+      always() &&
+      (needs.floor.result == 'success' || needs.floor.result == 'skipped') &&
+      needs.committee.result == 'success' &&
+      needs.issue_positions.result == 'success' &&
+      needs.committee.outputs.complete == 'true' &&
+      needs.issue_positions.outputs.complete == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+      - name: Read production environment privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+      - name: Run final read-only corpus audit
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/audit-senator-evidence-corpus.ts
+      - name: Post completion note to issue 477
+        shell: bash
+        run: |
+          gh issue comment 477 --repo "$GITHUB_REPOSITORY" --body "Senator corpus autopilot completed the committee and Senate-only issue-position passes, the floor retry gate succeeded, and the final read-only corpus audit ran successfully. Workflow: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+      - name: Remove temporary credentials and logs
+        if: always()
+        shell: bash
+        run: |
+          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log"
+
+  requeue:
+    needs: [floor, committee, issue_positions]
+    if: >-
+      always() &&
+      (needs.floor.result == 'success' || needs.floor.result == 'skipped') &&
+      needs.committee.result == 'success' &&
+      needs.issue_positions.result == 'success' &&
+      (
+        needs.committee.outputs.complete != 'true' ||
+        needs.issue_positions.outputs.complete != 'true'
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Dispatch the next bounded autopilot cycle
+        shell: bash
+        run: |
+          set -euo pipefail
+          remaining="${{ github.event_name == 'workflow_dispatch' && inputs.remaining_cycles || '12' }}"
+          if ! [[ "$remaining" =~ ^[0-9]+$ ]]; then
+            echo "::error::remaining_cycles must be numeric."
+            exit 1
+          fi
+          if [ "$remaining" -le 1 ]; then
+            echo "::error::Autopilot safety cap reached before all cursors completed."
+            exit 1
+          fi
+          next=$((remaining-1))
+          gh workflow run senator-corpus-autopilot.yml             --repo "$GITHUB_REPOSITORY"             --ref main             -f continue_only=true             -f remaining_cycles="$next"
+          {
+            echo "## Senator corpus autopilot"
+            echo
+            echo "Committee cursor: ${{ needs.committee.outputs.next_offset }}"
+            echo "Issue-position cursor: ${{ needs.issue_positions.outputs.next_offset }}"
+            echo "Queued continuation cycle with remaining safety budget: $next"
+          } >> "$GITHUB_STEP_SUMMARY"
