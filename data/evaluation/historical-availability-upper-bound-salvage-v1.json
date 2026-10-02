@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "historical-availability-upper-bound-salvage-v1",
+  "purpose": "One bounded post-closeout attempt to recover leakage-safe historical usability when exact first-publication time is missing but a later independent source can prove the exact row/report was public by a specific date.",
+  "scope": {
+    "candidateFinance": true,
+    "independentExpenditures": true,
+    "lobbying": true,
+    "organizationPublications": true,
+    "localTradeNews": true,
+    "memberPublications": true
+  },
+  "availabilityRule": {
+    "exactFirstPublicationRequired": false,
+    "conservativeAvailableByAllowed": true,
+    "usableOnlyWhenAvailableByStrictlyBeforeCutoff": true,
+    "sameDayExcluded": true,
+    "upperBoundMustProveExactRowOrContainingReport": true,
+    "acceptableProofs": [
+      "exact Wayback capture of the official regulator report/viewer page",
+      "official regulator record proving the exact containing report was filed or published by a specific date",
+      "immutable official artifact demonstrably containing the exact row"
+    ],
+    "notProofByItself": [
+      "transaction date",
+      "activity date",
+      "reporting-period end",
+      "statutory due date",
+      "election date",
+      "assumed timely filer compliance"
+    ],
+    "metadataMustDistinguishUpperBoundFromExactPublication": true
+  },
+  "productionPolicy": {
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "servingChanged": false,
+    "productionAction": "none"
+  },
+  "stopRule": "After one bounded proof sweep and one expanded public-source rotation, freeze remaining historical gaps unless a concrete new source or correctness defect appears."
+}

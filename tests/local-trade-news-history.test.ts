@@ -27,7 +27,7 @@ function capture(original: string, timestamp: string): WaybackCapture {
 
 test('local/trade news seeds are unique HTTPS prefixes bounded to the research window', () => {
   validateLocalTradeNewsSeeds();
-  assert.equal(LOCAL_TRADE_NEWS_SEEDS.length, 14);
+  assert.equal(LOCAL_TRADE_NEWS_SEEDS.length, 18);
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.url.startsWith('https://')));
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.prefix));
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.from === '20210101' && seed.to === '20261231'));
@@ -39,11 +39,12 @@ test('local/trade news seeds are unique HTTPS prefixes bounded to the research w
     ],
   );
   assert.deepEqual(
-    LOCAL_TRADE_NEWS_SEEDS.slice(-3).map(seed => [seed.id, seed.publisherKind]),
+    LOCAL_TRADE_NEWS_SEEDS.slice(-4).map(seed => [seed.id, seed.publisherKind]),
     [
-      ['mankato-free-press-local-news-archive', 'local_news'],
-      ['post-bulletin-local-news-archive', 'local_news'],
-      ['agweek-policy-archive', 'trade_news'],
+      ['brainerd-dispatch-minnesota-archive', 'local_news'],
+      ['bring-me-the-news-minnesota-archive', 'local_news'],
+      ['bemidji-pioneer-minnesota-archive', 'local_news'],
+      ['west-central-tribune-minnesota-archive', 'local_news'],
     ],
   );
 });

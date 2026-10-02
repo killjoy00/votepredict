@@ -141,6 +141,42 @@ export const LOCAL_TRADE_NEWS_SEEDS: readonly LocalTradeNewsSeed[] = [
     to: '20261231',
     prefix: true,
   },
+  {
+    id: 'brainerd-dispatch-minnesota-archive',
+    publisher: 'Brainerd Dispatch',
+    publisherKind: 'local_news',
+    url: 'https://www.brainerddispatch.com/news/minnesota/',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+  },
+  {
+    id: 'bring-me-the-news-minnesota-archive',
+    publisher: 'Bring Me The News',
+    publisherKind: 'local_news',
+    url: 'https://bringmethenews.com/minnesota-news/',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+  },
+  {
+    id: 'bemidji-pioneer-minnesota-archive',
+    publisher: 'Bemidji Pioneer',
+    publisherKind: 'local_news',
+    url: 'https://www.bemidjipioneer.com/news/minnesota/',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+  },
+  {
+    id: 'west-central-tribune-minnesota-archive',
+    publisher: 'West Central Tribune',
+    publisherKind: 'local_news',
+    url: 'https://www.wctrib.com/news/minnesota/',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+  },
 ] as const;
 
 export interface LocalTradeNewsBatchSelection {

@@ -5,7 +5,8 @@ export type OrganizationPublicationKind =
   | 'legislative_voting_record'
   | 'legislative_scorecard_index'
   | 'legislative_recap'
-  | 'legislative_advocacy';
+  | 'legislative_advocacy'
+  | 'candidate_endorsements';
 
 export type OrganizationPublicationSector =
   | 'labor'
@@ -169,6 +170,78 @@ export const ORGANIZATION_PUBLICATION_SEEDS: readonly OrganizationPublicationSee
     sector: 'business',
     publicationKind: 'legislative_scorecard_index',
     url: 'https://www.mnabc.com/Government-Advocacy/Legislative-Scorecard',
+    from: '20210101',
+    to: '20261231',
+  },
+  {
+    id: 'lea-mn-annual-legislative-reports',
+    organization: 'Legislative Evaluation Assembly of Minnesota',
+    sector: 'advocacy',
+    publicationKind: 'legislative_voting_record',
+    url: 'https://lea-mn.org/lea-annual-reports-on-the-legislature/',
+    from: '20210101',
+    to: '20261231',
+  },
+  {
+    id: 'nfib-mn-2022-legislative-endorsements',
+    organization: 'NFIB Minnesota PAC',
+    sector: 'business',
+    publicationKind: 'candidate_endorsements',
+    url: 'https://www.nfib.com/news/news/2022-nfib-mn-pac-endorsements-for-the-minnesota-legislature/',
+    from: '20220101',
+    to: '20261231',
+  },
+  {
+    id: 'mn-now-pac-2022-candidates',
+    organization: 'Minnesota NOW PAC',
+    sector: 'advocacy',
+    publicationKind: 'candidate_endorsements',
+    url: 'https://mnnow.org/pac/mn-now-pac-2022-candidates/',
+    from: '20220101',
+    to: '20261231',
+  },
+  {
+    id: 'mn-gun-owners-2022-legislative-endorsements',
+    organization: 'Minnesota Gun Owners Caucus',
+    sector: 'advocacy',
+    publicationKind: 'candidate_endorsements',
+    url: 'https://gunowners.mn/elections/2022-general-election-legislature/',
+    from: '20220101',
+    to: '20261231',
+  },
+  {
+    id: 'afscme-65-2022-endorsements',
+    organization: 'AFSCME Council 65',
+    sector: 'labor',
+    publicationKind: 'candidate_endorsements',
+    url: 'https://afscme65.org/news/afscme-65-endorsements',
+    from: '20220101',
+    to: '20261231',
+  },
+  {
+    id: 'mn-afl-cio-2022-political-endorsements',
+    organization: 'Minnesota AFL-CIO',
+    sector: 'labor',
+    publicationKind: 'candidate_endorsements',
+    url: 'https://www.mnaflcio.org/updates/2022-political-endorsements',
+    from: '20220101',
+    to: '20261231',
+  },
+  {
+    id: 'mccl-legislative-accountability-ratings',
+    organization: 'Minnesota Citizens Concerned for Life',
+    sector: 'advocacy',
+    publicationKind: 'legislative_voting_record',
+    url: 'https://www.mccl.org/legislative-accountability-ratings',
+    from: '20210101',
+    to: '20261231',
+  },
+  {
+    id: 'takeaction-mn-endorsements',
+    organization: 'TakeAction Minnesota',
+    sector: 'advocacy',
+    publicationKind: 'candidate_endorsements',
+    url: 'https://takeactionminnesota.org/endorsements',
     from: '20210101',
     to: '20261231',
   },

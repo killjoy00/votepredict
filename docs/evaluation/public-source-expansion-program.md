@@ -17,6 +17,12 @@ The expansion does not change serving probabilities. All new evidence defaults t
 
 For date-granular lifecycle replay, evidence must satisfy `available_date < cutoff_date`. Same-day material is excluded unless the historical source proves ordering precisely enough for the relevant model.
 
+### Conservative availability upper bounds
+
+The historical contract does **not** require recovery of the exact first publication instant. A later independent observation may establish a conservative **available-by** bound when it proves that the exact source/report/row was already public by that date. In that case, replay may use the item only for cutoffs strictly after the proven bound. This intentionally delays evidence relative to its unknown true publication time and therefore remains leakage-safe.
+
+Examples of acceptable upper-bound proof include an exact Wayback capture of the regulator report/viewer page, an official regulator record showing the exact report was filed/published by a specific date, or another immutable official artifact that demonstrably contains the exact row. Reporting-period end dates, transaction/activity dates, statutory filing deadlines, election dates, and assumptions that a filer complied on time do **not** establish an available-by bound by themselves. Metadata should distinguish an exact/derived publication date from a conservative upper bound rather than silently presenting the bound as the original publication timestamp.
+
 ## Eight families
 
 1. **Wayback campaign sites.** Backfill SOS-filed campaign home/issues/news/about pages using CDX capture timestamps and preserve original URL, archive URL, capture time, digest, fetched content hash, and supersession.
