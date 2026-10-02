@@ -269,7 +269,7 @@ async function main():Promise<void>{
               sourceQuality:'official',relevance:'medium',freshness:freshness(doc.year),
               extractionMethod:'deterministic-senate-committee-count-only',
               extractionVersion:MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,
-              confidence:1,
+              confidence:pdf.extractionMethod==='ocr_tesseract'?0.9:1,
               metadata:{
                 contextType:'senate_committee_vote',subtype:'count_only_roll_call',
                 committeeName:doc.committeeName,meetingDate:doc.meetingDate,
@@ -342,7 +342,7 @@ async function main():Promise<void>{
               ON CONFLICT(vote_event_id,normalized_member_name)
               DO UPDATE SET membership_id=EXCLUDED.membership_id,choice=EXCLUDED.choice,metadata=member_votes.metadata||EXCLUDED.metadata`,[
               event.rows[0].id,vote.membershipId,vote.sourceName,vote.normalizedName,vote.choice,ordinal,
-              JSON.stringify({committeeVote:true,reconciliationReason:vote.reason}),
+              JSON.stringify({committeeVote:true,reconciliationReason:vote.reason,textExtractionMethod:pdf.extractionMethod}),
             ]);
           }
         }
