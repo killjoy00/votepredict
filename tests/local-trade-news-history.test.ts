@@ -26,15 +26,15 @@ function capture(original: string, timestamp: string): WaybackCapture {
 
 test('local/trade news seeds are unique HTTPS prefixes bounded to the research window', () => {
   validateLocalTradeNewsSeeds();
-  assert.equal(LOCAL_TRADE_NEWS_SEEDS.length, 11);
+  assert.equal(LOCAL_TRADE_NEWS_SEEDS.length, 13);
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.url.startsWith('https://')));
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.prefix));
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.from === '20210101' && seed.to === '20261231'));
   assert.deepEqual(
     LOCAL_TRADE_NEWS_SEEDS.slice(0, 2).map(seed => [seed.id, seed.publisherKind]),
     [
-      ['star-tribune-minnesota-politics-archive', 'local_news'],
-      ['axios-twin-cities-archive', 'local_news'],
+      ['twin-cities-business-archive', 'trade_news'],
+      ['brownfield-ag-news-archive', 'trade_news'],
     ],
   );
 });
