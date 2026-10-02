@@ -117,6 +117,55 @@ test('parses legacy CFB committee registration header from historical reports', 
   assert.equal(proof.window.availableOn, '2022-11-01');
 });
 
+test('parses legacy CFB candidate header when PDF text places registration before its label', () => {
+  const reference: CfbReportViewerReference = {
+    filingYear: 2022,
+    reportName: '2021 Year-End Report',
+    year: '21',
+    type: 'pcc',
+    period: 'YE',
+    se: '0',
+    registrationNumber: '18443',
+    amendment: 0,
+  };
+  const text = [
+    'Report of Receipts and Expenditures for Principal Campaign Committee',
+    'Period Covered: 1/1/2021 through 12/31/2021',
+    'Erin Murphy for Senate 18443 Murphy, Erin Senate District: 64',
+    'Manning, Schyler Committee Information: St Paul MN 55116',
+    'Registration number: Committee name: Candidate name: Office and District:',
+    'Received by the Board January 28, 2022',
+  ].join(' ');
+  const proof = parseCfbReportPdfAvailability(reference, text);
+  assert.ok(proof);
+  assert.equal(proof.filedOn, '2022-01-28');
+  assert.equal(proof.window.coverageStartOn, '2021-01-01');
+  assert.equal(proof.window.coverageEndOn, '2021-12-31');
+  assert.equal(proof.window.availableOn, '2022-01-29');
+});
+
+test('legacy CFB candidate header fallback requires the exact viewer registration near the label', () => {
+  const reference: CfbReportViewerReference = {
+    filingYear: 2022,
+    reportName: '2021 Year-End Report',
+    year: '21',
+    type: 'pcc',
+    period: 'YE',
+    se: '0',
+    registrationNumber: '18443',
+    amendment: 0,
+  };
+  const text = [
+    'Report of Receipts and Expenditures for Principal Campaign Committee',
+    'Period Covered: 1/1/2021 through 12/31/2021',
+    'Different Candidate for Senate 99999 Candidate, Different Senate District: 64',
+    'Committee Information: St Paul MN 55116',
+    'Registration number: Committee name: Candidate name: Office and District:',
+    'Received by the Board January 28, 2022',
+  ].join(' ');
+  assert.equal(parseCfbReportPdfAvailability(reference, text), null);
+});
+
 test('legacy CFB committee registration fallback must match the report reference', () => {
   const reference: CfbReportViewerReference = {
     filingYear: 2022,
