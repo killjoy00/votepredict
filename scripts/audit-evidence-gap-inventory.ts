@@ -200,6 +200,48 @@ async function main() {
       ORDER BY s.slug,c.slug
     `);
 
+    const financeTimingDebt = await pool.query(`
+      WITH identities AS (
+        SELECT
+          ei.metadata->>'rowKey' AS row_key,
+          ei.metadata->>'filerRegistrationNumber' AS registration_number,
+          max(ei.metadata->>'candidateName') AS candidate_name,
+          s.slug AS session_slug,
+          c.slug AS chamber_slug,
+          bool_or(ei.metadata->>'asOfEligible'='true' AND ei.published_at IS NOT NULL) AS eligible
+        FROM evidence_items ei
+        JOIN source_documents sd ON sd.id=ei.source_document_id
+        JOIN memberships m ON m.id=ei.membership_id
+        JOIN legislative_sessions s ON s.id=m.session_id
+        JOIN chambers c ON c.id=m.chamber_id
+        WHERE sd.source_kind IN (
+          'campaign_finance_candidate_contribution_bulk',
+          'campaign_finance_candidate_expenditure_bulk'
+        )
+          AND ei.metadata->>'rowKey' IS NOT NULL
+          AND ei.metadata->>'filerRegistrationNumber' IS NOT NULL
+          AND s.slug IN ('2021-2022','2023-2024','2025-2026')
+        GROUP BY
+          ei.metadata->>'rowKey',
+          ei.metadata->>'filerRegistrationNumber',
+          s.slug,
+          c.slug
+      )
+      SELECT
+        session_slug AS "session",
+        chamber_slug AS "chamber",
+        registration_number AS "registrationNumber",
+        max(candidate_name) AS "candidateName",
+        count(*)::int AS "persistedRowKeys",
+        count(*) FILTER (WHERE eligible)::int AS "eligibleRowKeys",
+        count(*) FILTER (WHERE NOT eligible)::int AS "timingUnprovenRowKeys"
+      FROM identities
+      GROUP BY session_slug,chamber_slug,registration_number
+      HAVING count(*) FILTER (WHERE NOT eligible)>0
+      ORDER BY "timingUnprovenRowKeys" DESC,session_slug,chamber_slug,registration_number
+      LIMIT 60
+    `);
+
     const financeCompletion = await pool.query(`
       SELECT
         count(*)::int AS "checkpointRows",
@@ -231,6 +273,39 @@ async function main() {
       JOIN source_documents sd ON sd.id=ei.source_document_id
       WHERE sd.source_kind='campaign_finance_independent_expenditure_bulk'
         AND ei.metadata->>'subtype'='independent_expenditure_record'
+    `);
+
+    const independentExpenditureTimingDebt = await pool.query(`
+      WITH identities AS (
+        SELECT
+          ei.metadata->>'rowKey' AS row_key,
+          ei.metadata->>'spenderRegistrationNumber' AS spender_registration_number,
+          max(ei.metadata->>'spender') AS spender,
+          max(ei.metadata->>'year') AS year,
+          bool_or(ei.metadata->>'asOfEligible'='true' AND ei.published_at IS NOT NULL) AS eligible,
+          bool_or(ei.membership_id IS NOT NULL) AS membership_resolved
+        FROM evidence_items ei
+        JOIN source_documents sd ON sd.id=ei.source_document_id
+        WHERE sd.source_kind='campaign_finance_independent_expenditure_bulk'
+          AND ei.metadata->>'subtype'='independent_expenditure_record'
+          AND ei.metadata->>'rowKey' IS NOT NULL
+        GROUP BY
+          ei.metadata->>'rowKey',
+          ei.metadata->>'spenderRegistrationNumber'
+      )
+      SELECT
+        coalesce(spender_registration_number,'unresolved') AS "spenderRegistrationNumber",
+        max(spender) AS "spender",
+        max(year) AS "latestYear",
+        count(*)::int AS "persistedRowKeys",
+        count(*) FILTER (WHERE eligible)::int AS "eligibleRowKeys",
+        count(*) FILTER (WHERE NOT eligible)::int AS "timingUnprovenRowKeys",
+        count(*) FILTER (WHERE NOT membership_resolved)::int AS "membershipUnresolvedRowKeys"
+      FROM identities
+      GROUP BY spender_registration_number
+      HAVING count(*) FILTER (WHERE NOT eligible)>0
+      ORDER BY "timingUnprovenRowKeys" DESC,"membershipUnresolvedRowKeys" DESC
+      LIMIT 60
     `);
 
     const lobbying = await pool.query(`
@@ -538,11 +613,13 @@ async function main() {
           },
           D_candidateFinance: {
             bySessionChamber: finance.rows,
+            topTimingDebtGroups: financeTimingDebt.rows,
             completionAuthority: financeCompletion.rows[0],
             gapClass: 'collected_with_partial_historical_timing_and_identity_gaps',
           },
           E_independentExpenditures: {
             observed: independentExpenditures.rows[0],
+            topTimingDebtGroups: independentExpenditureTimingDebt.rows,
             gapClass: 'collected_with_partial_historical_disclosure_proof',
           },
           F_houseAttachmentBodies: {
