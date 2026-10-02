@@ -32,7 +32,7 @@ async function main(){
         const acquired=await acquireCfbPcfHistoricalReportProofs({
           registrationNumber,
           segmentEndYear,
-          maxReports:16,
+          maxReports:24,
         });
         const reports=acquired.reports.map(report=>({proof:report.proof,text:report.text}));
         let matched=0;
