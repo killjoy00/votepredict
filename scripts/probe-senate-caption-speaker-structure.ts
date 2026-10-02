@@ -53,7 +53,7 @@ async function main(){
   for(const pageUrl of pages){
     const pageResponse=await fetch(pageUrl,{
       headers:{accept:'text/html,application/xhtml+xml','user-agent':'VotePredict/2.0 senator-caption-structure-probe'},
-      signal:AbortSignal.timeout(30_000),
+      signal:AbortSignal.timeout(90_000),
     });
     if(!pageResponse.ok)throw new Error('LRL media page returned HTTP '+pageResponse.status);
     const pageHtml=await pageResponse.text();
@@ -62,7 +62,7 @@ async function main(){
     for(const request of requests.slice(0,3)){
       const response=await fetch(request.endpointUrl,{
         headers:{accept:'text/html,application/xhtml+xml',referer:pageUrl,'user-agent':'VotePredict/2.0 senator-caption-structure-probe'},
-        signal:AbortSignal.timeout(30_000),
+        signal:AbortSignal.timeout(90_000),
       });
       const html=await response.text();
       if(!response.ok||html.length===0)continue;
