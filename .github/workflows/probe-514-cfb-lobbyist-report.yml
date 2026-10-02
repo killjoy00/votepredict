@@ -1,4 +1,4 @@
-name: Probe #514 CFB lobbyist report contract
+name: "Probe #514 CFB lobbyist report contract"
 
 on:
   issue_comment:

@@ -1,4 +1,4 @@
-name: Probe #514 Senate floor-log speaker cues
+name: "Probe #514 Senate floor-log speaker cues"
 
 on:
   issue_comment:

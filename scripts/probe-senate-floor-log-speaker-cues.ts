@@ -41,7 +41,10 @@ function floorLogUrls(html:string,year:number):string[]{
   for(const match of html.matchAll(/href\s*=\s*["']([^"']+\.pdf[^"']*)["']/gi)){
     let url:URL;
     try{url=new URL(decodeHtml(match[1]),'https://www.lrl.mn.gov/history/floorlogs');}catch{continue;}
-    if(!PDF_HOSTS.has(url.hostname.toLowerCase()))continue;
+    const host=url.hostname.toLowerCase();
+    if(!PDF_HOSTS.has(host))continue;
+    if(url.protocol==='http:')url.protocol='https:';
+    if(url.protocol!=='https:')continue;
     if(!new RegExp('/floorlogs/senate/'+year+'/\\d{8}slog\\.pdf$','i').test(url.pathname))continue;
     urls.add(url.toString());
   }
