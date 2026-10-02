@@ -330,7 +330,11 @@ async function main() {
         count(*) FILTER (
           WHERE coalesce(ei.metadata->>'availabilityProof','') <> ''
              OR coalesce(ei.metadata->>'proofKind','') <> ''
-        )::int AS "itemsWithAvailabilityProof"
+        )::int AS "itemsWithAvailabilityProof",
+        count(ei.id) FILTER (
+          WHERE ei.metadata->>'asOfEligible' IS DISTINCT FROM 'true'
+             OR ei.published_at IS NULL
+        )::int AS "itemsWithoutProvenHistoricalTiming"
       FROM source_documents sd
       LEFT JOIN evidence_items ei ON ei.source_document_id=sd.id
       WHERE sd.source_kind ILIKE '%lobby%'
@@ -639,7 +643,9 @@ async function main() {
           },
           C_lobbyingPublicationTiming: {
             observed: lobbying.rows[0],
-            gapClass: 'source_structure_known_historical_publication_timing_unproven',
+            gapClass: Number(lobbying.rows[0]?.explicitlyEligibleItems ?? 0) > 0
+              ? 'partial_historical_timing_proven_remaining_rows_unproven'
+              : 'source_structure_known_historical_publication_timing_unproven',
           },
           D_candidateFinance: {
             bySessionChamber: finance.rows,
