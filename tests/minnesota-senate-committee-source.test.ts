@@ -10,21 +10,20 @@ test('Senate year-page parser extracts direct official minute PDFs by committee 
       '<h2>Agriculture, Broadband and Rural Development (Senate)</h2>',
       '<a href="/archive/minutes/senate/2024/agr/20240219/Agr_20240219_Agenda.pdf">Agenda</a>',
       '<a href="/archive/minutes/senate/2024/agr/20240219/Agr_20240219_Minutes.pdf">Minutes</a>',
-      '<h2>Finance (Senate)</h2>',
-      '<a href="/archive/minutes/senate/2024/fin/20240229/Fin_20240229_Minutes.pdf">Minutes</a>',
-      '<a href="/archive/minutes/senate/2024/fin/20240306/Fin_20240306_Minutes.pdf">Minutes</a>',
+      '<div class="committee-title"><strong>Finance (Senate)</strong></div>',
+      '<a href="/archive/minutes/senate/2024/fin/20240229/Fin_20240229_Minutes.pdf"><img alt="Open document in new tab"></a> Minutes',
+      '<a href="/archive/minutes/senate/2024/fin/20240306/Fin_20240306_Minutes.pdf"><span>Open document in new tab</span></a> Minutes',
       '<h2>House Finance</h2>',
       '<a href="/archive/minutes/senate/2024/fin/20240401/Should_Not_Use.pdf">Minutes</a>',
-      '<h2>Taxes (Senate)</h2>',
-      '<a href="/archive/minutes/senate/2023/tax/20230306/Tax_20230306_Minutes.pdf">Minutes</a>',
-      '<a href="https://example.com/archive/minutes/senate/2024/tax/20240409/Tax_20240409_Minutes.pdf">Minutes</a>',
+      '<div>Taxes (Senate)</div>',
+      '<a href="/archive/minutes/senate/2023/tax/20230306/Tax_20230306_Minutes.pdf">Open document</a> Minutes',
+      '<a href="https://example.com/archive/minutes/senate/2024/tax/20240409/Tax_20240409_Minutes.pdf">Open document</a> Minutes',
     ].join('\n'),
   });
 
   assert.deepEqual(parsed.committeeNames,[
     'Agriculture, Broadband and Rural Development',
     'Finance',
-    'Taxes',
   ]);
   assert.deepEqual(parsed.documents.map(row=>[row.meetingDate,row.committeeName,row.url]),[
     ['2024-02-19','Agriculture, Broadband and Rural Development','https://www.lrl.mn.gov/archive/minutes/senate/2024/agr/20240219/Agr_20240219_Minutes.pdf'],

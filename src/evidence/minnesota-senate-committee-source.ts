@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 
 export const MN_SENATE_COMMITTEE_SOURCE_VERSION =
-  'mn-senate-committee-source-v2' as const;
+  'mn-senate-committee-source-v3' as const;
 export const MN_LRL_MINUTES_BASE = 'https://www.lrl.mn.gov';
 
 export interface SenateCommitteePage {
@@ -40,11 +40,15 @@ function stripTags(value:string):string{
   return decodeHtml(value.replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').trim();
 }
 
-function anchors(html:string,baseUrl:string):Array<{href:string;text:string}>{
-  const rows:Array<{href:string;text:string}>=[];
+function anchors(html:string,baseUrl:string):Array<{href:string;text:string;index:number}>{
+  const rows:Array<{href:string;text:string;index:number}>=[];
   for(const match of html.matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)){
     try{
-      rows.push({href:new URL(decodeHtml(match[1]),baseUrl).toString(),text:stripTags(match[2])});
+      rows.push({
+        href:new URL(decodeHtml(match[1]),baseUrl).toString(),
+        text:stripTags(match[2]),
+        index:match.index??0,
+      });
     }catch{
       // Invalid source hrefs are ignored; official-page coverage accounting records the page itself.
     }
@@ -61,41 +65,46 @@ async function fetchHtml(url:string,fetchImpl:typeof fetch):Promise<string>{
   return response.text();
 }
 
+function nearestSenateCommitteeName(html:string,index:number):string|undefined{
+  const before=html.slice(Math.max(0,index-16_000),index);
+  const candidates=[...before.matchAll(/>([^<>]{1,240}\(Senate\))\s*</gi)];
+  if(candidates.length===0)return undefined;
+  const heading=decodeHtml(candidates[candidates.length-1][1]).replace(/\s+/g,' ').trim();
+  const committeeName=heading.replace(/\s*\(Senate\)\s*$/i,'').trim();
+  return committeeName||undefined;
+}
+
 export function parseSenateMinutesYearHtml(input:{
   year:number;
   html:string;
   sourceUrl:string;
 }):{committeeNames:string[];documents:SenateCommitteeMinuteDocument[]}{
-  const sections=[...input.html.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>([\s\S]*?)(?=<h2\b|$)/gi)];
-  const committeeNames:string[]=[];
+  const committeeNames=new Set<string>();
   const documents:SenateCommitteeMinuteDocument[]=[];
   const seen=new Set<string>();
 
-  for(const section of sections){
-    const heading=stripTags(section[1]);
-    const committeeName=heading.replace(/\s*\(Senate\)\s*$/i,'').trim();
-    if(!/\(Senate\)\s*$/i.test(heading)||!committeeName)continue;
-    committeeNames.push(committeeName);
+  for(const anchor of anchors(input.html,input.sourceUrl)){
+    const url=new URL(anchor.href);
+    if(url.hostname!=='www.lrl.mn.gov'&&url.hostname!=='lrl.mn.gov')continue;
+    if(!new RegExp(`^/archive/minutes/senate/${input.year}/`,'i').test(url.pathname))continue;
+    if(!/minutes[^/]*\.pdf$/i.test(url.pathname))continue;
 
-    for(const anchor of anchors(section[2],input.sourceUrl)){
-      if(!/^minutes$/i.test(anchor.text.trim()))continue;
-      const url=new URL(anchor.href);
-      if(url.hostname!=='www.lrl.mn.gov'&&url.hostname!=='lrl.mn.gov')continue;
-      if(!new RegExp(`^/archive/minutes/senate/${input.year}/`,'i').test(url.pathname))continue;
-      if(!/\.pdf$/i.test(url.pathname))continue;
-      const dateMatch=url.pathname.match(/\/(20\d{6})\//);
-      if(!dateMatch)continue;
-      const raw=dateMatch[1];
-      const meetingDate=`${raw.slice(0,4)}-${raw.slice(4,6)}-${raw.slice(6,8)}`;
-      const key=url.toString();
-      if(seen.has(key))continue;
-      seen.add(key);
-      documents.push({year:input.year,committeeName,meetingDate,url:key});
-    }
+    const dateMatch=url.pathname.match(/\/(20\d{6})\//);
+    if(!dateMatch)continue;
+    const committeeName=nearestSenateCommitteeName(input.html,anchor.index);
+    if(!committeeName)continue;
+
+    const raw=dateMatch[1];
+    const meetingDate=`${raw.slice(0,4)}-${raw.slice(4,6)}-${raw.slice(6,8)}`;
+    const key=url.toString();
+    if(seen.has(key))continue;
+    seen.add(key);
+    committeeNames.add(committeeName);
+    documents.push({year:input.year,committeeName,meetingDate,url:key});
   }
 
   return {
-    committeeNames:[...new Set(committeeNames)].sort((a,b)=>a.localeCompare(b)),
+    committeeNames:[...committeeNames].sort((a,b)=>a.localeCompare(b)),
     documents:documents.sort((a,b)=>
       a.meetingDate.localeCompare(b.meetingDate)
       || a.committeeName.localeCompare(b.committeeName)
