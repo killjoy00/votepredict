@@ -8,7 +8,7 @@ const DATABASE_CANDIDATES=[
 ] as const;
 const DATABASE_BRIDGE_URL='https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const SOURCE_SYSTEM='mn_senate_committee_minutes';
-const SELECTION_PASS='senator-corpus-v1';
+const SELECTION_PASS='senator-corpus-v2';
 const BATCH_SIZE=Math.max(1,Math.min(60,Number(process.env.VOTEPREDICT_SENATE_COMMITTEE_BATCH??30)||30));
 let secretValues:string[]=[];
 
@@ -142,7 +142,7 @@ async function main():Promise<void>{
     const batch=discovered.length<=BATCH_SIZE
       ? discovered
       : [...discovered.slice(offset,offset+BATCH_SIZE),...discovered.slice(0,Math.max(0,offset+BATCH_SIZE-discovered.length))];
-    const nextOffset=discovered.length?(offset+batch.length)%discovered.length:0;
+    const plannedNextOffset=discovered.length?(offset+batch.length)%discovered.length:0;
 
     const run=await pool.query<{id:string}>(`
       INSERT INTO ingestion_runs(source_system,scope,status,metadata)
@@ -150,7 +150,7 @@ async function main():Promise<void>{
       SOURCE_SYSTEM,`batch:${BATCH_SIZE}`,JSON.stringify({
         selectionPass:SELECTION_PASS,parserVersion:MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,
         sourceVersion:MN_SENATE_COMMITTEE_SOURCE_VERSION,totalDocuments:discovered.length,
-        batchDocuments:batch.length,offset,nextOffset,discoveryByYear,
+        batchDocuments:batch.length,offset,nextOffset:offset,plannedNextOffset,discoveryByYear,
         electronicCoverage:{availableYears:[2022,2023,2024,2025,2026],unavailableYears:[2021]},
       }),
     ]);
@@ -352,10 +352,11 @@ async function main():Promise<void>{
       }
     }
 
+    const nextOffset=failures>0?offset:plannedNextOffset;
     const result={
       selectionPass:SELECTION_PASS,parserVersion:MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,
       sourceVersion:MN_SENATE_COMMITTEE_SOURCE_VERSION,totalDocuments:discovered.length,
-      batchDocuments:batch.length,offset,nextOffset,discoveryByYear,documentsFetched,ocrDocuments,
+      batchDocuments:batch.length,offset,nextOffset,plannedNextOffset,retryRequired:failures>0,discoveryByYear,documentsFetched,ocrDocuments,
       observations,namedObservations,countOnlyObservations,memberVotes,inserted,reused,
       unresolvedMembers,unresolvedBills,failures,failureSamples,unresolvedMemberSamples,
       sourceBoundary:{
