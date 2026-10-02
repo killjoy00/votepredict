@@ -1,0 +1,32 @@
+name: Probe #514 Senate floor-log speaker cues
+
+on:
+  issue_comment:
+    types: [created, edited]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.event_name == 'issue_comment' && (github.event.issue.number != 514 || github.event.comment.user.login != 'killjoy00' || !startsWith(github.event.comment.body, '[senate-floor-log-speaker-cue-probe]')) && format('probe-514-senate-floor-log-speaker-cues-skip-{0}', github.run_id) || 'probe-514-senate-floor-log-speaker-cues' }}
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    if: >-
+      github.event_name != 'issue_comment' ||
+      (
+        github.event.issue.number == 514 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        startsWith(github.event.comment.body, '[senate-floor-log-speaker-cue-probe]')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+      - name: Probe official Senate floor logs for direct speaker cues
+        run: node --import tsx scripts/probe-senate-floor-log-speaker-cues.ts
