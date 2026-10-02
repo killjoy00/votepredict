@@ -10,7 +10,7 @@ const DATABASE_CANDIDATES = [
 ] as const;
 const DATABASE_BRIDGE_URL =
   'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
-const MAX_REPORTS_PER_GROUP = 16;
+const MAX_REPORTS_PER_GROUP = 24;
 let secrets: string[] = [];
 
 function mask(value: string) {
