@@ -114,7 +114,88 @@ export const LOCAL_TRADE_NEWS_SEEDS: readonly LocalTradeNewsSeed[] = [
     to: '20261231',
     prefix: true,
   },
+  {
+    id: 'mankato-free-press-local-news-archive',
+    publisher: 'Mankato Free Press',
+    publisherKind: 'local_news',
+    url: 'https://www.mankatofreepress.com/news/local_news/',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+  },
+  {
+    id: 'post-bulletin-local-news-archive',
+    publisher: 'Post Bulletin',
+    publisherKind: 'local_news',
+    url: 'https://www.postbulletin.com/news/local/',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+  },
+  {
+    id: 'agweek-policy-archive',
+    publisher: 'Agweek',
+    publisherKind: 'trade_news',
+    url: 'https://www.agweek.com/news/policy/',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+  },
 ] as const;
+
+export interface LocalTradeNewsBatchSelection {
+  batch: LocalTradeNewsSeed[];
+  offset: number;
+  nextOffset: number;
+  targeted: boolean;
+  requestedSeedIds: string[];
+}
+
+export function selectLocalTradeNewsBatch({
+  priorNextOffset,
+  batchSize,
+  requestedSeedIds = [],
+  seeds = LOCAL_TRADE_NEWS_SEEDS,
+}: {
+  priorNextOffset: number;
+  batchSize: number;
+  requestedSeedIds?: readonly string[];
+  seeds?: readonly LocalTradeNewsSeed[];
+}): LocalTradeNewsBatchSelection {
+  validateLocalTradeNewsSeeds(seeds);
+  if (!Number.isInteger(batchSize) || batchSize < 1 || batchSize > 2) {
+    throw new Error(`Local/trade news batch size must be an integer from 1 through 2: ${batchSize}`);
+  }
+  const offset = seeds.length
+    ? (((priorNextOffset % seeds.length) + seeds.length) % seeds.length)
+    : 0;
+  const requested = requestedSeedIds.map(id => id.trim()).filter(Boolean);
+  if (requested.length > 2) {
+    throw new Error('Targeted local/trade news run may include at most 2 seed ids');
+  }
+  if (new Set(requested).size !== requested.length) {
+    throw new Error('Targeted local/trade news seed ids must be unique');
+  }
+  if (requested.length) {
+    const byId = new Map(seeds.map(seed => [seed.id, seed]));
+    const batch = requested.map(id => {
+      const seed = byId.get(id);
+      if (!seed) throw new Error(`Unknown local/trade news seed id: ${id}`);
+      return seed;
+    });
+    return { batch, offset, nextOffset: offset, targeted: true, requestedSeedIds: requested };
+  }
+  const batch = seeds.length <= batchSize
+    ? [...seeds]
+    : [...seeds.slice(offset, offset + batchSize), ...seeds.slice(0, Math.max(0, offset + batchSize - seeds.length))];
+  return {
+    batch,
+    offset,
+    nextOffset: seeds.length ? (offset + batch.length) % seeds.length : 0,
+    targeted: false,
+    requestedSeedIds: [],
+  };
+}
 
 const TARGET_PATH_TERMS = [
   'legislat',

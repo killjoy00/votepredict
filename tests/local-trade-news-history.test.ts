@@ -5,6 +5,7 @@ import {
   archiveSessionSlug,
   extractLocalTradeNewsBillIdentifiers,
   localTradeNewsTextIsTargeted,
+  selectLocalTradeNewsBatch,
   selectLocalTradeNewsCaptures,
   validateLocalTradeNewsSeeds,
 } from '../src/evidence/local-trade-news-history.js';
@@ -26,7 +27,7 @@ function capture(original: string, timestamp: string): WaybackCapture {
 
 test('local/trade news seeds are unique HTTPS prefixes bounded to the research window', () => {
   validateLocalTradeNewsSeeds();
-  assert.equal(LOCAL_TRADE_NEWS_SEEDS.length, 11);
+  assert.equal(LOCAL_TRADE_NEWS_SEEDS.length, 14);
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.url.startsWith('https://')));
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.prefix));
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.from === '20210101' && seed.to === '20261231'));
@@ -36,6 +37,75 @@ test('local/trade news seeds are unique HTTPS prefixes bounded to the research w
       ['star-tribune-minnesota-politics-archive', 'local_news'],
       ['axios-twin-cities-archive', 'local_news'],
     ],
+  );
+  assert.deepEqual(
+    LOCAL_TRADE_NEWS_SEEDS.slice(-3).map(seed => [seed.id, seed.publisherKind]),
+    [
+      ['mankato-free-press-local-news-archive', 'local_news'],
+      ['post-bulletin-local-news-archive', 'local_news'],
+      ['agweek-policy-archive', 'trade_news'],
+    ],
+  );
+});
+
+test('targeted local/trade runs preserve the durable rotation cursor', () => {
+  const rotation = selectLocalTradeNewsBatch({
+    priorNextOffset: 9,
+    batchSize: 1,
+  });
+  assert.equal(rotation.targeted, false);
+  assert.equal(rotation.offset, 9);
+  assert.equal(rotation.nextOffset, 10);
+  assert.deepEqual(rotation.batch.map(seed => seed.id), ['minnpost-state-government-archive']);
+
+  const targeted = selectLocalTradeNewsBatch({
+    priorNextOffset: 9,
+    batchSize: 1,
+    requestedSeedIds: [
+      'mankato-free-press-local-news-archive',
+      'agweek-policy-archive',
+    ],
+  });
+  assert.equal(targeted.targeted, true);
+  assert.equal(targeted.offset, 9);
+  assert.equal(targeted.nextOffset, 9);
+  assert.deepEqual(targeted.batch.map(seed => seed.id), [
+    'mankato-free-press-local-news-archive',
+    'agweek-policy-archive',
+  ]);
+});
+
+test('targeted local/trade selection fails closed on invalid requests', () => {
+  assert.throws(
+    () => selectLocalTradeNewsBatch({
+      priorNextOffset: 9,
+      batchSize: 1,
+      requestedSeedIds: ['not-registered'],
+    }),
+    /Unknown local\/trade news seed id/,
+  );
+  assert.throws(
+    () => selectLocalTradeNewsBatch({
+      priorNextOffset: 9,
+      batchSize: 1,
+      requestedSeedIds: [
+        'mankato-free-press-local-news-archive',
+        'mankato-free-press-local-news-archive',
+      ],
+    }),
+    /must be unique/,
+  );
+  assert.throws(
+    () => selectLocalTradeNewsBatch({
+      priorNextOffset: 9,
+      batchSize: 1,
+      requestedSeedIds: [
+        'mankato-free-press-local-news-archive',
+        'post-bulletin-local-news-archive',
+        'agweek-policy-archive',
+      ],
+    }),
+    /at most 2/,
   );
 });
 
