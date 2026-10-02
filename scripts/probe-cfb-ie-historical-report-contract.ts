@@ -53,6 +53,11 @@ async function viewerSession(url:string){
     html:text,
   };
 }
+function queryParams(entries:readonly (readonly [string,string])[]){
+  const params=new URLSearchParams();
+  for(const [key,value] of entries)params.append(key,value);
+  return params;
+}
 function formCandidates(registrationNumber:string,segmentEndYear:number){
   const base=[
     ['id',registrationNumber],
@@ -70,9 +75,9 @@ function formCandidates(registrationNumber:string,segmentEndYear:number){
     ['year_data[FilingYear]',String(segmentEndYear)] as const,
   ];
   return [
-    {name:'election-segment',params:new URLSearchParams(segment)},
-    {name:'year-only',params:new URLSearchParams(yearOnly)},
-    {name:'filing-year',params:new URLSearchParams(filingYear)},
+    {name:'election-segment',params:queryParams(segment)},
+    {name:'year-only',params:queryParams(yearOnly)},
+    {name:'filing-year',params:queryParams(filingYear)},
   ];
 }
 async function postApi(input:{
