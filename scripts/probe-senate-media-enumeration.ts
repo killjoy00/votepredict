@@ -3,8 +3,6 @@ export {};
 const BASE='https://www.lrl.mn.gov/media/';
 const YEARS=[2021,2022,2023,2024,2025,2026];
 
-function pad(value:number):string{return String(value).padStart(2,'0');}
-
 function quarterWindows(year:number):Array<{start:string;end:string}>{
   return [
     {start:`01/01/${year}`,end:`03/31/${year}`},
