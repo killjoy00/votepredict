@@ -130,6 +130,64 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
   }
 
 
+  const zeroNayNamedPattern=/(\d+)\s*\/\s*0\s*\(\s*Ayes?\s*:\s*([^)]*?)\s*;\s*Nays?\s*\)\s*([^\n]{0,160})/gi;
+  for(const match of text.matchAll(zeroNayNamedPattern)){
+    const start=match.index??0;
+    const context=text.slice(Math.max(0,start-900),start+match[0].length+180);
+    const yeaCount=Number(match[1]);
+    const yeaVotes=names(match[2],'yea');
+    if(yeaVotes.length!==yeaCount)continue;
+    const key=[
+      nearestBill(context)??'none',
+      nearestAmendment(context)??'none',
+      yeaVotes.map(row=>row.normalizedName).join(','),
+      '',
+    ].join('|');
+    if(seen.has(key))continue;
+    seen.add(key);
+    observations.push({
+      billIdentifier:nearestBill(context),
+      amendmentRef:nearestAmendment(context),
+      motionText:context.replace(/\s+/g,' ').trim().slice(-900),
+      voteKind:voteKind(context),
+      yeaCount,
+      nayCount:0,
+      passed:explicitOutcome(match[3]+' '+context.slice(-240)),
+      memberVotes:yeaVotes,
+      individualVotesAvailable:true,
+    });
+  }
+
+  const countsBeforeListsPattern=/(?:roll\s+call[^\n]{0,220}?)(\d+)\s*\/\s*(\d+)[^\n]{0,220}\n\s*Ayes?\s*:\s*([^\n]+)\n\s*Nays?\s*:\s*([^\n]*)(?:\n|$)/gi;
+  for(const match of text.matchAll(countsBeforeListsPattern)){
+    const start=match.index??0;
+    const context=text.slice(Math.max(0,start-900),start+match[0].length+180);
+    const yeaCount=Number(match[1]);
+    const nayCount=Number(match[2]);
+    const yeaVotes=names(match[3],'yea');
+    const nayVotes=names(match[4],'nay');
+    if(yeaVotes.length!==yeaCount||nayVotes.length!==nayCount)continue;
+    const key=[
+      nearestBill(context)??'none',
+      nearestAmendment(context)??'none',
+      yeaVotes.map(row=>row.normalizedName).join(','),
+      nayVotes.map(row=>row.normalizedName).join(','),
+    ].join('|');
+    if(seen.has(key))continue;
+    seen.add(key);
+    observations.push({
+      billIdentifier:nearestBill(context),
+      amendmentRef:nearestAmendment(context),
+      motionText:context.replace(/\s+/g,' ').trim().slice(-900),
+      voteKind:voteKind(context),
+      yeaCount,
+      nayCount,
+      passed:explicitOutcome(context),
+      memberVotes:[...yeaVotes,...nayVotes],
+      individualVotesAvailable:true,
+    });
+  }
+
   const resultsBlockPattern=/AYES?\s*:\s*([\s\S]{1,600}?)\s*NAYS?\s*:\s*([\s\S]{1,900}?)(?:\s*ABSENT\s*:\s*[^\n]*)?\s*On\s+a\s+vote\s+of\s+(\d+)\s+AYES?\s*(?:,|and)\s*(\d+)\s+NAYS?\b([^\n]{0,220})/gi;
   for(const match of text.matchAll(resultsBlockPattern)){
     const start=match.index??0;
