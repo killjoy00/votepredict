@@ -1,3 +1,5 @@
+export {};
+
 const pages=[
   'https://www.lrl.mn.gov/media/',
   'https://www.lrl.mn.gov/media/captions',
