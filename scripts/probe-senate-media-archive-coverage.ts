@@ -32,6 +32,7 @@ async function main(){
   }
 
   if(unique.size===0)throw new Error('Official LRL Senate media discovery returned zero recording pages');
+  if(totalFailures>0)throw new Error('Official LRL Senate media discovery had '+totalFailures+' event-level failures');
   console.log(JSON.stringify({
     senateMediaArchiveCoverageProbe:{
       sourceVersion:MN_SENATE_MEDIA_ARCHIVE_SOURCE_VERSION,
