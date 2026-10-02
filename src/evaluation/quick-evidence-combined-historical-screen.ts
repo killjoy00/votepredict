@@ -625,7 +625,7 @@ function sessionCoverage(observations: readonly Observation[], session: SessionS
 export async function evaluateQuickEvidenceCombinedHistoricalScreen(
   pool: Pool,
   input: QuickEvidenceCombinedScreenInput,
-  options: { codeSha?: string | null } = {},
+  options: { codeSha?: string | null; includeMatrix?: boolean } = {},
 ) {
   if (input.schemaVersion !== QUICK_EVIDENCE_COMBINED_SCREEN_INPUT_SCHEMA) {
     throw new Error(`Unsupported combined screen input schema: ${String(input.schemaVersion)}`);
@@ -885,6 +885,34 @@ export async function evaluateQuickEvidenceCombinedHistoricalScreen(
   const featureByPair = new Map<string, number[]>();
   for (const [key, raw] of rawByPair) featureByPair.set(key, transformRaw(raw, districtStandardization));
 
+  const matrix = options.includeMatrix ? {
+    schemaVersion: 'quick-evidence-combined-historical-matrix-v1' as const,
+    featureNames: [...QUICK_EVIDENCE_COMBINED_FEATURES],
+    rows: baseline.flatMap((event) => {
+      const target = targets.get(event.voteEventId);
+      if (!target) return [];
+      return event.memberPredictions.map((member) => {
+        const key = `${event.voteEventId}|${member.membershipId}`;
+        return {
+          voteEventId: event.voteEventId,
+          membershipId: member.membershipId,
+          legislatorId: member.legislatorId,
+          session: event.session,
+          chamber: event.chamber,
+          occurredOn: event.occurredOn,
+          billId: target.billId,
+          identifier: target.identifier,
+          eventStatus: event.status,
+          baseProbability: member.yesProbability ?? null,
+          outcome: member.actualOutcome ?? null,
+          actualYes: event.actualYes,
+          passed: event.passed,
+          features: [...(featureByPair.get(key) ?? Array.from({ length: QUICK_EVIDENCE_COMBINED_FEATURES.length }, () => 0))],
+        };
+      });
+    }),
+  } : undefined;
+
   const coverage = {
     training: sessionCoverage(observations, TRAIN_SESSION),
     validation: sessionCoverage(observations, VALIDATION_SESSION),
@@ -949,6 +977,7 @@ export async function evaluateQuickEvidenceCombinedHistoricalScreen(
     },
     coverage,
     coverageGate,
+    ...(matrix ? { matrix } : {}),
   };
 
   if (!coverageGate.passed) {
