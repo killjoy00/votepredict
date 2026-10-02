@@ -1,6 +1,6 @@
 import type { WaybackCapture } from './wayback';
 
-export const LOCAL_TRADE_NEWS_HISTORY_VERSION = 'local-trade-news-history-v1' as const;
+export const LOCAL_TRADE_NEWS_HISTORY_VERSION = 'local-trade-news-history-v2' as const;
 
 export type LocalTradeNewsPublisherKind = 'local_news' | 'trade_news';
 
@@ -15,6 +15,24 @@ export interface LocalTradeNewsSeed {
 }
 
 export const LOCAL_TRADE_NEWS_SEEDS: readonly LocalTradeNewsSeed[] = [
+  {
+    id: 'twin-cities-business-archive',
+    publisher: 'Twin Cities Business',
+    publisherKind: 'trade_news',
+    url: 'https://tcbmag.com/',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+  },
+  {
+    id: 'brownfield-ag-news-archive',
+    publisher: 'Brownfield Ag News',
+    publisherKind: 'trade_news',
+    url: 'https://www.brownfieldagnews.com/news/',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+  },
   {
     id: 'star-tribune-minnesota-politics-archive',
     publisher: 'Minnesota Star Tribune',
