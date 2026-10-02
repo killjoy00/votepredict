@@ -260,28 +260,90 @@ async function main() {
           ei.id,
           ei.bill_id,
           ei.metadata->>'subtype' AS subtype,
-          ei.metadata->>'attachmentUrl' AS attachment_url
+          ei.metadata->>'attachmentUrl' AS attachment_url,
+          ei.metadata->>'officialPostedOn' AS official_posted_on
         FROM evidence_items ei
         JOIN source_documents sd ON sd.id=ei.source_document_id
         WHERE sd.source_kind='house_committee_archive_page'
+          AND ei.extraction_version='house-committee-archive-v1'
           AND ei.metadata->>'subtype' LIKE 'committee_archive_%'
           AND coalesce(ei.metadata->>'attachmentUrl','') <> ''
       ),
-      body_links AS (
+      pdf_candidates AS (
+        SELECT *
+        FROM archive
+        WHERE bill_id IS NOT NULL
+          AND official_posted_on IS NOT NULL
+          AND lower(split_part(attachment_url,'?',1)) LIKE '%.pdf'
+      ),
+      current_body AS (
         SELECT DISTINCT sd.metadata->>'archiveEvidenceId' AS archive_evidence_id
         FROM source_documents sd
-        WHERE sd.source_kind IN ('house_committee_attachment_pdf','house_committee_attachment_wayback_pdf')
+        WHERE sd.source_kind='house_committee_attachment_pdf'
+          AND sd.metadata->>'attachmentContentVersion'='house-committee-attachment-content-v1'
           AND coalesce(sd.metadata->>'archiveEvidenceId','') <> ''
+      ),
+      wayback_body AS (
+        SELECT DISTINCT sd.metadata->>'archiveEvidenceId' AS archive_evidence_id
+        FROM source_documents sd
+        WHERE sd.source_kind='house_committee_attachment_wayback_pdf'
+          AND sd.metadata->>'attachmentWaybackVersion'='house-committee-attachment-wayback-bulk-v1'
+          AND coalesce(sd.metadata->>'archiveEvidenceId','') <> ''
+      ),
+      wayback_markers AS (
+        SELECT DISTINCT ei.metadata->>'archiveEvidenceId' AS archive_evidence_id
+        FROM evidence_items ei
+        WHERE ei.metadata->>'subtype'='committee_attachment_wayback_scan_marker'
+          AND ei.extraction_version='house-committee-attachment-wayback-bulk-v1'
+          AND coalesce(ei.metadata->>'archiveEvidenceId','') <> ''
       )
       SELECT
-        count(*)::int AS "archiveAttachmentItems",
-        count(DISTINCT attachment_url)::int AS "uniqueAttachmentUrls",
-        count(DISTINCT bill_id)::int AS "distinctBills",
-        count(*) FILTER (WHERE subtype='committee_archive_fiscal_note')::int AS "fiscalNoteItems",
-        count(*) FILTER (WHERE body_links.archive_evidence_id IS NOT NULL)::int AS "attachmentsWithBodyEvidence",
-        count(*) FILTER (WHERE body_links.archive_evidence_id IS NULL)::int AS "attachmentsWithoutBodyEvidence"
-      FROM archive
-      LEFT JOIN body_links ON body_links.archive_evidence_id=archive.id::text
+        (SELECT count(*)::int FROM archive) AS "archiveAttachmentItems",
+        (SELECT count(DISTINCT attachment_url)::int FROM archive) AS "uniqueAttachmentUrls",
+        (SELECT count(DISTINCT bill_id)::int FROM archive) AS "distinctBills",
+        (SELECT count(*)::int FROM archive WHERE subtype='committee_archive_fiscal_note') AS "fiscalNoteItems",
+        (SELECT count(*)::int FROM pdf_candidates) AS "billTargetedPdfCandidates",
+        (SELECT count(*)::int FROM current_body) AS "currentBodySources",
+        (SELECT count(*)::int FROM wayback_body) AS "waybackBodySources",
+        (SELECT count(*)::int FROM wayback_markers) AS "waybackScanMarkers",
+        (
+          SELECT count(*)::int
+          FROM pdf_candidates p
+          WHERE EXISTS (
+            SELECT 1 FROM current_body b WHERE b.archive_evidence_id=p.id::text
+          )
+        ) AS "pdfCandidatesWithCurrentBody",
+        (
+          SELECT count(*)::int
+          FROM pdf_candidates p
+          WHERE EXISTS (
+            SELECT 1 FROM wayback_body b WHERE b.archive_evidence_id=p.id::text
+          )
+        ) AS "pdfCandidatesWithWaybackBody",
+        (
+          SELECT count(*)::int
+          FROM pdf_candidates p
+          WHERE EXISTS (
+            SELECT 1 FROM wayback_markers m WHERE m.archive_evidence_id=p.id::text
+          )
+        ) AS "pdfCandidatesWithWaybackScanMarker",
+        (
+          SELECT count(*)::int
+          FROM pdf_candidates p
+          WHERE NOT EXISTS (
+            SELECT 1 FROM wayback_body b WHERE b.archive_evidence_id=p.id::text
+          )
+            AND NOT EXISTS (
+              SELECT 1 FROM wayback_markers m WHERE m.archive_evidence_id=p.id::text
+            )
+        ) AS "waybackCandidatesRemaining",
+        (
+          SELECT count(*)::int
+          FROM pdf_candidates p
+          WHERE NOT EXISTS (
+            SELECT 1 FROM current_body b WHERE b.archive_evidence_id=p.id::text
+          )
+        ) AS "currentBodyCandidatesRemaining"
     `);
 
     const fiscalNotes = await pool.query(`
