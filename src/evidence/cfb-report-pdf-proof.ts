@@ -90,11 +90,20 @@ export function parseCfbReportPdfAvailability(
   const normalized = text.replace(/\u0000/g, '').replace(/\s+/g, ' ').trim();
   const period = normalized.match(/Period Covered:\s*(\d{1,2}\/\d{1,2}\/\d{4})\s+through\s+(\d{1,2}\/\d{1,2}\/\d{4})/i);
   const received = normalized.match(/Received by the Board\s+([A-Za-z]+\s+\d{1,2},\s+\d{4})/i);
-  const registration =
+  const directRegistration =
     normalized.match(/Registration Number:\s*(\d+)/i)
     ?? normalized.match(/\bCommittee\s+(\d{4,})\b/i);
-  if (!period || !received || !registration) return null;
-  if ((registration[1] ?? '').trim() !== reference.registrationNumber) return null;
+  let registrationNumber=directRegistration?.[1]?.trim()??'';
+  if(!registrationNumber&&/^\d+$/.test(reference.registrationNumber)){
+    const labelIndex=normalized.search(/Registration Number:/i);
+    if(labelIndex>=0){
+      const header=normalized.slice(Math.max(0,labelIndex-600),labelIndex);
+      const exactReference=new RegExp('(?:^|\\D)'+reference.registrationNumber+'(?:\\D|$)');
+      if(exactReference.test(header))registrationNumber=reference.registrationNumber;
+    }
+  }
+  if (!period || !received || !registrationNumber) return null;
+  if (registrationNumber !== reference.registrationNumber) return null;
 
   const coverageStartOn = usDate(period[1] ?? '');
   const coverageEndOn = usDate(period[2] ?? '');
