@@ -240,13 +240,15 @@ async function main() {
     }>(coverageBeforeSql, [mappedJson]);
 
     const before = coverageBefore.rows[0];
-    if (!before || before.persistedMappedRows !== mappedRows.length) {
+    if (!before) {
+      throw new Error('Historical IE repair could not measure persisted exact mapped row keys');
+    }
+    if (before.persistedMappedRows <= 0) {
       throw new Error(
-        'Historical IE repair aborted before writes because only '
-        + String(before?.persistedMappedRows ?? 0) + '/'
-        + mappedRows.length + ' exact mapped row keys are persisted',
+        'Historical IE repair aborted before writes because zero exact mapped row keys are persisted',
       );
     }
+    const unpersistedMappedRowKeys = mappedRows.length - before.persistedMappedRows;
 
     const globalEligibleSql = [
       "SELECT count(DISTINCT ei.metadata->>'rowKey')::int AS count",
@@ -355,6 +357,7 @@ async function main() {
           failClosedRows: groups.reduce((sum, row) => sum + Number(row.rowsFailClosed ?? 0), 0),
           proofFailures,
           persistedMappedRowKeys: before.persistedMappedRows,
+          unpersistedMappedRowKeys,
           eligibleMappedRowKeysBefore: before.eligibleMappedRows,
           ineligibleMappedItemRowsBefore: before.ineligibleMappedItemRows,
           promotedDistinctRowKeysThisRun: promotedItemRowKeys.size,
@@ -369,12 +372,13 @@ async function main() {
           reportMustDemonstrateExactRow: true,
           transactionDateIsAvailability: false,
           sameDayReplayExcluded: true,
+          unpersistedMappedRowsRemainFailClosed: true,
           alreadyEligibleRowsOverwritten: false,
           contextOnly: true,
           mechanicallyActionable: false,
           modelWeight: 0,
           servingChanged: false,
-          productionAction: 'proof_promotion_only',
+          productionAction: 'persisted_proof_promotion_only',
         },
       },
     }, null, 2));
