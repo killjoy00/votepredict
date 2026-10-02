@@ -57,13 +57,8 @@ function amountCandidates(amount: number): string[] {
 }
 
 function escapeRegex(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\export function lobbyingSummaryDemonstratesPrincipalRow(
-  row: LobbyingPrincipalSummaryRow,
-  text: string,
-): boolean {
-');
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
-
 function tokenRegex(value: string): RegExp {
   return new RegExp('(?:^| )' + escapeRegex(value) + '(?: |$)', 'g');
 }
