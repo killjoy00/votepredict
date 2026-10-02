@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 import {
   CAMPAIGN_FINANCE_PAGE_URL,
+  discoverCampaignFinanceDownloadUrls,
 } from '../src/evidence/campaign-finance-live.js';
 import {
   discoverWaybackCaptures,
@@ -435,6 +436,120 @@ async function main(): Promise<void> {
       probes.push(landingProbe);
     }
 
+    let directCurrentUrlFallback: Record<string, unknown> | null = null;
+    if (selectedLanding.length === 0) {
+      try {
+        const currentDownloads = await discoverCampaignFinanceDownloadUrls();
+        const streams: Array<[DataCapture['stream'], string]> = [
+          ['contributions', currentDownloads.contributions],
+          ['expenditures', currentDownloads.expenditures],
+          ['independentExpenditures', currentDownloads.independentExpenditures],
+        ];
+        const streamResults: Array<Record<string, unknown>> = [];
+
+        for (const [stream, url] of streams) {
+          const captureMap = new Map<string, DataCapture>();
+          const discoveryFailures: string[] = [];
+          for (const anchor of PROBE_ANCHORS) {
+            try {
+              const found = await discoverDataCaptures(url, anchor, stream);
+              for (const capture of found) {
+                captureMap.set(capture.timestamp + '|' + capture.digest, capture);
+              }
+            } catch (error) {
+              discoveryFailures.push(anchor.slice(0, 10) + ': ' + safe(error));
+            }
+          }
+          const captures = [...captureMap.values()].sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+          const attempts: Array<Record<string, unknown>> = [];
+          let accepted = false;
+
+          for (const capture of captures) {
+            try {
+              const csv = await fetchArchivedCsv(capture);
+              if (stream === 'contributions' || stream === 'expenditures') {
+                const rows = stream === 'contributions'
+                  ? parseCfbCandidateContributionCsv(csv, { fromYear: 2021, toYear: 2022 })
+                  : parseCfbCandidateExpenditureCsv(csv, { fromYear: 2021, toYear: 2022 });
+                if (rows.length < 25) throw new Error('Archived candidate CSV parsed fewer than 25 2021-22 rows');
+                let debtMatches = 0;
+                for (const row of rows) {
+                  if (!candidateDebt.has(row.rowKey)) continue;
+                  debtMatches += 1;
+                  const prior = earliestCandidate.get(row.rowKey);
+                  if (!prior || capture.capturedAt < prior.capturedAt) {
+                    earliestCandidate.set(row.rowKey, {
+                      capturedAt: capture.capturedAt,
+                      stream,
+                      archiveUrl: capture.archiveUrl,
+                    });
+                  }
+                }
+                attempts.push({
+                  capturedAt: capture.capturedAt,
+                  parsedRows2021_22: rows.length,
+                  timingDebtExactMatches: debtMatches,
+                  status: 'parsed',
+                });
+                accepted = true;
+                break;
+              }
+
+              const rows = parseCfbIndependentExpenditureCsv(csv, { fromYear: 2021, toYear: 2022 });
+              if (rows.length < 10) throw new Error('Archived IE CSV parsed fewer than 10 2021-22 rows');
+              let debtMatches = 0;
+              let membershipResolvedMatches = 0;
+              for (const row of rows) {
+                if (!ieDebt.has(row.rowKey)) continue;
+                debtMatches += 1;
+                if (ieDebt.get(row.rowKey)) membershipResolvedMatches += 1;
+                const prior = earliestIe.get(row.rowKey);
+                if (!prior || capture.capturedAt < prior.capturedAt) {
+                  earliestIe.set(row.rowKey, {
+                    capturedAt: capture.capturedAt,
+                    archiveUrl: capture.archiveUrl,
+                  });
+                }
+              }
+              attempts.push({
+                capturedAt: capture.capturedAt,
+                parsedRows2021_22: rows.length,
+                timingDebtExactMatches: debtMatches,
+                membershipResolvedDebtMatches: membershipResolvedMatches,
+                status: 'parsed',
+              });
+              accepted = true;
+              break;
+            } catch (error) {
+              attempts.push({
+                capturedAt: capture.capturedAt,
+                status: 'fetch_or_parse_failed',
+                error: safe(error),
+              });
+            }
+          }
+
+          streamResults.push({
+            stream,
+            url,
+            capturesDiscovered: captures.length,
+            discoveryFailures,
+            accepted,
+            attempts,
+          });
+        }
+        directCurrentUrlFallback = {
+          discoveredFromCurrentOfficialLandingPage: currentDownloads.discovered,
+          streams: streamResults,
+        };
+      } catch (error) {
+        directCurrentUrlFallback = {
+          status: 'current_download_url_discovery_failed',
+          error: safe(error),
+        };
+      }
+    }
+
     function byDate(values: Iterable<{ capturedAt: string }>) {
       const counts = new Map<string, number>();
       for (const value of values) {
@@ -469,6 +584,7 @@ async function main(): Promise<void> {
           independentExpenditureByEarliestUpperBoundDate: byDate(earliestIe.values()),
         },
         probes,
+        directCurrentUrlFallback,
         policy: {
           exactRowContainmentRequired: true,
           archiveCaptureIsConservativeAvailableByBound: true,
