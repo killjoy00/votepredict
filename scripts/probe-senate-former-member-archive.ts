@@ -64,49 +64,6 @@ async function chooseDb(env: Record<string, string | undefined>) {
   return value;
 }
 
-function slugTokens(name: string): string[] {
-  return name
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim()
-    .split(/\s+/)
-    .filter(token => token.length > 1);
-}
-
-function generatedCandidateUrls(
-  member: { name: string; party: string },
-  dflProfileUrl: string | undefined,
-): string[] {
-  const party = member.party.trim().toUpperCase();
-  const tokens = slugTokens(member.name);
-  const first = tokens[0];
-  const last = tokens.at(-1);
-  if (!first || !last) return dflProfileUrl ? [dflProfileUrl] : [];
-  const full = tokens.join('-');
-  const firstLast = first + '-' + last;
-  const slugs = [...new Set([full, firstLast])];
-
-  if (party === 'DFL') {
-    const urls = dflProfileUrl ? [dflProfileUrl] : [];
-    for (const slug of slugs) {
-      urls.push(`https://senatedfl.mn/author/${slug}/`);
-      urls.push(`https://senatedfl.mn/author/senator-${slug}/`);
-    }
-    return [...new Set(urls)];
-  }
-  if (party === 'R' || party === 'GOP' || party === 'REPUBLICAN') {
-    const urls: string[] = [];
-    for (const slug of slugs) {
-      urls.push(`https://www.mnsenaterepublicans.com/${slug}`);
-      urls.push(`https://www.mnsenaterepublicans.com/senator-${slug}`);
-    }
-    return [...new Set(urls)];
-  }
-  return [];
-}
-
 type TargetRow = {
   membership_id: string;
   legislator_id: string;
@@ -134,6 +91,8 @@ async function main() {
   delete process.env.POSTGRES_URL_NON_POOLING;
 
   const { pool } = await import('../src/lib/db/index.js');
+  const { generatedSenateFormerMemberCandidateUrls } =
+    await import('../src/evidence/senate-former-member-archive.js');
   const {
     memberPrimaryProfileMatches,
     senateDflFallbackProfileUrl,
@@ -229,7 +188,7 @@ async function main() {
         : undefined;
       const urls = [...new Set([
         ...priorRegistryRows.map(row => row.url),
-        ...generatedCandidateUrls(target, dflFallback),
+        ...generatedSenateFormerMemberCandidateUrls(target, dflFallback),
       ])];
       candidateUrls += urls.length;
 
