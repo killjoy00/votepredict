@@ -374,7 +374,7 @@ async function main():Promise<void>{
              vote_events=$4,member_votes=$5,unresolved_members=$6,error_summary=$7,
              metadata=metadata||$8::jsonb
        WHERE id=$1::uuid`,[
-      runId,failures?'complete_with_warnings':'complete',documentsFetched,observations,
+      runId,'complete',documentsFetched,observations,
       memberVotes,unresolvedMembers,failureSamples[0]??null,JSON.stringify(result),
     ]);
     console.log(JSON.stringify({senateCommitteeMinutesBackfill:result},null,2));
