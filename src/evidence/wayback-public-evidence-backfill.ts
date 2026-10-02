@@ -17,6 +17,8 @@ export interface WaybackSeed {
 function priority(url:string):number{
   let path:string;
   try{path=new URL(url).pathname.toLowerCase();}catch{return -100;}
+  if(path.startsWith('/cdn-cgi/'))return -100;
+  if(/\.(?:css|js|mjs|map|xml|png|jpe?g|gif|svg|webp|ico|woff2?|ttf|eot)$/.test(path))return -100;
   if(path==='/'||path==='')return 100;
   if(/issue|priorit|policy|platform|legislat/.test(path))return 95;
   if(/news|press|media|update|blog/.test(path))return 90;
@@ -32,6 +34,7 @@ export function selectWaybackEvidenceCaptures(
   const maxCaptures=Math.max(1,Math.min(50,input.maxCaptures??12));
   const byOriginalYear=new Map<string,WaybackCapture>();
   for(const capture of captures){
+    if(priority(capture.original)<0)continue;
     const year=capture.capturedAt.slice(0,4);
     const key=capture.original+'|'+year;
     const existing=byOriginalYear.get(key);
