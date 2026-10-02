@@ -34,6 +34,7 @@ const PROBE_ANCHORS = [
   '2023-08-01T00:00:00.000Z',
 ] as const;
 const MAX_ARCHIVED_CSV_BYTES = 120_000_000;
+const CFB_CANDIDATE_BULK_UPPER_BOUND_VERSION = 'cfb-candidate-bulk-upper-bound-v1';
 const LEGACY_OFFICIAL_DOWNLOADS = [
   {
     stream: 'contributions' as const,
@@ -323,7 +324,7 @@ async function main(): Promise<void> {
       limit: 200,
     });
     const selectedLanding = closestLandingCaptures(landing);
-    const earliestCandidate = new Map<string, { capturedAt: string; stream: string; archiveUrl: string }>();
+    const earliestCandidate = new Map<string, { capturedAt: string; stream: string; archiveUrl: string; digest: string; sourceUrl: string }>();
     const earliestIe = new Map<string, { capturedAt: string; archiveUrl: string }>();
     const probes: Array<Record<string, unknown>> = [];
 
@@ -389,6 +390,8 @@ async function main(): Promise<void> {
                     capturedAt: capture.capturedAt,
                     stream,
                     archiveUrl: capture.archiveUrl,
+                    digest: capture.digest,
+                    sourceUrl: url,
                   });
                 }
               }
@@ -491,6 +494,8 @@ async function main(): Promise<void> {
                 capturedAt: capture.capturedAt,
                 stream: legacy.stream,
                 archiveUrl: capture.archiveUrl,
+                digest: capture.digest,
+                sourceUrl: legacy.url,
               });
             }
           }
@@ -533,6 +538,123 @@ async function main(): Promise<void> {
         .map(([availableBy, rowKeys]) => ({ availableBy, rowKeys }));
     }
 
+    const write = process.env.VOTEPREDICT_CFB_BULK_UPPER_BOUND_WRITE === '1';
+    let promotedCandidateItemRows = 0;
+    let promotedCandidateDistinctRowKeys = 0;
+    if (write && earliestCandidate.size > 0) {
+      if (earliestCandidate.size < 10_000 && candidateDebt.size >= 15_000) {
+        throw new Error(
+          'Refusing candidate upper-bound write because recoverable exact-row proof unexpectedly fell below 10,000 rows',
+        );
+      }
+      const proofs = [...earliestCandidate.entries()].map(([rowKey, proof]) => ({
+        rowKey,
+        ...proof,
+      }));
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        for (let offset = 0; offset < proofs.length; offset += 750) {
+          const batch = proofs.slice(offset, offset + 750);
+          const result = await client.query(`
+            WITH proof AS (
+              SELECT *
+                FROM jsonb_to_recordset($1::jsonb) AS p(
+                  "rowKey" text,
+                  "capturedAt" timestamptz,
+                  stream text,
+                  "archiveUrl" text,
+                  digest text,
+                  "sourceUrl" text
+                )
+            ), targets AS (
+              SELECT ei.id,
+                     p."rowKey",
+                     p."capturedAt",
+                     p.stream,
+                     p."archiveUrl",
+                     p.digest,
+                     p."sourceUrl"
+                FROM proof p
+                JOIN evidence_items ei ON ei.metadata->>'rowKey'=p."rowKey"
+                JOIN source_documents sd ON sd.id=ei.source_document_id
+                JOIN memberships m ON m.id=ei.membership_id
+                JOIN legislative_sessions s ON s.id=m.session_id
+               WHERE s.slug='2021-2022'
+                 AND ei.membership_id IS NOT NULL
+                 AND ei.metadata->>'subtype' IN (
+                       'candidate_contribution_record',
+                       'candidate_expenditure_record'
+                     )
+                 AND (
+                   (p.stream='contributions'
+                    AND sd.source_kind='campaign_finance_candidate_contribution_bulk')
+                   OR
+                   (p.stream='expenditures'
+                    AND sd.source_kind='campaign_finance_candidate_expenditure_bulk')
+                 )
+                 AND (
+                   ei.metadata->>'asOfEligible' IS DISTINCT FROM 'true'
+                   OR ei.published_at IS NULL
+                 )
+            )
+            UPDATE evidence_items ei
+               SET published_at=t."capturedAt",
+                   metadata=ei.metadata || jsonb_build_object(
+                     'asOfEligible', true,
+                     'availabilityStatus', 'proven_by_archived_official_bulk_upper_bound',
+                     'availabilityProof', 'independent_archive_capture_exact_row',
+                     'availableAt', t."capturedAt",
+                     'availabilityBoundKind', 'conservative_upper_bound',
+                     'exactFirstPublicationKnown', false,
+                     'availabilityProofUrl', t."archiveUrl",
+                     'availabilitySourceUrl', t."sourceUrl",
+                     'archiveCapturedAt', t."capturedAt",
+                     'archiveDigest', t.digest,
+                     'transactionDateIsAvailability', false,
+                     'sameDayEligible', false,
+                     'contextOnly', true,
+                     'mechanicallyActionable', false,
+                     'modelWeight', 0,
+                     'cfbCandidateBulkUpperBoundVersion', $2::text
+                   )
+              FROM targets t
+             WHERE ei.id=t.id
+            RETURNING ei.metadata->>'rowKey' AS "rowKey"
+          `, [JSON.stringify(batch), CFB_CANDIDATE_BULK_UPPER_BOUND_VERSION]);
+          promotedCandidateItemRows += result.rowCount ?? result.rows.length;
+        }
+
+        const verify = await client.query<{ rowKeys: number }>(`
+          SELECT count(DISTINCT ei.metadata->>'rowKey')::int AS "rowKeys"
+            FROM evidence_items ei
+            JOIN source_documents sd ON sd.id=ei.source_document_id
+            JOIN memberships m ON m.id=ei.membership_id
+            JOIN legislative_sessions s ON s.id=m.session_id
+           WHERE s.slug='2021-2022'
+             AND sd.source_kind IN (
+                   'campaign_finance_candidate_contribution_bulk',
+                   'campaign_finance_candidate_expenditure_bulk'
+                 )
+             AND ei.metadata->>'cfbCandidateBulkUpperBoundVersion'=$1
+             AND ei.metadata->>'asOfEligible'='true'
+             AND ei.published_at IS NOT NULL
+        `, [CFB_CANDIDATE_BULK_UPPER_BOUND_VERSION]);
+        promotedCandidateDistinctRowKeys = verify.rows[0]?.rowKeys ?? 0;
+        if (promotedCandidateDistinctRowKeys < proofs.length) {
+          throw new Error(
+            `Candidate upper-bound promotion invariant failed: expected at least ${proofs.length} exact row keys, found ${promotedCandidateDistinctRowKeys}`,
+          );
+        }
+        await client.query('COMMIT');
+      } catch (error) {
+        await client.query('ROLLBACK').catch(() => undefined);
+        throw error;
+      } finally {
+        client.release();
+      }
+    }
+
     const ieResolvedRecovered = [...earliestIe.keys()].filter(rowKey => ieDebt.get(rowKey));
     console.log(JSON.stringify({
       cfbBulkWaybackUpperBoundProbe: {
@@ -547,6 +669,12 @@ async function main(): Promise<void> {
           independentExpenditure2021_22RowKeys: ieDebt.size,
           independentExpenditureMembershipResolved2021_22RowKeys:
             [...ieDebt.values()].filter(Boolean).length,
+        },
+        write,
+        candidatePromotion: {
+          version: CFB_CANDIDATE_BULK_UPPER_BOUND_VERSION,
+          promotedItemRows: promotedCandidateItemRows,
+          promotedDistinctRowKeys: promotedCandidateDistinctRowKeys,
         },
         recoverableByArchivedOfficialBulkArtifact: {
           candidateFinanceExactRowKeys: earliestCandidate.size,
@@ -564,7 +692,7 @@ async function main(): Promise<void> {
           arbitraryCalendarYearEndIsAvailability: false,
           transactionDateIsAvailability: false,
           sameDayEligible: false,
-          evidenceWrites: false,
+          evidenceWrites: write,
           servingChanged: false,
           productionAction: 'none',
         },
