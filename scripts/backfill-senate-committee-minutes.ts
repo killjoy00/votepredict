@@ -129,6 +129,9 @@ async function main():Promise<void>{
       discovered.push(...result.documents);
     }
     discovered.sort((a,b)=>a.meetingDate.localeCompare(b.meetingDate)||a.committeeName.localeCompare(b.committeeName)||a.url.localeCompare(b.url));
+    if(discovered.length===0){
+      throw new Error('Official LRL Senate committee discovery returned zero Minutes PDFs for 2022-2026');
+    }
 
     const prior=await pool.query<{next_offset:number|null}>(`
       SELECT CASE WHEN metadata->>'nextOffset' ~ '^[0-9]+$' THEN (metadata->>'nextOffset')::int ELSE 0 END next_offset
