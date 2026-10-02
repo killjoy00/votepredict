@@ -45,7 +45,7 @@ function floorLogUrls(html:string,year:number):string[]{
     if(!PDF_HOSTS.has(host))continue;
     if(url.protocol==='http:')url.protocol='https:';
     if(url.protocol!=='https:')continue;
-    if(!new RegExp('/floorlogs/senate/'+year+'/\\d{8}slog\\.pdf
+    if(!new RegExp('/floorlogs/senate/'+year+'/\\d{8}slog\\.pdf$','i').test(url.pathname))continue;
     urls.add(url.toString());
   }
   return [...urls].sort();
