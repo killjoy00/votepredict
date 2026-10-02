@@ -102,7 +102,7 @@ function captionTimeSeconds(value:string):number|undefined{
 function explicitSenateSpeaker(value:string):{speaker:string;utterance:string}|undefined{
   const compact=value.replace(/\s+/g,' ').trim();
   const match=compact.match(
-    /^(?:>>\s*)?(?:(?:SEN(?:ATOR)?\.?|VICE\s+CHAIR|CHAIR)\s+)([A-Za-zÀ-ž][A-Za-zÀ-ž .''’-]{0,80})\s*:\s*(.*)$/i,
+    /^(?:>>\s*)?(?:(?:SEN(?:ATOR)?\.?|VICE\s+CHAIR|CHAIR)\s+)([A-Za-zÀ-ž][A-Za-zÀ-ž .'’-]{0,80})\s*:\s*(.*)$/i,
   );
   if(!match)return undefined;
   const speaker=match[1].trim();
