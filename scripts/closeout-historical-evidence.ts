@@ -502,12 +502,14 @@ async function main(): Promise<void> {
     .map(([, value]) => value)
     .filter((value): value is string => typeof value === 'string');
   secrets.forEach(mask);
-  process.env.DATABASE_URL = await chooseDb(env);
-  delete process.env.DATABASE_URL_UNPOOLED;
-  delete process.env.POSTGRES_URL;
-  delete process.env.POSTGRES_URL_NON_POOLING;
-
-  const { pool } = await import('../src/lib/db/index.js');
+  const databaseUrl = await chooseDb(env);
+  const { Pool } = await import('pg');
+  const pool = new Pool({
+    connectionString: databaseUrl,
+    max: 4,
+    idleTimeoutMillis: 20_000,
+    connectionTimeoutMillis: 10_000,
+  });
   try {
     const combined = await evaluateQuickEvidenceCombinedHistoricalScreen(pool, input, {
       codeSha: process.env.GITHUB_SHA ?? null,
