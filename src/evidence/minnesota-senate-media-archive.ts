@@ -35,19 +35,27 @@ function decodeHtml(value:string):string{
 
 export function parseSenateMediaEventsJson(text:string):SenateMediaEvent[]{
   let parsed:unknown;
-  try{parsed=JSON.parse(text);}catch{return [];}
-  if(!Array.isArray(parsed))return [];
+  try{parsed=JSON.parse(text);}catch{
+    throw new Error('Minnesota LRL Senate media event response was not valid JSON');
+  }
+  if(!Array.isArray(parsed))throw new Error('Minnesota LRL Senate media event response was not an array');
   const rows:SenateMediaEvent[]=[];
   const seen=new Set<string>();
   for(const item of parsed){
-    if(!item||typeof item!=='object'||Array.isArray(item))continue;
+    if(!item||typeof item!=='object'||Array.isArray(item)){
+      throw new Error('Minnesota LRL Senate media event response contained a malformed row');
+    }
     const row=item as Record<string,unknown>;
     const id=typeof row.ID==='string'?row.ID.trim():'';
     const name=typeof row.value==='string'?decodeHtml(row.value).replace(/\s+/g,' ').trim():'';
-    if(!/^\d+-\d+-s$/i.test(id)||!name||seen.has(id))continue;
+    if(!/^\d+-\d+-s$/i.test(id)||!name){
+      throw new Error('Minnesota LRL Senate media event response contained an invalid ID or label');
+    }
+    if(seen.has(id))continue;
     seen.add(id);
     rows.push({id,name});
   }
+  if(rows.length===0)throw new Error('Minnesota LRL Senate media event response was empty');
   return rows.sort((a,b)=>a.name.localeCompare(b.name)||a.id.localeCompare(b.id));
 }
 
