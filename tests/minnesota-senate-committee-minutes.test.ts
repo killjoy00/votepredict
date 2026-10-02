@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { parseSenateCommitteeMinuteVotes } from '../src/evidence/minnesota-senate-committee-minutes.js';
+import { normalizeSenateCommitteeMemberSourceName, parseSenateCommitteeMinuteVotes } from '../src/evidence/minnesota-senate-committee-minutes.js';
 
 test('Senate committee minute parser captures explicit named Aye/Nay lists', () => {
   const html = `
@@ -234,4 +234,11 @@ test('Senate committee parser captures zero-Nay named roll calls reported as aye
   assert.equal(rows[0].memberVotes.length,10);
   assert.ok(rows[0].memberVotes.every(row=>row.choice==='yea'));
   assert.equal(rows[0].passed,true);
+});
+
+
+test('Senate committee source-name normalization fixes only the documented Ingebrightsen source spelling',()=>{
+  assert.equal(normalizeSenateCommitteeMemberSourceName('Ingebrightsen'),'Ingebrigtsen');
+  assert.equal(normalizeSenateCommitteeMemberSourceName('  Ingebrightsen  '),'Ingebrigtsen');
+  assert.equal(normalizeSenateCommitteeMemberSourceName('Limmer'),'Limmer');
 });
