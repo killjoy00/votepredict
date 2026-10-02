@@ -324,7 +324,7 @@ export function parseSenateCommitteeMinuteContextActions(html:string):SenateComm
   for(let index=0;index<lines.length;index+=1){
     const line=lines[index];
     const context=lines.slice(Math.max(0,index-2),Math.min(lines.length,index+2)).join(' ');
-    const passed=explicitOutcome(line+' '+context);
+    const passed=explicitOutcome(line);
     if(passed===undefined)continue;
 
     let actionKind:SenateCommitteeContextAction['actionKind']|undefined;
