@@ -1,7 +1,11 @@
+import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 export const MN_SENATE_COMMITTEE_SOURCE_VERSION =
-  'mn-senate-committee-source-v4' as const;
+  'mn-senate-committee-source-v5' as const;
 export const MN_LRL_MINUTES_BASE = 'https://www.lrl.mn.gov';
 
 export interface SenateCommitteePage {
@@ -23,6 +27,7 @@ export interface FetchedSenateCommitteeMinute {
   contentSha256: string;
   fetchedAt: string;
   httpStatus: number;
+  extractionMethod: 'embedded_text' | 'ocr_tesseract';
 }
 
 function decodeHtml(value:string):string{
@@ -141,6 +146,60 @@ export async function discoverSenateCommitteeMinuteDocuments(input:{
   };
 }
 
+
+function cleanPdfText(value:string):string{
+  return value.replace(/\u0000/g,'').replace(/[ \t]+\n/g,'\n').trim();
+}
+
+export function chooseSenateCommitteeMinuteText(input:{
+  embeddedText:string;
+  ocrText?:string;
+}):{text:string;extractionMethod:'embedded_text'|'ocr_tesseract'}{
+  const embedded=cleanPdfText(input.embeddedText);
+  if(embedded.length>=40)return {text:embedded,extractionMethod:'embedded_text'};
+  const ocr=cleanPdfText(input.ocrText??'');
+  if(ocr.length>=40)return {text:ocr,extractionMethod:'ocr_tesseract'};
+  throw new Error('Minnesota Senate committee minutes PDF had too little extractable text');
+}
+
+function ocrSenateCommitteeMinutePdf(bytes:Uint8Array):string{
+  if(process.env.VOTEPREDICT_SENATE_COMMITTEE_OCR!=='1')return '';
+  const dir=mkdtempSync(join(tmpdir(),'votepredict-senate-minutes-'));
+  try{
+    const pdfPath=join(dir,'minutes.pdf');
+    const imagePrefix=join(dir,'page');
+    writeFileSync(pdfPath,Buffer.from(bytes));
+    try{
+      execFileSync('pdftoppm',['-jpeg','-r','200',pdfPath,imagePrefix],{
+        stdio:'ignore',timeout:120_000,
+      });
+    }catch(error){
+      throw new Error('Minnesota Senate committee minutes OCR render failed',{cause:error});
+    }
+    const images=readdirSync(dir)
+      .filter(name=>/^page-\d+\.jpg$/i.test(name))
+      .sort((left,right)=>left.localeCompare(right,undefined,{numeric:true}));
+    if(images.length===0)throw new Error('Minnesota Senate committee minutes OCR produced no page images');
+    const pages:string[]=[];
+    for(const image of images){
+      try{
+        const text=execFileSync('tesseract',[
+          join(dir,image),'stdout','-l','eng','--psm','1',
+        ],{
+          encoding:'utf8',timeout:120_000,
+          stdio:['ignore','pipe','pipe'],
+        });
+        pages.push(text);
+      }catch(error){
+        throw new Error('Minnesota Senate committee minutes OCR failed',{cause:error});
+      }
+    }
+    return pages.join('\n\n');
+  }finally{
+    rmSync(dir,{recursive:true,force:true});
+  }
+}
+
 export async function fetchSenateCommitteeMinutePdf(input:{
   url:string;
   fetchImpl?:typeof fetch;
@@ -160,14 +219,18 @@ export async function fetchSenateCommitteeMinutePdf(input:{
   const parser=new PDFParse({data:bytes.slice(),CanvasFactory});
   try{
     const parsed=await parser.getText();
-    const text=parsed.text.replace(/\u0000/g,'').trim();
-    if(text.length<40)throw new Error('Minnesota Senate committee minutes PDF had too little extractable text');
+    const embeddedText=cleanPdfText(parsed.text);
+    const selected=chooseSenateCommitteeMinuteText({
+      embeddedText,
+      ...(embeddedText.length<40?{ocrText:ocrSenateCommitteeMinutePdf(bytes)}:{}),
+    });
     return {
-      text,
+      text:selected.text,
       bytes:bytes.byteLength,
       contentSha256:createHash('sha256').update(bytes).digest('hex'),
       fetchedAt:new Date().toISOString(),
       httpStatus:response.status,
+      extractionMethod:selected.extractionMethod,
     };
   }finally{
     await parser.destroy();
