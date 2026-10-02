@@ -1,0 +1,32 @@
+name: Validate historical CFB IE report proofs
+
+on:
+  issue_comment:
+    types: [created, edited]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.event_name == 'issue_comment' && (github.event.issue.number != 514 || github.event.comment.user.login != 'killjoy00' || !startsWith(github.event.comment.body, '[cfb-ie-history-validation]')) && format('cfb-ie-history-validation-skip-{0}', github.run_id) || 'cfb-ie-history-validation' }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: >-
+      github.event_name != 'issue_comment' ||
+      (
+        github.event.issue.number == 514 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        startsWith(github.event.comment.body, '[cfb-ie-history-validation]')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+      - name: Validate historical CFB committee/fund report proofs against IE rows
+        run: node --import tsx scripts/validate-cfb-ie-report-history.ts
