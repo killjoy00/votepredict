@@ -319,9 +319,7 @@ async function main(): Promise<void> {
       const client = await pool.connect();
       try {
         await client.query('BEGIN');
-        for (let offset = 0; offset < proofs.length; offset += 500) {
-          const batch = proofs.slice(offset, offset + 500);
-          const result = await client.query(`
+        const result = await client.query(`
             WITH proof AS (
               SELECT *
                 FROM jsonb_to_recordset($1::jsonb) AS p(
@@ -372,9 +370,8 @@ async function main(): Promise<void> {
               FROM targets t
              WHERE ei.id=t.id
             RETURNING ei.metadata->>'rowKey' AS "rowKey"
-          `, [JSON.stringify(batch), CFB_IE_LEGACY_BULK_UPPER_BOUND_VERSION]);
-          promotedItemRows += result.rowCount ?? result.rows.length;
-        }
+          `, [JSON.stringify(proofs), CFB_IE_LEGACY_BULK_UPPER_BOUND_VERSION]);
+        promotedItemRows += result.rowCount ?? result.rows.length;
 
         const verify = await client.query<{ rowKeys: number; memberResolvedRowKeys: number }>(`
           SELECT
