@@ -148,6 +148,10 @@ function reportDateCandidates(value: string): string[] {
   ])];
 }
 
+function hasExactReportDate(text: string, date: string): boolean {
+  return new RegExp('(?:^|\\D)' + date + '(?:\\D|$)').test(text);
+}
+
 function normalize(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
@@ -177,7 +181,7 @@ export function cfbReportTextDemonstratesFinanceRow(
 ): boolean {
   if (!row.transactionDate) return false;
   const dates = reportDateCandidates(row.transactionDate);
-  if (!dates.length || !dates.some(date => reportText.includes(date))) return false;
+  if (!dates.length || !dates.some(date => hasExactReportDate(reportText, date))) return false;
 
   const amount = row.kind === 'expenditure' && Number.isFinite(row.totalAmount)
     ? Number(row.totalAmount)
