@@ -11,13 +11,25 @@ test('Senate media event parser accepts verified LRL ID/value rows',()=>{
   const rows=parseSenateMediaEventsJson(JSON.stringify([
     {ID:'23823-0-s',value:'Aging and Long-Term Care Policy'},
     {ID:'26138-0-s',value:'Capitol &amp; Report'},
-    {ID:'not-senate',value:'Ignore'},
     {ID:'23823-0-s',value:'Duplicate'},
   ]));
   assert.deepEqual(rows,[
     {id:'23823-0-s',name:'Aging and Long-Term Care Policy'},
     {id:'26138-0-s',name:'Capitol & Report'},
   ]);
+});
+
+test('Senate media event parser fails closed on malformed official rows',()=>{
+  assert.throws(()=>parseSenateMediaEventsJson('<option>not json</option>'),/not valid JSON/);
+  assert.throws(()=>parseSenateMediaEventsJson('{}'),/was not an array/);
+  assert.throws(()=>parseSenateMediaEventsJson('[]'),/was empty/);
+  assert.throws(
+    ()=>parseSenateMediaEventsJson(JSON.stringify([
+      {ID:'23823-0-s',value:'Aging and Long-Term Care Policy'},
+      {ID:'not-senate',value:'Malformed event'},
+    ])),
+    /invalid ID or label/,
+  );
 });
 
 test('Senate media URL builders use verified body and machine event IDs',()=>{
