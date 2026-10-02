@@ -81,8 +81,10 @@ async function main() {
     const prior = await pool.query<{ next_offset: number | null }>(`
       SELECT CASE WHEN metadata->>'nextOffset' ~ '^[0-9]+$' THEN (metadata->>'nextOffset')::int ELSE 0 END AS next_offset
         FROM ingestion_runs
-       WHERE source_system='organization-publication-archive' AND status='complete'
-       ORDER BY finished_at DESC NULLS LAST LIMIT 1`);
+       WHERE source_system='organization-publication-archive'
+         AND status='complete'
+         AND metadata->>'version'=$1
+       ORDER BY finished_at DESC NULLS LAST LIMIT 1`, [ORGANIZATION_PUBLICATION_HISTORY_VERSION]);
     const requested = Number.parseInt(process.env.VOTEPREDICT_ORGANIZATION_PUBLICATION_BATCH ?? '', 10);
     const batchSize = Number.isFinite(requested) ? Math.min(4, Math.max(1, requested)) : DEFAULT_BATCH;
     const seeds = [...ORGANIZATION_PUBLICATION_SEEDS];
@@ -126,6 +128,7 @@ async function main() {
               metadata: {
                 publisher: 'Internet Archive',
                 organization: seed.organization,
+                sector: seed.sector,
                 seedId: seed.id,
                 publicationKind: seed.publicationKind,
                 originalUrl: capture.original,
@@ -151,6 +154,7 @@ async function main() {
                 contextType: 'organization_publication',
                 subtype: seed.publicationKind,
                 organization: seed.organization,
+                sector: seed.sector,
                 seedId: seed.id,
                 originalUrl: capture.original,
                 archiveUrl: capture.archiveUrl,
@@ -183,6 +187,7 @@ async function main() {
       version: ORGANIZATION_PUBLICATION_HISTORY_VERSION,
       totalSeeds: seeds.length,
       batchSeeds: batch.length,
+      batchSectors: [...new Set(batch.map(seed => seed.sector))].sort(),
       offset,
       nextOffset,
       capturesDiscovered,
