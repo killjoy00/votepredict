@@ -1,7 +1,8 @@
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { Pool } from 'pg';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
+import { planLinearBatch } from '../src/evidence/linear-batch-cursor.js';
 
 const DATABASE_CANDIDATES=[
   'DATABASE_URL_UNPOOLED','POSTGRES_URL_NON_POOLING','DATABASE_URL','POSTGRES_URL',
@@ -138,11 +139,14 @@ async function main():Promise<void>{
         FROM ingestion_runs
        WHERE source_system=$1 AND status='complete' AND metadata->>'selectionPass'=$2
        ORDER BY finished_at DESC NULLS LAST LIMIT 1`,[SOURCE_SYSTEM,SELECTION_PASS]);
-    const offset=discovered.length?((prior.rows[0]?.next_offset??0)%discovered.length):0;
-    const batch=discovered.length<=BATCH_SIZE
-      ? discovered
-      : [...discovered.slice(offset,offset+BATCH_SIZE),...discovered.slice(0,Math.max(0,offset+BATCH_SIZE-discovered.length))];
-    const plannedNextOffset=discovered.length?(offset+batch.length)%discovered.length:0;
+    const plan=planLinearBatch({
+      total:discovered.length,
+      priorOffset:prior.rows[0]?.next_offset??0,
+      batchSize:BATCH_SIZE,
+    });
+    const offset=plan.offset;
+    const batch=discovered.slice(plan.offset,plan.end);
+    const plannedNextOffset=plan.nextOffset;
 
     const run=await pool.query<{id:string}>(`
       INSERT INTO ingestion_runs(source_system,scope,status,metadata)
@@ -406,11 +410,12 @@ async function main():Promise<void>{
     }
 
     const nextOffset=failures>0?offset:plannedNextOffset;
+    const complete=failures===0&&plan.completesPass;
     const result={
       selectionPass:SELECTION_PASS,parserVersion:MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,
       actionsParserVersion:MN_SENATE_COMMITTEE_ACTIONS_PARSER_VERSION,
       sourceVersion:MN_SENATE_COMMITTEE_SOURCE_VERSION,totalDocuments:discovered.length,
-      batchDocuments:batch.length,offset,nextOffset,plannedNextOffset,retryRequired:failures>0,discoveryByYear,documentsFetched,ocrDocuments,
+      batchDocuments:batch.length,offset,nextOffset,plannedNextOffset,complete,retryRequired:failures>0,discoveryByYear,documentsFetched,ocrDocuments,
       observations,namedObservations,countOnlyObservations,contextActions,voiceVoteActions,unanimousActions,resultOnlyActions,
       memberVotes,inserted,reused,
       unresolvedMembers,unresolvedBills,failures,failureSamples,unresolvedMemberSamples,
@@ -434,6 +439,16 @@ async function main():Promise<void>{
       runId,'complete',documentsFetched,observations,
       memberVotes,unresolvedMembers,failureSamples[0]??null,JSON.stringify(result),
     ]);
+    const stateFile=process.env.VOTEPREDICT_BACKFILL_STATE_FILE?.trim();
+    if(stateFile){
+      writeFileSync(stateFile,JSON.stringify({
+        kind:'senate_committee_minutes',
+        selectionPass:SELECTION_PASS,
+        totalDocuments:discovered.length,
+        batchDocuments:batch.length,
+        offset,nextOffset,failures,complete,
+      })+'\n',{encoding:'utf8',mode:0o600});
+    }
     console.log(JSON.stringify({senateCommitteeMinutesBackfill:result},null,2));
   }finally{
     await pool.end();
