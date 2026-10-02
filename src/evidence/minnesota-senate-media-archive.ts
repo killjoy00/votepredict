@@ -161,7 +161,7 @@ export async function discoverSenateMediaRecordingPages(input:{
   const eventFailures:Array<{eventId:string;eventName:string;message:string}>=[];
   for(const group of groups){
     if('failure' in group){
-      eventFailures.push({eventId:group.event.id,eventName:group.event.name,message:group.failure});
+      eventFailures.push({eventId:group.event.id,eventName:group.event.name,message:group.failure??'Unknown media endpoint failure'});
       continue;
     }
     for(const recording of group.recordings){
