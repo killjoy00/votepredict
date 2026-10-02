@@ -1,7 +1,7 @@
 import { normalizeMemberName } from '@/sources/minnesota/house-votes';
 
 export const MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION =
-  'mn-senate-committee-minutes-v1' as const;
+  'mn-senate-committee-minutes-v2' as const;
 
 export interface SenateCommitteeMemberVote {
   sourceName: string;
@@ -64,7 +64,7 @@ function nearestAmendment(context: string): string | undefined {
 function names(value: string, choice: 'yea' | 'nay'): SenateCommitteeMemberVote[] {
   return value
     .split(/\s*(?:,|;|\band\b)\s*/i)
-    .map((name) => name.replace(/^Senator\s+/i, '').trim())
+    .map((name) => name.replace(/^(?:(?:Vice\s+)?Chair|Senator|Minority\s+Lead|Ranking(?:\s+Minority)?\s+Member)\s+/i, '').trim())
     .filter((name) => /^[A-Za-zÀ-ž][A-Za-zÀ-ž .'-]{0,80}$/.test(name))
     .map((sourceName) => ({
       sourceName,
@@ -95,6 +95,7 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
   const namedPatterns = [
     /(\d+)\s*\/\s*(\d+)\s*\(\s*Ayes?\s*:\s*([^)]*?)\s*;\s*Nays?\s*:\s*([^)]*?)\)\s*([^\n]{0,120})/gi,
     /(?:roll call vote[^\d]{0,80})?(\d+)\s+(?:yes|ayes?)\s+and\s+(\d+)\s+(?:no|nays?)[\s\S]{0,220}?\(\s*Yes\s*-\s*([^)]*?)\)\s*\(\s*No\s*-\s*([^)]*?)\)\s*([^\n]{0,120})/gi,
+    /(\d+)\s+(?:ayes?|yes)\s*,?\s*(\d+)\s+(?:nays?|no)\b[\s\S]{0,180}?\(\s*(?:Ayes?|Yes)\s*[-–:]\s*([^;)]*?)\s*;\s*(?:Nays?|No)\s*[-–:]\s*([^;)]*?)(?:\s*;\s*Absent\s*[-–:][^)]*)?\)\s*([^\n]{0,160})/gi,
   ];
 
   for (const pattern of namedPatterns) {
@@ -128,9 +129,42 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
     }
   }
 
+
+  const resultsBlockPattern=/AYES?\s*:\s*([\s\S]{1,600}?)\s*NAYS?\s*:\s*([\s\S]{1,900}?)(?:\s*ABSENT\s*:\s*[^\n]*)?\s*On\s+a\s+vote\s+of\s+(\d+)\s+AYES?\s*(?:,|and)\s*(\d+)\s+NAYS?\b([^\n]{0,220})/gi;
+  for(const match of text.matchAll(resultsBlockPattern)){
+    const start=match.index??0;
+    const context=text.slice(Math.max(0,start-900),start+match[0].length+180);
+    const yeaCount=Number(match[3]);
+    const nayCount=Number(match[4]);
+    const yeaVotes=names(match[1],'yea');
+    const nayVotes=names(match[2],'nay');
+    if(yeaVotes.length!==yeaCount||nayVotes.length!==nayCount)continue;
+    const key=[
+      nearestBill(context)??'none',
+      nearestAmendment(context)??'none',
+      yeaVotes.map(row=>row.normalizedName).join(','),
+      nayVotes.map(row=>row.normalizedName).join(','),
+    ].join('|');
+    if(seen.has(key))continue;
+    seen.add(key);
+    observations.push({
+      billIdentifier:nearestBill(context),
+      amendmentRef:nearestAmendment(context),
+      motionText:context.replace(/\s+/g,' ').trim().slice(-900),
+      voteKind:voteKind(context),
+      yeaCount,
+      nayCount,
+      passed:explicitOutcome(match[5]+' '+context.slice(-240)),
+      memberVotes:[...yeaVotes,...nayVotes],
+      individualVotesAvailable:true,
+    });
+  }
+
   const countOnlyPatterns = [
     /(?:roll call vote[^\n]{0,220}?)?(?:vote was|roll call(?: vote)?(?: was)?)\s*(\d+)\s*[-–]\s*(\d+)\b/gi,
     /there were\s+(\d+)\s+(?:hands\s+shown\s+for\s+)?(?:yes|ayes?)\s+and\s+(\d+)\s+(?:hands\s+shown\s+for\s+)?(?:no|nays?)\b/gi,
+    /On\s+a\s+vote\s+of\s+(\d+)\s+(?:ayes?|yes)\s*(?:,|and)\s*(\d+)\s+(?:nays?|no)\b/gi,
+    /(?:requested\s+(?:a\s+)?division|called\s+for\s+division|division)[^\n]{0,160}?(\d+)\s+(?:yes|ayes?)\s*[,;]?\s*(\d+)\s+(?:no|nays?)\b/gi,
   ];
   for (const countOnly of countOnlyPatterns) {
     for (const match of text.matchAll(countOnly)) {
