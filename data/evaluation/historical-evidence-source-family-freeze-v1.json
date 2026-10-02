@@ -1,0 +1,238 @@
+{
+  "schemaVersion": "historical-evidence-source-family-freeze-v1",
+  "issue": 459,
+  "sourceExpansionIssue": 355,
+  "evidenceSnapshot": {
+    "headSha": "213544edbfa764d3070985b03fbb685b816fff53",
+    "finalGapAuditRunId": 37062451519,
+    "finalWaybackSelectorVerificationRunId": 37062818647,
+    "senatorCorpusAuditRunId": 37026467140,
+    "frozenAt": "2026-10-02T21:02:18Z"
+  },
+  "availabilityContract": {
+    "strictlyPreCutoff": true,
+    "sameDayExcludedUnlessOrderingIndependentlyProven": true,
+    "transactionDatesAreAvailability": false,
+    "missingMeans": "unknown_or_unavailable",
+    "ambiguousIdentityFailsClosed": true,
+    "ambiguousSpeakerAttributionFailsClosed": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "productionAction": "none"
+  },
+  "families": [
+    {
+      "id": 1,
+      "name": "wayback_campaign_member_caucus",
+      "status": "materially_improved_with_residual_source_gaps",
+      "availabilityProof": "exact archive capture timestamp or verified native publisher timestamp under frozen source rules",
+      "finalState": {
+        "memberPublicationCoverage": {
+          "2021-2022": {
+            "house": {
+              "zero": 2,
+              "low": 0,
+              "fivePlus": 132
+            },
+            "senate": {
+              "zero": 26,
+              "low": 18,
+              "fivePlus": 23
+            }
+          },
+          "2023-2024": {
+            "house": {
+              "zero": 53,
+              "low": 6,
+              "fivePlus": 77
+            },
+            "senate": {
+              "zero": 14,
+              "low": 15,
+              "fivePlus": 39
+            }
+          },
+          "2025-2026": {
+            "house": {
+              "zero": 3,
+              "low": 0,
+              "fivePlus": 134
+            },
+            "senate": {
+              "zero": 11,
+              "low": 10,
+              "fivePlus": 49
+            }
+          }
+        },
+        "senateIssuePositionItems": {
+          "2021-2022": 350,
+          "2023-2024": 551,
+          "2025-2026": 405
+        }
+      },
+      "boundary": "Blind historical pagination is frozen after diminishing returns; zero coverage is unobserved/unavailable, not no-position."
+    },
+    {
+      "id": 2,
+      "name": "independent_expenditures",
+      "status": "materially_improved_with_timing_and_target_debt",
+      "availabilityProof": "official CFB report-level availability only when the exact row is demonstrably contained in the report",
+      "finalState": {
+        "eligibleRowKeys": 1384,
+        "timingUnprovenRowKeys": 5664,
+        "exactMappedButUnpersistedOrUnresolved": 999
+      },
+      "boundary": "Further work requires stronger exact target/report resolution; transaction dates remain provenance only."
+    },
+    {
+      "id": 3,
+      "name": "candidate_finance_disclosure_timing",
+      "status": "materially_improved_with_residual_timing_debt",
+      "availabilityProof": "official CFB filing/report proof with the documented availability rule and exact row containment",
+      "finalState": {
+        "globalEligibleRowKeys": 45253,
+        "membershipSlice": {
+          "eligibleRowKeys": 41594,
+          "timingUnprovenRowKeys": 19659
+        },
+        "bySessionChamber": {
+          "2021-2022": {
+            "house": {
+              "persisted": 12647,
+              "eligible": 2564,
+              "timingUnproven": 10083
+            },
+            "senate": {
+              "persisted": 9483,
+              "eligible": 1549,
+              "timingUnproven": 7934
+            }
+          },
+          "2023-2024": {
+            "house": {
+              "persisted": 17201,
+              "eligible": 16594,
+              "timingUnproven": 607
+            },
+            "senate": {
+              "persisted": 5609,
+              "eligible": 5124,
+              "timingUnproven": 485
+            }
+          },
+          "2025-2026": {
+            "house": {
+              "persisted": 9486,
+              "eligible": 9133,
+              "timingUnproven": 353
+            },
+            "senate": {
+              "persisted": 6827,
+              "eligible": 6630,
+              "timingUnproven": 197
+            }
+          }
+        }
+      },
+      "boundary": "All deterministically membership-resolvable source rows were terminally checkpointed; remaining historical ineligibility stays fail-closed."
+    },
+    {
+      "id": 4,
+      "name": "organization_endorsement_questionnaire_scorecard",
+      "status": "materially_improved",
+      "availabilityProof": "verified native publication timestamp or exact archive capture",
+      "finalState": {
+        "historicallyTimedItems": 87,
+        "sectorCounts": {
+          "advocacy": 2,
+          "business": 39,
+          "education": 6,
+          "environmental": 2,
+          "healthcare": 4,
+          "labor": 16,
+          "localGovernment": 3,
+          "professional": 12,
+          "legacyUnclassified": 3
+        }
+      },
+      "boundary": "Corpus is curated and non-exhaustive; endorsements and scores never imply a specific legislative vote."
+    },
+    {
+      "id": 5,
+      "name": "lobbying_subjects_associations",
+      "status": "frozen_explicit_availability_boundary",
+      "availabilityProof": "directly proven official disclosure/publication timing for the specific report",
+      "finalState": {
+        "evidenceItems": 7994,
+        "itemsWithPublishedAt": 0,
+        "explicitlyEligibleItems": 0,
+        "availabilityProofRows": 0
+      },
+      "boundary": "No supported historical publication-time surface or publication-delay rule was established; campaign-finance timing rules are not borrowed."
+    },
+    {
+      "id": 6,
+      "name": "committee_hearing_material",
+      "status": "complete_to_provable_metadata_minutes_boundary_with_attachment_body_deferral",
+      "availabilityProof": "official publication/listing metadata; archived attachment bodies require exact archived PDF capture",
+      "finalState": {
+        "houseAttachmentItems": 44444,
+        "uniqueAttachmentUrls": 44313,
+        "billTargetedPdfCandidates": 24490,
+        "qualifyingHistoricalWaybackPdfBodies": 0,
+        "senateElectronicMinuteDocuments": 1452,
+        "senate2021ElectronicDocuments": 0
+      },
+      "boundary": "Broad 24,490-candidate attachment-body hydration is deferred after zero qualifying archived-PDF yield; 2021 Senate print minutes require a new acquisition/digitization path."
+    },
+    {
+      "id": 7,
+      "name": "member_caucus_publications",
+      "status": "materially_improved_with_documented_diminishing_returns",
+      "availabilityProof": "verified native historical publisher timestamp or exact archive capture",
+      "finalState": {
+        "coverageReference": "family 1 membership publication coverage"
+      },
+      "boundary": "Former-member and low-coverage recovery remains source-limited; blind pagination is frozen."
+    },
+    {
+      "id": 8,
+      "name": "targeted_local_trade_news",
+      "status": "materially_improved_curated_boundary",
+      "availabilityProof": "verified publisher metadata or exact archive capture",
+      "finalState": {
+        "historicallyTimedItems": 77,
+        "bySession": {
+          "2021-2022": 16,
+          "2023-2024": 20,
+          "2025-2026": 41
+        }
+      },
+      "boundary": "Curated rather than comprehensive; old reuse-heavy archive tails are not replayed merely to increase row count."
+    }
+  ],
+  "adjacentEvidenceBoundaries": {
+    "senateFloorRollCalls": {
+      "status": "complete_under_current_journal_parser_boundary",
+      "memberVotes": {
+        "2021-2022": 29241,
+        "2023-2024": 71644,
+        "2025-2026": 38711
+      },
+      "unresolvedMemberVotes": 0
+    },
+    "senateRemarks": {
+      "status": "frozen_direct_attribution_boundary",
+      "uniqueRecordingPages": 3048,
+      "safelyAttributableCaptionRemarks": 0
+    },
+    "fiscalNotes": {
+      "status": "positive_official_archive_boundary",
+      "officialItems": 418,
+      "billTargeted": 329,
+      "distinctBills": 280
+    }
+  },
+  "nextPhase": "2027 prospective evidence accrual under issue #287; new retrospective collection requires a concrete new source, correctness defect, or predeclared hypothesis."
+}
