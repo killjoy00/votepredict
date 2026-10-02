@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  chooseSenateCommitteeMinuteText,
   parseSenateCommitteeIndexHtml,
   parseSenateCommitteePageHtml,
 } from '../src/evidence/minnesota-senate-committee-source.js';
@@ -56,4 +57,29 @@ test('Senate committee page parser deduplicates repeated Minutes links', () => {
   });
   assert.equal(rows.length,1);
   assert.equal(rows[0].meetingDate,'2025-02-03');
+});
+
+
+test('Senate committee minute text selection uses OCR only when embedded text is unavailable', () => {
+  assert.deepEqual(
+    chooseSenateCommitteeMinuteText({embeddedText:'Digitally extractable official committee minutes text with ample content.'}),
+    {
+      text:'Digitally extractable official committee minutes text with ample content.',
+      extractionMethod:'embedded_text',
+    },
+  );
+  assert.deepEqual(
+    chooseSenateCommitteeMinuteText({
+      embeddedText:' ',
+      ocrText:'OCR fallback text from a scanned official committee minutes page with ample content.',
+    }),
+    {
+      text:'OCR fallback text from a scanned official committee minutes page with ample content.',
+      extractionMethod:'ocr_tesseract',
+    },
+  );
+  assert.throws(
+    ()=>chooseSenateCommitteeMinuteText({embeddedText:'short',ocrText:'also short'}),
+    /too little extractable text/,
+  );
 });
