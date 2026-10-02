@@ -199,3 +199,39 @@ test('Senate committee parser captures counts before separate Ayes and Nays line
   assert.equal(rows[0].memberVotes.length,9);
   assert.equal(rows[0].passed,true);
 });
+
+
+test('Senate committee parser captures roll-call counts followed by separate Ayes and Nays lists', () => {
+  const html = [
+    'S.F. 2149 was before the Labor Committee.',
+    'Senator Dornink offered the A8 amendment - adopted by roll call (6 aye, 4 nay)',
+    'Senator Dornink requested a roll call',
+    'Ayes: Dornink, Gruenhagen, Kupec, Lieske, Hauschild, Wesenberg',
+    'Nays: McEwen, Marty, Pappas, Oumou Verbeten',
+    'MOTION ADOPTED',
+  ].join('\n');
+  const rows=parseSenateCommitteeMinuteVotes(html);
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].billIdentifier,'SF2149');
+  assert.equal(rows[0].amendmentRef,'A8');
+  assert.equal(rows[0].individualVotesAvailable,true);
+  assert.deepEqual([rows[0].yeaCount,rows[0].nayCount],[6,4]);
+  assert.equal(rows[0].memberVotes.length,10);
+  assert.equal(rows[0].passed,true);
+});
+
+test('Senate committee parser captures zero-Nay named roll calls reported as ayes/nays words', () => {
+  const html = [
+    'S.F. 3748 was before the Judiciary Committee.',
+    'Senator Kreun requested a journal-entry roll call.',
+    'Roll call - 10 ayes, 0 nays (Ayes – Limmer, Eichorn, Howe, Kreun, Latz, Oumou Verbeten, Carlson, Pappas, Seeberger, Westlin) - motion prevailed.',
+  ].join('\n');
+  const rows=parseSenateCommitteeMinuteVotes(html);
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].billIdentifier,'SF3748');
+  assert.equal(rows[0].individualVotesAvailable,true);
+  assert.deepEqual([rows[0].yeaCount,rows[0].nayCount],[10,0]);
+  assert.equal(rows[0].memberVotes.length,10);
+  assert.ok(rows[0].memberVotes.every(row=>row.choice==='yea'));
+  assert.equal(rows[0].passed,true);
+});
