@@ -18,7 +18,7 @@ jobs:
   closeout:
     if: >-
       (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'issue_comment' && github.event.issue.number == 459 && contains(github.event.comment.body, '[historical-evidence-closeout]'))
+      (github.event_name == 'issue_comment' && github.event.issue.number == 459 && contains(fromJSON('[\"OWNER\",\"MEMBER\",\"COLLABORATOR\"]'), github.event.comment.author_association) && contains(github.event.comment.body, '[historical-evidence-closeout]'))
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -104,6 +104,15 @@ jobs:
           echo 'Could not read the VotePredict production environment. No closeout diagnostic was run.'
           exit 1
 
+      - name: Run final read-only coverage and exclusion audit
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --import tsx scripts/audit-evidence-gap-inventory.ts \
+            --output artifacts/historical-evidence-closeout/evidence-gap-inventory-v1.json
+
       - name: Build canonical historical matrix and fixed finance diagnostic
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
@@ -122,7 +131,13 @@ jobs:
           dir='artifacts/historical-evidence-closeout'
           manifest="$dir/historical-as-of-matrix-v1-manifest.json"
           diagnostic="$dir/quick-evidence-finance-enriched-historical-diagnostic-v1.json"
+          audit="$dir/evidence-gap-inventory-v1.json"
           test -s "$dir/historical-as-of-matrix-v1.ndjson.gz"
+          test -s "$audit"
+          test "$(jq -r '.evidenceGapInventoryV1.schemaVersion' "$audit")" = 'evidence-gap-inventory-v1'
+          test "$(jq -r '.evidenceGapInventoryV1.interpretation.readOnly' "$audit")" = 'true'
+          test "$(jq -r '.evidenceGapInventoryV1.interpretation.noEvidenceWrites' "$audit")" = 'true'
+          test "$(jq -r '.evidenceGapInventoryV1.interpretation.productionAction' "$audit")" = 'none'
           test "$(jq -r '.schemaVersion' "$manifest")" = 'historical-as-of-matrix-v1-manifest'
           test "$(jq -r '.featureCount' "$manifest")" = '37'
           test "$(jq -r '.baseFeatureCount' "$manifest")" = '32'
@@ -146,6 +161,7 @@ jobs:
         with:
           name: historical-evidence-closeout-${{ github.sha }}
           path: |
+            artifacts/historical-evidence-closeout/evidence-gap-inventory-v1.json
             artifacts/historical-evidence-closeout/historical-as-of-matrix-v1.ndjson.gz
             artifacts/historical-evidence-closeout/historical-as-of-matrix-v1-manifest.json
             artifacts/historical-evidence-closeout/quick-evidence-finance-enriched-historical-diagnostic-v1.json
