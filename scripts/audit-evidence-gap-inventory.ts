@@ -268,11 +268,10 @@ async function main() {
           AND coalesce(ei.metadata->>'attachmentUrl','') <> ''
       ),
       body_links AS (
-        SELECT DISTINCT ei.metadata->>'archiveEvidenceId' AS archive_evidence_id
-        FROM evidence_items ei
-        JOIN source_documents sd ON sd.id=ei.source_document_id
+        SELECT DISTINCT sd.metadata->>'archiveEvidenceId' AS archive_evidence_id
+        FROM source_documents sd
         WHERE sd.source_kind IN ('house_committee_attachment_pdf','house_committee_attachment_wayback_pdf')
-          AND coalesce(ei.metadata->>'archiveEvidenceId','') <> ''
+          AND coalesce(sd.metadata->>'archiveEvidenceId','') <> ''
       )
       SELECT
         count(*)::int AS "archiveAttachmentItems",
