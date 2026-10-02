@@ -40,13 +40,26 @@ function normalizeDiagnosticValue(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
-function diagnosticDateTokens(value: string | null): { padded: string | null; unpadded: string | null } {
+function diagnosticDateTokens(value: string | null): {
+  padded: string | null;
+  unpadded: string | null;
+  paddedShortYear: string | null;
+  unpaddedShortYear: string | null;
+} {
   const match = value?.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (!match) return { padded: null, unpadded: null };
+  if (!match) return {
+    padded: null,
+    unpadded: null,
+    paddedShortYear: null,
+    unpaddedShortYear: null,
+  };
   const [, year = '', month = '', day = ''] = match;
+  const shortYear = year.slice(-2);
   return {
     padded: month + '/' + day + '/' + year,
     unpadded: String(Number(month)) + '/' + String(Number(day)) + '/' + year,
+    paddedShortYear: month + '/' + day + '/' + shortYear,
+    unpaddedShortYear: String(Number(month)) + '/' + String(Number(day)) + '/' + shortYear,
   };
 }
 
@@ -87,10 +100,13 @@ function legacyContainmentSignals(
     : row.amount;
   let paddedDateSeen = false;
   let unpaddedDateSeen = false;
+  let paddedShortYearDateSeen = false;
+  let unpaddedShortYearDateSeen = false;
   let amountSeen = false;
   let identitySeen = false;
   let paddedFullMatch = false;
   let flexibleDateFullMatch = false;
+  let anyExactDateFormatFullMatch = false;
 
   for (const report of reports) {
     const inCoverage = Boolean(
@@ -100,24 +116,40 @@ function legacyContainmentSignals(
     );
     const padded = Boolean(dateTokens.padded && report.text.includes(dateTokens.padded));
     const unpadded = Boolean(dateTokens.unpadded && report.text.includes(dateTokens.unpadded));
+    const paddedShortYear = Boolean(
+      dateTokens.paddedShortYear && report.text.includes(dateTokens.paddedShortYear)
+    );
+    const unpaddedShortYear = Boolean(
+      dateTokens.unpaddedShortYear && report.text.includes(dateTokens.unpaddedShortYear)
+    );
     const hasAmount = diagnosticHasAmount(report.text, amount);
     const hasIdentity = diagnosticHasIdentity(row, report.text);
     paddedDateSeen ||= padded;
     unpaddedDateSeen ||= unpadded;
+    paddedShortYearDateSeen ||= paddedShortYear;
+    unpaddedShortYearDateSeen ||= unpaddedShortYear;
     amountSeen ||= hasAmount;
     identitySeen ||= hasIdentity;
     paddedFullMatch ||= inCoverage && padded && hasAmount && hasIdentity;
     flexibleDateFullMatch ||= inCoverage && (padded || unpadded) && hasAmount && hasIdentity;
+    anyExactDateFormatFullMatch ||= inCoverage
+      && (padded || unpadded || paddedShortYear || unpaddedShortYear)
+      && hasAmount
+      && hasIdentity;
   }
 
   return {
     paddedDateSeen,
     unpaddedDateSeen,
+    paddedShortYearDateSeen,
+    unpaddedShortYearDateSeen,
     amountSeen,
     identitySeen,
     paddedFullMatch,
     flexibleDateFullMatch,
+    anyExactDateFormatFullMatch,
     flexibleDateWouldRecover: flexibleDateFullMatch && !paddedFullMatch,
+    shortYearWouldRecover: anyExactDateFormatFullMatch && !flexibleDateFullMatch,
   };
 }
 
@@ -159,13 +191,17 @@ async function main() {
       paddedDateSeen: 0,
       unpaddedDateSeen: 0,
       unpaddedOnlyDateSeen: 0,
+      paddedShortYearDateSeen: 0,
+      unpaddedShortYearDateSeen: 0,
       amountSeen: 0,
       identitySeen: 0,
       paddedFullMatch: 0,
       flexibleDateFullMatch: 0,
       flexibleDateWouldRecover: 0,
-      contributions: { rows: 0, flexibleDateWouldRecover: 0 },
-      expenditures: { rows: 0, flexibleDateWouldRecover: 0 },
+      anyExactDateFormatFullMatch: 0,
+      shortYearWouldRecover: 0,
+      contributions: { rows: 0, flexibleDateWouldRecover: 0, shortYearWouldRecover: 0 },
+      expenditures: { rows: 0, flexibleDateWouldRecover: 0, shortYearWouldRecover: 0 },
     };
     for (const row of targetRows) {
       rowsExamined += 1;
@@ -176,16 +212,21 @@ async function main() {
         if (signals.paddedDateSeen) failClosedSignals.paddedDateSeen += 1;
         if (signals.unpaddedDateSeen) failClosedSignals.unpaddedDateSeen += 1;
         if (signals.unpaddedDateSeen && !signals.paddedDateSeen) failClosedSignals.unpaddedOnlyDateSeen += 1;
+        if (signals.paddedShortYearDateSeen) failClosedSignals.paddedShortYearDateSeen += 1;
+        if (signals.unpaddedShortYearDateSeen) failClosedSignals.unpaddedShortYearDateSeen += 1;
         if (signals.amountSeen) failClosedSignals.amountSeen += 1;
         if (signals.identitySeen) failClosedSignals.identitySeen += 1;
         if (signals.paddedFullMatch) failClosedSignals.paddedFullMatch += 1;
         if (signals.flexibleDateFullMatch) failClosedSignals.flexibleDateFullMatch += 1;
         if (signals.flexibleDateWouldRecover) failClosedSignals.flexibleDateWouldRecover += 1;
+        if (signals.anyExactDateFormatFullMatch) failClosedSignals.anyExactDateFormatFullMatch += 1;
+        if (signals.shortYearWouldRecover) failClosedSignals.shortYearWouldRecover += 1;
         const kindSignals = row.kind === 'contribution'
           ? failClosedSignals.contributions
           : failClosedSignals.expenditures;
         kindSignals.rows += 1;
         if (signals.flexibleDateWouldRecover) kindSignals.flexibleDateWouldRecover += 1;
+        if (signals.shortYearWouldRecover) kindSignals.shortYearWouldRecover += 1;
         continue;
       }
       rowsMatched += 1;
