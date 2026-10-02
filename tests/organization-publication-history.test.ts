@@ -58,7 +58,7 @@ test('organization publication batch selection preserves the rotation cursor for
     'abc-mnnd-legislative-scorecard',
   ]);
   assert.equal(rotation.offset, 14);
-  assert.equal(rotation.nextOffset, 0);
+  assert.equal(rotation.nextOffset, 16);
 
   const retry = selectOrganizationPublicationBatch({
     priorNextOffset: 0,
