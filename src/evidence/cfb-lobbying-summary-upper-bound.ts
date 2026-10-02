@@ -87,11 +87,12 @@ export function lobbyingSummaryDemonstratesPrincipalRow(
   const principalPattern = tokenRegex(principal);
   for (const match of searchable.matchAll(principalPattern)) {
     const index = match.index ?? 0;
-    const window = searchable.slice(
-      Math.max(0, index - 180),
-      Math.min(searchable.length, index + match[0].length + 420),
+    const afterPrincipal = searchable.slice(
+      index + match[0].length,
+      Math.min(searchable.length, index + match[0].length + 220),
     );
-    if (amounts.some(value => numericTokenPresent(window, value))) return true;
+    const firstAmountLikeToken = afterPrincipal.match(/(?:^| )([0-9]{3,})(?: |$)/)?.[1] ?? null;
+    if (firstAmountLikeToken && amounts.includes(firstAmountLikeToken)) return true;
   }
   return false;
 }
