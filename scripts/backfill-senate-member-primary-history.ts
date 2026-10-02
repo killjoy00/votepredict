@@ -187,6 +187,10 @@ async function main() {
     1,
     24,
   );
+  const candidatePoolLimit = Math.min(192, Math.max(
+    articlesPerMember,
+    articlesPerMember * 8,
+  ));
 
   let runId: string | undefined;
   try {
@@ -313,9 +317,13 @@ async function main() {
         continue;
       }
 
-      const candidates = selectMemberPrimaryArticleCandidates(discovery, sourceMember, articlesPerMember);
-      candidatesDiscovered += candidates.length;
-      const existingUrls = candidates.length > 0
+      const candidatePool = selectMemberPrimaryArticleCandidates(
+        discovery,
+        sourceMember,
+        candidatePoolLimit,
+      );
+      candidatesDiscovered += candidatePool.length;
+      const existingUrls = candidatePool.length > 0
         ? new Set((await pool.query<{ source_url: string }>(`
             SELECT DISTINCT sd.source_url
               FROM source_documents sd
@@ -323,14 +331,14 @@ async function main() {
              WHERE sd.source_kind = 'senate_member_primary_historical_article'
                AND ei.extraction_version = $2
                AND sd.source_url = ANY($1::text[])
-          `, [candidates, HISTORY_VERSION])).rows.map(row => row.source_url))
+          `, [candidatePool, HISTORY_VERSION])).rows.map(row => row.source_url))
         : new Set<string>();
+      skippedAlreadyPersisted += existingUrls.size;
+      const candidates = candidatePool
+        .filter(url => !existingUrls.has(url))
+        .slice(0, articlesPerMember);
 
       for (const url of candidates) {
-        if (existingUrls.has(url)) {
-          skippedAlreadyPersisted += 1;
-          continue;
-        }
         articleAttempts += 1;
         try {
           const page = await fetchWithRetry(
@@ -483,6 +491,8 @@ async function main() {
           member: member.name,
           sourceDiscoveries,
           candidatesDiscovered,
+          candidatePoolLimit,
+          selectedNewCandidates: candidates.length,
           articleAttempts,
           accepted,
           inserted,
@@ -500,6 +510,7 @@ async function main() {
       nextOffset,
       memberBatchSize,
       articlesPerMember,
+      candidatePoolLimit,
       directoryFailures,
       sourceDiscoveries,
       candidatesDiscovered,

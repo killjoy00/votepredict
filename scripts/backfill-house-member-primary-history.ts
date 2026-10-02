@@ -301,8 +301,36 @@ async function main() {
         : new Set<string>();
       previouslyPersisted += existingUrls.size;
 
+      const membershipIds = [...new Set(member.memberships.map(row => row.membership_id))];
+      const coverageRows = membershipIds.length > 0
+        ? (await pool.query<{ membership_id: string; items: number }>(`
+            SELECT ei.membership_id::text AS membership_id,
+                   count(*)::int AS items
+              FROM evidence_items ei
+              JOIN source_documents sd ON sd.id = ei.source_document_id
+             WHERE ei.membership_id = ANY($1::uuid[])
+               AND sd.source_kind IN (
+                 'house_member_primary_historical_article',
+                 'wayback_member_primary',
+                 'wayback_campaign_site'
+               )
+             GROUP BY ei.membership_id
+          `, [membershipIds])).rows
+        : [];
+      const coverageByMembership = new Map(
+        coverageRows.map(row => [row.membership_id, row.items] as const),
+      );
+
       const candidates = resolved
         .filter(row => !existingUrls.has(row.entry.url))
+        .sort((left, right) => {
+          const coverageDifference =
+            (coverageByMembership.get(left.membership.membership_id) ?? 0)
+            - (coverageByMembership.get(right.membership.membership_id) ?? 0);
+          if (coverageDifference !== 0) return coverageDifference;
+          return left.entry.publishedOn.localeCompare(right.entry.publishedOn)
+            || left.entry.url.localeCompare(right.entry.url);
+        })
         .slice(0, articlesPerMember);
 
       for (const { entry, membership } of candidates) {
@@ -421,6 +449,11 @@ async function main() {
           archiveEntries: entries.length,
           resolvedEntries: resolved.length,
           selectedArticles: candidates.length,
+          selectedMemberships: [...new Set(candidates.map(row => row.membership.membership_id))].length,
+          selectedSessions: [...new Set(candidates.map(row => row.membership.session_slug))],
+          selectedCoverageBefore: [...new Set(candidates.map(row =>
+            coverageByMembership.get(row.membership.membership_id) ?? 0
+          ))].sort((a, b) => a - b),
           articlesFetched,
           inserted,
           reused,
