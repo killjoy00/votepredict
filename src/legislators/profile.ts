@@ -1,5 +1,6 @@
 import { loadCurrentCampaignFinanceContext } from '@/evidence/campaign-finance-store';
 import type { CampaignFinanceMemberContext } from '@/evidence/campaign-finance-snapshot';
+import { loadPriorCycleProvenFinanceContext, type PriorCycleProvenFinanceContext } from '@/evidence/prior-cycle-finance-context';
 import { pool } from '@/lib/db';
 
 export interface LegislatorDirectoryRow {
@@ -97,6 +98,7 @@ export interface LegislatorProfile {
   evidence: LegislatorEvidenceRow[];
   memberPrimaryEvidence: LegislatorEvidenceRow[];
   campaignFinance?: CampaignFinanceMemberContext;
+  priorCycleFinance: PriorCycleProvenFinanceContext[];
 }
 
 type DirectoryDbRow = {
@@ -561,13 +563,19 @@ export async function loadLegislatorProfile(legislatorId: string): Promise<Legis
   const crossPartyAlignments = currentMembership
     ? alignments.filter((row) => row.party !== currentMembership.party).slice(0, 6)
     : [];
-  const campaignFinance = currentMembership
-    ? await loadCurrentCampaignFinanceContext({
-        membershipId: currentMembership.membershipId,
-        memberName: currentMembership.name,
-        chamber: currentMembership.chamberSlug,
-      })
-    : undefined;
+  const [campaignFinance, priorCycleFinance] = currentMembership
+    ? await Promise.all([
+        loadCurrentCampaignFinanceContext({
+          membershipId: currentMembership.membershipId,
+          memberName: currentMembership.name,
+          chamber: currentMembership.chamberSlug,
+        }),
+        loadPriorCycleProvenFinanceContext({
+          membershipId: currentMembership.membershipId,
+          asOf: new Date().toISOString(),
+        }),
+      ])
+    : [undefined, [] as PriorCycleProvenFinanceContext[]];
 
   return {
     legislatorId,
@@ -582,5 +590,6 @@ export async function loadLegislatorProfile(legislatorId: string): Promise<Legis
     evidence,
     memberPrimaryEvidence,
     campaignFinance,
+    priorCycleFinance,
   };
 }
