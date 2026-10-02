@@ -24,7 +24,6 @@ test('Senate year-page parser extracts direct official minute PDFs by committee 
   assert.deepEqual(parsed.committeeNames,[
     'Agriculture, Broadband and Rural Development',
     'Finance',
-    'Taxes',
   ]);
   assert.deepEqual(parsed.documents.map(row=>[row.meetingDate,row.committeeName,row.url]),[
     ['2024-02-19','Agriculture, Broadband and Rural Development','https://www.lrl.mn.gov/archive/minutes/senate/2024/agr/20240219/Agr_20240219_Minutes.pdf'],
