@@ -488,6 +488,26 @@ async function main() {
       ORDER BY 1,2
     `);
 
+    const organizationPublicationCoverage = await pool.query(`
+      SELECT
+        coalesce(sd.metadata->>'sector',ei.metadata->>'sector','legacy_unclassified') AS "sector",
+        count(DISTINCT sd.metadata->>'seedId')::int AS "seeds",
+        count(DISTINCT sd.id)::int AS "sourceDocuments",
+        count(ei.id)::int AS "evidenceItems",
+        count(*) FILTER (
+          WHERE ei.published_at IS NOT NULL
+            AND (
+              coalesce(ei.metadata->>'availabilityProof','') <> ''
+              OR coalesce(ei.metadata->>'archiveCapturedAt','') <> ''
+            )
+        )::int AS "itemsWithHistoricalTimingProof"
+      FROM source_documents sd
+      LEFT JOIN evidence_items ei ON ei.source_document_id=sd.id
+      WHERE sd.source_kind='wayback_organization_publication'
+      GROUP BY coalesce(sd.metadata->>'sector',ei.metadata->>'sector','legacy_unclassified')
+      ORDER BY 1
+    `);
+
     const memberPublicationGaps = await pool.query(`
       WITH target AS (
         SELECT m.id,l.name,s.slug session_slug,c.slug chamber
@@ -632,6 +652,7 @@ async function main() {
           },
           H_I_J_publicArchives: {
             byFamilySession: publicArchiveCoverage.rows,
+            organizationPublicationBySector: organizationPublicationCoverage.rows,
             memberPublicationCoverage: memberPublicationGaps.rows,
             lowCoverageMembers: lowCoverageMembers.rows,
             gapClass: 'bounded_curated_coverage_not_exhaustive',
