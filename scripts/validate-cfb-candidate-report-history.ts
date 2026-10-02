@@ -36,6 +36,91 @@ function mapperInput(row: CfbCandidateFinanceRow) {
   };
 }
 
+function normalizeDiagnosticValue(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function diagnosticDateTokens(value: string | null): { padded: string | null; unpadded: string | null } {
+  const match = value?.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return { padded: null, unpadded: null };
+  const [, year = '', month = '', day = ''] = match;
+  return {
+    padded: month + '/' + day + '/' + year,
+    unpadded: String(Number(month)) + '/' + String(Number(day)) + '/' + year,
+  };
+}
+
+function diagnosticHasAmount(text: string, amount: number): boolean {
+  const fixed = amount.toFixed(2);
+  const withCommas = amount.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  return text.includes(withCommas) || text.replace(/,/g, '').includes(fixed);
+}
+
+function diagnosticHasIdentity(row: CfbCandidateFinanceRow, text: string): boolean {
+  const strongIds = [
+    row.kind === 'expenditure' ? row.affectedCommitteeRegistrationNumber : null,
+    row.kind === 'contribution' ? row.contributorRegistrationNumber : null,
+  ].filter((value): value is string => Boolean(value?.trim()));
+  if (strongIds.some(value => text.includes(value))) return true;
+
+  const normalized = normalizeDiagnosticValue(text);
+  const names = [
+    row.kind === 'expenditure' ? row.affectedCommitteeName : null,
+    row.kind === 'contribution' ? row.contributor : null,
+    row.kind === 'expenditure' ? row.vendorName : null,
+  ]
+    .map(value => value ? normalizeDiagnosticValue(value) : '')
+    .filter(value => value.length >= 4);
+  return names.some(value => normalized.includes(value));
+}
+
+function legacyContainmentSignals(
+  row: CfbCandidateFinanceRow,
+  reports: readonly CfbCandidateHistoricalReport[],
+) {
+  const dateTokens = diagnosticDateTokens(row.transactionDate);
+  const amount = row.kind === 'expenditure' && Number.isFinite(row.totalAmount)
+    ? Number(row.totalAmount)
+    : row.amount;
+  let paddedDateSeen = false;
+  let unpaddedDateSeen = false;
+  let amountSeen = false;
+  let identitySeen = false;
+  let paddedFullMatch = false;
+  let flexibleDateFullMatch = false;
+
+  for (const report of reports) {
+    const inCoverage = Boolean(
+      row.transactionDate
+      && row.transactionDate >= report.proof.window.coverageStartOn
+      && row.transactionDate <= report.proof.window.coverageEndOn
+    );
+    const padded = Boolean(dateTokens.padded && report.text.includes(dateTokens.padded));
+    const unpadded = Boolean(dateTokens.unpadded && report.text.includes(dateTokens.unpadded));
+    const hasAmount = diagnosticHasAmount(report.text, amount);
+    const hasIdentity = diagnosticHasIdentity(row, report.text);
+    paddedDateSeen ||= padded;
+    unpaddedDateSeen ||= unpadded;
+    amountSeen ||= hasAmount;
+    identitySeen ||= hasIdentity;
+    paddedFullMatch ||= inCoverage && padded && hasAmount && hasIdentity;
+    flexibleDateFullMatch ||= inCoverage && (padded || unpadded) && hasAmount && hasIdentity;
+  }
+
+  return {
+    paddedDateSeen,
+    unpaddedDateSeen,
+    amountSeen,
+    identitySeen,
+    paddedFullMatch,
+    flexibleDateFullMatch,
+    flexibleDateWouldRecover: flexibleDateFullMatch && !paddedFullMatch,
+  };
+}
+
 async function main() {
   const targetBatch = resolveCfbCandidateFinanceTargetBatch(
     process.env.VOTEPREDICT_CFB_CANDIDATE_FINANCE_BATCH_REQUEST,
@@ -69,10 +154,40 @@ async function main() {
       && cfbCandidateSegmentEndYear(row.year) === target.segmentEndYear);
 
     let targetMatched = 0;
+    const failClosedSignals = {
+      rows: 0,
+      paddedDateSeen: 0,
+      unpaddedDateSeen: 0,
+      unpaddedOnlyDateSeen: 0,
+      amountSeen: 0,
+      identitySeen: 0,
+      paddedFullMatch: 0,
+      flexibleDateFullMatch: 0,
+      flexibleDateWouldRecover: 0,
+      contributions: { rows: 0, flexibleDateWouldRecover: 0 },
+      expenditures: { rows: 0, flexibleDateWouldRecover: 0 },
+    };
     for (const row of targetRows) {
       rowsExamined += 1;
       const match = firstProvenCfbFinanceAvailability(mapperInput(row), reportTexts);
-      if (!match) continue;
+      if (!match) {
+        const signals = legacyContainmentSignals(row, acquired.reports);
+        failClosedSignals.rows += 1;
+        if (signals.paddedDateSeen) failClosedSignals.paddedDateSeen += 1;
+        if (signals.unpaddedDateSeen) failClosedSignals.unpaddedDateSeen += 1;
+        if (signals.unpaddedDateSeen && !signals.paddedDateSeen) failClosedSignals.unpaddedOnlyDateSeen += 1;
+        if (signals.amountSeen) failClosedSignals.amountSeen += 1;
+        if (signals.identitySeen) failClosedSignals.identitySeen += 1;
+        if (signals.paddedFullMatch) failClosedSignals.paddedFullMatch += 1;
+        if (signals.flexibleDateFullMatch) failClosedSignals.flexibleDateFullMatch += 1;
+        if (signals.flexibleDateWouldRecover) failClosedSignals.flexibleDateWouldRecover += 1;
+        const kindSignals = row.kind === 'contribution'
+          ? failClosedSignals.contributions
+          : failClosedSignals.expenditures;
+        kindSignals.rows += 1;
+        if (signals.flexibleDateWouldRecover) kindSignals.flexibleDateWouldRecover += 1;
+        continue;
+      }
       rowsMatched += 1;
       targetMatched += 1;
       if (samples.length < 16) {
@@ -102,6 +217,7 @@ async function main() {
       rowsExamined: targetRows.length,
       rowsMatched: targetMatched,
       rowsFailClosed: targetRows.length - targetMatched,
+      failClosedSignals,
       reportProofs: acquired.reports.slice(0, 12).map(report => ({
         reportName: report.proof.window.reportName,
         coverageStartOn: report.proof.window.coverageStartOn,
