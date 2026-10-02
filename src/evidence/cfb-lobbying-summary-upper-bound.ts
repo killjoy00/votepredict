@@ -56,6 +56,22 @@ function amountCandidates(amount: number): string[] {
   ].map(value => value.toLowerCase()))];
 }
 
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\export function lobbyingSummaryDemonstratesPrincipalRow(
+  row: LobbyingPrincipalSummaryRow,
+  text: string,
+): boolean {
+');
+}
+
+function tokenRegex(value: string): RegExp {
+  return new RegExp('(?:^| )' + escapeRegex(value) + '(?: |$)', 'g');
+}
+
+function numericTokenPresent(text: string, value: string): boolean {
+  return new RegExp('(?:^|[^0-9])' + escapeRegex(value) + '(?:[^0-9]|$)').test(text);
+}
+
 export function lobbyingSummaryDemonstratesPrincipalRow(
   row: LobbyingPrincipalSummaryRow,
   text: string,
@@ -73,15 +89,14 @@ export function lobbyingSummaryDemonstratesPrincipalRow(
   const amounts = amountCandidates(row.totalSpent)
     .map(value => value.replace(/[$.,]/g, '').replace(/\s+/g, ''))
     .filter(Boolean);
-  let start = 0;
-  while (true) {
-    const index = searchable.indexOf(principal, start);
-    if (index < 0) return false;
+  const principalPattern = tokenRegex(principal);
+  for (const match of searchable.matchAll(principalPattern)) {
+    const index = match.index ?? 0;
     const window = searchable.slice(
       Math.max(0, index - 180),
-      Math.min(searchable.length, index + principal.length + 420),
+      Math.min(searchable.length, index + match[0].length + 420),
     );
-    if (amounts.some(value => window.includes(value))) return true;
-    start = index + principal.length;
+    if (amounts.some(value => numericTokenPresent(window, value))) return true;
   }
+  return false;
 }
