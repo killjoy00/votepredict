@@ -78,6 +78,64 @@ export function summarizeSenateCaptionPayload(html:string):SenateCaptionPayloadS
   };
 }
 
+export interface SenateCaptionRow {
+  rawTime: string;
+  startSeconds: number;
+  text: string;
+  explicitSpeaker?: string;
+  utteranceText: string;
+}
+
+function captionTimeSeconds(value:string):number|undefined{
+  const trimmed=decodeHtml(value).trim();
+  if(/^\d+(?:\.\d+)?$/.test(trimmed)){
+    const seconds=Number(trimmed);
+    return Number.isFinite(seconds)?seconds:undefined;
+  }
+  const parts=trimmed.split(':').map(part=>Number(part));
+  if(parts.some(part=>!Number.isFinite(part)))return undefined;
+  if(parts.length===2)return parts[0]*60+parts[1];
+  if(parts.length===3)return parts[0]*3600+parts[1]*60+parts[2];
+  return undefined;
+}
+
+function explicitSenateSpeaker(value:string):{speaker:string;utterance:string}|undefined{
+  const compact=value.replace(/\s+/g,' ').trim();
+  const match=compact.match(
+    /^(?:>>\s*)?(?:(?:SEN(?:ATOR)?\.?|VICE\s+CHAIR|CHAIR)\s+)([A-Za-zÀ-ž][A-Za-zÀ-ž .''’-]{0,80})\s*:\s*(.*)$/i,
+  );
+  if(!match)return undefined;
+  const speaker=match[1].trim();
+  const utterance=match[2].trim();
+  if(!speaker||!utterance)return undefined;
+  return {speaker,utterance};
+}
+
+export function extractSenateCaptionRows(html:string):SenateCaptionRow[]{
+  const rows:SenateCaptionRow[]=[];
+  for(const rowMatch of html.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)){
+    const rowHtml=rowMatch[1];
+    const timeMatch=rowHtml.match(/\bdata-time\s*=\s*["']([^"']+)["']/i);
+    if(!timeMatch)continue;
+    const startSeconds=captionTimeSeconds(timeMatch[1]);
+    if(startSeconds===undefined)continue;
+    const cells=[...rowHtml.matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/gi)]
+      .map(match=>stripTags(match[1]));
+    if(cells.length<2)continue;
+    const text=cells.slice(1).join(' ').replace(/\s+/g,' ').trim();
+    if(!text)continue;
+    const speaker=explicitSenateSpeaker(text);
+    rows.push({
+      rawTime:decodeHtml(timeMatch[1]).trim(),
+      startSeconds,
+      text,
+      ...(speaker?{explicitSpeaker:speaker.speaker}:{}),
+      utteranceText:speaker?.utterance??text,
+    });
+  }
+  return rows;
+}
+
 export function extractSenateCaptionSourceCandidates(html:string,pageUrl:string):CaptionSourceCandidate[]{
   const rows:CaptionSourceCandidate[]=[];
   const seen=new Set<string>();
