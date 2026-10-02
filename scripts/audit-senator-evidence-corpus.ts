@@ -261,7 +261,7 @@ async function main(){
        WHERE source_system IN ('mn_senate_journals','mn_senate_committee_minutes','wayback-public-evidence')
          AND (
            source_system<>'wayback-public-evidence'
-           OR metadata->>'selectionPass' IN ('issue-positions-v1','senate-issue-positions-v2')
+           OR metadata->>'selectionPass' IN ('issue-positions-v1','senate-issue-positions-v2','senate-issue-positions-v3')
          )
        ORDER BY started_at DESC
        LIMIT 20
