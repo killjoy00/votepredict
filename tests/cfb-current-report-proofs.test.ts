@@ -244,6 +244,10 @@ test('finance row mapping accepts exact legacy numeric date spellings', () => {
     row,
     '08/06/21 Example Donor 500.00',
   ), false);
+  assert.equal(cfbReportTextDemonstratesFinanceRow(
+    { ...row, transactionDate: '2021-01-05' },
+    '11/5/21 Example Donor 500.00',
+  ), false, 'short-year date tokens must not match inside a different numeric date');
 });
 
 test('finance row mapping fails closed outside the report coverage window', () => {
