@@ -1,0 +1,24 @@
+name: Probe Senate caption speaker structure
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    if: >-
+      github.event.issue.number == 477 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      startsWith(github.event.comment.body, '[senator-caption-speaker-structure-probe]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+      - name: Probe caption row speaker metadata
+        run: node --import tsx scripts/probe-senate-caption-speaker-structure.ts
