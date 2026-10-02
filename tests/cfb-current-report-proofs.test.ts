@@ -227,6 +227,25 @@ test('finance row mapping requires the report to demonstrate the specific row', 
   }, [{ proof, text: reportText }]), null);
 });
 
+test('finance row mapping accepts exact legacy numeric date spellings', () => {
+  const row = {
+    transactionDate: '2021-08-05',
+    kind: 'contribution',
+    amount: 500,
+    contributor: 'Example Donor',
+  };
+  for (const date of ['08/05/2021', '8/5/2021', '08/05/21', '8/5/21']) {
+    assert.equal(cfbReportTextDemonstratesFinanceRow(
+      row,
+      date + ' Example Donor 500.00',
+    ), true, date);
+  }
+  assert.equal(cfbReportTextDemonstratesFinanceRow(
+    row,
+    '08/06/21 Example Donor 500.00',
+  ), false);
+});
+
 test('finance row mapping fails closed outside the report coverage window', () => {
   const reference: CfbReportViewerReference = {
     filingYear: 2026,
