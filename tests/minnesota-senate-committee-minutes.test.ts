@@ -166,3 +166,36 @@ test('Senate committee parser falls back to aggregate counts when a results-bloc
   assert.deepEqual(rows[0].memberVotes,[]);
   assert.deepEqual([rows[0].yeaCount,rows[0].nayCount],[3,2]);
 });
+
+
+test('Senate committee parser captures unanimous named roll calls with an empty Nays list', () => {
+  const html = `
+    <p>S.F. 5000 was before the committee.</p>
+    <p>Senator Murphy requested a roll call on the motion.</p>
+    <p>10/0 (Ayes: Murphy, Rest, Johnson, Champion, Coleman, Frentz, Limmer, Marty, Miller, Pappas; Nays) Motion prevailed.</p>
+  `;
+  const rows=parseSenateCommitteeMinuteVotes(html);
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].billIdentifier,'SF5000');
+  assert.equal(rows[0].individualVotesAvailable,true);
+  assert.deepEqual([rows[0].yeaCount,rows[0].nayCount],[10,0]);
+  assert.equal(rows[0].memberVotes.length,10);
+  assert.ok(rows[0].memberVotes.every(row=>row.choice==='yea'));
+  assert.equal(rows[0].passed,true);
+});
+
+test('Senate committee parser captures counts before separate Ayes and Nays lines', () => {
+  const html = `
+    <p>S.F. 2000 was before the committee.</p>
+    <p>Senator Green requested roll call on final passage - 5/4 - motion for final passage prevails</p>
+    <p>Ayes: Green, Lang, Wesenberg, Eichorn, Utke</p>
+    <p>Nays: Hawj, Hauschild, McEwen, Morrison</p>
+  `;
+  const rows=parseSenateCommitteeMinuteVotes(html);
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].billIdentifier,'SF2000');
+  assert.equal(rows[0].individualVotesAvailable,true);
+  assert.deepEqual([rows[0].yeaCount,rows[0].nayCount],[5,4]);
+  assert.equal(rows[0].memberVotes.length,9);
+  assert.equal(rows[0].passed,true);
+});
