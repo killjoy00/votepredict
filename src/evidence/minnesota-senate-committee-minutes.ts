@@ -81,7 +81,7 @@ function voteKind(context: string): SenateCommitteeVoteObservation['voteKind'] {
 
 function explicitOutcome(value: string): boolean | undefined {
   if (/\b(?:motion|amendment)\s+(?:failed|did not prevail|was not adopted)\b/i.test(value)) return false;
-  if (/\b(?:motion|amendment)\s+(?:passed|prevailed|was adopted)\b/i.test(value)) return true;
+  if (/\b(?:motion|amendment)(?:\s+for\s+final\s+passage)?\s+(?:passed|prevails|prevailed|was adopted)\b/i.test(value)) return true;
   if (/\bnot adopted\b|\bmotion failed\b/i.test(value)) return false;
   if (/\badopted\b|\bmotion passed\b/i.test(value)) return true;
   return undefined;
