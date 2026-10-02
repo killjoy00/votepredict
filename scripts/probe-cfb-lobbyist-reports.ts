@@ -348,6 +348,9 @@ async function fetchLobbyistReportPdf(reference: LobbyistPdfReference, referer: 
   if (bytes.byteLength > 30_000_000) throw new Error('CFB lobbyist PDF response exceeded 30 MB');
   const header = new TextDecoder('ascii').decode(bytes.subarray(0, Math.min(5, bytes.byteLength)));
   const isPdf = header === '%PDF-';
+  const byteLength = bytes.byteLength;
+  const { createHash } = await import('node:crypto');
+  const contentSha256 = createHash('sha256').update(bytes).digest('hex');
   let text = '';
   if (isPdf && bytes.byteLength >= 300) {
     const { CanvasFactory } = await import('pdf-parse/worker');
@@ -362,16 +365,15 @@ async function fetchLobbyistReportPdf(reference: LobbyistPdfReference, referer: 
   } else {
     text = new TextDecoder('utf-8').decode(bytes);
   }
-  const { createHash } = await import('node:crypto');
   return {
     reference,
     method,
     status: response.status,
     finalUrl: response.url,
     contentType: response.headers.get('content-type'),
-    bytes: bytes.byteLength,
+    bytes: byteLength,
     isPdf,
-    contentSha256: createHash('sha256').update(bytes).digest('hex'),
+    contentSha256,
     textLength: text.length,
     contexts: pdfDateAndSubjectContexts(text),
     textSample: text.replace(/\s+/g, ' ').trim().slice(0, 12000),
