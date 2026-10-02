@@ -96,12 +96,15 @@ async function main() {
              OR coalesce(ei.metadata->>'availableAt','') <> ''
         )::int AS "itemsWithAvailabilityProof",
         count(*) FILTER (
-          WHERE ei.metadata->>'asOfEligible'='false'
-             OR (
-               ei.published_at IS NULL
-               AND coalesce(ei.metadata->>'availabilityProof','')=''
-               AND coalesce(ei.metadata->>'availableAt','')=''
-             )
+          WHERE ei.id IS NOT NULL
+            AND (
+              ei.metadata->>'asOfEligible'='false'
+              OR (
+                ei.published_at IS NULL
+                AND coalesce(ei.metadata->>'availabilityProof','')=''
+                AND coalesce(ei.metadata->>'availableAt','')=''
+              )
+            )
         )::int AS "itemsWithoutProvenHistoricalTiming"
       FROM source_documents sd
       LEFT JOIN legislative_sessions s ON s.id=sd.session_id
