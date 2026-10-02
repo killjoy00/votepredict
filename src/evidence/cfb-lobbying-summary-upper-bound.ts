@@ -70,12 +70,18 @@ export function lobbyingSummaryDemonstratesPrincipalRow(
   if (principal.length < 4) return false;
 
   const searchable = normalized.replace(/[$.,]/g, '').replace(/\s+/g, ' ');
+  const amounts = amountCandidates(row.totalSpent)
+    .map(value => value.replace(/[$.,]/g, '').replace(/\s+/g, ''))
+    .filter(Boolean);
   let start = 0;
   while (true) {
     const index = searchable.indexOf(principal, start);
     if (index < 0) return false;
-    const window = normalized.slice(Math.max(0, index - 180), Math.min(normalized.length, index + principal.length + 420));
-    if (amountCandidates(row.totalSpent).some(value => window.includes(value))) return true;
+    const window = searchable.slice(
+      Math.max(0, index - 180),
+      Math.min(searchable.length, index + principal.length + 420),
+    );
+    if (amounts.some(value => window.includes(value))) return true;
     start = index + principal.length;
   }
 }
