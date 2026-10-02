@@ -82,6 +82,18 @@ async function main(){
          WHERE sd.source_kind='senate_committee_minutes'
          GROUP BY ve.session_id
       ),
+      committee_actions AS (
+        SELECT sd.session_id,
+               count(*)::int items,
+               count(*) FILTER (WHERE ei.metadata->>'subtype'='voice_vote')::int voice_vote_actions,
+               count(*) FILTER (WHERE ei.metadata->>'subtype'='unanimous_action')::int unanimous_actions,
+               count(*) FILTER (WHERE ei.metadata->>'subtype'='motion_result_only')::int result_only_actions
+          FROM evidence_items ei
+          JOIN source_documents sd ON sd.id=ei.source_document_id
+         WHERE sd.source_kind='senate_committee_minutes'
+           AND ei.metadata->>'contextType'='senate_committee_action'
+         GROUP BY sd.session_id
+      ),
       issue_positions AS (
         SELECT m.session_id,
                count(*)::int items,
@@ -142,6 +154,10 @@ async function main(){
              coalesce(c.count_only_events,0)::int AS "committeeCountOnlyEvents",
              coalesce(c.member_votes,0)::int AS "committeeMemberVotes",
              coalesce(c.unresolved_member_votes,0)::int AS "committeeUnresolvedMemberVotes",
+             coalesce(ca.items,0)::int AS "committeeActionContextItems",
+             coalesce(ca.voice_vote_actions,0)::int AS "committeeVoiceVoteActions",
+             coalesce(ca.unanimous_actions,0)::int AS "committeeUnanimousActions",
+             coalesce(ca.result_only_actions,0)::int AS "committeeResultOnlyActions",
              coalesce(ip.items,0)::int AS "issuePositionItems",
              coalesce(ip.memberships,0)::int AS "membershipsWithIssuePositions",
              coalesce(ip.supports,0)::int AS "issuePositionSupports",
@@ -156,13 +172,15 @@ async function main(){
         JOIN senate_memberships sm ON sm.session_slug=s.slug
         LEFT JOIN floor f ON f.session_id=s.id
         LEFT JOIN committee c ON c.session_id=s.id
+        LEFT JOIN committee_actions ca ON ca.session_id=s.id
         LEFT JOIN issue_positions ip ON ip.session_id=s.id
         LEFT JOIN finance fi ON fi.session_id=s.id
         LEFT JOIN remarks r ON r.session_id=s.id
        WHERE s.slug IN ('2021-2022','2023-2024','2025-2026')
        GROUP BY s.id,s.slug,f.events,f.passage_events,f.nonpassage_events,f.nonbill_events,
                 f.member_votes,f.unresolved_member_votes,c.events,c.named_events,c.count_only_events,
-                c.member_votes,c.unresolved_member_votes,ip.items,ip.memberships,ip.supports,ip.opposes,
+                c.member_votes,c.unresolved_member_votes,ca.items,ca.voice_vote_actions,ca.unanimous_actions,
+                ca.result_only_actions,ip.items,ip.memberships,ip.supports,ip.opposes,
                 ip.unclear,fi.itemized_contribution_rows,fi.memberships,fi.historically_eligible_rows,
                 r.items,r.memberships
        ORDER BY s.slug
@@ -260,6 +278,7 @@ async function main(){
           financeScope:'publicly itemized Senate candidate contribution rows only',
           missingMeans:'unobserved_or_unavailable_not_no_position',
           committeeCountOnlyPolicy:'never fabricate individual senator votes',
+          committeeActionPolicy:'voice/unanimous/result-only actions are context only and never member-resolved votes',
           remarksScope:'caption-derived remarks only; current count may be zero until Track D lands',
           productionAction:'none',
         },
