@@ -159,7 +159,7 @@ async function main():Promise<void>{
     const rosterCache=new Map<string,Candidate[]>();
     const billsCache=new Map<string,Map<string,string>>();
     const contextCache=new Map<string,{sessionId:string;chamberId:string}>();
-    let documentsFetched=0,observations=0,namedObservations=0,countOnlyObservations=0;
+    let documentsFetched=0,ocrDocuments=0,observations=0,namedObservations=0,countOnlyObservations=0;
     let memberVotes=0,inserted=0,reused=0,unresolvedMembers=0,unresolvedBills=0,failures=0;
     const failureSamples:string[]=[];
     const unresolvedMemberSamples:string[]=[];
@@ -196,6 +196,7 @@ async function main():Promise<void>{
 
         const pdf=await fetchSenateCommitteeMinutePdf({url:doc.url});
         documentsFetched+=1;
+        if(pdf.extractionMethod==='ocr_tesseract')ocrDocuments+=1;
         const parsed=parseSenateCommitteeMinuteVotes(pdf.text);
         observations+=parsed.length;
         const drafts:Array<any>=[];
@@ -241,14 +242,14 @@ async function main():Promise<void>{
                 sourceQuality:'official',relevance:'high',freshness:freshness(doc.year),
                 extractionMethod:'deterministic-senate-committee-roll-call',
                 extractionVersion:MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,
-                confidence:1,
+                confidence:pdf.extractionMethod==='ocr_tesseract'?0.9:1,
                 metadata:{
                   contextType:'senate_committee_vote',subtype:'named_roll_call',
                   committeeName:doc.committeeName,meetingDate:doc.meetingDate,
                   billIdentifier:observation.billIdentifier??null,amendmentRef:observation.amendmentRef??null,
                   voteKind:observation.voteKind,voteChoice:vote.choice,yeaCount:observation.yeaCount,nayCount:observation.nayCount,
                   motionPassed:observation.passed??null,motionText:observation.motionText,
-                  individualVotesAvailable:true,sourceVerified:true,
+                  individualVotesAvailable:true,sourceVerified:true,textExtractionMethod:pdf.extractionMethod,
                   meetingDateIsAvailability:false,asOfEligible:false,
                   availabilityStatus:'official_archive_current_bytes_no_publication_timestamp',
                   sameDayEligible:false,finalPassageStanceInferred:false,
@@ -275,7 +276,7 @@ async function main():Promise<void>{
                 billIdentifier:observation.billIdentifier??null,amendmentRef:observation.amendmentRef??null,
                 voteKind:observation.voteKind,yeaCount:observation.yeaCount,nayCount:observation.nayCount,
                 motionPassed:observation.passed??null,motionText:observation.motionText,
-                individualVotesAvailable:false,sourceVerified:true,
+                individualVotesAvailable:false,sourceVerified:true,textExtractionMethod:pdf.extractionMethod,
                 meetingDateIsAvailability:false,asOfEligible:false,
                 availabilityStatus:'official_archive_current_bytes_no_publication_timestamp',
                 sameDayEligible:false,finalPassageStanceInferred:false,
@@ -299,7 +300,7 @@ async function main():Promise<void>{
             committeeName:doc.committeeName,meetingDate:doc.meetingDate,
             parserVersion:MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,
             sourceVersion:MN_SENATE_COMMITTEE_SOURCE_VERSION,
-            officialArchive:true,meetingDateIsAvailability:false,asOfEligible:false,
+            officialArchive:true,textExtractionMethod:pdf.extractionMethod,meetingDateIsAvailability:false,asOfEligible:false,
           },
         },drafts);
         inserted+=persisted.inserted;reused+=persisted.reused;
@@ -330,7 +331,7 @@ async function main():Promise<void>{
               source:'Minnesota Legislative Reference Library committee minutes',
               committeeName:doc.committeeName,committeeVote:true,
               individualVotesAvailable:observation.individualVotesAvailable,
-              finalPassageStanceInferred:false,parserVersion:MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,
+              finalPassageStanceInferred:false,textExtractionMethod:pdf.extractionMethod,parserVersion:MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,
             }),
           ]);
           for(const [ordinal,vote] of resolvedVotes[observationIndex].entries()){
@@ -354,7 +355,7 @@ async function main():Promise<void>{
     const result={
       selectionPass:SELECTION_PASS,parserVersion:MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,
       sourceVersion:MN_SENATE_COMMITTEE_SOURCE_VERSION,totalDocuments:discovered.length,
-      batchDocuments:batch.length,offset,nextOffset,discoveryByYear,documentsFetched,
+      batchDocuments:batch.length,offset,nextOffset,discoveryByYear,documentsFetched,ocrDocuments,
       observations,namedObservations,countOnlyObservations,memberVotes,inserted,reused,
       unresolvedMembers,unresolvedBills,failures,failureSamples,unresolvedMemberSamples,
       sourceBoundary:{
