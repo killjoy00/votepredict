@@ -135,9 +135,17 @@ export function parseCfbReportPdfAvailability(
   };
 }
 
-function reportDate(value: string): string | null {
+function reportDateCandidates(value: string): string[] {
   const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  return match ? `${match[2]}/${match[3]}/${match[1]}` : null;
+  if (!match) return [];
+  const [, year = '', month = '', day = ''] = match;
+  const shortYear = year.slice(-2);
+  return [...new Set([
+    month + '/' + day + '/' + year,
+    String(Number(month)) + '/' + String(Number(day)) + '/' + year,
+    month + '/' + day + '/' + shortYear,
+    String(Number(month)) + '/' + String(Number(day)) + '/' + shortYear,
+  ])];
 }
 
 function normalize(value: string): string {
@@ -168,8 +176,8 @@ export function cfbReportTextDemonstratesFinanceRow(
   reportText: string,
 ): boolean {
   if (!row.transactionDate) return false;
-  const date = reportDate(row.transactionDate);
-  if (!date || !reportText.includes(date)) return false;
+  const dates = reportDateCandidates(row.transactionDate);
+  if (!dates.length || !dates.some(date => reportText.includes(date))) return false;
 
   const amount = row.kind === 'expenditure' && Number.isFinite(row.totalAmount)
     ? Number(row.totalAmount)
