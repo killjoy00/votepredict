@@ -1,5 +1,6 @@
 import { generateText, jsonSchema, Output } from 'ai';
 import {
+  EVIDENCE_QUALITY_ATTRIBUTION_TYPES,
   EVIDENCE_QUALITY_CENTRALITY,
   EVIDENCE_QUALITY_CLAIM_TYPES,
   EVIDENCE_QUALITY_CORROBORATION,
@@ -89,6 +90,8 @@ function annotationSchema(input: EvidenceQualityCandidateContext) {
             stance: { type: 'string', enum: [...EVIDENCE_QUALITY_STANCES] },
             specificity: { type: 'string', enum: [...EVIDENCE_QUALITY_SPECIFICITY] },
             explicitness: { type: 'string', enum: [...EVIDENCE_QUALITY_EXPLICITNESS] },
+            attributionType: { type: 'string', enum: [...EVIDENCE_QUALITY_ATTRIBUTION_TYPES] },
+            attributedActor: { type: ['string', 'null'], maxLength: 160 },
             normalizedClaim: { type: 'string', minLength: 1, maxLength: 500 },
             supportingExcerpt: { type: 'string', minLength: 1, maxLength: 500 },
             extractionConfidence: { type: 'number', minimum: 0, maximum: 1 },
@@ -101,6 +104,8 @@ function annotationSchema(input: EvidenceQualityCandidateContext) {
             'stance',
             'specificity',
             'explicitness',
+            'attributionType',
+            'attributedActor',
             'normalizedClaim',
             'supportingExcerpt',
             'extractionConfidence',
