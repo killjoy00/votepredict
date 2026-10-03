@@ -136,12 +136,19 @@ async function main() {
           WHERE sdt.source_document_id=sd.id
             AND sdt.extraction_version=$2
        )
+       AND NOT EXISTS (
+         SELECT 1
+           FROM ingestion_runs ir
+          WHERE ir.source_system='evidence-quality-source-snapshot-v1'
+            AND coalesce(ir.metadata->'attemptedSourceIds','[]'::jsonb) ? sd.id::text
+       )
      ORDER BY sd.fetched_at,sd.id
      LIMIT $3`, [sourceKinds, EVIDENCE_QUALITY_TEXT_VERSION, limit]);
 
   const result = {
     textVersion: EVIDENCE_QUALITY_TEXT_VERSION,
     selected: selected.rows.length,
+    attemptedSourceIds: selected.rows.map((row) => row.source_document_id),
     inserted: 0,
     reused: 0,
     fetchFailures: 0,

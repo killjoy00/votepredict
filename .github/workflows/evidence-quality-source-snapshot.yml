@@ -10,7 +10,7 @@ on:
         required: false
         default: '25'
       source_kinds:
-        description: Optional comma-separated Evidence Quality v1 source kinds
+        description: Optional comma-separated source kinds; blank uses archival/historical defaults
         required: false
         default: ''
 
@@ -64,7 +64,7 @@ jobs:
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
           VOTEPREDICT_EVIDENCE_QUALITY_SNAPSHOT_LIMIT: ${{ github.event_name == 'workflow_dispatch' && inputs.limit || '25' }}
-          VOTEPREDICT_EVIDENCE_QUALITY_SOURCE_KINDS: ${{ github.event_name == 'workflow_dispatch' && inputs.source_kinds || '' }}
+          VOTEPREDICT_EVIDENCE_QUALITY_SOURCE_KINDS: ${{ github.event_name == 'workflow_dispatch' && inputs.source_kinds || 'wayback_local_trade_news,wayback_campaign_site,wayback_member_primary,house_member_primary_historical_article,senate_member_primary_historical_article,wayback_organization_publication' }}
         run: node --import tsx scripts/snapshot-evidence-quality-source-text.ts
 
       - name: Audit Evidence Quality coverage
