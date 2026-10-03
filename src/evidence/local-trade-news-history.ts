@@ -1,6 +1,6 @@
 import type { WaybackCapture } from './wayback';
 
-export const LOCAL_TRADE_NEWS_HISTORY_VERSION = 'local-trade-news-history-v2' as const;
+export const LOCAL_TRADE_NEWS_HISTORY_VERSION = 'local-trade-news-history-v3' as const;
 
 export type LocalTradeNewsPublisherKind = 'local_news' | 'trade_news';
 
@@ -12,6 +12,7 @@ export interface LocalTradeNewsSeed {
   from: string;
   to: string;
   prefix: true;
+  pathHints?: readonly string[];
 }
 
 export const LOCAL_TRADE_NEWS_SEEDS: readonly LocalTradeNewsSeed[] = [
@@ -303,6 +304,126 @@ export const LOCAL_TRADE_NEWS_SEEDS: readonly LocalTradeNewsSeed[] = [
     to: '20261231',
     prefix: true,
   },
+  {
+    id: 'minnesota-daily-article-archive',
+    publisher: 'The Minnesota Daily',
+    publisherKind: 'local_news',
+    url: 'https://mndaily.com/2',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+    pathHints: ['/city/', '/news/', 'legislat', 'capitol', 'politic', 'state-house', 'state-senate'],
+  },
+  {
+    id: 'minnesota-news-network-headlines-archive',
+    publisher: 'Minnesota News Network',
+    publisherKind: 'local_news',
+    url: 'https://minnesotanewsnetwork.com/morning-headlines',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+    pathHints: ['morning-headlines'],
+  },
+  {
+    id: 'knsi-central-minnesota-archive',
+    publisher: 'KNSI',
+    publisherKind: 'local_news',
+    url: 'https://knsiradio.com/202',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+    pathHints: ['minnesota-', 'legislat', 'lawmaker', 'capitol', 'politic', 'election', 'state-house', 'state-senate'],
+  },
+  {
+    id: 'tpt-almanac-capitol-archive',
+    publisher: 'Twin Cities PBS / Almanac at the Capitol',
+    publisherKind: 'local_news',
+    url: 'https://www.tpt.org/almanac-at-the-capitol/video/',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+    pathHints: ['/almanac-at-the-capitol/video/'],
+  },
+  {
+    id: 'inforum-minnesota-archive',
+    publisher: 'InForum / Forum News Service',
+    publisherKind: 'local_news',
+    url: 'https://www.inforum.com/news/minnesota/',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+    pathHints: ['/news/minnesota/'],
+  },
+  {
+    id: 'grand-forks-herald-minnesota-archive',
+    publisher: 'Grand Forks Herald / Forum News Service',
+    publisherKind: 'local_news',
+    url: 'https://www.grandforksherald.com/news/minnesota/',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+    pathHints: ['/news/minnesota/'],
+  },
+  {
+    id: 'mshale-politics-archive',
+    publisher: 'Mshale',
+    publisherKind: 'local_news',
+    url: 'https://mshale.com/202',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+    pathHints: ['state-lawmaker', 'minnesota-house', 'minnesota-senate', 'legislat', 'state-funding', 'district-'],
+  },
+  {
+    id: 'uptake-politics-archive',
+    publisher: 'The UpTake',
+    publisherKind: 'local_news',
+    url: 'https://theuptake.org/202',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+    pathHints: ['legislat', 'senate', 'house', 'capitol', 'policy'],
+  },
+  {
+    id: 'north-news-stories-archive',
+    publisher: 'North News',
+    publisherKind: 'local_news',
+    url: 'https://mynorthnews.org/stories/',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+    pathHints: ['/stories/'],
+  },
+  {
+    id: 'roseau-times-region-story-archive',
+    publisher: 'Roseau Times-Region',
+    publisherKind: 'local_news',
+    url: 'https://www.roseautimes.com/story/202',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+    pathHints: ['/news/', 'legislat', 'house-', 'senate-', 'bill-', 'capitol'],
+  },
+  {
+    id: 'mille-lacs-messenger-news-archive',
+    publisher: 'Mille Lacs Messenger',
+    publisherKind: 'local_news',
+    url: 'https://www.messagemedia.co/millelacs/news/',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+    pathHints: ['/millelacs/news/'],
+  },
+  {
+    id: 'isanti-chisago-star-news-archive',
+    publisher: 'Isanti-Chisago County Star',
+    publisherKind: 'local_news',
+    url: 'https://www.hometownsource.com/isanti_chisago/news/',
+    from: '20210101',
+    to: '20261231',
+    prefix: true,
+    pathHints: ['/isanti_chisago/news/'],
+  },
 ] as const;
 
 export interface LocalTradeNewsBatchSelection {
@@ -411,7 +532,7 @@ const TARGET_TEXT_TERMS = [
   'state senate',
 ] as const;
 
-function pathPriority(value: string): number {
+function pathPriority(value: string, pathHints: readonly string[] = []): number {
   let pathname: string;
   try {
     pathname = new URL(value).pathname.toLowerCase();
@@ -419,6 +540,9 @@ function pathPriority(value: string): number {
     return -100;
   }
   let topicalScore = 0;
+  for (const hint of pathHints) {
+    if (pathname.includes(hint.toLowerCase())) topicalScore += 30;
+  }
   for (const term of TARGET_PATH_TERMS) {
     if (pathname.includes(term)) topicalScore += 20;
   }
@@ -429,19 +553,19 @@ function pathPriority(value: string): number {
 
 export function selectLocalTradeNewsCaptures(
   captures: readonly WaybackCapture[],
-  input: { maxCaptures?: number } = {},
+  input: { maxCaptures?: number; pathHints?: readonly string[] } = {},
 ): WaybackCapture[] {
   const maxCaptures = Math.max(1, Math.min(40, input.maxCaptures ?? 12));
   const byOriginalYear = new Map<string, WaybackCapture>();
   for (const capture of captures) {
-    if (pathPriority(capture.original) <= 0) continue;
+    if (pathPriority(capture.original, input.pathHints) <= 0) continue;
     const key = `${capture.original}|${capture.capturedAt.slice(0, 4)}`;
     const existing = byOriginalYear.get(key);
     if (!existing || capture.timestamp > existing.timestamp) byOriginalYear.set(key, capture);
   }
   return [...byOriginalYear.values()]
     .sort((left, right) =>
-      pathPriority(right.original) - pathPriority(left.original)
+      pathPriority(right.original, input.pathHints) - pathPriority(left.original, input.pathHints)
       || right.timestamp.localeCompare(left.timestamp)
       || left.original.localeCompare(right.original))
     .slice(0, maxCaptures)
