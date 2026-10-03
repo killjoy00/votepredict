@@ -85,4 +85,22 @@ The two-clock policy is an **eligibility and interpretation contract**, not an a
 
 The canonical issue #459 matrix remains frozen. The two-clock artifact is separately versioned, read-only, non-serving, and cannot be described as a replacement historical replay.
 
+## First two-clock diagnostic result
+
+The first merged diagnostic ran on 2026-10-03 as workflow run `37084284524` at code SHA `f7c718d6e7e8d786b31bc2b7655e003849116e76`. Its immutable artifact is `11260371615`, digest `sha256:9f0a9a5462678d43b4e9f25662d5cdd1fb05ce4d06f1f98df778106b87887e78`.
+
+The strict lane exactly reproduced the post-salvage historical finance result, which is an important implementation check: the new two-clock abstraction did not loosen or alter the historical as-of replay.
+
+| Session | Strict public-as-of coverage | Retrospective pre-vote activity coverage | Added activity-clock matrix rows |
+| --- | ---: | ---: | ---: |
+| 2021-22 | 3,224 / 35,510 (9.1%) | 30,532 / 35,510 (86.0%) | 27,308 |
+| 2023-24 | 17,560 / 49,827 (35.2%) | 40,828 / 49,827 (81.9%) | 23,268 |
+| 2025-26 | 27,072 / 50,120 (54.0%) | 43,543 / 50,120 (86.9%) | 16,471 |
+
+At the source-row level, 61,253 member-linked candidate-finance rows had a usable transaction date. Of those, 52,374 also had proven public-availability timing and 8,879 were retrospective-activity-only. The much larger matrix-row difference occurs because an earlier transaction can be available as retrospective context for many later member-vote observations.
+
+For the frozen 2023-24 validation period, the retrospective activity clock improved member Brier, log loss, calibration error, and chamber Yes-count MAE relative to the strict-finance lane, but the result was mixed across metrics and did not uniformly improve on the existing fixed-lambda combined model. In particular, relative to that current combined model the retrospective lane changed member Brier by `+0.0003974`, log loss by `+0.0000799`, ECE by `-0.0014388`, and chamber Yes-count MAE by `+0.01125`. Classification accuracy and passage Brier were worse.
+
+The conclusion is therefore about **information structure, not automatic model promotion**: the public-availability gate was excluding a large amount of activity that genuinely occurred before later votes, and the richer activity clock contains some measurable retrospective signal relative to the strict-finance lane. It remains exploratory and cannot establish historical live accuracy or justify a serving change by itself.
+
 Serving decisions remain prospective. The definitive forward test is the prospective evidence/model evaluation under issue #287.
