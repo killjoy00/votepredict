@@ -146,6 +146,8 @@ The screen records six feature families: amendment YEA/NAY, motion-or-procedural
 
 The eight-family historical/public source expansion is tracked in issue #355 and specified in `docs/evaluation/public-source-expansion-program.md`. Shared historical availability and Internet Archive CDX handling live in `src/evidence/historical-public-availability.ts` and `src/evidence/wayback.ts`. Archive capture time, regulator filing/disclosure time, official publication time, or verified publisher metadata—not the underlying event date—controls historical eligibility.
 
+The historical press/archive lane currently has **44 bounded publisher/source prefixes**. The second breadth tranche adds The Minnesota Daily, Minnesota News Network, KNSI, Twin Cities PBS / Almanac at the Capitol, InForum / Forum News Service, Grand Forks Herald / Forum News Service, Mshale, The UpTake, North News, Roseau Times-Region, Mille Lacs Messenger, and Isanti-Chisago County Star. Sources with narrow but non-obvious URL structures can declare source-specific path hints for archive candidate selection; those hints affect only which archived pages are fetched for review. They do not bypass the fetched-page legislative/bill/member verification or the historical availability rules.
+
 ## Existing commands
 
 - `npm run data:cfb:snapshot` builds the normalized Minnesota Campaign Finance and Public Disclosure Board snapshot through the shared TypeScript live-source parser.
