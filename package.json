@@ -66,7 +66,8 @@
     "backfill:senate:committee-minutes": "tsx scripts/backfill-senate-committee-minutes.ts",
     "backfill:evidence-quality": "tsx scripts/backfill-evidence-quality.ts",
     "snapshot:evidence-quality": "tsx scripts/snapshot-evidence-quality-source-text.ts",
-    "audit:evidence-quality": "tsx scripts/audit-evidence-quality-coverage.ts"
+    "audit:evidence-quality": "tsx scripts/audit-evidence-quality-coverage.ts",
+    "audit:evidence-quality-priority": "tsx scripts/audit-evidence-quality-priority.ts"
   },
   "dependencies": {
     "@neondatabase/auth": "0.5.0-beta",

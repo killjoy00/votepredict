@@ -72,6 +72,11 @@ jobs:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: node --import tsx scripts/audit-evidence-quality-coverage.ts
 
+      - name: Audit Evidence Quality annotation priority
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/audit-evidence-quality-priority.ts
+
       - name: Remove temporary credentials and logs
         if: always()
         shell: bash
