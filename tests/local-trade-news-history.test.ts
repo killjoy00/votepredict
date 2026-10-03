@@ -27,7 +27,7 @@ function capture(original: string, timestamp: string): WaybackCapture {
 
 test('local/trade news seeds are unique HTTPS prefixes bounded to the research window', () => {
   validateLocalTradeNewsSeeds();
-  assert.equal(LOCAL_TRADE_NEWS_SEEDS.length, 32);
+  assert.equal(LOCAL_TRADE_NEWS_SEEDS.length, 44);
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.url.startsWith('https://')));
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.prefix));
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.from === '20210101' && seed.to === '20261231'));
@@ -46,6 +46,14 @@ test('local/trade news seeds are unique HTTPS prefixes bounded to the research w
     seed.id === 'msp-business-journal-government-archive' && seed.publisherKind === 'trade_news'));
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.some(seed =>
     seed.id === 'mn-spokesman-recorder-dated-archive' && seed.publisherKind === 'local_news'));
+  assert.ok(LOCAL_TRADE_NEWS_SEEDS.some(seed =>
+    seed.id === 'tpt-almanac-capitol-archive' && seed.pathHints?.includes('/almanac-at-the-capitol/video/')));
+  assert.ok(LOCAL_TRADE_NEWS_SEEDS.some(seed =>
+    seed.id === 'mshale-politics-archive' && seed.publisherKind === 'local_news'));
+  assert.ok(LOCAL_TRADE_NEWS_SEEDS.some(seed =>
+    seed.id === 'north-news-stories-archive' && seed.pathHints?.includes('/stories/')));
+  assert.ok(LOCAL_TRADE_NEWS_SEEDS.some(seed =>
+    seed.id === 'roseau-times-region-story-archive' && seed.publisherKind === 'local_news'));
 });
 
 test('targeted local/trade runs preserve the durable rotation cursor', () => {
@@ -115,6 +123,15 @@ test('capture selection is deterministic, topical, and keeps only the latest cap
   const irrelevant = capture('https://example.com/2024/sports-championship', '20240501120000');
   const selected = selectLocalTradeNewsCaptures([irrelevant, topicalOld, topicalNew]);
   assert.deepEqual(selected.map(row => row.timestamp), ['20240401120000']);
+});
+
+test('capture selection can use a narrow source-specific path hint without weakening text verification', () => {
+  const hinted = capture('https://example.com/almanac-at-the-capitol/video/week-4', '20240401120000');
+  const unrelated = capture('https://example.com/sports/championship', '20240501120000');
+  const selected = selectLocalTradeNewsCaptures([unrelated, hinted], {
+    pathHints: ['/almanac-at-the-capitol/video/'],
+  });
+  assert.deepEqual(selected.map(row => row.original), [hinted.original]);
 });
 
 test('targeting recognizes broader statehouse language while rejecting unrelated local coverage', () => {
