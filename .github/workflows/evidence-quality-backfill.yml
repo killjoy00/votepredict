@@ -13,6 +13,10 @@ on:
         description: Optional comma-separated Evidence Quality v1 source kinds
         required: false
         default: ''
+      max_priority:
+        description: Maximum deterministic priority tier to annotate (1-5)
+        required: false
+        default: '2'
 
 permissions:
   contents: read
@@ -59,6 +63,7 @@ jobs:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
           VOTEPREDICT_EVIDENCE_QUALITY_LIMIT: ${{ github.event_name == 'workflow_dispatch' && inputs.limit || startsWith(github.event.comment.body, '[evidence-quality-canary]') && '1' || '12' }}
           VOTEPREDICT_EVIDENCE_QUALITY_SOURCE_KINDS: ${{ github.event_name == 'workflow_dispatch' && inputs.source_kinds || startsWith(github.event.comment.body, '[evidence-quality-canary]') && 'wayback_local_trade_news' || '' }}
+          VOTEPREDICT_EVIDENCE_QUALITY_MAX_PRIORITY: ${{ github.event_name == 'workflow_dispatch' && inputs.max_priority || '2' }}
         run: node --import tsx scripts/backfill-evidence-quality.ts
       - name: Remove temporary credentials and logs
         if: always()

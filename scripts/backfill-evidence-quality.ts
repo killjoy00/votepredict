@@ -166,27 +166,37 @@ async function main() {
   const limit = Number.isFinite(requestedLimit)
     ? Math.min(MAX_LIMIT, Math.max(1, requestedLimit))
     : DEFAULT_LIMIT;
+  const requestedMaxPriority = Number.parseInt(
+    process.env.VOTEPREDICT_EVIDENCE_QUALITY_MAX_PRIORITY ?? '',
+    10,
+  );
+  const maxPriority = Number.isFinite(requestedMaxPriority)
+    ? Math.min(5, Math.max(1, requestedMaxPriority))
+    : 2;
   const classifier = new EvidenceQualityClassifier();
   const requestedKinds = (process.env.VOTEPREDICT_EVIDENCE_QUALITY_SOURCE_KINDS ?? '')
     .split(',')
     .map((value) => value.trim())
     .filter(Boolean);
+  const semanticFirstPassKinds = EVIDENCE_QUALITY_SOURCE_KINDS
+    .filter((sourceKind) => sourceKind !== 'house_session_daily');
   const sourceKinds = requestedKinds.length > 0
     ? requestedKinds.filter(isEvidenceQualitySourceKind)
-    : [...EVIDENCE_QUALITY_SOURCE_KINDS];
+    : semanticFirstPassKinds;
   if (sourceKinds.length === 0) throw new Error('No valid Evidence Quality v1 source kinds requested');
 
   const runRow = await pool.query<{ id: string }>(`
     INSERT INTO ingestion_runs(source_system,scope,status,metadata)
     VALUES('evidence-quality-v1',$1,'running',$2::jsonb)
     RETURNING id::text`, [
-    'sources:' + sourceKinds.join(',') + ':limit:' + limit,
+    'sources:' + sourceKinds.join(',') + ':priority<=' + maxPriority + ':limit:' + limit,
     JSON.stringify({
       schemaVersion: EVIDENCE_QUALITY_SCHEMA_VERSION,
       promptVersion: EVIDENCE_QUALITY_PROMPT_VERSION,
       provider: EVIDENCE_QUALITY_CLASSIFIER_PROVIDER,
       model: classifier.model,
       sourceKinds,
+      maxPriority,
       limit,
       outcomeUse: 'none',
       servingChanged: false,
@@ -195,59 +205,90 @@ async function main() {
   const runId = runRow.rows[0].id;
 
   const sourceResult = await pool.query<SourceRow>(`
-    SELECT sd.id::text AS source_document_id,
-           sd.source_kind,
-           sd.source_url,
-           sd.content_sha256,
-           sd.fetched_at::text,
-           sd.metadata AS source_metadata,
-           jsonb_agg(
-             jsonb_build_object(
-               'excerpt',ei.excerpt,
-               'publishedAt',ei.published_at,
-               'memberName',l.name,
-               'billIdentifier',b.identifier,
-               'metadata',ei.metadata
-             )
-             ORDER BY ei.created_at,ei.id
-           ) AS evidence_rows
-      FROM source_documents sd
-      JOIN evidence_items ei ON ei.source_document_id=sd.id
-      LEFT JOIN memberships m ON m.id=ei.membership_id
-      LEFT JOIN legislators l ON l.id=m.legislator_id
-      LEFT JOIN bills b ON b.id=ei.bill_id
-     WHERE sd.source_kind = ANY($1::text[])
-       AND NOT EXISTS (
-         SELECT 1
-           FROM evidence_quality_annotations eqa
-          WHERE eqa.source_document_id=sd.id
-            AND eqa.schema_version=$2
-            AND eqa.prompt_version=$3
-            AND eqa.classifier_provider=$4
-            AND eqa.classifier_model=$5
-       )
-     GROUP BY sd.id
-     ORDER BY CASE sd.source_kind
-       WHEN 'house_member_primary_historical_article' THEN 1
-       WHEN 'senate_member_primary_historical_article' THEN 1
-       WHEN 'wayback_member_primary' THEN 2
-       WHEN 'wayback_campaign_site' THEN 3
-       WHEN 'wayback_local_trade_news' THEN 4
-       WHEN 'wayback_organization_publication' THEN 5
-       WHEN 'house_session_daily' THEN 6
-       WHEN 'member_primary_article' THEN 7
-       WHEN 'campaign_site' THEN 8
-       WHEN 'public_news_article' THEN 9
-       ELSE 10
-     END,
-     sd.fetched_at,
-     sd.id
-     LIMIT $6`, [
+    WITH document_features AS (
+      SELECT sd.id,
+             sd.source_kind,
+             sd.source_url,
+             sd.content_sha256,
+             sd.fetched_at,
+             sd.metadata AS source_metadata,
+             jsonb_agg(
+               jsonb_build_object(
+                 'excerpt',ei.excerpt,
+                 'publishedAt',ei.published_at,
+                 'memberName',l.name,
+                 'billIdentifier',b.identifier,
+                 'metadata',ei.metadata
+               )
+               ORDER BY ei.created_at,ei.id
+             ) AS evidence_rows,
+             bool_or(
+               ei.membership_id IS NOT NULL
+               OR CASE
+                    WHEN jsonb_typeof(ei.metadata->'mentionedMembers')='array'
+                    THEN jsonb_array_length(ei.metadata->'mentionedMembers') > 0
+                    ELSE false
+                  END
+               OR nullif(trim(coalesce(ei.metadata->>'memberName','')),'') IS NOT NULL
+             ) AS has_member,
+             bool_or(
+               ei.bill_id IS NOT NULL
+               OR CASE
+                    WHEN jsonb_typeof(ei.metadata->'billIdentifiers')='array'
+                    THEN jsonb_array_length(ei.metadata->'billIdentifiers') > 0
+                    ELSE false
+                  END
+               OR nullif(trim(coalesce(ei.metadata->>'exactBillIdentifier','')),'') IS NOT NULL
+             ) AS has_bill,
+             bool_or(
+               ei.relevance IN ('direct','high')
+               OR ei.evidence_kind IN ('direct_statement','related_statement')
+             ) AS direct_or_high
+        FROM source_documents sd
+        JOIN evidence_items ei ON ei.source_document_id=sd.id
+        LEFT JOIN memberships m ON m.id=ei.membership_id
+        LEFT JOIN legislators l ON l.id=m.legislator_id
+        LEFT JOIN bills b ON b.id=ei.bill_id
+       WHERE sd.source_kind = ANY($1::text[])
+         AND NOT EXISTS (
+           SELECT 1
+             FROM evidence_quality_annotations eqa
+            WHERE eqa.source_document_id=sd.id
+              AND eqa.schema_version=$2
+              AND eqa.prompt_version=$3
+              AND eqa.classifier_provider=$4
+              AND eqa.classifier_model=$5
+         )
+       GROUP BY sd.id
+    ),
+    prioritized AS (
+      SELECT *,
+             CASE
+               WHEN has_member AND has_bill THEN 1
+               WHEN has_member AND direct_or_high THEN 2
+               WHEN has_bill AND direct_or_high THEN 3
+               WHEN has_member OR has_bill THEN 4
+               ELSE 5
+             END AS priority_rank
+        FROM document_features
+    )
+    SELECT id::text AS source_document_id,
+           source_kind,
+           source_url,
+           content_sha256,
+           fetched_at::text,
+           source_metadata,
+           evidence_rows
+      FROM prioritized
+     WHERE priority_rank <= $6
+     ORDER BY priority_rank,fetched_at,id
+     LIMIT $7`, [
     sourceKinds,
     EVIDENCE_QUALITY_SCHEMA_VERSION,
     EVIDENCE_QUALITY_PROMPT_VERSION,
     EVIDENCE_QUALITY_CLASSIFIER_PROVIDER,
     classifier.model,
+    maxPriority,
     limit,
   ]);
 
