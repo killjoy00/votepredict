@@ -118,23 +118,37 @@ async function main() {
   const runId = runRow.rows[0].id;
 
   const selected = await pool.query<SourceRow>(`
-    WITH candidates AS (
-      SELECT sd.id::text AS source_document_id,
+    WITH document_features AS (
+      SELECT sd.id,
              sd.source_kind,
              sd.source_url,
              sd.content_sha256,
-             sd.fetched_at::text AS fetched_at,
-             row_number() OVER (
-               PARTITION BY sd.source_kind
-               ORDER BY sd.fetched_at,sd.id
-             ) AS source_rank
+             sd.fetched_at,
+             bool_or(
+               ei.membership_id IS NOT NULL
+               OR CASE
+                    WHEN jsonb_typeof(ei.metadata->'mentionedMembers')='array'
+                    THEN jsonb_array_length(ei.metadata->'mentionedMembers') > 0
+                    ELSE false
+                  END
+               OR nullif(trim(coalesce(ei.metadata->>'memberName','')),'') IS NOT NULL
+             ) AS has_member,
+             bool_or(
+               ei.bill_id IS NOT NULL
+               OR CASE
+                    WHEN jsonb_typeof(ei.metadata->'billIdentifiers')='array'
+                    THEN jsonb_array_length(ei.metadata->'billIdentifiers') > 0
+                    ELSE false
+                  END
+               OR nullif(trim(coalesce(ei.metadata->>'exactBillIdentifier','')),'') IS NOT NULL
+             ) AS has_bill,
+             bool_or(
+               ei.relevance IN ('direct','high')
+               OR ei.evidence_kind IN ('direct_statement','related_statement')
+             ) AS direct_or_high
         FROM source_documents sd
+        JOIN evidence_items ei ON ei.source_document_id=sd.id
        WHERE sd.source_kind = ANY($1::text[])
-         AND EXISTS (
-           SELECT 1
-             FROM evidence_items ei
-            WHERE ei.source_document_id=sd.id
-         )
          AND NOT EXISTS (
            SELECT 1
              FROM source_document_texts sdt
@@ -147,10 +161,34 @@ async function main() {
             WHERE ir.source_system='evidence-quality-source-snapshot-v1'
               AND coalesce(ir.metadata->'attemptedSourceIds','[]'::jsonb) ? sd.id::text
          )
+       GROUP BY sd.id
+    ),
+    prioritized AS (
+      SELECT *,
+             CASE
+               WHEN has_member AND has_bill THEN 1
+               WHEN has_member AND direct_or_high THEN 2
+               WHEN has_bill AND direct_or_high THEN 3
+               WHEN has_member OR has_bill THEN 4
+               ELSE 5
+             END AS priority_rank
+        FROM document_features
+    ),
+    ranked AS (
+      SELECT *,
+             row_number() OVER (
+               PARTITION BY source_kind
+               ORDER BY priority_rank,fetched_at,id
+             ) AS source_rank
+        FROM prioritized
     )
-    SELECT source_document_id,source_kind,source_url,content_sha256,fetched_at
-      FROM candidates
-     ORDER BY source_rank,source_kind,fetched_at,source_document_id
+    SELECT id::text AS source_document_id,
+           source_kind,
+           source_url,
+           content_sha256,
+           fetched_at::text
+      FROM ranked
+     ORDER BY priority_rank,source_rank,source_kind,fetched_at,id
      LIMIT $3`, [sourceKinds, EVIDENCE_QUALITY_TEXT_VERSION, limit]);
 
   const result = {
