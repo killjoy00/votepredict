@@ -195,7 +195,8 @@ The production reconciliation repaired the release-integrity drift found during 
 - [x] Combine lifecycle/floor-access probability with conditional member/chamber passage and score strict source-chamber passage across all introduced bills.
 - [x] Define any companion/substantive-vehicle outcome separately with an outcome-blind frozen lineage rule.
 - [x] Freeze the P8 2027-28 prospective lifecycle capture/evaluation contract before outcomes accrue.
-- [ ] Freeze the exact P8 model artifact and activate immutable daily lifecycle capture before 2027-28 outcomes accrue.
+- [x] Freeze the exact P8 model artifact from completed 2021-26 history before any 2027-28 outcomes accrue.
+- [ ] Activate immutable daily P8 lifecycle capture before 2027-28 outcomes accrue.
 
 ### P2 — measure rather than tune
 
