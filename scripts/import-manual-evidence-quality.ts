@@ -123,11 +123,11 @@ function stringArray(value: unknown): string[] {
 }
 
 function normalizedMembers(values: readonly string[]): string[] {
-  return [...new Set(values.map((value) => value.trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  return [...new Set(values.map((value) => value.trim()).filter(Boolean))].sort();
 }
 
 function normalizedBills(values: readonly string[]): string[] {
-  return [...new Set(values.map((value) => value.trim().toUpperCase()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  return [...new Set(values.map((value) => value.trim().toUpperCase()).filter(Boolean))].sort();
 }
 
 function candidateContext(rows: readonly EvidenceRow[]) {
@@ -147,8 +147,8 @@ function candidateContext(rows: readonly EvidenceRow[]) {
   }
 
   return {
-    memberNames: normalizedMembers([...members]),
-    billIdentifiers: normalizedBills([...bills]),
+    memberNames: normalizedMembers([...members]).slice(0, 24),
+    billIdentifiers: normalizedBills([...bills]).slice(0, 24),
   };
 }
 
