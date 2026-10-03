@@ -227,7 +227,21 @@ async function main() {
             AND eqa.classifier_model=$5
        )
      GROUP BY sd.id
-     ORDER BY sd.fetched_at,sd.id
+     ORDER BY CASE sd.source_kind
+       WHEN 'house_member_primary_historical_article' THEN 1
+       WHEN 'senate_member_primary_historical_article' THEN 1
+       WHEN 'wayback_member_primary' THEN 2
+       WHEN 'wayback_campaign_site' THEN 3
+       WHEN 'wayback_local_trade_news' THEN 4
+       WHEN 'wayback_organization_publication' THEN 5
+       WHEN 'house_session_daily' THEN 6
+       WHEN 'member_primary_article' THEN 7
+       WHEN 'campaign_site' THEN 8
+       WHEN 'public_news_article' THEN 9
+       ELSE 10
+     END,
+     sd.fetched_at,
+     sd.id
      LIMIT $6`, [
     sourceKinds,
     EVIDENCE_QUALITY_SCHEMA_VERSION,
