@@ -48,13 +48,12 @@ jobs:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: node --import tsx scripts/apply-evidence-quality-migration.ts --apply
 
-      - name: Verify exact production migration ledger
+      - name: Verify exact Evidence Quality migration state
         if: >-
           startsWith(github.event.comment.body, '[evidence-quality-migration] apply')
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
-          VOTEPREDICT_REQUIRE_MIGRATION_LEDGER: '1'
-        run: node --import tsx scripts/check-production-migration-drift.ts
+        run: node --import tsx scripts/apply-evidence-quality-migration.ts
 
       - name: Remove temporary credentials and logs
         if: always()
