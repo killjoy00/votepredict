@@ -1,4 +1,4 @@
-import { doublePrecision, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { boolean, doublePrecision, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 import { billVersions, bills, forecastRevisions, forecasts, memberships, sourceDocuments } from './schema';
 
 const createdAt = () => timestamp('created_at', { withTimezone: true }).notNull().defaultNow();
@@ -53,6 +53,51 @@ export const evidenceRelationships = pgTable('evidence_relationships', {
   createdAt: createdAt(),
 }, (table) => [
   uniqueIndex('evidence_relationships_unique_uq').on(table.fromEvidenceId, table.toEvidenceId, table.relationKind),
+]);
+
+export const sourceDocumentTexts = pgTable('source_document_texts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  sourceDocumentId: uuid('source_document_id').notNull().references(() => sourceDocuments.id, { onDelete: 'cascade' }),
+  sourceContentSha256: text('source_content_sha256').notNull(),
+  textSha256: text('text_sha256').notNull(),
+  normalizedText: text('normalized_text').notNull(),
+  extractionMethod: text('extraction_method').notNull(),
+  extractionVersion: text('extraction_version').notNull(),
+  metadata: jsonb('metadata').notNull().default({}),
+  createdAt: createdAt(),
+}, (table) => [
+  uniqueIndex('source_document_texts_source_version_uq').on(table.sourceDocumentId, table.extractionVersion),
+  index('source_document_texts_hash_idx').on(table.textSha256),
+]);
+
+export const evidenceQualityAnnotations = pgTable('evidence_quality_annotations', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  sourceDocumentId: uuid('source_document_id').notNull().references(() => sourceDocuments.id, { onDelete: 'cascade' }),
+  sourceDocumentTextId: uuid('source_document_text_id').references(() => sourceDocumentTexts.id, { onDelete: 'set null' }),
+  schemaVersion: text('schema_version').notNull(),
+  promptVersion: text('prompt_version').notNull(),
+  classifierProvider: text('classifier_provider').notNull(),
+  classifierModel: text('classifier_model').notNull(),
+  contentMode: text('content_mode').notNull(),
+  annotation: jsonb('annotation').notNull(),
+  extractionConfidence: doublePrecision('extraction_confidence').notNull(),
+  outcomeBlind: boolean('outcome_blind').notNull().default(true),
+  contextOnly: boolean('context_only').notNull().default(true),
+  mechanicallyActionable: boolean('mechanically_actionable').notNull().default(false),
+  modelWeight: doublePrecision('model_weight').notNull().default(0),
+  metadata: jsonb('metadata').notNull().default({}),
+  createdAt: createdAt(),
+}, (table) => [
+  uniqueIndex('evidence_quality_annotations_identity_uq').on(
+    table.sourceDocumentId,
+    table.schemaVersion,
+    table.promptVersion,
+    table.classifierProvider,
+    table.classifierModel,
+    table.contentMode,
+  ),
+  index('evidence_quality_annotations_source_idx').on(table.sourceDocumentId, table.createdAt),
+  index('evidence_quality_annotations_schema_idx').on(table.schemaVersion, table.createdAt),
 ]);
 
 export const researchRuns = pgTable('research_runs', {

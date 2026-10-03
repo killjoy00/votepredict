@@ -63,7 +63,8 @@
     "backfill:house:committee-attachment-content": "tsx scripts/backfill-house-committee-attachment-content.ts",
     "backfill:house:committee-attachment-wayback": "tsx scripts/backfill-house-committee-attachment-wayback.ts",
     "backfill:senate:member-primary-history": "tsx scripts/backfill-senate-member-primary-history.ts",
-    "backfill:senate:committee-minutes": "tsx scripts/backfill-senate-committee-minutes.ts"
+    "backfill:senate:committee-minutes": "tsx scripts/backfill-senate-committee-minutes.ts",
+    "backfill:evidence-quality": "tsx scripts/backfill-evidence-quality.ts"
   },
   "dependencies": {
     "@neondatabase/auth": "0.5.0-beta",

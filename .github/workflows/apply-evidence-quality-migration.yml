@@ -1,0 +1,68 @@
+name: Evidence Quality v1 migration
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evidence-quality-v1-migration
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    if: >-
+      github.event.issue.number == 579 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      startsWith(github.event.comment.body, '[evidence-quality-migration]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+
+      - name: Read production environment privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+
+      - name: Read-only production preflight
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/apply-evidence-quality-migration.ts
+
+      - name: Apply guarded additive 0013 migration
+        if: >-
+          startsWith(github.event.comment.body, '[evidence-quality-migration] apply')
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/apply-evidence-quality-migration.ts --apply
+
+      - name: Verify exact production migration ledger
+        if: >-
+          startsWith(github.event.comment.body, '[evidence-quality-migration] apply')
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+          VOTEPREDICT_REQUIRE_MIGRATION_LEDGER: '1'
+        run: node --import tsx scripts/check-production-migration-drift.ts
+
+      - name: Remove temporary credentials and logs
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PYTHON'
+          import os
+          from pathlib import Path
+          for name in ['votepredict-production.env','vercel-pull.log']:
+              Path(os.environ['RUNNER_TEMP'],name).unlink(missing_ok=True)
+          PYTHON
