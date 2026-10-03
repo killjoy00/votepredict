@@ -39,13 +39,14 @@ Examples of acceptable upper-bound proof include an exact Wayback capture of the
 
 The completed 44-source broad press review materially expanded the historical local/trade-news corpus without changing evidence semantics.
 
-- Final read-only audit: workflow `37090303922`.
-- Historically timed local/trade-news items: **408**, up from the pre-review **112** (**+296**).
-- Session totals: **137** in 2021-22, **113** in 2023-24, and **158** in 2025-26.
+- Final post-retry read-only audit: workflow `37090752375`.
+- Historically timed local/trade-news items: **410**, up from the pre-review **112** (**+298**).
+- Session totals: **138** in 2021-22, **113** in 2023-24, and **159** in 2025-26.
 - First breadth tranche net additions: **136** across workflows `37087156349`, `37087166820`, `37087559584`, and `37089446884`.
 - Second breadth tranche net additions: **160** across workflows `37088990172` and `37089252998`.
 - The 10-source second-tranche batch selected 216 captures, fetched 214, accepted/inserted 134, and recorded only two snapshot 404 failures; 93 accepted pages contained direct recognizable legislator-name matches.
 - The final eight-source first-tranche cleanup selected 136 captures, fetched 133, accepted/inserted 74, and recorded three transient Republican Eagle fetch failures.
+- A final bounded transient-failure retry (workflow `37090580654`) rechecked KNSI, Almanac at the Capitol, and Republican Eagle, reused 32 already-persisted items, recovered **2 additional articles**, and left only two fail-closed archive fetches (one Almanac 404 and one Republican Eagle fetch failure).
 - The first broadened live production refresh after deployment (workflow `37087362760`) processed 24 memberships and inserted **4 verified publisher-news articles** plus **38 member-primary publications**. GDELT timeout/rate-limit warnings fell back to Bing News RSS and did not change serving behavior.
 
 The corpus remains context-only/non-mechanical. Archive availability is still the exact Wayback capture timestamp, same-day use remains excluded, and no article is converted into a member or bill stance merely because it names a legislator or discusses legislation. No serving/model change was made.
