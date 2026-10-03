@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "historical-post-salvage-diagnostic-plan-v1",
+  "issue": 514,
+  "frozenAt": "2026-10-03T00:27:00Z",
+  "purpose": "One separately versioned robustness-only rerun after the bounded historical availability salvage. Preserve the canonical #459 matrix unchanged while measuring the effect of newly proven candidate-finance availability under the already-frozen five-feature contract and recording context-only coverage gains for the other salvaged evidence families.",
+  "canonicalBaseline": {
+    "issue": 459,
+    "workflowRunId": 37066155829,
+    "artifactId": 11252079484,
+    "artifactDigest": "sha256:22e8944cffc6fda553b05ea6ad5e92400d35fc01d83177efdd5d1204dd3c5a6f",
+    "matrixCanonicalNdjsonSha256": "c97ac50c8c89ae0548cc48bed65a42c22f332e2977b33173619c9e258c09a4d0",
+    "matrixRows": 135457,
+    "featureCount": 37
+  },
+  "protocol": {
+    "historicalReplay": "historical-quick-replay-v2",
+    "servingBaseline": "member-eb-v1.2-decay180",
+    "trainSession": "2021-2022",
+    "validationSession": "2023-2024",
+    "descriptiveSession": "2025-2026",
+    "reuseFrozenCloseoutEvaluator": true,
+    "financeFeatureContract": [
+      "financeAvailable",
+      "financeContributionCountLog1p",
+      "financeContributionAmountLog1p",
+      "financeExpenditureCountLog1p",
+      "financeExpenditureAmountLog1p"
+    ],
+    "ridgeLambda": 20,
+    "retuneAfterValidation": false,
+    "maximumAbsoluteLogitDelta": 1,
+    "strictPublishedDateBeforeVoteDate": true,
+    "sameDayExcluded": true,
+    "transactionDateIsAvailability": false
+  },
+  "modelingScope": {
+    "candidateFinance": "rerun_existing_five_feature_contract",
+    "independentExpenditures": "coverage_only_context",
+    "lobbying": "coverage_only_context",
+    "organizationPublicationsAndEndorsements": "coverage_only_context",
+    "memberPublications": "coverage_only_context",
+    "localTradeNews": "coverage_only_context",
+    "reason": "These non-candidate-finance families are persisted as contextOnly/mechanicallyActionable=false/modelWeight=0 and have no predeclared predictive feature transformation. Do not invent retrospective features after outcomes were inspected."
+  },
+  "interpretation": {
+    "independentValidationSet": false,
+    "robustnessOnly": true,
+    "canonical459ArtifactRemainsFrozen": true,
+    "automaticPromotion": false,
+    "productionAction": "none",
+    "servingChanged": false,
+    "evidenceWrites": false
+  }
+}
