@@ -13,7 +13,7 @@ VotePredict stores reusable public evidence in the existing `source_documents` a
 7. **Treat campaign claims as primary-source claims.** A campaign site establishes what a campaign publishes, not whether the claim is independently true and not how the legislator will vote.
 8. **Treat news discovery separately from verification.** GDELT is a discovery index. A hit is not durable evidence until VotePredict fetches the underlying article, verifies the target member is actually named, and preserves publication/capture provenance.
 9. **Prefer official identity sources.** Campaign-site URLs come from Minnesota Secretary of State candidate filings rather than guessed domains or general web search.
-10. **Preserve as-of boundaries in modeling.** Historical use requires evidence that the information was public before the forecast cutoff, not merely that the underlying event happened before it.
+10. **Preserve both historical clocks.** Historical *as-of replay* requires evidence that the information was public before the forecast cutoff. Separate retrospective signal analysis may use an underlying activity that truly occurred before the vote even when disclosure happened later, but that lane must never be described as information the model could have known at the time. See `docs/HISTORICAL-EVIDENCE-TWO-CLOCKS.md`.
 
 ## Relationship to Quick and Deep
 
@@ -65,7 +65,18 @@ The existing official Minnesota Campaign Finance and Public Disclosure Board bul
 
 Current production aggregates retain source hashes, cycle metadata, top-level descriptive breakdowns, and explicit supersession lineage. Money remains neutral context; donor identity, employer, contribution amount, spender identity, or independent spending is never directly translated into a vote stance.
 
-CFB bulk rows expose transaction dates, while ordinary campaign-finance information is generally disclosed through periodic reports and some large contributions have separate faster notice rules. A transaction date therefore does **not** prove the item was already public on that date. VotePredict preserves this distinction in model evaluation.
+CFB bulk rows expose transaction dates, while ordinary campaign-finance information is generally disclosed through periodic reports and some large contributions have separate faster notice rules. A transaction date therefore does **not** prove the item was already public on that date.
+
+VotePredict now preserves **two clocks** for historical finance use:
+
+- the **underlying-activity clock** answers when the contribution, expenditure, or other underlying activity actually occurred;
+- the **public-availability clock** answers when the exact row/value is proven to have been publicly observable.
+
+The public-availability clock remains mandatory for strict historical as-of replay and for any claim about what a model could have known at the historical forecast date. The underlying-activity clock may be used separately for retrospective signal learning when the activity itself occurred before the vote, even if the disclosure was late or its historical publication timing cannot be proved. Results from that retrospective lane are explicitly not historical live-performance estimates.
+
+For annual aggregate evidence, the end of the reporting period is the conservative activity-clock boundary. For example, a 2022 annual lobbying total can be considered pre-vote retrospective context for a 2023 vote because the summarized activity period ended on 2022-12-31; that does not imply the exact total was publicly known on 2022-12-31.
+
+Money remains neutral context rather than a vote stance. The two-clock rule changes eligibility for analysis, not the semantic meaning of the evidence or automatic model weight.
 
 ## Fetch hardening
 
