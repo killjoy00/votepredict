@@ -76,9 +76,7 @@ async function chooseDb(env: Record<string, string | undefined>) {
 }
 
 async function main() {
-  if (!process.argv.includes('--apply')) {
-    throw new Error('Refusing production migration without explicit --apply');
-  }
+  const apply = process.argv.includes('--apply');
 
   const envFile = process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
   if (!envFile) throw new Error('Production env file required');
@@ -136,6 +134,20 @@ async function main() {
 
     if (ledger.rows.length !== PRIOR_MIGRATIONS.length) {
       throw new Error('Production ledger is not exactly at the expected 0012 precondition');
+    }
+
+    if (!apply) {
+      console.log(JSON.stringify({
+        evidenceQualityMigration: {
+          target: TARGET_MIGRATION,
+          alreadyApplied: false,
+          applied: false,
+          safeToApply: true,
+          priorMigrationsVerified: PRIOR_MIGRATIONS.length,
+          checksum: targetChecksum,
+        },
+      }, null, 2));
+      return;
     }
 
     await client.query('BEGIN');
