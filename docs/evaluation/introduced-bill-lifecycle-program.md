@@ -1,7 +1,7 @@
 # Introduced-bill lifecycle evaluation program
 
 Status: **active engineering program**  
-Tracking issue: #310  
+Tracking issue: #310 (governing tracker; supersedes #309)  
 Primary scope: Minnesota Quick / public-data evaluation  
 Deep: out of scope
 
