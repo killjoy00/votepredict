@@ -108,12 +108,22 @@ test('targeted local/trade selection fails closed on invalid requests', () => {
       priorNextOffset: 9,
       batchSize: 1,
       requestedSeedIds: [
-        'mankato-free-press-local-news-archive',
-        'post-bulletin-local-news-archive',
-        'agweek-policy-archive',
-      ],
+      "star-tribune-minnesota-politics-archive",
+      "axios-twin-cities-archive",
+      "cbs-minnesota-news-archive",
+      "kstp-news-archive",
+      "fox9-minnesota-news-archive",
+      "duluth-news-tribune-minnesota-archive",
+      "minnesota-lawyer-article-archive",
+      "mpr-news-story-archive",
+      "minnesota-reformer-article-archive",
+      "minnpost-state-government-archive",
+      "finance-commerce-article-archive",
+      "mankato-free-press-local-news-archive",
+      "post-bulletin-local-news-archive"
+],
     }),
-    /at most 2/,
+    /at most 12/,
   );
 });
 
