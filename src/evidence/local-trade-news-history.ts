@@ -453,8 +453,8 @@ export function selectLocalTradeNewsBatch({
     ? (((priorNextOffset % seeds.length) + seeds.length) % seeds.length)
     : 0;
   const requested = requestedSeedIds.map(id => id.trim()).filter(Boolean);
-  if (requested.length > 2) {
-    throw new Error('Targeted local/trade news run may include at most 2 seed ids');
+  if (requested.length > 12) {
+    throw new Error('Targeted local/trade news run may include at most 12 seed ids');
   }
   if (new Set(requested).size !== requested.length) {
     throw new Error('Targeted local/trade news seed ids must be unique');
