@@ -154,7 +154,12 @@ async function main() {
         const selected = selectLocalTradeNewsCaptures(captures, { maxCaptures: 40, pathHints: seed.pathHints });
         capturesSelected += selected.length;
 
-        for (const capture of selected) {
+        let captureIndex = 0;
+        const workerCount = Math.min(4, selected.length);
+        await Promise.all(Array.from({ length: workerCount }, async () => {
+          while (true) {
+            const capture = selected[captureIndex++];
+            if (!capture) return;
           try {
             const page = await fetchWaybackSnapshot(capture);
             fetched += 1;
@@ -236,7 +241,8 @@ async function main() {
             failures += 1;
             if (failureSamples.length < 12) failureSamples.push(`${seed.id}: snapshot: ${safe(error)}`);
           }
-        }
+          }
+        }));
       } catch (error) {
         failures += 1;
         if (failureSamples.length < 12) failureSamples.push(`${seed.id}: discovery: ${safe(error)}`);
