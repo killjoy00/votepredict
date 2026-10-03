@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 concurrency:
   group: evidence-quality-v1-manual-frozen-export
@@ -53,6 +54,25 @@ jobs:
           name: evidence-quality-manual-batch1-frozen
           path: ${{ runner.temp }}/evidence-quality-manual-batch1-frozen.json
           retention-days: 7
+
+      - name: Report run ID to issue 579
+        if: github.event_name == 'issue_comment'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/issues/579/comments"             -f body="[evidence-quality-manual-export-result] run_id=$RUN_ID status=success artifact=evidence-quality-manual-batch1-frozen"
+
+      - name: Report failed run ID to issue 579
+        if: failure() && github.event_name == 'issue_comment'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.run_id }}
+        shell: bash
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/issues/579/comments"             -f body="[evidence-quality-manual-export-result] run_id=$RUN_ID status=failed artifact=none" || true
 
       - name: Remove temporary credentials and logs
         if: always()
