@@ -134,7 +134,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          gh issue comment 514 --repo "$GITHUB_REPOSITORY" --body "[historical-finance-two-clock-diagnostic-complete] Read-only two-clock diagnostic completed on `$GITHUB_SHA`. Strict public-as-of replay remains separate from retrospective transaction-date signal learning; canonical #459 and serving remain unchanged. Workflow: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          gh issue comment 514 --repo "$GITHUB_REPOSITORY" --body "[historical-finance-two-clock-diagnostic-complete] Read-only two-clock diagnostic completed on $GITHUB_SHA. Strict public-as-of replay remains separate from retrospective transaction-date signal learning; canonical #459 and serving remain unchanged. Workflow: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
 
       - name: Remove temporary credentials and lookups
         if: always()
