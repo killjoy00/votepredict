@@ -121,12 +121,31 @@ async function main() {
     const existingTarget = byFilename.get(TARGET_MIGRATION);
     if (existingTarget) {
       if (existingTarget !== targetChecksum) throw new Error('Existing 0013 checksum does not match repository migration');
+      if (ledger.rows.length !== PRIOR_MIGRATIONS.length + 1) {
+        throw new Error('Production ledger is not exactly at the expected 0013 state');
+      }
+      const existingObjects = await client.query<{
+        source_texts: string | null;
+        annotations: string | null;
+      }>(`
+        SELECT
+          to_regclass('public.source_document_texts')::text AS source_texts,
+          to_regclass('public.evidence_quality_annotations')::text AS annotations`);
+      const existing = existingObjects.rows[0];
+      if (existing?.source_texts !== 'source_document_texts'
+        || existing?.annotations !== 'evidence_quality_annotations') {
+        throw new Error('0013 is recorded but Evidence Quality tables are missing');
+      }
       console.log(JSON.stringify({
         evidenceQualityMigration: {
           target: TARGET_MIGRATION,
           alreadyApplied: true,
           applied: false,
+          verified: true,
+          priorMigrationsVerified: PRIOR_MIGRATIONS.length,
           checksum: targetChecksum,
+          sourceDocumentTexts: existing.source_texts,
+          evidenceQualityAnnotations: existing.annotations,
         },
       }, null, 2));
       return;
