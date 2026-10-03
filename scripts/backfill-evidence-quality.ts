@@ -176,6 +176,24 @@ async function main() {
     : [...EVIDENCE_QUALITY_SOURCE_KINDS];
   if (sourceKinds.length === 0) throw new Error('No valid Evidence Quality v1 source kinds requested');
 
+  const runRow = await pool.query<{ id: string }>(`
+    INSERT INTO ingestion_runs(source_system,scope,status,metadata)
+    VALUES('evidence-quality-v1',$1,'running',$2::jsonb)
+    RETURNING id::text`, [
+    'sources:' + sourceKinds.join(',') + ':limit:' + limit,
+    JSON.stringify({
+      schemaVersion: EVIDENCE_QUALITY_SCHEMA_VERSION,
+      promptVersion: EVIDENCE_QUALITY_PROMPT_VERSION,
+      provider: EVIDENCE_QUALITY_CLASSIFIER_PROVIDER,
+      model: classifier.model,
+      sourceKinds,
+      limit,
+      outcomeUse: 'none',
+      servingChanged: false,
+    }),
+  ]);
+  const runId = runRow.rows[0].id;
+
   const sourceResult = await pool.query<SourceRow>(`
     SELECT sd.id::text AS source_document_id,
            sd.source_kind,
@@ -360,9 +378,25 @@ async function main() {
     }
   }
 
+  const finalStatus = result.failures > 0 && result.annotated === 0 ? 'failed' : 'complete';
+  await pool.query(`
+    UPDATE ingestion_runs
+       SET status=$2,
+           finished_at=now(),
+           source_documents=$3,
+           error_summary=$4,
+           metadata=metadata || $5::jsonb
+     WHERE id=$1::uuid`, [
+    runId,
+    finalStatus,
+    result.annotated,
+    finalStatus === 'failed' ? 'Evidence Quality v1 batch produced no annotations' : null,
+    JSON.stringify(result),
+  ]);
+
   console.log(JSON.stringify({ evidenceQualityBackfill: result }, null, 2));
   await pool.end();
-  if (result.failures > 0 && result.annotated === 0) process.exitCode = 1;
+  if (finalStatus === 'failed') process.exitCode = 1;
 }
 
 main().catch((error) => {
