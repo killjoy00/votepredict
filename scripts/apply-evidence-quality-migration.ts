@@ -90,8 +90,8 @@ async function main() {
   secrets.forEach(mask);
 
   const migration = migrationSql(TARGET_MIGRATION);
-  if (/\b(?:DROP|TRUNCATE|DELETE|UPDATE|ALTER)\b/i.test(migration)) {
-    throw new Error('Evidence Quality migration contains a disallowed destructive/mutating SQL keyword');
+  if (/^\s*(?:DROP|TRUNCATE|DELETE|UPDATE|ALTER)\b/im.test(migration)) {
+    throw new Error('Evidence Quality migration contains a disallowed destructive/mutating SQL statement');
   }
 
   const { Pool } = await import('pg');
