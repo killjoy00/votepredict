@@ -9,6 +9,10 @@ export const EVIDENCE_QUALITY_SOURCE_KINDS = [
   'public_news_article',
   'member_primary_article',
   'campaign_site',
+  'wayback_campaign_site',
+  'wayback_member_primary',
+  'house_member_primary_historical_article',
+  'senate_member_primary_historical_article',
   'wayback_organization_publication',
   'house_session_daily',
 ] as const;
