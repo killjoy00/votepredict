@@ -118,31 +118,39 @@ async function main() {
   const runId = runRow.rows[0].id;
 
   const selected = await pool.query<SourceRow>(`
-    SELECT sd.id::text AS source_document_id,
-           sd.source_kind,
-           sd.source_url,
-           sd.content_sha256,
-           sd.fetched_at::text
-      FROM source_documents sd
-     WHERE sd.source_kind = ANY($1::text[])
-       AND EXISTS (
-         SELECT 1
-           FROM evidence_items ei
-          WHERE ei.source_document_id=sd.id
-       )
-       AND NOT EXISTS (
-         SELECT 1
-           FROM source_document_texts sdt
-          WHERE sdt.source_document_id=sd.id
-            AND sdt.extraction_version=$2
-       )
-       AND NOT EXISTS (
-         SELECT 1
-           FROM ingestion_runs ir
-          WHERE ir.source_system='evidence-quality-source-snapshot-v1'
-            AND coalesce(ir.metadata->'attemptedSourceIds','[]'::jsonb) ? sd.id::text
-       )
-     ORDER BY sd.fetched_at,sd.id
+    WITH candidates AS (
+      SELECT sd.id::text AS source_document_id,
+             sd.source_kind,
+             sd.source_url,
+             sd.content_sha256,
+             sd.fetched_at::text AS fetched_at,
+             row_number() OVER (
+               PARTITION BY sd.source_kind
+               ORDER BY sd.fetched_at,sd.id
+             ) AS source_rank
+        FROM source_documents sd
+       WHERE sd.source_kind = ANY($1::text[])
+         AND EXISTS (
+           SELECT 1
+             FROM evidence_items ei
+            WHERE ei.source_document_id=sd.id
+         )
+         AND NOT EXISTS (
+           SELECT 1
+             FROM source_document_texts sdt
+            WHERE sdt.source_document_id=sd.id
+              AND sdt.extraction_version=$2
+         )
+         AND NOT EXISTS (
+           SELECT 1
+             FROM ingestion_runs ir
+            WHERE ir.source_system='evidence-quality-source-snapshot-v1'
+              AND coalesce(ir.metadata->'attemptedSourceIds','[]'::jsonb) ? sd.id::text
+         )
+    )
+    SELECT source_document_id,source_kind,source_url,content_sha256,fetched_at
+      FROM candidates
+     ORDER BY source_rank,source_kind,fetched_at,source_document_id
      LIMIT $3`, [sourceKinds, EVIDENCE_QUALITY_TEXT_VERSION, limit]);
 
   const result = {
