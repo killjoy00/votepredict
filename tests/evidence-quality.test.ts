@@ -41,6 +41,8 @@ function annotation(): EvidenceQualityAnnotation {
       stance: 'supports',
       specificity: 'exact_bill',
       explicitness: 'attributed_paraphrase',
+      attributionType: 'target_member',
+      attributedActor: 'Jane Doe',
       normalizedClaim: 'Jane Doe explicitly supports HF123.',
       supportingExcerpt: 'Representative Jane Doe said she supports HF123 because the bill expands access to the program.',
       extractionConfidence: 0.97,
