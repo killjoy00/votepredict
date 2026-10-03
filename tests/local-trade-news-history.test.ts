@@ -27,7 +27,7 @@ function capture(original: string, timestamp: string): WaybackCapture {
 
 test('local/trade news seeds are unique HTTPS prefixes bounded to the research window', () => {
   validateLocalTradeNewsSeeds();
-  assert.equal(LOCAL_TRADE_NEWS_SEEDS.length, 18);
+  assert.equal(LOCAL_TRADE_NEWS_SEEDS.length, 32);
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.url.startsWith('https://')));
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.prefix));
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.every(seed => seed.from === '20210101' && seed.to === '20261231'));
@@ -38,15 +38,14 @@ test('local/trade news seeds are unique HTTPS prefixes bounded to the research w
       ['axios-twin-cities-archive', 'local_news'],
     ],
   );
-  assert.deepEqual(
-    LOCAL_TRADE_NEWS_SEEDS.slice(-4).map(seed => [seed.id, seed.publisherKind]),
-    [
-      ['brainerd-dispatch-minnesota-archive', 'local_news'],
-      ['bring-me-the-news-minnesota-archive', 'local_news'],
-      ['bemidji-pioneer-minnesota-archive', 'local_news'],
-      ['west-central-tribune-minnesota-archive', 'local_news'],
-    ],
-  );
+  assert.ok(LOCAL_TRADE_NEWS_SEEDS.some(seed =>
+    seed.id === 'pioneer-press-dated-archive' && seed.publisherKind === 'local_news'));
+  assert.ok(LOCAL_TRADE_NEWS_SEEDS.some(seed =>
+    seed.id === 'sahan-journal-democracy-politics-archive' && seed.publisherKind === 'local_news'));
+  assert.ok(LOCAL_TRADE_NEWS_SEEDS.some(seed =>
+    seed.id === 'msp-business-journal-government-archive' && seed.publisherKind === 'trade_news'));
+  assert.ok(LOCAL_TRADE_NEWS_SEEDS.some(seed =>
+    seed.id === 'mn-spokesman-recorder-dated-archive' && seed.publisherKind === 'local_news'));
 });
 
 test('targeted local/trade runs preserve the durable rotation cursor', () => {
@@ -118,8 +117,10 @@ test('capture selection is deterministic, topical, and keeps only the latest cap
   assert.deepEqual(selected.map(row => row.timestamp), ['20240401120000']);
 });
 
-test('targeting requires legislative text or an explicit Minnesota bill identifier', () => {
+test('targeting recognizes broader statehouse language while rejecting unrelated local coverage', () => {
   assert.equal(localTradeNewsTextIsTargeted('The Minnesota Legislature returned to the State Capitol.'), true);
+  assert.equal(localTradeNewsTextIsTargeted('Minnesota lawmakers negotiated through the night.'), true);
+  assert.equal(localTradeNewsTextIsTargeted('The state senate opened its legislative session Tuesday.'), true);
   assert.equal(localTradeNewsTextIsTargeted('Lawmakers debated HF 1234 before adjournment.'), true);
   assert.equal(localTradeNewsTextIsTargeted('A local sports team won its game.'), false);
 });
