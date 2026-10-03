@@ -65,6 +65,16 @@ export const EVIDENCE_QUALITY_EXPLICITNESS = [
 ] as const;
 export type EvidenceQualityExplicitness = (typeof EVIDENCE_QUALITY_EXPLICITNESS)[number];
 
+export const EVIDENCE_QUALITY_ATTRIBUTION_TYPES = [
+  'target_member',
+  'organization',
+  'official_record',
+  'journalist_summary',
+  'other',
+  'unclear',
+] as const;
+export type EvidenceQualityAttributionType = (typeof EVIDENCE_QUALITY_ATTRIBUTION_TYPES)[number];
+
 export const EVIDENCE_QUALITY_NOVELTY = [
   'new_claim',
   'repeated_claim',
@@ -101,6 +111,8 @@ export interface EvidenceQualityClaim {
   stance: EvidenceQualityStance;
   specificity: EvidenceQualitySpecificity;
   explicitness: EvidenceQualityExplicitness;
+  attributionType: EvidenceQualityAttributionType;
+  attributedActor: string | null;
   normalizedClaim: string;
   supportingExcerpt: string;
   extractionConfidence: number;
@@ -194,6 +206,12 @@ export function validateEvidenceQualityAnnotation(
       && !['explicit_position', 'quoted_position'].includes(claim.claimType)) {
       throw new Error('Directional stance requires an explicit_position or quoted_position claim type');
     }
+    if (claim.attributionType === 'target_member' && claim.memberNames.length === 0) {
+      throw new Error('Target-member attribution requires at least one candidate member identity');
+    }
+    if (claim.attributedActor !== null && claim.attributedActor.length > 160) {
+      throw new Error('Evidence quality attributedActor exceeds 160 characters');
+    }
   }
 }
 
@@ -245,6 +263,8 @@ export function buildEvidenceQualityPrompt(input: EvidenceQualityCandidateContex
     '- stance: supports | opposes | mixed | none | unclear',
     '- specificity: exact_bill | named_proposal | issue_family | generic | none',
     '- explicitness: direct_quote | attributed_paraphrase | document_position | none',
+    '- attributionType: target_member | organization | official_record | journalist_summary | other | unclear',
+    '- attributedActor: the named speaker/organization/record owner when identifiable, otherwise null',
     '- normalizedClaim: a concise factual restatement of what the source says',
     '- supportingExcerpt: exact text from the supplied document, maximum 500 characters',
     '- extractionConfidence: 0..1',
