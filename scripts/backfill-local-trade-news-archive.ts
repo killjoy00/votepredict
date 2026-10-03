@@ -173,13 +173,76 @@ async function main() {
             if (!matchedLegislativeText && !matchedMember && !matchedBill) {
               rejectedUntargeted += 1;
               continue;
-              }
-        }));
-      } catch (error) {
+            }
+            accepted += 1;
+            if (matchedLegislativeText) acceptedByLegislativeText += 1;
+            if (matchedMember) acceptedByMemberMention += 1;
+            if (matchedBill) acceptedByBillIdentifier += 1;
+            const sessionSlug = archiveSessionSlug(capture.capturedAt);
+            const persisted = await persistDurableEvidence({
+              sourceKind: 'wayback_local_trade_news',
+              sourceUrl: capture.archiveUrl,
+              contentSha256: page.contentSha256,
+              fetchedAt: page.fetchedAt,
+              httpStatus: page.httpStatus,
+              sessionSlug,
+              metadata: {
+                publisher: seed.publisher,
+                publisherKind: seed.publisherKind,
+                seedId: seed.id,
+                originalUrl: capture.original,
+                archiveUrl: capture.archiveUrl,
+                archiveCapturedAt: capture.capturedAt,
+                archiveDigest: capture.digest,
+                publisherPublishedAt: page.publishedAt,
+                availabilityProof: 'independent_archive_capture',
+                availableAt: capture.capturedAt,
+                mentionedMembers,
+                billIdentifiers,
+                collectorVersion: LOCAL_TRADE_NEWS_HISTORY_VERSION,
+              },
+            }, [{
+              kind: 'context',
+              stance: 'neutral',
+              claim: `Internet Archive captured targeted ${seed.publisher} coverage on ${capture.capturedAt.slice(0, 10)}.`,
+              excerpt: page.excerpt,
+              publishedAt: capture.capturedAt,
+              sourceQuality: 'reputable_secondary',
+              relevance: 'low',
+              freshness: freshness(capture.capturedAt),
+              extractionMethod: 'deterministic-wayback-local-trade-news-capture',
+              extractionVersion: LOCAL_TRADE_NEWS_HISTORY_VERSION,
+              confidence: 1,
+              metadata: {
+                contextType: 'local_trade_news',
+                subtype: seed.publisherKind,
+                publisher: seed.publisher,
+                seedId: seed.id,
+                originalUrl: capture.original,
+                archiveUrl: capture.archiveUrl,
+                archiveCapturedAt: capture.capturedAt,
+                archiveDigest: capture.digest,
+                publisherPublishedAt: page.publishedAt,
+                availabilityProof: 'independent_archive_capture',
+                availableAt: capture.capturedAt,
+                mentionedMembers,
+                billIdentifiers,
+                sameDayEligible: false,
+                contextOnly: true,
+                mechanicallyActionable: false,
+                modelWeight: 0,
+                articleInfersLegislativeStance: false,
+                evidenceSeriesKey: `local_trade_news:${seed.id}:${capture.original}`,
+              },
+            }]);
+            inserted += persisted.inserted;
+            reused += persisted.reused;
+          } catch (error) {
             failures += 1;
             if (failureSamples.length < 12) failureSamples.push(`${seed.id}: snapshot: ${safe(error)}`);
           }
-        }
+          }
+        }));
       } catch (error) {
         failures += 1;
         if (failureSamples.length < 12) failureSamples.push(`${seed.id}: discovery: ${safe(error)}`);
