@@ -28,7 +28,10 @@ jobs:
       (
         github.event.issue.number == 579 &&
         github.event.comment.user.login == 'killjoy00' &&
-        startsWith(github.event.comment.body, '[evidence-quality-backfill]')
+        (
+          startsWith(github.event.comment.body, '[evidence-quality-backfill]') ||
+          startsWith(github.event.comment.body, '[evidence-quality-canary]')
+        )
       )
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -55,8 +58,8 @@ jobs:
       - name: Annotate bounded textual evidence batch
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
-          VOTEPREDICT_EVIDENCE_QUALITY_LIMIT: ${{ github.event_name == 'workflow_dispatch' && inputs.limit || '12' }}
-          VOTEPREDICT_EVIDENCE_QUALITY_SOURCE_KINDS: ${{ github.event_name == 'workflow_dispatch' && inputs.source_kinds || '' }}
+          VOTEPREDICT_EVIDENCE_QUALITY_LIMIT: ${{ github.event_name == 'workflow_dispatch' && inputs.limit || startsWith(github.event.comment.body, '[evidence-quality-canary]') && '1' || '12' }}
+          VOTEPREDICT_EVIDENCE_QUALITY_SOURCE_KINDS: ${{ github.event_name == 'workflow_dispatch' && inputs.source_kinds || startsWith(github.event.comment.body, '[evidence-quality-canary]') && 'wayback_local_trade_news' || '' }}
         run: node --import tsx scripts/backfill-evidence-quality.ts
       - name: Remove temporary credentials and logs
         if: always()
