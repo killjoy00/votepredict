@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "historical-finance-two-clock-diagnostic-plan-v1",
+  "issue": 514,
+  "frozenAt": "2026-10-03T01:20:00Z",
+  "purpose": "Separate historical observability from underlying pre-vote activity. Preserve the strict public-availability lane for historical as-of replay while adding a retrospective activity-clock lane for signal learning using the same already-frozen five candidate-finance features.",
+  "canonicalBaseline": {
+    "issue": 459,
+    "workflowRunId": 37066155829,
+    "artifactId": 11252079484,
+    "artifactDigest": "sha256:22e8944cffc6fda553b05ea6ad5e92400d35fc01d83177efdd5d1204dd3c5a6f",
+    "matrixCanonicalNdjsonSha256": "c97ac50c8c89ae0548cc48bed65a42c22f332e2977b33173619c9e258c09a4d0"
+  },
+  "hypothesis": {
+    "statement": "Underlying candidate-finance activity that occurred before a vote may contain retrospective predictive signal even when the exact row/value was not yet publicly observable at the historical forecast cutoff.",
+    "status": "retrospective_exploratory",
+    "independentValidationSet": false
+  },
+  "clocks": {
+    "publicAvailability": {
+      "field": "published_at",
+      "eligibility": "asOfEligible=true AND published_at IS NOT NULL AND transactionDateIsAvailability=false",
+      "cutoffRule": "published_at::date < vote_date",
+      "use": "strict historical as-of replay and claims about what a model could have known at the time"
+    },
+    "underlyingActivity": {
+      "candidateFinanceField": "metadata.transactionDate",
+      "cutoffRule": "transactionDate < vote_date",
+      "use": "retrospective signal learning and hypothesis generation only",
+      "doesNotEstablishHistoricalObservability": true
+    },
+    "annualReportingPeriod": {
+      "rule": "When an evidence row is an annual aggregate rather than a point event, the reporting-period end date may serve as a conservative underlying-activity date for later votes only.",
+      "example": "A 2022 annual lobbying total may be activity-clock eligible for votes after 2022-12-31 even if its exact public-availability date is later or unproven."
+    }
+  },
+  "protocol": {
+    "historicalReplay": "historical-quick-replay-v2",
+    "servingBaseline": "member-eb-v1.2-decay180",
+    "trainSession": "2021-2022",
+    "validationSession": "2023-2024",
+    "descriptiveSession": "2025-2026",
+    "financeFeatureContract": [
+      "candidateFinanceAvailable",
+      "candidateContributionCount",
+      "candidateContributionAmount",
+      "candidateExpenditureCount",
+      "candidateExpenditureAmount"
+    ],
+    "featureTransform": "same frozen log1p transform as #459",
+    "ridgeLambda": 20,
+    "retuneAfterValidation": false,
+    "maximumAbsoluteLogitDelta": 1,
+    "sameDayExcluded": true
+  },
+  "scope": {
+    "candidateFinance": "two_clock_model_diagnostic",
+    "independentExpenditures": "two_clock_data_contract_only_until_a_feature_transform_is_predeclared",
+    "lobbying": "two_clock_data_contract_only_until_a_feature_transform_is_predeclared",
+    "organizationPublicationsAndEndorsements": "unchanged",
+    "memberPublications": "unchanged",
+    "localTradeNews": "unchanged"
+  },
+  "interpretation": {
+    "strictLaneCanSupportHistoricalReplayClaims": true,
+    "retrospectiveActivityLaneCanSupportHistoricalReplayClaims": false,
+    "retrospectiveActivityLaneCanSupportSignalLearning": true,
+    "moneyImpliesVoteStance": false,
+    "automaticPromotion": false,
+    "productionAction": "none",
+    "servingChanged": false,
+    "evidenceWrites": false,
+    "canonical459ArtifactRemainsFrozen": true
+  }
+}
