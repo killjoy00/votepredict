@@ -5,7 +5,7 @@ import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 const AUDIT_VERSION = 'evidence-quality-human-audit-v1';
 const DEFAULT_SAMPLE_LIMIT = 120;
 const MAX_SAMPLE_LIMIT = 200;
-const MAX_SOURCE_TEXT_CHARS = 20_000;
+const MAX_SOURCE_TEXT_CHARS = 60_000;
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 let secrets: string[] = [];
@@ -19,6 +19,7 @@ type AuditRow = {
   content_mode: string;
   extraction_confidence: number;
   annotation: Record<string, unknown>;
+  annotation_metadata: Record<string, unknown>;
   normalized_text: string | null;
   evidence_context: unknown[];
   annotation_created_at: string;
@@ -164,6 +165,7 @@ async function main() {
            eqa.content_mode,
            eqa.extraction_confidence,
            eqa.annotation,
+           eqa.metadata AS annotation_metadata,
            sdt.normalized_text,
            eqa.created_at::text AS annotation_created_at,
            coalesce(
@@ -237,6 +239,7 @@ async function main() {
         stratum: stratum(row),
         annotationCreatedAt: row.annotation_created_at,
         annotation: row.annotation,
+        annotationMetadata: row.annotation_metadata,
         evidenceContext: row.evidence_context,
         sourceText: sourceText.slice(0, MAX_SOURCE_TEXT_CHARS),
         sourceTextTruncated: sourceText.length > MAX_SOURCE_TEXT_CHARS,
