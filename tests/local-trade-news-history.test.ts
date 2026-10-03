@@ -144,6 +144,16 @@ test('capture selection can use a narrow source-specific path hint without weake
   assert.deepEqual(selected.map(row => row.original), [hinted.original]);
 });
 
+test('deep archive review honors the hard 40-capture ceiling', () => {
+  const rows = Array.from({ length: 55 }, (_, index) =>
+    capture(
+      `https://example.com/2024/minnesota-legislature-budget-${index}`,
+      `2024${String((index % 12) + 1).padStart(2, '0')}15${String(index % 24).padStart(2, '0')}0000`,
+    ));
+  assert.equal(selectLocalTradeNewsCaptures(rows, { maxCaptures: 40 }).length, 40);
+  assert.equal(selectLocalTradeNewsCaptures(rows, { maxCaptures: 999 }).length, 40);
+});
+
 test('targeting recognizes broader statehouse language while rejecting unrelated local coverage', () => {
   assert.equal(localTradeNewsTextIsTargeted('The Minnesota Legislature returned to the State Capitol.'), true);
   assert.equal(localTradeNewsTextIsTargeted('Minnesota lawmakers negotiated through the night.'), true);

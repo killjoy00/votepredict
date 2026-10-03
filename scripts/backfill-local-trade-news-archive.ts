@@ -151,7 +151,7 @@ async function main() {
           prefix: true,
         });
         capturesDiscovered += captures.length;
-        const selected = selectLocalTradeNewsCaptures(captures, { maxCaptures: 24, pathHints: seed.pathHints });
+        const selected = selectLocalTradeNewsCaptures(captures, { maxCaptures: 40, pathHints: seed.pathHints });
         capturesSelected += selected.length;
 
         for (const capture of selected) {

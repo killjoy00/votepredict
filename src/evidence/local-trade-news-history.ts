@@ -1,6 +1,6 @@
 import type { WaybackCapture } from './wayback';
 
-export const LOCAL_TRADE_NEWS_HISTORY_VERSION = 'local-trade-news-history-v3' as const;
+export const LOCAL_TRADE_NEWS_HISTORY_VERSION = 'local-trade-news-history-v4' as const;
 
 export type LocalTradeNewsPublisherKind = 'local_news' | 'trade_news';
 
