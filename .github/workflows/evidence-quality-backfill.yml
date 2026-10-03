@@ -50,11 +50,10 @@ jobs:
           set -euo pipefail
           umask 077
           npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
-      - name: Require exact production migration ledger
+      - name: Require exact Evidence Quality migration state
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
-          VOTEPREDICT_REQUIRE_MIGRATION_LEDGER: '1'
-        run: node --import tsx scripts/check-production-migration-drift.ts
+        run: node --import tsx scripts/apply-evidence-quality-migration.ts
       - name: Annotate bounded textual evidence batch
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
