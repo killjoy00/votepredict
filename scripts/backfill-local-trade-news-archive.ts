@@ -132,6 +132,9 @@ async function main() {
     let capturesSelected = 0;
     let fetched = 0;
     let accepted = 0;
+    let acceptedByLegislativeText = 0;
+    let acceptedByMemberMention = 0;
+    let acceptedByBillIdentifier = 0;
     let rejectedUntargeted = 0;
     let inserted = 0;
     let reused = 0;
@@ -148,22 +151,28 @@ async function main() {
           prefix: true,
         });
         capturesDiscovered += captures.length;
-        const selected = selectLocalTradeNewsCaptures(captures, { maxCaptures: 12 });
+        const selected = selectLocalTradeNewsCaptures(captures, { maxCaptures: 24 });
         capturesSelected += selected.length;
 
         for (const capture of selected) {
           try {
             const page = await fetchWaybackSnapshot(capture);
             fetched += 1;
-            if (!localTradeNewsTextIsTargeted(page.text)) {
-              rejectedUntargeted += 1;
-              continue;
-            }
-            accepted += 1;
             const mentionedMembers = memberNames
               .filter(name => publicPageMentionsPerson(page.text, name))
               .slice(0, 24);
             const billIdentifiers = extractLocalTradeNewsBillIdentifiers(page.text).slice(0, 24);
+            const matchedLegislativeText = localTradeNewsTextIsTargeted(page.text);
+            const matchedMember = mentionedMembers.length > 0;
+            const matchedBill = billIdentifiers.length > 0;
+            if (!matchedLegislativeText && !matchedMember && !matchedBill) {
+              rejectedUntargeted += 1;
+              continue;
+            }
+            accepted += 1;
+            if (matchedLegislativeText) acceptedByLegislativeText += 1;
+            if (matchedMember) acceptedByMemberMention += 1;
+            if (matchedBill) acceptedByBillIdentifier += 1;
             const sessionSlug = archiveSessionSlug(capture.capturedAt);
             const persisted = await persistDurableEvidence({
               sourceKind: 'wayback_local_trade_news',
@@ -246,6 +255,9 @@ async function main() {
       capturesSelected,
       fetched,
       accepted,
+      acceptedByLegislativeText,
+      acceptedByMemberMention,
+      acceptedByBillIdentifier,
       rejectedUntargeted,
       inserted,
       reused,
