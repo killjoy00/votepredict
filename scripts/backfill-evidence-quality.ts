@@ -133,6 +133,10 @@ async function main() {
     .filter((value): value is string => typeof value === 'string');
   secrets.forEach(mask);
 
+  for (const [key, value] of Object.entries(env)) {
+    if (value !== undefined) process.env[key] = value;
+  }
+
   process.env.DATABASE_URL = await chooseDb(env);
   delete process.env.POSTGRES_URL;
   delete process.env.DATABASE_URL_UNPOOLED;
