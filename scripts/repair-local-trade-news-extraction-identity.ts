@@ -1,6 +1,5 @@
 import { readFileSync } from 'node:fs';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
-import { evidenceIngestionKey } from '../src/evidence/durable-ingestion.js';
 import type { DurableEvidenceDraft } from '../src/evidence/durable-ingestion.js';
 
 const LEGACY_VERSION = 'local-trade-news-history-v4';
@@ -81,6 +80,7 @@ async function main() {
   delete process.env.DATABASE_URL_UNPOOLED;
   delete process.env.POSTGRES_URL_NON_POOLING;
 
+  const { evidenceIngestionKey } = await import('../src/evidence/durable-ingestion.js');
   const { pool } = await import('../src/lib/db/index.js');
   const client = await pool.connect();
   let duplicateRows = 0;
