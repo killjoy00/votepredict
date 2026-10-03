@@ -41,7 +41,7 @@ async function chooseDb(env: Record<string, string | undefined>) {
   }
   const secret = env.CRON_SECRET?.trim();
   if (!secret) throw new Error('CRON_SECRET required for database bridge fallback');
-  const response = await fetch(DATABASE_BRIDGE_URL, { headers: { authorization: `Bearer ${secret}` } });
+  const response = await fetch(DATABASE_BRIDGE_URL, { method: 'POST', headers: { authorization: `Bearer ${secret}` } });
   if (!response.ok) throw new Error('Database bridge HTTP ' + response.status);
   const value = (await response.text()).trim();
   secrets.push(value);
