@@ -55,6 +55,10 @@ test('Evidence Quality v1 includes semantic text sources and excludes determinis
     'public_news_article',
     'member_primary_article',
     'campaign_site',
+    'wayback_campaign_site',
+    'wayback_member_primary',
+    'house_member_primary_historical_article',
+    'senate_member_primary_historical_article',
     'wayback_organization_publication',
     'house_session_daily',
   ]) {
@@ -69,7 +73,7 @@ test('Evidence Quality v1 includes semantic text sources and excludes determinis
   ]) {
     assert.equal(isEvidenceQualitySourceKind(sourceKind), false);
   }
-  assert.equal(EVIDENCE_QUALITY_SOURCE_KINDS.length, 6);
+  assert.equal(EVIDENCE_QUALITY_SOURCE_KINDS.length, 10);
 });
 
 test('Evidence Quality v1 prompt is outcome-blind and forbids vote prediction and unsupported stance inference', () => {
