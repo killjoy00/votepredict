@@ -148,6 +148,8 @@ The eight-family historical/public source expansion is tracked in issue #355 and
 
 The historical press/archive lane currently has **44 bounded publisher/source prefixes**. The second breadth tranche adds The Minnesota Daily, Minnesota News Network, KNSI, Twin Cities PBS / Almanac at the Capitol, InForum / Forum News Service, Grand Forks Herald / Forum News Service, Mshale, The UpTake, North News, Roseau Times-Region, Mille Lacs Messenger, and Isanti-Chisago County Star. Sources with narrow but non-obvious URL structures can declare source-specific path hints for archive candidate selection; those hints affect only which archived pages are fetched for review. They do not bypass the fetched-page legislative/bill/member verification or the historical availability rules.
 
+The completed broad press review is production-audited at **408 historically timed local/trade-news items**, up from **112** before the broadening pass. The final session split is **137 / 113 / 158** for 2021-22 / 2023-24 / 2025-26. The two breadth tranches added **296** net-new historical articles. Final audit workflow: `37090303922`. These rows remain `contextOnly=true`, `mechanicallyActionable=false`, `modelWeight=0`, and same-day ineligible. The first expanded live refresh after deployment (workflow `37087362760`) inserted 4 verified publisher-news articles and 38 member-primary publications across a 24-membership batch while retaining provider-fallback warnings as diagnostics rather than changing serving behavior.
+
 ## Existing commands
 
 - `npm run data:cfb:snapshot` builds the normalized Minnesota Campaign Finance and Public Disclosure Board snapshot through the shared TypeScript live-source parser.
