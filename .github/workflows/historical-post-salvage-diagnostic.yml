@@ -1,0 +1,245 @@
+name: "#514 post-salvage historical diagnostic"
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  issues: write
+
+concurrency:
+  group: historical-post-salvage-diagnostic-514
+  cancel-in-progress: true
+
+jobs:
+  diagnostic:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.issue.number == 514 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        startsWith(github.event.comment.body, '[historical-post-salvage-diagnostic]')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Verify frozen post-salvage plan and canonical baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          plan='data/evaluation/historical-post-salvage-diagnostic-plan-v1.json'
+          lineage='data/evaluation/quick-evidence-committee-rollcall-candidate-lineage-v1.json'
+
+          test "$(jq -r '.schemaVersion' "$plan")" = 'historical-post-salvage-diagnostic-plan-v1'
+          test "$(jq -r '.canonicalBaseline.workflowRunId' "$plan")" = '37066155829'
+          test "$(jq -r '.canonicalBaseline.artifactId' "$plan")" = '11252079484'
+          test "$(jq -r '.canonicalBaseline.matrixCanonicalNdjsonSha256' "$plan")" = 'c97ac50c8c89ae0548cc48bed65a42c22f332e2977b33173619c9e258c09a4d0'
+          test "$(jq -r '.protocol.ridgeLambda' "$plan")" = '20'
+          test "$(jq -r '.protocol.retuneAfterValidation' "$plan")" = 'false'
+          test "$(jq -r '.modelingScope.independentExpenditures' "$plan")" = 'coverage_only_context'
+          test "$(jq -r '.modelingScope.lobbying' "$plan")" = 'coverage_only_context'
+          test "$(jq -r '.interpretation.productionAction' "$plan")" = 'none'
+          test "$(jq -r '.interpretation.evidenceWrites' "$plan")" = 'false'
+
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/11252079484" > "$RUNNER_TEMP/canonical-artifact.json"
+          test "$(jq -r '.digest' "$RUNNER_TEMP/canonical-artifact.json")" = 'sha256:22e8944cffc6fda553b05ea6ad5e92400d35fc01d83177efdd5d1204dd3c5a6f'
+          test "$(jq -r '.expired' "$RUNNER_TEMP/canonical-artifact.json")" = 'false'
+
+          test "$(jq -r '.schemaVersion' "$lineage")" = 'quick-evidence-committee-rollcall-candidate-lineage-v1'
+          run_id="$(jq -r '.extractionRunId' "$lineage")"
+          artifact_id="$(jq -r '.candidateArtifact.id' "$lineage")"
+          artifact_name="$(jq -r '.candidateArtifact.name' "$lineage")"
+          expected_digest="$(jq -r '.candidateArtifact.digest' "$lineage")"
+          expected_sha="$(jq -r '.extractionHeadSha' "$lineage")"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}" > "$RUNNER_TEMP/committee-run.json"
+          test "$(jq -r '.head_sha' "$RUNNER_TEMP/committee-run.json")" = "$expected_sha"
+          test "$(jq -r '.conclusion' "$RUNNER_TEMP/committee-run.json")" = 'success'
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/artifacts" > "$RUNNER_TEMP/committee-artifacts.json"
+          actual="$(jq -c --argjson id "$artifact_id" '.artifacts[] | select(.id == $id)' "$RUNNER_TEMP/committee-artifacts.json")"
+          test -n "$actual"
+          test "$(printf '%s' "$actual" | jq -r '.name')" = "$artifact_name"
+          test "$(printf '%s' "$actual" | jq -r '.digest')" = "$expected_digest"
+          test "$(printf '%s' "$actual" | jq -r '.expired')" = 'false'
+
+          echo "committee_run_id=$run_id" >> "$GITHUB_ENV"
+          echo "committee_artifact_name=$artifact_name" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-fund --no-audit
+
+      - name: Download frozen committee feature corpus
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ env.committee_artifact_name }}
+          path: inputs/committee
+          github-token: ${{ github.token }}
+          run-id: ${{ env.committee_run_id }}
+
+      - name: Read production environment privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+
+      - name: Run post-salvage read-only evidence inventory
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/post-salvage
+          node --import tsx scripts/audit-evidence-gap-inventory.ts \
+            --output artifacts/post-salvage/evidence-gap-inventory-post-salvage-v1.json
+
+      - name: Re-run only the frozen existing historical feature contract
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --import tsx scripts/closeout-historical-evidence.ts \
+            --committee-candidates inputs/committee/quick-evidence-committee-rollcall-candidates-v1.json \
+            --committee-lineage data/evaluation/quick-evidence-committee-rollcall-candidate-lineage-v1.json \
+            --output-dir artifacts/post-salvage/raw-frozen-evaluator
+
+      - name: Build separately versioned post-salvage wrapper
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('node:fs');
+          const crypto = require('node:crypto');
+          const path = require('node:path');
+          const root = 'artifacts/post-salvage';
+          const raw = path.join(root, 'raw-frozen-evaluator');
+          const read = (p) => fs.readFileSync(p);
+          const json = (p) => JSON.parse(read(p).toString('utf8'));
+          const sha = (p) => crypto.createHash('sha256').update(read(p)).digest('hex');
+
+          const planPath = 'data/evaluation/historical-post-salvage-diagnostic-plan-v1.json';
+          const plan = json(planPath);
+          const manifestPath = path.join(raw, 'historical-as-of-matrix-v1-manifest.json');
+          const diagnosticPath = path.join(raw, 'quick-evidence-finance-enriched-historical-diagnostic-v1.json');
+          const inventoryPath = path.join(root, 'evidence-gap-inventory-post-salvage-v1.json');
+          const matrixPath = path.join(raw, 'historical-as-of-matrix-v1.ndjson.gz');
+          const manifest = json(manifestPath);
+          const diagnostic = json(diagnosticPath);
+          const inventory = json(inventoryPath);
+
+          const wrapper = {
+            schemaVersion: 'historical-post-salvage-diagnostic-v1',
+            generatedAt: new Date().toISOString(),
+            issue: 514,
+            codeSha: process.env.GITHUB_SHA ?? null,
+            workflowRunId: Number(process.env.GITHUB_RUN_ID ?? 0) || null,
+            plan: {
+              path: planPath,
+              sha256: sha(planPath),
+              schemaVersion: plan.schemaVersion,
+            },
+            canonicalBaseline: plan.canonicalBaseline,
+            postSalvageSnapshot: {
+              rawMatrixRows: manifest.rows,
+              rawMatrixEvents: manifest.events,
+              rawMatrixMemberships: manifest.memberships,
+              rawMatrixCanonicalNdjsonSha256: manifest.matrixCanonicalNdjsonSha256,
+              rawMatrixGzipSha256: manifest.matrixGzipSha256,
+              financeEligibleRowsLoaded: diagnostic.financeSourceCoverage.exactEligibleRowsLoaded,
+              financeAvailability: diagnostic.financeSourceCoverage.matrixAvailability,
+              financeBySessionChamber: diagnostic.financeSourceCoverage.bySessionChamber,
+              validationFinanceMinusCurrent: diagnostic.scores['2023-2024'].financeMinusCurrent,
+              validationByChamber: diagnostic.validationSlices.byChamber,
+              validationBalancedMemberSensitivity: diagnostic.validationSlices.balancedMemberSensitivity,
+              financeMovedValidationMembers: diagnostic.validationSlices.financeMovedMembers.memberOutcomes,
+            },
+            coverageInventory: {
+              schemaVersion: inventory.evidenceGapInventoryV1?.schemaVersion ?? null,
+              sha256: sha(inventoryPath),
+              path: 'evidence-gap-inventory-post-salvage-v1.json',
+            },
+            rawFrozenEvaluatorArtifacts: {
+              matrixGzipSha256: sha(matrixPath),
+              manifestSha256: sha(manifestPath),
+              diagnosticSha256: sha(diagnosticPath),
+              note: 'These raw files reuse the frozen #459 evaluator and retain its internal v1 schema names. They are noncanonical inputs to this separately versioned wrapper only.',
+            },
+            modelingScope: plan.modelingScope,
+            interpretation: plan.interpretation,
+          };
+          fs.writeFileSync(
+            path.join(root, 'historical-post-salvage-diagnostic-v1.json'),
+            JSON.stringify(wrapper, null, 2) + '\n',
+            { mode: 0o600 },
+          );
+          console.log(JSON.stringify({ historicalPostSalvageDiagnosticV1: wrapper }, null, 2));
+          NODE
+
+      - name: Verify post-salvage artifact contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          root='artifacts/post-salvage'
+          wrapper="$root/historical-post-salvage-diagnostic-v1.json"
+          raw="$root/raw-frozen-evaluator"
+          test -s "$wrapper"
+          test -s "$root/evidence-gap-inventory-post-salvage-v1.json"
+          test -s "$raw/historical-as-of-matrix-v1.ndjson.gz"
+          test -s "$raw/historical-as-of-matrix-v1-manifest.json"
+          test -s "$raw/quick-evidence-finance-enriched-historical-diagnostic-v1.json"
+          test "$(jq -r '.schemaVersion' "$wrapper")" = 'historical-post-salvage-diagnostic-v1'
+          test "$(jq -r '.canonicalBaseline.artifactId' "$wrapper")" = '11252079484'
+          test "$(jq -r '.modelingScope.candidateFinance' "$wrapper")" = 'rerun_existing_five_feature_contract'
+          test "$(jq -r '.modelingScope.independentExpenditures' "$wrapper")" = 'coverage_only_context'
+          test "$(jq -r '.modelingScope.lobbying' "$wrapper")" = 'coverage_only_context'
+          test "$(jq -r '.interpretation.canonical459ArtifactRemainsFrozen' "$wrapper")" = 'true'
+          test "$(jq -r '.interpretation.productionAction' "$wrapper")" = 'none'
+          test "$(jq -r '.interpretation.evidenceWrites' "$wrapper")" = 'false'
+
+      - name: Upload immutable post-salvage diagnostic
+        uses: actions/upload-artifact@v7
+        with:
+          name: historical-post-salvage-diagnostic-${{ github.sha }}
+          path: |
+            artifacts/post-salvage/historical-post-salvage-diagnostic-v1.json
+            artifacts/post-salvage/evidence-gap-inventory-post-salvage-v1.json
+            artifacts/post-salvage/raw-frozen-evaluator/historical-as-of-matrix-v1.ndjson.gz
+            artifacts/post-salvage/raw-frozen-evaluator/historical-as-of-matrix-v1-manifest.json
+            artifacts/post-salvage/raw-frozen-evaluator/quick-evidence-finance-enriched-historical-diagnostic-v1.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Post completion marker
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh issue comment 514 --repo "$GITHUB_REPOSITORY" --body "[historical-post-salvage-diagnostic-complete] Separately versioned read-only post-salvage coverage + frozen-finance robustness diagnostic completed on `$GITHUB_SHA`. The canonical #459 artifact remains unchanged. Workflow: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+
+      - name: Remove temporary credentials and lookups
+        if: always()
+        shell: bash
+        run: |
+          rm -f \
+            "$RUNNER_TEMP/votepredict-production.env" \
+            "$RUNNER_TEMP/vercel-pull.log" \
+            "$RUNNER_TEMP/canonical-artifact.json" \
+            "$RUNNER_TEMP/committee-run.json" \
+            "$RUNNER_TEMP/committee-artifacts.json"
