@@ -2,6 +2,11 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 import { evidenceQualityExactEvidenceItemAvailabilityDate } from '../src/evidence/evidence-quality-historical-availability.js';
+import {
+  evidenceQualityGranularAvailabilityPatchSubset as managedSubset,
+  hasEvidenceQualityGranularAvailabilityProofMetadata as hasManagedMetadata,
+  sameEvidenceQualityGranularAvailabilityPatch as sameManagedMetadata,
+} from '../src/evidence/evidence-quality-granular-availability-repair.js';
 
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
@@ -11,23 +16,6 @@ const EXPECTED_CANONICAL_ARTIFACT_ID = 11316021651;
 const EXPECTED_CANONICAL_ARTIFACT_DIGEST = 'sha256:05aaeca085fa1d48a85a3226565eaad627bce8d33c248c055ac4e9963fffdc44';
 const EXPECTED_PLAN_ARTIFACT_ID = 11315632754;
 const EXPECTED_PLAN_ARTIFACT_DIGEST = 'sha256:6b1f7bfb91cdfe79994cdc87314c3efd505610a1effe81cec8630341860da5e6';
-
-const MANAGED_KEYS = [
-  'historicalAvailabilityVersion',
-  'availabilityProof',
-  'availableAt',
-  'canonicalSourceUrl',
-  'archiveUrl',
-  'archiveCapturedAt',
-  'sourceContentSha256',
-  'availabilityScope',
-  'availabilityContentIdentity',
-  'availabilityProofExcerptFingerprint',
-  'availabilityProofArchiveContentSha256',
-  'availabilityProofCanonicalArtifactId',
-  'availabilityProofCanonicalArtifactDigest',
-  'asOfEligible',
-] as const;
 
 let secrets: string[] = [];
 
@@ -134,34 +122,6 @@ async function chooseDb(env: Record<string, string | undefined>) {
 
 function normalizeExcerpt(value: string) {
   return value.replace(/\s+/g, ' ').trim();
-}
-
-function canonicalJson(value: unknown): string {
-  if (Array.isArray(value)) return '[' + value.map(canonicalJson).join(',') + ']';
-  if (value && typeof value === 'object') {
-    const object = value as Record<string, unknown>;
-    return '{' + Object.keys(object).sort().map((key) => JSON.stringify(key) + ':' + canonicalJson(object[key])).join(',') + '}';
-  }
-  return JSON.stringify(value);
-}
-
-function managedSubset(metadata: Record<string, unknown> | null): Record<string, unknown> {
-  const result: Record<string, unknown> = {};
-  for (const key of MANAGED_KEYS) {
-    if (metadata && Object.prototype.hasOwnProperty.call(metadata, key)) result[key] = metadata[key];
-  }
-  return result;
-}
-
-function sameManagedMetadata(
-  existing: Record<string, unknown> | null,
-  planned: Record<string, unknown>,
-): boolean {
-  return canonicalJson(managedSubset(existing)) === canonicalJson(managedSubset(planned));
-}
-
-function hasManagedMetadata(metadata: Record<string, unknown> | null): boolean {
-  return MANAGED_KEYS.some((key) => metadata && Object.prototype.hasOwnProperty.call(metadata, key));
 }
 
 function validatePlan(plan: Plan) {
