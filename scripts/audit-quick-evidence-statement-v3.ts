@@ -2,6 +2,11 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 import { extractExplicitBillStatementsV3 } from '../src/evidence/bill-statement-extractor-v3.js';
+import {
+  compareQuickEvidenceToManual,
+  mergeQuickEvidenceManualAnnotationsBySource,
+  type QuickEvidenceManualAnnotation,
+} from '../src/evidence/quick-evidence-v3-manual-reference.js';
 
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
@@ -29,15 +34,7 @@ type V2Row = {
 
 type AnnotationRow = {
   source_document_id: string;
-  annotation: {
-    claims?: Array<{
-      memberNames?: string[];
-      billIdentifiers?: string[];
-      stance?: string;
-      claimType?: string;
-      normalizedClaim?: string;
-    }>;
-  };
+  annotation: QuickEvidenceManualAnnotation;
 };
 
 function mask(value: string) {
@@ -81,31 +78,6 @@ async function chooseDb(env: Record<string, string | undefined>) {
   mask(value);
   if (!await works(value)) throw new Error('Database bridge returned non-portable URL');
   return value;
-}
-
-function normBill(value: string): string {
-  return value.toUpperCase().replace(/\s+/g, '');
-}
-
-function compatibleManual(
-  annotation: AnnotationRow['annotation'] | undefined,
-  memberName: string,
-  billIdentifier: string,
-  stance: string,
-): 'agree' | 'opposite' | 'no_match' | 'unreviewed' {
-  if (!annotation) return 'unreviewed';
-  const bill = normBill(billIdentifier);
-  const claims = (annotation.claims ?? []).filter((claim) =>
-    ['supports', 'opposes', 'mixed'].includes(claim.stance ?? '')
-    && (claim.memberNames ?? []).includes(memberName)
-    && (claim.billIdentifiers ?? []).some((identifier) => normBill(identifier) === bill));
-
-  if (claims.length === 0) return 'no_match';
-  if (claims.some((claim) => claim.stance === stance || claim.stance === 'mixed')) return 'agree';
-  if (claims.some((claim) =>
-    (claim.stance === 'supports' && stance === 'opposes')
-    || (claim.stance === 'opposes' && stance === 'supports'))) return 'opposite';
-  return 'no_match';
 }
 
 function bump(target: Record<string, number>, key: string) {
@@ -166,7 +138,12 @@ async function main() {
           AND schema_version=$2
           AND classifier_provider=$3
           AND content_mode='verified_full_text'`, [sourceIds, SCHEMA_VERSION, MANUAL_PROVIDER]);
-  const manualBySource = new Map(annotations.rows.map((row) => [row.source_document_id, row.annotation]));
+  const manualBySource = mergeQuickEvidenceManualAnnotationsBySource(
+    annotations.rows.map((row) => ({
+      sourceDocumentId: row.source_document_id,
+      annotation: row.annotation,
+    })),
+  );
 
   const groups = new Map<string, V2Row[]>();
   for (const row of v2.rows) {
@@ -218,7 +195,7 @@ async function main() {
     const v3ByBill = new Map(v3.map((row) => [row.target?.billId ?? '', row]));
 
     for (const row of rows) {
-      const manual = compatibleManual(
+      const manual = compareQuickEvidenceToManual(
         manualBySource.get(row.source_document_id),
         row.member_name,
         row.bill_identifier,
@@ -239,7 +216,7 @@ async function main() {
     for (const row of v3) {
       const bill = bills.find((candidate) => candidate.id === row.target?.billId);
       if (!bill) continue;
-      const manual = compatibleManual(
+      const manual = compareQuickEvidenceToManual(
         manualBySource.get(first.source_document_id),
         first.member_name,
         bill.identifier,
@@ -259,7 +236,7 @@ async function main() {
         evidenceId: row.evidence_id,
         billIdentifier: row.bill_identifier,
         stance: row.stance,
-        manualComparison: compatibleManual(
+        manualComparison: compareQuickEvidenceToManual(
           manualBySource.get(row.source_document_id),
           row.member_name,
           row.bill_identifier,
@@ -272,7 +249,7 @@ async function main() {
           billIdentifier: bill?.identifier ?? null,
           stance: row.stance,
           manualComparison: bill
-            ? compatibleManual(manualBySource.get(first.source_document_id), first.member_name, bill.identifier, row.stance ?? '')
+            ? compareQuickEvidenceToManual(manualBySource.get(first.source_document_id), first.member_name, bill.identifier, row.stance ?? '')
             : 'no_match',
           excerpt: row.excerpt,
         };
