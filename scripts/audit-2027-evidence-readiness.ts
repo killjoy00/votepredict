@@ -71,7 +71,11 @@ async function main() {
     await client.query('BEGIN READ ONLY');
 
     const evidenceSummary = await client.query(`
-      WITH classified AS (
+      WITH superseded AS (
+        SELECT DISTINCT to_evidence_id
+          FROM evidence_relationships
+         WHERE relation_kind='supersedes'
+      ), classified AS (
         SELECT
           ei.id,
           ei.membership_id,
@@ -88,12 +92,7 @@ async function main() {
           m.legislator_id,
           member_session.slug AS membership_session,
           bill_session.slug AS bill_session,
-          EXISTS (
-            SELECT 1
-              FROM evidence_relationships er
-             WHERE er.to_evidence_id=ei.id
-               AND er.relation_kind='supersedes'
-          ) AS is_superseded,
+          (superseded.to_evidence_id IS NOT NULL) AS is_superseded,
           (
             sd.fetched_at <= $1::timestamptz
             AND (ei.published_at IS NULL OR ei.published_at <= $1::timestamptz)
@@ -104,6 +103,7 @@ async function main() {
         LEFT JOIN legislative_sessions member_session ON member_session.id=m.session_id
         LEFT JOIN bills b ON b.id=ei.bill_id
         LEFT JOIN legislative_sessions bill_session ON bill_session.id=b.session_id
+        LEFT JOIN superseded ON superseded.to_evidence_id=ei.id
       )
       SELECT
         count(*)::int AS total_items,
@@ -137,7 +137,11 @@ async function main() {
     `, [PROSPECTIVE_CUTOFF, PROSPECTIVE_SESSION]);
 
     const bySourceKind = await client.query(`
-      WITH classified AS (
+      WITH superseded AS (
+        SELECT DISTINCT to_evidence_id
+          FROM evidence_relationships
+         WHERE relation_kind='supersedes'
+      ), classified AS (
         SELECT
           ei.id,
           ei.membership_id,
@@ -147,12 +151,10 @@ async function main() {
           sd.source_kind,
           sd.fetched_at,
           ei.published_at,
-          EXISTS (
-            SELECT 1 FROM evidence_relationships er
-             WHERE er.to_evidence_id=ei.id AND er.relation_kind='supersedes'
-          ) AS is_superseded
+          (superseded.to_evidence_id IS NOT NULL) AS is_superseded
         FROM evidence_items ei
         JOIN source_documents sd ON sd.id=ei.source_document_id
+        LEFT JOIN superseded ON superseded.to_evidence_id=ei.id
       )
       SELECT source_kind,
              count(*)::int AS total_items,
