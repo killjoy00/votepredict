@@ -6,14 +6,41 @@ export type ArchiveProofClassification =
   | 'ambiguous_snapshot'
   | 'non_archive_publication_proof';
 
+export type ArchiveProofVerifiedProof = {
+  matchedExcerpt?: string;
+  [key: string]: unknown;
+};
+
 export type ArchiveProofTarget = {
   rowKey: string;
+  voteEventId?: string;
+  membershipId?: string;
+  billId?: string;
+  identifier?: string;
+  occurredOn?: string;
+  session?: string;
+  evidenceIds?: string[];
+  frozenExcerpts?: string[];
+  frozenExcerptFingerprints?: string[];
   classification: ArchiveProofClassification;
+  preVoteCaptureCount?: number;
+  firstPreVoteCapture?: Record<string, unknown> | null;
+  lastPreVoteCapture?: Record<string, unknown> | null;
+  verifiedProof?: ArchiveProofVerifiedProof | null;
   [key: string]: unknown;
 };
 
 export type ArchiveProofSource = {
   sourceDocumentId: string;
+  sourceKind: string;
+  sourceUrl: string;
+  sourceContentSha256: string;
+  storedPublishedOnDiagnosticOnly?: string | null;
+  sessions: string[];
+  potentialNewRows: number;
+  captureDiscovery?: Record<string, unknown>;
+  snapshotFetches?: Record<string, unknown>;
+  classification: ArchiveProofClassification;
   targets: ArchiveProofTarget[];
   [key: string]: unknown;
 };
