@@ -9,9 +9,16 @@ import {
   evidenceQualityExactEvidenceItemAvailabilityDate,
   evidenceQualitySourceAvailabilityDate,
 } from '../src/evidence/evidence-quality-historical-availability.js';
-
-const EXPECTED_DOCUMENTS = 226;
-const EXPECTED_UNIQUE_SIGNATURES = 180;
+import {
+  EVIDENCE_QUALITY_BASELINE_MANUAL_DOCUMENTS,
+  EVIDENCE_QUALITY_BASELINE_UNIQUE_SIGNATURES,
+  EVIDENCE_QUALITY_HISTORICAL_CONSUMER_DOCUMENTS,
+  EVIDENCE_QUALITY_SESSION_DAILY_EXCERPT_DOCUMENTS,
+  EVIDENCE_QUALITY_SESSION_DAILY_EXCERPT_UNIQUE_SIGNATURES,
+  evidenceQualityHistoricalAnnotationCohort,
+  evidenceQualityHistoricalCohortUsesSourceAvailability,
+  type EvidenceQualityHistoricalAnnotationCohort,
+} from '../src/evidence/evidence-quality-historical-consumer.js';
 const MANUAL_PROVIDER = 'manual-openai';
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
@@ -19,6 +26,9 @@ let secrets: string[] = [];
 
 type AnnotationRow = {
   source_document_id: string;
+  source_document_text_id: string | null;
+  classifier_model: string;
+  content_mode: string;
   source_kind: string;
   source_url: string;
   source_content_sha256: string;
@@ -38,6 +48,7 @@ type AnnotationRow = {
     }>;
   };
   annotation_metadata: Record<string, unknown> | null;
+  historical_cohort?: EvidenceQualityHistoricalAnnotationCohort;
   outcome_blind: boolean;
   context_only: boolean;
   mechanically_actionable: boolean;
@@ -147,8 +158,11 @@ function exactClaimAvailabilityDate(input: {
   supportingExcerpt: string;
 }): string | null {
   const dates = new Set<string>();
-  const sourceDate = availabilityDate(input.source.source_metadata);
-  if (sourceDate) dates.add(sourceDate);
+  if (!input.source.historical_cohort) throw new Error('Historical annotation cohort was not resolved');
+  if (evidenceQualityHistoricalCohortUsesSourceAvailability(input.source.historical_cohort)) {
+    const sourceDate = availabilityDate(input.source.source_metadata);
+    if (sourceDate) dates.add(sourceDate);
+  }
 
   for (const context of input.contexts) {
     if (context.membership_id !== input.membershipId || context.bill_id !== input.billId) continue;
@@ -205,6 +219,9 @@ async function main() {
     await client.query('BEGIN READ ONLY');
     const annotations = await client.query<AnnotationRow>(`
       SELECT eqa.source_document_id::text,
+             eqa.source_document_text_id::text,
+             eqa.classifier_model,
+             eqa.content_mode,
              sd.source_kind,
              sd.source_url,
              sd.content_sha256 AS source_content_sha256,
@@ -220,27 +237,56 @@ async function main() {
        WHERE eqa.schema_version=$1
          AND eqa.prompt_version=$2
          AND eqa.classifier_provider=$3
-         AND eqa.content_mode='verified_full_text'
-       ORDER BY eqa.source_document_id`, [
+         AND eqa.content_mode IN ('verified_full_text','excerpt_only')
+       ORDER BY eqa.source_document_id, eqa.content_mode`, [
       EVIDENCE_QUALITY_SCHEMA_VERSION,
       EVIDENCE_QUALITY_PROMPT_VERSION,
       MANUAL_PROVIDER,
     ]);
 
-    if (annotations.rows.length !== EXPECTED_DOCUMENTS) throw new Error('Manual annotation document count mismatch');
+    const selectedRows = annotations.rows.flatMap((row) => {
+      const cohort = evidenceQualityHistoricalAnnotationCohort({
+        sourceKind: row.source_kind,
+        sourceDocumentTextId: row.source_document_text_id,
+        classifierModel: row.classifier_model,
+        contentMode: row.content_mode,
+        annotationMetadata: row.annotation_metadata,
+      });
+      return cohort ? [{ ...row, historical_cohort: cohort }] : [];
+    });
+    const baselineRows = selectedRows.filter((row) => row.historical_cohort === 'baseline_verified_full_text');
+    const sessionDailyRows = selectedRows.filter((row) => row.historical_cohort === 'session_daily_archive_verified_excerpt');
+    if (baselineRows.length !== EVIDENCE_QUALITY_BASELINE_MANUAL_DOCUMENTS) {
+      throw new Error('Baseline full-text annotation count mismatch: ' + baselineRows.length);
+    }
+    if (sessionDailyRows.length !== EVIDENCE_QUALITY_SESSION_DAILY_EXCERPT_DOCUMENTS) {
+      throw new Error('Guarded Session Daily excerpt annotation count mismatch: ' + sessionDailyRows.length);
+    }
+    if (selectedRows.length !== EVIDENCE_QUALITY_HISTORICAL_CONSUMER_DOCUMENTS) {
+      throw new Error('Historical consumer annotation count mismatch: ' + selectedRows.length);
+    }
 
     const fingerprints = new Set<string>();
+    const baselineFingerprints = new Set<string>();
+    const sessionDailyFingerprints = new Set<string>();
     const sourceIds: string[] = [];
-    for (const row of annotations.rows) {
+    for (const row of selectedRows) {
       if (!row.outcome_blind || !row.context_only || row.mechanically_actionable || Number(row.model_weight) !== 0) {
         throw new Error('Policy invariant failed for ' + row.source_document_id);
       }
       const fingerprint = stringMeta(row.annotation_metadata, 'semanticFingerprint');
       if (!fingerprint) throw new Error('Missing semantic fingerprint');
       fingerprints.add(fingerprint);
+      if (row.historical_cohort === 'baseline_verified_full_text') baselineFingerprints.add(fingerprint);
+      else sessionDailyFingerprints.add(fingerprint);
       sourceIds.push(row.source_document_id);
     }
-    if (fingerprints.size !== EXPECTED_UNIQUE_SIGNATURES) throw new Error('Semantic signature count mismatch');
+    if (baselineFingerprints.size !== EVIDENCE_QUALITY_BASELINE_UNIQUE_SIGNATURES) {
+      throw new Error('Baseline semantic signature count mismatch: ' + baselineFingerprints.size);
+    }
+    if (sessionDailyFingerprints.size !== EVIDENCE_QUALITY_SESSION_DAILY_EXCERPT_UNIQUE_SIGNATURES) {
+      throw new Error('Session Daily semantic signature count mismatch: ' + sessionDailyFingerprints.size);
+    }
 
     const contexts = await client.query<ContextRow>(`
       SELECT ei.source_document_id::text,
@@ -268,7 +314,7 @@ async function main() {
     const unmappedExactClaims: Array<Record<string, unknown>> = [];
     let exactDirectionalClaims = 0;
 
-    for (const row of annotations.rows) {
+    for (const row of selectedRows) {
       const fingerprint = stringMeta(row.annotation_metadata, 'semanticFingerprint')!;
       const availableOn = availabilityDate(row.source_metadata);
       for (const claim of row.annotation.claims) {
@@ -410,7 +456,7 @@ async function main() {
     for (const row of unmappedExactClaims) increment(unmappedBySourceKind, String(row.sourceKind));
 
     const audit = {
-      schemaVersion: 'evidence-quality-historical-coverage-audit-v1.1',
+      schemaVersion: 'evidence-quality-historical-coverage-audit-v1.2',
       generatedAt: new Date().toISOString(),
       issue: 579,
       targetUniverse: {
@@ -419,8 +465,12 @@ async function main() {
         memberships: new Set(targets.map((row) => row.membershipId)).size,
       },
       corpus: {
-        documents: annotations.rows.length,
+        documents: selectedRows.length,
+        baselineVerifiedFullTextDocuments: baselineRows.length,
+        sessionDailyArchiveVerifiedExcerptDocuments: sessionDailyRows.length,
         uniqueSemanticSignatures: fingerprints.size,
+        baselineUniqueSemanticSignatures: baselineFingerprints.size,
+        sessionDailyUniqueSemanticSignatures: sessionDailyFingerprints.size,
         exactDirectionalClaims,
         exactClaimsWithoutDeterministicMapping: unmappedExactClaims.length,
         exactMappedSemanticSignals: exactSignals.size,
