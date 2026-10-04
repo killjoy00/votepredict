@@ -262,12 +262,6 @@ async function main() {
   }
 
   const manualCoveredSourceDocuments = summary.manualCoveredSourceDocuments.size;
-  const serializableSummary = {
-    ...summary,
-    manualCoveredSourceDocuments,
-  };
-  delete (serializableSummary as { manualCoveredSourceDocuments?: unknown }).manualCoveredSourceDocuments;
-
   const artifact = {
     auditVersion: 'legacy-quick-evidence-statement-audit-v1',
     generatedAt: new Date().toISOString(),
