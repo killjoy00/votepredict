@@ -1,1 +1,1339 @@
-{"batchId":"EQV1-MANUAL-002","schemaVersion":"evidence-quality-v1","promptVersion":"evidence-quality-prompt-v1","provider":"OpenAI","model":"GPT-5.6 Sol","sourceSnapshotRunId":37099902152,"sourceTextVersion":"evidence-quality-text-v1","cohortCutoff":"2026-10-03T05:29:17Z","rowRange":{"start":26,"end":50},"selectedSourceDocumentIds":["29217b8c-36dc-4427-afd9-851f0bdd17d9","93ef6f73-4676-4ed0-afa3-86161da7c0c6","e59f7286-483b-4465-a138-f2e9cacded20","dcbd7c7c-ab4d-4e07-a1e9-96d2c0bbf36b","23dedc7f-af40-4e38-a1e4-98bcb17eb2ba","d36e4d52-e59d-4937-a28a-d3bb49d553e4","7414af84-7ccd-4a84-8cac-1de42ab4a9bb","1cc98f6a-99af-46e2-b127-bd7c5981694c","de367890-c25a-4eb9-876f-a79767461a09","a5c52eca-b2f4-4599-b06c-ee0433a097de","2053a89b-e170-4b54-b1db-955554ec7d06","42b43516-aba5-40e8-920d-6b809dbc11ff","7ed8c2d2-e351-431f-95ed-8fadb7aa330f","970fd67e-575f-4a23-8199-f06df4a28961","e22e38b5-0038-4b73-84d2-28f576d5e228","f5478564-51df-4a95-8a83-3ebc823194d4","72ba2dd4-dfd0-4179-9c90-f33465153dcf","338507ac-28b3-4759-81aa-2cfab41db2e4","6b02f491-d8da-46af-a620-31b6c69211b6","119f7e18-82d9-470c-9e2d-04eac97696fe","9d939b15-8bb7-4104-bf3d-85f7ac96909e","888c0d02-9821-4c23-9596-fd964ad449fc","e7e37451-9a5f-4ea4-a99e-a871233a0daa","a0c20c35-50c6-49de-83af-ebdcc3b06251","0c26261f-780b-4a52-9083-71231ec3ab9f"],"documents":[{"row":26,"sourceDocumentId":"29217b8c-36dc-4427-afd9-851f0bdd17d9","sourceDocumentTextId":"de183bac-3835-4ff7-8ce8-7cba7f1bac3c","sourceKind":"wayback_campaign_site","candidateMemberNames":["John A. Hoffman"],"candidateBillIdentifiers":["SF3337"],"annotation":{"document":{"legislativeRelevance":"medium","centrality":"substantial","contentType":"campaign_position","novelty":"unknown","corroboration":"unknown","topics":["education","adult learners with disabilities","special education"],"documentConfidence":0.94},"claims":[{"memberNames":["John A. Hoffman"],"billIdentifiers":["SF3337"],"linkage":"exact_member_bill","claimType":"sponsorship","stance":"none","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"John A. Hoffman","normalizedClaim":"Hoffman’s campaign page identifies SF3337 as legislation he authored.","supportingExcerpt":"(Authored: SF 3337)","extractionConfidence":0.94}],"notes":["Authorship is recorded without inferring support for final passage."]},"calculatedExtractionConfidence":0.94,"validationFailures":[]},{"row":27,"sourceDocumentId":"93ef6f73-4676-4ed0-afa3-86161da7c0c6","sourceDocumentTextId":"45696072-d0dc-481d-925b-853ffe5477b7","sourceKind":"wayback_campaign_site","candidateMemberNames":["John A. Hoffman"],"candidateBillIdentifiers":["HF2749","SF1458","SF2356","SF3350"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"substantial","contentType":"campaign_position","novelty":"unknown","corroboration":"unknown","topics":["health and human services","veterans","first responders"],"documentConfidence":0.96},"claims":[{"memberNames":["John A. Hoffman"],"billIdentifiers":["SF2356"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"John A. Hoffman","normalizedClaim":"Hoffman states that he voted for SF2356, including provisions affecting veteran-owned businesses and military retirees.","supportingExcerpt":"Additionally, Sen. Hoffman voted for SF 2356 to make veteran-owned small businesses more competitive for government contracts up to $25,000 for goods, services, and construction.","extractionConfidence":0.99},{"memberNames":["John A. Hoffman"],"billIdentifiers":["SF3350"],"linkage":"exact_member_bill","claimType":"sponsorship","stance":"none","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"John A. Hoffman","normalizedClaim":"The campaign page identifies Hoffman as chief author of legislation labeled SF3350 concerning first-responder exposure to infectious disease.","supportingExcerpt":"Senator Hoffman chief authored legislation to assist first responders if exposed on duty to bodily fluids that could potentially contain viruses and infectious diseases. Specifically, this bill allows first responders to petition courts for blood samples from source individuals to test for pathogens. On a case by case basis, the court would weigh the need for test results with the need to protect privacy, health, safety, and the public interest. (SF 3350)","extractionConfidence":0.95}],"notes":["No directional stance is inferred from chief authorship of SF3350 alone. Candidate bills HF2749 and SF1458 are referenced in broader budget history but are not separately annotated here because the supplied text does not tie a concise explicit position to each identifier as cleanly as SF2356."]},"calculatedExtractionConfidence":0.95,"validationFailures":[]},{"row":28,"sourceDocumentId":"e59f7286-483b-4465-a138-f2e9cacded20","sourceDocumentTextId":"b20fc306-a80e-4d48-86c1-3652e79cd140","sourceKind":"wayback_member_primary","candidateMemberNames":["John Huot"],"candidateBillIdentifiers":["HF4269"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["first responders","peer support confidentiality","mental health"],"documentConfidence":0.98},"claims":[{"memberNames":["John Huot"],"billIdentifiers":["HF4269"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"John Huot","normalizedClaim":"Huot argues that first responders deserve a confidential peer-counseling support system in the release identifying him as the House author of HF4269.","supportingExcerpt":"“Our first responders work hard to keep us safe,” said House author (HF4269) Representative John Huot (DFL-Rosemount). “They deserve access to a dignified and confidential peer Counseling support system.”","extractionConfidence":0.98}],"notes":[]},"calculatedExtractionConfidence":0.98,"validationFailures":[]},{"row":29,"sourceDocumentId":"dcbd7c7c-ab4d-4e07-a1e9-96d2c0bbf36b","sourceDocumentTextId":"31af54aa-a108-4659-bf14-815a5473f8d3","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Esther Agbaje"],"candidateBillIdentifiers":["HF1118"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"substantial","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["affordable housing","rental housing","housing preservation"],"documentConfidence":0.98},"claims":[{"memberNames":["Esther Agbaje"],"billIdentifiers":["HF1118"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Esther Agbaje","normalizedClaim":"Agbaje presents HF1118 as her bill to preserve naturally occurring affordable housing and argues for increasing housing options.","supportingExcerpt":"I successfully presented my first bill, HF 1118 , which supports the preservation of ‘naturally occurring affordable housing’ (NOAH). Now more than ever, we need to increase housing options to make sure everyone has a safe place to lay their head at night.","extractionConfidence":0.98}],"notes":[]},"calculatedExtractionConfidence":0.98,"validationFailures":[]},{"row":30,"sourceDocumentId":"23dedc7f-af40-4e38-a1e4-98bcb17eb2ba","sourceDocumentTextId":"e5ae27c7-5a19-4faa-8eef-8a13a8032c4c","sourceKind":"wayback_member_primary","candidateMemberNames":["Julie Greene"],"candidateBillIdentifiers":["HF24"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"substantial","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["reproductive health","newborn medical care","health policy"],"documentConfidence":0.99},"claims":[{"memberNames":["Julie Greene"],"billIdentifiers":["HF24"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"opposes","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Julie Greene","normalizedClaim":"Greene explicitly states that she voted no on HF24.","supportingExcerpt":"I voted NO on HF24 , a “born alive” bill based on a falsehood that doctors are not providing appropriate medical care for babies born alive.","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":31,"sourceDocumentId":"d36e4d52-e59d-4937-a28a-d3bb49d553e4","sourceDocumentTextId":"bb0ec888-3b79-4b0d-8410-ec279f1dd664","sourceKind":"wayback_member_primary","candidateMemberNames":["Krista Knudsen"],"candidateBillIdentifiers":["HF4"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["budget surplus","tax refunds","constitutional amendment"],"documentConfidence":0.98},"claims":[{"memberNames":["Krista Knudsen"],"billIdentifiers":["HF4"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Krista Knudsen","normalizedClaim":"Knudsen argues in favor of returning projected budget surpluses to taxpayers in the HF4 release.","supportingExcerpt":"The bill establishes the Minnesota Tax Relief Fund, ensuring that excess tax revenue is set aside and returned to the Minnesotans who paid it. \"When the government runs a surplus, it means taxpayers have overpaid. Returning that money puts it back where it belongs, in the hands of families, workers, and small businesses. It fuels growth and financial security,\" said Rep. Knudsen.","extractionConfidence":0.98}],"notes":[]},"calculatedExtractionConfidence":0.98,"validationFailures":[]},{"row":32,"sourceDocumentId":"7414af84-7ccd-4a84-8cac-1de42ab4a9bb","sourceDocumentTextId":"27a1a271-d231-4229-bb61-e6c794a4c482","sourceKind":"wayback_member_primary","candidateMemberNames":["Kristin Bahner"],"candidateBillIdentifiers":["HF31"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"substantial","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["tax conformity","tax relief","business taxation"],"documentConfidence":0.99},"claims":[{"memberNames":["Kristin Bahner"],"billIdentifiers":["HF31"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Kristin Bahner","normalizedClaim":"Bahner explicitly says she co-authored and voted in favor of HF31.","supportingExcerpt":"Last week, I was proud to co-author and vote in favor of our first bill of the session, HF31 – a federal tax conformity bill that returns $100 million back to taxpayers.","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":33,"sourceDocumentId":"1cc98f6a-99af-46e2-b127-bd7c5981694c","sourceDocumentTextId":"2ee6bb45-26b1-4eea-84ed-6f9a9bd5c793","sourceKind":"wayback_member_primary","candidateMemberNames":["Liz Lee"],"candidateBillIdentifiers":["HF28"],"annotation":{"document":{"legislativeRelevance":"medium","centrality":"incidental","contentType":"other","novelty":"unknown","corroboration":"unknown","topics":["voting rights","news archive"],"documentConfidence":0.95},"claims":[{"memberNames":["Liz Lee"],"billIdentifiers":["HF28"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Liz Lee","normalizedClaim":"The member-news index explicitly identifies a release stating that Lee voted to pass HF28.","supportingExcerpt":"RELEASE: Rep. Liz Lee votes to pass HF 28, the “Restore the Vote” Act - (Thursday, February 2, 2023)","extractionConfidence":0.96}],"notes":["The frozen source is a member-news index; the directional claim is limited to the explicit title text."]},"calculatedExtractionConfidence":0.95,"validationFailures":[]},{"row":34,"sourceDocumentId":"de367890-c25a-4eb9-876f-a79767461a09","sourceDocumentTextId":"2318a62e-2fed-409e-afc4-aa42690387d0","sourceKind":"wayback_member_primary","candidateMemberNames":["Lucille Rehm"],"candidateBillIdentifiers":["HF1917"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"substantial","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["public libraries","regional library systems","education resources"],"documentConfidence":0.98},"claims":[{"memberNames":["Lucille Rehm"],"billIdentifiers":["HF1917"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Lucille Rehm","normalizedClaim":"Rehm presents HF1917 as a bill she is carrying to invest in regional public libraries and expresses enthusiasm for strengthening library systems.","supportingExcerpt":"Supporting our Public Libraries (HF 1917) I presented a bill I’m carrying to invest in our regional public library system across the state. Public libraries are a vital part of our communities. I’m excited to build on our strong public library systems because we know how much they mean to our neighbors in Chanhassen and Chaska; the important services they provide for our seniors, students, child care providers, parents, and the resources they make available and accessible to all learners.","extractionConfidence":0.98}],"notes":[]},"calculatedExtractionConfidence":0.98,"validationFailures":[]},{"row":35,"sourceDocumentId":"a5c52eca-b2f4-4599-b06c-ee0433a097de","sourceDocumentTextId":"374bd55a-7ca3-408f-a578-5eac089dd0c2","sourceKind":"wayback_member_primary","candidateMemberNames":["Natalie Zeleznikar"],"candidateBillIdentifiers":["HF4601"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["pregnancy resource centers","maternity homes","health funding"],"documentConfidence":0.98},"claims":[{"memberNames":["Natalie Zeleznikar"],"billIdentifiers":["HF4601"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Natalie Zeleznikar","normalizedClaim":"Zeleznikar argues for the pregnancy-resource-center and maternity-home funding approach associated with HF4601.","supportingExcerpt":"“Giving all of the money to just Planned Parenthood reduces the choice that expecting mothers have when there are many options that could be better at pregnancy centers and maternity homes.” Said Rep. Zeleznikar on her legislation. “These centers give women who don’t want to choose abortion options, education, and a support system.”","extractionConfidence":0.98}],"notes":[]},"calculatedExtractionConfidence":0.98,"validationFailures":[]},{"row":36,"sourceDocumentId":"2053a89b-e170-4b54-b1db-955554ec7d06","sourceDocumentTextId":"9cd9eaa3-f228-4127-b2d2-4b851f80729f","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Greg Boe"],"candidateBillIdentifiers":["HF3424"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["fentanyl","controlled substances","public safety"],"documentConfidence":0.99},"claims":[{"memberNames":["Greg Boe"],"billIdentifiers":["HF3424"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"attributed_paraphrase","attributionType":"target_member","attributedActor":"Greg Boe","normalizedClaim":"The release states that Boe supports the fentanyl-penalty measure described as HF3424.","supportingExcerpt":"Representative Greg Boe is supporting measures to provide the same weight threshold and penalty for the sale of fentanyl as there is for heroin. HF3424 would find those with in possession of fentanyl guilty of a first-degree controlled substance crime if the drugs met certain weight minimums.","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":37,"sourceDocumentId":"42b43516-aba5-40e8-920d-6b809dbc11ff","sourceDocumentTextId":"da28420b-c725-4a5c-96a5-d10a845f6939","sourceKind":"wayback_member_primary","candidateMemberNames":["Steve Elkins"],"candidateBillIdentifiers":["HF8"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"substantial","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["gun background checks","firearm policy","public safety"],"documentConfidence":0.99},"claims":[{"memberNames":["Steve Elkins"],"billIdentifiers":["HF8"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Steve Elkins","normalizedClaim":"Elkins explicitly states that he supported HF8, which would expand criminal background checks on gun sales.","supportingExcerpt":"Last session I supported legislation that passed the House which would expand criminal background checks on all gun sales ( HF 8 )","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":38,"sourceDocumentId":"7ed8c2d2-e351-431f-95ed-8fadb7aa330f","sourceDocumentTextId":"cad86071-099b-4e9c-9df0-14c3971f84f2","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["James Gordon"],"candidateBillIdentifiers":["HF1"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"substantial","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["fraud prevention","inspector general","state program oversight"],"documentConfidence":0.97},"claims":[{"memberNames":["James Gordon"],"billIdentifiers":["HF1"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"James Gordon","normalizedClaim":"Gordon describes the anti-fraud bills he joined as a step in the right direction and identifies HF1 as one he co-sponsored.","supportingExcerpt":"The additional oversight and accountability provided in our bills will be a step in the right direction. The first three bills House Republicans drafted in response to this issue this session include: House File 1 (which I co-sponsored): Establishes a centralized Office of the Inspector General to lead the fight against fraud across state programs.","extractionConfidence":0.97}],"notes":[]},"calculatedExtractionConfidence":0.97,"validationFailures":[]},{"row":39,"sourceDocumentId":"970fd67e-575f-4a23-8199-f06df4a28961","sourceDocumentTextId":"fe24fade-058d-49f6-b638-6cdc1b99b3ca","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["James Gordon"],"candidateBillIdentifiers":["HF733"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"substantial","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["charitable gaming","electronic pull tabs","local charities"],"documentConfidence":0.97},"claims":[{"memberNames":["James Gordon"],"billIdentifiers":["HF733"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"James Gordon","normalizedClaim":"Gordon advocates restoring prior electronic pull-tab features through the House bill he identifies as HF733.","supportingExcerpt":"Our charitable organizations do such great work in our communities, but now the state is getting in the way and that needs to be fixed. We just need to get things back to the way they were and that’s what the House Republican bill does.","extractionConfidence":0.97}],"notes":[]},"calculatedExtractionConfidence":0.97,"validationFailures":[]},{"row":40,"sourceDocumentId":"e22e38b5-0038-4b73-84d2-28f576d5e228","sourceDocumentTextId":"6a8bcee1-e8bd-41ea-9f0d-88805a01cfa1","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Jeff Brand"],"candidateBillIdentifiers":["HF28"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["voting rights","felony disenfranchisement","elections"],"documentConfidence":0.99},"claims":[{"memberNames":["Jeff Brand"],"billIdentifiers":["HF28"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"attributed_paraphrase","attributionType":"target_member","attributedActor":"Jeff Brand","normalizedClaim":"The release states that Brand was a co-author of HF28 and voted to support it.","supportingExcerpt":"Jeff Brand (DFL – Saint Peter) is a co-author on the bill and voted to support it.","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":41,"sourceDocumentId":"f5478564-51df-4a95-8a83-3ebc823194d4","sourceDocumentTextId":"019e1464-0758-4ade-adaa-f7df5db3edc1","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Jessica Hanson"],"candidateBillIdentifiers":["HF41"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["essential workers","paid leave","COVID-19"],"documentConfidence":0.98},"claims":[{"memberNames":["Jessica Hanson"],"billIdentifiers":["HF41"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Jessica Hanson","normalizedClaim":"Hanson presents HF41 as necessary emergency leave for essential workers and describes its intended protections positively.","supportingExcerpt":"I signed on to co-author HF41 with Rep. Cedrick Frazier, and I am grateful for his leadership on this. HF41 will ensure that employers provide their essential workers in Minnesota with emergency leave to care for themselves, their families, and their communities. This leave will ensure that frontline health workers and other essential workers have the financial security to continue protecting and caring for Minnesotans.","extractionConfidence":0.98}],"notes":[]},"calculatedExtractionConfidence":0.98,"validationFailures":[]},{"row":42,"sourceDocumentId":"72ba2dd4-dfd0-4179-9c90-f33465153dcf","sourceDocumentTextId":"747ec743-cf96-4373-b46d-8ee320c71642","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Jr. Bidal Duran"],"candidateBillIdentifiers":["HF4"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["budget surplus","tax refunds","constitutional amendment"],"documentConfidence":0.98},"claims":[{"memberNames":["Jr. Bidal Duran"],"billIdentifiers":["HF4"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Jr. Bidal Duran","normalizedClaim":"Duran argues in favor of HF4’s approach to returning budget surpluses to taxpayers.","supportingExcerpt":"Representative Bidal Duran (R-Bemidji) expressed disappointment as all 67 Democrats voted against House File 4, a bill he coauthored to ensure taxpayers pay no more than necessary and receive tax relief in the event of a surplus. “This bill is about accountability. When the government sees a surplus, it should be returned to the people - the ones who earned it,” said Representative Duran.","extractionConfidence":0.98}],"notes":[]},"calculatedExtractionConfidence":0.98,"validationFailures":[]},{"row":43,"sourceDocumentId":"338507ac-28b3-4759-81aa-2cfab41db2e4","sourceDocumentTextId":"6d76170a-72c7-4740-9c60-b33e6d8ed01d","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Julie Greene"],"candidateBillIdentifiers":["HF12","HF6"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"substantial","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["school athletics","student programs","education policy"],"documentConfidence":0.97},"claims":[{"memberNames":["Julie Greene"],"billIdentifiers":["HF12","HF6"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"opposes","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Julie Greene","normalizedClaim":"Greene explicitly characterizes HF12 and HF6 among bills she considers dangerous, irresponsible, and unconstitutional.","supportingExcerpt":"Attacking trans athletes and forcing children as young as 5 to ‘prove’ their gender to anyone who asks (HF12) Removing data protections for AG work (HF12) Canceling diversity, equity and inclusion support for students (HF6) While I remain committed to finding common solutions, these bills are dangerous, irresponsible, and unconstitutional. I will continue to fight for our community’s values.","extractionConfidence":0.97}],"notes":[]},"calculatedExtractionConfidence":0.97,"validationFailures":[]},{"row":44,"sourceDocumentId":"6b02f491-d8da-46af-a620-31b6c69211b6","sourceDocumentTextId":"d74bcfb0-5c51-425d-9c20-77360b08e4ac","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Julie Greene"],"candidateBillIdentifiers":["HF12"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"substantial","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["school athletics","transgender students","education policy"],"documentConfidence":0.99},"claims":[{"memberNames":["Julie Greene"],"billIdentifiers":["HF12"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"opposes","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Julie Greene","normalizedClaim":"Greene explicitly states that she voted no on HF12.","supportingExcerpt":"In addition, I also voted NO on HF 12, a discriminatory bill brought to the floor that would change current Minnesota State High School League policy and ban trans girls from participating in sports.","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":45,"sourceDocumentId":"119f7e18-82d9-470c-9e2d-04eac97696fe","sourceDocumentTextId":"9c629cf9-3086-4ec2-88ff-6e905c90ad54","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Kaohly Vang Her"],"candidateBillIdentifiers":["HF7"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"substantial","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["earned sick and safe time","paid sick leave","worker protections"],"documentConfidence":0.99},"claims":[{"memberNames":["Kaohly Vang Her"],"billIdentifiers":["HF7"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Kaohly Vang Her","normalizedClaim":"Her explicitly states that she supports HF7 to expand Earned Sick and Safe Time.","supportingExcerpt":"This session, I\u2019m supporting a bill that would expand Earned Sick and Safe Time ( HF 7 )","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":46,"sourceDocumentId":"9d939b15-8bb7-4104-bf3d-85f7ac96909e","sourceDocumentTextId":"a4e89a5b-cd17-4048-84ec-05599ba55284","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Keith Allen"],"candidateBillIdentifiers":["HF4"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["budget surplus","tax refunds","constitutional amendment"],"documentConfidence":0.99},"claims":[{"memberNames":["Keith Allen"],"billIdentifiers":["HF4"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Keith Allen","normalizedClaim":"Allen explicitly calls HF4 a common-sense solution for returning surplus funds to taxpayers.","supportingExcerpt":"\"Minnesota families are struggling with rising costs, and the government should not be sitting on billions of their hard-earned dollars, HF4 is a common-sense solution that puts money back where it belongs-in the pockets of taxpayers.\"","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":47,"sourceDocumentId":"888c0d02-9821-4c23-9596-fd964ad449fc","sourceDocumentTextId":"14496ecc-1dc5-490c-be5f-07d63f5a0b78","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Kristin Robbins"],"candidateBillIdentifiers":["HF153"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["education tax credits","school tuition","family expenses"],"documentConfidence":0.98},"claims":[{"memberNames":["Kristin Robbins"],"billIdentifiers":["HF153"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Kristin Robbins","normalizedClaim":"Robbins argues that the education tax-credit expansion in HF153 is overdue and would help families.","supportingExcerpt":"\u201cAn increase in the amount of the K-12 education tax credit/deduction is long overdue and will help families who incurred extra expenses for tutoring, supplies, and technology while students learned from home.\u201d","extractionConfidence":0.98}],"notes":[]},"calculatedExtractionConfidence":0.98,"validationFailures":[]},{"row":48,"sourceDocumentId":"e7e37451-9a5f-4ea4-a99e-a871233a0daa","sourceDocumentTextId":"9ed3ee2e-92af-4086-b3d3-b153ae2b66ce","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Lisa Demuth"],"candidateBillIdentifiers":["HF131"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"substantial","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["self-defense","stand your ground","public safety"],"documentConfidence":0.99},"claims":[{"memberNames":["Lisa Demuth"],"billIdentifiers":["HF131"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Lisa Demuth","normalizedClaim":"Demuth says she is proud to be chief author of HF131 and looks forward to carrying it through the legislative process.","supportingExcerpt":"I am proud to be the chief author of H.F. 131 to help people defend themselves against threats. This Stand Your Ground bill would eliminate the duty to retreat in cases of self-defense and it expands the boundary to allow use of deadly force to include your vehicle, camper, boat, etc. I look forward to carrying this bill through the legislative process and discussing this important issue.","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":49,"sourceDocumentId":"a0c20c35-50c6-49de-83af-ebdcc3b06251","sourceDocumentTextId":"d6dfba9b-03f6-406f-a30e-145136d3f4de","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Liz Boldon"],"candidateBillIdentifiers":["HF1"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"substantial","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["economic security","pandemic relief","housing assistance"],"documentConfidence":0.92},"claims":[{"memberNames":["Liz Boldon"],"billIdentifiers":["HF1"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Liz Boldon","normalizedClaim":"Boldon endorses the House DFL priority package, which the source identifies as beginning with HF1 on economic security.","supportingExcerpt":"\"By establishing these priorities, the House DFL is focusing on our shared values and putting our neighbors in Rochester first. With these priorities, we are standing up for our vulnerable neighbors when they most need our support.\" The first bills include the following: Economic Security \u2013 HF 1 Housing assistance and homelessness prevention Emergency cash payments to families most in need Food security Broadband expansion","extractionConfidence":0.92}],"notes":["The support is for the identified priority package; HF1 is explicitly listed as the Economic Security bill within that package."]},"calculatedExtractionConfidence":0.92,"validationFailures":[]},{"row":50,"sourceDocumentId":"0c26261f-780b-4a52-9083-71231ec3ab9f","sourceDocumentTextId":"78279466-25ae-465b-9775-91deec095e2b","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Liz Lee"],"candidateBillIdentifiers":["HF28"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["voting rights","felony disenfranchisement","elections"],"documentConfidence":0.99},"claims":[{"memberNames":["Liz Lee"],"billIdentifiers":["HF28"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Liz Lee","normalizedClaim":"Lee explicitly states that she votes for HF28 and explains her support for restoring voting rights after incarceration.","supportingExcerpt":"\u201cAs a country that holds accountable those who commit serious crimes, we also do not believe in double jeopardy. I vote for HF 28 because in our multiracial democracy, we must protect the sacred right to vote for everyone. This is especially important when our carceral system has such a disparate impact on our communities of color,\u201d said Rep. Lee.","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.99,"validationFailures":[]}],"validationFailures":[],"summary":{"documentsAnnotated":25,"directionalClaims":24,"intentionallyNonDirectionalRows":[26],"documentsCouldNotConfidentlyClassify":[],"documentsWithValidationFailures":0}}
+{
+  "batchId": "EQV1-MANUAL-002",
+  "schemaVersion": "evidence-quality-v1",
+  "promptVersion": "evidence-quality-prompt-v1",
+  "provider": "OpenAI",
+  "model": "GPT-5.6 Sol",
+  "sourceSnapshotRunId": 37099902152,
+  "sourceTextVersion": "evidence-quality-text-v1",
+  "cohortCutoff": "2026-10-03T05:29:17Z",
+  "rowRange": {
+    "start": 26,
+    "end": 50
+  },
+  "selectedSourceDocumentIds": [
+    "29217b8c-36dc-4427-afd9-851f0bdd17d9",
+    "93ef6f73-4676-4ed0-afa3-86161da7c0c6",
+    "e59f7286-483b-4465-a138-f2e9cacded20",
+    "dcbd7c7c-ab4d-4e07-a1e9-96d2c0bbf36b",
+    "23dedc7f-af40-4e38-a1e4-98bcb17eb2ba",
+    "d36e4d52-e59d-4937-a28a-d3bb49d553e4",
+    "7414af84-7ccd-4a84-8cac-1de42ab4a9bb",
+    "1cc98f6a-99af-46e2-b127-bd7c5981694c",
+    "de367890-c25a-4eb9-876f-a79767461a09",
+    "a5c52eca-b2f4-4599-b06c-ee0433a097de",
+    "2053a89b-e170-4b54-b1db-955554ec7d06",
+    "42b43516-aba5-40e8-920d-6b809dbc11ff",
+    "7ed8c2d2-e351-431f-95ed-8fadb7aa330f",
+    "970fd67e-575f-4a23-8199-f06df4a28961",
+    "e22e38b5-0038-4b73-84d2-28f576d5e228",
+    "f5478564-51df-4a95-8a83-3ebc823194d4",
+    "72ba2dd4-dfd0-4179-9c90-f33465153dcf",
+    "338507ac-28b3-4759-81aa-2cfab41db2e4",
+    "6b02f491-d8da-46af-a620-31b6c69211b6",
+    "119f7e18-82d9-470c-9e2d-04eac97696fe",
+    "9d939b15-8bb7-4104-bf3d-85f7ac96909e",
+    "888c0d02-9821-4c23-9596-fd964ad449fc",
+    "e7e37451-9a5f-4ea4-a99e-a871233a0daa",
+    "a0c20c35-50c6-49de-83af-ebdcc3b06251",
+    "0c26261f-780b-4a52-9083-71231ec3ab9f"
+  ],
+  "documents": [
+    {
+      "row": 26,
+      "sourceDocumentId": "29217b8c-36dc-4427-afd9-851f0bdd17d9",
+      "sourceDocumentTextId": "de183bac-3835-4ff7-8ce8-7cba7f1bac3c",
+      "sourceKind": "wayback_campaign_site",
+      "candidateMemberNames": [
+        "John A. Hoffman"
+      ],
+      "candidateBillIdentifiers": [
+        "SF3337"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "medium",
+          "centrality": "substantial",
+          "contentType": "campaign_position",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "education",
+            "adult learners with disabilities",
+            "special education"
+          ],
+          "documentConfidence": 0.94
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "John A. Hoffman"
+            ],
+            "billIdentifiers": [
+              "SF3337"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "sponsorship",
+            "stance": "none",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "John A. Hoffman",
+            "normalizedClaim": "Hoffman’s campaign page identifies SF3337 as legislation he authored.",
+            "supportingExcerpt": "(Authored: SF 3337)",
+            "extractionConfidence": 0.94
+          }
+        ],
+        "notes": [
+          "Authorship is recorded without inferring support for final passage."
+        ]
+      },
+      "calculatedExtractionConfidence": 0.94,
+      "validationFailures": []
+    },
+    {
+      "row": 27,
+      "sourceDocumentId": "93ef6f73-4676-4ed0-afa3-86161da7c0c6",
+      "sourceDocumentTextId": "45696072-d0dc-481d-925b-853ffe5477b7",
+      "sourceKind": "wayback_campaign_site",
+      "candidateMemberNames": [
+        "John A. Hoffman"
+      ],
+      "candidateBillIdentifiers": [
+        "HF2749",
+        "SF1458",
+        "SF2356",
+        "SF3350"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "substantial",
+          "contentType": "campaign_position",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "health and human services",
+            "veterans",
+            "first responders"
+          ],
+          "documentConfidence": 0.96
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "John A. Hoffman"
+            ],
+            "billIdentifiers": [
+              "SF2356"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "legislative_action",
+            "stance": "none",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "John A. Hoffman",
+            "normalizedClaim": "Hoffman campaign material reports that he voted for SF2356; the completed vote is retained as legislative action, not directional evidence.",
+            "supportingExcerpt": "Additionally, Sen. Hoffman voted for SF 2356 to make veteran-owned small businesses more competitive for government contracts up to $25,000 for goods, services, and construction.",
+            "extractionConfidence": 0.99
+          },
+          {
+            "memberNames": [
+              "John A. Hoffman"
+            ],
+            "billIdentifiers": [
+              "SF3350"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "sponsorship",
+            "stance": "none",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "John A. Hoffman",
+            "normalizedClaim": "The campaign page identifies Hoffman as chief author of legislation labeled SF3350 concerning first-responder exposure to infectious disease.",
+            "supportingExcerpt": "Senator Hoffman chief authored legislation to assist first responders if exposed on duty to bodily fluids that could potentially contain viruses and infectious diseases. Specifically, this bill allows first responders to petition courts for blood samples from source individuals to test for pathogens. On a case by case basis, the court would weigh the need for test results with the need to protect privacy, health, safety, and the public interest. (SF 3350)",
+            "extractionConfidence": 0.95
+          }
+        ],
+        "notes": [
+          "No directional stance is inferred from chief authorship of SF3350 alone. Candidate bills HF2749 and SF1458 are referenced in broader budget history but are not separately annotated here because the supplied text does not tie a concise explicit position to each identifier as cleanly as SF2356.",
+          "Second-pass audit: completed-vote/index language is retained as non-directional legislative action under the outcome-blind prompt rule."
+        ]
+      },
+      "calculatedExtractionConfidence": 0.95,
+      "validationFailures": []
+    },
+    {
+      "row": 28,
+      "sourceDocumentId": "e59f7286-483b-4465-a138-f2e9cacded20",
+      "sourceDocumentTextId": "b20fc306-a80e-4d48-86c1-3652e79cd140",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "John Huot"
+      ],
+      "candidateBillIdentifiers": [
+        "HF4269"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "first responders",
+            "peer support confidentiality",
+            "mental health"
+          ],
+          "documentConfidence": 0.98
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "John Huot"
+            ],
+            "billIdentifiers": [
+              "HF4269"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "John Huot",
+            "normalizedClaim": "Huot argues that first responders deserve a confidential peer-counseling support system in the release identifying him as the House author of HF4269.",
+            "supportingExcerpt": "“Our first responders work hard to keep us safe,” said House author (HF4269) Representative John Huot (DFL-Rosemount). “They deserve access to a dignified and confidential peer Counseling support system.”",
+            "extractionConfidence": 0.98
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.98,
+      "validationFailures": []
+    },
+    {
+      "row": 29,
+      "sourceDocumentId": "dcbd7c7c-ab4d-4e07-a1e9-96d2c0bbf36b",
+      "sourceDocumentTextId": "31af54aa-a108-4659-bf14-815a5473f8d3",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Esther Agbaje"
+      ],
+      "candidateBillIdentifiers": [
+        "HF1118"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "substantial",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "affordable housing",
+            "rental housing",
+            "housing preservation"
+          ],
+          "documentConfidence": 0.98
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Esther Agbaje"
+            ],
+            "billIdentifiers": [
+              "HF1118"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Esther Agbaje",
+            "normalizedClaim": "Agbaje presents HF1118 as her bill to preserve naturally occurring affordable housing and argues for increasing housing options.",
+            "supportingExcerpt": "I successfully presented my first bill, HF 1118 , which supports the preservation of ‘naturally occurring affordable housing’ (NOAH). Now more than ever, we need to increase housing options to make sure everyone has a safe place to lay their head at night.",
+            "extractionConfidence": 0.98
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.98,
+      "validationFailures": []
+    },
+    {
+      "row": 30,
+      "sourceDocumentId": "23dedc7f-af40-4e38-a1e4-98bcb17eb2ba",
+      "sourceDocumentTextId": "e5ae27c7-5a19-4faa-8eef-8a13a8032c4c",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "Julie Greene"
+      ],
+      "candidateBillIdentifiers": [
+        "HF24"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "substantial",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "reproductive health",
+            "newborn medical care",
+            "health policy"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Julie Greene"
+            ],
+            "billIdentifiers": [
+              "HF24"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "opposes",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Julie Greene",
+            "normalizedClaim": "Greene explicitly states that she voted no on HF24.",
+            "supportingExcerpt": "I voted NO on HF24 , a “born alive” bill based on a falsehood that doctors are not providing appropriate medical care for babies born alive.",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 31,
+      "sourceDocumentId": "d36e4d52-e59d-4937-a28a-d3bb49d553e4",
+      "sourceDocumentTextId": "bb0ec888-3b79-4b0d-8410-ec279f1dd664",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "Krista Knudsen"
+      ],
+      "candidateBillIdentifiers": [
+        "HF4"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "budget surplus",
+            "tax refunds",
+            "constitutional amendment"
+          ],
+          "documentConfidence": 0.98
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Krista Knudsen"
+            ],
+            "billIdentifiers": [
+              "HF4"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Krista Knudsen",
+            "normalizedClaim": "Knudsen argues in favor of returning projected budget surpluses to taxpayers in the HF4 release.",
+            "supportingExcerpt": "The bill establishes the Minnesota Tax Relief Fund, ensuring that excess tax revenue is set aside and returned to the Minnesotans who paid it. \"When the government runs a surplus, it means taxpayers have overpaid. Returning that money puts it back where it belongs, in the hands of families, workers, and small businesses. It fuels growth and financial security,\" said Rep. Knudsen.",
+            "extractionConfidence": 0.98
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.98,
+      "validationFailures": []
+    },
+    {
+      "row": 32,
+      "sourceDocumentId": "7414af84-7ccd-4a84-8cac-1de42ab4a9bb",
+      "sourceDocumentTextId": "27a1a271-d231-4229-bb61-e6c794a4c482",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "Kristin Bahner"
+      ],
+      "candidateBillIdentifiers": [
+        "HF31"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "substantial",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "tax conformity",
+            "tax relief",
+            "business taxation"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Kristin Bahner"
+            ],
+            "billIdentifiers": [
+              "HF31"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Kristin Bahner",
+            "normalizedClaim": "Bahner explicitly says she co-authored and voted in favor of HF31.",
+            "supportingExcerpt": "Last week, I was proud to co-author and vote in favor of our first bill of the session, HF31 – a federal tax conformity bill that returns $100 million back to taxpayers.",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 33,
+      "sourceDocumentId": "1cc98f6a-99af-46e2-b127-bd7c5981694c",
+      "sourceDocumentTextId": "2ee6bb45-26b1-4eea-84ed-6f9a9bd5c793",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "Liz Lee"
+      ],
+      "candidateBillIdentifiers": [
+        "HF28"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "medium",
+          "centrality": "incidental",
+          "contentType": "other",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "voting rights",
+            "news archive"
+          ],
+          "documentConfidence": 0.95
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Liz Lee"
+            ],
+            "billIdentifiers": [
+              "HF28"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "legislative_action",
+            "stance": "none",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Liz Lee",
+            "normalizedClaim": "The member-news index lists a release stating that Liz Lee voted to pass HF28; the completed vote is retained as legislative action, not directional evidence.",
+            "supportingExcerpt": "RELEASE: Rep. Liz Lee votes to pass HF 28, the “Restore the Vote” Act - (Thursday, February 2, 2023)",
+            "extractionConfidence": 0.96
+          }
+        ],
+        "notes": [
+          "The frozen source is a member-news index; the directional claim is limited to the explicit title text.",
+          "Second-pass audit: completed-vote/index language is retained as non-directional legislative action under the outcome-blind prompt rule."
+        ]
+      },
+      "calculatedExtractionConfidence": 0.95,
+      "validationFailures": []
+    },
+    {
+      "row": 34,
+      "sourceDocumentId": "de367890-c25a-4eb9-876f-a79767461a09",
+      "sourceDocumentTextId": "2318a62e-2fed-409e-afc4-aa42690387d0",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "Lucille Rehm"
+      ],
+      "candidateBillIdentifiers": [
+        "HF1917"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "substantial",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "public libraries",
+            "regional library systems",
+            "education resources"
+          ],
+          "documentConfidence": 0.98
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Lucille Rehm"
+            ],
+            "billIdentifiers": [
+              "HF1917"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Lucille Rehm",
+            "normalizedClaim": "Rehm presents HF1917 as a bill she is carrying to invest in regional public libraries and expresses enthusiasm for strengthening library systems.",
+            "supportingExcerpt": "Supporting our Public Libraries (HF 1917) I presented a bill I’m carrying to invest in our regional public library system across the state. Public libraries are a vital part of our communities. I’m excited to build on our strong public library systems because we know how much they mean to our neighbors in Chanhassen and Chaska; the important services they provide for our seniors, students, child care providers, parents, and the resources they make available and accessible to all learners.",
+            "extractionConfidence": 0.98
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.98,
+      "validationFailures": []
+    },
+    {
+      "row": 35,
+      "sourceDocumentId": "a5c52eca-b2f4-4599-b06c-ee0433a097de",
+      "sourceDocumentTextId": "374bd55a-7ca3-408f-a578-5eac089dd0c2",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "Natalie Zeleznikar"
+      ],
+      "candidateBillIdentifiers": [
+        "HF4601"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "pregnancy resource centers",
+            "maternity homes",
+            "health funding"
+          ],
+          "documentConfidence": 0.98
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Natalie Zeleznikar"
+            ],
+            "billIdentifiers": [
+              "HF4601"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Natalie Zeleznikar",
+            "normalizedClaim": "Zeleznikar argues for the pregnancy-resource-center and maternity-home funding approach associated with HF4601.",
+            "supportingExcerpt": "“Giving all of the money to just Planned Parenthood reduces the choice that expecting mothers have when there are many options that could be better at pregnancy centers and maternity homes.” Said Rep. Zeleznikar on her legislation. “These centers give women who don’t want to choose abortion options, education, and a support system.”",
+            "extractionConfidence": 0.98
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.98,
+      "validationFailures": []
+    },
+    {
+      "row": 36,
+      "sourceDocumentId": "2053a89b-e170-4b54-b1db-955554ec7d06",
+      "sourceDocumentTextId": "9cd9eaa3-f228-4127-b2d2-4b851f80729f",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Greg Boe"
+      ],
+      "candidateBillIdentifiers": [
+        "HF3424"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "fentanyl",
+            "controlled substances",
+            "public safety"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Greg Boe"
+            ],
+            "billIdentifiers": [
+              "HF3424"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "attributed_paraphrase",
+            "attributionType": "target_member",
+            "attributedActor": "Greg Boe",
+            "normalizedClaim": "The release states that Boe supports the fentanyl-penalty measure described as HF3424.",
+            "supportingExcerpt": "Representative Greg Boe is supporting measures to provide the same weight threshold and penalty for the sale of fentanyl as there is for heroin. HF3424 would find those with in possession of fentanyl guilty of a first-degree controlled substance crime if the drugs met certain weight minimums.",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 37,
+      "sourceDocumentId": "42b43516-aba5-40e8-920d-6b809dbc11ff",
+      "sourceDocumentTextId": "da28420b-c725-4a5c-96a5-d10a845f6939",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "Steve Elkins"
+      ],
+      "candidateBillIdentifiers": [
+        "HF8"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "substantial",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "gun background checks",
+            "firearm policy",
+            "public safety"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Steve Elkins"
+            ],
+            "billIdentifiers": [
+              "HF8"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Steve Elkins",
+            "normalizedClaim": "Elkins explicitly states that he supported HF8, which would expand criminal background checks on gun sales.",
+            "supportingExcerpt": "Last session I supported legislation that passed the House which would expand criminal background checks on all gun sales ( HF 8 )",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 38,
+      "sourceDocumentId": "7ed8c2d2-e351-431f-95ed-8fadb7aa330f",
+      "sourceDocumentTextId": "cad86071-099b-4e9c-9df0-14c3971f84f2",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "James Gordon"
+      ],
+      "candidateBillIdentifiers": [
+        "HF1"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "substantial",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "fraud prevention",
+            "inspector general",
+            "state program oversight"
+          ],
+          "documentConfidence": 0.97
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "James Gordon"
+            ],
+            "billIdentifiers": [
+              "HF1"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "James Gordon",
+            "normalizedClaim": "Gordon describes the anti-fraud bills he joined as a step in the right direction and identifies HF1 as one he co-sponsored.",
+            "supportingExcerpt": "The additional oversight and accountability provided in our bills will be a step in the right direction. The first three bills House Republicans drafted in response to this issue this session include: House File 1 (which I co-sponsored): Establishes a centralized Office of the Inspector General to lead the fight against fraud across state programs.",
+            "extractionConfidence": 0.97
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.97,
+      "validationFailures": []
+    },
+    {
+      "row": 39,
+      "sourceDocumentId": "970fd67e-575f-4a23-8199-f06df4a28961",
+      "sourceDocumentTextId": "fe24fade-058d-49f6-b638-6cdc1b99b3ca",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "James Gordon"
+      ],
+      "candidateBillIdentifiers": [
+        "HF733"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "substantial",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "charitable gaming",
+            "electronic pull tabs",
+            "local charities"
+          ],
+          "documentConfidence": 0.97
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "James Gordon"
+            ],
+            "billIdentifiers": [
+              "HF733"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "James Gordon",
+            "normalizedClaim": "Gordon advocates restoring prior electronic pull-tab features through the House bill he identifies as HF733.",
+            "supportingExcerpt": "Our charitable organizations do such great work in our communities, but now the state is getting in the way and that needs to be fixed. We just need to get things back to the way they were and that’s what the House Republican bill does.",
+            "extractionConfidence": 0.97
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.97,
+      "validationFailures": []
+    },
+    {
+      "row": 40,
+      "sourceDocumentId": "e22e38b5-0038-4b73-84d2-28f576d5e228",
+      "sourceDocumentTextId": "6a8bcee1-e8bd-41ea-9f0d-88805a01cfa1",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Jeff Brand"
+      ],
+      "candidateBillIdentifiers": [
+        "HF28"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "voting rights",
+            "felony disenfranchisement",
+            "elections"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Jeff Brand"
+            ],
+            "billIdentifiers": [
+              "HF28"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Jeff Brand",
+            "normalizedClaim": "Brand explicitly supports HF28 as an important step toward ending continued disenfranchisement after incarceration.",
+            "supportingExcerpt": "“There’s no reason someone who has served and completed their time should continue to be disenfranchised,” said Rep. Brand. “This is an important step in mitigating the effects of a broken criminal justice system. Twenty-one other states, both red and blue, restore voting rights as soon as incarceration ends, and I’m glad that Minnesota will bring that number up to twenty-two.”",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": [
+          "Second-pass audit: directional stance is grounded in Brand's direct supportive quote rather than the completed vote."
+        ]
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 41,
+      "sourceDocumentId": "f5478564-51df-4a95-8a83-3ebc823194d4",
+      "sourceDocumentTextId": "019e1464-0758-4ade-adaa-f7df5db3edc1",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Jessica Hanson"
+      ],
+      "candidateBillIdentifiers": [
+        "HF41"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "essential workers",
+            "paid leave",
+            "COVID-19"
+          ],
+          "documentConfidence": 0.98
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Jessica Hanson"
+            ],
+            "billIdentifiers": [
+              "HF41"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Jessica Hanson",
+            "normalizedClaim": "Hanson presents HF41 as necessary emergency leave for essential workers and describes its intended protections positively.",
+            "supportingExcerpt": "I signed on to co-author HF41 with Rep. Cedrick Frazier, and I am grateful for his leadership on this. HF41 will ensure that employers provide their essential workers in Minnesota with emergency leave to care for themselves, their families, and their communities. This leave will ensure that frontline health workers and other essential workers have the financial security to continue protecting and caring for Minnesotans.",
+            "extractionConfidence": 0.98
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.98,
+      "validationFailures": []
+    },
+    {
+      "row": 42,
+      "sourceDocumentId": "72ba2dd4-dfd0-4179-9c90-f33465153dcf",
+      "sourceDocumentTextId": "747ec743-cf96-4373-b46d-8ee320c71642",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Jr. Bidal Duran"
+      ],
+      "candidateBillIdentifiers": [
+        "HF4"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "budget surplus",
+            "tax refunds",
+            "constitutional amendment"
+          ],
+          "documentConfidence": 0.98
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Jr. Bidal Duran"
+            ],
+            "billIdentifiers": [
+              "HF4"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Jr. Bidal Duran",
+            "normalizedClaim": "Duran argues in favor of HF4’s approach to returning budget surpluses to taxpayers.",
+            "supportingExcerpt": "Representative Bidal Duran (R-Bemidji) expressed disappointment as all 67 Democrats voted against House File 4, a bill he coauthored to ensure taxpayers pay no more than necessary and receive tax relief in the event of a surplus. “This bill is about accountability. When the government sees a surplus, it should be returned to the people - the ones who earned it,” said Representative Duran.",
+            "extractionConfidence": 0.98
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.98,
+      "validationFailures": []
+    },
+    {
+      "row": 43,
+      "sourceDocumentId": "338507ac-28b3-4759-81aa-2cfab41db2e4",
+      "sourceDocumentTextId": "6d76170a-72c7-4740-9c60-b33e6d8ed01d",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Julie Greene"
+      ],
+      "candidateBillIdentifiers": [
+        "HF12",
+        "HF6"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "substantial",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "school athletics",
+            "student programs",
+            "education policy"
+          ],
+          "documentConfidence": 0.97
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Julie Greene"
+            ],
+            "billIdentifiers": [
+              "HF12",
+              "HF6"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "opposes",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Julie Greene",
+            "normalizedClaim": "Greene explicitly characterizes HF12 and HF6 among bills she considers dangerous, irresponsible, and unconstitutional.",
+            "supportingExcerpt": "Attacking trans athletes and forcing children as young as 5 to ‘prove’ their gender to anyone who asks (HF12) Removing data protections for AG work (HF12) Canceling diversity, equity and inclusion support for students (HF6) While I remain committed to finding common solutions, these bills are dangerous, irresponsible, and unconstitutional. I will continue to fight for our community’s values.",
+            "extractionConfidence": 0.97
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.97,
+      "validationFailures": []
+    },
+    {
+      "row": 44,
+      "sourceDocumentId": "6b02f491-d8da-46af-a620-31b6c69211b6",
+      "sourceDocumentTextId": "d74bcfb0-5c51-425d-9c20-77360b08e4ac",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Julie Greene"
+      ],
+      "candidateBillIdentifiers": [
+        "HF12"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "substantial",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "school athletics",
+            "transgender students",
+            "education policy"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Julie Greene"
+            ],
+            "billIdentifiers": [
+              "HF12"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "opposes",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Julie Greene",
+            "normalizedClaim": "Greene explicitly states that she voted no on HF12.",
+            "supportingExcerpt": "In addition, I also voted NO on HF 12, a discriminatory bill brought to the floor that would change current Minnesota State High School League policy and ban trans girls from participating in sports.",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 45,
+      "sourceDocumentId": "119f7e18-82d9-470c-9e2d-04eac97696fe",
+      "sourceDocumentTextId": "9c629cf9-3086-4ec2-88ff-6e905c90ad54",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Kaohly Vang Her"
+      ],
+      "candidateBillIdentifiers": [
+        "HF7"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "substantial",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "earned sick and safe time",
+            "paid sick leave",
+            "worker protections"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Kaohly Vang Her"
+            ],
+            "billIdentifiers": [
+              "HF7"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Kaohly Vang Her",
+            "normalizedClaim": "Her explicitly states that she supports HF7 to expand Earned Sick and Safe Time.",
+            "supportingExcerpt": "This session, I’m supporting a bill that would expand Earned Sick and Safe Time ( HF 7 )",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 46,
+      "sourceDocumentId": "9d939b15-8bb7-4104-bf3d-85f7ac96909e",
+      "sourceDocumentTextId": "a4e89a5b-cd17-4048-84ec-05599ba55284",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Keith Allen"
+      ],
+      "candidateBillIdentifiers": [
+        "HF4"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "budget surplus",
+            "tax refunds",
+            "constitutional amendment"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Keith Allen"
+            ],
+            "billIdentifiers": [
+              "HF4"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Keith Allen",
+            "normalizedClaim": "Allen explicitly calls HF4 a common-sense solution for returning surplus funds to taxpayers.",
+            "supportingExcerpt": "\"Minnesota families are struggling with rising costs, and the government should not be sitting on billions of their hard-earned dollars, HF4 is a common-sense solution that puts money back where it belongs-in the pockets of taxpayers.\"",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 47,
+      "sourceDocumentId": "888c0d02-9821-4c23-9596-fd964ad449fc",
+      "sourceDocumentTextId": "14496ecc-1dc5-490c-be5f-07d63f5a0b78",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Kristin Robbins"
+      ],
+      "candidateBillIdentifiers": [
+        "HF153"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "education tax credits",
+            "school tuition",
+            "family expenses"
+          ],
+          "documentConfidence": 0.98
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Kristin Robbins"
+            ],
+            "billIdentifiers": [
+              "HF153"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Kristin Robbins",
+            "normalizedClaim": "Robbins argues that the education tax-credit expansion in HF153 is overdue and would help families.",
+            "supportingExcerpt": "“An increase in the amount of the K-12 education tax credit/deduction is long overdue and will help families who incurred extra expenses for tutoring, supplies, and technology while students learned from home.”",
+            "extractionConfidence": 0.98
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.98,
+      "validationFailures": []
+    },
+    {
+      "row": 48,
+      "sourceDocumentId": "e7e37451-9a5f-4ea4-a99e-a871233a0daa",
+      "sourceDocumentTextId": "9ed3ee2e-92af-4086-b3d3-b153ae2b66ce",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Lisa Demuth"
+      ],
+      "candidateBillIdentifiers": [
+        "HF131"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "substantial",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "self-defense",
+            "stand your ground",
+            "public safety"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Lisa Demuth"
+            ],
+            "billIdentifiers": [
+              "HF131"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Lisa Demuth",
+            "normalizedClaim": "Demuth says she is proud to be chief author of HF131 and looks forward to carrying it through the legislative process.",
+            "supportingExcerpt": "I am proud to be the chief author of H.F. 131 to help people defend themselves against threats. This Stand Your Ground bill would eliminate the duty to retreat in cases of self-defense and it expands the boundary to allow use of deadly force to include your vehicle, camper, boat, etc. I look forward to carrying this bill through the legislative process and discussing this important issue.",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 49,
+      "sourceDocumentId": "a0c20c35-50c6-49de-83af-ebdcc3b06251",
+      "sourceDocumentTextId": "d6dfba9b-03f6-406f-a30e-145136d3f4de",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Liz Boldon"
+      ],
+      "candidateBillIdentifiers": [
+        "HF1"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "substantial",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "economic security",
+            "pandemic relief",
+            "housing assistance"
+          ],
+          "documentConfidence": 0.92
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Liz Boldon"
+            ],
+            "billIdentifiers": [
+              "HF1"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Liz Boldon",
+            "normalizedClaim": "Boldon endorses the House DFL priority package, which the source identifies as beginning with HF1 on economic security.",
+            "supportingExcerpt": "\"By establishing these priorities, the House DFL is focusing on our shared values and putting our neighbors in Rochester first. With these priorities, we are standing up for our vulnerable neighbors when they most need our support.\" The first bills include the following: Economic Security – HF 1 Housing assistance and homelessness prevention Emergency cash payments to families most in need Food security Broadband expansion",
+            "extractionConfidence": 0.92
+          }
+        ],
+        "notes": [
+          "The support is for the identified priority package; HF1 is explicitly listed as the Economic Security bill within that package."
+        ]
+      },
+      "calculatedExtractionConfidence": 0.92,
+      "validationFailures": []
+    },
+    {
+      "row": 50,
+      "sourceDocumentId": "0c26261f-780b-4a52-9083-71231ec3ab9f",
+      "sourceDocumentTextId": "78279466-25ae-465b-9775-91deec095e2b",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Liz Lee"
+      ],
+      "candidateBillIdentifiers": [
+        "HF28"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "voting rights",
+            "felony disenfranchisement",
+            "elections"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Liz Lee"
+            ],
+            "billIdentifiers": [
+              "HF28"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Liz Lee",
+            "normalizedClaim": "Lee explicitly states that she votes for HF28 and explains her support for restoring voting rights after incarceration.",
+            "supportingExcerpt": "“As a country that holds accountable those who commit serious crimes, we also do not believe in double jeopardy. I vote for HF 28 because in our multiracial democracy, we must protect the sacred right to vote for everyone. This is especially important when our carceral system has such a disparate impact on our communities of color,” said Rep. Lee.",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    }
+  ],
+  "validationFailures": [],
+  "summary": {
+    "documentsAnnotated": 25,
+    "directionalClaims": 22,
+    "intentionallyNonDirectionalRows": [
+      26,
+      27,
+      33
+    ],
+    "documentsCouldNotConfidentlyClassify": [],
+    "documentsWithValidationFailures": 0
+  }
+}
