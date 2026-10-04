@@ -362,7 +362,7 @@ async function main() {
     }
 
     const report={
-      schemaVersion:'evidence-quality-pre-vote-candidate-inventory-v1.2',
+      schemaVersion:'evidence-quality-pre-vote-candidate-inventory-v1.3',
       generatedAt:new Date().toISOString(),
       issue:579,
       targetUniverse:{rows:targets.length,currentCoveredRows:covered.size},
