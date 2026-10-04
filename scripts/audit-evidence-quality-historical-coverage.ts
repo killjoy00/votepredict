@@ -316,7 +316,9 @@ async function main() {
 
     for (const row of selectedRows) {
       const fingerprint = stringMeta(row.annotation_metadata, 'semanticFingerprint')!;
-      const availableOn = availabilityDate(row.source_metadata);
+      const availableOn = row.historical_cohort && evidenceQualityHistoricalCohortUsesSourceAvailability(row.historical_cohort)
+        ? availabilityDate(row.source_metadata)
+        : null;
       for (const claim of row.annotation.claims) {
         if (!['supports','opposes','mixed'].includes(claim.stance)) continue;
         if (claim.memberNames.length === 0 || claim.billIdentifiers.length === 0) continue;
@@ -497,7 +499,9 @@ async function main() {
         legacyQuickEvidenceV2Included: false,
         quickEvidenceV3Included: false,
         p2BillInferencePerformed: false,
-        availabilityResolution: 'exact evidence_items.metadata excerpt proof when claim/context matched; source_documents.metadata fallback',
+        availabilityResolution: 'exact evidence_items.metadata excerpt proof when claim/context matched; source_documents.metadata fallback only for baseline verified_full_text annotations',
+        historicalAnnotationCohorts: ['baseline_verified_full_text', 'session_daily_archive_verified_excerpt'],
+        sessionDailyExcerptSourceAvailabilityFallback: false,
         evidenceItemScopedProofNeverPromotedSourceWide: true,
         servingChanged: false,
       },
