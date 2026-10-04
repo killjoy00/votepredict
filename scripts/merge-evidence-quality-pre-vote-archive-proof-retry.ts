@@ -99,7 +99,9 @@ async function main() {
     }
   }
 
-  const retryBySource = new Map<string, ArchiveProofSource>(\n    retry.sources.map((source) => [source.sourceDocumentId, source] as const),\n  );
+  const retryBySource = new Map<string, ArchiveProofSource>(
+    retry.sources.map((source) => [source.sourceDocumentId, source] as const),
+  );
   const firstAmbiguousKeys = new Set(
     first.sources.flatMap((source) => source.targets
       .filter((target) => target.classification === 'ambiguous_snapshot')
