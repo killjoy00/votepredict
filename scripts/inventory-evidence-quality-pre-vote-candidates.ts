@@ -8,7 +8,8 @@ import { resolveEvidenceQualityAvailability } from '../src/evidence/evidence-qua
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const EXPECTED_TARGET_ROWS = 135457;
-const EXPECTED_COVERED_ROWS = 17;
+const EXPECTED_COVERED_ROWS = 29;
+const TRAINING_SESSION = '2021-2022' as const;
 let secrets: string[] = [];
 
 type TargetRow = {
@@ -141,21 +142,24 @@ function sourceSummary(candidate: SourceCandidate) {
   };
 }
 
-function greedySelect(candidates: SourceCandidate[], limit: number) {
+function greedySelect(
+  candidates: SourceCandidate[],
+  limit: number,
+  eligibleRowKeys?: ReadonlySet<string>,
+) {
   const selected: Array<ReturnType<typeof sourceSummary> & { marginalRows: number; cumulativeRows: number }> = [];
   const covered = new Set<string>();
   const remaining = [...candidates];
+  const eligible = (key: string) => !eligibleRowKeys || eligibleRowKeys.has(key);
   while (selected.length < limit && remaining.length) {
     remaining.sort((a,b)=>{
-      const aMarginal=[...a.newCoverageRowKeys].filter((key)=>!covered.has(key)).length;
-      const bMarginal=[...b.newCoverageRowKeys].filter((key)=>!covered.has(key)).length;
+      const aMarginal=[...a.newCoverageRowKeys].filter((key)=>eligible(key) && !covered.has(key)).length;
+      const bMarginal=[...b.newCoverageRowKeys].filter((key)=>eligible(key) && !covered.has(key)).length;
       if (bMarginal !== aMarginal) return bMarginal-aMarginal;
-      const aTrain=[...a.newCoverageRowKeys].filter((key)=>!covered.has(key) && key.includes('')).length;
-      void aTrain;
       return a.availableOn.localeCompare(b.availableOn) || a.sourceDocumentId.localeCompare(b.sourceDocumentId);
     });
     const candidate=remaining.shift()!;
-    const marginal=[...candidate.newCoverageRowKeys].filter((key)=>!covered.has(key));
+    const marginal=[...candidate.newCoverageRowKeys].filter((key)=>eligible(key) && !covered.has(key));
     if (!marginal.length) break;
     for(const key of marginal) covered.add(key);
     selected.push({...sourceSummary(candidate),marginalRows:marginal.length,cumulativeRows:covered.size});
@@ -173,7 +177,14 @@ async function main() {
   const targets=loadTargets(targetPath);
   const covered=loadCovered(matrixPath);
   const targetByPair=new Map<string,TargetRow[]>();
+  const targetByRowKey=new Map<string,TargetRow>();
+  const trainingTargetRowKeys=new Set<string>();
+  const currentCoveredBySession:Record<string,number>={};
   for(const row of targets){
+    const rowKey=row.voteEventId+'|'+row.membershipId;
+    targetByRowKey.set(rowKey,row);
+    if(row.session===TRAINING_SESSION) trainingTargetRowKeys.add(rowKey);
+    if(covered.has(rowKey)) currentCoveredBySession[row.session]=(currentCoveredBySession[row.session]??0)+1;
     const key=row.membershipId+'|'+row.billId;
     const values=targetByPair.get(key)??[];
     values.push(row);
@@ -352,6 +363,18 @@ async function main() {
     const ordinaryGreedy=greedySelect(ordinary,100);
     const sessionGreedy=greedySelect(sessionDaily,100);
 
+    const trainingCandidates=deduped.filter((candidate)=>
+      [...candidate.newCoverageRowKeys].some((key)=>trainingTargetRowKeys.has(key)));
+    const trainingOrdinary=trainingCandidates.filter((candidate)=>candidate.sourceKind!=='house_session_daily');
+    const trainingSessionDaily=trainingCandidates.filter((candidate)=>candidate.sourceKind==='house_session_daily');
+    const trainingOrdinaryGreedy=greedySelect(trainingOrdinary,100,trainingTargetRowKeys);
+    const trainingSessionDailyGreedy=greedySelect(trainingSessionDaily,100,trainingTargetRowKeys);
+    const missingAvailabilityTrainingCandidates=[...missingAvailabilityPotentialBySource.values()]
+      .filter((candidate)=>candidate.sessions.has(TRAINING_SESSION));
+    const missingAvailabilityTrainingRowKeys=new Set(
+      missingAvailabilityTrainingCandidates.flatMap((candidate)=>
+        [...candidate.rowKeys].filter((key)=>trainingTargetRowKeys.has(key))));
+
     const sourceKindSummary:Record<string,{sources:number;newCoverageRows:number;textReady:number}>= {};
     for(const candidate of deduped){
       const summary=sourceKindSummary[candidate.sourceKind]??{sources:0,newCoverageRows:0,textReady:0};
@@ -362,10 +385,17 @@ async function main() {
     }
 
     const report={
-      schemaVersion:'evidence-quality-pre-vote-candidate-inventory-v1.3',
+      schemaVersion:'evidence-quality-pre-vote-candidate-inventory-v1.4',
       generatedAt:new Date().toISOString(),
       issue:579,
-      targetUniverse:{rows:targets.length,currentCoveredRows:covered.size},
+      targetUniverse:{
+        rows:targets.length,
+        currentCoveredRows:covered.size,
+        currentCoveredBySession:Object.fromEntries(Object.entries(currentCoveredBySession).sort(([a],[b])=>a.localeCompare(b))),
+        trainingSession:TRAINING_SESSION,
+        trainingRows:trainingTargetRowKeys.size,
+        trainingCoveredRows:currentCoveredBySession[TRAINING_SESSION]??0,
+      },
       sourceRowsScanned:result.rows.length,
       exclusions:{rowsMissingAvailability,rowsOutsideTargetUniverse,rowsOnlyPostOrSameDay},
       missingAvailabilityDiagnostic:{
@@ -382,6 +412,11 @@ async function main() {
           sessions:[...candidate.sessions].sort(),
           potentialTargets:[...candidate.targets.values()].map((target)=>({...target,evidenceIds:[...target.evidenceIds].sort(),excerpts:[...target.excerpts].sort()})).sort((a,b)=>a.occurredOn.localeCompare(b.occurredOn)||a.voteEventId.localeCompare(b.voteEventId)||a.membershipId.localeCompare(b.membershipId)),
         })).sort((a,b)=>b.potentialNewRows-a.potentialNewRows||a.publishedOn.localeCompare(b.publishedOn)||a.sourceDocumentId.localeCompare(b.sourceDocumentId)),
+        trainingSession:{
+          session:TRAINING_SESSION,
+          sourcesWithStoredPublishedAtThatCouldAddRows:missingAvailabilityTrainingCandidates.length,
+          potentialNewRowsIfStoredPublishedAtWereIndependentlyValidated:missingAvailabilityTrainingRowKeys.size,
+        },
         interpretation:'diagnostic only: evidence_items.published_at is not promoted to historical availability proof without independent provenance validation',
       },
       candidates:{
@@ -391,6 +426,9 @@ async function main() {
         ordinarySourceDocuments:ordinary.length,
         houseSessionDailySourceDocuments:sessionDaily.length,
         bySourceKind:sourceKindSummary,
+        trainingSessionSources:trainingCandidates.length,
+        trainingSessionOrdinarySources:trainingOrdinary.length,
+        trainingSessionHouseSessionDailySources:trainingSessionDaily.length,
       },
       recommendedOrdinaryCohort:{
         limit:100,
@@ -404,6 +442,20 @@ async function main() {
         potentialNewRows:sessionGreedy.coveredRows,
         rows:sessionGreedy.selected,
       },
+      recommendedTrainingOrdinaryCohort:{
+        session:TRAINING_SESSION,
+        limit:100,
+        sources:trainingOrdinaryGreedy.selected.length,
+        potentialNewRows:trainingOrdinaryGreedy.coveredRows,
+        rows:trainingOrdinaryGreedy.selected,
+      },
+      recommendedTrainingHouseSessionDailyCohort:{
+        session:TRAINING_SESSION,
+        limit:100,
+        sources:trainingSessionDailyGreedy.selected.length,
+        potentialNewRows:trainingSessionDailyGreedy.coveredRows,
+        rows:trainingSessionDailyGreedy.selected,
+      },
       allCandidates:deduped.map(sourceSummary).sort((a,b)=>b.newCoverageRows-a.newCoverageRows||a.availableOn.localeCompare(b.availableOn)||a.sourceDocumentId.localeCompare(b.sourceDocumentId)),
       exactContentDuplicateGroups:duplicateGroups,
       policy:{
@@ -413,7 +465,7 @@ async function main() {
         evidenceItemScopedProofNeverPromotedSourceWide:true,
         sameDayExcluded:true,
         alreadyAnnotatedSourcesExcluded:true,
-        currentV12CoveredRowsExcludedFromMarginalRanking:true,
+        currentV14CoveredRowsExcludedFromMarginalRanking:true,
         exactContentDedup:true,
         houseSessionDailySeparated:true,
         modelFitting:'none',
@@ -422,7 +474,7 @@ async function main() {
     };
 
     mkdirSync(outputDir,{recursive:true});
-    writeFileSync(resolve(outputDir,'evidence-quality-pre-vote-candidate-inventory-v1.json'),JSON.stringify(report,null,2)+'\n');
+    writeFileSync(resolve(outputDir,'evidence-quality-pre-vote-candidate-inventory-v1.4.json'),JSON.stringify(report,null,2)+'\n');
     console.log(JSON.stringify({
       evidenceQualityPreVoteCandidateInventory:{
         targetRows:targets.length,
@@ -440,6 +492,15 @@ async function main() {
         missingAvailabilityBySourceKind,
         missingAvailabilitySourcesWithPotentialPublishedAtCoverage:missingAvailabilityPotentialBySource.size,
         missingAvailabilityPotentialNewRowsIfPublishedAtValidated:new Set([...missingAvailabilityPotentialBySource.values()].flatMap((candidate)=>[...candidate.rowKeys])).size,
+        trainingSession:TRAINING_SESSION,
+        trainingCoveredRows:currentCoveredBySession[TRAINING_SESSION]??0,
+        trainingCandidateSources:trainingCandidates.length,
+        trainingOrdinaryRecommendedSources:trainingOrdinaryGreedy.selected.length,
+        trainingOrdinaryPotentialNewRows:trainingOrdinaryGreedy.coveredRows,
+        trainingHouseSessionDailyRecommendedSources:trainingSessionDailyGreedy.selected.length,
+        trainingHouseSessionDailyPotentialNewRows:trainingSessionDailyGreedy.coveredRows,
+        trainingMissingAvailabilitySourcesWithPotentialPublishedAtCoverage:missingAvailabilityTrainingCandidates.length,
+        trainingMissingAvailabilityPotentialNewRowsIfPublishedAtValidated:missingAvailabilityTrainingRowKeys.size,
         outcomeUse:'none',
         modelFitting:'none',
         servingChanged:false,
