@@ -7,7 +7,7 @@ const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING'
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const SNAPSHOT_RUN_ID = 37170314795;
 const PREVIOUS_CUTOFF = '2026-10-04T00:27:44.362338Z';
-const CUTOFF = '2026-10-04T02:13:29.630968Z';
+const CUTOFF = '2026-10-04T02:13:43Z';
 const COHORT_ID = 'P2-SUP-001';
 const EXPECTED_DOCUMENTS = 11;
 const RECOVERY_SOURCE_IDS = [
@@ -186,7 +186,7 @@ async function main() {
   try {
     await client.query('BEGIN READ ONLY');
 
-    const params = [EVIDENCE_QUALITY_TEXT_VERSION, CUTOFF, [...EVIDENCE_QUALITY_SOURCE_KINDS], priorIds, [...RECOVERY_SOURCE_IDS]];
+    const params = [EVIDENCE_QUALITY_TEXT_VERSION, [...EVIDENCE_QUALITY_SOURCE_KINDS], priorIds, [...RECOVERY_SOURCE_IDS]];
     const featureCte = `
       WITH document_features AS (
         SELECT
@@ -229,15 +229,14 @@ async function main() {
         JOIN source_document_texts sdt
           ON sdt.source_document_id=sd.id
          AND sdt.extraction_version=$1
-         AND sdt.created_at <= $2::timestamptz
         JOIN evidence_items ei ON ei.source_document_id=sd.id
         LEFT JOIN memberships m ON m.id=ei.membership_id
         LEFT JOIN legislators l ON l.id=m.legislator_id
         LEFT JOIN bills b ON b.id=ei.bill_id
-        WHERE sd.source_kind = ANY($3::text[])
+        WHERE sd.source_kind = ANY($2::text[])
           AND sd.source_kind <> 'house_session_daily'
-          AND sd.id = ANY($5::uuid[])
-          AND NOT (sd.id = ANY($4::uuid[]))
+          AND sd.id = ANY($3::uuid[])
+          AND NOT (sd.id = ANY($3::uuid[]))
         GROUP BY sd.id,sdt.id
       )`;
 
@@ -284,7 +283,7 @@ async function main() {
 
   const documents = rows.map((row, index) => {
     if (row.source_kind === 'house_session_daily') throw new Error('house_session_daily entered P2 cohort');
-    if (Date.parse(row.snapshot_created_at) > Date.parse(CUTOFF)) throw new Error('Snapshot newer than P2 cohort cutoff entered cohort');
+    if (Date.parse(row.snapshot_created_at) > Date.parse(CUTOFF)) throw new Error('Snapshot created after recovery-run completion entered P2 cohort');
     if (!RECOVERY_SOURCE_IDS.includes(row.source_document_id as (typeof RECOVERY_SOURCE_IDS)[number])) throw new Error('Source outside recovery run attempted-source set entered P2 cohort');
     if (!row.normalized_text.trim()) throw new Error('Frozen source text is empty');
     if (priorIds.includes(row.source_document_id)) throw new Error('P2 cohort overlaps baseline manual cohort');
