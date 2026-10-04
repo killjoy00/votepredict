@@ -224,5 +224,24 @@
     "independentValidationSet": false,
     "combinedEvidenceResult": "old frozen passage-safety threshold still not cleared",
     "implication": "Do not retune on the already-seen historical outcomes; use the prospective 40/2000/50 gate for definitive evaluation."
+  },
+  "temporalStatementHistoryAmendment": {
+    "reason": "Before normal 2027-2028 prospective capture, preserve substantively distinct public statement history instead of treating supersession as semantic erasure, and make exact-bill statement retrieval portable across session-specific memberships via stable legislator identity.",
+    "evidenceReadinessAudit": {
+      "workflowRunId": 37226924263,
+      "artifactId": 11311859471,
+      "artifactDigest": "sha256:604ac1697156bf46e2ee48f4da90f1c4a0647659ce42a593bec17c8837330913",
+      "timestampEligibleEvidenceItems": 340192,
+      "supersededDirectionalStatements": 118,
+      "stanceChangedSupersessionEdges": 1,
+      "stableLegislatorResolvablePriorSessionItems": 256887
+    },
+    "statementVersionPolicy": "supersedes remains immutable lineage; direct/related statements retain substantively distinct historical versions; same evidenceSeriesKey + kind + stance + normalized claim is deduplicated to the newest capture",
+    "sessionPortability": "exact-bill directional lookup maps evidence memberships to the forecast membership through stable legislator_id",
+    "billBoundary": "bill_id must still equal the current forecast bill exactly; no old-bill-to-new-bill inference",
+    "memberIssueBoundary": "member_issue evidence remains unavailable for current-bill directional scoring until a separately frozen applicability policy exists",
+    "servingProbabilityChange": "none",
+    "activeWeightChange": "none",
+    "automaticPromotion": false
   }
 }

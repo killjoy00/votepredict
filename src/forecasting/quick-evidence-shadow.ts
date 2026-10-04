@@ -1,6 +1,7 @@
 import { pool } from '@/lib/db';
 import { evidenceLogitDelta, EVIDENCE_IMPACT_VERSION } from '@/evidence/impact';
 import { evidenceImpactPolicy } from '@/evidence/policy';
+import { dedupeTemporalEvidenceHistory } from '@/evidence/temporal-statement-history';
 import type { EvidenceDraft, EvidenceSignal } from '@/evidence/types';
 import {
   authorshipAvailableAt,
@@ -19,6 +20,8 @@ export type QuickEvidenceStoredRow = {
   id: string;
   membership_id: string;
   evidence_kind: EvidenceSignal['kind'];
+  claim: string;
+  evidence_series_key: string | null;
   stance: EvidenceSignal['stance'];
   source_quality: EvidenceSignal['sourceQuality'];
   relevance: EvidenceSignal['relevance'];
@@ -389,9 +392,16 @@ async function loadDirectionalEvidence(
   asOf: string,
 ): Promise<Map<string, QuickEvidenceStoredRow[]>> {
   const result = await pool.query<QuickEvidenceStoredRow>(`
+    WITH target_memberships AS (
+      SELECT id AS target_membership_id, legislator_id
+        FROM memberships
+       WHERE id = ANY($1::uuid[])
+    )
     SELECT ei.id::text,
-           ei.membership_id::text,
+           target.target_membership_id::text AS membership_id,
            ei.evidence_kind,
+           ei.claim,
+           NULLIF(ei.metadata->>'evidenceSeriesKey','') AS evidence_series_key,
            COALESCE(ei.stance,'unclear') AS stance,
            ei.source_quality,
            ei.relevance,
@@ -402,23 +412,27 @@ async function loadDirectionalEvidence(
            sd.fetched_at::text,
            ei.metadata
       FROM evidence_items ei
+      JOIN memberships evidence_membership ON evidence_membership.id=ei.membership_id
+      JOIN target_memberships target ON target.legislator_id=evidence_membership.legislator_id
       JOIN source_documents sd ON sd.id=ei.source_document_id
-     WHERE ei.membership_id = ANY($1::uuid[])
-       AND ei.bill_id = $2::uuid
+     WHERE ei.bill_id = $2::uuid
        AND sd.fetched_at <= $3::timestamptz
        AND (ei.published_at IS NULL OR ei.published_at <= $3::timestamptz)
-       AND NOT EXISTS (
-         SELECT 1 FROM evidence_relationships er
-          WHERE er.to_evidence_id=ei.id
-            AND er.relation_kind='supersedes'
+       AND (
+         ei.evidence_kind IN ('direct_statement','related_statement')
+         OR NOT EXISTS (
+           SELECT 1 FROM evidence_relationships er
+            WHERE er.to_evidence_id=ei.id
+              AND er.relation_kind='supersedes'
+         )
        )
-     ORDER BY ei.membership_id, COALESCE(ei.published_at,sd.fetched_at) DESC, ei.id`, [
+     ORDER BY target.target_membership_id, COALESCE(ei.published_at,sd.fetched_at) DESC, ei.id DESC`, [
     membershipIds,
     billId,
     asOf,
   ]);
   const byMembership = new Map<string, QuickEvidenceStoredRow[]>();
-  for (const row of result.rows) {
+  for (const row of dedupeTemporalEvidenceHistory(result.rows)) {
     const rows = byMembership.get(row.membership_id) ?? [];
     rows.push(row);
     byMembership.set(row.membership_id, rows);

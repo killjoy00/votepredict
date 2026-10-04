@@ -1,4 +1,5 @@
 import { pool } from '@/lib/db';
+import { dedupeTemporalEvidenceHistory } from '@/evidence/temporal-statement-history';
 import {
   loadLegislatorProfile,
   type LegislatorAlignmentRow,
@@ -94,7 +95,10 @@ type AlignmentDbRow = {
 };
 
 type EvidenceDbRow = {
+  id: string;
   kind: string;
+  evidence_kind: string;
+  evidence_series_key: string | null;
   stance: string | null;
   claim: string;
   excerpt: string | null;
@@ -275,7 +279,10 @@ async function loadIssueAlignments(
 async function loadIssueEvidence(legislatorId: string, billIds: readonly string[]): Promise<LegislatorEvidenceRow[]> {
   if (billIds.length === 0) return [];
   const result = await pool.query<EvidenceDbRow>(`
-    SELECT ei.evidence_kind AS kind,
+    SELECT ei.id::text,
+           ei.evidence_kind AS kind,
+           ei.evidence_kind,
+           NULLIF(ei.metadata->>'evidenceSeriesKey','') AS evidence_series_key,
            ei.stance,
            ei.claim,
            ei.excerpt,
@@ -288,15 +295,18 @@ async function loadIssueEvidence(legislatorId: string, billIds: readonly string[
       JOIN memberships m ON m.id = ei.membership_id
      WHERE m.legislator_id = $1
        AND ei.bill_id = ANY($2::uuid[])
-       AND NOT EXISTS (
-         SELECT 1
-           FROM evidence_relationships er
-          WHERE er.to_evidence_id = ei.id
-            AND er.relation_kind = 'supersedes'
+       AND (
+         ei.evidence_kind IN ('direct_statement','related_statement')
+         OR NOT EXISTS (
+           SELECT 1
+             FROM evidence_relationships er
+            WHERE er.to_evidence_id = ei.id
+              AND er.relation_kind = 'supersedes'
+         )
        )
-     ORDER BY COALESCE(ei.published_at, ei.created_at) DESC
-     LIMIT 30`, [legislatorId, billIds]);
-  return result.rows.map((row) => ({
+     ORDER BY COALESCE(ei.published_at, ei.created_at) DESC, ei.id DESC
+     LIMIT 120`, [legislatorId, billIds]);
+  return dedupeTemporalEvidenceHistory(result.rows).slice(0, 30).map((row) => ({
     kind: row.kind,
     stance: row.stance ?? undefined,
     claim: row.claim,

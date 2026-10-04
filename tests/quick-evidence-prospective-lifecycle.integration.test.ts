@@ -69,6 +69,7 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
         freshness text NOT NULL,
         confidence double precision,
         published_at timestamptz,
+        claim text NOT NULL DEFAULT '',
         metadata jsonb NOT NULL DEFAULT '{}'
       );
       CREATE TABLE evidence_relationships (
@@ -147,10 +148,17 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
     const evidence1 = '10000000-0000-0000-0000-000000000012';
     const evidence2 = '10000000-0000-0000-0000-000000000013';
     const voteId = '10000000-0000-0000-0000-000000000014';
+    const priorSessionId = '10000000-0000-0000-0000-000000000015';
+    const priorMember1 = '10000000-0000-0000-0000-000000000016';
+    const priorSource1 = '10000000-0000-0000-0000-000000000017';
+    const priorSource2 = '10000000-0000-0000-0000-000000000018';
+    const priorEvidence1 = '10000000-0000-0000-0000-000000000019';
+    const priorEvidence2 = '10000000-0000-0000-0000-000000000020';
+    const priorEvidence3 = '10000000-0000-0000-0000-000000000021';
 
     await client.query(
-      "INSERT INTO legislative_sessions VALUES ($1, '2027-2028', '2027-01-01')",
-      [sessionId],
+      "INSERT INTO legislative_sessions VALUES ($1, '2027-2028', '2027-01-01'),($2, '2025-2026', '2025-01-01')",
+      [sessionId, priorSessionId],
     );
     await client.query(
       "INSERT INTO chambers VALUES ($1, 'house', 'House')",
@@ -162,25 +170,41 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
     );
     await client.query(`
       INSERT INTO memberships(id,session_id,chamber_id,legislator_id,party) VALUES
-        ($1,$3,$4,$5,'A'),($2,$3,$4,$6,'B')
-    `, [member1, member2, sessionId, chamberId, legislator1, legislator2]);
+        ($1,$3,$4,$5,'A'),($2,$3,$4,$6,'B'),($7,$8,$4,$5,'A')
+    `, [member1, member2, sessionId, chamberId, legislator1, legislator2, priorMember1, priorSessionId]);
     await client.query(`
       INSERT INTO source_documents VALUES
         ($1,'member_primary_article','2027-01-31T10:00:00Z'),
-        ($2,'house_committee_minutes','2027-01-31T11:00:00Z')
-    `, [source1, source2]);
+        ($2,'house_committee_minutes','2027-01-31T11:00:00Z'),
+        ($3,'campaign_site','2026-06-01T10:00:00Z'),
+        ($4,'campaign_site','2026-09-01T10:00:00Z')
+    `, [source1, source2, priorSource1, priorSource2]);
     await client.query(`
       INSERT INTO evidence_items(
         id,source_document_id,membership_id,bill_id,evidence_kind,stance,
-        source_quality,relevance,freshness,confidence,published_at,metadata
+        source_quality,relevance,freshness,confidence,published_at,claim,metadata
       ) VALUES
         ($1,$3,$5,$7,'direct_statement','supports','official','direct','current',0.99,
-         '2027-01-31T09:00:00Z',
-         '{"quickEvidenceCandidate":true,"sourceVerified":true,"mechanicallyActionable":false}'),
+         '2027-01-31T09:00:00Z','Current exact-bill support',
+         '{"quickEvidenceCandidate":true,"sourceVerified":true,"mechanicallyActionable":false,"evidenceSeriesKey":"member-position:alpha:hf1"}'),
         ($2,$4,$6,$7,'context','neutral','official','high','current',1,
-         '2027-01-31T00:00:00Z',
-         '{"subtype":"committee_rollcall","voteSide":"aye","mechanics":["committee_recommends_passage"],"asOfEligible":true,"mechanicallyActionable":false}')
-    `, [evidence1, evidence2, source1, source2, member1, member2, billId]);
+         '2027-01-31T00:00:00Z','Committee context',
+         '{"subtype":"committee_rollcall","voteSide":"aye","mechanics":["committee_recommends_passage"],"asOfEligible":true,"mechanicallyActionable":false}'),
+        ($8,$9,$10,$7,'direct_statement','supports','member_primary','direct','stale',0.95,
+         '2026-06-01T09:00:00Z','Strong exact-bill support',
+         '{"quickEvidenceCandidate":true,"sourceVerified":true,"mechanicallyActionable":false,"evidenceSeriesKey":"member-position:alpha:hf1"}'),
+        ($11,$12,$10,$7,'direct_statement','supports','member_primary','direct','recent',0.95,
+         '2026-09-01T09:00:00Z','Strong exact-bill support',
+         '{"quickEvidenceCandidate":true,"sourceVerified":true,"mechanicallyActionable":false,"evidenceSeriesKey":"member-position:alpha:hf1"}'),
+        ($13,$12,$10,$7,'direct_statement','opposes','member_primary','direct','recent',0.95,
+         '2026-09-01T09:00:00Z','Now opposes exact-bill passage',
+         '{"quickEvidenceCandidate":true,"sourceVerified":true,"mechanicallyActionable":false,"evidenceSeriesKey":"member-position:alpha:hf1"}')
+    `, [evidence1, evidence2, source1, source2, member1, member2, billId, priorEvidence1, priorSource1, priorMember1, priorEvidence2, priorSource2, priorEvidence3]);
+    await client.query(
+      "INSERT INTO evidence_relationships(to_evidence_id,relation_kind) VALUES ($1,'supersedes')",
+      [priorEvidence1],
+    );
+
     await client.query(`
       INSERT INTO forecasts(
         id,owner_user_id,target_type,target_kind,bill_id,target_chamber_id,session_id,created_at
@@ -307,6 +331,9 @@ test('Quick prospective lifecycle rehearses capture, resolution, and sealed pair
       'zero-weight committee context must not move candidate probability',
     );
     assert.equal(member2Shadow.features.committeeRecommendsPassageAye, 1);
+    assert.equal(member1Shadow.features.directSupport, 2, 'current plus one deduplicated prior-session support statement');
+    assert.equal(member1Shadow.features.directOppose, 1, 'substantively changed prior-session statement is preserved');
+    assert.equal(member1Shadow.features.conflictingDirectionalEvidence, true);
 
     await client.query(`
       INSERT INTO vote_events(
