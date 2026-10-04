@@ -6,7 +6,7 @@ import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const SNAPSHOT_RUN_ID = 37170314795;
-const PREVIOUS_CUTOFF = '2026-10-04T02:13:29.630968Z';
+const PREVIOUS_CUTOFF = '2026-10-04T00:27:44.362338Z';
 const CUTOFF = '2026-10-04T02:13:29.630968Z';
 const COHORT_ID = 'P1-SUP-003';
 const EXPECTED_DOCUMENTS = 14;
