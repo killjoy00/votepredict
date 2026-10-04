@@ -5,6 +5,7 @@ import { extractExplicitBillStatementsV3, QUICK_EVIDENCE_STATEMENT_EXTRACTOR_V3_
 const bills = [
   { id: '11111111-1111-1111-1111-111111111111', identifier: 'HF1234' },
   { id: '22222222-2222-2222-2222-222222222222', identifier: 'SF55' },
+  { id: '33333333-3333-3333-3333-333333333333', identifier: 'HF1' },
 ];
 
 function input(memberName: string, text: string) {
@@ -103,4 +104,32 @@ test('v3 remains fail-closed when member attribution is too distant from the sta
     'Senator Alice Mann discussed the long history and many competing perspectives surrounding the proposal before noting that she supports SF55.',
   ));
   assert.equal(rows.length, 0);
+});
+
+
+test('v3 treats opposing as opposition and ignores Back to profile navigation in the Skraba HF1 failure mode', () => {
+  const rows = extractExplicitBillStatementsV3(input(
+    'Roger J Skraba',
+    'Minnesota House of Representatives House Menu Legislative News and Views - Rep. Roger Skraba (R) Back to profile RELEASE: Rep. Skraba Statement Opposing House File 1 Friday, January 20, 2023',
+  ));
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].target?.billId, '33333333-3333-3333-3333-333333333333');
+  assert.equal(rows[0].stance, 'opposes');
+});
+
+test('v3 does not treat bare Back to profile navigation as bill support', () => {
+  const rows = extractExplicitBillStatementsV3(input(
+    'Mary Franson',
+    'Legislative News and Views - Rep. Mary Franson Back to profile House File 1234 Friday update.',
+  ));
+  assert.equal(rows.length, 0);
+});
+
+test('v3 still recognizes bare back when it directly governs an exact bill identifier', () => {
+  const rows = extractExplicitBillStatementsV3(input(
+    'Mary Franson',
+    'Representative Mary Franson said, I back HF1234 and urge colleagues to pass it.',
+  ));
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].stance, 'supports');
 });

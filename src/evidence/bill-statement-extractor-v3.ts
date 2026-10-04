@@ -44,9 +44,9 @@ function targetAttributionPattern(memberName: string): RegExp {
   );
 }
 
-const SUPPORT = /\b(?:support(?:s|ed|ing)?|back(?:s|ed|ing)?|endorse(?:s|d|ment)?|vote(?:d|s|ing)?\s+(?:yes|aye|for)|vote(?:d|s|ing)?\s+in\s+favor(?:\s+of)?|vote(?:d|s|ing)?\s+to\s+pass|will\s+vote\s+(?:yes|aye|for))\b/i;
+const SUPPORT = /\b(?:support(?:s|ed|ing)?|back(?:s|ed|ing)|back(?=\s+(?:(?:HF|SF)\s*\d|(?:House|Senate)\s+File\b))|endorse(?:s|d|ment)?|vote(?:d|s|ing)?\s+(?:yes|aye|for)|vote(?:d|s|ing)?\s+in\s+favor(?:\s+of)?|vote(?:d|s|ing)?\s+to\s+pass|will\s+vote\s+(?:yes|aye|for))\b/i;
 const NEGATED_SUPPORT = /\b(?:(?:do|does|did)\s+not\s+support|(?:cannot|can't|won't|wouldn't)\s+support|will\s+not\s+support|will\s+not\s+vote\s+for|(?:cannot|can't|won't|wouldn't)\s+vote\s+for)\b/i;
-const OPPOSE = /\b(?:oppose(?:s|d|ing)?|reject(?:s|ed|ing)?|vote(?:d|s|ing)?\s+(?:no|nay|against)|will\s+vote\s+(?:no|nay|against))\b/i;
+const OPPOSE = /\b(?:oppos(?:e|es|ed|ing)|reject(?:s|ed|ing)?|vote(?:d|s|ing)?\s+(?:no|nay|against)|will\s+vote\s+(?:no|nay|against))\b/i;
 const INTERVENING_ACTOR = /\b(?:democrats?|republicans?|dfl(?:ers)?|gop|governor|committee|house|senate|members?|lawmakers?|colleagues?|opponents?|supporters?)\b/i;
 const LIMITED_OBJECT = /\b(?:amendment|amendments|provision|provisions|section|sections|language|alternative|alternatives|substitute|proposal|proposals|portion|component|components)\b/i;
 
