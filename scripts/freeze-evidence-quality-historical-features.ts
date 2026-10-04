@@ -12,6 +12,10 @@ import {
   evidenceQualityFeaturesAsOf,
   type EvidenceQualityExactSignal,
 } from '../src/evaluation/evidence-quality-historical-features.js';
+import {
+  evidenceQualityExactEvidenceItemAvailabilityDate,
+  evidenceQualitySourceAvailabilityDate,
+} from '../src/evidence/evidence-quality-historical-availability.js';
 
 const EXPECTED_DOCUMENTS = 226;
 const EXPECTED_UNIQUE_SIGNATURES = 180;
@@ -20,10 +24,10 @@ const EXPECTED_EVENTS = 1339;
 const EXPECTED_MEMBERSHIPS = 611;
 const EXPECTED_ROW_KEY_SHA256 = '3aa47101f9e4a848e293fdaa89ef853919d49826b68ae90960370c5c19e9df72';
 const MANUAL_PROVIDER = 'manual-openai';
-const MATRIX_SCHEMA = 'evidence-quality-historical-feature-matrix-v1.2';
-const SIGNAL_SCHEMA = 'evidence-quality-historical-exact-signals-v1.2';
-const ISSUE_SCHEMA = 'evidence-quality-historical-member-issue-signals-v1.2';
-const PLAN_PATH = 'data/evaluation/evidence-quality/evidence-quality-historical-feature-plan-v1.2.json';
+const MATRIX_SCHEMA = 'evidence-quality-historical-feature-matrix-v1.3';
+const SIGNAL_SCHEMA = 'evidence-quality-historical-exact-signals-v1.3';
+const ISSUE_SCHEMA = 'evidence-quality-historical-member-issue-signals-v1.3';
+const PLAN_PATH = 'data/evaluation/evidence-quality/evidence-quality-historical-feature-plan-v1.3.json';
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 let secrets: string[] = [];
@@ -34,6 +38,7 @@ type AnnotationRow = {
   source_document_text_id: string;
   source_kind: string;
   source_url: string;
+  source_content_sha256: string;
   source_session_id: string | null;
   source_chamber_id: string | null;
   source_metadata: Record<string, unknown> | null;
@@ -74,6 +79,8 @@ type ContextRow = {
   bill_id: string | null;
   member_name: string | null;
   bill_identifier: string | null;
+  evidence_excerpt: string | null;
+  evidence_metadata: Record<string, unknown> | null;
 };
 
 type MembershipIdentityRow = {
@@ -268,13 +275,34 @@ function validDateOnly(value: string | null): value is string {
 }
 
 function availabilityDate(metadata: Record<string, unknown> | null): string | null {
-  for (const key of ['availableAt', 'availableOn', 'archiveCapturedAt'] as const) {
-    const raw = stringMeta(metadata, key);
-    if (!raw || !Number.isFinite(Date.parse(raw))) continue;
-    const date = raw.slice(0, 10);
-    if (validDateOnly(date)) return date;
+  return evidenceQualitySourceAvailabilityDate(metadata);
+}
+
+function claimAvailabilityDate(input: {
+  source: AnnotationRow;
+  contexts: readonly ContextRow[];
+  supportingExcerpt: string;
+  membershipId: string;
+  billId?: string;
+}): string | null {
+  const dates = new Set<string>();
+  const sourceDate = availabilityDate(input.source.source_metadata);
+  if (sourceDate) dates.add(sourceDate);
+
+  for (const context of input.contexts) {
+    if (context.membership_id !== input.membershipId) continue;
+    if (input.billId !== undefined && context.bill_id !== input.billId) continue;
+    const date = evidenceQualityExactEvidenceItemAvailabilityDate({
+      evidenceMetadata: context.evidence_metadata,
+      sourceUrl: input.source.source_url,
+      sourceContentSha256: input.source.source_content_sha256,
+      evidenceExcerpt: context.evidence_excerpt,
+      claimSupportingExcerpt: input.supportingExcerpt,
+    });
+    if (date) dates.add(date);
   }
-  return null;
+
+  return earliest(dates);
 }
 
 function loadTargets(path: string): TargetRow[] {
@@ -306,7 +334,7 @@ async function main() {
   if (!envFile || !targetPath || !outputDir) throw new Error('Production env, target universe, and output directory are required');
 
   const plan = JSON.parse(readFileSync(resolve(PLAN_PATH), 'utf8')) as { schemaVersion: string; featureNames: string[] };
-  if (plan.schemaVersion !== 'evidence-quality-historical-feature-plan-v1.2'
+  if (plan.schemaVersion !== 'evidence-quality-historical-feature-plan-v1.3'
       || canonicalJson(plan.featureNames) !== canonicalJson([...EVIDENCE_QUALITY_HISTORICAL_FEATURES])) {
     throw new Error('Evidence Quality historical feature plan drifted');
   }
@@ -335,6 +363,7 @@ async function main() {
              eqa.source_document_text_id::text,
              sd.source_kind,
              sd.source_url,
+             sd.content_sha256 AS source_content_sha256,
              sd.session_id::text AS source_session_id,
              sd.chamber_id::text AS source_chamber_id,
              sd.metadata AS source_metadata,
@@ -386,7 +415,9 @@ async function main() {
              ei.membership_id::text,
              ei.bill_id::text,
              l.name AS member_name,
-             b.identifier AS bill_identifier
+             b.identifier AS bill_identifier,
+             ei.excerpt AS evidence_excerpt,
+             ei.metadata AS evidence_metadata
         FROM evidence_items ei
         LEFT JOIN memberships m ON m.id=ei.membership_id
         LEFT JOIN legislators l ON l.id=m.legislator_id
@@ -452,7 +483,6 @@ async function main() {
 
     for (const row of annotationResult.rows) {
       const fingerprint = stringMeta(row.annotation_metadata, 'semanticFingerprint')!;
-      const availableOn = availabilityDate(row.source_metadata);
       const contexts = contextsBySource.get(row.source_document_id) ?? [];
 
       for (const claim of row.annotation.claims) {
@@ -507,7 +537,14 @@ async function main() {
               mappingMethods: new Set<string>(),
             };
             acc.sourceDocumentIds.add(row.source_document_id);
-            if (availableOn) acc.availableDates.add(availableOn);
+            const claimAvailableOn = claimAvailabilityDate({
+              source: row,
+              contexts,
+              supportingExcerpt: claim.supportingExcerpt,
+              membershipId: membership.membershipId,
+              billId: entry.resolution.billId,
+            });
+            if (claimAvailableOn) acc.availableDates.add(claimAvailableOn);
             acc.claimTypes.add(claim.claimType);
             acc.explicitness.add(claim.explicitness);
             acc.mappingMethods.add(membership.method);
@@ -557,7 +594,13 @@ async function main() {
             mappingMethods: new Set<string>(),
           };
           acc.sourceDocumentIds.add(row.source_document_id);
-          if (availableOn) acc.availableDates.add(availableOn);
+          const claimAvailableOn = claimAvailabilityDate({
+            source: row,
+            contexts,
+            supportingExcerpt: claim.supportingExcerpt,
+            membershipId: membership.membershipId,
+          });
+          if (claimAvailableOn) acc.availableDates.add(claimAvailableOn);
           acc.stances.add(claim.stance);
           acc.claimTypes.add(claim.claimType);
           acc.mappingMethods.add(membership.method);
@@ -657,15 +700,15 @@ async function main() {
     const exactGzip = gzipSync(Buffer.from(exactText), { level: 9 });
     const issueGzip = gzipSync(Buffer.from(issueText), { level: 9 });
 
-    const matrixPath = resolve(outputDir, 'evidence-quality-historical-feature-matrix-v1.2.ndjson.gz');
-    const exactPath = resolve(outputDir, 'evidence-quality-historical-exact-signals-v1.2.ndjson.gz');
-    const issuePath = resolve(outputDir, 'evidence-quality-historical-member-issue-signals-v1.2.ndjson.gz');
+    const matrixPath = resolve(outputDir, 'evidence-quality-historical-feature-matrix-v1.3.ndjson.gz');
+    const exactPath = resolve(outputDir, 'evidence-quality-historical-exact-signals-v1.3.ndjson.gz');
+    const issuePath = resolve(outputDir, 'evidence-quality-historical-member-issue-signals-v1.3.ndjson.gz');
     writeFileSync(matrixPath, matrixGzip);
     writeFileSync(exactPath, exactGzip);
     writeFileSync(issuePath, issueGzip);
 
     const manifest = {
-      schemaVersion: 'evidence-quality-historical-feature-matrix-v1.2-manifest',
+      schemaVersion: 'evidence-quality-historical-feature-matrix-v1.3-manifest',
       generatedAt: new Date().toISOString(),
       issue: 579,
       plan: PLAN_PATH,
@@ -719,7 +762,8 @@ async function main() {
         outcomeUseDuringFeatureConstruction: 'none',
         strictPreEventAvailability: true,
         sameDayEvidenceExcluded: true,
-        availabilitySource: 'source_documents.metadata.availableAt | availableOn | archiveCapturedAt',
+        availabilitySource: 'exact evidence_items.metadata excerpt proof when claim/context matched; source_documents.metadata fallback',
+        evidenceItemScopedProofNeverPromotedSourceWide: true,
         semanticDeduplication: 'semanticFingerprint + deterministic membership/bill identity',
         identityResolution: 'prefer evidence_items IDs; otherwise resolve only the already-reviewed claim member/bill identifiers by unique exact match within source session/chamber; ambiguity fails closed',
         memberIssueBillInference: 'none',
@@ -730,7 +774,7 @@ async function main() {
         modelWeightChanged: false,
       },
     };
-    const manifestPath = resolve(outputDir, 'evidence-quality-historical-feature-matrix-v1.2-manifest.json');
+    const manifestPath = resolve(outputDir, 'evidence-quality-historical-feature-matrix-v1.3-manifest.json');
     writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
 
     console.log(JSON.stringify({
