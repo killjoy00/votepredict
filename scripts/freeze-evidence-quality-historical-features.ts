@@ -404,7 +404,7 @@ async function main() {
       MANUAL_PROVIDER,
     ]);
 
-    const selectedRows = selectedRows.flatMap((row) => {
+    const selectedRows = annotationResult.rows.flatMap((row) => {
       const cohort = evidenceQualityHistoricalAnnotationCohort({
         sourceKind: row.source_kind,
         sourceDocumentTextId: row.source_document_text_id,
