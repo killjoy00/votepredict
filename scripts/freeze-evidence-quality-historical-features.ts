@@ -8,6 +8,11 @@ import {
   EVIDENCE_QUALITY_SCHEMA_VERSION,
 } from '../src/evidence/evidence-quality.js';
 import {
+  claimHistoricalAvailability,
+  sourceDocumentAvailabilityDate,
+  type EvidenceQualityAvailabilityContext,
+} from '../src/evidence/evidence-quality-historical-availability.js';
+import {
   EVIDENCE_QUALITY_HISTORICAL_FEATURES,
   evidenceQualityFeaturesAsOf,
   type EvidenceQualityExactSignal,
@@ -34,6 +39,7 @@ type AnnotationRow = {
   source_document_text_id: string;
   source_kind: string;
   source_url: string;
+  source_content_sha256: string;
   source_session_id: string | null;
   source_chamber_id: string | null;
   source_metadata: Record<string, unknown> | null;
@@ -69,11 +75,14 @@ type AnnotationRow = {
 };
 
 type ContextRow = {
+  evidence_id: string;
   source_document_id: string;
   membership_id: string | null;
   bill_id: string | null;
   member_name: string | null;
   bill_identifier: string | null;
+  excerpt: string | null;
+  evidence_metadata: Record<string, unknown> | null;
 };
 
 type MembershipIdentityRow = {
@@ -108,6 +117,8 @@ type ExactAccumulator = {
   billId: string;
   sourceDocumentIds: Set<string>;
   availableDates: Set<string>;
+  availabilityMethods: Set<string>;
+  availabilityEvidenceItemIds: Set<string>;
   supports: boolean;
   opposes: boolean;
   mixed: boolean;
@@ -128,6 +139,8 @@ type IssueAccumulator = {
   membershipId: string;
   sourceDocumentIds: Set<string>;
   availableDates: Set<string>;
+  availabilityMethods: Set<string>;
+  availabilityEvidenceItemIds: Set<string>;
   stances: Set<string>;
   claimTypes: Set<string>;
   topics: Set<string>;
@@ -267,16 +280,6 @@ function validDateOnly(value: string | null): value is string {
   return Number.isFinite(timestamp) && new Date(timestamp).toISOString().slice(0, 10) === value;
 }
 
-function availabilityDate(metadata: Record<string, unknown> | null): string | null {
-  for (const key of ['availableAt', 'availableOn', 'archiveCapturedAt'] as const) {
-    const raw = stringMeta(metadata, key);
-    if (!raw || !Number.isFinite(Date.parse(raw))) continue;
-    const date = raw.slice(0, 10);
-    if (validDateOnly(date)) return date;
-  }
-  return null;
-}
-
 function loadTargets(path: string): TargetRow[] {
   const rows = readFileSync(path, 'utf8').split('\n').filter(Boolean).map((line) => JSON.parse(line) as TargetRow & Record<string, unknown>);
   if (rows.length !== EXPECTED_ROWS) throw new Error('Target universe row count mismatch');
@@ -335,6 +338,7 @@ async function main() {
              eqa.source_document_text_id::text,
              sd.source_kind,
              sd.source_url,
+             sd.content_sha256 AS source_content_sha256,
              sd.session_id::text AS source_session_id,
              sd.chamber_id::text AS source_chamber_id,
              sd.metadata AS source_metadata,
@@ -375,18 +379,21 @@ async function main() {
       if (!fingerprint || !/^[0-9a-f]{64}$/i.test(fingerprint)) throw new Error('Missing semantic fingerprint');
       fingerprints.add(fingerprint);
       sourceIds.push(row.source_document_id);
-      if (!availabilityDate(row.source_metadata)) sourcesMissingAvailability += 1;
+      if (!sourceDocumentAvailabilityDate(row.source_metadata)) sourcesMissingAvailability += 1;
     }
     if (fingerprints.size !== EXPECTED_UNIQUE_SIGNATURES) {
       throw new Error(`Expected ${EXPECTED_UNIQUE_SIGNATURES} semantic signatures, found ${fingerprints.size}`);
     }
 
     const contextResult = await client.query<ContextRow>(`
-      SELECT ei.source_document_id::text,
+      SELECT ei.id::text AS evidence_id,
+             ei.source_document_id::text,
              ei.membership_id::text,
              ei.bill_id::text,
              l.name AS member_name,
-             b.identifier AS bill_identifier
+             b.identifier AS bill_identifier,
+             ei.excerpt,
+             ei.metadata AS evidence_metadata
         FROM evidence_items ei
         LEFT JOIN memberships m ON m.id=ei.membership_id
         LEFT JOIN legislators l ON l.id=m.legislator_id
@@ -452,8 +459,14 @@ async function main() {
 
     for (const row of annotationResult.rows) {
       const fingerprint = stringMeta(row.annotation_metadata, 'semanticFingerprint')!;
-      const availableOn = availabilityDate(row.source_metadata);
       const contexts = contextsBySource.get(row.source_document_id) ?? [];
+      const availabilityContexts: EvidenceQualityAvailabilityContext[] = contexts.map((context) => ({
+        evidenceItemId: context.evidence_id,
+        membershipId: context.membership_id,
+        billId: context.bill_id,
+        excerpt: context.excerpt,
+        metadata: context.evidence_metadata,
+      }));
 
       for (const claim of row.annotation.claims) {
         if (!['supports', 'opposes', 'mixed'].includes(claim.stance)) continue;
@@ -492,6 +505,8 @@ async function main() {
               billId: entry.resolution.billId,
               sourceDocumentIds: new Set<string>(),
               availableDates: new Set<string>(),
+              availabilityMethods: new Set<string>(),
+              availabilityEvidenceItemIds: new Set<string>(),
               supports: false,
               opposes: false,
               mixed: false,
@@ -507,7 +522,18 @@ async function main() {
               mappingMethods: new Set<string>(),
             };
             acc.sourceDocumentIds.add(row.source_document_id);
-            if (availableOn) acc.availableDates.add(availableOn);
+            const availability = claimHistoricalAvailability({
+              sourceMetadata: row.source_metadata,
+              sourceUrl: row.source_url,
+              sourceContentSha256: row.source_content_sha256,
+              contexts: availabilityContexts,
+              supportingExcerpt: claim.supportingExcerpt,
+              membershipId: membership.membershipId,
+              billId: entry.resolution.billId,
+            });
+            if (availability.availableOn) acc.availableDates.add(availability.availableOn);
+            if (availability.method !== 'none') acc.availabilityMethods.add(availability.method);
+            for (const evidenceItemId of availability.evidenceItemIds) acc.availabilityEvidenceItemIds.add(evidenceItemId);
             acc.claimTypes.add(claim.claimType);
             acc.explicitness.add(claim.explicitness);
             acc.mappingMethods.add(membership.method);
@@ -550,6 +576,8 @@ async function main() {
             membershipId: membership.membershipId,
             sourceDocumentIds: new Set<string>(),
             availableDates: new Set<string>(),
+            availabilityMethods: new Set<string>(),
+            availabilityEvidenceItemIds: new Set<string>(),
             stances: new Set<string>(),
             claimTypes: new Set<string>(),
             topics: new Set<string>(),
@@ -557,7 +585,18 @@ async function main() {
             mappingMethods: new Set<string>(),
           };
           acc.sourceDocumentIds.add(row.source_document_id);
-          if (availableOn) acc.availableDates.add(availableOn);
+          const availability = claimHistoricalAvailability({
+            sourceMetadata: row.source_metadata,
+            sourceUrl: row.source_url,
+            sourceContentSha256: row.source_content_sha256,
+            contexts: availabilityContexts,
+            supportingExcerpt: claim.supportingExcerpt,
+            membershipId: membership.membershipId,
+            billId: null,
+          });
+          if (availability.availableOn) acc.availableDates.add(availability.availableOn);
+          if (availability.method !== 'none') acc.availabilityMethods.add(availability.method);
+          for (const evidenceItemId of availability.evidenceItemIds) acc.availabilityEvidenceItemIds.add(evidenceItemId);
           acc.stances.add(claim.stance);
           acc.claimTypes.add(claim.claimType);
           acc.mappingMethods.add(membership.method);
@@ -588,6 +627,8 @@ async function main() {
       claimTypes: [...acc.claimTypes].sort(),
       explicitness: [...acc.explicitness].sort(),
       mappingMethods: [...acc.mappingMethods].sort(),
+      availabilityMethods: [...acc.availabilityMethods].sort(),
+      availabilityEvidenceItemIds: [...acc.availabilityEvidenceItemIds].sort(),
       sourceDocumentIds: [...acc.sourceDocumentIds].sort(),
     })).sort((a, b) =>
       a.membershipId.localeCompare(b.membershipId)
@@ -605,6 +646,8 @@ async function main() {
       topics: [...acc.topics].sort(),
       maxConfidence: acc.maxConfidence,
       mappingMethods: [...acc.mappingMethods].sort(),
+      availabilityMethods: [...acc.availabilityMethods].sort(),
+      availabilityEvidenceItemIds: [...acc.availabilityEvidenceItemIds].sort(),
       sourceDocumentIds: [...acc.sourceDocumentIds].sort(),
       billInference: 'none',
     })).sort((a, b) => a.membershipId.localeCompare(b.membershipId) || a.fingerprint.localeCompare(b.fingerprint));
@@ -673,6 +716,7 @@ async function main() {
         documents: annotationResult.rows.length,
         uniqueSemanticSignatures: fingerprints.size,
         sourcesMissingHistoricalAvailability: sourcesMissingAvailability,
+        sourcesMissingSourceWideAvailability: sourcesMissingAvailability,
         directionalClaims,
         exactDirectionalClaims,
         memberIssueDirectionalClaims,
@@ -719,7 +763,8 @@ async function main() {
         outcomeUseDuringFeatureConstruction: 'none',
         strictPreEventAvailability: true,
         sameDayEvidenceExcluded: true,
-        availabilitySource: 'source_documents.metadata.availableAt | availableOn | archiveCapturedAt',
+        availabilitySource: 'source_documents.metadata source-wide proof OR claim-scoped evidence_items.metadata exact-excerpt proof',
+        granularAvailabilityRequirements: 'exact source URL/hash + evidence_item_excerpt scope + exact_frozen_excerpt_match + deterministic member/bill identity + supporting excerpt contained in proven evidence excerpt',
         semanticDeduplication: 'semanticFingerprint + deterministic membership/bill identity',
         identityResolution: 'prefer evidence_items IDs; otherwise resolve only the already-reviewed claim member/bill identifiers by unique exact match within source session/chamber; ambiguity fails closed',
         memberIssueBillInference: 'none',
