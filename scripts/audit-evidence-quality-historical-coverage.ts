@@ -410,7 +410,7 @@ async function main() {
     for (const row of unmappedExactClaims) increment(unmappedBySourceKind, String(row.sourceKind));
 
     const audit = {
-      schemaVersion: 'evidence-quality-historical-coverage-audit-v1',
+      schemaVersion: 'evidence-quality-historical-coverage-audit-v1.1',
       generatedAt: new Date().toISOString(),
       issue: 579,
       targetUniverse: {
@@ -447,6 +447,8 @@ async function main() {
         legacyQuickEvidenceV2Included: false,
         quickEvidenceV3Included: false,
         p2BillInferencePerformed: false,
+        availabilityResolution: 'exact evidence_items.metadata excerpt proof when claim/context matched; source_documents.metadata fallback',
+        evidenceItemScopedProofNeverPromotedSourceWide: true,
         servingChanged: false,
       },
     };
