@@ -2,6 +2,12 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 import { evidenceQualityExactEvidenceItemAvailabilityDate } from '../src/evidence/evidence-quality-historical-availability.js';
+import {
+  classifyEvidenceQualityGranularRepairState,
+  evidenceQualityEffectiveGranularAvailabilityPatch,
+  evidenceQualityGranularManagedSubset,
+  evidenceQualityGranularMetadataMatches,
+} from '../src/evidence/evidence-quality-granular-availability-repair.js';
 
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
@@ -12,22 +18,6 @@ const EXPECTED_CANONICAL_ARTIFACT_DIGEST = 'sha256:05aaeca085fa1d48a85a3226565ea
 const EXPECTED_PLAN_ARTIFACT_ID = 11315632754;
 const EXPECTED_PLAN_ARTIFACT_DIGEST = 'sha256:6b1f7bfb91cdfe79994cdc87314c3efd505610a1effe81cec8630341860da5e6';
 
-const MANAGED_KEYS = [
-  'historicalAvailabilityVersion',
-  'availabilityProof',
-  'availableAt',
-  'canonicalSourceUrl',
-  'archiveUrl',
-  'archiveCapturedAt',
-  'sourceContentSha256',
-  'availabilityScope',
-  'availabilityContentIdentity',
-  'availabilityProofExcerptFingerprint',
-  'availabilityProofArchiveContentSha256',
-  'availabilityProofCanonicalArtifactId',
-  'availabilityProofCanonicalArtifactDigest',
-  'asOfEligible',
-] as const;
 
 let secrets: string[] = [];
 
@@ -136,34 +126,6 @@ function normalizeExcerpt(value: string) {
   return value.replace(/\s+/g, ' ').trim();
 }
 
-function canonicalJson(value: unknown): string {
-  if (Array.isArray(value)) return '[' + value.map(canonicalJson).join(',') + ']';
-  if (value && typeof value === 'object') {
-    const object = value as Record<string, unknown>;
-    return '{' + Object.keys(object).sort().map((key) => JSON.stringify(key) + ':' + canonicalJson(object[key])).join(',') + '}';
-  }
-  return JSON.stringify(value);
-}
-
-function managedSubset(metadata: Record<string, unknown> | null): Record<string, unknown> {
-  const result: Record<string, unknown> = {};
-  for (const key of MANAGED_KEYS) {
-    if (metadata && Object.prototype.hasOwnProperty.call(metadata, key)) result[key] = metadata[key];
-  }
-  return result;
-}
-
-function sameManagedMetadata(
-  existing: Record<string, unknown> | null,
-  planned: Record<string, unknown>,
-): boolean {
-  return canonicalJson(managedSubset(existing)) === canonicalJson(managedSubset(planned));
-}
-
-function hasManagedMetadata(metadata: Record<string, unknown> | null): boolean {
-  return MANAGED_KEYS.some((key) => metadata && Object.prototype.hasOwnProperty.call(metadata, key));
-}
-
 function validatePlan(plan: Plan) {
   if (plan.schemaVersion !== EXPECTED_PLAN_SCHEMA || plan.issue !== 579) {
     throw new Error('Unexpected granular availability repair plan');
@@ -259,6 +221,7 @@ async function main() {
 
     let alreadyApplied = 0;
     let needsApply = 0;
+    let legacyTransitions = 0;
     const conflicts: Array<Record<string, unknown>> = [];
     const validationRows: Array<Record<string, unknown>> = [];
 
@@ -278,10 +241,11 @@ async function main() {
         throw new Error('Production identity drift for evidence item ' + row.evidence_id);
       }
 
-      const patch = candidate.recommendedEvidenceMetadataPatch;
+      const plannedPatch = candidate.recommendedEvidenceMetadataPatch;
+      const patch = evidenceQualityEffectiveGranularAvailabilityPatch(plannedPatch);
       if (
-        patch.availabilityProofCanonicalArtifactId !== EXPECTED_CANONICAL_ARTIFACT_ID
-        || patch.availabilityProofCanonicalArtifactDigest !== EXPECTED_CANONICAL_ARTIFACT_DIGEST
+        plannedPatch.availabilityProofCanonicalArtifactId !== EXPECTED_CANONICAL_ARTIFACT_ID
+        || plannedPatch.availabilityProofCanonicalArtifactDigest !== EXPECTED_CANONICAL_ARTIFACT_DIGEST
       ) {
         throw new Error('Candidate canonical proof identity drift for evidence item ' + row.evidence_id);
       }
@@ -297,27 +261,31 @@ async function main() {
         throw new Error('Planned metadata fails current granular resolver for evidence item ' + row.evidence_id);
       }
 
-      const managedPresent = hasManagedMetadata(row.evidence_metadata);
-      const identical = sameManagedMetadata(row.evidence_metadata, patch);
+      const state = classifyEvidenceQualityGranularRepairState({
+        sourceKind: row.source_kind,
+        existingMetadata: row.evidence_metadata,
+        plannedMetadata: plannedPatch,
+      });
 
-      if (identical) {
+      if (state === 'already_applied') {
         alreadyApplied += 1;
-      } else if (managedPresent) {
+      } else if (state === 'needs_apply' || state === 'legacy_session_daily_ineligible_repairable') {
+        needsApply += 1;
+        if (state === 'legacy_session_daily_ineligible_repairable') legacyTransitions += 1;
+      } else {
         conflicts.push({
           evidenceId: row.evidence_id,
           sourceDocumentId: row.source_document_id,
-          existingManagedMetadata: managedSubset(row.evidence_metadata),
-          plannedManagedMetadata: managedSubset(patch),
+          existingManagedMetadata: evidenceQualityGranularManagedSubset(row.evidence_metadata),
+          plannedManagedMetadata: evidenceQualityGranularManagedSubset(patch),
         });
-      } else {
-        needsApply += 1;
       }
 
       validationRows.push({
         evidenceId: row.evidence_id,
         sourceDocumentId: row.source_document_id,
         availabilityDate: resolvedDate,
-        state: identical ? 'already_applied' : managedPresent ? 'conflict' : 'needs_apply',
+        state,
       });
     }
 
@@ -332,7 +300,13 @@ async function main() {
     if (apply && needsApply > 0) {
       for (const row of rows.rows) {
         const candidate = candidateById.get(row.evidence_id)!;
-        if (sameManagedMetadata(row.evidence_metadata, candidate.recommendedEvidenceMetadataPatch)) continue;
+        const patch = evidenceQualityEffectiveGranularAvailabilityPatch(
+          candidate.recommendedEvidenceMetadataPatch,
+        );
+        if (evidenceQualityGranularMetadataMatches(
+          row.evidence_metadata,
+          candidate.recommendedEvidenceMetadataPatch,
+        )) continue;
 
         const updated = await client.query<{ metadata: Record<string, unknown> }>(`
           UPDATE evidence_items
@@ -340,7 +314,7 @@ async function main() {
            WHERE id=$1::uuid
            RETURNING metadata`, [
           row.evidence_id,
-          JSON.stringify(candidate.recommendedEvidenceMetadataPatch),
+          JSON.stringify(patch),
         ]);
         if (updated.rows.length !== 1) throw new Error('Failed to update evidence item ' + row.evidence_id);
 
@@ -376,7 +350,10 @@ async function main() {
       if (verify.rows.length !== EXPECTED_CANDIDATES) throw new Error('Post-apply row count mismatch');
       for (const row of verify.rows) {
         const candidate = candidateById.get(row.evidence_id)!;
-        if (!sameManagedMetadata(row.evidence_metadata, candidate.recommendedEvidenceMetadataPatch)) {
+        if (!evidenceQualityGranularMetadataMatches(
+          row.evidence_metadata,
+          candidate.recommendedEvidenceMetadataPatch,
+        )) {
           throw new Error('Post-apply metadata mismatch for evidence item ' + row.evidence_id);
         }
         const resolved = evidenceQualityExactEvidenceItemAvailabilityDate({
@@ -414,6 +391,7 @@ async function main() {
         currentRowsRevalidated: rows.rows.length,
         alreadyAppliedBeforeRun: alreadyApplied,
         neededApplyBeforeRun: needsApply,
+        legacySessionDailyTransitionsBeforeRun: legacyTransitions,
         conflicts: conflicts.length,
         safeToApply: conflicts.length === 0,
         appliedThisRun: applied,
@@ -430,6 +408,8 @@ async function main() {
         exactEvidenceIdentityRevalidated: true,
         granularResolverRevalidatedBeforeWrite: true,
         granularResolverRevalidatedAfterWrite: apply,
+        legacySessionDailyEligibilityTransitionGuarded: true,
+        staleIneligibilityReasonReplaced: true,
         outcomeUse: 'none',
         modelFitting: 'none',
         weightsChanged: false,
