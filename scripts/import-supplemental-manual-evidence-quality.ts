@@ -134,6 +134,10 @@ function normalizedBills(values: readonly string[]): string[] {
   return [...new Set(values.map((value) => value.trim().toUpperCase()).filter(Boolean))].sort();
 }
 
+function isUuid(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
+
 function candidateContext(rows: readonly EvidenceRow[]) {
   const members = new Set<string>();
   const bills = new Set<string>();
@@ -217,6 +221,8 @@ function loadBatches() {
 
     const selected = new Set(batch.selectedSourceDocumentIds);
     for (const document of batch.documents) {
+      if (!isUuid(document.sourceDocumentId)) throw new Error(`${path}: row ${document.row} has invalid source document UUID`);
+      if (!isUuid(document.sourceDocumentTextId)) throw new Error(`${path}: row ${document.row} has invalid source document text UUID`);
       if (!selected.has(document.sourceDocumentId)) throw new Error(`${path}: document missing from selected source IDs`);
       if (document.validationFailures.length > 0) throw new Error(`${path}: row ${document.row} has validation failures`);
       const minimum = evidenceQualityExtractionConfidence(document.annotation);
