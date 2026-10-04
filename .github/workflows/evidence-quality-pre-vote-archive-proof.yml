@@ -1,0 +1,65 @@
+name: Audit Evidence Quality pre-vote archive proof
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: >-
+    ${{ startsWith(github.event.comment.body, '[evidence-quality-pre-vote-archive-proof]')
+        && 'evidence-quality-pre-vote-archive-proof'
+        || format('evidence-quality-pre-vote-archive-proof-skip-{0}', github.event.comment.id) }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: >-
+      github.event.issue.number == 579 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      startsWith(github.event.comment.body, '[evidence-quality-pre-vote-archive-proof]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize frozen post-641 pre-vote inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11314137329/zip > "$RUNNER_TEMP/evidence-quality-pre-vote-candidate-inventory-v1.zip"
+          echo "b4a3f8a770a3acaa337eb93adedec1f06538f9270812d7b9eece631e084b2b5d  $RUNNER_TEMP/evidence-quality-pre-vote-candidate-inventory-v1.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/evidence-quality-pre-vote-candidate-inventory-v1"
+          unzip -q "$RUNNER_TEMP/evidence-quality-pre-vote-candidate-inventory-v1.zip" -d "$RUNNER_TEMP/evidence-quality-pre-vote-candidate-inventory-v1"
+
+      - name: Run read-only pre-vote archive proof audit
+        env:
+          VOTEPREDICT_EQ_PRE_VOTE_INVENTORY_PATH: ${{ runner.temp }}/evidence-quality-pre-vote-candidate-inventory-v1/evidence-quality-pre-vote-candidate-inventory-v1.json
+          VOTEPREDICT_EQ_PRE_VOTE_INVENTORY_ARTIFACT_ID: "11314137329"
+          VOTEPREDICT_EQ_PRE_VOTE_INVENTORY_ARTIFACT_DIGEST: "sha256:b4a3f8a770a3acaa337eb93adedec1f06538f9270812d7b9eece631e084b2b5d"
+          VOTEPREDICT_EQ_ARCHIVE_PROOF_DIR: ${{ runner.temp }}/evidence-quality-pre-vote-archive-proof
+          VOTEPREDICT_EQ_ARCHIVE_CDX_LIMIT: "500"
+          VOTEPREDICT_EQ_ARCHIVE_FETCH_LIMIT_PER_SOURCE: "12"
+          VOTEPREDICT_EQ_ARCHIVE_CONCURRENCY: "3"
+        run: node --import tsx scripts/audit-evidence-quality-pre-vote-archive-proof.ts
+
+      - name: Upload archive proof audit
+        uses: actions/upload-artifact@v7
+        with:
+          name: evidence-quality-pre-vote-archive-proof-v1
+          path: ${{ runner.temp }}/evidence-quality-pre-vote-archive-proof/*
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Remove frozen input artifact
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/evidence-quality-pre-vote-candidate-inventory-v1.zip"
