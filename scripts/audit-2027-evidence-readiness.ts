@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
+import { getQuickEvidenceProspectiveScorecard } from '../src/operations/quick-evidence-prospective-scorecard.js';
 
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
@@ -293,6 +294,8 @@ async function main() {
       FROM rows
     `, [PROSPECTIVE_CUTOFF]);
 
+    const prospectiveScorecard = await getQuickEvidenceProspectiveScorecard(client);
+
     const audit = {
       schemaVersion: 'evidence-2027-readiness-audit-v1',
       generatedAt: new Date().toISOString(),
@@ -311,6 +314,7 @@ async function main() {
         directionalExamples: supersededDirectionalExamples.rows,
       },
       manualEvidenceQuality: evidenceQuality.rows[0],
+      prospectiveScorecard,
       designFindings: {
         supersedesIsVersionLineageNotNecessarilyInvalidation: true,
         oldDirectionalStatementsShouldNotBeAssumedSemanticallyDead: true,
@@ -335,6 +339,17 @@ async function main() {
         durableEvidence: evidenceSummary.rows[0],
         supersession: supersession.rows[0],
         manualEvidenceQuality: evidenceQuality.rows[0],
+        prospectiveScorecard: {
+          status: prospectiveScorecard.status,
+          resolvedForecasts: prospectiveScorecard.resolvedForecasts,
+          selectedRevisions: prospectiveScorecard.selectedRevisions,
+          minimums: prospectiveScorecard.minimums,
+          primaryScoringAllowed: prospectiveScorecard.primaryScoringAllowed,
+          metricsSealed: prospectiveScorecard.metrics === null,
+          servingBaseline: prospectiveScorecard.metadata.servingBaseline,
+          experiment: prospectiveScorecard.metadata.experiment,
+          productionAction: prospectiveScorecard.productionAction,
+        },
         outcomeUse: 'none',
         servingChanged: false,
       },
