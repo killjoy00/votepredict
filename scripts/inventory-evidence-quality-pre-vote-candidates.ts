@@ -33,6 +33,7 @@ type CandidateRow = {
   source_url: string;
   content_sha256: string;
   source_metadata: Record<string, unknown> | null;
+  evidence_metadata: Record<string, unknown> | null;
   source_session: string | null;
   membership_id: string;
   bill_id: string;
@@ -197,6 +198,7 @@ async function main() {
              sd.source_url,
              sd.content_sha256,
              sd.metadata AS source_metadata,
+             ei.metadata AS evidence_metadata,
              ls.slug AS source_session,
              ei.membership_id::text,
              ei.bill_id::text,
@@ -227,11 +229,19 @@ async function main() {
     let rowsMissingAvailability=0;
     let rowsOutsideTargetUniverse=0;
     let rowsOnlyPostOrSameDay=0;
+    let rowsUsingEvidenceItemScopedAvailability=0;
+    let rowsUsingSourceDocumentAvailability=0;
     const missingAvailabilityBySourceKind:Record<string,number>={};
     const missingAvailabilityPotentialBySource=new Map<string,{sourceDocumentId:string;sourceKind:string;sourceUrl:string;contentSha256:string;publishedOn:string;rowKeys:Set<string>;sessions:Set<string>;targets:Map<string,{voteEventId:string;membershipId:string;billId:string;identifier:string;occurredOn:string;session:string;evidenceIds:Set<string>;excerpts:Set<string>}>}>();
 
     for(const row of result.rows){
-      const availableOn=availabilityDate(row.source_metadata);
+      const availability=resolveHistoricalEvidenceAvailability({
+        evidenceMetadata:row.evidence_metadata,
+        sourceMetadata:row.source_metadata,
+      });
+      const availableOn=availability?.availableOn ?? null;
+      if(availability?.scope==='evidence_item_excerpt') rowsUsingEvidenceItemScopedAvailability+=1;
+      if(availability?.scope==='source_document') rowsUsingSourceDocumentAvailability+=1;
       if(!availableOn){
         rowsMissingAvailability+=1;
         missingAvailabilityBySourceKind[row.source_kind]=(missingAvailabilityBySourceKind[row.source_kind]??0)+1;
@@ -426,6 +436,8 @@ async function main() {
         ordinaryPotentialNewRows:ordinaryGreedy.coveredRows,
         houseSessionDailyRecommendedSources:sessionGreedy.selected.length,
         houseSessionDailyPotentialNewRows:sessionGreedy.coveredRows,
+        rowsUsingEvidenceItemScopedAvailability,
+        rowsUsingSourceDocumentAvailability,
         bySourceKind:sourceKindSummary,
         missingAvailabilityBySourceKind,
         missingAvailabilitySourcesWithPotentialPublishedAtCoverage:missingAvailabilityPotentialBySource.size,
