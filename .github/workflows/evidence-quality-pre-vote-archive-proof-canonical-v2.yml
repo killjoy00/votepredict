@@ -1,0 +1,76 @@
+name: Freeze canonical Evidence Quality archive proof v2
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: >-
+    ${{ startsWith(github.event.comment.body, '[evidence-quality-pre-vote-archive-proof-canonical-v2]')
+        && 'evidence-quality-pre-vote-archive-proof-canonical-v2'
+        || format('evidence-quality-pre-vote-archive-proof-canonical-v2-skip-{0}', github.event.comment.id) }}
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    if: >-
+      github.event.issue.number == 579 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      startsWith(github.event.comment.body, '[evidence-quality-pre-vote-archive-proof-canonical-v2]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize canonical v1 archive proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11315431580/zip > "$RUNNER_TEMP/archive-canonical-v1.zip"
+          echo "54baa66d4c91c480ecf8b1bd9dbf3a0fd106dab80e833747312d3d1712cab7e5  $RUNNER_TEMP/archive-canonical-v1.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/archive-canonical-v1"
+          unzip -q "$RUNNER_TEMP/archive-canonical-v1.zip" -d "$RUNNER_TEMP/archive-canonical-v1"
+
+      - name: Materialize availability fallback artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11315621060/zip > "$RUNNER_TEMP/archive-availability-fallback.zip"
+          echo "ffdf5f32d007e983c5cc8dfbef20a1a29940b78249e5eb46e62d7bc230bb2286  $RUNNER_TEMP/archive-availability-fallback.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/archive-availability-fallback"
+          unzip -q "$RUNNER_TEMP/archive-availability-fallback.zip" -d "$RUNNER_TEMP/archive-availability-fallback"
+
+      - name: Freeze canonical archive proof v2
+        env:
+          VOTEPREDICT_EQ_ARCHIVE_CANONICAL_V1_PATH: ${{ runner.temp }}/archive-canonical-v1/evidence-quality-pre-vote-archive-proof-canonical-v1.json
+          VOTEPREDICT_EQ_ARCHIVE_CANONICAL_V1_RUN_ID: "37235481559"
+          VOTEPREDICT_EQ_ARCHIVE_CANONICAL_V1_ARTIFACT_ID: "11315431580"
+          VOTEPREDICT_EQ_ARCHIVE_CANONICAL_V1_ARTIFACT_DIGEST: "sha256:54baa66d4c91c480ecf8b1bd9dbf3a0fd106dab80e833747312d3d1712cab7e5"
+          VOTEPREDICT_EQ_ARCHIVE_AVAILABILITY_FALLBACK_PATH: ${{ runner.temp }}/archive-availability-fallback/evidence-quality-pre-vote-archive-availability-fallback-v1.json
+          VOTEPREDICT_EQ_ARCHIVE_AVAILABILITY_FALLBACK_RUN_ID: "37235743385"
+          VOTEPREDICT_EQ_ARCHIVE_AVAILABILITY_FALLBACK_ARTIFACT_ID: "11315621060"
+          VOTEPREDICT_EQ_ARCHIVE_AVAILABILITY_FALLBACK_ARTIFACT_DIGEST: "sha256:ffdf5f32d007e983c5cc8dfbef20a1a29940b78249e5eb46e62d7bc230bb2286"
+          VOTEPREDICT_EQ_ARCHIVE_CANONICAL_V2_DIR: ${{ runner.temp }}/evidence-quality-pre-vote-archive-proof-canonical-v2
+        run: node --import tsx scripts/freeze-evidence-quality-pre-vote-archive-proof-canonical-v2.ts
+
+      - name: Upload canonical archive proof v2
+        uses: actions/upload-artifact@v7
+        with:
+          name: evidence-quality-pre-vote-archive-proof-canonical-v2
+          path: ${{ runner.temp }}/evidence-quality-pre-vote-archive-proof-canonical-v2/*
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Remove input artifacts
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/archive-canonical-v1.zip" "$RUNNER_TEMP/archive-availability-fallback.zip"
