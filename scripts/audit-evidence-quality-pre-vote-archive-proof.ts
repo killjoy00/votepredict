@@ -13,10 +13,22 @@ import {
   type EvidenceQualityArchiveProofClassification,
 } from '../src/evidence/evidence-quality-archive-proof.js';
 
-const EXPECTED_INVENTORY_SCHEMA = 'evidence-quality-pre-vote-candidate-inventory-v1.2';
-const EXPECTED_RECOVERY_SOURCES = 92;
-const EXPECTED_POTENTIAL_NEW_ROWS = 144;
+const LEGACY_INVENTORY_SCHEMA = 'evidence-quality-pre-vote-candidate-inventory-v1.2';
+const TRAINING_INVENTORY_SCHEMA = 'evidence-quality-pre-vote-candidate-inventory-v1.4';
+const LEGACY_RECOVERY_SOURCES = 92;
+const LEGACY_POTENTIAL_NEW_ROWS = 144;
+const TRAINING_SESSION = '2021-2022';
+const TRAINING_RECOVERY_SOURCES = 21;
+const TRAINING_POTENTIAL_NEW_ROWS = 34;
 const EXPECTED_SOURCE_KIND = 'house_session_daily';
+
+type ArchiveAuditMode = 'legacy_all_recovery' | 'training_2021_2022';
+
+function archiveAuditMode(): ArchiveAuditMode {
+  const raw = process.env.VOTEPREDICT_EQ_ARCHIVE_AUDIT_MODE?.trim() || 'legacy_all_recovery';
+  if (raw === 'legacy_all_recovery' || raw === 'training_2021_2022') return raw;
+  throw new Error('Unsupported VOTEPREDICT_EQ_ARCHIVE_AUDIT_MODE: ' + raw);
+}
 const DEFAULT_CAPTURE_LIMIT = 500;
 const DEFAULT_FETCH_LIMIT_PER_SOURCE = 12;
 const DEFAULT_CONCURRENCY = 3;
@@ -53,6 +65,11 @@ type Inventory = {
     potentialNewRowsIfStoredPublishedAtWereIndependentlyValidated: number;
     candidates: FrozenCandidate[];
     interpretation: string;
+    trainingSession?: {
+      session: string;
+      sourcesWithStoredPublishedAtThatCouldAddRows: number;
+      potentialNewRowsIfStoredPublishedAtWereIndependentlyValidated: number;
+    };
   };
 };
 
@@ -320,25 +337,55 @@ async function main() {
   if (!inputPath || !outputDir) throw new Error('Frozen inventory path and output directory are required');
 
   const inventory = JSON.parse(readFileSync(inputPath, 'utf8')) as Inventory;
-  if (inventory.schemaVersion !== EXPECTED_INVENTORY_SCHEMA) {
-    throw new Error('Unexpected inventory schema: ' + inventory.schemaVersion);
+  const mode = archiveAuditMode();
+  let candidates: FrozenCandidate[];
+  let expectedPotentialRows: number;
+
+  if (mode === 'legacy_all_recovery') {
+    if (inventory.schemaVersion !== LEGACY_INVENTORY_SCHEMA) {
+      throw new Error('Unexpected legacy inventory schema: ' + inventory.schemaVersion);
+    }
+    candidates = inventory.missingAvailabilityDiagnostic.candidates;
+    if (candidates.length !== LEGACY_RECOVERY_SOURCES) {
+      throw new Error('Expected ' + LEGACY_RECOVERY_SOURCES + ' legacy recovery sources, found ' + candidates.length);
+    }
+    if (inventory.missingAvailabilityDiagnostic.sourcesWithStoredPublishedAtThatCouldAddRows !== LEGACY_RECOVERY_SOURCES) {
+      throw new Error('Legacy recovery-source count drifted from frozen diagnostic');
+    }
+    if (inventory.missingAvailabilityDiagnostic.potentialNewRowsIfStoredPublishedAtWereIndependentlyValidated !== LEGACY_POTENTIAL_NEW_ROWS) {
+      throw new Error('Legacy potential-row count drifted from frozen diagnostic');
+    }
+    expectedPotentialRows = LEGACY_POTENTIAL_NEW_ROWS;
+  } else {
+    if (inventory.schemaVersion !== TRAINING_INVENTORY_SCHEMA) {
+      throw new Error('Unexpected training inventory schema: ' + inventory.schemaVersion);
+    }
+    const training = inventory.missingAvailabilityDiagnostic.trainingSession;
+    if (
+      !training
+      || training.session !== TRAINING_SESSION
+      || training.sourcesWithStoredPublishedAtThatCouldAddRows !== TRAINING_RECOVERY_SOURCES
+      || training.potentialNewRowsIfStoredPublishedAtWereIndependentlyValidated !== TRAINING_POTENTIAL_NEW_ROWS
+    ) {
+      throw new Error('Training recovery diagnostic drifted from frozen inventory');
+    }
+    candidates = inventory.missingAvailabilityDiagnostic.candidates
+      .filter(candidate => candidate.sessions.includes(TRAINING_SESSION));
+    if (candidates.length !== TRAINING_RECOVERY_SOURCES) {
+      throw new Error('Expected ' + TRAINING_RECOVERY_SOURCES + ' training recovery sources, found ' + candidates.length);
+    }
+    if (candidates.some(candidate => candidate.potentialTargets.some(target => target.session !== TRAINING_SESSION))) {
+      throw new Error('Training recovery cohort contains a non-training target');
+    }
+    expectedPotentialRows = TRAINING_POTENTIAL_NEW_ROWS;
   }
-  const candidates = inventory.missingAvailabilityDiagnostic.candidates;
-  if (candidates.length !== EXPECTED_RECOVERY_SOURCES) {
-    throw new Error('Expected ' + EXPECTED_RECOVERY_SOURCES + ' recovery sources, found ' + candidates.length);
-  }
-  if (inventory.missingAvailabilityDiagnostic.sourcesWithStoredPublishedAtThatCouldAddRows !== EXPECTED_RECOVERY_SOURCES) {
-    throw new Error('Recovery-source count drifted from frozen diagnostic');
-  }
-  if (inventory.missingAvailabilityDiagnostic.potentialNewRowsIfStoredPublishedAtWereIndependentlyValidated !== EXPECTED_POTENTIAL_NEW_ROWS) {
-    throw new Error('Potential-row count drifted from frozen diagnostic');
-  }
+
   if (candidates.some(candidate => candidate.sourceKind !== EXPECTED_SOURCE_KIND)) {
-    throw new Error('Current frozen recovery cohort is expected to contain only house_session_daily sources');
+    throw new Error('Frozen recovery cohort is expected to contain only house_session_daily sources');
   }
 
   const uniquePotentialRows = new Set(candidates.flatMap(candidate => candidate.potentialTargets.map(rowKey)));
-  if (uniquePotentialRows.size !== EXPECTED_POTENTIAL_NEW_ROWS) {
+  if (uniquePotentialRows.size !== expectedPotentialRows) {
     throw new Error('Frozen target row-key count mismatch: ' + uniquePotentialRows.size);
   }
 
@@ -404,11 +451,14 @@ async function main() {
     issue: 579,
     frozenInventory: {
       schemaVersion: inventory.schemaVersion,
+      auditMode: mode,
+      trainingSession: mode === 'training_2021_2022' ? TRAINING_SESSION : null,
       generatedAt: inventory.generatedAt,
       artifactId: process.env.VOTEPREDICT_EQ_PRE_VOTE_INVENTORY_ARTIFACT_ID ?? null,
       artifactDigest: process.env.VOTEPREDICT_EQ_PRE_VOTE_INVENTORY_ARTIFACT_DIGEST ?? null,
       recoverySources: candidates.length,
       uniquePotentialRows: uniquePotentialRows.size,
+      expectedUniquePotentialRows: expectedPotentialRows,
     },
     summary: {
       sourcesAudited: sources.length,
