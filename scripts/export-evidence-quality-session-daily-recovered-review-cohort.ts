@@ -6,10 +6,17 @@ import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const EXPECTED_PROOF_SCHEMA = 'evidence-quality-pre-vote-archive-proof-canonical-v1';
-const EXPECTED_VERIFIED_SOURCES = 12;
-const EXPECTED_VERIFIED_TARGET_RECORDS = 18;
-const EXPECTED_VERIFIED_UNIQUE_ROWS = 16;
+const EXPECTED_VERIFIED_SOURCES = 15;
+const EXPECTED_VERIFIED_TARGET_RECORDS = 21;
+const EXPECTED_VERIFIED_UNIQUE_ROWS = 19;
 const EXPECTED_SOURCE_KIND = 'house_session_daily';
+const EXPECTED_CANONICAL_RETRY_SOURCES = 12;
+const EXPECTED_CANONICAL_RETRY_TARGETS = 18;
+const EXPECTED_CANONICAL_RETRY_ROWS = 16;
+const EXPECTED_FALLBACK_SOURCES = 3;
+const EXPECTED_FALLBACK_TARGETS = 3;
+const EXPECTED_FALLBACK_ROWS = 3;
+const EXPECTED_FALLBACK_SCHEMA = 'evidence-quality-pre-vote-archive-availability-fallback-v1';
 let secrets: string[] = [];
 
 type VerifiedProof = {
@@ -35,6 +42,7 @@ type ProofTarget = {
   frozenExcerptFingerprints: string[];
   classification: string;
   recoveredFromFirstRunAmbiguity?: boolean;
+  recoveryMethod?: 'canonical_retry' | 'availability_fallback';
   verifiedProof: VerifiedProof | null;
 };
 
@@ -60,6 +68,26 @@ type ProofArtifact = {
     };
   };
   sources: ProofSource[];
+};
+
+type FallbackResult = ProofTarget & {
+  sourceDocumentId: string;
+  sourceKind: string;
+  sourceUrl: string;
+  sourceContentSha256: string;
+};
+
+type FallbackArtifact = {
+  schemaVersion: string;
+  issue: number;
+  summary: {
+    newlyVerifiedTargetRecords: number;
+    newlyVerifiedUniquePotentialRows: number;
+    newlyVerifiedSources: number;
+    newlyVerifiedDistinctExcerpts: number;
+    remainingAmbiguousTargetRecords: number;
+  };
+  results: FallbackResult[];
 };
 
 type SourceRow = {
@@ -155,38 +183,71 @@ function normalizeExcerpt(value: string) {
 
 async function main() {
   const proofPath = process.env.VOTEPREDICT_EQ_ARCHIVE_PROOF_PATH;
+  const fallbackPath = process.env.VOTEPREDICT_EQ_ARCHIVE_FALLBACK_PATH;
   const envFile = process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
   const outputDir = process.env.VOTEPREDICT_EQ_SESSION_DAILY_REVIEW_DIR;
-  if (!proofPath || !envFile || !outputDir) throw new Error('Archive proof, production env, and output directory are required');
+  if (!proofPath || !fallbackPath || !envFile || !outputDir) {
+    throw new Error('Canonical proof, fallback proof, production env, and output directory are required');
+  }
 
   const proof = JSON.parse(readFileSync(proofPath, 'utf8')) as ProofArtifact;
+  const fallback = JSON.parse(readFileSync(fallbackPath, 'utf8')) as FallbackArtifact;
   if (proof.schemaVersion !== EXPECTED_PROOF_SCHEMA || proof.issue !== 579) {
-    throw new Error('Unexpected archive proof artifact');
+    throw new Error('Unexpected canonical archive proof artifact');
   }
-  if (proof.summary.retryRecovery.newlyVerifiedSources !== EXPECTED_VERIFIED_SOURCES) {
-    throw new Error('Recovered verified source count drifted from canonical proof artifact');
+  if (fallback.schemaVersion !== EXPECTED_FALLBACK_SCHEMA || fallback.issue !== 579) {
+    throw new Error('Unexpected availability fallback artifact');
   }
-  if (proof.summary.retryRecovery.newlyVerifiedUniquePotentialRows !== EXPECTED_VERIFIED_UNIQUE_ROWS) {
-    throw new Error('Recovered verified unique-row count drifted from canonical proof artifact');
-  }
-  if (proof.summary.retryRecovery.newlyVerifiedTargetRecords !== EXPECTED_VERIFIED_TARGET_RECORDS) {
-    throw new Error('Recovered verified target-record count drifted from canonical proof artifact');
-  }
-  if (proof.summary.retryRecovery.newlyVerifiedDistinctExcerpts !== EXPECTED_VERIFIED_SOURCES) {
-    throw new Error('Recovered distinct-excerpt count drifted from canonical proof artifact');
+  if (
+    proof.summary.retryRecovery.newlyVerifiedSources !== EXPECTED_CANONICAL_RETRY_SOURCES
+    || proof.summary.retryRecovery.newlyVerifiedUniquePotentialRows !== EXPECTED_CANONICAL_RETRY_ROWS
+    || proof.summary.retryRecovery.newlyVerifiedTargetRecords !== EXPECTED_CANONICAL_RETRY_TARGETS
+    || proof.summary.retryRecovery.newlyVerifiedDistinctExcerpts !== EXPECTED_CANONICAL_RETRY_SOURCES
+  ) {
+    throw new Error('Canonical retry-recovery counts drifted');
   }
   if (proof.summary.canonicalTargetClassificationCounts.verified_pre_vote_archive_match !== 62) {
     throw new Error('Canonical verified-target total drifted');
   }
+  if (
+    fallback.summary.newlyVerifiedSources !== EXPECTED_FALLBACK_SOURCES
+    || fallback.summary.newlyVerifiedUniquePotentialRows !== EXPECTED_FALLBACK_ROWS
+    || fallback.summary.newlyVerifiedTargetRecords !== EXPECTED_FALLBACK_TARGETS
+    || fallback.summary.newlyVerifiedDistinctExcerpts !== EXPECTED_FALLBACK_SOURCES
+    || fallback.summary.remainingAmbiguousTargetRecords !== 10
+  ) {
+    throw new Error('Availability-fallback recovery counts drifted');
+  }
 
-  const selected = proof.sources
-    .map((source) => ({
-      source,
-      targets: source.targets.filter((target) =>
+  const selectedBySource = new Map<string, { source: ProofSource; targets: ProofTarget[] }>();
+  for (const source of proof.sources) {
+    const targets = source.targets
+      .filter((target) =>
         target.classification === 'verified_pre_vote_archive_match'
-        && target.recoveredFromFirstRunAmbiguity === true),
-    }))
-    .filter((entry) => entry.targets.length > 0)
+        && target.recoveredFromFirstRunAmbiguity === true)
+      .map((target) => ({ ...target, recoveryMethod: 'canonical_retry' as const }));
+    if (targets.length > 0) {
+      selectedBySource.set(source.sourceDocumentId, { source, targets });
+    }
+  }
+  for (const result of fallback.results.filter((row) => row.classification === 'verified_pre_vote_archive_match')) {
+    if (selectedBySource.has(result.sourceDocumentId)) {
+      throw new Error('Recovery source unexpectedly overlaps canonical retry and availability fallback: ' + result.sourceDocumentId);
+    }
+    const source: ProofSource = {
+      sourceDocumentId: result.sourceDocumentId,
+      sourceKind: result.sourceKind,
+      sourceUrl: result.sourceUrl,
+      sourceContentSha256: result.sourceContentSha256,
+      storedPublishedOnDiagnosticOnly: '',
+      targets: [],
+    };
+    selectedBySource.set(result.sourceDocumentId, {
+      source,
+      targets: [{ ...result, recoveredFromFirstRunAmbiguity: true, recoveryMethod: 'availability_fallback' }],
+    });
+  }
+  const selected = [...selectedBySource.values()]
     .sort((a, b) => a.source.sourceDocumentId.localeCompare(b.source.sourceDocumentId));
 
   if (selected.length !== EXPECTED_VERIFIED_SOURCES) throw new Error('Selected verified source count mismatch');
@@ -336,6 +397,7 @@ async function main() {
           evidenceIds: [...target.evidenceIds].sort(),
           frozenExcerpts: target.frozenExcerpts.map(normalizeExcerpt),
           archiveProof: target.verifiedProof,
+          recoveryMethod: target.recoveryMethod ?? 'canonical_retry',
         };
       });
 
@@ -353,6 +415,7 @@ async function main() {
         frozenExcerpts,
         verifiedTargets: reviewedTargets,
         recoveredFromFirstRunAmbiguity: true,
+        recoveryMethods: sortedUnique(targets.map((target) => target.recoveryMethod ?? 'canonical_retry')),
         annotationStatus: 'pending_manual_or_ai_semantic_review',
       };
     });
@@ -378,12 +441,20 @@ async function main() {
       schemaVersion: 'evidence-quality-session-daily-recovered-review-cohort-v1',
       generatedAt: new Date().toISOString(),
       issue: 579,
-      sourceProofArtifact: {
-        id: Number(process.env.VOTEPREDICT_EQ_ARCHIVE_PROOF_ARTIFACT_ID ?? 0) || null,
-        digest: process.env.VOTEPREDICT_EQ_ARCHIVE_PROOF_ARTIFACT_DIGEST ?? null,
-        runId: Number(process.env.VOTEPREDICT_EQ_ARCHIVE_PROOF_RUN_ID ?? 0) || null,
+      sourceProofArtifacts: {
+        canonical: {
+          id: Number(process.env.VOTEPREDICT_EQ_ARCHIVE_PROOF_ARTIFACT_ID ?? 0) || null,
+          digest: process.env.VOTEPREDICT_EQ_ARCHIVE_PROOF_ARTIFACT_DIGEST ?? null,
+          runId: Number(process.env.VOTEPREDICT_EQ_ARCHIVE_PROOF_RUN_ID ?? 0) || null,
+          schemaVersion: proof.schemaVersion,
+        },
+        availabilityFallback: {
+          id: Number(process.env.VOTEPREDICT_EQ_ARCHIVE_FALLBACK_ARTIFACT_ID ?? 0) || null,
+          digest: process.env.VOTEPREDICT_EQ_ARCHIVE_FALLBACK_ARTIFACT_DIGEST ?? null,
+          runId: Number(process.env.VOTEPREDICT_EQ_ARCHIVE_FALLBACK_RUN_ID ?? 0) || null,
+          schemaVersion: fallback.schemaVersion,
+        },
       },
-      sourceProofSchema: proof.schemaVersion,
       cohortIdentitySha256,
       documentsExpected: documents.length,
       uniqueVerifiedPotentialRows: uniqueRowKeys.size,
@@ -401,6 +472,8 @@ async function main() {
         archiveAvailabilityAlreadyProven: true,
         recoveredTargetsOnly: true,
         firstRunAmbiguousRequired: true,
+        canonicalRetryRecoveredTargets: EXPECTED_CANONICAL_RETRY_TARGETS,
+        availabilityFallbackRecoveredTargets: EXPECTED_FALLBACK_TARGETS,
         archiveProofDoesNotImplyDirectionality: true,
         sponsorshipAndProcedureNotDirectionalByThemselves: true,
         directionalStanceRequiresExplicitAttributablePositionOrQuote: true,
