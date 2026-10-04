@@ -77,7 +77,6 @@ type BillRow = {
   bill_id: string;
   identifier: string;
   session: string;
-  chamber: string;
 };
 
 type EvidenceRow = {
@@ -234,11 +233,9 @@ async function main() {
       client.query<BillRow>(`
         SELECT b.id::text AS bill_id,
                b.identifier,
-               s.slug AS session,
-               c.slug AS chamber
+               s.slug AS session
           FROM bills b
           JOIN legislative_sessions s ON s.id=b.session_id
-          JOIN chambers c ON c.id=b.chamber_id
          WHERE b.id = ANY($1::uuid[])
          ORDER BY b.id
       `, [billIds]),
@@ -322,7 +319,6 @@ async function main() {
           memberChamber: membership.chamber,
           billId: target.billId,
           billIdentifier: bill.identifier,
-          billChamber: bill.chamber,
           evidenceIds: [...target.evidenceIds].sort(),
           frozenExcerpts: target.frozenExcerpts.map(normalizeExcerpt),
           archiveProof: target.verifiedProof,
