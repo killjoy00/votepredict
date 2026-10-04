@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
@@ -176,6 +175,7 @@ function loadDocuments(): ImportDocument[] {
 
   for (const path of BATCH_PATHS) {
     const batch = JSON.parse(readFileSync(resolve(path), 'utf8')) as Batch;
+    if (batch.schemaVersion !== 'evidence-quality-session-daily-semantic-review-v1') throw new Error(path + ': semantic review schema mismatch');
     if (batch.evidenceQualitySchemaVersion !== EVIDENCE_QUALITY_SCHEMA_VERSION) throw new Error(path + ': Evidence Quality schema mismatch');
     if (batch.evidenceQualityPromptVersion !== EVIDENCE_QUALITY_PROMPT_VERSION) throw new Error(path + ': Evidence Quality prompt mismatch');
     if (batch.provider !== 'OpenAI' || batch.model !== MODEL) throw new Error(path + ': unexpected review provider/model');
