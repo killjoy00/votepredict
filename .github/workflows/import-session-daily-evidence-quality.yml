@@ -5,7 +5,6 @@ on:
     types: [created, edited]
 
 permissions:
-  actions: write
   contents: read
 
 concurrency:
@@ -28,16 +27,6 @@ jobs:
       VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
       VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
     steps:
-      - name: Delete unsafe prior preflight artifact
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          for artifact_id in 11316878308 11317539113; do
-            gh api --method DELETE /repos/${{ github.repository }}/actions/artifacts/$artifact_id || true
-          done
-
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with: { node-version: 22, cache: npm }
