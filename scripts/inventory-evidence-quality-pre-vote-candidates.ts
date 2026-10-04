@@ -238,7 +238,7 @@ async function main() {
     let rowsOutsideTargetUniverse=0;
     let rowsOnlyPostOrSameDay=0;
     const missingAvailabilityBySourceKind:Record<string,number>={};
-    const missingAvailabilityPotentialBySource=new Map<string,{sourceDocumentId:string;sourceKind:string;sourceUrl:string;publishedOn:string;rowKeys:Set<string>;sessions:Set<string>}>();
+    const missingAvailabilityPotentialBySource=new Map<string,{sourceDocumentId:string;sourceKind:string;sourceUrl:string;publishedOn:string;rowKeys:Set<string>;sessions:Set<string>;targets:Map<string,{voteEventId:string;membershipId:string;billId:string;identifier:string;occurredOn:string;session:string}>}>();
 
     for(const row of result.rows){
       const availableOn=availabilityDate(row.source_metadata);
@@ -258,9 +258,11 @@ async function main() {
               publishedOn,
               rowKeys:new Set<string>(),
               sessions:new Set<string>(),
+              targets:new Map(),
             };
             current.rowKeys.add(rowKey);
             current.sessions.add(target.session);
+            current.targets.set(rowKey,{voteEventId:target.voteEventId,membershipId:target.membershipId,billId:target.billId,identifier:target.identifier,occurredOn:target.occurredOn,session:target.session});
             missingAvailabilityPotentialBySource.set(row.source_document_id,current);
           }
         }
@@ -355,7 +357,7 @@ async function main() {
     }
 
     const report={
-      schemaVersion:'evidence-quality-pre-vote-candidate-inventory-v1.1',
+      schemaVersion:'evidence-quality-pre-vote-candidate-inventory-v1.2',
       generatedAt:new Date().toISOString(),
       issue:579,
       targetUniverse:{rows:targets.length,currentCoveredRows:covered.size},
@@ -372,6 +374,7 @@ async function main() {
           publishedOn:candidate.publishedOn,
           potentialNewRows:candidate.rowKeys.size,
           sessions:[...candidate.sessions].sort(),
+          potentialTargets:[...candidate.targets.values()].sort((a,b)=>a.occurredOn.localeCompare(b.occurredOn)||a.voteEventId.localeCompare(b.voteEventId)||a.membershipId.localeCompare(b.membershipId)),
         })).sort((a,b)=>b.potentialNewRows-a.potentialNewRows||a.publishedOn.localeCompare(b.publishedOn)||a.sourceDocumentId.localeCompare(b.sourceDocumentId)),
         interpretation:'diagnostic only: evidence_items.published_at is not promoted to historical availability proof without independent provenance validation',
       },
