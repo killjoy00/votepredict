@@ -281,6 +281,7 @@ async function main() {
       const candidateBillIdentifiers = sortedUnique(targets.map((target) => {
         const bill = billById.get(target.billId);
         if (!bill) throw new Error('Bill missing: ' + target.billId);
+        if (bill.session !== target.session) throw new Error('Bill session mismatch for ' + target.rowKey);
         if (bill.identifier.toUpperCase().replace(/\s+/g, '') !== target.identifier.toUpperCase().replace(/\s+/g, '')) {
           throw new Error('Bill identifier mismatch for ' + target.rowKey);
         }
