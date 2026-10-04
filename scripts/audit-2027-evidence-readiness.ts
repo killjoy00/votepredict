@@ -69,6 +69,7 @@ async function main() {
   const client = await pool.connect();
   try {
     await client.query('BEGIN READ ONLY');
+    await client.query("SET LOCAL statement_timeout = '60s'");
 
     const evidenceSummary = await client.query(`
       WITH superseded AS (

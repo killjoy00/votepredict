@@ -10,7 +10,7 @@ permissions:
 concurrency:
   group: >-
     ${{ startsWith(github.event.comment.body, '[evidence-2027-readiness-audit]')
-        && 'evidence-2027-readiness-audit'
+        && 'evidence-2027-readiness-audit-optimized-v1'
         || format('evidence-2027-readiness-audit-skip-{0}', github.event.comment.id) }}
   cancel-in-progress: false
 
