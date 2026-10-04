@@ -1,0 +1,92 @@
+name: Import Session Daily excerpt Evidence Quality v1
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: >-
+    ${{ startsWith(github.event.comment.body, '[evidence-quality-session-daily-import]')
+        && 'evidence-quality-session-daily-import'
+        || format('evidence-quality-session-daily-import-skip-{0}', github.event.comment.id) }}
+  cancel-in-progress: false
+
+jobs:
+  import:
+    if: >-
+      github.event.issue.number == 579 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      startsWith(github.event.comment.body, '[evidence-quality-session-daily-import]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+
+      - name: Read production environment privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+
+      - name: Require exact Evidence Quality migration state
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/apply-evidence-quality-migration.ts
+
+      - name: Validate archive-verified excerpt reviews against production
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/session-daily-import-audit"
+          node --import tsx scripts/import-session-daily-evidence-quality.ts | tee "$RUNNER_TEMP/session-daily-import-audit/preflight.log"
+
+      - name: Import 32 reviewed excerpt annotations atomically
+        if: startsWith(github.event.comment.body, '[evidence-quality-session-daily-import] apply')
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --import tsx scripts/import-session-daily-evidence-quality.ts --apply | tee "$RUNNER_TEMP/session-daily-import-audit/apply.log"
+
+      - name: Verify imported Session Daily excerpt cohort
+        if: startsWith(github.event.comment.body, '[evidence-quality-session-daily-import] apply')
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --import tsx scripts/import-session-daily-evidence-quality.ts | tee "$RUNNER_TEMP/session-daily-import-audit/verify.log"
+
+      - name: Upload import audit
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: evidence-quality-session-daily-excerpt-import-audit-v1
+          path: ${{ runner.temp }}/session-daily-import-audit/*
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Remove temporary credentials and logs
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PYTHON'
+          import os
+          from pathlib import Path
+          for name in ['votepredict-production.env','vercel-pull.log']:
+              Path(os.environ['RUNNER_TEMP'],name).unlink(missing_ok=True)
+          PYTHON
