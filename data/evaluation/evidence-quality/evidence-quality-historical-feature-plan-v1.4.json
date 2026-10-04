@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "evidence-quality-historical-feature-plan-v1.4",
+  "issue": 579,
+  "purpose": "Freeze an outcome-blind, strict-as-of feature substrate from the established manual full-text corpus plus the guarded archive-verified Session Daily excerpt annotations before any retrospective model fitting.",
+  "targetUniverse": {
+    "sourceArtifactId": 11252079484,
+    "sourceArtifactDigest": "sha256:22e8944cffc6fda553b05ea6ad5e92400d35fc01d83177efdd5d1204dd3c5a6f",
+    "sourceMatrixSchema": "historical-as-of-matrix-v1",
+    "sourceMatrixCanonicalNdjsonSha256": "c97ac50c8c89ae0548cc48bed65a42c22f332e2977b33173619c9e258c09a4d0",
+    "sourceMatrixGzipSha256": "d8a9735a514f427508a7a37303ba312dcac3f929a51aa05a1aba32a76b384637",
+    "rows": 135457,
+    "events": 1339,
+    "memberships": 611,
+    "rowKeySha256": "3aa47101f9e4a848e293fdaa89ef853919d49826b68ae90960370c5c19e9df72",
+    "chronology": {
+      "trainSession": "2021-2022",
+      "validationSession": "2023-2024",
+      "descriptiveSession": "2025-2026"
+    }
+  },
+  "annotationCorpus": {
+    "documents": 258,
+    "schemaVersion": "evidence-quality-v1",
+    "promptVersion": "evidence-quality-prompt-v1",
+    "provider": "manual-openai",
+    "baselineVerifiedFullText": {
+      "documents": 226,
+      "expectedUniqueSemanticSignatures": 180,
+      "contentMode": "verified_full_text",
+      "baselineReviewPrs": [626, 627, 628],
+      "baselineProductionSyncRunId": 37222941536,
+      "postReviewDedupRunId": 37223070376,
+      "postReviewDedupArtifactId": 11310867507,
+      "postReviewDedupArtifactDigest": "sha256:16ec0c22cfd3303d6e2ffd73dd5c511a514c58b636cb6b6c5b732f0aacd66b8e"
+    },
+    "sessionDailyArchiveVerifiedExcerpt": {
+      "documents": 32,
+      "expectedUniqueSemanticSignatures": 32,
+      "contentMode": "excerpt_only",
+      "sourceDocumentTextId": null,
+      "sourceKind": "house_session_daily",
+      "importVersion": "session-daily-excerpt-evidence-quality-import-v1",
+      "importPr": 661,
+      "importCommit": "a8cdefc0e2d28297eba77039ebd1b22a7e7eb38c",
+      "applyRunId": 37242028266,
+      "applyArtifactId": 11317539113,
+      "applyArtifactDigest": "sha256:83d89fdc204c5ae897bdd164c43fc88e55bc7dea2899326b2f1098d918b89327",
+      "excludedHumanAdjudicationRows": 5,
+      "targetMemberDirectionalClaims": 20,
+      "exactMemberBillDirectionalClaims": 10,
+      "memberIssueDirectionalClaims": 10,
+      "thirdPartyBillOnlyDirectionalClaims": 1
+    }
+  },
+  "featureNames": [
+    "exactDirectionalAvailable",
+    "exactSupportSignatures",
+    "exactOpposeSignatures",
+    "exactMixedSignatures",
+    "exactDirectQuoteSupportSignatures",
+    "exactDirectQuoteOpposeSignatures",
+    "exactExplicitSupportSignatures",
+    "exactExplicitOpposeSignatures",
+    "exactSupportMaxConfidence",
+    "exactOpposeMaxConfidence",
+    "exactMixedMaxConfidence",
+    "exactDirectionalConflict"
+  ],
+  "policies": {
+    "outcomeUseDuringFeatureConstruction": "none",
+    "strictDateExclusiveAvailability": true,
+    "baselineAvailabilitySource": "exact evidence_items.metadata excerpt proof when claim/context identity and supporting excerpt match; source_documents.metadata fallback",
+    "sessionDailyExcerptAvailabilitySource": "exact evidence_items.metadata excerpt proof only; source_documents.metadata fallback forbidden",
+    "semanticDeduplication": "one signal per semanticFingerprint + membershipId + billId; repeated captures do not multiply counts",
+    "exactBillMapping": "prefer matching evidence_items membership_id + bill_id; otherwise resolve only reviewed claim identities by unique exact match within source session/chamber; never invent or infer a bill identifier",
+    "memberIssuePolicy": "member_issue evidence remains bill-free; membership may be resolved by unique exact reviewed member identity in the source session/chamber, with no bill inference",
+    "legacyQuickEvidenceV2": "excluded/quarantined",
+    "quickEvidenceV3": "excluded/evaluation-only",
+    "servingAction": "none",
+    "modelWeightChange": "none",
+    "modelFitting": "none",
+    "evidenceItemScopedProofNeverPromotedSourceWide": true
+  },
+  "supersedes": "evidence-quality-historical-feature-plan-v1.3",
+  "v14Change": {
+    "reason": "Admit only the 32 production-imported Session Daily annotations from #661 as archive-verified excerpt evidence while preserving their weaker content identity boundary.",
+    "historicalConsumerGate": {
+      "baselineVerifiedFullTextDocuments": 226,
+      "sessionDailyArchiveVerifiedExcerptDocuments": 32,
+      "sessionDailyImportVersion": "session-daily-excerpt-evidence-quality-import-v1",
+      "sessionDailyRequiredSourceKind": "house_session_daily",
+      "sessionDailyRequiredContentMode": "excerpt_only",
+      "sessionDailyRequiredSourceDocumentTextId": null,
+      "sessionDailyRequiredHistoricalAvailabilityScope": "evidence_item_excerpt",
+      "sessionDailySourceAvailabilityFallback": false
+    },
+    "outcomeUse": "none",
+    "modelFitting": "none",
+    "servingChanged": false
+  },
+  "granularAvailabilityCorrection": {
+    "reason": "Evidence-item-scoped archive proof remains attached to the exact durable evidence item/excerpt. A proven excerpt must not promote unrelated content from the same later-fetched source document.",
+    "sourcePlanRunId": 37237103992,
+    "sourcePlanArtifactId": 11315632754,
+    "sourcePlanArtifactDigest": "sha256:6b1f7bfb91cdfe79994cdc87314c3efd505610a1effe81cec8630341860da5e6",
+    "plannedExactEvidenceItems": 49,
+    "sourceWidePromotionsAuthorized": 0,
+    "outcomeUse": "none"
+  }
+}
