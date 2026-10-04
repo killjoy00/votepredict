@@ -159,7 +159,7 @@ async function main() {
   try {
     await client.query('BEGIN READ ONLY');
 
-    const params = [EVIDENCE_QUALITY_TEXT_VERSION, CUTOFF, [...EVIDENCE_QUALITY_SOURCE_KINDS], priorIds, PREVIOUS_CUTOFF] as const;
+    const params = [EVIDENCE_QUALITY_TEXT_VERSION, CUTOFF, [...EVIDENCE_QUALITY_SOURCE_KINDS], priorIds, PREVIOUS_CUTOFF];
     const featureCte = `
       WITH document_features AS (
         SELECT
