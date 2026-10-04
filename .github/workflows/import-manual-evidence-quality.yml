@@ -8,7 +8,10 @@ permissions:
   contents: read
 
 concurrency:
-  group: evidence-quality-v1-manual-import
+  group: >-
+    ${{ startsWith(github.event.comment.body, '[evidence-quality-manual-import]')
+        && 'evidence-quality-v1-manual-import'
+        || format('evidence-quality-v1-manual-import-skip-{0}', github.event.comment.id) }}
   cancel-in-progress: false
 
 jobs:

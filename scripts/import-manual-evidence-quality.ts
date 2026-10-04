@@ -156,6 +156,15 @@ function normalizeText(value: string): string {
   return value.replace(/\s+/g, ' ').trim().toLowerCase();
 }
 
+function canonicalJson(value: unknown): string {
+  if (Array.isArray(value)) return '[' + value.map((item) => canonicalJson(item)).join(',') + ']';
+  if (value && typeof value === 'object') {
+    const object = value as Record<string, unknown>;
+    return '{' + Object.keys(object).sort().map((key) => JSON.stringify(key) + ':' + canonicalJson(object[key])).join(',') + '}';
+  }
+  return JSON.stringify(value);
+}
+
 function semanticFingerprint(document: ManualDocument): string {
   const claims = document.annotation.claims.map((claim) => ({
     memberNames: normalizedMembers(claim.memberNames),
@@ -358,7 +367,7 @@ async function main() {
       if (!row) throw new Error(`Row ${document.row}: imported annotation missing`);
       if (row.source_document_text_id !== document.sourceDocumentTextId) throw new Error(`Row ${document.row}: imported source text ID mismatch`);
       if (row.classifier_model !== document.model) throw new Error(`Row ${document.row}: imported model metadata mismatch`);
-      if (JSON.stringify(row.annotation) !== JSON.stringify(document.annotation)) throw new Error(`Row ${document.row}: imported annotation differs from repository artifact`);
+      if (canonicalJson(row.annotation) !== canonicalJson(document.annotation)) throw new Error(`Row ${document.row}: imported annotation differs from repository artifact`);
       if (Math.abs(row.extraction_confidence - document.calculatedExtractionConfidence) > 1e-12) {
         throw new Error(`Row ${document.row}: imported extraction confidence differs`);
       }
