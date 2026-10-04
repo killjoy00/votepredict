@@ -17,7 +17,7 @@ concurrency:
 jobs:
   audit:
     if: >-
-      github.event.issue.number == 579 &&
+      (github.event.issue.number == 579 || github.event.issue.number == 287) &&
       github.event.comment.user.login == 'killjoy00' &&
       startsWith(github.event.comment.body, '[evidence-2027-readiness-audit]')
     runs-on: ubuntu-latest
