@@ -102,7 +102,7 @@ async function main() {
 
   const verified = allTargets.filter((target) => target.classification === 'verified_pre_vote_archive_match');
   const ambiguous = allTargets.filter((target) => target.classification === 'ambiguous_snapshot');
-  const fallbackVerified = allTargets.filter((target) => target.canonicalAvailabilityStage === 'availability_fallback');
+  const fallbackVerified = allTargets.filter((target) =>\n    (target as Record<string, unknown>).canonicalAvailabilityStage === 'availability_fallback');
 
   const verifiedUniqueRows = new Set(verified.map((target) => target.rowKey));
   const verifiedSources = new Set(verified.map((target) => target.sourceDocumentId));
