@@ -33,6 +33,7 @@ type AnnotationRow = {
       specificity: string;
       explicitness: string;
       normalizedClaim: string;
+      supportingExcerpt: string;
       extractionConfidence: number;
     }>;
   };
@@ -320,17 +321,9 @@ async function main() {
             contexts: contextsBySource.get(row.source_document_id) ?? [],
             membershipId: match.membership_id!,
             billId: match.bill_id!,
-            supportingExcerpt: claim.normalizedClaim ? claim.normalizedClaim : '',
+            supportingExcerpt: claim.supportingExcerpt,
           });
-          const supportingExcerptAvailability = exactClaimAvailabilityDate({
-            source: row,
-            contexts: contextsBySource.get(row.source_document_id) ?? [],
-            membershipId: match.membership_id!,
-            billId: match.bill_id!,
-            supportingExcerpt: (claim as typeof claim & { supportingExcerpt?: string }).supportingExcerpt ?? '',
-          });
-          const effectiveAvailableOn = supportingExcerptAvailability ?? claimAvailableOn;
-          if (effectiveAvailableOn) signal.availableDates.add(effectiveAvailableOn);
+          if (claimAvailableOn) signal.availableDates.add(claimAvailableOn);
           signal.stances.add(claim.stance);
           exactSignals.set(key, signal);
         }
