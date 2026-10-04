@@ -20,10 +20,10 @@ const EXPECTED_EVENTS = 1339;
 const EXPECTED_MEMBERSHIPS = 611;
 const EXPECTED_ROW_KEY_SHA256 = '3aa47101f9e4a848e293fdaa89ef853919d49826b68ae90960370c5c19e9df72';
 const MANUAL_PROVIDER = 'manual-openai';
-const MATRIX_SCHEMA = 'evidence-quality-historical-feature-matrix-v1.1';
-const SIGNAL_SCHEMA = 'evidence-quality-historical-exact-signals-v1.1';
-const ISSUE_SCHEMA = 'evidence-quality-historical-member-issue-signals-v1.1';
-const PLAN_PATH = 'data/evaluation/evidence-quality/evidence-quality-historical-feature-plan-v1.1.json';
+const MATRIX_SCHEMA = 'evidence-quality-historical-feature-matrix-v1.2';
+const SIGNAL_SCHEMA = 'evidence-quality-historical-exact-signals-v1.2';
+const ISSUE_SCHEMA = 'evidence-quality-historical-member-issue-signals-v1.2';
+const PLAN_PATH = 'data/evaluation/evidence-quality/evidence-quality-historical-feature-plan-v1.2.json';
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 let secrets: string[] = [];
@@ -34,6 +34,8 @@ type AnnotationRow = {
   source_document_text_id: string;
   source_kind: string;
   source_url: string;
+  source_session_id: string | null;
+  source_chamber_id: string | null;
   source_metadata: Record<string, unknown> | null;
   normalized_text: string;
   extraction_version: string;
@@ -74,6 +76,20 @@ type ContextRow = {
   bill_identifier: string | null;
 };
 
+type MembershipIdentityRow = {
+  membership_id: string;
+  session_id: string;
+  chamber_id: string;
+  member_name: string;
+  member_external_key: string;
+};
+
+type BillIdentityRow = {
+  bill_id: string;
+  session_id: string;
+  identifier: string;
+};
+
 type TargetRow = {
   voteEventId: string;
   membershipId: string;
@@ -104,6 +120,7 @@ type ExactAccumulator = {
   mixedConfidence: number;
   claimTypes: Set<string>;
   explicitness: Set<string>;
+  mappingMethods: Set<string>;
 };
 
 type IssueAccumulator = {
@@ -115,6 +132,7 @@ type IssueAccumulator = {
   claimTypes: Set<string>;
   topics: Set<string>;
   maxConfidence: number;
+  mappingMethods: Set<string>;
 };
 
 function mask(value: string) {
@@ -183,6 +201,66 @@ function normalizeBill(value: string) {
   return value.replace(/\s+/g, '').trim().toUpperCase();
 }
 
+function uniqueValue(values: readonly string[]): string | null {
+  const unique = [...new Set(values)];
+  return unique.length === 1 ? unique[0] : null;
+}
+
+function resolveMembershipIdentity(input: {
+  source: AnnotationRow;
+  claimMemberNames: readonly string[];
+  contexts: readonly ContextRow[];
+  membershipsBySession: ReadonlyMap<string, readonly MembershipIdentityRow[]>;
+}): { membershipId: string; method: string } | null {
+  const normalizedNames = new Set(input.claimMemberNames.map(normalizeName));
+  const direct = uniqueValue(input.contexts
+    .filter((context) => context.membership_id && context.member_name && normalizedNames.has(normalizeName(context.member_name)))
+    .map((context) => context.membership_id!));
+  if (direct) return { membershipId: direct, method: 'evidence_item_membership' };
+
+  if (input.claimMemberNames.length !== 1 || !input.source.source_session_id) return null;
+  const targetName = normalizeName(input.claimMemberNames[0]);
+  let candidates = [...(input.membershipsBySession.get(input.source.source_session_id) ?? [])];
+  if (input.source.source_chamber_id) {
+    candidates = candidates.filter((candidate) => candidate.chamber_id === input.source.source_chamber_id);
+  }
+
+  const externalKey = stringMeta(input.source.source_metadata, 'memberExternalKey');
+  if (externalKey) {
+    const byExternalKey = candidates.filter((candidate) =>
+      candidate.member_external_key === externalKey && normalizeName(candidate.member_name) === targetName);
+    if (byExternalKey.length === 1) {
+      return { membershipId: byExternalKey[0].membership_id, method: 'source_member_external_key' };
+    }
+    if (byExternalKey.length > 1) return null;
+  }
+
+  const byName = candidates.filter((candidate) => normalizeName(candidate.member_name) === targetName);
+  return byName.length === 1
+    ? { membershipId: byName[0].membership_id, method: 'source_session_exact_member_name' }
+    : null;
+}
+
+function resolveBillIdentity(input: {
+  source: AnnotationRow;
+  billIdentifier: string;
+  contexts: readonly ContextRow[];
+  billsBySession: ReadonlyMap<string, readonly BillIdentityRow[]>;
+}): { billId: string; method: string } | null {
+  const normalized = normalizeBill(input.billIdentifier);
+  const direct = uniqueValue(input.contexts
+    .filter((context) => context.bill_id && context.bill_identifier && normalizeBill(context.bill_identifier) === normalized)
+    .map((context) => context.bill_id!));
+  if (direct) return { billId: direct, method: 'evidence_item_bill' };
+
+  if (!input.source.source_session_id) return null;
+  const candidates = (input.billsBySession.get(input.source.source_session_id) ?? [])
+    .filter((candidate) => normalizeBill(candidate.identifier) === normalized);
+  return candidates.length === 1
+    ? { billId: candidates[0].bill_id, method: 'source_session_exact_bill_identifier' }
+    : null;
+}
+
 function validDateOnly(value: string | null): value is string {
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const timestamp = Date.parse(value + 'T00:00:00.000Z');
@@ -228,7 +306,7 @@ async function main() {
   if (!envFile || !targetPath || !outputDir) throw new Error('Production env, target universe, and output directory are required');
 
   const plan = JSON.parse(readFileSync(resolve(PLAN_PATH), 'utf8')) as { schemaVersion: string; featureNames: string[] };
-  if (plan.schemaVersion !== 'evidence-quality-historical-feature-plan-v1.1'
+  if (plan.schemaVersion !== 'evidence-quality-historical-feature-plan-v1.2'
       || canonicalJson(plan.featureNames) !== canonicalJson([...EVIDENCE_QUALITY_HISTORICAL_FEATURES])) {
     throw new Error('Evidence Quality historical feature plan drifted');
   }
@@ -257,6 +335,8 @@ async function main() {
              eqa.source_document_text_id::text,
              sd.source_kind,
              sd.source_url,
+             sd.session_id::text AS source_session_id,
+             sd.chamber_id::text AS source_chamber_id,
              sd.metadata AS source_metadata,
              sdt.normalized_text,
              sdt.extraction_version,
@@ -321,6 +401,45 @@ async function main() {
       contextsBySource.set(row.source_document_id, values);
     }
 
+    const sourceSessionIds = [...new Set(annotationResult.rows
+      .map((row) => row.source_session_id)
+      .filter((value): value is string => Boolean(value)))];
+
+    const membershipIdentityResult = sourceSessionIds.length === 0
+      ? { rows: [] as MembershipIdentityRow[] }
+      : await client.query<MembershipIdentityRow>(`
+          SELECT m.id::text AS membership_id,
+                 m.session_id::text,
+                 m.chamber_id::text,
+                 l.name AS member_name,
+                 l.external_key AS member_external_key
+            FROM memberships m
+            JOIN legislators l ON l.id=m.legislator_id
+           WHERE m.session_id = ANY($1::uuid[])
+           ORDER BY m.session_id,m.chamber_id,l.normalized_name,m.id`, [sourceSessionIds]);
+    const membershipsBySession = new Map<string, MembershipIdentityRow[]>();
+    for (const identity of membershipIdentityResult.rows) {
+      const values = membershipsBySession.get(identity.session_id) ?? [];
+      values.push(identity);
+      membershipsBySession.set(identity.session_id, values);
+    }
+
+    const billIdentityResult = sourceSessionIds.length === 0
+      ? { rows: [] as BillIdentityRow[] }
+      : await client.query<BillIdentityRow>(`
+          SELECT b.id::text AS bill_id,
+                 b.session_id::text,
+                 b.identifier
+            FROM bills b
+           WHERE b.session_id = ANY($1::uuid[])
+           ORDER BY b.session_id,b.identifier,b.id`, [sourceSessionIds]);
+    const billsBySession = new Map<string, BillIdentityRow[]>();
+    for (const identity of billIdentityResult.rows) {
+      const values = billsBySession.get(identity.session_id) ?? [];
+      values.push(identity);
+      billsBySession.set(identity.session_id, values);
+    }
+
     const exact = new Map<string, ExactAccumulator>();
     const issues = new Map<string, IssueAccumulator>();
     let directionalClaims = 0;
@@ -328,6 +447,8 @@ async function main() {
     let memberIssueDirectionalClaims = 0;
     let exactClaimsWithoutDeterministicMapping = 0;
     let memberIssueClaimsWithoutDeterministicMapping = 0;
+    let exactClaimsUsingSourceSessionIdentityResolution = 0;
+    let memberIssueClaimsUsingSourceSessionIdentityResolution = 0;
 
     for (const row of annotationResult.rows) {
       const fingerprint = stringMeta(row.annotation_metadata, 'semanticFingerprint')!;
@@ -342,22 +463,33 @@ async function main() {
 
         if (memberNames.size > 0 && billIdentifiers.size > 0) {
           exactDirectionalClaims += 1;
-          const matches = contexts.filter((context) =>
-            Boolean(context.membership_id && context.bill_id && context.member_name && context.bill_identifier)
-            && memberNames.has(normalizeName(context.member_name!))
-            && billIdentifiers.has(normalizeBill(context.bill_identifier!)));
-          const pairs = new Map<string, ContextRow>();
-          for (const match of matches) pairs.set(match.membership_id + '|' + match.bill_id, match);
-          if (pairs.size === 0) {
+          const membership = resolveMembershipIdentity({
+            source: row,
+            claimMemberNames: claim.memberNames,
+            contexts,
+            membershipsBySession,
+          });
+          const resolvedBills = claim.billIdentifiers.map((billIdentifier) => ({
+            billIdentifier,
+            resolution: resolveBillIdentity({ source: row, billIdentifier, contexts, billsBySession }),
+          })).filter((entry): entry is { billIdentifier: string; resolution: { billId: string; method: string } } =>
+            entry.resolution !== null);
+
+          if (!membership || resolvedBills.length === 0) {
             exactClaimsWithoutDeterministicMapping += 1;
             continue;
           }
-          for (const match of pairs.values()) {
-            const key = fingerprint + '|' + match.membership_id + '|' + match.bill_id;
+
+          const usesSourceSessionResolution = membership.method !== 'evidence_item_membership'
+            || resolvedBills.some((entry) => entry.resolution.method !== 'evidence_item_bill');
+          if (usesSourceSessionResolution) exactClaimsUsingSourceSessionIdentityResolution += 1;
+
+          for (const entry of resolvedBills) {
+            const key = fingerprint + '|' + membership.membershipId + '|' + entry.resolution.billId;
             const acc = exact.get(key) ?? {
               fingerprint,
-              membershipId: match.membership_id!,
-              billId: match.bill_id!,
+              membershipId: membership.membershipId,
+              billId: entry.resolution.billId,
               sourceDocumentIds: new Set<string>(),
               availableDates: new Set<string>(),
               supports: false,
@@ -372,11 +504,14 @@ async function main() {
               mixedConfidence: 0,
               claimTypes: new Set<string>(),
               explicitness: new Set<string>(),
+              mappingMethods: new Set<string>(),
             };
             acc.sourceDocumentIds.add(row.source_document_id);
             if (availableOn) acc.availableDates.add(availableOn);
             acc.claimTypes.add(claim.claimType);
             acc.explicitness.add(claim.explicitness);
+            acc.mappingMethods.add(membership.method);
+            acc.mappingMethods.add(entry.resolution.method);
             const confidence = Number(claim.extractionConfidence);
             if (claim.stance === 'supports') {
               acc.supports = true;
@@ -396,35 +531,39 @@ async function main() {
           }
         } else if (claim.linkage === 'member_issue' && memberNames.size > 0 && billIdentifiers.size === 0) {
           memberIssueDirectionalClaims += 1;
-          const matches = contexts.filter((context) =>
-            Boolean(context.membership_id && context.member_name)
-            && memberNames.has(normalizeName(context.member_name!)));
-          const memberships = new Map<string, ContextRow>();
-          for (const match of matches) memberships.set(match.membership_id!, match);
-          if (memberships.size === 0) {
+          const membership = resolveMembershipIdentity({
+            source: row,
+            claimMemberNames: claim.memberNames,
+            contexts,
+            membershipsBySession,
+          });
+          if (!membership) {
             memberIssueClaimsWithoutDeterministicMapping += 1;
             continue;
           }
-          for (const match of memberships.values()) {
-            const key = fingerprint + '|' + match.membership_id;
-            const acc = issues.get(key) ?? {
-              fingerprint,
-              membershipId: match.membership_id!,
-              sourceDocumentIds: new Set<string>(),
-              availableDates: new Set<string>(),
-              stances: new Set<string>(),
-              claimTypes: new Set<string>(),
-              topics: new Set<string>(),
-              maxConfidence: 0,
-            };
-            acc.sourceDocumentIds.add(row.source_document_id);
-            if (availableOn) acc.availableDates.add(availableOn);
-            acc.stances.add(claim.stance);
-            acc.claimTypes.add(claim.claimType);
-            for (const topic of row.annotation.document.topics ?? []) if (topic.trim()) acc.topics.add(topic.trim());
-            acc.maxConfidence = Math.max(acc.maxConfidence, Number(claim.extractionConfidence));
-            issues.set(key, acc);
+          if (membership.method !== 'evidence_item_membership') {
+            memberIssueClaimsUsingSourceSessionIdentityResolution += 1;
           }
+          const key = fingerprint + '|' + membership.membershipId;
+          const acc = issues.get(key) ?? {
+            fingerprint,
+            membershipId: membership.membershipId,
+            sourceDocumentIds: new Set<string>(),
+            availableDates: new Set<string>(),
+            stances: new Set<string>(),
+            claimTypes: new Set<string>(),
+            topics: new Set<string>(),
+            maxConfidence: 0,
+            mappingMethods: new Set<string>(),
+          };
+          acc.sourceDocumentIds.add(row.source_document_id);
+          if (availableOn) acc.availableDates.add(availableOn);
+          acc.stances.add(claim.stance);
+          acc.claimTypes.add(claim.claimType);
+          acc.mappingMethods.add(membership.method);
+          for (const topic of row.annotation.document.topics ?? []) if (topic.trim()) acc.topics.add(topic.trim());
+          acc.maxConfidence = Math.max(acc.maxConfidence, Number(claim.extractionConfidence));
+          issues.set(key, acc);
         }
       }
     }
@@ -448,6 +587,7 @@ async function main() {
       mixedConfidence: acc.mixedConfidence,
       claimTypes: [...acc.claimTypes].sort(),
       explicitness: [...acc.explicitness].sort(),
+      mappingMethods: [...acc.mappingMethods].sort(),
       sourceDocumentIds: [...acc.sourceDocumentIds].sort(),
     })).sort((a, b) =>
       a.membershipId.localeCompare(b.membershipId)
@@ -464,6 +604,7 @@ async function main() {
       claimTypes: [...acc.claimTypes].sort(),
       topics: [...acc.topics].sort(),
       maxConfidence: acc.maxConfidence,
+      mappingMethods: [...acc.mappingMethods].sort(),
       sourceDocumentIds: [...acc.sourceDocumentIds].sort(),
       billInference: 'none',
     })).sort((a, b) => a.membershipId.localeCompare(b.membershipId) || a.fingerprint.localeCompare(b.fingerprint));
@@ -516,15 +657,15 @@ async function main() {
     const exactGzip = gzipSync(Buffer.from(exactText), { level: 9 });
     const issueGzip = gzipSync(Buffer.from(issueText), { level: 9 });
 
-    const matrixPath = resolve(outputDir, 'evidence-quality-historical-feature-matrix-v1.1.ndjson.gz');
-    const exactPath = resolve(outputDir, 'evidence-quality-historical-exact-signals-v1.1.ndjson.gz');
-    const issuePath = resolve(outputDir, 'evidence-quality-historical-member-issue-signals-v1.1.ndjson.gz');
+    const matrixPath = resolve(outputDir, 'evidence-quality-historical-feature-matrix-v1.2.ndjson.gz');
+    const exactPath = resolve(outputDir, 'evidence-quality-historical-exact-signals-v1.2.ndjson.gz');
+    const issuePath = resolve(outputDir, 'evidence-quality-historical-member-issue-signals-v1.2.ndjson.gz');
     writeFileSync(matrixPath, matrixGzip);
     writeFileSync(exactPath, exactGzip);
     writeFileSync(issuePath, issueGzip);
 
     const manifest = {
-      schemaVersion: 'evidence-quality-historical-feature-matrix-v1.1-manifest',
+      schemaVersion: 'evidence-quality-historical-feature-matrix-v1.2-manifest',
       generatedAt: new Date().toISOString(),
       issue: 579,
       plan: PLAN_PATH,
@@ -537,6 +678,8 @@ async function main() {
         memberIssueDirectionalClaims,
         exactClaimsWithoutDeterministicMapping,
         memberIssueClaimsWithoutDeterministicMapping,
+        exactClaimsUsingSourceSessionIdentityResolution,
+        memberIssueClaimsUsingSourceSessionIdentityResolution,
       },
       targetUniverse: {
         rows: targets.length,
@@ -578,6 +721,7 @@ async function main() {
         sameDayEvidenceExcluded: true,
         availabilitySource: 'source_documents.metadata.availableAt | availableOn | archiveCapturedAt',
         semanticDeduplication: 'semanticFingerprint + deterministic membership/bill identity',
+        identityResolution: 'prefer evidence_items IDs; otherwise resolve only the already-reviewed claim member/bill identifiers by unique exact match within source session/chamber; ambiguity fails closed',
         memberIssueBillInference: 'none',
         legacyQuickEvidenceV2Included: false,
         quickEvidenceV3Included: false,
@@ -586,7 +730,7 @@ async function main() {
         modelWeightChanged: false,
       },
     };
-    const manifestPath = resolve(outputDir, 'evidence-quality-historical-feature-matrix-v1.1-manifest.json');
+    const manifestPath = resolve(outputDir, 'evidence-quality-historical-feature-matrix-v1.2-manifest.json');
     writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
 
     console.log(JSON.stringify({
@@ -602,6 +746,8 @@ async function main() {
         sourcesMissingHistoricalAvailability: manifest.annotationCorpus.sourcesMissingHistoricalAvailability,
         exactClaimsWithoutDeterministicMapping: manifest.annotationCorpus.exactClaimsWithoutDeterministicMapping,
         memberIssueClaimsWithoutDeterministicMapping: manifest.annotationCorpus.memberIssueClaimsWithoutDeterministicMapping,
+        exactClaimsUsingSourceSessionIdentityResolution: manifest.annotationCorpus.exactClaimsUsingSourceSessionIdentityResolution,
+        memberIssueClaimsUsingSourceSessionIdentityResolution: manifest.annotationCorpus.memberIssueClaimsUsingSourceSessionIdentityResolution,
         outcomeUse: 'none',
         modelFitting: 'none',
         servingChanged: false,
