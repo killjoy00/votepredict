@@ -1,0 +1,469 @@
+{
+  "batchId": "EQV1-SESSION-DAILY-ARCHIVE-VERIFIED-002-SEMANTIC-REVIEW",
+  "schemaVersion": "evidence-quality-session-daily-semantic-review-v1",
+  "evidenceQualitySchemaVersion": "evidence-quality-v1",
+  "evidenceQualityPromptVersion": "evidence-quality-prompt-v1",
+  "provider": "OpenAI",
+  "model": "GPT-5.6 Sol",
+  "sourceCohort": {
+    "runId": 37237250762,
+    "artifactId": 11315647956,
+    "artifactName": "evidence-quality-session-daily-review-cohort-supplement-02",
+    "artifactDigest": "sha256:4869f0313294e5dcf230a56a29a21da24a5c466dbf030a146a4aaf599db788b9",
+    "cohortIdentitySha256": "fff46e7dd351ebaae2389a401b1f21140904f263bcd42fb1a8068d751a91bc60",
+    "batchId": "EQV1-SESSION-DAILY-ARCHIVE-VERIFIED-002"
+  },
+  "summary": {
+    "documentsReviewed": 15,
+    "targetMemberDirectionalDocuments": 10,
+    "targetMemberDirectionalClaims": 10,
+    "exactMemberBillDirectionalClaims": 6,
+    "memberIssueDirectionalClaims": 4,
+    "exactMemberBillDirectionalUniquePotentialRows": 8,
+    "billOnlyThirdPartyDirectionalClaims": 0,
+    "targetMemberNonDirectionalDocuments": 5,
+    "humanAdjudicationRecommendedRows": [
+      5,
+      9
+    ],
+    "validationFailures": 0
+  },
+  "policy": {
+    "outcomeBlind": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "reviewUsesFrozenExcerptOnly": true,
+    "archiveAvailabilityAlreadyProven": true,
+    "verifiedFullTextClaimed": false,
+    "sourceByteHashMatchClaimed": false,
+    "sponsorshipAuthorshipProcedureDirectionalByDefault": false,
+    "individualProvisionSupportPromotedToWholeBillSupport": false,
+    "candidateMemberStanceInferredFromThirdPartySupport": false,
+    "frozenCandidateListsPreserved": true,
+    "frozenReviewTextEmbeddedForMechanicalValidation": true,
+    "modelFitting": "none",
+    "servingChanged": false
+  },
+  "reviews": [
+    {
+      "row": 1,
+      "sourceDocumentId": "064afade-9f1b-420b-8ca8-4fa9e3ce4e3a",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17924",
+      "reviewTextSha256": "334439afd41904dcb81ea0286510eb9beaac197dccec3ac2818814eff11e857b",
+      "candidateMemberNames": [
+        "Zack Stephenson"
+      ],
+      "candidateBillIdentifiers": [
+        "HF100"
+      ],
+      "reviewText": "ll to the House Floor. (House Photography file photo It’s far from a done deal, but recreational cannabis took an important step forward Monday to becoming legal in Minnesota. The House Ways and Means Committee approved HF100 , as amended , on a split-voice vote and sent it to the House Floor. Rep. Zack Stephenson (DFL-Coon Rapids), who sponsors the bill, said the decades-long prohibition and criminalization of cannabis has not worked to mak",
+      "sourceKind": "house_session_daily",
+      "decision": "member_issue_directional",
+      "memberNames": [
+        "Zack Stephenson"
+      ],
+      "billIdentifiers": [],
+      "stance": "supports",
+      "claimType": "explicit_position",
+      "specificity": "issue_family",
+      "normalizedClaim": "Stephenson explicitly argues that decades-long cannabis prohibition and criminalization have not worked; retain this as issue-level reform evidence, not whole-bill HF100 support.",
+      "supportingExcerpt": "Rep. Zack Stephenson (DFL-Coon Rapids), who sponsors the bill, said the decades-long prohibition and criminalization of cannabis has not worked",
+      "notes": [
+        "The source is clipped after this complete proposition; no whole-bill stance is inferred from sponsorship."
+      ]
+    },
+    {
+      "row": 2,
+      "sourceDocumentId": "0b19617d-7e29-4620-b42b-16f347efadaa",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17926",
+      "reviewTextSha256": "2ce2463def8df192307b5efe2e695a3d828f12d6c6662e1696e7df5204a08205",
+      "candidateMemberNames": [
+        "Rick Hansen"
+      ],
+      "candidateBillIdentifiers": [
+        "HF2310"
+      ],
+      "reviewText": "­— in some quarters — too expensive. At 473 pages, the omnibus environment, natural resources, climate and energy finance bill is big, but it is big for a reason, said Rep. Rick Hansen (DFL-South St. Paul), who sponsors HF2310 . “This is a problem-solving bill, problems that have been around for a long time,” said Hansen, adding many of the solutions have been proposed before. Hanson said longtime issues would be addressed, citing the $93 mil",
+      "sourceKind": "house_session_daily",
+      "decision": "exact_member_bill_directional",
+      "memberNames": [
+        "Rick Hansen"
+      ],
+      "billIdentifiers": [
+        "HF2310"
+      ],
+      "stance": "supports",
+      "claimType": "quoted_position",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Hansen explicitly describes HF2310 as a problem-solving bill addressing longstanding problems.",
+      "supportingExcerpt": "“This is a problem-solving bill, problems that have been around for a long time,” said Hansen",
+      "notes": []
+    },
+    {
+      "row": 3,
+      "sourceDocumentId": "23956a3f-e511-49a1-a764-22790d03b4b4",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17995",
+      "reviewTextSha256": "aa52f141afa0d099ba9d98b9f88ed0fe7dedf68364c081a4111a6691a70d3890",
+      "candidateMemberNames": [
+        "Erin K. Maye Quade"
+      ],
+      "candidateBillIdentifiers": [
+        "HF2"
+      ],
+      "reviewText": "le to work due to a family member’s serious health condition, a qualifying exigency, safety leave, bonding leave, or the employee’s own pregnancy, pregnancy recovery, or serious health condition. Conference Committee on HF2 - part 1 5/12/23 “This is going to be lifechanging for so many Minnesotans,” said Sen. Erin Maye Quade (DFL-Apple Valley). A self-funding family and medical insurance benefit account modeled after the state’s unemployme",
+      "sourceKind": "house_session_daily",
+      "decision": "exact_member_bill_directional",
+      "memberNames": [
+        "Erin K. Maye Quade"
+      ],
+      "billIdentifiers": [
+        "HF2"
+      ],
+      "stance": "supports",
+      "claimType": "quoted_position",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Maye Quade explicitly praises the HF2 family and medical leave proposal as life-changing for many Minnesotans.",
+      "supportingExcerpt": "Conference Committee on HF2 - part 1 5/12/23 “This is going to be lifechanging for so many Minnesotans,” said Sen. Erin Maye Quade (DFL-Apple Valley).",
+      "notes": []
+    },
+    {
+      "row": 4,
+      "sourceDocumentId": "2627e168-3f10-42ea-aa9a-333118f1cdb8",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17509",
+      "reviewTextSha256": "285a09098ebd93f602e11b5627e67a2c2f629fe37974057577c6d17b53d13c6d",
+      "candidateMemberNames": [
+        "Brad Tabke"
+      ],
+      "candidateBillIdentifiers": [
+        "HF207"
+      ],
+      "reviewText": "ators, Marla Spivak, Distinguished McKnight Professor at the University of Minnesota, told the House Environment and Natural Resources Finance and Policy Committee Wednesday. Sponsored by Rep. Brad Tabke (DFL-Shakopee), HF207 would appropriate $4 million from the General Fund in the next biennium to the Board of Water and Soil Resources for Lawns to Legumes . Rep. Brad Tabke The bill was approved as amended by the committee on a split voice",
+      "sourceKind": "house_session_daily",
+      "decision": "non_directional",
+      "memberNames": [
+        "Brad Tabke"
+      ],
+      "billIdentifiers": [
+        "HF207"
+      ],
+      "stance": "none",
+      "claimType": "sponsorship",
+      "specificity": "exact_bill",
+      "normalizedClaim": "The excerpt identifies Tabke as sponsor of HF207 and reports committee action, without an attributable final-passage position.",
+      "supportingExcerpt": "Sponsored by Rep. Brad Tabke (DFL-Shakopee), HF207 would appropriate $4 million from the General Fund in the next biennium",
+      "notes": [
+        "Sponsorship and committee approval are non-directional."
+      ]
+    },
+    {
+      "row": 5,
+      "sourceDocumentId": "2fd7a7e0-5c9b-49c6-a3de-9970a0600498",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/18008",
+      "reviewTextSha256": "2d1c6c38c5af219865506a95f35b0fb14fbac1cc997dcd187ca807ddee5a7c8f",
+      "candidateMemberNames": [
+        "Lindsey Port",
+        "Zack Stephenson"
+      ],
+      "candidateBillIdentifiers": [
+        "HF100"
+      ],
+      "reviewText": "n’t light up a spliff just yet, but odds you could enjoy a legal joint by this summer got higher Tuesday. All you need now are two affirmative votes and a pen stroke. Rep. Zack Stephenson (DFL-Coon Rapids), who sponsors HF100 with Sen. Lindsey Port (DFL-Burnsville), said both he and Port are optimistic the recreational cannabis bill will be repassed by both chambers before the session ends. “I think we’re both feeling really confident that w",
+      "sourceKind": "house_session_daily",
+      "decision": "non_directional_human_check",
+      "memberNames": [
+        "Lindsey Port",
+        "Zack Stephenson"
+      ],
+      "billIdentifiers": [
+        "HF100"
+      ],
+      "stance": "unclear",
+      "claimType": "policy_discussion",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Stephenson reports that he and Port are optimistic HF100 will be repassed, but predictive optimism plus sponsorship is not treated as an explicit normative final-passage stance; the following quote is clipped.",
+      "supportingExcerpt": "Rep. Zack Stephenson (DFL-Coon Rapids), who sponsors HF100 with Sen. Lindsey Port (DFL-Burnsville), said both he and Port are optimistic the recreational cannabis bill will be repassed by both chambers before the session ends.",
+      "notes": [
+        "Human check recommended because the following direct quote is clipped.",
+        "Do not convert forecast-like optimism or sponsorship into final-passage support."
+      ]
+    },
+    {
+      "row": 6,
+      "sourceDocumentId": "5b6920a8-5877-4df5-b464-a1542abb2795",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17756",
+      "reviewTextSha256": "6cff1de821228fd31490751c1d65d82e7354ba938d01c8288386c8bde2a52a57",
+      "candidateMemberNames": [
+        "Jamie Long"
+      ],
+      "candidateBillIdentifiers": [
+        "HF669"
+      ],
+      "reviewText": "cash rather than bonds. House Majority Leader Jamie Long (DFL-Mpls) said bonding would allow the Legislature to fund other priorities and every generation would be paying for intergenerational projects. MN House passes HF669 3/6/23 While the $1.5 billion would represent one of the largest investments the state’s made in infrastructure, it is well short of the $3 billion proposed by Gov. Tim Walz and more than $6 billion in requests received",
+      "sourceKind": "house_session_daily",
+      "decision": "member_issue_directional",
+      "memberNames": [
+        "Jamie Long"
+      ],
+      "billIdentifiers": [],
+      "stance": "supports",
+      "claimType": "explicit_position",
+      "specificity": "named_proposal",
+      "normalizedClaim": "Long explicitly argues for bonding as a way to preserve capacity for other priorities while spreading intergenerational project costs across generations.",
+      "supportingExcerpt": "House Majority Leader Jamie Long (DFL-Mpls) said bonding would allow the Legislature to fund other priorities and every generation would be paying for intergenerational projects.",
+      "notes": [
+        "Retained as financing-policy evidence, not promoted to whole-bill HF669 support."
+      ]
+    },
+    {
+      "row": 7,
+      "sourceDocumentId": "607de8f9-a663-4236-9c6c-22a0c2ae8cab",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17791",
+      "reviewTextSha256": "99f5fcaba2568d4dcfc0221d0b57016ac0d6c3b751e53722c1d1a5defaf45b6d",
+      "candidateMemberNames": [
+        "Hodan Hassan"
+      ],
+      "candidateBillIdentifiers": [
+        "HF2369"
+      ],
+      "reviewText": "the industry norm. Issues around driver safety and dignity have been festering for years in Minnesota, and Rep. Hodan Hassan (DFL-Mpls) believes legislative action is now necessary to protect these workers. She sponsors HF2369 , which would create a novel regulatory framework of transportation network companies. “[Drivers] have often been left without the same protections and benefits that other workers receive,” she said. “This bill establis",
+      "sourceKind": "house_session_daily",
+      "decision": "member_issue_directional",
+      "memberNames": [
+        "Hodan Hassan"
+      ],
+      "billIdentifiers": [],
+      "stance": "supports",
+      "claimType": "explicit_position",
+      "specificity": "issue_family",
+      "normalizedClaim": "Hassan explicitly says legislative action is necessary to protect transportation-network drivers; retain as worker-protection policy evidence rather than whole-bill HF2369 support.",
+      "supportingExcerpt": "Rep. Hodan Hassan (DFL-Mpls) believes legislative action is now necessary to protect these workers.",
+      "notes": [
+        "The later bill-specific quote is clipped and is not used."
+      ]
+    },
+    {
+      "row": 8,
+      "sourceDocumentId": "68a4e094-4938-4a9c-a4bf-0d952b65807d",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17866",
+      "reviewTextSha256": "b69f469f8dc2525f498749ecde7f4fded709a32ed80552a2f7b6ef721c77ed6e",
+      "candidateMemberNames": [
+        "Mike Freiberg"
+      ],
+      "candidateBillIdentifiers": [
+        "HF2204"
+      ],
+      "reviewText": "ing body with changes to be effective in a year ending in “3.” By statute , the Legislature is charged with the task. Approved, as amended , Friday by the House State and Local Government Finance and Policy Committee is HF2204 , a redistricting map of the Metropolitan Council’s 16 districts. Its next stop is the House Floor. Rep. Mike Freiberg (DFL-Golden Valley), the bill sponsor, said the metropolitan area population grew by 11% from the pr",
+      "sourceKind": "house_session_daily",
+      "decision": "non_directional",
+      "memberNames": [
+        "Mike Freiberg"
+      ],
+      "billIdentifiers": [
+        "HF2204"
+      ],
+      "stance": "none",
+      "claimType": "sponsorship",
+      "specificity": "exact_bill",
+      "normalizedClaim": "The excerpt identifies Freiberg as HF2204's sponsor and begins a population description, but contains no attributable directional position on final passage.",
+      "supportingExcerpt": "Rep. Mike Freiberg (DFL-Golden Valley), the bill sponsor",
+      "notes": [
+        "Sponsorship alone is non-directional."
+      ]
+    },
+    {
+      "row": 9,
+      "sourceDocumentId": "81b04b92-954d-42e9-b41a-b92cd531c767",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17691",
+      "reviewTextSha256": "646f57bb0b6213640970c978f0356927257784e68f816fc160f76ef3787cbb52",
+      "candidateMemberNames": [
+        "Fue Lee",
+        "Liz Lee"
+      ],
+      "candidateBillIdentifiers": [
+        "HF670"
+      ],
+      "reviewText": "Moorhead and sent them to the House Ways and Means Committee. House Capital Investment Committee 2/20/23 HF669 , amended by a delete-all and author’s amendment , would authorize about $1.5 billion from bond sales, while HF670 , also amended by a delete-all and author’s amendment , would appropriate about $400 million from the General Fund for state and local projects. The Legislature is catching up, said Rep. Fue Lee (DFL-Mpls), who sponsors",
+      "sourceKind": "house_session_daily",
+      "decision": "non_directional_human_check",
+      "memberNames": [
+        "Fue Lee"
+      ],
+      "billIdentifiers": [
+        "HF670"
+      ],
+      "stance": "unclear",
+      "claimType": "policy_discussion",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Fue Lee says the Legislature is catching up in the HF670 context, but the excerpt cuts off before preserving enough attributable context to classify a directional stance; no position is assigned to Liz Lee.",
+      "supportingExcerpt": "The Legislature is catching up, said Rep. Fue Lee (DFL-Mpls), who sponsors",
+      "notes": [
+        "Human check recommended because the attribution is clipped.",
+        "No stance for Liz Lee is inferred from candidate membership alone."
+      ]
+    },
+    {
+      "row": 10,
+      "sourceDocumentId": "85dd5b6b-3344-4a27-b2de-d2dffb843cfd",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17501",
+      "reviewTextSha256": "288392afcf6af3fc552fc4fc37f8a2677e63734338bf141dbac82bc348b12011",
+      "candidateMemberNames": [
+        "Jamie Becker-Finn"
+      ],
+      "candidateBillIdentifiers": [
+        "HF90"
+      ],
+      "reviewText": "id. Now, the public defender system is in crisis and the state is not meeting its constitutional duty to provide free public defense lawyers for indigent people, says Rep. Jamie Becker-Finn (DFL-Roseville). She sponsors HF90 that would appropriate $25 million in fiscal year 2023 for the Board of Public Defense to hire more public defense attorneys and boost salaries, something she said is necessary to begin to undo decades of understaffing.",
+      "sourceKind": "house_session_daily",
+      "decision": "exact_member_bill_directional",
+      "memberNames": [
+        "Jamie Becker-Finn"
+      ],
+      "billIdentifiers": [
+        "HF90"
+      ],
+      "stance": "supports",
+      "claimType": "explicit_position",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Becker-Finn explicitly says HF90's public-defense hiring and salary funding is necessary to begin undoing decades of understaffing.",
+      "supportingExcerpt": "She sponsors HF90 that would appropriate $25 million in fiscal year 2023 for the Board of Public Defense to hire more public defense attorneys and boost salaries, something she said is necessary to begin to undo decades of understaffing.",
+      "notes": []
+    },
+    {
+      "row": 11,
+      "sourceDocumentId": "91e6b76e-e391-47a6-985d-b857ff614d53",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/18358",
+      "reviewTextSha256": "97379fd996cebe803f42f85c35ac4b8cf862a5406e84627d87223c48eb493f64",
+      "candidateMemberNames": [
+        "Kaela Berg"
+      ],
+      "candidateBillIdentifiers": [
+        "HF2609"
+      ],
+      "reviewText": "se or possess it. Rep. Kaela Berg (DFL-Burnsville) sponsors a bill that would increase the penalty for that action, making the crime a felony. It is currently a gross misdemeanor. Berg and supporters have said they hope HF2609 will prevent tragedies such as the Feb. 18 shooting in Burnsville, when a man killed three local first responders arriving at a domestic abuse call. The killer was legally prevented from possessing firearms, but the two",
+      "sourceKind": "house_session_daily",
+      "decision": "exact_member_bill_directional",
+      "memberNames": [
+        "Kaela Berg"
+      ],
+      "billIdentifiers": [
+        "HF2609"
+      ],
+      "stance": "supports",
+      "claimType": "explicit_position",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Berg is explicitly attributed as hoping HF2609 will prevent tragedies like the Burnsville first-responder shooting.",
+      "supportingExcerpt": "Berg and supporters have said they hope HF2609 will prevent tragedies such as the Feb. 18 shooting in Burnsville",
+      "notes": []
+    },
+    {
+      "row": 12,
+      "sourceDocumentId": "c3db1dfc-908a-4af6-8dcb-441fb16f4a6e",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17918",
+      "reviewTextSha256": "57b1a01195b5dc7a2fddd2efcd7680ef1e7080193c91bf2c898623918c7eb373",
+      "candidateMemberNames": [
+        "Leon M. Lillie",
+        "Melissa Hortman"
+      ],
+      "candidateBillIdentifiers": [
+        "HF1999"
+      ],
+      "reviewText": "propriation over the 2024-25 biennium. The bill now moves to the Senate. “There’s no other state that has this in the entire country,” said Rep. Leon Lillie (DFL-North St. Paul), the bill sponsor. Minnesota House passes HF1999 , the omnibus Legacy finance bill 4/12/23 “Investing in the outdoors, clean water, arts and culture, and parks and trails is an investment in our quality of life,” House Speaker Melissa Hortman (DFL-Brooklyn Park) said",
+      "sourceKind": "house_session_daily",
+      "decision": "member_issue_directional",
+      "memberNames": [
+        "Melissa Hortman"
+      ],
+      "billIdentifiers": [],
+      "stance": "supports",
+      "claimType": "quoted_position",
+      "specificity": "issue_family",
+      "normalizedClaim": "Hortman explicitly endorses investment in outdoors, clean water, arts and culture, and parks and trails as an investment in quality of life.",
+      "supportingExcerpt": "“Investing in the outdoors, clean water, arts and culture, and parks and trails is an investment in our quality of life,” House Speaker Melissa Hortman (DFL-Brooklyn Park) said",
+      "notes": [
+        "Lillie's separate quote is not directional enough; Hortman's issue support is not promoted to whole-bill HF1999 support."
+      ]
+    },
+    {
+      "row": 13,
+      "sourceDocumentId": "c9ed5148-595c-4bef-933e-dab59afa1333",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17988",
+      "reviewTextSha256": "d0b29ef34c3a422660dfea314c2315b793c31cd151ed5fbf6f80d21dd4b874b6",
+      "candidateMemberNames": [
+        "Robert Bierman"
+      ],
+      "candidateBillIdentifiers": [
+        "HF402"
+      ],
+      "reviewText": "use Menu HPIS Home Session Daily Photography TV/Video Publications About Contacts May 8, 2023 5:36 PM House OKs beefed-up state oversight of proposed health care sales, mergers By Tim Walker Rep. Robert Bierman outlines HF402, a bill that would add oversight to mergers of public health care systems, May 8. (Photo by Catherine Davis) (CORRECTION: The original post said the Health Department, in consultation with the attorney general would pro",
+      "sourceKind": "house_session_daily",
+      "decision": "non_directional",
+      "memberNames": [
+        "Robert Bierman"
+      ],
+      "billIdentifiers": [
+        "HF402"
+      ],
+      "stance": "none",
+      "claimType": "policy_discussion",
+      "specificity": "exact_bill",
+      "normalizedClaim": "The excerpt says Bierman outlines HF402 and describes its oversight purpose, but preserves no attributable directional position from him.",
+      "supportingExcerpt": "Rep. Robert Bierman outlines HF402, a bill that would add oversight to mergers of public health care systems, May 8.",
+      "notes": []
+    },
+    {
+      "row": 14,
+      "sourceDocumentId": "cb539982-31cc-4fed-a52a-41ba131106d1",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17890",
+      "reviewTextSha256": "84dd6f493337603cd9edae07a658a418009bd2ef4ffa3b656ffc25bf2fb55979",
+      "candidateMemberNames": [
+        "Cheryl Youakim"
+      ],
+      "candidateBillIdentifiers": [
+        "HF2497"
+      ],
+      "reviewText": "rch 29, 2023 6:07 PM DFL unveils K-12 education budget bill that proposes $2.2 billion in new spending on schools By Steve Abrams “We’ve had over 20 years of under-investment in our schools,” Rep. Cheryl Youakim said of HF2497. “While we cannot change that overnight, or even in one biennium, this is an incredible start.” (House Photography file photo) With this proposal, we make historic investments in our schools. Those were the words of Rep",
+      "sourceKind": "house_session_daily",
+      "decision": "exact_member_bill_directional",
+      "memberNames": [
+        "Cheryl Youakim"
+      ],
+      "billIdentifiers": [
+        "HF2497"
+      ],
+      "stance": "supports",
+      "claimType": "quoted_position",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Youakim explicitly praises HF2497 as an incredible start after years of school under-investment.",
+      "supportingExcerpt": "“We’ve had over 20 years of under-investment in our schools,” Rep. Cheryl Youakim said of HF2497. “While we cannot change that overnight, or even in one biennium, this is an incredible start.”",
+      "notes": []
+    },
+    {
+      "row": 15,
+      "sourceDocumentId": "f6507eba-553c-41cc-932a-7fab705efe8c",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17888",
+      "reviewTextSha256": "03a7641d98fc34d3ddf8e906b981bb862232200c909021b00affa2add569dfc7",
+      "candidateMemberNames": [
+        "Leon M. Lillie"
+      ],
+      "candidateBillIdentifiers": [
+        "HF1999"
+      ],
+      "reviewText": "executive director of Lessard-Sams Outdoor Heritage Council, uses a visual aid March 29 to help answer a question about the House Legacy Finance Committee’s omnibus bill. (Photo by Catherine Davis) Water. Land. Legacy. HF1999 covers it all. It would clean up Minnesota waters, preserve habitat, invest in the state’s arts and cultural heritage, and improve parks and trails, said Rep. Leon Lillie (DFL-North St. Paul). He sponsors the bill that",
+      "sourceKind": "house_session_daily",
+      "decision": "exact_member_bill_directional",
+      "memberNames": [
+        "Leon M. Lillie"
+      ],
+      "billIdentifiers": [
+        "HF1999"
+      ],
+      "stance": "supports",
+      "claimType": "explicit_position",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Lillie explicitly attributes broad positive outcomes to HF1999 across clean water, habitat, arts and culture, parks, and trails.",
+      "supportingExcerpt": "HF1999 covers it all. It would clean up Minnesota waters, preserve habitat, invest in the state’s arts and cultural heritage, and improve parks and trails, said Rep. Leon Lillie (DFL-North St. Paul).",
+      "notes": []
+    }
+  ]
+}
