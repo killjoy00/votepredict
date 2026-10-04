@@ -2,7 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { gunzipSync } from 'node:zlib';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
-import { EVIDENCE_QUALITY_SOURCE_KINDS, EVIDENCE_QUALITY_TEXT_VERSION } from '../src/evidence/evidence-quality.js';
+import { EVIDENCE_QUALITY_SOURCE_KINDS, EVIDENCE_QUALITY_TEXT_VERSION } from '../src/evidence/evidence-quality.js';\nimport { resolveHistoricalEvidenceAvailability } from '../src/evidence/evidence-item-historical-availability.js';
 
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
@@ -99,25 +99,10 @@ async function chooseDb(env: Record<string, string | undefined>) {
   return value;
 }
 
-function stringMeta(metadata: Record<string, unknown> | null, key: string): string | null {
-  const value = metadata?.[key];
-  return typeof value === 'string' && value.trim() ? value.trim() : null;
-}
-
 function validDateOnly(value: string | null): value is string {
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const t = Date.parse(value + 'T00:00:00.000Z');
   return Number.isFinite(t) && new Date(t).toISOString().slice(0,10) === value;
-}
-
-function availabilityDate(metadata: Record<string, unknown> | null): string | null {
-  for (const key of ['availableAt','availableOn','archiveCapturedAt'] as const) {
-    const raw = stringMeta(metadata,key);
-    if (!raw || !Number.isFinite(Date.parse(raw))) continue;
-    const date = raw.slice(0,10);
-    if (validDateOnly(date)) return date;
-  }
-  return null;
 }
 
 function loadTargets(path: string): TargetRow[] {
@@ -301,7 +286,7 @@ async function main() {
         };
         bySource.set(row.source_document_id,candidate);
       }
-      candidate.targetPairs.add(row.membership_id+'|'+row.bill_id);
+      if(availableOn<candidate.availableOn) candidate.availableOn=availableOn;\n      candidate.targetPairs.add(row.membership_id+'|'+row.bill_id);
       for(const target of preVote){
         const rowKey=target.voteEventId+'|'+target.membershipId;
         candidate.coverageRowKeys.add(rowKey);
@@ -370,7 +355,7 @@ async function main() {
       issue:579,
       targetUniverse:{rows:targets.length,currentCoveredRows:covered.size},
       sourceRowsScanned:result.rows.length,
-      exclusions:{rowsMissingAvailability,rowsOutsideTargetUniverse,rowsOnlyPostOrSameDay},
+      exclusions:{rowsMissingAvailability,rowsOutsideTargetUniverse,rowsOnlyPostOrSameDay},\n      availabilityResolution:{rowsUsingEvidenceItemScopedAvailability,rowsUsingSourceDocumentAvailability},
       missingAvailabilityDiagnostic:{
         bySourceKind:missingAvailabilityBySourceKind,
         sourcesWithStoredPublishedAtThatCouldAddRows:missingAvailabilityPotentialBySource.size,
@@ -411,7 +396,7 @@ async function main() {
       exactContentDuplicateGroups:duplicateGroups,
       policy:{
         outcomeUse:'none',
-        strictPreVoteAvailability:true,
+        strictPreVoteAvailability:true,\n        granularEvidenceItemAvailabilitySupported:true,
         sameDayExcluded:true,
         alreadyAnnotatedSourcesExcluded:true,
         currentV12CoveredRowsExcludedFromMarginalRanking:true,
