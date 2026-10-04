@@ -35,7 +35,7 @@ Rules applied:
 | 68 | `e9c0f2d1-ffaf-4c61-b731-b1486771d365` | batch-01 row 17 | HF9 directionality is anchored to a post-vote “voted in support” statement; outcome-blind semantics favor legislative_action unless independent explicit position text is substituted. |
 | 78 | `c21414ca-36ad-41c4-ac81-4ef1771b2785` | batch-01 row 2 | HF4 directionality is anchored to “I voted to pass HF 4”; favorable description does not independently state final-passage support. |
 | 81 | `47f6d3e6-701f-460f-bf1c-0912165c0b49` | batch-03 row 62 | Duplicate-source Hoffman SF2356 completed-vote issue. |
-| 89 | `535b888c-8d26-434f-b8df-343b677fd5c9` | batch-01 row 22 | Lawrence's stance is independently supported later in the source (“I voted no because…” plus policy rationale), but the selected excerpt is only the completed-vote sentence. Replace excerpt/normalized claim with the explicit reason. |
+| 89 | `535b888c-8d26-434f-b8df-343b677fd5c9` | batch-01 row 22 | HF3631 directionality is ultimately anchored to a completed vote (“I voted no” / “I voted no because…”). The rationale explains the action but does not provide a separate pre-outcome position statement; outcome-blind treatment should retain this as legislative_action/stance=none. |
 | 94 | `8ae52cc1-5a4f-4b4f-a9d1-ca0767e0df56` | batch-03 row 58 | Duplicate-source Hoffman SF2356 completed-vote issue. |
 | 96 | `e22e38b5-0038-4b73-84d2-28f576d5e228` | batch-02 row 40 | Full source contains Brand's direct supportive quote (“This is an important step…”), but selected excerpt is only co-authorship plus completed vote. Replace with the direct quote and preferably `quoted_position`. |
 
