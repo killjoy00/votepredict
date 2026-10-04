@@ -1,4 +1,4 @@
-name: Freeze Evidence Quality historical feature matrix
+name: Freeze Evidence Quality historical feature matrix v1.1
 
 on:
   issue_comment:
@@ -85,7 +85,7 @@ jobs:
       - name: Upload frozen feature artifact
         uses: actions/upload-artifact@v7
         with:
-          name: evidence-quality-historical-feature-freeze-v1
+          name: evidence-quality-historical-feature-freeze-v1-1
           path: ${{ runner.temp }}/evidence-quality-historical-feature-freeze/*
           if-no-files-found: error
           retention-days: 30
