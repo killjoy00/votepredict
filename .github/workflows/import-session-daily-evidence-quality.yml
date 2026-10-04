@@ -51,7 +51,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/session-daily-import-audit"
-          node --import tsx scripts/import-session-daily-evidence-quality.ts | tee "$RUNNER_TEMP/session-daily-import-audit/preflight.json"
+          node --import tsx scripts/import-session-daily-evidence-quality.ts | tee "$RUNNER_TEMP/session-daily-import-audit/preflight.log"
 
       - name: Import 32 reviewed excerpt annotations atomically
         if: startsWith(github.event.comment.body, '[evidence-quality-session-daily-import] apply')
@@ -60,7 +60,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          node --import tsx scripts/import-session-daily-evidence-quality.ts --apply | tee "$RUNNER_TEMP/session-daily-import-audit/apply.json"
+          node --import tsx scripts/import-session-daily-evidence-quality.ts --apply | tee "$RUNNER_TEMP/session-daily-import-audit/apply.log"
 
       - name: Verify imported Session Daily excerpt cohort
         if: startsWith(github.event.comment.body, '[evidence-quality-session-daily-import] apply')
@@ -69,7 +69,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          node --import tsx scripts/import-session-daily-evidence-quality.ts | tee "$RUNNER_TEMP/session-daily-import-audit/verify.json"
+          node --import tsx scripts/import-session-daily-evidence-quality.ts | tee "$RUNNER_TEMP/session-daily-import-audit/verify.log"
 
       - name: Upload import audit
         uses: actions/upload-artifact@v7
