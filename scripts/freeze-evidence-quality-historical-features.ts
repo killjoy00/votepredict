@@ -483,7 +483,6 @@ async function main() {
 
     for (const row of annotationResult.rows) {
       const fingerprint = stringMeta(row.annotation_metadata, 'semanticFingerprint')!;
-      const availableOn = availabilityDate(row.source_metadata);
       const contexts = contextsBySource.get(row.source_document_id) ?? [];
 
       for (const claim of row.annotation.claims) {
