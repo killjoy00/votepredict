@@ -186,6 +186,10 @@ async function auditCandidate(
 
       try {
         const page = await fetchWaybackSnapshot(capture);
+        const finalUrl = new URL(page.finalUrl);
+        if (finalUrl.protocol !== 'https:' || finalUrl.hostname.toLowerCase() !== 'web.archive.org') {
+          throw new Error('Wayback snapshot redirected off web.archive.org');
+        }
         const matchedTargetRowKeys: string[] = [];
         for (const target of unresolvedRelevantTargets) {
           const matchedExcerpt = target.excerpts.find(excerpt =>
@@ -422,6 +426,7 @@ async function main() {
       productionWrites: false,
       storedPublishedAtUsedAsProof: false,
       exactFrozenSourceUrlUsed: true,
+      archiveSnapshotMustRemainOnWaybackHost: true,
       sourceContentShaPreserved: true,
       strictPreVoteArchiveCaptureRequired: true,
       sameDayArchiveCaptureExcluded: true,
