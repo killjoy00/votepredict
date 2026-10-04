@@ -35,6 +35,8 @@ type CandidateRow = {
   source_session: string | null;
   membership_id: string;
   bill_id: string;
+  evidence_id: string;
+  evidence_excerpt: string | null;
   published_at: string | null;
   source_document_text_id: string | null;
   extraction_version: string | null;
@@ -212,6 +214,8 @@ async function main() {
              ls.slug AS source_session,
              ei.membership_id::text,
              ei.bill_id::text,
+             ei.id::text AS evidence_id,
+             ei.excerpt AS evidence_excerpt,
              ei.published_at::text,
              sdt.id::text AS source_document_text_id,
              sdt.extraction_version
@@ -238,7 +242,7 @@ async function main() {
     let rowsOutsideTargetUniverse=0;
     let rowsOnlyPostOrSameDay=0;
     const missingAvailabilityBySourceKind:Record<string,number>={};
-    const missingAvailabilityPotentialBySource=new Map<string,{sourceDocumentId:string;sourceKind:string;sourceUrl:string;publishedOn:string;rowKeys:Set<string>;sessions:Set<string>;targets:Map<string,{voteEventId:string;membershipId:string;billId:string;identifier:string;occurredOn:string;session:string}>}>();
+    const missingAvailabilityPotentialBySource=new Map<string,{sourceDocumentId:string;sourceKind:string;sourceUrl:string;contentSha256:string;publishedOn:string;rowKeys:Set<string>;sessions:Set<string>;targets:Map<string,{voteEventId:string;membershipId:string;billId:string;identifier:string;occurredOn:string;session:string;evidenceIds:Set<string>;excerpts:Set<string>}>}>();
 
     for(const row of result.rows){
       const availableOn=availabilityDate(row.source_metadata);
@@ -255,6 +259,7 @@ async function main() {
               sourceDocumentId:row.source_document_id,
               sourceKind:row.source_kind,
               sourceUrl:row.source_url,
+              contentSha256:row.content_sha256,
               publishedOn,
               rowKeys:new Set<string>(),
               sessions:new Set<string>(),
@@ -262,7 +267,10 @@ async function main() {
             };
             current.rowKeys.add(rowKey);
             current.sessions.add(target.session);
-            current.targets.set(rowKey,{voteEventId:target.voteEventId,membershipId:target.membershipId,billId:target.billId,identifier:target.identifier,occurredOn:target.occurredOn,session:target.session});
+            const targetProof=current.targets.get(rowKey)??{voteEventId:target.voteEventId,membershipId:target.membershipId,billId:target.billId,identifier:target.identifier,occurredOn:target.occurredOn,session:target.session,evidenceIds:new Set<string>(),excerpts:new Set<string>()};
+            targetProof.evidenceIds.add(row.evidence_id);
+            if(row.evidence_excerpt?.trim())targetProof.excerpts.add(row.evidence_excerpt.trim());
+            current.targets.set(rowKey,targetProof);
             missingAvailabilityPotentialBySource.set(row.source_document_id,current);
           }
         }
@@ -371,10 +379,11 @@ async function main() {
           sourceDocumentId:candidate.sourceDocumentId,
           sourceKind:candidate.sourceKind,
           sourceUrl:candidate.sourceUrl,
+          contentSha256:candidate.contentSha256,
           publishedOn:candidate.publishedOn,
           potentialNewRows:candidate.rowKeys.size,
           sessions:[...candidate.sessions].sort(),
-          potentialTargets:[...candidate.targets.values()].sort((a,b)=>a.occurredOn.localeCompare(b.occurredOn)||a.voteEventId.localeCompare(b.voteEventId)||a.membershipId.localeCompare(b.membershipId)),
+          potentialTargets:[...candidate.targets.values()].map((target)=>({...target,evidenceIds:[...target.evidenceIds].sort(),excerpts:[...target.excerpts].sort()})).sort((a,b)=>a.occurredOn.localeCompare(b.occurredOn)||a.voteEventId.localeCompare(b.voteEventId)||a.membershipId.localeCompare(b.membershipId)),
         })).sort((a,b)=>b.potentialNewRows-a.potentialNewRows||a.publishedOn.localeCompare(b.publishedOn)||a.sourceDocumentId.localeCompare(b.sourceDocumentId)),
         interpretation:'diagnostic only: evidence_items.published_at is not promoted to historical availability proof without independent provenance validation',
       },
