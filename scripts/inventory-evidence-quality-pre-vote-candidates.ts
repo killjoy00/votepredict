@@ -35,6 +35,7 @@ type CandidateRow = {
   source_session: string | null;
   membership_id: string;
   bill_id: string;
+  published_at: string | null;
   source_document_text_id: string | null;
   extraction_version: string | null;
 };
@@ -211,6 +212,7 @@ async function main() {
              ls.slug AS source_session,
              ei.membership_id::text,
              ei.bill_id::text,
+             ei.published_at::text,
              sdt.id::text AS source_document_text_id,
              sdt.extraction_version
         FROM evidence_items ei
@@ -235,10 +237,35 @@ async function main() {
     let rowsMissingAvailability=0;
     let rowsOutsideTargetUniverse=0;
     let rowsOnlyPostOrSameDay=0;
+    const missingAvailabilityBySourceKind:Record<string,number>={};
+    const missingAvailabilityPotentialBySource=new Map<string,{sourceDocumentId:string;sourceKind:string;sourceUrl:string;publishedOn:string;rowKeys:Set<string>;sessions:Set<string>}>();
 
     for(const row of result.rows){
       const availableOn=availabilityDate(row.source_metadata);
-      if(!availableOn){rowsMissingAvailability+=1;continue;}
+      if(!availableOn){
+        rowsMissingAvailability+=1;
+        missingAvailabilityBySourceKind[row.source_kind]=(missingAvailabilityBySourceKind[row.source_kind]??0)+1;
+        const publishedOn=row.published_at && Number.isFinite(Date.parse(row.published_at)) ? row.published_at.slice(0,10) : null;
+        const targetRows=targetByPair.get(row.membership_id+'|'+row.bill_id)??[];
+        if(publishedOn && validDateOnly(publishedOn)){
+          for(const target of targetRows){
+            const rowKey=target.voteEventId+'|'+target.membershipId;
+            if(publishedOn>=target.occurredOn || covered.has(rowKey)) continue;
+            const current=missingAvailabilityPotentialBySource.get(row.source_document_id)??{
+              sourceDocumentId:row.source_document_id,
+              sourceKind:row.source_kind,
+              sourceUrl:row.source_url,
+              publishedOn,
+              rowKeys:new Set<string>(),
+              sessions:new Set<string>(),
+            };
+            current.rowKeys.add(rowKey);
+            current.sessions.add(target.session);
+            missingAvailabilityPotentialBySource.set(row.source_document_id,current);
+          }
+        }
+        continue;
+      }
       const targetRows=targetByPair.get(row.membership_id+'|'+row.bill_id)??[];
       if(!targetRows.length){rowsOutsideTargetUniverse+=1;continue;}
       const preVote=targetRows.filter((target)=>availableOn<target.occurredOn);
@@ -328,12 +355,26 @@ async function main() {
     }
 
     const report={
-      schemaVersion:'evidence-quality-pre-vote-candidate-inventory-v1',
+      schemaVersion:'evidence-quality-pre-vote-candidate-inventory-v1.1',
       generatedAt:new Date().toISOString(),
       issue:579,
       targetUniverse:{rows:targets.length,currentCoveredRows:covered.size},
       sourceRowsScanned:result.rows.length,
       exclusions:{rowsMissingAvailability,rowsOutsideTargetUniverse,rowsOnlyPostOrSameDay},
+      missingAvailabilityDiagnostic:{
+        bySourceKind:missingAvailabilityBySourceKind,
+        sourcesWithStoredPublishedAtThatCouldAddRows:missingAvailabilityPotentialBySource.size,
+        potentialNewRowsIfStoredPublishedAtWereIndependentlyValidated:new Set([...missingAvailabilityPotentialBySource.values()].flatMap((candidate)=>[...candidate.rowKeys])).size,
+        candidates:[...missingAvailabilityPotentialBySource.values()].map((candidate)=>({
+          sourceDocumentId:candidate.sourceDocumentId,
+          sourceKind:candidate.sourceKind,
+          sourceUrl:candidate.sourceUrl,
+          publishedOn:candidate.publishedOn,
+          potentialNewRows:candidate.rowKeys.size,
+          sessions:[...candidate.sessions].sort(),
+        })).sort((a,b)=>b.potentialNewRows-a.potentialNewRows||a.publishedOn.localeCompare(b.publishedOn)||a.sourceDocumentId.localeCompare(b.sourceDocumentId)),
+        interpretation:'diagnostic only: evidence_items.published_at is not promoted to historical availability proof without independent provenance validation',
+      },
       candidates:{
         sourceDocumentsBeforeExactDedup:candidates.length,
         exactContentDuplicateGroups:duplicateGroups.length,
@@ -385,6 +426,9 @@ async function main() {
         houseSessionDailyRecommendedSources:sessionGreedy.selected.length,
         houseSessionDailyPotentialNewRows:sessionGreedy.coveredRows,
         bySourceKind:sourceKindSummary,
+        missingAvailabilityBySourceKind,
+        missingAvailabilitySourcesWithPotentialPublishedAtCoverage:missingAvailabilityPotentialBySource.size,
+        missingAvailabilityPotentialNewRowsIfPublishedAtValidated:new Set([...missingAvailabilityPotentialBySource.values()].flatMap((candidate)=>[...candidate.rowKeys])).size,
         outcomeUse:'none',
         modelFitting:'none',
         servingChanged:false,
