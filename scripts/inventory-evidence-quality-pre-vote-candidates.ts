@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { gunzipSync } from 'node:zlib';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 import { EVIDENCE_QUALITY_SOURCE_KINDS, EVIDENCE_QUALITY_TEXT_VERSION } from '../src/evidence/evidence-quality.js';
+import { evidenceItemAvailabilityDate, type EvidenceQualityAvailabilityMethod } from '../src/evidence/evidence-quality-historical-availability.js';
 
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
@@ -32,6 +33,7 @@ type CandidateRow = {
   source_url: string;
   content_sha256: string;
   source_metadata: Record<string, unknown> | null;
+  evidence_metadata: Record<string, unknown> | null;
   source_session: string | null;
   membership_id: string;
   bill_id: string;
@@ -48,6 +50,7 @@ type SourceCandidate = {
   sourceUrl: string;
   contentSha256: string;
   availableOn: string;
+  availabilityMethods: Set<EvidenceQualityAvailabilityMethod>;
   sourceSession: string | null;
   sourceDocumentTextId: string | null;
   textReady: boolean;
@@ -99,25 +102,10 @@ async function chooseDb(env: Record<string, string | undefined>) {
   return value;
 }
 
-function stringMeta(metadata: Record<string, unknown> | null, key: string): string | null {
-  const value = metadata?.[key];
-  return typeof value === 'string' && value.trim() ? value.trim() : null;
-}
-
 function validDateOnly(value: string | null): value is string {
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const t = Date.parse(value + 'T00:00:00.000Z');
   return Number.isFinite(t) && new Date(t).toISOString().slice(0,10) === value;
-}
-
-function availabilityDate(metadata: Record<string, unknown> | null): string | null {
-  for (const key of ['availableAt','availableOn','archiveCapturedAt'] as const) {
-    const raw = stringMeta(metadata,key);
-    if (!raw || !Number.isFinite(Date.parse(raw))) continue;
-    const date = raw.slice(0,10);
-    if (validDateOnly(date)) return date;
-  }
-  return null;
 }
 
 function loadTargets(path: string): TargetRow[] {
@@ -142,6 +130,7 @@ function sourceSummary(candidate: SourceCandidate) {
     sourceUrl: candidate.sourceUrl,
     contentSha256: candidate.contentSha256,
     availableOn: candidate.availableOn,
+    availabilityMethods: [...candidate.availabilityMethods].sort(),
     sourceSession: candidate.sourceSession,
     sourceDocumentTextId: candidate.sourceDocumentTextId,
     textReady: candidate.textReady,
@@ -211,6 +200,7 @@ async function main() {
              sd.source_url,
              sd.content_sha256,
              sd.metadata AS source_metadata,
+             ei.metadata AS evidence_metadata,
              ls.slug AS source_session,
              ei.membership_id::text,
              ei.bill_id::text,
@@ -245,7 +235,13 @@ async function main() {
     const missingAvailabilityPotentialBySource=new Map<string,{sourceDocumentId:string;sourceKind:string;sourceUrl:string;contentSha256:string;publishedOn:string;rowKeys:Set<string>;sessions:Set<string>;targets:Map<string,{voteEventId:string;membershipId:string;billId:string;identifier:string;occurredOn:string;session:string;evidenceIds:Set<string>;excerpts:Set<string>}>}>();
 
     for(const row of result.rows){
-      const availableOn=availabilityDate(row.source_metadata);
+      const availability=evidenceItemAvailabilityDate({
+        sourceMetadata:row.source_metadata,
+        evidenceMetadata:row.evidence_metadata,
+        sourceUrl:row.source_url,
+        sourceContentSha256:row.content_sha256,
+      });
+      const availableOn=availability.availableOn;
       if(!availableOn){
         rowsMissingAvailability+=1;
         missingAvailabilityBySourceKind[row.source_kind]=(missingAvailabilityBySourceKind[row.source_kind]??0)+1;
@@ -289,6 +285,7 @@ async function main() {
           sourceUrl:row.source_url,
           contentSha256:row.content_sha256,
           availableOn,
+          availabilityMethods:new Set([availability.method]),
           sourceSession:row.source_session,
           sourceDocumentTextId:row.source_document_text_id,
           textReady:row.extraction_version===EVIDENCE_QUALITY_TEXT_VERSION,
@@ -300,6 +297,9 @@ async function main() {
           targetPairs:new Set(),
         };
         bySource.set(row.source_document_id,candidate);
+      }else{
+        if(availableOn<candidate.availableOn)candidate.availableOn=availableOn;
+        candidate.availabilityMethods.add(availability.method);
       }
       candidate.targetPairs.add(row.membership_id+'|'+row.bill_id);
       for(const target of preVote){
@@ -339,6 +339,7 @@ async function main() {
           for(const pair of duplicate.targetPairs) representative.targetPairs.add(pair);
           representative.textReady ||= duplicate.textReady;
           representative.sourceDocumentTextId ||= duplicate.sourceDocumentTextId;
+          for(const method of duplicate.availabilityMethods) representative.availabilityMethods.add(method);
         }
         duplicateGroups.push({dedupKey:key,representativeSourceDocumentId:representative.sourceDocumentId,sourceDocumentIds:values.map((value)=>value.sourceDocumentId)});
       }
@@ -413,6 +414,8 @@ async function main() {
         outcomeUse:'none',
         strictPreVoteAvailability:true,
         sameDayExcluded:true,
+        availabilityInputs:['source_documents.metadata','evidence_items.metadata'],
+        granularAvailabilityScope:'evidence_item_excerpt only; exact source identity and structured historical proof required',
         alreadyAnnotatedSourcesExcluded:true,
         currentV12CoveredRowsExcludedFromMarginalRanking:true,
         exactContentDedup:true,
