@@ -16,6 +16,7 @@ export type CanonicalV2Target = Record<string, unknown> & {
   rowKey: string;
   classification: ArchiveProofClassification;
   verifiedProof?: Record<string, unknown> | null;
+  verifiedProof?: Record<string, unknown> | null;
   canonicalAvailabilityStage: 'canonical_retry' | 'availability_fallback';
   preFallbackClassification: ArchiveProofClassification;
   fallbackClassification: 'verified_pre_vote_archive_match' | 'ambiguous_snapshot';
