@@ -16,18 +16,25 @@ import {
   evidenceQualityExactEvidenceItemAvailabilityDate,
   evidenceQualitySourceAvailabilityDate,
 } from '../src/evidence/evidence-quality-historical-availability.js';
-
-const EXPECTED_DOCUMENTS = 226;
-const EXPECTED_UNIQUE_SIGNATURES = 180;
+import {
+  EVIDENCE_QUALITY_BASELINE_MANUAL_DOCUMENTS,
+  EVIDENCE_QUALITY_BASELINE_UNIQUE_SIGNATURES,
+  EVIDENCE_QUALITY_HISTORICAL_CONSUMER_DOCUMENTS,
+  EVIDENCE_QUALITY_SESSION_DAILY_EXCERPT_DOCUMENTS,
+  EVIDENCE_QUALITY_SESSION_DAILY_EXCERPT_UNIQUE_SIGNATURES,
+  evidenceQualityHistoricalAnnotationCohort,
+  evidenceQualityHistoricalCohortUsesSourceAvailability,
+  type EvidenceQualityHistoricalAnnotationCohort,
+} from '../src/evidence/evidence-quality-historical-consumer.js';
 const EXPECTED_ROWS = 135457;
 const EXPECTED_EVENTS = 1339;
 const EXPECTED_MEMBERSHIPS = 611;
 const EXPECTED_ROW_KEY_SHA256 = '3aa47101f9e4a848e293fdaa89ef853919d49826b68ae90960370c5c19e9df72';
 const MANUAL_PROVIDER = 'manual-openai';
-const MATRIX_SCHEMA = 'evidence-quality-historical-feature-matrix-v1.3';
-const SIGNAL_SCHEMA = 'evidence-quality-historical-exact-signals-v1.3';
-const ISSUE_SCHEMA = 'evidence-quality-historical-member-issue-signals-v1.3';
-const PLAN_PATH = 'data/evaluation/evidence-quality/evidence-quality-historical-feature-plan-v1.3.json';
+const MATRIX_SCHEMA = 'evidence-quality-historical-feature-matrix-v1.4';
+const SIGNAL_SCHEMA = 'evidence-quality-historical-exact-signals-v1.4';
+const ISSUE_SCHEMA = 'evidence-quality-historical-member-issue-signals-v1.4';
+const PLAN_PATH = 'data/evaluation/evidence-quality/evidence-quality-historical-feature-plan-v1.4.json';
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 let secrets: string[] = [];
@@ -35,15 +42,17 @@ let secrets: string[] = [];
 type AnnotationRow = {
   annotation_id: string;
   source_document_id: string;
-  source_document_text_id: string;
+  source_document_text_id: string | null;
+  classifier_model: string;
+  content_mode: string;
   source_kind: string;
   source_url: string;
   source_content_sha256: string;
   source_session_id: string | null;
   source_chamber_id: string | null;
   source_metadata: Record<string, unknown> | null;
-  normalized_text: string;
-  extraction_version: string;
+  normalized_text: string | null;
+  extraction_version: string | null;
   extraction_confidence: number;
   outcome_blind: boolean;
   context_only: boolean;
@@ -71,6 +80,7 @@ type AnnotationRow = {
     }>;
   };
   annotation_metadata: Record<string, unknown> | null;
+  historical_cohort?: EvidenceQualityHistoricalAnnotationCohort;
 };
 
 type ContextRow = {
@@ -286,8 +296,11 @@ function claimAvailabilityDate(input: {
   billId?: string;
 }): string | null {
   const dates = new Set<string>();
-  const sourceDate = availabilityDate(input.source.source_metadata);
-  if (sourceDate) dates.add(sourceDate);
+  if (!input.source.historical_cohort) throw new Error('Historical annotation cohort was not resolved');
+  if (evidenceQualityHistoricalCohortUsesSourceAvailability(input.source.historical_cohort)) {
+    const sourceDate = availabilityDate(input.source.source_metadata);
+    if (sourceDate) dates.add(sourceDate);
+  }
 
   for (const context of input.contexts) {
     if (context.membership_id !== input.membershipId) continue;
@@ -334,7 +347,7 @@ async function main() {
   if (!envFile || !targetPath || !outputDir) throw new Error('Production env, target universe, and output directory are required');
 
   const plan = JSON.parse(readFileSync(resolve(PLAN_PATH), 'utf8')) as { schemaVersion: string; featureNames: string[] };
-  if (plan.schemaVersion !== 'evidence-quality-historical-feature-plan-v1.3'
+  if (plan.schemaVersion !== 'evidence-quality-historical-feature-plan-v1.4'
       || canonicalJson(plan.featureNames) !== canonicalJson([...EVIDENCE_QUALITY_HISTORICAL_FEATURES])) {
     throw new Error('Evidence Quality historical feature plan drifted');
   }
@@ -361,6 +374,8 @@ async function main() {
       SELECT eqa.id::text AS annotation_id,
              eqa.source_document_id::text,
              eqa.source_document_text_id::text,
+             eqa.classifier_model,
+             eqa.content_mode,
              sd.source_kind,
              sd.source_url,
              sd.content_sha256 AS source_content_sha256,
@@ -378,36 +393,72 @@ async function main() {
              eqa.metadata AS annotation_metadata
         FROM evidence_quality_annotations eqa
         JOIN source_documents sd ON sd.id=eqa.source_document_id
-        JOIN source_document_texts sdt ON sdt.id=eqa.source_document_text_id
+        LEFT JOIN source_document_texts sdt ON sdt.id=eqa.source_document_text_id
        WHERE eqa.schema_version=$1
          AND eqa.prompt_version=$2
          AND eqa.classifier_provider=$3
-         AND eqa.content_mode='verified_full_text'
-       ORDER BY eqa.source_document_id`, [
+         AND eqa.content_mode IN ('verified_full_text','excerpt_only')
+       ORDER BY eqa.source_document_id, eqa.content_mode`, [
       EVIDENCE_QUALITY_SCHEMA_VERSION,
       EVIDENCE_QUALITY_PROMPT_VERSION,
       MANUAL_PROVIDER,
     ]);
 
-    if (annotationResult.rows.length !== EXPECTED_DOCUMENTS) {
-      throw new Error(`Expected ${EXPECTED_DOCUMENTS} manual annotations, found ${annotationResult.rows.length}`);
+    const selectedRows = selectedRows.flatMap((row) => {
+      const cohort = evidenceQualityHistoricalAnnotationCohort({
+        sourceKind: row.source_kind,
+        sourceDocumentTextId: row.source_document_text_id,
+        classifierModel: row.classifier_model,
+        contentMode: row.content_mode,
+        annotationMetadata: row.annotation_metadata,
+      });
+      return cohort ? [{ ...row, historical_cohort: cohort }] : [];
+    });
+    const baselineRows = selectedRows.filter((row) => row.historical_cohort === 'baseline_verified_full_text');
+    const sessionDailyRows = selectedRows.filter((row) => row.historical_cohort === 'session_daily_archive_verified_excerpt');
+    if (baselineRows.length !== EVIDENCE_QUALITY_BASELINE_MANUAL_DOCUMENTS) {
+      throw new Error('Baseline full-text annotation count mismatch: ' + baselineRows.length);
     }
+    if (sessionDailyRows.length !== EVIDENCE_QUALITY_SESSION_DAILY_EXCERPT_DOCUMENTS) {
+      throw new Error('Guarded Session Daily excerpt annotation count mismatch: ' + sessionDailyRows.length);
+    }
+    if (selectedRows.length !== EVIDENCE_QUALITY_HISTORICAL_CONSUMER_DOCUMENTS) {
+      throw new Error('Historical consumer annotation count mismatch: ' + selectedRows.length);
+    }
+
     const fingerprints = new Set<string>();
+    const baselineFingerprints = new Set<string>();
+    const sessionDailyFingerprints = new Set<string>();
     const sourceIds: string[] = [];
     let sourcesMissingAvailability = 0;
-    for (const row of annotationResult.rows) {
+    for (const row of selectedRows) {
       if (!row.outcome_blind || !row.context_only || row.mechanically_actionable || Number(row.model_weight) !== 0) {
         throw new Error('Evidence Quality policy invariant failed for source ' + row.source_document_id);
       }
-      if (row.extraction_version !== 'evidence-quality-text-v1') throw new Error('Source text version drift');
+      if (row.historical_cohort === 'baseline_verified_full_text'
+          && row.extraction_version !== 'evidence-quality-text-v1') {
+        throw new Error('Baseline source text version drift');
+      }
+      if (row.historical_cohort === 'session_daily_archive_verified_excerpt'
+          && (row.source_document_text_id !== null || row.extraction_version !== null)) {
+        throw new Error('Session Daily excerpt annotation unexpectedly claims source text identity');
+      }
       const fingerprint = stringMeta(row.annotation_metadata, 'semanticFingerprint');
       if (!fingerprint || !/^[0-9a-f]{64}$/i.test(fingerprint)) throw new Error('Missing semantic fingerprint');
       fingerprints.add(fingerprint);
+      if (row.historical_cohort === 'baseline_verified_full_text') baselineFingerprints.add(fingerprint);
+      else sessionDailyFingerprints.add(fingerprint);
       sourceIds.push(row.source_document_id);
-      if (!availabilityDate(row.source_metadata)) sourcesMissingAvailability += 1;
+      if (row.historical_cohort === 'baseline_verified_full_text'
+          && !availabilityDate(row.source_metadata)) {
+        sourcesMissingAvailability += 1;
+      }
     }
-    if (fingerprints.size !== EXPECTED_UNIQUE_SIGNATURES) {
-      throw new Error(`Expected ${EXPECTED_UNIQUE_SIGNATURES} semantic signatures, found ${fingerprints.size}`);
+    if (baselineFingerprints.size !== EVIDENCE_QUALITY_BASELINE_UNIQUE_SIGNATURES) {
+      throw new Error('Baseline semantic signature count mismatch: ' + baselineFingerprints.size);
+    }
+    if (sessionDailyFingerprints.size !== EVIDENCE_QUALITY_SESSION_DAILY_EXCERPT_UNIQUE_SIGNATURES) {
+      throw new Error('Session Daily semantic signature count mismatch: ' + sessionDailyFingerprints.size);
     }
 
     const contextResult = await client.query<ContextRow>(`
@@ -432,7 +483,7 @@ async function main() {
       contextsBySource.set(row.source_document_id, values);
     }
 
-    const sourceSessionIds = [...new Set(annotationResult.rows
+    const sourceSessionIds = [...new Set(selectedRows
       .map((row) => row.source_session_id)
       .filter((value): value is string => Boolean(value)))];
 
@@ -481,7 +532,7 @@ async function main() {
     let exactClaimsUsingSourceSessionIdentityResolution = 0;
     let memberIssueClaimsUsingSourceSessionIdentityResolution = 0;
 
-    for (const row of annotationResult.rows) {
+    for (const row of selectedRows) {
       const fingerprint = stringMeta(row.annotation_metadata, 'semanticFingerprint')!;
       const contexts = contextsBySource.get(row.source_document_id) ?? [];
 
@@ -700,21 +751,25 @@ async function main() {
     const exactGzip = gzipSync(Buffer.from(exactText), { level: 9 });
     const issueGzip = gzipSync(Buffer.from(issueText), { level: 9 });
 
-    const matrixPath = resolve(outputDir, 'evidence-quality-historical-feature-matrix-v1.3.ndjson.gz');
-    const exactPath = resolve(outputDir, 'evidence-quality-historical-exact-signals-v1.3.ndjson.gz');
-    const issuePath = resolve(outputDir, 'evidence-quality-historical-member-issue-signals-v1.3.ndjson.gz');
+    const matrixPath = resolve(outputDir, 'evidence-quality-historical-feature-matrix-v1.4.ndjson.gz');
+    const exactPath = resolve(outputDir, 'evidence-quality-historical-exact-signals-v1.4.ndjson.gz');
+    const issuePath = resolve(outputDir, 'evidence-quality-historical-member-issue-signals-v1.4.ndjson.gz');
     writeFileSync(matrixPath, matrixGzip);
     writeFileSync(exactPath, exactGzip);
     writeFileSync(issuePath, issueGzip);
 
     const manifest = {
-      schemaVersion: 'evidence-quality-historical-feature-matrix-v1.3-manifest',
+      schemaVersion: 'evidence-quality-historical-feature-matrix-v1.4-manifest',
       generatedAt: new Date().toISOString(),
       issue: 579,
       plan: PLAN_PATH,
       annotationCorpus: {
-        documents: annotationResult.rows.length,
+        documents: selectedRows.length,
+        baselineVerifiedFullTextDocuments: baselineRows.length,
+        sessionDailyArchiveVerifiedExcerptDocuments: sessionDailyRows.length,
         uniqueSemanticSignatures: fingerprints.size,
+        baselineUniqueSemanticSignatures: baselineFingerprints.size,
+        sessionDailyUniqueSemanticSignatures: sessionDailyFingerprints.size,
         sourcesMissingHistoricalAvailability: sourcesMissingAvailability,
         directionalClaims,
         exactDirectionalClaims,
@@ -762,7 +817,9 @@ async function main() {
         outcomeUseDuringFeatureConstruction: 'none',
         strictPreEventAvailability: true,
         sameDayEvidenceExcluded: true,
-        availabilitySource: 'exact evidence_items.metadata excerpt proof when claim/context matched; source_documents.metadata fallback',
+        availabilitySource: 'exact evidence_items.metadata excerpt proof when claim/context matched; source_documents.metadata fallback only for baseline verified_full_text annotations',
+        historicalAnnotationCohorts: ['baseline_verified_full_text', 'session_daily_archive_verified_excerpt'],
+        sessionDailyExcerptSourceAvailabilityFallback: false,
         evidenceItemScopedProofNeverPromotedSourceWide: true,
         semanticDeduplication: 'semanticFingerprint + deterministic membership/bill identity',
         identityResolution: 'prefer evidence_items IDs; otherwise resolve only the already-reviewed claim member/bill identifiers by unique exact match within source session/chamber; ambiguity fails closed',
@@ -774,7 +831,7 @@ async function main() {
         modelWeightChanged: false,
       },
     };
-    const manifestPath = resolve(outputDir, 'evidence-quality-historical-feature-matrix-v1.3-manifest.json');
+    const manifestPath = resolve(outputDir, 'evidence-quality-historical-feature-matrix-v1.4-manifest.json');
     writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
 
     console.log(JSON.stringify({
