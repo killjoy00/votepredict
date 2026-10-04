@@ -235,7 +235,7 @@ async function main() {
         LEFT JOIN bills b ON b.id=ei.bill_id
         WHERE sd.source_kind = ANY($2::text[])
           AND sd.source_kind <> 'house_session_daily'
-          AND sd.id = ANY($3::uuid[])
+          AND sd.id = ANY($4::uuid[])
           AND NOT (sd.id = ANY($3::uuid[]))
         GROUP BY sd.id,sdt.id
       )`;
