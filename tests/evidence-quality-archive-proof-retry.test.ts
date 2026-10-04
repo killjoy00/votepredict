@@ -10,6 +10,12 @@ function report(classifications: string[]): ArchiveProofReport {
     schemaVersion: 'evidence-quality-pre-vote-archive-proof-v1',
     sources: [{
       sourceDocumentId: 'source-1',
+      sourceKind: 'house_session_daily',
+      sourceUrl: 'https://www.house.mn.gov/SessionDaily/Story/1',
+      sourceContentSha256: 'a'.repeat(64),
+      sessions: ['2023-2024'],
+      potentialNewRows: classifications.length,
+      classification: 'ambiguous_snapshot',
       targets: classifications.map((classification, index) => ({
         rowKey: 'row-' + index,
         classification: classification as never,
@@ -64,6 +70,12 @@ test('retry merge fails when target identity drifts', () => {
     ...report(['verified_pre_vote_archive_match']),
     sources: [{
       sourceDocumentId: 'source-1',
+      sourceKind: 'house_session_daily',
+      sourceUrl: 'https://www.house.mn.gov/SessionDaily/Story/1',
+      sourceContentSha256: 'a'.repeat(64),
+      sessions: ['2023-2024'],
+      potentialNewRows: 1,
+      classification: 'verified_pre_vote_archive_match',
       targets: [{ rowKey: 'different-row', classification: 'verified_pre_vote_archive_match' }],
     }],
   };
