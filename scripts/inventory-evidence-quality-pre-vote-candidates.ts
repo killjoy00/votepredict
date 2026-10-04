@@ -177,12 +177,10 @@ async function main() {
   const targets=loadTargets(targetPath);
   const covered=loadCovered(matrixPath);
   const targetByPair=new Map<string,TargetRow[]>();
-  const targetByRowKey=new Map<string,TargetRow>();
   const trainingTargetRowKeys=new Set<string>();
   const currentCoveredBySession:Record<string,number>={};
   for(const row of targets){
     const rowKey=row.voteEventId+'|'+row.membershipId;
-    targetByRowKey.set(rowKey,row);
     if(row.session===TRAINING_SESSION) trainingTargetRowKeys.add(rowKey);
     if(covered.has(rowKey)) currentCoveredBySession[row.session]=(currentCoveredBySession[row.session]??0)+1;
     const key=row.membershipId+'|'+row.billId;
