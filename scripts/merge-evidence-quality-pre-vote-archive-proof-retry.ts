@@ -109,17 +109,21 @@ async function main() {
   );
 
   const sources = merged.sources.map((source) => {
-    const firstSource = first.sources.find((row) => row.sourceDocumentId === source.sourceDocumentId)!;
-    const retrySource = retryBySource.get(source.sourceDocumentId);
-    if (!retrySource) throw new Error('Source missing from retry: ' + source.sourceDocumentId);
+    if (typeof source.sourceDocumentId !== 'string' || !source.sourceDocumentId) {
+      throw new Error('Canonical source is missing sourceDocumentId');
+    }
+    const sourceDocumentId = source.sourceDocumentId;
+    const firstSource = first.sources.find((row) => row.sourceDocumentId === sourceDocumentId)!;
+    const retrySource = retryBySource.get(sourceDocumentId);
+    if (!retrySource) throw new Error('Source missing from retry: ' + sourceDocumentId);
     const canonicalTargets = source.targets.map((target) => ({
       ...target,
       recoveredFromFirstRunAmbiguity:
-        firstAmbiguousKeys.has(source.sourceDocumentId + '|' + target.rowKey)
+        firstAmbiguousKeys.has(sourceDocumentId + '|' + target.rowKey)
         && target.classification !== 'ambiguous_snapshot',
     }));
     return {
-      sourceDocumentId: source.sourceDocumentId,
+      sourceDocumentId,
       sourceKind: source.sourceKind,
       sourceUrl: source.sourceUrl,
       sourceContentSha256: source.sourceContentSha256,
