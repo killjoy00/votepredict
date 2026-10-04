@@ -16,6 +16,14 @@ const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING'
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const EXPECTED_DOCUMENTS = 125;
 const MANUAL_PROVIDER = 'manual-openai';
+const EXPECTED_IDENTITY_SHA256: Record<string, string> = {
+  'EQV1-P1-SUP-001': '0147b19711c8251190640727b0e10de0eee276d9378bee23971236639d95e9d7',
+  'EQV1-P1-SUP-002': '0762f0e772b007ae74ce6a5dfc74ad57dc84548ebaf8019c9c999340d1d6a24c',
+  'EQV1-P1-SUP-003': 'ec7c701f3eb5eef1ed1336fe4c7b56af373ec52d1da46c7a78be048d6b67b7f4',
+  'EQV1-P2-SUP-001': '9adc72c9281a3892881c2318a8936867162f8105c64c30853b7c318befa2b163',
+  'EQV1-P2-SUP-002': '22b61f5d644ee0c965e44bc6b14e13ff6d63219d1e34d92d93f0b8d4d4bc5806',
+  'EQV1-P2-SUP-003': 'ffc18a3dc97008cc71c9036e43162375e8354b316e70f2895b209bb8fe176a67',
+};
 const BATCH_PATHS = [
   'data/evaluation/evidence-quality/manual-annotations/p1-supplement-01.json',
   'data/evaluation/evidence-quality/manual-annotations/p1-supplement-02.json',
@@ -217,6 +225,15 @@ function loadBatches() {
     }
     if (batch.batchId.startsWith('EQV1-P2-') && batch.documents.some((document) => document.candidateBillIdentifiers.length !== 0)) {
       throw new Error(`${path}: P2 cohort contains candidate bill identifiers`);
+    }
+    const identityPayload = batch.documents
+      .slice()
+      .sort((a, b) => a.row - b.row)
+      .map((document) => `${document.row}|${document.sourceDocumentId}|${document.sourceDocumentTextId}`)
+      .join('\n');
+    const identitySha256 = createHash('sha256').update(identityPayload).digest('hex');
+    if (identitySha256 !== EXPECTED_IDENTITY_SHA256[batch.batchId]) {
+      throw new Error(`${path}: frozen source/text identity hash mismatch`);
     }
 
     const selected = new Set(batch.selectedSourceDocumentIds);
