@@ -43,6 +43,15 @@ jobs:
           mkdir -p "$RUNNER_TEMP/evidence-quality-pre-vote-archive-proof-canonical-v1"
           unzip -q "$RUNNER_TEMP/evidence-quality-pre-vote-archive-proof-canonical-v1.zip" -d "$RUNNER_TEMP/evidence-quality-pre-vote-archive-proof-canonical-v1"
 
+      - name: Materialize positive-proof availability fallback artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11315014442/zip > "$RUNNER_TEMP/evidence-quality-pre-vote-archive-availability-fallback-v1.zip"
+          echo "bee02801a8eedbc060ef3fe5d48ba140022283a270db24cbd07fcc9f08a4ac9b  $RUNNER_TEMP/evidence-quality-pre-vote-archive-availability-fallback-v1.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/evidence-quality-pre-vote-archive-availability-fallback-v1"
+          unzip -q "$RUNNER_TEMP/evidence-quality-pre-vote-archive-availability-fallback-v1.zip" -d "$RUNNER_TEMP/evidence-quality-pre-vote-archive-availability-fallback-v1"
+
       - name: Read production environment privately
         shell: bash
         run: |
@@ -57,6 +66,10 @@ jobs:
           VOTEPREDICT_EQ_ARCHIVE_PROOF_ARTIFACT_ID: "11314884404"
           VOTEPREDICT_EQ_ARCHIVE_PROOF_ARTIFACT_DIGEST: "sha256:075f0f4a9fbc113747164bbeeec1a2847de08c9d44a08d249a4410e8a83667a1"
           VOTEPREDICT_EQ_ARCHIVE_PROOF_RUN_ID: "37235551185"
+          VOTEPREDICT_EQ_ARCHIVE_FALLBACK_PATH: ${{ runner.temp }}/evidence-quality-pre-vote-archive-availability-fallback-v1/evidence-quality-pre-vote-archive-availability-fallback-v1.json
+          VOTEPREDICT_EQ_ARCHIVE_FALLBACK_ARTIFACT_ID: "11315014442"
+          VOTEPREDICT_EQ_ARCHIVE_FALLBACK_ARTIFACT_DIGEST: "sha256:bee02801a8eedbc060ef3fe5d48ba140022283a270db24cbd07fcc9f08a4ac9b"
+          VOTEPREDICT_EQ_ARCHIVE_FALLBACK_RUN_ID: "37235904868"
           VOTEPREDICT_EQ_SESSION_DAILY_REVIEW_DIR: ${{ runner.temp }}/evidence-quality-session-daily-recovered-review-cohort
         run: node --import tsx scripts/export-evidence-quality-session-daily-recovered-review-cohort.ts
 
@@ -72,4 +85,4 @@ jobs:
         if: always()
         shell: bash
         run: |
-          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/evidence-quality-pre-vote-archive-proof-canonical-v1.zip"
+          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/evidence-quality-pre-vote-archive-proof-canonical-v1.zip" "$RUNNER_TEMP/evidence-quality-pre-vote-archive-availability-fallback-v1.zip"
