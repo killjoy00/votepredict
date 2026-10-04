@@ -264,7 +264,7 @@ async function loadIssueAlignments(
      ORDER BY agreement DESC, pa.shared_votes DESC, l.name
      LIMIT 40`, [currentMembershipId, eventIds]);
 
-  return dedupeTemporalEvidenceHistory(result.rows).slice(0, 30).map((row) => ({
+  return result.rows.map((row) => ({
     legislatorId: row.legislator_id,
     membershipId: row.membership_id,
     name: row.name,
@@ -295,15 +295,18 @@ async function loadIssueEvidence(legislatorId: string, billIds: readonly string[
       JOIN memberships m ON m.id = ei.membership_id
      WHERE m.legislator_id = $1
        AND ei.bill_id = ANY($2::uuid[])
-       AND NOT EXISTS (
-         SELECT 1
-           FROM evidence_relationships er
-          WHERE er.to_evidence_id = ei.id
-            AND er.relation_kind = 'supersedes'
+       AND (
+         ei.evidence_kind IN ('direct_statement','related_statement')
+         OR NOT EXISTS (
+           SELECT 1
+             FROM evidence_relationships er
+            WHERE er.to_evidence_id = ei.id
+              AND er.relation_kind = 'supersedes'
+         )
        )
-     ORDER BY COALESCE(ei.published_at, ei.created_at) DESC
-     LIMIT 30`, [legislatorId, billIds]);
-  return result.rows.map((row) => ({
+     ORDER BY COALESCE(ei.published_at, ei.created_at) DESC, ei.id DESC
+     LIMIT 120`, [legislatorId, billIds]);
+  return dedupeTemporalEvidenceHistory(result.rows).slice(0, 30).map((row) => ({
     kind: row.kind,
     stance: row.stance ?? undefined,
     claim: row.claim,

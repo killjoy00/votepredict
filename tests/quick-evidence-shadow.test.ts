@@ -16,6 +16,8 @@ function stored(overrides: Partial<QuickEvidenceStoredRow> = {}): QuickEvidenceS
     id: 'evidence-1',
     membership_id: 'member-1',
     evidence_kind: 'direct_statement',
+    claim: 'Stored bill-specific evidence',
+    evidence_series_key: null,
     stance: 'supports',
     source_quality: 'member_primary',
     relevance: 'direct',
