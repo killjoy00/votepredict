@@ -1,0 +1,686 @@
+{
+  "batchId": "EQV1-SESSION-DAILY-ARCHIVE-VERIFIED-001-SEMANTIC-REVIEW",
+  "schemaVersion": "evidence-quality-session-daily-semantic-review-v1",
+  "evidenceQualitySchemaVersion": "evidence-quality-v1",
+  "evidenceQualityPromptVersion": "evidence-quality-prompt-v1",
+  "provider": "OpenAI",
+  "model": "GPT-5.6 Sol",
+  "sourceCohort": {
+    "runId": 37233894771,
+    "artifactId": 11314817215,
+    "artifactName": "evidence-quality-session-daily-review-cohort-v1",
+    "artifactDigest": "sha256:203e98ddf610af528cac0fd7d697737983ee1a6affa45437d2a688c83ca7ee46",
+    "cohortIdentitySha256": "4586c3acd5f0e954e4a7d6795e08cdf25d7ae6347f71c393db2c8eadf0fd9e61",
+    "batchId": "EQV1-SESSION-DAILY-ARCHIVE-VERIFIED-001"
+  },
+  "summary": {
+    "documentsReviewed": 22,
+    "targetMemberDirectionalDocuments": 10,
+    "targetMemberDirectionalClaims": 10,
+    "exactMemberBillDirectionalClaims": 4,
+    "memberIssueDirectionalClaims": 6,
+    "exactMemberBillDirectionalUniquePotentialRows": 6,
+    "billOnlyThirdPartyDirectionalClaims": 1,
+    "targetMemberNonDirectionalDocuments": 12,
+    "humanAdjudicationRecommendedRows": [
+      8,
+      15,
+      20
+    ],
+    "validationFailures": 0
+  },
+  "policy": {
+    "outcomeBlind": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "reviewUsesFrozenExcerptOnly": true,
+    "archiveAvailabilityAlreadyProven": true,
+    "verifiedFullTextClaimed": false,
+    "sourceByteHashMatchClaimed": false,
+    "sponsorshipAuthorshipProcedureDirectionalByDefault": false,
+    "individualProvisionSupportPromotedToWholeBillSupport": false,
+    "candidateMemberStanceInferredFromThirdPartySupport": false,
+    "modelFitting": "none",
+    "servingChanged": false,
+    "frozenCandidateListsPreserved": true,
+    "frozenReviewTextEmbeddedForMechanicalValidation": true
+  },
+  "reviews": [
+    {
+      "row": 1,
+      "sourceDocumentId": "239175bd-042d-4b55-b47e-e320842f472e",
+      "reviewTextSha256": "9b1dd7a6459b9f31f25d52921830bd6dcb4ad2872936b4482b0427bd99cdef4b",
+      "decision": "member_issue_directional",
+      "memberNames": [
+        "Bonnie Westlin"
+      ],
+      "billIdentifiers": [],
+      "stance": "supports",
+      "claimType": "quoted_position",
+      "specificity": "named_proposal",
+      "normalizedClaim": "Westlin explicitly welcomes the red-flag policy provision, but the excerpt does not establish her final-passage stance on SF2909 as a whole.",
+      "supportingExcerpt": "“This has been a long time coming,” Sen. Bonnie Westlin (DFL-Plymouth) said Wednesday regarding the so-called red-flag provision.",
+      "notes": [
+        "Support for an individual provision is retained as member/issue evidence and is not promoted to whole-bill support."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17992",
+      "candidateMemberNames": [
+        "Bonnie Westlin"
+      ],
+      "candidateBillIdentifiers": [
+        "SF2909"
+      ],
+      "frozenReviewText": "r others. “This has been a long time coming,” Sen. Bonnie Westlin (DFL-Plymouth) said Wednesday regarding the so-called red-flag provision. Her best friend committed suicide by a firearm in 1991. Conference Committee on SF2909 5/10/23 - Part 1 “Extreme-risk protection orders strike a balance between the rights of an individual to lawfully possess a firearm and our desire to keep that person safe as well as the surrounding community and others"
+    },
+    {
+      "row": 2,
+      "sourceDocumentId": "27334b25-76cb-44fe-87ab-fb337deacc4b",
+      "reviewTextSha256": "9a24ca016bbfeda2fbc21e935c04a66f9c2ad12c3fb9bb4f1cb5380a4ed6e492",
+      "decision": "non_directional",
+      "memberNames": [
+        "Ben Bakeberg"
+      ],
+      "billIdentifiers": [
+        "HF5237"
+      ],
+      "stance": "unclear",
+      "claimType": "policy_discussion",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Bakeberg gives a mixed assessment of HF5237, praising some bipartisan provisions while criticizing legislative overreach, without stating a final-passage position.",
+      "supportingExcerpt": "Rep. Ben Bakeberg (R-Jordan) said there are several positive bipartisan things in the bill that were logical decisions, but legislative overreach has damaged schools.",
+      "notes": [
+        "Mixed bill assessment is not converted into supports/opposes/mixed final-passage stance."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/18348",
+      "candidateMemberNames": [
+        "Ben Bakeberg"
+      ],
+      "candidateBillIdentifiers": [
+        "HF5237"
+      ],
+      "frozenReviewText": "s last year both in funding and the direction we want our state education system to go.” Republican sticking points revolved around the cost of mandates placed on schools during the 2023 session. Minnesota House debates HF5237 , the education supplemental finance bill 4/30/24 Rep. Ben Bakeberg (R-Jordan) said there are several positive bipartisan things in the bill that were logical decisions, but legislative overreach has damaged schools. “("
+    },
+    {
+      "row": 3,
+      "sourceDocumentId": "2c3275ba-a42d-44fb-99e9-84e5fcb33071",
+      "reviewTextSha256": "4d1a4f389fc23938b00b3adfd6857663324b3b353c08288432bf69473ec18c5a",
+      "decision": "member_issue_directional",
+      "memberNames": [
+        "Rick Hansen"
+      ],
+      "billIdentifiers": [],
+      "stance": "supports",
+      "claimType": "quoted_position",
+      "specificity": "issue_family",
+      "normalizedClaim": "Hansen favorably endorses tree planting while introducing HF3911, but the excerpt does not establish a final-passage stance on the bill as a whole.",
+      "supportingExcerpt": "“It’s another great day to plant trees,” Hansen said Wednesday in introducing HF3911",
+      "notes": [
+        "Consistent with the frozen P1 rubric, favorable issue framing while introducing a bill is not promoted to final-passage support."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/18354",
+      "candidateMemberNames": [
+        "Rick Hansen"
+      ],
+      "candidateBillIdentifiers": [
+        "HF3911"
+      ],
+      "frozenReviewText": "ce Rep. Rick Hansen (DFL-South St. Paul) has shared the adage that the best time to plant trees is 20 years ago. The next best time is today. “It’s another great day to plant trees,” Hansen said Wednesday in introducing HF3911 , the environment and natural resources supplemental policy and finance bill that would provide approximately $19 million from various funds to plant trees in communities, state parks, along trails and at the zoo. The H"
+    },
+    {
+      "row": 4,
+      "sourceDocumentId": "3274e867-e1c4-4997-af56-7a147e44cdfe",
+      "reviewTextSha256": "b60aca53ddc3f06f885f3006551880b259e4c61f829dea7bb2a2d37f33a76afd",
+      "decision": "member_issue_directional",
+      "memberNames": [
+        "Zack Stephenson"
+      ],
+      "billIdentifiers": [],
+      "stance": "supports",
+      "claimType": "quoted_position",
+      "specificity": "issue_family",
+      "normalizedClaim": "Stephenson explicitly praises the social-media guardrail policy in the proposal, but the excerpt does not establish his final-passage stance on SF4097 as a whole.",
+      "supportingExcerpt": "Rep. Zack Stephenson (DFL-Coon Rapids), who sponsors HF4077 /SF4097* with Sen. Matt Klein (DFL-Mendota Heights), touted the “groundbreaking approach” to social media protections, calling it a “bipartisan effort to put some real guardrails about social media.”",
+      "notes": [
+        "No stance is inferred for Matt D. Klein from co-sponsorship alone.",
+        "Praise for an individual provision is not promoted to whole-bill support."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/18293",
+      "candidateMemberNames": [
+        "Matt D. Klein",
+        "Zack Stephenson"
+      ],
+      "candidateBillIdentifiers": [
+        "SF4097"
+      ],
+      "frozenReviewText": "ontaining provisions ranging from enhancing protections against coerced debt to giving social media users more power over the content the platforms feed them. Rep. Zack Stephenson (DFL-Coon Rapids), who sponsors HF4077 /SF4097* with Sen. Matt Klein (DFL-Mendota Heights), touted the “groundbreaking approach” to social media protections, calling it a “bipartisan effort to put some real guardrails about social media.” He also spoke on the “reall"
+    },
+    {
+      "row": 5,
+      "sourceDocumentId": "42bf58a4-a339-4483-a7a8-ae4997aaadea",
+      "reviewTextSha256": "62f1de6b50c485afd440a93b56484077e1a1a3c947d82c61ba91f874e369c3d9",
+      "decision": "member_issue_directional",
+      "memberNames": [
+        "Paul Torkelson"
+      ],
+      "billIdentifiers": [],
+      "stance": "supports",
+      "claimType": "explicit_position",
+      "specificity": "named_proposal",
+      "normalizedClaim": "Torkelson explicitly praises excluding ranked-choice voting from the proposal; this is member/issue evidence and not whole-bill support for HF3276.",
+      "supportingExcerpt": "Rep. Paul Torkelson (R-Hanska) said one of the best things about the bill is that ranked choice voting is not included.",
+      "notes": [
+        "The explicit preference concerns exclusion of ranked-choice voting and is retained only as member/issue evidence.",
+        "Frazier sponsorship remains non-directional; the opening Greenman fragment is clipped."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/18364",
+      "candidateMemberNames": [
+        "Cedrick Rommel Frazier",
+        "Emma Greenman",
+        "Paul Torkelson"
+      ],
+      "candidateBillIdentifiers": [
+        "HF3276"
+      ],
+      "frozenReviewText": "vide resources local election officials say they need, said Rep. Emma Greenman (DFL-Mpls). Rep. Paul Torkelson (R-Hanska) said one of the best things about the bill is that ranked choice voting is not included. Instead, HF3276 , sponsored by Rep. Cedrick Frazier (DFL-New Hope), was amended Friday by the House Ways and Means Committee and is expected to reach the floor as a standalone bill. A quintet of Republican-offered amendments were adopt"
+    },
+    {
+      "row": 6,
+      "sourceDocumentId": "42fbe9b8-d1f5-4a03-b828-368f5256c28a",
+      "reviewTextSha256": "5060531b1a90babd7435f5c5f79e1024d1af4078301852f48302ae4494997319",
+      "decision": "non_directional",
+      "memberNames": [
+        "Brad Tabke"
+      ],
+      "billIdentifiers": [
+        "HF3436"
+      ],
+      "stance": "none",
+      "claimType": "sponsorship",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Session Daily identifies Tabke as sponsor of HF3436 and reports procedural advancement; the later Tabke statement is truncated.",
+      "supportingExcerpt": "Sponsored by Rep. Brad Tabke (DFL-Shakopee), HF3436 , as amended , was approved on a voice vote Thursday and is headed to the House Floor.",
+      "notes": [
+        "Sponsorship and procedure are non-directional."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/18216",
+      "candidateMemberNames": [
+        "Brad Tabke"
+      ],
+      "candidateBillIdentifiers": [
+        "HF3436"
+      ],
+      "frozenReviewText": "es of provisions, including several added by amendment, that would clarify and amend laws covering car seats , parking tickets , train derailments, transit programs and more. Sponsored by Rep. Brad Tabke (DFL-Shakopee), HF3436 , as amended , was approved on a voice vote Thursday and is headed to the House Floor. House Transportation Finance and Policy Committee 3/21/24 The bill has a lot of moving parts, Tabke said, and he appreciates the har"
+    },
+    {
+      "row": 7,
+      "sourceDocumentId": "4307d70f-baab-40e9-912e-8f0a62feb279",
+      "reviewTextSha256": "5add3b3a76f1b30df43624cf043795397d91798bde6b4de7b4aa5ad008d1205a",
+      "decision": "non_directional",
+      "memberNames": [
+        "Kelly Moller"
+      ],
+      "billIdentifiers": [
+        "HF1989"
+      ],
+      "stance": "unclear",
+      "claimType": "policy_discussion",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Moller explains that ticket-purchasing frustrations motivated her to sponsor HF1989, but the excerpt does not explicitly state a final-passage position.",
+      "supportingExcerpt": "She told the House Judiciary Finance and Civil Law Committee Tuesday those frustrations moved her to sponsor HF1989",
+      "notes": [
+        "Motive plus sponsorship is not by itself final-passage support."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/18079",
+      "candidateMemberNames": [
+        "Kelly Moller"
+      ],
+      "candidateBillIdentifiers": [
+        "HF1989"
+      ],
+      "frozenReviewText": "to buy tickets — only to lose them when the site crashed. Rep. Kelly Moller (DFL-Shoreview) was one of those. She told the House Judiciary Finance and Civil Law Committee Tuesday those frustrations moved her to sponsor HF1989 . The bill would regulate how online ticket sellers, bulk ticket buyers and resellers operate aiming to give additional consumer protections to individual ticket buyers in the state. “Whether you’re a Taylor Swift fan o"
+    },
+    {
+      "row": 8,
+      "sourceDocumentId": "54f469b2-88aa-4559-abda-9fac40bc096c",
+      "reviewTextSha256": "81a68eff16b380f3a6deb6fc57e3455de6be21c8005e59969675b33f4741a49a",
+      "decision": "non_directional_human_check",
+      "memberNames": [
+        "Erin P. Murphy"
+      ],
+      "billIdentifiers": [
+        "SF1384"
+      ],
+      "stance": "unclear",
+      "claimType": "policy_discussion",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Murphy is quoted positively about delivering care in the proposal context, but the frozen excerpt begins mid-sentence and does not establish a sufficiently clear stance on SF1384.",
+      "supportingExcerpt": "ting the very best care that we can deliver together,” said Sen. Erin Murphy (DFL-St. Paul).",
+      "notes": [
+        "No stance is inferred for Sandra Feist from chairing the conference committee.",
+        "Human adjudication recommended because the quote begins mid-sentence."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/18023",
+      "candidateMemberNames": [
+        "Erin P. Murphy",
+        "Sandra Feist"
+      ],
+      "candidateBillIdentifiers": [
+        "SF1384"
+      ],
+      "frozenReviewText": "ting the very best care that we can deliver together,” said Sen. Erin Murphy (DFL-St. Paul). She and Rep. Sandra Feist (DFL-New Brighton) chair the conference committee dedicated to the proposal. Conference Committee on SF1384 5/20/23 The conferees used HF1522 /SF1384* as a vehicle bill to carry the measure, having pulled the language out of the health finance bill. After nearly an hour of discussion and the adoption of several technical oral"
+    },
+    {
+      "row": 9,
+      "sourceDocumentId": "5eb1786d-4f22-4685-a8e9-61959604c68c",
+      "reviewTextSha256": "23e60fdc4620a281b8dbb695a66949a2b4a2176f5a30265e902931696410c167",
+      "decision": "non_directional",
+      "memberNames": [
+        "Kelly Moller"
+      ],
+      "billIdentifiers": [
+        "HF1510"
+      ],
+      "stance": "unclear",
+      "claimType": "policy_discussion",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Moller describes HF1510 as noncontroversial and focused on department-recommended changes, without explicitly stating a final-passage position.",
+      "supportingExcerpt": "She said none of the provisions in the bill are controversial. Rather, HF1510 focuses on policy changes that reflect recommendations from the Department of Public Safety",
+      "notes": [
+        "No direction is inferred from sponsorship or committee-chair status."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17800",
+      "candidateMemberNames": [
+        "Kelly Moller"
+      ],
+      "candidateBillIdentifiers": [
+        "HF1510"
+      ],
+      "frozenReviewText": "te budget bill from the House Public Safety Finance and Policy Committee. Rep. Kelly Moller (DFL-Shoreview) is the committee chair and bill sponsor. She said none of the provisions in the bill are controversial. Rather, HF1510 focuses on policy changes that reflect recommendations from the Department of Public Safety on measures that would clarify department procedures, modify duties the department must perform, and make conforming or technic"
+    },
+    {
+      "row": 10,
+      "sourceDocumentId": "7421d4a3-a149-49bc-9216-6f89397443fa",
+      "reviewTextSha256": "0e69cab29ce9e62426b462d0712bd231ef88638218cd36159acf1be6f61e6366",
+      "decision": "member_issue_directional",
+      "memberNames": [
+        "Kristi Pursell"
+      ],
+      "billIdentifiers": [],
+      "stance": "supports",
+      "claimType": "explicit_position",
+      "specificity": "named_proposal",
+      "normalizedClaim": "Pursell explicitly argues that the climate-coordinator proposal would benefit Minnesota farmers and attract federal funding, without stating a final-passage position on SF1955 as a whole.",
+      "supportingExcerpt": "Rep. Kristi Pursell (DFL-Northfield) said the climate coordinator position would help bring federal dollars to the state, ensure farmers have a seat at the table",
+      "notes": [
+        "Support for an individual omnibus provision is not promoted to whole-bill support."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17936",
+      "candidateMemberNames": [
+        "Kristi Pursell"
+      ],
+      "candidateBillIdentifiers": [
+        "SF1955"
+      ],
+      "frozenReviewText": "pand the capacity of the Agriculture Department to help farmers. Funding is included to hire a climate coordinator and an additional member to the department’s one-person international marketing team. MN House debate on SF1955 , the omnibus agriculture finance bill 4/20/23 Rep. Kristi Pursell (DFL-Northfield) said the climate coordinator position would help bring federal dollars to the state, ensure farmers have a seat at the table during cli"
+    },
+    {
+      "row": 11,
+      "sourceDocumentId": "7d39ee4b-5ea5-45c0-b853-e3864ee70373",
+      "reviewTextSha256": "c139a6b17768125b237c1077472b499950e0a51dd71c464aa2afff4fd77049bf",
+      "decision": "member_issue_directional",
+      "memberNames": [
+        "Zack Stephenson"
+      ],
+      "billIdentifiers": [],
+      "stance": "supports",
+      "claimType": "explicit_position",
+      "specificity": "named_proposal",
+      "normalizedClaim": "Stephenson explicitly argues that the proposed commerce funding would continue critical services for consumers and businesses, without expressly stating a final-passage stance on SF2744 as a whole.",
+      "supportingExcerpt": "Rep. Zack Stephenson (DFL-Coon Rapids), who sponsors HF2680 /SF2744*, said the money would allow the department to continue providing critical services to both consumers and businesses across Minnesota.",
+      "notes": [
+        "The reported House vote is not used.",
+        "Funding-policy support is retained as member/issue evidence rather than whole-bill support."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17957",
+      "candidateMemberNames": [
+        "Zack Stephenson"
+      ],
+      "candidateBillIdentifiers": [
+        "SF2744"
+      ],
+      "frozenReviewText": "o operate those programs in the upcoming 2024-25 biennium, the omnibus commerce finance and policy bill would appropriate $64.2 million from the General Fund. Rep. Zack Stephenson (DFL-Coon Rapids), who sponsors HF2680 /SF2744*, said the money would allow the department to continue providing critical services to both consumers and businesses across Minnesota. The House passed the bill, as amended, 70-58 Thursday. Because the House inserted la"
+    },
+    {
+      "row": 12,
+      "sourceDocumentId": "b03dc4c9-f81c-438e-8c1c-ec5dd4fbb3e1",
+      "reviewTextSha256": "b9a3e02502ed7cfc8d3fc811e2f85c9ff80b4374f5f3e52f7dab6dde409daaa2",
+      "decision": "exact_member_bill_directional",
+      "memberNames": [
+        "Cheryl Youakim"
+      ],
+      "billIdentifiers": [
+        "HF5237"
+      ],
+      "stance": "supports",
+      "claimType": "quoted_position",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Youakim explicitly endorses HF5237 as continuing investments in districts, teachers, and students.",
+      "supportingExcerpt": "“This bill continues our investments in our school districts, our teachers and, most importantly, our students,” she said.",
+      "notes": [],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/18308",
+      "candidateMemberNames": [
+        "Cheryl Youakim"
+      ],
+      "candidateBillIdentifiers": [
+        "HF5237"
+      ],
+      "frozenReviewText": "the voluntary pre-kindergarten program, create programs to investigate student attendance and truancy, and pay student teachers a stipend for their student teaching experience. Rep. Cheryl Youakim (DFL-Hopkins) sponsors HF5237 that, as amended , now heads to the House Taxes Committee. “This bill continues our investments in our school districts, our teachers and, most importantly, our students,” she said. It would provide a significant fundin"
+    },
+    {
+      "row": 13,
+      "sourceDocumentId": "b1f294d5-268f-455d-8e8f-a3ac44125de1",
+      "reviewTextSha256": "f3f0cb7253cab6e3f016e16c06864c39334465c4d1a726bf5f036886cdf5c702",
+      "decision": "exact_member_bill_directional",
+      "memberNames": [
+        "Athena Hollins"
+      ],
+      "billIdentifiers": [
+        "HF375"
+      ],
+      "stance": "supports",
+      "claimType": "quoted_position",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Hollins explicitly praises HF375 for bringing the executive branch in line with employers that have banned the box.",
+      "supportingExcerpt": "“This bill really brings our executive branch up to speed with public employers and private industries across Minnesota and the country who have banned the box,” said Rep. Athena Hollins (DFL-St. Paul), the sponsor of HF375 .",
+      "notes": [],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17738",
+      "candidateMemberNames": [
+        "Athena Hollins"
+      ],
+      "candidateBillIdentifiers": [
+        "HF375"
+      ],
+      "frozenReviewText": "3 “This bill really brings our executive branch up to speed with public employers and private industries across Minnesota and the country who have banned the box,” said Rep. Athena Hollins (DFL-St. Paul), the sponsor of HF375 . As amended , the bill was approved Thursday by the House State and Local Government Finance and Policy Committee and sent to the House Floor. “Banning the box gives individuals the opportunity to sit in on interviews"
+    },
+    {
+      "row": 14,
+      "sourceDocumentId": "bea8f1f2-f54b-4204-acce-f426988e6298",
+      "reviewTextSha256": "560b827cb6db38a3cf27676c365cff0a3e19ed5a583f098f26184be2447aa63d",
+      "decision": "non_directional",
+      "memberNames": [
+        "Harry Niska"
+      ],
+      "billIdentifiers": [
+        "HF2"
+      ],
+      "stance": "none",
+      "claimType": "procedural_action",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Session Daily reports that Niska successfully offered an amendment to HF2; amendment activity alone does not establish his stance on final passage.",
+      "supportingExcerpt": "An amendment successfully offered by Rep. Harry Niska (R-Ramsey)",
+      "notes": [
+        "No directional stance is inferred from offering an amendment."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17974",
+      "candidateMemberNames": [
+        "Harry Niska"
+      ],
+      "candidateBillIdentifiers": [
+        "HF2"
+      ],
+      "frozenReviewText": "r, which Richardson said would be particularly helpful to self-employed or gig workers, who could opt into the program. Benefits would be available starting July 1, 2025. Rep. Marion O'Neill holds up the fiscal note for HF2 , a bill to create a statewide family and medical benefit insurance program, during debate on the House Floor. (Photo by Catherine Davis) An amendment successfully offered by Rep. Harry Niska (R-Ramsey) would require an"
+    },
+    {
+      "row": 15,
+      "sourceDocumentId": "c0a3ac40-70a6-432c-b8e5-5394df7925f2",
+      "reviewTextSha256": "a44c262ea89fd6ba4af108f71e7bc5ce84ac0eb6024b58dc8118753c0a87785d",
+      "decision": "non_directional_human_check",
+      "memberNames": [
+        "Frank Hornstein",
+        "Larry Kraft"
+      ],
+      "billIdentifiers": [
+        "HF2887"
+      ],
+      "stance": "unclear",
+      "claimType": "policy_discussion",
+      "specificity": "exact_bill",
+      "normalizedClaim": "The frozen excerpt reports committee approval and begins a Kraft attribution but cuts off before a complete member position is preserved.",
+      "supportingExcerpt": "Rep. Larry Kraft (DFL-St. Louis Park) said the bill would address cr",
+      "notes": [
+        "Party-line committee approval is not converted into individual member stance.",
+        "Human adjudication recommended if a fuller immutable excerpt can be recovered."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17910",
+      "candidateMemberNames": [
+        "Frank Hornstein",
+        "Larry Kraft"
+      ],
+      "candidateBillIdentifiers": [
+        "HF2887"
+      ],
+      "frozenReviewText": "er rates on registration fees and vehicle sales tax. It would also dedicate revenue generated from sales taxes on car parts to transportation. Rep. Frank Hornstein Following adoption of an amended delete-all amendment , HF2887 was approved on a 9-5 party-line vote and referred to the House Taxes Committee. [MORE: Read about the bill ; View the spreadsheet , revenue summary ] Rep. Larry Kraft (DFL-St. Louis Park) said the bill would address cr"
+    },
+    {
+      "row": 16,
+      "sourceDocumentId": "c9eb1334-317b-4202-bf7d-6b84cbaf5a13",
+      "reviewTextSha256": "b5692649fde1cee46767702ca2d9f593b404f962fea8264b7522abc0e9c87e51",
+      "decision": "exact_member_bill_directional",
+      "memberNames": [
+        "Samantha Vang"
+      ],
+      "billIdentifiers": [
+        "SF1955"
+      ],
+      "stance": "supports",
+      "claimType": "quoted_position",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Vang explicitly praises SF1955’s agriculture budget as a legacy and celebrates its investments in emerging farmers and land stewardship.",
+      "supportingExcerpt": "“I’m happy this will be a legacy of this year’s agriculture budget bill,” said Rep. Samantha Vang (DFL-Brooklyn Center).",
+      "notes": [
+        "No stance is inferred for Aric Putnam from co-sponsorship alone."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17985",
+      "candidateMemberNames": [
+        "Aric Putnam",
+        "Samantha Vang"
+      ],
+      "candidateBillIdentifiers": [
+        "SF1955"
+      ],
+      "frozenReviewText": "cipate in the program would pay premiums when the fund dips below $8 million. “I’m happy this will be a legacy of this year’s agriculture budget bill,” said Rep. Samantha Vang (DFL-Brooklyn Center). She sponsors HF2278 /SF1955* with Sen. Aric Putnam (DFL-St. Cloud). “I’m also excited to see we’re making historic investments in emerging farmers and strong investments in helping farmers take care of the land. I think we have a strong, well-roun"
+    },
+    {
+      "row": 17,
+      "sourceDocumentId": "d4bda984-3375-4c71-b9fe-9be4116d58e3",
+      "reviewTextSha256": "e0304ee728fe6b15d3691ef9966d03c2ac8cab7b27df0cf30a2fb110bdd8ed48",
+      "decision": "third_party_bill_directional_not_member_stance",
+      "memberNames": [],
+      "billIdentifiers": [
+        "HF4"
+      ],
+      "stance": "supports",
+      "claimType": "explicit_position",
+      "specificity": "exact_bill",
+      "normalizedClaim": "The excerpt reports that Rev. Doug Mork testified in support of HF4; this is third-party support, not a candidate-member stance.",
+      "supportingExcerpt": "The Rev. Doug Mork, associate pastor at Holy Trinity Lutheran Church in Minneapolis, testifies Jan. 10 in support of HF4 sponsored by Rep. María Isa Pérez-Vega , center, and Rep. Aisha Gomez , right.",
+      "notes": [
+        "No stance is inferred for María Isa Pérez-Vega or Aisha Gomez from sponsorship or third-party testimony."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17500",
+      "candidateMemberNames": [
+        "Aisha Gomez",
+        "María Isa Pérez-Vega"
+      ],
+      "candidateBillIdentifiers": [
+        "HF4"
+      ],
+      "frozenReviewText": "ng truancy at school was ridiculously difficult and getting a job nearly impossible, said Sarah Silva. The Rev. Doug Mork, associate pastor at Holy Trinity Lutheran Church in Minneapolis, testifies Jan. 10 in support of HF4 sponsored by Rep. María Isa Pérez-Vega , center, and Rep. Aisha Gomez , right. (Photo by Andrew VonBank) Drivers showing basic understanding of the rules of the road would improve safety for all. Opening access to insur"
+    },
+    {
+      "row": 18,
+      "sourceDocumentId": "ee2ce278-11be-4214-8033-aef0ad82aa70",
+      "reviewTextSha256": "fae542c3d9c20e9fcf3029acdbfd1e56c932339eec7a2de514b38fef45a242bc",
+      "decision": "non_directional",
+      "memberNames": [
+        "Cedrick Rommel Frazier"
+      ],
+      "billIdentifiers": [
+        "HF3489"
+      ],
+      "stance": "unclear",
+      "claimType": "policy_discussion",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Frazier says HF3489 needs fixing while supporting continued committee consideration, which does not establish a final-passage stance.",
+      "supportingExcerpt": "Rep. Cedrick Frazier (DFL-New Hope), who sponsors HF3489 , agreed the legislation needs fixing, but said moving it through the committee process is the best way forward.",
+      "notes": [
+        "Support for continued committee process is procedural, not final-passage support."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/18048",
+      "candidateMemberNames": [
+        "Cedrick Rommel Frazier"
+      ],
+      "candidateBillIdentifiers": [
+        "HF3489"
+      ],
+      "frozenReviewText": "enforcement and pass it,” she said. Demuth argued that changes to the bill’s language in the form of a Republican amendment are needed now and said the bill can’t wait. Rep. Cedrick Frazier (DFL-New Hope), who sponsors HF3489 , agreed the legislation needs fixing, but said moving it through the committee process is the best way forward. That would allow all stakeholders to be heard, he said, especially the students the legislation would affe"
+    },
+    {
+      "row": 19,
+      "sourceDocumentId": "ee6f3cd6-fcfa-494d-a6e1-096b5feb485d",
+      "reviewTextSha256": "aa44b9e95583fe3c0ea22585eff9ff8633f4c45b8b81eb40a863fb9af90df3f7",
+      "decision": "non_directional",
+      "memberNames": [
+        "Cedrick Rommel Frazier"
+      ],
+      "billIdentifiers": [
+        "HF3489"
+      ],
+      "stance": "none",
+      "claimType": "sponsorship",
+      "specificity": "exact_bill",
+      "normalizedClaim": "The frozen excerpt identifies Frazier as sponsor of HF3489 but contains no attributable position from him.",
+      "supportingExcerpt": "Rep. Cedrick Frazier, left, is the bill sponsor.",
+      "notes": [
+        "Sponsorship alone is non-directional."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/18050",
+      "candidateMemberNames": [
+        "Cedrick Rommel Frazier"
+      ],
+      "candidateBillIdentifiers": [
+        "HF3489"
+      ],
+      "frozenReviewText": "cts February 12, 2024 7:29 PM Clarification to school resource officer law could be at hand By Brian Basham Public Safety Commissioner Bob Jacobson testifies before the House Education Policy Committee Feb. 12 regarding HF3489. Rep. Cedrick Frazier, left, is the bill sponsor. (Photo by Michele Jokinen) A fix could be coming for a 2023 law whose interpretation led to uncertainty that some said put Minnesota students at risk. Except in cases of"
+    },
+    {
+      "row": 20,
+      "sourceDocumentId": "f2dd9a4c-d921-4b1e-a055-42459b9f257d",
+      "reviewTextSha256": "fe3532c9732f41000a4f22909dd23354f508f614085501ae9a631b44e7ea93ac",
+      "decision": "non_directional_human_check",
+      "memberNames": [
+        "Michael Howard"
+      ],
+      "billIdentifiers": [
+        "HF2335"
+      ],
+      "stance": "unclear",
+      "claimType": "policy_discussion",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Howard begins a favorable appraisal of HF2335, but the frozen quote is clipped mid-word and is therefore failed closed rather than treated as directional final-passage evidence.",
+      "supportingExcerpt": "Howard said the proposal is the “most comprehensive bill to address our affordable housin",
+      "notes": [
+        "Human adjudication recommended because the frozen quote is clipped at the end.",
+        "Fail-closed rule applied: clipped text is not classified as directional even though the preserved fragment is favorable."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17883",
+      "candidateMemberNames": [
+        "Michael Howard"
+      ],
+      "candidateBillIdentifiers": [
+        "HF2335"
+      ],
+      "frozenReviewText": "dlord. Say goodbye to the “American Dream.” In every corner of the state, Minnesotans struggle with housing. To address problems with homelessness, renting and homeownership, Rep. Michael Howard (DFL-Richfield) sponsors HF2335 , the omnibus housing finance bill, which would appropriate $1.1 billion to the Housing Finance Agency over the 2024-25 biennium. Howard said the proposal is the “most comprehensive bill to address our affordable housin"
+    },
+    {
+      "row": 21,
+      "sourceDocumentId": "f80d09e1-230e-4a62-8e38-b197b82c1772",
+      "reviewTextSha256": "7487304492baf5e25b979be08c82cba9eaf72dbaca24eb48595dd21f6bb635e6",
+      "decision": "non_directional",
+      "memberNames": [
+        "Kaohly Vang Her"
+      ],
+      "billIdentifiers": [
+        "HF3100"
+      ],
+      "stance": "none",
+      "claimType": "sponsorship",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Session Daily identifies Kaohly Vang Her as sponsor of HF3100; the excerpt contains no attributable position from her on the bill.",
+      "supportingExcerpt": "HF3100 , the omnibus pensions bill sponsored by Rep. Kaohly Vang Her (DFL-St. Paul).",
+      "notes": [
+        "Patty Acomb’s comment refers to the preceding nuclear-waste issue, not HF3100.",
+        "No stance is inferred for Samantha Vang from appearing in the target set."
+      ],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17917",
+      "candidateMemberNames": [
+        "Kaohly Vang Her",
+        "Patty Acomb",
+        "Samantha Vang"
+      ],
+      "candidateBillIdentifiers": [
+        "HF3100"
+      ],
+      "frozenReviewText": "age of nuclear waste. But Rep. Patty Acomb (DFL-Minnetonka), the bill sponsor, said the Senate may have a different take and conversations on the issue would continue. Also receiving committee approval, as amended , was HF3100 , the omnibus pensions bill sponsored by Rep. Kaohly Vang Her (DFL-St. Paul). The committee is scheduled to have hearings on several other budget bills this week as well. Wednesday at 9 a.m.: HF1723 – the omnibus electi"
+    },
+    {
+      "row": 22,
+      "sourceDocumentId": "fd4b7c5e-4cd2-4d40-a8e7-0f933a76f994",
+      "reviewTextSha256": "eac823f5b7f79950b356ef265a5538f13703abcf8a7f12b3902308b7df27214d",
+      "decision": "exact_member_bill_directional",
+      "memberNames": [
+        "Erin Koegel"
+      ],
+      "billIdentifiers": [
+        "HF1104"
+      ],
+      "stance": "supports",
+      "claimType": "explicit_position",
+      "specificity": "exact_bill",
+      "normalizedClaim": "Koegel explicitly argues that existing pregnancy accommodations are insufficient and seeks significant changes through HF1104.",
+      "supportingExcerpt": "In the view of Rep. Erin Koegel (DFL-Spring Lake Park), these accommodations are insufficient for today’s workers. As the sponsor of the HF1104 , she is seeking to enact significant changes to this area of state labor law.",
+      "notes": [],
+      "sourceKind": "house_session_daily",
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17647",
+      "candidateMemberNames": [
+        "Erin Koegel"
+      ],
+      "candidateBillIdentifiers": [
+        "HF1104"
+      ],
+      "frozenReviewText": "modations in the workplace. Many of these were first set in state statute in 2014. In the view of Rep. Erin Koegel (DFL-Spring Lake Park), these accommodations are insufficient for today’s workers. As the sponsor of the HF1104 , she is seeking to enact significant changes to this area of state labor law. “Pregnancy and motherhood is one of the hardest things that I have ever done,” Koegel said. “We have to make sure that we’re supporting wome"
+    }
+  ]
+}
