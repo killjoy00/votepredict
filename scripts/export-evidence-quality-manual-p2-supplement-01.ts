@@ -37,6 +37,19 @@ const RECOVERY_SOURCE_IDS = [
   "cd679835-c1bc-408d-8000-79a3ed44c110",
   "163885dc-3f81-4f39-923c-fd17f03ec3bf"
 ] as const;
+const FROZEN_P2_SOURCE_IDS = [
+  "8b775dea-8edf-4635-9c5e-c107a1828941",
+  "2b6d9e05-c6ca-4538-9cc7-86ba9f323b64",
+  "54f7719e-ca87-4963-818f-360454450c42",
+  "f77e5eb0-ae12-448b-ab0f-42b6946acd54",
+  "88d7691f-83b9-40d5-accb-ba0e43cae3a1",
+  "eb29f10d-ff7f-4b41-8701-fc4daa389447",
+  "d7dfface-1b2f-47aa-84cc-e92987a29855",
+  "2d85c31f-f4ca-44b2-b252-bd7fc98c275d",
+  "ec0515c4-ba78-4b83-b996-b9a795817638",
+  "cd679835-c1bc-408d-8000-79a3ed44c110",
+  "163885dc-3f81-4f39-923c-fd17f03ec3bf"
+] as const;
 const PRIOR_BATCH_PATHS = [
   'data/evaluation/evidence-quality/manual-annotations/batch-01.json',
   'data/evaluation/evidence-quality/manual-annotations/batch-02.json',
@@ -186,20 +199,20 @@ async function main() {
   try {
     await client.query('BEGIN READ ONLY');
 
-    const params = [EVIDENCE_QUALITY_TEXT_VERSION, [...EVIDENCE_QUALITY_SOURCE_KINDS], priorIds, [...RECOVERY_SOURCE_IDS], CUTOFF];
-    const featureCte = `
-      WITH document_features AS (
-        SELECT
-          sd.id,
-          sd.source_kind,
-          sd.source_url,
-          sd.fetched_at,
-          sd.metadata AS source_metadata,
-          sdt.id AS source_document_text_id,
-          sdt.source_content_sha256,
-          sdt.text_sha256,
-          sdt.created_at AS snapshot_created_at,
-          sdt.normalized_text,
+    const params = [EVIDENCE_QUALITY_TEXT_VERSION, [...EVIDENCE_QUALITY_SOURCE_KINDS], priorIds, [...FROZEN_P2_SOURCE_IDS], CUTOFF];
+    const result = await client.query<ExportRow>(`
+      SELECT
+        sd.id::text AS source_document_id,
+        sdt.id::text AS source_document_text_id,
+        sd.source_kind,
+        sd.source_url,
+        sd.fetched_at::text AS source_fetched_at,
+        sd.metadata AS source_metadata,
+        sdt.source_content_sha256,
+        sdt.text_sha256,
+        sdt.created_at::text AS snapshot_created_at,
+        sdt.normalized_text,
+        coalesce(
           jsonb_agg(
             jsonb_build_object(
               'publishedAt',ei.published_at,
@@ -210,65 +223,26 @@ async function main() {
               'metadata',ei.metadata
             )
             ORDER BY ei.created_at,ei.id
-          ) AS evidence_rows,
-          bool_or(
-            ei.membership_id IS NOT NULL
-            OR (jsonb_typeof(ei.metadata->'mentionedMembers')='array' AND jsonb_array_length(ei.metadata->'mentionedMembers') > 0)
-            OR nullif(trim(coalesce(ei.metadata->>'memberName','')),'') IS NOT NULL
-          ) AS has_member,
-          bool_or(
-            ei.bill_id IS NOT NULL
-            OR (jsonb_typeof(ei.metadata->'billIdentifiers')='array' AND jsonb_array_length(ei.metadata->'billIdentifiers') > 0)
-            OR nullif(trim(coalesce(ei.metadata->>'exactBillIdentifier','')),'') IS NOT NULL
-          ) AS has_bill,
-          bool_or(
-            ei.relevance IN ('direct','high')
-            OR ei.evidence_kind IN ('direct_statement','related_statement')
-          ) AS direct_or_high
-        FROM source_documents sd
-        JOIN source_document_texts sdt
-          ON sdt.source_document_id=sd.id
-         AND sdt.extraction_version=$1
-        JOIN evidence_items ei ON ei.source_document_id=sd.id
-        LEFT JOIN memberships m ON m.id=ei.membership_id
-        LEFT JOIN legislators l ON l.id=m.legislator_id
-        LEFT JOIN bills b ON b.id=ei.bill_id
-        WHERE sd.source_kind = ANY($2::text[])
-          AND sd.source_kind <> 'house_session_daily'
-          AND sd.id = ANY($4::uuid[])
-          AND NOT (sd.id = ANY($3::uuid[]))
-          AND ei.created_at <= $5::timestamptz
-        GROUP BY sd.id,sdt.id
-      )`;
-
-    const countResult = await client.query<{ count: number }>(
-      featureCte + `
-      SELECT count(*)::int AS count
-        FROM document_features
-       WHERE has_member AND NOT has_bill AND direct_or_high`,
-      params,
-    );
-    eligibleCount = countResult.rows[0]?.count ?? 0;
-
-    const result = await client.query<ExportRow>(
-      featureCte + `
-      SELECT
-        id::text AS source_document_id,
-        source_document_text_id::text,
-        source_kind,
-        source_url,
-        fetched_at::text AS source_fetched_at,
-        source_metadata,
-        source_content_sha256,
-        text_sha256,
-        snapshot_created_at::text,
-        normalized_text,
-        evidence_rows
-      FROM document_features
-      WHERE has_member AND NOT has_bill AND direct_or_high
-      ORDER BY fetched_at,id`,
-      params,
-    );
+          ) FILTER (WHERE ei.id IS NOT NULL),
+          '[]'::jsonb
+        ) AS evidence_rows
+      FROM source_documents sd
+      JOIN source_document_texts sdt
+        ON sdt.source_document_id=sd.id
+       AND sdt.extraction_version=$1
+      LEFT JOIN evidence_items ei
+        ON ei.source_document_id=sd.id
+       AND ei.created_at <= $5::timestamptz
+      LEFT JOIN memberships m ON m.id=ei.membership_id
+      LEFT JOIN legislators l ON l.id=m.legislator_id
+      LEFT JOIN bills b ON b.id=ei.bill_id
+      WHERE sd.source_kind = ANY($2::text[])
+        AND sd.source_kind <> 'house_session_daily'
+        AND sd.id = ANY($4::uuid[])
+        AND NOT (sd.id = ANY($3::uuid[]))
+      GROUP BY sd.id,sdt.id
+      ORDER BY sd.fetched_at,sd.id`, params);
+    eligibleCount = result.rows.length;
     rows = result.rows;
     await client.query('ROLLBACK');
   } catch (error) {
@@ -285,13 +259,20 @@ async function main() {
   const documents = rows.map((row, index) => {
     if (row.source_kind === 'house_session_daily') throw new Error('house_session_daily entered P2 cohort');
     if (Date.parse(row.snapshot_created_at) > Date.parse(CUTOFF)) throw new Error('Snapshot created after recovery-run completion entered P2 cohort');
-    if (!RECOVERY_SOURCE_IDS.includes(row.source_document_id as (typeof RECOVERY_SOURCE_IDS)[number])) throw new Error('Source outside recovery run attempted-source set entered P2 cohort');
+    if (!FROZEN_P2_SOURCE_IDS.includes(row.source_document_id as (typeof FROZEN_P2_SOURCE_IDS)[number])) throw new Error('Source outside frozen P2 recovery partition entered cohort');
+    if (!RECOVERY_SOURCE_IDS.includes(row.source_document_id as (typeof RECOVERY_SOURCE_IDS)[number])) throw new Error('Frozen P2 source is not part of recovery run attempted-source set');
     if (!row.normalized_text.trim()) throw new Error('Frozen source text is empty');
     if (priorIds.includes(row.source_document_id)) throw new Error('P2 cohort overlaps baseline manual cohort');
 
     const candidates = candidateContext(row.evidence_rows ?? []);
     if (candidates.memberNames.length === 0) throw new Error(`P2 row ${index + 1} lacks deterministic member candidates`);
-    if (candidates.billIdentifiers.length !== 0) throw new Error(`P2 row ${index + 1} unexpectedly has bill candidates`);
+    if (candidates.billIdentifiers.length !== 0) throw new Error(`P2 row ${index + 1} unexpectedly has bill candidates at frozen cutoff`);
+    const directOrHigh = (row.evidence_rows ?? []).some((evidence) =>
+      evidence.relevance === 'direct'
+      || evidence.relevance === 'high'
+      || evidence.evidenceKind === 'direct_statement'
+      || evidence.evidenceKind === 'related_statement');
+    if (!directOrHigh) throw new Error(`P2 row ${index + 1} lacks direct/high evidence at frozen cutoff`);
 
     return {
       batchRow: index + 1,
@@ -324,6 +305,8 @@ async function main() {
     sourceSnapshotRunId: SNAPSHOT_RUN_ID,
     previousSupplementCutoff: PREVIOUS_CUTOFF,
     recoverySourceDocumentIds: [...RECOVERY_SOURCE_IDS],
+    frozenP2SourceDocumentIds: [...FROZEN_P2_SOURCE_IDS],
+    frozenPartitionBasis: 'exact complement of successful P1-SUP-003 selection within recovery run 37170314795; recovery-time priority audit reported +14 P1 and +11 P2 snapshots',
     cohortCutoff: CUTOFF,
     evidenceCutoff: CUTOFF,
     textVersion: EVIDENCE_QUALITY_TEXT_VERSION,
