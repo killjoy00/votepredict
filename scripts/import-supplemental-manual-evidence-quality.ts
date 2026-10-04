@@ -425,7 +425,7 @@ async function main() {
     await client.query('BEGIN');
     for (const document of documents) {
       const fingerprint = semanticFingerprint(document);
-      const duplicateRows = fingerprints.get(fingerprint) ?? [document.row];
+      const duplicateRows = fingerprints.get(fingerprint) ?? [`${document.batchId}:${document.row}`];
       await client.query(`
         INSERT INTO evidence_quality_annotations (
           source_document_id,
