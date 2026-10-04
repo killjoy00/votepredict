@@ -99,7 +99,7 @@ async function main() {
     }
   }
 
-  const retryBySource = new Map(retry.sources.map((source) => [source.sourceDocumentId, source]));
+  const retryBySource = new Map<string, ArchiveProofSource>(\n    retry.sources.map((source) => [source.sourceDocumentId, source] as const),\n  );
   const firstAmbiguousKeys = new Set(
     first.sources.flatMap((source) => source.targets
       .filter((target) => target.classification === 'ambiguous_snapshot')
@@ -175,7 +175,7 @@ async function main() {
   const recoveredSources = new Set(recovered.map((target) => target.sourceDocumentId));
   const recoveredDistinctExcerpts = new Set(
     recovered.map((target) => {
-      const proof = target.verifiedProof as { matchedExcerpt?: string } | null | undefined;
+      const proof = (target as Record<string, unknown>).verifiedProof as { matchedExcerpt?: string } | null | undefined;
       return proof?.matchedExcerpt ?? '';
     }).filter(Boolean),
   );
