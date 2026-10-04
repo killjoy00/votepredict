@@ -15,6 +15,7 @@ export type AvailabilityFallbackResult = {
 export type CanonicalV2Target = Record<string, unknown> & {
   rowKey: string;
   classification: ArchiveProofClassification;
+  verifiedProof?: Record<string, unknown> | null;
   canonicalAvailabilityStage: 'canonical_retry' | 'availability_fallback';
   preFallbackClassification: ArchiveProofClassification;
   fallbackClassification: 'verified_pre_vote_archive_match' | 'ambiguous_snapshot';
@@ -28,7 +29,7 @@ export function mergeCanonicalArchiveProofWithAvailabilityFallback(
   canonicalSources: readonly ArchiveProofSource[],
   fallbackResults: readonly AvailabilityFallbackResult[],
 ): {
-  sources: Array<Omit<ArchiveProofSource, 'targets'> & { targets: CanonicalV2Target[] }>;
+  sources: Array<ArchiveProofSource & { targets: CanonicalV2Target[] }>;
   upgradedTargetKeys: string[];
 } {
   const canonicalTargets = new Map<string, { source: ArchiveProofSource; target: Record<string, unknown> & {
