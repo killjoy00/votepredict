@@ -186,7 +186,7 @@ async function main() {
   try {
     await client.query('BEGIN READ ONLY');
 
-    const params = [EVIDENCE_QUALITY_TEXT_VERSION, [...EVIDENCE_QUALITY_SOURCE_KINDS], priorIds, [...RECOVERY_SOURCE_IDS]];
+    const params = [EVIDENCE_QUALITY_TEXT_VERSION, [...EVIDENCE_QUALITY_SOURCE_KINDS], priorIds, [...RECOVERY_SOURCE_IDS], CUTOFF];
     const featureCte = `
       WITH document_features AS (
         SELECT
@@ -237,6 +237,7 @@ async function main() {
           AND sd.source_kind <> 'house_session_daily'
           AND sd.id = ANY($4::uuid[])
           AND NOT (sd.id = ANY($3::uuid[]))
+          AND ei.created_at <= $5::timestamptz
         GROUP BY sd.id,sdt.id
       )`;
 
@@ -324,6 +325,7 @@ async function main() {
     previousSupplementCutoff: PREVIOUS_CUTOFF,
     recoverySourceDocumentIds: [...RECOVERY_SOURCE_IDS],
     cohortCutoff: CUTOFF,
+    evidenceCutoff: CUTOFF,
     textVersion: EVIDENCE_QUALITY_TEXT_VERSION,
     priorManualDocumentsExcluded: priorIds.length,
     eligibleFrozenP2DocumentsInWindow: eligibleCount,
@@ -334,6 +336,7 @@ async function main() {
       'all 101 source documents from manual batches 1-4',
       'documents with deterministic bill linkage',
       'documents outside recovery run 37170314795 attempted-source set',
+      'evidence rows created after the frozen recovery cutoff',
     ],
     policy: {
       productionReadOnly: true,
