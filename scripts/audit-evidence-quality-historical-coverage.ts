@@ -5,6 +5,10 @@ import {
   EVIDENCE_QUALITY_PROMPT_VERSION,
   EVIDENCE_QUALITY_SCHEMA_VERSION,
 } from '../src/evidence/evidence-quality.js';
+import {
+  evidenceQualityExactEvidenceItemAvailabilityDate,
+  evidenceQualitySourceAvailabilityDate,
+} from '../src/evidence/evidence-quality-historical-availability.js';
 
 const EXPECTED_DOCUMENTS = 226;
 const EXPECTED_UNIQUE_SIGNATURES = 180;
@@ -16,6 +20,8 @@ let secrets: string[] = [];
 type AnnotationRow = {
   source_document_id: string;
   source_kind: string;
+  source_url: string;
+  source_content_sha256: string;
   source_metadata: Record<string, unknown> | null;
   annotation: {
     claims: Array<{
@@ -43,6 +49,8 @@ type ContextRow = {
   bill_id: string | null;
   member_name: string | null;
   bill_identifier: string | null;
+  evidence_excerpt: string | null;
+  evidence_metadata: Record<string, unknown> | null;
 };
 
 type TargetRow = {
@@ -127,13 +135,33 @@ function validDateOnly(value: string | null): value is string {
 }
 
 function availabilityDate(metadata: Record<string, unknown> | null): string | null {
-  for (const key of ['availableAt', 'availableOn', 'archiveCapturedAt'] as const) {
-    const raw = stringMeta(metadata, key);
-    if (!raw || !Number.isFinite(Date.parse(raw))) continue;
-    const date = raw.slice(0, 10);
-    if (validDateOnly(date)) return date;
+  return evidenceQualitySourceAvailabilityDate(metadata);
+}
+
+function exactClaimAvailabilityDate(input: {
+  source: AnnotationRow;
+  contexts: readonly ContextRow[];
+  membershipId: string;
+  billId: string;
+  supportingExcerpt: string;
+}): string | null {
+  const dates = new Set<string>();
+  const sourceDate = availabilityDate(input.source.source_metadata);
+  if (sourceDate) dates.add(sourceDate);
+
+  for (const context of input.contexts) {
+    if (context.membership_id !== input.membershipId || context.bill_id !== input.billId) continue;
+    const date = evidenceQualityExactEvidenceItemAvailabilityDate({
+      evidenceMetadata: context.evidence_metadata,
+      sourceUrl: input.source.source_url,
+      sourceContentSha256: input.source.source_content_sha256,
+      evidenceExcerpt: context.evidence_excerpt,
+      claimSupportingExcerpt: input.supportingExcerpt,
+    });
+    if (date) dates.add(date);
   }
-  return null;
+
+  return earliest(dates);
 }
 
 function earliest(values: Set<string>): string | null {
@@ -177,6 +205,8 @@ async function main() {
     const annotations = await client.query<AnnotationRow>(`
       SELECT eqa.source_document_id::text,
              sd.source_kind,
+             sd.source_url,
+             sd.content_sha256 AS source_content_sha256,
              sd.metadata AS source_metadata,
              eqa.annotation,
              eqa.metadata AS annotation_metadata,
@@ -216,7 +246,9 @@ async function main() {
              ei.membership_id::text,
              ei.bill_id::text,
              l.name AS member_name,
-             b.identifier AS bill_identifier
+             b.identifier AS bill_identifier,
+             ei.excerpt AS evidence_excerpt,
+             ei.metadata AS evidence_metadata
         FROM evidence_items ei
         LEFT JOIN memberships m ON m.id=ei.membership_id
         LEFT JOIN legislators l ON l.id=m.legislator_id
@@ -283,7 +315,22 @@ async function main() {
             stances: new Set<string>(),
           };
           signal.sourceDocumentIds.add(row.source_document_id);
-          if (availableOn) signal.availableDates.add(availableOn);
+          const claimAvailableOn = exactClaimAvailabilityDate({
+            source: row,
+            contexts: contextsBySource.get(row.source_document_id) ?? [],
+            membershipId: match.membership_id!,
+            billId: match.bill_id!,
+            supportingExcerpt: claim.normalizedClaim ? claim.normalizedClaim : '',
+          });
+          const supportingExcerptAvailability = exactClaimAvailabilityDate({
+            source: row,
+            contexts: contextsBySource.get(row.source_document_id) ?? [],
+            membershipId: match.membership_id!,
+            billId: match.bill_id!,
+            supportingExcerpt: (claim as typeof claim & { supportingExcerpt?: string }).supportingExcerpt ?? '',
+          });
+          const effectiveAvailableOn = supportingExcerptAvailability ?? claimAvailableOn;
+          if (effectiveAvailableOn) signal.availableDates.add(effectiveAvailableOn);
           signal.stances.add(claim.stance);
           exactSignals.set(key, signal);
         }
