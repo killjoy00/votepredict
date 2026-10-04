@@ -1,0 +1,76 @@
+name: Freeze canonical Evidence Quality archive proof
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: >-
+    ${{ startsWith(github.event.comment.body, '[evidence-quality-pre-vote-archive-proof-canonical]')
+        && 'evidence-quality-pre-vote-archive-proof-canonical'
+        || format('evidence-quality-pre-vote-archive-proof-canonical-skip-{0}', github.event.comment.id) }}
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    if: >-
+      github.event.issue.number == 579 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      startsWith(github.event.comment.body, '[evidence-quality-pre-vote-archive-proof-canonical]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize first archive-proof artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11314353035/zip > "$RUNNER_TEMP/archive-first.zip"
+          echo "85be9d805d910cc48214e57a5f21a814b30601188e02cebd0431b557f4abab1e  $RUNNER_TEMP/archive-first.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/archive-first"
+          unzip -q "$RUNNER_TEMP/archive-first.zip" -d "$RUNNER_TEMP/archive-first"
+
+      - name: Materialize retry archive-proof artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11314718456/zip > "$RUNNER_TEMP/archive-retry.zip"
+          echo "5303b29bf6ee562b2be17144180a6c77ce05dbf7d451edac0b3f150174791d00  $RUNNER_TEMP/archive-retry.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/archive-retry"
+          unzip -q "$RUNNER_TEMP/archive-retry.zip" -d "$RUNNER_TEMP/archive-retry"
+
+      - name: Freeze canonical retry-aware proof
+        env:
+          VOTEPREDICT_EQ_ARCHIVE_FIRST_PATH: ${{ runner.temp }}/archive-first/evidence-quality-pre-vote-archive-proof-v1.json
+          VOTEPREDICT_EQ_ARCHIVE_FIRST_RUN_ID: "37232308290"
+          VOTEPREDICT_EQ_ARCHIVE_FIRST_ARTIFACT_ID: "11314353035"
+          VOTEPREDICT_EQ_ARCHIVE_FIRST_ARTIFACT_DIGEST: "sha256:85be9d805d910cc48214e57a5f21a814b30601188e02cebd0431b557f4abab1e"
+          VOTEPREDICT_EQ_ARCHIVE_RETRY_PATH: ${{ runner.temp }}/archive-retry/evidence-quality-pre-vote-archive-proof-v1.json
+          VOTEPREDICT_EQ_ARCHIVE_RETRY_RUN_ID: "37233522411"
+          VOTEPREDICT_EQ_ARCHIVE_RETRY_ARTIFACT_ID: "11314718456"
+          VOTEPREDICT_EQ_ARCHIVE_RETRY_ARTIFACT_DIGEST: "sha256:5303b29bf6ee562b2be17144180a6c77ce05dbf7d451edac0b3f150174791d00"
+          VOTEPREDICT_EQ_ARCHIVE_CANONICAL_DIR: ${{ runner.temp }}/evidence-quality-pre-vote-archive-proof-canonical
+        run: node --import tsx scripts/merge-evidence-quality-pre-vote-archive-proof-retry.ts
+
+      - name: Upload canonical archive proof
+        uses: actions/upload-artifact@v7
+        with:
+          name: evidence-quality-pre-vote-archive-proof-canonical-v1
+          path: ${{ runner.temp }}/evidence-quality-pre-vote-archive-proof-canonical/*
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Remove input artifacts
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/archive-first.zip" "$RUNNER_TEMP/archive-retry.zip"
