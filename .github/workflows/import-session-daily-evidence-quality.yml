@@ -34,7 +34,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          gh api --method DELETE /repos/${{ github.repository }}/actions/artifacts/11316878308 || true
+          for artifact_id in 11316878308 11317539113; do
+            gh api --method DELETE /repos/${{ github.repository }}/actions/artifacts/$artifact_id || true
+          done
 
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
