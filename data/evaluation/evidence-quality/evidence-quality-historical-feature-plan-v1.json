@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "evidence-quality-historical-feature-plan-v1",
+  "issue": 579,
+  "purpose": "Freeze an outcome-blind, strict-as-of feature substrate from manually reviewed Evidence Quality v1 annotations before any retrospective model fitting.",
+  "targetUniverse": {
+    "sourceArtifactId": 11252079484,
+    "sourceArtifactDigest": "sha256:22e8944cffc6fda553b05ea6ad5e92400d35fc01d83177efdd5d1204dd3c5a6f",
+    "sourceMatrixSchema": "historical-as-of-matrix-v1",
+    "sourceMatrixCanonicalNdjsonSha256": "c97ac50c8c89ae0548cc48bed65a42c22f332e2977b33173619c9e258c09a4d0",
+    "sourceMatrixGzipSha256": "d8a9735a514f427508a7a37303ba312dcac3f929a51aa05a1aba32a76b384637",
+    "rows": 135457,
+    "events": 1339,
+    "memberships": 611,
+    "rowKeySha256": "3aa47101f9e4a848e293fdaa89ef853919d49826b68ae90960370c5c19e9df72",
+    "chronology": {
+      "trainSession": "2021-2022",
+      "validationSession": "2023-2024",
+      "descriptiveSession": "2025-2026"
+    }
+  },
+  "annotationCorpus": {
+    "documents": 226,
+    "expectedUniqueSemanticSignatures": 180,
+    "schemaVersion": "evidence-quality-v1",
+    "promptVersion": "evidence-quality-prompt-v1",
+    "provider": "manual-openai",
+    "baselineReviewPrs": [
+      626,
+      627,
+      628
+    ],
+    "baselineProductionSyncRunId": 37222941536,
+    "postReviewDedupRunId": 37223070376,
+    "postReviewDedupArtifactId": 11310867507,
+    "postReviewDedupArtifactDigest": "sha256:16ec0c22cfd3303d6e2ffd73dd5c511a514c58b636cb6b6c5b732f0aacd66b8e"
+  },
+  "featureNames": [
+    "exactDirectionalAvailable",
+    "exactSupportSignatures",
+    "exactOpposeSignatures",
+    "exactMixedSignatures",
+    "exactDirectQuoteSupportSignatures",
+    "exactDirectQuoteOpposeSignatures",
+    "exactExplicitSupportSignatures",
+    "exactExplicitOpposeSignatures",
+    "exactSupportMaxConfidence",
+    "exactOpposeMaxConfidence",
+    "exactMixedMaxConfidence",
+    "exactDirectionalConflict"
+  ],
+  "policies": {
+    "outcomeUseDuringFeatureConstruction": "none",
+    "strictDateExclusiveAvailability": true,
+    "availabilitySource": "source_documents.metadata.availableAt only; missing/invalid availability fails closed for historical feature use",
+    "semanticDeduplication": "one signal per semanticFingerprint + membershipId + billId; repeated captures do not multiply counts",
+    "exactBillMapping": "only deterministic evidence_items membership_id + bill_id pairs matching the claim's supplied member and bill identifiers",
+    "memberIssuePolicy": "P2 member_issue evidence is frozen in a separate inventory and never attached to a bill without a deterministic bill link",
+    "legacyQuickEvidenceV2": "excluded/quarantined",
+    "quickEvidenceV3": "excluded/evaluation-only",
+    "servingAction": "none",
+    "modelWeightChange": "none",
+    "modelFitting": "none"
+  }
+}\n
