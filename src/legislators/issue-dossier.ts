@@ -1,4 +1,5 @@
 import { pool } from '@/lib/db';
+import { dedupeTemporalEvidenceHistory } from '@/evidence/temporal-statement-history';
 import {
   loadLegislatorProfile,
   type LegislatorAlignmentRow,
@@ -94,7 +95,10 @@ type AlignmentDbRow = {
 };
 
 type EvidenceDbRow = {
+  id: string;
   kind: string;
+  evidence_kind: string;
+  evidence_series_key: string | null;
   stance: string | null;
   claim: string;
   excerpt: string | null;
@@ -260,7 +264,7 @@ async function loadIssueAlignments(
      ORDER BY agreement DESC, pa.shared_votes DESC, l.name
      LIMIT 40`, [currentMembershipId, eventIds]);
 
-  return result.rows.map((row) => ({
+  return dedupeTemporalEvidenceHistory(result.rows).slice(0, 30).map((row) => ({
     legislatorId: row.legislator_id,
     membershipId: row.membership_id,
     name: row.name,
@@ -275,7 +279,10 @@ async function loadIssueAlignments(
 async function loadIssueEvidence(legislatorId: string, billIds: readonly string[]): Promise<LegislatorEvidenceRow[]> {
   if (billIds.length === 0) return [];
   const result = await pool.query<EvidenceDbRow>(`
-    SELECT ei.evidence_kind AS kind,
+    SELECT ei.id::text,
+           ei.evidence_kind AS kind,
+           ei.evidence_kind,
+           NULLIF(ei.metadata->>'evidenceSeriesKey','') AS evidence_series_key,
            ei.stance,
            ei.claim,
            ei.excerpt,
