@@ -12,6 +12,10 @@ import {
   evidenceQualityFeaturesAsOf,
   type EvidenceQualityExactSignal,
 } from '../src/evaluation/evidence-quality-historical-features.js';
+import {
+  evidenceQualityExactEvidenceItemAvailabilityDate,
+  evidenceQualitySourceAvailabilityDate,
+} from '../src/evidence/evidence-quality-historical-availability.js';
 
 const EXPECTED_DOCUMENTS = 226;
 const EXPECTED_UNIQUE_SIGNATURES = 180;
@@ -34,6 +38,7 @@ type AnnotationRow = {
   source_document_text_id: string;
   source_kind: string;
   source_url: string;
+  source_content_sha256: string;
   source_session_id: string | null;
   source_chamber_id: string | null;
   source_metadata: Record<string, unknown> | null;
@@ -74,6 +79,8 @@ type ContextRow = {
   bill_id: string | null;
   member_name: string | null;
   bill_identifier: string | null;
+  evidence_excerpt: string | null;
+  evidence_metadata: Record<string, unknown> | null;
 };
 
 type MembershipIdentityRow = {
@@ -268,13 +275,34 @@ function validDateOnly(value: string | null): value is string {
 }
 
 function availabilityDate(metadata: Record<string, unknown> | null): string | null {
-  for (const key of ['availableAt', 'availableOn', 'archiveCapturedAt'] as const) {
-    const raw = stringMeta(metadata, key);
-    if (!raw || !Number.isFinite(Date.parse(raw))) continue;
-    const date = raw.slice(0, 10);
-    if (validDateOnly(date)) return date;
+  return evidenceQualitySourceAvailabilityDate(metadata);
+}
+
+function claimAvailabilityDate(input: {
+  source: AnnotationRow;
+  contexts: readonly ContextRow[];
+  supportingExcerpt: string;
+  membershipId: string;
+  billId?: string;
+}): string | null {
+  const dates = new Set<string>();
+  const sourceDate = availabilityDate(input.source.source_metadata);
+  if (sourceDate) dates.add(sourceDate);
+
+  for (const context of input.contexts) {
+    if (context.membership_id !== input.membershipId) continue;
+    if (input.billId !== undefined && context.bill_id !== input.billId) continue;
+    const date = evidenceQualityExactEvidenceItemAvailabilityDate({
+      evidenceMetadata: context.evidence_metadata,
+      sourceUrl: input.source.source_url,
+      sourceContentSha256: input.source.source_content_sha256,
+      evidenceExcerpt: context.evidence_excerpt,
+      claimSupportingExcerpt: input.supportingExcerpt,
+    });
+    if (date) dates.add(date);
   }
-  return null;
+
+  return earliest(dates);
 }
 
 function loadTargets(path: string): TargetRow[] {
@@ -335,6 +363,7 @@ async function main() {
              eqa.source_document_text_id::text,
              sd.source_kind,
              sd.source_url,
+             sd.content_sha256 AS source_content_sha256,
              sd.session_id::text AS source_session_id,
              sd.chamber_id::text AS source_chamber_id,
              sd.metadata AS source_metadata,
@@ -386,7 +415,9 @@ async function main() {
              ei.membership_id::text,
              ei.bill_id::text,
              l.name AS member_name,
-             b.identifier AS bill_identifier
+             b.identifier AS bill_identifier,
+             ei.excerpt AS evidence_excerpt,
+             ei.metadata AS evidence_metadata
         FROM evidence_items ei
         LEFT JOIN memberships m ON m.id=ei.membership_id
         LEFT JOIN legislators l ON l.id=m.legislator_id
@@ -507,7 +538,14 @@ async function main() {
               mappingMethods: new Set<string>(),
             };
             acc.sourceDocumentIds.add(row.source_document_id);
-            if (availableOn) acc.availableDates.add(availableOn);
+            const claimAvailableOn = claimAvailabilityDate({
+              source: row,
+              contexts,
+              supportingExcerpt: claim.supportingExcerpt,
+              membershipId: membership.membershipId,
+              billId: entry.resolution.billId,
+            });
+            if (claimAvailableOn) acc.availableDates.add(claimAvailableOn);
             acc.claimTypes.add(claim.claimType);
             acc.explicitness.add(claim.explicitness);
             acc.mappingMethods.add(membership.method);
@@ -557,7 +595,13 @@ async function main() {
             mappingMethods: new Set<string>(),
           };
           acc.sourceDocumentIds.add(row.source_document_id);
-          if (availableOn) acc.availableDates.add(availableOn);
+          const claimAvailableOn = claimAvailabilityDate({
+            source: row,
+            contexts,
+            supportingExcerpt: claim.supportingExcerpt,
+            membershipId: membership.membershipId,
+          });
+          if (claimAvailableOn) acc.availableDates.add(claimAvailableOn);
           acc.stances.add(claim.stance);
           acc.claimTypes.add(claim.claimType);
           acc.mappingMethods.add(membership.method);
@@ -719,7 +763,8 @@ async function main() {
         outcomeUseDuringFeatureConstruction: 'none',
         strictPreEventAvailability: true,
         sameDayEvidenceExcluded: true,
-        availabilitySource: 'source_documents.metadata.availableAt | availableOn | archiveCapturedAt',
+        availabilitySource: 'exact evidence_items.metadata excerpt proof when claim/context matched; source_documents.metadata fallback',
+        evidenceItemScopedProofNeverPromotedSourceWide: true,
         semanticDeduplication: 'semanticFingerprint + deterministic membership/bill identity',
         identityResolution: 'prefer evidence_items IDs; otherwise resolve only the already-reviewed claim member/bill identifiers by unique exact match within source session/chamber; ambiguity fails closed',
         memberIssueBillInference: 'none',
