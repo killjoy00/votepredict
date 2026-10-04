@@ -1,7 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
-import { getQuickEvidenceProspectiveScorecard } from '../src/operations/quick-evidence-prospective-scorecard.js';
 
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
@@ -67,6 +66,9 @@ async function main() {
   delete process.env.POSTGRES_URL_NON_POOLING;
 
   const { pool } = await import('../src/lib/db/index.js');
+  const { getQuickEvidenceProspectiveScorecard } = await import(
+    '../src/operations/quick-evidence-prospective-scorecard.js'
+  );
   const client = await pool.connect();
   try {
     await client.query('BEGIN READ ONLY');
