@@ -71,7 +71,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: evidence-quality-historical-coverage-audit-v1-2
-          path: ${{ runner.temp }}/evidence-quality-historical-coverage-audit-v1.1.json
+          path: ${{ runner.temp }}/evidence-quality-historical-coverage-audit-v1.2.json
           if-no-files-found: error
           retention-days: 30
 
