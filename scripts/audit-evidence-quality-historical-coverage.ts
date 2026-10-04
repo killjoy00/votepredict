@@ -5,6 +5,11 @@ import {
   EVIDENCE_QUALITY_PROMPT_VERSION,
   EVIDENCE_QUALITY_SCHEMA_VERSION,
 } from '../src/evidence/evidence-quality.js';
+import {
+  claimHistoricalAvailability,
+  sourceDocumentAvailabilityDate,
+  type EvidenceQualityAvailabilityContext,
+} from '../src/evidence/evidence-quality-historical-availability.js';
 
 const EXPECTED_DOCUMENTS = 226;
 const EXPECTED_UNIQUE_SIGNATURES = 180;
@@ -16,6 +21,8 @@ let secrets: string[] = [];
 type AnnotationRow = {
   source_document_id: string;
   source_kind: string;
+  source_url: string;
+  source_content_sha256: string;
   source_metadata: Record<string, unknown> | null;
   annotation: {
     claims: Array<{
@@ -27,6 +34,7 @@ type AnnotationRow = {
       specificity: string;
       explicitness: string;
       normalizedClaim: string;
+      supportingExcerpt: string;
       extractionConfidence: number;
     }>;
   };
@@ -38,11 +46,14 @@ type AnnotationRow = {
 };
 
 type ContextRow = {
+  evidence_id: string;
   source_document_id: string;
   membership_id: string | null;
   bill_id: string | null;
   member_name: string | null;
   bill_identifier: string | null;
+  excerpt: string | null;
+  evidence_metadata: Record<string, unknown> | null;
 };
 
 type TargetRow = {
@@ -64,6 +75,8 @@ type Signal = {
   sourceKind: string;
   sourceDocumentIds: Set<string>;
   availableDates: Set<string>;
+  availabilityMethods: Set<string>;
+  availabilityEvidenceItemIds: Set<string>;
   stances: Set<string>;
 };
 
@@ -126,16 +139,6 @@ function validDateOnly(value: string | null): value is string {
   return Number.isFinite(timestamp) && new Date(timestamp).toISOString().slice(0, 10) === value;
 }
 
-function availabilityDate(metadata: Record<string, unknown> | null): string | null {
-  for (const key of ['availableAt', 'availableOn', 'archiveCapturedAt'] as const) {
-    const raw = stringMeta(metadata, key);
-    if (!raw || !Number.isFinite(Date.parse(raw))) continue;
-    const date = raw.slice(0, 10);
-    if (validDateOnly(date)) return date;
-  }
-  return null;
-}
-
 function earliest(values: Set<string>): string | null {
   return [...values].filter(validDateOnly).sort()[0] ?? null;
 }
@@ -177,6 +180,8 @@ async function main() {
     const annotations = await client.query<AnnotationRow>(`
       SELECT eqa.source_document_id::text,
              sd.source_kind,
+             sd.source_url,
+             sd.content_sha256 AS source_content_sha256,
              sd.metadata AS source_metadata,
              eqa.annotation,
              eqa.metadata AS annotation_metadata,
@@ -212,11 +217,14 @@ async function main() {
     if (fingerprints.size !== EXPECTED_UNIQUE_SIGNATURES) throw new Error('Semantic signature count mismatch');
 
     const contexts = await client.query<ContextRow>(`
-      SELECT ei.source_document_id::text,
+      SELECT ei.id::text AS evidence_id,
+             ei.source_document_id::text,
              ei.membership_id::text,
              ei.bill_id::text,
              l.name AS member_name,
-             b.identifier AS bill_identifier
+             b.identifier AS bill_identifier,
+             ei.excerpt,
+             ei.metadata AS evidence_metadata
         FROM evidence_items ei
         LEFT JOIN memberships m ON m.id=ei.membership_id
         LEFT JOIN legislators l ON l.id=m.legislator_id
@@ -237,25 +245,38 @@ async function main() {
 
     for (const row of annotations.rows) {
       const fingerprint = stringMeta(row.annotation_metadata, 'semanticFingerprint')!;
-      const availableOn = availabilityDate(row.source_metadata);
+      const sourceAvailableOn = sourceDocumentAvailabilityDate(row.source_metadata);
+      const contexts = contextsBySource.get(row.source_document_id) ?? [];
+      const availabilityContexts: EvidenceQualityAvailabilityContext[] = contexts.map((context) => ({
+        evidenceItemId: context.evidence_id,
+        membershipId: context.membership_id,
+        billId: context.bill_id,
+        excerpt: context.excerpt,
+        metadata: context.evidence_metadata,
+      }));
       for (const claim of row.annotation.claims) {
         if (!['supports','opposes','mixed'].includes(claim.stance)) continue;
         if (claim.memberNames.length === 0 || claim.billIdentifiers.length === 0) continue;
         exactDirectionalClaims += 1;
         const memberNames = new Set(claim.memberNames.map(normalizeName));
         const billIdentifiers = new Set(claim.billIdentifiers.map(normalizeBill));
-        const matches = (contextsBySource.get(row.source_document_id) ?? []).filter((context) =>
+        const matches = contexts.filter((context) =>
           Boolean(context.membership_id && context.bill_id && context.member_name && context.bill_identifier)
           && memberNames.has(normalizeName(context.member_name!))
           && billIdentifiers.has(normalizeBill(context.bill_identifier!)));
 
-        const pairs = new Map<string, ContextRow>();
-        for (const match of matches) pairs.set(match.membership_id + '|' + match.bill_id, match);
+        const pairs = new Map<string, ContextRow[]>();
+        for (const match of matches) {
+          const pairKey = match.membership_id + '|' + match.bill_id;
+          const values = pairs.get(pairKey) ?? [];
+          values.push(match);
+          pairs.set(pairKey, values);
+        }
         if (pairs.size === 0) {
           unmappedExactClaims.push({
             sourceDocumentId: row.source_document_id,
             sourceKind: row.source_kind,
-            availableOn,
+            availableOn: sourceAvailableOn,
             memberNames: claim.memberNames,
             billIdentifiers: claim.billIdentifiers,
             linkage: claim.linkage,
@@ -269,7 +290,17 @@ async function main() {
           continue;
         }
 
-        for (const match of pairs.values()) {
+        for (const pairMatches of pairs.values()) {
+          const match = pairMatches[0];
+          const availability = claimHistoricalAvailability({
+            sourceMetadata: row.source_metadata,
+            sourceUrl: row.source_url,
+            sourceContentSha256: row.source_content_sha256,
+            contexts: availabilityContexts,
+            supportingExcerpt: claim.supportingExcerpt,
+            membershipId: match.membership_id!,
+            billId: match.bill_id!,
+          });
           const key = fingerprint + '|' + match.membership_id + '|' + match.bill_id;
           const signal = exactSignals.get(key) ?? {
             fingerprint,
@@ -280,10 +311,16 @@ async function main() {
             sourceKind: row.source_kind,
             sourceDocumentIds: new Set<string>(),
             availableDates: new Set<string>(),
+            availabilityMethods: new Set<string>(),
+            availabilityEvidenceItemIds: new Set<string>(),
             stances: new Set<string>(),
           };
           signal.sourceDocumentIds.add(row.source_document_id);
-          if (availableOn) signal.availableDates.add(availableOn);
+          if (availability.availableOn) signal.availableDates.add(availability.availableOn);
+          if (availability.method !== 'none') signal.availabilityMethods.add(availability.method);
+          for (const evidenceItemId of availability.evidenceItemIds) {
+            signal.availabilityEvidenceItemIds.add(evidenceItemId);
+          }
           signal.stances.add(claim.stance);
           exactSignals.set(key, signal);
         }
@@ -344,6 +381,8 @@ async function main() {
         sourceKind: signal.sourceKind,
         sourceDocumentIds: [...signal.sourceDocumentIds].sort(),
         availableOn,
+        availabilityMethods: [...signal.availabilityMethods].sort(),
+        availabilityEvidenceItemIds: [...signal.availabilityEvidenceItemIds].sort(),
         stances: [...signal.stances].sort(),
         targetEvents: targetRows.map((row) => ({
           voteEventId: row.voteEventId,
@@ -407,6 +446,8 @@ async function main() {
         legacyQuickEvidenceV2Included: false,
         quickEvidenceV3Included: false,
         p2BillInferencePerformed: false,
+        availabilityInputs: ['source_documents.metadata', 'evidence_items.metadata'],
+        granularAvailabilityScope: 'claim must map to the exact member/bill evidence item and its supporting excerpt must occur in the proven evidence-item excerpt',
         servingChanged: false,
       },
     };
