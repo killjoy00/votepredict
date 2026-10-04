@@ -1,0 +1,92 @@
+name: Evidence Quality v1 supplemental P2 manual export 03
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: evidence-quality-manual-p2-supplement-03-frozen-export
+  cancel-in-progress: false
+
+jobs:
+  export:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.issue.number == 579 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        startsWith(github.event.comment.body, '[evidence-quality-manual-export-p2-supplement-03]')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+
+      - name: Read production environment privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+
+      - name: Export frozen P2 cohort read-only
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+          VOTEPREDICT_EVIDENCE_QUALITY_P2_COHORT_ID: P2-SUP-003
+          VOTEPREDICT_EVIDENCE_QUALITY_P2_PREVIOUS_CUTOFF: 2026-10-04T02:21:38.983992Z
+          VOTEPREDICT_EVIDENCE_QUALITY_P2_CUTOFF: 2026-10-04T03:34:05.016632Z
+          VOTEPREDICT_EVIDENCE_QUALITY_SOURCE_SNAPSHOT_INGESTION_RUN_ID: a1db8dae-d7f1-4828-b0c8-4780d340722f
+          VOTEPREDICT_EVIDENCE_QUALITY_P2_EXPECTED_DOCUMENTS: '25'
+          VOTEPREDICT_EVIDENCE_QUALITY_MANUAL_EXPORT_OUTPUT: ${{ runner.temp }}/evidence-quality-manual-p2-supplement-03-frozen.json
+        run: node --import tsx scripts/export-evidence-quality-manual-p2-window.ts
+
+      - name: Upload frozen P2 cohort
+        uses: actions/upload-artifact@v7
+        with:
+          name: evidence-quality-manual-p2-supplement-03-frozen
+          path: ${{ runner.temp }}/evidence-quality-manual-p2-supplement-03-frozen.json
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: Report run ID to issue 579
+        if: github.event_name == 'issue_comment'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/issues/579/comments" -f body="[evidence-quality-manual-export-p2-supplement-03-result] run_id=$RUN_ID status=success artifact=evidence-quality-manual-p2-supplement-03-frozen"
+
+      - name: Report failed run ID to issue 579
+        if: failure() && github.event_name == 'issue_comment'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.run_id }}
+        shell: bash
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/issues/579/comments" -f body="[evidence-quality-manual-export-p2-supplement-03-result] run_id=$RUN_ID status=failed artifact=evidence-quality-manual-p2-supplement-03-frozen" || true
+
+      - name: Remove temporary credentials and logs
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PYTHON'
+          import os
+          from pathlib import Path
+          for name in ['votepredict-production.env','vercel-pull.log']:
+              Path(os.environ['RUNNER_TEMP'],name).unlink(missing_ok=True)
+          PYTHON
