@@ -328,36 +328,48 @@ async function main() {
   }
 
   const fingerprints = new Map<string, string[]>();
+  const validationErrors: string[] = [];
   for (const document of documents) {
-    const source = sourcesByTextId.get(document.sourceDocumentTextId);
-    if (!source) throw new Error(`Row ${document.row}: frozen source text row not found`);
-    if (source.source_document_id !== document.sourceDocumentId) throw new Error(`Row ${document.row}: source/text identity mismatch`);
-    if (source.source_kind !== document.sourceKind) throw new Error(`Row ${document.row}: source kind mismatch`);
-    if (source.extraction_version !== EVIDENCE_QUALITY_TEXT_VERSION) throw new Error(`Row ${document.row}: source text extraction version mismatch`);
+    try {
+      const source = sourcesByTextId.get(document.sourceDocumentTextId);
+      if (!source) throw new Error('frozen source text row not found');
+      if (source.source_document_id !== document.sourceDocumentId) throw new Error('source/text identity mismatch');
+      if (source.source_kind !== document.sourceKind) throw new Error('source kind mismatch');
+      if (source.extraction_version !== EVIDENCE_QUALITY_TEXT_VERSION) throw new Error('source text extraction version mismatch');
 
-    const frozenEvidence = (evidenceBySource.get(document.sourceDocumentId) ?? [])
-      .filter((row) => Date.parse(row.created_at) <= Date.parse(document.cohortCutoff));
-    const candidates = candidateContext(frozenEvidence);
-    if (JSON.stringify(candidates.memberNames) !== JSON.stringify(normalizedMembers(document.candidateMemberNames))) {
-      throw new Error(`Row ${document.row}: candidate member list no longer matches production evidence`);
+      const frozenEvidence = (evidenceBySource.get(document.sourceDocumentId) ?? [])
+        .filter((row) => Date.parse(row.created_at) <= Date.parse(document.cohortCutoff));
+      const candidates = candidateContext(frozenEvidence);
+      if (JSON.stringify(candidates.memberNames) !== JSON.stringify(normalizedMembers(document.candidateMemberNames))) {
+        throw new Error('candidate member list no longer matches frozen production evidence');
+      }
+      if (JSON.stringify(candidates.billIdentifiers) !== JSON.stringify(normalizedBills(document.candidateBillIdentifiers))) {
+        throw new Error('candidate bill list no longer matches frozen production evidence');
+      }
+
+      validateEvidenceQualityAnnotation(document.annotation, {
+        sourceKind: document.sourceKind,
+        sourceUrl: source.source_url,
+        contentMode: 'verified_full_text',
+        text: source.normalized_text,
+        candidateMemberNames: document.candidateMemberNames,
+        candidateBillIdentifiers: document.candidateBillIdentifiers,
+      });
+
+      const fingerprint = semanticFingerprint(document);
+      const rows = fingerprints.get(fingerprint) ?? [];
+      rows.push(`${document.batchId}:${document.row}`);
+      fingerprints.set(fingerprint, rows);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      validationErrors.push(`${document.batchId} row ${document.row}: ${message}`);
     }
-    if (JSON.stringify(candidates.billIdentifiers) !== JSON.stringify(normalizedBills(document.candidateBillIdentifiers))) {
-      throw new Error(`Row ${document.row}: candidate bill list no longer matches production evidence`);
-    }
-
-    validateEvidenceQualityAnnotation(document.annotation, {
-      sourceKind: document.sourceKind,
-      sourceUrl: source.source_url,
-      contentMode: 'verified_full_text',
-      text: source.normalized_text,
-      candidateMemberNames: document.candidateMemberNames,
-      candidateBillIdentifiers: document.candidateBillIdentifiers,
-    });
-
-    const fingerprint = semanticFingerprint(document);
-    const rows = fingerprints.get(fingerprint) ?? [];
-    rows.push(`${document.batchId}:${document.row}`);
-    fingerprints.set(fingerprint, rows);
+  }
+  if (validationErrors.length > 0) {
+    throw new Error(
+      `Supplemental cohort validation failed (${validationErrors.length} document(s)):\n` +
+      validationErrors.slice(0, 50).join('\n'),
+    );
   }
 
   const duplicateGroups = [...fingerprints.entries()]
