@@ -1,12 +1,14 @@
 import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { gunzipSync } from 'node:zlib';
 import {
   HOUSE_ATTACHMENT_DENSITY_SELECTOR_ARTIFACT_DIGEST,
   HOUSE_ATTACHMENT_DENSITY_SELECTOR_ARTIFACT_ID,
   HOUSE_ATTACHMENT_DENSITY_SELECTOR_INPUT_SHA256,
   HOUSE_ATTACHMENT_DENSITY_SELECTOR_PILOT_SIZE,
   HOUSE_ATTACHMENT_DENSITY_SELECTOR_POTENTIAL_ROWS,
+  houseAttachmentArchiveProbeDiscoveryFrom,
   houseAttachmentArchiveProbeTargetKey,
   houseAttachmentCaptureOpportunity,
   validateHouseAttachmentDensityPilot,
@@ -16,10 +18,19 @@ import type { HouseAttachmentHistoricalDensityPilotRow } from '../src/evidence/h
 import { discoverWaybackPdfCaptures, type WaybackCapture } from '../src/evidence/wayback.js';
 
 const EXPECTED_TARGET_ROWS = 135457;
+const EXPECTED_CURRENT_COVERED_ROWS = 38;
+const EXPECTED_TRAINING_COVERED_ROWS = 3;
 const MAX_PDF_BYTES = 25_000_000;
 const MAX_REDIRECTS = 4;
 const MAX_DISCOVERY_CAPTURES = 2000;
 const OUTPUT_FILE = 'historical-density-house-attachment-archive-probe-v1.json';
+
+type MatrixRow = {
+  voteEventId: string;
+  membershipId: string;
+  session: string;
+  features: number[];
+};
 
 type SelectorReport = {
   schemaVersion: string;
@@ -54,6 +65,32 @@ function safe(error: unknown): string {
   return (error instanceof Error ? (error.stack ?? error.message) : String(error))
     .replace(/https?:\/\/\S+/gi, '[source URL]')
     .slice(0, 1600);
+}
+
+function loadCurrentCoveredRowKeys(path: string) {
+  const rows = gunzipSync(readFileSync(path))
+    .toString('utf8')
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => JSON.parse(line) as MatrixRow);
+  if (rows.length !== EXPECTED_TARGET_ROWS) {
+    throw new Error('v1.5 matrix row count drifted: ' + rows.length);
+  }
+  const covered = new Set(
+    rows
+      .filter((row) => Number(row.features?.[0] ?? 0) > 0)
+      .map((row) => row.voteEventId + '|' + row.membershipId),
+  );
+  if (covered.size !== EXPECTED_CURRENT_COVERED_ROWS) {
+    throw new Error('v1.5 exact-bill covered-row count drifted: ' + covered.size);
+  }
+  const trainingCovered = rows.filter(
+    (row) => row.session === '2021-2022' && Number(row.features?.[0] ?? 0) > 0,
+  ).length;
+  if (trainingCovered !== EXPECTED_TRAINING_COVERED_ROWS) {
+    throw new Error('v1.5 2021-22 covered-row count drifted: ' + trainingCovered);
+  }
+  return covered;
 }
 
 function loadTargets(path: string) {
@@ -127,7 +164,7 @@ async function probeCandidate(
   try {
     captures = await discoverWaybackPdfCaptures({
       url: candidate.attachmentUrl,
-      from: candidate.lastOfficialPostedOn,
+      from: houseAttachmentArchiveProbeDiscoveryFrom(candidate.lastOfficialPostedOn),
       to: candidate.lastTargetVoteOn ?? undefined,
       limit: MAX_DISCOVERY_CAPTURES,
     });
@@ -226,9 +263,10 @@ async function probeCandidate(
 async function main() {
   const selectorPath = process.env.VOTEPREDICT_HOUSE_ATTACHMENT_SELECTOR_PATH;
   const targetPath = process.env.VOTEPREDICT_EQ_TARGET_UNIVERSE_PATH;
+  const currentMatrixPath = process.env.VOTEPREDICT_EQ_CURRENT_MATRIX_PATH;
   const outputDir = process.env.VOTEPREDICT_HOUSE_ATTACHMENT_ARCHIVE_PROBE_OUTPUT_DIR;
-  if (!selectorPath || !targetPath || !outputDir) {
-    throw new Error('Frozen selector, immutable target universe, and output directory are required');
+  if (!selectorPath || !targetPath || !currentMatrixPath || !outputDir) {
+    throw new Error('Frozen selector, immutable target universe, v1.5 matrix, and output directory are required');
   }
 
   const selector = JSON.parse(readFileSync(selectorPath, 'utf8')) as SelectorReport;
@@ -248,6 +286,12 @@ async function main() {
   }
   const pilotValidation = validateHouseAttachmentDensityPilot(selector.recommendedPilot.rows);
   const targetByKey = loadTargets(targetPath);
+  const currentCoveredRowKeys = loadCurrentCoveredRowKeys(currentMatrixPath);
+  const newlyCoveredPilotRows = [...new Set(selector.recommendedPilot.rows.flatMap((row) => row.overlapRowKeys))]
+    .filter((key) => currentCoveredRowKeys.has(key));
+  if (newlyCoveredPilotRows.length) {
+    throw new Error('Frozen attachment pilot overlaps rows already covered in v1.5: ' + newlyCoveredPilotRows.length);
+  }
 
   const rows = [];
   for (let i = 0; i < selector.recommendedPilot.rows.length; i += 1) {
@@ -310,6 +354,13 @@ async function main() {
       session: '2021-2022',
       chamber: 'house',
     },
+    currentMatrix: {
+      artifactId: 11380755983,
+      artifactDigest: 'sha256:fe2254fc9d2ed0ea00712feab384958e4942cf387e442c29515b3a75183692d7',
+      exactBillCoveredRows: EXPECTED_CURRENT_COVERED_ROWS,
+      trainingExactBillCoveredRows: EXPECTED_TRAINING_COVERED_ROWS,
+      frozenPilotRowsAlreadyCovered: 0,
+    },
     summary: {
       probedPdfs: rows.length,
       classificationCounts: Object.fromEntries(Object.entries(classificationCounts).sort(([a], [b]) => a.localeCompare(b))),
@@ -327,6 +378,8 @@ async function main() {
       productionWrites: false,
       exactFrozenSelectorArtifactRequired: true,
       exactImmutableTargetUniverseRequired: true,
+      exactV15MatrixRequired: true,
+      frozenPilotMustRemainUncoveredInV15: true,
       exactOriginalAttachmentUrlOnly: true,
       exactPdfBytesFetched: true,
       archiveSnapshotMustRemainOnWaybackHost: true,
