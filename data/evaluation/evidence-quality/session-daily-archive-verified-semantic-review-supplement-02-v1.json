@@ -15,17 +15,14 @@
   },
   "summary": {
     "documentsReviewed": 15,
-    "targetMemberDirectionalDocuments": 10,
-    "targetMemberDirectionalClaims": 10,
-    "exactMemberBillDirectionalClaims": 6,
+    "targetMemberDirectionalDocuments": 13,
+    "targetMemberDirectionalClaims": 13,
+    "exactMemberBillDirectionalClaims": 9,
     "memberIssueDirectionalClaims": 4,
-    "exactMemberBillDirectionalUniquePotentialRows": 8,
+    "exactMemberBillDirectionalUniquePotentialRows": 12,
     "billOnlyThirdPartyDirectionalClaims": 0,
-    "targetMemberNonDirectionalDocuments": 5,
-    "humanAdjudicationRecommendedRows": [
-      5,
-      9
-    ],
+    "targetMemberNonDirectionalDocuments": 2,
+    "humanAdjudicationRecommendedRows": [],
     "validationFailures": 0
   },
   "policy": {
@@ -43,7 +40,10 @@
     "frozenCandidateListsPreserved": true,
     "frozenReviewTextEmbeddedForMechanicalValidation": true,
     "modelFitting": "none",
-    "servingChanged": false
+    "servingChanged": false,
+    "semanticPolicyVersion": "evidence-quality-sponsorship-support-v1",
+    "humanAdjudicationVersion": "session-daily-five-row-human-adjudication-v1",
+    "verifiedSponsorshipDirectionalSupportByPolicy": true
   },
   "reviews": [
     {
@@ -140,20 +140,20 @@
       ],
       "reviewText": "ators, Marla Spivak, Distinguished McKnight Professor at the University of Minnesota, told the House Environment and Natural Resources Finance and Policy Committee Wednesday. Sponsored by Rep. Brad Tabke (DFL-Shakopee), HF207 would appropriate $4 million from the General Fund in the next biennium to the Board of Water and Soil Resources for Lawns to Legumes . Rep. Brad Tabke The bill was approved as amended by the committee on a split voice",
       "sourceKind": "house_session_daily",
-      "decision": "non_directional",
+      "decision": "exact_member_bill_directional",
       "memberNames": [
         "Brad Tabke"
       ],
       "billIdentifiers": [
         "HF207"
       ],
-      "stance": "none",
+      "stance": "supports",
       "claimType": "sponsorship",
       "specificity": "exact_bill",
-      "normalizedClaim": "The excerpt identifies Tabke as sponsor of HF207 and reports committee action, without an attributable final-passage position.",
+      "normalizedClaim": "Session Daily identifies Brad Tabke as sponsor of HF207; verified sponsorship is supportive evidence for HF207.",
       "supportingExcerpt": "Sponsored by Rep. Brad Tabke (DFL-Shakopee), HF207 would appropriate $4 million from the General Fund in the next biennium",
       "notes": [
-        "Sponsorship and committee approval are non-directional."
+        "Verified exact-bill sponsorship is supportive under evidence-quality-sponsorship-support-v1; committee or floor procedure remains separately non-directional."
       ]
     },
     {
@@ -170,7 +170,7 @@
       ],
       "reviewText": "n’t light up a spliff just yet, but odds you could enjoy a legal joint by this summer got higher Tuesday. All you need now are two affirmative votes and a pen stroke. Rep. Zack Stephenson (DFL-Coon Rapids), who sponsors HF100 with Sen. Lindsey Port (DFL-Burnsville), said both he and Port are optimistic the recreational cannabis bill will be repassed by both chambers before the session ends. “I think we’re both feeling really confident that w",
       "sourceKind": "house_session_daily",
-      "decision": "non_directional_human_check",
+      "decision": "exact_member_bill_directional",
       "memberNames": [
         "Lindsey Port",
         "Zack Stephenson"
@@ -178,14 +178,14 @@
       "billIdentifiers": [
         "HF100"
       ],
-      "stance": "unclear",
-      "claimType": "policy_discussion",
+      "stance": "supports",
+      "claimType": "sponsorship",
       "specificity": "exact_bill",
-      "normalizedClaim": "Stephenson reports that he and Port are optimistic HF100 will be repassed, but predictive optimism plus sponsorship is not treated as an explicit normative final-passage stance; the following quote is clipped.",
+      "normalizedClaim": "Session Daily identifies Zack Stephenson and Lindsey Port as co-sponsors of HF100; their verified co-sponsorship is supportive evidence for HF100.",
       "supportingExcerpt": "Rep. Zack Stephenson (DFL-Coon Rapids), who sponsors HF100 with Sen. Lindsey Port (DFL-Burnsville), said both he and Port are optimistic the recreational cannabis bill will be repassed by both chambers before the session ends.",
       "notes": [
-        "Human check recommended because the following direct quote is clipped.",
-        "Do not convert forecast-like optimism or sponsorship into final-passage support."
+        "Owner adjudication: both Stephenson and Port support HF100.",
+        "The archived frozen excerpt independently states the co-sponsorship relationship; support therefore does not depend on the clipped following quote."
       ]
     },
     {
@@ -255,20 +255,20 @@
       ],
       "reviewText": "ing body with changes to be effective in a year ending in “3.” By statute , the Legislature is charged with the task. Approved, as amended , Friday by the House State and Local Government Finance and Policy Committee is HF2204 , a redistricting map of the Metropolitan Council’s 16 districts. Its next stop is the House Floor. Rep. Mike Freiberg (DFL-Golden Valley), the bill sponsor, said the metropolitan area population grew by 11% from the pr",
       "sourceKind": "house_session_daily",
-      "decision": "non_directional",
+      "decision": "exact_member_bill_directional",
       "memberNames": [
         "Mike Freiberg"
       ],
       "billIdentifiers": [
         "HF2204"
       ],
-      "stance": "none",
+      "stance": "supports",
       "claimType": "sponsorship",
       "specificity": "exact_bill",
-      "normalizedClaim": "The excerpt identifies Freiberg as HF2204's sponsor and begins a population description, but contains no attributable directional position on final passage.",
+      "normalizedClaim": "Session Daily identifies Mike Freiberg as sponsor of HF2204; verified sponsorship is supportive evidence for HF2204.",
       "supportingExcerpt": "Rep. Mike Freiberg (DFL-Golden Valley), the bill sponsor",
       "notes": [
-        "Sponsorship alone is non-directional."
+        "Verified exact-bill sponsorship is supportive under evidence-quality-sponsorship-support-v1; committee or floor procedure remains separately non-directional."
       ]
     },
     {
@@ -285,20 +285,21 @@
       ],
       "reviewText": "Moorhead and sent them to the House Ways and Means Committee. House Capital Investment Committee 2/20/23 HF669 , amended by a delete-all and author’s amendment , would authorize about $1.5 billion from bond sales, while HF670 , also amended by a delete-all and author’s amendment , would appropriate about $400 million from the General Fund for state and local projects. The Legislature is catching up, said Rep. Fue Lee (DFL-Mpls), who sponsors",
       "sourceKind": "house_session_daily",
-      "decision": "non_directional_human_check",
+      "decision": "non_directional",
       "memberNames": [
         "Fue Lee"
       ],
       "billIdentifiers": [
         "HF670"
       ],
-      "stance": "unclear",
+      "stance": "none",
       "claimType": "policy_discussion",
       "specificity": "exact_bill",
-      "normalizedClaim": "Fue Lee says the Legislature is catching up in the HF670 context, but the excerpt cuts off before preserving enough attributable context to classify a directional stance; no position is assigned to Liz Lee.",
+      "normalizedClaim": "Fue Lee says the Legislature is catching up in the HF670 context; this clipped passage is retained as non-directional policy context.",
       "supportingExcerpt": "The Legislature is catching up, said Rep. Fue Lee (DFL-Mpls), who sponsors",
       "notes": [
-        "Human check recommended because the attribution is clipped.",
+        "Owner adjudication: this passage is non-directional.",
+        "Any independently verified canonical sponsorship relationship is handled separately under evidence-quality-sponsorship-support-v1.",
         "No stance for Liz Lee is inferred from candidate membership alone."
       ]
     },
