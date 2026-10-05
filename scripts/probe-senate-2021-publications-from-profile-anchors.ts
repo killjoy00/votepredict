@@ -411,7 +411,7 @@ async function main() {
             archiveUrl: capture.archiveUrl,
             archiveCapturedAt: capture.capturedAt,
             archiveDigest: capture.digest,
-            title: page.title ?? candidate.linkText || null,
+            title: page.title ?? (candidate.linkText || null),
             nativePublishedAt: page.publishedAt ?? null,
             availabilityBound: capture.capturedAt,
             availabilityBoundKind: 'exact_archive_capture',
