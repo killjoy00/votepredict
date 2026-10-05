@@ -18,7 +18,7 @@ concurrency:
 jobs:
   inventory:
     if: >-
-      github.event.issue.number == 579 &&
+      github.event.issue.number == 718 &&
       github.event.comment.user.login == 'killjoy00' &&
       startsWith(github.event.comment.body, '[evidence-quality-pre-vote-candidate-inventory]')
     runs-on: ubuntu-latest
@@ -53,14 +53,23 @@ jobs:
                   out.write(json.dumps(target,separators=(',',':'))+'\n')
           PYTHON
 
-      - name: Materialize authoritative v1.4 Evidence Quality matrix
+      - name: Materialize authoritative v1.5 Evidence Quality matrix
         shell: bash
         run: |
           set -euo pipefail
-          gh api /repos/${{ github.repository }}/actions/artifacts/11318046136/zip > "$RUNNER_TEMP/evidence-quality-v1-4.zip"
-          echo "e563a8f5623818af3eed1ea6182ad210009709095add5fc48398c5a6370ea648  $RUNNER_TEMP/evidence-quality-v1-4.zip" | sha256sum -c -
-          mkdir -p "$RUNNER_TEMP/evidence-quality-v1-4"
-          unzip -q "$RUNNER_TEMP/evidence-quality-v1-4.zip" evidence-quality-historical-feature-matrix-v1.4.ndjson.gz -d "$RUNNER_TEMP/evidence-quality-v1-4"
+          gh api /repos/${{ github.repository }}/actions/artifacts/11380755983/zip > "$RUNNER_TEMP/evidence-quality-v1-5.zip"
+          echo "fe2254fc9d2ed0ea00712feab384958e4942cf387e442c29515b3a75183692d7  $RUNNER_TEMP/evidence-quality-v1-5.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/evidence-quality-v1-5"
+          unzip -q "$RUNNER_TEMP/evidence-quality-v1-5.zip" evidence-quality-historical-feature-matrix-v1.5.ndjson.gz -d "$RUNNER_TEMP/evidence-quality-v1-5"
+
+      - name: Materialize frozen v1.4 recovery inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11317004477/zip > "$RUNNER_TEMP/evidence-quality-inventory-v1-4.zip"
+          echo "f3ec4d6038ecb677c9b460a62a8d6aedba5cc2c80e15b83e8d85d0d7483a3da6  $RUNNER_TEMP/evidence-quality-inventory-v1-4.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/evidence-quality-inventory-v1-4"
+          unzip -q "$RUNNER_TEMP/evidence-quality-inventory-v1-4.zip" evidence-quality-pre-vote-candidate-inventory-v1.4.json -d "$RUNNER_TEMP/evidence-quality-inventory-v1-4"
 
       - name: Read production environment privately
         shell: bash
@@ -73,14 +82,15 @@ jobs:
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
           VOTEPREDICT_EQ_TARGET_UNIVERSE_PATH: ${{ runner.temp }}/evidence-quality-target-universe-v1.ndjson
-          VOTEPREDICT_EQ_CURRENT_MATRIX_PATH: ${{ runner.temp }}/evidence-quality-v1-4/evidence-quality-historical-feature-matrix-v1.4.ndjson.gz
+          VOTEPREDICT_EQ_CURRENT_MATRIX_PATH: ${{ runner.temp }}/evidence-quality-v1-5/evidence-quality-historical-feature-matrix-v1.5.ndjson.gz
+          VOTEPREDICT_EQ_V14_CANDIDATE_INVENTORY_PATH: ${{ runner.temp }}/evidence-quality-inventory-v1-4/evidence-quality-pre-vote-candidate-inventory-v1.4.json
           VOTEPREDICT_EQ_CANDIDATE_INVENTORY_DIR: ${{ runner.temp }}/evidence-quality-pre-vote-candidate-inventory
         run: node --import tsx scripts/inventory-evidence-quality-pre-vote-candidates.ts
 
       - name: Upload candidate inventory
         uses: actions/upload-artifact@v7
         with:
-          name: evidence-quality-pre-vote-candidate-inventory-v1-4
+          name: evidence-quality-pre-vote-candidate-inventory-v1-5
           path: ${{ runner.temp }}/evidence-quality-pre-vote-candidate-inventory/*
           if-no-files-found: error
           retention-days: 30
@@ -89,4 +99,4 @@ jobs:
         if: always()
         shell: bash
         run: |
-          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/historical-closeout.zip" "$RUNNER_TEMP/evidence-quality-v1-4.zip"
+          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/historical-closeout.zip" "$RUNNER_TEMP/evidence-quality-v1-5.zip" "$RUNNER_TEMP/evidence-quality-inventory-v1-4.zip"
