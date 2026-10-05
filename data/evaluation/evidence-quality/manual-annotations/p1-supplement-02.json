@@ -1,1 +1,1263 @@
-{"batchId":"EQV1-P1-SUP-002","schemaVersion":"evidence-quality-v1","promptVersion":"evidence-quality-prompt-v1","provider":"OpenAI","model":"GPT-5.6 Sol","cohortId":"P1-SUP-002","sourceSnapshotRunId":37164938962,"sourceExportRunId":37165218629,"sourceArtifactId":11289561472,"sourceArtifactName":"evidence-quality-manual-p1-supplement-02-frozen","sourceArtifactDigest":"sha256:c2de9e168b8e308c478fcd624318be410bd3552320bd7c7875e947314e9ef1fe","sourceTextVersion":"evidence-quality-text-v1","cohortCutoff":"2026-10-04T00:27:44.362338Z","documentsExpected":23,"selectedSourceDocumentIds":["ae041b05-72ea-4b25-b3c7-db5480d45798","b46f803d-f077-43c3-a302-0a45df02ba28","dadb5000-0e35-4dec-b142-85d9adba39d2","da8c8ae7-e3c7-41cb-a11f-7de2080ac1c4","371d78d1-941d-415d-9326-2f9ed1e242c4","d07f9a6a-0246-47f6-b405-8349910692dd","52680a71-12ff-40f5-94a5-2a011574aa7a","8172659e-b071-4646-9a15-3041dd58a225","732280e0-fcc4-4d1f-84d6-7e7b31a46303","10ad7e5d-084c-4f5d-a50a-bcc8d3de2ea2","ddf048c0-9684-482c-82a6-ac0d665de89f","9415bba8-99bb-405b-8737-ec473dde8888","c810fc9f-05d8-4a20-95d7-c709b1533ac2","d471fc67-c360-4bd4-b994-b056f6da0dd2","55cda351-beaa-4c44-9178-2ad80808ee59","9e2df933-42ac-4d78-a937-1065f3903f4f","ec8425fa-c8c2-4e44-96e5-597ac2a9a323","0a57af1e-8f50-4911-a9a4-c09da5c69899","16576591-1764-4e31-83f2-4a3f3ace967c","176b9401-e613-4ebb-8aaf-12bb59b53619","ce55a558-7642-4806-b378-2c0074bdb14a","75837242-257c-4fb0-b631-30a722311414","3eb52512-1158-4c1b-9f92-d67e60a2c073"],"documents":[{"row":1,"sourceDocumentId":"ae041b05-72ea-4b25-b3c7-db5480d45798","sourceDocumentTextId":"dfa6f8b8-1087-478c-bc81-bf8916ba17a8","sourceKind":"wayback_member_primary","candidateMemberNames":["Erica Schwartz"],"candidateBillIdentifiers":["HF12"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["girls sports","athletic competition"],"documentConfidence":0.98},"claims":[{"memberNames":["Erica Schwartz"],"billIdentifiers":["HF12"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Erica Schwartz","normalizedClaim":"Schwartz explicitly endorses HF12 as protecting fair and safe opportunities in girls sports.","supportingExcerpt":"House File 12 , which I proudly endorsed, provides protections to ensure girls in Minnesota continue to have equal opportunities to compete safely and fairly.","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.98,"validationFailures":[]},{"row":2,"sourceDocumentId":"b46f803d-f077-43c3-a302-0a45df02ba28","sourceDocumentTextId":"f1d3de5a-dba8-4230-abc7-b722f0ee8426","sourceKind":"wayback_member_primary","candidateMemberNames":["Erica Schwartz"],"candidateBillIdentifiers":["HF12"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["girls sports","athletic competition"],"documentConfidence":0.98},"claims":[{"memberNames":["Erica Schwartz"],"billIdentifiers":["HF12"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Erica Schwartz","normalizedClaim":"Schwartz explicitly describes HF12 as providing needed protections for female athletes.","supportingExcerpt":"“House File 12 provides the common-sense protections our female athletes need,” she continued. “We must act now to ensure that girls in Minnesota continue to have equal opportunities to compete safely and fairly.”","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.98,"validationFailures":[]},{"row":3,"sourceDocumentId":"dadb5000-0e35-4dec-b142-85d9adba39d2","sourceDocumentTextId":"d8c9b0e0-3c88-4d5d-89c2-8ed596173477","sourceKind":"wayback_member_primary","candidateMemberNames":["James Gordon"],"candidateBillIdentifiers":["HF733"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["charitable gaming","electronic pull tabs"],"documentConfidence":0.96},"claims":[{"memberNames":["James Gordon"],"billIdentifiers":["HF733"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"James Gordon","normalizedClaim":"Gordon advocates HF733 as the fix for charitable-gaming changes harming local organizations.","supportingExcerpt":"Our charitable organizations do such great work in our communities, but now the state is getting in the way and that needs to be fixed. We just need to get things back to the way they were and that’s what the House Republican bill does.","extractionConfidence":0.96}],"notes":[]},"calculatedExtractionConfidence":0.96,"validationFailures":[]},{"row":4,"sourceDocumentId":"da8c8ae7-e3c7-41cb-a11f-7de2080ac1c4","sourceDocumentTextId":"c9100391-cb8a-4d91-9d70-ffed8300b165","sourceKind":"wayback_member_primary","candidateMemberNames":["Jeff Witte"],"candidateBillIdentifiers":["HF1227"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["public safety training","sales tax exemption"],"documentConfidence":0.97},"claims":[{"memberNames":["Jeff Witte"],"billIdentifiers":["HF1227"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Jeff Witte","normalizedClaim":"Witte explicitly supports HF1227 and its tax exemption for a Lakeville public-safety training facility.","supportingExcerpt":"I’m proud to co-author House File 1227 with Representative Jon Koznick (R-Lakeville), a bill that provides a sales tax exemption on construction materials for the development of a new public safety training facility in Lakeville. This project will be a huge win for the community, ensuring that our first responders have the resources they need to train effectively and keep Minnesotans safe—without unnecessary government taxation getting in the way.","extractionConfidence":0.98}],"notes":[]},"calculatedExtractionConfidence":0.97,"validationFailures":[]},{"row":5,"sourceDocumentId":"371d78d1-941d-415d-9326-2f9ed1e242c4","sourceDocumentTextId":"282f2eb1-27c6-4d3d-a678-337e124cc35f","sourceKind":"wayback_member_primary","candidateMemberNames":["Jeff Witte"],"candidateBillIdentifiers":["HF1277","HF435"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["data centers","economic development","correctional policy"],"documentConfidence":0.98},"claims":[{"memberNames":["Jeff Witte"],"billIdentifiers":["HF1277"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Jeff Witte","normalizedClaim":"Witte explicitly supports HF1277 as an economic-development measure for large-scale data centers.","supportingExcerpt":"I’m proud to co-author House File 1277 , a bill designed to bring more large-scale data centers to Minnesota—a move that will boost our economy, create jobs, and position our state as a leader in the tech industry.","extractionConfidence":0.99},{"memberNames":["Jeff Witte"],"billIdentifiers":["HF435"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Jeff Witte","normalizedClaim":"Witte explicitly states full support for HF435 and its correctional housing policy.","supportingExcerpt":"I fully support Representative Mary Franson's (R-Alexandria) House File 435 . This legislation mandates that only biological female inmates be housed at the Minnesota Correctional Facility in Shakopee, our state's sole women's prison.","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.98,"validationFailures":[]},{"row":6,"sourceDocumentId":"d07f9a6a-0246-47f6-b405-8349910692dd","sourceDocumentTextId":"32759696-8d10-4d75-9623-382ea0fa7c59","sourceKind":"wayback_member_primary","candidateMemberNames":["Keith Allen"],"candidateBillIdentifiers":["HF4"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["budget surplus","tax refunds","constitutional amendment"],"documentConfidence":0.99},"claims":[{"memberNames":["Keith Allen"],"billIdentifiers":["HF4"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Keith Allen","normalizedClaim":"Allen explicitly calls HF4 a common-sense way to return surplus funds to taxpayers.","supportingExcerpt":"\"Minnesota families are struggling with rising costs, and the government should not be sitting on billions of their hard-earned dollars, HF4 is a common-sense solution that puts money back where it belongs-in the pockets of taxpayers.\"","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":7,"sourceDocumentId":"52680a71-12ff-40f5-94a5-2a011574aa7a","sourceDocumentTextId":"5a825769-d8da-4d95-838b-c0557b4a67c0","sourceKind":"wayback_member_primary","candidateMemberNames":["Mike Freiberg"],"candidateBillIdentifiers":["HF28"],"annotation":{"document":{"legislativeRelevance":"medium","centrality":"incidental","contentType":"other","novelty":"unknown","corroboration":"unknown","topics":["member news index","voting rights"],"documentConfidence":0.95},"claims":[{"memberNames":["Mike Freiberg"],"billIdentifiers":["HF28"],"linkage":"exact_member_bill","claimType":"background","stance":"none","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Mike Freiberg","normalizedClaim":"The frozen source is a member-news index listing a release about Freiberg and HF28, without the substantive release text.","supportingExcerpt":"RELEASE: Rep. Mike Freiberg votes to pass HF 28, the “Restore the Vote” Act - (Thursday, February 2, 2023)","extractionConfidence":0.97}],"notes":["Index-title vote language is not used as outcome evidence or to infer stance."]},"calculatedExtractionConfidence":0.95,"validationFailures":[]},{"row":8,"sourceDocumentId":"8172659e-b071-4646-9a15-3041dd58a225","sourceDocumentTextId":"29393a63-9bc5-4279-805b-cec00faa38bf","sourceKind":"wayback_member_primary","candidateMemberNames":["Patricia Anderson"],"candidateBillIdentifiers":["HF5"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["delivery tax","tax repeal"],"documentConfidence":0.99},"claims":[{"memberNames":["Patricia Anderson"],"billIdentifiers":["HF5"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Patricia Anderson","normalizedClaim":"Anderson explicitly supports HF5 to repeal the retail delivery tax.","supportingExcerpt":"That’s why I’m supporting House File 5 , which would fully repeal this burdensome tax. The bill had its first hearing in the Transportation Committee on Monday, and I look forward to working with my colleagues to advance this much-needed relief for Minnesota families.","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":9,"sourceDocumentId":"732280e0-fcc4-4d1f-84d6-7e7b31a46303","sourceDocumentTextId":"d23c88e6-e988-465d-a60e-ad9ffbbcf75f","sourceKind":"wayback_member_primary","candidateMemberNames":["Roger J Skraba"],"candidateBillIdentifiers":["HF1"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["abortion policy","reproductive health"],"documentConfidence":0.99},"claims":[{"memberNames":["Roger J Skraba"],"billIdentifiers":["HF1"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"opposes","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Roger J Skraba","normalizedClaim":"Skraba explicitly criticizes HF1 and says its rejected safeguards make the bill deeply troubling.","supportingExcerpt":"That’s why I am so disappointed that despite our best efforts, many of the widely supported safeguards that we tried to add to the bill were rejected. Because of this bill, Minnesota’s abortion policy will be more closely aligned with countries like North Korea and China than France, the United Kingdom, and the rest of the western world. This is extremely troubling and does not reflect our Minnesota values.”","extractionConfidence":0.99}],"notes":["The stance is grounded in Skraba’s quoted criticism, not the reported chamber vote."]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":10,"sourceDocumentId":"10ad7e5d-084c-4f5d-a50a-bcc8d3de2ea2","sourceDocumentTextId":"3d3ed401-64fd-4ee9-b1bd-44f3e7504f13","sourceKind":"wayback_member_primary","candidateMemberNames":["Samantha Vang"],"candidateBillIdentifiers":["HF21"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["full-service community schools","education funding"],"documentConfidence":0.97},"claims":[{"memberNames":["Samantha Vang"],"billIdentifiers":["HF21"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Samantha Vang","normalizedClaim":"Vang explicitly says full-service community schools should be supported and funded, the policy embodied in HF21.","supportingExcerpt":"“Throughout the last few years, we have heard of the staffing shortages and the needs we must meet for our students in our education system. Full-service community schools incorporate community partnerships to address out-of-school barriers to learning,” said Rep. Vang. “My community of Brooklyn Center is a pioneer in this model and provides the wrap-around services for students to be successful in the classroom. It’s vital we support and invest in these schools to support our students.”","extractionConfidence":0.97}],"notes":[]},"calculatedExtractionConfidence":0.97,"validationFailures":[]},{"row":11,"sourceDocumentId":"ddf048c0-9684-482c-82a6-ac0d665de89f","sourceDocumentTextId":"1ee54dab-0266-446d-bcac-670fa1339c07","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Brian Johnson"],"candidateBillIdentifiers":["HF2746"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["firefighters","critical illness support"],"documentConfidence":0.98},"claims":[{"memberNames":["Brian Johnson"],"billIdentifiers":["HF2746"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Brian Johnson","normalizedClaim":"Johnson explicitly argues that firefighters deserve care and support, in the source’s discussion of HF2746.","supportingExcerpt":"“I am one of the few who know about walking into a building, knowing your lungs are filling with smoke and carcinogen, and still doing everything you can to save another life,” Johnson said. “Ninety percent of Minnesota’s firefighters are volunteers. They all deserve to be cared for and supported in any way we can.”","extractionConfidence":0.98}],"notes":["The claim relies on Johnson’s contemporaneous statement, not the reported vote result."]},"calculatedExtractionConfidence":0.98,"validationFailures":[]},{"row":12,"sourceDocumentId":"9415bba8-99bb-405b-8737-ec473dde8888","sourceDocumentTextId":"96031542-2954-4451-a13a-acaca810ec71","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Cedrick Rommel Frazier"],"candidateBillIdentifiers":["HF4"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["driver licensing","undocumented residents","road safety"],"documentConfidence":0.99},"claims":[{"memberNames":["Cedrick Rommel Frazier"],"billIdentifiers":["HF4"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Cedrick Rommel Frazier","normalizedClaim":"Frazier explicitly states support for HF4 and explains its licensing and road-safety rationale.","supportingExcerpt":"I voted to pass HF 4, known as “Driver’s Licenses for All” a bill that would to restore the ability of our undocumented neighbors to earn a driver’s license. This measure would impact 81,000 of our immigrant neighbors.","extractionConfidence":0.99}],"notes":["The member’s own contemporaneous statement supplies the stance; no external outcome record is used."]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":13,"sourceDocumentId":"c810fc9f-05d8-4a20-95d7-c709b1533ac2","sourceDocumentTextId":"77cf3e06-9747-4ca8-94cf-5d27033ba3a7","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Cheryl Youakim"],"candidateBillIdentifiers":["HF21"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["full-service community schools","education funding"],"documentConfidence":0.96},"claims":[{"memberNames":["Cheryl Youakim"],"billIdentifiers":[],"linkage":"member_issue","claimType":"policy_discussion","stance":"none","specificity":"issue_family","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Cheryl Youakim","normalizedClaim":"Youakim endorses the full-service community-school model generally, but does not explicitly state a final-passage position on HF21.","supportingExcerpt":"“House DFLers believe that all of our children deserve a world-class education, no matter where they live in our state,” said House Education Finance Chair Cheryl Youakim (DFL-Hopkins). “We are working for our students and their families, to fully invest in them where they are at. That includes the needs they bring into school with them. The full service community schools model is an evidence-based approach to do just that.”","extractionConfidence":0.97},{"memberNames":[],"billIdentifiers":["HF21"],"linkage":"bill_only","claimType":"background","stance":"none","specificity":"exact_bill","explicitness":"attributed_paraphrase","attributionType":"journalist_summary","attributedActor":null,"normalizedClaim":"The release describes HF21 as Samantha Vang’s bill to fund full-service community schools.","supportingExcerpt":"House File 21, would provide comprehensive support and funding for full-service community schools in Minnesota.","extractionConfidence":0.99}],"notes":["Issue-level advocacy is not converted into an explicit final-passage position on HF21."]},"calculatedExtractionConfidence":0.96,"validationFailures":[]},{"row":14,"sourceDocumentId":"d471fc67-c360-4bd4-b994-b056f6da0dd2","sourceDocumentTextId":"06756a58-1140-486a-986b-2c41e614db29","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Dan Wolgamott"],"candidateBillIdentifiers":["HF19"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["earned sick and safe time","labor standards"],"documentConfidence":0.99},"claims":[{"memberNames":["Dan Wolgamott"],"billIdentifiers":["HF19"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Dan Wolgamott","normalizedClaim":"Wolgamott explicitly supports HF19 and describes its earned sick and safe time guarantee.","supportingExcerpt":"Through my seat on the House Labor and Industry committee, I voted YES for HF 19, which delivers guaranteed earned sick and safe time to all Minnesota workers. Nobody should have to make the gut-wrenching decision to choose between earning their income and caring for themselves or a loved one.","extractionConfidence":0.99}],"notes":["The contemporaneous first-person statement supplies the stance; no external vote record is used."]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":15,"sourceDocumentId":"55cda351-beaa-4c44-9178-2ad80808ee59","sourceDocumentTextId":"0eafc81b-7d37-440a-bf5c-f72ac87841d1","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Dan Wolgamott"],"candidateBillIdentifiers":["HF21"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["education funding","full-service community schools"],"documentConfidence":0.95},"claims":[{"memberNames":[],"billIdentifiers":["HF21"],"linkage":"bill_only","claimType":"background","stance":"none","specificity":"exact_bill","explicitness":"document_position","attributionType":"official_record","attributedActor":null,"normalizedClaim":"The release describes HF21 as Samantha Vang’s bill to fund full-service community schools; Wolgamott’s quoted support in the same release concerns a different bill.","supportingExcerpt":"House File 21 , authored by Rep. Samantha Vang (DFL - Brooklyn Center), which would fund full-service community schools.","extractionConfidence":0.99}],"notes":["The candidate member’s quoted position concerns HF18, not candidate bill HF21."]},"calculatedExtractionConfidence":0.95,"validationFailures":[]},{"row":16,"sourceDocumentId":"9e2df933-42ac-4d78-a937-1065f3903f4f","sourceDocumentTextId":"51003aef-29b4-494d-bee4-69c86edc5365","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Dave Pinto"],"candidateBillIdentifiers":["HF13","HF150"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["child care assistance","early learning scholarships"],"documentConfidence":0.96},"claims":[{"memberNames":["Dave Pinto"],"billIdentifiers":["HF13"],"linkage":"exact_member_bill","claimType":"sponsorship","stance":"none","specificity":"exact_bill","explicitness":"attributed_paraphrase","attributionType":"journalist_summary","attributedActor":null,"normalizedClaim":"The release identifies Pinto as author of HF13, which would raise Child Care Assistance Program rates.","supportingExcerpt":"HF 13 authored by Rep. Pinto, would increase rates for the Child Care Assistance Program (CCAP) to the 75th percentile, the full required rate for this federal program; Minnesota’s current rates are some of the lowest in the country.","extractionConfidence":0.98},{"memberNames":["Dave Pinto"],"billIdentifiers":["HF150"],"linkage":"exact_member_bill","claimType":"sponsorship","stance":"none","specificity":"exact_bill","explicitness":"attributed_paraphrase","attributionType":"journalist_summary","attributedActor":null,"normalizedClaim":"The release identifies Pinto as author of HF150, which would fund early learning scholarships and child-care stabilization payments.","supportingExcerpt":"HF 150 , also authored by Rep. Pinto, would provide $40 million in early learning scholarships for about 4,000 low-income children from birth through age 4, as well as reverse forthcoming cuts to monthly stabilization payments received by child care providers, both through the end of the biennium in June.","extractionConfidence":0.98}],"notes":["Authorship and a favorable statement about the broader early-childhood package are not treated as explicit final-passage positions on either candidate bill."]},"calculatedExtractionConfidence":0.96,"validationFailures":[]},{"row":17,"sourceDocumentId":"ec8425fa-c8c2-4e44-96e5-597ac2a9a323","sourceDocumentTextId":"2b0d8e68-22c1-4bab-81e3-16744af89b0e","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Emma Greenman"],"candidateBillIdentifiers":["HF28"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["voting rights","felony disenfranchisement"],"documentConfidence":0.99},"claims":[{"memberNames":["Emma Greenman"],"billIdentifiers":["HF28"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Emma Greenman","normalizedClaim":"Greenman explicitly says HF28 rights a wrong and that she is proud to support it.","supportingExcerpt":"This bill tonight rights that wrong. It establishes a fair rule that if you’re a citizen living in our community, you can vote. Voting is a cornerstone of a healthy democracy, and it ensures that citizens have a voice in decisions that impact their lives. This is the right thing to do for Minnesotans and I’m proud to support it.”","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":18,"sourceDocumentId":"0a57af1e-8f50-4911-a9a4-c09da5c69899","sourceDocumentTextId":"7ca7a8bc-e365-45b6-9790-f56f057e417a","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Emma Greenman"],"candidateBillIdentifiers":["HF3"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["election administration","voting rights","campaign finance"],"documentConfidence":0.99},"claims":[{"memberNames":["Emma Greenman"],"billIdentifiers":["HF3"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Emma Greenman","normalizedClaim":"Greenman explicitly says HF3 protects and strengthens democracy and praises urgent action on the legislation.","supportingExcerpt":"“This is a critical moment for our democracy,” said Representative Greenman. “We know that solving our most significant challenges requires all of us to come together and build a democracy that centers the voices of all Minnesotans. I am grateful for the Elections Committee's commitment to urgent action to protect and strengthen our democracy, which is what this legislation does.”","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":19,"sourceDocumentId":"16576591-1764-4e31-83f2-4a3f3ace967c","sourceDocumentTextId":"2c74ee19-9b36-4559-b29f-ecc4b2539d9e","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Erica Schwartz"],"candidateBillIdentifiers":["HF1623"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["museums","education funding","children"],"documentConfidence":0.99},"claims":[{"memberNames":["Erica Schwartz"],"billIdentifiers":["HF1623"],"linkage":"exact_member_bill","claimType":"explicit_position","stance":"supports","specificity":"exact_bill","explicitness":"document_position","attributionType":"target_member","attributedActor":"Erica Schwartz","normalizedClaim":"Schwartz explicitly states support for HF1623 and its museum investments.","supportingExcerpt":"I'm excited to support HF 1623 and keep pushing for investments that make learning fun, interactive, and accessible for all Minnesotans.","extractionConfidence":0.99}],"notes":[]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":20,"sourceDocumentId":"176b9401-e613-4ebb-8aaf-12bb59b53619","sourceDocumentTextId":"ff2bc83c-5c8a-4cfb-81ad-541b3307bfe1","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Heather Keeler"],"candidateBillIdentifiers":["HF444"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["homelessness","emergency shelter","housing services"],"documentConfidence":0.98},"claims":[{"memberNames":["Heather Keeler"],"billIdentifiers":["HF444"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Heather Keeler","normalizedClaim":"Keeler explicitly describes HF444 as a community-driven foundation for preventing homelessness.","supportingExcerpt":"The Pathway Home Act offers a strong foundation for the transformative work we continue to do to keep our future generations of Minnesotans housed.\"","extractionConfidence":0.98}],"notes":[]},"calculatedExtractionConfidence":0.98,"validationFailures":[]},{"row":21,"sourceDocumentId":"ce55a558-7642-4806-b378-2c0074bdb14a","sourceDocumentTextId":"5d3f4685-3899-4815-b586-45caf7cea367","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Heather Keeler"],"candidateBillIdentifiers":["HF444"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["homelessness","emergency shelter","housing services"],"documentConfidence":0.98},"claims":[{"memberNames":["Heather Keeler"],"billIdentifiers":["HF444"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Heather Keeler","normalizedClaim":"Keeler explicitly says HF444 will benefit families and help keep youth housed while acknowledging it is not sufficient alone.","supportingExcerpt":"“Our youth are our future. The decision we made tonight will benefit many families and future generations to come.","extractionConfidence":0.98}],"notes":["The quote itself supplies the stance; the reported chamber passage is not used."]},"calculatedExtractionConfidence":0.98,"validationFailures":[]},{"row":22,"sourceDocumentId":"75837242-257c-4fb0-b631-30a722311414","sourceDocumentTextId":"468ae5a5-02ce-485e-a2e9-8e339a57833b","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Jeff Brand"],"candidateBillIdentifiers":["HF444"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["homelessness","emergency shelter"],"documentConfidence":0.99},"claims":[{"memberNames":["Jeff Brand"],"billIdentifiers":["HF444"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Jeff Brand","normalizedClaim":"Brand explicitly calls HF444 a step in the right direction and describes himself as an enthusiastic supporter.","supportingExcerpt":"“Everyone deserves a safe place to sleep at night, and right now in Minnesota, we are failing to ensure that safety for all citizens. Passing this bill is a step in the right direction, and I am proud to be a co-author and an enthusiastic supporter.","extractionConfidence":0.99}],"notes":["The member’s explicit quote, not the reported vote result, supports the stance."]},"calculatedExtractionConfidence":0.99,"validationFailures":[]},{"row":23,"sourceDocumentId":"3eb52512-1158-4c1b-9f92-d67e60a2c073","sourceDocumentTextId":"18a3266f-d577-42b5-a807-30c071bf81f0","sourceKind":"house_member_primary_historical_article","candidateMemberNames":["Jon Koznick"],"candidateBillIdentifiers":["HF796"],"annotation":{"document":{"legislativeRelevance":"high","centrality":"primary","contentType":"member_statement","novelty":"unknown","corroboration":"unknown","topics":["transportation infrastructure","road safety","economic development"],"documentConfidence":0.97},"claims":[{"memberNames":["Jon Koznick"],"billIdentifiers":["HF796"],"linkage":"exact_member_bill","claimType":"quoted_position","stance":"supports","specificity":"exact_bill","explicitness":"direct_quote","attributionType":"target_member","attributedActor":"Jon Koznick","normalizedClaim":"Koznick explicitly advocates the HF796 interchange project as important for safety, capacity, and economic development and expresses hope for legislative support.","supportingExcerpt":"“This bill introduction is an important first step that will start the process needed for improvements at this interchange to make current traffic use safer and support future capacity use,” said Koznick.","extractionConfidence":0.98}],"notes":["The stance is based on Koznick’s quoted advocacy, not introduction alone."]},"calculatedExtractionConfidence":0.97,"validationFailures":[]}],"validationFailures":[],"summary":{"documentsAnnotated":23,"directionalClaims":20,"intentionallyNonDirectionalRows":[7,13,15,16],"documentsCouldNotConfidentlyClassify":[],"documentsWithValidationFailures":0}}
+{
+  "batchId": "EQV1-P1-SUP-002",
+  "schemaVersion": "evidence-quality-v1",
+  "promptVersion": "evidence-quality-prompt-v1",
+  "provider": "OpenAI",
+  "model": "GPT-5.6 Sol",
+  "cohortId": "P1-SUP-002",
+  "sourceSnapshotRunId": 37164938962,
+  "sourceExportRunId": 37165218629,
+  "sourceArtifactId": 11289561472,
+  "sourceArtifactName": "evidence-quality-manual-p1-supplement-02-frozen",
+  "sourceArtifactDigest": "sha256:c2de9e168b8e308c478fcd624318be410bd3552320bd7c7875e947314e9ef1fe",
+  "sourceTextVersion": "evidence-quality-text-v1",
+  "cohortCutoff": "2026-10-04T00:27:44.362338Z",
+  "documentsExpected": 23,
+  "selectedSourceDocumentIds": [
+    "ae041b05-72ea-4b25-b3c7-db5480d45798",
+    "b46f803d-f077-43c3-a302-0a45df02ba28",
+    "dadb5000-0e35-4dec-b142-85d9adba39d2",
+    "da8c8ae7-e3c7-41cb-a11f-7de2080ac1c4",
+    "371d78d1-941d-415d-9326-2f9ed1e242c4",
+    "d07f9a6a-0246-47f6-b405-8349910692dd",
+    "52680a71-12ff-40f5-94a5-2a011574aa7a",
+    "8172659e-b071-4646-9a15-3041dd58a225",
+    "732280e0-fcc4-4d1f-84d6-7e7b31a46303",
+    "10ad7e5d-084c-4f5d-a50a-bcc8d3de2ea2",
+    "ddf048c0-9684-482c-82a6-ac0d665de89f",
+    "9415bba8-99bb-405b-8737-ec473dde8888",
+    "c810fc9f-05d8-4a20-95d7-c709b1533ac2",
+    "d471fc67-c360-4bd4-b994-b056f6da0dd2",
+    "55cda351-beaa-4c44-9178-2ad80808ee59",
+    "9e2df933-42ac-4d78-a937-1065f3903f4f",
+    "ec8425fa-c8c2-4e44-96e5-597ac2a9a323",
+    "0a57af1e-8f50-4911-a9a4-c09da5c69899",
+    "16576591-1764-4e31-83f2-4a3f3ace967c",
+    "176b9401-e613-4ebb-8aaf-12bb59b53619",
+    "ce55a558-7642-4806-b378-2c0074bdb14a",
+    "75837242-257c-4fb0-b631-30a722311414",
+    "3eb52512-1158-4c1b-9f92-d67e60a2c073"
+  ],
+  "documents": [
+    {
+      "row": 1,
+      "sourceDocumentId": "ae041b05-72ea-4b25-b3c7-db5480d45798",
+      "sourceDocumentTextId": "dfa6f8b8-1087-478c-bc81-bf8916ba17a8",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "Erica Schwartz"
+      ],
+      "candidateBillIdentifiers": [
+        "HF12"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "girls sports",
+            "athletic competition"
+          ],
+          "documentConfidence": 0.98
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Erica Schwartz"
+            ],
+            "billIdentifiers": [
+              "HF12"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Erica Schwartz",
+            "normalizedClaim": "Schwartz explicitly endorses HF12 as protecting fair and safe opportunities in girls sports.",
+            "supportingExcerpt": "House File 12 , which I proudly endorsed, provides protections to ensure girls in Minnesota continue to have equal opportunities to compete safely and fairly.",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.98,
+      "validationFailures": []
+    },
+    {
+      "row": 2,
+      "sourceDocumentId": "b46f803d-f077-43c3-a302-0a45df02ba28",
+      "sourceDocumentTextId": "f1d3de5a-dba8-4230-abc7-b722f0ee8426",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "Erica Schwartz"
+      ],
+      "candidateBillIdentifiers": [
+        "HF12"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "girls sports",
+            "athletic competition"
+          ],
+          "documentConfidence": 0.98
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Erica Schwartz"
+            ],
+            "billIdentifiers": [
+              "HF12"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Erica Schwartz",
+            "normalizedClaim": "Schwartz explicitly describes HF12 as providing needed protections for female athletes.",
+            "supportingExcerpt": "“House File 12 provides the common-sense protections our female athletes need,” she continued. “We must act now to ensure that girls in Minnesota continue to have equal opportunities to compete safely and fairly.”",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.98,
+      "validationFailures": []
+    },
+    {
+      "row": 3,
+      "sourceDocumentId": "dadb5000-0e35-4dec-b142-85d9adba39d2",
+      "sourceDocumentTextId": "d8c9b0e0-3c88-4d5d-89c2-8ed596173477",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "James Gordon"
+      ],
+      "candidateBillIdentifiers": [
+        "HF733"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "charitable gaming",
+            "electronic pull tabs"
+          ],
+          "documentConfidence": 0.96
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "James Gordon"
+            ],
+            "billIdentifiers": [
+              "HF733"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "James Gordon",
+            "normalizedClaim": "Gordon advocates HF733 as the fix for charitable-gaming changes harming local organizations.",
+            "supportingExcerpt": "Our charitable organizations do such great work in our communities, but now the state is getting in the way and that needs to be fixed. We just need to get things back to the way they were and that’s what the House Republican bill does.",
+            "extractionConfidence": 0.96
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.96,
+      "validationFailures": []
+    },
+    {
+      "row": 4,
+      "sourceDocumentId": "da8c8ae7-e3c7-41cb-a11f-7de2080ac1c4",
+      "sourceDocumentTextId": "c9100391-cb8a-4d91-9d70-ffed8300b165",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "Jeff Witte"
+      ],
+      "candidateBillIdentifiers": [
+        "HF1227"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "public safety training",
+            "sales tax exemption"
+          ],
+          "documentConfidence": 0.97
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Jeff Witte"
+            ],
+            "billIdentifiers": [
+              "HF1227"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Jeff Witte",
+            "normalizedClaim": "Witte explicitly supports HF1227 and its tax exemption for a Lakeville public-safety training facility.",
+            "supportingExcerpt": "I’m proud to co-author House File 1227 with Representative Jon Koznick (R-Lakeville), a bill that provides a sales tax exemption on construction materials for the development of a new public safety training facility in Lakeville. This project will be a huge win for the community, ensuring that our first responders have the resources they need to train effectively and keep Minnesotans safe—without unnecessary government taxation getting in the way.",
+            "extractionConfidence": 0.98
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.97,
+      "validationFailures": []
+    },
+    {
+      "row": 5,
+      "sourceDocumentId": "371d78d1-941d-415d-9326-2f9ed1e242c4",
+      "sourceDocumentTextId": "282f2eb1-27c6-4d3d-a678-337e124cc35f",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "Jeff Witte"
+      ],
+      "candidateBillIdentifiers": [
+        "HF1277",
+        "HF435"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "data centers",
+            "economic development",
+            "correctional policy"
+          ],
+          "documentConfidence": 0.98
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Jeff Witte"
+            ],
+            "billIdentifiers": [
+              "HF1277"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Jeff Witte",
+            "normalizedClaim": "Witte explicitly supports HF1277 as an economic-development measure for large-scale data centers.",
+            "supportingExcerpt": "I’m proud to co-author House File 1277 , a bill designed to bring more large-scale data centers to Minnesota—a move that will boost our economy, create jobs, and position our state as a leader in the tech industry.",
+            "extractionConfidence": 0.99
+          },
+          {
+            "memberNames": [
+              "Jeff Witte"
+            ],
+            "billIdentifiers": [
+              "HF435"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Jeff Witte",
+            "normalizedClaim": "Witte explicitly states full support for HF435 and its correctional housing policy.",
+            "supportingExcerpt": "I fully support Representative Mary Franson's (R-Alexandria) House File 435 . This legislation mandates that only biological female inmates be housed at the Minnesota Correctional Facility in Shakopee, our state's sole women's prison.",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.98,
+      "validationFailures": []
+    },
+    {
+      "row": 6,
+      "sourceDocumentId": "d07f9a6a-0246-47f6-b405-8349910692dd",
+      "sourceDocumentTextId": "32759696-8d10-4d75-9623-382ea0fa7c59",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "Keith Allen"
+      ],
+      "candidateBillIdentifiers": [
+        "HF4"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "budget surplus",
+            "tax refunds",
+            "constitutional amendment"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Keith Allen"
+            ],
+            "billIdentifiers": [
+              "HF4"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Keith Allen",
+            "normalizedClaim": "Allen explicitly calls HF4 a common-sense way to return surplus funds to taxpayers.",
+            "supportingExcerpt": "\"Minnesota families are struggling with rising costs, and the government should not be sitting on billions of their hard-earned dollars, HF4 is a common-sense solution that puts money back where it belongs-in the pockets of taxpayers.\"",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 7,
+      "sourceDocumentId": "52680a71-12ff-40f5-94a5-2a011574aa7a",
+      "sourceDocumentTextId": "5a825769-d8da-4d95-838b-c0557b4a67c0",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "Mike Freiberg"
+      ],
+      "candidateBillIdentifiers": [
+        "HF28"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "medium",
+          "centrality": "incidental",
+          "contentType": "other",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "member news index",
+            "voting rights"
+          ],
+          "documentConfidence": 0.95
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Mike Freiberg"
+            ],
+            "billIdentifiers": [
+              "HF28"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "background",
+            "stance": "none",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Mike Freiberg",
+            "normalizedClaim": "The frozen source is a member-news index listing a release about Freiberg and HF28, without the substantive release text.",
+            "supportingExcerpt": "RELEASE: Rep. Mike Freiberg votes to pass HF 28, the “Restore the Vote” Act - (Thursday, February 2, 2023)",
+            "extractionConfidence": 0.97
+          }
+        ],
+        "notes": [
+          "Index-title vote language is not used as outcome evidence or to infer stance."
+        ]
+      },
+      "calculatedExtractionConfidence": 0.95,
+      "validationFailures": []
+    },
+    {
+      "row": 8,
+      "sourceDocumentId": "8172659e-b071-4646-9a15-3041dd58a225",
+      "sourceDocumentTextId": "29393a63-9bc5-4279-805b-cec00faa38bf",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "Patricia Anderson"
+      ],
+      "candidateBillIdentifiers": [
+        "HF5"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "delivery tax",
+            "tax repeal"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Patricia Anderson"
+            ],
+            "billIdentifiers": [
+              "HF5"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Patricia Anderson",
+            "normalizedClaim": "Anderson explicitly supports HF5 to repeal the retail delivery tax.",
+            "supportingExcerpt": "That’s why I’m supporting House File 5 , which would fully repeal this burdensome tax. The bill had its first hearing in the Transportation Committee on Monday, and I look forward to working with my colleagues to advance this much-needed relief for Minnesota families.",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 9,
+      "sourceDocumentId": "732280e0-fcc4-4d1f-84d6-7e7b31a46303",
+      "sourceDocumentTextId": "d23c88e6-e988-465d-a60e-ad9ffbbcf75f",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "Roger J Skraba"
+      ],
+      "candidateBillIdentifiers": [
+        "HF1"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "abortion policy",
+            "reproductive health"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Roger J Skraba"
+            ],
+            "billIdentifiers": [
+              "HF1"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "opposes",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Roger J Skraba",
+            "normalizedClaim": "Skraba explicitly criticizes HF1 and says its rejected safeguards make the bill deeply troubling.",
+            "supportingExcerpt": "That’s why I am so disappointed that despite our best efforts, many of the widely supported safeguards that we tried to add to the bill were rejected. Because of this bill, Minnesota’s abortion policy will be more closely aligned with countries like North Korea and China than France, the United Kingdom, and the rest of the western world. This is extremely troubling and does not reflect our Minnesota values.”",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": [
+          "The stance is grounded in Skraba’s quoted criticism, not the reported chamber vote."
+        ]
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 10,
+      "sourceDocumentId": "10ad7e5d-084c-4f5d-a50a-bcc8d3de2ea2",
+      "sourceDocumentTextId": "3d3ed401-64fd-4ee9-b1bd-44f3e7504f13",
+      "sourceKind": "wayback_member_primary",
+      "candidateMemberNames": [
+        "Samantha Vang"
+      ],
+      "candidateBillIdentifiers": [
+        "HF21"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "full-service community schools",
+            "education funding"
+          ],
+          "documentConfidence": 0.97
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Samantha Vang"
+            ],
+            "billIdentifiers": [
+              "HF21"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Samantha Vang",
+            "normalizedClaim": "Vang explicitly says full-service community schools should be supported and funded, the policy embodied in HF21.",
+            "supportingExcerpt": "“Throughout the last few years, we have heard of the staffing shortages and the needs we must meet for our students in our education system. Full-service community schools incorporate community partnerships to address out-of-school barriers to learning,” said Rep. Vang. “My community of Brooklyn Center is a pioneer in this model and provides the wrap-around services for students to be successful in the classroom. It’s vital we support and invest in these schools to support our students.”",
+            "extractionConfidence": 0.97
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.97,
+      "validationFailures": []
+    },
+    {
+      "row": 11,
+      "sourceDocumentId": "ddf048c0-9684-482c-82a6-ac0d665de89f",
+      "sourceDocumentTextId": "1ee54dab-0266-446d-bcac-670fa1339c07",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Brian Johnson"
+      ],
+      "candidateBillIdentifiers": [
+        "HF2746"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "firefighters",
+            "critical illness support"
+          ],
+          "documentConfidence": 0.98
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Brian Johnson"
+            ],
+            "billIdentifiers": [
+              "HF2746"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Brian Johnson",
+            "normalizedClaim": "Johnson explicitly argues that firefighters deserve care and support, in the source’s discussion of HF2746.",
+            "supportingExcerpt": "“I am one of the few who know about walking into a building, knowing your lungs are filling with smoke and carcinogen, and still doing everything you can to save another life,” Johnson said. “Ninety percent of Minnesota’s firefighters are volunteers. They all deserve to be cared for and supported in any way we can.”",
+            "extractionConfidence": 0.98
+          }
+        ],
+        "notes": [
+          "The claim relies on Johnson’s contemporaneous statement, not the reported vote result."
+        ]
+      },
+      "calculatedExtractionConfidence": 0.98,
+      "validationFailures": []
+    },
+    {
+      "row": 12,
+      "sourceDocumentId": "9415bba8-99bb-405b-8737-ec473dde8888",
+      "sourceDocumentTextId": "96031542-2954-4451-a13a-acaca810ec71",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Cedrick Rommel Frazier"
+      ],
+      "candidateBillIdentifiers": [
+        "HF4"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "driver licensing",
+            "undocumented residents",
+            "road safety"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Cedrick Rommel Frazier"
+            ],
+            "billIdentifiers": [
+              "HF4"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Cedrick Rommel Frazier",
+            "normalizedClaim": "Frazier explicitly states support for HF4 and explains its licensing and road-safety rationale.",
+            "supportingExcerpt": "I voted to pass HF 4, known as “Driver’s Licenses for All” a bill that would to restore the ability of our undocumented neighbors to earn a driver’s license. This measure would impact 81,000 of our immigrant neighbors.",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": [
+          "The member’s own contemporaneous statement supplies the stance; no external outcome record is used."
+        ]
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 13,
+      "sourceDocumentId": "c810fc9f-05d8-4a20-95d7-c709b1533ac2",
+      "sourceDocumentTextId": "77cf3e06-9747-4ca8-94cf-5d27033ba3a7",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Cheryl Youakim"
+      ],
+      "candidateBillIdentifiers": [
+        "HF21"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "full-service community schools",
+            "education funding"
+          ],
+          "documentConfidence": 0.96
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Cheryl Youakim"
+            ],
+            "billIdentifiers": [],
+            "linkage": "member_issue",
+            "claimType": "policy_discussion",
+            "stance": "none",
+            "specificity": "issue_family",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Cheryl Youakim",
+            "normalizedClaim": "Youakim endorses the full-service community-school model generally, but does not explicitly state a final-passage position on HF21.",
+            "supportingExcerpt": "“House DFLers believe that all of our children deserve a world-class education, no matter where they live in our state,” said House Education Finance Chair Cheryl Youakim (DFL-Hopkins). “We are working for our students and their families, to fully invest in them where they are at. That includes the needs they bring into school with them. The full service community schools model is an evidence-based approach to do just that.”",
+            "extractionConfidence": 0.97
+          },
+          {
+            "memberNames": [],
+            "billIdentifiers": [
+              "HF21"
+            ],
+            "linkage": "bill_only",
+            "claimType": "background",
+            "stance": "none",
+            "specificity": "exact_bill",
+            "explicitness": "attributed_paraphrase",
+            "attributionType": "journalist_summary",
+            "attributedActor": null,
+            "normalizedClaim": "The release describes HF21 as Samantha Vang’s bill to fund full-service community schools.",
+            "supportingExcerpt": "House File 21, would provide comprehensive support and funding for full-service community schools in Minnesota.",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": [
+          "Issue-level advocacy is not converted into an explicit final-passage position on HF21."
+        ]
+      },
+      "calculatedExtractionConfidence": 0.96,
+      "validationFailures": []
+    },
+    {
+      "row": 14,
+      "sourceDocumentId": "d471fc67-c360-4bd4-b994-b056f6da0dd2",
+      "sourceDocumentTextId": "06756a58-1140-486a-986b-2c41e614db29",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Dan Wolgamott"
+      ],
+      "candidateBillIdentifiers": [
+        "HF19"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "earned sick and safe time",
+            "labor standards"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Dan Wolgamott"
+            ],
+            "billIdentifiers": [
+              "HF19"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Dan Wolgamott",
+            "normalizedClaim": "Wolgamott explicitly supports HF19 and describes its earned sick and safe time guarantee.",
+            "supportingExcerpt": "Through my seat on the House Labor and Industry committee, I voted YES for HF 19, which delivers guaranteed earned sick and safe time to all Minnesota workers. Nobody should have to make the gut-wrenching decision to choose between earning their income and caring for themselves or a loved one.",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": [
+          "The contemporaneous first-person statement supplies the stance; no external vote record is used."
+        ]
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 15,
+      "sourceDocumentId": "55cda351-beaa-4c44-9178-2ad80808ee59",
+      "sourceDocumentTextId": "0eafc81b-7d37-440a-bf5c-f72ac87841d1",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Dan Wolgamott"
+      ],
+      "candidateBillIdentifiers": [
+        "HF21"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "education funding",
+            "full-service community schools"
+          ],
+          "documentConfidence": 0.95
+        },
+        "claims": [
+          {
+            "memberNames": [],
+            "billIdentifiers": [
+              "HF21"
+            ],
+            "linkage": "bill_only",
+            "claimType": "background",
+            "stance": "none",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "official_record",
+            "attributedActor": null,
+            "normalizedClaim": "The release describes HF21 as Samantha Vang’s bill to fund full-service community schools; Wolgamott’s quoted support in the same release concerns a different bill.",
+            "supportingExcerpt": "House File 21 , authored by Rep. Samantha Vang (DFL - Brooklyn Center), which would fund full-service community schools.",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": [
+          "The candidate member’s quoted position concerns HF18, not candidate bill HF21."
+        ]
+      },
+      "calculatedExtractionConfidence": 0.95,
+      "validationFailures": []
+    },
+    {
+      "row": 16,
+      "sourceDocumentId": "9e2df933-42ac-4d78-a937-1065f3903f4f",
+      "sourceDocumentTextId": "51003aef-29b4-494d-bee4-69c86edc5365",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Dave Pinto"
+      ],
+      "candidateBillIdentifiers": [
+        "HF13",
+        "HF150"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "child care assistance",
+            "early learning scholarships"
+          ],
+          "documentConfidence": 0.96
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Dave Pinto"
+            ],
+            "billIdentifiers": [
+              "HF13"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "sponsorship",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "attributed_paraphrase",
+            "attributionType": "journalist_summary",
+            "attributedActor": null,
+            "normalizedClaim": "The release identifies Pinto as author of HF13, which would raise Child Care Assistance Program rates.",
+            "supportingExcerpt": "HF 13 authored by Rep. Pinto, would increase rates for the Child Care Assistance Program (CCAP) to the 75th percentile, the full required rate for this federal program; Minnesota’s current rates are some of the lowest in the country.",
+            "extractionConfidence": 0.98
+          },
+          {
+            "memberNames": [
+              "Dave Pinto"
+            ],
+            "billIdentifiers": [
+              "HF150"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "sponsorship",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "attributed_paraphrase",
+            "attributionType": "journalist_summary",
+            "attributedActor": null,
+            "normalizedClaim": "The release identifies Pinto as author of HF150, which would fund early learning scholarships and child-care stabilization payments.",
+            "supportingExcerpt": "HF 150 , also authored by Rep. Pinto, would provide $40 million in early learning scholarships for about 4,000 low-income children from birth through age 4, as well as reverse forthcoming cuts to monthly stabilization payments received by child care providers, both through the end of the biennium in June.",
+            "extractionConfidence": 0.98
+          }
+        ],
+        "notes": [
+          "Authorship and a favorable statement about the broader early-childhood package are not treated as explicit final-passage positions on either candidate bill."
+        ]
+      },
+      "calculatedExtractionConfidence": 0.96,
+      "validationFailures": []
+    },
+    {
+      "row": 17,
+      "sourceDocumentId": "ec8425fa-c8c2-4e44-96e5-597ac2a9a323",
+      "sourceDocumentTextId": "2b0d8e68-22c1-4bab-81e3-16744af89b0e",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Emma Greenman"
+      ],
+      "candidateBillIdentifiers": [
+        "HF28"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "voting rights",
+            "felony disenfranchisement"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Emma Greenman"
+            ],
+            "billIdentifiers": [
+              "HF28"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Emma Greenman",
+            "normalizedClaim": "Greenman explicitly says HF28 rights a wrong and that she is proud to support it.",
+            "supportingExcerpt": "This bill tonight rights that wrong. It establishes a fair rule that if you’re a citizen living in our community, you can vote. Voting is a cornerstone of a healthy democracy, and it ensures that citizens have a voice in decisions that impact their lives. This is the right thing to do for Minnesotans and I’m proud to support it.”",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 18,
+      "sourceDocumentId": "0a57af1e-8f50-4911-a9a4-c09da5c69899",
+      "sourceDocumentTextId": "7ca7a8bc-e365-45b6-9790-f56f057e417a",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Emma Greenman"
+      ],
+      "candidateBillIdentifiers": [
+        "HF3"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "election administration",
+            "voting rights",
+            "campaign finance"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Emma Greenman"
+            ],
+            "billIdentifiers": [
+              "HF3"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Emma Greenman",
+            "normalizedClaim": "Greenman explicitly says HF3 protects and strengthens democracy and praises urgent action on the legislation.",
+            "supportingExcerpt": "“This is a critical moment for our democracy,” said Representative Greenman. “We know that solving our most significant challenges requires all of us to come together and build a democracy that centers the voices of all Minnesotans. I am grateful for the Elections Committee's commitment to urgent action to protect and strengthen our democracy, which is what this legislation does.”",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 19,
+      "sourceDocumentId": "16576591-1764-4e31-83f2-4a3f3ace967c",
+      "sourceDocumentTextId": "2c74ee19-9b36-4559-b29f-ecc4b2539d9e",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Erica Schwartz"
+      ],
+      "candidateBillIdentifiers": [
+        "HF1623"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "museums",
+            "education funding",
+            "children"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Erica Schwartz"
+            ],
+            "billIdentifiers": [
+              "HF1623"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "explicit_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "document_position",
+            "attributionType": "target_member",
+            "attributedActor": "Erica Schwartz",
+            "normalizedClaim": "Schwartz explicitly states support for HF1623 and its museum investments.",
+            "supportingExcerpt": "I'm excited to support HF 1623 and keep pushing for investments that make learning fun, interactive, and accessible for all Minnesotans.",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 20,
+      "sourceDocumentId": "176b9401-e613-4ebb-8aaf-12bb59b53619",
+      "sourceDocumentTextId": "ff2bc83c-5c8a-4cfb-81ad-541b3307bfe1",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Heather Keeler"
+      ],
+      "candidateBillIdentifiers": [
+        "HF444"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "homelessness",
+            "emergency shelter",
+            "housing services"
+          ],
+          "documentConfidence": 0.98
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Heather Keeler"
+            ],
+            "billIdentifiers": [
+              "HF444"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Heather Keeler",
+            "normalizedClaim": "Keeler explicitly describes HF444 as a community-driven foundation for preventing homelessness.",
+            "supportingExcerpt": "The Pathway Home Act offers a strong foundation for the transformative work we continue to do to keep our future generations of Minnesotans housed.\"",
+            "extractionConfidence": 0.98
+          }
+        ],
+        "notes": []
+      },
+      "calculatedExtractionConfidence": 0.98,
+      "validationFailures": []
+    },
+    {
+      "row": 21,
+      "sourceDocumentId": "ce55a558-7642-4806-b378-2c0074bdb14a",
+      "sourceDocumentTextId": "5d3f4685-3899-4815-b586-45caf7cea367",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Heather Keeler"
+      ],
+      "candidateBillIdentifiers": [
+        "HF444"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "homelessness",
+            "emergency shelter",
+            "housing services"
+          ],
+          "documentConfidence": 0.98
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Heather Keeler"
+            ],
+            "billIdentifiers": [
+              "HF444"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Heather Keeler",
+            "normalizedClaim": "Keeler explicitly says HF444 will benefit families and help keep youth housed while acknowledging it is not sufficient alone.",
+            "supportingExcerpt": "“Our youth are our future. The decision we made tonight will benefit many families and future generations to come.",
+            "extractionConfidence": 0.98
+          }
+        ],
+        "notes": [
+          "The quote itself supplies the stance; the reported chamber passage is not used."
+        ]
+      },
+      "calculatedExtractionConfidence": 0.98,
+      "validationFailures": []
+    },
+    {
+      "row": 22,
+      "sourceDocumentId": "75837242-257c-4fb0-b631-30a722311414",
+      "sourceDocumentTextId": "468ae5a5-02ce-485e-a2e9-8e339a57833b",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Jeff Brand"
+      ],
+      "candidateBillIdentifiers": [
+        "HF444"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "homelessness",
+            "emergency shelter"
+          ],
+          "documentConfidence": 0.99
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Jeff Brand"
+            ],
+            "billIdentifiers": [
+              "HF444"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Jeff Brand",
+            "normalizedClaim": "Brand explicitly calls HF444 a step in the right direction and describes himself as an enthusiastic supporter.",
+            "supportingExcerpt": "“Everyone deserves a safe place to sleep at night, and right now in Minnesota, we are failing to ensure that safety for all citizens. Passing this bill is a step in the right direction, and I am proud to be a co-author and an enthusiastic supporter.",
+            "extractionConfidence": 0.99
+          }
+        ],
+        "notes": [
+          "The member’s explicit quote, not the reported vote result, supports the stance."
+        ]
+      },
+      "calculatedExtractionConfidence": 0.99,
+      "validationFailures": []
+    },
+    {
+      "row": 23,
+      "sourceDocumentId": "3eb52512-1158-4c1b-9f92-d67e60a2c073",
+      "sourceDocumentTextId": "18a3266f-d577-42b5-a807-30c071bf81f0",
+      "sourceKind": "house_member_primary_historical_article",
+      "candidateMemberNames": [
+        "Jon Koznick"
+      ],
+      "candidateBillIdentifiers": [
+        "HF796"
+      ],
+      "annotation": {
+        "document": {
+          "legislativeRelevance": "high",
+          "centrality": "primary",
+          "contentType": "member_statement",
+          "novelty": "unknown",
+          "corroboration": "unknown",
+          "topics": [
+            "transportation infrastructure",
+            "road safety",
+            "economic development"
+          ],
+          "documentConfidence": 0.97
+        },
+        "claims": [
+          {
+            "memberNames": [
+              "Jon Koznick"
+            ],
+            "billIdentifiers": [
+              "HF796"
+            ],
+            "linkage": "exact_member_bill",
+            "claimType": "quoted_position",
+            "stance": "supports",
+            "specificity": "exact_bill",
+            "explicitness": "direct_quote",
+            "attributionType": "target_member",
+            "attributedActor": "Jon Koznick",
+            "normalizedClaim": "Koznick explicitly advocates the HF796 interchange project as important for safety, capacity, and economic development and expresses hope for legislative support.",
+            "supportingExcerpt": "“This bill introduction is an important first step that will start the process needed for improvements at this interchange to make current traffic use safer and support future capacity use,” said Koznick.",
+            "extractionConfidence": 0.98
+          }
+        ],
+        "notes": [
+          "The stance is based on Koznick’s quoted advocacy, not introduction alone."
+        ]
+      },
+      "calculatedExtractionConfidence": 0.97,
+      "validationFailures": []
+    }
+  ],
+  "validationFailures": [],
+  "summary": {
+    "documentsAnnotated": 23,
+    "directionalClaims": 22,
+    "intentionallyNonDirectionalRows": [
+      7,
+      13,
+      15
+    ],
+    "documentsCouldNotConfidentlyClassify": [],
+    "documentsWithValidationFailures": 0
+  },
+  "semanticPolicyVersion": "evidence-quality-sponsorship-support-v1"
+}
