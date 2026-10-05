@@ -10,9 +10,9 @@ permissions:
 concurrency:
   group: >-
     ${{ startsWith(github.event.comment.body, '[senate-2021-publication-anchor-probe]')
-        && 'senate-2021-publication-anchor-probe'
+        && 'senate-2021-publication-anchor-probe-v2'
         || format('senate-2021-publication-anchor-probe-skip-{0}', github.event.comment.id) }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   probe:
