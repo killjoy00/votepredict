@@ -11,8 +11,14 @@ const DATABASE_CANDIDATES = [
 const DATABASE_BRIDGE_URL =
   'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const SESSION = '2021-2022';
-const MAX_LINK_CANDIDATES_PER_MEMBER = 16;
+const MAX_LINK_CANDIDATES_PER_MEMBER = 8;
 const MAX_VERIFIED_PUBLICATIONS_PER_MEMBER = 8;
+const PROFILE_ANCHOR_TIMEOUT_MS = 12_000;
+const WAYBACK_CDX_ATTEMPT_TIMEOUT_MS = 8_000;
+const WAYBACK_SNAPSHOT_ATTEMPT_TIMEOUT_MS = 12_000;
+const WAYBACK_SNAPSHOT_ATTEMPTS = 2;
+const MEMBER_PROBE_BUDGET_MS = 3 * 60_000;
+const GLOBAL_PROBE_BUDGET_MS = 24 * 60_000;
 let secrets: string[] = [];
 
 function argumentValue(name: string): string | undefined {
@@ -42,6 +48,12 @@ function safe(error: unknown) {
     .replace(/https?:\/\/\S+/gi, '[source URL]')
     .slice(0, 1200);
 }
+
+const boundedWaybackFetch: typeof fetch = (input, init) =>
+  fetch(input, {
+    ...init,
+    signal: AbortSignal.timeout(WAYBACK_CDX_ATTEMPT_TIMEOUT_MS),
+  });
 
 async function chooseDb(env: Record<string, string | undefined>) {
   const { Pool } = await import('pg');
@@ -236,7 +248,7 @@ async function main() {
 
   const { pool } = await import('../src/lib/db/index.js');
   const { fetchPublicPage, publicPageMentionsPerson } = await import('../src/evidence/public-http.js');
-  const { discoverWaybackCaptures, fetchWaybackSnapshot } = await import('../src/evidence/wayback.js');
+  const { discoverWaybackCaptures } = await import('../src/evidence/wayback.js');
   const {
     selectWaybackEvidenceCaptures,
     sessionArchiveWindow,
@@ -319,6 +331,8 @@ async function main() {
     }
 
     const window = sessionArchiveWindow(SESSION);
+    const probeStartedAt = Date.now();
+    const globalDeadline = probeStartedAt + GLOBAL_PROBE_BUDGET_MS;
     const results: Array<Record<string, unknown>> = [];
     let anchorPagesFetched = 0;
     let uniqueLinksDiscovered = 0;
@@ -326,6 +340,8 @@ async function main() {
     let articleSnapshotsFetched = 0;
     let verifiedPublicationCandidates = 0;
     let failures = 0;
+    let budgetExhaustedMemberships = 0;
+    let candidatesSkippedByBudget = 0;
 
     for (const target of targets) {
       const targetAnchors = anchorsByMembership.get(target.membership_id) ?? [];
@@ -336,15 +352,25 @@ async function main() {
         discoveredFrom: Set<string>;
       }>();
       const targetFailures: string[] = [];
+      const memberStartedAt = Date.now();
+      const memberDeadline = Math.min(globalDeadline, memberStartedAt + MEMBER_PROBE_BUDGET_MS);
+      let memberBudgetExhausted = false;
+      let profileAnchorsFetched = 0;
+      let candidatesAttempted = 0;
 
       for (const anchor of targetAnchors) {
+        if (Date.now() >= memberDeadline) {
+          memberBudgetExhausted = true;
+          break;
+        }
         try {
           const page = await fetchPublicPage(anchor.archive_url, {
-            timeoutMs: 20_000,
+            timeoutMs: PROFILE_ANCHOR_TIMEOUT_MS,
             maxBytes: 2_500_000,
             userAgent: 'VotePredict/2.0 senate-publication-anchor-probe',
           });
           anchorPagesFetched += 1;
+          profileAnchorsFetched += 1;
           for (const candidate of profileArticleLinks(page.rawContent, anchor.archive_url, anchor.original_url)) {
             const current = candidateMap.get(candidate.url);
             if (!current) {
@@ -378,6 +404,11 @@ async function main() {
 
       for (const candidate of rankedCandidates) {
         if (verified.length >= MAX_VERIFIED_PUBLICATIONS_PER_MEMBER) break;
+        if (Date.now() >= memberDeadline) {
+          memberBudgetExhausted = true;
+          break;
+        }
+        candidatesAttempted += 1;
         articleCaptureQueries += 1;
         try {
           const captures = await discoverWaybackCaptures({
@@ -385,6 +416,7 @@ async function main() {
             from: window.from,
             to: window.to,
             limit: 60,
+            fetchImpl: boundedWaybackFetch,
           });
           const selected = selectWaybackEvidenceCaptures(captures, { maxCaptures: 1 });
           if (selected.length === 0) {
@@ -399,7 +431,41 @@ async function main() {
           }
 
           const capture = selected[0];
-          const page = await fetchWaybackSnapshot(capture);
+          if (Date.now() >= memberDeadline) {
+            memberBudgetExhausted = true;
+            probes.push({
+              url: candidate.url,
+              linkText: candidate.linkText,
+              discoveredFromProfileAnchors: candidate.discoveredFrom.size,
+              capturesDiscovered: captures.length,
+              selectedCapturedAt: capture.capturedAt,
+              status: 'budget_exhausted_before_snapshot',
+            });
+            break;
+          }
+
+          let page: Awaited<ReturnType<typeof fetchPublicPage>> | undefined;
+          let snapshotError: unknown;
+          for (let attempt = 1; attempt <= WAYBACK_SNAPSHOT_ATTEMPTS; attempt += 1) {
+            try {
+              page = await fetchPublicPage(capture.archiveUrl, {
+                timeoutMs: WAYBACK_SNAPSHOT_ATTEMPT_TIMEOUT_MS,
+                maxBytes: 2_500_000,
+                userAgent: 'VotePredict/2.0 senate-publication-anchor-probe',
+              });
+              break;
+            } catch (error) {
+              snapshotError = error;
+              if (attempt < WAYBACK_SNAPSHOT_ATTEMPTS && Date.now() < memberDeadline) {
+                await new Promise((resolve) => setTimeout(resolve, 750));
+              }
+            }
+          }
+          if (!page) {
+            throw snapshotError instanceof Error
+              ? snapshotError
+              : new Error('Bounded Wayback snapshot fetch failed');
+          }
           articleSnapshotsFetched += 1;
           const mentionsMember = publicPageMentionsPerson(page.text, target.member_name);
           const enoughText = page.text.length >= 250;
@@ -449,14 +515,23 @@ async function main() {
         }
       }
 
+      if (memberBudgetExhausted) {
+        budgetExhaustedMemberships += 1;
+        candidatesSkippedByBudget += Math.max(0, rankedCandidates.length - candidatesAttempted);
+        if (targetFailures.length < 5) targetFailures.push('member_probe_budget_exhausted');
+      }
+
       results.push({
         membershipId: target.membership_id,
         memberName: target.member_name,
         party: target.party,
         district: target.district,
         verifiedProfileAnchors: targetAnchors.length,
+        profileAnchorsFetched,
         uniqueSameSiteLinksDiscovered: candidateMap.size,
-        boundedLinksProbed: rankedCandidates.length,
+        rankedLinkCandidates: rankedCandidates.length,
+        boundedLinksProbed: candidatesAttempted,
+        memberBudgetExhausted,
         verifiedPublicationCandidates: verified.length,
         publications: verified,
         probes,
@@ -466,7 +541,7 @@ async function main() {
 
     const output = {
       senate2021PublicationAnchorProbe: {
-        schemaVersion: 'senate-2021-publication-anchor-probe-v1',
+        schemaVersion: 'senate-2021-publication-anchor-probe-v2',
         session: SESSION,
         targets: results,
         totals: {
@@ -478,6 +553,9 @@ async function main() {
           articleSnapshotsFetched,
           verifiedPublicationCandidates,
           failures,
+          budgetExhaustedMemberships,
+          candidatesSkippedByBudget,
+          probeElapsedMs: Date.now() - probeStartedAt,
         },
         policy: {
           readOnly: true,
@@ -494,6 +572,13 @@ async function main() {
           modelWeight: 0,
           servingChanged: false,
           productionAction: 'none',
+          boundedRuntime: true,
+          maxLinkCandidatesPerMember: MAX_LINK_CANDIDATES_PER_MEMBER,
+          memberProbeBudgetMs: MEMBER_PROBE_BUDGET_MS,
+          globalProbeBudgetMs: GLOBAL_PROBE_BUDGET_MS,
+          waybackCdxAttemptTimeoutMs: WAYBACK_CDX_ATTEMPT_TIMEOUT_MS,
+          waybackSnapshotAttemptTimeoutMs: WAYBACK_SNAPSHOT_ATTEMPT_TIMEOUT_MS,
+          waybackSnapshotAttempts: WAYBACK_SNAPSHOT_ATTEMPTS,
         },
       },
     };

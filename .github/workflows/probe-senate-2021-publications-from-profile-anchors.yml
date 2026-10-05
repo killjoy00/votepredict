@@ -10,7 +10,7 @@ permissions:
 concurrency:
   group: >-
     ${{ startsWith(github.event.comment.body, '[senate-2021-publication-anchor-probe]')
-        && 'senate-2021-publication-anchor-probe-v2'
+        && 'senate-2021-publication-anchor-probe-v3'
         || format('senate-2021-publication-anchor-probe-skip-{0}', github.event.comment.id) }}
   cancel-in-progress: true
 
@@ -44,12 +44,12 @@ jobs:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
         run: |
           node --import tsx scripts/probe-senate-2021-publications-from-profile-anchors.ts \
-            --output artifacts/senate-2021-publication-anchor-probe-v1.json
+            --output artifacts/senate-2021-publication-anchor-probe-v2.json
 
       - name: Upload publication probe artifact
         uses: actions/upload-artifact@v6
         with:
-          name: senate-2021-publication-anchor-probe-v1
+          name: senate-2021-publication-anchor-probe-v2
           path: artifacts/senate-2021-publication-anchor-probe-v1.json
           if-no-files-found: error
           retention-days: 90
