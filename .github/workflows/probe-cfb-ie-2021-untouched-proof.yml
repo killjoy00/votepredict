@@ -1,0 +1,66 @@
+name: Probe untouched 2021 IE historical proofs
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: >-
+    ${{ startsWith(github.event.comment.body, '[cfb-ie-2021-untouched-proof-probe]')
+        && 'cfb-ie-2021-untouched-proof-probe'
+        || format('cfb-ie-2021-untouched-proof-probe-skip-{0}', github.event.comment.id) }}
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    if: >-
+      github.event.issue.number == 678 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      startsWith(github.event.comment.body, '[cfb-ie-2021-untouched-proof-probe]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+
+      - name: Read production environment privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+
+      - name: Probe exact official report proofs for untouched 2021 IE debt
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: |
+          node --import tsx scripts/probe-cfb-ie-2021-untouched-proof.ts \
+            --output artifacts/cfb-ie-2021-untouched-proof-probe-v1.json
+
+      - name: Upload proof probe artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: cfb-ie-2021-untouched-proof-probe-v1
+          path: artifacts/cfb-ie-2021-untouched-proof-probe-v1.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Remove temporary credentials and logs
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PYTHON'
+          import os
+          from pathlib import Path
+          for name in ['votepredict-production.env','vercel-pull.log']:
+              Path(os.environ['RUNNER_TEMP'],name).unlink(missing_ok=True)
+          PYTHON
