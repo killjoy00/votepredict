@@ -26,6 +26,12 @@ export type PriorEvidenceQualityInventory = {
     trainingSession?: string;
     trainingCoveredRows?: number;
   };
+  recommendedTrainingOrdinaryCohort: {
+    session: string;
+    sources: number;
+    potentialNewRows: number;
+    rows: Array<{ sourceDocumentId: string }>;
+  };
   missingAvailabilityDiagnostic: {
     trainingSession: {
       session: string;
@@ -65,6 +71,17 @@ export function deriveHistoricalRecoveryExhaustion(
     || priorInventory.targetUniverse.trainingCoveredRows !== 3
   ) {
     throw new Error('Prior Evidence Quality inventory baseline drifted');
+  }
+
+  const ordinary = priorInventory.recommendedTrainingOrdinaryCohort;
+  if (
+    ordinary.session !== EVIDENCE_QUALITY_PRE_VOTE_TRAINING_SESSION
+    || ordinary.sources !== 1
+    || ordinary.potentialNewRows !== 1
+    || ordinary.rows.length !== 1
+    || ordinary.rows[0]?.sourceDocumentId !== EVIDENCE_QUALITY_EXHAUSTED_ORDINARY_SOURCE_ID
+  ) {
+    throw new Error('Prior ordinary 2021-22 recovery source drifted');
   }
 
   const diagnostic = priorInventory.missingAvailabilityDiagnostic.trainingSession;
