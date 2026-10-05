@@ -59,10 +59,20 @@ jobs:
                   out.write(json.dumps(target,separators=(',',':'))+'\n')
           PYTHON
 
+      - name: Materialize authoritative v1.5 Evidence Quality matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11380755983/zip > "$RUNNER_TEMP/evidence-quality-v1-5.zip"
+          echo "fe2254fc9d2ed0ea00712feab384958e4942cf387e442c29515b3a75183692d7  $RUNNER_TEMP/evidence-quality-v1-5.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/evidence-quality-v1-5"
+          unzip -q "$RUNNER_TEMP/evidence-quality-v1-5.zip" evidence-quality-historical-feature-matrix-v1.5.ndjson.gz -d "$RUNNER_TEMP/evidence-quality-v1-5"
+
       - name: Probe exact archived PDF availability for the frozen pilot
         env:
           VOTEPREDICT_HOUSE_ATTACHMENT_SELECTOR_PATH: ${{ runner.temp }}/house-attachment-selector/historical-density-house-attachment-selector-v1.json
           VOTEPREDICT_EQ_TARGET_UNIVERSE_PATH: ${{ runner.temp }}/evidence-quality-target-universe-v1.ndjson
+          VOTEPREDICT_EQ_CURRENT_MATRIX_PATH: ${{ runner.temp }}/evidence-quality-v1-5/evidence-quality-historical-feature-matrix-v1.5.ndjson.gz
           VOTEPREDICT_HOUSE_ATTACHMENT_ARCHIVE_PROBE_OUTPUT_DIR: ${{ runner.temp }}/historical-density-house-attachment-archive-probe
         run: node --import tsx scripts/probe-house-attachment-historical-density-archive.ts
 
@@ -78,4 +88,4 @@ jobs:
         if: always()
         shell: bash
         run: |
-          rm -f "$RUNNER_TEMP/house-attachment-selector.zip" "$RUNNER_TEMP/historical-closeout.zip"
+          rm -f "$RUNNER_TEMP/house-attachment-selector.zip" "$RUNNER_TEMP/historical-closeout.zip" "$RUNNER_TEMP/evidence-quality-v1-5.zip"
