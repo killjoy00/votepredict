@@ -121,6 +121,13 @@ function candidateValue(kinds: readonly string[]) {
   return ranked[0] ?? KIND_PRIORITY.attachment;
 }
 
+function attachmentIdentityUrl(value: string): string {
+  const canonical = canonicalHouseCommitteeAttachmentPdfUrl(value);
+  const url = new URL(canonical);
+  if (url.hostname.toLowerCase() === 'house.mn.gov') url.hostname = 'www.house.mn.gov';
+  return url.toString();
+}
+
 function rowKey(row: Pick<HouseAttachmentHistoricalDensityTarget, 'voteEventId' | 'membershipId'>): string {
   return row.voteEventId + '|' + row.membershipId;
 }
@@ -159,7 +166,7 @@ export function buildHouseAttachmentHistoricalDensityCandidates(input: {
 
   for (const row of input.evidenceRows) {
     if (!validDateOnly(row.officialPostedOn)) throw new Error('House attachment candidate has invalid official posted date');
-    const attachmentUrl = canonicalHouseCommitteeAttachmentPdfUrl(row.attachmentUrl);
+    const attachmentUrl = attachmentIdentityUrl(row.attachmentUrl);
     let aggregate = byUrl.get(attachmentUrl);
     if (!aggregate) {
       aggregate = {
