@@ -1,6 +1,9 @@
 name: Audit CFB availability-proof debt
 
 on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 9 * * 1'
   issue_comment:
     types: [created, edited]
 
@@ -8,18 +11,18 @@ permissions:
   contents: read
 
 concurrency:
-  group: >-
-    ${{ startsWith(github.event.comment.body, '[cfb-availability-debt-audit]')
-        && 'cfb-availability-debt-audit'
-        || format('cfb-availability-debt-audit-skip-{0}', github.event.comment.id) }}
+  group: cfb-availability-debt-audit
   cancel-in-progress: false
 
 jobs:
   audit:
     if: >-
-      github.event.issue.number == 678 &&
-      github.event.comment.user.login == 'killjoy00' &&
-      startsWith(github.event.comment.body, '[cfb-availability-debt-audit]')
+      github.event_name != 'issue_comment' ||
+      (
+        github.event.issue.number == 678 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        startsWith(github.event.comment.body, '[cfb-availability-debt-audit]')
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:

@@ -1,6 +1,9 @@
 name: Audit 2021-22 Senate publication recovery
 
 on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 9 * * 1'
   issue_comment:
     types: [created, edited]
 
@@ -8,18 +11,18 @@ permissions:
   contents: read
 
 concurrency:
-  group: >-
-    ${{ startsWith(github.event.comment.body, '[senate-2021-publication-recovery-audit]')
-        && 'senate-2021-publication-recovery-audit'
-        || format('senate-2021-publication-recovery-audit-skip-{0}', github.event.comment.id) }}
+  group: senate-2021-publication-recovery-audit
   cancel-in-progress: false
 
 jobs:
   audit:
     if: >-
-      github.event.issue.number == 676 &&
-      github.event.comment.user.login == 'killjoy00' &&
-      startsWith(github.event.comment.body, '[senate-2021-publication-recovery-audit]')
+      github.event_name != 'issue_comment' ||
+      (
+        github.event.issue.number == 676 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        startsWith(github.event.comment.body, '[senate-2021-publication-recovery-audit]')
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
