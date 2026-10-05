@@ -92,6 +92,13 @@ function matchEnd(match: RegExpMatchArray | null): number {
   return match?.index === undefined ? -1 : match.index + match[0].length;
 }
 
+function completedVoteWrapsStance(excerpt: string, stance: RegExpMatchArray): boolean {
+  const stanceStart = stance.index ?? -1;
+  if (stanceStart < 0) return false;
+  const before = excerpt.slice(Math.max(0, stanceStart - 32), stanceStart);
+  return /\bvote(?:d|s|ing)?\s+(?:in\s+)?$/i.test(before);
+}
+
 function nearestTargetAttribution(excerpt: string, stanceIndex: number, memberName: string): RegExpMatchArray | null {
   const pattern = targetAttributionPattern(memberName);
   const matches = [...excerpt.matchAll(new RegExp(pattern.source, 'gi'))];
@@ -157,6 +164,7 @@ export function extractExplicitBillStatementsV4(input: ExtractBillStatementsInpu
     if (Boolean(supportMatch) === Boolean(opposeMatch)) continue;
     const stanceMatch = supportMatch ?? opposeMatch;
     if (!stanceMatch) continue;
+    if (completedVoteWrapsStance(excerpt, stanceMatch)) continue;
 
     const attributionMatch = nearestTargetAttribution(excerpt, stanceMatch.index ?? -1, input.memberName);
     if (!attributionMatch || !attributionIsTight(excerpt, attributionMatch, stanceMatch)) continue;

@@ -182,3 +182,20 @@ test('v4 rejects historical citation context where support governs an investment
   ));
   assert.equal(rows.length, 0);
 });
+
+
+test('v4 excludes completed voted-in-support action history', () => {
+  const rows = extractExplicitBillStatementsV4(input(
+    'Mary Franson',
+    'Last week, I voted in support of House File 1234 after final debate.',
+  ));
+  assert.equal(rows.length, 0);
+});
+
+test('v4 excludes collective voted-in-support action history', () => {
+  const rows = extractExplicitBillStatementsV4(input(
+    'Mary Franson',
+    'My colleagues and I voted in support of HF1234, which later passed the House.',
+  ));
+  assert.equal(rows.length, 0);
+});
