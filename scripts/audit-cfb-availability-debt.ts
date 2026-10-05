@@ -119,6 +119,12 @@ async function main() {
           max(ei.metadata->>'candidateName') AS candidate_name,
           max((ei.metadata->>'year')::int) AS year,
           max(ei.metadata->>'subtype') AS subtype,
+          CASE
+            WHEN max((ei.metadata->>'year')::int) IN (2021,2022) THEN 2022
+            WHEN max((ei.metadata->>'year')::int) IN (2023,2024) THEN 2024
+            WHEN max((ei.metadata->>'year')::int) IN (2025,2026) THEN 2026
+            ELSE NULL
+          END AS segment_end_year,
           s.slug AS session_slug,
           c.slug AS chamber_slug,
           bool_or(ei.metadata->>'asOfEligible'='true' AND ei.published_at IS NOT NULL) AS eligible
@@ -185,21 +191,22 @@ async function main() {
           registration_number,
           max(candidate_name) AS candidate_name,
           max(year)::int AS latest_year,
-          max(session_slug) AS session_slug,
-          max(chamber_slug) AS chamber_slug,
+          segment_end_year,
+          session_slug,
+          chamber_slug,
           count(*)::int AS persisted_row_keys,
           count(*) FILTER (WHERE eligible)::int AS eligible_row_keys,
           count(*) FILTER (WHERE NOT eligible)::int AS timing_unproven_row_keys,
           count(*) FILTER (WHERE NOT eligible AND subtype='candidate_contribution_record')::int AS unproven_contribution_rows,
           count(*) FILTER (WHERE NOT eligible AND subtype='candidate_expenditure_record')::int AS unproven_expenditure_rows
         FROM identities
-        GROUP BY registration_number
+        GROUP BY registration_number,segment_end_year,session_slug,chamber_slug
         HAVING count(*) FILTER (WHERE NOT eligible)>0
       ),
       checkpoints AS (
         SELECT
           metadata->>'registrationNumber' AS registration_number,
-          max((metadata->>'segmentEndYear')::int) AS segment_end_year,
+          (metadata->>'segmentEndYear')::int AS segment_end_year,
           max((metadata->>'referencesDiscovered')::int) AS references_discovered,
           max((metadata->>'selectedReports')::int) AS selected_reports,
           max((metadata->>'proofsParsed')::int) AS proofs_parsed,
@@ -210,12 +217,13 @@ async function main() {
         WHERE source_system='cfb-candidate-finance-membership-tail-group'
           AND status='complete'
           AND metadata->>'registrationNumber' IS NOT NULL
-        GROUP BY metadata->>'registrationNumber'
+        GROUP BY metadata->>'registrationNumber',(metadata->>'segmentEndYear')::int
       )
       SELECT
         d.registration_number AS "registrationNumber",
         d.candidate_name AS "candidateName",
         d.latest_year AS "latestYear",
+        d.segment_end_year AS "segmentEndYear",
         d.session_slug AS "session",
         d.chamber_slug AS "chamber",
         d.persisted_row_keys AS "persistedRowKeys",
@@ -230,8 +238,10 @@ async function main() {
         coalesce(c.proof_failures,0)::int AS "proofFailures",
         coalesce(c.disclosure_mapped_rows,0)::int AS "disclosureMappedRows"
       FROM debt d
-      LEFT JOIN checkpoints c ON c.registration_number=d.registration_number
-      ORDER BY d.timing_unproven_row_keys DESC,d.registration_number
+      LEFT JOIN checkpoints c
+        ON c.registration_number=d.registration_number
+       AND c.segment_end_year=d.segment_end_year
+      ORDER BY d.timing_unproven_row_keys DESC,d.segment_end_year,d.registration_number
     `);
 
     const ieSummary = await pool.query(`
@@ -241,6 +251,12 @@ async function main() {
           ei.metadata->>'spenderRegistrationNumber' AS registration_number,
           max(ei.metadata->>'spender') AS spender,
           max((ei.metadata->>'year')::int) AS year,
+          CASE
+            WHEN max((ei.metadata->>'year')::int) IN (2021,2022) THEN 2022
+            WHEN max((ei.metadata->>'year')::int) IN (2023,2024) THEN 2024
+            WHEN max((ei.metadata->>'year')::int) IN (2025,2026) THEN 2026
+            ELSE NULL
+          END AS segment_end_year,
           bool_or(ei.metadata->>'asOfEligible'='true' AND ei.published_at IS NOT NULL) AS eligible,
           bool_or(ei.membership_id IS NOT NULL) AS membership_resolved,
           bool_or(coalesce(ei.metadata->>'reportName','') <> '') AS has_report_name,
@@ -270,6 +286,7 @@ async function main() {
       registrationNumber: string | null;
       spender: string | null;
       latestYear: number | null;
+      segmentEndYear: number | null;
       persistedRowKeys: number;
       eligibleRowKeys: number;
       timingUnprovenRowKeys: number;
@@ -301,6 +318,7 @@ async function main() {
         registration_number AS "registrationNumber",
         max(spender) AS "spender",
         max(year)::int AS "latestYear",
+        segment_end_year AS "segmentEndYear",
         count(*)::int AS "persistedRowKeys",
         count(*) FILTER (WHERE eligible)::int AS "eligibleRowKeys",
         count(*) FILTER (WHERE NOT eligible)::int AS "timingUnprovenRowKeys",
@@ -309,16 +327,15 @@ async function main() {
         count(*) FILTER (WHERE NOT eligible AND has_filed_on)::int AS "unprovenWithFiledOn",
         count(*) FILTER (WHERE NOT eligible AND has_disclosed_on)::int AS "unprovenWithDisclosedOn"
       FROM identities
-      GROUP BY registration_number
+      GROUP BY registration_number,segment_end_year
       HAVING count(*) FILTER (WHERE NOT eligible)>0
-      ORDER BY "timingUnprovenRowKeys" DESC,"membershipResolvedDebt" DESC,registration_number
+      ORDER BY "timingUnprovenRowKeys" DESC,"membershipResolvedDebt" DESC,segment_end_year,registration_number
     `);
 
     const ieAttempted = new Set(CFB_IE_HISTORICAL_PROOF_TARGET_REGISTRATIONS.map((value) => value.trim()));
     const ieGroups = ieGroupsResult.rows.map((row) => ({
       ...row,
       session: sessionFromYear(row.latestYear),
-      segmentEndYear: segmentEndYear(row.latestYear),
       historicalReportProofTargetedPreviously:
         Boolean(row.registrationNumber && ieAttempted.has(row.registrationNumber.trim())),
       candidateNewProofSurface:
