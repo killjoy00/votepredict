@@ -69,17 +69,32 @@ async function chooseDb(env: Record<string, string | undefined>) {
 
   const secret = env.CRON_SECRET?.trim();
   if (!secret) throw new Error('CRON_SECRET unavailable');
-  const response = await fetch(DATABASE_BRIDGE_URL, {
-    method: 'POST',
-    headers: { authorization: 'Bearer ' + secret },
-    signal: AbortSignal.timeout(20_000),
-  });
-  if (!response.ok) throw new Error('Database bridge HTTP ' + response.status);
-  const value = (await response.text()).trim();
-  secrets.push(value);
-  mask(value);
-  if (!await works(value)) throw new Error('Database bridge returned non-portable URL');
-  return value;
+
+  let lastBridgeError: unknown;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const response = await fetch(DATABASE_BRIDGE_URL, {
+        method: 'POST',
+        headers: { authorization: 'Bearer ' + secret },
+        signal: AbortSignal.timeout(60_000),
+      });
+      if (!response.ok) throw new Error('Database bridge HTTP ' + response.status);
+      const value = (await response.text()).trim();
+      secrets.push(value);
+      mask(value);
+      if (!await works(value)) throw new Error('Database bridge returned non-portable URL');
+      return value;
+    } catch (error) {
+      lastBridgeError = error;
+      if (attempt < 3) {
+        await new Promise((resolve) => setTimeout(resolve, 2_000));
+      }
+    }
+  }
+
+  throw lastBridgeError instanceof Error
+    ? lastBridgeError
+    : new Error('Database bridge failed after bounded retries');
 }
 
 function decodeEntities(value: string): string {
