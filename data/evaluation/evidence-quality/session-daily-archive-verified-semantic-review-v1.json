@@ -19,9 +19,9 @@
     "targetMemberDirectionalClaims": 13,
     "exactMemberBillDirectionalClaims": 7,
     "memberIssueDirectionalClaims": 6,
-    "exactMemberBillDirectionalUniquePotentialRows": 15,
+    "exactMemberBillDirectionalUniquePotentialRows": 11,
     "billOnlyThirdPartyDirectionalClaims": 1,
-    "targetMemberNonDirectionalDocuments": 9,
+    "targetMemberNonDirectionalDocuments": 8,
     "humanAdjudicationRecommendedRows": [
       8,
       15,
@@ -46,7 +46,8 @@
     "frozenCandidateListsPreserved": true,
     "frozenReviewTextEmbeddedForMechanicalValidation": true,
     "semanticPolicyVersion": "evidence-quality-sponsorship-support-v1",
-    "verifiedSponsorshipDirectionalSupportByPolicy": true
+    "verifiedSponsorshipDirectionalSupportByPolicy": true,
+    "procedureDirectionalByDefault": false
   },
   "reviews": [
     {
