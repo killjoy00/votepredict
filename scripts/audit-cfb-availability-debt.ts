@@ -164,6 +164,12 @@ async function main() {
           max(ei.metadata->>'candidateName') AS candidate_name,
           max((ei.metadata->>'year')::int) AS year,
           max(ei.metadata->>'subtype') AS subtype,
+          CASE
+            WHEN max((ei.metadata->>'year')::int) IN (2021,2022) THEN 2022
+            WHEN max((ei.metadata->>'year')::int) IN (2023,2024) THEN 2024
+            WHEN max((ei.metadata->>'year')::int) IN (2025,2026) THEN 2026
+            ELSE NULL
+          END AS segment_end_year,
           s.slug AS session_slug,
           c.slug AS chamber_slug,
           bool_or(ei.metadata->>'asOfEligible'='true' AND ei.published_at IS NOT NULL) AS eligible
@@ -301,6 +307,12 @@ async function main() {
           ei.metadata->>'spenderRegistrationNumber' AS registration_number,
           max(ei.metadata->>'spender') AS spender,
           max((ei.metadata->>'year')::int) AS year,
+          CASE
+            WHEN max((ei.metadata->>'year')::int) IN (2021,2022) THEN 2022
+            WHEN max((ei.metadata->>'year')::int) IN (2023,2024) THEN 2024
+            WHEN max((ei.metadata->>'year')::int) IN (2025,2026) THEN 2026
+            ELSE NULL
+          END AS segment_end_year,
           bool_or(ei.metadata->>'asOfEligible'='true' AND ei.published_at IS NOT NULL) AS eligible,
           bool_or(ei.membership_id IS NOT NULL) AS membership_resolved,
           bool_or(coalesce(ei.metadata->>'reportName','') <> '') AS has_report_name,
