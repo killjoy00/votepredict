@@ -21,12 +21,12 @@ import {
 
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
-const EXPECTED_DOCUMENTS = 32;
-const EXPECTED_HUMAN_CHECK_ROWS = 5;
-const EXPECTED_TARGET_MEMBER_DIRECTIONAL = 20;
+const EXPECTED_DOCUMENTS = 34;
+const EXPECTED_HUMAN_CHECK_ROWS = 3;
+const EXPECTED_TARGET_MEMBER_DIRECTIONAL = 26;
 const EXPECTED_THIRD_PARTY_BILL_DIRECTIONAL = 1;
-const EXPECTED_NON_DIRECTIONAL = 11;
-const EXPECTED_EXACT_MEMBER_BILL_DIRECTIONAL = 10;
+const EXPECTED_NON_DIRECTIONAL = 7;
+const EXPECTED_EXACT_MEMBER_BILL_DIRECTIONAL = 16;
 const EXPECTED_MEMBER_ISSUE_DIRECTIONAL = 10;
 const MANUAL_PROVIDER = 'manual-openai';
 const MODEL = 'GPT-5.6 Sol';
@@ -231,7 +231,13 @@ function loadDocuments(): ImportDocument[] {
           }
         } else {
           targetDirectional += 1;
-          if (claim.attributionType !== 'target_member') throw new Error(path + ': target directional claim lost member attribution');
+          if (
+            claim.claimType === 'sponsorship'
+              ? claim.attributionType !== 'official_record'
+              : claim.attributionType !== 'target_member'
+          ) {
+            throw new Error(path + ': target directional claim has unexpected attribution');
+          }
           if (claim.linkage === 'exact_member_bill') exactMemberBillDirectional += 1;
           if (claim.linkage === 'member_issue') memberIssueDirectional += 1;
         }
@@ -250,8 +256,8 @@ function loadDocuments(): ImportDocument[] {
     }
   }
 
-  if (humanChecks !== EXPECTED_HUMAN_CHECK_ROWS) throw new Error('Expected 5 excluded human-check rows');
-  if (documents.length !== EXPECTED_DOCUMENTS) throw new Error('Expected 32 importable Session Daily reviews');
+  if (humanChecks !== EXPECTED_HUMAN_CHECK_ROWS) throw new Error('Expected 3 excluded human-check rows');
+  if (documents.length !== EXPECTED_DOCUMENTS) throw new Error('Expected 34 importable Session Daily reviews');
   if (new Set(documents.map((document) => document.row.sourceDocumentId)).size !== EXPECTED_DOCUMENTS) {
     throw new Error('Session Daily import cohort contains duplicate source documents');
   }
