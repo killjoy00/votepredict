@@ -4,12 +4,18 @@ import { gunzipSync } from 'node:zlib';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 import { EVIDENCE_QUALITY_SOURCE_KINDS, EVIDENCE_QUALITY_TEXT_VERSION } from '../src/evidence/evidence-quality.js';
 import { resolveEvidenceQualityAvailability } from '../src/evidence/evidence-quality-historical-availability.js';
+import {
+  EVIDENCE_QUALITY_PRE_VOTE_TRAINING_SESSION,
+  deriveHistoricalRecoveryExhaustion,
+  historicalRecoveryDisposition,
+  type PriorEvidenceQualityInventory,
+} from '../src/evidence/evidence-quality-recovery-exhaustion.js';
 
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const EXPECTED_TARGET_ROWS = 135457;
-const EXPECTED_COVERED_ROWS = 29;
-const TRAINING_SESSION = '2021-2022' as const;
+const EXPECTED_COVERED_ROWS = 38;
+const TRAINING_SESSION = EVIDENCE_QUALITY_PRE_VOTE_TRAINING_SESSION;
 let secrets: string[] = [];
 
 type TargetRow = {
@@ -171,9 +177,12 @@ async function main() {
   const envFile=process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
   const targetPath=process.env.VOTEPREDICT_EQ_TARGET_UNIVERSE_PATH;
   const matrixPath=process.env.VOTEPREDICT_EQ_CURRENT_MATRIX_PATH;
+  const priorInventoryPath=process.env.VOTEPREDICT_EQ_V14_CANDIDATE_INVENTORY_PATH;
   const outputDir=process.env.VOTEPREDICT_EQ_CANDIDATE_INVENTORY_DIR;
-  if(!envFile||!targetPath||!matrixPath||!outputDir) throw new Error('Production env, target universe, current matrix, and output dir required');
+  if(!envFile||!targetPath||!matrixPath||!priorInventoryPath||!outputDir) throw new Error('Production env, target universe, current matrix, prior v1.4 inventory, and output dir required');
 
+  const priorInventory=JSON.parse(readFileSync(priorInventoryPath,'utf8')) as PriorEvidenceQualityInventory;
+  const recoveryExhaustion=deriveHistoricalRecoveryExhaustion(priorInventory);
   const targets=loadTargets(targetPath);
   const covered=loadCovered(matrixPath);
   const targetByPair=new Map<string,TargetRow[]>();
@@ -356,36 +365,59 @@ async function main() {
       deduped.push(representative);
     }
 
-    const ordinary=deduped.filter((candidate)=>candidate.sourceKind!=='house_session_daily');
-    const sessionDaily=deduped.filter((candidate)=>candidate.sourceKind==='house_session_daily');
+    const exhaustedCandidates=deduped.filter((candidate)=>
+      !historicalRecoveryDisposition(candidate.sourceDocumentId,recoveryExhaustion).fresh);
+    const freshDeduped=deduped.filter((candidate)=>
+      historicalRecoveryDisposition(candidate.sourceDocumentId,recoveryExhaustion).fresh);
+
+    const rawOrdinary=deduped.filter((candidate)=>candidate.sourceKind!=='house_session_daily');
+    const rawSessionDaily=deduped.filter((candidate)=>candidate.sourceKind==='house_session_daily');
+    const ordinary=freshDeduped.filter((candidate)=>candidate.sourceKind!=='house_session_daily');
+    const sessionDaily=freshDeduped.filter((candidate)=>candidate.sourceKind==='house_session_daily');
     const ordinaryGreedy=greedySelect(ordinary,100);
     const sessionGreedy=greedySelect(sessionDaily,100);
 
-    const trainingCandidates=deduped.filter((candidate)=>
+    const rawTrainingCandidates=deduped.filter((candidate)=>
+      [...candidate.newCoverageRowKeys].some((key)=>trainingTargetRowKeys.has(key)));
+    const trainingCandidates=freshDeduped.filter((candidate)=>
       [...candidate.newCoverageRowKeys].some((key)=>trainingTargetRowKeys.has(key)));
     const trainingOrdinary=trainingCandidates.filter((candidate)=>candidate.sourceKind!=='house_session_daily');
     const trainingSessionDaily=trainingCandidates.filter((candidate)=>candidate.sourceKind==='house_session_daily');
     const trainingOrdinaryGreedy=greedySelect(trainingOrdinary,100,trainingTargetRowKeys);
     const trainingSessionDailyGreedy=greedySelect(trainingSessionDaily,100,trainingTargetRowKeys);
-    const missingAvailabilityTrainingCandidates=[...missingAvailabilityPotentialBySource.values()]
+
+    const rawMissingAvailabilityTrainingCandidates=[...missingAvailabilityPotentialBySource.values()]
       .filter((candidate)=>candidate.sessions.has(TRAINING_SESSION));
+    const rawMissingAvailabilityTrainingRowKeys=new Set(
+      rawMissingAvailabilityTrainingCandidates.flatMap((candidate)=>
+        [...candidate.rowKeys].filter((key)=>trainingTargetRowKeys.has(key))));
+    const missingAvailabilityTrainingCandidates=rawMissingAvailabilityTrainingCandidates
+      .filter((candidate)=>!recoveryExhaustion.sessionDailySourceIds.has(candidate.sourceDocumentId));
     const missingAvailabilityTrainingRowKeys=new Set(
       missingAvailabilityTrainingCandidates.flatMap((candidate)=>
         [...candidate.rowKeys].filter((key)=>trainingTargetRowKeys.has(key))));
 
     const sourceKindSummary:Record<string,{sources:number;newCoverageRows:number;textReady:number}>= {};
-    for(const candidate of deduped){
+    for(const candidate of freshDeduped){
       const summary=sourceKindSummary[candidate.sourceKind]??{sources:0,newCoverageRows:0,textReady:0};
       summary.sources+=1;
       summary.newCoverageRows+=candidate.newCoverageRowKeys.size;
       if(candidate.textReady) summary.textReady+=1;
       sourceKindSummary[candidate.sourceKind]=summary;
     }
+    const rawSourceKindSummary:Record<string,{sources:number;newCoverageRows:number;textReady:number}>= {};
+    for(const candidate of deduped){
+      const summary=rawSourceKindSummary[candidate.sourceKind]??{sources:0,newCoverageRows:0,textReady:0};
+      summary.sources+=1;
+      summary.newCoverageRows+=candidate.newCoverageRowKeys.size;
+      if(candidate.textReady) summary.textReady+=1;
+      rawSourceKindSummary[candidate.sourceKind]=summary;
+    }
 
     const report={
-      schemaVersion:'evidence-quality-pre-vote-candidate-inventory-v1.4',
+      schemaVersion:'evidence-quality-pre-vote-candidate-inventory-v1.5',
       generatedAt:new Date().toISOString(),
-      issue:579,
+      issue:718,
       targetUniverse:{
         rows:targets.length,
         currentCoveredRows:covered.size,
@@ -412,18 +444,57 @@ async function main() {
         })).sort((a,b)=>b.potentialNewRows-a.potentialNewRows||a.publishedOn.localeCompare(b.publishedOn)||a.sourceDocumentId.localeCompare(b.sourceDocumentId)),
         trainingSession:{
           session:TRAINING_SESSION,
-          sourcesWithStoredPublishedAtThatCouldAddRows:missingAvailabilityTrainingCandidates.length,
-          potentialNewRowsIfStoredPublishedAtWereIndependentlyValidated:missingAvailabilityTrainingRowKeys.size,
+          rawSourcesWithStoredPublishedAtThatCouldAddRows:rawMissingAvailabilityTrainingCandidates.length,
+          rawPotentialNewRowsIfStoredPublishedAtWereIndependentlyValidated:rawMissingAvailabilityTrainingRowKeys.size,
+          exhaustedSourcesExcludedFromActionableRecovery:rawMissingAvailabilityTrainingCandidates.length-missingAvailabilityTrainingCandidates.length,
+          exhaustedPotentialRowsExcludedFromActionableRecovery:rawMissingAvailabilityTrainingRowKeys.size-missingAvailabilityTrainingRowKeys.size,
+          freshSourcesWithStoredPublishedAtThatCouldAddRows:missingAvailabilityTrainingCandidates.length,
+          freshPotentialNewRowsIfStoredPublishedAtWereIndependentlyValidated:missingAvailabilityTrainingRowKeys.size,
         },
-        interpretation:'diagnostic only: evidence_items.published_at is not promoted to historical availability proof without independent provenance validation',
+        interpretation:'diagnostic only: evidence_items.published_at is not promoted to historical availability proof without independent provenance validation; known exhausted 2021-22 archive surfaces are retained in raw diagnostics but excluded from fresh actionable recovery',
+      },
+      exhaustedRecoverySurfaces:{
+        frozenPriorInventory:{
+          runId:37243020066,
+          artifactId:11317004477,
+          artifactDigest:'sha256:f3ec4d6038ecb677c9b460a62a8d6aedba5cc2c80e15b83e8d85d0d7483a3da6',
+          schemaVersion:'evidence-quality-pre-vote-candidate-inventory-v1.4',
+        },
+        sessionDailyTrainingArchiveLane:{
+          sources:recoveryExhaustion.sessionDailySourceIds.size,
+          uniqueTrainingRows:recoveryExhaustion.sessionDailyTrainingRowKeys.size,
+          canonicalRetryRunId:37257134594,
+          canonicalRetryArtifactId:11323132086,
+          canonicalRetryArtifactDigest:'sha256:38dc5c8d7b17920d0f22135902609f14a1352918d1f39cd025f85a6ec24337a1',
+          result:'0/34 strict-pre-vote exact frozen-excerpt proofs',
+          reopenRule:'genuinely new independent proof/source surface only',
+        },
+        ordinarySingleSourceArchiveLane:{
+          sourceDocumentIds:[...recoveryExhaustion.ordinarySourceIds].sort(),
+          canonicalProbeRunId:37388944741,
+          canonicalProbeArtifactId:11380715355,
+          canonicalProbeArtifactDigest:'sha256:bab7f27970c3987cb87bb915c08a38901892c58ea97c5139885a7694d0c16915',
+          result:'no_archive_capture',
+          reopenRule:'genuinely new independent proof/source surface only',
+        },
+        exhaustedExactAvailabilityCandidates:exhaustedCandidates.map((candidate)=>({
+          ...sourceSummary(candidate),
+          recoveryDisposition:historicalRecoveryDisposition(candidate.sourceDocumentId,recoveryExhaustion).reason,
+        })).sort((a,b)=>b.newCoverageRows-a.newCoverageRows||a.availableOn.localeCompare(b.availableOn)||a.sourceDocumentId.localeCompare(b.sourceDocumentId)),
       },
       candidates:{
         sourceDocumentsBeforeExactDedup:candidates.length,
         exactContentDuplicateGroups:duplicateGroups.length,
-        dedupedSourceDocuments:deduped.length,
+        rawDedupedSourceDocuments:deduped.length,
+        exhaustedDedupedSourceDocuments:exhaustedCandidates.length,
+        freshDedupedSourceDocuments:freshDeduped.length,
+        rawOrdinarySourceDocuments:rawOrdinary.length,
+        rawHouseSessionDailySourceDocuments:rawSessionDaily.length,
         ordinarySourceDocuments:ordinary.length,
         houseSessionDailySourceDocuments:sessionDaily.length,
         bySourceKind:sourceKindSummary,
+        rawBySourceKind:rawSourceKindSummary,
+        rawTrainingSessionSources:rawTrainingCandidates.length,
         trainingSessionSources:trainingCandidates.length,
         trainingSessionOrdinarySources:trainingOrdinary.length,
         trainingSessionHouseSessionDailySources:trainingSessionDaily.length,
@@ -454,7 +525,11 @@ async function main() {
         potentialNewRows:trainingSessionDailyGreedy.coveredRows,
         rows:trainingSessionDailyGreedy.selected,
       },
-      allCandidates:deduped.map(sourceSummary).sort((a,b)=>b.newCoverageRows-a.newCoverageRows||a.availableOn.localeCompare(b.availableOn)||a.sourceDocumentId.localeCompare(b.sourceDocumentId)),
+      allCandidates:freshDeduped.map(sourceSummary).sort((a,b)=>b.newCoverageRows-a.newCoverageRows||a.availableOn.localeCompare(b.availableOn)||a.sourceDocumentId.localeCompare(b.sourceDocumentId)),
+      rawCandidateDiagnostics:deduped.map((candidate)=>({
+        ...sourceSummary(candidate),
+        recoveryDisposition:historicalRecoveryDisposition(candidate.sourceDocumentId,recoveryExhaustion).reason,
+      })).sort((a,b)=>b.newCoverageRows-a.newCoverageRows||a.availableOn.localeCompare(b.availableOn)||a.sourceDocumentId.localeCompare(b.sourceDocumentId)),
       exactContentDuplicateGroups:duplicateGroups,
       policy:{
         outcomeUse:'none',
@@ -463,8 +538,10 @@ async function main() {
         evidenceItemScopedProofNeverPromotedSourceWide:true,
         sameDayExcluded:true,
         alreadyAnnotatedSourcesExcluded:true,
-        currentV14CoveredRowsExcludedFromMarginalRanking:true,
+        currentV15CoveredRowsExcludedFromMarginalRanking:true,
         exactContentDedup:true,
+        knownExhaustedRecoverySurfacesExcludedFromActionableRanking:true,
+        exhaustedSurfacesDerivedFromPinnedV14Inventory:true,
         houseSessionDailySeparated:true,
         modelFitting:'none',
         servingChanged:false,
@@ -472,14 +549,16 @@ async function main() {
     };
 
     mkdirSync(outputDir,{recursive:true});
-    writeFileSync(resolve(outputDir,'evidence-quality-pre-vote-candidate-inventory-v1.4.json'),JSON.stringify(report,null,2)+'\n');
+    writeFileSync(resolve(outputDir,'evidence-quality-pre-vote-candidate-inventory-v1.5.json'),JSON.stringify(report,null,2)+'\n');
     console.log(JSON.stringify({
       evidenceQualityPreVoteCandidateInventory:{
         targetRows:targets.length,
         currentCoveredRows:covered.size,
         sourceRowsScanned:result.rows.length,
         candidateSources:candidates.length,
-        dedupedCandidateSources:deduped.length,
+        rawDedupedCandidateSources:deduped.length,
+        exhaustedDedupedCandidateSources:exhaustedCandidates.length,
+        freshDedupedCandidateSources:freshDeduped.length,
         ordinarySources:ordinary.length,
         houseSessionDailySources:sessionDaily.length,
         ordinaryRecommendedSources:ordinaryGreedy.selected.length,
@@ -492,11 +571,14 @@ async function main() {
         missingAvailabilityPotentialNewRowsIfPublishedAtValidated:new Set([...missingAvailabilityPotentialBySource.values()].flatMap((candidate)=>[...candidate.rowKeys])).size,
         trainingSession:TRAINING_SESSION,
         trainingCoveredRows:currentCoveredBySession[TRAINING_SESSION]??0,
+        rawTrainingCandidateSources:rawTrainingCandidates.length,
         trainingCandidateSources:trainingCandidates.length,
         trainingOrdinaryRecommendedSources:trainingOrdinaryGreedy.selected.length,
         trainingOrdinaryPotentialNewRows:trainingOrdinaryGreedy.coveredRows,
         trainingHouseSessionDailyRecommendedSources:trainingSessionDailyGreedy.selected.length,
         trainingHouseSessionDailyPotentialNewRows:trainingSessionDailyGreedy.coveredRows,
+        rawTrainingMissingAvailabilitySourcesWithPotentialPublishedAtCoverage:rawMissingAvailabilityTrainingCandidates.length,
+        rawTrainingMissingAvailabilityPotentialNewRowsIfPublishedAtValidated:rawMissingAvailabilityTrainingRowKeys.size,
         trainingMissingAvailabilitySourcesWithPotentialPublishedAtCoverage:missingAvailabilityTrainingCandidates.length,
         trainingMissingAvailabilityPotentialNewRowsIfPublishedAtValidated:missingAvailabilityTrainingRowKeys.size,
         outcomeUse:'none',
