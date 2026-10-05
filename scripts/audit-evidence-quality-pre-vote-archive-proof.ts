@@ -12,11 +12,11 @@ import {
   archiveTextContainsFrozenExcerpt,
   type EvidenceQualityArchiveProofClassification,
 } from '../src/evidence/evidence-quality-archive-proof.js';
+import {
+  parseEvidenceQualityArchiveAuditMode,
+  selectEvidenceQualityArchiveAuditCohort,
+} from '../src/evidence/evidence-quality-archive-audit-cohort.js';
 
-const EXPECTED_INVENTORY_SCHEMA = 'evidence-quality-pre-vote-candidate-inventory-v1.2';
-const EXPECTED_RECOVERY_SOURCES = 92;
-const EXPECTED_POTENTIAL_NEW_ROWS = 144;
-const EXPECTED_SOURCE_KIND = 'house_session_daily';
 const DEFAULT_CAPTURE_LIMIT = 500;
 const DEFAULT_FETCH_LIMIT_PER_SOURCE = 12;
 const DEFAULT_CONCURRENCY = 3;
@@ -53,6 +53,11 @@ type Inventory = {
     potentialNewRowsIfStoredPublishedAtWereIndependentlyValidated: number;
     candidates: FrozenCandidate[];
     interpretation: string;
+    trainingSession?: {
+      session: string;
+      sourcesWithStoredPublishedAtThatCouldAddRows: number;
+      potentialNewRowsIfStoredPublishedAtWereIndependentlyValidated: number;
+    };
   };
 };
 
@@ -320,25 +325,16 @@ async function main() {
   if (!inputPath || !outputDir) throw new Error('Frozen inventory path and output directory are required');
 
   const inventory = JSON.parse(readFileSync(inputPath, 'utf8')) as Inventory;
-  if (inventory.schemaVersion !== EXPECTED_INVENTORY_SCHEMA) {
-    throw new Error('Unexpected inventory schema: ' + inventory.schemaVersion);
-  }
-  const candidates = inventory.missingAvailabilityDiagnostic.candidates;
-  if (candidates.length !== EXPECTED_RECOVERY_SOURCES) {
-    throw new Error('Expected ' + EXPECTED_RECOVERY_SOURCES + ' recovery sources, found ' + candidates.length);
-  }
-  if (inventory.missingAvailabilityDiagnostic.sourcesWithStoredPublishedAtThatCouldAddRows !== EXPECTED_RECOVERY_SOURCES) {
-    throw new Error('Recovery-source count drifted from frozen diagnostic');
-  }
-  if (inventory.missingAvailabilityDiagnostic.potentialNewRowsIfStoredPublishedAtWereIndependentlyValidated !== EXPECTED_POTENTIAL_NEW_ROWS) {
-    throw new Error('Potential-row count drifted from frozen diagnostic');
-  }
-  if (candidates.some(candidate => candidate.sourceKind !== EXPECTED_SOURCE_KIND)) {
-    throw new Error('Current frozen recovery cohort is expected to contain only house_session_daily sources');
-  }
+  const mode = parseEvidenceQualityArchiveAuditMode(
+    process.env.VOTEPREDICT_EQ_ARCHIVE_AUDIT_MODE,
+  );
+  const cohort = selectEvidenceQualityArchiveAuditCohort(inventory, mode);
+  const candidates = cohort.candidates;
+  const expectedPotentialRows = cohort.expectedPotentialRows;
+
 
   const uniquePotentialRows = new Set(candidates.flatMap(candidate => candidate.potentialTargets.map(rowKey)));
-  if (uniquePotentialRows.size !== EXPECTED_POTENTIAL_NEW_ROWS) {
+  if (uniquePotentialRows.size !== expectedPotentialRows) {
     throw new Error('Frozen target row-key count mismatch: ' + uniquePotentialRows.size);
   }
 
@@ -404,11 +400,14 @@ async function main() {
     issue: 579,
     frozenInventory: {
       schemaVersion: inventory.schemaVersion,
+      auditMode: mode,
+      trainingSession: cohort.trainingSession,
       generatedAt: inventory.generatedAt,
       artifactId: process.env.VOTEPREDICT_EQ_PRE_VOTE_INVENTORY_ARTIFACT_ID ?? null,
       artifactDigest: process.env.VOTEPREDICT_EQ_PRE_VOTE_INVENTORY_ARTIFACT_DIGEST ?? null,
       recoverySources: candidates.length,
       uniquePotentialRows: uniquePotentialRows.size,
+      expectedUniquePotentialRows: expectedPotentialRows,
     },
     summary: {
       sourcesAudited: sources.length,
