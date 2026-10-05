@@ -18,7 +18,7 @@ concurrency:
 jobs:
   audit:
     if: >-
-      github.event.issue.number == 579 &&
+      github.event.issue.number == 718 &&
       github.event.comment.user.login == 'killjoy00' &&
       startsWith(github.event.comment.body, '[evidence-quality-historical-coverage-audit]')
     runs-on: ubuntu-latest
@@ -64,14 +64,14 @@ jobs:
         env:
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
           VOTEPREDICT_EQ_TARGET_UNIVERSE_PATH: ${{ runner.temp }}/evidence-quality-target-universe-v1.ndjson
-          VOTEPREDICT_EQ_COVERAGE_AUDIT_OUTPUT: ${{ runner.temp }}/evidence-quality-historical-coverage-audit-v1.2.json
+          VOTEPREDICT_EQ_COVERAGE_AUDIT_OUTPUT: ${{ runner.temp }}/evidence-quality-historical-coverage-audit-v1.3.json
         run: node --import tsx scripts/audit-evidence-quality-historical-coverage.ts
 
       - name: Upload coverage audit
         uses: actions/upload-artifact@v7
         with:
-          name: evidence-quality-historical-coverage-audit-v1-2
-          path: ${{ runner.temp }}/evidence-quality-historical-coverage-audit-v1.2.json
+          name: evidence-quality-historical-coverage-audit-v1-3
+          path: ${{ runner.temp }}/evidence-quality-historical-coverage-audit-v1.3.json
           if-no-files-found: error
           retention-days: 30
 
