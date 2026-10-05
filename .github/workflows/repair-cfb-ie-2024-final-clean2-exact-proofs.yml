@@ -1,0 +1,70 @@
+name: Repair final clean 2 2023-24 IE exact proofs
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: >-
+    ${{ startsWith(github.event.comment.body, '[cfb-ie-2024-final-clean2-exact-proof-repair]')
+        && 'cfb-ie-2024-final-clean2-exact-proof-repair'
+        || format('cfb-ie-2024-final-clean2-exact-proof-repair-skip-{0}', github.event.comment.id) }}
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    if: >-
+      github.event.issue.number == 678 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      startsWith(github.event.comment.body, '[cfb-ie-2024-final-clean2-exact-proof-repair]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+
+      - name: Read production environment privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+
+      - name: Validate exact frozen 2-row clean repair mapping
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/repair-cfb-ie-2024-final-clean2-exact-proofs.ts
+
+      - name: Apply exact frozen IE proof repair
+        if: >-
+          startsWith(github.event.comment.body, '[cfb-ie-2024-final-clean2-exact-proof-repair] apply')
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/repair-cfb-ie-2024-final-clean2-exact-proofs.ts --apply
+
+      - name: Verify exact repair idempotently
+        if: >-
+          startsWith(github.event.comment.body, '[cfb-ie-2024-final-clean2-exact-proof-repair] apply')
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/repair-cfb-ie-2024-final-clean2-exact-proofs.ts
+
+      - name: Remove temporary credentials and logs
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PYTHON'
+          import os
+          from pathlib import Path
+          for name in ['votepredict-production.env','vercel-pull.log']:
+              Path(os.environ['RUNNER_TEMP'],name).unlink(missing_ok=True)
+          PYTHON
