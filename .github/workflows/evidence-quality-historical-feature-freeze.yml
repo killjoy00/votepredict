@@ -1,4 +1,4 @@
-name: Freeze Evidence Quality historical feature matrix v1.4
+name: Freeze Evidence Quality historical feature matrix v1.5
 
 on:
   issue_comment:
@@ -18,7 +18,7 @@ concurrency:
 jobs:
   freeze:
     if: >-
-      github.event.issue.number == 579 &&
+      github.event.issue.number == 718 &&
       github.event.comment.user.login == 'killjoy00' &&
       startsWith(github.event.comment.body, '[evidence-quality-feature-matrix-freeze]')
     runs-on: ubuntu-latest
@@ -85,7 +85,7 @@ jobs:
       - name: Upload frozen feature artifact
         uses: actions/upload-artifact@v7
         with:
-          name: evidence-quality-historical-feature-freeze-v1-4
+          name: evidence-quality-historical-feature-freeze-v1-5
           path: ${{ runner.temp }}/evidence-quality-historical-feature-freeze/*
           if-no-files-found: error
           retention-days: 30
