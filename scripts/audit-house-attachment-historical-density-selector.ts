@@ -233,7 +233,7 @@ async function main() {
 
   const priorWayback = identitySets(priorWaybackRows);
   const priorScan = identitySets(priorScanRows);
-  const currentBody = identitySets(currentBodyRows);
+  const currentBodyIdentities = identitySets(currentBodyRows);
 
   const evidenceRows: HouseAttachmentHistoricalDensityEvidenceRow[] = dbRows.map((row) => {
     const normalizedUrl = attachmentIdentityUrl(row.attachment_url);
@@ -249,8 +249,8 @@ async function main() {
         || Boolean(normalizedUrl && priorWayback.urls.has(normalizedUrl)),
       priorWaybackScan: priorScan.ids.has(row.archive_evidence_id)
         || Boolean(normalizedUrl && priorScan.urls.has(normalizedUrl)),
-      currentBodyPresent: currentBody.ids.has(row.archive_evidence_id)
-        || Boolean(normalizedUrl && currentBody.urls.has(normalizedUrl)),
+      currentBodyPresent: currentBodyIdentities.ids.has(row.archive_evidence_id)
+        || Boolean(normalizedUrl && currentBodyIdentities.urls.has(normalizedUrl)),
     };
   });
 
