@@ -15,13 +15,13 @@
   },
   "summary": {
     "documentsReviewed": 22,
-    "targetMemberDirectionalDocuments": 10,
-    "targetMemberDirectionalClaims": 10,
-    "exactMemberBillDirectionalClaims": 4,
+    "targetMemberDirectionalDocuments": 13,
+    "targetMemberDirectionalClaims": 13,
+    "exactMemberBillDirectionalClaims": 7,
     "memberIssueDirectionalClaims": 6,
-    "exactMemberBillDirectionalUniquePotentialRows": 6,
+    "exactMemberBillDirectionalUniquePotentialRows": 11,
     "billOnlyThirdPartyDirectionalClaims": 1,
-    "targetMemberNonDirectionalDocuments": 12,
+    "targetMemberNonDirectionalDocuments": 8,
     "humanAdjudicationRecommendedRows": [
       8,
       15,
@@ -44,7 +44,10 @@
     "modelFitting": "none",
     "servingChanged": false,
     "frozenCandidateListsPreserved": true,
-    "frozenReviewTextEmbeddedForMechanicalValidation": true
+    "frozenReviewTextEmbeddedForMechanicalValidation": true,
+    "semanticPolicyVersion": "evidence-quality-sponsorship-support-v1",
+    "verifiedSponsorshipDirectionalSupportByPolicy": true,
+    "procedureDirectionalByDefault": false
   },
   "reviews": [
     {
@@ -193,20 +196,20 @@
       "row": 6,
       "sourceDocumentId": "42fbe9b8-d1f5-4a03-b828-368f5256c28a",
       "reviewTextSha256": "5060531b1a90babd7435f5c5f79e1024d1af4078301852f48302ae4494997319",
-      "decision": "non_directional",
+      "decision": "exact_member_bill_directional",
       "memberNames": [
         "Brad Tabke"
       ],
       "billIdentifiers": [
         "HF3436"
       ],
-      "stance": "none",
+      "stance": "supports",
       "claimType": "sponsorship",
       "specificity": "exact_bill",
-      "normalizedClaim": "Session Daily identifies Tabke as sponsor of HF3436 and reports procedural advancement; the later Tabke statement is truncated.",
+      "normalizedClaim": "Session Daily identifies Brad Tabke as sponsor of HF3436; verified sponsorship is supportive evidence for HF3436.",
       "supportingExcerpt": "Sponsored by Rep. Brad Tabke (DFL-Shakopee), HF3436 , as amended , was approved on a voice vote Thursday and is headed to the House Floor.",
       "notes": [
-        "Sponsorship and procedure are non-directional."
+        "Verified exact-bill sponsorship is supportive under evidence-quality-sponsorship-support-v1; the reported procedural advancement is not itself directional."
       ],
       "sourceKind": "house_session_daily",
       "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/18216",
@@ -568,20 +571,20 @@
       "row": 19,
       "sourceDocumentId": "ee6f3cd6-fcfa-494d-a6e1-096b5feb485d",
       "reviewTextSha256": "aa44b9e95583fe3c0ea22585eff9ff8633f4c45b8b81eb40a863fb9af90df3f7",
-      "decision": "non_directional",
+      "decision": "exact_member_bill_directional",
       "memberNames": [
         "Cedrick Rommel Frazier"
       ],
       "billIdentifiers": [
         "HF3489"
       ],
-      "stance": "none",
+      "stance": "supports",
       "claimType": "sponsorship",
       "specificity": "exact_bill",
-      "normalizedClaim": "The frozen excerpt identifies Frazier as sponsor of HF3489 but contains no attributable position from him.",
+      "normalizedClaim": "Session Daily identifies Cedrick Frazier as sponsor of HF3489; verified sponsorship is supportive evidence for HF3489.",
       "supportingExcerpt": "Rep. Cedrick Frazier, left, is the bill sponsor.",
       "notes": [
-        "Sponsorship alone is non-directional."
+        "Verified exact-bill sponsorship is supportive under evidence-quality-sponsorship-support-v1."
       ],
       "sourceKind": "house_session_daily",
       "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/18050",
@@ -627,21 +630,20 @@
       "row": 21,
       "sourceDocumentId": "f80d09e1-230e-4a62-8e38-b197b82c1772",
       "reviewTextSha256": "7487304492baf5e25b979be08c82cba9eaf72dbaca24eb48595dd21f6bb635e6",
-      "decision": "non_directional",
+      "decision": "exact_member_bill_directional",
       "memberNames": [
         "Kaohly Vang Her"
       ],
       "billIdentifiers": [
         "HF3100"
       ],
-      "stance": "none",
+      "stance": "supports",
       "claimType": "sponsorship",
       "specificity": "exact_bill",
-      "normalizedClaim": "Session Daily identifies Kaohly Vang Her as sponsor of HF3100; the excerpt contains no attributable position from her on the bill.",
+      "normalizedClaim": "Session Daily identifies Kaohly Vang Her as sponsor of HF3100; verified sponsorship is supportive evidence for HF3100.",
       "supportingExcerpt": "HF3100 , the omnibus pensions bill sponsored by Rep. Kaohly Vang Her (DFL-St. Paul).",
       "notes": [
-        "Patty Acomb’s comment refers to the preceding nuclear-waste issue, not HF3100.",
-        "No stance is inferred for Samantha Vang from appearing in the target set."
+        "Verified exact-bill sponsorship is supportive under evidence-quality-sponsorship-support-v1; no stance is inferred for other candidate members from nearby unrelated text."
       ],
       "sourceKind": "house_session_daily",
       "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/17917",

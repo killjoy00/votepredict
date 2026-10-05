@@ -9,6 +9,7 @@ import {
   EVIDENCE_QUALITY_NOVELTY,
   EVIDENCE_QUALITY_SPECIFICITY,
   EVIDENCE_QUALITY_STANCES,
+  applyEvidenceQualitySponsorshipPolicy,
   buildEvidenceQualityPrompt,
   validateEvidenceQualityAnnotation,
   type EvidenceQualityAnnotation,
@@ -150,11 +151,12 @@ export class EvidenceQualityClassifier {
       }),
     });
 
-    validateEvidenceQualityAnnotation(result.output, input);
+    const annotation = applyEvidenceQualitySponsorshipPolicy(result.output);
+    validateEvidenceQualityAnnotation(annotation, input);
     return {
       provider: this.provider,
       model: this.model,
-      annotation: result.output,
+      annotation,
       usage: result.totalUsage,
     };
   }

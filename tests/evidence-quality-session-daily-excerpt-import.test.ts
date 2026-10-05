@@ -68,7 +68,11 @@ test('Session Daily excerpt reviews transform conservatively and exclude human-c
           assert.equal(claim.attributionType, 'official_record');
         } else {
           targetDirectional += 1;
-          assert.equal(claim.attributionType, 'target_member');
+          if (claim.claimType === 'sponsorship') {
+            assert.equal(claim.attributionType, 'official_record');
+          } else {
+            assert.equal(claim.attributionType, 'target_member');
+          }
           if (claim.linkage === 'exact_member_bill') exactMemberBillDirectional += 1;
           if (claim.linkage === 'member_issue') memberIssueDirectional += 1;
         }
@@ -84,13 +88,13 @@ test('Session Daily excerpt reviews transform conservatively and exclude human-c
   }
 
   assert.equal(reviewed, 37);
-  assert.equal(humanChecks, 5);
-  assert.equal(importable, 32);
-  assert.equal(sourceIds.size, 32);
-  assert.equal(fingerprints.size, 32);
-  assert.equal(targetDirectional, 20);
+  assert.equal(humanChecks, 3);
+  assert.equal(importable, 34);
+  assert.equal(sourceIds.size, 34);
+  assert.equal(fingerprints.size, 34);
+  assert.equal(targetDirectional, 26);
   assert.equal(thirdPartyDirectional, 1);
-  assert.equal(nonDirectional, 11);
-  assert.equal(exactMemberBillDirectional, 10);
+  assert.equal(nonDirectional, 7);
+  assert.equal(exactMemberBillDirectional, 16);
   assert.equal(memberIssueDirectional, 10);
 });

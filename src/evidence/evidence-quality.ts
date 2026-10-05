@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 export const EVIDENCE_QUALITY_SCHEMA_VERSION = 'evidence-quality-v1' as const;
 export const EVIDENCE_QUALITY_PROMPT_VERSION = 'evidence-quality-prompt-v1' as const;
 export const EVIDENCE_QUALITY_TEXT_VERSION = 'evidence-quality-text-v1' as const;
+export const EVIDENCE_QUALITY_SPONSORSHIP_POLICY_VERSION = 'evidence-quality-sponsorship-support-v1' as const;
 
 export const EVIDENCE_QUALITY_SOURCE_KINDS = [
   'wayback_local_trade_news',
@@ -132,6 +133,27 @@ export interface EvidenceQualityAnnotation {
   notes: string[];
 }
 
+export function applyEvidenceQualitySponsorshipPolicy(
+  annotation: EvidenceQualityAnnotation,
+): EvidenceQualityAnnotation {
+  return {
+    ...annotation,
+    claims: annotation.claims.map((claim) => {
+      if (claim.claimType !== 'sponsorship') return claim;
+      if (
+        claim.memberNames.length === 0
+        || claim.billIdentifiers.length === 0
+        || claim.linkage !== 'exact_member_bill'
+        || claim.specificity !== 'exact_bill'
+      ) {
+        return claim;
+      }
+      return { ...claim, stance: 'supports' };
+    }),
+    notes: [...annotation.notes],
+  };
+}
+
 export function isEvidenceQualitySourceKind(value: string): value is EvidenceQualitySourceKind {
   return (EVIDENCE_QUALITY_SOURCE_KINDS as readonly string[]).includes(value);
 }
@@ -202,9 +224,21 @@ export function validateEvidenceQualityAnnotation(
     for (const bill of claim.billIdentifiers) {
       if (!bills.has(bill.toUpperCase())) throw new Error(`Evidence quality claim returned unknown bill: ${bill}`);
     }
-    if (['supports', 'opposes', 'mixed'].includes(claim.stance)
+    if (claim.claimType === 'sponsorship') {
+      if (claim.stance !== 'supports') {
+        throw new Error('Verified exact-bill sponsorship must be treated as support');
+      }
+      if (
+        claim.linkage !== 'exact_member_bill'
+        || claim.specificity !== 'exact_bill'
+        || claim.memberNames.length === 0
+        || claim.billIdentifiers.length === 0
+      ) {
+        throw new Error('Sponsorship support requires an exact member-bill relationship');
+      }
+    } else if (['supports', 'opposes', 'mixed'].includes(claim.stance)
       && !['explicit_position', 'quoted_position'].includes(claim.claimType)) {
-      throw new Error('Directional stance requires an explicit_position or quoted_position claim type');
+      throw new Error('Directional stance requires an explicit_position, quoted_position, or verified sponsorship claim type');
     }
     if (claim.attributionType === 'target_member' && claim.memberNames.length === 0) {
       throw new Error('Target-member attribution requires at least one candidate member identity');
