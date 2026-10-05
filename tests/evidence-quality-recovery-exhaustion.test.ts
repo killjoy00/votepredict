@@ -29,6 +29,12 @@ function fixture(): PriorEvidenceQualityInventory {
       trainingSession: EVIDENCE_QUALITY_PRE_VOTE_TRAINING_SESSION,
       trainingCoveredRows: 3,
     },
+    recommendedTrainingOrdinaryCohort: {
+      session: EVIDENCE_QUALITY_PRE_VOTE_TRAINING_SESSION,
+      sources: 1,
+      potentialNewRows: 1,
+      rows: [{ sourceDocumentId: EVIDENCE_QUALITY_EXHAUSTED_ORDINARY_SOURCE_ID }],
+    },
     missingAvailabilityDiagnostic: {
       trainingSession: {
         session: EVIDENCE_QUALITY_PRE_VOTE_TRAINING_SESSION,
@@ -69,6 +75,13 @@ test('fails closed if the prior frozen exhaustion cohort drifts', () => {
   assert.throws(
     () => deriveHistoricalRecoveryExhaustion(wrongKind),
     /non-Session-Daily/,
+  );
+
+  const wrongOrdinary = fixture();
+  wrongOrdinary.recommendedTrainingOrdinaryCohort.rows[0].sourceDocumentId = 'different-source';
+  assert.throws(
+    () => deriveHistoricalRecoveryExhaustion(wrongOrdinary),
+    /ordinary 2021-22 recovery source drifted/,
   );
 
   const wrongCount = fixture();
