@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   EVIDENCE_QUALITY_SOURCE_KINDS,
+  EVIDENCE_QUALITY_SPONSORSHIP_POLICY_VERSION,
+  applyEvidenceQualitySponsorshipPolicy,
   buildEvidenceQualityPrompt,
   isEvidenceQualitySourceKind,
   sourceContentIdentityMatches,
@@ -133,5 +135,59 @@ test('classifier cannot return an unknown member or bill identity', () => {
   assert.throws(
     () => validateEvidenceQualityAnnotation(value, input()),
     /unknown member/,
+  );
+});
+
+
+test('verified exact-bill sponsorship is normalized to support under the sponsorship policy', () => {
+  const value = annotation();
+  value.claims[0] = {
+    ...value.claims[0],
+    claimType: 'sponsorship',
+    stance: 'none',
+    explicitness: 'none',
+    attributionType: 'official_record',
+    attributedActor: null,
+    normalizedClaim: 'Jane Doe is a sponsor of HF123.',
+    supportingExcerpt: 'Representative Jane Doe said she supports HF123 because the bill expands access to the program.',
+  };
+  const normalized = applyEvidenceQualitySponsorshipPolicy(value);
+  assert.equal(EVIDENCE_QUALITY_SPONSORSHIP_POLICY_VERSION, 'evidence-quality-sponsorship-support-v1');
+  assert.equal(normalized.claims[0].stance, 'supports');
+  assert.doesNotThrow(() => validateEvidenceQualityAnnotation(normalized, input()));
+});
+
+test('sponsorship cannot remain neutral once an exact member-bill relationship is verified', () => {
+  const value = annotation();
+  value.claims[0] = {
+    ...value.claims[0],
+    claimType: 'sponsorship',
+    stance: 'none',
+    explicitness: 'none',
+    attributionType: 'official_record',
+    attributedActor: null,
+  };
+  assert.throws(
+    () => validateEvidenceQualityAnnotation(value, input()),
+    /sponsorship must be treated as support/i,
+  );
+});
+
+test('sponsorship support still requires an exact member-bill relationship', () => {
+  const value = annotation();
+  value.claims[0] = {
+    ...value.claims[0],
+    claimType: 'sponsorship',
+    stance: 'supports',
+    linkage: 'member_only',
+    billIdentifiers: [],
+    specificity: 'none',
+    explicitness: 'none',
+    attributionType: 'official_record',
+    attributedActor: null,
+  };
+  assert.throws(
+    () => validateEvidenceQualityAnnotation(value, input()),
+    /exact member-bill relationship/i,
   );
 });
