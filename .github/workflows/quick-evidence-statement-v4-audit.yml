@@ -1,0 +1,62 @@
+name: Compare quick evidence statement v2 and v4
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quick-evidence-statement-v4-comparison
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: >-
+      github.event.issue.number == 612 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      startsWith(github.event.comment.body, '[quick-evidence-statement-v4-audit]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+
+      - name: Read production environment privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+
+      - name: Compare v2 and v4 read-only
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+          VOTEPREDICT_QUICK_EVIDENCE_V4_AUDIT_OUTPUT: ${{ runner.temp }}/quick-evidence-statement-v4-comparison-v1.json
+        run: node --import tsx scripts/audit-quick-evidence-statement-v4.ts
+
+      - name: Upload comparison artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: quick-evidence-statement-v4-comparison-v1
+          path: ${{ runner.temp }}/quick-evidence-statement-v4-comparison-v1.json
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Remove temporary credentials and logs
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PYTHON'
+          import os
+          from pathlib import Path
+          for name in ['votepredict-production.env','vercel-pull.log']:
+              Path(os.environ['RUNNER_TEMP'],name).unlink(missing_ok=True)
+          PYTHON
