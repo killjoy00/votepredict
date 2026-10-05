@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   HOUSE_ATTACHMENT_DENSITY_SELECTOR_PILOT_SIZE,
   HOUSE_ATTACHMENT_DENSITY_SELECTOR_POTENTIAL_ROWS,
+  houseAttachmentArchiveProbeDiscoveryFrom,
   houseAttachmentArchiveProbeTargetKey,
   houseAttachmentCaptureOpportunity,
   validateHouseAttachmentDensityPilot,
@@ -104,4 +105,10 @@ test('fails closed when a selector row cannot be reproduced from the immutable u
     targetByKey: new Map(),
     capturedAt: '2021-02-10T00:00:00.000Z',
   }), /missing from immutable target universe/);
+});
+
+test('archive discovery starts on the calendar day after the latest official listing', () => {
+  assert.equal(houseAttachmentArchiveProbeDiscoveryFrom('2021-02-03'), '2021-02-04');
+  assert.equal(houseAttachmentArchiveProbeDiscoveryFrom('2021-12-31'), '2022-01-01');
+  assert.throws(() => houseAttachmentArchiveProbeDiscoveryFrom('2021-02-30'), /listing date is invalid/);
 });
