@@ -257,7 +257,7 @@ function marginalEventCount(candidate: HouseAttachmentHistoricalDensityCandidate
 
 export function selectHouseAttachmentHistoricalDensityPilot(
   candidates: readonly HouseAttachmentHistoricalDensityCandidate[],
-  limit = HOUSE_ATTACHMENT_HISTORICAL_DENSITY_PILOT_SIZE,
+  limit: number = HOUSE_ATTACHMENT_HISTORICAL_DENSITY_PILOT_SIZE,
 ): HouseAttachmentHistoricalDensityPilotRow[] {
   const remaining = candidates.filter((candidate) => candidate.selectableFreshSurface && candidate.overlapRows > 0);
   const coveredRows = new Set<string>();
