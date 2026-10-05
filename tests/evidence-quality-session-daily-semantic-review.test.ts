@@ -75,11 +75,11 @@ test('Session Daily archive-verified semantic review is frozen, grounded, and co
   const issueDirectional = targetDirectional.filter((row) => row.decision === 'member_issue_directional');
   const thirdPartyDirectional = payload.reviews.filter((row) => row.decision === 'third_party_bill_directional_not_member_stance');
 
-  assert.equal(targetDirectional.length, 10);
-  assert.equal(exactDirectional.length, 4);
+  assert.equal(targetDirectional.length, 13);
+  assert.equal(exactDirectional.length, 7);
   assert.equal(issueDirectional.length, 6);
   assert.equal(thirdPartyDirectional.length, 1);
-  assert.ok(targetDirectional.every((row) => ['explicit_position', 'quoted_position'].includes(row.claimType)));
+  assert.ok(targetDirectional.every((row) => ['explicit_position', 'quoted_position', 'sponsorship'].includes(row.claimType)));
   assert.ok(exactDirectional.every((row) => row.billIdentifiers.length === 1 && row.specificity === 'exact_bill'));
   assert.ok(issueDirectional.every((row) => row.billIdentifiers.length === 0));
   assert.ok(thirdPartyDirectional.every((row) => row.memberNames.length === 0));
@@ -97,10 +97,10 @@ test('Session Daily archive-verified semantic review is frozen, grounded, and co
   assert.deepEqual(payload.reviews.filter((row) => row.decision.includes('human_check')).map((row) => row.row), [8, 15, 20]);
 
   assert.equal(payload.summary.documentsReviewed, 22);
-  assert.equal(payload.summary.targetMemberDirectionalClaims, 10);
-  assert.equal(payload.summary.exactMemberBillDirectionalClaims, 4);
+  assert.equal(payload.summary.targetMemberDirectionalClaims, 13);
+  assert.equal(payload.summary.exactMemberBillDirectionalClaims, 7);
   assert.equal(payload.summary.memberIssueDirectionalClaims, 6);
-  assert.equal(payload.summary.exactMemberBillDirectionalUniquePotentialRows, 6);
+  assert.equal(payload.summary.exactMemberBillDirectionalUniquePotentialRows, 11);
   assert.deepEqual(payload.summary.humanAdjudicationRecommendedRows, [8, 15, 20]);
   assert.equal(payload.summary.validationFailures, 0);
 
@@ -111,7 +111,8 @@ test('Session Daily archive-verified semantic review is frozen, grounded, and co
   assert.equal(payload.policy.reviewUsesFrozenExcerptOnly, true);
   assert.equal(payload.policy.verifiedFullTextClaimed, false);
   assert.equal(payload.policy.sourceByteHashMatchClaimed, false);
-  assert.equal(payload.policy.sponsorshipAuthorshipProcedureDirectionalByDefault, false);
+  assert.equal(payload.policy.verifiedSponsorshipDirectionalSupportByPolicy, true);
+  assert.equal(payload.policy.semanticPolicyVersion, 'evidence-quality-sponsorship-support-v1');
   assert.equal(payload.policy.individualProvisionSupportPromotedToWholeBillSupport, false);
   assert.equal(payload.policy.candidateMemberStanceInferredFromThirdPartySupport, false);
   assert.equal(payload.policy.frozenCandidateListsPreserved, true);
