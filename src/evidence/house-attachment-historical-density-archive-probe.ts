@@ -33,6 +33,18 @@ export function houseAttachmentArchiveProbeTargetKey(
   return row.voteEventId + '|' + row.membershipId;
 }
 
+export function houseAttachmentArchiveProbeDiscoveryFrom(listedOn: string): string {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(listedOn)) {
+    throw new Error('House attachment listing date is invalid');
+  }
+  const parsed = new Date(listedOn + 'T00:00:00.000Z');
+  if (!Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== listedOn) {
+    throw new Error('House attachment listing date is invalid');
+  }
+  parsed.setUTCDate(parsed.getUTCDate() + 1);
+  return parsed.toISOString().slice(0, 10);
+}
+
 function validDateOnly(value: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const parsed = new Date(value + 'T00:00:00.000Z');
