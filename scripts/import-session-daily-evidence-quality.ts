@@ -22,6 +22,18 @@ import {
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const EXPECTED_DOCUMENTS = 34;
+const EXPECTED_PRE_POLICY_DOCUMENTS = 32;
+const EXPECTED_POLICY_UPDATE_SOURCE_IDS = new Set([
+  '42fbe9b8-d1f5-4a03-b828-368f5256c28a',
+  'ee6f3cd6-fcfa-494d-a6e1-096b5feb485d',
+  'f80d09e1-230e-4a62-8e38-b197b82c1772',
+  '2627e168-3f10-42ea-aa9a-333118f1cdb8',
+  '68a4e094-4938-4a9c-a4bf-0d952b65807d',
+]);
+const EXPECTED_NEW_ADJUDICATED_SOURCE_IDS = new Set([
+  '2fd7a7e0-5c9b-49c6-a3de-9970a0600498',
+  '81b04b92-954d-42e9-b41a-b92cd531c767',
+]);
 const EXPECTED_HUMAN_CHECK_ROWS = 3;
 const EXPECTED_TARGET_MEMBER_DIRECTIONAL = 26;
 const EXPECTED_THIRD_PARTY_BILL_DIRECTIONAL = 1;
@@ -438,6 +450,44 @@ async function fetchExisting(queryable: Queryable, sourceIds: string[]) {
   }> }>;
 }
 
+function classifyExistingMigration(
+  documents: readonly ImportDocument[],
+  existing: Awaited<ReturnType<typeof fetchExisting>>['rows'],
+) {
+  const bySource = new Map(existing.map((row) => [row.source_document_id, row]));
+  const missing = documents.filter((document) => !bySource.has(document.row.sourceDocumentId));
+  const changed = documents.filter((document) => {
+    const row = bySource.get(document.row.sourceDocumentId);
+    return Boolean(row && canonicalJson(row.annotation) !== canonicalJson(document.annotation));
+  });
+
+  const missingIds = new Set(missing.map((document) => document.row.sourceDocumentId));
+  const changedIds = new Set(changed.map((document) => document.row.sourceDocumentId));
+
+  const exactSet = (actual: ReadonlySet<string>, expected: ReadonlySet<string>) =>
+    actual.size === expected.size && [...actual].every((value) => expected.has(value));
+
+  if (!exactSet(missingIds, EXPECTED_NEW_ADJUDICATED_SOURCE_IDS)) {
+    throw new Error('Unexpected Session Daily missing-source set during policy migration');
+  }
+  if (!exactSet(changedIds, EXPECTED_POLICY_UPDATE_SOURCE_IDS)) {
+    throw new Error('Unexpected Session Daily changed-annotation set during policy migration');
+  }
+
+  for (const document of changed) {
+    const row = bySource.get(document.row.sourceDocumentId)!;
+    const oldClaim = row.annotation.claims[0];
+    if (oldClaim.claimType !== 'sponsorship' || oldClaim.stance !== 'none') {
+      throw new Error('Session Daily sponsorship migration encountered unexpected prior annotation shape');
+    }
+    if (row.metadata?.manualBatchId !== document.batchId || row.metadata?.manualRow !== document.row.row) {
+      throw new Error('Session Daily sponsorship migration lineage mismatch');
+    }
+  }
+
+  return { missing, changed };
+}
+
 function verifyExisting(documents: readonly ImportDocument[], existing: Awaited<ReturnType<typeof fetchExisting>>['rows']) {
   if (existing.length !== EXPECTED_DOCUMENTS) throw new Error('Expected complete Session Daily excerpt import, found ' + existing.length + '/' + EXPECTED_DOCUMENTS);
   const bySource = new Map(existing.map((row) => [row.source_document_id, row]));
@@ -503,8 +553,8 @@ async function main() {
     validateProductionContext(documents, context);
     const existing = await fetchExisting(pool as unknown as Queryable, sourceIds);
 
-    if (existing.rows.length !== 0 && existing.rows.length !== EXPECTED_DOCUMENTS) {
-      throw new Error('Session Daily excerpt annotation import is partially present: ' + existing.rows.length + '/' + EXPECTED_DOCUMENTS);
+    if (![0, EXPECTED_PRE_POLICY_DOCUMENTS, EXPECTED_DOCUMENTS].includes(existing.rows.length)) {
+      throw new Error('Session Daily excerpt annotation import is in an unexpected partial state: ' + existing.rows.length + '/' + EXPECTED_DOCUMENTS);
     }
 
     if (existing.rows.length === EXPECTED_DOCUMENTS) {
@@ -513,8 +563,21 @@ async function main() {
       return;
     }
 
+    const migration = existing.rows.length === EXPECTED_PRE_POLICY_DOCUMENTS
+      ? classifyExistingMigration(documents, existing.rows)
+      : { missing: documents, changed: [] as ImportDocument[] };
+
     if (!apply) {
-      console.log(JSON.stringify(summary({ alreadyApplied: false, applied: false, safeToApply: true }), null, 2));
+      console.log(JSON.stringify({
+        ...summary({ alreadyApplied: false, applied: false, safeToApply: true }),
+        migration: {
+          existingRows: existing.rows.length,
+          changedRows: migration.changed.length,
+          missingRows: migration.missing.length,
+          policyUpdateSourceIds: migration.changed.map((document) => document.row.sourceDocumentId),
+          newAdjudicatedSourceIds: migration.missing.map((document) => document.row.sourceDocumentId),
+        },
+      }, null, 2));
       return;
     }
 
@@ -527,38 +590,100 @@ async function main() {
       const lockedContext = await loadProductionContext(client as unknown as Queryable, sourceIds);
       validateProductionContext(documents, lockedContext);
       const lockedExisting = await fetchExisting(client as unknown as Queryable, sourceIds);
-      if (lockedExisting.rows.length !== 0) throw new Error('Session Daily excerpt annotations appeared between preflight and locked transaction');
 
-      for (const document of documents) {
-        await client.query(`
-          INSERT INTO evidence_quality_annotations (
-            source_document_id,
-            source_document_text_id,
-            schema_version,
-            prompt_version,
-            classifier_provider,
-            classifier_model,
-            content_mode,
-            annotation,
-            extraction_confidence,
-            outcome_blind,
-            context_only,
-            mechanically_actionable,
-            model_weight,
-            metadata
-          ) VALUES (
-            $1::uuid,NULL,$2,$3,$4,$5,'excerpt_only',$6::jsonb,$7,
-            true,true,false,0,$8::jsonb
-          )`, [
-          document.row.sourceDocumentId,
-          EVIDENCE_QUALITY_SCHEMA_VERSION,
-          EVIDENCE_QUALITY_PROMPT_VERSION,
-          MANUAL_PROVIDER,
-          MODEL,
-          JSON.stringify(document.annotation),
-          0.95,
-          JSON.stringify(expectedMetadata(document)),
-        ]);
+      if (existing.rows.length === EXPECTED_PRE_POLICY_DOCUMENTS) {
+        if (lockedExisting.rows.length !== EXPECTED_PRE_POLICY_DOCUMENTS) {
+          throw new Error('Session Daily excerpt annotations changed between preflight and locked transaction');
+        }
+        const lockedMigration = classifyExistingMigration(documents, lockedExisting.rows);
+
+        for (const document of lockedMigration.changed) {
+          await client.query(`
+            UPDATE evidence_quality_annotations
+               SET annotation=$1::jsonb,
+                   metadata=$2::jsonb
+             WHERE source_document_id=$3::uuid
+               AND schema_version=$4
+               AND prompt_version=$5
+               AND classifier_provider=$6
+               AND classifier_model=$7
+               AND content_mode='excerpt_only'`, [
+            JSON.stringify(document.annotation),
+            JSON.stringify(expectedMetadata(document)),
+            document.row.sourceDocumentId,
+            EVIDENCE_QUALITY_SCHEMA_VERSION,
+            EVIDENCE_QUALITY_PROMPT_VERSION,
+            MANUAL_PROVIDER,
+            MODEL,
+          ]);
+        }
+
+        for (const document of lockedMigration.missing) {
+          await client.query(`
+            INSERT INTO evidence_quality_annotations (
+              source_document_id,
+              source_document_text_id,
+              schema_version,
+              prompt_version,
+              classifier_provider,
+              classifier_model,
+              content_mode,
+              annotation,
+              extraction_confidence,
+              outcome_blind,
+              context_only,
+              mechanically_actionable,
+              model_weight,
+              metadata
+            ) VALUES (
+              $1::uuid,NULL,$2,$3,$4,$5,'excerpt_only',$6::jsonb,$7,
+              true,true,false,0,$8::jsonb
+            )`, [
+            document.row.sourceDocumentId,
+            EVIDENCE_QUALITY_SCHEMA_VERSION,
+            EVIDENCE_QUALITY_PROMPT_VERSION,
+            MANUAL_PROVIDER,
+            MODEL,
+            JSON.stringify(document.annotation),
+            0.95,
+            JSON.stringify(expectedMetadata(document)),
+          ]);
+        }
+      } else {
+        if (lockedExisting.rows.length !== 0) {
+          throw new Error('Session Daily excerpt annotations appeared between preflight and locked transaction');
+        }
+        for (const document of documents) {
+          await client.query(`
+            INSERT INTO evidence_quality_annotations (
+              source_document_id,
+              source_document_text_id,
+              schema_version,
+              prompt_version,
+              classifier_provider,
+              classifier_model,
+              content_mode,
+              annotation,
+              extraction_confidence,
+              outcome_blind,
+              context_only,
+              mechanically_actionable,
+              model_weight,
+              metadata
+            ) VALUES (
+              $1::uuid,NULL,$2,$3,$4,$5,'excerpt_only',$6::jsonb,$7,
+              true,true,false,0,$8::jsonb
+            )`, [
+            document.row.sourceDocumentId,
+            EVIDENCE_QUALITY_SCHEMA_VERSION,
+            EVIDENCE_QUALITY_PROMPT_VERSION,
+            MANUAL_PROVIDER,
+            MODEL,
+            JSON.stringify(document.annotation),
+            0.95,
+            JSON.stringify(expectedMetadata(document)),
+          ]);
+        }
       }
 
       const inserted = await fetchExisting(client as unknown as Queryable, sourceIds);
@@ -573,7 +698,14 @@ async function main() {
 
     const final = await fetchExisting(pool as unknown as Queryable, sourceIds);
     verifyExisting(documents, final.rows);
-    console.log(JSON.stringify(summary({ alreadyApplied: false, applied: true }), null, 2));
+    console.log(JSON.stringify({
+      ...summary({ alreadyApplied: false, applied: true }),
+      migration: {
+        priorRows: existing.rows.length,
+        updatedRows: migration.changed.length,
+        insertedRows: migration.missing.length,
+      },
+    }, null, 2));
   } finally {
     await pool.end();
   }
