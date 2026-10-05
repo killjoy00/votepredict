@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "evidence-quality-historical-feature-plan-v1.5",
+  "issue": 718,
+  "purpose": "Freeze an outcome-blind, strict-as-of historical Evidence Quality substrate from the current approved 226-document verified-full-text corpus plus the 34 guarded archive-verified Session Daily excerpt annotations, before any new historical recovery or retrospective model fitting.",
+  "targetUniverse": {
+    "sourceArtifactId": 11252079484,
+    "sourceArtifactDigest": "sha256:22e8944cffc6fda553b05ea6ad5e92400d35fc01d83177efdd5d1204dd3c5a6f",
+    "sourceMatrixSchema": "historical-as-of-matrix-v1",
+    "sourceMatrixCanonicalNdjsonSha256": "c97ac50c8c89ae0548cc48bed65a42c22f332e2977b33173619c9e258c09a4d0",
+    "sourceMatrixGzipSha256": "d8a9735a514f427508a7a37303ba312dcac3f929a51aa05a1aba32a76b384637",
+    "rows": 135457,
+    "events": 1339,
+    "memberships": 611,
+    "rowKeySha256": "3aa47101f9e4a848e293fdaa89ef853919d49826b68ae90960370c5c19e9df72",
+    "chronology": {
+      "trainSession": "2021-2022",
+      "validationSession": "2023-2024",
+      "descriptiveSession": "2025-2026"
+    }
+  },
+  "annotationCorpus": {
+    "documents": 260,
+    "schemaVersion": "evidence-quality-v1",
+    "promptVersion": "evidence-quality-prompt-v1",
+    "provider": "manual-openai",
+    "baselineVerifiedFullText": {
+      "documents": 226,
+      "expectedUniqueSemanticSignatures": 180,
+      "contentMode": "verified_full_text",
+      "baselineReviewPrs": [
+        626,
+        627,
+        628
+      ],
+      "baselineProductionSyncRunId": 37222941536,
+      "postReviewDedupRunId": 37223070376,
+      "postReviewDedupArtifactId": 11310867507,
+      "postReviewDedupArtifactDigest": "sha256:16ec0c22cfd3303d6e2ffd73dd5c511a514c58b636cb6b6c5b732f0aacd66b8e",
+      "sponsorshipSupportPolicyVersion": "evidence-quality-sponsorship-support-v1",
+      "sponsorshipSupportPr": 674,
+      "sponsorshipSupportCommit": "f4367c9037a6bfb46e16c6cb72a7765d291eb8f0",
+      "sponsorshipSupportProductionSyncRunId": 37258246215,
+      "verifiedSponsorshipSupportClaims": 24,
+      "proceduralMisclassificationCorrections": 1
+    },
+    "sessionDailyArchiveVerifiedExcerpt": {
+      "documents": 34,
+      "expectedUniqueSemanticSignatures": 34,
+      "contentMode": "excerpt_only",
+      "sourceDocumentTextId": null,
+      "sourceKind": "house_session_daily",
+      "importVersion": "session-daily-excerpt-evidence-quality-import-v1",
+      "initialImportPr": 661,
+      "initialImportCommit": "a8cdefc0e2d28297eba77039ebd1b22a7e7eb38c",
+      "initialApplyRunId": 37242028266,
+      "policyMigrationPr": 674,
+      "policyMigrationCommit": "f4367c9037a6bfb46e16c6cb72a7765d291eb8f0",
+      "policyMigrationRunId": 37258343803,
+      "excludedHumanAdjudicationRows": 3,
+      "targetMemberDirectionalClaims": 26,
+      "exactMemberBillDirectionalClaims": 16,
+      "memberIssueDirectionalClaims": 10,
+      "thirdPartyBillOnlyDirectionalClaims": 1,
+      "nonDirectionalClaims": 7
+    }
+  },
+  "featureNames": [
+    "exactDirectionalAvailable",
+    "exactSupportSignatures",
+    "exactOpposeSignatures",
+    "exactMixedSignatures",
+    "exactDirectQuoteSupportSignatures",
+    "exactDirectQuoteOpposeSignatures",
+    "exactExplicitSupportSignatures",
+    "exactExplicitOpposeSignatures",
+    "exactSupportMaxConfidence",
+    "exactOpposeMaxConfidence",
+    "exactMixedMaxConfidence",
+    "exactDirectionalConflict"
+  ],
+  "policies": {
+    "outcomeUseDuringFeatureConstruction": "none",
+    "strictDateExclusiveAvailability": true,
+    "baselineAvailabilitySource": "exact evidence_items.metadata excerpt proof when claim/context identity and supporting excerpt match; source_documents.metadata fallback",
+    "sessionDailyExcerptAvailabilitySource": "exact evidence_items.metadata excerpt proof only; source_documents.metadata fallback forbidden",
+    "semanticDeduplication": "one signal per semanticFingerprint + membershipId + billId; repeated captures do not multiply counts",
+    "exactBillMapping": "prefer matching evidence_items membership_id + bill_id; otherwise resolve only reviewed claim identities by unique exact match within source session/chamber; never invent or infer a bill identifier",
+    "memberIssuePolicy": "member_issue evidence remains bill-free; membership may be resolved by unique exact reviewed member identity in the source session/chamber, with no bill inference",
+    "legacyQuickEvidenceV2": "excluded/quarantined",
+    "quickEvidenceV3": "excluded/evaluation-only",
+    "servingAction": "none",
+    "modelWeightChange": "none",
+    "modelFitting": "none",
+    "evidenceItemScopedProofNeverPromotedSourceWide": true
+  },
+  "supersedes": "evidence-quality-historical-feature-plan-v1.4",
+  "granularAvailabilityCorrection": {
+    "reason": "Evidence-item-scoped archive proof remains attached to the exact durable evidence item/excerpt. A proven excerpt must not promote unrelated content from the same later-fetched source document.",
+    "sourcePlanRunId": 37237103992,
+    "sourcePlanArtifactId": 11315632754,
+    "sourcePlanArtifactDigest": "sha256:6b1f7bfb91cdfe79994cdc87314c3efd505610a1effe81cec8630341860da5e6",
+    "plannedExactEvidenceItems": 49,
+    "sourceWidePromotionsAuthorized": 0,
+    "outcomeUse": "none"
+  },
+  "v15Change": {
+    "reason": "Reconcile historical consumers to the already-approved #674 semantic state: sponsorship-support-v1 in the 226 verified-full-text corpus and the final 34-document Session Daily excerpt cohort.",
+    "historicalConsumerGate": {
+      "baselineVerifiedFullTextDocuments": 226,
+      "baselineSponsorshipSupportPolicyVersion": "evidence-quality-sponsorship-support-v1",
+      "sessionDailyArchiveVerifiedExcerptDocuments": 34,
+      "sessionDailyImportVersion": "session-daily-excerpt-evidence-quality-import-v1",
+      "sessionDailyRequiredSourceKind": "house_session_daily",
+      "sessionDailyRequiredContentMode": "excerpt_only",
+      "sessionDailyRequiredSourceDocumentTextId": null,
+      "sessionDailyRequiredHistoricalAvailabilityScope": "evidence_item_excerpt",
+      "sessionDailySourceAvailabilityFallback": false
+    },
+    "comparisonBaseline": {
+      "plan": "evidence-quality-historical-feature-plan-v1.4",
+      "freezeRunId": 37242666010,
+      "freezeArtifactId": 11318046136,
+      "freezeArtifactDigest": "sha256:e563a8f5623818af3eed1ea6182ad210009709095add5fc48398c5a6370ea648",
+      "nonzeroExactBillRows": 29,
+      "sessionNonzeroRows": {
+        "2021-2022": 3,
+        "2023-2024": 23,
+        "2025-2026": 3
+      }
+    },
+    "outcomeUse": "none",
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}

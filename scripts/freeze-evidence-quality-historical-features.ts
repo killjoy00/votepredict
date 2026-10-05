@@ -31,10 +31,10 @@ const EXPECTED_EVENTS = 1339;
 const EXPECTED_MEMBERSHIPS = 611;
 const EXPECTED_ROW_KEY_SHA256 = '3aa47101f9e4a848e293fdaa89ef853919d49826b68ae90960370c5c19e9df72';
 const MANUAL_PROVIDER = 'manual-openai';
-const MATRIX_SCHEMA = 'evidence-quality-historical-feature-matrix-v1.4';
-const SIGNAL_SCHEMA = 'evidence-quality-historical-exact-signals-v1.4';
-const ISSUE_SCHEMA = 'evidence-quality-historical-member-issue-signals-v1.4';
-const PLAN_PATH = 'data/evaluation/evidence-quality/evidence-quality-historical-feature-plan-v1.4.json';
+const MATRIX_SCHEMA = 'evidence-quality-historical-feature-matrix-v1.5';
+const SIGNAL_SCHEMA = 'evidence-quality-historical-exact-signals-v1.5';
+const ISSUE_SCHEMA = 'evidence-quality-historical-member-issue-signals-v1.5';
+const PLAN_PATH = 'data/evaluation/evidence-quality/evidence-quality-historical-feature-plan-v1.5.json';
 const DATABASE_CANDIDATES = ['DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING', 'DATABASE_URL', 'POSTGRES_URL'] as const;
 const DATABASE_BRIDGE_URL = 'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 let secrets: string[] = [];
@@ -347,7 +347,7 @@ async function main() {
   if (!envFile || !targetPath || !outputDir) throw new Error('Production env, target universe, and output directory are required');
 
   const plan = JSON.parse(readFileSync(resolve(PLAN_PATH), 'utf8')) as { schemaVersion: string; featureNames: string[] };
-  if (plan.schemaVersion !== 'evidence-quality-historical-feature-plan-v1.4'
+  if (plan.schemaVersion !== 'evidence-quality-historical-feature-plan-v1.5'
       || canonicalJson(plan.featureNames) !== canonicalJson([...EVIDENCE_QUALITY_HISTORICAL_FEATURES])) {
     throw new Error('Evidence Quality historical feature plan drifted');
   }
@@ -751,17 +751,17 @@ async function main() {
     const exactGzip = gzipSync(Buffer.from(exactText), { level: 9 });
     const issueGzip = gzipSync(Buffer.from(issueText), { level: 9 });
 
-    const matrixPath = resolve(outputDir, 'evidence-quality-historical-feature-matrix-v1.4.ndjson.gz');
-    const exactPath = resolve(outputDir, 'evidence-quality-historical-exact-signals-v1.4.ndjson.gz');
-    const issuePath = resolve(outputDir, 'evidence-quality-historical-member-issue-signals-v1.4.ndjson.gz');
+    const matrixPath = resolve(outputDir, 'evidence-quality-historical-feature-matrix-v1.5.ndjson.gz');
+    const exactPath = resolve(outputDir, 'evidence-quality-historical-exact-signals-v1.5.ndjson.gz');
+    const issuePath = resolve(outputDir, 'evidence-quality-historical-member-issue-signals-v1.5.ndjson.gz');
     writeFileSync(matrixPath, matrixGzip);
     writeFileSync(exactPath, exactGzip);
     writeFileSync(issuePath, issueGzip);
 
     const manifest = {
-      schemaVersion: 'evidence-quality-historical-feature-matrix-v1.4-manifest',
+      schemaVersion: 'evidence-quality-historical-feature-matrix-v1.5-manifest',
       generatedAt: new Date().toISOString(),
-      issue: 579,
+      issue: 718,
       plan: PLAN_PATH,
       annotationCorpus: {
         documents: selectedRows.length,
@@ -831,7 +831,7 @@ async function main() {
         modelWeightChanged: false,
       },
     };
-    const manifestPath = resolve(outputDir, 'evidence-quality-historical-feature-matrix-v1.4-manifest.json');
+    const manifestPath = resolve(outputDir, 'evidence-quality-historical-feature-matrix-v1.5-manifest.json');
     writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
 
     console.log(JSON.stringify({

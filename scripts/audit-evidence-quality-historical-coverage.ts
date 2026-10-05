@@ -458,9 +458,9 @@ async function main() {
     for (const row of unmappedExactClaims) increment(unmappedBySourceKind, String(row.sourceKind));
 
     const audit = {
-      schemaVersion: 'evidence-quality-historical-coverage-audit-v1.2',
+      schemaVersion: 'evidence-quality-historical-coverage-audit-v1.3',
       generatedAt: new Date().toISOString(),
-      issue: 579,
+      issue: 718,
       targetUniverse: {
         rows: targets.length,
         events: new Set(targets.map((row) => row.voteEventId)).size,

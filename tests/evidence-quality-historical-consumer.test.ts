@@ -21,8 +21,8 @@ function excerptMetadata(overrides: Record<string, unknown> = {}) {
   };
 }
 
-test('historical consumer cohort count is frozen at 226 baseline plus 32 Session Daily excerpts', () => {
-  assert.equal(EVIDENCE_QUALITY_HISTORICAL_CONSUMER_DOCUMENTS, 258);
+test('historical consumer cohort count is frozen at 226 baseline plus 34 Session Daily excerpts', () => {
+  assert.equal(EVIDENCE_QUALITY_HISTORICAL_CONSUMER_DOCUMENTS, 260);
 });
 
 test('verified full text remains eligible only with a source text identity', () => {
@@ -43,7 +43,7 @@ test('verified full text remains eligible only with a source text identity', () 
   }), null);
 });
 
-test('only exact #661 Session Daily excerpt metadata is admitted', () => {
+test('only exact guarded Session Daily excerpt metadata is admitted', () => {
   assert.equal(evidenceQualityHistoricalAnnotationCohort({
     sourceKind: 'house_session_daily',
     sourceDocumentTextId: null,
