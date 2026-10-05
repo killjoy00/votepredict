@@ -43,7 +43,8 @@
     "servingChanged": false,
     "semanticPolicyVersion": "evidence-quality-sponsorship-support-v1",
     "humanAdjudicationVersion": "session-daily-five-row-human-adjudication-v1",
-    "verifiedSponsorshipDirectionalSupportByPolicy": true
+    "verifiedSponsorshipDirectionalSupportByPolicy": true,
+    "procedureDirectionalByDefault": false
   },
   "reviews": [
     {
