@@ -186,26 +186,30 @@ async function main() {
             WHERE sd.source_kind='wayback_member_primary'
               AND ei.metadata->>'subtype'='archived_member_primary_profile'
           )::int AS profile_anchor_sources,
-          min(ei.published_at)::text FILTER (
-            WHERE (
-              sd.source_kind='senate_member_primary_historical_article'
-              OR sd.source_kind='wayback_campaign_site'
-              OR (
-                sd.source_kind='wayback_member_primary'
-                AND coalesce(ei.metadata->>'subtype','') <> 'archived_member_primary_profile'
+          (
+            min(ei.published_at) FILTER (
+              WHERE (
+                sd.source_kind='senate_member_primary_historical_article'
+                OR sd.source_kind='wayback_campaign_site'
+                OR (
+                  sd.source_kind='wayback_member_primary'
+                  AND coalesce(ei.metadata->>'subtype','') <> 'archived_member_primary_profile'
+                )
               )
             )
-          ) AS earliest_substantive_published_at,
-          max(ei.published_at)::text FILTER (
-            WHERE (
-              sd.source_kind='senate_member_primary_historical_article'
-              OR sd.source_kind='wayback_campaign_site'
-              OR (
-                sd.source_kind='wayback_member_primary'
-                AND coalesce(ei.metadata->>'subtype','') <> 'archived_member_primary_profile'
+          )::text AS earliest_substantive_published_at,
+          (
+            max(ei.published_at) FILTER (
+              WHERE (
+                sd.source_kind='senate_member_primary_historical_article'
+                OR sd.source_kind='wayback_campaign_site'
+                OR (
+                  sd.source_kind='wayback_member_primary'
+                  AND coalesce(ei.metadata->>'subtype','') <> 'archived_member_primary_profile'
+                )
               )
             )
-          ) AS latest_substantive_published_at
+          )::text AS latest_substantive_published_at
         FROM target_memberships tm
         LEFT JOIN evidence_items ei ON ei.membership_id=tm.id
         LEFT JOIN source_documents sd ON sd.id=ei.source_document_id
