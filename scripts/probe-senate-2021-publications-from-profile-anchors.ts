@@ -11,6 +11,10 @@ const DATABASE_CANDIDATES = [
 const DATABASE_BRIDGE_URL =
   'https://br-billowing-wave-aecfbwky-dbbridge.compute.c-2.us-east-2.aws.neon.tech/connection';
 const SESSION = '2021-2022';
+const STRICT_ARCHIVE_FROM = '20210101';
+const STRICT_ARCHIVE_TO = '20221231';
+const STRICT_NATIVE_PUBLISHED_FROM = '2021-01-01';
+const STRICT_NATIVE_PUBLISHED_TO = '2022-12-31';
 const MAX_LINK_CANDIDATES_PER_MEMBER = 8;
 const MAX_VERIFIED_PUBLICATIONS_PER_MEMBER = 8;
 const PROFILE_ANCHOR_TIMEOUT_MS = 12_000;
@@ -251,7 +255,6 @@ async function main() {
   const { discoverWaybackCaptures } = await import('../src/evidence/wayback.js');
   const {
     selectWaybackEvidenceCaptures,
-    sessionArchiveWindow,
   } = await import('../src/evidence/wayback-public-evidence-backfill.js');
 
   try {
@@ -330,7 +333,7 @@ async function main() {
       anchorsByMembership.set(anchor.membership_id, list);
     }
 
-    const window = sessionArchiveWindow(SESSION);
+    const window = { from: STRICT_ARCHIVE_FROM, to: STRICT_ARCHIVE_TO };
     const probeStartedAt = Date.now();
     const globalDeadline = probeStartedAt + GLOBAL_PROBE_BUDGET_MS;
     const results: Array<Record<string, unknown>> = [];
@@ -469,7 +472,13 @@ async function main() {
           articleSnapshotsFetched += 1;
           const mentionsMember = publicPageMentionsPerson(page.text, target.member_name);
           const enoughText = page.text.length >= 250;
-          const accepted = mentionsMember && enoughText;
+          const nativePublishedAt = page.publishedAt ?? null;
+          const nativePublishedInSession = nativePublishedAt === null
+            || (
+              nativePublishedAt.slice(0, 10) >= STRICT_NATIVE_PUBLISHED_FROM
+              && nativePublishedAt.slice(0, 10) <= STRICT_NATIVE_PUBLISHED_TO
+            );
+          const accepted = mentionsMember && enoughText && nativePublishedInSession;
 
           probes.push({
             url: candidate.url,
@@ -478,10 +487,15 @@ async function main() {
             capturesDiscovered: captures.length,
             selectedCapturedAt: capture.capturedAt,
             title: page.title ?? null,
-            publishedAt: page.publishedAt ?? null,
+            publishedAt: nativePublishedAt,
             mentionsMember,
+            nativePublishedInSession,
             readableCharacters: page.text.length,
-            status: accepted ? 'verified_publication_candidate' : 'rejected_content_check',
+            status: accepted
+              ? 'verified_publication_candidate'
+              : !nativePublishedInSession
+                ? 'rejected_outside_session_native_publication_date'
+                : 'rejected_content_check',
           });
 
           if (!accepted) continue;
@@ -493,7 +507,7 @@ async function main() {
             archiveCapturedAt: capture.capturedAt,
             archiveDigest: capture.digest,
             title: page.title ?? (candidate.linkText || null),
-            nativePublishedAt: page.publishedAt ?? null,
+            nativePublishedAt,
             availabilityBound: capture.capturedAt,
             availabilityBoundKind: 'exact_archive_capture',
             discoveredFromProfileSourceDocumentIds: [...candidate.discoveredFrom],
@@ -541,7 +555,7 @@ async function main() {
 
     const output = {
       senate2021PublicationAnchorProbe: {
-        schemaVersion: 'senate-2021-publication-anchor-probe-v2',
+        schemaVersion: 'senate-2021-publication-anchor-probe-v3',
         session: SESSION,
         targets: results,
         totals: {
@@ -562,6 +576,8 @@ async function main() {
           verifiedProfileAnchorRequired: true,
           sameSiteLinksOnly: true,
           inSessionArchiveCaptureRequired: true,
+          strictArchiveWindow: { from: STRICT_ARCHIVE_FROM, to: STRICT_ARCHIVE_TO },
+          nativePublicationDateMustBeInSessionWhenPresent: true,
           articleMustMentionMember: true,
           archiveCaptureIsAvailabilityUpperBound: true,
           firstPublicationNotInferredFromCapture: true,
