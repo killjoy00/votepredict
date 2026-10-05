@@ -10,9 +10,10 @@ import {
   HISTORICAL_DENSITY_SINGLE_SOURCE_URL,
   resolveHistoricalDensitySingleTarget,
   selectHistoricalDensitySingleSourceCandidate,
+  type HistoricalDensityInventoryShape,
 } from '../src/evidence/evidence-quality-single-source-recovery.js';
 
-function inventory() {
+function inventory(): HistoricalDensityInventoryShape {
   return {
     schemaVersion: HISTORICAL_DENSITY_SINGLE_SOURCE_INVENTORY_SCHEMA,
     targetUniverse: { rows: 135457, currentCoveredRows: 29 },
