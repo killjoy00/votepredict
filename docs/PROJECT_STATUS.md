@@ -162,6 +162,7 @@ The production reconciliation repaired the release-integrity drift found during 
 - [x] Record historically reconstructable prior same-bill amendment/motion/procedural/other vote counts in the unified Quick Evidence vector at zero weight, with same-day rows excluded.
 - [x] Add a frozen retrospective structured-legislative component diagnostic using 2021-22 training, 2023-24 validation, and 2025-26 descriptive scoring.
 - [x] Add fail-closed dated sponsorship reconstruction from official Revisor current-author state plus dated author additions/strikes, record `billAuthor` inside the single Quick Evidence vector at zero weight, and freeze an authorship component diagnostic.
+- [x] Adopt `evidence-quality-sponsorship-support-v1`: verified sponsor/co-sponsor/authorship is semantically supportive exact-bill evidence, with dated Revisor authorship authoritative and `billAuthor` remaining zero-weight/non-mechanical unless separately promoted.
 - [x] Add official House floor-amendment proposer/disposition capture at zero weight.
 - [x] Add official conference-committee appointment capture at zero weight.
 - [x] Add exact-bill named-member legislative speech/reporting capture at zero weight.
