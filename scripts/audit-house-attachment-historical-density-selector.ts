@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import { gunzipSync } from 'node:zlib';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 import { HOUSE_COMMITTEE_ARCHIVE_PARSER_VERSION } from '../src/evidence/house-committee-archive.js';
+import { canonicalHouseCommitteeAttachmentPdfUrl } from '../src/evidence/house-committee-attachment-content.js';
 import {
   HOUSE_ATTACHMENT_HISTORICAL_DENSITY_PILOT_SIZE,
   HOUSE_ATTACHMENT_HISTORICAL_DENSITY_SELECTOR_VERSION,
@@ -35,9 +36,11 @@ type DatabaseRow = {
   attachment_name: string;
   attachment_subtype: string;
   official_posted_on: string;
-  prior_wayback_pdf: boolean;
-  prior_wayback_scan: boolean;
-  current_body_present: boolean;
+};
+
+type IdentityRow = {
+  archive_evidence_id: string | null;
+  attachment_url: string | null;
 };
 
 function mask(value: string) {
@@ -123,6 +126,30 @@ function countBy(rows: readonly string[]) {
   return Object.fromEntries(Object.entries(counts).sort(([a], [b]) => a.localeCompare(b)));
 }
 
+function attachmentIdentityUrl(value: string): string | null {
+  try {
+    const canonical = canonicalHouseCommitteeAttachmentPdfUrl(value);
+    const url = new URL(canonical);
+    if (url.hostname.toLowerCase() === 'house.mn.gov') url.hostname = 'www.house.mn.gov';
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
+function identitySets(rows: readonly IdentityRow[]) {
+  const ids = new Set<string>();
+  const urls = new Set<string>();
+  for (const row of rows) {
+    if (row.archive_evidence_id) ids.add(row.archive_evidence_id);
+    if (row.attachment_url) {
+      const normalized = attachmentIdentityUrl(row.attachment_url);
+      if (normalized) urls.add(normalized);
+    }
+  }
+  return { ids, urls };
+}
+
 async function main() {
   const envFile = process.env.VOTEPREDICT_PRODUCTION_ENV_FILE;
   const targetPath = process.env.VOTEPREDICT_EQ_TARGET_UNIVERSE_PATH;
@@ -149,8 +176,12 @@ async function main() {
   const { pool } = await import('../src/lib/db/index.js');
   const client = await pool.connect();
   let dbRows: DatabaseRow[] = [];
+  let priorWaybackRows: IdentityRow[] = [];
+  let priorScanRows: IdentityRow[] = [];
+  let currentBodyRows: IdentityRow[] = [];
   try {
     await client.query('BEGIN READ ONLY');
+
     dbRows = (await client.query<DatabaseRow>(`
       SELECT ei.id::text AS archive_evidence_id,
              ei.bill_id::text AS bill_id,
@@ -158,34 +189,7 @@ async function main() {
              ei.metadata->>'attachmentUrl' AS attachment_url,
              coalesce(ei.metadata->>'attachmentName','House committee attachment') AS attachment_name,
              coalesce(ei.metadata->>'subtype','committee_archive_attachment') AS attachment_subtype,
-             ei.metadata->>'officialPostedOn' AS official_posted_on,
-             EXISTS (
-               SELECT 1
-                 FROM source_documents archived
-                WHERE archived.source_kind='house_committee_attachment_wayback_pdf'
-                  AND (
-                    archived.metadata->>'archiveEvidenceId'=ei.id::text
-                    OR archived.metadata->>'originalUrl'=ei.metadata->>'attachmentUrl'
-                  )
-             ) AS prior_wayback_pdf,
-             EXISTS (
-               SELECT 1
-                 FROM evidence_items marker
-                WHERE marker.metadata->>'subtype'='committee_attachment_wayback_scan_marker'
-                  AND (
-                    marker.metadata->>'archiveEvidenceId'=ei.id::text
-                    OR marker.metadata->>'originalUrl'=ei.metadata->>'attachmentUrl'
-                  )
-             ) AS prior_wayback_scan,
-             EXISTS (
-               SELECT 1
-                 FROM source_documents current_body
-                WHERE current_body.source_kind='house_committee_attachment_pdf'
-                  AND (
-                    current_body.metadata->>'archiveEvidenceId'=ei.id::text
-                    OR current_body.metadata->>'listedAttachmentUrl'=ei.metadata->>'attachmentUrl'
-                  )
-             ) AS current_body_present
+             ei.metadata->>'officialPostedOn' AS official_posted_on
         FROM evidence_items ei
         JOIN source_documents archive_page ON archive_page.id=ei.source_document_id
         JOIN bills b ON b.id=ei.bill_id
@@ -199,24 +203,56 @@ async function main() {
          AND lower(split_part(ei.metadata->>'attachmentUrl','?',1)) LIKE '%.pdf'
        ORDER BY ei.id
     `, [HOUSE_COMMITTEE_ARCHIVE_PARSER_VERSION, HOUSE_ATTACHMENT_HISTORICAL_DENSITY_SESSION])).rows;
+
+    priorWaybackRows = (await client.query<IdentityRow>(`
+      SELECT metadata->>'archiveEvidenceId' AS archive_evidence_id,
+             metadata->>'originalUrl' AS attachment_url
+        FROM source_documents
+       WHERE source_kind='house_committee_attachment_wayback_pdf'
+    `)).rows;
+
+    priorScanRows = (await client.query<IdentityRow>(`
+      SELECT metadata->>'archiveEvidenceId' AS archive_evidence_id,
+             metadata->>'originalUrl' AS attachment_url
+        FROM evidence_items
+       WHERE metadata->>'subtype'='committee_attachment_wayback_scan_marker'
+    `)).rows;
+
+    currentBodyRows = (await client.query<IdentityRow>(`
+      SELECT metadata->>'archiveEvidenceId' AS archive_evidence_id,
+             metadata->>'listedAttachmentUrl' AS attachment_url
+        FROM source_documents
+       WHERE source_kind='house_committee_attachment_pdf'
+    `)).rows;
+
     await client.query('ROLLBACK');
   } finally {
     client.release();
     await pool.end();
   }
 
-  const evidenceRows: HouseAttachmentHistoricalDensityEvidenceRow[] = dbRows.map((row) => ({
-    archiveEvidenceId: row.archive_evidence_id,
-    billId: row.bill_id,
-    billIdentifier: row.bill_identifier,
-    attachmentUrl: row.attachment_url,
-    attachmentName: row.attachment_name,
-    attachmentSubtype: row.attachment_subtype,
-    officialPostedOn: row.official_posted_on,
-    priorWaybackPdf: row.prior_wayback_pdf,
-    priorWaybackScan: row.prior_wayback_scan,
-    currentBodyPresent: row.current_body_present,
-  }));
+  const priorWayback = identitySets(priorWaybackRows);
+  const priorScan = identitySets(priorScanRows);
+  const currentBody = identitySets(currentBodyRows);
+
+  const evidenceRows: HouseAttachmentHistoricalDensityEvidenceRow[] = dbRows.map((row) => {
+    const normalizedUrl = attachmentIdentityUrl(row.attachment_url);
+    return {
+      archiveEvidenceId: row.archive_evidence_id,
+      billId: row.bill_id,
+      billIdentifier: row.bill_identifier,
+      attachmentUrl: row.attachment_url,
+      attachmentName: row.attachment_name,
+      attachmentSubtype: row.attachment_subtype,
+      officialPostedOn: row.official_posted_on,
+      priorWaybackPdf: priorWayback.ids.has(row.archive_evidence_id)
+        || Boolean(normalizedUrl && priorWayback.urls.has(normalizedUrl)),
+      priorWaybackScan: priorScan.ids.has(row.archive_evidence_id)
+        || Boolean(normalizedUrl && priorScan.urls.has(normalizedUrl)),
+      currentBodyPresent: currentBody.ids.has(row.archive_evidence_id)
+        || Boolean(normalizedUrl && currentBody.urls.has(normalizedUrl)),
+    };
+  });
 
   const inputIdentityRows = evidenceRows
     .map((row) => JSON.stringify({
