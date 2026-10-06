@@ -16,7 +16,10 @@ concurrency:
   group: votepredict-production-forecast-scheduler
   cancel-in-progress: false
 
-jobs:\n  run:\n    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'\n    runs-on: ubuntu-latest
+jobs:
+  run:
+    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
