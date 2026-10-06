@@ -165,7 +165,7 @@ function unique(values: readonly string[]): string[] {
   return [...new Set(values)];
 }
 
-function reviewKey(issueFamily: string, identifier: string, occurredOn: string): string {
+function makeReviewKey(issueFamily: string, identifier: string, occurredOn: string): string {
   return `${issueFamily}|${identifier}|${occurredOn}`;
 }
 
@@ -263,7 +263,7 @@ function main() {
       throw new Error(`Candidate safety/provenance drifted: ${claim.claimId} ${claim.identifier}`);
     }
 
-    const key = reviewKey(
+    const key = makeReviewKey(
       claim.issueFamily,
       claim.identifier,
       claim.occurredOn,
@@ -417,7 +417,7 @@ function main() {
     const claim = candidateByEventMembership.get(eventKey);
     if (!claim) throw new Error(`Missing candidate claim for ${eventKey}`);
 
-    const reviewKey = reviewKey(
+    const reviewKey = makeReviewKey(
       claim.issueFamily,
       claim.identifier,
       claim.occurredOn,
