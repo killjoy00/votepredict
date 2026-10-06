@@ -1,0 +1,105 @@
+name: Recover single 2025 historical-density official source
+
+on:
+  pull_request:
+    paths:
+      - scripts/recover-historical-density-2025-single-official-source.ts
+      - .github/workflows/historical-density-2025-single-official-source.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/recover-historical-density-2025-single-official-source.ts
+      - .github/workflows/historical-density-2025-single-official-source.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2025-single-source-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    name: Recover exact frozen House article
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize frozen v1.5 candidate inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11380604012/zip > "$RUNNER_TEMP/candidates.zip"
+          echo "c3cbd57573598c36071afb7c4de84ce15a334972ee75c0accdcea93317a93450  $RUNNER_TEMP/candidates.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/candidates"
+          unzip -q "$RUNNER_TEMP/candidates.zip" evidence-quality-pre-vote-candidate-inventory-v1.5.json -d "$RUNNER_TEMP/candidates"
+
+      - name: Recover exact frozen source content
+        env:
+          VOTEPREDICT_EQ_V15_CANDIDATE_INVENTORY_PATH: ${{ runner.temp }}/candidates/evidence-quality-pre-vote-candidate-inventory-v1.5.json
+          VOTEPREDICT_HISTORICAL_DENSITY_2025_RECOVERY_OUTPUT_DIR: ${{ runner.temp }}/recovery
+        run: node --import tsx scripts/recover-historical-density-2025-single-official-source.ts
+
+      - name: Verify fail-closed recovery contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/recovery/historical-density-2025-single-official-source-recovery-v1.json"
+          test "$(jq -r '.frozenInput.inventoryArtifactId' "$f")" = 11380604012
+          test "$(jq -r '.frozenInput.sourceDocumentId' "$f")" = e7c86e77-31bb-422e-9569-4c9e98f7fdbe
+          test "$(jq -r '.frozenInput.sourceKind' "$f")" = member_primary_article
+          test "$(jq -r '.frozenInput.frozenContentSha256' "$f")" = 46d09d251af2e80d349e339364201d339d858c16fcd0df20201a358ad7ab84db
+          test "$(jq -r '.frozenInput.availableOn' "$f")" = 2025-02-17
+          test "$(jq -r '.frozenInput.targetSession' "$f")" = 2025-2026
+          test "$(jq -r '.frozenInput.newCoverageRows' "$f")" = 1
+          case "$(jq -r '.result.status' "$f")" in
+            recovered|hash_mismatch|fetch_failure|short_text) ;;
+            *) echo "::error::Unexpected recovery status"; exit 1 ;;
+          esac
+          if [ "$(jq -r '.result.status' "$f")" = recovered ]; then
+            test "$(jq -r '.result.exactFrozenContentMatch' "$f")" = true
+            test "$(jq -r '.result.normalizedText | length > 40' "$f")" = true
+            test "$(jq -r '.result.normalizedTextSha256 | test("^[0-9a-f]{64}$")' "$f")" = true
+          else
+            test "$(jq -r '.result.normalizedText == null' "$f")" = true
+          fi
+          test "$(jq -r '.policy.exactFrozenContentShaRequiredForReviewableText' "$f")" = true
+          test "$(jq -r '.policy.mutableCurrentPageSubstitution' "$f")" = false
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.semanticApplicabilityInference' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          {
+            echo '## Bounded 2025 historical source recovery'
+            echo
+            echo "- Source: `e7c86e77-31bb-422e-9569-4c9e98f7fdbe`"
+            echo "- Frozen availability: **2025-02-17**"
+            echo "- Potential new 2025-26 rows: **1**"
+            echo "- Result: **$(jq -r '.result.status' "$f")**"
+            echo "- Exact frozen content match: **$(jq -r '.result.exactFrozenContentMatch' "$f")**"
+            echo "- Production DB queried: **no**"
+            echo "- Outcomes used: **none**"
+            echo "- Vercel used: **no**"
+            echo "- Model fitting: **none**"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2025-single-official-source-recovery-v1
+          path: ${{ runner.temp }}/recovery/*
+          if-no-files-found: error
+          retention-days: 90
