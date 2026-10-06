@@ -1,17 +1,20 @@
 name: Revisor introduction sharded production backfill
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/revisor-introduction-sharded-backfill.yml
   workflow_dispatch:
+    inputs:
+      run_vercel:
+        description: Explicitly allow this workflow to contact Vercel
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 jobs:
   backfill:
+    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'
     strategy:
       fail-fast: false
       max-parallel: 2
