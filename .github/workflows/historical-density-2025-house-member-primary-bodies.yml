@@ -1,0 +1,113 @@
+name: Historical density 2025 House member-primary body recovery
+
+on:
+  pull_request:
+    paths:
+      - scripts/recover-historical-density-2025-house-member-primary-bodies.ts
+      - .github/workflows/historical-density-2025-house-member-primary-bodies.yml
+      - src/evidence/bill-statement-extractor.ts
+      - src/evidence/public-http.ts
+  push:
+    branches: [main]
+    paths:
+      - scripts/recover-historical-density-2025-house-member-primary-bodies.ts
+      - .github/workflows/historical-density-2025-house-member-primary-bodies.yml
+      - src/evidence/bill-statement-extractor.ts
+      - src/evidence/public-http.ts
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2025-house-member-primary-bodies-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    name: Recover strict-pre-vote House member-primary bodies
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize immutable 2025 House member-primary inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11440840273/zip > "$RUNNER_TEMP/house-inventory.zip"
+          echo "07ee41210122f42716269ab56f8775d78e10d00df39740315acc1ce055937c20  $RUNNER_TEMP/house-inventory.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/house-inventory"
+          unzip -q "$RUNNER_TEMP/house-inventory.zip" historical-density-2025-house-member-primary-inventory-v1.json -d "$RUNNER_TEMP/house-inventory"
+
+      - name: Recover bodies and screen exact-bill explicit statements
+        env:
+          VOTEPREDICT_HISTORICAL_DENSITY_2025_HOUSE_INVENTORY_PATH: ${{ runner.temp }}/house-inventory/historical-density-2025-house-member-primary-inventory-v1.json
+          VOTEPREDICT_HISTORICAL_DENSITY_2025_HOUSE_BODIES_OUTPUT_DIR: ${{ runner.temp }}/house-bodies
+        run: node --import tsx scripts/recover-historical-density-2025-house-member-primary-bodies.ts
+
+      - name: Verify recovery accounting and safety
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/house-bodies/historical-density-2025-house-member-primary-bodies-v1.json"
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-member-primary-bodies-v1
+          test "$(jq -r '.issue' "$f")" = 718
+          test "$(jq -r '.session' "$f")" = 2025-2026
+          test "$(jq -r '.frozenInput.sourceEntries' "$f")" = 1340
+          test "$(jq -r '.frozenInput.targetEvents' "$f")" = 25
+          test "$(jq -r '.frozenInput.targetBills' "$f")" = 25
+          test "$(jq -r '.recovery.attemptedArticleBodies' "$f")" = 1340
+          test "$(jq -r '(.recovery.fetchedArticleBodies + .recovery.failedArticleBodies) == 1340' "$f")" = true
+          test "$(jq -r '.recovery.fetchedArticleBodies > 0' "$f")" = true
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.sameDayEligible' "$f")" = false
+          test "$(jq -r '.policy.sourceBodiesFetched' "$f")" = true
+          test "$(jq -r '.policy.nonCandidateBodiesRetained' "$f")" = true
+          test "$(jq -r '.policy.allFetchedBodiesRetainedForSemanticReview' "$f")" = true
+          test "$(jq -r '.recovery.bodies | length' "$f")" = "$(jq -r '.recovery.fetchedArticleBodies' "$f")"
+          test "$(jq -r '.policy.exactBillLinkageRequiresExplicitIdentifierInBody' "$f")" = true
+          test "$(jq -r '.policy.exactBillStatementRequiresDeterministicMemberAttributionAndStance' "$f")" = true
+          test "$(jq -r '.policy.memberIssueApplicabilityInferred' "$f")" = false
+          test "$(jq -r '.policy.contextOnly' "$f")" = true
+          test "$(jq -r '.policy.mechanicallyActionable' "$f")" = false
+          test "$(jq -r '.policy.modelWeight' "$f")" = 0
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+          {
+            echo '## 2025-26 House member-primary body recovery'
+            echo
+            echo "- Frozen source URLs attempted: **$(jq -r '.recovery.attemptedArticleBodies' "$f")**"
+            echo "- Bodies fetched: **$(jq -r '.recovery.fetchedArticleBodies' "$f")**"
+            echo "- Body fetch failures: **$(jq -r '.recovery.failedArticleBodies' "$f")**"
+            echo "- Recovered bodies retained: **$(jq -r '.recovery.bodies | length' "$f")**"
+            echo "- Exact-bill explicit-statement candidates: **$(jq -r '.exactBillScreen.exactStatementCandidates' "$f")**"
+            echo "- Candidate articles: **$(jq -r '.exactBillScreen.candidateArticles' "$f")**"
+            echo "- Candidate members: **$(jq -r '.exactBillScreen.candidateMembers' "$f")**"
+            echo "- Candidate bills: **$(jq -r '.exactBillScreen.candidateBills' "$f")**"
+            echo "- Candidate target events: **$(jq -r '.exactBillScreen.candidateTargetEvents' "$f")**"
+            echo "- Outcomes used: **none**"
+            echo "- Production DB queried: **no**"
+            echo "- Vercel used: **no**"
+            echo "- Feature rows written: **no**"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2025-house-member-primary-bodies-v1
+          path: ${{ runner.temp }}/house-bodies/*
+          if-no-files-found: error
+          retention-days: 90
