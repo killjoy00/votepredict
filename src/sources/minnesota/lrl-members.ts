@@ -104,6 +104,11 @@ function nameFromPage(lines: string[], fallback: string): string {
   const record = lines.find((line) => /\s-\sLegislator Record\b/i.test(line));
   const raw = record?.replace(/\s-\sLegislator Record[\s\S]*$/i, '').trim() || fallback;
   const nicknameStripped = raw.replace(/\s*"[^"]*"\s*/g, ' ').replace(/\s+/g, ' ').trim();
+  // Current LRL headings can render canonical names as "First Last, Jr." or
+  // "First Last, II". Preserve that terminal suffix instead of mistaking the
+  // comma for an inverted "Last, First" name.
+  const terminalSuffix = nicknameStripped.match(/^(.+),\s*(Jr\.?|Sr\.?|II|III|IV)$/i);
+  if (terminalSuffix) return `${terminalSuffix[1]} ${terminalSuffix[2]}`.replace(/\s+/g, ' ').trim();
   // LRL renders suffixes in inverted names as "Last, Jr., First". Treat the
   // suffix as part of the surname side, not as the given name.
   const suffixed = nicknameStripped.match(/^([^,]+),\s*(Jr\.?|Sr\.?|II|III|IV),\s*(.+)$/i);
