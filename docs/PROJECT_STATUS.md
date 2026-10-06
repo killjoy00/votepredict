@@ -1,6 +1,6 @@
 # VotePredict project status
 
-_Last updated: 2026-10-03_
+_Last updated: 2026-10-06_
 
 VotePredict V2 is no longer a rebuild project. The clean-slate V2 sequence is complete through production hardening, introduction forecasting, current/floor forecasting, immutable revisions, evidence storage, scheduled production forecasting, forecast-vs-actual scoring infrastructure, and the automated 2027-28 Opening Day transition path. The **2027 Opening Day Ready** release-integrity milestone is now complete; the project is in **operate, validate prospectively, and selectively expand** mode.
 
@@ -64,6 +64,18 @@ Those sources can be added to the durable evidence layer without requiring Deep 
 
 Campaign-finance relationships in particular must remain context rather than an inferred vote stance unless an independently evaluated model demonstrates predictive value. A contribution, employer, donor category, or independent expenditure does not by itself establish how a legislator will vote.
 
+## Historical evidence density
+
+Issue #718 is an active bounded evidence-construction program, separate from broad retrospective model tuning. The primary objective is still strict-pre-vote 2021-22 member-event coverage, with newer sessions tracked explicitly so the historical evidence substrate does not become disproportionately sparse outside training.
+
+The canonical historical feature matrix is now **v1.7** from merged PR #747. It preserves the full 135,457-row target universe and all 38 existing exact-bill directional rows, while reviewed-applicability rows increased from 2 to 6. Combined directional coverage is now **44 rows** total: **9 / 35,510** in 2021-22, **32 / 49,827** in 2023-24, and **3 / 50,120** in 2025-26. Exact rows changed versus v1.6: zero; exact/reviewed overlap: zero; ambiguous/pending applicability rows admitted: zero.
+
+The second P2 semantic gate reviewed 124 candidate groups / 138 candidate claim pairs and resolved them to 4 applicable, 17 ambiguous-fail-closed, 103 not applicable, and 0 pending. Full eligible-pair accounting is 4 applicable / 91 ambiguous-fail-closed / 2,621 not applicable. The four newly accepted rows are Julia Coleman -> SF2575, Julia Coleman -> SF2666, Zach Duckworth -> SF2575, and Paul Utke -> SF2848.
+
+Coverage remains far too sparse for model fitting. The next infrastructure step is a GitHub-only cross-session target-gap inventory over the immutable v1.7 matrix. 2021-22 remains the primary historical program; among newer sessions, 2025-26 is the first recovery priority because it currently has the lowest strict directional coverage rate.
+
+See `docs/evaluation/historical-evidence-density-program.md` for the governing contract, closed lanes, canonical artifact lineage, semantic-gate architecture, and next-work boundaries.
+
 ## Modeling posture
 
 Retrospective research has now screened member-history decay, participation, issue conditioning, analogue alternatives, process context, richer dated process history, event-level uncertainty, and passage fragility. The strongest accepted production change was 180-day member-history decay.
@@ -91,7 +103,7 @@ Two final pre-prospective experiments were then frozen before results were obser
 - **Broad House committee roll calls — corrected v2 robustness:** the same frozen outcome-blind committee corpus and original threshold policy still clear. Validation member Brier improves by **0.0016150**, member log loss by **0.0035121**, chamber Yes-count MAE by **0.2750 votes**, and passage Brier worsens by only **+0.0002050**, inside the +0.002 guardrail. The 2025-26 descriptive member Brier improves by **0.0003697**. This supports continued zero-weight prospective measurement only; no serving weight is authorized.
 - **All reconstructable evidence together — corrected v2 robustness:** the 32-feature candidate improves validation member Brier by **0.0049414**, log loss by **0.0102407**, calibration error by **0.0183892**, and chamber Yes-count MAE by **0.9101 votes**, but passage Brier worsens by **+0.0022187**, narrowly above the old +0.002 safety limit. Event-balanced member Brier also improves (-0.0022446), while chamber-balanced member log loss is essentially flat/slightly worse (+0.0004366). The chamber split is decisive: House member Brier improves by **0.0095538** and Yes-count MAE by **2.0661 votes**, but House passage Brier worsens **+0.0077636**; Senate member Brier worsens **+0.0091608** while Senate passage Brier improves **-0.0064433**. Omitting either of the two validation failed-passage events still leaves passage Brier above the old +0.002 guardrail (+0.0022442 or +0.0024288), so the failure is not attributable to only one failed vote.
 
-The retrospective evidence phase is therefore complete. Serving Quick remains unchanged and all new evidence weights remain non-serving. The corrected historical suite says the standalone House committee signal is robust, while a single pooled cross-chamber evidence offset is not chamber-stable and still fails passage safety. Broad retuning on the same 2021-26 outcomes should stop; the definitive next phase is prospective accumulation/scoring under `quick-evidence-prospective-v1`.
+The broad retrospective **model-tuning** phase is complete. Serving Quick remains unchanged and all new evidence weights remain non-serving. The corrected historical suite says the standalone House committee signal is robust, while a single pooled cross-chamber evidence offset is not chamber-stable and still fails passage safety. Broad retuning on the same 2021-26 outcomes should stop. Targeted historical evidence-density/provenance work under #718 remains active, but it is explicitly outcome-blind, zero-weight, non-serving, and does not authorize model fitting. Prospective accumulation/scoring under `quick-evidence-prospective-v1` remains the path for future promotion-quality evidence.
 
 ## 2027-28 Opening Day readiness evidence
 
@@ -171,6 +183,18 @@ The production reconciliation repaired the release-integrity drift found during 
 - [x] Add zero-weight prospective House committee-roll-call capture to the future Quick Evidence corpus under a newly frozen pre-activation protocol; historical Quick v2 robustness confirms the standalone signal still clears, but no serving weight is authorized.
 - [x] Add Quick Evidence accrual/schema/source-yield monitoring plus a sealed paired scorecard and disposable end-to-end lifecycle rehearsal.
 - [ ] Accumulate enough real prospective/as-of forecasts and outcomes to open the frozen `quick-evidence-prospective-v1` 40 / 2,000 / 50 primary-scoring gate.
+
+### P1 — finish bounded historical evidence density (#718)
+
+- [x] Reconcile the historical Evidence Quality substrate and preserve the 135,457-row universe.
+- [x] Recover and semantically review the first 25-source 2021-22 P2 cohort.
+- [x] Recover and semantically review the remaining 40 fresh 2021-22 P2 source bodies.
+- [x] Canonicalize strict-pre-vote applicability through a fail-closed semantic gate and freeze historical feature matrix v1.7.
+- [x] Preserve exact-bill semantics unchanged while adding only explicitly reviewed applicability rows.
+- [x] Keep all new historical evidence context-only, mechanically non-actionable, zero-weight, outcome-blind, and non-serving.
+- [ ] Freeze and publish the GitHub-only cross-session target-gap inventory from v1.7.
+- [ ] Use the 2025-26 gap map for the next bounded newer-session source-recovery inventory, then 2023-24 after that lane reaches its stop rule.
+- [ ] Continue 2021-22 only through genuinely new source/proof surfaces; do not reopen exhausted Session Daily, House-attachment, or other closed archive lanes.
 
 ### P1 — prepare 2027-28
 
