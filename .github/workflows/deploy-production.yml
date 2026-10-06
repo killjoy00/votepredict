@@ -1,9 +1,13 @@
 name: Deploy production
 
 on:
-  workflow_run:
-    workflows: [CI]
-    types: [completed]
+  workflow_dispatch:
+    inputs:
+      run_vercel:
+        description: Explicitly allow this workflow to contact Vercel
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -14,17 +18,14 @@ concurrency:
 
 jobs:
   deploy:
-    if: >-
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.head_branch == 'main' &&
-      github.event.workflow_run.event == 'push'
+    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
       VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
-      RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+      RELEASE_SHA: ${{ github.sha }}
 
     steps:
       - name: Checkout exact green main commit
@@ -115,7 +116,7 @@ jobs:
             echo "- Commit: \`$RELEASE_SHA\`"
             echo "- Deployment: $DEPLOYMENT_URL"
             echo '- Migration ledger: exact repository match required inside the Vercel production build'
-            echo '- Trigger: successful CI run on protected `main`'
+            echo '- Trigger: explicit manual Vercel run'
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Record superseded release

@@ -1,24 +1,20 @@
 name: Prepare 2027 introduction artifact
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/prepare-2027-introduction-artifact.yml
-      - scripts/prepare-2027-introduction-serving-artifact.ts
-      - src/evaluation/introduction-model.ts
-      - src/evaluation/introduction-text-model.ts
-      - src/forecasting/introduction-prior-model.ts
-  schedule:
-    - cron: '43 14 * * *'
   workflow_dispatch:
+    inputs:
+      run_vercel:
+        description: Explicitly allow this workflow to contact Vercel
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 jobs:
   prepare:
-    if: github.ref == 'refs/heads/main'
+    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:

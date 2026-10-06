@@ -1,24 +1,13 @@
 name: Passage fragility prospective
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/passage-fragility-prospective.yml
-      - data/evaluation/passage-fragility-prospective-plan-v1.json
-      - data/evaluation/passage-fragility-reference-v1.json
-      - scripts/run-production-passage-fragility-shadow-capture.ts
-      - scripts/run-production-passage-fragility-prospective-score.ts
-      - src/app/api/operations/passage-fragility-shadow/capture/route.ts
-      - src/app/api/operations/passage-fragility-shadow/score/route.ts
-      - src/forecasting/passage-fragility-shadow.ts
-      - src/operations/passage-fragility-shadow-capture.ts
-      - src/operations/passage-fragility-prospective-score.ts
-      - tests/passage-fragility-shadow.test.ts
   workflow_dispatch:
-  schedule:
-    - cron: '17 * * * *'
-    - cron: '37 13 * * 1'
+    inputs:
+      run_vercel:
+        description: Explicitly allow this workflow to contact Vercel
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -34,7 +23,7 @@ env:
 
 jobs:
   capture:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event.schedule == '17 * * * *'
+    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
@@ -124,7 +113,7 @@ jobs:
         run: rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/vercel-deployments.json"
 
   score:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event.schedule == '37 13 * * 1'
+    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:

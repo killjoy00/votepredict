@@ -1,9 +1,13 @@
 name: Weekly evidence cleanup health
 
 on:
-  schedule:
-    - cron: '17 14 * * 1'
   workflow_dispatch:
+    inputs:
+      run_vercel:
+        description: Explicitly allow this workflow to contact Vercel
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -14,6 +18,7 @@ concurrency:
 
 jobs:
   audit:
+    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
