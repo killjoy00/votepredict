@@ -31,19 +31,19 @@ test('tranche-2 review has three applicable and one explicit fail-closed overrid
   assert.equal(decisions.defaultDecision, 'not_applicable');
   assert.equal(decisions.overrides.length, 4);
   assert.equal(
-    decisions.overrides.filter((row) => row.decision === 'applicable').length,
+    decisions.overrides.filter((row: { decision?: string }) => row.decision === 'applicable').length,
     3,
   );
   assert.equal(
-    decisions.overrides.filter((row) => row.decision === 'ambiguous_fail_closed').length,
+    decisions.overrides.filter((row: { decision?: string }) => row.decision === 'ambiguous_fail_closed').length,
     1,
   );
   assert.equal(
-    decisions.overrides.filter((row) => row.alignmentDirection === 'aligns').length,
+    decisions.overrides.filter((row: { alignmentDirection?: string | null }) => row.alignmentDirection === 'aligns').length,
     2,
   );
   assert.equal(
-    decisions.overrides.filter((row) => row.alignmentDirection === 'conflicts').length,
+    decisions.overrides.filter((row: { alignmentDirection?: string | null }) => row.alignmentDirection === 'conflicts').length,
     1,
   );
 });
