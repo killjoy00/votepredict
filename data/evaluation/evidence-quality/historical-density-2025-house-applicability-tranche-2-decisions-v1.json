@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-tranche-2-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenCandidateArtifact": {
+    "runId": 37547468536,
+    "artifactId": 11450748830,
+    "digest": "sha256:aba3db598037ab665a8224d2bbbd3ace6f9d2d3238054adb7f2b101927b6ce82",
+    "targetTrancheIndex": 2,
+    "targetEventKeySha256": "9304a46f37889fa3ae166803e3675669c55fb99d475f1484ea3efd11f7e01299",
+    "reviewKeySha256": "51dc578f9f79c755936a32282d49a7a2522346c7710d5f30f14b2922ec73854b",
+    "eligibleClaimEventPairs": 1150,
+    "candidatePairs": 242,
+    "candidateBills": 17,
+    "candidatePublicMembers": 39,
+    "candidateSemanticGroups": 39
+  },
+  "defaultDecision": "not_applicable",
+  "defaultBillRationales": {
+    "HF124": "Line-of-duty death gifts and local public-safety-officer memorial expenditures do not implement any nominated member policy; generic public-safety wording is incidental.",
+    "HF1355": "Commercial diving and aquatic-plant permit safety requirements do not implement the nominated state-worker telework proposition.",
+    "HF2023": "Overdose-prevention education in a substance-use model program does not implement the nominated disability-services proposition.",
+    "HF2309": "Housing-program eligibility, finance, sprinkler, and housing-authority provisions do not enact zoning liberalization or protection from extreme manufactured-home rent increases; housing terminology alone is insufficient.",
+    "HF2403": "Commerce, insurance, financial-institution, corporate, and garnishment provisions do not implement the nominated fraud-governance, public-safety, DWI, Medicaid-tax, manufactured-home rent, emergency-power, or other member propositions; keyword overlap is incidental.",
+    "HF2431": "Higher-education funding and student-aid policy do not implement the nominated K-12 special-education funding, public-safety, fraud-governance, or other member propositions; adjacent education terminology is insufficient.",
+    "HF2432": "The judiciary/public-safety/corrections omnibus contains adjacent fraud, trafficking, human-services, and public-safety language, but it does not implement the specific nominated propositions such as a new centralized inspector general, legislative fraud notes, state-agency fraud reporting, traffic-stop/racial-profiling reform, an anti-trafficking task force, Paid Family and Medical Leave repeal protection, or the source-specific Make Minnesota Safe package. Incidental program references fail closed.",
+    "HF2438": "Transportation omnibus provisions are not applicable to nominated claims except where an explicit override below identifies a direct policy match. Generic transportation, public-safety, telework, manufactured-home, environmental, or enforcement terminology is insufficient.",
+    "HF2446": "Agriculture-budget provisions include a PFAS-contaminated-biosolids study, but do not roll back PFAS prevention measures, create the nominated recreational-vehicle PFAS exemption, or enact a family-farm sick-time exemption.",
+    "HF2551": "Children/youth/families recodification is primarily technical and does not substantively enact the nominated parental-authority, LGBTQ-school, disability-support, education-funding, public-safety, or related propositions.",
+    "HF2563": "Legacy-fund appropriations and accountability provisions do not implement the nominated member policy propositions; generic environment, research, accountability, or public-safety words are insufficient.",
+    "HF3022": "Miscellaneous technical corrections do not substantively implement the nominated member policy propositions; corrected statutory references and incidental terms are not applicability.",
+    "SF1959": "Military and veterans budget/services provisions do not implement the nominated disability-services, telework, housing-rent, inspector-general, or emergency-powers propositions.",
+    "SF2216": "Commerce omnibus provisions are not applicable to nominated claims except where an explicit PFAS override below identifies a direct policy match. Electric-vehicle charging, generic fraud/oversight, insurance, housing, or public-safety language does not establish the other propositions.",
+    "SF2298": "Housing-budget provisions address housing finance and manufactured-home relocation/trust-fund mechanics, not extreme rent-increase protection or zoning liberalization; fraud and oversight terms are incidental.",
+    "SF2847": "Garnishment-form amendments do not implement the nominated Medicaid-tax, manufactured-home rent, or disability-services propositions.",
+    "SF571": "Trust, probate, and powers-of-appointment changes do not implement parental final-authority or gubernatorial emergency-powers propositions."
+  },
+  "overrides": [
+    {
+      "reviewKey": "zeleznikar_ev_road_funding_parity|HF2438|2025-04-28|46388d1841e58d9befc08450243def66157e678619b30511889a69aa96fd50d0",
+      "decision": "applicable",
+      "billPolicyDirection": "raises_all_electric_vehicle_surcharge_for_transportation_funding",
+      "alignmentDirection": "aligns",
+      "reason": "HF2438 directly amends the all-electric vehicle surcharge from $75 to $200 and routes related transportation revenue, implementing the member's proposition that EV registration charges should contribute more comparably to road funding."
+    },
+    {
+      "reviewKey": "heintzeman_off_highway_vehicle_pfas_exemption|SF2216|2025-04-29|85e7d06d2ff842eb997b16692c730d9d0180063ec68c2b3f072443ac4d7fea4f",
+      "decision": "applicable",
+      "billPolicyDirection": "adds_pfas_juvenile_product_exemptions_for_child_off_highway_vehicles_snowmobiles_and_e_bikes",
+      "alignmentDirection": "aligns",
+      "reason": "SF2216 directly excludes children's off-highway vehicles, ATVs, off-highway motorcycles, snowmobiles, electric-assisted bicycles, and replacement parts from the PFAS-regulated juvenile-product definition, matching the member's exemption proposition."
+    },
+    {
+      "reviewKey": "fischer_pfas_protections|SF2216|2025-04-29|85e7d06d2ff842eb997b16692c730d9d0180063ec68c2b3f072443ac4d7fea4f",
+      "decision": "applicable",
+      "billPolicyDirection": "weakens_existing_pfas_product_restrictions_by_adding_exemptions",
+      "alignmentDirection": "conflicts",
+      "reason": "SF2216 narrows existing PFAS product restrictions by adding exemptions, so it is substantively applicable to the member's opposition to rolling back Minnesota PFAS prevention measures and conflicts with that stance."
+    },
+    {
+      "reviewKey": "kraft_repeat_dwi_interlock|HF2438|2025-04-28|46388d1841e58d9befc08450243def66157e678619b30511889a69aa96fd50d0",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "HF2438 amends ignition-interlock eligibility and restrictions, including provisions keyed to prior impaired-driving incidents, but the exact version does not clearly establish the source proposition's combined policy of materially longer repeat-DWI interlock time plus reduced entry barriers. Same-program overlap is insufficient."
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
