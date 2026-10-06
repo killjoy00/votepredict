@@ -184,7 +184,7 @@ async function materializeEventSources(events: TargetRow[]): Promise<Map<string,
   const statusCache = new Map<string, Promise<RevisorBillMetadata>>();
   const versionCache = new Map<string, Promise<Awaited<ReturnType<typeof fetchRevisorBillVersion>>>>();
   const ordered = [...events].sort((a, b) => a.occurredOn.localeCompare(b.occurredOn) || a.voteEventId.localeCompare(b.voteEventId));
-  const rows = await mapLimit(ordered, 4, async (event) => {
+  const rows = await mapLimit<TargetRow, readonly [string, EventSource]>(ordered, 4, async (event) => {
     let metadata: RevisorBillMetadata;
     try {
       let pending = statusCache.get(event.identifier);
