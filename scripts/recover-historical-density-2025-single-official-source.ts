@@ -45,17 +45,17 @@ type Inventory = {
   candidates: {
     freshDedupedSourceDocuments: number;
     bySourceKind: Record<string, { sources: number; newCoverageRows: number; textReady: number }>;
-    policy: {
-      outcomeUse: string;
-      strictPreVoteAvailability: boolean;
-      sameDayExcluded: boolean;
-      alreadyAnnotatedSourcesExcluded: boolean;
-      exactContentDedup: boolean;
-      modelFitting: string;
-      servingChanged: boolean;
-    };
   };
   allCandidates: Candidate[];
+  policy: {
+    outcomeUse: string;
+    strictPreVoteAvailability: boolean;
+    sameDayExcluded: boolean;
+    alreadyAnnotatedSourcesExcluded: boolean;
+    exactContentDedup: boolean;
+    modelFitting: string;
+    servingChanged: boolean;
+  };
 };
 
 function requiredEnv(name: string): string {
@@ -88,13 +88,13 @@ async function main(): Promise<void> {
     || inventory.targetUniverse.currentCoveredBySession['2023-2024'] !== 32
     || inventory.targetUniverse.currentCoveredBySession['2025-2026'] !== 3
     || inventory.candidates.freshDedupedSourceDocuments !== 4
-    || inventory.candidates.policy.outcomeUse !== 'none'
-    || !inventory.candidates.policy.strictPreVoteAvailability
-    || !inventory.candidates.policy.sameDayExcluded
-    || !inventory.candidates.policy.alreadyAnnotatedSourcesExcluded
-    || !inventory.candidates.policy.exactContentDedup
-    || inventory.candidates.policy.modelFitting !== 'none'
-    || inventory.candidates.policy.servingChanged
+    || inventory.policy.outcomeUse !== 'none'
+    || !inventory.policy.strictPreVoteAvailability
+    || !inventory.policy.sameDayExcluded
+    || !inventory.policy.alreadyAnnotatedSourcesExcluded
+    || !inventory.policy.exactContentDedup
+    || inventory.policy.modelFitting !== 'none'
+    || inventory.policy.servingChanged
   ) {
     throw new Error('Frozen v1.5 candidate inventory identity or policy drifted');
   }
