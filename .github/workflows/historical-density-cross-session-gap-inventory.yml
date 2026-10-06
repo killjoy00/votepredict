@@ -1,0 +1,110 @@
+name: Historical density cross-session gap inventory
+
+on:
+  pull_request:
+    paths:
+      - scripts/audit-historical-density-cross-session-gap.mjs
+      - .github/workflows/historical-density-cross-session-gap-inventory.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/audit-historical-density-cross-session-gap.mjs
+      - .github/workflows/historical-density-cross-session-gap-inventory.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-cross-session-gap-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  inventory:
+    name: Freeze cross-session target gaps
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Materialize immutable v1.7 historical feature matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11436413885/zip > "$RUNNER_TEMP/v17.zip"
+          echo "fc1d77ccc51bc33f3e3f1c0dd6622c0f2a9797d62a8d54bcb65906de30228e44  $RUNNER_TEMP/v17.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/v17"
+          unzip -q "$RUNNER_TEMP/v17.zip" \
+            evidence-quality-historical-feature-matrix-v1.7-manifest.json \
+            evidence-quality-historical-feature-matrix-v1.7.ndjson.gz \
+            -d "$RUNNER_TEMP/v17"
+
+      - name: Build read-only cross-session gap inventory
+        env:
+          VOTEPREDICT_EQ_V17_MANIFEST_PATH: ${{ runner.temp }}/v17/evidence-quality-historical-feature-matrix-v1.7-manifest.json
+          VOTEPREDICT_EQ_V17_MATRIX_PATH: ${{ runner.temp }}/v17/evidence-quality-historical-feature-matrix-v1.7.ndjson.gz
+          VOTEPREDICT_HISTORICAL_DENSITY_CROSS_SESSION_OUTPUT_DIR: ${{ runner.temp }}/cross-session-gap
+        run: node scripts/audit-historical-density-cross-session-gap.mjs
+
+      - name: Verify frozen gap accounting
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/cross-session-gap/historical-density-cross-session-gap-inventory-v1.json"
+          test "$(jq -r '.summary.combinedCoveredRows' "$f")" = 44
+          test "$(jq -r '.summary.combinedUncoveredRows' "$f")" = 135413
+          test "$(jq -r '.summary.bySession["2021-2022"].rows' "$f")" = 35510
+          test "$(jq -r '.summary.bySession["2021-2022"].coveredRows' "$f")" = 9
+          test "$(jq -r '.summary.bySession["2021-2022"].uncoveredRows' "$f")" = 35501
+          test "$(jq -r '.summary.bySession["2021-2022"].uncoveredMemberships' "$f")" = 201
+          test "$(jq -r '.summary.bySession["2021-2022"].uncoveredEvents' "$f")" = 374
+          test "$(jq -r '.summary.bySession["2021-2022"].uncoveredBills' "$f")" = 196
+          test "$(jq -r '.summary.bySession["2023-2024"].rows' "$f")" = 49827
+          test "$(jq -r '.summary.bySession["2023-2024"].coveredRows' "$f")" = 32
+          test "$(jq -r '.summary.bySession["2023-2024"].uncoveredRows' "$f")" = 49795
+          test "$(jq -r '.summary.bySession["2023-2024"].uncoveredMemberships' "$f")" = 203
+          test "$(jq -r '.summary.bySession["2023-2024"].uncoveredEvents' "$f")" = 480
+          test "$(jq -r '.summary.bySession["2023-2024"].uncoveredBills' "$f")" = 203
+          test "$(jq -r '.summary.bySession["2025-2026"].rows' "$f")" = 50120
+          test "$(jq -r '.summary.bySession["2025-2026"].coveredRows' "$f")" = 3
+          test "$(jq -r '.summary.bySession["2025-2026"].uncoveredRows' "$f")" = 50117
+          test "$(jq -r '.summary.bySession["2025-2026"].uncoveredMemberships' "$f")" = 207
+          test "$(jq -r '.summary.bySession["2025-2026"].uncoveredEvents' "$f")" = 485
+          test "$(jq -r '.summary.bySession["2025-2026"].uncoveredBills' "$f")" = 251
+          test "$(jq -r '.priority.primaryHistoricalProgramSession' "$f")" = 2021-2022
+          test "$(jq -r '.priority.recommendedNextNewerSession' "$f")" = 2025-2026
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.applicabilityInferred' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+          {
+            echo '## Historical density cross-session gap inventory'
+            echo
+            echo '- 2021-22: **9 / 35,510 covered**, 35,501 uncovered'
+            echo '- 2023-24: **32 / 49,827 covered**, 49,795 uncovered'
+            echo '- 2025-26: **3 / 50,120 covered**, 50,117 uncovered'
+            echo '- Primary historical program remains **2021-22**'
+            echo '- Recommended next newer-session recovery target: **2025-26**'
+            echo '- Production DB queried: **no**'
+            echo '- Vercel used: **no**'
+            echo '- Outcomes used: **none**'
+            echo '- Applicability inferred: **no**'
+            echo '- Model fitting: **none**'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-cross-session-gap-inventory-v1
+          path: ${{ runner.temp }}/cross-session-gap/*
+          if-no-files-found: error
+          retention-days: 90
