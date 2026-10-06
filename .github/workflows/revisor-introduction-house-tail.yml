@@ -1,11 +1,13 @@
 name: Revisor introduction 2021 House tail backfill
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/revisor-introduction-house-tail.yml
   workflow_dispatch:
+    inputs:
+      run_vercel:
+        description: Explicitly allow this workflow to contact Vercel
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -16,7 +18,7 @@ concurrency:
 
 jobs:
   backfill:
-    if: github.ref == 'refs/heads/main'
+    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
