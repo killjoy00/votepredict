@@ -1,12 +1,13 @@
 name: Public evidence refresh
 
 on:
-  schedule:
-    - cron: '37 */6 * * *'
   workflow_dispatch:
-  workflow_run:
-    workflows: [Deploy production]
-    types: [completed]
+    inputs:
+      run_vercel:
+        description: Explicitly allow this workflow to contact Vercel
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -15,13 +16,7 @@ concurrency:
   group: votepredict-public-evidence-refresh
   cancel-in-progress: false
 
-jobs:
-  refresh:
-    if: >-
-      github.event_name != 'workflow_run' ||
-      (github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.head_branch == 'main')
-    runs-on: ubuntu-latest
+jobs:\n  refresh:\n    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'\n    runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -32,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+          ref: ${{ github.sha }}
 
       - uses: actions/setup-node@v7
         with:
