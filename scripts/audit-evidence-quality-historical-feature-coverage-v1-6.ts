@@ -133,9 +133,9 @@ function main() {
     || manifest.coverage.removedExactRowsVsV15 !== 0
     || manifest.applicabilityGate.applicableRows !== 2
     || manifest.applicabilityGate.finalStatusCounts.applicable !== 2
-    || manifest.applicabilityGate.finalStatusCounts.ambiguous_fail_closed !== 38
-    || manifest.applicabilityGate.finalStatusCounts.pending_review !== 21
-    || manifest.applicabilityGate.finalStatusCounts.not_applicable !== 3862
+    || manifest.applicabilityGate.finalStatusCounts.ambiguous_fail_closed !== 40
+    || manifest.applicabilityGate.finalStatusCounts.pending_review !== 0
+    || manifest.applicabilityGate.finalStatusCounts.not_applicable !== 3881
     || manifest.policy.outcomeUseDuringFeatureConstruction !== 'none'
     || !manifest.policy.exactBillEvidenceSemanticsRemainSeparate
     || manifest.policy.pendingOrAmbiguousApplicabilityIncluded

@@ -8,7 +8,7 @@ import {
 const EXPECTED_ELIGIBLE_ROWS = 3923;
 const EXPECTED_CANDIDATE_PAIRS = 105;
 const EXPECTED_CANDIDATE_GROUPS = 74;
-const EXPECTED_EXPLICIT_REVIEW_KEYS = 65;
+const EXPECTED_EXPLICIT_REVIEW_KEYS = 74;
 const OUTPUT_FILE = 'historical-density-p2-applicability-canonical-v1.json';
 
 type CandidateClaim = {
@@ -364,9 +364,9 @@ function main() {
   const decisionCounts = countGroups(groups);
   const expectedCounts = {
     applicable: { groups: 2, pairs: 2 },
-    ambiguous_fail_closed: { groups: 8, pairs: 8 },
-    not_applicable: { groups: 55, pairs: 74 },
-    pending_review: { groups: 9, pairs: 21 },
+    ambiguous_fail_closed: { groups: 9, pairs: 10 },
+    not_applicable: { groups: 63, pairs: 93 },
+    pending_review: { groups: 0, pairs: 0 },
   };
   if (JSON.stringify(decisionCounts) !== JSON.stringify(expectedCounts)) {
     throw new Error(
@@ -473,9 +473,9 @@ function main() {
   );
   const expectedFinal = {
     applicable: 2,
-    ambiguous_fail_closed: 38,
-    pending_review: 21,
-    not_applicable: 3862,
+    ambiguous_fail_closed: 40,
+    pending_review: 0,
+    not_applicable: 3881,
   };
   if (JSON.stringify(finalStatusCounts) !== JSON.stringify(expectedFinal)) {
     throw new Error(

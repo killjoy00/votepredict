@@ -22,6 +22,13 @@
       "alignmentDirection": null
     },
     {
+      "reviewKey": "abortion|HF2128|2021-05-17",
+      "decision": "not_applicable",
+      "reasonCode": "pregnancy_or_reproductive_health_context_not_abortion_policy",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
       "reviewKey": "abortion|HF2725|2022-05-22",
       "decision": "not_applicable",
       "reasonCode": "unborn_child_criminal_law_not_abortion_policy",
@@ -120,6 +127,13 @@
       "alignmentDirection": null
     },
     {
+      "reviewKey": "long_term_care_protections|HF1829|2022-05-22",
+      "decision": "not_applicable",
+      "reasonCode": "long_term_care_insurance_reference_not_resident_protection_claim",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
       "reviewKey": "long_term_care_protections|HF1952|2021-04-26",
       "decision": "not_applicable",
       "reasonCode": "term_hit_in_insurance_tax_housing_admin_or_other_nonprotection_context",
@@ -127,7 +141,21 @@
       "alignmentDirection": null
     },
     {
+      "reviewKey": "long_term_care_protections|HF1952|2021-05-17",
+      "decision": "not_applicable",
+      "reasonCode": "nursing_home_election_access_context_not_resident_protection_claim",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
       "reviewKey": "long_term_care_protections|HF2128|2021-04-29",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "mixed_omnibus_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "long_term_care_protections|HF2128|2021-05-17",
       "decision": "ambiguous_fail_closed",
       "reasonCode": "mixed_omnibus_fail_closed",
       "billPolicyDirection": null,
@@ -260,6 +288,13 @@
       "alignmentDirection": null
     },
     {
+      "reviewKey": "long_term_care_protections|SF2957|2022-02-28",
+      "decision": "not_applicable",
+      "reasonCode": "health_care_worker_retirement_context_not_resident_protection_claim",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
       "reviewKey": "long_term_care_protections|SF3257|2022-05-12",
       "decision": "not_applicable",
       "reasonCode": "term_hit_in_insurance_tax_housing_admin_or_other_nonprotection_context",
@@ -330,7 +365,21 @@
       "alignmentDirection": null
     },
     {
+      "reviewKey": "minnesotacare_for_all|HF1952|2021-05-17",
+      "decision": "not_applicable",
+      "reasonCode": "eligibility_audit_not_universal_eligibility_expansion",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
       "reviewKey": "minnesotacare_for_all|HF2128|2021-04-29",
+      "decision": "not_applicable",
+      "reasonCode": "existing_enrollee_administration_or_benefit_interaction_not_universal_eligibility_expansion",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "minnesotacare_for_all|HF2128|2021-05-17",
       "decision": "not_applicable",
       "reasonCode": "existing_enrollee_administration_or_benefit_interaction_not_universal_eligibility_expansion",
       "billPolicyDirection": null,
@@ -366,6 +415,13 @@
     },
     {
       "reviewKey": "minnesotacare_for_all|SF3472|2022-03-14",
+      "decision": "not_applicable",
+      "reasonCode": "program_funding_without_universal_eligibility_expansion",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "minnesotacare_for_all|SF3472|2022-03-31",
       "decision": "not_applicable",
       "reasonCode": "program_funding_without_universal_eligibility_expansion",
       "billPolicyDirection": null,
@@ -410,6 +466,13 @@
       "reviewKey": "school_choice_parental_control|HF2128|2021-04-29",
       "decision": "not_applicable",
       "reasonCode": "term_hit_incidental_to_nonmatching_policy",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "school_choice_parental_control|HF2128|2021-05-17",
+      "decision": "not_applicable",
+      "reasonCode": "private_school_reference_incidental_to_medical_cannabis_siting_not_school_choice_policy",
       "billPolicyDirection": null,
       "alignmentDirection": null
     },
