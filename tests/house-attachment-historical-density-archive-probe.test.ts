@@ -3,6 +3,11 @@ import assert from 'node:assert/strict';
 import {
   HOUSE_ATTACHMENT_DENSITY_SELECTOR_PILOT_SIZE,
   HOUSE_ATTACHMENT_DENSITY_SELECTOR_POTENTIAL_ROWS,
+  HOUSE_ATTACHMENT_DENSITY_SELECTOR_ARTIFACT_ID,
+  HOUSE_ATTACHMENT_DENSITY_SELECTOR_ARTIFACT_DIGEST,
+  HOUSE_ATTACHMENT_DENSITY_SELECTOR_INPUT_SHA256,
+  selectHouseAttachmentArchiveRetryCandidates,
+  type HouseAttachmentArchiveProbeFrozenReport,
   houseAttachmentArchiveProbeDiscoveryFrom,
   houseAttachmentArchiveProbeTargetKey,
   houseAttachmentCaptureOpportunity,
@@ -111,4 +116,80 @@ test('archive discovery starts on the calendar day after the latest official lis
   assert.equal(houseAttachmentArchiveProbeDiscoveryFrom('2021-02-03'), '2021-02-04');
   assert.equal(houseAttachmentArchiveProbeDiscoveryFrom('2021-12-31'), '2022-01-01');
   assert.throws(() => houseAttachmentArchiveProbeDiscoveryFrom('2021-02-30'), /listing date is invalid/);
+});
+
+
+function frozenPriorProbe(pilot: readonly HouseAttachmentHistoricalDensityPilotRow[]): HouseAttachmentArchiveProbeFrozenReport {
+  return {
+    schemaVersion: 'historical-density-house-attachment-archive-probe-v1',
+    selectorLineage: {
+      artifactId: HOUSE_ATTACHMENT_DENSITY_SELECTOR_ARTIFACT_ID,
+      artifactDigest: HOUSE_ATTACHMENT_DENSITY_SELECTOR_ARTIFACT_DIGEST,
+      candidateInputSha256: HOUSE_ATTACHMENT_DENSITY_SELECTOR_INPUT_SHA256,
+      pilotSize: 24,
+      potentialRows: 5628,
+    },
+    currentMatrix: {
+      artifactId: 11380755983,
+      artifactDigest: 'sha256:fe2254fc9d2ed0ea00712feab384958e4942cf387e442c29515b3a75183692d7',
+      exactBillCoveredRows: 38,
+      trainingExactBillCoveredRows: 3,
+      frozenPilotRowsAlreadyCovered: 0,
+    },
+    summary: {
+      probedPdfs: 24,
+      classificationCounts: {
+        ambiguous_discovery_failure: 2,
+        no_archive_pdf_capture: 22,
+      },
+      verifiedPdfs: 0,
+      verifiedBills: 0,
+      verifiedPotentialRows: 0,
+      verifiedEvents: 0,
+      verifiedMemberships: 0,
+    },
+    rows: pilot.map((row, index) => ({
+      attachmentUrl: row.attachmentUrl,
+      billIdentifiers: row.billIdentifiers,
+      classification: index >= 22 ? 'ambiguous_discovery_failure' : 'no_archive_pdf_capture',
+      verified: null,
+    })),
+  };
+}
+
+test('retry cohort is derived only from the two prior acquisition ambiguities', () => {
+  const pilot = Array.from({ length: 24 }, (_, i) => candidate(i, i === 23 ? 246 : 234));
+  const prior = frozenPriorProbe(pilot);
+  const selected = selectHouseAttachmentArchiveRetryCandidates({ priorProbe: prior, pilot });
+
+  assert.equal(selected.length, 2);
+  assert.deepEqual(
+    selected.map((row) => row.attachmentUrl).sort(),
+    [pilot[22].attachmentUrl, pilot[23].attachmentUrl].sort(),
+  );
+});
+
+test('retry cohort fails closed on prior-result drift or reopening a closed negative', () => {
+  const pilot = Array.from({ length: 24 }, (_, i) => candidate(i, i === 23 ? 246 : 234));
+
+  const countDrift = structuredClone(frozenPriorProbe(pilot));
+  countDrift.summary.classificationCounts.no_archive_pdf_capture = 21;
+  assert.throws(
+    () => selectHouseAttachmentArchiveRetryCandidates({ priorProbe: countDrift, pilot }),
+    /result counts drifted/,
+  );
+
+  const billDrift = structuredClone(frozenPriorProbe(pilot));
+  billDrift.rows[22].billIdentifiers = ['HF9999'];
+  assert.throws(
+    () => selectHouseAttachmentArchiveRetryCandidates({ priorProbe: billDrift, pilot }),
+    /bill identity drifted/,
+  );
+
+  const verifiedDrift = structuredClone(frozenPriorProbe(pilot));
+  verifiedDrift.rows[22].verified = { archiveContentSha256: 'x' };
+  assert.throws(
+    () => selectHouseAttachmentArchiveRetryCandidates({ priorProbe: verifiedDrift, pilot }),
+    /already verified/,
+  );
 });
