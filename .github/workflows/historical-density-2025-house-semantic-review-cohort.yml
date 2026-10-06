@@ -98,7 +98,8 @@ jobs:
             echo '## 2025-26 House semantic review cohort'
             echo
             echo '- Recovered bodies: **1,340**'
-            echo '- Parseable article-owned bodies: **1,310**'\n            echo '- Unique article-owned bodies: **1,290**'
+            echo '- Parseable article-owned bodies: **1,310**'
+            echo '- Unique article-owned bodies: **1,290**'
             echo '- Strong-signal documents: **400** across **123** members'
             echo '- Frozen review cohort: **50 documents / 50 members**'
             echo '- Candidate bill identifiers: **0**'
