@@ -1,0 +1,146 @@
+{
+  "schemaVersion": "historical-density-2025-house-semantic-decisions-part-v1",
+  "part": 3,
+  "rows": [
+    21,
+    30
+  ],
+  "decisions": [
+    {
+      "row": 21,
+      "decision": "directional",
+      "semanticKey": "stier_human_trafficking_task_force",
+      "topics": [
+        "human trafficking",
+        "public safety",
+        "law enforcement"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Terry Stier supports establishing an anti-human-trafficking task force.",
+      "supportingExcerpt": "Taking Action on Public Safety: Combating Human Trafficking In addition to fighting wasteful spending, I’m also pleased to share that a bill I coauthored to establish an anti-human trafficking task force had its first reading this Thursday in the House Committee on Public Safety, marking an important step forward in the legislative process. Human trafficking is a hidden epidemic that impacts people in every community, from the largest cities to the most rural areas.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 22,
+      "decision": "directional",
+      "semanticKey": "demuth_centralized_inspector_general",
+      "topics": [
+        "fraud prevention",
+        "government oversight",
+        "inspector general"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Lisa Demuth supports creating a centralized Office of the Inspector General and stronger anti-fraud controls in state government.",
+      "supportingExcerpt": "The bills we have introduced (I have co-authored each) will establish a centralized Office of the Inspector General to combat fraud and abuse in state government (including requiring a fraud reporting hotline and mandating agencies to halt payments when fraud is suspected), strengthen grant management requirements, mandate fraud reporting, and establish criminal penalties for violations to protect taxpayer dollars, among other measures.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 23,
+      "decision": "directional",
+      "semanticKey": "schwartz_make_minnesota_safe",
+      "topics": [
+        "public safety",
+        "law enforcement",
+        "criminal penalties"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Erica Schwartz supports a public-safety package that strengthens law enforcement, increases offender accountability, and expands criminal-justice transparency.",
+      "supportingExcerpt": "This proposal is part of my Public Safety Committee and I am proud to co-author these bills. This comprehensive proposal is designed to: Strengthen law enforcement.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 24,
+      "decision": "directional",
+      "semanticKey": "rymer_education_budget_cuts",
+      "topics": [
+        "education funding",
+        "school mandates"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Max Rymer opposes the governor's education budget proposal that would reduce special-education aid, non-public pupil aid, and teacher compensation.",
+      "supportingExcerpt": "I oppose this budget and will make it my mission to reduce these unfunded mandates on our schools.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 25,
+      "decision": "directional",
+      "semanticKey": "curran_lgbtq_civil_rights",
+      "topics": [
+        "civil rights",
+        "LGBTQ rights"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Brion Curran supports protecting the civil rights and liberties of transgender, non-binary, and two-spirit Minnesotans.",
+      "supportingExcerpt": "I am proud to represent our district, and I am determined to fight tirelessly to protect the civil liberties of every one of our residents.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 26,
+      "decision": "directional",
+      "semanticKey": "her_paid_family_medical_leave",
+      "topics": [
+        "paid family leave",
+        "labor",
+        "healthcare"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Kaohly Vang Her opposes repealing Minnesota's Paid Family and Medical Leave policy.",
+      "supportingExcerpt": "I will continue to oppose Republican bills to lower taxes for the rich, put barriers to healthcare access, and repeal policies that help Minnesotans thrive like Paid Family and Medical Leave.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 27,
+      "decision": "directional",
+      "semanticKey": "kraft_repeat_dwi_interlock",
+      "topics": [
+        "DWI",
+        "ignition interlock",
+        "public safety"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Larry Kraft supports stronger ignition-interlock requirements for repeat DWI offenders while reducing barriers to entering the interlock program.",
+      "supportingExcerpt": "the legislation ramps the interlock time a lot more aggressively while also reducing barriers to folks getting on the interlock. This is one of my top priorities this session",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 28,
+      "decision": "non_directional",
+      "reasonCode": "generic_bipartisan_commitment_without_specific_policy_position"
+    },
+    {
+      "row": 29,
+      "decision": "non_directional",
+      "reasonCode": "generic_governance_commitment_without_specific_policy_position"
+    },
+    {
+      "row": 30,
+      "decision": "directional",
+      "semanticKey": "anderson_independent_inspector_general",
+      "topics": [
+        "fraud prevention",
+        "government oversight",
+        "inspector general"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Patricia Anderson supports creating an independent Office of the Inspector General to investigate and prevent fraud, waste, and abuse.",
+      "supportingExcerpt": "House File 1 – Fighting Fraud at the Source This session, I am proud to author House File 1 , a bill aimed at preventing the next big fraud scandal before it happens. This legislation will: Create an independent Office of the Inspector General to investigate and prevent fraud, waste, and abuse.",
+      "crossBatchDuplicateOf": []
+    }
+  ]
+}

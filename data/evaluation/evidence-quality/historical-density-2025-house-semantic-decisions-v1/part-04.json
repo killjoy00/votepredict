@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "historical-density-2025-house-semantic-decisions-part-v1",
+  "part": 4,
+  "rows": [
+    31,
+    40
+  ],
+  "decisions": [
+    {
+      "row": 31,
+      "decision": "non_directional",
+      "reasonCode": "generic_values_without_specific_policy_position"
+    },
+    {
+      "row": 32,
+      "decision": "directional",
+      "semanticKey": "sencer_mura_lgbtq_safe_schools",
+      "topics": [
+        "education",
+        "LGBTQ rights",
+        "curriculum"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Samantha Sencer-Mura supports safe and inclusive schools for LGBTQ students and protections for teachers who teach diverse and accurate curriculum.",
+      "supportingExcerpt": "I remain committed to ensuring all students can show up at our schools as their whole selves, that students can continue to see schools as safe and brave spaces, and that our teachers are protected when they teach diverse, honest, and accurate curriculum.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 33,
+      "decision": "directional",
+      "semanticKey": "gomez_millionaire_tax_for_medicaid",
+      "topics": [
+        "Medicaid",
+        "taxation",
+        "healthcare"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Aisha Gomez supports raising taxes on millionaires to offset federal Medicaid funding cuts.",
+      "supportingExcerpt": "Medicaid not Millionaires While President Trump and Congressional Republicans look to subsidize tax cuts for the wealthy by reducing federal funding for Medicaid, I introduced legislation that would raise taxes on millionaires at the level necessary to offset any cuts to this crucial program.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 34,
+      "decision": "directional",
+      "semanticKey": "nash_fraud_notes",
+      "topics": [
+        "fraud prevention",
+        "government oversight"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Jim Nash supports requiring fraud-risk notes for proposed legislation before new programs or policies are enacted.",
+      "supportingExcerpt": "House File 3 establishes “fraud notes,” a groundbreaking tool to assess the susceptibility of proposed legislation to fraud. Similar to fiscal notes, fraud notes would provide lawmakers with an evaluation of potential fraud risks before enacting new programs or policies.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 35,
+      "decision": "directional",
+      "semanticKey": "van_binsbergen_state_agency_fraud_reporting",
+      "topics": [
+        "fraud prevention",
+        "government oversight"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Scott Van Binsbergen supports stricter fraud reporting requirements and additional fraud-prevention tools for state agencies.",
+      "supportingExcerpt": "House File 2 (which I co-authored): Strengthens fraud prevention by mandating stricter reporting requirements for state agencies and equipping them with additional tools to identify and prevent fraudulent activities.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 36,
+      "decision": "directional",
+      "semanticKey": "joy_make_minnesota_safe",
+      "topics": [
+        "public safety",
+        "law enforcement",
+        "criminal penalties"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Jim Joy supports a public-safety package that strengthens law enforcement, increases offender accountability, and expands criminal-justice transparency.",
+      "supportingExcerpt": "This proposal is part of my Public Safety Committee and I am proud to co-author these bills. This comprehensive proposal is designed to: Strengthen law enforcement.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 37,
+      "decision": "directional",
+      "semanticKey": "roach_limit_emergency_powers",
+      "topics": [
+        "emergency powers",
+        "executive authority",
+        "civil liberties"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Drew Roach supports limiting a governor's unilateral emergency powers and requiring a two-thirds legislative vote to extend them.",
+      "supportingExcerpt": "To that, I and many others say, “never again.” My legislation would prevent any governor from unilaterally declaring an emergency and require 2/3 of the legislature to extend emergency powers to the governor.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 38,
+      "decision": "directional",
+      "semanticKey": "allen_fraud_oversight_accountability",
+      "topics": [
+        "fraud prevention",
+        "government oversight"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Keith Allen supports stronger oversight and accountability for state programs to reduce fraud and waste.",
+      "supportingExcerpt": "I will work to strengthen oversight and increase accountability to ensure that state programs are efficient and transparent.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 39,
+      "decision": "directional",
+      "semanticKey": "sexton_end_nuclear_moratorium",
+      "topics": [
+        "nuclear energy",
+        "energy policy",
+        "affordability"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Thomas Sexton supports ending Minnesota's moratorium on new nuclear power generation.",
+      "supportingExcerpt": "This bill ends our moratorium on the construction of new nuclear power plants from over 30 years ago.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 40,
+      "decision": "directional",
+      "semanticKey": "nadeau_teacher_pension_state_funding",
+      "topics": [
+        "teacher pensions",
+        "education",
+        "retirement"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Danny Nadeau supports using state funds for teacher pension reform that expands earlier retirement options.",
+      "supportingExcerpt": "We will fight to reappropriate state funds for this pension reform.",
+      "crossBatchDuplicateOf": []
+    }
+  ]
+}

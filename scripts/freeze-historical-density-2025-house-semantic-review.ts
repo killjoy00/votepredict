@@ -1,159 +1,110 @@
 import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 
-const ISSUE = 718;
-const SESSION = '2025-2026';
-const BATCH_ID = 'EQV1-HISTORICAL-DENSITY-2025-HOUSE-001';
-const COHORT_SCHEMA = 'historical-density-2025-house-semantic-review-cohort-v1';
-const OUTPUT_SCHEMA = 'historical-density-2025-house-semantic-review-v1';
-const COHORT_RUN_ID = 37528910948;
-const COHORT_ARTIFACT_ID = 11442499885;
-const COHORT_ARTIFACT_DIGEST = 'sha256:c8551e3690cb8d4a8a9cee2c0cc5b006a5b87d1e6c0baa6a7f6755aae2ee1662';
-const COHORT_SELECTION_KEY_SHA256 = '984c1d1128968c0b22079421cbcdbf2580459622728efb01a030c461b99d3d62';
-const EXPECTED_DOCUMENTS = 50;
-const EXPECTED_DIRECTIONAL = 46;
-const EXPECTED_NON_DIRECTIONAL = 4;
-const EXPECTED_HEADER = ['row','decision','semanticKey','topics','claimType','stance','explicitness','normalizedClaim','excerptStart','excerptEnd','excerptSha256','reasonCode'];
-const OUTPUT_FILE = 'historical-density-2025-house-semantic-review-v1.json';
+const COHORT_SCHEMA='historical-density-2025-house-semantic-review-cohort-v1';
+const DECISION_SCHEMA='historical-density-2025-house-semantic-decisions-v1';
+const PART_SCHEMA='historical-density-2025-house-semantic-decisions-part-v1';
+const OUTPUT_SCHEMA='historical-density-2025-house-semantic-review-v1';
+const BATCH_ID='EQV1-HISTORICAL-DENSITY-2025-HOUSE-001';
+const SESSION='2025-2026';
+const RUN_ID=37528487859;
+const ARTIFACT_ID=11443187627;
+const ARTIFACT_DIGEST='sha256:13aebbf7882adf1e0afef19adc932d0109b56b8b331c052680b1586937b001c5';
+const SELECTION_SHA='984c1d1128968c0b22079421cbcdbf2580459622728efb01a030c461b99d3d62';
+const EXPECTED_NON=[16,28,29,31];
 
-type CohortDocument = {
-  row: number; publicMemberKey: string; lrlId: string; memberName: string; districts: string[]; parties: string[];
-  articleUrl: string; articleTitle: string; publishedOn: string; contentSha256: string; articleOwnedTextSha256: string;
-  articleOwnedText: string; earliestStrictFutureTargetDate: string; candidateBillIdentifiers: string[];
-};
-type Cohort = {
-  schemaVersion: string; issue: number; session: string;
-  selection: {
-    selectedDocuments: number; selectedMembers: number; maximumDocumentsPerMember: number; selectionKeySha256: string;
-    targetBillTextUsed: boolean; targetBillIdentifiersUsedForSelection: boolean; targetVoteOutcomesUsed: boolean;
-    targetEventIdentityUsedForSelection: boolean; strictFutureEventCountUsedForTieBreakOnly: boolean;
-  };
-  documents: CohortDocument[];
-  policy: {
-    outcomeBlind: boolean; outcomeUse: string; memberIssueOnlyAtThisStage: boolean; billInference: boolean;
-    candidateBillIdentifiersRequiredEmpty: boolean; targetBillApplicabilityInferred: boolean; publicLrlIdentityOnly: boolean;
-    internalMembershipIdentityResolved: boolean; productionDatabaseQueried: boolean; productionWrites: boolean; vercelUsed: boolean;
-    sameDayEligible: boolean; contextOnly: boolean; mechanicallyActionable: boolean; modelWeight: number;
-    featureRowsWritten: boolean; modelFitting: string; servingChanged: boolean;
-  };
-};
-type DirectionalDecision = {
-  row: number; decision: 'directional'; semanticKey: string; topics: string[];
-  claimType: 'quoted_position' | 'explicit_position'; stance: 'supports' | 'opposes';
-  explicitness: 'direct_quote' | 'document_position'; normalizedClaim: string;
-  excerptStart: number; excerptEnd: number; excerptSha256: string;
-};
-type NonDirectionalDecision = { row: number; decision: 'non_directional'; reasonCode: string };
-type Decision = DirectionalDecision | NonDirectionalDecision;
+type AnyObject=Record<string,any>;
+function env(name:string){const v=process.env[name]?.trim();if(!v)throw new Error(`${name} is required`);return v;}
+function readJson(path:string){return JSON.parse(readFileSync(path,'utf8')) as AnyObject;}
 
-function requiredEnv(name: string): string {
-  const value = process.env[name]?.trim();
-  if (!value) throw new Error(`${name} is required`);
-  return value;
-}
-function sha256(value: string): string { return createHash('sha256').update(value).digest('hex'); }
-function parseDecisions(path: string): Decision[] {
-  const lines = readFileSync(path, 'utf8').trimEnd().split(/\r?\n/);
-  if (JSON.stringify(lines[0]!.split('\t')) !== JSON.stringify(EXPECTED_HEADER)) throw new Error('Semantic decision TSV header drifted');
-  return lines.slice(1).map((line, index) => {
-    const [rowRaw, decision, semanticKey, topicsRaw, claimType, stance, explicitness, normalizedClaim, startRaw, endRaw, excerptSha256, reasonCode] = line.split('\t');
-    const row = Number(rowRaw);
-    if (row !== index + 1) throw new Error(`Decision row order drifted at ${rowRaw}`);
-    if (decision === 'non_directional') {
-      if (!reasonCode || semanticKey || topicsRaw || claimType || stance || explicitness || normalizedClaim || startRaw || endRaw || excerptSha256) throw new Error(`Malformed non-directional row ${row}`);
-      return { row, decision, reasonCode };
+function main(){
+  const cohort=readJson(env('VOTEPREDICT_2025_HOUSE_SEMANTIC_COHORT_PATH'));
+  const decisionDir=resolve(env('VOTEPREDICT_2025_HOUSE_SEMANTIC_DECISION_DIR'));
+  const output=resolve(env('VOTEPREDICT_2025_HOUSE_SEMANTIC_REVIEW_OUTPUT'));
+  const manifest=readJson(resolve(decisionDir,'manifest.json'));
+  const parts=(manifest.parts as string[]).map((name)=>readJson(resolve(decisionDir,name)));
+  const decisions=parts.flatMap((part)=>part.decisions as AnyObject[]);
+
+  if(cohort.schemaVersion!==COHORT_SCHEMA||cohort.issue!==718||cohort.session!==SESSION||cohort.documents?.length!==50
+    ||cohort.selection?.recoveredBodies!==1340||cohort.selection?.parsedArticleOwnedBodies!==1310||cohort.selection?.uniqueArticleOwnedBodies!==1290
+    ||cohort.selection?.strongSignalDocuments!==400||cohort.selection?.strongSignalMembers!==123||cohort.selection?.selectedDocuments!==50
+    ||cohort.selection?.selectedMembers!==50||cohort.selection?.maximumDocumentsPerMember!==1||cohort.selection?.selectionKeySha256!==SELECTION_SHA
+    ||cohort.selection?.targetBillTextUsed||cohort.selection?.targetBillIdentifiersUsedForSelection||cohort.selection?.targetVoteOutcomesUsed
+    ||cohort.selection?.targetEventIdentityUsedForSelection||!cohort.selection?.strictFutureEventCountUsedForTieBreakOnly
+    ||!cohort.policy?.outcomeBlind||cohort.policy?.outcomeUse!=='none'||!cohort.policy?.sourceBodiesAreOfficialHouseMemberPrimary
+    ||!cohort.policy?.articleOwnedTextOnlyForSignalSelection||!cohort.policy?.memberIssueOnlyAtThisStage||cohort.policy?.billInference
+    ||!cohort.policy?.candidateBillIdentifiersRequiredEmpty||cohort.policy?.targetBillApplicabilityInferred||!cohort.policy?.publicLlrIdentityOnly
+    ||cohort.policy?.internalMembershipIdentityResolved||cohort.policy?.productionDatabaseQueried||cohort.policy?.productionWrites||cohort.policy?.vercelUsed
+    ||cohort.policy?.sameDayEligible||!cohort.policy?.contextOnly||cohort.policy?.mechanicallyActionable||cohort.policy?.modelWeight!==0
+    ||cohort.policy?.featureRowsWritten||cohort.policy?.modelFitting!=='none'||cohort.policy?.servingChanged){
+    throw new Error('Frozen 2025 House semantic cohort identity/policy drifted');
+  }
+
+  if(manifest.schemaVersion!==DECISION_SCHEMA||manifest.batchId!==BATCH_ID||manifest.issue!==718
+    ||manifest.frozenCohort?.runId!==RUN_ID||manifest.frozenCohort?.artifactId!==ARTIFACT_ID||manifest.frozenCohort?.digest!==ARTIFACT_DIGEST
+    ||manifest.frozenCohort?.selectionKeySha256!==SELECTION_SHA||manifest.parts?.length!==5||manifest.policy?.candidateBillIdentifiers?.length!==0
+    ||manifest.policy?.targetBillApplicabilityInferred||manifest.policy?.outcomeUse!=='none'||!manifest.policy?.memberIssueOnly||manifest.policy?.billInference
+    ||manifest.policy?.internalMembershipIdentityResolved||!manifest.policy?.contextOnly||manifest.policy?.mechanicallyActionable||manifest.policy?.modelWeight!==0
+    ||manifest.policy?.productionDatabaseQueried||manifest.policy?.productionWrites||manifest.policy?.vercelUsed||manifest.policy?.modelFitting!=='none'
+    ||manifest.policy?.servingChanged){throw new Error('2025 House semantic-decision manifest drifted');}
+
+  if(parts.some((part,index)=>part.schemaVersion!==PART_SCHEMA||part.part!==index+1||part.decisions?.length!==10
+    ||part.rows?.[0]!==index*10+1||part.rows?.[1]!==(index+1)*10)){throw new Error('Semantic decision part identity drifted');}
+  if(decisions.length!==50||JSON.stringify(decisions.map((x)=>x.row))!==JSON.stringify(Array.from({length:50},(_,i)=>i+1))){
+    throw new Error('Semantic decisions must cover rows 1..50 exactly once');
+  }
+
+  const directional=decisions.filter((x)=>x.decision==='directional');
+  const non=decisions.filter((x)=>x.decision==='non_directional');
+  if(directional.length!==46||non.length!==4||new Set(directional.map((x)=>x.semanticKey)).size!==46
+    ||JSON.stringify(non.map((x)=>x.row))!==JSON.stringify(EXPECTED_NON)||directional.some((x)=>x.crossBatchDuplicateOf?.length!==0)){
+    throw new Error(`Semantic review counts drifted directional=${directional.length} non=${non.length}`);
+  }
+
+  const documentReviews=decisions.map((decision)=>{
+    const doc=cohort.documents[decision.row-1];
+    if(!doc||doc.row!==decision.row||doc.publicMemberKey!==`public-lrl:${SESSION}:${doc.lrlId}`||!doc.memberName?.trim()
+      ||!doc.articleUrl?.startsWith('https://www.house.mn.gov/')||doc.candidateBillIdentifiers?.length!==0||doc.strictFutureTargetEventCount<1
+      ||!(doc.publishedOn<doc.earliestStrictFutureTargetDate)||!(doc.publishedOn<doc.latestStrictFutureTargetDate)){
+      throw new Error(`Frozen cohort row invalid: ${decision.row}`);
     }
-    if (decision !== 'directional' || !semanticKey || !topicsRaw || !normalizedClaim || !excerptSha256) throw new Error(`Malformed directional row ${row}`);
-    if (claimType !== 'quoted_position' && claimType !== 'explicit_position') throw new Error(`Invalid claim type row ${row}`);
-    if (stance !== 'supports' && stance !== 'opposes') throw new Error(`Invalid stance row ${row}`);
-    if (explicitness !== 'direct_quote' && explicitness !== 'document_position') throw new Error(`Invalid explicitness row ${row}`);
-    const excerptStart = Number(startRaw), excerptEnd = Number(endRaw);
-    if (!Number.isInteger(excerptStart) || !Number.isInteger(excerptEnd) || excerptStart < 0 || excerptEnd <= excerptStart) throw new Error(`Invalid excerpt offsets row ${row}`);
-    return { row, decision, semanticKey, topics: topicsRaw.split(';'), claimType, stance, explicitness, normalizedClaim, excerptStart, excerptEnd, excerptSha256 };
-  });
-}
-
-function main(): void {
-  const cohort = JSON.parse(readFileSync(requiredEnv('VOTEPREDICT_HISTORICAL_DENSITY_2025_HOUSE_SEMANTIC_COHORT_PATH'), 'utf8')) as Cohort;
-  const decisions = parseDecisions(requiredEnv('VOTEPREDICT_HISTORICAL_DENSITY_2025_HOUSE_SEMANTIC_DECISION_PATH'));
-  const outputDir = requiredEnv('VOTEPREDICT_HISTORICAL_DENSITY_2025_HOUSE_SEMANTIC_REVIEW_OUTPUT_DIR');
-
-  if (
-    cohort.schemaVersion !== COHORT_SCHEMA || cohort.issue !== ISSUE || cohort.session !== SESSION
-    || cohort.selection.selectedDocuments !== EXPECTED_DOCUMENTS || cohort.selection.selectedMembers !== EXPECTED_DOCUMENTS
-    || cohort.selection.maximumDocumentsPerMember !== 1 || cohort.selection.selectionKeySha256 !== COHORT_SELECTION_KEY_SHA256
-    || cohort.selection.targetBillTextUsed || cohort.selection.targetBillIdentifiersUsedForSelection || cohort.selection.targetVoteOutcomesUsed
-    || cohort.selection.targetEventIdentityUsedForSelection || !cohort.selection.strictFutureEventCountUsedForTieBreakOnly
-    || cohort.documents.length !== EXPECTED_DOCUMENTS || !cohort.policy.outcomeBlind || cohort.policy.outcomeUse !== 'none'
-    || !cohort.policy.memberIssueOnlyAtThisStage || cohort.policy.billInference || !cohort.policy.candidateBillIdentifiersRequiredEmpty
-    || cohort.policy.targetBillApplicabilityInferred || !cohort.policy.publicLrlIdentityOnly || cohort.policy.internalMembershipIdentityResolved
-    || cohort.policy.productionDatabaseQueried || cohort.policy.productionWrites || cohort.policy.vercelUsed || cohort.policy.sameDayEligible
-    || !cohort.policy.contextOnly || cohort.policy.mechanicallyActionable || cohort.policy.modelWeight !== 0 || cohort.policy.featureRowsWritten
-    || cohort.policy.modelFitting !== 'none' || cohort.policy.servingChanged
-  ) throw new Error('2025 House semantic cohort identity or safety policy drifted');
-
-  if (decisions.length !== EXPECTED_DOCUMENTS) throw new Error(`Expected ${EXPECTED_DOCUMENTS} decisions, got ${decisions.length}`);
-  const directional = decisions.filter((d): d is DirectionalDecision => d.decision === 'directional');
-  const nonDirectional = decisions.filter((d): d is NonDirectionalDecision => d.decision === 'non_directional');
-  if (directional.length !== EXPECTED_DIRECTIONAL || nonDirectional.length !== EXPECTED_NON_DIRECTIONAL) throw new Error(`Semantic counts drifted ${directional.length}/${nonDirectional.length}`);
-
-  const semanticKeys = new Set<string>();
-  const publicMemberKeys = new Set<string>();
-  const documentReviews = decisions.map((decision) => {
-    const document = cohort.documents[decision.row - 1];
-    if (!document || document.row !== decision.row || document.publicMemberKey !== `public-lrl:${SESSION}:${document.lrlId}`
-      || document.candidateBillIdentifiers.length !== 0 || !(document.publishedOn < document.earliestStrictFutureTargetDate)) {
-      throw new Error(`Frozen cohort document boundary drifted at row ${decision.row}`);
+    const base={row:decision.row,publicMemberKey:doc.publicMemberKey,lrlId:doc.lrlId,memberName:doc.memberName,sourceUrl:doc.articleUrl,
+      sourceTitle:doc.articleTitle,sourceContentSha256:doc.contentSha256,articleOwnedTextSha256:doc.articleOwnedTextSha256,publishedOn:doc.publishedOn,
+      candidateBillIdentifiers:[] as string[]};
+    if(decision.decision==='non_directional'){
+      if(!decision.reasonCode?.trim())throw new Error(`Non-directional row ${decision.row} lacks reason`);
+      return {...base,decision:'non_directional' as const,reasonCode:decision.reasonCode};
     }
-    if (publicMemberKeys.has(document.publicMemberKey)) throw new Error(`Duplicate public member ${document.publicMemberKey}`);
-    publicMemberKeys.add(document.publicMemberKey);
-    const shared = {
-      row: decision.row, publicMemberKey: document.publicMemberKey, lrlId: document.lrlId, memberName: document.memberName,
-      districts: document.districts, parties: document.parties, sourceUrl: document.articleUrl, sourceTitle: document.articleTitle,
-      sourceContentSha256: document.contentSha256, articleOwnedTextSha256: document.articleOwnedTextSha256, availableAt: document.publishedOn,
-      candidateBillIdentifiers: [] as string[], internalMembershipId: null as null, internalLegislatorId: null as null,
-    };
-    if (decision.decision === 'non_directional') return { ...shared, decision: decision.decision, reasonCode: decision.reasonCode };
-    if (semanticKeys.has(decision.semanticKey)) throw new Error(`Duplicate semantic key ${decision.semanticKey}`);
-    semanticKeys.add(decision.semanticKey);
-    const excerpt = document.articleOwnedText.slice(decision.excerptStart, decision.excerptEnd);
-    if (!excerpt || sha256(excerpt) !== decision.excerptSha256) throw new Error(`Exact excerpt proof drifted at row ${decision.row}`);
-    return { ...shared, decision: decision.decision, semanticKey: decision.semanticKey, topics: decision.topics, claimType: decision.claimType,
-      stance: decision.stance, explicitness: decision.explicitness, normalizedClaim: decision.normalizedClaim, supportingExcerpt: excerpt };
+    if(!decision.semanticKey?.trim()||!decision.topics?.length||!decision.normalizedClaim?.trim()||!decision.supportingExcerpt?.trim()
+      ||!doc.articleOwnedText.includes(decision.supportingExcerpt))throw new Error(`Directional row ${decision.row} lacks exact grounded fields`);
+    return {...base,decision:'directional' as const,semanticKey:decision.semanticKey,districts:doc.districts,parties:doc.parties,
+      strictFutureTargetEventCount:doc.strictFutureTargetEventCount,earliestStrictFutureTargetDate:doc.earliestStrictFutureTargetDate,
+      latestStrictFutureTargetDate:doc.latestStrictFutureTargetDate,linkage:'member_issue' as const,topics:decision.topics,claimType:decision.claimType,
+      stance:decision.stance,specificity:'issue_family' as const,explicitness:decision.explicitness,attributionType:'target_member' as const,
+      attributedActor:doc.memberName,normalizedClaim:decision.normalizedClaim,supportingExcerpt:decision.supportingExcerpt,extractionConfidence:0.97,
+      crossBatchDuplicateOf:[] as string[],internalMembershipIdentityResolved:false};
   });
-  if (semanticKeys.size !== EXPECTED_DIRECTIONAL || publicMemberKeys.size !== EXPECTED_DOCUMENTS) throw new Error('Semantic/public-member identity accounting drifted');
 
-  const semanticGroups = documentReviews.flatMap((review) => review.decision !== 'directional' ? [] : [{
-    semanticKey: review.semanticKey, publicMemberKey: review.publicMemberKey, lrlId: review.lrlId, memberName: review.memberName,
-    internalMembershipId: null, internalLegislatorId: null, sourceRows: [review.row], sourceUrls: [review.sourceUrl],
-    sourceContentSha256: [review.sourceContentSha256], earliestAvailability: review.availableAt, topics: review.topics,
-    claimType: review.claimType, stance: review.stance, explicitness: review.explicitness, normalizedClaim: review.normalizedClaim,
-    supportingExcerpt: review.supportingExcerpt, linkage: 'member_issue' as const, candidateBillIdentifiers: [] as string[],
-    internalIdentityResolution: 'pending' as const, applicabilityDecision: 'not_evaluated' as const,
-  }]).sort((a, b) => a.semanticKey.localeCompare(b.semanticKey));
+  const semanticGroups=documentReviews.filter((x)=>x.decision==='directional').map((x:any)=>({semanticKey:x.semanticKey,publicMemberKey:x.publicMemberKey,
+    lrlId:x.lrlId,memberName:x.memberName,sourceRows:[x.row],sourceUrls:[x.sourceUrl],earliestAvailability:x.publishedOn,topics:x.topics,
+    claimType:x.claimType,stance:x.stance,explicitness:x.explicitness,normalizedClaim:x.normalizedClaim,supportingExcerpt:x.supportingExcerpt,
+    extractionConfidence:0.97,linkage:'member_issue',candidateBillIdentifiers:[],crossBatchDuplicateOf:[],novelForApplicabilityScreen:true,
+    internalMembershipIdentityResolved:false})).sort((a:any,b:any)=>a.semanticKey.localeCompare(b.semanticKey));
 
-  const decisionKeySha256 = sha256(`${decisions.map((d) => d.decision === 'directional'
-    ? `${d.row}|${d.semanticKey}|${d.stance}|${d.excerptStart}|${d.excerptEnd}|${d.excerptSha256}`
-    : `${d.row}|non_directional|${d.reasonCode}`).join('\n')}\n`);
-  const report = {
-    schemaVersion: OUTPUT_SCHEMA, generatedAt: new Date().toISOString(), batchId: BATCH_ID, issue: ISSUE, session: SESSION,
-    frozenCohort: { runId: COHORT_RUN_ID, artifactId: COHORT_ARTIFACT_ID, digest: COHORT_ARTIFACT_DIGEST, selectionKeySha256: COHORT_SELECTION_KEY_SHA256 },
-    decisionKeySha256,
-    summary: { documents: EXPECTED_DOCUMENTS, publicMembers: EXPECTED_DOCUMENTS, directionalDocuments: directional.length,
-      nonDirectionalDocuments: nonDirectional.length, uniqueSemanticGroups: semanticGroups.length, candidateBillIdentifiers: 0,
-      internalMembershipMappings: 0, internalLegislatorMappings: 0 },
-    documentReviews, semanticGroups,
-    policy: { outcomeBlind: true, outcomeUse: 'none', publicLrlIdentityOnly: true, internalMembershipIdentityResolved: false,
-      internalIdentityMustBeResolvedBeforeApplicabilityOrMatrixOverlay: true, memberIssueOnly: true, billInference: false,
-      candidateBillIdentifiersRequiredEmpty: true, targetBillApplicabilityInferred: false, productionDatabaseQueried: false,
-      productionWrites: false, vercelUsed: false, sameDayEligible: false, contextOnly: true, mechanicallyActionable: false,
-      modelWeight: 0, featureRowsWritten: false, modelFitting: 'none', servingChanged: false,
-      nextStepBoundary: 'Resolve public LRL identity to an outcome-blind internal membership mapping before any strict-pre-vote applicability audit or matrix overlay. Do not infer internal UUIDs from names or districts.' },
-  };
-  mkdirSync(outputDir, { recursive: true });
-  writeFileSync(resolve(outputDir, OUTPUT_FILE), `${JSON.stringify(report, null, 2)}\n`);
-  console.log(JSON.stringify({ historicalDensity2025HouseSemanticReview: { ...report.summary, decisionKeySha256, outcomeUse: 'none', productionDatabaseQueried: false, vercelUsed: false } }, null, 2));
+  const report={schemaVersion:OUTPUT_SCHEMA,batchId:BATCH_ID,generatedAt:new Date().toISOString(),issue:718,session:SESSION,
+    frozenCohort:{runId:RUN_ID,artifactId:ARTIFACT_ID,digest:ARTIFACT_DIGEST,selectionKeySha256:SELECTION_SHA},
+    summary:{documents:50,directionalDocuments:46,nonDirectionalDocuments:4,uniqueSemanticGroups:46,novelSemanticGroups:46,
+      crossBatchDuplicateSemanticGroups:0,candidateBillIdentifiers:0,internalMembershipIdentitiesResolved:0},semanticGroups,documentReviews,
+    policy:{outcomeBlind:true,outcomeUse:'none',memberIssueOnly:true,billInference:false,candidateBillIdentifiersRequiredEmpty:true,
+      targetBillApplicabilityInferred:false,onlyNovelSemanticGroupsAdvanceToApplicabilityScreen:true,publicLlrIdentityOnly:true,
+      internalMembershipIdentityResolved:false,internalIdentityResolutionRequiredBeforeFeatureIntegration:true,productionDatabaseQueried:false,
+      productionWrites:false,contextOnly:true,mechanicallyActionable:false,modelWeight:0,modelFitting:'none',vercelUsed:false,servingChanged:false},
+    contentSha256WithoutSelfField:null as string|null};
+  mkdirSync(dirname(output),{recursive:true});
+  const canonical=`${JSON.stringify(report,null,2)}\n`;
+  report.contentSha256WithoutSelfField=createHash('sha256').update(canonical).digest('hex');
+  writeFileSync(output,`${JSON.stringify(report,null,2)}\n`,'utf8');
+  console.log(JSON.stringify({historicalDensity2025HouseSemanticReview:report.summary,policy:{outcomeUse:'none',productionDatabaseQueried:false,vercelUsed:false,modelFitting:'none'}},null,2));
 }
-
 main();

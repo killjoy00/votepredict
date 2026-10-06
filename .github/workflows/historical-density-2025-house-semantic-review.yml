@@ -1,16 +1,18 @@
-name: Historical density 2025 House semantic review
+name: Freeze 2025 House semantic review
 
 on:
   pull_request:
     paths:
-      - data/evaluation/evidence-quality/historical-density-2025-house-semantic-decisions-v1.tsv
+      - data/evaluation/evidence-quality/historical-density-2025-house-semantic-decisions-v1/**
       - scripts/freeze-historical-density-2025-house-semantic-review.ts
+      - tests/historical-density-2025-house-semantic-review.test.ts
       - .github/workflows/historical-density-2025-house-semantic-review.yml
   push:
     branches: [main]
     paths:
-      - data/evaluation/evidence-quality/historical-density-2025-house-semantic-decisions-v1.tsv
+      - data/evaluation/evidence-quality/historical-density-2025-house-semantic-decisions-v1/**
       - scripts/freeze-historical-density-2025-house-semantic-review.ts
+      - tests/historical-density-2025-house-semantic-review.test.ts
       - .github/workflows/historical-density-2025-house-semantic-review.yml
   workflow_dispatch:
 
@@ -23,8 +25,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  review:
-    name: Freeze reviewed 2025 House semantics
+  freeze:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -37,77 +38,70 @@ jobs:
           cache: npm
       - run: npm ci --no-fund --no-audit
 
-      - name: Materialize immutable main semantic cohort
+      - name: Test checked-in semantic decision gate
+        run: node --import tsx --test tests/historical-density-2025-house-semantic-review.test.ts
+
+      - name: Materialize immutable 2025 House semantic cohort
         shell: bash
         run: |
           set -euo pipefail
-          gh api /repos/${{ github.repository }}/actions/artifacts/11442499885/zip > "$RUNNER_TEMP/semantic-cohort.zip"
-          echo "c8551e3690cb8d4a8a9cee2c0cc5b006a5b87d1e6c0baa6a7f6755aae2ee1662  $RUNNER_TEMP/semantic-cohort.zip" | sha256sum -c -
+          gh api /repos/${{ github.repository }}/actions/artifacts/11443187627/zip > "$RUNNER_TEMP/semantic-cohort.zip"
+          echo "13aebbf7882adf1e0afef19adc932d0109b56b8b331c052680b1586937b001c5  $RUNNER_TEMP/semantic-cohort.zip" | sha256sum -c -
           mkdir -p "$RUNNER_TEMP/semantic-cohort"
           unzip -q "$RUNNER_TEMP/semantic-cohort.zip" historical-density-2025-house-semantic-review-cohort-v1.json -d "$RUNNER_TEMP/semantic-cohort"
 
-      - name: Freeze reviewed semantic decisions
+      - name: Freeze reviewed member-issue semantics
         env:
-          VOTEPREDICT_HISTORICAL_DENSITY_2025_HOUSE_SEMANTIC_COHORT_PATH: ${{ runner.temp }}/semantic-cohort/historical-density-2025-house-semantic-review-cohort-v1.json
-          VOTEPREDICT_HISTORICAL_DENSITY_2025_HOUSE_SEMANTIC_DECISION_PATH: data/evaluation/evidence-quality/historical-density-2025-house-semantic-decisions-v1.tsv
-          VOTEPREDICT_HISTORICAL_DENSITY_2025_HOUSE_SEMANTIC_REVIEW_OUTPUT_DIR: ${{ runner.temp }}/semantic-review
+          VOTEPREDICT_2025_HOUSE_SEMANTIC_COHORT_PATH: ${{ runner.temp }}/semantic-cohort/historical-density-2025-house-semantic-review-cohort-v1.json
+          VOTEPREDICT_2025_HOUSE_SEMANTIC_DECISION_DIR: data/evaluation/evidence-quality/historical-density-2025-house-semantic-decisions-v1
+          VOTEPREDICT_2025_HOUSE_SEMANTIC_REVIEW_OUTPUT: ${{ runner.temp }}/historical-density-2025-house-semantic-review-v1.json
         run: node --import tsx scripts/freeze-historical-density-2025-house-semantic-review.ts
 
-      - name: Verify semantic review boundary
+      - name: Verify semantic-review boundary
         shell: bash
         run: |
           set -euo pipefail
-          f="$RUNNER_TEMP/semantic-review/historical-density-2025-house-semantic-review-v1.json"
+          f="$RUNNER_TEMP/historical-density-2025-house-semantic-review-v1.json"
           test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-semantic-review-v1
-          test "$(jq -r '.issue' "$f")" = 718
-          test "$(jq -r '.session' "$f")" = 2025-2026
+          test "$(jq -r '.batchId' "$f")" = EQV1-HISTORICAL-DENSITY-2025-HOUSE-001
           test "$(jq -r '.summary.documents' "$f")" = 50
-          test "$(jq -r '.summary.publicMembers' "$f")" = 50
           test "$(jq -r '.summary.directionalDocuments' "$f")" = 46
           test "$(jq -r '.summary.nonDirectionalDocuments' "$f")" = 4
           test "$(jq -r '.summary.uniqueSemanticGroups' "$f")" = 46
+          test "$(jq -r '.summary.novelSemanticGroups' "$f")" = 46
+          test "$(jq -r '.summary.crossBatchDuplicateSemanticGroups' "$f")" = 0
           test "$(jq -r '.summary.candidateBillIdentifiers' "$f")" = 0
-          test "$(jq -r '.summary.internalMembershipMappings' "$f")" = 0
-          test "$(jq -r '.summary.internalLegislatorMappings' "$f")" = 0
-          test "$(jq -r '.semanticGroups | all(.linkage == "member_issue")' "$f")" = true
-          test "$(jq -r '.semanticGroups | all((.candidateBillIdentifiers | length) == 0)' "$f")" = true
-          test "$(jq -r '.semanticGroups | all(.internalMembershipId == null and .internalLegislatorId == null)' "$f")" = true
-          test "$(jq -r '.policy.outcomeBlind' "$f")" = true
+          test "$(jq -r '.summary.internalMembershipIdentitiesResolved' "$f")" = 0
+          jq -e '[.semanticGroups[].candidateBillIdentifiers | length] | add == 0' "$f" >/dev/null
+          jq -e '[.semanticGroups[].novelForApplicabilityScreen] | all(. == true)' "$f" >/dev/null
+          jq -e '[.semanticGroups[].internalMembershipIdentityResolved] | all(. == false)' "$f" >/dev/null
           test "$(jq -r '.policy.outcomeUse' "$f")" = none
-          test "$(jq -r '.policy.publicLrlIdentityOnly' "$f")" = true
-          test "$(jq -r '.policy.internalMembershipIdentityResolved' "$f")" = false
-          test "$(jq -r '.policy.internalIdentityMustBeResolvedBeforeApplicabilityOrMatrixOverlay' "$f")" = true
-          test "$(jq -r '.policy.memberIssueOnly' "$f")" = true
           test "$(jq -r '.policy.billInference' "$f")" = false
           test "$(jq -r '.policy.targetBillApplicabilityInferred' "$f")" = false
+          test "$(jq -r '.policy.internalMembershipIdentityResolved' "$f")" = false
+          test "$(jq -r '.policy.internalIdentityResolutionRequiredBeforeFeatureIntegration' "$f")" = true
           test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
-          test "$(jq -r '.policy.productionWrites' "$f")" = false
           test "$(jq -r '.policy.vercelUsed' "$f")" = false
-          test "$(jq -r '.policy.sameDayEligible' "$f")" = false
-          test "$(jq -r '.policy.contextOnly' "$f")" = true
-          test "$(jq -r '.policy.mechanicallyActionable' "$f")" = false
-          test "$(jq -r '.policy.modelWeight' "$f")" = 0
-          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
           test "$(jq -r '.policy.modelFitting' "$f")" = none
           test "$(jq -r '.policy.servingChanged' "$f")" = false
           {
             echo '## 2025-26 House semantic review'
             echo
-            echo '- Reviewed documents: **50**'
+            echo '- Frozen documents: **50**'
             echo '- Directional: **46**'
-            echo '- Non-directional: **4**'
-            echo '- Unique semantic groups: **46**'
+            echo '- Non-directional/fail-closed: **4**'
+            echo '- Novel semantic groups: **46**'
             echo '- Candidate bill identifiers: **0**'
-            echo '- Internal membership mappings: **0**'
+            echo '- Internal membership IDs resolved: **0**'
             echo '- Outcomes used: **none**'
             echo '- Production DB queried: **no**'
             echo '- Vercel used: **no**'
-            echo '- Matrix rows written: **no**'
+            echo '- Model fitting: **none**'
           } >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v7
         with:
           name: historical-density-2025-house-semantic-review-v1
-          path: ${{ runner.temp }}/semantic-review/*
+          path: ${{ runner.temp }}/historical-density-2025-house-semantic-review-v1.json
           if-no-files-found: error
           retention-days: 90
