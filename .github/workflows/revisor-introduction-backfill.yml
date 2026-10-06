@@ -2,6 +2,12 @@ name: Revisor introduction production backfill
 
 on:
   workflow_dispatch:
+    inputs:
+      run_vercel:
+        description: Explicitly allow this workflow to contact Vercel
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -10,10 +16,7 @@ concurrency:
   group: revisor-introduction-production-backfill
   cancel-in-progress: false
 
-jobs:
-  backfill:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+jobs:\n  backfill:\n    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'\n    runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
