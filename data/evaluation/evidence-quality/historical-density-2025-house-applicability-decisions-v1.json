@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-decisions-v1",
+  "issue": 718,
+  "frozenCandidateArtifact": {
+    "runId": 37546266981,
+    "artifactId": 11450382467,
+    "digest": "sha256:90c6b0eb156412e74ef6181d55c1c91690660ded4fbc8b281195078b2427118d",
+    "reviewKeySha256": "9e4b9247306c6e7314fe0105cbb741ea0977e25c4d4b347bf228f4cca75ff535",
+    "candidatePairs": 47,
+    "candidateBills": 14,
+    "candidatePublicMembers": 19,
+    "candidateSemanticGroups": 19
+  },
+  "defaultDecision": "not_applicable",
+  "semanticRationales": {
+    "allen_fraud_oversight_accountability": "HF1027 concerns mortgage-foreclosure redemption and uses fraud/fraudulent only in real-property litigation; it does not create state-program fraud oversight or accountability controls.",
+    "anderson_independent_inspector_general": "HF1027 is a mortgage-foreclosure/redemption bill and does not create or empower an independent inspector general.",
+    "coulter_legislator_lobbying_cooling_off": "HF1723 mentions a St. Louis County legislative-lobbyist position; it does not impose a post-legislative-service lobbying cooling-off period.",
+    "demuth_centralized_inspector_general": "HF1027 addresses mortgage foreclosure and does not create a centralized Office of the Inspector General or statewide anti-fraud controls.",
+    "frazier_traffic_stop_reform": "HF1659 concerns corrections/community supervision and protective-agent definitions; its traffic reference is generic security traffic control, not standardized police traffic-stop or racial-profiling reform.",
+    "gillman_parental_rights": "HF2067 modifies school attendance, reporting, and absence procedures. It does not give parents final decision-making authority over education, healthcare, or upbringing; the parent-related attendance language does not implement that broader proposition.",
+    "gomez_millionaire_tax_for_medicaid": "HF2184 exempts the Office of Ombudsperson for American Indian Families from court fees; it neither raises taxes on millionaires nor offsets Medicaid/Medical Assistance funding cuts.",
+    "hansen_refinery_hazard_notification": "The nominated public-safety bills address firefighter assistance, surplus badges, victim-assistance fines, victim notification, agricultural vehicle speed, and corrections; none requires refinery hazardous-chemical release notification to first responders.",
+    "joy_make_minnesota_safe": "The nominated bills do not implement the specific Make Minnesota Safe package described by the source article (violent-offender penalties, peace-officer assault penalties, critical-infrastructure penalties, and charging/sentencing transparency). Generic public-safety overlap is insufficient.",
+    "kraft_repeat_dwi_interlock": "The nominated public-safety/corrections bills contain no repeat-DWI ignition-interlock policy or interlock-entry reform.",
+    "nadeau_teacher_pension_state_funding": "HF2067 is a student-attendance/reporting bill and does not fund or reform teacher pensions or earlier-retirement options.",
+    "nash_fraud_notes": "HF1027 uses fraud language in mortgage-foreclosure disputes; it does not require legislative fraud-risk notes for proposed programs or policies.",
+    "perez_vega_state_worker_telework": "HF1723 concerns St. Louis County employment classifications and obsolete local provisions; it does not govern state-worker telework agreements or return-to-office mandates.",
+    "roach_limit_emergency_powers": "SF202 concerns real-property partition/eminent-domain procedures and HF1659 concerns corrections; neither limits gubernatorial emergency powers or requires a two-thirds legislative extension vote.",
+    "schwartz_make_minnesota_safe": "The nominated bills do not implement the specific Make Minnesota Safe package described by the source article. Generic public-safety, law-enforcement, or penalty language is not sufficient applicability.",
+    "stier_human_trafficking_task_force": "The nominated victim-notification, agricultural-vehicle, and corrections bills do not establish an anti-human-trafficking task force.",
+    "van_binsbergen_state_agency_fraud_reporting": "HF1027 concerns mortgage-foreclosure fraud disputes and does not impose fraud-reporting or prevention requirements on state agencies.",
+    "virnig_disability_support": "The nominated bills do not enact the broad disability-support proposition. HF1659 and HF1662 are unrelated; HF2067 contains incidental disability/service language in attendance provisions; HF62 expressly states its cross-references have no substantive legal effect.",
+    "zeleznikar_ev_road_funding_parity": "SF1075 modifies medical exceptions to vehicle-window glazing requirements; it does not adjust electric-vehicle registration fees or road-funding contributions."
+  },
+  "overrides": [],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
