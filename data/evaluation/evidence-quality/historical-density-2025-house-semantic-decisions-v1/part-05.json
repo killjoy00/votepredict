@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "historical-density-2025-house-semantic-decisions-part-v1",
+  "part": 5,
+  "rows": [
+    41,
+    50
+  ],
+  "decisions": [
+    {
+      "row": 41,
+      "decision": "directional",
+      "semanticKey": "youakim_paid_family_medical_leave",
+      "topics": [
+        "paid family leave",
+        "labor",
+        "healthcare"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Cheryl Youakim opposes repealing Minnesota's Paid Family and Medical Leave policy.",
+      "supportingExcerpt": "I will continue to oppose bills to place barriers to healthcare access, cut education funding, and repeal policies that help Minnesotans thrive like Paid Family and Medical Leave.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 42,
+      "decision": "directional",
+      "semanticKey": "berg_duty_to_retreat_repeal",
+      "topics": [
+        "self defense",
+        "gun policy",
+        "duty to retreat"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Kaela Berg opposes legislation eliminating Minnesota's duty to retreat.",
+      "supportingExcerpt": "Democrats Defeat Shoot First Bill This week I helped to vote down HF 13 , Republicans’ Shoot First bill which would remove Minnesota’s long-standing duty to retreat to prevent the escalation of violence. If passed, this would lead to even more gun violence victims and more loss of life.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 43,
+      "decision": "directional",
+      "semanticKey": "murphy_sex_based_school_sports",
+      "topics": [
+        "school sports",
+        "transgender policy",
+        "sex-based athletics"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Tom Murphy supports limiting girls' school sports participation to female-sex students.",
+      "supportingExcerpt": "Friends and Neighbors, A plan that would prevent boys in Minnesota from playing in girls’ sports received a full House floor debate this week, and I voted yes on the bill.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 44,
+      "decision": "directional",
+      "semanticKey": "anderson_family_farm_sick_time_exemption",
+      "topics": [
+        "earned sick time",
+        "agriculture",
+        "labor"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Paul H. Anderson supports exempting certain small-family-farm and short-term farm employees from Minnesota's sick-time program.",
+      "supportingExcerpt": "Bill to aid farms A bill I authored to exempt employees who work on family farms with either five or fewer employees, or who work 28 days or less per year, from participating in the state’s costly sick time program received a committee hearing this week.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 45,
+      "decision": "directional",
+      "semanticKey": "engen_ban_ez_pass",
+      "topics": [
+        "transportation",
+        "tolls",
+        "EZ Pass"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Elliott Engen supports banning EZ Pass toll lanes in Minnesota.",
+      "supportingExcerpt": "This week I introduced a bill to ban “EZ Pass”. It is as much of a scam as the message below.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 46,
+      "decision": "directional",
+      "semanticKey": "heintzeman_off_highway_vehicle_pfas_exemption",
+      "topics": [
+        "PFAS",
+        "off-highway vehicles",
+        "environmental regulation"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Joshua Heintzeman supports exempting off-highway vehicles, snowmobiles, and electric-assisted bicycles from certain PFAS restrictions.",
+      "supportingExcerpt": "HF 81 - This bill exempts off-highway vehicles, snowmobiles, and electric-assisted bicycles from unnecessary PFAS restrictions, ensuring that these recreational vehicles are not unfairly impacted by regulations meant for products designed for infants and children.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 47,
+      "decision": "directional",
+      "semanticKey": "feist_gun_violence_research",
+      "topics": [
+        "gun violence",
+        "research",
+        "public safety"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Sandra Feist supports nonpartisan research focused on reducing violence and improving criminal-justice policy, including gun-violence prevention.",
+      "supportingExcerpt": "HF134 would support nonpartisan research focused on reducing violence and improving criminal justice policies, with special emphasis on gun violence prevention. This builds on the successful Violence Prevention Project Research Center we partnered with last year and will continue our evidence-based approach to creating safer communities.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 48,
+      "decision": "directional",
+      "semanticKey": "norris_manufactured_home_rent_protection",
+      "topics": [
+        "housing",
+        "manufactured homes",
+        "rent"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Matt Norris supports protections for manufactured-home residents against extreme rent increases.",
+      "supportingExcerpt": "Manufactured Homes - Fighting for Affordability One of my top priorities is protecting our neighbors in manufactured housing from extreme rent increases. Many parks across Minnesota, including in our district, are being bought by private equity firms.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 49,
+      "decision": "directional",
+      "semanticKey": "wiener_pro_life",
+      "topics": [
+        "abortion",
+        "pro-life"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Mike Wiener supports protecting unborn life.",
+      "supportingExcerpt": "I also continue to fight for the rights of the unborn.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 50,
+      "decision": "directional",
+      "semanticKey": "nelson_reduce_school_mandates",
+      "topics": [
+        "education",
+        "school mandates"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Nathan Nelson supports raising educational standards while reducing unnecessary mandates on schools.",
+      "supportingExcerpt": "Raising educational standards while reducing unnecessary mandates on schools",
+      "crossBatchDuplicateOf": []
+    }
+  ]
+}

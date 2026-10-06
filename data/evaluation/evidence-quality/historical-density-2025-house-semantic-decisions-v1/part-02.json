@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "historical-density-2025-house-semantic-decisions-part-v1",
+  "part": 2,
+  "rows": [
+    11,
+    20
+  ],
+  "decisions": [
+    {
+      "row": 11,
+      "decision": "directional",
+      "semanticKey": "quam_classroom_direct_education_funding",
+      "topics": [
+        "education funding",
+        "schools"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Duane Quam supports directing education funding to students and classrooms rather than bureaucracy.",
+      "supportingExcerpt": "Education Finance : Overseeing education funding to ensure resources are directed to students and classrooms, rather than bureaucracy.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 12,
+      "decision": "directional",
+      "semanticKey": "witte_pro_life",
+      "topics": [
+        "abortion",
+        "pro-life"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Jeff Witte supports a pro-life position centered on protecting unborn life.",
+      "supportingExcerpt": "Together, we are a voice for the voiceless and a source of hope in challenging times. Let’s keep this momentum going as we work to create a culture of life in Minnesota and beyond.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 13,
+      "decision": "directional",
+      "semanticKey": "swedzinski_end_nuclear_moratorium",
+      "topics": [
+        "nuclear energy",
+        "energy policy"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Chris Swedzinski supports ending Minnesota's moratorium on new nuclear power plants.",
+      "supportingExcerpt": "One major provision in my bill ends Minnesota’s 1994 moratorium on constructing new nuclear power plants because any clean energy future must include nuclear, carbon capture technology, and other forms of renewable energy like hydroelectricity.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 14,
+      "decision": "directional",
+      "semanticKey": "gillman_parental_rights",
+      "topics": [
+        "parental rights",
+        "education",
+        "healthcare"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Dawn Gillman supports giving parents final decision-making authority over their children's education, healthcare, and upbringing.",
+      "supportingExcerpt": "I truly believe that parents, not the government, should have the final say in decisions that impact their child’s education, healthcare, and upbringing.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 15,
+      "decision": "directional",
+      "semanticKey": "bennett_sex_based_school_sports",
+      "topics": [
+        "school sports",
+        "transgender policy",
+        "sex-based athletics"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Peggy Bennett supports prohibiting male students from competing on girls' school sports teams.",
+      "supportingExcerpt": "Legislation is moving forward at the Capitol that would prohibit boys from playing in girls’ sports in Minnesota, and I support it strongly.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 16,
+      "decision": "non_directional",
+      "reasonCode": "institutional_process_not_policy_position"
+    },
+    {
+      "row": 17,
+      "decision": "directional",
+      "semanticKey": "greenman_fair_competition_antitrust",
+      "topics": [
+        "antitrust",
+        "competition",
+        "monopoly"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Emma Greenman supports stronger competition law targeting monopoly and monopsony power.",
+      "supportingExcerpt": "I introduced HF34, the Fair Competition Act , which is designed to fight against monopoly and monopsony power.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 18,
+      "decision": "directional",
+      "semanticKey": "falconer_trans_student_sports_inclusion",
+      "topics": [
+        "school sports",
+        "transgender rights"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Alexander Falconer opposes excluding transgender students from school sports.",
+      "supportingExcerpt": "I spoke against this bill when it was in committee, and I’ll do the same thing on the House Floor. You can watch my closing comments in committee before I voted against the bill here .",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 19,
+      "decision": "directional",
+      "semanticKey": "davis_duty_to_retreat_repeal",
+      "topics": [
+        "self defense",
+        "gun policy",
+        "duty to retreat"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Ben Davis supports expanding self-defense law by removing the duty to retreat.",
+      "supportingExcerpt": "I authored House Files 0786 and 0705 , both of which expand Minnesota's self-defense laws by removing the duty to retreat and allowing deadly force to protect one’s home, vehicle, or person from imminent harm or felony crimes.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 20,
+      "decision": "directional",
+      "semanticKey": "moller_trans_student_sports_ban",
+      "topics": [
+        "school sports",
+        "transgender rights"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Kelly Moller opposes legislation barring transgender students from girls' school sports.",
+      "supportingExcerpt": "HF 12 does not combat violence against girls. Instead, it is dangerous and discriminatory legislation which scapegoats a small and vulnerable group of Minnesotans, while opening our kids up to invasive \"transvestigations.\" I'm proud to vote against HF 12.",
+      "crossBatchDuplicateOf": []
+    }
+  ]
+}

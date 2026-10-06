@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "historical-density-2025-house-semantic-decisions-v1",
+  "batchId": "EQV1-HISTORICAL-DENSITY-2025-HOUSE-001",
+  "issue": 718,
+  "frozenCohort": {
+    "runId": 37528910948,
+    "artifactId": 11442499885,
+    "digest": "sha256:c8551e3690cb8d4a8a9cee2c0cc5b006a5b87d1e6c0baa6a7f6755aae2ee1662",
+    "selectionKeySha256": "984c1d1128968c0b22079421cbcdbf2580459622728efb01a030c461b99d3d62"
+  },
+  "policy": {
+    "candidateBillIdentifiers": [],
+    "targetBillApplicabilityInferred": false,
+    "outcomeUse": "none",
+    "memberIssueOnly": true,
+    "billInference": false,
+    "internalMembershipIdentityResolved": false,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  },
+  "parts": [
+    "part-01.json",
+    "part-02.json",
+    "part-03.json",
+    "part-04.json",
+    "part-05.json"
+  ]
+}
