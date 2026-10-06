@@ -21,7 +21,10 @@ env:
   VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
   VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
 
-jobs:\n  capture:\n    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'\n    runs-on: ubuntu-latest
+jobs:
+  capture:
+    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
       VOTEPREDICT_PASSAGE_FRAGILITY_CAPTURE_OUTPUT: artifacts/passage-fragility-shadow-capture-v1.json
@@ -108,7 +111,10 @@ jobs:\n  capture:\n    if: inputs.run_vercel == true && github.ref == 'refs/head
         if: always()
         shell: bash
         run: rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/vercel-deployments.json"
-\n  score:\n    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'\n    runs-on: ubuntu-latest
+
+  score:
+    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
       VOTEPREDICT_PASSAGE_FRAGILITY_SCORE_OUTPUT: artifacts/passage-fragility-prospective-score-v1.json
