@@ -150,3 +150,133 @@ export function houseAttachmentCaptureOpportunity(input: {
     billIdentifiers: [...new Set(rows.map((row) => row.identifier))].sort(),
   };
 }
+
+
+export const HOUSE_ATTACHMENT_DENSITY_ARCHIVE_PROBE_ARTIFACT_ID = 11381821796 as const;
+export const HOUSE_ATTACHMENT_DENSITY_ARCHIVE_PROBE_ARTIFACT_DIGEST =
+  'sha256:8142a38cfbe4b609d94bdaa5755bd598e1f9f8cd41afcd3fe58dffd1c7748cea' as const;
+export const HOUSE_ATTACHMENT_DENSITY_ARCHIVE_RETRY_SIZE = 2 as const;
+
+export type HouseAttachmentArchiveProbeFrozenRow = {
+  attachmentUrl: string;
+  billIdentifiers: string[];
+  classification: string;
+  verified: unknown | null;
+};
+
+export type HouseAttachmentArchiveProbeFrozenReport = {
+  schemaVersion: string;
+  selectorLineage: {
+    artifactId: number;
+    artifactDigest: string;
+    candidateInputSha256: string;
+    pilotSize: number;
+    potentialRows: number;
+  };
+  currentMatrix: {
+    artifactId: number;
+    artifactDigest: string;
+    exactBillCoveredRows: number;
+    trainingExactBillCoveredRows: number;
+    frozenPilotRowsAlreadyCovered: number;
+  };
+  summary: {
+    probedPdfs: number;
+    classificationCounts: Record<string, number>;
+    verifiedPdfs: number;
+    verifiedBills: number;
+    verifiedPotentialRows: number;
+    verifiedEvents: number;
+    verifiedMemberships: number;
+  };
+  rows: HouseAttachmentArchiveProbeFrozenRow[];
+};
+
+export function selectHouseAttachmentArchiveRetryCandidates(input: {
+  priorProbe: HouseAttachmentArchiveProbeFrozenReport;
+  pilot: readonly HouseAttachmentHistoricalDensityPilotRow[];
+}): HouseAttachmentHistoricalDensityPilotRow[] {
+  const prior = input.priorProbe;
+  if (prior.schemaVersion !== 'historical-density-house-attachment-archive-probe-v1') {
+    throw new Error('House attachment prior archive-probe schema drifted');
+  }
+  if (
+    prior.selectorLineage.artifactId !== HOUSE_ATTACHMENT_DENSITY_SELECTOR_ARTIFACT_ID
+    || prior.selectorLineage.artifactDigest !== HOUSE_ATTACHMENT_DENSITY_SELECTOR_ARTIFACT_DIGEST
+    || prior.selectorLineage.candidateInputSha256 !== HOUSE_ATTACHMENT_DENSITY_SELECTOR_INPUT_SHA256
+    || prior.selectorLineage.pilotSize !== HOUSE_ATTACHMENT_DENSITY_SELECTOR_PILOT_SIZE
+    || prior.selectorLineage.potentialRows !== HOUSE_ATTACHMENT_DENSITY_SELECTOR_POTENTIAL_ROWS
+  ) {
+    throw new Error('House attachment prior archive-probe selector lineage drifted');
+  }
+  if (
+    prior.currentMatrix.artifactId !== 11380755983
+    || prior.currentMatrix.artifactDigest !== 'sha256:fe2254fc9d2ed0ea00712feab384958e4942cf387e442c29515b3a75183692d7'
+    || prior.currentMatrix.exactBillCoveredRows !== 38
+    || prior.currentMatrix.trainingExactBillCoveredRows !== 3
+    || prior.currentMatrix.frozenPilotRowsAlreadyCovered !== 0
+  ) {
+    throw new Error('House attachment prior archive-probe v1.5 matrix lineage drifted');
+  }
+  if (
+    prior.summary.probedPdfs !== HOUSE_ATTACHMENT_DENSITY_SELECTOR_PILOT_SIZE
+    || prior.summary.verifiedPdfs !== 0
+    || prior.summary.verifiedBills !== 0
+    || prior.summary.verifiedPotentialRows !== 0
+    || prior.summary.verifiedEvents !== 0
+    || prior.summary.verifiedMemberships !== 0
+    || prior.summary.classificationCounts.no_archive_pdf_capture !== 22
+    || prior.summary.classificationCounts.ambiguous_discovery_failure !== HOUSE_ATTACHMENT_DENSITY_ARCHIVE_RETRY_SIZE
+    || Object.keys(prior.summary.classificationCounts).sort().join('|')
+      !== 'ambiguous_discovery_failure|no_archive_pdf_capture'
+  ) {
+    throw new Error('House attachment prior archive-probe result counts drifted');
+  }
+  if (prior.rows.length !== HOUSE_ATTACHMENT_DENSITY_SELECTOR_PILOT_SIZE) {
+    throw new Error('House attachment prior archive-probe row count drifted');
+  }
+
+  const pilotByUrl = new Map(input.pilot.map((row) => [row.attachmentUrl, row]));
+  if (pilotByUrl.size !== HOUSE_ATTACHMENT_DENSITY_SELECTOR_PILOT_SIZE) {
+    throw new Error('House attachment retry pilot URL identity drifted');
+  }
+
+  const closedNegativeUrls = new Set(
+    prior.rows
+      .filter((row) => row.classification === 'no_archive_pdf_capture')
+      .map((row) => row.attachmentUrl),
+  );
+  if (closedNegativeUrls.size !== 22) {
+    throw new Error('House attachment retry closed-negative surface count drifted');
+  }
+
+  const ambiguous = prior.rows.filter((row) => row.classification === 'ambiguous_discovery_failure');
+  if (ambiguous.length !== HOUSE_ATTACHMENT_DENSITY_ARCHIVE_RETRY_SIZE) {
+    throw new Error('House attachment retry ambiguity count drifted');
+  }
+  if (ambiguous.some((row) => row.verified !== null)) {
+    throw new Error('House attachment retry cannot include an already verified PDF');
+  }
+
+  const selected = ambiguous.map((row) => {
+    if (closedNegativeUrls.has(row.attachmentUrl)) {
+      throw new Error('House attachment retry attempted to reopen a closed negative surface');
+    }
+    const candidate = pilotByUrl.get(row.attachmentUrl);
+    if (!candidate) throw new Error('House attachment retry URL missing from frozen selector pilot');
+    if (
+      candidate.billIdentifiers.length !== row.billIdentifiers.length
+      || candidate.billIdentifiers.some((value, index) => value !== row.billIdentifiers[index])
+    ) {
+      throw new Error('House attachment retry bill identity drifted');
+    }
+    return candidate;
+  });
+
+  const urls = new Set(selected.map((row) => row.attachmentUrl));
+  if (urls.size !== HOUSE_ATTACHMENT_DENSITY_ARCHIVE_RETRY_SIZE) {
+    throw new Error('House attachment retry contains duplicate ambiguous URLs');
+  }
+
+  return selected.sort((a, b) => a.attachmentUrl.localeCompare(b.attachmentUrl));
+}
