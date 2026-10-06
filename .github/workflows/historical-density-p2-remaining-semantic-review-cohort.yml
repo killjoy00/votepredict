@@ -1,0 +1,71 @@
+name: Freeze remaining 2021-22 P2 semantic review cohort
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/freeze-historical-density-p2-remaining-semantic-review-cohort.ts
+      - .github/workflows/historical-density-p2-remaining-semantic-review-cohort.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-p2-remaining-semantic-review-cohort
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize immutable remaining-text recovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11420533673/zip > "$RUNNER_TEMP/p2-remaining.zip"
+          echo "53b6d1631b021e58dc521ffcb62ae016b95731b99a6ca2c1dae5d89dab09d7c4  $RUNNER_TEMP/p2-remaining.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/p2-remaining"
+          unzip -q "$RUNNER_TEMP/p2-remaining.zip" historical-density-p2-remaining-text-recovery-v1.json -d "$RUNNER_TEMP/p2-remaining"
+
+      - name: Freeze artifact-only semantic review cohort
+        env:
+          VOTEPREDICT_P2_REMAINING_RECOVERY_PATH: ${{ runner.temp }}/p2-remaining/historical-density-p2-remaining-text-recovery-v1.json
+          VOTEPREDICT_P2_REMAINING_COHORT_OUTPUT_PATH: ${{ runner.temp }}/historical-density-p2-remaining-semantic-review-cohort-v1.json
+        run: node --import tsx scripts/freeze-historical-density-p2-remaining-semantic-review-cohort.ts
+
+      - name: Verify cohort boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$RUNNER_TEMP/historical-density-p2-remaining-semantic-review-cohort-v1.json"
+          test "$(jq -r '.artifactVersion' "$file")" = 'historical-density-p2-remaining-semantic-review-cohort-v1'
+          test "$(jq -r '.batchId' "$file")" = 'EQV1-HISTORICAL-DENSITY-P2-002'
+          test "$(jq -r '.selectedDocuments' "$file")" = '40'
+          test "$(jq -r '.membershipsExpected' "$file")" = '13'
+          test "$(jq '[.documents[].candidateBillIdentifiers | length] | add' "$file")" = '0'
+          test "$(jq -r '.policy.sourceTextStorage' "$file")" = 'artifact_only'
+          test "$(jq -r '.policy.productionDatabaseQueried' "$file")" = 'false'
+          test "$(jq -r '.policy.productionWrites' "$file")" = 'false'
+          test "$(jq -r '.policy.outcomeBlind' "$file")" = 'true'
+          test "$(jq -r '.policy.billInferenceAllowed' "$file")" = 'false'
+          test "$(jq -r '.policy.vercelUsed' "$file")" = 'false'
+          test "$(jq -r '.policy.servingChanged' "$file")" = 'false'
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-p2-remaining-semantic-review-cohort-v1
+          path: ${{ runner.temp }}/historical-density-p2-remaining-semantic-review-cohort-v1.json
+          if-no-files-found: error
+          retention-days: 30
