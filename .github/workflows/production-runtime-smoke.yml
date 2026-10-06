@@ -16,7 +16,10 @@ concurrency:
   group: votepredict-production-runtime-smoke
   cancel-in-progress: false
 
-jobs:\n  smoke:\n    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'\n    runs-on: ubuntu-latest
+jobs:
+  smoke:
+    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
