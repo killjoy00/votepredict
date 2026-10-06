@@ -75,7 +75,9 @@ jobs:
           test "$(jq -r '.policy.outcomeUse' "$f")" = none
           test "$(jq -r '.policy.sameDayEligible' "$f")" = false
           test "$(jq -r '.policy.sourceBodiesFetched' "$f")" = true
-          test "$(jq -r '.policy.nonCandidateBodiesRetained' "$f")" = false
+          test "$(jq -r '.policy.nonCandidateBodiesRetained' "$f")" = true
+          test "$(jq -r '.policy.allFetchedBodiesRetainedForSemanticReview' "$f")" = true
+          test "$(jq -r '.recovery.bodies | length' "$f")" = "$(jq -r '.recovery.fetchedArticleBodies' "$f")"
           test "$(jq -r '.policy.exactBillLinkageRequiresExplicitIdentifierInBody' "$f")" = true
           test "$(jq -r '.policy.exactBillStatementRequiresDeterministicMemberAttributionAndStance' "$f")" = true
           test "$(jq -r '.policy.memberIssueApplicabilityInferred' "$f")" = false
@@ -91,6 +93,7 @@ jobs:
             echo "- Frozen source URLs attempted: **$(jq -r '.recovery.attemptedArticleBodies' "$f")**"
             echo "- Bodies fetched: **$(jq -r '.recovery.fetchedArticleBodies' "$f")**"
             echo "- Body fetch failures: **$(jq -r '.recovery.failedArticleBodies' "$f")**"
+            echo "- Recovered bodies retained: **$(jq -r '.recovery.bodies | length' "$f")**"
             echo "- Exact-bill explicit-statement candidates: **$(jq -r '.exactBillScreen.exactStatementCandidates' "$f")**"
             echo "- Candidate articles: **$(jq -r '.exactBillScreen.candidateArticles' "$f")**"
             echo "- Candidate members: **$(jq -r '.exactBillScreen.candidateMembers' "$f")**"
