@@ -1,0 +1,117 @@
+name: Audit 2025 House applicability candidates
+
+on:
+  pull_request:
+    paths:
+      - scripts/audit-historical-density-2025-house-applicability.ts
+      - .github/workflows/historical-density-2025-house-applicability-audit.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/audit-historical-density-2025-house-applicability.ts
+      - .github/workflows/historical-density-2025-house-applicability-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2025-house-applicability-audit-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize immutable semantic review
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11445097212/zip > "$RUNNER_TEMP/semantic-review.zip"
+          echo "1a908a9fc300f4d1b8df5c4ea38474d669c3769c54378eb1527b210e528949ce  $RUNNER_TEMP/semantic-review.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/semantic-review"
+          unzip -q "$RUNNER_TEMP/semantic-review.zip" historical-density-2025-house-semantic-review-v1.json -d "$RUNNER_TEMP/semantic-review"
+
+      - name: Materialize immutable 2025 House inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11440840273/zip > "$RUNNER_TEMP/inventory.zip"
+          echo "07ee41210122f42716269ab56f8775d78e10d00df39740315acc1ce055937c20  $RUNNER_TEMP/inventory.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/inventory"
+          unzip -q "$RUNNER_TEMP/inventory.zip" historical-density-2025-house-member-primary-inventory-v1.json -d "$RUNNER_TEMP/inventory"
+
+      - name: Audit strict-pre-vote bill-policy candidates
+        env:
+          VOTEPREDICT_2025_HOUSE_SEMANTIC_REVIEW_PATH: ${{ runner.temp }}/semantic-review/historical-density-2025-house-semantic-review-v1.json
+          VOTEPREDICT_2025_HOUSE_INVENTORY_PATH: ${{ runner.temp }}/inventory/historical-density-2025-house-member-primary-inventory-v1.json
+          VOTEPREDICT_2025_HOUSE_APPLICABILITY_OUTPUT_DIR: ${{ runner.temp }}/applicability-audit
+        run: node --import tsx scripts/audit-historical-density-2025-house-applicability.ts
+
+      - name: Verify candidate-audit boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/applicability-audit/historical-density-2025-house-applicability-candidate-audit-v1.json"
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-applicability-candidate-audit-v1
+          test "$(jq -r '.issue' "$f")" = 718
+          test "$(jq -r '.session' "$f")" = 2025-2026
+          test "$(jq -r '.cohort.novelSemanticGroups' "$f")" = 46
+          test "$(jq -r '.cohort.targetEvents' "$f")" = 25
+          test "$(jq -r '.cohort.internalMembershipIdentitiesResolved' "$f")" = 0
+          test "$(jq -r '.candidateScreen.automaticApplicableRows' "$f")" = 0
+          test "$(jq -r '.candidateScreen.automaticAlignmentRows' "$f")" = 0
+          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.publicLrlIdentityOnly' "$f")" = true
+          test "$(jq -r '.policy.internalMembershipIdentityResolved' "$f")" = false
+          test "$(jq -r '.policy.internalIdentityRequiredBeforeFeatureIntegration' "$f")" = true
+          test "$(jq -r '.policy.billIdentifiersInferredFromMemberClaims' "$f")" = false
+          test "$(jq -r '.policy.sameDayBillVersionsExcluded' "$f")" = true
+          test "$(jq -r '.policy.deterministicScreenCanDeclareApplicability' "$f")" = false
+          test "$(jq -r '.policy.semanticReviewRequiredForApplicability' "$f")" = true
+          test "$(jq -r '.policy.contextOnly' "$f")" = true
+          test "$(jq -r '.policy.mechanicallyActionable' "$f")" = false
+          test "$(jq -r '.policy.modelWeight' "$f")" = 0
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+          jq -e '[.candidateClaims[].applicabilityDecision] | all(. == "pending_semantic_review")' "$f" >/dev/null
+          jq -e '[.candidateClaims[].internalMembershipIdentityResolved] | all(. == false)' "$f" >/dev/null
+          jq -e '[.candidateClaims[].versionProof.strictlyBeforeVoteDate] | all(. == true)' "$f" >/dev/null
+          {
+            echo '## 2025-26 House applicability candidate audit'
+            echo
+            echo "- Novel semantic groups: **$(jq -r '.cohort.novelSemanticGroups' "$f")**"
+            echo "- Target events: **$(jq -r '.cohort.targetEvents' "$f")**"
+            echo "- Eligible claim-event pairs: **$(jq -r '.cohort.eligibleClaimEventPairs' "$f")**"
+            echo "- Candidate claim pairs: **$(jq -r '.candidateScreen.candidateClaimPairs' "$f")**"
+            echo "- Candidate bills: **$(jq -r '.candidateScreen.candidateBills' "$f")**"
+            echo "- Candidate public members: **$(jq -r '.candidateScreen.candidatePublicMembers' "$f")**"
+            echo "- Candidate semantic groups: **$(jq -r '.candidateScreen.candidateSemanticGroups' "$f")**"
+            echo '- Automatic applicable rows: **0**'
+            echo '- Outcomes used: **none**'
+            echo '- Production DB queried: **no**'
+            echo '- Vercel used: **no**'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2025-house-applicability-candidate-audit-v1
+          path: ${{ runner.temp }}/applicability-audit/*
+          if-no-files-found: error
+          retention-days: 90
