@@ -105,6 +105,21 @@ type FetchAudit = {
   error?: string;
 };
 
+type RecoveredBody = {
+  lrlId: string;
+  memberName: string;
+  districts: string[];
+  parties: string[];
+  articleUrl: string;
+  articleTitle: string;
+  publishedOn: string;
+  canonicalUrl: string;
+  contentSha256: string;
+  fetchedAt: string;
+  httpStatus: number;
+  text: string;
+};
+
 type ExactStatementCandidate = {
   lrlId: string;
   memberName: string;
@@ -221,6 +236,7 @@ async function main(): Promise<void> {
   if (targetBills.length !== EXPECTED_TARGET_EVENTS) throw new Error('Expected 25 unique target bills');
 
   const exactCandidates: ExactStatementCandidate[] = [];
+  const recoveredBodies: RecoveredBody[] = [];
   const fetchAudits = await mapLimit(inventory.archiveInventory.sourceEntries, CONCURRENCY, async (entry): Promise<FetchAudit> => {
     try {
       const page = await fetchWithRetry(entry.articleUrl);
@@ -228,6 +244,21 @@ async function main(): Promise<void> {
       if (parsed.hostname.toLowerCase() !== 'www.house.mn.gov' || normalizePath(page.canonicalUrl) !== normalizePath(entry.articleUrl)) {
         throw new Error('House article redirected outside its frozen member-specific path');
       }
+
+      recoveredBodies.push({
+        lrlId: entry.lrlId,
+        memberName: entry.memberName,
+        districts: entry.districts,
+        parties: entry.parties,
+        articleUrl: entry.articleUrl,
+        articleTitle: entry.articleTitle,
+        publishedOn: entry.publishedOn,
+        canonicalUrl: page.canonicalUrl,
+        contentSha256: page.contentSha256,
+        fetchedAt: page.fetchedAt,
+        httpStatus: page.httpStatus,
+        text: page.text,
+      });
 
       const drafts = extractExplicitBillStatements({
         membershipId: `public-lrl:${SESSION}:${entry.lrlId}`,
@@ -309,6 +340,12 @@ async function main(): Promise<void> {
     || a.stance.localeCompare(b.stance)
   );
 
+  recoveredBodies.sort((a, b) =>
+    a.publishedOn.localeCompare(b.publishedOn)
+    || a.memberName.localeCompare(b.memberName)
+    || a.articleUrl.localeCompare(b.articleUrl)
+  );
+
   const fetched = fetchAudits.filter((row) => row.status === 'fetched');
   const failed = fetchAudits.filter((row) => row.status === 'failed');
   if (fetched.length + failed.length !== EXPECTED_SOURCE_ENTRIES) throw new Error('Body fetch accounting does not cover the frozen source cohort');
@@ -344,6 +381,7 @@ async function main(): Promise<void> {
       failedArticleBodies: failed.length,
       bodyIdentitySha256,
       fetchAudits,
+      bodies: recoveredBodies,
     },
     exactBillScreen: {
       extractorVersion: QUICK_EVIDENCE_STATEMENT_EXTRACTOR_VERSION,
@@ -364,7 +402,8 @@ async function main(): Promise<void> {
       outcomeUse: 'none',
       sameDayEligible: false,
       sourceBodiesFetched: true,
-      nonCandidateBodiesRetained: false,
+      nonCandidateBodiesRetained: true,
+      allFetchedBodiesRetainedForSemanticReview: true,
       candidateBodiesRetainedForReview: true,
       exactBillLinkageRequiresExplicitIdentifierInBody: true,
       exactBillStatementRequiresDeterministicMemberAttributionAndStance: true,
@@ -375,7 +414,7 @@ async function main(): Promise<void> {
       featureRowsWritten: false,
       modelFitting: 'none',
       servingChanged: false,
-      nextStepBoundary: 'Review exact-bill candidates against source-body provenance and frozen chronology. If exact-bill yield is insufficient, create a separate outcome-blind semantic cohort from recovered bodies; do not infer applicability in this recovery artifact.',
+      nextStepBoundary: 'Review exact-bill candidates against source-body provenance and frozen chronology. If exact-bill yield is insufficient, freeze a separate outcome-blind semantic cohort directly from these immutable recovered bodies; do not infer applicability in this recovery artifact.',
     },
   };
 
@@ -386,6 +425,7 @@ async function main(): Promise<void> {
       attemptedArticleBodies: report.recovery.attemptedArticleBodies,
       fetchedArticleBodies: report.recovery.fetchedArticleBodies,
       failedArticleBodies: report.recovery.failedArticleBodies,
+      retainedRecoveredBodies: report.recovery.bodies.length,
       exactStatementCandidates: report.exactBillScreen.exactStatementCandidates,
       candidateArticles: report.exactBillScreen.candidateArticles,
       candidateMembers: report.exactBillScreen.candidateMembers,
