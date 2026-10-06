@@ -16,6 +16,7 @@ test('remaining P2 screen has exactly 17 novel semantic groups', () => {
     P2_REMAINING_APPLICABILITY_RULES.map((rule) => rule.id).sort(),
   );
   assert.ok(P2_REMAINING_APPLICABILITY_RULES.every((rule) => rule.screenPolicy === 'screen_issue_match'));
+  assert.ok(P2_REMAINING_APPLICABILITY_RULES.every((rule) => rule.candidatePatterns.length > 0));
 });
 
 test('narrow issue screens nominate issue presence only', () => {
