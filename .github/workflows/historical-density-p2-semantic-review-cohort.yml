@@ -1,0 +1,82 @@
+name: Export 2021-22 P2 historical-density semantic review cohort
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: >-
+    ${{ startsWith(github.event.comment.body, '[historical-density-p2-semantic-review-cohort]')
+        && 'historical-density-p2-semantic-review-cohort'
+        || format('historical-density-p2-semantic-review-cohort-skip-{0}', github.event.comment.id) }}
+  cancel-in-progress: false
+
+jobs:
+  export:
+    if: >-
+      github.event.issue.number == 718 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      startsWith(github.event.comment.body, '[historical-density-p2-semantic-review-cohort]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize frozen P2 inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11382774063/zip > "$RUNNER_TEMP/p2-inventory.zip"
+          echo "0e5a737d7069bdc9c95f9a22caae7ebf48e1fa39b84c1fcaed344fdbd14b14cd  $RUNNER_TEMP/p2-inventory.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/p2-inventory"
+          unzip -q "$RUNNER_TEMP/p2-inventory.zip" historical-density-p2-recovery-inventory-v1.json -d "$RUNNER_TEMP/p2-inventory"
+
+      - name: Materialize canonical P2 text recovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11383194456/zip > "$RUNNER_TEMP/p2-recovery.zip"
+          echo "4b2ba6a1370ea08d22af8b0c377ca7374509695f3d7c1ecc709b2b607fb98f4f  $RUNNER_TEMP/p2-recovery.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/p2-recovery"
+          unzip -q "$RUNNER_TEMP/p2-recovery.zip" historical-density-p2-pilot-text-recovery-v1.json -d "$RUNNER_TEMP/p2-recovery"
+
+      - name: Read production environment privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+
+      - name: Export frozen semantic review cohort read-only
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+          VOTEPREDICT_HISTORICAL_DENSITY_P2_INVENTORY_PATH: ${{ runner.temp }}/p2-inventory/historical-density-p2-recovery-inventory-v1.json
+          VOTEPREDICT_HISTORICAL_DENSITY_P2_RECOVERY_PATH: ${{ runner.temp }}/p2-recovery/historical-density-p2-pilot-text-recovery-v1.json
+          VOTEPREDICT_HISTORICAL_DENSITY_P2_REVIEW_OUTPUT: ${{ runner.temp }}/historical-density-p2-semantic-review-cohort-v1.json
+        run: node --import tsx scripts/export-historical-density-p2-semantic-review-cohort.ts
+
+      - name: Upload frozen review cohort
+        uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-p2-semantic-review-cohort-v1
+          path: ${{ runner.temp }}/historical-density-p2-semantic-review-cohort-v1.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Remove temporary credentials and frozen inputs
+        if: always()
+        shell: bash
+        run: |
+          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/p2-inventory.zip" "$RUNNER_TEMP/p2-recovery.zip"
