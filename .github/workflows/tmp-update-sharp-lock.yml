@@ -1,0 +1,43 @@
+name: Temporary sharp lock update
+
+on:
+  push:
+    branches:
+      - evidence/historical-density-p2-remaining-applicability
+    paths:
+      - .github/workflows/tmp-update-sharp-lock.yml
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: evidence/historical-density-p2-remaining-applicability
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Update only the transitive sharp family in package-lock
+        run: npm update sharp --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Verify patched resolution
+        run: |
+          node -e "const j=require('./package-lock.json'); const v=j.packages['node_modules/sharp']?.version; if(v!=='0.35.5') throw new Error('expected sharp 0.35.5, got '+v); console.log('sharp',v)"
+          git diff -- package-lock.json
+      - name: Commit lockfile
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- package-lock.json; then
+            echo "package-lock already patched"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "Patch transitive sharp dependency"
+          git push origin HEAD:evidence/historical-density-p2-remaining-applicability
