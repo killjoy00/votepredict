@@ -171,9 +171,9 @@ function main() {
     || review.summary.eligibleMemberEventRows !== 3923
     || review.summary.applicableRows !== 2
     || review.summary.finalStatusCounts.applicable !== 2
-    || review.summary.finalStatusCounts.ambiguous_fail_closed !== 38
-    || review.summary.finalStatusCounts.pending_review !== 21
-    || review.summary.finalStatusCounts.not_applicable !== 3862
+    || review.summary.finalStatusCounts.ambiguous_fail_closed !== 40
+    || review.summary.finalStatusCounts.pending_review !== 0
+    || review.summary.finalStatusCounts.not_applicable !== 3881
     || review.applicableRows.length !== 2
     || review.policy.outcomeUse !== 'none'
     || review.policy.inputContainsVoteOutcomes
