@@ -1,0 +1,77 @@
+name: Freeze 2021-22 P2 applicability review
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/evidence/historical-density-p2-applicability-review.ts
+      - scripts/freeze-historical-density-p2-applicability-review.ts
+      - tests/historical-density-p2-applicability-review.test.ts
+      - .github/workflows/historical-density-p2-applicability-review.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-p2-applicability-review
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+
+      - name: Run frozen review unit tests
+        run: node --import tsx --test tests/historical-density-p2-applicability-review.test.ts
+
+      - name: Materialize immutable candidate audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11390705696/zip > "$RUNNER_TEMP/p2-applicability-candidates.zip"
+          echo "25fccbdac56f4f0598541e347a7af19e2c27ae3be7b89959f9e578087e370698  $RUNNER_TEMP/p2-applicability-candidates.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/p2-applicability-candidates"
+          unzip -q "$RUNNER_TEMP/p2-applicability-candidates.zip" historical-density-p2-applicability-candidate-audit-v1.json -d "$RUNNER_TEMP/p2-applicability-candidates"
+
+      - name: Freeze conservative semantic applicability review
+        env:
+          VOTEPREDICT_P2_APPLICABILITY_CANDIDATE_PATH: ${{ runner.temp }}/p2-applicability-candidates/historical-density-p2-applicability-candidate-audit-v1.json
+          VOTEPREDICT_P2_APPLICABILITY_REVIEW_OUTPUT_DIR: ${{ runner.temp }}/historical-density-p2-applicability-review
+        run: node --import tsx scripts/freeze-historical-density-p2-applicability-review.ts
+
+      - name: Verify frozen review boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$RUNNER_TEMP/historical-density-p2-applicability-review/historical-density-p2-applicability-review-v1.json"
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-density-p2-applicability-review-v1'
+          test "$(jq -r '.reviewSummary.eligibleMemberEventRows' "$file")" = '3923'
+          test "$(jq -r '.reviewSummary.candidatePairsReviewed' "$file")" = '105'
+          test "$(jq -r '.reviewSummary.candidateReviewGroups' "$file")" = '77'
+          test "$(jq -r '.reviewSummary.acceptedReviewGroups' "$file")" = '3'
+          test "$(jq -r '.reviewSummary.rejectedCandidatePairs' "$file")" = '102'
+          test "$(jq -r '.reviewSummary.finalStatusCounts.applicable' "$file")" = '3'
+          test "$(jq -r '.reviewSummary.finalStatusCounts.ambiguous_fail_closed' "$file")" = '30'
+          test "$(jq -r '.reviewSummary.finalStatusCounts.not_applicable' "$file")" = '3890'
+          test "$(jq -r '.policy.outcomeUse' "$file")" = 'none'
+          test "$(jq -r '.policy.exactVersionHashRequiredForAcceptance' "$file")" = 'true'
+          test "$(jq -r '.policy.productionDatabaseQueried' "$file")" = 'false'
+          test "$(jq -r '.policy.vercelUsed' "$file")" = 'false'
+          test "$(jq -r '.policy.servingChanged' "$file")" = 'false'
+
+      - name: Upload immutable applicability review
+        uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-p2-applicability-review-v1
+          path: ${{ runner.temp }}/historical-density-p2-applicability-review/*
+          if-no-files-found: error
+          retention-days: 30
