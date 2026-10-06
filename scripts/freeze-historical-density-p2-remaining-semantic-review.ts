@@ -366,7 +366,8 @@ function main() {
 
   const duplicateGroups = semanticGroups
     .filter((group) => group.sourceRows.length > 1)
-    .map((group) => group.sourceRows);
+    .map((group) => group.sourceRows)
+    .sort((a, b) => (a[0] ?? 0) - (b[0] ?? 0));
   const expectedDuplicateGroups = [
     [1, 6, 36],
     [3, 12],
