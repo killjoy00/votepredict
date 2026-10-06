@@ -67,6 +67,18 @@ test('LRL detail parser moves an inverted suffix after the surname', () => {
   assert.equal(record?.district, '29');
 });
 
+test('LRL detail parser preserves terminal generational suffixes in canonical headings', () => {
+  const juniorHtml = `<h1>Bidal Duran, Jr. - Legislator Record</h1><h3>94th Legislative Session (2025-2026)</h3><p>Body: House</p><p>District: 02A</p><p>Term of Office: 1/6/2025 to 1/3/2027</p><p>Party: Republican</p>`;
+  const junior = parseLrlMembershipDetail({ html: juniorHtml, session: getMinnesotaHouseSession('302'), lrlId: '15629', fallbackName: 'Bidal Duran, Jr.', sourceUrl: 'https://www.lrl.mn.gov/legdb/fulldetail?ID=15629' });
+  assert.equal(junior?.name, 'Bidal Duran Jr.');
+  assert.equal(junior?.normalizedName, 'bidal duran jr');
+
+  const numeralHtml = `<h1>Duane Quam, II - Legislator Record</h1><h3>94th Legislative Session (2025-2026)</h3><p>Body: House</p><p>District: 24A</p><p>Term of Office: 1/6/2025 to 1/3/2027</p><p>Party: Republican</p>`;
+  const numeral = parseLrlMembershipDetail({ html: numeralHtml, session: getMinnesotaHouseSession('302'), lrlId: '15366', fallbackName: 'Duane Quam, II', sourceUrl: 'https://www.lrl.mn.gov/legdb/fulldetail?ID=15366' });
+  assert.equal(numeral?.name, 'Duane Quam II');
+  assert.equal(numeral?.normalizedName, 'duane quam ii');
+});
+
 test('official House clerk aliases remain provenance-backed and deterministic', () => {
   assert.deepEqual(officialMembershipAliasesForLrlId('15409').map((alias) => [alias.sourceName, alias.normalizedName]), [["O'Neill", 'o neill']]);
   assert.deepEqual(officialMembershipAliasesForLrlId('15576').map((alias) => [alias.sourceName, alias.normalizedName]), [['Lee, K.', 'lee k']]);
