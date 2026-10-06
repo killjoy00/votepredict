@@ -19,9 +19,9 @@ const EXPECTED_SEMANTIC_GROUPS = 39;
 const EXPECTED_ELIGIBLE_PAIRS = 1150;
 const EXPECTED_BASELINE_AMBIGUOUS = 138;
 const EXPECTED_NOT_NOMINATED = 770;
-const EXPECTED_APPLICABLE = 3;
+const EXPECTED_APPLICABLE = 8;
 const EXPECTED_REVIEW_AMBIGUOUS = 1;
-const EXPECTED_REVIEW_NOT_APPLICABLE = 238;
+const EXPECTED_REVIEW_NOT_APPLICABLE = 233;
 
 type Json = Record<string, any>;
 
@@ -101,10 +101,10 @@ function main(): void {
     decisions.schemaVersion !== DECISION_SCHEMA
     || decisions.issue !== 718
     || decisions.session !== '2025-2026'
-    || decisions.frozenCandidateArtifact?.runId !== 37547468536
-    || decisions.frozenCandidateArtifact?.artifactId !== 11450748830
+    || decisions.frozenCandidateArtifact?.runId !== 37547701097
+    || decisions.frozenCandidateArtifact?.artifactId !== 11451775355
     || decisions.frozenCandidateArtifact?.digest !==
-      'sha256:aba3db598037ab665a8224d2bbbd3ace6f9d2d3238054adb7f2b101927b6ce82'
+      'sha256:7af526bc8ecc54a6851db2b0e33275cc67cae91e11751b4430d4b70d8d5dcb74'
     || decisions.frozenCandidateArtifact?.targetTrancheIndex !== 2
     || decisions.frozenCandidateArtifact?.targetEventKeySha256 !== EXPECTED_TARGET_EVENT_SHA
     || decisions.frozenCandidateArtifact?.reviewKeySha256 !== EXPECTED_REVIEW_KEY_SHA
@@ -115,7 +115,7 @@ function main(): void {
     || decisions.frozenCandidateArtifact?.candidateSemanticGroups !== EXPECTED_SEMANTIC_GROUPS
     || decisions.defaultDecision !== 'not_applicable'
     || !Array.isArray(decisions.overrides)
-    || decisions.overrides.length !== 4
+    || decisions.overrides.length !== 9
     || decisions.policy?.everyCandidateReviewed !== true
     || decisions.policy?.applicableRequiresExplicitOverride !== true
     || decisions.policy?.ambiguousRequiresExplicitOverride !== true
@@ -276,8 +276,29 @@ function main(): void {
     aligns: reviewedCandidates.filter((row) => row.alignmentDirection === 'aligns').length,
     conflicts: reviewedCandidates.filter((row) => row.alignmentDirection === 'conflicts').length,
   };
-  if (alignmentCounts.aligns !== 2 || alignmentCounts.conflicts !== 1) {
+  if (alignmentCounts.aligns !== 7 || alignmentCounts.conflicts !== 1) {
     throw new Error(`Alignment counts drifted: ${JSON.stringify(alignmentCounts)}`);
+  }
+
+  const expectedApplicableReviewKeys = [
+    'allen_fraud_oversight_accountability|HF2432|2025-04-25|f82944db2f58b5a0da53d7f76101c6eb7a7c2c6211419f14ad14ea4e05c0bf08',
+    'elkins_zoning_housing_supply|HF2309|2025-04-29|20c725d66b29f85fb17623d52e35102c548b44295f4ebddb31d6b15479efe128',
+    'fischer_pfas_protections|SF2216|2025-04-29|85e7d06d2ff842eb997b16692c730d9d0180063ec68c2b3f072443ac4d7fea4f',
+    'heintzeman_off_highway_vehicle_pfas_exemption|SF2216|2025-04-29|85e7d06d2ff842eb997b16692c730d9d0180063ec68c2b3f072443ac4d7fea4f',
+    'joy_make_minnesota_safe|HF2432|2025-04-25|f82944db2f58b5a0da53d7f76101c6eb7a7c2c6211419f14ad14ea4e05c0bf08',
+    'schwartz_make_minnesota_safe|HF2432|2025-04-25|f82944db2f58b5a0da53d7f76101c6eb7a7c2c6211419f14ad14ea4e05c0bf08',
+    'van_binsbergen_state_agency_fraud_reporting|HF2432|2025-04-25|f82944db2f58b5a0da53d7f76101c6eb7a7c2c6211419f14ad14ea4e05c0bf08',
+    'zeleznikar_ev_road_funding_parity|HF2438|2025-04-28|46388d1841e58d9befc08450243def66157e678619b30511889a69aa96fd50d0',
+  ].sort();
+  const actualApplicableReviewKeys = reviewedCandidates
+    .filter((row) => row.decision === 'applicable')
+    .map((row) => row.reviewKey)
+    .sort();
+  if (
+    JSON.stringify(actualApplicableReviewKeys)
+    !== JSON.stringify(expectedApplicableReviewKeys)
+  ) {
+    throw new Error('Applicable tranche-2 review-key set drifted');
   }
 
   const reviewedByKey = new Map(
@@ -317,9 +338,9 @@ function main(): void {
   }
 
   if (
-    finalPairStatusCounts.applicable !== 3
+    finalPairStatusCounts.applicable !== 8
     || finalPairStatusCounts.ambiguous_fail_closed !== 139
-    || finalPairStatusCounts.not_applicable !== 1008
+    || finalPairStatusCounts.not_applicable !== 1003
     || finalPairStatusCounts.pending_review !== 0
   ) {
     throw new Error(
@@ -344,8 +365,8 @@ function main(): void {
     issue: 718,
     session: '2025-2026',
     frozenInput: {
-      runId: 37547468536,
-      artifactId: 11450748830,
+      runId: 37547701097,
+      artifactId: 11451775355,
       digest:
         'sha256:aba3db598037ab665a8224d2bbbd3ace6f9d2d3238054adb7f2b101927b6ce82',
       targetTrancheIndex: 2,
@@ -382,7 +403,7 @@ function main(): void {
       modelFitting: 'none',
       servingChanged: false,
       nextStep:
-        'Resolve public LRL identity to the internal historical membership identity for the three applicable pairs before any feature integration; do not guess IDs.',
+        'Resolve public LRL identity to the internal historical membership identity for the eight applicable context records before any feature integration; do not guess IDs.',
     },
     contentSha256WithoutSelfField: null as string | null,
   };
