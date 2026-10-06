@@ -3,10 +3,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
   P2_ACCEPTED_CLAIM_FEATURE_METADATA,
-  P2_CANONICAL_APPLICABLE_KEYS,
-  canonicalP2ApplicabilityDecision,
 } from '../src/evidence/historical-density-p2-canonical.js';
-import { p2ApplicabilityReviewKey } from '../src/evidence/historical-density-p2-applicability-semantic-review.js';
 
 const EXPECTED_ELIGIBLE_ROWS = 3923;
 const EXPECTED_CANDIDATE_PAIRS = 105;
@@ -98,6 +95,35 @@ type DecisionName =
   | 'not_applicable'
   | 'pending_review';
 
+type GateDecision = {
+  reviewKey: string;
+  decision: Exclude<DecisionName, 'pending_review'>;
+  reasonCode: string;
+  billPolicyDirection: string | null;
+  alignmentDirection:
+    | 'position_aligns_with_bill'
+    | 'position_conflicts_with_bill'
+    | null;
+};
+
+type DecisionGate = {
+  schemaVersion: string;
+  issue: number;
+  decisions: GateDecision[];
+  policy: {
+    unlistedCandidateGroup: string;
+    crossReviewDisagreement: string;
+    onlyApplicableMayReachMatrix: boolean;
+    outcomeUse: string;
+    sameDayVersionEligible: boolean;
+    productionDatabaseQueried: boolean;
+    productionWrites: boolean;
+    vercelUsed: boolean;
+    modelFitting: string;
+    servingChanged: boolean;
+  };
+};
+
 type CanonicalGroup = {
   reviewKey: string;
   decision: DecisionName;
@@ -139,6 +165,10 @@ function unique(values: readonly string[]): string[] {
   return [...new Set(values)];
 }
 
+function reviewKey(issueFamily: string, identifier: string, occurredOn: string): string {
+  return `${issueFamily}|${identifier}|${occurredOn}`;
+}
+
 function countGroups(
   groups: readonly CanonicalGroup[],
 ): Record<DecisionName, { groups: number; pairs: number }> {
@@ -157,8 +187,43 @@ function countGroups(
 
 function main() {
   const candidatePath = requiredEnv('VOTEPREDICT_P2_APPLICABILITY_CANDIDATE_PATH');
+  const decisionPath = requiredEnv('VOTEPREDICT_P2_APPLICABILITY_DECISION_PATH');
   const outputDir = requiredEnv('VOTEPREDICT_P2_CANONICAL_REVIEW_OUTPUT_DIR');
   const audit = JSON.parse(readFileSync(candidatePath, 'utf8')) as CandidateAudit;
+  const gate = JSON.parse(readFileSync(decisionPath, 'utf8')) as DecisionGate;
+
+  if (
+    gate.schemaVersion !== 'historical-density-p2-applicability-decision-gate-v1'
+    || gate.issue !== 718
+    || gate.decisions.length !== EXPECTED_EXPLICIT_REVIEW_KEYS
+    || gate.policy.unlistedCandidateGroup !== 'pending_review_fail_closed_unavailable'
+    || gate.policy.crossReviewDisagreement !== 'ambiguous_fail_closed_unavailable'
+    || !gate.policy.onlyApplicableMayReachMatrix
+    || gate.policy.outcomeUse !== 'none'
+    || gate.policy.sameDayVersionEligible
+    || gate.policy.productionDatabaseQueried
+    || gate.policy.productionWrites
+    || gate.policy.vercelUsed
+    || gate.policy.modelFitting !== 'none'
+    || gate.policy.servingChanged
+  ) {
+    throw new Error('Canonical decision-gate identity/policy drifted');
+  }
+
+  const decisionMap = new Map<string, GateDecision>();
+  for (const decision of gate.decisions) {
+    if (decisionMap.has(decision.reviewKey)) {
+      throw new Error(`Duplicate decision-gate key: ${decision.reviewKey}`);
+    }
+    if (decision.decision === 'applicable') {
+      if (!decision.billPolicyDirection || !decision.alignmentDirection) {
+        throw new Error(`Applicable gate row lacks direction/alignment: ${decision.reviewKey}`);
+      }
+    } else if (decision.billPolicyDirection !== null || decision.alignmentDirection !== null) {
+      throw new Error(`Fail-closed gate row unexpectedly has direction/alignment: ${decision.reviewKey}`);
+    }
+    decisionMap.set(decision.reviewKey, decision);
+  }
 
   if (
     audit.schemaVersion !== 'historical-density-p2-applicability-candidate-audit-v1'
@@ -198,7 +263,7 @@ function main() {
       throw new Error(`Candidate safety/provenance drifted: ${claim.claimId} ${claim.identifier}`);
     }
 
-    const key = p2ApplicabilityReviewKey(
+    const key = reviewKey(
       claim.issueFamily,
       claim.identifier,
       claim.occurredOn,
@@ -241,7 +306,13 @@ function main() {
         throw new Error(`Candidate group lacks exact stable provenance: ${reviewKey}`);
       }
 
-      const decision = canonicalP2ApplicabilityDecision(reviewKey);
+      const decision = decisionMap.get(reviewKey) ?? {
+        reviewKey,
+        decision: 'pending_review' as const,
+        reasonCode: 'unreviewed_candidate_group',
+        billPolicyDirection: null,
+        alignmentDirection: null,
+      };
       if (decision.decision === 'applicable') {
         if (!decision.billPolicyDirection || !decision.alignmentDirection) {
           throw new Error(`Applicable group lacks direction/alignment: ${reviewKey}`);
@@ -293,9 +364,9 @@ function main() {
   const decisionCounts = countGroups(groups);
   const expectedCounts = {
     applicable: { groups: 2, pairs: 2 },
-    ambiguous_fail_closed: { groups: 8, pairs: 10 },
+    ambiguous_fail_closed: { groups: 8, pairs: 8 },
     not_applicable: { groups: 55, pairs: 74 },
-    pending_review: { groups: 9, pairs: 19 },
+    pending_review: { groups: 9, pairs: 21 },
   };
   if (JSON.stringify(decisionCounts) !== JSON.stringify(expectedCounts)) {
     throw new Error(
@@ -307,11 +378,18 @@ function main() {
     .filter((group) => group.decision === 'applicable')
     .map((group) => group.reviewKey)
     .sort();
-  if (
-    JSON.stringify(applicableKeys)
-    !== JSON.stringify([...P2_CANONICAL_APPLICABLE_KEYS].sort())
-  ) {
+  const expectedApplicableKeys = [
+    'gas_tax|HF1684|2021-04-22',
+    'school_choice_parental_control|SF2575|2022-03-03',
+  ].sort();
+  if (JSON.stringify(applicableKeys) !== JSON.stringify(expectedApplicableKeys)) {
     throw new Error(`Applicable allowlist drifted: ${applicableKeys.join(',')}`);
+  }
+
+  const candidateKeys = new Set(groups.map((group) => group.reviewKey));
+  const extraDecisionKeys = [...decisionMap.keys()].filter((key) => !candidateKeys.has(key));
+  if (extraDecisionKeys.length) {
+    throw new Error(`Decision gate contains non-candidate keys: ${extraDecisionKeys.join(',')}`);
   }
 
   const explicitlyReviewedGroups =
@@ -339,7 +417,7 @@ function main() {
     const claim = candidateByEventMembership.get(eventKey);
     if (!claim) throw new Error(`Missing candidate claim for ${eventKey}`);
 
-    const reviewKey = p2ApplicabilityReviewKey(
+    const reviewKey = reviewKey(
       claim.issueFamily,
       claim.identifier,
       claim.occurredOn,
@@ -395,8 +473,8 @@ function main() {
   );
   const expectedFinal = {
     applicable: 2,
-    ambiguous_fail_closed: 40,
-    pending_review: 19,
+    ambiguous_fail_closed: 38,
+    pending_review: 21,
     not_applicable: 3862,
   };
   if (JSON.stringify(finalStatusCounts) !== JSON.stringify(expectedFinal)) {
