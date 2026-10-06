@@ -217,13 +217,13 @@ function main(): void {
     return { reviewKey, semanticKey: semanticKeys[0]!, identifier: identifiers[0]!, occurredOn: dates[0]!, billId: bills[0]!, versionTextSha256: hashes[0]!, versionUrl: urls[0]!, versionPostedOn: posted[0]!, decision: decision.decision, reasonCode: decision.reasonCode, billPolicyDirection: decision.billPolicyDirection, alignmentDirection: decision.alignmentDirection, candidatePairs: claims.length, claims };
   }).sort((a, b) => a.reviewKey.localeCompare(b.reviewKey));
   const extraOverrides = [...overrideMap.keys()].filter((key) => !grouped.has(key));
-  if (extraOverrides.length) throw new Error(`Sverride contains non-candidate keys: ${extraOverrides.join(',')}`);
+  if (extraOverrides.length) throw new Error(`Override contains non-candidate keys: ${extraOverrides.join(',')}`);
   const counts = countDecisions(groups);
   const expected = { applicable: { groups: 4, pairs: 4 }, ambiguous_fail_closed: { groups: 17, pairs: 17 }, not_applicable: { groups: 103, pairs: 117 }, pending_review: { groups: 0, pairs: 0 } };
   if (JSON.stringify(counts) !== JSON.stringify(expected)) throw new Error(`Decision counts drifted: ${JSON.stringify(counts)}`);
 
   const groupMap = new Map(groups.map((x) => [x.reviewKey, x]));
-  const finalPairStatusCounts: Record<DecisionName, number> = { applicable: 4, ambiguous_fail_closed: 91, not_applicable: 2621, pending_review: 0 };
+  const finalPairStatusCounts: Record<DecisionName, number> = { applicable: 0, ambiguous_fail_closed: 0, not_applicable: 0, pending_review: 0 };
   for (const pair of audit.pairResults) {
     if (pair.status === 'not_nominated') finalPairStatusCounts.not_applicable += 1;
     else if (pair.status === 'ambiguous_fail_closed') finalPairStatusCounts.ambiguous_fail_closed += 1;
