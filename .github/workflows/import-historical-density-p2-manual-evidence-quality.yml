@@ -1,0 +1,84 @@
+name: Import 2021-22 historical-density P2 manual Evidence Quality
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: >-
+    ${{ startsWith(github.event.comment.body, '[historical-density-p2-semantic-annotation-import]')
+        && 'historical-density-p2-semantic-annotation-import'
+        || format('historical-density-p2-semantic-annotation-import-skip-{0}', github.event.comment.id) }}
+  cancel-in-progress: false
+
+jobs:
+  import:
+    if: >-
+      github.event.issue.number == 718 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      startsWith(github.event.comment.body, '[historical-density-p2-semantic-annotation-import]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize frozen P2 semantic-review cohort
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11383404277/zip > "$RUNNER_TEMP/p2-review.zip"
+          echo "bc0c274ecc7705a47dda26f97d2f2c0a09643ac77b0a585ed63e0402ee4bd51c  $RUNNER_TEMP/p2-review.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/p2-review"
+          unzip -q "$RUNNER_TEMP/p2-review.zip" historical-density-p2-semantic-review-cohort-v1.json -d "$RUNNER_TEMP/p2-review"
+
+      - name: Read production environment privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1
+
+      - name: Require exact Evidence Quality migration state
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+        run: node --import tsx scripts/apply-evidence-quality-migration.ts
+
+      - name: Validate frozen 25-row P2 annotation cohort against production
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+          VOTEPREDICT_HISTORICAL_DENSITY_P2_REVIEW_PATH: ${{ runner.temp }}/p2-review/historical-density-p2-semantic-review-cohort-v1.json
+        run: node --import tsx scripts/import-historical-density-p2-manual-evidence-quality.ts
+
+      - name: Import frozen P2 annotations atomically
+        if: >-
+          startsWith(github.event.comment.body, '[historical-density-p2-semantic-annotation-import] apply')
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+          VOTEPREDICT_HISTORICAL_DENSITY_P2_REVIEW_PATH: ${{ runner.temp }}/p2-review/historical-density-p2-semantic-review-cohort-v1.json
+        run: node --import tsx scripts/import-historical-density-p2-manual-evidence-quality.ts --apply
+
+      - name: Verify imported frozen P2 annotation cohort
+        if: >-
+          startsWith(github.event.comment.body, '[historical-density-p2-semantic-annotation-import] apply')
+        env:
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+          VOTEPREDICT_HISTORICAL_DENSITY_P2_REVIEW_PATH: ${{ runner.temp }}/p2-review/historical-density-p2-semantic-review-cohort-v1.json
+        run: node --import tsx scripts/import-historical-density-p2-manual-evidence-quality.ts
+
+      - name: Remove temporary credentials and frozen input
+        if: always()
+        shell: bash
+        run: |
+          rm -f "$RUNNER_TEMP/votepredict-production.env" "$RUNNER_TEMP/vercel-pull.log" "$RUNNER_TEMP/p2-review.zip"
