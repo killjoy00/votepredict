@@ -1,0 +1,101 @@
+name: Retry two ambiguous 2021-22 House attachment archive probes
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: >-
+    ${{ startsWith(github.event.comment.body, '[historical-density-house-attachment-ambiguous-retry]')
+        && 'historical-density-house-attachment-ambiguous-retry'
+        || format('historical-density-house-attachment-ambiguous-retry-skip-{0}', github.event.comment.id) }}
+  cancel-in-progress: false
+
+jobs:
+  retry:
+    if: >-
+      github.event.issue.number == 718 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      startsWith(github.event.comment.body, '[historical-density-house-attachment-ambiguous-retry]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize canonical 24-PDF archive probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11381821796/zip > "$RUNNER_TEMP/prior-probe.zip"
+          echo "8142a38cfbe4b609d94bdaa5755bd598e1f9f8cd41afcd3fe58dffd1c7748cea  $RUNNER_TEMP/prior-probe.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/prior-probe"
+          unzip -q "$RUNNER_TEMP/prior-probe.zip" historical-density-house-attachment-archive-probe-v1.json -d "$RUNNER_TEMP/prior-probe"
+
+      - name: Materialize frozen selector
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11381216160/zip > "$RUNNER_TEMP/selector.zip"
+          echo "e6f795c501db56ec9e009ee14afad54e172604d052914eafbe50778d3f6cec20  $RUNNER_TEMP/selector.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/selector"
+          unzip -q "$RUNNER_TEMP/selector.zip" historical-density-house-attachment-selector-v1.json -d "$RUNNER_TEMP/selector"
+
+      - name: Materialize immutable target universe
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11252079484/zip > "$RUNNER_TEMP/historical-closeout.zip"
+          echo "22e8944cffc6fda553b05ea6ad5e92400d35fc01d83177efdd5d1204dd3c5a6f  $RUNNER_TEMP/historical-closeout.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/historical-closeout"
+          unzip -q "$RUNNER_TEMP/historical-closeout.zip" historical-as-of-matrix-v1.ndjson.gz -d "$RUNNER_TEMP/historical-closeout"
+          python - <<'PYTHON'
+          import gzip,json,os
+          src=os.path.join(os.environ['RUNNER_TEMP'],'historical-closeout','historical-as-of-matrix-v1.ndjson.gz')
+          dst=os.path.join(os.environ['RUNNER_TEMP'],'evidence-quality-target-universe-v1.ndjson')
+          with gzip.open(src,'rt',encoding='utf-8') as fh, open(dst,'w',encoding='utf-8') as out:
+              for line in fh:
+                  row=json.loads(line)
+                  target={k:row[k] for k in ['voteEventId','membershipId','session','chamber','occurredOn','billId','identifier']}
+                  out.write(json.dumps(target,separators=(',',':'))+'\n')
+          PYTHON
+
+      - name: Materialize authoritative v1.5 Evidence Quality matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11380755983/zip > "$RUNNER_TEMP/evidence-quality-v1-5.zip"
+          echo "fe2254fc9d2ed0ea00712feab384958e4942cf387e442c29515b3a75183692d7  $RUNNER_TEMP/evidence-quality-v1-5.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/evidence-quality-v1-5"
+          unzip -q "$RUNNER_TEMP/evidence-quality-v1-5.zip" evidence-quality-historical-feature-matrix-v1.5.ndjson.gz -d "$RUNNER_TEMP/evidence-quality-v1-5"
+
+      - name: Retry only the two transient exact-URL discovery failures
+        env:
+          VOTEPREDICT_HOUSE_ATTACHMENT_PRIOR_PROBE_PATH: ${{ runner.temp }}/prior-probe/historical-density-house-attachment-archive-probe-v1.json
+          VOTEPREDICT_HOUSE_ATTACHMENT_SELECTOR_PATH: ${{ runner.temp }}/selector/historical-density-house-attachment-selector-v1.json
+          VOTEPREDICT_EQ_TARGET_UNIVERSE_PATH: ${{ runner.temp }}/evidence-quality-target-universe-v1.ndjson
+          VOTEPREDICT_EQ_CURRENT_MATRIX_PATH: ${{ runner.temp }}/evidence-quality-v1-5/evidence-quality-historical-feature-matrix-v1.5.ndjson.gz
+          VOTEPREDICT_HOUSE_ATTACHMENT_ARCHIVE_RETRY_OUTPUT_DIR: ${{ runner.temp }}/historical-density-house-attachment-archive-retry
+        run: node --import tsx scripts/retry-house-attachment-historical-density-archive.ts
+
+      - name: Upload bounded retry artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-house-attachment-archive-ambiguous-retry-v1
+          path: ${{ runner.temp }}/historical-density-house-attachment-archive-retry/*
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Remove frozen input artifacts
+        if: always()
+        shell: bash
+        run: |
+          rm -f "$RUNNER_TEMP/prior-probe.zip" "$RUNNER_TEMP/selector.zip" "$RUNNER_TEMP/historical-closeout.zip" "$RUNNER_TEMP/evidence-quality-v1-5.zip"
