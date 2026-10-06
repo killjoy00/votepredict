@@ -1,0 +1,257 @@
+{
+  "schemaVersion": "historical-density-p2-remaining-applicability-decision-gate-v1",
+  "issue": 718,
+  "frozenCandidateArtifact": {
+    "runId": 37490027592,
+    "artifactId": 11424703301,
+    "digest": "sha256:2d8e9b48f654febbd4e027d626fde3696eb6f8c055eeba40ad2007332f69abf1"
+  },
+  "candidateReviewKeySha256": "4fd8d5aa6821a4e548482f27749d5ff2f4e11c511a72d06e5426be78dd7a5900",
+  "candidateReviewGroups": 124,
+  "defaultDecisionBySemanticKey": {
+    "coleman_parental_education_control": {
+      "decision": "not_applicable",
+      "reasonCode": "incidental_or_scope_mismatched_education_reference_not_parental_control_policy",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    "coleman_pro_life": {
+      "decision": "not_applicable",
+      "reasonCode": "fetal_unborn_or_abortion_reference_not_new_directional_abortion_policy",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    "duckworth_parental_education_choice": {
+      "decision": "not_applicable",
+      "reasonCode": "incidental_or_scope_mismatched_education_reference_not_parental_choice_policy",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    "hoffman_disability_employment_protections": {
+      "decision": "not_applicable",
+      "reasonCode": "disability_or_employment_reference_not_frozen_state_agency_ada_protection_claim",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    "hoffman_gas_tax_opposition": {
+      "decision": "not_applicable",
+      "reasonCode": "fuel_tax_or_ifta_reference_not_gas_tax_rate_increase",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    "hoffman_solar_standard": {
+      "decision": "not_applicable",
+      "reasonCode": "solar_reference_not_solar_standard_or_community_solar_policy",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    "jasinski_stand_your_ground": {
+      "decision": "not_applicable",
+      "reasonCode": "use_of_force_reference_not_stand_your_ground_policy",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    "koran_end_emergency_powers": {
+      "decision": "not_applicable",
+      "reasonCode": "emergency_reference_not_termination_of_governor_emergency_powers",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    "koran_gas_tax_opposition": {
+      "decision": "not_applicable",
+      "reasonCode": "fuel_tax_or_ifta_reference_not_gas_tax_rate_increase",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    "lang_pro_life": {
+      "decision": "not_applicable",
+      "reasonCode": "fetal_unborn_or_abortion_reference_not_new_directional_abortion_policy",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    "mathews_second_amendment": {
+      "decision": "not_applicable",
+      "reasonCode": "firearm_reference_not_general_second_amendment_policy",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    "murphy_minimum_wage_15_indexed": {
+      "decision": "not_applicable",
+      "reasonCode": "wage_reference_not_15_dollar_indexed_minimum_wage_policy",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    "utke_gas_tax_opposition": {
+      "decision": "not_applicable",
+      "reasonCode": "fuel_tax_or_ifta_reference_not_gas_tax_rate_increase",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    "utke_law_enforcement_resources": {
+      "decision": "not_applicable",
+      "reasonCode": "law_enforcement_reference_not_additional_tools_or_resources_policy",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    }
+  },
+  "overrides": [
+    {
+      "reviewKey": "coleman_parental_education_control|HF4300|2022-05-03|d3aa597ee1516dc713f3180030974d658bc0add17140a7d40f5f0f836cccb4a9",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "mixed_or_narrow_education_policy_relevance_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "coleman_parental_education_control|SF2575|2022-03-03|83db51b7fa5e3a6353e230e1ed06f53a575dea3799b84e1db96c98e212ab4b08",
+      "decision": "applicable",
+      "reasonCode": "direct_parental_curriculum_control_match",
+      "billPolicyDirection": "expands_parental_access_to_instructional_materials_and_requires_direct_notice_of_alternative_instruction_rights",
+      "alignmentDirection": "position_aligns_with_bill"
+    },
+    {
+      "reviewKey": "coleman_parental_education_control|SF2666|2022-03-10|b77450cd3d4f5aef808ccfecae2d8f450720c914fee4b5128d17991a76cba157",
+      "decision": "applicable",
+      "reasonCode": "direct_parental_curriculum_transparency_match",
+      "billPolicyDirection": "requires_k12_class_syllabi_to_be_made_available_to_parents",
+      "alignmentDirection": "position_aligns_with_bill"
+    },
+    {
+      "reviewKey": "coleman_parental_education_control|SF3534|2022-05-20|bf28cbcb89de7254ef71a1f67fa4e915db96a0799f341cfbcf76aac9837ee8f8",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "mixed_or_narrow_education_policy_relevance_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "duckworth_parental_education_choice|HF4300|2022-05-03|d3aa597ee1516dc713f3180030974d658bc0add17140a7d40f5f0f836cccb4a9",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "transparency_or_narrow_school_admission_relevance_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "duckworth_parental_education_choice|SF2575|2022-03-03|83db51b7fa5e3a6353e230e1ed06f53a575dea3799b84e1db96c98e212ab4b08",
+      "decision": "applicable",
+      "reasonCode": "direct_parental_curriculum_choice_match",
+      "billPolicyDirection": "expands_parental_access_to_instructional_materials_and_preserves_parent_requested_alternative_instruction",
+      "alignmentDirection": "position_aligns_with_bill"
+    },
+    {
+      "reviewKey": "duckworth_parental_education_choice|SF2666|2022-03-10|b77450cd3d4f5aef808ccfecae2d8f450720c914fee4b5128d17991a76cba157",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "transparency_or_narrow_school_admission_relevance_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "duckworth_parental_education_choice|SF3534|2022-05-20|bf28cbcb89de7254ef71a1f67fa4e915db96a0799f341cfbcf76aac9837ee8f8",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "transparency_or_narrow_school_admission_relevance_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "hoffman_disability_employment_protections|HF4293|2022-05-02|20495e24c198bb4449e2b32c8c201fa952ce41223cbd40dd064b81e0c1e21a3f",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "partial_disability_employment_scope_without_full_frozen_claim_match_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "hoffman_disability_employment_protections|SF2876|2022-03-21|f281243cc5efc9417c7994123e1e1c0b86e43a807eb7e18cdd31474bea7f0372",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "partial_disability_employment_scope_without_full_frozen_claim_match_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "hoffman_solar_standard|SF4091|2022-04-26|feffa2f505b0bec42f0ffd929c51a646bf12f93dced782ffb6f2495db61ea443",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "mixed_energy_omnibus_contains_solar_policy_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "hoffman_solar_standard|SF4091|2022-05-22|7a2434c72c5a9c7e50224e77bdf3eb7116df2f4c5449f586cd7e182c02172a56",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "mixed_energy_omnibus_contains_solar_policy_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "koran_end_emergency_powers|HF4293|2022-05-02|20495e24c198bb4449e2b32c8c201fa952ce41223cbd40dd064b81e0c1e21a3f",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "emergency_authority_scope_change_not_specific_walz_emergency_termination_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "mathews_second_amendment|HF4293|2022-05-02|20495e24c198bb4449e2b32c8c201fa952ce41223cbd40dd064b81e0c1e21a3f",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "specific_firearm_regulation_vs_broad_second_amendment_claim_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "mathews_second_amendment|SF395|2021-03-08|3af8e54b548c03178d24f0a7c61692d275fe7fcae4f18dec7c90ec17bf565d33",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "specific_firearm_regulation_vs_broad_second_amendment_claim_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "utke_law_enforcement_resources|HF3669|2022-05-11|2b131dec1d7bd7457f908fc36e863fda431683a18a1c11ca4f894d1810670ef2",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "resource_related_or_omnibus_law_enforcement_provision_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "utke_law_enforcement_resources|HF961|2022-05-16|15fcf6922ea34e98ddc543374773309c15b7199be854e9e9d15748464b2e9cfe",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "resource_related_or_omnibus_law_enforcement_provision_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "utke_law_enforcement_resources|HF961|2022-05-20|15fcf6922ea34e98ddc543374773309c15b7199be854e9e9d15748464b2e9cfe",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "resource_related_or_omnibus_law_enforcement_provision_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "utke_law_enforcement_resources|SF2848|2022-02-14|3cca18a4ee2165800bb297f006f77a0f740fc73a9c9030c09f6a4b33cf66aacb",
+      "decision": "applicable",
+      "reasonCode": "direct_law_enforcement_resource_match",
+      "billPolicyDirection": "appropriates_funds_for_peace_officer_recruitment_and_pathway_to_policing_reimbursement_grants",
+      "alignmentDirection": "position_aligns_with_bill"
+    },
+    {
+      "reviewKey": "utke_law_enforcement_resources|SF4091|2022-04-26|feffa2f505b0bec42f0ffd929c51a646bf12f93dced782ffb6f2495db61ea443",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "resource_related_or_omnibus_law_enforcement_provision_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    },
+    {
+      "reviewKey": "utke_law_enforcement_resources|SF4091|2022-05-22|7a2434c72c5a9c7e50224e77bdf3eb7116df2f4c5449f586cd7e182c02172a56",
+      "decision": "ambiguous_fail_closed",
+      "reasonCode": "resource_related_or_omnibus_law_enforcement_provision_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null
+    }
+  ],
+  "policy": {
+    "unlistedCandidateGroup": "pending_review_fail_closed_unavailable",
+    "onlyApplicableMayReachMatrix": true,
+    "outcomeUse": "none",
+    "sameDayVersionEligible": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
