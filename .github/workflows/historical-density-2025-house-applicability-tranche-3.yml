@@ -99,7 +99,7 @@ jobs:
           test "$(jq -r '.frozenInputs.targetTrancheIndex' "$f")" = 3
           test "$(jq -r '.frozenInputs.targetRankStart' "$f")" = 51
           test "$(jq -r '.frozenInputs.targetRankEnd' "$f")" = 75
-          test "$(jq -r '.frozenInputs.targetEventKeySha256' "$f")" = 9304a46f37889fa3ae166803e3675669c55fb99d475f1484ea3efd11f7e01299
+          test "$(jq -r '.frozenInputs.targetEventKeySha256' "$f")" = e5df92e5d1074edae44bc376ba85a041c3107dde1c84cddc3c8a471c132822f0
           test "$(jq -r '.candidateScreen.automaticApplicableRows' "$f")" = 0
           test "$(jq -r '.candidateScreen.automaticAlignmentRows' "$f")" = 0
           test "$(jq -r '.policy.outcomeUse' "$f")" = none
