@@ -1,19 +1,20 @@
 name: Production database connectivity diagnostic
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/production-database-connectivity.yml
-      - scripts/diagnose-production-database-connectivity.ts
   workflow_dispatch:
+    inputs:
+      run_vercel:
+        description: Explicitly allow this workflow to contact Vercel
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 jobs:
   diagnose:
-    if: github.ref == 'refs/heads/main'
+    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
