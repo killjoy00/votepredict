@@ -1,0 +1,118 @@
+name: Audit remaining 2021-22 P2 applicability candidates
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/evidence/historical-density-p2-remaining-applicability.ts
+      - scripts/audit-historical-density-p2-remaining-applicability.ts
+      - tests/historical-density-p2-remaining-applicability.test.ts
+      - .github/workflows/historical-density-p2-remaining-applicability-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-p2-remaining-applicability-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Test remaining applicability candidate rules
+        run: node --import tsx --test tests/historical-density-p2-remaining-applicability.test.ts
+
+      - name: Materialize immutable semantic review and outcome-blind targets
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11423055543/zip > "$RUNNER_TEMP/p2-semantic-review.zip"
+          echo "5d4e92963f3095dbc4d20f950ad6bc4f80150c83cb18586bcdf3c0a9373c97e0  $RUNNER_TEMP/p2-semantic-review.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/p2-semantic-review"
+          unzip -q "$RUNNER_TEMP/p2-semantic-review.zip" historical-density-p2-remaining-semantic-review-v1.json -d "$RUNNER_TEMP/p2-semantic-review"
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11252079484/zip > "$RUNNER_TEMP/historical-closeout.zip"
+          echo "22e8944cffc6fda553b05ea6ad5e92400d35fc01d83177efdd5d1204dd3c5a6f  $RUNNER_TEMP/historical-closeout.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/historical-closeout"
+          unzip -q "$RUNNER_TEMP/historical-closeout.zip" historical-as-of-matrix-v1.ndjson.gz -d "$RUNNER_TEMP/historical-closeout"
+
+          python - <<'PYTHON'
+          import gzip,json,os
+          matrix_path=os.path.join(os.environ['RUNNER_TEMP'],'historical-closeout','historical-as-of-matrix-v1.ndjson.gz')
+          target_path=os.path.join(os.environ['RUNNER_TEMP'],'p2-outcome-blind-2021-targets.ndjson')
+          allowed=['voteEventId','membershipId','legislatorId','session','chamber','occurredOn','billId','identifier']
+          count=0
+          with gzip.open(matrix_path,'rt',encoding='utf-8') as src, open(target_path,'w',encoding='utf-8') as out:
+              for line in src:
+                  row=json.loads(line)
+                  if row['session']!='2021-2022':
+                      continue
+                  out.write(json.dumps({key:row[key] for key in allowed},separators=(',',':'))+'\n')
+                  count+=1
+          if count != 35510:
+              raise SystemExit(f'expected 35510 outcome-blind 2021-22 rows, got {count}')
+          print(json.dumps({'outcomeBlind2021TargetRows':count}))
+          PYTHON
+
+      - name: Build strict-pre-vote remaining applicability candidates
+        env:
+          VOTEPREDICT_P2_REMAINING_SEMANTIC_REVIEW_PATH: ${{ runner.temp }}/p2-semantic-review/historical-density-p2-remaining-semantic-review-v1.json
+          VOTEPREDICT_P2_OUTCOME_BLIND_TARGET_PATH: ${{ runner.temp }}/p2-outcome-blind-2021-targets.ndjson
+          VOTEPREDICT_P2_REMAINING_APPLICABILITY_OUTPUT_DIR: ${{ runner.temp }}/p2-remaining-applicability
+        run: node --import tsx scripts/audit-historical-density-p2-remaining-applicability.ts
+
+      - name: Verify fail-closed candidate boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$RUNNER_TEMP/p2-remaining-applicability/historical-density-p2-remaining-applicability-candidate-audit-v1.json"
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-density-p2-remaining-applicability-candidate-audit-v1'
+          test "$(jq -r '.cohort.target2021Rows' "$file")" = '35510'
+          test "$(jq -r '.cohort.novelSemanticGroups' "$file")" = '17'
+          test "$(jq -r '.candidateScreen.automaticApplicableRows' "$file")" = '0'
+          test "$(jq -r '.candidateScreen.automaticAlignmentRows' "$file")" = '0'
+          test "$(jq -r '.policy.outcomeUse' "$file")" = 'none'
+          test "$(jq -r '.policy.inputTargetRowsContainOutcomes' "$file")" = 'false'
+          test "$(jq -r '.policy.onlyNovelSemanticGroupsScreened' "$file")" = 'true'
+          test "$(jq -r '.policy.crossBatchDuplicatesScreened' "$file")" = 'false'
+          test "$(jq -r '.policy.productionDatabaseQueried' "$file")" = 'false'
+          test "$(jq -r '.policy.productionWrites' "$file")" = 'false'
+          test "$(jq -r '.policy.vercelUsed' "$file")" = 'false'
+          test "$(jq -r '.policy.sameDayBillVersionsExcluded' "$file")" = 'true'
+          test "$(jq -r '.policy.semanticReviewRequiredForApplicability' "$file")" = 'true'
+          test "$(jq -r '.policy.servingChanged' "$file")" = 'false'
+
+          {
+            echo "## Remaining P2 applicability candidate audit"
+            echo
+            echo "- Novel semantic groups: **$(jq -r '.cohort.novelSemanticGroups' "$file")**"
+            echo "- Memberships with novel groups: **$(jq -r '.cohort.membershipsWithNovelSemanticGroups' "$file")**"
+            echo "- Eligible claim-event pairs: **$(jq -r '.cohort.eligibleClaimEventPairs' "$file")**"
+            echo "- Candidate claim pairs: **$(jq -r '.candidateScreen.candidateClaimPairs' "$file")**"
+            echo "- Candidate review groups: **$(jq -r '.candidateScreen.candidateReviewGroups' "$file")**"
+            echo "- Candidate bills: **$(jq -r '.candidateScreen.candidateBills' "$file")**"
+            echo "- Automatic applicable rows: **0**"
+            echo "- Outcomes: **none**"
+            echo "- Vercel: **not used**"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-p2-remaining-applicability-candidate-audit-v1
+          path: ${{ runner.temp }}/p2-remaining-applicability/*
+          if-no-files-found: error
+          retention-days: 30
