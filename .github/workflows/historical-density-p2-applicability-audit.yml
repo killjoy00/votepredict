@@ -1,0 +1,103 @@
+name: Audit 2021-22 P2 member-issue applicability candidates
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/evidence/historical-density-p2-applicability.ts
+      - scripts/audit-historical-density-p2-applicability.ts
+      - tests/historical-density-p2-applicability.test.ts
+      - .github/workflows/historical-density-p2-applicability-audit.yml
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-p2-applicability-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-fund --no-audit
+
+      - name: Run applicability unit tests
+        run: node --import tsx --test tests/historical-density-p2-applicability.test.ts
+
+      - name: Materialize immutable frozen inputs without outcomes
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11252079484/zip > "$RUNNER_TEMP/historical-closeout.zip"
+          echo "22e8944cffc6fda553b05ea6ad5e92400d35fc01d83177efdd5d1204dd3c5a6f  $RUNNER_TEMP/historical-closeout.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/historical-closeout"
+          unzip -q "$RUNNER_TEMP/historical-closeout.zip" historical-as-of-matrix-v1.ndjson.gz -d "$RUNNER_TEMP/historical-closeout"
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11383404277/zip > "$RUNNER_TEMP/p2-review.zip"
+          echo "bc0c274ecc7705a47dda26f97d2f2c0a09643ac77b0a585ed63e0402ee4bd51c  $RUNNER_TEMP/p2-review.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/p2-review"
+          unzip -q "$RUNNER_TEMP/p2-review.zip" historical-density-p2-semantic-review-cohort-v1.json -d "$RUNNER_TEMP/p2-review"
+
+          python - <<'PYTHON'
+          import gzip,json,os
+          cohort_path=os.path.join(os.environ['RUNNER_TEMP'],'p2-review','historical-density-p2-semantic-review-cohort-v1.json')
+          matrix_path=os.path.join(os.environ['RUNNER_TEMP'],'historical-closeout','historical-as-of-matrix-v1.ndjson.gz')
+          target_path=os.path.join(os.environ['RUNNER_TEMP'],'p2-outcome-blind-targets.ndjson')
+          cohort=json.load(open(cohort_path,encoding='utf-8'))
+          memberships={row['membershipId'] for row in cohort['documents']}
+          allowed=['voteEventId','membershipId','legislatorId','session','chamber','occurredOn','billId','identifier']
+          count=0
+          with gzip.open(matrix_path,'rt',encoding='utf-8') as src, open(target_path,'w',encoding='utf-8') as out:
+              for line in src:
+                  row=json.loads(line)
+                  if row['session']!='2021-2022' or row['membershipId'] not in memberships:
+                      continue
+                  out.write(json.dumps({key:row[key] for key in allowed},separators=(',',':'))+'\n')
+                  count+=1
+          if count != 3924:
+              raise SystemExit(f'expected 3924 raw member-event rows, got {count}')
+          print(json.dumps({'rawOutcomeBlindMemberEventRows':count,'memberships':len(memberships)}))
+          PYTHON
+
+      - name: Build outcome-blind applicability candidate audit
+        env:
+          VOTEPREDICT_P2_REVIEW_COHORT_PATH: ${{ runner.temp }}/p2-review/historical-density-p2-semantic-review-cohort-v1.json
+          VOTEPREDICT_P2_OUTCOME_BLIND_TARGET_PATH: ${{ runner.temp }}/p2-outcome-blind-targets.ndjson
+          VOTEPREDICT_P2_APPLICABILITY_OUTPUT_DIR: ${{ runner.temp }}/historical-density-p2-applicability
+        run: node --import tsx scripts/audit-historical-density-p2-applicability.ts
+
+      - name: Verify fail-closed audit boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$RUNNER_TEMP/historical-density-p2-applicability/historical-density-p2-applicability-candidate-audit-v1.json"
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-density-p2-applicability-candidate-audit-v1'
+          test "$(jq -r '.cohort.rawMemberEventRows' "$file")" = '3924'
+          test "$(jq -r '.cohort.eligibleMemberEventRows' "$file")" = '3923'
+          test "$(jq -r '.cohort.excludedBeforeAnyFrozenSourceAvailability' "$file")" = '1'
+          test "$(jq -r '.candidateScreen.automaticApplicableRows' "$file")" = '0'
+          test "$(jq -r '.candidateScreen.automaticAlignmentRows' "$file")" = '0'
+          test "$(jq -r '.policy.outcomeUse' "$file")" = 'none'
+          test "$(jq -r '.policy.inputTargetRowsContainOutcomes' "$file")" = 'false'
+          test "$(jq -r '.policy.productionDatabaseQueried' "$file")" = 'false'
+          test "$(jq -r '.policy.vercelUsed' "$file")" = 'false'
+          test "$(jq -r '.policy.sameDayBillVersionsExcluded' "$file")" = 'true'
+          test "$(jq -r '.policy.semanticReviewRequiredForApplicability' "$file")" = 'true'
+          test "$(jq -r '.policy.servingChanged' "$file")" = 'false'
+
+      - name: Upload immutable applicability candidate audit
+        uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-p2-applicability-candidate-audit-v1
+          path: ${{ runner.temp }}/historical-density-p2-applicability/*
+          if-no-files-found: error
+          retention-days: 30
