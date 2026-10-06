@@ -354,8 +354,8 @@ function main(): void {
     });
   }
 
-  if (parsedArticleOwnedBodies !== EXPECTED_BODIES) {
-    throw new Error(`Expected article-owned text for ${EXPECTED_BODIES} bodies, got ${parsedArticleOwnedBodies}`);
+  if (parsedArticleOwnedBodies !== EXPECTED_PARSED_ARTICLE_OWNED_BODIES) {
+    throw new Error(`Expected ${EXPECTED_PARSED_ARTICLE_OWNED_BODIES} parseable article-owned bodies, got ${parsedArticleOwnedBodies}`);
   }
   if (exactBodyHashes.size !== EXPECTED_UNIQUE_BODIES) {
     throw new Error(`Expected ${EXPECTED_UNIQUE_BODIES} unique article-owned bodies, got ${exactBodyHashes.size}`);
