@@ -1,0 +1,83 @@
+name: Freeze remaining 2021-22 P2 semantic review
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - data/evaluation/evidence-quality/historical-density-p2-remaining-semantic-decisions-v1.json
+      - scripts/freeze-historical-density-p2-remaining-semantic-review.ts
+      - .github/workflows/historical-density-p2-remaining-semantic-review.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-p2-remaining-semantic-review
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize frozen remaining P2 cohort
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11421014765/zip > "$RUNNER_TEMP/p2-cohort.zip"
+          echo "743b1cd844a591380709bb9c7faaa310af05d8e2a9532811fcf98a34e1d12708  $RUNNER_TEMP/p2-cohort.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/p2-cohort"
+          unzip -q "$RUNNER_TEMP/p2-cohort.zip" historical-density-p2-remaining-semantic-review-cohort-v1.json -d "$RUNNER_TEMP/p2-cohort"
+
+      - name: Freeze outcome-blind semantic review
+        env:
+          VOTEPREDICT_P2_REMAINING_COHORT_PATH: ${{ runner.temp }}/p2-cohort/historical-density-p2-remaining-semantic-review-cohort-v1.json
+          VOTEPREDICT_P2_REMAINING_DECISION_PATH: data/evaluation/evidence-quality/historical-density-p2-remaining-semantic-decisions-v1.json
+          VOTEPREDICT_P2_REMAINING_SEMANTIC_REVIEW_OUTPUT: ${{ runner.temp }}/historical-density-p2-remaining-semantic-review-v1.json
+        run: node --import tsx scripts/freeze-historical-density-p2-remaining-semantic-review.ts
+
+      - name: Verify semantic-review boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$RUNNER_TEMP/historical-density-p2-remaining-semantic-review-v1.json"
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-density-p2-remaining-semantic-review-v1'
+          test "$(jq -r '.batchId' "$file")" = 'EQV1-HISTORICAL-DENSITY-P2-002'
+          test "$(jq -r '.summary.documents' "$file")" = '40'
+          test "$(jq -r '.summary.memberships' "$file")" = '13'
+          test "$(jq -r '.summary.directionalDocuments' "$file")" = '28'
+          test "$(jq -r '.summary.nonDirectionalDocuments' "$file")" = '12'
+          test "$(jq -r '.summary.uniqueSemanticGroups' "$file")" = '20'
+          test "$(jq -r '.summary.crossBatchDuplicateSemanticGroups' "$file")" = '3'
+          test "$(jq -r '.summary.novelSemanticGroups' "$file")" = '17'
+          test "$(jq -r '.summary.candidateBillIdentifiers' "$file")" = '0'
+          jq -e '[.semanticGroups[].candidateBillIdentifiers | length] | add == 0' "$file" >/dev/null
+          jq -e '[.semanticGroups[] | select(.novelForApplicabilityScreen == true)] | length == 17' "$file" >/dev/null
+          jq -e '[.semanticGroups[] | select(.crossBatchDuplicateOf | length > 0) | .novelForApplicabilityScreen] | all(. == false)' "$file" >/dev/null
+          test "$(jq -r '.policy.outcomeUse' "$file")" = 'none'
+          test "$(jq -r '.policy.billInference' "$file")" = 'false'
+          test "$(jq -r '.policy.targetBillApplicabilityInferred' "$file")" = 'false'
+          test "$(jq -r '.policy.crossBatchDuplicatesCanMultiplySignals' "$file")" = 'false'
+          test "$(jq -r '.policy.onlyNovelSemanticGroupsAdvanceToNewApplicabilityScreen' "$file")" = 'true'
+          test "$(jq -r '.policy.productionDatabaseQueried' "$file")" = 'false'
+          test "$(jq -r '.policy.vercelUsed' "$file")" = 'false'
+          test "$(jq -r '.policy.servingChanged' "$file")" = 'false'
+          jq -e '.summary.withinBatchDuplicateGroups == [[1,6,36],[3,12],[4,39],[13,35],[31,32,34,40]]' "$file" >/dev/null
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-p2-remaining-semantic-review-v1
+          path: ${{ runner.temp }}/historical-density-p2-remaining-semantic-review-v1.json
+          if-no-files-found: error
+          retention-days: 30
