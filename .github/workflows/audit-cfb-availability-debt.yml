@@ -16,7 +16,10 @@ concurrency:
   group: cfb-availability-debt-audit
   cancel-in-progress: false
 
-jobs:\n  audit:\n    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'\n    runs-on: ubuntu-latest
+jobs:
+  audit:
+    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
