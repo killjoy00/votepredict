@@ -62,6 +62,9 @@ jobs:
           test "$(jq -r '.summary.crossBatchDuplicateSemanticGroups' "$file")" = '3'
           test "$(jq -r '.summary.novelSemanticGroups' "$file")" = '17'
           test "$(jq -r '.summary.candidateBillIdentifiers' "$file")" = '0'
+          jq -e '[.semanticGroups[].candidateBillIdentifiers | length] | add == 0' "$file" >/dev/null
+          jq -e '[.semanticGroups[] | select(.novelForApplicabilityScreen == true)] | length == 17' "$file" >/dev/null
+          jq -e '[.semanticGroups[] | select(.crossBatchDuplicateOf | length > 0) | .novelForApplicabilityScreen] | all(. == false)' "$file" >/dev/null
           test "$(jq -r '.policy.outcomeUse' "$file")" = 'none'
           test "$(jq -r '.policy.billInference' "$file")" = 'false'
           test "$(jq -r '.policy.targetBillApplicabilityInferred' "$file")" = 'false'
