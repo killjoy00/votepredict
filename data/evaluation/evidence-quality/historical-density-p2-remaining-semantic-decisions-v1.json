@@ -1,0 +1,533 @@
+{
+  "schemaVersion": "historical-density-p2-remaining-semantic-decisions-v1",
+  "batchId": "EQV1-HISTORICAL-DENSITY-P2-002",
+  "issue": 718,
+  "frozenCohort": {
+    "runId": 37481875190,
+    "artifactId": 11421014765,
+    "digest": "sha256:743b1cd844a591380709bb9c7faaa310af05d8e2a9532811fcf98a34e1d12708",
+    "integritySha256": "7f585c50c3ff747a5128b76ce346c68c6a132d9e390903de4f11e1b541a68ff6"
+  },
+  "decisions": [
+    {
+      "row": 1,
+      "decision": "directional",
+      "semanticKey": "coleman_pro_life",
+      "topics": [
+        "abortion"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Julia Coleman supports protecting unborn life.",
+      "supportingExcerpt": "As your state senator, I will not only protect the unborn and the Second Amendment, but will fight to stop unconstitutional government overreach, and for our government to strictly adhere to our founding document.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 2,
+      "decision": "non_directional",
+      "reasonCode": "endorsement_context_not_member_position"
+    },
+    {
+      "row": 3,
+      "decision": "directional",
+      "semanticKey": "mathews_defund_planned_parenthood",
+      "topics": [
+        "abortion",
+        "Planned Parenthood"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Andrew Mathews supports completely defunding Planned Parenthood in Minnesota.",
+      "supportingExcerpt": "I will always join the fight to completely defund Planned Parenthood in Minnesota, and have the money go to other resources that will help the life of the mother AND the life of the child.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 4,
+      "decision": "directional",
+      "semanticKey": "mathews_second_amendment",
+      "topics": [
+        "Second Amendment",
+        "gun rights"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Andrew Mathews supports Second Amendment rights.",
+      "supportingExcerpt": "Vote for your GOP-endorsed Candidate who will stand for: – Fiscal Restraint – Keeping Government within its means – Lower taxes – Pro-Life issues – Lake Mille Lacs – Pro-jobs Economy (Saving Sherco Power Plant) – 2nd Amendment Rights (received an “A” rating from the NRA!)",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 5,
+      "decision": "non_directional",
+      "reasonCode": "biography_not_policy_position"
+    },
+    {
+      "row": 6,
+      "decision": "directional",
+      "semanticKey": "coleman_pro_life",
+      "topics": [
+        "abortion"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Julia Coleman supports protecting unborn life.",
+      "supportingExcerpt": "As your state senator, I will not only protect the unborn and the Second Amendment, but will fight to stop unconstitutional government overreach, and for our government to strictly adhere to our founding document.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 7,
+      "decision": "non_directional",
+      "reasonCode": "headline_index_only"
+    },
+    {
+      "row": 8,
+      "decision": "directional",
+      "semanticKey": "lang_pro_life",
+      "topics": [
+        "abortion"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Andrew Lang opposes abortion and states a pro-life position.",
+      "supportingExcerpt": "I oppose abortion and have a 100% pro-life voting record, including a top rating from Minnesota Citizens Concerned for Life (MCCL).",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 9,
+      "decision": "directional",
+      "semanticKey": "murphy_minimum_wage_15_indexed",
+      "topics": [
+        "minimum wage",
+        "labor"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Erin Murphy supports raising the minimum wage to $15 per hour indexed to inflation.",
+      "supportingExcerpt": "I will fight to raise the minimum wage to $15/hr indexed to inflation, and ensure Minnesotans have the benefits necessary to provide for themselves and their loved ones.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 10,
+      "decision": "directional",
+      "semanticKey": "jasinski_stand_your_ground",
+      "topics": [
+        "self defense",
+        "gun policy"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "John Jasinski supports expanding Minnesota’s Stand Your Ground law.",
+      "supportingExcerpt": "I support legislation to expand the ‘Stand Your Ground’ law in Minnesota and was a co-author of legislation that would direct prosecutors to crack down on violent criminals.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 11,
+      "decision": "non_directional",
+      "reasonCode": "biography_not_policy_position"
+    },
+    {
+      "row": 12,
+      "decision": "directional",
+      "semanticKey": "mathews_defund_planned_parenthood",
+      "topics": [
+        "abortion",
+        "Planned Parenthood"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Andrew Mathews supports completely defunding Planned Parenthood in Minnesota.",
+      "supportingExcerpt": "I will always join the fight to completely defund Planned Parenthood in Minnesota, and have the money go to other resources that will help the life of the mother AND the life of the child.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 13,
+      "decision": "directional",
+      "semanticKey": "coleman_parental_education_control",
+      "topics": [
+        "education",
+        "parental control"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Julia Coleman supports putting more power in parents’ hands over their children’s education.",
+      "supportingExcerpt": "By fighting to put power back into the hands of parents when it comes to their child’s education, protecting our constitutional rights, changing how we address healthcare costs, opposing a gas tax increase, and holding bureaucracies – like the Department of Human Services – accountable for how they spend our hard-earned tax dollars, I believe we can start to make that future possible.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 14,
+      "decision": "directional",
+      "semanticKey": "hoffman_close_corporate_tax_loopholes",
+      "topics": [
+        "corporate taxation",
+        "tax loopholes"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "John Hoffman supports closing corporate income-tax loopholes.",
+      "supportingExcerpt": "Sen. Hoffman voted to close more than $400 million in tax loopholes used by big corporations to avoid paying Minnesota income taxes.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 15,
+      "decision": "non_directional",
+      "reasonCode": "third_party_testimonials"
+    },
+    {
+      "row": 16,
+      "decision": "non_directional",
+      "reasonCode": "third_party_letters"
+    },
+    {
+      "row": 17,
+      "decision": "directional",
+      "semanticKey": "hoffman_hate_crime_penalty_enhancement",
+      "topics": [
+        "hate crimes",
+        "criminal penalties"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "John Hoffman supports enhanced penalties for bias-motivated felony assault.",
+      "supportingExcerpt": "By authoring legislation designed to increase maximum penalties by 25% on felony assault motivated by bias, Senator Hoffman is taking a decisive step in protecting and safeguarding our communities.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 18,
+      "decision": "directional",
+      "semanticKey": "hoffman_gas_tax_opposition",
+      "topics": [
+        "transportation",
+        "gas tax"
+      ],
+      "claimType": "explicit_position",
+      "stance": "opposes",
+      "explicitness": "document_position",
+      "normalizedClaim": "John Hoffman opposes gas-tax and vehicle-registration-fee increases.",
+      "supportingExcerpt": "Hoffman protected all Minnesotans and our business community against an unnecessary gas tax and registration fee increases.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 19,
+      "decision": "directional",
+      "semanticKey": "hoffman_solar_standard",
+      "topics": [
+        "energy",
+        "solar"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "John Hoffman supports a solar-energy standard and community solar.",
+      "supportingExcerpt": "Sen. Hoffman voted to establish a 1.5% solar standard by 2025 for investor-owned utilities such as Excel Energy and Minnesota Power, expected to increase Minnesota’s installed capacity by 32 times over seven years. The bill also set up a new framework for community solar programs.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 20,
+      "decision": "non_directional",
+      "reasonCode": "headline_index_only"
+    },
+    {
+      "row": 21,
+      "decision": "directional",
+      "semanticKey": "utke_gas_tax_opposition",
+      "topics": [
+        "transportation",
+        "gas tax"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Paul Utke opposes a gas-tax increase.",
+      "supportingExcerpt": "I do not support a gas tax increase.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 22,
+      "decision": "directional",
+      "semanticKey": "utke_law_enforcement_resources",
+      "topics": [
+        "public safety",
+        "law enforcement"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Paul Utke supports providing law enforcement with additional tools and resources.",
+      "supportingExcerpt": "At a time when the governor has talked about defunding the police, we need to provide law enforcement with additional tools and resources, so they can do their jobs during these challenging times.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 23,
+      "decision": "non_directional",
+      "reasonCode": "headline_index_only"
+    },
+    {
+      "row": 24,
+      "decision": "directional",
+      "semanticKey": "duckworth_parental_education_choice",
+      "topics": [
+        "education",
+        "school choice"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Zach Duckworth supports parental choice in children’s education.",
+      "supportingExcerpt": "Parents must have choices for their children’s education and all public schools, including colleges and universities, should be held accountable for all funds received and spent.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 25,
+      "decision": "directional",
+      "semanticKey": "koran_pro_life",
+      "topics": [
+        "abortion"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Mark Koran states a continuing pro-life position.",
+      "supportingExcerpt": "I have voted 100% pro life and will continue to support life.",
+      "crossBatchDuplicateOf": [
+        "EQV1-HISTORICAL-DENSITY-P2-001:15"
+      ]
+    },
+    {
+      "row": 26,
+      "decision": "directional",
+      "semanticKey": "koran_end_emergency_powers",
+      "topics": [
+        "emergency powers",
+        "executive power"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Mark Koran supports ending Governor Walz’s emergency powers.",
+      "supportingExcerpt": "Today we passed a resolution to end Governor Walz's emergency powers, which have been extended longer than any other governor has done in Minnesota history.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 27,
+      "decision": "non_directional",
+      "reasonCode": "generic_campaign_homepage"
+    },
+    {
+      "row": 28,
+      "decision": "directional",
+      "semanticKey": "coleman_public_safety_first_responders",
+      "topics": [
+        "public safety",
+        "first responders"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Julia Coleman identifies public safety and support for first responders as a top priority.",
+      "supportingExcerpt": "Learn more about why public safety, and taking care of those who take care of us is a top priority for me",
+      "crossBatchDuplicateOf": [
+        "EQV1-HISTORICAL-DENSITY-P2-001:24"
+      ]
+    },
+    {
+      "row": 29,
+      "decision": "non_directional",
+      "reasonCode": "biography_not_policy_position"
+    },
+    {
+      "row": 30,
+      "decision": "directional",
+      "semanticKey": "koran_gas_tax_opposition",
+      "topics": [
+        "transportation",
+        "gas tax"
+      ],
+      "claimType": "explicit_position",
+      "stance": "opposes",
+      "explicitness": "document_position",
+      "normalizedClaim": "Mark Koran opposes raising taxes, including a gas-tax increase, to fund transportation.",
+      "supportingExcerpt": "We are committed to funding transportation needs without raising taxes. Last session, we put a stop to a 20-cent gas tax proposed by Governor Walz.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 31,
+      "decision": "directional",
+      "semanticKey": "coleman_gas_tax_opposition",
+      "topics": [
+        "education",
+        "constitutional rights",
+        "health care",
+        "gas tax",
+        "government accountability"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Julia Coleman explicitly opposes a gas tax increase as part of her stated policy priorities.",
+      "supportingExcerpt": "My priorities at the Capitol include putting power back into the hands of parents when it comes to their child’s education, protecting our constitutional rights, changing how we address health care costs, opposing a gas tax increase, and holding bureaucracies — like the Department of Human Services — accountable for how they spend our hard-earned tax dollars.",
+      "crossBatchDuplicateOf": [
+        "EQV1-HISTORICAL-DENSITY-P2-001:7",
+        "EQV1-HISTORICAL-DENSITY-P2-001:20",
+        "EQV1-HISTORICAL-DENSITY-P2-001:25"
+      ]
+    },
+    {
+      "row": 32,
+      "decision": "directional",
+      "semanticKey": "coleman_gas_tax_opposition",
+      "topics": [
+        "education",
+        "constitutional rights",
+        "health care",
+        "gas tax",
+        "government accountability"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Julia Coleman explicitly opposes a gas tax increase as part of her stated policy priorities.",
+      "supportingExcerpt": "My priorities at the Capitol include putting power back into the hands of parents when it comes to their child’s education, protecting our constitutional rights, changing how we address health care costs, opposing a gas tax increase, and holding bureaucracies — like the Department of Human Services — accountable for how they spend our hard-earned tax dollars.",
+      "crossBatchDuplicateOf": [
+        "EQV1-HISTORICAL-DENSITY-P2-001:7",
+        "EQV1-HISTORICAL-DENSITY-P2-001:20",
+        "EQV1-HISTORICAL-DENSITY-P2-001:25"
+      ]
+    },
+    {
+      "row": 33,
+      "decision": "non_directional",
+      "reasonCode": "endorsement_context_not_member_position"
+    },
+    {
+      "row": 34,
+      "decision": "directional",
+      "semanticKey": "coleman_gas_tax_opposition",
+      "topics": [
+        "education",
+        "constitutional rights",
+        "health care",
+        "gas tax",
+        "government accountability"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Julia Coleman explicitly opposes a gas tax increase as part of her stated policy priorities.",
+      "supportingExcerpt": "My priorities at the Capitol include putting power back into the hands of parents when it comes to their child’s education, protecting our constitutional rights, changing how we address health care costs, opposing a gas tax increase, and holding bureaucracies — like the Department of Human Services — accountable for how they spend our hard-earned tax dollars.",
+      "crossBatchDuplicateOf": [
+        "EQV1-HISTORICAL-DENSITY-P2-001:7",
+        "EQV1-HISTORICAL-DENSITY-P2-001:20",
+        "EQV1-HISTORICAL-DENSITY-P2-001:25"
+      ]
+    },
+    {
+      "row": 35,
+      "decision": "directional",
+      "semanticKey": "coleman_parental_education_control",
+      "topics": [
+        "education",
+        "parental control"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Julia Coleman supports putting more power in parents’ hands over their children’s education.",
+      "supportingExcerpt": "By fighting to put power back into the hands of parents when it comes to their child’s education, protecting our constitutional rights, changing how we address healthcare costs, opposing a gas tax increase, and holding bureaucracies – like the Department of Human Services – accountable for how they spend our hard-earned tax dollars, I believe we can start to make that future possible.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 36,
+      "decision": "directional",
+      "semanticKey": "coleman_pro_life",
+      "topics": [
+        "abortion"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Julia Coleman supports protecting unborn life.",
+      "supportingExcerpt": "As your state senator, I will not only protect the unborn and the Second Amendment, but will fight to stop unconstitutional government overreach, and for our government to strictly adhere to our founding document.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 37,
+      "decision": "non_directional",
+      "reasonCode": "generic_campaign_homepage"
+    },
+    {
+      "row": 38,
+      "decision": "directional",
+      "semanticKey": "hoffman_disability_employment_protections",
+      "topics": [
+        "disability rights",
+        "state employment"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "John Hoffman supports stronger disability-employment protections and ADA compliance in state agencies.",
+      "supportingExcerpt": "This comprehensive set of policies will ensure protections, a firm interpretation of the ADA laid out through requirements, expectations, as well as training for a variety of employees in our state agencies.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 39,
+      "decision": "directional",
+      "semanticKey": "mathews_second_amendment",
+      "topics": [
+        "Second Amendment",
+        "gun rights"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Andrew Mathews supports Second Amendment rights.",
+      "supportingExcerpt": "Vote for your GOP-endorsed Candidate who will stand for: – Fiscal Restraint – Keeping Government within its means – Lower taxes – Pro-Life issues – Lake Mille Lacs – Pro-jobs Economy (Saving Sherco Power Plant) – 2nd Amendment Rights (received an “A” rating from the NRA!)",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 40,
+      "decision": "directional",
+      "semanticKey": "coleman_gas_tax_opposition",
+      "topics": [
+        "education",
+        "constitutional rights",
+        "health care",
+        "gas tax",
+        "government accountability"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Julia Coleman explicitly opposes a gas tax increase as part of her stated policy priorities.",
+      "supportingExcerpt": "My priorities at the Capitol include putting power back into the hands of parents when it comes to their child’s education, protecting our constitutional rights, changing how we address health care costs, opposing a gas tax increase, and holding bureaucracies — like the Department of Human Services — accountable for how they spend our hard-earned tax dollars.",
+      "crossBatchDuplicateOf": [
+        "EQV1-HISTORICAL-DENSITY-P2-001:7",
+        "EQV1-HISTORICAL-DENSITY-P2-001:20",
+        "EQV1-HISTORICAL-DENSITY-P2-001:25"
+      ]
+    }
+  ],
+  "policy": {
+    "candidateBillIdentifiers": [],
+    "targetBillApplicabilityInferred": false,
+    "outcomeUse": "none",
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
