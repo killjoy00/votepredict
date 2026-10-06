@@ -1,0 +1,179 @@
+name: Historical density P2 remaining canonical pipeline
+
+on:
+  pull_request:
+    paths:
+      - src/evidence/historical-density-p2-canonical.ts
+      - data/evaluation/evidence-quality/historical-density-p2-remaining-applicability-decisions-v1.json
+      - scripts/freeze-historical-density-p2-remaining-applicability-canonical.ts
+      - scripts/build-evidence-quality-historical-feature-matrix-v1-7.ts
+      - scripts/audit-evidence-quality-historical-feature-coverage-v1-7.ts
+      - tests/historical-density-p2-remaining-canonical.test.ts
+      - .github/workflows/historical-density-p2-remaining-canonical-pipeline.yml
+  push:
+    branches: [main]
+    paths:
+      - src/evidence/historical-density-p2-canonical.ts
+      - data/evaluation/evidence-quality/historical-density-p2-remaining-applicability-decisions-v1.json
+      - scripts/freeze-historical-density-p2-remaining-applicability-canonical.ts
+      - scripts/build-evidence-quality-historical-feature-matrix-v1-7.ts
+      - scripts/audit-evidence-quality-historical-feature-coverage-v1-7.ts
+      - tests/historical-density-p2-remaining-canonical.test.ts
+      - .github/workflows/historical-density-p2-remaining-canonical-pipeline.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-p2-remaining-canonical-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  canonical:
+    name: Gate, freeze, matrix v1.7, coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Test remaining semantic decision gate
+        run: node --import tsx --test tests/historical-density-p2-remaining-canonical.test.ts
+
+      - name: Materialize immutable audit and v1.6 baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11424703301/zip > "$RUNNER_TEMP/p2-remaining-audit.zip"
+          echo "2d8e9b48f654febbd4e027d626fde3696eb6f8c055eeba40ad2007332f69abf1  $RUNNER_TEMP/p2-remaining-audit.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/p2-remaining-audit"
+          unzip -q "$RUNNER_TEMP/p2-remaining-audit.zip" historical-density-p2-remaining-applicability-candidate-audit-v1.json -d "$RUNNER_TEMP/p2-remaining-audit"
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11391697762/zip > "$RUNNER_TEMP/v16.zip"
+          echo "6d30be0dabed59d66994749ac3a7e872eaf5b652d775b2392c573b300305828f  $RUNNER_TEMP/v16.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/v16"
+          unzip -q "$RUNNER_TEMP/v16.zip" evidence-quality-historical-feature-matrix-v1.6.ndjson.gz evidence-quality-historical-feature-matrix-v1.6-manifest.json -d "$RUNNER_TEMP/v16"
+
+      - name: Freeze remaining P2 semantic applicability
+        env:
+          VOTEPREDICT_P2_REMAINING_APPLICABILITY_CANDIDATE_PATH: ${{ runner.temp }}/p2-remaining-audit/historical-density-p2-remaining-applicability-candidate-audit-v1.json
+          VOTEPREDICT_P2_REMAINING_APPLICABILITY_DECISION_PATH: data/evaluation/evidence-quality/historical-density-p2-remaining-applicability-decisions-v1.json
+          VOTEPREDICT_P2_REMAINING_CANONICAL_OUTPUT_DIR: ${{ runner.temp }}/p2-remaining-canonical
+        run: node --import tsx scripts/freeze-historical-density-p2-remaining-applicability-canonical.ts
+
+      - name: Verify fail-closed canonical gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/p2-remaining-canonical/historical-density-p2-remaining-applicability-canonical-v1.json"
+          test "$(jq -r '.review.candidateReviewGroups' "$f")" = 124
+          test "$(jq -r '.review.candidateClaimPairs' "$f")" = 138
+          test "$(jq -r '.review.decisionCounts.applicable.groups' "$f")" = 4
+          test "$(jq -r '.review.decisionCounts.ambiguous_fail_closed.groups' "$f")" = 17
+          test "$(jq -r '.review.decisionCounts.not_applicable.groups' "$f")" = 103
+          test "$(jq -r '.review.decisionCounts.pending_review.groups' "$f")" = 0
+          test "$(jq -r '.review.finalPairStatusCounts.applicable' "$f")" = 4
+          test "$(jq -r '.review.finalPairStatusCounts.ambiguous_fail_closed' "$f")" = 91
+          test "$(jq -r '.review.finalPairStatusCounts.not_applicable' "$f")" = 2621
+          test "$(jq -r '.review.finalPairStatusCounts.pending_review' "$f")" = 0
+          test "$(jq -r '.applicableRows | length' "$f")" = 4
+          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-p2-remaining-canonical-review-v1
+          path: ${{ runner.temp }}/p2-remaining-canonical/*
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Build immutable historical matrix v1.7
+        env:
+          VOTEPREDICT_P2_REMAINING_CANONICAL_REVIEW_PATH: ${{ runner.temp }}/p2-remaining-canonical/historical-density-p2-remaining-applicability-canonical-v1.json
+          VOTEPREDICT_EQ_V16_MANIFEST_PATH: ${{ runner.temp }}/v16/evidence-quality-historical-feature-matrix-v1.6-manifest.json
+          VOTEPREDICT_EQ_V16_MATRIX_PATH: ${{ runner.temp }}/v16/evidence-quality-historical-feature-matrix-v1.6.ndjson.gz
+          VOTEPREDICT_EQ_V17_OUTPUT_DIR: ${{ runner.temp }}/v17
+        run: node --import tsx scripts/build-evidence-quality-historical-feature-matrix-v1-7.ts
+
+      - name: Verify v1.7 is strictly additive
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/v17/evidence-quality-historical-feature-matrix-v1.7-manifest.json"
+          test "$(jq -r '.targetUniverse.rows' "$f")" = 135457
+          test "$(jq -r '.coverage.exactNonzeroRows' "$f")" = 38
+          test "$(jq -r '.coverage.reviewedApplicabilityNonzeroRows' "$f")" = 6
+          test "$(jq -r '.coverage.combinedNonzeroRows' "$f")" = 44
+          test "$(jq -r '.coverage.netAddedCombinedRowsVsV16' "$f")" = 4
+          test "$(jq -r '.coverage.exactRowsChangedVsV16' "$f")" = 0
+          test "$(jq -r '.coverage.reviewedApplicabilityRowsChangedOutsideAdditions' "$f")" = 0
+          test "$(jq -r '.coverage.overlapRows' "$f")" = 0
+          test "$(jq -r '.coverage.bySession["2021-2022"].exactNonzeroRows' "$f")" = 3
+          test "$(jq -r '.coverage.bySession["2021-2022"].reviewedApplicabilityNonzeroRows' "$f")" = 6
+          test "$(jq -r '.coverage.bySession["2021-2022"].combinedNonzeroRows' "$f")" = 9
+          test "$(jq -r '.policy.exactBillEvidenceSemanticsRemainSeparate' "$f")" = true
+          test "$(jq -r '.policy.previousReviewedApplicabilityPreserved' "$f")" = true
+          test "$(jq -r '.policy.pendingOrAmbiguousApplicabilityIncluded' "$f")" = false
+          test "$(jq -r '.policy.outcomeUseDuringFeatureConstruction' "$f")" = none
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: evidence-quality-historical-feature-freeze-v1-7
+          path: ${{ runner.temp }}/v17/*
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Audit v1.7 historical coverage
+        env:
+          VOTEPREDICT_EQ_V17_MANIFEST_PATH: ${{ runner.temp }}/v17/evidence-quality-historical-feature-matrix-v1.7-manifest.json
+          VOTEPREDICT_EQ_V17_MATRIX_PATH: ${{ runner.temp }}/v17/evidence-quality-historical-feature-matrix-v1.7.ndjson.gz
+          VOTEPREDICT_EQ_V17_COVERAGE_OUTPUT_DIR: ${{ runner.temp }}/coverage
+        run: node --import tsx scripts/audit-evidence-quality-historical-feature-coverage-v1-7.ts
+
+      - name: Verify coverage conclusion and summarize
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/coverage/evidence-quality-historical-feature-coverage-v1.7.json"
+          test "$(jq -r '.summary.targetRows' "$f")" = 135457
+          test "$(jq -r '.summary.exactNonzeroRows' "$f")" = 38
+          test "$(jq -r '.summary.reviewedApplicabilityNonzeroRows' "$f")" = 6
+          test "$(jq -r '.summary.combinedNonzeroRows' "$f")" = 44
+          test "$(jq -r '.summary.exactRowsChangedVsV16' "$f")" = 0
+          test "$(jq -r '.bySession["2021-2022"].combinedNonzeroRows' "$f")" = 9
+          test "$(jq -r '.review.ambiguousOrPendingRowsIncludedInMatrix' "$f")" = 0
+          test "$(jq -r '.interpretation.modelingReady' "$f")" = false
+          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          {
+            echo '## Historical density P2 remaining canonical review'
+            echo
+            echo '- Candidate review groups: **124**'
+            echo '- Semantic decisions: **4 applicable / 17 ambiguous / 103 not applicable**'
+            echo '- Exact-bill nonzero rows: **38 → 38**'
+            echo '- Reviewed-applicability rows: **2 → 6**'
+            echo '- Combined directional rows: **40 → 44**'
+            echo '- 2021-22 covered rows: **5 → 9**'
+            echo '- Ambiguous/pending rows included: **0**'
+            echo '- Outcomes used: **none**'
+            echo '- Vercel used: **no**'
+            echo '- Model fitting: **none**'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: evidence-quality-historical-feature-coverage-v1-7
+          path: ${{ runner.temp }}/coverage/*
+          if-no-files-found: error
+          retention-days: 30
