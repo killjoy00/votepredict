@@ -45,8 +45,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          gh api /repos/${{ github.repository }}/actions/artifacts/11443187627/zip > "$RUNNER_TEMP/semantic-cohort.zip"
-          echo "13aebbf7882adf1e0afef19adc932d0109b56b8b331c052680b1586937b001c5  $RUNNER_TEMP/semantic-cohort.zip" | sha256sum -c -
+          gh api /repos/${{ github.repository }}/actions/artifacts/11442499885/zip > "$RUNNER_TEMP/semantic-cohort.zip"
+          echo "c8551e3690cb8d4a8a9cee2c0cc5b006a5b87d1e6c0baa6a7f6755aae2ee1662  $RUNNER_TEMP/semantic-cohort.zip" | sha256sum -c -
           mkdir -p "$RUNNER_TEMP/semantic-cohort"
           unzip -q "$RUNNER_TEMP/semantic-cohort.zip" historical-density-2025-house-semantic-review-cohort-v1.json -d "$RUNNER_TEMP/semantic-cohort"
 
