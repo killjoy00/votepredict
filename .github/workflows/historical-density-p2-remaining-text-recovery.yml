@@ -1,0 +1,93 @@
+name: Recover remaining 2021-22 P2 source text
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/recover-historical-density-p2-remaining-text-artifact.ts
+      - .github/workflows/historical-density-p2-remaining-text-recovery.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-p2-remaining-text-recovery
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize immutable P2 inventory and first cohort
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11382774063/zip > "$RUNNER_TEMP/p2-inventory.zip"
+          echo "0e5a737d7069bdc9c95f9a22caae7ebf48e1fa39b84c1fcaed344fdbd14b14cd  $RUNNER_TEMP/p2-inventory.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/p2-inventory"
+          unzip -q "$RUNNER_TEMP/p2-inventory.zip" historical-density-p2-recovery-inventory-v1.json -d "$RUNNER_TEMP/p2-inventory"
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11383404277/zip > "$RUNNER_TEMP/p2-cohort.zip"
+          echo "bc0c274ecc7705a47dda26f97d2f2c0a09643ac77b0a585ed63e0402ee4bd51c  $RUNNER_TEMP/p2-cohort.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/p2-cohort"
+          unzip -q "$RUNNER_TEMP/p2-cohort.zip" historical-density-p2-semantic-review-cohort-v1.json -d "$RUNNER_TEMP/p2-cohort"
+
+      - name: Recover untouched frozen source bodies
+        env:
+          VOTEPREDICT_P2_INVENTORY_PATH: ${{ runner.temp }}/p2-inventory/historical-density-p2-recovery-inventory-v1.json
+          VOTEPREDICT_P2_COHORT_PATH: ${{ runner.temp }}/p2-cohort/historical-density-p2-semantic-review-cohort-v1.json
+          VOTEPREDICT_P2_REMAINING_RECOVERY_OUTPUT_DIR: ${{ runner.temp }}/p2-remaining
+        run: node --import tsx scripts/recover-historical-density-p2-remaining-text-artifact.ts
+
+      - name: Verify recovery boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="$RUNNER_TEMP/p2-remaining/historical-density-p2-remaining-text-recovery-v1.json"
+          test "$(jq -r '.schemaVersion' "$file")" = 'historical-density-p2-remaining-text-recovery-v1'
+          test "$(jq -r '.frozenInputs.freshRecoverableGroups' "$file")" = '65'
+          test "$(jq -r '.frozenInputs.priorPilotSources' "$file")" = '25'
+          test "$(jq -r '.frozenInputs.untouchedSources' "$file")" = '40'
+          test "$(jq -r '.frozenInputs.untouchedMemberships' "$file")" = '13'
+          test "$(jq -r '.policy.productionDatabaseQueried' "$file")" = 'false'
+          test "$(jq -r '.policy.productionWrites' "$file")" = 'false'
+          test "$(jq -r '.policy.annotationWrites' "$file")" = 'false'
+          test "$(jq -r '.policy.billInference' "$file")" = 'false'
+          test "$(jq -r '.policy.stanceInference' "$file")" = 'false'
+          test "$(jq -r '.policy.outcomeUse' "$file")" = 'none'
+          test "$(jq -r '.policy.vercelUsed' "$file")" = 'false'
+          test "$(jq -r '.policy.servingChanged' "$file")" = 'false'
+
+          {
+            echo "## Remaining P2 recovery"
+            echo
+            echo "- Frozen untouched sources: **40**"
+            echo "- Recovered: **$(jq -r '.result.recoveredSources' "$file")**"
+            echo "- Memberships recovered: **$(jq -r '.result.recoveredMemberships' "$file")**"
+            echo "- Fetch failures: **$(jq -r '.result.fetchFailures' "$file")**"
+            echo "- Hash mismatches: **$(jq -r '.result.hashMismatches' "$file")**"
+            echo "- Short texts: **$(jq -r '.result.shortTexts' "$file")**"
+            echo "- Production DB: **not used**"
+            echo "- Vercel: **not used**"
+            echo "- Outcomes: **not used**"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-p2-remaining-text-recovery-v1
+          path: ${{ runner.temp }}/p2-remaining/*
+          if-no-files-found: error
+          retention-days: 30
