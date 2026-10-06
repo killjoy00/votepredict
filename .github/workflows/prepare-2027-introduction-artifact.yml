@@ -12,7 +12,10 @@ on:
 permissions:
   contents: read
 
-jobs:\n  prepare:\n    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'\n    runs-on: ubuntu-latest
+jobs:
+  prepare:
+    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
