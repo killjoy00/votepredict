@@ -45,8 +45,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          gh api /repos/${{ github.repository }}/actions/artifacts/11450748830/zip > "$RUNNER_TEMP/tranche2-audit.zip"
-          echo "aba3db598037ab665a8224d2bbbd3ace6f9d2d3238054adb7f2b101927b6ce82  $RUNNER_TEMP/tranche2-audit.zip" | sha256sum -c -
+          gh api /repos/${{ github.repository }}/actions/artifacts/11451775355/zip > "$RUNNER_TEMP/tranche2-audit.zip"
+          echo "7af526bc8ecc54a6851db2b0e33275cc67cae91e11751b4430d4b70d8d5dcb74  $RUNNER_TEMP/tranche2-audit.zip" | sha256sum -c -
           mkdir -p "$RUNNER_TEMP/tranche2-audit"
           unzip -q "$RUNNER_TEMP/tranche2-audit.zip" applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-2-v1.json -d "$RUNNER_TEMP/tranche2-audit"
 
@@ -69,17 +69,17 @@ jobs:
           test "$(jq -r '.review.candidateBills' "$f")" = 17
           test "$(jq -r '.review.candidatePublicMembers' "$f")" = 39
           test "$(jq -r '.review.candidateSemanticGroups' "$f")" = 39
-          test "$(jq -r '.review.decisions.applicable' "$f")" = 3
+          test "$(jq -r '.review.decisions.applicable' "$f")" = 8
           test "$(jq -r '.review.decisions.ambiguous_fail_closed' "$f")" = 1
-          test "$(jq -r '.review.decisions.not_applicable' "$f")" = 238
+          test "$(jq -r '.review.decisions.not_applicable' "$f")" = 233
           test "$(jq -r '.review.decisions.pending_review' "$f")" = 0
-          test "$(jq -r '.review.alignmentCounts.aligns' "$f")" = 2
+          test "$(jq -r '.review.alignmentCounts.aligns' "$f")" = 7
           test "$(jq -r '.review.alignmentCounts.conflicts' "$f")" = 1
-          test "$(jq -r '.review.finalPairStatusCounts.applicable' "$f")" = 3
+          test "$(jq -r '.review.finalPairStatusCounts.applicable' "$f")" = 8
           test "$(jq -r '.review.finalPairStatusCounts.ambiguous_fail_closed' "$f")" = 139
-          test "$(jq -r '.review.finalPairStatusCounts.not_applicable' "$f")" = 1008
+          test "$(jq -r '.review.finalPairStatusCounts.not_applicable' "$f")" = 1003
           test "$(jq -r '.review.finalPairStatusCounts.pending_review' "$f")" = 0
-          test "$(jq -r '.review.applicableRows' "$f")" = 3
+          test "$(jq -r '.review.applicableRows' "$f")" = 8
           test "$(jq -r '.review.integrationReadyRows' "$f")" = 0
           test "$(jq -r '.frozenInput.targetEventKeySha256' "$f")" = 9304a46f37889fa3ae166803e3675669c55fb99d475f1484ea3efd11f7e01299
           test "$(jq -r '.frozenInput.reviewKeySha256' "$f")" = 51dc578f9f79c755936a32282d49a7a2522346c7710d5f30f14b2922ec73854b
@@ -99,11 +99,11 @@ jobs:
             echo '## 2025-26 House reviewed applicability — tranche 2'
             echo
             echo '- Candidate pairs reviewed: **242**'
-            echo '- Applicable: **3**'
+            echo '- Applicable: **8**'
             echo '- Reviewed ambiguous/fail-closed: **1**'
-            echo '- Reviewed not applicable: **238**'
-            echo '- Full eligible-pair accounting: **3 applicable / 139 fail-closed / 1,008 not-applicable / 0 pending**'
-            echo '- Alignment: **2 align / 1 conflict**'
+            echo '- Reviewed not applicable: **233**'
+            echo '- Full eligible-pair accounting: **8 applicable / 139 fail-closed / 1,003 not-applicable / 0 pending**'
+            echo '- Alignment: **7 align / 1 conflict**'
             echo '- Integration-ready rows: **0** (internal identity unresolved)'
             echo '- Outcomes used: **none**'
             echo '- Production DB queried: **no**'
