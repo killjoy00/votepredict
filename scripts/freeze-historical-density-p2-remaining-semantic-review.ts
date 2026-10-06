@@ -364,6 +364,7 @@ function main() {
     })
     .sort((a, b) => a.semanticKey.localeCompare(b.semanticKey));
 
+  // Keep duplicate-group output deterministic by source-row order rather than semantic-key order.
   const duplicateGroups = semanticGroups
     .filter((group) => group.sourceRows.length > 1)
     .map((group) => group.sourceRows)
