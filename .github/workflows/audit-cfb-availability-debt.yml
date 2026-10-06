@@ -2,10 +2,12 @@ name: Audit CFB availability-proof debt
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '17 9 * * 1'
-  issue_comment:
-    types: [created, edited]
+    inputs:
+      run_vercel:
+        description: Explicitly allow this workflow to contact Vercel
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -14,16 +16,7 @@ concurrency:
   group: cfb-availability-debt-audit
   cancel-in-progress: false
 
-jobs:
-  audit:
-    if: >-
-      github.event_name != 'issue_comment' ||
-      (
-        github.event.issue.number == 678 &&
-        github.event.comment.user.login == 'killjoy00' &&
-        startsWith(github.event.comment.body, '[cfb-availability-debt-audit]')
-      )
-    runs-on: ubuntu-latest
+jobs:\n  audit:\n    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'\n    runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
