@@ -34,7 +34,7 @@ function main(){
     ||cohort.selection?.targetEventIdentityUsedForSelection||!cohort.selection?.strictFutureEventCountUsedForTieBreakOnly
     ||!cohort.policy?.outcomeBlind||cohort.policy?.outcomeUse!=='none'||!cohort.policy?.sourceBodiesAreOfficialHouseMemberPrimary
     ||!cohort.policy?.articleOwnedTextOnlyForSignalSelection||!cohort.policy?.memberIssueOnlyAtThisStage||cohort.policy?.billInference
-    ||!cohort.policy?.candidateBillIdentifiersRequiredEmpty||cohort.policy?.targetBillApplicabilityInferred||!cohort.policy?.publicLlrIdentityOnly
+    ||!cohort.policy?.candidateBillIdentifiersRequiredEmpty||cohort.policy?.targetBillApplicabilityInferred||!cohort.policy?.publicLrlIdentityOnly
     ||cohort.policy?.internalMembershipIdentityResolved||cohort.policy?.productionDatabaseQueried||cohort.policy?.productionWrites||cohort.policy?.vercelUsed
     ||cohort.policy?.sameDayEligible||!cohort.policy?.contextOnly||cohort.policy?.mechanicallyActionable||cohort.policy?.modelWeight!==0
     ||cohort.policy?.featureRowsWritten||cohort.policy?.modelFitting!=='none'||cohort.policy?.servingChanged){
