@@ -62,6 +62,7 @@ jobs:
           test "$(jq -r '.frozenInputs.priorPilotSources' "$file")" = '25'
           test "$(jq -r '.frozenInputs.untouchedSources' "$file")" = '40'
           test "$(jq -r '.frozenInputs.untouchedMemberships' "$file")" = '13'
+          test "$(jq -r '.result.recoveredSources + .result.unresolvedSources' "$file")" = '40'
           test "$(jq -r '.policy.productionDatabaseQueried' "$file")" = 'false'
           test "$(jq -r '.policy.productionWrites' "$file")" = 'false'
           test "$(jq -r '.policy.annotationWrites' "$file")" = 'false'
