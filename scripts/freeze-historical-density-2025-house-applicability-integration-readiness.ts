@@ -168,7 +168,7 @@ function loadDecisionSections(): DecisionSection[] {
     const decision = readJson(resolve(file));
     if (
       decision.issue !== ISSUE
-      || decision.session !== SESSION
+      || (decision.session !== undefined && decision.session !== SESSION)
       || decision.defaultDecision !== 'not_applicable'
       || decision.policy?.everyCandidateReviewed !== true
       || decision.policy?.applicableRequiresExplicitOverride !== true
