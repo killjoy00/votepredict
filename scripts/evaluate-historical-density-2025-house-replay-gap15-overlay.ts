@@ -459,6 +459,10 @@ function verifySupportRebuild(envelope: SupportEnvelope) {
 }
 
 async function main(): Promise<void> {
+  const canonical = parseCanonicalMatrix(
+    env('VOTEPREDICT_HISTORICAL_AS_OF_MANIFEST_PATH'),
+    env('VOTEPREDICT_HISTORICAL_AS_OF_MATRIX_PATH'),
+  );
   const support = parseSupport(
     env('VOTEPREDICT_GAP16_SUPPORT_MANIFEST_PATH'),
     env('VOTEPREDICT_GAP16_SUPPORT_SNAPSHOT_PATH'),
@@ -468,6 +472,8 @@ async function main(): Promise<void> {
 
   const rebuilt = verifySupportRebuild(support.envelope);
   const counts = decisiveCounts(support.envelope.data.historicalVotes);
+  const byBill = versionsByBill(support.envelope.data.versions);
+  const byEventVotes = votesByEvent(support.envelope.data.historicalVotes);
 
   const canonicalTargets = support.envelope.data.events.filter(
     (event) =>
