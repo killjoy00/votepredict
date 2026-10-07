@@ -132,14 +132,21 @@ function normalizeCommittee(value: string): string {
     .trim();
 }
 
-function referralCommittee(description: string): string | null {
+function referralCommittee(input: {
+  description: string;
+  fields: Record<string, string>;
+}): string | null {
+  const explicit = input.fields.COMMITTEE_NAME?.trim()
+    || input.fields.COMMITTEE?.trim();
+  if (explicit) return explicit.replace(/\s+/g, ' ').trim();
+
   const patterns = [
     /\bre-referred\s+to\s+(?:the\s+)?(?:committee\s+on\s+)?(.+?)(?:[.;]|$)/i,
     /\bre-refer\s+to\s+(?:the\s+)?(?:committee\s+on\s+)?(.+?)(?:[.;]|$)/i,
     /\breferred\s+to\s+(?:the\s+)?(?:committee\s+on\s+)?(.+?)(?:[.;]|$)/i,
   ];
   for (const pattern of patterns) {
-    const match = description.match(pattern);
+    const match = input.description.match(pattern);
     if (!match) continue;
     const label = match[1]
       .replace(/^the\s+/i, '')
@@ -390,7 +397,10 @@ async function main(): Promise<void> {
         continue;
       }
 
-      const committeeLabel = referralCommittee(action.description);
+      const committeeLabel = referralCommittee({
+        description: action.description,
+        fields: action.fields,
+      });
       if (!committeeLabel) {
         referDescriptionsWithoutParsedCommittee.push({
           identifier: status.identifier,
