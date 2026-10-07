@@ -404,6 +404,38 @@ async function main(): Promise<void> {
         outcome,
       })),
     );
+    const sameBillJournalOutcomes = pages.flatMap((page) =>
+      page.outcomes
+        .filter(
+          (outcome) =>
+            canonicalBillIdentifier(outcome.identifier) === candidate.identifier,
+        )
+        .map((outcome) => ({
+          url: page.url,
+          contentSha256: page.contentSha256,
+          yeaCount: outcome.yeaCount,
+          nayCount: outcome.nayCount,
+          passed: outcome.passed,
+          journalPage: outcome.journalPage ?? null,
+          resultText: outcome.resultText,
+        })),
+    );
+    const sameTallyJournalOutcomes = pages.flatMap((page) =>
+      page.outcomes
+        .filter(
+          (outcome) =>
+            outcome.yeaCount === event.yeaCount
+            && outcome.nayCount === event.nayCount,
+        )
+        .map((outcome) => ({
+          url: page.url,
+          identifier: canonicalBillIdentifier(outcome.identifier),
+          contentSha256: page.contentSha256,
+          passed: outcome.passed,
+          journalPage: outcome.journalPage ?? null,
+          resultText: outcome.resultText,
+        })),
+    );
 
     const exactJournalMatches =
       journalMatches.length > 1 && event.journalPage
@@ -431,6 +463,13 @@ async function main(): Promise<void> {
               ? 'unresolved_no_exact_outcome'
               : 'unresolved_multiple_exact_outcomes',
           candidateMatches: exactJournalMatches.length,
+          pagesSearched: pages.map((page) => ({
+            url: page.url,
+            contentSha256: page.contentSha256,
+            parsedOutcomeCount: page.outcomes.length,
+          })),
+          sameBillJournalOutcomes,
+          sameTallyJournalOutcomes,
         };
 
     return {
@@ -485,6 +524,13 @@ async function main(): Promise<void> {
     (sum, row) => sum + row.officialHouseVote.memberVoteCount,
     0,
   );
+  const unresolvedWithSameBillOutcome = unresolved.filter(
+    (row) =>
+      'sameBillJournalOutcomes' in row.journal
+      && row.journal.sameBillJournalOutcomes.length > 0,
+  ).length;
+  const unresolvedWithNoSameBillOutcome =
+    unresolved.length - unresolvedWithSameBillOutcome;
 
   const report = {
     schemaVersion: 'historical-density-2025-house-public-replay-gap-proof-v1',
@@ -513,6 +559,8 @@ async function main(): Promise<void> {
       candidates: cases.length,
       sourceNativeReplayable: replayable.length,
       explicitOutcomeUnresolved: unresolved.length,
+      unresolvedWithSameBillOutcome,
+      unresolvedWithNoSameBillOutcome,
       memberVoteRows,
       passed: replayable.filter(
         (row) => 'passed' in row.journal && row.journal.passed === true,
@@ -549,6 +597,8 @@ async function main(): Promise<void> {
       candidates: cases.length,
       sourceNativeReplayable: replayable.length,
       explicitOutcomeUnresolved: unresolved.length,
+      unresolvedWithSameBillOutcome,
+      unresolvedWithNoSameBillOutcome,
       memberVoteRows,
       passed: report.summary.passed,
       failed: report.summary.failed,
