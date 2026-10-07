@@ -27,6 +27,14 @@ const MATRIX_CANONICAL_SHA256 =
 const EXPECTED_MATRIX_ROWS = 135457;
 const EXPECTED_MATRIX_EVENT_COUNT = 1339;
 const EXPECTED_2025_HOUSE_MATRIX_EVENTS = 264;
+const EXPECTED_OFFICIAL_ROLL_CALLS = 465;
+const EXPECTED_PASSAGE_ROLL_CALLS = 281;
+const EXPECTED_NON_PASSAGE_ROLL_CALLS = 184;
+const EXPECTED_PASSAGE_NO_STRICT_TEXT = 28;
+const EXPECTED_PUBLIC_REPLAY_CANDIDATES = 253;
+const EXPECTED_MATCHED_REPLAY_EVENTS = 237;
+const EXPECTED_PUBLIC_CANDIDATES_OUTSIDE_MATRIX = 16;
+const EXPECTED_MATRIX_EVENTS_WITHOUT_PUBLIC_CANDIDATE = 27;
 
 type ParsedEvent = ReturnType<typeof parseHouseVoteDetailHtml>[number];
 
@@ -118,6 +126,13 @@ async function mapLimit<T, R>(
   return results;
 }
 
+function eventBillIdentifier(event: ParsedEvent): string {
+  if (!event.billIdentifier) {
+    throw new Error(`Parsed House vote is missing bill identity: ${event.externalKey}`);
+  }
+  return event.billIdentifier;
+}
+
 function canonicalBillIdentifier(value: string): string {
   const match = value.replace(/\s+/g, '').toUpperCase().match(/^(HF|SF)0*(\d+)$/);
   if (!match) throw new Error(`Unsupported bill identifier: ${value}`);
@@ -185,17 +200,17 @@ async function verifyStrictPreVoteText(
   return mapLimit(events, 4, async (event) => {
     let metadata: RevisorBillMetadata;
     try {
-      let pending = statusCache.get(event.billIdentifier);
+      let pending = statusCache.get(eventBillIdentifier(event));
       if (!pending) {
         pending = retry(() =>
-          fetchRevisorBill(SESSION, event.billIdentifier, false)
+          fetchRevisorBill(SESSION, eventBillIdentifier(event), false)
         );
-        statusCache.set(event.billIdentifier, pending);
+        statusCache.set(eventBillIdentifier(event), pending);
       }
       metadata = await pending;
     } catch (error) {
       return {
-        identifier: event.billIdentifier,
+        identifier: eventBillIdentifier(event),
         occurredOn: event.occurredOn,
         status: 'status_fetch_failed',
         error: safeMessage(error),
@@ -205,7 +220,7 @@ async function verifyStrictPreVoteText(
     const selected = selectStrictPreVoteVersion(metadata, event.occurredOn);
     if (!selected) {
       return {
-        identifier: event.billIdentifier,
+        identifier: eventBillIdentifier(event),
         occurredOn: event.occurredOn,
         status: 'no_strict_prevote_version',
       };
@@ -220,7 +235,7 @@ async function verifyStrictPreVoteText(
       const version = await pending;
       if (version.text.length < 100) {
         return {
-          identifier: event.billIdentifier,
+          identifier: eventBillIdentifier(event),
           occurredOn: event.occurredOn,
           status: 'version_too_short',
           versionPostedOn: version.postedOn,
@@ -229,7 +244,7 @@ async function verifyStrictPreVoteText(
         };
       }
       return {
-        identifier: event.billIdentifier,
+        identifier: eventBillIdentifier(event),
         occurredOn: event.occurredOn,
         status: 'verified',
         versionPostedOn: version.postedOn,
@@ -238,7 +253,7 @@ async function verifyStrictPreVoteText(
       };
     } catch (error) {
       return {
-        identifier: event.billIdentifier,
+        identifier: eventBillIdentifier(event),
         occurredOn: event.occurredOn,
         status: 'version_fetch_failed',
         error: safeMessage(error),
@@ -338,7 +353,7 @@ async function main(): Promise<void> {
     if (
       events.some(
         (event) =>
-          canonicalBillIdentifier(event.billIdentifier)
+          canonicalBillIdentifier(eventBillIdentifier(event))
           !== canonicalLinkIdentifier,
       )
     ) {
@@ -391,12 +406,87 @@ async function main(): Promise<void> {
     compositeKey(event.identifier, event.occurredOn)
   );
   const officialCandidateCompositeKeys = publicReplayCandidates.map((event) =>
-    compositeKey(event.billIdentifier, event.occurredOn)
+    compositeKey(eventBillIdentifier(event), event.occurredOn)
   );
   const comparison = compareMultiplicities(
     officialCandidateCompositeKeys,
     matrixCompositeKeys,
   );
+
+  const versionProofByExternalKey = new Map(
+    passageAtLeast20.map((event, index) => [
+      event.externalKey,
+      versionProofs[index]!,
+    ] as const),
+  );
+  const officialEventsByComposite = new Map<string, ParsedEvent[]>();
+  for (const event of officialEvents) {
+    const key = compositeKey(eventBillIdentifier(event), event.occurredOn);
+    const rows = officialEventsByComposite.get(key) ?? [];
+    rows.push(event);
+    officialEventsByComposite.set(key, rows);
+  }
+  const mismatchDetails = comparison.mismatchGroups.map((group) => {
+    const officialAtKey = officialEventsByComposite.get(group.compositeKey) ?? [];
+    const officialDetails = officialAtKey.map((event) => ({
+      externalKey: event.externalKey,
+      voteKind: event.voteKind,
+      isPassage: event.isPassage,
+      decisiveVotes: event.yeaCount + event.nayCount,
+      motionText: event.motionText,
+      strictVersionStatus:
+        versionProofByExternalKey.get(event.externalKey)?.status ?? null,
+    }));
+    let classification: string;
+    if (group.officialEvents > group.matrixEvents) {
+      classification = 'public_replay_candidate_absent_from_frozen_matrix';
+    } else if (officialAtKey.length === 0) {
+      classification = 'frozen_matrix_event_absent_from_current_official_house_parser';
+    } else if (officialAtKey.every((event) => !event.isPassage)) {
+      classification = 'frozen_matrix_event_current_parser_non_passage';
+    } else if (
+      officialAtKey.some(
+        (event) =>
+          event.isPassage
+          && versionProofByExternalKey.get(event.externalKey)?.status
+            === 'no_strict_prevote_version',
+      )
+    ) {
+      classification =
+        'frozen_matrix_event_current_revisor_strict_version_not_discoverable';
+    } else {
+      classification = 'multiplicity_or_other_replay_gate_difference';
+    }
+    return {
+      ...group,
+      classification,
+      currentOfficialEvents: officialDetails,
+    };
+  });
+
+  if (
+    officialEvents.length !== EXPECTED_OFFICIAL_ROLL_CALLS
+    || passageEvents.length !== EXPECTED_PASSAGE_ROLL_CALLS
+    || nonPassageEvents.length !== EXPECTED_NON_PASSAGE_ROLL_CALLS
+    || passageNoStrictText.length !== EXPECTED_PASSAGE_NO_STRICT_TEXT
+    || publicReplayCandidates.length !== EXPECTED_PUBLIC_REPLAY_CANDIDATES
+    || comparison.matchedEvents !== EXPECTED_MATCHED_REPLAY_EVENTS
+    || comparison.officialOutsideMatrix !== EXPECTED_PUBLIC_CANDIDATES_OUTSIDE_MATRIX
+    || comparison.matrixWithoutOfficial !== EXPECTED_MATRIX_EVENTS_WITHOUT_PUBLIC_CANDIDATE
+  ) {
+    throw new Error(
+      `2025 House universe audit count drifted: ${JSON.stringify({
+        officialRollCalls: officialEvents.length,
+        passageRollCalls: passageEvents.length,
+        nonPassageRollCalls: nonPassageEvents.length,
+        passageNoStrictText: passageNoStrictText.length,
+        publicReplayCandidates: publicReplayCandidates.length,
+        matchedReplayEvents: comparison.matchedEvents,
+        publicCandidatesOutsideMatrix: comparison.officialOutsideMatrix,
+        matrixEventsWithoutPublicCandidate: comparison.matrixWithoutOfficial,
+      })}`,
+    );
+  }
 
   const matrixCoverage = {
     fullyUncoveredEvents: [...matrixEvents.values()].filter(
@@ -444,7 +534,7 @@ async function main(): Promise<void> {
     officialRollCallUniverse: {
       voteEvents: officialEvents.length,
       billsWithRecordedVotes: new Set(
-        officialEvents.map((event) => event.billIdentifier),
+        officialEvents.map((event) => eventBillIdentifier(event)),
       ).size,
       minVoteDate: [...officialEvents]
         .map((event) => event.occurredOn)
@@ -457,7 +547,7 @@ async function main(): Promise<void> {
       passageVoteEvents: passageEvents.length,
       nonPassageVoteEvents: nonPassageEvents.length,
       passageBills: new Set(
-        passageEvents.map((event) => event.billIdentifier),
+        passageEvents.map((event) => eventBillIdentifier(event)),
       ).size,
       nonPassageByVoteKind: countBy(
         nonPassageEvents.map((event) => event.voteKind),
@@ -489,6 +579,10 @@ async function main(): Promise<void> {
       identity:
         'source-neutral multiplicity by bill identifier + vote date; this avoids database UUID dependence while preserving repeated same-bill/same-day event counts',
       ...comparison,
+      mismatchDetails,
+      mismatchClassificationCounts: countBy(
+        mismatchDetails.map((row) => row.classification),
+      ),
       publicCandidateCoverageByFrozenMatrix:
         publicReplayCandidates.length > 0
           ? comparison.matchedEvents / publicReplayCandidates.length
