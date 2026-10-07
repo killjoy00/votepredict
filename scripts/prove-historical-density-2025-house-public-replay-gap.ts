@@ -662,6 +662,7 @@ async function main(): Promise<void> {
   const unresolvedWithSameBillOutcome = unresolved.filter(
     (row) =>
       'sameBillJournalOutcomes' in row.journal
+      && Array.isArray(row.journal.sameBillJournalOutcomes)
       && row.journal.sameBillJournalOutcomes.length > 0,
   ).length;
   const unresolvedWithNoSameBillOutcome =
