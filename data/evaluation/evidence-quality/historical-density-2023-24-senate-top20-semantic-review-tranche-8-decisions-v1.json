@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "historical-density-2023-24-senate-top20-semantic-review-tranche-8-decisions-v1",
+  "issue": 718,
+  "session": "2023-2024",
+  "trancheId": "SENATE-2023-24-TOP20-SEMANTIC-008",
+  "frozenReviewPacket": {
+    "reviewRows": 4,
+    "reviewKeySha256": "aa645f360a74adcb5c0b8df8aa5175dc1cd0e5e2ad0779d0809f39d4025a2426",
+    "sourcePdfSha256": "74f1ef0fbe1179ebc5d2d2d618a273c4cf49ae2659d69a27074756670fefde8a",
+    "sourceTextSha256": "ca7a95b1952eed34825cc990a85c323e5014b532d65cbff70e28ff5d8d2456e8",
+    "reviewPacketProofSha256": "4a9d1aa6b34c5cea329d5fff4a3c3fb55cb6ad478e8b19fdea1bb4e498be16f2"
+  },
+  "decisionRationales": {
+    "full_text_review_no_candidate_bill_support": "Full frozen minute reviewed. This candidate bill is neither explicitly mentioned nor otherwise unambiguously identifiable in the source text; committee/referral overlap alone is not treated as applicability.",
+    "candidate_bill_explicitly_present_but_only_procedural_actions_recorded": "Full frozen minute reviewed. The candidate bill is explicit, but the minute records motions, amendments, substitution, or recommend-to-pass procedure rather than an attributable directional member statement under the existing Senate semantic-review contract. Named roll-call votes on amendments are amendment positions, not whole-bill directional positions."
+  },
+  "notApplicableReviewKeys": [
+    "74f1ef0fbe1179ebc5d2d2d618a273c4cf49ae2659d69a27074756670fefde8a|ca7a95b1952eed34825cc990a85c323e5014b532d65cbff70e28ff5d8d2456e8|aaab87ed-c15a-4d7a-a9b2-8eb654be60d5|226fcfdc-a454-47a6-a422-9048cc7b6407",
+    "74f1ef0fbe1179ebc5d2d2d618a273c4cf49ae2659d69a27074756670fefde8a|ca7a95b1952eed34825cc990a85c323e5014b532d65cbff70e28ff5d8d2456e8|44dd70b3-01a7-42df-a691-2de8fb101a2d|b79daf47-e490-450e-8096-5f9a79a2c687"
+  ],
+  "billContextRows": [
+    {
+      "reviewKey": "74f1ef0fbe1179ebc5d2d2d618a273c4cf49ae2659d69a27074756670fefde8a|ca7a95b1952eed34825cc990a85c323e5014b532d65cbff70e28ff5d8d2456e8|37738672-670d-4fce-aa53-c91a6b42c152|af0af7fa-f7bf-49d8-90bf-8890413c7e18",
+      "billMentionExcerpt": "H.F. 4757: Senator Port: O\u0000ce of Cannabis Management modi\u0000cations and appropriations.",
+      "billMentionPage": 1
+    },
+    {
+      "reviewKey": "74f1ef0fbe1179ebc5d2d2d618a273c4cf49ae2659d69a27074756670fefde8a|ca7a95b1952eed34825cc990a85c323e5014b532d65cbff70e28ff5d8d2456e8|d1478e5e-d7f2-4745-b3c4-f58ef7b0e3a0|af0af7fa-f7bf-49d8-90bf-8890413c7e18",
+      "billMentionExcerpt": "H.F. 4757: Senator Port: O\u0000ce of Cannabis Management modi\u0000cations and appropriations.",
+      "billMentionPage": 1
+    }
+  ],
+  "directionalRows": [],
+  "ambiguousFailClosedRows": [],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "targetVoteOutcomesRead": false,
+    "outcomeUse": "none",
+    "committeeMembershipUsedAsStance": false,
+    "attendanceUsedAsStance": false,
+    "proceduralActionUsedAsDirectionalStance": false,
+    "ambiguousDefaultsToFailClosed": true,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "modelWeightChanged": false,
+    "servingChanged": false,
+    "vercelUsed": false,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0
+  }
+}

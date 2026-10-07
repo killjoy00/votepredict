@@ -1,0 +1,130 @@
+name: Freeze 2023-24 Senate top-20 semantic review tranche 8
+
+on:
+  pull_request:
+    paths:
+      - data/evaluation/evidence-quality/historical-density-2023-24-senate-top20-semantic-review-tranche-8-decisions-v1.json
+      - scripts/freeze-historical-density-2023-24-senate-top20-semantic-review-tranche-8.mjs
+      - tests/historical-density-2023-24-senate-top20-semantic-review-tranche-8.test.ts
+      - .github/workflows/historical-density-2023-24-senate-top20-semantic-review-tranche-8.yml
+  push:
+    branches: [main]
+    paths:
+      - data/evaluation/evidence-quality/historical-density-2023-24-senate-top20-semantic-review-tranche-8-decisions-v1.json
+      - scripts/freeze-historical-density-2023-24-senate-top20-semantic-review-tranche-8.mjs
+      - tests/historical-density-2023-24-senate-top20-semantic-review-tranche-8.test.ts
+      - .github/workflows/historical-density-2023-24-senate-top20-semantic-review-tranche-8.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2023-24-senate-top20-semantic-review-tranche-8-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Test checked-in outcome-blind decisions
+        run: node --import tsx --test tests/historical-density-2023-24-senate-top20-semantic-review-tranche-8.test.ts
+
+      - name: Materialize canonical 2023-24 Senate overlap
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11501649286/zip > "$RUNNER_TEMP/overlap.zip"
+          echo "c5ed67e03a2aabb7b41df147beb2d4e814b6db834055387efaf716e3b6ac3f42  $RUNNER_TEMP/overlap.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/overlap"
+          unzip -q "$RUNNER_TEMP/overlap.zip" historical-density-2023-24-senate-electronic-minute-target-overlap-v1.json -d "$RUNNER_TEMP/overlap"
+
+      - name: Materialize canonical top-20 source metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11502134219/zip > "$RUNNER_TEMP/source.zip"
+          echo "bb6318582f5fb01e9078fbaa6c2b67c43274ca4b4f8f6ced95aa7f9625975d50  $RUNNER_TEMP/source.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/source"
+          unzip -q "$RUNNER_TEMP/source.zip" historical-density-2023-24-senate-electronic-minute-top20-freeze-v1.json -d "$RUNNER_TEMP/source"
+
+      - name: Materialize canonical #792 frozen text
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11502902302/zip > "$RUNNER_TEMP/text.zip"
+          echo "c73031633618f4a599a8e1ae1147eb9cd2b429db229335dccef14961a3aa835c  $RUNNER_TEMP/text.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/text"
+          unzip -q "$RUNNER_TEMP/text.zip" \
+            historical-density-2023-24-senate-top20-text-extraction-v1.json \
+            texts/74f1ef0fbe1179ebc5d2d2d618a273c4cf49ae2659d69a27074756670fefde8a.txt \
+            -d "$RUNNER_TEMP/text"
+
+      - name: Freeze semantic review tranche 8
+        env:
+          VOTEPREDICT_SENATE_2023_24_OVERLAP_PATH: ${{ runner.temp }}/overlap/historical-density-2023-24-senate-electronic-minute-target-overlap-v1.json
+          VOTEPREDICT_SENATE_2023_24_TOP20_FREEZE_PATH: ${{ runner.temp }}/source/historical-density-2023-24-senate-electronic-minute-top20-freeze-v1.json
+          VOTEPREDICT_SENATE_2023_24_TOP20_TEXT_EXTRACTION_PATH: ${{ runner.temp }}/text/historical-density-2023-24-senate-top20-text-extraction-v1.json
+          VOTEPREDICT_SENATE_2023_24_TOP20_SEMANTIC_DECISIONS_PATH: data/evaluation/evidence-quality/historical-density-2023-24-senate-top20-semantic-review-tranche-8-decisions-v1.json
+          VOTEPREDICT_SENATE_2023_24_TOP20_SEMANTIC_OUTPUT_DIR: ${{ runner.temp }}/review
+        run: node scripts/freeze-historical-density-2023-24-senate-top20-semantic-review-tranche-8.mjs
+
+      - name: Verify frozen semantic-review boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          packet="$RUNNER_TEMP/review/historical-density-2023-24-senate-top20-semantic-review-tranche-8-packet-v1.json"
+          review="$RUNNER_TEMP/review/historical-density-2023-24-senate-top20-semantic-review-tranche-8-v1.json"
+          test "$(jq -r '.schemaVersion' "$packet")" = historical-density-2023-24-senate-top20-semantic-review-tranche-8-packet-v1
+          test "$(jq -r '.scope.documents' "$packet")" = 1
+          test "$(jq -r '.scope.reviewRows' "$packet")" = 4
+          test "$(jq -r '.scope.candidateBills' "$packet")" = 3
+          test "$(jq -r '.reviewKeySha256' "$packet")" = aa645f360a74adcb5c0b8df8aa5175dc1cd0e5e2ad0779d0809f39d4025a2426
+          test "$(jq -r '.reviewPacketProofSha256' "$packet")" = 4a9d1aa6b34c5cea329d5fff4a3c3fb55cb6ad478e8b19fdea1bb4e498be16f2
+          test "$(jq -r '.schemaVersion' "$review")" = historical-density-2023-24-senate-top20-semantic-review-tranche-8-v1
+          test "$(jq -r '.summary.decisions.not_applicable_to_candidate_bill' "$review")" = 2
+          test "$(jq -r '.summary.decisions.bill_context_only_no_member_direction' "$review")" = 2
+          test "$(jq -r '.summary.decisions.directional_member_statement' "$review")" = 0
+          test "$(jq -r '.summary.decisions.ambiguous_fail_closed' "$review")" = 0
+          test "$(jq -r '.summary.mechanicallyActionableRows' "$review")" = 0
+          test "$(jq -r '.reviewedRowProofSha256' "$review")" = 0b15aa90797e41f0cbeabd451cfecbc96ecb0c29ca7cccc915c87cbbc9547c57
+          test "$(jq -r '.reviewProofSha256' "$review")" = 66691b957cc5b847fc42554c474d2745057ff4244e9c4f1e5c9510834d7f43ad
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$review")" = false
+          test "$(jq -r '.policy.proceduralActionUsedAsDirectionalStance' "$review")" = false
+          test "$(jq -r '.policy.productionDatabaseQueried' "$review")" = false
+          test "$(jq -r '.policy.featureRowsWritten' "$review")" = false
+          test "$(jq -r '.policy.modelFitting' "$review")" = none
+          test "$(jq -r '.policy.servingChanged' "$review")" = false
+          test "$(jq -r '.policy.vercelUsed' "$review")" = false
+          test "$(jq -r '.policy.mechanicallyActionable' "$review")" = false
+          {
+            echo '## 2023-24 Senate top-20 semantic review — tranche 8'
+            echo
+            echo '- Canonical documents reviewed: **1** (rank 8)'
+            echo '- Candidate target events reviewed: **4** across **3** bills'
+            echo '- Not applicable to candidate bill: **2**'
+            echo '- Bill context only / no member direction: **2**'
+            echo '- Directional member statements: **0**'
+            echo '- Ambiguous / fail-closed: **0**'
+            echo '- Mechanically actionable rows: **0**'
+            echo '- Outcome use: **none**'
+            echo '- Production DB / feature writes / model / serving changes: **none**'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2023-24-senate-top20-semantic-review-tranche-8-v1
+          path: ${{ runner.temp }}/review/*
+          if-no-files-found: error
+          retention-days: 90
