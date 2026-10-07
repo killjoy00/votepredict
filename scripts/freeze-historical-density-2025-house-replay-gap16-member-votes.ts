@@ -45,6 +45,13 @@ const IDENTITY_CURRENT_ROSTER_SHA256 =
 const EXPECTED_EVENTS = 16;
 const EXPECTED_CURRENT_IDENTITIES = 134;
 const EXPECTED_EXTRA_HISTORICAL_IDENTITIES = 3;
+const EXPECTED_TOTAL_MEMBER_VOTES = 2125;
+const EXPECTED_UNIQUE_MEMBERSHIPS_OBSERVED = 137;
+const EXPECTED_EXTERNAL_KEY_ORDINAL_DRIFT_EVENTS = 0;
+const EXPECTED_EVENT_PROOF_SHA256 =
+  '6f3846e9296385e83151008dcd977659604fbc3e3f3a4dd43e09270186e63dd5';
+const EXPECTED_MEMBER_VOTE_ROW_SHA256 =
+  '721d748bacb74cd110380e233d7df101d044b5ad00d59bdf368ad39ecab9998b';
 const CONCURRENCY = 4;
 
 const PERSON_SUFFIXES = new Set(['jr', 'sr', 'ii', 'iii', 'iv']);
@@ -497,6 +504,29 @@ async function main(): Promise<void> {
   const externalKeyOrdinalDriftEvents = reconstructed.filter(
     (event) => !event.externalKeyExactMatch,
   ).length;
+
+  if (totalMemberVotes !== EXPECTED_TOTAL_MEMBER_VOTES) {
+    throw new Error(`Total member-vote row count drifted: ${totalMemberVotes}`);
+  }
+  if (membershipCoverage.size !== EXPECTED_UNIQUE_MEMBERSHIPS_OBSERVED) {
+    throw new Error(
+      `Unique membership coverage drifted: ${membershipCoverage.size}`,
+    );
+  }
+  if (
+    externalKeyOrdinalDriftEvents
+      !== EXPECTED_EXTERNAL_KEY_ORDINAL_DRIFT_EVENTS
+  ) {
+    throw new Error(
+      `External-key ordinal drift count changed: ${externalKeyOrdinalDriftEvents}`,
+    );
+  }
+  if (eventProofSha256 !== EXPECTED_EVENT_PROOF_SHA256) {
+    throw new Error(`Event proof drifted: ${eventProofSha256}`);
+  }
+  if (memberVoteRowSha256 !== EXPECTED_MEMBER_VOTE_ROW_SHA256) {
+    throw new Error(`Member-vote row proof drifted: ${memberVoteRowSha256}`);
+  }
 
   const report = {
     schemaVersion: 'historical-density-2025-house-replay-gap16-member-votes-v1',
