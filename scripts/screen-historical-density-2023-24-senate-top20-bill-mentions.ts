@@ -19,6 +19,8 @@ const EXPECTED_LITERAL_MATCH_EVENTS=21;
 const EXPECTED_LITERAL_MATCH_BILLS=12;
 const EXPECTED_LITERAL_MATCH_DOCUMENTS=9;
 const EXPECTED_LITERAL_MATCH_UNCOVERED_ROWS=1407;
+const EXPECTED_SCREEN_PROOF=
+  'f4a7ae90733c1cf3e28859bde1aa62dc5771d5d9459d2f4394bd5fb1284bfae4';
 
 type Json=Record<string,any>;
 function sha256(v:string){return createHash('sha256').update(v).digest('hex');}
@@ -120,6 +122,9 @@ function main(){
     r.documentRank,r.pdfContentSha256,r.voteEventId,r.billId,r.identifier,
     r.literalBillMention,r.literalMatchCount,
   ].join('|')).join('\n')+'\n');
+  if(screenProofSha256!==EXPECTED_SCREEN_PROOF) {
+    throw new Error(`Pinned literal bill-mention screen proof drifted: ${screenProofSha256}`);
+  }
   const report={
     schemaVersion:'historical-density-2023-24-senate-top20-bill-mention-screen-v1',
     generatedAt:new Date().toISOString(),
