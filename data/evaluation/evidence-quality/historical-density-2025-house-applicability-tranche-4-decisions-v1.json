@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-tranche-4-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenCandidateArtifact": {
+    "runId": 37551658789,
+    "artifactId": 11453146518,
+    "digest": "sha256:7e549f2f723235ef8e436c9048217dc1a4aa06e62513d316b25f016800b50a0f",
+    "targetTrancheIndex": 4,
+    "targetRankStart": 76,
+    "targetRankEnd": 100,
+    "targetEventKeySha256": "b30043dfcb57fd7d5cb10b489b9d42ca1ea4476e5c4ee1bec512277fe7aa4339",
+    "reviewKeySha256": "aff014070d7b0764014d3876bc57cf67f9a390b617542ff452307706f25a95dc",
+    "eligibleClaimEventPairs": 1150,
+    "candidatePairs": 212,
+    "candidateBills": 18,
+    "candidatePublicMembers": 38,
+    "candidateSemanticGroups": 38
+  },
+  "defaultDecision": "not_applicable",
+  "defaultBillRationales": {
+    "HF2115": "The human-services policy bill is not applicable to nominated claims except the explicit Allen fraud-oversight override below. Existing Office of Inspector General references do not create a new independent or centralized statewide inspector general; broad aging/disability policy changes do not by themselves implement Virnig's general disability-support proposition; and other topic overlaps are incidental.",
+    "HF2169": "Expanding second-degree unintentional murder to additional protective-order violations is a discrete criminal-law change. It does not implement the source-specific Make Minnesota Safe package or the other nominated public-safety propositions.",
+    "HF2432": "The judiciary/public-safety omnibus is not applicable to nominated claims except the four explicit fraud/accountability and Make Minnesota Safe overrides below. Other public-safety, trafficking, enforcement, disability, education, housing, PFAS, leave, and transportation overlaps are incidental or do not implement the specific proposition.",
+    "HF2446": "Agriculture-budget policy, including a PFAS-contaminated-biosolids study, does not create the nominated family-farm sick-time exemption, off-highway-vehicle PFAS exemption, or a rollback/strengthening of Minnesota PFAS product-prevention measures. Other overlaps are incidental.",
+    "HF2563": "Legacy-fund appropriations and accountability provisions do not implement the nominated member propositions; generic environmental, research, education, public-safety, fraud, or accountability terms are insufficient.",
+    "HF3241": "Dynamic electronic-content rules for motor-vehicle displays do not implement EV road-funding parity, PFAS vehicle exemptions, human-trafficking policy, or the source-specific Make Minnesota Safe package.",
+    "HF3378": "Requiring release of unredacted Optum reports is an information-disclosure measure and does not substantively expand comprehensive services for people with disabilities.",
+    "HF3379": "Repeal of housing stabilization services does not implement the nominated millionaire-tax-for-Medicaid funding proposition, broad disability-support position, education-funding propositions, fraud-governance structures, telework policy, or emergency-powers limits.",
+    "HF3516": "Dentistry licensure and scope-of-practice changes do not implement the nominated disability, PFAS, parental-rights, paid-leave, telework, LGBTQ-school, Medicaid-tax, or inspector-general propositions.",
+    "HF3528": "Barber regulation changes do not implement PFAS protections, teacher-pension funding, or LGBTQ safe-school protections.",
+    "HF3718": "Veterinary-medicine and veterinary-technology regulation does not implement the nominated fraud-governance, PFAS, telework, disability-support, emergency-powers, trafficking, family-farm sick-time, or EV-funding propositions.",
+    "HF3731": "Eliminating an electrical installer license does not limit gubernatorial emergency powers.",
+    "HF3741": "Veterans' educational-assistance changes for children and spouses do not establish broad parental final-decision authority over education, health care, or upbringing.",
+    "SF2298": "Housing-budget and policy provisions include general rent limits for specified tax-credit projects and manufactured-home infrastructure/relocation measures, but they do not enact Elkins's zoning-liberalization proposition or Norris's specific protection for manufactured-home residents against extreme lot-rent increases. Other fraud/oversight terms are incidental.",
+    "SF2370": "Cannabis regulation, licensing, expungement, and medical-cannabis policy do not implement the nominated housing, fraud, PFAS, public-safety, DWI, parental-rights, disability, or other member propositions.",
+    "SF3045": "The state-government operations omnibus is not applicable to nominated claims except the explicit Allen and Van Binsbergen oversight/reporting overrides below. Lobbying definitions, retirement appropriations, paid-leave references, disability data standards, EV fleet purchases, and other governance terms do not establish the other reviewed propositions.",
+    "SF3602": "Electronic estate-planning document law does not limit gubernatorial emergency powers or implement disability-support policy.",
+    "SF3623": "School-bus stopping requirements do not adjust EV registration/road-funding contributions or create PFAS exemptions for off-highway vehicles."
+  },
+  "overrides": [
+    {
+      "reviewKey": "allen_fraud_oversight_accountability|HF2115|2025-05-19|6ff092f3112bfe489bcfe686d8921dc878cd82c599e9327ddd3634f17b2efa75",
+      "decision": "applicable",
+      "billPolicyDirection": "strengthens_human_services_program_fraud_detection_prevention_investigation_and_recovery",
+      "alignmentDirection": "aligns",
+      "reason": "The strict pre-vote HF2115 version requires detection, prevention, investigation, and resolution of fraudulent activity in human-services programs and requires county agencies to identify and recover overpayments. That directly advances Allen's position favoring stronger state-program oversight and accountability to reduce fraud and waste."
+    },
+    {
+      "reviewKey": "allen_fraud_oversight_accountability|HF2432|2025-05-18|5b01e687cf81513fbf9630b403e823d10c0ef173d9927b5623d281219a78be45",
+      "decision": "applicable",
+      "billPolicyDirection": "creates_state_program_fraud_investigation_referral_reporting_and_accountability_controls",
+      "alignmentDirection": "aligns",
+      "reason": "The strict pre-vote HF2432 version retains the BCA Financial Crimes and Fraud Section, mandatory state-agency referrals for qualifying suspected fraud, investigative authority, and annual reporting. That directly implements stronger oversight and accountability for state programs."
+    },
+    {
+      "reviewKey": "van_binsbergen_state_agency_fraud_reporting|HF2432|2025-05-18|5b01e687cf81513fbf9630b403e823d10c0ef173d9927b5623d281219a78be45",
+      "decision": "applicable",
+      "billPolicyDirection": "requires_state_agency_fraud_referrals_and_reporting_and_adds_fraud_investigative_capacity",
+      "alignmentDirection": "aligns",
+      "reason": "HF2432 requires state agencies to refer qualifying suspected fraudulent activity, supports investigation/referral, and requires recurring fraud-related reporting. That directly matches Van Binsbergen's support for stricter state-agency fraud reporting and additional fraud-prevention tools."
+    },
+    {
+      "reviewKey": "joy_make_minnesota_safe|HF2432|2025-05-18|5b01e687cf81513fbf9630b403e823d10c0ef173d9927b5623d281219a78be45",
+      "decision": "applicable",
+      "billPolicyDirection": "strengthens_violent_offender_and_sex_trafficking_penalties_and_expands_criminal_justice_transparency",
+      "alignmentDirection": "aligns",
+      "reason": "The strict pre-vote HF2432 version retains multiple explicit Make Minnesota Safe elements: mandatory/consecutive penalties for specified assaults involving jailed offenders and law enforcement, mandatory minimum first-degree sex-trafficking sentences, and public reporting that includes prosecutorial charging decisions. That materially implements Joy's reviewed package."
+    },
+    {
+      "reviewKey": "schwartz_make_minnesota_safe|HF2432|2025-05-18|5b01e687cf81513fbf9630b403e823d10c0ef173d9927b5623d281219a78be45",
+      "decision": "applicable",
+      "billPolicyDirection": "strengthens_violent_offender_and_sex_trafficking_penalties_and_expands_criminal_justice_transparency",
+      "alignmentDirection": "aligns",
+      "reason": "The strict pre-vote HF2432 version retains multiple explicit Make Minnesota Safe elements: mandatory/consecutive penalties for specified assaults involving jailed offenders and law enforcement, mandatory minimum first-degree sex-trafficking sentences, and public reporting that includes prosecutorial charging decisions. That materially implements Schwartz's reviewed package."
+    },
+    {
+      "reviewKey": "allen_fraud_oversight_accountability|SF3045|2025-05-19|4fa4c52937972605fa8c6fd3320179f69c429d08e087127a84260be7ce2db89d",
+      "decision": "applicable",
+      "billPolicyDirection": "standardizes_state_agency_reporting_and_oversight_of_public_resource_misuse_and_adds_fraud_controls",
+      "alignmentDirection": "aligns",
+      "reason": "The exact SF3045 version requires state-agency leaders to route concerns about misuse of public money, resources, or protected data to obligated oversight officers or the Legislative Auditor and standardizes that process across agencies, alongside fraud-prevention provisions. That directly advances Allen's oversight/accountability proposition."
+    },
+    {
+      "reviewKey": "van_binsbergen_state_agency_fraud_reporting|SF3045|2025-05-19|4fa4c52937972605fa8c6fd3320179f69c429d08e087127a84260be7ce2db89d",
+      "decision": "applicable",
+      "billPolicyDirection": "standardizes_state_agency_reporting_of_public_resource_misuse_to_oversight_officers",
+      "alignmentDirection": "aligns",
+      "reason": "The exact SF3045 version requires every state department, board, commission, office, or agency to ensure concerns about misuse of public money/resources/data are promptly directed to designated oversight officers or the Legislative Auditor, with a standardized statewide process. That directly matches Van Binsbergen's state-agency fraud-reporting proposition."
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
