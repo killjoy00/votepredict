@@ -41,7 +41,7 @@ test('tranche-4 review has seven applicable and no ambiguous override', () => {
   );
   assert.equal(
     decisions.overrides.filter((row: { alignmentDirection?: string | null }) => row.alignmentDirection === 'aligns').length,
-    8,
+    7,
   );
   assert.equal(
     decisions.overrides.filter((row: { alignmentDirection?: string | null }) => row.alignmentDirection === 'conflicts').length,
