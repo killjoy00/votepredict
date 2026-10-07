@@ -77,8 +77,11 @@ jobs:
           test "$(jq -r '.reconstruction.unmatchedDecisiveVoters' "$f")" = 0
           test "$(jq -r '.reconstruction.ambiguousDecisiveVoters' "$f")" = 0
           test "$(jq -r '.reconstruction.tallyParityEvents' "$f")" = 16
-          test "$(jq -r '.reconstruction.totalMemberVotes' "$f")" -gt 2000
-          test "$(jq -r '.reconstruction.uniqueMembershipsObserved' "$f")" -ge 130
+          test "$(jq -r '.reconstruction.totalMemberVotes' "$f")" = 2125
+          test "$(jq -r '.reconstruction.uniqueMembershipsObserved' "$f")" = 137
+          test "$(jq -r '.reconstruction.externalKeyOrdinalDriftEvents' "$f")" = 0
+          test "$(jq -r '.reconstruction.eventProofSha256' "$f")" = 6f3846e9296385e83151008dcd977659604fbc3e3f3a4dd43e09270186e63dd5
+          test "$(jq -r '.reconstruction.memberVoteRowSha256' "$f")" = 721d748bacb74cd110380e233d7df101d044b5ad00d59bdf368ad39ecab9998b
 
           jq -e '[.reconstruction.eventsData[].isPassage] | all(. == true)' "$f" >/dev/null
           jq -e '[.reconstruction.eventsData[].passFailOutcome] | all(. == null)' "$f" >/dev/null
@@ -111,8 +114,9 @@ jobs:
             echo '- Unmatched decisive voters: **0**'
             echo '- Ambiguous decisive voters: **0**'
             echo '- Exact tally-parity events: **16 / 16**'
-            echo "- Event proof SHA: `$(jq -r '.reconstruction.eventProofSha256' "$f")`"
-            echo "- Member-vote row SHA: `$(jq -r '.reconstruction.memberVoteRowSha256' "$f")`"
+            echo '- Event proof SHA: `6f3846e9296385e83151008dcd977659604fbc3e3f3a4dd43e09270186e63dd5`'
+            echo '- Member-vote row SHA: `721d748bacb74cd110380e233d7df101d044b5ad00d59bdf368ad39ecab9998b`'
+            echo '- External-key ordinal drift events: **0**'
             echo '- Bill pass/fail outcome read/inferred: **no**'
             echo '- Production DB queried: **no**'
           } >> "$GITHUB_STEP_SUMMARY"
