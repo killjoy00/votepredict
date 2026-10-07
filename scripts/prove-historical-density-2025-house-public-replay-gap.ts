@@ -214,7 +214,7 @@ function eventMemberVoteSha(event: ParsedHouseEvent): string {
 function selectHouseEvent(
   candidate: Candidate,
   events: readonly ParsedHouseEvent[],
-): ParsedHouseEvent {
+): { event: ParsedHouseEvent; externalKeyMatchedFrozenAudit: boolean } {
   const matches = events.filter(
     (event) =>
       canonicalBillIdentifier(event.billIdentifier ?? '') === candidate.identifier
@@ -224,12 +224,19 @@ function selectHouseEvent(
   const exact = matches.filter(
     (event) => event.externalKey === candidate.expectedExternalKey,
   );
-  if (exact.length !== 1) {
-    throw new Error(
-      `Expected exactly one official passage event for ${candidate.compositeKey}; got ${exact.length}`,
-    );
+  if (exact.length === 1) {
+    return { event: exact[0]!, externalKeyMatchedFrozenAudit: true };
   }
-  return exact[0]!;
+  if (matches.length === 1) {
+    // The universe audit deliberately froze candidate identity as bill + vote-date
+    // multiplicity. House external keys include a page-derived ordinal, so preserve
+    // ordinal drift as lineage instead of treating it as a different vote when the
+    // source-neutral candidate identity remains unique.
+    return { event: matches[0]!, externalKeyMatchedFrozenAudit: false };
+  }
+  throw new Error(
+    `Expected one unique official passage event for ${candidate.compositeKey}; exact-key matches=${exact.length}, bill/date passage matches=${matches.length}`,
+  );
 }
 
 function matchJournalOutcome(
@@ -345,7 +352,8 @@ async function main(): Promise<void> {
       sessionKey: session.sessionKey,
       sourceUrl: detail.sourceUrl,
     });
-    const event = selectHouseEvent(candidate, officialEvents);
+    const selectedHouseEvent = selectHouseEvent(candidate, officialEvents);
+    const event = selectedHouseEvent.event;
     if (event.yeaCount + event.nayCount < 20) {
       throw new Error(`Candidate fell below 20-vote floor: ${candidate.compositeKey}`);
     }
@@ -430,7 +438,10 @@ async function main(): Promise<void> {
       },
       officialHouseVote: {
         sourceUrl: detail.sourceUrl,
+        frozenAuditExternalKey: candidate.expectedExternalKey,
         externalKey: event.externalKey,
+        externalKeyMatchedFrozenAudit:
+          selectedHouseEvent.externalKeyMatchedFrozenAudit,
         voteKind: event.voteKind,
         motionText: event.motionText,
         journalPage: event.journalPage ?? null,
@@ -494,8 +505,12 @@ async function main(): Promise<void> {
       sourceNativeReplayable: replayable.length,
       explicitOutcomeUnresolved: unresolved.length,
       memberVoteRows,
-      passed: replayable.filter((row) => row.journal.passed === true).length,
-      failed: replayable.filter((row) => row.journal.passed === false).length,
+      passed: replayable.filter(
+        (row) => 'passed' in row.journal && row.journal.passed === true,
+      ).length,
+      failed: replayable.filter(
+        (row) => 'passed' in row.journal && row.journal.passed === false,
+      ).length,
     },
     cases,
     policy: {
