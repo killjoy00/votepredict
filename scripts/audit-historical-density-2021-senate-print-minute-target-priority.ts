@@ -35,11 +35,24 @@ const EXPECTED_UNCOVERED_EVENTS = 218;
 const EXPECTED_UNCOVERED_BILLS = 176;
 const EXPECTED_2021_TARGET_EVENTS = 82;
 const EXPECTED_2022_TARGET_EVENTS = 136;
+const EXPECTED_TARGET_EVENT_KEY_SHA256 =
+  '7cf570804af8abed6eb4990b6fe530046ba038e5bc61d85e1311158afedc3657';
 
 const EXPECTED_MEDIA_EVENTS = 33;
 const EXPECTED_MEDIA_RECORDINGS = 621;
 const EXPECTED_COMMITTEE_GROUPS = 30;
+const EXPECTED_COMMITTEE_GROUP_SHA256 =
+  'e7b5bcb09a55511fa4cf7e061fce6a58a35b604763bfa35155e7327866a35bc2';
+const EXPECTED_MATCHED_COMMITTEES = 20;
+const EXPECTED_MATCHED_TARGET_EVENTS = 66;
+const EXPECTED_MATCHED_UNCOVERED_ROWS = 4422;
+const EXPECTED_ASSOCIATION_PROOF_SHA256 =
+  'f16f22044d13286f4478dac260952fec19684495a65d5f1a0a52de6fad84ce44';
 const PRIORITY_COMMITTEES = 10;
+const EXPECTED_PRIORITY_TARGET_EVENTS = 62;
+const EXPECTED_PRIORITY_UNCOVERED_ROWS = 4154;
+const EXPECTED_PRIORITY_PROOF_SHA256 =
+  'e4d78af9f9e0f7c34bd1b2131c2e9a3a58c80e871fc2bb51de8f5cd421923aa5';
 const REVISOR_CONCURRENCY = 6;
 
 type Json = Record<string, any>;
@@ -590,6 +603,71 @@ async function main(): Promise<void> {
         target.uncoveredRows,
         target.referralDates.join(','),
       ].join('|')));
+  const associationProofSha256 = setSha(associationLines);
+  const targetEventKeySha256 = setSha(
+    targetEvents.map((target) =>
+      [
+        target.voteEventId,
+        target.billId,
+        target.identifier,
+        target.occurredOn,
+        target.uncoveredRows,
+      ].join('|')),
+  );
+  const committeeGroupSha256 = setSha(
+    committeeEvents.map((event) =>
+      `${event.id}|${event.name}|${media.recordings.filter(
+        (recording) => recording.eventId === event.id,
+      ).length}`),
+  );
+  const priorityProofSha256 = sha256(
+    `${selected.map((row) => [
+      row.rank,
+      row.eventId,
+      row.eventName,
+      row.recordingPages,
+      row.totalAssociatedTargetEvents,
+      row.totalAssociatedTargetBills,
+      row.totalAssociatedUncoveredRows,
+      row.marginalTargetEvents,
+      row.marginalUncoveredRows,
+      row.cumulativeTargetEvents,
+      row.cumulativeUncoveredRows,
+    ].join('|')).join('\n')}\n`,
+  );
+
+  if (
+    targetEventKeySha256 !== EXPECTED_TARGET_EVENT_KEY_SHA256
+    || committeeGroupSha256 !== EXPECTED_COMMITTEE_GROUP_SHA256
+    || referDescriptionsWithoutParsedCommittee.length !== 0
+    || unmatchedReferralLabels.size !== 0
+    || candidates.length !== EXPECTED_MATCHED_COMMITTEES
+    || matchedTargetEvents.size !== EXPECTED_MATCHED_TARGET_EVENTS
+    || matchedRows !== EXPECTED_MATCHED_UNCOVERED_ROWS
+    || associationProofSha256 !== EXPECTED_ASSOCIATION_PROOF_SHA256
+    || selected.length !== PRIORITY_COMMITTEES
+    || coveredTargetEvents.size !== EXPECTED_PRIORITY_TARGET_EVENTS
+    || selectedRows !== EXPECTED_PRIORITY_UNCOVERED_ROWS
+    || priorityProofSha256 !== EXPECTED_PRIORITY_PROOF_SHA256
+  ) {
+    throw new Error(
+      'Pinned Senate print-minute priority proof drifted: '
+      + JSON.stringify({
+        targetEventKeySha256,
+        committeeGroupSha256,
+        unparsedReferrals: referDescriptionsWithoutParsedCommittee.length,
+        unmatchedReferralLabels: unmatchedReferralLabels.size,
+        matchedCommittees: candidates.length,
+        matchedTargetEvents: matchedTargetEvents.size,
+        matchedRows,
+        associationProofSha256,
+        selectedCommittees: selected.length,
+        selectedTargetEvents: coveredTargetEvents.size,
+        selectedRows,
+        priorityProofSha256,
+      }),
+    );
+  }
 
   const report = {
     schemaVersion:
@@ -623,16 +701,7 @@ async function main(): Promise<void> {
         2021: EXPECTED_2021_TARGET_EVENTS,
         2022: EXPECTED_2022_TARGET_EVENTS,
       },
-      targetEventKeySha256: setSha(
-        targetEvents.map((target) =>
-          [
-            target.voteEventId,
-            target.billId,
-            target.identifier,
-            target.occurredOn,
-            target.uncoveredRows,
-          ].join('|')),
-      ),
+      targetEventKeySha256,
     },
     lrlScope: {
       year: MEDIA_YEAR,
@@ -640,12 +709,7 @@ async function main(): Promise<void> {
       committeeOrOtherGroups: committeeEvents.length,
       uniqueRecordingPages: media.recordings.length,
       eventFailures: media.eventFailures,
-      committeeGroupSha256: setSha(
-        committeeEvents.map((event) =>
-          `${event.id}|${event.name}|${media.recordings.filter(
-            (recording) => recording.eventId === event.id,
-          ).length}`),
-      ),
+      committeeGroupSha256,
       committeeGroups: committeeEvents.map((event) => ({
         eventId: event.id,
         eventName: event.name,
@@ -672,7 +736,7 @@ async function main(): Promise<void> {
       committeesWithMatchedPreVoteReferrals: candidates.length,
       matchedTargetEvents: matchedTargetEvents.size,
       matchedUncoveredRows: matchedRows,
-      associationProofSha256: setSha(associationLines),
+      associationProofSha256,
       committees: candidates,
     },
     priority: {
@@ -680,6 +744,7 @@ async function main(): Promise<void> {
       selectedCommitteeCount: selected.length,
       selectedTargetEvents: coveredTargetEvents.size,
       selectedUncoveredRows: selectedRows,
+      priorityProofSha256,
       selected,
     },
     interpretation: {
