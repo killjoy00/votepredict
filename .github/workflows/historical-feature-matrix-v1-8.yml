@@ -1,0 +1,193 @@
+name: Freeze historical feature matrix v1.8
+
+on:
+  pull_request:
+    paths:
+      - scripts/build-evidence-quality-historical-feature-matrix-v1-8.ts
+      - scripts/audit-evidence-quality-historical-feature-coverage-v1-8.ts
+      - .github/workflows/historical-feature-matrix-v1-8.yml
+      - src/evidence/historical-density-p2-canonical.ts
+  push:
+    branches: [main]
+    paths:
+      - scripts/build-evidence-quality-historical-feature-matrix-v1-8.ts
+      - scripts/audit-evidence-quality-historical-feature-coverage-v1-8.ts
+      - .github/workflows/historical-feature-matrix-v1-8.yml
+      - src/evidence/historical-density-p2-canonical.ts
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-feature-matrix-v1-8-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize immutable v1.7 feature matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11436413885/zip > "$RUNNER_TEMP/v17.zip"
+          echo "fc1d77ccc51bc33f3e3f1c0dd6622c0f2a9797d62a8d54bcb65906de30228e44  $RUNNER_TEMP/v17.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/v17"
+          unzip -q "$RUNNER_TEMP/v17.zip" \
+            evidence-quality-historical-feature-matrix-v1.7-manifest.json \
+            evidence-quality-historical-feature-matrix-v1.7.ndjson.gz \
+            -d "$RUNNER_TEMP/v17"
+
+      - name: Materialize canonical 2025 House integration readiness
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11493988951/zip > "$RUNNER_TEMP/readiness.zip"
+          echo "7bc236c9ac1a92ff3567a2673f96fd25c8658f17389e389489970e456234aaa2  $RUNNER_TEMP/readiness.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/readiness"
+          unzip -q "$RUNNER_TEMP/readiness.zip" \
+            historical-density-2025-house-applicability-integration-readiness-v1.json \
+            -d "$RUNNER_TEMP/readiness"
+
+      - name: Build immutable historical matrix v1.8
+        env:
+          VOTEPREDICT_EQ_V17_MANIFEST_PATH: ${{ runner.temp }}/v17/evidence-quality-historical-feature-matrix-v1.7-manifest.json
+          VOTEPREDICT_EQ_V17_MATRIX_PATH: ${{ runner.temp }}/v17/evidence-quality-historical-feature-matrix-v1.7.ndjson.gz
+          VOTEPREDICT_2025_HOUSE_INTEGRATION_READINESS_PATH: ${{ runner.temp }}/readiness/historical-density-2025-house-applicability-integration-readiness-v1.json
+          VOTEPREDICT_EQ_V18_OUTPUT_DIR: ${{ runner.temp }}/v18
+        run: node --import tsx scripts/build-evidence-quality-historical-feature-matrix-v1-8.ts
+
+      - name: Verify v1.8 is strictly additive
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/v18/evidence-quality-historical-feature-matrix-v1.8-manifest.json"
+
+          test "$(jq -r '.schemaVersion' "$f")" = evidence-quality-historical-feature-matrix-v1.8-manifest
+          test "$(jq -r '.baseline.artifactId' "$f")" = 11436413885
+          test "$(jq -r '.overlaySource.artifactId' "$f")" = 11493988951
+          test "$(jq -r '.overlaySource.sourceCommitSha' "$f")" = 03f5ce08ee4bdf9edf54c0027f3c57b66afe2eb3
+
+          test "$(jq -r '.targetUniverse.rows' "$f")" = 135457
+          test "$(jq -r '.targetUniverse.events' "$f")" = 1339
+          test "$(jq -r '.targetUniverse.memberships' "$f")" = 611
+          test "$(jq -r '.targetUniverse.rowKeySha256' "$f")" = 3aa47101f9e4a848e293fdaa89ef853919d49826b68ae90960370c5c19e9df72
+
+          test "$(jq -r '.featureFamilies.exactBill.nonzeroRows' "$f")" = 38
+          test "$(jq -r '.featureFamilies.exactBill.featureDigestAfter' "$f")" = d829a4991ba99a3f92fc4f6e1359f2a9429859382c6584a4232d6b38670188bc
+          test "$(jq -r '.featureFamilies.reviewedApplicability.nonzeroRows' "$f")" = 54
+          test "$(jq -r '.featureFamilies.reviewedApplicability.previousNonzeroRows' "$f")" = 6
+          test "$(jq -r '.featureFamilies.reviewedApplicability.netAddedRows' "$f")" = 48
+          test "$(jq -r '.featureFamilies.reviewedApplicability.featureDigestAfter' "$f")" = 36bc247aba5bb0d888ffa32d9fc2173aa2552171d08e175e417c0b633f7a92a7
+          test "$(jq -r '.featureFamilies.reviewedApplicability.addedReviewKeySha256' "$f")" = a2caa40ea956cf479bbe8a84b4b415207efdffa4429732b2a5128096fadd6ebc
+          test "$(jq -r '.featureFamilies.reviewedApplicability.addedRowKeySha256' "$f")" = c06872dba335ae09c771ce6fc3a8d77c02f0d1b4adc4ce57ae51d0ad9a523e56
+          test "$(jq -r '.featureFamilies.reviewedApplicability.addedClaimProofSha256' "$f")" = 1044159f2cf6292cb61e606b2086e4cb9e9a117f3b3e58175c43221c961a9f14
+
+          test "$(jq -r '.coverage.exactNonzeroRows' "$f")" = 38
+          test "$(jq -r '.coverage.reviewedApplicabilityNonzeroRows' "$f")" = 54
+          test "$(jq -r '.coverage.combinedNonzeroRows' "$f")" = 92
+          test "$(jq -r '.coverage.overlapRows' "$f")" = 0
+          test "$(jq -r '.coverage.membershipsWithCombinedDirectionalEvidence' "$f")" = 44
+          test "$(jq -r '.coverage.eventsWithCombinedDirectionalEvidence' "$f")" = 73
+          test "$(jq -r '.coverage.netAddedCombinedRowsVsV17' "$f")" = 48
+          test "$(jq -r '.coverage.exactRowsChangedVsV17' "$f")" = 0
+          test "$(jq -r '.coverage.reviewedApplicabilityRowsChangedOutsideAdditions' "$f")" = 0
+          test "$(jq -r '.coverage.bySession["2021-2022"].combinedNonzeroRows' "$f")" = 9
+          test "$(jq -r '.coverage.bySession["2023-2024"].combinedNonzeroRows' "$f")" = 32
+          test "$(jq -r '.coverage.bySession["2025-2026"].exactNonzeroRows' "$f")" = 3
+          test "$(jq -r '.coverage.bySession["2025-2026"].reviewedApplicabilityNonzeroRows' "$f")" = 48
+          test "$(jq -r '.coverage.bySession["2025-2026"].combinedNonzeroRows' "$f")" = 51
+
+          test "$(jq -r '.applicabilityGate.acceptedClaimEventPairs' "$f")" = 48
+          test "$(jq -r '.applicabilityGate.integrationRows' "$f")" = 48
+          test "$(jq -r '.applicabilityGate.alignmentCounts.aligns' "$f")" = 47
+          test "$(jq -r '.applicabilityGate.alignmentCounts.conflicts' "$f")" = 1
+
+          test "$(jq -r '.digests.matrixCanonicalNdjsonSha256' "$f")" = 2d4ed4993fd7efce5a0c7de2a4331f1f3a0f163e323f437c6f9e7dacf266a30b
+          test "$(jq -r '.digests.matrixGzipSha256' "$f")" = 42f9d79bd69df63b46a2f0f5c1636f4cc7f8fd0ec0a65ae905d85f28fd436700
+
+          test "$(jq -r '.policy.outcomeUseDuringFeatureConstruction' "$f")" = none
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.existingDirectionalRowsOverwritten' "$f")" = false
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: evidence-quality-historical-feature-freeze-v1-8
+          path: ${{ runner.temp }}/v18/*
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Audit v1.8 historical coverage
+        env:
+          VOTEPREDICT_EQ_V18_MANIFEST_PATH: ${{ runner.temp }}/v18/evidence-quality-historical-feature-matrix-v1.8-manifest.json
+          VOTEPREDICT_EQ_V18_MATRIX_PATH: ${{ runner.temp }}/v18/evidence-quality-historical-feature-matrix-v1.8.ndjson.gz
+          VOTEPREDICT_EQ_V18_COVERAGE_OUTPUT_DIR: ${{ runner.temp }}/coverage
+        run: node --import tsx scripts/audit-evidence-quality-historical-feature-coverage-v1-8.ts
+
+      - name: Verify v1.8 coverage conclusion and summarize
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/coverage/evidence-quality-historical-feature-coverage-v1.8.json"
+
+          test "$(jq -r '.summary.targetRows' "$f")" = 135457
+          test "$(jq -r '.summary.exactNonzeroRows' "$f")" = 38
+          test "$(jq -r '.summary.reviewedApplicabilityNonzeroRows' "$f")" = 54
+          test "$(jq -r '.summary.combinedNonzeroRows' "$f")" = 92
+          test "$(jq -r '.summary.netAddedRowsVsV17' "$f")" = 48
+          test "$(jq -r '.summary.exactRowsChangedVsV17' "$f")" = 0
+          test "$(jq -r '.summary.overlapRows' "$f")" = 0
+          test "$(jq -r '.summary.membershipsWithCombinedDirectionalEvidence' "$f")" = 44
+          test "$(jq -r '.summary.eventsWithCombinedDirectionalEvidence' "$f")" = 73
+          test "$(jq -r '.bySession["2021-2022"].combinedNonzeroRows' "$f")" = 9
+          test "$(jq -r '.bySession["2025-2026"].combinedNonzeroRows' "$f")" = 51
+          test "$(jq -r '.review.ambiguousOrPendingRowsIncludedInMatrix' "$f")" = 0
+          test "$(jq -r '.interpretation.modelingReady' "$f")" = false
+          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+
+          {
+            echo '## Historical feature matrix v1.8'
+            echo
+            echo '- Accepted 2025-26 House claim-event rows added: **48**'
+            echo '- Exact-bill nonzero rows: **38 → 38**'
+            echo '- Reviewed-applicability rows: **6 → 54**'
+            echo '- Combined directional rows: **44 → 92**'
+            echo '- 2025-26 covered rows: **3 → 51**'
+            echo '- Memberships with directional evidence: **30 → 44**'
+            echo '- Events with directional evidence: **39 → 73**'
+            echo '- Existing directional-row overlap: **0**'
+            echo '- Ambiguous/pending rows included: **0**'
+            echo '- Target outcomes read: **no**'
+            echo '- Production DB queried: **no**'
+            echo '- Model fitting: **none**'
+            echo '- Modeling ready: **no** — 2021-22 training coverage remains 9 rows'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: evidence-quality-historical-feature-coverage-v1-8
+          path: ${{ runner.temp }}/coverage/*
+          if-no-files-found: error
+          retention-days: 90
