@@ -70,6 +70,8 @@ jobs:
           test "$(jq -r '.summary.candidateBills' "$p")" = 5
           test "$(jq -r '.summary.completedDecisions' "$p")" = 0
           test "$(jq -r '.sourceIntake.sourceLedgerProofSha256' "$p")" = 701467a4cfe7ad7a2e79a6753b52d444ff802d72490d311b757a2f876f6f8994
+          test "$(jq -r '.reviewKeySha256' "$p")" = 03f49db508eaa3ea2413cc410d1b22f23a5a4abd0641d24ea9cb14b39477997c
+          test "$(jq -r '.reviewPacketProofSha256' "$p")" = 87f93dfe6fd349a074998b05f1309b0c944fbc0bfad85d0c4144686d56514933
           test "$(jq -r '[.rows[].review.decision] | all(. == null)' "$p")" = true
           test "$(jq -r '[.rows[].review.memberStance] | all(. == null)' "$p")" = true
           test "$(jq -r '.policy.sourceDocumentContentReadByGenerator' "$p")" = false
@@ -81,6 +83,8 @@ jobs:
 
           test "$(jq -r '.schemaVersion' "$d")" = historical-density-2021-senate-print-minute-semantic-review-decisions-template-v1
           test "$(jq -r '.decisions | length' "$d")" = 5
+          test "$(jq -r '.frozenReviewPacket.reviewKeySha256' "$d")" = 03f49db508eaa3ea2413cc410d1b22f23a5a4abd0641d24ea9cb14b39477997c
+          test "$(jq -r '.decisionsTemplateProofSha256' "$d")" = 6e421a694077872cffe082073936d20a7488538c79561dc632c9de5ea1d7e6e5
           test "$(jq -r '[.decisions[].decision] | all(. == null)' "$d")" = true
           test "$(jq -r '.policy.defaultFailClosedUntilExplicitDecision' "$d")" = true
           test "$(jq -r '.policy.noAutomaticDirectionalDecision' "$d")" = true
