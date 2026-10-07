@@ -614,6 +614,22 @@ async function main(): Promise<void> {
 
   usable.sort((a, b) => a.compositeKey.localeCompare(b.compositeKey));
   if (usable.length < MIN_USABLE_BRIDGE_EVENTS) {
+    const reasonCounts = skippedBridgeEvents.reduce<Record<string, number>>(
+      (acc, row) => {
+        acc[row.reason] = (acc[row.reason] ?? 0) + 1;
+        return acc;
+      },
+      {},
+    );
+    console.error(JSON.stringify({
+      bridgeDiagnostics: {
+        bridgeTargets: bridgeTargets.length,
+        usable: usable.length,
+        skipped: skippedBridgeEvents.length,
+        reasonCounts,
+        examples: skippedBridgeEvents.slice(0, 20),
+      },
+    }, null, 2));
     throw new Error(`Insufficient clean bridge events: ${usable.length}`);
   }
 
