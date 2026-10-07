@@ -28,6 +28,10 @@ const EXPECTED_SELECTED_UNCOVERED_ROWS = 4154;
 const EXPECTED_RECORDING_PAGES = 208;
 const EXPECTED_REQUEST_ASSOCIATION_PROOF =
   '6d3ecfa7d433e8a3f3c835ecc9934a0b68cab53f213501b333e873d32d29a1d0';
+const EXPECTED_CSV_SHA256 =
+  '323c8be6cd874115b4e8601343eebec96a705be2e1670ef360ca7c2970a334d9';
+const EXPECTED_MARKDOWN_SHA256 =
+  '033e9d5c45abad9d378a4ad3d351b9299dc4f378bfe86fc791bd1cb666e83bc3';
 
 const JSON_NAME =
   'historical-density-2021-senate-print-minute-request-package-v1.json';
@@ -322,6 +326,17 @@ function main(): void {
     '',
   ];
   const markdownText = markdownLines.join('\n');
+  const csvSha256 = sha256(csvText);
+  const markdownSha256 = sha256(markdownText);
+  if (
+    csvSha256 !== EXPECTED_CSV_SHA256
+    || markdownSha256 !== EXPECTED_MARKDOWN_SHA256
+  ) {
+    throw new Error(
+      'Pinned Senate print-minute request output drifted: '
+      + JSON.stringify({ csvSha256, markdownSha256 }),
+    );
+  }
 
   const report = {
     schemaVersion:
@@ -354,8 +369,8 @@ function main(): void {
       json: JSON_NAME,
       csv: CSV_NAME,
       markdown: MARKDOWN_NAME,
-      csvSha256: sha256(csvText),
-      markdownSha256: sha256(markdownText),
+      csvSha256,
+      markdownSha256,
     },
     interpretation: {
       acquisitionOnly: true,
