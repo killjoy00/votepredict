@@ -76,6 +76,7 @@ jobs:
           test "$(jq -r '.identity.candidateCount' "$f")" = 16
           test "$(jq -r '.identity.compositeKeySha256' "$f")" = c756fa9d80e7914e579d1bb43e2dc3c3d730ad221e0f8185dc2de2ccffc2c37a
           test "$(jq -r '.identity.officialExternalKeySha256' "$f")" = 0b4e9af1eb5af5d9677035238ac7315d2e318f790d1ef53a3944a988978b7063
+          test "$(jq -r '.identity.strictVersionProofSha256' "$f")" = 6ae078583c0bc7171ee83a7ae1193c4321b5b7a8bfb9aa3489ac4cc19d9f16ee
           test "$(jq -r '.identity.exactOriginalReplayMatches' "$f")" = 0
           test "$(jq -r '.identity.candidateBillsPresentElsewhereInOriginalReplay | join(",")' "$f")" = HF3718
           test "$(jq -r '.candidates | length' "$f")" = 16
