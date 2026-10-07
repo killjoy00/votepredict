@@ -3,14 +3,56 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
+type Override = {
+  reviewKey: string;
+  decision: string;
+  billPolicyDirection: string | null;
+  alignmentDirection: string | null;
+  reason: string;
+};
+
+type ReviewCounts = {
+  applicable: number;
+  ambiguous_fail_closed: number;
+  not_applicable: number;
+  pending_review: number;
+};
+
+type TrancheDecision = {
+  trancheIndex: number;
+  frozenCandidateArtifact: {
+    runId: number;
+    artifactId: number;
+    digest: string;
+    reviewKeySha256: string;
+    candidatePairs: number;
+  };
+  expectedReviewCounts: ReviewCounts;
+  overrides: Override[];
+};
+
+type Decisions = {
+  schemaVersion: string;
+  issue: number;
+  session: string;
+  tranches: TrancheDecision[];
+  policy: Record<string, unknown>;
+};
+
 const path = resolve(
   'data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranches-9-11-decisions-v1.json',
 );
-const decisions = JSON.parse(readFileSync(path, 'utf8'));
+const decisions = JSON.parse(readFileSync(path, 'utf8')) as Decisions;
 
-const byTranche = new Map(
-  decisions.tranches.map((row: { trancheIndex: number }) => [row.trancheIndex, row]),
+const byTranche = new Map<number, TrancheDecision>(
+  decisions.tranches.map((row) => [row.trancheIndex, row] as const),
 );
+
+function getTranche(index: number): TrancheDecision {
+  const tranche = byTranche.get(index);
+  assert.ok(tranche);
+  return tranche;
+}
 
 test('final House decisions pin canonical main artifacts and review-key sets', () => {
   assert.equal(
@@ -42,8 +84,7 @@ test('final House decisions pin canonical main artifacts and review-key sets', (
   } as const;
 
   for (const [index, frozen] of Object.entries(expected)) {
-    const tranche = byTranche.get(Number(index));
-    assert.ok(tranche);
+    const tranche = getTranche(Number(index));
     assert.equal(tranche.frozenCandidateArtifact.runId, 37560399946);
     assert.equal(tranche.frozenCandidateArtifact.artifactId, frozen.artifactId);
     assert.equal(tranche.frozenCandidateArtifact.digest, frozen.digest);
@@ -59,19 +100,19 @@ test('final House decisions pin canonical main artifacts and review-key sets', (
 });
 
 test('final House review pins corrected per-tranche decision counts', () => {
-  assert.deepEqual(byTranche.get(9).expectedReviewCounts, {
+  assert.deepEqual(getTranche(9).expectedReviewCounts, {
     applicable: 4,
     ambiguous_fail_closed: 6,
     not_applicable: 186,
     pending_review: 0,
   });
-  assert.deepEqual(byTranche.get(10).expectedReviewCounts, {
+  assert.deepEqual(getTranche(10).expectedReviewCounts, {
     applicable: 6,
     ambiguous_fail_closed: 5,
     not_applicable: 144,
     pending_review: 0,
   });
-  assert.deepEqual(byTranche.get(11).expectedReviewCounts, {
+  assert.deepEqual(getTranche(11).expectedReviewCounts, {
     applicable: 3,
     ambiguous_fail_closed: 1,
     not_applicable: 22,
@@ -131,7 +172,7 @@ test('exact fail-closed final-House review keys are frozen', () => {
 });
 
 test('HF21 remains fail-closed because three-fifths is not two-thirds', () => {
-  const t10 = byTranche.get(10);
+  const t10 = getTranche(10);
   const hf21 = t10.overrides.find(
     (row: { reviewKey: string }) =>
       row.reviewKey.startsWith('roach_limit_emergency_powers|HF21|'),
