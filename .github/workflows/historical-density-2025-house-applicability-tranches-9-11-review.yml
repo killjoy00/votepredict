@@ -1,0 +1,142 @@
+name: Freeze final reviewed 2025 House applicability tranches 9-11
+
+on:
+  pull_request:
+    paths:
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranches-9-11-decisions-v1.json
+      - scripts/freeze-historical-density-2025-house-applicability-tranches-9-11-review.ts
+      - tests/historical-density-2025-house-applicability-tranches-9-11-review.test.ts
+      - .github/workflows/historical-density-2025-house-applicability-tranches-9-11-review.yml
+  push:
+    branches: [main]
+    paths:
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranches-9-11-decisions-v1.json
+      - scripts/freeze-historical-density-2025-house-applicability-tranches-9-11-review.ts
+      - tests/historical-density-2025-house-applicability-tranches-9-11-review.test.ts
+      - .github/workflows/historical-density-2025-house-applicability-tranches-9-11-review.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2025-house-applicability-tranches-9-11-review-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Test final House applicability decisions
+        run: node --import tsx --test tests/historical-density-2025-house-applicability-tranches-9-11-review.test.ts
+
+      - name: Materialize immutable final candidate audits
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/final-audits/9" "$RUNNER_TEMP/final-audits/10" "$RUNNER_TEMP/final-audits/11"
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11456955534/zip > "$RUNNER_TEMP/t9.zip"
+          echo "e39e55879877c57e9d393be137864a4c7df3d8b3384ee20fba6258b94b105b58  $RUNNER_TEMP/t9.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/t9.zip" applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-9-v1.json -d "$RUNNER_TEMP/final-audits/9"
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11456880675/zip > "$RUNNER_TEMP/t10.zip"
+          echo "45b83827707ccf31ec3e580cdc4254c8b282f13ff0de222a8c5934e9a69163b2  $RUNNER_TEMP/t10.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/t10.zip" applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-10-v1.json -d "$RUNNER_TEMP/final-audits/10"
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11456386548/zip > "$RUNNER_TEMP/t11.zip"
+          echo "6a8c6bf3d6f93beb8de19166e76643f005711ff724d8f0146d15d9a2c34f813f  $RUNNER_TEMP/t11.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/t11.zip" applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-11-v1.json -d "$RUNNER_TEMP/final-audits/11"
+
+      - name: Freeze reviewed final House applicability gate
+        env:
+          VOTEPREDICT_2025_HOUSE_TRANCHE9_APPLICABILITY_AUDIT_PATH: ${{ runner.temp }}/final-audits/9/applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-9-v1.json
+          VOTEPREDICT_2025_HOUSE_TRANCHE10_APPLICABILITY_AUDIT_PATH: ${{ runner.temp }}/final-audits/10/applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-10-v1.json
+          VOTEPREDICT_2025_HOUSE_TRANCHE11_APPLICABILITY_AUDIT_PATH: ${{ runner.temp }}/final-audits/11/applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-11-v1.json
+          VOTEPREDICT_2025_HOUSE_TRANCHE9_11_APPLICABILITY_DECISIONS_PATH: data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranches-9-11-decisions-v1.json
+          VOTEPREDICT_2025_HOUSE_TRANCHE9_11_APPLICABILITY_REVIEW_OUTPUT: ${{ runner.temp }}/final-review/historical-density-2025-house-applicability-tranches-9-11-review-v1.json
+        run: node --import tsx scripts/freeze-historical-density-2025-house-applicability-tranches-9-11-review.ts
+
+      - name: Verify final House reviewed boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/final-review/historical-density-2025-house-applicability-tranches-9-11-review-v1.json"
+
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-applicability-tranches-9-11-review-v1
+          test "$(jq -r '.issue' "$f")" = 718
+          test "$(jq -r '.session' "$f")" = 2025-2026
+          test "$(jq -r '.tranches | length' "$f")" = 3
+
+          test "$(jq -r '.aggregate.candidatePairs' "$f")" = 377
+          test "$(jq -r '.aggregate.reviewedApplicable' "$f")" = 13
+          test "$(jq -r '.aggregate.reviewedAmbiguous' "$f")" = 12
+          test "$(jq -r '.aggregate.reviewedNotApplicable' "$f")" = 352
+          test "$(jq -r '.aggregate.eligiblePairs' "$f")" = 2589
+          test "$(jq -r '.aggregate.finalApplicable' "$f")" = 13
+          test "$(jq -r '.aggregate.finalAmbiguous' "$f")" = 248
+          test "$(jq -r '.aggregate.finalNotApplicable' "$f")" = 2328
+          test "$(jq -r '.aggregate.pendingReview' "$f")" = 0
+          test "$(jq -r '.aggregate.aligns' "$f")" = 13
+          test "$(jq -r '.aggregate.conflicts' "$f")" = 0
+          test "$(jq -r '.aggregate.integrationReadyRows' "$f")" = 0
+
+          test "$(jq -r '.tranches[] | select(.trancheIndex == 9) | .frozenInput.reviewKeySha256' "$f")" = 3974d68ee7e02f1acfffdf8d8a7b2af3ad3789a57778a59aea776aebf4aec0a3
+          test "$(jq -r '.tranches[] | select(.trancheIndex == 10) | .frozenInput.reviewKeySha256' "$f")" = a0aaa42ff9ad13f23608925d32189b8bf930f629acda9f85fae01160e544532f
+          test "$(jq -r '.tranches[] | select(.trancheIndex == 11) | .frozenInput.reviewKeySha256' "$f")" = 94a1c7f65eaa371c6719e7f22151820600b7b7a932291ce8a079f915d8f20e93
+
+          test "$(jq -r '.tranches[] | select(.trancheIndex == 9) | .review.decisions.applicable' "$f")" = 4
+          test "$(jq -r '.tranches[] | select(.trancheIndex == 9) | .review.decisions.ambiguous_fail_closed' "$f")" = 6
+          test "$(jq -r '.tranches[] | select(.trancheIndex == 10) | .review.decisions.applicable' "$f")" = 6
+          test "$(jq -r '.tranches[] | select(.trancheIndex == 10) | .review.decisions.ambiguous_fail_closed' "$f")" = 5
+          test "$(jq -r '.tranches[] | select(.trancheIndex == 11) | .review.decisions.applicable' "$f")" = 3
+          test "$(jq -r '.tranches[] | select(.trancheIndex == 11) | .review.decisions.ambiguous_fail_closed' "$f")" = 1
+
+          jq -e '[.tranches[].review.reviewedCandidates[] | select(.decision == "applicable") | .internalMembershipIdentityResolved] | all(. == false)' "$f" >/dev/null
+          jq -e '[.tranches[].review.reviewedCandidates[] | select(.decision == "applicable") | .integrationReady] | all(. == false)' "$f" >/dev/null
+
+          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.internalMembershipIdentityResolved' "$f")" = false
+          test "$(jq -r '.policy.internalIdentityRequiredBeforeFeatureIntegration' "$f")" = true
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+
+          {
+            echo '## 2025-26 House applicability — final reviewed tranches 9-11'
+            echo
+            echo '- Final target ranks covered: **201-264**'
+            echo '- Candidate pairs reviewed: **377**'
+            echo '- Applicable: **13**'
+            echo '- Reviewed ambiguous/fail-closed: **12**'
+            echo '- Reviewed not applicable: **352**'
+            echo '- Full eligible-pair accounting: **13 applicable / 248 fail-closed / 2,328 not-applicable / 0 pending**'
+            echo '- Alignment: **13 align / 0 conflict**'
+            echo '- Integration-ready rows: **0**'
+            echo '- Outcomes used: **none**'
+            echo '- Production DB queried: **no**'
+            echo '- Vercel used: **no**'
+            echo '- 2025-26 House uncovered event universe through rank **264** is fully semantically reviewed.'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2025-house-applicability-tranches-9-11-review-v1
+          path: ${{ runner.temp }}/final-review/*
+          if-no-files-found: error
+          retention-days: 90
