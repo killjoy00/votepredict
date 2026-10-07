@@ -73,7 +73,7 @@ function main(): void {
     || audit.candidateScreen?.candidateBills !== EXPECTED_CANDIDATE_BILLS
     || audit.candidateScreen?.candidatePublicMembers !== EXPECTED_CANDIDATE_MEMBERS
     || audit.candidateScreen?.candidateSemanticGroups !== EXPECTED_SEMANTIC_GROUPS
-    || audit.candidateScreen?.pairStatusCounts?.ambiguous_fail_closed !== EXPECTED_BASELINE_AMBIGUOUS
+    || (audit.candidateScreen?.pairStatusCounts?.ambiguous_fail_closed ?? 0) !== EXPECTED_BASELINE_AMBIGUOUS
     || audit.candidateScreen?.pairStatusCounts?.not_nominated !== EXPECTED_NOT_NOMINATED
     || audit.candidateScreen?.pairStatusCounts?.candidate_for_semantic_review !== EXPECTED_CANDIDATES
     || audit.candidateScreen?.automaticApplicableRows !== 0
