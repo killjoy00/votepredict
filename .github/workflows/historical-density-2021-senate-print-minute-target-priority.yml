@@ -75,19 +75,26 @@ jobs:
           test "$(jq -r '.targetGap.bills' "$f")" = 176
           test "$(jq -r '.targetGap.eventYearCounts["2021"]' "$f")" = 82
           test "$(jq -r '.targetGap.eventYearCounts["2022"]' "$f")" = 136
+          test "$(jq -r '.targetGap.targetEventKeySha256' "$f")" = 7cf570804af8abed6eb4990b6fe530046ba038e5bc61d85e1311158afedc3657
 
           test "$(jq -r '.lrlScope.totalEventGroups' "$f")" = 33
           test "$(jq -r '.lrlScope.committeeOrOtherGroups' "$f")" = 30
           test "$(jq -r '.lrlScope.uniqueRecordingPages' "$f")" = 621
           test "$(jq -r '.lrlScope.eventFailures | length' "$f")" = 0
+          test "$(jq -r '.lrlScope.committeeGroupSha256' "$f")" = e7b5bcb09a55511fa4cf7e061fce6a58a35b604763bfa35155e7327866a35bc2
 
           test "$(jq -r '.revisor.targetBillStatusDocuments' "$f")" = 176
           test "$(jq -r '.revisor.fetchFailures' "$f")" = 0
-          test "$(jq -r '.acquisitionCandidates.committeesWithMatchedPreVoteReferrals > 0' "$f")" = true
-          test "$(jq -r '.acquisitionCandidates.matchedTargetEvents > 0' "$f")" = true
-          test "$(jq -r '.acquisitionCandidates.matchedUncoveredRows > 0' "$f")" = true
-          test "$(jq -r '.acquisitionCandidates.associationProofSha256 | length' "$f")" = 64
-          test "$(jq -r '.priority.selectedCommitteeCount > 0' "$f")" = true
+          test "$(jq -r '.revisor.referralDescriptionsWithoutParsedCommittee | length' "$f")" = 0
+          test "$(jq -r '.revisor.unmatchedReferralLabels | length' "$f")" = 0
+          test "$(jq -r '.acquisitionCandidates.committeesWithMatchedPreVoteReferrals' "$f")" = 20
+          test "$(jq -r '.acquisitionCandidates.matchedTargetEvents' "$f")" = 66
+          test "$(jq -r '.acquisitionCandidates.matchedUncoveredRows' "$f")" = 4422
+          test "$(jq -r '.acquisitionCandidates.associationProofSha256' "$f")" = f16f22044d13286f4478dac260952fec19684495a65d5f1a0a52de6fad84ce44
+          test "$(jq -r '.priority.selectedCommitteeCount' "$f")" = 10
+          test "$(jq -r '.priority.selectedTargetEvents' "$f")" = 62
+          test "$(jq -r '.priority.selectedUncoveredRows' "$f")" = 4154
+          test "$(jq -r '.priority.priorityProofSha256' "$f")" = e4d78af9f9e0f7c34bd1b2131c2e9a3a58c80e871fc2bb51de8f5cd421923aa5
 
           test "$(jq -r '.interpretation.acquisitionOnly' "$f")" = true
           test "$(jq -r '.interpretation.mediaEventPresenceDoesNotProveMinuteExists' "$f")" = true
@@ -113,13 +120,15 @@ jobs:
             echo '- v1.8 uncovered Senate rows: **14,600**'
             echo '- Target events / bills: **218 / 176**'
             echo '- LRL 2021 committee/other groups: **30**'
-            echo "- Committees with matched pre-vote referrals: **$(jq -r '.acquisitionCandidates.committeesWithMatchedPreVoteReferrals' "$f")**"
-            echo "- Matched target events: **$(jq -r '.acquisitionCandidates.matchedTargetEvents' "$f")**"
-            echo "- Matched uncovered rows: **$(jq -r '.acquisitionCandidates.matchedUncoveredRows' "$f")**"
-            echo "- Priority committees selected: **$(jq -r '.priority.selectedCommitteeCount' "$f")**"
-            echo "- Priority target events: **$(jq -r '.priority.selectedTargetEvents' "$f")**"
-            echo "- Priority uncovered rows: **$(jq -r '.priority.selectedUncoveredRows' "$f")**"
-            echo "- Unmatched referral labels: **$(jq -r '.revisor.unmatchedReferralLabels | length' "$f")**"
+            echo '- Committees with matched pre-vote referrals: **20**'
+            echo '- Matched target events: **66**'
+            echo '- Matched uncovered rows: **4,422**'
+            echo '- Priority committees selected: **10**'
+            echo '- Priority target events: **62**'
+            echo '- Priority uncovered rows: **4,154**'
+            echo '- Unparsed/unmatched referral labels: **0 / 0**'
+            echo '- Association proof SHA: `f16f22044d13286f4478dac260952fec19684495a65d5f1a0a52de6fad84ce44`'
+            echo '- Priority proof SHA: `e4d78af9f9e0f7c34bd1b2131c2e9a3a58c80e871fc2bb51de8f5cd421923aa5`'
             echo '- This is acquisition scope only; no minute existence/content or member stance is inferred.'
           } >> "$GITHUB_STEP_SUMMARY"
 
