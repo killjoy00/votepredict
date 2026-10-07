@@ -61,6 +61,7 @@ jobs:
           test "$(jq -r '.allowedCommittees | length' "$template")" = 10
           test "$(jq -r '.allowedCommittees[0].committeeEventId' "$template")" = 23837-0-s
           test "$(jq -r '.allowedCommittees[0].committeeName' "$template")" = Finance
+          test "$(sha256sum "$template" | awk '{print $1}')" = 8cbac5bc679cbf53ac9a3374786c131f75d7df2d1726f20b390dd46b200cdc19
 
           mkdir -p "$RUNNER_TEMP/source"
           printf '%s' '%PDF-1.4 synthetic LRL fixture only' > "$RUNNER_TEMP/source/finance-2021-02-20.pdf"
@@ -119,9 +120,13 @@ jobs:
           test "$(jq -r '.policy.sourcePathsMustRemainInsideSourceRoot' "$l")" = true
           test "$(jq -r '.policy.exactSourceBytesArchived' "$l")" = true
           test "$(jq -r '.policy.successfulIntakeCreatesEvidence' "$l")" = false
+          test "$(jq -r '.sourceLedgerProofSha256' "$l")" = 701467a4cfe7ad7a2e79a6753b52d444ff802d72490d311b757a2f876f6f8994
+          test "$(sha256sum "$b" | awk '{print $1}')" = dc7318e5bea18adae041eccc4c1cea1d234c91e9719a618f784c08fb6875e3dc
+          test "$(sha256sum "$l" | awk '{print $1}')" = 84796fcbeeaa97d16d8918c031416afd36432d2d513614093a3c5f9afc1f0803
           archived="$(jq -r '.sources[0].archivedRelativePath' "$l")"
           test -s "$RUNNER_TEMP/output/$archived"
-          test "$(sha256sum "$RUNNER_TEMP/output/$archived" | awk '{print $1}')" = "$(jq -r '.sources[0].contentSha256' "$l")"
+          test "$(jq -r '.sources[0].contentSha256' "$l")" = ab8a84192fa1ea47014511e5585fd3777fb266c3c6761fa8922b2354635f1b0f
+          test "$(sha256sum "$RUNNER_TEMP/output/$archived" | awk '{print $1}')" = ab8a84192fa1ea47014511e5585fd3777fb266c3c6761fa8922b2354635f1b0f
 
       - name: Verify path traversal fails closed
         shell: bash
