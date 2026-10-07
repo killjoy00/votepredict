@@ -177,6 +177,7 @@ test('HF21 remains fail-closed because three-fifths is not two-thirds', () => {
     (row: { reviewKey: string }) =>
       row.reviewKey.startsWith('roach_limit_emergency_powers|HF21|'),
   );
+  if (!hf21) throw new Error('Missing frozen HF21 review override');
   assert.equal(hf21.decision, 'ambiguous_fail_closed');
   assert.equal(hf21.billPolicyDirection, null);
   assert.equal(hf21.alignmentDirection, null);
