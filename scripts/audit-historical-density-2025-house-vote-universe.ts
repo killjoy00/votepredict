@@ -35,6 +35,8 @@ const EXPECTED_PUBLIC_REPLAY_CANDIDATES = 253;
 const EXPECTED_MATCHED_REPLAY_EVENTS = 237;
 const EXPECTED_PUBLIC_CANDIDATES_OUTSIDE_MATRIX = 16;
 const EXPECTED_MATRIX_EVENTS_WITHOUT_PUBLIC_CANDIDATE = 27;
+const EXPECTED_CURRENT_REVISOR_HISTORY_GAPS = 27;
+const EXPECTED_PUBLIC_CANDIDATES_ABSENT_FROZEN_MATRIX = 16;
 
 type ParsedEvent = ReturnType<typeof parseHouseVoteDetailHtml>[number];
 
@@ -488,6 +490,24 @@ async function main(): Promise<void> {
     );
   }
 
+  const mismatchClassificationCounts = countBy(
+    mismatchDetails.map((row) => row.classification),
+  );
+  if (
+    mismatchClassificationCounts[
+      'frozen_matrix_event_current_revisor_strict_version_not_discoverable'
+    ] !== EXPECTED_CURRENT_REVISOR_HISTORY_GAPS
+    || mismatchClassificationCounts[
+      'public_replay_candidate_absent_from_frozen_matrix'
+    ] !== EXPECTED_PUBLIC_CANDIDATES_ABSENT_FROZEN_MATRIX
+  ) {
+    throw new Error(
+      `2025 House mismatch classification drifted: ${JSON.stringify(
+        mismatchClassificationCounts,
+      )}`,
+    );
+  }
+
   const matrixCoverage = {
     fullyUncoveredEvents: [...matrixEvents.values()].filter(
       (event) => event.coveredRows === 0,
@@ -580,9 +600,7 @@ async function main(): Promise<void> {
         'source-neutral multiplicity by bill identifier + vote date; this avoids database UUID dependence while preserving repeated same-bill/same-day event counts',
       ...comparison,
       mismatchDetails,
-      mismatchClassificationCounts: countBy(
-        mismatchDetails.map((row) => row.classification),
-      ),
+      mismatchClassificationCounts,
       publicCandidateCoverageByFrozenMatrix:
         publicReplayCandidates.length > 0
           ? comparison.matchedEvents / publicReplayCandidates.length
@@ -609,8 +627,10 @@ async function main(): Promise<void> {
       productionDatabaseQueried: false,
       productionWrites: false,
       vercelUsed: false,
-      targetVoteOutcomesRead: false,
-      outcomeUse: 'none',
+      voteTalliesReadFromOfficialHousePages: true,
+      voteTallyUse: 'apply the frozen >=20 decisive-vote replay eligibility floor only',
+      passFailOutcomeReadOrInferred: false,
+      outcomeUseForSemanticsOrModeling: 'none',
       officialPublicSourcesOnly: true,
       frozenMatrixOutcomesIgnored: true,
       servingChanged: false,
@@ -636,7 +656,8 @@ async function main(): Promise<void> {
         comparison.matrixWithoutOfficial,
       matrixCoverage,
       productionDatabaseQueried: false,
-      targetVoteOutcomesRead: false,
+      voteTalliesReadFromOfficialHousePages: true,
+      passFailOutcomeReadOrInferred: false,
     },
   }, null, 2));
 }
