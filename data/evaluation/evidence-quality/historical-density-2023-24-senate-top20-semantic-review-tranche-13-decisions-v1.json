@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "historical-density-2023-24-senate-top20-semantic-review-tranche-13-decisions-v1",
+  "issue": 718,
+  "session": "2023-2024",
+  "trancheId": "SENATE-2023-24-TOP20-SEMANTIC-013",
+  "frozenReviewPacket": {
+    "reviewRows": 21,
+    "reviewKeySha256": "4b2930447ccfc6f808645ef60573d1eb2acac553f80a853924e0c3514ab3c67f",
+    "sourcePdfSha256": "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b",
+    "sourceTextSha256": "e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c",
+    "reviewPacketProofSha256": "0a0208943f6ba6f7c5ee54674351e863dadf692558595304ef93fef591ec84bc"
+  },
+  "decisionRationales": {
+    "full_text_review_no_candidate_bill_support": "Full frozen minute reviewed. This candidate bill is neither explicitly mentioned nor otherwise unambiguously identifiable in the source text; committee/referral overlap alone is not treated as applicability.",
+    "candidate_bill_explicitly_present_but_only_procedural_actions_recorded": "Full frozen minute reviewed. The candidate bill is explicit, but the minute records motions, amendments, table procedure, substitution, or recommend-to-pass procedure rather than an attributable directional whole-bill member statement under the existing Senate semantic-review contract."
+  },
+  "notApplicableReviewKeys": [
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|0fc30893-8f82-4080-9cb8-a83434c5e20b|803a6943-4bf8-426a-a461-21245b141157",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|4f0c80cb-0f2b-4b63-b8a7-3836e754b4b5|53f2a31f-a633-471f-8e82-b4f3624e9e8e",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|fafa58d6-95f2-4647-8b19-a0929180c26b|53f2a31f-a633-471f-8e82-b4f3624e9e8e",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|105a399e-cdde-4ee2-be11-7c44c1e36fdc|10cbdee4-b1ee-49fc-9b23-3421e45bf127",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|ae441102-48a5-4c6c-86a4-8555c22bcdd0|10cbdee4-b1ee-49fc-9b23-3421e45bf127",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|d9d35f41-17e4-4cf8-8ee5-952ec7b3e5b1|10cbdee4-b1ee-49fc-9b23-3421e45bf127",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|5fb93449-0ff2-4848-b262-0435a7deba4d|1a5f57a3-ba52-4d76-84ab-47f257310947",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|8f6ca853-d1e0-4d6b-9e93-b461914ea7a3|1a5f57a3-ba52-4d76-84ab-47f257310947",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|4bea0a55-c3e0-474e-9526-f999e5c3010b|14b7c41b-5202-427a-9358-44d2ab866053",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|18d5f038-d85f-4413-bba9-b264fdba06ca|8010ac74-3b50-4b19-a67b-a4cf3cc06c1a",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|53dc93ea-b1f9-47de-b434-7a323ddd8be2|8010ac74-3b50-4b19-a67b-a4cf3cc06c1a",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|34bc573a-5dcd-4ede-abbe-027171e1e5a5|e467d0eb-ee59-470a-ac09-09396683978e",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|c4b5fc5a-9683-4f13-9177-6681bd5fefdd|c4a859bd-7743-4e8b-af2f-7d5c89d7abed",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|1712155c-1cbc-4a08-b87f-f49686e05f6a|803a6943-4bf8-426a-a461-21245b141157",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|df7bed99-2d32-4e72-a6d4-430a9d1658a0|d37ce64c-2ad3-457e-accc-84748c6c2af0",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|f946dd98-8d8a-4b8c-bcf1-0c82f08092dc|9c304478-35ef-4e85-8023-a6a98699e728",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|d3b45314-1b89-4392-afcb-6e37a6bafbb2|0c277630-70b0-42bb-b668-6749dc2e50f1",
+    "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|b81220c5-69f0-460c-913c-57a1ef2f7e1a|21fe3b66-3e1b-4ee0-8938-9227823514d2"
+  ],
+  "billContextRows": [
+    {
+      "reviewKey": "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|840db6c3-27be-45e0-b2d6-b6d37289d344|cb0c0b6e-e513-4138-8183-05cbbed91d79",
+      "billMentionExcerpt": "H.F. 2887: Senator Dibble: Omnibus Transportation appropriations.",
+      "billMentionPage": 1
+    },
+    {
+      "reviewKey": "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|989c13b7-ae70-447e-b6ef-a57c96554f10|cb0c0b6e-e513-4138-8183-05cbbed91d79",
+      "billMentionExcerpt": "H.F. 2887: Senator Dibble: Omnibus Transportation appropriations.",
+      "billMentionPage": 1
+    },
+    {
+      "reviewKey": "cf2f3b4d0ea7d81435b5b23f5f2f7883102ae18e2ff0ddebc3b08a7c5785c17b|e55974285fc2f0028b5d0c2aafa814ae2870a739d26b371e18099dc128d1942c|a5849fc0-0166-41a1-a3de-94bcc7770a4b|cb0c0b6e-e513-4138-8183-05cbbed91d79",
+      "billMentionExcerpt": "H.F. 2887: Senator Dibble: Omnibus Transportation appropriations.",
+      "billMentionPage": 1
+    }
+  ],
+  "directionalRows": [],
+  "ambiguousFailClosedRows": [],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "targetVoteOutcomesRead": false,
+    "outcomeUse": "none",
+    "committeeMembershipUsedAsStance": false,
+    "attendanceUsedAsStance": false,
+    "proceduralActionUsedAsDirectionalStance": false,
+    "ambiguousDefaultsToFailClosed": true,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "modelWeightChanged": false,
+    "servingChanged": false,
+    "vercelUsed": false,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0
+  }
+}
