@@ -59,6 +59,8 @@ const EXPECTED_UNRESOLVED = 'HF2354|2026-05-17';
 const EXPECTED_REPLAYABLE_EVENTS = 15;
 const EXPECTED_MEMBER_OBSERVATIONS = 1990;
 const EXPECTED_MEMBER_PREDICTIONS = 1990;
+const EXPECTED_MEMBER_PREDICTION_ROWS = 2009;
+const EXPECTED_MEMBER_PREDICTION_ROWS_WITHOUT_OUTCOME = 19;
 const EXPECTED_DECISIVE_VOTE_ROWS = 1991;
 const EXPECTED_DECISIVE_VOTE_ROWS_WITHOUT_PREDICTION = 1;
 const EXPECTED_DECISIVE_VOTE_PREDICTION_GAP_PROOF_SHA256 =
@@ -747,6 +749,33 @@ async function main(): Promise<void> {
     };
   });
 
+  const memberPredictionRows = detailedEvents.reduce(
+    (total, event) => total + event.memberPredictions.length,
+    0,
+  );
+  const memberPredictionRowsWithoutOutcome = detailedEvents.reduce(
+    (total, event) => total
+      + event.memberPredictions.filter((row) => row.actualOutcome === null).length,
+    0,
+  );
+  if (
+    memberPredictionRows !== EXPECTED_MEMBER_PREDICTION_ROWS
+    || memberPredictionRowsWithoutOutcome
+      !== EXPECTED_MEMBER_PREDICTION_ROWS_WITHOUT_OUTCOME
+    || memberPredictionRows - memberPredictionRowsWithoutOutcome
+      !== EXPECTED_MEMBER_OBSERVATIONS
+  ) {
+    throw new Error(
+      'Prediction-row observation boundary drifted: '
+      + JSON.stringify({
+        memberPredictionRows,
+        memberPredictionRowsWithoutOutcome,
+        memberPredictionRowsWithOutcome:
+          memberPredictionRows - memberPredictionRowsWithoutOutcome,
+      }),
+    );
+  }
+
   const decisiveVoteRows = detailedEvents.reduce(
     (total, event) => total + event.decisiveVoteRows.length,
     0,
@@ -857,6 +886,8 @@ async function main(): Promise<void> {
       statusCounts,
       resultProofSha256,
       memberPredictionProofSha256,
+      memberPredictionRows,
+      memberPredictionRowsWithoutOutcome,
       decisiveVoteRows,
       decisiveVoteRowsWithoutPrediction: decisiveVoteRowsWithoutPrediction.length,
       decisiveVotePredictionGapProofSha256,
@@ -920,6 +951,8 @@ async function main(): Promise<void> {
       statusCounts,
       resultProofSha256,
       memberPredictionProofSha256,
+      memberPredictionRows,
+      memberPredictionRowsWithoutOutcome,
       decisiveVoteRows,
       decisiveVoteRowsWithoutPrediction: decisiveVoteRowsWithoutPrediction.length,
       decisiveVotePredictionGapProofSha256,
