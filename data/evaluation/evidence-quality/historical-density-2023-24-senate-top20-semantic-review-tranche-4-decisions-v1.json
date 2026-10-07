@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "historical-density-2023-24-senate-top20-semantic-review-tranche-4-decisions-v1",
+  "issue": 718,
+  "session": "2023-2024",
+  "trancheId": "SENATE-2023-24-TOP20-SEMANTIC-004",
+  "frozenReviewPacket": {
+    "reviewRows": 18,
+    "reviewKeySha256": "d783bead5e435d0f2ed06a27d31edd979de3861bbf63465388a2e3e9e83ba6ab",
+    "sourcePdfSha256": "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce",
+    "sourceTextSha256": "60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273",
+    "reviewPacketProofSha256": "debabbc591bcad79e263ca49844da14039752abdabae291cf4e977fd3a0765db"
+  },
+  "decisionRationales": {
+    "full_text_review_no_candidate_bill_support": "Full frozen minute reviewed. This candidate bill is neither explicitly mentioned nor otherwise unambiguously identifiable in the source text; committee/referral overlap alone is not treated as applicability.",
+    "candidate_bill_explicitly_present_but_only_procedural_actions_recorded": "Full frozen minute reviewed. The candidate bill is explicit, but the minute records motions, amendments, substitution, or recommend-to-pass procedure rather than an attributable directional member statement under the existing Senate semantic-review contract."
+  },
+  "notApplicableReviewKeys": [
+    "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|18d5f038-d85f-4413-bba9-b264fdba06ca|8010ac74-3b50-4b19-a67b-a4cf3cc06c1a",
+    "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|2674d5a0-1d09-451f-ac40-25331743f042|d37ce64c-2ad3-457e-accc-84748c6c2af0",
+    "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|53dc93ea-b1f9-47de-b434-7a323ddd8be2|8010ac74-3b50-4b19-a67b-a4cf3cc06c1a",
+    "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|5dcf763f-96a0-4a92-9ff0-bdb2704b650c|21fe3b66-3e1b-4ee0-8938-9227823514d2",
+    "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|5fb93449-0ff2-4848-b262-0435a7deba4d|1a5f57a3-ba52-4d76-84ab-47f257310947",
+    "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|8b5fb8c9-127f-4e45-94f1-04f3a963cfaa|1d7de7c4-9dfa-46e3-8a17-968409504126",
+    "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|8f6ca853-d1e0-4d6b-9e93-b461914ea7a3|1a5f57a3-ba52-4d76-84ab-47f257310947",
+    "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|974b2373-2ba9-42a1-b7fa-1532719b0259|8010ac74-3b50-4b19-a67b-a4cf3cc06c1a",
+    "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|b81220c5-69f0-460c-913c-57a1ef2f7e1a|21fe3b66-3e1b-4ee0-8938-9227823514d2",
+    "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|d2713378-25d9-465a-a574-a1f3c588666c|af1a407e-0bdc-40ab-a5ee-b00092f5eb4c",
+    "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|d3118894-5281-4b76-bdc8-c900a209d47a|1a5f57a3-ba52-4d76-84ab-47f257310947",
+    "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|d3b45314-1b89-4392-afcb-6e37a6bafbb2|0c277630-70b0-42bb-b668-6749dc2e50f1",
+    "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|df7bed99-2d32-4e72-a6d4-430a9d1658a0|d37ce64c-2ad3-457e-accc-84748c6c2af0",
+    "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|f946dd98-8d8a-4b8c-bcf1-0c82f08092dc|9c304478-35ef-4e85-8023-a6a98699e728"
+  ],
+  "billContextRows": [
+    {
+      "reviewKey": "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|34bc573a-5dcd-4ede-abbe-027171e1e5a5|e467d0eb-ee59-470a-ac09-09396683978e",
+      "billMentionExcerpt": "S.F. 3035: Senator Champion: Department of Employment and Economic Development, Public Utilities Commission and Explore",
+      "billMentionPage": 1
+    },
+    {
+      "reviewKey": "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|4bea0a55-c3e0-474e-9526-f999e5c3010b|14b7c41b-5202-427a-9358-44d2ab866053",
+      "billMentionExcerpt": "S.F. 2909: Senator Latz: Omnibus Judiciary and Public Safety appropriations.",
+      "billMentionPage": 1
+    },
+    {
+      "reviewKey": "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|8789195d-9c61-4049-9406-7e7e189056e8|e467d0eb-ee59-470a-ac09-09396683978e",
+      "billMentionExcerpt": "S.F. 3035: Senator Champion: Department of Employment and Economic Development, Public Utilities Commission and Explore",
+      "billMentionPage": 1
+    },
+    {
+      "reviewKey": "e03303f78847f341cff08b8c20ef0ee9503e3a14b6d23910f85415405c9d57ce|60ef46c1652c9da884b654f952288fb219be3b4b8490cb9325dcc286bc346273|d721043a-9147-43be-8bad-325e5ead1626|14b7c41b-5202-427a-9358-44d2ab866053",
+      "billMentionExcerpt": "S.F. 2909: Senator Latz: Omnibus Judiciary and Public Safety appropriations.",
+      "billMentionPage": 1
+    }
+  ],
+  "directionalRows": [],
+  "ambiguousFailClosedRows": [],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "targetVoteOutcomesRead": false,
+    "outcomeUse": "none",
+    "committeeMembershipUsedAsStance": false,
+    "attendanceUsedAsStance": false,
+    "proceduralActionUsedAsDirectionalStance": false,
+    "ambiguousDefaultsToFailClosed": true,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "modelWeightChanged": false,
+    "servingChanged": false,
+    "vercelUsed": false,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0
+  }
+}
