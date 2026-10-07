@@ -89,7 +89,7 @@ jobs:
           test "$(jq -r '.schemaVersion' "$packet")" = historical-density-2023-24-senate-top20-semantic-review-tranche-3-packet-v1
           test "$(jq -r '.scope.documents' "$packet")" = 1
           test "$(jq -r '.scope.reviewRows' "$packet")" = 11
-          test "$(jq -r '.scope.candidateBills' "$packet")" = 8
+          test "$(jq -r '.scope.candidateBills' "$packet")" = 5
           test "$(jq -r '.reviewKeySha256' "$packet")" = 4836a5270964fef768300dd2eec26f8e331f5c0840407cb1c35fa56ec73e8e04
           test "$(jq -r '.reviewPacketProofSha256' "$packet")" = 7ca3806ab4390585869462c4182e6e13c344c96f7871cec465c877b3961e4038
           test "$(jq -r '.schemaVersion' "$review")" = historical-density-2023-24-senate-top20-semantic-review-tranche-3-v1
