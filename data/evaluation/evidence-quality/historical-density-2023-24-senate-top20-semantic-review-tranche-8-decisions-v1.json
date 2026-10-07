@@ -12,7 +12,7 @@
   },
   "decisionRationales": {
     "full_text_review_no_candidate_bill_support": "Full frozen minute reviewed. This candidate bill is neither explicitly mentioned nor otherwise unambiguously identifiable in the source text; committee/referral overlap alone is not treated as applicability.",
-    "candidate_bill_explicitly_present_but_only_procedural_actions_recorded": "Full frozen minute reviewed. The candidate bill is explicit, but the minute records motions, amendments, substitution, or recommend-to-pass procedure rather than an attributable directional member statement under the existing Senate semantic-review contract."
+    "candidate_bill_explicitly_present_but_only_procedural_actions_recorded": "Full frozen minute reviewed. The candidate bill is explicit, but the minute records motions, amendments, substitution, or recommend-to-pass procedure rather than an attributable directional member statement under the existing Senate semantic-review contract. Named roll-call votes on amendments are amendment positions, not whole-bill directional positions."
   },
   "notApplicableReviewKeys": [
     "74f1ef0fbe1179ebc5d2d2d618a273c4cf49ae2659d69a27074756670fefde8a|ca7a95b1952eed34825cc990a85c323e5014b532d65cbff70e28ff5d8d2456e8|aaab87ed-c15a-4d7a-a9b2-8eb654be60d5|226fcfdc-a454-47a6-a422-9048cc7b6407",
@@ -21,12 +21,12 @@
   "billContextRows": [
     {
       "reviewKey": "74f1ef0fbe1179ebc5d2d2d618a273c4cf49ae2659d69a27074756670fefde8a|ca7a95b1952eed34825cc990a85c323e5014b532d65cbff70e28ff5d8d2456e8|37738672-670d-4fce-aa53-c91a6b42c152|af0af7fa-f7bf-49d8-90bf-8890413c7e18",
-      "billMentionExcerpt": "H.F. 4757: Senator Port:",
+      "billMentionExcerpt": "H.F. 4757: Senator Port: O\u0000ce of Cannabis Management modi\u0000cations and appropriations.",
       "billMentionPage": 1
     },
     {
       "reviewKey": "74f1ef0fbe1179ebc5d2d2d618a273c4cf49ae2659d69a27074756670fefde8a|ca7a95b1952eed34825cc990a85c323e5014b532d65cbff70e28ff5d8d2456e8|d1478e5e-d7f2-4745-b3c4-f58ef7b0e3a0|af0af7fa-f7bf-49d8-90bf-8890413c7e18",
-      "billMentionExcerpt": "H.F. 4757: Senator Port:",
+      "billMentionExcerpt": "H.F. 4757: Senator Port: O\u0000ce of Cannabis Management modi\u0000cations and appropriations.",
       "billMentionPage": 1
     }
   ],
