@@ -126,19 +126,34 @@ async function chooseDb(runtimeEnv: Record<string, string | undefined>): Promise
   const secret = runtimeEnv.CRON_SECRET?.trim();
   if (!secret) throw new Error('CRON_SECRET unavailable');
   mask(secret);
-  const response = await fetch(DATABASE_BRIDGE_URL, {
-    method: 'POST',
-    headers: { authorization: `Bearer ${secret}` },
-    signal: AbortSignal.timeout(20_000),
-  });
-  if (!response.ok) throw new Error(`Database bridge HTTP ${response.status}`);
-  const value = (await response.text()).trim();
-  secrets.push(value);
-  mask(value);
-  if (!await works(value)) {
-    throw new Error('Database bridge returned non-portable URL');
+  let lastBridgeError: unknown;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const response = await fetch(DATABASE_BRIDGE_URL, {
+        method: 'POST',
+        headers: { authorization: `Bearer ${secret}` },
+        signal: AbortSignal.timeout(30_000),
+      });
+      if (!response.ok) {
+        throw new Error(`Database bridge HTTP ${response.status}`);
+      }
+      const value = (await response.text()).trim();
+      secrets.push(value);
+      mask(value);
+      if (!await works(value)) {
+        throw new Error('Database bridge returned non-portable URL');
+      }
+      return value;
+    } catch (error) {
+      lastBridgeError = error;
+      if (attempt < 3) {
+        await new Promise((resolveDelay) => setTimeout(resolveDelay, attempt * 3000));
+      }
+    }
   }
-  return value;
+  throw lastBridgeError instanceof Error
+    ? lastBridgeError
+    : new Error(String(lastBridgeError));
 }
 
 function parseCanonicalMatrix(manifestPath: string, matrixPath: string): CanonicalRow[] {
@@ -306,7 +321,7 @@ function serializableSupport(
       || a.voteEventId.localeCompare(b.voteEventId),
   );
   const versions = [...dataset.versionsByBill.entries()]
-    .flatMap(([billId, rows]) => rows.map((row) => ({ billId, ...row })))
+    .flatMap(([, rows]) => rows.map((row) => ({ ...row })))
     .sort(
       (a, b) => a.billId.localeCompare(b.billId)
         || a.publishedAt.localeCompare(b.publishedAt)
