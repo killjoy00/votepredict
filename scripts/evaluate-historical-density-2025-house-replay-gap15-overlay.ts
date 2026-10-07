@@ -1,0 +1,524 @@
+import { createHash } from 'node:crypto';
+import { gunzipSync } from 'node:zlib';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import {
+  buildHistoricalQuickAnalogueSupport,
+  scoreHistoricalQuickReplay,
+  type QuickReplayEvent,
+  type QuickReplayMembership,
+  type QuickReplayVersion,
+  type QuickReplayVote,
+} from '../src/evaluation/historical-quick-replay.js';
+import { runHistoricalQuickDecayShadowReplay } from '../src/evaluation/historical-quick-decay-shadow-replay.js';
+
+const ISSUE = 718;
+const HALF_LIFE_DAYS = 180;
+
+const SUPPORT_RUN_ID = 37631304120;
+const SUPPORT_ARTIFACT_ID = 11486621043;
+const SUPPORT_ARTIFACT_DIGEST =
+  'sha256:9c21df92e9ee8644570e90cd2586cc16c1e14bc0e0bae94a527a320516a21553';
+const SUPPORT_CANONICAL_SHA256 =
+  'bd4f8fedf2c79bb42d87b94a2864fc877c7b577d33f4e5da8157eef01b818c6f';
+const SUPPORT_GZIP_SHA256 =
+  'd9f7b54c3dbb7c4db9579a718a6c00283056a8b2e4de8dbf0a3ea3dc63bf776b';
+const SUPPORT_EVENTS = 1380;
+const SUPPORT_VERSIONS = 2206;
+const SUPPORT_MEMBERSHIPS = 612;
+const SUPPORT_HISTORICAL_VOTES = 137435;
+const SUPPORT_CANONICAL_TARGETS = 1339;
+const SUPPORT_TARGET_VERSIONS = 1377;
+const SUPPORT_ANALOGUE_EVENTS = 1374;
+
+const OUTCOME_RUN_ID = 37625127437;
+const OUTCOME_ARTIFACT_ID = 11483367972;
+const OUTCOME_ARTIFACT_DIGEST =
+  'sha256:2415268dd0f3a0fb5cea4e03eb22e6e74ee1f1efdaa8ce4dd8b8ea743e8659ba';
+const OUTCOME_SOURCE_SHA256 =
+  'e1a0abcc2970e7888021946dbe915aebf27077dafc4dfc7249b023339aad92d0';
+const OUTCOME_PROOF_SHA256 =
+  'b7490e53daeff266d8c5d450ee428c018b1070dcf0e4ca8b91234b24bbb616db';
+
+const EXPECTED_GAP_EVENTS = 16;
+const EXPECTED_OVERLAY_TARGETS = 15;
+const EXPECTED_UNRESOLVED = 'HF2354|2026-05-17';
+
+type Json = Record<string, any>;
+
+type SupportEnvelope = {
+  schemaVersion: string;
+  generatedAt: string;
+  issue: number;
+  replayVersion: string;
+  memberHistoryHalfLifeDays: number;
+  data: {
+    events: QuickReplayEvent[];
+    versions: QuickReplayVersion[];
+    memberships: QuickReplayMembership[];
+    historicalVotes: QuickReplayVote[];
+    targetVersions: Array<{
+      voteEventId: string;
+      billVersionId: string;
+      billId: string;
+      publishedAt: string;
+    }>;
+    analogueSupport: Array<{
+      voteEventId: string;
+      prefiltered: number;
+      selected: number;
+      selectedAnalogueIds: string[];
+      directMemberSupport: number;
+    }>;
+  };
+};
+
+function env(name: string): string {
+  const value = process.env[name]?.trim();
+  if (!value) throw new Error(`${name} is required`);
+  return value;
+}
+
+function sha256(value: string | Buffer): string {
+  return createHash('sha256').update(value).digest('hex');
+}
+
+function setSha(values: readonly string[]): string {
+  return sha256(`${[...values].sort().join('\n')}\n`);
+}
+
+function readJson(path: string): Json {
+  return JSON.parse(readFileSync(path, 'utf8')) as Json;
+}
+
+function composite(identifier: string, occurredOn: string): string {
+  return `${identifier.replace(/\s+/g, '').toUpperCase()}|${occurredOn}`;
+}
+
+function parseSupport(manifestPath: string, snapshotPath: string) {
+  const manifest = readJson(manifestPath);
+  const gzip = readFileSync(snapshotPath);
+
+  if (
+    manifest.schemaVersion
+      !== 'historical-density-2025-house-replay-gap16-support-manifest-v1'
+    || manifest.issue !== ISSUE
+    || manifest.frozenInputs?.canonicalMatrix?.artifactId !== 11252079484
+    || manifest.frozenInputs?.gapMemberVotes?.artifactId !== 11482176035
+    || manifest.frozenInputs?.gapOutcomes?.artifactId !== OUTCOME_ARTIFACT_ID
+    || manifest.productionSnapshot?.databaseReadOnly !== true
+    || manifest.productionSnapshot?.productionWrites !== false
+    || manifest.canonicalParity?.passed !== true
+    || manifest.canonicalParity?.canonicalRows !== 135457
+    || manifest.canonicalParity?.currentRows !== 135457
+    || manifest.canonicalParity?.missingRows !== 0
+    || manifest.canonicalParity?.extraRows !== 0
+    || manifest.canonicalParity?.fieldMismatches !== 0
+    || manifest.gapLoaderReconciliation?.passed !== true
+    || manifest.gapLoaderReconciliation?.reconciledEvents !== EXPECTED_GAP_EVENTS
+    || manifest.gapLoaderReconciliation?.reconciledDecisiveMemberVotes !== 2125
+    || manifest.gapOverlayReadiness?.outcomeCompleteEvents !== EXPECTED_OVERLAY_TARGETS
+    || manifest.gapOverlayReadiness?.readyForTargetVersionAugmentation !== true
+    || manifest.gapOverlayReadiness?.readyForScoring !== false
+  ) {
+    throw new Error('Canonical Quick support manifest drifted');
+  }
+
+  if (
+    manifest.productionSnapshot?.events !== SUPPORT_EVENTS
+    || manifest.productionSnapshot?.versions !== SUPPORT_VERSIONS
+    || manifest.productionSnapshot?.memberships !== SUPPORT_MEMBERSHIPS
+    || manifest.productionSnapshot?.historicalVotes !== SUPPORT_HISTORICAL_VOTES
+    || manifest.productionSnapshot?.targets !== SUPPORT_CANONICAL_TARGETS
+    || manifest.productionSnapshot?.targetVersions !== SUPPORT_TARGET_VERSIONS
+    || manifest.productionSnapshot?.analogueSupportEvents !== SUPPORT_ANALOGUE_EVENTS
+    || manifest.productionSnapshot?.supportSnapshotCanonicalSha256
+      !== SUPPORT_CANONICAL_SHA256
+    || manifest.productionSnapshot?.supportSnapshotGzipSha256 !== SUPPORT_GZIP_SHA256
+  ) {
+    throw new Error('Canonical Quick support counts/digests drifted');
+  }
+
+  if (sha256(gzip) !== SUPPORT_GZIP_SHA256) {
+    throw new Error('Quick support gzip digest mismatch');
+  }
+  const json = gunzipSync(gzip).toString('utf8');
+  if (sha256(json) !== SUPPORT_CANONICAL_SHA256) {
+    throw new Error('Quick support canonical JSON digest mismatch');
+  }
+  const envelope = JSON.parse(json) as SupportEnvelope;
+  if (
+    envelope.schemaVersion
+      !== 'historical-density-2025-house-replay-gap16-support-snapshot-v1'
+    || envelope.issue !== ISSUE
+    || envelope.replayVersion !== 'historical-quick-replay-v2'
+    || envelope.memberHistoryHalfLifeDays !== HALF_LIFE_DAYS
+    || envelope.data.events.length !== SUPPORT_EVENTS
+    || envelope.data.versions.length !== SUPPORT_VERSIONS
+    || envelope.data.memberships.length !== SUPPORT_MEMBERSHIPS
+    || envelope.data.historicalVotes.length !== SUPPORT_HISTORICAL_VOTES
+    || envelope.data.targetVersions.length !== SUPPORT_TARGET_VERSIONS
+    || envelope.data.analogueSupport.length !== SUPPORT_ANALOGUE_EVENTS
+  ) {
+    throw new Error('Quick support snapshot envelope drifted');
+  }
+  return { manifest, envelope };
+}
+
+function parseOutcomes(path: string) {
+  const value = readJson(path);
+  if (
+    value.schemaVersion !== 'historical-density-2025-house-replay-gap16-outcomes-v1'
+    || value.issue !== ISSUE
+    || value.session !== '2025-2026'
+    || value.chamber !== 'house'
+    || value.journalSource?.sourceProofSha256 !== OUTCOME_SOURCE_SHA256
+    || value.outcomeRecovery?.outcomeProofSha256 !== OUTCOME_PROOF_SHA256
+    || value.outcomeRecovery?.events !== EXPECTED_GAP_EVENTS
+    || value.outcomeRecovery?.recovered !== EXPECTED_OVERLAY_TARGETS
+    || value.outcomeRecovery?.unresolved !== 1
+  ) {
+    throw new Error('Canonical gap outcome artifact drifted');
+  }
+  const rows = value.outcomeRecovery.eventsData as Json[];
+  const recovered = rows.filter((row) => row.status === 'recovered');
+  const unresolved = rows.filter((row) => row.status === 'unresolved');
+  if (
+    recovered.length !== EXPECTED_OVERLAY_TARGETS
+    || unresolved.length !== 1
+    || unresolved[0]?.compositeKey !== EXPECTED_UNRESOLVED
+  ) {
+    throw new Error('Gap outcome recovery set drifted');
+  }
+  return { value, recovered, unresolved: unresolved[0] };
+}
+
+function versionsByBill(versions: readonly QuickReplayVersion[]) {
+  const result = new Map<string, QuickReplayVersion[]>();
+  for (const version of versions) {
+    const rows = result.get(version.billId) ?? [];
+    rows.push(version);
+    result.set(version.billId, rows);
+  }
+  return result;
+}
+
+function votesByEvent(votes: readonly QuickReplayVote[]) {
+  const result = new Map<string, Map<string, 'yea' | 'nay'>>();
+  for (const vote of votes) {
+    const rows = result.get(vote.voteEventId) ?? new Map<string, 'yea' | 'nay'>();
+    const prior = rows.get(vote.legislatorId);
+    if (prior && prior !== vote.choice) {
+      throw new Error(
+        `Conflicting legislator vote in frozen support: ${vote.voteEventId}|${vote.legislatorId}`,
+      );
+    }
+    rows.set(vote.legislatorId, vote.choice);
+    result.set(vote.voteEventId, rows);
+  }
+  return result;
+}
+
+function decisiveCounts(votes: readonly QuickReplayVote[]) {
+  const result = new Map<string, number>();
+  for (const vote of votes) {
+    result.set(vote.voteEventId, (result.get(vote.voteEventId) ?? 0) + 1);
+  }
+  return result;
+}
+
+function verifySupportRebuild(envelope: SupportEnvelope) {
+  const byBill = versionsByBill(envelope.data.versions);
+  const byEventVotes = votesByEvent(envelope.data.historicalVotes);
+  const rebuilt = buildHistoricalQuickAnalogueSupport(
+    envelope.data.events,
+    byBill,
+    byEventVotes,
+  );
+
+  if (
+    rebuilt.targetVersionByEvent.size !== SUPPORT_TARGET_VERSIONS
+    || rebuilt.supportByEvent.size !== SUPPORT_ANALOGUE_EVENTS
+  ) {
+    throw new Error(
+      `Rebuilt Quick support cardinality drifted: `
+      + JSON.stringify({
+        targetVersions: rebuilt.targetVersionByEvent.size,
+        analogueSupport: rebuilt.supportByEvent.size,
+      }),
+    );
+  }
+
+  const frozenTargetVersions = new Map(
+    envelope.data.targetVersions.map((row) => [row.voteEventId, row] as const),
+  );
+  for (const [voteEventId, version] of rebuilt.targetVersionByEvent) {
+    const frozen = frozenTargetVersions.get(voteEventId);
+    if (
+      !frozen
+      || frozen.billVersionId !== version.id
+      || frozen.billId !== version.billId
+      || frozen.publishedAt !== version.publishedAt
+    ) {
+      throw new Error(`Target-version rebuild drifted for ${voteEventId}`);
+    }
+  }
+
+  const frozenAnalogue = new Map(
+    envelope.data.analogueSupport.map((row) => [row.voteEventId, row] as const),
+  );
+  for (const [voteEventId, support] of rebuilt.supportByEvent) {
+    const frozen = frozenAnalogue.get(voteEventId);
+    if (
+      !frozen
+      || frozen.prefiltered !== support.prefiltered
+      || frozen.selected !== support.selected
+      || JSON.stringify(frozen.selectedAnalogueIds)
+        !== JSON.stringify(support.selectedAnalogueIds)
+      || frozen.directMemberSupport !== support.member.size
+    ) {
+      throw new Error(`Analogue-support rebuild drifted for ${voteEventId}`);
+    }
+  }
+
+  return rebuilt;
+}
+
+async function main(): Promise<void> {
+  const support = parseSupport(
+    env('VOTEPREDICT_GAP16_SUPPORT_MANIFEST_PATH'),
+    env('VOTEPREDICT_GAP16_SUPPORT_SNAPSHOT_PATH'),
+  );
+  const outcomes = parseOutcomes(env('VOTEPREDICT_GAP16_OUTCOMES_PATH'));
+  const output = resolve(env('VOTEPREDICT_GAP15_OVERLAY_OUTPUT'));
+
+  const rebuilt = verifySupportRebuild(support.envelope);
+  const counts = decisiveCounts(support.envelope.data.historicalVotes);
+
+  const canonicalTargets = support.envelope.data.events.filter(
+    (event) =>
+      event.passed !== null
+      && rebuilt.targetVersionByEvent.has(event.voteEventId)
+      && (counts.get(event.voteEventId) ?? 0) >= 20,
+  );
+  if (canonicalTargets.length !== SUPPORT_CANONICAL_TARGETS) {
+    throw new Error(
+      `Canonical target set drifted after offline rebuild: ${canonicalTargets.length}`,
+    );
+  }
+
+  const reconciledByComposite = new Map<string, Json>(
+    (support.manifest.gapLoaderReconciliation.events as Json[])
+      .map((row) => [String(row.compositeKey), row]),
+  );
+  const eventById = new Map(
+    support.envelope.data.events.map((event) => [event.voteEventId, event] as const),
+  );
+
+  const overlayTargets: QuickReplayEvent[] = outcomes.recovered.map((row) => {
+    const compositeKey = String(row.compositeKey);
+    const reconciliation = reconciledByComposite.get(compositeKey);
+    if (!reconciliation) {
+      throw new Error(`No frozen loader reconciliation for ${compositeKey}`);
+    }
+    const event = eventById.get(String(reconciliation.voteEventId));
+    if (!event) throw new Error(`No frozen loader event for ${compositeKey}`);
+    if (
+      event.passed !== null
+      || composite(event.identifier, event.occurredOn) !== compositeKey
+      || event.yeaCount !== Number(row.yeaCount)
+      || event.nayCount !== Number(row.nayCount)
+      || !rebuilt.targetVersionByEvent.has(event.voteEventId)
+      || !rebuilt.supportByEvent.has(event.voteEventId)
+      || (counts.get(event.voteEventId) ?? 0) !== Number(row.decisiveVotes)
+      || typeof row.passed !== 'boolean'
+    ) {
+      throw new Error(`Overlay target prerequisites drifted for ${compositeKey}`);
+    }
+    return {
+      ...event,
+      passed: row.passed as boolean,
+    };
+  });
+
+  if (
+    overlayTargets.length !== EXPECTED_OVERLAY_TARGETS
+    || new Set(overlayTargets.map((event) => event.voteEventId)).size
+      !== EXPECTED_OVERLAY_TARGETS
+  ) {
+    throw new Error('Overlay target identity/cardinality drifted');
+  }
+  if (
+    overlayTargets.some(
+      (event) => composite(event.identifier, event.occurredOn) === EXPECTED_UNRESOLVED,
+    )
+  ) {
+    throw new Error('Fail-closed HF2354 event leaked into overlay targets');
+  }
+
+  const results = runHistoricalQuickDecayShadowReplay(
+    overlayTargets,
+    rebuilt.targetVersionByEvent,
+    rebuilt.supportByEvent,
+    support.envelope.data.memberships,
+    support.envelope.data.historicalVotes,
+    HALF_LIFE_DAYS,
+  );
+  if (results.length !== EXPECTED_OVERLAY_TARGETS) {
+    throw new Error(`Expected 15 overlay replay results, found ${results.length}`);
+  }
+
+  const scorecard = scoreHistoricalQuickReplay(results);
+  const statusCounts: Record<string, number> = {};
+  for (const result of results) {
+    statusCounts[result.status] = (statusCounts[result.status] ?? 0) + 1;
+  }
+
+  const resultProofSha256 = setSha(
+    results.map((result) =>
+      [
+        result.voteEventId,
+        result.status,
+        result.targetVersionId,
+        result.activeMembers,
+        result.directAnalogueMembers,
+        result.selectedAnalogues,
+        result.memberPredictions.length,
+        result.memberPredictions.filter((row) => row.yesProbability !== undefined).length,
+        result.actualYes,
+        result.passed ? 'pass' : 'fail',
+        result.passageProbability ?? 'null',
+        result.expectedYes ?? 'null',
+      ].join('|')
+    ),
+  );
+  const memberPredictionProofSha256 = setSha(
+    results.flatMap((result) =>
+      result.memberPredictions.map((member) =>
+        [
+          result.voteEventId,
+          member.membershipId,
+          member.legislatorId,
+          member.party,
+          member.yesProbability ?? 'null',
+          member.actualOutcome ?? 'null',
+          member.analogueEffectiveWeight,
+          member.cannotPredictReason ?? '',
+        ].join('|')
+      )
+    ),
+  );
+
+  const report = {
+    schemaVersion: 'historical-density-2025-house-replay-gap15-overlay-v1',
+    generatedAt: new Date().toISOString(),
+    issue: ISSUE,
+    replay: {
+      version: 'historical-quick-replay-v2',
+      memberHistoryHalfLifeDays: HALF_LIFE_DAYS,
+      cohort: '15 frozen outcome-complete 2025-26 House replay-gap events',
+    },
+    frozenInputs: {
+      support: {
+        runId: SUPPORT_RUN_ID,
+        artifactId: SUPPORT_ARTIFACT_ID,
+        artifactDigest: SUPPORT_ARTIFACT_DIGEST,
+        canonicalSha256: SUPPORT_CANONICAL_SHA256,
+        gzipSha256: SUPPORT_GZIP_SHA256,
+      },
+      outcomes: {
+        runId: OUTCOME_RUN_ID,
+        artifactId: OUTCOME_ARTIFACT_ID,
+        artifactDigest: OUTCOME_ARTIFACT_DIGEST,
+        sourceProofSha256: OUTCOME_SOURCE_SHA256,
+        outcomeProofSha256: OUTCOME_PROOF_SHA256,
+      },
+    },
+    reconstruction: {
+      supportTargetVersions: rebuilt.targetVersionByEvent.size,
+      supportAnalogueEvents: rebuilt.supportByEvent.size,
+      frozenSupportSelectionsExact: true,
+      canonicalTargetsRebuilt: canonicalTargets.length,
+      canonicalTargetsChanged: false,
+    },
+    overlay: {
+      frozenGapEvents: EXPECTED_GAP_EVENTS,
+      outcomeCompleteTargets: overlayTargets.length,
+      excludedFailClosed: [EXPECTED_UNRESOLVED],
+      underlyingLoaderPassedWasNullForAllTargets: true,
+      targetVersionCoverage: overlayTargets.filter((event) =>
+        rebuilt.targetVersionByEvent.has(event.voteEventId)).length,
+      analogueSupportCoverage: overlayTargets.filter((event) =>
+        rebuilt.supportByEvent.has(event.voteEventId)).length,
+      results: results.length,
+      statusCounts,
+      resultProofSha256,
+      memberPredictionProofSha256,
+      events: results.map((result) => {
+        const target = overlayTargets.find((event) =>
+          event.voteEventId === result.voteEventId)!;
+        return {
+          voteEventId: result.voteEventId,
+          compositeKey: composite(target.identifier, target.occurredOn),
+          identifier: target.identifier,
+          occurredOn: target.occurredOn,
+          status: result.status,
+          targetVersionId: result.targetVersionId,
+          activeMembers: result.activeMembers,
+          directAnalogueMembers: result.directAnalogueMembers,
+          selectedAnalogues: result.selectedAnalogues,
+          memberObservations: result.memberPredictions.filter(
+            (row) => row.actualOutcome !== undefined,
+          ).length,
+          memberPredictions: result.memberPredictions.filter(
+            (row) => row.yesProbability !== undefined,
+          ).length,
+          passageProbability: result.passageProbability ?? null,
+          expectedYes: result.expectedYes ?? null,
+          actualYes: result.actualYes,
+          passed: result.passed,
+        };
+      }),
+    },
+    scorecard,
+    policy: {
+      productionDatabaseQueried: false,
+      productionWrites: false,
+      vercelUsed: false,
+      canonicalTargetSetMutated: false,
+      frozenSupportOnly: true,
+      frozenOutcomeLabelsOnly: true,
+      unresolvedOutcomeExcluded: EXPECTED_UNRESOLVED,
+      targetSelectionUsesOutcomesBeyondFrozenGapSet: false,
+      modelFitting: 'none',
+      featureRowsWritten: false,
+      servingChanged: false,
+      mechanicallyActionable: false,
+      interpretationBoundary:
+        'This is an offline evaluation of the 15 previously missing replay targets under frozen historical Quick v2 support. It does not modify the canonical benchmark or production serving.',
+    },
+  };
+
+  mkdirSync(dirname(output), { recursive: true });
+  writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+
+  console.log(JSON.stringify({
+    historicalDensity2025HouseReplayGap15Overlay: {
+      supportTargetVersions: report.reconstruction.supportTargetVersions,
+      supportAnalogueEvents: report.reconstruction.supportAnalogueEvents,
+      canonicalTargetsRebuilt: report.reconstruction.canonicalTargetsRebuilt,
+      outcomeCompleteTargets: report.overlay.outcomeCompleteTargets,
+      statusCounts,
+      resultProofSha256,
+      memberPredictionProofSha256,
+      overall: scorecard.overall,
+      productionDatabaseQueried: false,
+      canonicalTargetSetMutated: false,
+    },
+  }, null, 2));
+}
+
+main().catch((error) => {
+  console.error(error instanceof Error ? error.stack ?? error.message : String(error));
+  process.exitCode = 1;
+});
