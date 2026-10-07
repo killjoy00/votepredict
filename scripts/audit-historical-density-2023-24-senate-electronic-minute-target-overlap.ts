@@ -43,6 +43,23 @@ const EXPECTED_TARGET_EVENT_KEY_SHA256 =
 const EXPECTED_UNCOVERED_ROW_KEY_SHA256 =
   '6100ab06630e5f40723e35df8c6e68696318863c5823e095f7674c61e61412a7';
 
+const EXPECTED_2023_COMMITTEE_PAGES = 22;
+const EXPECTED_2023_MINUTE_DOCUMENTS = 454;
+const EXPECTED_2024_COMMITTEE_PAGES = 23;
+const EXPECTED_2024_MINUTE_DOCUMENTS = 258;
+const EXPECTED_MINUTE_DOCUMENTS = 712;
+const EXPECTED_MINUTE_COMMITTEES = 22;
+const EXPECTED_MINUTE_UNIVERSE_PROOF =
+  '870a0b5dd39535095ecddb614cf13b4d066aaf8107ec8bdf7ceb69bc1f5339b4';
+const EXPECTED_REVISOR_STATUS_DOCUMENTS = 140;
+const EXPECTED_REVISOR_FAILURE_IDENTIFIER = 'HF3769';
+const EXPECTED_MATCHED_TARGET_EVENTS = 117;
+const EXPECTED_MATCHED_UNCOVERED_ROWS = 7838;
+const EXPECTED_CANDIDATE_MINUTE_DOCUMENTS = 436;
+const EXPECTED_MINUTE_TARGET_ASSOCIATIONS = 1727;
+const EXPECTED_ASSOCIATION_PROOF =
+  'dbb3e5e4ce5191ec4fb47aa1f777f72067a3dca7fedefc0871ac41ed341adbf1';
+
 const REVISOR_CONCURRENCY = 6;
 
 type Json = Record<string, any>;
@@ -416,6 +433,30 @@ async function main(): Promise<void> {
       row.minuteUrl,
     ].join('|')),
   );
+
+  if (
+    discoveries[0]?.committeePages !== EXPECTED_2023_COMMITTEE_PAGES
+    || discoveries[0]?.documents.length !== EXPECTED_2023_MINUTE_DOCUMENTS
+    || discoveries[1]?.committeePages !== EXPECTED_2024_COMMITTEE_PAGES
+    || discoveries[1]?.documents.length !== EXPECTED_2024_MINUTE_DOCUMENTS
+    || documents.length !== EXPECTED_MINUTE_DOCUMENTS
+    || docsByCommittee.size !== EXPECTED_MINUTE_COMMITTEES
+    || documentUniverseProofSha256 !== EXPECTED_MINUTE_UNIVERSE_PROOF
+    || statuses.length !== EXPECTED_REVISOR_STATUS_DOCUMENTS
+    || statusFetchFailures.length !== 1
+    || statusFetchFailures[0]?.identifier !== EXPECTED_REVISOR_FAILURE_IDENTIFIER
+    || unparsedReferrals.length !== 0
+    || unmatchedLabels.size !== 0
+    || targetsWithReferral.size !== EXPECTED_MATCHED_TARGET_EVENTS
+    || targetsWithMatchedCommittee.size !== EXPECTED_MATCHED_TARGET_EVENTS
+    || targetsWithMinuteCandidates.size !== EXPECTED_MATCHED_TARGET_EVENTS
+    || matchedRows !== EXPECTED_MATCHED_UNCOVERED_ROWS
+    || candidateDocs.size !== EXPECTED_CANDIDATE_MINUTE_DOCUMENTS
+    || associations.length !== EXPECTED_MINUTE_TARGET_ASSOCIATIONS
+    || associationProofSha256 !== EXPECTED_ASSOCIATION_PROOF
+  ) {
+    throw new Error('Pinned 2023-24 Senate electronic-minute overlap drifted');
+  }
 
   const committeeSummary = [...docsByCommittee.entries()]
     .map(([normalizedCommittee, rows]) => ({
