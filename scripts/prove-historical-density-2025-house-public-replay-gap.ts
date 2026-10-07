@@ -286,10 +286,10 @@ function explicitJournalOutcomesForEvent(
     'gi',
   );
   const billMention =
-    /\\b([HS])\\.?\\s*F\\.?\\s*No\\.?\\s*(\\d+)\\b/gi;
-  const pageMarker = /Top of Page\\s+(\\d+)/gi;
+    /\b([HS])\.?\s*F\.?\s*No\.?\s*(\d+)\b/gi;
+  const pageMarker = /Top of Page\s+(\d+)/gi;
   const resultPattern =
-    /The\\s+(?:bill|resolution)(?:,\\s+as amended)?\\s+(?:was\\s+(not\\s+)?(?:repassed|passed|adopted)|did\\s+(not\\s+)?(?:pass|adopt))[^.]*\\./i;
+    /The\s+(?:bill|resolution)(?:,\s+as amended)?\s+(?:was\s+(not\s+)?(?:repassed|passed|adopted)|did\s+(not\s+)?(?:pass|adopt))[^.]*\./i;
   const rows: ExplicitJournalOutcome[] = [];
 
   for (const tallyMatch of text.matchAll(tally)) {
