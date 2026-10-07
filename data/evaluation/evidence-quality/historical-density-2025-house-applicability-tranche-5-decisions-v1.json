@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-tranche-5-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenCandidateArtifact": {
+    "runId": 37554123759,
+    "artifactId": 11454147584,
+    "digest": "sha256:95d9505405f7b39c7cdd7e1e21f341e3bc810dca01d39e4a9a274de3e50b26b2",
+    "targetTrancheIndex": 5,
+    "targetRankStart": 101,
+    "targetRankEnd": 125,
+    "targetEventKeySha256": "75b0435e0b61b4a356e82c3017caa400cf67a21778a41158f032679151067862",
+    "reviewKeySha256": "6358562d7889e743afbc9213879e59f341325c980d5b09dcf2893f9860507f49",
+    "eligibleClaimEventPairs": 1150,
+    "candidatePairs": 116,
+    "candidateBills": 16,
+    "candidatePublicMembers": 25,
+    "candidateSemanticGroups": 25
+  },
+  "defaultDecision": "not_applicable",
+  "defaultBillRationales": {
+    "HF2358": "Enhancing penalties for specified coercion offenses is a discrete coercion-policy change. It does not implement the source-specific Make Minnesota Safe package, gun-violence research, traffic-stop reform, refinery hazard notification, repeat-DWI interlock policy, or an anti-trafficking task force.",
+    "HF3155": "Adding gift-card fraud to organized retail theft addresses private retail fraud. It does not create state-program oversight/accountability, state-agency fraud reporting, an inspector-general structure, legislative fraud-risk notes, or the nominated public-safety propositions.",
+    "HF3404": "Increasing penalties for impersonating a peace officer and related firearm conduct is a discrete criminal-law measure. It does not implement the source-specific Make Minnesota Safe package or the other nominated traffic-stop, research, DWI, emergency-powers, refinery, or trafficking propositions.",
+    "HF3453": "Setting the legal age for kratom possession at 21 is unrelated to the nominated public-safety propositions despite generic public-safety terminology.",
+    "HF3496": "Corrections supervision-abatement policy does not implement the nominated gun-violence research, traffic-stop, refinery-notification, Make Minnesota Safe, DWI-interlock, or trafficking propositions.",
+    "HF3544": "Veterans-benefit eligibility and repeal of a veterans environmental-hazards assistance program do not roll back or strengthen Minnesota PFAS product-prevention measures.",
+    "HF3621": "State-program payment-withholding rules for credible fraud allegations are not applicable to nominated claims except the explicit Allen oversight/accountability override below. The bill does not create an independent or centralized inspector general, require legislative fraud-risk notes, or impose the stricter state-agency fraud-reporting regime in Van Binsbergen's proposition; other public-safety/disability overlaps are incidental.",
+    "HF3676": "Safe at Home address-confidentiality protections and related penalties do not implement the nominated public-safety-package, traffic-stop, DWI, refinery, pension, housing-rent, emergency-powers, trafficking, research, or disability propositions.",
+    "HF3762": "Access to expunged records for firearm-eligibility determinations is not nonpartisan gun-violence research and does not implement the other nominated public-safety propositions.",
+    "HF3768": "Corrections-facility licensing and responsibility provisions do not implement parental final authority, teacher-pension funding, emergency-powers limits, disability-support services, or the nominated public-safety propositions.",
+    "HF3769": "Corrections substance-use care, mental-health beds, and tuberculosis screening do not implement PFAS prevention, gubernatorial emergency-powers limits, or the reviewed broad disability-support proposition.",
+    "HF3782": "Disclosure of chemical irritants used in certain buildings is not a requirement that refinery facilities notify local first responders of hazardous-chemical releases, and it does not implement the other nominated public-safety propositions.",
+    "HF4118": "Credit-union insurance and conforming financial-institution changes do not implement the nominated fraud-governance, parental-rights, PFAS, teacher-pension, housing-rent, emergency-powers, LGBTQ-school, disability, or EV road-funding propositions; cross-referenced statutes are incidental.",
+    "HF4241": "Hennepin County medical-examiner selection, Rochester school-board procedure, and park-board disclosure changes do not implement parental final authority or Paid Family and Medical Leave policy.",
+    "HF4425": "Extending criminal limitations periods for Medical Assistance fraud and theft of public funds is not applicable to nominated claims except the explicit Allen accountability override below. It does not create an inspector-general structure, legislative fraud-risk notes, stricter state-agency fraud reporting/prevention tools, millionaire-tax Medicaid funding, an anti-trafficking task force, or the source-specific Make Minnesota Safe package.",
+    "SF3832": "DAIRI dairy-assistance eligibility and cost-share rules do not exempt family-farm employees from Minnesota earned-sick-time requirements."
+  },
+  "overrides": [
+    {
+      "reviewKey": "allen_fraud_oversight_accountability|HF3621|2026-04-20|1dd29548e31b3c3682a1fca6d91a75038bf0c8f1061e1f99d939cf4cdecc4ecd",
+      "decision": "applicable",
+      "billPolicyDirection": "strengthens_state_program_fraud_controls_by_authorizing_payment_withholding_on_verified_credible_fraud_allegations_and_interagency_data_sharing",
+      "alignmentDirection": "aligns",
+      "reason": "The strict pre-vote HF3621 version gives state agencies a concrete program-integrity control: they may withhold program payments when a participant is under a verified credible fraud investigation, with interagency data sharing to prevent fraud against public programs. That directly advances Allen's support for stronger oversight and accountability for state programs to reduce fraud and waste."
+    },
+    {
+      "reviewKey": "allen_fraud_oversight_accountability|HF4425|2026-04-20|2f59ca6e14257d690bcd98d927aaaea7e188a9158d397f5ede32cb57c26ccce8",
+      "decision": "applicable",
+      "billPolicyDirection": "extends_criminal_enforcement_window_for_medical_assistance_fraud_and_theft_of_public_funds",
+      "alignmentDirection": "aligns",
+      "reason": "The strict pre-vote HF4425 version extends the limitations period to ten years for specified Medical Assistance fraud and theft of public funds belonging to the state, political subdivisions, or agencies. That materially strengthens accountability for fraud involving public programs and funds, aligning with Allen's reviewed oversight/accountability position."
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
