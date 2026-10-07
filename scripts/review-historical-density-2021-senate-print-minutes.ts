@@ -12,6 +12,8 @@ import type {
 
 const TEMPLATE_SCHEMA =
   'historical-density-2021-senate-print-minute-semantic-review-template-v1';
+const EXPECTED_SYNTHETIC_TEMPLATE_SHA256 =
+  '03d77d2daf7551bbc3ec95e6d698735fcb832b66bf8f3f60c86c91de3ccad19d';
 
 type Args = {
   intakeBundle?: string;
@@ -111,6 +113,14 @@ function writeTemplate(
   const output = resolve(path);
   mkdirSync(dirname(output), { recursive: true });
   const text = JSON.stringify(template, null, 2) + '\n';
+  if (
+    bundle.documents.length === 1
+    && bundle.documents[0]?.id
+      === 'senate-print-minute-23837-0-s-2021-02-20-ab8a84192fa1ea47'
+    && sha256(text) !== EXPECTED_SYNTHETIC_TEMPLATE_SHA256
+  ) {
+    throw new Error(`Pinned synthetic semantic-review template drifted: ${sha256(text)}`);
+  }
   writeFileSync(output, text, 'utf8');
   console.log(JSON.stringify({
     senate2021PrintMinuteSemanticReviewTemplate: {
