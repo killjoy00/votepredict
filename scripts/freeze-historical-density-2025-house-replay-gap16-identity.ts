@@ -529,6 +529,14 @@ async function main(): Promise<void> {
   for (const row of fetched) officialByIdentifier.set(row.identifier, row.parsed);
 
   const skippedBridgeEvents: Array<{ compositeKey: string; reason: string }> = [];
+  const knownMismatchDiagnostics = new Map<string, {
+    memberName: string;
+    method: string;
+    mismatches: number;
+    comparisons: number;
+    valuePairs: Record<string, number>;
+    examples: string[];
+  }>();
   const usable: BridgeAudit[] = [];
 
   for (const target of bridgeTargets) {
@@ -580,10 +588,23 @@ async function main(): Promise<void> {
     for (const [canonicalName, identity] of knownCurrent) {
       const internalValue = matrixEvent.rows.get(identity.membershipId) ?? null;
       const publicValue = publicChoices.get(canonicalName) ?? null;
+      const diagnostic = knownMismatchDiagnostics.get(canonicalName) ?? {
+        memberName: identity.memberName,
+        method: identity.method,
+        mismatches: 0,
+        comparisons: 0,
+        valuePairs: {},
+        examples: [],
+      };
+      diagnostic.comparisons += 1;
+      const pairKey = `${String(internalValue)}->${String(publicValue)}`;
+      diagnostic.valuePairs[pairKey] = (diagnostic.valuePairs[pairKey] ?? 0) + 1;
       if (internalValue !== publicValue) {
+        diagnostic.mismatches += 1;
+        if (diagnostic.examples.length < 5) diagnostic.examples.push(target.compositeKey);
         mismatch = true;
-        break;
       }
+      knownMismatchDiagnostics.set(canonicalName, diagnostic);
       comparisons += 1;
     }
     if (mismatch) {
@@ -627,6 +648,10 @@ async function main(): Promise<void> {
         usable: usable.length,
         skipped: skippedBridgeEvents.length,
         reasonCounts,
+        worstKnownIdentityMismatches: [...knownMismatchDiagnostics.values()]
+          .filter((row) => row.mismatches > 0)
+          .sort((a, b) => b.mismatches - a.mismatches || a.memberName.localeCompare(b.memberName))
+          .slice(0, 30),
         examples: skippedBridgeEvents.slice(0, 20),
       },
     }, null, 2));
