@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "historical-density-2023-24-senate-top20-semantic-review-tranche-11-decisions-v1",
+  "issue": 718,
+  "session": "2023-2024",
+  "trancheId": "SENATE-2023-24-TOP20-SEMANTIC-011",
+  "frozenReviewPacket": {
+    "reviewRows": 10,
+    "reviewKeySha256": "b5dbc4409912f2d6246fe9da2d0e7ab94457665b1d43634b66c2891a3aee57c9",
+    "sourcePdfSha256": "a49f69ead3f3fb28f734cf7613b124dc54efe493fbfa37e796488dfd090ab5d5",
+    "sourceTextSha256": "fb60b2e30d11870d3937c427de64bf4d33934a29ccec5dd1ba31c17de90c3d49",
+    "reviewPacketProofSha256": "57e5c6b822b43ff4b6cceb9de4ea0931b16862a9361d630c269c4f6040fdf4fc"
+  },
+  "decisionRationales": {
+    "full_text_review_no_candidate_bill_support": "Full frozen minute reviewed. This candidate bill is neither explicitly mentioned nor otherwise unambiguously identifiable in the source text; committee/referral overlap alone is not treated as applicability.",
+    "candidate_bill_explicitly_present_but_only_procedural_actions_recorded": "Full frozen minute reviewed. The candidate bill is explicit, but the minute records motions, amendments, substitution, or recommend-to-pass procedure rather than an attributable directional member statement under the existing Senate semantic-review contract."
+  },
+  "notApplicableReviewKeys": [
+    "a49f69ead3f3fb28f734cf7613b124dc54efe493fbfa37e796488dfd090ab5d5|fb60b2e30d11870d3937c427de64bf4d33934a29ccec5dd1ba31c17de90c3d49|3ac2afe3-46a5-4622-8138-f80994433445|ca356bbf-cfad-4e76-b097-cef5cc52049c",
+    "a49f69ead3f3fb28f734cf7613b124dc54efe493fbfa37e796488dfd090ab5d5|fb60b2e30d11870d3937c427de64bf4d33934a29ccec5dd1ba31c17de90c3d49|e64a08fa-342d-4b5c-844c-0ee206b066ee|ca356bbf-cfad-4e76-b097-cef5cc52049c",
+    "a49f69ead3f3fb28f734cf7613b124dc54efe493fbfa37e796488dfd090ab5d5|fb60b2e30d11870d3937c427de64bf4d33934a29ccec5dd1ba31c17de90c3d49|e46d0513-5c9c-4062-a0b5-a422caadfb9a|724b7d6e-fb13-495b-a926-6483dc79eff5",
+    "a49f69ead3f3fb28f734cf7613b124dc54efe493fbfa37e796488dfd090ab5d5|fb60b2e30d11870d3937c427de64bf4d33934a29ccec5dd1ba31c17de90c3d49|5fb93449-0ff2-4848-b262-0435a7deba4d|1a5f57a3-ba52-4d76-84ab-47f257310947",
+    "a49f69ead3f3fb28f734cf7613b124dc54efe493fbfa37e796488dfd090ab5d5|fb60b2e30d11870d3937c427de64bf4d33934a29ccec5dd1ba31c17de90c3d49|8f6ca853-d1e0-4d6b-9e93-b461914ea7a3|1a5f57a3-ba52-4d76-84ab-47f257310947",
+    "a49f69ead3f3fb28f734cf7613b124dc54efe493fbfa37e796488dfd090ab5d5|fb60b2e30d11870d3937c427de64bf4d33934a29ccec5dd1ba31c17de90c3d49|ccddb819-998d-4b4c-8f0e-5caacb17fd36|7bef3e40-b865-4252-a4a0-7b469e8cd48a",
+    "a49f69ead3f3fb28f734cf7613b124dc54efe493fbfa37e796488dfd090ab5d5|fb60b2e30d11870d3937c427de64bf4d33934a29ccec5dd1ba31c17de90c3d49|d1e34ee8-a9f2-448b-bca9-ffb9861fa787|7bef3e40-b865-4252-a4a0-7b469e8cd48a",
+    "a49f69ead3f3fb28f734cf7613b124dc54efe493fbfa37e796488dfd090ab5d5|fb60b2e30d11870d3937c427de64bf4d33934a29ccec5dd1ba31c17de90c3d49|e8efa31c-5fd7-450f-b249-ab36a0da62ee|db942152-737a-4506-9a8f-f6c9d8b8d539",
+    "a49f69ead3f3fb28f734cf7613b124dc54efe493fbfa37e796488dfd090ab5d5|fb60b2e30d11870d3937c427de64bf4d33934a29ccec5dd1ba31c17de90c3d49|0d22670d-1170-430c-8ed7-64fcc68d31d4|f0743863-285c-40c1-9179-8e2f7e207c1d",
+    "a49f69ead3f3fb28f734cf7613b124dc54efe493fbfa37e796488dfd090ab5d5|fb60b2e30d11870d3937c427de64bf4d33934a29ccec5dd1ba31c17de90c3d49|77921dee-216b-4ac9-8114-89886a242692|f0743863-285c-40c1-9179-8e2f7e207c1d"
+  ],
+  "billContextRows": [],
+  "directionalRows": [],
+  "ambiguousFailClosedRows": [],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "targetVoteOutcomesRead": false,
+    "outcomeUse": "none",
+    "committeeMembershipUsedAsStance": false,
+    "attendanceUsedAsStance": false,
+    "proceduralActionUsedAsDirectionalStance": false,
+    "ambiguousDefaultsToFailClosed": true,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "modelWeightChanged": false,
+    "servingChanged": false,
+    "vercelUsed": false,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0
+  }
+}
