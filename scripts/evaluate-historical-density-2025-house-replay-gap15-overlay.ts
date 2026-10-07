@@ -14,6 +14,19 @@ import { runHistoricalQuickDecayShadowReplay } from '../src/evaluation/historica
 
 const ISSUE = 718;
 const HALF_LIFE_DAYS = 180;
+const CANONICAL_ROWS = 135457;
+const CANONICAL_EVENTS = 1339;
+const CANONICAL_MEMBERSHIPS = 611;
+const CANONICAL_MATRIX_CANONICAL_SHA256 =
+  'c97ac50c8c89ae0548cc48bed65a42c22f332e2977b33173619c9e258c09a4d0';
+const CANONICAL_MATRIX_GZIP_SHA256 =
+  'd8a9735a514f427508a7a37303ba312dcac3f929a51aa05a1aba32a76b384637';
+const CANONICAL_ROW_KEY_SHA256 =
+  '3aa47101f9e4a848e293fdaa89ef853919d49826b68ae90960370c5c19e9df72';
+const PROBABILITY_TOLERANCE = 1e-12;
+const REPLAY_SESSIONS = new Set(['2021-2022', '2023-2024', '2025-2026']);
+const FROZEN_MEMBER_VOTE_ROW_SHA256 =
+  '721d748bacb74cd110380e233d7df101d044b5ad00d59bdf368ad39ecab9998b';
 
 const SUPPORT_RUN_ID = 37631304120;
 const SUPPORT_ARTIFACT_ID = 11486621043;
@@ -58,6 +71,24 @@ const EXPECTED_CHAMBER_MAE = 13.715526534958565;
 
 type Json = Record<string, any>;
 
+type CanonicalRow = {
+  voteEventId: string;
+  membershipId: string;
+  legislatorId: string;
+  session: string;
+  chamber: string;
+  occurredOn: string;
+  billId: string;
+  identifier: string;
+  eventStatus: string;
+  baseProbability: number | null;
+  outcome: 0 | 1 | null;
+  actualYes: number;
+  passed: boolean;
+};
+
+type CurrentRow = CanonicalRow;
+
 type SupportEnvelope = {
   schemaVersion: string;
   generatedAt: string;
@@ -101,6 +132,137 @@ function setSha(values: readonly string[]): string {
 
 function readJson(path: string): Json {
   return JSON.parse(readFileSync(path, 'utf8')) as Json;
+}
+
+function rowKey(row: Pick<CanonicalRow, 'voteEventId' | 'membershipId'>): string {
+  return `${row.voteEventId}|${row.membershipId}`;
+}
+
+function parseCanonicalMatrix(manifestPath: string, matrixPath: string): CanonicalRow[] {
+  const manifest = readJson(manifestPath);
+  const gzip = readFileSync(matrixPath);
+  if (
+    manifest.schemaVersion !== 'historical-as-of-matrix-v1-manifest'
+    || manifest.issue !== 459
+    || manifest.replay?.version !== 'historical-quick-replay-v2'
+    || manifest.rows !== CANONICAL_ROWS
+    || manifest.events !== CANONICAL_EVENTS
+    || manifest.memberships !== CANONICAL_MEMBERSHIPS
+    || manifest.matrixCanonicalNdjsonSha256 !== CANONICAL_MATRIX_CANONICAL_SHA256
+    || manifest.matrixGzipSha256 !== CANONICAL_MATRIX_GZIP_SHA256
+  ) {
+    throw new Error('Canonical historical matrix manifest drifted');
+  }
+  if (sha256(gzip) !== CANONICAL_MATRIX_GZIP_SHA256) {
+    throw new Error('Canonical historical matrix gzip digest mismatch');
+  }
+  const ndjson = gunzipSync(gzip).toString('utf8');
+  if (sha256(ndjson) !== CANONICAL_MATRIX_CANONICAL_SHA256) {
+    throw new Error('Canonical historical matrix NDJSON digest mismatch');
+  }
+  const rows = ndjson.trimEnd().split('\n').map((line) => JSON.parse(line) as CanonicalRow);
+  if (rows.length !== CANONICAL_ROWS) {
+    throw new Error(`Canonical matrix row count drifted: ${rows.length}`);
+  }
+  return rows;
+}
+
+function flattenReplayRows(
+  results: ReturnType<typeof runHistoricalQuickDecayShadowReplay>,
+  targets: readonly QuickReplayEvent[],
+): CurrentRow[] {
+  const targetById = new Map(targets.map((event) => [event.voteEventId, event] as const));
+  return results
+    .filter((event) => REPLAY_SESSIONS.has(event.session))
+    .flatMap((event) => {
+      const target = targetById.get(event.voteEventId);
+      if (!target) throw new Error(`Replay result missing target event ${event.voteEventId}`);
+      return event.memberPredictions.map((member): CurrentRow => ({
+        voteEventId: event.voteEventId,
+        membershipId: member.membershipId,
+        legislatorId: member.legislatorId,
+        session: event.session,
+        chamber: event.chamber,
+        occurredOn: event.occurredOn,
+        billId: target.billId,
+        identifier: target.identifier,
+        eventStatus: event.status,
+        baseProbability: member.yesProbability ?? null,
+        outcome: member.actualOutcome ?? null,
+        actualYes: event.actualYes,
+        passed: event.passed,
+      }));
+    });
+}
+
+function compareRows(canonical: readonly CanonicalRow[], current: readonly CurrentRow[]) {
+  const canonicalByKey = new Map(canonical.map((row) => [rowKey(row), row]));
+  const currentByKey = new Map(current.map((row) => [rowKey(row), row]));
+  if (canonicalByKey.size !== canonical.length || currentByKey.size !== current.length) {
+    throw new Error('Duplicate canonical/current row keys detected');
+  }
+
+  const canonicalKeys = [...canonicalByKey.keys()].sort();
+  const currentKeys = [...currentByKey.keys()].sort();
+  const missingKeys = canonicalKeys.filter((key) => !currentByKey.has(key));
+  const extraKeys = currentKeys.filter((key) => !canonicalByKey.has(key));
+  const mismatches: Json[] = [];
+
+  for (const key of canonicalKeys) {
+    const expected = canonicalByKey.get(key)!;
+    const actual = currentByKey.get(key);
+    if (!actual) continue;
+    for (const field of [
+      'legislatorId',
+      'session',
+      'chamber',
+      'occurredOn',
+      'billId',
+      'identifier',
+      'eventStatus',
+      'outcome',
+      'actualYes',
+      'passed',
+    ] as const) {
+      if (actual[field] !== expected[field]) {
+        mismatches.push({ key, field, expected: expected[field], actual: actual[field] });
+        break;
+      }
+    }
+    if (mismatches.at(-1)?.key === key) continue;
+
+    if (expected.baseProbability === null || actual.baseProbability === null) {
+      if (expected.baseProbability !== actual.baseProbability) {
+        mismatches.push({
+          key,
+          field: 'baseProbability',
+          expected: expected.baseProbability,
+          actual: actual.baseProbability,
+        });
+      }
+    } else if (Math.abs(expected.baseProbability - actual.baseProbability) > PROBABILITY_TOLERANCE) {
+      mismatches.push({
+        key,
+        field: 'baseProbability',
+        expected: expected.baseProbability,
+        actual: actual.baseProbability,
+        delta: actual.baseProbability - expected.baseProbability,
+      });
+    }
+  }
+
+  return {
+    canonicalRows: canonical.length,
+    currentRows: current.length,
+    canonicalRowKeySha256: setSha(canonicalKeys),
+    currentRowKeySha256: setSha(currentKeys),
+    missingRows: missingKeys.length,
+    extraRows: extraKeys.length,
+    fieldMismatches: mismatches.length,
+    sampleMissing: missingKeys.slice(0, 10),
+    sampleExtra: extraKeys.slice(0, 10),
+    sampleMismatches: mismatches.slice(0, 10),
+  };
 }
 
 function composite(identifier: string, occurredOn: string): string {
