@@ -1,0 +1,69 @@
+name: Extract 2023-24 Senate top-20 minute text
+
+on:
+  pull_request:
+    paths:
+      - scripts/extract-historical-density-2023-24-senate-top20-minute-text.ts
+      - .github/workflows/historical-density-2023-24-senate-top20-minute-text.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/extract-historical-density-2023-24-senate-top20-minute-text.ts
+      - .github/workflows/historical-density-2023-24-senate-top20-minute-text.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Materialize canonical top-20 PDF freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11502134219/zip > "$RUNNER_TEMP/source.zip"
+          echo "bb6318582f5fb01e9078fbaa6c2b67c43274ca4b4f8f6ced95aa7f9625975d50  $RUNNER_TEMP/source.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/source"
+          unzip -q "$RUNNER_TEMP/source.zip" -d "$RUNNER_TEMP/source"
+      - name: Extract embedded text from frozen PDFs
+        env:
+          VOTEPREDICT_SENATE_2023_24_TOP20_MANIFEST_PATH: ${{ runner.temp }}/source/historical-density-2023-24-senate-electronic-minute-top20-freeze-v1.json
+          VOTEPREDICT_SENATE_2023_24_TOP20_SOURCE_ROOT: ${{ runner.temp }}/source
+          VOTEPREDICT_SENATE_2023_24_TEXT_OUTPUT_DIR: ${{ runner.temp }}/text
+        run: node --import tsx scripts/extract-historical-density-2023-24-senate-top20-minute-text.ts
+      - name: Verify extraction boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/text/historical-density-2023-24-senate-top20-text-extraction-v1.json"
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2023-24-senate-top20-text-extraction-v1
+          test "$(jq -r '.sourceFreeze.artifactId' "$f")" = 11502134219
+          test "$(jq -r '.summary.documents' "$f")" = 20
+          test "$(find "$RUNNER_TEMP/text/texts" -type f -name '*.txt' | wc -l)" = 20
+          test "$(jq -r '.summary.extractionProofSha256 | length' "$f")" = 64
+          test "$(jq -r '.interpretation.semanticReviewPerformed' "$f")" = false
+          test "$(jq -r '.interpretation.memberStanceInferred' "$f")" = false
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: historical-density-2023-24-senate-top20-text-extraction-v1
+          path: ${{ runner.temp }}/text/*
+          if-no-files-found: warn
+          retention-days: 90
