@@ -54,6 +54,15 @@ const EXPECTED_PUBLIC_CURRENT_MEMBERS = 134;
 const EXPECTED_KNOWN_CURRENT_IDENTITIES = 127;
 const EXPECTED_SIGNATURE_IDENTITIES = 7;
 const EXPECTED_EXTRA_HISTORICAL_IDENTITIES = 3;
+const EXPECTED_USABLE_BRIDGE_EVENTS = 71;
+const EXPECTED_BRIDGE_EVENT_KEY_SHA256 =
+  'd2e681055f5d684ac18649207c480b42ac0073bdff9f789dc7cb19308ee53f53';
+const EXPECTED_BRIDGE_SOURCE_PROOF_SHA256 =
+  '828283c4ff6744eb5dc53cfdcbf8a4740a5ae14662cc7517993a3ecdf434a9f1';
+const EXPECTED_SIGNATURE_MAPPING_SHA256 =
+  '26e0d18d8c43f8ca3775ed971809bdf3e14b474d7f54d5c96355e3f4fc4950a8';
+const EXPECTED_CURRENT_ROSTER_MAPPING_SHA256 =
+  'dccf018ae2a46d4232ae3a29b96c82d69536f7bfaf98de94676b42fe197cd40c';
 
 const BRIDGE_START = '2025-03-20';
 const BRIDGE_END = '2026-03-11';
@@ -512,8 +521,8 @@ async function main(): Promise<void> {
         : []),
     ],
   }));
-  const publicByFakeMembership = new Map(
-    [...publicByLrl.values()].map((row) => [`public-lrl:${row.lrlId}`, row] as const),
+  const publicByFakeMembership = new Map<string, PublicIdentity>(
+    [...publicByLrl.values()].map((row) => [`public-lrl:${row.lrlId}`, row]),
   );
 
   const byComposite = new Map<string, MatrixEvent[]>();
@@ -736,7 +745,7 @@ async function main(): Promise<void> {
   );
 
   const currentMappings = [
-    ...knownCurrent.values().map((identity) => {
+    ...[...knownCurrent.values()].map((identity) => {
       const publicIdentity = publicByCanonical.get(identity.canonicalName)!;
       return {
         membershipId: identity.membershipId,
@@ -785,6 +794,22 @@ async function main(): Promise<void> {
         `${row.membershipId}|${row.legislatorId}|${row.lrlId}|${row.canonicalName}|${row.method}`,
     ),
   );
+
+  if (usable.length !== EXPECTED_USABLE_BRIDGE_EVENTS) {
+    throw new Error(`Usable bridge-event count drifted: ${usable.length}`);
+  }
+  if (bridgeEventKeySha256 !== EXPECTED_BRIDGE_EVENT_KEY_SHA256) {
+    throw new Error(`Bridge-event identity drifted: ${bridgeEventKeySha256}`);
+  }
+  if (bridgeSourceProofSha256 !== EXPECTED_BRIDGE_SOURCE_PROOF_SHA256) {
+    throw new Error(`Bridge-source proof drifted: ${bridgeSourceProofSha256}`);
+  }
+  if (signatureMappingSha256 !== EXPECTED_SIGNATURE_MAPPING_SHA256) {
+    throw new Error(`Signature mapping drifted: ${signatureMappingSha256}`);
+  }
+  if (currentRosterMappingSha256 !== EXPECTED_CURRENT_ROSTER_MAPPING_SHA256) {
+    throw new Error(`Current-roster mapping drifted: ${currentRosterMappingSha256}`);
+  }
 
   const output = resolve(env('VOTEPREDICT_GAP16_IDENTITY_OUTPUT'));
   const report = {
