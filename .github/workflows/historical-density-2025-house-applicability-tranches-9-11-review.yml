@@ -131,7 +131,7 @@ jobs:
             echo '- Outcomes used: **none**'
             echo '- Production DB queried: **no**'
             echo '- Vercel used: **no**'
-            echo '- 2025-26 House uncovered event universe through rank **264** is fully semantically reviewed.'
+            echo '- Frozen 2025-26 House historical-replay target universe through rank **264** is fully semantically reviewed; this does not claim coverage of all House roll calls.'
           } >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v7
