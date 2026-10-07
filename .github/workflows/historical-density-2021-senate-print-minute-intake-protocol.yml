@@ -1,0 +1,84 @@
+name: Freeze 2021 Senate print minute intake protocol
+
+on:
+  pull_request:
+    paths:
+      - src/evaluation/historical-density-2021-senate-print-minute-intake.ts
+      - tests/historical-density-2021-senate-print-minute-intake.test.ts
+      - scripts/freeze-historical-density-2021-senate-print-minute-intake-protocol.ts
+      - .github/workflows/historical-density-2021-senate-print-minute-intake-protocol.yml
+  push:
+    branches: [main]
+    paths:
+      - src/evaluation/historical-density-2021-senate-print-minute-intake.ts
+      - tests/historical-density-2021-senate-print-minute-intake.test.ts
+      - scripts/freeze-historical-density-2021-senate-print-minute-intake-protocol.ts
+      - .github/workflows/historical-density-2021-senate-print-minute-intake-protocol.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2021-senate-print-minute-intake-protocol-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Materialize canonical request package
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11496898656/zip > "$RUNNER_TEMP/request.zip"
+          echo "c7d6d274dd734878efbb830a1c8c17a35afb1503e30ca4917cefc8e1d39fb26e  $RUNNER_TEMP/request.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/request"
+          unzip -q "$RUNNER_TEMP/request.zip" \
+            historical-density-2021-senate-print-minute-request-package-v1.json \
+            -d "$RUNNER_TEMP/request"
+      - name: Test intake protocol
+        run: node --import tsx --test tests/historical-density-2021-senate-print-minute-intake.test.ts
+      - name: Freeze intake protocol
+        env:
+          VOTEPREDICT_SENATE_2021_REQUEST_PACKAGE_PATH: ${{ runner.temp }}/request/historical-density-2021-senate-print-minute-request-package-v1.json
+          VOTEPREDICT_SENATE_2021_INTAKE_PROTOCOL_OUTPUT: ${{ runner.temp }}/protocol/historical-density-2021-senate-print-minute-intake-protocol-v1.json
+        run: node --import tsx scripts/freeze-historical-density-2021-senate-print-minute-intake-protocol.ts
+      - name: Verify fail-closed boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/protocol/historical-density-2021-senate-print-minute-intake-protocol-v1.json"
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2021-senate-print-minute-intake-protocol-v1
+          test "$(jq -r '.frozenRequestPackage.artifactId' "$f")" = 11496898656
+          test "$(jq -r '.frozenRequestPackage.requestAssociationProofSha256' "$f")" = 6d3ecfa7d433e8a3f3c835ecc9934a0b68cab53f213501b333e873d32d29a1d0
+          test "$(jq -r '.currentState.authoritativeMinuteFilesReceived' "$f")" = 0
+          test "$(jq -r '.currentState.intakeDocuments' "$f")" = 0
+          test "$(jq -r '.intakeContract.sameDayTargetDocumentsExcluded' "$f")" = true
+          test "$(jq -r '.intakeContract.committeeAndDateMatchCreatesCandidateOnly' "$f")" = true
+          test "$(jq -r '.intakeContract.billMentionRequiredBeforeSemanticApplicability' "$f")" = true
+          test "$(jq -r '.intakeContract.memberAttributionRequiredBeforeDirectionalEvidence' "$f")" = true
+          test "$(jq -r '.intakeContract.evidenceStatusAtIntake' "$f")" = not_evidence
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+          test "$(jq -r '.protocolProofSha256' "$f")" = b8dad4d70a696ddc8d3c32bbc831710cabcc1e8f00a7b633af16773427837bbf
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2021-senate-print-minute-intake-protocol-v1
+          path: ${{ runner.temp }}/protocol/*
+          if-no-files-found: error
+          retention-days: 90
