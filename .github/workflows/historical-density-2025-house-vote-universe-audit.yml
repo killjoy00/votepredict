@@ -5,6 +5,11 @@ on:
     paths:
       - scripts/audit-historical-density-2025-house-vote-universe.ts
       - .github/workflows/historical-density-2025-house-vote-universe-audit.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/audit-historical-density-2025-house-vote-universe.ts
+      - .github/workflows/historical-density-2025-house-vote-universe-audit.yml
   workflow_dispatch:
 
 permissions:
@@ -84,6 +89,8 @@ jobs:
           test "$(jq -r '.comparison.officialOutsideMatrix' "$f")" = 16
           test "$(jq -r '.comparison.matrixWithoutOfficial' "$f")" = 27
           test "$(jq -r '.comparison.exactMultiplicityParity' "$f")" = false
+          test "$(jq -r '.comparison.mismatchClassificationCounts.frozen_matrix_event_current_revisor_strict_version_not_discoverable' "$f")" = 27
+          test "$(jq -r '.comparison.mismatchClassificationCounts.public_replay_candidate_absent_from_frozen_matrix' "$f")" = 16
           test "$(jq -r '.frozen2025HouseReplayUniverse.fullyUncoveredEvents' "$f")" = 261
           test "$(jq -r '.frozen2025HouseReplayUniverse.partiallyCoveredEvents' "$f")" = 3
           test "$(jq -r '.frozen2025HouseReplayUniverse.fullyCoveredEvents' "$f")" = 0
@@ -91,8 +98,9 @@ jobs:
           test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
           test "$(jq -r '.policy.productionWrites' "$f")" = false
           test "$(jq -r '.policy.vercelUsed' "$f")" = false
-          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
-          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.voteTalliesReadFromOfficialHousePages' "$f")" = true
+          test "$(jq -r '.policy.passFailOutcomeReadOrInferred' "$f")" = false
+          test "$(jq -r '.policy.outcomeUseForSemanticsOrModeling' "$f")" = none
           test "$(jq -r '.policy.servingChanged' "$f")" = false
 
           {
@@ -112,7 +120,9 @@ jobs:
             echo "- Frozen matrix fully uncovered events: **$(jq -r '.frozen2025HouseReplayUniverse.fullyUncoveredEvents' "$f")**"
             echo "- Frozen matrix partially covered events: **$(jq -r '.frozen2025HouseReplayUniverse.partiallyCoveredEvents' "$f")**"
             echo "- Production DB queried: **no**"
-            echo "- Target outcomes read: **no**"
+            echo "- Official yea/nay tallies read for >=20 eligibility floor: **yes**"
+            echo "- Pass/fail outcome read or inferred: **no**"
+            echo "- Outcome use for semantics/modeling: **none**"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v7
