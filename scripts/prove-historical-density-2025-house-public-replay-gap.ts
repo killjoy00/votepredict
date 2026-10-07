@@ -33,6 +33,15 @@ const UNIVERSE_AUDIT_ARTIFACT_DIGEST =
 const EXPECTED_CANDIDATES = 16;
 const EXPECTED_CANDIDATE_SET_SHA256 =
   'c756fa9d80e7914e579d1bb43e2dc3c3d730ad221e0f8185dc2de2ccffc2c37a';
+const EXPECTED_REPLAYABLE = 15;
+const EXPECTED_REPLAYABLE_SET_SHA256 =
+  'e7b97f3662dd5519c1ff3c2e19e264ffb940e1a63e309ac1fb760af98fe7a0e4';
+const EXPECTED_UNRESOLVED = 1;
+const EXPECTED_UNRESOLVED_SET_SHA256 =
+  '5ba2565066c226be105d45c477280f491b91608066ea95c76bcd52bf1c838903';
+const EXPECTED_MEMBER_VOTE_ROWS = 2125;
+const EXPECTED_PASSED = 15;
+const EXPECTED_FAILED = 0;
 const USER_AGENT = 'VotePredict/2.0 2025-house-public-replay-gap-proof';
 
 type Json = Record<string, any>;
@@ -617,6 +626,39 @@ async function main(): Promise<void> {
     (sum, row) => sum + row.officialHouseVote.memberVoteCount,
     0,
   );
+  const replayableSetSha256 = candidateSetSha(
+    replayable.map((row) => row.compositeKey),
+  );
+  const unresolvedSetSha256 = candidateSetSha(
+    unresolved.map((row) => row.compositeKey),
+  );
+  const passed = replayable.filter(
+    (row) => 'passed' in row.journal && row.journal.passed === true,
+  ).length;
+  const failed = replayable.filter(
+    (row) => 'passed' in row.journal && row.journal.passed === false,
+  ).length;
+  if (
+    replayable.length !== EXPECTED_REPLAYABLE
+    || replayableSetSha256 !== EXPECTED_REPLAYABLE_SET_SHA256
+    || unresolved.length !== EXPECTED_UNRESOLVED
+    || unresolvedSetSha256 !== EXPECTED_UNRESOLVED_SET_SHA256
+    || memberVoteRows !== EXPECTED_MEMBER_VOTE_ROWS
+    || passed !== EXPECTED_PASSED
+    || failed !== EXPECTED_FAILED
+  ) {
+    throw new Error(
+      `Frozen 16-case replay-gap result drifted: ${JSON.stringify({
+        replayable: replayable.length,
+        replayableSetSha256,
+        unresolved: unresolved.length,
+        unresolvedSetSha256,
+        memberVoteRows,
+        passed,
+        failed,
+      })}`,
+    );
+  }
   const unresolvedWithSameBillOutcome = unresolved.filter(
     (row) =>
       'sameBillJournalOutcomes' in row.journal
@@ -651,16 +693,14 @@ async function main(): Promise<void> {
     summary: {
       candidates: cases.length,
       sourceNativeReplayable: replayable.length,
+      replayableSetSha256,
       explicitOutcomeUnresolved: unresolved.length,
+      unresolvedSetSha256,
       unresolvedWithSameBillOutcome,
       unresolvedWithNoSameBillOutcome,
       memberVoteRows,
-      passed: replayable.filter(
-        (row) => 'passed' in row.journal && row.journal.passed === true,
-      ).length,
-      failed: replayable.filter(
-        (row) => 'passed' in row.journal && row.journal.passed === false,
-      ).length,
+      passed,
+      failed,
     },
     cases,
     policy: {
@@ -691,7 +731,9 @@ async function main(): Promise<void> {
     historicalDensity2025HousePublicReplayGapProof: {
       candidates: cases.length,
       sourceNativeReplayable: replayable.length,
+      replayableSetSha256,
       explicitOutcomeUnresolved: unresolved.length,
+      unresolvedSetSha256,
       unresolvedWithSameBillOutcome,
       unresolvedWithNoSameBillOutcome,
       memberVoteRows,
