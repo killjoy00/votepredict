@@ -293,8 +293,13 @@ function validatePacketAgainstIntake(
       );
     }
   }
+  const expectedSourceHashes = [...new Set(
+    bundle.documents.map((document) => document.contentSha256),
+  )].sort();
   if (
     packet.sourceIntake.documents !== bundle.documents.length
+    || JSON.stringify([...packet.sourceIntake.sourceContentSha256Set].sort())
+      !== JSON.stringify(expectedSourceHashes)
     || packet.reviewKeySha256 !== setSha(expectedKeys)
     || packet.rows.length !== expectedKeys.length
   ) {
