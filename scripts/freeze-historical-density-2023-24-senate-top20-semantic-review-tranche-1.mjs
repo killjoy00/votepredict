@@ -171,7 +171,7 @@ ok(decisions.schemaVersion === K.decisionSchema && decisions.issue === 718
   && decisions.frozenReviewPacket?.reviewRows === 24
   && decisions.frozenReviewPacket?.reviewKeySha256 === K.reviewKeySha
   && decisions.frozenReviewPacket?.reviewPacketProofSha256 === K.packetProof
-  && decisions.frozenReviewPackket?.sourcePdfSha256 === K.pdfSha
+  && decisions.frozenReviewPacket?.sourcePdfSha256 === K.pdfSha
   && decisions.frozenReviewPacket?.sourceTextSha256 === K.textSha
   && decisions.policy?.everyCandidateReviewed === true
   && decisions.policy?.targetVoteOutcomesRead === false
