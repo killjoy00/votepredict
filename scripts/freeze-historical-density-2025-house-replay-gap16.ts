@@ -465,7 +465,7 @@ async function main(): Promise<void> {
       officialExternalKeySha256: EXPECTED_EXTERNAL_KEY_SHA256,
       strictVersionProofSha256: versionProofSha256,
       exactOriginalReplayMatches: 0,
-      billsPresentElsewhereInOriginalReplay,
+      billsPresentElsewhereInOriginalReplay: billsPresentElsewhere,
       productionDatabaseQueried: false,
       passFailOutcomeReadOrInferred: false,
     },
