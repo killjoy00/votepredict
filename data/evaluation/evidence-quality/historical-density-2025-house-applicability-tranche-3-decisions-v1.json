@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-tranche-3-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenCandidateArtifact": {
+    "runId": 37549542666,
+    "artifactId": 11452236668,
+    "digest": "sha256:0c78a9af4ca9cb87d660424a607151c24f295be5c95bd719d803fe7dd184a52f",
+    "targetTrancheIndex": 3,
+    "targetEventKeySha256": "e5df92e5d1074edae44bc376ba85a041c3107dde1c84cddc3c8a471c132822f0",
+    "reviewKeySha256": "ce074d71b2d6fed1c4ec0f9836aca73c873875d607775c24e4731af56a882f2b",
+    "eligibleClaimEventPairs": 1150,
+    "candidatePairs": 325,
+    "candidateBills": 17,
+    "candidatePublicMembers": 39,
+    "candidateSemanticGroups": 39
+  },
+  "defaultDecision": "not_applicable",
+  "defaultBillRationales": {
+    "HF1290": "Roadside automatic-external-defibrillator signage does not limit gubernatorial emergency powers; the emergency-language overlap is unrelated.",
+    "HF2098": "Local-government data, audit thresholds, notices, district organization, and rental-licensing changes do not implement the nominated telework, paid-leave, trafficking, disability, emergency-powers, or source-specific public-safety propositions.",
+    "HF2115": "Human-services policy is not applicable to nominated claims except the explicit fraud-oversight override below. Disability and Inspector General references occur in a broad mixed omnibus and do not by themselves create comprehensive disability-support policy or a new independent/centralized statewide Inspector General.",
+    "HF2130": "DWI and ignition-interlock reform is not applicable to the other nominated public-safety or policy claims except the explicit Kraft ignition-interlock overrides below; generic public-safety terminology is insufficient.",
+    "HF2433": "The K-12 finance omnibus contains many education categories but does not cleanly implement the other nominated education/governance propositions. The Rymer budget proposition is reviewed separately below because the exact version contains mixed directional changes across his named aid categories.",
+    "HF2434": "The human-services omnibus is not applicable to nominated claims except the explicit Allen fraud-integrity and Virnig disability-support overrides below. Other health, labor, housing, Inspector General, and program terms are incidental or mixed rather than direct implementations of the reviewed propositions.",
+    "HF2435": "The health-finance and policy omnibus does not implement the nominated nuclear-power, PFAS, paid-leave, school-sports, fraud-governance, or other member propositions; apparent nuclear and policy-term overlap is unrelated medical/health context.",
+    "HF2442": "Energy and renewable-development appropriations do not adjust electric-vehicle registration charges or road-funding contributions.",
+    "HF2464": "Health licensing and higher-education-facilities changes do not implement the nominated paid-leave, DWI, disability, public-safety, PFAS, or other member propositions.",
+    "SF1740": "The K-12 policy omnibus changes school policy broadly but does not enact the nominated transgender-sports rules, broad parental final authority, teacher protections for diverse curriculum, or other reviewed propositions. Existing gender-identity/anti-bullying context is not a new directional enactment.",
+    "SF1832": "Jobs, labor, economic-development, work-break, and manufactured-housing provisions do not repeal or preserve Paid Family and Medical Leave, create the nominated family-farm sick-time exemption, cap extreme manufactured-home rent increases, or implement the other reviewed propositions.",
+    "SF1959": "Military and veterans budget/services provisions do not implement the nominated disability-support, telework, housing-rent, Inspector General, or emergency-powers propositions.",
+    "SF2077": "Environment and natural-resources policy is not applicable to nominated claims except the explicit Fischer PFAS-protection override below. It funds PFAS programs but does not create Heintzeman's off-highway-vehicle PFAS exemption; other environmental/public-safety overlaps are incidental.",
+    "SF2200": "Restorative-practices evidence and data rules do not implement the nominated gun-violence research, traffic-stop reform, DWI, trafficking, disability, or Make Minnesota Safe propositions.",
+    "SF2370": "Cannabis regulation, licensing, expungement, and medical-cannabis policy do not implement the nominated zoning/housing, fraud, PFAS, public-safety, DWI, or other member propositions.",
+    "SF3045": "State-government operations are not applicable to nominated claims except the explicit Allen and Van Binsbergen oversight/reporting overrides below. Lobbying definitions, retirement appropriations, elections, licensing, and other governance language do not establish a legislator cooling-off period, teacher early-retirement reform, telework policy, or the other reviewed propositions.",
+    "SF3196": "A corrections deficiency appropriation does not implement the nominated traffic-stop, trafficking, DWI, gun-research, Inspector General, or source-specific Make Minnesota Safe propositions."
+  },
+  "overrides": [
+    {
+      "reviewKey": "kraft_repeat_dwi_interlock|HF2130|2025-05-01|2e4b4eaba8a5805b843ae407691a394582fbc08c7e9933228b391077eba76e08",
+      "decision": "applicable",
+      "billPolicyDirection": "strengthens_ignition_interlock_duration_and_requirements_and_expands_program_eligibility",
+      "alignmentDirection": "aligns",
+      "reason": "HF2130 directly modifies how long specified impaired-driving offenders must remain in ignition interlock, adds treatment and compliance requirements, and expands program eligibility. That substantively matches Kraft's position favoring stronger repeat-DWI interlock requirements while improving access to the program."
+    },
+    {
+      "reviewKey": "kraft_repeat_dwi_interlock|HF2130|2025-05-16|578af128ce2277619087148a26e7ef7cc689bdbcc9417f2a4877ba1f3766730c",
+      "decision": "applicable",
+      "billPolicyDirection": "strengthens_ignition_interlock_duration_and_requirements_and_expands_program_eligibility",
+      "alignmentDirection": "aligns",
+      "reason": "The later strict-pre-vote HF2130 version preserves the same direct ignition-interlock policy: longer participation/revocation consequences, additional compliance requirements, and expanded eligibility. It aligns with Kraft's reviewed proposition."
+    },
+    {
+      "reviewKey": "fischer_pfas_protections|SF2077|2025-05-05|a2c37a4f9ebb4bcc58f32e4e3a40cd3d4473c4521eae4b89fef336342bd7eab7",
+      "decision": "applicable",
+      "billPolicyDirection": "funds_and_enforces_existing_pfas_prevention_and_blueprint_programs",
+      "alignmentDirection": "aligns",
+      "reason": "SF2077 directly funds implementation of Minnesota's PFAS Blueprint and enforcement of existing PFAS-in-food-packaging provisions. That strengthens rather than rolls back PFAS prevention and aligns with Fischer's opposition to PFAS rollbacks."
+    },
+    {
+      "reviewKey": "allen_fraud_oversight_accountability|HF2115|2025-05-05|dcda1c61b865cdc5c9bb286fd85dd444ab4006d59ac47f82f16d16247202b3fd",
+      "decision": "applicable",
+      "billPolicyDirection": "strengthens_human_services_program_fraud_detection_prevention_investigation_and_recovery",
+      "alignmentDirection": "aligns",
+      "reason": "HF2115 makes the department responsible for detecting, preventing, investigating, and resolving fraud in human-services programs and requires county agencies to identify and recover overpayments. That directly implements Allen's broad state-program fraud oversight and accountability proposition."
+    },
+    {
+      "reviewKey": "allen_fraud_oversight_accountability|HF2434|2025-05-05|11c6ab8238eb5937d830399cdeea52c7ec893e148138bed8f624838b731dc87c",
+      "decision": "applicable",
+      "billPolicyDirection": "strengthens_provider_program_integrity_and_fraud_prevention_controls",
+      "alignmentDirection": "aligns",
+      "reason": "HF2434 adds provider compliance and program-integrity requirements explicitly covering fraud prevention, fraud detection, penalties, internal controls, and provider eligibility. Those are substantive anti-fraud controls for state-administered programs and align with Allen's proposition."
+    },
+    {
+      "reviewKey": "allen_fraud_oversight_accountability|SF3045|2025-05-01|4fa4c52937972605fa8c6fd3320179f69c429d08e087127a84260be7ce2db89d",
+      "decision": "applicable",
+      "billPolicyDirection": "standardizes_state_agency_reporting_and_oversight_of_public_resource_misuse_and_adds_fraud_controls",
+      "alignmentDirection": "aligns",
+      "reason": "SF3045 requires state-agency leaders to route concerns about misuse of public money, resources, or data to obligated oversight officers or the Legislative Auditor and standardizes that process across agencies, alongside explicit fraud-prevention policy. That directly advances state-program oversight/accountability against waste and fraud."
+    },
+    {
+      "reviewKey": "van_binsbergen_state_agency_fraud_reporting|SF3045|2025-05-01|4fa4c52937972605fa8c6fd3320179f69c429d08e087127a84260be7ce2db89d",
+      "decision": "applicable",
+      "billPolicyDirection": "standardizes_state_agency_reporting_of_public_resource_misuse_to_oversight_officers",
+      "alignmentDirection": "aligns",
+      "reason": "SF3045 requires every state department, board, commission, office, or agency to ensure concerns about misuse of public money/resources/data are promptly directed to designated oversight officers or the Legislative Auditor, with a standardized statewide process. That directly matches Van Binsbergen's state-agency fraud-reporting proposition."
+    },
+    {
+      "reviewKey": "virnig_disability_support|HF2434|2025-05-05|11c6ab8238eb5937d830399cdeea52c7ec893e148138bed8f624838b731dc87c",
+      "decision": "applicable",
+      "billPolicyDirection": "expands_assistive_technology_remote_support_and_advocacy_for_people_with_disabilities",
+      "alignmentDirection": "aligns",
+      "reason": "HF2434 establishes and funds a disability-services technology and advocacy expansion grant to expand assistive technology, remote supports, advocacy, training, access, independence, quality of life, and safety for people with disabilities. That directly aligns with Virnig's broad disability-support position."
+    },
+    {
+      "reviewKey": "rymer_education_budget_cuts|HF2433|2025-05-16|5da5bf18e17dfe3be6fabfe0de003a064ae1e2cc74e8a5c6eb1f3a78b2c2a7c4",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "HF2433 directly changes the same education-aid families named by Rymer, including nonpublic-pupil and teacher-compensation funding, but its special-education changes are mixed across programs and years. Because the reviewed claim is a combined proposition about reductions across all three categories, the omnibus version does not support one unambiguous bill-side direction and fails closed."
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
