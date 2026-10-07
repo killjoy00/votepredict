@@ -138,13 +138,24 @@ function canonicalIdentifier(value: string): string {
   return `${match[1]}${Number(match[2])}`;
 }
 
+const PERSON_SUFFIXES = new Set(['jr', 'sr', 'ii', 'iii', 'iv']);
+
 function canonicalPersonName(value: string): string {
   const normalized = normalizeMemberName(value);
   const tokens = normalized.split(' ').filter(Boolean);
-  const suffixes = new Set(['jr', 'sr', 'ii', 'iii', 'iv']);
-  const suffix = tokens.filter((token) => suffixes.has(token));
-  const base = tokens.filter((token) => !suffixes.has(token));
+  const suffix = tokens.filter((token) => PERSON_SUFFIXES.has(token));
+  const base = tokens.filter((token) => !PERSON_SUFFIXES.has(token));
   return [...base, ...suffix].join(' ');
+}
+
+function suffixStrippedAlias(value: string): string | undefined {
+  const normalized = normalizeMemberName(value);
+  const tokens = normalized
+    .split(' ')
+    .filter(Boolean)
+    .filter((token) => !PERSON_SUFFIXES.has(token));
+  const alias = tokens.join(' ');
+  return alias && alias !== normalized ? alias : undefined;
 }
 
 function compositeKey(identifier: string, occurredOn: string): string {
@@ -494,7 +505,12 @@ async function main(): Promise<void> {
     membershipId: `public-lrl:${row.lrlId}`,
     legislatorId: `public-lrl:${row.lrlId}`,
     name: row.memberName,
-    aliases: officialMembershipAliasesForLrlId(row.lrlId).map((alias) => alias.sourceName),
+    aliases: [
+      ...officialMembershipAliasesForLrlId(row.lrlId).map((alias) => alias.sourceName),
+      ...(suffixStrippedAlias(row.memberName)
+        ? [suffixStrippedAlias(row.memberName)!]
+        : []),
+    ],
   }));
   const publicByFakeMembership = new Map(
     [...publicByLrl.values()].map((row) => [`public-lrl:${row.lrlId}`, row] as const),
