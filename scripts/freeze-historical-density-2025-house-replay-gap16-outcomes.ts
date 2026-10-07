@@ -25,6 +25,17 @@ const MEMBER_VOTE_ROW_SHA256 =
 const EXPECTED_EVENTS = 16;
 const EXPECTED_MEMBER_VOTES = 2125;
 const EXPECTED_MEMBERSHIPS = 137;
+const EXPECTED_JOURNAL_LINKS_DISCOVERED = 78;
+const EXPECTED_JOURNAL_PAGES_FETCHED = 14;
+const EXPECTED_RECOVERED_OUTCOMES = 15;
+const EXPECTED_UNRESOLVED_OUTCOMES = 1;
+const EXPECTED_PASSED_OUTCOMES = 15;
+const EXPECTED_FAILED_OUTCOMES = 0;
+const EXPECTED_UNRESOLVED_COMPOSITE_KEY = 'HF2354|2026-05-17';
+const EXPECTED_SOURCE_PROOF_SHA256 =
+  'e1a0abcc2970e7888021946dbe915aebf27077dafc4dfc7249b023339aad92d0';
+const EXPECTED_OUTCOME_PROOF_SHA256 =
+  'b7490e53daeff266d8c5d450ee428c018b1070dcf0e4ca8b91234b24bbb616db';
 
 type Json = Record<string, any>;
 
@@ -330,6 +341,36 @@ async function main(): Promise<void> {
         `${row.compositeKey}|${row.passed ? 'pass' : 'fail'}|${row.resultText}|${row.outcomeJournalPage ?? 'no-page'}|${row.sourceUrl}|${row.contentSha256}`,
     ),
   );
+
+  if (parsed.links.length !== EXPECTED_JOURNAL_LINKS_DISCOVERED) {
+    throw new Error(`House Journal link count drifted: ${parsed.links.length}`);
+  }
+  if (pages.length !== EXPECTED_JOURNAL_PAGES_FETCHED) {
+    throw new Error(`Exact-date House Journal page count drifted: ${pages.length}`);
+  }
+  if (
+    recovered.length !== EXPECTED_RECOVERED_OUTCOMES
+    || unresolved.length !== EXPECTED_UNRESOLVED_OUTCOMES
+    || passed !== EXPECTED_PASSED_OUTCOMES
+    || failed !== EXPECTED_FAILED_OUTCOMES
+  ) {
+    throw new Error(
+      `Outcome recovery counts drifted: ${JSON.stringify({ recovered: recovered.length, unresolved: unresolved.length, passed, failed })}`,
+    );
+  }
+  if (
+    unresolved.length !== 1
+    || unresolved[0]?.compositeKey !== EXPECTED_UNRESOLVED_COMPOSITE_KEY
+    || unresolved[0]?.unresolvedReason !== 'no_exact_bill_tally_result_match'
+  ) {
+    throw new Error(`Unresolved outcome identity drifted: ${JSON.stringify(unresolved)}`);
+  }
+  if (sourceProofSha256 !== EXPECTED_SOURCE_PROOF_SHA256) {
+    throw new Error(`House Journal source proof drifted: ${sourceProofSha256}`);
+  }
+  if (outcomeProofSha256 !== EXPECTED_OUTCOME_PROOF_SHA256) {
+    throw new Error(`House Journal outcome proof drifted: ${outcomeProofSha256}`);
+  }
 
   const report = {
     schemaVersion: 'historical-density-2025-house-replay-gap16-outcomes-v1',
