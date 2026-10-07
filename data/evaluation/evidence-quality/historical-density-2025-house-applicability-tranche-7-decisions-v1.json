@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-tranche-7-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenCandidateArtifact": {
+    "runId": 37558359715,
+    "artifactId": 11455338397,
+    "digest": "sha256:8b66755abcc579e3832b068b72b6c050b63352f0650f4050bfd09630a12dfd84",
+    "targetTrancheIndex": 7,
+    "targetRankStart": 151,
+    "targetRankEnd": 175,
+    "targetEventKeySha256": "3d994198b510f648867bb0804b25ff201328c6dd0628d901ff33579b43f1378f",
+    "reviewKeySha256": "7bdd75e8965ecba1025ec3c66a2b5aa60747ea9628be0f4dfa53c7d55cb7408f",
+    "eligibleClaimEventPairs": 1150,
+    "candidatePairs": 133,
+    "candidateBills": 14,
+    "candidatePublicMembers": 33,
+    "candidateSemanticGroups": 33
+  },
+  "defaultDecision": "not_applicable",
+  "defaultBillRationales": {
+    "HF1082": "The public-safety bill changes officer/survivor benefits, grooming and impersonation offenses, domestic-violence response, task forces, grants, and related provisions, but it does not create an inspector general, a gun-violence research program, standardized anti-profiling traffic-stop rules, refinery-release notice, PFAS policy, repeat-DWI ignition-interlock policy, manufactured-home rent protections, emergency-powers limits, LGBTQ-school protections, an anti-human-trafficking task force, disability-services policy, or EV road-funding parity. Its domestic-violence and responder-identification task forces and generic criminal-justice reporting do not establish the nominated propositions or the specific Make Minnesota Safe package.",
+    "HF1141": "The Minnesota Housing Finance Agency supplemental budget, housing infrastructure bonds, program transfers, and fund-reporting changes do not create an independent or centralized inspector general and do not regulate manufactured-home park rent increases. Generic housing, rent-restricted-unit, and oversight language is insufficient.",
+    "HF3684": "Department of Veterans Affairs grant standards are not applicable to nominated inspector-general, fraud-note, statewide agency-fraud-reporting, or general disability-service propositions. The bill's direct state-grant fraud/accountability controls are handled only by the explicit Allen override below.",
+    "HF3732": "DEED/workforce-development and labor-and-industry policy changes do not enact the nominated family-farm sick-time exemption, sex-based school-sports rule, housing-zoning reform, PFAS vehicle exemption, manufactured-home rent cap/protection, state-worker telework policy, emergency-powers limit, nuclear-moratorium repeal, anti-trafficking task force, broad disability-services policy, or EV road-funding parity. Topic words such as agriculture, labor, housing, energy, and transportation are adjacent rather than substantively matching.",
+    "HF3919": "Benefits and eligibility for veterans of the Secret War in Laos do not implement the nominated gun-violence research, traffic-stop, refinery-notification, Make Minnesota Safe, repeat-DWI interlock, anti-trafficking-task-force, or broad disability-support propositions.",
+    "HF4006": "A project-specific modification to the Progress Parkway transportation appropriation does not create the nominated PFAS exemption for off-highway vehicles, snowmobiles, or electric-assisted bicycles.",
+    "HF4063": "School-bus stopping, first-aid-kit, USDOT-number, and training-use provisions do not create the nominated PFAS recreational-vehicle exemption or change electric-vehicle registration charges for road-funding parity.",
+    "HF4151": "Private-detective and protective-agent licensing eligibility changes do not implement gun-violence research, standardized traffic-stop reform, refinery hazard notification, the Make Minnesota Safe package, repeat-DWI ignition-interlock policy, or an anti-human-trafficking task force.",
+    "HF4252": "The higher-education omnibus changes student aid, parenting-student accommodations, school regulation, and reporting but does not enact the nominated family-farm sick-time exemption, inspector-general structures, PFAS policy, broad parental final authority, Paid Family and Medical Leave protection, Make Minnesota Safe package, teacher-pension reform, fraud-risk notes, state-worker telework, emergency-powers limits, LGBTQ-school protections, anti-trafficking task force, statewide state-agency fraud-reporting regime, or broad disability-services policy. Its direct fraud controls for state-administered aid and grant programs are handled only by the explicit Allen override below.",
+    "HF4462": "Requiring a standardized summary page for state requests for proposals is procurement-formatting policy, not a substantive state-program anti-fraud control, inspector-general structure, fraud-risk note, or stricter state-agency fraud-reporting and prevention regime.",
+    "SF1750": "Common-interest-community governance, unit-owner rights, fees, foreclosure, conflicts, and dispute-resolution rules do not implement the nominated inspector-general, gun-research, traffic-stop, refinery-notification, Make Minnesota Safe, repeat-DWI interlock, emergency-powers, or anti-trafficking propositions.",
+    "SF3888": "Allowing tow trucks to use variable-message signs does not implement the nominated gun-research, traffic-stop, refinery-notification, Make Minnesota Safe, repeat-DWI interlock, or anti-trafficking propositions.",
+    "SF4760": "The public-safety omnibus contains many adjacent terms, but generic public-safety, law-enforcement, domestic-abuse, trafficking, education, housing, and employment provisions do not by themselves establish the nominated inspector-general, civil-rights, gun-research, traffic-stop, parental-rights, refinery-notification, PFAS, Paid Family and Medical Leave, Make Minnesota Safe, teacher-pension, fraud-note, school-mandate, manufactured-home-rent, telework, emergency-powers, LGBTQ-school, anti-trafficking-task-force, statewide agency-fraud-reporting, or disability-service propositions. The exact state-program fraud-investigation and repeat-DWI/interlock provisions are handled only by the explicit overrides below.",
+    "SF4807": "Secret War in Laos veterans-benefit and cemetery-eligibility changes do not implement the nominated gun-research, traffic-stop, refinery-notification, Make Minnesota Safe, repeat-DWI interlock, anti-trafficking-task-force, or broad disability-support propositions."
+  },
+  "overrides": [
+    {
+      "reviewKey": "allen_fraud_oversight_accountability|HF3684|2026-05-04|221715130568be0e8d320d4bc36881b88f90e5e6c99f18a13a4f7033748a33cb",
+      "decision": "applicable",
+      "billPolicyDirection": "strengthens_veterans_grant_scoring_fraud_withholding_reporting_and_accountability_controls",
+      "alignmentDirection": "aligns",
+      "reason": "The strict pre-vote HF3684 version establishes measurable grant scoring, authorizes the Veterans Affairs commissioner to withhold grant money when a grantee committed fraud or is under criminal investigation, and requires recurring grantee reporting on grant amounts, other public grants, services, outcomes, and charitable-giving ratios. Those are direct oversight and accountability controls for a state grant program and align with Allen's broad anti-fraud/accountability proposition."
+    },
+    {
+      "reviewKey": "allen_fraud_oversight_accountability|HF4252|2026-05-04|3f8ce2b77740c67ba6e55aca1889ceed08b0486520ef83d1de43a3f1f6a30033",
+      "decision": "applicable",
+      "billPolicyDirection": "adds_fraud_based_denial_inspection_and_information_controls_for_state_student_aid_and_grant_programs",
+      "alignmentDirection": "aligns",
+      "reason": "The strict pre-vote HF4252 version creates a fraud-denial rule for student aid and grant programs administered under chapter 136A: funding may be denied for materially false or fraudulent applications, refusal of reasonable inspection or information requests, or a fraud/material-violation determination involving government funding. These are direct state-program anti-fraud and oversight controls and align with Allen's proposition."
+    },
+    {
+      "reviewKey": "allen_fraud_oversight_accountability|SF4760|2026-04-30|6556496ef9fb1af977eb787b8b54c9ad3ddb53e5b0896077440e252ef7b6722f",
+      "decision": "applicable",
+      "billPolicyDirection": "expands_bca_investigative_authority_for_fraud_in_state_funded_or_administered_programs",
+      "alignmentDirection": "aligns",
+      "reason": "The strict pre-vote SF4760 version gives the BCA superintendent subpoena authority for financial-crime and fraud investigations, expressly including fraud involving state-funded or state-administered programs or services. That is a concrete new oversight and investigative tool for state-program fraud and aligns with Allen's broad accountability proposition."
+    },
+    {
+      "reviewKey": "kraft_repeat_dwi_interlock|SF4760|2026-04-30|6556496ef9fb1af977eb787b8b54c9ad3ddb53e5b0896077440e252ef7b6722f",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "SF4760 directly amends repeat-impaired-driving license-revocation and ignition-interlock provisions and broadens parts of the program-participant definition, so it is genuinely in the same policy lane. But the exact version does not safely establish Kraft's combined proposition of materially more aggressive interlock time for repeat DWI offenders while also reducing barriers to program entry. Same-program overlap is therefore fail-closed."
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
