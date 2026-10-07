@@ -111,7 +111,11 @@ jobs:
           test "$(jq -r '.identityCoverage.extraHistoricalIdentities' "$f")" = 3
           test "$(jq -r '.identityCoverage.unresolvedAfterSignature' "$f")" = 0
 
-          test "$(jq -r '.bridge.usableEvents' "$f")" -ge 40
+          test "$(jq -r '.bridge.usableEvents' "$f")" = 71
+          test "$(jq -r '.bridge.bridgeEventKeySha256' "$f")" = d2e681055f5d684ac18649207c480b42ac0073bdff9f789dc7cb19308ee53f53
+          test "$(jq -r '.bridge.bridgeSourceProofSha256' "$f")" = 828283c4ff6744eb5dc53cfdcbf8a4740a5ae14662cc7517993a3ecdf434a9f1
+          test "$(jq -r '.signatureResolution.mappingSha256' "$f")" = 26e0d18d8c43f8ca3775ed971809bdf3e14b474d7f54d5c96355e3f4fc4950a8
+          test "$(jq -r '.currentRoster.mappingSha256' "$f")" = dccf018ae2a46d4232ae3a29b96c82d69536f7bfaf98de94676b42fe197cd40c
           test "$(jq -r '.signatureResolution.mappings | length' "$f")" = 7
           test "$(jq -r '.currentRoster.mappings | length' "$f")" = 134
           test "$(jq -r '.extraHistoricalMemberships | length' "$f")" = 3
@@ -146,10 +150,10 @@ jobs:
             echo '- Extra historical membership records: **3**'
             echo '- Unresolved after signature: **0**'
             echo "- Usable non-gap bridge events: **$(jq -r '.bridge.usableEvents' "$f")**"
-            echo "- Bridge-event SHA: `$(jq -r '.bridge.bridgeEventKeySha256' "$f")`"
-            echo "- Bridge-source proof SHA: `$(jq -r '.bridge.bridgeSourceProofSha256' "$f")`"
-            echo "- Signature mapping SHA: `$(jq -r '.signatureResolution.mappingSha256' "$f")`"
-            echo "- Current roster mapping SHA: `$(jq -r '.currentRoster.mappingSha256' "$f")`"
+            echo '- Bridge-event SHA: `d2e681055f5d684ac18649207c480b42ac0073bdff9f789dc7cb19308ee53f53`'
+            echo '- Bridge-source proof SHA: `828283c4ff6744eb5dc53cfdcbf8a4740a5ae14662cc7517993a3ecdf434a9f1`'
+            echo '- Signature mapping SHA: `26e0d18d8c43f8ca3775ed971809bdf3e14b474d7f54d5c96355e3f4fc4950a8`'
+            echo '- Current roster mapping SHA: `dccf018ae2a46d4232ae3a29b96c82d69536f7bfaf98de94676b42fe197cd40c`'
             echo '- Gap16 candidate vote pages requested: **no**'
             echo '- Gap16 candidate vote choices read: **no**'
             echo '- Production DB queried: **no**'
