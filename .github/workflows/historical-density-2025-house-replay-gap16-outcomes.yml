@@ -66,10 +66,17 @@ jobs:
           test "$(jq -r '.frozenInput.memberVotes.memberships' "$f")" = 137
 
           test "$(jq -r '.journalSource.sessionMatched' "$f")" = true
-          test "$(jq -r '.journalSource.indexLinksDiscovered' "$f")" -ge 40
+          test "$(jq -r '.journalSource.indexLinksDiscovered' "$f")" = 78
+          test "$(jq -r '.journalSource.exactDateJournalPagesFetched' "$f")" = 14
+          test "$(jq -r '.journalSource.sourceProofSha256' "$f")" = e1a0abcc2970e7888021946dbe915aebf27077dafc4dfc7249b023339aad92d0
           test "$(jq -r '.outcomeRecovery.events' "$f")" = 16
-          test $(( $(jq -r '.outcomeRecovery.recovered' "$f") + $(jq -r '.outcomeRecovery.unresolved' "$f") )) -eq 16
-          test $(( $(jq -r '.outcomeRecovery.passed' "$f") + $(jq -r '.outcomeRecovery.failed' "$f") )) -eq "$(jq -r '.outcomeRecovery.recovered' "$f")"
+          test "$(jq -r '.outcomeRecovery.recovered' "$f")" = 15
+          test "$(jq -r '.outcomeRecovery.unresolved' "$f")" = 1
+          test "$(jq -r '.outcomeRecovery.passed' "$f")" = 15
+          test "$(jq -r '.outcomeRecovery.failed' "$f")" = 0
+          test "$(jq -r '.outcomeRecovery.outcomeProofSha256' "$f")" = b7490e53daeff266d8c5d450ee428c018b1070dcf0e4ca8b91234b24bbb616db
+          test "$(jq -r '[.outcomeRecovery.eventsData[] | select(.status == "unresolved")][0].compositeKey' "$f")" = 'HF2354|2026-05-17'
+          test "$(jq -r '[.outcomeRecovery.eventsData[] | select(.status == "unresolved")][0].unresolvedReason' "$f")" = no_exact_bill_tally_result_match
           jq -e '[.outcomeRecovery.eventsData[] | select(.status == "recovered") | (.passed == true or .passed == false)] | all' "$f" >/dev/null
           jq -e '[.outcomeRecovery.eventsData[] | select(.status == "unresolved") | .passed == null] | all' "$f" >/dev/null
           jq -e '[.outcomeRecovery.eventsData[] | select(.status == "recovered") | (.sourceUrl | startswith("https://www.house.mn.gov/cco/journals/2025-26/J"))] | all' "$f" >/dev/null
@@ -95,13 +102,13 @@ jobs:
             echo '## 2025-26 House replay-gap explicit outcomes'
             echo
             echo '- Frozen events: **16**'
-            echo "- House Journal outcomes recovered: **$(jq -r '.outcomeRecovery.recovered' "$f")**"
-            echo "- Unresolved: **$(jq -r '.outcomeRecovery.unresolved' "$f")**"
-            echo "- Explicit passes: **$(jq -r '.outcomeRecovery.passed' "$f")**"
-            echo "- Explicit failures: **$(jq -r '.outcomeRecovery.failed' "$f")**"
-            echo "- Exact-date Journal pages fetched: **$(jq -r '.journalSource.exactDateJournalPagesFetched' "$f")**"
-            echo "- Journal source proof SHA: `$(jq -r '.journalSource.sourceProofSha256' "$f")`"
-            echo "- Outcome proof SHA: `$(jq -r '.outcomeRecovery.outcomeProofSha256' "$f")`"
+            echo '- House Journal outcomes recovered: **15 / 16**'
+            echo '- Unresolved: **1 — HF2354 on 2026-05-17**'
+            echo '- Explicit passes: **15**'
+            echo '- Explicit failures: **0**'
+            echo '- Exact-date Journal pages fetched: **14**'
+            echo '- Journal source proof SHA: `e1a0abcc2970e7888021946dbe915aebf27077dafc4dfc7249b023339aad92d0`'
+            echo '- Outcome proof SHA: `b7490e53daeff266d8c5d450ee428c018b1070dcf0e4ca8b91234b24bbb616db`'
             echo '- Tally inference allowed: **no**'
             echo '- Production DB queried: **no**'
           } >> "$GITHUB_STEP_SUMMARY"
