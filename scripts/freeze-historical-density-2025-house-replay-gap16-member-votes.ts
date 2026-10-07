@@ -320,6 +320,30 @@ async function main(): Promise<void> {
     );
     const selected = exactExternalKey.length === 1 ? exactExternalKey : stableIdentity;
     if (selected.length !== 1) {
+      const currentParsedEvents = pageEvents.map((event) => ({
+        externalKey: event.externalKey,
+        billIdentifier: event.billIdentifier ?? null,
+        occurredOn: event.occurredOn,
+        journalPage: event.journalPage ?? null,
+        voteKind: event.voteKind,
+        isPassage: event.isPassage,
+        yeaCount: event.yeaCount,
+        nayCount: event.nayCount,
+        decisiveVotes: event.yeaCount + event.nayCount,
+        motionText: event.motionText,
+      }));
+      console.error(JSON.stringify({
+        houseVoteIdentityDiagnostic: {
+          frozen: {
+            compositeKey: candidate.compositeKey,
+            externalKey: candidate.externalKey,
+            journalPage: candidate.journalPage,
+            decisiveVotes: candidate.decisiveVotes,
+            motionText: candidate.motionText,
+          },
+          currentParsedEvents,
+        },
+      }, null, 2));
       throw new Error(
         `Expected one stable official event for ${candidate.compositeKey}; `
         + `exactExternalKey=${exactExternalKey.length}, stableIdentity=${stableIdentity.length}`,
