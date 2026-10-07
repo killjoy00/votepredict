@@ -3,9 +3,9 @@
   "issue": 718,
   "session": "2025-2026",
   "frozenCandidateArtifact": {
-    "runId": 37555963012,
-    "artifactId": 11455310210,
-    "digest": "sha256:a80decf9423cbd59fc09a3abc6dad8f8194d2bea64b1d255ae944fd59237bb55",
+    "runId": 37556230483,
+    "artifactId": 11454860978,
+    "digest": "sha256:fcfce6beafffa76f5e8f0947207aa3944bf7b3c560ec0419bfe6a0c7be50f0c7",
     "targetTrancheIndex": 6,
     "targetRankStart": 126,
     "targetRankEnd": 150,
