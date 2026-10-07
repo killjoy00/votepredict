@@ -8,7 +8,7 @@ const path = resolve(
 );
 const decisions = JSON.parse(readFileSync(path, 'utf8'));
 
-test('tranche-7 decisions pin the exact 126-candidate set', () => {
+test('tranche-7 decisions pin the exact 133-candidate set', () => {
   assert.equal(
     decisions.schemaVersion,
     'historical-density-2025-house-applicability-tranche-7-decisions-v1',
@@ -41,7 +41,7 @@ test('tranche-7 review has three applicable and one ambiguous override', () => {
   );
   assert.equal(
     decisions.overrides.filter((row: { alignmentDirection?: string | null }) => row.alignmentDirection === 'aligns').length,
-    1,
+    3,
   );
   assert.equal(
     decisions.overrides.filter((row: { alignmentDirection?: string | null }) => row.alignmentDirection === 'conflicts').length,
