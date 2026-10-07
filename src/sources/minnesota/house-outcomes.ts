@@ -13,14 +13,14 @@ export function parseHouseJournalOutcomes(html: string): HouseJournalOutcome[] {
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
     .replace(/<[^>]+>/g, ' ').replace(/&nbsp;|&#160;/gi, ' ').replace(/\s+/g, ' ');
   const outcomes: HouseJournalOutcome[] = [];
-  const roll = /The question was taken on the (?:re)?passage of the bill(?:, as amended)? and the roll was called\.(?:\s*Pursuant to rule[^.]*\.[\s\S]{0,250}?)?\s*There were (\d+) yeas and (\d+) nays/gi;
+  const roll = /The question was taken on the (?:re)?passage of the bill(?:, as amended)? and the roll was called\.(?:\s*Pursuant to rule[^.]*\.[\s\S]{0,250}?)?\s*There were (\d+) yeas? and (\d+) nays?/gi;
   for (const match of text.matchAll(roll)) {
     const before = text.slice(0, match.index);
-    const headings = [...before.matchAll(/([HS])\.?\s*F\.?\s*No\.?\s*(\d+)\s*,\s*A (?:bill for an act|resolution)/gi)];
+    const headings = [...before.matchAll(/([HS])\.?\s*F\.?\s*No\.?\s*(\d+)\s*,\s*A (?:bill for an act|(?:memorial )?resolution)/gi)];
     const heading = headings.at(-1);
     if (!heading) continue;
     const following = text.slice(match.index! + match[0].length);
-    const boundary = following.search(/The question was taken|[HS]\.?\s*F\.?\s*No\.?\s*\d+\s*,\s*A (?:bill for an act|resolution)/i);
+    const boundary = following.search(/The question was taken|[HS]\.?\s*F\.?\s*No\.?\s*\d+\s*,\s*A (?:bill for an act|(?:memorial )?resolution)/i);
     const block = following.slice(0, boundary < 0 ? 12000 : Math.min(boundary, 12000));
     const result = block.match(/The (?:bill|resolution)(?:, as amended)? (?:was (not )?(?:(?:re)?passed|adopted)|did (not )?(?:pass|adopt))[^.]*\./i);
     if (!result) continue;
