@@ -75,7 +75,7 @@ jobs:
           test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
           test "$(jq -r '.policy.modelFitting' "$f")" = none
           test "$(jq -r '.policy.servingChanged' "$f")" = false
-          test "$(jq -r '.protocolProofSha256 | length' "$f")" = 64
+          test "$(jq -r '.protocolProofSha256' "$f")" = b8dad4d70a696ddc8d3c32bbc831710cabcc1e8f00a7b633af16773427837bbf
       - uses: actions/upload-artifact@v7
         with:
           name: historical-density-2021-senate-print-minute-intake-protocol-v1
