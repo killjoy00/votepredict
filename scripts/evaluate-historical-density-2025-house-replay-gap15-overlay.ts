@@ -288,6 +288,9 @@ function parseSupport(manifestPath: string, snapshotPath: string) {
     || manifest.canonicalParity?.missingRows !== 0
     || manifest.canonicalParity?.extraRows !== 0
     || manifest.canonicalParity?.fieldMismatches !== 0
+    || manifest.canonicalParity?.rowKeySha256 !== CANONICAL_ROW_KEY_SHA256
+    || manifest.frozenInputs?.gapMemberVotes?.memberVoteRowSha256
+      !== FROZEN_MEMBER_VOTE_ROW_SHA256
     || manifest.gapLoaderReconciliation?.passed !== true
     || manifest.gapLoaderReconciliation?.reconciledEvents !== EXPECTED_GAP_EVENTS
     || manifest.gapLoaderReconciliation?.reconciledDecisiveMemberVotes !== 2125
@@ -468,6 +471,10 @@ async function main(): Promise<void> {
     env('VOTEPREDICT_GAP16_SUPPORT_SNAPSHOT_PATH'),
   );
   const outcomes = parseOutcomes(env('VOTEPREDICT_GAP16_OUTCOMES_PATH'));
+  const canonical = parseCanonicalMatrix(
+    env('VOTEPREDICT_HISTORICAL_AS_OF_MANIFEST_PATH'),
+    env('VOTEPREDICT_HISTORICAL_AS_OF_MATRIX_PATH'),
+  );
   const output = resolve(env('VOTEPREDICT_GAP15_OVERLAY_OUTPUT'));
 
   const rebuilt = verifySupportRebuild(support.envelope);
@@ -536,10 +543,50 @@ async function main(): Promise<void> {
     throw new Error('Fail-closed HF2354 event leaked into overlay targets');
   }
 
+  const overlayPassedByEvent = new Map(
+    overlayTargets.map((event) => [event.voteEventId, event.passed] as const),
+  );
+  const overlayEvents = support.envelope.data.events.map((event) =>
+    overlayPassedByEvent.has(event.voteEventId)
+      ? { ...event, passed: overlayPassedByEvent.get(event.voteEventId) as boolean }
+      : event);
+  const overlayRebuilt = buildHistoricalQuickAnalogueSupport(
+    overlayEvents,
+    versionsByBill(support.envelope.data.versions),
+    votesByEvent(support.envelope.data.historicalVotes),
+  );
+
+  const canonicalOverlayResults = runHistoricalQuickDecayShadowReplay(
+    canonicalTargets,
+    overlayRebuilt.targetVersionByEvent,
+    overlayRebuilt.supportByEvent,
+    support.envelope.data.memberships,
+    support.envelope.data.historicalVotes,
+    HALF_LIFE_DAYS,
+  );
+  const canonicalRegression = compareRows(
+    canonical,
+    flattenReplayRows(canonicalOverlayResults, canonicalTargets),
+  );
+  if (
+    canonicalRegression.canonicalRows !== CANONICAL_ROWS
+    || canonicalRegression.currentRows !== CANONICAL_ROWS
+    || canonicalRegression.canonicalRowKeySha256 !== CANONICAL_ROW_KEY_SHA256
+    || canonicalRegression.currentRowKeySha256 !== CANONICAL_ROW_KEY_SHA256
+    || canonicalRegression.missingRows !== 0
+    || canonicalRegression.extraRows !== 0
+    || canonicalRegression.fieldMismatches !== 0
+  ) {
+    throw new Error(
+      'Canonical 135,457-row replay changed with overlay present: '
+      + JSON.stringify(canonicalRegression),
+    );
+  }
+
   const results = runHistoricalQuickDecayShadowReplay(
     overlayTargets,
-    rebuilt.targetVersionByEvent,
-    rebuilt.supportByEvent,
+    overlayRebuilt.targetVersionByEvent,
+    overlayRebuilt.supportByEvent,
     support.envelope.data.memberships,
     support.envelope.data.historicalVotes,
     HALF_LIFE_DAYS,
@@ -614,8 +661,115 @@ async function main(): Promise<void> {
     );
   }
 
+  const existing2025HouseResults = canonicalOverlayResults.filter(
+    (result) => result.session === '2025-2026' && result.chamber === 'house',
+  );
+  const existing2025HouseScorecard = scoreHistoricalQuickReplay(existing2025HouseResults).overall;
+
+  const detailedEvents = results.map((result) => {
+    const target = overlayTargets.find((event) => event.voteEventId === result.voteEventId)!;
+    const targetVersion = overlayRebuilt.targetVersionByEvent.get(result.voteEventId);
+    const analogueSupport = overlayRebuilt.supportByEvent.get(result.voteEventId);
+    if (!targetVersion || !analogueSupport) {
+      throw new Error(`Detailed overlay support missing for ${result.voteEventId}`);
+    }
+    const analogueDetails = analogueSupport.selectedAnalogueDetails ?? [];
+    if (
+      analogueDetails.length !== analogueSupport.selected
+      || JSON.stringify(analogueDetails.map((row) => row.voteEventId))
+        !== JSON.stringify(analogueSupport.selectedAnalogueIds)
+    ) {
+      throw new Error(`Selected analogue detail drifted for ${result.voteEventId}`);
+    }
+    const decisiveVoteRows = support.envelope.data.historicalVotes
+      .filter((row) => row.voteEventId === result.voteEventId)
+      .sort((a, b) => a.membershipId.localeCompare(b.membershipId))
+      .map((row) => ({
+        membershipId: row.membershipId,
+        legislatorId: row.legislatorId,
+        party: row.party,
+        choice: row.choice,
+      }));
+
+    return {
+      voteEventId: result.voteEventId,
+      billId: target.billId,
+      compositeKey: composite(target.identifier, target.occurredOn),
+      identifier: target.identifier,
+      occurredOn: target.occurredOn,
+      status: result.status,
+      targetVersion: {
+        id: targetVersion.id,
+        billId: targetVersion.billId,
+        publishedAt: targetVersion.publishedAt,
+        rawTextSha256: sha256(targetVersion.rawText),
+      },
+      analogueSupport: {
+        prefiltered: analogueSupport.prefiltered,
+        selected: analogueSupport.selected,
+        directMemberSupport: analogueSupport.member.size,
+        selectedAnalogueIds: [...analogueSupport.selectedAnalogueIds],
+        selectedAnalogues: analogueDetails.map((row) => ({ ...row })),
+      },
+      decisiveVoteRows,
+      decisiveVoteRowSha256: setSha(
+        decisiveVoteRows.map((row) =>
+          `${row.membershipId}|${row.legislatorId}|${row.party}|${row.choice}`),
+      ),
+      activeMembers: result.activeMembers,
+      directAnalogueMembers: result.directAnalogueMembers,
+      memberObservations: result.memberPredictions.filter(
+        (row) => row.actualOutcome !== undefined,
+      ).length,
+      memberPredictions: result.memberPredictions.map((row) => ({
+        membershipId: row.membershipId,
+        legislatorId: row.legislatorId,
+        party: row.party,
+        yesProbability: row.yesProbability ?? null,
+        actualOutcome: row.actualOutcome ?? null,
+        analogueEffectiveWeight: row.analogueEffectiveWeight,
+        support: row.support,
+        cannotPredictReason: row.cannotPredictReason ?? null,
+      })),
+      passageProbability: result.passageProbability ?? null,
+      expectedYes: result.expectedYes ?? null,
+      yesLow: result.yesLow ?? null,
+      yesHigh: result.yesHigh ?? null,
+      actualYes: result.actualYes,
+      passed: result.passed,
+    };
+  });
+
+  const overlayInputProofSha256 = setSha(
+    detailedEvents.flatMap((event) => [
+      [
+        event.voteEventId,
+        event.billId,
+        event.compositeKey,
+        event.targetVersion.id,
+        event.targetVersion.rawTextSha256,
+        event.analogueSupport.prefiltered,
+        event.analogueSupport.selected,
+        event.analogueSupport.directMemberSupport,
+        event.analogueSupport.selectedAnalogueIds.join(','),
+        event.decisiveVoteRowSha256,
+      ].join('|'),
+      ...event.analogueSupport.selectedAnalogues.map((row) =>
+        [
+          event.voteEventId,
+          row.voteEventId,
+          row.billVersionId,
+          row.similarity,
+          row.recencyWeight,
+          row.score,
+          row.relationship ?? '',
+          row.reasons.join(','),
+        ].join('|')),
+    ]),
+  );
+
   const report = {
-    schemaVersion: 'historical-density-2025-house-replay-gap15-overlay-v1',
+    schemaVersion: 'historical-density-2025-house-replay-gap15-overlay-v2',
     generatedAt: new Date().toISOString(),
     issue: ISSUE,
     replay: {
@@ -645,6 +799,7 @@ async function main(): Promise<void> {
       frozenSupportSelectionsExact: true,
       canonicalTargetsRebuilt: canonicalTargets.length,
       canonicalTargetsChanged: false,
+      canonicalRowsWithOverlayPresent: canonicalRegression,
     },
     overlay: {
       frozenGapEvents: EXPECTED_GAP_EVENTS,
@@ -659,38 +814,39 @@ async function main(): Promise<void> {
       statusCounts,
       resultProofSha256,
       memberPredictionProofSha256,
-      events: results.map((result) => {
-        const target = overlayTargets.find((event) =>
-          event.voteEventId === result.voteEventId)!;
-        return {
-          voteEventId: result.voteEventId,
-          compositeKey: composite(target.identifier, target.occurredOn),
-          identifier: target.identifier,
-          occurredOn: target.occurredOn,
-          status: result.status,
-          targetVersionId: result.targetVersionId,
-          activeMembers: result.activeMembers,
-          directAnalogueMembers: result.directAnalogueMembers,
-          selectedAnalogues: result.selectedAnalogues,
-          memberObservations: result.memberPredictions.filter(
-            (row) => row.actualOutcome !== undefined,
-          ).length,
-          memberPredictions: result.memberPredictions.filter(
-            (row) => row.yesProbability !== undefined,
-          ).length,
-          passageProbability: result.passageProbability ?? null,
-          expectedYes: result.expectedYes ?? null,
-          actualYes: result.actualYes,
-          passed: result.passed,
-        };
-      }),
+      overlayInputProofSha256,
+      events: detailedEvents,
     },
     scorecard,
+    comparison: {
+      existing2025HouseReplayCohort: {
+        events: existing2025HouseResults.length,
+        scorecard: existing2025HouseScorecard,
+      },
+      overlayMinusExisting2025House: {
+        memberAccuracy:
+          scorecard.overall.memberAccuracy - existing2025HouseScorecard.memberAccuracy,
+        memberBrier:
+          scorecard.overall.memberBrier - existing2025HouseScorecard.memberBrier,
+        memberLogLoss:
+          scorecard.overall.memberLogLoss - existing2025HouseScorecard.memberLogLoss,
+        memberExpectedCalibrationError:
+          scorecard.overall.memberExpectedCalibrationError
+          - existing2025HouseScorecard.memberExpectedCalibrationError,
+        chamberMeanAbsoluteYesError:
+          scorecard.overall.chamberMeanAbsoluteYesError
+          - existing2025HouseScorecard.chamberMeanAbsoluteYesError,
+        passageBrier:
+          scorecard.overall.passageBrier - existing2025HouseScorecard.passageBrier,
+      },
+    },
     policy: {
       productionDatabaseQueried: false,
       productionWrites: false,
       vercelUsed: false,
       canonicalTargetSetMutated: false,
+      canonicalRowsComparedToImmutableMatrix: true,
+      canonicalRowsUnchangedWithOverlayPresent: true,
       frozenSupportOnly: true,
       frozenOutcomeLabelsOnly: true,
       unresolvedOutcomeExcluded: EXPECTED_UNRESOLVED,
@@ -712,6 +868,8 @@ async function main(): Promise<void> {
       supportTargetVersions: report.reconstruction.supportTargetVersions,
       supportAnalogueEvents: report.reconstruction.supportAnalogueEvents,
       canonicalTargetsRebuilt: report.reconstruction.canonicalTargetsRebuilt,
+      canonicalRowsWithOverlayPresent:
+        report.reconstruction.canonicalRowsWithOverlayPresent,
       outcomeCompleteTargets: report.overlay.outcomeCompleteTargets,
       statusCounts,
       resultProofSha256,
