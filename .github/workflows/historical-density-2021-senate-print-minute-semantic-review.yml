@@ -127,6 +127,7 @@ jobs:
 
           test "$(jq -r '.manifestSkeleton.reviews | length' "$t")" = 1
           test "$(jq -r '.manifestSkeleton.reviews[0].candidateBillIdentifiers | index("SF694") != null' "$t")" = true
+          test "$(sha256sum "$t" | awk '{print $1}')" = 03d77d2daf7551bbc3ec95e6d698735fcb832b66bf8f3f60c86c91de3ccad19d
 
           test "$(jq -r '.summary.documentsReviewed' "$f")" = 1
           test "$(jq -r '.summary.directionalDocuments' "$f")" = 1
@@ -138,10 +139,14 @@ jobs:
           test "$(jq -r '.semanticClaims[0].internalMembershipIdentityResolved' "$f")" = false
           test "$(jq -r '.semanticClaims[0].mechanicallyActionable' "$f")" = false
           test "$(jq -r '.semanticClaims[0].modelWeight' "$f")" = 0
+          test "$(jq -r '.semanticClaims[0].semanticClaimFingerprintSha256' "$f")" = f9bc3e3ebbe0ed0974521ba287b9b400bd80ac42805a31ab9a27fbad47dc56a4
+          test "$(jq -r '.documentReviewProofSha256' "$f")" = def856f80599c7da6a047efa085f98e0ae7bf81b5ef8aeb6345e76288592ad15
+          test "$(jq -r '.semanticClaimProofSha256' "$f")" = 354ac53a40afce8978fd869ef5480292d1557611b25c2e76ee5c077d18e5a486
+          test "$(jq -r '.reviewProofSha256' "$f")" = 0504411738be6e353925653a8dd68cbe40878253133dcb11b4fdb1a38a4e54dd
+          test "$(sha256sum "$f" | awk '{print $1}')" = 14988e6be3f890ddbc9ac315cd1525730eae7d939f1d3f10e44c46ab71cf9957
           test "$(jq -r '.policy.targetVoteOutcomesConsulted' "$f")" = false
           test "$(jq -r '.policy.proceduralActionUsedAsDirectionalStance' "$f")" = false
           test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
-          test "$(jq -r '.reviewProofSha256 | length' "$f")" = 64
 
       - name: Verify unsupported bill fails closed
         shell: bash
