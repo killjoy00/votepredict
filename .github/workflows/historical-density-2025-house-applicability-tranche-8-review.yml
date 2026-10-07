@@ -1,0 +1,118 @@
+name: Freeze reviewed 2025 House applicability tranche 7
+
+on:
+  pull_request:
+    paths:
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-8-decisions-v1.json
+      - scripts/freeze-historical-density-2025-house-applicability-tranche-8-review.ts
+      - tests/historical-density-2025-house-applicability-tranche-8-review.test.ts
+      - .github/workflows/historical-density-2025-house-applicability-tranche-8-review.yml
+  push:
+    branches: [main]
+    paths:
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-8-decisions-v1.json
+      - scripts/freeze-historical-density-2025-house-applicability-tranche-8-review.ts
+      - tests/historical-density-2025-house-applicability-tranche-8-review.test.ts
+      - .github/workflows/historical-density-2025-house-applicability-tranche-8-review.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2025-house-applicability-tranche-8-review-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Test checked-in tranche-8 applicability decisions
+        run: node --import tsx --test tests/historical-density-2025-house-applicability-tranche-8-review.test.ts
+
+      - name: Materialize immutable tranche-8 candidate audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11454989971/zip > "$RUNNER_TEMP/tranche8-audit.zip"
+          echo "53cd21f43a24678f416d0bedb595a72635d0f588700d47443c35a147d7ca3145  $RUNNER_TEMP/tranche8-audit.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/tranche8-audit"
+          unzip -q "$RUNNER_TEMP/tranche8-audit.zip" applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-8-v1.json -d "$RUNNER_TEMP/tranche8-audit"
+
+      - name: Freeze reviewed tranche-8 applicability gate
+        env:
+          VOTEPREDICT_2025_HOUSE_TRANCHE8_APPLICABILITY_AUDIT_PATH: ${{ runner.temp }}/tranche8-audit/applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-8-v1.json
+          VOTEPREDICT_2025_HOUSE_TRANCHE8_APPLICABILITY_DECISIONS_PATH: data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-8-decisions-v1.json
+          VOTEPREDICT_2025_HOUSE_TRANCHE8_APPLICABILITY_REVIEW_OUTPUT: ${{ runner.temp }}/tranche8-review/historical-density-2025-house-applicability-tranche-8-review-v1.json
+        run: node --import tsx scripts/freeze-historical-density-2025-house-applicability-tranche-8-review.ts
+
+      - name: Verify reviewed tranche-8 boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/tranche8-review/historical-density-2025-house-applicability-tranche-8-review-v1.json"
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-applicability-tranche-8-review-v1
+          test "$(jq -r '.issue' "$f")" = 718
+          test "$(jq -r '.session' "$f")" = 2025-2026
+          test "$(jq -r '.review.candidatePairs' "$f")" = 179
+          test "$(jq -r '.review.candidateBills' "$f")" = 14
+          test "$(jq -r '.review.candidatePublicMembers' "$f")" = 37
+          test "$(jq -r '.review.candidateSemanticGroups' "$f")" = 37
+          test "$(jq -r '.review.decisions.applicable' "$f")" = 6
+          test "$(jq -r '.review.decisions.ambiguous_fail_closed' "$f")" = 0
+          test "$(jq -r '.review.decisions.not_applicable' "$f")" = 173
+          test "$(jq -r '.review.decisions.pending_review' "$f")" = 0
+          test "$(jq -r '.review.alignmentCounts.aligns' "$f")" = 6
+          test "$(jq -r '.review.alignmentCounts.conflicts' "$f")" = 0
+          test "$(jq -r '.review.finalPairStatusCounts.applicable' "$f")" = 6
+          test "$(jq -r '.review.finalPairStatusCounts.ambiguous_fail_closed' "$f")" = 184
+          test "$(jq -r '.review.finalPairStatusCounts.not_applicable' "$f")" = 960
+          test "$(jq -r '.review.finalPairStatusCounts.pending_review' "$f")" = 0
+          test "$(jq -r '.review.applicableRows' "$f")" = 6
+          test "$(jq -r '.review.integrationReadyRows' "$f")" = 0
+          test "$(jq -r '.frozenInput.targetEventKeySha256' "$f")" = 107c41146c0359bc186012674f663db64b4f791bb4fc4b7ac96e5d9dc90e3916
+          test "$(jq -r '.frozenInput.reviewKeySha256' "$f")" = 48150f3aaf7f31f6bb755cc96f9e0b50be544d03dc4d9254987c5f7101dd94a5
+          jq -e '[.review.reviewedCandidates[] | select(.decision == "applicable") | .internalMembershipIdentityResolved] | all(. == false)' "$f" >/dev/null
+          jq -e '[.review.reviewedCandidates[] | select(.decision == "applicable") | .integrationReady] | all(. == false)' "$f" >/dev/null
+          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.internalMembershipIdentityResolved' "$f")" = false
+          test "$(jq -r '.policy.internalIdentityRequiredBeforeFeatureIntegration' "$f")" = true
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+          {
+            echo '## 2025-26 House reviewed applicability — tranche 7'
+            echo
+            echo '- Candidate pairs reviewed: **179**'
+            echo '- Applicable: **6**'
+            echo '- Reviewed ambiguous/fail-closed: **0**'
+            echo '- Reviewed not applicable: **173**'
+            echo '- Full eligible-pair accounting: **6 applicable / 184 fail-closed / 960 not-applicable / 0 pending**'
+            echo '- Alignment: **6 align / 0 conflict**'
+            echo '- Integration-ready rows: **0** (internal identity unresolved)'
+            echo '- Outcomes used: **none**'
+            echo '- Production DB queried: **no**'
+            echo '- Vercel used: **no**'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2025-house-applicability-tranche-8-review-v1
+          path: ${{ runner.temp }}/tranche8-review/*
+          if-no-files-found: error
+          retention-days: 90
