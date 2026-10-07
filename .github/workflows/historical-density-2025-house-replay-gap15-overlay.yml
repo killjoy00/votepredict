@@ -1,0 +1,134 @@
+name: Evaluate 2025 House replay gap 15 overlay
+
+on:
+  pull_request:
+    paths:
+      - scripts/evaluate-historical-density-2025-house-replay-gap15-overlay.ts
+      - .github/workflows/historical-density-2025-house-replay-gap15-overlay.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/evaluate-historical-density-2025-house-replay-gap15-overlay.ts
+      - .github/workflows/historical-density-2025-house-replay-gap15-overlay.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2025-house-replay-gap15-overlay-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize canonical Quick support
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11486621043/zip > "$RUNNER_TEMP/support.zip"
+          echo "9c21df92e9ee8644570e90cd2586cc16c1e14bc0e0bae94a527a320516a21553  $RUNNER_TEMP/support.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/support"
+          unzip -q "$RUNNER_TEMP/support.zip"             historical-density-2025-house-replay-gap16-support-manifest-v1.json             historical-density-2025-house-replay-gap16-support-snapshot-v1.json.gz             -d "$RUNNER_TEMP/support"
+
+      - name: Materialize canonical explicit outcomes
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11483367972/zip > "$RUNNER_TEMP/outcomes.zip"
+          echo "2415268dd0f3a0fb5cea4e03eb22e6e74ee1f1efdaa8ce4dd8b8ea743e8659ba  $RUNNER_TEMP/outcomes.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/outcomes"
+          unzip -q "$RUNNER_TEMP/outcomes.zip"             historical-density-2025-house-replay-gap16-outcomes-v1.json             -d "$RUNNER_TEMP/outcomes"
+
+      - name: Evaluate frozen 15-event overlay
+        env:
+          VOTEPREDICT_GAP16_SUPPORT_MANIFEST_PATH: ${{ runner.temp }}/support/historical-density-2025-house-replay-gap16-support-manifest-v1.json
+          VOTEPREDICT_GAP16_SUPPORT_SNAPSHOT_PATH: ${{ runner.temp }}/support/historical-density-2025-house-replay-gap16-support-snapshot-v1.json.gz
+          VOTEPREDICT_GAP16_OUTCOMES_PATH: ${{ runner.temp }}/outcomes/historical-density-2025-house-replay-gap16-outcomes-v1.json
+          VOTEPREDICT_GAP15_OVERLAY_OUTPUT: ${{ runner.temp }}/overlay/historical-density-2025-house-replay-gap15-overlay-v1.json
+        run: node --import tsx scripts/evaluate-historical-density-2025-house-replay-gap15-overlay.ts
+
+      - name: Verify overlay boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/overlay/historical-density-2025-house-replay-gap15-overlay-v1.json"
+
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-replay-gap15-overlay-v1
+          test "$(jq -r '.issue' "$f")" = 718
+          test "$(jq -r '.replay.version' "$f")" = historical-quick-replay-v2
+          test "$(jq -r '.replay.memberHistoryHalfLifeDays' "$f")" = 180
+
+          test "$(jq -r '.frozenInputs.support.runId' "$f")" = 37631304120
+          test "$(jq -r '.frozenInputs.support.artifactId' "$f")" = 11486621043
+          test "$(jq -r '.frozenInputs.outcomes.runId' "$f")" = 37625127437
+          test "$(jq -r '.frozenInputs.outcomes.artifactId' "$f")" = 11483367972
+
+          test "$(jq -r '.reconstruction.supportTargetVersions' "$f")" = 1377
+          test "$(jq -r '.reconstruction.supportAnalogueEvents' "$f")" = 1374
+          test "$(jq -r '.reconstruction.frozenSupportSelectionsExact' "$f")" = true
+          test "$(jq -r '.reconstruction.canonicalTargetsRebuilt' "$f")" = 1339
+          test "$(jq -r '.reconstruction.canonicalTargetsChanged' "$f")" = false
+
+          test "$(jq -r '.overlay.frozenGapEvents' "$f")" = 16
+          test "$(jq -r '.overlay.outcomeCompleteTargets' "$f")" = 15
+          test "$(jq -r '.overlay.excludedFailClosed | join(",")' "$f")" = 'HF2354|2026-05-17'
+          test "$(jq -r '.overlay.underlyingLoaderPassedWasNullForAllTargets' "$f")" = true
+          test "$(jq -r '.overlay.targetVersionCoverage' "$f")" = 15
+          test "$(jq -r '.overlay.analogueSupportCoverage' "$f")" = 15
+          test "$(jq -r '.overlay.results' "$f")" = 15
+          test "$(jq -r '.overlay.events | length' "$f")" = 15
+
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.canonicalTargetSetMutated' "$f")" = false
+          test "$(jq -r '.policy.frozenSupportOnly' "$f")" = true
+          test "$(jq -r '.policy.frozenOutcomeLabelsOnly' "$f")" = true
+          test "$(jq -r '.policy.unresolvedOutcomeExcluded' "$f")" = 'HF2354|2026-05-17'
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+
+          {
+            echo '## 2025-26 House replay-gap offline overlay'
+            echo
+            echo '- Frozen support reconstruction: **exact**'
+            echo '- Canonical targets rebuilt: **1,339**'
+            echo '- Canonical targets mutated: **no**'
+            echo '- Overlay targets: **15**'
+            echo '- Fail-closed excluded: **HF2354 · 2026-05-17**'
+            echo "- Replay status counts: `$(jq -c '.overlay.statusCounts' "$f")`"
+            echo "- Member observations: **$(jq -r '.scorecard.overall.memberObservations' "$f")**"
+            echo "- Member predictions: **$(jq -r '.scorecard.overall.memberPredictions' "$f")**"
+            echo "- Member coverage: **$(jq -r '.scorecard.overall.memberCoverage' "$f")**"
+            echo "- Member accuracy: **$(jq -r '.scorecard.overall.memberAccuracy' "$f")**"
+            echo "- Member Brier: **$(jq -r '.scorecard.overall.memberBrier' "$f")**"
+            echo "- Passage Brier: **$(jq -r '.scorecard.overall.passageBrier' "$f")**"
+            echo "- Event result proof SHA: `$(jq -r '.overlay.resultProofSha256' "$f")`"
+            echo "- Member prediction proof SHA: `$(jq -r '.overlay.memberPredictionProofSha256' "$f")`"
+            echo '- Production DB queried: **no**'
+            echo '- Model fitting / serving changes: **none**'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2025-house-replay-gap15-overlay-v1
+          path: ${{ runner.temp }}/overlay/*
+          if-no-files-found: error
+          retention-days: 90
