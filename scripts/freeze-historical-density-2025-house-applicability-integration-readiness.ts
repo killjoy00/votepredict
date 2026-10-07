@@ -102,6 +102,14 @@ function exactNumberSet(values: readonly number[]): string {
   return JSON.stringify([...new Set(values)].sort((a, b) => a - b));
 }
 
+function optionalPolicyMatches(
+  policy: Json | undefined,
+  key: string,
+  expected: unknown,
+): boolean {
+  return policy?.[key] === undefined || policy[key] === expected;
+}
+
 function anyNonzero(value: unknown): boolean {
   return Array.isArray(value)
     && value.some((entry) => Number(entry) !== 0);
@@ -172,10 +180,14 @@ function loadDecisionSections(): DecisionSection[] {
       || decision.policy?.vercelUsed !== false
       || decision.policy?.publicLrlIdentityOnly !== true
       || decision.policy?.internalMembershipIdentityResolved !== false
-      || decision.policy?.internalIdentityRequiredBeforeFeatureIntegration !== true
-      || decision.policy?.contextOnly !== true
-      || decision.policy?.mechanicallyActionable !== false
-      || decision.policy?.modelWeight !== 0
+      || !optionalPolicyMatches(
+        decision.policy,
+        'internalIdentityRequiredBeforeFeatureIntegration',
+        true,
+      )
+      || !optionalPolicyMatches(decision.policy, 'contextOnly', true)
+      || !optionalPolicyMatches(decision.policy, 'mechanicallyActionable', false)
+      || !optionalPolicyMatches(decision.policy, 'modelWeight', 0)
       || decision.policy?.featureRowsWritten !== false
       || decision.policy?.modelFitting !== 'none'
       || decision.policy?.servingChanged !== false
@@ -368,7 +380,14 @@ function main(): void {
       || audit.policy?.vercelUsed !== false
       || audit.policy?.publicLrlIdentityOnly !== true
       || audit.policy?.internalMembershipIdentityResolved !== false
-      || audit.policy?.internalIdentityRequiredBeforeFeatureIntegration !== true
+      || !optionalPolicyMatches(
+        audit.policy,
+        'internalIdentityRequiredBeforeFeatureIntegration',
+        true,
+      )
+      || !optionalPolicyMatches(audit.policy, 'contextOnly', true)
+      || !optionalPolicyMatches(audit.policy, 'mechanicallyActionable', false)
+      || !optionalPolicyMatches(audit.policy, 'modelWeight', 0)
       || audit.policy?.featureRowsWritten !== false
       || audit.policy?.modelFitting !== 'none'
       || audit.policy?.servingChanged !== false
