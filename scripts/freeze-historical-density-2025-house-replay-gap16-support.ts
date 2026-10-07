@@ -16,6 +16,14 @@ const CANONICAL_MATRIX_CANONICAL_SHA256 =
   'c97ac50c8c89ae0548cc48bed65a42c22f332e2977b33173619c9e258c09a4d0';
 const CANONICAL_MATRIX_GZIP_SHA256 =
   'd8a9735a514f427508a7a37303ba312dcac3f929a51aa05a1aba32a76b384637';
+const MEMBER_VOTES_ARTIFACT_ID = 11482176035;
+const MEMBER_VOTES_ARTIFACT_DIGEST =
+  'sha256:d87fe9e1d51ae9bacebe94e3c1b065675db42da011a72273cbb74a9e5d52e450';
+const MEMBER_VOTES_EVENT_PROOF_SHA256 =
+  '6f3846e9296385e83151008dcd977659604fbc3e3f3a4dd43e09270186e63dd5';
+const MEMBER_VOTE_ROW_SHA256 =
+  '721d748bacb74cd110380e233d7df101d044b5ad00d59bdf368ad39ecab9998b';
+const EXPECTED_FROZEN_MEMBER_VOTES = 2125;
 const OUTCOME_ARTIFACT_ID = 11483367972;
 const OUTCOME_ARTIFACT_DIGEST =
   'sha256:2415268dd0f3a0fb5cea4e03eb22e6e74ee1f1efdaa8ce4dd8b8ea743e8659ba';
@@ -209,6 +217,41 @@ function parseOutcomeInput(path: string) {
   }
   return { value, composites };
 }
+function parseMemberVoteInput(path: string) {
+  const value = JSON.parse(readFileSync(path, 'utf8')) as Json;
+  if (
+    value.schemaVersion !== 'historical-density-2025-house-replay-gap16-member-votes-v1'
+    || value.issue !== ISSUE
+    || value.session !== '2025-2026'
+    || value.chamber !== 'house'
+    || value.reconstruction?.events !== EXPECTED_GAP_EVENTS
+    || value.reconstruction?.totalMemberVotes !== EXPECTED_FROZEN_MEMBER_VOTES
+    || value.reconstruction?.eventProofSha256 !== MEMBER_VOTES_EVENT_PROOF_SHA256
+    || value.reconstruction?.memberVoteRowSha256 !== MEMBER_VOTE_ROW_SHA256
+  ) {
+    throw new Error('Canonical gap16 member-vote artifact drifted');
+  }
+  const events = (value.reconstruction.eventsData ?? []) as Json[];
+  if (events.length !== EXPECTED_GAP_EVENTS) {
+    throw new Error(`Expected ${EXPECTED_GAP_EVENTS} frozen member-vote events`);
+  }
+  const byComposite = new Map<string, Json>();
+  for (const event of events) {
+    const compositeKey = String(event.compositeKey);
+    if (byComposite.has(compositeKey)) {
+      throw new Error(`Duplicate frozen member-vote event ${compositeKey}`);
+    }
+    byComposite.set(compositeKey, event);
+  }
+  return { value, byComposite };
+}
+
+function voteProofRows(votes: readonly { membershipId: string; legislatorId: string; choice: string }[]) {
+  return votes.map(
+    (vote) => `${vote.membershipId}|${vote.legislatorId}|${vote.choice}`,
+  ).sort();
+}
+
 
 function flattenCurrentRows(
   dataset: Awaited<ReturnType<typeof loadHistoricalQuickReplayDataset>>,
@@ -367,7 +410,8 @@ async function main(): Promise<void> {
     || plan.snapshotProtocol?.canonicalParityGate?.exactCanonicalRowKeySetRequired !== true
     || plan.snapshotProtocol?.extensionRule?.eligibleOutcomeCompleteEvents !== EXPECTED_OUTCOME_COMPLETE
     || plan.snapshotProtocol?.extensionRule?.targetSelectionMayChangeAfterSnapshot !== false
-    || plan.snapshotProtocol?.gapEventPresenceGate?.expectedExactBillDateMatchesInCurrentLoader !== 0
+    || plan.snapshotProtocol?.gapEventPresenceGate?.requiredCurrentLoaderMatches !== EXPECTED_GAP_EVENTS
+    || plan.snapshotProtocol?.gapEventPresenceGate?.expectedFrozenMemberVoteRows !== EXPECTED_FROZEN_MEMBER_VOTES
   ) {
     throw new Error('Frozen replay support plan drifted');
   }
@@ -377,6 +421,7 @@ async function main(): Promise<void> {
     env('VOTEPREDICT_HISTORICAL_AS_OF_MATRIX_PATH'),
   );
   const outcomes = parseOutcomeInput(env('VOTEPREDICT_GAP16_OUTCOMES_PATH'));
+  const memberVotes = parseMemberVoteInput(env('VOTEPREDICT_GAP16_MEMBER_VOTES_PATH'));
 
   const envPath = env('VOTEPREDICT_PRODUCTION_ENV_FILE');
   const runtimeEnv = parseRuntimeEnvironment(readFileSync(envPath, 'utf8'));
@@ -428,20 +473,111 @@ async function main(): Promise<void> {
       );
     }
 
-    const currentCompositeCounts = new Map<string, number>();
+    const currentEventsByComposite = new Map<string, typeof dataset.events>();
     for (const event of dataset.events) {
       const key = eventComposite(event.identifier, event.occurredOn);
-      currentCompositeCounts.set(key, (currentCompositeCounts.get(key) ?? 0) + 1);
+      const rows = currentEventsByComposite.get(key) ?? [];
+      rows.push(event);
+      currentEventsByComposite.set(key, rows);
     }
-    const gapMatches = outcomes.composites.flatMap((compositeKey) => {
-      const count = currentCompositeCounts.get(compositeKey) ?? 0;
-      return count > 0 ? [{ compositeKey, currentLoaderEventCount: count }] : [];
-    });
-    if (gapMatches.length > 0) {
+    const votesByEvent = new Map<string, typeof dataset.historicalVotes>();
+    for (const vote of dataset.historicalVotes) {
+      const rows = votesByEvent.get(vote.voteEventId) ?? [];
+      rows.push(vote);
+      votesByEvent.set(vote.voteEventId, rows);
+    }
+
+    const reconciledGapEvents = outcomes.composites.map((compositeKey) => {
+      const currentEvents = currentEventsByComposite.get(compositeKey) ?? [];
+      if (currentEvents.length !== 1) {
+        throw new Error(
+          `Expected one current loader event for ${compositeKey}; got ${currentEvents.length}`,
+        );
+      }
+      const currentEvent = currentEvents[0]!;
+      const frozenEvent = memberVotes.byComposite.get(compositeKey);
+      if (!frozenEvent) {
+        throw new Error(`Frozen member-vote event missing for ${compositeKey}`);
+      }
+      if (
+        currentEvent.identifier.toUpperCase() !== String(frozenEvent.identifier).toUpperCase()
+        || currentEvent.occurredOn !== String(frozenEvent.occurredOn)
+        || currentEvent.yeaCount !== Number(frozenEvent.yeaCount)
+        || currentEvent.nayCount !== Number(frozenEvent.nayCount)
+      ) {
+        throw new Error(
+          `Current loader event/tally mismatch for ${compositeKey}: `
+            + JSON.stringify({
+              current: {
+                identifier: currentEvent.identifier,
+                occurredOn: currentEvent.occurredOn,
+                yeaCount: currentEvent.yeaCount,
+                nayCount: currentEvent.nayCount,
+              },
+              frozen: {
+                identifier: frozenEvent.identifier,
+                occurredOn: frozenEvent.occurredOn,
+                yeaCount: frozenEvent.yeaCount,
+                nayCount: frozenEvent.nayCount,
+              },
+            }),
+        );
+      }
+
+      const frozenVotes = ((frozenEvent.memberVotes ?? []) as Json[]).map((vote) => ({
+        membershipId: String(vote.membershipId),
+        legislatorId: String(vote.legislatorId),
+        choice: String(vote.choice),
+      }));
+      const currentVotes = (votesByEvent.get(currentEvent.voteEventId) ?? []).map((vote) => ({
+        membershipId: vote.membershipId,
+        legislatorId: vote.legislatorId,
+        choice: vote.choice,
+      }));
+      const frozenVoteRows = voteProofRows(frozenVotes);
+      const currentVoteRows = voteProofRows(currentVotes);
+      if (
+        frozenVoteRows.length !== currentVoteRows.length
+        || JSON.stringify(frozenVoteRows) !== JSON.stringify(currentVoteRows)
+      ) {
+        throw new Error(
+          `Current loader decisive member votes mismatch for ${compositeKey}`,
+        );
+      }
+
+      return {
+        compositeKey,
+        voteEventId: currentEvent.voteEventId,
+        billId: currentEvent.billId,
+        frozenDecisiveVotes: frozenVoteRows.length,
+        currentDecisiveVotes: currentVoteRows.length,
+        decisiveVoteSetSha256: setSha(currentVoteRows),
+        currentTargetVersionPresent: dataset.targetVersionByEvent.has(currentEvent.voteEventId),
+      };
+    }).sort((a, b) => a.compositeKey.localeCompare(b.compositeKey));
+
+    const reconciledVoteRows = reconciledGapEvents.reduce(
+      (sum, row) => sum + row.currentDecisiveVotes,
+      0,
+    );
+    if (
+      reconciledGapEvents.length !== EXPECTED_GAP_EVENTS
+      || reconciledVoteRows !== EXPECTED_FROZEN_MEMBER_VOTES
+    ) {
       throw new Error(
-        `Frozen gap events unexpectedly exist in current loader state: ${JSON.stringify(gapMatches)}`,
+        `Gap loader reconciliation cardinality drifted: `
+          + JSON.stringify({
+            events: reconciledGapEvents.length,
+            decisiveVotes: reconciledVoteRows,
+          }),
       );
     }
+    const gapLoaderIdentitySha256 = setSha(
+      reconciledGapEvents.map(
+        (row) =>
+          `${row.compositeKey}|${row.voteEventId}|${row.billId}|${row.decisiveVoteSetSha256}`,
+      ),
+    );
 
     const support = serializableSupport(dataset);
     const supportEnvelope = {
@@ -479,6 +615,14 @@ async function main(): Promise<void> {
           matrixCanonicalNdjsonSha256: CANONICAL_MATRIX_CANONICAL_SHA256,
           matrixGzipSha256: CANONICAL_MATRIX_GZIP_SHA256,
         },
+        gapMemberVotes: {
+          artifactId: MEMBER_VOTES_ARTIFACT_ID,
+          artifactDigest: MEMBER_VOTES_ARTIFACT_DIGEST,
+          events: EXPECTED_GAP_EVENTS,
+          memberVotes: EXPECTED_FROZEN_MEMBER_VOTES,
+          eventProofSha256: MEMBER_VOTES_EVENT_PROOF_SHA256,
+          memberVoteRowSha256: MEMBER_VOTE_ROW_SHA256,
+        },
         gapOutcomes: {
           artifactId: OUTCOME_ARTIFACT_ID,
           artifactDigest: OUTCOME_ARTIFACT_DIGEST,
@@ -511,15 +655,26 @@ async function main(): Promise<void> {
         extraRows: 0,
         fieldMismatches: 0,
       },
+      gapLoaderReconciliation: {
+        passed: true,
+        reconciledEvents: reconciledGapEvents.length,
+        reconciledDecisiveMemberVotes: reconciledVoteRows,
+        loaderIdentitySha256: gapLoaderIdentitySha256,
+        currentTargetVersionsPresent: reconciledGapEvents.filter(
+          (row) => row.currentTargetVersionPresent,
+        ).length,
+        events: reconciledGapEvents,
+      },
       gapOverlayReadiness: {
-        exactGapEventsPresentInCurrentLoader: 0,
+        exactGapEventsPresentInCurrentLoader: reconciledGapEvents.length,
         frozenGapEvents: EXPECTED_GAP_EVENTS,
         outcomeCompleteEvents: EXPECTED_OUTCOME_COMPLETE,
         excludedUntilExplicitOutcome: [EXPECTED_UNRESOLVED],
-        readyForInMemoryOverlayConstruction: true,
+        reuseCurrentLoaderEventAndBillIds: true,
+        readyForTargetVersionAugmentation: true,
         readyForScoring: false,
         reason:
-          'The support state is frozen and canonical baseline parity is proven, but the 15-event in-memory overlay and its target-specific companion/bill identity wiring have not yet been constructed and regression-tested.',
+          'The current loader event/bill identities and all decisive member votes reconcile exactly to the frozen source reconstruction. Scoring still requires immutable strict pre-vote raw text/version augmentation and regression-tested target rebuilding.',
       },
       policy: {
         productionDatabaseQueried: true,
@@ -529,6 +684,8 @@ async function main(): Promise<void> {
         vercelDeployment: false,
         targetSelectionUsesCurrentProductionState: false,
         gapEventPresenceGatePassed: true,
+        gapLoaderReconciliationPassed: true,
+        unresolvedOutcomeIgnoredFromMutableDatabase: true,
         canonicalBaselineReinterpreted: false,
         modelFitting: 'none',
         servingChanged: false,
