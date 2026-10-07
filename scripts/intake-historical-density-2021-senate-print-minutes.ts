@@ -36,6 +36,8 @@ const REQUEST_CSV_SHA256 =
   '323c8be6cd874115b4e8601343eebec96a705be2e1670ef360ca7c2970a334d9';
 const REQUEST_MARKDOWN_SHA256 =
   '033e9d5c45abad9d378a4ad3d351b9299dc4f378bfe86fc791bd1cb666e83bc3';
+const EXPECTED_TEMPLATE_FILE_SHA256 =
+  '8cbac5bc679cbf53ac9a3374786c131f75d7df2d1726f20b390dd46b200cdc19';
 
 const MANIFEST_SCHEMA =
   'historical-density-2021-senate-print-minute-local-intake-manifest-v1';
@@ -155,14 +157,21 @@ function writeTemplate(path: string, request: SenatePrintMinuteRequestPackage): 
     documents: [] as LocalManifestDocument[],
   };
   const output = resolve(path);
+  const templateText = JSON.stringify(template, null, 2) + '\n';
+  const templateFileSha256 = sha256(templateText);
+  if (templateFileSha256 !== EXPECTED_TEMPLATE_FILE_SHA256) {
+    throw new Error(
+      `Pinned Senate print-minute intake template drifted: ${templateFileSha256}`,
+    );
+  }
   mkdirSync(dirname(output), { recursive: true });
-  writeFileSync(output, JSON.stringify(template, null, 2) + '\n', 'utf8');
+  writeFileSync(output, templateText, 'utf8');
   console.log(JSON.stringify({
     senate2021PrintMinuteIntakeTemplate: {
       path: output,
       committees: template.allowedCommittees.length,
       requestAssociationProofSha256: REQUEST_ASSOCIATION_PROOF,
-      templateSha256: sha256(JSON.stringify(template)),
+      templateFileSha256,
     },
   }, null, 2));
 }
