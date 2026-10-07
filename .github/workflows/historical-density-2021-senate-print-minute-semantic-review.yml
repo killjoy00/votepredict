@@ -1,0 +1,172 @@
+name: Test 2021 Senate print minute semantic review
+
+on:
+  pull_request:
+    paths:
+      - src/evaluation/historical-density-2021-senate-print-minute-semantic-review.ts
+      - scripts/review-historical-density-2021-senate-print-minutes.ts
+      - tests/historical-density-2021-senate-print-minute-semantic-review.test.ts
+      - .github/workflows/historical-density-2021-senate-print-minute-semantic-review.yml
+      - src/evaluation/historical-density-2021-senate-print-minute-intake.ts
+  push:
+    branches: [main]
+    paths:
+      - src/evaluation/historical-density-2021-senate-print-minute-semantic-review.ts
+      - scripts/review-historical-density-2021-senate-print-minutes.ts
+      - tests/historical-density-2021-senate-print-minute-semantic-review.test.ts
+      - .github/workflows/historical-density-2021-senate-print-minute-semantic-review.yml
+      - src/evaluation/historical-density-2021-senate-print-minute-intake.ts
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2021-senate-print-minute-semantic-review-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-semantic-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize canonical local-intake fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11499462793/zip > "$RUNNER_TEMP/intake.zip"
+          echo "befde23007d609f7ca754a708b865e4754bcc4ef48f7844e47d212dc32eb3582  $RUNNER_TEMP/intake.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/intake"
+          unzip -q "$RUNNER_TEMP/intake.zip" \
+            output/historical-density-2021-senate-print-minute-intake-bundle-v1.json \
+            -d "$RUNNER_TEMP/intake"
+
+      - name: Test semantic-review validator
+        run: node --import tsx --test tests/historical-density-2021-senate-print-minute-semantic-review.test.ts
+
+      - name: Generate review template from canonical intake fixture
+        run: |
+          node --import tsx scripts/review-historical-density-2021-senate-print-minutes.ts \
+            --intake-bundle "$RUNNER_TEMP/intake/output/historical-density-2021-senate-print-minute-intake-bundle-v1.json" \
+            --write-template "$RUNNER_TEMP/review-template.json"
+
+      - name: Build synthetic human-review manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          bundle="$RUNNER_TEMP/intake/output/historical-density-2021-senate-print-minute-intake-bundle-v1.json"
+          bundle_sha="$(sha256sum "$bundle" | awk '{print $1}')"
+          document_id="$(jq -r '.documents[0].id' "$bundle")"
+          content_sha="$(jq -r '.documents[0].contentSha256' "$bundle")"
+          cat > "$RUNNER_TEMP/review-manifest.json" <<JSON
+          {
+            "schemaVersion": "historical-density-2021-senate-print-minute-semantic-review-manifest-v1",
+            "batchId": "SENATE-MINUTE-SYNTHETIC-CI-001",
+            "intakeBundleSha256": "$bundle_sha",
+            "reviewedOn": "2026-10-07",
+            "reviewMethod": "human_manual_full_document",
+            "reviews": [{
+              "documentId": "$document_id",
+              "sourceContentSha256": "$content_sha",
+              "fullDocumentReviewed": true,
+              "decision": "directional_claims",
+              "notes": ["Synthetic CI semantic-review fixture; not authoritative evidence."],
+              "claims": [{
+                "sourcePage": 1,
+                "billIdentifier": "SF694",
+                "memberName": "Jane Doe",
+                "attributedMemberText": "Sen. Jane Doe",
+                "stance": "supports",
+                "claimType": "quoted_position",
+                "explicitness": "direct_quote",
+                "scope": "whole_bill",
+                "normalizedClaim": "Jane Doe supports SF694 as a whole.",
+                "supportingExcerpt": "Sen. Jane Doe said, \"I support SF694.\"",
+                "extractionConfidence": 0.95,
+                "transcriptionVerifiedAgainstSourcePage": true
+              }]
+            }],
+            "policy": {
+              "outcomeUse": "none",
+              "targetVoteOutcomesConsulted": false,
+              "partyOrIdeologyUsed": false,
+              "committeeMembershipUsedAsStance": false,
+              "attendanceUsedAsStance": false,
+              "proceduralActionUsedAsDirectionalStance": false,
+              "exactBillMentionRequired": true,
+              "explicitNamedMemberAttributionRequired": true,
+              "wholeBillPositionRequired": true
+            }
+          }
+          JSON
+
+      - name: Run synthetic semantic review
+        run: |
+          node --import tsx scripts/review-historical-density-2021-senate-print-minutes.ts \
+            --intake-bundle "$RUNNER_TEMP/intake/output/historical-density-2021-senate-print-minute-intake-bundle-v1.json" \
+            --review-manifest "$RUNNER_TEMP/review-manifest.json" \
+            --output "$RUNNER_TEMP/review/historical-density-2021-senate-print-minute-semantic-review-bundle-v1.json" \
+            --generated-at "2026-10-07T00:00:00.000Z"
+
+      - name: Verify semantic-review boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          t="$RUNNER_TEMP/review-template.json"
+          f="$RUNNER_TEMP/review/historical-density-2021-senate-print-minute-semantic-review-bundle-v1.json"
+
+          test "$(jq -r '.manifestSkeleton.reviews | length' "$t")" = 1
+          test "$(jq -r '.manifestSkeleton.reviews[0].candidateBillIdentifiers | index("SF694") != null' "$t")" = true
+          test "$(sha256sum "$t" | awk '{print $1}')" = 03d77d2daf7551bbc3ec95e6d698735fcb832b66bf8f3f60c86c91de3ccad19d
+
+          test "$(jq -r '.summary.documentsReviewed' "$f")" = 1
+          test "$(jq -r '.summary.directionalDocuments' "$f")" = 1
+          test "$(jq -r '.summary.semanticClaims' "$f")" = 1
+          test "$(jq -r '.semanticClaims[0].billIdentifier' "$f")" = SF694
+          test "$(jq -r '.semanticClaims[0].memberName' "$f")" = "Jane Doe"
+          test "$(jq -r '.semanticClaims[0].candidateTargetEventIds | length' "$f")" = 1
+          test "$(jq -r '.semanticClaims[0].publicIdentityResolved' "$f")" = false
+          test "$(jq -r '.semanticClaims[0].internalMembershipIdentityResolved' "$f")" = false
+          test "$(jq -r '.semanticClaims[0].mechanicallyActionable' "$f")" = false
+          test "$(jq -r '.semanticClaims[0].modelWeight' "$f")" = 0
+          test "$(jq -r '.semanticClaims[0].semanticClaimFingerprintSha256' "$f")" = f9bc3e3ebbe0ed0974521ba287b9b400bd80ac42805a31ab9a27fbad47dc56a4
+          test "$(jq -r '.documentReviewProofSha256' "$f")" = def856f80599c7da6a047efa085f98e0ae7bf81b5ef8aeb6345e76288592ad15
+          test "$(jq -r '.semanticClaimProofSha256' "$f")" = 354ac53a40afce8978fd869ef5480292d1557611b25c2e76ee5c077d18e5a486
+          test "$(jq -r '.reviewProofSha256' "$f")" = 0504411738be6e353925653a8dd68cbe40878253133dcb11b4fdb1a38a4e54dd
+          test "$(sha256sum "$f" | awk '{print $1}')" = 14988e6be3f890ddbc9ac315cd1525730eae7d939f1d3f10e44c46ab71cf9957
+          test "$(jq -r '.policy.targetVoteOutcomesConsulted' "$f")" = false
+          test "$(jq -r '.policy.proceduralActionUsedAsDirectionalStance' "$f")" = false
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+
+      - name: Verify unsupported bill fails closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          jq '.reviews[0].claims[0].billIdentifier = "SF999" | .reviews[0].claims[0].supportingExcerpt = "Sen. Jane Doe said, \"I support SF999.\""' \
+            "$RUNNER_TEMP/review-manifest.json" > "$RUNNER_TEMP/bad-review.json"
+          if node --import tsx scripts/review-historical-density-2021-senate-print-minutes.ts \
+            --intake-bundle "$RUNNER_TEMP/intake/output/historical-density-2021-senate-print-minute-intake-bundle-v1.json" \
+            --review-manifest "$RUNNER_TEMP/bad-review.json" \
+            --output "$RUNNER_TEMP/bad.json"; then
+            echo 'expected non-candidate bill semantic review to fail' >&2
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2021-senate-print-minute-semantic-review-fixture-v1
+          path: |
+            ${{ runner.temp }}/review-template.json
+            ${{ runner.temp }}/review/*
+          if-no-files-found: error
+          retention-days: 30
