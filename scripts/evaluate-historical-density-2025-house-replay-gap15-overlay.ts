@@ -69,6 +69,10 @@ const EXPECTED_RESULT_PROOF_SHA256 =
   'a89de23656cc3c2cfde31999703d54f60cbe86ab8bdee93962f8081d3331f2b4';
 const EXPECTED_MEMBER_PREDICTION_PROOF_SHA256 =
   'caf50b9ae2f07c2cfd0361554bb5440f11dec7b0b495c9b92768189b7cf41848';
+const EXPECTED_OVERLAY_INPUT_PROOF_SHA256 =
+  '58d55491ca59349029b8debfe7a8552f8a1e11737163228828bd008673280f3b';
+const EXPECTED_COMPARISON_PROOF_SHA256 =
+  '3a359f9597e200bcec484e3a2fd0a874f7dc69c3eb4c51b79b626a767605e671';
 const EXPECTED_MEMBER_ACCURACY = 0.9698492462311558;
 const EXPECTED_MEMBER_BRIER = 0.03725407295423199;
 const EXPECTED_MEMBER_LOG_LOSS = 0.16242195623689934;
@@ -840,6 +844,39 @@ async function main(): Promise<void> {
     ]),
   );
 
+  const comparison = {
+    existing2025HouseReplayCohort: {
+      events: existing2025HouseResults.length,
+      scorecard: existing2025HouseScorecard,
+    },
+    overlayMinusExisting2025House: {
+      memberAccuracy:
+        scorecard.overall.memberAccuracy - existing2025HouseScorecard.memberAccuracy,
+      memberBrier:
+        scorecard.overall.memberBrier - existing2025HouseScorecard.memberBrier,
+      memberLogLoss:
+        scorecard.overall.memberLogLoss - existing2025HouseScorecard.memberLogLoss,
+      memberExpectedCalibrationError:
+        scorecard.overall.memberExpectedCalibrationError
+        - existing2025HouseScorecard.memberExpectedCalibrationError,
+      chamberMeanAbsoluteYesError:
+        scorecard.overall.chamberMeanAbsoluteYesError
+        - existing2025HouseScorecard.chamberMeanAbsoluteYesError,
+      passageBrier:
+        scorecard.overall.passageBrier - existing2025HouseScorecard.passageBrier,
+    },
+  };
+  const comparisonProofSha256 = sha256(JSON.stringify(comparison));
+  if (
+    overlayInputProofSha256 !== EXPECTED_OVERLAY_INPUT_PROOF_SHA256
+    || comparisonProofSha256 !== EXPECTED_COMPARISON_PROOF_SHA256
+  ) {
+    throw new Error(
+      'Detailed overlay audit proof drifted: '
+      + JSON.stringify({ overlayInputProofSha256, comparisonProofSha256 }),
+    );
+  }
+
   const report = {
     schemaVersion: 'historical-density-2025-house-replay-gap15-overlay-v2',
     generatedAt: new Date().toISOString(),
@@ -896,26 +933,8 @@ async function main(): Promise<void> {
     },
     scorecard,
     comparison: {
-      existing2025HouseReplayCohort: {
-        events: existing2025HouseResults.length,
-        scorecard: existing2025HouseScorecard,
-      },
-      overlayMinusExisting2025House: {
-        memberAccuracy:
-          scorecard.overall.memberAccuracy - existing2025HouseScorecard.memberAccuracy,
-        memberBrier:
-          scorecard.overall.memberBrier - existing2025HouseScorecard.memberBrier,
-        memberLogLoss:
-          scorecard.overall.memberLogLoss - existing2025HouseScorecard.memberLogLoss,
-        memberExpectedCalibrationError:
-          scorecard.overall.memberExpectedCalibrationError
-          - existing2025HouseScorecard.memberExpectedCalibrationError,
-        chamberMeanAbsoluteYesError:
-          scorecard.overall.chamberMeanAbsoluteYesError
-          - existing2025HouseScorecard.chamberMeanAbsoluteYesError,
-        passageBrier:
-          scorecard.overall.passageBrier - existing2025HouseScorecard.passageBrier,
-      },
+      comparisonProofSha256,
+      ...comparison,
     },
     policy: {
       productionDatabaseQueried: false,
