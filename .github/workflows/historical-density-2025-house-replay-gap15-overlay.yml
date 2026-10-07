@@ -93,6 +93,18 @@ jobs:
           test "$(jq -r '.overlay.analogueSupportCoverage' "$f")" = 15
           test "$(jq -r '.overlay.results' "$f")" = 15
           test "$(jq -r '.overlay.events | length' "$f")" = 15
+          test "$(jq -r '.overlay.statusCounts.replayable' "$f")" = 15
+          test "$(jq -r '.overlay.statusCounts | length' "$f")" = 1
+          test "$(jq -r '.overlay.resultProofSha256' "$f")" = a89de23656cc3c2cfde31999703d54f60cbe86ab8bdee93962f8081d3331f2b4
+          test "$(jq -r '.overlay.memberPredictionProofSha256' "$f")" = caf50b9ae2f07c2cfd0361554bb5440f11dec7b0b495c9b92768189b7cf41848
+          test "$(jq -r '.scorecard.overall.memberObservations' "$f")" = 1990
+          test "$(jq -r '.scorecard.overall.memberPredictions' "$f")" = 1990
+          test "$(jq -r '.scorecard.overall.memberCoverage' "$f")" = 1
+          test "$(jq -r '.scorecard.overall.memberAccuracy' "$f")" = 0.9698492462311558
+          test "$(jq -r '.scorecard.overall.memberBrier' "$f")" = 0.03725407295423199
+          test "$(jq -r '.scorecard.overall.memberLogLoss' "$f")" = 0.16242195623689934
+          test "$(jq -r '.scorecard.overall.memberExpectedCalibrationError' "$f")" = 0.080291699115617
+          test "$(jq -r '.scorecard.overall.chamberMeanAbsoluteYesError' "$f")" = 13.715526534958565
 
           test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
           test "$(jq -r '.policy.productionWrites' "$f")" = false
@@ -113,15 +125,17 @@ jobs:
             echo '- Canonical targets mutated: **no**'
             echo '- Overlay targets: **15**'
             echo '- Fail-closed excluded: **HF2354 · 2026-05-17**'
-            echo "- Replay status counts: `$(jq -c '.overlay.statusCounts' "$f")`"
-            echo "- Member observations: **$(jq -r '.scorecard.overall.memberObservations' "$f")**"
-            echo "- Member predictions: **$(jq -r '.scorecard.overall.memberPredictions' "$f")**"
-            echo "- Member coverage: **$(jq -r '.scorecard.overall.memberCoverage' "$f")**"
-            echo "- Member accuracy: **$(jq -r '.scorecard.overall.memberAccuracy' "$f")**"
-            echo "- Member Brier: **$(jq -r '.scorecard.overall.memberBrier' "$f")**"
-            echo "- Passage Brier: **$(jq -r '.scorecard.overall.passageBrier' "$f")**"
-            echo "- Event result proof SHA: `$(jq -r '.overlay.resultProofSha256' "$f")`"
-            echo "- Member prediction proof SHA: `$(jq -r '.overlay.memberPredictionProofSha256' "$f")`"
+            echo '- Replay status counts: `{"replayable":15}`'
+            echo '- Member observations / predictions: **1,990 / 1,990**'
+            echo '- Member coverage: **1.0**'
+            echo '- Member accuracy: **0.9698492462311558**'
+            echo '- Member Brier: **0.03725407295423199**'
+            echo '- Member log loss: **0.16242195623689934**'
+            echo '- Member ECE: **0.080291699115617**'
+            echo '- Chamber mean absolute yes error: **13.715526534958565**'
+            echo '- Passage Brier: **0.0006427345051755174**'
+            echo '- Event result proof SHA: `a89de23656cc3c2cfde31999703d54f60cbe86ab8bdee93962f8081d3331f2b4`'
+            echo '- Member prediction proof SHA: `caf50b9ae2f07c2cfd0361554bb5440f11dec7b0b495c9b92768189b7cf41848`'
             echo '- Production DB queried: **no**'
             echo '- Model fitting / serving changes: **none**'
           } >> "$GITHUB_STEP_SUMMARY"
