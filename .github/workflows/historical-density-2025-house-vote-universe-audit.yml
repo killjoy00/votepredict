@@ -1,0 +1,103 @@
+name: Audit full 2025 House vote universe
+
+on:
+  pull_request:
+    paths:
+      - scripts/audit-historical-density-2025-house-vote-universe.ts
+      - .github/workflows/historical-density-2025-house-vote-universe-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2025-house-vote-universe-audit-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize immutable v1.7 matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11436413885/zip > "$RUNNER_TEMP/v17.zip"
+          echo "fc1d77ccc51bc33f3e3f1c0dd6622c0f2a9797d62a8d54bcb65906de30228e44  $RUNNER_TEMP/v17.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/v17"
+          unzip -q "$RUNNER_TEMP/v17.zip"             evidence-quality-historical-feature-matrix-v1.7.ndjson.gz             -d "$RUNNER_TEMP/v17"
+
+      - name: Audit official House roll-call denominator
+        env:
+          VOTEPREDICT_EQ_V17_MATRIX_PATH: ${{ runner.temp }}/v17/evidence-quality-historical-feature-matrix-v1.7.ndjson.gz
+          VOTEPREDICT_2025_HOUSE_VOTE_UNIVERSE_AUDIT_OUTPUT: ${{ runner.temp }}/audit/historical-density-2025-house-vote-universe-gap-audit-v1.json
+        run: node --import tsx scripts/audit-historical-density-2025-house-vote-universe.ts
+
+      - name: Verify audit completeness and summarize
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/audit/historical-density-2025-house-vote-universe-gap-audit-v1.json"
+
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-vote-universe-gap-audit-v1
+          test "$(jq -r '.issue' "$f")" = 718
+          test "$(jq -r '.session' "$f")" = 2025-2026
+          test "$(jq -r '.chamber' "$f")" = house
+          test "$(jq -r '.sources.frozenMatrix.artifactId' "$f")" = 11436413885
+          test "$(jq -r '.sources.frozenMatrix.rows' "$f")" = 135457
+          test "$(jq -r '.sources.frozenMatrix.events' "$f")" = 1339
+          test "$(jq -r '.frozen2025HouseReplayUniverse.events' "$f")" = 264
+          test "$(jq -r '.replayGate.degradedSourceFetches' "$f")" = 0
+
+          total="$(jq -r '.officialRollCallUniverse.voteEvents' "$f")"
+          passage="$(jq -r '.officialRollCallUniverse.passageVoteEvents' "$f")"
+          nonpassage="$(jq -r '.officialRollCallUniverse.nonPassageVoteEvents' "$f")"
+          candidates="$(jq -r '.replayGate.publicSourceReplayCandidates' "$f")"
+
+          test "$total" -gt 264
+          test $((passage + nonpassage)) -eq "$total"
+          test "$candidates" -le "$passage"
+
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+
+          {
+            echo '## 2025-26 House full roll-call universe audit'
+            echo
+            echo "- Official recorded roll calls: **$total**"
+            echo "- Passage roll calls: **$passage**"
+            echo "- Non-passage roll calls: **$nonpassage**"
+            echo "- Passage votes excluded by <20 decisive votes: **$(jq -r '.replayGate.excludedForUnder20DecisiveVotes' "$f")**"
+            echo "- Passage votes excluded by no strict pre-vote text after 20-vote floor: **$(jq -r '.replayGate.excludedForNoStrictPreVoteTextAfter20VoteFloor' "$f")**"
+            echo "- Public-source replay candidates: **$candidates**"
+            echo "- Frozen v1.7 House replay events: **264**"
+            echo "- Public candidates outside frozen matrix: **$(jq -r '.comparison.officialOutsideMatrix' "$f")**"
+            echo "- Frozen matrix events without public candidate: **$(jq -r '.comparison.matrixWithoutOfficial' "$f")**"
+            echo "- Exact bill/date multiplicity parity: **$(jq -r '.comparison.exactMultiplicityParity' "$f")**"
+            echo "- Frozen matrix fully uncovered events: **$(jq -r '.frozen2025HouseReplayUniverse.fullyUncoveredEvents' "$f")**"
+            echo "- Frozen matrix partially covered events: **$(jq -r '.frozen2025HouseReplayUniverse.partiallyCoveredEvents' "$f")**"
+            echo "- Production DB queried: **no**"
+            echo "- Target outcomes read: **no**"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2025-house-vote-universe-gap-audit-v1
+          path: ${{ runner.temp }}/audit/*
+          if-no-files-found: error
+          retention-days: 90
