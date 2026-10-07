@@ -546,7 +546,7 @@ function main(): void {
       modelFitting: 'none',
       servingChanged: false,
       nextStep:
-        'The 2025-26 House applicability candidate universe is fully reviewed through rank 264. Resolve internal historical membership identity independently before any feature integration; do not guess IDs.',
+        'The frozen 2025-26 House historical-replay applicability target universe is fully reviewed through rank 264. This does not claim coverage of all House roll calls. Resolve internal historical membership identity independently before any feature integration; do not guess IDs.',
     },
     contentSha256WithoutSelfField: null as string | null,
   };
