@@ -412,16 +412,16 @@ async function main() {
     || targetTranche.chamber !== 'house'
     || targetTranche.source.artifactId !== TARGET_SOURCE_ARTIFACT_ID
     || targetTranche.source.artifactDigest !== TARGET_SOURCE_ARTIFACT_DIGEST
-    || targetTranche.ranking.trancheIndex !== 3
-    || targetTranche.ranking.rankStart !== 51
-    || targetTranche.ranking.rankEnd !== 75
+    || targetTranche.ranking.trancheIndex !== 4
+    || targetTranche.ranking.rankStart !== 76
+    || targetTranche.ranking.rankEnd !== 100
     || targetTranche.ranking.eventCount !== EXPECTED_EVENTS
     || targetTranche.ranking.eventKeySha256 !== TARGET_EVENT_KEY_SHA
     || targetTranche.ranking.priorTrancheEventKeySha256
-      !== '9304a46f37889fa3ae166803e3675669c55fb99d475f1484ea3efd11f7e01299'
+      !== 'e5df92e5d1074edae44bc376ba85a041c3107dde1c84cddc3c8a471c132822f0'
     || targetTranche.events.length !== EXPECTED_EVENTS
-    || targetTranche.minTargetDate !== '2025-04-30'
-    || targetTranche.maxTargetDate !== '2025-05-17'
+    || targetTranche.minTargetDate !== '2025-05-17'
+    || targetTranche.maxTargetDate !== '2026-04-13'
     || targetTranche.policy.targetVoteOutcomesRead !== false
     || targetTranche.policy.outcomeUse !== 'none'
     || targetTranche.policy.productionDatabaseQueried !== false
@@ -430,7 +430,7 @@ async function main() {
     || targetTranche.policy.applicabilityInferred !== false
     || targetTranche.policy.sameDayEligible !== false
   ) {
-    throw new Error('2025 House tranche-3 target identity/policy drifted');
+    throw new Error('2025 House tranche-4 target identity/policy drifted');
   }
 
   const eventSources = await materializeEventSources(targetTranche.events);
