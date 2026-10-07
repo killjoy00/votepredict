@@ -77,7 +77,9 @@ jobs:
           test "$(jq -r '.targetGap.uncoveredRowKeySha256' "$f")" = 6100ab06630e5f40723e35df8c6e68696318863c5823e095f7674c61e61412a7
           test "$(jq -r '.officialMinuteUniverse.totalDocuments > 0' "$f")" = true
           test "$(jq -r '.officialMinuteUniverse.byYear | length' "$f")" = 2
-          test "$(jq -r '.revisor.targetBillStatusDocuments' "$f")" = 141
+          test "$(jq -r '.revisor.requestedTargetBillStatusDocuments' "$f")" = 141
+          test "$(jq -r '(.revisor.targetBillStatusDocuments + (.revisor.statusFetchFailures | length))' "$f")" = 141
+          test "$(jq -r '.revisor.targetBillStatusDocuments > 0' "$f")" = true
           test "$(jq -r '.overlap.targetEventsWithChronologicallyEligibleMinute > 0' "$f")" = true
           test "$(jq -r '.overlap.matchedUncoveredRows > 0' "$f")" = true
           test "$(jq -r '.overlap.uniqueCandidateMinuteDocuments > 0' "$f")" = true
@@ -105,6 +107,7 @@ jobs:
             echo "- Uncovered rows represented: **$(jq -r '.overlap.matchedUncoveredRows' "$f")**"
             echo "- Unique candidate minute PDFs: **$(jq -r '.overlap.uniqueCandidateMinuteDocuments' "$f")**"
             echo "- Minute-target associations: **$(jq -r '.overlap.minuteTargetAssociations' "$f")**"
+            echo "- Revisor status fetch failures: **$(jq -r '.revisor.statusFetchFailures | length' "$f")**"
             echo "- Unmatched committee labels: **$(jq -r '.revisor.unmatchedCommitteeLabels | length' "$f")**"
             echo '- PDF bodies fetched: **no**'
             echo '- Target outcomes read: **no**'
