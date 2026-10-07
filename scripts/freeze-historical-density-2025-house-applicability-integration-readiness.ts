@@ -609,7 +609,7 @@ function main(): void {
         digest: String(section.frozenCandidateArtifact.digest),
         reviewKeySha256: String(section.frozenCandidateArtifact.reviewKeySha256),
       })),
-      decisionFiles: DECISION_FILES.map(basename),
+      decisionFiles: DECISION_FILES.map((file) => basename(file)),
     },
     review: {
       applicableClaimEventPairs: applicable.length,
