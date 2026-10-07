@@ -43,6 +43,18 @@ const OUTCOME_PROOF_SHA256 =
 const EXPECTED_GAP_EVENTS = 16;
 const EXPECTED_OVERLAY_TARGETS = 15;
 const EXPECTED_UNRESOLVED = 'HF2354|2026-05-17';
+const EXPECTED_REPLAYABLE_EVENTS = 15;
+const EXPECTED_MEMBER_OBSERVATIONS = 1990;
+const EXPECTED_MEMBER_PREDICTIONS = 1990;
+const EXPECTED_RESULT_PROOF_SHA256 =
+  'a89de23656cc3c2cfde31999703d54f60cbe86ab8bdee93962f8081d3331f2b4';
+const EXPECTED_MEMBER_PREDICTION_PROOF_SHA256 =
+  'caf50b9ae2f07c2cfd0361554bb5440f11dec7b0b495c9b92768189b7cf41848';
+const EXPECTED_MEMBER_ACCURACY = 0.9698492462311558;
+const EXPECTED_MEMBER_BRIER = 0.03725407295423199;
+const EXPECTED_MEMBER_LOG_LOSS = 0.16242195623689934;
+const EXPECTED_MEMBER_ECE = 0.080291699115617;
+const EXPECTED_CHAMBER_MAE = 13.715526534958565;
 
 type Json = Record<string, any>;
 
@@ -408,6 +420,31 @@ async function main(): Promise<void> {
       )
     ),
   );
+
+  if (
+    statusCounts.replayable !== EXPECTED_REPLAYABLE_EVENTS
+    || Object.keys(statusCounts).length !== 1
+    || scorecard.overall.memberObservations !== EXPECTED_MEMBER_OBSERVATIONS
+    || scorecard.overall.memberPredictions !== EXPECTED_MEMBER_PREDICTIONS
+    || scorecard.overall.memberCoverage !== 1
+    || Math.abs(scorecard.overall.memberAccuracy - EXPECTED_MEMBER_ACCURACY) > 1e-15
+    || Math.abs(scorecard.overall.memberBrier - EXPECTED_MEMBER_BRIER) > 1e-15
+    || Math.abs(scorecard.overall.memberLogLoss - EXPECTED_MEMBER_LOG_LOSS) > 1e-15
+    || Math.abs(scorecard.overall.memberExpectedCalibrationError - EXPECTED_MEMBER_ECE) > 1e-15
+    || Math.abs(scorecard.overall.chamberMeanAbsoluteYesError - EXPECTED_CHAMBER_MAE) > 1e-15
+    || resultProofSha256 !== EXPECTED_RESULT_PROOF_SHA256
+    || memberPredictionProofSha256 !== EXPECTED_MEMBER_PREDICTION_PROOF_SHA256
+  ) {
+    throw new Error(
+      'Frozen 15-event overlay result drifted: '
+      + JSON.stringify({
+        statusCounts,
+        overall: scorecard.overall,
+        resultProofSha256,
+        memberPredictionProofSha256,
+      }),
+    );
+  }
 
   const report = {
     schemaVersion: 'historical-density-2025-house-replay-gap15-overlay-v1',
