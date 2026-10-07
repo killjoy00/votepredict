@@ -1,0 +1,141 @@
+name: Rank 2021 Senate print minute acquisition
+
+on:
+  pull_request:
+    paths:
+      - scripts/audit-historical-density-2021-senate-print-minute-target-priority.ts
+      - .github/workflows/historical-density-2021-senate-print-minute-target-priority.yml
+      - src/sources/minnesota/revisor-actions.ts
+      - src/sources/minnesota/revisor-introduction.ts
+      - src/evidence/minnesota-senate-media-archive.ts
+  push:
+    branches: [main]
+    paths:
+      - scripts/audit-historical-density-2021-senate-print-minute-target-priority.ts
+      - .github/workflows/historical-density-2021-senate-print-minute-target-priority.yml
+      - src/sources/minnesota/revisor-actions.ts
+      - src/sources/minnesota/revisor-introduction.ts
+      - src/evidence/minnesota-senate-media-archive.ts
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2021-senate-print-minute-target-priority-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize immutable v1.8 feature matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11494634289/zip > "$RUNNER_TEMP/v18.zip"
+          echo "710bacebb4aeeafa60821a38ba376b6e321e785b7dc1d75aced92743859e9e29  $RUNNER_TEMP/v18.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/v18"
+          unzip -q "$RUNNER_TEMP/v18.zip" \
+            evidence-quality-historical-feature-matrix-v1.8-manifest.json \
+            evidence-quality-historical-feature-matrix-v1.8.ndjson.gz \
+            -d "$RUNNER_TEMP/v18"
+
+      - name: Rank 2021 Senate print-minute acquisition priority
+        env:
+          VOTEPREDICT_EQ_V18_MANIFEST_PATH: ${{ runner.temp }}/v18/evidence-quality-historical-feature-matrix-v1.8-manifest.json
+          VOTEPREDICT_EQ_V18_MATRIX_PATH: ${{ runner.temp }}/v18/evidence-quality-historical-feature-matrix-v1.8.ndjson.gz
+          VOTEPREDICT_SENATE_2021_MINUTE_PRIORITY_OUTPUT: ${{ runner.temp }}/priority/historical-density-2021-senate-print-minute-target-priority-v1.json
+        run: node --import tsx scripts/audit-historical-density-2021-senate-print-minute-target-priority.ts
+
+      - name: Verify acquisition-only boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/priority/historical-density-2021-senate-print-minute-target-priority-v1.json"
+
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2021-senate-print-minute-target-priority-v1
+          test "$(jq -r '.issue' "$f")" = 718
+          test "$(jq -r '.frozenInputs.historicalFeatureMatrixV18.artifactId' "$f")" = 11494634289
+
+          test "$(jq -r '.targetGap.uncoveredRows' "$f")" = 14600
+          test "$(jq -r '.targetGap.memberships' "$f")" = 67
+          test "$(jq -r '.targetGap.targetEvents' "$f")" = 218
+          test "$(jq -r '.targetGap.bills' "$f")" = 176
+          test "$(jq -r '.targetGap.eventYearCounts["2021"]' "$f")" = 82
+          test "$(jq -r '.targetGap.eventYearCounts["2022"]' "$f")" = 136
+          test "$(jq -r '.targetGap.targetEventKeySha256' "$f")" = 7cf570804af8abed6eb4990b6fe530046ba038e5bc61d85e1311158afedc3657
+
+          test "$(jq -r '.lrlScope.totalEventGroups' "$f")" = 33
+          test "$(jq -r '.lrlScope.committeeOrOtherGroups' "$f")" = 30
+          test "$(jq -r '.lrlScope.uniqueRecordingPages' "$f")" = 621
+          test "$(jq -r '.lrlScope.eventFailures | length' "$f")" = 0
+          test "$(jq -r '.lrlScope.committeeGroupSha256' "$f")" = e7b5bcb09a55511fa4cf7e061fce6a58a35b604763bfa35155e7327866a35bc2
+
+          test "$(jq -r '.revisor.targetBillStatusDocuments' "$f")" = 176
+          test "$(jq -r '.revisor.fetchFailures' "$f")" = 0
+          test "$(jq -r '.revisor.referralDescriptionsWithoutParsedCommittee | length' "$f")" = 0
+          test "$(jq -r '.revisor.unmatchedReferralLabels | length' "$f")" = 0
+          test "$(jq -r '.acquisitionCandidates.committeesWithMatchedPreVoteReferrals' "$f")" = 20
+          test "$(jq -r '.acquisitionCandidates.matchedTargetEvents' "$f")" = 66
+          test "$(jq -r '.acquisitionCandidates.matchedUncoveredRows' "$f")" = 4422
+          test "$(jq -r '.acquisitionCandidates.associationProofSha256' "$f")" = f16f22044d13286f4478dac260952fec19684495a65d5f1a0a52de6fad84ce44
+          test "$(jq -r '.priority.selectedCommitteeCount' "$f")" = 10
+          test "$(jq -r '.priority.selectedTargetEvents' "$f")" = 62
+          test "$(jq -r '.priority.selectedUncoveredRows' "$f")" = 4154
+          test "$(jq -r '.priority.priorityProofSha256' "$f")" = e4d78af9f9e0f7c34bd1b2131c2e9a3a58c80e871fc2bb51de8f5cd421923aa5
+
+          test "$(jq -r '.interpretation.acquisitionOnly' "$f")" = true
+          test "$(jq -r '.interpretation.mediaEventPresenceDoesNotProveMinuteExists' "$f")" = true
+          test "$(jq -r '.interpretation.revisorReferralDoesNotProveMinuteExists' "$f")" = true
+          test "$(jq -r '.interpretation.minuteExistenceDoesNotProveMemberDirectionalEvidence' "$f")" = true
+
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.memberStanceInferred' "$f")" = false
+          test "$(jq -r '.policy.committeeReferralTreatedAsEvidence' "$f")" = false
+          test "$(jq -r '.policy.mediaPresenceTreatedAsEvidence' "$f")" = false
+          test "$(jq -r '.policy.printMinuteContentAcquired' "$f")" = false
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+
+          {
+            echo '## 2021 Senate print-minute target priority'
+            echo
+            echo '- v1.8 uncovered Senate rows: **14,600**'
+            echo '- Target events / bills: **218 / 176**'
+            echo '- LRL 2021 committee/other groups: **30**'
+            echo '- Committees with matched pre-vote referrals: **20**'
+            echo '- Matched target events: **66**'
+            echo '- Matched uncovered rows: **4,422**'
+            echo '- Priority committees selected: **10**'
+            echo '- Priority target events: **62**'
+            echo '- Priority uncovered rows: **4,154**'
+            echo '- Unparsed/unmatched referral labels: **0 / 0**'
+            echo '- Association proof SHA: `f16f22044d13286f4478dac260952fec19684495a65d5f1a0a52de6fad84ce44`'
+            echo '- Priority proof SHA: `e4d78af9f9e0f7c34bd1b2131c2e9a3a58c80e871fc2bb51de8f5cd421923aa5`'
+            echo '- This is acquisition scope only; no minute existence/content or member stance is inferred.'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: historical-density-2021-senate-print-minute-target-priority-v1
+          path: ${{ runner.temp }}/priority/*
+          if-no-files-found: warn
+          retention-days: 90
