@@ -71,6 +71,8 @@ jobs:
           test "$(jq -r '.request.selectedUncoveredRows' "$f")" = 4154
           test "$(jq -r '.request.requestAssociationProofSha256' "$f")" = 6d3ecfa7d433e8a3f3c835ecc9934a0b68cab53f213501b333e873d32d29a1d0
           test "$(jq -r '.request.groups | length' "$f")" = 10
+          test "$(jq -r '.outputs.csvSha256' "$f")" = 323c8be6cd874115b4e8601343eebec96a705be2e1670ef360ca7c2970a334d9
+          test "$(jq -r '.outputs.markdownSha256' "$f")" = 033e9d5c45abad9d378a4ad3d351b9299dc4f378bfe86fc791bd1cb666e83bc3
 
           test -s "$RUNNER_TEMP/request/historical-density-2021-senate-print-minute-request-targets-v1.csv"
           test -s "$RUNNER_TEMP/request/historical-density-2021-senate-print-minute-request-brief-v1.md"
@@ -102,8 +104,8 @@ jobs:
             echo '- Selected committee recording pages: **208**'
             echo '- Frozen uncovered-row opportunity: **4,154**'
             echo '- Request association proof: `6d3ecfa7d433e8a3f3c835ecc9934a0b68cab53f213501b333e873d32d29a1d0`'
-            echo "- CSV SHA: `$(jq -r '.outputs.csvSha256' "$f")`"
-            echo "- Markdown SHA: `$(jq -r '.outputs.markdownSha256' "$f")`"
+            echo '- CSV SHA: `323c8be6cd874115b4e8601343eebec96a705be2e1670ef360ca7c2970a334d9`'
+            echo '- Markdown SHA: `033e9d5c45abad9d378a4ad3d351b9299dc4f378bfe86fc791bd1cb666e83bc3`'
             echo '- Acquisition only: **yes**'
             echo '- Target outcomes read: **no**'
             echo '- Evidence/features written: **no**'
