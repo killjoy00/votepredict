@@ -120,7 +120,10 @@ jobs:
           test "$(jq -r '.overlay.statusCounts | length' "$f")" = 1
           test "$(jq -r '.overlay.resultProofSha256' "$f")" = a89de23656cc3c2cfde31999703d54f60cbe86ab8bdee93962f8081d3331f2b4
           test "$(jq -r '.overlay.memberPredictionProofSha256' "$f")" = caf50b9ae2f07c2cfd0361554bb5440f11dec7b0b495c9b92768189b7cf41848
-          test "$(jq -r '[.overlay.events[].memberPredictions | length] | add' "$f")" = 1990
+          test "$(jq -r '[.overlay.events[].memberPredictions | length] | add' "$f")" = 2009
+          test "$(jq -r '.overlay.memberPredictionRows' "$f")" = 2009
+          test "$(jq -r '.overlay.memberPredictionRowsWithoutOutcome' "$f")" = 19
+          test "$(jq -r '([.overlay.events[].memberPredictions[] | select(.actualOutcome != null)] | length)' "$f")" = 1990
           test "$(jq -r '[.overlay.events[].decisiveVoteRows | length] | add' "$f")" = 1991
           test "$(jq -r '.overlay.decisiveVoteRows' "$f")" = 1991
           test "$(jq -r '.overlay.decisiveVoteRowsWithoutPrediction' "$f")" = 1
@@ -162,7 +165,9 @@ jobs:
             echo '- Overlay targets: **15**'
             echo '- Fail-closed excluded: **HF2354 · 2026-05-17**'
             echo '- Replay status counts: `{"replayable":15}`'
-            echo '- Member observations / predictions: **1,990 / 1,990**'
+            echo '- Scored member observations / predictions: **1,990 / 1,990**'
+            echo '- Full active-member forecast rows: **2,009**'
+            echo '- Forecast rows without decisive outcome: **19**'
             echo '- Raw decisive vote rows: **1,991**'
             echo '- Raw decisive rows outside strict pre-vote membership cohort: **1**'
             echo '- Member coverage: **1.0**'
