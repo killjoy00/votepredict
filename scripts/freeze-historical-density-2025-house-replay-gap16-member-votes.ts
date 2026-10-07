@@ -3,6 +3,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import {
   fetchHouseVoteDetail,
+  listHouseVoteBillLinks,
   normalizeMemberName,
   parseHouseVoteDetailHtml,
 } from '../src/sources/minnesota/house-votes.js';
@@ -289,12 +290,35 @@ async function main(): Promise<void> {
   const candidatesForResolution = sourceCandidates(identities);
   const session = getMinnesotaHouseSession(SESSION);
 
-  const detailByIdentifier = new Map<string, ReturnType<typeof parseHouseVoteDetailHtml>>();
+  const detailByIdentifier = new Map<string, {
+    sourceBillIdentifier: string;
+    events: ReturnType<typeof parseHouseVoteDetailHtml>;
+  }>();
   const identifiers = [...new Set(candidates.map((row) => row.identifier))].sort();
+
+  const officialLinks = await retry(() => listHouseVoteBillLinks(session.sessionKey));
+  const officialLinkByCanonical = new Map<string, string[]>();
+  for (const link of officialLinks) {
+    const canonical = canonicalIdentifier(link.billIdentifier);
+    const values = officialLinkByCanonical.get(canonical) ?? [];
+    values.push(link.billIdentifier);
+    officialLinkByCanonical.set(canonical, values);
+  }
+
   const details = await mapLimit(identifiers, CONCURRENCY, async (identifier) => {
-    const page = await retry(() => fetchHouseVoteDetail(session.sessionKey, identifier));
+    const sourceIdentifiers = [...new Set(officialLinkByCanonical.get(identifier) ?? [])].sort();
+    if (sourceIdentifiers.length !== 1) {
+      throw new Error(
+        `Expected one official House summary link for ${identifier}; got ${JSON.stringify(sourceIdentifiers)}`,
+      );
+    }
+    const sourceBillIdentifier = sourceIdentifiers[0]!;
+    const page = await retry(() =>
+      fetchHouseVoteDetail(session.sessionKey, sourceBillIdentifier)
+    );
     return {
       identifier,
+      sourceBillIdentifier,
       events: parseHouseVoteDetailHtml({
         html: page.html,
         sessionKey: session.sessionKey,
@@ -302,10 +326,19 @@ async function main(): Promise<void> {
       }),
     };
   });
-  for (const row of details) detailByIdentifier.set(row.identifier, row.events);
+  for (const row of details) {
+    detailByIdentifier.set(row.identifier, {
+      sourceBillIdentifier: row.sourceBillIdentifier,
+      events: row.events,
+    });
+  }
 
   const reconstructed = candidates.map((candidate) => {
-    const pageEvents = detailByIdentifier.get(candidate.identifier) ?? [];
+    const detail = detailByIdentifier.get(candidate.identifier);
+    if (!detail) {
+      throw new Error(`Official House detail missing for ${candidate.identifier}`);
+    }
+    const pageEvents = detail.events;
     const exactExternalKey = pageEvents.filter(
       (event) => event.externalKey === candidate.externalKey,
     );
@@ -426,6 +459,7 @@ async function main(): Promise<void> {
       currentParsedExternalKey: event.externalKey,
       externalKeyExactMatch: event.externalKey === candidate.externalKey,
       journalPage: event.journalPage ?? null,
+      sourceBillIdentifier: detail.sourceBillIdentifier,
       sourceUrl: event.sourceUrl,
       motionText: event.motionText,
       voteKind: event.voteKind,
