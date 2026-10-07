@@ -50,7 +50,7 @@ jobs:
           test "$(jq -r '.canonicalInputs.outcomes.artifactId' "$plan")" = 11483367972
           test "$(jq -r '.snapshotProtocol.canonicalParityGate.required' "$plan")" = true
           test "$(jq -r '.snapshotProtocol.canonicalParityGate.exactCanonicalRowKeySetRequired' "$plan")" = true
-          test "$(jq -r '.snapshotProtocol.canonicalParityGate.probabilityTolerance' "$plan")" = 1e-12
+          test "$(jq -r '.snapshotProtocol.canonicalParityGate.probabilityTolerance' "$plan")" = 1E-12
           test "$(jq -r '.snapshotProtocol.gapEventPresenceGate.expectedExactBillDateMatchesInCurrentLoader' "$plan")" = 0
           test "$(jq -r '.snapshotProtocol.extensionRule.eligibleOutcomeCompleteEvents' "$plan")" = 15
           test "$(jq -r '.snapshotProtocol.extensionRule.targetSelectionMayChangeAfterSnapshot' "$plan")" = false
