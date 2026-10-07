@@ -118,8 +118,14 @@ async function mapLimit<T, R>(
   return results;
 }
 
+function canonicalBillIdentifier(value: string): string {
+  const match = value.replace(/\s+/g, '').toUpperCase().match(/^(HF|SF)0*(\d+)$/);
+  if (!match) throw new Error(`Unsupported bill identifier: ${value}`);
+  return `${match[1]}${Number(match[2])}`;
+}
+
 function compositeKey(identifier: string, occurredOn: string): string {
-  return `${identifier}|${occurredOn}`;
+  return `${canonicalBillIdentifier(identifier)}|${occurredOn}`;
 }
 
 function multiplicities(keys: readonly string[]): Map<string, number> {
@@ -328,7 +334,14 @@ async function main(): Promise<void> {
     if (events.length === 0) {
       throw new Error(`No vote events parsed for ${link.billIdentifier}`);
     }
-    if (events.some((event) => event.billIdentifier !== link.billIdentifier)) {
+    const canonicalLinkIdentifier = canonicalBillIdentifier(link.billIdentifier);
+    if (
+      events.some(
+        (event) =>
+          canonicalBillIdentifier(event.billIdentifier)
+          !== canonicalLinkIdentifier,
+      )
+    ) {
       throw new Error(
         `Vote-detail bill identity drifted for ${link.billIdentifier}`,
       );
