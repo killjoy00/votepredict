@@ -134,6 +134,8 @@ jobs:
 
           test "$(jq -r '.manifestSkeleton.decisions | length' "$t")" = 5
           test "$(jq -r '.manifestSkeleton.documentAttestations | length' "$t")" = 1
+          test "$(sha256sum "$t" | awk '{print $1}')" = bf2b39ccdea8caeb82f77a51d3d396ed5323a9b4752eda17ce5c2b81f8c1d9a2
+          test "$(sha256sum "$RUNNER_TEMP/completion.json" | awk '{print $1}')" = 47681875eca1f61a1ca9797b546e03d81146f0b78b396dda89b74fac13abaa1e
           test "$(jq -r '.frozenReviewPacket.reviewKeySha256' "$f")" = 03f49db508eaa3ea2413cc410d1b22f23a5a4abd0641d24ea9cb14b39477997c
           test "$(jq -r '.summary.reviewRows' "$f")" = 5
           test "$(jq -r '.summary.directionalRows' "$f")" = 1
@@ -147,7 +149,9 @@ jobs:
           test "$(jq -r '.policy.nonDirectionalRowsPreservedInAudit' "$f")" = true
           test "$(jq -r '.policy.mechanicallyActionable' "$f")" = false
           test "$(jq -r '.policy.modelWeight' "$f")" = 0
-          test "$(jq -r '.rowDecisionProofSha256 | length' "$f")" = 64
+          test "$(jq -r '.documentAttestationProofSha256' "$f")" = 8900d587c7900f66d2c686e3ea2fdb3ea946ed9080c469bf05311bfe5172beb1
+          test "$(jq -r '.rowDecisionProofSha256' "$f")" = 26fccad2c3a3327837b348c1b65fc6a26a9910dfdd2df07a525b2347eb9ef4ab
+          test "$(sha256sum "$f" | awk '{print $1}')" = e2b0a745b4a57527c879782a0d4fb43ada8bb78031cf536800d199ee1bfe579d
 
           test "$(jq -r '.summary.semanticClaims' "$s")" = 1
           test "$(jq -r '.semanticClaims[0].billIdentifier' "$s")" = SF694
