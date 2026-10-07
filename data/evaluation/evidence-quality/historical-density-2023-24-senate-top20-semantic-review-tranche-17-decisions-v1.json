@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "historical-density-2023-24-senate-top20-semantic-review-tranche-17-decisions-v1",
+  "issue": 718,
+  "session": "2023-2024",
+  "trancheId": "SENATE-2023-24-TOP20-SEMANTIC-017",
+  "frozenReviewPacket": {
+    "reviewRows": 2,
+    "reviewKeySha256": "9240b4888317d3fe6170185d4c1b3cd9f5768a381b18eb3395f72559d6da09e0",
+    "sourcePdfSha256": "a90f47e7ab18230622ca826770658fcdae08d4732d1e4e65dfca3d3dfa2b1ca8",
+    "sourceTextSha256": "189f70d28eaac4d9b5b631039c03092294f0e739ad42004dfaa12b3d4574d4a2",
+    "reviewPacketProofSha256": "a02032d975670d5a08809602c29283503f4db4c8a44eef556f0293da25cbaf2d"
+  },
+  "decisionRationales": {
+    "full_text_review_no_candidate_bill_support": "Full frozen minute reviewed. This candidate bill is neither explicitly mentioned nor otherwise unambiguously identifiable in the source text; committee/referral overlap alone is not treated as applicability.",
+    "candidate_bill_explicitly_present_but_only_procedural_actions_recorded": "Full frozen minute reviewed. The candidate bill is explicit, but the minute records motions, amendments, substitution, or recommend-to-pass procedure rather than an attributable directional member statement under the existing Senate semantic-review contract."
+  },
+  "notApplicableReviewKeys": [
+    "a90f47e7ab18230622ca826770658fcdae08d4732d1e4e65dfca3d3dfa2b1ca8|189f70d28eaac4d9b5b631039c03092294f0e739ad42004dfaa12b3d4574d4a2|5afc1fb0-6cb7-4b5b-bc79-fbdce80c83ce|b34ade4c-852a-40c3-a14b-7c1e33a40a13",
+    "a90f47e7ab18230622ca826770658fcdae08d4732d1e4e65dfca3d3dfa2b1ca8|189f70d28eaac4d9b5b631039c03092294f0e739ad42004dfaa12b3d4574d4a2|1b75b8b6-cb07-48dc-b32b-3a7a0d7cbaf3|b34ade4c-852a-40c3-a14b-7c1e33a40a13"
+  ],
+  "billContextRows": [],
+  "directionalRows": [],
+  "ambiguousFailClosedRows": [],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "targetVoteOutcomesRead": false,
+    "outcomeUse": "none",
+    "committeeMembershipUsedAsStance": false,
+    "attendanceUsedAsStance": false,
+    "proceduralActionUsedAsDirectionalStance": false,
+    "ambiguousDefaultsToFailClosed": true,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "modelWeightChanged": false,
+    "servingChanged": false,
+    "vercelUsed": false,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0
+  }
+}
