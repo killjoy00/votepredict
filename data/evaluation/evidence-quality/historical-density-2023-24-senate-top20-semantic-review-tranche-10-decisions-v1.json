@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "historical-density-2023-24-senate-top20-semantic-review-tranche-10-decisions-v1",
+  "issue": 718,
+  "session": "2023-2024",
+  "trancheId": "SENATE-2023-24-TOP20-SEMANTIC-010",
+  "frozenReviewPacket": {
+    "reviewRows": 3,
+    "reviewKeySha256": "72ba18a2907dd6fc9e4b6777913edcedd2844fa7c3d33b6115d6a554291725dc",
+    "sourcePdfSha256": "5cbc8cdcce8b29fd795bc7a615e401f2bcf78cc17ba80fa5bd08cb9f7734d067",
+    "sourceTextSha256": "88e70cf325cbc1990f8d495e9026c9e4e90b4d2c51ec458493cb902cef7947ac",
+    "reviewPacketProofSha256": "f830d00ddc67deefb736685c9633c5698a969e0fda65364c445b7e32f4d9b832"
+  },
+  "decisionRationales": {
+    "full_text_review_no_candidate_bill_support": "Full frozen minute reviewed. This candidate bill is neither explicitly mentioned nor otherwise unambiguously identifiable in the source text; committee/referral overlap alone is not treated as applicability.",
+    "candidate_bill_explicitly_present_but_only_procedural_actions_recorded": "Full frozen minute reviewed. The candidate bill is explicit, but the minute records motions, amendments, substitution, or recommend-to-pass procedure rather than an attributable directional member statement under the existing Senate semantic-review contract."
+  },
+  "notApplicableReviewKeys": [
+    "5cbc8cdcce8b29fd795bc7a615e401f2bcf78cc17ba80fa5bd08cb9f7734d067|88e70cf325cbc1990f8d495e9026c9e4e90b4d2c51ec458493cb902cef7947ac|503402e0-4485-40f7-a2f4-059d1a6b23c7|fdbed96c-a6fc-44f1-aeb5-c53f304b5970",
+    "5cbc8cdcce8b29fd795bc7a615e401f2bcf78cc17ba80fa5bd08cb9f7734d067|88e70cf325cbc1990f8d495e9026c9e4e90b4d2c51ec458493cb902cef7947ac|e2f1e71d-0d96-43db-9ccf-31fce3f062e4|2b27d450-54f2-433b-8f7a-0634f215cfb9",
+    "5cbc8cdcce8b29fd795bc7a615e401f2bcf78cc17ba80fa5bd08cb9f7734d067|88e70cf325cbc1990f8d495e9026c9e4e90b4d2c51ec458493cb902cef7947ac|55a9033d-5776-444e-91ef-036c897bb195|dbc6143a-4ae7-493f-8d44-bc84828c51ad"
+  ],
+  "billContextRows": [],
+  "directionalRows": [],
+  "ambiguousFailClosedRows": [],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "targetVoteOutcomesRead": false,
+    "outcomeUse": "none",
+    "committeeMembershipUsedAsStance": false,
+    "attendanceUsedAsStance": false,
+    "proceduralActionUsedAsDirectionalStance": false,
+    "ambiguousDefaultsToFailClosed": true,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "modelWeightChanged": false,
+    "servingChanged": false,
+    "vercelUsed": false,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0
+  }
+}
