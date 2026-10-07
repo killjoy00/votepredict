@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-tranche-6-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenCandidateArtifact": {
+    "runId": 37556230483,
+    "artifactId": 11454860978,
+    "digest": "sha256:fcfce6beafffa76f5e8f0947207aa3944bf7b3c560ec0419bfe6a0c7be50f0c7",
+    "targetTrancheIndex": 6,
+    "targetRankStart": 126,
+    "targetRankEnd": 150,
+    "targetEventKeySha256": "eafb3980bdbe20a94da1150e673e8d9218753bcea7f696863fc598f9b4abc072",
+    "reviewKeySha256": "8c3d030d553d9e9c22ebafdf983398f999213bc779945d201682c05de1c03a0c",
+    "eligibleClaimEventPairs": 1150,
+    "candidatePairs": 126,
+    "candidateBills": 15,
+    "candidatePublicMembers": 33,
+    "candidateSemanticGroups": 33
+  },
+  "defaultDecision": "not_applicable",
+  "defaultBillRationales": {
+    "HF3426": "Environment and Natural Resources Trust Fund grant provisions are not applicable to nominated claims except the explicit Allen fraud/accountability override below. The bill does not create an independent or centralized statewide inspector general, legislative fraud-risk notes, the stricter state-agency fraud-reporting regime, a family-farm sick-time exemption, PFAS product policy, refinery-release notification, teacher-pension reform, telework policy, emergency-powers limits, LGBTQ-school protections, disability-support services, or EV road-funding parity.",
+    "HF3489": "Field-trip safeguards, educator-licensing reporting, grooming offenses, and related education provisions are not applicable to nominated claims except the explicit Gillman fail-closed override below. Incidental fraud/licensing, pension, education-funding, public-safety, inspector-general, emergency-powers, trafficking, or disability terminology does not implement those propositions.",
+    "HF3766": "Travel-insurance licensing, registration, sales, and regulation do not implement the nominated school-sports, PFAS recreational-vehicle exemption, teacher-pension, telework, emergency-powers, disability-support, or EV road-funding propositions.",
+    "HF3832": "Allowing flavoring agents in drug compounding does not repeal or modify Minnesota nuclear-energy restrictions and is unrelated to the nominated nuclear-moratorium propositions.",
+    "HF3970": "A contract-for-deed remedy for victims of domestic abuse or sexual assault is a discrete civil-law protection and does not implement the source-specific Make Minnesota Safe package or establish an anti-human-trafficking task force.",
+    "HF4052": "Telephone-company regulation and reporting changes do not implement the nominated inspector-general structures, gun-violence research, traffic-stop reform, refinery hazard notification, Make Minnesota Safe package, repeat-DWI interlock policy, emergency-powers limits, or human-trafficking task force.",
+    "HF4075": "Uniform procedures for firearm restrictions resulting from convictions and judicial orders do not establish nonpartisan gun-violence research, traffic-stop reform, refinery hazard notification, repeat-DWI interlock policy, the source-specific Make Minnesota Safe package, an anti-trafficking task force, or broad parental final authority; family-law references are incidental.",
+    "HF4146": "Temporary authority to store drill cores outside the state drill-core library does not implement the nominated public-safety, traffic-stop, refinery-notification, DWI-interlock, gun-research, or trafficking propositions.",
+    "HF4188": "Commerce, insurance, financial-product, securities, virtual-currency, and unclaimed-property provisions do not implement state-program fraud/accountability, inspector-general structures, legislative fraud notes, the stricter state-agency fraud-reporting regime, PFAS recreational-vehicle exemptions, or the nominated public-safety propositions; fraud and oversight language is commercial/private-sector in scope.",
+    "HF4224": "General notice requirements for water discharges do not strengthen or weaken Minnesota PFAS product-prevention requirements and therefore do not substantively implement Fischer's PFAS-protection proposition.",
+    "HF4455": "Ramsey County human-resources terminology and classification changes are local personnel housekeeping and do not implement statewide inspector-general, Paid Family and Medical Leave, telework, emergency-powers, or disability-support propositions.",
+    "HF4493": "Pharmacist authority for opioid-use-disorder treatment and pharmacist disciplinary rules do not implement state-program fraud/accountability, inspector-general structures, legislative fraud notes, stricter state-agency fraud reporting, millionaire-tax Medicaid funding, an anti-trafficking task force, or broad disability-support policy; fraud references concern licensing/billing misconduct.",
+    "SF3622": "Technical and conforming changes to common-interest ownership law do not implement the nominated inspector-general, gun-research, traffic-stop, refinery-notification, PFAS recreation-vehicle, public-safety-package, DWI-interlock, emergency-powers, trafficking, or disability-support propositions.",
+    "SF3868": "Virtual-currency-kiosk anti-scam disclosures and restrictions address private consumer fraud. They do not create state-program oversight/accountability, inspector-general structures, legislative fraud notes, stricter state-agency fraud reporting, the Make Minnesota Safe package, or an anti-trafficking task force.",
+    "SF3958": "Changing the reporting date for the disaster-assistance contingency account is an administrative reporting change and does not limit gubernatorial emergency powers or implement the nominated public-safety, traffic-stop, refinery-notification, DWI-interlock, gun-research, or trafficking propositions."
+  },
+  "overrides": [
+    {
+      "reviewKey": "allen_fraud_oversight_accountability|HF3426|2026-04-30|ac7e9362ec9f8e85beef6072449a32b2b0e90e2c1ef0c336361f9c1eb33d9abd",
+      "decision": "applicable",
+      "billPolicyDirection": "strengthens_public_grant_fraud_prevention_monitoring_risk_assessment_financial_reconciliation_and_accountability_controls",
+      "alignmentDirection": "aligns",
+      "reason": "The strict pre-vote HF3426 version requires annual fraud-prevention and financial-reconciliation training for grant managers, unannounced grant monitoring visits, preaward risk assessments, financial reconciliation, reimbursement/surety controls, and public-accountability documentation for public funds. Those are direct state-program oversight and accountability controls matching Allen's proposition."
+    },
+    {
+      "reviewKey": "gillman_parental_rights|HF3489|2026-04-27|19f0f1807823fc737eac8019c54e68cc8e103d2df1e65e7ded9e9378d1974287",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "HF3489 allows a parent to consent to a narrow exception from a field-trip supervision rule, which is genuinely related to parental decision-making in education. But that discrete consent authority does not safely establish Gillman's much broader proposition that parents should have final decision-making authority over children's education, healthcare, and upbringing. The scope mismatch fails closed."
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
