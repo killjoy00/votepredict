@@ -293,6 +293,32 @@ function main(): void {
     },
   };
 
+  const reviewPacketProofSha256 = sha256(JSON.stringify({
+    issue: packet.issue,
+    sourceIntake: packet.sourceIntake,
+    summary: packet.summary,
+    reviewKeySha256: packet.reviewKeySha256,
+    allowedDecisionValues: packet.allowedDecisionValues,
+    requiredForDirectionalDecision: packet.requiredForDirectionalDecision,
+    rows: packet.rows,
+    policy: packet.policy,
+  }));
+  const decisionsTemplateProofSha256 = sha256(JSON.stringify({
+    issue: decisions.issue,
+    frozenReviewPacket: decisions.frozenReviewPacket,
+    instructions: decisions.instructions,
+    decisions: decisions.decisions,
+    policy: decisions.policy,
+  }));
+  const packetWithProof = {
+    ...packet,
+    reviewPacketProofSha256,
+  };
+  const decisionsWithProof = {
+    ...decisions,
+    decisionsTemplateProofSha256,
+  };
+
   mkdirSync(outputDir, { recursive: true });
   const packetPath = resolve(
     outputDir,
@@ -302,10 +328,14 @@ function main(): void {
     outputDir,
     'historical-density-2021-senate-print-minute-semantic-review-decisions-template-v1.json',
   );
-  writeFileSync(packetPath, JSON.stringify(packet, null, 2) + '\n', 'utf8');
+  writeFileSync(
+    packetPath,
+    JSON.stringify(packetWithProof, null, 2) + '\n',
+    'utf8',
+  );
   writeFileSync(
     decisionsPath,
-    JSON.stringify(decisions, null, 2) + '\n',
+    JSON.stringify(decisionsWithProof, null, 2) + '\n',
     'utf8',
   );
 
@@ -313,9 +343,9 @@ function main(): void {
     senate2021PrintMinuteSemanticReviewPacket: {
       ...packet.summary,
       reviewKeySha256,
+      reviewPacketProofSha256,
+      decisionsTemplateProofSha256,
       sourceLedgerProofSha256: ledger.sourceLedgerProofSha256,
-      packetSha256: sha256(readFileSync(packetPath, 'utf8')),
-      decisionsTemplateSha256: sha256(readFileSync(decisionsPath, 'utf8')),
       targetVoteOutcomesRead: false,
       decisionsAutoFilled: false,
       evidenceCreated: false,
