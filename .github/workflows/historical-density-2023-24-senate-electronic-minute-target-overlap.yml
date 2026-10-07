@@ -1,0 +1,133 @@
+name: Audit 2023-24 Senate electronic minute target overlap
+
+on:
+  pull_request:
+    paths:
+      - scripts/audit-historical-density-2023-24-senate-electronic-minute-target-overlap.ts
+      - .github/workflows/historical-density-2023-24-senate-electronic-minute-target-overlap.yml
+      - src/evidence/minnesota-senate-committee-source.ts
+      - src/sources/minnesota/revisor-actions.ts
+      - src/sources/minnesota/revisor-introduction.ts
+  push:
+    branches: [main]
+    paths:
+      - scripts/audit-historical-density-2023-24-senate-electronic-minute-target-overlap.ts
+      - .github/workflows/historical-density-2023-24-senate-electronic-minute-target-overlap.yml
+      - src/evidence/minnesota-senate-committee-source.ts
+      - src/sources/minnesota/revisor-actions.ts
+      - src/sources/minnesota/revisor-introduction.ts
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2023-24-senate-electronic-minute-target-overlap-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize immutable v1.8 feature matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11494634289/zip > "$RUNNER_TEMP/v18.zip"
+          echo "710bacebb4aeeafa60821a38ba376b6e321e785b7dc1d75aced92743859e9e29  $RUNNER_TEMP/v18.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/v18"
+          unzip -q "$RUNNER_TEMP/v18.zip" \
+            evidence-quality-historical-feature-matrix-v1.8-manifest.json \
+            evidence-quality-historical-feature-matrix-v1.8.ndjson.gz \
+            -d "$RUNNER_TEMP/v18"
+
+      - name: Audit official electronic-minute overlap
+        env:
+          VOTEPREDICT_EQ_V18_MANIFEST_PATH: ${{ runner.temp }}/v18/evidence-quality-historical-feature-matrix-v1.8-manifest.json
+          VOTEPREDICT_EQ_V18_MATRIX_PATH: ${{ runner.temp }}/v18/evidence-quality-historical-feature-matrix-v1.8.ndjson.gz
+          VOTEPREDICT_SENATE_2023_24_MINUTE_OVERLAP_OUTPUT: ${{ runner.temp }}/audit/historical-density-2023-24-senate-electronic-minute-target-overlap-v1.json
+        run: node --import tsx scripts/audit-historical-density-2023-24-senate-electronic-minute-target-overlap.ts
+
+      - name: Verify read-only source-overlap boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/audit/historical-density-2023-24-senate-electronic-minute-target-overlap-v1.json"
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2023-24-senate-electronic-minute-target-overlap-v1
+          test "$(jq -r '.issue' "$f")" = 718
+          test "$(jq -r '.frozenInput.historicalFeatureMatrixV18.artifactId' "$f")" = 11494634289
+          test "$(jq -r '.targetGap.uncoveredRows' "$f")" = 14471
+          test "$(jq -r '.targetGap.memberships' "$f")" = 67
+          test "$(jq -r '.targetGap.targetEvents' "$f")" = 216
+          test "$(jq -r '.targetGap.bills' "$f")" = 141
+          test "$(jq -r '.targetGap.byYear["2023"].targetEvents' "$f")" = 122
+          test "$(jq -r '.targetGap.byYear["2024"].targetEvents' "$f")" = 94
+          test "$(jq -r '.targetGap.targetEventKeySha256' "$f")" = 504723315794c0471801b01bd8e0159e2bfa2dc900dbf7d8c095b4957c974672
+          test "$(jq -r '.targetGap.uncoveredRowKeySha256' "$f")" = 6100ab06630e5f40723e35df8c6e68696318863c5823e095f7674c61e61412a7
+          test "$(jq -r '.officialMinuteUniverse.byYear[0].committeePages' "$f")" = 22
+          test "$(jq -r '.officialMinuteUniverse.byYear[0].documents' "$f")" = 454
+          test "$(jq -r '.officialMinuteUniverse.byYear[1].committeePages' "$f")" = 23
+          test "$(jq -r '.officialMinuteUniverse.byYear[1].documents' "$f")" = 258
+          test "$(jq -r '.officialMinuteUniverse.totalDocuments' "$f")" = 712
+          test "$(jq -r '.officialMinuteUniverse.committees' "$f")" = 22
+          test "$(jq -r '.officialMinuteUniverse.documentUniverseProofSha256' "$f")" = 870a0b5dd39535095ecddb614cf13b4d066aaf8107ec8bdf7ceb69bc1f5339b4
+          test "$(jq -r '.revisor.requestedTargetBillStatusDocuments' "$f")" = 141
+          test "$(jq -r '.revisor.targetBillStatusDocuments' "$f")" = 140
+          test "$(jq -r '.revisor.statusFetchFailures | length' "$f")" = 1
+          test "$(jq -r '.revisor.statusFetchFailures[0].identifier' "$f")" = HF3769
+          test "$(jq -r '.revisor.unparsedReferralActions | length' "$f")" = 0
+          test "$(jq -r '.revisor.unmatchedCommitteeLabels | length' "$f")" = 0
+          test "$(jq -r '.overlap.targetEventsWithPreVoteReferral' "$f")" = 117
+          test "$(jq -r '.overlap.targetEventsWithMatchedCommittee' "$f")" = 117
+          test "$(jq -r '.overlap.targetEventsWithChronologicallyEligibleMinute' "$f")" = 117
+          test "$(jq -r '.overlap.matchedUncoveredRows' "$f")" = 7838
+          test "$(jq -r '.overlap.uniqueCandidateMinuteDocuments' "$f")" = 436
+          test "$(jq -r '.overlap.minuteTargetAssociations' "$f")" = 1727
+          test "$(jq -r '.overlap.associationProofSha256' "$f")" = dbb3e5e4ce5191ec4fb47aa1f777f72067a3dca7fedefc0871ac41ed341adbf1
+          test "$(jq -r '.interpretation.minuteBodyFetched' "$f")" = false
+          test "$(jq -r '.interpretation.minuteBodyParsed' "$f")" = false
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.pdfBodiesFetched' "$f")" = false
+          test "$(jq -r '.policy.memberStanceInferred' "$f")" = false
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+
+          {
+            echo '## 2023-24 Senate electronic-minute target overlap'
+            echo
+            echo '- v1.8 uncovered Senate rows: **14,471**'
+            echo '- Target events / bills / memberships: **216 / 141 / 67**'
+            echo "- Official 2023-24 minute PDFs discovered: **$(jq -r '.officialMinuteUniverse.totalDocuments' "$f")**"
+            echo "- Target events with pre-vote referrals: **$(jq -r '.overlap.targetEventsWithPreVoteReferral' "$f")**"
+            echo "- Target events with matched LRL committee: **$(jq -r '.overlap.targetEventsWithMatchedCommittee' "$f")**"
+            echo "- Target events with chronologically eligible minute PDFs: **$(jq -r '.overlap.targetEventsWithChronologicallyEligibleMinute' "$f")**"
+            echo "- Uncovered rows represented: **$(jq -r '.overlap.matchedUncoveredRows' "$f")**"
+            echo "- Unique candidate minute PDFs: **$(jq -r '.overlap.uniqueCandidateMinuteDocuments' "$f")**"
+            echo "- Minute-target associations: **$(jq -r '.overlap.minuteTargetAssociations' "$f")**"
+            echo "- Revisor status fetch failures: **$(jq -r '.revisor.statusFetchFailures | length' "$f")**"
+            echo "- Unmatched committee labels: **$(jq -r '.revisor.unmatchedCommitteeLabels | length' "$f")**"
+            echo '- PDF bodies fetched: **no**'
+            echo '- Target outcomes read: **no**'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: historical-density-2023-24-senate-electronic-minute-target-overlap-v1
+          path: ${{ runner.temp }}/audit/*
+          if-no-files-found: warn
+          retention-days: 90
