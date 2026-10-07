@@ -51,7 +51,9 @@ jobs:
           test "$(jq -r '.snapshotProtocol.canonicalParityGate.required' "$plan")" = true
           test "$(jq -r '.snapshotProtocol.canonicalParityGate.exactCanonicalRowKeySetRequired' "$plan")" = true
           test "$(jq -r '.snapshotProtocol.canonicalParityGate.probabilityTolerance' "$plan")" = 1E-12
-          test "$(jq -r '.snapshotProtocol.gapEventPresenceGate.expectedExactBillDateMatchesInCurrentLoader' "$plan")" = 0
+          test "$(jq -r '.snapshotProtocol.gapEventPresenceGate.requiredCurrentLoaderMatches' "$plan")" = 16
+          test "$(jq -r '.snapshotProtocol.gapEventPresenceGate.expectedFrozenMemberVoteRows' "$plan")" = 2125
+          test "$(jq -r '.snapshotProtocol.gapEventPresenceGate.reconciliationRequiredBeforeSnapshot' "$plan")" = true
           test "$(jq -r '.snapshotProtocol.extensionRule.eligibleOutcomeCompleteEvents' "$plan")" = 15
           test "$(jq -r '.snapshotProtocol.extensionRule.targetSelectionMayChangeAfterSnapshot' "$plan")" = false
           test "$(jq -r '.snapshotProtocol.productionDatabaseReadOnly' "$plan")" = true
@@ -66,6 +68,15 @@ jobs:
           echo "22e8944cffc6fda553b05ea6ad5e92400d35fc01d83177efdd5d1204dd3c5a6f  $RUNNER_TEMP/historical-as-of.zip" | sha256sum -c -
           mkdir -p "$RUNNER_TEMP/historical-as-of"
           unzip -q "$RUNNER_TEMP/historical-as-of.zip"             historical-as-of-matrix-v1-manifest.json             historical-as-of-matrix-v1.ndjson.gz             -d "$RUNNER_TEMP/historical-as-of"
+
+      - name: Materialize canonical gap member votes
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11482176035/zip > "$RUNNER_TEMP/gap16-member-votes.zip"
+          echo "d87fe9e1d51ae9bacebe94e3c1b065675db42da011a72273cbb74a9e5d52e450  $RUNNER_TEMP/gap16-member-votes.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/gap16-member-votes"
+          unzip -q "$RUNNER_TEMP/gap16-member-votes.zip"             historical-density-2025-house-replay-gap16-member-votes-v1.json             -d "$RUNNER_TEMP/gap16-member-votes"
 
       - name: Materialize canonical gap outcomes
         shell: bash
@@ -96,6 +107,7 @@ jobs:
           VOTEPREDICT_GAP16_SUPPORT_PLAN_PATH: data/evaluation/historical-density-2025-house-replay-gap16-support-plan-v1.json
           VOTEPREDICT_HISTORICAL_AS_OF_MANIFEST_PATH: ${{ runner.temp }}/historical-as-of/historical-as-of-matrix-v1-manifest.json
           VOTEPREDICT_HISTORICAL_AS_OF_MATRIX_PATH: ${{ runner.temp }}/historical-as-of/historical-as-of-matrix-v1.ndjson.gz
+          VOTEPREDICT_GAP16_MEMBER_VOTES_PATH: ${{ runner.temp }}/gap16-member-votes/historical-density-2025-house-replay-gap16-member-votes-v1.json
           VOTEPREDICT_GAP16_OUTCOMES_PATH: ${{ runner.temp }}/gap16-outcomes/historical-density-2025-house-replay-gap16-outcomes-v1.json
           VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
           VOTEPREDICT_GAP16_SUPPORT_OUTPUT_DIR: ${{ runner.temp }}/gap16-support
@@ -113,6 +125,7 @@ jobs:
           test "$(jq -r '.schemaVersion' "$manifest")" = historical-density-2025-house-replay-gap16-support-manifest-v1
           test "$(jq -r '.issue' "$manifest")" = 718
           test "$(jq -r '.frozenInputs.canonicalMatrix.artifactId' "$manifest")" = 11252079484
+          test "$(jq -r '.frozenInputs.gapMemberVotes.artifactId' "$manifest")" = 11482176035
           test "$(jq -r '.frozenInputs.gapOutcomes.artifactId' "$manifest")" = 11483367972
 
           test "$(jq -r '.canonicalParity.passed' "$manifest")" = true
@@ -122,11 +135,15 @@ jobs:
           test "$(jq -r '.canonicalParity.extraRows' "$manifest")" = 0
           test "$(jq -r '.canonicalParity.fieldMismatches' "$manifest")" = 0
 
-          test "$(jq -r '.gapOverlayReadiness.exactGapEventsPresentInCurrentLoader' "$manifest")" = 0
+          test "$(jq -r '.gapLoaderReconciliation.passed' "$manifest")" = true
+          test "$(jq -r '.gapLoaderReconciliation.reconciledEvents' "$manifest")" = 16
+          test "$(jq -r '.gapLoaderReconciliation.reconciledDecisiveMemberVotes' "$manifest")" = 2125
+          test "$(jq -r '.gapOverlayReadiness.exactGapEventsPresentInCurrentLoader' "$manifest")" = 16
           test "$(jq -r '.gapOverlayReadiness.frozenGapEvents' "$manifest")" = 16
           test "$(jq -r '.gapOverlayReadiness.outcomeCompleteEvents' "$manifest")" = 15
           test "$(jq -r '.gapOverlayReadiness.excludedUntilExplicitOutcome | join(",")' "$manifest")" = 'HF2354|2026-05-17'
-          test "$(jq -r '.gapOverlayReadiness.readyForInMemoryOverlayConstruction' "$manifest")" = true
+          test "$(jq -r '.gapOverlayReadiness.reuseCurrentLoaderEventAndBillIds' "$manifest")" = true
+          test "$(jq -r '.gapOverlayReadiness.readyForTargetVersionAugmentation' "$manifest")" = true
           test "$(jq -r '.gapOverlayReadiness.readyForScoring' "$manifest")" = false
 
           test "$(jq -r '.policy.productionDatabaseQueried' "$manifest")" = true
@@ -135,6 +152,8 @@ jobs:
           test "$(jq -r '.policy.vercelEnvironmentRead' "$manifest")" = true
           test "$(jq -r '.policy.vercelDeployment' "$manifest")" = false
           test "$(jq -r '.policy.targetSelectionUsesCurrentProductionState' "$manifest")" = false
+          test "$(jq -r '.policy.gapLoaderReconciliationPassed' "$manifest")" = true
+          test "$(jq -r '.policy.unresolvedOutcomeIgnoredFromMutableDatabase' "$manifest")" = true
           test "$(jq -r '.policy.modelFitting' "$manifest")" = none
           test "$(jq -r '.policy.servingChanged' "$manifest")" = false
 
@@ -150,7 +169,10 @@ jobs:
             echo "- Replay targets: **$(jq -r '.productionSnapshot.targets' "$manifest")**"
             echo "- Support snapshot SHA: `$(jq -r '.productionSnapshot.supportSnapshotCanonicalSha256' "$manifest")`"
             echo "- Support gzip SHA: `$(jq -r '.productionSnapshot.supportSnapshotGzipSha256' "$manifest")`"
-            echo '- Frozen gap events already present in loader: **0**'
+            echo '- Reconciled frozen gap events in loader: **16 / 16**'
+            echo '- Reconciled decisive member-vote rows: **2,125 / 2,125**'
+            echo "- Gap loader identity SHA: `$(jq -r '.gapLoaderReconciliation.loaderIdentitySha256' "$manifest")`"
+            echo "- Current strict target versions already present: **$(jq -r '.gapLoaderReconciliation.currentTargetVersionsPresent' "$manifest") / 16**"
             echo '- Outcome-complete extension events: **15**'
             echo '- Production DB mode: **read-only**'
             echo '- Production writes: **none**'
