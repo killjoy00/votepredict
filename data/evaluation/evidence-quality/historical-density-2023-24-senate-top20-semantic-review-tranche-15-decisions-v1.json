@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "historical-density-2023-24-senate-top20-semantic-review-tranche-15-decisions-v1",
+  "issue": 718,
+  "session": "2023-2024",
+  "trancheId": "SENATE-2023-24-TOP20-SEMANTIC-015",
+  "frozenReviewPacket": {
+    "reviewRows": 9,
+    "reviewKeySha256": "29b72a0f4ad937cda84e6a124914dabda72e20e6a27b86f61b3b336f21cdba30",
+    "sourcePdfSha256": "f991b7a57b9439544ee916683cbe6bc318d57b2863431300d912480e0723ca7a",
+    "sourceTextSha256": "8b92f672f14d2028f0e645e80026c11aeb44c4e950e4ebf845c7b32d6947359a",
+    "reviewPacketProofSha256": "bc049ca3c44daca54b12f13a98e42f4d9a502488fe3d6425dd18ac5621257cff"
+  },
+  "decisionRationales": {
+    "full_text_review_no_candidate_bill_support": "Full frozen minute reviewed. This candidate bill is neither explicitly mentioned nor otherwise unambiguously identifiable in the source text; committee/referral overlap alone is not treated as applicability.",
+    "candidate_bill_explicitly_present_but_only_procedural_actions_recorded": "Full frozen minute reviewed. The candidate bill is explicit, but the minute records table, amendment, and recommend-to-pass procedure rather than an attributable directional whole-bill member statement under the existing Senate semantic-review contract."
+  },
+  "notApplicableReviewKeys": [
+    "f991b7a57b9439544ee916683cbe6bc318d57b2863431300d912480e0723ca7a|8b92f672f14d2028f0e645e80026c11aeb44c4e950e4ebf845c7b32d6947359a|96928a12-c945-4763-8303-b33092b8276b|54888885-8913-4d81-b951-45ca56cafa93",
+    "f991b7a57b9439544ee916683cbe6bc318d57b2863431300d912480e0723ca7a|8b92f672f14d2028f0e645e80026c11aeb44c4e950e4ebf845c7b32d6947359a|4bea0a55-c3e0-474e-9526-f999e5c3010b|14b7c41b-5202-427a-9358-44d2ab866053",
+    "f991b7a57b9439544ee916683cbe6bc318d57b2863431300d912480e0723ca7a|8b92f672f14d2028f0e645e80026c11aeb44c4e950e4ebf845c7b32d6947359a|ccddb819-998d-4b4c-8f0e-5caacb17fd36|7bef3e40-b865-4252-a4a0-7b469e8cd48a",
+    "f991b7a57b9439544ee916683cbe6bc318d57b2863431300d912480e0723ca7a|8b92f672f14d2028f0e645e80026c11aeb44c4e950e4ebf845c7b32d6947359a|d1e34ee8-a9f2-448b-bca9-ffb9861fa787|7bef3e40-b865-4252-a4a0-7b469e8cd48a",
+    "f991b7a57b9439544ee916683cbe6bc318d57b2863431300d912480e0723ca7a|8b92f672f14d2028f0e645e80026c11aeb44c4e950e4ebf845c7b32d6947359a|911a80a2-dc58-40d3-9d1c-c9fe94aca670|be921470-ecdb-4ca6-8aea-2d8cf9cc0629",
+    "f991b7a57b9439544ee916683cbe6bc318d57b2863431300d912480e0723ca7a|8b92f672f14d2028f0e645e80026c11aeb44c4e950e4ebf845c7b32d6947359a|008ddeea-1932-4ed7-910d-1a1c34da6cc3|19aa9310-8246-453e-8b21-3b64bd595f38",
+    "f991b7a57b9439544ee916683cbe6bc318d57b2863431300d912480e0723ca7a|8b92f672f14d2028f0e645e80026c11aeb44c4e950e4ebf845c7b32d6947359a|f089e6fd-7e5e-4d9b-8deb-fd7f84c4c26a|19aa9310-8246-453e-8b21-3b64bd595f38",
+    "f991b7a57b9439544ee916683cbe6bc318d57b2863431300d912480e0723ca7a|8b92f672f14d2028f0e645e80026c11aeb44c4e950e4ebf845c7b32d6947359a|e7c7051b-1c3d-4644-8ebb-c99345b1691a|be921470-ecdb-4ca6-8aea-2d8cf9cc0629"
+  ],
+  "billContextRows": [
+    {
+      "reviewKey": "f991b7a57b9439544ee916683cbe6bc318d57b2863431300d912480e0723ca7a|8b92f672f14d2028f0e645e80026c11aeb44c4e950e4ebf845c7b32d6947359a|ef4c5601-9ef1-43f9-980a-1f19f758da80|a5306426-feb8-47aa-b21a-2c2bd5b188ed",
+      "billMentionExcerpt": "H.F. 402: Senator Wiklund: Specifying requirements for health care entity transactions and extending the moratorium on",
+      "billMentionPage": 1
+    }
+  ],
+  "directionalRows": [],
+  "ambiguousFailClosedRows": [],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "targetVoteOutcomesRead": false,
+    "outcomeUse": "none",
+    "committeeMembershipUsedAsStance": false,
+    "attendanceUsedAsStance": false,
+    "proceduralActionUsedAsDirectionalStance": false,
+    "ambiguousDefaultsToFailClosed": true,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "modelWeightChanged": false,
+    "servingChanged": false,
+    "vercelUsed": false,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0
+  }
+}
