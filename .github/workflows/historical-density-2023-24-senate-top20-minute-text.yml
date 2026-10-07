@@ -51,8 +51,12 @@ jobs:
           test "$(jq -r '.schemaVersion' "$f")" = historical-density-2023-24-senate-top20-text-extraction-v1
           test "$(jq -r '.sourceFreeze.artifactId' "$f")" = 11502134219
           test "$(jq -r '.summary.documents' "$f")" = 20
+          test "$(jq -r '.summary.readableEmbeddedTextDocuments' "$f")" = 20
+          test "$(jq -r '.summary.insufficientEmbeddedTextDocuments' "$f")" = 0
+          test "$(jq -r '.summary.totalTextChars' "$f")" = 63078
+          test "$(jq -r '.summary.totalTextWords' "$f")" = 9488
+          test "$(jq -r '.summary.extractionProofSha256' "$f")" = ad0e37fc543ec8be11adfdab8c09f6212bc5ba45f4a6af105a2dc2a723f8d9af
           test "$(find "$RUNNER_TEMP/text/texts" -type f -name '*.txt' | wc -l)" = 20
-          test "$(jq -r '.summary.extractionProofSha256 | length' "$f")" = 64
           test "$(jq -r '.interpretation.semanticReviewPerformed' "$f")" = false
           test "$(jq -r '.interpretation.memberStanceInferred' "$f")" = false
           test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
