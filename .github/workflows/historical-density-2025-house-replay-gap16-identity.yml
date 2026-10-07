@@ -1,0 +1,167 @@
+name: Freeze 2025 House replay gap identities
+
+on:
+  pull_request:
+    paths:
+      - scripts/freeze-historical-density-2025-house-replay-gap16-identity.ts
+      - .github/workflows/historical-density-2025-house-replay-gap16-identity.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/freeze-historical-density-2025-house-replay-gap16-identity.ts
+      - .github/workflows/historical-density-2025-house-replay-gap16-identity.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2025-house-replay-gap16-identity-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize canonical gap16 artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11461161724/zip > "$RUNNER_TEMP/gap16.zip"
+          echo "637969cb94bf331382bd896a3ad81f9d1650531da2050f641002403e7c6b14e9  $RUNNER_TEMP/gap16.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/gap16"
+          unzip -q "$RUNNER_TEMP/gap16.zip"             historical-density-2025-house-replay-gap16-v1.json             -d "$RUNNER_TEMP/gap16"
+
+      - name: Materialize original historical replay matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11252079484/zip > "$RUNNER_TEMP/historical-as-of.zip"
+          echo "22e8944cffc6fda553b05ea6ad5e92400d35fc01d83177efdd5d1204dd3c5a6f  $RUNNER_TEMP/historical-as-of.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/historical-as-of"
+          unzip -q "$RUNNER_TEMP/historical-as-of.zip"             historical-as-of-matrix-v1-manifest.json             historical-as-of-matrix-v1.ndjson.gz             -d "$RUNNER_TEMP/historical-as-of"
+
+      - name: Materialize frozen identity artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/10652783041/zip > "$RUNNER_TEMP/committee.zip"
+          echo "0fdea28f30cb88f4d0df30e567f694d8c7ae124515a65ece802c871518c71f92  $RUNNER_TEMP/committee.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/committee"
+          unzip -q "$RUNNER_TEMP/committee.zip"             quick-evidence-committee-rollcall-candidates-v1.json             -d "$RUNNER_TEMP/committee"
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/10304963037/zip > "$RUNNER_TEMP/deep-outcome.zip"
+          echo "a2ec289b7bd58a2d996739ac91df64601f91e3888a00e2bf97a7b9d8f6bc4fff  $RUNNER_TEMP/deep-outcome.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/deep-outcome"
+          unzip -q "$RUNNER_TEMP/deep-outcome.zip"             historical-deep-outcome-snapshot.json             -d "$RUNNER_TEMP/deep-outcome"
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11440840273/zip > "$RUNNER_TEMP/public-roster.zip"
+          echo "07ee41210122f42716269ab56f8775d78e10d00df39740315acc1ce055937c20  $RUNNER_TEMP/public-roster.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/public-roster"
+          unzip -q "$RUNNER_TEMP/public-roster.zip"             historical-density-2025-house-member-primary-inventory-v1.json             -d "$RUNNER_TEMP/public-roster"
+
+      - name: Resolve frozen 2025 House identities
+        env:
+          VOTEPREDICT_GAP16_PATH: ${{ runner.temp }}/gap16/historical-density-2025-house-replay-gap16-v1.json
+          VOTEPREDICT_HISTORICAL_AS_OF_MANIFEST_PATH: ${{ runner.temp }}/historical-as-of/historical-as-of-matrix-v1-manifest.json
+          VOTEPREDICT_HISTORICAL_AS_OF_MATRIX_PATH: ${{ runner.temp }}/historical-as-of/historical-as-of-matrix-v1.ndjson.gz
+          VOTEPREDICT_COMMITTEE_CANDIDATES_PATH: ${{ runner.temp }}/committee/quick-evidence-committee-rollcall-candidates-v1.json
+          VOTEPREDICT_DEEP_OUTCOME_PATH: ${{ runner.temp }}/deep-outcome/historical-deep-outcome-snapshot.json
+          VOTEPREDICT_PUBLIC_INVENTORY_PATH: ${{ runner.temp }}/public-roster/historical-density-2025-house-member-primary-inventory-v1.json
+          VOTEPREDICT_GAP16_IDENTITY_OUTPUT: ${{ runner.temp }}/identity/historical-density-2025-house-replay-gap16-identity-v1.json
+        run: node --import tsx scripts/freeze-historical-density-2025-house-replay-gap16-identity.ts
+
+      - name: Verify identity boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/identity/historical-density-2025-house-replay-gap16-identity-v1.json"
+
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-replay-gap16-identity-v1
+          test "$(jq -r '.issue' "$f")" = 718
+          test "$(jq -r '.session' "$f")" = 2025-2026
+          test "$(jq -r '.chamber' "$f")" = house
+
+          test "$(jq -r '.frozenInputs.gap16.runId' "$f")" = 37572160059
+          test "$(jq -r '.frozenInputs.gap16.artifactId' "$f")" = 11461161724
+          test "$(jq -r '.frozenInputs.historicalAsOfMatrix.artifactId' "$f")" = 11252079484
+          test "$(jq -r '.frozenInputs.committeeIdentityArtifact.artifactId' "$f")" = 10652783041
+          test "$(jq -r '.frozenInputs.priorSessionIdentityArtifact.artifactId' "$f")" = 10304963037
+          test "$(jq -r '.frozenInputs.publicRosterArtifact.artifactId' "$f")" = 11440840273
+
+          test "$(jq -r '.identityCoverage.internalHistoricalMemberships' "$f")" = 137
+          test "$(jq -r '.identityCoverage.direct2025CommitteeIdentities' "$f")" = 112
+          test "$(jq -r '.identityCoverage.stablePriorSessionIdentities' "$f")" = 18
+          test "$(jq -r '.identityCoverage.preSignatureIdentities' "$f")" = 130
+          test "$(jq -r '.identityCoverage.knownCurrentRosterIdentities' "$f")" = 127
+          test "$(jq -r '.identityCoverage.signatureResolvedIdentities' "$f")" = 7
+          test "$(jq -r '.identityCoverage.currentPublicRosterIdentities' "$f")" = 134
+          test "$(jq -r '.identityCoverage.extraHistoricalIdentities' "$f")" = 3
+          test "$(jq -r '.identityCoverage.unresolvedAfterSignature' "$f")" = 0
+
+          test "$(jq -r '.bridge.usableEvents' "$f")" = 71
+          test "$(jq -r '.bridge.bridgeEventKeySha256' "$f")" = d2e681055f5d684ac18649207c480b42ac0073bdff9f789dc7cb19308ee53f53
+          test "$(jq -r '.bridge.bridgeSourceProofSha256' "$f")" = 828283c4ff6744eb5dc53cfdcbf8a4740a5ae14662cc7517993a3ecdf434a9f1
+          test "$(jq -r '.signatureResolution.mappingSha256' "$f")" = 26e0d18d8c43f8ca3775ed971809bdf3e14b474d7f54d5c96355e3f4fc4950a8
+          test "$(jq -r '.currentRoster.mappingSha256' "$f")" = dccf018ae2a46d4232ae3a29b96c82d69536f7bfaf98de94676b42fe197cd40c
+          test "$(jq -r '.signatureResolution.mappings | length' "$f")" = 7
+          test "$(jq -r '.currentRoster.mappings | length' "$f")" = 134
+          test "$(jq -r '.extraHistoricalMemberships | length' "$f")" = 3
+
+          jq -e '[.signatureResolution.mappings[].memberName] | sort == ["Alexander Falconer","David Gottfried","Huldah Momanyi-Hiltsley","James Gordon","Peter Johnson","Steve Gander","Wayne A. Johnson"]' "$f" >/dev/null
+          jq -e '[.extraHistoricalMemberships[].memberName] | sort == ["Meg Luger-Nikolai","Shelley Buck","Xp Lee"]' "$f" >/dev/null
+
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.gap16CandidateSelectionFrozenBeforeIdentityResolution' "$f")" = true
+          test "$(jq -r '.policy.gap16CandidateVotePagesRequested' "$f")" = false
+          test "$(jq -r '.policy.gap16CandidateVoteChoicesRead' "$f")" = false
+          test "$(jq -r '.policy.gap16CandidateOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.bridgeMemberVoteOutcomesUsed' "$f")" = true
+          test "$(jq -r '.policy.bridgeOutcomeUse' "$f")" = identity_resolution_only
+          test "$(jq -r '.policy.bridgeEventsExcludeAllGap16BillIdentifiers' "$f")" = true
+          test "$(jq -r '.policy.targetSelectionUsesOutcomes' "$f")" = false
+          test "$(jq -r '.policy.semanticDecisionsUseOutcomes' "$f")" = false
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+
+          {
+            echo '## 2025-26 House replay-gap identity resolution'
+            echo
+            echo '- Historical membership records: **137**'
+            echo '- Direct 2025 committee identities: **112**'
+            echo '- Stable-legislator identities inherited from prior session: **18**'
+            echo '- Signature-resolved identities: **7**'
+            echo '- Current/public roster identities resolved: **134 / 134**'
+            echo '- Extra historical membership records: **3**'
+            echo '- Unresolved after signature: **0**'
+            echo "- Usable non-gap bridge events: **$(jq -r '.bridge.usableEvents' "$f")**"
+            echo '- Bridge-event SHA: `d2e681055f5d684ac18649207c480b42ac0073bdff9f789dc7cb19308ee53f53`'
+            echo '- Bridge-source proof SHA: `828283c4ff6744eb5dc53cfdcbf8a4740a5ae14662cc7517993a3ecdf434a9f1`'
+            echo '- Signature mapping SHA: `26e0d18d8c43f8ca3775ed971809bdf3e14b474d7f54d5c96355e3f4fc4950a8`'
+            echo '- Current roster mapping SHA: `dccf018ae2a46d4232ae3a29b96c82d69536f7bfaf98de94676b42fe197cd40c`'
+            echo '- Gap16 candidate vote pages requested: **no**'
+            echo '- Gap16 candidate vote choices read: **no**'
+            echo '- Production DB queried: **no**'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2025-house-replay-gap16-identity-v1
+          path: ${{ runner.temp }}/identity/*
+          if-no-files-found: error
+          retention-days: 90
