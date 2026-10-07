@@ -120,6 +120,7 @@ jobs:
           test "$(jq -r '.overlay.statusCounts | length' "$f")" = 1
           test "$(jq -r '.overlay.resultProofSha256' "$f")" = a89de23656cc3c2cfde31999703d54f60cbe86ab8bdee93962f8081d3331f2b4
           test "$(jq -r '.overlay.memberPredictionProofSha256' "$f")" = caf50b9ae2f07c2cfd0361554bb5440f11dec7b0b495c9b92768189b7cf41848
+          test "$(jq -r '.overlay.overlayInputProofSha256' "$f")" = 58d55491ca59349029b8debfe7a8552f8a1e11737163228828bd008673280f3b
           test "$(jq -r '[.overlay.events[].memberPredictions | length] | add' "$f")" = 2009
           test "$(jq -r '.overlay.memberPredictionRows' "$f")" = 2009
           test "$(jq -r '.overlay.memberPredictionRowsWithoutOutcome' "$f")" = 19
@@ -132,7 +133,8 @@ jobs:
           test "$(jq -r '[.overlay.events[] | (.analogueSupport.selectedAnalogueIds | length) == .analogueSupport.selected] | all' "$f")" = true
           test "$(jq -r '[.overlay.events[] | (.analogueSupport.selectedAnalogues | length) == .analogueSupport.selected] | all' "$f")" = true
           test "$(jq -r '[.overlay.events[] | (.targetVersion.rawTextSha256 | length) == 64] | all' "$f")" = true
-          test "$(jq -r '.comparison.existing2025HouseReplayCohort.events > 0' "$f")" = true
+          test "$(jq -r '.comparison.existing2025HouseReplayCohort.events' "$f")" = 264
+          test "$(jq -r '.comparison.comparisonProofSha256' "$f")" = 3a359f9597e200bcec484e3a2fd0a874f7dc69c3eb4c51b79b626a767605e671
           test "$(jq -r '.scorecard.overall.memberObservations' "$f")" = 1990
           test "$(jq -r '.scorecard.overall.memberPredictions' "$f")" = 1990
           test "$(jq -r '.scorecard.overall.memberCoverage' "$f")" = 1
@@ -179,6 +181,9 @@ jobs:
             echo '- Passage Brier: **0.0006427345051755174**'
             echo '- Event result proof SHA: `a89de23656cc3c2cfde31999703d54f60cbe86ab8bdee93962f8081d3331f2b4`'
             echo '- Member prediction proof SHA: `caf50b9ae2f07c2cfd0361554bb5440f11dec7b0b495c9b92768189b7cf41848`'
+            echo '- Overlay input proof SHA: `58d55491ca59349029b8debfe7a8552f8a1e11737163228828bd008673280f3b`'
+            echo '- Existing 2025-26 House comparison cohort: **264 events**'
+            echo '- Comparison proof SHA: `3a359f9597e200bcec484e3a2fd0a874f7dc69c3eb4c51b79b626a767605e671`'
             echo '- Production DB queried: **no**'
             echo '- Model fitting / serving changes: **none**'
           } >> "$GITHUB_STEP_SUMMARY"
