@@ -84,7 +84,9 @@
         "event passed label"
       ],
       "probabilityTolerance": 1e-12,
-      "onMismatch": "Fail closed. Do not score any gap16 extension event and do not reinterpret the canonical baseline."
+      "onMismatch": "Fail closed. Do not score any gap16 extension event and do not reinterpret the canonical baseline.",
+      "exactCanonicalRowKeySetRequired": true,
+      "onExtraOrMissingRowKey": "Fail closed. The current loader target-row universe must match the immutable canonical matrix exactly."
     },
     "extensionRule": {
       "candidateSetImmutable": true,
@@ -96,7 +98,8 @@
       "excludedUntilExplicitOutcome": [
         "HF2354|2026-05-17"
       ],
-      "targetSelectionMayNotChangeAfterSnapshot": false
+      "targetSelectionMayChangeAfterSnapshot": false,
+      "targetSelectionRule": "The frozen 16-event candidate set is immutable; the read-only support snapshot cannot add, remove, or rerank extension targets."
     }
   },
   "knownReadiness": {
