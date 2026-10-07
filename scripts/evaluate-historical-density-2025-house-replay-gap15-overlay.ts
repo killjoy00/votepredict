@@ -59,6 +59,10 @@ const EXPECTED_UNRESOLVED = 'HF2354|2026-05-17';
 const EXPECTED_REPLAYABLE_EVENTS = 15;
 const EXPECTED_MEMBER_OBSERVATIONS = 1990;
 const EXPECTED_MEMBER_PREDICTIONS = 1990;
+const EXPECTED_DECISIVE_VOTE_ROWS = 1991;
+const EXPECTED_DECISIVE_VOTE_ROWS_WITHOUT_PREDICTION = 1;
+const EXPECTED_DECISIVE_VOTE_PREDICTION_GAP_PROOF_SHA256 =
+  'da18129bb7840d074681243601484797e7a45a74d20add3d4399b1fa6adc0b74';
 const EXPECTED_RESULT_PROOF_SHA256 =
   'a89de23656cc3c2cfde31999703d54f60cbe86ab8bdee93962f8081d3331f2b4';
 const EXPECTED_MEMBER_PREDICTION_PROOF_SHA256 =
@@ -686,6 +690,12 @@ async function main(): Promise<void> {
         party: row.party,
         choice: row.choice,
       }));
+    const predictionMembershipIds = new Set(
+      result.memberPredictions.map((row) => row.membershipId),
+    );
+    const decisiveVoteRowsWithoutPrediction = decisiveVoteRows.filter(
+      (row) => !predictionMembershipIds.has(row.membershipId),
+    );
 
     return {
       voteEventId: result.voteEventId,
@@ -708,6 +718,7 @@ async function main(): Promise<void> {
         selectedAnalogues: analogueDetails.map((row) => ({ ...row })),
       },
       decisiveVoteRows,
+      decisiveVoteRowsWithoutPrediction,
       decisiveVoteRowSha256: setSha(
         decisiveVoteRows.map((row) =>
           `${row.membershipId}|${row.legislatorId}|${row.party}|${row.choice}`),
@@ -735,6 +746,42 @@ async function main(): Promise<void> {
       passed: result.passed,
     };
   });
+
+  const decisiveVoteRows = detailedEvents.reduce(
+    (total, event) => total + event.decisiveVoteRows.length,
+    0,
+  );
+  const decisiveVoteRowsWithoutPrediction = detailedEvents.flatMap((event) =>
+    event.decisiveVoteRowsWithoutPrediction.map((row) => ({
+      compositeKey: event.compositeKey,
+      ...row,
+    })));
+  const decisiveVotePredictionGapProofSha256 = setSha(
+    decisiveVoteRowsWithoutPrediction.map((row) =>
+      [
+        row.compositeKey,
+        row.membershipId,
+        row.legislatorId,
+        row.party,
+        row.choice,
+      ].join('|')),
+  );
+  if (
+    decisiveVoteRows !== EXPECTED_DECISIVE_VOTE_ROWS
+    || decisiveVoteRowsWithoutPrediction.length
+      !== EXPECTED_DECISIVE_VOTE_ROWS_WITHOUT_PREDICTION
+    || decisiveVotePredictionGapProofSha256
+      !== EXPECTED_DECISIVE_VOTE_PREDICTION_GAP_PROOF_SHA256
+  ) {
+    throw new Error(
+      'Decisive-vote/prediction boundary drifted: '
+      + JSON.stringify({
+        decisiveVoteRows,
+        decisiveVoteRowsWithoutPrediction,
+        decisiveVotePredictionGapProofSha256,
+      }),
+    );
+  }
 
   const overlayInputProofSha256 = setSha(
     detailedEvents.flatMap((event) => [
@@ -810,6 +857,9 @@ async function main(): Promise<void> {
       statusCounts,
       resultProofSha256,
       memberPredictionProofSha256,
+      decisiveVoteRows,
+      decisiveVoteRowsWithoutPrediction: decisiveVoteRowsWithoutPrediction.length,
+      decisiveVotePredictionGapProofSha256,
       overlayInputProofSha256,
       events: detailedEvents,
     },
@@ -870,6 +920,9 @@ async function main(): Promise<void> {
       statusCounts,
       resultProofSha256,
       memberPredictionProofSha256,
+      decisiveVoteRows,
+      decisiveVoteRowsWithoutPrediction: decisiveVoteRowsWithoutPrediction.length,
+      decisiveVotePredictionGapProofSha256,
       overall: scorecard.overall,
       productionDatabaseQueried: false,
       canonicalTargetSetMutated: false,
