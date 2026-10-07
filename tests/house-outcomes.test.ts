@@ -13,3 +13,34 @@ test('House recovery cannot borrow an outcome from the next bill', () => {
   assert.equal(parseHouseJournalOutcomes(vote('')+vote('The bill was passed.').replace('123','124')).length,1);
   assert.equal(parseHouseJournalOutcomes(vote('')+vote('The bill was passed.').replace('123','124'))[0].identifier,'HF124');
 });
+
+
+test('House recovery accepts singular yea/nay grammar in explicit journal rolls', () => {
+  const html = '<p>H. F. No. 944, A bill for an act relating to natural resources.</p>'
+    + '<p>The question was taken on the passage of the bill and the roll was called. There were 131 yeas and 1 nay as follows:</p>'
+    + '<p>Those who voted in the affirmative were: A B C</p>'
+    + '<p>The bill was passed and its title agreed to.</p>';
+  const outcomes = parseHouseJournalOutcomes(html);
+  assert.equal(outcomes.length, 1);
+  assert.deepEqual(outcomes[0], {
+    identifier: 'HF944',
+    yeaCount: 131,
+    nayCount: 1,
+    passed: true,
+    resultText: 'The bill was passed and its title agreed to.',
+    journalPage: undefined,
+  });
+});
+
+test('House recovery recognizes memorial resolutions only with explicit result text', () => {
+  const html = '<p>H. F. No. 475, A memorial resolution requesting congressional action.</p>'
+    + '<p>The question was taken on the passage of the bill and the roll was called. There were 85 yeas and 44 nays as follows:</p>'
+    + '<p>Those who voted in the affirmative were: A B C</p>'
+    + '<p>The bill was passed and its title agreed to.</p>';
+  const outcomes = parseHouseJournalOutcomes(html);
+  assert.equal(outcomes.length, 1);
+  assert.equal(outcomes[0].identifier, 'HF475');
+  assert.equal(outcomes[0].yeaCount, 85);
+  assert.equal(outcomes[0].nayCount, 44);
+  assert.equal(outcomes[0].passed, true);
+});
