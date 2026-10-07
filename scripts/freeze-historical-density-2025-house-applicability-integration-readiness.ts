@@ -35,6 +35,18 @@ const IDENTITY_CURRENT_ROSTER_SHA256 =
 const EXPECTED_CURRENT_IDENTITIES = 134;
 
 const EXPECTED_APPLICABLE_CLAIM_EVENT_PAIRS = 48;
+const EXPECTED_APPLICABLE_PUBLIC_MEMBERS = 15;
+const EXPECTED_APPLICABLE_TARGET_EVENTS = 34;
+const EXPECTED_APPLICABLE_BILLS = 24;
+const EXPECTED_INTEGRATION_ROWS = 48;
+const EXPECTED_DUPLICATE_CLAIM_EVENT_PAIRS = 0;
+const EXPECTED_APPLICABLE_REVIEW_KEY_SHA256 =
+  'a2caa40ea956cf479bbe8a84b4b415207efdffa4429732b2a5128096fadd6ebc';
+const EXPECTED_INTEGRATION_ROW_KEY_SHA256 =
+  'c06872dba335ae09c771ce6fc3a8d77c02f0d1b4adc4ce57ae51d0ad9a523e56';
+const EXPECTED_INTEGRATION_CLAIM_PROOF_SHA256 =
+  '1044159f2cf6292cb61e606b2086e4cb9e9a117f3b3e58175c43221c961a9f14';
+
 const EXPECTED_CANDIDATE_ARTIFACT_IDS = [
   11450382467,
   11451775355,
@@ -578,6 +590,32 @@ function main(): void {
     ),
   );
 
+  const duplicateClaimEventPairs = applicable.length - integrationRows.length;
+  if (
+    applicablePublicMembers.size !== EXPECTED_APPLICABLE_PUBLIC_MEMBERS
+    || applicableEvents.size !== EXPECTED_APPLICABLE_TARGET_EVENTS
+    || applicableBills.size !== EXPECTED_APPLICABLE_BILLS
+    || integrationRows.length !== EXPECTED_INTEGRATION_ROWS
+    || duplicateClaimEventPairs !== EXPECTED_DUPLICATE_CLAIM_EVENT_PAIRS
+    || applicableReviewKeySha256 !== EXPECTED_APPLICABLE_REVIEW_KEY_SHA256
+    || integrationRowKeySha256 !== EXPECTED_INTEGRATION_ROW_KEY_SHA256
+    || integrationClaimProofSha256 !== EXPECTED_INTEGRATION_CLAIM_PROOF_SHA256
+  ) {
+    throw new Error(
+      'Pinned integration-readiness proof drifted: '
+      + JSON.stringify({
+        publicMembers: applicablePublicMembers.size,
+        targetEvents: applicableEvents.size,
+        bills: applicableBills.size,
+        integrationRows: integrationRows.length,
+        duplicateClaimEventPairs,
+        applicableReviewKeySha256,
+        integrationRowKeySha256,
+        integrationClaimProofSha256,
+      }),
+    );
+  }
+
   const report = {
     schemaVersion:
       'historical-density-2025-house-applicability-integration-readiness-v1',
@@ -638,7 +676,7 @@ function main(): void {
     integration: {
       applicableClaimEventPairs: applicable.length,
       uniqueMemberEventRows: integrationRows.length,
-      duplicateClaimEventPairs: applicable.length - integrationRows.length,
+      duplicateClaimEventPairs,
       rowKeySha256: integrationRowKeySha256,
       claimProofSha256: integrationClaimProofSha256,
       rows: integrationRows,
