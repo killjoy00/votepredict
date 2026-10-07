@@ -1,0 +1,337 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-tranches-9-11-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "defaultDecision": "not_applicable",
+  "tranches": [
+    {
+      "trancheIndex": 9,
+      "frozenCandidateArtifact": {
+        "runId": 37560399946,
+        "artifactId": 11456955534,
+        "digest": "sha256:e39e55879877c57e9d393be137864a4c7df3d8b3384ee20fba6258b94b105b58",
+        "targetRankStart": 201,
+        "targetRankEnd": 225,
+        "targetEventKeySha256": "ee804ad6c0d65f64848a96c716e000146ca09e74ac00e31ca4a2be9d08896c3e",
+        "reviewKeySha256": "3974d68ee7e02f1acfffdf8d8a7b2af3ad3789a57778a59aea776aebf4aec0a3",
+        "eligibleClaimEventPairs": 1150,
+        "candidatePairs": 196,
+        "candidateBills": 17,
+        "candidatePublicMembers": 36,
+        "candidateSemanticGroups": 36
+      },
+      "expectedReviewCounts": {
+        "applicable": 4,
+        "ambiguous_fail_closed": 6,
+        "not_applicable": 186,
+        "pending_review": 0
+      },
+      "expectedFinalPairStatusCounts": {
+        "applicable": 4,
+        "ambiguous_fail_closed": 98,
+        "not_applicable": 1048,
+        "pending_review": 0
+      },
+      "defaultBillRationales": {
+        "HF1141": "Housing-finance budget, bonding, and program administration do not create an inspector general or regulate manufactured-home rent increases.",
+        "HF2433": "The education-finance omnibus does not substantively implement the nominated noneducation propositions; its mixed education-aid direction is handled only by the explicit Rymer fail-closed override.",
+        "HF3067": "Paraprofessional qualification clarification does not fund teacher pensions or expand earlier teacher retirement.",
+        "HF3426": "Environment and natural-resources trust-fund provisions do not implement the other nominated propositions; the exact state-grant fraud/accountability controls are handled only by the Allen override.",
+        "HF3489": "Field-trip, educator-reporting, and grooming-offense provisions do not implement the other nominated propositions; the narrow parental-consent overlap is handled only by the Gillman fail-closed override.",
+        "HF3522": "Temporary veterans-home closure authority does not create a millionaire-tax Medicaid funding mechanism.",
+        "HF4017": "A study of unlawful infectious/pathological-waste shipment does not provide disability services or supports.",
+        "HF4074": "The retirement omnibus does not implement the many incidental topical nominations; its direct teacher-pension state-aid and earlier-retirement changes are handled only by the Nadeau override.",
+        "HF4138": "Minor social-media account regulation and behavioral-threat assessment are not the nominated gun-research, criminal-justice, trafficking-task-force, parental-rights, telework, or disability-services policies.",
+        "HF4188": "Consumer-finance and insurance regulation addresses private-market fraud and licensing, not the nominated state-program oversight, inspector-general, criminal-justice, trafficking, DWI, or reporting propositions.",
+        "HF4239": "Campaign-finance reporting and disclaimer rules do not establish a two-year legislator lobbying ban, emergency-powers rule, trafficking task force, or the Make Minnesota Safe package.",
+        "HF4252": "Higher-education policy does not implement the incidental nominations; its direct fraud-denial, inspection, and information controls are handled only by the Allen override.",
+        "SF2373": "Minor-league baseball wage exemptions and construction-code/licensing changes do not implement the nominated farm sick-time, parental-rights, housing-rent, telework, emergency-powers, pension, or EV policies.",
+        "SF3210": "Disability-accommodation anti-discrimination protection is not a discrete disability-services program; the close scope overlap with Virnig's broad services proposition is handled only by the fail-closed override.",
+        "SF3432": "Emergency-vehicle markings and protective services for officials do not implement the nominated inspector-general, public-safety package, DWI, PFAS, telework, trafficking, or EV propositions.",
+        "SF4282": "Forecast adjustments move multiple education and human-services appropriations in different directions; the mixed overlap with Rymer's combined education-cut proposition is handled only by the explicit fail-closed overrides.",
+        "SF4760": "The public-safety omnibus does not establish incidental nominated propositions; its state-program fraud authority and partial repeat-DWI/interlock overlap are handled only by explicit overrides."
+      },
+      "overrides": [
+        {
+          "reviewKey": "allen_fraud_oversight_accountability|HF3426|2026-05-14|ac7e9362ec9f8e85beef6072449a32b2b0e90e2c1ef0c336361f9c1eb33d9abd",
+          "decision": "applicable",
+          "billPolicyDirection": "strengthens_public_grant_fraud_prevention_monitoring_risk_assessment_financial_reconciliation_and_accountability_controls",
+          "alignmentDirection": "aligns",
+          "reason": "The exact HF3426 text is the previously reviewed version that requires fraud-prevention and financial-reconciliation training, unannounced monitoring, preaward risk assessment, financial reconciliation, and related public-grant accountability controls. It directly aligns with Allen's state-program anti-fraud proposition."
+        },
+        {
+          "reviewKey": "nadeau_teacher_pension_state_funding|HF4074|2026-05-13|279143937a67360ab8a6a8797b67771e1bb886afb89b758c23c3510bd020d4fb",
+          "decision": "applicable",
+          "billPolicyDirection": "uses_direct_state_aid_for_teacher_retirement_and_expands_earlier_retirement_options",
+          "alignmentDirection": "aligns",
+          "reason": "HF4074 provides direct state aid to teacher retirement systems and materially expands earlier retirement eligibility, including lowering a key teacher-retirement age threshold from 62 to 59.5. That directly matches Nadeau's state-funded earlier-retirement proposition."
+        },
+        {
+          "reviewKey": "allen_fraud_oversight_accountability|HF4252|2026-05-16|a26de8c86d73a0aa59b5d63a3cdcb089bf8d3140d907eb480d2197bf87ed85e3",
+          "decision": "applicable",
+          "billPolicyDirection": "adds_fraud_based_denial_inspection_and_information_controls_for_state_higher_education_programs",
+          "alignmentDirection": "aligns",
+          "reason": "The strict pre-vote HF4252 version retains direct fraud-denial, reasonable-inspection, and information-supply controls for state-administered higher-education aid and regulated institutions. Those are substantive state-program oversight and anti-fraud controls aligning with Allen's proposition."
+        },
+        {
+          "reviewKey": "allen_fraud_oversight_accountability|SF4760|2026-05-12|6556496ef9fb1af977eb787b8b54c9ad3ddb53e5b0896077440e252ef7b6722f",
+          "decision": "applicable",
+          "billPolicyDirection": "expands_bca_investigative_authority_for_fraud_in_state_funded_or_administered_programs",
+          "alignmentDirection": "aligns",
+          "reason": "This is the same exact SF4760 text previously reviewed as giving the BCA subpoena authority for financial-crime and fraud investigations involving state-funded or state-administered programs. It aligns with Allen's oversight/accountability position."
+        },
+        {
+          "reviewKey": "rymer_education_budget_cuts|HF2433|2026-05-16|5da5bf18e17dfe3be6fabfe0de003a064ae1e2cc74e8a5c6eb1f3a78b2c2a7c4",
+          "decision": "ambiguous_fail_closed",
+          "billPolicyDirection": null,
+          "alignmentDirection": null,
+          "reason": "The exact HF2433 text is the previously reviewed mixed education omnibus: it changes the same special-education, nonpublic-pupil, and teacher-compensation families but not in one consistent direction matching Rymer's combined proposition."
+        },
+        {
+          "reviewKey": "gillman_parental_rights|HF3489|2026-05-16|19f0f1807823fc737eac8019c54e68cc8e103d2df1e65e7ded9e9378d1974287",
+          "decision": "ambiguous_fail_closed",
+          "billPolicyDirection": null,
+          "alignmentDirection": null,
+          "reason": "The exact HF3489 text gives parents a narrow consent role in a field-trip supervision exception, but it does not establish Gillman's broad proposition that parents have final authority over education, health care, and upbringing."
+        },
+        {
+          "reviewKey": "virnig_disability_support|SF3210|2026-05-12|ef8325c1e1beb7d415200ef49f9125ab06401f637fde79f8624a36a085051539",
+          "decision": "ambiguous_fail_closed",
+          "billPolicyDirection": null,
+          "alignmentDirection": null,
+          "reason": "SF3210 strengthens disability-accommodation and anti-discrimination protections across employment, housing, public services, and education. That is substantively disability-related, but it is a civil-rights accommodation rule rather than the comprehensive disability-services proposition reviewed for Virnig, so it fails closed."
+        },
+        {
+          "reviewKey": "rymer_education_budget_cuts|SF4282|2026-05-13|3a5c2d91d930874a8f3f08a84f05c6c8f74bbb94815dd55cd8d3d0a74b0e1c63",
+          "decision": "ambiguous_fail_closed",
+          "billPolicyDirection": null,
+          "alignmentDirection": null,
+          "reason": "SF4282 makes forecast adjustments within the exact education-aid families Rymer discussed, but some special-education and teacher-compensation appropriations increase while other disability/home-service lines decrease. The combined proposition has no single defensible direction."
+        },
+        {
+          "reviewKey": "rymer_education_budget_cuts|SF4282|2026-05-16|3a5c2d91d930874a8f3f08a84f05c6c8f74bbb94815dd55cd8d3d0a74b0e1c63",
+          "decision": "ambiguous_fail_closed",
+          "billPolicyDirection": null,
+          "alignmentDirection": null,
+          "reason": "The same exact SF4282 version remains mixed across the education-aid categories named by Rymer, so the later vote-event row also fails closed rather than inferring one bill-side direction."
+        },
+        {
+          "reviewKey": "kraft_repeat_dwi_interlock|SF4760|2026-05-12|6556496ef9fb1af977eb787b8b54c9ad3ddb53e5b0896077440e252ef7b6722f",
+          "decision": "ambiguous_fail_closed",
+          "billPolicyDirection": null,
+          "alignmentDirection": null,
+          "reason": "This is the same exact SF4760 text previously reviewed as directly amending repeat-impaired-driving and ignition-interlock rules without safely proving Kraft's combined proposition of stronger repeat-DWI interlock time plus reduced entry barriers."
+        }
+      ]
+    },
+    {
+      "trancheIndex": 10,
+      "frozenCandidateArtifact": {
+        "runId": 37560399946,
+        "artifactId": 11456880675,
+        "digest": "sha256:45b83827707ccf31ec3e580cdc4254c8b282f13ff0de222a8c5934e9a69163b2",
+        "targetRankStart": 226,
+        "targetRankEnd": 250,
+        "targetEventKeySha256": "87cfaaec13743d7c7d97f2ea3b69f5f2cfb389320e356a4893991827ba023848",
+        "reviewKeySha256": "a0aaa42ff9ad13f23608925d32189b8bf930f629acda9f85fae01160e544532f",
+        "eligibleClaimEventPairs": 929,
+        "candidatePairs": 155,
+        "candidateBills": 13,
+        "candidatePublicMembers": 37,
+        "candidateSemanticGroups": 37
+      },
+      "expectedReviewCounts": {
+        "applicable": 6,
+        "ambiguous_fail_closed": 5,
+        "not_applicable": 144,
+        "pending_review": 0
+      },
+      "expectedFinalPairStatusCounts": {
+        "applicable": 6,
+        "ambiguous_fail_closed": 75,
+        "not_applicable": 848,
+        "pending_review": 0
+      },
+      "defaultBillRationales": {
+        "HF124": "Line-of-duty gift and local-expenditure authority for a fallen public-safety officer does not implement the nominated refinery-notice or source-specific Make Minnesota Safe package.",
+        "HF129": "A biennial child-sex-trafficking prevention program evaluation does not create the nominated refinery-notice rule or the source-specific Make Minnesota Safe package.",
+        "HF13": "Eliminating the duty to retreat is a self-defense rule, not the nominated refinery-notice requirement or the specific Make Minnesota Safe package.",
+        "HF21": "The emergency-extension supermajority bill is in Roach's exact policy lane but uses a three-fifths threshold rather than the frozen two-thirds proposition; handled only by the fail-closed override.",
+        "HF23": "Public-employee whistleblower protection does not create an inspector general, fraud-risk note, or the Make Minnesota Safe package; its direct anti-fraud accountability match and narrower agency-reporting mismatch are handled only by explicit overrides.",
+        "HF2438": "The transportation omnibus does not implement incidental nominations; EV road-funding parity and the partial repeat-DWI/interlock overlap are handled only by explicit overrides.",
+        "HF286": "Local criminal-background-check authority does not implement refinery notification or the source-specific Make Minnesota Safe package.",
+        "HF3629": "Statewide grants-management changes do not create an inspector general, fraud-risk note, telework rule, or emergency-powers rule; its direct anti-fraud/accountability and state-agency fraud-tool matches are handled only by explicit overrides.",
+        "SF2077": "The environment omnibus does not implement incidental nominations; its exact PFAS-protection match is handled only by the Fischer override.",
+        "SF334": "Read Act professional-development requirements do not implement teacher-pension funding, classroom-direct funding, the combined education-budget-cut proposition, or LGBTQ safe-school protections.",
+        "SF4401": "Cannabis licensing and market-regulation changes do not implement the nominated inspector-general, housing, Medicaid-tax, criminal-justice, DWI, grant-fraud, disability-services, or emergency-powers propositions.",
+        "SF4476": "The human-services omnibus does not implement incidental nominations; its exact disability-service continuity/access match is handled only by the Virnig override.",
+        "SF4612": "The broad health and human-services omnibus contains technical and programmatic overlap across Medicaid, fraud, and disability topics but does not enact the nominated millionaire-tax financing mechanism or a single coherent disability-services proposition; those close overlaps are handled only by explicit fail-closed overrides."
+      },
+      "overrides": [
+        {
+          "reviewKey": "allen_fraud_oversight_accountability|HF23|2025-03-10|5e1311515995e16ecae919f370906498e2717cbef63d08b975910019f6f4566d",
+          "decision": "applicable",
+          "billPolicyDirection": "protects_public_employee_reporting_of_state_program_fraud_waste_and_abuse",
+          "alignmentDirection": "aligns",
+          "reason": "HF23 expressly defines fraud and waste involving state-agency or political-subdivision programs and strengthens whistleblower protection for public employees reporting those problems. That directly advances state-program accountability and aligns with Allen's broad anti-fraud proposition."
+        },
+        {
+          "reviewKey": "allen_fraud_oversight_accountability|HF3629|2026-05-17|cd76ef81ad166a5167b9e6bea12386da8535303cc24043981f1d9bd7ada4a37d",
+          "decision": "applicable",
+          "billPolicyDirection": "strengthens_state_grants_governance_reporting_fraud_misuse_channels_and_criminal_accountability",
+          "alignmentDirection": "aligns",
+          "reason": "HF3629 tightens statewide grants governance, adds legislative reporting of policy exceptions, preserves a centralized fraud/misuse reporting channel, and broadens grant-termination accountability for criminal conduct by key personnel. Those are direct state-program oversight controls aligning with Allen's proposition."
+        },
+        {
+          "reviewKey": "van_binsbergen_state_agency_fraud_reporting|HF3629|2026-05-17|cd76ef81ad166a5167b9e6bea12386da8535303cc24043981f1d9bd7ada4a37d",
+          "decision": "applicable",
+          "billPolicyDirection": "strengthens_statewide_grant_governance_reporting_and_fraud_misuse_accountability_tools",
+          "alignmentDirection": "aligns",
+          "reason": "HF3629 adds reporting of grant-policy exceptions to legislative committees, strengthens protection around the statewide channel for reports of grant-policy violations and fraud/misuse, and expands criminal-accountability coverage in state grants. That materially adds fraud-reporting/accountability tools for state agencies and aligns with Van Binsbergen's proposition."
+        },
+        {
+          "reviewKey": "zeleznikar_ev_road_funding_parity|HF2438|2026-05-17|439f61729f59c44a8688e33ef3f4edfc3b3454f4d22178c9d70205b834d5501b",
+          "decision": "applicable",
+          "billPolicyDirection": "raises_all_electric_vehicle_surcharge_and_routes_revenue_to_transportation_funds",
+          "alignmentDirection": "aligns",
+          "reason": "The strict pre-vote HF2438 version retains the direct all-electric-vehicle surcharge increase and transportation-fund allocation previously reviewed as matching Zeleznikar's EV road-funding parity proposition."
+        },
+        {
+          "reviewKey": "fischer_pfas_protections|SF2077|2026-05-17|a2c37a4f9ebb4bcc58f32e4e3a40cd3d4473c4521eae4b89fef336342bd7eab7",
+          "decision": "applicable",
+          "billPolicyDirection": "funds_and_enforces_existing_pfas_prevention_and_blueprint_programs",
+          "alignmentDirection": "aligns",
+          "reason": "This is the same exact SF2077 text previously reviewed as funding Minnesota's PFAS Blueprint and enforcement of existing PFAS prevention provisions. It aligns with Fischer's opposition to PFAS rollbacks."
+        },
+        {
+          "reviewKey": "virnig_disability_support|SF4476|2026-05-17|f34f7c2c6c1b3fd6b3310ff41fe054163f1d795bf727556f0ac8d56a71da4327",
+          "decision": "applicable",
+          "billPolicyDirection": "strengthens_continuity_access_and_supports_across_aging_and_disability_services",
+          "alignmentDirection": "aligns",
+          "reason": "This is the same exact SF4476 text previously reviewed as substantively strengthening continuity, aging and disability services, personal-care assistance, and home- and community-based supports. It aligns with Virnig's disability-support position."
+        },
+        {
+          "reviewKey": "roach_limit_emergency_powers|HF21|2025-02-27|d64984d677ffc92526dd57efd40affab11c0de82c5592357f642f6fdef30d93c",
+          "decision": "ambiguous_fail_closed",
+          "billPolicyDirection": null,
+          "alignmentDirection": null,
+          "reason": "HF21 directly limits unilateral emergency extensions, but its statutory threshold is three-fifths of each legislative house, while Roach's frozen proposition specifically requires two-thirds. The same-policy but materially different threshold fails closed."
+        },
+        {
+          "reviewKey": "van_binsbergen_state_agency_fraud_reporting|HF23|2025-03-10|5e1311515995e16ecae919f370906498e2717cbef63d08b975910019f6f4566d",
+          "decision": "ambiguous_fail_closed",
+          "billPolicyDirection": null,
+          "alignmentDirection": null,
+          "reason": "HF23 protects public employees who report fraud, waste, or abuse involving state programs, which is directly adjacent to fraud reporting. But it does not impose stricter fraud-reporting requirements on state agencies or establish the broader prevention-tool regime in Van Binsbergen's combined proposition."
+        },
+        {
+          "reviewKey": "kraft_repeat_dwi_interlock|HF2438|2026-05-17|439f61729f59c44a8688e33ef3f4edfc3b3454f4d22178c9d70205b834d5501b",
+          "decision": "ambiguous_fail_closed",
+          "billPolicyDirection": null,
+          "alignmentDirection": null,
+          "reason": "HF2438 directly amends repeat-impaired-driving and ignition-interlock eligibility/restrictions, but the exact version still does not safely establish Kraft's combined proposition of materially stronger repeat-DWI interlock duration plus reduced barriers to program entry."
+        },
+        {
+          "reviewKey": "gomez_millionaire_tax_for_medicaid|SF4612|2026-05-17|f9050f3d2c553cc77d2ed09850236be7fceaeda6d468c6afd19d1c8f4edb284e",
+          "decision": "ambiguous_fail_closed",
+          "billPolicyDirection": null,
+          "alignmentDirection": null,
+          "reason": "SF4612 materially changes Medical Assistance eligibility and financing-related administration, so it is in the same Medicaid policy lane. But it does not enact Gomez's defining mechanism of raising taxes on millionaires to increase Medicaid funding, leaving no defensible alignment direction."
+        },
+        {
+          "reviewKey": "virnig_disability_support|SF4612|2026-05-17|f9050f3d2c553cc77d2ed09850236be7fceaeda6d468c6afd19d1c8f4edb284e",
+          "decision": "ambiguous_fail_closed",
+          "billPolicyDirection": null,
+          "alignmentDirection": null,
+          "reason": "SF4612 contains disability-related eligibility definitions, public-service provisions, and broad health/human-services changes, but the exact omnibus does not express one coherent disability-services direction comparable to Virnig's comprehensive-services proposition. The overlap therefore fails closed."
+        }
+      ]
+    },
+    {
+      "trancheIndex": 11,
+      "frozenCandidateArtifact": {
+        "runId": 37560399946,
+        "artifactId": 11456386548,
+        "digest": "sha256:6a8c6bf3d6f93beb8de19166e76643f005711ff724d8f0146d15d9a2c34f813f",
+        "targetRankStart": 251,
+        "targetRankEnd": 264,
+        "targetEventKeySha256": "3d4d83276928f170726e2a499c2422eac2ede373f711bcdcfdca29c542e95242",
+        "reviewKeySha256": "94a1c7f65eaa371c6719e7f22151820600b7b7a932291ce8a079f915d8f20e93",
+        "eligibleClaimEventPairs": 510,
+        "candidatePairs": 26,
+        "candidateBills": 5,
+        "candidatePublicMembers": 18,
+        "candidateSemanticGroups": 18
+      },
+      "expectedReviewCounts": {
+        "applicable": 3,
+        "ambiguous_fail_closed": 1,
+        "not_applicable": 22,
+        "pending_review": 0
+      },
+      "expectedFinalPairStatusCounts": {
+        "applicable": 3,
+        "ambiguous_fail_closed": 75,
+        "not_applicable": 432,
+        "pending_review": 0
+      },
+      "defaultBillRationales": {
+        "HF1401": "Expanding the endangered-person definition for a missing-person program does not implement refinery-release notification or the source-specific Make Minnesota Safe package.",
+        "HF24": "Born-alive infant protections are directly pro-life but concern an infant after live birth; the narrower unborn-life scope distinction is handled only by explicit Witte and Wiener overrides.",
+        "HF25": "Pregnancy-center and maternity-home grants do not implement the incidental inspector-general, housing, PFAS, or emergency-powers nominations; their direct pro-life/unborn-life relevance is handled only by explicit overrides.",
+        "HF3826": "Identity-theft definitions, fraud subpoena authority, and fraud statutes of limitation do not create an inspector general, fraud-risk note, DWI policy, trafficking task force, refinery notice, traffic-stop reform, or the source-specific Make Minnesota Safe package.",
+        "HF747": "Business-corporation governance changes do not limit gubernatorial emergency powers."
+      },
+      "overrides": [
+        {
+          "reviewKey": "witte_pro_life|HF24|2025-03-13|7e540d5ed1ee264aba5012b586434310a8023ae1a70bdee9b499ae003a7fb491",
+          "decision": "applicable",
+          "billPolicyDirection": "strengthens_legal_protection_and_required_life_preserving_care_for_infants_born_alive_after_abortion",
+          "alignmentDirection": "aligns",
+          "reason": "HF24 strengthens born-alive infant legal recognition and required life-preserving medical care after an abortion. That is a direct pro-life protection and aligns with Witte's reviewed pro-life position."
+        },
+        {
+          "reviewKey": "wiener_pro_life|HF25|2025-03-13|109baa6835ed45ccd9f091a7800dc35fe235ce247d54275698ee8c68349ed8ce",
+          "decision": "applicable",
+          "billPolicyDirection": "funds_pregnancy_centers_and_maternity_homes_supporting_pregnancy_childbirth_and_parenting",
+          "alignmentDirection": "aligns",
+          "reason": "HF25 establishes grants for women's pregnancy centers and maternity homes providing pregnancy, childbirth, and parenting support. That substantively advances an unborn-life/pro-life support policy and aligns with Wiener's proposition."
+        },
+        {
+          "reviewKey": "witte_pro_life|HF25|2025-03-13|109baa6835ed45ccd9f091a7800dc35fe235ce247d54275698ee8c68349ed8ce",
+          "decision": "applicable",
+          "billPolicyDirection": "funds_pregnancy_centers_and_maternity_homes_supporting_pregnancy_childbirth_and_parenting",
+          "alignmentDirection": "aligns",
+          "reason": "HF25 funds pregnancy centers and maternity homes offering pregnancy, childbirth, and parenting support. That directly aligns with Witte's reviewed pro-life position."
+        },
+        {
+          "reviewKey": "wiener_pro_life|HF24|2025-03-13|7e540d5ed1ee264aba5012b586434310a8023ae1a70bdee9b499ae003a7fb491",
+          "decision": "ambiguous_fail_closed",
+          "billPolicyDirection": null,
+          "alignmentDirection": null,
+          "reason": "HF24 protects an infant only after the infant is born alive following an abortion. That is closely adjacent to Wiener's proposition about protecting unborn life, but it does not directly regulate or protect life before birth, so the narrower proposition fails closed."
+        }
+      ]
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
