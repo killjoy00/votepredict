@@ -45,23 +45,23 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          gh api /repos/${{ github.repository }}/actions/artifacts/11453146518/zip > "$RUNNER_TEMP/tranche3-audit.zip"
-          echo "7e549f2f723235ef8e436c9048217dc1a4aa06e62513d316b25f016800b50a0f  $RUNNER_TEMP/tranche3-audit.zip" | sha256sum -c -
-          mkdir -p "$RUNNER_TEMP/tranche3-audit"
-          unzip -q "$RUNNER_TEMP/tranche3-audit.zip" applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-4-v1.json -d "$RUNNER_TEMP/tranche3-audit"
+          gh api /repos/${{ github.repository }}/actions/artifacts/11453146518/zip > "$RUNNER_TEMP/tranche4-audit.zip"
+          echo "7e549f2f723235ef8e436c9048217dc1a4aa06e62513d316b25f016800b50a0f  $RUNNER_TEMP/tranche4-audit.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/tranche4-audit"
+          unzip -q "$RUNNER_TEMP/tranche4-audit.zip" applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-4-v1.json -d "$RUNNER_TEMP/tranche4-audit"
 
       - name: Freeze reviewed tranche-4 applicability gate
         env:
-          VOTEPREDICT_2025_HOUSE_TRANCHE4_APPLICABILITY_AUDIT_PATH: ${{ runner.temp }}/tranche3-audit/applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-4-v1.json
+          VOTEPREDICT_2025_HOUSE_TRANCHE4_APPLICABILITY_AUDIT_PATH: ${{ runner.temp }}/tranche4-audit/applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-4-v1.json
           VOTEPREDICT_2025_HOUSE_TRANCHE4_APPLICABILITY_DECISIONS_PATH: data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-4-decisions-v1.json
-          VOTEPREDICT_2025_HOUSE_TRANCHE4_APPLICABILITY_REVIEW_OUTPUT: ${{ runner.temp }}/tranche3-review/historical-density-2025-house-applicability-tranche-4-review-v1.json
+          VOTEPREDICT_2025_HOUSE_TRANCHE4_APPLICABILITY_REVIEW_OUTPUT: ${{ runner.temp }}/tranche4-review/historical-density-2025-house-applicability-tranche-4-review-v1.json
         run: node --import tsx scripts/freeze-historical-density-2025-house-applicability-tranche-4-review.ts
 
       - name: Verify reviewed tranche-4 boundary
         shell: bash
         run: |
           set -euo pipefail
-          f="$RUNNER_TEMP/tranche3-review/historical-density-2025-house-applicability-tranche-4-review-v1.json"
+          f="$RUNNER_TEMP/tranche4-review/historical-density-2025-house-applicability-tranche-4-review-v1.json"
           test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-applicability-tranche-4-review-v1
           test "$(jq -r '.issue' "$f")" = 718
           test "$(jq -r '.session' "$f")" = 2025-2026
@@ -113,6 +113,6 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: historical-density-2025-house-applicability-tranche-4-review-v1
-          path: ${{ runner.temp }}/tranche3-review/*
+          path: ${{ runner.temp }}/tranche4-review/*
           if-no-files-found: error
           retention-days: 90
