@@ -1,4 +1,4 @@
-name: Freeze reviewed 2025 House applicability tranche 2
+name: Freeze reviewed 2025 House applicability tranche 3
 
 on:
   pull_request:
@@ -96,7 +96,7 @@ jobs:
           test "$(jq -r '.policy.modelFitting' "$f")" = none
           test "$(jq -r '.policy.servingChanged' "$f")" = false
           {
-            echo '## 2025-26 House reviewed applicability — tranche 2'
+            echo '## 2025-26 House reviewed applicability — tranche 3'
             echo
             echo '- Candidate pairs reviewed: **325**'
             echo '- Applicable: **8**'
