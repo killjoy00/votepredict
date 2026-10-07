@@ -14,6 +14,19 @@ import { runHistoricalQuickDecayShadowReplay } from '../src/evaluation/historica
 
 const ISSUE = 718;
 const HALF_LIFE_DAYS = 180;
+const CANONICAL_ROWS = 135457;
+const CANONICAL_EVENTS = 1339;
+const CANONICAL_MEMBERSHIPS = 611;
+const CANONICAL_MATRIX_CANONICAL_SHA256 =
+  'c97ac50c8c89ae0548cc48bed65a42c22f332e2977b33173619c9e258c09a4d0';
+const CANONICAL_MATRIX_GZIP_SHA256 =
+  'd8a9735a514f427508a7a37303ba312dcac3f929a51aa05a1aba32a76b384637';
+const CANONICAL_ROW_KEY_SHA256 =
+  '3aa47101f9e4a848e293fdaa89ef853919d49826b68ae90960370c5c19e9df72';
+const PROBABILITY_TOLERANCE = 1e-12;
+const REPLAY_SESSIONS = new Set(['2021-2022', '2023-2024', '2025-2026']);
+const FROZEN_MEMBER_VOTE_ROW_SHA256 =
+  '721d748bacb74cd110380e233d7df101d044b5ad00d59bdf368ad39ecab9998b';
 
 const SUPPORT_RUN_ID = 37631304120;
 const SUPPORT_ARTIFACT_ID = 11486621043;
@@ -46,10 +59,20 @@ const EXPECTED_UNRESOLVED = 'HF2354|2026-05-17';
 const EXPECTED_REPLAYABLE_EVENTS = 15;
 const EXPECTED_MEMBER_OBSERVATIONS = 1990;
 const EXPECTED_MEMBER_PREDICTIONS = 1990;
+const EXPECTED_MEMBER_PREDICTION_ROWS = 2009;
+const EXPECTED_MEMBER_PREDICTION_ROWS_WITHOUT_OUTCOME = 19;
+const EXPECTED_DECISIVE_VOTE_ROWS = 1991;
+const EXPECTED_DECISIVE_VOTE_ROWS_WITHOUT_PREDICTION = 1;
+const EXPECTED_DECISIVE_VOTE_PREDICTION_GAP_PROOF_SHA256 =
+  'da18129bb7840d074681243601484797e7a45a74d20add3d4399b1fa6adc0b74';
 const EXPECTED_RESULT_PROOF_SHA256 =
   'a89de23656cc3c2cfde31999703d54f60cbe86ab8bdee93962f8081d3331f2b4';
 const EXPECTED_MEMBER_PREDICTION_PROOF_SHA256 =
   'caf50b9ae2f07c2cfd0361554bb5440f11dec7b0b495c9b92768189b7cf41848';
+const EXPECTED_OVERLAY_INPUT_PROOF_SHA256 =
+  '58d55491ca59349029b8debfe7a8552f8a1e11737163228828bd008673280f3b';
+const EXPECTED_COMPARISON_PROOF_SHA256 =
+  '3a359f9597e200bcec484e3a2fd0a874f7dc69c3eb4c51b79b626a767605e671';
 const EXPECTED_MEMBER_ACCURACY = 0.9698492462311558;
 const EXPECTED_MEMBER_BRIER = 0.03725407295423199;
 const EXPECTED_MEMBER_LOG_LOSS = 0.16242195623689934;
@@ -57,6 +80,24 @@ const EXPECTED_MEMBER_ECE = 0.080291699115617;
 const EXPECTED_CHAMBER_MAE = 13.715526534958565;
 
 type Json = Record<string, any>;
+
+type CanonicalRow = {
+  voteEventId: string;
+  membershipId: string;
+  legislatorId: string;
+  session: string;
+  chamber: string;
+  occurredOn: string;
+  billId: string;
+  identifier: string;
+  eventStatus: string;
+  baseProbability: number | null;
+  outcome: 0 | 1 | null;
+  actualYes: number;
+  passed: boolean;
+};
+
+type CurrentRow = CanonicalRow;
 
 type SupportEnvelope = {
   schemaVersion: string;
@@ -103,6 +144,137 @@ function readJson(path: string): Json {
   return JSON.parse(readFileSync(path, 'utf8')) as Json;
 }
 
+function rowKey(row: Pick<CanonicalRow, 'voteEventId' | 'membershipId'>): string {
+  return `${row.voteEventId}|${row.membershipId}`;
+}
+
+function parseCanonicalMatrix(manifestPath: string, matrixPath: string): CanonicalRow[] {
+  const manifest = readJson(manifestPath);
+  const gzip = readFileSync(matrixPath);
+  if (
+    manifest.schemaVersion !== 'historical-as-of-matrix-v1-manifest'
+    || manifest.issue !== 459
+    || manifest.replay?.version !== 'historical-quick-replay-v2'
+    || manifest.rows !== CANONICAL_ROWS
+    || manifest.events !== CANONICAL_EVENTS
+    || manifest.memberships !== CANONICAL_MEMBERSHIPS
+    || manifest.matrixCanonicalNdjsonSha256 !== CANONICAL_MATRIX_CANONICAL_SHA256
+    || manifest.matrixGzipSha256 !== CANONICAL_MATRIX_GZIP_SHA256
+  ) {
+    throw new Error('Canonical historical matrix manifest drifted');
+  }
+  if (sha256(gzip) !== CANONICAL_MATRIX_GZIP_SHA256) {
+    throw new Error('Canonical historical matrix gzip digest mismatch');
+  }
+  const ndjson = gunzipSync(gzip).toString('utf8');
+  if (sha256(ndjson) !== CANONICAL_MATRIX_CANONICAL_SHA256) {
+    throw new Error('Canonical historical matrix NDJSON digest mismatch');
+  }
+  const rows = ndjson.trimEnd().split('\n').map((line) => JSON.parse(line) as CanonicalRow);
+  if (rows.length !== CANONICAL_ROWS) {
+    throw new Error(`Canonical matrix row count drifted: ${rows.length}`);
+  }
+  return rows;
+}
+
+function flattenReplayRows(
+  results: ReturnType<typeof runHistoricalQuickDecayShadowReplay>,
+  targets: readonly QuickReplayEvent[],
+): CurrentRow[] {
+  const targetById = new Map(targets.map((event) => [event.voteEventId, event] as const));
+  return results
+    .filter((event) => REPLAY_SESSIONS.has(event.session))
+    .flatMap((event) => {
+      const target = targetById.get(event.voteEventId);
+      if (!target) throw new Error(`Replay result missing target event ${event.voteEventId}`);
+      return event.memberPredictions.map((member): CurrentRow => ({
+        voteEventId: event.voteEventId,
+        membershipId: member.membershipId,
+        legislatorId: member.legislatorId,
+        session: event.session,
+        chamber: event.chamber,
+        occurredOn: event.occurredOn,
+        billId: target.billId,
+        identifier: target.identifier,
+        eventStatus: event.status,
+        baseProbability: member.yesProbability ?? null,
+        outcome: member.actualOutcome ?? null,
+        actualYes: event.actualYes,
+        passed: event.passed,
+      }));
+    });
+}
+
+function compareRows(canonical: readonly CanonicalRow[], current: readonly CurrentRow[]) {
+  const canonicalByKey = new Map(canonical.map((row) => [rowKey(row), row]));
+  const currentByKey = new Map(current.map((row) => [rowKey(row), row]));
+  if (canonicalByKey.size !== canonical.length || currentByKey.size !== current.length) {
+    throw new Error('Duplicate canonical/current row keys detected');
+  }
+
+  const canonicalKeys = [...canonicalByKey.keys()].sort();
+  const currentKeys = [...currentByKey.keys()].sort();
+  const missingKeys = canonicalKeys.filter((key) => !currentByKey.has(key));
+  const extraKeys = currentKeys.filter((key) => !canonicalByKey.has(key));
+  const mismatches: Json[] = [];
+
+  for (const key of canonicalKeys) {
+    const expected = canonicalByKey.get(key)!;
+    const actual = currentByKey.get(key);
+    if (!actual) continue;
+    for (const field of [
+      'legislatorId',
+      'session',
+      'chamber',
+      'occurredOn',
+      'billId',
+      'identifier',
+      'eventStatus',
+      'outcome',
+      'actualYes',
+      'passed',
+    ] as const) {
+      if (actual[field] !== expected[field]) {
+        mismatches.push({ key, field, expected: expected[field], actual: actual[field] });
+        break;
+      }
+    }
+    if (mismatches.at(-1)?.key === key) continue;
+
+    if (expected.baseProbability === null || actual.baseProbability === null) {
+      if (expected.baseProbability !== actual.baseProbability) {
+        mismatches.push({
+          key,
+          field: 'baseProbability',
+          expected: expected.baseProbability,
+          actual: actual.baseProbability,
+        });
+      }
+    } else if (Math.abs(expected.baseProbability - actual.baseProbability) > PROBABILITY_TOLERANCE) {
+      mismatches.push({
+        key,
+        field: 'baseProbability',
+        expected: expected.baseProbability,
+        actual: actual.baseProbability,
+        delta: actual.baseProbability - expected.baseProbability,
+      });
+    }
+  }
+
+  return {
+    canonicalRows: canonical.length,
+    currentRows: current.length,
+    canonicalRowKeySha256: setSha(canonicalKeys),
+    currentRowKeySha256: setSha(currentKeys),
+    missingRows: missingKeys.length,
+    extraRows: extraKeys.length,
+    fieldMismatches: mismatches.length,
+    sampleMissing: missingKeys.slice(0, 10),
+    sampleExtra: extraKeys.slice(0, 10),
+    sampleMismatches: mismatches.slice(0, 10),
+  };
+}
+
 function composite(identifier: string, occurredOn: string): string {
   return `${identifier.replace(/\s+/g, '').toUpperCase()}|${occurredOn}`;
 }
@@ -126,6 +298,9 @@ function parseSupport(manifestPath: string, snapshotPath: string) {
     || manifest.canonicalParity?.missingRows !== 0
     || manifest.canonicalParity?.extraRows !== 0
     || manifest.canonicalParity?.fieldMismatches !== 0
+    || manifest.canonicalParity?.rowKeySha256 !== CANONICAL_ROW_KEY_SHA256
+    || manifest.frozenInputs?.gapMemberVotes?.memberVoteRowSha256
+      !== FROZEN_MEMBER_VOTE_ROW_SHA256
     || manifest.gapLoaderReconciliation?.passed !== true
     || manifest.gapLoaderReconciliation?.reconciledEvents !== EXPECTED_GAP_EVENTS
     || manifest.gapLoaderReconciliation?.reconciledDecisiveMemberVotes !== 2125
@@ -297,6 +472,10 @@ function verifySupportRebuild(envelope: SupportEnvelope) {
 }
 
 async function main(): Promise<void> {
+  const canonical = parseCanonicalMatrix(
+    env('VOTEPREDICT_HISTORICAL_AS_OF_MANIFEST_PATH'),
+    env('VOTEPREDICT_HISTORICAL_AS_OF_MATRIX_PATH'),
+  );
   const support = parseSupport(
     env('VOTEPREDICT_GAP16_SUPPORT_MANIFEST_PATH'),
     env('VOTEPREDICT_GAP16_SUPPORT_SNAPSHOT_PATH'),
@@ -306,6 +485,8 @@ async function main(): Promise<void> {
 
   const rebuilt = verifySupportRebuild(support.envelope);
   const counts = decisiveCounts(support.envelope.data.historicalVotes);
+  const byBill = versionsByBill(support.envelope.data.versions);
+  const byEventVotes = votesByEvent(support.envelope.data.historicalVotes);
 
   const canonicalTargets = support.envelope.data.events.filter(
     (event) =>
@@ -368,10 +549,50 @@ async function main(): Promise<void> {
     throw new Error('Fail-closed HF2354 event leaked into overlay targets');
   }
 
+  const overlayPassedByEvent = new Map(
+    overlayTargets.map((event) => [event.voteEventId, event.passed] as const),
+  );
+  const overlayEvents = support.envelope.data.events.map((event) =>
+    overlayPassedByEvent.has(event.voteEventId)
+      ? { ...event, passed: overlayPassedByEvent.get(event.voteEventId) as boolean }
+      : event);
+  const overlayRebuilt = buildHistoricalQuickAnalogueSupport(
+    overlayEvents,
+    byBill,
+    byEventVotes,
+  );
+
+  const canonicalOverlayResults = runHistoricalQuickDecayShadowReplay(
+    canonicalTargets,
+    overlayRebuilt.targetVersionByEvent,
+    overlayRebuilt.supportByEvent,
+    support.envelope.data.memberships,
+    support.envelope.data.historicalVotes,
+    HALF_LIFE_DAYS,
+  );
+  const canonicalRegression = compareRows(
+    canonical,
+    flattenReplayRows(canonicalOverlayResults, canonicalTargets),
+  );
+  if (
+    canonicalRegression.canonicalRows !== CANONICAL_ROWS
+    || canonicalRegression.currentRows !== CANONICAL_ROWS
+    || canonicalRegression.canonicalRowKeySha256 !== CANONICAL_ROW_KEY_SHA256
+    || canonicalRegression.currentRowKeySha256 !== CANONICAL_ROW_KEY_SHA256
+    || canonicalRegression.missingRows !== 0
+    || canonicalRegression.extraRows !== 0
+    || canonicalRegression.fieldMismatches !== 0
+  ) {
+    throw new Error(
+      'Canonical 135,457-row replay changed with overlay present: '
+      + JSON.stringify(canonicalRegression),
+    );
+  }
+
   const results = runHistoricalQuickDecayShadowReplay(
     overlayTargets,
-    rebuilt.targetVersionByEvent,
-    rebuilt.supportByEvent,
+    overlayRebuilt.targetVersionByEvent,
+    overlayRebuilt.supportByEvent,
     support.envelope.data.memberships,
     support.envelope.data.historicalVotes,
     HALF_LIFE_DAYS,
@@ -446,8 +667,218 @@ async function main(): Promise<void> {
     );
   }
 
+  const existing2025HouseResults = canonicalOverlayResults.filter(
+    (result) => result.session === '2025-2026' && result.chamber === 'house',
+  );
+  const existing2025HouseScorecard = scoreHistoricalQuickReplay(existing2025HouseResults).overall;
+
+  const detailedEvents = results.map((result) => {
+    const target = overlayTargets.find((event) => event.voteEventId === result.voteEventId)!;
+    const targetVersion = overlayRebuilt.targetVersionByEvent.get(result.voteEventId);
+    const analogueSupport = overlayRebuilt.supportByEvent.get(result.voteEventId);
+    if (!targetVersion || !analogueSupport) {
+      throw new Error(`Detailed overlay support missing for ${result.voteEventId}`);
+    }
+    const analogueDetails = analogueSupport.selectedAnalogueDetails ?? [];
+    if (
+      analogueDetails.length !== analogueSupport.selected
+      || JSON.stringify(analogueDetails.map((row) => row.voteEventId))
+        !== JSON.stringify(analogueSupport.selectedAnalogueIds)
+    ) {
+      throw new Error(`Selected analogue detail drifted for ${result.voteEventId}`);
+    }
+    const decisiveVoteRows = support.envelope.data.historicalVotes
+      .filter((row) => row.voteEventId === result.voteEventId)
+      .sort((a, b) => a.membershipId.localeCompare(b.membershipId))
+      .map((row) => ({
+        membershipId: row.membershipId,
+        legislatorId: row.legislatorId,
+        party: row.party,
+        choice: row.choice,
+      }));
+    const predictionMembershipIds = new Set(
+      result.memberPredictions.map((row) => row.membershipId),
+    );
+    const decisiveVoteRowsWithoutPrediction = decisiveVoteRows.filter(
+      (row) => !predictionMembershipIds.has(row.membershipId),
+    );
+
+    return {
+      voteEventId: result.voteEventId,
+      billId: target.billId,
+      compositeKey: composite(target.identifier, target.occurredOn),
+      identifier: target.identifier,
+      occurredOn: target.occurredOn,
+      status: result.status,
+      targetVersion: {
+        id: targetVersion.id,
+        billId: targetVersion.billId,
+        publishedAt: targetVersion.publishedAt,
+        rawTextSha256: sha256(targetVersion.rawText),
+      },
+      analogueSupport: {
+        prefiltered: analogueSupport.prefiltered,
+        selected: analogueSupport.selected,
+        directMemberSupport: analogueSupport.member.size,
+        selectedAnalogueIds: [...analogueSupport.selectedAnalogueIds],
+        selectedAnalogues: analogueDetails.map((row) => ({ ...row })),
+      },
+      decisiveVoteRows,
+      decisiveVoteRowsWithoutPrediction,
+      decisiveVoteRowSha256: setSha(
+        decisiveVoteRows.map((row) =>
+          `${row.membershipId}|${row.legislatorId}|${row.party}|${row.choice}`),
+      ),
+      activeMembers: result.activeMembers,
+      directAnalogueMembers: result.directAnalogueMembers,
+      memberObservations: result.memberPredictions.filter(
+        (row) => row.actualOutcome !== undefined,
+      ).length,
+      memberPredictions: result.memberPredictions.map((row) => ({
+        membershipId: row.membershipId,
+        legislatorId: row.legislatorId,
+        party: row.party,
+        yesProbability: row.yesProbability ?? null,
+        actualOutcome: row.actualOutcome ?? null,
+        analogueEffectiveWeight: row.analogueEffectiveWeight,
+        support: row.support,
+        cannotPredictReason: row.cannotPredictReason ?? null,
+      })),
+      passageProbability: result.passageProbability ?? null,
+      expectedYes: result.expectedYes ?? null,
+      yesLow: result.yesLow ?? null,
+      yesHigh: result.yesHigh ?? null,
+      actualYes: result.actualYes,
+      passed: result.passed,
+    };
+  });
+
+  const memberPredictionRows = detailedEvents.reduce(
+    (total, event) => total + event.memberPredictions.length,
+    0,
+  );
+  const memberPredictionRowsWithoutOutcome = detailedEvents.reduce(
+    (total, event) => total
+      + event.memberPredictions.filter((row) => row.actualOutcome === null).length,
+    0,
+  );
+  if (
+    memberPredictionRows !== EXPECTED_MEMBER_PREDICTION_ROWS
+    || memberPredictionRowsWithoutOutcome
+      !== EXPECTED_MEMBER_PREDICTION_ROWS_WITHOUT_OUTCOME
+    || memberPredictionRows - memberPredictionRowsWithoutOutcome
+      !== EXPECTED_MEMBER_OBSERVATIONS
+  ) {
+    throw new Error(
+      'Prediction-row observation boundary drifted: '
+      + JSON.stringify({
+        memberPredictionRows,
+        memberPredictionRowsWithoutOutcome,
+        memberPredictionRowsWithOutcome:
+          memberPredictionRows - memberPredictionRowsWithoutOutcome,
+      }),
+    );
+  }
+
+  const decisiveVoteRows = detailedEvents.reduce(
+    (total, event) => total + event.decisiveVoteRows.length,
+    0,
+  );
+  const decisiveVoteRowsWithoutPrediction = detailedEvents.flatMap((event) =>
+    event.decisiveVoteRowsWithoutPrediction.map((row) => ({
+      compositeKey: event.compositeKey,
+      ...row,
+    })));
+  const decisiveVotePredictionGapProofSha256 = setSha(
+    decisiveVoteRowsWithoutPrediction.map((row) =>
+      [
+        row.compositeKey,
+        row.membershipId,
+        row.legislatorId,
+        row.party,
+        row.choice,
+      ].join('|')),
+  );
+  if (
+    decisiveVoteRows !== EXPECTED_DECISIVE_VOTE_ROWS
+    || decisiveVoteRowsWithoutPrediction.length
+      !== EXPECTED_DECISIVE_VOTE_ROWS_WITHOUT_PREDICTION
+    || decisiveVotePredictionGapProofSha256
+      !== EXPECTED_DECISIVE_VOTE_PREDICTION_GAP_PROOF_SHA256
+  ) {
+    throw new Error(
+      'Decisive-vote/prediction boundary drifted: '
+      + JSON.stringify({
+        decisiveVoteRows,
+        decisiveVoteRowsWithoutPrediction,
+        decisiveVotePredictionGapProofSha256,
+      }),
+    );
+  }
+
+  const overlayInputProofSha256 = setSha(
+    detailedEvents.flatMap((event) => [
+      [
+        event.voteEventId,
+        event.billId,
+        event.compositeKey,
+        event.targetVersion.id,
+        event.targetVersion.rawTextSha256,
+        event.analogueSupport.prefiltered,
+        event.analogueSupport.selected,
+        event.analogueSupport.directMemberSupport,
+        event.analogueSupport.selectedAnalogueIds.join(','),
+        event.decisiveVoteRowSha256,
+      ].join('|'),
+      ...event.analogueSupport.selectedAnalogues.map((row) =>
+        [
+          event.voteEventId,
+          row.voteEventId,
+          row.billVersionId,
+          row.similarity,
+          row.recencyWeight,
+          row.score,
+          row.relationship ?? '',
+          row.reasons.join(','),
+        ].join('|')),
+    ]),
+  );
+
+  const comparison = {
+    existing2025HouseReplayCohort: {
+      events: existing2025HouseResults.length,
+      scorecard: existing2025HouseScorecard,
+    },
+    overlayMinusExisting2025House: {
+      memberAccuracy:
+        scorecard.overall.memberAccuracy - existing2025HouseScorecard.memberAccuracy,
+      memberBrier:
+        scorecard.overall.memberBrier - existing2025HouseScorecard.memberBrier,
+      memberLogLoss:
+        scorecard.overall.memberLogLoss - existing2025HouseScorecard.memberLogLoss,
+      memberExpectedCalibrationError:
+        scorecard.overall.memberExpectedCalibrationError
+        - existing2025HouseScorecard.memberExpectedCalibrationError,
+      chamberMeanAbsoluteYesError:
+        scorecard.overall.chamberMeanAbsoluteYesError
+        - existing2025HouseScorecard.chamberMeanAbsoluteYesError,
+      passageBrier:
+        scorecard.overall.passageBrier - existing2025HouseScorecard.passageBrier,
+    },
+  };
+  const comparisonProofSha256 = sha256(JSON.stringify(comparison));
+  if (
+    overlayInputProofSha256 !== EXPECTED_OVERLAY_INPUT_PROOF_SHA256
+    || comparisonProofSha256 !== EXPECTED_COMPARISON_PROOF_SHA256
+  ) {
+    throw new Error(
+      'Detailed overlay audit proof drifted: '
+      + JSON.stringify({ overlayInputProofSha256, comparisonProofSha256 }),
+    );
+  }
+
   const report = {
-    schemaVersion: 'historical-density-2025-house-replay-gap15-overlay-v1',
+    schemaVersion: 'historical-density-2025-house-replay-gap15-overlay-v2',
     generatedAt: new Date().toISOString(),
     issue: ISSUE,
     replay: {
@@ -477,6 +908,7 @@ async function main(): Promise<void> {
       frozenSupportSelectionsExact: true,
       canonicalTargetsRebuilt: canonicalTargets.length,
       canonicalTargetsChanged: false,
+      canonicalRowsWithOverlayPresent: canonicalRegression,
     },
     overlay: {
       frozenGapEvents: EXPECTED_GAP_EVENTS,
@@ -491,38 +923,26 @@ async function main(): Promise<void> {
       statusCounts,
       resultProofSha256,
       memberPredictionProofSha256,
-      events: results.map((result) => {
-        const target = overlayTargets.find((event) =>
-          event.voteEventId === result.voteEventId)!;
-        return {
-          voteEventId: result.voteEventId,
-          compositeKey: composite(target.identifier, target.occurredOn),
-          identifier: target.identifier,
-          occurredOn: target.occurredOn,
-          status: result.status,
-          targetVersionId: result.targetVersionId,
-          activeMembers: result.activeMembers,
-          directAnalogueMembers: result.directAnalogueMembers,
-          selectedAnalogues: result.selectedAnalogues,
-          memberObservations: result.memberPredictions.filter(
-            (row) => row.actualOutcome !== undefined,
-          ).length,
-          memberPredictions: result.memberPredictions.filter(
-            (row) => row.yesProbability !== undefined,
-          ).length,
-          passageProbability: result.passageProbability ?? null,
-          expectedYes: result.expectedYes ?? null,
-          actualYes: result.actualYes,
-          passed: result.passed,
-        };
-      }),
+      memberPredictionRows,
+      memberPredictionRowsWithoutOutcome,
+      decisiveVoteRows,
+      decisiveVoteRowsWithoutPrediction: decisiveVoteRowsWithoutPrediction.length,
+      decisiveVotePredictionGapProofSha256,
+      overlayInputProofSha256,
+      events: detailedEvents,
     },
     scorecard,
+    comparison: {
+      comparisonProofSha256,
+      ...comparison,
+    },
     policy: {
       productionDatabaseQueried: false,
       productionWrites: false,
       vercelUsed: false,
       canonicalTargetSetMutated: false,
+      canonicalRowsComparedToImmutableMatrix: true,
+      canonicalRowsUnchangedWithOverlayPresent: true,
       frozenSupportOnly: true,
       frozenOutcomeLabelsOnly: true,
       unresolvedOutcomeExcluded: EXPECTED_UNRESOLVED,
@@ -544,10 +964,17 @@ async function main(): Promise<void> {
       supportTargetVersions: report.reconstruction.supportTargetVersions,
       supportAnalogueEvents: report.reconstruction.supportAnalogueEvents,
       canonicalTargetsRebuilt: report.reconstruction.canonicalTargetsRebuilt,
+      canonicalRowsWithOverlayPresent:
+        report.reconstruction.canonicalRowsWithOverlayPresent,
       outcomeCompleteTargets: report.overlay.outcomeCompleteTargets,
       statusCounts,
       resultProofSha256,
       memberPredictionProofSha256,
+      memberPredictionRows,
+      memberPredictionRowsWithoutOutcome,
+      decisiveVoteRows,
+      decisiveVoteRowsWithoutPrediction: decisiveVoteRowsWithoutPrediction.length,
+      decisiveVotePredictionGapProofSha256,
       overall: scorecard.overall,
       productionDatabaseQueried: false,
       canonicalTargetSetMutated: false,

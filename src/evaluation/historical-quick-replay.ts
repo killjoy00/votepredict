@@ -70,10 +70,30 @@ export interface QuickReplayAnalogueMemberSupport {
   weight: number;
 }
 
+export interface QuickReplaySelectedAnalogue {
+  voteEventId: string;
+  billId: string;
+  billVersionId: string;
+  identifier: string;
+  occurredAt: string;
+  publishedAt: string;
+  similarity: number;
+  recencyWeight: number;
+  score: number;
+  relationship?: 'same-bill' | 'official-companion' | 'companion-text' | 'reintroduced' | 'identical-text';
+  reasons: string[];
+}
+
 export interface QuickReplayAnalogueSupport {
   prefiltered: number;
   selected: number;
   selectedAnalogueIds: string[];
+  /**
+   * Evaluation/audit detail only. Replay scoring continues to use the aggregated
+   * member map below; this field exposes the already-selected deterministic
+   * analogue identities/scores without changing selection or weighting.
+   */
+  selectedAnalogueDetails?: QuickReplaySelectedAnalogue[];
   member: Map<string, QuickReplayAnalogueMemberSupport>;
 }
 
@@ -300,6 +320,19 @@ export function buildHistoricalQuickAnalogueSupport(
           prefiltered: prefiltered.length,
           selected: selected.length,
           selectedAnalogueIds: selected.map((analogue) => analogue.candidate.voteEventId),
+          selectedAnalogueDetails: selected.map((analogue) => ({
+            voteEventId: analogue.candidate.voteEventId,
+            billId: analogue.candidate.billId,
+            billVersionId: analogue.candidate.billVersionId,
+            identifier: analogue.candidate.identifier,
+            occurredAt: analogue.candidate.occurredAt,
+            publishedAt: analogue.candidate.publishedAt,
+            similarity: analogue.similarity,
+            recencyWeight: analogue.recencyWeight,
+            score: analogue.score,
+            relationship: analogue.relationship,
+            reasons: analogue.reasons,
+          })),
           member,
         });
       }
