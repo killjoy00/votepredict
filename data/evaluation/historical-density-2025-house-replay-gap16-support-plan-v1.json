@@ -99,12 +99,27 @@
         "HF2354|2026-05-17"
       ],
       "targetSelectionMayChangeAfterSnapshot": false,
-      "targetSelectionRule": "The frozen 16-event candidate set is immutable; the read-only support snapshot cannot add, remove, or rerank extension targets."
+      "targetSelectionRule": "The frozen 16-event candidate set is immutable; the read-only support snapshot cannot add, remove, or rerank extension targets.",
+      "overlayStrategy": "Reuse reconciled current loader eventId/billId identities; do not create duplicate synthetic events."
     },
     "gapEventPresenceGate": {
       "required": true,
-      "expectedExactBillDateMatchesInCurrentLoader": 0,
-      "onMatch": "Fail closed and reconcile the current production event with the frozen source-reconstructed event before any overlay or scoring."
+      "firstReadObservation": {
+        "exactFrozenBillDateMatchesInCurrentLoader": 16,
+        "observationMeaning": "All 16 frozen source-reconstructed events now exist in the current loader even though they were absent from the original frozen target matrix."
+      },
+      "requiredCurrentLoaderMatches": 16,
+      "reconciliationRequiredBeforeSnapshot": true,
+      "reconciliationFields": [
+        "canonical bill identifier",
+        "vote date",
+        "exact yea count",
+        "exact nay count",
+        "complete decisive membershipId + legislatorId + choice set"
+      ],
+      "expectedFrozenMemberVoteRows": 2125,
+      "unresolvedOutcomePolicy": "HF2354|2026-05-17 remains outcome-unresolved for extension scoring even if the mutable database currently contains a passed value.",
+      "onMismatch": "Fail closed. Do not use current loader event/bill IDs or support state for extension work."
     },
     "environmentDetails": {
       "vercelEnvironmentRead": true,
@@ -119,7 +134,8 @@
     "targetMemberVotes": "complete for 16/16",
     "explicitPassFailOutcome": "complete for 15/16; HF2354 remains fail-closed",
     "fullReplaySupportSnapshot": "not yet frozen",
-    "replayReadyNow": false
+    "replayReadyNow": false,
+    "currentLoaderGapEventPresence": "16/16 exact bill/date events observed; reconciliation pending"
   },
   "policy": {
     "targetSelectionUsesCurrentProductionState": false,
