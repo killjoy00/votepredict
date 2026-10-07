@@ -205,7 +205,7 @@ async function main(): Promise<void> {
     const page = await retry(() =>
       fetchPublicPage(link.url, {
         timeoutMs: 45_000,
-        maxBytes: 4_000_000,
+        maxBytes: 12_000_000,
         userAgent: 'VotePredict/2.0 gap16 House Journal outcome freeze',
       })
     );
