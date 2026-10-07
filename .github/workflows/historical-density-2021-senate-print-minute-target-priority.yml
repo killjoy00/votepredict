@@ -24,7 +24,7 @@ permissions:
 
 concurrency:
   group: historical-density-2021-senate-print-minute-target-priority-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   audit:
