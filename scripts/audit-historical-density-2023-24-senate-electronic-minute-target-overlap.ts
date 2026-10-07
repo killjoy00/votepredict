@@ -134,15 +134,16 @@ async function mapLimit<T, R>(
   );
   return out;
 }
-async function fetchStatus(identifier: string): Promise<{
-  identifier: string;
-  statusUrl: string;
-  xml: string;
-}> {
+type StatusFetch =
+  | { ok: true; identifier: string; statusUrl: string; xml: string }
+  | { ok: false; identifier: string; failures: string[] };
+
+async function fetchStatus(identifier: string): Promise<StatusFetch> {
   const failures: string[] = [];
   for (const url of buildRevisorRegularSessionStatusXmlUrls(SESSION, identifier)) {
     try {
       return {
+        ok: true,
         identifier,
         statusUrl: url,
         xml: await fetchRevisorStatusXml(url),
@@ -151,9 +152,7 @@ async function fetchStatus(identifier: string): Promise<{
       failures.push(error instanceof Error ? error.message : String(error));
     }
   }
-  throw new Error(
-    `No Revisor status document for ${identifier}: ${failures.join(' | ')}`,
-  );
+  return { ok: false, identifier, failures };
 }
 
 function loadTargets(): TargetEvent[] {
@@ -279,11 +278,21 @@ async function main(): Promise<void> {
   }
 
   const identifiers = [...new Set(targets.map((row) => row.identifier))].sort();
-  const statuses = await mapLimit(
+  const statusResults = await mapLimit(
     identifiers,
     REVISOR_CONCURRENCY,
     fetchStatus,
   );
+  const statuses = statusResults.filter(
+    (row): row is Extract<StatusFetch, { ok: true }> => row.ok,
+  );
+  const statusFetchFailures = statusResults
+    .filter((row): row is Extract<StatusFetch, { ok: false }> => !row.ok)
+    .map((row) => ({
+      identifier: row.identifier,
+      failures: row.failures,
+    }))
+    .sort((a, b) => a.identifier.localeCompare(b.identifier));
 
   const referralsByIdentifier = new Map<string, Referral[]>();
   const unparsedReferrals: Json[] = [];
@@ -475,7 +484,9 @@ async function main(): Promise<void> {
       documentUniverseProofSha256,
     },
     revisor: {
+      requestedTargetBillStatusDocuments: identifiers.length,
       targetBillStatusDocuments: statuses.length,
+      statusFetchFailures,
       unparsedReferralActions: unparsedReferrals,
       unmatchedCommitteeLabels: [...unmatchedLabels.entries()]
         .map(([normalized, row]) => ({
@@ -531,7 +542,9 @@ async function main(): Promise<void> {
       targetGap: report.targetGap,
       officialMinuteUniverse: report.officialMinuteUniverse,
       revisor: {
+        requestedTargetBillStatusDocuments: identifiers.length,
         targetBillStatusDocuments: statuses.length,
+        statusFetchFailures: statusFetchFailures.length,
         unparsedReferralActions: unparsedReferrals.length,
         unmatchedCommitteeLabels: report.revisor.unmatchedCommitteeLabels.length,
       },
