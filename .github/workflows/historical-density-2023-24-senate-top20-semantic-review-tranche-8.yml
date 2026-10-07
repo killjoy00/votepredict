@@ -98,8 +98,8 @@ jobs:
           test "$(jq -r '.summary.decisions.directional_member_statement' "$review")" = 0
           test "$(jq -r '.summary.decisions.ambiguous_fail_closed' "$review")" = 0
           test "$(jq -r '.summary.mechanicallyActionableRows' "$review")" = 0
-          test "$(jq -r '.reviewedRowProofSha256' "$review")" = 508a21b7d445bcb4949efffd30f297ae2514fc989ceab69111740a1dfef07168
-          test "$(jq -r '.reviewProofSha256' "$review")" = e32e7d2d5527588999d3833444f39575de610defdefaa09847e98e2cf49070c6
+          test "$(jq -r '.reviewedRowProofSha256' "$review")" = 0b15aa90797e41f0cbeabd451cfecbc96ecb0c29ca7cccc915c87cbbc9547c57
+          test "$(jq -r '.reviewProofSha256' "$review")" = 66691b957cc5b847fc42554c474d2745057ff4244e9c4f1e5c9510834d7f43ad
           test "$(jq -r '.policy.targetVoteOutcomesRead' "$review")" = false
           test "$(jq -r '.policy.proceduralActionUsedAsDirectionalStance' "$review")" = false
           test "$(jq -r '.policy.productionDatabaseQueried' "$review")" = false
