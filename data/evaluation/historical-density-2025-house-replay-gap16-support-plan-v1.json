@@ -100,6 +100,17 @@
       ],
       "targetSelectionMayChangeAfterSnapshot": false,
       "targetSelectionRule": "The frozen 16-event candidate set is immutable; the read-only support snapshot cannot add, remove, or rerank extension targets."
+    },
+    "gapEventPresenceGate": {
+      "required": true,
+      "expectedExactBillDateMatchesInCurrentLoader": 0,
+      "onMatch": "Fail closed and reconcile the current production event with the frozen source-reconstructed event before any overlay or scoring."
+    },
+    "environmentDetails": {
+      "vercelEnvironmentRead": true,
+      "vercelDeployment": false,
+      "databaseMode": "read-only",
+      "temporaryCredentialsDeletedAfterRun": true
     }
   },
   "knownReadiness": {
