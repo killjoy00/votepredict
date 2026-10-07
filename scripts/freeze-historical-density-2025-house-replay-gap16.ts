@@ -36,6 +36,8 @@ const EXPECTED_COMPOSITE_KEY_SHA256 =
   'c756fa9d80e7914e579d1bb43e2dc3c3d730ad221e0f8185dc2de2ccffc2c37a';
 const EXPECTED_EXTERNAL_KEY_SHA256 =
   '0b4e9af1eb5af5d9677035238ac7315d2e318f790d1ef53a3944a988978b7063';
+const EXPECTED_STRICT_VERSION_PROOF_SHA256 =
+  '6ae078583c0bc7171ee83a7ae1193c4321b5b7a8bfb9aa3489ac4cc19d9f16ee';
 
 const EXPECTED_COMPOSITE_KEYS = [
   'HF1354|2025-04-25',
@@ -396,6 +398,11 @@ async function main(): Promise<void> {
         `${row.compositeKey}|${row.strictPreVoteVersion.postedOn}|${row.strictPreVoteVersion.versionKey}|${row.strictPreVoteVersion.textSha256}`,
     ),
   );
+  if (versionProofSha256 !== EXPECTED_STRICT_VERSION_PROOF_SHA256) {
+    throw new Error(
+      `Strict-version proof set drifted: ${versionProofSha256}`,
+    );
+  }
 
   const report = {
     schemaVersion: 'historical-density-2025-house-replay-gap16-v1',
@@ -424,7 +431,7 @@ async function main(): Promise<void> {
       candidateCount: enriched.length,
       compositeKeySha256: EXPECTED_COMPOSITE_KEY_SHA256,
       officialExternalKeySha256: EXPECTED_EXTERNAL_KEY_SHA256,
-      strictVersionProofSha256: versionProofSha256,
+      strictVersionProofSha256: EXPECTED_STRICT_VERSION_PROOF_SHA256,
       exactOriginalReplayMatches: 0,
       candidateBillsPresentElsewhereInOriginalReplay: billsPresentElsewhere,
     },
