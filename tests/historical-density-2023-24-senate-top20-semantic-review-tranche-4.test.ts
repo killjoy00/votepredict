@@ -9,7 +9,7 @@ const decisions = JSON.parse(readFileSync(resolve(
 ), 'utf8'));
 
 function setSha(values: readonly string[]): string {
-  return createHash('sha256').update(`${[...values].sort().join('\\n')}\\n`).digest('hex');
+  return createHash('sha256').update(`${[...values].sort().join('\n')}\n`).digest('hex');
 }
 
 function allReviewKeys(): string[] {
