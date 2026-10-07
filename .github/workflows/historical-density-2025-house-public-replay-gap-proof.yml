@@ -60,6 +60,15 @@ jobs:
           test "$(jq -r '.frozenSelection.candidateCount' "$f")" = 16
           test "$(jq -r '.frozenSelection.candidateSetSha256' "$f")" = c756fa9d80e7914e579d1bb43e2dc3c3d730ad221e0f8185dc2de2ccffc2c37a
           test "$(jq -r '.summary.candidates' "$f")" = 16
+          test "$(jq -r '.summary.sourceNativeReplayable' "$f")" = 15
+          test "$(jq -r '.summary.replayableSetSha256' "$f")" = e7b97f3662dd5519c1ff3c2e19e264ffb940e1a63e309ac1fb760af98fe7a0e4
+          test "$(jq -r '.summary.explicitOutcomeUnresolved' "$f")" = 1
+          test "$(jq -r '.summary.unresolvedSetSha256' "$f")" = 5ba2565066c226be105d45c477280f491b91608066ea95c76bcd52bf1c838903
+          test "$(jq -r '.summary.memberVoteRows' "$f")" = 2125
+          test "$(jq -r '.summary.passed' "$f")" = 15
+          test "$(jq -r '.summary.failed' "$f")" = 0
+          test "$(jq -r '[.cases[] | select(.sourceNativeReplayable == false) | .compositeKey] | join(",")' "$f")" = HF2354\|2026-05-17
+          test "$(jq -r '[.cases[] | select(.sourceNativeReplayable == true) | .journal.resolutionMethod] | unique | join(",")' "$f")" = exact_bill_tally_and_explicit_result_v1
 
           test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
           test "$(jq -r '.policy.productionWrites' "$f")" = false
@@ -83,7 +92,9 @@ jobs:
             echo
             echo '- Frozen gap candidates: **16**'
             echo "- Source-native replayable: **$replayable**"
+            echo '- Replayable set SHA-256: **e7b97f3662dd5519c1ff3c2e19e264ffb940e1a63e309ac1fb760af98fe7a0e4**'
             echo "- Explicit Journal outcome unresolved: **$unresolved**"
+            echo '- Unresolved case: **HF2354 | 2026-05-17**'
             echo "- Public member-vote rows captured: **$(jq -r '.summary.memberVoteRows' "$f")**"
             echo "- Explicit passes: **$(jq -r '.summary.passed' "$f")**"
             echo "- Explicit failures: **$(jq -r '.summary.failed' "$f")**"
