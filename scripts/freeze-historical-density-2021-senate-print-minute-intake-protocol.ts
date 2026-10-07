@@ -20,6 +20,8 @@ const CSV_SHA256 =
   '323c8be6cd874115b4e8601343eebec96a705be2e1670ef360ca7c2970a334d9';
 const MARKDOWN_SHA256 =
   '033e9d5c45abad9d378a4ad3d351b9299dc4f378bfe86fc791bd1cb666e83bc3';
+const EXPECTED_PROTOCOL_PROOF =
+  'b8dad4d70a696ddc8d3c32bbc831710cabcc1e8f00a7b633af16773427837bbf';
 
 function sha256(value: string): string {
   return createHash('sha256').update(value).digest('hex');
@@ -99,9 +101,13 @@ const proofPayload = {
   currentState: protocol.currentState,
   policy: protocol.policy,
 };
+const protocolProofSha256 = sha256(JSON.stringify(proofPayload));
+if (protocolProofSha256 !== EXPECTED_PROTOCOL_PROOF) {
+  throw new Error(`Pinned Senate print-minute intake protocol proof drifted: ${protocolProofSha256}`);
+}
 const output = {
   ...protocol,
-  protocolProofSha256: sha256(JSON.stringify(proofPayload)),
+  protocolProofSha256,
 };
 mkdirSync(dirname(outputPath), { recursive: true });
 writeFileSync(outputPath, JSON.stringify(output, null, 2) + '\n', 'utf8');
