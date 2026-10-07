@@ -1,0 +1,170 @@
+name: Freeze 2025 House replay gap Quick support
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - audit/2025-house-replay-gap16-readiness
+    paths:
+      - data/evaluation/historical-density-2025-house-replay-gap16-support-plan-v1.json
+      - scripts/freeze-historical-density-2025-house-replay-gap16-support.ts
+      - .github/workflows/historical-density-2025-house-replay-gap16-support.yml
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2025-house-replay-gap16-support-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: team_Ayjs9f3ahL8cNptN9huz7G12
+      VERCEL_PROJECT_ID: prj_ahLcbRLMMwZD6LzyuO61aOTnnb8j
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-fund --no-audit
+
+      - name: Verify frozen support protocol
+        shell: bash
+        run: |
+          set -euo pipefail
+          plan='data/evaluation/historical-density-2025-house-replay-gap16-support-plan-v1.json'
+          test "$(jq -r '.schemaVersion' "$plan")" = historical-density-2025-house-replay-gap16-support-plan-v1
+          test "$(jq -r '.issue' "$plan")" = 718
+          test "$(jq -r '.canonicalInputs.historicalAsOfMatrix.artifactId' "$plan")" = 11252079484
+          test "$(jq -r '.canonicalInputs.outcomes.artifactId' "$plan")" = 11483367972
+          test "$(jq -r '.snapshotProtocol.canonicalParityGate.required' "$plan")" = true
+          test "$(jq -r '.snapshotProtocol.canonicalParityGate.exactCanonicalRowKeySetRequired' "$plan")" = true
+          test "$(jq -r '.snapshotProtocol.canonicalParityGate.probabilityTolerance' "$plan")" = 1e-12
+          test "$(jq -r '.snapshotProtocol.gapEventPresenceGate.expectedExactBillDateMatchesInCurrentLoader' "$plan")" = 0
+          test "$(jq -r '.snapshotProtocol.extensionRule.eligibleOutcomeCompleteEvents' "$plan")" = 15
+          test "$(jq -r '.snapshotProtocol.extensionRule.targetSelectionMayChangeAfterSnapshot' "$plan")" = false
+          test "$(jq -r '.snapshotProtocol.productionDatabaseReadOnly' "$plan")" = true
+          test "$(jq -r '.snapshotProtocol.productionWrites' "$plan")" = false
+          test "$(jq -r '.snapshotProtocol.environmentDetails.vercelDeployment' "$plan")" = false
+
+      - name: Materialize canonical historical matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11252079484/zip > "$RUNNER_TEMP/historical-as-of.zip"
+          echo "22e8944cffc6fda553b05ea6ad5e92400d35fc01d83177efdd5d1204dd3c5a6f  $RUNNER_TEMP/historical-as-of.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/historical-as-of"
+          unzip -q "$RUNNER_TEMP/historical-as-of.zip"             historical-as-of-matrix-v1-manifest.json             historical-as-of-matrix-v1.ndjson.gz             -d "$RUNNER_TEMP/historical-as-of"
+
+      - name: Materialize canonical gap outcomes
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11483367972/zip > "$RUNNER_TEMP/gap16-outcomes.zip"
+          echo "2415268dd0f3a0fb5cea4e03eb22e6e74ee1f1efdaa8ce4dd8b8ea743e8659ba  $RUNNER_TEMP/gap16-outcomes.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/gap16-outcomes"
+          unzip -q "$RUNNER_TEMP/gap16-outcomes.zip"             historical-density-2025-house-replay-gap16-outcomes-v1.json             -d "$RUNNER_TEMP/gap16-outcomes"
+
+      - name: Read production environment privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${VERCEL_TOKEN:-}"
+          umask 077
+          for attempt in 1 2 3; do
+            if npx --yes vercel@59.13.1 env pull "$RUNNER_TEMP/votepredict-production.env" --environment=production --yes --token "$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-pull.log" 2>&1; then
+              exit 0
+            fi
+            if [ "$attempt" != 3 ]; then sleep 5; fi
+          done
+          echo 'Could not read the VotePredict production environment. No support snapshot was run.'
+          exit 1
+
+      - name: Freeze read-only Quick support snapshot
+        env:
+          VOTEPREDICT_GAP16_SUPPORT_PLAN_PATH: data/evaluation/historical-density-2025-house-replay-gap16-support-plan-v1.json
+          VOTEPREDICT_HISTORICAL_AS_OF_MANIFEST_PATH: ${{ runner.temp }}/historical-as-of/historical-as-of-matrix-v1-manifest.json
+          VOTEPREDICT_HISTORICAL_AS_OF_MATRIX_PATH: ${{ runner.temp }}/historical-as-of/historical-as-of-matrix-v1.ndjson.gz
+          VOTEPREDICT_GAP16_OUTCOMES_PATH: ${{ runner.temp }}/gap16-outcomes/historical-density-2025-house-replay-gap16-outcomes-v1.json
+          VOTEPREDICT_PRODUCTION_ENV_FILE: ${{ runner.temp }}/votepredict-production.env
+          VOTEPREDICT_GAP16_SUPPORT_OUTPUT_DIR: ${{ runner.temp }}/gap16-support
+        run: node --import tsx scripts/freeze-historical-density-2025-house-replay-gap16-support.ts
+
+      - name: Verify support boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          dir="$RUNNER_TEMP/gap16-support"
+          manifest="$dir/historical-density-2025-house-replay-gap16-support-manifest-v1.json"
+          snapshot="$dir/historical-density-2025-house-replay-gap16-support-snapshot-v1.json.gz"
+
+          test -s "$snapshot"
+          test "$(jq -r '.schemaVersion' "$manifest")" = historical-density-2025-house-replay-gap16-support-manifest-v1
+          test "$(jq -r '.issue' "$manifest")" = 718
+          test "$(jq -r '.frozenInputs.canonicalMatrix.artifactId' "$manifest")" = 11252079484
+          test "$(jq -r '.frozenInputs.gapOutcomes.artifactId' "$manifest")" = 11483367972
+
+          test "$(jq -r '.canonicalParity.passed' "$manifest")" = true
+          test "$(jq -r '.canonicalParity.canonicalRows' "$manifest")" = 135457
+          test "$(jq -r '.canonicalParity.currentRows' "$manifest")" = 135457
+          test "$(jq -r '.canonicalParity.missingRows' "$manifest")" = 0
+          test "$(jq -r '.canonicalParity.extraRows' "$manifest")" = 0
+          test "$(jq -r '.canonicalParity.fieldMismatches' "$manifest")" = 0
+
+          test "$(jq -r '.gapOverlayReadiness.exactGapEventsPresentInCurrentLoader' "$manifest")" = 0
+          test "$(jq -r '.gapOverlayReadiness.frozenGapEvents' "$manifest")" = 16
+          test "$(jq -r '.gapOverlayReadiness.outcomeCompleteEvents' "$manifest")" = 15
+          test "$(jq -r '.gapOverlayReadiness.excludedUntilExplicitOutcome | join(",")' "$manifest")" = 'HF2354|2026-05-17'
+          test "$(jq -r '.gapOverlayReadiness.readyForInMemoryOverlayConstruction' "$manifest")" = true
+          test "$(jq -r '.gapOverlayReadiness.readyForScoring' "$manifest")" = false
+
+          test "$(jq -r '.policy.productionDatabaseQueried' "$manifest")" = true
+          test "$(jq -r '.policy.productionDatabaseReadOnly' "$manifest")" = true
+          test "$(jq -r '.policy.productionWrites' "$manifest")" = false
+          test "$(jq -r '.policy.vercelEnvironmentRead' "$manifest")" = true
+          test "$(jq -r '.policy.vercelDeployment' "$manifest")" = false
+          test "$(jq -r '.policy.targetSelectionUsesCurrentProductionState' "$manifest")" = false
+          test "$(jq -r '.policy.modelFitting' "$manifest")" = none
+          test "$(jq -r '.policy.servingChanged' "$manifest")" = false
+
+          {
+            echo '## Replay-gap Quick support snapshot'
+            echo
+            echo '- Canonical parity rows: **135,457 / 135,457**'
+            echo '- Missing / extra / field mismatches: **0 / 0 / 0**'
+            echo "- Full passage events: **$(jq -r '.productionSnapshot.events' "$manifest")**"
+            echo "- Dated bill versions: **$(jq -r '.productionSnapshot.versions' "$manifest")**"
+            echo "- Membership rows: **$(jq -r '.productionSnapshot.memberships' "$manifest")**"
+            echo "- Decisive historical passage votes: **$(jq -r '.productionSnapshot.historicalVotes' "$manifest")**"
+            echo "- Replay targets: **$(jq -r '.productionSnapshot.targets' "$manifest")**"
+            echo "- Support snapshot SHA: `$(jq -r '.productionSnapshot.supportSnapshotCanonicalSha256' "$manifest")`"
+            echo "- Support gzip SHA: `$(jq -r '.productionSnapshot.supportSnapshotGzipSha256' "$manifest")`"
+            echo '- Frozen gap events already present in loader: **0**'
+            echo '- Outcome-complete extension events: **15**'
+            echo '- Production DB mode: **read-only**'
+            echo '- Production writes: **none**'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2025-house-replay-gap16-support-v1
+          path: ${{ runner.temp }}/gap16-support/*
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Remove temporary credentials
+        if: always()
+        shell: bash
+        run: |
+          rm -f             "$RUNNER_TEMP/votepredict-production.env"             "$RUNNER_TEMP/vercel-pull.log"
