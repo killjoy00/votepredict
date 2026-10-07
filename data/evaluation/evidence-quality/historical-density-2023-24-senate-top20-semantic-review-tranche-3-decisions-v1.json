@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "historical-density-2023-24-senate-top20-semantic-review-tranche-3-decisions-v1",
+  "issue": 718,
+  "session": "2023-2024",
+  "trancheId": "SENATE-2023-24-TOP20-SEMANTIC-003",
+  "frozenReviewPacket": {
+    "reviewRows": 11,
+    "reviewKeySha256": "4836a5270964fef768300dd2eec26f8e331f5c0840407cb1c35fa56ec73e8e04",
+    "sourcePdfSha256": "aba65fd2fd0f354c328c2619c5f96e6c10e712eeb6be34c6d0909e016010b9e6",
+    "sourceTextSha256": "7167f9d6ba01d7852f36484cd1060ca3e4b3731a70035b8766707aa0a8ce933a",
+    "reviewPacketProofSha256": "7ca3806ab4390585869462c4182e6e13c344c96f7871cec465c877b3961e4038"
+  },
+  "decisionRationales": {
+    "full_text_review_no_candidate_bill_support": "Full frozen minute reviewed. This candidate bill is neither explicitly mentioned nor otherwise unambiguously identifiable in the source text; committee/referral overlap alone is not treated as applicability.",
+    "candidate_bill_explicitly_present_but_only_procedural_actions_recorded": "Full frozen minute reviewed. The candidate bill is explicit, but the minute records motions, amendments, substitution, or recommend-to-pass procedure rather than an attributable directional member statement under the existing Senate semantic-review contract."
+  },
+  "notApplicableReviewKeys": [
+    "aba65fd2fd0f354c328c2619c5f96e6c10e712eeb6be34c6d0909e016010b9e6|7167f9d6ba01d7852f36484cd1060ca3e4b3731a70035b8766707aa0a8ce933a|58f23bd0-1733-4faa-99be-7e7142a85a10|1574cb15-6632-48a9-b7c1-232802f2a423",
+    "aba65fd2fd0f354c328c2619c5f96e6c10e712eeb6be34c6d0909e016010b9e6|7167f9d6ba01d7852f36484cd1060ca3e4b3731a70035b8766707aa0a8ce933a|9677144b-c648-4054-9632-a7da6f193e74|9bfa8538-104d-4624-bca7-9e73364f0102",
+    "aba65fd2fd0f354c328c2619c5f96e6c10e712eeb6be34c6d0909e016010b9e6|7167f9d6ba01d7852f36484cd1060ca3e4b3731a70035b8766707aa0a8ce933a|fa958cec-3f46-4da1-a5d8-f8a3fa117351|f9bf4271-251c-4626-bec8-6f998086b00a",
+    "aba65fd2fd0f354c328c2619c5f96e6c10e712eeb6be34c6d0909e016010b9e6|7167f9d6ba01d7852f36484cd1060ca3e4b3731a70035b8766707aa0a8ce933a|dbdaf69e-4334-4f43-b612-b726940be189|289b613c-0200-47e4-8e7a-bfbcece1b6b6",
+    "aba65fd2fd0f354c328c2619c5f96e6c10e712eeb6be34c6d0909e016010b9e6|7167f9d6ba01d7852f36484cd1060ca3e4b3731a70035b8766707aa0a8ce933a|f4146b29-d005-4f21-a1f1-1e6e50b36acf|289b613c-0200-47e4-8e7a-bfbcece1b6b6",
+    "aba65fd2fd0f354c328c2619c5f96e6c10e712eeb6be34c6d0909e016010b9e6|7167f9d6ba01d7852f36484cd1060ca3e4b3731a70035b8766707aa0a8ce933a|97876b4d-ca6d-498b-bc44-27f4b57b7255|561d6ca4-f181-4aa3-8f91-43b872f61de9",
+    "aba65fd2fd0f354c328c2619c5f96e6c10e712eeb6be34c6d0909e016010b9e6|7167f9d6ba01d7852f36484cd1060ca3e4b3731a70035b8766707aa0a8ce933a|25d099a7-18bc-448f-840c-0e257d941bb3|561d6ca4-f181-4aa3-8f91-43b872f61de9",
+    "aba65fd2fd0f354c328c2619c5f96e6c10e712eeb6be34c6d0909e016010b9e6|7167f9d6ba01d7852f36484cd1060ca3e4b3731a70035b8766707aa0a8ce933a|ad84d5aa-0b35-4d99-8a6e-5cb228c360db|1574cb15-6632-48a9-b7c1-232802f2a423",
+    "aba65fd2fd0f354c328c2619c5f96e6c10e712eeb6be34c6d0909e016010b9e6|7167f9d6ba01d7852f36484cd1060ca3e4b3731a70035b8766707aa0a8ce933a|98ebdca5-bfa9-42fb-b95b-47cc42f8e8a8|289b613c-0200-47e4-8e7a-bfbcece1b6b6",
+    "aba65fd2fd0f354c328c2619c5f96e6c10e712eeb6be34c6d0909e016010b9e6|7167f9d6ba01d7852f36484cd1060ca3e4b3731a70035b8766707aa0a8ce933a|8be92af2-0fb8-48ce-849d-36edb3c43e37|9bfa8538-104d-4624-bca7-9e73364f0102",
+    "aba65fd2fd0f354c328c2619c5f96e6c10e712eeb6be34c6d0909e016010b9e6|7167f9d6ba01d7852f36484cd1060ca3e4b3731a70035b8766707aa0a8ce933a|fa640df0-6adb-4363-b736-960e0e9220b0|9bfa8538-104d-4624-bca7-9e73364f0102"
+  ],
+  "billContextRows": [],
+  "directionalRows": [],
+  "ambiguousFailClosedRows": [],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "targetVoteOutcomesRead": false,
+    "outcomeUse": "none",
+    "committeeMembershipUsedAsStance": false,
+    "attendanceUsedAsStance": false,
+    "proceduralActionUsedAsDirectionalStance": false,
+    "ambiguousDefaultsToFailClosed": true,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "modelWeightChanged": false,
+    "servingChanged": false,
+    "vercelUsed": false,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0
+  }
+}
