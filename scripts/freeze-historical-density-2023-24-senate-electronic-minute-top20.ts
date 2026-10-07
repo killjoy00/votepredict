@@ -167,7 +167,11 @@ async function main() {
     || selectionProofSha256!==EXPECTED_SELECTION_PROOF
   ) throw new Error('Pinned top-20 Senate minute selection drifted');
 
-  const fetched=await mapLimit(selected,CONCURRENCY,async(row)=>{
+  const fetched=await mapLimit<Json, Json & {
+    finalUrl:string;
+    bytes:Uint8Array;
+    contentSha256:string;
+  }>(selected,CONCURRENCY,async(row)=>{
     const pdf=await fetchPdf(String(row.minuteUrl));
     return {...row,finalUrl:pdf.finalUrl,bytes:pdf.bytes,contentSha256:pdf.contentSha256};
   });
@@ -178,11 +182,14 @@ async function main() {
     writeFileSync(resolve(pdfDir,`${row.contentSha256}.pdf`),row.bytes);
   }
 
-  const documents=fetched.map(({bytes:pdfBytes,...row})=>({
-    ...row,
-    bytes:pdfBytes.byteLength,
-    archivedRelativePath:`pdfs/${row.contentSha256}.pdf`,
-  }));
+  const documents: Json[] = fetched.map((row)=>{
+    const pdfBytes=row.bytes as Uint8Array;
+    return {
+      ...row,
+      bytes:pdfBytes.byteLength,
+      archivedRelativePath:`pdfs/${row.contentSha256}.pdf`,
+    };
+  });
   const sourceBytesProofSha256=sha256(
     documents.map((row)=>[
       row.rank,row.minuteUrl,row.finalUrl,row.contentSha256,row.bytes,
@@ -209,8 +216,8 @@ async function main() {
       selectionProofSha256,
     },
     sourceFreeze:{
-      documents:documents.length,
-      totalBytes:documents.reduce((sum,row)=>sum+row.bytes,0),
+      documentCount:documents.length,
+      totalBytes:documents.reduce((sum,row)=>sum+Number(row.bytes),0),
       sourceBytesProofSha256,
       documents,
     },
@@ -246,7 +253,7 @@ async function main() {
   console.log(JSON.stringify({
     senate2023_24Top20MinuteFreeze:{
       selection:report.selection,
-      documents:report.sourceFreeze.documents,
+      documents:report.sourceFreeze.documentCount,
       totalBytes:report.sourceFreeze.totalBytes,
       sourceBytesProofSha256,
       targetVoteOutcomesRead:false,
