@@ -62,7 +62,7 @@ jobs:
           test "$(jq -r '.selection.selectedTargetEvents' "$f")" = 97
           test "$(jq -r '.selection.selectedUncoveredRows' "$f")" = 6498
           test "$(jq -r '.selection.selectionProofSha256' "$f")" = 1a6bc27b8b8bb433b060abfe213f1db7ad3463902536be5f741ed166b9b84e0f
-          test "$(jq -r '.sourceFreeze.documents' "$f")" = 20
+          test "$(jq -r '.sourceFreeze.documentCount' "$f")" = 20
           test "$(find "$RUNNER_TEMP/freeze/pdfs" -type f -name '*.pdf' | wc -l)" = 20
           test "$(jq -r '[.sourceFreeze.documents[].contentSha256 | length] | all(. == 64)' "$f")" = true
           test "$(jq -r '.interpretation.exactOfficialPdfBytesFrozen' "$f")" = true
