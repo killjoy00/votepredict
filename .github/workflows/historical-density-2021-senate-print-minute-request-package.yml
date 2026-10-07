@@ -1,0 +1,119 @@
+name: Freeze 2021 Senate print minute request package
+
+on:
+  pull_request:
+    paths:
+      - scripts/freeze-historical-density-2021-senate-print-minute-request-package.ts
+      - .github/workflows/historical-density-2021-senate-print-minute-request-package.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/freeze-historical-density-2021-senate-print-minute-request-package.ts
+      - .github/workflows/historical-density-2021-senate-print-minute-request-package.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2021-senate-print-minute-request-package-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize canonical Senate print-minute priority
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11496154614/zip > "$RUNNER_TEMP/priority.zip"
+          echo "7fe1b76bf95c5a58cb2930f4a8392d254038a1a43196a687e184bd7ac19f4cf0  $RUNNER_TEMP/priority.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/priority"
+          unzip -q "$RUNNER_TEMP/priority.zip" \
+            historical-density-2021-senate-print-minute-target-priority-v1.json \
+            -d "$RUNNER_TEMP/priority"
+
+      - name: Freeze authoritative acquisition request package
+        env:
+          VOTEPREDICT_SENATE_2021_PRIORITY_PATH: ${{ runner.temp }}/priority/historical-density-2021-senate-print-minute-target-priority-v1.json
+          VOTEPREDICT_SENATE_2021_REQUEST_OUTPUT_DIR: ${{ runner.temp }}/request
+        run: node --import tsx scripts/freeze-historical-density-2021-senate-print-minute-request-package.ts
+
+      - name: Verify request-package boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/request/historical-density-2021-senate-print-minute-request-package-v1.json"
+
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2021-senate-print-minute-request-package-v1
+          test "$(jq -r '.issue' "$f")" = 718
+          test "$(jq -r '.source.runId' "$f")" = 37651575088
+          test "$(jq -r '.source.artifactId' "$f")" = 11496154614
+          test "$(jq -r '.source.sourceCommitSha' "$f")" = a0fc341d65bc4e1b901f1eb23676042c9a427033
+
+          test "$(jq -r '.request.committees' "$f")" = 10
+          test "$(jq -r '.request.targetAssociations' "$f")" = 85
+          test "$(jq -r '.request.uniqueTargetEvents' "$f")" = 62
+          test "$(jq -r '.request.uniqueTargetBills' "$f")" = 57
+          test "$(jq -r '.request.selectedCommitteeRecordingPages' "$f")" = 208
+          test "$(jq -r '.request.selectedUncoveredRows' "$f")" = 4154
+          test "$(jq -r '.request.requestAssociationProofSha256' "$f")" = 6d3ecfa7d433e8a3f3c835ecc9934a0b68cab53f213501b333e873d32d29a1d0
+          test "$(jq -r '.request.groups | length' "$f")" = 10
+          test "$(jq -r '.outputs.csvSha256' "$f")" = 323c8be6cd874115b4e8601343eebec96a705be2e1670ef360ca7c2970a334d9
+          test "$(jq -r '.outputs.markdownSha256' "$f")" = 033e9d5c45abad9d378a4ad3d351b9299dc4f378bfe86fc791bd1cb666e83bc3
+
+          test -s "$RUNNER_TEMP/request/historical-density-2021-senate-print-minute-request-targets-v1.csv"
+          test -s "$RUNNER_TEMP/request/historical-density-2021-senate-print-minute-request-brief-v1.md"
+          test "$(wc -l < "$RUNNER_TEMP/request/historical-density-2021-senate-print-minute-request-targets-v1.csv")" = 86
+
+          test "$(jq -r '.interpretation.acquisitionOnly' "$f")" = true
+          test "$(jq -r '.interpretation.requestDoesNotAssertMinuteExists' "$f")" = true
+          test "$(jq -r '.interpretation.returnedMinuteDoesNotAutomaticallyBecomeEvidence' "$f")" = true
+
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.memberStanceInferred' "$f")" = false
+          test "$(jq -r '.policy.referralTreatedAsEvidence' "$f")" = false
+          test "$(jq -r '.policy.mediaPresenceTreatedAsEvidence' "$f")" = false
+          test "$(jq -r '.policy.printMinuteContentAcquired' "$f")" = false
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+
+          {
+            echo '## 2021 Senate print-minute acquisition request package'
+            echo
+            echo '- Priority committees: **10**'
+            echo '- Committee-target associations: **85**'
+            echo '- Unique target events / bills: **62 / 57**'
+            echo '- Selected committee recording pages: **208**'
+            echo '- Frozen uncovered-row opportunity: **4,154**'
+            echo '- Request association proof: `6d3ecfa7d433e8a3f3c835ecc9934a0b68cab53f213501b333e873d32d29a1d0`'
+            echo '- CSV SHA: `323c8be6cd874115b4e8601343eebec96a705be2e1670ef360ca7c2970a334d9`'
+            echo '- Markdown SHA: `033e9d5c45abad9d378a4ad3d351b9299dc4f378bfe86fc791bd1cb666e83bc3`'
+            echo '- Acquisition only: **yes**'
+            echo '- Target outcomes read: **no**'
+            echo '- Evidence/features written: **no**'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2021-senate-print-minute-request-package-v1
+          path: ${{ runner.temp }}/request/*
+          if-no-files-found: error
+          retention-days: 90
