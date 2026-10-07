@@ -8,7 +8,7 @@ const path = resolve(
 );
 const decisions = JSON.parse(readFileSync(path, 'utf8'));
 
-test('tranche-4 decisions pin the exact 325-candidate set', () => {
+test('tranche-4 decisions pin the exact 212-candidate set', () => {
   assert.equal(
     decisions.schemaVersion,
     'historical-density-2025-house-applicability-tranche-4-decisions-v1',
