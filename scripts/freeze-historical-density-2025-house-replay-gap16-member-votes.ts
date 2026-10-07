@@ -55,6 +55,7 @@ type FrozenCandidate = {
   identifier: string;
   occurredOn: string;
   externalKey: string;
+  journalPage: string;
   decisiveVotes: number;
   motionText: string;
 };
@@ -99,6 +100,14 @@ function canonicalIdentifier(value: string): string {
   const match = value.replace(/\s+/g, '').toUpperCase().match(/^(HF|SF)0*(\d+)$/);
   if (!match) throw new Error(`Unsupported bill identifier: ${value}`);
   return `${match[1]}${Number(match[2])}`;
+}
+
+function frozenJournalPage(externalKey: string): string {
+  const parts = externalKey.split(':');
+  if (parts.length !== 5 || !parts[3]) {
+    throw new Error(`Malformed frozen House external key: ${externalKey}`);
+  }
+  return parts[3];
 }
 
 function canonicalPersonName(value: string): string {
@@ -178,6 +187,7 @@ function verifyGap16(value: Json): FrozenCandidate[] {
     identifier: canonicalIdentifier(String(row.identifier)),
     occurredOn: String(row.occurredOn),
     externalKey: String(row.externalKey),
+    journalPage: frozenJournalPage(String(row.externalKey)),
     decisiveVotes: Number(row.decisiveVotes),
     motionText: String(row.motionText),
   }));
@@ -295,19 +305,32 @@ async function main(): Promise<void> {
   for (const row of details) detailByIdentifier.set(row.identifier, row.events);
 
   const reconstructed = candidates.map((candidate) => {
-    const exact = (detailByIdentifier.get(candidate.identifier) ?? []).filter(
+    const pageEvents = detailByIdentifier.get(candidate.identifier) ?? [];
+    const exactExternalKey = pageEvents.filter(
       (event) => event.externalKey === candidate.externalKey,
     );
-    if (exact.length !== 1) {
+    const stableIdentity = pageEvents.filter(
+      (event) =>
+        event.isPassage
+        && canonicalIdentifier(String(event.billIdentifier)) === candidate.identifier
+        && event.occurredOn === candidate.occurredOn
+        && String(event.journalPage ?? 'no-journal') === candidate.journalPage
+        && event.yeaCount + event.nayCount === candidate.decisiveVotes
+        && event.motionText === candidate.motionText,
+    );
+    const selected = exactExternalKey.length === 1 ? exactExternalKey : stableIdentity;
+    if (selected.length !== 1) {
       throw new Error(
-        `Expected one exact official event for ${candidate.compositeKey}; got ${exact.length}`,
+        `Expected one stable official event for ${candidate.compositeKey}; `
+        + `exactExternalKey=${exactExternalKey.length}, stableIdentity=${stableIdentity.length}`,
       );
     }
-    const event = exact[0]!;
+    const event = selected[0]!;
     if (
       !event.isPassage
       || canonicalIdentifier(String(event.billIdentifier)) !== candidate.identifier
       || event.occurredOn !== candidate.occurredOn
+      || String(event.journalPage ?? 'no-journal') !== candidate.journalPage
       || event.yeaCount + event.nayCount !== candidate.decisiveVotes
       || event.motionText !== candidate.motionText
     ) {
@@ -375,7 +398,10 @@ async function main(): Promise<void> {
       compositeKey: candidate.compositeKey,
       identifier: candidate.identifier,
       occurredOn: candidate.occurredOn,
-      officialExternalKey: candidate.externalKey,
+      frozenOfficialExternalKey: candidate.externalKey,
+      currentParsedExternalKey: event.externalKey,
+      externalKeyExactMatch: event.externalKey === candidate.externalKey,
+      journalPage: event.journalPage ?? null,
       sourceUrl: event.sourceUrl,
       motionText: event.motionText,
       voteKind: event.voteKind,
@@ -396,20 +422,23 @@ async function main(): Promise<void> {
   const eventProofSha256 = setSha(
     reconstructed.map(
       (event) =>
-        `${event.compositeKey}|${event.officialExternalKey}|${event.yeaCount}|${event.nayCount}|${sha256(event.motionText)}`,
+        `${event.compositeKey}|${event.frozenOfficialExternalKey}|${event.journalPage ?? 'no-journal'}|${event.yeaCount}|${event.nayCount}|${sha256(event.motionText)}`,
     ),
   );
   const memberVoteRowSha256 = setSha(
     reconstructed.flatMap((event) =>
       event.memberVotes.map(
         (vote) =>
-          `${event.officialExternalKey}|${vote.membershipId}|${vote.legislatorId}|${vote.choice}|${vote.sourceOrdinal}|${normalizeMemberName(vote.sourceName)}`,
+          `${event.frozenOfficialExternalKey}|${vote.membershipId}|${vote.legislatorId}|${vote.choice}|${vote.sourceOrdinal}|${normalizeMemberName(vote.sourceName)}`,
       )
     ),
   );
   const membershipCoverage = new Set(
     reconstructed.flatMap((event) => event.memberVotes.map((vote) => vote.membershipId)),
   );
+  const externalKeyOrdinalDriftEvents = reconstructed.filter(
+    (event) => !event.externalKeyExactMatch,
+  ).length;
 
   const report = {
     schemaVersion: 'historical-density-2025-house-replay-gap16-member-votes-v1',
@@ -440,6 +469,7 @@ async function main(): Promise<void> {
       events: reconstructed.length,
       totalMemberVotes,
       uniqueMembershipsObserved: membershipCoverage.size,
+      externalKeyOrdinalDriftEvents,
       unmatchedDecisiveVoters: 0,
       ambiguousDecisiveVoters: 0,
       tallyParityEvents: reconstructed.length,
@@ -482,6 +512,7 @@ async function main(): Promise<void> {
       events: reconstructed.length,
       totalMemberVotes,
       uniqueMembershipsObserved: membershipCoverage.size,
+      externalKeyOrdinalDriftEvents,
       eventProofSha256,
       memberVoteRowSha256,
       passFailOutcomeReadOrInferred: false,
