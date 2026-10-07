@@ -46,6 +46,18 @@ jobs:
           mkdir -p "$RUNNER_TEMP/support"
           unzip -q "$RUNNER_TEMP/support.zip"             historical-density-2025-house-replay-gap16-support-manifest-v1.json             historical-density-2025-house-replay-gap16-support-snapshot-v1.json.gz             -d "$RUNNER_TEMP/support"
 
+      - name: Materialize canonical historical matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11252079484/zip > "$RUNNER_TEMP/historical-as-of.zip"
+          echo "22e8944cffc6fda553b05ea6ad5e92400d35fc01d83177efdd5d1204dd3c5a6f  $RUNNER_TEMP/historical-as-of.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/historical-as-of"
+          unzip -q "$RUNNER_TEMP/historical-as-of.zip" \
+            historical-as-of-matrix-v1-manifest.json \
+            historical-as-of-matrix-v1.ndjson.gz \
+            -d "$RUNNER_TEMP/historical-as-of"
+
       - name: Materialize canonical explicit outcomes
         shell: bash
         run: |
@@ -60,16 +72,18 @@ jobs:
           VOTEPREDICT_GAP16_SUPPORT_MANIFEST_PATH: ${{ runner.temp }}/support/historical-density-2025-house-replay-gap16-support-manifest-v1.json
           VOTEPREDICT_GAP16_SUPPORT_SNAPSHOT_PATH: ${{ runner.temp }}/support/historical-density-2025-house-replay-gap16-support-snapshot-v1.json.gz
           VOTEPREDICT_GAP16_OUTCOMES_PATH: ${{ runner.temp }}/outcomes/historical-density-2025-house-replay-gap16-outcomes-v1.json
-          VOTEPREDICT_GAP15_OVERLAY_OUTPUT: ${{ runner.temp }}/overlay/historical-density-2025-house-replay-gap15-overlay-v1.json
+          VOTEPREDICT_HISTORICAL_AS_OF_MANIFEST_PATH: ${{ runner.temp }}/historical-as-of/historical-as-of-matrix-v1-manifest.json
+          VOTEPREDICT_HISTORICAL_AS_OF_MATRIX_PATH: ${{ runner.temp }}/historical-as-of/historical-as-of-matrix-v1.ndjson.gz
+          VOTEPREDICT_GAP15_OVERLAY_OUTPUT: ${{ runner.temp }}/overlay/historical-density-2025-house-replay-gap15-overlay-v2.json
         run: node --import tsx scripts/evaluate-historical-density-2025-house-replay-gap15-overlay.ts
 
       - name: Verify overlay boundary
         shell: bash
         run: |
           set -euo pipefail
-          f="$RUNNER_TEMP/overlay/historical-density-2025-house-replay-gap15-overlay-v1.json"
+          f="$RUNNER_TEMP/overlay/historical-density-2025-house-replay-gap15-overlay-v2.json"
 
-          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-replay-gap15-overlay-v1
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-replay-gap15-overlay-v2
           test "$(jq -r '.issue' "$f")" = 718
           test "$(jq -r '.replay.version' "$f")" = historical-quick-replay-v2
           test "$(jq -r '.replay.memberHistoryHalfLifeDays' "$f")" = 180
@@ -84,6 +98,13 @@ jobs:
           test "$(jq -r '.reconstruction.frozenSupportSelectionsExact' "$f")" = true
           test "$(jq -r '.reconstruction.canonicalTargetsRebuilt' "$f")" = 1339
           test "$(jq -r '.reconstruction.canonicalTargetsChanged' "$f")" = false
+          test "$(jq -r '.reconstruction.canonicalRowsWithOverlayPresent.canonicalRows' "$f")" = 135457
+          test "$(jq -r '.reconstruction.canonicalRowsWithOverlayPresent.currentRows' "$f")" = 135457
+          test "$(jq -r '.reconstruction.canonicalRowsWithOverlayPresent.canonicalRowKeySha256' "$f")" = 3aa47101f9e4a848e293fdaa89ef853919d49826b68ae90960370c5c19e9df72
+          test "$(jq -r '.reconstruction.canonicalRowsWithOverlayPresent.currentRowKeySha256' "$f")" = 3aa47101f9e4a848e293fdaa89ef853919d49826b68ae90960370c5c19e9df72
+          test "$(jq -r '.reconstruction.canonicalRowsWithOverlayPresent.missingRows' "$f")" = 0
+          test "$(jq -r '.reconstruction.canonicalRowsWithOverlayPresent.extraRows' "$f")" = 0
+          test "$(jq -r '.reconstruction.canonicalRowsWithOverlayPresent.fieldMismatches' "$f")" = 0
 
           test "$(jq -r '.overlay.frozenGapEvents' "$f")" = 16
           test "$(jq -r '.overlay.outcomeCompleteTargets' "$f")" = 15
@@ -97,6 +118,12 @@ jobs:
           test "$(jq -r '.overlay.statusCounts | length' "$f")" = 1
           test "$(jq -r '.overlay.resultProofSha256' "$f")" = a89de23656cc3c2cfde31999703d54f60cbe86ab8bdee93962f8081d3331f2b4
           test "$(jq -r '.overlay.memberPredictionProofSha256' "$f")" = caf50b9ae2f07c2cfd0361554bb5440f11dec7b0b495c9b92768189b7cf41848
+          test "$(jq -r '[.overlay.events[].memberPredictions | length] | add' "$f")" = 1990
+          test "$(jq -r '[.overlay.events[].decisiveVoteRows | length] | add' "$f")" = 1990
+          test "$(jq -r '[.overlay.events[] | (.analogueSupport.selectedAnalogueIds | length) == .analogueSupport.selected] | all' "$f")" = true
+          test "$(jq -r '[.overlay.events[] | (.analogueSupport.selectedAnalogues | length) == .analogueSupport.selected] | all' "$f")" = true
+          test "$(jq -r '[.overlay.events[] | (.targetVersion.rawTextSha256 | length) == 64] | all' "$f")" = true
+          test "$(jq -r '.comparison.existing2025HouseReplayCohort.events > 0' "$f")" = true
           test "$(jq -r '.scorecard.overall.memberObservations' "$f")" = 1990
           test "$(jq -r '.scorecard.overall.memberPredictions' "$f")" = 1990
           test "$(jq -r '.scorecard.overall.memberCoverage' "$f")" = 1
@@ -110,6 +137,8 @@ jobs:
           test "$(jq -r '.policy.productionWrites' "$f")" = false
           test "$(jq -r '.policy.vercelUsed' "$f")" = false
           test "$(jq -r '.policy.canonicalTargetSetMutated' "$f")" = false
+          test "$(jq -r '.policy.canonicalRowsComparedToImmutableMatrix' "$f")" = true
+          test "$(jq -r '.policy.canonicalRowsUnchangedWithOverlayPresent' "$f")" = true
           test "$(jq -r '.policy.frozenSupportOnly' "$f")" = true
           test "$(jq -r '.policy.frozenOutcomeLabelsOnly' "$f")" = true
           test "$(jq -r '.policy.unresolvedOutcomeExcluded' "$f")" = 'HF2354|2026-05-17'
@@ -123,6 +152,7 @@ jobs:
             echo '- Frozen support reconstruction: **exact**'
             echo '- Canonical targets rebuilt: **1,339**'
             echo '- Canonical targets mutated: **no**'
+            echo '- Canonical 135,457 rows changed with overlay present: **no**'
             echo '- Overlay targets: **15**'
             echo '- Fail-closed excluded: **HF2354 · 2026-05-17**'
             echo '- Replay status counts: `{"replayable":15}`'
@@ -142,7 +172,7 @@ jobs:
 
       - uses: actions/upload-artifact@v7
         with:
-          name: historical-density-2025-house-replay-gap15-overlay-v1
+          name: historical-density-2025-house-replay-gap15-overlay-v2
           path: ${{ runner.temp }}/overlay/*
           if-no-files-found: error
           retention-days: 90
