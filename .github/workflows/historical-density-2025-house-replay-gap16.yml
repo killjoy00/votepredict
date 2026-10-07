@@ -1,0 +1,113 @@
+name: Freeze 2025 House replay gap 16
+
+on:
+  pull_request:
+    paths:
+      - scripts/freeze-historical-density-2025-house-replay-gap16.ts
+      - .github/workflows/historical-density-2025-house-replay-gap16.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/freeze-historical-density-2025-house-replay-gap16.ts
+      - .github/workflows/historical-density-2025-house-replay-gap16.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2025-house-replay-gap16-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize canonical House universe audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11457484096/zip > "$RUNNER_TEMP/universe-audit.zip"
+          echo "9047ac177fcabc03b2b80662ca0a2475d07fef1e4ea8a828643c1f8aeb6020e1  $RUNNER_TEMP/universe-audit.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/universe-audit"
+          unzip -q "$RUNNER_TEMP/universe-audit.zip"             historical-density-2025-house-vote-universe-gap-audit-v1.json             -d "$RUNNER_TEMP/universe-audit"
+
+      - name: Materialize original historical replay matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11252079484/zip > "$RUNNER_TEMP/historical-as-of.zip"
+          echo "22e8944cffc6fda553b05ea6ad5e92400d35fc01d83177efdd5d1204dd3c5a6f  $RUNNER_TEMP/historical-as-of.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/historical-as-of"
+          unzip -q "$RUNNER_TEMP/historical-as-of.zip"             historical-as-of-matrix-v1-manifest.json             historical-as-of-matrix-v1.ndjson.gz             -d "$RUNNER_TEMP/historical-as-of"
+
+      - name: Freeze outcome-blind replay expansion candidates
+        env:
+          VOTEPREDICT_2025_HOUSE_UNIVERSE_AUDIT_PATH: ${{ runner.temp }}/universe-audit/historical-density-2025-house-vote-universe-gap-audit-v1.json
+          VOTEPREDICT_HISTORICAL_AS_OF_MANIFEST_PATH: ${{ runner.temp }}/historical-as-of/historical-as-of-matrix-v1-manifest.json
+          VOTEPREDICT_HISTORICAL_AS_OF_MATRIX_PATH: ${{ runner.temp }}/historical-as-of/historical-as-of-matrix-v1.ndjson.gz
+          VOTEPREDICT_2025_HOUSE_REPLAY_GAP16_OUTPUT: ${{ runner.temp }}/gap16/historical-density-2025-house-replay-gap16-v1.json
+        run: node --import tsx scripts/freeze-historical-density-2025-house-replay-gap16.ts
+
+      - name: Verify replay-gap boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/gap16/historical-density-2025-house-replay-gap16-v1.json"
+
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-replay-gap16-v1
+          test "$(jq -r '.issue' "$f")" = 718
+          test "$(jq -r '.session' "$f")" = 2025-2026
+          test "$(jq -r '.chamber' "$f")" = house
+          test "$(jq -r '.frozenInputs.universeAudit.runId' "$f")" = 37563491641
+          test "$(jq -r '.frozenInputs.universeAudit.artifactId' "$f")" = 11457484096
+          test "$(jq -r '.frozenInputs.originalHistoricalAsOfMatrix.artifactId' "$f")" = 11252079484
+          test "$(jq -r '.identity.candidateCount' "$f")" = 16
+          test "$(jq -r '.identity.compositeKeySha256' "$f")" = c756fa9d80e7914e579d1bb43e2dc3c3d730ad221e0f8185dc2de2ccffc2c37a
+          test "$(jq -r '.identity.officialExternalKeySha256' "$f")" = 0b4e9af1eb5af5d9677035238ac7315d2e318f790d1ef53a3944a988978b7063
+          test "$(jq -r '.identity.exactOriginalReplayMatches' "$f")" = 0
+          test "$(jq -r '.identity.candidateBillsPresentElsewhereInOriginalReplay | join(",")' "$f")" = HF3718
+          test "$(jq -r '.candidates | length' "$f")" = 16
+          jq -e '[.candidates[].decisiveVotes] | all(. >= 20)' "$f" >/dev/null
+          jq -e '[.candidates[].strictPreVoteVersion.strictlyBeforeVoteDate] | all(. == true)' "$f" >/dev/null
+          jq -e '[.candidates[].originalReplayMatrix.exactEventPresent] | all(. == false)' "$f" >/dev/null
+          jq -e '[.candidates[].disposition] | all(. == "candidate_for_replay_corpus_rebuild_investigation")' "$f" >/dev/null
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.passFailOutcomeReadOrInferred' "$f")" = false
+          test "$(jq -r '.policy.outcomeUseForSemanticsOrModeling' "$f")" = none
+          test "$(jq -r '.policy.targetSelectionUsesOutcomes' "$f")" = false
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+
+          {
+            echo '## 2025-26 House replay gap — 16 candidate events'
+            echo
+            echo '- Candidate events: **16**'
+            echo '- Composite-key SHA: `c756fa9d80e7914e579d1bb43e2dc3c3d730ad221e0f8185dc2de2ccffc2c37a`'
+            echo '- Official external-key SHA: `0b4e9af1eb5af5d9677035238ac7315d2e318f790d1ef53a3944a988978b7063`'
+            echo "- Strict-version proof SHA: `$(jq -r '.identity.strictVersionProofSha256' "$f")`"
+            echo '- Exact events already in original replay matrix: **0**'
+            echo '- Candidate bills present elsewhere in original replay: **HF3718 only**'
+            echo '- Production DB queried: **no**'
+            echo '- Pass/fail outcome read/inferred: **no**'
+            echo '- Next step: source-reconstructed replay-corpus extension evaluation for these 16 as one batch.'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2025-house-replay-gap16-v1
+          path: ${{ runner.temp }}/gap16/*
+          if-no-files-found: error
+          retention-days: 90
