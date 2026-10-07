@@ -471,10 +471,6 @@ async function main(): Promise<void> {
     env('VOTEPREDICT_GAP16_SUPPORT_SNAPSHOT_PATH'),
   );
   const outcomes = parseOutcomes(env('VOTEPREDICT_GAP16_OUTCOMES_PATH'));
-  const canonical = parseCanonicalMatrix(
-    env('VOTEPREDICT_HISTORICAL_AS_OF_MANIFEST_PATH'),
-    env('VOTEPREDICT_HISTORICAL_AS_OF_MATRIX_PATH'),
-  );
   const output = resolve(env('VOTEPREDICT_GAP15_OVERLAY_OUTPUT'));
 
   const rebuilt = verifySupportRebuild(support.envelope);
@@ -552,8 +548,8 @@ async function main(): Promise<void> {
       : event);
   const overlayRebuilt = buildHistoricalQuickAnalogueSupport(
     overlayEvents,
-    versionsByBill(support.envelope.data.versions),
-    votesByEvent(support.envelope.data.historicalVotes),
+    byBill,
+    byEventVotes,
   );
 
   const canonicalOverlayResults = runHistoricalQuickDecayShadowReplay(
