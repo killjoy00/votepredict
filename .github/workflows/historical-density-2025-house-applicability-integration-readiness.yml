@@ -123,6 +123,10 @@ jobs:
           test "$(jq -r '.chamber' "$f")" = house
 
           test "$(jq -r '.review.applicableClaimEventPairs' "$f")" = 48
+          test "$(jq -r '.review.publicMembers' "$f")" = 15
+          test "$(jq -r '.review.targetEvents' "$f")" = 34
+          test "$(jq -r '.review.bills' "$f")" = 24
+          test "$(jq -r '.review.applicableReviewKeySha256' "$f")" = a2caa40ea956cf479bbe8a84b4b415207efdffa4429732b2a5128096fadd6ebc
           test "$(jq -r '.identityResolution.applicablePairsResolved' "$f")" = 48
           test "$(jq -r '.identityResolution.applicablePairsUnresolved' "$f")" = 0
           test "$(jq -r '.identityResolution.identityMapCoverageComplete' "$f")" = true
@@ -138,10 +142,10 @@ jobs:
           test "$(jq -r '.matrixBoundary.overlapWithExistingReviewedApplicabilityRows' "$f")" = 0
 
           test "$(jq -r '.integration.applicableClaimEventPairs' "$f")" = 48
-          test "$(jq -r '.integration.uniqueMemberEventRows > 0' "$f")" = true
-          test "$(jq -r '.integration.rowKeySha256 | length' "$f")" = 64
-          test "$(jq -r '.integration.claimProofSha256 | length' "$f")" = 64
-          test "$(jq -r '.review.applicableReviewKeySha256 | length' "$f")" = 64
+          test "$(jq -r '.integration.uniqueMemberEventRows' "$f")" = 48
+          test "$(jq -r '.integration.duplicateClaimEventPairs' "$f")" = 0
+          test "$(jq -r '.integration.rowKeySha256' "$f")" = c06872dba335ae09c771ce6fc3a8d77c02f0d1b4adc4ce57ae51d0ad9a523e56
+          test "$(jq -r '.integration.claimProofSha256' "$f")" = 1044159f2cf6292cb61e606b2086e4cb9e9a117f3b3e58175c43221c961a9f14
 
           test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
           test "$(jq -r '.policy.productionWrites' "$f")" = false
@@ -158,10 +162,11 @@ jobs:
             echo '## 2025-26 House applicability integration readiness'
             echo
             echo '- Explicitly accepted claim-event pairs: **48**'
-            echo "- Integration-ready unique member-event rows: **$(jq -r '.integration.uniqueMemberEventRows' "$f")**"
-            echo "- Duplicate accepted claims sharing a row: **$(jq -r '.integration.duplicateClaimEventPairs' "$f")**"
-            echo "- Public members represented: **$(jq -r '.review.publicMembers' "$f")**"
-            echo "- Target events represented: **$(jq -r '.review.targetEvents' "$f")**"
+            echo '- Integration-ready unique member-event rows: **48**'
+            echo '- Duplicate accepted claims sharing a row: **0**'
+            echo '- Public members represented: **15**'
+            echo '- Target events represented: **34**'
+            echo '- Bills represented: **24**'
             echo "- Existing directional-row overlap: **0**"
             echo "- Missing/mismatched v1.7 rows: **0**"
             echo "- Applicable review-key SHA: `$(jq -r '.review.applicableReviewKeySha256' "$f")`"
