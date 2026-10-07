@@ -17,6 +17,9 @@ import {
   parseHistoricalDeepHouseJournalIndex,
 } from '../src/evaluation/historical-deep-house-journal-source-bundle.js';
 import {
+  historicalDeepExpansionHtmlText,
+} from '../src/evaluation/historical-deep-expansion-source-bundle.js';
+import {
   parseHouseJournalOutcomes,
   type HouseJournalOutcome,
 } from '../src/sources/minnesota/house-outcomes.js';
@@ -263,6 +266,78 @@ function matchJournalOutcome(
   return matches;
 }
 
+type ExplicitJournalOutcome = {
+  identifier: string;
+  yeaCount: number;
+  nayCount: number;
+  passed: boolean;
+  resultText: string;
+  journalPage: string | null;
+};
+
+function explicitJournalOutcomesForEvent(
+  html: string,
+  event: ParsedHouseEvent,
+): ExplicitJournalOutcome[] {
+  const identifier = canonicalBillIdentifier(event.billIdentifier ?? '');
+  const text = historicalDeepExpansionHtmlText(html);
+  const tally = new RegExp(
+    `\\bThere were\\s+${event.yeaCount}\\s+yeas?\\s+and\\s+${event.nayCount}\\s+nays?\\b`,
+    'gi',
+  );
+  const billMention =
+    /\\b([HS])\\.?\\s*F\\.?\\s*No\\.?\\s*(\\d+)\\b/gi;
+  const pageMarker = /Top of Page\\s+(\\d+)/gi;
+  const resultPattern =
+    /The\\s+(?:bill|resolution)(?:,\\s+as amended)?\\s+(?:was\\s+(not\\s+)?(?:repassed|passed|adopted)|did\\s+(not\\s+)?(?:pass|adopt))[^.]*\\./i;
+  const rows: ExplicitJournalOutcome[] = [];
+
+  for (const tallyMatch of text.matchAll(tally)) {
+    const tallyIndex = tallyMatch.index ?? -1;
+    if (tallyIndex < 0) continue;
+    const before = text.slice(Math.max(0, tallyIndex - 30_000), tallyIndex);
+    const mentions = [...before.matchAll(billMention)];
+    const nearest = mentions.at(-1);
+    if (!nearest) continue;
+    const nearestIdentifier = canonicalBillIdentifier(
+      `${nearest[1]!.toUpperCase()}F${Number(nearest[2])}`,
+    );
+    if (nearestIdentifier !== identifier) continue;
+
+    const after = text.slice(
+      tallyIndex + tallyMatch[0].length,
+      tallyIndex + tallyMatch[0].length + 16_000,
+    );
+    const result = resultPattern.exec(after);
+    if (!result || result.index > 12_000) continue;
+
+    const beforeResult = after.slice(0, result.index);
+    const nextBillMentions = [...beforeResult.matchAll(billMention)];
+    if (
+      nextBillMentions.some((mention) =>
+        canonicalBillIdentifier(
+          `${mention[1]!.toUpperCase()}F${Number(mention[2])}`,
+        ) !== identifier
+      )
+    ) {
+      continue;
+    }
+
+    const pageMatches = [...before.matchAll(pageMarker)];
+    const journalPage = pageMatches.at(-1)?.[1] ?? null;
+    rows.push({
+      identifier,
+      yeaCount: event.yeaCount,
+      nayCount: event.nayCount,
+      passed: !(result[1] || result[2]),
+      resultText: result[0],
+      journalPage,
+    });
+  }
+
+  return rows;
+}
+
 async function main(): Promise<void> {
   const auditPath = resolve(env('VOTEPREDICT_2025_HOUSE_UNIVERSE_AUDIT_PATH'));
   const outputPath = resolve(env('VOTEPREDICT_2025_HOUSE_PUBLIC_REPLAY_GAP_OUTPUT'));
@@ -333,6 +408,7 @@ async function main(): Promise<void> {
       ...link,
       finalUrl: response.url,
       contentSha256: sha256(response.bytes),
+      html,
       outcomes: parseHouseJournalOutcomes(html),
     };
   });
@@ -444,25 +520,42 @@ async function main(): Promise<void> {
           )
         : journalMatches;
 
-    const journalResolved = exactJournalMatches.length === 1;
+    const scopedExplicitMatches = pages.flatMap((page) =>
+      explicitJournalOutcomesForEvent(page.html, event).map((outcome) => ({
+        page,
+        outcome,
+      })),
+    );
+    const exactScopedExplicitMatches =
+      scopedExplicitMatches.length > 1 && event.journalPage
+        ? scopedExplicitMatches.filter(
+            (row) => row.outcome.journalPage === event.journalPage,
+          )
+        : scopedExplicitMatches;
+
+    const journalResolved = exactScopedExplicitMatches.length === 1;
     const journal = journalResolved
       ? {
           status: 'resolved_explicit_outcome',
-          url: exactJournalMatches[0]!.page.url,
-          finalUrl: exactJournalMatches[0]!.page.finalUrl,
-          journalDate: exactJournalMatches[0]!.page.journalDate,
-          legislativeDay: exactJournalMatches[0]!.page.legislativeDay,
-          contentSha256: exactJournalMatches[0]!.page.contentSha256,
-          journalPage: exactJournalMatches[0]!.outcome.journalPage ?? null,
-          passed: exactJournalMatches[0]!.outcome.passed,
-          resultText: exactJournalMatches[0]!.outcome.resultText,
+          resolutionMethod: 'exact_bill_tally_and_explicit_result_v1',
+          url: exactScopedExplicitMatches[0]!.page.url,
+          finalUrl: exactScopedExplicitMatches[0]!.page.finalUrl,
+          journalDate: exactScopedExplicitMatches[0]!.page.journalDate,
+          legislativeDay: exactScopedExplicitMatches[0]!.page.legislativeDay,
+          contentSha256: exactScopedExplicitMatches[0]!.page.contentSha256,
+          journalPage: exactScopedExplicitMatches[0]!.outcome.journalPage,
+          passed: exactScopedExplicitMatches[0]!.outcome.passed,
+          resultText: exactScopedExplicitMatches[0]!.outcome.resultText,
+          legacyParserExactMatches: exactJournalMatches.length,
         }
       : {
           status:
             exactJournalMatches.length === 0
               ? 'unresolved_no_exact_outcome'
               : 'unresolved_multiple_exact_outcomes',
-          candidateMatches: exactJournalMatches.length,
+          candidateMatches: exactScopedExplicitMatches.length,
+          legacyParserExactMatches: exactJournalMatches.length,
+          scopedExplicitMatches: exactScopedExplicitMatches.length,
           pagesSearched: pages.map((page) => ({
             url: page.url,
             contentSha256: page.contentSha256,
@@ -577,6 +670,8 @@ async function main(): Promise<void> {
       candidateSelectionUsedPassFailOutcome: false,
       passFailOutcomeReadOnlyAfterCandidateSetFrozen: true,
       outcomeSource: 'explicit Minnesota House Journal result only',
+      outcomeResolutionMethod:
+        'exact frozen bill identity + exact House yea/nay tally + explicit Journal pass/adopt result text',
       outcomeInferenceFromVoteThreshold: false,
       officialPublicSourcesOnly: true,
       sameDayRevisorVersionsExcluded: true,
