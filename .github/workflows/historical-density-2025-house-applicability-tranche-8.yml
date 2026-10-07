@@ -92,7 +92,7 @@ jobs:
           set -euo pipefail
           f="$RUNNER_TEMP/applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-8-v1.json"
           test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-applicability-candidate-audit-tranche-v1
-          test "$(jq -r '.issue' "$f")" = 818
+          test "$(jq -r '.issue' "$f")" = 718
           test "$(jq -r '.session' "$f")" = 2025-2026
           test "$(jq -r '.cohort.novelSemanticGroups' "$f")" = 46
           test "$(jq -r '.cohort.targetEvents' "$f")" = 25
