@@ -65,6 +65,13 @@ function canonicalBillIdentifier(value: string): string {
   return `${match[1]}${Number(match[2])}`;
 }
 
+function houseVoteQueryIdentifier(value: string): string {
+  const canonical = canonicalBillIdentifier(value);
+  const match = canonical.match(/^(HF|SF)(\d+)$/);
+  if (!match) throw new Error(`Unsupported House vote query identifier: ${value}`);
+  return `${match[1]}${match[2].padStart(4, '0')}`;
+}
+
 function candidateSetSha(values: readonly string[]): string {
   return sha256(`${[...values].sort().join('\n')}\n`);
 }
@@ -344,8 +351,9 @@ async function main(): Promise<void> {
   >();
 
   const cases = await mapLimit(candidates, 4, async (candidate) => {
+    const houseQueryIdentifier = houseVoteQueryIdentifier(candidate.identifier);
     const detail = await retry(() =>
-      fetchHouseVoteDetail(session.sessionKey, candidate.identifier)
+      fetchHouseVoteDetail(session.sessionKey, houseQueryIdentifier)
     );
     const officialEvents = parseHouseVoteDetailHtml({
       html: detail.html,
@@ -438,6 +446,7 @@ async function main(): Promise<void> {
       },
       officialHouseVote: {
         sourceUrl: detail.sourceUrl,
+        queryIdentifier: houseQueryIdentifier,
         frozenAuditExternalKey: candidate.expectedExternalKey,
         externalKey: event.externalKey,
         externalKeyMatchedFrozenAudit:
