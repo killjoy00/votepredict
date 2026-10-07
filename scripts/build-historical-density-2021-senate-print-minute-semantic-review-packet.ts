@@ -196,7 +196,7 @@ function main(): void {
       requestPackageArtifactId: 11496898656,
       documents: bundle.summary.documents,
       sourceLedgerProofSha256: ledger.sourceLedgerProofSha256,
-      sourceContentSha256Set,
+      sourceContentSha256Set: sourceSha256Set,
     },
     summary: {
       reviewRows: rows.length,
