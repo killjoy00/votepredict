@@ -1,0 +1,129 @@
+name: Freeze 2025 House replay gap member votes
+
+on:
+  pull_request:
+    paths:
+      - scripts/freeze-historical-density-2025-house-replay-gap16-member-votes.ts
+      - .github/workflows/historical-density-2025-house-replay-gap16-member-votes.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/freeze-historical-density-2025-house-replay-gap16-member-votes.ts
+      - .github/workflows/historical-density-2025-house-replay-gap16-member-votes.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2025-house-replay-gap16-member-votes-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize canonical gap16 artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11461161724/zip > "$RUNNER_TEMP/gap16.zip"
+          echo "637969cb94bf331382bd896a3ad81f9d1650531da2050f641002403e7c6b14e9  $RUNNER_TEMP/gap16.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/gap16"
+          unzip -q "$RUNNER_TEMP/gap16.zip"             historical-density-2025-house-replay-gap16-v1.json             -d "$RUNNER_TEMP/gap16"
+
+      - name: Materialize canonical gap16 identity artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11480438899/zip > "$RUNNER_TEMP/identity.zip"
+          echo "a932390e813ae038b15fe4b24218755bc706c33d43f7b2c2a9aa9836e0ca51f6  $RUNNER_TEMP/identity.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/identity"
+          unzip -q "$RUNNER_TEMP/identity.zip"             historical-density-2025-house-replay-gap16-identity-v1.json             -d "$RUNNER_TEMP/identity"
+
+      - name: Reconstruct 16 official House roll calls
+        env:
+          VOTEPREDICT_GAP16_PATH: ${{ runner.temp }}/gap16/historical-density-2025-house-replay-gap16-v1.json
+          VOTEPREDICT_GAP16_IDENTITY_PATH: ${{ runner.temp }}/identity/historical-density-2025-house-replay-gap16-identity-v1.json
+          VOTEPREDICT_GAP16_MEMBER_VOTES_OUTPUT: ${{ runner.temp }}/member-votes/historical-density-2025-house-replay-gap16-member-votes-v1.json
+        run: node --import tsx scripts/freeze-historical-density-2025-house-replay-gap16-member-votes.ts
+
+      - name: Verify reconstruction boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/member-votes/historical-density-2025-house-replay-gap16-member-votes-v1.json"
+
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-replay-gap16-member-votes-v1
+          test "$(jq -r '.issue' "$f")" = 718
+          test "$(jq -r '.session' "$f")" = 2025-2026
+          test "$(jq -r '.chamber' "$f")" = house
+          test "$(jq -r '.frozenInputs.gap16.artifactId' "$f")" = 11461161724
+          test "$(jq -r '.frozenInputs.identity.artifactId' "$f")" = 11480438899
+
+          test "$(jq -r '.reconstruction.events' "$f")" = 16
+          test "$(jq -r '.reconstruction.eventsData | length' "$f")" = 16
+          test "$(jq -r '.reconstruction.unmatchedDecisiveVoters' "$f")" = 0
+          test "$(jq -r '.reconstruction.ambiguousDecisiveVoters' "$f")" = 0
+          test "$(jq -r '.reconstruction.tallyParityEvents' "$f")" = 16
+          test "$(jq -r '.reconstruction.totalMemberVotes' "$f")" = 2125
+          test "$(jq -r '.reconstruction.uniqueMembershipsObserved' "$f")" = 137
+          test "$(jq -r '.reconstruction.externalKeyOrdinalDriftEvents' "$f")" = 0
+          test "$(jq -r '.reconstruction.eventProofSha256' "$f")" = 6f3846e9296385e83151008dcd977659604fbc3e3f3a4dd43e09270186e63dd5
+          test "$(jq -r '.reconstruction.memberVoteRowSha256' "$f")" = 721d748bacb74cd110380e233d7df101d044b5ad00d59bdf368ad39ecab9998b
+
+          jq -e '[.reconstruction.eventsData[].isPassage] | all(. == true)' "$f" >/dev/null
+          jq -e '[.reconstruction.eventsData[].passFailOutcome] | all(. == null)' "$f" >/dev/null
+          jq -e '[.reconstruction.eventsData[].passFailOutcomeStatus] | all(. == "not_read_or_inferred")' "$f" >/dev/null
+          jq -e '[.reconstruction.eventsData[] | (.memberVotes | length) == .decisiveVotes]' "$f" >/dev/null
+          jq -e '[.reconstruction.eventsData[] | ([.memberVotes[] | select(.choice == "yea")] | length) == .yeaCount]' "$f" >/dev/null
+          jq -e '[.reconstruction.eventsData[] | ([.memberVotes[] | select(.choice == "nay")] | length) == .nayCount]' "$f" >/dev/null
+
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.candidateSetFrozenBeforeVoteChoiceRead' "$f")" = true
+          test "$(jq -r '.policy.identityMapFrozenBeforeVoteChoiceRead' "$f")" = true
+          test "$(jq -r '.policy.candidateMemberVoteChoicesRead' "$f")" = true
+          test "$(jq -r '.policy.candidateVoteChoiceUse' "$f")" = replay_extension_reconstruction_only
+          test "$(jq -r '.policy.passFailOutcomeReadOrInferred' "$f")" = false
+          test "$(jq -r '.policy.passFailOutcomeUse' "$f")" = none
+          test "$(jq -r '.policy.targetSelectionUsesOutcomes' "$f")" = false
+          test "$(jq -r '.policy.semanticDecisionsUseOutcomes' "$f")" = false
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+
+          {
+            echo '## 2025-26 House replay-gap member-vote reconstruction'
+            echo
+            echo '- Reconstructed events: **16 / 16**'
+            echo "- Resolved decisive member-vote rows: **$(jq -r '.reconstruction.totalMemberVotes' "$f")**"
+            echo "- Unique historical memberships observed: **$(jq -r '.reconstruction.uniqueMembershipsObserved' "$f")**"
+            echo '- Unmatched decisive voters: **0**'
+            echo '- Ambiguous decisive voters: **0**'
+            echo '- Exact tally-parity events: **16 / 16**'
+            echo '- Event proof SHA: `6f3846e9296385e83151008dcd977659604fbc3e3f3a4dd43e09270186e63dd5`'
+            echo '- Member-vote row SHA: `721d748bacb74cd110380e233d7df101d044b5ad00d59bdf368ad39ecab9998b`'
+            echo '- External-key ordinal drift events: **0**'
+            echo '- Bill pass/fail outcome read/inferred: **no**'
+            echo '- Production DB queried: **no**'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2025-house-replay-gap16-member-votes-v1
+          path: ${{ runner.temp }}/member-votes/*
+          if-no-files-found: error
+          retention-days: 90
