@@ -1,0 +1,180 @@
+name: Freeze 2025 House applicability integration readiness
+
+on:
+  pull_request:
+    paths:
+      - scripts/freeze-historical-density-2025-house-applicability-integration-readiness.ts
+      - .github/workflows/historical-density-2025-house-applicability-integration-readiness.yml
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-decisions-v1.json
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-2-decisions-v1.json
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-3-decisions-v1.json
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-4-decisions-v1.json
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-5-decisions-v1.json
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-6-decisions-v1.json
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-7-decisions-v1.json
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-8-decisions-v1.json
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranches-9-11-decisions-v1.json
+  push:
+    branches: [main]
+    paths:
+      - scripts/freeze-historical-density-2025-house-applicability-integration-readiness.ts
+      - .github/workflows/historical-density-2025-house-applicability-integration-readiness.yml
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-decisions-v1.json
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-2-decisions-v1.json
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-3-decisions-v1.json
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-4-decisions-v1.json
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-5-decisions-v1.json
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-6-decisions-v1.json
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-7-decisions-v1.json
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-8-decisions-v1.json
+      - data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranches-9-11-decisions-v1.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2025-house-applicability-integration-readiness-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize immutable v1.7 feature matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11436413885/zip > "$RUNNER_TEMP/v17.zip"
+          echo "fc1d77ccc51bc33f3e3f1c0dd6622c0f2a9797d62a8d54bcb65906de30228e44  $RUNNER_TEMP/v17.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/v17"
+          unzip -q "$RUNNER_TEMP/v17.zip" \
+            evidence-quality-historical-feature-matrix-v1.7-manifest.json \
+            evidence-quality-historical-feature-matrix-v1.7.ndjson.gz \
+            -d "$RUNNER_TEMP/v17"
+
+      - name: Materialize frozen current House identity map
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11480438899/zip > "$RUNNER_TEMP/identity.zip"
+          echo "a932390e813ae038b15fe4b24218755bc706c33d43f7b2c2a9aa9836e0ca51f6  $RUNNER_TEMP/identity.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/identity"
+          unzip -q "$RUNNER_TEMP/identity.zip" \
+            historical-density-2025-house-replay-gap16-identity-v1.json \
+            -d "$RUNNER_TEMP/identity"
+
+      - name: Materialize canonical 2025 House applicability candidate artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/candidates"
+          mkdir -p "$root"
+
+          while read -r artifact_id digest; do
+            zip="$RUNNER_TEMP/candidate-${artifact_id}.zip"
+            gh api "/repos/${{ github.repository }}/actions/artifacts/${artifact_id}/zip" > "$zip"
+            echo "${digest}  ${zip}" | sha256sum -c -
+            mkdir -p "$root/${artifact_id}"
+            unzip -q "$zip" -d "$root/${artifact_id}"
+          done <<'EOF'
+          11450382467 90c6b0eb156412e74ef6181d55c1c91690660ded4fbc8b281195078b2427118d
+          11451775355 7af526bc8ecc54a6851db2b0e33275cc67cae91e11751b4430d4b70d8d5dcb74
+          11452236668 0c78a9af4ca9cb87d660424a607151c24f295be5c95bd719d803fe7dd184a52f
+          11453146518 7e549f2f723235ef8e436c9048217dc1a4aa06e62513d316b25f016800b50a0f
+          11454147584 95d9505405f7b39c7cdd7e1e21f341325c980d5b09dcf2893f9860507f49
+          11454860978 fcfce6beafffa76f5e8f0947207aa3944bf7b3c560ec0419bfe6a0c7be50f0c7
+          11455338397 8b66755abcc579e3832b068b72b6c050b63352f0650f4050bfd09630a12dfd84
+          11454989971 53cd21f43a24678f416d0bedb595a72635d0f588700d47443c35a147d7ca3145
+          11456955534 e39e55879877c57e9d393be137864a4c7df3d8b3384ee20fba6258b94b105b58
+          11456880675 45b83827707ccf31ec3e580cdc4254c8b282f13ff0de222a8c5934e9a69163b2
+          11456386548 6a8c6bf3d6f93beb8de19166e76643f005711ff724d8f0146d15d9a2c34f813f
+          EOF
+
+      - name: Freeze integration-readiness artifact
+        env:
+          VOTEPREDICT_V17_MANIFEST_PATH: ${{ runner.temp }}/v17/evidence-quality-historical-feature-matrix-v1.7-manifest.json
+          VOTEPREDICT_V17_MATRIX_PATH: ${{ runner.temp }}/v17/evidence-quality-historical-feature-matrix-v1.7.ndjson.gz
+          VOTEPREDICT_2025_HOUSE_IDENTITY_PATH: ${{ runner.temp }}/identity/historical-density-2025-house-replay-gap16-identity-v1.json
+          VOTEPREDICT_2025_HOUSE_CANDIDATE_ROOT: ${{ runner.temp }}/candidates
+          VOTEPREDICT_2025_HOUSE_INTEGRATION_READINESS_OUTPUT: ${{ runner.temp }}/readiness/historical-density-2025-house-applicability-integration-readiness-v1.json
+        run: node --import tsx scripts/freeze-historical-density-2025-house-applicability-integration-readiness.ts
+
+      - name: Verify integration-readiness boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/readiness/historical-density-2025-house-applicability-integration-readiness-v1.json"
+
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-applicability-integration-readiness-v1
+          test "$(jq -r '.issue' "$f")" = 718
+          test "$(jq -r '.session' "$f")" = 2025-2026
+          test "$(jq -r '.chamber' "$f")" = house
+
+          test "$(jq -r '.review.applicableClaimEventPairs' "$f")" = 48
+          test "$(jq -r '.identityResolution.applicablePairsResolved' "$f")" = 48
+          test "$(jq -r '.identityResolution.applicablePairsUnresolved' "$f")" = 0
+          test "$(jq -r '.identityResolution.identityMapCoverageComplete' "$f")" = true
+
+          test "$(jq -r '.matrixBoundary.rows' "$f")" = 135457
+          test "$(jq -r '.matrixBoundary.existingExactDirectionalRows' "$f")" = 38
+          test "$(jq -r '.matrixBoundary.existingReviewedApplicabilityRows' "$f")" = 6
+          test "$(jq -r '.matrixBoundary.existingCombinedDirectionalRows' "$f")" = 44
+          test "$(jq -r '.matrixBoundary.existing2025CombinedDirectionalRows' "$f")" = 3
+          test "$(jq -r '.matrixBoundary.applicableRowsMissingFromMatrix' "$f")" = 0
+          test "$(jq -r '.matrixBoundary.applicableRowsWithIdentityMismatch' "$f")" = 0
+          test "$(jq -r '.matrixBoundary.overlapWithExistingExactDirectionalRows' "$f")" = 0
+          test "$(jq -r '.matrixBoundary.overlapWithExistingReviewedApplicabilityRows' "$f")" = 0
+
+          test "$(jq -r '.integration.applicableClaimEventPairs' "$f")" = 48
+          test "$(jq -r '.integration.uniqueMemberEventRows > 0' "$f")" = true
+          test "$(jq -r '.integration.rowKeySha256 | length' "$f")" = 64
+          test "$(jq -r '.integration.claimProofSha256 | length' "$f")" = 64
+          test "$(jq -r '.review.applicableReviewKeySha256 | length' "$f")" = 64
+
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.semanticDecisionsUseOutcomes' "$f")" = false
+          test "$(jq -r '.policy.internalIdentityRequiredAndResolved' "$f")" = true
+          test "$(jq -r '.policy.existingDirectionalRowsMayBeOverwritten' "$f")" = false
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+
+          {
+            echo '## 2025-26 House applicability integration readiness'
+            echo
+            echo '- Explicitly accepted claim-event pairs: **48**'
+            echo "- Integration-ready unique member-event rows: **$(jq -r '.integration.uniqueMemberEventRows' "$f")**"
+            echo "- Duplicate accepted claims sharing a row: **$(jq -r '.integration.duplicateClaimEventPairs' "$f")**"
+            echo "- Public members represented: **$(jq -r '.review.publicMembers' "$f")**"
+            echo "- Target events represented: **$(jq -r '.review.targetEvents' "$f")**"
+            echo "- Existing directional-row overlap: **0**"
+            echo "- Missing/mismatched v1.7 rows: **0**"
+            echo "- Applicable review-key SHA: `$(jq -r '.review.applicableReviewKeySha256' "$f")`"
+            echo "- Integration row-key SHA: `$(jq -r '.integration.rowKeySha256' "$f")`"
+            echo "- Integration claim proof SHA: `$(jq -r '.integration.claimProofSha256' "$f")`"
+            echo '- Production DB queried: **no**'
+            echo '- Target outcomes read: **no**'
+            echo '- Feature rows written: **no**'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2025-house-applicability-integration-readiness-v1
+          path: ${{ runner.temp }}/readiness/*
+          if-no-files-found: error
+          retention-days: 90
