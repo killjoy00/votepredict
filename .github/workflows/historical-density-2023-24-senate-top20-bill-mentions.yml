@@ -59,6 +59,7 @@ jobs:
           test "$(jq -r '.summary.literalMatchTargetEvents' "$f")" = 21
           test "$(jq -r '.summary.literalMatchBills' "$f")" = 12
           test "$(jq -r '.summary.literalMatchUncoveredRows' "$f")" = 1407
+          test "$(jq -r '.summary.screenProofSha256' "$f")" = f4a7ae90733c1cf3e28859bde1aa62dc5771d5d9459d2f4394bd5fb1284bfae4
           test "$(jq -r '[.rows[].semanticDecision] | all(. == null)' "$f")" = true
           test "$(jq -r '[.rows[].memberStance] | all(. == null)' "$f")" = true
           test "$(jq -r '.interpretation.literalMentionEstablishesDirection' "$f")" = false
