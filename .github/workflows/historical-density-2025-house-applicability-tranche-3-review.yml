@@ -52,9 +52,9 @@ jobs:
 
       - name: Freeze reviewed tranche-3 applicability gate
         env:
-          VOTEPREDICT_2025_HOUSE_TRANCHE2_APPLICABILITY_AUDIT_PATH: ${{ runner.temp }}/tranche3-audit/applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-3-v1.json
-          VOTEPREDICT_2025_HOUSE_TRANCHE2_APPLICABILITY_DECISIONS_PATH: data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-3-decisions-v1.json
-          VOTEPREDICT_2025_HOUSE_TRANCHE2_APPLICABILITY_REVIEW_OUTPUT: ${{ runner.temp }}/tranche3-review/historical-density-2025-house-applicability-tranche-3-review-v1.json
+          VOTEPREDICT_2025_HOUSE_TRANCHE3_APPLICABILITY_AUDIT_PATH: ${{ runner.temp }}/tranche3-audit/applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-3-v1.json
+          VOTEPREDICT_2025_HOUSE_TRANCHE3_APPLICABILITY_DECISIONS_PATH: data/evaluation/evidence-quality/historical-density-2025-house-applicability-tranche-3-decisions-v1.json
+          VOTEPREDICT_2025_HOUSE_TRANCHE3_APPLICABILITY_REVIEW_OUTPUT: ${{ runner.temp }}/tranche3-review/historical-density-2025-house-applicability-tranche-3-review-v1.json
         run: node --import tsx scripts/freeze-historical-density-2025-house-applicability-tranche-3-review.ts
 
       - name: Verify reviewed tranche-3 boundary
