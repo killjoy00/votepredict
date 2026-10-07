@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "historical-density-2025-house-replay-gap16-support-plan-v1",
+  "issue": 718,
+  "frozenAt": "2026-10-07",
+  "purpose": "Freeze the protocol for a read-only historical Quick replay support snapshot before observing current production-loader parity. The snapshot may support the frozen 16-event House replay-gap extension only if it reproduces the immutable canonical historical matrix for all existing target rows.",
+  "canonicalInputs": {
+    "historicalAsOfMatrix": {
+      "workflowRunId": 37066155829,
+      "artifactId": 11252079484,
+      "artifactDigest": "sha256:22e8944cffc6fda553b05ea6ad5e92400d35fc01d83177efdd5d1204dd3c5a6f",
+      "manifestSchemaVersion": "historical-as-of-matrix-v1-manifest",
+      "matrixCanonicalNdjsonSha256": "c97ac50c8c89ae0548cc48bed65a42c22f332e2977b33173619c9e258c09a4d0",
+      "rows": 135457,
+      "events": 1339,
+      "memberships": 611,
+      "replayVersion": "historical-quick-replay-v2"
+    },
+    "gap16": {
+      "workflowRunId": 37572160059,
+      "artifactId": 11461161724,
+      "artifactDigest": "sha256:637969cb94bf331382bd896a3ad81f9d1650531da2050f641002403e7c6b14e9",
+      "events": 16
+    },
+    "identity": {
+      "workflowRunId": 37618812260,
+      "artifactId": 11480438899,
+      "artifactDigest": "sha256:a932390e813ae038b15fe4b24218755bc706c33d43f7b2c2a9aa9836e0ca51f6",
+      "currentPublicRosterIdentities": 134,
+      "historicalMembershipRecords": 137
+    },
+    "memberVotes": {
+      "workflowRunId": 37620464346,
+      "artifactId": 11482176035,
+      "artifactDigest": "sha256:d87fe9e1d51ae9bacebe94e3c1b065675db42da011a72273cbb74a9e5d52e450",
+      "events": 16,
+      "decisiveRows": 2125,
+      "eventProofSha256": "6f3846e9296385e83151008dcd977659604fbc3e3f3a4dd43e09270186e63dd5",
+      "memberVoteRowSha256": "721d748bacb74cd110380e233d7df101d044b5ad00d59bdf368ad39ecab9998b"
+    },
+    "outcomes": {
+      "workflowRunId": 37625127437,
+      "artifactId": 11483367972,
+      "artifactDigest": "sha256:2415268dd0f3a0fb5cea4e03eb22e6e74ee1f1efdaa8ce4dd8b8ea743e8659ba",
+      "recovered": 15,
+      "unresolved": 1,
+      "unresolvedCompositeKey": "HF2354|2026-05-17",
+      "journalSourceProofSha256": "e1a0abcc2970e7888021946dbe915aebf27077dafc4dfc7249b023339aad92d0",
+      "outcomeProofSha256": "b7490e53daeff266d8c5d450ee428c018b1070dcf0e4ca8b91234b24bbb616db"
+    }
+  },
+  "loaderContract": {
+    "implementation": "src/evaluation/historical-quick-replay-dataset.ts",
+    "replayImplementation": "src/evaluation/historical-quick-replay.ts",
+    "requiredState": [
+      "all ingested Minnesota passage events before the replay cutoff, not only replay targets",
+      "dated bill-version corpus used for strict target versions and as-of analogue candidate versions",
+      "all decisive member votes on passage events used for analogue member support and chronological member/party/global history",
+      "membership session/chamber/party/service-window rows used to construct the active roster",
+      "strictly pre-target companion references used by historical analogue relationship logic"
+    ],
+    "importantScopeFinding": "Historical analogue retrieval does not impose a chamber filter. A faithful support snapshot therefore cannot be reduced to the 2025-26 House target matrix alone."
+  },
+  "snapshotProtocol": {
+    "environment": "Use the repository's established historical-evidence-closeout pattern: pull the production environment privately in GitHub Actions, make read-only database queries, upload an immutable artifact, and delete temporary credentials.",
+    "productionDatabaseReadOnly": true,
+    "productionWrites": false,
+    "vercelDeployment": false,
+    "loader": "loadHistoricalQuickReplayDataset(pool)",
+    "snapshotContents": [
+      "QuickReplayEvent[] full passage-event stream",
+      "versionsByBill full dated raw-text/version state required by replay",
+      "QuickReplayMembership[]",
+      "QuickReplayVote[] full decisive passage-vote history",
+      "derived current targetVersionByEvent and analogueSupportByEvent identities/counts for diagnostics"
+    ],
+    "canonicalParityGate": {
+      "required": true,
+      "rule": "Re-run the current loader/replay and compare every immutable canonical matrix row by voteEventId + membershipId before using the snapshot for extension work.",
+      "requiredFields": [
+        "event status",
+        "member base probability",
+        "member actual outcome",
+        "event actual yes count",
+        "event passed label"
+      ],
+      "probabilityTolerance": 1e-12,
+      "onMismatch": "Fail closed. Do not score any gap16 extension event and do not reinterpret the canonical baseline."
+    },
+    "extensionRule": {
+      "candidateSetImmutable": true,
+      "identityImmutable": true,
+      "memberVotesImmutable": true,
+      "explicitOutcomesImmutable": true,
+      "scoreOnlyOutcomeCompleteEvents": true,
+      "eligibleOutcomeCompleteEvents": 15,
+      "excludedUntilExplicitOutcome": [
+        "HF2354|2026-05-17"
+      ],
+      "targetSelectionMayNotChangeAfterSnapshot": false
+    }
+  },
+  "knownReadiness": {
+    "targetStrictPreVoteVersions": "complete for 16/16",
+    "targetMembershipIdentity": "complete",
+    "targetMemberVotes": "complete for 16/16",
+    "explicitPassFailOutcome": "complete for 15/16; HF2354 remains fail-closed",
+    "fullReplaySupportSnapshot": "not yet frozen",
+    "replayReadyNow": false
+  },
+  "policy": {
+    "targetSelectionUsesCurrentProductionState": false,
+    "semanticDecisionsUseOutcomes": false,
+    "productionWrites": false,
+    "modelFitting": "none",
+    "servingChanged": false,
+    "mechanicallyActionable": false
+  }
+}
