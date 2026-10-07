@@ -219,7 +219,7 @@ function nominate(text: string, group: SemanticGroup) {
     hits.flatMap((hit) => hit.split(' ')).filter((token) => token.length >= 5),
   );
   const nominated = multiword.length > 0 || distinctTokens.length >= 2
-    || hits.some((hit) => /^(pfas|medicaid|zoning|abortion|telework|antitrust|lobbyist|lobbying|nuclear|dwi)$/.test(hit));
+    || hits.some((hit) => /^(pfas|fraud|fraudulent|medicaid|zoning|abortion|telework|antitrust|lobbyist|lobbying|nuclear|dwi)$/.test(hit));
   return { nominated, hits };
 }
 
