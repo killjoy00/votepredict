@@ -1,0 +1,75 @@
+name: Screen 2023-24 Senate top-20 bill mentions
+
+on:
+  pull_request:
+    paths:
+      - scripts/screen-historical-density-2023-24-senate-top20-bill-mentions.ts
+      - .github/workflows/historical-density-2023-24-senate-top20-bill-mentions.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/screen-historical-density-2023-24-senate-top20-bill-mentions.ts
+      - .github/workflows/historical-density-2023-24-senate-top20-bill-mentions.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  screen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Materialize canonical overlap and frozen text
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11501649286/zip > "$RUNNER_TEMP/overlap.zip"
+          echo "c5ed67e03a2aabb7b41df147beb2d4e814b6db834055387efaf716e3b6ac3f42  $RUNNER_TEMP/overlap.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/overlap"
+          unzip -q "$RUNNER_TEMP/overlap.zip" -d "$RUNNER_TEMP/overlap"
+          gh api /repos/${{ github.repository }}/actions/artifacts/11502902302/zip > "$RUNNER_TEMP/text.zip"
+          echo "c73031633618f4a599a8e1ae1147eb9cd2b429db229335dccef14961a3aa835c  $RUNNER_TEMP/text.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/text"
+          unzip -q "$RUNNER_TEMP/text.zip" -d "$RUNNER_TEMP/text"
+      - name: Screen literal candidate bill mentions
+        env:
+          VOTEPREDICT_SENATE_2023_24_OVERLAP_PATH: ${{ runner.temp }}/overlap/historical-density-2023-24-senate-electronic-minute-target-overlap-v1.json
+          VOTEPREDICT_SENATE_2023_24_TEXT_REPORT_PATH: ${{ runner.temp }}/text/historical-density-2023-24-senate-top20-text-extraction-v1.json
+          VOTEPREDICT_SENATE_2023_24_TEXT_ROOT: ${{ runner.temp }}/text
+          VOTEPREDICT_SENATE_2023_24_BILL_SCREEN_OUTPUT: ${{ runner.temp }}/screen/historical-density-2023-24-senate-top20-bill-mention-screen-v1.json
+        run: node --import tsx scripts/screen-historical-density-2023-24-senate-top20-bill-mentions.ts
+      - name: Verify fail-closed mention screen
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/screen/historical-density-2023-24-senate-top20-bill-mention-screen-v1.json"
+          test "$(jq -r '.summary.documentCandidateEventPairs' "$f")" = 160
+          test "$(jq -r '.summary.literalMatchPairs' "$f")" = 21
+          test "$(jq -r '.summary.literalMatchDocuments' "$f")" = 9
+          test "$(jq -r '.summary.literalMatchTargetEvents' "$f")" = 21
+          test "$(jq -r '.summary.literalMatchBills' "$f")" = 12
+          test "$(jq -r '.summary.literalMatchUncoveredRows' "$f")" = 1407
+          test "$(jq -r '[.rows[].semanticDecision] | all(. == null)' "$f")" = true
+          test "$(jq -r '[.rows[].memberStance] | all(. == null)' "$f")" = true
+          test "$(jq -r '.interpretation.literalMentionEstablishesDirection' "$f")" = false
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: historical-density-2023-24-senate-top20-bill-mention-screen-v1
+          path: ${{ runner.temp }}/screen/*
+          if-no-files-found: warn
+          retention-days: 90
