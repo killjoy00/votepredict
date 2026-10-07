@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   lockfile:
@@ -16,15 +16,24 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
       - uses: actions/setup-node@v7
         with:
           node-version: 22
       - name: Resolve package lock
         run: npm install --package-lock-only --ignore-scripts --no-fund --no-audit
-      - name: Show resolved Next version
-        run: node -e "const l=require('./package-lock.json'); console.log(l.packages['node_modules/next'].version)"
-      - uses: actions/upload-artifact@v7
-        with:
-          name: next-16-4-lockfile
-          path: package-lock.json
-          if-no-files-found: error
+      - name: Verify resolved Next version
+        run: |
+          test "$(node -e "console.log(require('./package-lock.json').packages['node_modules/next'].version)")" = "16.4.0"
+      - name: Commit generated lockfile
+        run: |
+          if git diff --quiet -- package-lock.json; then
+            echo "package-lock.json already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "Update lockfile for Next.js 16.4.0"
+          git push origin HEAD:${{ github.event.pull_request.head.ref || github.ref_name }}
