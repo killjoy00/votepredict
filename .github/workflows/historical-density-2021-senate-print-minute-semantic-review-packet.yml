@@ -1,0 +1,98 @@
+name: Build 2021 Senate print minute semantic review packet
+
+on:
+  pull_request:
+    paths:
+      - scripts/build-historical-density-2021-senate-print-minute-semantic-review-packet.ts
+      - .github/workflows/historical-density-2021-senate-print-minute-semantic-review-packet.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/build-historical-density-2021-senate-print-minute-semantic-review-packet.ts
+      - .github/workflows/historical-density-2021-senate-print-minute-semantic-review-packet.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2021-senate-print-minute-semantic-review-packet-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize canonical synthetic local-intake fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11499462793/zip > "$RUNNER_TEMP/intake.zip"
+          echo "befde23007d609f7ca754a708b865e4754bcc4ef48f7844e47d212dc32eb3582  $RUNNER_TEMP/intake.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/intake"
+          unzip -q "$RUNNER_TEMP/intake.zip" \
+            output/historical-density-2021-senate-print-minute-intake-bundle-v1.json \
+            output/historical-density-2021-senate-print-minute-local-source-ledger-v1.json \
+            -d "$RUNNER_TEMP/intake"
+          test "$(sha256sum "$RUNNER_TEMP/intake/output/historical-density-2021-senate-print-minute-intake-bundle-v1.json" | awk '{print $1}')" = dc7318e5bea18adae041eccc4c1cea1d234c91e9719a618f784c08fb6875e3dc
+          test "$(sha256sum "$RUNNER_TEMP/intake/output/historical-density-2021-senate-print-minute-local-source-ledger-v1.json" | awk '{print $1}')" = 84796fcbeeaa97d16d8918c031416afd36432d2d513614093a3c5f9afc1f0803
+
+      - name: Build blank semantic-review packet
+        env:
+          VOTEPREDICT_SENATE_2021_INTAKE_BUNDLE_PATH: ${{ runner.temp }}/intake/output/historical-density-2021-senate-print-minute-intake-bundle-v1.json
+          VOTEPREDICT_SENATE_2021_SOURCE_LEDGER_PATH: ${{ runner.temp }}/intake/output/historical-density-2021-senate-print-minute-local-source-ledger-v1.json
+          VOTEPREDICT_SENATE_2021_REVIEW_PACKET_OUTPUT_DIR: ${{ runner.temp }}/review
+        run: node --import tsx scripts/build-historical-density-2021-senate-print-minute-semantic-review-packet.ts
+
+      - name: Verify review boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          p="$RUNNER_TEMP/review/historical-density-2021-senate-print-minute-semantic-review-packet-v1.json"
+          d="$RUNNER_TEMP/review/historical-density-2021-senate-print-minute-semantic-review-decisions-template-v1.json"
+
+          test "$(jq -r '.schemaVersion' "$p")" = historical-density-2021-senate-print-minute-semantic-review-packet-v1
+          test "$(jq -r '.summary.reviewRows' "$p")" = 5
+          test "$(jq -r '.summary.documents' "$p")" = 1
+          test "$(jq -r '.summary.committees' "$p")" = 1
+          test "$(jq -r '.summary.candidateTargetEvents' "$p")" = 5
+          test "$(jq -r '.summary.candidateBills' "$p")" = 5
+          test "$(jq -r '.summary.completedDecisions' "$p")" = 0
+          test "$(jq -r '.sourceIntake.sourceLedgerProofSha256' "$p")" = 701467a4cfe7ad7a2e79a6753b52d444ff802d72490d311b757a2f876f6f8994
+          test "$(jq -r '.reviewKeySha256' "$p")" = 03f49db508eaa3ea2413cc410d1b22f23a5a4abd0641d24ea9cb14b39477997c
+          test "$(jq -r '.reviewPacketProofSha256' "$p")" = 87f93dfe6fd349a074998b05f1309b0c944fbc0bfad85d0c4144686d56514933
+          test "$(jq -r '[.rows[].review.decision] | all(. == null)' "$p")" = true
+          test "$(jq -r '[.rows[].review.memberStance] | all(. == null)' "$p")" = true
+          test "$(jq -r '.policy.sourceDocumentContentReadByGenerator' "$p")" = false
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$p")" = false
+          test "$(jq -r '.policy.decisionsAutoFilled' "$p")" = false
+          test "$(jq -r '.policy.billApplicabilityInferred' "$p")" = false
+          test "$(jq -r '.policy.memberStanceInferred' "$p")" = false
+          test "$(jq -r '.policy.reviewOutputCreatesEvidence' "$p")" = false
+
+          test "$(jq -r '.schemaVersion' "$d")" = historical-density-2021-senate-print-minute-semantic-review-decisions-template-v1
+          test "$(jq -r '.decisions | length' "$d")" = 5
+          test "$(jq -r '.frozenReviewPacket.reviewKeySha256' "$d")" = 03f49db508eaa3ea2413cc410d1b22f23a5a4abd0641d24ea9cb14b39477997c
+          test "$(jq -r '.decisionsTemplateProofSha256' "$d")" = 6e421a694077872cffe082073936d20a7488538c79561dc632c9de5ea1d7e6e5
+          test "$(jq -r '[.decisions[].decision] | all(. == null)' "$d")" = true
+          test "$(jq -r '.policy.defaultFailClosedUntilExplicitDecision' "$d")" = true
+          test "$(jq -r '.policy.noAutomaticDirectionalDecision' "$d")" = true
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$d")" = false
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2021-senate-print-minute-semantic-review-packet-v1
+          path: ${{ runner.temp }}/review/*
+          if-no-files-found: error
+          retention-days: 30
