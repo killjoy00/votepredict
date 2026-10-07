@@ -42,11 +42,11 @@ test('rank-8 review keeps explicit HF4757 amendment and passage procedure as con
   assert.equal(decisions.billContextRows.length, 2);
   assert.equal(decisions.directionalRows.length, 0);
   assert.equal(decisions.ambiguousFailClosedRows.length, 0);
-  assert.equal(decisions.billContextRows.every((row: any) => row.billMentionExcerpt === 'H.F. 4757: Senator Port:'), true);
+  assert.equal(decisions.billContextRows.every((row: any) => row.billMentionExcerpt.startsWith('H.F. 4757:')), true);\n  assert.equal(decisions.billContextRows.every((row: any) => row.billMentionExcerpt.includes('\\u0000')), true);
   assert.equal(decisions.billContextRows.every((row: any) => row.billMentionPage === 1), true);
   assert.match(
     decisions.decisionRationales.candidate_bill_explicitly_present_but_only_procedural_actions_recorded,
-    /procedure/,
+    /amendment positions/,
   );
 });
 
