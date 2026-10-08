@@ -113,6 +113,8 @@ jobs:
           test "$(jq -r '.cohort.targetEvents' "$f")" = 25
           test "$(jq -r '.cohort.eligibleClaimEventPairs' "$f")" = 858
           test "$(jq -r '.cohort.ineligibleSourceNotYetAvailablePairs' "$f")" = 192
+          test "$(jq -r '.cohort.eligibleClaimEventPairsByTargetYear["2025"]' "$f")" = 270
+          test "$(jq -r '.cohort.eligibleClaimEventPairsByTargetYear["2026"]' "$f")" = 588
           test "$(jq -r '.pairResults | length' "$f")" = 858
           test "$(jq -r '.frozenInputs.targetTrancheIndex' "$f")" = 10
           test "$(jq -r '.frozenInputs.targetRankStart' "$f")" = 226
