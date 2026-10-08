@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-cohort-2-tranche-7-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenCandidateArtifact": {
+    "runId": 37818931593,
+    "artifactId": 11569180060,
+    "digest": "sha256:1a80f0d5fabe6526a8b34e1dfc3ca01cab5236439ac02019499d0d1c82d5986d",
+    "contentSha256WithoutSelfField": "1d8265f8d9f67ca35d1f46c369d84f07b7262984c880000fd0b2fc2d31d967e3",
+    "targetTrancheIndex": 7,
+    "targetRankStart": 151,
+    "targetRankEnd": 175,
+    "targetEventKeySha256": "3d994198b510f648867bb0804b25ff201328c6dd0628d901ff33579b43f1378f",
+    "reviewKeySha256": "795b2caffcc871bde906213ca2557b62a49d84def52d4ce7e2c5d112a9ef526c",
+    "eligibleClaimEventPairs": 1050,
+    "candidatePairs": 169,
+    "candidateBills": 17,
+    "candidatePublicMembers": 39,
+    "candidateSemanticGroups": 39
+  },
+  "defaultDecision": "not_applicable",
+  "defaultBillRationales": {
+    "HF1082": "The strict 4th engrossment allocates public-safety funding, provides law-enforcement/dependent benefits, regulates domestic-violence response, grooming and criminal penalties, and funds a nonfatal-shootings clearance grant. It does not create rural no-transport ambulance reimbursement, HOA/CIC purchaser protections, home-school counseling, Paid Family and Medical Leave policy, conservation, reproductive rights, sex-based school athletics, the named Empowering Small Communities Program, Great Start childcare affordability, Attorney General records access, Baby Boxes, National Guard buildings, taxpayer refunds, disabled-veteran property-tax exclusions or state-agency anti-fraud reporting. Child-abuse/grooming protections concern criminal justice and K-12, not infant childcare-facility monitoring or provider-to-parent education; grants do not establish the claimed state-program fraud oversight regime.",
+    "HF1141": "The Minnesota Housing Finance Agency supplemental appropriations expand statewide workforce housing and homeownership counseling, housing bonds and affordable housing tools. Homeownership counseling is not Clardy's counseling for home-schooled children. State housing allocations are not evidence of a combined Minneapolis water-distribution and deeply affordable public-housing appropriation: there is no named Minneapolis water component. The housing bill neither revises HOA/CIC owner rights, authorizes Great Start childcare affordability, Baby Boxes or infant safeguarding, funds Mound water or a zoo operating room, establishes the named small-community grant program, creates taxpayer-surplus refund amendments nor changes disabled-veteran property-tax exclusions.",
+    "HF1270": "Licensing acupuncture and herbal-medicine practitioners is an occupational health regulation. Counseling terminology does not create elementary home-school student counseling or guidance services.",
+    "HF3532": "Eligibility and interment fees for state veterans cemeteries, including National Guard/reserve service and disabled dependents, are burial provisions. They neither construct or resource National Guard buildings nor raise a disabled-veteran/spouse property-tax exclusion, and they do not enact the Great Start Affordability Act.",
+    "HF3684": "The new Department of Veterans Affairs directed-grant law prescribes grantee eligibility, measurable scoring, commissioner fraud-related withholding, grants reporting and financial accountability. Those exact public-program fraud controls support only Robbins's explicit broader fraud-oversight override below. A grantee's reports to DVA are not stricter fraud-reporting requirements imposed *on state agencies* together with prevention tools under Rarick's combined proposition. Attorney General good-standing checks do not expand public access to AG records; veterans grants do not establish Koegel's named Empowering Small Communities infrastructure program.",
+    "HF3732": "The Department of Employment and Economic Development/workforce appropriations revise youth training support, Pathways to Prosperity adult education-to-employment services, development grants and infrastructure-financing rules. The youth work-experience/education support has genuine overlap with Kresha's career-readiness theme but does not independently prove his combined student career-pathway *education reform* source claim; that case is separately fail-closed. Workforce apprenticeships and training are not teacher pay or pensions, telework/remote-work policy, the Great Start Act, patient staffing ratios, conservation-program investments, an inclusive ERA, women/girls athletics policy, the CEO-pay-ratio tax, a named zoo operating-room expansion, Hastings PFAS treatment, Mound clean water investment, Minneapolis water-plus-housing package, National Guard buildings, disabled-veteran tax exemptions, state-agency fraud reporting/controls, Attorney General public-data access, infant childcare safety, home-school counseling, named Empowering Small Communities program, or a constitutional taxpayer-surplus refund. Grants requiring ordinary evaluation or reporting do not become public-program fraud enforcement. Youth workforce provisions do not materially fund public school districts under Hussein's source.",
+    "HF3900": "The proposed constitutional change and permanent school fund distribution formula explicitly aim to increase funds distributed to school districts statewide, so Hussein's broad public-school funding position is applicable only through the override below; proposal remains contingent on voters. An amendment to the school fund's constitutional clause is *not* Finke's inclusive Equal Rights Amendment; serving the Attorney General on the State Board of Investment does not expand public access to AG data. School-fund distributions are not disabled-veteran property-tax exclusions.",
+    "HF3919": "Benefits, designations, memorial/burial rights and recognition for veterans of the Secret War in Laos do not establish a disabled-veteran property-tax exclusion or provide National Guard building resources. Other mentions of children, public safety and Attorney General records are incidental to veterans-specific eligibility and documentation, not childcare affordability, infant safeguards, parent education or public-data access.",
+    "HF3972": "The Rental Home Marketplace Guarantees Act regulates reimbursement insurance, registration and disclosures for short-term rental marketplace damage guarantees. It is not HOA/common-interest-community governance or unit-owner consumer protection. It does not fund Mound clean-water infrastructure; generic terms 'consumer protection', 'local' or 'infrastructure' do not transfer to those policies.",
+    "HF4063": "School bus stopping distances, first-aid kits, USDOT identification and driver training do not enact the Great Start child-care affordability program, restrict abuse at childcare facilities, mandate infant-abuse parent education, or supply National Guard buildings. 'Child' and 'guard' concern students and safety around school buses.",
+    "HF4151": "Licensing definitions and eligibility for private detectives/protective agents do not authorize Safe Haven Baby Boxes and have no CEO compensation-ratio taxation rule. References to protecting the public or executive officers are occupational regulation, not the nominated propositions.",
+    "HF4252": "Higher-education student financial aid, accommodations for pregnant/parenting students, eligibility for postsecondary child-care assistance, private career school regulation and institutional reporting are not the Great Start Affordability Act, public K-12 school sports/ERA policy, paid employment-based Family and Medical Leave, homeschool counseling, HOA oversight, named municipal PFAS/Mound water projects, school teacher pension/pay policy, National Guard buildings, tax refunds, rent-setting bans, CEO-pay-ratio tax or named small-city grants. The new chapter 136A.1212 fraud-based denial/inspection/information powers are direct state-administered grant oversight and apply solely to the Robbins override below. Annual higher-education program reporting does not establish Rarick's stricter *state-agency fraud reporting* paired with prevention tools. Revised private career-school quality/curriculum standards do not independently expand student career pathways in the combined Kresha education-reform proposition.",
+    "HF4462": "The amendment adds a standardized one-page synopsis for grant requests for proposals; pre-existing statewide grants-office functions include receiving fraud/waste comments. The new summary template does not impose state-agency fraud incident reporting, add investigative/prevention tools, or materially strengthen the state-program fraud oversight powers claimed by Rarick and Robbins. Carried-forward fraud-comment responsibilities are not mistaken for newly enacted controls.",
+    "SF1750": "The 3rd engrossment is a substantive common-interest-ownership and HOA bill. It includes added owner-to-association dispute resolution, fee/collection/foreclosure limits, notices and conflict-of-interest protections, directly matching only Bahner's HOA/CIC consumer-protection override. Motor-vehicle emergency/ambulance examples in CIC definitions are not rural ambulance nontransport reimbursement. Shared 'rights', 'tax', 'infrastructure', 'national', 'attorney general' or 'property' wording does not enact an ERA, women's athletics policy, zoo expansion, named small-community/Mound/Minneapolis projects, AG office public-data policy, Baby Boxes, Guard buildings, constitutional surplus refunds, disabled-veteran property-tax exclusions or a CEO-pay-ratio tax.",
+    "SF3888": "Allowing tow trucks to display variable-message signs during emergency highway service is traffic-safety equipment authority, not safe infant/newborn surrender via Safe Haven Baby Boxes.",
+    "SF4760": "The extensive public-safety omnibus includes law-enforcement/victim/protection-order amendments, correctional facilities, privacy rules, coercion, criminal records, financial crime, interlock and existing school/family provisions. Its new Bureau of Criminal Apprehension financial-fraud subpoena power expressly reaches state-funded/administered services, directly matching the Robbins public-program fraud oversight override. Department of Commerce insurance-fraud referrals are a new agency reporting obligation, but whether that combined commercial-insurance referral and separate BCA public-program investigation power fulfills Rarick's joined state-agency fraud-reporting-plus-prevention proposition remains uncertain and is separately fail-closed. Amended K-12 violence-prevention text largely carries forward early-childhood parent education rather than imposing a new infant-specific provider mandate; child-care references protect judicial officials' privacy and do not create infant facility safeguards, Great Start affordability, or Baby Boxes. Other omnibus references do not implement rural ambulance no-transport reimbursement, healthcare staffing ratios, home-school counseling, public K-12 funding, inclusive ERA, bodily/reproductive rights, athlete gender policies, named local water/zoo/Guard/housing projects, income/tax/rebate amendments, CEO-pay-ratio tax, medical debt relief, named small-community grants, AG-office records access, chronic-absenteeism tracking, disabled-veteran property tax, school career education reform, or teacher pay and pensions. 'Paid Leave Appeals' employment privacy is not a PFML repeal/protection. Licensing and fraud terms cannot transfer to HOA/CIC law.",
+    "SF4807": "This Secret War in Laos and state veterans cemetery eligibility/benefits omnibus changes memorial designations, burial eligibility, honor-guard payments and recognition. References to National Guard membership are about burial/honor-guard eligibility, not Guard construction funding. Disabled-veteran designations do not amend property-tax exclusion amounts; mentions of children, public safety, records or schools are incidental to veterans benefits, not home-school counseling, Great Start childcare affordability, baby-box authorization or AG public-records access."
+  },
+  "overrides": [
+    {
+      "reviewKey": "bahner_hoa_cic_consumer_protection_reform|SF1750|2026-04-30|507c078c9b020f046b73d0f1ebb112d01049c907abb5a0696c4a16cf7b1ada86",
+      "decision": "applicable",
+      "billPolicyDirection": "strengthens_hoa_cic_unit_owner_dispute_resolution_fee_collection_transparency_and_governance_protections",
+      "alignmentDirection": "aligns",
+      "reason": "Strict-pre-vote SF1750 section 13 creates mandatory association participation in unit-owner dispute resolution before debt collection, with no user fee; other sections limit fines, foreclosure/attorney fees and establish conflict-of-interest controls. These are concrete purchaser/owner protections and oversight changes in the exact HOA/CIC sector identified in Bahner's source statement."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|HF3684|2026-05-04|221715130568be0e8d320d4bc36881b88f90e5e6c99f18a13a4f7033748a33cb",
+      "decision": "applicable",
+      "billPolicyDirection": "tightens_state_dva_grant_scoring_fraud_withholding_grantee_reporting_and_public_fund_accountability",
+      "alignmentDirection": "aligns",
+      "reason": "The exact pre-vote HF3684 version directs Veterans Affairs to apply measurable grant scoring and authorizes withholding grants for grantee fraud or criminal investigation; it also requires recipients to report program use and results. Those are substantive controls for public grant money that match Robbins's broadly stated state-program fraud oversight and accountability position."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|HF4252|2026-05-04|3f8ce2b77740c67ba6e55aca1889ceed08b0486520ef83d1de43a3f1f6a30033",
+      "decision": "applicable",
+      "billPolicyDirection": "adds_state_student_aid_fraud_denial_inspection_and_information_compliance_controls",
+      "alignmentDirection": "aligns",
+      "reason": "HF4252 section 10 creates §136A.1212, allowing denial of state student aid or grants for materially false/fraudulent applications, refusal of reasonable state information or inspection requests, or established government-funding fraud. This is a concrete fraud-control mechanism for a state program, directly within Robbins's public-money accountability proposition."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|SF4760|2026-04-30|6556496ef9fb1af977eb787b8b54c9ad3ddb53e5b0896077440e252ef7b6722f",
+      "decision": "applicable",
+      "billPolicyDirection": "authorizes_bca_subpoenas_in_fraud_investigations_including_state_funded_administered_programs",
+      "alignmentDirection": "aligns",
+      "reason": "The strict pre-vote SF4760 article 18 adds BCA subpoena authority for financial crimes and fraud expressly including investigations of state-funded or administered programs or services. A new investigatory tool for state-program fraud is substantively aligned with Robbins's support for stronger state oversight and accountability; no private-fraud or unrelated policy identity is transferred."
+    },
+    {
+      "reviewKey": "hussein_well_resourced_public_schools|HF3900|2026-05-04|f355b5a1454a31f95ed4abf0128b08687f76d84ba19e5968d2643fc98ad6d5d2",
+      "decision": "applicable",
+      "billPolicyDirection": "proposes_permanent_school_fund_reform_increasing_future_distributions_to_minnesota_school_districts",
+      "alignmentDirection": "aligns",
+      "reason": "HF3900's frozen March 18 first engrossment would submit a permanent school fund constitutional amendment to voters and implement a 4.5-percent trailing asset-value distribution formula. The proposed ballot question explicitly aims to increase funding going to all Minnesota school districts without increased individual income/property taxes. It aligns with Hussein's source-specific support for strong, well-resourced public schools statewide; the proposal is contingent on voter adoption, not treated as already enacted."
+    },
+    {
+      "reviewKey": "kresha_career_pathway_education_reform|HF3732|2026-05-04|d63e816a16cae41548b817b23d984b7aec1ee38d986ab1a8cbbb751f2b844a8e",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "HF3732 sections 2-5 materially broaden support services for at-risk youth education/training and section 10 establishes a Pathways to Prosperity program for adult basic education, GEDs and occupation credentials. These are real workforce/education pathways, but most are DEED employment services and carry forward existing youth programs, not a clear K-12/student education-system reform that expands career pathways as required by Kresha's combined source proposition. Without proving the precise education-reform element, remain fail-closed."
+    },
+    {
+      "reviewKey": "rarick_state_agency_fraud_reporting|SF4760|2026-04-30|6556496ef9fb1af977eb787b8b54c9ad3ddb53e5b0896077440e252ef7b6722f",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "SF4760 article 18 newly requires Department of Commerce referrals to BCA of crimes uncovered by its civil insurance-fraud investigations and separately authorizes BCA subpoenas for financial/public-program fraud. Although this creates a reporting obligation for one state agency and a separate enforcement tool, the reporting relates to commercial insurance crimes while the tool spans public-program investigations; the exact source proposition joins stricter state-agency fraud reporting with tools to identify/prevent fraudulent activities. The mismatched program scope cannot be safely inferred to satisfy the combined proposition, so no direction or applicability is assigned."
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
