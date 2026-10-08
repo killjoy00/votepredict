@@ -81,6 +81,7 @@ jobs:
           test "$(jq -r '.review.finalPairStatusCounts.pending_review' "$f")" = 0
           test "$(jq -r '.review.applicableRows' "$f")" = 3
           test "$(jq -r '.review.integrationReadyRows' "$f")" = 0
+          test "$(jq -r '.frozenInput.targetTrancheIndex' "$f")" = 6
           test "$(jq -r '.frozenInput.targetEventKeySha256' "$f")" = eafb3980bdbe20a94da1150e673e8d9218753bcea7f696863fc598f9b4abc072
           test "$(jq -r '.frozenInput.reviewKeySha256' "$f")" = a4b50b76692e36d6e8e15af11eeb832ae7d8329b819220a008670be21fb412b2
           jq -e '[.review.reviewedCandidates[] | select(.decision == "applicable") | .internalMembershipIdentityResolved] | all(. == false)' "$f" >/dev/null

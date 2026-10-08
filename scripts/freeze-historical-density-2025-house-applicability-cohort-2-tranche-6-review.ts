@@ -382,7 +382,7 @@ function main(): void {
       artifactId: 11564384052,
       digest:
         'sha256:5229e7cea919d127de0ded4e229d60ec7dcd6f3e0daa45f9c81758a4ac0cf3cf',
-      targetTrancheIndex: 5,
+      targetTrancheIndex: 6,
       targetEventKeySha256: EXPECTED_TARGET_EVENT_SHA,
       reviewKeySha256,
     },
