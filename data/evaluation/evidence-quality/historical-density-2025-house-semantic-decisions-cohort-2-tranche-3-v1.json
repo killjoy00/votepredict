@@ -1,0 +1,183 @@
+{
+  "schemaVersion": "historical-density-2025-house-semantic-decisions-cohort-2-tranche-3-v1",
+  "batchId": "EQV1-HISTORICAL-DENSITY-2025-HOUSE-002-T03",
+  "issue": 718,
+  "frozenCohort": {
+    "runId": 37718561841,
+    "artifactId": 11525006690,
+    "digest": "sha256:384e0f7856b051f621af0f9f7f55ec517068d093100d47edb12746911410d17c",
+    "selectionKeySha256": "6364b5c9f86ec6e4cbf4ddd9398ce962f376342c36d5e501bb65884018672a05"
+  },
+  "reviewedRows": [
+    21,
+    30
+  ],
+  "decisions": [
+    {
+      "row": 21,
+      "decision": "directional",
+      "semanticKey": "fogelman_household_cost_tax_repeal",
+      "topics": [
+        "affordability",
+        "taxes",
+        "household costs"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Marj J. Fogelman supports repealing the automatic gas tax increase, delivery taxes, and other policies she says raise household costs.",
+      "supportingExcerpt": "Our goal is to make things more affordable for Minnesotans. To do that, we will seek to repeal Democrat laws that hurt family budgets, such as their automatic gas tax increase, delivery taxes, and other policies that have driven up the costs of goods and services.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 22,
+      "decision": "directional",
+      "semanticKey": "dippel_hastings_pfas_water_treatment_funding",
+      "topics": [
+        "PFAS",
+        "drinking water",
+        "water infrastructure"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Tom Dippel supports using state funding to help cover Hastings' PFAS water-treatment costs.",
+      "supportingExcerpt": "In order to help prevent any further financial punishment of Hastings residents and business owners, I am authoring three separate bills that would utilize state funding to cover the costs.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 23,
+      "decision": "directional",
+      "semanticKey": "huot_minnesota_zoo_large_animal_operating_room",
+      "topics": [
+        "Minnesota Zoo",
+        "capital investment",
+        "veterinary infrastructure"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "John Huot supports state investment in a modest expansion of the Minnesota Zoo's Large Animal Operating Room.",
+      "supportingExcerpt": "I’m excited to partner with Rep. Robert Bierman to author legislation that would invest in a modest expansion of the Minnesota Zoo’s Large Animal Operating Room.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 24,
+      "decision": "directional",
+      "semanticKey": "smith_ceo_pay_ratio_tax",
+      "topics": [
+        "taxation",
+        "executive compensation",
+        "income inequality"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Andrew Smith supports a tax on companies whose CEO earns more than 50 times the median worker wage, scaled to the pay disparity.",
+      "supportingExcerpt": "I’ve already introduced a bill to implement a “CEO tax” for companies whose CEO makes more than 50x their median worker wage, sliding based on the amount of the disparity.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 25,
+      "decision": "directional",
+      "semanticKey": "reyer_medical_debt_relief",
+      "topics": [
+        "medical debt",
+        "healthcare affordability",
+        "consumer finance"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Liz Reyer supports using state dollars to purchase and relieve medical debt for Minnesotans.",
+      "supportingExcerpt": "This year I’m authoring legislation to leverage state dollars to buy and relieve medical debt for hundreds of thousands of Minnesotans.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 26,
+      "decision": "directional",
+      "semanticKey": "pursell_trans_student_sports_ban",
+      "topics": [
+        "school sports",
+        "transgender rights",
+        "student privacy"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Kristi Pursell opposes legislation banning transgender students from school sports and subjecting girls to additional bodily scrutiny.",
+      "supportingExcerpt": "HF 12 is dangerous and discriminatory legislation that scapegoats a small and vulnerable group of Minnesotans, while suggesting additional scrutiny of girls' bodies and I’m proud I voted against HF 12.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 27,
+      "decision": "directional",
+      "semanticKey": "hemmingsen_jaeger_paid_family_medical_leave",
+      "topics": [
+        "paid family leave",
+        "paid medical leave",
+        "worker benefits"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Amanda Hemmingsen-Jaeger supports protecting Minnesota's Paid Family and Medical Leave policy.",
+      "supportingExcerpt": "It also means that we must protect policies passed last biennium, like Paid Family and Medical Leave.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 28,
+      "decision": "directional",
+      "semanticKey": "kotyza_witthuhn_great_start_child_care_affordability",
+      "topics": [
+        "child care",
+        "family affordability",
+        "early learning"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Carlie Kotyza-Witthuhn supports the Great Start Affordability Act to make child care more affordable for Minnesota families.",
+      "supportingExcerpt": "I’m especially excited to continue working on the Great Start Affordability Act which will receive a hearing in committee on March 25th. The program will bring us one step closer to making Minnesota the best place to raise a family.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 29,
+      "decision": "directional",
+      "semanticKey": "howard_algorithmic_rent_price_fixing_ban",
+      "topics": [
+        "housing",
+        "rent",
+        "price fixing"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Michael Howard supports banning algorithmic price fixing used to raise rents.",
+      "supportingExcerpt": "The sooner Republicans come back to the negotiating table, the sooner we can get to the work of delivering for Minnesotans - top of mind for me is legislation to ban price fixing by algorithm.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 30,
+      "decision": "non_directional",
+      "reasonCode": "collective_house_republican_immigration_benefits_package_without_specific_member_policy_position"
+    }
+  ],
+  "policy": {
+    "candidateBillIdentifiers": [],
+    "targetBillApplicabilityInferred": false,
+    "outcomeUse": "none",
+    "memberIssueOnly": true,
+    "billInference": false,
+    "internalMembershipIdentityResolved": false,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
