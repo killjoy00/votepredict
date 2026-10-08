@@ -44,7 +44,7 @@ test('2025 House cohort-2 tranche-3 semantic gate keeps conservative accounting'
   );
   assert.equal(
     new Set(directional.map((decision: any) => decision.semanticKey)).size,
-    8,
+    9,
   );
   assert.equal(
     directional.some(
