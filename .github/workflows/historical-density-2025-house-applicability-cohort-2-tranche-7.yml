@@ -1,0 +1,146 @@
+name: Audit 2025 House cohort 2 applicability candidates tranche 6
+
+on:
+  pull_request:
+    paths:
+      - scripts/freeze-historical-density-2025-house-target-tranche-7.mjs
+      - scripts/audit-historical-density-2025-house-applicability-cohort-2-tranche-7.ts
+      - .github/workflows/historical-density-2025-house-applicability-cohort-2-tranche-7.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/freeze-historical-density-2025-house-target-tranche-7.mjs
+      - scripts/audit-historical-density-2025-house-applicability-cohort-2-tranche-7.ts
+      - .github/workflows/historical-density-2025-house-applicability-cohort-2-tranche-7.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2025-house-applicability-cohort-2-tranche-7-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize immutable v1.7 matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11436413885/zip > "$RUNNER_TEMP/v17.zip"
+          echo "fc1d77ccc51bc33f3e3f1c0dd6622c0f2a9797d62a8d54bcb65906de30228e44  $RUNNER_TEMP/v17.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/v17"
+          unzip -q "$RUNNER_TEMP/v17.zip"             evidence-quality-historical-feature-matrix-v1.7-manifest.json             evidence-quality-historical-feature-matrix-v1.7.ndjson.gz             -d "$RUNNER_TEMP/v17"
+
+      - name: Freeze target-event tranche 6
+        env:
+          VOTEPREDICT_EQ_V17_MANIFEST_PATH: ${{ runner.temp }}/v17/evidence-quality-historical-feature-matrix-v1.7-manifest.json
+          VOTEPREDICT_EQ_V17_MATRIX_PATH: ${{ runner.temp }}/v17/evidence-quality-historical-feature-matrix-v1.7.ndjson.gz
+          VOTEPREDICT_2025_HOUSE_TARGET_TRANCHE_OUTPUT_DIR: ${{ runner.temp }}/target-tranche
+        run: node scripts/freeze-historical-density-2025-house-target-tranche-7.mjs
+
+      - name: Verify target-event tranche 6
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/target-tranche/historical-density-2025-house-target-tranche-7-v1.json"
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-target-tranche-v1
+          test "$(jq -r '.ranking.trancheIndex' "$f")" = 7
+          test "$(jq -r '.ranking.rankStart' "$f")" = 151
+          test "$(jq -r '.ranking.rankEnd' "$f")" = 175
+          test "$(jq -r '.ranking.eventCount' "$f")" = 25
+          test "$(jq -r '.ranking.eventKeySha256' "$f")" = 3d994198b510f648867bb0804b25ff201328c6dd0628d901ff33579b43f1378f
+          test "$(jq -r '.ranking.priorTrancheEventKeySha256' "$f")" = eafb3980bdbe20a94da1150e673e8d9218753bcea7f696863fc598f9b4abc072
+          test "$(jq -r '.minTargetDate' "$f")" = 2026-04-30
+          test "$(jq -r '.maxTargetDate' "$f")" = 2026-05-04
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+
+      - name: Materialize canonical main semantic review
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11555527900/zip > "$RUNNER_TEMP/semantic-review.zip"
+          echo "fbd0cc191039eb478aa25fe8d34f289b8906d5f4ac728225e183c8da37956e2b  $RUNNER_TEMP/semantic-review.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/semantic-review"
+          unzip -q "$RUNNER_TEMP/semantic-review.zip" historical-density-2025-house-semantic-review-cohort-2-aggregate-v1.json -d "$RUNNER_TEMP/semantic-review"
+
+      - name: Audit strict-pre-vote bill-policy candidates
+        env:
+          VOTEPREDICT_2025_HOUSE_SEMANTIC_REVIEW_PATH: ${{ runner.temp }}/semantic-review/historical-density-2025-house-semantic-review-cohort-2-aggregate-v1.json
+          VOTEPREDICT_2025_HOUSE_TARGET_TRANCHE_PATH: ${{ runner.temp }}/target-tranche/historical-density-2025-house-target-tranche-7-v1.json
+          VOTEPREDICT_2025_HOUSE_APPLICABILITY_OUTPUT_DIR: ${{ runner.temp }}/applicability-audit
+        run: node --import tsx scripts/audit-historical-density-2025-house-applicability-cohort-2-tranche-7.ts
+
+      - name: Verify candidate-audit boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/applicability-audit/historical-density-2025-house-applicability-candidate-audit-cohort-2-tranche-7-v1.json"
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-applicability-candidate-audit-cohort-2-tranche-7-v1
+          test "$(jq -r '.issue' "$f")" = 718
+          test "$(jq -r '.session' "$f")" = 2025-2026
+          test "$(jq -r '.cohort.novelSemanticGroups' "$f")" = 42
+          test "$(jq -r '.cohort.targetEvents' "$f")" = 25
+          test "$(jq -r '.frozenInputs.targetTrancheIndex' "$f")" = 7
+          test "$(jq -r '.frozenInputs.targetRankStart' "$f")" = 151
+          test "$(jq -r '.frozenInputs.targetRankEnd' "$f")" = 175
+          test "$(jq -r '.frozenInputs.targetEventKeySha256' "$f")" = 3d994198b510f648867bb0804b25ff201328c6dd0628d901ff33579b43f1378f
+          test "$(jq -r '.candidateScreen.automaticApplicableRows' "$f")" = 0
+          test "$(jq -r '.candidateScreen.automaticAlignmentRows' "$f")" = 0
+          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.targetVoteOutcomesRead' "$f")" = false
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.internalMembershipIdentityResolved' "$f")" = false
+          test "$(jq -r '.policy.deterministicScreenCanDeclareApplicability' "$f")" = false
+          test "$(jq -r '.policy.semanticReviewRequiredForApplicability' "$f")" = true
+          test "$(jq -r '.policy.contextOnly' "$f")" = true
+          test "$(jq -r '.policy.mechanicallyActionable' "$f")" = false
+          test "$(jq -r '.policy.modelWeight' "$f")" = 0
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+          jq -e '[.candidateClaims[].applicabilityDecision] | all(. == "pending_semantic_review")' "$f" >/dev/null
+          jq -e '[.candidateClaims[].internalMembershipIdentityResolved] | all(. == false)' "$f" >/dev/null
+          jq -e '[.candidateClaims[].versionProof.strictlyBeforeVoteDate] | all(. == true)' "$f" >/dev/null
+          {
+            echo '## 2025-26 House cohort-2 applicability tranche 6'
+            echo
+            echo '- Target ranks: **151-175**'
+            echo '- Frozen target events: **25**'
+            echo "- Eligible claim-event pairs: **$(jq -r '.cohort.eligibleClaimEventPairs' "$f")**"
+            echo "- Candidate claim pairs: **$(jq -r '.candidateScreen.candidateClaimPairs' "$f")**"
+            echo "- Candidate bills: **$(jq -r '.candidateScreen.candidateBills' "$f")**"
+            echo "- Candidate public members: **$(jq -r '.candidateScreen.candidatePublicMembers' "$f")**"
+            echo "- Candidate semantic groups: **$(jq -r '.candidateScreen.candidateSemanticGroups' "$f")**"
+            echo '- Automatic applicable rows: **0**'
+            echo '- Outcomes used: **none**'
+            echo '- Production DB queried: **no**'
+            echo '- Vercel used: **no**'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2025-house-applicability-cohort-2-tranche-7-v1
+          path: |
+            ${{ runner.temp }}/target-tranche/*
+            ${{ runner.temp }}/applicability-audit/*
+          if-no-files-found: error
+          retention-days: 90
