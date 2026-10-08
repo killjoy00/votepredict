@@ -1,0 +1,172 @@
+{
+  "schemaVersion": "historical-density-2025-house-semantic-decisions-cohort-2-tranche-2-v1",
+  "batchId": "EQV1-HISTORICAL-DENSITY-2025-HOUSE-002-T02",
+  "issue": 718,
+  "frozenCohort": {
+    "runId": 37718561841,
+    "artifactId": 11525006690,
+    "digest": "sha256:384e0f7856b051f621af0f9f7f55ec517068d093100d47edb12746911410d17c",
+    "selectionKeySha256": "6364b5c9f86ec6e4cbf4ddd9398ce962f376342c36d5e501bb65884018672a05"
+  },
+  "reviewedRows": [
+    11,
+    20
+  ],
+  "decisions": [
+    {
+      "row": 11,
+      "decision": "directional",
+      "semanticKey": "hussein_well_resourced_public_schools",
+      "topics": [
+        "public education",
+        "school funding",
+        "education resources"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Samakab Hussein supports strong, well-resourced public schools across Minnesota.",
+      "supportingExcerpt": "I remain committed to championing education and advocating for strong, well-resourced public schools—not only in District 65A, but throughout the entire state.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 12,
+      "decision": "directional",
+      "semanticKey": "clardy_homeschool_counseling_services",
+      "topics": [
+        "student counseling",
+        "homeschool education",
+        "student services"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Mary Frances Clardy supports extending counseling and guidance services to home-schooled elementary-aged children.",
+      "supportingExcerpt": "Just today my bipartisan bill to extend counseling and guidance services to home-schooled elementary aged children received a hearing in the Education Finance Committee.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 13,
+      "decision": "directional",
+      "semanticKey": "hanson_paid_family_medical_leave",
+      "topics": [
+        "paid family leave",
+        "paid medical leave",
+        "worker benefits"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Jessica Hanson opposes repealing Minnesota Paid Family and Medical Leave.",
+      "supportingExcerpt": "I will continue to oppose Republican bills to lower taxes for the rich, put barriers to healthcare access, and repeal policies that help Minnesotans thrive like Paid Family and Medical Leave.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 14,
+      "decision": "directional",
+      "semanticKey": "harder_conservation_programs",
+      "topics": [
+        "conservation",
+        "natural resources",
+        "environment"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Bobbie V. Harder supports policies that strengthen conservation programs and protect Minnesota's environment.",
+      "supportingExcerpt": "I’m proud to support policies that strengthen conservation programs and ensure Minnesota’s environment remains healthy for future generations.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 15,
+      "decision": "directional",
+      "semanticKey": "tabke_school_sports_gender_body_scrutiny",
+      "topics": [
+        "school sports",
+        "transgender students",
+        "privacy"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Brad Tabke opposes school-sports policies that invite spectators to challenge girls' gender and subject children to unwarranted bodily scrutiny.",
+      "supportingExcerpt": "As written, this bill would allow any random spectator to call into question the gender of a female player, whether that’s an elementary schooler or a varsity athlete. That kind of unwarranted scrutiny over the bodies of our children is not something I support.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 16,
+      "decision": "non_directional",
+      "reasonCode": "generic_affordability_and_anti_administration_values_without_specific_policy_position"
+    },
+    {
+      "row": 17,
+      "decision": "directional",
+      "semanticKey": "hicks_unilateral_telework_policy_changes",
+      "topics": [
+        "state workforce",
+        "telework",
+        "workplace policy"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Kimberly C Hicks opposes unilateral state telework policy changes made without consultation or clear guidance for managers.",
+      "supportingExcerpt": "Unilateral decisions like this with no discussion or guidance on what managers are supposed to tell their teams creates panic, confusion, and fear. This is not how we work together.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 18,
+      "decision": "directional",
+      "semanticKey": "xiong_state_worker_remote_work",
+      "topics": [
+        "state workforce",
+        "remote work",
+        "telework"
+      ],
+      "claimType": "quoted_position",
+      "stance": "opposes",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Jay Xiong opposes requiring state employees to return to in-person work and supports preserving remote-work flexibility.",
+      "supportingExcerpt": "I strongly oppose Governor Walz’s recent decision to require state employees to return to in-person work , rolling back the flexibility that remote work has provided.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 19,
+      "decision": "non_directional",
+      "reasonCode": "collective_mining_support_and_general_commitment_without_specific_member_policy_position"
+    },
+    {
+      "row": 20,
+      "decision": "directional",
+      "semanticKey": "lawrence_chronic_absenteeism_tracking",
+      "topics": [
+        "school attendance",
+        "chronic absenteeism",
+        "truancy tracking"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Bryan Lawrence supports legislation to combat chronic school absenteeism by improving tracking of truancy and absenteeism.",
+      "supportingExcerpt": "I'm excited to share that two bills I co-authored to combat chronic absenteeism in schools passed the House of Representatives yesterday. These pieces of legislation, House Files 2067 and 0062 , stemmed from a study group and reflect the dedication and teamwork of Representatives Keeler, Bakeberg, Virnig, and myself. These bills aim to enhance the tracking of chronic truancy and absenteeism, ensuring better support for students and schools.",
+      "crossBatchDuplicateOf": []
+    }
+  ],
+  "policy": {
+    "candidateBillIdentifiers": [],
+    "targetBillApplicabilityInferred": false,
+    "outcomeUse": "none",
+    "memberIssueOnly": true,
+    "billInference": false,
+    "internalMembershipIdentityResolved": false,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
