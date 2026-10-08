@@ -214,7 +214,7 @@ console.log(JSON.stringify({
     rankStart: RANK_START,
     rankEnd: RANK_END,
     eventCount: selected.length,
-    eventKeySha256: EXPECTED_TRANCHE5_SHA,
+    eventKeySha256: EXPECTED_TRANCHE7_SHA,
     minTargetDate: report.minTargetDate,
     maxTargetDate: report.maxTargetDate,
     identifiers: report.identifiers,
