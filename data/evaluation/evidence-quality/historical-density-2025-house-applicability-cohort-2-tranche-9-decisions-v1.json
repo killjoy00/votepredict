@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-cohort-2-tranche-9-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenCandidateArtifact": {
+    "runId": 37832386938,
+    "artifactId": 11574520636,
+    "digest": "sha256:be7841eb4a8e674dbfccfe1c0ad812ffb8b879788f62fb74fac92140b6878ee5",
+    "contentSha256WithoutSelfField": "94075055e81b5ffca109b31ef8a8359b3dfe3599ad2464476b3d45f649b6da00",
+    "targetTrancheIndex": 9,
+    "targetRankStart": 201,
+    "targetRankEnd": 225,
+    "targetEventKeySha256": "ee804ad6c0d65f64848a96c716e000146ca09e74ac00e31ca4a2be9d08896c3e",
+    "reviewKeySha256": "8711d9c01aad8ba7b2d26d3ca89f294dfee6b9cc9769abc12e66e31aa2471de1",
+    "eligibleClaimEventPairs": 1050,
+    "candidatePairs": 249,
+    "candidateBills": 18,
+    "candidatePublicMembers": 41,
+    "candidateSemanticGroups": 41
+  },
+  "defaultDecision": "not_applicable",
+  "defaultBillRationales": {
+    "HF1141": "This second-engrossment Minnesota Housing Finance Agency supplemental housing budget finances statewide housing development, workforce housing and homeownership assistance. It does not add an HOA/Common Interest Ownership Act consumer-rights regime, homeschool elementary counseling services, the named Minnesota Zoo large-animal operating-room expansion, Koegel's specifically named Empowering Small Communities Program, Great Start child-care affordability, infant-abuse safeguarding/parent education, Mound water funding, Hastings municipal PFAS water treatment, or a constitutional surplus refund. Mahamoud's *combined Minneapolis drinking-water infrastructure AND deeply affordable public housing* claim is not proved by statewide affordable housing aid without its specified Minneapolis water project. No disabled-veteran property-tax increase is enacted.",
+    "HF2433": "The exact April 30, 2025 second engrossment is an extensive K–12 education finance and policy bill. It provides substantive direct state public-school aid and reform-oriented CTE consortium grants and high-school EMT course/certification appropriations, separately matched to Hussein and Kresha below. Its general education aid, student-support revenue, Read Act, teacher training and staffing/grant appropriations do not establish Lawrence's specifically new chronic truancy/absence-tracking policy: occasional existing attendance metrics are not such reporting reform. Nor do they enact the Great Start child-care affordability act, added home-school elementary counseling, state Paid Family and Medical Leave protections, sex-based/transgender sports law, childcare-center infant abuse safeguards, parents' infant abuse reporting education, medical service staff ratios, particular Hastings/Mound/Minneapolis water and housing earmarks, private rent-price algorithm controls, state-program fraud incident reporting/prevention, named small-city infrastructure program, teacher-wide pension reform, CEO pay-ratio tax, tax repeal/refund amendments, or any other nominated program. Wolgamott's workplace/salary/pension slogan has some limited overlap with teacher-salary grants but not demonstrated statewide wages or pensions; that exact candidate is separately fail-closed.",
+    "HF3067": "The exact amendment clarifies qualifications and credential exceptions for paraprofessionals serving school students in Minn. Stat. 121A.642, not guidance or counseling for *homeschooled elementary-aged children* as Clardy's frozen proposition requires. Education and pupil words do not make a different type of K–12 staffing credential policy applicable.",
+    "HF3426": "The strict April 20 first engrossment appropriates Environment and Natural Resources Trust Fund money for conservation/habitat/environmental protections and adds substantial fraud-prevention/grantee-oversight training, risk-assessment and public grant monitoring, separately applicable for Harder and Robbins. Environmental STEM internships overlap Kresha's student career aims without independently implementing the expressly linked education reform; that exact pair remains fail-closed. Public grantee reporting is not Rarick's joined stricter *state-agency incident reporting plus prevention tools*. The bill does not earmark Dippel's Hastings municipal PFAS drinking-water treatment, Myers's named Mound drinking-water project, Mahamoud's combined Minneapolis water/public housing, Huot's zoo *large-animal operating room*, Koegel's named small-city program, state K–12 operational funding in Hussein's sense, state National Guard buildings, ambulance no-transport reimbursement, childcare affordability/safeguards or parent-infant-abuse education, the inclusive ERA, or disabled-veteran tax-exclusion changes.",
+    "HF3489": "The strict fourth-engrossment school field-trip supervision, educator licensing/child-protection reporting and criminal grooming provisions concern school employees, K–12 student field trips and abuse criminal offenses. They are not laws imposing *childcare facility* abuse safeguards on infants, mandates for health or care providers to educate parents about detecting/reporting infant abuse, home-schooled elementary counseling, sex/gender school sports eligibility protections, public Attorney General office dataset access, state-funded program fraud-accountability controls, or Rarick's state-agency fraud-reporting-and-prevention package. School staff/pupil safety cannot be conflated with child-care infant-program policy.",
+    "HF3900": "The exact May 4 second engrossment proposes a constitutional change to the permanent school fund and revises a 4.5% asset-value distribution mechanism, with a voter ballot question expressly aimed at increasing school funding across Minnesota without new individual income/property taxes. That proposed direction matches Hussein alone, not Finke's separate inclusive Equal Rights Amendment, Fogelman's repeal of automatic gas/delivery taxes, Perryman's surplus-refund rule, Niska's public Attorney General-office data access (the existing Attorney General state investment board role is separate), or Rehrauer's disabled-veteran property-tax exclusion. It is a proposed ballot measure, not an enacted constitutional provision.",
+    "HF4017": "The strict second engrossment requires and funds a study of unlawful shipment of infectious/pathological medical waste. Investigation/reporting of solid-waste shipment violations is a distinct environmental-health administration topic and neither creates stricter state-agency fraud-incident reporting nor equips state agencies with fraud detection/prevention tools required together by Rarick. A study of unlawful waste transport is not a state-funded program fraud-control reform.",
+    "HF4074": "The exact May 11 second engrossment is a statewide public retirement and pension-administration omnibus. Its Article 3 materially revises St. Paul Teachers Retirement Fund contributions, funds the pension association, relaxes teacher retire-and-return eligibility and extends annuity earnings-relief periods, directly matching Wolgamott's *fair teacher pensions* component in its own precise override. Other sections expand municipal probation/telecommunicator benefits or adjust broad state employee definitions, pension salary calculations, disability exams and administrative reporting. The explicit exclusion of paid-family-leave benefit payments from pensionable salary is not the repeal or protection of Minnesota's Paid Family and Medical Leave program as asserted by Hanson or Hemmingsen-Jaeger. No provision establishes the independent state employee telework consultation/return-to-office policies claimed by Hicks/Xiong, nor homeschool counseling, K–12 education finance in Hussein's general school-resourcing sense, ambulance nontransport billing, patient staffing ratios, direct state administration replacing private public health insurers, fraud reporting and prevention by state agencies, children's care safeguards, named local infrastructure, emergency infant surrender boxes, protected sports eligibility, income/tax amendments, CEO pay-ratio tax, National Guard capital buildings or HOA consumer rights. Incidental 'fraud', 'pension', 'family leave', 'ambulance', and teacher terms do not transfer to those distinct policy identities.",
+    "HF4138": "The exact fourth engrossment imposes privacy, parental consent and age protections for *minor social media platform accounts* and authorizes Attorney General enforcement. Online social-media account regulations do not require care providers to educate parents to recognize/report abuse *in infants*, authorize Safe Haven Baby Boxes for newborn surrender, provide Great Start child-care affordability, release public datasets held by the Attorney General's own office, or fund National Guard buildings. Same bill/version appears at separate May 12 and May 16 vote events, each with its own immutable review key; neither is resolved by another event.",
+    "HF4188": "The strict April 24 second engrossment regulates insurance, securities, consumer financial products and private virtual-currency kiosks, with commercial fraud and deceptive-practice prevention. It does not implement HOA/CIC statutory purchaser/owner safeguards, state-program fraud monitoring under Robbins, Rarick's *state agency incident reporting plus tools*, public health-insurance programs moving from private insurer to state administration, or government acquisition of medical debt. It also does not amend the inclusive Equal Rights Amendment, school sex-based sports eligibility, State Guard buildings, disabled-veteran property-tax exclusions, CEO-to-worker compensation tax, named conservation/zoo/Mound/small-community infrastructure, home-school counseling or infant surrender. Identical words like 'consumer protection', 'fraud', 'state', 'capital', and 'tax' refer to materially different programs and actors.",
+    "HF4239": "The strict first engrossment concerns Campaign Finance and Public Disclosure Board reporting, political committees/noncampaign expenses, administrative complaints and confidentiality classifications for *campaign-finance* records. The Board's public reports and complaint handling are not an expansion of public access to the Attorney General's own office records while safeguarding residents, and are not new agency fraud incident reporting combined with fraud prevention tools. Generic political disclosure, reporting, revenue, tax, grants, housing and 'protection' terminology does not create HOA/CIC rights, inclusive ERA, sex-based school sports policy, the specifically named small-city/Mound investments, Great Start affordability, Guard buildings, disabled-veteran property tax increases, infant childcare safeguarding or the compensation pay-ratio tax.",
+    "HF4240": "The exact May 7 second engrossment amends absentee voting, election calendars, ballot forms and related election administration. Public election records and certification by state offices are not broadened public access to Minnesota Attorney General's office *datasets*. Election officials' guards, disabled voter accommodations, property references and other technical terminology do not add National Guard building resources, disabled-veteran property-tax exclusion, state medical-debt relief purchasing, or HOA/CIC consumer reforms.",
+    "HF4252": "The strict May 4 third engrossment is a higher-education student aid/career-school regulatory and funding omnibus, including new §136A.1212 allowing the Office of Higher Education to deny state student aid or grants based on materially false/fraudulent applications or refusal of reasonable state inspection/information requests. That state grant anti-fraud control directly matches Robbins (separately overridden). Requirements for private career schools and student retention/accommodation have topical overlap with Kresha's linked student education/career-pathway reform, but do not independently show *expanded career pathways*; that key remains fail-closed. Student aid fraud controls do not impose Rarick's two-part ongoing *state-agency incident reporting plus prevention tools*. PFAS cleanup aid goes to Lake Superior College emergency response training, **not Hastings municipal drinking water treatment**. Other grant and campus changes are not Great Start childcare affordability, homeschool elementary guidance, teacher pension/pay protection, sex-based school athletics eligibility, inclusive ERA, paid employment Family and Medical Leave protection, named municipal water/affordable housing projects, rural ambulance nontransport reimbursement, National Guard buildings, surplus refunds, disabled-veteran tax law, rent algorithm regulation, caregiver infant abuse prevention or parent education, or CEO pay-ratio tax.",
+    "SF2373": "The strict fourth engrossment exempts minor league baseball players from minimum wage/overtime and changes construction codes/contractor trade-licensing requirements. Contractor inspection, project utility references and incidental students/parents are not HOA/CIC consumer-protection changes, homeschooling counseling, conservation-program/environmental grants, National Guard building appropriations or care-provider parental education about infant abuse.",
+    "SF3210": "The strict first engrossment expands Minnesota Human Rights Act protection against discrimination by adding *reasonable disability accommodations* to the statute's purpose provision. Existing references to race, gender identity, national origin and sexual orientation are carried-forward categories, not new protections for the specific LGBTQ, Black and Brown or immigrant communities named by Hill and Noor. It does not protect abortion access from federal restrictions, regulate trans student sports or set biological-sex school athletic rules. Advocacy for different protected groups does not authorize identity-category transfer just because the same statute governs all discrimination.",
+    "SF3432": "The strict third engrossment governs removal of identifying insignia from sold emergency vehicles, protective/security services for state officials, funding for courthouse and governmental security, and related reporting. Emergency police/ambulance *vehicle equipment* is not medical-assistance reimbursement for no-transport rural ambulance runs. Official security funding is not Safe Haven newborn-surrender boxes, National Guard capital buildings or named small-community/Mound water investments. State public safety reports are not Rarick's coordinated state-agency fraud-reporting and prevention reform or public release of AG office records, and employee protective details do not enact remote-work/return-to-office rules, tax repeals, surplus refunds or disabled-veteran tax exemptions.",
+    "SF4282": "The exact first engrossment makes forecast and appropriations adjustments in K–12 education, Department of Human Services, Department of Children/Youth/Families, childcare and Metro Mobility accounts. These forecast corrections are not enactment of the named Great Start Affordability Act, a new entitlement for *home-schooled elementary* counseling, providers' parent education on identifying/reporting infant abuse, or new infant-facility abuse safeguards. A budget adjustment for state health programs is not conversion of private-insurer administration to direct state administration under Liebling's frozen proposition. Teacher-support and school finance forecast lines are not teacher-wide competitive pay/pension reforms under Wolgamott. Koegel's named Empowering Small Communities infrastructure grant program is absent. The identical frozen bill text applies to two target events May 13 and May 16; their distinct candidate keys cannot be collapsed or borrowed.",
+    "SF4760": "The strict April 22 second engrossment is a wide public safety and criminal-justice omnibus (victims' rights, data, corrections, judicial protection, background checks, crimes, financial fraud). New BCA financial-fraud investigatory subpoenas expressly covering fraud in state-funded or administered programs directly match Robbins's general public-fund oversight stance. A separate Commerce insurance-fraud referral obligation to BCA raises ambiguity for Rarick's joined stricter *state-agency fraud reporting plus prevention* source: commercial insurance reporting and state-funded-program investigation are not proven a unified public-program incident-reporting reform; that exact key is fail-closed. Existing immigration-status crime victim data confidentiality is not new protective policy for Hill/Noor's LGBTQ, racial or immigrant communities; youth work-experience program provisions are not Kresha's K–12 career education reform; child and domestic abuse provisions affect criminal-justice or existing school settings, not infant childcare-facility abuse rules or parent education. No component enacts Great Start affordability, school truancy tracking, direct state public health-insurance administration, safe patient staffing ratios, medical debt purchasing, financial surplus tax refunds, sports gender eligibility rules, inclusive ERA, bodily/reproductive rights amendments, municipal water/zoo/Mound/Minneapolis/small-community earmarks, National Guard capital, disabled-veteran tax exclusions, PFML program protection/repeal, CEO pay-ratio tax, rent algorithms or teacher pensions. Strict bill, program and beneficiary identities remain separate."
+  },
+  "overrides": [
+    {
+      "reviewKey": "hussein_well_resourced_public_schools|HF2433|2026-05-16|5da5bf18e17dfe3be6fabfe0de003a064ae1e2cc74e8a5c6eb1f3a78b2c2a7c4",
+      "decision": "applicable",
+      "billPolicyDirection": "appropriates_public_k12_general_education_school_support_and_teacher_program_financing",
+      "alignmentDirection": "aligns",
+      "reason": "HF2433's strict April 30, 2025 second engrossment contains detailed 2026/2027 state K–12 appropriations for general education, education excellence, student support personnel, facilities, school nutrition, literacy and special education. This substantively funds public schools across Minnesota in the exact statewide public-school resource domain championed in Hussein's prior statement; do not infer whether the underlying vote passed."
+    },
+    {
+      "reviewKey": "kresha_career_pathway_education_reform|HF2433|2026-05-16|5da5bf18e17dfe3be6fabfe0de003a064ae1e2cc74e8a5c6eb1f3a78b2c2a7c4",
+      "decision": "applicable",
+      "billPolicyDirection": "creates_k12_career_technical_education_consorita_and_student_emt_training_certification_grants",
+      "alignmentDirection": "aligns",
+      "reason": "The strict second engrossment HF2433 Article 1 appropriations include section 12, subdivision 11, $5,000,000/year for career and technical education consortium grants through Minnesota Service Cooperatives and subdivision 12, $500,000/year for high school courses leading toward emergency medical technician certification. Actual school-based career and workforce education opportunities match Kresha's stated aim to improve student career pathways *through education reform*, unlike mere environmental internship grants."
+    },
+    {
+      "reviewKey": "wolgamott_teacher_workplace_pay_pension|HF4074|2026-05-13|279143937a67360ab8a6a8797b67771e1bb886afb89b758c23c3510bd020d4fb",
+      "decision": "applicable",
+      "billPolicyDirection": "improves_minnesota_teacher_pension_contributions_state_retirement_aid_and_retire_return_options",
+      "alignmentDirection": "aligns",
+      "reason": "HF4074 strict May 11 second engrossment ARTICLE 3 amends St. Paul teacher retirement contributions for fiscal years after June 30, 2026 from 11.5% to 10.5% (basic) and 9% to 8% (coordinated), adds $3,400,000 in state retirement fund aid, lowers TRA retire-and-return eligibility from 62 to 59-1/2, and extends annuity earnings-limit suspensions for retired teachers through 2030/2031. These are material improvements to the teacher pensions/retirement rights in Wolgamott's explicit pre-vote statement, without claiming that unrelated safe working conditions or general wages were also changed."
+    },
+    {
+      "reviewKey": "hussein_well_resourced_public_schools|HF3900|2026-05-16|451f0b67f59f91d992043bf8e9b284fe1644cdb68e5f25f775467667211526fd",
+      "decision": "applicable",
+      "billPolicyDirection": "proposes_constitutional_permanent_school_fund_distributions_for_higher_statewide_public_school_funding",
+      "alignmentDirection": "aligns",
+      "reason": "HF3900's exact strict May 4 second engrossment submits a permanent school fund constitutional amendment to voters, revises calculation/distribution and frames the ballot question explicitly as increasing funds to every Minnesota school district. It is directly aligned to Hussein's well-resourced public schools stance; this is a proposed voter-contingent change, not a claim that the constitutional reform was enacted."
+    },
+    {
+      "reviewKey": "harder_conservation_programs|HF3426|2026-05-14|ac7e9362ec9f8e85beef6072449a32b2b0e90e2c1ef0c336361f9c1eb33d9abd",
+      "decision": "applicable",
+      "billPolicyDirection": "appropriates_environment_and_natural_resources_trust_fund_for_statewide_conservation_restoration_habitat_and_natural_resources_programs",
+      "alignmentDirection": "aligns",
+      "reason": "The exact April 20 first engrossment HF3426 directly appropriates Environment and Natural Resources Trust Fund money to diverse habitat restoration, native landscape protection, climate resilience, conservation and environmental programs. Its actor, program and public funding direction directly match Harder's published support for strengthening conservation programs and Minnesota environmental protection."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|HF3426|2026-05-14|ac7e9362ec9f8e85beef6072449a32b2b0e90e2c1ef0c336361f9c1eb33d9abd",
+      "decision": "applicable",
+      "billPolicyDirection": "creates_public_environmental_grant_fraud_prevention_training_risk_assessment_and_monitoring_controls",
+      "alignmentDirection": "aligns",
+      "reason": "The exact first-engrossment HF3426 adds new DNR grant manager annual fraud prevention/financial reconciliation training, pre-award grant risk assessments, unannounced monitoring and selected grantee financial reconciliation and recipient accountability requirements. These are direct oversight controls over state-managed environmental grant funds, matching Robbins's broad state-program fraud accountability statement; no transfer to the narrower Rarick reporting claim."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|HF4252|2026-05-16|a26de8c86d73a0aa59b5d63a3cdcb089bf8d3140d907eb480d2197bf87ed85e3",
+      "decision": "applicable",
+      "billPolicyDirection": "adds_state_student_grant_eligibility_denial_for_fraudulent_applications_and_inspection_noncompliance",
+      "alignmentDirection": "aligns",
+      "reason": "In the newly pinned May 4 *third* engrossment of HF4252, section adding §136A.1212 authorizes denial of Minnesota student aid or state grants for materially false/fraudulent financial applications, refusal of reasonable state inspection or information, or a government-funding fraud determination. This establishes a concrete state-program fraud and accountability tool matching Robbins's public money oversight position, independently verified on this exact bill version rather than copied from its previous engrossment."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|SF4760|2026-05-12|6556496ef9fb1af977eb787b8b54c9ad3ddb53e5b0896077440e252ef7b6722f",
+      "decision": "applicable",
+      "billPolicyDirection": "establishes_bca_fraud_investigation_subpoena_tools_explicitly_for_state_funded_administered_programs",
+      "alignmentDirection": "aligns",
+      "reason": "SF4760's strict April 22 second engrossment expressly authorizes Bureau of Criminal Apprehension subpoenas of business/financial documents when investigating fraud including state-funded or state-administered programs and services. Strengthened statewide investigative capacity for misuse of public money directly aligns to Robbins's broad fraud oversight/transparency stance for this *May 12* target vote, with no inference from any other bill or target event."
+    },
+    {
+      "reviewKey": "kresha_career_pathway_education_reform|HF3426|2026-05-14|ac7e9362ec9f8e85beef6072449a32b2b0e90e2c1ef0c336361f9c1eb33d9abd",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "The exact HF3426 conservation trust-fund text finances youth environmental STEM projects, internships, apprenticeships and natural-resource career awareness, creating genuine career-readiness topical overlap. However these are DNR/conservation grants, not independently demonstrated *education reform* that expands career pathways within schools as Kresha's conjunction specifies. The education-system scope is unresolved and no directional label is assigned."
+    },
+    {
+      "reviewKey": "kresha_career_pathway_education_reform|HF4252|2026-05-16|a26de8c86d73a0aa59b5d63a3cdcb089bf8d3140d907eb480d2197bf87ed85e3",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "HF4252's third engrossment substantively reforms private career-school and distance-education licensure, quality standards, student disclosure and oversight. That is educational regulation involving occupational training but no frozen section independently demonstrates expanded student career pathways or a new workforce readiness opportunity, both central to Kresha's stated education-reform aim. A possible indirect effect is insufficient to assign applicability/direction."
+    },
+    {
+      "reviewKey": "rarick_state_agency_fraud_reporting|SF4760|2026-05-12|6556496ef9fb1af977eb787b8b54c9ad3ddb53e5b0896077440e252ef7b6722f",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "The same frozen SF4760 second engrossment newly requires the Commerce commissioner to refer crimes found in civil *commercial insurance-fraud* investigations to the BCA and separately grants BCA investigatory subpoena powers that can reach state-funded programs. Rarick's exact published position joins *stricter fraud-incident reporting by state agencies* with tools to identify/prevent fraud in those agency programs; combining reporting from commercial insurance with different public-program investigations does not prove a unified source policy match. Preserve the scope ambiguity."
+    },
+    {
+      "reviewKey": "wolgamott_teacher_workplace_pay_pension|HF2433|2026-05-16|5da5bf18e17dfe3be6fabfe0de003a064ae1e2cc74e8a5c6eb1f3a78b2c2a7c4",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "The HF2433 K–12 appropriations include teacher development, school workforce grants and limited eligibility to use an emergency medical education grant for teacher salary expenses. Although teacher funding is topical overlap, there is no proof the exact bill directly establishes safe teacher working conditions, statewide *competitive teacher pay*, or *fair retirement pensions* emphasized in Wolgamott's multi-component source slogan; a limited-course salary allowance alone is not a teacher compensation policy. Stay fail-closed."
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "reviewMethod": "all_249_exact_prevote_candidate_claims_crosschecked_with_18_frozen_revisor_bill_policy_propositions_plus_individual_overrides",
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
