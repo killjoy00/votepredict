@@ -616,10 +616,24 @@ async function main() {
       (event) => group.earliestAvailability < event.occurredOn,
     ).length, 0,
   );
+  const eligiblePairsByTargetYear = Object.fromEntries(
+    ['2025', '2026'].map((year) => [
+      year,
+      semantic.semanticGroups.reduce(
+        (count, group) => count + targetTranche.events.filter(
+          (event) => event.occurredOn.startsWith(year)
+            && group.earliestAvailability < event.occurredOn,
+        ).length,
+        0,
+      ),
+    ]),
+  );
   if (
     eligibleSourcePairsIndependently !== EXPECTED_ELIGIBLE_PAIRS
     || pairResults.length !== EXPECTED_ELIGIBLE_PAIRS
     || EXPECTED_GROUPS * EXPECTED_EVENTS - pairResults.length !== EXPECTED_INELIGIBLE_SOURCE_DATE_PAIRS
+    || eligiblePairsByTargetYear['2025'] !== 270
+    || eligiblePairsByTargetYear['2026'] !== 588
   ) throw new Error('Tranche-10 source-availability gate drifted');
 
   const sourceStatusCounts = Object.fromEntries(
@@ -661,6 +675,7 @@ async function main() {
       targetEvents: targetTranche.events.length,
       eligibleClaimEventPairs: pairResults.length,
       ineligibleSourceNotYetAvailablePairs: EXPECTED_INELIGIBLE_SOURCE_DATE_PAIRS,
+      eligibleClaimEventPairsByTargetYear: eligiblePairsByTargetYear,
       publicMembers: new Set(
         semantic.semanticGroups.map((group) => group.publicMemberKey),
       ).size,
