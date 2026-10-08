@@ -494,13 +494,13 @@ async function main() {
     || targetTranche.chamber !== 'house'
     || targetTranche.source.artifactId !== TARGET_SOURCE_ARTIFACT_ID
     || targetTranche.source.artifactDigest !== TARGET_SOURCE_ARTIFACT_DIGEST
-    || targetTranche.ranking.trancheIndex !== 5
+    || targetTranche.ranking.trancheIndex !== 6
     || targetTranche.ranking.rankStart !== 126
     || targetTranche.ranking.rankEnd !== 150
     || targetTranche.ranking.eventCount !== EXPECTED_EVENTS
     || targetTranche.ranking.eventKeySha256 !== TARGET_EVENT_KEY_SHA
     || targetTranche.ranking.priorTrancheEventKeySha256
-      !== 'b30043dfcb57fd7d5cb10b489b9d42ca1ea4476e5c4ee1bec512277fe7aa4339'
+      !== '75b0435e0b61b4a356e82c3017caa400cf67a21778a41158f032679151067862'
     || targetTranche.events.length !== EXPECTED_EVENTS
     || targetTranche.minTargetDate !== '2026-04-23'
     || targetTranche.maxTargetDate !== '2026-04-30'
