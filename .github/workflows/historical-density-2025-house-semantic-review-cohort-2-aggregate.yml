@@ -1,0 +1,136 @@
+name: Freeze 2025 House cohort 2 semantic aggregate
+
+on:
+  pull_request:
+    paths:
+      - data/evaluation/evidence-quality/historical-density-2025-house-semantic-cohort-2-aggregate-manifest-v1.json
+      - scripts/freeze-historical-density-2025-house-semantic-review-cohort-2-aggregate.ts
+      - tests/historical-density-2025-house-semantic-review-cohort-2-aggregate.test.ts
+      - .github/workflows/historical-density-2025-house-semantic-review-cohort-2-aggregate.yml
+  push:
+    branches: [main]
+    paths:
+      - data/evaluation/evidence-quality/historical-density-2025-house-semantic-cohort-2-aggregate-manifest-v1.json
+      - scripts/freeze-historical-density-2025-house-semantic-review-cohort-2-aggregate.ts
+      - tests/historical-density-2025-house-semantic-review-cohort-2-aggregate.test.ts
+      - .github/workflows/historical-density-2025-house-semantic-review-cohort-2-aggregate.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2025-house-semantic-review-cohort-2-aggregate-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    name: Freeze cohort-2 House semantic aggregate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Test checked-in aggregate manifest
+        run: node --import tsx --test tests/historical-density-2025-house-semantic-review-cohort-2-aggregate.test.ts
+
+      - name: Materialize immutable semantic tranches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/semantic-tranches"
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11525334634/zip > "$RUNNER_TEMP/t1.zip"
+          echo "f49c0782af966b1aa10cc7ade6cb73916a0bc87fd4dbc2b29d12a7b07c125fd3  $RUNNER_TEMP/t1.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/t1.zip" historical-density-2025-house-semantic-review-cohort-2-tranche-1-v1.json -d "$RUNNER_TEMP/semantic-tranches"
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11554106286/zip > "$RUNNER_TEMP/t2.zip"
+          echo "43494944f40d3783628b55d1ffc613b3a5059239da0d558269debd1a628fcb92  $RUNNER_TEMP/t2.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/t2.zip" historical-density-2025-house-semantic-review-cohort-2-tranche-2-v1.json -d "$RUNNER_TEMP/semantic-tranches"
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11554617271/zip > "$RUNNER_TEMP/t3.zip"
+          echo "bf29ab4e7f901cafea9230267ff6e1d90849b606edb43d0ca266b7b4d6da6633  $RUNNER_TEMP/t3.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/t3.zip" historical-density-2025-house-semantic-review-cohort-2-tranche-3-v1.json -d "$RUNNER_TEMP/semantic-tranches"
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11554518798/zip > "$RUNNER_TEMP/t4.zip"
+          echo "88d302fbb4c51a8218f8acafbc6a6458582ade3cf14acaf4b0241def9d784338  $RUNNER_TEMP/t4.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/t4.zip" historical-density-2025-house-semantic-review-cohort-2-tranche-4-v1.json -d "$RUNNER_TEMP/semantic-tranches"
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11554928371/zip > "$RUNNER_TEMP/t5.zip"
+          echo "8ad082dcbd3318b8a3be3bbb04de7481c2d858f6f99449c5d4eb017b5ee1f267  $RUNNER_TEMP/t5.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/t5.zip" historical-density-2025-house-semantic-review-cohort-2-tranche-5-v1.json -d "$RUNNER_TEMP/semantic-tranches"
+
+      - name: Freeze complete cohort-2 semantic aggregate
+        env:
+          VOTEPREDICT_2025_HOUSE_SEMANTIC_COHORT_2_AGGREGATE_MANIFEST_PATH: data/evaluation/evidence-quality/historical-density-2025-house-semantic-cohort-2-aggregate-manifest-v1.json
+          VOTEPREDICT_2025_HOUSE_SEMANTIC_COHORT_2_T1_PATH: ${{ runner.temp }}/semantic-tranches/historical-density-2025-house-semantic-review-cohort-2-tranche-1-v1.json
+          VOTEPREDICT_2025_HOUSE_SEMANTIC_COHORT_2_T2_PATH: ${{ runner.temp }}/semantic-tranches/historical-density-2025-house-semantic-review-cohort-2-tranche-2-v1.json
+          VOTEPREDICT_2025_HOUSE_SEMANTIC_COHORT_2_T3_PATH: ${{ runner.temp }}/semantic-tranches/historical-density-2025-house-semantic-review-cohort-2-tranche-3-v1.json
+          VOTEPREDICT_2025_HOUSE_SEMANTIC_COHORT_2_T4_PATH: ${{ runner.temp }}/semantic-tranches/historical-density-2025-house-semantic-review-cohort-2-tranche-4-v1.json
+          VOTEPREDICT_2025_HOUSE_SEMANTIC_COHORT_2_T5_PATH: ${{ runner.temp }}/semantic-tranches/historical-density-2025-house-semantic-review-cohort-2-tranche-5-v1.json
+          VOTEPREDICT_2025_HOUSE_SEMANTIC_COHORT_2_AGGREGATE_OUTPUT: ${{ runner.temp }}/historical-density-2025-house-semantic-review-cohort-2-aggregate-v1.json
+        run: node --import tsx scripts/freeze-historical-density-2025-house-semantic-review-cohort-2-aggregate.ts
+
+      - name: Verify aggregate boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/historical-density-2025-house-semantic-review-cohort-2-aggregate-v1.json"
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-semantic-review-cohort-2-aggregate-v1
+          test "$(jq -r '.batchId' "$f")" = EQV1-HISTORICAL-DENSITY-2025-HOUSE-002
+          test "$(jq -r '.reviewedRows[0]' "$f")" = 1
+          test "$(jq -r '.reviewedRows[1]' "$f")" = 50
+          test "$(jq -r '.cohortComplete' "$f")" = true
+          test "$(jq -r '.summary.documents' "$f")" = 50
+          test "$(jq -r '.summary.directionalDocuments' "$f")" = 42
+          test "$(jq -r '.summary.nonDirectionalDocuments' "$f")" = 8
+          test "$(jq -r '.summary.uniqueSemanticGroups' "$f")" = 42
+          test "$(jq -r '.summary.novelSemanticGroups' "$f")" = 42
+          test "$(jq -r '.summary.crossBatchDuplicateSemanticGroups' "$f")" = 0
+          test "$(jq -r '.summary.candidateBillIdentifiers' "$f")" = 0
+          test "$(jq -r '.summary.internalMembershipIdentitiesResolved' "$f")" = 0
+          test "$(jq -r '.trancheSources | length' "$f")" = 5
+          jq -e '[.semanticGroups[].candidateBillIdentifiers | length] | add == 0' "$f" >/dev/null
+          jq -e '[.semanticGroups[].novelForApplicabilityScreen] | all(. == true)' "$f" >/dev/null
+          jq -e '[.semanticGroups[].internalMembershipIdentityResolved] | all(. == false)' "$f" >/dev/null
+          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.billInference' "$f")" = false
+          test "$(jq -r '.policy.targetBillApplicabilityInferred' "$f")" = false
+          test "$(jq -r '.policy.contextOnly' "$f")" = true
+          test "$(jq -r '.policy.mechanicallyActionable' "$f")" = false
+          test "$(jq -r '.policy.modelWeight' "$f")" = 0
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+          {
+            echo '## 2025-26 House cohort-2 semantic aggregate'
+            echo
+            echo '- Frozen documents: **50**'
+            echo '- Directional: **42**'
+            echo '- Non-directional/fail-closed: **8**'
+            echo '- Novel semantic groups: **42**'
+            echo '- Canonical tranche artifacts pinned: **5**'
+            echo '- Candidate bill identifiers: **0**'
+            echo '- Internal membership IDs resolved: **0**'
+            echo '- Outcomes used: **none**'
+            echo '- Production DB queried: **no**'
+            echo '- Vercel used: **no**'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2025-house-semantic-review-cohort-2-aggregate-v1
+          path: ${{ runner.temp }}/historical-density-2025-house-semantic-review-cohort-2-aggregate-v1.json
+          if-no-files-found: error
+          retention-days: 90
