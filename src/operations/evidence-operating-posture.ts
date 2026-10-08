@@ -31,6 +31,12 @@ export interface EvidenceOperatingPostureReport {
   schemaVersion: 'evidence-operating-posture-static-audit-v1';
   protectedWorkflowCount: number;
   protectedWorkflows: EvidencePostureWorkflow[];
+  sandboxReadonlyWorkflow: {
+    manualOnly: boolean;
+    approvalGuardPresent: boolean;
+    vercelDependencyPresent: boolean;
+    sandboxCredentialPathPresent: boolean;
+  };
   configuredVercelGitDeploymentsDisabled: boolean;
   configuredVercelCronEntries: number | null;
   liveVercelCronStatus: 'unverified_not_queried';
@@ -114,6 +120,41 @@ export function auditEvidenceOperatingPosture(
     protectedWorkflows.push({ path, triggers, jobCount: jobs.length, gatedJobCount });
   }
 
+  // Independently review the new Vercel-free, non-production read-only path.
+  // This must not silently become an automatic evidence refresh or call the
+  // paused ingestion worker.
+  const sandboxWorkflowPath = '.github/workflows/evidence-neon-readonly-sandbox.yml';
+  const sandboxSource = read(sandboxWorkflowPath) ?? '';
+  const sandboxTrigger = topLevelBlock(sandboxSource, 'on');
+  const sandboxEvents = sandboxTrigger === null ? [] : eventNames(sandboxTrigger);
+  const manualOnly = sandboxEvents.length === 1 && sandboxEvents[0] === 'workflow_dispatch';
+  const sandboxJobBlock = topLevelBlock(sandboxSource, 'jobs');
+  const sandboxJobs = sandboxJobBlock === null ? [] : jobSegments(sandboxJobBlock);
+  const sandboxIf = sandboxJobs.length === 1
+    ? sandboxJobs[0].source.match(/^    if: >-\s*\n([\s\S]*?)\n    /m)?.[1] ?? ''
+    : '';
+  const approvalGuardPresent =
+    sandboxJobs.length === 1 &&
+    sandboxJobs[0].name === 'audit' &&
+    sandboxIf.includes("github.ref == 'refs/heads/main'") &&
+    sandboxIf.includes('inputs.run_readonly == true') &&
+    sandboxIf.includes("inputs.approval_phrase == 'READ_ONLY_SANDBOX_AUDIT'") &&
+    sandboxSource.includes('environment: evidence-readonly-sandbox') &&
+    sandboxSource.includes('      run_readonly:') &&
+    /run_readonly:[\s\S]*?type: boolean[\s\S]*?default: false/.test(sandboxTrigger ?? '') &&
+    sandboxSource.includes('VOTEPREDICT_EVIDENCE_RO_SCOPE: sandbox');
+  const vercelDependencyPresent =
+    /VERCEL_TOKEN|vercel@|vercel env pull|run-direct-public-evidence-refresh|deploy --prod|cron\/forecasts/i
+      .test(sandboxSource);
+  const sandboxCredentialPathPresent =
+    sandboxSource.includes('secrets.EVIDENCE_READONLY_SANDBOX_URL') &&
+    sandboxSource.includes('vars.EVIDENCE_READONLY_SANDBOX_ROLE') &&
+    sandboxSource.includes('scripts/audit-evidence-neon-readonly.ts --connect');
+  if (!manualOnly || !approvalGuardPresent || vercelDependencyPresent || !sandboxCredentialPathPresent) {
+    add(sandboxWorkflowPath,
+      'sandbox health workflow must remain manual, explicitly approved, Vercel-free and read-only');
+  }
+
   let configuredVercelGitDeploymentsDisabled = false;
   let configuredVercelCronEntries: number | null = null;
   const rawConfig = read('vercel.json');
@@ -183,6 +224,12 @@ export function auditEvidenceOperatingPosture(
     schemaVersion: 'evidence-operating-posture-static-audit-v1',
     protectedWorkflowCount: PAUSED_VERCEL_WORKFLOWS.length,
     protectedWorkflows,
+    sandboxReadonlyWorkflow: {
+      manualOnly,
+      approvalGuardPresent,
+      vercelDependencyPresent,
+      sandboxCredentialPathPresent,
+    },
     configuredVercelGitDeploymentsDisabled,
     configuredVercelCronEntries,
     liveVercelCronStatus: 'unverified_not_queried',
