@@ -52,7 +52,7 @@ jobs:
 
       - name: Freeze reviewed tranche-2 applicability gate
         env:
-          VOTEPREDICT_2025_HOUSE_COHORT_2_TRANCHE2_APPLICABILITY_AUDIT_PATH: ${{ runner.temp }}/tranche2-audit/applicability-audit/historical-density-2025-house-applicability-candidate-audit-tranche-2-v1.json
+          VOTEPREDICT_2025_HOUSE_COHORT_2_TRANCHE2_APPLICABILITY_AUDIT_PATH: ${{ runner.temp }}/tranche2-audit/applicability-audit/historical-density-2025-house-applicability-candidate-audit-cohort-2-tranche-2-v1.json
           VOTEPREDICT_2025_HOUSE_COHORT_2_TRANCHE2_APPLICABILITY_DECISIONS_PATH: data/evaluation/evidence-quality/historical-density-2025-house-applicability-cohort-2-tranche-2-decisions-v1.json
           VOTEPREDICT_2025_HOUSE_COHORT_2_TRANCHE2_APPLICABILITY_REVIEW_OUTPUT: ${{ runner.temp }}/tranche2-review/historical-density-2025-house-applicability-review-cohort-2-tranche-2-v1.json
         run: node --import tsx scripts/freeze-historical-density-2025-house-applicability-cohort-2-tranche-2-review.ts
