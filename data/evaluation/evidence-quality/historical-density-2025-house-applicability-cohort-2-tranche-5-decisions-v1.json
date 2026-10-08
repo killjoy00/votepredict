@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-cohort-2-tranche-5-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenCandidateArtifact": {
+    "runId": 37806608462,
+    "artifactId": 11563311998,
+    "digest": "sha256:1b06113f1bd71925444e5a1d6e1f5ec6b7b24de43ec7a7da0ab81b4693b72b96",
+    "contentSha256WithoutSelfField": "5c3e4293ca0978b583b76de4c1ff029ca12308a851c97673ad7356877caab7ab",
+    "targetTrancheIndex": 5,
+    "targetRankStart": 101,
+    "targetRankEnd": 125,
+    "targetEventKeySha256": "75b0435e0b61b4a356e82c3017caa400cf67a21778a41158f032679151067862",
+    "reviewKeySha256": "f466e126ea4d06b139356a78fa22e1ef2067727ccf4576d98cb9747989a3c4a8",
+    "eligibleClaimEventPairs": 1050,
+    "candidatePairs": 72,
+    "candidateBills": 15,
+    "candidatePublicMembers": 25,
+    "candidateSemanticGroups": 25
+  },
+  "defaultDecision": "not_applicable",
+  "defaultBillRationales": {
+    "HF2358": "Enhanced coercion penalties are a discrete criminal-law change and do not authorize Safe Haven Baby Boxes or otherwise implement the nominated cohort-2 proposition.",
+    "HF3155": "Adding gift-card fraud to organized retail theft addresses private retail fraud. It does not create state-program fraud oversight/transparency, impose stricter state-agency fraud reporting, or authorize Safe Haven Baby Boxes.",
+    "HF3404": "Increasing penalties for impersonating a peace officer is a discrete public-safety measure and does not authorize Safe Haven Baby Boxes.",
+    "HF3453": "Setting the legal age for kratom possession at 21 is unrelated to Safe Haven Baby Boxes despite generic safety terminology.",
+    "HF3496": "Corrections supervision-abatement policy does not authorize Safe Haven Baby Boxes.",
+    "HF3544": "Veterans-benefit eligibility changes and repeal of a veterans environmental-hazards assistance program do not extend homeschool counseling, strengthen general conservation programs, expand public access to Attorney General data, fund National Guard buildings, or increase the disabled-veteran property-tax exclusion.",
+    "HF3621": "The state-program payment-withholding bill is not applicable to nominated cohort-2 claims except the explicit Robbins fraud-oversight override below. It creates a concrete fraud-control tool but does not impose the stricter state-agency fraud-reporting requirement in Rarick's combined proposition; other conservation, Attorney General data, and surplus-refund overlaps are incidental.",
+    "HF3676": "Safe at Home address-confidentiality protections and related penalties do not implement the nominated HOA/CIC reform, homeschool counseling, equal-rights amendment, childcare affordability, Safe Haven Baby Boxes, National Guard building resources, state-agency fraud reporting, disabled-veteran property-tax exclusion, childcare-camera safeguards, CEO-pay-ratio tax, or infant-abuse parent education.",
+    "HF3699": "State-park license-plate contest requirements are administrative contest rules and do not materially strengthen conservation programs or environmental protection.",
+    "HF3762": "Access to expunged records for firearm-eligibility determinations does not authorize Safe Haven Baby Boxes.",
+    "HF3768": "Corrections-facility licensing and responsibility provisions do not implement the nominated ambulance reimbursement, small-community infrastructure, childcare affordability, Minneapolis water/public housing, Mound clean-water investment, Attorney General data, Safe Haven Baby Boxes, National Guard building resources, state-agency fraud reporting, childcare safeguards, infant-abuse education, or teacher pay/pension propositions.",
+    "HF3782": "Disclosure of chemical irritants used in certain buildings is not a Mound clean-water investment and does not authorize Safe Haven Baby Boxes.",
+    "HF4118": "Credit-union insurance and conforming financial-institution changes do not implement the nominated ambulance, HOA/CIC, equal-rights, tax-repeal, conservation, algorithmic-rent, zoo operating-room, small-community, Attorney General data, National Guard, surplus-refund, state-agency fraud-reporting, disabled-veteran property-tax, medical-debt, state fraud-oversight, CEO-pay-tax, or teacher pay/pension propositions; cross-referenced statutes are incidental.",
+    "HF4425": "Extending limitations periods for Medical Assistance fraud and theft of public funds is not applicable to nominated cohort-2 claims except the explicit Robbins fraud-accountability override below. It does not move public healthcare to direct state administration and does not impose stricter state-agency fraud reporting or provide the specific prevention tools in Rarick's proposition.",
+    "SF3832": "DAIRI dairy-assistance eligibility and cost-share changes do not strengthen general conservation programs, fund a zoo operating room, establish the Empowering Small Communities program, reduce childcare costs, fund Mound clean water, provide National Guard building resources, require childcare-camera safeguards, or require infant-abuse parent education."
+  },
+  "overrides": [
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|HF3621|2026-04-20|1dd29548e31b3c3682a1fca6d91a75038bf0c8f1061e1f99d939cf4cdecc4ecd",
+      "decision": "applicable",
+      "billPolicyDirection": "authorizes_state_program_payment_withholding_on_verified_credible_fraud_allegations_and_interagency_fraud_data_sharing",
+      "alignmentDirection": "aligns",
+      "reason": "HF3621 gives state agencies a concrete program-integrity control: they may withhold program payments when a participant is under a verified credible fraud investigation and share information across agencies to prevent fraud against public programs. That directly advances Robbins's broad support for stronger state fraud oversight, transparency, and accountability."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|HF4425|2026-04-20|2f59ca6e14257d690bcd98d927aaaea7e188a9158d397f5ede32cb57c26ccce8",
+      "decision": "applicable",
+      "billPolicyDirection": "extends_criminal_enforcement_window_for_medical_assistance_fraud_and_theft_of_public_funds",
+      "alignmentDirection": "aligns",
+      "reason": "HF4425 extends the limitations period to ten years for specified Medical Assistance fraud and theft of public funds belonging to the state, political subdivisions, or agencies. That materially strengthens accountability for fraud involving public programs and funds, aligning with Robbins's broad fraud-oversight/accountability position."
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
