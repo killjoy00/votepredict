@@ -6,15 +6,16 @@ VotePredict V2 is no longer a rebuild project. The clean-slate V2 sequence is co
 
 ## Production posture
 
-- Production application: Vercel, exact-green-main deployment workflow.
+- Production application: Vercel continues to serve its previously deployed release. Repository production deployments are **paused / manual-only**, not automatically triggered by green CI; any intentional release remains governed by #732.
 - Primary database: Neon Postgres with private owner authentication and recovery controls.
 - Current/floor serving member model: `member-eb-v1.2-decay180`.
 - Current/floor rollback arm: `member-eb-v1.1`.
 - Minnesota 2025-26 introduction model: `intro-title-text-eb-v4`, frozen and session-pinned.
 - 2027-28 introduction artifact: frozen from completed prior-biennium data and prepared for the future session; it does not use 2027 outcomes.
-- Hourly production forecast polling: GitHub Actions, with Vercel Cron as the daily fallback.
-- 2027-28 source/bootstrap readiness: automated and guarded; production remains fail-closed until authoritative future-session sources are plausible.
+- Production forecast scheduling: the GitHub workflow is **manual-only / paused** under #732; the already-deployed Vercel cron's actual live state remains **unverified**. No active hourly or daily automation is claimed.
+- Source/bootstrap runtime routines: code and test fixtures remain, but Vercel-dependent automatic triggers are paused under #732; previously documented automatic operation should not be assumed active.
 - Release migration integrity: the live Neon ledger is reconciled through `0012`, and every Vercel production build now requires an exact repository-vs-production migration-ledger match before the application build can complete.
+- Public evidence ingestion: durable collectors and monitoring code exist, but **evidence refresh is suspended**. The manual GitHub refresh workflow still pulls Vercel production environment variables and is not a separately approved direct-Neon path. No production-source freshness was verified during the #847 documentation audit.
 - Process-history research: completed and manual-only; the selected enriched process candidate did not earn a prospective shadow or production action.
 - Deep research: explicitly unavailable while Vercel AI Gateway returns `billing_required`. Quick forecasting remains independent and operational.
 
@@ -75,6 +76,8 @@ All 11 ranked 2025-26 House cohort-2 applicability tranches are finished (#845; 
 An independent public-archive desk pass dated **2026-10-08** found **eight** 2021 Senate indexed meeting agendas explicitly naming **14** frozen priority-bill identities within the exact pre-vote windows for **17** existing candidate-event associations. This is discovery metadata only: **0 recording bytes independently verified, 0 member-specific directional statements adjudicated, 0 evidence/feature rows created**. Follow `docs/evaluation/2021-senate-public-source-audit.md` for individual dated links, rigorous limits and the self-service-only next steps. The older v1.7 2021-22 gap of 35,501 uncovered rows remains the priority (v1.8 did not change 2021-22 coverage).
 
 See `docs/evaluation/historical-evidence-density-program.md` for canonical baselines, closed lanes and the operator safety contract.
+
+**Current cross-project evidence tracker:** [issue #847](https://github.com/killjoy00/votepredict/issues/847) and [`docs/evaluation/evidence-program-scorecard.md`](evaluation/evidence-program-scorecard.md). The scorecard separates dated source-family corpus metrics from the v1.8 **92 strict directional feature rows**, identifies the extra **49 review-only** 2025-26 cohort-2 pairs, and records Vercel/evidence refresh as suspended. No 2027 actions, live DB reads or production refreshes are authorized by #847.
 
 ## Modeling posture
 
@@ -155,8 +158,8 @@ The production reconciliation repaired the release-integrity drift found during 
 
 ### P1 — operate and deepen the non-Deep durable public-evidence program
 
-- [x] Keep campaign finance on the scheduled official CFB refresh path.
-- [x] Keep Minnesota Secretary of State campaign-site discovery and bounded issue/news/about crawling on the scheduled rotation.
+- [x] Implement the official CFB finance refresh path in the durable evidence collector; **automatic refresh is currently paused** under #732.
+- [x] Implement Minnesota SOS campaign-site discovery and bounded rotating issue/news/about capture; the existing scheduled rotation is **paused** under #732.
 - [x] Add deterministic House member-news and Senate caucus member-primary source registries keyed to stable legislator identity.
 - [x] Capture recent member-primary publications with content hashes, canonical URLs, publication/capture dates, and supersession history.
 - [x] Expose member-primary publication health in Operations and the publications themselves on legislator profiles.
@@ -164,7 +167,7 @@ The production reconciliation repaired the release-integrity drift found during 
 - [x] Improve generic publisher-verified news discovery without weakening publisher-page verification: common-name aliases, per-member result fairness, multi-provider union, and GDELT rate-limit backoff.
 - [x] Broaden press/article review depth: 120-day live-news discovery, higher verified-article caps, 44-source historical local/trade archive universe, per-source path hints, member-name acceptance for district reporting, and a final 40-capture-per-source deep archive pass.
 - [x] Expose news-member coverage, latest-batch yield/failures/no-lead counts, and prospective-corpus age in Operations.
-- [x] Double scheduled web-evidence rotation to 24 members per run and deepen bounded member-primary/news capture.
+- [x] Raise the implemented web-evidence batch cap to **24 members per run** and deepen bounded member-primary/news capture; no recurring production refresh currently executes from the paused workflow.
 - [x] Supersede the unactivated availability-only evidence protocol with one unified `quick-evidence-v1` candidate before any 2027 Quick revision existed.
 - [x] Add deterministic exact-bill support/opposition extraction for verified member-primary and campaign pages while keeping extracted items non-mechanical outside the Quick Evidence shadow.
 - [x] Add official prior same-bill/companion passage votes to the same Quick Evidence feature vector.
