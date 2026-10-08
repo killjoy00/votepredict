@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-cohort-2-tranche-4-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenCandidateArtifact": {
+    "runId": 37801173914,
+    "artifactId": 11560497316,
+    "digest": "sha256:5d098afd1283d0402965bdf2590c8c6f69666cbb02a5f1c6567a324c41f9fee8",
+    "contentSha256WithoutSelfField": "142737ce042254121dc5894de87f571f7a292e81c0156dc1ebce792498d66e04",
+    "targetTrancheIndex": 4,
+    "targetRankStart": 76,
+    "targetRankEnd": 100,
+    "targetEventKeySha256": "b30043dfcb57fd7d5cb10b489b9d42ca1ea4476e5c4ee1bec512277fe7aa4339",
+    "reviewKeySha256": "24e756bb9dd6206dfee8f9404d6f0d294aef97343162d82aa10f504c3e48aeaf",
+    "eligibleClaimEventPairs": 1050,
+    "candidatePairs": 230,
+    "candidateBills": 15,
+    "candidatePublicMembers": 41,
+    "candidateSemanticGroups": 41
+  },
+  "defaultDecision": "not_applicable",
+  "defaultBillRationales": {
+    "HF2115": "The human-services policy bill is not applicable to nominated cohort-2 claims except the explicit Robbins fraud-oversight override below. Its substantive fraud provisions govern human-services program detection, prevention, investigation, overpayment recovery, and accountability; other disability, childcare, staffing, housing, public-health, telework, and infant-safety overlaps do not implement the reviewed propositions.",
+    "HF2169": "Expanding second-degree unintentional murder to additional protective-order violations is a discrete criminal-law change. It does not authorize Safe Haven Baby Boxes or implement the other nominated cohort-2 propositions.",
+    "HF2432": "The judiciary/public-safety omnibus is not applicable to nominated cohort-2 claims except the explicit Rarick and Robbins fraud-reporting/oversight overrides below. Other ambulance, public-data, leave, conservation, housing, education, child-safety, and public-safety overlaps are incidental or do not implement the specific proposition.",
+    "HF2446": "The agriculture-budget bill is not applicable to nominated cohort-2 claims except the explicit Harder conservation/environment override below. Its PFAS-contaminated-biosolids study does not fund Hastings treatment, and statewide agricultural water, childcare, housing, reimbursement, and other terminology does not implement the remaining specific propositions.",
+    "HF2563": "Legacy-fund appropriations are not applicable to nominated cohort-2 claims except the explicit Harder conservation-program override below. Camp Ripley habitat easements do not provide National Guard building resources; statewide clean-water and habitat funding does not specifically fund Mound or Hastings projects; other oversight and reimbursement terms are incidental.",
+    "HF3378": "Requiring release of unredacted Optum reports is an information-disclosure measure about those reports, not a policy expanding public access to Minnesota Attorney General office data generally.",
+    "HF3379": "Repeal of housing stabilization services and associated Medicaid/provider provisions does not implement the nominated cohort-2 housing, childcare, public-health, fraud-governance, ambulance, tax, or child-safety propositions. Existing provider-integrity and fraud-screening language does not create the broader state fraud oversight/reporting policies reviewed here.",
+    "HF3516": "Dentistry licensure and scope-of-practice changes do not implement the nominated cohort-2 homeschool counseling, public-health administration, Attorney General data, National Guard resources, fraud reporting, disabled-veteran property tax, or CEO-pay tax propositions.",
+    "HF3528": "Barber regulation changes do not implement the nominated homeschool counseling, conservation, National Guard building-resource, or teacher workplace/pay/pension propositions.",
+    "HF3718": "Veterinary-medicine and veterinary-technology regulation does not implement the nominated cohort-2 ambulance, HOA, homeschool, reproductive-rights, athletics, clean-water, Attorney General data, National Guard, fraud, or CEO-pay-tax propositions; fraud terminology concerns veterinary licensure and professional conduct.",
+    "HF3741": "Veterans educational-assistance changes for children and spouses do not increase the disabled-veteran property-tax exclusion and do not require infant-abuse parent education.",
+    "SF2298": "Housing-budget and policy provisions include rent limits for specified tax-credit projects and manufactured-home infrastructure/relocation measures, but they do not ban algorithmic rent price fixing, enact the reviewed HOA/CIC reform, or fund the specific Minneapolis/Mound projects. Other rural, child, fraud, and consumer terms are incidental.",
+    "SF2370": "Cannabis regulation, licensing, expungement, and medical-cannabis policy do not implement the nominated cohort-2 conservation, fraud, housing, Attorney General data, National Guard, child-safety, paid-leave, public-health, or other member propositions.",
+    "SF3045": "The state-government operations omnibus is not applicable to nominated cohort-2 claims except the explicit Rarick and Robbins fraud-reporting/oversight overrides below. State-personnel, leave, public-data, Attorney General, advertising-transparency, compensation, rural-policy, military-affairs, and other governance references do not enact the remaining propositions.",
+    "SF3602": "Electronic estate-planning document law does not increase the disabled-veteran property-tax exclusion or implement any other nominated cohort-2 proposition."
+  },
+  "overrides": [
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|HF2115|2025-05-19|6ff092f3112bfe489bcfe686d8921dc878cd82c599e9327ddd3634f17b2efa75",
+      "decision": "applicable",
+      "billPolicyDirection": "strengthens_human_services_program_fraud_detection_prevention_investigation_and_recovery",
+      "alignmentDirection": "aligns",
+      "reason": "HF2115 requires DHS to ensure detection, prevention, investigation, and resolution of fraudulent activity in human-services programs and requires county agencies to identify and recover overpayments. That directly advances stronger state-program fraud oversight, transparency, and accountability."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|HF2432|2025-05-18|5b01e687cf81513fbf9630b403e823d10c0ef173d9927b5623d281219a78be45",
+      "decision": "applicable",
+      "billPolicyDirection": "creates_state_program_fraud_investigation_referral_reporting_and_accountability_controls",
+      "alignmentDirection": "aligns",
+      "reason": "HF2432 retains the BCA Financial Crimes and Fraud Section, mandatory state-agency referrals for qualifying suspected fraud, investigative authority, and recurring fraud reporting. Those are direct state fraud oversight and accountability controls."
+    },
+    {
+      "reviewKey": "rarick_state_agency_fraud_reporting|HF2432|2025-05-18|5b01e687cf81513fbf9630b403e823d10c0ef173d9927b5623d281219a78be45",
+      "decision": "applicable",
+      "billPolicyDirection": "requires_state_agency_fraud_referrals_and_reporting_and_adds_fraud_investigative_capacity",
+      "alignmentDirection": "aligns",
+      "reason": "HF2432 requires state agencies to refer qualifying suspected fraudulent activity, provides investigation/referral capacity, and requires recurring fraud-related reporting. That directly matches stricter state-agency fraud reporting and additional fraud-prevention tools."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|SF3045|2025-05-19|4fa4c52937972605fa8c6fd3320179f69c429d08e087127a84260be7ce2db89d",
+      "decision": "applicable",
+      "billPolicyDirection": "standardizes_state_agency_reporting_and_oversight_of_public_resource_misuse_and_adds_fraud_controls",
+      "alignmentDirection": "aligns",
+      "reason": "SF3045 standardizes reporting of suspected misuse of public money, resources, or protected data to designated oversight officers or the Legislative Auditor and contains explicit fraud-prevention policy. That directly advances state fraud oversight, transparency, and accountability."
+    },
+    {
+      "reviewKey": "rarick_state_agency_fraud_reporting|SF3045|2025-05-19|4fa4c52937972605fa8c6fd3320179f69c429d08e087127a84260be7ce2db89d",
+      "decision": "applicable",
+      "billPolicyDirection": "requires_state_agencies_to_route_suspected_public_resource_misuse_to_designated_oversight_officers",
+      "alignmentDirection": "aligns",
+      "reason": "SF3045 requires state departments, boards, commissions, offices, and agencies to route concerns about misuse of public money, resources, or data to designated oversight officers or the Legislative Auditor through a standardized process. That directly matches stricter state-agency fraud reporting."
+    },
+    {
+      "reviewKey": "harder_conservation_programs|HF2446|2025-05-18|8be063fc6cc9d75390b64e8df2707f44a8e63a632ae8ec4eb67853efa544c28f",
+      "decision": "applicable",
+      "billPolicyDirection": "funds_forever_green_natural_resource_protection_and_water_soil_conservation_programs",
+      "alignmentDirection": "aligns",
+      "reason": "HF2446 funds the Forever Green initiative expressly to protect Minnesota's natural resources and funds water-quality, soil-health, and conservation-oriented agricultural programs. That directly aligns with Harder's explicit support for strengthening conservation programs and keeping Minnesota's environment healthy."
+    },
+    {
+      "reviewKey": "harder_conservation_programs|HF2563|2025-05-18|8c0cb67231f61973542f9a4565b4720bf34adf9c70ea379be007bf57bb155ee1",
+      "decision": "applicable",
+      "billPolicyDirection": "funds_conservation_habitat_acquisition_restoration_and_environmental_programs_from_legacy_funds",
+      "alignmentDirection": "aligns",
+      "reason": "HF2563 appropriates Legacy funds for land acquisition, prairie, wetland and wildlife-habitat restoration and enhancement, clean-water work, and conservation grants. That directly strengthens conservation programs and environmental protection."
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
