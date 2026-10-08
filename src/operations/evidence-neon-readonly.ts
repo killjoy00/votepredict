@@ -117,7 +117,7 @@ export const SOURCE_FRESHNESS_SQL = `
    LIMIT 6
 `;
 
-interface GuardRow {
+interface GuardRow extends Record<string, unknown> {
   role_name: string;
   in_readonly_transaction: boolean;
   superuser: boolean;
@@ -132,14 +132,14 @@ interface GuardRow {
   writes_ingestion: boolean;
   writes_sources: boolean;
 }
-interface PipelineRow {
+interface PipelineRow extends Record<string, unknown> {
   status: string;
   started_at: string;
   finished_at: string | null;
   news_inserted: number | null;
   news_failures: number | null;
 }
-interface FreshnessRow { kind: string; last_fetched_at: string | null; }
+interface FreshnessRow extends Record<string, unknown> { kind: string; last_fetched_at: string | null; }
 
 /** Caller injects one pg connection; the function never owns credentials. */
 export async function auditNeonEvidenceReadonlySandbox(
