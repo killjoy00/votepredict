@@ -1,6 +1,6 @@
 # VotePredict project status
 
-_Last updated: 2026-10-06_
+_Last updated: 2026-10-08_
 
 VotePredict V2 is no longer a rebuild project. The clean-slate V2 sequence is complete through production hardening, introduction forecasting, current/floor forecasting, immutable revisions, evidence storage, scheduled production forecasting, forecast-vs-actual scoring infrastructure, and the automated 2027-28 Opening Day transition path. The **2027 Opening Day Ready** release-integrity milestone is now complete; the project is in **operate, validate prospectively, and selectively expand** mode.
 
@@ -66,15 +66,15 @@ Campaign-finance relationships in particular must remain context rather than an 
 
 ## Historical evidence density
 
-Issue #718 is an active bounded evidence-construction program, separate from broad retrospective model tuning. The primary objective is still strict-pre-vote 2021-22 member-event coverage, with newer sessions tracked explicitly so the historical evidence substrate does not become disproportionately sparse outside training.
+Issue #718 remains open for its primary **2021-22 strict-pre-vote training-evidence** objective. The canonical v1.8 historical feature matrix from #782 preserves the 135,457-row universe and 38 original exact-bill directional rows; combined directional rows total **92**, split **9 / 35,510** in 2021-22, **32 / 49,827** in 2023-24, and **51 / 50,120** in 2025-26. No model fitting or production/serving changes are authorized by this program.
 
-The canonical historical feature matrix is now **v1.7** from merged PR #747. It preserves the full 135,457-row target universe and all 38 existing exact-bill directional rows, while reviewed-applicability rows increased from 2 to 6. Combined directional coverage is now **44 rows** total: **9 / 35,510** in 2021-22, **32 / 49,827** in 2023-24, and **3 / 50,120** in 2025-26. Exact rows changed versus v1.6: zero; exact/reviewed overlap: zero; ambiguous/pending applicability rows admitted: zero.
+All 11 ranked 2025-26 House cohort-2 applicability tranches are finished (#845; 49 aligned context-only pairs, zero integration-ready). These are not feature-ready records and cannot be claimed as a gain for the 2021-22 primary objective.
 
-The second P2 semantic gate reviewed 124 candidate groups / 138 candidate claim pairs and resolved them to 4 applicable, 17 ambiguous-fail-closed, 103 not applicable, and 0 pending. Full eligible-pair accounting is 4 applicable / 91 ambiguous-fail-closed / 2,621 not applicable. The four newly accepted rows are Julia Coleman -> SF2575, Julia Coleman -> SF2666, Zach Duckworth -> SF2575, and Paul Utke -> SF2848.
+**Binding user restriction — 2021 Senate source recovery is PUBLIC SELF-SERVICE ONLY. Do not contact the Minnesota Legislative Reference Library or another office; do not email, call, draft outreach, send requests, solicit digitization, arrange visits, or ask to contact anyone.** Earlier 2021 print-minute request and offline-intake artifacts exist only as historical frozen target/provenance data, not an outreach work queue. If staff-only records are required, mark them unavailable and stop.
 
-Coverage remains far too sparse for model fitting. The next infrastructure step is a GitHub-only cross-session target-gap inventory over the immutable v1.7 matrix. 2021-22 remains the primary historical program; among newer sessions, 2025-26 is the first recovery priority because it currently has the lowest strict directional coverage rate.
+An independent public-archive desk pass dated **2026-10-08** found **eight** 2021 Senate indexed meeting agendas explicitly naming **14** frozen priority-bill identities within the exact pre-vote windows for **17** existing candidate-event associations. This is discovery metadata only: **0 recording bytes independently verified, 0 member-specific directional statements adjudicated, 0 evidence/feature rows created**. Follow `docs/evaluation/2021-senate-public-source-audit.md` for individual dated links, rigorous limits and the self-service-only next steps. The older v1.7 2021-22 gap of 35,501 uncovered rows remains the priority (v1.8 did not change 2021-22 coverage).
 
-See `docs/evaluation/historical-evidence-density-program.md` for the governing contract, closed lanes, canonical artifact lineage, semantic-gate architecture, and next-work boundaries.
+See `docs/evaluation/historical-evidence-density-program.md` for canonical baselines, closed lanes and the operator safety contract.
 
 ## Modeling posture
 
