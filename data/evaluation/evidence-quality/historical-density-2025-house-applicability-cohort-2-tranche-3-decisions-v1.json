@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-cohort-2-tranche-3-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenCandidateArtifact": {
+    "runId": 37798615199,
+    "artifactId": 11560096786,
+    "digest": "sha256:f3fbb4cdfaa8e7799c47473833e86266eb3ebd0de24b32a91a6c2cb6741fb469",
+    "contentSha256WithoutSelfField": "e982309cc7586ae262dfa73a6565fe39565f606c5dfd261b173b7f81f1bd66c7",
+    "targetTrancheIndex": 3,
+    "targetEventKeySha256": "e5df92e5d1074edae44bc376ba85a041c3107dde1c84cddc3c8a471c132822f0",
+    "reviewKeySha256": "9587335f4c550c12d1b1dd97361e4a3312ea2ea9d92b7c59295f146d98cf9359",
+    "eligibleClaimEventPairs": 1050,
+    "candidatePairs": 384,
+    "candidateBills": 17,
+    "candidatePublicMembers": 42,
+    "candidateSemanticGroups": 42
+  },
+  "defaultDecision": "not_applicable",
+  "defaultBillRationales": {
+    "HF2098": "Local-government data, audit, notice, district-organization, and rental-licensing changes do not implement the nominated cohort-2 member propositions; issue words such as data, reimbursement, water, property, and leave occur in unrelated contexts.",
+    "HF2115": "Human-services policy is not applicable to nominated cohort-2 claims except the explicit Robbins fraud-oversight override below. The bill gives DHS responsibility for detecting, preventing, investigating, and resolving program fraud, but does not enact Rarick's specific state-agency fraud-reporting proposition; other health, disability, housing, staffing, and program terms are incidental or partial.",
+    "HF2130": "DWI and ignition-interlock reform does not implement the nominated cohort-2 public-safety, safe-haven, infant-safety, or other member propositions; generic public-safety overlap is insufficient.",
+    "HF2433": "The K-12 finance omnibus is not applicable to nominated cohort-2 claims except the explicit Kresha career-pathway override below. Broad school funding is mixed across programs, attendance references do not create Lawrence's chronic-absenteeism tracking policy, and teacher-compensation provisions do not establish Wolgamott's combined workplace-pay-pension proposition.",
+    "HF2434": "The human-services omnibus is not applicable to nominated cohort-2 claims except the explicit Robbins fraud-oversight override below. Its staffing-ratio language concerns mental-health case management rather than Bierman's patient staffing proposition; other housing, childcare, public-health, consumer, and program terms are incidental or partial.",
+    "HF2435": "The health-finance and policy omnibus is not applicable to nominated cohort-2 claims except the explicit West infant-abuse parent-education override below. Childcare, EMS, managed-care, staffing, and child-protection provisions do not enact the other specific propositions such as Great Start affordability, non-transport ambulance reimbursement, or direct state administration of public healthcare.",
+    "HF2442": "Energy and renewable-development appropriations do not implement the nominated cohort-2 tax, clean-water, consumer-finance, conservation, or other propositions; generic consumer and finance language is unrelated.",
+    "HF2464": "Health licensing and higher-education-facilities changes do not implement the nominated cohort-2 public-health administration, staffing-ratio, childcare, PFAS, paid-leave, or other propositions.",
+    "SF1740": "The K-12 policy omnibus changes attendance, teacher licensing, bullying, and school policy broadly but does not enact Lawrence's chronic-absenteeism tracking system, Kresha's career-pathway expansion, transgender-sports policy, homeschool counseling, or the other reviewed cohort-2 propositions.",
+    "SF1832": "Jobs, labor, economic-development, work-break, and manufactured-housing provisions do not repeal or preserve Paid Family and Medical Leave, implement the nominated career-pathway or school propositions, or enact the other cohort-2 claims; leave and workforce terminology is incidental.",
+    "SF1959": "Military and veterans budget/services provisions directly implement Olson's National Guard building-resource proposition only through the explicit override below. Veterans-benefit language does not increase Rehrauer's disabled-veteran property-tax exclusion and other overlaps are incidental.",
+    "SF2077": "Environment and natural-resources policy directly implements Harder's broad conservation-program proposition only through the explicit override below. PFAS and water-infrastructure programs are statewide and do not specifically fund Hastings PFAS treatment or Mound clean-water investment; other overlaps are incidental.",
+    "SF2200": "Restorative-practices evidence and data rules do not implement the nominated cohort-2 public-safety, civil-rights, school, fraud, or other member propositions.",
+    "SF2370": "Cannabis regulation, licensing, expungement, and medical-cannabis policy do not implement the nominated cohort-2 housing, public-health, fraud, child-safety, or other member propositions.",
+    "SF3045": "State-government operations are not applicable to nominated cohort-2 claims except the explicit Rarick and Robbins fraud-reporting/oversight overrides below. State-personnel, leave, public-data, Attorney General, advertising-transparency, compensation, and budget language does not enact the nominated telework, AG-data-transparency, CEO-tax, surplus-refund, or other propositions.",
+    "SF3196": "A corrections deficiency appropriation does not implement the nominated cohort-2 public-safety, fraud, child-safety, civil-rights, or other propositions.",
+    "SF908": "Underground-telecommunications-installer certification changes do not implement any nominated cohort-2 member policy proposition; infrastructure and workforce terms are incidental."
+  },
+  "overrides": [
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|HF2115|2025-05-05|dcda1c61b865cdc5c9bb286fd85dd444ab4006d59ac47f82f16d16247202b3fd",
+      "decision": "applicable",
+      "billPolicyDirection": "assigns_human_services_fraud_detection_prevention_investigation_and_recovery_responsibilities",
+      "alignmentDirection": "aligns",
+      "reason": "HF2115 makes DHS responsible for detecting, preventing, investigating, and resolving fraudulent activity in human-services programs and requires county agencies to identify and recover overpayments. That directly advances state-program fraud oversight and accountability."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|HF2434|2025-05-05|11c6ab8238eb5937d830399cdeea52c7ec893e148138bed8f624838b731dc87c",
+      "decision": "applicable",
+      "billPolicyDirection": "strengthens_provider_program_integrity_fraud_prevention_detection_and_internal_controls",
+      "alignmentDirection": "aligns",
+      "reason": "HF2434 adds provider program-integrity requirements explicitly covering fraud prevention, fraud detection, penalties, internal controls, and provider eligibility. Those are substantive anti-fraud oversight and accountability controls."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|SF3045|2025-05-01|4fa4c52937972605fa8c6fd3320179f69c429d08e087127a84260be7ce2db89d",
+      "decision": "applicable",
+      "billPolicyDirection": "standardizes_state_agency_reporting_and_oversight_of_public_resource_misuse_and_adds_fraud_controls",
+      "alignmentDirection": "aligns",
+      "reason": "SF3045 standardizes reporting of suspected misuse of public money, resources, or data to oversight officers or the Legislative Auditor and adds explicit fraud-prevention policy. That directly advances state fraud oversight, transparency, and accountability."
+    },
+    {
+      "reviewKey": "rarick_state_agency_fraud_reporting|SF3045|2025-05-01|4fa4c52937972605fa8c6fd3320179f69c429d08e087127a84260be7ce2db89d",
+      "decision": "applicable",
+      "billPolicyDirection": "requires_state_agencies_to_route_suspected_public_resource_misuse_to_designated_oversight_officers",
+      "alignmentDirection": "aligns",
+      "reason": "SF3045 requires state departments, boards, commissions, offices, and agencies to ensure concerns about misuse of public money, resources, or data are promptly directed to designated oversight officers or the Legislative Auditor through a standardized process. That directly matches stricter state-agency fraud reporting."
+    },
+    {
+      "reviewKey": "harder_conservation_programs|SF2077|2025-05-05|a2c37a4f9ebb4bcc58f32e4e3a40cd3d4473c4521eae4b89fef336342bd7eab7",
+      "decision": "applicable",
+      "billPolicyDirection": "funds_and_modifies_environment_natural_resources_conservation_and_grant_programs",
+      "alignmentDirection": "aligns",
+      "reason": "SF2077 appropriates money for environment and natural resources, modifies and creates environmental and natural-resource programs and grants, and expressly applies conservation and resource-management principles. That directly aligns with strengthening conservation programs and protecting Minnesota's environment."
+    },
+    {
+      "reviewKey": "olson_national_guard_building_resources|SF1959|2025-05-17|a72690fa8e74efb032e110bfba05f19952b9c8866e2f512e1ea254028ab357c9",
+      "decision": "applicable",
+      "billPolicyDirection": "funds_military_affairs_training_facility_maintenance_and_updates_state_armory_building_authority",
+      "alignmentDirection": "aligns",
+      "reason": "SF1959 appropriates more than $10 million per year for maintenance of Military Affairs training facilities and amends State Armory Building Commission powers. That directly provides building and facility resources for the Minnesota National Guard."
+    },
+    {
+      "reviewKey": "west_infant_abuse_parent_education|HF2435|2025-05-12|a74f41c80e7b80117a7e82773c8c10f3878ce0d298d021ad148c896174e1de1e",
+      "decision": "applicable",
+      "billPolicyDirection": "requires_health_care_providers_to_educate_parents_on_recognizing_and_reporting_physical_abuse_in_infants",
+      "alignmentDirection": "aligns",
+      "reason": "HF2435 creates section 144.124, requiring family-practice physicians, pediatricians, and other pediatric primary-care providers to give parents and primary caregivers materials on recognizing signs of physical abuse in infants and reporting suspected abuse. That is an exact substantive match."
+    },
+    {
+      "reviewKey": "kresha_career_pathway_education_reform|HF2433|2025-05-16|5da5bf18e17dfe3be6fabfe0de003a064ae1e2cc74e8a5c6eb1f3a78b2c2a7c4",
+      "decision": "applicable",
+      "billPolicyDirection": "supports_career_and_technical_program_expansion_and_career_pathway_opportunities",
+      "alignmentDirection": "aligns",
+      "reason": "HF2433 contains a career-and-technical-program expansion for an aeronautics and commercial over-the-road technical program and funds pathway-oriented education programs. That directly advances career-pathway opportunities and workforce readiness for students."
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
