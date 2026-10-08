@@ -175,11 +175,11 @@ function main(): void {
     candidateClaims.length !== EXPECTED_CANDIDATES
     || new Set(reviewKeys).size !== EXPECTED_CANDIDATES
   ) {
-    throw new Error('Tranche-10 candidate review-key cardinality drifted');
+    throw new Error('Tranche-11 candidate review-key cardinality drifted');
   }
   const reviewKeySha256 = setSha(reviewKeys);
   if (reviewKeySha256 !== EXPECTED_REVIEW_KEY_SHA) {
-    throw new Error(`Tranche-10 review-key set drifted: ${reviewKeySha256}`);
+    throw new Error(`Tranche-11 review-key set drifted: ${reviewKeySha256}`);
   }
 
   const candidateBills = [
