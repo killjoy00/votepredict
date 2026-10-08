@@ -131,7 +131,7 @@ export function auditEvidenceOperatingPosture(
   const sandboxJobBlock = topLevelBlock(sandboxSource, 'jobs');
   const sandboxJobs = sandboxJobBlock === null ? [] : jobSegments(sandboxJobBlock);
   const sandboxIf = sandboxJobs.length === 1
-    ? sandboxJobs[0].source.match(/^    if: >-\s*\n([\s\S]*?)\n    /m)?.[1] ?? ''
+    ? sandboxJobs[0].source.match(/^    if: >-\n((?: {6}[^\n]+\n?)+)/m)?.[1] ?? ''
     : '';
   const approvalGuardPresent =
     sandboxJobs.length === 1 &&
