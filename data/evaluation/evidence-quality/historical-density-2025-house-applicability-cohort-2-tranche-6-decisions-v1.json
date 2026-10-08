@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-cohort-2-tranche-6-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenCandidateArtifact": {
+    "runId": 37810812989,
+    "artifactId": 11564384052,
+    "digest": "sha256:5229e7cea919d127de0ded4e229d60ec7dcd6f3e0daa45f9c81758a4ac0cf3cf",
+    "contentSha256WithoutSelfField": "cd51b25e85453493374074c94d16b6c89c7f9aad8aa62221016b701f81ff41e1",
+    "targetTrancheIndex": 6,
+    "targetRankStart": 126,
+    "targetRankEnd": 150,
+    "targetEventKeySha256": "eafb3980bdbe20a94da1150e673e8d9218753bcea7f696863fc598f9b4abc072",
+    "reviewKeySha256": "a4b50b76692e36d6e8e15af11eeb832ae7d8329b819220a008670be21fb412b2",
+    "eligibleClaimEventPairs": 1050,
+    "candidatePairs": 148,
+    "candidateBills": 16,
+    "candidatePublicMembers": 37,
+    "candidateSemanticGroups": 37
+  },
+  "defaultDecision": "not_applicable",
+  "defaultBillRationales": {
+    "HF3426": "The strict pre-vote HF3426 trust-fund appropriation and community-grants sections substantively support conservation and public-grant fraud monitoring only for the separately recorded Harder and Robbins overrides. Environmental STEM workforce projects overlap Kresha's education-reform position without proving the scope of education reform; that is separately fail-closed. DNR grantee reporting does not implement Rarick's combined requirement of stricter state-agency fraud reporting plus tools. The bill does not fund Hastings PFAS municipal treatment, named Mound/Minneapolis water projects or public housing, the Minnesota Zoo large-animal operating room, the named Empowering Small Communities program, childcare affordability/safeguards or infant-abuse parent education, National Guard buildings, disabled-veteran property-tax changes, homeschool counseling, or a constitutional ERA.",
+    "HF3489": "The frozen field-trip supervision, educator licensure and grooming-offense provisions protect K-12 students; they do not create infant or childcare-facility safeguards, provider-to-parent infant-abuse education, home-school counseling, transgender sports legislation or gender-body scrutiny, Attorney General data transparency, or statewide fraud oversight/reporting. References to teacher fraud or abuse of children are in different actors and settings.",
+    "HF3766": "Travel-insurance licensing, retailer registration and traveler coverage rules do not fund ambulance no-transport responses, change state Paid Family/Medical Leave or teacher pensions, govern school sports, regulate HOA/CIC purchasers, authorize baby boxes, implement childcare affordability/safeguards, provide AG data access, National Guard facilities or disabled-veteran tax exclusion. Reimbursement and emergency evacuation are travel-insurance concepts only.",
+    "HF3875": "Judiciary/court publication, conciliation, restitution and child-protection council expiration amendments do not implement HOA/CIC consumer oversight, the named Empowering Small Communities infrastructure program, or a requirement that providers educate parents about infant abuse.",
+    "HF3970": "Contract-for-deed remedies for domestic abuse/sexual assault victims are targeted property/civil-law protections; they do not reform HOA/CIC oversight, impose childcare-facility infant abuse safeguards, or educate parents about abuse.",
+    "HF4052": "Telephone-service company regulatory and reporting changes are not public school or childcare investments, AG office data access, state-agency fraud reporting, named small-community infrastructure funding, medical/ambulance reimbursement, zoo capital, water infrastructure in Mound, Safe Haven Baby Boxes, National Guard buildings, a refund constitutional amendment, tax repeal or pay-ratio taxation; common words such as reporting, facilities, and costs are incidental.",
+    "HF4075": "Firearm restrictions associated with criminal judgments and judicial orders are not a Minnesota Equal Rights Amendment, reproductive-rights protection, LGBTQ civil-rights law, home-school counseling, HOA/CIC consumer protection, named small-community infrastructure program, baby-box authorization, childcare-facility oversight/parent education, or state fraud-reporting tools. Existing domestic-child-abuse and civil-rights law is cross-referenced incidentally, not amended for these propositions.",
+    "HF4146": "Temporary drill-core storage authority concerns geological records, not substantive conservation-program funding or Safe Haven Baby Boxes.",
+    "HF4188": "Department of Commerce insurance, securities, virtual-currency and unclaimed-property provisions target financial products and private/commercial fraud, not state-program fraud-reporting or state fraud oversight, HOA/CIC owner protections, algorithmic rent-setting, household tax repeal, health-insurer administration, water/parks conservation, the named local-infrastructure projects, constitutional ERA, athletics, tax ratios, or other nominated member-specific policies. The commercial consumer-protection terminology cannot transfer to Bahner's HOA context.",
+    "HF4224": "Changing notification of certain water discharges does not appropriate funds for Hastings PFAS treatment, for Minneapolis water-distribution/public housing, or for Mound clean-water investment. Mere water-discharge terminology is not the named water-funding proposition.",
+    "HF4455": "Ramsey County HR classification and terminology changes are local personnel administrative provisions, not state Paid Family/Medical Leave policy, homeschooling counseling, natural-resource conservation, Mound water infrastructure, Attorney General data access or a CEO-to-worker pay-ratio tax.",
+    "HF4493": "Pharmacist prescribing authority for opioid-use-disorder treatment and related professional disciplinary provisions are not state-managed public-health insurance administration, HOA/CIC law, homeschooling counseling, state fraud reporting or state-program fraud oversight; billing misconduct is not the specified agency accountability regime.",
+    "SF3622": "Technical/structural Common Interest Ownership Act changes do not implement any other nominated proposition, including medical ambulance reimbursement, tax repeals, rent price-fixing bans, constitutional equality rights, conservation, public infrastructure or refunds. The addition of purchaser access to association preventative-maintenance plans, schedules and budgets on resale in section 36 is an actual purchaser-facing disclosure safeguard; its limited Bahner HOA/CIC consumer-protection alignment is separately recorded. Existing notice/cancellation statutes are not treated as new reforms.",
+    "SF3868": "Virtual-currency-kiosk prohibition targets private financial consumer scams, not state-agency fraud reporting or public-program oversight and not HOA/CIC consumer protection.",
+    "SF3887": "Watershed-district, watershed-management organization and township employee-health-benefit self-insurance is personnel benefit authority, not a named Mound clean-water investment.",
+    "SF3958": "A new reporting date for disaster assistance contingency accounts is administrative state emergency accounting, not the state fraud-reporting/prevention proposal, environmental conservation, clean-water investment in Mound, Safe Haven Baby Boxes, or a taxpayer-surplus refund constitutional amendment."
+  },
+  "overrides": [
+    {
+      "reviewKey": "harder_conservation_programs|HF3426|2026-04-30|ac7e9362ec9f8e85beef6072449a32b2b0e90e2c1ef0c336361f9c1eb33d9abd",
+      "decision": "applicable",
+      "billPolicyDirection": "appropriates_environment_and_natural_resources_trust_fund_for_statewide_conservation_habitat_restoration_and_environmental_protection_programs",
+      "alignmentDirection": "aligns",
+      "reason": "The exact pre-vote HF3426 first engrossment appropriates trust-fund funding for diverse conservation, habitat preservation, restoration, natural-resource protection and environmental programs. Harder's frozen statement explicitly supports stronger conservation programs and environmental protection, a direct subject and policy-direction match."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|HF3426|2026-04-30|ac7e9362ec9f8e85beef6072449a32b2b0e90e2c1ef0c336361f9c1eb33d9abd",
+      "decision": "applicable",
+      "billPolicyDirection": "strengthens_public_conservation_grant_fraud_prevention_preaward_risk_assessment_unannounced_monitoring_reconciliation_and_accountability",
+      "alignmentDirection": "aligns",
+      "reason": "HF3426 sections 7-11 add annual fraud-prevention and financial-reconciliation training for DNR grant managers, unannounced grant-monitoring visits, preaward risk assessments, random reconciliation and grant-recipient reporting. These public-money oversight controls substantively match Robbins's broad state fraud-transparency and accountability position; no Rarick state-agency reporting inference is transferred."
+    },
+    {
+      "reviewKey": "bahner_hoa_cic_consumer_protection_reform|SF3622|2026-04-23|9613c6bf2bbd355d16a71fc55391e09ddbca14ba0a7c97fe28b6b6d83868bddc",
+      "decision": "applicable",
+      "billPolicyDirection": "adds_common_interest_community_resale_disclosure_of_preventative_maintenance_plan_schedule_and_budget_for_unit_purchasers",
+      "alignmentDirection": "aligns",
+      "reason": "In the frozen strict-pre-vote SF3622 second engrossment, section 36 revises CIC resale disclosure certificate item 6 by adding a requirement for association written preventative-maintenance plans, schedules and budgets to be furnished with the certificate or available electronically. This is a purchaser-facing HOA/CIC transparency and consumer-protection requirement aligned with Bahner's position for stronger consumer protection and oversight; carried-forward old cancellation/notice language is not treated as new policy."
+    },
+    {
+      "reviewKey": "kresha_career_pathway_education_reform|HF3426|2026-04-30|ac7e9362ec9f8e85beef6072449a32b2b0e90e2c1ef0c336361f9c1eb33d9abd",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "HF3426 allocates environmental trust-fund money to STEM career exploration, youth internships and natural-resource career pathways (including 'Classrooms to Careers'). That is real topical overlap with Kresha's career-readiness claim, but this conservation grant appropriation does not independently establish his separately stated education-reform proposition. Because the exact claim links education reform and career pathways, applicability is not inferred from funding youth exposure alone."
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
