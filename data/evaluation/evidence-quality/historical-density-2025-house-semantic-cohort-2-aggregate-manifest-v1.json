@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "historical-density-2025-house-semantic-cohort-2-aggregate-manifest-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenSourceCohort": {
+    "runId": 37718561841,
+    "artifactId": 11525006690,
+    "digest": "sha256:384e0f7856b051f621af0f9f7f55ec517068d093100d47edb12746911410d17c",
+    "selectionKeySha256": "6364b5c9f86ec6e4cbf4ddd9398ce962f376342c36d5e501bb65884018672a05"
+  },
+  "tranches": [
+    {
+      "tranche": 1,
+      "rowStart": 1,
+      "rowEnd": 10,
+      "mergeSha": "babacc381f575fd1d1a5e4f68cb0c57d766a1204",
+      "runId": 37721115038,
+      "artifactId": 11525334634,
+      "digest": "sha256:f49c0782af966b1aa10cc7ade6cb73916a0bc87fd4dbc2b29d12a7b07c125fd3",
+      "outputSchema": "historical-density-2025-house-semantic-review-cohort-2-tranche-1-v1",
+      "outputContentSha256": "186759c02564ab8750f80ec7952593c0b0f555998155af095c34d5e88486a25f",
+      "directionalDocuments": 8,
+      "nonDirectionalDocuments": 2,
+      "semanticGroups": 8
+    },
+    {
+      "tranche": 2,
+      "rowStart": 11,
+      "rowEnd": 20,
+      "mergeSha": "1682d9b5792f33eb006ae2927dfd500ac61d885b",
+      "runId": 37784967088,
+      "artifactId": 11554106286,
+      "digest": "sha256:43494944f40d3783628b55d1ffc613b3a5059239da0d558269debd1a628fcb92",
+      "outputSchema": "historical-density-2025-house-semantic-review-cohort-2-tranche-2-v1",
+      "outputContentSha256": "7076a7e36443106475935f4bb83dce7edcba176f4c178dc142b860439cc3aa29",
+      "directionalDocuments": 8,
+      "nonDirectionalDocuments": 2,
+      "semanticGroups": 8
+    },
+    {
+      "tranche": 3,
+      "rowStart": 21,
+      "rowEnd": 30,
+      "mergeSha": "86267ab3f1d2b2c771b79ad63f4e888930abc522",
+      "runId": 37786464598,
+      "artifactId": 11554617271,
+      "digest": "sha256:bf29ab4e7f901cafea9230267ff6e1d90849b606edb43d0ca266b7b4d6da6633",
+      "outputSchema": "historical-density-2025-house-semantic-review-cohort-2-tranche-3-v1",
+      "outputContentSha256": "42fc9a897b058c331681490aaec18aa4dd65410ab7d59315a6d48f193430e726",
+      "directionalDocuments": 9,
+      "nonDirectionalDocuments": 1,
+      "semanticGroups": 9
+    },
+    {
+      "tranche": 4,
+      "rowStart": 31,
+      "rowEnd": 40,
+      "mergeSha": "0a3d5cdde58aea5a2ff6894e8d82d5ae4aabcbc8",
+      "runId": 37787568079,
+      "artifactId": 11554518798,
+      "digest": "sha256:88d302fbb4c51a8218f8acafbc6a6458582ade3cf14acaf4b0241def9d784338",
+      "outputSchema": "historical-density-2025-house-semantic-review-cohort-2-tranche-4-v1",
+      "outputContentSha256": "a5f2766395de48ccc9ee43c5be5600dde90e0c9adf83c13bf0747f6ce6237d71",
+      "directionalDocuments": 10,
+      "nonDirectionalDocuments": 0,
+      "semanticGroups": 10
+    },
+    {
+      "tranche": 5,
+      "rowStart": 41,
+      "rowEnd": 50,
+      "mergeSha": "e6c04d8b18e40730cd1cb27faf94f64b3e91ff47",
+      "runId": 37788429235,
+      "artifactId": 11554928371,
+      "digest": "sha256:8ad082dcbd3318b8a3be3bbb04de7481c2d858f6f99449c5d4eb017b5ee1f267",
+      "outputSchema": "historical-density-2025-house-semantic-review-cohort-2-tranche-5-v1",
+      "outputContentSha256": "4d779dc79b6dfc49951af2b6fef226b179ef782637c02b0f32e35dab9af4137c",
+      "directionalDocuments": 7,
+      "nonDirectionalDocuments": 3,
+      "semanticGroups": 7
+    }
+  ],
+  "expectedAggregate": {
+    "documents": 50,
+    "directionalDocuments": 42,
+    "nonDirectionalDocuments": 8,
+    "uniqueSemanticGroups": 42,
+    "novelSemanticGroups": 42,
+    "crossBatchDuplicateSemanticGroups": 0,
+    "candidateBillIdentifiers": 0,
+    "internalMembershipIdentitiesResolved": 0
+  },
+  "policy": {
+    "outcomeUse": "none",
+    "targetBillApplicabilityInferred": false,
+    "billInference": false,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
