@@ -45,13 +45,13 @@ function setSha(values: readonly string[]): string {
 
 function main(): void {
   const audit = readJson(
-    env('VOTEPREDICT_2025_HOUSE_TRANCHE2_APPLICABILITY_AUDIT_PATH'),
+    env('VOTEPREDICT_2025_HOUSE_COHORT_2_TRANCHE2_APPLICABILITY_AUDIT_PATH'),
   );
   const decisions = readJson(
-    env('VOTEPREDICT_2025_HOUSE_TRANCHE2_APPLICABILITY_DECISIONS_PATH'),
+    env('VOTEPREDICT_2025_HOUSE_COHORT_2_TRANCHE2_APPLICABILITY_DECISIONS_PATH'),
   );
   const output = resolve(
-    env('VOTEPREDICT_2025_HOUSE_TRANCHE2_APPLICABILITY_REVIEW_OUTPUT'),
+    env('VOTEPREDICT_2025_HOUSE_COHORT_2_TRANCHE2_APPLICABILITY_REVIEW_OUTPUT'),
   );
 
   if (
@@ -93,6 +93,9 @@ function main(): void {
     || audit.policy?.sameDayBillVersionsExcluded !== true
     || audit.policy?.deterministicScreenCanDeclareApplicability !== false
     || audit.policy?.semanticReviewRequiredForApplicability !== true
+    || audit.policy?.contextOnly !== true
+    || audit.policy?.mechanicallyActionable !== false
+    || audit.policy?.modelWeight !== 0
     || audit.policy?.featureRowsWritten !== false
     || audit.policy?.modelFitting !== 'none'
     || audit.policy?.servingChanged !== false
