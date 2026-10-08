@@ -40,9 +40,11 @@ Calibration remains off by default for the member/floor model because the evalua
 
 ## Current operating note
 
-As of 2026-09-16, Quick/introduction forecasting and the production scheduler are operational. Deep research remains unavailable until Vercel AI Gateway billing is enabled; failed Deep research must not invalidate an otherwise valid Quick revision. The Operations Production readiness panel surfaces this distinction explicitly.
+**As of October 8, 2026, Vercel automation is paused.** GitHub pull requests still use full CI, but the production deploy, production forecast scheduler, evidence refresh and identified Vercel-dependent maintenance workflows are **manual-only** under [issue #732](https://github.com/killjoy00/votepredict/issues/732). The active public-evidence refresh workflow still uses `vercel env pull`, so it is **not** an independently operable GitHub/Neon pipeline while the pause remains. The source-controlled cron configuration has been removed; the old *live deployment's* cron is **unverified**. Do not claim automatic evidence freshness, production scheduling or deployment from older operational documentation.
 
-The next major milestone is **2027 Opening Day Ready**: automate the 2027-28 session/roster/bill-universe transition, freeze a new introduction artifact using completed prior biennia, verify future prospective protocols, and require no manual database preparation when the next session begins.
+Historical evidence and source-family work is tracked in the [evidence operating scorecard](docs/evaluation/evidence-program-scorecard.md) and [issue #847](https://github.com/killjoy00/votepredict/issues/847). The primary outstanding historical directional-coverage gap is 2021-22 under [#718](https://github.com/killjoy00/votepredict/issues/718). Historical source acquisition is public self-service only: do not contact the Legislative Reference Library or other offices.
+
+Deep research remains unavailable while AI Gateway returns `billing_required`; the Quick serving model is unchanged. No model-weight, serving, database or production actions are authorized by the evidence operating tracker.
 
 ## Local setup
 
@@ -92,9 +94,9 @@ CI also runs the complete migration chain against a fresh PostgreSQL database be
 
 ## Deployment
 
-Automatic Vercel Git deployments are disabled. Feature branches are validated in GitHub CI without generating routine Vercel previews. After a push to `main` passes CI, `.github/workflows/deploy-production.yml` checks out that exact green SHA and performs the Vercel production deployment.
+Automatic Vercel Git deployments are disabled and feature-branch validation uses GitHub CI. **A successful push or merge does not automatically deploy production.** The [`deploy-production.yml`](.github/workflows/deploy-production.yml) path is paused and manual-only, requiring explicit `run_vercel=true` on current `main` plus a separately authorized release under [#732](https://github.com/killjoy00/votepredict/issues/732).
 
-Production release policy, fallback procedures, smoke checks, and quota discipline are documented in [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md).
+See [deployment policy](docs/DEPLOYMENT.md) and the [evidence operating scorecard](docs/evaluation/evidence-program-scorecard.md). Do not run the refresh or a Vercel workflow as a side effect of evidence research.
 
 ## Governing documents
 
@@ -103,6 +105,7 @@ Production release policy, fallback procedures, smoke checks, and quota discipli
 - [docs/ARCHITECTURE_V2.md](./docs/ARCHITECTURE_V2.md)
 - [docs/DATA_AND_EVIDENCE.md](./docs/DATA_AND_EVIDENCE.md)
 - [docs/EVIDENCE-INGESTION.md](./docs/EVIDENCE-INGESTION.md)
+- [docs/evaluation/evidence-program-scorecard.md](./docs/evaluation/evidence-program-scorecard.md)
 - [docs/EVALUATION_STANDARD.md](./docs/EVALUATION_STANDARD.md)
 - [docs/REBUILD_PLAN.md](./docs/REBUILD_PLAN.md)
 - [docs/OPERATIONS.md](./docs/OPERATIONS.md)
