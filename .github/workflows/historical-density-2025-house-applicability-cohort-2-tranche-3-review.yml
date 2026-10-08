@@ -69,17 +69,17 @@ jobs:
           test "$(jq -r '.review.candidateBills' "$f")" = 17
           test "$(jq -r '.review.candidatePublicMembers' "$f")" = 42
           test "$(jq -r '.review.candidateSemanticGroups' "$f")" = 42
-          test "$(jq -r '.review.decisions.applicable' "$f")" = 8
+          test "$(jq -r '.review.decisions.applicable' "$f")" = 10
           test "$(jq -r '.review.decisions.ambiguous_fail_closed' "$f")" = 0
-          test "$(jq -r '.review.decisions.not_applicable' "$f")" = 376
+          test "$(jq -r '.review.decisions.not_applicable' "$f")" = 374
           test "$(jq -r '.review.decisions.pending_review' "$f")" = 0
-          test "$(jq -r '.review.alignmentCounts.aligns' "$f")" = 8
+          test "$(jq -r '.review.alignmentCounts.aligns' "$f")" = 10
           test "$(jq -r '.review.alignmentCounts.conflicts' "$f")" = 0
-          test "$(jq -r '.review.finalPairStatusCounts.applicable' "$f")" = 8
+          test "$(jq -r '.review.finalPairStatusCounts.applicable' "$f")" = 10
           test "$(jq -r '.review.finalPairStatusCounts.ambiguous_fail_closed' "$f")" = 126
-          test "$(jq -r '.review.finalPairStatusCounts.not_applicable' "$f")" = 916
+          test "$(jq -r '.review.finalPairStatusCounts.not_applicable' "$f")" = 914
           test "$(jq -r '.review.finalPairStatusCounts.pending_review' "$f")" = 0
-          test "$(jq -r '.review.applicableRows' "$f")" = 8
+          test "$(jq -r '.review.applicableRows' "$f")" = 10
           test "$(jq -r '.review.integrationReadyRows' "$f")" = 0
           test "$(jq -r '.frozenInput.targetEventKeySha256' "$f")" = e5df92e5d1074edae44bc376ba85a041c3107dde1c84cddc3c8a471c132822f0
           test "$(jq -r '.frozenInput.reviewKeySha256' "$f")" = 9587335f4c550c12d1b1dd97361e4a3312ea2ea9d92b7c59295f146d98cf9359
@@ -99,11 +99,11 @@ jobs:
             echo '## 2025-26 House cohort-2 reviewed applicability — tranche 3'
             echo
             echo '- Candidate pairs reviewed: **384**'
-            echo '- Applicable: **8**'
+            echo '- Applicable: **10**'
             echo '- Reviewed ambiguous/fail-closed: **0**'
-            echo '- Reviewed not applicable: **376**'
-            echo '- Full eligible-pair accounting: **8 applicable / 126 fail-closed / 916 not-applicable / 0 pending**'
-            echo '- Alignment: **8 align / 0 conflict**'
+            echo '- Reviewed not applicable: **374**'
+            echo '- Full eligible-pair accounting: **10 applicable / 126 fail-closed / 914 not-applicable / 0 pending**'
+            echo '- Alignment: **10 align / 0 conflict**'
             echo '- Integration-ready rows: **0** (internal identity unresolved)'
             echo '- Outcomes used: **none**'
             echo '- Production DB queried: **no**'
