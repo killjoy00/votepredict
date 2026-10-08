@@ -1,0 +1,172 @@
+{
+  "schemaVersion": "historical-density-2025-house-semantic-decisions-cohort-2-tranche-1-v1",
+  "batchId": "EQV1-HISTORICAL-DENSITY-2025-HOUSE-002-T01",
+  "issue": 718,
+  "frozenCohort": {
+    "runId": 37718561841,
+    "artifactId": 11525006690,
+    "digest": "sha256:384e0f7856b051f621af0f9f7f55ec517068d093100d47edb12746911410d17c",
+    "selectionKeySha256": "6364b5c9f86ec6e4cbf4ddd9398ce962f376342c36d5e501bb65884018672a05"
+  },
+  "reviewedRows": [
+    1,
+    10
+  ],
+  "decisions": [
+    {
+      "row": 1,
+      "decision": "directional",
+      "semanticKey": "mahamoud_minneapolis_water_and_public_housing",
+      "topics": [
+        "water infrastructure",
+        "public housing",
+        "affordable housing"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Anquam Mahamoud supports funding Minneapolis water-distribution infrastructure and deeply affordable public housing.",
+      "supportingExcerpt": "I introduced legislation funding water distribution infrastructure improvements for the City of Minneapolis and a bill to support the Minneapolis Public Housing Authority’s efforts to provide deeply affordable housing units, which I learned about during our visit to Spring Manor earlier this year.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 2,
+      "decision": "directional",
+      "semanticKey": "novotny_safe_haven_baby_boxes",
+      "topics": [
+        "safe haven law",
+        "newborn safety",
+        "public safety"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Paul Novotny supports authorizing Safe Haven Baby Boxes so parents in crisis can anonymously and safely surrender newborns.",
+      "supportingExcerpt": "I am committed to fighting for this legislation, and I hope to see it move forward with strong support.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 3,
+      "decision": "non_directional",
+      "reasonCode": "generic_service_and_collaboration_commitment_without_specific_policy_position"
+    },
+    {
+      "row": 4,
+      "decision": "directional",
+      "semanticKey": "bahner_hoa_cic_consumer_protection_reform",
+      "topics": [
+        "consumer protection",
+        "homeowners associations",
+        "common interest communities"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Kristin Bahner supports HOA and common-interest-community reforms that strengthen consumer protections and oversight.",
+      "supportingExcerpt": "Working with a bipartisan group of legislators, I plan to introduce a reform package that will strengthen consumer protection laws and ensure Minnesotans are not taken advantage of by these quasi-government organizations with little oversight.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 5,
+      "decision": "directional",
+      "semanticKey": "finke_inclusive_equal_rights_amendment",
+      "topics": [
+        "equal rights amendment",
+        "civil rights",
+        "constitutional rights"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Leigh Dawn Finke supports passage of an inclusive Minnesota Equal Rights Amendment.",
+      "supportingExcerpt": "I am honored to be the lead House author for the ERA this session and was excited to meet with a broad collection of leaders working to ensure the passage of an inclusive ERA in Minnesota. This has been a hard-fought effort, but I am committed to ensuring this important constitutional amendment is victorious.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 6,
+      "decision": "directional",
+      "semanticKey": "rarick_state_agency_fraud_reporting",
+      "topics": [
+        "fraud prevention",
+        "government oversight",
+        "state agencies"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Marion Rarick supports stricter fraud reporting requirements and additional fraud-prevention tools for state agencies.",
+      "supportingExcerpt": "House File 2 (I’m a co-author): Strengthens fraud prevention by mandating stricter reporting requirements for state agencies and equipping them with additional tools to identify and prevent fraudulent activities.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 7,
+      "decision": "directional",
+      "semanticKey": "bierman_safe_patient_staff_ratios",
+      "topics": [
+        "healthcare workforce",
+        "patient safety",
+        "staffing ratios"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Robert Bierman supports safe patient-to-staff ratios and legislative solutions that uphold patient-care standards.",
+      "supportingExcerpt": "Safe patient-to-staff ratios are critical in this work, and as the co-chair of the Health Finance Committee, it's an honor to partner with them on legislative solutions that uphold the standard of care Minnesotans expect and deserve.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 8,
+      "decision": "directional",
+      "semanticKey": "hill_lgbtq_racial_immigrant_rights",
+      "topics": [
+        "civil rights",
+        "LGBTQ rights",
+        "immigrant rights"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Josiah Hill supports protecting the rights of LGBTQ, Black and Brown, and immigrant communities from discriminatory government action.",
+      "supportingExcerpt": "I will fight to protect the rights of our LGBTQ, Black and Brown, and immigrant communities.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 9,
+      "decision": "directional",
+      "semanticKey": "noor_lgbtq_racial_immigrant_rights",
+      "topics": [
+        "civil rights",
+        "LGBTQ rights",
+        "immigrant rights"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Mohamud Noor supports protecting the rights of LGBTQ, Black and Brown, and immigrant communities from discriminatory government action.",
+      "supportingExcerpt": "I will fight to protect the rights of our LGBTQ, Black and Brown, and immigrant communities.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 10,
+      "decision": "non_directional",
+      "reasonCode": "generic_democracy_equity_and_rights_commitments_without_specific_issue_position"
+    }
+  ],
+  "policy": {
+    "candidateBillIdentifiers": [],
+    "targetBillApplicabilityInferred": false,
+    "outcomeUse": "none",
+    "memberIssueOnly": true,
+    "billInference": false,
+    "internalMembershipIdentityResolved": false,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
