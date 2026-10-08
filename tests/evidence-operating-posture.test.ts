@@ -32,6 +32,10 @@ test('paused Vercel workflows and documentation match the source-controlled oper
   assert.equal(result.evidenceRefresh.dependsOnVercelEnvironmentPull, true);
   assert.equal(result.evidenceRefresh.directDatabaseWorkerPresent, true);
   assert.equal(result.evidenceRefresh.productionRefreshExecuted, false);
+  assert.equal(result.sandboxReadonlyWorkflow.manualOnly, true);
+  assert.equal(result.sandboxReadonlyWorkflow.approvalGuardPresent, true);
+  assert.equal(result.sandboxReadonlyWorkflow.vercelDependencyPresent, false);
+  assert.equal(result.sandboxReadonlyWorkflow.sandboxCredentialPathPresent, true);
 });
 
 test('adding an automatic push trigger fails the paused workflow audit', () => {
@@ -92,4 +96,28 @@ test('unknown trigger syntax and missing required input never pass open', () => 
   assert.equal(auditWithOverride(path, original.replace(
     '      run_vercel:', '      enable_something_else:',
   )).passed, false);
+});
+
+
+test('sandbox-only audit workflow rejects a pushed trigger', () => {
+  const path = '.github/workflows/evidence-neon-readonly-sandbox.yml';
+  const changed = readRepo(path).replace(
+    'on:\n  workflow_dispatch:', 'on:\n  push:\n  workflow_dispatch:',
+  );
+  assert.equal(auditWithOverride(path, changed).passed, false);
+});
+
+test('sandbox-only audit workflow rejects removed approval, changed role path and Vercel reintroduction', () => {
+  const path = '.github/workflows/evidence-neon-readonly-sandbox.yml';
+  const original = readRepo(path);
+  for (const changed of [
+    original.replace("inputs.approval_phrase == 'READ_ONLY_SANDBOX_AUDIT'", "inputs.run_readonly == true"),
+    original.replace('default: false', 'default: true'),
+    original.replace('environment: evidence-readonly-sandbox', 'environment: production'),
+    original.replace('secrets.EVIDENCE_READONLY_SANDBOX_URL', 'secrets.DATABASE_URL'),
+    original.replace('node --import tsx scripts/audit-evidence-neon-readonly.ts --connect',
+      'npx vercel env pull'),
+  ]) {
+    assert.equal(auditWithOverride(path, changed).passed, false);
+  }
 });
