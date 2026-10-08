@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-cohort-2-tranche-10-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenCandidateArtifact": {
+    "runId": 37836795789,
+    "artifactId": 11575244373,
+    "digest": "sha256:7f4e038d45793474c4e46196c7fb06cc916ac533e271280c1cb307e406a6fd3f",
+    "contentSha256WithoutSelfField": "64b9217e6f9c01edc7e3742b992d47f77f7fc1a5939d778b828cef8a2f9af089",
+    "targetTrancheIndex": 10,
+    "targetRankStart": 226,
+    "targetRankEnd": 250,
+    "targetEventKeySha256": "87cfaaec13743d7c7d97f2ea3b69f5f2cfb389320e356a4893991827ba023848",
+    "reviewKeySha256": "73700085a7053d976965283a38268929a219bd70512e2aa3b7c5cb3b8bdd5ee5",
+    "eligibleClaimEventPairs": 858,
+    "ineligibleSourceNotYetAvailablePairs": 192,
+    "eligibleClaimEventPairsByTargetYear": {
+      "2025": 270,
+      "2026": 588
+    },
+    "candidatePairs": 174,
+    "candidateBills": 19,
+    "candidatePublicMembers": 42,
+    "candidateSemanticGroups": 42
+  },
+  "defaultDecision": "not_applicable",
+  "defaultBillRationales": {
+    "HF13": "The exact 2025-02-06 introduction removes a duty to retreat before using reasonable force in legal self-defense or defense of others. It changes criminal self-defense standards, not obligations for providers to educate parents about infant abuse or teacher pension/pay and workplace protections. Child, parent, school-employee and other generic public-safety terms cannot substitute for the frozen person, beneficiary and policy mechanism.",
+    "HF20": "The strict 2025-02-06 introduction narrowly clarifies which Attorney General Office files classified under Minn. Stat. 13.65 are private **data on individuals**. The precise privacy-versus-public-access scope of Niska's own prior published position is separately accepted by exact-key override. The bill makes no amendment to the Common Interest Ownership Act, purchaser or HOA board duties, nor new state-agency fraud incident reporting/prevention requirements.",
+    "HF21": "The strict 2025-02-06 introduction changes the threshold for legislative authorization to extend a governor-declared peacetime emergency beyond 14 days, establishing a supermajority requirement. Emergency preparedness and state/local resource references do not fund the named Mound city clean-water investment in Myers's frozen source statement; unrelated emergency infrastructure or water-utility subject matter cannot transfer to a named appropriation.",
+    "HF23": "The strict 2025-02-17 first engrossment expressly adds abuse, fraud and waste definitions to the public employee whistleblower framework and a new protected disclosure when a public employee reports fraud/waste/abuse in programs of state agencies or political subdivisions. This is a specific reporting safeguard for stronger governmental antifraud transparency, separately accepted for Robbins by exact-key override. It neither changes Minnesota HOA/CIC consumer governance nor creates **Rarick's joined stricter mandatory agency incident reporting AND new preventive tools**; disclosures by employees under antiretaliation protection are a different actor and function.",
+    "HF124": "The 2025-02-24 first engrossment authorizes noncorrupt ceremonial/morale gifts after a public safety officer dies in the line of duty and local government expenditure to recognize such officers. Even though it concerns a state agency and a gift/reporting procedure, it does not require state agencies to report suspected fraud incidents or establish new fraud identification/prevention tools, the two constituent parts of Rarick's source.",
+    "HF129": "The 2025-02-07 introduction requires the director of child sex-trafficking prevention to report program evaluations to the legislature every odd-numbered year. Child sex-trafficking prevention reporting is not a health-care or childcare provider requirement to educate parents on recognizing and reporting abuse **in infants**, the different actor, audience, and mandated training in West's statement.",
+    "HF286": "The 2025-02-26 first engrossment authorizes Minnesota cities/counties to run state and federal criminal background checks on certain adult-entertainment and massage-business local license applicants. A state background data repository and investigatory release mechanism is not expanded **public access to Minnesota Attorney General Office data with individual privacy**; the records custodian, protected persons and disclosures are distinct from Niska's bill.",
+    "HF289": "The 2025-02-17 first engrossment sets up a State Agency Value Initiative (SAVI) program to retain a share of operational cost savings for innovative efficiency projects. Agency accounting reports and savings incentives do not newly require state agencies to report fraud incidents and equip them with fraud prevention/detection tools together, as Rarick's source states. General efficiency reporting is not fraud-reporting legislation.",
+    "HF2438": "The exact 2025-04-28 third engrossment is a large Minnesota transportation/road/transit/aviation/rail budget and infrastructure-policy omnibus with Safe Routes to School and public-safety transportation provisions. It contains no exact mandate to pay emergency medical-assistance ambulance **nontransport** runs, notwithstanding broad rural/transport/EMS nominations for Backer. Highways, hazardous-material transport, air travel, traffic enforcement, licensing, state reports, grants, infrastructure, transit and school-route work do not create the unrelated frozen HOA/CIC rights, Great Start child-care affordability, teacher pensions, infant abuse education, Attorney General office public data, state-agency fraud reporting plus tools, protected girls sports eligibility, Named Mound/Hastings/Minneapolis water investments, Minnesota Zoo *large-animal operating room*, National Guard capital buildings, direct state managed-care replacement, CEO pay-ratio tax, or smaller communities program. The exact source and target bill domains must agree, not just 'public safety' or 'transportation'.",
+    "HF2484": "The exact May 16, 2026 second engrossment provides a proposed $30 million general-fund appropriation for Mary C. Murphy **library construction grants**. Its general capital improvement vocabulary cannot be carried over to Huot's *Minnesota Zoo large-animal operating room* or Olson's *National Guard capital and building resources*. The grant manager and beneficiary institutions are unrelated.",
+    "HF3629": "The exact April 21, 2026 first engrossment amends statewide **grants governance**, requiring legislative committees to receive reports on exceptions to general executive agency grant policies and protecting identifying data of individuals sending grant misconduct comments. It refines the OGM's longstanding duty to receive and forward allegations of fraud/misuse. The new exception reporting and protection of grant complainants are substantive accountability safeguards, separately reviewed for Robbins's broad public-money oversight proposition. Niska's different claim concerns public access to Attorney General Office files, not grants management. For Rarick, grant-policy *exception* reports and existing public fraud comment handling are not an independently established new state-agency **fraud incident** reporting mandate plus prevention tools.",
+    "HF4591": "The exact May 8, 2026 first engrossment changes block/matching grant eligibility criteria for *public television and noncommercial radio stations*, with funding for broadcasting institutions. It does not allocate statewide K–12 public-school operating aid, natural resources conservation programs, the specific Empowering Small Communities infrastructure program named by Koegel, or taxes based on corporate CEO-to-worker pay ratios. Generic grants and public educational programming are distinct beneficiaries and purposes.",
+    "HF719": "The strict May 16, 2026 first engrossment proposes bond-funded capital appropriations for the Safe Routes to School grants administered by transportation officials. 'Capital investment' and state bonds do not fund Minnesota Zoo's Large Animal Operating Room or National Guard building/resources; neither institution is named or funded in this exact bill version.",
+    "SF1943": "The strict March 23, 2026 second engrossment bans pet shop sales of dogs and cats and changes pet dealer advertising and warranties. It does not create reforms for HOA/common-interest-community owners, boards or purchasers, despite broad consumer-protection terminology, and does not expand public access to the Minnesota Attorney General's **own records** while safeguarding privacy.",
+    "SF2077": "The exact April 28, 2025 second engrossment provides large Environment and Natural Resources Trust Fund and environmental-agency appropriations for wetland preservation, environmental education, wildlife habitat, local parks and trails, conservation corps and natural resource stewardship. These direct conservation programs align specifically to Harder's frozen statement as an exact-key override. Although it funds the Zoological Board's **general operations**, it does not earmark the specific expansion of the Minnesota Zoo's Large Animal Operating Room endorsed by Huot. University PFAS research and groundwater biofilters are not Hastings municipal water-treatment appropriations or the Mound city clean-water project. Other public grants, tax, science education, water, wildlife, NGO, BWSR oversight, environmental protections and public lands terms do not enact HOA protections, childcare affordability, home-school counseling, sex-based sports rules, a statewide AG public-data transparency law, statewide state-agency fraud reporting with prevention tools, Safe Haven Baby Boxes, surplus taxpayer refund constitutional rules, remote-work decisions, Guard buildings or a CEO pay-ratio tax. Notably BWSR grants in the strict text are **exempted** from some existing grant-monitoring/payment policies, making the net antifraud direction unclear for Robbins, separately fail closed.",
+    "SF4401": "The strict May 12, 2026 third engrossment is a large cannabis/hemp business licensing, retail market, private compliance reporting and Office of Cannabis Management data-policy omnibus. Its civil licensing penalties and consumer safeguards concern regulated private cannabis enterprises, not HOA/CIC homeowner protections, government grant fraud oversight, or Rarick's agency incident reporting and anti-fraud tools. The bill makes some OCM monitoring data **nonpublic**, not a public disclosure requirement for Attorney General Office data. Age restrictions on cannabis are not Safe Haven infant drop-off boxes, providers educating parents about infant abuse, or child-care-center abuse safeguards. Social equity and cannabis licensing are not the broad constitutional Equal Rights Amendment, sex-based school athletic eligibility, school operating aid, Hastings/Mound/Minneapolis water and housing, veterans property tax exclusions, public state healthcare conversion, rural ambulance nontransport payments, emergency military buildings, family medical leave protection/repeal, or a named Koegel infrastructure program. Terms 'water', 'child', 'public data' and 'grant' do not transfer across actors/programs.",
+    "SF4476": "The exact May 7, 2026 third engrossment changes disability and long-term-care service program delivery, provider oversight, protective services and DHS administrative budgets. The added DHS Inspector General administrative appropriation overlaps Robbins's state antifraud accountability goals, but the strict prior text does not prove a specifically funded new fraud detection/reporting/control capacity: an explicit exact-key ambiguity is preserved. Existing public-program payment withholding for fraud is largely carried-forward law and must not count as a new intervention. Aging/disability care services are not new hospital nurse-to-patient staffing ratios, replacement of private insurer administration of public healthcare, mandates protecting *infants in childcare facilities*, Safe Haven Baby Boxes or providers teaching parents to recognize infant abuse. Disability living expenses, training, housing and workforce provisions likewise do not implement the separate frozen named taxes, rural EMS nontransport payment, Mound/Hastings/Minneapolis water, zoo operating room, statewide pensions, ERA, state telework, private rent-fixing ban or state-agency fraud reporting PLUS prevention tools.",
+    "SF4612": "The exact April 30, 2026 third engrossment reforms mixed Health/DHS/DCYF childcare, benefit eligibility, provider services and state human-services appropriations. Childcare rough-handling/shaking restrictions partially restate preexisting Minnesota Rule 9503.0055, and it is unproven that the cited text substantively *strengthens* Scott's infant/young-child childcare safeguards: explicit source-specific ambiguity, not an automatic alignment. The same appropriations article **adds $26,000 to DHS Inspector General** but **subtracts $425,000 from fraud-prevention grants** for FY2027; the net state fraud-control direction is indeterminate for Robbins, kept fail closed. Training childcare workers about head trauma is not West's separately required **providers educating parents** on recognizing and reporting infant abuse. Childcare licensing reform is not the named Great Start Affordability Act. Center supervision ratios do not regulate hospital safe patient-to-staff ratios, Medicaid eligibility changes do not replace private-managed public healthcare plans with direct state administration, and budgetary/oversight/legal references are not Finke's inclusive constitutional ERA, Niska's AG Office data access, Babyn Boxes, broad teacher pensions, sex-based athletics, rural ambulance nontransport, named water projects, Zoo large-animal operating room, Guard buildings, corporate CEO-to-worker pay tax or remote state employee work rules.",
+    "SF5200": "The April 21, 2026 introduction makes a **technical citation correction** in the Paid Family and Medical Leave chapter's overpayment appeal language (268B.08 -> 268B.081). It does not newly secure Minnesota's PFML entitlement, oppose a repeal, change leave eligibility or expand benefits. The presence of 'family or medical leave benefits' cannot independently be read as the substantive protections in Hanson and Hemmingsen-Jaeger's frozen statements."
+  },
+  "overrides": [
+    {
+      "reviewKey": "niska_attorney_general_data_transparency|HF20|2025-02-20|98e1e48b9758410a625b6dbf0b39515ef14096504adccc5670287b97b6b48ddd",
+      "decision": "applicable",
+      "billPolicyDirection": "clarifies_attorney_general_records_privacy_is_limited_to_data_on_individuals_enabling_public_access_to_other_AG_records",
+      "alignmentDirection": "aligns",
+      "reason": "The frozen HF20 introduction (posted 2025-02-06) modifies Minn. Stat. 13.65, subd. 1, so the enumerated Office of the Attorney General data classifications are private *data on individuals*; the class does not automatically extend to non-individual public-government files. Niska's own independently published pre-vote statement expressly supports making more AG data public while preserving ordinary residents' privacy. This is his exact statutory policy mechanism and actor, not just a generic transparency reference."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|HF23|2025-03-10|5e1311515995e16ecae919f370906498e2717cbef63d08b975910019f6f4566d",
+      "decision": "applicable",
+      "billPolicyDirection": "expands_antiretaliation_protection_to_state_public_employee_disclosures_of_fraud_waste_abuse_in_public_programs",
+      "alignmentDirection": "aligns",
+      "reason": "HF23 first engrossment (posted 2025-02-17), new Minn. Stat. 181.932, subd.1 clause (7), explicitly protects public employees who report fraud, waste or abuse *in state-agency or local-government programs* to investigators, legislative auditors and officials. New §181.931 definitions specify public program fraud and waste. This is a substantive new whistleblower transparency/accountability tool within Robbins's pre-vote broad call for stronger governmental fraud oversight; it does not mandate agency fraud incident reports as in Rarick's separate two-part statement."
+    },
+    {
+      "reviewKey": "harder_conservation_programs|SF2077|2026-05-17|a2c37a4f9ebb4bcc58f32e4e3a40cd3d4473c4521eae4b89fef336342bd7eab7",
+      "decision": "applicable",
+      "billPolicyDirection": "funds_environmental_conservation_habitat_restoration_wetlands_and_state_natural_resource_stewardship_programs",
+      "alignmentDirection": "aligns",
+      "reason": "SF2077 strict April 28, 2025 second engrossment materially funds Minnesota DNR, Board of Water and Soil Resources, Conservation Corps, natural-resource trust-fund projects, habitat protection, shoreline and woodland restoration, and implementation of the Wetland Conservation Act. These are actual Minnesota conservation programs and environmental-protection appropriations directly within Harder's frozen published position supporting stronger conservation programs."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|HF3629|2026-05-17|cd76ef81ad166a5167b9e6bea12386da8535303cc24043981f1d9bd7ada4a37d",
+      "decision": "applicable",
+      "billPolicyDirection": "requires_legislative_reporting_of_exceptions_to_statewide_grants_controls_and_protects_grant_misconduct_complainant_identity",
+      "alignmentDirection": "aligns",
+      "reason": "HF3629 strict April 21 first engrossment changes executive-agency grants governance: OGM policy exceptions must be reported to committee chairs/ranking minority members and fraud/misuse complainant identifying information is shielded from release to the agency accused. These are concrete new state-grant oversight, transparency and accountability protections supporting Robbins's broad antifraud-governance position. The already-existing OGM intake/forwarding of grant-fraud allegations alone would not suffice; only the new reporting/complainant protections support this bounded match."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|SF4612|2026-05-17|f9050f3d2c553cc77d2ed09850236be7fceaeda6d468c6afd19d1c8f4edb284e",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "Same exact strict SF4612 third-engrossment identity as independently frozen earlier: its 2027 DHS Inspector General appropriation increases by $26,000 while fraud-prevention grants decrease by $425,000. The different programs and opposing funding changes leave the actual direction of Minnesota state fraud oversight unproved. Neither blanket alignment nor conflict can safely be assigned to Robbins from this omnibus bill."
+    },
+    {
+      "reviewKey": "scott_childcare_abuse_safeguards|SF4612|2026-05-17|f9050f3d2c553cc77d2ed09850236be7fceaeda6d468c6afd19d1c8f4edb284e",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "SF4612 proposes statutory child-care center behavioral guidance and bans rough handling, shaking, restraints and humiliation, directly overlapping Scott's childcare/infant abuse-safeguard actor and issue. However prior Minnesota Rule 9503.0055 already contained materially similar prohibitions. The frozen exact bill text does not isolate how the reform *strengthens* infant safeguards beyond recodification, so source applicability and directional alignment fail closed."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|SF4476|2026-05-17|f34f7c2c6c1b3fd6b3310ff41fe054163f1d795bf727556f0ac8d56a71da4327",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "SF4476's exact May 7 third engrossment adds substantial FY2027 DHS central-office Inspector General funding and future base resources, but does not pin a new fraud-investigation/monitoring duty or earmark these additional dollars specifically for antifraud operations. Carried-forward provider payment withholding for fraud is not newly enacted policy. Increased IG funding alone has plausible but unresolved oversight effects, so Robbins's directional alignment fails closed."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|SF2077|2026-05-17|a2c37a4f9ebb4bcc58f32e4e3a40cd3d4473c4521eae4b89fef336342bd7eab7",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "SF2077 gives substantial state natural-resources grants but expressly exempts BWSR appropriations from Office of Grants Management grant payment and monitoring policies 08-08 and 08-10, while other conservation funding includes normal oversight and agency performance provisions. The net public grant fraud-transparency direction cannot be derived from this mixed environmental funding and monitoring-policy exception, even though it strongly supports Harder's unrelated conservation stance."
+    },
+    {
+      "reviewKey": "rarick_state_agency_fraud_reporting|HF3629|2026-05-17|cd76ef81ad166a5167b9e6bea12386da8535303cc24043981f1d9bd7ada4a37d",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "HF3629 newly requires OGM to report *exceptions to statewide grants-governance policies* to legislative committees and shields people who submitted fraud/misuse allegations from disclosure to the accused agency. Its general OGM fraud-comment handling duty already existed; it does not create the joined *stricter state agency fraud incident-reporting duty AND additional fraud identification/prevention tools* required by Rarick's two-part pre-vote proposition. Legislative exception notices and informant privacy cannot be substituted for those two components."
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "reviewMethod": "each_of_174_exact_candidate_claims_screened_against_its_strict_prevotebill_version_and_original_frozen_member_statement_using_19_reasoned_bill_defaults_and_exact_key_overrides",
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
