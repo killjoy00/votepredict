@@ -62,7 +62,7 @@ jobs:
         run: |
           set -euo pipefail
           f="$RUNNER_TEMP/tranche4-review/historical-density-2025-house-applicability-review-cohort-2-tranche-4-v1.json"
-          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-applicability-tranche-4-review-v1
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-applicability-review-cohort-2-tranche-4-v1
           test "$(jq -r '.issue' "$f")" = 718
           test "$(jq -r '.session' "$f")" = 2025-2026
           test "$(jq -r '.review.candidatePairs' "$f")" = 230
