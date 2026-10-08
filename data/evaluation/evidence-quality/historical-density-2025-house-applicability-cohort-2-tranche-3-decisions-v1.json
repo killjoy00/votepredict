@@ -23,7 +23,7 @@
     "HF2130": "DWI and ignition-interlock reform does not implement the nominated cohort-2 public-safety, safe-haven, infant-safety, or other member propositions; generic public-safety overlap is insufficient.",
     "HF2433": "The K-12 finance omnibus is not applicable to nominated cohort-2 claims except the explicit Kresha career-pathway override below. Broad school funding is mixed across programs, attendance references do not create Lawrence's chronic-absenteeism tracking policy, and teacher-compensation provisions do not establish Wolgamott's combined workplace-pay-pension proposition.",
     "HF2434": "The human-services omnibus is not applicable to nominated cohort-2 claims except the explicit Robbins fraud-oversight override below. Its staffing-ratio language concerns mental-health case management rather than Bierman's patient staffing proposition; other housing, childcare, public-health, consumer, and program terms are incidental or partial.",
-    "HF2435": "The health-finance and policy omnibus is not applicable to nominated cohort-2 claims except the explicit West infant-abuse parent-education override below. Childcare, EMS, managed-care, staffing, and child-protection provisions do not enact the other specific propositions such as Great Start affordability, non-transport ambulance reimbursement, or direct state administration of public healthcare.",
+    "HF2435": "The health-finance and policy omnibus is not applicable to nominated cohort-2 claims except the explicit Backer rural-EMS non-transport payment, Scott childcare-camera safeguard, and West infant-abuse parent-education overrides below. Other managed-care, staffing, childcare-affordability, and child-protection provisions do not enact the remaining specific propositions.",
     "HF2442": "Energy and renewable-development appropriations do not implement the nominated cohort-2 tax, clean-water, consumer-finance, conservation, or other propositions; generic consumer and finance language is unrelated.",
     "HF2464": "Health licensing and higher-education-facilities changes do not implement the nominated cohort-2 public-health administration, staffing-ratio, childcare, PFAS, paid-leave, or other propositions.",
     "SF1740": "The K-12 policy omnibus changes attendance, teacher licensing, bullying, and school policy broadly but does not enact Lawrence's chronic-absenteeism tracking system, Kresha's career-pathway expansion, transgender-sports policy, homeschool counseling, or the other reviewed cohort-2 propositions.",
@@ -92,6 +92,20 @@
       "billPolicyDirection": "supports_career_and_technical_program_expansion_and_career_pathway_opportunities",
       "alignmentDirection": "aligns",
       "reason": "HF2433 contains a career-and-technical-program expansion for an aeronautics and commercial over-the-road technical program and funds pathway-oriented education programs. That directly advances career-pathway opportunities and workforce readiness for students."
+    },
+    {
+      "reviewKey": "backer_rural_ambulance_nontransport_reimbursement|HF2435|2025-05-12|a74f41c80e7b80117a7e82773c8c10f3878ce0d298d021ad148c896174e1de1e",
+      "decision": "applicable",
+      "billPolicyDirection": "creates_rural_ems_uncompensated_care_payments_for_unpaid_no_transport_responses",
+      "alignmentDirection": "aligns",
+      "reason": "HF2435 creates a Rural EMS Uncompensated Care Pool Payment Program for rural ambulance licensees. Eligible responses expressly require that an ambulance responded, did not transport a person to a hospital emergency department, and received no payment from any source; payments are calculated from those eligible responses. That directly matches Backer's support for reimbursing rural ambulance services when essential on-scene care is provided without transport."
+    },
+    {
+      "reviewKey": "scott_childcare_abuse_safeguards|HF2435|2025-05-12|a74f41c80e7b80117a7e82773c8c10f3878ce0d298d021ad148c896174e1de1e",
+      "decision": "applicable",
+      "billPolicyDirection": "requires_video_security_cameras_in_infant_toddler_childcare_areas_and_60_day_recording_retention",
+      "alignmentDirection": "aligns",
+      "reason": "Scott's pre-vote source specifically supports childcare safeguards including video cameras monitoring infants and toddlers and 60-day footage retention. HF2435 creates the child-care-center video-security-camera section, requires cameras in infant and toddler rooms, and requires recordings to be retained for 60 calendar days. That is a direct substantive match."
     }
   ],
   "policy": {
