@@ -21,9 +21,9 @@ const EXPECTED_SEMANTIC_GROUPS = 42;
 const EXPECTED_ELIGIBLE_PAIRS = 1050;
 const EXPECTED_BASELINE_AMBIGUOUS = 126;
 const EXPECTED_NOT_NOMINATED = 540;
-const EXPECTED_APPLICABLE = 8;
+const EXPECTED_APPLICABLE = 10;
 const EXPECTED_REVIEW_AMBIGUOUS = 0;
-const EXPECTED_REVIEW_NOT_APPLICABLE = 376;
+const EXPECTED_REVIEW_NOT_APPLICABLE = 374;
 
 type Json = Record<string, any>;
 
@@ -122,7 +122,7 @@ function main(): void {
     || decisions.frozenCandidateArtifact?.candidateSemanticGroups !== EXPECTED_SEMANTIC_GROUPS
     || decisions.defaultDecision !== 'not_applicable'
     || !Array.isArray(decisions.overrides)
-    || decisions.overrides.length !== 8
+    || decisions.overrides.length !== 10
     || decisions.policy?.everyCandidateReviewed !== true
     || decisions.policy?.applicableRequiresExplicitOverride !== true
     || decisions.policy?.ambiguousRequiresExplicitOverride !== true
@@ -283,11 +283,13 @@ function main(): void {
     aligns: reviewedCandidates.filter((row) => row.alignmentDirection === 'aligns').length,
     conflicts: reviewedCandidates.filter((row) => row.alignmentDirection === 'conflicts').length,
   };
-  if (alignmentCounts.aligns !== 8 || alignmentCounts.conflicts !== 0) {
+  if (alignmentCounts.aligns !== 10 || alignmentCounts.conflicts !== 0) {
     throw new Error(`Alignment counts drifted: ${JSON.stringify(alignmentCounts)}`);
   }
 
   const expectedApplicableReviewKeys = [
+    'backer_rural_ambulance_nontransport_reimbursement|HF2435|2025-05-12|a74f41c80e7b80117a7e82773c8c10f3878ce0d298d021ad148c896174e1de1e',
+    'scott_childcare_abuse_safeguards|HF2435|2025-05-12|a74f41c80e7b80117a7e82773c8c10f3878ce0d298d021ad148c896174e1de1e',
     'harder_conservation_programs|SF2077|2025-05-05|a2c37a4f9ebb4bcc58f32e4e3a40cd3d4473c4521eae4b89fef336342bd7eab7',
     'kresha_career_pathway_education_reform|HF2433|2025-05-16|5da5bf18e17dfe3be6fabfe0de003a064ae1e2cc74e8a5c6eb1f3a78b2c2a7c4',
     'olson_national_guard_building_resources|SF1959|2025-05-17|a72690fa8e74efb032e110bfba05f19952b9c8866e2f512e1ea254028ab357c9',
@@ -345,9 +347,9 @@ function main(): void {
   }
 
   if (
-    finalPairStatusCounts.applicable !== 8
+    finalPairStatusCounts.applicable !== 10
     || finalPairStatusCounts.ambiguous_fail_closed !== 126
-    || finalPairStatusCounts.not_applicable !== 916
+    || finalPairStatusCounts.not_applicable !== 914
     || finalPairStatusCounts.pending_review !== 0
   ) {
     throw new Error(
@@ -410,7 +412,7 @@ function main(): void {
       modelFitting: 'none',
       servingChanged: false,
       nextStep:
-        'Resolve public LRL identity to the internal historical membership identity for the eight applicable context records before any feature integration; do not guess IDs.',
+        'Resolve public LRL identity to the internal historical membership identity for the ten applicable context records before any feature integration; do not guess IDs.',
     },
     contentSha256WithoutSelfField: null as string | null,
   };
