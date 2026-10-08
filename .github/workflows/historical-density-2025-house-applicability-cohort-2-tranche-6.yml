@@ -58,7 +58,7 @@ jobs:
           set -euo pipefail
           f="$RUNNER_TEMP/target-tranche/historical-density-2025-house-target-tranche-6-v1.json"
           test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-target-tranche-v1
-          test "$(jq -r '.ranking.trancheIndex' "$f")" = 5
+          test "$(jq -r '.ranking.trancheIndex' "$f")" = 6
           test "$(jq -r '.ranking.rankStart' "$f")" = 126
           test "$(jq -r '.ranking.rankEnd' "$f")" = 150
           test "$(jq -r '.ranking.eventCount' "$f")" = 25
