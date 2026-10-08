@@ -138,7 +138,7 @@ function main(): void {
     || nonDirectional.length !== 1
     || JSON.stringify(nonDirectional.map((decision: Json) => decision.row))
       !== JSON.stringify(EXPECTED_NON_DIRECTIONAL)
-    || new Set(directional.map((decision: Json) => decision.semanticKey)).size !== 8
+    || new Set(directional.map((decision: Json) => decision.semanticKey)).size !== 9
     || directional.some(
       (decision: Json) => decision.crossBatchDuplicateOf?.length !== 0,
     )
