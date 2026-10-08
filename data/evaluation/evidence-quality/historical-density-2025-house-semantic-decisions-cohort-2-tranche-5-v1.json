@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "historical-density-2025-house-semantic-decisions-cohort-2-tranche-5-v1",
+  "batchId": "EQV1-HISTORICAL-DENSITY-2025-HOUSE-002-T05",
+  "issue": 718,
+  "frozenCohort": {
+    "runId": 37718561841,
+    "artifactId": 11525006690,
+    "digest": "sha256:384e0f7856b051f621af0f9f7f55ec517068d093100d47edb12746911410d17c",
+    "selectionKeySha256": "6364b5c9f86ec6e4cbf4ddd9398ce962f376342c36d5e501bb65884018672a05"
+  },
+  "reviewedRows": [
+    41,
+    50
+  ],
+  "decisions": [
+    {
+      "row": 41,
+      "decision": "directional",
+      "semanticKey": "scott_childcare_abuse_safeguards",
+      "topics": [
+        "childcare safety",
+        "child abuse prevention",
+        "childcare oversight"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Peggy Scott supports stronger childcare-facility safeguards to protect infants and young children from abuse.",
+      "supportingExcerpt": "But we do need to have measures in place to protect our babies when someone from that 1% loses control for whatever reason. These bills help address that need.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 42,
+      "decision": "directional",
+      "semanticKey": "koegel_empowering_small_communities_program",
+      "topics": [
+        "small communities",
+        "infrastructure",
+        "grant assistance"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Erin Koegel supports permanently establishing Minnesota's Empowering Small Communities Program to help small cities develop infrastructure projects and stronger grant applications.",
+      "supportingExcerpt": "We cannot maximize federal investments in Minnesota without helping smaller communities increase their chances of securing grants for their infrastructure needs, that’s why I introduced legislation permanently establishing the existing Empowering Small Communities Program into law.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 43,
+      "decision": "directional",
+      "semanticKey": "kresha_career_pathway_education_reform",
+      "topics": [
+        "career pathways",
+        "education reform",
+        "workforce readiness"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Ron Kresha supports education reforms that expand career-pathway opportunities and workforce readiness for students.",
+      "supportingExcerpt": "I am committed to having robust conversations and creating education reforms that improve career pathway opportunities.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 44,
+      "decision": "non_directional",
+      "reasonCode": "institutional_power_sharing_and_quorum_process_without_specific_policy_position"
+    },
+    {
+      "row": 45,
+      "decision": "non_directional",
+      "reasonCode": "generic_justice_and_governance_commitment_without_specific_policy_position"
+    },
+    {
+      "row": 46,
+      "decision": "directional",
+      "semanticKey": "hortman_protect_abortion_access_transgender_minnesotans",
+      "topics": [
+        "abortion access",
+        "transgender rights",
+        "civil rights"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Melissa Hortman supports defending abortion access and transgender Minnesotans from federal restrictions and attacks.",
+      "supportingExcerpt": "Minnesota House DFLers are committed to doing all we can to protect the rights, freedoms, and well-being of all Minnesotans from Donald Trump’s dangerous agenda. Trump’s proposed tariffs will damage Minnesota’s economy and raise prices for Minnesota families, his attacks on abortion access and transgender Minnesotans will rip away reproductive freedom, and his authoritarian approach and targeting of political opponents will undermine our democracy.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 47,
+      "decision": "directional",
+      "semanticKey": "myers_clean_water_mound_investment",
+      "topics": [
+        "clean water",
+        "water infrastructure",
+        "local investment"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Andrew Myers supports clean-water protections and public investment in clean water for Mound.",
+      "supportingExcerpt": "I was also proud to help pass the “Keep It Clean” bill and secure $10.3 million for clean water in Mound.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 48,
+      "decision": "directional",
+      "semanticKey": "hollins_bodily_autonomy_reproductive_rights",
+      "topics": [
+        "bodily autonomy",
+        "reproductive rights",
+        "civil rights"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Athena Hollins supports protecting bodily autonomy and reproductive rights.",
+      "supportingExcerpt": "In this tumultuous time, I will continue the work in whatever way I need to protect representative democracy and ensure that everyone has access to protecting bodily autonomy and reproductive rights, dignified social services, a welcoming state for all, and the ability to build wealth for their families.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 49,
+      "decision": "non_directional",
+      "reasonCode": "event_attendance_and_generic_constituent_priority_commitment_without_specific_policy_position"
+    },
+    {
+      "row": 50,
+      "decision": "directional",
+      "semanticKey": "robbins_state_fraud_oversight_transparency",
+      "topics": [
+        "fraud prevention",
+        "government oversight",
+        "transparency"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Kristin Robbins supports stronger state fraud oversight, transparency, and accountability.",
+      "supportingExcerpt": "We will not stop fighting for transparency and solutions. Minnesota taxpayers deserve better, and I am committed to ensuring they get it.",
+      "crossBatchDuplicateOf": []
+    }
+  ],
+  "policy": {
+    "candidateBillIdentifiers": [],
+    "targetBillApplicabilityInferred": false,
+    "outcomeUse": "none",
+    "memberIssueOnly": true,
+    "billInference": false,
+    "internalMembershipIdentityResolved": false,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
