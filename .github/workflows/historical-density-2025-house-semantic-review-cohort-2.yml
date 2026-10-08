@@ -1,0 +1,129 @@
+name: Historical density 2025 House semantic review cohort 2
+
+on:
+  pull_request:
+    paths:
+      - scripts/freeze-historical-density-2025-house-semantic-review-cohort-2.ts
+      - .github/workflows/historical-density-2025-house-semantic-review-cohort-2.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/freeze-historical-density-2025-house-semantic-review-cohort-2.ts
+      - .github/workflows/historical-density-2025-house-semantic-review-cohort-2.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2025-house-semantic-review-cohort-2-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    name: Freeze second 2025 House semantic review cohort
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize immutable 2025 House inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11440172805/zip > "$RUNNER_TEMP/house-bodies.zip"
+          echo "d8cbfbf993eae23e0608badfe996d985d57b1ff04effcc8b41c38bd39b3e9e5e  $RUNNER_TEMP/house-bodies.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/house-bodies"
+          unzip -q "$RUNNER_TEMP/house-bodies.zip" historical-density-2025-house-member-primary-bodies-v1.json -d "$RUNNER_TEMP/house-bodies"
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11440840273/zip > "$RUNNER_TEMP/house-inventory.zip"
+          echo "07ee41210122f42716269ab56f8775d78e10d00df39740315acc1ce055937c20  $RUNNER_TEMP/house-inventory.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/house-inventory"
+          unzip -q "$RUNNER_TEMP/house-inventory.zip" historical-density-2025-house-member-primary-inventory-v1.json -d "$RUNNER_TEMP/house-inventory"
+
+          gh api /repos/${{ github.repository }}/actions/artifacts/11442499885/zip > "$RUNNER_TEMP/semantic-cohort-1.zip"
+          echo "c8551e3690cb8d4a8a9cee2c0cc5b006a5b87d1e6c0baa6a7f6755aae2ee1662  $RUNNER_TEMP/semantic-cohort-1.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/semantic-cohort-1"
+          unzip -q "$RUNNER_TEMP/semantic-cohort-1.zip" historical-density-2025-house-semantic-review-cohort-2-v1.json -d "$RUNNER_TEMP/semantic-cohort-1"
+
+      - name: Freeze outcome-blind semantic review cohort
+        env:
+          VOTEPREDICT_HISTORICAL_DENSITY_2025_HOUSE_BODIES_PATH: ${{ runner.temp }}/house-bodies/historical-density-2025-house-member-primary-bodies-v1.json
+          VOTEPREDICT_HISTORICAL_DENSITY_2025_HOUSE_INVENTORY_PATH: ${{ runner.temp }}/house-inventory/historical-density-2025-house-member-primary-inventory-v1.json
+          VOTEPREDICT_HISTORICAL_DENSITY_2025_HOUSE_SEMANTIC_COHORT_1_PATH: ${{ runner.temp }}/semantic-cohort-1/historical-density-2025-house-semantic-review-cohort-2-v1.json
+          VOTEPREDICT_HISTORICAL_DENSITY_2025_HOUSE_SEMANTIC_COHORT_OUTPUT_DIR: ${{ runner.temp }}/semantic-cohort
+        run: node --import tsx scripts/freeze-historical-density-2025-house-semantic-review-cohort-2.ts
+
+      - name: Verify frozen cohort boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/semantic-cohort/historical-density-2025-house-semantic-review-cohort-2-v1.json"
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-semantic-review-cohort-2-v1
+          test "$(jq -r '.issue' "$f")" = 718
+          test "$(jq -r '.session' "$f")" = 2025-2026
+          test "$(jq -r '.selection.recoveredBodies' "$f")" = 1340
+          test "$(jq -r '.selection.parsedArticleOwnedBodies' "$f")" = 1310
+          test "$(jq -r '.selection.uniqueArticleOwnedBodies' "$f")" = 1290
+          test "$(jq -r '.selection.strongSignalDocuments' "$f")" = 400
+          test "$(jq -r '.selection.strongSignalMembers' "$f")" = 123
+          test "$(jq -r '.selection.selectedDocuments' "$f")" = 50
+          test "$(jq -r '.selection.selectedMembers' "$f")" = 50
+          test "$(jq -r '.selection.maximumDocumentsPerMember' "$f")" = 1
+          test "$(jq -r '.selection.minimumSelectedSignalScore' "$f")" = 6
+          test "$(jq -r '.selection.maximumSelectedSignalScore' "$f")" = 14
+          test "$(jq -r '.selection.excludedPreviouslyReviewedMembers' "$f")" = 50
+          test "$(jq -r '.selection.selectionKeySha256' "$f")" = 6364b5c9f86ec6e4cbf4ddd9398ce962f376342c36d5e501bb65884018672a05
+          test "$(jq -r '[.documents[].candidateBillIdentifiers | length] | add' "$f")" = 0
+          prev="$RUNNER_TEMP/semantic-cohort-1/historical-density-2025-house-semantic-review-cohort-v1.json"
+          test -z "$(comm -12 <(jq -r '.documents[].lrlId' "$f" | sort) <(jq -r '.documents[].lrlId' "$prev" | sort))"
+          test "$(jq -r '.policy.outcomeBlind' "$f")" = true
+          test "$(jq -r '.policy.previousSemanticCohortPinned' "$f")" = true
+          test "$(jq -r '.policy.excludesPreviouslyReviewedMembers' "$f")" = true
+          test "$(jq -r '.policy.outcomeUse' "$f")" = none
+          test "$(jq -r '.policy.memberIssueOnlyAtThisStage' "$f")" = true
+          test "$(jq -r '.policy.billInference' "$f")" = false
+          test "$(jq -r '.policy.candidateBillIdentifiersRequiredEmpty' "$f")" = true
+          test "$(jq -r '.policy.targetBillApplicabilityInferred' "$f")" = false
+          test "$(jq -r '.policy.internalMembershipIdentityResolved' "$f")" = false
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.sameDayEligible' "$f")" = false
+          test "$(jq -r '.policy.contextOnly' "$f")" = true
+          test "$(jq -r '.policy.mechanicallyActionable' "$f")" = false
+          test "$(jq -r '.policy.modelWeight' "$f")" = 0
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+          {
+            echo '## 2025-26 House semantic review cohort'
+            echo
+            echo '- Recovered bodies: **1,340**'
+            echo '- Parseable article-owned bodies: **1,310**'
+            echo '- Unique article-owned bodies: **1,290**'
+            echo '- Strong-signal documents: **400** across **123** members'
+            echo '- Frozen review cohort 2: **50 documents / 50 new members**'
+            echo '- Previously reviewed members excluded: **50**\n            echo '- Candidate bill identifiers: **0**''
+            echo '- Internal membership identity resolved: **no**'
+            echo '- Outcomes used: **none**'
+            echo '- Production DB queried: **no**'
+            echo '- Vercel used: **no**'
+            echo '- Model fitting: **none**'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2025-house-semantic-review-cohort-2-v1
+          path: ${{ runner.temp }}/semantic-cohort/*
+          if-no-files-found: error
+          retention-days: 90
