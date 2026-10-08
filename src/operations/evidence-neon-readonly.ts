@@ -85,6 +85,7 @@ export const READONLY_GUARD_SQL = `
          r.rolcreaterole AS creates_roles,
          r.rolreplication AS replication,
          r.rolbypassrls AS bypasses_rls,
+         EXISTS (SELECT 1 FROM pg_auth_members membership WHERE membership.member = r.oid) AS has_other_role_memberships,
          has_database_privilege(current_user, current_database(), 'CREATE') AS creates_database_objects,
          has_schema_privilege(current_user, 'public', 'CREATE') AS creates_schema_objects,
          has_table_privilege(current_user, 'public.ingestion_runs', 'SELECT') AS reads_ingestion,
@@ -125,6 +126,7 @@ interface GuardRow extends Record<string, unknown> {
   creates_roles: boolean;
   replication: boolean;
   bypasses_rls: boolean;
+  has_other_role_memberships: boolean;
   creates_database_objects: boolean;
   creates_schema_objects: boolean;
   reads_ingestion: boolean;
@@ -165,6 +167,7 @@ export async function auditNeonEvidenceReadonlySandbox(
       r.creates_roles !== false ||
       r.replication !== false ||
       r.bypasses_rls !== false ||
+      r.has_other_role_memberships !== false ||
       r.creates_database_objects !== false ||
       r.creates_schema_objects !== false ||
       r.reads_ingestion !== true ||
