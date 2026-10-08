@@ -36,7 +36,7 @@ test('tranche-5 review has two applicable and no ambiguous override', () => {
   assert.equal(decisions.overrides.length, 2);
   assert.equal(
     decisions.overrides.filter((row: { decision?: string }) => row.decision === 'applicable' ).length,
-    7,
+    2,
   );
   assert.equal(
     decisions.overrides.filter((row: { decision?: string }) => row.decision === 'ambiguous_fail_closed' ).length,
@@ -44,7 +44,7 @@ test('tranche-5 review has two applicable and no ambiguous override', () => {
   );
   assert.equal(
     decisions.overrides.filter((row: { alignmentDirection?: string | null }) => row.alignmentDirection === 'aligns').length,
-    7,
+    2,
   );
   assert.equal(
     decisions.overrides.filter((row: { alignmentDirection?: string | null }) => row.alignmentDirection === 'conflicts').length,
