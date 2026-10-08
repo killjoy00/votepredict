@@ -58,13 +58,13 @@ test('tranche-4 review pins the exact accepted and fail-closed review keys', () 
     .map((row: { reviewKey: string }) => row.reviewKey)
     .sort();
   assert.deepEqual(applicable, [
-    'allen_fraud_oversight_accountability|HF2115|2025-05-19|6ff092f3112bfe489bcfe686d8921dc878cd82c599e9327ddd3634f17b2efa75',
-    'allen_fraud_oversight_accountability|HF2432|2025-05-18|5b01e687cf81513fbf9630b403e823d10c0ef173d9927b5623d281219a78be45',
-    'allen_fraud_oversight_accountability|SF3045|2025-05-19|4fa4c52937972605fa8c6fd3320179f69c429d08e087127a84260be7ce2db89d',
-    'joy_make_minnesota_safe|HF2432|2025-05-18|5b01e687cf81513fbf9630b403e823d10c0ef173d9927b5623d281219a78be45',
-    'schwartz_make_minnesota_safe|HF2432|2025-05-18|5b01e687cf81513fbf9630b403e823d10c0ef173d9927b5623d281219a78be45',
-    'van_binsbergen_state_agency_fraud_reporting|HF2432|2025-05-18|5b01e687cf81513fbf9630b403e823d10c0ef173d9927b5623d281219a78be45',
-    'van_binsbergen_state_agency_fraud_reporting|SF3045|2025-05-19|4fa4c52937972605fa8c6fd3320179f69c429d08e087127a84260be7ce2db89d',
+    'harder_conservation_programs|HF2446|2025-05-18|8be063fc6cc9d75390b64e8df2707f44a8e63a632ae8ec4eb67853efa544c28f',
+    'harder_conservation_programs|HF2563|2025-05-18|8c0cb67231f61973542f9a4565b4720bf34adf9c70ea379be007bf57bb155ee1',
+    'rarick_state_agency_fraud_reporting|HF2432|2025-05-18|5b01e687cf81513fbf9630b403e823d10c0ef173d9927b5623d281219a78be45',
+    'rarick_state_agency_fraud_reporting|SF3045|2025-05-19|4fa4c52937972605fa8c6fd3320179f69c429d08e087127a84260be7ce2db89d',
+    'robbins_state_fraud_oversight_transparency|HF2115|2025-05-19|6ff092f3112bfe489bcfe686d8921dc878cd82c599e9327ddd3634f17b2efa75',
+    'robbins_state_fraud_oversight_transparency|HF2432|2025-05-18|5b01e687cf81513fbf9630b403e823d10c0ef173d9927b5623d281219a78be45',
+    'robbins_state_fraud_oversight_transparency|SF3045|2025-05-19|4fa4c52937972605fa8c6fd3320179f69c429d08e087127a84260be7ce2db89d',
   ]);
   const ambiguous = decisions.overrides
     .filter((row: { decision?: string }) => row.decision === 'ambiguous_fail_closed')
