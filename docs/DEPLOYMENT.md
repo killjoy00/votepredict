@@ -37,43 +37,27 @@ This disables automatic Git deployments entirely.
 
 ## Production deployment workflow
 
-`.github/workflows/deploy-production.yml` is the sole release mechanism.
+**Current deployment posture: paused and manual-only.** Since merged [PR #733](https://github.com/killjoy00/votepredict/pull/733), `.github/workflows/deploy-production.yml` has only a **`workflow_dispatch` trigger**, with a required boolean `run_vercel=true` (default false) and a `main`-branch guard. GitHub CI does **not** automatically dispatch it. **Do not run it while the #732 pause applies** except for a separately documented, explicitly authorized release.
 
-It is triggered by completion of the `CI` workflow and runs only when:
+For any future independently authorized manual release:
 
-- CI concluded `success`;
-- the CI run was for `main`;
-- the CI run was triggered by a push.
+1. First confirm the target `main` SHA has green CI, including migrations, typecheck, tests, build and production dependency audit. The current manual workflow does **not** independently enforce a green-CI trigger.
+2. An explicitly authorized operator manually starts the workflow on that exact current `main` commit with affirmative `run_vercel=true`. The workflow verifies its checked-out SHA and checks that it is still current `main`.
+3. The workflow currently invokes `scripts/prepare-production-cron.ts` before remote deployment. That script may **create production CRON_SECRET / FORECAST_BATCH_SIZE environment variables**, so the deployment itself contacts the Vercel control plane and must not be treated as a passive check.
+4. One authorized `vercel deploy --prod` is then performed and its URL/SHA recorded. Audit/evidence merges alone never justify a production release.
+5. If a release is actually approved, verify the exact deployment and health using only the separately approved bounded smoke plan. Do not revive previous deploy -> smoke -> forecast -> opening-day -> refresh fan-out.
 
-The workflow then:
+Source-controlled `vercel.json` has `git.deploymentEnabled=false` and no `crons` declaration. **An older deployed cron may still exist:** the live Vercel cron state is **unverified**. #732 owns any future safe verification or removal; a changed repository file is not proof of live shutdown.
 
-1. checks out `github.event.workflow_run.head_sha` exactly;
-2. verifies the checked-out SHA matches the release SHA and is still current `main`;
-3. requires the repository Vercel credential;
-4. ensures required production runtime configuration exists before deployment;
-5. performs one remote `vercel deploy --prod` against the pinned VotePredict team/project;
-6. records the commit and deployment URL in the Actions job summary.
+## Standard release path (suspended until an intentional release is authorized)
 
-This design prevents a feature branch, failed CI commit, later-moving branch head, audit workflow, or maintenance workflow from being substituted into production or creating an extra deployment.
+1. Change code on a feature branch and pass GitHub PR CI.
+2. Merge into `main` only after the relevant gate is green.
+3. Confirm CI for the exact merged `main` SHA.
+4. If and only if the operational pause is separately addressed and a release is explicitly approved, manually dispatch the production deployment and verify the current-SHA protection.
+5. Check the single deployment result and, if authorized, the minimum applicable health signal without triggering expensive or write-capable secondary workloads.
 
-## Standard release path
-
-1. Push work to a feature branch.
-2. GitHub Actions runs the complete `verify` gate:
-   - clean migration replay;
-   - TypeScript validation;
-   - full automated tests;
-   - Next.js production build;
-   - high-severity production dependency audit.
-3. Merge only after release-relevant checks are green.
-4. The push to `main` starts a fresh CI run for the merge commit.
-5. When that `main` CI run succeeds, `Deploy production` checks out the exact green SHA and starts the single remote Vercel production deployment.
-6. Confirm the Vercel deployment reaches `READY` and identifies the expected commit SHA.
-7. Confirm production aliases are attached, including `vote.planitnow.us` and `votepredict.vercel.app`.
-8. Smoke-test the changed user path.
-9. Inspect production 5xx/runtime errors for the new deployment before considering the release complete.
-
-Vercel installs dependencies with `npm ci --no-fund --no-audit` using the committed lockfile.
+**No production deployment is required or authorized** to update issue #847 evidence scorecards, offline audit tests, or documentation. For the accurate public-evidence refresh state see [Evidence program operating scorecard](evaluation/evidence-program-scorecard.md) and [#732](https://github.com/killjoy00/votepredict/issues/732).
 
 ## Why the production build is remote
 
@@ -83,11 +67,11 @@ The release workflow therefore uses Vercel's **remote production build** (`verce
 
 ## Maintenance and audit tooling
 
-Maintenance capabilities remain available through their application endpoints and scripts, but legacy GitHub workflows that independently deployed production before invoking them were removed. This includes the former evidence-refresh, Revisor audit/refresh, runtime-smoke, and issue-driven Vercel fallback deployment workflows.
+Most historical evaluation, source audits and evidence ingestion code remains in the repository, but **availability of code is not permission to operate it**. #733 made the identified Vercel-dependent maintenance entrypoints manual-only. Several other issue-command workflows still retrieve production configuration through `vercel env pull`; do not execute them under #732 without an independently reviewed, Vercel-free conversion or an explicitly approved exception. Never deploy production as an incidental prerequisite for source research.
 
-When one of these capabilities is needed, it must target the already-deployed production release. It may not create a deployment as a prerequisite. Production model/evaluation audits that remain automated follow the same rule: they verify or wait for the exact release SHA and then inspect that runtime.
+The current `public-evidence-refresh.yml` uses a GitHub runner **but still pulls Vercel production environment variables**, then calls a **write-capable** direct-Neon collector. No six-hour/post-deploy refresh currently runs from that workflow, and the as-of freshness of production evidence was **not** certified by source inspection. The safe future alternative is a protected direct-Neon credential with **separate read-only health and separately authorized write** stages; it is a proposal, not an activated path. See [the current evidence scorecard](evaluation/evidence-program-scorecard.md).
 
-`/api/health` exposes the deployed Git commit SHA alongside database/auth health so release tooling can verify which exact commit is currently serving without creating another deployment.
+`/api/health` can reveal a deployed SHA in a deliberate, approved health check, but this documentation-only exercise performs **no** Vercel or production request.
 
 ## Deployment quota discipline
 
