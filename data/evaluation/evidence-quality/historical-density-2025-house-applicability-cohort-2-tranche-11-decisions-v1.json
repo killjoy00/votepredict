@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-cohort-2-tranche-11-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenCandidateArtifact": {
+    "runId": 37839924268,
+    "artifactId": 11576828710,
+    "digest": "sha256:b6ff18a1c4dd93bac6179ebc454a160db7ac68b7840aa4713523e056bc7d169b",
+    "contentSha256WithoutSelfField": "072b44fdc09980bbee25b1f807164361af612113d1f3551bc59ef9efc4397ecd",
+    "targetTrancheIndex": 11,
+    "targetRankStart": 251,
+    "targetRankEnd": 264,
+    "targetEventKeySha256": "3d4d83276928f170726e2a499c2422eac2ede373f711bcdcfdca29c542e95242",
+    "reviewKeySha256": "b6eb850b70a1d50beb3f5e343b0444c09b479169b27abec1140e477ee50653bc",
+    "eligibleClaimEventPairs": 474,
+    "ineligibleSourceNotYetAvailablePairs": 114,
+    "eligibleClaimEventPairsByTargetYear": {
+      "2025": 432,
+      "2026": 42
+    },
+    "candidatePairs": 29,
+    "candidateBills": 10,
+    "candidatePublicMembers": 18,
+    "candidateSemanticGroups": 18
+  },
+  "defaultDecision": "not_applicable",
+  "defaultBillRationales": {
+    "HF1034": "The strict 2025-02-14 introduction authorizes and funds a specific district aeronautics and commercial over-the-road technical pilot training program. Mary Frances Clardy's exact source instead requires guidance and counseling services for **homeschooled elementary-aged children**, not general school training or a commercial technical college pilot. Student, school district and services vocabulary are incidental to the different beneficiary and program.",
+    "HF1401": "The strict 2025-02-21 introduction amends the Bureau of Criminal Apprehension definition of an endangered missing person, adding vulnerable persons and criteria for locating them. This is not legislation authorizing anonymous **Safe Haven Baby Boxes** for newborn surrender (Paul Novotny) and not a statute requiring providers to teach parents to detect/report infant abuse (Nolan West). Generic parent/child/public safety references have separate purposes.",
+    "HF1443": "The strict 2025-02-21 introduction changes Minnesota business corporation powers and governance, including how directors may compensate officers, workers or other staff and legal authority to manage corporate property. It neither measures a chief executive's compensation relative to median workers nor imposes Andrew Smith's company tax threshold **CEO greater than 50× median worker wage**. General compensation/income terms are not the proposed progressive corporate surtax.",
+    "HF24": "The strict 2025-02-06 introduction revises Minn. Stat. 145.423 to clarify legal recognition and reasonable medical care for an infant **born alive after abortion**. It operates after delivery and does not change whether a pregnant person can obtain an abortion, or provide protections for transgender residents against federal restrictions. Melissa Hortman's frozen source joins protecting abortion access and transgender Minnesotans; labeling post-birth medical care as anti-abortion access policy would infer an unsupported effect.",
+    "HF25": "The strict 2025-03-03 second engrossment establishes the Supporting Women Act, an eligible-grantee program for nonprofit maternity homes and pregnancy centers that assist women carrying pregnancies to term. Grantees may not provide/promote abortions or directly refer women for abortion services; the narrower potential reproductive choice effect for Hortman's combined abortion-access and transgender protection source is explicitly fail-closed rather than assigned alignment/conflict. The text does not enact new HOA/CIC owner governance protections (Bahner), statutory hospital patient-to-staff ratios (Bierman), repeal gas/delivery taxes (Fogelman), protect state Paid Family and Medical Leave from repeal (Hanson), increase disabled veteran/spouse property-tax exclusions (Rehrauer), purchase and cancel Minnesotans' medical debt (Reyer), or require health/care providers to **educate parents to recognize/report infant abuse** (West). Ordinary maternity program parenting help and a budget line analyzing universal healthcare finance do not supply those exact policies.",
+    "HF3826": "The strict 2026-04-07 second engrossment materially expands Minnesota Attorney General and county attorney law-enforcement investigative subpoena authority for business and financial records in crimes involving fraud, explicitly including **state-funded or state-administered programs or services**. The new investigatory tools directly support Robbins's broader state-program fraud oversight/accountability position (explicit applicable override). Rarick's separate joined claim requires a new **state-agency fraud incident reporting obligation plus tools**; this text adds legal investigative powers but no new agency incident-reporting mandate (explicit semantic fail-closed override). Expanding AG investigators' access to private records is not expanded **public** access to Attorney General Office datasets with individuals' privacy protected (Niska). Fraud compensation and corporate income references do not impose Andrew Smith's CEO-to-worker pay-ratio surtax, and utility records are not Mahamoud's combined Minneapolis municipal drinking-water/public-housing investment. Missing child identity crimes do not authorize Novotny's Safe Haven infant surrender boxes.",
+    "HF4": "The strict 2025-03-10 second engrossment proposes a voter-contingent amendment to the Minnesota Constitution creating a tax relief fund for projected surplus revenue **above 105 percent of projected expenditures**, with one-time refunds **or** one-time tax reductions for Minnesota income and property taxpayers. This matches Bernie Perryman's independently frozen co-sponsorship of a constitutional amendment returning future budget surpluses to citizens (exact positive override); do not represent it as already enacted or as mandating direct cash payments only. It does not enact Finke's different inclusive Equal Rights Amendment, raise Rehrauer's specifically disabled-veteran property-tax exclusion, or impose Smith's 50× executive compensation corporate pay-ratio tax.",
+    "HF438": "The strict 2025-02-11 introduction authorizes certain powers for the **Crane Lake Water and Sanitary District** in St. Louis County, a distinct locality from Andrew Myers's named public funding for drinking-water protection/investment in the city of **Mound**. Both names touch water infrastructure, but a Crane Lake local-government powers bill does not appropriate funds to Mound or establish its requested water project.",
+    "HF747": "The strict 2025-02-12 introduction substantially revises Minnesota **business corporation** statute chapter 302A, shareholder rights and corporate boards. 'Common' describes common shares and corporate-stock classes, not a common-interest-community HOA governance and consumer-protection reform (Bahner). Generic 'equal' shareholder rights do not amend the constitutional Equal Rights Amendment endorsed by Finke. References to attorneys and shareholder legal actions do not release **Attorney General's Office** public data under Niska's source; different actor, custodian and disclosure mechanism.",
+    "SF1552": "The strict 2025-02-27 first engrossment concerns certain private business warehouse storage financial statements, financial audit assurances and reporting standards for licensees. It does not alter public data classified in the Minnesota Attorney General's own office as Niska advocates, and does not impose taxes on companies based on CEO-to-median-worker salary multiples (Smith). Generic executive compensation, income and third-party financial statement auditing do not establish either frozen source proposition."
+  },
+  "overrides": [
+    {
+      "reviewKey": "perryman_surplus_taxpayer_refunds|HF4|2025-03-17|2d8bc31c73f5eca6b3f775a670597b3a7e97dd1098199f4b9b7cfa71dc5e6cb5",
+      "decision": "applicable",
+      "billPolicyDirection": "proposes_voter_contingent_constitutional_tax_relief_fund_returning_projected_surplus_above_105_percent_threshold_via_refunds_or_onetime_tax_reductions",
+      "alignmentDirection": "aligns",
+      "reason": "The strict March 10, 2025 HF4 second engrossment proposes a constitutional tax relief fund under article X and submission to the 2026 electorate, requiring surplus projected above **105 percent of expenditures** be applied to one-time income/property-taxpayer refunds or one-time tax reductions. Perryman's earlier first-person published statement describes co-authoring a constitutional amendment to guarantee future surplus tax revenue is returned to Minnesotans. The matching lawmaking mechanism, excess-revenue trigger and resident beneficiaries establish a direct **proposed** alignment; not treated as enacted law or a mandatory cash-only refund."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|HF3826|2026-04-20|ad53562ff7410b899f9cd34ecb296233ed98852b70d45beb0c4b1d5428e92e6c",
+      "decision": "applicable",
+      "billPolicyDirection": "expands_ag_and_county_attorney_financial_fraud_investigative_subpoenas_expressly_including_state_funded_and_administered_programs",
+      "alignmentDirection": "aligns",
+      "reason": "The exact HF3826 April 7, 2026 second engrossment newly allows the Attorney General and county attorneys to subpoena broad business/financial records for lawful investigations into financial crimes and fraud **including fraud in state-funded or administered programs and services**. This substantive anti-fraud investigation/oversight power addresses misuse of public funds and directly matches Kristin Robbins's published state-accountability/fraud-transparency position, without granting the public access to AG investigative records or implying Rarick's separate compulsory reporting mandate."
+    },
+    {
+      "reviewKey": "rarick_state_agency_fraud_reporting|HF3826|2026-04-20|ad53562ff7410b899f9cd34ecb296233ed98852b70d45beb0c4b1d5428e92e6c",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "HF3826 newly expands prosecutorial investigative subpoena powers for fraud, including public programs, establishing a real additional detection/enforcement tool. Marion Rarick's exact independently frozen proposition explicitly joins **stricter reporting of fraud incidents by state agencies AND additional agency fraud prevention tools**. The bill does not create a state-agency fraud-incident reporting duty; investigative access by the AG and prosecutors cannot silently be conflated with the agency's mandatory reporting of detected incidents. Preserve this substantive overlap as ambiguous/fail closed."
+    },
+    {
+      "reviewKey": "hortman_protect_abortion_access_transgender_minnesotans|HF25|2025-03-13|109baa6835ed45ccd9f091a7800dc35fe235ce247d54275698ee8c68349ed8ce",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "HF25's Supporting Women Act would fund maternity homes and pregnancy centers conditioned on recipients neither providing/promoting abortions nor directly referring clients to abortion providers. Those restrictions on **grantees** may have an indirect abortion-referral/access effect, but do not ban access to abortion generally or change legal protections for transgender Minnesotans against federal restrictions, both central to Hortman's combined January 2025 statement. Without separately proving the restrictions' access impact and full source scope, no positive or negative policy alignment is safe."
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "reviewMethod": "all_29_exact_candidate_source_propositions_and_strict_before_vote_revisor_bill_versions_examined_with_10_bill_scope_rationales_and_exact_key_overrides",
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
