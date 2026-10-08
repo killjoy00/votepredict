@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-cohort-2-tranche-8-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenCandidateArtifact": {
+    "runId": 37823971961,
+    "artifactId": 11569574820,
+    "digest": "sha256:a1394fc20a1849dc7a793652eadb102beeef494069db11a28b5ababcacd327cb",
+    "contentSha256WithoutSelfField": "33b0b3a5e6cc2fb048602327ddf8c1871f9b23a8ace41043e973b41ef751b47e",
+    "targetTrancheIndex": 8,
+    "targetRankStart": 176,
+    "targetRankEnd": 200,
+    "targetEventKeySha256": "107c41146c0359bc186012674f663db64b4f791bb4fc4b7ac96e5d9dc90e3916",
+    "reviewKeySha256": "b2fc7027148305840b5ed147f37b8ac849af10e0a9f3ec2c779e22f58262fcd2",
+    "eligibleClaimEventPairs": 1050,
+    "candidatePairs": 202,
+    "candidateBills": 17,
+    "candidatePublicMembers": 42,
+    "candidateSemanticGroups": 42
+  },
+  "defaultDecision": "not_applicable",
+  "defaultBillRationales": {
+    "HF3131": "HF3131 amends cancer-related disability parking certificate eligibility and medical certification, not grants management or state-agency fraud incident reporting. Incidental false-statement/certification language does not establish the broad public-program oversight proposition of Robbins or Rarick's joined agency fraud-reporting plus prevention requirement.",
+    "HF3295": "HF3295 authorizes public bodies to broadcast open meetings on social media. It changes transparency of meetings, not fraud incidents reported by state agencies, fraud investigation or prevention tools. Rarick's two-part claim cannot be inferred from open-meeting accessibility.",
+    "HF3298": "HF3298 creates 50-percent reimbursement (capped by site/year) for replacing underground petroleum tank single-walled steel piping using a petroleum cleanup fund. It is not ambulance-service nontransport reimbursement, nor a named investment in clean water for Mound. Its contamination-prevention environmental overlap with Harder's *conservation programs* proposition is real but program-scope ambiguous; only Harder's exact candidate is separately fail-closed rather than assumed applicable.",
+    "HF3682": "HF3682 adds a grantee fraud risk-rating requirement to statewide executive-agency grants management, plus funding to develop enterprise templates and training. That is directly applicable to Robbins's public-grant fraud-oversight position by explicit override. It does not impose a new stricter *state-agency fraud incident reporting* duty in addition to risk-prevention tools as required by Rarick; the carried-forward existing office duty to forward public comments about fraud is not a newly enacted agency-reporting requirement.",
+    "HF4102": "HF4102 concerns State Patrol compensation-study rules, police chaplains and State Patrol authority. A study of patrol pay is not the Minnesota Paid Family and Medical Leave program; State Patrol employee conditions do not set state-employee telework consultation or remote-flexibility policy; emergency/security terminology is not rural ambulance no-transport reimbursement or Safe Haven Baby Boxes.",
+    "HF4195": "HF4195 modifies Department of Children, Youth, and Families grants to youth intervention programs; the beneficiaries are youth intervention organizations, not parents seeking Great Start child-care affordability, home-schooled elementary school counseling, Safe Haven newborn surrender sites, sex-based school sports policy, the named Empowering Small Communities infrastructure program, or a Mound clean-water project.",
+    "HF4240": "HF4240 changes election administration, absentee-ballot forms, calendars and voter procedures. References to the attorney general, guards, disabled electors and property are incidental to election law, not public access to Attorney General office datasets, National Guard construction funding or disabled-veteran property-tax exclusion amounts.",
+    "HF4348": "HF4348 permits local-government financing/public-improvement treatment of thermal energy networks. Designating a district thermal-energy project as 'waterworks' does not fund the particular clean-water work for Mound named in Myers's source; no Mound identity or clean-water appropriation is established.",
+    "HF4546": "HF4546 adjusts 2026/2027 DHS and DCYF forecast appropriations for human-service/health/child-care programs. Budget baselines do not enact or specifically fund the named Great Start Affordability Act, alter independent private-insurer operation to direct public administration of state health programs, add childcare-facility abuse safeguards, or mandate providers to educate parents about infant abuse.",
+    "HF82": "HF82 revises scope, licensure and duties of health-care athletic trainers. Athletic-trainer medicine is not an athlete sex/gender eligibility policy for school girls' sports, despite the word 'athletic'.",
+    "SF3432": "SF3432 changes markings and insignia on emergency vehicles sold to the public and provides protective/security services and appropriations for state officials and courthouses. It does not reimburse rural medical-assistance ambulance nontransport calls, impose a tax repeal/refund constitutional rule, authorize Safe Haven Baby Boxes, expand Attorney General data access, alter a state-employee telework-return decision, fund National Guard buildings, adjust disabled-veteran property-tax exclusion, establish the named Empowering Small Communities program, or fund Mound clean water. Administrative fraud/oversight/certification terms refer to emergency-vehicle/official-security systems, not Rarick's paired state-agency fraud reporting and prevention.",
+    "SF3637": "SF3637 allows optometrists as well as physicians to prescribe motor-vehicle window glazing medical exemptions. A vehicle operator's physician/optometrist certification is not a mandate that healthcare providers educate parents to identify and report infant abuse.",
+    "SF4244": "SF4244 is an omnibus of miscellaneous technical, obsolete-reference and conforming corrections in unrelated statutes. References to prior laws concerning schools, housing, childcare, welfare, environmental permits, tax, health care, disability, employment, attorney general, grants, fraud, rental/condominium and public safety do not by themselves enact any nominated member-specific substantive reform. No exact changed provision establishes state-agency fraud reporting *and* prevention tools, stronger statewide program fraud oversight, Great Start affordability, abusive infant care safeguards or provider-to-parent abuse training, healthcare administration conversion, named local funding, statutory Equal Rights Amendment, sex-based school sports restrictions, remote-work policy, medical debt buying, CEO pay-ratio tax or disability veteran tax exclusions. Technical corrections are not treated as substantive support.",
+    "SF4476": "SF4476 modifies aging/disability/home- and community-based services, protective services and provider continuity; health/assistance references do not move public insurance administration from private carriers to direct state administration, protect infants in childcare facilities, mandate parent infant-abuse education, set hospital patient-to-staff ratios, fund named projects, regulate school sports, attorney-general public records, tax exclusions, baby boxes or state telework. The fraud-based public-program payment-withholding text has pre-existing context, while a new $1.284 million 2027 appropriation plus later base increases to DHS Office of Inspector General has plausible oversight relevance to Robbins but does not specify what new fraud control it purchases; this exact pair remains separately fail-closed. It does not impose new incident-reporting duties upon state agencies alongside a prevention program for Rarick.",
+    "SF4612": "SF4612 is a large mixed DHS/Health/DCYF health-program, eligibility, childcare-licensing and human-services omnibus. It imposes new-form childcare supervision, behavior guidance and abuse-prohibition statutes but preexisting Minnesota Rule 9503.0055 already prohibited rough handling, shaking and emotional abuse; whether the reform materially *strengthens* Scott's abuse-specific safeguards rather than chiefly recodifies protections is separately fail-closed. It changes DHS Inspector General appropriation by +$26,000 while cutting fraud-prevention grants by $425,000 in FY 2027; this mixed financing cannot be called an unambiguous enhancement in the exact Robbins anti-fraud position, separately fail-closed. Healthcare eligibility/work requirements and provider rules do not replace private health insurers with direct administration of state public healthcare; childcare regulatory modernization is not the named Great Start Affordability Act; provider child-care first-aid/abusive-head-trauma training is not a new duty that providers educate *parents* on recognizing/reporting infant abuse. Center staffing ratios do not impose hospital patient-to-staff ratios. References to school attendance, equal rights, paid leave, bills, tax, state workers, grants, property, healthcare, local infrastructure, water, veterans, school policy and household costs lack the exact actor/program/legislative target of the remaining 42 propositions.",
+    "SF476": "SF476 extensively amends aging/disability, protective services, home- and community-based supports, housing stabilization and provider licensing. Provider compliance training mentions fraud prevention, but the housing-stabilization provider-integrity training and payment controls appear in pre-existing, carried-forward subdivisions rather than establishing Robbins's new statewide anti-fraud oversight authority; a housing-service *provider* is not the *state agency* under Rarick's joined reporting requirement. Direct-care operation by a state treatment facility is not a reform transferring public healthcare program administration from private carriers to the state under Liebling's source. Disability service and care references do not mandate hospital ratios, Great Start affordability, baby-box authorization, abuse-specific childcare safeguards or parent education, medical debt purchasing, school reforms, named Mound/Minneapolis water projects, zoo expansions, affordable public housing package, state-worker remote work, tax refunds or constitutional ERA.",
+    "SF856": "SF856 creates an independent statewide Office of the Inspector General, new authority to inspect and investigate fraud/misuse of state-funded programs, interagency coordination and referral duties, public reporting tools and enforcement. Those are a direct substantive match to Robbins's state-fraud transparency/oversight position (exact override). The bill requires state agencies to highlight public fraud-reporting tools and respond to Inspector General investigations, but this does not clearly create the distinct stricter *state-agency incident-reporting mandate* linked to prevention tools that Rarick's two-part source explicitly specifies; preserve an exact-key semantic fail-closed ambiguity. References to government budgets, state law, public records, childcare, healthcare, agencies, the attorney general or employees do not enact separate named childcare, local infrastructure, special tax, equal-rights, sports, healthcare administration, telework, or infant-provider-parent education proposals."
+  },
+  "overrides": [
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|HF3682|2026-05-07|351337d5d9ac24b4854df3fcbb1ec9b936f7e9a754931e7d3a428446b5565bdf",
+      "decision": "applicable",
+      "billPolicyDirection": "establishes_statewide_state_grantee_fraud_risk_ratings_and_grants_management_controls",
+      "alignmentDirection": "aligns",
+      "reason": "The strict-pre-vote HF3682 second engrossment adds a grantee fraud-risk rating system and corresponding grants-management procedures for all executive agencies in amended Minn. Stat. 16B.97, subd.4, and appropriates $71,000 for Office of Grants Management templates/training. This is an actual, proposed state-program fraud-risk prevention and accountability mechanism directly within Robbins's broader state oversight/transparency stance."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|SF856|2026-05-07|c0d7ecb994fe0b30b768f27eb54caf88d21b75e4e01f427519bc05686a1417dc",
+      "decision": "applicable",
+      "billPolicyDirection": "creates_independent_state_inspector_general_with_cross_agency_public_fund_fraud_investigations_referrals_reporting_and_prevention",
+      "alignmentDirection": "aligns",
+      "reason": "The exact pre-vote SF856 tenth engrossment creates independent Office of the Inspector General under proposed chapter 15D, empowered to investigate fraud/misuse across state agencies, stop/freeze public funds when appropriate, make referrals, receive fraud reports and publish systemic accountability reports. It concretely strengthens fraud oversight and transparency for state-funded programs, directly matching Robbins's broad pre-vote public-fund accountability stance."
+    },
+    {
+      "reviewKey": "harder_conservation_programs|HF3298|2026-05-07|48fb7d0cbfbae373980cae10b6ee9001e3d5ebae9142afc988c906d7febd496a",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "HF3298 would reimburse replacement of obsolete single-walled underground petroleum storage piping out of the petroleum tank fund; reducing petroleum release risks is plausibly environmental protection. Harder's exact frozen claim, however, ties environmental protection to *strengthening conservation programs*, while this measure is commercial petroleum storage modernization/compensation, not a demonstrated conservation program. Do not infer full claim applicability from a generalized ecological benefit."
+    },
+    {
+      "reviewKey": "rarick_state_agency_fraud_reporting|SF856|2026-05-07|c0d7ecb994fe0b30b768f27eb54caf88d21b75e4e01f427519bc05686a1417dc",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "SF856 provides real cross-agency anti-fraud investigation and prevention tools plus new agency duties to publicize fraud-reporting tools and cooperate with Inspector General requests, including producing reports demanded in investigations. Yet those provisions do not independently establish the ongoing stricter obligation for *state agencies to report fraud incidents* that Rarick's joined state-agency fraud-reporting-and-prevention source proposition specifies. Agency web links and inspector-general reports cannot silently substitute for agency incident reporting."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|SF4612|2026-05-07|f9050f3d2c553cc77d2ed09850236be7fceaeda6d468c6afd19d1c8f4edb284e",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "The exact SF4612 third engrossment increases FY2027 DHS Office of Inspector General central-office funds by $26,000 yet separately reduces grants for fraud prevention by $425,000 in the same human-services appropriations article. Because the mixed positive and negative changes to oversight/fraud-prevention resources have no proven net fraud-control direction, Robbins's broad stronger-oversight proposition cannot safely receive an alignment or conflict label from this omnibus."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|SF4476|2026-05-11|f34f7c2c6c1b3fd6b3310ff41fe054163f1d795bf727556f0ac8d56a71da4327",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "SF4476's third engrossment newly appropriates $1,284,000 in FY2027 and raises future baseline funding for the DHS central-office Inspector General, but the frozen section lacks new specified fraud-detection/reporting powers or explicit anti-fraud use for the allocation. Other provider fraud-withholding and complaint provisions occur in existing carried-forward law. Increased office resources alone cannot establish Robbins's broader substantive fraud-oversight direction without an independently pinned use-of-funds link."
+    },
+    {
+      "reviewKey": "scott_childcare_abuse_safeguards|SF4612|2026-05-07|f9050f3d2c553cc77d2ed09850236be7fceaeda6d468c6afd19d1c8f4edb284e",
+      "decision": "ambiguous_fail_closed",
+      "billPolicyDirection": null,
+      "alignmentDirection": null,
+      "reason": "SF4612's proposed 142H.13 behavior-guidance statutory text forbids physical punishment, rough handling, shaking, restraints and humiliation in child-care centers, precisely the childcare/young-child actor and abuse context of Scott's source. However pre-vote Minnesota Rule 9503.0055 already prohibited many of these acts and required behavior-guidance policies; the omnibus appears to modernize and recodify substantial existing regulation. Without demonstrating that the exact changes *strengthen* infant/young-child abuse safeguards beyond existing rules, the direction and applicability must fail closed."
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "reviewMethod": "all_202_candidate_claims_compared_to_exact_bill_policy_scope_with_per_bill_fail_closed_defaults_and_exact_key_overrides",
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
