@@ -1,0 +1,194 @@
+{
+  "schemaVersion": "historical-density-2025-house-semantic-decisions-cohort-2-tranche-4-v1",
+  "batchId": "EQV1-HISTORICAL-DENSITY-2025-HOUSE-002-T04",
+  "issue": 718,
+  "frozenCohort": {
+    "runId": 37718561841,
+    "artifactId": 11525006690,
+    "digest": "sha256:384e0f7856b051f621af0f9f7f55ec517068d093100d47edb12746911410d17c",
+    "selectionKeySha256": "6364b5c9f86ec6e4cbf4ddd9398ce962f376342c36d5e501bb65884018672a05"
+  },
+  "reviewedRows": [
+    31,
+    40
+  ],
+  "decisions": [
+    {
+      "row": 31,
+      "decision": "directional",
+      "semanticKey": "perryman_surplus_taxpayer_refunds",
+      "topics": [
+        "tax refunds",
+        "state budget surplus",
+        "taxpayer relief"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Bernie Perryman supports a constitutional amendment requiring future state budget surpluses above the specified threshold to be returned directly to taxpayers.",
+      "supportingExcerpt": "I have co-authored legislation for a constitutional amendment that would guarantee future state budget surpluses are returned directly to citizens.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 32,
+      "decision": "directional",
+      "semanticKey": "wolgamott_teacher_workplace_pay_pension",
+      "topics": [
+        "teacher compensation",
+        "teacher pensions",
+        "school workforce"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Dan Wolgamott supports safe working conditions, competitive pay, and fair pensions for Minnesota teachers.",
+      "supportingExcerpt": "Every teacher in Minnesota deserves a safe work environment, a competitive wage, and a fair pension!",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 33,
+      "decision": "directional",
+      "semanticKey": "niska_attorney_general_data_transparency",
+      "topics": [
+        "government transparency",
+        "attorney general",
+        "public records"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Harry Niska supports expanding public access to Minnesota Attorney General office data while preserving ordinary residents' privacy.",
+      "supportingExcerpt": "In short, my bill would make more of the attorney general’s data public and correct the law to more closely align with the legislature’s original intention, rather than the Supreme Court’s interpretation.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 34,
+      "decision": "directional",
+      "semanticKey": "liebling_direct_state_public_health_program_admin",
+      "topics": [
+        "public health programs",
+        "managed care",
+        "healthcare administration"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Tina Liebling supports moving Minnesota public healthcare programs away from private-insurer administration toward direct state administration.",
+      "supportingExcerpt": "HF 255 reverses the state’s system of turning over our public health care programs to private insurance companies as it now does for 85% of enrollees.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 35,
+      "decision": "directional",
+      "semanticKey": "rehrauer_disabled_veteran_property_tax_exclusion",
+      "topics": [
+        "disabled veterans",
+        "property taxes",
+        "veterans benefits"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Kari Rehrauer supports increasing property-tax exclusion amounts for disabled veterans and their spouses.",
+      "supportingExcerpt": "In the Veterans committee this week, I voiced support for HF194, a bill authored by Republican Rep. Knudson to help support disabled veterans. It allows for an increase in the property tax exclusion amounts which is needed to keep our disabled vets and their spouses in their homes.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 36,
+      "decision": "directional",
+      "semanticKey": "west_infant_abuse_parent_education",
+      "topics": [
+        "child abuse prevention",
+        "parent education",
+        "infant safety"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Nolan West supports requiring providers to educate parents on recognizing and reporting abuse in infants.",
+      "supportingExcerpt": "This week, my bill ( H.F. 953 ), requiring providers to educate parents on recognizing and reporting abuse in infants received a hearing in the Health Finance and Policy Committee.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 37,
+      "decision": "directional",
+      "semanticKey": "hudson_sex_based_womens_athletics",
+      "topics": [
+        "school sports",
+        "sex-based athletics",
+        "gender identity"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Walter Hudson supports prioritizing biological-sex protections over gender-identity claims in women's athletics.",
+      "supportingExcerpt": "Are we going to protect the female sex from discrimination in women’s athletics or not? Those are the only two binary choices, and it is indeed a binary choice. I choose to stand with the female sex rather than the arbitrary claims of somebody who's expressing themselves.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 38,
+      "decision": "directional",
+      "semanticKey": "backer_rural_ambulance_nontransport_reimbursement",
+      "topics": [
+        "rural EMS",
+        "ambulance reimbursement",
+        "emergency medical services"
+      ],
+      "claimType": "explicit_position",
+      "stance": "supports",
+      "explicitness": "document_position",
+      "normalizedClaim": "Jeff Backer supports reimbursing ambulance services for essential medical-assistance runs even when patient transport is not required.",
+      "supportingExcerpt": "House File 696 ensures that ambulance services get the support they need by allowing reimbursement for essential medical assistance runs, including those where transport isn’t required.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 39,
+      "decision": "directional",
+      "semanticKey": "freiberg_reproductive_rights_equity_fund",
+      "topics": [
+        "reproductive rights",
+        "reproductive healthcare",
+        "health equity"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Mike Freiberg supports reproductive-choice protections and creating a Reproductive Rights Equity Fund.",
+      "supportingExcerpt": "I was proud to participate in last week’s reproductive health rally with UnRestrict Minnesota, and I am proud to author the bill to create the Reproductive Rights Equity Fund. Minnesotans deserve the right to make choices about their own reproductive health.",
+      "crossBatchDuplicateOf": []
+    },
+    {
+      "row": 40,
+      "decision": "directional",
+      "semanticKey": "olson_national_guard_building_resources",
+      "topics": [
+        "Minnesota National Guard",
+        "military facilities",
+        "capital investment"
+      ],
+      "claimType": "quoted_position",
+      "stance": "supports",
+      "explicitness": "direct_quote",
+      "normalizedClaim": "Bjorn Olson supports providing building resources for the Minnesota National Guard.",
+      "supportingExcerpt": "I authored this bill because as a soldier in the U.S. Army Reserve, it’s always a priority of mine to fight for our men and women in uniform. I’m proud to report that my bill to support the MN National Guard with building resources passed unanimously off the MN House floor!",
+      "crossBatchDuplicateOf": []
+    }
+  ],
+  "policy": {
+    "candidateBillIdentifiers": [],
+    "targetBillApplicabilityInferred": false,
+    "outcomeUse": "none",
+    "memberIssueOnly": true,
+    "billInference": false,
+    "internalMembershipIdentityResolved": false,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
