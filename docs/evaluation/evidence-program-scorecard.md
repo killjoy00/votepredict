@@ -81,12 +81,48 @@ The reproducible **repository-only** audit `node --import tsx scripts/audit-evid
 4. Verify no duplicate capture, unbounded external fetch or missing-source-to-zero assumption. Review source family freshness, inserts/reuses, failures, unresolved identities, backend runtime cost and operational impact before even proposing a schedule.
 5. Treat the previously registered production cron question as a **separate #732 live-state gate**. This project does not call or redeploy Vercel to resolve it.
 
+## Vercel-independent sandbox health implementation (unactivated)
+
+The implementation branch for #847 adds a **sandbox-only** read-only proof path. This is not a production refresh and does not create a credential, GitHub environment, Neon branch, or recurring trigger. The Vercel-dependent, write-capable legacy `public-evidence-refresh.yml` remains paused and unchanged.
+
+| Capability | Committed path | Execution boundary |
+| --- | --- | --- |
+| Standalone bounded read-only SQL auditor | `src/operations/evidence-neon-readonly.ts` | Restricts source tables, selects only latest pipeline metadata and six source-kind last-fetch timestamps, and requires a least-privilege SQL role |
+| Offline-default CLI | `scripts/audit-evidence-neon-readonly.ts` | No arguments / `--offline`: zero connectivity. `--connect`: **sandbox-only**, requires verified TLS and explicit environment acknowledgement |
+| Manually gated GitHub Action | `.github/workflows/evidence-neon-readonly-sandbox.yml` | Sole trigger `workflow_dispatch`; default-off `run_readonly=false`, exact phrase, `main` branch and `evidence-readonly-sandbox` GitHub environment; no Vercel secrets/CLI/HTTP or database bridge |
+| Static and integration tests | `tests/evidence-neon-readonly.test.ts` and `tests/evidence-operating-posture.test.ts` | Pure fake-client fail-closed tests plus a disposable **localhost-only CI PostgreSQL** least-privilege role test |
+
+**No live Neon project, live branch, GitHub environment approval rules, or secret has been configured or verified in this session.** Merely merging the new workflow does not authorize or cause a read. Do not run it until all preconditions below are independently verified. The workflow **cannot itself prove** that an operator supplied a *sandbox* Neon endpoint; the protected environment and user-managed branch/credential scope are essential.
+
+To provision separately **only in an approved disposable Neon branch**, have an appropriately authorized operator create a **SQL-level** dedicated non-owner role with a strong privately generated password. Role creation or grants below are *illustrative*, not executed:
+
+```sql
+-- Execute only on an explicitly approved, disposable Neon sandbox branch.
+-- Substitute the actual sandbox database name and a privately generated secret.
+CREATE ROLE vp_evidence_ro_sandbox LOGIN
+  NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS
+  PASSWORD '<privately-generated-unique-secret>';
+GRANT CONNECT ON DATABASE <sandbox_database> TO vp_evidence_ro_sandbox;
+GRANT USAGE ON SCHEMA public TO vp_evidence_ro_sandbox;
+GRANT SELECT ON public.ingestion_runs, public.source_documents
+  TO vp_evidence_ro_sandbox;
+-- No INSERT, UPDATE, DELETE, TRUNCATE, CREATE, GRANT ALL or default table grants.
+```
+
+Configure `evidence-readonly-sandbox` with explicitly reviewed branch/reviewer restrictions, environment-secret `EVIDENCE_READONLY_SANDBOX_URL` and variable `EVIDENCE_READONLY_SANDBOX_ROLE`. The URL must be an **actual non-production Neon Postgres endpoint** with a matching username and `sslmode=verify-full`; no fallback to owner credentials, production env pulls or the authenticated database bridge. The auditor additionally enforces `BEGIN ... READ ONLY`, a single DB connection, local statement/lock/idle timeouts, absence of superuser/DDL/DML table rights, and explicit SELECT grants before reading ingestion status or source timestamps. A missing source row is **not observed**, never recorded as zero evidence.
+
+For development: `node --import tsx scripts/audit-evidence-neon-readonly.ts --offline` requires **no secrets or network**. The GitHub job uses `--connect` only after affirmative manual inputs and the environment gate; it does **not** run on PR, push, schedule, issue comments or CI. Do not use the production database to rehearse it under #847.
+
+The **remaining operating gates** are: review/apply protected GitHub environment rules and sandbox-only role on a truly separate Neon branch; manually authorize one bounded sandbox read-only test; inspect the output and role proofs; then separately decide whether any production read-only check or write-capable collector is justified. Those future decisions do **not** follow automatically from green CI. The old live Vercel cron remains **unverified** under #732.
+
 ## #847 current execution ledger
 
 - [x] Reconcile distinct evidence families, historical directional coverage and review-only results with source links and cutoff dates.
 - [x] Establish a source-code-only safety test and the explicit independent refresh design.
 - [ ] Merge docs and guard tests after exact-head CI; verify post-merge CI.
 - [ ] Validate live-only questions under their separate authorization boundaries. **Never** treat unverified live cron or stale freshness as verified healthy.
-- [ ] Authorize and test a dedicated direct-Neon route separately before any production evidence refresh or scheduled ingestion can resume.
+- [x] Implement an offline-default, sandbox-only direct-Neon read-only audit and explicit manual GitHub workflow (pending sandbox provisioning; no live connection executed).
+- [ ] Provision and approve sandbox-only secret/role and execute bounded **sandbox** read-only proof; production health/ingestion remains independently gated.
+- [ ] Any production ingestion writes or scheduled refresh still require a separate explicit approval; never resume from this audit automatically.
 
 **Boundary:** docs, offline configuration audit, regression tests only. No Vercel contact, production database access, ingest writes, source crawls, model fitting, serving changes, or future-session work.
