@@ -1,4 +1,4 @@
-name: Audit 2025 House cohort 2 applicability candidates tranche 6
+name: Audit 2025 House cohort 2 applicability candidates tranche 7
 
 on:
   pull_request:
@@ -45,14 +45,14 @@ jobs:
           mkdir -p "$RUNNER_TEMP/v17"
           unzip -q "$RUNNER_TEMP/v17.zip"             evidence-quality-historical-feature-matrix-v1.7-manifest.json             evidence-quality-historical-feature-matrix-v1.7.ndjson.gz             -d "$RUNNER_TEMP/v17"
 
-      - name: Freeze target-event tranche 6
+      - name: Freeze target-event tranche 7
         env:
           VOTEPREDICT_EQ_V17_MANIFEST_PATH: ${{ runner.temp }}/v17/evidence-quality-historical-feature-matrix-v1.7-manifest.json
           VOTEPREDICT_EQ_V17_MATRIX_PATH: ${{ runner.temp }}/v17/evidence-quality-historical-feature-matrix-v1.7.ndjson.gz
           VOTEPREDICT_2025_HOUSE_TARGET_TRANCHE_OUTPUT_DIR: ${{ runner.temp }}/target-tranche
         run: node scripts/freeze-historical-density-2025-house-target-tranche-7.mjs
 
-      - name: Verify target-event tranche 6
+      - name: Verify target-event tranche 7
         shell: bash
         run: |
           set -euo pipefail
@@ -121,7 +121,7 @@ jobs:
           jq -e '[.candidateClaims[].internalMembershipIdentityResolved] | all(. == false)' "$f" >/dev/null
           jq -e '[.candidateClaims[].versionProof.strictlyBeforeVoteDate] | all(. == true)' "$f" >/dev/null
           {
-            echo '## 2025-26 House cohort-2 applicability tranche 6'
+            echo '## 2025-26 House cohort-2 applicability tranche 7'
             echo
             echo '- Target ranks: **151-175**'
             echo '- Frozen target events: **25**'
