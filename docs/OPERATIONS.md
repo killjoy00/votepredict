@@ -2,6 +2,8 @@
 
 This document defines operating expectations for the private production tool. It supplements `CHARTER.md`, `docs/EVALUATION_STANDARD.md`, `docs/DEPLOYMENT.md`, and the V2 architecture. It does not relax leakage, evidence, lineage, or model-promotion rules.
 
+**Current October 2026 operating override:** Vercel automation and production release triggers are **paused / manual-only** under [#732](https://github.com/killjoy00/votepredict/issues/732). Historical audit, evidence scorecard and issue updates do not authorize a production deploy, scheduler, source refresh, Vercel environment pull or database write. The current public-evidence refresh still depends on Vercel credentials; the old live Vercel cron remains **unverified**, not proven disabled. See [Evidence operating scorecard](evaluation/evidence-program-scorecard.md) and [deployment policy](DEPLOYMENT.md).
+
 ## Access and security
 
 - Owner workspace routes and all mutations require the private owner guard.
@@ -91,7 +93,7 @@ Promotion is deliberately staged:
 
 1. **Evaluation PR** — freeze the candidate, run the leakage-safe historical comparison, record metrics/limitations, and decide whether the candidate earns promotion. This PR must not change serving probabilities merely because evaluation code exists.
 2. **Serving integration PR** — only after promotion is earned, build/freeze the production artifact or runtime integration, prove parity with the evaluated candidate, add leakage/fallback tests, and pass the normal release gate.
-3. **Production deployment** — deploy the exact green merge commit and run the smoke/runtime-log checks in `docs/DEPLOYMENT.md`.
+3. **Separately authorized production deployment (currently paused)** — after the independent evaluation and integration gates, any necessary release must be explicitly authorized under #732 and dispatched manually for the exact green `main` SHA; do not deploy automatically or run write-capable smoke/refresh routines as a side effect.
 
 This separation prevents a candidate from changing production probabilities before its empirical promotion decision exists.
 
@@ -168,7 +170,7 @@ Source re-ingestion is not a substitute for recovery of private forecasts, revis
 
 ## Release gate
 
-Normal release gate:
+Normal release validation gate (production steps apply only after separately authorized manual dispatch under #732):
 
 - GitHub pull request;
 - clean-database migration replay;
@@ -181,7 +183,7 @@ Normal release gate:
 - production route/auth smoke test;
 - production 5xx/runtime-error review for the changed surface.
 
-Avoid unnecessary Vercel deployments during development. GitHub CI is the default branch validation surface; deploy only when a production/preview runtime check adds information CI cannot provide.
+Do **not** deploy Vercel during ordinary evidence/documentation/CI work. GitHub CI is the branch validation surface; even a green `main` commit does not trigger a release. Any future production runtime check must be explicitly approved under #732 and minimize expensive or write-capable side effects.
 
 ## Current known production warning
 
