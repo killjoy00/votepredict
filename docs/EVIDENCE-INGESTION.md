@@ -93,13 +93,19 @@ Arbitrary public URLs are treated as untrusted input. The shared fetcher:
 
 The crawler is intentionally bounded rather than exhaustive. One bad site or article does not fail the other evidence streams.
 
-## Production cadence
+## Production cadence and current pause
 
-`.github/workflows/public-evidence-refresh.yml` invokes the protected production runtime every six hours and after a successful production deployment. The job pulls production authentication privately and calls `POST /api/operations/public-evidence-refresh`; database work occurs inside the deployed Vercel runtime where the Neon Marketplace connection is routable.
+**Current cadence: suspended.** As of **2026-10-08**, the merged Vercel automation pause in [issue #732](https://github.com/killjoy00/votepredict/issues/732) makes `.github/workflows/public-evidence-refresh.yml` **manual-only**. Its sole trigger is `workflow_dispatch`, and its job requires an explicit `run_vercel=true` input on `main`, defaulting to false. **That explicit switch is a technical guard, not permission to run it while the #732 pause is in force.**
 
-Current-member web work is rotated by least-recent public-evidence capture. Production now requests the endpoint maximum of 24 memberships per run, so the 200-member active legislature is revisited in roughly nine scheduled batches rather than seventeen. Each pass may retain up to eight recent member-primary publications and five verified publisher-news articles per member. The broader press-review configuration searches farther back before verification rather than treating the latest few weeks as the entire relevant article universe. Campaign-finance refresh is folded into the same run when the last successful live finance refresh is older than the configured freshness threshold, avoiding repeated bulk downloads on every web batch.
+The existing workflow **still depends on Vercel** to pull its production environment. It then launches `scripts/run-direct-public-evidence-refresh.ts`, which chooses a PostgreSQL connection (potentially via an authenticated Neon database bridge) and calls the **write-capable** `runPublicEvidenceRefresh()`. A GitHub-hosted worker does **not** make this path Vercel-independent or read-only. Neither the workflow nor any production refresh was run for [issue #847](https://github.com/killjoy00/votepredict/issues/847). **No automatic schedule or refresh is presently authorized.**
 
-Operations exposes the latest pipeline status plus current finance, campaign-site, member-primary, news, and web-covered-member counts. It also reports news-member coverage, last-batch news insert/failure/no-lead counts, the age of the prospective corpus, and the number of current Quick Evidence candidate items/members. Candidate counts are distinct from serving mechanically-actionable counts. Public evidence ingestion remains useful even when an item has no serving model impact.
+The historic six-hour rotation, 24-membership batch size and former post-deploy refresh were implementation/configuration history, **not the current operating cadence**. The per-run member cap remains 24. Do not infer current data freshness from an old schedule or the continued existence of Operations metrics.
+
+The Operations page exposes previously captured ingestion/source and campaign-finance, campaign-site, member-primary, news, web-covered-member, insert/failure, and Quick Evidence candidate measurements. Those are useful when **actually observed**; this documentation reconciliation did **not** query the live database or certify current freshness.
+
+In the checked-in `vercel.json`, automatic Git deployments are disabled and no cron is registered. That does **not** prove the old cron on a **previously deployed** release is off; the live-state question is explicitly **unverified** under #732. Never reactivate production scheduling, use Vercel credentials, or trigger ingestion to answer a documentation question.
+
+For the consolidated dated metrics, offline posture test, and proposed *unactivated* GitHub/direct-Neon alternative (separate read-only health credentials and separately approved write canary), see [Evidence program operating scorecard](evaluation/evidence-program-scorecard.md). Until independent credential, safety and approval gates are satisfied, existing evidence remains durable but routine automated refresh is **paused**.
 
 ## Quick Evidence candidate
 
