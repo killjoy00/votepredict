@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "historical-density-2025-house-applicability-cohort-2-tranche-2-decisions-v1",
+  "issue": 718,
+  "session": "2025-2026",
+  "frozenCandidateArtifact": {
+    "runId": 37792513184,
+    "artifactId": 11557221099,
+    "digest": "sha256:bfcd0748f2a7052e6847630eb1a6710be33b6053ae9ed51f5b7e74973aebb8f8",
+    "contentSha256WithoutSelfField": "a57d6df55f42a20f5a16392504581395fdc2774a61f0563bb80d0ae63fdcd5dc",
+    "targetTrancheIndex": 2,
+    "targetEventKeySha256": "9304a46f37889fa3ae166803e3675669c55fb99d475f1484ea3efd11f7e01299",
+    "reviewKeySha256": "bd3b49eb5b3c406d1b65741b049c97b229653b42105d0c0b8483b8af085bd6c4",
+    "eligibleClaimEventPairs": 1050,
+    "candidatePairs": 333,
+    "candidateBills": 19,
+    "candidatePublicMembers": 39,
+    "candidateSemanticGroups": 39
+  },
+  "defaultDecision": "not_applicable",
+  "defaultBillRationales": {
+    "HF1090": "Renaming the library construction grant program does not fund the Minnesota Zoo operating room, National Guard facilities, or the Mound clean-water project; generic capital-investment wording is incidental.",
+    "HF124": "Line-of-duty death gifts and local public-safety-officer memorial expenditures do not implement Safe Haven Baby Boxes or state-agency fraud-reporting requirements; public-safety and state-agency wording is incidental.",
+    "HF1355": "Commercial-diving safety requirements tied to aquatic-plant permits do not create or strengthen the conservation programs in Harder's broad conservation position, and do not provide National Guard building resources.",
+    "HF1982": "Removing deadlines for active-transportation safety training does not resource Minnesota public schools in the sense of Hussein's funding/resource position; the public-school reference is only the program setting.",
+    "HF2023": "Overdose-prevention education in a substance-use model program does not extend counseling services to home-schooled children or create childcare/infant-abuse safeguards.",
+    "HF2309": "Housing-program eligibility, finance, sprinkler, and housing-authority provisions do not enact algorithmic rent-price-fixing restrictions, HOA/CIC consumer oversight, or Mahamoud's specific Minneapolis water and deeply affordable public-housing funding proposition; generic affordable/public-housing overlap is insufficient.",
+    "HF2403": "Commerce, insurance, financial-institution, corporate, and garnishment provisions do not implement the nominated cohort-2 propositions. A common-interest-community definition is incidental rather than HOA/CIC oversight reform, and Commerce data-call rules do not expand public access to Attorney General office data.",
+    "HF2431": "Higher-education funding, student-aid, private-career-school, and workforce-scholarship provisions do not extend elementary homeschool counseling, establish the cited career-pathway reform, resource K-12 public schools, or provide teacher pay/pension protections; adjacent education/workforce terminology is insufficient.",
+    "HF2432": "The judiciary/public-safety/corrections omnibus does not implement the nominated cohort-2 propositions except the explicit Rarick and Robbins fraud-oversight overrides below. Paid-leave, childcare, public-data, and other issue words elsewhere in the bill are incidental or concern different programs.",
+    "HF2438": "The transportation omnibus does not implement the nominated cohort-2 propositions except the explicit Koegel Empowering Small Minnesota Communities Program override below. Clean-water, local-investment, property-tax, public-safety, and other terminology elsewhere does not enact those source propositions.",
+    "HF2446": "Agriculture-budget provisions include a PFAS-contaminated-biosolids study and drinking-water research, but do not fund Hastings PFAS treatment, Minneapolis water infrastructure, Mound clean-water investment, childcare affordability, or the other nominated cohort-2 propositions.",
+    "HF2551": "Children/youth/families recodification is primarily technical and does not substantively enact the nominated homeschool counseling, childcare affordability/safety, public-school funding, public-health administration, Attorney General transparency, or related propositions.",
+    "HF2563": "Legacy-fund appropriations directly implement Harder's broad conservation-program position only through the explicit override below. General Minnesota Zoo funding does not fund Huot's Large Animal Operating Room expansion, and statewide clean-water appropriations do not establish the specific Mound or Hastings water projects.",
+    "HF3022": "Miscellaneous technical corrections do not substantively implement the nominated cohort-2 member policy propositions; corrected statutory references and incidental issue terms are not applicability.",
+    "SF1959": "Military and veterans budget/services provisions directly implement Olson's National Guard facilities position only through the explicit override below. Veterans-benefit language does not increase Rehrauer's disabled-veteran property-tax exclusion, and other overlaps are incidental.",
+    "SF2216": "The Commerce omnibus directly implements Bahner's common-interest-community consumer-oversight position only through the explicit override below. Its consumer fraud program, insurance, health-plan, PFAS, public-data, and other provisions do not enact the other nominated cohort-2 propositions.",
+    "SF2298": "Housing-budget provisions finance affordable housing and modify housing programs, but do not ban algorithmic rent price fixing, create HOA/CIC oversight, or specifically fund Mahamoud's Minneapolis water-distribution and deeply affordable public-housing proposal; general housing overlap is insufficient.",
+    "SF2847": "Garnishment-form amendments do not purchase or retire medical debt, alter public-health-program administration, create the nominated tax policy, or implement disabled-veteran property-tax exclusions.",
+    "SF571": "Trust, probate, and powers-of-appointment changes do not implement the nominated Attorney General transparency, childcare abuse, National Guard, disabled-veteran tax, CEO-pay-tax, or household-cost propositions."
+  },
+  "overrides": [
+    {
+      "reviewKey": "bahner_hoa_cic_consumer_protection_reform|SF2216|2025-04-29|85e7d06d2ff842eb997b16692c730d9d0180063ec68c2b3f072443ac4d7fea4f",
+      "decision": "applicable",
+      "billPolicyDirection": "creates_common_interest_community_ombudsperson_register_complaint_analysis_and_unit_owner_assistance",
+      "alignmentDirection": "aligns",
+      "reason": "SF2216 establishes a common-interest-community ombudsperson and register, requires complaint/inquiry analysis, and authorizes assistance to unit owners enforcing their rights. That directly implements stronger HOA/CIC consumer protection and oversight."
+    },
+    {
+      "reviewKey": "rarick_state_agency_fraud_reporting|HF2432|2025-04-25|f82944db2f58b5a0da53d7f76101c6eb7a7c2c6211419f14ad14ea4e05c0bf08",
+      "decision": "applicable",
+      "billPolicyDirection": "requires_state_agency_fraud_referrals_reporting_and_adds_fraud_investigative_capacity",
+      "alignmentDirection": "aligns",
+      "reason": "HF2432 requires state agencies to refer qualifying suspected fraud, permits lower-dollar referrals, adds a BCA Financial Crimes and Fraud Section, and requires fraud reporting. That directly matches stricter state-agency fraud reporting and additional fraud-prevention tools."
+    },
+    {
+      "reviewKey": "robbins_state_fraud_oversight_transparency|HF2432|2025-04-25|f82944db2f58b5a0da53d7f76101c6eb7a7c2c6211419f14ad14ea4e05c0bf08",
+      "decision": "applicable",
+      "billPolicyDirection": "creates_state_program_fraud_investigation_referral_reporting_and_accountability_controls",
+      "alignmentDirection": "aligns",
+      "reason": "HF2432 creates dedicated state-program fraud investigative capacity, mandatory state-agency referral rules, and annual fraud reporting. Those are direct fraud-oversight and accountability controls matching Robbins's stated position."
+    },
+    {
+      "reviewKey": "olson_national_guard_building_resources|SF1959|2025-04-29|a72690fa8e74efb032e110bfba05f19952b9c8866e2f512e1ea254028ab357c9",
+      "decision": "applicable",
+      "billPolicyDirection": "funds_military_affairs_training_facility_maintenance_and_updates_state_armory_building_authority",
+      "alignmentDirection": "aligns",
+      "reason": "SF1959 appropriates more than $10 million per year for maintenance of Military Affairs training facilities and amends State Armory Building Commission powers. That directly provides building/facility resources for the Minnesota National Guard."
+    },
+    {
+      "reviewKey": "harder_conservation_programs|HF2563|2025-04-25|8c0cb67231f61973542f9a4565b4720bf34adf9c70ea379be007bf57bb155ee1",
+      "decision": "applicable",
+      "billPolicyDirection": "funds_conservation_habitat_acquisition_restoration_and_environmental_programs_from_legacy_funds",
+      "alignmentDirection": "aligns",
+      "reason": "HF2563 appropriates Legacy funds for conservation programs including land acquisition, wetland/prairie/wildlife-habitat restoration and enhancement, and grants to conservation organizations. That directly aligns with strengthening conservation programs and protecting Minnesota's environment."
+    },
+    {
+      "reviewKey": "koegel_empowering_small_communities_program|HF2438|2025-04-28|46388d1841e58d9befc08450243def66157e678619b30511889a69aa96fd50d0",
+      "decision": "applicable",
+      "billPolicyDirection": "funds_and_defines_empowering_small_minnesota_communities_program_for_small_community_project_assistance",
+      "alignmentDirection": "aligns",
+      "reason": "HF2438 names and defines the Empowering Small Minnesota Communities Program, specifies assistance to small communities, and appropriates $2.5 million in each fiscal year to the program. That directly matches Koegel's support for establishing and supporting the program."
+    }
+  ],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "applicableRequiresExplicitOverride": true,
+    "ambiguousRequiresExplicitOverride": true,
+    "unlistedCandidateDecision": "unavailable_fail_closed",
+    "outcomeUse": "none",
+    "targetVoteOutcomesRead": false,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "vercelUsed": false,
+    "publicLrlIdentityOnly": true,
+    "internalMembershipIdentityResolved": false,
+    "internalIdentityRequiredBeforeFeatureIntegration": true,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "servingChanged": false
+  }
+}
