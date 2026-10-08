@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "historical-density-2023-24-senate-top20-semantic-review-tranche-20-decisions-v1",
+  "issue": 718,
+  "session": "2023-2024",
+  "trancheId": "SENATE-2023-24-TOP20-SEMANTIC-020",
+  "frozenReviewPacket": {
+    "reviewRows": 2,
+    "reviewKeySha256": "5468aabb257a3e07e002d3bc9690eb7126630542f38651bdda9317a0ecb0013b",
+    "sourcePdfSha256": "4f3be2ced2f3357556c604057ce2476b820238c566a3a5f5c04d04a44a682e36",
+    "sourceTextSha256": "1e7806aaadeffbdab28c1606a8f3f07d684f68c076f0ddafbfd4a192109f4271",
+    "reviewPacketProofSha256": "7a759ee7b1914f951dbd6571d46e3efa66e674366d4030d8e1b693a3e0ecf6ee"
+  },
+  "decisionRationales": {
+    "full_text_review_no_candidate_bill_support": "Full frozen minute reviewed. This candidate bill is neither explicitly mentioned nor otherwise unambiguously identifiable in the source text; committee/referral overlap alone is not treated as applicability.",
+    "candidate_bill_explicitly_present_but_only_procedural_actions_recorded": "Full frozen minute reviewed. The candidate bill is explicit, but the minute records amendments, presentation/testimony, questions/comments, or lay-over procedure rather than an attributable directional whole-bill member statement under the existing Senate semantic-review contract."
+  },
+  "notApplicableReviewKeys": [],
+  "billContextRows": [
+    {
+      "reviewKey": "4f3be2ced2f3357556c604057ce2476b820238c566a3a5f5c04d04a44a682e36|1e7806aaadeffbdab28c1606a8f3f07d684f68c076f0ddafbfd4a192109f4271|379202de-d6e4-4a46-b2d6-64c340757cc9|7e93b4bc-278e-4342-a39b-99216d06e7dc",
+      "billMentionExcerpt": "S.F. 4027: Senator Champion: Membership modiDcation of the energy transition advisory committee TestiDers: Matt Varilek,",
+      "billMentionPage": 2
+    },
+    {
+      "reviewKey": "4f3be2ced2f3357556c604057ce2476b820238c566a3a5f5c04d04a44a682e36|1e7806aaadeffbdab28c1606a8f3f07d684f68c076f0ddafbfd4a192109f4271|5b1d9312-24b6-4a01-956b-d9417601dfcb|7e93b4bc-278e-4342-a39b-99216d06e7dc",
+      "billMentionExcerpt": "S.F. 4027: Senator Champion: Membership modiDcation of the energy transition advisory committee TestiDers: Matt Varilek,",
+      "billMentionPage": 2
+    }
+  ],
+  "directionalRows": [],
+  "ambiguousFailClosedRows": [],
+  "policy": {
+    "everyCandidateReviewed": true,
+    "targetVoteOutcomesRead": false,
+    "outcomeUse": "none",
+    "committeeMembershipUsedAsStance": false,
+    "attendanceUsedAsStance": false,
+    "proceduralActionUsedAsDirectionalStance": false,
+    "ambiguousDefaultsToFailClosed": true,
+    "productionDatabaseQueried": false,
+    "productionWrites": false,
+    "featureRowsWritten": false,
+    "modelFitting": "none",
+    "modelWeightChanged": false,
+    "servingChanged": false,
+    "vercelUsed": false,
+    "contextOnly": true,
+    "mechanicallyActionable": false,
+    "modelWeight": 0
+  }
+}
