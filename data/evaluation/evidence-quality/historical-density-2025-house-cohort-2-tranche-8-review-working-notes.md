@@ -43,6 +43,13 @@ weight or production feature from these context-only public LRL records.
   *Great Start Affordability Act*. Verify the actor, beneficiary, program and precise
   new text (rather than merely carried-forward rules). Healthcare eligibility,
   opioid/payment-withholding and pharmacy changes also require separate claim matching.
+  Exact article 14 appropriations separately add $26,000 for the DHS Office of
+  Inspector General, **but subtract $425,000 from fraud-prevention grants** in
+  fiscal year 2027. These are changes in opposite directions within one omnibus
+  bill. Do **not** label the whole bill a positive or negative Robbins fraud
+  oversight match without isolating the exact program, funding impact, and source
+  proposition. See exact text, article 14, sections 5 and 8, at the same pinned
+  SF4612 Revisor URL.
 - **SF4244**: 40 nominations; 3rd engrossment technical/conforming corrections
   across varied statutes. Generic terms are particularly prone to false nominations;
   do not accept a reference to a prior statute as new substantive policy.
