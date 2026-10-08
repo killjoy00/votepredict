@@ -1,10 +1,14 @@
 # Historical evidence density program
 
-_Last updated: 2026-10-06_
+_Last updated: 2026-10-08_
 
 Issue #718 is the active bounded program for increasing strict-pre-vote historical directional evidence without weakening provenance, chronology, or semantic review. Its primary objective remains the 2021-22 training universe, while newer sessions are tracked explicitly so the evidence substrate does not become disproportionately sparse outside training.
 
 This program is evidence construction and coverage work, not model tuning. Broad retrospective feature searching on the 2021-26 vote outcomes remains closed.
+
+## Non-negotiable operator instruction: self-service only; no external contact
+
+**Do not email, call, draft or queue correspondence, submit requests, schedule visits, or otherwise contact the Legislative Reference Library or any other office for historical 2021 Senate committee minutes.** The project owner expressly ruled out external records requests, repeatedly. Do not ask to seek exceptions. The prior 2021 print-minute request package (#784) is a historical targeting artifact, **not an action item**; the 2021 print-minute acquisition lane is blocked absent publicly accessible online files. Use only independently accessible public web archives, recordings, captions and bill pages; stop when source bytes/attribution/chronology cannot be proven. See [`2021-senate-public-source-audit.md`](2021-senate-public-source-audit.md) for the 2026-10-08 online pass (8 public agenda records matching 17 frozen associations; zero verified source recordings or directional statements).
 
 ## Governing contract
 
@@ -107,13 +111,13 @@ The primary historical program remains **2021-22** because that is the training 
 
 This target-gap ranking is not a claim that any row is recoverable. Source recovery still requires a separate bounded inventory with exact historical availability and freshness guards.
 
-## Next work
+## Current post-v1.7 checkpoint and next work
 
-1. Freeze the cross-session target-gap inventory from v1.7 and publish its immutable artifact/digest.
-2. Use the 2025-26 gap map to build a bounded **source** inventory from genuinely fresh member-primary/campaign and exact-member+bill surfaces without Vercel or outcome access.
-3. Recover exact bodies only for frozen source candidates whose source/content identity and historical availability can be independently revalidated.
-4. Feed recovered member/issue evidence through the same semantic gate rather than creating a bespoke session-specific applicability pipeline.
-5. Repeat for 2023-24 after the 2025-26 bounded lane reaches a stop rule.
-6. Continue 2021-22 recovery only through genuinely new proof surfaces; do not reopen exhausted routes merely to increase document count.
+PR #782 froze v1.8 (post-merge artifacts and CI recorded in [issue #718 milestone](https://github.com/killjoy00/votepredict/issues/718#issuecomment-6041784252)): the unchanged 135,457-row universe has 92 combined directional rows, of which **9 / 35,510 are 2021-22**; 2023-24 remains 32, and 2025-26 increased to 51. v1.7 remains the frozen input for independent downstream audits, not the latest feature matrix. The House cohort-2 2025-26 sweep ranks 1–264 finished after #845 with **49 aligned context-only pairs** across 11 tranches; none are integration-ready and they do not improve the 2021-22 primary goal ([accepted milestone](https://github.com/killjoy00/votepredict/issues/718#issuecomment-6068882931)).
 
-Success continues to be measured in unique strict-pre-vote member-event rows, memberships, and target events, with exact-bill and reviewed member/issue applicability reported separately. Raw document count is not a success metric.
+1. Focus on **2021-22** strict directional coverage: the 2021 Senate print-minute request/intake plumbing exists but **has zero received print records**. Do not use its request package for outreach. Public online media is the only permitted alternative.
+2. Follow the bounded independent public-media pass in [`2021-senate-public-source-audit.md`](2021-senate-public-source-audit.md): eight exact 2021 Senate agenda pages name 14 distinct frozen bills and satisfy date windows for 17 target-event associations. These are **candidate discovery only**, not evidence.
+3. Retrieve/historically anchor only publicly accessible audio/video/captions (if available) and require source hashes, independent bill+member attribution, specific directional statements, and strict chronology. Fail closed if missing. Reuse existing bounded media/caption probe modules and existing semantic review gates; do not invent an unsupported record.
+4. Preserve all closed/exhausted source lanes and the non-serving, zero-weight contract. Stop a source lane when progress requires library contact, private records, assumed evidence or relaxed provenance; do not open a new 2025-26 tranche or claim that the 2025-26 sweep satisfied the 2021-22 training objective.
+
+Success continues to be measured in unique strict-pre-vote member-event rows, memberships, and target events, with exact-bill and reviewed member/issue applicability reported separately. Raw document count or agenda hits are not success metrics.
