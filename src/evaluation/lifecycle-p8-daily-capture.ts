@@ -81,9 +81,30 @@ export interface P8DailyCaptureRow {
   lineage: {
     billSourceSha256: string;
     billSourceUrl: string;
-    processStatus: 'parsed' | 'source_deferred';
+    introducedOn: string;
+    adjournmentOn: string;
+    firstObservedAt: string;
+    processStatus: 'parsed' | 'source_deferred' | 'not_observable_by_cutoff';
     processSourceEligible: boolean;
+    processObservedAt: string | null;
     processParserVersion: typeof REVISOR_PROCESS_PARSER_VERSION | null;
+    eligibleProcessEvents: Array<{
+      eventKey: string;
+      occurredOn: string;
+      observedAt: string;
+      stageKind: string;
+      chamber: Chamber;
+      sourceUrl: string;
+      sourceSha256: string;
+    }>;
+    eligibleBillVersions: Array<{
+      id: string;
+      versionKey: string;
+      publishedOn: string;
+      observedAt: string;
+      sourceUrl: string;
+      sourceSha256: string;
+    }>;
     observedProcessSourceSha256: string[];
     observedVersionSourceSha256: string[];
     observedProcessUrls: string[];
@@ -341,9 +362,31 @@ function rowForBill(bill: P8DailyBillInput, cutoff: string): P8DailyCaptureRow {
     lineage: {
       billSourceSha256: bill.sourceSha256,
       billSourceUrl: bill.sourceUrl,
-      processStatus: bill.process.status,
+      introducedOn: bill.introducedOn,
+      adjournmentOn: bill.adjournmentOn,
+      firstObservedAt: bill.firstObservedAt,
+      processStatus: bill.process.status === 'source_deferred' ? 'source_deferred'
+        : processSourceEligible ? 'parsed' : 'not_observable_by_cutoff',
       processSourceEligible,
+      processObservedAt: processSourceEligible ? bill.process.observedAt : null,
       processParserVersion: processSourceEligible ? REVISOR_PROCESS_PARSER_VERSION : null,
+      eligibleProcessEvents: events.map(event => ({
+        eventKey: event.eventKey,
+        occurredOn: event.occurredOn,
+        observedAt: event.observedAt,
+        stageKind: event.stageKind,
+        chamber: event.chamber,
+        sourceUrl: event.sourceUrl,
+        sourceSha256: event.sourceSha256,
+      })),
+      eligibleBillVersions: versions.map(version => ({
+        id: version.id,
+        versionKey: version.versionKey,
+        publishedOn: version.publishedOn,
+        observedAt: version.observedAt,
+        sourceUrl: version.sourceUrl,
+        sourceSha256: version.sourceSha256,
+      })),
       observedProcessSourceSha256: uniqueSorted(events.map(event => event.sourceSha256)),
       observedVersionSourceSha256: uniqueSorted(versions.map(v => v.sourceSha256)),
       observedProcessUrls: uniqueSorted(events.map(event => event.sourceUrl)),
