@@ -50,6 +50,9 @@ async function fetchCalendarPdf(sourceUrl: (typeof CALENDAR_URLS)[number]): Prom
     throw new Error('CFB calendar response is not a bounded PDF');
   }
   const contentSha256 = createHash('sha256').update(raw).digest('hex');
+  // PDFParse may transfer/detach the Uint8Array's backing ArrayBuffer.
+  // Capture original binary length BEFORE passing the bytes to its worker.
+  const originalByteLength = raw.byteLength;
   const { CanvasFactory } = await import('pdf-parse/worker');
   const { PDFParse } = await import('pdf-parse');
   const parser = new PDFParse({ data: raw, CanvasFactory });
@@ -61,7 +64,7 @@ async function fetchCalendarPdf(sourceUrl: (typeof CALENDAR_URLS)[number]): Prom
       sourceUrl,
       contentSha256,
       fetchedAt: new Date().toISOString(),
-      bytes: raw.byteLength,
+      bytes: originalByteLength,
       body,
     };
   } finally {
