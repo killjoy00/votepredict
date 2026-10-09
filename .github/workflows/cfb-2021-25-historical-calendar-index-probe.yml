@@ -1,6 +1,7 @@
 name: One-time CFB 2021-25 disclosure calendar archive and SD6 source version
 
-# One-shot public-source proof when this workflow first appears on main.
+# One-shot public-source proof on initial addition; one bounded replay to verify the
+# archive's suspect Senate District 64A listing against the original House PDF.
 # No cron, workflow_dispatch, production DB, private donor data, Vercel,
 # freeze manipulation, historical serving, or prediction-model updates.
 on:
