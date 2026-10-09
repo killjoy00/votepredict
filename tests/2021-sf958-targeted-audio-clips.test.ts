@@ -47,7 +47,7 @@ test('source MIME/HTTP/size fail closed without touching audio content',()=>{
 
 test('fake media cannot masquerade as hash-pinned originals',async()=>{
   const x=ORIGINS[0];
-  const calls=[];
+  const calls: Array<{url: RequestInfo | URL; init: RequestInit | undefined}> = [];
   const mock:typeof fetch=async (url,init)=>{
     calls.push({url,init});
     return new Response(Buffer.from('ID3fake short file'),{status:200,headers:{'content-type':'audio/mpeg'}});
