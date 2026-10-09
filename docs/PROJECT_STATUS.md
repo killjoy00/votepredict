@@ -1,6 +1,6 @@
 # VotePredict project status
 
-_Last updated: 2026-10-08_
+_Last updated: 2026-10-09_
 
 VotePredict V2 is no longer a rebuild project. The clean-slate V2 sequence is complete through production hardening, introduction forecasting, current/floor forecasting, immutable revisions, evidence storage, scheduled production forecasting, forecast-vs-actual scoring infrastructure, and the automated 2027-28 Opening Day transition path. The **2027 Opening Day Ready** release-integrity milestone is now complete; the project is in **operate, validate prospectively, and selectively expand** mode.
 
@@ -66,6 +66,8 @@ Those sources can be added to the durable evidence layer without requiring Deep 
 Campaign-finance relationships in particular must remain context rather than an inferred vote stance unless an independently evaluated model demonstrates predictive value. A contribution, employer, donor category, or independent expenditure does not by itself establish how a legislator will vote.
 
 ## Historical evidence density
+
+**2026-10-09 pivot: #718 is PAUSED, not an active historical source-recovery queue.** The final bounded SF958 pre-vote publication check and five-page official House member-news target-overlap pilot produced **0** new strict directional feature rows. Additional MP3, transcript, Wayback and broad 2021-22 press archive expansion stops under the existing diminishing-yield rule. The [documented decision](evaluation/historical-2021-22-pivot-decision-2026-10-09.md) preserves the verified source leads, failure reasons, and unchanged **9 / 35,510** baseline. Forecast-improvement work instead uses the *already built and frozen* prospective/validation programs [#287](https://github.com/killjoy00/votepredict/issues/287) and [#310](https://github.com/killjoy00/votepredict/issues/310); no 2027 operational activation, model retune, production, or serving action is authorized by this documentation update.
 
 Issue #718 remains open for its primary **2021-22 strict-pre-vote training-evidence** objective. The canonical v1.8 historical feature matrix from #782 preserves the 135,457-row universe and 38 original exact-bill directional rows; combined directional rows total **92**, split **9 / 35,510** in 2021-22, **32 / 49,827** in 2023-24, and **51 / 50,120** in 2025-26. No model fitting or production/serving changes are authorized by this program.
 
@@ -197,7 +199,7 @@ The production reconciliation repaired the release-integrity drift found during 
 - [x] Keep all new historical evidence context-only, mechanically non-actionable, zero-weight, outcome-blind, and non-serving.
 - [ ] Freeze and publish the GitHub-only cross-session target-gap inventory from v1.7.
 - [ ] Use the 2025-26 gap map for the next bounded newer-session source-recovery inventory, then 2023-24 after that lane reaches its stop rule.
-- [ ] Continue 2021-22 only through genuinely new source/proof surfaces; do not reopen exhausted Session Daily, House-attachment, or other closed archive lanes.
+- [ ] **Paused by the 2026-10-09 decision:** reopen 2021-22 only on a genuinely new independently proven source/proof surface that yields qualifying strict-pre-vote member-event rows; do not reopen exhausted Session Daily, House-attachment, media, or other closed archive lanes.
 
 ### P1 — prepare 2027-28
 
