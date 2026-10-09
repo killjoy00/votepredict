@@ -460,6 +460,11 @@ export function buildOfflineP8DailyCapture(input: {
   const rows: P8DailyCaptureRow[] = [];
   for (const bill of input.bills) {
     validateBill(bill);
+    if (input.source === 'offline_observed_revisor_receipts' &&
+        (!bill.calendarEvidence ||
+         !sourceEarlierThanCutoff(bill.calendarEvidence.observedAt, cutoff))) {
+      throw new Error('Official calendar datum was not observable before the P8 cutoff');
+    }
     if (seen.has(bill.billId)) throw new Error('Duplicate bill in daily capture');
     seen.add(bill.billId);
     // Date-exclusive rule applies to discovery and introduction, not just process.
