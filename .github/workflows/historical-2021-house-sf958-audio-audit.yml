@@ -29,8 +29,13 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-fund --no-audit
-      - name: Decode tool availability
-        run: command -v ffprobe
+      - name: Install standard MP3 probe if runner does not provide it
+        run: |
+          if ! command -v ffprobe >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends ffmpeg
+          fi
+          command -v ffprobe
       - name: Hash and decode four exact publicly served 2021 House SF958 MP3 files
         env:
           VOTEPREDICT_SF958_REPORT_FILE: artifacts/2021-house-sf958/source-verification-v1.json
