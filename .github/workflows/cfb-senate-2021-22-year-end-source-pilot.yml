@@ -1,0 +1,35 @@
+name: One-time CFB 2021-22 Senate year-end official PDF proof pilot
+
+# Historical-only bounded public-source pilot. No cron, production DB, model
+# training or serving, donor exports, private secrets or 2027 program.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/cfb-senate-2021-22-year-end-source-pilot.yml
+
+permissions:
+  contents: read
+
+jobs:
+  old-senate-candidate-annual-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Prove original 2021-22 CFB one-Senator annual-report date fields
+        run: |
+          node --import tsx scripts/capture-cfb-senate-2021-22-year-end-pdf-proofs.ts \
+            --output artifacts/cfb-2021-22-senate-year-end-pdf-proofs.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2021-22-senate-year-end-one-filer-proofs
+          path: artifacts/cfb-2021-22-senate-year-end-pdf-proofs.json
+          if-no-files-found: error
+          retention-days: 30
