@@ -1,0 +1,35 @@
+name: One-time CFB Senate 6 report PDF and disclosure calendar provenance
+
+# Trigger only when first added on main. No cron, Vercel, Neon, production
+# database access, raw donor-data export or inference-model modification.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/cfb-sd6-2025-report-pdf-proof-probe.yml
+
+permissions:
+  contents: read
+
+jobs:
+  official-source-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Acquire at most five public CFB Senate District 6 report PDFs and two official calendar PDFs
+        run: |
+          node --import tsx scripts/capture-cfb-sd6-2025-report-pdf-proofs.ts \
+            --output artifacts/cfb-sd6-2025-pdf-and-calendar-metadata.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cfb-sd6-2025-report-pdf-calendar-provenance
+          path: artifacts/cfb-sd6-2025-pdf-and-calendar-metadata.json
+          if-no-files-found: error
+          retention-days: 30
