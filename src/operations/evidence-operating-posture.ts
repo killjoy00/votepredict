@@ -19,6 +19,8 @@ export const PAUSED_VERCEL_WORKFLOWS = [
   'revisor-introduction-house-tail.yml',
   'evaluate-introduction-timing-v3.yml',
   'revisor-introduction-sharded-backfill.yml',
+  'evidence-2027-readiness-audit.yml',
+  'lifecycle-p8-prospective-model.yml',
 ] as const;
 
 const JOB_GUARD = "inputs.run_vercel == true && github.ref == 'refs/heads/main'";
