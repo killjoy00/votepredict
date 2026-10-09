@@ -1,0 +1,73 @@
+name: Evidence Neon sandbox read-only health
+
+# Deliberately NOT a scheduled workflow. Production is not an accepted target.
+# Environment credentials are not configured by this repository change.
+on:
+  workflow_dispatch:
+    inputs:
+      run_readonly:
+        description: Explicitly authorize a sandbox-only, read-only metadata check
+        type: boolean
+        required: true
+        default: false
+      approval_phrase:
+        description: Type READ_ONLY_SANDBOX_AUDIT to request the protected sandbox check
+        type: string
+        required: true
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evidence-neon-readonly-sandbox
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      inputs.run_readonly == true &&
+      inputs.approval_phrase == 'READ_ONLY_SANDBOX_AUDIT'
+    # Configure restricted secrets, an exact non-production Neon branch, and
+    # required reviewers in this GitHub environment *before any manual run*.
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      VOTEPREDICT_EVIDENCE_RO_SCOPE: sandbox
+      VOTEPREDICT_EVIDENCE_RO_EXECUTION_APPROVAL: READ_ONLY_SANDBOX_AUDIT
+      VOTEPREDICT_EVIDENCE_RO_DATABASE_URL: ${{ secrets.EVIDENCE_READONLY_SANDBOX_URL }}
+      VOTEPREDICT_EVIDENCE_RO_EXPECTED_ROLE: ${{ vars.EVIDENCE_READONLY_SANDBOX_ROLE }}
+      VOTEPREDICT_EVIDENCE_RO_OUTPUT_FILE: artifacts/evidence-neon-sandbox-readonly-health-v1.json
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Require protected sandbox secrets without Vercel or production fallback
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${VOTEPREDICT_EVIDENCE_RO_DATABASE_URL:-}"
+          test -n "${VOTEPREDICT_EVIDENCE_RO_EXPECTED_ROLE:-}"
+          mkdir -p artifacts
+          chmod 700 artifacts
+      - name: Read-only sandbox evidence ingestion and source freshness
+        run: node --import tsx scripts/audit-evidence-neon-readonly.ts --connect
+      - name: Save bounded report (no source body or credentials)
+        uses: actions/upload-artifact@v7
+        with:
+          name: evidence-neon-sandbox-readonly-health-v1-${{ github.sha }}-${{ github.run_id }}
+          path: artifacts/evidence-neon-sandbox-readonly-health-v1.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Remove sandbox output
+        if: always()
+        shell: bash
+        run: rm -f artifacts/evidence-neon-sandbox-readonly-health-v1.json

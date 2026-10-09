@@ -77,7 +77,7 @@ An independent public-archive desk pass dated **2026-10-08** found **eight** 202
 
 See `docs/evaluation/historical-evidence-density-program.md` for canonical baselines, closed lanes and the operator safety contract.
 
-**Current cross-project evidence tracker:** [issue #847](https://github.com/killjoy00/votepredict/issues/847) and [`docs/evaluation/evidence-program-scorecard.md`](evaluation/evidence-program-scorecard.md). The scorecard separates dated source-family corpus metrics from the v1.8 **92 strict directional feature rows**, identifies the extra **49 review-only** 2025-26 cohort-2 pairs, and records Vercel/evidence refresh as suspended. No 2027 actions, live DB reads or production refreshes are authorized by #847.
+**Current cross-project evidence tracker:** [issue #847](https://github.com/killjoy00/votepredict/issues/847) and [`docs/evaluation/evidence-program-scorecard.md`](evaluation/evidence-program-scorecard.md). The scorecard separates dated source-family corpus metrics from the v1.8 **92 strict directional feature rows**, identifies the extra **49 review-only** 2025-26 cohort-2 pairs, and records Vercel/evidence refresh as suspended. #847 now includes an **offline-default, sandbox-only** direct-Neon **read-only** health auditor and manual GitHub workflow, with least-privilege SQL checks and no Vercel dependencies; it is **not provisioned or activated** and cannot write evidence. No 2027 actions, live DB reads or production refreshes are authorized by #847.
 
 ## Modeling posture
 

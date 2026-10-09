@@ -105,7 +105,7 @@ The Operations page exposes previously captured ingestion/source and campaign-fi
 
 In the checked-in `vercel.json`, automatic Git deployments are disabled and no cron is registered. That does **not** prove the old cron on a **previously deployed** release is off; the live-state question is explicitly **unverified** under #732. Never reactivate production scheduling, use Vercel credentials, or trigger ingestion to answer a documentation question.
 
-For the consolidated dated metrics, offline posture test, and proposed *unactivated* GitHub/direct-Neon alternative (separate read-only health credentials and separately approved write canary), see [Evidence program operating scorecard](evaluation/evidence-program-scorecard.md). Until independent credential, safety and approval gates are satisfied, existing evidence remains durable but routine automated refresh is **paused**.
+For the consolidated dated metrics, offline posture test, and **unactivated sandbox-only Neon read-only auditor**, see [Evidence program operating scorecard](evaluation/evidence-program-scorecard.md). The new `scripts/audit-evidence-neon-readonly.ts` CLI defaults to `--offline` (no DB/network calls); `.github/workflows/evidence-neon-readonly-sandbox.yml` is manual, default-off and requires a dedicated **non-production** least-privilege role. No sandbox environment/secrets are configured or live checks have run. This is **not** an ingestion path, and the existing production refresh remains paused. A write-capable direct-Neon collector would need separate design and explicit authorization. Until those gates pass, previously captured evidence remains durable but routine automated refresh is **paused**.
 
 ## Quick Evidence candidate
 
