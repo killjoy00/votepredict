@@ -778,6 +778,7 @@ promote a model automatically.
 - [x] Freeze the prospective capture/evaluation contract before 2027-28 outcomes.
 - [x] Freeze the exact 2027 prospective model artifact from completed 2021-26 history.
 - [x] Build/test an outcome-blind, date-exclusive **offline synthetic** daily-capture prototype with append-only local storage; [prototype contract](lifecycle-p8-daily-offline-prototype.md). This does **not** activate real capture or compute P8 probabilities.
+- [x] Add offline official Revisor XML receipt/first-observed-time replay and original frozen-model byte verification; [provenance bridge and limits](lifecycle-p8-revisor-receipts-and-frozen-model.md). **No 2027 data was collected or scored; complete-bill enumeration and authenticated calendar data remain unresolved.**
 - [ ] Activate immutable daily lifecycle capture before 2027-28 outcomes.
 - [ ] Preserve the serving models while observations accrue.
 - [ ] Score only after the frozen prospective reveal/coverage gates are met.
