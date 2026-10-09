@@ -57,17 +57,23 @@ export function validateReadonlySandboxConfig(
   if (!raw || !expectedRole) {
     throw new Error('Dedicated sandbox Neon URL and expected least-privilege role are required');
   }
-  if (!/^[a-z_][a-z0-9_]{2,62}$/.test(expectedRole)) {
-    throw new Error('Expected database role has invalid format');
+  if (!/^vp_evidence_ro_[a-z0-9_]{3,48}$/.test(expectedRole)) {
+    throw new Error('Expected database role must use the dedicated vp_evidence_ro_ prefix');
   }
   let url: URL;
   try { url = new URL(raw); } catch {
     throw new Error('Dedicated sandbox Neon URL is invalid');
   }
+  const allowedParams = [...url.searchParams.keys()].every(key =>
+    key === 'sslmode' || key === 'channel_binding');
   if (
+    !allowedParams ||
+    (url.searchParams.has('channel_binding') && url.searchParams.get('channel_binding') !== 'require') ||
     !['postgres:', 'postgresql:'].includes(url.protocol) ||
     !url.hostname.endsWith('.neon.tech') ||
     url.hostname.includes('dbbridge') ||
+    url.hostname.includes('-pooler.') ||
+    (url.port && url.port !== '5432') ||
     url.searchParams.get('sslmode') !== 'verify-full' ||
     decodeURIComponent(url.username) !== expectedRole ||
     !url.password || !url.pathname || url.pathname === '/'
