@@ -6,7 +6,6 @@
  */
 import { appendFileSync } from 'node:fs';
 import {
-  PROJECT_CHECK_APPROVAL,
   verifyVotePredictNeonProject,
 } from '../src/operations/votepredict-neon-project-identity.js';
 
