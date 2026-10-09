@@ -92,7 +92,7 @@ The implementation branch for #847 adds a **sandbox-only** read-only proof path.
 | Manually gated GitHub Action | `.github/workflows/evidence-neon-readonly-sandbox.yml` | Sole trigger `workflow_dispatch`; default-off `run_readonly=false`, exact phrase, `main` branch and `evidence-readonly-sandbox` GitHub environment; no Vercel secrets/CLI/HTTP or database bridge |
 | Static and integration tests | `tests/evidence-neon-readonly.test.ts` and `tests/evidence-operating-posture.test.ts` | Pure fake-client fail-closed tests plus a disposable **localhost-only CI PostgreSQL** least-privilege role test |
 
-**No live Neon project, live branch, GitHub environment approval rules, or secret has been configured or verified in this session.** Merely merging the new workflow does not authorize or cause a read. Do not run it until all preconditions below are independently verified. The workflow **cannot itself prove** that an operator supplied a *sandbox* Neon endpoint; the protected environment and user-managed branch/credential scope are essential.
+**At PR #849's completion, no live Neon project/branch, GitHub environment approval rules, or secret was verified.** On 2026-10-08 the owner subsequently reported adding `NEON_API_KEY` (environment secret) and `VOTEPREDICT_NEON_PROJECT_ID` (environment variable) in the `evidence-readonly-sandbox` GitHub environment. That report is **not independent verification** of the environment, key scope, project identity, branch isolation or live access; none was checked through GitHub or Neon APIs during this documentation edit. Merely merging the new workflow does not authorize or cause a read. Do not run it until all preconditions below are independently verified. The workflow **cannot itself prove** that an operator supplied a *sandbox* Neon endpoint; the protected environment and user-managed branch/credential scope are essential.
 
 To provision separately **only in an approved disposable Neon branch**, have an appropriately authorized operator create a **SQL-level** dedicated non-owner role with a strong privately generated password. Role creation or grants below are *illustrative*, not executed:
 
@@ -133,6 +133,21 @@ To answer whether GitHub already has a usable *credential namespace*, without to
 The preflight has no `curl`, `psql`, Vercel CLI, database connection, workflow secret-value injection, deploy, ingestion or run trigger for the protected sandbox. Its automatic push trigger is confined to its **own workflow file** so the initial merge yields a deterministic GitHub Actions finding; it is **not a periodic job**. See the actual GitHub run and its step summary for a grounded result; absent a run, the credential state is **unverified**.
 
 If no VotePredict-scoped direct credential namespace is available in GitHub, #847's live Neon phase remains **blocked**. The only approved next paths are provision a genuinely scoped GitHub credential + protected sandbox, or continue fully offline with the already-passing isolated PostgreSQL tests. **Do not** fall back to the Pack 1 connector, to `vercel env pull`, or to production database secrets. No 2027 work, model promotion or Library contact is authorized here.
+
+## VotePredict Neon project identity — manually gated next step
+
+**User-reported configuration (unverified):** GitHub environment `evidence-readonly-sandbox` now contains secret `NEON_API_KEY` and variable `VOTEPREDICT_NEON_PROJECT_ID`. The initial repository-scope preflight #851 cannot see environment-level entries and its earlier all-false outcome does **not** contradict this report. GitHub's general repository fetch interface also does not expose environment configuration or secret values.
+
+The manual-only [`verify-votepredict-neon-project.yml`](../../.github/workflows/verify-votepredict-neon-project.yml) is the **next identity check**, and stays default-off:
+
+1. Open VotePredict's **GitHub Actions → VotePredict Neon project identity (manual read-only)** and select **Run workflow** on `main`.
+2. Tick `verify_project` and enter exactly `VERIFY_VOTEPREDICT_NEON_PROJECT` in `approval_phrase`. Ensure the `evidence-readonly-sandbox` environment's main-only restrictions / required reviewers (where available) are configured before starting.
+3. The one-purpose script `scripts/verify-votepredict-neon-project.ts` reads those environment-scoped GitHub values and issues **one** authenticated `GET /api/v2/projects/{project_id}` to Neon with an 8-second timeout. It accepts only an exact project-ID match and a project name containing `VotePredict` (normalizing spaces/case). A Pack 1 or other mismatched project fails closed.
+4. The job logs a small sanitized pass/fail report **without outputting the API key, project ID, Neon response body or any connection string**. It does not invoke the app DB, create a branch, list project data, query production, or read/write evidence.
+
+**Do not treat passing this gate as proof that the API key is strictly project-scoped or that the intended production identity is independently established outside the owner-supplied configuration.** It establishes only that Neon's metadata agrees with the specific configured ID and VotePredict name. A failed/missing secret/mismatched name is a stop gate. GitHub cannot read environment secrets for us, and no project verification was executed when adding this workflow.
+
+Only after an accepted manual identity check should a **separate approved** schema-only (data-free, Beta) disposable branch operation be designed/executed; require a short expiration to avoid orphaned storage/compute and never copy production rows by default. The existing sandbox SQL reader also needs a separately provisioned least-privilege role and sandbox connection URL before its own one-time live read. **Neither branch creation nor any production evidence refresh is authorized by merging this project-verification workflow.**
 
 ## #847 current execution ledger
 
