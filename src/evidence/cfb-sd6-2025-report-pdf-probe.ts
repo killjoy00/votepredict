@@ -172,21 +172,21 @@ export function diagnoseCfbSd6ReportPdfHeader(
   // Deliberately output ONLY structural markers and dates. No candidate
   // treasurer, donor, contributor, employer, amount, address or body snippet.
   const head = normalized(body).slice(0, 4_000);
-  const registration = head.match(/Registration\\s+Number\\s*:\\s*(\\d{4,8})\\b/i);
+  const registration = head.match(/Registration\s+Number\s*:\s*(\d{4,8})\b/i);
   const period = head.match(
-    /Period\\s+Covered\\s*:\\s*(\\d{1,2}\\/\\d{1,2}\\/\\d{4})\\s+through\\s+(\\d{1,2}\\/\\d{1,2}\\/\\d{4})/i,
+    /Period\s+Covered\s*:\s*(\d{1,2}\/\d{1,2}\/\d{4})\s+through\s+(\d{1,2}\/\d{1,2}\/\d{4})/i,
   );
-  const received = head.match(/Received\\s+by\\s+the\\s+Board\\s+([A-Za-z]+\\s+\\d{1,2},\\s+\\d{4})/i);
+  const received = head.match(/Received\s+by\s+the\s+Board\s+([A-Za-z]+\s+\d{1,2},\s+\d{4})/i);
   return {
     referenceId: cfbSd6ReportIdentity(reference),
-    hasCandidateReportTitle: /Report of Receipts and Expenditures\\s+for\\s+Principal Campaign Committee/i.test(head),
-    hasRegistrationLabel: /Registration\\s+Number\\s*:/i.test(head),
+    hasCandidateReportTitle: /Report of Receipts and Expenditures\s+for\s+Principal Campaign Committee/i.test(head),
+    hasRegistrationLabel: /Registration\s+Number\s*:/i.test(head),
     registrationMatches: registration?.[1] === reference.registrationNumber,
-    senateDistrictSixMatches: /Senat(?:e|or)\\s+District\\s*:?\\s*6\\b/i.test(head),
+    senateDistrictSixMatches: /Senat(?:e|or)\s+District\s*:?\s*6\b/i.test(head),
     coverageStartOn: dateFromUs(period?.[1] ?? ''),
     coverageEndOn: dateFromUs(period?.[2] ?? ''),
     filedOn: dateFromEnglish(received?.[1] ?? ''),
-    reportContainsReceivedByBoard: /Received\\s+by\\s+the\\s+Board/i.test(head),
+    reportContainsReceivedByBoard: /Received\s+by\s+the\s+Board/i.test(head),
   };
 }
 
