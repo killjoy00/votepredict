@@ -91,7 +91,7 @@ test('Neon API permission failures, redirects, and invalid responses do not cert
   }
   await assert.rejects(
     () => verifyVotePredictNeonProject(base, async () => {
-      throw new Error('private Neon's credentials should not appear in logs');
+      throw new Error('Private Neon credentials should not appear in logs');
     }),
     /request failed/,
   );
