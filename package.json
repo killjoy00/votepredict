@@ -51,6 +51,7 @@
     "eval:lifecycle:p7-outcome": "tsx scripts/evaluate-lifecycle-p7-outcome.ts",
     "build:lifecycle:p8-model": "tsx scripts/build-lifecycle-p8-prospective-model.ts",
     "rehearse:lifecycle:p8:offline": "tsx scripts/rehearse-lifecycle-p8-daily-capture.ts",
+    "verify:lifecycle:p8:offline": "tsx scripts/verify-lifecycle-p8-frozen-model-offline.ts",
     "audit:lifecycle:external-availability": "tsx scripts/audit-lifecycle-external-availability.ts",
     "eval:lifecycle:external-screen": "tsx scripts/evaluate-lifecycle-external-evidence-screen.ts",
     "eval:lifecycle:external-selection-control": "tsx scripts/evaluate-lifecycle-external-selection-control.ts",
