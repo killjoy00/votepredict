@@ -167,19 +167,22 @@ export function auditCfbSenateCandidateReportReferences(
     const referenceIds: string[] = [];
     if (matching.length > 0) {
       const acquired = matching.filter(validCapture);
-      if (acquired.length !== matching.length && matching.some(s => s.status === 'acquired')) {
+      if (matching.some(s => s.status === 'acquired' && !validCapture(s))) {
         status = 'source_payload_invalid';
       } else if (acquired.length === 0) {
         status = 'source_fetch_failed';
-      } else if (new Set(acquired.map(s => s.responseSha256)).size > 1) {
+      } else if (
+        matching.length !== acquired.length
+        || new Set(acquired.map(s => s.responseSha256)).size > 1
+        || new Set(acquired.map(s => JSON.stringify(s.references))).size > 1
+      ) {
         status = 'source_snapshots_conflict';
       } else {
         const source = acquired[0]!;
         sourceResponseSha256 = source.responseSha256;
         sourceViewerPage = source.sourceUrl;
-        if (matching.length !== acquired.length) status = 'source_snapshots_conflict';
-        else {
-          status = 'no_matching_year_references';
+        status = 'no_matching_year_references';
+        {
           const seen = new Set<string>();
           for (const ref of source.references) {
             if (!validReference(ref, source)) {
