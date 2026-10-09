@@ -48,13 +48,13 @@ jobs:
           VOTEPREDICT_SF958_EXCERPTS_DIR: artifacts/sf958-targeted-review
         continue-on-error: true
         run: |
-          python3 -m venv "${{ github.run_id }}NER_TEMP/one-time-asr"
+          python3 -m venv "$RUNNER_TEMP/one-time-asr"
           "$RUNNER_TEMP/one-time-asr/bin/pip" install -q faster-whisper==1.2.1
           timeout 360 "$RUNNER_TEMP/one-time-asr/bin/python" scripts/transcribe-2021-sf958-clips-unverified.py
       - name: Upload small derived review excerpts and conservative source manifest
         uses: actions/upload-artifact@v7
         with:
-          name: historical-2021-sf958-reviewed-clips-${{ github.sha }}-$RUN
+          name: historical-2021-sf958-reviewed-clips-${{ github.sha }}-${{ github.run_id }}
           path: artifacts/sf958-targeted-review/
           if-no-files-found: error
           retention-days: 14
