@@ -81,6 +81,7 @@ test('GitHub preflight is a one-file merge trigger and does no network or produc
   assert.match(source, /secrets\.NEON_API_KEY != ''/);
   assert.match(source, /vars\.VOTEPREDICT_NEON_PROJECT_ID != ''/);
   assert.match(source, /secrets\.EVIDENCE_READONLY_SANDBOX_URL != ''/);
-  assert.doesNotMatch(source, /vercel env pull|VERCEL_TOKEN|DATABASE_URL_UNPOOLED: \u0024\u007b\u007b secrets\.|NEON_API_KEY: \u0024\u007b\u007b secrets\.|curl |wget |psql|--connect|runPublicEvidenceRefresh|deploy --prod|permissions:\s*[\s\S]*?id-token: write/i);
+  assert.doesNotMatch(source, /vercel env pull|VERCEL_TOKEN|curl |wget |psql|--connect|runPublicEvidenceRefresh|deploy --prod|permissions:\s*[\s\S]*?id-token: write/i);
+  assert.doesNotMatch(source, /^\s+(?:NEON_API_KEY|DATABASE_URL_UNPOOLED):\s+\$\{\{\s*secrets\./m);
   assert.match(source, /run: node scripts\/check-github-neon-credential-presence\.mjs/);
 });
