@@ -1,0 +1,51 @@
+name: VotePredict Neon project identity (manual read-only)
+
+# Issue #847. No automatic trigger, branch creation, database connection,
+# Vercel access, secret export, or production evidence refresh.
+on:
+  workflow_dispatch:
+    inputs:
+      verify_project:
+        description: Approve one read-only Neon project-details GET
+        type: boolean
+        required: true
+        default: false
+      approval_phrase:
+        description: Type VERIFY_VOTEPREDICT_NEON_PROJECT
+        type: string
+        required: true
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: votepredict-neon-project-identity
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      inputs.verify_project == true &&
+      inputs.approval_phrase == 'VERIFY_VOTEPREDICT_NEON_PROJECT'
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_NEON_APPROVAL: ${{ inputs.approval_phrase }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify only VotePredict Neon project metadata; no DB connection or branch mutation
+        run: node --import tsx scripts/verify-votepredict-neon-project.ts --verify
