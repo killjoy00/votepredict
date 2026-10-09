@@ -53,6 +53,23 @@ That first run also identified **two fail-closed gaps**:
 
 The retrieved special-cycle final PDF covers **January 1–May 14, 2025**, while the calendar states **May 20** as its last transaction date for the cycle-final report. Do **not** silently treat those coverage periods as identical; reconcile the actual report filing/version and calendar window independently before using row-level completeness. No eligibility promotion is allowed by this repair.
 
+## Source proof retained permanently after rerun #871
+
+The corrected **2026-10-09** [one-time official source run #37997701770](https://github.com/killjoy00/votepredict/actions/runs/37997701770) succeeded: **5/5 original CFB report PDFs downloaded and source headers verified, 2/2 official CFB calendar PDFs downloaded, 5/5 report/calendar pairs matched**, with zero source fetch failures. The public-source proof metadata was acquired only from the government-hosted viewer and calendars; no database connection was made.
+
+The **versioned public, metadata-only source snapshot** is [`docs/evaluation/source-proof/cfb-2025-senate-district6-report-pdfs.json`](./source-proof/cfb-2025-senate-district6-report-pdfs.json). It fixes the *exact* CFB viewer response SHA-256, **seven original PDF SHA-256 hashes and file sizes**, five source report identities and coverage/receipt dates, two correct case-specific calendar locators and proof flags, conservative statutory/filing release bounds, and the GitHub action run/artifact IDs. Because Actions artifacts expire, this snapshot is durable source-provenance evidence. The separately checked [snapshot test](../../tests/cfb-sd6-2025-source-proof-snapshot.test.ts) guards against silent date/source drift.
+
+**Exact observed CFB received / statutory deadline / legal-and-filing conservative day bounds:**
+- Pre-special primary: **Apr 8 / Apr 8 / Apr 9, 2025**.
+- Pre-special general: **Apr 22 / Apr 22 / Apr 23, 2025**.
+- Special election cycle final: **May 26 / May 27 / May 28, 2025**.
+- Ordinary 2025 year-end: **Jan 30 / Feb 2 / Feb 3, 2026**. Early filing is still nonpublic until the original due-date release.
+- Original year-end amendment #1: **May 24, 2026 / Feb 2, 2026 original obligation / May 25, 2026** conservative late-amendment floor. The amendment is **not** an additional statutory required filing.
+
+Original PDF headers show a contiguous 2025 time partition for the separate special cycle final (Jan 1–May 14, 2025) and ordinary year-end (May 15–Dec 31, 2025). This **does not** establish that the second report's transactions were publicly knowable in 2025. The special-election calendar's **May 20** last transaction date also does **not** match the special final PDF's **May 14** period end. That is a source-calendar inconsistency requiring independent investigation, not a reason to backfill extra days or mark rows absent.
+
+All five source records deliberately preserve **`historicallyPublicByOn=null`**, **`exactRowContainmentVerified=false`**, and **`historicalAsOfEligible=false`**. Original PDFs were hashed in GitHub Actions but **not checked into Git, distributed with this snapshot, or used as a complete 2021–2025 Senate denominator**. The snapshot does not certify historical availability and does not provide permission to mutate prior forecast evidence.
+
 ## What next and why this is not yet a complete finance repair
 
 1. Confirm the one-time workflow actually downloaded the five PDFs and independently hashed both calendars; investigate and report any inaccessible source as an *explicit source gap*. Do **not** infer a successful download from a passing CI run.
