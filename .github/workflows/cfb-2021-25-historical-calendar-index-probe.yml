@@ -1,0 +1,36 @@
+name: One-time CFB 2021-25 disclosure calendar archive and SD6 source version
+
+# One-shot public-source proof when this workflow first appears on main.
+# No cron, workflow_dispatch, production DB, private donor data, Vercel,
+# freeze manipulation, historical serving, or prediction-model updates.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/cfb-2021-25-historical-calendar-index-probe.yml
+
+permissions:
+  contents: read
+
+jobs:
+  source-calendar-archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Acquire one official archive listing and two SD6 public calendar PDF source bodies
+        run: |
+          node --import tsx scripts/capture-cfb-2021-25-calendar-index-and-sd6-version.ts \
+            --output artifacts/cfb-calendar-archive-and-sd6-version.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2021-25-calendar-index-and-sd6-version
+          path: artifacts/cfb-calendar-archive-and-sd6-version.json
+          if-no-files-found: error
+          retention-days: 30
