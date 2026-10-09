@@ -52,6 +52,13 @@ export interface P8DailyBillInput {
   firstObservedAt: string;
   sourceUrl: string;
   sourceSha256: string;
+  /** Required for official-receipt input, optional for original synthetic fixtures. */
+  calendarEvidence?: {
+    sourceUrl: string;
+    sourceSha256: string;
+    observedAt: string;
+    adjournmentOn: string;
+  };
   process: {
     status: 'parsed' | 'source_deferred';
     observedAt: string | null;
@@ -84,6 +91,12 @@ export interface P8DailyCaptureRow {
     introducedOn: string;
     adjournmentOn: string;
     firstObservedAt: string;
+    calendarEvidence: {
+      sourceUrl: string;
+      sourceSha256: string;
+      observedAt: string;
+      adjournmentOn: string;
+    } | null;
     processStatus: 'parsed' | 'source_deferred' | 'not_observable_by_cutoff';
     processSourceEligible: boolean;
     processObservedAt: string | null;
@@ -126,7 +139,7 @@ export interface P8DailyCaptureBatch {
   cutoffDateExclusive: string;
   capturedAt: string;
   timezone: typeof P8_DAILY_CAPTURE_TIMEZONE;
-  source: 'offline_supplied_asof_fixtures';
+  source: 'offline_supplied_asof_fixtures' | 'offline_observed_revisor_receipts';
   frozenModelContentSha256Reference: typeof LIFECYCLE_P8_FROZEN_MODEL_CONTENT_SHA256;
   outcomeRead: false;
   productionCaptureActivated: false;
@@ -136,7 +149,7 @@ export interface P8DailyCaptureBatch {
   contentSha256: string;
 }
 
-const OFFICIAL_HOSTS = new Set(['revisor.mn.gov', 'www.revisor.mn.gov']);
+const OFFICIAL_HOSTS = new Set(['revisor.mn.gov', 'www.revisor.mn.gov', 'api.revisor.mn.gov']);
 const NON_TERMINAL_PROCESS_KINDS = new Set([
   'committee_referral', 'committee_report', 'rules_referral',
   'second_reading', 'floor_scheduled', 'amendment_activity',
@@ -204,7 +217,8 @@ function validateSource(url: string, contentHash: string, label: string): void {
 function validateBill(input: P8DailyBillInput): void {
   assertOnlyKeys(input,
     ['billId', 'session', 'chamber', 'identifier', 'introducedOn', 'adjournmentOn',
-      'firstObservedAt', 'sourceUrl', 'sourceSha256', 'process', 'billVersions'], 'bill');
+      'firstObservedAt', 'sourceUrl', 'sourceSha256', 'calendarEvidence',
+      'process', 'billVersions'], 'bill');
   if (input.session !== P8_DAILY_CAPTURE_SESSION ||
       (input.chamber !== 'house' && input.chamber !== 'senate') ||
       typeof input.billId !== 'string' || !input.billId.trim() ||
@@ -219,6 +233,19 @@ function validateBill(input: P8DailyBillInput): void {
   if (input.introducedOn > input.adjournmentOn) throw new Error('Introduction after adjournment');
   dateFromInstant(input.firstObservedAt, 'bill firstObservedAt');
   validateSource(input.sourceUrl, input.sourceSha256, 'bill');
+  if (input.calendarEvidence !== undefined) {
+    const calendar = input.calendarEvidence;
+    assertOnlyKeys(calendar, ['sourceUrl', 'sourceSha256', 'observedAt', 'adjournmentOn'], 'calendarEvidence');
+    dateOnly(calendar.adjournmentOn, 'calendar adjournmentOn');
+    if (calendar.adjournmentOn !== input.adjournmentOn) {
+      throw new Error('Official calendar evidence conflicts with bill adjournment date');
+    }
+    const observedOn = dateFromInstant(calendar.observedAt, 'calendar observedAt');
+    if (observedOn > input.introducedOn && observedOn > input.adjournmentOn) {
+      throw new Error('Calendar observation is after the recorded adjournment');
+    }
+    validateSource(calendar.sourceUrl, calendar.sourceSha256, 'calendar');
+  }
   assertOnlyKeys(input.process, ['status', 'observedAt', 'parserVersion', 'events'], 'process');
   if (!Array.isArray(input.process.events) || !Array.isArray(input.billVersions)) {
     throw new Error('process events and bill versions must be arrays');
@@ -368,6 +395,7 @@ function rowForBill(bill: P8DailyBillInput, cutoff: string): P8DailyCaptureRow {
       introducedOn: bill.introducedOn,
       adjournmentOn: bill.adjournmentOn,
       firstObservedAt: bill.firstObservedAt,
+      calendarEvidence: bill.calendarEvidence ? { ...bill.calendarEvidence } : null,
       processStatus,
       processSourceEligible,
       processObservedAt: processSourceEligible ? bill.process.observedAt : null,
@@ -409,8 +437,9 @@ export function buildOfflineP8DailyCapture(input: {
   cutoffDateExclusive: string;
   capturedAt: string;
   bills: readonly P8DailyBillInput[];
+  source?: P8DailyCaptureBatch['source'];
 }): P8DailyCaptureBatch {
-  assertOnlyKeys(input, ['cutoffDateExclusive', 'capturedAt', 'bills'], 'capture');
+  assertOnlyKeys(input, ['cutoffDateExclusive', 'capturedAt', 'bills', 'source'], 'capture');
   const cutoff = dateOnly(input.cutoffDateExclusive, 'cutoffDateExclusive');
   if (cutoff < '2027-01-01' || cutoff > '2028-12-31') {
     throw new Error('P8 daily capture accepts only 2027-2028 dates');
@@ -419,6 +448,14 @@ export function buildOfflineP8DailyCapture(input: {
     throw new Error('Captured instant must be on the declared America/Chicago calendar day');
   }
   if (!Array.isArray(input.bills)) throw new Error('Capture bills must be an array');
+  if (input.source !== undefined && input.source !== 'offline_supplied_asof_fixtures' &&
+      input.source !== 'offline_observed_revisor_receipts') {
+    throw new Error('Unsupported offline P8 observation source');
+  }
+  if (input.source === 'offline_observed_revisor_receipts' &&
+      input.bills.some(bill => !bill.calendarEvidence)) {
+    throw new Error('Receipt-based P8 capture requires timestamped calendar evidence per bill');
+  }
   const seen = new Set<string>();
   const rows: P8DailyCaptureRow[] = [];
   for (const bill of input.bills) {
@@ -438,7 +475,7 @@ export function buildOfflineP8DailyCapture(input: {
     cutoffDateExclusive: cutoff,
     capturedAt: input.capturedAt,
     timezone: P8_DAILY_CAPTURE_TIMEZONE,
-    source: 'offline_supplied_asof_fixtures' as const,
+    source: input.source ?? 'offline_supplied_asof_fixtures' as const,
     frozenModelContentSha256Reference: LIFECYCLE_P8_FROZEN_MODEL_CONTENT_SHA256,
     outcomeRead: false as const,
     productionCaptureActivated: false as const,
