@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 import {
   buildOfflineP8DailyCapture,
   latestP8CaptureBeforeEvent,
@@ -308,4 +309,32 @@ test('tampered row/batch hash is rejected before any file is written', async () 
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
+});
+
+test('synthetic-only rehearsal CLI runs without external credentials or databases', () => {
+  const output = execFileSync(process.execPath, [
+    '--import', 'tsx', 'scripts/rehearse-lifecycle-p8-daily-capture.ts',
+  ], {
+    cwd: process.cwd(),
+    encoding: 'utf8',
+    timeout: 30_000,
+  });
+  const summary = JSON.parse(output) as {
+    verdict: string;
+    rows: number;
+    firstWrite: string;
+    secondWrite: string;
+    productionCaptureActivated: boolean;
+    outcomeRead: boolean;
+    predictionsComputed: boolean;
+    temporaryFilesRemoved: boolean;
+  };
+  assert.equal(summary.verdict, 'passed');
+  assert.equal(summary.rows, 1);
+  assert.equal(summary.firstWrite, 'created');
+  assert.equal(summary.secondWrite, 'already_present');
+  assert.equal(summary.productionCaptureActivated, false);
+  assert.equal(summary.outcomeRead, false);
+  assert.equal(summary.predictionsComputed, false);
+  assert.equal(summary.temporaryFilesRemoved, true);
 });
