@@ -1,0 +1,37 @@
+name: One-time CFB 2025 Senate candidate report reference probe
+
+# This workflow runs once on its own addition to main. Not a scheduler or
+# standing crawler. No secrets, production DB, deploy or PDF downloads.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/cfb-2025-candidate-report-reference-probe.yml
+
+permissions:
+  contents: read
+
+jobs:
+  source-reference-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Capture one official 2025 candidate report tab, metadata only
+        run: |
+          node --import tsx scripts/capture-cfb-candidate-reference-inventory.ts \
+            --registrations 19205 \
+            --segments 2026 \
+            --output artifacts/cfb-candidate-references.jsonl
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2025-candidate-19205-reference-probe
+          path: artifacts/cfb-candidate-references.jsonl
+          if-no-files-found: error
+          retention-days: 30
