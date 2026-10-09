@@ -115,6 +115,25 @@ For development: `node --import tsx scripts/audit-evidence-neon-readonly.ts --of
 
 The **remaining operating gates** are: review/apply protected GitHub environment rules and sandbox-only role on a truly separate Neon branch; manually authorize one bounded sandbox read-only test; inspect the output and role proofs; then separately decide whether any production read-only check or write-capable collector is justified. Those future decisions do **not** follow automatically from green CI. The old live Vercel cron remains **unverified** under #732.
 
+## GitHub-only Neon access discovery (no separate ChatGPT connector required)
+
+The current VotePredict GitHub **CI** workflow (`.github/workflows/ci.yml`) tests against a local ephemeral `postgres:18-alpine` service. It does **not** establish a Neon connection. Existing source-backed historical/evidence workflows that accessed Neon did so by pulling production environment variables using the **paused** Vercel path; the repository contains no declared direct `NEON_API_KEY`/VotePredict project-ID binding in its existing ingestion workflow. That source inspection **cannot prove** the absence of secret names in GitHub settings.
+
+The separate Neon plugin account visible during this review resolves to an unrelated Pack 1 project. **Never use that project/branch or any other application’s credentials as a substitute for VotePredict.**
+
+To answer whether GitHub already has a usable *credential namespace*, without touching Vercel or Neon, `.github/workflows/evidence-neon-github-credential-preflight.yml` performs a single path-filtered, offline check on merge and permits explicit manual reruns. It passes **only booleans produced by GitHub expressions** (e.g., whether `secrets.NEON_API_KEY != ''`); the script `scripts/check-github-neon-credential-presence.mjs` receives no API keys, URLs or passwords. Its output states whether these four names are visible at **repository** scope:
+
+| Name | Purpose | Safety |
+| --- | --- | --- |
+| `NEON_API_KEY` | Candidate GitHub-held Neon API credential for future *separate* project-identity verification | Name present ≠ valid, scoped to VotePredict or authorized |
+| `VOTEPREDICT_NEON_PROJECT_ID` | Candidate GitHub repository variable pointing to the **correct** project | Presence alone cannot prove project identity |
+| `EVIDENCE_READONLY_SANDBOX_URL` | Candidate repository-level sandbox URL | Protected environment-specific secrets are intentionally not inspected; never assume a URL is sandbox from its name |
+| `DATABASE_URL_UNPOOLED` | Legacy direct database URL name | May point to production: **must not be used by the sandbox preflight** |
+
+The preflight has no `curl`, `psql`, Vercel CLI, database connection, workflow secret-value injection, deploy, ingestion or run trigger for the protected sandbox. Its automatic push trigger is confined to its **own workflow file** so the initial merge yields a deterministic GitHub Actions finding; it is **not a periodic job**. See the actual GitHub run and its step summary for a grounded result; absent a run, the credential state is **unverified**.
+
+If no VotePredict-scoped direct credential namespace is available in GitHub, #847's live Neon phase remains **blocked**. The only approved next paths are provision a genuinely scoped GitHub credential + protected sandbox, or continue fully offline with the already-passing isolated PostgreSQL tests. **Do not** fall back to the Pack 1 connector, to `vercel env pull`, or to production database secrets. No 2027 work, model promotion or Library contact is authorized here.
+
 ## #847 current execution ledger
 
 - [x] Reconcile distinct evidence families, historical directional coverage and review-only results with source links and cutoff dates.
