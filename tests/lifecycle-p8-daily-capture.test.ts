@@ -114,6 +114,12 @@ test('offline P8 daily rows are deterministic, sorted, source lineaged and outco
   assert.deepEqual(parsed.features.evidenceFamilyCounts, {});
   assert.equal(parsed.memberVoteLabel, null);
   assert.deepEqual(parsed.lineage.observedProcessSourceSha256, [SHA_A, SHA_B]);
+  assert.equal(parsed.lineage.firstObservedAt, '2027-01-07T15:00:00.000Z');
+  assert.equal(parsed.lineage.processObservedAt, '2027-01-08T20:00:00.000Z');
+  assert.equal(parsed.lineage.eligibleProcessEvents.length, 2);
+  assert.equal(parsed.lineage.eligibleProcessEvents[1].observedAt, '2027-01-09T20:00:00.000Z');
+  assert.equal(parsed.lineage.eligibleBillVersions.length, 1);
+  assert.equal(parsed.lineage.eligibleBillVersions[0].publishedOn, '2027-01-06');
   assert.equal(parsed.model.predictionsComputed, false);
   assert.equal(Object.hasOwn(parsed, 'targets'), false);
   assert.equal(Object.hasOwn(parsed, 'authoritativePassage'), false);
@@ -129,6 +135,8 @@ test('same-day process and version observations are excluded regardless of intra
   assert.equal(snapshot.features.priorProcessStageCounts.floor_scheduled, undefined);
   assert.equal(snapshot.features.latestEligibleBillVersion?.versionKey, '0');
   assert.deepEqual(snapshot.features.priorCompanionIdentifiers, []);
+  assert.deepEqual(snapshot.lineage.eligibleProcessEvents.map(row => row.occurredOn), ['2027-01-08']);
+  assert.deepEqual(snapshot.lineage.eligibleBillVersions.map(row => row.publishedOn), ['2027-01-06']);
 });
 
 test('late-observed prior-dated events and versions do not backfill old daily rows', () => {
@@ -155,6 +163,10 @@ test('late-observed prior-dated events and versions do not backfill old daily ro
   });
   const today = make('2027-01-10', CAPTURED, [observation]).rows[0];
   assert.equal(today.lineage.processSourceEligible, false);
+  assert.equal(today.lineage.processStatus, 'not_observable_by_cutoff');
+  assert.equal(today.lineage.processObservedAt, null);
+  assert.deepEqual(today.lineage.eligibleProcessEvents, []);
+  assert.deepEqual(today.lineage.eligibleBillVersions, []);
   assert.equal(today.features.lifecycleState, 'introduced');
   assert.equal(today.features.latestEligibleBillVersion, null);
   assert.deepEqual(today.lineage.observedProcessSourceSha256, []);
