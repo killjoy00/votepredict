@@ -25,7 +25,8 @@ export function verifyOfflineP8BatchIntegrity(batch: P8DailyCaptureBatch): void 
     batch.servingChanged !== false ||
     batch.predictionsComputed !== false ||
     batch.timezone !== P8_DAILY_CAPTURE_TIMEZONE ||
-    batch.source !== 'offline_supplied_asof_fixtures' ||
+    (batch.source !== 'offline_supplied_asof_fixtures' &&
+     batch.source !== 'offline_observed_revisor_receipts') ||
     batch.frozenModelContentSha256Reference !== LIFECYCLE_P8_FROZEN_MODEL_CONTENT_SHA256 ||
     !Array.isArray(batch.rows)) {
     throw new Error('Invalid or unexpectedly activated offline P8 capture');
