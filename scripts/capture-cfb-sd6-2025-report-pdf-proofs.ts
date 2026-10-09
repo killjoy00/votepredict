@@ -17,6 +17,7 @@ import {
   CFB_SD6_2025_SPECIAL_CALENDAR,
   auditCfbSd6ReportPdfCaptures,
   cfbSd6ReportIdentity,
+  diagnoseCfbSd6ReportPdfHeader,
   verifyCfbSd6CalendarCapture,
   type CfbSd6CalendarCapture,
   type CfbSd6ReportPdfCapture,
@@ -134,6 +135,10 @@ async function main() {
     }),
     calendarFailures,
     reportPdfFailures: failures,
+    safeReportHeaderDiagnostics: captures.map(capture => ({
+      reportId: cfbSd6ReportIdentity(capture.reference),
+      diagnostic: diagnoseCfbSd6ReportPdfHeader(capture.reference, capture.text),
+    })),
     privacy: {
       reportPdfSourceTextWritten: false,
       individualDonorDataWritten: false,
