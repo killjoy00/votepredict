@@ -224,6 +224,9 @@ function validateBill(input: P8DailyBillInput): void {
         seen.has(event.eventKey)) throw new Error('Process event key missing or duplicated');
     seen.add(event.eventKey);
     dateOnly(event.occurredOn, 'event occurredOn');
+    if (event.occurredOn < input.introducedOn) {
+      throw new Error('Process event predates official bill introduction');
+    }
     const observedOn = dateFromInstant(event.observedAt, 'event observedAt');
     if (observedOn < event.occurredOn) throw new Error('Process event observed before occurrence');
     if (!NON_TERMINAL_PROCESS_KINDS.has(event.stageKind) ||
