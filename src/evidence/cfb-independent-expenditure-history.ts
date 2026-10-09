@@ -11,6 +11,7 @@ export interface CfbIndependentExpenditureRow {
   transactionDate: string | null;
   reportName: string | null;
   filedOn: string | null;
+  dueOn: string | null;
   disclosedOn: string | null;
   spender: string;
   spenderRegistrationNumber: string | null;
@@ -105,6 +106,7 @@ export function parseCfbIndependentExpenditureCsv(
     const transactionDate=normalizeDate(value(rawRow,index,['Date','Expenditure date']));
     const reportName=value(rawRow,index,['Report name','Report','Report type','Filing type'])||null;
     const filedOn=normalizeDate(value(rawRow,index,['Filed date','Filing date','Date filed']));
+    const dueOn=normalizeDate(value(rawRow,index,['Report due date','Due date','Date due']));
     const disclosedOn=normalizeDate(value(rawRow,index,[
       'Disclosure date','Disclosed date','Date disclosed','Public date','Published date','Date published',
     ]));
@@ -119,7 +121,7 @@ export function parseCfbIndependentExpenditureCsv(
       affectedCommitteeRegistrationNumber,candidateName:identity.candidateName,chamber:identity.chamber,
       direction,amount,unpaidAmount,totalAmount:Number((amount+unpaidAmount).toFixed(2)),
     };
-    rows.push({...core,reportName,filedOn,disclosedOn,rowKey:stableRowKey(core),raw});
+    rows.push({...core,reportName,filedOn,dueOn,disclosedOn,rowKey:stableRowKey(core),raw});
   });
   return rows.sort((a,b)=>
     a.year-b.year

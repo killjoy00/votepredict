@@ -112,3 +112,16 @@ test('does not convert due dates alone into availability proofs', () => {
     [],
   );
 });
+
+test('board proof table keeps early filing distinct from the statutory public-release day', () => {
+  const proofs = parseCfbBoardMaterialsFilingProofs([
+    '1. Example Senate Candidate Committee (19001)',
+    'Report(s) Due Filed Amount',
+    '2024 Year-End 1/31/25 1/28/25 $0 LFF',
+  ].join('\n'), 'https://register.cfb.mn.gov/pdf/bdinfo/agendas/2025_02_01_materials.pdf');
+  assert.equal(proofs.length, 1);
+  assert.equal(proofs[0]?.dueOn, '2025-01-31');
+  assert.equal(proofs[0]?.filedOn, '2025-01-28');
+  assert.equal(proofs[0]?.availableOn, '2025-02-01');
+  assert.equal(proofs[0]?.statutoryReleaseAtLocal, '2025-02-01T08:00:00[America/Chicago]');
+});

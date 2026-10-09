@@ -30,7 +30,7 @@ test('public finance features use disclosure time and carry pre-session disclosu
     },
     {
       chamber: 'house', matchKey: 'a|b', candidateName: 'A B',
-      occurredOn: '2025-02-01', availableOn: '2025-02-10', availabilitySource: 'filed_plus_one',
+      occurredOn: '2025-02-01', availableOn: '2025-02-10', availabilitySource: 'filed_due_statutory_release',
       kind: 'spending', amount: 50,
     },
     {

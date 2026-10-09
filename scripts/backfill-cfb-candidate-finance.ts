@@ -319,6 +319,7 @@ async function main() {
       rowKey: string;
       availableOn: string;
       filedOn: string;
+      dueOn: string;
       reportName: string;
       proofUrl: string;
       proofTextSha256: string;
@@ -355,6 +356,7 @@ async function main() {
         rowKey: row.rowKey,
         availableOn: match.window.availableOn,
         filedOn: match.proof.filedOn,
+        dueOn: match.proof.dueOn,
         reportName: match.window.reportName,
         proofUrl: match.window.proofUrl,
         proofTextSha256: match.proof.textSha256,
@@ -457,7 +459,9 @@ async function main() {
               ? 'pending_regulatory_disclosure_promotion'
               : 'awaiting_regulatory_disclosure_proof',
             transactionDateIsAvailability: false,
-            filingDateDerivedAvailability: Boolean(disclosure),
+            filingDateDerivedAvailability: false,
+            dueDateAndFilingBoundApplied: Boolean(disclosure),
+            reportDueOn: disclosure?.dueOn ?? null,
             transactionDate: row.transactionDate,
             year: row.year,
             committeeName: row.committeeName,
@@ -631,6 +635,7 @@ async function main() {
         row_key: mapping.rowKey,
         available_on: mapping.availableOn,
         filed_on: mapping.filedOn,
+        due_on: mapping.dueOn,
         report_name: mapping.reportName,
         proof_url: mapping.proofUrl,
         proof_text_sha256: mapping.proofTextSha256,
@@ -645,6 +650,7 @@ async function main() {
               row_key text,
               available_on date,
               filed_on date,
+              due_on date,
               report_name text,
               proof_url text,
               proof_text_sha256 text,
@@ -661,6 +667,7 @@ async function main() {
                  'availabilityPolicyVersion', $2::text,
                  'availableOn', disclosure.available_on::text,
                  'filedOn', disclosure.filed_on::text,
+                 'reportDueOn', disclosure.due_on::text,
                  'reportName', disclosure.report_name,
                  'availabilityProofKind', 'cfb_report_filing',
                  'availabilityProofUrl', disclosure.proof_url,
@@ -668,7 +675,8 @@ async function main() {
                  'availabilityProofContentSha256', disclosure.proof_content_sha256,
                  'availabilityProofFetchedAt', disclosure.proof_fetched_at::text,
                  'availabilityProofBytes', disclosure.proof_bytes,
-                 'filingDateDerivedAvailability', true,
+                 'filingDateDerivedAvailability', false,
+                 'dueDateAndFilingBoundApplied', true,
                  'transactionDateIsAvailability', false,
                  'contextOnly', true,
                  'mechanicallyActionable', false,

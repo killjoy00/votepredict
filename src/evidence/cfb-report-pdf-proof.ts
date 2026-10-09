@@ -18,6 +18,7 @@ export interface CfbReportViewerReference {
 export interface CfbParsedReportProof {
   reference: CfbReportViewerReference;
   filedOn: string;
+  dueOn: string;
   window: CfbReportAvailabilityWindow;
   textSha256: string;
 }
@@ -90,6 +91,11 @@ export function parseCfbReportPdfAvailability(
   const normalized = text.replace(/\u0000/g, '').replace(/\s+/g, ' ').trim();
   const period = normalized.match(/Period Covered:\s*(\d{1,2}\/\d{1,2}\/\d{4})\s+through\s+(\d{1,2}\/\d{1,2}\/\d{4})/i);
   const received = normalized.match(/Received by the Board\s+([A-Za-z]+\s+\d{1,2},\s+\d{4})/i);
+  // A received/filing date does not establish when an early-filed
+  // ordinary report ceased being nonpublic. Require an explicit due-date
+  // field in the official report; otherwise leave its eligibility unknown.
+  const dueDate = normalized.match(/\b(?:Report\s+)?Due\s+Date\s*:\s*(\d{1,2}\/\d{1,2}\/\d{4}|[A-Za-z]+\s+\d{1,2},\s+\d{4})/i)
+    ?? normalized.match(/\bReport\s+Due\s*:\s*(\d{1,2}\/\d{1,2}\/\d{4}|[A-Za-z]+\s+\d{1,2},\s+\d{4})/i);
   const directRegistration =
     normalized.match(/Registration Number:\s*(\d+)/i)
     ?? normalized.match(/\bCommittee\s+(\d{4,})\b/i);
@@ -102,32 +108,37 @@ export function parseCfbReportPdfAvailability(
       if(exactReference.test(header))registrationNumber=reference.registrationNumber;
     }
   }
-  if (!period || !received || !registrationNumber) return null;
+  if (!period || !received || !dueDate || !registrationNumber) return null;
   if (registrationNumber !== reference.registrationNumber) return null;
 
   const coverageStartOn = usDate(period[1] ?? '');
   const coverageEndOn = usDate(period[2] ?? '');
   const filedOn = longDate(received[1] ?? '');
-  if (!coverageStartOn || !coverageEndOn || !filedOn) return null;
-  if (coverageEndOn < coverageStartOn) return null;
+  const dueOn = usDate(dueDate[1] ?? '') ?? longDate(dueDate[1] ?? '');
+  if (!coverageStartOn || !coverageEndOn || !filedOn || !dueOn) return null;
+  if (coverageEndOn < coverageStartOn || dueOn < coverageEndOn || filedOn < coverageEndOn) return null;
 
   const proofUrl = viewerProofUrl(reference);
   const filingProof = buildCfbReportDisclosureProof({
     registrationNumber: reference.registrationNumber,
     reportName: reference.reportName + (reference.amendment ? ` - Amendment #${reference.amendment}` : ''),
     filedOn,
+    dueOn,
     proofUrl,
   });
   if (filingProof.availableOn < coverageEndOn) return null;
   return {
     reference,
     filedOn,
+    dueOn,
     window: {
       registrationNumber: reference.registrationNumber,
       reportName: filingProof.reportName,
       coverageStartOn,
       coverageEndOn,
       availableOn: filingProof.availableOn,
+      filedOn,
+      dueOn,
       proofUrl,
       proofKind: 'cfb_report_filing',
     },

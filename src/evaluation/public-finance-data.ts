@@ -15,7 +15,7 @@ export interface PublicFinanceTransaction {
   candidateName: string;
   occurredOn: string;
   availableOn: string | null;
-  availabilitySource: 'direct_disclosure' | 'filed_plus_one' | null;
+  availabilitySource: 'direct_disclosure' | 'filed_due_statutory_release' | null;
   kind: PublicFinanceKind;
   amount: number;
 }
@@ -174,12 +174,19 @@ function parseTransactions(text: string, kind: PublicFinanceKind): {
       'Filing date',
       'Date filed',
     ]));
+    const dueOn = normalizeFinanceDate(firstValue(row, indexes, [
+      'Report due date',
+      'Due date',
+      'Date due',
+    ]));
+    // A filing alone cannot establish public availability before the
+    // legally required 8 AM release the day after the report is due.
     const availableOn = directDisclosureOn
-      ?? (filedOn ? cfbElectronicReportAvailableOn(filedOn) : undefined);
+      ?? (filedOn && dueOn ? cfbElectronicReportAvailableOn(filedOn, dueOn) : undefined);
     const availabilitySource = directDisclosureOn
       ? 'direct_disclosure' as const
-      : filedOn
-        ? 'filed_plus_one' as const
+      : filedOn && dueOn
+        ? 'filed_due_statutory_release' as const
         : null;
     if (availableOn) availabilityDatedRows += 1;
 

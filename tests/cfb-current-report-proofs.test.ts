@@ -28,7 +28,7 @@ test('parses official current-report grid into viewer references', () => {
   assert.equal(grid.references[1]?.amendment, 1);
 });
 
-test('parses CFB report coverage and derives next-day availability from received date', () => {
+test('parses CFB coverage, received date and independently stated report due date', () => {
   const reference: CfbReportViewerReference = {
     filingYear: 2026,
     reportName: 'September Report',
@@ -42,6 +42,7 @@ test('parses CFB report coverage and derives next-day availability from received
   const text = [
     'Registration Number: 17653',
     'Period Covered: 01/01/2026 through 09/15/2026',
+    'Report Due Date: September 22, 2026',
     'Received by the Board September 22, 2026',
   ].join(' ');
   const proof = parseCfbReportPdfAvailability(reference, text);
@@ -49,6 +50,9 @@ test('parses CFB report coverage and derives next-day availability from received
   assert.equal(proof.filedOn, '2026-09-22');
   assert.equal(proof.window.coverageStartOn, '2026-01-01');
   assert.equal(proof.window.coverageEndOn, '2026-09-15');
+  assert.equal(proof.dueOn, '2026-09-22');
+  assert.equal(proof.window.filedOn, '2026-09-22');
+  assert.equal(proof.window.dueOn, '2026-09-22');
   assert.equal(proof.window.availableOn, '2026-09-23');
   assert.equal(proof.window.proofKind, 'cfb_report_filing');
 });
@@ -67,6 +71,7 @@ test('rejects CFB report windows whose proven availability predates coverage end
   const text = [
     'Registration Number: 17653',
     'Period Covered: 01/01/2026 through 09/30/2026',
+    'Report Due Date: October 14, 2026',
     'Received by the Board September 20, 2026',
   ].join(' ');
   assert.equal(parseCfbReportPdfAvailability(reference, text), null);
@@ -86,6 +91,7 @@ test('rejects CFB report windows whose coverage end predates coverage start', ()
   const text = [
     'Registration Number: 17653',
     'Period Covered: 09/30/2026 through 01/01/2026',
+    'Report Due Date: October 14, 2026',
     'Received by the Board October 10, 2026',
   ].join(' ');
   assert.equal(parseCfbReportPdfAvailability(reference, text), null);
@@ -107,6 +113,7 @@ test('parses legacy CFB committee registration header from historical reports', 
     'Period Covered: 1/1/2022 through 10/24/2022',
     'Hortman, Melissa A House Dist.34B Committee 15677',
     'Registration number: Committee name: Candidate name:',
+    'Report Due Date: October 31, 2022',
     'Received by the Board October 31, 2022',
   ].join(' ');
   const proof = parseCfbReportPdfAvailability(reference, text);
@@ -134,6 +141,7 @@ test('parses legacy CFB candidate header when PDF text places registration befor
     'Erin Murphy for Senate 18443 Murphy, Erin Senate District: 64',
     'Manning, Schyler Committee Information: St Paul MN 55116',
     'Registration number: Committee name: Candidate name: Office and District:',
+    'Report Due Date: January 31, 2022',
     'Received by the Board January 28, 2022',
   ].join(' ');
   const proof = parseCfbReportPdfAvailability(reference, text);
@@ -141,7 +149,8 @@ test('parses legacy CFB candidate header when PDF text places registration befor
   assert.equal(proof.filedOn, '2022-01-28');
   assert.equal(proof.window.coverageStartOn, '2021-01-01');
   assert.equal(proof.window.coverageEndOn, '2021-12-31');
-  assert.equal(proof.window.availableOn, '2022-01-29');
+  assert.equal(proof.dueOn, '2022-01-31');
+  assert.equal(proof.window.availableOn, '2022-02-01');
 });
 
 test('legacy CFB candidate header fallback requires the exact viewer registration near the label', () => {
@@ -161,6 +170,7 @@ test('legacy CFB candidate header fallback requires the exact viewer registratio
     'Different Candidate for Senate 99999 Candidate, Different Senate District: 64',
     'Committee Information: St Paul MN 55116',
     'Registration number: Committee name: Candidate name: Office and District:',
+    'Report Due Date: January 31, 2022',
     'Received by the Board January 28, 2022',
   ].join(' ');
   assert.equal(parseCfbReportPdfAvailability(reference, text), null);
@@ -180,6 +190,7 @@ test('legacy CFB committee registration fallback must match the report reference
   const text = [
     'Period Covered: 1/1/2022 through 10/24/2022',
     'Example Candidate Committee 99999',
+    'Report Due Date: October 31, 2022',
     'Received by the Board October 31, 2022',
   ].join(' ');
   assert.equal(parseCfbReportPdfAvailability(reference, text), null);
@@ -199,6 +210,7 @@ test('finance row mapping requires the report to demonstrate the specific row', 
   const reportText = [
     'Registration Number: 17653',
     'Period Covered: 01/01/2026 through 09/15/2026',
+    'Report Due Date: September 22, 2026',
     'Received by the Board September 22, 2026',
     '08/15/2026 Example Donor 500.00',
   ].join(' ');
@@ -264,6 +276,7 @@ test('finance row mapping fails closed outside the report coverage window', () =
   const reportText = [
     'Registration Number: 17653',
     'Period Covered: 01/01/2026 through 09/15/2026',
+    'Report Due Date: September 22, 2026',
     'Received by the Board September 22, 2026',
     '10/01/2026 Example Donor 500.00',
   ].join(' ');
@@ -277,4 +290,17 @@ test('finance row mapping fails closed outside the report coverage window', () =
     contributor: 'Example Donor',
   }, [{ proof, text: reportText }]);
   assert.equal(match, null);
+});
+
+test('official report without an explicit due date fails closed, even if received early',()=>{
+  const reference: CfbReportViewerReference = {
+    filingYear:2022, reportName:'2021 Year-End Report',year:'21',type:'pcc',
+    period:'YE',se:'0',registrationNumber:'18443',amendment:0,
+  };
+  const text=[
+    'Registration Number: 18443',
+    'Period Covered: 01/01/2021 through 12/31/2021',
+    'Received by the Board January 28, 2022',
+  ].join(' ');
+  assert.equal(parseCfbReportPdfAvailability(reference,text),null);
 });

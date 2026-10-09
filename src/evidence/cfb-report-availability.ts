@@ -1,4 +1,4 @@
-export const CFB_REPORT_AVAILABILITY_VERSION='mn-cfb-report-availability-v6' as const;
+export const CFB_REPORT_AVAILABILITY_VERSION='mn-cfb-report-availability-v7' as const;
 export const CFB_SPECIFIC_LOBBYING_SUBJECT_FIRST_REPORT_YEAR=2024 as const;
 
 function exactDate(value:string,label:string):string{
@@ -22,19 +22,30 @@ function requireOfficialCfbProofUrl(value:string):void{
   }
 }
 
-// CFB board records state that electronically filed CFRO campaign-finance reports
-// are published on the Board website the day after filing. This helper deliberately
-// requires a proven filing date; report due dates are never substituted.
-export function cfbElectronicReportAvailableOn(filedOn:string):string{
-  const date=new Date(exactDate(filedOn,'CFB filing date')+'T00:00:00Z');
+function followingDate(value:string):string{
+  const date=new Date(value+'T00:00:00Z');
   date.setUTCDate(date.getUTCDate()+1);
   return date.toISOString().slice(0,10);
+}
+
+// Minnesota Statutes 10A.20, subd. 1b: ordinary reports remain nonpublic
+// until 8:00 a.m. America/Chicago on the day AFTER the report is DUE.
+// Board publication after a late filing may be later; filing + one day is
+// retained as an additional conservative lower bound, never a substitute
+// for the legal due-date release. Historical as-of logic uses day granularity
+// and excludes the availability day itself.
+export function cfbElectronicReportAvailableOn(filedOn:string,dueOn:string):string{
+  const filingBound=followingDate(exactDate(filedOn,'CFB filing date'));
+  const statutoryBound=followingDate(exactDate(dueOn,'CFB report due date'));
+  return filingBound>statutoryBound?filingBound:statutoryBound;
 }
 
 export interface CfbDisclosureProof {
   registrationNumber:string;
   reportName:string;
   filedOn:string;
+  dueOn?:string;
+  statutoryReleaseAtLocal?:string;
   availableOn:string;
   proofUrl:string;
   proofKind:'cfb_report_filing'|'cfb_large_contribution_notice'|'cfb_lobbyist_activity_report';
@@ -80,6 +91,8 @@ export interface CfbReportAvailabilityWindow {
   coverageStartOn:string;
   coverageEndOn:string;
   availableOn:string;
+  filedOn?:string;
+  dueOn?:string;
   proofUrl:string;
   proofKind:'cfb_public_disclosure'|'cfb_report_filing'|'cfb_large_contribution_notice';
 }
@@ -109,6 +122,12 @@ export function firstCfbReportAvailabilityForTransaction(
     const availableOn=exactDate(report.availableOn,'CFB report availability date');
     if(coverageEndOn<coverageStartOn)throw new Error('CFB report coverage end date cannot precede start date');
     if(availableOn<coverageEndOn)throw new Error('CFB report availability date cannot precede coverage end date');
+    // Older filing-derived windows without independently established due dates
+    // must never participate in historical eligibility selection.
+    if(report.proofKind==='cfb_report_filing'){
+      if(!report.filedOn||!report.dueOn)return [];
+      if(availableOn<cfbElectronicReportAvailableOn(report.filedOn,report.dueOn))return [];
+    }
     if(occurredOn<coverageStartOn||occurredOn>coverageEndOn)return [];
     return [{
       ...report,
@@ -133,16 +152,21 @@ export function buildCfbReportDisclosureProof(input:{
   registrationNumber:string;
   reportName:string;
   filedOn:string;
+  dueOn:string;
   proofUrl:string;
 }):CfbDisclosureProof{
   if(!input.registrationNumber.trim())throw new Error('CFB registration number required');
+  if(!input.reportName.trim())throw new Error('CFB report name required');
   requireOfficialCfbProofUrl(input.proofUrl);
   const filedOn=exactDate(input.filedOn,'CFB filing date');
+  const dueOn=exactDate(input.dueOn,'CFB report due date');
   return {
     registrationNumber:input.registrationNumber.trim(),
     reportName:input.reportName.trim(),
     filedOn,
-    availableOn:cfbElectronicReportAvailableOn(filedOn),
+    dueOn,
+    statutoryReleaseAtLocal:followingDate(dueOn)+'T08:00:00[America/Chicago]',
+    availableOn:cfbElectronicReportAvailableOn(filedOn,dueOn),
     proofUrl:input.proofUrl,
     proofKind:'cfb_report_filing',
   };
