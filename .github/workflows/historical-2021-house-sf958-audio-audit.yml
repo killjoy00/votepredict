@@ -1,0 +1,48 @@
+name: Historical 2021 House SF958 public conference audio audit
+
+# One-time run when this new workflow is merged to main. After that, manual only.
+# Exactly four publicly indexed LRL-hosted House audio files; no Library outreach.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-2021-house-sf958-audio-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: historical-2021-house-sf958-audio-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Decode tool availability
+        run: command -v ffprobe
+      - name: Hash and decode four exact publicly served 2021 House SF958 MP3 files
+        env:
+          VOTEPREDICT_SF958_REPORT_FILE: artifacts/2021-house-sf958/source-verification-v1.json
+          VOTEPREDICT_SF958_SHORT_AUDIO_DIR: artifacts/2021-house-sf958/short-source-audio
+        run: |
+          mkdir -p artifacts/2021-house-sf958
+          node --import tsx scripts/probe-2021-house-sf958-public-audio.ts --probe
+          test -s artifacts/2021-house-sf958/source-verification-v1.json
+      - name: Preserve source metadata and, only if verified, two short public audio clips
+        uses: actions/upload-artifact@v7
+        with:
+          name: historical-2021-house-sf958-public-audio-${{ github.sha }}-${{ github.run_id }}
+          path: artifacts/2021-house-sf958/
+          if-no-files-found: error
+          retention-days: 14
