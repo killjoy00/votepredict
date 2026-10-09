@@ -102,7 +102,7 @@ test('missing and uncorroborated official row links remain explicitly unverified
   assert.ok(noReport.flags.includes('missing_report_due_date'));
   assert.ok(noReport.flags.includes('missing_row_level_official_proof'));
 
-  for (const altered of [
+  const invalidClaims: Array<Partial<HistoricalFinanceReportRowProof>> = [
     { proofUrl: 'https://example.com/report.pdf' },
     { exactRowProofSha256: '' },
     { registrationNumber: '99999' },
@@ -110,7 +110,8 @@ test('missing and uncorroborated official row links remain explicitly unverified
     { dueOn: undefined },
     { dueOn: '2025-01-15', disclosedOn: '2025-01-16' },
     { coverageEndOn: '2024-10-01' },
-  ]) {
+  ];
+  for (const altered of invalidClaims) {
     const row = auditCfbHistoricalReleaseDebt([input], [
       reportProof('no-report', altered),
     ]).rows[0]!;
