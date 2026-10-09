@@ -112,6 +112,7 @@ test('sandbox-only audit workflow rejects removed approval, changed role path an
   const original = readRepo(path);
   for (const changed of [
     original.replace("inputs.approval_phrase == 'READ_ONLY_SANDBOX_AUDIT'", "inputs.run_readonly == true"),
+    original.replace("inputs.approval_phrase == 'READ_ONLY_SANDBOX_AUDIT'", "inputs.approval_phrase == 'READ_ONLY_SANDBOX_AUDIT' || true"),
     original.replace('default: false', 'default: true'),
     original.replace('environment: evidence-readonly-sandbox', 'environment: production'),
     original.replace('secrets.EVIDENCE_READONLY_SANDBOX_URL', 'secrets.DATABASE_URL'),
