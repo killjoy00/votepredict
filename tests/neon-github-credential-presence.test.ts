@@ -17,6 +17,7 @@ function run(overrides: Record<string, string> = {}) {
     encoding: 'utf8',
     env: {
       PATH: process.env.PATH ?? '',
+      NODE_ENV: 'test',
       ...defaults,
       ...overrides,
     },
