@@ -7,9 +7,11 @@ import { link, mkdir, readFile, unlink, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import {
   P8_DAILY_CAPTURE_SCHEMA,
+  P8_DAILY_CAPTURE_TIMEZONE,
   type P8DailyCaptureBatch,
   type P8DailyCaptureRow,
 } from './lifecycle-p8-daily-capture';
+import { LIFECYCLE_P8_FROZEN_MODEL_CONTENT_SHA256 } from './lifecycle-p8-prospective';
 
 function sha256(value: unknown): string {
   return createHash('sha256').update(JSON.stringify(value)).digest('hex');
@@ -22,6 +24,9 @@ export function verifyOfflineP8BatchIntegrity(batch: P8DailyCaptureBatch): void 
     batch.productionCaptureActivated !== false ||
     batch.servingChanged !== false ||
     batch.predictionsComputed !== false ||
+    batch.timezone !== P8_DAILY_CAPTURE_TIMEZONE ||
+    batch.source !== 'offline_supplied_asof_fixtures' ||
+    batch.frozenModelContentSha256Reference !== LIFECYCLE_P8_FROZEN_MODEL_CONTENT_SHA256 ||
     !Array.isArray(batch.rows)) {
     throw new Error('Invalid or unexpectedly activated offline P8 capture');
   }
@@ -30,6 +35,12 @@ export function verifyOfflineP8BatchIntegrity(batch: P8DailyCaptureBatch): void 
     const { contentSha256, ...content } = row;
     if (row.schemaVersion !== P8_DAILY_CAPTURE_SCHEMA ||
       row.cutoff.asOfDateExclusive !== batch.cutoffDateExclusive ||
+      row.cutoff.timezone !== P8_DAILY_CAPTURE_TIMEZONE ||
+      row.cutoff.sameDayExcluded !== true ||
+      row.model.frozenModelContentSha256Reference !== LIFECYCLE_P8_FROZEN_MODEL_CONTENT_SHA256 ||
+      row.model.predictionsComputed !== false ||
+      row.rowId !== sha256([P8_DAILY_CAPTURE_SCHEMA, row.bill.billId,
+        batch.cutoffDateExclusive]).slice(0, 32) ||
       row.memberVoteLabel !== null ||
       contentSha256 !== sha256(content)) {
       throw new Error('Invalid or modified immutable P8 row hash');
