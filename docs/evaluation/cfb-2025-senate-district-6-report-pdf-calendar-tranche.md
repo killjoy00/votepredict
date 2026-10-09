@@ -43,6 +43,16 @@ The output stores per report:
 
 A public-source download failure must be recorded as `pdf_missing_or_invalid` or `calendar_not_verified`; never substitute a report title, transaction date or Board meeting date. The CLI does not touch any database or create an importable automatic eligibility manifest.
 
+## First real source capture and the fail-closed repair
+
+The initial post-merge [2026-10-09 source run](https://github.com/killjoy00/votepredict/actions/runs/37997147902) acquired all **five** individual CFB report PDFs and both distinct official calendar PDFs, producing original report/calendar SHA-256 values without saving report bodies. It matched the original candidate-report headers for the three special-cycle reports: CFB received pre-primary **2025-04-08**, pre-general **2025-04-22**, and cycle final **2025-05-26**. These are actual source-proven received dates, not examples.
+
+That first run also identified **two fail-closed gaps**:
+- The PDF parser transfers/detaches its Uint8Array backing buffer; a calendar byte-length computed *after* extracting text was erroneously zero. The validator properly rejected that metadata even though the actual PDF content SHA-256 was present. #871 saves the true original byte length before passing the file to the PDF worker, then reruns the bounded source probe. An empty/invalid file is still rejected.
+- Two ordinary year-end report headers were unverified. The parser had assumed every year-end report started January 1, which is too strict if an independently filed special-election cycle final report occupies the earlier part of that year. #871 retains the required **December 31** year-end but allows a later source-proven starting date. Safe Boolean/date-only diagnostics make any remaining formatting failures explicit without disclosing report contents.
+
+The retrieved special-cycle final PDF covers **January 1–May 14, 2025**, while the calendar states **May 20** as its last transaction date for the cycle-final report. Do **not** silently treat those coverage periods as identical; reconcile the actual report filing/version and calendar window independently before using row-level completeness. No eligibility promotion is allowed by this repair.
+
 ## What next and why this is not yet a complete finance repair
 
 1. Confirm the one-time workflow actually downloaded the five PDFs and independently hashed both calendars; investigate and report any inaccessible source as an *explicit source gap*. Do **not** infer a successful download from a passing CI run.

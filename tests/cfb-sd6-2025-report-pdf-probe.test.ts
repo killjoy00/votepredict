@@ -9,6 +9,7 @@ import {
   cfbSd6CalendarRuleForReference,
   cfbSd6ReportIdentity,
   parseCfbSd6ReportPdfHeader,
+  diagnoseCfbSd6ReportPdfHeader,
   verifyCfbSd6CalendarCapture,
   type CfbSd6CalendarCapture,
   type CfbSd6ReportPdfCapture,
@@ -104,6 +105,30 @@ test('header fails closed on unrelated filer, off-chamber office, invalid date a
   ]) assert.equal(parseCfbSd6ReportPdfHeader(r, text), null);
   assert.equal(parseCfbSd6ReportPdfHeader(ref('YE', '0'), good), null,
     'year-end needs complete Jan 1-Dec 31 coverage, not an early report');
+});
+
+test('ordinary year-end can follow a distinct special election final reporting window', () => {
+  const reference = ref('YE', '0');
+  const specialThenOrdinary = header('05/15/2025', '12/31/2025', 'February 2, 2026');
+  const extracted = parseCfbSd6ReportPdfHeader(reference, specialThenOrdinary);
+  assert.equal(extracted?.coverageStartOn, '2025-05-15');
+  assert.equal(extracted?.coverageEndOn, '2025-12-31');
+  assert.equal(extracted?.filedOn, '2026-02-02');
+  assert.equal(parseCfbSd6ReportPdfHeader(reference,
+    header('05/15/2025', '12/30/2025', 'February 2, 2026')), null);
+});
+
+test('failed-header diagnostics expose only identity flags and dates, never body text', () => {
+  const reference = ref('YE', '0');
+  const candidate = header('05/15/2025', '12/31/2025', 'February 2, 2026')
+    + ' 11/01/2025 Private Donor Name 500.00 Secret Street';
+  const diag = diagnoseCfbSd6ReportPdfHeader(reference, candidate);
+  assert.equal(diag.registrationMatches, true);
+  assert.equal(diag.senateDistrictSixMatches, true);
+  assert.equal(diag.coverageStartOn, '2025-05-15');
+  assert.equal(diag.filedOn, '2026-02-02');
+  assert.ok(!JSON.stringify(diag).includes('Private Donor'));
+  assert.ok(!JSON.stringify(diag).includes('Secret Street'));
 });
 
 test('calendar captures require separate official source, contents, and exact year/category', () => {
