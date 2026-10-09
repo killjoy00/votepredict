@@ -326,6 +326,9 @@ function rowForBill(bill: P8DailyBillInput, cutoff: string): P8DailyCaptureRow {
   for (const event of events) counts[event.stageKind] = (counts[event.stageKind] ?? 0) + 1;
   const version = versions[0] ?? null;
   const uniqueSorted = (values: readonly string[]) => [...new Set(values)].sort();
+  const processStatus: P8DailyCaptureRow['lineage']['processStatus'] =
+    bill.process.status === 'source_deferred' ? 'source_deferred'
+    : processSourceEligible ? 'parsed' : 'not_observable_by_cutoff';
   const content = {
     schemaVersion: P8_DAILY_CAPTURE_SCHEMA,
     rowId: sha256([P8_DAILY_CAPTURE_SCHEMA, bill.billId, cutoff]).slice(0, 32),
@@ -365,8 +368,7 @@ function rowForBill(bill: P8DailyBillInput, cutoff: string): P8DailyCaptureRow {
       introducedOn: bill.introducedOn,
       adjournmentOn: bill.adjournmentOn,
       firstObservedAt: bill.firstObservedAt,
-      processStatus: bill.process.status === 'source_deferred' ? 'source_deferred'
-        : processSourceEligible ? 'parsed' : 'not_observable_by_cutoff',
+      processStatus,
       processSourceEligible,
       processObservedAt: processSourceEligible ? bill.process.observedAt : null,
       processParserVersion: processSourceEligible ? REVISOR_PROCESS_PARSER_VERSION : null,
