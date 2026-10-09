@@ -82,6 +82,38 @@ test('hostile PDF links and current year outside 2021-25 are excluded without al
   assert.ok(a.years.every(x => x.year >= 2021 && x.year <= 2025));
 });
 
+test('2025 mislabeled Senate District 64A remains an ambiguous archive label, never a fifth Senate election', () => {
+  const html = [
+    '<h3>2025 campaign finance</h3>',
+    '<a href="/pdf/calendars/2025_special_election_64A.pdf">Senate District 64A special election</a>',
+    '<a href="/pdf/calendars/2025_special_election_6.pdf">Senate District 6 special election</a>',
+    '<a href="/pdf/calendars/2025_special_election_34B.pdf">House District 34B special election</a>',
+    '<h3>2025 lobbying</h3>',
+  ].join('');
+  const inventory = parseCfbHistoricalCalendarIndex(html, fetchedAt);
+  const report = inventory.years.find(r => r.year === 2025)!;
+  assert.equal(report.calendarLinksObserved, 3);
+  assert.equal(report.senateSpecialElectionLinksObserved, 1);
+  assert.equal(report.ambiguousChamberLabelLinksObserved, 1);
+  assert.equal(inventory.ambiguousChamberSourceLabels.length, 1);
+  assert.equal(inventory.ambiguousChamberSourceLabels[0]?.family, 'ambiguous_chamber_label');
+  assert.equal(inventory.ambiguousLabelsAreNotSenateCalendarProof, true);
+  assert.equal(inventory.requiredReportDenominator, null);
+});
+
+test('plain Senate district number and House A/B are distinct categories', () => {
+  const inventory = parseCfbHistoricalCalendarIndex(
+    '<h3>2024 campaign finance</h3>'
+    + '<a href="/pdf/calendars/senate45.pdf">Senate District 45 special election</a>'
+    + '<a href="/pdf/calendars/house27B.pdf">House District 27B special election</a>'
+    + '<h3>2024 lobbying</h3>',
+    fetchedAt,
+  );
+  assert.equal(inventory.years.find(r => r.year === 2024)?.senateSpecialElectionLinksObserved, 1);
+  assert.equal(inventory.years.find(r => r.year === 2024)?.ambiguousChamberLabelLinksObserved, 0);
+  assert.equal(inventory.links.filter(r => r.family === 'house_special_election').length, 1);
+});
+
 test('year section exists but no downloadable official files is unrecognized, not zero', () => {
   const a = parseCfbHistoricalCalendarIndex('<h3>2025 campaign finance</h3><a href="/no.pdf">bad</a>', fetchedAt);
   assert.equal(a.years.find(x => x.year === 2025)?.listingStatus, 'source_markup_unrecognized');
