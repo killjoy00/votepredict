@@ -5,7 +5,8 @@
  */
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 export const HOUSE_AUDIO_PROBE_VERSION = 'historical-2021-sf958-house-conference-audio-v1';
@@ -37,18 +38,27 @@ export interface SourceResult {
   eligibleDirectionalRowsAdded: 0;
 }
 export function decodeMp3WithFfprobe(bytes: Buffer): DecodeResult {
-  const p = spawnSync('ffprobe', [
-    '-v', 'error', '-f', 'mp3', '-show_entries', 'format=format_name,duration',
-    '-of', 'json', 'pipe:0',
-  ], { input: bytes, encoding: 'utf8', timeout: 30000, maxBuffer: 65536 });
-  if (p.status !== 0 || p.error) return null;
+  // Accurate format duration requires a seekable local file; pipe:0 can
+  // incorrectly report N/A for legitimate VBR recordings.
+  const temp = mkdtempSync(join(tmpdir(), 'vp-sf958-audio-'));
   try {
-    const data = JSON.parse(p.stdout) as { format?: { format_name?: string; duration?: string } };
-    const format = data.format?.format_name ?? '';
-    const durationSeconds = Number(data.format?.duration);
-    if (!format.includes('mp3') || !Number.isFinite(durationSeconds) || durationSeconds <= 0) return null;
-    return { format, durationSeconds };
-  } catch { return null; }
+    const name = join(temp, 'source.mp3');
+    writeFileSync(name, bytes, { mode: 0o600 });
+    const p = spawnSync('ffprobe', [
+      '-v', 'error', '-show_entries', 'format=format_name,duration',
+      '-of', 'json', name,
+    ], { encoding: 'utf8', timeout: 30000, maxBuffer: 65536 });
+    if (p.status !== 0 || p.error) return null;
+    try {
+      const data = JSON.parse(p.stdout) as { format?: { format_name?: string; duration?: string } };
+      const format = data.format?.format_name ?? '';
+      const durationSeconds = Number(data.format?.duration);
+      if (!format.includes('mp3') || !Number.isFinite(durationSeconds) || durationSeconds <= 0) return null;
+      return { format, durationSeconds };
+    } catch { return null; }
+  } finally {
+    rmSync(temp, { recursive: true, force: true });
+  }
 }
 const errorCodes = new Set(['ENOTFOUND', 'EAI_AGAIN', 'ETIMEDOUT', 'ECONNRESET',
   'ECONNREFUSED', 'UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_HEADERS_TIMEOUT']);
