@@ -1,8 +1,8 @@
 # Historical evidence density program
 
-_Last updated: 2026-10-08_
+_Last updated: 2026-10-09_
 
-Issue #718 is the active bounded program for increasing strict-pre-vote historical directional evidence without weakening provenance, chronology, or semantic review. Its primary objective remains the 2021-22 training universe, while newer sessions are tracked explicitly so the evidence substrate does not become disproportionately sparse outside training.
+Issue #718 was the bounded historical directional-evidence density program. **As of 2026-10-09 it is PAUSED following a zero-yield closeout**; keep this as a provenance/frozen-baseline reference, not a fresh historical-source work queue. See [the source-level stop/pivot decision](historical-2021-22-pivot-decision-2026-10-09.md), including the final SF958/Rep. Vang proof check, five-link member-news pilot, and a concrete handoff to the existing forecast-quality programs #287 and #310. The original 2021-22 training-universe objective was not met: strict directional coverage remains **9 / 35,510**. Do not mistake audio retrieval, transcript extraction, or potential overlapping voters for accepted evidence.
 
 This program is evidence construction and coverage work, not model tuning. Broad retrospective feature searching on the 2021-26 vote outcomes remains closed.
 
@@ -111,7 +111,7 @@ The primary historical program remains **2021-22** because that is the training 
 
 This target-gap ranking is not a claim that any row is recoverable. Source recovery still requires a separate bounded inventory with exact historical availability and freshness guards.
 
-## Current post-v1.7 checkpoint and next work
+## Frozen post-v1.7 checkpoint (historical next steps superseded by the 2026-10-09 pause)
 
 PR #782 froze v1.8 (post-merge artifacts and CI recorded in [issue #718 milestone](https://github.com/killjoy00/votepredict/issues/718#issuecomment-6041784252)): the unchanged 135,457-row universe has 92 combined directional rows, of which **9 / 35,510 are 2021-22**; 2023-24 remains 32, and 2025-26 increased to 51. v1.7 remains the frozen input for independent downstream audits, not the latest feature matrix. The House cohort-2 2025-26 sweep ranks 1–264 finished after #845 with **49 aligned context-only pairs** across 11 tranches; none are integration-ready and they do not improve the 2021-22 primary goal ([accepted milestone](https://github.com/killjoy00/votepredict/issues/718#issuecomment-6068882931)).
 
