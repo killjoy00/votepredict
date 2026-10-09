@@ -165,7 +165,12 @@ test('late-observed prior-dated events and versions do not backfill old daily ro
 });
 
 test('same-day introductions and first-discovered bills are not retrospectively included', () => {
-  const introducedToday = bill({ introducedOn: '2027-01-10' });
+  const introducedToday = bill({
+    introducedOn: '2027-01-10',
+    firstObservedAt: '2027-01-10T14:00:00.000Z',
+    process: { status: 'source_deferred', observedAt: null, parserVersion: null, events: [] },
+    billVersions: [],
+  });
   const firstFetchedToday = bill({
     billId: 'fixture-late', identifier: 'HF66',
     firstObservedAt: '2027-01-10T14:00:00.000Z',
