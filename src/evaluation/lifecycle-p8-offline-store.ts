@@ -38,6 +38,8 @@ export function verifyOfflineP8BatchIntegrity(batch: P8DailyCaptureBatch): void 
       row.cutoff.asOfDateExclusive !== batch.cutoffDateExclusive ||
       row.cutoff.timezone !== P8_DAILY_CAPTURE_TIMEZONE ||
       row.cutoff.sameDayExcluded !== true ||
+      (batch.source === 'offline_observed_revisor_receipts' &&
+       row.lineage.calendarEvidence === null) ||
       row.model.frozenModelContentSha256Reference !== LIFECYCLE_P8_FROZEN_MODEL_CONTENT_SHA256 ||
       row.model.predictionsComputed !== false ||
       row.rowId !== sha256([P8_DAILY_CAPTURE_SCHEMA, row.bill.billId,
