@@ -119,10 +119,10 @@ The **remaining operating gates** are: review/apply protected GitHub environment
 
 - [x] Reconcile distinct evidence families, historical directional coverage and review-only results with source links and cutoff dates.
 - [x] Establish a source-code-only safety test and the explicit independent refresh design.
-- [ ] Merge docs and guard tests after exact-head CI; verify post-merge CI.
+- [x] Merge the original scorecard/docs/static guard in [PR #848](https://github.com/killjoy00/votepredict/pull/848); exact PR-head [CI 37860748651](https://github.com/killjoy00/votepredict/actions/runs/37860748651) and exact post-merge [CI 37860978280](https://github.com/killjoy00/votepredict/actions/runs/37860978280) both **success**.
 - [ ] Validate live-only questions under their separate authorization boundaries. **Never** treat unverified live cron or stale freshness as verified healthy.
-- [x] Implement an offline-default, sandbox-only direct-Neon read-only audit and explicit manual GitHub workflow (pending sandbox provisioning; no live connection executed).
+- [x] Implement the offline-default, sandbox-only direct-Neon read-only audit, manual GitHub gate and disposable PostgreSQL privilege tests in [PR #849](https://github.com/killjoy00/votepredict/pull/849). Exact PR-head [CI 37863019343](https://github.com/killjoy00/votepredict/actions/runs/37863019343) **success**, merge SHA `b56f16e4c34a2bd6c4fc4fa9650db0b385f87413`; follow the exact-merge [CI 37863231879](https://github.com/killjoy00/votepredict/actions/runs/37863231879). **No sandbox Neon credentials, protected environment or live check are asserted.**
 - [ ] Provision and approve sandbox-only secret/role and execute bounded **sandbox** read-only proof; production health/ingestion remains independently gated.
 - [ ] Any production ingestion writes or scheduled refresh still require a separate explicit approval; never resume from this audit automatically.
 
-**Boundary:** docs, offline configuration audit, regression tests only. No Vercel contact, production database access, ingest writes, source crawls, model fitting, serving changes, or future-session work.
+**Boundary:** the completed software work is repo documentation, offline configuration audit, regression tests and a manually gated, unactivated Neon sandbox reader. No Vercel contact, production database access, ingestion writes, source crawls, model fitting, serving changes, or future-session work. The live cron remains unverified and production ingestion stays paused.
