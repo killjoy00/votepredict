@@ -136,10 +136,9 @@ export function auditEvidenceOperatingPosture(
   const approvalGuardPresent =
     sandboxJobs.length === 1 &&
     sandboxJobs[0].name === 'audit' &&
-    sandboxIf.includes("github.ref == 'refs/heads/main'") &&
-    sandboxIf.includes('inputs.run_readonly == true') &&
-    sandboxIf.includes("inputs.approval_phrase == 'READ_ONLY_SANDBOX_AUDIT'") &&
-    sandboxSource.includes('environment: evidence-readonly-sandbox') &&
+    sandboxIf.replace(/\s+/g, ' ').trim() ===
+      "github.ref == 'refs/heads/main' && inputs.run_readonly == true && inputs.approval_phrase == 'READ_ONLY_SANDBOX_AUDIT'" &&
+    /^    environment: evidence-readonly-sandbox\s*$/m.test(sandboxSource) &&
     sandboxSource.includes('      run_readonly:') &&
     /run_readonly:[\s\S]*?type: boolean[\s\S]*?default: false/.test(sandboxTrigger ?? '') &&
     sandboxSource.includes('VOTEPREDICT_EVIDENCE_RO_SCOPE: sandbox');
