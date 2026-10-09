@@ -183,8 +183,8 @@ test('no post-adjournment capture and no non-2027 cutoffs', () => {
 test('capture timestamp uses Chicago calendar date including spring DST transition', () => {
   assert.throws(() => make('2027-03-14', '2027-03-14T05:30:00.000Z'), /America\/Chicago/);
   assert.doesNotThrow(() => make('2027-03-14', '2027-03-14T06:30:00.000Z'));
-  assert.throws(() => make('2027-01-10', '2027-01-11T05:59:59.000Z'), /America\/Chicago/);
-  assert.doesNotThrow(() => make('2027-01-10', '2027-01-11T06:00:00.000Z'.replace('06:00:00','05:00:00')));
+  assert.doesNotThrow(() => make('2027-01-10', '2027-01-11T05:59:59.000Z'));
+  assert.throws(() => make('2027-01-10', '2027-01-11T06:00:00.000Z'), /America\/Chicago/);
 });
 
 test('unknown and outcome-bearing fields fail closed before any artifact is produced', () => {
