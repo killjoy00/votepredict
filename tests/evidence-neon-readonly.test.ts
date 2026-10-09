@@ -65,6 +65,24 @@ test('the direct Neon sandbox URL and expected role require an explicit verified
   assert.throws(() => validateReadonlySandboxConfig(config({
     VOTEPREDICT_EVIDENCE_RO_DATABASE_URL: FAKE_URL.replace('ep-sandbox.', 'dbbridge.'),
   })));
+  assert.throws(() => validateReadonlySandboxConfig(config({
+    VOTEPREDICT_EVIDENCE_RO_EXPECTED_ROLE: 'neondb_owner',
+  })));
+  assert.throws(() => validateReadonlySandboxConfig(config({
+    VOTEPREDICT_EVIDENCE_RO_DATABASE_URL: FAKE_URL.replace('ep-sandbox.', 'ep-sandbox-pooler.'),
+  })));
+  assert.throws(() => validateReadonlySandboxConfig(config({
+    VOTEPREDICT_EVIDENCE_RO_DATABASE_URL: FAKE_URL + '&host=bad.example.com',
+  })));
+  assert.throws(() => validateReadonlySandboxConfig(config({
+    VOTEPREDICT_EVIDENCE_RO_DATABASE_URL: FAKE_URL + '&options=-c%20role%3Dpostgres',
+  })));
+  assert.throws(() => validateReadonlySandboxConfig(config({
+    VOTEPREDICT_EVIDENCE_RO_DATABASE_URL: FAKE_URL.replace('.neon.tech/', '.neon.tech:5544/'),
+  })));
+  assert.equal(validateReadonlySandboxConfig(config({
+    VOTEPREDICT_EVIDENCE_RO_DATABASE_URL: FAKE_URL + '&channel_binding=require',
+  })).expectedRole, 'vp_evidence_ro_sandbox');
 });
 
 type Statement = { sql: string; values?: unknown[] };
