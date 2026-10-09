@@ -1,0 +1,60 @@
+name: Historical 2021 SF958 targeted public-audio excerpt review
+
+# One-time scoped recording review on introduction to main; manual reruns only.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-2021-sf958-targeted-excerpts.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: historical-2021-sf958-targeted-excerpts
+  cancel-in-progress: false
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Prepare audio decoding
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends ffmpeg
+          fi
+          command -v ffmpeg
+      - name: Verify original SHA-256 and cut only six narrow source-derived excerpts
+        env:
+          VOTEPREDICT_SF958_EXCERPTS_DIR: artifacts/sf958-targeted-review
+        run: |
+          mkdir -p artifacts/sf958-targeted-review
+          node --import tsx scripts/review-2021-sf958-targeted-clips.ts --extract
+          test -s artifacts/sf958-targeted-review/manifest.json
+          test "$(find artifacts/sf958-targeted-review -maxdepth 1 -name '*.mp3' | wc -l)" = 6
+      - name: Optional CPU-only unverified transcript hints for human review
+        env:
+          VOTEPREDICT_SF958_EXCERPTS_DIR: artifacts/sf958-targeted-review
+        continue-on-error: true
+        run: |
+          python3 -m venv "${{ github.run_id }}NER_TEMP/one-time-asr"
+          "$RUNNER_TEMP/one-time-asr/bin/pip" install -q faster-whisper==1.2.1
+          timeout 360 "$RUNNER_TEMP/one-time-asr/bin/python" scripts/transcribe-2021-sf958-clips-unverified.py
+      - name: Upload small derived review excerpts and conservative source manifest
+        uses: actions/upload-artifact@v7
+        with:
+          name: historical-2021-sf958-reviewed-clips-${{ github.sha }}-$RUN
+          path: artifacts/sf958-targeted-review/
+          if-no-files-found: error
+          retention-days: 14
