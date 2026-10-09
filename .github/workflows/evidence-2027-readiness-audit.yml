@@ -1,25 +1,24 @@
 name: Audit 2027 evidence readiness
 
 on:
-  issue_comment:
-    types: [created, edited]
+  workflow_dispatch:
+    inputs:
+      run_vercel:
+        description: Explicitly allow this workflow to read the Vercel production environment
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 concurrency:
-  group: >-
-    ${{ startsWith(github.event.comment.body, '[evidence-2027-readiness-audit]')
-        && 'evidence-2027-readiness-audit-optimized-v1'
-        || format('evidence-2027-readiness-audit-skip-{0}', github.event.comment.id) }}
+  group: evidence-2027-readiness-audit
   cancel-in-progress: false
 
 jobs:
   audit:
-    if: >-
-      (github.event.issue.number == 579 || github.event.issue.number == 287) &&
-      github.event.comment.user.login == 'killjoy00' &&
-      startsWith(github.event.comment.body, '[evidence-2027-readiness-audit]')
+    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
