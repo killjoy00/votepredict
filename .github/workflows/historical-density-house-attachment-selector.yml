@@ -13,7 +13,7 @@ concurrency:
     ${{ startsWith(github.event.comment.body, '[historical-density-house-attachment-selector]')
         && 'historical-density-house-attachment-selector'
         || format('historical-density-house-attachment-selector-skip-{0}', github.event.comment.id) }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   select:
