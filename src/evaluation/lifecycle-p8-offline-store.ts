@@ -34,7 +34,7 @@ export function verifyOfflineP8BatchIntegrity(batch: P8DailyCaptureBatch): void 
       contentSha256 !== sha256(content)) {
       throw new Error('Invalid or modified immutable P8 row hash');
     }
-    if (previous && row.bill.billId <= previous) {
+    if (previous && row.bill.billId.localeCompare(previous) <= 0) {
       throw new Error('Daily rows must be unique and deterministically ordered');
     }
     previous = row.bill.billId;
