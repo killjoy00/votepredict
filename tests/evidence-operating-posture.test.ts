@@ -19,7 +19,7 @@ test('paused Vercel workflows and documentation match the source-controlled oper
   const result = auditEvidenceOperatingPosture(readRepo);
   assert.equal(result.passed, true, JSON.stringify(result.findings));
   assert.deepEqual(result.findings, []);
-  assert.equal(result.protectedWorkflowCount, 15);
+  assert.equal(result.protectedWorkflowCount, 17);
   assert.equal(result.protectedWorkflows.length, PAUSED_VERCEL_WORKFLOWS.length);
   assert.ok(result.protectedWorkflows.every(w =>
     w.triggers.length === 1 &&
@@ -120,5 +120,22 @@ test('sandbox-only audit workflow rejects removed approval, changed role path an
       'npx vercel env pull'),
   ]) {
     assert.equal(auditWithOverride(path, changed).passed, false);
+  }
+});
+
+test('prospective read and P8 model workflows cannot be reactivated by an issue comment or absent opt-in', () => {
+  for (const name of ['evidence-2027-readiness-audit.yml', 'lifecycle-p8-prospective-model.yml']) {
+    const path = '.github/workflows/' + name;
+    const original = readRepo(path);
+    assert.ok(original.includes('on:\n  workflow_dispatch:'));
+    assert.ok(original.includes("if: inputs.run_vercel == true && github.ref == 'refs/heads/main'"));
+    for (const changed of [
+      original.replace('on:\n  workflow_dispatch:', 'on:\n  issue_comment:\n    types: [created, edited]\n  workflow_dispatch:'),
+      original.replace('default: false', 'default: true'),
+      original.replace("if: inputs.run_vercel == true && github.ref == 'refs/heads/main'", "if: github.ref == 'refs/heads/main'"),
+      original.replace("if: inputs.run_vercel == true && github.ref == 'refs/heads/main'", "if: inputs.run_vercel == true"),
+    ]) {
+      assert.equal(auditWithOverride(path, changed).passed, false, name);
+    }
   }
 });
