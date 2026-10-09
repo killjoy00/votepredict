@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { Pool } from 'pg';
 import { parseRuntimeEnvironment } from '../src/operations/environment-file.js';
 import { finalizeLinearBatch, planLinearBatch } from '../src/evidence/linear-batch-cursor.js';
+import { senateCommitteeHearingTiming } from '../src/evidence/senate-committee-meeting-timing.js';
 
 const DATABASE_CANDIDATES=[
   'DATABASE_URL_UNPOOLED','POSTGRES_URL_NON_POOLING','DATABASE_URL','POSTGRES_URL',
@@ -201,6 +202,7 @@ async function main():Promise<void>{
         }
 
         const pdf=await fetchSenateCommitteeMinutePdf({url:doc.url});
+        const hearingTiming=senateCommitteeHearingTiming(doc.meetingDate);
         documentsFetched+=1;
         if(pdf.extractionMethod==='ocr_tesseract')ocrDocuments+=1;
         const parsed=parseSenateCommitteeMinuteVotes(pdf.text);
@@ -249,6 +251,7 @@ async function main():Promise<void>{
                   occurredOn:doc.meetingDate,
                 },
                 kind:'fact',stance:'neutral',
+                publishedAt:hearingTiming.publishedAt,
                 claim:`${candidate?.name??vote.sourceName} cast a recorded ${vote.choice.toUpperCase()} vote on a Minnesota Senate ${doc.committeeName} committee ${observation.voteKind} on ${doc.meetingDate}.`,
                 excerpt:observation.motionText.slice(0,600),
                 sourceQuality:'official',relevance:'high',freshness:freshness(doc.year),
@@ -262,9 +265,8 @@ async function main():Promise<void>{
                   voteKind:observation.voteKind,voteChoice:vote.choice,yeaCount:observation.yeaCount,nayCount:observation.nayCount,
                   motionPassed:observation.passed??null,motionText:observation.motionText,
                   individualVotesAvailable:true,sourceVerified:true,textExtractionMethod:pdf.extractionMethod,
-                  meetingDateIsAvailability:false,asOfEligible:false,
-                  availabilityStatus:'official_archive_current_bytes_no_publication_timestamp',
-                  sameDayEligible:false,finalPassageStanceInferred:false,
+                  ...hearingTiming.metadata,
+                  finalPassageStanceInferred:false,
                   mechanicallyActionable:false,modelWeight:0,
                   reconciliationReason:resolution.reason,
                   reconciliationSourceName,
@@ -278,6 +280,7 @@ async function main():Promise<void>{
             drafts.push({
               target:knownBill?{billIdentifier:knownBill,sessionSlug,occurredOn:doc.meetingDate}:undefined,
               kind:'context',stance:'neutral',
+              publishedAt:hearingTiming.publishedAt,
               claim:`Minnesota Senate ${doc.committeeName} committee minutes record a ${observation.yeaCount}-${observation.nayCount} committee vote on ${doc.meetingDate}, but do not identify individual votes.`,
               excerpt:observation.motionText.slice(0,600),
               sourceQuality:'official',relevance:'medium',freshness:freshness(doc.year),
@@ -291,9 +294,8 @@ async function main():Promise<void>{
                 voteKind:observation.voteKind,yeaCount:observation.yeaCount,nayCount:observation.nayCount,
                 motionPassed:observation.passed??null,motionText:observation.motionText,
                 individualVotesAvailable:false,sourceVerified:true,textExtractionMethod:pdf.extractionMethod,
-                meetingDateIsAvailability:false,asOfEligible:false,
-                availabilityStatus:'official_archive_current_bytes_no_publication_timestamp',
-                sameDayEligible:false,finalPassageStanceInferred:false,
+                ...hearingTiming.metadata,
+                finalPassageStanceInferred:false,
                 mechanicallyActionable:false,modelWeight:0,
                 ingestionIdentityKey:`${doc.url}|obs:${observationIndex}|count:${observation.yeaCount}-${observation.nayCount}`,
               },
@@ -321,6 +323,7 @@ async function main():Promise<void>{
           drafts.push({
             target:knownBill?{billIdentifier:knownBill,sessionSlug,occurredOn:doc.meetingDate}:undefined,
             kind:'context',stance:'neutral',
+            publishedAt:hearingTiming.publishedAt,
             claim:`Minnesota Senate ${doc.committeeName} committee minutes record a ${methodLabel} ${action.voteKind} action${subject?' on '+subject:''} that ${outcomeLabel} on ${doc.meetingDate}; the minutes do not provide member-resolved YEA/NAY votes for this action.`,
             excerpt:action.motionText.slice(0,600),
             sourceQuality:'official',relevance:'medium',freshness:freshness(doc.year),
@@ -334,9 +337,8 @@ async function main():Promise<void>{
               voteKind:action.voteKind,motionPassed:action.passed,motionText:action.motionText,
               individualVotesAvailable:false,committeeActionOnly:true,sourceVerified:true,
               textExtractionMethod:pdf.extractionMethod,
-              meetingDateIsAvailability:false,asOfEligible:false,
-              availabilityStatus:'official_archive_current_bytes_no_publication_timestamp',
-              sameDayEligible:false,finalPassageStanceInferred:false,
+              ...hearingTiming.metadata,
+              finalPassageStanceInferred:false,
               mechanicallyActionable:false,modelWeight:0,
               ingestionIdentityKey:`${doc.url}|action:${action.actionKind}|${actionHash}`,
             },
@@ -357,7 +359,7 @@ async function main():Promise<void>{
             parserVersion:MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,
             actionsParserVersion:MN_SENATE_COMMITTEE_ACTIONS_PARSER_VERSION,
             sourceVersion:MN_SENATE_COMMITTEE_SOURCE_VERSION,
-            officialArchive:true,textExtractionMethod:pdf.extractionMethod,meetingDateIsAvailability:false,asOfEligible:false,
+            officialArchive:true,textExtractionMethod:pdf.extractionMethod,...hearingTiming.metadata,
           },
         },drafts);
         inserted+=persisted.inserted;reused+=persisted.reused;
@@ -387,6 +389,7 @@ async function main():Promise<void>{
             JSON.stringify({
               source:'Minnesota Legislative Reference Library committee minutes',
               committeeName:doc.committeeName,committeeVote:true,
+              ...hearingTiming.metadata,
               individualVotesAvailable:observation.individualVotesAvailable,
               finalPassageStanceInferred:false,textExtractionMethod:pdf.extractionMethod,parserVersion:MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION,
             }),
@@ -425,7 +428,8 @@ async function main():Promise<void>{
         years2023Plus:'LRL states Senate minutes are electronic-only',
       },
       policy:{
-        meetingDateIsAvailability:false,asOfEligible:false,sameDayEligible:false,
+        meetingDateIsAvailability:true,asOfEligible:true,sameDayEligible:false,
+        availabilityRule:'open_senate_committee_hearing',dateGranularity:'day',
         finalPassageStanceInferred:false,mechanicallyActionable:false,modelWeight:0,
         committeeActionsAreMemberVotes:false,productionAction:'none',
       },
