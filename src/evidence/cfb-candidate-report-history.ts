@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import {
   parseCfbReportPdfAvailability,
   parseCfbReportViewerReferences,
@@ -9,6 +10,18 @@ import { fetchCfbReportViewerText } from './cfb-current-report-acquisition.js';
 const CFB_ORIGIN = 'https://register.cfb.mn.gov';
 const CFB_CANDIDATE_API_URL =
   CFB_ORIGIN + '/reports-and-data/viewers/campaign-finance/candidates/api';
+
+// A raw official API body is hashed for provenance but not saved in the
+// inventory output. Viewer references do not verify PDF bytes or legal release.
+export interface CfbCandidateViewerReferenceSnapshot {
+  registrationNumber: string;
+  segmentEndYear: 2022 | 2024 | 2026;
+  sourceUrl: string;
+  apiUrl: string;
+  fetchedAt: string;
+  responseSha256: string;
+  references: CfbReportViewerReference[];
+}
 
 export interface CfbCandidateHistoricalReport {
   proof: CfbParsedReportProof;
@@ -97,10 +110,10 @@ async function fetchCandidateViewerSession(referer: string): Promise<string> {
     .join('; ');
 }
 
-export async function fetchCfbCandidateHistoricalReportReferences(
+export async function fetchCfbCandidateHistoricalReportReferenceSnapshot(
   registrationNumber: string,
   segmentEndYear: number,
-): Promise<CfbReportViewerReference[]> {
+): Promise<CfbCandidateViewerReferenceSnapshot> {
   const registration = requireRegistrationNumber(registrationNumber);
   const endYear = requireSegmentEndYear(segmentEndYear);
   const referer =
@@ -129,7 +142,23 @@ export async function fetchCfbCandidateHistoricalReportReferences(
   }
   const text = await response.text();
   if (text.length > 8_000_000) throw new Error('CFB candidate reports tab API response exceeded 8 MB');
-  return parseCfbCandidateReportsTabResponse(text, registration, endYear);
+  return {
+    registrationNumber: registration,
+    segmentEndYear: endYear,
+    sourceUrl: referer,
+    apiUrl: CFB_CANDIDATE_API_URL,
+    fetchedAt: new Date().toISOString(),
+    responseSha256: createHash('sha256').update(text, 'utf8').digest('hex'),
+    references: parseCfbCandidateReportsTabResponse(text, registration, endYear),
+  };
+}
+
+export async function fetchCfbCandidateHistoricalReportReferences(
+  registrationNumber: string,
+  segmentEndYear: number,
+): Promise<CfbReportViewerReference[]> {
+  const snapshot = await fetchCfbCandidateHistoricalReportReferenceSnapshot(registrationNumber, segmentEndYear);
+  return snapshot.references;
 }
 
 export async function acquireCfbCandidateHistoricalReportProofs(input: {
