@@ -85,6 +85,8 @@ test('workflow only runs by its own new file path or manually, no production or 
   assert.match(s,/persist-credentials: false/);
   assert.match(s,/scripts\/review-2021-sf958-targeted-clips\.ts --extract/);
   assert.match(s,/python3 -m venv "\$RUNNER_TEMP\/one-time-asr"/);
+  // PyAV 19 removed metadata_errors, which faster-whisper 1.2.1 requires.
+  assert.match(s,/"faster-whisper==1\.2\.1" "av==18\.1\.0"/);
   assert.match(s,/historical-2021-sf958-reviewed-clips-\$\{\{ github\.sha \}\}-\$\{\{ github\.run_id \}\}/);
   assert.doesNotMatch(s,/^\s+(?:schedule|pull_request|workflow_run|issue_comment):/m);
   assert.doesNotMatch(s,/secrets\.|DATABASE_URL|NEON_API_KEY|VERCEL_TOKEN|vercel|psql|runPublicEvidenceRefresh|--connect|--create|deploy --prod|id-token: write/i);
