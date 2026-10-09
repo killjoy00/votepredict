@@ -3,7 +3,8 @@
  * node --import tsx scripts/capture-cfb-2021-25-calendar-index-and-sd6-version.ts
  *   --output artifacts/cfb-2021-25-calendar-index-and-sd6-version.json
  *
- * Requests: one CFB official calendar index page, two SD6 calendar PDFs.
+ * Requests: one official CFB calendar index page, two SD6 PDF calendars,
+ * and one 2025 mislabeled House District 64A original calendar PDF.
  * No campaign-contribution rows, financial records, private databases,
  * member identities, raw PDFs or PDF text are persisted.
  */
@@ -12,6 +13,8 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import {
   CFB_HISTORICAL_CALENDAR_INDEX_URL,
+  CFB_MISLABELED_HOUSE64A_CALENDAR_URL,
+  auditCfbMislabeled2025House64aCalendar,
   CFB_SD6_CANDIDATE_PACKET_URL,
   CFB_SD6_STANDALONE_CALENDAR_URL,
   parseCfbHistoricalCalendarIndex,
@@ -72,6 +75,24 @@ async function pdfCapture(
   }
 }
 
+async function fetchMislabeled64aOriginalCalendar() {
+  const sourceUrl = CFB_MISLABELED_HOUSE64A_CALENDAR_URL;
+  const result = await fetchOfficial(sourceUrl, 'pdf');
+  const { CanvasFactory } = await import('pdf-parse/worker');
+  const { PDFParse } = await import('pdf-parse');
+  const parser = new PDFParse({ data: result.bytes, CanvasFactory });
+  try {
+    const text = (await parser.getText()).text ?? '';
+    if (text.trim().length < 100) throw Error('CFB 64A PDF text extraction too short');
+    return {
+      sourceUrl, finalSourceUrl: result.finalUrl, rawPdfSha256: result.sha,
+      pdfBytes: result.size, fetchedAt: result.fetchedAt, extractedText: text,
+    };
+  } finally {
+    await parser.destroy();
+  }
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const index = args.indexOf('--output');
@@ -98,12 +119,21 @@ async function main() {
     catch (error) { failures.push({ role, sourceUrl: url, error: safeError(error) }); }
   }
   const comparison = verifyCfbSd6StandaloneCalendarComparison(results);
+  let labeled64a = null;
+  try {
+    labeled64a = await fetchMislabeled64aOriginalCalendar();
+  } catch (error) {
+    failures.push({ role: 'archive_labeled_senate64a', sourceUrl: CFB_MISLABELED_HOUSE64A_CALENDAR_URL,
+      error: safeError(error) });
+  }
+  const chamberProof = auditCfbMislabeled2025House64aCalendar(indexProof, labeled64a);
   const result = {
     ...indexProof,
     indexFinalUrl: archive.finalUrl,
     indexResponseByteLength: archive.size,
     senate6StandaloneCalendarListedInOfficial2025Archive: referencesOfficialSd6,
     senate6CalendarComparison: comparison,
+    suspect2025Senate64aOriginalPdfOfficeProof: chamberProof,
     calendarAcquisitionFailures: failures,
     policies: {
       noPDFBytesStored: true,
@@ -122,8 +152,9 @@ async function main() {
     calendarReferenceCount: indexProof.links.length,
     distinctCalendarPdfUrls: indexProof.observedUniquePdfUrls,
     senate6StandaloneListed: referencesOfficialSd6,
-    sourcePdfDownloadsSucceeded: results.length,
+    sourcePdfDownloadsSucceeded: results.length + (labeled64a ? 1 : 0),
     sourcePdfDownloadsFailed: failures.length,
+    mislabeledSenate64aOriginalOffice: chamberProof,
     standaloneVsPacket: comparison,
     reportDenominatorCertified: false,
     historicalEligibilityChanged: false,
