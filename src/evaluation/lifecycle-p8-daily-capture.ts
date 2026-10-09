@@ -398,7 +398,10 @@ export function buildOfflineP8DailyCapture(input: {
     predictionsComputed: false as const,
     rows,
   };
-  return { ...content, contentSha256: sha256(content) };
+  // The first capturedAt is preserved in the append-only file. Later identical
+  // reruns may have a different wall-clock time without becoming data drift.
+  const { capturedAt: _firstCaptureTime, ...immutableContent } = content;
+  return { ...content, contentSha256: sha256(immutableContent) };
 }
 
 /** Date-exclusive evaluation selection, without joining or reading future targets. */
