@@ -134,20 +134,29 @@ The preflight has no `curl`, `psql`, Vercel CLI, database connection, workflow s
 
 If no VotePredict-scoped direct credential namespace is available in GitHub, #847's live Neon phase remains **blocked**. The only approved next paths are provision a genuinely scoped GitHub credential + protected sandbox, or continue fully offline with the already-passing isolated PostgreSQL tests. **Do not** fall back to the Pack 1 connector, to `vercel env pull`, or to production database secrets. No 2027 work, model promotion or Library contact is authorized here.
 
-## VotePredict Neon project identity — manually gated next step
+## VotePredict Neon identity — accepted, but scoped to metadata
 
-**User-reported configuration (unverified):** GitHub environment `evidence-readonly-sandbox` now contains secret `NEON_API_KEY` and variable `VOTEPREDICT_NEON_PROJECT_ID`. The initial repository-scope preflight #851 cannot see environment-level entries and its earlier all-false outcome does **not** contradict this report. GitHub's general repository fetch interface also does not expose environment configuration or secret values.
+The owner configured `NEON_API_KEY` (protected GitHub environment secret) and `VOTEPREDICT_NEON_PROJECT_ID` (environment variable) in `evidence-readonly-sandbox`. Unlike the older *repository-level* preflight (#851), the manually dispatched identity workflow uses that protected environment.
 
-The manual-only [`verify-votepredict-neon-project.yml`](../../.github/workflows/verify-votepredict-neon-project.yml) is the **next identity check**, and stays default-off:
+[Manual GitHub run #37874080449](https://github.com/killjoy00/votepredict/actions/runs/37874080449) **SUCCESS** on exact `main` commit `b742139dc1fa546d83b61be822bb9daa2ecafed9`. The sanitized project-details report verified the API-response project ID and normalized **VotePredict** name; `projectIdMatched=true` and `projectNameMatched=true`. The earlier manual attempt #37873974213 failed. The successful run did not create a branch, connect to PostgreSQL, read production rows, or write evidence.
 
-1. Open VotePredict's **GitHub Actions → VotePredict Neon project identity (manual read-only)** and select **Run workflow** on `main`.
-2. Tick `verify_project` and enter exactly `VERIFY_VOTEPREDICT_NEON_PROJECT` in `approval_phrase`. Ensure the `evidence-readonly-sandbox` environment's main-only restrictions / required reviewers (where available) are configured before starting.
-3. The one-purpose script `scripts/verify-votepredict-neon-project.ts` reads those environment-scoped GitHub values and issues **one** authenticated `GET /api/v2/projects/{project_id}` to Neon with an 8-second timeout. It accepts only an exact project-ID match and a project name containing `VotePredict` (normalizing spaces/case). A Pack 1 or other mismatched project fails closed.
-4. The job logs a small sanitized pass/fail report **without outputting the API key, project ID, Neon response body or any connection string**. It does not invoke the app DB, create a branch, list project data, query production, or read/write evidence.
+**Limitations:** This does **not** establish a tightly project-scoped API key, independently verify the live app's connection/project binding, or certify protected GitHub environment reviewer rules. It proves authenticated metadata access for the user-configured VotePredict project; it is not production database access.
 
-**Do not treat passing this gate as proof that the API key is strictly project-scoped or that the intended production identity is independently established outside the owner-supplied configuration.** It establishes only that Neon's metadata agrees with the specific configured ID and VotePredict name. A failed/missing secret/mismatched name is a stop gate. GitHub cannot read environment secrets for us, and no project verification was executed when adding this workflow.
+## Next gate: one expiring schema-only Neon sandbox (not created by a PR)
 
-Only after an accepted manual identity check should a **separate approved** schema-only (data-free, Beta) disposable branch operation be designed/executed; require a short expiration to avoid orphaned storage/compute and never copy production rows by default. The existing sandbox SQL reader also needs a separately provisioned least-privilege role and sandbox connection URL before its own one-time live read. **Neither branch creation nor any production evidence refresh is authorized by merging this project-verification workflow.**
+The manually dispatched [`votepredict-neon-schema-only-sandbox.yml`](../../.github/workflows/votepredict-neon-schema-only-sandbox.yml) prepares an isolated **24-hour schema-only** Neon branch in the previously verified project. Schema-only branching is [a Neon Beta feature](https://neon.com/docs/guides/branching-schema-only), distinct from ordinary Neon data-bearing branches. This workflow is **manual-only, default-off**, protected by `evidence-readonly-sandbox` and limited to `killjoy00/votepredict` on current `main`.
+
+Only after independent approval for this specific disposable resource:
+
+1. Visit **GitHub Actions → VotePredict Neon schema-only evidence sandbox (24h manual)** and select **Run workflow** on `main`.
+2. Check `create_sandbox` and type exactly `CREATE_VOTEPREDICT_SCHEMA_ONLY_SANDBOX` in `approval_phrase`. Do **not** change or bypass the protected GitHub environment's approval restrictions.
+3. The job rechecks the project ID and VotePredict name, finds exactly one default source branch, rejects pre-existing #847 sandbox branches, and then sends a single Neon management `POST /projects/{project_id}/branches` with `init_source='schema-only'`, no endpoints, `protected=false` and a **24-hour `expires_at`**. It neither queries PostgreSQL nor copies evidence rows.
+4. The job verifies the new branch is actually schema-only (Neon may report `parent-schema` instead of `schema-only`), unprotected and nondefault; confirms the expiration and **zero compute endpoints** through read-only Neon metadata calls. On a safety-verification failure it requests deletion of only the uniquely named branch it just created; if cleanup is uncertain, it fails and requires manual inspection, **never auto-retry**.
+5. A successful run emits only the new **branch ID, name, expiration, and verification flags**. It does not return passwords or connection strings. A failed run may need Neon Console inspection before a rerun. The 24-hour expiry avoids permanently orphaning the disposable branch; creation may incur small usage charges even without a compute endpoint.
+
+No schema-only branch or sandbox SQL role was created by **merging** this workflow. Creating a branch does **not** automatically activate the separate [`evidence-neon-readonly-sandbox.yml`](../../.github/workflows/evidence-neon-readonly-sandbox.yml). That health check still requires a **dedicated least-privilege SQL role**, a protected sandbox-only URL and an independently authorized, bounded read-only session. The provisioned sandbox, once verified, must be managed separately from any production data and must never use the unrelated Pack 1 Neon project.
+
+**Standing exclusions:** No automatic source refresh, production DB data read/write, Vercel or cron change, model fitting, Library contact or future-session/2027 work. The old deployed Vercel cron is still unverified under #732.
 
 ## #847 current execution ledger
 
@@ -156,6 +165,8 @@ Only after an accepted manual identity check should a **separate approved** sche
 - [x] Merge the original scorecard/docs/static guard in [PR #848](https://github.com/killjoy00/votepredict/pull/848); exact PR-head [CI 37860748651](https://github.com/killjoy00/votepredict/actions/runs/37860748651) and exact post-merge [CI 37860978280](https://github.com/killjoy00/votepredict/actions/runs/37860978280) both **success**.
 - [ ] Validate live-only questions under their separate authorization boundaries. **Never** treat unverified live cron or stale freshness as verified healthy.
 - [x] Implement the offline-default, sandbox-only direct-Neon read-only audit, manual GitHub gate and disposable PostgreSQL privilege tests in [PR #849](https://github.com/killjoy00/votepredict/pull/849). Exact PR-head [CI 37863019343](https://github.com/killjoy00/votepredict/actions/runs/37863019343) **success**, merge SHA `b56f16e4c34a2bd6c4fc4fa9650db0b385f87413`; follow the exact-merge [CI 37863231879](https://github.com/killjoy00/votepredict/actions/runs/37863231879). **No sandbox Neon credentials, protected environment or live check are asserted.**
+- [x] Verify VotePredict Neon project **metadata identity** on the protected, manual GitHub workflow: [run #37874080449](https://github.com/killjoy00/votepredict/actions/runs/37874080449) **SUCCESS**; key scope, SQL grants and live production binding remain unverified.
+- [ ] Approve and run the **manual, 24-hour expiring schema-only branch** workflow separately; no branch is created by normal CI or merge.
 - [ ] Provision and approve sandbox-only secret/role and execute bounded **sandbox** read-only proof; production health/ingestion remains independently gated.
 - [ ] Any production ingestion writes or scheduled refresh still require a separate explicit approval; never resume from this audit automatically.
 
