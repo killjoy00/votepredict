@@ -31,10 +31,10 @@ jobs:
             --output artifacts/cfb-candidate-references.jsonl
       - name: Classify the exact 2025 filer-year (never an official denominator)
         run: |
-          printf '%s\\n' '{"registrationNumber":"19205","year":2025}' > artifacts/cfb-targets.jsonl
-          node --import tsx scripts/audit-cfb-candidate-reference-inventory-offline.ts \\
-            --targets artifacts/cfb-targets.jsonl \\
-            --snapshots artifacts/cfb-candidate-references.jsonl \\
+          printf '%s\n' '{"registrationNumber":"19205","year":2025}' > artifacts/cfb-targets.jsonl
+          node --import tsx scripts/audit-cfb-candidate-reference-inventory-offline.ts \
+            --targets artifacts/cfb-targets.jsonl \
+            --snapshots artifacts/cfb-candidate-references.jsonl \
             --output artifacts/cfb-2025-filer-year-audit.json
       - uses: actions/upload-artifact@v4
         with:
