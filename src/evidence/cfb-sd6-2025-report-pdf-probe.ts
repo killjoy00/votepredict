@@ -151,16 +151,42 @@ export function parseCfbSd6ReportPdfHeader(
   if (!coverageStartOn || !coverageEndOn || !filedOn) return null;
   if (coverageStartOn > coverageEndOn || coverageEndOn > filedOn) return null;
   if (coverageStartOn.slice(0, 4) !== '2025' || coverageEndOn.slice(0, 4) !== '2025') return null;
-  // A year-end report covers the complete calendar year; special-election
-  // reports cover only the sub-period printed on the original PDF.
+  // A 2025 year-end report ends December 31 but may START after a special
+  // election cycle final report. Do not assume January 1 for a committee
+  // that filed both the special and ordinary cycle reports in that year.
   if (reference.se === '0' && reference.period === 'YE'
-      && (coverageStartOn !== '2025-01-01' || coverageEndOn !== '2025-12-31')) return null;
+      && coverageEndOn !== '2025-12-31') return null;
   return {
     registrationNumber: reference.registrationNumber,
     coverageStartOn, coverageEndOn, filedOn,
     parserVersion: 'sd6-report-header-v1',
     identityVerified: true,
     committeeOfficeDistrictVerified: true,
+  };
+}
+
+export function diagnoseCfbSd6ReportPdfHeader(
+  reference: CfbReportViewerReference,
+  body: string,
+) {
+  // Deliberately output ONLY structural markers and dates. No candidate
+  // treasurer, donor, contributor, employer, amount, address or body snippet.
+  const head = normalized(body).slice(0, 4_000);
+  const registration = head.match(/Registration\\s+Number\\s*:\\s*(\\d{4,8})\\b/i);
+  const period = head.match(
+    /Period\\s+Covered\\s*:\\s*(\\d{1,2}\\/\\d{1,2}\\/\\d{4})\\s+through\\s+(\\d{1,2}\\/\\d{1,2}\\/\\d{4})/i,
+  );
+  const received = head.match(/Received\\s+by\\s+the\\s+Board\\s+([A-Za-z]+\\s+\\d{1,2},\\s+\\d{4})/i);
+  return {
+    referenceId: cfbSd6ReportIdentity(reference),
+    hasCandidateReportTitle: /Report of Receipts and Expenditures\\s+for\\s+Principal Campaign Committee/i.test(head),
+    hasRegistrationLabel: /Registration\\s+Number\\s*:/i.test(head),
+    registrationMatches: registration?.[1] === reference.registrationNumber,
+    senateDistrictSixMatches: /Senat(?:e|or)\\s+District\\s*:?\\s*6\\b/i.test(head),
+    coverageStartOn: dateFromUs(period?.[1] ?? ''),
+    coverageEndOn: dateFromUs(period?.[2] ?? ''),
+    filedOn: dateFromEnglish(received?.[1] ?? ''),
+    reportContainsReceivedByBoard: /Received\\s+by\\s+the\\s+Board/i.test(head),
   };
 }
 
