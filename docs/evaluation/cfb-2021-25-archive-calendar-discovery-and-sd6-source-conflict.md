@@ -1,6 +1,6 @@
 # Issue #864 — Historical Senate finance: regulator calendar index and SD6 conflicting sources
 
-**Date:** October 9, 2026. **Scope:** public Minnesota Campaign Finance and Public Disclosure Board calendar discovery for 2021–2025, with a two-document original-PDF pilot for the 2025 Senate District 6 special-election calendar. No database reads or writes, private data, model changes, scheduler changes, unapproved backfill, or public-office contact.
+**Date:** October 9, 2026. **Scope:** public Minnesota Campaign Finance and Public Disclosure Board calendar discovery for 2021–2025, with two original 2025 Senate District 6 calendar PDFs and a third source document verifying a possible 2025 House District 64A office mislabel. No database reads or writes, private data, model changes, scheduler changes, unapproved backfill, or public-office contact.
 
 ## Separate finance completeness requirement
 
@@ -32,9 +32,9 @@ The independently acquired registration 19205 special-cycle final report covers 
 ## Scope of this small PR
 
 - src/evidence/cfb-historical-calendar-inventory.ts: deterministic archive-year source inventory for 2021–2025 only, URL host/path allowlist, preserved calendar families and null/unknown counters; exact original-SD6-PDF metadata comparison using source URLs, content SHA-256, original byte length, dated capture, correct document title and a fully contextual final-report period expression. A May 14 election date outside the final-report expression cannot be used as proof.
-- scripts/capture-cfb-2021-25-calendar-index-and-sd6-version.ts: at most **four read-only public CFB requests**, one official archive listing and the two distinct SD6 PDF sources. Source hashes, size, per-document status and verified date claims are persisted. **No source PDF bytes or raw parsed PDF text, donor data or credentials** go into the artifact.
+- scripts/capture-cfb-2021-25-calendar-index-and-sd6-version.ts: at most **four read-only public CFB requests**, one official archive listing and the two distinct SD6 PDFs and one separate 2025 House District 64A calendar. Source hashes, size, per-document status and verified date claims are persisted. **No source PDF bytes or raw parsed PDF text, donor data or credentials** go into the artifact.
 - tests/cfb-historical-calendar-inventory.test.ts: synthetic coverage of archive-year absences, wrong-domain links, duplicate source entries, source conflicts, both period-end variants, PDF spoofing, ambiguous text, and eligibility fail-closed constraints.
-- .github/workflows/cfb-2021-25-historical-calendar-index-probe.yml: a **one-time** public source probe triggered solely by first addition of its workflow file to main. No cron, job scheduler, data service or forecast integration.
+- .github/workflows/cfb-2021-25-historical-calendar-index-probe.yml: a **one-time** initial public source probe, with one deliberately bounded replay after the House64A office-label correction. No schedule or service loop. No cron, job scheduler, data service or forecast integration.
 
 Inspect GitHub workflow artifact: per-year **year listing status**, report-category **calendar links**, and **both original PDF statuses**. A successful Actions job does **not** itself certify those original PDFs were obtainable: require per-source proof and absence of acquisition failures.
 
