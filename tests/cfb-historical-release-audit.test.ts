@@ -92,6 +92,7 @@ test('missing and uncorroborated official row links remain explicitly unverified
       rowKey: 'no-report', year: 2024, chamber: 'senate',
       filerRegistrationNumber: '18443', transactionDate: '2024-10-25',
       availableOn: '2025-01-29', asOfEligible: true,
+      filedOn: null,
       availabilityPolicyVersion: 'mn-cfb-report-availability-v6',
     },
   });
