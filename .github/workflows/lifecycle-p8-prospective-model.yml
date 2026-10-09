@@ -1,9 +1,13 @@
 name: Lifecycle P8 prospective model freeze
 
 on:
-  issue_comment:
-    types: [created, edited]
   workflow_dispatch:
+    inputs:
+      run_vercel:
+        description: Explicitly allow this workflow to read the Vercel production environment
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -14,13 +18,7 @@ concurrency:
 
 jobs:
   build:
-    if: >-
-      github.event_name != 'issue_comment' ||
-      (
-        github.event.issue.number == 310 &&
-        github.event.comment.user.login == 'killjoy00' &&
-        startsWith(github.event.comment.body, '[lifecycle-p8-prospective-model]')
-      )
+    if: inputs.run_vercel == true && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
