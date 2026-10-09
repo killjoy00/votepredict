@@ -1,0 +1,52 @@
+name: VotePredict Neon schema-only evidence sandbox (24h manual)
+
+# Issue #847. This is NOT production refresh or a normal data-bearing branch.
+# Only one explicitly approved GitHub workflow_dispatch may create a sandbox.
+# Never add schedule, push, issue_comment or PR triggers.
+on:
+  workflow_dispatch:
+    inputs:
+      create_sandbox:
+        description: Approve ONE 24-hour schema-only Neon branch (no rows/compute)
+        required: true
+        type: boolean
+        default: false
+      approval_phrase:
+        description: Type CREATE_VOTEPREDICT_SCHEMA_ONLY_SANDBOX
+        required: true
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: votepredict-neon-schema-only-sandbox
+  cancel-in-progress: false
+
+jobs:
+  create:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      inputs.create_sandbox == true &&
+      inputs.approval_phrase == 'CREATE_VOTEPREDICT_SCHEMA_ONLY_SANDBOX'
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_SCHEMA_ONLY_APPROVAL: ${{ inputs.approval_phrase }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Create one expiring schema-only branch; no compute, credentials or source rows exported
+        run: node --import tsx scripts/create-votepredict-neon-schema-only-sandbox.ts --create
