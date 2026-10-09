@@ -132,7 +132,9 @@ test('read-only audit observes bounded, non-PII statuses and never writes', asyn
   assert.equal(result.sourceFreshness.length, 6);
   assert.equal(result.sourceFreshness.find(r => r.kind === 'public_news_article')?.observation, 'observed');
   assert.equal(result.sourceFreshness.find(r => r.kind === 'campaign_site')?.observation, 'not_observed');
-  assert.deepEqual(m.calls.filter(c => c.values).map(c => c.values), [[...SOURCE_KINDS]]);
+  const parameterized = m.calls.filter(c => c.values !== undefined);
+  assert.equal(parameterized.length, 1);
+  assert.deepEqual(parameterized[0].values, [[...SOURCE_KINDS]]);
   assert.ok(m.calls.every(c => /^(BEGIN TRANSACTION|SET LOCAL|SELECT|ROLLBACK)/i.test(c.sql.trim())));
   assert.equal(m.calls.at(-1)?.sql, 'ROLLBACK');
   assert.equal(m.released, true);
