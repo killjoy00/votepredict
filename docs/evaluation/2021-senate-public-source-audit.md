@@ -96,3 +96,24 @@ The official [2021–22 Minnesota House floor video archive](https://www.house.m
 ## Conformance
 
 Outcome-blind read-only desk research on official public web indexes plus local deterministic comparison to the frozen target CSV. No source bytes or speaker-level evidence claimed. Repo documentation is the only output; no source, production or evaluation result mutation.
+
+## Follow-up: new exact public House SF958 conference audio host (2026-10-09)
+
+**New public source family, not additional evidence:** the official [House 92nd Legislature conference-committee audio archive](https://www.house.mn.gov/audio/CCarchives/92) has exact, self-service **MP3 download links on www.lrl.mn.gov** for SF958. This is a different URL/host family from the three Senate Granicus MP3s that each returned HTTP 403 on the GitHub-hosted runner. Publicly downloading already published Library-hosted files is permitted; there was **no communication with the Library or any office**.
+
+| Recorded meeting date | Official source | Exact public MP3 | Archive description |
+| --- | --- | --- | --- |
+| 2021-05-04 | SF958 conference committee | [SF0958050421.mp3](https://www.lrl.mn.gov/audio/house/2021/SF0958050421.mp3) | 2h22m; same/similar and House-only provisions |
+| 2021-05-06 | SF958 conference committee | [SF0958050621.mp3](https://www.lrl.mn.gov/audio/house/2021/SF0958050621.mp3) | 2h30m; food access, emerging farmers, meat processing, biofuels and possible compromise language |
+| 2021-05-13 | SF958 conference committee | [SF0958051321.mp3](https://www.lrl.mn.gov/audio/house/2021/SF0958051321.mp3) | 2m; committee recessed |
+| 2021-05-15 | SF958 conference committee | [SF0958051521.mp3](https://www.lrl.mn.gov/audio/house/2021/SF0958051521.mp3) | 1m; meeting recessed; no substantive reconvened video |
+
+Source identity is the *official House archive listing and each exact Download MP3 href*. A public web reader recognized audio/mpeg at these four links but could not return binary bytes; an independent workspace HTTP client failed DNS for the host. **At this desk-research checkpoint no complete recording was retrieved, hashed or decoded, and no speaker or quote was verified.** Do not interpret a browser's unsupported-audio response as successful acquisition.
+
+The immutable v1.8 target matrix includes **May 17, 2021 SF958 House** vote event 39623fea-b934-4d2a-8d88-5918163e54b8 (134 member-event target rows) and **May 17, 2021 SF958 Senate** vote event 94d489cd-ed5f-4f40-962a-388877c0946c (67 rows). These are date-and-bill *research windows only*. The May 17 conference-report version cannot inherit direction from the April 22 House bill version without independent provision-level review. Conferee membership or the archive's Sundin/Westrom labels do not attribute any audio statement.
+
+The new scripts/probe-2021-house-sf958-public-audio.ts and .github/workflows/historical-2021-house-sf958-audio-audit.yml are **offline by default** and permit only these four exact MP3 URLs. The one-time main-branch audit checks whole-file HTTP 200 (no redirects or partial transfers), audio MIME/signature, capped streaming, full SHA-256 and MP3 decode/duration, temporarily retaining only the two short verified public files as a GitHub Actions artifact. Per-file caps are 100 MiB for each long recording and 8 MiB for each short one, with a 15-minute job ceiling. No database, Vercel, secret, cron, production, target-outcome, serving or model connection. **An accessible recording remains context-only** until independently corroborated speaker identity, explicit exact-bill stance, strictly prior historical publication and frozen member-event mapping are proven.
+
+An independent official [House Session Daily story dated April 22, 2021](https://www.house.mn.gov/SessionDaily/Story/15922) attributes a favorable SF958/HF1524-specific quotation to Representative Mike Sundin. This is a **textual lead only** for later May 17 frozen House event: pre-vote availability of the exact content is not independently anchored, and the May 17 bill version differs from the April 22 House version. That story and April 21 floor-video *tabling motion* are **not accepted new directional member-event rows**. Do not reopen exhausted broad Session Daily or Wayback lanes.
+
+**Coverage remains 9/35,510 for 2021-22; new accepted directional rows = 0.** If complete audio is recovered, the next gate is actual statement content, named speaker verification and strict before-vote public availability; unknown remains unknown.
