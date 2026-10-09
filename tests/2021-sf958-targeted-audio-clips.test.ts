@@ -84,6 +84,8 @@ test('workflow only runs by its own new file path or manually, no production or 
   assert.match(s,/^  workflow_dispatch:/m);
   assert.match(s,/persist-credentials: false/);
   assert.match(s,/scripts\/review-2021-sf958-targeted-clips\.ts --extract/);
+  assert.match(s,/python3 -m venv "\$RUNNER_TEMP\/one-time-asr"/);
+  assert.match(s,/historical-2021-sf958-reviewed-clips-\$\{\{ github\.sha \}\}-\$\{\{ github\.run_id \}\}/);
   assert.doesNotMatch(s,/^\s+(?:schedule|pull_request|workflow_run|issue_comment):/m);
   assert.doesNotMatch(s,/secrets\.|DATABASE_URL|NEON_API_KEY|VERCEL_TOKEN|vercel|psql|runPublicEvidenceRefresh|--connect|--create|deploy --prod|id-token: write/i);
 });
