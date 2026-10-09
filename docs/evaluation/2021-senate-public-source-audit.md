@@ -55,6 +55,44 @@ Independent availability references:
 4. Pass only independently verified candidates to the existing semantic review gate. Preserve `contextOnly=true`, `mechanicallyActionable=false`, `modelWeight=0`, `integrationReady=false` until separate approved integration. **No model/serving change is authorized.**
 5. If the public online record cannot be read or verified, report the exact unavailable/ambiguous count and stop. **No library contact, outreach, digitization request or manual acquisition escalation.**
 
+## Follow-up: v1.8 target overlap and pinned public-audio byte probe (2026-10-08)
+
+**Frozen-v1.8 evidence target computation only; no speaker/statement evidence found yet.** Independently inspected canonical GitHub Actions run [37647888556](https://github.com/killjoy00/votepredict/actions/runs/37647888556), matrix artifact `11494634289`. Confirmed immutable target set **135,457 rows** and canonical compressed NDJSON SHA-256 `42f9d79bd69df63b46a2f0f5c1636f4cc7f8fd0ec0a65ae905d85f28fd436700` and decompressed NDJSON SHA-256 `2d4ed4993fd7efce5a0c7de2a4331f1f3a0f163e323f437c6f9e7dacf266a30b`. Filter was explicit `2021-2022` **Senate** chamber, frozen exact bill ID in each official public 2021 agenda, frozen vote date **strictly after** agenda date, and no existing v1.8 exact-bill or reviewed directional feature on the member-event row.
+
+| Public 2021 Senate agenda date | Frozen exact bills | Distinct matching later Senate events | Uncovered v1.8 Senate member-event rows |
+| --- | --- | ---: | ---: |
+| Jan 12 | SF26 | 1 | 67 |
+| Feb 4 | SF193, SF395, SF529 | 4 | 268 |
+| Feb 11 | SF440 | 1 | 67 |
+| Feb 18 | SF672 | 1 | 67 |
+| Mar 9 | SF1470, SF1807 | 2 | 134 |
+| Mar 16 | SF226 | 1 | 67 |
+| Apr 13 | SF958, SF1098, SF970 | 5 | 335 |
+| Apr 21 | SF383, SF1160 | 2 | 134 |
+| **Total** | **14 distinct bill IDs** | **17 distinct Senate target events** | **1,139 unique still-uncovered member-event rows** |
+
+**These are entirely theoretical overlap opportunities, not a claimed source/quote yield** and not additions to the v1.8 `9 / 35,510` verified 2021–22 directional baseline. The 17 distinct Senate events here result from an exact-vote filter and should not be confused with the earlier 17 agenda-to-frozen-association hits from the 85 print-minute targeting associations.
+
+### Pinned initial public source leads — bounded byte accessibility, NOT audio content
+
+The [public Senate historical audio index](https://mnsenate.granicus.com/ViewPublisher.php?view_id=2) contains links that appear to correspond to three of the official dated agendas above. They are **candidate links**, not separately verified exact audio-to-meeting identities. April 13 Finance has two indexed audio entries, and April 21 Finance multiple parts; these three links do not represent a claim to complete recordings.
+
+| Meeting | Agenda | Exact pinned MP3 candidate |
+| --- | --- | --- |
+| Civil Law Feb 4 | [clip 6032](https://mnsenate.granicus.com/GeneratedAgendaViewer.php?clip_id=6032&view_id=2) | [MP3 candidate](https://archive-video.granicus.com/mnsenate/mnsenate_7edfc4ff-545c-4f41-af4c-53476171dbe1.mp3) |
+| Finance Apr 13 | [clip 6960](https://mnsenate.granicus.com/GeneratedAgendaViewer.php?clip_id=6960&view_id=2) | [MP3 candidate](https://archive-video.granicus.com/mnsenate/mnsenate_91f9beb5-353d-4047-be35-4bb7f4803654.mp3) |
+| Finance Apr 21 | [clip 7022](https://mnsenate.granicus.com/GeneratedAgendaViewer.php?clip_id=7022&view_id=2) | [part-1 MP3 candidate](https://archive-video.granicus.com/mnsenate/mnsenate_1e0d21bb-646c-489e-bdef-fe7ee6ad4c29.mp3) |
+
+The **one-time** [`historical-2021-senate-public-audio-byteprobe.yml`](../../.github/workflows/historical-2021-senate-public-audio-byteprobe.yml) is triggered when its own workflow file is first added to `main` (or through an explicit later manual dispatch). It attempts a **single 64-KiB HTTP Range GET per exact URL**, permits no redirected/custom hosts, cancels larger bodies, classifies HTTP/transport issues separately and hashes only retrieved prefix bytes. The report never records audio/transcript content and always returns `fullRecordingsVerified=0` and `directionalEvidenceRowsAdded=0`. No GitHub secret, production DB, Vercel, Library contact or archive-crawl mode is used.
+
+A byte-prefix MP3 signature **does not establish a complete recording, its publication date, agenda-to-recording identity, exact spoken content or attribution**; if available, those checks would need a separate explicitly bounded full-source recovery and independent semantic review. If the probe reports HTTP/DNS/redirect failures, those are *source-accessibility findings from that specific runner*, not proof no archive exists.
+
+### Independent House public floor-video alternative (not yet reviewed)
+
+The official [2021–22 Minnesota House floor video archive](https://www.house.mn.gov/htv/archivesHFS.asp?ls_year=92) exposes bill-specific time markers. Its Apr 21, 2021 SF958 segment precedes a later Apr 22 House target vote, so it is a **candidate for source retrieval** only: no audio bytes, bill-specific words, attributable legislator statement, historic timestamp order, or directional evidence has been established. The Apr 22 [Session Daily report on HF1524/SF958](https://www.house.mn.gov/sessiondaily/Story/15922) is **same-day with the Apr 22 vote** and must not be used for that vote without an independent intra-day proof. Do not use current mutable pages as retrospective availability evidence. Never infer stance from floor agenda, bill labels, committee actions, or vote outcomes.
+
+**Success criterion remains: genuinely recovered, hashed, independently available strict-pre-vote source, explicit named-member and bill mention, clear directional statement, and separate semantics.** Pending that, the 2021–22 strict directional count remains **9**; new evidence rows **0**.
+
 ## Conformance
 
 Outcome-blind read-only desk research on official public web indexes plus local deterministic comparison to the frozen target CSV. No source bytes or speaker-level evidence claimed. Repo documentation is the only output; no source, production or evaluation result mutation.

@@ -1,0 +1,44 @@
+name: Historical 2021 Senate public audio byte probe
+
+# One-time check on the introduction of this workflow, then manually only.
+# Public HTTP byte ranges from exactly three pinned Granicus URLs; no DB.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/historical-2021-senate-public-audio-byteprobe.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: historical-2021-senate-public-audio-byteprobe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Probe 3 exact public MP3 prefixes without storing audio
+        env:
+          VOTEPREDICT_AUDIO_REPORT_FILE: artifacts/historical-2021-senate-audio-byteprobe-v1.json
+        run: |
+          mkdir -p artifacts
+          node --import tsx scripts/probe-2021-senate-public-audio.ts --probe
+      - name: Save source-accessibility metadata only (no recording bytes)
+        uses: actions/upload-artifact@v7
+        with:
+          name: historical-2021-senate-audio-byteprobe-v1-${{ github.sha }}-${{ github.run_id }}
+          path: artifacts/historical-2021-senate-audio-byteprobe-v1.json
+          if-no-files-found: error
+          retention-days: 14
