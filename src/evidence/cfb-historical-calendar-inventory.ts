@@ -7,6 +7,8 @@ export const CFB_SD6_STANDALONE_CALENDAR_URL =
   'https://register.cfb.mn.gov/pdf/calendars/2025_special_election_6.pdf';
 export const CFB_SD6_CANDIDATE_PACKET_URL =
   'https://cfb.mn.gov/pdf/publications/elections/candidate_packets/2025/Senate_6_special.pdf';
+export const CFB_MISLABELED_HOUSE64A_CALENDAR_URL =
+  'https://register.cfb.mn.gov/pdf/calendars/2025_special_election_64A.pdf';
 
 const YEARS = [2021, 2022, 2023, 2024, 2025] as const;
 type Year = typeof YEARS[number];
@@ -145,6 +147,56 @@ export function parseCfbHistoricalCalendarIndex(body: string, fetchedAt: string)
     registeredSenateFilerDenominator: null,
     missingSectionIsNotProofNoCalendarExists: true,
     noDateOrEligibilityInferredFromIndex: true,
+  };
+}
+
+export interface CfbOriginalOfficeCalendarCapture {
+  sourceUrl: string;
+  finalSourceUrl: string;
+  rawPdfSha256: string;
+  pdfBytes: number;
+  fetchedAt: string;
+  extractedText: string;
+}
+
+export function auditCfbMislabeled2025House64aCalendar(
+  archive: ReturnType<typeof parseCfbHistoricalCalendarIndex>,
+  source: CfbOriginalOfficeCalendarCapture | null,
+) {
+  const mismatchedArchiveLink = archive.links.find(link =>
+    link.year === 2025
+    && link.sourceUrl === CFB_MISLABELED_HOUSE64A_CALENDAR_URL
+    && link.title.toLowerCase() === 'senate district 64a special election') ?? null;
+  const validPdf = Boolean(source
+    && source.sourceUrl === CFB_MISLABELED_HOUSE64A_CALENDAR_URL
+    && source.finalSourceUrl === CFB_MISLABELED_HOUSE64A_CALENDAR_URL
+    && /^[a-f0-9]{64}$/.test(source.rawPdfSha256)
+    && Number.isInteger(source.pdfBytes) && source.pdfBytes >= 500
+    && !Number.isNaN(Date.parse(source.fetchedAt))
+    && source.extractedText.length > 100);
+  // Only count House when the ORIGINAL official PDF title says House.
+  // An archive link, a URL suffix A/B, or a calendar search result alone
+  // cannot conclusively establish the chamber/office.
+  const titleText = source?.extractedText.replace(/\s+/g, ' ').slice(0, 1_500) ?? '';
+  const originalSaysHouse64a = validPdf
+    && /House\s+District\s+64A\s+Special\s+Election\s+Public\s+Disclosure\s+Calendar/i.test(titleText);
+  return {
+    schemaVersion: 'cfb-2025-64a-archive-office-mislabel-proof-v1' as const,
+    archiveListedAsSenate64a: Boolean(mismatchedArchiveLink),
+    sourceUrl: CFB_MISLABELED_HOUSE64A_CALENDAR_URL,
+    originalPdfStatus: !source ? 'not_acquired'
+      : !validPdf ? 'invalid_pdf_provenance'
+      : originalSaysHouse64a ? 'house_64a_original_title_verified'
+      : 'original_title_unverified',
+    sourcePdfSha256: validPdf ? source!.rawPdfSha256 : null,
+    sourcePdfBytes: validPdf ? source!.pdfBytes : null,
+    originalPdfFetchedAt: validPdf ? source!.fetchedAt : null,
+    verifiedHouse64aArchiveLabelConflict: Boolean(mismatchedArchiveLink && originalSaysHouse64a),
+    sourceListingCannotBeCountedAsSenateCalendar: true,
+    officialRegisteredSenateFilerDenominator: null,
+    historicalAvailabilityEstablished: false,
+    senateOfficeAttributionGranted: false,
+    productionDataMutation: false,
   };
 }
 
