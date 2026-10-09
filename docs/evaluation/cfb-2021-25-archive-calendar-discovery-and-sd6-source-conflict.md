@@ -10,6 +10,14 @@ The existing [public-source ledger](./source-proof/cfb-2025-senate-district6-rep
 
 The new pure archive parser reads the regulator's official HTML, records its fetched-body SHA-256, lists year- and family-specific links with exact official original PDF URLs, and reports explicit year-not-listed or malformed-source states. It does **not** infer due dates, report filing obligation or public availability from the link title. **The calendar index is not the official registered-filer or required-report denominator.**
 
+## Discovered 2025 calendar archive office-label inconsistency
+
+The live October 9, 2026 archive source inventory lists **10** calendar links for 2025, of which the original parser labeled **5** as Senate special elections. One archive anchor literally reads **“Senate District 64A special election”** and links to [the CFB's original 2025 64A calendar](https://register.cfb.mn.gov/pdf/calendars/2025_special_election_64A.pdf). But a Senate district is not designated with an A/B suffix, and the original PDF identifies **House District 64A** rather than Senate. We must not count an archive anchor as independent office proof.
+
+The corrected inventory therefore distinguishes **four valid numeric Senate special-election link labels**, **one ambiguous archive office label**, and **three explicitly House-labeled special election links** for 2025. The remaining two entries are a general calendar and local-election influence disclosure calendar. The **10 links remain 10 source references**; none count mandated filings or Senate candidates.
+
+The public source capture now makes **one additional bounded original CFB PDF request** to prove the 64A title from original PDF bytes, recording its SHA-256/size/fetched-at and a narrow exact title check. If that request fails, chamber resolution remains *unverified* and is recorded as a failure. This is metadata-only and does not alter the other archives, historical release dates, or any candidate identity. The original CFB archive's title is preserved literally as provenance alongside the discrepancy, not silently rewritten.
+
 ## Conflicting official SD6 period cutoffs: no silent adjudication
 
 Two distinct official CFB sources require independent original-byte verification:
