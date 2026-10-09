@@ -1,0 +1,111 @@
+name: Prove 2025 House public replay gap
+
+on:
+  pull_request:
+    paths:
+      - scripts/prove-historical-density-2025-house-public-replay-gap.ts
+      - .github/workflows/historical-density-2025-house-public-replay-gap-proof.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: historical-density-2025-house-public-replay-gap-proof-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  prove:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Materialize canonical House universe audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api /repos/${{ github.repository }}/actions/artifacts/11457484096/zip > "$RUNNER_TEMP/universe-audit.zip"
+          echo "9047ac177fcabc03b2b80662ca0a2475d07fef1e4ea8a828643c1f8aeb6020e1  $RUNNER_TEMP/universe-audit.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/universe-audit"
+          unzip -q "$RUNNER_TEMP/universe-audit.zip"             historical-density-2025-house-vote-universe-gap-audit-v1.json             -d "$RUNNER_TEMP/universe-audit"
+
+      - name: Prove public-source replayability
+        env:
+          VOTEPREDICT_2025_HOUSE_UNIVERSE_AUDIT_PATH: ${{ runner.temp }}/universe-audit/historical-density-2025-house-vote-universe-gap-audit-v1.json
+          VOTEPREDICT_2025_HOUSE_PUBLIC_REPLAY_GAP_OUTPUT: ${{ runner.temp }}/proof/historical-density-2025-house-public-replay-gap-proof-v1.json
+        run: node --import tsx scripts/prove-historical-density-2025-house-public-replay-gap.ts
+
+      - name: Verify frozen selection and source discipline
+        shell: bash
+        run: |
+          set -euo pipefail
+          f="$RUNNER_TEMP/proof/historical-density-2025-house-public-replay-gap-proof-v1.json"
+
+          test "$(jq -r '.schemaVersion' "$f")" = historical-density-2025-house-public-replay-gap-proof-v1
+          test "$(jq -r '.issue' "$f")" = 718
+          test "$(jq -r '.session' "$f")" = 2025-2026
+          test "$(jq -r '.chamber' "$f")" = house
+          test "$(jq -r '.frozenSelection.sourceAuditRunId' "$f")" = 37563491641
+          test "$(jq -r '.frozenSelection.sourceAuditArtifactId' "$f")" = 11457484096
+          test "$(jq -r '.frozenSelection.sourceAuditArtifactDigest' "$f")" = sha256:9047ac177fcabc03b2b80662ca0a2475d07fef1e4ea8a828643c1f8aeb6020e1
+          test "$(jq -r '.frozenSelection.candidateCount' "$f")" = 16
+          test "$(jq -r '.frozenSelection.candidateSetSha256' "$f")" = c756fa9d80e7914e579d1bb43e2dc3c3d730ad221e0f8185dc2de2ccffc2c37a
+          test "$(jq -r '.summary.candidates' "$f")" = 16
+          test "$(jq -r '.summary.sourceNativeReplayable' "$f")" = 15
+          test "$(jq -r '.summary.replayableSetSha256' "$f")" = e7b97f3662dd5519c1ff3c2e19e264ffb940e1a63e309ac1fb760af98fe7a0e4
+          test "$(jq -r '.summary.explicitOutcomeUnresolved' "$f")" = 1
+          test "$(jq -r '.summary.unresolvedSetSha256' "$f")" = 5ba2565066c226be105d45c477280f491b91608066ea95c76bcd52bf1c838903
+          test "$(jq -r '.summary.memberVoteRows' "$f")" = 2125
+          test "$(jq -r '.summary.passed' "$f")" = 15
+          test "$(jq -r '.summary.failed' "$f")" = 0
+          test "$(jq -r '[.cases[] | select(.sourceNativeReplayable == false) | .compositeKey] | join(",")' "$f")" = HF2354\|2026-05-17
+          test "$(jq -r '[.cases[] | select(.sourceNativeReplayable == true) | .journal.resolutionMethod] | unique | join(",")' "$f")" = exact_bill_tally_and_explicit_result_v1
+
+          test "$(jq -r '.policy.productionDatabaseQueried' "$f")" = false
+          test "$(jq -r '.policy.productionWrites' "$f")" = false
+          test "$(jq -r '.policy.vercelUsed' "$f")" = false
+          test "$(jq -r '.policy.candidateSelectionUsedPassFailOutcome' "$f")" = false
+          test "$(jq -r '.policy.passFailOutcomeReadOnlyAfterCandidateSetFrozen' "$f")" = true
+          test "$(jq -r '.policy.outcomeInferenceFromVoteThreshold' "$f")" = false
+          test "$(jq -r '.policy.officialPublicSourcesOnly' "$f")" = true
+          test "$(jq -r '.policy.sameDayRevisorVersionsExcluded' "$f")" = true
+          test "$(jq -r '.policy.featureRowsWritten' "$f")" = false
+          test "$(jq -r '.policy.modelFitting' "$f")" = none
+          test "$(jq -r '.policy.servingChanged' "$f")" = false
+          test "$(jq -r '.policy.integrationReady' "$f")" = false
+
+          replayable="$(jq -r '.summary.sourceNativeReplayable' "$f")"
+          unresolved="$(jq -r '.summary.explicitOutcomeUnresolved' "$f")"
+          test $((replayable + unresolved)) -eq 16
+
+          {
+            echo '## 2025-26 House public replay-gap proof'
+            echo
+            echo '- Frozen gap candidates: **16**'
+            echo "- Source-native replayable: **$replayable**"
+            echo '- Replayable set SHA-256: **e7b97f3662dd5519c1ff3c2e19e264ffb940e1a63e309ac1fb760af98fe7a0e4**'
+            echo "- Explicit Journal outcome unresolved: **$unresolved**"
+            echo '- Unresolved case: **HF2354 | 2026-05-17**'
+            echo "- Public member-vote rows captured: **$(jq -r '.summary.memberVoteRows' "$f")**"
+            echo "- Explicit passes: **$(jq -r '.summary.passed' "$f")**"
+            echo "- Explicit failures: **$(jq -r '.summary.failed' "$f")**"
+            echo '- Candidate selection used pass/fail outcome: **no**'
+            echo '- Production DB queried: **no**'
+            echo '- Integration-ready: **no**'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: historical-density-2025-house-public-replay-gap-proof-v1
+          path: ${{ runner.temp }}/proof/*
+          if-no-files-found: error
+          retention-days: 90
