@@ -192,6 +192,8 @@ async function main() {
             dueOn: proof.dueOn,
             filedOn: proof.filedOn,
             provenAvailableOn: proof.availableOn,
+            statutoryReleaseAtLocal: proof.statutoryReleaseAtLocal,
+            reportDueOn: proof.dueOn,
             proofKind: proof.proofKind,
             proofUrl: proof.proofUrl,
             retrospectiveAvailabilityProof: true,
@@ -244,7 +246,7 @@ async function main() {
             proofCount: proofs.length,
             bytes: pdf.bytes,
             historicalAvailabilityPolicy:
-              'explicit filed date only; due dates never treated as public availability',
+              'both exact report due and filing dates; statutory release is 8 AM following due date; late filing bound applied',
           },
         }, drafts);
 
@@ -296,7 +298,7 @@ async function main() {
         policy: {
           explicitFiledDateRequired: true,
           dueDateIsAvailability: false,
-          reportAvailabilityRule: 'electronically filed report is available the next day',
+          reportAvailabilityRule: '8 AM day after report due, conservatively not before day after filing',
           transactionDateIsAvailability: false,
           servingChanged: false,
           productionAction: 'none',

@@ -144,6 +144,7 @@ export function parseCfbBoardMaterialsFilingProofs(
         registrationNumber,
         reportName,
         filedOn,
+        dueOn,
         proofUrl,
       });
       proofs.push({ ...proof, entityName, dueOn });

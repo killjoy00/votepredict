@@ -143,6 +143,7 @@ async function main() {
       availableOn: string;
       disclosedOn: string | null;
       filedOn: string | null;
+      dueOn: string | null;
       reportName: string;
       proofKind: 'cfb_public_disclosure' | 'cfb_report_filing';
       proofUrl: string;
@@ -170,6 +171,7 @@ async function main() {
           availableOn: proof.availableOn,
           disclosedOn: proof.disclosedOn,
           filedOn: row.filedOn,
+          dueOn: row.dueOn,
           reportName: proof.reportName,
           proofKind: proof.proofKind,
           proofUrl: proof.proofUrl,
@@ -182,11 +184,12 @@ async function main() {
         continue;
       }
 
-      if (row.filedOn && row.reportName) {
+      if (row.filedOn && row.dueOn && row.reportName) {
         const proof = buildCfbReportDisclosureProof({
           registrationNumber,
           reportName: row.reportName,
           filedOn: row.filedOn,
+          dueOn: row.dueOn,
           proofUrl: urls.independentExpenditures,
         });
         disclosureMappings.push({
@@ -194,6 +197,7 @@ async function main() {
           availableOn: proof.availableOn,
           disclosedOn: null,
           filedOn: proof.filedOn,
+          dueOn: proof.dueOn ?? null,
           reportName: proof.reportName,
           proofKind: 'cfb_report_filing',
           proofUrl: proof.proofUrl,
@@ -227,6 +231,7 @@ async function main() {
               availableOn: match.window.availableOn,
               disclosedOn: null,
               filedOn: match.proof.filedOn,
+              dueOn: match.proof.dueOn,
               reportName: match.window.reportName,
               proofKind: 'cfb_report_filing',
               proofUrl: match.window.proofUrl,
@@ -274,7 +279,9 @@ async function main() {
             : 'awaiting_regulatory_disclosure_proof',
           transactionDateIsAvailability: false,
           disclosureDateIsAvailability: disclosure?.proofKind === 'cfb_public_disclosure',
-          filingDateDerivedAvailability: disclosure?.proofKind === 'cfb_report_filing',
+          filingDateDerivedAvailability: false,
+          dueDateAndFilingBoundApplied: disclosure?.proofKind === 'cfb_report_filing',
+          reportDueOn: disclosure?.dueOn ?? row.dueOn,
           transactionDate: row.transactionDate,
           reportName: disclosure?.reportName ?? row.reportName,
           filedOn: disclosure?.filedOn ?? row.filedOn,
@@ -317,7 +324,7 @@ async function main() {
           rowCount: rows.length,
           rowContentSha256,
           historicalAvailability: disclosureMappings.length
-            ? 'official_disclosure_or_filing_derived_availability_when_row_level_proven'
+            ? 'official_disclosure_or_due_date_bounded_availability_when_row_level_proven'
             : 'pending_disclosure_proof',
           availabilityPolicyVersion: CFB_REPORT_AVAILABILITY_VERSION,
         },
@@ -351,6 +358,7 @@ async function main() {
           available_on: mapping.availableOn,
           disclosed_on: mapping.disclosedOn,
           filed_on: mapping.filedOn,
+          due_on: mapping.dueOn,
           report_name: mapping.reportName,
           proof_kind: mapping.proofKind,
           proof_url: mapping.proofUrl,
@@ -367,6 +375,7 @@ async function main() {
                 available_on date,
                 disclosed_on date,
                 filed_on date,
+                due_on date,
                 report_name text,
                 proof_kind text,
                 proof_url text,
@@ -385,6 +394,7 @@ async function main() {
                    'availableOn', disclosure.available_on::text,
                    'disclosedOn', disclosure.disclosed_on::text,
                    'filedOn', disclosure.filed_on::text,
+                   'reportDueOn', disclosure.due_on::text,
                    'reportName', disclosure.report_name,
                    'availabilityProofKind', disclosure.proof_kind,
                    'availabilityProofUrl', disclosure.proof_url,
@@ -393,7 +403,8 @@ async function main() {
                    'availabilityProofFetchedAt', disclosure.proof_fetched_at::text,
                    'availabilityProofBytes', disclosure.proof_bytes,
                    'disclosureDateIsAvailability', disclosure.proof_kind = 'cfb_public_disclosure',
-                   'filingDateDerivedAvailability', disclosure.proof_kind = 'cfb_report_filing',
+                   'filingDateDerivedAvailability', false,
+                   'dueDateAndFilingBoundApplied', disclosure.proof_kind = 'cfb_report_filing',
                    'transactionDateIsAvailability', false,
                    'contextOnly', true,
                    'mechanicallyActionable', false,
@@ -447,7 +458,7 @@ async function main() {
         sourceDocumentId,
         disclosureMappedRows: disclosureMappings.length,
         directDisclosureRows: disclosureMappings.filter(row => row.proofKind === 'cfb_public_disclosure').length,
-        filingDerivedRows: disclosureMappings.filter(row => row.proofKind === 'cfb_report_filing').length,
+        dueDateBoundedReportRows: disclosureMappings.filter(row => row.proofKind === 'cfb_report_filing').length,
         currentReportMappedRows: disclosureMappings.filter(row => row.source === 'current_report_pdf').length,
         currentReportAcquisition: {
           reportLimit: currentReportLimit(),
