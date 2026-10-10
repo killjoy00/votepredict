@@ -171,7 +171,9 @@ test('preview SQL only targets source/date/identity-verified legacy evidence and
   const sql = previewSenateCommitteeHearingRepairSql([evidence()]);
   assert.ok(sql.includes('UPDATE evidence_items AS ei'));
   assert.ok(sql.includes('published_at ='));
-  assert.ok(sql.includes("source_document_id = approved.source_document_id"));
+  assert.ok(sql.includes("sd.id = approved.source_document_id"));
+  assert.ok(sql.includes("sd.source_url = approved.source_url"));
+  assert.ok(sql.includes("ei.source_document_id = sd.id"));
   assert.ok(sql.includes("metadata->>'sourceVerified'"));
   assert.ok(sql.includes("metadata->>'ingestionIdentityKey'"));
   assert.ok(sql.includes('NOT EXISTS'));
