@@ -42,7 +42,7 @@ From an environment that can access the public index, select a generated \`query
 \`\`\`bash
 curl --fail --show-error --location \
   --max-time 30 \
-  'https://index.commoncrawl.org/CC-MAIN-2025-43-index?url=heintzemanforsenate.com%2F&output=json' \
+  'https://index.commoncrawl.org/CC-MAIN-2025-13-index?url=heintzemanforsenate.com%2F&output=json' \
   --output /tmp/cc-response.jsonl
 \`\`\`
 
