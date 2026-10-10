@@ -12,6 +12,10 @@ import {
   type AuditedOfficialSenateDirectory,
   SENATOR_ONLY_COVERAGE_OBSERVATION_DATE,
 } from './senate-official-ever-served-directory.js';
+import {
+  exceptionalFormerOrLaterSenatorMatch,validateVerifiedExceptionalProofs,
+  type VerifiedSenateExceptionalPersonSources,
+} from './senate-lrl-explicit-historic-person-proofs.js';
 
 export const STATEWIDE_SENATE_CAMPAIGN_SOURCE_AUDIT_VERSION='senate-2021-25-ever-served-person-campaign-source-coverage-v2' as const;
 type Cohort='2020_general'|'2022_general'|'2024_special'|'2025_special';
@@ -100,6 +104,7 @@ function validateOriginalGeneralCensus(
 export function auditStatewideSenateCampaignSourceRecovery(
  census?:{y2020?:HistoricalOriginalGeneralCensus;y2022?:HistoricalOriginalGeneralCensus},
  officialDirectory?:AuditedOfficialSenateDirectory,
+ exceptionalIdentityProofs?:VerifiedSenateExceptionalPersonSources,
 ){
  if(seeds.schema!=='mn-sos-senate-candidate-website-seeds-2021-25-v1'
    ||seeds.scope.targetCalendarYears.join(',')!=='2021,2022,2023,2024,2025'
@@ -112,6 +117,10 @@ export function auditStatewideSenateCampaignSourceRecovery(
    ||survey.excerpts.length!==8
    ||survey.scope.earliestPreElectionAvailabilityCertified!==false)
    throw Error('Upstream election website/archive/survey manifest assumptions changed');
+ if(exceptionalIdentityProofs){
+   if(!officialDirectory)throw Error('Exact LRL cross-district and former-name proof needs independently checked Senate service');
+   validateVerifiedExceptionalProofs(exceptionalIdentityProofs);
+ }
  if(Boolean(census?.y2020)!==Boolean(census?.y2022))
    throw Error('Both raw-original 2020 and 2022 SOS census exports required together');
  const originalCensusProvided=Boolean(census?.y2020&&census?.y2022);
@@ -157,14 +166,21 @@ export function auditStatewideSenateCampaignSourceRecovery(
       survey.sources.find(src=>src.id===x.sourceId)!.district,2022)===candidate);
   if(publisherQuotes.some(x=>x.historicalPublicByAt!==null||x.eligibleForForecast!==false))
     throw Error('Unverified publisher quote backdated to historical source');
-  const service=officialDirectory
+  const exceptional=officialDirectory
+    ?exceptionalFormerOrLaterSenatorMatch(
+        officialDirectory,exceptionalIdentityProofs,w.candidateName,w.district,meta.year)
+    :null;
+  const service=exceptional??(officialDirectory
     ?validateActualSenateServiceForElection(officialDirectory,w.candidateName,w.district,meta.year)
     :{status:'not_yet_verified' as const,officialName:null,term:null,
-       serviceForThisElectionFollowingYearVerified:false,officialServiceSource:null};
+       serviceForThisElectionFollowingYearVerified:false,officialServiceSource:null});
   return{
     candidateName:w.candidateName,district:w.district,
     officialSenateServiceVerified:service.status==='verified_senate_service',
     officialSenateServiceVerifiedName:service.officialName,
+    explicitSourceProvenFormerOrCrossDistrictIdentity:exceptional?.officialIdentityProofSourceUrl??null,
+    explicitSourceProvenIdentityObservedAt:exceptional?.officialIdentityProofObservedAt??null,
+    explicitSourceProvenIdentityOriginalSha256:exceptional?.officialIdentityProofSourceSha256??null,
     officialSenateServiceTerm:service.term,
     actuallyServedFollowingElectionTermVerified:
       service.serviceForThisElectionFollowingYearVerified,
@@ -228,12 +244,24 @@ export function auditStatewideSenateCampaignSourceRecovery(
    if(!originalCensus)continue;
    const year=Number(originalCensus.officialGeneralElectionDate.slice(0,4));
    for(const entry of originalCensus.candidates.filter(x=>x.generalOutcome==='nonwinner')){
-     const service=officialDirectory
+     const exception=officialDirectory
+       ?exceptionalFormerOrLaterSenatorMatch(
+          officialDirectory,exceptionalIdentityProofs,entry.candidateName,entry.district,year)
+       :null;
+     const service=exception??(officialDirectory
        ?validateActualSenateServiceForElection(officialDirectory,
           entry.candidateName,entry.district,year)
        :{status:'not_yet_verified' as const,officialName:null,term:null,
-          serviceForThisElectionFollowingYearVerified:false,officialServiceSource:null};
-     if(service.status!=='verified_senate_service'){
+          serviceForThisElectionFollowingYearVerified:false,officialServiceSource:null});
+     // Never assign a candidate with the same common name in ANOTHER
+     // district to an unrelated existing legislator. When two Senate
+     // districts differ, insist on exact LRL original biographical text
+     // establishing this SPECIFIC losing campaign.
+     const originallyServedThisDistrict=
+       service.status==='verified_senate_service'
+       &&Boolean(service.term?.endsWith(' SD'+entry.district));
+     if(service.status!=='verified_senate_service'
+       ||(!originallyServedThisDistrict&&!exception)){
        unverifiedNonwinnerObservations++;
        continue;
      }
@@ -248,6 +276,13 @@ export function auditStatewideSenateCampaignSourceRecovery(
        officialLRLName:service.officialName,
        officialLRLTerm:service.term,
        originalLRLServiceSource:service.officialServiceSource,
+       individualCrossDistrictLinkIndependentlySourceProven:Boolean(exception),
+       exactCrossDistrictOrHistoricNameOfficialSourceUrl:
+         exception?.officialIdentityProofSourceUrl??null,
+       crossDistrictOrNameIdentityProofObservedAt:
+         exception?.officialIdentityProofObservedAt??null,
+       crossDistrictOrNameIdentityProofSha256:
+         exception?.officialIdentityProofSourceSha256??null,
        originalServiceSourceObservedOn:
          service.officialServiceSource===officialDirectory?.supplementalSwearingSource?.url
            ?officialDirectory?.supplementalSwearingSource?.observedAt
@@ -302,6 +337,9 @@ export function auditStatewideSenateCampaignSourceRecovery(
    original2020And2022FilingExportsRecovered:false,
    allPrimaryAndWithdrawnCandidateDenominatorKnown:false,
    independentStatewideLegislatorMembershipRosterReconciled:Boolean(officialDirectory),
+   separateOfficialLRLFormerNameAndCrossDistrictOriginalsVerified:Boolean(exceptionalIdentityProofs),
+   sharedFirstLastNameFromWrongDistrictWithoutExplicitLinkMustBeExcluded:true,
+   sourceObservationNeverImputedBeforeObservedOn:true,
    statewideMemberYearCompletenessCertified:false,
    onlyVerifiedEverServedPeopleIncluded:true,
    previousOrLaterSenateServiceQualifiesEvenWhenCandidateLost:true,
