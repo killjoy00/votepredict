@@ -7,12 +7,15 @@ export const CFB_SD6_STANDALONE_CALENDAR_URL =
   'https://register.cfb.mn.gov/pdf/calendars/2025_special_election_6.pdf';
 export const CFB_SD6_CANDIDATE_PACKET_URL =
   'https://cfb.mn.gov/pdf/publications/elections/candidate_packets/2025/Senate_6_special.pdf';
+export const CFB_MISLABELED_HOUSE64A_CALENDAR_URL =
+  'https://register.cfb.mn.gov/pdf/calendars/2025_special_election_64A.pdf';
 
 const YEARS = [2021, 2022, 2023, 2024, 2025] as const;
 type Year = typeof YEARS[number];
 type CalendarFamily =
   | 'senate_special_election'
   | 'house_special_election'
+  | 'ambiguous_chamber_label'
   | 'candidate_regular'
   | 'party_unit'
   | 'committee_or_fund'
@@ -31,6 +34,7 @@ export interface CfbArchivedCalendarYear {
   listingStatus: 'listed' | 'year_not_listed' | 'source_markup_unrecognized';
   calendarLinksObserved: number | null;
   senateSpecialElectionLinksObserved: number | null;
+  ambiguousChamberLabelLinksObserved: number | null;
 }
 
 export interface CfbCalendarPdfObservation {
@@ -68,7 +72,11 @@ function htmlText(value: string): string {
 }
 
 function classify(label: string): CalendarFamily {
-  if (/senate\s+district\s+\d+[A-Z]?\s+special election/i.test(label)) return 'senate_special_election';
+  // Senate districts are numeric. A public archive label such as "Senate
+  // District 64A" must not silently count as a Senate calendar: the CFB's
+  // original 2025_64A PDF instead identifies House District 64A.
+  if (/senate\s+district\s+\d+[A-Z]\s+special election/i.test(label)) return 'ambiguous_chamber_label';
+  if (/senate\s+district\s+\d+\s+special election/i.test(label)) return 'senate_special_election';
   if (/house\s+district\s+\d+[A-Z]?\s+special election/i.test(label)) return 'house_special_election';
   if (/party|caucus/i.test(label)) return 'party_unit';
   if (/committee|fund/i.test(label)) return 'committee_or_fund';
@@ -89,7 +97,8 @@ export function parseCfbHistoricalCalendarIndex(body: string, fetchedAt: string)
       h.title.toLowerCase() === String(year) + ' campaign finance');
     if (!section) {
       years.push({ year, listingStatus: headings.length ? 'year_not_listed' : 'source_markup_unrecognized',
-        calendarLinksObserved: null, senateSpecialElectionLinksObserved: null });
+        calendarLinksObserved: null, senateSpecialElectionLinksObserved: null,
+        ambiguousChamberLabelLinksObserved: null });
       continue;
     }
     const following = headings.find(h => h.offset > section.end);
@@ -118,6 +127,8 @@ export function parseCfbHistoricalCalendarIndex(body: string, fetchedAt: string)
       calendarLinksObserved: found.length > 0 ? found.length : null,
       senateSpecialElectionLinksObserved: found.length > 0
         ? found.filter(l => l.family === 'senate_special_election').length : null,
+      ambiguousChamberLabelLinksObserved: found.length > 0
+        ? found.filter(l => l.family === 'ambiguous_chamber_label').length : null,
     });
   }
   links.sort((a, b) => a.year - b.year || a.title.localeCompare(b.title) || a.sourceUrl.localeCompare(b.sourceUrl));
@@ -129,11 +140,63 @@ export function parseCfbHistoricalCalendarIndex(body: string, fetchedAt: string)
     years,
     links,
     observedUniquePdfUrls: new Set(links.map(l => l.sourceUrl)).size,
+    ambiguousChamberSourceLabels: links.filter(l => l.family === 'ambiguous_chamber_label'),
+    ambiguousLabelsAreNotSenateCalendarProof: true,
     // The index is a list of links, NOT the required filing universe.
     requiredReportDenominator: null,
     registeredSenateFilerDenominator: null,
     missingSectionIsNotProofNoCalendarExists: true,
     noDateOrEligibilityInferredFromIndex: true,
+  };
+}
+
+export interface CfbOriginalOfficeCalendarCapture {
+  sourceUrl: string;
+  finalSourceUrl: string;
+  rawPdfSha256: string;
+  pdfBytes: number;
+  fetchedAt: string;
+  extractedText: string;
+}
+
+export function auditCfbMislabeled2025House64aCalendar(
+  archive: ReturnType<typeof parseCfbHistoricalCalendarIndex>,
+  source: CfbOriginalOfficeCalendarCapture | null,
+) {
+  const mismatchedArchiveLink = archive.links.find(link =>
+    link.year === 2025
+    && link.sourceUrl === CFB_MISLABELED_HOUSE64A_CALENDAR_URL
+    && link.title.toLowerCase() === 'senate district 64a special election') ?? null;
+  const validPdf = Boolean(source
+    && source.sourceUrl === CFB_MISLABELED_HOUSE64A_CALENDAR_URL
+    && source.finalSourceUrl === CFB_MISLABELED_HOUSE64A_CALENDAR_URL
+    && /^[a-f0-9]{64}$/.test(source.rawPdfSha256)
+    && Number.isInteger(source.pdfBytes) && source.pdfBytes >= 500
+    && !Number.isNaN(Date.parse(source.fetchedAt))
+    && source.extractedText.length > 100);
+  // Only count House when the ORIGINAL official PDF title says House.
+  // An archive link, a URL suffix A/B, or a calendar search result alone
+  // cannot conclusively establish the chamber/office.
+  const titleText = source?.extractedText.replace(/\s+/g, ' ').slice(0, 1_500) ?? '';
+  const originalSaysHouse64a = validPdf
+    && /House\s+District\s+64A\s+Special\s+Election\s+Public\s+Disclosure\s+Calendar/i.test(titleText);
+  return {
+    schemaVersion: 'cfb-2025-64a-archive-office-mislabel-proof-v1' as const,
+    archiveListedAsSenate64a: Boolean(mismatchedArchiveLink),
+    sourceUrl: CFB_MISLABELED_HOUSE64A_CALENDAR_URL,
+    originalPdfStatus: !source ? 'not_acquired'
+      : !validPdf ? 'invalid_pdf_provenance'
+      : originalSaysHouse64a ? 'house_64a_original_title_verified'
+      : 'original_title_unverified',
+    sourcePdfSha256: validPdf ? source!.rawPdfSha256 : null,
+    sourcePdfBytes: validPdf ? source!.pdfBytes : null,
+    originalPdfFetchedAt: validPdf ? source!.fetchedAt : null,
+    verifiedHouse64aArchiveLabelConflict: Boolean(mismatchedArchiveLink && originalSaysHouse64a),
+    sourceListingCannotBeCountedAsSenateCalendar: true,
+    officialRegisteredSenateFilerDenominator: null,
+    historicalAvailabilityEstablished: false,
+    senateOfficeAttributionGranted: false,
+    productionDataMutation: false,
   };
 }
 

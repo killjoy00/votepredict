@@ -1,6 +1,7 @@
 name: One-time CFB 2021-25 disclosure calendar archive and SD6 source version
 
-# One-shot public-source proof when this workflow first appears on main.
+# One-shot public-source proof on initial addition; one bounded replay to verify the
+# archive's suspect Senate District 64A listing against the original House PDF.
 # No cron, workflow_dispatch, production DB, private donor data, Vercel,
 # freeze manipulation, historical serving, or prediction-model updates.
 on:
@@ -24,7 +25,7 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci --no-fund --no-audit
-      - name: Acquire one official archive listing and two SD6 public calendar PDF source bodies
+      - name: Acquire official calendar index, two SD6 originals and suspect House District 64A original
         run: |
           node --import tsx scripts/capture-cfb-2021-25-calendar-index-and-sd6-version.ts \
             --output artifacts/cfb-calendar-archive-and-sd6-version.json

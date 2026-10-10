@@ -1,6 +1,6 @@
 # Issue #864 — Historical Senate finance: regulator calendar index and SD6 conflicting sources
 
-**Date:** October 9, 2026. **Scope:** public Minnesota Campaign Finance and Public Disclosure Board calendar discovery for 2021–2025, with a two-document original-PDF pilot for the 2025 Senate District 6 special-election calendar. No database reads or writes, private data, model changes, scheduler changes, unapproved backfill, or public-office contact.
+**Date:** October 9, 2026. **Scope:** public Minnesota Campaign Finance and Public Disclosure Board calendar discovery for 2021–2025, with two original 2025 Senate District 6 calendar PDFs and a third source document verifying a possible 2025 House District 64A office mislabel. No database reads or writes, private data, model changes, scheduler changes, unapproved backfill, or public-office contact.
 
 ## Separate finance completeness requirement
 
@@ -9,6 +9,20 @@ The Board's [official calendar archive index](https://register.cfb.mn.gov/filer-
 The existing [public-source ledger](./source-proof/cfb-2025-senate-district6-report-pdfs.json) independently proves original PDF hashes, exact received dates and distinct statutory due dates for one Senate committee (registration 19205 in 2025). Such calendar dates must not be copied to other Senate special elections, years or filers without exact authoritative sources.
 
 The new pure archive parser reads the regulator's official HTML, records its fetched-body SHA-256, lists year- and family-specific links with exact official original PDF URLs, and reports explicit year-not-listed or malformed-source states. It does **not** infer due dates, report filing obligation or public availability from the link title. **The calendar index is not the official registered-filer or required-report denominator.**
+
+## Discovered 2025 calendar archive office-label inconsistency
+
+The live October 9, 2026 archive source inventory lists **10** calendar links for 2025, of which the original parser labeled **5** as Senate special elections. One archive anchor literally reads **“Senate District 64A special election”** and links to [the CFB's original 2025 64A calendar](https://register.cfb.mn.gov/pdf/calendars/2025_special_election_64A.pdf). But a Senate district is not designated with an A/B suffix, and the original PDF identifies **House District 64A** rather than Senate. We must not count an archive anchor as independent office proof.
+
+The corrected inventory therefore distinguishes **four valid numeric Senate special-election link labels**, **one ambiguous archive office label**, and **three explicitly House-labeled special election links** for 2025. The remaining two entries are a general calendar and local-election influence disclosure calendar. The **10 links remain 10 source references**; none count mandated filings or Senate candidates.
+
+The public source capture now makes **one additional bounded original CFB PDF request** to prove the 64A title from original PDF bytes, recording its SHA-256/size/fetched-at and a narrow exact title check. If that request fails, chamber resolution remains *unverified* and is recorded as a failure. This is metadata-only and does not alter the other archives, historical release dates, or any candidate identity. The original CFB archive's title is preserved literally as provenance alongside the discrepancy, not silently rewritten.
+
+## Verified labeling discrepancy: 2025 House 64A incorrectly labeled Senate
+
+The official 2025 archive currently labels one link **“Senate District 64A special election”**, but the target [original official PDF](https://cfb.mn.gov/pdf/calendars/2025_special_election_64A.pdf) clearly identifies **House District 64A Special Election Public Disclosure Calendar**. The [Minnesota House's November 18, 2025 legislative news](https://www.house.mn.gov/SessionDaily/Story/18856) separately describes the 2026 House 64A special election.
+
+Until original PDF byte/hash acquisition, it is a **mislabeled/ambiguous archive link**, not one of the Senate special-election calendars. The audit now keeps the link in the archive count but excludes it from the **Senate-specific** calendar count, and independently checks the source PDF title/hash under the safe read-only public-source workflow. In the initial archive index there were five items *labeled* Senate, but one is actually this House 64A item: **four** have unambiguous Senate-district labels, not five. A label corrected for chamber classification does **not** establish any required-filing denominator.
 
 ## Conflicting official SD6 period cutoffs: no silent adjudication
 
@@ -24,9 +38,9 @@ The independently acquired registration 19205 special-cycle final report covers 
 ## Scope of this small PR
 
 - src/evidence/cfb-historical-calendar-inventory.ts: deterministic archive-year source inventory for 2021–2025 only, URL host/path allowlist, preserved calendar families and null/unknown counters; exact original-SD6-PDF metadata comparison using source URLs, content SHA-256, original byte length, dated capture, correct document title and a fully contextual final-report period expression. A May 14 election date outside the final-report expression cannot be used as proof.
-- scripts/capture-cfb-2021-25-calendar-index-and-sd6-version.ts: at most **three read-only public CFB requests**, one official archive listing and the two distinct SD6 PDF sources. Source hashes, size, per-document status and verified date claims are persisted. **No source PDF bytes or raw parsed PDF text, donor data or credentials** go into the artifact.
+- scripts/capture-cfb-2021-25-calendar-index-and-sd6-version.ts: at most **four read-only public CFB requests**, one official archive listing and the two distinct SD6 PDFs and one separate 2025 House District 64A calendar. Source hashes, size, per-document status and verified date claims are persisted. **No source PDF bytes or raw parsed PDF text, donor data or credentials** go into the artifact.
 - tests/cfb-historical-calendar-inventory.test.ts: synthetic coverage of archive-year absences, wrong-domain links, duplicate source entries, source conflicts, both period-end variants, PDF spoofing, ambiguous text, and eligibility fail-closed constraints.
-- .github/workflows/cfb-2021-25-historical-calendar-index-probe.yml: a **one-time** public source probe triggered solely by first addition of its workflow file to main. No cron, job scheduler, data service or forecast integration.
+- .github/workflows/cfb-2021-25-historical-calendar-index-probe.yml: a **one-time** initial public source probe, with one deliberately bounded replay after the House64A office-label correction. No schedule or service loop. No cron, job scheduler, data service or forecast integration.
 
 Inspect GitHub workflow artifact: per-year **year listing status**, report-category **calendar links**, and **both original PDF statuses**. A successful Actions job does **not** itself certify those original PDFs were obtainable: require per-source proof and absence of acquisition failures.
 
