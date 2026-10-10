@@ -1,0 +1,37 @@
+name: One-time 2021-25 CFB Senate district candidate registration inventory
+
+# Adding this workflow to main initiates one bounded, read-only source capture.
+# No schedule, no workflow_dispatch, no database or production credentials.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/cfb-senate-district-inventory-once.yml
+
+permissions:
+  contents: read
+
+jobs:
+  acquire-public-senate-district-scope:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Capture 67 Senate districts over 2020/2022/2024/2026 election segments
+        run: |
+          node --import tsx scripts/capture-cfb-senate-district-registration-inventory.ts \
+            --output artifacts/cfb-senate-district-registrations.json
+      - name: Retain official metadata-only source observations even on partial failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-senate-2021-25-official-district-registration-discovery
+          path: artifacts/cfb-senate-district-registrations.json
+          if-no-files-found: warn
+          retention-days: 30
