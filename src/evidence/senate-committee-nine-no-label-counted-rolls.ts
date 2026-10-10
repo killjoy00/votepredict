@@ -40,9 +40,9 @@ export function selectNinePinnedSourceRollOriginals(year:NineReviewYear,original
 type Side='yea'|'nay'|'absent'|'pass';
 type NamedChoice={side:Side;name:string;at:number};
 function side(s:string):Side{
-  if(/^(?:yea|yes|aye)$/i.test(s))return 'yea';
-  if(/^(?:nay|no)$/i.test(s))return 'nay';
-  if(/^pass$/i.test(s))return 'pass';
+  if(/^(?:yeas?|yes|ayes?)$/i.test(s))return 'yea';
+  if(/^(?:nays?|no|noes?)$/i.test(s))return 'nay';
+  if(/^pass(?:es)?$/i.test(s))return 'pass';
   return 'absent';
 }
 function tallyFrom(raw:string):{yea:number;nay:number;absent:number|null;pass:number|null}|null{
