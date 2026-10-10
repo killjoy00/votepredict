@@ -76,8 +76,15 @@ async function main(): Promise<void> {
   await assertProjectEndpointBelongsToApprovedBranch({
     apiKey,projectId,branchId,databaseHost:destination.host,
   });
+  // Construct pg options explicitly: URL query parameters cannot weaken TLS
+  // certificate verification or inject unsupported driver options.
+  const parsedUrl=new URL(dbUrl);
   const pool=new Pool({
-    connectionString:destination.connectionString,
+    host:destination.host,
+    port:parsedUrl.port ? Number(parsedUrl.port) : 5432,
+    user:destination.username,
+    password:decodeURIComponent(parsedUrl.password),
+    database:destination.database,
     ssl:{rejectUnauthorized:true},
     max:1,
     connectionTimeoutMillis:7000,
