@@ -16,6 +16,7 @@ import {readFileSync,statSync,mkdirSync,writeFileSync} from 'node:fs';
 import {resolve,dirname} from 'node:path';
 import {auditSos2020to2022OriginalGeneralCensus} from '../src/evidence/senate-2020-22-official-general-census.js';
 import {auditStatewideSenateCampaignSourceRecovery} from '../src/evidence/senate-statewide-winner-campaign-source-coverage.js';
+import {parseOfficialMnSenateServiceDirectory} from '../src/evidence/senate-official-ever-served-directory.js';
 const args=process.argv.slice(2);
 const flag=(name:string)=>{
  const i=args.indexOf(name);
@@ -27,6 +28,12 @@ function originalBytes(path:string){
  if(!stat.isFile()||stat.size<100||stat.size>3*1024*1024)
    throw Error('Historical government original source must be a bounded regular file');
  return readFileSync(f);
+}
+function originalBytesAllow5MB(path:string){
+ const stat=statSync(path);
+ if(!stat.isFile()||stat.size<9000||stat.size>5*1024*1024)
+   throw Error('Original Senate LRL service directory size invalid');
+ return readFileSync(path);
 }
 function main(){
  const out=flag('--output');
@@ -44,17 +51,38 @@ function main(){
  if(censuses&&(!censuses.y2020.source.originalBytesMatchPreviouslyAcquiredGithubRunnerEvidence
    ||!censuses.y2022.source.originalBytesMatchPreviouslyAcquiredGithubRunnerEvidence))
    throw Error('Independent SOS source SHA-256 differs from first published original acquisition');
- const report=auditStatewideSenateCampaignSourceRecovery(censuses);
+ const officialHtml=flag('--official-senate-service-html');
+ const officialMetadata=flag('--official-senate-service-metadata');
+ if(Boolean(officialHtml)!==Boolean(officialMetadata))
+   throw Error('Provide BOTH independently obtained LRL Senate service original HTML and metadata');
+ if([officialHtml,officialMetadata].some(x=>x&&resolve(x)===resolve(out)))
+   throw Error('No overwriting LRL official originals');
+ let officialRoster;
+ if(officialHtml&&officialMetadata){
+   const meta=JSON.parse(readFileSync(officialMetadata,'utf8')) as {
+     source?:{observedAt?:string;sourceBytesSha256?:string};
+   };
+   if(!meta.source?.observedAt||!meta.source.sourceBytesSha256)
+     throw Error('LRL source audit missing dated retrieval and SHA-256');
+   officialRoster=parseOfficialMnSenateServiceDirectory(
+     originalBytesAllow5MB(officialHtml),meta.source.observedAt);
+   if(officialRoster.source.sourceBytesSha256!==meta.source.sourceBytesSha256)
+     throw Error('Original LRL Senate directory HTML checksum changed after retrieval');
+ }
+ const report=auditStatewideSenateCampaignSourceRecovery(censuses,officialRoster);
  const destination=resolve(out);
  mkdirSync(dirname(destination),{recursive:true});
  const output={...report,cliOriginalSOSSourceBytesRehashedAndCrosschecked:have,
   cliDidNotConnectToAnyExternalDatabase:true};
  writeFileSync(destination,JSON.stringify(output,null,2)+'\n',{flag:'wx',mode:0o600});
  console.log(JSON.stringify({
-  output:destination,candidateWinnerElectionObservations:report.totals.winnerElectionObservations,
+  output:destination,candidateWinnerElectionObservationsUsedInternally:report.totals.electionWinnerObservationsUsedOnlyForSourceJoin,
   officialOriginalCensusesRehashed:have?2:0,
+  officialSenateServiceDirectoryRehashed:Boolean(officialRoster),
+  namedActualSenateMemberObservations:report.totals.namedSenatorOnlyElectionObservationsConfirmedByLRL,
   originalCampaignPagesForWinningCandidates:report.totals.winnerOriginalHistoricIssuePageSources,
   winnerWebsiteLeadsOnly:report.totals.winnerWebsitePublisherLinkLeads,
+  unidentifiedCandidateNamesInPublicReport:0,
   candidateSurvey2022WinnerExcerptsUnverifiedHistoricalPublicBy:report.totals.winnerPublisherSurveyQuotesWithoutHistoricalPublicBy,
   verifiedMemberYearDenominator:false,
   noProductionWrites:true,
