@@ -8,6 +8,7 @@ import {
  historicalSourceTargets,retrieveSmallPublicOriginal,base32Sha1,
  filteredCandidateQuestionnaireCdx,acquireSenateOriginal2020to2022Sources,
 } from '../scripts/acquire-senate-2020-22-candidate-original-sources.js';
+import {auditSos2020to2022OriginalGeneralCensus} from '../src/evidence/senate-2020-22-official-general-census.js';
 const article=historicalSourceTargets()[0].url;
 const syntheticPage=Buffer.from('<html><body>Rob Kupec: Support education and rural health care.</body></html>');
 const sha1=base32Sha1(syntheticPage);
@@ -97,4 +98,67 @@ test('bounded real fetch flow stores original candidate questionnaire and 2020 r
     createHash('sha256').update(syntheticPage).digest('hex'));
   assert.equal(report.totals.historicalCandidateIssueExcerptsManuallyAttributed,0);
  }finally{rmSync(dir,{recursive:true,force:true});}
+});
+
+function syntheticOfficialSenateGeneralElection(year:2020|2022){
+ const result:string[]=[];const lookup:string[]=[];
+ for(let d=1;d<=67;d++){
+  const officeId=String(120+d).padStart(4,'0'),title='State Senator District '+d;
+  const candidates=[
+   {code:'0301',name:'Synthetic Winner District '+d,party:'R',votes:22000+d},
+   ...(year===2020||d<=59?[{code:'0401',name:'Synthetic Loser District '+d,party:'DFL',votes:12500+d}]:[]),
+   ...(year===2020&&d<=12||year===2022&&d<=5?
+     [{code:'0501',name:'Synthetic Third District '+d,party:'IND',votes:500+d}]:[]),
+  ];
+  for(const person of candidates){
+   result.push(['MN','','',officeId,title,String(d),person.code,person.name,'','',
+     person.party,'10','10',String(person.votes),'55.00','35000'].join(';'));
+   lookup.push([officeId+person.code,person.name,officeId,title,'88','03',person.party].join(';'));
+  }
+  result.push(['MN','','',officeId,title,String(d),'9901','WRITE-IN','','',
+   'WI','10','10','10','0.01','35000'].join(';'));
+ }
+ // Non-Senate candidates may appear in the full official SOS candidate lookup.
+ lookup.push('01010301;President Example;0101;U.S. President;88;03;R');
+ return {st:Buffer.from(result.join('\r\n')+'\r\n'),
+  cand:Buffer.from(lookup.join('\r\n')+'\r\n')};
+}
+test('67 original Senate general races produce exactly 2020: 146 names/79 losers, 2022: 131 names/64 losers',()=>{
+ for(const year of [2020,2022] as const){
+  const input=syntheticOfficialSenateGeneralElection(year);
+  const report=auditSos2020to2022OriginalGeneralCensus(year,input.st,input.cand);
+  assert.equal(report.totals.senateDistricts,67);
+  assert.equal(report.totals.nonWriteinElectionWinnerCandidates,67);
+  assert.equal(report.totals.uniqueNamedBallotCandidates,year===2020?146:131);
+  assert.equal(report.totals.nonwinningNamedCandidates,year===2020?79:64);
+  assert.equal(report.totals.writeInAggregateRows,67);
+  assert.equal(report.source.originalBytesMatchPreviouslyAcquiredGithubRunnerEvidence,false);
+  assert.ok(report.candidates.every(c=>!c.eligibleForHistoricalPreVoteForecast
+    &&!c.campaignIssueStatementPublicByProven
+    &&c.campaignWebsiteOriginalSOSFilingField===null));
+  assert.equal(report.totals.certifiedOriginalFiledCandidateUniverse,false);
+ }
+});
+test('original post-election results and candidate lookup must agree on every candidate, ID, party and district',()=>{
+ const input=syntheticOfficialSenateGeneralElection(2020);
+ const wrong=Buffer.from(input.cand.toString('utf8').replace('Synthetic Winner District 1','Different Candidate'));
+ assert.throws(()=>auditSos2020to2022OriginalGeneralCensus(2020,input.st,wrong),
+   /does not match independent/);
+ const wrongYear=Buffer.from(input.st.toString('utf8').replace('State Senator District 1','State Representative District 1'));
+ assert.throws(()=>auditSos2020to2022OriginalGeneralCensus(2020,wrongYear,input.cand));
+ const missingDistrict=Buffer.from(input.st.toString('utf8').split('\r\n')
+   .filter(x=>!x.includes('State Senator District 67')).join('\r\n'));
+ assert.throws(()=>auditSos2020to2022OriginalGeneralCensus(2020,missingDistrict,input.cand),
+   /universe mismatch/);
+});
+test('historic filing export row with a campaign website column cannot masquerade as 7-field election cand.txt',()=>{
+ const input=syntheticOfficialSenateGeneralElection(2022);
+ const wrong=Buffer.from(input.cand.toString('utf8').replace(
+  'Synthetic Winner District 1;0121;State Senator District 1;88;03;R',
+  'Synthetic Winner District 1;0121;State Senator District 1;88;03;R;SITE;HTTPS://SITE.EXAMPLE'));
+ assert.throws(()=>auditSos2020to2022OriginalGeneralCensus(2022,input.st,wrong),
+   /exactly seven fields/);
+ const maintenance=Buffer.from('<html><body><h1>Maintenance in progress</h1></body></html>'.repeat(10));
+ assert.throws(()=>auditSos2020to2022OriginalGeneralCensus(2022,maintenance,input.cand),
+   /maintenance page/);
 });
