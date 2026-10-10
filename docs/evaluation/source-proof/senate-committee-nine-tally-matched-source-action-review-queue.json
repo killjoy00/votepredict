@@ -1,0 +1,249 @@
+{
+  "schemaVersion": "senate-nine-12-numeric-matched-original-source-roll-review-queue-v1",
+  "issue": 864,
+  "proofRunId": 38084229868,
+  "documents": [
+    {
+      "year": 2023,
+      "hearingDate": "2023-01-17",
+      "committeeName": "Elections",
+      "officialSourcePdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230117/Elections_20230117_Minutes.pdf",
+      "originalSourcePdfSha256": "35782d185a244fe98a77a2e9c6bd3ec2e37a7591d28d18de5dbe8380b396355a",
+      "originalEmbeddedTextSha256": "20d11fe16247a8f992088d75c969c89dc8ec681d311d05c51c1073238aa8775c",
+      "sourceRollBlocks": [
+        {
+          "sourceTextOffset": 1399,
+          "sourceNamedYeaCount": 7,
+          "sourceNamedNayCount": 6,
+          "sourceAbsentCount": 1,
+          "sourcePassCount": 0,
+          "sourceNumericTallyMatchesNamedRoll": true,
+          "humanActionLabelForReviewOnly": "SF26 committee recommendation",
+          "exactActionAndMembershipHumanCertified": false,
+          "billPolicyStanceAndSenateFloorVoteNotInferred": true,
+          "eligibleForPrivateHistoricalDatabaseImport": false
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "hearingDate": "2023-02-07",
+      "committeeName": "Elections",
+      "officialSourcePdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230207/Elections_20230207_Minutes.pdf",
+      "originalSourcePdfSha256": "cffcc4c84bb1c44d4cb8a5238ff02a7ef75dbfe942b46bbdd367f0a5c9664e11",
+      "originalEmbeddedTextSha256": "5a6547381bc59da4070e7b0db4d179a085e78f1d20ab5892fd4cbacb114c1a93",
+      "sourceRollBlocks": [
+        {
+          "sourceTextOffset": 1530,
+          "sourceNamedYeaCount": 6,
+          "sourceNamedNayCount": 8,
+          "sourceAbsentCount": 0,
+          "sourcePassCount": 0,
+          "sourceNumericTallyMatchesNamedRoll": true,
+          "humanActionLabelForReviewOnly": "A36 vs oral amendment motion ambiguous",
+          "exactActionAndMembershipHumanCertified": false,
+          "billPolicyStanceAndSenateFloorVoteNotInferred": true,
+          "eligibleForPrivateHistoricalDatabaseImport": false
+        },
+        {
+          "sourceTextOffset": 2056,
+          "sourceNamedYeaCount": 6,
+          "sourceNamedNayCount": 8,
+          "sourceAbsentCount": 0,
+          "sourcePassCount": 0,
+          "sourceNumericTallyMatchesNamedRoll": true,
+          "humanActionLabelForReviewOnly": "A35 amendment",
+          "exactActionAndMembershipHumanCertified": false,
+          "billPolicyStanceAndSenateFloorVoteNotInferred": true,
+          "eligibleForPrivateHistoricalDatabaseImport": false
+        },
+        {
+          "sourceTextOffset": 2635,
+          "sourceNamedYeaCount": 8,
+          "sourceNamedNayCount": 6,
+          "sourceAbsentCount": 0,
+          "sourcePassCount": 0,
+          "sourceNumericTallyMatchesNamedRoll": true,
+          "humanActionLabelForReviewOnly": "SF3 committee recommendation",
+          "exactActionAndMembershipHumanCertified": false,
+          "billPolicyStanceAndSenateFloorVoteNotInferred": true,
+          "eligibleForPrivateHistoricalDatabaseImport": false
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "hearingDate": "2023-02-14",
+      "committeeName": "Elections",
+      "officialSourcePdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230214/Elections_20230214_Minutes.pdf",
+      "originalSourcePdfSha256": "680830e9751ca233ef966dcf3d7ce63a1af65b6160931fc0055cb6576cf5c50b",
+      "originalEmbeddedTextSha256": "2614012dbd4727921d13e248990e44fe8cd152008017061351a891282f3010b2",
+      "sourceRollBlocks": [
+        {
+          "sourceTextOffset": 2061,
+          "sourceNamedYeaCount": 8,
+          "sourceNamedNayCount": 5,
+          "sourceAbsentCount": 1,
+          "sourcePassCount": 0,
+          "sourceNumericTallyMatchesNamedRoll": true,
+          "humanActionLabelForReviewOnly": "SF1515 committee recommendation",
+          "exactActionAndMembershipHumanCertified": false,
+          "billPolicyStanceAndSenateFloorVoteNotInferred": true,
+          "eligibleForPrivateHistoricalDatabaseImport": false
+        },
+        {
+          "sourceTextOffset": 3305,
+          "sourceNamedYeaCount": 8,
+          "sourceNamedNayCount": 5,
+          "sourceAbsentCount": 1,
+          "sourcePassCount": 0,
+          "sourceNumericTallyMatchesNamedRoll": true,
+          "humanActionLabelForReviewOnly": "SF1507 committee recommendation",
+          "exactActionAndMembershipHumanCertified": false,
+          "billPolicyStanceAndSenateFloorVoteNotInferred": true,
+          "eligibleForPrivateHistoricalDatabaseImport": false
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "hearingDate": "2023-02-21",
+      "committeeName": "Elections",
+      "officialSourcePdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230221/Elections_20230221_Minutes.pdf",
+      "originalSourcePdfSha256": "b534d5d59ff69170a85d8ca2fce0beede2c4b9c8d87c3312c272241f8eb98114",
+      "originalEmbeddedTextSha256": "bc5212ebd7a506ec2b5e5c27750b35708aca44e94eb881d673086d7aa930dd19",
+      "sourceRollBlocks": [
+        {
+          "sourceTextOffset": 2663,
+          "sourceNamedYeaCount": 7,
+          "sourceNamedNayCount": 6,
+          "sourceAbsentCount": 1,
+          "sourcePassCount": 0,
+          "sourceNumericTallyMatchesNamedRoll": true,
+          "humanActionLabelForReviewOnly": "SF749 committee recommendation",
+          "exactActionAndMembershipHumanCertified": false,
+          "billPolicyStanceAndSenateFloorVoteNotInferred": true,
+          "eligibleForPrivateHistoricalDatabaseImport": false
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "hearingDate": "2023-03-02",
+      "committeeName": "Elections",
+      "officialSourcePdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230302/Elections_20230302_Minutes.pdf",
+      "originalSourcePdfSha256": "15fccd136330e8a949ca9d16bd7f2e8e263466135316c7cc3d0ce5d56c5b7188",
+      "originalEmbeddedTextSha256": "09216cd1673f7713b2991c0f6e3933c20a6e3ef5d3eb8621c1e1f48a7377f2d2",
+      "sourceRollBlocks": [
+        {
+          "sourceTextOffset": 1287,
+          "sourceNamedYeaCount": 6,
+          "sourceNamedNayCount": 8,
+          "sourceAbsentCount": 0,
+          "sourcePassCount": 0,
+          "sourceNumericTallyMatchesNamedRoll": true,
+          "humanActionLabelForReviewOnly": "SF1434 oral amendment",
+          "exactActionAndMembershipHumanCertified": false,
+          "billPolicyStanceAndSenateFloorVoteNotInferred": true,
+          "eligibleForPrivateHistoricalDatabaseImport": false
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "hearingDate": "2023-03-07",
+      "committeeName": "Elections",
+      "officialSourcePdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230307/Elections_20230307_Minutes.pdf",
+      "originalSourcePdfSha256": "9db4f615f45322c8a419b40daa66b536517937e85ea800e5c867c779ebacad4d",
+      "originalEmbeddedTextSha256": "54cf63f480a14c658212edc4fa950153df7de6dfd1862800c29b2ad63d932286",
+      "sourceRollBlocks": [
+        {
+          "sourceTextOffset": 1899,
+          "sourceNamedYeaCount": 5,
+          "sourceNamedNayCount": 8,
+          "sourceAbsentCount": 0,
+          "sourcePassCount": 1,
+          "sourceNumericTallyMatchesNamedRoll": true,
+          "humanActionLabelForReviewOnly": "A2 amendment; one source Pass",
+          "exactActionAndMembershipHumanCertified": false,
+          "billPolicyStanceAndSenateFloorVoteNotInferred": true,
+          "eligibleForPrivateHistoricalDatabaseImport": false
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "hearingDate": "2023-03-14",
+      "committeeName": "Elections",
+      "officialSourcePdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230314/Elections_20230314_Minutes.pdf",
+      "originalSourcePdfSha256": "3af993abd7a941d787ddd1076f0c79edece3797852f643fca59bce8c79d97ed6",
+      "originalEmbeddedTextSha256": "a149a5dd2bcb191af0ff7a1e30568f8998886ac1f75762d429bb043dc8c164b1",
+      "sourceRollBlocks": [
+        {
+          "sourceTextOffset": 1315,
+          "sourceNamedYeaCount": 8,
+          "sourceNamedNayCount": 4,
+          "sourceAbsentCount": 2,
+          "sourcePassCount": 0,
+          "sourceNumericTallyMatchesNamedRoll": true,
+          "humanActionLabelForReviewOnly": "SF1827 committee recommendation",
+          "exactActionAndMembershipHumanCertified": false,
+          "billPolicyStanceAndSenateFloorVoteNotInferred": true,
+          "eligibleForPrivateHistoricalDatabaseImport": false
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "hearingDate": "2024-02-20",
+      "committeeName": "Rules and Administration",
+      "officialSourcePdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/rules/20240220/Rules_20240220_Minutes.pdf",
+      "originalSourcePdfSha256": "548770daa6160f199b690d469c6e30c9d594befb2f4e227e56c6c6861a6a3930",
+      "originalEmbeddedTextSha256": "a8ae6d06b8aa8c0e07582773ec959407def0de451b24c2d5db6ad0466c3830c9",
+      "sourceRollBlocks": [
+        {
+          "sourceTextOffset": 1067,
+          "sourceNamedYeaCount": 4,
+          "sourceNamedNayCount": 6,
+          "sourceAbsentCount": 0,
+          "sourcePassCount": 0,
+          "sourceNumericTallyMatchesNamedRoll": true,
+          "humanActionLabelForReviewOnly": "Committee Resolution CR008 A2 amendment - procedural",
+          "exactActionAndMembershipHumanCertified": false,
+          "billPolicyStanceAndSenateFloorVoteNotInferred": true,
+          "eligibleForPrivateHistoricalDatabaseImport": false
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "hearingDate": "2024-05-07",
+      "committeeName": "Rules and Administration - Subcommittee on Ethical Conduct",
+      "officialSourcePdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2024/rulesethical/20240507/rulesethical_20240507_Minutes.pdf",
+      "originalSourcePdfSha256": "bf4d6924cd038a0de628e2b4f3287a6b217560b5ce01bc5b90002010bb1e54b2",
+      "originalEmbeddedTextSha256": "2b2c7ea92e5854a27cd9bca5bc15569f9e1c47612d56cd094efd03c51c287496",
+      "sourceRollBlocks": [
+        {
+          "sourceTextOffset": 6257,
+          "sourceNamedYeaCount": 0,
+          "sourceNamedNayCount": 4,
+          "sourceAbsentCount": 0,
+          "sourcePassCount": 0,
+          "sourceNumericTallyMatchesNamedRoll": true,
+          "humanActionLabelForReviewOnly": "Ethics complaint 0-4 failed motion - procedural",
+          "exactActionAndMembershipHumanCertified": false,
+          "billPolicyStanceAndSenateFloorVoteNotInferred": true,
+          "eligibleForPrivateHistoricalDatabaseImport": false
+        }
+      ]
+    }
+  ],
+  "totalOriginalOfficialPdfs": 9,
+  "totalProvisionalNamedRollBlocks": 12,
+  "totalExplicitYeaNayNames": 147,
+  "totalNonvotingPassAbsentNames": 7,
+  "originalSourcePdfHashesIndependentlyRechecked": true,
+  "noOriginalMemberNamesOrFullPdfTextCommitted": true,
+  "noSenatorIdentityRosterValidationPerformed": true,
+  "noAutomaticEvidenceImport": true
+}
