@@ -103,7 +103,7 @@ export type CandidateNamedRoll={
 export function extractNineSourceIndividualRolls(text:string,year:NineReviewYear,committee:string):CandidateNamedRoll[]{
   if(text.length<40||text.length>1_000_000)
     throw Error('Original source text outside fixed review bounds');
-  const anchors=[...text.matchAll(/\b(?:by\s+a\s+roll\s+call\s+vote\s+of|with\s+(?:a\s+roll\s+call\s+)?vote\s+of|there\s+being)\b/gi)];
+  const anchors=[...text.matchAll(/\b(?:by\s+a\s+roll\s+call\s+vote\s+of|with\s+(?:a\s+roll\s+call\s+)?vote\s+of|with\s+\d{1,2}\s*(?:ayes?|yeas?)|there\s+being)\b/gi)];
   const results:CandidateNamedRoll[]=[];
   let previousEnd=0;
   for(const token of anchors){
