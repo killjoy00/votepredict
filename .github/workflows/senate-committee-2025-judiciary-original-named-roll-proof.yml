@@ -1,0 +1,47 @@
+name: One-time original 2025 Judiciary scanned named roll source proof
+
+# Exactly the historically indexed 2025-03-12 official LRL Senate Judiciary
+# original PDF already independently hashed in #884 source audit.
+# No database, cron, dispatch, secrets, serving or model actions.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-2025-judiciary-original-named-roll-proof.yml
+
+permissions:
+  contents: read
+
+jobs:
+  original-named-roll-source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify scanned original PDF rasterizer and OCR tools
+        run: |
+          if ! command -v pdfinfo >/dev/null || ! command -v pdftoppm >/dev/null || ! command -v tesseract >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+          fi
+          pdfinfo -v
+          pdftoppm -v
+          tesseract --version
+      - name: Verify exact original PDF SHA, OCR text SHA and named roll choices as one-way hashes
+        env:
+          VOTEPREDICT_SENATE_COMMITTEE_OCR: "1"
+        run: |
+          node --import tsx scripts/prove-senate-2025-judiciary-scanned-named-roll.ts \
+            --output artifacts/senate-2025-judiciary-original-named-roll-source-metadata.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: senate-2025-judiciary-original-named-roll-source-proof
+          path: artifacts/senate-2025-judiciary-original-named-roll-source-metadata.json
+          if-no-files-found: error
+          retention-days: 30
