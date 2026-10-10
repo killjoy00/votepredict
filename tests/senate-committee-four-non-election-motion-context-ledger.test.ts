@@ -66,7 +66,9 @@ test('original motion identities distinguish amendment outcomes from committee r
   assert.equal(march7.officialSenatePublishedMinutesSourceUrl,
     'https://www.senate.mn/schedule/hearing_minutes.html?hearing_id=18367&ls=93');
   assert.equal(march7.officialSenateMinutePageNotIndependentOfArchivedLrlMinutes,true);
-  assert.equal(march7.originalLrlPdfVersusOfficialSenateHtmlSemanticParityStillRequiresReview,true);
+  assert.equal(march7.originalLrlPdfVersusOfficialSenateHtmlSemanticParityStillRequiresReview,false);
+  assert.equal(march7.originalLrlPdfVsSenateHtmlMotionBillTallyNamedSidesVerifiedInLaterSourceRun,38093480954);
+  assert.equal(march7.originalLrlPdfVsSenateHtmlFullDocumentByteOrSemanticIdentityVerified,false);
 });
 
 test('attendance is a per-roll gate, and repeated recommendation text cannot become another named roll',()=>{
@@ -90,6 +92,11 @@ test('semantic observations and source mirroring are not independent second-sour
   assert.equal(p.originalPdfAndTextShaReverifiedByThisSemanticLedger,false);
   assert.equal(p.sourceMirrorIsIndependentCorroboration,false);
   assert.equal(p.originalLrlPdfVersusSenatePublishedMarch7ParityVerifiedByThisReview,false);
+  assert.equal(p.actualOneTimeFourOriginalSourceRunAfterInitialSemanticReview,38093480954);
+  assert.equal(p.originalLrlPdfAndTextReverifiedInSubsequentIndependentRun,true);
+  assert.equal(p.records[1].absentSectionNotLocatedByActualAutomatedOriginalSourceReviewRun,38093480954);
+  assert.equal(p.records[1].openingAbsentMembershipFullyMachineCertified,false);
+  assert.equal(p.records[1].machineFoundNoAbsenteeChoicesDoesNotCertifyZeroConflicts,true);
   assert.equal(p.limitations.needsIndependentMotionBillLogAndHistoricalRosterReview,true);
   assert.equal(p.limitations.dbReconciliationOrWritesPerformed,false);
   assert.equal(p.limitations.modelForecastServingScheduler2027Changed,false);

@@ -9,7 +9,7 @@
   "originalPdfAndTextShaReverifiedByThisSemanticLedger": false,
   "sourceAuthority": "Minnesota Legislative Reference Library original official electronically indexed Senate committee minutes",
   "sourceMirrorIsIndependentCorroboration": false,
-  "sourceHumanSemanticsNotes": "Three original LRL archived PDF texts and a fourth official Senate published hearing-minutes page were inspected for bill/motion paragraph context. Exact original LRL PDF SHA/source offset parity for March 7 remains a distinct verification gate; the Senate HTML is a publication of the same minutes, not an independent second source.",
+  "sourceHumanSemanticsNotes": "Original four motion-context review followed by successful exact SHA pinned re-download run 38093480954, which reverified four source PDF/text byte hashes, motion offsets and bill/tally context. Exact opening-absence parser did not locate the HHS Feb15 absent header; all database/membership certification remains disallowed.",
   "auditedCandidateCount": 4,
   "sourceContextIdentifiedCount": 4,
   "sourceContextOnHoldCount": 0,
@@ -68,7 +68,10 @@
       "sourceRestatesRecommendationWithoutSecondNamedRoll": false,
       "independentHistoricalCommitteeMembershipVerified": false,
       "eligibleForPersistedIndividualMemberVote": false,
-      "finalFloorOrBillPolicyStanceInferred": false
+      "finalFloorOrBillPolicyStanceInferred": false,
+      "absentSectionNotLocatedByActualAutomatedOriginalSourceReviewRun": 38093480954,
+      "openingAbsentMembershipFullyMachineCertified": false,
+      "machineFoundNoAbsenteeChoicesDoesNotCertifyZeroConflicts": true
     },
     {
       "year": 2024,
@@ -98,7 +101,9 @@
       "finalFloorOrBillPolicyStanceInferred": false,
       "officialSenatePublishedMinutesSourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?hearing_id=18367&ls=93",
       "officialSenateMinutePageNotIndependentOfArchivedLrlMinutes": true,
-      "originalLrlPdfVersusOfficialSenateHtmlSemanticParityStillRequiresReview": true
+      "originalLrlPdfVersusOfficialSenateHtmlSemanticParityStillRequiresReview": false,
+      "originalLrlPdfVsSenateHtmlMotionBillTallyNamedSidesVerifiedInLaterSourceRun": 38093480954,
+      "originalLrlPdfVsSenateHtmlFullDocumentByteOrSemanticIdentityVerified": false
     },
     {
       "year": 2024,
@@ -138,5 +143,8 @@
     "modelForecastServingScheduler2027Changed": false,
     "issue864MustStayOpen": true
   },
-  "originalLrlPdfVersusSenatePublishedMarch7ParityVerifiedByThisReview": false
+  "originalLrlPdfVersusSenatePublishedMarch7ParityVerifiedByThisReview": false,
+  "actualOneTimeFourOriginalSourceRunAfterInitialSemanticReview": 38093480954,
+  "originalLrlPdfAndTextReverifiedInSubsequentIndependentRun": true,
+  "actualFourOriginalSourceHashAndOutcomeProofLedgerPath": "docs/evaluation/source-proof/senate-committee-four-non-elections-original-source-run-provenance-ledger.json"
 }
