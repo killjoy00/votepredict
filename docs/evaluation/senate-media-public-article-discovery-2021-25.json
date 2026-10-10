@@ -37,7 +37,8 @@
       "historicalForecastEligibilityProven": false,
       "membershipOnPublicationDateVerified": false,
       "directQuoteHumanVerified": false,
-      "issueStanceInferred": false
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": false
     },
     {
       "id": "mn-reformer-2021-education-finance",
@@ -58,7 +59,8 @@
       "historicalForecastEligibilityProven": false,
       "membershipOnPublicationDateVerified": false,
       "directQuoteHumanVerified": false,
-      "issueStanceInferred": false
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": false
     },
     {
       "id": "mpr-2021-school-choice",
@@ -77,7 +79,8 @@
       "historicalForecastEligibilityProven": false,
       "membershipOnPublicationDateVerified": false,
       "directQuoteHumanVerified": false,
-      "issueStanceInferred": false
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true
     },
     {
       "id": "mn-reformer-2021-family-preservation",
@@ -96,7 +99,8 @@
       "historicalForecastEligibilityProven": false,
       "membershipOnPublicationDateVerified": false,
       "directQuoteHumanVerified": false,
-      "issueStanceInferred": false
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true
     },
     {
       "id": "mn-reformer-2022-tax-package",
@@ -115,7 +119,8 @@
       "historicalForecastEligibilityProven": false,
       "membershipOnPublicationDateVerified": false,
       "directQuoteHumanVerified": false,
-      "issueStanceInferred": false
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true
     },
     {
       "id": "mn-reformer-2022-gun-proposals",
@@ -134,7 +139,8 @@
       "historicalForecastEligibilityProven": false,
       "membershipOnPublicationDateVerified": false,
       "directQuoteHumanVerified": false,
-      "issueStanceInferred": false
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true
     },
     {
       "id": "mn-reformer-2022-secular-caucus",
@@ -153,7 +159,8 @@
       "historicalForecastEligibilityProven": false,
       "membershipOnPublicationDateVerified": false,
       "directQuoteHumanVerified": false,
-      "issueStanceInferred": false
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true
     },
     {
       "id": "mn-reformer-2023-clean-energy",
@@ -173,7 +180,8 @@
       "historicalForecastEligibilityProven": false,
       "membershipOnPublicationDateVerified": false,
       "directQuoteHumanVerified": false,
-      "issueStanceInferred": false
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": false
     },
     {
       "id": "mn-reformer-2023-driver-licenses",
@@ -192,7 +200,8 @@
       "historicalForecastEligibilityProven": false,
       "membershipOnPublicationDateVerified": false,
       "directQuoteHumanVerified": false,
-      "issueStanceInferred": false
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": false
     },
     {
       "id": "mn-reformer-2023-reproductive-health",
@@ -211,7 +220,8 @@
       "historicalForecastEligibilityProven": false,
       "membershipOnPublicationDateVerified": false,
       "directQuoteHumanVerified": false,
-      "issueStanceInferred": false
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true
     },
     {
       "id": "mn-reformer-2024-junk-fees",
@@ -231,7 +241,8 @@
       "historicalForecastEligibilityProven": false,
       "membershipOnPublicationDateVerified": false,
       "directQuoteHumanVerified": false,
-      "issueStanceInferred": false
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true
     },
     {
       "id": "mn-reformer-2024-majority-leader",
@@ -250,7 +261,8 @@
       "historicalForecastEligibilityProven": false,
       "membershipOnPublicationDateVerified": false,
       "directQuoteHumanVerified": false,
-      "issueStanceInferred": false
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true
     },
     {
       "id": "mn-reformer-2025-social-media-tax",
@@ -270,7 +282,8 @@
       "historicalForecastEligibilityProven": false,
       "membershipOnPublicationDateVerified": false,
       "directQuoteHumanVerified": false,
-      "issueStanceInferred": false
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true
     },
     {
       "id": "mpr-2025-minnesotacare-budget",
@@ -291,9 +304,19 @@
       "historicalForecastEligibilityProven": false,
       "membershipOnPublicationDateVerified": false,
       "directQuoteHumanVerified": false,
-      "issueStanceInferred": false
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true
     }
   ],
   "sourceUniverseCompletenessKnown": false,
-  "publisherYearSlotsInOriginal44SeedReview": 220
+  "publisherYearSlotsInOriginal44SeedReview": 220,
+  "seedPrefixDiscoveryComparison": {
+    "publisherSeedsChecked": [
+      "minnesota-reformer-article-archive",
+      "mpr-news-story-archive"
+    ],
+    "calculatedAgainstCheckedInSeedUrls": true,
+    "outsideSeedPrefixLeadCount": 4,
+    "criticalLimitation": "Outside-prefix only proves the existing Wayback discovery prefix would not select this exact current-article URL. The live article may exist in alternate archives or sources; the full statewide and archived universe is unknown."
+  }
 }
