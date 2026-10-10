@@ -18,6 +18,12 @@ The corrected inventory therefore distinguishes **four valid numeric Senate spec
 
 The public source capture now makes **one additional bounded original CFB PDF request** to prove the 64A title from original PDF bytes, recording its SHA-256/size/fetched-at and a narrow exact title check. If that request fails, chamber resolution remains *unverified* and is recorded as a failure. This is metadata-only and does not alter the other archives, historical release dates, or any candidate identity. The original CFB archive's title is preserved literally as provenance alongside the discrepancy, not silently rewritten.
 
+## Verified labeling discrepancy: 2025 House 64A incorrectly labeled Senate
+
+The official 2025 archive currently labels one link **“Senate District 64A special election”**, but the target [original official PDF](https://cfb.mn.gov/pdf/calendars/2025_special_election_64A.pdf) clearly identifies **House District 64A Special Election Public Disclosure Calendar**. The [Minnesota House's November 18, 2025 legislative news](https://www.house.mn.gov/SessionDaily/Story/18856) separately describes the 2026 House 64A special election.
+
+Until original PDF byte/hash acquisition, it is a **mislabeled/ambiguous archive link**, not one of the Senate special-election calendars. The audit now keeps the link in the archive count but excludes it from the **Senate-specific** calendar count, and independently checks the source PDF title/hash under the safe read-only public-source workflow. In the initial archive index there were five items *labeled* Senate, but one is actually this House 64A item: **four** have unambiguous Senate-district labels, not five. A label corrected for chamber classification does **not** establish any required-filing denominator.
+
 ## Conflicting official SD6 period cutoffs: no silent adjudication
 
 Two distinct official CFB sources require independent original-byte verification:
