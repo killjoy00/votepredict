@@ -117,7 +117,7 @@ async function main(){
   mkdirSync(dirname(opt.output),{recursive:true});
   writeFileSync(opt.output,JSON.stringify(out,null,2)+'\n');
   console.log(JSON.stringify({year:opt.year,verifiedPages:results.length,
-    failures:failures.length,pagesWithMediaCandidates,mediaCategories:counts},null,2));
+    failures:failures.length,pagesWithMediaCandidates:pagesWithCandidate,mediaCategories:counts},null,2));
   if(failures.length || pagesWithCandidate!==MISSING_MEDIA_EXPECTED[opt.year].mediaPages)
     process.exitCode=1;
 }
