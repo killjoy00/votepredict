@@ -1,7 +1,7 @@
 name: One-time 141 missing Senate Minutes alternate official source pages
 
 # Four independent year jobs inspect only date-filtered official LRL pages
-# from the exact previous 1,592-meeting index. No scheduler/dispatch, database,
+# from the exact previous 1,592-meeting index. Safely follows only canonical\n# same-LRL/same-committee/same-day HTTP 301 redirects. No scheduler/dispatch, database,
 # originals OCR, inferential votes, model, forecast or 2027 work.
 on:
   push:
