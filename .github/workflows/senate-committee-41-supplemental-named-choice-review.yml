@@ -1,0 +1,58 @@
+name: One-time source-only supplemental explicit choices from 41 Senate roll cues
+
+# Source-only re-fetch of exactly 41 previously hashed 2022-25 Senate Minutes.
+# Original original-source SHA and text SHA checked for each PDF; no database
+# secrets, scheduler, model, forecast, serving or 2027 work.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-41-supplemental-named-choice-review.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  verify-exact-source-year:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        year: [2022, 2023, 2024, 2025]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Retrieve immutable prior original-source roll review metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-${{ matrix.year }}-unparsed-roll-review-metadata
+          run-id: 38075573031
+          github-token: ${{ github.token }}
+          path: artifacts/prior-source
+      - name: Preflight PDF page cap
+        run: |
+          if ! command -v pdfinfo >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils
+          fi
+      - name: Re-fetch SHA-pinned original PDFs and classify explicit named YEA NAY candidate blocks
+        run: |
+          node --import tsx scripts/salvage-senate-41-strong-roll-named-candidates.ts \
+            --year ${{ matrix.year }} \
+            --source-json artifacts/prior-source/senate-${{ matrix.year }}-unparsed-roll-review.json \
+            --output artifacts/semantic/senate-${{ matrix.year }}-supplemental-named-source-review.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-${{ matrix.year }}-41-supplemental-named-candidate-review
+          path: artifacts/semantic/senate-${{ matrix.year }}-strong-roll-41-source-review.json
+          retention-days: 7
+          if-no-files-found: warn
