@@ -116,12 +116,16 @@ test('HTTP failures, malformed responses and network failures fail closed withou
       },
     );
   }
-  await assert.rejects(()=>assertProjectEndpointBelongsToApprovedBranch(
-    {...input,databaseHost:'127.0.0.1'},fakeApi([endpoint()])),
-  ),/Invalid Neon database host/);
-  await assert.rejects(()=>assertProjectEndpointBelongsToApprovedBranch(
-    {...input,apiKey:''},fakeApi([endpoint()])),
-  ),/required/);
+  await assert.rejects(
+    ()=>assertProjectEndpointBelongsToApprovedBranch(
+      {...input,databaseHost:'127.0.0.1'},fakeApi([endpoint()])),
+    /Invalid Neon database host/,
+  );
+  await assert.rejects(
+    ()=>assertProjectEndpointBelongsToApprovedBranch(
+      {...input,apiKey:''},fakeApi([endpoint()])),
+    /required/,
+  );
 });
 
 test('project verified does NOT imply an eligible SQL export until the read-only role is checked',()=>{
