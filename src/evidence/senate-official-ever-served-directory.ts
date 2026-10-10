@@ -117,14 +117,38 @@ function nameParts(name:string){
     .replace(/\s+/g,' ').trim().split(' ');
   return {first:x[0]??'',last:x.at(-1)??''};
 }
-/** A conservative person match: first and last names plus Senate district
- * AND overlapping service years. Distinct first-name spellings (Jen/Jennifer)
- * require a separately audited exact alias, never generic fuzzy matching.
+/**
+ * LRL sometimes documents a common first name explicitly ("Kupec, Robert -
+ * 'Rob'"). A nickname only qualifies where the SAME official row explicitly
+ * lists that exact alias. Generic fuzzy name matching remains prohibited.
+ */
+function officialIdentityMatchesCandidate(row:SenateServedRecord,candidateName:string):boolean{
+ const person=nameParts(row.officialName),target=nameParts(candidateName);
+ if(person.last!==target.last||!target.first||!target.last)return false;
+ if(person.first===target.first)return true;
+ const nicknameMatch=row.officialNameRaw.match(/\s+-\s*["“]([^"”]+)["”]/);
+ if(!nicknameMatch)return false;
+ const alternatives=nicknameMatch[1].split(/,\s*/).map(a=>nameParts(a+' '+target.last).first);
+ return alternatives.includes(target.first);
+}
+/**
+ * Critical distinction: the user wants anyone who EVER served in the
+ * Minnesota Senate, even if they lost a race or did not begin a new term
+ * after an election. For example, Jerry Relph served until December 2020;
+ * the 2020 winning election did not produce a 2021 service term.
+ *
+ * "verified_senate_service" proves *person* has served; the separate
+ * "serviceForThisElectionFollowingYearVerified" flag governs the cohort.
  */
 export function validateActualSenateServiceForElection(
  official:AuditedOfficialSenateDirectory,
  candidateName:string,district:string,electionYear:number,
-):{status:'verified_senate_service'|'not_yet_verified';officialName:string|null;term:string|null}{
+):{
+ status:'verified_senate_service'|'not_yet_verified';
+ officialName:string|null;term:string|null;
+ serviceForThisElectionFollowingYearVerified:boolean;
+ officialServiceSource:string|null;
+}{
  if(official.schema!=='mn-lrl-official-senate-ever-served-directory-v1'
    ||official.source.url!==OFFICIAL_MN_SENATE_SERVICE_DIRECTORY_URL
    ||official.source.directoryIsSenatorServiceNotCandidateFiling!==true
@@ -135,37 +159,38 @@ export function validateActualSenateServiceForElection(
  if(!/^\d{1,2}$/.test(district)||!Number.isInteger(electionYear)
    ||!['2020','2022','2024','2025'].includes(String(electionYear)))
    throw Error('Unknown candidate-election senator-service window');
- const year=electionYear===2020?2021:electionYear===2022?2023:2025;
- const target=nameParts(candidateName);
- const matches=official.senators.filter(row=>{
-   const p=nameParts(row.officialName);
-   return p.first===target.first&&p.last===target.last
-     &&row.senateServiceTerms.some(term=>
-       term.district===district
-       &&term.startsYear<=year
-       &&(term.endsYear===null||term.endsYear>=year));
- });
- if(matches.length!==1)
-   return {status:'not_yet_verified',officialName:null,term:null};
- const row=matches[0];
- const term=row.senateServiceTerms.find(t=>t.district===district
-   &&t.startsYear<=year&&(t.endsYear===null||t.endsYear>=year))!;
- return {status:'verified_senate_service',officialName:row.officialName,
-   term:term.startsYear+'-'+(term.endsYear??'Present')+' SD'+term.district};
+ const termYear=electionYear===2020?2021:electionYear===2022?2023:2025;
+ const persons=official.senators.filter(row=>
+   officialIdentityMatchesCandidate(row,candidateName));
+ if(persons.length!==1)return {
+   status:'not_yet_verified',officialName:null,term:null,
+   serviceForThisElectionFollowingYearVerified:false,officialServiceSource:null,
+ };
+ const row=persons[0];
+ const thisTerm=row.senateServiceTerms.find(term=>
+   term.district===district
+   &&term.startsYear<=termYear
+   &&(term.endsYear===null||term.endsYear>=termYear));
+ const previousOrDifferent=row.senateServiceTerms.find(term=>term.district===district)
+   ??row.senateServiceTerms[0];
+ return {
+   status:'verified_senate_service',officialName:row.officialName,
+   term:(thisTerm??previousOrDifferent).startsYear+'-'+
+     ((thisTerm??previousOrDifferent).endsYear??'Present')+
+     ' SD'+(thisTerm??previousOrDifferent).district,
+   serviceForThisElectionFollowingYearVerified:Boolean(thisTerm),
+   officialServiceSource:row.officialSourceUrl,
+ };
 }
-/** A candidate who lost earlier but *ever* later served is eligible for
- * research only once independently matching a later recorded Senate term.
- * Unlike winner-to-term joins, no district continuity is required here.
+/** An earlier losing candidate can enter research if this independent
+ * directory proves that exact person later or earlier served in the Senate.
+ * Do not accidentally exclude future senators just because they once lost.
  */
 export function validateCandidateEverActuallyServed(
  official:AuditedOfficialSenateDirectory,candidateName:string,
 ):boolean{
  if(official.schema!=='mn-lrl-official-senate-ever-served-directory-v1')
    throw Error('Unverified Minnesota LRL Senate service directory');
- const target=nameParts(candidateName);
- return official.senators.some(row=>{
-  const p=nameParts(row.officialName);
-  return p.first===target.first&&p.last===target.last
-    &&row.senateServiceTerms.length>0;
- });
+ return official.senators.filter(row=>
+   officialIdentityMatchesCandidate(row,candidateName)).length===1;
 }
