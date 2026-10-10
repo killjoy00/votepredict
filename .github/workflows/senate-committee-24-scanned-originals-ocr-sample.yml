@@ -1,0 +1,52 @@
+name: One-time 24-source Senate original scanned minutes OCR sample
+
+# Exactly 24 independently source-recorded original public Senate Minutes
+# PDFs, four fixed historic years, per-PDF byte/page caps. No cron, dispatch,
+# DB secrets, production mutation, forecast changes or 2027 work.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-24-scanned-originals-ocr-sample.yml
+
+permissions:
+  contents: read
+
+jobs:
+  one-historic-year-ocr:
+    strategy:
+      fail-fast: false
+      matrix:
+        year: [2022, 2023, 2024, 2025]
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify bounded original page rasterizer and OCR engine
+        run: |
+          if ! command -v pdfinfo >/dev/null || ! command -v pdftoppm >/dev/null || ! command -v tesseract >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+          fi
+          pdfinfo -v
+          pdftoppm -v
+          tesseract --version
+      - name: Independently OCR exact pinned originals for this single year
+        env:
+          VOTEPREDICT_SENATE_COMMITTEE_OCR: "1"
+        run: |
+          node --import tsx scripts/probe-senate-committee-24-scanned-originals.ts \
+            --year ${{ matrix.year }} \
+            --output artifacts/senate-committee-${{ matrix.year }}-second-ocr-sample.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: senate-committee-${{ matrix.year }}-second-ocr-sample-metadata
+          path: artifacts/senate-committee-${{ matrix.year }}-second-ocr-sample.json
+          if-no-files-found: error
+          retention-days: 30
