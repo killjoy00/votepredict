@@ -68,12 +68,13 @@
     "committeesLegallyActiveIn2025": null,
     "required2025ReportCount": null,
     "actuallyFiledOriginalReportCount": null,
-    "verifiedOriginalReportPdfCount": 0,
     "historicalPublicByVerifiedReportCount": 0,
     "sourceToDbRowContainmentProved": false,
     "statutoryDeadlineAndFilingDatesReconciled": false,
     "completeStatewide2021to2025SenateCoverageCertified": false,
-    "note": "These 85 are source viewer references (60 with amendment number 0 and 25 amended versions) for a targeted 41-committee registration cohort, not 85 authenticated PDFs, 60 legally owed reports, or a historical eligibility proof. Current data can reflect submissions and amendments after 2025. Explicit null required/actually-filed statewide totals remain."
+    "note": "These 85 are source viewer references (60 with amendment number 0 and 25 amended versions) for a targeted 41-committee registration cohort, not 85 authenticated PDFs, 60 legally owed reports, or a historical eligibility proof. Current data can reflect submissions and amendments after 2025. Explicit null required/actually-filed statewide totals remain. The separate prior SD6 control PDF proof remains valid; the zero in this checkpoint means no NEW PDF bytes were verified by this source-reference audit.",
+    "newPdfVerificationsInThisSourceReferenceCheckpoint": 0,
+    "priorOriginalPdfControlProofsExist": true
   },
   "boundaries": {
     "publicCfbReadOnly": true,
