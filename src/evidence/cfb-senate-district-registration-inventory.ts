@@ -109,7 +109,7 @@ export function parseCfbSenateDistrictCandidatePage(input: {
   for (const match of input.html.matchAll(/<label\b[^>]*>([\s\S]*?)<\/label>/gi)) {
     const inner = match[1] ?? '';
     const name = htmlText(inner.replace(/<input\b[^>]*>/gi, ''));
-    if (!/^[\p{L}][\p{L} .'-]{0,80},\s*[\p{L}]/u.test(name) || name.length > 110) continue;
+    if (!/^[\p{L}][^<>@\n]{1,100},\s*[\p{L}]/u.test(name) || name.length > 110) continue;
     const tag = inner.match(/<input\b([^>]*)>/i)?.[1];
     const registration = tag ? inputValue(tag) : null;
     if (!registration || !/^\d{3,8}$/.test(registration)) { malformed++; continue; }
