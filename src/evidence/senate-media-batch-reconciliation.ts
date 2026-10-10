@@ -4,6 +4,7 @@
  * No database/network/CI, no automatically inferred quotation or stance.
  */
 import { createHash } from 'node:crypto';
+import { LOCAL_TRADE_NEWS_SEEDS } from './local-trade-news-history.js';
 import {
   auditSenateMediaRemarks,
   type SenateMediaContextExport,
@@ -66,6 +67,8 @@ export interface SenateMediaPrivateCoverageGroup {
   notAttempted: number;
   /** Not a published-articles or statewide coverage denominator. */
   coverageScope: 'eligible_sources_in_selected_private_export_only';
+  missingness: 'not_observed_in_export_not_no_published_articles'
+    | 'sampled_archive_not_full_publisher_article_universe';
 }
 
 export interface SenateMediaBatchSummary {
@@ -74,7 +77,7 @@ export interface SenateMediaBatchSummary {
   suppliedContextRows: number;
   eligibleDistinctArchivedArticles: number;
   studyYearDistinctSourceRows: number;
-  outsideStudyYearDistinctSourceRows: number;
+  outsideStudyYearContextRows: number;
   invalidProvenanceStudyYearDistinctSources: number;
   attemptedDistinctSources: number;
   exactOriginalHashMatched: number;
@@ -242,7 +245,20 @@ export function reconcileSenateMediaPrivateBatches(input: {
     if(row.status==='original_bytes_hash_mismatch')mismatched++;
     else if(row.status!=='verified_original_bytes')unavailable++;
   }
+  // The denominator is the *bounded source export*, never publisher output.
+  // Explicit zero rows for all 44 seeds/year pairs prevent silently treating
+  // an unobserved source as having published zero relevant articles.
   const publisherGroups=new Map<string,SenateMediaPrivateCoverageGroup>();
+  for (const year of YEARS) for (const seed of LOCAL_TRADE_NEWS_SEEDS) {
+    publisherGroups.set(year+'|'+seed.id,{
+      year,publisher:seed.publisher,seedId:seed.id,
+      eligibleDistinctArchivedArticles:0,retrievalAttempted:0,
+      exactOriginalHashMatched:0,originalHashMismatched:0,
+      retrievalUnavailableOrRejected:0,notAttempted:0,
+      coverageScope:'eligible_sources_in_selected_private_export_only',
+      missingness:'not_observed_in_export_not_no_published_articles',
+    });
+  }
   const yearGroups=YEARS.map(year=>({
     year,eligible:0,attempted:0,hashMatched:0,hashMismatched:0,
     unavailableOrRejected:0,notAttempted:0,
@@ -257,11 +273,13 @@ export function reconcileSenateMediaPrivateBatches(input: {
         exactOriginalHashMatched:0,originalHashMismatched:0,
         retrievalUnavailableOrRejected:0,notAttempted:0,
         coverageScope:'eligible_sources_in_selected_private_export_only',
+        missingness:'sampled_archive_not_full_publisher_article_universe',
       };
       publisherGroups.set(key,group);
     }
     const yr=yearGroups.find(x=>x.year===row.captureYear)!;
     group.eligibleDistinctArchivedArticles++;
+    group.missingness='sampled_archive_not_full_publisher_article_universe';
     yr.eligible++;
     const attempt=actual.get(row.sourceDocumentId);
     if(!attempt){
@@ -293,7 +311,7 @@ export function reconcileSenateMediaPrivateBatches(input: {
     suppliedContextRows:contexts.length,
     eligibleDistinctArchivedArticles:eligible.length,
     studyYearDistinctSourceRows:emptyAudit.distinctArchivedArticlesInExport,
-    outsideStudyYearDistinctSourceRows:emptyAudit.corpusContextItemsOutsideStudyYears,
+    outsideStudyYearContextRows:emptyAudit.corpusContextItemsOutsideStudyYears,
     invalidProvenanceStudyYearDistinctSources:base.rejectedInStudy,
     attemptedDistinctSources:actual.size,
     exactOriginalHashMatched:snapshots.size,
