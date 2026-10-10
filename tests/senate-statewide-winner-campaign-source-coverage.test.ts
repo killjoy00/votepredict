@@ -9,6 +9,29 @@ import {
  auditStatewideSenateCampaignSourceRecovery,type HistoricalOriginalGeneralCensus,
 } from '../src/evidence/senate-statewide-winner-campaign-source-coverage.js';
 const observed=seeds.winners;
+function verifiedSenatorsFixture(){
+ return {
+  schema:'mn-lrl-official-senate-ever-served-directory-v1' as const,
+  source:{
+   url:'https://www.lrl.mn.gov/legdb/senate_dir' as const,
+   observedAt:'2026-10-10T19:00:00.000Z',sourceBytesSha256:'a'.repeat(64),
+   sourceBytesLength:310000,
+   originalHistoricDateForDisplayedDirectoryEstablished:false as const,
+   directoryIsSenatorServiceNotCandidateFiling:true as const,
+  },
+  senators:observed.map(x=>({
+   officialName:x.candidateName,officialNameRaw:x.candidateName,
+   officialSourceUrl:'https://www.lrl.mn.gov/legdb/senate_dir' as const,
+   senateServiceTerms:[{
+    startsYear:x.sourceId==='sos-general-2020'?2021:
+      x.sourceId==='sos-general-2022'?2023:2025,
+    endsYear:x.sourceId==='sos-general-2020'?2022:
+      x.sourceId==='sos-general-2022'?2024:2026,
+    district:x.district,
+   }],
+  })),
+ };
+}
 function fakeOriginal(year:2020|2022):HistoricalOriginalGeneralCensus{
  const winners=observed.filter(c=>c.sourceId==='sos-general-'+year);
  const extra=year===2020?79:64;
@@ -48,28 +71,37 @@ function fakeOriginal(year:2020|2022):HistoricalOriginalGeneralCensus{
   ],
  };
 }
-test('139 post-election winner observations, NOT 139 unique seated senators or known 2021-25 member years',()=>{
- const r=auditStatewideSenateCampaignSourceRecovery();
- assert.equal(r.totals.winnerElectionObservations,139);
- assert.equal(r.totals.original2020And2022WinnerObservations,134);
- assert.equal(r.totals.special2024And2025WinnerObservations,5);
- assert.deepEqual(r.cohorts.map(x=>[x.cohort,x.winnerElectionObservations]),
+test('never publish unverified person names as actual senators based only on SOS winner status',()=>{
+ const report=auditStatewideSenateCampaignSourceRecovery();
+ assert.equal(report.totals.electionWinnerObservationsUsedOnlyForSourceJoin,139);
+ assert.equal(report.totals.namedSenatorOnlyElectionObservationsConfirmedByLRL,0);
+ assert.equal(report.totals.electionWinnersWithoutIndependentLRLServiceMatchExcluded,139);
+ assert.deepEqual(report.senatorElectionObservations,[]);
+ assert.equal(report.scope.onlyVerifiedEverServedPeopleIncluded,true);
+});
+test('139 post-election winner observations with separately confirmed LRL terms, NOT 139 unique seated senators',()=>{
+ const r=auditStatewideSenateCampaignSourceRecovery(undefined,verifiedSenatorsFixture());
+ assert.equal(r.totals.electionWinnerObservationsUsedOnlyForSourceJoin,139);
+ assert.equal(r.totals.namedSenatorOnlyElectionObservationsConfirmedByLRL,139);
+ assert.equal(r.totals.original2020And2022WinnerObservationsUsedInternallyForJoin,134);
+ assert.equal(r.totals.special2024And2025WinnerObservationsUsedInternallyForJoin,5);
+ assert.deepEqual(r.cohorts.map(x=>[x.cohort,x.verifiedEverServedSenatorElectionObservations]),
   [['2020_general',67],['2022_general',67],['2024_special',1],['2025_special',4]]);
  assert.equal(r.scope.statewideMemberYearCompletenessCertified,false);
- assert.equal(r.scope.independentStatewideLegislatorMembershipRosterReconciled,false);
+ assert.equal(r.scope.independentStatewideLegislatorMembershipRosterReconciled,true);
  assert.equal(r.scope.aMissingSourceIsNotAProvenAbsentCampaignWebsite,true);
- assert.ok(r.winnerElectionObservations.every(x=>
+ assert.ok(r.senatorElectionObservations.every(x=>
   x.membershipId===null&&!x.actualLegislativeMembershipStartEndVerified
   &&x.immediateForecastEvidenceAdmissions===0));
 });
 test('historical source page recovery numerator, site URL leads and 2022 survey must remain distinct',()=>{
- const r=auditStatewideSenateCampaignSourceRecovery();
+ const r=auditStatewideSenateCampaignSourceRecovery(undefined,verifiedSenatorsFixture());
  assert.equal(r.totals.winnerWebsitePublisherLinkLeads,4);
  assert.equal(r.totals.winnerOriginalHistoricIssuePageSources,3);
  assert.equal(r.totals.winningCandidateOwnedArchivedIssueExcerptLeads,10);
  assert.equal(r.totals.winnerPublisherSurveyQuotesWithoutHistoricalPublicBy,4);
- assert.equal(r.totals.winnerElectionObservationsWithoutVerifiedHistoricCampaignIssuePage,136);
- assert.equal(r.totals.losingCandidateIssueExcerptsNotAttachableToWinner,7);
+ assert.equal(r.totals.verifiedSenatorElectionObservationsWithoutAuthenticatedHistoricIssuePage,136);
+ assert.equal(r.totals.neverServedOpponentIssueExcerptsExcludedFromNamedOutput,true);
  assert.equal(r.totals.historicOriginalSOSFilingWebsiteAssignments,0);
  assert.equal(r.totals.statementsAdmittedToForecast,0);
  assert.equal(r.cohorts[0].archivedOriginalCampaignIssuePageWinners,0);
@@ -79,8 +111,8 @@ test('historical source page recovery numerator, site URL leads and 2022 survey 
  assert.equal(r.cohorts[3].archivedOriginalCampaignIssuePageWinners,2);
 });
 test('named 2025 winners have source-specific proof; Amanda website lead is not historic issue text',()=>{
- const r=auditStatewideSenateCampaignSourceRecovery();
- const pick=(name:string)=>r.winnerElectionObservations.find(x=>x.candidateName===name);
+ const r=auditStatewideSenateCampaignSourceRecovery(undefined,verifiedSenatorsFixture());
+ const pick=(name:string)=>r.senatorElectionObservations.find(x=>x.candidateName===name);
  assert.equal(pick('Ann Johnson Stewart')?.independentHistoricalOriginalCampaignPageCount,1);
  assert.equal(pick('Keri Heintzeman')?.originalCampaignIssueShortExcerptLeads,3);
  assert.equal(pick('Michael Holmstrom Jr')?.originalCampaignIssueShortExcerptLeads,3);
@@ -90,14 +122,14 @@ test('named 2025 winners have source-specific proof; Amanda website lead is not 
  assert.equal(pick('Doron Clark')?.websiteAbsentIndependentlyProven,false);
  assert.equal(pick('Rob Kupec')?.candidateSubmitted2022PublisherSurveyExcerptLeads,2);
  assert.equal(pick('Michael Kreun')?.candidateSubmitted2022PublisherSurveyExcerptLeads,2);
- assert.ok(!r.winnerElectionObservations.some(x=>x.candidateName==='Louis McNutt'));
+ assert.ok(!r.senatorElectionObservations.some(x=>x.candidateName==='Louis McNutt'));
 });
 test('both state original result audits must reconcile all 67 exact winning name and district identities',()=>{
  const yes=auditStatewideSenateCampaignSourceRecovery({
   y2020:fakeOriginal(2020),y2022:fakeOriginal(2022),
- });
+ },verifiedSenatorsFixture());
  assert.equal(yes.totals.originalGovernmentCensusesReconciledInThisRun,2);
- assert.ok(yes.winnerElectionObservations.filter(x=>x.electionYear===2020
+ assert.ok(yes.senatorElectionObservations.filter(x=>x.electionYear===2020
   ||x.electionYear===2022).every(x=>x.independentOriginalGeneralCensusCrossMatchedInThisRun));
  const one=fakeOriginal(2020);
  one.candidates.find(x=>x.generalOutcome==='winner'&&x.district==='4')!.candidateName='Different Person';
@@ -127,7 +159,9 @@ test('offline CLI preserves explicit no-production/no-member-year status and ref
   const argv=['--import','tsx','scripts/audit-senate-statewide-campaign-source-coverage-offline.ts'];
   execFileSync('node',[...argv,'--output',output],{timeout:20000,stdio:'pipe'});
   const obj=JSON.parse(readFileSync(output,'utf8'));
-  assert.equal(obj.totals.winnerElectionObservations,139);
+  assert.equal(obj.totals.electionWinnerObservationsUsedOnlyForSourceJoin,139);
+  assert.equal(obj.totals.namedSenatorOnlyElectionObservationsConfirmedByLRL,0);
+  assert.equal(obj.senatorElectionObservations.length,0);
   assert.equal(obj.totals.originalGovernmentCensusesReconciledInThisRun,0);
   assert.equal(obj.cliOriginalSOSSourceBytesRehashedAndCrosschecked,false);
   assert.equal(obj.scope.statewideMemberYearCompletenessCertified,false);
