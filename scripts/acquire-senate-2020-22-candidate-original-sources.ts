@@ -81,9 +81,6 @@ export async function retrieveSmallPublicOriginal(
  }catch(e){result.error=e instanceof Error?e.name+': '+e.message.slice(0,160):'public_get_failed';}
  return result;
 }
-function hexSha(bytes:Buffer,alg:'sha256'|'sha1'){
- return createHash(alg).update(bytes).digest('hex');
-}
 const abc='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 export function base32Sha1(bytes:Buffer):string{
  const raw=createHash('sha1').update(bytes).digest();let value=0,bits=0,out='';
