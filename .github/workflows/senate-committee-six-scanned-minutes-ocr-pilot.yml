@@ -1,0 +1,45 @@
+name: One-time six-source Senate 2022-25 scanned minute OCR feasibility
+
+# Explicitly bounded feasibility sample on six already source-verified public
+# Senate committee Minutes PDFs. No cron or workflow dispatch; no DB secrets.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-six-scanned-minutes-ocr-pilot.yml
+
+permissions:
+  contents: read
+
+jobs:
+  six-original-scanned-minutes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Install document rasterizer and Tesseract only when needed
+        run: |
+          if ! command -v pdftoppm >/dev/null || ! command -v tesseract >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+          fi
+          pdftoppm -v
+          tesseract --version
+      - name: OCR exactly six already source-verified original public Senate minute PDFs
+        env:
+          VOTEPREDICT_SENATE_COMMITTEE_OCR: "1"
+        run: |
+          node --import tsx scripts/probe-senate-committee-scanned-minutes-ocr.ts \
+            --output artifacts/senate-committee-six-scanned-ocr-metadata.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: senate-committee-six-scanned-original-ocr-metadata
+          path: artifacts/senate-committee-six-scanned-ocr-metadata.json
+          if-no-files-found: error
+          retention-days: 30
