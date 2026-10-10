@@ -55,7 +55,7 @@ function main(){
   officialOriginalCensusesRehashed:have?2:0,
   originalCampaignPagesForWinningCandidates:report.totals.winnerOriginalHistoricIssuePageSources,
   winnerWebsiteLeadsOnly:report.totals.winnerWebsitePublisherLinkLeads,
-  2022CandidateSurveyWinnerExcerptsUnverifiedHistoricalPublicBy:report.totals.winnerPublisherSurveyQuotesWithoutHistoricalPublicBy,
+  candidateSurvey2022WinnerExcerptsUnverifiedHistoricalPublicBy:report.totals.winnerPublisherSurveyQuotesWithoutHistoricalPublicBy,
   verifiedMemberYearDenominator:false,
   noProductionWrites:true,
  }));
