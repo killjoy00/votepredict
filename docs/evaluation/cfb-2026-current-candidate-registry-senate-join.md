@@ -27,6 +27,15 @@ The one-time PR-only [public API source run](https://github.com/killjoy00/votepr
 | Source-viewer IDs observed in recent all-office termination list | 6 |
 | Malformed current registry source rows or conflicting same-registration rows | 0 |
 
+### Material 2025 cohort recovered from the 2026 election viewer
+
+**Do not interpret the election-segment end year as a registration or filing year.** Of the **134** Senate registration IDs observed only on the 2026 election viewer:
+- **41** match the present-day official current list with **registration dates during 2025**. They form a verifiable 2025 candidate-registration lead set for investigating report requirements, especially 2025 special elections and post-registration reporting obligations.
+- **78** are registered during **2026**, so they are not evidence of 2021–2025 registration activity.
+- **15** do not appear in the October 2026 public current registry and still lack an independently verified registration date. They remain unresolved rather than considered missing reports or terminated committees.
+
+The other 360 election-viewer IDs were observed in at least one 2020/2022/2024 segment: **111** also appear in the current register, **249** do not. The full cohort split is source-pinned and reproducibly tested using the 494-ID election-viewer checkpoint and the 230 dated current-list registrations.
+
 The checkpoint preserves the exact 230 current-list Senate numeric registration IDs, current reported registration/termination dates in [a compact PSV](source-proof/cfb-2026-public-current-senate-registration-dates.psv), SHA256-pinned by offline regression tests. It deliberately retains **no candidate names**, home addresses, committee officers, email addresses, phone numbers, donor names or financial transactions.
 
 ### Control registrations
