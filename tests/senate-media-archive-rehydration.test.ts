@@ -98,6 +98,14 @@ test('spoofed archive host, differing original path, wrong timestamp, or no sha 
   assert.equal(plan.rejectionReasons.missing_valid_original_sha256,1);
 });
 
+test('source-original query parameters stay within exact Wayback identity and are not stripped',()=>{
+  const withQuery=context();
+  withQuery.originalUrl=original+'?publisher-story-id=123';
+  withQuery.archiveUrl='https://web.archive.org/web/20230404101112id_/'+withQuery.originalUrl;
+  withQuery.sourceUrl=withQuery.archiveUrl;
+  assert.equal(planSenateMediaRehydration([withQuery]).selected.length,1);
+});
+
 test('duplicate evidence identities and conflicting per-document source identity fail hard',()=>{
   const c=context();
   assert.throws(()=>planSenateMediaRehydration([c,c]),/Duplicate or missing/);
@@ -142,7 +150,7 @@ test('original raw bytes, not decoded UTF-8 reserialization, are authenticated',
   const bytes=Buffer.concat([Buffer.from(body),Buffer.from([0xff,0xfe])]);
   const c=context(); c.sourceSha256=digest(bytes);
   const result=await fetchSenateMediaOriginalBytes(candidate(c),
-    fetchWithResponse(new Response(bytes,{status:200,headers:{'content-type':'text/html'}})));
+    fetchWithResponse(new Response(new Uint8Array(bytes),{status:200,headers:{'content-type':'text/html'}})));
   assert.equal(result.status,'verified_original_bytes');
   assert.equal(result.snapshot?.rawBodyBase64,bytes.toString('base64'));
 });
