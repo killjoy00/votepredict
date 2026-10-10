@@ -17,6 +17,11 @@ import {resolve,dirname} from 'node:path';
 import {auditSos2020to2022OriginalGeneralCensus} from '../src/evidence/senate-2020-22-official-general-census.js';
 import {auditStatewideSenateCampaignSourceRecovery} from '../src/evidence/senate-statewide-winner-campaign-source-coverage.js';
 import {parseOfficialMnSenateServiceDirectory} from '../src/evidence/senate-official-ever-served-directory.js';
+import {
+  SOURCE_TARGETS,verifyOfficialSenatorExceptionalSource,validateVerifiedExceptionalProofs,
+  LRL_EXACT_SENATE_HISTORIC_IDENTITY_PROOFS_VERSION,
+  type VerifiedSenateExceptionalPersonSources,
+} from '../src/evidence/senate-lrl-explicit-historic-person-proofs.js';
 const args=process.argv.slice(2);
 const flag=(name:string)=>{
  const i=args.indexOf(name);
@@ -80,7 +85,30 @@ function main(){
          !==meta.supplementalSwearingSource.sourceBytesSha256))
      throw Error('Original LRL Senate directory or sworn-in source checksum changed');
  }
- const report=auditStatewideSenateCampaignSourceRecovery(censuses,officialRoster);
+ const exceptionInput=flag('--official-special-identity-proofs');
+ let verifiedExceptionalSource:VerifiedSenateExceptionalPersonSources|undefined;
+ if(exceptionInput){
+   if(!officialRoster)throw Error('Official biography exceptions must have original Senate directory corroboration');
+   const metadata=JSON.parse(readFileSync(exceptionInput,'utf8')) as VerifiedSenateExceptionalPersonSources;
+   validateVerifiedExceptionalProofs(metadata);
+   const proofs=SOURCE_TARGETS.map(target=>{
+     const file=dirname(resolve(exceptionInput))+
+       '/mn-lrl-senator-explicit-history-'+target.id+'.html';
+     const input=originalBytesAllow5MB(file);
+     const row=metadata.proofs.find(x=>x.id===target.id)!;
+     const independentlyRechecked=verifyOfficialSenatorExceptionalSource(
+       target.id,input,row.observedAt);
+     if(independentlyRechecked.sourceBodySha256!==row.sourceBodySha256)
+       throw Error('Original senator biography does not match pinned SHA256 '+target.id);
+     return independentlyRechecked;
+   });
+   verifiedExceptionalSource={
+     schema:LRL_EXACT_SENATE_HISTORIC_IDENTITY_PROOFS_VERSION,proofs,
+   };
+   validateVerifiedExceptionalProofs(verifiedExceptionalSource);
+ }
+ const report=auditStatewideSenateCampaignSourceRecovery(
+   censuses,officialRoster,verifiedExceptionalSource);
  const destination=resolve(out);
  mkdirSync(dirname(destination),{recursive:true});
  const output={...report,cliOriginalSOSSourceBytesRehashedAndCrosschecked:have,
@@ -90,6 +118,8 @@ function main(){
   output:destination,candidateWinnerElectionObservationsUsedInternally:report.totals.electionWinnerObservationsUsedOnlyForSourceJoin,
   officialOriginalCensusesRehashed:have?2:0,
   officialSenateServiceDirectoryRehashed:Boolean(officialRoster),
+  exactHistoricNamesAndPriorSenatorElectionLossLinksRehashed:verifiedExceptionalSource?.proofs.length??0,
+  formerOrLaterSenatorLosingElectionObservations:report.totals.everServedSenatorsWhoLostAGeneralRaceAlsoIncluded,
   namedActualSenateMemberObservations:report.totals.namedSenatorOnlyElectionObservationsConfirmedByLRL,
   originalCampaignPagesForWinningCandidates:report.totals.winnerOriginalHistoricIssuePageSources,
   winnerWebsiteLeadsOnly:report.totals.winnerWebsitePublisherLinkLeads,
