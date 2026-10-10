@@ -15,7 +15,7 @@ export interface SanitizedMediaNeonReadiness {
   sqlRoleSelectOnlyVerified: boolean;
   mediaExportPerformed: false;
   originalArticleBytesAccessed: false;
-  databaseRowsRead: false;
+  evidenceSourceRowsRead: false;
   productionDatabaseWritten: false;
   sandboxOrProductionBranchCreated: false;
   status:
@@ -149,7 +149,7 @@ export function mediaNeonReadinessReport(
     sqlRoleSelectOnlyVerified: status === 'project_verified_role_preflight_ready',
     mediaExportPerformed: false,
     originalArticleBytesAccessed: false,
-    databaseRowsRead: false,
+    evidenceSourceRowsRead: false,
     productionDatabaseWritten: false,
     sandboxOrProductionBranchCreated: false,
   };
