@@ -1,0 +1,270 @@
+{
+  "schema": "mn-sos-targeted-senate-general-election-outcomes-2022-25-v1",
+  "scope": {
+    "purpose": "election-outcome identity join only; MUST NOT be used as pre-election prediction evidence",
+    "winnerKnownOnlyAfterElection": true,
+    "officialResultPagesIdentifiedAsUnofficialTallies": true,
+    "certifiedCanvassOriginalsObtained": false,
+    "fullStatewideElectionUniverseCertified": false,
+    "observedRaces": 6,
+    "excludedWriteIns": true,
+    "sourcePublicationBeforeElection": false,
+    "noDbMembershipIds": true,
+    "sourceIsNotHistoricalCampaignStatement": true,
+    "noProductionDatabaseReadOrWrite": true
+  },
+  "sources": [
+    {
+      "id": "sos-2022-sd4",
+      "publisher": "Minnesota Secretary of State",
+      "kind": "official_publisher_unofficial_general_results_post_vote_identity_only",
+      "electionOn": "2022-11-08",
+      "district": "4",
+      "resultUrl": "https://electionresults.sos.mn.gov/results/Index?DistrictId=492&ErsElectionId=149&scenario=StateSenate&show=Go",
+      "outcomeAuthenticatedWithOriginalCanvass": false,
+      "originalPublisherPageResponseHashStored": false,
+      "sourceMayChangeToCertifiedResults": true,
+      "winnersKnownToForecastOnlyAfterElection": true,
+      "requiredMembershipSessionForRetrospectiveIdentity": "2023-2024"
+    },
+    {
+      "id": "sos-2022-sd32",
+      "publisher": "Minnesota Secretary of State",
+      "kind": "official_publisher_unofficial_general_results_post_vote_identity_only",
+      "electionOn": "2022-11-08",
+      "district": "32",
+      "resultUrl": "https://electionresults.sos.mn.gov/Results/Index?ersElectionId=149&scenario=StateSenate",
+      "outcomeAuthenticatedWithOriginalCanvass": false,
+      "originalPublisherPageResponseHashStored": false,
+      "sourceMayChangeToCertifiedResults": true,
+      "winnersKnownToForecastOnlyAfterElection": true,
+      "requiredMembershipSessionForRetrospectiveIdentity": "2023-2024"
+    },
+    {
+      "id": "sos-2024-sd45",
+      "publisher": "Minnesota Secretary of State",
+      "kind": "official_publisher_unofficial_general_results_post_vote_identity_only",
+      "electionOn": "2024-11-05",
+      "district": "45",
+      "resultUrl": "https://electionresults.sos.mn.gov/results/Index?DistrictId=533&ErsElectionId=170&scenario=StateSenate&show=Go",
+      "outcomeAuthenticatedWithOriginalCanvass": false,
+      "originalPublisherPageResponseHashStored": false,
+      "sourceMayChangeToCertifiedResults": true,
+      "winnersKnownToForecastOnlyAfterElection": true,
+      "requiredMembershipSessionForRetrospectiveIdentity": "2025-2026"
+    },
+    {
+      "id": "sos-2025-sd6",
+      "publisher": "Minnesota Secretary of State",
+      "kind": "official_publisher_unofficial_general_results_post_vote_identity_only",
+      "electionOn": "2025-04-29",
+      "district": "6",
+      "resultUrl": "https://electionresults.sos.mn.gov/results/Index?DistrictId=494&ErsElectionId=184&scenario=StateSenate&show=Go",
+      "outcomeAuthenticatedWithOriginalCanvass": false,
+      "originalPublisherPageResponseHashStored": false,
+      "sourceMayChangeToCertifiedResults": true,
+      "winnersKnownToForecastOnlyAfterElection": true,
+      "requiredMembershipSessionForRetrospectiveIdentity": "2025-2026"
+    },
+    {
+      "id": "sos-2025-sd29",
+      "publisher": "Minnesota Secretary of State",
+      "kind": "official_publisher_unofficial_general_results_post_vote_identity_only",
+      "electionOn": "2025-11-04",
+      "district": "29",
+      "resultUrl": "https://electionresults.sos.mn.gov/results/Index?DistrictId=517&ErsElectionId=187&scenario=StateSenate&show=Go",
+      "outcomeAuthenticatedWithOriginalCanvass": false,
+      "originalPublisherPageResponseHashStored": false,
+      "sourceMayChangeToCertifiedResults": true,
+      "winnersKnownToForecastOnlyAfterElection": true,
+      "requiredMembershipSessionForRetrospectiveIdentity": "2025-2026"
+    },
+    {
+      "id": "sos-2025-sd47",
+      "publisher": "Minnesota Secretary of State",
+      "kind": "official_publisher_unofficial_general_results_post_vote_identity_only",
+      "electionOn": "2025-11-04",
+      "district": "47",
+      "resultUrl": "https://electionresults.sos.mn.gov/Results/Index?ersElectionId=187&scenario=StateSenate",
+      "outcomeAuthenticatedWithOriginalCanvass": false,
+      "originalPublisherPageResponseHashStored": false,
+      "sourceMayChangeToCertifiedResults": true,
+      "winnersKnownToForecastOnlyAfterElection": true,
+      "requiredMembershipSessionForRetrospectiveIdentity": "2025-2026"
+    }
+  ],
+  "candidates": [
+    {
+      "sourceId": "sos-2022-sd4",
+      "electionOn": "2022-11-08",
+      "district": "4",
+      "candidateName": "Rob Kupec",
+      "votes": 15929,
+      "generalElectionOutcome": "winner",
+      "resultDataClass": "post_election_result_only",
+      "sourceIsPreElectionEvidence": false,
+      "candidateSourceWebsiteOfficialSOSFieldUnverified": true,
+      "earlyUseAsModelFeatureProhibited": true
+    },
+    {
+      "sourceId": "sos-2022-sd4",
+      "electionOn": "2022-11-08",
+      "district": "4",
+      "candidateName": "Dan Bohmer",
+      "votes": 14202,
+      "generalElectionOutcome": "loser",
+      "resultDataClass": "post_election_result_only",
+      "sourceIsPreElectionEvidence": false,
+      "candidateSourceWebsiteOfficialSOSFieldUnverified": true,
+      "earlyUseAsModelFeatureProhibited": true
+    },
+    {
+      "sourceId": "sos-2022-sd32",
+      "electionOn": "2022-11-08",
+      "district": "32",
+      "candidateName": "Michael Kreun",
+      "votes": 19684,
+      "generalElectionOutcome": "winner",
+      "resultDataClass": "post_election_result_only",
+      "sourceIsPreElectionEvidence": false,
+      "candidateSourceWebsiteOfficialSOSFieldUnverified": true,
+      "earlyUseAsModelFeatureProhibited": true
+    },
+    {
+      "sourceId": "sos-2022-sd32",
+      "electionOn": "2022-11-08",
+      "district": "32",
+      "candidateName": "Kate Luthner",
+      "votes": 17459,
+      "generalElectionOutcome": "loser",
+      "resultDataClass": "post_election_result_only",
+      "sourceIsPreElectionEvidence": false,
+      "candidateSourceWebsiteOfficialSOSFieldUnverified": true,
+      "earlyUseAsModelFeatureProhibited": true
+    },
+    {
+      "sourceId": "sos-2024-sd45",
+      "electionOn": "2024-11-05",
+      "district": "45",
+      "candidateName": "Ann Johnson Stewart",
+      "votes": 29791,
+      "generalElectionOutcome": "winner",
+      "resultDataClass": "post_election_result_only",
+      "sourceIsPreElectionEvidence": false,
+      "candidateSourceWebsiteOfficialSOSFieldUnverified": true,
+      "earlyUseAsModelFeatureProhibited": true
+    },
+    {
+      "sourceId": "sos-2024-sd45",
+      "electionOn": "2024-11-05",
+      "district": "45",
+      "candidateName": "Kathleen Fowke",
+      "votes": 26969,
+      "generalElectionOutcome": "loser",
+      "resultDataClass": "post_election_result_only",
+      "sourceIsPreElectionEvidence": false,
+      "candidateSourceWebsiteOfficialSOSFieldUnverified": true,
+      "earlyUseAsModelFeatureProhibited": true
+    },
+    {
+      "sourceId": "sos-2025-sd6",
+      "electionOn": "2025-04-29",
+      "district": "6",
+      "candidateName": "Keri Heintzeman",
+      "votes": 12752,
+      "generalElectionOutcome": "winner",
+      "resultDataClass": "post_election_result_only",
+      "sourceIsPreElectionEvidence": false,
+      "candidateSourceWebsiteOfficialSOSFieldUnverified": true,
+      "earlyUseAsModelFeatureProhibited": true
+    },
+    {
+      "sourceId": "sos-2025-sd6",
+      "electionOn": "2025-04-29",
+      "district": "6",
+      "candidateName": "Denise Slipy",
+      "votes": 8376,
+      "generalElectionOutcome": "loser",
+      "resultDataClass": "post_election_result_only",
+      "sourceIsPreElectionEvidence": false,
+      "candidateSourceWebsiteOfficialSOSFieldUnverified": true,
+      "earlyUseAsModelFeatureProhibited": true
+    },
+    {
+      "sourceId": "sos-2025-sd29",
+      "electionOn": "2025-11-04",
+      "district": "29",
+      "candidateName": "Michael Holmstrom Jr",
+      "votes": 12328,
+      "generalElectionOutcome": "winner",
+      "resultDataClass": "post_election_result_only",
+      "sourceIsPreElectionEvidence": false,
+      "candidateSourceWebsiteOfficialSOSFieldUnverified": true,
+      "earlyUseAsModelFeatureProhibited": true
+    },
+    {
+      "sourceId": "sos-2025-sd29",
+      "electionOn": "2025-11-04",
+      "district": "29",
+      "candidateName": "Louis McNutt",
+      "votes": 7459,
+      "generalElectionOutcome": "loser",
+      "resultDataClass": "post_election_result_only",
+      "sourceIsPreElectionEvidence": false,
+      "candidateSourceWebsiteOfficialSOSFieldUnverified": true,
+      "earlyUseAsModelFeatureProhibited": true
+    },
+    {
+      "sourceId": "sos-2025-sd47",
+      "electionOn": "2025-11-04",
+      "district": "47",
+      "candidateName": "Amanda Hemmingsen-Jaeger",
+      "votes": 13527,
+      "generalElectionOutcome": "winner",
+      "resultDataClass": "post_election_result_only",
+      "sourceIsPreElectionEvidence": false,
+      "candidateSourceWebsiteOfficialSOSFieldUnverified": true,
+      "earlyUseAsModelFeatureProhibited": true
+    },
+    {
+      "sourceId": "sos-2025-sd47",
+      "electionOn": "2025-11-04",
+      "district": "47",
+      "candidateName": "Dwight Dorau",
+      "votes": 8383,
+      "generalElectionOutcome": "loser",
+      "resultDataClass": "post_election_result_only",
+      "sourceIsPreElectionEvidence": false,
+      "candidateSourceWebsiteOfficialSOSFieldUnverified": true,
+      "earlyUseAsModelFeatureProhibited": true
+    }
+  ],
+  "sourcesForAdditionalHistorical2022CampaignStatements": [
+    {
+      "id": "ballotpedia-2022-sd4-20221007",
+      "publicationOnClaim": "2022-10-07",
+      "dateIndependentlyArchivedPublicBy": null,
+      "candidateDistrict": "4",
+      "candidateNames": [
+        "Rob Kupec",
+        "Dan Bohmer"
+      ],
+      "url": "https://news.ballotpedia.org/2022/10/07/all-candidates-for-minnesota-state-senate-district-4-complete-ballotpedias-candidate-connection-survey/",
+      "sourceClass": "publisher_presents_candidate_supplied_questionnaire",
+      "candidateExactExcerptSourceBytesAuthenticated": false
+    },
+    {
+      "id": "ballotpedia-2022-sd32-20221019",
+      "publicationOnClaim": "2022-10-19",
+      "dateIndependentlyArchivedPublicBy": null,
+      "candidateDistrict": "32",
+      "candidateNames": [
+        "Michael Kreun",
+        "Kate Luthner"
+      ],
+      "url": "https://news.ballotpedia.org/2022/10/19/all-candidates-for-minnesota-state-senate-district-32-complete-ballotpedias-candidate-connection-survey/",
+      "sourceClass": "publisher_presents_candidate_supplied_questionnaire",
+      "candidateExactExcerptSourceBytesAuthenticated": false
+    }
+  ]
+}
