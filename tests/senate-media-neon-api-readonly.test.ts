@@ -37,7 +37,7 @@ function fakeApi(
     assert.equal(init.credentials,'omit');
     assert.equal((init.headers as Record<string,string>).Authorization,'Bearer '+KEY);
     let result:unknown;
-    if(url===ROOT)result=fixtures.project;
+    if(url===ROOT)result={project:fixtures.project};
     else if(url===ROOT+'/branches/'+BRANCH+'/databases')result=fixtures.databases;
     else if(url===ROOT+'/endpoints')result=fixtures.endpoints;
     else if(url.startsWith(ROOT+'/connection_uri?')){
