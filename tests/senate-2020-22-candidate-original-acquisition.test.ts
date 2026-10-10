@@ -13,7 +13,7 @@ const article=historicalSourceTargets()[0].url;
 const syntheticPage=Buffer.from('<html><body>Rob Kupec: Support education and rural health care.</body></html>');
 const sha1=base32Sha1(syntheticPage);
 const cdxHeader=['timestamp','original','mimetype','statuscode','digest','length'];
-const cdxRow=(timestamp:string,original=article,digest=sha1)=>[
+const cdxRow=(timestamp:string,original:string=article,digest:string=sha1)=>[
  timestamp,original,'text/html','200',digest,'1234',
 ];
 test('six exact, public original sources distinguish 2020/2022 candidate-result files from filing website schema',()=>{
