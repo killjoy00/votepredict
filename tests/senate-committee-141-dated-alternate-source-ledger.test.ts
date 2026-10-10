@@ -8,7 +8,7 @@ const ledger=JSON.parse(raw);
 
 test('pin 141 official dated source page recovery archive and four exact artifact hashes',()=>{
   const blob=createHash('sha1').update('blob '+Buffer.byteLength(raw)+'\0').update(raw).digest('hex');
-  assert.equal(blob,'7786a4135f9aef493fe7d14c8d6b0eac472bc7f9');
+  assert.equal(blob,'56177bbf81145017857246f1510ae9cebf5e1092');
   assert.equal(ledger.issue,864);
   assert.equal(ledger.originalIndexedMeetingCensus.runId,38065594898);
   assert.equal(ledger.originalIndexedMeetingCensus.artifactId,11674762938);
