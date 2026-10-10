@@ -147,10 +147,19 @@ export function parseCfb2022OriginalCeHeader(target:Cfb2022OriginalCeTarget,text
   const head=normalized(text).slice(0,6500);
   if(!/Report of Receipts and Expenditures\s+for\s+Principal Campaign Committee/i.test(head)) return null;
   const reg=head.match(/Registration\s+Number\s*:\s*(\d{4,8})\b/i)?.[1] ?? null;
+  // The 2022 paper forms often print the registration NUMBER separately from
+  // its label. Require either the directly adjacent exact number OR an
+  // unambiguous target number close to a verified registration label.
+  // A directly adjacent, different registration MUST always be rejected.
+  const labelIndex=head.search(/Registration\s+Number\s*:/i);
+  const vicinity=labelIndex<0?'':head.slice(Math.max(0,labelIndex-700),labelIndex+700);
+  const registrationMatches=reg!==null
+    ? reg===target.reg
+    : labelIndex>=0 && new RegExp('(?:^|\\D)'+target.reg+'(?:\\D|$)').test(vicinity);
   const district=new RegExp('Senat(?:e|or)\\s+District\\s*:?\\s*'+target.district+'\\b','i');
   const dates=head.match(/Period\s+Covered\s*:\s*(\d{1,2}\/\d{1,2}\/\d{4})\s+through\s+(\d{1,2}\/\d{1,2}\/\d{4})/i);
   const rec=head.match(/Received\s+by\s+the\s+Board\s*:?\s*([A-Za-z]+\s+\d{1,2},\s*\d{4})/i);
-  if(reg!==target.reg || !district.test(head) || !dates || !rec) return null;
+  if(!registrationMatches || !district.test(head) || !dates || !rec) return null;
   const periodStartOn=dateUs(dates[1]??'');
   const periodEndOn=dateUs(dates[2]??'');
   const receivedOn=dateEnglish(rec[1]??'');
