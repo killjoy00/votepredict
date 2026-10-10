@@ -77,6 +77,12 @@ export function auditSenateCommitteeOriginalMinutePdf(input: {
     nayCount: vote.nayCount,
     outcomePassed: vote.passed ?? null,
     namedMemberChoicesInPdf: vote.individualVotesAvailable ? vote.memberVotes.length : 0,
+    // Only the SHA-256 choice+normalized-name fingerprints, never individual
+    // member names, leave this memory-only PDF parser. Allows a separately
+    // authorized private SELECT-only vote export to compare exact choices.
+    choiceIdentitySha256: vote.individualVotesAvailable
+      ? vote.memberVotes.map(member => sha(member.choice + ':' + member.normalizedName)).sort()
+      : [],
     individualVotesAvailable: vote.individualVotesAvailable,
     motionTextSha256: sha(vote.motionText),
     finalPassageStanceInferred: false,
