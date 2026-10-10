@@ -1,56 +1,50 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { chooseSenateCommitteeMinuteText } from '../src/evidence/minnesota-senate-committee-source.js';
-import { auditSenateCommitteeOriginalMinutePdf } from '../src/evidence/senate-committee-original-pdf-action-audit.js';
+import {
+  SENATE_SIX_SCANNED_ORIGINALS,
+  SENATE_SIX_SCANNED_ORIGINAL_MAX_BYTES,
+  SENATE_SIX_SCANNED_ORIGINAL_MAX_PAGES,
+  isPinnedScannedSenateOriginalPdfUrl,
+  validateSenateOriginalOcrPageCount,
+  verifyScannedSenateSixSourceManifest,
+} from '../src/evidence/senate-committee-scanned-ocr-pilot.js';
 
-const official = {
-  year: 2023,
-  committeeName: 'Higher Education',
-  meetingDate: '2023-01-10',
-  url: 'https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230110/highered_20230110_minutes.pdf',
-};
-
-test('scanned original PDF uses OCR only if embedded official text is too short', () => {
-  const scanned = chooseSenateCommitteeMinuteText({
-    embeddedText: ' ',
-    ocrText: 'Official Senate Higher Education Minutes January 10 2023. '
-      + 'The motion prevailed by a voice vote.',
-  });
-  assert.equal(scanned.extractionMethod, 'ocr_tesseract');
-  assert.ok(scanned.text.length > 40);
-  const embedded = chooseSenateCommitteeMinuteText({
-    embeddedText: 'Original signed Senate committee minutes extracted from text PDF. ',
-    ocrText: 'An OCR copy must not override already-readable embedded text.',
-  });
-  assert.equal(embedded.extractionMethod, 'embedded_text');
+test('OCR feasibility cohort is exactly 6 original official PDFs with verified year/date URL identities', () => {
+  assert.equal(verifyScannedSenateSixSourceManifest(), true);
+  assert.equal(SENATE_SIX_SCANNED_ORIGINALS.length, 6);
+  assert.deepEqual(SENATE_SIX_SCANNED_ORIGINALS.map(x => x.year), [
+    2022, 2022, 2022, 2023, 2024, 2025,
+  ]);
+  assert.equal(new Set(SENATE_SIX_SCANNED_ORIGINALS.map(x => x.url)).size, 6);
+  assert.ok(SENATE_SIX_SCANNED_ORIGINALS.every(x => x.url.endsWith('_minutes.pdf')
+    || x.url.endsWith('_Minutes.pdf')));
+  assert.ok(SENATE_SIX_SCANNED_ORIGINALS.every(x =>
+    isPinnedScannedSenateOriginalPdfUrl(x.url)));
 });
 
-test('original OCR source retains hash, date and context-only candidate action without invented member votes', () => {
-  const sourceText = [
-    'Official Senate Higher Education Committee Minutes.',
-    'S.F. 441 was before the committee.',
-    'Senator Doe moved the A1 amendment. It was adopted via voice vote.',
-  ].join(' ');
-  const report = auditSenateCommitteeOriginalMinutePdf({
-    document: official,
-    pdf: {
-      text: sourceText, bytes: 42_000, contentSha256: 'a'.repeat(64),
-      fetchedAt: '2026-10-10T16:00:00.000Z',
-      httpStatus: 200, extractionMethod: 'ocr_tesseract',
-    },
-  });
-  assert.equal(report.document.extractionMethod, 'ocr_tesseract');
-  assert.equal(report.document.meetingDate, '2023-01-10');
-  assert.equal(report.document.originalRawPdfSha256, 'a'.repeat(64));
-  assert.equal(report.sourceParserTotals.namedMemberChoicesInPdf, 0);
-  assert.ok(report.sourceParserTotals.voiceActions >= 1);
-  assert.ok(report.contextOnlyActions.every(x => x.individualVotesAvailable === false));
-  assert.equal(report.originalPdfTextPersisted, false);
-  assert.ok(!JSON.stringify(report).includes('Senator Doe'));
+test('OCR pilot refuses arbitrary Senate/House/2021/redirected or query URLs', () => {
+  const first = SENATE_SIX_SCANNED_ORIGINALS[0]!.url;
+  for (const candidate of [
+    first + '?download=true',
+    first.replace('/senate/', '/house/'),
+    first.replace('/2022/', '/2021/'),
+    first.replace('www.lrl.mn.gov', 'www.lrl.mn.gov.evil.test'),
+    first.replace('https://', 'http://'),
+    'https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230111/highered_20230111_minutes.pdf',
+  ]) assert.equal(isPinnedScannedSenateOriginalPdfUrl(candidate), false, candidate);
 });
 
-test('unrecoverable OCR text continues to fail closed rather than producing zero-vote proof', () => {
-  assert.throws(() => chooseSenateCommitteeMinuteText({
-    embeddedText: '', ocrText: 'illegible',
-  }), /too little extractable text/);
+test('raster OCR has hard per-PDF original byte and page caps; unknown or unbounded pages fail closed', () => {
+  assert.equal(SENATE_SIX_SCANNED_ORIGINAL_MAX_BYTES, 8_000_000);
+  assert.equal(SENATE_SIX_SCANNED_ORIGINAL_MAX_PAGES, 8);
+  for (const valid of [1, 4, 8]) assert.doesNotThrow(() =>
+    validateSenateOriginalOcrPageCount(valid));
+  for (const invalid of [-1, 0, 9, 99, 1.5, NaN, Infinity]) {
+    assert.throws(() => validateSenateOriginalOcrPageCount(invalid), /outside six-file bounded OCR pilot/);
+  }
+});
+
+test('six-source pilot represents only year 2022–25 official electronic originals, not an all-meeting/vote universe', () => {
+  assert.equal(new Set<number>(SENATE_SIX_SCANNED_ORIGINALS.map(x => x.year)).has(2021), false);
+  assert.equal(SENATE_SIX_SCANNED_ORIGINALS.length < 207, true);
 });
