@@ -85,6 +85,26 @@ function isoCapture(date:string):number{
   return ms;
 }
 function key(name:string,dist:string):string{return strictCandidateKey(name)+'|'+dist;}
+/**
+ * Observed 2026-10-10 direct Neon READ ONLY three-district roster includes
+ * "Ann M Johnson Stewart" for 2025-26 SD45, while SOS 2024 SD45 lists
+ * "Ann Johnson Stewart". This is an explicit, one-candidate, one-session
+ * alias only. No generic fuzzy name edit-distance/initial stripping.
+ *
+ * Source: protected existing-Neon READ ONLY run 38089505309, artifact
+ * 11683477900; the selected Neon default branch is NOT independently proven
+ * to equal the deployed production DB.
+ */
+export function retrospectiveWinningSenateMemberKey(
+  name:string,district:string,session:'2023-2024'|'2025-2026',
+):string{
+  const normalized=strictCandidateKey(name);
+  if(district==='45'&&session==='2025-2026'
+    &&normalized==='ann m johnson stewart')
+    return key('Ann Johnson Stewart','45');
+  return key(name,district);
+}
+
 const requiredElections=new Map([
   ['2022|4','Rob Kupec'],['2022|32','Michael Kreun'],
   ['2024|45','Ann Johnson Stewart'],['2025|6','Keri Heintzeman'],
@@ -201,7 +221,7 @@ export function reconcileHistoricalCampaignWinnerExcerpts(
   const winnerSeed=new Set(prior.winners.map(w=>key(w.candidateName,w.district)));
   const membershipMap=new Map<string,ExportMember[]>();
   for(const m of exported?.members??[]){
-    const k=key(m.senatorName,m.district);
+    const k=retrospectiveWinningSenateMemberKey(m.senatorName,m.district,m.sessionSlug);
     membershipMap.set(k,[...(membershipMap.get(k)??[]),m]);
   }
   const memberRows=exported?.evidence??[];
@@ -264,6 +284,9 @@ export function reconcileHistoricalCampaignWinnerExcerpts(
         eligible.length===1?'unique_name_district_session_and_date_match':
         'member_not_in_restricted_snapshot',
       membershipId:m?.membershipId??null,
+      membershipNameMatchBasis:!m?null:
+        key(m.senatorName,m.district)===key(c.candidateName,dist)?'strict_normalized_candidate_name':
+        'documented_2025_sd45_middle_initial_alias',
       existingCampaignSiteIssueItemsInSnapshot:m?.recordedIssuePositionItems??null,
       existingCampaignSiteEvidenceRowsInExport:exported?(m?rows.length:0):null,
       exactExistingExcerptSpanMatches:exported?(m?exactMatches:0):null,
