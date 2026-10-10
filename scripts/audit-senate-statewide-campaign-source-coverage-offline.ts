@@ -53,21 +53,32 @@ function main(){
    throw Error('Independent SOS source SHA-256 differs from first published original acquisition');
  const officialHtml=flag('--official-senate-service-html');
  const officialMetadata=flag('--official-senate-service-metadata');
+ const specialSwearingHtml=flag('--official-special-swearing-html');
  if(Boolean(officialHtml)!==Boolean(officialMetadata))
    throw Error('Provide BOTH independently obtained LRL Senate service original HTML and metadata');
- if([officialHtml,officialMetadata].some(x=>x&&resolve(x)===resolve(out)))
+ if([officialHtml,officialMetadata,specialSwearingHtml].some(x=>x&&resolve(x)===resolve(out)))
    throw Error('No overwriting LRL official originals');
  let officialRoster;
  if(officialHtml&&officialMetadata){
    const meta=JSON.parse(readFileSync(officialMetadata,'utf8')) as {
      source?:{observedAt?:string;sourceBytesSha256?:string};
+     supplementalSwearingSource?:{observedAt?:string;sourceBytesSha256?:string};
    };
    if(!meta.source?.observedAt||!meta.source.sourceBytesSha256)
      throw Error('LRL source audit missing dated retrieval and SHA-256');
+   if(meta.supplementalSwearingSource&&!specialSwearingHtml)
+     throw Error('Supplemental official swearing original is required for this source audit');
+   if(specialSwearingHtml&&!meta.supplementalSwearingSource?.observedAt)
+     throw Error('Historical Senate swearing source requires actual dated/hashed metadata');
    officialRoster=parseOfficialMnSenateServiceDirectory(
-     originalBytesAllow5MB(officialHtml),meta.source.observedAt);
-   if(officialRoster.source.sourceBytesSha256!==meta.source.sourceBytesSha256)
-     throw Error('Original LRL Senate directory HTML checksum changed after retrieval');
+     originalBytesAllow5MB(officialHtml),meta.source.observedAt,
+     specialSwearingHtml?originalBytesAllow5MB(specialSwearingHtml):undefined,
+     meta.supplementalSwearingSource?.observedAt);
+   if(officialRoster.source.sourceBytesSha256!==meta.source.sourceBytesSha256
+     ||(meta.supplementalSwearingSource
+       &&officialRoster.supplementalSwearingSource?.sourceBytesSha256
+         !==meta.supplementalSwearingSource.sourceBytesSha256))
+     throw Error('Original LRL Senate directory or sworn-in source checksum changed');
  }
  const report=auditStatewideSenateCampaignSourceRecovery(censuses,officialRoster);
  const destination=resolve(out);
