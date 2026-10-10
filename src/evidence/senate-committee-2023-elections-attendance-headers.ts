@@ -37,7 +37,7 @@ export function parse2023ElectionsOriginalMeetingAttendance(text:string){
   const next=head.slice(a.index+a[0].length);
   // Stop only on an unambiguous call-to-order cue. Unknown or missing cue
   // fails closed rather than treating committee business as attendance.
-  const stop=next.search(/\bSenator\s+[A-Z][\s\S]{0,80}?\bcalled\s+the\s+meeting\s+to\s+order\b|\bCall\s+to\s+Order\b|\bA\s+quorum\s+is\s+present\b/i);
+  const stop=next.search(/(?:^|\n)\s*Senator\s+[A-Z][A-Za-z.'-]*(?:\s+[A-Z][A-Za-z.'-]*){0,3}\s+called\s+the\s+meeting\s+to\s+order\b|\bCall\s+to\s+Order\b|\bA\s+quorum\s+is\s+present\b/i);
   if(stop<0||stop>1150)
     return {attendanceSectionsLocated:false,memberPresentCount:0,
       memberAbsentCount:0,unknownOrUnlistedRosterMembers:14,
