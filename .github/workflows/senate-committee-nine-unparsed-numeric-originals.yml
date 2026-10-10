@@ -1,0 +1,57 @@
+name: One-time nine original Senate no-label counted-roll source recheck
+
+# Bounded official source PDFs, exact historical SHA-verified earlier audit.
+# Standalone named source direction hints; no production DB, models or serving.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-nine-unparsed-numeric-originals.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  recheck-named-directional-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        year: [2023, 2024]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Retrieve immutable initial original Senate PDF action-source metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-${{ matrix.year }}-original-action-source-metadata
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts/sha-pinned-originals
+      - name: Check PDF page tool
+        run: |
+          if ! command -v pdfinfo >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils
+          fi
+      - name: Re-open nine bounded originals and audit named YEA NAY versus Pass Absent
+        run: |
+          node --import tsx scripts/review-senate-nine-unparsed-numeric-original-rolls.ts \
+            --year ${{ matrix.year }} \
+            --source-json artifacts/sha-pinned-originals/senate-committee-${{ matrix.year }}-original-pdf-actions.json \
+            --output artifacts/semantic/senate-${{ matrix.year }}-nine-original-numeric-rolls.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-${{ matrix.year }}-nine-strong-original-roll-directions
+          path: artifacts/semantic/senate-${{ matrix.year }}-nine-original-numeric-rolls.json
+          retention-days: 30
+          if-no-files-found: error
