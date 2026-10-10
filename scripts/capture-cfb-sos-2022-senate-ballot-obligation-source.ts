@@ -160,7 +160,7 @@ async function main(){
     sosGeneralCandidates:general?.rows.length??null,
     sosPrimaryContestedCandidateRows:primary?.rows.length??null,
     officialCfbDistrictPagesVerified:validPages.length,
-    2022SenateCfbRegisteredViewerIds:result.original2022SegmentRegistrationCount,
+    '2022SenateCfbRegisteredViewerIds':result.original2022SegmentRegistrationCount,
     generalCandidateDistrictAndNameMatches: audit?.sourceCounts.generalBallotCandidateNameDistrictMatchesToCfb2022Viewer??null,
     primaryContestedCandidateMatches:audit?.sourceCounts.contestedPrimaryNameDistrictMatchesToCfb2022Viewer??null,
     sosGeneralNamesWithoutCfbMatch:audit?.sourceCounts.sosGeneralCandidateRecordsWithoutSafeCfbMatch??null,
