@@ -1,0 +1,13 @@
+# Issue #864 — link-level source review of 138 dated Senate media leads
+
+Previous [source proof](./senate-committee-141-missing-minutes-alternate-source-triage.md) established 141 official LRL electronically indexed 2022–25 Senate committee meeting entries without a linked original Minutes PDF. The exact source-date HTML section on **138** of those pages contains at least one link with 'audio', 'video', 'watch', etc.; previous outputs only retained the **SHA-256 digest of the URL**, so it was not known whether those hrefs pointed to actual specific meeting recordings or merely a media archive entry/search page.
+
+This bounded one-time [official-page verification workflow](../../.github/workflows/senate-committee-141-media-href-resolution.yml) downloads **only** exact source-reviewed original year metadata artifacts from source run #38076153790. It refetches up to 141 *exact official HTTPS LRL date-specific committee pages*, hard 2 MiB page cap, no redirect, checks original document SHA-256 and hearing-date-section SHA-256, and verifies each media URL's hash against the independently archived source metadata. Then it materializes meeting-specific candidate href, label, host and **unverified** source-type classification: likely specific clip (clip ID), date-parameter candidate, generic archive/publisher landing, or other unverified media link. It does **not** download, transcribe or assert any audio/video.
+
+A link labelled 'Watch video' is **not proof** of a recording, speaker, motion or named YEA/NAY vote. Even a Granicus MediaPlayer URL with a clip ID requires downstream event/date/committee matching, accessible playback or transcript and correct named-choice attribution. Date link labels, cross-domain matching, old archive redirects or access failures remain explicit uncertain states, never zero votes.
+
+Commit only hash-verified source URL metadata after successful source runs; do not retain original HTML/PDF, audio/video or transcripts in the repo. 2021 printed Senate minutes and 2022 print/electronic differences remain incomplete, and the 141 strong parser-cue PDFs are a different missingness queue.
+
+Public Senate [Granicus archives](https://mnsenate.granicus.com/ViewPublisher.php?view_id=1) currently warn that older **2016–2022 video archives are scheduled for deletion on December 31, 2026**. This increases urgency of cataloging original 2021–22 media metadata (without contacting public offices or downloading full media automatically). This public warning is a provider claim, not a confirmed future deletion or an authorized external bulk archive.
+
+No production DB reads/writes, training/model/forecast/serving/scheduler/2027 work, or outside-office contact. #864 OPEN.
