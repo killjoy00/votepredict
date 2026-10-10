@@ -9,10 +9,10 @@
   "originalPdfAndTextShaReverifiedByThisSemanticLedger": false,
   "sourceAuthority": "Minnesota Legislative Reference Library original official electronically indexed Senate committee minutes",
   "sourceMirrorIsIndependentCorroboration": false,
-  "sourceHumanSemanticsNotes": "Published official minutes were inspected for bill/motion paragraph context. This is a motion classification only, not a re-download of SHA-pinned bytes or independent second-source confirmation.",
+  "sourceHumanSemanticsNotes": "Three original LRL archived PDF texts and a fourth official Senate published hearing-minutes page were inspected for bill/motion paragraph context. Exact original LRL PDF SHA/source offset parity for March 7 remains a distinct verification gate; the Senate HTML is a publication of the same minutes, not an independent second source.",
   "auditedCandidateCount": 4,
-  "sourceContextIdentifiedCount": 3,
-  "sourceContextOnHoldCount": 1,
+  "sourceContextIdentifiedCount": 4,
+  "sourceContextOnHoldCount": 0,
   "totalExplicitNamedYeaNayTokens": 33,
   "nonElectionsScopeOnly": true,
   "records": [
@@ -78,24 +78,27 @@
       "sourceTextOffset": 2517,
       "sourceNamedYeaCount": 6,
       "sourceNamedNayCount": 4,
-      "originalPrintedHearingDateMatchesIndex": null,
-      "originalOpeningPresentCount": null,
-      "originalOpeningAbsentCount": null,
+      "originalPrintedHearingDateMatchesIndex": true,
+      "originalOpeningPresentCount": 10,
+      "originalOpeningAbsentCount": 0,
       "rollSpecificAbsentCount": null,
-      "choiceGivenToOpeningAbsentMemberCount": null,
+      "choiceGivenToOpeningAbsentMemberCount": 0,
       "presentAtOpeningButLaterRollAbsentCount": null,
       "motionIdentity": {
-        "reviewState": "HOLD_MOTION_CONTEXT_NOT_INDEPENDENTLY_READ",
-        "billIdentifier": null,
+        "reviewState": "OFFICIAL_SENATE_MINUTES_CONTEXT_IDENTIFIED_LRL_PDF_PARITY_PENDING",
+        "billIdentifier": "SF4483",
         "amendmentIdentifier": null,
-        "actionKind": null,
-        "recordedOutcome": null,
+        "actionKind": "COMMITTEE_RECOMMENDATION_AS_AMENDED",
+        "recordedOutcome": "ADOPTED",
         "separatelyVerifiedSourceMotionIdentity": false
       },
-      "sourceRestatesRecommendationWithoutSecondNamedRoll": null,
+      "sourceRestatesRecommendationWithoutSecondNamedRoll": true,
       "independentHistoricalCommitteeMembershipVerified": false,
       "eligibleForPersistedIndividualMemberVote": false,
-      "finalFloorOrBillPolicyStanceInferred": false
+      "finalFloorOrBillPolicyStanceInferred": false,
+      "officialSenatePublishedMinutesSourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?hearing_id=18367&ls=93",
+      "officialSenateMinutePageNotIndependentOfArchivedLrlMinutes": true,
+      "originalLrlPdfVersusOfficialSenateHtmlSemanticParityStillRequiresReview": true
     },
     {
       "year": 2024,
@@ -134,5 +137,6 @@
     "dbReconciliationOrWritesPerformed": false,
     "modelForecastServingScheduler2027Changed": false,
     "issue864MustStayOpen": true
-  }
+  },
+  "originalLrlPdfVersusSenatePublishedMarch7ParityVerifiedByThisReview": false
 }
