@@ -12,6 +12,7 @@ import { mkdirSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import siteLeads from '../data/evaluation/senate-campaign-issue-page-url-leads-2024-25-v1.json' with {type:'json'};
 import windows from '../data/evaluation/senate-commoncrawl-index-windows-2024-25-v1.json' with {type:'json'};
+import pinnedWaybackReplays from '../data/evaluation/senate-wayback-real-cdx-selected-replay-2024-25-v1.json' with {type:'json'};
 import {
   planSenateCommonCrawlIndexResearch, reviewOfflineCommonCrawlIndexRows,
   type CcSourceQuery, type CommonCrawlCatalog, type CcIndexRecord,
@@ -71,6 +72,7 @@ export interface ResponseSample {
   responseHeaders:{
     date:string|null;contentType:string|null;lastModified:string|null;
     contentRange:string|null;etag:string|null;
+    mementoDatetime:string|null; archiveOriginalHttpStatus:string|null; archiveOriginalContentType:string|null;
   }|null;
   bodyBuffer:Buffer|null;
   boundedBodyComplete:boolean;
@@ -124,6 +126,9 @@ export async function readBoundedPublicResponse(
       date:response.headers.get('date'),contentType:response.headers.get('content-type'),
       lastModified:response.headers.get('last-modified'),
       contentRange:response.headers.get('content-range'),etag:response.headers.get('etag'),
+      mementoDatetime:response.headers.get('memento-datetime'),
+      archiveOriginalHttpStatus:response.headers.get('x-archive-orig-status'),
+      archiveOriginalContentType:response.headers.get('x-archive-orig-content-type'),
     };
     const cap=options.byteCap??MAX_INDEX_BYTES;
     const rawLength=response.headers.get('content-length');
@@ -336,6 +341,96 @@ async function acquireWaybackIndexes(dir:string,impl:typeof fetch){
   }
   return output;
 }
+
+const BASE32_CHARS='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+function sha1Base32(bytes:Buffer):string{
+  const octets=createHash('sha1').update(bytes).digest();
+  let value=0,bits=0,result='';
+  for(const octet of octets){
+    value=(value<<8)|octet;bits+=8;
+    while(bits>=5){result+=BASE32_CHARS[(value>>(bits-5))&31];bits-=5;}
+    value&=(1<<bits)-1;
+  }
+  if(bits)result+=BASE32_CHARS[(value<<(5-bits))&31];
+  return result;
+}
+interface PinnedReplayCapture {
+  id:string;candidateName:string;district:string;electionYear:number;
+  generalElectionOn:string;originalUrl:string;
+  capturedAt:string;timestamp:string;cdxDigest:string;archiveUrl:string;
+  originalHistoricPageBytesVerified:false;forecastEligible:false;
+}
+export function selectedWaybackHistoricalReplayTargets():PinnedReplayCapture[] {
+  const source=pinnedWaybackReplays;
+  if(source.schema!=='senate-2024-25-acquired-wayback-cdx-targets-v1'
+    ||source.source.researchGithubActionsRunId!==38085775020
+    ||source.source.sourceAcquisitionArtifactId!==11682351954
+    ||source.source.artifactZipSha256!=='a0141b9a6f9e558675a7528db57a4498b0674662afe4cd28a3c500196826de8f'
+    ||source.totals.targetSelectedForRealReplay!==12||source.targets.length!==12)
+    throw new Error('Unknown/fabricated independently captured Wayback CDX source manifest');
+  const ids=new Set<string>();
+  for(const target of source.targets){
+    if(ids.has(target.id)||target.originalHistoricPageBytesVerified!==false||target.forecastEligible!==false)
+      throw new Error('Unexpected/previously promoted Wayback snapshot');
+    ids.add(target.id);
+    const site=leads.candidates.find(c=>c.candidateName===target.candidateName
+      &&c.district===target.district&&c.electionYear===target.electionYear);
+    if(!site||new URL(target.originalUrl).hostname.toLowerCase().replace(/^www\./,'')!==site.campaignHost)
+      throw new Error('Cross-candidate historical Wayback source target');
+    const checked=new Date(target.capturedAt);
+    const stamp=Number.isFinite(checked.getTime())
+      ?checked.toISOString().replace(/[-:TZ.]/g,'').slice(0,14):null;
+    if(stamp!==target.timestamp||target.archiveUrl!=='https://web.archive.org/web/'
+      +target.timestamp+'id_/'+target.originalUrl
+      ||target.electionYear!==checked.getUTCFullYear()
+      ||checked.getTime()>=Date.parse(target.generalElectionOn+'T00:00:00Z')
+      ||target.candidateName==='Dwight Dorau'&&checked.getTime()<Date.parse('2025-07-30T00:00:00Z')
+      ||!/^[A-Z2-7]{32}$/.test(target.cdxDigest))
+      throw new Error('Source capture from unrelated campaign or after cutoff');
+  }
+  return source.targets;
+}
+async function acquireWaybackOriginalReplaySamples(dir:string,impl:typeof fetch) {
+  const targets=selectedWaybackHistoricalReplayTargets();
+  const output=[];
+  for(let i=0;i<targets.length;i+=3){
+    const batch=targets.slice(i,i+3);
+    const group=await Promise.all(batch.map(async target=>{
+      const response=await readBoundedPublicResponse(target.archiveUrl,'wayback_snapshot',{
+        fetchImpl:impl,byteCap:MAX_INDEX_BYTES,timeoutMs:NETWORK_TIMEOUT_MS,
+      });
+      const is200Html=response.status===200&&response.boundedBodyComplete
+        &&Boolean(response.bodyBuffer?.length)
+        &&/^(?:text\/html|text\/plain|application\/xhtml\+xml)\b/i.test(response.responseHeaders?.contentType??'');
+      const computedDigest=is200Html&&response.bodyBuffer
+        ?sha1Base32(response.bodyBuffer):null;
+      const exactPayloadDigestMatchesCdx=Boolean(computedDigest&&computedDigest===target.cdxDigest);
+      const file=is200Html&&response.bodyBuffer
+        ?saveBytes(dir,'wayback-replay-'+target.id+'.html',response.bodyBuffer):null;
+      const result={
+        candidateName:target.candidateName,electionYear:target.electionYear,district:target.district,
+        originalUrl:target.originalUrl,cdxIndexClaimedCapturedAt:target.capturedAt,
+        sourceWaybackArchiveUrl:target.archiveUrl,sourceCdxDigest:target.cdxDigest,
+        response:noBody(response),replayedBodySha1Base32:computedDigest,
+        http200HtmlReplayBytesRetrieved:Boolean(is200Html),exactPayloadDigestMatchesCdx,
+        rawWaybackReplayFile:file,
+        historicalCampaignSourcePageBytesCorroboratedByIndexDigest:exactPayloadDigestMatchesCdx,
+        firstPublicByForAnySpecificIssueStatementProven:false,
+        candidateIssueAttributionReviewed:false,forecastEligible:false,
+      };
+      console.log('PUBLIC-WAYBACK-REPLAY '+JSON.stringify({
+        candidate:result.candidateName,capturedAt:result.cdxIndexClaimedCapturedAt,
+        status:response.status,sha256:response.bodySha256,
+        digestMatchesCdx:exactPayloadDigestMatchesCdx,
+        error:response.error,
+      }));
+      return result;
+    }));
+    output.push(...group);
+  }
+  return output;
+}
+
 async function acquirePublisherPages(dir:string,impl:typeof fetch) {
   const sources=await Promise.all(PUBLISHER_SOURCES.map(async source=>{
     const response=await readBoundedPublicResponse(source.url,'public_publisher_page',
@@ -368,6 +463,7 @@ export async function acquireSenateCampaignPublicSources(
   const indexes=await acquireCcIndexes(target,fetchImpl);
   const warcs=await acquireWarcSample(target,indexes,fetchImpl);
   const wayback=await acquireWaybackIndexes(target,fetchImpl);
+  const waybackReplay=await acquireWaybackOriginalReplaySamples(target,fetchImpl);
   const publishers=await acquirePublisherPages(target,fetchImpl);
   const manifest={
     schema:SENATE_CAMPAIGN_PUBLIC_SOURCE_ACQUISITION_VERSION,
@@ -387,6 +483,12 @@ export async function acquireSenateCampaignPublicSources(
       attemptedWaybackIndexQueries:wayback.length,
       waybackIndexHttp200:wayback.filter(r=>r.response.status===200).length,
       waybackPreGeneralIndexCaptureCandidates:wayback.reduce((n,r)=>n+r.indexCaptureCandidatesStrictlyPreGeneral.length,0),
+      waybackSameElectionCalendarYearCdxCandidates:wayback.reduce((n,r)=>n+
+        r.indexCaptureCandidatesStrictlyPreGeneral.filter(c=>c.capturedAt.slice(0,4)
+          ===leads.candidates.find(candidate=>candidate.candidateName===r.candidateName)?.electionYear.toString()).length,0),
+      waybackPinnedReplaysAttempted:waybackReplay.length,
+      waybackReplayHttp200HtmlBodiesDownloaded:waybackReplay.filter(x=>x.http200HtmlReplayBytesRetrieved).length,
+      waybackReplayedBodyCdxDigestMatches:waybackReplay.filter(x=>x.exactPayloadDigestMatchesCdx).length,
       publisherLivePagesDownloaded:publishers.filter(p=>p.retrievedSourceHtmlFile!==null).length,
       verifiedPreElectionCandidateAuthoredStatements:0,
     },
@@ -403,11 +505,14 @@ export async function acquireSenateCampaignPublicSources(
     })),
     commonCrawlWarcs:warcs,
     waybackIndexes:wayback,
+    waybackOriginalReplays:waybackReplay,
+    pinnedHistoricalWaybackCdxSource:pinnedWaybackReplays.source,
     contemporaneouslyDatedPublisherPages:publishers,
   };
   const reportFile=saveBytes(target,'acquisition-manifest.json',Buffer.from(JSON.stringify(manifest,null,2)+'\n'));
   console.log('PUBLIC-SOURCE-ACQUISITION-SUMMARY '+JSON.stringify({
     ...manifest.totals,reportFile,outputDir:target,
+    historicalPagesMatchingAcquiredCdxDigest:manifest.totals.waybackReplayedBodyCdxDigestMatches,
     independentlyVerifiedPreVoteIssueStatements:0,
     corpusComplete:false,
   }));
