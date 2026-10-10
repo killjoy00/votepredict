@@ -13,7 +13,7 @@ const sha=(s:string)=>createHash('sha256').update(s).digest('hex');
 type Side='yea'|'nay'|'absent'|'pass';
 function sample(sides:Side[]){
  return {
-  choiceIdentitySha256:roster.map((name,i)=>sha(sides[i]+':'+normalizeMemberName(name))),
+  sourceChoiceFingerprintSha256:roster.map((name,i)=>sha(sides[i]+':'+normalizeMemberName(name))),
   sourceYeaCount:sides.filter(x=>x==='yea').length,
   sourceNayCount:sides.filter(x=>x==='nay').length,
   explicitlyNamedYeas:sides.filter(x=>x==='yea').length,
@@ -60,14 +60,16 @@ test('February 7 no absent and March 7 Pass are different explicit nonvoting sta
 });
 test('unknown member, duplicate identity or choosing two sides for the same senator is rejected',()=>{
  const yes=sample(roster.map((_,i)=>i<7?'yea':'nay'));
- yes.choiceIdentitySha256[0]=sha('yea:'+normalizeMemberName('outsider'));
+ yes.sourceChoiceFingerprintSha256[0]=sha('yea:'+normalizeMemberName('outsider'));
  assert.throws(()=>inspect2023ElectionsCandidateAgainstOfficialRoster(yes),/outside 2023 public Elections roster/);
  const dup=sample(roster.map((_,i)=>i<7?'yea':'nay'));
- dup.choiceIdentitySha256[0]=dup.choiceIdentitySha256[1];
+ dup.sourceChoiceFingerprintSha256[0]=dup.sourceChoiceFingerprintSha256[1];
  assert.throws(()=>inspect2023ElectionsCandidateAgainstOfficialRoster(dup),/multiple times|both vote sides/);
  const miss=sample(roster.map((_,i)=>i<7?'yea':'nay'));
- miss.choiceIdentitySha256.pop();
+ miss.sourceChoiceFingerprintSha256.pop();
  assert.throws(()=>inspect2023ElectionsCandidateAgainstOfficialRoster(miss),/choice count/);
+ const missing={...sample(roster.map((_,i):Side=>i<7?'yea':'nay')),sourceChoiceFingerprintSha256:undefined as unknown as string[]};
+ assert.throws(()=>inspect2023ElectionsCandidateAgainstOfficialRoster(missing),/choice count/);
 });
 test('source tally mismatch and falsely absent senator inference fail closed',()=>{
  const wrong=sample(roster.map((_,i)=>i<7?'yea':'nay'));
