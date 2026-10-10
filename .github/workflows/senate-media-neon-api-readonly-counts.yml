@@ -1,10 +1,17 @@
-name: Senate media Neon one-key historical counts (manual, read-only)
+name: Senate media Neon one-key historical counts (protected read-only)
 
 # Issue #912: independent owner-controlled proof for the EXISTING Neon default
 # branch using the already configured protected NEON_API_KEY.
 # No database, role, branch, endpoint or secret created or modified.
-# Only four management API GETs and a bounded READ ONLY SQL aggregate.
+# Five GET-only management API calls and a bounded READ ONLY SQL aggregate.
+# Owner's historical approvals are reused only for a specially designated
+# ONE-TIME main commit after successful CI, within the SAME protected env.
+# Neither arbitrary merges nor recurring schedules can access the credentials.
 on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
     inputs:
       run_bounded_counts:
@@ -22,7 +29,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: senate-media-neon-one-key-manual-audit
+  group: senate-media-neon-one-key-protected-audit
   cancel-in-progress: false
 
 jobs:
@@ -30,9 +37,23 @@ jobs:
     if: >-
       github.repository == 'killjoy00/votepredict' &&
       github.ref == 'refs/heads/main' &&
-      github.event_name == 'workflow_dispatch' &&
-      inputs.run_bounded_counts == true &&
-      inputs.approval_phrase == 'VERIFY_SENATE_MEDIA_READONLY'
+      (
+        (
+          github.event_name == 'workflow_dispatch' &&
+          inputs.run_bounded_counts == true &&
+          inputs.approval_phrase == 'VERIFY_SENATE_MEDIA_READONLY'
+        ) ||
+        (
+          github.event_name == 'workflow_run' &&
+          github.event.workflow_run.name == 'CI' &&
+          github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.event == 'push' &&
+          github.event.workflow_run.head_branch == 'main' &&
+          github.event.workflow_run.head_repository.full_name == 'killjoy00/votepredict' &&
+          github.event.workflow_run.run_attempt == 1 &&
+          contains(github.event.workflow_run.head_commit.message, 'SENATE_MEDIA_ONE_SHOT_20261010_V1')
+        )
+      )
     environment: evidence-readonly-sandbox
     runs-on: ubuntu-latest
     timeout-minutes: 7
@@ -40,14 +61,29 @@ jobs:
       NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
       VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
       VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
-      VOTEPREDICT_MEDIA_APPROVAL: ${{ inputs.approval_phrase }}
+      VOTEPREDICT_MEDIA_APPROVAL: ${{ github.event_name == 'workflow_run' && 'VERIFY_SENATE_MEDIA_READONLY' || inputs.approval_phrase }}
+      VOTEPREDICT_MEDIA_CI_WORKFLOW: ${{ github.event.workflow_run.name }}
+      VOTEPREDICT_MEDIA_CI_EVENT: ${{ github.event.workflow_run.event }}
+      VOTEPREDICT_MEDIA_CI_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+      VOTEPREDICT_MEDIA_CI_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+      VOTEPREDICT_MEDIA_CI_HEAD_REPOSITORY: ${{ github.event.workflow_run.head_repository.full_name }}
+      VOTEPREDICT_MEDIA_CI_RUN_ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
+      VOTEPREDICT_MEDIA_CI_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+      VOTEPREDICT_MEDIA_CI_ONE_SHOT_MARKER_MATCHED: ${{ github.event_name == 'workflow_run' && contains(github.event.workflow_run.head_commit.message, 'SENATE_MEDIA_ONE_SHOT_20261010_V1') && 'true' || 'false' }}
       VOTEPREDICT_MEDIA_AGGREGATE_APPROVAL: BOUNDED_AGGREGATE_ONLY
     steps:
-      - name: Checkout reviewed exact main revision (no persistent auth token)
+      - name: Checkout successful main CI commit (never a PR or fork)
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
           persist-credentials: false
+      - name: Require source checkout to match successful CI main SHA
+        if: github.event_name == 'workflow_run'
+        env:
+          APPROVED_MAIN_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$APPROVED_MAIN_SHA"
+          test "$(git branch --show-current)" = "" || test "$(git branch --show-current)" = "main"
       - uses: actions/setup-node@v7
         with:
           node-version: 22
