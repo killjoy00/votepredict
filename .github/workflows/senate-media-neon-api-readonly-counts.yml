@@ -1,0 +1,57 @@
+name: Senate media Neon one-key historical counts (manual, read-only)
+
+# Issue #912: independent owner-controlled proof for the EXISTING Neon default
+# branch using the already configured protected NEON_API_KEY.
+# No database, role, branch, endpoint or secret created or modified.
+# Only four management API GETs and a bounded READ ONLY SQL aggregate.
+on:
+  workflow_dispatch:
+    inputs:
+      run_bounded_counts:
+        description: Approve protected VotePredict default-branch READ ONLY SQL aggregate (no source export)
+        required: true
+        type: boolean
+        default: false
+      approval_phrase:
+        description: Type VERIFY_SENATE_MEDIA_READONLY
+        required: true
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-neon-one-key-manual-audit
+  cancel-in-progress: false
+
+jobs:
+  existing-api-key-readonly:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'workflow_dispatch' &&
+      inputs.run_bounded_counts == true &&
+      inputs.approval_phrase == 'VERIFY_SENATE_MEDIA_READONLY'
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_MEDIA_APPROVAL: ${{ inputs.approval_phrase }}
+      VOTEPREDICT_MEDIA_AGGREGATE_APPROVAL: BOUNDED_AGGREGATE_ONLY
+    steps:
+      - name: Checkout reviewed exact main revision (no persistent auth token)
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Only bounded existing-project GETs plus Postgres READ ONLY transaction
+        run: node --import tsx scripts/check-senate-media-neon-api-readonly.ts
