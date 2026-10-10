@@ -1,0 +1,58 @@
+name: One-time crosscheck 19 Senate committee roll candidates against PDF header and absentees
+
+# Original official PDFs only, exact immutable 19 source-offset queue. No
+# model, scheduler, production DB or general crawl; source excerpts are
+# seven-day temporary artifacts and never part of serving/ingestion.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-19-original-date-attendance.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  inspect-source-identity-by-year:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        year: [2023, 2024, 2025]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Read fixed previous original 2022-25 roll-call review artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-\${{ matrix.year }}-unparsed-roll-review-metadata
+          run-id: 38075573031
+          github-token: \${{ github.token }}
+          path: artifacts/previous-independent-proof
+      - name: Source PDF page-count utility
+        run: |
+          if ! command -v pdfinfo >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils
+          fi
+      - name: Inspect precise 19 source offsets, date headers and absentee vote conflict
+        run: |
+          node --import tsx scripts/review-senate-19-original-motion-date-attendance.ts \
+            --year \${{ matrix.year }} \
+            --source-json artifacts/previous-independent-proof/senate-\${{ matrix.year }}-unparsed-roll-review.json \
+            --output artifacts/semantic/senate-\${{ matrix.year }}-19-date-attendance-original.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-\${{ matrix.year }}-19-source-motion-date-attendance-review
+          path: artifacts/semantic/senate-\${{ matrix.year }}-19-date-attendance-original.json
+          retention-days: 7
+          if-no-files-found: error
