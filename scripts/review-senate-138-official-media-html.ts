@@ -65,7 +65,7 @@ async function main(){
     records:reviews,failures:errors,
     htmlBodyBound600KBNoRedirects:true,noMediaAudioOrVideoDownloaded:true,
     noHumanPlaybackOrTranscriptPerformed:true,
-    matchingMtgidNotProofOfRecording:false,
+    matchingMtgidNotProofOfRecording:true,
     sourceHtmlIsNotNamedSenatorVoteEvidence:true,
     noProductionDbReadWritesOrModelForecastServingSchedulerChanges:true,
   };
