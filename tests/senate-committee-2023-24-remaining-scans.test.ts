@@ -71,5 +71,5 @@ test('fills source extraction cohort only, not missing minutes links or complete
   assert.equal(prior2024, 5);
   assert.equal(prior2023 + SENATE_2023_24_CATCHUP_YEAR_COUNTS[2023], 22);
   assert.equal(prior2024 + SENATE_2023_24_CATCHUP_YEAR_COUNTS[2024], 13);
-  assert.equal(sources.some(s => s.year === 2021 || s.year === 2022), false);
+  assert.deepEqual([...new Set(sources.map(s => s.year))], [2023, 2024]);
 });
