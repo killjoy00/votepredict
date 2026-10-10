@@ -1,0 +1,37 @@
+name: One-time CFB 2025-dated Senate candidate report-reference audit
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2025-dated-senate-report-refs.yml
+      - scripts/capture-cfb-2025-dated-senate-report-references.ts
+      - src/evidence/cfb-2025-dated-senate-registration-cohort.ts
+      - tests/cfb-2025-dated-senate-registration-cohort.test.ts
+
+permissions:
+  contents: read
+
+jobs:
+  official-candidate-viewer-2025-year-references:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Read 2025 report viewer references for exactly 41 independently dated Senate registration leads
+        run: |
+          node --import tsx scripts/capture-cfb-2025-dated-senate-report-references.ts \
+            --output artifacts/cfb-2025-registered-senate-report-viewer-references.json
+      - name: Retain metadata-only report source proof and partial capture errors
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2025-dated-senate-candidate-report-references
+          path: artifacts/cfb-2025-registered-senate-report-viewer-references.json
+          retention-days: 30
+          if-no-files-found: warn
