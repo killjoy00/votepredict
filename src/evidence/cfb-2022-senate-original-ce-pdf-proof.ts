@@ -87,6 +87,49 @@ function captureValid(p:Cfb2022PdfProofCapture):boolean {
     && !Number.isNaN(Date.parse(p.fetchedAt));
 }
 function normalized(t:string){return t.replace(/\u0000/g,'').replace(/\s+/g,' ').trim();}
+export function diagnoseCfb2022CeCalendar(p:Cfb2022PdfProofCapture|null){
+  const t=p?normalized(p.text):'';
+  return {
+    sourceIdentity:!!p&&p.sourceUrl===CFB_2022_CE_INDEPENDENT_CALENDAR_URL,
+    pdfProvenance:!!p&&captureValid(p)&&p.bytes>=500,
+    datedCalendarTitle:/2022 Disclosure Calendar for Candidates for Senate, House, and District Courts/i.test(t),
+    hasYear2022:/2022/.test(t),
+    hasJuly25:/July 25/.test(t),
+    hasPreprimaryTerm:/Pre-primary report of receipts and expenditures due/i.test(t),
+    preprimaryPeriodExact:/Pre-primary report of receipts and expenditures due\.\s*Period covered:\s*1\/1\/2022 through 7\/18\/2022/i.test(t),
+    hasOctober31:/October 31/.test(t),
+    hasPregeneralTerm:/Pre-general report of receipts and expenditures due/i.test(t),
+    pregeneralPeriodExact:/October 31\s+Pre-general report of receipts and expenditures due\.\s*Period covered:\s*1\/1\/2022 through 10\/24\/2022/i.test(t),
+    primaryLossExemption:/Candidates who lost the primary election do not need to file this report/i.test(t),
+  };
+}
+export function diagnoseCfb2022OriginalCeHeader(target:Cfb2022OriginalCeTarget,text:string){
+  const head=normalized(text).slice(0,6500);
+  const direct=head.match(/Registration\s+Number\s*:\s*(\d{4,8})\b/i)?.[1]??null;
+  const labelIndex=head.search(/Registration\s+Number\s*:/i);
+  const vicinity=labelIndex<0?'':head.slice(Math.max(0,labelIndex-700),labelIndex+700);
+  const dates=head.match(/Period\s+Covered\s*:\s*(\d{1,2}\/\d{1,2}\/\d{4})\s+through\s+(\d{1,2}\/\d{1,2}\/\d{4})/i);
+  const received=head.match(/Received\s+by\s+the\s+Board\s*:?\s*([A-Za-z]+\s+\d{1,2},\s*\d{4})/i);
+  const district=new RegExp('Senat(?:e|or)\\s+District\\s*:?\\s*'+target.district+'\\b','i');
+  return {
+    firstPageWindowChars:head.length,
+    hasPrincipalCommitteeReportTitle:/Report of Receipts and Expenditures\s+for\s+Principal Campaign Committee/i.test(head),
+    hasRegistrationLabel:labelIndex>=0,
+    directRegistrationNumberMatches:direct===target.reg,
+    registrationIdFoundNearSourceLabel:labelIndex>=0
+      && new RegExp('(?:^|\\D)'+target.reg+'(?:\\D|$)').test(vicinity),
+    hasSenateOfficeWord:/Senat(?:e|or)/i.test(head),
+    expectedSenateDistrictMatched:district.test(head),
+    hasPeriodCoveredLabel:/Period\s+Covered\s*:/i.test(head),
+    coveragePeriodParseable:!!dates,
+    parsedPeriodStartOn:dateUs(dates?.[1]??''),
+    parsedPeriodEndOn:dateUs(dates?.[2]??''),
+    exactIndependentExpectedPeriodEnd:dateUs(dates?.[2]??'')===target.expectedPeriodEndOn,
+    hasBoardReceivedStamp:/Received\s+by\s+the\s+Board/i.test(head),
+    receivedDateParseable:!!received,
+    parsedReceivedOn:dateEnglish(received?.[1]??''),
+  };
+}
 export function verifyCfb2022CeCalendar(p:Cfb2022PdfProofCapture|null):boolean {
   if(!p || p.sourceUrl!==CFB_2022_CE_INDEPENDENT_CALENDAR_URL || !captureValid(p)
     || p.bytes<500) return false;
