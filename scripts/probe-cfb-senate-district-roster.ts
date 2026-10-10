@@ -42,6 +42,27 @@ function candidateLookalikes(html: string) {
   return [...new Set(attributes)].slice(0, 30);
 }
 
+
+function candidateLabelDiagnostics(html: string) {
+  // Candidate checkbox labels only. Public candidate names/registration tokens;
+  // never retain phone numbers, personal addresses, donor or transaction text.
+  const records: Array<{ candidateLabel: string; inputNames: string[]; inputValue: string | null; inputId: string | null }> = [];
+  for (const match of html.matchAll(/<label\b([^>]*)>([\s\S]*?)<\/label>/gi)) {
+    const inner = match[2] ?? '';
+    const content = stripTags(inner.replace(/<input\b[^>]*>/gi, ''));
+    if (!/^[\p{L}][\p{L} .'-]{0,80},\s*[\p{L}]/u.test(content) || content.length > 110) continue;
+    const input = inner.match(/<input\b([^>]*)>/i)?.[1] ?? '';
+    const attribute = (name: string) => input.match(new RegExp('\\b' + name + '\\s*=\\s*["\x27]([^"\x27]{1,150})["\x27]', 'i'))?.[1] ?? null;
+    records.push({
+      candidateLabel: content,
+      inputNames: [...input.matchAll(/\b([a-zA-Z_:][\w:-]*)\s*=/g)].map(m => m[1]).slice(0, 16),
+      inputValue: attribute('value')?.slice(0, 60) ?? null,
+      inputId: attribute('id')?.slice(0, 60) ?? null,
+    });
+  }
+  return records.slice(0, 50);
+}
+
 async function main(): Promise<void> {
 for (const district of districts) {
   for (const segment of segments) {
@@ -68,7 +89,7 @@ for (const district of districts) {
         pageHasExpectedSenateHeading: new RegExp('Senate\\s+' + district + '(?:\\D|$)', 'i').test(stripTags(text)),
         profileReferenceCount: links.length, profileReferenceSample: links.slice(0, 16),
         candidateNameLandmarks: matches,
-        fieldNames: candidateLookalikes(text),
+        fieldNames: candidateLookalikes(text), candidateCheckboxLabels: candidateLabelDiagnostics(text),
         scriptSrcCount: [...text.matchAll(/<script\b[^>]*\bsrc=/gi)].length,
         selectedFormCount: [...text.matchAll(/<form\b/gi)].length,
         missingPage: !response.ok,
