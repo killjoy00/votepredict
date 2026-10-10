@@ -138,6 +138,48 @@ function active(row: SenateMediaRosterYear, day: string): boolean {
   return validDay(row.activeFrom) && validDay(row.activeThrough)
     && row.activeFrom <= day && day <= row.activeThrough;
 }
+/**
+ * A surname-only attribution cannot select between two concurrent senators
+ * sharing that surname. Unknown peer term bounds count as possibly active;
+ * this is a conservative attribution gate, not a claim of historical absence.
+ */
+function possibleOnDate(row: SenateMediaRosterYear, day: string): boolean {
+  if (!validDay(row.activeFrom) || !validDay(row.activeThrough)) return true;
+  return active(row, day);
+}
+function senatorSurname(name: string): string {
+  return name.trim().split(/\s+/).at(-1)?.toLowerCase() ?? '';
+}
+function namedSenatorIssues(
+  cue: string,
+  member: SenateMediaRosterYear,
+  roster: readonly SenateMediaRosterYear[],
+  publishedAt: number | null,
+): string[] {
+  const last = senatorSurname(member.senatorName);
+  if (!last) return ['speaker_not_explicitly_named_in_attribution'];
+  const full = member.senatorName.trim().replace(/\s+/g,' ').replace(/[.*+?^()|[\]{}\\]/g,'\\function active(row: SenateMediaRosterYear, day: string): boolean {
+  return validDay(row.activeFrom) && validDay(row.activeThrough)
+    && row.activeFrom <= day && day <= row.activeThrough;
+}
+');
+  const fullInCue = new RegExp('(?:^|[^\\w])' + full + '(?=$|[^\\w])','i').test(cue);
+  const surnameOnlyCue = new RegExp('\\bsen(?:ator)?\\.?\\s+'
+    + last.replace(/[.*+?^()|[\]{}\\]/g, '\\function active(row: SenateMediaRosterYear, day: string): boolean {
+  return validDay(row.activeFrom) && validDay(row.activeThrough)
+    && row.activeFrom <= day && day <= row.activeThrough;
+}
+') + '\\b','i').test(cue);
+  if (!fullInCue && !surnameOnlyCue)
+    return ['speaker_not_explicitly_named_in_attribution'];
+  if (fullInCue || publishedAt === null) return [];
+  const day = new Date(publishedAt).toISOString().slice(0,10);
+  const competingSenator=roster.some(other=>other.year===member.year
+    && other.membershipId!==member.membershipId
+    && senatorSurname(other.senatorName)===last
+    && possibleOnDate(other,day));
+  return competingSenator ? ['ambiguous_senator_surname_requires_full_named_cue'] : [];
+}
 function quoteIssues(
   review: SenateMediaReview,
   source: SenateMediaContextExport,
@@ -193,15 +235,9 @@ function quoteIssues(
     const quotedSpans = [...passage.matchAll(/["“]([^"”]+)["”]/g)];
     if (!quote || !quotedSpans.some(match => plain(match[1]).includes(quote)))
       issues.push('claimed_quote_not_delimited_as_direct_speech');
-    // A surname alone, anonymous caption or "said they" cannot prove a speaker.
-    if (member) {
-      const last = member.senatorName.trim().split(/\s+/).at(-1)?.toLowerCase() ?? '';
-      const named = cue.toLowerCase();
-      if (!last || !(named.includes(member.senatorName.toLowerCase())
-        || new RegExp('\\bsen(?:ator)?\\.?\\s+' + last.replace(/[.*+?^()|[\]{}\\]/g, '\\$&') + '\\b', 'i').test(cue))) {
-        issues.push('speaker_not_explicitly_named_in_attribution');
-      }
-    }
+    // Named-source presence is necessary but not sufficient for semantic
+    // attribution. Same-surname peers require a full, unambiguous name cue.
+    if (member) issues.push(...namedSenatorIssues(cue,member,roster,pub));
     const dateProof = review.publicationDateProof?.trim() ?? '';
     if (dateProof.length < 6 || !raw.includes(dateProof))
       issues.push('original_publisher_date_proof_missing');
@@ -262,6 +298,7 @@ export function auditSenateMediaRemarks(input: {
     exactQuote: string | null; attributablePassage: string | null;
   }> = [];
   const reviewKeys = new Set<string>();
+  const dispositionsBySource=new Map<string,Set<SenateMediaReviewDisposition>>();
   for (const review of reviews) {
     const row = byDocument.get(review.sourceDocumentId);
     if (!row) throw Error('Media review references unknown or out-of-scope source');
@@ -270,6 +307,14 @@ export function auditSenateMediaRemarks(input: {
       || instant(review.reviewedAt) === null) {
       throw Error('Invalid disposition or missing human media review identity/time');
     }
+    const priorDispositions=dispositionsBySource.get(review.sourceDocumentId)
+      ?? new Set<SenateMediaReviewDisposition>();
+    if ((review.disposition==='source_unavailable' && priorDispositions.has('exact_named_quote'))
+      || (review.disposition==='exact_named_quote' && priorDispositions.has('source_unavailable'))) {
+      throw Error('Contradictory media source-unavailable and named-quote reviews');
+    }
+    priorDispositions.add(review.disposition);
+    dispositionsBySource.set(review.sourceDocumentId,priorDispositions);
     const key = review.sourceDocumentId + '|' + (review.membershipId ?? '')
       + '|' + (review.exactQuote ?? '') + '|' + review.disposition;
     if (reviewKeys.has(key)) throw Error('Duplicate media review verdict');
