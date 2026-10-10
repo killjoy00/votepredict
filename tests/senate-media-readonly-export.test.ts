@@ -90,7 +90,7 @@ test('production checked-in export SQL remains SELECT-only, in one repeatable-re
   assert.match(joined, /SELECT '___VOTEPREDICT_MEDIA_CONTEXT_JSONL_V1___';/);
   assert.match(joined, /SELECT '___VOTEPREDICT_MEDIA_ROSTER_JSONL_V1___';/);
   assert.ok(joined.trimEnd().endsWith('COMMIT;'));
-  assert.equal((joined.match(/;\s*(?=\n|$)/g) ?? []).length, 5);
+  assert.equal((joined.match(/;\s*(?=\n|$)/g) ?? []).length, 6);
 });
 
 test('export SQL with a write, second statement, or psql meta-command is refused', () => {
