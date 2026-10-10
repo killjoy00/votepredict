@@ -24,7 +24,7 @@ export interface SanitizedMediaNeonReadiness {
     | 'project_verified_role_preflight_ready';
 }
 
-export function assertMediaReadinessManualApproval(env: NodeJS.ProcessEnv): void {
+export function assertMediaReadinessManualApproval(env: Record<string, string | undefined>): void {
   if (env.GITHUB_REPOSITORY !== 'killjoy00/votepredict'
     || env.GITHUB_REF !== 'refs/heads/main'
     || env.GITHUB_EVENT_NAME !== 'workflow_dispatch'
