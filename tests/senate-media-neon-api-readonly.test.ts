@@ -261,3 +261,94 @@ test('manual exact repository/main/approval and protected workflow, zero schedul
   assert.match(code,/default_transaction_read_only=on/);
   assert.doesNotMatch(code,/INSERT INTO|DELETE FROM|CREATE TABLE|ALTER TABLE|UPDATE public\./i);
 });
+
+test('stage progress reports only fixed labels, in order, with no Neon identifiers or secrets',async()=>{
+  const phases:string[]=[];
+  await discoverExistingVotePredictNeonConnection(options,fakeApi(),
+    phase=>phases.push(phase));
+  assert.deepEqual(phases,[
+    'project_metadata_received','project_identity_verified',
+    'database_inventory_received','database_selected',
+    'endpoint_inventory_received','endpoint_selected',
+    'connection_uri_response_received','connection_uri_verified',
+  ]);
+  assert.doesNotMatch(phases.join(' '),new RegExp(KEY+'|'+PASSWORD+'|'+PROJECT+'|'+HOST));
+});
+
+test('staged diagnosis of an API or URI refusal does not expose the actual error',async()=>{
+  const cases:[
+    string,
+    (url:string,init:RequestInit)=>Promise<Response>,
+    string[],
+  ][]=[
+    ['project_api',async()=>{throw Error(KEY+' '+PASSWORD);},[]],
+    ['database_api',async(url,init)=>{
+      if(url.includes('/databases'))throw Error(KEY+' '+PASSWORD);
+      return fakeApi()(url,init);
+    },['project_metadata_received','project_identity_verified']],
+    ['wrong_existing_branch',fakeApi({
+      databases:{databases:[{...base.databases.databases[0],branch_id:'br-other-123'}]},
+    }),['project_metadata_received','project_identity_verified','database_inventory_received']],
+    ['no_endpoint',fakeApi({endpoints:{endpoints:[]}}),[
+      'project_metadata_received','project_identity_verified',
+      'database_inventory_received','database_selected','endpoint_inventory_received',
+    ]],
+    ['invalid_existing_uri',fakeApi({uri:{uri:URI.replace(HOST,'unrelated.example.org')}}),[
+      'project_metadata_received','project_identity_verified',
+      'database_inventory_received','database_selected',
+      'endpoint_inventory_received','endpoint_selected',
+      'connection_uri_response_received',
+    ]],
+  ];
+  for(const [name,request,expectedPhases] of cases){
+    const reached:string[]=[];
+    await assert.rejects(()=>discoverExistingVotePredictNeonConnection(
+      options,request,phase=>reached.push(phase),
+    ),name+' must fail closed');
+    assert.deepEqual(reached,expectedPhases,name+' emitted unexpected stage');
+    assert.doesNotMatch(reached.join(' '),new RegExp(KEY+'|'+PASSWORD+'|'+PROJECT));
+  }
+});
+
+test('SQL-only phases require actual readonly identity, readable tables and completed rollback',async()=>{
+  const successfulPhases:string[]=[];
+  const db=()=>({
+    connect:async()=>({
+      query:async(sql:string,params?:unknown[])=>{
+        if(sql.startsWith('BEGIN')||sql==='ROLLBACK')return {rows:[]};
+        if(sql.includes('current_database()'))return {rows:[{db:'neondb',role:'neondb_owner',ro:'on'}]};
+        if(sql.includes('to_regclass'))return {
+          rows:(params?.[0] as string[]).map(x=>({table_name:x,present:true,readable:true})),
+        };
+        if(sql.includes('count(*)'))return {rows:[{year:'2023',context_rows:'2',source_documents:'1'}]};
+        throw Error('Unexpected synthetic SQL');
+      },
+      release:()=>{},
+    }),
+    end:async()=>{},
+  }) as unknown as Pick<Pool,'connect'|'end'>;
+  await verifyExistingNeonMediaAggregate(options,fakeApi(),db,phase=>successfulPhases.push(phase));
+  assert.deepEqual(successfulPhases.slice(-5),[
+    'sql_connection_opened','sql_readonly_identity_verified',
+    'sql_required_tables_verified','sql_aggregate_completed','sql_transaction_rolled_back',
+  ]);
+  const deniedPhases:string[]=[];
+  const invalid=()=>({
+    connect:async()=>({
+      query:async(sql:string)=>{
+        if(sql.startsWith('BEGIN')||sql==='ROLLBACK')return {rows:[]};
+        return {rows:[{db:'pack1',role:'neondb_owner',ro:'on'}]};
+      },
+      release:()=>{},
+    }),
+    end:async()=>{},
+  }) as unknown as Pick<Pool,'connect'|'end'>;
+  await assert.rejects(()=>verifyExistingNeonMediaAggregate(
+    options,fakeApi(),invalid,phase=>deniedPhases.push(phase),
+  ),/mismatch/);
+  assert.equal(deniedPhases.at(-1),'sql_connection_opened');
+  assert.equal(deniedPhases.includes('sql_required_tables_verified'),false);
+  const source=readFileSync('scripts/check-senate-media-neon-api-readonly.ts','utf8');
+  assert.match(source,/Existing VotePredict Neon one-key aggregate failed closed at last completed phase:/);
+  assert.doesNotMatch(source,/console\.error\(.*(?:error\.message|JSON\.stringify\(error)/);
+});
