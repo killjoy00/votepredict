@@ -1,0 +1,60 @@
+name: One-time four non-Elections original source motion context recheck
+
+# Separate 2023 / 2024 source-only jobs; each uses existing immutable 19-block
+# parser/offset manifest, original PDF+embedded-text SHA, 3MiB / 30 pages.
+# One 2023 Judiciary and three 2024 HHS/Labor PDFs. The existing script
+# refuses production or member vote promotion.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-four-non-elections-source-check.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  review-exact-four-originals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        year: [2023, 2024]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Download pinned original electronic minutes PDF+text SHA manifest
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-${{ matrix.year }}-unparsed-roll-review-metadata
+          run-id: 38075573031
+          github-token: ${{ github.token }}
+          path: artifacts/original-manifest
+      - name: Ensure PDF page-count tool exists
+        run: |
+          if ! command -v pdfinfo >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils
+          fi
+      - name: Recheck exact source hashes and 19-queue offsets for one or three original PDFs
+        run: |
+          node --import tsx scripts/review-senate-19-original-motion-date-attendance.ts \
+            --year ${{ matrix.year }} \
+            --source-json artifacts/original-manifest/senate-${{ matrix.year }}-unparsed-roll-review.json \
+            --output artifacts/qa/senate-${{ matrix.year }}-non-election-original-source-context.json
+      - name: Publish ephemeral source QA (not approved votes)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-${{ matrix.year }}-four-non-election-original-source-check
+          path: artifacts/qa/senate-${{ matrix.year }}-non-election-original-source-context.json
+          retention-days: 7
+          if-no-files-found: error
