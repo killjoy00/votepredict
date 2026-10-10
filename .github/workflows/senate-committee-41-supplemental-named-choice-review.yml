@@ -53,6 +53,6 @@ jobs:
         if: always()
         with:
           name: senate-${{ matrix.year }}-41-supplemental-named-candidate-review
-          path: artifacts/semantic/senate-${{ matrix.year }}-strong-roll-41-source-review.json
+          path: artifacts/semantic/senate-${{ matrix.year }}-supplemental-named-source-review.json
           retention-days: 7
-          if-no-files-found: warn
+          if-no-files-found: error
