@@ -143,9 +143,9 @@ export async function acquireSenateOriginal2020to2022Sources(
   const ascii=r.responseBuffer?.subarray(0,8192).toString('latin1')??'';
   const looksLikeElectionText=Boolean(!isSOS||(
     r.status===200
-    &&!/<\\s*(?:!doctype|html|head|body|title)\\b/i.test(ascii)
+    &&!/<\s*(?:!doctype|html|head|body|title)\b/i.test(ascii)
     &&!/(?:maintenance in progress|please revisit this site)/i.test(ascii)
-    &&ascii.split(/\\r?\\n/).some(row=>row.includes(';')&&row.length>9)
+    &&ascii.split(/\r?\n/).some(row=>row.includes(';')&&row.length>9)
   ));
   const name=persist(dir,target.id+'.response',r.status===200?r.responseBuffer:null);
   const observation={id:target.id,year:target.year,kind:target.kind,
