@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "senate-committee-2022-25-original-scan-24-stratified-v1",
+  "issue": 864,
+  "independentSourceRunId": 38066441841,
+  "sourceArtifactIds": {
+    "2022": 11674729430,
+    "2023": 11674568363,
+    "2024": 11675315164,
+    "2025": 11675014092
+  },
+  "selectionDescription": "24 previously source-documented insufficient-embedded-text original Senate Minutes PDFs, 8/4/4/8 by historical year; later-session coverage and multiple committee types; excludes prior six-source feasibility pilot",
+  "maxOriginalBytes": 8000000,
+  "maxPdfPages": 8,
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "originals": [
+    {
+      "year": 2022,
+      "committeeName": "Finance",
+      "meetingDate": "2022-03-10",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220310/Fin_20220310_minutes.pdf"
+    },
+    {
+      "year": 2022,
+      "committeeName": "Finance",
+      "meetingDate": "2022-05-18",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220518/Fin_20220518_minutes.pdf"
+    },
+    {
+      "year": 2022,
+      "committeeName": "Agriculture and Rural Development Finance and Policy",
+      "meetingDate": "2022-03-23",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finag/20220323/FinAg_20220323_minutes.pdf"
+    },
+    {
+      "year": 2022,
+      "committeeName": "Energy and Utilities Finance and Policy",
+      "meetingDate": "2022-03-29",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Energy/20220329/energy_20220329_Minutes.pdf"
+    },
+    {
+      "year": 2022,
+      "committeeName": "Human Services Reform Finance and Policy",
+      "meetingDate": "2022-12-14",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finhhsreform/20221214/finhhsreform_20221214_Minutes.pdf"
+    },
+    {
+      "year": 2022,
+      "committeeName": "Health and Human Services Finance and Policy",
+      "meetingDate": "2022-04-04",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Finhealth/20220404/finhealth_20220404_minutes.pdf"
+    },
+    {
+      "year": 2022,
+      "committeeName": "Jobs and Economic Growth Finance and Policy",
+      "meetingDate": "2022-03-30",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Jobs/20220330/Jobs_20220330_minutes.pdf"
+    },
+    {
+      "year": 2022,
+      "committeeName": "Taxes - Subcommittee on Property Taxes",
+      "meetingDate": "2022-05-02",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Subproperty/20220502/subproperty_20220502_Minutes.pdf"
+    },
+    {
+      "year": 2023,
+      "committeeName": "Higher Education",
+      "meetingDate": "2023-01-26",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230126/highered_20230126_minutes.pdf"
+    },
+    {
+      "year": 2023,
+      "committeeName": "Higher Education",
+      "meetingDate": "2023-02-16",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230216/highered_20230216_minutes.pdf"
+    },
+    {
+      "year": 2023,
+      "committeeName": "Higher Education",
+      "meetingDate": "2023-03-09",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230309/highered_20230309_minutes.pdf"
+    },
+    {
+      "year": 2023,
+      "committeeName": "Higher Education",
+      "meetingDate": "2023-03-30",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2023/highered/20230330/highered_20230330_minutes.pdf"
+    },
+    {
+      "year": 2024,
+      "committeeName": "Higher Education",
+      "meetingDate": "2024-03-05",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2024/highered/20240305/highered_20240305_minutes.pdf"
+    },
+    {
+      "year": 2024,
+      "committeeName": "Higher Education",
+      "meetingDate": "2024-03-21",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2024/highered/20240321/highered_20240321_minutes.pdf"
+    },
+    {
+      "year": 2024,
+      "committeeName": "Higher Education",
+      "meetingDate": "2024-04-18",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2024/highered/20240418/highered_20240418_minutes.pdf"
+    },
+    {
+      "year": 2024,
+      "committeeName": "Labor",
+      "meetingDate": "2024-03-26",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2024/labor/20240326/labor_20240326_minutes.pdf"
+    },
+    {
+      "year": 2025,
+      "committeeName": "Higher Education",
+      "meetingDate": "2025-01-30",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2025/highered/20250130/highered_20250130_minutes.pdf"
+    },
+    {
+      "year": 2025,
+      "committeeName": "Higher Education",
+      "meetingDate": "2025-03-11",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2025/highered/20250311/highered_20250311_minutes.pdf"
+    },
+    {
+      "year": 2025,
+      "committeeName": "Higher Education",
+      "meetingDate": "2025-04-10",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2025/highered/20250410/highered_20250410_minutes.pdf"
+    },
+    {
+      "year": 2025,
+      "committeeName": "Taxes",
+      "meetingDate": "2025-01-30",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2025/taxes/20250130/Taxes_20250130_minutes.pdf"
+    },
+    {
+      "year": 2025,
+      "committeeName": "Taxes",
+      "meetingDate": "2025-05-06",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2025/taxes/20250506/Taxes_20250506_Minutes.pdf"
+    },
+    {
+      "year": 2025,
+      "committeeName": "Judiciary and Public Safety",
+      "meetingDate": "2025-02-17",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2025/jud/20250217/Jud_20250217_minutes.pdf"
+    },
+    {
+      "year": 2025,
+      "committeeName": "Judiciary and Public Safety",
+      "meetingDate": "2025-03-12",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2025/jud/20250312/Jud_20250312_minutes.pdf"
+    },
+    {
+      "year": 2025,
+      "committeeName": "Judiciary and Public Safety",
+      "meetingDate": "2025-09-25",
+      "url": "https://www.lrl.mn.gov/archive/minutes/senate/2025/jud/20250925/Jud_20250925_Minutes.pdf"
+    }
+  ],
+  "noProductionDatabaseAccess": true,
+  "notCompleteOfficialSourceUniverse": true
+}
