@@ -107,10 +107,10 @@ test('exact issue page, campaign domain and candidate election join are preserve
 });
 test('later site text is not upgraded into historical campaign evidence through corrupted catalog',()=>{
   const x=structuredClone(catalog);
-  x.source.originalRegistryResponseHashIndependentlyVerified=true as false;
+  (x.source as unknown as {originalRegistryResponseHashIndependentlyVerified:boolean}).originalRegistryResponseHashIndependentlyVerified=true;
   assert.throws(()=>planSenateCommonCrawlIndexResearch(leads,x),/Unrecognized or upgraded/);
   const y=structuredClone(leads);
-  y.candidates[0].pages[0].historicalSitePageBytesProven=true as false;
+  (y.candidates[0].pages[0] as unknown as {historicalSitePageBytesProven:boolean}).historicalSitePageBytesProven=true;
   assert.throws(()=>planSenateCommonCrawlIndexResearch(y,catalog),/Backdated/);
 });
 test('invalid or post-2025, duplicate, unsorted index windows are fail closed',()=>{
