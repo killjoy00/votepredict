@@ -120,7 +120,7 @@ export function parseCfbSenateDistrictCandidatePage(input: {
   const candidates = [...seen.entries()].map(([registrationNumber, candidateDisplayName]) =>
     ({ registrationNumber, candidateDisplayName })).sort((a, b) =>
       a.registrationNumber.localeCompare(b.registrationNumber));
-  return { ...result, candidates, malformedCandidateLabels: malformed,
+  return { ...result, candidates: malformed > 0 ? [] : candidates, malformedCandidateLabels: malformed,
     status: malformed > 0 ? 'source_candidate_labels_invalid' :
       candidates.length ? 'candidate_labels_observed' : 'no_candidate_labels_visible' };
 }
