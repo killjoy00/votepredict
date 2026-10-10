@@ -211,15 +211,18 @@ export async function discoverExistingVotePredictNeonConnection(
 }
 
 /**
- * Owner previously approved the bounded one-key check through protected
- * workflow_dispatch. Avoid repeated clicks after reviewed fixes by allowing
- * only one designated successful main CI push to perform the SAME fixed,
- * bounded read-only aggregate in the SAME protected GitHub environment.
+ * #912: manual consent was supplied repeatedly. A specially marked main
+ * revision may be verified in its OWN uncancellable, ephemeral-Postgres
+ * check job, followed by one bounded source COUNT under the SAME protected
+ * evidence-readonly-sandbox environment. Regular push, PR, CI replay,
+ * foreign repositories and wrong refs all fail closed.
  *
- * Ordinary merges, PRs, schedules, forks and CI reruns cannot pass.
- * This does not bypass GitHub environment reviewers if configured.
+ * The event's marker and needs.verify success must be checked by GitHub
+ * Actions AND passed as fixed boolean strings, not raw untrusted data.
+ * No programmatic bypass of required environment reviewers is possible.
  */
-export const SENATE_MEDIA_CI_ONE_SHOT_MARKER = 'SENATE_MEDIA_ONE_SHOT_20261010_V1' as const;
+export const SENATE_MEDIA_CI_ONE_SHOT_MARKER =
+  'SENATE_MEDIA_DEDICATED_ONE_SHOT_20261010_V2' as const;
 export function assertApprovedDirectNeonWorkflow(env:Record<string,string|undefined>):void{
   if(env.VOTEPREDICT_MEDIA_AGGREGATE_APPROVAL!=='BOUNDED_AGGREGATE_ONLY')
     throw Error('Only separately acknowledged bounded media aggregate review is approved');
@@ -227,18 +230,14 @@ export function assertApprovedDirectNeonWorkflow(env:Record<string,string|undefi
     assertMediaReadinessManualApproval(env);
     return;
   }
-  if(env.GITHUB_EVENT_NAME!=='workflow_run'
+  if(env.GITHUB_EVENT_NAME!=='push'
     || env.GITHUB_REPOSITORY!=='killjoy00/votepredict'
     || env.GITHUB_REF!=='refs/heads/main'
+    || env.GITHUB_RUN_ATTEMPT!=='1'
     || env.VOTEPREDICT_MEDIA_APPROVAL!=='VERIFY_SENATE_MEDIA_READONLY'
-    || env.VOTEPREDICT_MEDIA_CI_ONE_SHOT_MARKER_MATCHED!=='true'
-    || env.VOTEPREDICT_MEDIA_CI_WORKFLOW!=='CI'
-    || env.VOTEPREDICT_MEDIA_CI_EVENT!=='push'
-    || env.VOTEPREDICT_MEDIA_CI_CONCLUSION!=='success'
-    || env.VOTEPREDICT_MEDIA_CI_HEAD_BRANCH!=='main'
-    || env.VOTEPREDICT_MEDIA_CI_HEAD_REPOSITORY!=='killjoy00/votepredict'
-    || env.VOTEPREDICT_MEDIA_CI_RUN_ATTEMPT!=='1'
-    || !/^[a-f0-9]{40}$/.test(env.VOTEPREDICT_MEDIA_CI_HEAD_SHA??'')){
-    throw Error('Protected one-time successful main CI evidence audit is not authorized');
+    || env.VOTEPREDICT_MEDIA_DEDICATED_VERIFY_SUCCEEDED!=='true'
+    || env.VOTEPREDICT_MEDIA_DEDICATED_ONE_SHOT_MARKER_MATCHED!=='true'
+    || !/^[a-f0-9]{40}$/.test(env.GITHUB_SHA??'')){
+    throw Error('Protected single approved main-commit read-only aggregate not authorized');
   }
 }
