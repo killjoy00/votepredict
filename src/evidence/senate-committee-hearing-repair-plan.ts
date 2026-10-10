@@ -1,7 +1,7 @@
 import {
   SENATE_COMMITTEE_MEETING_TIMING_VERSION,
   senateCommitteeHearingTiming,
-} from './senate-committee-meeting-timing.js';
+} from './senate-committee-meeting-timing';
 
 export const SENATE_COMMITTEE_LEGACY_REPAIR_VERSION =
   'senate-committee-legacy-hearing-date-safe-repair-v1' as const;
