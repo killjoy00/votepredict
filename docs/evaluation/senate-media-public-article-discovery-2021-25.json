@@ -1,0 +1,299 @@
+{
+  "version": "senate-media-public-discovery-leads-v1",
+  "issue": 912,
+  "discoveryDate": "2026-10-10",
+  "studyYears": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "purpose": "Independent, publicly located news-page leads for eventual private source-document/roster cross-check; not approved historical quotations, not an exhaustive media denominator.",
+  "fieldLimitations": {
+    "publicationDayDisplayedOnPublicPage": "Unverified publisher display date; no independent historical Wayback public-by proof",
+    "namedSenatorLeadsForManualReview": "Search/discovery lead only; explicit quote, attribution, Senate term, actual person speaking and issue review still unverified",
+    "livePageUrl": "Public current page, never substitute for source_documents original archived HTTP bytes or stored SHA256",
+    "evidenceDisposition": "No VotePredict evidence, votes, predictions or model stance are created here",
+    "sourceSeenInVotePredictExport": "Unknown without previously authorized private source export"
+  },
+  "stateSenateOnly": true,
+  "selectedNonExhaustiveArticleLeads": [
+    {
+      "id": "mn-reformer-2021-rent-control",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/briefs/rent-control-ban-passes-senate-committee-lawmaker-says-minneapolis-is-on-path-to-self-destruction/",
+      "publicationDayDisplayedOnPublicPage": "2021-03-02",
+      "searchTopicOnly": "rent control and local government",
+      "namedSenatorLeadsForManualReview": [
+        "Karla Bigham",
+        "Torrey Westrom"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false
+    },
+    {
+      "id": "mn-reformer-2021-education-finance",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/briefs/minnesota-senate-passes-education-finance-bill/",
+      "publicationDayDisplayedOnPublicPage": "2021-04-22",
+      "searchTopicOnly": "education finance",
+      "namedSenatorLeadsForManualReview": [
+        "Roger Chamberlain",
+        "Chuck Wiger",
+        "Scott Dibble"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false
+    },
+    {
+      "id": "mpr-2021-school-choice",
+      "publisher": "MPR News",
+      "seedId": "mpr-news-story-archive",
+      "livePageUrl": "https://www.mprnews.org/story/2021/06/10/gop-wants-private-school-option-walz-dfl-push-back",
+      "publicationDayDisplayedOnPublicPage": "2021-06-10",
+      "searchTopicOnly": "education savings accounts",
+      "namedSenatorLeadsForManualReview": [
+        "Roger Chamberlain"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false
+    },
+    {
+      "id": "mn-reformer-2021-family-preservation",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2021/03/15/theyre-going-to-take-the-baby-minnesota-foster-care-barriers-separate-families-advocates-say/",
+      "publicationDayDisplayedOnPublicPage": "2021-03-15",
+      "searchTopicOnly": "foster-care and family preservation",
+      "namedSenatorLeadsForManualReview": [
+        "Bobby Joe Champion"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false
+    },
+    {
+      "id": "mn-reformer-2022-tax-package",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2022/04/07/senate-approves-8-4-billion-in-tax-cuts-and-adjourns-for-easter-break/",
+      "publicationDayDisplayedOnPublicPage": "2022-04-07",
+      "searchTopicOnly": "tax policy and Social Security",
+      "namedSenatorLeadsForManualReview": [
+        "Jeremy Miller"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false
+    },
+    {
+      "id": "mn-reformer-2022-gun-proposals",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2022/05/26/after-uvalde-texas-shooting-renewed-calls-for-gun-control-legislation-in-minnesota/",
+      "publicationDayDisplayedOnPublicPage": "2022-05-26",
+      "searchTopicOnly": "firearm policy",
+      "namedSenatorLeadsForManualReview": [
+        "Patricia Torres Ray"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false
+    },
+    {
+      "id": "mn-reformer-2022-secular-caucus",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2022/10/05/minnesota-legislators-create-secular-caucus-to-counter-christian-nationalism/",
+      "publicationDayDisplayedOnPublicPage": "2022-10-05",
+      "searchTopicOnly": "church-state and civil rights",
+      "namedSenatorLeadsForManualReview": [
+        "John Marty"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false
+    },
+    {
+      "id": "mn-reformer-2023-clean-energy",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/briefs/minnesota-senate-on-the-cusp-of-passing-bill-mandating-carbon-free-energy-by-2040/",
+      "publicationDayDisplayedOnPublicPage": "2023-02-02",
+      "searchTopicOnly": "clean energy",
+      "namedSenatorLeadsForManualReview": [
+        "Nick Frentz",
+        "Kari Dziedzic"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false
+    },
+    {
+      "id": "mn-reformer-2023-driver-licenses",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/briefs/minnesota-senate-expected-to-pass-bill-giving-drivers-licenses-to-undocumented-residents/",
+      "publicationDayDisplayedOnPublicPage": "2023-02-21",
+      "searchTopicOnly": "driver licensing",
+      "namedSenatorLeadsForManualReview": [
+        "Zaynab Mohamed"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false
+    },
+    {
+      "id": "mn-reformer-2023-reproductive-health",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2023/04/21/senate-poised-to-pass-three-dfl-social-issue-bills/",
+      "publicationDayDisplayedOnPublicPage": "2023-04-21",
+      "searchTopicOnly": "reproductive health",
+      "namedSenatorLeadsForManualReview": [
+        "Kelly Morrison"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false
+    },
+    {
+      "id": "mn-reformer-2024-junk-fees",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2024/05/01/senate-approves-ban-on-junk-fees/",
+      "publicationDayDisplayedOnPublicPage": "2024-05-01",
+      "searchTopicOnly": "consumer fees",
+      "namedSenatorLeadsForManualReview": [
+        "Lindsey Port",
+        "Eric Pratt"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false
+    },
+    {
+      "id": "mn-reformer-2024-majority-leader",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2024/02/06/erin-murphy-to-serve-as-next-senate-majority-leader/",
+      "publicationDayDisplayedOnPublicPage": "2024-02-06",
+      "searchTopicOnly": "senate legislative priorities",
+      "namedSenatorLeadsForManualReview": [
+        "Erin Murphy"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false
+    },
+    {
+      "id": "mn-reformer-2025-social-media-tax",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2025/04/09/minnesota-republicans-skeptical-of-dfls-proposed-new-tax-on-social-media/",
+      "publicationDayDisplayedOnPublicPage": "2025-04-09",
+      "searchTopicOnly": "digital-services taxation",
+      "namedSenatorLeadsForManualReview": [
+        "Bill Weber",
+        "Ann Rest"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false
+    },
+    {
+      "id": "mpr-2025-minnesotacare-budget",
+      "publisher": "MPR News",
+      "seedId": "mpr-news-story-archive",
+      "livePageUrl": "https://www.mprnews.org/story/2025/06/10/minnesota-budget-is-done-immigrant-health-coverage-cut",
+      "publicationDayDisplayedOnPublicPage": "2025-06-10",
+      "searchTopicOnly": "MinnesotaCare budget changes",
+      "namedSenatorLeadsForManualReview": [
+        "Jordan Rasmusson",
+        "Erin Maye Quade",
+        "Bobby Joe Champion"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false
+    }
+  ],
+  "sourceUniverseCompletenessKnown": false,
+  "publisherYearSlotsInOriginal44SeedReview": 220
+}
