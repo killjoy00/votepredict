@@ -1,0 +1,57 @@
+name: Senate media Neon access check (manual, no export)
+
+# Issue #912. Requires the owner's manual GitHub dispatch and protected
+# evidence-readonly-sandbox approval. This job does NOT export media,
+# create a Neon role/branch, retrieve any Neon connection password,
+# or permit production SQL writes.
+on:
+  workflow_dispatch:
+    inputs:
+      check_readonly:
+        description: Explicitly authorize VotePredict-only Neon identity and SELECT-only role preflight
+        type: boolean
+        required: true
+        default: false
+      approval_phrase:
+        description: Type VERIFY_SENATE_MEDIA_READONLY
+        type: string
+        required: true
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-neon-readonly-preflight
+  cancel-in-progress: false
+
+jobs:
+  verify-readonly:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'workflow_dispatch' &&
+      inputs.check_readonly == true &&
+      inputs.approval_phrase == 'VERIFY_SENATE_MEDIA_READONLY'
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_READONLY_DATABASE_URL: ${{ secrets.VOTEPREDICT_MEDIA_READONLY_DATABASE_URL }}
+      VOTEPREDICT_MEDIA_APPROVED_BRANCH_ID: ${{ vars.VOTEPREDICT_MEDIA_APPROVED_BRANCH_ID }}
+      VOTEPREDICT_MEDIA_APPROVAL: ${{ inputs.approval_phrase }}
+    steps:
+      - name: Checkout trusted main commit (no persistent GitHub credential)
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Authenticate project, endpoint and restricted SELECT-only SQL role (no evidence data)
+        run: node --import tsx scripts/check-senate-media-gh-neon-readiness.ts
