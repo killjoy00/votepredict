@@ -162,7 +162,8 @@ test('failed query is visible and unknown is distinct from verified absence',()=
 });
 test('upstream 400-CDX-row cap stays explicit as a truncation warning',()=>{
   const query=prefixQuery('Keri Heintzeman');
-  const rows=Array.from({length:400},(_,i)=>record('20250305'+String(i).padStart(6,'0'),
+  const rows=Array.from({length:400},(_,i)=>record(
+    new Date(Date.UTC(2025,2,5,0,0,0)+i*1000).toISOString().replace(/[-:TZ.]/g,'').slice(0,14),
     'https://heintzemanforsenate.com/',String(i)));
   const report=planCampaignArchiveSourceRecovery(leads,sites,[cdx(query.id,rows)]);
   const keri=report.candidates.find(c=>c.candidateName==='Keri Heintzeman')!;
