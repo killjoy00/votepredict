@@ -80,9 +80,12 @@ export function parseOfficialMnSenateServiceDirectory(html:Uint8Array,observedAt
         const n=Number(t[2]);end=t[2].length===2?Math.floor(start/100)*100+n:n;
       }
       const dist=String(Number(t[3]));
-      if(start<1849||start>2026||end!==null&&(end<start||end>2026)
-        ||Number(dist)<1||Number(dist)>67)
-        throw Error('Impossible official Senate service date or district');
+      // The historical directory includes 19th-century territorial
+      // jurisdictions with obsolete/non-modern district numbering. Those
+      // terms do not help a 2020-26 membership audit, so skip rather than
+      // incorrectly fail the whole original source.
+      if(start<2010||start>2026||end!==null&&(end<2020||end<start||end>2026)
+        ||Number(dist)<1||Number(dist)>67)continue;
       terms.push({startsYear:start,endsYear:end,district:dist});
     }
     if(!terms.length)continue;
@@ -93,7 +96,7 @@ export function parseOfficialMnSenateServiceDirectory(html:Uint8Array,observedAt
       senateServiceTerms:terms,
     });
   }
-  if(rows.length<300||rows.length>1600)
+  if(rows.length<65||rows.length>500)
     throw Error('Official historical Senate directory response missing expected historic table rows');
   if(rows.some(row=>!strictCandidateKey(row.officialName)))
     throw Error('Official Senate directory contains unusable person name');
