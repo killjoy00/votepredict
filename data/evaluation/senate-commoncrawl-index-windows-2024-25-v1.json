@@ -1,0 +1,165 @@
+{
+  "schema": "mn-senate-commoncrawl-historical-windows-2024-25-v1",
+  "source": {
+    "officialCollectionRegistryUrl": "https://index.commoncrawl.org/collinfo.json",
+    "officialDocumentationUrl": "https://commoncrawl.org/cdxj-index",
+    "registryAccessedOn": "2026-10-10",
+    "originalRegistryResponseBytesStored": false,
+    "originalRegistryResponseHashIndependentlyVerified": false,
+    "sourceIsCrawlIndexMetadataOnly": true
+  },
+  "scope": {
+    "historicalYears": [
+      2024,
+      2025
+    ],
+    "priorElectionArchivesOnly": true,
+    "includes2020to2023": false,
+    "completeArchiveUniverseCertified": false,
+    "actualCapturedCampaignPagesDiscovered": 0,
+    "originalWarcRecordsDownloaded": 0,
+    "statementEvidenceEligible": false
+  },
+  "indexes": [
+    {
+      "id": "CC-MAIN-2024-10",
+      "from": "2024-02-20T21:10:55Z",
+      "to": "2024-03-05T15:40:45Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2024-10-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2024-18",
+      "from": "2024-04-12T10:13:54Z",
+      "to": "2024-04-25T16:02:16Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2024-18-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2024-22",
+      "from": "2024-05-17T23:31:22Z",
+      "to": "2024-05-31T00:06:14Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2024-22-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2024-26",
+      "from": "2024-06-12T14:04:24Z",
+      "to": "2024-06-25T23:28:02Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2024-26-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2024-30",
+      "from": "2024-07-12T09:42:14Z",
+      "to": "2024-07-25T20:55:45Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2024-30-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2024-33",
+      "from": "2024-08-02T23:45:08Z",
+      "to": "2024-08-16T06:08:12Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2024-33-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2024-38",
+      "from": "2024-09-07T09:58:56Z",
+      "to": "2024-09-21T04:50:54Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2024-38-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2024-42",
+      "from": "2024-10-03T09:40:20Z",
+      "to": "2024-10-16T09:12:31Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2024-42-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2024-46",
+      "from": "2024-11-01T18:42:24Z",
+      "to": "2024-11-15T05:19:00Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2024-46-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2024-51",
+      "from": "2024-12-01T16:20:23Z",
+      "to": "2024-12-15T00:22:57Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2024-51-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2025-05",
+      "from": "2025-01-12T19:43:58Z",
+      "to": "2025-01-26T16:54:02Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2025-05-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2025-08",
+      "from": "2025-02-06T11:42:25Z",
+      "to": "2025-02-19T23:14:40Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2025-08-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2025-13",
+      "from": "2025-03-15T03:16:26Z",
+      "to": "2025-03-28T17:32:37Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2025-13-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2025-18",
+      "from": "2025-04-17T13:50:10Z",
+      "to": "2025-05-01T01:05:29Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2025-18-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2025-21",
+      "from": "2025-05-12T01:17:22Z",
+      "to": "2025-05-25T06:44:06Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2025-21-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2025-26",
+      "from": "2025-06-12T11:28:40Z",
+      "to": "2025-06-25T09:54:11Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2025-26-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2025-30",
+      "from": "2025-07-07T18:36:38Z",
+      "to": "2025-07-20T20:56:29Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2025-30-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2025-33",
+      "from": "2025-08-02T22:09:07Z",
+      "to": "2025-08-15T23:42:38Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2025-33-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2025-38",
+      "from": "2025-09-05T11:21:01Z",
+      "to": "2025-09-18T11:00:14Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2025-38-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    },
+    {
+      "id": "CC-MAIN-2025-43",
+      "from": "2025-10-05T11:42:39Z",
+      "to": "2025-10-19T01:06:58Z",
+      "indexApiUrl": "https://index.commoncrawl.org/CC-MAIN-2025-43-index",
+      "sourceClaim": "common_crawl_official_collinfo_metadata_not_capture_proof"
+    }
+  ]
+}
