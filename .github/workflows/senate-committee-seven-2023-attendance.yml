@@ -1,0 +1,52 @@
+name: One-time seven 2023 Elections source meeting attendance vs ten named rolls
+
+# Source-only exact original PDF+embedded-text SHA audit, 3MiB / 30p;
+# one historical year, no private DB, prediction, model or 2027 changes.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-seven-2023-attendance.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  review-seven-original-source-attendance-sections:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Acquire immutable original 2023 Senate electronic PDF source audit metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2023-original-action-source-metadata
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts/original-source-hashes
+      - name: Ensure source-PDF page-count tool exists
+        run: |
+          if ! command -v pdfinfo >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils
+          fi
+      - name: Compare SHA-verified seven original committee attendance headers and ten named roll actions
+        run: |
+          node --import tsx scripts/review-senate-seven-2023-original-attendance.ts \
+            --source-json artifacts/original-source-hashes/senate-committee-2023-original-pdf-actions.json \
+            --source-queue-json docs/evaluation/source-proof/senate-committee-nine-tally-matched-source-action-review-queue.json \
+            --output artifacts/attendance/senate-2023-seven-original-meeting-attendance-review.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2023-seven-original-attendance-10-roll-proof
+          path: artifacts/attendance/senate-2023-seven-original-meeting-attendance-review.json
+          retention-days: 30
+          if-no-files-found: error
