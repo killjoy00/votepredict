@@ -1,16 +1,12 @@
 name: Senate media Neon one-key historical counts (protected read-only)
 
-# Issue #912: independent owner-controlled proof for the EXISTING Neon default
-# branch using the already configured protected NEON_API_KEY.
-# No database, role, branch, endpoint or secret created or modified.
-# Five GET-only management API calls and a bounded READ ONLY SQL aggregate.
-# Owner's historical approvals are reused only for a specially designated
-# ONE-TIME main commit after successful CI, within the SAME protected env.
-# Neither arbitrary merges nor recurring schedules can access the credentials.
+# #912: The owner's previous manual approvals were repeatedly blocked by
+# integration bugs and a cancelled shared CI run. Preserve the manual fallback
+# but execute exactly one specially marked main-branch revision using dedicated
+# NON-CANCELLING verification, then the SAME protected READ ONLY count.
+# No new roles, credentials, databases, Neon branches or raw-source artifacts.
 on:
-  workflow_run:
-    workflows: [CI]
-    types: [completed]
+  push:
     branches: [main]
   workflow_dispatch:
     inputs:
@@ -28,32 +24,63 @@ on:
 permissions:
   contents: read
 
+# This is deliberately distinct from the general CI concurrency group.
+# Normal CI may be cancelled by later merges, but not this review's gate.
 concurrency:
-  group: senate-media-neon-one-key-protected-audit
+  group: senate-media-neon-protected-one-shot-${{ github.sha }}
   cancel-in-progress: false
 
 jobs:
-  existing-api-key-readonly:
+  one-shot-verify:
     if: >-
       github.repository == 'killjoy00/votepredict' &&
       github.ref == 'refs/heads/main' &&
-      (
-        (
-          github.event_name == 'workflow_dispatch' &&
-          inputs.run_bounded_counts == true &&
-          inputs.approval_phrase == 'VERIFY_SENATE_MEDIA_READONLY'
-        ) ||
-        (
-          github.event_name == 'workflow_run' &&
-          github.event.workflow_run.name == 'CI' &&
-          github.event.workflow_run.conclusion == 'success' &&
-          github.event.workflow_run.event == 'push' &&
-          github.event.workflow_run.head_branch == 'main' &&
-          github.event.workflow_run.head_repository.full_name == 'killjoy00/votepredict' &&
-          github.event.workflow_run.run_attempt == 1 &&
-          contains(github.event.workflow_run.head_commit.message, 'SENATE_MEDIA_ONE_SHOT_20261010_V1')
-        )
-      )
+      github.event_name == 'push' &&
+      contains(github.event.head_commit.message, 'SENATE_MEDIA_DEDICATED_ONE_SHOT_20261010_V2')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify migrations from a clean disposable PostgreSQL database
+        run: npm run db:migrate
+      - name: Run the full repository check suite on this exact revision
+        run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+
+  one-shot-readonly:
+    needs: [one-shot-verify]
+    if: >-
+      needs.one-shot-verify.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push' &&
+      contains(github.event.head_commit.message, 'SENATE_MEDIA_DEDICATED_ONE_SHOT_20261010_V2')
     environment: evidence-readonly-sandbox
     runs-on: ubuntu-latest
     timeout-minutes: 7
@@ -61,33 +88,54 @@ jobs:
       NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
       VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
       VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
-      VOTEPREDICT_MEDIA_APPROVAL: ${{ github.event_name == 'workflow_run' && 'VERIFY_SENATE_MEDIA_READONLY' || inputs.approval_phrase }}
-      VOTEPREDICT_MEDIA_CI_WORKFLOW: ${{ github.event.workflow_run.name }}
-      VOTEPREDICT_MEDIA_CI_EVENT: ${{ github.event.workflow_run.event }}
-      VOTEPREDICT_MEDIA_CI_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
-      VOTEPREDICT_MEDIA_CI_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
-      VOTEPREDICT_MEDIA_CI_HEAD_REPOSITORY: ${{ github.event.workflow_run.head_repository.full_name }}
-      VOTEPREDICT_MEDIA_CI_RUN_ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
-      VOTEPREDICT_MEDIA_CI_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
-      VOTEPREDICT_MEDIA_CI_ONE_SHOT_MARKER_MATCHED: ${{ github.event_name == 'workflow_run' && contains(github.event.workflow_run.head_commit.message, 'SENATE_MEDIA_ONE_SHOT_20261010_V1') && 'true' || 'false' }}
+      VOTEPREDICT_MEDIA_APPROVAL: VERIFY_SENATE_MEDIA_READONLY
       VOTEPREDICT_MEDIA_AGGREGATE_APPROVAL: BOUNDED_AGGREGATE_ONLY
+      VOTEPREDICT_MEDIA_DEDICATED_VERIFY_SUCCEEDED: ${{ needs.one-shot-verify.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_MEDIA_DEDICATED_ONE_SHOT_MARKER_MATCHED: ${{ contains(github.event.head_commit.message, 'SENATE_MEDIA_DEDICATED_ONE_SHOT_20261010_V2') && 'true' || 'false' }}
     steps:
-      - name: Checkout successful main CI commit (never a PR or fork)
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+          ref: ${{ github.sha }}
           persist-credentials: false
-      - name: Require source checkout to match successful CI main SHA
-        if: github.event_name == 'workflow_run'
+      - name: Require exact verified commit, not a moving main ref
         env:
-          APPROVED_MAIN_SHA: ${{ github.event.workflow_run.head_sha }}
-        run: |
-          test "$(git rev-parse HEAD)" = "$APPROVED_MAIN_SHA"
-          test "$(git branch --show-current)" = "" || test "$(git branch --show-current)" = "main"
+          REVIEWED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_SHA"
       - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: package-lock.json
       - run: npm ci --no-fund --no-audit
-      - name: Only bounded existing-project GETs plus Postgres READ ONLY transaction
+      - name: Only existing-project GETs and one PostgreSQL READ ONLY aggregate
+        run: node --import tsx scripts/check-senate-media-neon-api-readonly.ts
+
+  manual-readonly:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'workflow_dispatch' &&
+      inputs.run_bounded_counts == true &&
+      inputs.approval_phrase == 'VERIFY_SENATE_MEDIA_READONLY'
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_MEDIA_APPROVAL: ${{ inputs.approval_phrase }}
+      VOTEPREDICT_MEDIA_AGGREGATE_APPROVAL: BOUNDED_AGGREGATE_ONLY
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Only existing-project GETs and one PostgreSQL READ ONLY aggregate
         run: node --import tsx scripts/check-senate-media-neon-api-readonly.ts
