@@ -159,16 +159,21 @@ export function auditStatewideSenateCampaignSourceRecovery(
     throw Error('Unverified publisher quote backdated to historical source');
   const service=officialDirectory
     ?validateActualSenateServiceForElection(officialDirectory,w.candidateName,w.district,meta.year)
-    :{status:'not_yet_verified' as const,officialName:null,term:null};
+    :{status:'not_yet_verified' as const,officialName:null,term:null,
+       serviceForThisElectionFollowingYearVerified:false,officialServiceSource:null};
   return{
     candidateName:w.candidateName,district:w.district,
     officialSenateServiceVerified:service.status==='verified_senate_service',
     officialSenateServiceVerifiedName:service.officialName,
     officialSenateServiceTerm:service.term,
-    officialSenateServiceSource:service.status==='verified_senate_service'
-      ?officialDirectory!.source.url:null,
+    actuallyServedFollowingElectionTermVerified:
+      service.serviceForThisElectionFollowingYearVerified,
+    officialSenateServiceSource:service.officialServiceSource,
     officialSenateServiceDirectoryObservedAt:service.status==='verified_senate_service'
-      ?officialDirectory!.source.observedAt:null,
+      ?service.officialServiceSource===officialDirectory!.supplementalSwearingSource?.url
+        ?officialDirectory!.supplementalSwearingSource!.observedAt
+        :officialDirectory!.source.observedAt
+      :null,
     // ALWAYS distinguish the time we observed these current bytes from
     // a historic archived page's demonstrable public-by timestamp.
     officialElectionResultOriginalBytesRetrievedOn:SENATOR_ONLY_COVERAGE_OBSERVATION_DATE,
@@ -258,6 +263,10 @@ export function auditStatewideSenateCampaignSourceRecovery(
    onlyVerifiedEverServedPeopleIncluded:true,
    officialLRLSenateServiceDirectorySource:officialDirectory?.source.url??null,
    officialLRLSenateServiceDirectoryRetrievedAt:officialDirectory?.source.observedAt??null,
+   officialLRLSpecialSwearingHistoryOriginalSha256:
+     officialDirectory?.supplementalSwearingSource?.sourceBytesSha256??null,
+   officialLRLSpecialSwearingHistoryRetrievedAt:
+     officialDirectory?.supplementalSwearingSource?.observedAt??null,
    publicGovernmentElectionRecordsRetrievedOn:SENATOR_ONLY_COVERAGE_OBSERVATION_DATE,
    currentCandidatePublisherTextEarliestVerifiedOn:SENATOR_ONLY_COVERAGE_OBSERVATION_DATE,
    noOriginalPageFirstPostedDateInferred:true,
