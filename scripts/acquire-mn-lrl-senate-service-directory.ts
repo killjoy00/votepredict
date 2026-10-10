@@ -53,7 +53,13 @@ async function main(){
     resultIsOnlySenatorServiceNotCandidateFiling:true,
   }));
 }
-main().catch(()=>{
-  console.error('Source retrieval/parser failed: NO senator identity automatically promoted');
+main().catch((error:unknown)=>{
+  // Official public HTML parsing errors are safe to report with no secrets,
+  // so reviewers can distinguish a real source access failure from a parser mismatch.
+  const message=error instanceof Error?error.message.slice(0,220):'unknown_public_fetch_or_parser_error';
+  console.error('SENATOR-SERVICE-DIRECTORY-FAILED '+JSON.stringify({
+    kind:'unverified_official_senate_service_source',reason:message,
+    candidateNamesReleased:false,personRecordsAdmitted:0,
+  }));
   process.exitCode=1;
 });
