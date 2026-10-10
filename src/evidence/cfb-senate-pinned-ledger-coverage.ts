@@ -1,13 +1,10 @@
 /**
- * Issue #864, candidate-committee scope ONLY. Reconciles previously captured,
- * original-document CFB source ledgers. This never enumerates the statewide
- * committee universe or makes any historical publication/row-level claim.
+ * Issue #864: offline audit of TWO already acquired Minnesota Senate CFB
+ * source-proof ledgers. These pilots cannot establish a statewide denominator.
  */
 export const CFB_SENATE_PINNED_LEDGER_COVERAGE_VERSION =
   'cfb-senate-2021-25-pinned-ledger-coverage-v1' as const;
 export const CFB_SENATE_COVERAGE_YEARS = [2021, 2022, 2023, 2024, 2025] as const;
-
-interface ObjectValue { [key: string]: unknown }
 
 export interface CfbSenateVerifiedSourceReport {
   reportId: string;
@@ -29,155 +26,183 @@ export interface CfbSenateVerifiedSourceReport {
   historicalAsOfEligibilityGranted: false;
   calendarPeriodDisputeOpen: boolean;
 }
+export interface CfbSenateHistoricalPinnedLedgers { sd6: unknown; senate64: unknown; }
+type ObjectValue = Record<string, unknown>;
 
-export interface CfbSenateHistoricalPinnedLedgers {
-  sd6: unknown;
-  senate64: unknown;
+function check(condition: unknown, reason: string): asserts condition {
+  if (!condition) throw Error(reason);
 }
-
-function object(value: unknown, label: string): ObjectValue {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) {
-    throw Error(`${label} must be a JSON object`);
-  }
+function record(value: unknown, name: string): ObjectValue {
+  check(value && typeof value === 'object' && !Array.isArray(value), name + ' is not an object');
   return value as ObjectValue;
 }
-function string(value: unknown, label: string): string {
-  if (typeof value !== 'string' || !value) throw Error(`${label} must be a nonempty string`);
+function nonempty(value: unknown, name: string): string {
+  check(typeof value === 'string' && value.length > 0, name + ' is not a string');
   return value;
 }
-function sha(value: unknown, label: string): string {
-  const s = string(value, label);
-  if (!/^[a-f0-9]{64}$/.test(s)) throw Error(`${label} must be a SHA-256 digest`);
-  return s;
+function digest(value: unknown, name: string): string {
+  const text = nonempty(value, name);
+  check(/^[0-9a-f]{64}$/.test(text), name + ' must be SHA-256');
+  return text;
 }
-function date(value: unknown, label: string): string {
-  const s = string(value, label);
-  if (!/^20\d{2}-\d{2}-\d{2}$/.test(s)
-      || Number.isNaN(Date.parse(s + 'T00:00:00Z'))
-      || new Date(s + 'T00:00:00Z').toISOString().slice(0, 10) !== s) {
-    throw Error(`${label} must be a real YYYY-MM-DD date`);
-  }
-  return s;
+function day(value: unknown, name: string): string {
+  const text = nonempty(value, name);
+  check(/^20[0-9]{2}-[0-9]{2}-[0-9]{2}$/.test(text), name + ' must be an ISO date');
+  const date = new Date(text + 'T00:00:00Z');
+  check(!Number.isNaN(date.valueOf()) && date.toISOString().slice(0, 10) === text,
+    name + ' must be a real ISO date');
+  return text;
 }
-function dateAfter(iso: string): string {
-  const d = new Date(iso + 'T00:00:00Z');
-  d.setUTCDate(d.getUTCDate() + 1);
-  return d.toISOString().slice(0, 10);
+function followingDay(value: string): string {
+  const date = new Date(value + 'T00:00:00Z');
+  date.setUTCDate(date.getUTCDate() + 1);
+  return date.toISOString().slice(0, 10);
 }
-function assert(value: unknown, label: string): asserts value {
-  if (!value) throw Error(label);
-}
-function officialUrl(value: unknown, label: string): string {
-  const s = string(value, label);
+function officialUrl(value: unknown, name: string): string {
+  const text = nonempty(value, name);
   let url: URL;
-  try { url = new URL(s); } catch { throw Error(`${label} must be an official CFB URL`); }
-  assert(url.protocol === 'https:' && (
-    url.hostname === 'cfb.mn.gov' || url.hostname === 'register.cfb.mn.gov'
-  ), `${label} must use a recognized official CFB host`);
-  return s;
+  try { url = new URL(text); } catch { throw Error(name + ' is not a URL'); }
+  check(url.protocol === 'https:' &&
+    (url.hostname === 'cfb.mn.gov' || url.hostname === 'register.cfb.mn.gov'),
+    name + ' must be on an official CFB host');
+  return text;
 }
-
-function reportKey(reportId: string, reportYear: number, registration: string, urlValue: string) {
-  const m = reportId.match(/^(\d{3,8}):(\d{2}):pcc:([A-Za-z0-9_-]{1,15}):([A-Za-z0-9_-]{1,10}):(\d{1,2})$/);
-  assert(m && m[1] === registration && 2000 + Number(m[2]) === reportYear,
-    'report ID must identify its actual candidate committee and reporting year');
-  const u = new URL(officialUrl(urlValue, 'report viewer URL'));
-  assert(u.pathname === '/rptViewer/Main.php' && u.searchParams.get('do') === 'viewPDF',
-    'report viewer URL must be an original official CFB PDF locator');
-  for (const [key, expected] of [
-    ['regnum', registration], ['year', m[2]], ['type', 'pcc'],
-    ['period', m[3]], ['se', m[4]], ['amend', String(Number(m[5]))],
+function sourceReport(input: {
+  id: unknown; registration: string; year: number;
+  pdfHash: unknown; pdfBytes: unknown; viewer: unknown;
+  calendar: unknown; calendarHash: unknown;
+  periodStart: unknown; periodEnd: unknown;
+  received: unknown; due: unknown; floor: unknown;
+  publicBy: unknown; contained: unknown; eligible: unknown;
+  dispute: boolean;
+}): CfbSenateVerifiedSourceReport {
+  const reportId = nonempty(input.id, 'report ID');
+  const match = /^([0-9]{3,8}):([0-9]{2}):pcc:([A-Za-z0-9_-]+):([A-Za-z0-9_-]+):([0-9]{1,2})$/.exec(reportId);
+  check(match && match[1] === input.registration &&
+    2000 + Number(match[2]) === input.year,
+    'report ID must identify its actual Senate candidate committee and reporting year');
+  const amendmentNumber = Number(match[5]);
+  const officialViewerUrl = officialUrl(input.viewer, 'report viewer');
+  const viewer = new URL(officialViewerUrl);
+  check(viewer.pathname === '/rptViewer/Main.php' && viewer.searchParams.get('do') === 'viewPDF',
+    'report viewer URL must identify a CFB PDF');
+  for (const [field, expected] of [
+    ['regnum', input.registration], ['year', match[2]], ['type', 'pcc'],
+    ['period', match[3]], ['se', match[4]], ['amend', String(amendmentNumber)],
   ]) {
-    assert(u.searchParams.get(key) === expected, `viewer URL does not match report ID field ${key}`);
+    check(viewer.searchParams.get(field) === expected,
+      'viewer URL does not match report ID field ' + field);
   }
-  return s;
-}
-
-/** These two named original source ledgers are a PILOT, not a roster importer. */
-export function readCfbSenatePinnedReportProofs(input: CfbSenateHistoricalPinnedLedgers) {
-  const sd6 = object(input.sd6, 'Senate District 6 original-document ledger');
-  const sd6Scope = object(sd6.scope, 'Senate District 6 scope');
-  assert(sd6.schemaVersion === 'cfb-sd6-2025-official-pdf-provenance-v1'
-    && sd6Scope.registrationNumber === '19205'
-    && sd6Scope.office === 'Minnesota Senate District 6'
-    && sd6Scope.reportYear === 2025
-    && sd6Scope.officialAllSenateFilerDenominator === null,
-    'Senate District 6 source ledger scope/version changed');
-  const calendars = object(sd6.officialCalendars, 'SD6 original calendars');
-  const periodReview = object(sd6.periodReview, 'SD6 period comparison');
-  assert(periodReview.reportCalendarPeriodMismatchNeedsReview === true,
-    'known Senate District 6 calendar-period conflict must remain explicit');
-  const sd6Reports = sd6.reports;
-  assert(Array.isArray(sd6Reports), 'SD6 reports must be an array');
-  const sd6Parsed = sd6Reports.map((entry: unknown) => {
-    const row = object(entry, 'SD6 report');
-    assert(row.officialReportHeaderIdentityVerified === true, 'SD6 original header not verified');
-    const calendar = object(calendars[string(row.calendarSource, 'SD6 calendar key')], 'SD6 official calendar');
-    assert(calendar.scopeAndDateMarkersVerified === true
-      && calendar.manualDateToReportTableAssociationReviewed === true,
-    'SD6 original calendar applicability not reviewed');
-    const knownConflict = row.reportId === '19205:25:pcc:YE:1:0';
-    assert((row.amendedVersionNotSeparateRequiredReport === true) === (row.amendmentIndexFromViewer === 1),
-      'SD6 viewer amendment classification differs from source ledger');
-    const result = checkedReport({
-      reportId: row.reportId, registrationNumber: '19205', reportYear: 2025,
-      pdfSha: row.sourcePdfSha256, pdfBytes: row.sourcePdfBytes, viewerUrl: row.sourceUrl,
-      calendarUrl: calendar.url, calendarSha: calendar.pdfSha256,
-      start: row.reportCoverageStartOn, end: row.reportCoverageEndOn,
-      filed: row.officialReceivedOn, due: row.statutoryDueOnFromCaseSpecificCalendar,
-      floor: row.conservativeLegalAndFilingBoundOn,
-      historicalPublicBy: row.historicallyPublicByOn,
-      rowContained: row.exactRowContainmentVerified, asOfEligible: row.historicalAsOfEligible,
-      knownCalendarPeriodDispute,
+  check(Number.isInteger(input.pdfBytes) && Number(input.pdfBytes) >= 500,
+    'source report must have independently captured PDF bytes');
+  const reportPdfSha256 = digest(input.pdfHash, 'original report PDF');
+  const officialCalendarUrl = officialUrl(input.calendar, 'original CFB calendar');
+  const officialCalendarSha256 = digest(input.calendarHash, 'original CFB calendar PDF');
+  const reportPeriodStartOn = day(input.periodStart, 'report period start');
+  const reportPeriodEndOn = day(input.periodEnd, 'report period end');
+  const filedOn = day(input.received, 'board-received date');
+  const dueOn = day(input.due, 'independent calendar due date');
+  const conservativeLegalAndFilingFloorOn = day(input.floor, 'legal and filing release floor');
+  check(reportPeriodStartOn <= reportPeriodEndOn && reportPeriodEndOn.slice(0, 4) === String(input.year),
+    'report period must end in the correct reporting year');
+  check(filedOn >= reportPeriodEndOn && dueOn >= reportPeriodEndOn,
+    'filing and due date must follow the covered reporting period');
+  check(conservativeLegalAndFilingFloorOn === followingDay(filedOn > dueOn ? filedOn : dueOn),
+    'floor must be later of the day after statutory due and the day after receipt');
+  check(input.publicBy === null && input.contained === false && input.eligible === false,
+    'pinned pilot cannot assert unproven historical publication, row containment or eligibility');
+  return {
+    reportId, registrationNumber: input.registration, reportYear: input.year,
+    originalReport: amendmentNumber === 0, amendmentNumber,
+    reportPdfSha256, officialViewerUrl, officialCalendarUrl, officialCalendarSha256,
+    reportPeriodStartOn, reportPeriodEndOn, filedOn, dueOn,
+    conservativeLegalAndFilingFloorOn, independentlyProvenHistoricalPublicByOn: null,
+    exactTransactionRowContainmentVerified: false, historicalAsOfEligibilityGranted: false,
+    calendarPeriodDisputeOpen: input.dispute,
   };
 }
 
-/** These two named original source ledgers are a PILOT, not a roster importer. */
+/** Requires both independent original-PDF source-provenance ledgers, unchanged. */
 export function readCfbSenatePinnedReportProofs(input: CfbSenateHistoricalPinnedLedgers) {
-  const sd6Scope = object(sd6.scope, 'Senate District 64 original-document ledger');
-  const s64Scope = object(s64.scope, 'Senate District 64 scope');
-  assert(s64.schemaVersion === 'cfb-2021-22-senate-report-independent-calendar-source-ledger-v1'
-    && s64Scope.registrationNumber === '18443'
-    && s64Scope.office === 'Minnesota Senate District 64'
-    && s64Scope.fullHistoricalSenateScope === false,
+  const sd6 = record(input.sd6, 'SD6 ledger');
+  const sd6Scope = record(sd6.scope, 'SD6 scope');
+  check(sd6.schemaVersion === 'cfb-sd6-2025-official-pdf-provenance-v1' &&
+    sd6Scope.registrationNumber === '19205' &&
+    sd6Scope.office === 'Minnesota Senate District 6' &&
+    sd6Scope.reportYear === 2025 &&
+    sd6Scope.officialAllSenateFilerDenominator === null,
+    'Senate District 6 source ledger scope/version changed');
+  const calendars = record(sd6.officialCalendars, 'SD6 calendars');
+  const review = record(sd6.periodReview, 'SD6 period review');
+  check(review.reportCalendarPeriodMismatchNeedsReview === true,
+    'known Senate District 6 calendar-period conflict must remain explicit');
+  check(Array.isArray(sd6.reports), 'SD6 reports must be an array');
+  const sd6Reports = sd6.reports.map((entry: unknown) => {
+    const row = record(entry, 'SD6 report');
+    check(row.officialReportHeaderIdentityVerified === true, 'SD6 source report identity not verified');
+    const cal = record(calendars[nonempty(row.calendarSource, 'SD6 calendar key')], 'SD6 calendar');
+    check(cal.scopeAndDateMarkersVerified === true &&
+      cal.manualDateToReportTableAssociationReviewed === true,
+      'SD6 original calendar applicability not reviewed');
+    check((row.amendedVersionNotSeparateRequiredReport === true) ===
+      (row.amendmentIndexFromViewer === 1),
+      'SD6 viewer amendment classification differs from source ledger');
+    const result = sourceReport({
+      id: row.reportId, registration: '19205', year: 2025,
+      pdfHash: row.sourcePdfSha256, pdfBytes: row.sourcePdfBytes, viewer: row.sourceUrl,
+      calendar: cal.url, calendarHash: cal.pdfSha256,
+      periodStart: row.reportCoverageStartOn, periodEnd: row.reportCoverageEndOn,
+      received: row.officialReceivedOn, due: row.statutoryDueOnFromCaseSpecificCalendar,
+      floor: row.conservativeLegalAndFilingBoundOn, publicBy: row.historicallyPublicByOn,
+      contained: row.exactRowContainmentVerified, eligible: row.historicalAsOfEligible,
+      dispute: row.reportId === '19205:25:pcc:YE:1:0',
+    });
+    check(result.amendmentNumber === row.amendmentIndexFromViewer,
+      'SD6 report ID and viewer amendment disagree');
+    return result;
+  });
+  const senate64 = record(input.senate64, 'SD64 ledger');
+  const s64Scope = record(senate64.scope, 'SD64 scope');
+  check(senate64.schemaVersion === 'cfb-2021-22-senate-report-independent-calendar-source-ledger-v1' &&
+    s64Scope.registrationNumber === '18443' &&
+    s64Scope.office === 'Minnesota Senate District 64' &&
+    s64Scope.fullHistoricalSenateScope === false,
     'Senate District 64 source ledger scope/version changed');
-  const s64Reports = s64.reportProofs;
-  assert(Array.isArray(s64Reports), 'SD64 reports must be an array');
-  const s64Parsed = s64Reports.map((entry: unknown) => {
-    const row = object(entry, 'SD64 annual original report');
-    const calendar = object(row.independentDueCalendar, 'SD64 independent original calendar');
-    assert(row.originalPdfHadPrintedDueDate === false
-      && calendar.originalCalendarDueDateVerified === true,
-    'SD64 independent due-date source must remain verified');
-    return checkedReport({
-      reportId: row.reportId, registrationNumber: '18443', reportYear: Number(row.reportYear),
-      pdfSha: row.originalReportPdfSha256, pdfBytes: row.originalPdfBytes,
-      viewerUrl: row.reportViewerUrl, calendarUrl: calendar.url,
-      calendarSha: calendar.originalPdfSha256,
-      start: row.originalPeriodStartOn, end: row.originalPeriodEndOn,
-      filed: row.actualBoardReceivedOn, due: calendar.specificYearEndReportDueOn,
+  check(Array.isArray(senate64.reportProofs), 'SD64 reports must be an array');
+  const oldReports = senate64.reportProofs.map((entry: unknown) => {
+    const row = record(entry, 'SD64 report');
+    const cal = record(row.independentDueCalendar, 'SD64 independent calendar');
+    check(row.originalPdfHadPrintedDueDate === false &&
+      cal.originalCalendarDueDateVerified === true,
+      'SD64 independent due-date source must remain verified');
+    return sourceReport({
+      id: row.reportId, registration: '18443', year: Number(row.reportYear),
+      pdfHash: row.originalReportPdfSha256, pdfBytes: row.originalPdfBytes,
+      viewer: row.reportViewerUrl, calendar: cal.url, calendarHash: cal.originalPdfSha256,
+      periodStart: row.originalPeriodStartOn, periodEnd: row.originalPeriodEndOn,
+      received: row.actualBoardReceivedOn, due: cal.specificYearEndReportDueOn,
       floor: row.conservativeEarliestStatutoryAndFilingReleaseOn,
-      historicalPublicBy: row.independentlyProvenHistoricalPublicByOn,
-      rowContained: row.exactTransactionRowContainmentVerified,
-      asOfEligible: row.historicalPredictionEligibilityGranted,
-      knownCalendarPeriodDispute: false,
+      publicBy: row.independentlyProvenHistoricalPublicByOn,
+      contained: row.exactTransactionRowContainmentVerified,
+      eligible: row.historicalPredictionEligibilityGranted, dispute: false,
     });
   });
-  return [...sd6Parsed, ...s64Parsed];
+  return [...sd6Reports, ...oldReports];
 }
 
+/** Counts only source-acquired pilot reports, never statewide obligations. */
 export function auditCfbSenatePinnedReportCoverage(reports: readonly CfbSenateVerifiedSourceReport[]) {
-  const byId = new Map<string, CfbSenateVerifiedSourceReport>();
+  const deduped = new Map<string, CfbSenateVerifiedSourceReport>();
   for (const report of reports) {
-    const previous = byId.get(report.reportId);
+    const previous = deduped.get(report.reportId);
     if (previous && JSON.stringify(previous) !== JSON.stringify(report)) {
-      throw Error(`Contradictory original PDF proof for report ID ${report.reportId}`);
+      throw Error('Contradictory original PDF proof for report ID ' + report.reportId);
     }
-    byId.set(report.reportId, report);
+    deduped.set(report.reportId, report);
   }
-  const distinct = [...byId.values()].sort((a, b) =>
-    a.reportYear - b.reportYear || a.registrationNumber.localeCompare(b.registrationNumber)
-    || a.reportId.localeCompare(b.reportId));
+  const distinct = [...deduped.values()].sort((a, b) =>
+    a.reportYear - b.reportYear || a.registrationNumber.localeCompare(b.registrationNumber) ||
+    a.reportId.localeCompare(b.reportId));
   const byYear = CFB_SENATE_COVERAGE_YEARS.map(year => {
     const cohort = distinct.filter(r => r.reportYear === year);
     return {
@@ -198,17 +223,15 @@ export function auditCfbSenatePinnedReportCoverage(reports: readonly CfbSenateVe
   return {
     schemaVersion: CFB_SENATE_PINNED_LEDGER_COVERAGE_VERSION,
     scope: '2021-2025 Minnesota Senate principal candidate committees only',
-    sourceProofScope: 'Two preselected source-acquired candidate committees, NOT the statewide filer universe',
-    reports: distinct,
-    byYear,
+    sourceProofScope: 'Two preselected Senate candidate committees, NOT the statewide filer universe',
+    reports: distinct, byYear,
     pilotTotals: {
       observedCandidateRegistrationIds: [...new Set(distinct.map(r => r.registrationNumber))].sort(),
       originalPdfVersions: distinct.length,
       originalFilingVersions: distinct.filter(r => r.originalReport).length,
       amendedVersions: distinct.filter(r => !r.originalReport).length,
       knownUnresolvedCalendarPeriodDiscrepancies: distinct.filter(r => r.calendarPeriodDisputeOpen).length,
-      historicalPublicByProofCount: 0,
-      exactRowContainmentProofCount: 0,
+      historicalPublicByProofCount: 0, exactRowContainmentProofCount: 0,
     },
     statewideDenominator: {
       officialRegisteredSenateCandidateCommittees: null as null,
@@ -217,14 +240,13 @@ export function auditCfbSenatePinnedReportCoverage(reports: readonly CfbSenateVe
       officiallyConfirmedNonfilers: null as null,
       terminationAndExemptionInventoryComplete: false,
       scopeCoverageCertified: false,
-      reason: 'Source-led sample excludes unknown current/terminated Senate committees, historical reporting requirements, waivers, nonfilers, and report versions outside the two pilots.',
+      reason: 'Only two pilots; other Senate registrations, terminated committees, exemptions, nonfilers and required/actual filings remain unverified.',
     },
     safeguards: {
       originalPdfBytesReacquired: false,
       currentSourceRetrievalIsHistoricalPublicByProof: false,
       releaseFloorIsHistoricalPublicByProof: false,
-      noDatabaseReadOrWrite: true,
-      noProductionServingOrRetrainingChange: true,
+      noDatabaseReadOrWrite: true, noProductionServingOrRetrainingChange: true,
     },
   };
 }
