@@ -129,6 +129,38 @@ test('unknown membership references and duplicate roster members are rejected', 
   })), /Unrecognized membership/);
 });
 
+test('candidate ownership with an unknown campaign year cannot establish a proven statement', () => {
+  const c = snapshot('20210401010101', 'PAGE', { campaignYear: null });
+  const report = auditSenateCampaignIssuePlatforms(input({
+    sites: [{ ...sites[0], campaignYear: null }],
+    captures: [c],
+    statements: [{ membershipId: id, archiveUrl: c.archiveUrl, policyFamily: 'education',
+      excerpt, attribution: 'candidate', stance: 'supports' }],
+  }));
+  assert.equal(report.memberships[0].provenAttributedStatements, 0);
+  assert.ok(report.memberships[0].gapCodes.includes('CAMPAIGN_YEAR_UNKNOWN'));
+});
+
+test('duplicate capture identity is rejected instead of using arbitrary text from duplicates', () => {
+  const capture = snapshot('20210401010101', 'PAGE');
+  assert.throws(() => auditSenateCampaignIssuePlatforms(input({
+    captures: [capture, { ...capture, pageText: 'contradictory text' }],
+  })), /Duplicate archive capture/);
+});
+
+test('a 2026 campaign cycle statement may be archived in 2025 for historical analysis', () => {
+  const capture = snapshot('20251201010101', 'PAGE', { campaignYear: 2026 });
+  const report = auditSenateCampaignIssuePlatforms(input({
+    roster: [{ ...baseRoster[0], sessionSlug: '2025-2026' }],
+    sites: [{ ...sites[0], campaignYear: 2026 }],
+    captures: [capture],
+    statements: [{ membershipId: id, archiveUrl: capture.archiveUrl, policyFamily: 'education',
+      excerpt, attribution: 'candidate', stance: 'supports' }],
+  }));
+  assert.equal(report.memberships[0].provenAttributedStatements, 1);
+  assert.deepEqual(report.memberships[0].auditedCalendarYears, [2025]);
+});
+
 test('offline CLI writes a deterministic private JSON report without any runtime credentials', () => {
   const dir = mkdtempSync(join(tmpdir(), 'campaign-issue-audit-'));
   try {
