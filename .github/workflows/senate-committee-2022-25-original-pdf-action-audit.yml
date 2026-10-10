@@ -1,0 +1,40 @@
+name: One-time 2022-25 Senate committee original minutes PDF action census
+
+# Exactly four historical public LRL electronic years, no 2021 print
+# inference, cron, dispatch, private database, mutation or training.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-2022-25-original-pdf-action-audit.yml
+
+permissions:
+  contents: read
+
+jobs:
+  original-senate-minute-pdf-actions:
+    strategy:
+      fail-fast: false
+      matrix:
+        year: [2022, 2023, 2024, 2025]
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Fetch and classify each original Senate minute PDF from one historical year
+        run: |
+          node --import tsx scripts/capture-senate-committee-2022-25-original-minutes-actions.ts \
+            --year ${{ matrix.year }} \
+            --output artifacts/senate-committee-${{ matrix.year }}-original-pdf-actions.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: senate-committee-${{ matrix.year }}-original-action-source-metadata
+          path: artifacts/senate-committee-${{ matrix.year }}-original-pdf-actions.json
+          if-no-files-found: error
+          retention-days: 30
