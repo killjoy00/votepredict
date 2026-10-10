@@ -1,0 +1,36 @@
+name: One-time CFB Senate 2021-22 original reports and independent calendar proof
+
+# One bounded public source acquisition, not a cron/scheduler or data backfill.
+# One Senate candidate reg 18443, original YE reports 2021 & 2022,
+# original 2022 and 2023 official CFB disclosure calendar PDFs only.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/cfb-2021-22-independent-senate-report-calendar-probe.yml
+
+permissions:
+  contents: read
+
+jobs:
+  senate-annual-independent-calendars:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Capture two source report PDFs and two original official calendars, metadata-only
+        run: |
+          node --import tsx scripts/capture-cfb-2021-22-senate-independent-calendar-proofs.ts \
+            --output artifacts/cfb-2021-22-senate-independent-calendars.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cfb-senate-2021-22-original-reports-and-independent-calendars
+          path: artifacts/cfb-2021-22-senate-independent-calendars.json
+          if-no-files-found: error
+          retention-days: 30
