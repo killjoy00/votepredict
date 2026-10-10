@@ -1,5 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import type { WaybackCapture } from '../src/evidence/wayback.js';
 import { planWaybackCampaignVersionCaptures } from '../src/evidence/wayback-campaign-version-plan.js';
 import { selectWaybackEvidenceCaptures } from '../src/evidence/wayback-public-evidence-backfill.js';
@@ -97,4 +101,25 @@ test('selection is deterministic independent of input order and bounded by maxim
   assert.equal(a.selectedCaptures.length, 50);
   assert.equal(a.unselectedDistinctVersions, 30);
   assert.deepEqual(a.selectedCaptures.map(c => c.archiveUrl), b.selectedCaptures.map(c => c.archiveUrl));
+});
+
+test('offline CDX CLI emits version gap findings without network and preserves the source manifest', () => {
+  const folder = mkdtempSync(join(tmpdir(), 'campaign-cdx-version-plan-'));
+  try {
+    const file = join(folder, 'source.json'), output = join(folder, 'report.json');
+    const source = [
+      ['timestamp','original','mimetype','statuscode','digest','length'],
+      ['20210101000000',issue,'text/html','200','early','200'],
+      ['20211201000000',issue,'text/html','200','late','220'],
+    ];
+    writeFileSync(file, JSON.stringify(source));
+    execFileSync('node', ['--import','tsx','scripts/plan-campaign-wayback-versions-offline.ts',
+      '--cdx',file,'--output',output,'--max-captures','40'], { timeout: 15_000, stdio: 'pipe' });
+    const report = JSON.parse(readFileSync(output, 'utf8'));
+    assert.equal(report.selectedCaptures.length, 2);
+    assert.equal(report.oldV3SelectionCount, 1);
+    assert.equal(report.selectedNotInV3.length, 1);
+    assert.equal(report.completenessCertified, false);
+    assert.equal(JSON.parse(readFileSync(file, 'utf8')).length, 3);
+  } finally { rmSync(folder, { recursive: true, force: true }); }
 });
