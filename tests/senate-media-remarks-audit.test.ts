@@ -229,3 +229,77 @@ test('invalid reviewer or unsupported media disposition cannot falsely mark a so
   unexpected.disposition = 'made_up_disposition' as SenateMediaReview['disposition'];
   assert.throws(() => audit({ reviews: [unexpected] }), /Invalid disposition/);
 });
+
+test('same-year active senators sharing a surname cannot be resolved from Sen. Surname alone',()=>{
+  const duplicate: SenateMediaRosterYear={
+    year:2023, senatorId:'senator-bob',membershipId:'membership-bob-23',
+    senatorName:'Bob Example',activeFrom:'2023-01-03',activeThrough:'2023-12-31',
+  };
+  const result=audit({roster:[member(),duplicate]});
+  assert.equal(result.verifiedAttributedQuotePassages,0);
+  assert.ok(result.reviewResults[0]?.failures
+    .includes('ambiguous_senator_surname_requires_full_named_cue'));
+});
+
+test('full-name cue in source-authenticated original resolves shared-surname senator uniquely',()=>{
+  const fullArticle=article.replace('Sen. Example said','Sen. Alice Example said');
+  const c=context(); c.sourceSha256=createHash('sha256').update(fullArticle).digest('hex');
+  const v=review();
+  v.attributionCue='Sen. Alice Example said';
+  v.sourcePassage='Sen. Alice Example said, "Our schools need more funding."';
+  const duplicate:SenateMediaRosterYear={
+    year:2023, senatorId:'senator-bob',membershipId:'membership-bob-23',
+    senatorName:'Bob Example',activeFrom:'2023-01-03',activeThrough:'2023-12-31',
+  };
+  const result=audit({
+    contexts:[c],roster:[member(),duplicate],
+    snapshots:[{sourceDocumentId:'source-1',rawBodyBase64:Buffer.from(fullArticle).toString('base64')}],
+    reviews:[v],
+  });
+  assert.equal(result.verifiedAttributedQuotePassages,1);
+  assert.equal(result.reviewResults[0]?.verified,true);
+});
+
+test('unresolved term of same-surname peer is ambiguous, but known out-of-term peer is not',()=>{
+  const uncertain:SenateMediaRosterYear={
+    year:2023,senatorId:'senator-bob',membershipId:'membership-bob-23',
+    senatorName:'Bob Example',activeFrom:null,activeThrough:null,
+  };
+  const uncertainResult=audit({roster:[member(),uncertain]});
+  assert.equal(uncertainResult.verifiedAttributedQuotePassages,0);
+  assert.ok(uncertainResult.reviewResults[0]?.failures
+    .includes('ambiguous_senator_surname_requires_full_named_cue'));
+  const outOfTerm={...uncertain,activeFrom:'2023-06-01',activeThrough:'2023-12-31'};
+  const result=audit({roster:[member(),outOfTerm]});
+  assert.equal(result.verifiedAttributedQuotePassages,1);
+});
+
+test('a surname embedded inside another last name is not explicit attribution',()=>{
+  const changed=article.replace('Sen. Example said','Alice Exampleson said');
+  const c=context();c.sourceSha256=createHash('sha256').update(changed).digest('hex');
+  const v=review();v.attributionCue='Alice Exampleson said';
+  v.sourcePassage='Alice Exampleson said, "Our schools need more funding."';
+  const result=audit({
+    contexts:[c],reviews:[v],
+    snapshots:[{sourceDocumentId:'source-1',rawBodyBase64:Buffer.from(changed).toString('base64')}],
+  });
+  assert.equal(result.verifiedAttributedQuotePassages,0);
+  assert.ok(result.reviewResults[0]?.failures.includes('speaker_not_explicitly_named_in_attribution'));
+});
+
+test('one original archive cannot be classified both unavailable and an authenticated named quote',()=>{
+  const unavailable:SenateMediaReview={
+    sourceDocumentId:'source-1',disposition:'source_unavailable',
+    reviewedBy:'reviewer',reviewedAt:'2026-10-10T19:00:00Z',
+  };
+  for(const order of [[unavailable,review()],[review(),unavailable]]) {
+    assert.throws(()=>audit({reviews:order}),/Contradictory media source-unavailable and named-quote reviews/);
+  }
+  const contextual:SenateMediaReview={
+    sourceDocumentId:'source-1',disposition:'contextual_mention',
+    reviewedBy:'reviewer',reviewedAt:'2026-10-10T19:00:00Z',
+  };
+  // Distinct context and exact quote reviews of the same article CAN coexist.
+  const accepted=audit({reviews:[contextual,review()]});
+  assert.equal(accepted.verifiedAttributedQuotePassages,1);
+});
