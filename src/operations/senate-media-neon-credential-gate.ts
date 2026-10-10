@@ -37,8 +37,6 @@ export interface ApprovedMediaSqlDestination {
   host: string;
   username: string;
   database: string;
-  /** The raw connection URI stays local to the trusted runner. */
-  connectionString: string;
 }
 
 export function parseMediaSqlDestination(value: string): ApprovedMediaSqlDestination {
@@ -66,7 +64,6 @@ export function parseMediaSqlDestination(value: string): ApprovedMediaSqlDestina
     host: uri.hostname,
     username: role,
     database,
-    connectionString: value,
   };
 }
 
