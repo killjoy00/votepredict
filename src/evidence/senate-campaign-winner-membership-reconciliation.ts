@@ -54,10 +54,12 @@ export interface ExportEvidence {
 export interface RestrictedMemberExport {
   schema:'senate-campaign-membership-evidence-ro-export-v1';
   scope:{
-    kind:'direct_neon_protected_sandbox_read_only';
+    kind:'direct_neon_protected_sandbox_read_only'|'existing_votepredict_default_branch_read_only';
     defaultProductionFalse:true;
     readOnlyTransactionConfirmed:true;
-    restrictedDatabaseRoleValidated:true;
+    restrictedDatabaseRoleValidated:boolean;
+    directNeonProjectIdentityVerified?:boolean;
+    declaredDatabaseOwnerRoleMayWrite?:boolean;
     session:'2025-2026';
     checkedDistricts:string[];
     completenessOfDistrictSnapshot:boolean;
@@ -137,10 +139,14 @@ function validatedSourceOutcomes(official:OutcomeManifest){
 }
 function memberExportValid(exported:RestrictedMemberExport) {
   if(exported.schema!=='senate-campaign-membership-evidence-ro-export-v1'
-    ||exported.scope.kind!=='direct_neon_protected_sandbox_read_only'
+    ||!['direct_neon_protected_sandbox_read_only','existing_votepredict_default_branch_read_only'].includes(exported.scope.kind)
+    ||(exported.scope.kind==='direct_neon_protected_sandbox_read_only' && exported.scope.restrictedDatabaseRoleValidated!==true)
+    ||(exported.scope.kind==='existing_votepredict_default_branch_read_only'
+      &&(exported.scope.directNeonProjectIdentityVerified!==true
+      ||exported.scope.declaredDatabaseOwnerRoleMayWrite!==true
+      ||exported.scope.restrictedDatabaseRoleValidated!==false))
     ||exported.scope.defaultProductionFalse!==true
     ||exported.scope.readOnlyTransactionConfirmed!==true
-    ||exported.scope.restrictedDatabaseRoleValidated!==true
     ||exported.scope.connectedToActualProductionEvidence!==false
     ||exported.scope.doesNotAssertProductionCompleteness!==true
     ||exported.scope.session!=='2025-2026'
@@ -276,7 +282,8 @@ export function reconcileHistoricalCampaignWinnerExcerpts(
       sourceIsNotPreElectionForecastFeature:true,
       noProductionReadsOrWritesByThisReconciler:true,
       actualProductionDBEvidenceAudited:false,
-      sandboxOnlyExportAccepted:Boolean(exported),
+      sandboxOnlyExportAccepted:Boolean(exported&&exported.scope.kind==='direct_neon_protected_sandbox_read_only'),
+      directExistingNeonDefaultBranchReadOnlyAccepted:Boolean(exported&&exported.scope.kind==='existing_votepredict_default_branch_read_only'),
       statewideSenatorCampaignCompletenessCertified:false,
       historical2020to2022OriginalWebsiteFilingsComplete:false,
       authorizedProductionEvidenceReconciliationComplete:false,
@@ -297,7 +304,7 @@ export function reconcileHistoricalCampaignWinnerExcerpts(
       'Elections are post-vote identity sources, not eligible as pre-vote features.',
       'Defeated candidates never inherit the winner membership; matching district alone is insufficient.',
       '2024/2025 archive captures have attested publication UPPER bounds, not website post dates.',
-      'A protected sandbox export cannot claim production roster/evidence completeness.',
+      'A protected sandbox OR independently verified existing Neon default branch export cannot certify that it equals the deployed production database.',
       'No direct production connection, Vercel environment or evidence ingestion was performed.',
     ],
   };
