@@ -33,9 +33,9 @@ jobs:
       - name: Read fixed previous original 2022-25 roll-call review artifact
         uses: actions/download-artifact@v4
         with:
-          name: senate-\${{ matrix.year }}-unparsed-roll-review-metadata
+          name: senate-${{ matrix.year }}-unparsed-roll-review-metadata
           run-id: 38075573031
-          github-token: \${{ github.token }}
+          github-token: ${{ github.token }}
           path: artifacts/previous-independent-proof
       - name: Source PDF page-count utility
         run: |
@@ -46,13 +46,13 @@ jobs:
       - name: Inspect precise 19 source offsets, date headers and absentee vote conflict
         run: |
           node --import tsx scripts/review-senate-19-original-motion-date-attendance.ts \
-            --year \${{ matrix.year }} \
-            --source-json artifacts/previous-independent-proof/senate-\${{ matrix.year }}-unparsed-roll-review.json \
-            --output artifacts/semantic/senate-\${{ matrix.year }}-19-date-attendance-original.json
+            --year ${{ matrix.year }} \
+            --source-json artifacts/previous-independent-proof/senate-${{ matrix.year }}-unparsed-roll-review.json \
+            --output artifacts/semantic/senate-${{ matrix.year }}-19-date-attendance-original.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: senate-\${{ matrix.year }}-19-source-motion-date-attendance-review
-          path: artifacts/semantic/senate-\${{ matrix.year }}-19-date-attendance-original.json
+          name: senate-${{ matrix.year }}-19-source-motion-date-attendance-review
+          path: artifacts/semantic/senate-${{ matrix.year }}-19-date-attendance-original.json
           retention-days: 7
           if-no-files-found: error
