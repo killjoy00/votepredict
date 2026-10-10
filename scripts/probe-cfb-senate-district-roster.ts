@@ -42,6 +42,7 @@ function candidateLookalikes(html: string) {
   return [...new Set(attributes)].slice(0, 30);
 }
 
+async function main(): Promise<void> {
 for (const district of districts) {
   for (const segment of segments) {
     const sourceUrl = origin + pathRoot + district + '/' + segment;
@@ -78,3 +79,6 @@ for (const district of districts) {
     }
   }
 }
+
+}
+main().catch(error => { console.error(error); process.exitCode = 1; });
