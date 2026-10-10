@@ -88,8 +88,8 @@ test('941 scoped principal committee ORIGINAL viewer version keys never include 
 test('current 2026 registration list has only 109 of 275 old viewer IDs, proving neither older activity nor termination',()=>{
   const x=p(), originalViewer=original();
   const ix=originalViewer.observedCandidateRegistrationIndex;
-  const ids=ix.registrationIdsCsv.split(',');
-  const datedIds=new Set(readFileSync(CURRENT,'utf8').trim().split('\n').map(s=>s.split('|')[0]));
+  const ids:string[]=(ix.registrationIdsCsv as string).split(',');
+  const datedIds=new Set<string>(readFileSync(CURRENT,'utf8').trim().split('\n').map(s=>s.split('|')[0] ?? ''));
   const cohort=deriveCfb2021to24SenateViewerCohort(originalViewer);
   const present=cohort.scopedDistinctRegistrationNumbers.filter(id=>datedIds.has(id)).length;
   const old=ids.filter((id,i)=>ix.segmentMembershipMaskHex[i]==='1');
