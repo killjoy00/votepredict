@@ -215,7 +215,11 @@ export function planCampaignArchiveSourceRecovery(
   const reqById=new Map(requests.map(r=>[r.id,r]));
   const responseIds=new Set<string>();
   const perCandidateCaptures=new Map<string,WaybackCapture[]>();
-  const queryAudit=[];
+  const queryAudit:Array<{
+    id:string; status:'failed'|'complete'; indexRows:number;
+    preGeneralRows:number; prePrimaryRows:number;
+    captureLimitMayHaveTruncated:boolean; originalResponseBytesAuthenticated:false;
+  }>=[];
   for(const result of providedIndexRows){
     const requested=reqById.get(result.queryId);
     if(!requested||responseIds.has(result.queryId))throw new Error('Unknown/duplicate CDX input request');
