@@ -1,0 +1,25 @@
+name: One-time public CFB candidate committee list schema reconnaissance
+
+on:
+  pull_request:
+    paths:
+      - scripts/probe-cfb-current-candidate-list-schema.ts
+      - .github/workflows/cfb-candidate-committee-list-source-shape.yml
+
+permissions:
+  contents: read
+
+jobs:
+  public-schema-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Inspect public CFB committee registration listing app and API shapes
+        run: node --import tsx scripts/probe-cfb-current-candidate-list-schema.ts
