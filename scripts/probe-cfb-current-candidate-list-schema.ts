@@ -97,11 +97,43 @@ async function probeAction(kind: string, cookie: string) {
   }
 }
 
+
+function currentListNavigationContexts(html: string) {
+  const labels = [
+    'All registered candidate committees', 'Current candidate reports',
+    'Recent candidate committee registrations',
+    'Recently terminated candidate committee registrations',
+    'Candidates who have not filed current reports',
+    'candidate-registrations', 'candidate-reports',
+  ];
+  const results = [];
+  for (const label of labels) {
+    const offset = html.toLowerCase().indexOf(label.toLowerCase());
+    const snippet = offset >= 0
+      ? html.slice(Math.max(0,offset-600),Math.min(html.length,offset+450))
+          .replace(/\s+/g,' ').replace(/(?:\d[\d -]{7,}\d)/g,'[possible-contact]').slice(0,1100)
+      : null;
+    results.push({label,found:offset>=0,htmlContext:snippet});
+  }
+  return results;
+}
+
+function relevantPublicScriptLiterals(js: string) {
+  const hits = [];
+  for (const m of js.matchAll(/["']([^"'<>]{0,80}(?:candidate|registr|terminat)[^"'<>]{0,90})["']/gi)) {
+    const value = m[1]!.trim();
+    if (!hits.includes(value)) hits.push(value);
+    if (hits.length >= 60) break;
+  }
+  return hits;
+}
+
 async function main() {
   const page = await getBounded(APP);
   console.log(JSON.stringify({type:'official-app-shell',status:page.status,url:page.url,
     htmlBytes:Buffer.byteLength(page.text),htmlSha256:hash(page.text),
     scriptSources:readScriptSrc(page.text)}));
+  console.log(JSON.stringify({type:'official-static-current-list-menu-context',items:currentListNavigationContexts(page.text)}));
   let cookies = page.cookies.join('; ');
   for (const src of readScriptSrc(page.text)) {
     try {
@@ -110,7 +142,7 @@ async function main() {
       const relevant = tokens.filter(s => /candidate|registr|terminated/i.test(s));
       console.log(JSON.stringify({type:'public-script-source-shape',url:src,status:file.status,
         responseBytes:Buffer.byteLength(file.text),sha256:hash(file.text),
-        sourceCandidateListIdentifiers:relevant.slice(0,70)}));
+        sourceCandidateListIdentifiers:relevant.slice(0,70),publicCandidateStringLiterals:relevantPublicScriptLiterals(file.text)}));
     } catch(e) {
       console.log(JSON.stringify({type:'script_fetch_failed',url:src,error:(e instanceof Error?e.message:String(e)).slice(0,120)}));
     }
