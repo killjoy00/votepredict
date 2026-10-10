@@ -1,0 +1,74 @@
+name: One-time final 152 low-text 2022 and 2025 Senate original Minutes OCR
+
+# Source-only, disjoint, hashed historical source batches. Executes once when
+# this workflow enters main; no dispatch, cron, private DB, model, serving or
+# 2027 work. Inputs are the original immutable-source SHA-bound audit artifacts.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-final-152-scanned-ocr.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  final-scanned-originals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include:
+          - { year: 2022, batch: 0, artifact: senate-committee-2022-original-action-source-metadata }
+          - { year: 2022, batch: 1, artifact: senate-committee-2022-original-action-source-metadata }
+          - { year: 2022, batch: 2, artifact: senate-committee-2022-original-action-source-metadata }
+          - { year: 2022, batch: 3, artifact: senate-committee-2022-original-action-source-metadata }
+          - { year: 2022, batch: 4, artifact: senate-committee-2022-original-action-source-metadata }
+          - { year: 2022, batch: 5, artifact: senate-committee-2022-original-action-source-metadata }
+          - { year: 2025, batch: 0, artifact: senate-committee-2025-original-action-source-metadata }
+          - { year: 2025, batch: 1, artifact: senate-committee-2025-original-action-source-metadata }
+          - { year: 2025, batch: 2, artifact: senate-committee-2025-original-action-source-metadata }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install exact lockfile dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Retrieve exact original full-PDF source audit artifact for this year
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts/independent-original-audit
+      - name: Verify original rasterizer and bounded English OCR
+        run: |
+          if ! command -v pdfinfo >/dev/null || ! command -v pdftoppm >/dev/null || ! command -v tesseract >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+          fi
+          pdfinfo -v
+          pdftoppm -v
+          tesseract --version
+      - name: OCR only the exact remaining SHA-pinned official original batch
+        env:
+          VOTEPREDICT_SENATE_COMMITTEE_OCR: "1"
+        run: |
+          node --import tsx scripts/probe-senate-committee-final-scanned-batch.ts \
+            --year ${{ matrix.year }} \
+            --batch ${{ matrix.batch }} \
+            --source-json artifacts/independent-original-audit/senate-committee-${{ matrix.year }}-original-pdf-actions.json \
+            --output artifacts/final-ocr/senate-${{ matrix.year }}-batch-${{ matrix.batch }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-final-scanned-${{ matrix.year }}-batch-${{ matrix.batch }}-metadata
+          path: artifacts/final-ocr/senate-${{ matrix.year }}-batch-${{ matrix.batch }}.json
+          if-no-files-found: warn
+          retention-days: 30
