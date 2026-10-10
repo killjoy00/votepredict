@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "cfb-public-current-candidate-registrations-2026-senate-checkpoint-v1",
+  "scope": {
+    "note": "This is the October 10 2026 public CFB all-registered-candidates and recent-candidate-terminations SNAPSHOT, NOT a historical statutory filing denominator or registration-life-cycle certificate.",
+    "studyReportYears": [
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "sourceFilerUniverse": "All currently listed candidate committee registrations, all offices, queried on 2026-10-10",
+    "comparison": "Historical election-segment Senate district candidate selection labels (2020,2022,2024,2026) from immutable 268-page #864 checkpoint."
+  },
+  "provenance": {
+    "run": "https://github.com/killjoy00/votepredict/actions/runs/38084492788",
+    "workflowCommit": "976a7acc6c2ac65a141debf5eb8a1084d6583d0a",
+    "artifactId": 11682175090,
+    "artifactName": "cfb-2026-public-candidate-registration-metadata-crosscheck",
+    "artifactCreated": "2026-10-10T20:38:53Z",
+    "artifactExpires": "2026-11-09T20:38:52Z",
+    "artifactZipSha256": "f3a3dcdeca4756e9d92a2f474e08aea5e00cdb25a2d6faceea3ac08a39ab788d",
+    "uncompressedMetadataJsonSha256": "5a2cd6634ffe84318e2313ad7a16005964c9ee7ce947ed821142cd2db5010f47",
+    "uncompressedMetadataJsonBytes": 176566,
+    "apiUrl": "https://register.cfb.mn.gov/reports/api/",
+    "allRegisteredCandidates": {
+      "action": "all-registered-candidates",
+      "fetchedAt": "2026-10-10T20:38:52.136Z",
+      "originalResponseSha256": "ed1666be22ecfb3bb1f550e33e2704c720c563bc7f99bc5bcfc440c4d6062a12",
+      "parsedRows": 767,
+      "rejectedRows": 0
+    },
+    "recentCandidateTerminations": {
+      "action": "recent-candidate-terminations",
+      "fetchedAt": "2026-10-10T20:38:52.443Z",
+      "originalResponseSha256": "41e0a0e31f7eb7d7289260f4137e81da714f3025b633adc8fd8b2505dafb1d",
+      "parsedRows": 21,
+      "rejectedRows": 0
+    },
+    "candidateRegistrationDatesPsv": "cfb-2026-public-current-senate-registration-dates.psv",
+    "normalizedPsvSha256WithoutFinalNewline": "31376fef8883e40d86091632b7d0581ee034553f56f43d56744ebe7c3c9a94ec",
+    "psvColumns": [
+      "cfbRegistrationId",
+      "currentListRegistrationDate",
+      "currentListTerminationDateIfPresent"
+    ],
+    "psvRepresents": "The 230 source-listed October 2026 Senate registrations also matched to the archived 268-page viewer; sorted by registration ID and retaining no names, donor or contact fields."
+  },
+  "observedSourceSnapshot": {
+    "allCurrentCandidateRegistrationsAllOffices": 767,
+    "currentlyListedSenateRegistrations": 230,
+    "senateCurrentRegistrationsMatchedToViewer": 230,
+    "currentSenateRegistrationsMissingFromViewer": 0,
+    "viewerSenateRegistrationsObservedAcrossFourSegments": 494,
+    "viewerRegistrationsNotOnOctober2026CurrentCandidateList": 264,
+    "currentSenateRegistrationsWithListedRegistrationDateOnOrBefore2025End": 152,
+    "currentSenateRegistrationsWithListedRegistrationDateIn2026": 78,
+    "currentSenateRegistrationsWithPopulatedTerminationDate": 3,
+    "viewerRegistrationIdsOnOctober2026RecentTerminationList": [
+      "17854",
+      "18694",
+      "18763",
+      "19362",
+      "19422",
+      "19563"
+    ],
+    "distinctViewerRegistrationsListedOnCurrentSourceWithConflictingRows": 0,
+    "listedViewerRegistrationIdsUnderNonSenateOffice": 0,
+    "independentOriginalPdfRegistrationControlsMatched": [
+      "18443",
+      "19205"
+    ],
+    "currentListIsNotCompleteHistoricalTerminations": true,
+    "viewerOnlyDoesNotImplyTerminated": true,
+    "registrationDatedBefore2026DoesNotImplyEveryAnnualReportDue": true
+  },
+  "historicalDenominator": {
+    "totalCandidateCommitteesLegallyActiveIn2021to2025": null,
+    "yearByYearRegisteredCommitteeFilerYears": null,
+    "statutoryReportsRequiredForSenate2021to2025": null,
+    "actuallyFiledOriginalReportCount": null,
+    "auditedExemptionsNonfilersTerminations": null,
+    "completeHistoricalLifeCycleVerified": false,
+    "historicalFilingDenominatorCertified": false,
+    "reason": "A current 2026 list with 230 Senate candidates is not a historical termination/re-registration ledger; election-viewer-only 264 registrations are not proven inactive. No legal obligation, amendment or historical reporting/publication proof follows from a registration date alone."
+  },
+  "boundaries": {
+    "readOnlyOfficialPublicSource": true,
+    "noProductionDatabaseReadWrite": true,
+    "noRawHtmlOrCandidatePersonalContactRetained": true,
+    "noDonorTransactionsRetained": true,
+    "noTrainingServingOr2027Changes": true
+  }
+}
