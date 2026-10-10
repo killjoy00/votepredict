@@ -4,8 +4,6 @@ import {
   CFB_HISTORICAL_CALENDAR_INDEX_URL,
   CFB_MISLABELED_HOUSE64A_CALENDAR_URL,
   auditCfbMislabeled2025House64aCalendar,
-  CFB_MISLABELED_HOUSE64A_CALENDAR_URL,
-  auditCfbMislabeled2025House64aCalendar,
   CFB_SD6_CANDIDATE_PACKET_URL,
   CFB_SD6_STANDALONE_CALENDAR_URL,
   parseCfbHistoricalCalendarIndex,
@@ -159,6 +157,36 @@ test('no exact original House64A title / forged PDF / absent source never establ
   assert.equal(absent.originalPdfStatus, 'not_acquired');
   assert.equal(absent.verifiedHouse64aArchiveLabelConflict, false);
   assert.equal(wrongTitle.sourceListingCannotBeCountedAsSenateCalendar, true);
+});
+
+test('exact original regulator PDF resolves suspect Senate 64A archive label to House 64A', () => {
+  const archive = parseCfbHistoricalCalendarIndex(
+    '<h3>2025 campaign finance</h3>'
+    + '<a href="/pdf/calendars/2025_special_election_64A.pdf">Senate District 64A special election</a>'
+    + '<h3>2025 lobbying</h3>', fetchedAt);
+  const source = {
+    sourceUrl: CFB_MISLABELED_HOUSE64A_CALENDAR_URL,
+    finalSourceUrl: CFB_MISLABELED_HOUSE64A_CALENDAR_URL,
+    rawPdfSha256: 'a'.repeat(64), pdfBytes: 24_500, fetchedAt,
+    extractedText: 'House District 64A Special Election Public Disclosure Calendar ' +
+      'Minnesota Campaign Finance and Public Disclosure Board ' + '2025 '.repeat(20),
+  };
+  const verified = auditCfbMislabeled2025House64aCalendar(archive, source);
+  assert.equal(verified.archiveListedAsSenate64a, true);
+  assert.equal(verified.originalPdfStatus, 'house_64a_original_title_verified');
+  assert.equal(verified.verifiedHouse64aArchiveLabelConflict, true);
+  assert.equal(verified.officialRegisteredSenateFilerDenominator, null);
+  assert.equal(verified.senateOfficeAttributionGranted, false);
+  const spoofed = auditCfbMislabeled2025House64aCalendar(archive,
+    { ...source, finalSourceUrl: 'https://example.com/fake.pdf' });
+  assert.equal(spoofed.originalPdfStatus, 'invalid_pdf_provenance');
+  assert.equal(spoofed.verifiedHouse64aArchiveLabelConflict, false);
+  const senateTitle = auditCfbMislabeled2025House64aCalendar(archive,
+    { ...source, extractedText: 'Senate District 64A Special Election Public Disclosure Calendar' + ' test'.repeat(40) });
+  assert.equal(senateTitle.originalPdfStatus, 'original_title_unverified');
+  assert.equal(senateTitle.verifiedHouse64aArchiveLabelConflict, false);
+  const absent = auditCfbMislabeled2025House64aCalendar(archive, null);
+  assert.equal(absent.originalPdfStatus, 'not_acquired');
 });
 
 test('year section exists but no downloadable official files is unrecognized, not zero', () => {
