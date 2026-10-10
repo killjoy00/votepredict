@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "senate-committee-2022-25-phase2-41-and-15-source-ledger-v1",
+  "issue": 864,
+  "recordedOn": "2026-10-10",
+  "priorFullOriginalPdfAuditRun": 38066441841,
+  "strong41": {
+    "runId": 38078641464,
+    "pr": 896,
+    "officialSourcePdfsReverified": 41,
+    "originalPdfOrTextShaDrift": 0,
+    "failedOriginalPdfs": 0,
+    "years": [
+      {
+        "year": 2022,
+        "originals": 2,
+        "artifactId": 11679725284,
+        "zipSha256": "90970fd55dd49c05ae3e16c9cdcb30d12f6d8d47f4bbbdb6a931086f355e7b19",
+        "jsonSha256": "a05649add699fb19c06ec8d07ca41375fb2f48c4318d0dd7e2909441d95f72d8"
+      },
+      {
+        "year": 2023,
+        "originals": 14,
+        "artifactId": 11678568716,
+        "zipSha256": "3599ccb7f61e2972de2944bb5d639e96e2a7d02bed983fa95f44caec49b25497",
+        "jsonSha256": "98422a30a824484cf6c4334ef02c19b486c10f09dcb6bc69d7c96c85b9f41c6f"
+      },
+      {
+        "year": 2024,
+        "originals": 13,
+        "artifactId": 11679024891,
+        "zipSha256": "2cf5a7e7c510b0fea236a0cc170fcced145589b114bbe1c38a8ee362e87d41a3",
+        "jsonSha256": "b8608f25d6074252161c4502004439e25e3eb8545f78d30169826b5dba3189e0"
+      },
+      {
+        "year": 2025,
+        "originals": 12,
+        "artifactId": 11679308082,
+        "zipSha256": "7b23b2594896218445fcce79f9e16e605ed6c759c3848d88871e9234bfc3fbe9",
+        "jsonSha256": "b66b45fae48bc8a8ff1a50535620de97d057b9a4ffb868ef967aa3ffefe78614"
+      }
+    ],
+    "onlySourceCueCandidates": true
+  },
+  "named15": {
+    "runId": 38079052118,
+    "pr": 898,
+    "officialSourcePdfsReverified": 10,
+    "namedRollParserObservations": 15,
+    "explicitSourceNamedChoices": 134,
+    "mechanicalIntegrityViolations": 0,
+    "years": [
+      {
+        "year": 2022,
+        "originals": 8,
+        "parserNamedRolls": 11,
+        "namedChoiceTokens": 99,
+        "sourceNamedIdentityDuplicates": 0,
+        "sourceTallyIntegrityViolations": 0,
+        "artifactId": 11679248744,
+        "zipSha256": "617e373db9a159226f666b887ef4d125a2552266c8943e2ecb828aa1a232d762",
+        "jsonSha256": "2ada11d589a2c33e6cf92fc6c4c0643a3b5d50e951355de74b0a73c5b20afbc6"
+      },
+      {
+        "year": 2025,
+        "originals": 2,
+        "parserNamedRolls": 4,
+        "namedChoiceTokens": 35,
+        "sourceNamedIdentityDuplicates": 0,
+        "sourceTallyIntegrityViolations": 0,
+        "artifactId": 11680060423,
+        "zipSha256": "9aa6aa9866b3843ba97410b221374e749bb1e3fbd6ed36fd712f940301201002",
+        "jsonSha256": "c417873021b45199bcbb5d7e33e46260b06c6e06ef02f92e70d41a12d565b533"
+      }
+    ],
+    "committeeMembershipCrossReferenceNotCompleted": true,
+    "motionDistinctnessUnverified": true
+  },
+  "noSourceTextMemberNamesOrPdfsCommitted": true,
+  "humanValidationAndPrivateDbReconciliationNotCompleted": true,
+  "officialRecordedVoteDenominator": null,
+  "year2021PrintOnlyAnd2022PrintElectronicStillUnresolved": true,
+  "productionDatabaseReadOrWrite": false,
+  "modelForecastServingSchedulerChanged": false
+}
