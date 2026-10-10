@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "cfb-sos-2022-senate-67-district-ballot-source-checkpoint-v1",
+  "source": {
+    "acquisitionRun": "https://github.com/killjoy00/votepredict/actions/runs/38093516835",
+    "acquisitionRunId": 38093516835,
+    "sourceWorkflowExactHead": "61aaf4669b3737655e0a12dba47bf0e2a1b2ebf4",
+    "mergedImplementationCommit": "3dc7859f0ba5781920e051201bcdcfbab49f36fa",
+    "originalWorkflowArtifactId": 11685460024,
+    "originalArtifactName": "cfb-sos-2022-senate-67-district-ballot-filing-denominator-predicates",
+    "artifactExpiresAt": "2026-11-09T23:01:55Z",
+    "zipSha256": "bbd94ff80a10d702f8096f73457ab653399b818abaf496449c4f635264868b1c",
+    "jsonSha256": "2474359842c2eedad05aed0052a48d6d3fdd24426ce0ee8de9dd6ca41d5c4ae5",
+    "originalMetadataJsonBytes": 304076,
+    "capturedAt": "2026-10-10T23:01:54.815Z",
+    "secretaryOfStateGeneral": {
+      "url": "https://electionresultsfiles.sos.mn.gov/20221108/stsenate.txt",
+      "originalBytes": 16857,
+      "sha256": "eb8980245094cf8af0cd08a69c42ae0262fb5a692b09a49be2aee959aecaae74",
+      "officialDistricts": 67,
+      "namedCandidateResultEntriesExcludingWriteIns": 131
+    },
+    "secretaryOfStateContestedPrimary": {
+      "url": "https://electionresultsfiles.sos.mn.gov/20220809/stsenate.txt",
+      "originalBytes": 6500,
+      "sha256": "598152339775ffb8cb489704abdb13fc06d660878991790a3222a330354d0f88",
+      "districtsWithContestedPrimaryCandidateRows": 24,
+      "namedCandidateResultEntries": 75,
+      "uncontestedCandidateElectionFilingStatusKnownFromThisResultFile": false
+    },
+    "campaignFinanceBoard": {
+      "baseUrl": "https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/districts-constitutional-offices/Senate/",
+      "sourceDistrictPagesIndependentlyFetched": 67,
+      "sourceDistinctRegisteredViewerCandidateIds": 270,
+      "sourceFailures": 0,
+      "sourceIdentityMatchedPreviouslyPinned2022Segment": true
+    }
+  },
+  "reconciliation": {
+    "sourceCandidateRegistrations": 270,
+    "SOS2022GeneralEntriesSafeDistrictAndFirstLastNameMatches": 115,
+    "SOS2022ContestedPrimaryEntriesSafeDistrictAndFirstLastNameMatches": 67,
+    "generalSOSCandidateResultsUnmatchedByStrictIdentity": 16,
+    "contestedPrimarySOSCandidateResultsUnmatchedByStrictIdentity": 8,
+    "cfbCandidateEntriesWithoutGeneralSOSMatch": 155,
+    "cfbCandidateEntriesWithoutContestedPrimarySOSMatch": 203,
+    "cfbUnknownNameShapeEntryCount": 1,
+    "noFuzzyOrCrossDistrictJoins": true,
+    "unmatchedSosResultDoesNotProveCfbRegistrationAbsent": true,
+    "unmatchedCfbViewerDoesNotProveNotOnBallot": true,
+    "unexplainedMatchesRemainForManualReconciliation": true,
+    "historicalRegistrationTerminationsIndependentlyVerified": 0,
+    "2022SenatePrePrimaryReportsLegallyRequired": null,
+    "2022SenatePreGeneralReportsLegallyRequired": null,
+    "2022SenateYearEndReportsLegallyRequired": null,
+    "2022SenateNonfilerCount": null,
+    "stateSenate2021to2025RequiredFilingDenominator": null
+  },
+  "safeguards": {
+    "originalElectionVoteTotalsNotPersistedToRepository": true,
+    "historicalPublicByNotGrantedByLaterResultSource": true,
+    "productionDbReadOrWrite": false,
+    "modelTrainingOrServingChanges": false,
+    "forecastInputsChanged": false,
+    "rawCFBSenateHtmlOrSOSPlaintextPersisted": false,
+    "issue864RemainsOpen": true
+  }
+}
