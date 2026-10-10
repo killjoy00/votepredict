@@ -56,6 +56,7 @@ export function parseOfficialMnSenateServiceDirectory(html:Uint8Array,observedAt
   AuditedOfficialSenateDirectory {
   const observed=new Date(observedAt);
   if(!Number.isFinite(observed.getTime())||observed.toISOString()!==observedAt
+    ||observed.getTime()<Date.parse('2026-10-10T00:00:00Z')
     ||observed.getTime()>Date.now()+60_000)
     throw Error('Source retrieval timestamp not valid observed UTC time');
   if(html.byteLength<9000||html.byteLength>5*1024*1024)
@@ -94,12 +95,8 @@ export function parseOfficialMnSenateServiceDirectory(html:Uint8Array,observedAt
   }
   if(rows.length<300||rows.length>1600)
     throw Error('Official historical Senate directory response missing expected historic table rows');
-  const names=new Set<string>();
-  for(const row of rows){
-    const name=strictCandidateKey(row.officialName);
-    if(!name||names.has(name))throw Error('Duplicated official Senate directory person name');
-    names.add(name);
-  }
+  if(rows.some(row=>!strictCandidateKey(row.officialName)))
+    throw Error('Official Senate directory contains unusable person name');
   return{
     schema:'mn-lrl-official-senate-ever-served-directory-v1',
     source:{
