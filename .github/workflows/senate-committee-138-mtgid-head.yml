@@ -1,0 +1,51 @@
+name: One-time Senate 138 official media record HTTP HEAD metadata
+
+# Non-serving, no media downloads: source-hashed official LRL media record IDs
+# from precise dated committee sections. Never GET audio/video or follow URLs.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-138-mtgid-head.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  official-media-metadata-by-year:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        year: [2022, 2023, 2024, 2025]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Retrieve source-hashed exact Senate 138 mtgid href audit
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-${{ matrix.year }}-dated-media-href-review
+          run-id: 38079233118
+          github-token: ${{ github.token }}
+          path: artifacts/official-dated-media
+      - name: Check HTTP HEAD for 138 exact official historical media IDs
+        run: |
+          node --import tsx scripts/probe-senate-138-mtgid-media-head.ts \
+            --year ${{ matrix.year }} \
+            --source-json artifacts/official-dated-media/senate-${{ matrix.year }}-media-hrefs.json \
+            --output artifacts/media-head/senate-${{ matrix.year }}-mtgid-head.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-${{ matrix.year }}-mtgid-head-source-metadata
+          path: artifacts/media-head/senate-${{ matrix.year }}-mtgid-head.json
+          retention-days: 30
+          if-no-files-found: warn
