@@ -48,7 +48,7 @@ test('meeting section rejects generic media elsewhere on page and detects only e
 });
 
 test('current original HTML SHA is required; a matching link on a different page is not acceptable',()=>{
-  const h='<html><h2>3/4/2023</h2><a href="/media/">Watch video</a></html>';
+  const h='<html><h2>3/4/2023</h2><a href="/media/">Watch video</a><h2>3/5/2023</h2></html>';
   const r:PriorMeetingSourceRow={
     year:2023,meetingDate:'2023-03-04',committeeName:'Taxes',
     canonicalOfficialMeetingPage:'https://www.lrl.mn.gov/minutes/comm?commid=11-0&year=2023&body=senate&date=3%2F4%2F2023',
