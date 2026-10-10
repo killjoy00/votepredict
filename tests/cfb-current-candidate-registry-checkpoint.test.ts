@@ -33,7 +33,7 @@ test('historical Senate source registry checkpoint is only a 2026 public snapsho
   assert.equal(p.provenance.allRegisteredCandidates.originalResponseSha256,
     'ed1666be22ecfb3bb1f550e33e2704c720c563bc7f99bc5bcfc440c4d6062a12');
   assert.equal(p.provenance.recentCandidateTerminations.originalResponseSha256,
-    '41e0a0e0e31f7eb7d7289260f4137e81da714f3025b633adc8fd8b2505dafb1d');
+    '41e0a0e31f7eb7d7289260f4137e81da714f3025b633adc8fd8b2505dafb1d');
   assert.deepEqual(p.scope.studyReportYears,[2021,2022,2023,2024,2025]);
   assert.equal(p.historicalDenominator.historicalFilingDenominatorCertified,false);
 });
