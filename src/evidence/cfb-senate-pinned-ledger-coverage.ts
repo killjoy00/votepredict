@@ -93,7 +93,7 @@ function sourceReport(input: {
     check(viewer.searchParams.get(field) === expected,
       'viewer URL does not match report ID field ' + field);
   }
-  check(Number.isInteger(input.pdfBytes) && Number(input.pdfBytes) >= 500,
+  check(typeof input.pdfBytes === 'number' && Number.isInteger(input.pdfBytes) && input.pdfBytes >= 500,
     'source report must have independently captured PDF bytes');
   const reportPdfSha256 = digest(input.pdfHash, 'original report PDF');
   const officialCalendarUrl = officialUrl(input.calendar, 'original CFB calendar');
