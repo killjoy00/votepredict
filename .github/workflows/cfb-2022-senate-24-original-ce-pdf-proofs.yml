@@ -1,0 +1,40 @@
+name: One-time 24 original 2022 Senate C/E PDF and disclosure-calendar proofs
+
+# Separate evidence acquisition track (#864), PR-only no schedule, no DB.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2022-senate-24-original-ce-pdf-proofs.yml
+      - scripts/capture-cfb-2022-senate-24-original-ce-pdf-proofs.ts
+      - src/evidence/cfb-2022-senate-original-ce-pdf-proof.ts
+      - tests/cfb-2022-senate-original-ce-pdf-proof.test.ts
+
+permissions:
+  contents: read
+
+jobs:
+  authenticate-2022-original-candidate-reports:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify 24 exact original-version source IDs and fail-closed PDF/calendar authentication
+        run: node --import tsx --test tests/cfb-2022-senate-original-ce-pdf-proof.test.ts
+      - name: Fetch 24 official original PDF versions and independent immutable 2022 calendar; preserve only metadata
+        run: |
+          node --import tsx scripts/capture-cfb-2022-senate-24-original-ce-pdf-proofs.ts \
+            --output artifacts/cfb-2022-senate-24-original-ce-pdf-proofs.json
+      - name: Preserve metadata and diagnostics even on partial PDF source failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2022-senate-24-original-ce-pdf-and-calendar-evidence
+          path: artifacts/cfb-2022-senate-24-original-ce-pdf-proofs.json
+          retention-days: 30
+          if-no-files-found: warn
