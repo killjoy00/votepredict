@@ -109,7 +109,8 @@ test('reference metadata is never elevated into a filed PDF, historical availabi
   assert.equal(d.committeesLegallyActiveIn2025,null);
   assert.equal(d.required2025ReportCount,null);
   assert.equal(d.actuallyFiledOriginalReportCount,null);
-  assert.equal(d.verifiedOriginalReportPdfCount,0);
+  assert.equal(d.newPdfVerificationsInThisSourceReferenceCheckpoint,0);
+  assert.equal(d.priorOriginalPdfControlProofsExist,true);
   assert.equal(d.historicalPublicByVerifiedReportCount,0);
   assert.equal(d.sourceToDbRowContainmentProved,false);
   assert.equal(d.statutoryDeadlineAndFilingDatesReconciled,false);
