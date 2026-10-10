@@ -8,9 +8,7 @@
  */
 import {createHash} from 'node:crypto';
 import {originalCampaignVisibleText} from './senate-authenticated-campaign-excerpt-audit.js';
-import {
-  type AuditedOfficialSenateDirectory,validateActualSenateServiceForElection,
-} from './senate-official-ever-served-directory.js';
+import {type AuditedOfficialSenateDirectory} from './senate-official-ever-served-directory.js';
 import {strictCandidateKey} from './sos-senate-historical-candidate-inventory.js';
 
 export const LRL_EXACT_SENATE_HISTORIC_IDENTITY_PROOFS_VERSION=
