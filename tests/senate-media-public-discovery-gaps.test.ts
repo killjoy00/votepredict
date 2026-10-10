@@ -1,0 +1,117 @@
+/**
+ * #946 public-only seed URL shadow analysis, with no network/SQL/ingestion.
+ * URLs and publication days are leads and never historical quote evidence.
+ */
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import test from 'node:test';
+import {
+  diagnoseMediaPublicDiscoveryPaths,
+} from '../src/evidence/senate-media-public-discovery-gaps.js';
+import {LOCAL_TRADE_NEWS_SEEDS} from '../src/evidence/local-trade-news-history.js';
+
+type LedgedLead={
+  id:string;seedId:string;livePageUrl:string;
+  publicationDayDisplayedOnPublicPage:string;urlInsideCurrentSeedPrefix:boolean;
+};
+const ledger=JSON.parse(readFileSync(
+  'docs/evaluation/senate-media-public-article-discovery-2021-25.json','utf8',
+)) as {selectedNonExhaustiveArticleLeads:LedgedLead[]};
+
+const brief=(id:string,slug:string,day='2025-05-01')=>({
+  id,seedId:'minnesota-reformer-article-archive',
+  livePageUrl:'https://minnesotareformer.com/briefs/'+slug+'/',
+  publicationDayDisplayedOnPublicPage:day,
+});
+const dated=(id:string,slug:string,day='2025-05-01')=>({
+  id,seedId:'minnesota-reformer-article-archive',
+  livePageUrl:'https://minnesotareformer.com/'+day.replaceAll('-','/')+'/'+slug+'/',
+  publicationDayDisplayedOnPublicPage:day,
+});
+
+test('shadowed public leads expose configured prefix and secondary topical-path blind spots',()=>{
+  const results=diagnoseMediaPublicDiscoveryPaths(ledger.selectedNonExhaustiveArticleLeads);
+  assert.equal(results.version,'senate-media-public-url-path-diagnostic-v1');
+  assert.equal(results.totalCuratedPublicUrlLeads,14);
+  assert.equal(results.leads.length,14);
+  assert.equal(results.urlLeadsOutsideConfiguredSeedPrefix,4);
+  assert.ok(results.urlLeadsFilteredByTopicalPathPriority>=1);
+  assert.ok(results.urlLeadsExcludedByEitherGate>=4);
+  assert.ok(results.urlLeadsExcludedByBothGates<=results.urlLeadsOutsideConfiguredSeedPrefix);
+  for(const lead of results.leads) {
+    const original=ledger.selectedNonExhaustiveArticleLeads.find(x=>x.id===lead.id)!;
+    const seed=LOCAL_TRADE_NEWS_SEEDS.find(s=>s.id===original.seedId)!;
+    assert.equal(lead.currentSeedPrefixWouldIncludeUrl,original.urlInsideCurrentSeedPrefix);
+    assert.equal(lead.currentSeedPrefixWouldIncludeUrl,lead.originalUrl.startsWith(seed.url));
+    assert.equal(lead.currentTwoGateDiscoveryWouldSelectUrl,
+      lead.currentSeedPrefixWouldIncludeUrl && lead.currentPathPriorityWouldSelectUrl);
+    assert.equal(lead.measuredAgainst,'current_seed_prefix_and_path_rules_only');
+    assert.equal(lead.originalWaybackCaptureVerified,false);
+    assert.equal(lead.matchedDatabaseSourceDocument,false);
+    assert.equal(lead.exactSenatorQuoteVerified,false);
+    assert.equal(lead.forecastEligibilityVerified,false);
+    assert.equal(Object.hasOwn(lead,'sourceDocumentId'),false);
+  }
+  assert.equal(results.isPublisherPublicationCensus,false);
+  assert.equal(results.sourceBytesOrDatabaseAccessed,false);
+  assert.equal(results.quotesHumanVerified,0);
+  assert.equal(results.statewideDenominatorEstablished,false);
+});
+
+test('prefix alone is not evidence of capture if URL path scoring rejects an otherwise eligible story',()=>{
+  const r=diagnoseMediaPublicDiscoveryPaths([{
+    id:'mpr-2021-synthetic-school-choice',
+    seedId:'mpr-news-story-archive',
+    livePageUrl:'https://www.mprnews.org/story/2021/06/10/gop-wants-private-school-option-walz-dfl-push-back',
+    publicationDayDisplayedOnPublicPage:'2021-06-10',
+  }]);
+  assert.equal(r.urlLeadsOutsideConfiguredSeedPrefix,0);
+  assert.equal(r.urlLeadsFilteredByTopicalPathPriority,1);
+  assert.equal(r.urlLeadsExcludedByEitherGate,1);
+  assert.equal(r.leads[0].currentTwoGateDiscoveryWouldSelectUrl,false);
+  // Article may still exist under a different URL or corpus: no missing count.
+  assert.equal(r.sourceBytesOrDatabaseAccessed,false);
+});
+
+test('matched brief and dated slug/day are alias CANDIDATES, not authenticated duplicate article proof',()=>{
+  const leads=[
+    brief('brief-senate-education','senate-education-bill'),
+    dated('dated-senate-education','senate-education-bill'),
+    dated('dated-other-slug','senate-budget-bill'),
+    dated('different-year-same-slug','senate-education-bill','2024-05-01'),
+  ];
+  const result=diagnoseMediaPublicDiscoveryPaths(leads);
+  assert.equal(result.possibleAliasPairs.length,1);
+  assert.deepEqual(result.possibleAliasPairs[0],{
+    firstLeadId:'brief-senate-education',
+    secondLeadId:'dated-senate-education',
+    commonDisplayedPublicationDay:'2025-05-01',
+    reason:'same_reformer_host_day_and_slug_brief_vs_dated_path',
+    status:'candidate_alias_not_verified_same_article',
+    originalArchivedBytesCompared:false,
+    publishedMediaDenominatorDeduplicated:false,
+  });
+  assert.equal(result.totalCuratedPublicUrlLeads,4);
+});
+
+test('rejects fake dates, duplicates, cross-publisher URLs and unsafe URL syntax',()=>{
+  const valid=brief('brief-senate-example','senate-example');
+  const invalid=[
+    [{...valid,id:'x'}],
+    [valid,valid],
+    [valid,{...valid,id:'other-lead-id'}],
+    [{...valid,publicationDayDisplayedOnPublicPage:'2025-02-30'}],
+    [{...valid,publicationDayDisplayedOnPublicPage:'2026-01-01'}],
+    [{...valid,seedId:'not-a-seed'}],
+    [{...valid,livePageUrl:'https://malicious.example.com/briefs/senate-example/'}],
+    [{...valid,livePageUrl:'http://minnesotareformer.com/briefs/senate-example/'}],
+    [{...valid,livePageUrl:'https://untrusted@minnesotareformer.com/briefs/senate-example/'}],
+    [{...valid,livePageUrl:valid.livePageUrl+'?tracking=1'}],
+    [{...valid,livePageUrl:valid.livePageUrl+'#fragment'}],
+  ];
+  for(const rows of invalid)
+    assert.throws(()=>diagnoseMediaPublicDiscoveryPaths(rows));
+  assert.throws(()=>diagnoseMediaPublicDiscoveryPaths(Array.from({length:501},(_,i)=>({
+    ...valid,id:'brief-senate-'+i,livePageUrl:valid.livePageUrl+i,
+  }))),/at most 500/);
+});

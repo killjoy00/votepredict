@@ -551,6 +551,18 @@ function pathPriority(value: string, pathHints: readonly string[] = []): number 
   return topicalScore + (/\/(?:20(?:21|22|23|24|25|26))\//.test(pathname) ? 5 : 0);
 }
 
+/**
+ * Public research DIAGNOSTIC ONLY. Shares the exact path selection rule
+ * with the current collector, but does not start a Wayback request, add a
+ * seed, write evidence, or imply an original source ever entered the corpus.
+ */
+export function localTradeNewsUrlPassesCurrentPathPriority(
+  publicArticleUrl: string,
+  pathHints: readonly string[] = [],
+): boolean {
+  return pathPriority(publicArticleUrl, pathHints) > 0;
+}
+
 export function selectLocalTradeNewsCaptures(
   captures: readonly WaybackCapture[],
   input: { maxCaptures?: number; pathHints?: readonly string[] } = {},
