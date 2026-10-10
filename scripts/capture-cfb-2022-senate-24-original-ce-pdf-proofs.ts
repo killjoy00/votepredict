@@ -16,6 +16,7 @@ import { fetchCfbReportViewerText } from '../src/evidence/cfb-current-report-acq
 import {
   CFB_2022_SENATE_CE_PROOF_VERSION, CFB_2022_CE_INDEPENDENT_CALENDAR_URL,
   auditCfb2022OriginalCePdf, cfb2022OriginalCePdfTargets,
+  diagnoseCfb2022CeCalendar, diagnoseCfb2022OriginalCeHeader,
   verifyCfb2022CeCalendar, type Cfb2022PdfProofCapture,
 } from '../src/evidence/cfb-2022-senate-original-ce-pdf-proof.js';
 const ROOT='https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/';
@@ -152,13 +153,19 @@ async function main(){
       originalPdfBytes:calendar?.bytes??null,
       fetchedAt:calendar?.fetchedAt??null,
       calendarIdentityAndBothReportDatesVerified:calendarVerified,
+      originalDatedCalendarStructuralDiagnostic:diagnoseCfb2022CeCalendar(calendar),
       errorKind:calendarError,
       preprimaryDueOn:calendarVerified?'2022-07-25':null,
       preprimaryCoverageEndOn:calendarVerified?'2022-07-18':null,
       pregeneralDueOn:calendarVerified?'2022-10-31':null,
       pregeneralCoverageEndOn:calendarVerified?'2022-10-24':null,
     },
-    reports,
+    reports:reports.map(row=>({
+      ...row,
+      sourceFirstPageMetadataDiagnostic:pdfs.has(row.id)
+        ? diagnoseCfb2022OriginalCeHeader(targets.find(t=>t.id===row.id)!,pdfs.get(row.id)!.text)
+        : null,
+    })),
     results:{
       reportPdfBytesDownloaded:pdfs.size,
       reportHeadersAndIndependentCalendarAuthenticated:successful,
