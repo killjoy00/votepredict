@@ -94,7 +94,7 @@ test('rejects wrong office, district/year, unsupported segment and untrusted hos
 });
 
 test('malformed candidate registration values fail closed, never add false rows', () => {
-  const bad = source(64, 2022, ['Murphy, Erin::not-a-registration']);
+  const bad = source(64, 2022, ['Murphy, Erin::18443', 'O’Driscoll, Joan::not-a-registration']);
   assert.equal(bad.status, 'source_candidate_labels_invalid');
   assert.equal(bad.malformedCandidateLabels, 1);
   assert.deepEqual(bad.candidates, []);
