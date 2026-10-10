@@ -34,7 +34,7 @@ test('real acquisition provenance corpus has exactly four candidate issue page v
 test('the manifest never silently attributes opposing candidates or campaign years to historical senator',()=>{
   const wrong=structuredClone(ledger);
   wrong.candidates[3].candidateName='Louis McNutt';
-  assert.throws(()=>auditHistoricalCampaignExcerptLeadManifest(wrong),/Archived quote assigned to wrong candidate/);
+  assert.throws(()=>auditHistoricalCampaignExcerptLeadManifest(wrong),/Missing or misattributed|Archived quote assigned to wrong candidate/);
   const district=structuredClone(ledger);
   district.candidates[1].district='67';
   assert.throws(()=>auditHistoricalCampaignExcerptLeadManifest(district),/Archived quote assigned to wrong candidate/);
@@ -88,7 +88,7 @@ test('tampered archived page bytes or changed historical CDX digest are fatal, n
   };
   assert.equal(recheckOriginalHistoricalExcerpt(input).exactVisibleExcerptCrossChecked,true);
   assert.throws(()=>recheckOriginalHistoricalExcerpt({...input,
-    originalHtml:Buffer.from('altered source bytes')}),/SHA-256 mismatch/);
+    originalHtml:Buffer.from('<html><main>tampered content safely longer than 32 bytes</main></html>')}),/SHA-256 mismatch/);
   assert.throws(()=>recheckOriginalHistoricalExcerpt({...input,
     expectedHistoricalCdxPayloadDigestSha1Base32:'A'.repeat(32)}),/disagree/);
   assert.throws(()=>recheckOriginalHistoricalExcerpt({...input,
