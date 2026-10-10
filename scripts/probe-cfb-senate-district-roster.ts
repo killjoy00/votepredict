@@ -7,7 +7,9 @@ import { createHash } from 'node:crypto';
 
 const origin = 'https://register.cfb.mn.gov';
 const districts = ['6', '35', '64'] as const;
-const segments = [2022, 2024, 2026] as const;
+// 2020 is predecessor context needed to discover committees still active in 2021;
+// it does not extend the 2021-2025 finance evidence study window.
+const segments = [2020, 2022, 2024, 2026] as const;
 const pathRoot = '/reports-and-data/viewers/campaign-finance/districts-constitutional-offices/Senate/';
 
 function stripTags(text: string) {
