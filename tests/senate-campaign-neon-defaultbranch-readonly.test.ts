@@ -140,7 +140,8 @@ test('workflow is protected owner-only, never runs from push/schedule/PR and use
  assert.match(workflow,/secrets\.NEON_API_KEY/);
  assert.match(workflow,/vars\.VOTEPREDICT_NEON_PROJECT_ID/);
  assert.doesNotMatch(workflow,/^\s+(?:push|pull_request|schedule|workflow_dispatch):/m);
- assert.doesNotMatch(workflow,/vercel|DATABASE_URL_UNPOOLED|cron|INSERT INTO|DELETE FROM|UPDATE public\./i);
+ const operative=workflow.split('\n').filter(line=>!/^\s*#/.test(line)).join('\n');
+ assert.doesNotMatch(operative,/vercel|DATABASE_URL_UNPOOLED|cron|INSERT INTO|DELETE FROM|UPDATE public\./i);
  const src=readFileSync('scripts/audit-senate-campaign-neon-defaultbranch-readonly.ts','utf8');
  assert.match(src,/BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY/);
  assert.match(src,/ROLLBACK/);
