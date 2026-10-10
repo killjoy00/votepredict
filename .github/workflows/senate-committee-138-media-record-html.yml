@@ -1,0 +1,51 @@
+name: One-time 138 Senate source-hashed official media record HTML metadata
+
+# Strict original LRL HTML metadata GET only. Fail if response changes to
+# audio/video (no media download), never follow redirects or query private DB.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-138-media-record-html.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  inspect-official-archive-html:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        year: [2022, 2023, 2024, 2025]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Restore exact source-hashed original dated LRL media href proofs
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-${{ matrix.year }}-dated-media-href-review
+          run-id: 38079233118
+          github-token: ${{ github.token }}
+          path: artifacts/prior-archive-hrefs
+      - name: Inspect exact official archive record HTML, not audio or video media
+        run: |
+          node --import tsx scripts/review-senate-138-official-media-html.ts \
+            --year ${{ matrix.year }} \
+            --source-json artifacts/prior-archive-hrefs/senate-${{ matrix.year }}-media-hrefs.json \
+            --output artifacts/record-pages/senate-${{ matrix.year }}-media-record-html.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-${{ matrix.year }}-official-media-record-html-proof
+          path: artifacts/record-pages/senate-${{ matrix.year }}-media-record-html.json
+          retention-days: 30
+          if-no-files-found: error
