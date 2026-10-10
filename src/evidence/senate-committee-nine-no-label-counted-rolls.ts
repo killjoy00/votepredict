@@ -74,11 +74,16 @@ function committeeColumnNamedRows(region:string,base:number):NamedChoice[]{
   if(next<0||next>550)return [];
   const yea=rest.slice(0,next);
   const no=rest.slice(next).replace(/^\s*NAYS?\b/i,'');
+  // The caller slices this region *before* the "There being" tally:
+  // it is impossible to require that marker inside the pre-tally text.
+  // Bound to 600 characters and reject additional section headings.
   const stop=no.search(/\bthere\s+being\b/i);
-  if(stop<0||stop>600)return [];
-  const nay=no.slice(0,stop);
+  const nay=stop<0?no.trim():no.slice(0,stop).trim();
+  if(nay.length<4||nay.length>600 ||
+    /\b(?:motion\s+(?:failed|prevailed)|the\s+clerk\s+took\s+the\s+roll)\b/i.test(nay))
+    return [];
   const parse=(raw:string,side:Side):NamedChoice[]=>{
-    const rx=/\b([A-Z][A-Z'-]{2,25})\s*,\s*([A-Za-z][A-Za-z'-]{1,30})(?:\s*[-–—]\s*(?:Ranking\s+Member|Vice\s+Chair|Chair))?/g;
+    const rx=/\b([A-Z][A-Z'-]{2,25})\s*,\s*([A-Z][A-Za-z'-]{1,30}(?:\s+[A-Z][a-z'-]{1,30})?)(?:\s*[-–—]\s*(?:Ranking\s+Member|Vice\s+Chair|Chair))?(?=\s*(?:\n|$))/gm;
     return [...raw.matchAll(rx)].map(m=>({
       at:base+start+(m.index??0),name:normalizeMemberName(m[2]+' '+m[1]),side,
     }));
