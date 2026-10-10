@@ -1,0 +1,53 @@
+name: One-time 141 missing Senate Minutes alternate official source pages
+
+# Four independent year jobs inspect only date-filtered official LRL pages
+# from the exact previous 1,592-meeting index. No scheduler/dispatch, database,
+# originals OCR, inferential votes, model, forecast or 2027 work.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-141-missing-minutes-alternate-pages.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  triage-one-historical-year:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        year: [2022, 2023, 2024, 2025]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install immutable project dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Retrieve exact original electronic meeting census JSON
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2021-25-official-meeting-census
+          run-id: 38065594898
+          github-token: ${{ github.token }}
+          path: artifacts/original-official-index
+      - name: Audit original indexed missing minutes against official date pages
+        run: |
+          node --import tsx scripts/audit-senate-missing-minutes-alternate-pages.ts \
+            --year ${{ matrix.year }} \
+            --source-json artifacts/original-official-index/senate-2021-25-official-meeting-census.json \
+            --output artifacts/triage/senate-${{ matrix.year }}-missing-minutes-alternate-source.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-${{ matrix.year }}-missing-minutes-alternate-source-metadata
+          path: artifacts/triage/senate-${{ matrix.year }}-missing-minutes-alternate-source.json
+          if-no-files-found: warn
+          retention-days: 30
