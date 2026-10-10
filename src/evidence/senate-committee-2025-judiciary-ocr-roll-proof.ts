@@ -19,6 +19,19 @@ export const ORIGINAL_SENATE_JUDICIARY_MARCH12_2025 = {
 
 type OriginalAudit = ReturnType<typeof auditSenateCommitteeOriginalMinutePdf>;
 
+/** Reject malformed/duplicated OCR choices, including the same member on both sides. */
+export function originalSenateNamedChoicesDistinct(input: readonly {
+  normalizedName: string;
+  choice: string;
+}[], expectedCount: number): boolean {
+  if (input.length !== expectedCount) return false;
+  const names = input.map(v => v.normalizedName.trim().toLowerCase());
+  return names.every(Boolean)
+    && new Set(names).size === expectedCount
+    && input.every(v => v.choice === 'yea' || v.choice === 'nay');
+}
+
+
 /**
  * This is exact ORIGINAL PDF+OCR+observation identity verification, not
  * evidence that named votes were matched to memberships in production.
@@ -49,6 +62,7 @@ export function verifySenateJudiciaryMarch2025NamedOriginal(audit: OriginalAudit
     || roll.namedMemberChoicesInPdf !== expected.sourceNamedMemberChoices
     || roll.choiceIdentitySha256.length !== expected.sourceNamedMemberChoices
     || !roll.choiceIdentitySha256.every(v => /^[a-f0-9]{64}$/.test(v))
+    || new Set(roll.choiceIdentitySha256).size !== expected.sourceNamedMemberChoices
     || roll.finalPassageStanceInferred !== false
     || !audit.contextOnlyActions.every(v => v.individualVotesAvailable === false
       && v.finalPassageStanceInferred === false)) {
