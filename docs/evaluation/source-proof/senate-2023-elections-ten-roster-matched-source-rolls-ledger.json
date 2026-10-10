@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "senate-2023-elections-ten-source-roll-public-roster-immutable-ledger-v1",
+  "issue": 864,
+  "reviewedOn": "2026-10-10",
+  "exactOriginalSourceRollRun": 38084229868,
+  "original2023SourceArtifactId": 11681598339,
+  "originalSourceJsonSha256": "9f58c518ef440b7d7322aab1125cd97c1b91d5aa05566bb62f94df7b5eff04f7",
+  "sourceOnlyRosterReviewRun": 38085294202,
+  "sourceOnlyRosterReviewArtifactId": 11682685643,
+  "sourceOnlyRosterReviewZipSha256": "b50584671871d84c06b1a565c37fda3af44c0064a4a9a59aea49c975c55f7490",
+  "sourceOnlyRosterReviewJsonSha256": "c6cc3219e2ebfd3cda63f91712fa40e713fa01f08c15fccd6fb6c01b127f1671",
+  "sourceOriginalPdfs": 7,
+  "sourceProvisionalCandidateRolls": 10,
+  "sourceStatusEntries": 140,
+  "explicitNamedYeaNaySourceEntries": 133,
+  "nonvotingPassOrAbsentSourceEntries": 7,
+  "officialHistoricalCommitteeRosterSurnames": 14,
+  "sourceFingerprintMatchesAll14UniqueRostersInEachRoll": true,
+  "unknownSourceSurnameFingerprints": 0,
+  "duplicateOrContradictorySourceNames": 0,
+  "independentPublishedHearingRosterReferences": [
+    "https://www.senate.mn/schedule/hearing_minutes.html?hearing_id=17523&ls=93",
+    "https://www.senate.mn/schedule/hearing_minutes.html?hearing_id=17600&ls=93"
+  ],
+  "records": [
+    {
+      "hearingDate": "2023-01-17",
+      "sourceOffset": 1399,
+      "explicitOriginalNamedYeaNayChoiceCount": 13,
+      "explicitAbsentOrPassCount": 1,
+      "uniqueCommitteeRosterSurnameFingerprintCount": 14,
+      "noUnknownOrDuplicateCommitteeSurnames": true,
+      "corroboratedSpecificFeb14AndersonAbsent": false,
+      "eachOriginalCandidateStillProvisional": true
+    },
+    {
+      "hearingDate": "2023-02-07",
+      "sourceOffset": 1530,
+      "explicitOriginalNamedYeaNayChoiceCount": 14,
+      "explicitAbsentOrPassCount": 0,
+      "uniqueCommitteeRosterSurnameFingerprintCount": 14,
+      "noUnknownOrDuplicateCommitteeSurnames": true,
+      "corroboratedSpecificFeb14AndersonAbsent": false,
+      "eachOriginalCandidateStillProvisional": true
+    },
+    {
+      "hearingDate": "2023-02-07",
+      "sourceOffset": 2056,
+      "explicitOriginalNamedYeaNayChoiceCount": 14,
+      "explicitAbsentOrPassCount": 0,
+      "uniqueCommitteeRosterSurnameFingerprintCount": 14,
+      "noUnknownOrDuplicateCommitteeSurnames": true,
+      "corroboratedSpecificFeb14AndersonAbsent": false,
+      "eachOriginalCandidateStillProvisional": true
+    },
+    {
+      "hearingDate": "2023-02-07",
+      "sourceOffset": 2635,
+      "explicitOriginalNamedYeaNayChoiceCount": 14,
+      "explicitAbsentOrPassCount": 0,
+      "uniqueCommitteeRosterSurnameFingerprintCount": 14,
+      "noUnknownOrDuplicateCommitteeSurnames": true,
+      "corroboratedSpecificFeb14AndersonAbsent": false,
+      "eachOriginalCandidateStillProvisional": true
+    },
+    {
+      "hearingDate": "2023-02-14",
+      "sourceOffset": 2061,
+      "explicitOriginalNamedYeaNayChoiceCount": 13,
+      "explicitAbsentOrPassCount": 1,
+      "uniqueCommitteeRosterSurnameFingerprintCount": 14,
+      "noUnknownOrDuplicateCommitteeSurnames": true,
+      "corroboratedSpecificFeb14AndersonAbsent": true,
+      "eachOriginalCandidateStillProvisional": true
+    },
+    {
+      "hearingDate": "2023-02-14",
+      "sourceOffset": 3305,
+      "explicitOriginalNamedYeaNayChoiceCount": 13,
+      "explicitAbsentOrPassCount": 1,
+      "uniqueCommitteeRosterSurnameFingerprintCount": 14,
+      "noUnknownOrDuplicateCommitteeSurnames": true,
+      "corroboratedSpecificFeb14AndersonAbsent": true,
+      "eachOriginalCandidateStillProvisional": true
+    },
+    {
+      "hearingDate": "2023-02-21",
+      "sourceOffset": 2663,
+      "explicitOriginalNamedYeaNayChoiceCount": 13,
+      "explicitAbsentOrPassCount": 1,
+      "uniqueCommitteeRosterSurnameFingerprintCount": 14,
+      "noUnknownOrDuplicateCommitteeSurnames": true,
+      "corroboratedSpecificFeb14AndersonAbsent": false,
+      "eachOriginalCandidateStillProvisional": true
+    },
+    {
+      "hearingDate": "2023-03-02",
+      "sourceOffset": 1287,
+      "explicitOriginalNamedYeaNayChoiceCount": 14,
+      "explicitAbsentOrPassCount": 0,
+      "uniqueCommitteeRosterSurnameFingerprintCount": 14,
+      "noUnknownOrDuplicateCommitteeSurnames": true,
+      "corroboratedSpecificFeb14AndersonAbsent": false,
+      "eachOriginalCandidateStillProvisional": true
+    },
+    {
+      "hearingDate": "2023-03-07",
+      "sourceOffset": 1899,
+      "explicitOriginalNamedYeaNayChoiceCount": 13,
+      "explicitAbsentOrPassCount": 1,
+      "uniqueCommitteeRosterSurnameFingerprintCount": 14,
+      "noUnknownOrDuplicateCommitteeSurnames": true,
+      "corroboratedSpecificFeb14AndersonAbsent": false,
+      "eachOriginalCandidateStillProvisional": true
+    },
+    {
+      "hearingDate": "2023-03-14",
+      "sourceOffset": 1315,
+      "explicitOriginalNamedYeaNayChoiceCount": 12,
+      "explicitAbsentOrPassCount": 2,
+      "uniqueCommitteeRosterSurnameFingerprintCount": 14,
+      "noUnknownOrDuplicateCommitteeSurnames": true,
+      "corroboratedSpecificFeb14AndersonAbsent": false,
+      "eachOriginalCandidateStillProvisional": true
+    }
+  ],
+  "limitations": {
+    "originalMemberNamesAndFullTextNotCommitted": true,
+    "senatorFullLegalIdentityBeyondSurnameUncertified": true,
+    "dateSpecificAttendanceIndependentlyVerifiedForFeb7AndFeb14Only": true,
+    "motionIdentityAndDistinctnessNotFullyProven": true,
+    "senateCommitteeVotesNotFinalFloorPassage": true,
+    "approvedHistoricalDatabaseReadOrJoinNotPerformed": true,
+    "sourceProofNotAutomatedEvidenceImport": true,
+    "noProductionDBOrForecastModelServingScheduler2027Writes": true,
+    "keepIssue864Open": true
+  }
+}
