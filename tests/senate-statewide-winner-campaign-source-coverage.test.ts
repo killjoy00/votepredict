@@ -30,6 +30,12 @@ function verifiedSenatorsFixture(){
     district:x.district,
    }],
   })),
+  // The previously serving senator is in scope even though he LOST in 2020.
+  ...[{
+   officialName:'Jerry Relph',officialNameRaw:'Relph, Jerry',
+   officialSourceUrl:'https://www.lrl.mn.gov/legdb/senate_dir' as const,
+   senateServiceTerms:[{startsYear:2017,endsYear:2020,district:'14'}],
+  }],
  };
 }
 function fakeOriginal(year:2020|2022):HistoricalOriginalGeneralCensus{
@@ -63,8 +69,8 @@ function fakeOriginal(year:2020|2022):HistoricalOriginalGeneralCensus{
     campaignWebsiteOriginalSOSFilingField:null,eligibleForHistoricalPreVoteForecast:false as const,
    })),
    ...Array.from({length:extra},(_,i)=>({
-    electionYear:year,candidateName:'Mock Defeated Candidate '+i,
-    district:String((i%67)+1),generalOutcome:'nonwinner' as const,
+    electionYear:year,candidateName:year===2020&&i===0?'Jerry Relph':'Mock Defeated Candidate '+i,
+    district:year===2020&&i===0?'14':String((i%67)+1),generalOutcome:'nonwinner' as const,
     sourceEvidenceClass:'postvote_election_result_identity_only' as const,
     campaignWebsiteOriginalSOSFilingField:null,eligibleForHistoricalPreVoteForecast:false as const,
    })),
@@ -136,6 +142,23 @@ test('both state original result audits must reconcile all 67 exact winning name
  assert.throws(()=>auditStatewideSenateCampaignSourceRecovery({
   y2020:one,y2022:fakeOriginal(2022),
  }),/mismatched separately downloaded original SOS candidate/);
+});
+test('historically serving senator is retained when later losing an election; never-served opponents stay anonymous',()=>{
+ const yes=auditStatewideSenateCampaignSourceRecovery({
+  y2020:fakeOriginal(2020),y2022:fakeOriginal(2022),
+ },verifiedSenatorsFixture());
+ assert.equal(yes.totals.everServedSenatorsWhoLostAGeneralRaceAlsoIncluded,1);
+ assert.equal(yes.totals.generalCandidateNonwinnerObservationsWithoutIndependentSenateServiceExcluded,142);
+ assert.equal(yes.actualSenatorCampaignElectionsTheyLost.length,1);
+ const former=yes.actualSenatorCampaignElectionsTheyLost[0];
+ assert.equal(former.candidateName,'Jerry Relph');
+ assert.equal(former.campaignElectionOutcome,'lost_this_election_but_actual_senate_member');
+ assert.equal(former.officialLRLTerm,'2017-2020 SD14');
+ assert.equal(former.actuallyServedNextTermFromThisElection,false);
+ assert.equal(former.originalSOSGeneralCandidateResultRetrievedOn,'2026-10-10');
+ assert.equal(former.policyPositionSourceDate,null);
+ assert.equal(former.preElectionForecastEvidenceAdmitted,0);
+ assert.ok(!JSON.stringify(yes).includes('Mock Defeated Candidate'));
 });
 test('source audit fails closed on fake filing evidence, postvote forecast availability or missing original source',()=>{
  const y20=fakeOriginal(2020),y22=fakeOriginal(2022);
