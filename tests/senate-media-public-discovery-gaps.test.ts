@@ -78,7 +78,7 @@ test('matched brief and dated slug/day are alias CANDIDATES, not authenticated d
     brief('brief-senate-education','senate-education-bill'),
     dated('dated-senate-education','senate-education-bill'),
     dated('dated-other-slug','senate-budget-bill'),
-    brief('different-year-same-slug','senate-education-bill','2024-05-01'),
+    dated('different-year-same-slug','senate-education-bill','2024-05-01'),
   ];
   const result=diagnoseMediaPublicDiscoveryPaths(leads);
   assert.equal(result.possibleAliasPairs.length,1);
