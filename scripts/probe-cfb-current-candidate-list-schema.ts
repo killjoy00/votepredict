@@ -160,6 +160,8 @@ async function probeOfficialGridInfo(kind: string, cookie: string) {
     console.log(JSON.stringify({type:'official-current-list-grid-info',
       action:kind,status:r.status,sha256:hash(r.text),responseBytes:Buffer.byteLength(r.text),
       validInfoObject:!!info,rootKeys:fields,description:displayDescription,links:linkNames,
+      infoFields:info?Object.keys(info).slice(0,30):[],
+      gridColumnNames:obj && Array.isArray(obj.cols)?obj.cols.filter(x=>typeof x==='string').slice(0,80):[],
       emptyPayload:!obj || fields.length===0}));
   } catch(error) {
     console.log(JSON.stringify({type:'official-current-list-grid-info',action:kind,status:'fetch_failed',
@@ -196,15 +198,20 @@ async function main() {
   }
   // First is an existing known-good app action from the repository. The
   // candidate-registrations action is explicitly a HYPOTHESIS under test.
-  for (const action of ['candidate-reports','candidate-registrations']) {
+  for (const action of ['candidate-reports','recent-candidate-registrations']) {
     await probeAction(action,cookies);
   }
   const candidateListHypotheses = [
-    'candidate-reports', 'candidate-committees', 'candidates', 'candidate-list',
-    'candidate-registrations', 'registered-candidates', 'candidate-registered',
-    'candidate-reg', 'candidate-recent', 'recent-candidate-registrations',
-    'candidate-terminated', 'candidate-terminations', 'candidate-nonfilers',
-    'candidate-unfiled',
+    'recent-candidate-registrations',
+    'all-candidate-registrations',
+    'all-registered-candidate-committees',
+    'all-registered-candidates',
+    'candidate-registration-list',
+    'recently-terminated-candidate-registrations',
+    'recent-candidate-terminations',
+    'terminated-candidate-registrations',
+    'recent-terminated-candidate-registrations',
+    'candidate-reports-not-filed',
   ];
   for (const action of candidateListHypotheses) {
     await probeOfficialGridInfo(action,cookies);
