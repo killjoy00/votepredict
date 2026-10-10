@@ -8,7 +8,7 @@ import {
 
 type Input = Parameters<typeof verifySenateJudiciaryMarch2025NamedOriginal>[0];
 const expected=ORIGINAL_SENATE_JUDICIARY_MARCH12_2025;
-const tokens='abcdefgh'.split('').map(x => x.repeat(64));
+const tokens='abcdef01'.split('').map(x => x.repeat(64));
 function valid(): Input {
   return {
     document: {
