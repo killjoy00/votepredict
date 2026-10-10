@@ -122,7 +122,28 @@ export function auditCfb2021to24SenateViewerReferenceCounts(
   }
   const targets=targetSegments.flatMap(target=>([target.segmentEndYear-1,target.segmentEndYear] as const)
     .map(year=>({registrationNumber:target.registrationNumber,year})));
-  const inventory=auditCfbSenateCandidateReportReferences(targets,snapshots);
+  // CFB mixes candidate public-subsidy affidavits into reports_data. The
+  // official source explicitly identifies these as type=aoc, not a principal
+  // campaign committee report of receipts/expenditures (type=pcc).
+  // Retain exact non-report IDs in the audit, but NEVER count them as a filed
+  // campaign finance report, missing report, or malformed principal filing.
+  // Fail closed on a new document kind or unexpected affidavit identity.
+  const allowedAncillaryAocIds=new Set([
+    '2442:22:aoc:C:0:0', '2471:22:aoc:C:0:0',
+    '2491:22:aoc:C:0:0', '2495:22:aoc:C:0:0',
+  ]);
+  const ancillaryDocuments=snapshots.flatMap(snapshot=>snapshot.status==='acquired'
+    ? snapshot.references.filter(ref=>ref.type!=='pcc').map(ref=>
+      [ref.registrationNumber,ref.year,ref.type,ref.period,ref.se,ref.amendment].join(':'))
+    : []);
+  if(new Set(ancillaryDocuments).size!==ancillaryDocuments.length
+    || ancillaryDocuments.some(id=>!allowedAncillaryAocIds.has(id))) {
+    throw Error('Unreviewed non-pcc source viewer document; manual reclassification required');
+  }
+  const principalCampaignCommitteeSnapshots=snapshots.map(snapshot=>snapshot.status==='acquired'
+    ? {...snapshot,references:snapshot.references.filter(ref=>ref.type==='pcc')}
+    : snapshot);
+  const inventory=auditCfbSenateCandidateReportReferences(targets,principalCampaignCommitteeSnapshots);
   const allRows=inventory.filerYears;
   const reports=inventory.reports;
   const byYear=[2021,2022,2023,2024].map(year=>{
@@ -192,6 +213,14 @@ export function auditCfb2021to24SenateViewerReferenceCounts(
       referenceIdentityMalformedFilerYears:allRows.filter(r=>r.invalidReferences>0).length,
       actuallyFiledOriginalReportsVerified:null,
       historicCommitteeYearRequiredReportDenominator:null,
+    },
+    ancillaryDocumentsInCandidateReportsTab: {
+      sourceCategory:'aoc',
+      legalDocumentKind:'affidavit_of_contributions_for_public_subsidy',
+      officialStatute:'https://www.revisor.mn.gov/statutes/2022/cite/10A.323',
+      excludedFromPrincipalCommitteeReportVersionCounts:ancillaryDocuments.length,
+      exactAncillarySourceVersionIds:[...ancillaryDocuments].sort(),
+      excludedDoesNotProveAnyFilingExemption:true,
     },
     exclusions:{
       sourceViewer2020Only84NotProbed:true,
