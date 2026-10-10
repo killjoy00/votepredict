@@ -1,6 +1,10 @@
 import { createHash } from 'node:crypto';
 import type { PoolClient } from 'pg';
 import { pool } from '@/lib/db';
+import {
+  senateCommitteeDurableNaturalKey,
+  senateCommitteePersistedIdentityCompatible,
+} from './senate-committee-hearing-repair-plan';
 
 export type DurableEvidenceKind = 'direct_statement' | 'related_statement' | 'fact' | 'context' | 'inference';
 export type DurableEvidenceStance = 'supports' | 'opposes' | 'mixed' | 'neutral' | 'unclear';
@@ -324,7 +328,56 @@ export async function persistDurableEvidence(
       }
       const key = evidenceIngestionKey({ sourceUrl: source.sourceUrl, contentSha256: source.contentSha256, membershipId: membershipId ?? undefined, billId: billId ?? undefined, draft });
       const seriesKey = evidenceSeriesKey({ membershipId: membershipId ?? undefined, billId: billId ?? undefined, draft });
-      await client.query(`SELECT pg_advisory_xact_lock(hashtextextended($1, 0))`, [seriesKey ? `series:${seriesKey}` : `item:${key}`]);
+      // Prior Senate committee ingestion SHA includes null publishedAt. Reuse
+      // the *same original observation* across the hearing-date transition,
+      // under a stable lock, without silently rewriting its historic dates.
+      const committeeIdentity = senateCommitteeDurableNaturalKey({
+        sourceKind: source.sourceKind,
+        sourceDocumentId,
+        ingestionIdentityKey: draft.metadata?.ingestionIdentityKey,
+        evidenceKind: draft.kind,
+        membershipId,
+        billId,
+      });
+      if (source.sourceKind === 'senate_committee_minutes' && !committeeIdentity) {
+        throw new Error('Senate committee minute lacks stable observation identity; refusing duplicate risk');
+      }
+      const lockKey = committeeIdentity
+        ? 'committee:' + committeeIdentity
+        : seriesKey ? 'series:' + seriesKey : 'item:' + key;
+      await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [lockKey]);
+      if (committeeIdentity) {
+        const prior = await client.query<{
+          id: string; claim: string; stance: string | null;
+          extraction_method: string; extraction_version: string | null;
+          context_type: string | null; subtype: string | null;
+        }>(`
+          SELECT id::text, claim, stance, extraction_method, extraction_version,
+                 metadata->>'contextType' AS context_type,
+                 metadata->>'subtype' AS subtype
+            FROM evidence_items
+           WHERE source_document_id = $1::uuid
+             AND metadata->>'ingestionIdentityKey' = $2
+             AND membership_id IS NOT DISTINCT FROM $3::uuid
+             AND bill_id IS NOT DISTINCT FROM $4::uuid
+             AND evidence_kind = $5
+           LIMIT 2
+        `, [
+          sourceDocumentId, String(draft.metadata?.ingestionIdentityKey).trim(),
+          membershipId, billId, draft.kind,
+        ]);
+        if (prior.rows.length > 1) {
+          throw new Error('Duplicate Senate committee natural identities need manual correction');
+        }
+        if (prior.rows.length === 1) {
+          if (!senateCommitteePersistedIdentityCompatible(prior.rows[0]!, draft)) {
+            throw new Error('Senate committee source identity changed meaning; refusing implicit reuse');
+          }
+          evidenceItemIds.push(prior.rows[0]!.id);
+          reused += 1;
+          continue;
+        }
+      }
       const existing = await client.query<{ id: string }>(`SELECT id::text FROM evidence_items WHERE metadata->>'ingestionKey' = $1 LIMIT 1`, [key]);
       if (existing.rows[0]) {
         if (seriesKey) {
