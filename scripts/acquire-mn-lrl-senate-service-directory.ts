@@ -13,6 +13,10 @@ import {
   OFFICIAL_MN_SENATE_SWEARING_HISTORY_URL,
   parseOfficialMnSenateServiceDirectory,
 } from '../src/evidence/senate-official-ever-served-directory.js';
+import {
+  SOURCE_TARGETS,verifyOfficialSenatorExceptionalSource,
+  LRL_EXACT_SENATE_HISTORIC_IDENTITY_PROOFS_VERSION,
+} from '../src/evidence/senate-lrl-explicit-historic-person-proofs.js';
 async function main(){
   const i=process.argv.indexOf('--output-dir');
   if(i<0||!process.argv[i+1]||process.argv.length!==4)
@@ -58,6 +62,31 @@ async function main(){
     swornBody,{flag:'wx',mode:0o600});
   writeFileSync(join(root,'mn-lrl-official-senate-service-directory-audit.json'),
     JSON.stringify(report,null,2)+'\n',{flag:'wx',mode:0o600});
+  const biographyProofs=[];
+  for(const source of SOURCE_TARGETS){
+    const url='https://www.lrl.mn.gov/legdb/fulldetail?id='+source.lrlId;
+    const response=await fetch(url,{
+      method:'GET',redirect:'manual',signal:AbortSignal.timeout(18000),
+      headers:{accept:'text/html','user-agent':'VotePredict/2.0 issue-864-public-Senate-service-audit'},
+    });
+    if(response.status!==200||new URL(response.url).hostname!=='www.lrl.mn.gov'
+      ||!/text\/html/i.test(response.headers.get('content-type')??''))
+      throw Error('LRL explicit senator biography source unavailable: '+source.id);
+    const size=response.headers.get('content-length');
+    if(size&&Number(size)>2*1024*1024)
+      throw Error('Original LRL identity biography exceeds bounded size');
+    const original=Buffer.from(await response.arrayBuffer());
+    const proof=verifyOfficialSenatorExceptionalSource(
+      source.id,original,new Date().toISOString());
+    writeFileSync(join(root,'mn-lrl-senator-explicit-history-'+source.id+'.html'),
+      original,{flag:'wx',mode:0o600});
+    biographyProofs.push(proof);
+  }
+  writeFileSync(join(root,'mn-lrl-three-historical-senator-identity-proofs.json'),
+    JSON.stringify({
+      schema:LRL_EXACT_SENATE_HISTORIC_IDENTITY_PROOFS_VERSION,
+      proofs:biographyProofs,
+    },null,2)+'\n',{flag:'wx',mode:0o600});
   console.log('SENATOR-SERVICE-DIRECTORY '+JSON.stringify({
     sourceUrl:report.source.url,
     observedAt:report.source.observedAt,
@@ -66,6 +95,7 @@ async function main(){
     independentlyDocumentedEverServedSenators:report.senators.length,
     officialSwearingSourceSha256:report.supplementalSwearingSource?.sourceBytesSha256??null,
     specialSwearingOriginalBytesObservedAt:report.supplementalSwearingSource?.observedAt??null,
+    explicitFormerOrLaterSenatorBiographiesVerified:biographyProofs.length,
     pre2026CampaignEvidenceCertified:false,
     resultIsOnlySenatorServiceNotCandidateFiling:true,
   }));
