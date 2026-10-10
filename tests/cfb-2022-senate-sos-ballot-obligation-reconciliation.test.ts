@@ -88,8 +88,8 @@ test('match only independently identical first-name surname and Senate district,
   assert.equal(row?.statutoryPreGeneralReportingObligationVerified,false);
   assert.equal(row?.wasLegallyRegisteredOnRelevant2022ReportDueDate,null);
   assert.equal(row?.actual2022CampaignReportFilingVerified,false);
-  assert.equal(a.sourceCounts.2022StatutoryPrePrimaryFilingsLegallyOwedCount,null);
-  assert.equal(a.sourceCounts.2022StatutoryPreGeneralFilingsLegallyOwedCount,null);
+  assert.equal(a.sourceCounts['2022StatutoryPrePrimaryFilingsLegallyOwedCount'],null);
+  assert.equal(a.sourceCounts['2022StatutoryPreGeneralFilingsLegallyOwedCount'],null);
   assert.equal(a.sourceCounts.completeSenate2021to2025StatutoryDenominator,null);
   assert.equal(a.safeguards.noFuzzyCandidateJoins,true);
   assert.equal(a.safeguards.primaryResultAbsenceIsProofCandidateDidNotFile,false);
