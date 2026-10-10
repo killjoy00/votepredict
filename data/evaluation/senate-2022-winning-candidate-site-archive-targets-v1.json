@@ -1,0 +1,80 @@
+{
+  "schema": "senate-2022-winning-candidate-site-archive-probe-targets-v1",
+  "scope": {
+    "issue": 864,
+    "electionOn": "2022-11-08",
+    "sourceClass": "direct_candidate_owned_campaign_website_discovery",
+    "officialSos2022CandidateFilingWebsiteFieldProven": false,
+    "candidateIdentityMatchedToOfficial2022GeneralWinners": true,
+    "candidateWebsiteContentPublicBy2022IndependentlyEstablished": false,
+    "targetCount": 5,
+    "uniqueCandidateWinners": 4,
+    "campaignSiteHostInfoDiscoveredFromMutable2026Pages": true,
+    "historicalStatementsFromCurrentPageForecastEligible": false,
+    "productionAccessOrWrites": false
+  },
+  "targets": [
+    {
+      "id": "carla-nelson-2022-issues-v1",
+      "candidateName": "Carla Nelson",
+      "district": "24",
+      "url": "https://www.carlanelson.com/home-page/",
+      "pageKind": "candidate_site_2022_campaign_issue_page_variant",
+      "historicalPageSourceSnapshotProven": false
+    },
+    {
+      "id": "carla-nelson-2022-issues-v2",
+      "candidateName": "Carla Nelson",
+      "district": "24",
+      "url": "https://www.carlanelson.com/home-page-2/",
+      "pageKind": "candidate_site_2022_campaign_issue_page_variant",
+      "historicalPageSourceSnapshotProven": false
+    },
+    {
+      "id": "nicole-mitchell-2022-campaign-release",
+      "candidateName": "Nicole Mitchell",
+      "district": "47",
+      "url": "https://www.nicolemitchell.org/news-events/today-nicole-mitchell-confirmed-her-candidacy-in-the-new-senate-district-47-which-includes-woodbury-and-part-of-maplewood",
+      "pageKind": "candidate_site_dated_2022_election_press_release",
+      "historicalPageSourceSnapshotProven": false
+    },
+    {
+      "id": "rob-kupec-2022-campaign-site",
+      "candidateName": "Rob Kupec",
+      "district": "4",
+      "url": "https://www.kupec4mnsenate.com/our-campaign",
+      "pageKind": "candidate_site_campaign_page_mutable_may_include_post_election_text",
+      "historicalPageSourceSnapshotProven": false
+    },
+    {
+      "id": "michael-kreun-campaign-site",
+      "candidateName": "Michael Kreun",
+      "district": "32",
+      "url": "https://www.michaelformnsenate.com/",
+      "pageKind": "candidate_site_campaign_homepage_mutable_may_describe_2026",
+      "historicalPageSourceSnapshotProven": false
+    }
+  ],
+  "provenance": [
+    {
+      "type": "publisher_current_campaign_2022_page_variant_link",
+      "url": "https://www.carlanelson.com/home-page/",
+      "claim": "2022 wording on current page is research lead, not original archive capture"
+    },
+    {
+      "type": "candidate_site_current_dated_2022_press_release",
+      "url": "https://www.nicolemitchell.org/news-events/today-nicole-mitchell-confirmed-her-candidacy-in-the-new-senate-district-47-which-includes-woodbury-and-part-of-maplewood",
+      "claim": "current website displays Feb 23, 2022; historic original bytes not independently captured"
+    },
+    {
+      "type": "candidate_site_current_mutable",
+      "url": "https://www.kupec4mnsenate.com/our-campaign",
+      "claim": "page prominently contains post-election 2022 language, not automatically a pre-election stance"
+    },
+    {
+      "type": "candidate_site_current_mutable",
+      "url": "https://www.michaelformnsenate.com/",
+      "claim": "currently advertises 2026 reelection; cannot be backdated"
+    }
+  ]
+}
