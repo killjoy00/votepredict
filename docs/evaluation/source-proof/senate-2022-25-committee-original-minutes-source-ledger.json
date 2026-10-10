@@ -1,0 +1,273 @@
+{
+  "schemaVersion": "votepredict-senate-committee-original-minutes-source-proof-ledger-v1",
+  "issue": 864,
+  "recordedOn": "2026-10-10",
+  "scope": "Minnesota Senate 2021-2025 historical committee meeting / actions, available electronic sources 2022-2025 only",
+  "sourceAuthority": "Minnesota Legislative Reference Library",
+  "sourceHomepage": "https://www.lrl.mn.gov/minutes/",
+  "indexProof": {
+    "runId": 38065594898,
+    "artifactId": 11674762938,
+    "artifactZipSha256": "cd39d5b334a4917616d614a03ae8b2ec0776e70214ae111ac5b54f877e890c7b",
+    "payloadJsonSha256": "ed5fb31e17df7acc035997fa487e55d3156997ac05603fdd046bffa554395ee0",
+    "sourceIndexYears": [
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "all99CommitteeIndexPagesFetched": true,
+    "failedPages": 0,
+    "anomalies": 0,
+    "indexLimitations": {
+      "year2021": "official Senate committee minutes print-only: electronic meeting count unknown",
+      "year2022": "official print and electronic Senate minutes may differ",
+      "year2023To2025": "current electronic index is not certified full all-committee/all-action denominator",
+      "unlinkedMinutesAreNotProofNoVotes": true
+    }
+  },
+  "originalPdfProof": {
+    "runId": 38066441841,
+    "workflowUrl": "https://github.com/killjoy00/votepredict/actions/runs/38066441841",
+    "downloadedOfficialPdfLinks": 1452,
+    "successfullyParsedEmbeddedText": 1245,
+    "unresolvedTooLittleEmbeddedText": 207,
+    "unresolvedHttpDownloadFailures": 0,
+    "noOriginalPdfBodiesStored": true,
+    "recognitionIsParserCandidateObservationsOnly": true,
+    "namedIndividualChoiceNamesEmitted": false,
+    "noPrivateDbAccess": true
+  },
+  "years": [
+    {
+      "year": 2022,
+      "officialIndexSha256": "d8e39c4116a289adeab2b5b8a8bd97948005c35c1d6a15a225f453b6f2f47505",
+      "committeePages": 29,
+      "indexedMeetings": 337,
+      "meetingsWithMinutes": 325,
+      "meetingsWithoutMinutes": 12,
+      "originalPdfLinks": 325,
+      "embeddedTextParsed": 204,
+      "tooLittleEmbeddedText": 121,
+      "actionParser": {
+        "namedRolls": 17,
+        "countOnlyRolls": 7,
+        "namedMemberChoices": 160,
+        "voice": 49,
+        "unanimous": 0,
+        "resultOnly": 392,
+        "possibleUnparsedRollCallPdfCount": 17,
+        "possibleUnparsedVoicePdfCount": 28,
+        "noSupportedActionPdfCount": 89
+      },
+      "metadataProof": {
+        "artifactId": 11674729430,
+        "artifactZipSha256": "51512c8ba4479b844d1e50bd7d4b3fd9ff7c8f962c51db85cf93441cbbf6203d",
+        "jsonSha256": "23be57a94c4c9dcb3641dca450b335c81fca9fbd25867d94658d77937b847372"
+      },
+      "topCommitteeGaps": {
+        "unlinkedMeetings": [
+          [
+            "Environment and Natural Resources Finance",
+            6
+          ],
+          [
+            "Housing Finance and Policy",
+            2
+          ]
+        ],
+        "unparsedPdf": [
+          [
+            "Finance",
+            21
+          ],
+          [
+            "Agriculture and Rural Development Finance and Policy",
+            15
+          ],
+          [
+            "Energy and Utilities Finance and Policy",
+            15
+          ]
+        ]
+      }
+    },
+    {
+      "year": 2023,
+      "officialIndexSha256": "5b6c80cf063bef31d5428c4e8cc051fb048770d2e0d34e50285340f02b468d73",
+      "committeePages": 22,
+      "indexedMeetings": 517,
+      "meetingsWithMinutes": 453,
+      "meetingsWithoutMinutes": 64,
+      "originalPdfLinks": 454,
+      "embeddedTextParsed": 432,
+      "tooLittleEmbeddedText": 22,
+      "actionParser": {
+        "namedRolls": 22,
+        "countOnlyRolls": 11,
+        "namedMemberChoices": 197,
+        "voice": 704,
+        "unanimous": 1,
+        "resultOnly": 988,
+        "possibleUnparsedRollCallPdfCount": 74,
+        "possibleUnparsedVoicePdfCount": 18,
+        "noSupportedActionPdfCount": 110
+      },
+      "metadataProof": {
+        "artifactId": 11674568363,
+        "artifactZipSha256": "2974d3b0963498176e8d2c2a4bc458e7e714b5c1384f2903d8acc8d7bfc2e393",
+        "jsonSha256": "ee719ddc1b6ce7aad631d6d4d9ca635c49e607bb69cf5cdbd17c4725d4698974"
+      },
+      "topCommitteeGaps": {
+        "unlinkedMeetings": [
+          [
+            "Taxes",
+            37
+          ],
+          [
+            "Agriculture, Broadband and Rural Development",
+            22
+          ]
+        ],
+        "unparsedPdf": [
+          [
+            "Higher Education",
+            22
+          ]
+        ]
+      }
+    },
+    {
+      "year": 2024,
+      "officialIndexSha256": "85d1eb97efbc187d7e5e156da942ec5aa33bf9de2f903cdc50cb940dc8511de2",
+      "committeePages": 23,
+      "indexedMeetings": 300,
+      "meetingsWithMinutes": 258,
+      "meetingsWithoutMinutes": 42,
+      "originalPdfLinks": 258,
+      "embeddedTextParsed": 245,
+      "tooLittleEmbeddedText": 13,
+      "actionParser": {
+        "namedRolls": 25,
+        "countOnlyRolls": 24,
+        "namedMemberChoices": 228,
+        "voice": 562,
+        "unanimous": 0,
+        "resultOnly": 718,
+        "possibleUnparsedRollCallPdfCount": 26,
+        "possibleUnparsedVoicePdfCount": 10,
+        "noSupportedActionPdfCount": 53
+      },
+      "metadataProof": {
+        "artifactId": 11675315164,
+        "artifactZipSha256": "80c4e10fe9e85e23708565b74b3a53855934c6c2b1c804a4160fb4e47d1e14af",
+        "jsonSha256": "c461c82a8f3be64b863783b1c4d02bc2b055f37fc0ecb39ec542ee5560ec4085"
+      },
+      "topCommitteeGaps": {
+        "unlinkedMeetings": [
+          [
+            "Taxes",
+            23
+          ],
+          [
+            "State and Local Government and Veterans",
+            13
+          ]
+        ],
+        "unparsedPdf": [
+          [
+            "Higher Education",
+            11
+          ],
+          [
+            "Labor",
+            2
+          ]
+        ]
+      }
+    },
+    {
+      "year": 2025,
+      "officialIndexSha256": "0087c15db45af1d9051a25cd8735310fefd7eb2fe4a761b9d50d6ffebcdd6166",
+      "committeePages": 25,
+      "indexedMeetings": 438,
+      "meetingsWithMinutes": 415,
+      "meetingsWithoutMinutes": 23,
+      "originalPdfLinks": 415,
+      "embeddedTextParsed": 364,
+      "tooLittleEmbeddedText": 51,
+      "actionParser": {
+        "namedRolls": 25,
+        "countOnlyRolls": 4,
+        "namedMemberChoices": 270,
+        "voice": 204,
+        "unanimous": 5,
+        "resultOnly": 902,
+        "possibleUnparsedRollCallPdfCount": 24,
+        "possibleUnparsedVoicePdfCount": 16,
+        "noSupportedActionPdfCount": 120
+      },
+      "metadataProof": {
+        "artifactId": 11675014092,
+        "artifactZipSha256": "a436cf052e9e3747d48f5f7a2ea8c29bcd67b9bfc179b2b5ee884ec4fde67eab",
+        "jsonSha256": "e611f2b7a7225d7c62e8bbae960db60c50793ffca7cb3928e62d578a809c5dea"
+      },
+      "topCommitteeGaps": {
+        "unlinkedMeetings": [
+          [
+            "Energy, Utilities, Environment, and Climate",
+            17
+          ],
+          [
+            "Rules and Administration - Subcommittee on Committees",
+            5
+          ]
+        ],
+        "unparsedPdf": [
+          [
+            "Higher Education",
+            18
+          ],
+          [
+            "Taxes",
+            16
+          ],
+          [
+            "Judiciary and Public Safety",
+            14
+          ]
+        ]
+      }
+    }
+  ],
+  "totals": {
+    "committeePages": 99,
+    "indexedMeetings": 1592,
+    "meetingsWithMinutes": 1451,
+    "meetingsWithoutMinutes": 141,
+    "originalPdfLinks": 1452,
+    "embeddedTextParsed": 1245,
+    "tooLittleEmbeddedText": 207,
+    "candidateNamedRolls": 89,
+    "candidateCountOnlyRolls": 46,
+    "candidateNamedMemberChoices": 855,
+    "candidateVoiceActions": 1519,
+    "candidateUnanimousActions": 6,
+    "candidateResultOnlyActions": 3000,
+    "parsedPdfWithPossibleUnparsedRollSignal": 141,
+    "parsedPdfWithPossibleUnparsedVoiceSignal": 72,
+    "parsedPdfWithNoSupportedAction": 372
+  },
+  "limitations": {
+    "all2021To2025OfficialMeetings": null,
+    "all2021To2025RecordedVotes": null,
+    "all2021To2025NamedVotes": null,
+    "year2021SourcePrintOnly": true,
+    "year2022PrintElectronicGapUnresolved": true,
+    "parsedActionCountsDoNotCertifyVoteCompleteness": true,
+    "legacyPrivateDatabaseRowsNotExported": true,
+    "sourceToDatabaseReconciliationNotPerformed": true,
+    "noProductionDatabaseOrModelModification": true,
+    "issue864MustRemainOpen": true
+  }
+}
