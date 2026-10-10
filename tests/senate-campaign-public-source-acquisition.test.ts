@@ -6,7 +6,8 @@ import { mkdtempSync, readFileSync, readdirSync, rmSync, statSync } from 'node:f
 import { tmpdir } from 'node:os';
 import {join} from 'node:path';
 import {
-  acquisitionTargets, readBoundedPublicResponse,acquireSenateCampaignPublicSources,
+  acquisitionTargets, selectedWaybackHistoricalReplayTargets,
+  readBoundedPublicResponse,acquireSenateCampaignPublicSources,
 } from '../scripts/acquire-senate-campaign-public-archive-sources.js';
 
 const gen=(status:number,body:string,headers:Record<string,string>={}):Response=>
@@ -174,5 +175,52 @@ test('HTTP 200 whole-WARC fallback without 206 Content-Range is not historical p
     assert.equal(m.totals.locallyCrossCheckedWarcPagePayloads,0);
     assert.equal(m.commonCrawlWarcs.outcomes[0].originalCompressedWarcFile,null);
     assert.equal(m.totals.verifiedPreElectionCandidateAuthoredStatements,0);
+  }finally{rmSync(dir,{recursive:true,force:true});}
+});
+
+test('actual acquired Wayback CDX source pins 12 real pre-election candidates, excludes 2024 Dwight House cycle',()=>{
+  const targets=selectedWaybackHistoricalReplayTargets();
+  assert.equal(targets.length,12);
+  assert.deepEqual(
+    Object.fromEntries([...new Set(targets.map(x=>x.candidateName))].map(name=>
+      [name,targets.filter(t=>t.candidateName===name).length])),
+    {'Ann Johnson Stewart':3,'Keri Heintzeman':2,'Louis McNutt':2,
+      'Michael Holmstrom Jr':2,'Dwight Dorau':3});
+  assert.ok(targets.every(row=>!row.originalHistoricPageBytesVerified
+    &&!row.forecastEligible));
+  assert.ok(targets.every(row=>row.capturedAt.slice(0,4)===String(row.electionYear)));
+  assert.ok(targets.filter(row=>row.candidateName==='Dwight Dorau')
+    .every(row=>Date.parse(row.capturedAt)>=Date.parse('2025-07-30T00:00:00Z')));
+  assert.ok(targets.every(row=>Date.parse(row.capturedAt)
+    <Date.parse(row.generalElectionOn+'T00:00:00Z')));
+  assert.ok(targets.every(row=>row.archiveUrl==='https://web.archive.org/web/'
+    +row.timestamp+'id_/'+row.originalUrl));
+});
+test('one-shot replay preserves an actual HTTP 200 archive body, but rejects mismatch with historic CDX content digest',async()=>{
+  const dir=temp(),out=join(dir,'acquired');
+  try{
+    const laterHtml='<html><body>this is not the historical content</body></html>';
+    const mock=async(url:string|URL|Request):Promise<Response>=>{
+      const u=String(url);
+      if(u.startsWith('https://web.archive.org/web/'))
+        return gen(200,laterHtml,{'content-type':'text/html',
+          'memento-datetime':'Sun, 03 Aug 2025 20:43:02 GMT'});
+      if(u.includes('index.commoncrawl.org'))return gen(404,'No index');
+      if(u.includes('web.archive.org'))return gen(503,'Index unavailable');
+      return gen(404,'Publisher unavailable');
+    };
+    const m=await acquireSenateCampaignPublicSources(out,mock as typeof fetch);
+    assert.equal(m.totals.waybackPinnedReplaysAttempted,12);
+    assert.equal(m.totals.waybackReplayHttp200HtmlBodiesDownloaded,12);
+    assert.equal(m.totals.waybackReplayedBodyCdxDigestMatches,0);
+    assert.equal(m.totals.verifiedPreElectionCandidateAuthoredStatements,0);
+    assert.ok(m.waybackOriginalReplays.every(x=>x.http200HtmlReplayBytesRetrieved
+      &&!x.exactPayloadDigestMatchesCdx
+      &&!x.firstPublicByForAnySpecificIssueStatementProven
+      &&!x.forecastEligible));
+    const first=m.waybackOriginalReplays[0];
+    assert.ok(first.rawWaybackReplayFile);
+    assert.equal(readFileSync(join(out,first.rawWaybackReplayFile)).toString('utf8'),laterHtml);
+    assert.equal(first.response.responseHeaders?.mementoDatetime,'Sun, 03 Aug 2025 20:43:02 GMT');
   }finally{rmSync(dir,{recursive:true,force:true});}
 });
