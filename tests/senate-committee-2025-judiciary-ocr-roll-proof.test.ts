@@ -3,11 +3,12 @@ import test from 'node:test';
 import {
   ORIGINAL_SENATE_JUDICIARY_MARCH12_2025,
   verifySenateJudiciaryMarch2025NamedOriginal,
+  originalSenateNamedChoicesDistinct,
 } from '../src/evidence/senate-committee-2025-judiciary-ocr-roll-proof.js';
 
 type Input = Parameters<typeof verifySenateJudiciaryMarch2025NamedOriginal>[0];
 const expected=ORIGINAL_SENATE_JUDICIARY_MARCH12_2025;
-const token='a'.repeat(64);
+const tokens='abcdefgh'.split('').map(x => x.repeat(64));
 function valid(): Input {
   return {
     document: {
@@ -24,7 +25,7 @@ function valid(): Input {
       externalKey:expected.voteEventExternalKey,
       individualVotesAvailable:true,
       yeaCount:5,nayCount:3,namedMemberChoicesInPdf:8,
-      choiceIdentitySha256:Array(8).fill(token),
+      choiceIdentitySha256:[...tokens],
       finalPassageStanceInferred:false,
     }],
     contextOnlyActions:[
@@ -78,6 +79,7 @@ test('named Senator roll requires explicit 8 hashed choices, consistent yea/nay 
     (x:Input)=>{x.voteObservations[0]!.namedMemberChoicesInPdf=7;},
     (x:Input)=>{x.voteObservations[0]!.choiceIdentitySha256.pop();},
     (x:Input)=>{x.voteObservations[0]!.choiceIdentitySha256[0]='unhashed_member';},
+    (x:Input)=>{x.voteObservations[0]!.choiceIdentitySha256[0]=tokens[1]!;},
     (x:Input)=>{x.voteObservations[0]!.individualVotesAvailable=false;},
     (x:Input)=>{x.voteObservations[0]!.finalPassageStanceInferred=true;},
     (x:Input)=>{x.contextOnlyActions[0]!.individualVotesAvailable=true;},
@@ -88,4 +90,18 @@ test('named Senator roll requires explicit 8 hashed choices, consistent yea/nay 
     const x=valid();edit(x);
     assert.throws(()=>verifySenateJudiciaryMarch2025NamedOriginal(x),/missing or unsafe|parser yield changed/);
   }
+});
+
+test('original named-senator OCR observation refuses duplicated senator surname on both YEA and NAY sides',()=>{
+  const names=['Johnson','Marty','Eichorn','Limmer','Murphy','Rest','Pappas','Champion']
+    .map((name,i)=>({normalizedName:name.toLowerCase(),choice:i<5?'yea':'nay'}));
+  assert.equal(originalSenateNamedChoicesDistinct(names,8),true);
+  assert.equal(originalSenateNamedChoicesDistinct(names.slice(0,7),8),false);
+  const conflict=names.map(row=>({...row}));
+  conflict[7]!.normalizedName=conflict[0]!.normalizedName;
+  conflict[7]!.choice='nay';
+  assert.equal(originalSenateNamedChoicesDistinct(conflict,8),false);
+  const wrong=names.map(row=>({...row}));
+  wrong[0]!.choice='abstain';
+  assert.equal(originalSenateNamedChoicesDistinct(wrong,8),false);
 });
