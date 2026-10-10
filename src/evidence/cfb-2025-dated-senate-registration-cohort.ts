@@ -43,7 +43,7 @@ export function selectCfb2025DatedSenateRegistrationTargets(
     const match = /^(\d{3,8})\|(\d{4}-\d{2}-\d{2})\|(\d{4}-\d{2}-\d{2})?$/.exec(line.trim());
     if (!match || !dateValid(match[2]!) ||
       (match[3] && !dateValid(match[3])) || (match[3] && match[3] < match[2]!) ||
-      match[1]!<=previousId || dated.has(match[1]!)) throw Error('Invalid/deduped current-registry source row');
+      match[1]! <= previousId || dated.has(match[1]!)) throw Error('Invalid/deduped current-registry source row');
     previousId=match[1]!;
     dated.set(match[1]!,{registered:match[2]!,terminated:match[3]??null});
   }
