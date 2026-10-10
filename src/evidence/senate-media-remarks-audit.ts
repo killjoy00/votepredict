@@ -108,7 +108,7 @@ function parseArchive(url: string | null, original: string | null) {
     + 'T' + d.slice(8, 10) + ':' + d.slice(10, 12) + ':' + d.slice(12, 14) + 'Z';
   return instant(date) === null ? null : date;
 }
-function contextIssues(row: SenateMediaContextExport): string[] {
+export function senateMediaContextProvenanceIssues(row: SenateMediaContextExport): string[] {
   const issues: string[] = [];
   const seed = row.seedId && SEEDS.get(row.seedId);
   if (!seed || row.publisher !== seed.publisher) issues.push('unknown_publisher_or_seed');
@@ -252,7 +252,7 @@ export function auditSenateMediaRemarks(input: {
     snapshotsByDocument.set(item.sourceDocumentId, item);
   }
   const invalidSources = new Map<string, string[]>();
-  for (const [id, row] of byDocument) invalidSources.set(id, contextIssues(row));
+  for (const [id, row] of byDocument) invalidSources.set(id, senateMediaContextProvenanceIssues(row));
   const classified: Array<{
     sourceDocumentId: string; membershipId: string | null; senatorName: string | null;
     issueCategory: string | null; disposition: SenateMediaReviewDisposition;
