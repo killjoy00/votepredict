@@ -217,6 +217,49 @@ export function auditStatewideSenateCampaignSourceRecovery(
  // Unknown service is excluded, NOT asserted to be a failed candidate.
  const confirmed=rows.filter(x=>x.officialSenateServiceVerified);
  const notVerified=rows.length-confirmed.length;
+ // A senator is a person who ACTUALLY served, not just someone who won.
+ // This includes, for example, a formerly serving senator who later LOST an
+ // election. SOS original 2020/22 nonwinner rows are eligible for this
+ // person-level audit ONLY when a separate LRL service record matches.
+ // Never emit any never-served (or unverified) candidate name.
+ const everServedNonwinningGeneralSenatorCampaigns=[];
+ let unverifiedNonwinnerObservations=0;
+ for(const originalCensus of [census?.y2020,census?.y2022]){
+   if(!originalCensus)continue;
+   const year=Number(originalCensus.officialGeneralElectionDate.slice(0,4));
+   for(const entry of originalCensus.candidates.filter(x=>x.generalOutcome==='nonwinner')){
+     const service=officialDirectory
+       ?validateActualSenateServiceForElection(officialDirectory,
+          entry.candidateName,entry.district,year)
+       :{status:'not_yet_verified' as const,officialName:null,term:null,
+          serviceForThisElectionFollowingYearVerified:false,officialServiceSource:null};
+     if(service.status!=='verified_senate_service'){
+       unverifiedNonwinnerObservations++;
+       continue;
+     }
+     everServedNonwinningGeneralSenatorCampaigns.push({
+       candidateName:entry.candidateName,
+       district:entry.district,
+       electionYear:year,
+       electionOn:originalCensus.officialGeneralElectionDate,
+       campaignElectionOutcome:'lost_this_election_but_actual_senate_member',
+       senateServiceProvedBeforeOrAfterElection:true,
+       actuallyServedNextTermFromThisElection:false,
+       officialLRLName:service.officialName,
+       officialLRLTerm:service.term,
+       originalLRLServiceSource:service.officialServiceSource,
+       originalServiceSourceObservedOn:
+         service.officialServiceSource===officialDirectory?.supplementalSwearingSource?.url
+           ?officialDirectory?.supplementalSwearingSource?.observedAt
+           :officialDirectory?.source.observedAt,
+       originalSOSGeneralCandidateResultRetrievedOn:SENATOR_ONLY_COVERAGE_OBSERVATION_DATE,
+       policyPositionSourceDate:null,
+       candidateCampaignIssuePositionSourceAuthenticated:false,
+       preElectionForecastEvidenceAdmitted:0,
+     });
+   }
+ }
+
  const cohorts=(['2020_general','2022_general','2024_special','2025_special'] as const)
   .map(cohort=>{
    const x=confirmed.filter(row=>row.electionCohort===cohort);
@@ -261,6 +304,9 @@ export function auditStatewideSenateCampaignSourceRecovery(
    independentStatewideLegislatorMembershipRosterReconciled:Boolean(officialDirectory),
    statewideMemberYearCompletenessCertified:false,
    onlyVerifiedEverServedPeopleIncluded:true,
+   previousOrLaterSenateServiceQualifiesEvenWhenCandidateLost:true,
+   aLostElectionNeverDisqualifiesEarlierOrLaterActualSenateService:true,
+   notAllGeneralElectionLosersAreNonSenators:true,
    officialLRLSenateServiceDirectorySource:officialDirectory?.source.url??null,
    officialLRLSenateServiceDirectoryRetrievedAt:officialDirectory?.source.observedAt??null,
    officialLRLSpecialSwearingHistoryOriginalSha256:
@@ -281,6 +327,10 @@ export function auditStatewideSenateCampaignSourceRecovery(
    electionWinnerObservationsUsedOnlyForSourceJoin:rows.length,
    namedSenatorOnlyElectionObservationsConfirmedByLRL:confirmed.length,
    electionWinnersWithoutIndependentLRLServiceMatchExcluded:notVerified,
+   everServedSenatorsWhoLostAGeneralRaceAlsoIncluded:
+     everServedNonwinningGeneralSenatorCampaigns.length,
+   generalCandidateNonwinnerObservationsWithoutIndependentSenateServiceExcluded:
+     unverifiedNonwinnerObservations,
    original2020And2022WinnerObservationsUsedInternallyForJoin:134,
    special2024And2025WinnerObservationsUsedInternallyForJoin:5,
    originalGovernmentCensusesReconciledInThisRun:originalCensusProvided?2:0,
@@ -295,6 +345,7 @@ export function auditStatewideSenateCampaignSourceRecovery(
    statementsAdmittedToForecast:0,
   },
   cohorts,senatorElectionObservations:confirmed,
+  actualSenatorCampaignElectionsTheyLost:everServedNonwinningGeneralSenatorCampaigns,
   gaps:[
    '139 are winning election observations, not distinct people or a 2021-2025 serving Senate roster.',
    '2020 and 2022 general results are post-vote identities and omit primary-only or withdrawn filing candidates.',
