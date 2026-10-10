@@ -51,7 +51,7 @@ test('actual Senate service requires name, district, 2020/22/24/25 term year; ea
  for(const [name,dist,year] of [
   ['Dan Bohmer','4',2022],
   ['Ann Johnson Stewart','6',2024],
-  ['Bruce Anderson','29',2025],
+  ['Bruce Anderson','30',2025],
  ] as const){
   assert.equal(validateActualSenateServiceForElection(official,name,dist,year)
    .status,'not_yet_verified');
