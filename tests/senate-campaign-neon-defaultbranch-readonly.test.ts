@@ -65,7 +65,7 @@ test('existing Neon default-branch named senator reconciliation remains a bounde
      if(sql.includes('to_regclass'))
        return {rows:(params?.[0] as string[]).map(table=>({table_name:table,present:true,readable:true}))};
      if(sql.includes('GROUP BY m.id'))return {rows:[
-       {membershipId:uuids[0],senatorName:'Ann Johnson Stewart',sessionSlug:'2025-2026',
+       {membershipId:uuids[0],senatorName:'Ann M Johnson Stewart',sessionSlug:'2025-2026',
         district:'45',startsOn:'2025-01-07',endsOn:null,party:'DFL',recordedIssuePositionItems:2},
        {membershipId:uuids[1],senatorName:'Keri Heintzeman',sessionSlug:'2025-2026',
         district:'6',startsOn:'2025-05-01',endsOn:null,party:'R',recordedIssuePositionItems:1},
@@ -93,6 +93,7 @@ test('existing Neon default-branch named senator reconciliation remains a bounde
  const phases:string[]=[];
  const report=await collectExistingCampaignNeonRows(CONFIG,fakeNeon,fakePool,s=>phases.push(s));
  assert.equal(report.joined.totals.uniquelyJoinedRestrictedSandboxMemberships,3);
+ assert.equal(report.joined.sourceRows[0].membershipNameMatchBasis,'documented_2025_sd45_middle_initial_alias');
  assert.equal(report.joined.totals.loserIssueExcerptLeads,3);
  assert.equal(report.joined.totals.restrictedSandboxExistingExactExcerptSpanHits,1);
  assert.equal(report.exported.members.length,3);

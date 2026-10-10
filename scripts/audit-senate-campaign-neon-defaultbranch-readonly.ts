@@ -11,7 +11,7 @@ import original from '../data/evaluation/senate-authenticated-campaign-issue-exc
 import outcomeJson from '../data/evaluation/senate-targeted-official-general-election-outcomes-2022-25-v1.json' with {type:'json'};
 import {strictCandidateKey} from '../src/evidence/sos-senate-historical-candidate-inventory.js';
 import {
-  reconcileHistoricalCampaignWinnerExcerpts,
+  reconcileHistoricalCampaignWinnerExcerpts,retrospectiveWinningSenateMemberKey,
   type RestrictedMemberExport,type OutcomeManifest,
 } from '../src/evidence/senate-campaign-winner-membership-reconciliation.js';
 import {discoverExistingVotePredictNeonConnection} from '../src/operations/senate-media-neon-api-readonly.js';
@@ -136,7 +136,7 @@ export async function collectExistingCampaignNeonRows(
         if(typeof row.membershipId!=='string'||typeof row.senatorName!=='string'
           ||typeof row.sessionSlug!=='string'||typeof row.district!=='string')
           throw Error('Invalid source membership row');
-        const k=strictCandidateKey(row.senatorName)+'|'+row.district;
+        const k=retrospectiveWinningSenateMemberKey(row.senatorName,row.district,'2025-2026');
         if(elected.has(k))memberToWinner.set(row.membershipId,k);
         return {
           membershipId:row.membershipId,senatorName:row.senatorName,
