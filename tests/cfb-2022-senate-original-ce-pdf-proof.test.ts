@@ -35,7 +35,7 @@ function report(target=targets[0]!):Cfb2022PdfProofCapture{
       'Senate District '+target.district,
       'Registration Number: '+target.reg,
       'Period Covered: 1/1/2022 through '+end,
-      'Received by the Board August 1, 2022',
+      'Received by the Board '+(target.period==='E'?'November 1, 2022':'August 1, 2022'),
     ].join('\n'),
   };
 }
