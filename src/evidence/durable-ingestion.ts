@@ -4,7 +4,7 @@ import { pool } from '@/lib/db';
 import {
   senateCommitteeDurableNaturalKey,
   senateCommitteePersistedIdentityCompatible,
-} from './senate-committee-hearing-repair-plan.js';
+} from './senate-committee-hearing-repair-plan';
 
 export type DurableEvidenceKind = 'direct_statement' | 'related_statement' | 'fact' | 'context' | 'inference';
 export type DurableEvidenceStance = 'supports' | 'opposes' | 'mixed' | 'neutral' | 'unclear';
