@@ -75,7 +75,7 @@ function isoDate(d:string):number{
   return ms;
 }
 function isoCapture(date:string):number{
-  if(!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.000)?Z$/.test(date))
+  if(!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{3})?Z$/.test(date))
     throw Error('Capture UTC timestamp malformed');
   const ms=Date.parse(date);
   if(!Number.isFinite(ms)||new Date(ms).toISOString().slice(0,19)!==date.slice(0,19))
@@ -191,7 +191,7 @@ export function reconcileHistoricalCampaignWinnerExcerpts(
     ||ledger.candidates.length!==4)
     throw Error('Unrecognized or promoted original issue excerpt ledger');
   if(exported)memberExportValid(exported);
-  const prior=priorSeeds as SenateSosSeedManifest;
+  const prior=priorSeeds as unknown as SenateSosSeedManifest;
   const winnerSeed=new Set(prior.winners.map(w=>key(w.candidateName,w.district)));
   const membershipMap=new Map<string,ExportMember[]>();
   for(const m of exported?.members??[]){
