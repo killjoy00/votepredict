@@ -1,0 +1,54 @@
+name: One-time final 2023-24 Senate original scanned minutes OCR catchup
+
+# This pushes source-only once when this workflow file first enters main.
+# Bounded 17 original 2023 + 8 original 2024 LRL scanned minutes.
+# Never scheduled/dispatchable; no production secrets, DB, model, or 2027.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-2023-24-remaining-scans-ocr.yml
+
+permissions:
+  contents: read
+
+jobs:
+  one-year-scanned-original-ocr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        year: [2023, 2024]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install immutable project dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Verify bounded page rasterizer and OCR worker
+        run: |
+          if ! command -v pdfinfo >/dev/null || ! command -v pdftoppm >/dev/null || ! command -v tesseract >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+          fi
+          pdfinfo -v
+          pdftoppm -v
+          tesseract --version
+      - name: Independently OCR remaining audited scanned originals for this year
+        env:
+          VOTEPREDICT_SENATE_COMMITTEE_OCR: "1"
+        run: |
+          node --import tsx scripts/probe-senate-committee-2023-24-remaining-scans.ts \
+            --year ${{ matrix.year }} \
+            --output artifacts/senate-committee-${{ matrix.year }}-remaining-scanned-originals.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-committee-${{ matrix.year }}-remaining-scanned-originals-metadata
+          path: artifacts/senate-committee-${{ matrix.year }}-remaining-scanned-originals.json
+          if-no-files-found: warn
+          retention-days: 30
