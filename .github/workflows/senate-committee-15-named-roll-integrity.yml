@@ -1,0 +1,49 @@
+name: One-time Senate OCR named-roll original-source integrity review
+
+# Exactly 10 original Senate scanned Minutes PDFs, 15 prior parser named
+# rolls/134 member choice tokens. Strict source/text SHA, no DB/secrets/models.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-15-named-roll-integrity.yml
+
+permissions:
+  contents: read
+
+jobs:
+  original-ocr-named-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        year: [2022, 2025]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify bounded original Senate OCR tools
+        run: |
+          if ! command -v pdfinfo >/dev/null || ! command -v pdftoppm >/dev/null || ! command -v tesseract >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+          fi
+      - name: Reverify 10 original OCR PDFs and 15 hashed candidate recorded rolls
+        env:
+          VOTEPREDICT_SENATE_COMMITTEE_OCR: "1"
+        run: |
+          node --import tsx scripts/check-senate-15-named-ocr-originals.ts \
+            --year ${{ matrix.year }} \
+            --output artifacts/review/senate-${{ matrix.year }}-ocr-named-integrity.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-${{ matrix.year }}-ocr-named-original-source-integrity
+          path: artifacts/review/senate-${{ matrix.year }}-ocr-named-integrity.json
+          retention-days: 30
+          if-no-files-found: warn
