@@ -150,8 +150,9 @@ export async function collectExistingCampaignNeonRows(
       const evidence=es.rows.map((row:Record<string,unknown>)=>{
         if(typeof row.membershipId!=='string'||typeof row.sourceUrl!=='string')
           throw Error('Invalid bounded historical source row');
+        const membershipId=row.membershipId as string;
         const candidate=known.find(c=>
-          strictCandidateKey(c.candidateName)+'|'+c.district===memberToWinner.get(row.membershipId));
+          strictCandidateKey(c.candidateName)+'|'+c.district===memberToWinner.get(membershipId));
         const comparison=typeof row.privateExcerptForInMemoryComparisonOnly==='string'
           ?row.privateExcerptForInMemoryComparisonOnly.replace(/\s+/g,' ').toLowerCase():'';
         // Never persist or log database excerpt text or original claim.
