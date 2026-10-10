@@ -87,6 +87,7 @@ function digest(value: Uint8Array): string {
 function plain(value: string): string {
   return value.replace(/&nbsp;|&#160;/gi, ' ')
     .replace(/&amp;/gi, '&').replace(/&quot;/gi, '"')
+    .replace(/&ldquo;/gi, '“').replace(/&rdquo;/gi, '”')
     .replace(/&apos;|&#39;/gi, "'")
     .replace(/&lt;/gi, '<').replace(/&gt;/gi, '>')
     .replace(/&#(\d+);/g, (_, n: string) => String.fromCodePoint(Number(n)))
@@ -188,6 +189,10 @@ function quoteIssues(
         || passage.indexOf(quote) - passage.indexOf(cue) > 260) {
       issues.push('quote_or_attribution_cue_not_contiguous');
     }
+    // A reporter's paraphrase is not a verbatim senator quotation.
+    const quotedSpans = [...passage.matchAll(/["“]([^"”]+)["”]/g)];
+    if (!quote || !quotedSpans.some(match => plain(match[1]).includes(quote)))
+      issues.push('claimed_quote_not_delimited_as_direct_speech');
     // A surname alone, anonymous caption or "said they" cannot prove a speaker.
     if (member) {
       const last = member.senatorName.trim().split(/\s+/).at(-1)?.toLowerCase() ?? '';
@@ -260,6 +265,11 @@ export function auditSenateMediaRemarks(input: {
   for (const review of reviews) {
     const row = byDocument.get(review.sourceDocumentId);
     if (!row) throw Error('Media review references unknown or out-of-scope source');
+    if (!(['exact_named_quote', 'contextual_mention', 'speaker_ambiguous', 'source_unavailable'] as unknown[])
+      .includes(review.disposition) || !review.reviewedBy?.trim()
+      || instant(review.reviewedAt) === null) {
+      throw Error('Invalid disposition or missing human media review identity/time');
+    }
     const key = review.sourceDocumentId + '|' + (review.membershipId ?? '')
       + '|' + (review.exactQuote ?? '') + '|' + review.disposition;
     if (reviewKeys.has(key)) throw Error('Duplicate media review verdict');
