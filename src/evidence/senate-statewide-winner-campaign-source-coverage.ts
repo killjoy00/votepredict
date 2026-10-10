@@ -7,8 +7,13 @@ import seeds from '../../data/evaluation/senate-sos-campaign-website-seeds-2021-
 import original from '../../data/evaluation/senate-authenticated-campaign-issue-excerpt-leads-2024-25-v1.json' with {type:'json'};
 import survey from '../../data/evaluation/senate-2022-candidate-survey-original-quote-leads-v1.json' with {type:'json'};
 import {strictCandidateKey} from './sos-senate-historical-candidate-inventory.js';
+import {
+  validateActualSenateServiceForElection,
+  type AuditedOfficialSenateDirectory,
+  SENATOR_ONLY_COVERAGE_OBSERVATION_DATE,
+} from './senate-official-ever-served-directory.js';
 
-export const STATEWIDE_SENATE_CAMPAIGN_SOURCE_AUDIT_VERSION='senate-2021-25-election-winner-campaign-source-coverage-v1' as const;
+export const STATEWIDE_SENATE_CAMPAIGN_SOURCE_AUDIT_VERSION='senate-2021-25-ever-served-person-campaign-source-coverage-v2' as const;
 type Cohort='2020_general'|'2022_general'|'2024_special'|'2025_special';
 type OrigCandidate={
  electionYear:number;district:string;candidateName:string;
@@ -94,6 +99,7 @@ function validateOriginalGeneralCensus(
 }
 export function auditStatewideSenateCampaignSourceRecovery(
  census?:{y2020?:HistoricalOriginalGeneralCensus;y2022?:HistoricalOriginalGeneralCensus},
+ officialDirectory?:AuditedOfficialSenateDirectory,
 ){
  if(seeds.schema!=='mn-sos-senate-candidate-website-seeds-2021-25-v1'
    ||seeds.scope.targetCalendarYears.join(',')!=='2021,2022,2023,2024,2025'
@@ -151,8 +157,29 @@ export function auditStatewideSenateCampaignSourceRecovery(
       survey.sources.find(src=>src.id===x.sourceId)!.district,2022)===candidate);
   if(publisherQuotes.some(x=>x.historicalPublicByAt!==null||x.eligibleForForecast!==false))
     throw Error('Unverified publisher quote backdated to historical source');
+  const service=officialDirectory
+    ?validateActualSenateServiceForElection(officialDirectory,w.candidateName,w.district,meta.year)
+    :{status:'not_yet_verified' as const,officialName:null,term:null};
   return{
     candidateName:w.candidateName,district:w.district,
+    officialSenateServiceVerified:service.status==='verified_senate_service',
+    officialSenateServiceVerifiedName:service.officialName,
+    officialSenateServiceTerm:service.term,
+    officialSenateServiceSource:service.status==='verified_senate_service'
+      ?officialDirectory!.source.url:null,
+    officialSenateServiceDirectoryObservedAt:service.status==='verified_senate_service'
+      ?officialDirectory!.source.observedAt:null,
+    // ALWAYS distinguish the time we observed these current bytes from
+    // a historic archived page's demonstrable public-by timestamp.
+    officialElectionResultOriginalBytesRetrievedOn:SENATOR_ONLY_COVERAGE_OBSERVATION_DATE,
+    candidateAuthoredIssueFirstAttestedPublicBy:page?.originalHtmlSource.sourceArchiveCaptureAt
+      ??(publisherQuotes.length?SENATOR_ONLY_COVERAGE_OBSERVATION_DATE:null),
+    candidateAuthoredIssueDateEvidenceBasis:page?'independently_archived_original_campaign_html_sha1_sha256':
+      publisherQuotes.length?'2026_observed_publisher_respondent_text_only':
+      'no_attested_candidate_issue_page',
+    candidateAuthoredIssueTextRetrievedOn:page||publisherQuotes.length
+      ?SENATOR_ONLY_COVERAGE_OBSERVATION_DATE:null,
+    candidateAuthoredIssueActuallyPublishedEarlierThanFirstAttestationProven:false,
     electionCohort:meta.cohort,electionYear:meta.year,
     generalElectionDay:source.electionOn,resultSourceUrl:source.url,
     followingSessionCandidateCohort:meta.followingSession,
@@ -179,11 +206,19 @@ export function auditStatewideSenateCampaignSourceRecovery(
     immediateForecastEvidenceAdmissions:0,
   };
  });
+ // SENATOR-ONLY RULE: election winner status is not proof of being
+ // sworn into the Senate. Never expose a candidate by name in this report
+ // absent independently verified official LRL Senate service, district/year.
+ // Unknown service is excluded, NOT asserted to be a failed candidate.
+ const confirmed=rows.filter(x=>x.officialSenateServiceVerified);
+ const notVerified=rows.length-confirmed.length;
  const cohorts=(['2020_general','2022_general','2024_special','2025_special'] as const)
   .map(cohort=>{
-   const x=rows.filter(row=>row.electionCohort===cohort);
+   const x=confirmed.filter(row=>row.electionCohort===cohort);
+   const stillUnverified=rows.filter(row=>row.electionCohort===cohort).length-x.length;
    return{
-    cohort,winnerElectionObservations:x.length,
+    cohort,verifiedEverServedSenatorElectionObservations:x.length,
+    electionWinnersPendingIndependentSenateServiceProof:stillUnverified,
     publisherCarriedWinnerCampaignSiteURLLeads:x.filter(y=>y.candidateWebsitePublisherLeads.length>0).length,
     archivedOriginalCampaignIssuePageWinners:x.filter(y=>y.independentHistoricalOriginalCampaignPageCount>0).length,
     authenticatedOriginalCampaignIssueExcerptLeads:x.reduce((n,y)=>n+y.originalCampaignIssueShortExcerptLeads,0),
@@ -193,20 +228,23 @@ export function auditStatewideSenateCampaignSourceRecovery(
     originalSOSFilingWebsiteFieldVerifiedWinners:0,
    };
   });
- if(cohorts.map(x=>x.winnerElectionObservations).join(',')!=='67,67,1,4'
+ if(rows.filter(r=>r.electionCohort==='2020_general').length!==67
+   ||rows.filter(r=>r.electionCohort==='2022_general').length!==67
+   ||rows.filter(r=>r.electionCohort==='2024_special').length!==1
+   ||rows.filter(r=>r.electionCohort==='2025_special').length!==4
    ||rows.length!==139)throw Error('Official election winner observations not statewide-cohort sized');
- const winnerSiteLeads=rows.filter(r=>r.candidateWebsitePublisherLeads.length).length;
- const winnersOriginalPage=rows.filter(r=>r.independentHistoricalOriginalCampaignPageCount).length;
- const wonExcerpts=rows.reduce((n,x)=>n+x.originalCampaignIssueShortExcerptLeads,0);
- const surveyExcerpts=rows.reduce((n,x)=>n+x.candidateSubmitted2022PublisherSurveyExcerptLeads,0);
- const losingOriginal=original.candidates.filter(c=>
-   !rows.some(w=>winnerKey(w.candidateName,w.district,w.electionYear)===
-     winnerKey(c.candidateName,c.district,c.electionYear)))
-   .reduce((n,c)=>n+c.excerpts.length,0);
- const excluded=losingOriginal+survey.excerpts.filter(x=>x.electionOutcome==='loser').length;
- if(winnerSiteLeads!==4||winnersOriginalPage!==3||wonExcerpts!==10
-   ||surveyExcerpts!==4||excluded!==7)
-   throw Error('Archived direct original-campaign / opponent excerpt counts inconsistent');
+ const winnerSiteLeads=confirmed.filter(r=>r.candidateWebsitePublisherLeads.length).length;
+ const winnersOriginalPage=confirmed.filter(r=>r.independentHistoricalOriginalCampaignPageCount).length;
+ const wonExcerpts=confirmed.reduce((n,x)=>n+x.originalCampaignIssueShortExcerptLeads,0);
+ const surveyExcerpts=confirmed.reduce((n,x)=>n+x.candidateSubmitted2022PublisherSurveyExcerptLeads,0);
+ // Never include never-served people or their statement details in
+ // the senator-focused coverage report. Raw official source verification
+ // internals may contain candidate rows; this output never does.
+ if(confirmed.length>139||confirmed.some(x=>!x.officialSenateServiceVerified))
+   throw Error('Only actual documented Senate members may appear in named report');
+ if(officialDirectory&&(!officialDirectory.source.observedAt
+   ||Date.parse(officialDirectory.source.observedAt)<Date.parse('2026-10-10T00:00:00Z')))
+   throw Error('Official Senate service evidence observation undated/backdated');
  return{
   schema:STATEWIDE_SENATE_CAMPAIGN_SOURCE_AUDIT_VERSION,
   scope:{
@@ -215,8 +253,14 @@ export function auditStatewideSenateCampaignSourceRecovery(
    originalSosGeneralCensusesCrossCompared:originalCensusProvided,
    original2020And2022FilingExportsRecovered:false,
    allPrimaryAndWithdrawnCandidateDenominatorKnown:false,
-   independentStatewideLegislatorMembershipRosterReconciled:false,
+   independentStatewideLegislatorMembershipRosterReconciled:Boolean(officialDirectory),
    statewideMemberYearCompletenessCertified:false,
+   onlyVerifiedEverServedPeopleIncluded:true,
+   officialLRLSenateServiceDirectorySource:officialDirectory?.source.url??null,
+   officialLRLSenateServiceDirectoryRetrievedAt:officialDirectory?.source.observedAt??null,
+   publicGovernmentElectionRecordsRetrievedOn:SENATOR_ONLY_COVERAGE_OBSERVATION_DATE,
+   currentCandidatePublisherTextEarliestVerifiedOn:SENATOR_ONLY_COVERAGE_OBSERVATION_DATE,
+   noOriginalPageFirstPostedDateInferred:true,
    aMissingSourceIsNotAProvenAbsentCampaignWebsite:true,
    archivePageFirstCaptureIsNotOriginalPublicationTime:true,
    winnerOutcomeNeverUsedAsPreElectionEvidence:true,
@@ -225,21 +269,23 @@ export function auditStatewideSenateCampaignSourceRecovery(
    noModelsOrForecastEvidenceMutated:true,
   },
   totals:{
-   winnerElectionObservations:rows.length,
-   original2020And2022WinnerObservations:134,
-   special2024And2025WinnerObservations:5,
+   electionWinnerObservationsUsedOnlyForSourceJoin:rows.length,
+   namedSenatorOnlyElectionObservationsConfirmedByLRL:confirmed.length,
+   electionWinnersWithoutIndependentLRLServiceMatchExcluded:notVerified,
+   original2020And2022WinnerObservationsUsedInternallyForJoin:134,
+   special2024And2025WinnerObservationsUsedInternallyForJoin:5,
    originalGovernmentCensusesReconciledInThisRun:originalCensusProvided?2:0,
    winnerWebsitePublisherLinkLeads:winnerSiteLeads,
    winnerOriginalHistoricIssuePageSources:winnersOriginalPage,
    winningCandidateOwnedArchivedIssueExcerptLeads:wonExcerpts,
    winnerPublisherSurveyQuotesWithoutHistoricalPublicBy:surveyExcerpts,
-   winnerElectionObservationsWithoutVerifiedHistoricCampaignIssuePage:rows.length-winnersOriginalPage,
-   losingCandidateIssueExcerptsNotAttachableToWinner:excluded,
+   verifiedSenatorElectionObservationsWithoutAuthenticatedHistoricIssuePage:confirmed.length-winnersOriginalPage,
+   neverServedOpponentIssueExcerptsExcludedFromNamedOutput:true,
    historicOriginalSOSFilingWebsiteAssignments:0,
    independentlyCertifiedCompleteMemberYears:0,
    statementsAdmittedToForecast:0,
   },
-  cohorts,winnerElectionObservations:rows,
+  cohorts,senatorElectionObservations:confirmed,
   gaps:[
    '139 are winning election observations, not distinct people or a 2021-2025 serving Senate roster.',
    '2020 and 2022 general results are post-vote identities and omit primary-only or withdrawn filing candidates.',
