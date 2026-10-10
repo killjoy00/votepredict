@@ -58,7 +58,7 @@ function tallyFrom(raw:string):{yea:number;nay:number;absent:number|null;pass:nu
   return yea!==null&&nay!==null ? {yea,nay,absent,pass}:null;
 }
 function directionNamedRows(region:string,base:number):NamedChoice[]{
-  const rx=/\bSenator\s+([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ .'-]{1,50}?)\s*[-–—:]\s*(Yea|Nay|Yes|No|Absent|Absence|Pass)\b/gi;
+  const rx=/\bSenator\s+([A-ZÀ-Ÿ][A-Za-zÀ-ÿ'-]{1,34}(?:\s+[A-ZÀ-Ÿ][A-Za-zÀ-ÿ'-]{1,34}){0,2})\s*[-–—:]\s*(Yea|Nay|Yes|No|Absent|Absence|Pass)\b/g;
   return [...region.matchAll(rx)].map(m=>({
     at:base+(m.index??0),name:normalizeMemberName(m[1]!.trim()),side:side(m[2]!),
   })).filter(m=>m.name.length>1);
