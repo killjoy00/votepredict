@@ -12,11 +12,14 @@ import {strictCandidateKey} from './sos-senate-historical-candidate-inventory.js
 
 export const OFFICIAL_MN_SENATE_SERVICE_DIRECTORY_URL=
   'https://www.lrl.mn.gov/legdb/senate_dir' as const;
+export const OFFICIAL_MN_SENATE_SWEARING_HISTORY_URL=
+  'https://www.lrl.mn.gov/history/caucus?body=s' as const;
 export const SENATOR_ONLY_COVERAGE_OBSERVATION_DATE='2026-10-10' as const;
 export type SenateServedRecord={
   officialName:string;
   officialNameRaw:string;
-  officialSourceUrl:typeof OFFICIAL_MN_SENATE_SERVICE_DIRECTORY_URL;
+  officialSourceUrl:typeof OFFICIAL_MN_SENATE_SERVICE_DIRECTORY_URL|
+    typeof OFFICIAL_MN_SENATE_SWEARING_HISTORY_URL;
   senateServiceTerms:Array<{startsYear:number;endsYear:number|null;district:string}>;
 };
 export type AuditedOfficialSenateDirectory={
@@ -28,6 +31,13 @@ export type AuditedOfficialSenateDirectory={
     sourceBytesLength:number;
     originalHistoricDateForDisplayedDirectoryEstablished:false;
     directoryIsSenatorServiceNotCandidateFiling:true;
+  };
+  supplementalSwearingSource?:{
+    url:typeof OFFICIAL_MN_SENATE_SWEARING_HISTORY_URL;
+    observedAt:string;sourceBytesSha256:string;
+    sourceBytesLength:number;
+    swearingDateIndependentlyDocumentedForNamedSpecialMembers:true;
+    websitePublicationDateBackdated:false;
   };
   senators:SenateServedRecord[];
 };
@@ -52,8 +62,10 @@ function firstLastOfOfficialDirectory(inverted:string):string{
   const m=cleaned.match(/^([^,]+),\s*(.+)$/);
   return normalizeSpace(m?m[2]+' '+m[1]:cleaned);
 }
-export function parseOfficialMnSenateServiceDirectory(html:Uint8Array,observedAt:string):
-  AuditedOfficialSenateDirectory {
+export function parseOfficialMnSenateServiceDirectory(
+  html:Uint8Array,observedAt:string,
+  swornHistoryHtml?:Uint8Array,swornHistoryObservedAt?:string,
+):AuditedOfficialSenateDirectory {
   const observed=new Date(observedAt);
   if(!Number.isFinite(observed.getTime())||observed.toISOString()!==observedAt
     ||observed.getTime()<Date.parse('2026-10-10T00:00:00Z')
@@ -100,6 +112,63 @@ export function parseOfficialMnSenateServiceDirectory(html:Uint8Array,observedAt
     throw Error('Official historical Senate directory response missing expected historic table rows');
   if(rows.some(row=>!strictCandidateKey(row.officialName)))
     throw Error('Official Senate directory contains unusable person name');
+  let supplementalSwearingSource:AuditedOfficialSenateDirectory['supplementalSwearingSource'];
+  if(Boolean(swornHistoryHtml)!==Boolean(swornHistoryObservedAt))
+    throw Error('Both original official special-election Senate swearing text and observed date required');
+  if(swornHistoryHtml&&swornHistoryObservedAt){
+    const instant=new Date(swornHistoryObservedAt);
+    if(!Number.isFinite(instant.getTime())||instant.toISOString()!==swornHistoryObservedAt
+      ||instant.getTime()<Date.parse('2026-10-10T00:00:00Z')
+      ||instant.getTime()>Date.now()+60_000)
+      throw Error('Swearing source observation timestamp missing/illegitimately backdated');
+    if(swornHistoryHtml.byteLength<9000||swornHistoryHtml.byteLength>5*1024*1024)
+      throw Error('Official special Senate swearing source incomplete/oversized');
+    const swornBody=Buffer.from(swornHistoryHtml).toString('utf8');
+    if(!swornBody.includes('Party Control')||!swornBody.includes('Minnesota Senate'))
+      throw Error('Wrong original official Senate swearing source');
+    const rowsHtml=[...swornBody.matchAll(/<tr\\b[^>]*>([\\s\\S]*?)<\\/tr>/gi)]
+      .map(x=>htmlText(x[1]));
+    if(rowsHtml.length<10)throw Error('Senate party-control swearing table has too few rows');
+    const namedSpecials=[
+      {name:'Ann Johnson Stewart',district:'45',oathOn:'November 25, 2024',
+       check:/Ann Johnson Stewart[\\s\\S]{0,220}District 45[\\s\\S]{0,160}sworn in on November 25, 2024/i,
+       date:'11/25/2024'},
+      {name:'Doron Clark',district:'60',oathOn:'February 3, 2025',
+       check:/Doron Clark[\\s\\S]{0,200}District 60[\\s\\S]{0,160}sworn in on February 3, 2025/i,
+       date:'2/3/2025'},
+      {name:'Keri Heintzeman',district:'6',oathOn:'May 6, 2025',
+       check:/Keri Heintzeman[\\s\\S]{0,190}District 6[\\s\\S]{0,180}sworn in on May 6, 2025/i,
+       date:'5/6/2025'},
+      {name:'Michael Holmstrom Jr',district:'29',oathOn:'November 18, 2025',
+       check:/Amanda Hemmingsen-Jaeger[\\s\\S]{0,160}District 47[\\s\\S]{0,160}Michael Holmstrom[\\s\\S]{0,160}District 29[\\s\\S]{0,160}sworn in on November 18, 2025/i,
+       date:'11/18/2025'},
+      {name:'Amanda Hemmingsen-Jaeger',district:'47',oathOn:'November 18, 2025',
+       check:/Amanda Hemmingsen-Jaeger[\\s\\S]{0,160}District 47[\\s\\S]{0,160}Michael Holmstrom[\\s\\S]{0,160}District 29[\\s\\S]{0,160}sworn in on November 18, 2025/i,
+       date:'11/18/2025'},
+    ];
+    for(const entry of namedSpecials){
+      const row=rowsHtml.find(x=>x.startsWith(entry.date+' ')
+        &&entry.check.test(x));
+      if(!row)throw Error('Missing exact officially attested special-election Senate swearing: '+
+        entry.date+' SD'+entry.district);
+      if(rows.some(r=>officialIdentityMatchesCandidate(r,entry.name)))
+        continue;
+      rows.push({
+        officialName:entry.name,officialNameRaw:entry.name,
+        officialSourceUrl:OFFICIAL_MN_SENATE_SWEARING_HISTORY_URL,
+        senateServiceTerms:[{startsYear:Number(entry.date.slice(-4)),endsYear:null,
+          district:entry.district}],
+      });
+    }
+    supplementalSwearingSource={
+      url:OFFICIAL_MN_SENATE_SWEARING_HISTORY_URL,
+      observedAt:swornHistoryObservedAt,
+      sourceBytesSha256:createHash('sha256').update(swornHistoryHtml).digest('hex'),
+      sourceBytesLength:swornHistoryHtml.byteLength,
+      swearingDateIndependentlyDocumentedForNamedSpecialMembers:true,
+      websitePublicationDateBackdated:false,
+    };
+  }
   return{
     schema:'mn-lrl-official-senate-ever-served-directory-v1',
     source:{
@@ -109,6 +178,7 @@ export function parseOfficialMnSenateServiceDirectory(html:Uint8Array,observedAt
       originalHistoricDateForDisplayedDirectoryEstablished:false,
       directoryIsSenatorServiceNotCandidateFiling:true,
     },
+    supplementalSwearingSource,
     senators:rows,
   };
 }
