@@ -1,0 +1,27 @@
+# Issue #864 — four non-Elections 2023–24 Senate committee roll candidates: original motion context
+
+The pre-existing [19 candidate exact-tally review queue](./source-proof/senate-committee-19-tally-matched-provisional-roll-review-queue.json) contains **four** candidates outside the fifteen 2025 Elections blocks. All four were previously detected in original electronically indexed minutes; arithmetic alone did not establish distinct motion identities. This focused review identifies the **specific contextual motion for three**, while preserving one explicit hold. It does **not** reauthenticate bytes or extracted text, validate a fully independent historical roster, or approve any production member-vote rows.
+
+| Official indexed hearing | Original numeric named roll | Original minutes context | Review status |
+| --- | --- | --- | --- |
+| [2023-03-03 Judiciary](https://www.lrl.mn.gov/archive/minutes/senate/2023/jud/20230303/Jud_20230303_minutes.pdf) | 2 YEA / 6 NAY; source text offset 3840 | Senator Limmer's **A-3 amendment to SF47**, which failed. The following recommendation to report SF47 was separate and must not inherit these eight sides. | SOURCE CONTEXT IDENTIFIED; membership / independent bill-log check still pending |
+| [2024-02-15 HHS](https://www.lrl.mn.gov/archive/minutes/senate/2024/health/20240215/Health_20240215_MINUTES.pdf) | 3 YEA / 5 NAY; source text offset 4729 | Senator Lieske's **A2 amendment to SF610**, which was not adopted. The earlier **A1** voice adoption and subsequent SF610 layover are **different actions**. | SOURCE CONTEXT IDENTIFIED; membership / independent bill-log check still pending |
+| [2024-03-07 Labor](https://www.lrl.mn.gov/archive/minutes/senate/2024/labor/20240307/labor_20240307_minutes.pdf) | 6 YEA / 4 NAY; source text offset 2517 | Exact source paragraph could not be independently read in this review. **No bill or motion attribution asserted.** | **HOLD** |
+| [2024-03-14 Labor](https://www.lrl.mn.gov/archive/minutes/senate/2024/labor/20240314/labor_20240314_minutes.pdf) | 4 YEA / 3 NAY; source text offset 2250 | **SF4742 as amended, recommendation to pass and re-refer to Senate Energy committee**, carried. The printed minutes then restate a matching recommendation as `MOTION CARRIED`; **do not count this restatement as a second named roll**. | SOURCE CONTEXT IDENTIFIED; membership / independent bill-log check still pending |
+
+## Direct original-minutes attendance check, limited to the three opened sources
+
+- **2023-03-03 Judiciary:** 8 present / 2 absent in original opening header. The eight explicitly named 2–6 sides are those opening-present committee participants. Zero YEA/NAY assignments to opening-header absentees in that identified roll.
+- **2024-02-15 HHS:** 8 present / 1 absent in original opening header. Eight explicit 3–5 named sides; the source specifically marks one senator absent on the roll. Zero named choices contradict original opening absence.
+- **2024-03-14 Labor:** 9 present / 1 absent at opening. The 4–3 recorded roll additionally marks three members absent; **two were present at opening**. This difference is a motion-time attendance ambiguity (possible departure), **not** a certified hard contradiction. No source-listed opening absentee is credited with a YEA or NAY.
+- **2024-03-07 Labor:** exact opening and roll-time attendance are **unresolved**; do not mark them consistent by default.
+
+These are **source-text observations**, not a separate official senator-by-date committee-membership proof. No unlisted or absent choice is inferred. The Labor March 14 PDF is itself a saved copy of Senate hearing-minutes HTML; consulting that HTML again does **not** constitute a second independent witness. Independent daily membership, contemporaneous bill logs, same-document motion distinctness, historical availability and private database correspondence each remain separate gates.
+
+## Existing reproducible source controls
+
+The metadata ledger [four source context records](./source-proof/senate-committee-four-non-elections-motion-context-ledger.json) joins each candidate to its immutable original date + PDF URL + exact source text offset in the existing 19-block queue. The already reviewed, **SHA-pinned** source manifests are in prior original audit run `38075573031`; preliminary tally source run `38079646647`. This semantic review did **not** itself re-fetch bytes. A bounded **actual GitHub Actions** source check in [the focused two-year workflow](../../.github/workflows/senate-committee-four-non-elections-source-check.yml) reuses the pre-existing nineteen-candidate original source validator, downloads just one 2023 and three 2024 SHA-pinned originals, checks exact original PDF and text hashes, and emits only short-lived metadata/source QA excerpts. Never treat workflow success as external bill-log corroboration or verified production equality.
+
+### Gating and next research
+
+Obtain a reliable view of the **March 7 Labor original**, pin its exact motion boundary, and reconcile its 6–4 tally without guessing. Independently compare the three classified motions against date-specific Senate committee membership and official bill action logs (while distinguishing a copied minutes entry from an independent record). Preserve discrepancies as HOLD rather than silently fixing source headings. **No individual member-vote database import, Senate floor stance, model/serving/training, production write or 2027 scheduling changes. Issue #864 remains OPEN.**
