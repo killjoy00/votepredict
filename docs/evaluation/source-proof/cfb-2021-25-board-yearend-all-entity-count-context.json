@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "cfb-2021-25-all-entity-campaign-finance-year-end-board-memo-count-context-v1",
+  "purpose": "Independent official statewide-all-reporting-entity baseline context ONLY; NOT a Senate candidate registered-committee or legally required report denominator",
+  "officialProgram": "Minnesota Campaign Finance and Public Disclosure Board campaign finance program",
+  "scopeIncludes": [
+    "principal candidate campaign committees across all offices",
+    "political party units",
+    "political committees",
+    "political funds"
+  ],
+  "sourceMethod": "Manual transcription from dated public Board meeting materials, without claiming binary PDF hash verification; when a count is absent retain null",
+  "yearEndReportCohorts": [
+    {
+      "reportYear": 2021,
+      "dueOn": "2022-01-31",
+      "source": "https://cfb.mn.gov/pdf/bdinfo/agendas/2022_02_02_materials.pdf",
+      "sourceMemoDated": "2022-01-26",
+      "sourcePageNumberWithinPdfZeroBased": 10,
+      "sourceClaim": "Notification sent to over 1,350 candidate committees, party units, political committees and funds",
+      "noticesSentLowerExclusiveBound": 1350,
+      "officialExactReportsDue": null,
+      "officialExactFiledByDeadline": null,
+      "isAnExactFilingDenominator": false
+    },
+    {
+      "reportYear": 2022,
+      "dueOn": "2023-01-31",
+      "source": "https://register.cfb.mn.gov/pdf/bdinfo/agendas/2023_02_08_materials.pdf",
+      "sourceMemoDated": "2023-02-01",
+      "sourcePageNumberWithinPdfZeroBased": 12,
+      "officialExactReportsDue": 1515,
+      "officialExactFiledByDeadline": 1367,
+      "boardTextPrintedPercent": 98,
+      "ratioImpliedByCountsPercentRoundedOneDecimal": 90.2,
+      "printedPercentInconsistentWithSourceCounts": true,
+      "originalWordingDiscrepancyPreserved": true,
+      "potentialCorrectionAuthoritativelyConfirmed": false
+    },
+    {
+      "reportYear": 2023,
+      "dueOn": "2024-01-31",
+      "source": "https://cfb.mn.gov/pdf/bdinfo/agendas/2024_02_07_materials.pdf",
+      "sourceMemoDated": "2024-01-31",
+      "sourcePageNumberWithinPdfZeroBased": 12,
+      "officialReportsExpectedBeforeDeadline": 1299,
+      "officialExactReportsDueAfterReconciliation": null,
+      "officialExactFiledByDeadline": null,
+      "isAnExactFinalFilingDenominator": false
+    },
+    {
+      "reportYear": 2024,
+      "dueOn": "2025-01-31",
+      "source": "https://cfb.mn.gov/pdf/bdinfo/agendas/2025_02_13_materials.pdf",
+      "sourceMemoDated": "2025-02-05",
+      "sourcePageNumberWithinPdfZeroBased": 12,
+      "officialExactReportsDue": 1320,
+      "officialExactFiledByDeadline": 1212,
+      "officialStillOutstandingAtMemoDate": 64,
+      "boardTextPrintedPercent": 92,
+      "ratioImpliedByCountsPercentRoundedOneDecimal": 91.8,
+      "printedPercentInconsistentWithSourceCounts": false,
+      "dueMinusTimelyFilings": 108,
+      "stillOutstandingIsLaterSnapshotNotEqualToLateAtDeadline": true
+    },
+    {
+      "reportYear": 2025,
+      "dueOn": "2026-02-02",
+      "deadlineSource": "https://cfb.mn.gov/pdf/bdinfo/minutes/2025_12_03_regular_session.pdf",
+      "deadlineSourceReportDated": "2025-12-03",
+      "secondarySource": "https://cfb.mn.gov/pdf/bdinfo/agendas/2026_03_12_materials.pdf",
+      "secondarySourceDocument": "Draft February 4 2026 minutes attached to March 12 materials",
+      "boardNarrativePercentReceivedAtFebruary2026Meeting": 93,
+      "boardNarrativeReportCountBase": null,
+      "officialExactReportsDue": null,
+      "officialExactFiledByDeadline": null,
+      "isAnExactFilingDenominator": false
+    }
+  ],
+  "notEstablished": {
+    "statewideSenateCandidateCommitteesLegallyRegisteredByYear": null,
+    "statewideSenateCandidateRequiredReports2021to2025": null,
+    "statewideSenateCandidateActuallyFiledOriginalReports2021to2025": null,
+    "candidateVsPartyVsFundCategoryBreakdownOfTheseBoardMemos": null,
+    "reportTypeOrSpecialElectionBreakdown": null,
+    "historicDocumentPublicByTimeline": null,
+    "lifecycleAndNonfilers": null,
+    "entireStatewideSenateHistoricalCompletenessProved": false
+  },
+  "policy": {
+    "doNotUseAllEntityCountsAsSenateDenominator": true,
+    "doNotInferMissingExactCountsFromPercentage": true,
+    "doNotReplaceBoard2022CountWithRatioDerivedEstimatedCount": true,
+    "mustReconcile2022PrintedPercentDiscrepancy": true,
+    "noProductionDatabaseOrServingChange": true,
+    "issue864Open": true
+  }
+}

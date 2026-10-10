@@ -1,0 +1,44 @@
+name: One-time 2021-24 Senate candidate CFB viewer report version counts
+
+# Issue #864: strictly PR-triggered bounded read-only source acquisition.
+# This is a 396-entry source-viewer/reference COUNT, not filed PDF/obligation.
+# No schedules, production secrets, Neon/Vercel or model/serving actions.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2021-24-senate-viewer-report-counts.yml
+      - scripts/capture-cfb-2021-24-senate-viewer-report-counts.ts
+      - src/evidence/cfb-2021-24-senate-viewer-report-counts.ts
+      - tests/cfb-2021-24-senate-viewer-report-counts.test.ts
+
+permissions:
+  contents: read
+
+jobs:
+  original-2021-24-candidate-viewer-senate-report-refs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify pinned 494-ID source cohort and fail-closed original/amendment counting
+        run: |
+          node --import tsx --test tests/cfb-2021-24-senate-viewer-report-counts.test.ts
+          node --import tsx --test tests/cfb-2021-25-board-yearend-all-entity-count-context.test.ts
+      - name: Query original 2022/2024 Senate candidate viewer segments (396 public API requests)
+        run: |
+          node --import tsx scripts/capture-cfb-2021-24-senate-viewer-report-counts.ts \
+            --output artifacts/cfb-2021-24-senate-historical-viewer-reference-counts.json
+      - name: Preserve 2021-24 original source reference count metadata and failures for audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2021-24-senate-396-candidate-viewer-report-counts
+          path: artifacts/cfb-2021-24-senate-historical-viewer-reference-counts.json
+          retention-days: 30
+          if-no-files-found: warn
