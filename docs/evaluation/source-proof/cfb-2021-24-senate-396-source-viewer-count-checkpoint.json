@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "cfb-2021to24-275-senate-registrations-396-official-viewer-source-count-checkpoint-v1",
+  "capturedAt": "2026-10-10T21:52:48.215Z",
+  "provenance": {
+    "verifiedSourceWorkflowRun": "https://github.com/killjoy00/votepredict/actions/runs/38088965276",
+    "verifiedSourceWorkflowRunId": 38088965276,
+    "verifiedSourcePr": 944,
+    "verifiedSourceWorkflowHeadSha": "1bc271a9cbd55d393b8884afba5f2eece2fba333",
+    "verifiedSourcePrMergedSquashSha": "3bab03ea8107584e159cf9d76c7797b6ec26c921",
+    "officialSourceArtifactId": 11683227803,
+    "officialSourceArtifactName": "cfb-2021-24-senate-396-candidate-viewer-report-counts",
+    "officialSourceArtifactExpiresAt": "2026-11-09T21:52:48Z",
+    "artifactZipSha256IndependentlyRechecked": "5516f3863ae9e5122df923b2d0f7f1fc88b5a5af3ddcb6dba2d3160570844914",
+    "sourceArtifactJsonSha256IndependentlyRechecked": "933f9c55c71da049a4a9af21574f562676e8e930f0cb6be6883e50b5f8901da0",
+    "sourceArtifactJsonBytes": 562731,
+    "independentInitialAcquisitionRunId": 38088552174,
+    "initialAcquisitionArtifactId": 11683905559,
+    "initialAcquisitionArtifactZipSha256": "6b0f8fdf351e8c14cb1b9cdb849c1a3855092d68729a43fe88189721de4f4193",
+    "initialAcquisitionRawJsonSha256": "e3052b357d1580508d1c7f452674ce480e619ee6302d952001dca836668c6337",
+    "all396OriginalOfficialApiBodySha256ReobservedIdentically": true,
+    "all1382OriginalOfficialViewerDocumentIdentityKeysReobservedIdentically": true,
+    "sourceApiResponseHashesJoinedInSegmentYearThenRegLexOrderSha256": "be6d3bde4a606ecfb6182756095c3aac36bbd97df7bd6d706f3e32be58331eca",
+    "all1382ReportAndAncillaryDocumentIdsLexicographicNewlineSha256": "7e375ae8e240e69c74f4aae9e058aa57869f22815897a43750904d397d50954b",
+    "metadataOnly396SourceRowsCanonicalPsvSha256WithoutTrailingNewline": "6056ce0072adfc6711588fe8d2b4b09694a658e52a249631fbf4e92f65a2a4f9",
+    "metadataOnly396SourceRowsCanonicalPsvBytesWithoutTrailingNewline": 49059,
+    "metadataOnly396SourceRowsFormat": "segmentEndYear|registrationNumber|sourceApiResponseSha256|commaDelimited source report version suffixes year:type:period:se:amendment",
+    "originalOfficialCfbCandidateViewerHost": "register.cfb.mn.gov",
+    "originalSourceViewerAllSenateRegistrationIdsCheckpoint": "cfb-2021-25-senate-district-registration-source-checkpoint.json",
+    "parentRegistrationUnionCount": 494,
+    "parentRegistrationIdsNewlineSha256": "cc6f3830ee1730a31781f282b5ecca0deba8ebfec50c949b28b8ae5f9cf497a3",
+    "parentRegistrationFourSegmentMaskHexSha256": "c70219a32a752e024d95d4d318cb43daa33bf45e5c3a2634b6652f7019aca91c"
+  },
+  "scope": {
+    "yearRange": [2021, 2022, 2023, 2024],
+    "originalOfficialElectionViewerSegments": [2022, 2024],
+    "2022SegmentRegistrationCount": 270,
+    "2024SegmentRegistrationCount": 126,
+    "distinctRegistrationNumbersInScope": 275,
+    "originalCandidateReportsTabApiCalls": 396,
+    "candidateYearPairsExamined": 792,
+    "2020OnlySourceRegistrationIdsNotProbed": 84,
+    "2026OnlySourceRegistrationIdsNotProbed": 134,
+    "2020And2026OnlySourceRegistrationIdsNotProbed": 1,
+    "registeredSenateCommitteesInRelevantYearsCertified": false
+  },
+  "observations": {
+    "responsesAcquired": 396,
+    "sourceFailures": 0,
+    "sourcePayloadOrRegistrationIdentityFailures": 0,
+    "unreviewedSourceReportTypes": 0,
+    "financialReportViewerReferencesTotal": 1378,
+    "principalCampaignCommitteeOriginalVersionReferencesAmendmentZero": 941,
+    "principalCampaignCommitteeAmendedVersionReferencesAmendmentPositive": 437,
+    "excludedNonFinancialCandidateViewerAffidavitReferences": 4,
+    "excludedAffidavitSourceType": "aoc",
+    "excludedAffidavitVersionIds": [
+      "2442:22:aoc:C:0:0",
+      "2471:22:aoc:C:0:0",
+      "2491:22:aoc:C:0:0",
+      "2495:22:aoc:C:0:0"
+    ],
+    "affidavitLegalCategory": "Minnesota Statutes 10A.323 - affidavit of contributions for public subsidy qualification",
+    "allSourceDocumentVersionsIncludingAffidavits": 1382
+  },
+  "byReportYear": [
+    {
+      "reportYear": 2021,
+      "sourceScopedRegistrations": 270,
+      "registrationsWithPccReportVersionReferences": 165,
+      "registrationsWithoutYearSpecificPccReferences": 105,
+      "pccOriginalVersionReferences": 165,
+      "pccAmendmentVersionReferences": 70,
+      "pccTotalReportVersionReferences": 235,
+      "originalVersionByPeriod": {"YE": 165, "C": 0, "E": 0}
+    },
+    {
+      "reportYear": 2022,
+      "sourceScopedRegistrations": 270,
+      "registrationsWithPccReportVersionReferences": 254,
+      "registrationsWithoutYearSpecificPccReferences": 16,
+      "pccOriginalVersionReferences": 524,
+      "pccAmendmentVersionReferences": 247,
+      "pccTotalReportVersionReferences": 771,
+      "originalVersionByPeriod": {"YE": 253, "C": 146, "E": 125}
+    },
+    {
+      "reportYear": 2023,
+      "sourceScopedRegistrations": 126,
+      "registrationsWithPccReportVersionReferences": 118,
+      "registrationsWithoutYearSpecificPccReferences": 8,
+      "pccOriginalVersionReferences": 118,
+      "pccAmendmentVersionReferences": 51,
+      "pccTotalReportVersionReferences": 169,
+      "originalVersionByPeriod": {"YE": 118, "C": 0, "E": 0}
+    },
+    {
+      "reportYear": 2024,
+      "sourceScopedRegistrations": 126,
+      "registrationsWithPccReportVersionReferences": 121,
+      "registrationsWithoutYearSpecificPccReferences": 5,
+      "pccOriginalVersionReferences": 134,
+      "pccAmendmentVersionReferences": 69,
+      "pccTotalReportVersionReferences": 203,
+      "originalVersionByPeriod": {"YE": 124, "C": 6, "E": 4}
+    }
+  ],
+  "currentRegistryCrosscheckAt2026Capture": {
+    "source": "cfb-2026-public-current-senate-registration-dates.psv",
+    "outOf275HistoricalViewersAlsoCurrentlyListedWithRegistrationDate": 109,
+    "outOf275HistoricalViewersAbsentFrom2026CurrentRegistrationList": 166,
+    "outOf84_2020OnlyViewersAlsoPresentInCurrentRegistrationList": 1,
+    "outOf84_2020OnlyViewersAbsentFrom2026CurrentRegistrationList": 83,
+    "absenceFromPresentDayRegistryProvesHistoricalTermination": false,
+    "presentDayRegistrationDateProvesContinuousHistoricActiveStatus": false
+  },
+  "sourceBounds": {
+    "viewerOriginalAmendmentZeroIsAuthenticatedPdf": false,
+    "sourceReportReferenceIsLegallyRequiredFiling": false,
+    "zeroReferencesProvesZeroFilings": false,
+    "sourceScopedViewerCountIsCompleteStatewideFilingCount": false,
+    "actualFiledOriginalPdfProofsNewlyVerifiedByThisCount": 0,
+    "priorOriginalSourcePdfProofsTrackedInSeparateCheckpoints": true,
+    "historicallyVerifiedPublicBy2021to24ReportCountFromThisAudit": 0,
+    "statewide2021to2025RequiredSenateReportDenominator": null,
+    "statewide2021to2025ActuallyFiledOriginalSenateReportCount": null,
+    "historicallyDatedSenateCommitteeActiveYearCount": null,
+    "sourceToProductionDatabaseReconciliation": false
+  },
+  "boundaries": {
+    "rawCfbResponseBodiesStoredInRepository": false,
+    "rawCandidateFinancePdfsOrTransactionsStoredInRepository": false,
+    "noProductionNeonOrVercelReadOrWrite": true,
+    "noModelRetrainingOrServingChange": true,
+    "noBackfillOrScheduler": true,
+    "no2027ProgramChanges": true,
+    "issue864RemainsOpen": true
+  }
+}
