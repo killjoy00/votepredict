@@ -35,6 +35,22 @@ export interface ExistingMediaNeonInput {
   /** Optional only if Neon exposes more than one plausible database. */
   preferredDatabase?:string;
 }
+/** Fixed non-sensitive milestones. No Neon response fields may enter this reporter. */
+export type MediaNeonAccessPhase =
+  | 'project_metadata_received'
+  | 'project_identity_verified'
+  | 'database_inventory_received'
+  | 'database_selected'
+  | 'endpoint_inventory_received'
+  | 'endpoint_selected'
+  | 'connection_uri_response_received'
+  | 'connection_uri_verified'
+  | 'sql_connection_opened'
+  | 'sql_readonly_identity_verified'
+  | 'sql_required_tables_verified'
+  | 'sql_aggregate_completed'
+  | 'sql_transaction_rolled_back';
+export type MediaNeonPhaseReporter = (phase:MediaNeonAccessPhase)=>void;
 function assertIdentity(input: ExistingMediaNeonInput):void {
   if (!input.apiKey || input.apiKey.length>1000 || !PROJECT.test(input.projectId))
     throw Error('VotePredict-protected Neon project credentials missing or invalid');
@@ -136,21 +152,30 @@ function validateUri(
 export async function discoverExistingVotePredictNeonConnection(
   input:ExistingMediaNeonInput,
   request:SafeFetch=fetch,
+  onPhase:MediaNeonPhaseReporter=()=>{},
 ):Promise<ExistingMediaNeonConnection>{
   assertIdentity(input);
   const base=API+input.projectId;
   const project=await getNeon(base,input.apiKey,request);
+  onPhase('project_metadata_received');
   const branchId=exactProject(input,project);
+  onPhase('project_identity_verified');
   const dbInventory=await getNeon(base+'/branches/'+branchId+'/databases',input.apiKey,request);
+  onPhase('database_inventory_received');
   const {database,role}=chooseDatabase(dbInventory,branchId,input.preferredDatabase);
+  onPhase('database_selected');
   const endpoints=await getNeon(base+'/endpoints',input.apiKey,request);
+  onPhase('endpoint_inventory_received');
   const {host,endpointId}=chooseEndpoint(endpoints,branchId,input.projectId);
+  onPhase('endpoint_selected');
   const params=new URLSearchParams({
     branch_id:branchId,endpoint_id:endpointId,
     database_name:database,role_name:role,pooled:'false',
   });
   const uri=await getNeon(base+'/connection_uri?'+params.toString(),input.apiKey,request);
+  onPhase('connection_uri_response_received');
   const {password,port}=validateUri(uri,{database,role,host});
+  onPhase('connection_uri_verified');
   return {projectId:input.projectId,branchId,endpointId,database,role,host,port,password};
 }
 
