@@ -1,0 +1,169 @@
+{
+  "schemaVersion": "senate-committee-2022-25-phase2-media-and-supplemental-proof-v1",
+  "issue": 864,
+  "recordedOn": "2026-10-10",
+  "officialMeetingPagesWithoutLinkedMinutesPdf": 141,
+  "mediaSource": {
+    "runId": 38079233118,
+    "pr": 897,
+    "perYear": [
+      {
+        "year": 2022,
+        "datedMeetings": 12,
+        "archivedMtgidLinks": 11,
+        "artifactId": 11679835908,
+        "zipSha256": "db8283f9bbc709b7d685879fd9d6a98a53e07e7e07b9b69a1120a8c431ee71db",
+        "jsonSha256": "f0ab42ba46eca582739896956b5dc32a81e6c93b9b834e45eb539c49f19cfd4f"
+      },
+      {
+        "year": 2023,
+        "datedMeetings": 64,
+        "archivedMtgidLinks": 64,
+        "artifactId": 11679855972,
+        "zipSha256": "3d7c6f62cd20624d0f795e83fbc29bd6bbc9a3035a4e7e7625dd43a4f48bd372",
+        "jsonSha256": "dbc2cea3cc58f5bbbde89d143456eddb3086050934d058ac499cbb3a29faa4b1"
+      },
+      {
+        "year": 2024,
+        "datedMeetings": 42,
+        "archivedMtgidLinks": 41,
+        "artifactId": 11679701503,
+        "zipSha256": "b41b19347fdd5e33325ad80e7b4ffc37221adbd7677ce613942fbed8c062f707",
+        "jsonSha256": "fd09197149998c792bb6c6195c59811d6b14cb4cdcd9f783055bff287035eef2"
+      },
+      {
+        "year": 2025,
+        "datedMeetings": 23,
+        "archivedMtgidLinks": 22,
+        "artifactId": 11680255323,
+        "zipSha256": "3e87a62c7f9010708bec512b8d53d647ac34bd73cf7bff322b8d463c1f9c1fd2",
+        "jsonSha256": "efd55fe0a59b949270029da71d40d906b8d4212aa1dc2fc9b93d3bac813ee159"
+      }
+    ],
+    "individuallySourceAssociatedUniqueLrlMtgidLinks": 138,
+    "meetingsWithNoMediaLink": 3,
+    "allHrefsForm": "https://www.lrl.mn.gov/media/file?mtgid=<source-id>",
+    "exactMinutesPdfsRecovered": 0
+  },
+  "supplementalSource": {
+    "runId": 38079646647,
+    "parserPr": 899,
+    "uploadRepairPr": 901,
+    "perYear": [
+      {
+        "year": 2022,
+        "originalPdfs": 2,
+        "provisionalBlocks": 1,
+        "sourceTallyMatches": 0,
+        "sourceTallyMismatches": 0,
+        "sourceNumericTallyUnknown": 1,
+        "provisionalNamedSideChoiceTokens": 8,
+        "artifactId": 11680350913,
+        "zipSha256": "39b29c869de91410cc60ff5507b5ae402d75796dfa5816c2c19bcf70e193726d",
+        "jsonSha256": "a8e3b7d16f7d974fe5d5039a08b7dbb38244035d83d2db94ed6101bfbb95de70"
+      },
+      {
+        "year": 2023,
+        "originalPdfs": 14,
+        "provisionalBlocks": 35,
+        "sourceTallyMatches": 1,
+        "sourceTallyMismatches": 7,
+        "sourceNumericTallyUnknown": 27,
+        "provisionalNamedSideChoiceTokens": 341,
+        "artifactId": 11680241055,
+        "zipSha256": "f30fddf14f603542cffca57151092e0c9259d6aabc6d288ebc92e2c8704a6ea7",
+        "jsonSha256": "17fed407140dc547870db9343f4f68965af9c1e256dc768191c374e11456cb32"
+      },
+      {
+        "year": 2024,
+        "originalPdfs": 13,
+        "provisionalBlocks": 28,
+        "sourceTallyMatches": 3,
+        "sourceTallyMismatches": 2,
+        "sourceNumericTallyUnknown": 23,
+        "provisionalNamedSideChoiceTokens": 241,
+        "artifactId": 11680400209,
+        "zipSha256": "2bfb411586c6a6ffb6e92097c9ff195f09af133a17770f1e705d5638e74ef620",
+        "jsonSha256": "293967e39b22b8bfe865a0861030d782bc1659ef441114c005587816a667fc1d"
+      },
+      {
+        "year": 2025,
+        "originalPdfs": 12,
+        "provisionalBlocks": 22,
+        "sourceTallyMatches": 15,
+        "sourceTallyMismatches": 1,
+        "sourceNumericTallyUnknown": 6,
+        "provisionalNamedSideChoiceTokens": 233,
+        "artifactId": 11679214346,
+        "zipSha256": "34cad8b3d072b7552187a0e3dbd5d4ae8232dee4d45b412e5d9ad83514d49102",
+        "jsonSha256": "689fae2cce78bdd2b26f097a4652232fb49e7162cfab7070179fe72bfaea44f5"
+      }
+    ],
+    "sourcePdfsReverified": 41,
+    "sourceFailures": 0,
+    "provisionalNamedVoteBlocks": 86,
+    "explicitNamedSideChoiceTokensInBlocks": 823,
+    "sourceTallyMatches": 19,
+    "matchedSourceNamedSideChoiceTokens": 196,
+    "sourceTallyMismatches": 10,
+    "sourceTallyUnknown": 57,
+    "allCandidatesProvisional": true
+  },
+  "headSource": {
+    "runId": 38079795850,
+    "pr": 900,
+    "perYear": [
+      {
+        "year": 2022,
+        "mtgidHeadResponses": 11,
+        "http200HtmlResponses": 11,
+        "errors": 0,
+        "artifactId": 11678999618,
+        "zipSha256": "239bddddeb605cd1c0bcddbeeef15b39c3e7e5440836ac385757561a8d237e84",
+        "jsonSha256": "580aee4a0f082de8a35dca255dd4feafcccfcc033755b72cf1ed815a646a5468"
+      },
+      {
+        "year": 2023,
+        "mtgidHeadResponses": 64,
+        "http200HtmlResponses": 64,
+        "errors": 0,
+        "artifactId": 11680081515,
+        "zipSha256": "6cab0035078319cc530dd2da685acc556606841958d39a20e046da0ffaab1aa7",
+        "jsonSha256": "1a77fbc557027d8eae0f62c4536af307271eb89e4b133b396c826a35509fba7c"
+      },
+      {
+        "year": 2024,
+        "mtgidHeadResponses": 41,
+        "http200HtmlResponses": 41,
+        "errors": 0,
+        "artifactId": 11680201321,
+        "zipSha256": "400f7d6bf89889abc80e538b0eb18e05bad206b0085b0670621657bafc5d6823",
+        "jsonSha256": "84c522b8e5dceab556d11b6fa055cea1d9e1c01e733f2bcb0feccbc6ab0a43c0"
+      },
+      {
+        "year": 2025,
+        "mtgidHeadResponses": 22,
+        "http200HtmlResponses": 22,
+        "errors": 0,
+        "artifactId": 11678779904,
+        "zipSha256": "f5980c2012e0773a4df07bf52a323e2ee02c90c2d9c7f6ef06b51317d5570dad",
+        "jsonSha256": "4942d7790bf0721be7d655954061490855fa3ae30ee5f595d382dab5c9f03bba"
+      }
+    ],
+    "officialLrlHeadResponses": 138,
+    "http200HtmlResponses": 138,
+    "errors": 0,
+    "recordPageRespondedNotVerifiedMediaPlayback": true,
+    "noFullMediaDownloaded": true
+  },
+  "limitations": {
+    "memberChoiceIdentityNotOfficiallyRosterMatched": true,
+    "sourceMotionDistinctnessNotHumanVerified": true,
+    "official2021PrintOnlySenateMinutesUnresolved": true,
+    "year2022PrintElectronicMismatchUnresolved": true,
+    "all2021_2025RecordedVoteDenominator": null,
+    "noSourceToProductionDatabaseReconciliation": true,
+    "noProductionDbReadOrWrites": true,
+    "noForecastModelServingSchedulersOr2027Changed": true
+  }
+}
