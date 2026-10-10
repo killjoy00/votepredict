@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "senate-nine-counted-original-roll-proof-v1",
+  "issue": 864,
+  "reviewDate": "2026-10-10",
+  "source": "Minnesota Legislative Reference Library original Senate committee minutes",
+  "initialSourceAuditRun": 38066441841,
+  "previous100SourceReviewRun": 38081471731,
+  "initialUncorrectedNamedRun": 38083910815,
+  "initialUncorrectedNinePdfCount": 9,
+  "initialNamedParserBlocks": 12,
+  "initialTallyMatches": 10,
+  "lowercaseAbsentFixPr": 923,
+  "sourceReviewParserPr": 915,
+  "correctedSourceRun": 38084229868,
+  "yearProof": [
+    {
+      "year": 2023,
+      "sourceArtifactId": 11681598339,
+      "zipSha256": "7314f5e185fea2c52d10b116b599edf66e52abc49d40a4ceff45aee9eb8cad80",
+      "jsonSha256": "9f58c518ef440b7d7322aab1125cd97c1b91d5aa05566bb62f94df7b5eff04f7",
+      "originalPdfs": 7,
+      "sourceFailures": 0,
+      "tallyMatchedParserBlocks": 10,
+      "explicitNamedYeaNayTokens": 133,
+      "explicitAbsentOrPassExcluded": 7
+    },
+    {
+      "year": 2024,
+      "sourceArtifactId": 11682015040,
+      "zipSha256": "23b4ab06b5bfb62dd5472a1663c1c8ca4b875bc410a9483a864fae4b76bd233d",
+      "jsonSha256": "849e05dfb5c79de1310ce463b490f64dedf9c7d5ecbc37b743e44ebe6ae13373",
+      "originalPdfs": 2,
+      "sourceFailures": 0,
+      "tallyMatchedParserBlocks": 2,
+      "explicitNamedYeaNayTokens": 14,
+      "explicitAbsentOrPassExcluded": 0
+    }
+  ],
+  "totalOriginalPdfsShaVerified": 9,
+  "totalTallyMatchedProvisionalBlocks": 12,
+  "totalExplicitYeaNayTokens": 147,
+  "totalExcludedAbsenceOrPassEntries": 7,
+  "cautions": {
+    "sourceNumericalMatchDoesNotProveDistinctActualMotion": true,
+    "historicalSenatorRosterMatchingNotCompleted": true,
+    "memberVoteDatabaseReconciliationNotCompleted": true,
+    "houseOrSenateFloorPassageStancesNotInferred": true,
+    "committeeRulesResolutionAndEthicsComplaintAreProceduralNotBillStance": true,
+    "originalFullTextMemberNamesAndPdfBytesNotCommitted": true,
+    "productionDbUntouched": true,
+    "forecastModelServingScheduler2027Untouched": true,
+    "issue864StillOpen": true
+  }
+}
