@@ -137,10 +137,22 @@ export async function acquireSenateOriginal2020to2022Sources(
  const files=[];
  for(const target of sources){
   const r=await retrieveSmallPublicOriginal(target.url,fetcher);
+  // A state SOS endpoint may return an HTTP 200 HTML maintenance page in
+  // place of the election text file. Never count that as original result data.
+  const isSOS=target.kind.startsWith('official_postvote');
+  const ascii=r.responseBuffer?.subarray(0,8192).toString('latin1')??'';
+  const looksLikeElectionText=Boolean(!isSOS||(
+    r.status===200
+    &&!/<\\s*(?:!doctype|html|head|body|title)\\b/i.test(ascii)
+    &&!/(?:maintenance in progress|please revisit this site)/i.test(ascii)
+    &&ascii.split(/\\r?\\n/).some(row=>row.includes(';')&&row.length>9)
+  ));
   const name=persist(dir,target.id+'.response',r.status===200?r.responseBuffer:null);
   const observation={id:target.id,year:target.year,kind:target.kind,
    sourceUrl:target.url,expectedCandidateNames:target.candidatePairs,
    response:metadata(r),storedResponseFile:name,
+   sourceTextFormatChecksPassed:r.status===200&&looksLikeElectionText,
+   sourceHttp200ButNotExpectedTextFormat:r.status===200&&!looksLikeElectionText,
    original2020or2022SosFilingWebsiteColumnAuthenticated:false,
    originalArchivePageBefore2022ElectionAuthenticated:false,
    postElectionSourceNotEligibleAsForecastFeature:target.kind.startsWith('official'),
@@ -203,7 +215,7 @@ export async function acquireSenateOriginal2020to2022Sources(
    directPublisherPagesAcquired:files.filter(x=>x.kind==='candidate_submitted_publisher_questionnaire'
     &&x.storedResponseFile).length,
    generalElectionPostvoteFilesAcquired:files.filter(x=>x.kind.startsWith('official')
-    &&x.storedResponseFile).length,
+    &&x.storedResponseFile&&x.sourceTextFormatChecksPassed).length,
    waybackIndexQueries:snapshots.length,
    priorGeneralWaybackIndexEntries:snapshots.reduce((n,x)=>n+x.parsedHistoricalIndexRows,0),
    priorGeneralWaybackArchiveHtmlSha1Matches:snapshots.reduce((n,x)=>
