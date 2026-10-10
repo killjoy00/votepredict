@@ -329,7 +329,11 @@ test('manual exact repository/main/approval and protected workflow, zero schedul
   assert.match(yml,/vars\.VOTEPREDICT_NEON_PROJECT_ID/);
   assert.match(yml,/^  push:\n    branches: \[main\]/m);
   assert.doesNotMatch(yml,/^  (?:pull_request|schedule):/m);
-  assert.doesNotMatch(yml,/upload-artifact|vercel env|DATABASE_URL_UNPOOLED/);
+  // Disposable localhost PostgreSQL is used only by the dedicated unprivileged
+  // verification job; it must NOT become the protected Neon read-only target.
+  assert.doesNotMatch(yml,/upload-artifact|vercel env/);
+  const auditJobs=yml.split('  one-shot-readonly:\n')[1] ?? '';
+  assert.doesNotMatch(auditJobs,/DATABASE_URL_UNPOOLED|VOTEPREDICT_INTEGRATION_DATABASE_URL/);
   const code=readFileSync('scripts/check-senate-media-neon-api-readonly.ts','utf8');
   assert.match(code,/BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY/);
   assert.match(code,/ROLLBACK/);
