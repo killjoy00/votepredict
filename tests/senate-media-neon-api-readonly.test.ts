@@ -238,70 +238,75 @@ test('read-only SQL guard rejects the wrong DB identity before source rows, even
     'ROLLBACK',
   ]);
 });
-test('exactly one marked first-attempt successful CI main-push can reuse protected read-only authorization',()=>{
+test('dedicated successful and marked main-commit verification may reuse previous bounded approval',()=>{
   const approved={
     GITHUB_REPOSITORY:'killjoy00/votepredict',
     GITHUB_REF:'refs/heads/main',
-    GITHUB_EVENT_NAME:'workflow_run',
+    GITHUB_EVENT_NAME:'push',
+    GITHUB_RUN_ATTEMPT:'1',
+    GITHUB_SHA:'a'.repeat(40),
     VOTEPREDICT_MEDIA_APPROVAL:'VERIFY_SENATE_MEDIA_READONLY',
     VOTEPREDICT_MEDIA_AGGREGATE_APPROVAL:'BOUNDED_AGGREGATE_ONLY',
-    VOTEPREDICT_MEDIA_CI_WORKFLOW:'CI',
-    VOTEPREDICT_MEDIA_CI_EVENT:'push',
-    VOTEPREDICT_MEDIA_CI_CONCLUSION:'success',
-    VOTEPREDICT_MEDIA_CI_HEAD_BRANCH:'main',
-    VOTEPREDICT_MEDIA_CI_HEAD_REPOSITORY:'killjoy00/votepredict',
-    VOTEPREDICT_MEDIA_CI_RUN_ATTEMPT:'1',
-    VOTEPREDICT_MEDIA_CI_HEAD_SHA:'a'.repeat(40),
-    VOTEPREDICT_MEDIA_CI_ONE_SHOT_MARKER_MATCHED:'true',
+    VOTEPREDICT_MEDIA_DEDICATED_VERIFY_SUCCEEDED:'true',
+    VOTEPREDICT_MEDIA_DEDICATED_ONE_SHOT_MARKER_MATCHED:'true',
   };
   assert.doesNotThrow(()=>assertApprovedDirectNeonWorkflow(approved));
   const denied=[
-    {GITHUB_EVENT_NAME:'push'},
+    {GITHUB_EVENT_NAME:'workflow_run'},
+    {GITHUB_EVENT_NAME:'pull_request'},
     {GITHUB_EVENT_NAME:'schedule'},
     {GITHUB_REF:'refs/heads/feature'},
     {GITHUB_REPOSITORY:'another/repo'},
+    {GITHUB_RUN_ATTEMPT:'2'},
+    {GITHUB_RUN_ATTEMPT:''},
+    {GITHUB_SHA:'123'},
+    {GITHUB_SHA:''},
     {VOTEPREDICT_MEDIA_APPROVAL:''},
     {VOTEPREDICT_MEDIA_AGGREGATE_APPROVAL:'unbounded'},
-    {VOTEPREDICT_MEDIA_CI_WORKFLOW:'PR Build'},
-    {VOTEPREDICT_MEDIA_CI_EVENT:'pull_request'},
-    {VOTEPREDICT_MEDIA_CI_CONCLUSION:'failure'},
-    {VOTEPREDICT_MEDIA_CI_HEAD_BRANCH:'feature'},
-    {VOTEPREDICT_MEDIA_CI_HEAD_REPOSITORY:'attacker/votepredict'},
-    {VOTEPREDICT_MEDIA_CI_RUN_ATTEMPT:'2'},
-    {VOTEPREDICT_MEDIA_CI_HEAD_SHA:''},
-    {VOTEPREDICT_MEDIA_CI_ONE_SHOT_MARKER_MATCHED:'false'},
-    {VOTEPREDICT_MEDIA_CI_ONE_SHOT_MARKER_MATCHED:''},
+    {VOTEPREDICT_MEDIA_DEDICATED_VERIFY_SUCCEEDED:'false'},
+    {VOTEPREDICT_MEDIA_DEDICATED_VERIFY_SUCCEEDED:''},
+    {VOTEPREDICT_MEDIA_DEDICATED_ONE_SHOT_MARKER_MATCHED:'false'},
+    {VOTEPREDICT_MEDIA_DEDICATED_ONE_SHOT_MARKER_MATCHED:''},
   ];
-  for(const changes of denied){
+  for(const changes of denied)
     assert.throws(()=>assertApprovedDirectNeonWorkflow({...approved,...changes}),
-      /authorized|approved|read.only/i,
-    );
-  }
+      /authorized|approved|read.only/i);
 });
 
-test('only a unique reviewed main squash-merge marker may trigger a one-time post-CI check',()=>{
+test('independent one-shot verification cannot be cancelled by shared CI and cannot expose protected secrets',()=>{
   const yml=readFileSync('.github/workflows/senate-media-neon-api-readonly-counts.yml','utf8');
-  assert.match(yml,/workflow_run:/);
-  assert.match(yml,/workflows: \[CI\]/);
-  assert.match(yml,/types: \[completed\]/);
-  assert.match(yml,/branches: \[main\]/);
-  assert.match(yml,/head_repository\.full_name == 'killjoy00\/votepredict'/);
-  assert.match(yml,/workflow_run\.event == 'push'/);
-  assert.match(yml,/workflow_run\.run_attempt == 1/);
-  assert.match(yml,/workflow_run\.conclusion == 'success'/);
-  assert.match(yml,/SENATE_MEDIA_ONE_SHOT_20261010_V1/);
+  assert.match(yml,/^  push:\n    branches: \[main\]/m);
+  assert.match(yml,/^  workflow_dispatch:/m);
+  assert.doesNotMatch(yml,/^  workflow_run:/m);
+  assert.doesNotMatch(yml,/^  (?:pull_request|schedule):/m);
+  assert.match(yml,/group: senate-media-neon-protected-one-shot-/);
+  assert.match(yml,/cancel-in-progress: false/);
+  assert.match(yml,/one-shot-verify:/);
+  assert.match(yml,/one-shot-readonly:\n    needs: \[one-shot-verify\]/);
+  assert.match(yml,/needs\.one-shot-verify\.result == 'success'/);
+  assert.match(yml,/github\.run_attempt == 1/);
+  assert.match(yml,/SENATE_MEDIA_DEDICATED_ONE_SHOT_20261010_V2/);
+  assert.match(yml,/github\.event\.head_commit\.message/);
   assert.match(yml,/environment: evidence-readonly-sandbox/);
+  assert.match(yml,/POSTGRES_DB: votepredict/);
+  assert.match(yml,/Verify migrations from a clean disposable PostgreSQL database/);
+  assert.match(yml,/npm run db:migrate/);
+  assert.match(yml,/npm run check/);
+  assert.match(yml,/npm audit --omit=dev --audit-level=high/);
+  assert.match(yml,/REVIEWED_SHA: \$\{\{ github\.sha \}\}/);
+  assert.match(yml,/test "\$\(git rev-parse HEAD\)" = "\$REVIEWED_SHA"/);
   assert.match(yml,/persist-credentials: false/);
-  assert.match(yml,/ref: \$\{\{ github\.event_name == 'workflow_run' && github\.event\.workflow_run\.head_sha \|\| github\.sha \}\}/);
-  assert.match(yml,/test "\$\(git rev-parse HEAD\)" = "\$APPROVED_MAIN_SHA"/);
-  assert.match(yml,/VOTEPREDICT_MEDIA_CI_HEAD_REPOSITORY/);
-  assert.doesNotMatch(yml,/^\s{2}(?:schedule|pull_request|push):/m);
   assert.doesNotMatch(yml,/upload-artifact|post-comment|CREATE ROLE|neon branches create/i);
-  // A full export is still blocked by independent private-only SQL gates.
   const script=readFileSync('scripts/check-senate-media-neon-api-readonly.ts','utf8');
   assert.match(script,/BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY/);
   assert.match(script,/ROLLBACK/);
   assert.doesNotMatch(script,/INSERT INTO|DELETE FROM|CREATE TABLE|ALTER TABLE|UPDATE public\./i);
+  const unprivileged=yml.split('  one-shot-verify:\n')[1]!.split('  one-shot-readonly:\n')[0]!;
+  assert.doesNotMatch(unprivileged,/NEON_API_KEY|environment: evidence-readonly-sandbox/);
+  const audit=yml.split('  one-shot-readonly:\n')[1]!.split('  manual-readonly:\n')[0]!;
+  assert.match(audit,/NEON_API_KEY: \$\{\{ secrets.NEON_API_KEY \}\}/);
+  assert.match(audit,/VOTEPREDICT_MEDIA_DEDICATED_VERIFY_SUCCEEDED/);
+  assert.match(audit,/VOTEPREDICT_MEDIA_DEDICATED_ONE_SHOT_MARKER_MATCHED/);
 });
 
 test('manual exact repository/main/approval and protected workflow, zero scheduled/PR/source export',()=>{
@@ -322,7 +327,8 @@ test('manual exact repository/main/approval and protected workflow, zero schedul
   assert.match(yml,/evidence-readonly-sandbox/);
   assert.match(yml,/secrets\.NEON_API_KEY/);
   assert.match(yml,/vars\.VOTEPREDICT_NEON_PROJECT_ID/);
-  assert.doesNotMatch(yml,/^\s+(?:push|pull_request|schedule):/m);
+  assert.match(yml,/^  push:\n    branches: \[main\]/m);
+  assert.doesNotMatch(yml,/^  (?:pull_request|schedule):/m);
   assert.doesNotMatch(yml,/upload-artifact|vercel env|DATABASE_URL_UNPOOLED/);
   const code=readFileSync('scripts/check-senate-media-neon-api-readonly.ts','utf8');
   assert.match(code,/BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY/);
