@@ -10,6 +10,7 @@ import {createHash} from 'node:crypto';
 import {mkdirSync,writeFileSync,existsSync} from 'node:fs';
 import {resolve,join} from 'node:path';
 import {parseWaybackCdxJson,type WaybackCapture} from '../src/evidence/wayback.js';
+import {auditSos2020to2022OriginalGeneralCensus} from '../src/evidence/senate-2020-22-official-general-census.js';
 
 export const SENATE_HISTORIC_ORIGINAL_ACQUISITION_VERSION='senate-2020-22-public-original-source-acquisition-v1';
 const MAX_RAW_BYTES=2*1024*1024;
@@ -135,6 +136,7 @@ export async function acquireSenateOriginal2020to2022Sources(
  if(existsSync(resolve(outputDir)))throw Error('Refuse to overwrite prior source acquisition');
  const dir=resolve(outputDir);mkdirSync(dir,{recursive:true,mode:0o700});
  const files=[];
+ const originals=new Map<string,Buffer>();
  for(const target of sources){
   const r=await retrieveSmallPublicOriginal(target.url,fetcher);
   // A state SOS endpoint may return an HTTP 200 HTML maintenance page in
@@ -159,8 +161,58 @@ export async function acquireSenateOriginal2020to2022Sources(
    claimsExactPolicyCandidateExcerptPreVote:false,
   };
   files.push(observation);
+  if(isSOS&&observation.sourceTextFormatChecksPassed&&r.responseBuffer)
+    originals.set(target.id,r.responseBuffer);
   console.log('HISTORIC-PUBLIC-SOURCE '+JSON.stringify({id:observation.id,
    status:r.status,error:r.error,sha256:r.bodySha256,bytes:r.responseBytes}));
+ }
+ const originalGeneralCensuses=[];
+ for(const year of [2020,2022] as const){
+  const st=originals.get(year+'-sos-general-stsenate');
+  const cand=originals.get(year+'-sos-general-cand');
+  if(!st||!cand){
+    originalGeneralCensuses.push({
+      electionYear:year,reportFile:null,success:false,
+      sourceResult:'one or both official general result files were unavailable or wrong format',
+      fullCandidateOriginalGeneralBallotProof:false,
+      sourceWebsiteFieldHistoricallyVerified:false,
+    });
+    continue;
+  }
+  try{
+    const report=auditSos2020to2022OriginalGeneralCensus(year,st,cand);
+    const file=persist(dir,year+'-sos-general-crosschecked-candidate-census.json',
+      Buffer.from(JSON.stringify(report,null,2)+'\n'));
+    originalGeneralCensuses.push({
+      electionYear:year,reportFile:file,success:true,
+      sourceResult:'both originals structurally matched',
+      sourceHashesMatchPriorAcquisition:report.source.originalBytesMatchPreviouslyAcquiredGithubRunnerEvidence,
+      districts:report.totals.senateDistricts,
+      winners:report.totals.nonWriteinElectionWinnerCandidates,
+      losingNamedCandidates:report.totals.nonwinningNamedCandidates,
+      sourceWebsiteFieldHistoricallyVerified:false,
+      fullCandidateOriginalGeneralBallotProof:true,
+    });
+    console.log('HISTORIC-OFFICIAL-CENSUS '+JSON.stringify({
+      electionYear:year,originalSha256:report.source.originalResultSha256,
+      candidateLookupSha256:report.source.originalCandidateLookupSha256,
+      sourceHashMatched:report.source.originalBytesMatchPreviouslyAcquiredGithubRunnerEvidence,
+      namedCandidates:report.totals.uniqueNamedBallotCandidates,
+      winners:report.totals.nonWriteinElectionWinnerCandidates,
+      losingCandidates:report.totals.nonwinningNamedCandidates,
+    }));
+  }catch(e){
+    originalGeneralCensuses.push({
+      electionYear:year,reportFile:null,success:false,
+      sourceResult:'official source formats or identities did not reconcile',
+      fullCandidateOriginalGeneralBallotProof:false,
+      sourceWebsiteFieldHistoricallyVerified:false,
+    });
+    console.log('HISTORIC-OFFICIAL-CENSUS '+JSON.stringify({
+      electionYear:year,success:false,
+      reason:e instanceof Error?e.message.slice(0,100):'unknown',
+    }));
+  }
  }
  const snapshots=[];
  for(const article of sources.filter(x=>x.kind==='candidate_submitted_publisher_questionnaire')){
@@ -220,9 +272,12 @@ export async function acquireSenateOriginal2020to2022Sources(
    priorGeneralWaybackIndexEntries:snapshots.reduce((n,x)=>n+x.parsedHistoricalIndexRows,0),
    priorGeneralWaybackArchiveHtmlSha1Matches:snapshots.reduce((n,x)=>
      n+x.snapshotAttempts.filter(y=>y.matchesHistoricalIndexDigest).length,0),
+   completeOriginalGeneralElectionCensuses:originalGeneralCensuses.filter(x=>x.success).length,
+   originalElectionWinnerIdentitiesConfirmed:originalGeneralCensuses.filter(x=>x.success).reduce((sum,x)=>sum+(x.winners??0),0),
+   originalElectionNonwinnerIdentitiesConfirmed:originalGeneralCensuses.filter(x=>x.success).reduce((sum,x)=>sum+(x.losingNamedCandidates??0),0),
    historicalCandidateIssueExcerptsManuallyAttributed:0,
    evidenceAddedToModel:0},
-  directSources:files,questionnaireWayback:snapshots,
+  directSources:files,originalGeneralCensuses,questionnaireWayback:snapshots,
   limitations:[
    'The seven-column election cand.txt is NOT the 21-column historical SOS filing export and has no campaign website field.',
    'Election outcomes and general election result files are post-election identity evidence, never pre-vote features.',
