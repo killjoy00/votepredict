@@ -318,7 +318,7 @@ export function reconcileSenateMediaPrivateBatches(input: {
     originalHashMismatched:mismatched,
     attemptedButUnavailableOrRejected:unavailable,
     notAttempted:eligible.length-actual.size,
-    retrievalAttemptsCompleteForEligibleExport:actual.size===eligible.length,
+    retrievalAttemptsCompleteForEligibleExport:eligible.length>0 && actual.size===eligible.length,
     batchCount:batches.length,
     byCaptureYear:yearGroups,
     byPublisherCaptureYear:[...publisherGroups.values()]
