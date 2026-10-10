@@ -79,6 +79,26 @@ test('original 2024 Rules separate AYES NAYS first/last roster must not be confu
   assert.equal(r[0]?.namedYeaNayTallyMatchesSource,true);
   assert.equal(r[0]?.sourceChoiceFingerprintSha256.length,10);
 });
+test('lowercase absent in the February 2023 official roll is a nonvoting choice, not an automatic tally mismatch',()=>{
+  const yes=['Carlson','Westlin','Boldon','Cwodzinski','Marty','Mitchell','Port','Rest'];
+  const no=['Koran','Bahr','Limmer','Mathews','Dornink'];
+  const src='Senator Koran requested a roll call vote and a roll call was granted. '+
+    yes.map(s=>'Senator '+s+' - Yea').join(' ')+ ' '+
+    no.map(s=>'Senator '+s+' - Nay').join(' ')+
+    ' Senator Anderson - absent With a roll call vote of 8 Yeas, 5 Nays, and 1 Absence, the motion prevailed.';
+  const records=extractNineSourceIndividualRolls(src,2023,'Elections');
+  assert.equal(records.length,1);
+  assert.equal(records[0]?.sourceYeaCount,8);
+  assert.equal(records[0]?.sourceNayCount,5);
+  assert.equal(records[0]?.explicitlyNamedYeas,8);
+  assert.equal(records[0]?.explicitlyNamedNays,5);
+  assert.equal(records[0]?.explicitlyListedAbsent,1);
+  assert.equal(records[0]?.explicitlyListedPass,0);
+  assert.equal(records[0]?.namedYeaNayTallyMatchesSource,true);
+  assert.equal(records[0]?.sourceChoiceFingerprintSha256.length,14);
+  assert.equal(records[0]?.noAutomaticIndividualVoteImport,true);
+});
+
 test('plain presence/attendance roll and voice vote cannot produce named yea nay candidates',()=>{
   const text='Senator Johnson called the meeting to order. The clerk took the roll. '+
     'Senator Carlson present. Senator Koran absent. A voice motion prevailed.';
