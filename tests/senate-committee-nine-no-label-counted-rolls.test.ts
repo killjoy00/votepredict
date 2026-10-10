@@ -6,7 +6,7 @@ import {
 
 test('exact original nine source manifests reject absent immutable source artifact SHA',()=>{
   for(const year of [2023,2024] as const)
-    assert.throws(()=>selectNinePinnedSourceRollOriginals(year,'{}'),/original source artifact hash differs/);
+    assert.throws(()=>selectNinePinnedSourceRollOriginals(year,'{}'),/source artifact hash differs/);
 });
 test('reversed source numeric tally counts explicit Yea/Nay and never classifies Absent or Pass as Nay',()=>{
   const text=[
