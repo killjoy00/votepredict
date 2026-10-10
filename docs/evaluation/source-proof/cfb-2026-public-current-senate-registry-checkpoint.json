@@ -72,7 +72,19 @@
     ],
     "currentListIsNotCompleteHistoricalTerminations": true,
     "viewerOnlyDoesNotImplyTerminated": true,
-    "registrationDatedBefore2026DoesNotImplyEveryAnnualReportDue": true
+    "registrationDatedBefore2026DoesNotImplyEveryAnnualReportDue": true,
+    "viewerOnly2026SegmentRegistrationCohorts": {
+      "totalCandidateRegistrationsObservedOnlyIn2026ElectionSegment": 134,
+      "listedInOctober2026CurrentSenateRegistryWithRegistrationDuring2025": 41,
+      "listedInOctober2026CurrentSenateRegistryWithRegistrationDuring2026": 78,
+      "absentFromOctober2026CurrentRegistryNoDatedRegistrationProof": 15,
+      "accounting": "41+78+15=134. 2026 election-viewer year is NOT the registration year; 2025-dated observations are leads, not legal filing obligations."
+    },
+    "viewerIdsObservedIn2020or2022or2024Cohorts": {
+      "total": 360,
+      "alsoListedInOctober2026CurrentRegistry": 111,
+      "notListedInCurrentRegistry": 249
+    }
   },
   "historicalDenominator": {
     "totalCandidateCommitteesLegallyActiveIn2021to2025": null,
