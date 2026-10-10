@@ -39,7 +39,7 @@ test('HTTP 200 HTML explicitly saying missing file is not a playable source',()=
 });
 
 test('untrusted non-HTML and unbounded sources fail closed',()=>{
-  assert.throws(()=>inspectSenateMediaRecordHtml('%PDF- fake','1045559'),/did not resemble HTML/);
+  assert.throws(()=>inspectSenateMediaRecordHtml('%PDF- fake object '.repeat(4),'1045559'),/did not resemble HTML/);
   assert.throws(()=>inspectSenateMediaRecordHtml('<html></html>','../foo'),/fixed source bounds/);
   assert.throws(()=>inspectSenateMediaRecordHtml('<html>'+'x'.repeat(650_000)+'</html>','1045559'),/fixed source bounds/);
 });
