@@ -37,6 +37,8 @@ test('original named 4-6 roll is source keyed and not mislabeled final passage s
   assert.equal(audit.voteObservations[0]?.billIdentifier, 'SF5430');
   assert.equal(audit.voteObservations[0]?.amendmentRef, 'A10');
   assert.equal(audit.voteObservations[0]?.yeaCount, 4);
+  assert.equal(audit.voteObservations[0]?.choiceIdentitySha256.length, 10);
+  assert.ok(audit.voteObservations[0]?.choiceIdentitySha256.every(x => /^[a-f0-9]{64}$/.test(x)));
   assert.equal(audit.voteObservations[0]?.nayCount, 6);
   assert.equal(audit.voteObservations[0]?.finalPassageStanceInferred, false);
   const expected = 'senate-committee:'
