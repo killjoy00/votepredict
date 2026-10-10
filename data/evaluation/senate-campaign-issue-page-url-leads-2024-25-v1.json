@@ -1,0 +1,244 @@
+{
+  "schema": "mn-senate-campaign-issue-original-url-leads-2024-25-v1",
+  "scope": {
+    "targetHistoricalCalendarYears": [
+      2024,
+      2025
+    ],
+    "historicalCompletenessIssue": 864,
+    "mode": "offline_research_planning",
+    "newVerifiedHistoricalCampaignPages": 0,
+    "newVerifiedIssueStatements": 0,
+    "denominatorCertified": false,
+    "noModelImpact": true
+  },
+  "laterResearchSnapshot": {
+    "repository": "nniiicc/electionsitechange",
+    "immutableCommit": "888e15a64c67d221de427aac49dc82ddc11a0c84",
+    "githubCommitCommitterDate": "2026-10-10T17:33:17Z",
+    "snapshotFormat": 3,
+    "sourceKind": "third_party_later_site_crawl",
+    "actualCrawlTimestampIndependentlyVerified": false,
+    "publisherGitBlobHashesVerifyRepositoryObjectsOnly": true,
+    "originalSiteResponseBytesIndependentlyVerified": false,
+    "earliestHistoricallyProvenPublicBy": null,
+    "usableAs2021to2025StatementProof": false
+  },
+  "candidates": [
+    {
+      "candidateName": "Ann Johnson Stewart",
+      "district": "45",
+      "electionYear": 2024,
+      "primaryElectionOn": "2024-08-13",
+      "generalElectionOn": "2024-11-05",
+      "publisherWebsiteLeadSourceId": "labor-review-2024-08-12",
+      "campaignHost": "annjohnsonstewart.com",
+      "sourceOriginalCampaignDomainCertified": false,
+      "sitesFromOfficialHistoricalFiling": false,
+      "laterResearchSnapshotLookupStatus": "page_paths_found_in_later_snapshot",
+      "pages": [
+        {
+          "kind": "homepage",
+          "originalUrl": "https://annjohnsonstewart.com/",
+          "sourceMetadataFile": "sites/annjohnsonstewart.com__5f70f2/meta.json",
+          "sourceMetadataGitBlobSha": "86c0af02e3fae0f2b6b0a4aae320052afd45b595",
+          "sourceTextFile": "sites/annjohnsonstewart.com__5f70f2/text.md",
+          "sourceTextGitBlobSha": "e25b882409e9d08314ba079c2bfd11633eba4144",
+          "sourceCrawlerFingerprint": "7070c9a17c80e1a2f473c44ad0db85b10db4f74d",
+          "sourceMetadataMentionsYears": [
+            "2026"
+          ],
+          "pageTextExtractedIn2026Only": true,
+          "historicalSitePageBytesProven": false,
+          "historicalSnapshotCapturedAt": null,
+          "historicalArchiveCdxDigest": null
+        },
+        {
+          "kind": "priorities",
+          "originalUrl": "https://annjohnsonstewart.com/priorities/",
+          "sourceMetadataFile": "sites/annjohnsonstewart.com__5f70f2/pages/priorities-a82e13/meta.json",
+          "sourceMetadataGitBlobSha": "9c531cc2ce53e8cede4e96e9871e3031ba92e8ab",
+          "sourceTextFile": "sites/annjohnsonstewart.com__5f70f2/pages/priorities-a82e13/text.md",
+          "sourceTextGitBlobSha": "c2acb4fdd042cca0d7be82e889afe987af99f64e",
+          "sourceCrawlerFingerprint": "a1e10c697a4667e988656c93b36f9a7cd704529e",
+          "sourceMetadataMentionsYears": [],
+          "pageTextExtractedIn2026Only": true,
+          "historicalSitePageBytesProven": false,
+          "historicalSnapshotCapturedAt": null,
+          "historicalArchiveCdxDigest": null
+        }
+      ]
+    },
+    {
+      "candidateName": "Keri Heintzeman",
+      "district": "6",
+      "electionYear": 2025,
+      "primaryElectionOn": "2025-04-15",
+      "generalElectionOn": "2025-04-29",
+      "publisherWebsiteLeadSourceId": "lakes-area-2025-voter-guide",
+      "campaignHost": "heintzemanforsenate.com",
+      "sourceOriginalCampaignDomainCertified": false,
+      "sitesFromOfficialHistoricalFiling": false,
+      "laterResearchSnapshotLookupStatus": "page_paths_found_in_later_snapshot",
+      "pages": [
+        {
+          "kind": "homepage_issues",
+          "originalUrl": "https://heintzemanforsenate.com/",
+          "sourceMetadataFile": "sites/heintzemanforsenate.com__5aa4c3/meta.json",
+          "sourceMetadataGitBlobSha": "5c1e3439fd393d952e1d8a187e0097d08b56bea8",
+          "sourceTextFile": "sites/heintzemanforsenate.com__5aa4c3/text.md",
+          "sourceTextGitBlobSha": "b4898f40e06cb92888e488886f298b608b32c14f",
+          "sourceCrawlerFingerprint": "587ae61366f191db37197c4c4e9da9a8fa97f300",
+          "sourceMetadataMentionsYears": [
+            "2026"
+          ],
+          "pageTextExtractedIn2026Only": true,
+          "historicalSitePageBytesProven": false,
+          "historicalSnapshotCapturedAt": null,
+          "historicalArchiveCdxDigest": null
+        }
+      ]
+    },
+    {
+      "candidateName": "Louis McNutt",
+      "district": "29",
+      "electionYear": 2025,
+      "primaryElectionOn": "2025-08-26",
+      "generalElectionOn": "2025-11-04",
+      "publisherWebsiteLeadSourceId": "reformer-nov2025",
+      "campaignHost": "louismcnuttformnsenate.com",
+      "sourceOriginalCampaignDomainCertified": false,
+      "sitesFromOfficialHistoricalFiling": false,
+      "laterResearchSnapshotLookupStatus": "page_paths_found_in_later_snapshot",
+      "pages": [
+        {
+          "kind": "homepage",
+          "originalUrl": "https://louismcnuttformnsenate.com/",
+          "sourceMetadataFile": "sites/louismcnuttformnsenate.com__bdfb8e/meta.json",
+          "sourceMetadataGitBlobSha": "66241acf45d3911f639d6b4b61956ae7cee31084",
+          "sourceTextFile": "sites/louismcnuttformnsenate.com__bdfb8e/text.md",
+          "sourceTextGitBlobSha": "9a58c38961cbf2c830cb8406461a60ca17cce0c7",
+          "sourceCrawlerFingerprint": "41c1fc2ded7494ad8c55c1d65fe73bef4dcbcb83",
+          "sourceMetadataMentionsYears": [],
+          "pageTextExtractedIn2026Only": true,
+          "historicalSitePageBytesProven": false,
+          "historicalSnapshotCapturedAt": null,
+          "historicalArchiveCdxDigest": null
+        },
+        {
+          "kind": "issues",
+          "originalUrl": "https://louismcnuttformnsenate.com/issues",
+          "sourceMetadataFile": "sites/louismcnuttformnsenate.com__bdfb8e/pages/issues-e2a7f9/meta.json",
+          "sourceMetadataGitBlobSha": "3a442027fd6298fcdc6312e4fb5491a97fd9b4c4",
+          "sourceTextFile": "sites/louismcnuttformnsenate.com__bdfb8e/pages/issues-e2a7f9/text.md",
+          "sourceTextGitBlobSha": "eef6531895ce1c133499f22636d8520df8696d10",
+          "sourceCrawlerFingerprint": "2386f2dd7536153a99ae6b7641e09b251a954d38",
+          "sourceMetadataMentionsYears": [],
+          "pageTextExtractedIn2026Only": true,
+          "historicalSitePageBytesProven": false,
+          "historicalSnapshotCapturedAt": null,
+          "historicalArchiveCdxDigest": null
+        }
+      ]
+    },
+    {
+      "candidateName": "Michael Holmstrom Jr",
+      "district": "29",
+      "electionYear": 2025,
+      "primaryElectionOn": "2025-08-26",
+      "generalElectionOn": "2025-11-04",
+      "publisherWebsiteLeadSourceId": "reformer-nov2025",
+      "campaignHost": "mike4mnsenate.com",
+      "sourceOriginalCampaignDomainCertified": false,
+      "sitesFromOfficialHistoricalFiling": false,
+      "laterResearchSnapshotLookupStatus": "page_paths_found_in_later_snapshot",
+      "pages": [
+        {
+          "kind": "homepage",
+          "originalUrl": "https://www.mike4mnsenate.com/",
+          "sourceMetadataFile": "sites/mike4mnsenate.com__b4dcb8/meta.json",
+          "sourceMetadataGitBlobSha": "28110f58b4ea9ed6993243f1115cfe379061a490",
+          "sourceTextFile": "sites/mike4mnsenate.com__b4dcb8/text.md",
+          "sourceTextGitBlobSha": "5a220468b184b478bd06ea21768a0a8dc5b23fff",
+          "sourceCrawlerFingerprint": "2ea0d299590931d62987125db94c7bc4c6f0749a",
+          "sourceMetadataMentionsYears": [],
+          "pageTextExtractedIn2026Only": true,
+          "historicalSitePageBytesProven": false,
+          "historicalSnapshotCapturedAt": null,
+          "historicalArchiveCdxDigest": null
+        },
+        {
+          "kind": "platform",
+          "originalUrl": "https://www.mike4mnsenate.com/platform",
+          "sourceMetadataFile": "sites/mike4mnsenate.com__b4dcb8/pages/platform-b28e66/meta.json",
+          "sourceMetadataGitBlobSha": "68bf59205b907c731d7f979c12b7b3f8f6b32503",
+          "sourceTextFile": "sites/mike4mnsenate.com__b4dcb8/pages/platform-b28e66/text.md",
+          "sourceTextGitBlobSha": "e6c7675e95e5f270230011c4c1b213ec3a0832d5",
+          "sourceCrawlerFingerprint": "282f488197caf3812f7857bb14f2458bb1f40048",
+          "sourceMetadataMentionsYears": [
+            "2024"
+          ],
+          "pageTextExtractedIn2026Only": true,
+          "historicalSitePageBytesProven": false,
+          "historicalSnapshotCapturedAt": null,
+          "historicalArchiveCdxDigest": null
+        }
+      ]
+    },
+    {
+      "candidateName": "Amanda Hemmingsen-Jaeger",
+      "district": "47",
+      "electionYear": 2025,
+      "primaryElectionOn": "2025-08-26",
+      "generalElectionOn": "2025-11-04",
+      "publisherWebsiteLeadSourceId": "reformer-nov2025",
+      "campaignHost": "amandaformn.com",
+      "sourceOriginalCampaignDomainCertified": false,
+      "sitesFromOfficialHistoricalFiling": false,
+      "laterResearchSnapshotLookupStatus": "page_paths_found_in_later_snapshot",
+      "pages": [
+        {
+          "kind": "homepage",
+          "originalUrl": "https://amandaformn.com/",
+          "sourceMetadataFile": "sites/amandaformn.com__e7b84b/meta.json",
+          "sourceMetadataGitBlobSha": "af9ca6aa57c1ff5b467b13df201654775bbc3c13",
+          "sourceTextFile": "sites/amandaformn.com__e7b84b/text.md",
+          "sourceTextGitBlobSha": "605c7fbb16bea1f289cba2a68f3214862c2b7feb",
+          "sourceCrawlerFingerprint": "5cbb87ae0dfd9c405d354bfce974bee248f36c7f",
+          "sourceMetadataMentionsYears": [],
+          "pageTextExtractedIn2026Only": true,
+          "historicalSitePageBytesProven": false,
+          "historicalSnapshotCapturedAt": null,
+          "historicalArchiveCdxDigest": null
+        },
+        {
+          "kind": "issues",
+          "originalUrl": "https://amandaformn.com/issues/",
+          "sourceMetadataFile": "sites/amandaformn.com__e7b84b/pages/issues-e2a7f9/meta.json",
+          "sourceMetadataGitBlobSha": "23050b7a941500726361ba536083342feb8ea420",
+          "sourceTextFile": "sites/amandaformn.com__e7b84b/pages/issues-e2a7f9/text.md",
+          "sourceTextGitBlobSha": "849a6909d8aeeca43f031d0fabc2e245a4bd675b",
+          "sourceCrawlerFingerprint": "a877bf6cd2463b632ed923f4388f23b568277d76",
+          "sourceMetadataMentionsYears": [],
+          "pageTextExtractedIn2026Only": true,
+          "historicalSitePageBytesProven": false,
+          "historicalSnapshotCapturedAt": null,
+          "historicalArchiveCdxDigest": null
+        }
+      ]
+    },
+    {
+      "candidateName": "Dwight Dorau",
+      "district": "47",
+      "electionYear": 2025,
+      "primaryElectionOn": "2025-08-26",
+      "generalElectionOn": "2025-11-04",
+      "publisherWebsiteLeadSourceId": "reformer-nov2025",
+      "campaignHost": "votefordwight.com",
+      "sourceOriginalCampaignDomainCertified": false,
+      "sitesFromOfficialHistoricalFiling": false,
+      "laterResearchSnapshotLookupStatus": "not_recovered_in_targeted_research_search",
+      "pages": []
+    }
+  ]
+}
