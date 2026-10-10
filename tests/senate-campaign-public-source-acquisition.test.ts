@@ -108,7 +108,7 @@ test('publisher HTTP 200 is acquired as 2026 source bytes, not historic campaign
       return gen(200,page,{'content-type':'text/html','last-modified':'Sat, 10 Oct 2026 10:00:00 GMT'});
     };
     const m=await acquireSenateCampaignPublicSources(out,mock as typeof fetch);
-    assert.equal(m.totals.publisherLivePagesDownloaded,3);
+    assert.equal(m.totals.publisherLivePagesDownloaded,6);
     assert.equal(m.totals.attemptedCommonCrawlOriginalWarcRanges,0);
     assert.equal(m.totals.verifiedPreElectionCandidateAuthoredStatements,0);
     assert.equal(m.sourceAuthorization.preElectionCandidateStatementProofCertified,false);
@@ -117,6 +117,9 @@ test('publisher HTTP 200 is acquired as 2026 source bytes, not historic campaign
     assert.equal(m.contemporaneouslyDatedPublisherPages[0].response.bodySha256,
       createHash('sha256').update(page).digest('hex'));
     assert.equal(readFileSync(join(out,'media-sd6-20250410.html')).toString(),page);
+    assert.equal(readFileSync(join(out,'2025-dorau-original-announcement.html')).toString(),page);
+    assert.equal(m.contemporaneouslyDatedPublisherPages[3].publicationDateOnPageClaim,'2025-07-30');
+    assert.equal(m.contemporaneouslyDatedPublisherPages[5].publicationDateOnPageClaim,'2025-10-28');
   }finally{rmSync(dir,{recursive:true,force:true});}
 });
 test('actual acquisition flow hashes source index, 206 compressed range and verified original-page bytes',async()=>{
