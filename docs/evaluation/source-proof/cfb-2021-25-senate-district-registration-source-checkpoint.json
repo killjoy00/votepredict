@@ -1,0 +1,195 @@
+{
+  "schemaVersion": "cfb-senate-district-registration-source-proof-v1",
+  "provenance": {
+    "sourceRun": "https://github.com/killjoy00/votepredict/actions/runs/38081628130",
+    "runId": 38081628130,
+    "artifactId": 11680891630,
+    "artifactName": "cfb-senate-2021-25-official-district-registration-discovery",
+    "artifactExpiresAt": "2026-11-09T19:56:34Z",
+    "mergedCaptureCommit": "d39d9371ebd47bb8f5923b71b92f313a2e7177dd",
+    "capturedAt": "2026-10-10T19:56:34.348Z",
+    "from": "2026-10-10T19:54:56.003Z",
+    "through": "2026-10-10T19:56:34.242Z",
+    "zipSha256": "fe85e6d3e4ae64d24d3153ae23b976267769cea8e57400e8008f2daffbace5a1",
+    "rawJsonSha256": "83770615658f7cf47802b05257bcbd45bed0c7c41ec19dfe99c31ca91b746c04",
+    "rawJsonBytes": 264296,
+    "canonical268PageProofWithIdsSha256": "08c27a830b9ce8084997dac7203a421f08dbf2af20a22c602be3703d74ff9747",
+    "canonicalSegmentProofSha256": {
+      "2020": "c8f69873935f7ba219a0d7d12c320dc80750efc63ac48fa46abb925207487482",
+      "2022": "4da15ed007e1686e475189ea0e7a43c14c1669b241f35ab0452abbeabbcc2fe8",
+      "2024": "9533dbb55bb489c3fcd50a628338cac699e3cace2a37d5bdd376cb911f7f64a6",
+      "2026": "a971bb2efec9ec748a911b853af65a6319a2a93505fb88014355ed69e74e9794"
+    },
+    "canonicalPageDigestRule": "Python json.dumps(list of {district,segmentEndYear,sourceUrl,htmlSha256,candidateRegistrationNumbers}, sort_keys=True,separators=(',',':'),ensure_ascii=False) encoded as UTF-8; observations ordered by segment then district"
+  },
+  "sourceCoverage": {
+    "districtsEachSegment": 67,
+    "segments": [
+      2020,
+      2022,
+      2024,
+      2026
+    ],
+    "pagesAttempted": 268,
+    "pagesAcquiredAndParsed": 268,
+    "sourceFailures": 0,
+    "contradictorySourceSnapshots": 0,
+    "bySegment": [
+      {
+        "year": 2020,
+        "pages": 67,
+        "pagesWithVisibleCandidates": 67,
+        "pagesWithoutVisibleCandidates": 0,
+        "observedIds": 231
+      },
+      {
+        "year": 2022,
+        "pages": 67,
+        "pagesWithVisibleCandidates": 64,
+        "pagesWithoutVisibleCandidates": 3,
+        "observedIds": 270,
+        "sourceEmptyDistricts": [
+          46,
+          60,
+          61
+        ]
+      },
+      {
+        "year": 2024,
+        "pages": 67,
+        "pagesWithVisibleCandidates": 48,
+        "pagesWithoutVisibleCandidates": 19,
+        "observedIds": 126,
+        "sourceEmptyDistricts": [
+          5,
+          9,
+          13,
+          16,
+          18,
+          19,
+          21,
+          22,
+          27,
+          30,
+          35,
+          41,
+          42,
+          46,
+          47,
+          49,
+          58,
+          61,
+          64
+        ]
+      },
+      {
+        "year": 2026,
+        "pages": 67,
+        "pagesWithVisibleCandidates": 66,
+        "pagesWithoutVisibleCandidates": 1,
+        "observedIds": 249,
+        "sourceEmptyDistricts": [
+          61
+        ]
+      }
+    ]
+  },
+  "observedCandidateRegistrationIndex": {
+    "distinctRegistrations": 494,
+    "observedOnlyIn2026Segment": 134,
+    "observedIn2020Or2022Or2024": 360,
+    "registrationIdsCsv": "11829,11880,12339,13262,13350,15123,15163,15286,15317,15501,15667,15675,15705,15777,16246,16311,16418,16553,16666,16891,16904,16907,16912,16931,16946,16964,16980,17005,17021,17027,17028,17040,17066,17077,17082,17091,17095,17105,17117,17140,17176,17277,17280,17310,17316,17319,17344,17347,17362,17367,17373,17383,17393,17404,17407,17423,17441,17442,17443,17462,17481,17520,17579,17849,17854,17856,17860,17865,17868,17869,17876,17878,17879,17893,17895,17898,17905,17910,17913,17919,17924,17925,17927,17929,17930,17936,17938,17942,17954,17964,17987,17990,17994,18001,18002,18004,18007,18010,18011,18019,18021,18026,18032,18035,18036,18040,18058,18076,18077,18083,18099,18102,18103,18204,18205,18228,18232,18337,18339,18406,18407,18408,18409,18416,18417,18418,18424,18425,18426,18429,18430,18435,18437,18440,18443,18445,18447,18451,18453,18455,18456,18457,18458,18465,18466,18467,18469,18488,18491,18498,18499,18500,18507,18508,18509,18515,18516,18523,18527,18529,18534,18539,18542,18549,18551,18555,18566,18567,18571,18572,18576,18577,18578,18581,18585,18589,18593,18594,18597,18604,18607,18608,18615,18616,18619,18621,18628,18635,18641,18643,18645,18647,18651,18652,18653,18655,18657,18660,18661,18663,18664,18665,18666,18668,18669,18670,18672,18674,18681,18682,18683,18688,18694,18696,18698,18705,18706,18707,18708,18709,18713,18715,18716,18717,18718,18719,18720,18721,18724,18730,18734,18735,18737,18738,18739,18749,18753,18754,18763,18766,18769,18770,18774,18777,18778,18780,18781,18788,18789,18791,18792,18793,18795,18800,18801,18809,18814,18819,18821,18823,18827,18828,18831,18834,18840,18841,18843,18844,18845,18848,18849,18850,18851,18858,18863,18864,18866,18867,18871,18872,18873,18878,18881,18882,18885,18888,18889,18895,18898,18901,18903,18910,18912,18914,18917,18919,18920,18927,18928,18929,18931,18932,18936,18937,18941,18942,18943,18944,18945,18953,18960,18964,18967,18969,18970,18971,18972,18975,18977,18983,18985,18992,18996,18999,19001,19003,19156,19194,19195,19196,19199,19200,19201,19202,19204,19205,19207,19209,19211,19214,19219,19227,19229,19231,19233,19234,19235,19238,19239,19246,19250,19254,19263,19264,19269,19275,19277,19281,19286,19289,19299,19306,19311,19317,19319,19321,19324,19325,19326,19330,19331,19332,19344,19345,19346,19347,19348,19351,19353,19356,19359,19361,19362,19363,19364,19366,19367,19368,19370,19371,19374,19378,19381,19382,19387,19389,19397,19400,19401,19405,19407,19412,19413,19416,19419,19422,19423,19426,19428,19432,19435,19438,19440,19443,19444,19449,19452,19464,19465,19468,19470,19473,19475,19488,19489,19492,19500,19504,19505,19509,19514,19515,19516,19520,19523,19529,19530,19531,19532,19535,19536,19537,19538,19542,19544,19546,19547,19550,19552,19553,19554,19555,19558,19559,19563,2111,2137,2197,2199,2204,2228,2231,2242,2254,2255,2257,2262,2279,2309,2310,2312,2313,2314,2316,2442,2451,2471,2472,2473,2486,2491,2495,2496,2498,2542,2790,2801,2802,2838,2883,2885,2902,2911,2912",
+    "segmentMembershipMaskHex": "3fffffff331331f3391f13111f3f71ff31131ff3f335ff337ff3fbf33333fff3f1f1b3b33ff13b1bf11311113b3bbb137ff3b31f11f1ffff131f1b1f33313f3113f131b133f73f17f33f731ff1f13133133331113337ff1111333733f1f3f133113731111111f1f11131ee22e2222e2266e2ee22a62a2eee22eae2ee22eee6e6eee222ee2622a2222eee222ee2e26e222e2a22e2e66226e26222622e662e62622e62e64ccc88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888111111111111111111122222222222888888888",
+    "bitBySegment": {
+      "2020": 1,
+      "2022": 2,
+      "2024": 4,
+      "2026": 8
+    },
+    "alignment": "The nth hex character encodes election-segment presence for nth comma-delimited registration ID; each ID is sorted lexicographically, not numerically.",
+    "registrationIdsNewlineSha256": "cc6f3830ee1730a31781f282b5ecca0deba8ebfec50c949b28b8ae5f9cf497a3",
+    "registrationMaskHexSha256": "c70219a32a752e024d95d4d318cb43daa33bf45e5c3a2634b6652f7019aca91c",
+    "registrationKeyColonMaskLinesSha256": "7ad488a3480792874b39aa1fc3059c282d21303b37993cb4eabd8c007c64c7e7",
+    "knownOriginalReportControlIds": [
+      "18443",
+      "19205"
+    ],
+    "sameNameDifferentRegistrationIds": [
+      {
+        "name": "Anderson, Paul",
+        "ids": [
+          "18036",
+          "18670"
+        ]
+      },
+      {
+        "name": "Bushard, Robert",
+        "ids": [
+          "18937",
+          "19531"
+        ]
+      },
+      {
+        "name": "Dippel, Tom",
+        "ids": [
+          "18739",
+          "19246"
+        ]
+      },
+      {
+        "name": "Lienemann, Leslie",
+        "ids": [
+          "18708",
+          "19299"
+        ]
+      },
+      {
+        "name": "McLaughlin, Kim",
+        "ids": [
+          "18942",
+          "19405"
+        ]
+      },
+      {
+        "name": "Nguyen, Diane",
+        "ids": [
+          "18589",
+          "18985"
+        ]
+      },
+      {
+        "name": "Roy, Leonard Alan",
+        "ids": [
+          "18515",
+          "18800"
+        ]
+      },
+      {
+        "name": "Schuler, Andy",
+        "ids": [
+          "2199",
+          "2498"
+        ]
+      }
+    ],
+    "sameRegistrationDifferentNameCount": 0
+  },
+  "historicalDenominator": {
+    "officialSenateFilerCount2021to2025": null,
+    "officialActiveCommitteeFilerYears": null,
+    "requiredReports": null,
+    "actualFiledOriginalReports": null,
+    "nonfilersAndExemptions": null,
+    "terminatedAndReactivatedHistoryVerified": false,
+    "completenessCertified": false,
+    "note": "The 494 IDs are a union of candidate checkboxes currently exposed for 2020, 2022, 2024, and 2026 election segments. 2020 carry-in is context and 2026 includes out-of-window activity. These are NOT dated 2021–2025 active registrations or required/actual reports. Absence from a segment does not prove termination."
+  },
+  "safeguards": {
+    "metadataOnly": true,
+    "noRawHtmlSaved": true,
+    "noDonorDetails": true,
+    "noProductionDatabaseReadOrWrite": true,
+    "noForecastOrModelChange": true,
+    "no2027Expansion": true
+  }
+}
