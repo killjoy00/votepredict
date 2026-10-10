@@ -5,6 +5,7 @@
  * Never infer historical active registrations or filings from a current list.
  */
 import { createHash } from 'node:crypto';
+import { mkdirSync, writeFileSync } from 'node:fs';
 const ORIGIN = 'https://register.cfb.mn.gov';
 const APP = ORIGIN + '/reports/current-lists/';
 const API = ORIGIN + '/reports/api/';
@@ -138,6 +139,14 @@ async function main() {
   for (const src of readScriptSrc(page.text)) {
     try {
       const file = await getBounded(src);
+      // Save only public program JS for offline endpoint routing inspection.
+      // No raw app HTML, API response rows, donor/committee contact details.
+      const scriptFilename = new URL(src).pathname;
+      const knownName = /^\/cache\/(default|app|site)\.[a-f0-9]+\.js$/.exec(scriptFilename)?.[1];
+      if (knownName && file.status === 200) {
+        mkdirSync('artifacts/cfb-public-js', { recursive: true });
+        writeFileSync('artifacts/cfb-public-js/' + knownName + '.js', file.text, {encoding:'utf8',flag:'w'});
+      }
       const tokens = exposePossiblePublicListIdentifiers(file.text);
       const relevant = tokens.filter(s => /candidate|registr|terminated/i.test(s));
       console.log(JSON.stringify({type:'public-script-source-shape',url:src,status:file.status,
