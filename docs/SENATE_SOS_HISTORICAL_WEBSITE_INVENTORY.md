@@ -12,9 +12,9 @@ Manifest: \`data/evaluation/senate-sos-campaign-website-seeds-2021-25-v1.json\`.
 | 2022 state Senate general results | Minnesota SOS unofficial returns | 67 winning entries | 0 | Same; not the full set of filed candidates |
 | 2024–2025 Senate special results | Minnesota SOS unofficial returns | 5 additional winning entries (2024 SD45; 2025 SD60, SD6, SD29, SD47) | 0 | Special-election candidate identity; not an exhaustive tenure roster |
 | 2025 SD60 and SD6 official filing-list pages | Minnesota SOS historical special-election pages | 10 + 9 named candidates, including losing primary candidates | 0 **visible on page** | Listed filed candidates as of the page's stated as-of date, not a website-absence certificate |
-| 2025 SD29 and SD47 campaign websites | Minnesota Reformer article dated November 4, 2025 | 4 direct campaign-page links | 4 **publisher-linked leads**, not original SOS filing URLs | Historical research leads that require independent original-page verification |
+| 2024 SD45 and 2025 SD6 / SD29 / SD47 campaign websites | Minneapolis Labor Review, Lakes Area Vote, Minnesota Reformer | 6 direct campaign-page links | 6 **publisher-linked leads**, not original SOS filing URLs | Historical research leads requiring independent original-page verification |
 
-**Total: 139 winner/election observations, 19 SOS-filed candidate-list observations, and 4 dated-publisher website URL leads.** These counts overlap persons and races: NEVER add them to obtain distinct persons, campaign committees, membership denominator, all candidates, or campaign-platform completeness.
+**Total: 139 winner/election observations, 19 SOS-filed candidate-list observations, and 6 publisher-carried website URL leads (five from dated articles, one from a voter-guide page without independently established historical page timing).** These counts overlap persons and races: NEVER add them to obtain distinct persons, campaign committees, membership denominator, all candidates, or campaign-platform completeness.
 
 Sources:
 - SOS Nov 3 2020 statewide Senate results: https://electionresults.sos.mn.gov/Results/Index?ersElectionId=136&scenario=StateSenate
@@ -26,15 +26,19 @@ Sources:
 - SOS SD60 filed-candidate page (listed as of Jan 2 2025): https://sos.mn.gov/election-administration-campaigns/elections-calendar/senate-district-60-special-election/
 - SOS SD6 filed-candidate page (listed as of Apr 2 2025; withdrawn candidates excluded): https://www.sos.mn.gov/election-administration-campaigns/elections-calendar/senate-district-6-special-election/
 - Minnesota Reformer Nov 4 2025 campaign-link article: https://minnesotareformer.com/2025/11/04/today-is-election-day-make-your-voice-heard/
+- Minneapolis Labor Review Aug 12 2024 candidate site citation: https://minneapolisunions.org/news/ann-johnson-stewart-labor-endorsed-SD-45
+- Lakes Area Vote 2025 candidate voter guide, historic page publication date independently unproven: https://lakesarea.vote/keri-heintzeman/
 - SOS historical candidate-file format: https://www.sos.mn.gov/media/2513/candidate-files-layout.txt
 
 Important historical limitation: the live SOS candidate finder currently presents the **2026** election. That file or today's updated campaign pages cannot be retroactively treated as records public in 2020, 2022, 2024 or 2025. The official SOS semicolon-delimited historical candidate file describes a \`Campaign Website\` field (index 15, field 16) for federal/state/county offices, but the layout document is **not** itself an original historic filing export. The source warns that fields can change before election day. We did not download any 2020/2022 original filing file or prove a public timestamp for its campaign website fields in this tranche.
 
-The November 2025 publication links to:
+Publisher-carried links identified in 2024–2025 source material:
 - Amanda Hemmingsen-Jaeger: https://amandaformn.com/
 - Dwight Dorau: https://votefordwight.com/
 - Michael Holmstrom Jr: https://www.mike4mnsenate.com/
-- Louis McNutt: https://louismcnuttformnsenate.com/
+- Louis McNutt (November 2025): https://louismcnuttformnsenate.com/
+- Ann Johnson Stewart (August 2024): https://annjohnsonstewart.com/
+- Keri Heintzeman (2025 voter guide, independently proven publication time **unknown**): https://heintzemanforsenate.com/
 
 These are **publisher-link discoveries only**. A publisher's printed date is distinct from the independently proven public-by date of the article and distinct from the candidate's original website page date. Neither a candidate position nor pre-vote eligibility is established by these leads. Current mutable campaign pages must NEVER be backdated.
 
@@ -45,7 +49,7 @@ node --import tsx scripts/audit-sos-senate-campaign-inventory-offline.ts \
   --output /tmp/senate-sos-website-seeds.json
 \`\`\`
 
-This writes an immutable \`0600\`-mode JSON report with all 139+19+4 discovery observations represented in counts, **zero memberships ranked**, and \`zeroRecordedPositionMemberships=null\`. No database or network is accessed. This is expected: aggregate evidence counts from #477 cannot identify the precise Senate membership UUIDs with zero records.
+This writes an immutable \`0600\`-mode JSON report with all 139+19+6 discovery observations represented in counts, **zero memberships ranked**, and \`zeroRecordedPositionMemberships=null\`. No database or network is accessed. This is expected: aggregate evidence counts from #477 cannot identify the precise Senate membership UUIDs with zero records.
 
 To rank the most important membership gaps, obtain a separately authorized, **SELECT-only**, complete membership export (script is NOT run automatically):
 \`scripts/sql/senate-2021-25-campaign-issue-priority-select-only.sql\`.
@@ -58,7 +62,7 @@ node --import tsx scripts/audit-sos-senate-campaign-inventory-offline.ts \
   --output /tmp/senate-sos-website-priority.json
 \`\`\`
 
-Rows with \`recordedIssuePositionItems=0\` sort first. Only exact normalized candidate name + election district + compatible election/session may attach a winner identity or one of the four publisher URL leads. Any uncertain alias, redistricting, candidate-vs-member identity, or vacancy is an explicit failed join, never a guessed match. A zero stored item count means **no stored qualifying evidence in that period**, not absence of a political position.
+Rows with \`recordedIssuePositionItems=0\` sort first. Only exact normalized candidate name + election district + compatible election/session may attach a winner identity or one of the six publisher URL leads. Any uncertain alias, redistricting, candidate-vs-member identity, or vacancy is an explicit failed join, never a guessed match. A zero stored item count means **no stored qualifying evidence in that period**, not absence of a political position.
 
 ## Optional **archived** SOS semicolon text file
 
