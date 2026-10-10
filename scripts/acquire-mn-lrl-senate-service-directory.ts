@@ -10,6 +10,7 @@ import {mkdirSync,writeFileSync} from 'node:fs';
 import {resolve,join} from 'node:path';
 import {
   OFFICIAL_MN_SENATE_SERVICE_DIRECTORY_URL,
+  OFFICIAL_MN_SENATE_SWEARING_HISTORY_URL,
   parseOfficialMnSenateServiceDirectory,
 } from '../src/evidence/senate-official-ever-served-directory.js';
 async function main(){
@@ -38,9 +39,23 @@ async function main(){
   }
   const html=Buffer.concat(pieces.map(x=>Buffer.from(x)),count);
   const observedAt=new Date().toISOString();
-  const report=parseOfficialMnSenateServiceDirectory(html,observedAt);
+  const sworn=await fetch(OFFICIAL_MN_SENATE_SWEARING_HISTORY_URL,{
+    method:'GET',redirect:'manual',signal:AbortSignal.timeout(18000),
+    headers:{accept:'text/html','user-agent':'VotePredict/2.0 issue-864-public-Senate-service-audit'},
+  });
+  if(sworn.status!==200||new URL(sworn.url).hostname!=='www.lrl.mn.gov'
+    ||!/text\/html/i.test(sworn.headers.get('content-type')??''))
+    throw Error('Official LRL Senate swearing source unavailable/redirected');
+  const swornBody=Buffer.from(await sworn.arrayBuffer());
+  if(swornBody.byteLength<9000||swornBody.byteLength>5*1024*1024)
+    throw Error('Original public LRL special-election swearing page exceeds source bounds');
+  const swornObservedAt=new Date().toISOString();
+  const report=parseOfficialMnSenateServiceDirectory(
+    html,observedAt,swornBody,swornObservedAt);
   writeFileSync(join(root,'mn-lrl-official-senate-service-directory.html'),
     html,{flag:'wx',mode:0o600});
+  writeFileSync(join(root,'mn-lrl-official-senate-special-swearing-history.html'),
+    swornBody,{flag:'wx',mode:0o600});
   writeFileSync(join(root,'mn-lrl-official-senate-service-directory-audit.json'),
     JSON.stringify(report,null,2)+'\n',{flag:'wx',mode:0o600});
   console.log('SENATOR-SERVICE-DIRECTORY '+JSON.stringify({
@@ -49,6 +64,8 @@ async function main(){
     sourceBodySha256:report.source.sourceBytesSha256,
     sourceBytesLength:report.source.sourceBytesLength,
     independentlyDocumentedEverServedSenators:report.senators.length,
+    officialSwearingSourceSha256:report.supplementalSwearingSource?.sourceBytesSha256??null,
+    specialSwearingOriginalBytesObservedAt:report.supplementalSwearingSource?.observedAt??null,
     pre2026CampaignEvidenceCertified:false,
     resultIsOnlySenatorServiceNotCandidateFiling:true,
   }));
