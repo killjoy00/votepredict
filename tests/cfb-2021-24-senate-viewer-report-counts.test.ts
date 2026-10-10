@@ -131,3 +131,34 @@ test('duplicate viewer segment target raises instead of double counting',()=>{
   assert.throws(()=>auditCfb2021to24SenateViewerReferenceCounts([a,a],[]),
     /Duplicate official viewer target segment/);
 });
+
+
+test('four source-observed 2022 aoc public-subsidy affidavits are nonreport documents, not missing pcc report filings',()=>{
+  const regs=new Set(['2442','2471','2491','2495']);
+  const cohortTargets=cohort().targets.filter(t=>t.segmentEndYear===2022&&regs.has(t.registrationNumber));
+  assert.equal(cohortTargets.length,4);
+  const source=cohortTargets.map(t=>snap(t.registrationNumber,2022,[{
+    ...ref(t.registrationNumber,2022,'C',0),type:'aoc',
+    reportName:'2022 Affidavit of Contributions',
+  }]));
+  const audit=auditCfb2021to24SenateViewerReferenceCounts(cohortTargets,source);
+  assert.equal(audit.ancillaryDocumentsInCandidateReportsTab.excludedFromPrincipalCommitteeReportVersionCounts,4);
+  assert.deepEqual(audit.ancillaryDocumentsInCandidateReportsTab.exactAncillarySourceVersionIds,[
+    '2442:22:aoc:C:0:0','2471:22:aoc:C:0:0',
+    '2491:22:aoc:C:0:0','2495:22:aoc:C:0:0',
+  ]);
+  assert.equal(audit.ancillaryDocumentsInCandidateReportsTab.excludedDoesNotProveAnyFilingExemption,true);
+  assert.equal(audit.totals.viewerReportVersionReferences,0);
+  assert.equal(audit.totals.referenceIdentityMalformedFilerYears,0);
+  assert.equal(audit.byYear[1]?.candidateRegistrationsWithoutYearSpecificReferences,4);
+  assert.equal(audit.byYear[1]?.legallyRequiredSenateCandidateReportCount,null);
+});
+
+test('unrecognized candidate viewer non-pcc document type fails closed instead of becoming a principal report',()=>{
+  const t=cohort().targets[0]!;
+  const raw=snap(t.registrationNumber,2022,[{
+    ...ref(t.registrationNumber,2022,'C',0),type:'unknown-other-document',
+  }]);
+  assert.throws(()=>auditCfb2021to24SenateViewerReferenceCounts([t],[raw]),
+    /Unreviewed non-pcc source viewer document/);
+});
