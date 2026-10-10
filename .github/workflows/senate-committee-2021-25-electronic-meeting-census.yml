@@ -1,0 +1,36 @@
+name: One-time Senate 2021-25 committee official meeting index census
+
+# Only on workflow-file addition to main. Source-only: official LRL
+# 2022-25 electronic meeting page HTML, 2021 print gap explicitly unknown.
+# No scheduler, DB secrets, Neon, Vercel, minute PDF bulk scraping or models.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-2021-25-electronic-meeting-census.yml
+
+permissions:
+  contents: read
+
+jobs:
+  official-lrl-meeting-census:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Enumerate official Senate electronic committee pages and minutes links for 2022-25
+        run: |
+          node --import tsx scripts/capture-senate-committee-2021-25-official-meeting-census.ts \
+            --output artifacts/senate-2021-25-official-meeting-census.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: senate-2021-25-official-meeting-census
+          path: artifacts/senate-2021-25-official-meeting-census.json
+          if-no-files-found: error
+          retention-days: 30
