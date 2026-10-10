@@ -59,6 +59,13 @@ function publicGridShape(json: any) {
     .filter(x => /^\d{3,8}$/.test(x)))].slice(0, 8) : [];
   const officeValues = officeIndex >= 0 ? [...new Set(rows.map(x => Array.isArray(x) ? String(x[officeIndex] ?? '').trim() : '')
     .filter(Boolean))].slice(0, 20) : [];
+  const dateFieldIndexes = cols.map((name,i) => ({name,i}))
+    .filter(field => /(?:registration|termination|filed|due).*date|date.*(?:registration|termination)/i.test(field.name));
+  const dateFieldProof = dateFieldIndexes.map(field=>({
+    name:field.name,
+    populatedCount:rows.filter(row=>Array.isArray(row)&&Boolean(row[field.i])).length,
+    dateSamples:[...new Set(rows.map(row=>Array.isArray(row)?String(row[field.i]??'').trim():'').filter(Boolean))].slice(0,5),
+  }));
   return {
     rootFields: Object.keys(root).slice(0, 20),
     columns: cols.slice(0, 90), reportedRowCount: root.row_count ?? null,
@@ -66,7 +73,7 @@ function publicGridShape(json: any) {
     candidateRegistrationIdColumn: regIndex >= 0 ? cols[regIndex] : null,
     sampleCandidateRegistrationIds: sampleRegistrationIds,
     possibleOfficeColumn: officeIndex >= 0 ? cols[officeIndex] : null,
-    possibleOfficeValues: officeValues,
+    possibleOfficeValues: officeValues, dateFieldProof,
     has18443: rows.some(x => Array.isArray(x) && x.some(y => String(y) === '18443')),
     has19205: rows.some(x => Array.isArray(x) && x.some(y => String(y) === '19205')),
   };
@@ -198,7 +205,7 @@ async function main() {
   }
   // First is an existing known-good app action from the repository. The
   // candidate-registrations action is explicitly a HYPOTHESIS under test.
-  for (const action of ['candidate-reports','recent-candidate-registrations']) {
+  for (const action of ['candidate-reports','all-registered-candidates','recent-candidate-registrations','recent-candidate-terminations']) {
     await probeAction(action,cookies);
   }
   const candidateListHypotheses = [
