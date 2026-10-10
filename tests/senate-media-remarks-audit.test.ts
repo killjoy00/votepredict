@@ -205,3 +205,27 @@ test('a non-quote review is classification only, never admitted as a direct name
   assert.equal(result.reviewResults[0]?.disposition, 'contextual_mention');
   assert.equal(result.reviewResults[0]?.exactQuote, null);
 });
+
+test('an attributable reporter paraphrase is not a verbatim quotation, even with exact article hash', () => {
+  const paraphrased = article.replace('"Our schools need more funding."', 'Our schools need more funding.');
+  const contextual = context();
+  contextual.sourceSha256 = createHash('sha256').update(Buffer.from(paraphrased)).digest('hex');
+  const verdict = review();
+  verdict.sourcePassage = 'Sen. Example said, Our schools need more funding.';
+  const auditResult = audit({
+    contexts: [contextual],
+    reviews: [verdict],
+    snapshots: [{ sourceDocumentId: 'source-1', rawBodyBase64: Buffer.from(paraphrased).toString('base64') }],
+  });
+  assert.equal(auditResult.verifiedAttributedQuotePassages, 0);
+  assert.ok(auditResult.reviewResults[0]?.failures.includes('claimed_quote_not_delimited_as_direct_speech'));
+});
+
+test('invalid reviewer or unsupported media disposition cannot falsely mark a source as reviewed', () => {
+  const unreviewed = review();
+  unreviewed.reviewedBy = '';
+  assert.throws(() => audit({ reviews: [unreviewed] }), /missing human media review/);
+  const unexpected = review();
+  unexpected.disposition = 'made_up_disposition' as SenateMediaReview['disposition'];
+  assert.throws(() => audit({ reviews: [unexpected] }), /Invalid disposition/);
+});
