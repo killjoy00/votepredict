@@ -1,0 +1,55 @@
+name: Verify downloaded 2022 Senate candidate survey respondent quotes
+
+# Source-only audit on same-repository PR changes. No Vercel, Neon, cron,
+# contents write, release or evidence ingestion.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/verify-senate-2022-survey-originals.yml
+      - scripts/audit-senate-2022-candidate-surveys-offline.ts
+      - src/evidence/senate-2022-candidate-survey-attribution-audit.ts
+      - data/evaluation/senate-2022-candidate-survey-original-quote-leads-v1.json
+      - tests/senate-2022-candidate-survey-attribution-audit.test.ts
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  offline-archive-originals:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-2022-candidate-survey-excerpt-attribution-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Retrieve original publicly acquired 2022 Ballotpedia article bytes (artifact 11683038599)
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38089571113
+          name: senate-2020-22-public-candidate-original-source-acquisition
+          github-token: ${{ github.token }}
+          path: artifacts/senate-2022-respondent-originals
+      - name: Rehash source bytes and verify quotes belong to the correct named candidate sections
+        run: |
+          node --import tsx scripts/audit-senate-2022-candidate-surveys-offline.ts \
+            --sd4 artifacts/senate-2022-respondent-originals/2022-sd4-ballotpedia-article.response \
+            --sd32 artifacts/senate-2022-respondent-originals/2022-sd32-ballotpedia-article.response \
+            --output artifacts/senate-2022-respondent-source-attribution.json
+      - name: Save only sanitized named-source historical evidence gaps (not full article text)
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-2022-candidate-survey-respondent-audit-v1
+          path: artifacts/senate-2022-respondent-source-attribution.json
+          if-no-files-found: error
+          retention-days: 14
