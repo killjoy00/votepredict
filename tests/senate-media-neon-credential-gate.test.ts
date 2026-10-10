@@ -135,7 +135,7 @@ test('project verified does NOT imply an eligible SQL export until the read-only
   assert.equal(checked.sqlRoleSelectOnlyVerified,true);
   for(const r of [missing,branch,checked]){
     assert.equal(r.mediaExportPerformed,false);
-    assert.equal(r.databaseRowsRead,false);
+    assert.equal(r.evidenceSourceRowsRead,false);
     assert.equal(r.productionDatabaseWritten,false);
     assert.equal(r.sandboxOrProductionBranchCreated,false);
     assert.equal(r.originalArticleBytesAccessed,false);
