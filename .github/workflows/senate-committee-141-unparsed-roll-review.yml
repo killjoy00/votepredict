@@ -1,0 +1,54 @@
+name: One-time review queue for 141 possible unparsed Senate original roll cues
+
+# Metadata-only audit of exact hashed original PDF observation JSONs, no
+# official source network downloads, private DB, model or scheduler actions.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-141-unparsed-roll-review.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  review-original-roll-signal-one-year:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { year: 2022, artifact: senate-committee-2022-original-action-source-metadata }
+          - { year: 2023, artifact: senate-committee-2023-original-action-source-metadata }
+          - { year: 2024, artifact: senate-committee-2024-original-action-source-metadata }
+          - { year: 2025, artifact: senate-committee-2025-original-action-source-metadata }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Retrieve exact original prior source metadata by run and artifact name
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts/original-roll-source
+      - name: Produce deterministic candidate review queue, no source bodies
+        run: |
+          node --import tsx scripts/build-senate-committee-unparsed-roll-review.ts \
+            --year ${{ matrix.year }} \
+            --source-json artifacts/original-roll-source/senate-committee-${{ matrix.year }}-original-pdf-actions.json \
+            --output artifacts/roll-review/senate-${{ matrix.year }}-unparsed-roll-review.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-${{ matrix.year }}-unparsed-roll-review-metadata
+          path: artifacts/roll-review/senate-${{ matrix.year }}-unparsed-roll-review.json
+          if-no-files-found: warn
+          retention-days: 30
