@@ -1,0 +1,43 @@
+name: One-time 2022 Senate SOS ballot and CFB candidate filing-denominator predicates
+
+# Issue #864 track 2, PR-only. Parallel to 2022 original PDF source proof.
+# Sources: two original official MN Secretary of State election results TXT
+# files and 67 original CFB 2022 Senate district candidate-select pages.
+# Historical registration/termination and legal report obligations remain null.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-sos-2022-senate-ballot-denominator-predicates.yml
+      - scripts/capture-cfb-sos-2022-senate-ballot-obligation-source.ts
+      - src/evidence/cfb-2022-senate-sos-ballot-obligation-reconciliation.ts
+      - tests/cfb-2022-senate-sos-ballot-obligation-reconciliation.test.ts
+
+permissions:
+  contents: read
+
+jobs:
+  discover-official-senate-ballot-predicates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify source-pinned 270-committee cohort and fail-closed ballot join
+        run: node --import tsx --test tests/cfb-2022-senate-sos-ballot-obligation-reconciliation.test.ts
+      - name: Re-acquire official SOS 2022 Senate results and all 67 CFB 2022 Senate district candidate rosters
+        run: |
+          node --import tsx scripts/capture-cfb-sos-2022-senate-ballot-obligation-source.ts \
+            --output artifacts/cfb-sos-2022-senate-ballot-obligation-predicate.json
+      - name: Preserve official source hash roster, unmatched candidates and uncertainty even on source failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-sos-2022-senate-67-district-ballot-filing-denominator-predicates
+          path: artifacts/cfb-sos-2022-senate-ballot-obligation-predicate.json
+          retention-days: 30
+          if-no-files-found: warn
