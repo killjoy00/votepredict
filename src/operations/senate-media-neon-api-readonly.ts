@@ -1,7 +1,8 @@
 /**
  * Track D (#912): access the EXISTING VotePredict Neon database using the
- * owner's protected GitHub Actions NEON_API_KEY. There are only four GETs:
- * project metadata, default-branch databases, project endpoints, connection URI.
+ * owner's protected GitHub Actions NEON_API_KEY. Exactly five GETs:
+ * project metadata, existing branch listing, default-branch databases,
+ * project endpoints, connection URI.
  * No branch/role/compute creation, credential rotation, environment pull,
  * Vercel fallback, or database write. The URI stays inside the Actions runner.
  */
@@ -39,6 +40,8 @@ export interface ExistingMediaNeonInput {
 export type MediaNeonAccessPhase =
   | 'project_metadata_received'
   | 'project_identity_verified'
+  | 'branch_inventory_received'
+  | 'default_branch_selected'
   | 'database_inventory_received'
   | 'database_selected'
   | 'endpoint_inventory_received'
@@ -78,7 +81,7 @@ async function getNeon(
   if(!isRecord(body))throw Error('Neon metadata response lacked an object');
   return body;
 }
-function exactProject(input:ExistingMediaNeonInput, payload:JsonObject):string {
+function assertExactProject(input:ExistingMediaNeonInput, payload:JsonObject):void {
   const p=payload.project;
   if(!isRecord(p) || p.id!==input.projectId)
     throw Error('Neon project does not match configured VotePredict ID');
@@ -86,10 +89,34 @@ function exactProject(input:ExistingMediaNeonInput, payload:JsonObject):string {
     ?p.name.toLowerCase().replace(/[^a-z0-9]/g,''):'';
   if(!name.includes('votepredict'))
     throw Error('Neon project name is not VotePredict');
-  const branch=p.default_branch_id;
-  if(typeof branch!=='string' || !BRANCH.test(branch))
-    throw Error('Neon project does not expose a valid existing default branch ID');
-  return branch;
+}
+
+/**
+ * Neon GET /projects/{id} does NOT return project.default_branch_id.
+ * Its separate GET /projects/{id}/branches response exposes branch.default.
+ * Never infer the target from a name like "main" or the first item.
+ * A paginated/incomplete list or multiple defaults fails closed.
+ */
+function selectExistingDefaultBranch(payload:JsonObject,projectId:string):string {
+  if(!Array.isArray(payload.branches)
+    || payload.branches.length===0 || payload.branches.length>100)
+    throw Error('Existing Neon branch inventory is missing or exceeds bounded limit');
+  if(payload.pagination!==undefined) {
+    if(!isRecord(payload.pagination)
+      || (payload.pagination.next !== undefined
+        && payload.pagination.next !== null
+        && payload.pagination.next !== ''))
+      throw Error('Neon branch inventory incomplete; cannot select default branch');
+  }
+  if(payload.branches.some(branch=>
+    !isRecord(branch) || !BRANCH.test(String(branch.id))
+    || branch.project_id!==projectId
+    || typeof branch.default !== 'boolean'))
+    throw Error('Existing Neon branches do not match the expected project');
+  const defaults=payload.branches.filter(branch=>branch.default===true);
+  if(defaults.length!==1)
+    throw Error('Exactly one independently marked default branch is required');
+  return defaults[0].id as string;
 }
 function chooseDatabase(
   body:JsonObject,branchId:string,preferredDatabase?:string,
@@ -158,8 +185,12 @@ export async function discoverExistingVotePredictNeonConnection(
   const base=API+input.projectId;
   const project=await getNeon(base,input.apiKey,request);
   onPhase('project_metadata_received');
-  const branchId=exactProject(input,project);
+  assertExactProject(input,project);
   onPhase('project_identity_verified');
+  const existingBranches=await getNeon(base+'/branches?limit=100',input.apiKey,request);
+  onPhase('branch_inventory_received');
+  const branchId=selectExistingDefaultBranch(existingBranches,input.projectId);
+  onPhase('default_branch_selected');
   const dbInventory=await getNeon(base+'/branches/'+branchId+'/databases',input.apiKey,request);
   onPhase('database_inventory_received');
   const {database,role}=chooseDatabase(dbInventory,branchId,input.preferredDatabase);
