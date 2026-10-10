@@ -108,6 +108,17 @@ test('exact observed 2025 SD45 Ann M Johnson Stewart initial is a single distric
  const denied=reconcileHistoricalCampaignWinnerExcerpts(official,undefined,wrongDistrict);
  assert.equal(denied.totals.uniquelyJoinedRestrictedSandboxMemberships,2);
 });
+test('one documented SD45 middle initial maps to Ann Stewart only',()=>{
+ const input=fakeRestrictedSandbox();
+ input.members[0].senatorName='Ann M Johnson Stewart';
+ const correct=reconcileHistoricalCampaignWinnerExcerpts(official,undefined,input);
+ assert.equal(correct.totals.uniquelyJoinedRestrictedSandboxMemberships,3);
+ assert.equal(correct.sourceRows[0].membershipNameMatchBasis,'documented_2025_sd45_middle_initial_alias');
+ const fake=fakeRestrictedSandbox();
+ fake.members[0].senatorName='Ann Q Johnson Stewart';
+ assert.equal(reconcileHistoricalCampaignWinnerExcerpts(official,undefined,fake)
+   .totals.uniquelyJoinedRestrictedSandboxMemberships,2);
+});
 test('post-election official winner data cannot be smuggled into forecast feature eligibility',()=>{
  const x=structuredClone(official);
  x.candidates.find(c=>c.candidateName==='Louis McNutt')!.generalElectionOutcome='winner';
