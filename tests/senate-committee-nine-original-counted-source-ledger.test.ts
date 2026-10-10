@@ -79,13 +79,13 @@ test('2024 Rules A2 and ethics complaint procedural votes are never silently tre
  assert.deepEqual(docs.map((d:{sourceRollBlocks:Array<{sourceNamedYeaCount:number;sourceNamedNayCount:number}>})=>
   [d.sourceRollBlocks[0].sourceNamedYeaCount,d.sourceRollBlocks[0].sourceNamedNayCount]),
   [[4,6],[0,4]]);
- assert.equal(proof.json.cautions.committeeResolutionAndEthicsMotionNotInferredPolicyPositions,true);
+ assert.equal(proof.json.cautions.committeeRulesResolutionAndEthicsComplaintAreProceduralNotBillStance,true);
 });
 
 test('member identity, action distinctness, database equality and 2021-print gaps remain open',()=>{
  assert.equal(proof.json.cautions.historicalSenatorRosterMatchingNotCompleted,true);
  assert.equal(proof.json.cautions.memberVoteDatabaseReconciliationNotCompleted,true);
- assert.equal(proof.json.cautions.committeeActionsNotSenateFloorPassage,true);
+ assert.equal(proof.json.cautions.houseOrSenateFloorPassageStancesNotInferred,true);
  assert.equal(proof.json.cautions.originalFullTextMemberNamesAndPdfBytesNotCommitted,true);
  assert.equal(proof.json.cautions.productionDbUntouched,true);
  assert.equal(proof.json.cautions.forecastModelServingScheduler2027Untouched,true);
