@@ -23,5 +23,5 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci --no-fund --no-audit
-      - name: Probe 3 official Senate districts across 3 election segments, metadata only
+      - name: Probe 3 official Senate districts across 4 election segments, metadata only
         run: node --import tsx scripts/probe-cfb-senate-district-roster.ts
