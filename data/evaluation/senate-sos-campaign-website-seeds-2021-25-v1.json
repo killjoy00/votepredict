@@ -1,0 +1,1183 @@
+{
+  "schema": "mn-sos-senate-candidate-website-seeds-2021-25-v1",
+  "scope": {
+    "state": "Minnesota",
+    "chamber": "senate",
+    "targetCalendarYears": [
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "baseGeneralElectionYears": [
+      2020,
+      2022
+    ],
+    "specialElectionYears": [
+      2024,
+      2025
+    ],
+    "purpose": "offline historical identity and campaign website discovery; source-to-database reconciliation not certified"
+  },
+  "limitations": {
+    "officialFiledCandidateUniverseCertified": false,
+    "officialSenatorMembershipRosterCertified": false,
+    "websitePublicByProven": false,
+    "unverifiedWebsiteCountNotZero": true,
+    "hasDatabaseMembershipIds": false,
+    "selectionIsPostElectionWinnerBiased": true,
+    "sourcePagesMayBeMutable": true,
+    "sourceContentHashesVerified": false,
+    "historicalStatementsProven": false,
+    "websiteAbsenceMeansNoWebsite": false,
+    "productionDatabaseRead": false,
+    "productionDatabaseWrite": false
+  },
+  "sources": [
+    {
+      "id": "sos-general-2020",
+      "publisher": "Minnesota Secretary of State",
+      "kind": "unofficial_post_election_result",
+      "electionOn": "2020-11-03",
+      "url": "https://electionresults.sos.mn.gov/Results/Index?ersElectionId=136&scenario=StateSenate",
+      "offersCampaignWebsite": false
+    },
+    {
+      "id": "sos-general-2022",
+      "publisher": "Minnesota Secretary of State",
+      "kind": "unofficial_post_election_result",
+      "electionOn": "2022-11-08",
+      "url": "https://electionresults.sos.mn.gov/Results/Index?ersElectionId=149&scenario=StateSenate",
+      "offersCampaignWebsite": false
+    },
+    {
+      "id": "sos-special-2024-45",
+      "publisher": "Minnesota Secretary of State",
+      "kind": "unofficial_post_election_result",
+      "electionOn": "2024-11-05",
+      "url": "https://electionresults.sos.mn.gov/Results/Index?ersElectionId=170&scenario=StateSenate",
+      "offersCampaignWebsite": false
+    },
+    {
+      "id": "sos-special-2025-60",
+      "publisher": "Minnesota Secretary of State",
+      "kind": "unofficial_post_election_result",
+      "electionOn": "2025-01-28",
+      "url": "https://electionresults.sos.mn.gov/Results/Index?ersElectionId=178&scenario=StateSenate",
+      "offersCampaignWebsite": false
+    },
+    {
+      "id": "sos-special-2025-6",
+      "publisher": "Minnesota Secretary of State",
+      "kind": "unofficial_post_election_result",
+      "electionOn": "2025-04-29",
+      "url": "https://electionresults.sos.mn.gov/Results/Index?ersElectionId=184&scenario=StateSenate",
+      "offersCampaignWebsite": false
+    },
+    {
+      "id": "sos-special-2025-29-47",
+      "publisher": "Minnesota Secretary of State",
+      "kind": "unofficial_post_election_result",
+      "electionOn": "2025-11-04",
+      "url": "https://electionresults.sos.mn.gov/Results/Index?ersElectionId=187&scenario=StateSenate",
+      "offersCampaignWebsite": false
+    },
+    {
+      "id": "sos-filed-2025-60",
+      "publisher": "Minnesota Secretary of State",
+      "kind": "official_historical_filed_candidate_list",
+      "asOfOn": "2025-01-02",
+      "url": "https://sos.mn.gov/election-administration-campaigns/elections-calendar/senate-district-60-special-election/",
+      "offersCampaignWebsite": false
+    },
+    {
+      "id": "sos-filed-2025-6",
+      "publisher": "Minnesota Secretary of State",
+      "kind": "official_historical_filed_candidate_list",
+      "asOfOn": "2025-04-02",
+      "url": "https://www.sos.mn.gov/election-administration-campaigns/elections-calendar/senate-district-6-special-election/",
+      "offersCampaignWebsite": false,
+      "note": "SOS page excludes withdrawn candidates"
+    },
+    {
+      "id": "sos-candidate-file-layout",
+      "publisher": "Minnesota Secretary of State",
+      "kind": "candidate_export_schema",
+      "url": "https://www.sos.mn.gov/media/2513/candidate-files-layout.txt",
+      "offersCampaignWebsite": true,
+      "documentedField": "Campaign Website, 16th semicolon-separated field for federal/state/county files; layout is not itself a historical data export"
+    },
+    {
+      "id": "reformer-nov2025",
+      "publisher": "Minnesota Reformer",
+      "kind": "publisher_carried_candidate_website_link",
+      "publisherPublishedOn": "2025-11-04",
+      "url": "https://minnesotareformer.com/2025/11/04/today-is-election-day-make-your-voice-heard/",
+      "offersCampaignWebsite": true
+    }
+  ],
+  "winners": [
+    {
+      "sourceId": "sos-general-2020",
+      "district": "1",
+      "candidateName": "Mark Johnson",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "2",
+      "candidateName": "Paul Utke",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "3",
+      "candidateName": "Thomas (Tom) Bakk",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "4",
+      "candidateName": "Kent Eken",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "5",
+      "candidateName": "Justin Eichorn",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "6",
+      "candidateName": "David J Tomassoni",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "7",
+      "candidateName": "Jen McEwen",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "8",
+      "candidateName": "Bill Ingebrigtsen",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "9",
+      "candidateName": "Paul Gazelka",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "10",
+      "candidateName": "Carrie Ruud",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "11",
+      "candidateName": "Jason Rarick",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "12",
+      "candidateName": "Torrey Westrom",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "13",
+      "candidateName": "Jeff Howe",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "14",
+      "candidateName": "Aric Putnam",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "15",
+      "candidateName": "Andrew Mathews",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "16",
+      "candidateName": "Gary Dahms",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "17",
+      "candidateName": "Andrew Lang",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "18",
+      "candidateName": "Scott Newman",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "19",
+      "candidateName": "Nick Frentz",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "20",
+      "candidateName": "Rich Draheim",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "21",
+      "candidateName": "Michael P. Goggin",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "22",
+      "candidateName": "Bill Weber",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "23",
+      "candidateName": "Julie A. Rosen",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "24",
+      "candidateName": "John R. Jasinski",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "25",
+      "candidateName": "David H. Senjem",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "26",
+      "candidateName": "Carla Nelson",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "27",
+      "candidateName": "Gene Dornink",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "28",
+      "candidateName": "Jeremy R. Miller",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "29",
+      "candidateName": "Bruce D. Anderson",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "30",
+      "candidateName": "Mary Kiffmeyer",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "31",
+      "candidateName": "Michelle R. Benson",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "32",
+      "candidateName": "Mark Koran",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "33",
+      "candidateName": "David Osmek",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "34",
+      "candidateName": "Warren Limmer",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "35",
+      "candidateName": "Jim Abeler",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "36",
+      "candidateName": "John Hoffman",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "37",
+      "candidateName": "Jerry Newton",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "38",
+      "candidateName": "Roger Chamberlain",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "39",
+      "candidateName": "Karin Housley",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "40",
+      "candidateName": "Chris A. Eaton",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "41",
+      "candidateName": "Mary Kunesh-Podein",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "42",
+      "candidateName": "Jason \"Ike\" Isaacson",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "43",
+      "candidateName": "Charles \"Chuck\" Wiger",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "44",
+      "candidateName": "Ann Johnson Stewart",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "45",
+      "candidateName": "Ann H. Rest",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "46",
+      "candidateName": "Ron Latz",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "47",
+      "candidateName": "Julia Coleman",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "48",
+      "candidateName": "Steve Cwodzinski",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "49",
+      "candidateName": "Melisa Lopez Franzen",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "50",
+      "candidateName": "Melissa Halvorson Wiklund",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "51",
+      "candidateName": "Jim Carlson",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "52",
+      "candidateName": "Matt Klein",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "53",
+      "candidateName": "Susan Kent",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "54",
+      "candidateName": "Karla Bigham",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "55",
+      "candidateName": "Eric Pratt",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "56",
+      "candidateName": "Lindsey Port",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "57",
+      "candidateName": "Greg Clausen",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "58",
+      "candidateName": "Zach Duckworth",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "59",
+      "candidateName": "Bobby Joe Champion",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "60",
+      "candidateName": "Kari Dziedzic",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "61",
+      "candidateName": "Scott Dibble",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "62",
+      "candidateName": "Omar Fateh",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "63",
+      "candidateName": "Patricia Torres Ray",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "64",
+      "candidateName": "Erin Murphy",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "65",
+      "candidateName": "Sandy Pappas",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "66",
+      "candidateName": "John Marty",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2020",
+      "district": "67",
+      "candidateName": "Foung Hawj",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "1",
+      "candidateName": "Mark Johnson",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "2",
+      "candidateName": "Steve Green",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "3",
+      "candidateName": "Grant Hauschild",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "4",
+      "candidateName": "Rob Kupec",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "5",
+      "candidateName": "Paul J. Utke",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "6",
+      "candidateName": "Justin Eichorn",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "7",
+      "candidateName": "Robert Farnsworth",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "8",
+      "candidateName": "Jen McEwen",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "9",
+      "candidateName": "Jordan Rasmusson",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "10",
+      "candidateName": "Nathan Wesenberg",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "11",
+      "candidateName": "Jason Rarick",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "12",
+      "candidateName": "Torrey Westrom",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "13",
+      "candidateName": "Jeff Howe",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "14",
+      "candidateName": "Aric Putnam",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "15",
+      "candidateName": "Gary Dahms",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "16",
+      "candidateName": "Andrew Robert Lang",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "17",
+      "candidateName": "Glenn Gruenhagen",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "18",
+      "candidateName": "Nick Frentz",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "19",
+      "candidateName": "John R. Jasinski",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "20",
+      "candidateName": "Steve Drazkowski",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "21",
+      "candidateName": "Bill Weber",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "22",
+      "candidateName": "Rich Draheim",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "23",
+      "candidateName": "Gene Dornink",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "24",
+      "candidateName": "Carla Nelson",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "25",
+      "candidateName": "Liz Boldon",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "26",
+      "candidateName": "Jeremy Miller",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "27",
+      "candidateName": "Andrew Mathews",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "28",
+      "candidateName": "Mark Koran",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "29",
+      "candidateName": "Bruce Anderson",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "30",
+      "candidateName": "Eric Lucero",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "31",
+      "candidateName": "Cal K. Bahr",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "32",
+      "candidateName": "Michael Kreun",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "33",
+      "candidateName": "Karin Housley",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "34",
+      "candidateName": "John Hoffman",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "35",
+      "candidateName": "Jim Abeler",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "36",
+      "candidateName": "Heather Gustafson",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "37",
+      "candidateName": "Warren Limmer",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "38",
+      "candidateName": "Susan Pha",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "39",
+      "candidateName": "Mary K Kunesh",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "40",
+      "candidateName": "John Marty",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "41",
+      "candidateName": "Judy Seeberger",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "42",
+      "candidateName": "Bonnie Westlin",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "43",
+      "candidateName": "Ann H. Rest",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "44",
+      "candidateName": "Tou Xiong",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "45",
+      "candidateName": "Kelly Morrison",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "46",
+      "candidateName": "Ron Latz",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "47",
+      "candidateName": "Nicole Mitchell",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "48",
+      "candidateName": "Julia Coleman",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "49",
+      "candidateName": "Steve Cwodzinski",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "50",
+      "candidateName": "Alice Mann",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "51",
+      "candidateName": "Melissa Halvorson Wiklund",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "52",
+      "candidateName": "Jim Carlson",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "53",
+      "candidateName": "Matt Klein",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "54",
+      "candidateName": "Eric Pratt",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "55",
+      "candidateName": "Lindsey Port",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "56",
+      "candidateName": "Erin Maye Quade",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "57",
+      "candidateName": "Zach Duckworth",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "58",
+      "candidateName": "Bill Lieske",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "59",
+      "candidateName": "Bobby Joe Champion",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "60",
+      "candidateName": "Kari Dziedzic",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "61",
+      "candidateName": "Scott Dibble",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "62",
+      "candidateName": "Omar Fateh",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "63",
+      "candidateName": "Zaynab Mohamed",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "64",
+      "candidateName": "Erin Murphy",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "65",
+      "candidateName": "Sandy Pappas",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "66",
+      "candidateName": "Clare Oumou Verbeten",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-general-2022",
+      "district": "67",
+      "candidateName": "Foung Hawj",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-special-2024-45",
+      "district": "45",
+      "candidateName": "Ann Johnson Stewart",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-special-2025-60",
+      "district": "60",
+      "candidateName": "Doron Clark",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-special-2025-6",
+      "district": "6",
+      "candidateName": "Keri Heintzeman",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-special-2025-29-47",
+      "district": "29",
+      "candidateName": "Michael Holmstrom Jr",
+      "recordType": "election_results_winner_discovery_only"
+    },
+    {
+      "sourceId": "sos-special-2025-29-47",
+      "district": "47",
+      "candidateName": "Amanda Hemmingsen-Jaeger",
+      "recordType": "election_results_winner_discovery_only"
+    }
+  ],
+  "filedCandidates": [
+    {
+      "sourceId": "sos-filed-2025-60",
+      "district": "60",
+      "candidateName": "Doron Clark",
+      "filedOn": "2024-12-31",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-60",
+      "district": "60",
+      "candidateName": "Peter Wagenius",
+      "filedOn": "2024-12-31",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-60",
+      "district": "60",
+      "candidateName": "Iris Grace Altamirano",
+      "filedOn": "2024-12-31",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-60",
+      "district": "60",
+      "candidateName": "Mohamed Jama",
+      "filedOn": "2024-12-31",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-60",
+      "district": "60",
+      "candidateName": "Monica Meyer",
+      "filedOn": "2024-12-31",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-60",
+      "district": "60",
+      "candidateName": "Joshua Preston",
+      "filedOn": "2024-12-31",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-60",
+      "district": "60",
+      "candidateName": "Amal Karim",
+      "filedOn": "2024-12-31",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-60",
+      "district": "60",
+      "candidateName": "Emilio César Rodríguez",
+      "filedOn": "2024-12-31",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-60",
+      "district": "60",
+      "candidateName": "Abigail Wolters",
+      "filedOn": "2024-12-31",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-60",
+      "district": "60",
+      "candidateName": "Christopher Robin Zimmerman",
+      "filedOn": "2024-12-31",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-6",
+      "district": "6",
+      "candidateName": "Steve Cotariu",
+      "filedOn": "2025-03-26",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-6",
+      "district": "6",
+      "candidateName": "Doug Kern",
+      "filedOn": "2025-03-26",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-6",
+      "district": "6",
+      "candidateName": "John A Howe",
+      "filedOn": "2025-03-26",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-6",
+      "district": "6",
+      "candidateName": "Keri Heintzeman",
+      "filedOn": "2025-03-26",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-6",
+      "district": "6",
+      "candidateName": "Jennifer Carnahan",
+      "filedOn": "2025-03-26",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-6",
+      "district": "6",
+      "candidateName": "Angel Zierden",
+      "filedOn": "2025-03-27",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-6",
+      "district": "6",
+      "candidateName": "Denise Slipy",
+      "filedOn": "2025-03-28",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-6",
+      "district": "6",
+      "candidateName": "Josh Gazelka",
+      "filedOn": "2025-03-31",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    },
+    {
+      "sourceId": "sos-filed-2025-6",
+      "district": "6",
+      "candidateName": "Matthew Zinda",
+      "filedOn": "2025-04-01",
+      "recordType": "official_sos_page_candidate_listing",
+      "candidateWebsite": null,
+      "candidateWebsiteStatus": "not_exposed_on_page"
+    }
+  ],
+  "websiteLeads": [
+    {
+      "district": "47",
+      "candidateName": "Amanda Hemmingsen-Jaeger",
+      "electionYear": 2025,
+      "url": "https://amandaformn.com/",
+      "sourceId": "reformer-nov2025",
+      "proofClass": "publisher_carried_link_only",
+      "isOriginalSosCandidateFiling": false,
+      "independentArchivePublicBy": null,
+      "sourceContentSha256": null,
+      "verifiedHistoricalIssueStatementCount": 0,
+      "eligibleForHistoricalReplay": false
+    },
+    {
+      "district": "47",
+      "candidateName": "Dwight Dorau",
+      "electionYear": 2025,
+      "url": "https://votefordwight.com/",
+      "sourceId": "reformer-nov2025",
+      "proofClass": "publisher_carried_link_only",
+      "isOriginalSosCandidateFiling": false,
+      "independentArchivePublicBy": null,
+      "sourceContentSha256": null,
+      "verifiedHistoricalIssueStatementCount": 0,
+      "eligibleForHistoricalReplay": false
+    },
+    {
+      "district": "29",
+      "candidateName": "Michael Holmstrom Jr",
+      "electionYear": 2025,
+      "url": "https://www.mike4mnsenate.com/",
+      "sourceId": "reformer-nov2025",
+      "proofClass": "publisher_carried_link_only",
+      "isOriginalSosCandidateFiling": false,
+      "independentArchivePublicBy": null,
+      "sourceContentSha256": null,
+      "verifiedHistoricalIssueStatementCount": 0,
+      "eligibleForHistoricalReplay": false
+    },
+    {
+      "district": "29",
+      "candidateName": "Louis McNutt",
+      "electionYear": 2025,
+      "url": "https://louismcnuttformnsenate.com/",
+      "sourceId": "reformer-nov2025",
+      "proofClass": "publisher_carried_link_only",
+      "isOriginalSosCandidateFiling": false,
+      "independentArchivePublicBy": null,
+      "sourceContentSha256": null,
+      "verifiedHistoricalIssueStatementCount": 0,
+      "eligibleForHistoricalReplay": false
+    }
+  ]
+}
