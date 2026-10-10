@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "cfb-senate-2025-source-dated-41-candidate-85-report-version-reference-checkpoint-v1",
+  "capturedAt": "2026-10-10T20:51:21Z",
+  "provenance": {
+    "sourceRun": "https://github.com/killjoy00/votepredict/actions/runs/38085296709",
+    "runId": 38085296709,
+    "workflowHeadSha": "39be7fd6a47a14a304d4cfd48267ea0cbc8bc647",
+    "sourceArtifactId": 11682530876,
+    "sourceArtifactName": "cfb-2025-dated-senate-candidate-report-references",
+    "artifactExpiresAt": "2026-11-09T20:51:21Z",
+    "sourceZipSha256": "f66f717162ccc2d0f9d84cb939c37fe3a45fcd49cc83dbad562647f88b9d2027",
+    "originalUncompressedJsonSha256": "279cf523e15487bac3ad4e295a806d046bffbd26d67a60e4b3b55f4b7af90ce7",
+    "originalUncompressedJsonBytes": 133650,
+    "metadataOnlyVersionLedger": "cfb-2025-dated-senate-85-reference-versions.psv",
+    "versionLedgerCanonicalRule": "UTF-8 PSV lines, remove exactly one final newline, preserve ID lexicographic order; columns registration|original source API response SHA-256|comma-delimited tokens. Token YE0.1 means reportId registration:25:pcc:YE:0:1 (period YE, special-election flag 0, amendment 1).",
+    "canonicalVersionLedgerSha256WithoutFinalNewline": "d34bb475cccd94481fd2f2215bf47e3c9695ad328e06bed2475967add067f0d0",
+    "reconstructed85ReportIdsLexicographicNewlineSha256": "e2d650a432620738a8cfcb68ce794ad9007353e93608cd7850cb1ce465011ece",
+    "perRegistrationResponseSha256Lines": "27b914d4094f18cbc359995b4edb9b32dc70e0ec4e75484e2273582c3d3dd201",
+    "originalOfficialSourceDomain": "register.cfb.mn.gov",
+    "originalReportReferenceViewer": "https://cfb.mn.gov/rptViewer/Main.php?do=viewPDF"
+  },
+  "scope": {
+    "reportYear": 2025,
+    "candidateViewerSegmentEndYear": 2026,
+    "candidateSelection": "Independently dated 2025 registrations observed exclusively in 2026 Senate district comparison election segment",
+    "observedOnlyIn2026Segment": 134,
+    "registeredDuring2025Scoped": 41,
+    "registeredDuring2026Excluded": 78,
+    "registrationDateUnknownExcluded": 15,
+    "firstIndependentOriginalPdfControlRegistration": "19205",
+    "noProductionDbOrServingChanges": true
+  },
+  "observedReportReferences": {
+    "registeredCandidateCommitteesQueried": 41,
+    "sourceSnapshotsAcquired": 41,
+    "sourceFailures": 0,
+    "candidatesWithAtLeastOne2025Reference": 41,
+    "candidatesWithNo2025Reference": 0,
+    "distinct2025ReportVersionReferenceIds": 85,
+    "originalVersionReferencesAmendmentZero": 60,
+    "amendedVersionReferencesAmendmentPositive": 25,
+    "byReportPeriod": {
+      "YE": {
+        "originalReferences": 48,
+        "amendmentReferences": 19
+      },
+      "C": {
+        "originalReferences": 7,
+        "amendmentReferences": 3
+      },
+      "E": {
+        "originalReferences": 5,
+        "amendmentReferences": 3
+      }
+    },
+    "amendmentNumberDistribution": {
+      "0": 60,
+      "1": 19,
+      "2": 4,
+      "3": 1,
+      "4": 1
+    },
+    "reportReferenceCollisions": 0,
+    "malformedReportReferences": 0,
+    "yearsOutside2025Counted": 0
+  },
+  "historicalFinanceDenominator": {
+    "committeesLegallyActiveIn2025": null,
+    "required2025ReportCount": null,
+    "actuallyFiledOriginalReportCount": null,
+    "historicalPublicByVerifiedReportCount": 0,
+    "sourceToDbRowContainmentProved": false,
+    "statutoryDeadlineAndFilingDatesReconciled": false,
+    "completeStatewide2021to2025SenateCoverageCertified": false,
+    "note": "These 85 are source viewer references (60 with amendment number 0 and 25 amended versions) for a targeted 41-committee registration cohort, not 85 authenticated PDFs, 60 legally owed reports, or a historical eligibility proof. Current data can reflect submissions and amendments after 2025. Explicit null required/actually-filed statewide totals remain. The separate prior SD6 control PDF proof remains valid; the zero in this checkpoint means no NEW PDF bytes were verified by this source-reference audit.",
+    "newPdfVerificationsInThisSourceReferenceCheckpoint": 0,
+    "priorOriginalPdfControlProofsExist": true
+  },
+  "boundaries": {
+    "publicCfbReadOnly": true,
+    "noRawPdfBytesInThisCheckpoint": true,
+    "noCandidateHomeOrOfficerContactOrDonorData": true,
+    "noAutomatedBackfillOrNewScheduler": true,
+    "no2027ProgramChanges": true,
+    "issue864MustRemainOpen": true
+  }
+}
