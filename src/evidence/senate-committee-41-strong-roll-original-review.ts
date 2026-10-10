@@ -87,7 +87,7 @@ export function triageOriginalRollCueText(text:string){
       attendanceTerm:ATTENDANCE.test(near),
       motionTerm:MOTION.test(near),
       voteTerm:VOTE.test(near),
-      ayeNayLabelNearby:LABEL.test(near),
+      ayeNayLabelNearby:/\b(?:ayes?|nays?|yes|no)\s*[:\-–]/i.test(near),
     };
   });
   const nearLabel=labels.map(at=>{
