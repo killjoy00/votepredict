@@ -24,6 +24,40 @@ The job uploads \`senate-campaign-public-archive-source-acquisition-v1\`, retain
 
 Every record explicitly maintains the distinctions **currently retrieved HTML ≠ independently time-proven historical page**, **CDX index ≠ WARC response**, **WARC body hash ≠ pre-vote candidate position excerpt**, and **opponent ≠ senator**. No source obtained means "not recovered from this bounded sample", NOT "did not exist".
 
+
+## Actual evidence recovered by PR #932's early acquisition attempts (2026-10-10)
+
+This section records **completed original retrievals**, not projected query results, with run IDs and content hashes so another researcher can reproduce the observations:
+
+### 2025 SD47 original campaign homepage — recovered from Common Crawl
+
+- The public collection \`CC-MAIN-2025-33\` returned **one real CDX index hit** for \`https://votefordwight.com/\`, original capture timestamp **2025-08-03T20:43:02.000Z**, before both the **Aug 26, 2025 primary** and **Nov 4, 2025 general**.
+- The next GitHub runner actually downloaded original WARC bytes from \`https://data.commoncrawl.org/crawl-data/CC-MAIN-2025-33/segments/1754151279735.55/warc/CC-MAIN-20250803200137-20250803230137-00256.warc.gz\` using \`Range: bytes=536529311-536551294\`; response was **HTTP 206** with exact \`Content-Range: bytes 536529311-536551294/1008336949\`, **21,984 gzipped bytes**.
+- The precise compressed range SHA-256 was \`5bc873936bbc9cee0e72c0ca317ad39dfe7b080a590bdaf790adaf025a8ef507\`. Independent local decoding and checksum verification found WARC block SHA-1 base32 \`6BXPZF7243LKPJ7JYU4HXDA2GEZPQ5PZ\` and original HTML payload SHA-1 base32 \`SPLKPD3I5ZYDKIAAJVDR6N5RA2OHDFWT\`, both exactly matching stored WARC digests and the separate original Common Crawl CDX index. Original HTTP status **200**, HTML body **98,491 bytes** with original body SHA-256 \`b950e489df039d69737f335e45e035fc10691817943bb014947fce6530a2b261\`. This is real historical original HTML, **not a synthetic fixture**.
+- The original page itself identifies **"VOTE DWIGHT DORAU FOR MN SENATE DISTRICT 47!"** and uses campaign-authored messages about governing for constituents, not political parties. This validates a **specific candidate and historical campaign presence**, not an attributable policy-family support/opposition stance; **zero new issue stances/forecasts are promoted** from this source.
+- Actual public source run [#38085831693](https://github.com/killjoy00/votepredict/actions/runs/38085831693), artifact \`11682766440\` (compressed + original source responses, retained 30 days). Source ZIP SHA-256 \`04f7a8f3de38e1cb3698034102fd34470e802ce03c96a841bb32381e41d8e052\`, manifest SHA-256 \`cbbf504e4c4198bf0951fdee93c5781a3c7543a6796ea79d9bc1fdc9f0ff471f\`. Exact provenance ledger: \`data/evaluation/senate-2025-sd47-original-commoncrawl-source-proof-v1.json\`.
+- The first automated validator rejected the source because original Common Crawl WARC contains **two legitimate, distinct \`WARC-Protocol\` transport metadata fields**, HTTP/1.1 and TLS/1.3. The validator has been updated to accept duplicate WARC-Protocol **only** while continuing to fail on duplicate original target, date, WARC block/payload digests, malformed timestamps or HTML bytes. The fix requires green CI and an actual WARC rerun to claim automation has reproduced the manual original-source checks.
+
+### 55 actual Wayback index records, split by candidate campaign year
+
+A completed independent acquisition run [#38085775020](https://github.com/killjoy00/votepredict/actions/runs/38085775020), artifact ID \`11682351954\` (source ZIP SHA-256 \`a0141b9a6f9e558675a7528db57a4498b0674662afe4cd28a3c500196826de8f\`; acquisition-manifest SHA-256 \`440ed8e6445e513359d1a7ed80aca5cc1957a3a962dc29598efdcc377330c1d7\`) returned six **real Wayback HTTP 200 CDX response matrices** and **55** original-path archive-index rows captured before relevant vote cutoffs.
+
+**Do not equate 55 records with 55 Senate campaign captures.** Exact original-index breakdown:
+- **Ann Johnson Stewart 2024 SD45 \`/priorities/\`: 5 index rows.**
+- **Keri Heintzeman 2025 SD6 homepage: 7 rows** (including duplicate protocol spellings/digests).
+- **Louis McNutt 2025 SD29 \`/issues\`: 2 rows.**
+- **Michael Holmstrom Jr 2025 SD29 \`/platform\`: 4 rows.**
+- **Amanda Hemmingsen-Jaeger 2025 SD47 \`/issues/\`: 0 rows** in this **specific exact URL** index query, **not proof site had no history**.
+- **Dwight Dorau \`/\`: 37 rows**, **20 in 2024**, when the site was used for a *prior House candidate campaign*, and 17 rows in 2025. Even the 2025 indexed captures before Dorau's July 30, 2025 candidacy announcement do **not** automatically establish their content is specifically about the 2025 SD47 Senate campaign. Explicitly separate campaign cycles.
+
+This is **35 pre-vote, same-election-calendar-year indexed entries across the six domains**, not 35 verified issue statements. Index count includes duplicate content digests. \`data/evaluation/senate-wayback-real-cdx-selected-replay-2024-25-v1.json\` pins 12 selected real timestamp+originalUrl+digest combinations (Ann 3, Keri 2, Louis 2, Michael 2, Dwight post-announcement 3) for actual original \`/web/TIMESTAMPid_/URL\` snapshot GETs. The source acquisition script **now attempts those twelve**; a live archived snapshot is recorded as **historical byte proof only when its SHA-1 base32 payload digest actually matches the independent historical CDX digest**. Memento HTTP response headers and 2026 retrieval body SHA-256 are saved separately. Archive HTML response status 200 without matching digest remains **unverified original text**.
+
+### Publisher quotation leads and responsible use
+
+The current actual HTTP HTML from the Lakeland PBS SD6 candidate forum, Lakes Area Vote Keri questionnaire, October 2024 Minneapolis Labor Review/Ann interview and October 2025 MPR Senate-special-election candidate interviews has been acquired and hashed in the one-shot run. Those pages' **current 2026 response copies** give real source-author/candidate/issue leads but **do not independently prove their displayed publication dates**, unlike a matching pre-vote archive WARC/page copy. The 2025 MPR interview includes direct statements from multiple **different candidates**, requiring per-speaker attribution before any candidate issue-position claim. Original Dwight July 2025 campaign press-release fetch and Minnesota Family Voter direct GET failed during one run; they must not be silently treated as source bytes obtained.
+
+These retrievals materially change source recovery status: an actual original pre-election campaign homepage **is proved**, and original archive search has real index data. They **do not certify historic statewide campaign issue statement completeness, official SOS campaign-URL assignments, or any issue stance for forecast use**.
+
 ## Manual review requirements when a real record arrives
 
 1. Open GitHub Actions artifact for the run. Match \`queryId\`, candidate, election, original page URL, index \`timestamp\`, \`filename\`, exact byte range, HTTP 206 headers and gzip CRC.
