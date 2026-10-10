@@ -48,14 +48,17 @@ async function officialCalendar():Promise<Cfb2022PdfProofCapture> {
     || new TextDecoder('ascii').decode(body.subarray(0,5))!=='%PDF-') {
     throw Error('Original 2022 CFB calendar is not PDF');
   }
+  // pdf-parse can transfer/detach the passed ArrayBuffer, so hash AND
+  // snapshot byte length before passing PDF data into the worker.
+  const bytes=body.byteLength;
+  const sha256=createHash('sha256').update(body).digest('hex');
   const {CanvasFactory}=await import('pdf-parse/worker');
   const {PDFParse}=await import('pdf-parse');
   const parser=new PDFParse({data:body,CanvasFactory});
   try {
     const text=(await parser.getText()).text??'';
     if(text.length<100)throw Error('Calendar PDF extraction empty');
-    return {sourceUrl:url,sha256:createHash('sha256').update(body).digest('hex'),
-      bytes:body.length,fetchedAt:new Date().toISOString(),text};
+    return {sourceUrl:url,sha256,bytes,fetchedAt:new Date().toISOString(),text};
   }finally{await parser.destroy();}
 }
 
