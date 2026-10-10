@@ -9,6 +9,7 @@
 import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
+import { findExactOfficialMeetingDateSection } from '../src/evidence/senate-committee-date-section.js';
 import {
   SENATE_MISSING_MINUTES_SOURCE,
   officialMissingMinutesMeetingPage,
@@ -57,7 +58,10 @@ function analyzeHtml(row:IndexedMissingMinutes,html:string,pageUrl:string){
   const visibleDay=Number(m)+'/'+Number(d)+'/'+y;
   const dateSeen=plain.includes(visibleDay);
   const actualCommitteeNameSeen=plain.toLowerCase().includes(row.committeeName.toLowerCase());
-  const a=extractAnchors(html,pageUrl);
+  const section=findExactOfficialMeetingDateSection(html,row.meetingDate);
+  // Global LRL navigation includes generic media/Minutes links. Do not use
+  // them for any meeting-level evidence unless unique date heading is scoped.
+  const a=section.scopeVerified ? extractAnchors(section.sectionHtml!,pageUrl) : [];
   const agenda=a.filter(x=>/\bagenda\b/i.test(x.text));
   const media=a.filter(x=>/audio|video|webcast|watch|listen|recording/i.test(x.text)||/granicus\.com/i.test(x.url));
   const minutes=a.filter(x=>/\bminutes?\b/i.test(x.text)||/_minutes\.pdf(\?|$)/i.test(x.url));
@@ -70,6 +74,9 @@ function analyzeHtml(row:IndexedMissingMinutes,html:string,pageUrl:string){
   const flags={
     sourcePageContainsTargetDate:dateSeen,
     sourcePageContainsCommitteeName:actualCommitteeNameSeen,
+    exactMeetingHeadingMatches:section.headingMatches,
+    exactDatedMeetingSectionVerified:section.scopeVerified,
+    datedMeetingSectionHtmlSha256:section.sectionHtml ? sha(section.sectionHtml) : null,
     pageMayContainOtherMeetingDates:true,
     agendaAnchorCandidates:agenda.length,
     mediaAnchorCandidates:media.length,
@@ -80,8 +87,8 @@ function analyzeHtml(row:IndexedMissingMinutes,html:string,pageUrl:string){
   };
   // Candidate links may be page-level, not proved to belong to target date.
   // False-positive source candidates cannot become recorded votes.
-  const triage=explicitMinutesOriginalForDay ? 'possible_minutes_index_drift_needs_pdf_proof'
-    : !dateSeen ? 'date_not_confirmed_on_current_page'
+  const triage=!section.scopeVerified ? 'meeting_date_section_not_isolated'
+    : explicitMinutesOriginalForDay ? 'possible_minutes_index_drift_needs_pdf_proof'
     : media.length>0 && agenda.length>0 ? 'media_and_agenda_candidate'
     : media.length>0 ? 'media_candidate'
     : agenda.length>0 ? 'agenda_candidate'
