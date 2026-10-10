@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "senate-2022-25-141-no-linked-minutes-dated-page-source-proof-v1",
+  "issue": 864,
+  "recordedOn": "2026-10-10",
+  "authority": "Minnesota Legislative Reference Library",
+  "originalIndexedMeetingCensus": {
+    "runId": 38065594898,
+    "artifactId": 11674762938,
+    "originalJsonSha256": "ed5fb31e17df7acc035997fa487e55d3156997ac05603fdd046bffa554395ee0",
+    "exactMissingMeetingRosterSha256": "b7702da8e81ae960fc20ae950e957c5172b4d7053a6c1c1424af0e4403cf2558",
+    "electronicIndexedMeetings": 1592,
+    "meetingsWithoutLinkedMinutes": 141
+  },
+  "firstFailedRedirectRun": {
+    "runId": 38075399014,
+    "reportedPageFailures": 141,
+    "reason": "official_http301_canonical_redirect_rejected_not_absent_meeting",
+    "noRecoveredVoteOrMinutesClaimed": true
+  },
+  "firstSourceRecoveredPagesRun": {
+    "runId": 38075749602,
+    "allPagesFetched": 141,
+    "failureCount": 0,
+    "limitation": "global_navigation_links_misclassified_as_media_do_not_use"
+  },
+  "scopedSourceRun": {
+    "runId": 38076153790,
+    "pr": 892,
+    "mainSha": "a022a8a5cef1375d22b9d9e1d2f4af74bd426db7",
+    "premergeCI": 38075982724,
+    "totalPages": 141,
+    "exactDateSectionValidated": 141,
+    "failedPages": 0,
+    "possibleDatedSectionMediaLinkPages": 138,
+    "distinctMediaCandidateUrlHashes": 138,
+    "remainingPagesWithoutMediaCandidates": 3,
+    "agendaLinkPages": 0,
+    "exactOfficialMinutesPdfLinksRecovered": 0,
+    "possibleOtherMinutesKeywordLinks": 2,
+    "recordsByYear": [
+      {
+        "year": 2022,
+        "originalMissingPages": 12,
+        "dateSectionsVerified": 12,
+        "pagesFetched": 12,
+        "failedPages": 0,
+        "datedSectionMediaPages": 11,
+        "agendaPages": 0,
+        "noMediaPages": 1,
+        "otherMinutesKeywordLinks": 0,
+        "exactOriginalMinutesPdfLinksRecovered": 0,
+        "artifactId": 11678695461,
+        "zipSha256": "b40fea19ebe7a99f22767b22024fc3d40062578309badf0db3fe7e722ae7cc5f",
+        "jsonSha256": "a25b4be463308dbb2ec91dfeddf061ea89201a287bb4181a296130dcbdaba939"
+      },
+      {
+        "year": 2023,
+        "originalMissingPages": 64,
+        "dateSectionsVerified": 64,
+        "pagesFetched": 64,
+        "failedPages": 0,
+        "datedSectionMediaPages": 64,
+        "agendaPages": 0,
+        "noMediaPages": 0,
+        "otherMinutesKeywordLinks": 2,
+        "exactOriginalMinutesPdfLinksRecovered": 0,
+        "artifactId": 11678735983,
+        "zipSha256": "8a795340edd3e26ab25731371658d2ac4e645a3eacbf08815c0ebcdebbb58dda",
+        "jsonSha256": "9f3a2ab4fd71c90c39b6897d50b5efa62da4c43cfb048670e17f9ee6b8ba494e"
+      },
+      {
+        "year": 2024,
+        "originalMissingPages": 42,
+        "dateSectionsVerified": 42,
+        "pagesFetched": 42,
+        "failedPages": 0,
+        "datedSectionMediaPages": 41,
+        "agendaPages": 0,
+        "noMediaPages": 1,
+        "otherMinutesKeywordLinks": 0,
+        "exactOriginalMinutesPdfLinksRecovered": 0,
+        "artifactId": 11679565102,
+        "zipSha256": "f15e6a5e72f1520ba3766203afc8833ed838b837f018eed031234143095b614a",
+        "jsonSha256": "efaa2d4f7ddd78063fa0c9b2d42645b3b9cc8cf3c25b7a2ace438030e394225b"
+      },
+      {
+        "year": 2025,
+        "originalMissingPages": 23,
+        "dateSectionsVerified": 23,
+        "pagesFetched": 23,
+        "failedPages": 0,
+        "datedSectionMediaPages": 22,
+        "agendaPages": 0,
+        "noMediaPages": 1,
+        "otherMinutesKeywordLinks": 0,
+        "exactOriginalMinutesPdfLinksRecovered": 0,
+        "artifactId": 11679555047,
+        "zipSha256": "a7e5d55c34364d684807d88726a21b7b93e4b7ba7ee11cab3b064b84f042cecc",
+        "jsonSha256": "d3a828a173912dba7221975aed60e8057d03799b911f577c4f14979d134665d3"
+      }
+    ]
+  },
+  "limits": {
+    "mediaLinksAreUnverifiedCandidateUrlsNotVerifiedRecordings": true,
+    "datedPageHasMeetingHeadingButNotVoteContentProof": true,
+    "scopedCandidateLinkHashesNotFullExternalSourceCapture": true,
+    "categoryIsNotExactRecordedVoteProof": true,
+    "year2021PrintOnlyOfficialSourcesUnresolved": true,
+    "year2022PrintAndElectronicMayDiffer": true,
+    "officialAllRecordedVotesDenominator": null,
+    "officialAllCommitteeMeetingsDenominator": null,
+    "privateEvidenceDbReconciliationPerformed": false,
+    "productionDatabaseOrModelServingChanges": false
+  }
+}
