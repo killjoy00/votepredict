@@ -93,3 +93,39 @@ test('recent terminations stay 2026 source evidence, never fabricated historical
   assert.equal(p.boundaries.noProductionDatabaseReadWrite,true);
   assert.equal(p.boundaries.noTrainingServingOr2027Changes,true);
 });
+
+test('2026 election-viewer-only candidate registration IDs split into 2025/2026/unknown by independent official date source',()=>{
+  const current=sourceProof();
+  const historical=JSON.parse(readFileSync(priorFile,'utf8')) as Record<string,any>;
+  const ids=historical.observedCandidateRegistrationIndex.registrationIdsCsv.split(',') as string[];
+  const masks=historical.observedCandidateRegistrationIndex.segmentMembershipMaskHex as string;
+  assert.equal(ids.length,494);
+  assert.equal(masks.length,494);
+  const only2026=new Set(ids.filter((_id,i)=>masks[i]==='8'));
+  assert.equal(only2026.size,134);
+  const currentRows=new Map(datedRows().rows.map(r=>[r.id,r]));
+  const date2025=[...only2026].filter(id=>{
+    const d=currentRows.get(id)?.registered;
+    return d && d>='2025-01-01' && d<='2025-12-31';
+  });
+  const date2026=[...only2026].filter(id=>{
+    const d=currentRows.get(id)?.registered;
+    return d && d>='2026-01-01' && d<='2026-12-31';
+  });
+  const stillUnresolved=[...only2026].filter(id=>!currentRows.has(id));
+  assert.equal(date2025.length,41);
+  assert.equal(date2026.length,78);
+  assert.equal(stillUnresolved.length,15);
+  assert.ok(date2025.includes('19205'));
+  assert.deepEqual(current.observedSourceSnapshot.viewerOnly2026SegmentRegistrationCohorts, {
+    totalCandidateRegistrationsObservedOnlyIn2026ElectionSegment:134,
+    listedInOctober2026CurrentSenateRegistryWithRegistrationDuring2025:41,
+    listedInOctober2026CurrentSenateRegistryWithRegistrationDuring2026:78,
+    absentFromOctober2026CurrentRegistryNoDatedRegistrationProof:15,
+    accounting:'41+78+15=134. 2026 election-viewer year is NOT the registration year; 2025-dated observations are leads, not legal filing obligations.',
+  });
+  assert.equal(current.observedSourceSnapshot.viewerIdsObservedIn2020or2022or2024Cohorts.total,360);
+  assert.equal(current.observedSourceSnapshot.viewerIdsObservedIn2020or2022or2024Cohorts.alsoListedInOctober2026CurrentRegistry,111);
+  assert.equal(current.observedSourceSnapshot.viewerIdsObservedIn2020or2022or2024Cohorts.notListedInCurrentRegistry,249);
+  assert.equal(current.historicalDenominator.statutoryReportsRequiredForSenate2021to2025,null);
+});
