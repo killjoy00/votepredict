@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   SENATE_MISSING_MINUTES_SOURCE,
   officialMissingMinutesMeetingPage,
+  isSafeSameMeetingLrlRedirect,
   selectMissingMinutesFromExactIndex,
   type IndexedMissingMinutes,
 } from '../src/evidence/senate-committee-missing-minutes-official-queue.js';
@@ -57,4 +58,27 @@ test('missing minutes link is evidence-gap state, never an assertion of zero act
     SENATE_MISSING_MINUTES_SOURCE.perYear[2023]+
     SENATE_MISSING_MINUTES_SOURCE.perYear[2024]+
     SENATE_MISSING_MINUTES_SOURCE.perYear[2025],141);
+});
+
+
+test('legacy LRL .aspx URL may canonically 301 only to same official Senate meeting',()=>{
+  const original=officialMissingMinutesMeetingPage(row);
+  const canonical=original.replace('/comm.aspx','/comm');
+  assert.equal(isSafeSameMeetingLrlRedirect(original,canonical),true);
+  assert.equal(isSafeSameMeetingLrlRedirect(original,
+    canonical.replace('www.lrl.mn.gov','lrl.mn.gov')),true);
+  const u=new URL(canonical);
+  u.searchParams.delete('body');
+  assert.equal(isSafeSameMeetingLrlRedirect(original,u.toString()),true,
+    'canonical Senate meeting retains exact known committee/date even if optional body dropped');
+  for(const changed of [
+    canonical.replace('www.lrl.mn.gov','evil.example'),
+    canonical.replace('https:','http:'),
+    canonical.replace('year=2022','year=2023'),
+    canonical.replace('23835-0','23836-0'),
+    canonical.replace('body=senate','body=house'),
+    canonical.replace('date=2%2F8%2F2022','date=2%2F9%2F2022'),
+    canonical+'&evil=true',
+    canonical+'#fragment',
+  ]) assert.equal(isSafeSameMeetingLrlRedirect(original,changed),false,changed);
 });
