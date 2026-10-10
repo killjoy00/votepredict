@@ -123,8 +123,8 @@ test('complete multiple batches yield exact source hashes but do not certify sen
   assert.equal(result.summary.retrievalAttemptsCompleteForEligibleExport,true);
   assert.equal(result.authenticatedSnapshots.length,1);
   assert.equal(result.authenticatedSnapshots[0]?.sourceDocumentId,'source-a');
-  assert.equal(result.summary.byPublisherCaptureYear.find(r=>r.year===2023)?.exactOriginalHashMatched,1);
-  assert.equal(result.summary.byPublisherCaptureYear.find(r=>r.year===2025)?.originalHashMismatched,1);
+  assert.equal(result.summary.byPublisherCaptureYear.find(r=>r.year===2023 && r.seedId==='mpr-news-story-archive')?.exactOriginalHashMatched,1);
+  assert.equal(result.summary.byPublisherCaptureYear.find(r=>r.year===2025 && r.seedId==='mpr-news-story-archive')?.originalHashMismatched,1);
   assert.equal(result.summary.auditVerifiedQuotePassages,0);
   assert.equal(result.summary.quotesHumanReviewed,false);
   assert.equal(result.summary.productionDatabaseReadOrWritten,false);
