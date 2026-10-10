@@ -141,7 +141,7 @@ function quoteIssues(
   review: SenateMediaReview,
   source: SenateMediaContextExport,
   sourceProblems: string[],
-  roster: SenateMediaRosterYear[],
+  roster: readonly SenateMediaRosterYear[],
   snapshot: SenateMediaSourceSnapshot | undefined,
 ): string[] {
   const issues = [...sourceProblems];
