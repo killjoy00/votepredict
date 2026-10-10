@@ -2,6 +2,18 @@
 
 Tracker: [#912](https://github.com/killjoy00/votepredict/issues/912).
 
+## One-time protected post-CI check, not another owner click
+
+The initial owner-triggered runs on October 10, 2026 authorized this bounded VotePredict read-only historical-media inspection, but implementation mistakes prevented live source counts. To avoid repeated workflow_dispatch requests, the same protected workflow now accepts **one** designated successful CI run on main after a reviewed squash merge.
+
+Conditions for that path: a **single exact one-use** `SENATE_MEDIA_ONE_SHOT_20261010_V1` marker in the reviewed merge commit message, CI workflow name `CI`, successful conclusion, first CI run attempt, source event `push`, `head_branch=main`, exact owner/repo and `GITHUB_REF=refs/heads/main`. Ordinary merges, PR builds, manual CI reruns, schedule events, forks and any wrong repo fail closed. GitHub Actions checks these and the script separately checks all sanitized attributes before any Neon request.
+
+**The GitHub evidence-readonly-sandbox protected environment remains mandatory.** This change does NOT bypass environment reviewers, remove a repository protection rule, broaden privileges, or create Neon credentials, branches, roles or databases. If GitHub requires a protected environment approval, the one-time job will remain waiting; it cannot evade that restriction.
+
+The code checks out the exact successful source CI SHA, independently compares checkout HEAD to that SHA, then performs the same GET-only project/branch/database/endpoint/URI steps and hard-coded SELECT-count transaction with `BEGIN REPEATABLE READ READ ONLY`, query timeouts and ROLLBACK. Outputs remain sanitized aggregate historical year counts or fixed non-sensitive failure phases, never passwords, article bodies, source rows, quote claims or uploaded workflow artifacts.
+
+**This is not a permanent recurring credential job.** Only the uniquely marked reviewed commit can trigger it. The manual option remains a fallback for explicit future owner use; the owner should not be repeatedly asked to run it as a debugging loop. The historical public-source audit and human attribution checks continue separately.
+
 This workflow uses the **existing** protected GitHub Actions `NEON_API_KEY` and `VOTEPREDICT_NEON_PROJECT_ID`. No new Neon project, database, branch, SQL role or connection-string secret is needed for the aggregate inspection.
 
 Run [Senate media Neon one-key historical counts](https://github.com/killjoy00/votepredict/actions/workflows/senate-media-neon-api-readonly-counts.yml) manually on `main`. Set `run_bounded_counts=true` and enter `VERIFY_SENATE_MEDIA_READONLY`. The `evidence-readonly-sandbox` GitHub environment must authorize the job.

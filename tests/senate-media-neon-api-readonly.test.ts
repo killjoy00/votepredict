@@ -238,6 +238,72 @@ test('read-only SQL guard rejects the wrong DB identity before source rows, even
     'ROLLBACK',
   ]);
 });
+test('exactly one marked first-attempt successful CI main-push can reuse protected read-only authorization',()=>{
+  const approved={
+    GITHUB_REPOSITORY:'killjoy00/votepredict',
+    GITHUB_REF:'refs/heads/main',
+    GITHUB_EVENT_NAME:'workflow_run',
+    VOTEPREDICT_MEDIA_APPROVAL:'VERIFY_SENATE_MEDIA_READONLY',
+    VOTEPREDICT_MEDIA_AGGREGATE_APPROVAL:'BOUNDED_AGGREGATE_ONLY',
+    VOTEPREDICT_MEDIA_CI_WORKFLOW:'CI',
+    VOTEPREDICT_MEDIA_CI_EVENT:'push',
+    VOTEPREDICT_MEDIA_CI_CONCLUSION:'success',
+    VOTEPREDICT_MEDIA_CI_HEAD_BRANCH:'main',
+    VOTEPREDICT_MEDIA_CI_HEAD_REPOSITORY:'killjoy00/votepredict',
+    VOTEPREDICT_MEDIA_CI_RUN_ATTEMPT:'1',
+    VOTEPREDICT_MEDIA_CI_HEAD_SHA:'a'.repeat(40),
+    VOTEPREDICT_MEDIA_CI_ONE_SHOT_MARKER_MATCHED:'true',
+  };
+  assert.doesNotThrow(()=>assertApprovedDirectNeonWorkflow(approved));
+  const denied=[
+    {GITHUB_EVENT_NAME:'push'},
+    {GITHUB_EVENT_NAME:'schedule'},
+    {GITHUB_REF:'refs/heads/feature'},
+    {GITHUB_REPOSITORY:'another/repo'},
+    {VOTEPREDICT_MEDIA_APPROVAL:''},
+    {VOTEPREDICT_MEDIA_AGGREGATE_APPROVAL:'unbounded'},
+    {VOTEPREDICT_MEDIA_CI_WORKFLOW:'PR Build'},
+    {VOTEPREDICT_MEDIA_CI_EVENT:'pull_request'},
+    {VOTEPREDICT_MEDIA_CI_CONCLUSION:'failure'},
+    {VOTEPREDICT_MEDIA_CI_HEAD_BRANCH:'feature'},
+    {VOTEPREDICT_MEDIA_CI_HEAD_REPOSITORY:'attacker/votepredict'},
+    {VOTEPREDICT_MEDIA_CI_RUN_ATTEMPT:'2'},
+    {VOTEPREDICT_MEDIA_CI_HEAD_SHA:''},
+    {VOTEPREDICT_MEDIA_CI_ONE_SHOT_MARKER_MATCHED:'false'},
+    {VOTEPREDICT_MEDIA_CI_ONE_SHOT_MARKER_MATCHED:''},
+  ];
+  for(const changes of denied){
+    assert.throws(()=>assertApprovedDirectNeonWorkflow({...approved,...changes}),
+      /authorized|approved|read.only/i,
+    );
+  }
+});
+
+test('only a unique reviewed main squash-merge marker may trigger a one-time post-CI check',()=>{
+  const yml=readFileSync('.github/workflows/senate-media-neon-api-readonly-counts.yml','utf8');
+  assert.match(yml,/workflow_run:/);
+  assert.match(yml,/workflows: \[CI\]/);
+  assert.match(yml,/types: \[completed\]/);
+  assert.match(yml,/branches: \[main\]/);
+  assert.match(yml,/head_repository\.full_name == 'killjoy00\/votepredict'/);
+  assert.match(yml,/workflow_run\.event == 'push'/);
+  assert.match(yml,/workflow_run\.run_attempt == 1/);
+  assert.match(yml,/workflow_run\.conclusion == 'success'/);
+  assert.match(yml,/SENATE_MEDIA_ONE_SHOT_20261010_V1/);
+  assert.match(yml,/environment: evidence-readonly-sandbox/);
+  assert.match(yml,/persist-credentials: false/);
+  assert.match(yml,/ref: \$\{\{ github\.event_name == 'workflow_run' && github\.event\.workflow_run\.head_sha \|\| github\.sha \}\}/);
+  assert.match(yml,/test "\$\(git rev-parse HEAD\)" = "\$APPROVED_MAIN_SHA"/);
+  assert.match(yml,/VOTEPREDICT_MEDIA_CI_HEAD_REPOSITORY/);
+  assert.doesNotMatch(yml,/^\s{2}(?:schedule|pull_request|push):/m);
+  assert.doesNotMatch(yml,/upload-artifact|post-comment|CREATE ROLE|neon branches create/i);
+  // A full export is still blocked by independent private-only SQL gates.
+  const script=readFileSync('scripts/check-senate-media-neon-api-readonly.ts','utf8');
+  assert.match(script,/BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY/);
+  assert.match(script,/ROLLBACK/);
+  assert.doesNotMatch(script,/INSERT INTO|DELETE FROM|CREATE TABLE|ALTER TABLE|UPDATE public\./i);
+});
+
 test('manual exact repository/main/approval and protected workflow, zero scheduled/PR/source export',()=>{
   assert.doesNotThrow(()=>assertApprovedDirectNeonWorkflow({
     GITHUB_REPOSITORY:'killjoy00/votepredict',
