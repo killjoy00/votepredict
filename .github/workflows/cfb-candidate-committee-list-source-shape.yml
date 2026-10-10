@@ -23,3 +23,12 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - name: Inspect public CFB committee registration listing app and API shapes
         run: node --import tsx scripts/probe-cfb-current-candidate-list-schema.ts
+
+      - name: Retain public CFB static JS sources briefly for offline route inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-public-current-list-app-scripts
+          path: artifacts/cfb-public-js/
+          retention-days: 7
+          if-no-files-found: warn
