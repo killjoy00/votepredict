@@ -124,7 +124,7 @@ test('successful official API tab without any reference is not a statutory absen
   assert.deepEqual(audited.byYear.slice(0,2).map(x=>x.candidateRegistrationsWithoutYearSpecificReferences),[1,1]);
   assert.ok(audited.results.slice(0,2).every(x=>x.status==='no_matching_year_references'));
   assert.equal(audited.totals.actuallyFiledOriginalReportsVerified,null);
-  assert.equal(audited.exclusions.commiteesNeverObservedInDistrictViewerNotEnumerated,undefined);
+  assert.equal(audited.exclusions.committeesNeverObservedInDistrictViewerNotEnumerated,true);
 });
 test('duplicate viewer segment target raises instead of double counting',()=>{
   const a=cohort().targets[0]!;
