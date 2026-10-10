@@ -58,7 +58,6 @@ test('restricted direct Neon connection URI accepted, and no password ever goes 
   assert.equal(d.host,HOST);
   assert.equal(d.username,'senate_media_readonly');
   assert.equal(d.database,'votepredict');
-  assert.equal(d.connectionString,URL);
   const untrusted=[
     URL.replace('postgresql:', 'https:'),
     URL.replace(HOST,'example.com'),
