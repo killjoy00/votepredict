@@ -54,7 +54,7 @@ This writes an immutable \`0600\`-mode JSON report with all 139+19+6 discovery o
 To rank the most important membership gaps, obtain a separately authorized, **SELECT-only**, complete membership export (script is NOT run automatically):
 \`scripts/sql/senate-2021-25-campaign-issue-priority-select-only.sql\`.
 
-The query returns \`membershipId\`, \`senatorName\`, \`sessionSlug\`, \`district\`, \`recordedIssuePositionItems\`. The count is *recorded timestamped items within the relevant historical session window*, not a claim of all positions that may have existed. The 2025–26 cohort is capped at **December 31, 2025**, excluding 2026 captures, and future archive timestamps are not treated as earlier proof. Export those results as **JSONL** (one JSON object per line), and run:
+The query returns \`membershipId\`, \`senatorName\`, \`sessionSlug\`, \`district\`, \`recordedIssuePositionItems\`. The count is *recorded timestamped campaign-site `issue_position` items (`sourceSubtype='campaign_site_page'`) within the relevant historical session window*. It excludes official member/caucus issue statements. This count is **not** a claim that all actual campaign positions have been collected. The 2025–26 cohort is capped at **December 31, 2025**, excluding 2026 captures, and future archive timestamps are not treated as earlier proof. Export those results as **JSONL** (one JSON object per line), and run:
 
 \`\`\`bash
 node --import tsx scripts/audit-sos-senate-campaign-inventory-offline.ts \
@@ -84,7 +84,7 @@ Inputs capped: manifest 4 MiB; membership JSONL 16 MiB and 1,000 records; candid
 ## Further work / acceptance debt
 
 1. Recover independently archived **original 2020 and 2022 SOS filing exports** and any historically date-proven 2024/2025 special candidate spreadsheets, with source/content hashes. Track all actual Senate filers including primary losers, withdrawals, write-ins, missing campaign URLs, and source unavailability; historic general-election winners are just a priority seed cohort.
-2. With explicit owner authorization, perform the SELECT-only membership export and produce **named, membership-UUID-level P0 lists**. Current 2021–22 / 2023–24 / 2025–26 #477 aggregate "no evidence" counts are not directly usable as a 2021–2025 person-level denominator.
+2. With explicit owner authorization, perform the SELECT-only membership export and produce **named, membership-UUID-level P0 lists**. Current 2021–22 / 2023–24 / 2025–26 #477 aggregate "no evidence" counts include member-primary sources, not just campaign pages, and are not directly usable as a 2021–2025 campaign-site or person-level denominator.
 3. Reconcile archived campaign sites, domain redirects/defunct hosts, issue/page changes, exact original statement excerpts, SHA-256 of original bytes, and independently proven earliest available-by timestamps using #902 and #906 tools. Post election-result identities are discovery-only and cannot be counted as pre-election platform publication evidence.
 4. Reconcile every verified original page to a SELECT-only evidence/source-document export. Revisit collection only in separately approved, non-serving batches. No historical model eligibility, retraining, or 2027/production behavior change under this issue.
 
