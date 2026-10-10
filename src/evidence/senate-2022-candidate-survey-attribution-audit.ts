@@ -59,7 +59,7 @@ function validMetadata(){
     throw Error('2022 publisher source provenance is not compatible with bounded observations');
   for(const section of src.speakerSections){
     const id=speakerKey(section.candidateName,src.district);
-    if(!want.candidates.includes(section.candidateName)||candidates.has(id))
+    if(!new Set<string>(want.candidates).has(section.candidateName)||candidates.has(id))
       throw Error('Invalid/duplicated 2022 candidate speaker heading');
     candidates.add(id);
     const outcome=outcomes.find(x=>speakerKey(x.candidateName,x.district)===id);
