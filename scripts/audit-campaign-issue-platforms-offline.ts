@@ -54,7 +54,7 @@ function optionalString(record: Record<string, unknown>, key: string): string | 
 function campaignYear(record: Record<string, unknown>): number | null {
   const year = record.campaignYear;
   if (year === null || year === undefined) return null;
-  if (typeof year !== 'number' || !Number.isInteger(year) || year < 1900 || year > 2025) throw new Error('Invalid campaignYear');
+  if (typeof year !== 'number' || !Number.isInteger(year) || year < 1900 || year > 2026) throw new Error('Invalid campaignYear');
   return year as number;
 }
 function choice<T extends string>(record: Record<string, unknown>, key: string, values: readonly T[]): T {
@@ -108,7 +108,7 @@ function main() {
     .filter((x): x is string => Boolean(x)).map(path => resolve(path));
   if (inputPaths.includes(output)) throw new Error('Refusing to overwrite an input export');
   mkdirSync(dirname(output), { recursive: true });
-  writeFileSync(output, JSON.stringify(report, null, 2) + '\n', { encoding: 'utf8', mode: 0o600 });
+  writeFileSync(output, JSON.stringify(report, null, 2) + '\n', { encoding: 'utf8', mode: 0o600, flag: 'wx' });
   console.log(JSON.stringify({ output, totals: report.totals, reconciliationCertified: false }, null, 2));
 }
 main();
