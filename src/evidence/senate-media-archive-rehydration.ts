@@ -63,7 +63,7 @@ function validExactArchiveLocation(row: SenateMediaContextExport): boolean {
     const inner = new URL(original);
     if (outer.protocol !== 'https:' || outer.hostname !== 'web.archive.org'
       || outer.host !== 'web.archive.org' || outer.username || outer.password
-      || outer.search || outer.hash || outer.toString() !== archive
+      || outer.hash || outer.toString() !== archive
       || !['http:', 'https:'].includes(inner.protocol)
       || inner.username || inner.password || inner.hash) return false;
     const match = archive.match(/^https:\/\/web\.archive\.org\/web\/(\d{14})id_\/(https?:\/\/.+)$/);
