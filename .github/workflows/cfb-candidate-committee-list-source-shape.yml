@@ -5,6 +5,9 @@ on:
     paths:
       - scripts/probe-cfb-current-candidate-list-schema.ts
       - .github/workflows/cfb-candidate-committee-list-source-shape.yml
+      - scripts/capture-cfb-current-candidate-registry-join.ts
+      - src/evidence/cfb-current-candidate-registry-join.ts
+      - tests/cfb-current-candidate-registry-join.test.ts
 
 permissions:
   contents: read
@@ -31,4 +34,17 @@ jobs:
           name: cfb-public-current-list-app-scripts
           path: artifacts/cfb-public-js/
           retention-days: 7
+          if-no-files-found: warn
+
+      - name: Capture present-day CFB registration-date metadata against Senate source IDs
+        run: |
+          node --import tsx scripts/capture-cfb-current-candidate-registry-join.ts \
+            --output artifacts/cfb-current-candidate-registry-join.json
+      - name: Retain sanitized dated registration cross-check snapshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2026-public-candidate-registration-metadata-crosscheck
+          path: artifacts/cfb-current-candidate-registry-join.json
+          retention-days: 30
           if-no-files-found: warn
