@@ -1,0 +1,44 @@
+name: One-time 2023 Elections original roll committee surname roster crosscheck
+
+# Original first-party SHA-verified source metadata only; no PDF re-fetch,
+# web crawl, private DB, model, predictions, scheduler or 2027 changes.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-2023-elections-roll-roster.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  compare-original-named-rolls-to-official-roster:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Retrieve source hashed original 2023 Elections rolls
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2023-nine-strong-original-roll-directions
+          run-id: 38084229868
+          github-token: ${{ github.token }}
+          path: artifacts/verified-source
+      - name: Compare ten source roll fingerprint sets against published 2023 Senate committee roster
+        run: |
+          node --import tsx scripts/check-senate-2023-elections-roster-fingerprints.ts \
+            --source-json artifacts/verified-source/senate-2023-nine-original-numeric-rolls.json \
+            --output artifacts/roster/senate-2023-elections-ten-rolling-roster-proof.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: senate-2023-elections-ten-named-roll-roster-proof
+          path: artifacts/roster/senate-2023-elections-ten-rolling-roster-proof.json
+          retention-days: 30
+          if-no-files-found: error
