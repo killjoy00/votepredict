@@ -111,7 +111,8 @@ async function main(): Promise<void> {
     completenessCertified: audit.historicalFinanceDenominator.completenessCertified,
     output,
   }, null, 2));
-  if (sourceErrors.length || !audit.sourceSummary.allDistrictSegmentsCapturedAndParsed) {
+  const controlsVerified = Object.values(audit.knownOriginalDocumentControlIds).every(Boolean);
+  if (sourceErrors.length || !audit.sourceSummary.allDistrictSegmentsCapturedAndParsed || !controlsVerified) {
     process.exitCode = 1; // partial source proof is a failure, not an official zero.
   }
 }
