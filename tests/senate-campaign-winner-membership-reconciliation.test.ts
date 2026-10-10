@@ -89,6 +89,25 @@ test('defeated opponent in same district cannot inherit elected senator evidence
  assert.equal(winning.membershipJoinStatus,'member_not_in_restricted_snapshot');
  assert.equal(r.totals.uniquelyJoinedRestrictedSandboxMemberships,2);
 });
+test('exact observed 2025 SD45 Ann M Johnson Stewart initial is a single district/session-bound candidate identity alias',()=>{
+ const x=fakeRestrictedSandbox();
+ x.members[0].senatorName='Ann M Johnson Stewart';
+ const report=reconcileHistoricalCampaignWinnerExcerpts(official,undefined,x);
+ assert.equal(report.totals.uniquelyJoinedRestrictedSandboxMemberships,3);
+ const ann=report.sourceRows.find(p=>p.candidateName==='Ann Johnson Stewart')!;
+ assert.equal(ann.membershipJoinStatus,'unique_name_district_session_and_date_match');
+ assert.equal(ann.membershipNameMatchBasis,'documented_2025_sd45_middle_initial_alias');
+ assert.equal(ann.membershipId,ids[0]);
+ const other=fakeRestrictedSandbox();
+ other.members[0].senatorName='Ann Q Johnson Stewart';
+ const unjoined=reconcileHistoricalCampaignWinnerExcerpts(official,undefined,other);
+ assert.equal(unjoined.totals.uniquelyJoinedRestrictedSandboxMemberships,2);
+ assert.equal(unjoined.sourceRows.find(p=>p.candidateName==='Ann Johnson Stewart')?.membershipId,null);
+ const wrongDistrict=fakeRestrictedSandbox();
+ wrongDistrict.members[0].district='29';
+ const denied=reconcileHistoricalCampaignWinnerExcerpts(official,undefined,wrongDistrict);
+ assert.equal(denied.totals.uniquelyJoinedRestrictedSandboxMemberships,2);
+});
 test('post-election official winner data cannot be smuggled into forecast feature eligibility',()=>{
  const x=structuredClone(official);
  x.candidates.find(c=>c.candidateName==='Louis McNutt')!.generalElectionOutcome='winner';
