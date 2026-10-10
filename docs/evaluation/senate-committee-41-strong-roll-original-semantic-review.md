@@ -1,0 +1,13 @@
+# Senate historical committee source review — 41 YEA/NAY-label plus roll-call cue PDFs
+
+#864 Stage B in the original-source evidence pipeline, not a historical DB repair.
+
+The original [141 possible missed roll-call PDF queue](./senate-committee-141-unparsed-roll-signal-review.md) contains 41 stronger source cues (2022 two, 2023 fourteen, 2024 thirteen, 2025 twelve). These are existing readable original PDFs with a literal roll-call phrase and YEA/NAY-style label. The known v2 parser found **no supported recorded vote** within each PDF; it is not established that any of the 41 contains a true omitted *voting* roll call rather than attendance or a different motion style.
+
+The [one-time direct-source workflow](../../.github/workflows/senate-committee-41-strong-roll-original-source.yml) downloads **only independently SHA-verified metadata** from roll-review run #38075573031. It then fetches exactly the 41 official Senate PDFs by original source URL, no redirects; bytes <=3 MiB, pages <=30, embedded text extraction only. Each PDF and its extracted text must match the earlier actual independent 2022–25 original-PDF audit's recorded SHA-256; if either changes, that original is an unresolved source-drift failure rather than upgraded evidence. A separate result is emitted for each historical year.
+
+Human review must separately inspect the *small and explicitly temporary* text excerpts around roll-call words and AYE/NAY labels (at most three 220-character snippets per PDF, in seven-day Actions artifacts only) and distinguish attendance roll from an actual motion-related counted recorded vote, with exact names, YEA/NAY and action/vote type independently corroborated. Source snippets are not committed as repo proof, no original PDF/complete source text is stored; durable outcomes should be **only provenance hashes and machine-confidence classification**, with named individual choices accepted only after original person and motion context validation.
+
+The temporary machine labels `cuesWithAttendanceWords`, `cuesWithMotionWords`, `cuesWithBothMotionAndAyeNayLabel` and `labelsNearRollPhrase` are **keywords only**. Do not count a keyword candidate as a distinct vote, a senator choice, a floor final passage stance or previously missing DB evidence. No source-to-persisted-private-database SELECT join has been executed or authorized. 2021 original print Minutes, 2022 print/electronic gap, and 141 unrelated electronically indexed meetings without linked Minutes remain separately open.
+
+No production DB, app serving, evaluation, retraining, model, prediction, scheduler, 2027, or public-office contact. Keep #864 open.
