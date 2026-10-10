@@ -56,8 +56,7 @@ test('all fourteen present is separately distinguishable from a later Pass',()=>
 test('Feb14 Anderson absent and marked absent in named motion has no absentee Yea/Nay conflict',()=>{
  const all=[...roster],present=all.filter(x=>x!=='Anderson');
  const text=originalAttendance(present,['Anderson'],'February 14');
- const status=Object.fromEntries(all.map((n,i)=>[n,n==='Anderson'?'absent':i<9?'yea':'nay']))
-  as Record<string,'yea'|'nay'|'absent'|'pass'>;
+ const status=Object.fromEntries(all.map((n,i)=>[n,n==='Anderson'?'absent':i<9?'yea':'nay'])) as Record<string,'yea'|'nay'|'absent'|'pass'>;
  const result=inspect2023OriginalElectionRollDateAndAttendance(
   text,'2023-02-14',sourceRoll(status));
  assert.equal(result.sourcePrintedDateAgreesWithIndex,true);
@@ -69,16 +68,14 @@ test('Feb14 Anderson absent and marked absent in named motion has no absentee Ye
 });
 test('named yea while original minutes lists Senator absent is a hard contradiction',()=>{
  const all=[...roster],text=originalAttendance(all.filter(x=>x!=='Anderson'),['Anderson'],'February 14');
- const status=Object.fromEntries(all.map((n,i)=>[n,i<8?'yea':'nay']))
-  as Record<string,'yea'|'nay'|'absent'|'pass'>;
+ const status=Object.fromEntries(all.map((n,i)=>[n,i<8?'yea':'nay'])) as Record<string,'yea'|'nay'|'absent'|'pass'>;
  const result=inspect2023OriginalElectionRollDateAndAttendance(text,'2023-02-14',sourceRoll(status));
  assert.equal(result.originalAbsentHeaderMembersGivenExplicitYeaNay,1);
  assert.equal(result.hardAbsenteeOrSourceDateIssue,true);
  assert.match(result.absentHeaderContradictionHashes[0],/^[a-f0-9]{64}$/);
 });
 test('member marked roll Absent despite initially present is review cue, not proof source contradiction',()=>{
- const status=Object.fromEntries(roster.map((n,i)=>[n,i===0?'absent':i<7?'yea':'nay']))
-  as Record<string,'yea'|'nay'|'absent'|'pass'>;
+ const status=Object.fromEntries(roster.map((n,i)=>[n,i===0?'absent':i<7?'yea':'nay'])) as Record<string,'yea'|'nay'|'absent'|'pass'>;
  const result=inspect2023OriginalElectionRollDateAndAttendance(
   originalAttendance([...roster],[],'March 7'),'2023-03-07',sourceRoll(status));
  assert.equal(result.originalAbsentHeaderMembersGivenExplicitYeaNay,0);
@@ -94,8 +91,7 @@ test('ambiguous absence header cannot be treated as all senators present',()=>{
  assert.equal(parse2023ElectionsOriginalMeetingAttendance(nullInput).attendanceSectionsLocated,false);
 });
 test('duplicate choice fingerprint fails closed and names never leave internal comparison',()=>{
- const status=Object.fromEntries(roster.map((n,i)=>[n,i<7?'yea':'nay']))
-  as Record<string,'yea'|'nay'|'absent'|'pass'>;
+ const status=Object.fromEntries(roster.map((n,i)=>[n,i<7?'yea':'nay'])) as Record<string,'yea'|'nay'|'absent'|'pass'>;
  const r=sourceRoll(status);
  r.sourceChoiceFingerprintSha256[0]=r.sourceChoiceFingerprintSha256[1];
  assert.throws(()=>inspect2023OriginalElectionRollDateAndAttendance(
