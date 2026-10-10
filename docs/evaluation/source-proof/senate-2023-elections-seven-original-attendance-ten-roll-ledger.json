@@ -1,0 +1,183 @@
+{
+  "schemaVersion": "senate-2023-seven-original-election-attendance-ten-roll-source-proof-v1",
+  "issue": 864,
+  "recordedOn": "2026-10-10",
+  "independentOriginalPdfActionSourceRun": 38066441841,
+  "priorSourceNamedRollAndRosterRuns": [
+    38084229868,
+    38085294202
+  ],
+  "sourceReviewCodePr": 936,
+  "originalOfficialPDFsAndHeaderReviewRun": 38086725116,
+  "officialSevenPdfSourceAuditArtifactId": 11682637939,
+  "officialSourceAuditArtifactZipSha256": "8d113cd7e34f9e99ab7b3a4e67893807e507d593234a66c2ed3e6b25b9c08cdd",
+  "originalSourceReviewJsonSha256": "12cc2727e04eeb75e26d6602827bd43a1d8d1ac5d9001cce73a8bece40357ec5",
+  "auditedOriginalSenateElectionPDFCount": 7,
+  "originalPdfsByteAndTextShaReverified": 7,
+  "sourceFailures": 0,
+  "provisionalNamedSourceRollsReverified": 10,
+  "allSevenOpeningHeadersPartitionOfficialFourteenMemberRoster": true,
+  "openingAttendanceHeaderMissingOrAmbiguous": 0,
+  "printedMeetingDateMismatches": 0,
+  "explicitYeaNayGivenBySourceToMembersListedAbsentAtOpening": 0,
+  "laterRollMarksAbsentOneMemberPresentAtOpening": 1,
+  "laterRollAbsentDoesNotProveOriginalRecordContradiction": true,
+  "sourceCandidateRollNotFinalVerifiedSenateFloorPassage": true,
+  "historicalPrivateDatabaseJoinOrWritePerformed": false,
+  "originalSourceIndividualMemberNameChoicePairsNotPersisted": true,
+  "noModelForecastServingTrainingSchedulerOr2027Changes": true,
+  "originalHearingEvidence": [
+    {
+      "year": 2023,
+      "hearingDate": "2023-01-17",
+      "officialCommitteeName": "Elections",
+      "officialOriginalPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230117/Elections_20230117_Minutes.pdf",
+      "independentlySourceShaPinnedPdf": "35782d185a244fe98a77a2e9c6bd3ec2e37a7591d28d18de5dbe8380b396355a",
+      "independentlySourceShaPinnedExtractedText": "20d11fe16247a8f992088d75c969c89dc8ec681d311d05c51c1073238aa8775c",
+      "openingMeetingAttendanceMembersPresent": 13,
+      "openingMeetingAttendanceMembersAbsent": 1,
+      "uniqueFourteenSenatorAttendancePartitionVerified": true,
+      "printedSourceMeetingDateMatchesOfficialIndexedHearingDate": true,
+      "totalTallyMatchedOriginalRollBlocks": 1,
+      "provisionalOriginalSourceRollOffsets": [
+        1399
+      ],
+      "namedYeaNayChoicesForMembersAbsentAtMeetingOpening": 0,
+      "laterRecordedRollSpecificAbsenceForMemberPresentAtOpening": 0,
+      "laterRollAbsenceDoesNotCertifyContradictionOrPhysicalPresence": true,
+      "sourceVotesNotApprovedForPrivatePersistedHistoricalMemberVotes": true
+    },
+    {
+      "year": 2023,
+      "hearingDate": "2023-02-07",
+      "officialCommitteeName": "Elections",
+      "officialOriginalPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230207/Elections_20230207_Minutes.pdf",
+      "independentlySourceShaPinnedPdf": "cffcc4c84bb1c44d4cb8a5238ff02a7ef75dbfe942b46bbdd367f0a5c9664e11",
+      "independentlySourceShaPinnedExtractedText": "5a6547381bc59da4070e7b0db4d179a085e78f1d20ab5892fd4cbacb114c1a93",
+      "openingMeetingAttendanceMembersPresent": 14,
+      "openingMeetingAttendanceMembersAbsent": 0,
+      "uniqueFourteenSenatorAttendancePartitionVerified": true,
+      "printedSourceMeetingDateMatchesOfficialIndexedHearingDate": true,
+      "totalTallyMatchedOriginalRollBlocks": 3,
+      "provisionalOriginalSourceRollOffsets": [
+        1530,
+        2056,
+        2635
+      ],
+      "namedYeaNayChoicesForMembersAbsentAtMeetingOpening": 0,
+      "laterRecordedRollSpecificAbsenceForMemberPresentAtOpening": 0,
+      "laterRollAbsenceDoesNotCertifyContradictionOrPhysicalPresence": true,
+      "sourceVotesNotApprovedForPrivatePersistedHistoricalMemberVotes": true
+    },
+    {
+      "year": 2023,
+      "hearingDate": "2023-02-14",
+      "officialCommitteeName": "Elections",
+      "officialOriginalPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230214/Elections_20230214_Minutes.pdf",
+      "independentlySourceShaPinnedPdf": "680830e9751ca233ef966dcf3d7ce63a1af65b6160931fc0055cb6576cf5c50b",
+      "independentlySourceShaPinnedExtractedText": "2614012dbd4727921d13e248990e44fe8cd152008017061351a891282f3010b2",
+      "openingMeetingAttendanceMembersPresent": 13,
+      "openingMeetingAttendanceMembersAbsent": 1,
+      "uniqueFourteenSenatorAttendancePartitionVerified": true,
+      "printedSourceMeetingDateMatchesOfficialIndexedHearingDate": true,
+      "totalTallyMatchedOriginalRollBlocks": 2,
+      "provisionalOriginalSourceRollOffsets": [
+        2061,
+        3305
+      ],
+      "namedYeaNayChoicesForMembersAbsentAtMeetingOpening": 0,
+      "laterRecordedRollSpecificAbsenceForMemberPresentAtOpening": 0,
+      "laterRollAbsenceDoesNotCertifyContradictionOrPhysicalPresence": true,
+      "sourceVotesNotApprovedForPrivatePersistedHistoricalMemberVotes": true
+    },
+    {
+      "year": 2023,
+      "hearingDate": "2023-02-21",
+      "officialCommitteeName": "Elections",
+      "officialOriginalPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230221/Elections_20230221_Minutes.pdf",
+      "independentlySourceShaPinnedPdf": "b534d5d59ff69170a85d8ca2fce0beede2c4b9c8d87c3312c272241f8eb98114",
+      "independentlySourceShaPinnedExtractedText": "bc5212ebd7a506ec2b5e5c27750b35708aca44e94eb881d673086d7aa930dd19",
+      "openingMeetingAttendanceMembersPresent": 13,
+      "openingMeetingAttendanceMembersAbsent": 1,
+      "uniqueFourteenSenatorAttendancePartitionVerified": true,
+      "printedSourceMeetingDateMatchesOfficialIndexedHearingDate": true,
+      "totalTallyMatchedOriginalRollBlocks": 1,
+      "provisionalOriginalSourceRollOffsets": [
+        2663
+      ],
+      "namedYeaNayChoicesForMembersAbsentAtMeetingOpening": 0,
+      "laterRecordedRollSpecificAbsenceForMemberPresentAtOpening": 0,
+      "laterRollAbsenceDoesNotCertifyContradictionOrPhysicalPresence": true,
+      "sourceVotesNotApprovedForPrivatePersistedHistoricalMemberVotes": true
+    },
+    {
+      "year": 2023,
+      "hearingDate": "2023-03-02",
+      "officialCommitteeName": "Elections",
+      "officialOriginalPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230302/Elections_20230302_Minutes.pdf",
+      "independentlySourceShaPinnedPdf": "15fccd136330e8a949ca9d16bd7f2e8e263466135316c7cc3d0ce5d56c5b7188",
+      "independentlySourceShaPinnedExtractedText": "09216cd1673f7713b2991c0f6e3933c20a6e3ef5d3eb8621c1e1f48a7377f2d2",
+      "openingMeetingAttendanceMembersPresent": 14,
+      "openingMeetingAttendanceMembersAbsent": 0,
+      "uniqueFourteenSenatorAttendancePartitionVerified": true,
+      "printedSourceMeetingDateMatchesOfficialIndexedHearingDate": true,
+      "totalTallyMatchedOriginalRollBlocks": 1,
+      "provisionalOriginalSourceRollOffsets": [
+        1287
+      ],
+      "namedYeaNayChoicesForMembersAbsentAtMeetingOpening": 0,
+      "laterRecordedRollSpecificAbsenceForMemberPresentAtOpening": 0,
+      "laterRollAbsenceDoesNotCertifyContradictionOrPhysicalPresence": true,
+      "sourceVotesNotApprovedForPrivatePersistedHistoricalMemberVotes": true
+    },
+    {
+      "year": 2023,
+      "hearingDate": "2023-03-07",
+      "officialCommitteeName": "Elections",
+      "officialOriginalPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230307/Elections_20230307_Minutes.pdf",
+      "independentlySourceShaPinnedPdf": "9db4f615f45322c8a419b40daa66b536517937e85ea800e5c867c779ebacad4d",
+      "independentlySourceShaPinnedExtractedText": "54cf63f480a14c658212edc4fa950153df7de6dfd1862800c29b2ad63d932286",
+      "openingMeetingAttendanceMembersPresent": 14,
+      "openingMeetingAttendanceMembersAbsent": 0,
+      "uniqueFourteenSenatorAttendancePartitionVerified": true,
+      "printedSourceMeetingDateMatchesOfficialIndexedHearingDate": true,
+      "totalTallyMatchedOriginalRollBlocks": 1,
+      "provisionalOriginalSourceRollOffsets": [
+        1899
+      ],
+      "namedYeaNayChoicesForMembersAbsentAtMeetingOpening": 0,
+      "laterRecordedRollSpecificAbsenceForMemberPresentAtOpening": 0,
+      "laterRollAbsenceDoesNotCertifyContradictionOrPhysicalPresence": true,
+      "sourceVotesNotApprovedForPrivatePersistedHistoricalMemberVotes": true
+    },
+    {
+      "year": 2023,
+      "hearingDate": "2023-03-14",
+      "officialCommitteeName": "Elections",
+      "officialOriginalPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2023/elections/20230314/Elections_20230314_Minutes.pdf",
+      "independentlySourceShaPinnedPdf": "3af993abd7a941d787ddd1076f0c79edece3797852f643fca59bce8c79d97ed6",
+      "independentlySourceShaPinnedExtractedText": "a149a5dd2bcb191af0ff7a1e30568f8998886ac1f75762d429bb043dc8c164b1",
+      "openingMeetingAttendanceMembersPresent": 13,
+      "openingMeetingAttendanceMembersAbsent": 1,
+      "uniqueFourteenSenatorAttendancePartitionVerified": true,
+      "printedSourceMeetingDateMatchesOfficialIndexedHearingDate": true,
+      "totalTallyMatchedOriginalRollBlocks": 1,
+      "provisionalOriginalSourceRollOffsets": [
+        1315
+      ],
+      "namedYeaNayChoicesForMembersAbsentAtMeetingOpening": 0,
+      "laterRecordedRollSpecificAbsenceForMemberPresentAtOpening": 1,
+      "laterRollAbsenceDoesNotCertifyContradictionOrPhysicalPresence": true,
+      "sourceVotesNotApprovedForPrivatePersistedHistoricalMemberVotes": true
+    }
+  ],
+  "unresolved": {
+    "laterVoteSpecificAbsenceMayRepresentLeftRoom": true,
+    "actualMotionDistinctnessAndFullSenatorIdentityReconciliationNeeded": true,
+    "originalPublicByTimingBeyondHearingRuleUncertain": true,
+    "sourceToPersistedPrivateHistoricalEvidenceEqualityUnverified": true,
+    "official2021SenatePrintOnlyAnd2022PrintElectronicUnresolved": true,
+    "official141IndexMissingMinutesAnd138UnplayedMediaStillUnresolved": true,
+    "keepIssue864Open": true
+  }
+}
