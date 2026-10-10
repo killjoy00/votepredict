@@ -105,9 +105,9 @@ async function main() {
   const sourceRaw = readFileSync(source, 'utf8');
   const all = selectVerifiedFinalOriginals(year,sourceRaw);
   const docs = all.filter((_, index) => index % conf.batches === batch);
-  if (!docs.length || docs.length > 20 || Math.ceil(conf.remaining/conf.batches) !==
-      (batch < conf.remaining % conf.batches
-        ? docs.length : (conf.remaining % conf.batches === 0 ? docs.length : docs.length+1)))
+  const expectedBatchSize = Math.floor(conf.remaining/conf.batches) +
+    (batch < conf.remaining % conf.batches ? 1 : 0);
+  if (docs.length !== expectedBatchSize || docs.length > 20)
     throw Error('Fixed year batch partition unexpectedly drifted');
   const allowed = new Set(docs.map(x=>x.url));
   const results: Array<ReturnType<typeof auditSenateCommitteeOriginalMinutePdf>>=[];
