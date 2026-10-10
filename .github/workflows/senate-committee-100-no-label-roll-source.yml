@@ -1,0 +1,66 @@
+name: One-time remaining 100 Senate roll-phrase PDFs without named label, source review
+
+# Eight fixed, source-hashed bounded jobs; no database, model or serving.
+# Public original PDFs only. No source names/full text saved. No automatic vote.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-100-no-label-roll-source.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  examine-original-embedded-minutes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        include:
+          - {year: 2022, batch: 0}
+          - {year: 2022, batch: 1}
+          - {year: 2023, batch: 0}
+          - {year: 2023, batch: 1}
+          - {year: 2024, batch: 0}
+          - {year: 2024, batch: 1}
+          - {year: 2025, batch: 0}
+          - {year: 2025, batch: 1}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Retrieve exact source-hashed original 2022-25 action audit metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-${{ matrix.year }}-original-action-source-metadata
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts/independent-pdf-source
+      - name: Bound original PDF page count
+        run: |
+          if ! command -v pdfinfo >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils
+          fi
+      - name: Reverify exact original PDF SHA and triage roll vs attendance context
+        run: |
+          node --import tsx scripts/review-senate-100-no-label-roll-originals.ts \
+            --year ${{ matrix.year }} \
+            --batch ${{ matrix.batch }} \
+            --source-json artifacts/independent-pdf-source/senate-committee-${{ matrix.year }}-original-pdf-actions.json \
+            --output artifacts/semantic/senate-${{ matrix.year }}-no-label-batch-${{ matrix.batch }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-${{ matrix.year }}-no-label-batch-${{ matrix.batch }}-source-review
+          path: artifacts/semantic/senate-${{ matrix.year }}-no-label-batch-${{ matrix.batch }}.json
+          retention-days: 7
+          if-no-files-found: error
