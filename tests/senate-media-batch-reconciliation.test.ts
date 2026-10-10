@@ -95,6 +95,10 @@ test('zero private retrieval batches represent missing attempts, NOT zero publis
   const contexts=[context('a'),context('b','20250404101112'),context('old','20260404101112')];
   const result=reconcileSenateMediaPrivateBatches({contexts,roster,batches:[]});
   assert.equal(result.summary.eligibleDistinctArchivedArticles,2);
+  assert.equal(result.summary.byPublisherCaptureYear.length,220);
+  assert.equal(result.summary.byPublisherCaptureYear.find(x=>x.year===2021 && x.publisher==='MPR News')?.missingness,
+    'not_observed_in_export_not_no_published_articles');
+  assert.equal(result.summary.outsideStudyYearContextRows,1);
   assert.equal(result.summary.attemptedDistinctSources,0);
   assert.equal(result.summary.notAttempted,2);
   assert.equal(result.summary.retrievalAttemptsCompleteForEligibleExport,false);
