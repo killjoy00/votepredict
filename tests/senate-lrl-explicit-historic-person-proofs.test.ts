@@ -4,6 +4,7 @@ import {
  SOURCE_TARGETS,verifyOfficialSenatorExceptionalSource,
  exceptionalFormerOrLaterSenatorMatch,validateVerifiedExceptionalProofs,
  LRL_EXACT_SENATE_HISTORIC_IDENTITY_PROOFS_VERSION,
+ type VerifiedSenateExceptionalPersonSources,
 } from '../src/evidence/senate-lrl-explicit-historic-person-proofs.js';
 import type {AuditedOfficialSenateDirectory} from '../src/evidence/senate-official-ever-served-directory.js';
 const DATE='2026-10-10T19:00:00.000Z';
@@ -50,7 +51,7 @@ function original(){
   })),
  } as unknown as AuditedOfficialSenateDirectory;
 }
-function checked(){
+function checked():VerifiedSenateExceptionalPersonSources{
  return {
   schema:LRL_EXACT_SENATE_HISTORIC_IDENTITY_PROOFS_VERSION,
   proofs:SOURCE_TARGETS.map(t=>verifyOfficialSenatorExceptionalSource(t.id,html(t.id),DATE)),
