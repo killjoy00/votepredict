@@ -116,16 +116,16 @@ async function main() {
   },null,2)+'\n',{encoding:'utf8',flag:'wx'});
   console.log(JSON.stringify({
     version:'cfb-2025-registered-senate-report-viewer-references-v1',
-    2025RegisteredCandidateCount:registrations.length,
+    registeredDuring2025CandidateCount:registrations.length,
     viewerSegmentYear:2026,
     sourceAcquired:registrations.length-sourceFailures,
     sourceFailures,
     malformedReportReferences:malformed,
-    2025CandidatesWithReportReferences:targets2025.filerYearsWithViewerReferences,
-    2025CandidatesWithoutMatchingYearReferences:targets2025.noMatchingYearReferences,
-    2025DistinctReportReferences:targets2025.observedDistinctReportReferences,
-    2025OriginalReportPdfProofs:0,
-    2025OfficialRequiredReports:null,
+    candidates2025WithReportReferences:targets2025.filerYearsWithViewerReferences,
+    candidates2025WithoutMatchingYearReferences:targets2025.noMatchingYearReferences,
+    distinct2025ReportReferences:targets2025.observedDistinctReportReferences,
+    original2025ReportPdfProofs:0,
+    official2025RequiredReports:null,
     firstIndependentOriginalPdfControl19205Observed:inventory.filerYears.some(x=>x.registrationNumber==='19205'&&x.referenceCount>0),
     output,
   },null,2));
