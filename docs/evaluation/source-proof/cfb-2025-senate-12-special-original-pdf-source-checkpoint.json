@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "cfb-senate-2025-special-original-ce-12-official-pdf-and-calendar-source-checkpoint-v1",
+  "capturedAt": "2026-10-10T21:19:24.146Z",
+  "provenance": {
+    "sourceRun": "https://github.com/killjoy00/votepredict/actions/runs/38087106096",
+    "runId": 38087106096,
+    "originalSourcePr": 941,
+    "sourceWorkflowHeadSha": "cb4bde0916477a89a2c64a3eec74cf511137021a",
+    "sourceWorkflowMergedSha": "093895854ad1f77d707ef3dc71d9308ce5666014",
+    "sourceArtifactId": 11682778548,
+    "sourceArtifactName": "cfb-2025-senate-12-special-original-pdf-calendar-proofs",
+    "sourceArtifactExpiresAt": "2026-11-09T21:19:24Z",
+    "originalZipSha256": "e2ba145c819586e21065559a2a82f7f740448b507ba51ceaca7dba79f91639eb",
+    "originalUncompressedJsonSha256": "5925fdfc2b0fee6ab5ed352fd1a903e3a9c16f91607854eefb2bb9d9ac196c58",
+    "originalUncompressedJsonBytes": 24337,
+    "underlying85ReferenceSourceRunId": 38085296709,
+    "underlying85ReferenceLedgerSha256": "d34bb475cccd94481fd2f2215bf47e3c9695ad328e06bed2475967add067f0d0",
+    "verified12ReportMetadataLedgerPath": "cfb-2025-senate-12-special-original-pdf-source-ledger.psv",
+    "verified12ReportMetadataLedgerCanonicalSha256WithoutFinalNewline": "5048b6fa2220a92a6e6a61484f49a224c3fd60fc4e5900d42e6f31c9852517b9",
+    "verified12ReportMetadataLedgerCanonicalBytesWithoutFinalNewline": 1770,
+    "verified12ReportMetadataLedgerColumnOrder": "originalViewerReportId|officialSenateDistrict|sourcePdfBinarySha256|sourcePdfBytes|coverageStartOn|coverageEndOn|BoardReceivedOn|independentCalendarDueOn|earliestLegalAndFilingNotBeforeDate"
+  },
+  "scope": {
+    "year": 2025,
+    "candidateViewerSegmentEndYear": 2026,
+    "cohortRegisteredDuring2025": 41,
+    "distinctRegistrationsInThisProbe": 7,
+    "originalVersionReportRefsTargeted": 12,
+    "prePrimaryOriginalVersionRefs": 7,
+    "preGeneralOriginalVersionRefs": 5,
+    "byDistrict": [
+      { "district": 6, "verifiedOriginalVersionReports": 5, "registrationNumbers": ["19205", "19207", "19211"] },
+      { "district": 29, "verifiedOriginalVersionReports": 4, "registrationNumbers": ["19229", "19234"] },
+      { "district": 47, "verifiedOriginalVersionReports": 3, "registrationNumbers": ["19233", "19235"] }
+    ]
+  },
+  "sourceAcquisition": {
+    "candidateViewerRequestsSucceeded": 7,
+    "candidateViewerResponseHashChangedSinceOriginalReferenceAudit": 0,
+    "pdfDownloadsWithBinarySha256": 12,
+    "exactRegistrationAndSenateDistrictHeaderVerified": 12,
+    "expectedReportPeriodEndIndependentlyMatched": 12,
+    "BoardReceivedDatesParsed": 12,
+    "independentCalendarDownloadsAndHashes": 3,
+    "independentCalendarScopeAndDateMarkersVerified": 3,
+    "reportPdfHeaderAndCalendarPairsVerified": 12,
+    "reportSourceFailures": 0,
+    "calendarSourceFailures": 0,
+    "unverifiedOriginalVersionTargets": 0,
+    "newlyVerifiedBeyondPriorDistrict6PrePrimaryAndPreGeneralControls": 10,
+    "originalViewerAmendmentNumberZero": 12,
+    "originalReportAmendmentCheckboxIndependentlyVerified": 0
+  },
+  "calendarPdfs": [
+    {
+      "district": 6,
+      "originalOfficialPdfUrl": "https://cfb.mn.gov/pdf/publications/elections/candidate_packets/2025/Senate_6_special.pdf",
+      "pdfBinarySha256": "d27307ec9bad876fb79cd517516e567e642ad4931077dda2d7941dc09518e863",
+      "bytes": 721353,
+      "prePrimaryDueOn": "2025-04-08",
+      "prePrimaryPeriodEndOn": "2025-04-01",
+      "preGeneralDueOn": "2025-04-22",
+      "preGeneralPeriodEndOn": "2025-04-15"
+    },
+    {
+      "district": 29,
+      "originalOfficialPdfUrl": "https://cfb.mn.gov/pdf/calendars/2025_special_election_29.pdf",
+      "pdfBinarySha256": "b102a7297a6ff1add3bcdb4bce03ef9761f3a3433908cbb507e95554fd3d38b2",
+      "bytes": 96309,
+      "prePrimaryDueOn": "2025-08-19",
+      "prePrimaryPeriodEndOn": "2025-08-12",
+      "preGeneralDueOn": "2025-10-28",
+      "preGeneralPeriodEndOn": "2025-10-21"
+    },
+    {
+      "district": 47,
+      "originalOfficialPdfUrl": "https://cfb.mn.gov/pdf/calendars/2025_special_election_47.pdf",
+      "pdfBinarySha256": "3b7669d2597632278b2a0e895a5cbf7199492fd286872127f6d9e36d9eb13291",
+      "bytes": 96308,
+      "prePrimaryDueOn": "2025-08-19",
+      "prePrimaryPeriodEndOn": "2025-08-12",
+      "preGeneralDueOn": "2025-10-28",
+      "preGeneralPeriodEndOn": "2025-10-21"
+    }
+  ],
+  "historicalFinanceCompleteness": {
+    "historicPublicByOnIndependentlyVerifiedCountInThisProbe": 0,
+    "historicalPublicByDateProofForAnyOfThese12": null,
+    "everyDateInMetadataLedgerIsAtMostConservativeNotBeforeEvidence": true,
+    "complete2021To2025SenateHistoricalCommitteeYearDenominator": null,
+    "statewide2025LegallyOwedOriginalReportDenominator": null,
+    "statewide2025ActuallyFiledOriginalReportDenominator": null,
+    "sourceToProductionRowContainmentProved": false,
+    "candidateObligationOrPrimaryBallotApplicabilityConfirmed": false,
+    "originalCheckboxProofStillNeeded": true,
+    "specialElectionFinalReportMay14VersusMay20DiscrepancyResolved": false,
+    "completeStatewide2021To2025SenateCoverageCertified": false
+  },
+  "boundaries": {
+    "onlyPublicOfficialCfbDataRead": true,
+    "rawPdfBytesOrBodyTextCommitted": false,
+    "candidateOrDonorIdentityAndTransactionTextCommitted": false,
+    "noProductionNeonOrVercelReadsOrWrites": true,
+    "noPredictionServingOrModelChange": true,
+    "noBackfillOrScheduler": true,
+    "no2027ProgramModification": true,
+    "issue864MustRemainOpen": true
+  }
+}
