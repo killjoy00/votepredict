@@ -36,6 +36,7 @@ jobs:
       github.repository == 'killjoy00/votepredict' &&
       github.ref == 'refs/heads/main' &&
       github.event_name == 'push' &&
+      github.run_attempt == 1 &&
       contains(github.event.head_commit.message, 'SENATE_MEDIA_DEDICATED_ONE_SHOT_20261010_V2')
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -80,6 +81,7 @@ jobs:
       github.repository == 'killjoy00/votepredict' &&
       github.ref == 'refs/heads/main' &&
       github.event_name == 'push' &&
+      github.run_attempt == 1 &&
       contains(github.event.head_commit.message, 'SENATE_MEDIA_DEDICATED_ONE_SHOT_20261010_V2')
     environment: evidence-readonly-sandbox
     runs-on: ubuntu-latest
