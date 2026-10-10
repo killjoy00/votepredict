@@ -34,7 +34,6 @@ function side(s:string):Side{return /^n|^no$/i.test(s)?'nay':'yea'}
 function names(raw:string):string[]|null {
   const text=raw
     .replace(/\s+(?=Senator\s+[A-Z])/g,', ')
-    .replace(/\s+(?=(?:Chair|Vice\s+Chair)\s+[A-Z])/g,', ')
     .replace(/\s+and\s+(?=[A-Z][a-z])/g,', ');
   const result:string[]=[];
   for(let item of text.split(/[,;]/)){
