@@ -9,10 +9,12 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { auditSenateCommitteeOriginalMinutePdf } from '../src/evidence/senate-committee-original-pdf-action-audit.js';
+import { parseSenateCommitteeMinuteVotes } from '../src/evidence/minnesota-senate-committee-minutes.js';
 import { fetchSenateCommitteeMinutePdf } from '../src/evidence/minnesota-senate-committee-source.js';
 import {
   ORIGINAL_SENATE_JUDICIARY_MARCH12_2025,
   verifySenateJudiciaryMarch2025NamedOriginal,
+  originalSenateNamedChoicesDistinct,
 } from '../src/evidence/senate-committee-2025-judiciary-ocr-roll-proof.js';
 import {
   SENATE_SIX_SCANNED_ORIGINAL_MAX_BYTES,
@@ -61,6 +63,15 @@ async function main(){
     url:original.url,
     fetchImpl:getPinnedOriginal as typeof fetch,
   });
+  const originalVotes=parseSenateCommitteeMinuteVotes(pdf.text);
+  if (originalVotes.length !== 1
+    || !originalVotes[0]!.individualVotesAvailable
+    || !originalSenateNamedChoicesDistinct(
+      originalVotes[0]!.memberVotes,
+      ORIGINAL_SENATE_JUDICIARY_MARCH12_2025.sourceNamedMemberChoices,
+    )) {
+    throw Error('Recovered original named senator YEA/NAY tokens are missing or duplicated');
+  }
   const audit=auditSenateCommitteeOriginalMinutePdf({
     document:{
       year:original.year,
