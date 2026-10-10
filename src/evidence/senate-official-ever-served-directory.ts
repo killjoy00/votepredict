@@ -126,24 +126,24 @@ export function parseOfficialMnSenateServiceDirectory(
     const swornBody=Buffer.from(swornHistoryHtml).toString('utf8');
     if(!swornBody.includes('Party Control')||!swornBody.includes('Minnesota Senate'))
       throw Error('Wrong original official Senate swearing source');
-    const rowsHtml=[...swornBody.matchAll(/<tr\\b[^>]*>([\\s\\S]*?)<\\/tr>/gi)]
+    const rowsHtml=[...swornBody.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)]
       .map(x=>htmlText(x[1]));
     if(rowsHtml.length<10)throw Error('Senate party-control swearing table has too few rows');
     const namedSpecials=[
       {name:'Ann Johnson Stewart',district:'45',oathOn:'November 25, 2024',
-       check:/Ann Johnson Stewart[\\s\\S]{0,220}District 45[\\s\\S]{0,160}sworn in on November 25, 2024/i,
+       check:/Ann Johnson Stewart[\s\S]{0,220}District 45[\s\S]{0,160}sworn in on November 25, 2024/i,
        date:'11/25/2024'},
       {name:'Doron Clark',district:'60',oathOn:'February 3, 2025',
-       check:/Doron Clark[\\s\\S]{0,200}District 60[\\s\\S]{0,160}sworn in on February 3, 2025/i,
+       check:/Doron Clark[\s\S]{0,200}District 60[\s\S]{0,160}sworn in on February 3, 2025/i,
        date:'2/3/2025'},
       {name:'Keri Heintzeman',district:'6',oathOn:'May 6, 2025',
-       check:/Keri Heintzeman[\\s\\S]{0,190}District 6[\\s\\S]{0,180}sworn in on May 6, 2025/i,
+       check:/Keri Heintzeman[\s\S]{0,190}District 6[\s\S]{0,180}sworn in on May 6, 2025/i,
        date:'5/6/2025'},
       {name:'Michael Holmstrom Jr',district:'29',oathOn:'November 18, 2025',
-       check:/Amanda Hemmingsen-Jaeger[\\s\\S]{0,160}District 47[\\s\\S]{0,160}Michael Holmstrom[\\s\\S]{0,160}District 29[\\s\\S]{0,160}sworn in on November 18, 2025/i,
+       check:/Amanda Hemmingsen-Jaeger[\s\S]{0,160}District 47[\s\S]{0,160}Michael Holmstrom[\s\S]{0,160}District 29[\s\S]{0,160}sworn in on November 18, 2025/i,
        date:'11/18/2025'},
       {name:'Amanda Hemmingsen-Jaeger',district:'47',oathOn:'November 18, 2025',
-       check:/Amanda Hemmingsen-Jaeger[\\s\\S]{0,160}District 47[\\s\\S]{0,160}Michael Holmstrom[\\s\\S]{0,160}District 29[\\s\\S]{0,160}sworn in on November 18, 2025/i,
+       check:/Amanda Hemmingsen-Jaeger[\s\S]{0,160}District 47[\s\S]{0,160}Michael Holmstrom[\s\S]{0,160}District 29[\s\S]{0,160}sworn in on November 18, 2025/i,
        date:'11/18/2025'},
     ];
     for(const entry of namedSpecials){
