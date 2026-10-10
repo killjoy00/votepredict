@@ -1,0 +1,42 @@
+name: One-time 2025 Senate special original C/E PDF source audit
+
+# PR-scoped, exactly 12 original-version PDF refs and 3 official
+# district-specific calendar PDFs. No cron, database access, credentials,
+# production workflow, row backfill, donors, model retraining or 2027 work.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2025-senate-special-original-pdf-proof.yml
+      - scripts/capture-cfb-2025-senate-12-special-original-pdf-proofs.ts
+      - src/evidence/cfb-2025-senate-special-original-pdf-proof.ts
+      - tests/cfb-2025-senate-special-original-pdf-proof.test.ts
+
+permissions:
+  contents: read
+
+jobs:
+  original-ce-source-and-calendar-pdfs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Offline pinned-source identity, calendar and failure-mode tests
+        run: node --import tsx --test tests/cfb-2025-senate-special-original-pdf-proof.test.ts
+      - name: Acquire at most twelve original version PDFs and three independent official calendars
+        run: |
+          node --import tsx scripts/capture-cfb-2025-senate-12-special-original-pdf-proofs.ts \
+            --output artifacts/cfb-2025-senate-12-special-original-pdf-proofs.json
+      - name: Preserve safe metadata proof and bounded source failures for manual audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2025-senate-12-special-original-pdf-calendar-proofs
+          path: artifacts/cfb-2025-senate-12-special-original-pdf-proofs.json
+          retention-days: 30
+          if-no-files-found: warn
