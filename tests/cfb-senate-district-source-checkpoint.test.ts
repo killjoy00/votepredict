@@ -107,7 +107,7 @@ test('source artifact ZIP/raw original bytes and 268-page canonical digest are p
   assert.equal(ledger.provenance.zipSha256, 'fe85e6d3e4ae64d24d3153ae23b976267769cea8e57400e8008f2daffbace5a1');
   assert.equal(ledger.provenance.rawJsonSha256, '83770615658f7cf47802b05257bcbd45bed0c7c41ec19dfe99c31ca91b746c04');
   assert.equal(ledger.provenance.canonical268PageProofWithIdsSha256, '08c27a830b9ce8084997dac7203a421f08dbf2af20a22c602be3703d74ff9747');
-  assert.ok(Object.values(ledger.provenance.canonicalSegmentProofSha256).every(x => /^[a-f0-9]{64}$/.test(x)));
+  assert.ok(Object.values(ledger.provenance.canonicalSegmentProofSha256).every(x => typeof x === 'string' && /^[a-f0-9]{64}$/.test(x)));
   assert.equal(ledger.safeguards.noProductionDatabaseReadOrWrite, true);
   assert.equal(ledger.safeguards.noForecastOrModelChange, true);
 });
