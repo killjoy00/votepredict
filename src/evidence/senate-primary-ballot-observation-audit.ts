@@ -106,15 +106,21 @@ function validateAndGroup(manifest:PrimaryBallotManifest) {
     const date=s.year===2022?'2022-08-09':s.year===2024?'2024-08-13':null;
     const mediaId=s.year===2022?'148':'169';
     const urlDate=s.year===2022?'20220809':'20240813';
-    if(!date||s.electionDate!==date||s.publisher!=='Minnesota Secretary of State'
+    const expectedId=s.year===2022?'sos-2022-08-09-senate-primary-candidates':
+      s.year===2024?'sos-2024-08-13-sd45-primary-candidates':null;
+    const expectedBlob=s.year===2022?'bb16cbfdf6b91e2b20e2c6882b0bfc57a40a0fe3':
+      s.year===2024?'e7a86254c0d3ea1eead252f1f350f13e0919c190':null;
+    const expectedPath='data/source/elections/primary-results/minnesota/'+s.year+'/candidates.txt';
+    if(!date||s.id!==expectedId||s.electionDate!==date||s.publisher!=='Minnesota Secretary of State'
       || s.officialPublishedCandidateRosterUrl!=='https://electionresultsfiles.sos.mn.gov/'+urlDate+'/cand.txt'
       || s.officialMediaIndexUrl!=='https://electionresults.sos.mn.gov/Select/MediaFiles/Index?ersElectionId='+mediaId
       || s.mirrorFieldCount!==7 || s.containsCampaignWebsiteField!==false
       || s.officialFileBytesCryptographicallyVerifiedInThisRun!==false
       || s.originalSOSCampaignFilingExport!==false
-      || !/^[a-f0-9]{40}$/.test(s.mirrorImmutableCommit)
-      || !/^[a-f0-9]{40}$/.test(s.mirrorBlobGitSha1)
-      || !s.mirrorRawUrl.startsWith('https://raw.githubusercontent.com/'+s.primaryMirrorRepo+'/'+s.mirrorImmutableCommit+'/')
+      || s.primaryMirrorRepo!=='PatrickFanella/left-field'
+      || s.mirrorImmutableCommit!=='c0f0b78eda7564532d4c94f8338b8b06ca2a603f'
+      || s.mirrorBlobGitSha1!==expectedBlob
+      || s.mirrorRawUrl!=='https://raw.githubusercontent.com/'+s.primaryMirrorRepo+'/'+s.mirrorImmutableCommit+'/'+expectedPath
       || sources.has(s.id)) throw new Error('Primary source provenance fail-closed: '+s.id);
     sources.set(s.id,s);
   }
