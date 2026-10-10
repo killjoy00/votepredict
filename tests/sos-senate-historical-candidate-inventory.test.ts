@@ -152,7 +152,7 @@ test('duplicate election-result districts and tampered website replay eligibilit
   dupe.winners.push({...dupe.winners[0]});
   assert.throws(()=>auditSenateSosWebsiteSeedInventory(dupe),/Duplicate election result district/);
   const unsafe=structuredClone(ledger);
-  unsafe.websiteLeads[0].eligibleForHistoricalReplay=true;
+  (unsafe.websiteLeads[0] as unknown as { eligibleForHistoricalReplay: boolean }).eligibleForHistoricalReplay=true;
   assert.throws(()=>auditSenateSosWebsiteSeedInventory(unsafe),/discovery-only/);
 });
 
