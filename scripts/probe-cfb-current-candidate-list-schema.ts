@@ -120,13 +120,51 @@ function currentListNavigationContexts(html: string) {
 }
 
 function relevantPublicScriptLiterals(js: string) {
-  const hits = [];
+  const hits: string[] = [];
   for (const m of js.matchAll(/["']([^"'<>]{0,80}(?:candidate|registr|terminat)[^"'<>]{0,90})["']/gi)) {
     const value = m[1]!.trim();
     if (!hits.includes(value)) hits.push(value);
     if (hits.length >= 60) break;
   }
   return hits;
+}
+
+
+async function probeOfficialGridInfo(kind: string, cookie: string) {
+  const params = new URLSearchParams();
+  params.set('action','grid_info');
+  params.set('data[action]',kind);
+  params.set('data[type]','current-lists');
+  params.set('data[params][0]','all');
+  try {
+    const r = await getBounded(API, {
+      method:'POST',
+      headers:{
+        'content-type':'application/x-www-form-urlencoded; charset=UTF-8',
+        'x-requested-with':'XMLHttpRequest',
+        'referer':APP, cookie,
+      }, body:params.toString()
+    });
+    let data: unknown;
+    try { data=JSON.parse(r.text); } catch { data=null; }
+    const obj = data && typeof data==='object' && !Array.isArray(data)
+      ? data as Record<string,unknown> : null;
+    const info = obj && obj.info && typeof obj.info==='object' && !Array.isArray(obj.info)
+      ? obj.info as Record<string,unknown> : null;
+    const fields = obj ? Object.keys(obj).slice(0,25) : [];
+    const displayDescription = info && typeof info.description === 'string'
+      ? info.description.slice(0,180) : null;
+    const linkNames = info && Array.isArray(info.links)
+      ? info.links.slice(0,15).map(x => x && typeof x === 'object' &&
+          typeof x.name === 'string' ? x.name.slice(0,80) : null).filter(Boolean) : [];
+    console.log(JSON.stringify({type:'official-current-list-grid-info',
+      action:kind,status:r.status,sha256:hash(r.text),responseBytes:Buffer.byteLength(r.text),
+      validInfoObject:!!info,rootKeys:fields,description:displayDescription,links:linkNames,
+      emptyPayload:!obj || fields.length===0}));
+  } catch(error) {
+    console.log(JSON.stringify({type:'official-current-list-grid-info',action:kind,status:'fetch_failed',
+      error:(error instanceof Error?error.message:String(error)).slice(0,120)}));
+  }
 }
 
 async function main() {
@@ -160,6 +198,16 @@ async function main() {
   // candidate-registrations action is explicitly a HYPOTHESIS under test.
   for (const action of ['candidate-reports','candidate-registrations']) {
     await probeAction(action,cookies);
+  }
+  const candidateListHypotheses = [
+    'candidate-reports', 'candidate-committees', 'candidates', 'candidate-list',
+    'candidate-registrations', 'registered-candidates', 'candidate-registered',
+    'candidate-reg', 'candidate-recent', 'recent-candidate-registrations',
+    'candidate-terminated', 'candidate-terminations', 'candidate-nonfilers',
+    'candidate-unfiled',
+  ];
+  for (const action of candidateListHypotheses) {
+    await probeOfficialGridInfo(action,cookies);
   }
 }
 main().catch(error=>{console.error(error instanceof Error?error.message:String(error));process.exitCode=1});
