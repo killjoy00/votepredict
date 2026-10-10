@@ -11,8 +11,8 @@ test('all 138 original source-associated media/file mtgid URLs are independently
   assert.equal(Object.values(PINNED_ORIGINAL_MEDIA_YEAR).reduce((n,r)=>n+r.mediaRecords,0),138);
   for(const year of [2022,2023,2024,2025] as const){
     assert.match(PINNED_ORIGINAL_MEDIA_YEAR[year].jsonSha256,/^[a-f0-9]{64}$/);
-    assert.throws(()=>selectPinnedMtgidRecords(year,'{}'),/source JSON SHA256 changed/);
-    assert.throws(()=>selectPinnedMtgidRecords(year,'[]'),/source JSON SHA256 changed/);
+    assert.throws(()=>selectPinnedMtgidRecords(year,'{}'),/href audit JSON SHA256 changed/);
+    assert.throws(()=>selectPinnedMtgidRecords(year,'[]'),/href audit JSON SHA256 changed/);
   }
 });
 
