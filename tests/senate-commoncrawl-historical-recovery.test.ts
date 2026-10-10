@@ -37,7 +37,7 @@ function base32Digest(data:Buffer):string{
   return result;
 }
 const sampleBody=Buffer.from('<html><head><title>Synthetic archived candidate homepage</title></head><body>Archive test: synthetic only; no real campaign quotation.</body></html>','utf8');
-function fixture(q:CcSourceQuery,stamp:string,opts:{body?:Buffer;warcType?:string;httpStatus?:number;httpEncoding?:string;target?:string;payloadDigest?:string;warcDate?:string;httpMime?:string}={}){
+function fixture(q:CcSourceQuery,stamp:string,opts:{body?:Buffer;warcType?:string;httpStatus?:number;httpEncoding?:string;target?:string;payloadDigest?:string;warcDate?:string;httpMime?:string;extraWarcHeaders?:string[]}={}){
   const original=q.queryKind==='host_prefix'?'https://'+q.candidateHost+'/':q.sourceUrl;
   const body=opts.body??sampleBody;
   const httpBlock=Buffer.concat([
@@ -51,6 +51,7 @@ function fixture(q:CcSourceQuery,stamp:string,opts:{body?:Buffer;warcType?:strin
   const head=[
     'WARC/1.0','WARC-Type: '+(opts.warcType??'response'),
     'WARC-Date: '+warcDate,'WARC-Target-URI: '+(opts.target??original),
+    ...(opts.extraWarcHeaders??[]),
     'Content-Type: application/http; msgtype=response',
     'Content-Length: '+httpBlock.length,
     'WARC-Block-Digest: sha1:'+base32Digest(httpBlock),
@@ -252,4 +253,24 @@ test('offline CLI validates one WARC byte range and optionally keeps its exact o
     assert.equal(statSync(payload).mode&0o777,0o600);
     assert.throws(()=>execFileSync('node',args,{timeout:15000,stdio:'pipe'}));
   }finally{rmSync(dir,{recursive:true,force:true});}
+});
+
+test('authentic multi-hop WARC-Protocol headers are accepted without allowing duplicate identity or digest',()=>{
+  const q=query('Ann Johnson Stewart','CC-MAIN-2024-42','issue_exact');
+  const good=fixture(q,'20241009123456',{extraWarcHeaders:[
+    'WARC-Protocol: http/1.1','WARC-Protocol: tls/1.3',
+  ]});
+  const passed=inspectSenateCommonCrawlWarcBytes(good.record,good.gz,leads);
+  assert.equal(passed.report.warcPayloadDigestCrossChecksPassed,true);
+  assert.equal(passed.report.campaignStanceEvidencePromoted,false);
+  const bad=fixture(q,'20241009123456',{extraWarcHeaders:[
+    'WARC-Date: 2024-10-08T12:34:56Z',
+  ]});
+  assert.throws(()=>inspectSenateCommonCrawlWarcBytes(bad.record,bad.gz,leads),
+    /malformed\/duplicate header warc-date/);
+  const badDigest=fixture(q,'20241009123456',{extraWarcHeaders:[
+    'WARC-Payload-Digest: sha1:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+  ]});
+  assert.throws(()=>inspectSenateCommonCrawlWarcBytes(badDigest.record,badDigest.gz,leads),
+    /malformed\/duplicate header warc-payload-digest/);
 });

@@ -1,0 +1,62 @@
+name: One-shot #864 public campaign archive source acquisition
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/acquire-senate-campaign-archive-public-sources.yml
+      - scripts/acquire-senate-campaign-public-archive-sources.ts
+      - tests/senate-campaign-public-source-acquisition.test.ts
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: >-
+    ${{ github.event_name == 'issue_comment'
+        && github.event.issue.number == 864
+        && github.event.comment.user.login == 'killjoy00'
+        && startsWith(github.event.comment.body, '[campaign-archive-public-acquire-v1]')
+        && 'campaign-archive-public-acquire-manual-864'
+        || format('campaign-archive-public-acquire-pr-{0}', github.run_id) }}
+  cancel-in-progress: false
+
+jobs:
+  one-shot-public-read-only:
+    if: >-
+      (github.event_name == 'pull_request'
+        && github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+        && startsWith(github.event.pull_request.head.ref, 'audit/864-'))
+      || (github.event_name == 'issue_comment'
+        && github.event.repository.full_name == 'killjoy00/votepredict'
+        && github.event.issue.number == 864
+        && github.event.comment.user.login == 'killjoy00'
+        && startsWith(github.event.comment.body, '[campaign-archive-public-acquire-v1]'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+
+      - name: Acquire public historic campaign archive index and original WARC source samples
+        timeout-minutes: 10
+        env:
+          NODE_OPTIONS: --max-old-space-size=384
+        run: |
+          node --import tsx scripts/acquire-senate-campaign-public-archive-sources.ts \
+            --output-dir artifacts/senate-campaign-public-archive-acquisition-v1
+
+      - name: Retain verified source bytes and explicit failures for manual review
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-campaign-public-archive-source-acquisition-v1
+          path: artifacts/senate-campaign-public-archive-acquisition-v1/
+          if-no-files-found: warn
+          retention-days: 30

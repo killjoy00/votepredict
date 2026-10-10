@@ -45,7 +45,19 @@ function readHeaders(raw:string):{statusLine:string,fields:Map<string,string>}{
     const sep=line.indexOf(':');
     if(sep<=0)fail('malformed header');
     const key=line.slice(0,sep).trim().toLowerCase(),value=line.slice(sep+1).trim();
-    if(!/^[a-z0-9-]+$/.test(key)||!value||fields.has(key))fail('malformed/duplicate header '+key);
+    if(!/^[a-z0-9-]+$/.test(key)||!value)fail('malformed/empty header '+key);
+    if(fields.has(key)){
+      // Genuine Common Crawl records can report two transport protocols, e.g.
+      // WARC-Protocol: http/1.1 and WARC-Protocol: tls/1.3. The field is optional
+      // metadata, never used as a content/provenance security claim. Keep
+      // strict duplicate rejection for WARC-Date, Target-URI and ALL digests.
+      if(key==='warc-protocol' && /^[a-zA-Z0-9._/-]{1,40}$/.test(value)
+        && !fields.get(key)!.split(', ').includes(value)){
+        fields.set(key,fields.get(key)!+', '+value);
+        continue;
+      }
+      fail('malformed/duplicate header '+key);
+    }
     fields.set(key,value);
   }
   return {statusLine,fields};
