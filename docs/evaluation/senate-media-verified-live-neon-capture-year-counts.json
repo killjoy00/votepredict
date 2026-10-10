@@ -1,0 +1,70 @@
+{
+  "version": "senate-media-verified-neon-live-aggregate-2021-25-v1",
+  "dateVerified": "2026-10-10",
+  "source": {
+    "workflowName": "Senate media Neon one-key historical counts (protected read-only)",
+    "workflowRunId": 38093691235,
+    "workflowRunUrl": "https://github.com/killjoy00/votepredict/actions/runs/38093691235",
+    "exactSourceRevision": "71bb9000389b49019d5c71b05209f5a111277098",
+    "reviewerMode": "marked-commit-dedicated-CI-pass-then-protected-Neon-readonly",
+    "lastSuccessfulStage": "sql_transaction_rolled_back"
+  },
+  "scope": {
+    "repository": "killjoy00/votepredict",
+    "projectIdentityVerified": true,
+    "existingNeonDefaultBranchVerified": true,
+    "deployedProductionBindingIndependentlyVerified": false,
+    "requiredSixEvidenceAndRosterTablesReadable": true,
+    "sqlTransactionReadOnlyVerified": true,
+    "globallyStrictSelectOnlyRole": false,
+    "ownerRoleMayHaveIndependentWritePrivileges": true,
+    "postgresTransactionRolledBack": true,
+    "productionRowsModified": false,
+    "privateSourceRowsOrArticleBodiesExported": false,
+    "sourceKind": "wayback_local_trade_news",
+    "metadataContextType": "local_trade_news",
+    "calendarClassification": "LEFT(metadata.archiveCapturedAt,4) Wayback capture year, not publisher publication year or legislative session",
+    "firstPublicByProvenForEverySource": false,
+    "missingnessDenominatorKnown": false,
+    "statewideMediaPublicationUniverseKnown": false,
+    "verifiedHumanSenatorQuotesFromThisQuery": 0,
+    "actualExistingNamedSenatorQuotesUnknown": true,
+    "crossYearSourceDocumentDeduplicationPerformed": false
+  },
+  "studyCaptureYears": {
+    "2021": {
+      "contextRows": 131,
+      "distinctSourceDocumentsWithinYear": 122
+    },
+    "2022": {
+      "contextRows": 182,
+      "distinctSourceDocumentsWithinYear": 163
+    },
+    "2023": {
+      "contextRows": 155,
+      "distinctSourceDocumentsWithinYear": 132
+    },
+    "2024": {
+      "contextRows": 118,
+      "distinctSourceDocumentsWithinYear": 103
+    },
+    "2025": {
+      "contextRows": 208,
+      "distinctSourceDocumentsWithinYear": 168
+    }
+  },
+  "totals": {
+    "study2021To2025ContextRows": 794,
+    "study2021To2025DistinctDocsSummedByYear": 688,
+    "outsideStudyYearsContextRows": 154,
+    "allCaptureYearsContextRows": 948,
+    "distinctDocsSummedAcrossAllCaptureYears": 805
+  },
+  "historicalCollectorSessionTalliesPreviouslyReported": {
+    "2021-2022": 313,
+    "2023-2024": 273,
+    "2025-2026": 362,
+    "limitation": "Existing collector reports group 2025 and 2026 sessions together; their 362 combined contexts are 2025 capture-year 208 plus out-of-range 154 context rows, assuming all remaining outside rows are 2026, which is not directly proved by the aggregate output."
+  },
+  "allowedUse": "Evidence corpus reconciliation baseline only; not a quotation count, statement-level training signal, coverage certificate or source/article denominator."
+}
