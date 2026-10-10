@@ -271,6 +271,7 @@ test('stage progress reports only fixed labels, in order, with no Neon identifie
     phase=>phases.push(phase));
   assert.deepEqual(phases,[
     'project_metadata_received','project_identity_verified',
+    'branch_inventory_received','default_branch_selected',
     'database_inventory_received','database_selected',
     'endpoint_inventory_received','endpoint_selected',
     'connection_uri_response_received','connection_uri_verified',
@@ -288,16 +289,18 @@ test('staged diagnosis of an API or URI refusal does not expose the actual error
     ['database_api',async(url,init)=>{
       if(url.includes('/databases'))throw Error(KEY+' '+PASSWORD);
       return fakeApi()(url,init);
-    },['project_metadata_received','project_identity_verified']],
+    },['project_metadata_received','project_identity_verified','branch_inventory_received','default_branch_selected']],
     ['wrong_existing_branch',fakeApi({
       databases:{databases:[{...base.databases.databases[0],branch_id:'br-other-123'}]},
-    }),['project_metadata_received','project_identity_verified','database_inventory_received']],
+    }),['project_metadata_received','project_identity_verified','branch_inventory_received','default_branch_selected','database_inventory_received']],
     ['no_endpoint',fakeApi({endpoints:{endpoints:[]}}),[
       'project_metadata_received','project_identity_verified',
+      'branch_inventory_received','default_branch_selected',
       'database_inventory_received','database_selected','endpoint_inventory_received',
     ]],
     ['invalid_existing_uri',fakeApi({uri:{uri:URI.replace(HOST,'unrelated.example.org')}}),[
       'project_metadata_received','project_identity_verified',
+      'branch_inventory_received','default_branch_selected',
       'database_inventory_received','database_selected',
       'endpoint_inventory_received','endpoint_selected',
       'connection_uri_response_received',
@@ -354,4 +357,37 @@ test('SQL-only phases require actual readonly identity, readable tables and comp
   const source=readFileSync('scripts/check-senate-media-neon-api-readonly.ts','utf8');
   assert.match(source,/Existing VotePredict Neon one-key aggregate failed closed at last completed phase:/);
   assert.doesNotMatch(source,/console\.error\(.*(?:error\.message|JSON\.stringify\(error)/);
+});
+
+test('Neon default branch selection uses only exactly one true flag, not branch name/order',async()=>{
+  const notDefault={id:'br-older-fork-123',project_id:PROJECT,default:false,name:'main'};
+  const actualDefault={...base.branches.branches[0],name:'renamed-production'};
+  const selected=await discoverExistingVotePredictNeonConnection(
+    options,fakeApi({branches:{branches:[notDefault,actualDefault],pagination:{next:null}}}));
+  assert.equal(selected.branchId,BRANCH);
+});
+test('Neon branch pagination, duplicate defaults and untrusted project IDs fail closed',async()=>{
+  const existing=base.branches.branches[0];
+  const suspicious=[
+    {branches:[existing],pagination:{next:'cursor-that-would-hide-more-branches'}},
+    {branches:[existing,{...existing,id:'br-second-default-456'}],pagination:{next:null}},
+    {branches:[{...existing,project_id:'another-project'}],pagination:{next:null}},
+    {branches:[{...existing,default:false}],pagination:{next:null}},
+    {branches:[],pagination:{next:null}},
+  ];
+  for(const branches of suspicious)
+    await assert.rejects(
+      ()=>discoverExistingVotePredictNeonConnection(options,fakeApi({branches})),
+      /branch|default|inventory/i,
+    );
+});
+test('safe stage labels report incomplete Neon branch selection before any SQL attempt',async()=>{
+  const reached:string[]=[];
+  const request=fakeApi({branches:{branches:[],pagination:{next:null}}});
+  await assert.rejects(()=>discoverExistingVotePredictNeonConnection(
+    options,request,phase=>reached.push(phase),
+  ),/branch inventory/);
+  assert.deepEqual(reached,[
+    'project_metadata_received','project_identity_verified','branch_inventory_received',
+  ]);
 });
