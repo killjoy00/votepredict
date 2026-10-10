@@ -1,0 +1,57 @@
+name: One-shot #864 campaign winner evidence Neon READ ONLY reconciliation
+
+# Deliberately no PR, cron, push, workflow_dispatch, Vercel or background triggers.
+# An exact owner-authored GitHub comment on issue #864 initiates at most one
+# direct existing-branch read-only transaction, protected by environment.
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: campaign-864-existing-neon-readonly-once
+  cancel-in-progress: false
+
+jobs:
+  protected-readonly:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.issue.number == 864 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      github.event.comment.body == '[campaign-864-neon-readonly-evidence]'
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_CAMPAIGN_NEON_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_CAMPAIGN_RO_APPROVAL: '[campaign-864-neon-readonly-evidence]'
+    steps:
+      - name: Checkout reviewed main with persistent GitHub credentials disabled
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Require explicitly configured VotePredict Neon project credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$NEON_API_KEY"
+          test -n "$VOTEPREDICT_NEON_PROJECT_ID"
+      - name: Bounded existing Neon default-branch SQL READ ONLY transaction and ROLLBACK
+        run: node --import tsx scripts/audit-senate-campaign-neon-defaultbranch-readonly.ts
+      - name: Retain private three-district retrospective source reconciliation metadata
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-2025-campaign-issue-neon-readonly-v1
+          path: artifacts/senate-campaign-2025-neon-readonly-reconciliation-v1.json
+          if-no-files-found: error
+          retention-days: 14
