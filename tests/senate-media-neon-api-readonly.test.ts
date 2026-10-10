@@ -19,7 +19,8 @@ const PASSWORD='SENSITIVE_SQL_PASSWORD_TEST_ONLY_DO_NOT_LOG';
 const ROOT='https://console.neon.tech/api/v2/projects/'+PROJECT;
 const URI='postgresql://neondb_owner:'+PASSWORD+'@'+HOST+'/neondb?sslmode=require&channel_binding=require';
 const base={
-  project:{id:PROJECT,name:'VotePredict',default_branch_id:BRANCH},
+  project:{id:PROJECT,name:'VotePredict'},
+  branches:{branches:[{id:BRANCH,project_id:PROJECT,default:true,name:'main'}],pagination:{next:null as string|null}},
   databases:{databases:[{name:'neondb',owner_name:'neondb_owner',branch_id:BRANCH}]},
   endpoints:{endpoints:[{id:ENDPOINT,host:HOST,branch_id:BRANCH,project_id:PROJECT,type:'read_write'}]},
   uri:{uri:URI},
@@ -38,6 +39,7 @@ function fakeApi(
     assert.equal((init.headers as Record<string,string>).Authorization,'Bearer '+KEY);
     let result:unknown;
     if(url===ROOT)result={project:fixtures.project};
+    else if(url===ROOT+'/branches?limit=100')result=fixtures.branches;
     else if(url===ROOT+'/branches/'+BRANCH+'/databases')result=fixtures.databases;
     else if(url===ROOT+'/endpoints')result=fixtures.endpoints;
     else if(url.startsWith(ROOT+'/connection_uri?')){
@@ -53,10 +55,11 @@ function fakeApi(
   };
 }
 const options={apiKey:KEY,projectId:PROJECT};
-test('uses existing API key and precisely four GETs, with no new credentials/branches/roles',async()=>{
+test('uses existing API key and precisely five GETs, with no new credentials/branches/roles',async()=>{
   const urls:string[]=[];
   const result=await discoverExistingVotePredictNeonConnection(options,fakeApi({},url=>urls.push(url)));
-  assert.equal(urls.length,4);
+  assert.equal(urls.length,5);
+  assert.equal(urls[1],ROOT+'/branches?limit=100');
   assert.equal(result.branchId,BRANCH);
   assert.equal(result.role,'neondb_owner');
   assert.equal(result.database,'neondb');
@@ -71,7 +74,7 @@ test('refuses Pack 1, wrong project ID, missing default branch and unavailable o
   const bad=[
     {project:{...base.project,name:'Pack 1'}},
     {project:{...base.project,id:'some-other-project'}},
-    {project:{...base.project,default_branch_id:''}},
+    {branches:{...base.branches,branches:[{...base.branches.branches[0],default:false}]}},
   ];
   for(const data of bad)
     await assert.rejects(()=>discoverExistingVotePredictNeonConnection(
