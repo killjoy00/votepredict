@@ -1,0 +1,17 @@
+# Issue #864 — original-PDF hearing-date, absent members and 19 named-roll source-offset QA
+
+The committee-original source work identified **19 provisional 2023–25 Senate named YEA/NAY candidate blocks (196 named-side tokens)** with numeric source tallies matching the named list totals. That arithmetic alone does **not** certify independent actual motions, member attendance, historical membership or consistent hearing-date attribution.
+
+## Two concrete discrepancies requiring HOLD before any evidence upgrade
+
+Independent inspection of original Minnesota LRL 2025 Elections minutes PDF content showed that the file indexed under **February 13, 2025** has a printed **February 27, 2025** date heading. More seriously, the printed source lists Senators Eric Lucero, John Marty and Lindsey Port as absent, yet the named recorded roll lists Lucero (NAY) and Marty and Port (YEA). This is a conflicting original record, *not* proof those senators voted on February 13. The official indexed hearing date governs the owner-chosen historical action timing rule **only once source-to-hearing identity is independently substantiated**; do not assign the conflicting body to February 13 or February 27 by guesswork.
+
+The original Elections PDF indexed under **March 27, 2025** is headed **Thursday, May 27, 2025**—an inconsistent month *and* weekday (May 27 was Tuesday). Its recorded 8/1 source-vote candidate is also on HOLD until the meeting/date identity is reconciled. Other PDFs can contain similarly mistaken administrative headings; do not silently correct them with filename-derived dates.
+
+## Independent one-time 19-candidate audit
+
+The source-only workflow at .github/workflows/senate-committee-19-original-date-attendance.yml obtains the exact, SHA-verified former 2022–25 strong-roll source candidate metadata, intersects with the preexisting permanent [19-source-offset queue](./source-proof/senate-committee-19-tally-matched-provisional-roll-review-queue.json), downloads **only 10 distinct original official committee PDFs**, and verifies original binary SHA and embedded text SHA before any review. The bounded source has 3 MiB and 30-page caps per document, no redirects; 3 independent year jobs (2023, 2024, 2025). All numeric candidate lists are rerun through the *standalone offline supplemental parser* to confirm exact offsets and named counts.
+
+For each of the 19 candidate blocks, a deterministic review record shows indexed hearing date, parsed printed header date, printed weekday/date validity, how many candidate named-choice fingerprints match people explicitly listed absent by the same source, nearby bill identifiers, motion/outcome cue hints, and a bounded ~1 KiB **temporary human-context review excerpt**. Raw original PDFs, complete text, names/quotes or source evidence are not committed. QA artifacts expire after seven days. A source mismatch, download failure or parser drift fails closed. Source contradiction is **recorded as a substantive anomaly**, not rewritten or falsely certified.
+
+No automatic vote upgrades or private evidence DB modifications. Even an original with no detected contradiction remains **unverified** until distinct motions, member identity and historical committee membership are independently reviewed. The 2021 printed official archive, 2022 print/electronic reconciliation, 141 no-linked-Minutes meeting entries and 138 media-record CONTENT still require review. Keep #864 OPEN; no production DB, forecast, models, serving, scheduler, 2027, office contact or Senate floor expansion.
