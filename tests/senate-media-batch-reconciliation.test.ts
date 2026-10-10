@@ -150,7 +150,7 @@ test('malformed or conflicting evidence identity fails before validating any all
   const contradiction={...context('b'),sourceDocumentId:'source-a',sourceSha256:'0'.repeat(64)};
   assert.throws(()=>reconcileSenateMediaPrivateBatches({
     contexts:[context('a'),contradiction],roster,batches:[],
-  }),/Conflicting original archived source identity/);
+  }),/Conflicting (?:source identities|original archived source identity)/);
 });
 
 test('overlapping and duplicated private source batches are rejected, even if hashes match',()=>{
