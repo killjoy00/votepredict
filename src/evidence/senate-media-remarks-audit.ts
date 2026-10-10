@@ -150,6 +150,10 @@ function possibleOnDate(row: SenateMediaRosterYear, day: string): boolean {
 function senatorSurname(name: string): string {
   return name.trim().split(/\s+/).at(-1)?.toLowerCase() ?? '';
 }
+function mediaRegexEscape(value: string): string {
+  // Callback replacement avoids RegExp replacement-string $-substitutions.
+  return value.replace(/[.*+?^()|[\]{}\\$]/g, char => '\\' + char);
+}
 function namedSenatorIssues(
   cue: string,
   member: SenateMediaRosterYear,
@@ -158,18 +162,10 @@ function namedSenatorIssues(
 ): string[] {
   const last = senatorSurname(member.senatorName);
   if (!last) return ['speaker_not_explicitly_named_in_attribution'];
-  const full = member.senatorName.trim().replace(/\s+/g,' ').replace(/[.*+?^()|[\]{}\\]/g,'\\function active(row: SenateMediaRosterYear, day: string): boolean {
-  return validDay(row.activeFrom) && validDay(row.activeThrough)
-    && row.activeFrom <= day && day <= row.activeThrough;
-}
-');
+  const full = mediaRegexEscape(member.senatorName.trim().replace(/\s+/g,' '));
   const fullInCue = new RegExp('(?:^|[^\\w])' + full + '(?=$|[^\\w])','i').test(cue);
   const surnameOnlyCue = new RegExp('\\bsen(?:ator)?\\.?\\s+'
-    + last.replace(/[.*+?^()|[\]{}\\]/g, '\\function active(row: SenateMediaRosterYear, day: string): boolean {
-  return validDay(row.activeFrom) && validDay(row.activeThrough)
-    && row.activeFrom <= day && day <= row.activeThrough;
-}
-') + '\\b','i').test(cue);
+    + mediaRegexEscape(last) + '\\b','i').test(cue);
   if (!fullInCue && !surnameOnlyCue)
     return ['speaker_not_explicitly_named_in_attribution'];
   if (fullInCue || publishedAt === null) return [];
