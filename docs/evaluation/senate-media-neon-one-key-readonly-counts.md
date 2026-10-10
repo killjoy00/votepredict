@@ -15,3 +15,13 @@ Only aggregate year-level counts appear in the workflow summary. The job does no
 After this initial live checkpoint, the separate [private media export](senate-media-private-export-runbook.md), [original byte verification](senate-media-original-wayback-rehydration.md), [private batch reconciliation](senate-media-private-batch-reconciliation.md) and human [speaker audit](senate-media-2021-25-attribution-audit.md) remain outstanding. No production writes, ingestion or model changes are authorized.
 
 Neon API reference: [connection URI](https://api-docs.neon.tech/reference/getconnectionuri), [database listing](https://api-docs.neon.tech/reference/listprojectbranchdatabases), [compute listing](https://api-docs.neon.tech/reference/listprojectendpoints).
+
+## First owner run and safe failure diagnostics
+
+The first manual [run #38086731790](https://github.com/killjoy00/votepredict/actions/runs/38086731790) reached the existing-project access/SQL step but **failed closed**, with no aggregate evidence counts or source exports. It deliberately suppressed detailed Neon and PostgreSQL errors to avoid leaking host names, database login secrets, raw credentials or source documents.
+
+Subsequent runs now emit a **fixed, non-sensitive last-completed-stage enum**: project metadata/identity, existing database inventory/selection, compute inventory/selection, password-bearing URI response/validation, SQL connection, read-only identity, required tables, aggregate SELECT, and final rollback. These labels never contain a value received from Neon or Postgres and do not claim success if the next stage failed.
+
+Inspect the run's failure message for `last completed phase`. For example, `database_inventory_received` indicates the API responded, but database selection/ownership verification failed; `endpoint_selected` indicates the next URI retrieval failed; `connection_uri_verified` indicates the URI checks passed but the SQL connection itself failed. No password, project/branch name, connection host or underlying exception is displayed. If the resolved project has more than one database, the optional `VOTEPREDICT_MEDIA_EXISTING_DATABASE` variable is relevant **only** after an actual database ambiguity has been established.
+
+This is a diagnostic-only iteration of the same manually approved, read-only workflow; no new role, branch, connection-string secret or source-export surface was introduced.

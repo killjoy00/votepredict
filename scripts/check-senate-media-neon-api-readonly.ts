@@ -13,6 +13,8 @@ import { Pool } from 'pg';
 import {
   discoverExistingVotePredictNeonConnection,
   assertApprovedDirectNeonWorkflow,
+  type MediaNeonAccessPhase,
+  type MediaNeonPhaseReporter,
 } from '../src/operations/senate-media-neon-api-readonly.js';
 import { REQUIRED_MEDIA_EXPORT_TABLES } from '../src/evidence/senate-media-readonly-export.js';
 
@@ -69,8 +71,9 @@ export async function verifyExistingNeonMediaAggregate(
   request:Parameters<typeof discoverExistingVotePredictNeonConnection>[1]=fetch,
   createPool:(config:ConstructorParameters<typeof Pool>[0])=>Pick<Pool,'connect'|'end'>=
     options=>new Pool(options),
+  onPhase:MediaNeonPhaseReporter=()=>{},
 ):Promise<SanitizedExistingNeonMediaReport>{
-  const target=await discoverExistingVotePredictNeonConnection(input,request);
+  const target=await discoverExistingVotePredictNeonConnection(input,request,onPhase);
   const pool=createPool({
     host:target.host,port:target.port,
     user:target.role,password:target.password,database:target.database,
@@ -81,6 +84,7 @@ export async function verifyExistingNeonMediaAggregate(
   });
   try {
     const client=await pool.connect();
+    onPhase('sql_connection_opened');
     let transactionStarted=false;
     try {
       await client.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
@@ -93,12 +97,14 @@ export async function verifyExistingNeonMediaAggregate(
         || identity.rows[0].role!==target.role
         || identity.rows[0].ro!=='on')
         throw Error('VotePredict SQL database/user or READ ONLY transaction mismatch');
+      onPhase('sql_readonly_identity_verified');
       const catalog=await client.query(CATALOG_SQL,[[...REQUIRED]]);
       if(catalog.rows.length!==REQUIRED.length
         || catalog.rows.some((row:{table_name:string;present:boolean;readable:boolean})=>
           !REQUIRED.includes(row.table_name as typeof REQUIRED[number])
           || row.present!==true||row.readable!==true))
         throw Error('Expected VotePredict media/roster source tables are missing or unreadable');
+      onPhase('sql_required_tables_verified');
       const result=await client.query(CONTEXT_COUNTS_SQL);
       if(result.rows.length>30)throw Error('Media aggregate unexpectedly has too many year keys');
       const byYear:AggregateRows=Object.fromEntries(
@@ -120,8 +126,10 @@ export async function verifyExistingNeonMediaAggregate(
           byYear[raw.year]={contextRows,distinctSourceDocuments};
         else outside+=contextRows;
       }
+      onPhase('sql_aggregate_completed');
       await client.query('ROLLBACK');
       transactionStarted=false;
+      onPhase('sql_transaction_rolled_back');
       return {
         status:'existing_neon_api_readonly_aggregate_verified',
         projectIdentityVerified:true,
@@ -149,15 +157,22 @@ export async function verifyExistingNeonMediaAggregate(
     await pool.end();
   }
 }
+/** A fixed phase enum is the only diagnostic allowed into public CI logs. */
+let lastSafePhase:'not_started'|'manual_approval_verified'|MediaNeonAccessPhase='not_started';
+const notePhase:MediaNeonPhaseReporter=phase=>{
+  lastSafePhase=phase;
+  console.log(JSON.stringify({mediaReadOnlyPhase:phase,completed:true}));
+};
 async function main():Promise<void>{
   if(process.argv.length!==2)
     throw Error('No CLI arguments permitted for bounded protected Neon media audit');
   assertApprovedDirectNeonWorkflow(process.env);
+  lastSafePhase='manual_approval_verified';
   const report=await verifyExistingNeonMediaAggregate({
     apiKey:process.env.NEON_API_KEY?.trim()??'',
     projectId:process.env.VOTEPREDICT_NEON_PROJECT_ID?.trim()??'',
     preferredDatabase:process.env.VOTEPREDICT_MEDIA_EXISTING_DATABASE?.trim()||undefined,
-  });
+  },fetch,undefined,notePhase);
   // These are aggregate counts only, never raw source records or credentials.
   console.log(JSON.stringify(report));
   if(process.env.GITHUB_STEP_SUMMARY){
@@ -192,6 +207,6 @@ async function main():Promise<void>{
 if(process.argv[1]&&/check-senate-media-neon-api-readonly\.ts$/.test(process.argv[1]))
   main().catch(()=>{
     // pg errors and Neon fetch diagnostics may contain user/password/endpoints.
-    console.error('Existing VotePredict Neon one-key aggregate failed closed; no source records exported');
+    console.error('Existing VotePredict Neon one-key aggregate failed closed at last completed phase: '+lastSafePhase+'; no source records exported');
     process.exitCode=1;
   });
