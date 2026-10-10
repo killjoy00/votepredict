@@ -1,0 +1,45 @@
+name: One-time 2025 Elections fifteen original rolls historical committee roster source QA
+
+# Offline SHA-pinned original Senate Minutes source metadata; no PDF or media
+# download, DB, model/forecast, scheduler, private secrets or 2027 work.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-2025-elections-15-roster.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  match-provisional-roll-source-against-historical-roster:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Restore exact original 2025 source SHA verified roll artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2025-41-supplemental-named-candidate-review
+          run-id: 38079646647
+          github-token: ${{ github.token }}
+          path: artifacts/official-original-source
+      - name: Check all 15 source offsets and actual historical 11-senator roster
+        run: |
+          node --import tsx scripts/check-senate-2025-elections-15-original-roster.ts \
+            --source-json artifacts/official-original-source/senate-2025-supplemental-named-source-review.json \
+            --source-queue-json docs/evaluation/source-proof/senate-committee-19-tally-matched-provisional-roll-review-queue.json \
+            --output artifacts/roster/senate-2025-elections-15-original-roster-review.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: senate-2025-elections-15-source-roster-qa
+          path: artifacts/roster/senate-2025-elections-15-original-roster-review.json
+          retention-days: 30
+          if-no-files-found: error
