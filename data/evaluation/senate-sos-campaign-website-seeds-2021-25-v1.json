@@ -115,6 +115,22 @@
       "publisherPublishedOn": "2025-11-04",
       "url": "https://minnesotareformer.com/2025/11/04/today-is-election-day-make-your-voice-heard/",
       "offersCampaignWebsite": true
+    },
+    {
+      "id": "labor-review-2024-08-12",
+      "publisher": "Minneapolis Labor Review / Minneapolis Regional Labor Federation",
+      "kind": "publisher_carried_candidate_website_link",
+      "publisherPublishedOn": "2024-08-12",
+      "url": "https://minneapolisunions.org/news/ann-johnson-stewart-labor-endorsed-SD-45",
+      "offersCampaignWebsite": true
+    },
+    {
+      "id": "lakes-area-2025-voter-guide",
+      "publisher": "Lakes Area Vote",
+      "kind": "publisher_carried_candidate_website_link",
+      "url": "https://lakesarea.vote/keri-heintzeman/",
+      "offersCampaignWebsite": true,
+      "note": "Page identifies 2025 SD6 candidacy and website but historical page public-by date not independently established"
     }
   ],
   "winners": [
@@ -1172,6 +1188,32 @@
       "electionYear": 2025,
       "url": "https://louismcnuttformnsenate.com/",
       "sourceId": "reformer-nov2025",
+      "proofClass": "publisher_carried_link_only",
+      "isOriginalSosCandidateFiling": false,
+      "independentArchivePublicBy": null,
+      "sourceContentSha256": null,
+      "verifiedHistoricalIssueStatementCount": 0,
+      "eligibleForHistoricalReplay": false
+    },
+    {
+      "district": "45",
+      "candidateName": "Ann Johnson Stewart",
+      "electionYear": 2024,
+      "url": "https://annjohnsonstewart.com/",
+      "sourceId": "labor-review-2024-08-12",
+      "proofClass": "publisher_carried_link_only",
+      "isOriginalSosCandidateFiling": false,
+      "independentArchivePublicBy": null,
+      "sourceContentSha256": null,
+      "verifiedHistoricalIssueStatementCount": 0,
+      "eligibleForHistoricalReplay": false
+    },
+    {
+      "district": "6",
+      "candidateName": "Keri Heintzeman",
+      "electionYear": 2025,
+      "url": "https://heintzemanforsenate.com/",
+      "sourceId": "lakes-area-2025-voter-guide",
       "proofClass": "publisher_carried_link_only",
       "isOriginalSosCandidateFiling": false,
       "independentArchivePublicBy": null,
