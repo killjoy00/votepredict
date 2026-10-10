@@ -1,6 +1,7 @@
 name: One-time nine original Senate no-label counted-roll source recheck
 
-# Bounded official source PDFs, exact historical SHA-verified earlier audit.
+# Bounded original PDFs, exact SHA-pinned historical audit.
+# Rerun after source-verified lowercase absent/absence parsing correction.
 # Standalone named source direction hints; no production DB, models or serving.
 on:
   push:
