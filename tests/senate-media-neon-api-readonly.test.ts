@@ -90,13 +90,19 @@ test('database auto-selection handles exactly one existing database and unambigu
   };
   const calls:string[]=[];
   const api=async(url:string,init:RequestInit)=>{
-    const u=url.includes('connection_uri?')?url.replace('database_name=votepredict','database_name=neondb').replace('role_name=vote_owner','role_name=neondb_owner'):url;
-    return fakeApi({...both},x=>calls.push(x))(u,init);
+    calls.push(url);
+    if(url.includes('/connection_uri?')){
+      const params=new URL(url).searchParams;
+      assert.equal(params.get('role_name'),'vote_owner');
+      assert.equal(params.get('database_name'),'votepredict');
+      return new Response(JSON.stringify({uri:URI.replace('neondb_owner','vote_owner')
+        .replace('/neondb?','/votepredict?')}));
+    }
+    return fakeApi({...both})(url,init);
   };
-  // Actual connection URI for this database must still match selected owner
-  // and database: synthetic fallback neondb is correctly refused.
-  await assert.rejects(()=>discoverExistingVotePredictNeonConnection(options,api),/did not match/);
-  assert.ok(calls.some(url=>url.includes('database_name=neondb')));
+  const selected=await discoverExistingVotePredictNeonConnection(options,api);
+  assert.equal(selected.database,'votepredict');
+  assert.equal(selected.role,'vote_owner');
   await assert.rejects(()=>discoverExistingVotePredictNeonConnection(
     options,fakeApi({databases:{databases:[
       {name:'abc',owner_name:'a_owner',branch_id:BRANCH},
@@ -121,7 +127,7 @@ test('supports single existing read replica, and fails when multiple compute can
   const read={...base.endpoints.endpoints[0],id:'ep-read-123',type:'read_only',host:'ep-read-123.us-east-2.aws.neon.tech'};
   const primary={...base.endpoints.endpoints[0]};
   const chosen:string[]=[];
-  await assert.rejects(()=>discoverExistingVotePredictNeonConnection(options,
+  const selected=await discoverExistingVotePredictNeonConnection(options,
     async(url,init)=>{
       if(url===ROOT+'/endpoints') return new Response(JSON.stringify({endpoints:[read,primary]}));
       if(url.includes('connection_uri?')){
@@ -129,8 +135,9 @@ test('supports single existing read replica, and fails when multiple compute can
         return new Response(JSON.stringify({uri:URI.replace(HOST,read.host)}));
       }
       return fakeApi()(url,init);
-    }),
-  ),/did not match|Neon connection URI/); // function fake API request asserts primary; this calls explicit endpoint id, not primary
+    },
+  );
+  assert.equal(selected.endpointId,'ep-read-123');
   assert.equal(chosen.length,1);
   assert.equal(new URL(chosen[0]).searchParams.get('endpoint_id'),'ep-read-123');
   await assert.rejects(()=>discoverExistingVotePredictNeonConnection(options,fakeApi({
@@ -161,8 +168,7 @@ test('existing owner role may be write-capable but ONLY catalog and aggregate SE
   const queried:string[]=[];
   let closed=0,released=0;
   const fakePool=(config:ConstructorParameters<typeof Pool>[0])=>{
-    assert.equal(config?.ssl && typeof config.ssl==='object' && !('ca' in config.ssl)
-      ?config.ssl.rejectUnauthorized:true,true);
+    assert.deepEqual(config?.ssl,{rejectUnauthorized:true});
     assert.equal(config?.user,'neondb_owner');
     assert.equal(config?.host,HOST);
     assert.equal(config?.database,'neondb');
