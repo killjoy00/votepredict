@@ -1,0 +1,45 @@
+name: One-shot 2020-22 public Senate source acquisition
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/acquire-senate-2020-22-public-originals.yml
+      - scripts/acquire-senate-2020-22-candidate-original-sources.ts
+      - tests/senate-2020-22-candidate-original-acquisition.test.ts
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ format('public-senate-2020-22-acquisition-{0}', github.run_id) }}
+  cancel-in-progress: false
+
+jobs:
+  public-original-only:
+    if: >-
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      startsWith(github.event.pull_request.head.ref, 'audit/864-')
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Download only historical public SOS results and 2022 candidate questionnaires
+        timeout-minutes: 8
+        run: |
+          node --import tsx scripts/acquire-senate-2020-22-candidate-original-sources.ts \
+            --output-dir artifacts/senate-2020-22-original-candidate-source-research-v1
+      - name: Retain actual public-source bytes and explicit per-source retrieval failures
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-2020-22-public-candidate-original-source-acquisition
+          path: artifacts/senate-2020-22-original-candidate-source-research-v1/
+          if-no-files-found: warn
+          retention-days: 30
