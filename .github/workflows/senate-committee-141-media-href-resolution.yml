@@ -1,0 +1,51 @@
+name: One-time resolve exact dated Senate missing-minute media hrefs
+
+# Official LRL HTML ONLY, exact prior 141 SHA-bound dated meeting pages,
+# no third-party media download, transcripts, DB access, scheduler or model.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-141-media-href-resolution.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  dated-media-href-year:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        year: [2022, 2023, 2024, 2025]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Retrieve previously source-hashed exact date-section triage
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-${{ matrix.year }}-missing-minutes-alternate-source-metadata
+          run-id: 38076153790
+          github-token: ${{ github.token }}
+          path: artifacts/prior-date-proof
+      - name: Extract only verified meeting-specific media href and label
+        run: |
+          node --import tsx scripts/verify-senate-141-dated-media-hrefs.ts \
+            --year ${{ matrix.year }} \
+            --source-json artifacts/prior-date-proof/senate-${{ matrix.year }}-missing-minutes-alternate-source.json \
+            --output artifacts/media-hrefs/senate-${{ matrix.year }}-media-hrefs.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-${{ matrix.year }}-dated-media-href-review
+          path: artifacts/media-hrefs/senate-${{ matrix.year }}-media-hrefs.json
+          if-no-files-found: warn
+          retention-days: 30
