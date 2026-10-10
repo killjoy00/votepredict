@@ -14,7 +14,7 @@ import {
   type SenateSosSeedManifest,
 } from '../src/evidence/sos-senate-historical-candidate-inventory.js';
 
-const ledger = manifest as SenateSosSeedManifest;
+const ledger = manifest as unknown as SenateSosSeedManifest;
 const member = (name:string,district:string,sessionSlug:'2021-2022'|'2023-2024'|'2025-2026',count:number) =>
   ({ membershipId:name+'|'+sessionSlug,senatorName:name,sessionSlug,district,recordedIssuePositionItems:count });
 
