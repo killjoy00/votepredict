@@ -51,6 +51,7 @@ jobs:
           node --import tsx scripts/audit-senate-statewide-campaign-source-coverage-offline.ts \
             --official-senate-service-html artifacts/mn-lrl-ever-served-senate-original/mn-lrl-official-senate-service-directory.html \
             --official-senate-service-metadata artifacts/mn-lrl-ever-served-senate-original/mn-lrl-official-senate-service-directory-audit.json \
+            --official-special-swearing-html artifacts/mn-lrl-ever-served-senate-original/mn-lrl-official-senate-special-swearing-history.html \
             --2020-st artifacts/official-originals/2020-sos-general-stsenate.response \
             --2020-cand artifacts/official-originals/2020-sos-general-cand.response \
             --2022-st artifacts/official-originals/2022-sos-general-stsenate.response \
