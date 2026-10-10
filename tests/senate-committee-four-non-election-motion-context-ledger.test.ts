@@ -11,7 +11,7 @@ const queueRaw=readFileSync(new URL('../docs/evaluation/source-proof/senate-comm
 const queue=JSON.parse(queueRaw.toString('utf8'));
 
 test('four candidate scope is exact immutable independent 19-record original source queue subset',()=>{
-  const sha=createHash('sha1').update('blob '+queueRaw.byteLength+'\\0'.replace('\\0','\0')).update(queueRaw).digest('hex');
+  const sha=createHash('sha1').update('blob '+queueRaw.byteLength+'\0').update(queueRaw).digest('hex');
   assert.equal(sha,'30f1c8ed6d2d2edcbbefadcf61f8019c1c435538');
   assert.equal(p.candidateQueueGitBlobSha,sha);
   assert.equal(p.issue,864);
@@ -58,20 +58,25 @@ test('original motion identities distinguish amendment outcomes from committee r
   assert.deepEqual([march14.motionIdentity.billIdentifier,march14.motionIdentity.actionKind,march14.motionIdentity.amendmentIdentifier,march14.motionIdentity.recordedOutcome],
     ['SF4742','COMMITTEE_RECOMMENDATION_AS_AMENDED',null,'ADOPTED']);
   for(const r of [jud,health,march14])assert.equal(r.motionIdentity.reviewState,'OFFICIAL_MINUTES_CONTEXT_IDENTIFIED_ROSTER_PENDING');
-  assert.equal(p.sourceContextIdentifiedCount,3);
-  assert.equal(p.sourceContextOnHoldCount,1);
-  assert.equal(march7.motionIdentity.reviewState,'HOLD_MOTION_CONTEXT_NOT_INDEPENDENTLY_READ');
-  assert.equal(march7.motionIdentity.billIdentifier,null);
-  assert.equal(march7.motionIdentity.actionKind,null);
-  assert.equal(march7.originalOpeningPresentCount,null);
-  assert.equal(march7.choiceGivenToOpeningAbsentMemberCount,null);
+  assert.equal(p.sourceContextIdentifiedCount,4);
+  assert.equal(p.sourceContextOnHoldCount,0);
+  assert.equal(march7.motionIdentity.reviewState,'OFFICIAL_SENATE_MINUTES_CONTEXT_IDENTIFIED_LRL_PDF_PARITY_PENDING');
+  assert.deepEqual([march7.motionIdentity.billIdentifier,march7.motionIdentity.actionKind,march7.motionIdentity.amendmentIdentifier,march7.motionIdentity.recordedOutcome],
+    ['SF4483','COMMITTEE_RECOMMENDATION_AS_AMENDED',null,'ADOPTED']);
+  assert.equal(march7.officialSenatePublishedMinutesSourceUrl,
+    'https://www.senate.mn/schedule/hearing_minutes.html?hearing_id=18367&ls=93');
+  assert.equal(march7.officialSenateMinutePageNotIndependentOfArchivedLrlMinutes,true);
+  assert.equal(march7.originalLrlPdfVersusOfficialSenateHtmlSemanticParityStillRequiresReview,true);
 });
 
 test('attendance is a per-roll gate, and repeated recommendation text cannot become another named roll',()=>{
-  const [jud,health,,labor]=p.records;
+  const [jud,health,march7,labor]=p.records;
   assert.deepEqual([jud.originalOpeningPresentCount,jud.originalOpeningAbsentCount,jud.choiceGivenToOpeningAbsentMemberCount],[8,2,0]);
   assert.deepEqual([health.originalOpeningPresentCount,health.originalOpeningAbsentCount,health.rollSpecificAbsentCount],[8,1,1]);
   assert.equal(health.choiceGivenToOpeningAbsentMemberCount,0);
+  assert.deepEqual([march7.originalOpeningPresentCount,march7.originalOpeningAbsentCount,march7.choiceGivenToOpeningAbsentMemberCount],[10,0,0]);
+  assert.equal(march7.rollSpecificAbsentCount,null);
+  assert.equal(march7.sourceRestatesRecommendationWithoutSecondNamedRoll,true);
   assert.deepEqual([labor.originalOpeningPresentCount,labor.originalOpeningAbsentCount,labor.rollSpecificAbsentCount],[9,1,3]);
   assert.equal(labor.choiceGivenToOpeningAbsentMemberCount,0);
   assert.equal(labor.presentAtOpeningButLaterRollAbsentCount,2);
@@ -84,6 +89,7 @@ test('attendance is a per-roll gate, and repeated recommendation text cannot bec
 test('semantic observations and source mirroring are not independent second-source or database proof',()=>{
   assert.equal(p.originalPdfAndTextShaReverifiedByThisSemanticLedger,false);
   assert.equal(p.sourceMirrorIsIndependentCorroboration,false);
+  assert.equal(p.originalLrlPdfVersusSenatePublishedMarch7ParityVerifiedByThisReview,false);
   assert.equal(p.limitations.needsIndependentMotionBillLogAndHistoricalRosterReview,true);
   assert.equal(p.limitations.dbReconciliationOrWritesPerformed,false);
   assert.equal(p.limitations.modelForecastServingScheduler2027Changed,false);
