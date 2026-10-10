@@ -51,6 +51,13 @@ const PUBLISHER_SOURCES=[
     publicationDateClaim:null,relatedCandidate:'Ann Johnson Stewart',kind:'third_party_sourced_candidate_platform_quote'},
   {id:'2025-lakesarea-vote-sd6',url:'https://lakesarea.vote/keri-heintzeman/',
     publicationDateClaim:null,relatedCandidate:'Keri Heintzeman',kind:'candidate_submitted_questionnaire'},
+  {id:'2025-dorau-original-announcement',url:'https://votefordwight.com/candidacy-announcement',
+    publicationDateClaim:'2025-07-30',relatedCandidate:'Dwight Dorau',kind:'original_campaign_candidacy_announcement_current_copy'},
+  {id:'2024-unions-sd45-interview',url:'https://minneapolisunions.org/news/mlr2024-10-19_SD-45-Ann-Johnson-Stewart',
+    publicationDateClaim:'2024-10-27',relatedCandidate:'Ann Johnson Stewart',kind:'media_direct_candidate_interview'},
+  {id:'2025-mpr-sd29-sd47-interviews',
+    url:'https://www.mprnews.org/story/2025/10/28/senate-majority-at-stake-in-minnesota-special-elections-in-washington-wright-counties',
+    publicationDateClaim:'2025-10-28',relatedCandidate:'Multiple SD29/SD47 candidates',kind:'media_multiple_candidate_direct_interviews'},
 ] as const;
 type PublicationKind=typeof PUBLISHER_SOURCES[number]['kind'];
 export interface ResponseSample {
@@ -90,7 +97,8 @@ export async function readBoundedPublicResponse(
   const allowed=kind==='commoncrawl_cdx_index'?['index.commoncrawl.org']
     :kind==='wayback_cdx_index'||kind==='wayback_snapshot'?['web.archive.org']
       :kind==='original_commoncrawl_warc'?['data.commoncrawl.org']
-        :['lptv.org','www.mnfamilyvoter.com','lakesarea.vote'];
+        :['lptv.org','www.mnfamilyvoter.com','lakesarea.vote','votefordwight.com',
+          'minneapolisunions.org','www.mprnews.org'];
   if(expected.protocol!=='https:'||!allowed.includes(expected.hostname)
     ||expected.username||expected.password||expected.port)
     throw new Error('Not a preapproved public-source fetch host: '+url);
