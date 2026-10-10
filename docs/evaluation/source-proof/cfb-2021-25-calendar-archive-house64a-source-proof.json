@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "cfb-2021-25-calendar-archive-house64a-source-proof-v1",
+  "officialCapture": {
+    "workflowRun": 38059292835,
+    "artifactId": 11671309735,
+    "captureCodeCommit": "79c722ae9b626dc8caf8a6a7a48a6e72c8c042f7",
+    "sourceIndexUrl": "https://register.cfb.mn.gov/filer-resources/disclosure-publications/calendars/calendars-archive/",
+    "rawIndexHtmlSha256": "a6a4623a30c4df65b103bb75d1f367dbea4fbd4f0319990b67789e79068318ad",
+    "indexOriginalResponseBytes": 40165,
+    "indexFetchedAt": "2026-10-10T14:22:22.302Z"
+  },
+  "archiveYearCounts": [
+    {
+      "year": 2021,
+      "status": "year_not_listed",
+      "calendarLinks": null,
+      "senateSpecialCalendarLabels": null,
+      "ambiguousChamberLabels": null
+    },
+    {
+      "year": 2022,
+      "status": "year_not_listed",
+      "calendarLinks": null,
+      "senateSpecialCalendarLabels": null,
+      "ambiguousChamberLabels": null
+    },
+    {
+      "year": 2023,
+      "status": "listed",
+      "calendarLinks": 3,
+      "senateSpecialCalendarLabels": 0,
+      "ambiguousChamberLabels": 0
+    },
+    {
+      "year": 2024,
+      "status": "listed",
+      "calendarLinks": 9,
+      "senateSpecialCalendarLabels": 1,
+      "ambiguousChamberLabels": 0
+    },
+    {
+      "year": 2025,
+      "status": "listed",
+      "calendarLinks": 10,
+      "senateSpecialCalendarLabels": 4,
+      "ambiguousChamberLabels": 1
+    }
+  ],
+  "observedCalendarLinks": 22,
+  "distinctOriginalPdfUrlsInIndex": 21,
+  "officeMislabel": {
+    "archiveYear": 2025,
+    "archiveTitle": "Senate District 64A special election",
+    "archivePdfUrl": "https://register.cfb.mn.gov/pdf/calendars/2025_special_election_64A.pdf",
+    "verifiedOriginalPdfTitle": "House District 64A Special Election Public Disclosure Calendar",
+    "originalRawPdfSha256": "d34aed7362ca4380389e176ee3ae9cfde7ff5ea9d93d82c969d62881e4dc5ed9",
+    "originalRawPdfBytes": 104464,
+    "originalPdfFetchedAt": "2026-10-10T14:22:25.349Z",
+    "verifiedAgainstOriginalPdf": true,
+    "countsAsUnambiguousSenateSpecialElectionCalendar": false
+  },
+  "senate6CalendarComparison": {
+    "standalone": {
+      "url": "https://register.cfb.mn.gov/pdf/calendars/2025_special_election_6.pdf",
+      "originalRawPdfSha256": "8a64ba95f3144eea27a3b164faa3ff4961ceb341a6de246a34eb8e3c218c389e",
+      "originalRawPdfBytes": 94410,
+      "finalReportPeriodEndOn": "2025-05-14",
+      "statutoryFinalReportDueOn": "2025-05-27"
+    },
+    "candidatePacket": {
+      "url": "https://cfb.mn.gov/pdf/publications/elections/candidate_packets/2025/Senate_6_special.pdf",
+      "originalRawPdfSha256": "d27307ec9bad876fb79cd517516e567e642ad4931077dda2d7941dc09518e863",
+      "originalRawPdfBytes": 721353,
+      "finalReportPeriodEndOn": "2025-05-20",
+      "separateSubsidyCycleEndsOn": "2025-05-14",
+      "statutoryFinalReportDueOn": "2025-05-27"
+    },
+    "distinctPeriodVersionsBothOfficiallyVerified": true,
+    "controllingVersionOrErratumIndependentlyProven": false,
+    "originalFiledReportCoverageEndOn": "2025-05-14"
+  },
+  "exclusion": {
+    "archive2021And2022UnlistedDoesNotMeanCalendarNeverExisted": true,
+    "officialAllSenateRegisteredFilerDenominator": null,
+    "officialRequiredReportDenominator": null,
+    "officialActualFilingDenominator": null,
+    "independentHistoricalPublicByOn": null,
+    "exactTransactionContainmentVerified": false,
+    "historicalAsOfEligibilityCertified": false,
+    "noReportOrDonorPdfBodyStored": true,
+    "productionDataReadOrModified": false,
+    "forecastOrModelChanged": false
+  }
+}

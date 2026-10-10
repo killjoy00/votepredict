@@ -23,6 +23,18 @@ The 2021/2022 calendar **archive index** only lists links for 2023 onward as of 
 - New bounded one-time CFB Actions source collector: one candidate report viewer (HTML+API), at most **two** annual report PDFs, and **two** original calendar PDFs. Original PDF body is used only transiently for validation; the workflow artifact contains only hashes, dates, source URLs, structural metadata, and explicit source errors.
 - Synthetic tests cover early/late filings, missing due field in original PDF, case-specific independent calendar, mismatched identity, bad/ambiguous source, no calendar, duplicates, and fail-closed historic publication policy.
 
+## Verified original source results (October 10, 2026)
+
+[One-time public-source run #38059511167](https://github.com/killjoy00/votepredict/actions/runs/38059511167) downloaded **both** original 2021 and 2022 CFB Senate 64 committee year-end report PDFs and **both** distinct independently relevant official disclosure calendar PDFs. All four original PDF bodies were SHA-256 hashed, all two report headers matched the verified Senate committee registration and actual reporting period, and **2/2** independent report/calendar pairs passed, with **0** source fetch failures.
+
+**Actual verified source fields:**
+- **2021 year-end:** CFB receipt **Jan 28, 2022**; independently original 2022 Senate candidate calendar due date **Jan 31, 2022**; conservative release day floor **Feb 1, 2022**.
+- **2022 year-end:** CFB receipt **Jan 30, 2023**; independently original 2023 general calendar due **Jan 31, 2023**; conservative release day floor **Feb 1, 2023**.
+
+Both original report PDFs **lack a printed due-date label**; no global parser was weakened. The source-specific join instead requires the correct original CFB calendar, original-report SHA-256, exact filer/report identity and original receipt date before computing a bound. **This is not proof either report was actually public by Feb 1 of its respective later year**, and does not certify any individual contribution or expenditure.
+
+The [permanently preserved proof ledger](./source-proof/cfb-2021-22-senate-one-filer-original-reports-and-calendars.json) records **all four original file SHA-256 hashes, original byte lengths, CFB report viewer response hash, precise actual dates, public provenance run/artifact IDs**, and explicit remaining unknown gates. It has [regression tests](../../tests/cfb-senate-2021-22-original-calendar-source-ledger.test.ts) and contains no raw PDFs, original donor text, or private transaction rows.
+
 ## What must not be inferred
 
 Even with a verified official receipt date and independently verified statutory calendar, the conservative legal floor is only the later of **the day after the due date** and **day after the filing receipt**, in America/Chicago under the already merged v7 rule. It is **not** independently proved the original PDF was publicly *available by* that historical date, and a PDF downloaded October 2026 does not establish that it was downloadable before any earlier vote.
