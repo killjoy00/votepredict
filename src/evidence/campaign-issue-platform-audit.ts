@@ -133,6 +133,13 @@ export function auditSenateCampaignIssuePlatforms(input: CampaignAuditInputs) {
   ] as const) {
     for (const row of rows) if (!ids.has(row.membershipId)) throw new Error('Unrecognized membership in ' + name + ': ' + row.membershipId);
   }
+  // Duplicate archive identities can hide contradictory bytes or campaign-year attribution.
+  const archiveKeys = new Set<string>();
+  for (const capture of input.captures) {
+    const key = capture.membershipId + '\u0000' + capture.archiveUrl;
+    if (archiveKeys.has(key)) throw new Error('Duplicate archive capture: ' + capture.archiveUrl);
+    archiveKeys.add(key);
+  }
   const sitesByMember = byMember(input.sites);
   const capturesByMember = byMember(input.captures);
   const statementsByMember = byMember(input.statements);
@@ -166,7 +173,7 @@ export function auditSenateCampaignIssuePlatforms(input: CampaignAuditInputs) {
       const capture = captures.find(c => c.archiveUrl === statement.archiveUrl);
       const issueKnown = taxonomy.has(statement.policyFamily);
       const documentedCampaignHost = Boolean(capture && sites.some(site =>
-        site.status === 'documented' && site.campaignYear === capture.campaignYear
+        site.status === 'documented' && site.campaignYear !== null && site.campaignYear === capture.campaignYear
         && urlOk(site.registrySourceUrl ?? '') && campaignHost(site.url) === campaignHost(capture.originalUrl)));
       const matchable = statement.attribution === 'candidate' && documentedCampaignHost
         && issueKnown && statement.excerpt.trim().length > 0;
