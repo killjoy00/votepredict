@@ -29,6 +29,35 @@ export const SENATE_MISSING_MINUTES_SOURCE = {
 
 const sha = (raw: string) => createHash('sha256').update(raw).digest('hex');
 
+/**
+ * LRL canonicalizes legacy /minutes/comm.aspx to /minutes/comm (HTTP 301).
+ * Follow a redirect ONLY if its official HTTPS destination has exactly the
+ * same committee ID, year and date as our already source-hashed meeting.
+ * The optional body=senate query may be dropped by canonicalization.
+ */
+export function isSafeSameMeetingLrlRedirect(originalUrl:string,targetUrl:string):boolean {
+  let original:URL,target:URL;
+  try {original=new URL(originalUrl);target=new URL(targetUrl,original)}catch{return false}
+  if(original.protocol!=='https:'||original.hostname!=='www.lrl.mn.gov'
+    ||original.pathname!=='/minutes/comm.aspx'
+    ||target.protocol!=='https:'
+    ||!['www.lrl.mn.gov','lrl.mn.gov'].includes(target.hostname)
+    ||!['/minutes/comm.aspx','/minutes/comm'].includes(target.pathname)
+    ||target.hash||target.username||target.password
+    ||target.searchParams.size<3||target.searchParams.size>4)
+    return false;
+  for(const key of ['commid','year','date'])
+    if(!original.searchParams.get(key)
+      ||target.searchParams.get(key)!==original.searchParams.get(key))
+      return false;
+  if(original.searchParams.get('body')!=='senate') return false;
+  const redirectedBody=target.searchParams.get('body');
+  if(redirectedBody!==null && redirectedBody!=='senate')return false;
+  return [...target.searchParams.keys()].every(key=>
+    ['commid','year','date','body'].includes(key));
+}
+
+
 export function officialMissingMinutesMeetingPage(row: IndexedMissingMinutes): string {
   const u = new URL(row.committeeUrl);
   if (u.hostname!=='www.lrl.mn.gov' || u.protocol!=='https:'
