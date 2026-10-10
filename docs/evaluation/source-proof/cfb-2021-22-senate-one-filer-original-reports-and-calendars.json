@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "cfb-2021-22-senate-report-independent-calendar-source-ledger-v1",
+  "originalCapture": {
+    "workflowRun": 38059511167,
+    "artifactId": 11671979899,
+    "captureCodeCommit": "ddd56715c41d40f03431ca225adaed0ed9d0a656",
+    "verifiedDate": "2026-10-10",
+    "officialCandidateViewerUrl": "https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/18443/2022/",
+    "originalViewerApiSha256": "8bd2a3da35a3d95349e5c6c89e313fe1edc893bcb37c2d1c9bcab475677ed277",
+    "viewerFetchedAt": "2026-10-10T14:25:46.408Z"
+  },
+  "scope": {
+    "candidate": "Erin Murphy",
+    "office": "Minnesota Senate District 64",
+    "registrationNumber": "18443",
+    "reportYears": [
+      2021,
+      2022
+    ],
+    "fullHistoricalSenateScope": false
+  },
+  "reportProofs": [
+    {
+      "reportId": "18443:21:pcc:YE:0:0",
+      "reportYear": 2021,
+      "reportViewerUrl": "https://cfb.mn.gov/rptViewer/Main.php?do=viewPDF&downloadpdf=false&year=21&type=pcc&period=YE&se=0&regnum=18443&amend=0",
+      "originalReportPdfSha256": "3bed3b738b55ce45d16f34acf45be06f6e598cca28b3ab63f6db09844cfb65a1",
+      "originalPdfBytes": 444784,
+      "reportPdfFetchedAt": "2026-10-10T14:25:49.342Z",
+      "originalPeriodStartOn": "2021-01-01",
+      "originalPeriodEndOn": "2021-12-31",
+      "actualBoardReceivedOn": "2022-01-28",
+      "originalPdfHadPrintedDueDate": false,
+      "independentDueCalendar": {
+        "url": "https://cfb.mn.gov/pdf/publications/elections/candidate_packets/2022/House_2022.pdf",
+        "embeddedTitle": "2022 Disclosure Calendar for Candidates for Senate, House, and District Courts",
+        "originalPdfSha256": "3fd6263844d5063156d68d871bd2c575a5b5cef415a61b6125c068491f6b2b25",
+        "originalPdfBytes": 574447,
+        "fetchedAt": "2026-10-10T14:25:51.503Z",
+        "specificYearEndReportDueOn": "2022-01-31",
+        "originalCalendarDueDateVerified": true
+      },
+      "conservativeEarliestStatutoryAndFilingReleaseOn": "2022-02-01",
+      "independentlyProvenHistoricalPublicByOn": null,
+      "exactTransactionRowContainmentVerified": false,
+      "historicalPredictionEligibilityGranted": false
+    },
+    {
+      "reportId": "18443:22:pcc:YE:0:0",
+      "reportYear": 2022,
+      "reportViewerUrl": "https://cfb.mn.gov/rptViewer/Main.php?do=viewPDF&downloadpdf=false&year=22&type=pcc&period=YE&se=0&regnum=18443&amend=0",
+      "originalReportPdfSha256": "b03462fc7ac658f80b0dbecf511b16aef4039e151c9c5f1b5237f562a3f4586e",
+      "originalPdfBytes": 837933,
+      "reportPdfFetchedAt": "2026-10-10T14:25:50.830Z",
+      "originalPeriodStartOn": "2022-01-01",
+      "originalPeriodEndOn": "2022-12-31",
+      "actualBoardReceivedOn": "2023-01-30",
+      "originalPdfHadPrintedDueDate": false,
+      "independentDueCalendar": {
+        "url": "https://cfb.mn.gov/pdf/calendars/2023_general_disclosure_calendar.pdf",
+        "embeddedTitle": "2023 Campaign Finance Disclosure Calendar",
+        "originalPdfSha256": "1ecdc61c956baca0d9cae9c3c45e0a79df29e2e0906ec99fc5dc72fed7204e10",
+        "originalPdfBytes": 38871,
+        "fetchedAt": "2026-10-10T14:25:51.797Z",
+        "specificYearEndReportDueOn": "2023-01-31",
+        "originalCalendarDueDateVerified": true
+      },
+      "conservativeEarliestStatutoryAndFilingReleaseOn": "2023-02-01",
+      "independentlyProvenHistoricalPublicByOn": null,
+      "exactTransactionRowContainmentVerified": false,
+      "historicalPredictionEligibilityGranted": false
+    }
+  ],
+  "safeguards": {
+    "originalReportPdfSourceFilesSaved": false,
+    "originalCalendarPdfSourceFilesSaved": false,
+    "rawPdfTextsOrDonorDetailsSaved": false,
+    "officialAllSenateRegisteredFilerDenominator": null,
+    "officialRequiredReportDenominator": null,
+    "actualSenateFiledReportDenominator": null,
+    "historicalPublicAvailabilityProven": false,
+    "exactFinanceRowContainmentProven": false,
+    "noProductionDbReadsOrWrites": true,
+    "noServingOrModelTrainingChanges": true,
+    "completenessCertified": false
+  }
+}
