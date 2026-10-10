@@ -1,0 +1,140 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {execFileSync} from 'node:child_process';
+import {mkdtempSync,readFileSync,statSync,rmSync,writeFileSync} from 'node:fs';
+import {join} from 'node:path';
+import {tmpdir} from 'node:os';
+import seeds from '../data/evaluation/senate-sos-campaign-website-seeds-2021-25-v1.json' with {type:'json'};
+import {
+ auditStatewideSenateCampaignSourceRecovery,type HistoricalOriginalGeneralCensus,
+} from '../src/evidence/senate-statewide-winner-campaign-source-coverage.js';
+const observed=seeds.winners;
+function fakeOriginal(year:2020|2022):HistoricalOriginalGeneralCensus{
+ const winners=observed.filter(c=>c.sourceId==='sos-general-'+year);
+ const extra=year===2020?79:64;
+ return {
+  schema:'senate-official-general-2020-22-original-result-census-v1',
+  officialGeneralElectionDate:year===2020?'2020-11-03':'2022-11-08',
+  source:{
+   originalResultSha256:year===2020
+    ?'c2937b1fee5ae077603d892adf03c4ce83e2bb2592753680d5bfdeb4aecf7ba5'
+    :'eb8980245094cf8af0cd08a69c42ae0262fb5a692b09a49be2aee959aecaae74',
+   originalCandidateLookupSha256:year===2020
+    ?'8a0596d788b651ec27c05aa576bed31a3a51efd83c2cd2ee2ae5fdcc2f02965a'
+    :'0973d5962a0afc830ac9374c43f70269871a6377d956b552065c0cf06bec3538',
+   originalBytesMatchPreviouslyAcquiredGithubRunnerEvidence:true,
+   bothOriginalGovernmentFilesPresentAndStructurallyCrossChecked:true,
+   originalSOSFiledCandidateWebsiteFieldVerified:false,
+   completeHistoricalFilingUniverseVerified:false,
+  },
+  totals:{
+   senateDistricts:67,uniqueNamedBallotCandidates:year===2020?146:131,
+   nonWriteinElectionWinnerCandidates:67,nonwinningNamedCandidates:extra,
+   writeInAggregateRows:67,certifiedOriginalFiledCandidateUniverse:false,
+  },
+  candidates:[
+   ...winners.map(x=>({
+    electionYear:year,candidateName:x.candidateName,district:x.district,
+    generalOutcome:'winner' as const,
+    sourceEvidenceClass:'postvote_election_result_identity_only' as const,
+    campaignWebsiteOriginalSOSFilingField:null,eligibleForHistoricalPreVoteForecast:false as const,
+   })),
+   ...Array.from({length:extra},(_,i)=>({
+    electionYear:year,candidateName:'Mock Defeated Candidate '+i,
+    district:String((i%67)+1),generalOutcome:'nonwinner' as const,
+    sourceEvidenceClass:'postvote_election_result_identity_only' as const,
+    campaignWebsiteOriginalSOSFilingField:null,eligibleForHistoricalPreVoteForecast:false as const,
+   })),
+  ],
+ };
+}
+test('139 post-election winner observations, NOT 139 unique seated senators or known 2021-25 member years',()=>{
+ const r=auditStatewideSenateCampaignSourceRecovery();
+ assert.equal(r.totals.winnerElectionObservations,139);
+ assert.equal(r.totals.original2020And2022WinnerObservations,134);
+ assert.equal(r.totals.special2024And2025WinnerObservations,5);
+ assert.deepEqual(r.cohorts.map(x=>[x.cohort,x.winnerElectionObservations]),
+  [['2020_general',67],['2022_general',67],['2024_special',1],['2025_special',4]]);
+ assert.equal(r.scope.statewideMemberYearCompletenessCertified,false);
+ assert.equal(r.scope.independentStatewideLegislatorMembershipRosterReconciled,false);
+ assert.equal(r.scope.aMissingSourceIsNotAProvenAbsentCampaignWebsite,true);
+ assert.ok(r.winnerElectionObservations.every(x=>
+  x.membershipId===null&&!x.actualLegislativeMembershipStartEndVerified
+  &&x.immediateForecastEvidenceAdmissions===0));
+});
+test('historical source page recovery numerator, site URL leads and 2022 survey must remain distinct',()=>{
+ const r=auditStatewideSenateCampaignSourceRecovery();
+ assert.equal(r.totals.winnerWebsitePublisherLinkLeads,4);
+ assert.equal(r.totals.winnerOriginalHistoricIssuePageSources,3);
+ assert.equal(r.totals.winningCandidateOwnedArchivedIssueExcerptLeads,10);
+ assert.equal(r.totals.winnerPublisherSurveyQuotesWithoutHistoricalPublicBy,4);
+ assert.equal(r.totals.winnerElectionObservationsWithoutVerifiedHistoricCampaignIssuePage,136);
+ assert.equal(r.totals.losingCandidateIssueExcerptsNotAttachableToWinner,7);
+ assert.equal(r.totals.historicOriginalSOSFilingWebsiteAssignments,0);
+ assert.equal(r.totals.statementsAdmittedToForecast,0);
+ assert.equal(r.cohorts[0].archivedOriginalCampaignIssuePageWinners,0);
+ assert.equal(r.cohorts[1].archivedOriginalCampaignIssuePageWinners,0);
+ assert.equal(r.cohorts[1].winnersWithUnverified2022CandidateSurveyQuote,2);
+ assert.equal(r.cohorts[2].archivedOriginalCampaignIssuePageWinners,1);
+ assert.equal(r.cohorts[3].archivedOriginalCampaignIssuePageWinners,2);
+});
+test('named 2025 winners have source-specific proof; Amanda website lead is not historic issue text',()=>{
+ const r=auditStatewideSenateCampaignSourceRecovery();
+ const pick=(name:string)=>r.winnerElectionObservations.find(x=>x.candidateName===name);
+ assert.equal(pick('Ann Johnson Stewart')?.independentHistoricalOriginalCampaignPageCount,1);
+ assert.equal(pick('Keri Heintzeman')?.originalCampaignIssueShortExcerptLeads,3);
+ assert.equal(pick('Michael Holmstrom Jr')?.originalCampaignIssueShortExcerptLeads,3);
+ assert.equal(pick('Amanda Hemmingsen-Jaeger')?.candidateWebsitePublisherLeads.length,1);
+ assert.equal(pick('Amanda Hemmingsen-Jaeger')?.independentHistoricalOriginalCampaignPageCount,0);
+ assert.equal(pick('Doron Clark')?.candidateWebsitePublisherLeads.length,0);
+ assert.equal(pick('Doron Clark')?.websiteAbsentIndependentlyProven,false);
+ assert.equal(pick('Rob Kupec')?.candidateSubmitted2022PublisherSurveyExcerptLeads,2);
+ assert.equal(pick('Michael Kreun')?.candidateSubmitted2022PublisherSurveyExcerptLeads,2);
+ assert.ok(!r.winnerElectionObservations.some(x=>x.candidateName==='Louis McNutt'));
+});
+test('both state original result audits must reconcile all 67 exact winning name and district identities',()=>{
+ const yes=auditStatewideSenateCampaignSourceRecovery({
+  y2020:fakeOriginal(2020),y2022:fakeOriginal(2022),
+ });
+ assert.equal(yes.totals.originalGovernmentCensusesReconciledInThisRun,2);
+ assert.ok(yes.winnerElectionObservations.filter(x=>x.electionYear===2020
+  ||x.electionYear===2022).every(x=>x.independentOriginalGeneralCensusCrossMatchedInThisRun));
+ const one=fakeOriginal(2020);
+ one.candidates.find(x=>x.generalOutcome==='winner'&&x.district==='4')!.candidateName='Different Person';
+ assert.throws(()=>auditStatewideSenateCampaignSourceRecovery({
+  y2020:one,y2022:fakeOriginal(2022),
+ }),/mismatched separately downloaded original SOS candidate/);
+});
+test('source audit fails closed on fake filing evidence, postvote forecast availability or missing original source',()=>{
+ const y20=fakeOriginal(2020),y22=fakeOriginal(2022);
+ assert.throws(()=>auditStatewideSenateCampaignSourceRecovery({y2020:y20}),
+  /Both raw-original/);
+ const invalid=fakeOriginal(2020);
+ invalid.candidates[0].eligibleForHistoricalPreVoteForecast=true as false;
+ assert.throws(()=>auditStatewideSenateCampaignSourceRecovery({
+  y2020:invalid,y2022:y22,
+ }),/corrupted or backdated/);
+ const bad=fakeOriginal(2022);
+ bad.source.originalResultSha256='b'.repeat(64);
+ assert.throws(()=>auditStatewideSenateCampaignSourceRecovery({
+  y2020:y20,y2022:bad,
+ }),/original byte provenance/);
+});
+test('offline CLI preserves explicit no-production/no-member-year status and refuses overwrites',()=>{
+ const dir=mkdtempSync(join(tmpdir(),'senate-statewide-source-cohorts-'));
+ try{
+  const output=join(dir,'report.json');
+  const argv=['--import','tsx','scripts/audit-senate-statewide-campaign-source-coverage-offline.ts'];
+  execFileSync('node',[...argv,'--output',output],{timeout:20000,stdio:'pipe'});
+  const obj=JSON.parse(readFileSync(output,'utf8'));
+  assert.equal(obj.totals.winnerElectionObservations,139);
+  assert.equal(obj.totals.originalGovernmentCensusesReconciledInThisRun,0);
+  assert.equal(obj.cliOriginalSOSSourceBytesRehashedAndCrosschecked,false);
+  assert.equal(obj.scope.statewideMemberYearCompletenessCertified,false);
+  assert.equal(statSync(output).mode&0o777,0o600);
+  assert.throws(()=>execFileSync('node',[...argv,'--output',output],{timeout:20000,stdio:'pipe'}));
+  writeFileSync(join(dir,'fake-sos.txt'),'not valid election file');
+  assert.throws(()=>execFileSync('node',[...argv,'--2020-st',join(dir,'fake-sos.txt'),
+   '--output',join(dir,'second.json')],{timeout:20000,stdio:'pipe'}));
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
