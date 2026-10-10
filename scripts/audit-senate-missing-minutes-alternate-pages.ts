@@ -12,6 +12,7 @@ import { dirname, resolve } from 'node:path';
 import {
   SENATE_MISSING_MINUTES_SOURCE,
   officialMissingMinutesMeetingPage,
+  isSafeSameMeetingLrlRedirect,
   selectMissingMinutesFromExactIndex,
   type IndexedMissingMinutes,
   type MissingSenateMinutesYear,
@@ -99,13 +100,32 @@ async function fetchDatePage(url:string){
   if(u.protocol!=='https:'||u.hostname!=='www.lrl.mn.gov'
      ||u.pathname!=='/minutes/comm.aspx'||u.searchParams.size!==4)
     throw Error('Refusing unscoped or unexpected committee page');
-  const res=await fetch(url,{
-    redirect:'manual',
-    headers:{accept:'text/html,application/xhtml+xml',
-      'user-agent':'VotePredict/2.0 historical-Senate-committee-minutes-source-audit'},
-    signal:AbortSignal.timeout(45_000),
-  });
-  if(res.status!==200) throw Error('Original date-filtered LRL page HTTP status '+res.status);
+  // Official LRL 301 canonicalization comm.aspx -> comm is expected.
+  // No cross-host, date, chamber or committee ID changes are permitted.
+  let target=url;
+  let res:Response | undefined;
+  let redirectCount=0;
+  for(let attempt=0;attempt<3;attempt++){
+    res=await fetch(target,{
+      redirect:'manual',
+      headers:{accept:'text/html,application/xhtml+xml',
+        'user-agent':'VotePredict/2.0 historical-Senate-committee-minutes-source-audit'},
+      signal:AbortSignal.timeout(45_000),
+    });
+    if(res.status===200)break;
+    if(![301,302,307,308].includes(res.status))
+      throw Error('Official date-filtered LRL page HTTP status '+res.status);
+    const location=res.headers.get('location');
+    if(!location)throw Error('Official LRL redirect was missing Location');
+    const next=new URL(location,target).toString();
+    if(!isSafeSameMeetingLrlRedirect(url,next))
+      throw Error('Official Senate committee redirect lost source hearing identity');
+    await res.body?.cancel();
+    target=next;
+    redirectCount++;
+  }
+  if(!res || res.status!==200)
+    throw Error('Official Senate meeting exceeded two canonical redirects');
   const header=res.headers.get('content-length');
   if(header!==null&&Number.isFinite(Number(header))&&Number(header)>2_000_000)
     throw Error('Original committee page oversized');
@@ -127,7 +147,7 @@ async function fetchDatePage(url:string){
   for(const c of chunks){bytes.set(c,i);i+=c.byteLength}
   const html=new TextDecoder().decode(bytes);
   if(!/<html|<main|<h[1-6]/i.test(html))throw Error('Official committee source did not resemble HTML');
-  return {html,rawHtmlSha256:sha(bytes),bytes:bytes.length};
+  return {html,rawHtmlSha256:sha(bytes),bytes:bytes.length,finalUrl:target,redirectCount};
 }
 async function main(){
   const {year,source,output}=getOptions();
@@ -149,10 +169,12 @@ async function main(){
       const pageUrl=officialMissingMinutesMeetingPage(row);
       try{
         const page=await fetchDatePage(pageUrl);
-        const flags=analyzeHtml(row,page.html,pageUrl);
+        const flags=analyzeHtml(row,page.html,page.finalUrl);
         results.push({
           year:row.year,committeeName:row.committeeName,meetingDate:row.meetingDate,
           originalIndexCommitteeUrl:row.committeeUrl,dateFilteredOfficialPage:pageUrl,
+          canonicalOfficialMeetingPage:page.finalUrl,
+          sameHearingOfficialRedirectsFollowed:page.redirectCount,
           datePageHtmlSha256:page.rawHtmlSha256,datePageBytes:page.bytes,
           indexedOriginalMinutesPdfLinks:0,
           committeeMissingMinutesLinkCount:groupCounts.get(row.committeeName),
