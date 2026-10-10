@@ -358,7 +358,7 @@ interface PinnedReplayCapture {
   id:string;candidateName:string;district:string;electionYear:number;
   generalElectionOn:string;originalUrl:string;
   capturedAt:string;timestamp:string;cdxDigest:string;archiveUrl:string;
-  originalHistoricPageBytesVerified:false;forecastEligible:false;
+  originalHistoricPageBytesVerified:boolean;forecastEligible:boolean;
 }
 export function selectedWaybackHistoricalReplayTargets():PinnedReplayCapture[] {
   const source=pinnedWaybackReplays;
