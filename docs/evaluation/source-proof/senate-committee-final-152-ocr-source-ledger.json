@@ -1,0 +1,300 @@
+{
+  "schemaVersion": "senate-committee-original-final-152-ocr-artifact-source-ledger-v1",
+  "issue": 864,
+  "recordedOn": "2026-10-10",
+  "sourceAuthority": "Minnesota Legislative Reference Library",
+  "originalSourceRun": 38066441841,
+  "sourceOcrRun": 38075234242,
+  "mergedOcrPr": 888,
+  "mergedMainSha": "3bc42308b3a49984d149ffc9f0f2afd363c0ade0",
+  "premergeCI": 38075059670,
+  "postmergeCI": 38075234237,
+  "original2022AuditArtifactId": 11674729430,
+  "original2025AuditArtifactId": 11675014092,
+  "selectedOriginalUrlListSha256": {
+    "2022": "794bd1003290f13e5c44e1ab27b545eee9632f8a09c09b0ed6080afa275b3be9",
+    "2025": "29d0656929dc92be4b283b296f1101cbbf6ad90ef991e31c6e1b30ceb6fee515"
+  },
+  "batchProofs": [
+    {
+      "year": 2022,
+      "batch": 0,
+      "artifactId": 11677439544,
+      "zipSha256": "adac85f1b36808b3a781a3745f3d9fdba54d632d07a06fd2ff31df4ed0a737b5",
+      "jsonSha256": "7b424b922f0dcd4d542615875ac29e05443ea9e5c66b2b4a4f8f1571accafd3f",
+      "ocrRecovered": 19,
+      "originalPdfFailures": 0,
+      "parserNamedRolls": 1,
+      "parserNamedChoices": 10,
+      "parserCountOnlyRolls": 1,
+      "parserVoiceContext": 8,
+      "parserResultOnlyContext": 26,
+      "possibleUnparsedRollSignal": 0,
+      "noSupportedActionPdfs": 11
+    },
+    {
+      "year": 2022,
+      "batch": 1,
+      "artifactId": 11678168763,
+      "zipSha256": "6bb4fa76069117a1ef02cfab8bcd34a16240c214a641544a7d2a10274174685e",
+      "jsonSha256": "85ea10d5683bf4df8511177564aefcc4e035603750127a4639ab61f1cf8c5649",
+      "ocrRecovered": 19,
+      "originalPdfFailures": 0,
+      "parserNamedRolls": 2,
+      "parserNamedChoices": 20,
+      "parserCountOnlyRolls": 0,
+      "parserVoiceContext": 5,
+      "parserResultOnlyContext": 21,
+      "possibleUnparsedRollSignal": 1,
+      "noSupportedActionPdfs": 10
+    },
+    {
+      "year": 2022,
+      "batch": 2,
+      "artifactId": 11677629231,
+      "zipSha256": "80a8ef6cc1d52ce78cb64db82cf870019e517a2326cac4c57ab6e9bb65b2ff38",
+      "jsonSha256": "ec13f318c45003b15c378d72354602fc0c322bbe29043104e49b77176a8eede6",
+      "ocrRecovered": 18,
+      "originalPdfFailures": 0,
+      "parserNamedRolls": 1,
+      "parserNamedChoices": 5,
+      "parserCountOnlyRolls": 0,
+      "parserVoiceContext": 6,
+      "parserResultOnlyContext": 21,
+      "possibleUnparsedRollSignal": 1,
+      "noSupportedActionPdfs": 10
+    },
+    {
+      "year": 2022,
+      "batch": 3,
+      "artifactId": 11677879406,
+      "zipSha256": "57210056445f0d35d158c305771d56ff6469435b1d03410b4da2e593c7107101",
+      "jsonSha256": "7301c1b7a7a4cc4061916debb5da40cd697b676c88e5896160bf2d09a02d5b6e",
+      "ocrRecovered": 18,
+      "originalPdfFailures": 0,
+      "parserNamedRolls": 2,
+      "parserNamedChoices": 15,
+      "parserCountOnlyRolls": 1,
+      "parserVoiceContext": 29,
+      "parserResultOnlyContext": 31,
+      "possibleUnparsedRollSignal": 1,
+      "noSupportedActionPdfs": 6
+    },
+    {
+      "year": 2022,
+      "batch": 4,
+      "artifactId": 11678358764,
+      "zipSha256": "6651575502c1ecd1dbfab523f66db273f1eff52e5bb22fc52df06e2c4ff0f6b1",
+      "jsonSha256": "b3cb9a2f532bd6ef54b63316318b60f4ac8ec187132107088224cac7aa08659e",
+      "ocrRecovered": 18,
+      "originalPdfFailures": 0,
+      "parserNamedRolls": 4,
+      "parserNamedChoices": 40,
+      "parserCountOnlyRolls": 1,
+      "parserVoiceContext": 4,
+      "parserResultOnlyContext": 14,
+      "possibleUnparsedRollSignal": 1,
+      "noSupportedActionPdfs": 9
+    },
+    {
+      "year": 2022,
+      "batch": 5,
+      "artifactId": 11678323861,
+      "zipSha256": "ceb67909f3afb42198674b6a63570bcd258cd2ff4d7117f424af69cd59cab301",
+      "jsonSha256": "15c3e3a03a247d63729f6dbbad212f99f591baecd64efd229f45a0787d9e549e",
+      "ocrRecovered": 18,
+      "originalPdfFailures": 0,
+      "parserNamedRolls": 1,
+      "parserNamedChoices": 9,
+      "parserCountOnlyRolls": 0,
+      "parserVoiceContext": 4,
+      "parserResultOnlyContext": 23,
+      "possibleUnparsedRollSignal": 0,
+      "noSupportedActionPdfs": 11
+    },
+    {
+      "year": 2025,
+      "batch": 0,
+      "artifactId": 11677409668,
+      "zipSha256": "e4651aac62d0e9130c577f74a3668abb85b296eaf369e8a878e9518ad2347380",
+      "jsonSha256": "7a44ab91902f437bd3a77c1ec975f413eed8cb38de03c066500133e12f9f93b8",
+      "ocrRecovered": 14,
+      "originalPdfFailures": 0,
+      "parserNamedRolls": 0,
+      "parserNamedChoices": 0,
+      "parserCountOnlyRolls": 0,
+      "parserVoiceContext": 0,
+      "parserResultOnlyContext": 7,
+      "possibleUnparsedRollSignal": 0,
+      "noSupportedActionPdfs": 9
+    },
+    {
+      "year": 2025,
+      "batch": 1,
+      "artifactId": 11678273765,
+      "zipSha256": "6fa571cf2a1f13861d4ec1687975a2ccf18b79b3007d6ce722b098587c2d9691",
+      "jsonSha256": "f7ff5ba388cfe3086cb4515850e258166984b17d1d5fd1269d7b3401c8f85d4c",
+      "ocrRecovered": 14,
+      "originalPdfFailures": 0,
+      "parserNamedRolls": 3,
+      "parserNamedChoices": 27,
+      "parserCountOnlyRolls": 0,
+      "parserVoiceContext": 4,
+      "parserResultOnlyContext": 4,
+      "possibleUnparsedRollSignal": 0,
+      "noSupportedActionPdfs": 8
+    },
+    {
+      "year": 2025,
+      "batch": 2,
+      "artifactId": 11677519671,
+      "zipSha256": "f9e8b54d841b928e8886f197cafab6fe2dbc41f6e439408d1b86f34f5c09e670",
+      "jsonSha256": "5212071837dc47404c4836ce1a996a9671f677a842b52008603852682eb6ea6b",
+      "ocrRecovered": 14,
+      "originalPdfFailures": 0,
+      "parserNamedRolls": 0,
+      "parserNamedChoices": 0,
+      "parserCountOnlyRolls": 0,
+      "parserVoiceContext": 4,
+      "parserResultOnlyContext": 19,
+      "possibleUnparsedRollSignal": 0,
+      "noSupportedActionPdfs": 4
+    }
+  ],
+  "namedSourceHighlights": [
+    {
+      "meetingDate": "2022-02-09",
+      "committeeName": "Finance",
+      "officialPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220209/Fin_20220209_minutes.pdf",
+      "pdfSha256": "b359cd1b7f2dba01fbefa4dd94a77e99046f3efa71d2476c452ccb443bd63894",
+      "ocrTextSha256": "c7223e379094b8aec02bc9883189ca30a982064a2296658e40c961a64d91d05b",
+      "namedRolls": 1,
+      "namedChoices": 10
+    },
+    {
+      "meetingDate": "2022-02-10",
+      "committeeName": "Finance",
+      "officialPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220210/Fin_20220210_minutes.pdf",
+      "pdfSha256": "2b3241b7fbbca48e36a44fb34e38489379bf555502ec3d4f4d0f909ba0645bde",
+      "ocrTextSha256": "073a7ec69827fee57e32c8bf1873f421545fdda9128f7e52f5bce59ef95f2eb6",
+      "namedRolls": 3,
+      "namedChoices": 30
+    },
+    {
+      "meetingDate": "2022-02-23",
+      "committeeName": "Labor and Industry Policy",
+      "officialPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Labor/20220223/Labor_20220223_Minutes.pdf",
+      "pdfSha256": "89fb989e5ebb744028fd92ad034386e081b445f7298bdc4c6ddb7b980c72ad47",
+      "ocrTextSha256": "f810d288e8b373826f5178250f6d6042d9358d478c85521eddd1259fc5994580",
+      "namedRolls": 1,
+      "namedChoices": 5
+    },
+    {
+      "meetingDate": "2022-03-02",
+      "committeeName": "Finance",
+      "officialPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220302/Fin_20220302_minutes.pdf",
+      "pdfSha256": "1b31afbe8911d181a764e377d08932bc856193d6fb4c34a997fda4132b2c22a5",
+      "ocrTextSha256": "376271c02ae11a1135a4f575d3b55d866a5cc0823a38a5dd0cc40ed3dfd0af96",
+      "namedRolls": 1,
+      "namedChoices": 10
+    },
+    {
+      "meetingDate": "2022-03-09",
+      "committeeName": "Finance",
+      "officialPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220309/Fin_20220309_minutes.pdf",
+      "pdfSha256": "ceacc9308afa43d9aa290e2a2253aeabe9fd17bcf331d6c7b117d3e2fc86dcb8",
+      "ocrTextSha256": "e98f9456497deb83b5b6714d2643de7bd79a47a956c8e990138a4ab9f6ceabbe",
+      "namedRolls": 1,
+      "namedChoices": 9
+    },
+    {
+      "meetingDate": "2022-03-30",
+      "committeeName": "Labor and Industry Policy",
+      "officialPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Labor/20220330/Labor_20220330_Minutes.pdf",
+      "pdfSha256": "51ff6669cd6f38fd0c817e37a3169665d8eb631689855df471e8d05c5d49cf5f",
+      "ocrTextSha256": "0ca25a47b3a97c7abe714f7ccf020532768f5ea92c343f4cc8e84a487350deb9",
+      "namedRolls": 1,
+      "namedChoices": 5
+    },
+    {
+      "meetingDate": "2022-04-25",
+      "committeeName": "Finance",
+      "officialPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220425/Fin_20220425_minutes.pdf",
+      "pdfSha256": "612df11c9a4ed2a87cc2745ca6b744ba3bc35dfbdbdded4c88698d843e152036",
+      "ocrTextSha256": "7dc9d44c5f1c6a36844e241b481b8aad6ac3f30385e49c583dadde70ed9bca22",
+      "namedRolls": 2,
+      "namedChoices": 20
+    },
+    {
+      "meetingDate": "2022-05-19",
+      "committeeName": "Finance",
+      "officialPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220519/Fin_20220519_minutes.pdf",
+      "pdfSha256": "b173012755b653e857bb3e71b24f14f4c96fcdf34f0c6bf8d09a3bd688f26b10",
+      "ocrTextSha256": "5b9bb5c6ff851ebffd36c65a0b89962f27860bb58ed97442e7ec5a058d33b291",
+      "namedRolls": 1,
+      "namedChoices": 10
+    },
+    {
+      "meetingDate": "2025-04-23",
+      "committeeName": "Taxes",
+      "officialPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/taxes/20250423/Taxes_20250423_Minutes.pdf",
+      "pdfSha256": "4580d4257925e6f54711bf72b6bed8b4bcfb756284e411f7c14b2b628e31665a",
+      "ocrTextSha256": "84da5ed69657dbb91ea6b1ef06cbfd0ea29bce66d5004131d4b07717b24eda90",
+      "namedRolls": 3,
+      "namedChoices": 27
+    }
+  ],
+  "aggregateNewBatch": {
+    "originalsAttempted": 152,
+    "originalsOcrRecovered": 152,
+    "sourceFailures": 0,
+    "namedRolls": 14,
+    "namedMemberChoices": 126,
+    "countOnlyRolls": 3,
+    "voiceContext": 64,
+    "unanimousContext": 0,
+    "resultOnlyContext": 166,
+    "contextActionCandidates": 230,
+    "originalsWithNoSupportedActions": 78,
+    "possibleUnparsedRollSignal": 4
+  },
+  "allOcrCohorts": {
+    "initialScannedOriginals": 207,
+    "previousOcrRecovered": 55,
+    "newOcrRecovered": 152,
+    "finalOcrRecovered": 207,
+    "remainingScannedOriginals": 0,
+    "yearStatus": {
+      "2022": {
+        "originalLowText": 121,
+        "recovered": 121
+      },
+      "2023": {
+        "originalLowText": 22,
+        "recovered": 22
+      },
+      "2024": {
+        "originalLowText": 13,
+        "recovered": 13
+      },
+      "2025": {
+        "originalLowText": 51,
+        "recovered": 51
+      }
+    }
+  },
+  "fullPerOriginalMetadataJsonSha256": "c300d4c1a9443193200cd1c830a9993edc0f0919c2147996564b43f218c2cfa9",
+  "limitations": {
+    "original2021PrintSenateMeetingAndVoteDenominator": null,
+    "year2022PrintElectronicMayDiffer": true,
+    "indexedMeetingsWithoutMinutesLink": 141,
+    "originalEmbeddedTextParsedButUnparsedRollCuePdfs": 141,
+    "additionalNewOcrPdfsWithPossibleUnparsedRollCue": 4,
+    "parserCandidateActionsAreHumanVerifiedDistinctMotions": false,
+    "sourceToPrivateDbReconciliationPerformed": false,
+    "productionHistoricalEvidenceChanges": false,
+    "all2021_2025OfficialMeetingsDenominator": null,
+    "all2021_2025RecordedVoteDenominator": null,
+    "noProductionDbOrModelSchedulerChanges": true
+  }
+}
