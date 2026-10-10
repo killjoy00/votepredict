@@ -57,7 +57,7 @@ function main(){
   if(payloadFile&&!warcFile)throw new Error('Payload saving requires verified offline WARC input');
   if(recordNumber&&(!/^[1-9]\d*$/.test(recordNumber)||+recordNumber>400))
     throw new Error('Use a 1-based record number of 1–400');
-  const files=[sitesFile,catalogFile,indexFile,warcFile].filter((x):x is string=>!!x).map(resolve);
+  const files=[sitesFile,catalogFile,indexFile,warcFile].filter((x):x is string=>!!x).map(x=>resolve(x));
   if(files.includes(resolve(out))||payloadFile&&[...files,resolve(out)].includes(resolve(payloadFile)))
     throw new Error('Refusing to overwrite or alias input/report and original-payload outputs');
   const leads=json<CampaignPageLeadManifest>(sitesFile,4*1024*1024);
