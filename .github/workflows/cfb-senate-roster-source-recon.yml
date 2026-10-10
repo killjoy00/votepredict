@@ -1,0 +1,27 @@
+name: One-time CFB Senate historical district roster source reconnaissance
+
+# Scoped source probe. Runs for edits to this workflow/script on its own PR,
+# never on schedule or a production deployment. No database credentials.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-senate-roster-source-recon.yml
+      - scripts/probe-cfb-senate-district-roster.ts
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-official-district-source-shape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Probe 3 official Senate districts across 4 election segments, metadata only
+        run: node --import tsx scripts/probe-cfb-senate-district-roster.ts
