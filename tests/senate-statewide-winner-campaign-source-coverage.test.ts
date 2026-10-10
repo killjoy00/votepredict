@@ -10,6 +10,31 @@ import {
 } from '../src/evidence/senate-statewide-winner-campaign-source-coverage.js';
 const observed=seeds.winners;
 function verifiedSenatorsFixture(){
+ // An independently documented member can win elections in multiple years.
+ // The directory has ONE row per person, with combined service terms.
+ // Never create one fake person per election-winner observation.
+ const members=new Map<string,{
+   officialName:string;officialNameRaw:string;
+   officialSourceUrl:'https://www.lrl.mn.gov/legdb/senate_dir';
+   senateServiceTerms:Array<{startsYear:number;endsYear:number;district:string}>;
+ }>();
+ for(const observation of observed){
+   const norm=observation.candidateName.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().split(/\s+/);
+   const id=(norm[0]??'')+'|'+(norm.at(-1)??'');
+   const sourceYear=observation.sourceId==='sos-general-2020'?2021:
+     observation.sourceId==='sos-general-2022'?2023:2025;
+   const endYear=observation.sourceId==='sos-general-2020'?2022:
+     observation.sourceId==='sos-general-2022'?2024:2026;
+   const existing=members.get(id);
+   const term={startsYear:sourceYear,endsYear:endYear,district:observation.district};
+   if(existing)existing.senateServiceTerms.push(term);
+   else members.set(id,{
+     officialName:observation.candidateName,officialNameRaw:observation.candidateName,
+     officialSourceUrl:'https://www.lrl.mn.gov/legdb/senate_dir',
+     senateServiceTerms:[term],
+   });
+ }
+
  return {
   schema:'mn-lrl-official-senate-ever-served-directory-v1' as const,
   source:{
@@ -19,23 +44,15 @@ function verifiedSenatorsFixture(){
    originalHistoricDateForDisplayedDirectoryEstablished:false as const,
    directoryIsSenatorServiceNotCandidateFiling:true as const,
   },
-  senators:observed.map(x=>({
-   officialName:x.candidateName,officialNameRaw:x.candidateName,
-   officialSourceUrl:'https://www.lrl.mn.gov/legdb/senate_dir' as const,
-   senateServiceTerms:[{
-    startsYear:x.sourceId==='sos-general-2020'?2021:
-      x.sourceId==='sos-general-2022'?2023:2025,
-    endsYear:x.sourceId==='sos-general-2020'?2022:
-      x.sourceId==='sos-general-2022'?2024:2026,
-    district:x.district,
-   }],
-  })),
-  // The previously serving senator is in scope even though he LOST in 2020.
-  ...[{
-   officialName:'Jerry Relph',officialNameRaw:'Relph, Jerry',
-   officialSourceUrl:'https://www.lrl.mn.gov/legdb/senate_dir' as const,
-   senateServiceTerms:[{startsYear:2017,endsYear:2020,district:'14'}],
-  }],
+  senators:[
+   ...members.values(),
+   // An independent previously served Senate member also qualifies after a lost election.
+   {
+     officialName:'Jerry Relph',officialNameRaw:'Relph, Jerry',
+     officialSourceUrl:'https://www.lrl.mn.gov/legdb/senate_dir' as const,
+     senateServiceTerms:[{startsYear:2017,endsYear:2020,district:'14'}],
+   },
+  ],
  };
 }
 function fakeOriginal(year:2020|2022):HistoricalOriginalGeneralCensus{
