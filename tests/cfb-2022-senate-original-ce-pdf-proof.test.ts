@@ -89,6 +89,24 @@ test('first-page identity requires exact Senate district, registration and C/E c
   const ep=report(e);
   assert.equal(parseCfb2022OriginalCeHeader(e,ep.text)?.periodEndOn,'2022-10-24');
 });
+test('old 2022 form allows registration number separated from label but never trusts conflicting direct registration',()=>{
+  const t=targets.find(x=>x.period==='C')!;
+  const text=report(t).text;
+  // Older forms often print the registration id beside an unrelated field
+  // rather than immediately after the Registration Number label.
+  const older=text.replace('Registration Number: '+t.reg,
+    'Registration Number: Candidate filed electronically\nCommittee ID '+t.reg);
+  assert.equal(parseCfb2022OriginalCeHeader(t,older)?.identityMatches,true);
+  assert.equal(parseCfb2022OriginalCeHeader(t,
+    older.replace('Committee ID '+t.reg,'Committee ID 987654')),null);
+  // A direct, different id is authoritative negative evidence even when the
+  // expected id appears later in the vicinity of the registration label.
+  const contradict=text.replace('Registration Number: '+t.reg,
+    'Registration Number: 99999 Committee ID '+t.reg);
+  assert.equal(parseCfb2022OriginalCeHeader(t,contradict),null);
+  assert.equal(parseCfb2022OriginalCeHeader(t,
+    older.replace('Registration Number:','Committee tracking code:')),null);
+});
 test('PDF only from matching CFB report URL; all verified facts never imply historical public-by proof',()=>{
   const t=targets.find(x=>x.period==='C')!;
   const x=auditCfb2022OriginalCePdf(t,report(t),calendar);
