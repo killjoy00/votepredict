@@ -2,7 +2,8 @@
 -- Requires separate, explicit owner authorization on a correct read-only database.
 -- Restrict 2025-26 membership evidence to calendar year 2025, not 2026.
 -- Result column aliases match the offline CLI JSONL reader.
--- This is a snapshot of recorded, timestamped issue_position items, NOT source completeness.
+-- Counts campaign-site issue positions ONLY (not member/caucus issue positions),
+-- filtered to historical date bounds; NOT a source-completeness claim.
 BEGIN TRANSACTION READ ONLY;
 
 SELECT m.id::text AS "membershipId",
@@ -11,6 +12,7 @@ SELECT m.id::text AS "membershipId",
        m.district::text AS "district",
        COUNT(ei.id) FILTER (
          WHERE ei.metadata->>'contextType'='issue_position'
+           AND ei.metadata->>'sourceSubtype'='campaign_site_page'
            AND ei.published_at IS NOT NULL
            AND ei.published_at < CASE s.slug
              WHEN '2021-2022' THEN TIMESTAMPTZ '2023-01-01T00:00:00Z'
