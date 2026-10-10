@@ -38,7 +38,7 @@ for(const surname of names){
 if(names.length!==14||new Set(names.map(normalizeMemberName)).size!==14)
   throw Error('Not an exactly fourteen-surname public Elections committee roster');
 export function inspect2023ElectionsCandidateAgainstOfficialRoster(input:{
-  choiceIdentitySha256:string[];
+  sourceChoiceFingerprintSha256:string[];
   sourceYeaCount:number;sourceNayCount:number;
   explicitlyNamedYeas:number;explicitlyNamedNays:number;
   explicitlyListedAbsent:number;explicitlyListedPass:number;
@@ -51,7 +51,7 @@ export function inspect2023ElectionsCandidateAgainstOfficialRoster(input:{
   sourceChoiceIdentityStillNotVerifiedByDailyAttendance:true;
   independentActualMotionAndHistoricDatabaseEqualityUnverified:true;
 }{
-  if(input.choiceIdentitySha256.length!==14||
+  if(!Array.isArray(input.sourceChoiceFingerprintSha256)||input.sourceChoiceFingerprintSha256.length!==14||
      input.namedYeaNayTallyMatchesSource!==true||
      input.explicitNamesAreUniqueWithinRoll!==true||
      input.sourceYeaCount!==input.explicitlyNamedYeas||
@@ -61,7 +61,7 @@ export function inspect2023ElectionsCandidateAgainstOfficialRoster(input:{
     throw Error('Provisional original-roll choice count or named tally inconsistent with 14 members');
   const seen=new Set<string>();
   let yea=0,nay=0,absent=0,pass=0;
-  for(const digest of input.choiceIdentitySha256){
+  for(const digest of input.sourceChoiceFingerprintSha256){
     if(!/^[a-f0-9]{64}$/.test(digest))throw Error('Invalid original named source fingerprint');
     const expected=officialMap.get(digest);
     if(!expected)throw Error('Original Senate source name outside 2023 public Elections roster');
@@ -80,7 +80,7 @@ export function inspect2023ElectionsCandidateAgainstOfficialRoster(input:{
     official2023CommitteeRosterCoversAllFourteenNamedSourceRows:true,
     explicitNamedYeaNayCount:yea+nay,
     explicitNonvotingStatusCount:absent+pass,
-    absenteeFingerprintContainsAnderson:input.choiceIdentitySha256.includes(
+    absenteeFingerprintContainsAnderson:input.sourceChoiceFingerprintSha256.includes(
       sha('absent:'+normalizeMemberName('Anderson'))),
     sourceChoiceIdentityStillNotVerifiedByDailyAttendance:true,
     independentActualMotionAndHistoricDatabaseEqualityUnverified:true,

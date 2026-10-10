@@ -1,6 +1,7 @@
 name: One-time 2023 Elections original roll committee surname roster crosscheck
 
 # Original first-party SHA-verified source metadata only; no PDF re-fetch,
+# Re-run only to align on-disk immutable source proof field `sourceChoiceFingerprintSha256`.
 # web crawl, private DB, model, predictions, scheduler or 2027 changes.
 on:
   push:
