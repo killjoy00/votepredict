@@ -36,7 +36,7 @@ function main() {
     if (arg.startsWith('--') && [...allowed].some(flag => arg.startsWith(flag + '='))) continue;
     if (arg.startsWith('--') || i === 0 && !arg.startsWith('--')) throw Error('Unsupported option');
   }
-  const paths = [input, out, sql].map(resolve);
+  const paths = [input, out, sql].map(p => resolve(p));
   if (new Set(paths).size !== 3) throw Error('Input and output paths must be distinct');
   const contents = readFileSync(paths[0]!, 'utf8');
   if (contents.length > 30_000_000) throw Error('Private JSONL export exceeds 30 MiB');
