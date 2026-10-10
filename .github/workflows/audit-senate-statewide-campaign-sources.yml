@@ -1,0 +1,56 @@
+name: Audit 2021-25 Senate campaign sources across all official winner observations
+
+# One-time internal PR audit of previously acquired PUBLIC SOS original bytes.
+# Nothing is scheduled; no Vercel, Neon, secret env, DB writes or forecasts.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-senate-statewide-campaign-sources.yml
+      - src/evidence/senate-statewide-winner-campaign-source-coverage.ts
+      - scripts/audit-senate-statewide-campaign-source-coverage-offline.ts
+      - tests/senate-statewide-winner-campaign-source-coverage.test.ts
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  public-archive-crosscheck:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-statewide-senate-campaign-winner-coverage-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Download earlier 2020/22 original public SOS text files, verified in #948
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38089571113
+          name: senate-2020-22-public-candidate-original-source-acquisition
+          github-token: ${{ github.token }}
+          path: artifacts/official-originals
+      - name: Independently rehash all four SOS originals and reconcile full 139 winner-source observations
+        run: |
+          node --import tsx scripts/audit-senate-statewide-campaign-source-coverage-offline.ts \
+            --2020-st artifacts/official-originals/2020-sos-general-stsenate.response \
+            --2020-cand artifacts/official-originals/2020-sos-general-cand.response \
+            --2022-st artifacts/official-originals/2022-sos-general-stsenate.response \
+            --2022-cand artifacts/official-originals/2022-sos-general-cand.response \
+            --output artifacts/senate-2021-25-statewide-source-recovery-gaps.json
+      - name: Preserve bounded public source coverage report without original ballot source files
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-2021-25-source-coverage-winner-observations-v1
+          path: artifacts/senate-2021-25-statewide-source-recovery-gaps.json
+          if-no-files-found: error
+          retention-days: 30
