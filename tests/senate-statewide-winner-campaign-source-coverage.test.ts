@@ -135,8 +135,12 @@ test('historical source page recovery numerator, site URL leads and 2022 survey 
 });
 test('named 2025 winners have source-specific proof; Amanda website lead is not historic issue text',()=>{
  const r=auditStatewideSenateCampaignSourceRecovery(undefined,verifiedSenatorsFixture());
- const pick=(name:string)=>r.senatorElectionObservations.find(x=>x.candidateName===name);
- assert.equal(pick('Ann Johnson Stewart')?.independentHistoricalOriginalCampaignPageCount,1);
+ const pick=(name:string,year?:number)=>r.senatorElectionObservations.find(x=>
+   x.candidateName===name&&(year===undefined||x.electionYear===year));
+ // Same senator appears as a 2020 general winner AND a 2024 special winner;
+ // the verified 2024 platform must not be retrospectively attributed to 2020.
+ assert.equal(pick('Ann Johnson Stewart',2024)?.independentHistoricalOriginalCampaignPageCount,1);
+ assert.equal(pick('Ann Johnson Stewart',2020)?.independentHistoricalOriginalCampaignPageCount,0);
  assert.equal(pick('Keri Heintzeman')?.originalCampaignIssueShortExcerptLeads,3);
  assert.equal(pick('Michael Holmstrom Jr')?.originalCampaignIssueShortExcerptLeads,3);
  assert.equal(pick('Amanda Hemmingsen-Jaeger')?.candidateWebsitePublisherLeads.length,1);
