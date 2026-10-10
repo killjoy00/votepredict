@@ -40,11 +40,11 @@ test('SOS special-election filing lists preserve candidates absent from winner-o
   assert.equal(report.scope.officialFiledCandidateUniverseComplete,false);
 });
 
-test('four dated publisher links are only discovery leads, not SOS filing website proof',()=>{
+test('six publisher-carried URLs remain unverified leads, not original SOS filings',()=>{
   const report=auditSenateSosWebsiteSeedInventory(ledger);
-  assert.equal(report.counts.publisherWebsiteLeads,4);
+  assert.equal(report.counts.publisherWebsiteLeads,6);
   assert.ok(ledger.websiteLeads.every(l=>!l.eligibleForHistoricalReplay && l.independentArchivePublicBy===null));
-  assert.equal(report.unjoinedPublisherWebsiteLeads.length,4);
+  assert.equal(report.unjoinedPublisherWebsiteLeads.length,6);
 });
 
 test('explicit exported zero-position memberships are prioritized without inferring unknown gaps are neutral',()=>{
@@ -77,6 +77,22 @@ test('suffix normalization does not change Senate district or backdate publisher
   const report=auditSenateSosWebsiteSeedInventory(ledger,[member('Michael Holmstrom','29','2025-2026',0)]);
   assert.deepEqual(report.membershipPriorities[0].candidateWebsiteDiscoveryLeads,['https://www.mike4mnsenate.com/']);
   assert.equal(report.membershipPriorities[0].independentlyProvenSitePublicBy,null);
+});
+
+test('2024 Ann Johnson Stewart and 2025 Heintzeman website leads join only to relevant 2025 cohort',()=>{
+  const report=auditSenateSosWebsiteSeedInventory(ledger,[
+    member('Ann Johnson Stewart','45','2025-2026',0),
+    member('Keri Heintzeman','6','2025-2026',0),
+    member('Ann Johnson Stewart','44','2021-2022',0),
+  ]);
+  const ann=report.membershipPriorities.find(m=>m.sessionSlug==='2025-2026' && m.senatorName==='Ann Johnson Stewart')!;
+  const keri=report.membershipPriorities.find(m=>m.senatorName==='Keri Heintzeman')!;
+  assert.deepEqual(ann.candidateWebsiteDiscoveryLeads,['https://annjohnsonstewart.com/']);
+  assert.deepEqual(keri.candidateWebsiteDiscoveryLeads,['https://heintzemanforsenate.com/']);
+  const old=report.membershipPriorities.find(m=>m.sessionSlug==='2021-2022')!;
+  assert.deepEqual(old.candidateWebsiteDiscoveryLeads,[]);
+  assert.equal(ann.independentlyProvenSitePublicBy,null);
+  assert.equal(keri.historicalStatementEligible,false);
 });
 
 test('2026 election-year website fields must not be imported as 2025 historical proofs',()=>{
