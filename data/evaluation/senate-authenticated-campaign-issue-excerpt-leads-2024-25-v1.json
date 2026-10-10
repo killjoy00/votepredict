@@ -1,0 +1,304 @@
+{
+  "schema": "senate-authenticated-campaign-policy-excerpt-leads-2024-25-v1",
+  "scope": {
+    "historicalCoverageIssue": 864,
+    "years": [
+      2024,
+      2025
+    ],
+    "chamber": "senate",
+    "uniqueCandidateOriginalIssuePages": 4,
+    "attributableShortExcerptLeads": 13,
+    "retrievedHistoricalPageBodiesReviewed": 4,
+    "eligibleForImmediateForecast": 0,
+    "productionDatabaseReads": 0,
+    "productionDatabaseWrites": 0,
+    "excludesGeneralElectionDayCaptures": true,
+    "primaryCutoffVariesByCandidate": true,
+    "siteAssignmentsHistoricallyOriginalSosFilingVerified": false,
+    "senatorMembershipOrOutcomeVerifiedByThisManifest": false,
+    "statewideCompletenessCertified": false
+  },
+  "provenance": {
+    "originalRunId": 38086478508,
+    "githubActionsArtifactId": 11682363094,
+    "originalSourceZipFileName": "senate-campaign-public-archive-source-acquisition-v1",
+    "originalArchiveArtifactZipSha256": "c20cd41da68fac461f05f17b6782abb34202d4add22cd9b5ea826610c3a8f8fb",
+    "originalSourceBytesPersistedInGitRepository": false,
+    "originalSourceByteHashesPersistedHere": true,
+    "originalArchiveBytesAvailableThroughGithubArtifactRetention": "30_days",
+    "waybackOriginalCdxIndexFirstAcquiredRunId": 38085775020,
+    "waybackFirstIndexAcquisitionArtifactId": 11682351954,
+    "waybackFirstIndexSourceZipSha256": "a0141b9a6f9e558675a7528db57a4498b0674662afe4cd28a3c500196826de8f",
+    "originalPageSource": "historical_wayback_id_replay_verified_by_sha1_digest_from_separate_original_cdx_index",
+    "alternateSourceAnn2024Oct10": "verified_independent_commoncrawl_WARC_and_Wayback_same_original_html_payload"
+  },
+  "candidates": [
+    {
+      "candidateName": "Ann Johnson Stewart",
+      "district": "45",
+      "electionYear": 2024,
+      "sourceEvidenceType": "candidate_campaign_issue_platform_page",
+      "campaignSiteAssignmentFromOriginalHistoricSosFilingCertified": false,
+      "directCampaignAuthorshipSupportedByOriginalCampaignPage": true,
+      "officialSenatorMembershipOrVictoryVerifiedForEachExcerpt": false,
+      "originalHtmlSource": {
+        "pinnedWaybackReplayId": "snapshot-01",
+        "sourceArchiveCaptureAt": "2024-09-04T05:28:50.000Z",
+        "sourceArchiveOriginalHtmlFileName": "wayback-replay-snapshot-01.html",
+        "originalHtmlResponseSha256": "c06cf92b63e2785504115cc618dedad6518052bb176ba29a0eb75d4cb6d2ac5e",
+        "originalBodySha1MatchesHistoricalCdxIndex": true,
+        "originalPageByteSourceArtifactId": 11682363094,
+        "sourceIsStrictlyBeforeGeneralElection": true,
+        "sourceIsStrictlyBeforePrimaryElection": false
+      },
+      "excerpts": [
+        {
+          "id": "ajs24-abortion-care",
+          "issueFamily": "health",
+          "candidateCommitment": "explicit_support",
+          "exactShortExcerptFromOriginalArchivedPage": "Vigorously defend abortion care",
+          "issueInterpretation": "defending abortion care access",
+          "textVerifiedInOriginalHtmlByHumanReview": true,
+          "snippetOnlyNoSurroundingPageOrBillText": true,
+          "earliestSnippetPublicByConservativelyAttestedAt": "2024-09-04T05:28:50.000Z",
+          "sourceSnapshotToBeRecheckedByOfflineAudit": "snapshot-01",
+          "immediatelyEligibleForForecast": false,
+          "matchedToProductionEvidenceId": false,
+          "legislatorMembershipAttributionAudited": false
+        },
+        {
+          "id": "ajs24-union-organizing",
+          "issueFamily": "labor_employment",
+          "candidateCommitment": "explicit_support",
+          "exactShortExcerptFromOriginalArchivedPage": "ability to organize unions in their workplaces",
+          "issueInterpretation": "workers' freedom to unionize",
+          "textVerifiedInOriginalHtmlByHumanReview": true,
+          "snippetOnlyNoSurroundingPageOrBillText": true,
+          "earliestSnippetPublicByConservativelyAttestedAt": "2024-09-04T05:28:50.000Z",
+          "sourceSnapshotToBeRecheckedByOfflineAudit": "snapshot-01",
+          "immediatelyEligibleForForecast": false,
+          "matchedToProductionEvidenceId": false,
+          "legislatorMembershipAttributionAudited": false
+        },
+        {
+          "id": "ajs24-family-taxes",
+          "issueFamily": "taxes_revenue",
+          "candidateCommitment": "explicit_support",
+          "exactShortExcerptFromOriginalArchivedPage": "Advocate for responsible tax cuts",
+          "issueInterpretation": "tax reductions for working families",
+          "textVerifiedInOriginalHtmlByHumanReview": true,
+          "snippetOnlyNoSurroundingPageOrBillText": true,
+          "earliestSnippetPublicByConservativelyAttestedAt": "2024-09-04T05:28:50.000Z",
+          "sourceSnapshotToBeRecheckedByOfflineAudit": "snapshot-01",
+          "immediatelyEligibleForForecast": false,
+          "matchedToProductionEvidenceId": false,
+          "legislatorMembershipAttributionAudited": false
+        },
+        {
+          "id": "ajs24-climate-infrastructure",
+          "issueFamily": "environment_natural_resources",
+          "candidateCommitment": "promise_action",
+          "exactShortExcerptFromOriginalArchivedPage": "Take meaningful action to stem climate change",
+          "issueInterpretation": "climate mitigation and resilient infrastructure",
+          "textVerifiedInOriginalHtmlByHumanReview": true,
+          "snippetOnlyNoSurroundingPageOrBillText": true,
+          "earliestSnippetPublicByConservativelyAttestedAt": "2024-09-04T05:28:50.000Z",
+          "sourceSnapshotToBeRecheckedByOfflineAudit": "snapshot-01",
+          "immediatelyEligibleForForecast": false,
+          "matchedToProductionEvidenceId": false,
+          "legislatorMembershipAttributionAudited": false
+        }
+      ]
+    },
+    {
+      "candidateName": "Keri Heintzeman",
+      "district": "6",
+      "electionYear": 2025,
+      "sourceEvidenceType": "candidate_campaign_issue_platform_page",
+      "campaignSiteAssignmentFromOriginalHistoricSosFilingCertified": false,
+      "directCampaignAuthorshipSupportedByOriginalCampaignPage": true,
+      "officialSenatorMembershipOrVictoryVerifiedForEachExcerpt": false,
+      "originalHtmlSource": {
+        "pinnedWaybackReplayId": "snapshot-05",
+        "sourceArchiveCaptureAt": "2025-04-24T16:32:55.000Z",
+        "sourceArchiveOriginalHtmlFileName": "wayback-replay-snapshot-05.html",
+        "originalHtmlResponseSha256": "8b46784183d4fccd20b07ebf0782d7f823b57cebf1bffed37c68003dbdef7fab",
+        "originalBodySha1MatchesHistoricalCdxIndex": true,
+        "originalPageByteSourceArtifactId": 11682363094,
+        "sourceIsStrictlyBeforeGeneralElection": true,
+        "sourceIsStrictlyBeforePrimaryElection": false
+      },
+      "excerpts": [
+        {
+          "id": "kh25-pro-life",
+          "issueFamily": "health",
+          "candidateCommitment": "priority_statement",
+          "exactShortExcerptFromOriginalArchivedPage": "pro-life advocate",
+          "issueInterpretation": "identifies as an anti-abortion rights advocate without specific bill claim",
+          "textVerifiedInOriginalHtmlByHumanReview": true,
+          "snippetOnlyNoSurroundingPageOrBillText": true,
+          "earliestSnippetPublicByConservativelyAttestedAt": "2025-04-24T16:32:55.000Z",
+          "sourceSnapshotToBeRecheckedByOfflineAudit": "snapshot-05",
+          "immediatelyEligibleForForecast": false,
+          "matchedToProductionEvidenceId": false,
+          "legislatorMembershipAttributionAudited": false
+        },
+        {
+          "id": "kh25-property-income-taxes",
+          "issueFamily": "taxes_revenue",
+          "candidateCommitment": "promise_action",
+          "exactShortExcerptFromOriginalArchivedPage": "lower income and property taxes",
+          "issueInterpretation": "reducing state income and property taxes",
+          "textVerifiedInOriginalHtmlByHumanReview": true,
+          "snippetOnlyNoSurroundingPageOrBillText": true,
+          "earliestSnippetPublicByConservativelyAttestedAt": "2025-04-24T16:32:55.000Z",
+          "sourceSnapshotToBeRecheckedByOfflineAudit": "snapshot-05",
+          "immediatelyEligibleForForecast": false,
+          "matchedToProductionEvidenceId": false,
+          "legislatorMembershipAttributionAudited": false
+        },
+        {
+          "id": "kh25-gun-restrictions",
+          "issueFamily": "public_safety",
+          "candidateCommitment": "explicit_opposition",
+          "exactShortExcerptFromOriginalArchivedPage": "opposes efforts to chip away at lawful gun ownership",
+          "issueInterpretation": "opposition to restrictions on lawful firearm possession",
+          "textVerifiedInOriginalHtmlByHumanReview": true,
+          "snippetOnlyNoSurroundingPageOrBillText": true,
+          "earliestSnippetPublicByConservativelyAttestedAt": "2025-04-24T16:32:55.000Z",
+          "sourceSnapshotToBeRecheckedByOfflineAudit": "snapshot-05",
+          "immediatelyEligibleForForecast": false,
+          "matchedToProductionEvidenceId": false,
+          "legislatorMembershipAttributionAudited": false
+        }
+      ]
+    },
+    {
+      "candidateName": "Louis McNutt",
+      "district": "29",
+      "electionYear": 2025,
+      "sourceEvidenceType": "candidate_campaign_issue_platform_page",
+      "campaignSiteAssignmentFromOriginalHistoricSosFilingCertified": false,
+      "directCampaignAuthorshipSupportedByOriginalCampaignPage": true,
+      "officialSenatorMembershipOrVictoryVerifiedForEachExcerpt": false,
+      "originalHtmlSource": {
+        "pinnedWaybackReplayId": "snapshot-06",
+        "sourceArchiveCaptureAt": "2025-08-26T22:22:28.000Z",
+        "sourceArchiveOriginalHtmlFileName": "wayback-replay-snapshot-06.html",
+        "originalHtmlResponseSha256": "61beba93487ae2b2478fe50d497d8e9ad80043655e97981cd14c3f4f96a21da5",
+        "originalBodySha1MatchesHistoricalCdxIndex": true,
+        "originalPageByteSourceArtifactId": 11682363094,
+        "sourceIsStrictlyBeforeGeneralElection": true,
+        "sourceIsStrictlyBeforePrimaryElection": false
+      },
+      "excerpts": [
+        {
+          "id": "lm25-health-choice",
+          "issueFamily": "health",
+          "candidateCommitment": "explicit_support",
+          "exactShortExcerptFromOriginalArchivedPage": "Support everyone's right to choose",
+          "issueInterpretation": "medical autonomy and reproductive choice in a healthcare issues list",
+          "textVerifiedInOriginalHtmlByHumanReview": true,
+          "snippetOnlyNoSurroundingPageOrBillText": true,
+          "earliestSnippetPublicByConservativelyAttestedAt": "2025-08-26T22:22:28.000Z",
+          "sourceSnapshotToBeRecheckedByOfflineAudit": "snapshot-06",
+          "immediatelyEligibleForForecast": false,
+          "matchedToProductionEvidenceId": false,
+          "legislatorMembershipAttributionAudited": false
+        },
+        {
+          "id": "lm25-social-security-taxes",
+          "issueFamily": "taxes_revenue",
+          "candidateCommitment": "promise_action",
+          "exactShortExcerptFromOriginalArchivedPage": "Get rid of the tax on social security",
+          "issueInterpretation": "removing taxation of Social Security income",
+          "textVerifiedInOriginalHtmlByHumanReview": true,
+          "snippetOnlyNoSurroundingPageOrBillText": true,
+          "earliestSnippetPublicByConservativelyAttestedAt": "2025-08-26T22:22:28.000Z",
+          "sourceSnapshotToBeRecheckedByOfflineAudit": "snapshot-06",
+          "immediatelyEligibleForForecast": false,
+          "matchedToProductionEvidenceId": false,
+          "legislatorMembershipAttributionAudited": false
+        },
+        {
+          "id": "lm25-special-education",
+          "issueFamily": "education",
+          "candidateCommitment": "promise_action",
+          "exactShortExcerptFromOriginalArchivedPage": "Fully fund our special education cross-subsidy",
+          "issueInterpretation": "special education funding",
+          "textVerifiedInOriginalHtmlByHumanReview": true,
+          "snippetOnlyNoSurroundingPageOrBillText": true,
+          "earliestSnippetPublicByConservativelyAttestedAt": "2025-08-26T22:22:28.000Z",
+          "sourceSnapshotToBeRecheckedByOfflineAudit": "snapshot-06",
+          "immediatelyEligibleForForecast": false,
+          "matchedToProductionEvidenceId": false,
+          "legislatorMembershipAttributionAudited": false
+        }
+      ]
+    },
+    {
+      "candidateName": "Michael Holmstrom Jr",
+      "district": "29",
+      "electionYear": 2025,
+      "sourceEvidenceType": "candidate_campaign_issue_platform_page",
+      "campaignSiteAssignmentFromOriginalHistoricSosFilingCertified": false,
+      "directCampaignAuthorshipSupportedByOriginalCampaignPage": true,
+      "officialSenatorMembershipOrVictoryVerifiedForEachExcerpt": false,
+      "originalHtmlSource": {
+        "pinnedWaybackReplayId": "snapshot-09",
+        "sourceArchiveCaptureAt": "2025-08-26T22:26:50.000Z",
+        "sourceArchiveOriginalHtmlFileName": "wayback-replay-snapshot-09.html",
+        "originalHtmlResponseSha256": "7a6ff67d24db1bd94a2ee5fc96fd8b467b5fcf1a01e089c25ca4f1e0870a35da",
+        "originalBodySha1MatchesHistoricalCdxIndex": true,
+        "originalPageByteSourceArtifactId": 11682363094,
+        "sourceIsStrictlyBeforeGeneralElection": true,
+        "sourceIsStrictlyBeforePrimaryElection": false
+      },
+      "excerpts": [
+        {
+          "id": "mh25-pro-life",
+          "issueFamily": "health",
+          "candidateCommitment": "priority_statement",
+          "exactShortExcerptFromOriginalArchivedPage": "I am proudly pro-life",
+          "issueInterpretation": "opposition to abortion access, no bill vote claim",
+          "textVerifiedInOriginalHtmlByHumanReview": true,
+          "snippetOnlyNoSurroundingPageOrBillText": true,
+          "earliestSnippetPublicByConservativelyAttestedAt": "2025-08-26T22:26:50.000Z",
+          "sourceSnapshotToBeRecheckedByOfflineAudit": "snapshot-09",
+          "immediatelyEligibleForForecast": false,
+          "matchedToProductionEvidenceId": false,
+          "legislatorMembershipAttributionAudited": false
+        },
+        {
+          "id": "mh25-school-choice",
+          "issueFamily": "education",
+          "candidateCommitment": "promise_action",
+          "exactShortExcerptFromOriginalArchivedPage": "champion school choice legislation",
+          "issueInterpretation": "supports legislation for parental school choice",
+          "textVerifiedInOriginalHtmlByHumanReview": true,
+          "snippetOnlyNoSurroundingPageOrBillText": true,
+          "earliestSnippetPublicByConservativelyAttestedAt": "2025-08-26T22:26:50.000Z",
+          "sourceSnapshotToBeRecheckedByOfflineAudit": "snapshot-09",
+          "immediatelyEligibleForForecast": false,
+          "matchedToProductionEvidenceId": false,
+          "legislatorMembershipAttributionAudited": false
+        },
+        {
+          "id": "mh25-constitutional-carry",
+          "issueFamily": "public_safety",
+          "candidateCommitment": "explicit_support",
+          "exactShortExcerptFromOriginalArchivedPage": "I believe in constitutional carry",
+          "issueInterpretation": "supports constitutional firearm carry",
+          "textVerifiedInOriginalHtmlByHumanReview": true,
+          "snippetOnlyNoSurroundingPageOrBillText": true,
+          "earliestSnippetPublicByConservativelyAttestedAt": "2025-08-26T22:26:50.000Z",
+          "sourceSnapshotToBeRecheckedByOfflineAudit": "snapshot-09",
+          "immediatelyEligibleForForecast": false,
+          "matchedToProductionEvidenceId": false,
+          "legislatorMembershipAttributionAudited": false
+        }
+      ]
+    }
+  ]
+}
