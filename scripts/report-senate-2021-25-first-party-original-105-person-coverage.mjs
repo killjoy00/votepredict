@@ -26,7 +26,18 @@ assert.equal(sha(swearing),proof.supplementalSwearingSource.sourceBytesSha256);
 const directory=parseOfficialMnSenateServiceDirectory(
  source,proof.source.observedAt,swearing,proof.supplementalSwearingSource.observedAt);
 assert.equal(directory.senators.length,105);
-assert.equal(JSON.stringify(directory.senators),JSON.stringify(proof.senators));
+// The earlier original 2026-10-10 parsing pass missed a Senate continuation:
+ // the identical official raw LRL Gary H. Dahms row explicitly reports
+ // Senate 2013-2022 SD16; 2023-Present SD15 without repeating "Senate".
+ // The current independently rehashed source parser correctly restores SD15.
+ // Require the entire original 105-person audit to remain byte-for-byte
+ // identical after precisely this verified original-row correction only.
+const originalSenatorsWithOneDocumentedParserCorrection=proof.senators.map(p=>
+ p.officialName==='Gary H. Dahms'?{
+  ...p,senateServiceTerms:[
+   ...p.senateServiceTerms,{startsYear:2023,endsYear:null,district:'15'}]}:p);
+assert.deepEqual(directory.senators,originalSenatorsWithOneDocumentedParserCorrection,
+ 'Only the exact source-verified Gary Dahms Senate SD15 continuation may differ from earlier original LRL parser receipt');
 const years=[2021,2022,2023,2024,2025];
 const normalize=s=>String(s).normalize('NFKD').replace(/[\u0300-\u036f]/g,'')
  .toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
