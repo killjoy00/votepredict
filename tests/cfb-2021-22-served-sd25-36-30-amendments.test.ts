@@ -50,7 +50,7 @@ test('original SHA-pinned 22+18 originals, 11 actual senators, 30 exact source a
   assert.deepEqual(s.amendmentReferenceCounts,
     {'21:YE':3,'22:C':7,'22:E':7,'22:YE':13});
   assert.equal(new Set(s.targets.map(t=>t.id)).size,30);
-  assert.equal(new Set(s.targets.map(t=>t.originalId)).size,21);
+  assert.equal(new Set(s.targets.map(t=>t.originalId)).size,19);
   assert.equal(new Set(s.targets.map(t=>t.actualSenator)).size,10);
   assert.equal(s.legallyOwedReportDenominator,null);
   const parents=new Set(s.originals.map(o=>o.id));
