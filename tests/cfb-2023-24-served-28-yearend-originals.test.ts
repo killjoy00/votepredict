@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {
   selectServed2023to24OriginalYearEnds,served2023to24YearEndRef,
   parseServed2023to24YearEndHeader,auditServed2023to24OriginalYearEnd,
@@ -88,7 +89,6 @@ test('permanent source ledger has 28 PDF byte hashes from two independent origin
    'cfb-2023-24-verified-served-28-original-yearend-source-checkpoint.json','utf8'));
  const ledger=readFileSync(checkpoint.permanentPdfLedger.path,'utf8');
  const rows=ledger.trimEnd().split('\n').map((l:string)=>l.split('|'));
- const {createHash}=require('node:crypto') as typeof import('node:crypto');
  const blobSha=createHash('sha1').update('blob '+Buffer.byteLength(ledger,'utf8')+'\0')
    .update(ledger).digest('hex');
  assert.equal(blobSha,checkpoint.permanentPdfLedger.gitBlobSha);
