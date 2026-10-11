@@ -4,6 +4,7 @@ import test from 'node:test';
 import {readFileSync} from 'node:fs';
 import {
   selectEightRecoveredSenators16OriginalYearends,
+  classifyEightRecovered16OriginalSourceRuns,
 } from '../src/evidence/cfb-2023-24-eight-recovered-16-yearend-originals.js';
 import {
   served2023to24YearEndRef,auditServed2023to24OriginalYearEnd,
@@ -87,4 +88,32 @@ test('never confuse 16 official source reference keys with sixteen unique PDF bo
  assert.equal(summarize28YearEndSource(alias).independentlyUniqueOriginalPdfBinaries,15);
  assert.ok(a.every(x=>x.statutoryDueOn===null&&x.actualHistoricalPublicByOn===null
    &&x.legallyOwed2023Or2024ReportCount===null&&!x.historicalPredictionEligible));
+});
+
+test('Lang 2023 viewer source PDF is an exact source-identity HOLD, not an authenticated financial report',()=>{
+  const all=targets.map((t,i)=>{
+    const held=t.id==='17994:23:pcc:YE:0:0';
+    const pdf=held
+      ?{sourceUrl:'https://cfb.mn.gov/rptViewer/Main.php?do=viewPDF&downloadpdf=false&year=23&type=pcc&period=YE&se=0&regnum=17994&amend=0',
+        sha256:'34022e5691aca08f318436ecbc30a1b3e2d5a32c2ad11a19ee0d64fb77443aba',
+        bytes:381617,observedAt:'2026-10-11T17:30:39.048Z',
+        text:'Report of Receipts and Expenditures for Principal Campaign Committee\n'+
+          'Period Covered: 1/1/2023 through 12/31/2023\n'+
+          'Received by the Board December 29, 2023'}
+      :{sourceUrl:'https://cfb.mn.gov/rptViewer/Main.php?do=viewPDF&downloadpdf=false&year='+
+          String(t.reportYear).slice(2)+'&type=pcc&period=YE&se=0&regnum='+t.reg+'&amend=0',
+        sha256:(i+1).toString(16).padStart(64,'0'),bytes:15500,
+        observedAt:'2026-10-11T17:30:39.048Z',text:firstPage(t)};
+    return auditServed2023to24OriginalYearEnd(t,pdf,null);
+  });
+  const result=classifyEightRecovered16OriginalSourceRuns(all);
+  assert.equal(result.acceptedFifteenOriginalsOneStrictSourceIdentityHold,true);
+  assert.equal(result.authenticatedAsSixteenOriginalPdfs,false);
+  assert.equal(result.verifiedOriginalPdfBinaries,15);
+  assert.equal(result.heldOfficialSourceDocuments,1);
+  assert.equal(result.reviewedHeldReportId,'17994:23:pcc:YE:0:0');
+  const mutated=all.map(r=>r.originalReportId==='17994:23:pcc:YE:0:0'
+    ?{...r,sourcePdfByteCount:381618}:r);
+  assert.equal(classifyEightRecovered16OriginalSourceRuns(mutated)
+    .acceptedFifteenOriginalsOneStrictSourceIdentityHold,false);
 });
