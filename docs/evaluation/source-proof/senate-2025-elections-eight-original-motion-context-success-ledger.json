@@ -1,0 +1,197 @@
+{
+  "schemaVersion": "senate-2025-elections-eight-original-motion-context-successful-recheck-v1",
+  "issue": 864,
+  "authority": "Minnesota Legislative Reference Library",
+  "eventScope": "2025-02-11,2025-03-25,2025-04-08 Elections exact original Minutes PDFs only",
+  "priorOriginalAttendanceSourceRunId": 38098600457,
+  "priorFullFourOriginalsSourceLedgerGitBlob": "63a605e038bea5762a70be7ac79602f6c23a0924",
+  "firstIncompleteMotionSourceRun": {
+    "runId": 38108205193,
+    "conclusion": "failure",
+    "artifactId": 11690925461,
+    "artifactZipSha256": "552b9ed5a290f7b889ab10cc4b4690350c82e5095dfaaa31af739cfdb78e28c4",
+    "artifactJsonSha256": "4426e571e2d832109841715359f29c8041a23f7dd4a6c028903ecb75e9dc7e49",
+    "originalsCompleted": 1,
+    "rollsCompleted": 1,
+    "errorNearEndTextBoundDates": [
+      "2025-02-11",
+      "2025-04-08"
+    ]
+  },
+  "correctedExactSourceRun": {
+    "runId": 38108467376,
+    "conclusion": "success",
+    "implementationRepairPR": 1017,
+    "implementationMergeSHA": "471d56823d51a86bd40bb8fea4ed508eec37265d",
+    "artifactId": 11691340627,
+    "artifactZipSha256": "eff60b06844fc6e1f651f1c2fce967098130a8d6ba8b182e5f140542fa2cf2bf",
+    "uncompressedJsonBytes": 16022,
+    "uncompressedJsonSha256": "275d85eb0653c3953db87e2d15e8fc83c6fa7f76631e59931fe3995800d5faae",
+    "originalPdfAndTextShaVerified": 3,
+    "exactRollContextOffsetsVerified": 8,
+    "sourceErrors": 0
+  },
+  "sourceRecords": [
+    {
+      "date": "2025-02-11",
+      "pdfSha": "f4a3bb61a56ccfae91d4cced922cf3b3ad8845e6a08daf8ee3efd02cd2e4a5ef",
+      "textSha": "c6fbcf2908f113c3c0443cffa7fb07d572ea8e5a01732f6dc1e9fdcfd5665abf",
+      "pdfBytes": 91554,
+      "rolls": [
+        {
+          "offset": 2354,
+          "nearSha": "ed542e1f573d3a832b846fc49b1bf54a54e09f45ca4ef358367b2c8fc32c0856",
+          "previewSha": "5bf0f3396a1ab958963ce9a82f5f4d19c67a787ac1c410000ba44f3c0aaead0f",
+          "yea": 5,
+          "nay": 6,
+          "mover": "Mathews",
+          "action": "oral_amendment_to_A2",
+          "result": "failed",
+          "printedNearbyBill": "SF0529",
+          "billAttribution": "HOLD_Feb11_Elections_official_calendar_lists_SF0828_not_prior_Feb6_SF0529"
+        },
+        {
+          "offset": 3460,
+          "nearSha": "534fe2fc04a715c2a96ccf7cd5a61805b1b7a4b1d62fc9ffdf6e58296d828790",
+          "previewSha": "6b56976da33662f9ef7bfcded9e31316c97e40d88f07b1d77422ca5b05e90b35",
+          "yea": 7,
+          "nay": 4,
+          "mover": "Boldon_requested_roll_call",
+          "action": "SF0569_commendation_recommend_pass_rerefer_rules",
+          "result": "carried",
+          "printedNearbyBill": "SF0569",
+          "billAttribution": "explicit_in_original_source"
+        }
+      ]
+    },
+    {
+      "date": "2025-03-25",
+      "pdfSha": "87eb6fcb2c4c436bb2e061d574541f5030db8f0cdd388b190da70578da3ff27b",
+      "textSha": "51a3d0dab3335bc0a52f70edd67527da590af25ec33578a1ac54af0142238dd9",
+      "pdfBytes": 87115,
+      "rolls": [
+        {
+          "offset": 1326,
+          "nearSha": "24d45a52fe0dc0080671201c71e4232edd69f48c03419300aa001d6b8f026e02",
+          "previewSha": "48211c73a7d381c7a13b8a086cab954c95a8af87323a71ac707885f31d203c49",
+          "yea": 8,
+          "nay": 3,
+          "mover": "Carlson",
+          "action": "SF1812_committee_recommend_pass_as_amended_rerefer_judiciary",
+          "result": "carried",
+          "printedNearbyBill": "SF1812",
+          "billAttribution": "explicit_in_original_source",
+          "separateVoiceVoteParagraphs": "A2_Oral_and_A2_amendment_prevail_no_individual_named_sides"
+        }
+      ]
+    },
+    {
+      "date": "2025-04-08",
+      "pdfSha": "d26c583ef3e5caae1b52d379bf9c6cc784e0e9d39a80c056259f65f83f2e4c46",
+      "textSha": "6dc40628432da41be2ac4afe24b8725d5638e069421c4f413445042794411101",
+      "pdfBytes": 99628,
+      "rolls": [
+        {
+          "offset": 2133,
+          "nearSha": "0f667c84df52683e6382a6ddfa77196b1a588b5ab7f7d2866d22bed94af26a1e",
+          "previewSha": "b6aaa1200c3cf320f624d91b772438fe04fb4391caffa135407c6a4ee3012e36",
+          "yea": 5,
+          "nay": 6,
+          "mover": "Koran",
+          "action": "SF2384_A20_amendment",
+          "result": "failed",
+          "printedNearbyBill": "SF2384",
+          "billAttribution": "explicit_in_original_source"
+        },
+        {
+          "offset": 2401,
+          "nearSha": "4180412cbfedd0cd352198492675db25f6a24cc4bc35aecd5bb882549e99e780",
+          "previewSha": "e8b879f3137295a1cbe7cad9543d2d424f3e1f61f123ad97cf608560792996a0",
+          "yea": 5,
+          "nay": 6,
+          "mover": "Bahr",
+          "action": "SF2384_A32_amendment",
+          "result": "failed",
+          "printedNearbyBill": "SF2384",
+          "billAttribution": "explicit_in_original_source",
+          "priorWithdrawnA32MotionSeparateFromThisVote": true
+        },
+        {
+          "offset": 2673,
+          "nearSha": "a354493af13f2bb65b03826bb0387e2879eca74cc49ae49d593156863046147e",
+          "previewSha": "9097e1f2697813ed36353e3b0c3231e47a3a8d299d4f3b9c3a9d78c4e8b2f629",
+          "yea": 5,
+          "nay": 6,
+          "mover": "Lucero",
+          "action": "SF2384_A21_amendment",
+          "result": "failed",
+          "printedNearbyBill": "SF2384",
+          "billAttribution": "explicit_in_original_source"
+        },
+        {
+          "offset": 2941,
+          "nearSha": "600799dfdcfd8404a49fc21515da0f2dbfbfbd03fa04876db794e8d1acedeb6e",
+          "previewSha": "767c8cc3ecf81cd14f9ba19ef3bfaf9d49bb3e517dfbc4d3b33b88ea84be3f9b",
+          "yea": 5,
+          "nay": 6,
+          "mover": "Bahr",
+          "action": "SF2384_A19_amendment",
+          "result": "failed",
+          "printedNearbyBill": "SF2384",
+          "billAttribution": "explicit_in_original_source"
+        },
+        {
+          "offset": 3303,
+          "nearSha": "b3825ba136f0286ddc994073c9ea8c4b8b6f07c90a2776bc1dd834c6effa1add",
+          "previewSha": "2b5dd6ad406597d4af7eb1a5243a2a3b193ae4a8d5dee0cab57fe1dc94fd1e10",
+          "yea": 6,
+          "nay": 5,
+          "mover": "Westlin",
+          "action": "prepare_SF2384_as_amended_contents_as_amendment_to_SF3096_with_technical_corrections",
+          "result": "carried",
+          "printedNearbyBill": "SF2384_SF3096",
+          "billAttribution": "explicit_in_original_source",
+          "notCommitteeRecommendationToPassSF3096": true
+        }
+      ]
+    }
+  ],
+  "newlyDiscoveredSeparateOriginalSourceLead": {
+    "date": "2025-04-08",
+    "bill": "SF2384",
+    "amendmentLabel": "A10",
+    "sourcePrintedVote": {
+      "yea": 7,
+      "nay": 3,
+      "absent": 1
+    },
+    "namedChoicesPrintedInNearbySourceText": 10,
+    "sourceReportedAbsentIndividual": "Lucero",
+    "sourceNearbyFirstEightRollOffset": 2133,
+    "priorNeighborhoodSha256": "0f667c84df52683e6382a6ddfa77196b1a588b5ab7f7d2866d22bed94af26a1e",
+    "candidateOutsideExactEightOffsetQueue": true,
+    "sourceOriginalA10EntireMotionParagraphRecheckedIndependently": false,
+    "certifiedDistinctAdditionalHistoricalVote": false,
+    "eligibleForIndividualMemberVoteImport": false,
+    "sourceVoiceOrAbsentCannotImputeYeaNay": true
+  },
+  "summary": {
+    "originalPdfSources": 3,
+    "shaVerifiedRollContexts": 8,
+    "explicitlyNamedSourceSides": 88,
+    "officialFullYearVoteDenominator": null,
+    "allEightAlreadyCountedAmongEarlier13NoNewIncrement": true,
+    "exactMotionUniquenessCertified": false,
+    "privateExistingVoteRowEqualityEstablished": false
+  },
+  "limits": {
+    "printedFeb11A2BillMayBeSourceTypo": true,
+    "printedFeb11SF0529VsOfficialFeb11SF0828AttributionHeld": true,
+    "one2025Apr08ExtraA10NeedsIndependentFullMotionReview": true,
+    "noSameDayPrediction": true,
+    "noProductionPrivateDbReadsOrWrites": true,
+    "noModelForecastTrainingServingSchedulerFloor2027Changes": true,
+    "noOfficeContact": true,
+    "issue864MustRemainOpen": true
+  }
+}
