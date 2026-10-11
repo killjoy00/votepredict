@@ -1,0 +1,54 @@
+name: Senate media 2023 Ann Rest exact historical quote cues
+
+# Public Wayback only; original HTML/audio and individual vote data never stored.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-rest-2023-original-quote-cues.yml
+      - src/evidence/senate-media-rest-2023-original-quote-audit.ts
+      - scripts/audit-senate-media-rest-2023-original-phrases.ts
+      - tests/senate-media-rest-2023-original-quote-audit.test.ts
+      - docs/evaluation/senate-media-2023-rest-historical-original-quote-fragment-queue.json
+      - docs/evaluation/senate-media-2021-25-broader-25-original-public-archive-receipts-20261011.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-rest-exact-public-original-cues
+  cancel-in-progress: false
+
+jobs:
+  proof-of-original:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+         github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+         github.event.pull_request.head.ref == 'research/media-25-original-captures-quote-bridge-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Replay two SHA-pinned 2023 original Rest articles and check only two short quote cues
+        run: |
+          node --import tsx scripts/audit-senate-media-rest-2023-original-phrases.ts \
+            --output artifacts/senate-media-rest-2023-original-phrase-proof.json
+      - name: Upload only source hash and phrase-status metadata
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-rest-2023-original-phrase-proof
+          path: artifacts/senate-media-rest-2023-original-phrase-proof.json
+          if-no-files-found: error
+          retention-days: 7
