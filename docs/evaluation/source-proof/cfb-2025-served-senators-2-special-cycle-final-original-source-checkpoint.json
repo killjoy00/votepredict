@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "cfb-2025-ever-served-senators-2-special-final-original-pdf-source-checkpoint-v1",
+  "provenance": {
+    "sourceRun": "https://github.com/killjoy00/votepredict/actions/runs/38098411551",
+    "sourceRunId": 38098411551,
+    "exactSourceWorkflowHeadSha": "0799021d9bd6de46037a90ccc8dccdd3580ebca5",
+    "mergedImplementationCommit": "215e5e9031d1d5c3394be9d14ff36f6b486109ae",
+    "originalSourceArtifactId": 11686332476,
+    "originalSourceArtifactExpiresAt": "2026-11-10T00:26:56Z",
+    "originalArtifactZipSha256": "6c3925b268ae4c65fc91e86a7c1bd092b5d8d7f79ffc78d7b77878a2ad4752e3",
+    "originalUncompressedMetadataJsonSha256": "00b2a6bada009ca90523a1c7eee43796e6e695f87e9a554db3e60613dfcf29ca",
+    "originalUncompressedMetadataJsonBytes": 7536,
+    "capturedAt": "2026-10-11T00:26:56.156Z",
+    "permanentMetadataLedger": "cfb-2025-served-senators-2-special-cycle-final-original-pdf-ledger.psv",
+    "permanentLedgerCanonicalSha256WithoutFinalNewline": "81cadcfa091408bfc0a5195c95979f7759c012827e4ad31b307140c5f9ae2f0e",
+    "permanentLedgerBytesWithoutFinalNewline": 347
+  },
+  "sourceService": {
+    "senateServiceUrl": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "senateServiceSha256": "0ca694dd61603583f4adf9e499038f362ef36d220f86d64f1e272f9718865d70",
+    "senateServiceBytes": 1601232,
+    "senateServiceObservedAt": "2026-10-11T00:26:48.822Z",
+    "senateSwearingUrl": "https://www.lrl.mn.gov/history/caucus?body=s",
+    "senateSwearingSha256": "b72efabc81c7bd94054451493fc009bcfb09e39089caffd7b0c54eb76e3bae31",
+    "senateSwearingBytes": 330790,
+    "senateSwearingObservedAt": "2026-10-11T00:26:48.229Z",
+    "originalHistoricPublicationOfLRLPageProven": false
+  },
+  "scope": {
+    "registrationNumbers": [
+      "19229",
+      "19233"
+    ],
+    "electionYear": 2025,
+    "official2025SpecialDistricts": [
+      29,
+      47
+    ],
+    "senators": [
+      "Michael Holmstrom Jr",
+      "Amanda Hemmingsen-Jaeger"
+    ],
+    "alwaysRequiresVerifiedActualSenateService": true,
+    "originalReportType": "2025_special_election_cycle_final",
+    "originalViewerVersionKeys": [
+      "19229:25:pcc:YE:1:0",
+      "19233:25:pcc:YE:1:0"
+    ],
+    "excludesAlreadyAuthenticated2025CEOriginals": true,
+    "excludesPreviouslyAuthenticatedDistrict6YEFinal": true
+  },
+  "sourceCalendars": [
+    {
+      "district": 29,
+      "url": "https://cfb.mn.gov/pdf/calendars/2025_special_election_29.pdf",
+      "pdfSha256": "b102a7297a6ff1add3bcdb4bce03ef9761f3a3433908cbb507e95554fd3d38b2",
+      "bytes": 96309,
+      "fetchedAt": "2026-10-11T00:26:52.133Z",
+      "calendarIdentityAndExactCycleFinalDueDateVerified": true,
+      "dueOn": "2025-12-01",
+      "lastTransactionDate": "2025-11-19"
+    },
+    {
+      "district": 47,
+      "url": "https://cfb.mn.gov/pdf/calendars/2025_special_election_47.pdf",
+      "pdfSha256": "3b7669d2597632278b2a0e895a5cbf7199492fd286872127f6d9e36d9eb13291",
+      "bytes": 96308,
+      "fetchedAt": "2026-10-11T00:26:55.460Z",
+      "calendarIdentityAndExactCycleFinalDueDateVerified": true,
+      "dueOn": "2025-12-01",
+      "lastTransactionDate": "2025-11-19"
+    }
+  ],
+  "sourceOriginalReports": [
+    {
+      "reportId": "19229:25:pcc:YE:1:0",
+      "district": 29,
+      "senator": "Michael Holmstrom Jr",
+      "registrationNumber": "19229",
+      "officialCFBDistrictRosterSha256": "f1ab8c55e92a7956ee0f852fa6e2c875bce8743128f04693f94e67f83ee78c87",
+      "originalViewerApiSha256": "584b5ed98bca7843b6eba51b378328ef41d209aedbbd6d294b5b7526078e5b50",
+      "viewerApiHashUnchanged": true,
+      "sourceReportPdfUrl": "https://cfb.mn.gov/rptViewer/Main.php?do=viewPDF&downloadpdf=false&year=25&type=pcc&period=YE&se=1&regnum=19229&amend=0",
+      "originalPdfBinarySha256": "0cecaf71ada09c3cb7d12dd439438dc432c7998159250b7c62e85bfdb0e383b2",
+      "bytes": 35024,
+      "pdfFetchedAt": "2026-10-11T00:26:53.661Z",
+      "independentHeaderRegistrationOfficePeriodReceivedVerified": true,
+      "coverageStartOn": "2025-07-29",
+      "coverageEndOn": "2025-11-19",
+      "boardReceivedOn": "2025-11-26",
+      "calendarDueOn": "2025-12-01",
+      "legallyPossibleNotBeforeOn": "2025-12-02",
+      "independentlyProvenHistoricalPublicByOn": null,
+      "eligibleForHistoricalAsOf": false,
+      "exactRequiredDutyPredicateVerified": false
+    },
+    {
+      "reportId": "19233:25:pcc:YE:1:0",
+      "district": 47,
+      "senator": "Amanda Hemmingsen-Jaeger",
+      "registrationNumber": "19233",
+      "officialCFBDistrictRosterSha256": "bf0d50755c1fba7e8bc0ba87e8c21e0262c852dda4fe6ada507f47c3d67e2bf0",
+      "originalViewerApiSha256": "bf4173cf5d5bd0cb796b5d2537d017db7130e7a7d54654bfa0d8f0b95b52ad80",
+      "viewerApiHashUnchanged": true,
+      "sourceReportPdfUrl": "https://cfb.mn.gov/rptViewer/Main.php?do=viewPDF&downloadpdf=false&year=25&type=pcc&period=YE&se=1&regnum=19233&amend=0",
+      "originalPdfBinarySha256": "e96a87e4bd9d0583382ae2345fd597e7c8d6db7f919c91797516c975b1ca4ab1",
+      "bytes": 38474,
+      "pdfFetchedAt": "2026-10-11T00:26:56.155Z",
+      "independentHeaderRegistrationOfficePeriodReceivedVerified": true,
+      "coverageStartOn": "2025-07-29",
+      "coverageEndOn": "2025-11-19",
+      "boardReceivedOn": "2025-11-20",
+      "calendarDueOn": "2025-12-01",
+      "legallyPossibleNotBeforeOn": "2025-12-02",
+      "independentlyProvenHistoricalPublicByOn": null,
+      "eligibleForHistoricalAsOf": false,
+      "exactRequiredDutyPredicateVerified": false
+    }
+  ],
+  "sourceSummary": {
+    "selectedEverServedSenators": 2,
+    "matchedOfficialCFBRegistrations": 2,
+    "unchangedOriginalCFBViewerSourceHashes": 2,
+    "exactOriginalReportPdfBinaryAndFirstPageVerified": 2,
+    "exactIndependentSpecialCalendarOriginalPdfsVerified": 2,
+    "sourceFailures": 0,
+    "newlyAuthenticatedOriginalPdfVersionsBeyondPrevious2025Cohorts": 2,
+    "historicalPublicByVerified": 0,
+    "statewideLegallyRequiredReportDenominator": null,
+    "thisCohortLegallyRequiredReportCount": null,
+    "originalVersionViewerKeyDoesNotGuaranteePdfAmendmentCheckbox": true,
+    "originalPdfBytesOrDonorsStored": false,
+    "modelOrProductionDataChanged": false,
+    "issue864RemainsOpen": true
+  }
+}

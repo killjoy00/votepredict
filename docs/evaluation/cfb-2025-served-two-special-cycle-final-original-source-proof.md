@@ -1,0 +1,18 @@
+# #864 — two newly authenticated original 2025 Senate special cycle-final filings
+
+**Permanent official-source checkpoint; not historical prediction eligibility or a legally required report denominator.**
+
+Source code was merged in [PR #967](https://github.com/killjoy00/votepredict/pull/967). On the exact implementation head `0799021d9bd6de46037a90ccc8dccdd3580ebca5`, [source run 38098411551](https://github.com/killjoy00/votepredict/actions/runs/38098411551) and the full repository CI both passed. The source-only artifact ID **11686332476** expires November 10, 2026. Its original 7,536-byte JSON SHA-256, ZIP SHA-256, acquisition timestamps, original calendar/LRL hashes and report metadata are preserved in [the permanent checkpoint](source-proof/cfb-2025-served-senators-2-special-cycle-final-original-source-checkpoint.json) and [canonical two-row PDF identity ledger](source-proof/cfb-2025-served-senators-2-special-cycle-final-original-pdf-ledger.psv).
+
+Only actual Minnesota Senate members qualify: **Michael Holmstrom Jr** of District 29 and **Amanda Hemmingsen-Jaeger** of District 47, confirmed against [the Legislative Reference Library senator service directory](https://www.lrl.mn.gov/legdb/senate_dir) and [the 2025 official swearing records](https://www.lrl.mn.gov/history/caucus?body=s), independently acquired October 11, 2026 UTC. The official CFB 2026-segment district candidate selection IDs were cross-checked with these known winners and pinned prior original CFB viewer responses; both source response hashes remained identical. No other named-candidate PDFs were downloaded.
+
+| Served senator | Original special cycle-final report | Original binary SHA-256 | Board received | Official due date | Not-before floor |
+|---|---|---|---|---|---|
+| Michael Holmstrom Jr (SD29) | `19229:25:pcc:YE:1:0` | `0cecaf71ada09c3cb7d12dd439438dc432c7998159250b7c62e85bfdb0e383b2` | 2025-11-26 | 2025-12-01 | 2025-12-02 |
+| Amanda Hemmingsen-Jaeger (SD47) | `19233:25:pcc:YE:1:0` | `e96a87e4bd9d0583382ae2345fd597e7c8d6db7f919c91797516c975b1ca4ab1` | 2025-11-20 | 2025-12-01 | 2025-12-02 |
+
+Both original PDFs' first pages independently establish the precise committee, Senate office/district, coverage July 29–November 19, 2025, and Board receipt dates. Both official source binary hashes and all report dates are independently checked against the original district-specific [2025 Senate District 29 disclosure calendar](https://cfb.mn.gov/pdf/calendars/2025_special_election_29.pdf) and [2025 Senate District 47 disclosure calendar](https://cfb.mn.gov/pdf/calendars/2025_special_election_47.pdf), each of which says the special cycle-final report is due December 1.
+
+These are **two newly authenticated original PDF versions**, beyond (without double-counting) the previously pinned **12 special C/E originals** and the separate SD6 year-end/cycle-final original proofs. Amendment=0 in the official viewer is a *version locator*; no unamended PDF checkbox claim is made. The Board's receipt date and statutory next-day floor are **not proof the specific report was historically public by that date**; the independent historical public-by count remains **zero**. Historical as-of eligibility is false. Exact legal filing-obligation and actual committee-termination predicates remain unresolved and **denominators remain null**. The source artifact contains only metadata; original PDF bodies, donor details, contact data and financial transactions are not stored.
+
+No production Neon/Vercel, backfills, model retraining, schedule/serving, or 2027 changes occurred. **Issue #864 remains open.**
