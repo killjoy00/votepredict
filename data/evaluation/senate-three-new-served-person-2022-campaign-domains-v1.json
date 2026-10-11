@@ -1,0 +1,64 @@
+{
+  "schema": "senate-2022-three-original-campaign-domain-recovery-served-persons-v1",
+  "issue": 864,
+  "historicalWindow": {
+    "afterInclusive": "2022-01-01T00:00:00.000Z",
+    "beforeExclusive": "2022-11-08T00:00:00.000Z",
+    "sourceIndexRowsPerDomainMaximum": 300,
+    "originalReplayPerPersonMaximum": 3
+  },
+  "officialSenatorSource": {
+    "url": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "originalRunId": 38094976711,
+    "originalArtifactId": 11685387674,
+    "revalidateOfficialOriginalHtmlAtAcquisition": true
+  },
+  "targets": [
+    {
+      "id": "judy22",
+      "person": "Judy Seeberger",
+      "district": "41",
+      "year": 2022,
+      "domain": "judyforsenate.com",
+      "modernUrlLeads": [
+        "https://judyforsenate.com/priorities/",
+        "https://judyforsenate.com/judy/"
+      ],
+      "currentlyDiscoveredCampaignHostNotVerifiedFiledSite": true
+    },
+    {
+      "id": "bonnie22",
+      "person": "Bonnie Westlin",
+      "district": "42",
+      "year": 2022,
+      "domain": "bonniewestlinformnsenate.com",
+      "modernUrlLeads": [
+        "https://www.bonniewestlinformnsenate.com/legislative-issues/",
+        "https://www.bonniewestlinformnsenate.com/announcement/"
+      ],
+      "currentlyDiscoveredCampaignHostNotVerifiedFiledSite": true
+    },
+    {
+      "id": "steve22",
+      "person": "Steve Cwodzinski",
+      "district": "49",
+      "year": 2022,
+      "domain": "cwodforsenate.com",
+      "modernUrlLeads": [
+        "https://cwodforsenate.com/",
+        "https://cwodforsenate.com/about"
+      ],
+      "currentlyDiscoveredCampaignHostNotVerifiedFiledSite": true
+    }
+  ],
+  "rules": {
+    "onlyIndependentlyActuallyServedSenators": true,
+    "redistrictedElectionDistrictDoesNotImplyDifferentPerson": true,
+    "archiveIndexWithoutMatchingOriginalHtmlDoesNotProveHistoricWords": true,
+    "sourceRetrievalTimeNeverRetroactivelyAssigned": true,
+    "originalAuthorFirstPostedAt": null,
+    "noArticleContextOrOpponentQuotesAttributedToSenator": true,
+    "noSourceAdmissionForecastDatabaseProductionOrModelChanges": true,
+    "unavailableArchiveNotCountedAsZero": true
+  }
+}
