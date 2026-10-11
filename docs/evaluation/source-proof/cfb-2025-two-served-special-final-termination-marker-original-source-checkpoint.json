@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "cfb-2025-actual-senate-members-two-original-special-final-termination-marker-permanent-proof-v1",
+  "issue": 864,
+  "evidenceScope": {
+    "onlyActualMinnesotaSenateMembers": true,
+    "elections": "2025 special Senate elections Districts 29 and 47",
+    "senatorCount": 2,
+    "reportYear": 2025,
+    "candidateViewerSegmentEndYear": 2026,
+    "reportPeriodStart": "2025-07-29",
+    "reportPeriodEnd": "2025-11-19",
+    "publicationAvailabilityForHistoricalForecastProven": false
+  },
+  "provenance": {
+    "sourceActionRun": "https://github.com/killjoy00/votepredict/actions/runs/38102244281",
+    "sourceWorkflowHead": "d015e09e3a783ee4b0aa609b5e191135e2004225",
+    "sourceWorkflowSucceeded": true,
+    "exactHeadFullRepositoryCi": "https://github.com/killjoy00/votepredict/actions/runs/38102244225",
+    "exactHeadFullCiSucceeded": true,
+    "mergedSourceImplementationCommit": "e6231859ed0da8ba095fa4b0ac2ae612ed1323c1",
+    "sourceArtifactId": 11687644644,
+    "sourceArtifactName": "cfb-2025-served-original-termination-form-marker-probe",
+    "originalSourceArtifactZipSha256": "b4b84746952ca3853ea673fda2301cc85d4f42e2db5160f44245eb694ed32b55",
+    "originalUncompressedMetadataJsonSha256": "f7dab9154a7423d7b8abbd04a3c8e041a678d0d0d9b88fe6bc841cc93dacfc74",
+    "originalUncompressedMetadataJsonBytes": 7180,
+    "originalSourceArtifactCapturedUtc": "2026-10-11T01:34:32.603Z",
+    "previousAuthenticatedSpecialFinalOriginalCheckpoint": "cfb-2025-served-senators-2-special-cycle-final-original-source-checkpoint.json",
+    "originalCandidateViewerPinnedLedger": "cfb-2025-dated-senate-85-reference-versions.psv",
+    "permanentOriginalPdfTerminationMarkerLedger": "cfb-2025-two-served-special-final-termination-marker-original-psv.psv",
+    "permanentMarkerLedgerCanonicalBytesWithoutFinalNewline": 474,
+    "permanentMarkerLedgerSha256WithoutFinalNewline": "108730ea3e3aaac8deb3829f5acd4f39d1d59c5795551155454d6a31c555b95a"
+  },
+  "originalSenateService": {
+    "directoryUrl": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "originalDirectorySha256": "20a3d45194c5903d70054d6b9592051806eb3a87a68d3defaff5a769eb9984d3",
+    "originalDirectoryObservedAtUtc": "2026-10-11T01:34:25.391Z",
+    "originalSpecialSenatorSwearingUrl": "https://www.lrl.mn.gov/history/caucus?body=s",
+    "originalSpecialSenatorSwearingSha256": "6545e13157224873896948cd72a1d1feacb811942039abd749cd73ce0acbdfb2",
+    "originalSwearingObservedAtUtc": "2026-10-11T01:34:26.600Z",
+    "namesNotActuallyServedExcluded": true
+  },
+  "originalReportSourceFindings": [
+    {
+      "senateMember": "Michael Holmstrom Jr",
+      "senateDistrict": 29,
+      "cfbRegistrationNumber": "19229",
+      "originalSpecialFinalReportId": "19229:25:pcc:YE:1:0",
+      "originalPdfSha256": "0cecaf71ada09c3cb7d12dd439438dc432c7998159250b7c62e85bfdb0e383b2",
+      "originalPdfBytes": 35024,
+      "originalPdfReacquiredAtUtc": "2026-10-11T01:34:30.560Z",
+      "officialBoardReceivedOn": "2025-11-26",
+      "recheckedOriginalViewerApiSha256": "584b5ed98bca7843b6eba51b378328ef41d209aedbbd6d294b5b7526078e5b50",
+      "originalViewerApiReobservedAtUtc": "2026-10-11T01:34:28.733Z",
+      "originalPdfExtractedTextSha256": "70accde57dba62fd66b077203b7fc7a99e4eae9f6e7a3dee0bcfa17a1525968d",
+      "extractedTerminationVocabularyCount": 3,
+      "extractedTerminationWordPositions": [
+        830,
+        1550,
+        8522
+      ],
+      "explicitFirst6500TextTerminationReportTypeFound": false,
+      "bareFirst6500TextTerminationReportLabelFound": false,
+      "selectedCheckboxProven": null,
+      "originalBoardTerminationNoticeProven": null,
+      "reportIsTermination": null,
+      "effectiveCommitteeTerminationOn": null,
+      "individual2025YearEndLegallyRequired": null,
+      "independentlyProvenHistoricalPublicByOn": null
+    },
+    {
+      "senateMember": "Amanda Hemmingsen-Jaeger",
+      "senateDistrict": 47,
+      "cfbRegistrationNumber": "19233",
+      "originalSpecialFinalReportId": "19233:25:pcc:YE:1:0",
+      "originalPdfSha256": "e96a87e4bd9d0583382ae2345fd597e7c8d6db7f919c91797516c975b1ca4ab1",
+      "originalPdfBytes": 38474,
+      "originalPdfReacquiredAtUtc": "2026-10-11T01:34:32.601Z",
+      "officialBoardReceivedOn": "2025-11-20",
+      "recheckedOriginalViewerApiSha256": "bf4173cf5d5bd0cb796b5d2537d017db7130e7a7d54654bfa0d8f0b95b52ad80",
+      "originalViewerApiReobservedAtUtc": "2026-10-11T01:34:31.809Z",
+      "originalPdfExtractedTextSha256": "c49c3bf3d45a50db8ecde4793b9ea1e5c6f42a88530330b0f89dd9e204f0e84a",
+      "extractedTerminationVocabularyCount": 3,
+      "extractedTerminationWordPositions": [
+        834,
+        1558,
+        10883
+      ],
+      "explicitFirst6500TextTerminationReportTypeFound": false,
+      "bareFirst6500TextTerminationReportLabelFound": false,
+      "selectedCheckboxProven": null,
+      "originalBoardTerminationNoticeProven": null,
+      "reportIsTermination": null,
+      "effectiveCommitteeTerminationOn": null,
+      "individual2025YearEndLegallyRequired": null,
+      "independentlyProvenHistoricalPublicByOn": null
+    }
+  ],
+  "legalSource": {
+    "official2025TerminationStatuteUrl": "https://www.revisor.mn.gov/statutes/2025/cite/10A.243",
+    "separatelyVerified2025Sd29And47SpecialDisclosureCalendarRule": "2025 ordinary year-end due unless special election cycle-final is a termination report",
+    "legalMeaningOfPrintedTerminationInstructions": "Generic printed instructions or occurrences of the word termination never prove a selected termination report designation.",
+    "yearEnd2025CalendarDueOn": "2026-02-02",
+    "original2025YearEndPdfVersionsAuthenticatedPreviously": 2,
+    "noInferenceFromFollowingYearEndFiling": true,
+    "noInferenceFrom2026CurrentRegistrationDateOrMissingTerminationDate": true
+  },
+  "summary": {
+    "previouslyVerifiedOriginalPdfHashesReconfirmed": 2,
+    "newlyAuthenticatedOriginalReportPdfBodies": 0,
+    "distinctTerminationLexemesAcrossTwoPdfs": 6,
+    "explicitReportTypeTerminationsTextuallyFound": 0,
+    "independentSelectedTerminationCheckboxesVerified": 0,
+    "independentOriginalBoardTerminationNoticesVerified": 0,
+    "individualLegallyOwedYearEndCount": null,
+    "statewideActualServingSenatorsLegallyOwedReportDenominator": null,
+    "independentlyProvenHistoricPublicByCount": 0,
+    "noSourceToDatabaseRowReconciliation": true,
+    "noPredictionEligibilityChange": true,
+    "keepIssue864Open": true
+  },
+  "safeguards": {
+    "noOriginalPdfBodiesOrRawTextSaved": true,
+    "whitelistedMarkerVocabularyOnly": true,
+    "noDonorsOrFinancialAmountsOrCandidateContactsSaved": true,
+    "noNonServingPersonNames": true,
+    "noProductionDbOrModelOrServingOrSchedulerWrites": true,
+    "no2027ProgramChanges": true
+  }
+}
