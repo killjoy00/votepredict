@@ -9,6 +9,9 @@ on:
       - scripts/probe-senate-media-mpr-history-bridge.mjs
       - scripts/run-senate-media-mpr-history-bridge.mjs
       - tests/senate-media-mpr-history-bridge.test.mjs
+      - tests/senate-media-mpr-bridge-real-receipts.test.mjs
+      - docs/evaluation/senate-media-mpr-feed-transcript-bridge-20261011.json
+      - docs/evaluation/senate-media-mpr-cdn-original-audio-20261011.json
       - docs/evaluation/senate-media-mpr-feed-transcript-bridge-20261011.json
       - docs/evaluation/senate-media-mpr-feed-transcript-bridge-20261011.md
   workflow_dispatch:
@@ -41,7 +44,7 @@ jobs:
         with:
           node-version: 22
       - name: Offline public-origin security and historical digest tests
-        run: node --test tests/senate-media-mpr-history-bridge.test.mjs
+        run: node --test tests/senate-media-mpr-history-bridge.test.mjs tests/senate-media-mpr-bridge-real-receipts.test.mjs
       - name: Bound official publisher feed and historical version lookups, 2 page replays max per original URL
         run: |
           node scripts/run-senate-media-mpr-history-bridge.mjs \
