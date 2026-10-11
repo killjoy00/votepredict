@@ -534,6 +534,6 @@
     ],
     "calculatedAgainstCheckedInSeedUrls": true,
     "outsideSeedPrefixLeadCount": 10,
-    "criticalLimitation": "10 of 23 selected URL leads are outside their configured seed prefixes, with three brief-versus-dated research alias pairs (March 2022 DFL public safety, Feb 2023 driver licensing, May 2025 road signs). Current-publisher URL comparisons do not demonstrate missing unique historical archived articles or a statewide publisher denominator."
+    "criticalLimitation": "10 of 23 selected URL leads are outside their configured seed prefixes, with three brief-versus-dated research alias pairs (March 2022 DFL public safety, Feb 2023 driver licensing, May 2025 road signs). Current-publisher URL comparisons do not demonstrate missing unique historical archived articles or a statewide publisher denominator. Publisher-wide and statewide publication denominators, original-archive identity, and historically valid public-by dates remain unknown."
   }
 }
