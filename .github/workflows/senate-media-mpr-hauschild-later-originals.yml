@@ -6,6 +6,8 @@ on:
       - scripts/probe-senate-media-mpr-episode-embeds.mjs
       - scripts/run-senate-media-mpr-hauschild-later-originals.mjs
       - tests/senate-media-mpr-hauschild-later-originals.test.mjs
+      - tests/senate-media-mpr-hauschild-later-real-receipts.test.mjs
+      - docs/evaluation/senate-media-mpr-hauschild-later-historical-transcript-cue-receipts-20261011.json
   workflow_dispatch:
 
 permissions:
@@ -36,7 +38,7 @@ jobs:
         with:
           node-version: 22
       - name: Offline later original page version tests
-        run: node --test tests/senate-media-mpr-hauschild-later-originals.test.mjs
+        run: node --test tests/senate-media-mpr-hauschild-later-originals.test.mjs tests/senate-media-mpr-hauschild-later-real-receipts.test.mjs
       - name: Exact CDX four version selection and at most next two post-earliest original HTTP replays
         run: |
           node scripts/run-senate-media-mpr-hauschild-later-originals.mjs \
