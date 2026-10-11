@@ -1,6 +1,6 @@
 # #864 Finance Track A — new 2022 Senate-serving candidates' original reports (SD13–24)
 
-This is a **new source-acquisition cohort**, not the existing [24 original 2022 PDFs from SD1–12](../source-proof/cfb-2022-senate-24-original-ce-pdf-source-checkpoint.json). Research exclusively individuals independently proven to have **actually served** in the Minnesota Senate; exclude even election candidates who never served. Do not conflate a general-election winner with pre-election prediction knowledge.
+This is a **new source-acquisition cohort**, not the existing [24 original 2022 PDFs from SD1–12](source-proof/cfb-2022-senate-24-original-ce-pdf-source-checkpoint.json). Research exclusively individuals independently proven to have **actually served** in the Minnesota Senate; exclude even election candidates who never served. Do not conflate a general-election winner with pre-election prediction knowledge.
 
 ## What the new acquisition verifies
 
