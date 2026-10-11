@@ -1,0 +1,88 @@
+name: Verify 25 exact 2022 archived Senator campaign issue snippets (older-copy distinct)
+
+# One-shot source-only audit: actual LRL Senate service + original archived
+# HTML for Judy Seeberger, Bonnie Westlin and Steve Cwodzinski.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-senate-three-new-served-2022-original-statement-excerpts.yml
+      - data/evaluation/senate-three-2022-original-sites-25-short-excerpt-proofs-v1.json
+      - src/evidence/senate-three-new-served-2022-original-campaign-issue-proof.ts
+      - scripts/audit-senate-three-new-served-2022-original-site-excerpts-offline.ts
+      - tests/senate-three-new-served-2022-original-issue-proof.test.ts
+      - docs/SENATE_THREE_NEW_SERVED_2022_ORIGINAL_ISSUE_STATEMENTS.md
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  original-three-candidate-issues-25-quote-span-checks:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-three-original-2022-senator-issue-site-25-excerpts-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Obtain immutable public actual Minnesota Senate service and special oath originals
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: artifacts/original-senator-lrl
+      - name: Obtain genuine 2022 candidate campaign page originals and exact CDX acquisition manifest
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38104021609
+          name: senate-2022-three-new-actual-senators-first-party-archive-source-v1
+          github-token: ${{ github.token }}
+          path: artifacts/2022-new-original-archive-pages
+      - name: Verify LRL identities, original archive SHAs/CDX digests and 25 original platform excerpts
+        shell: bash
+        run: |
+          set -euo pipefail
+          one() {
+            local found
+            found="$(find "$1" -type f -name "$2" -print -quit)"
+            test -n "$found"
+            printf '%s' "$found"
+          }
+          lrl="$(one artifacts/original-senator-lrl mn-lrl-official-senate-service-directory.html)"
+          meta="$(one artifacts/original-senator-lrl mn-lrl-official-senate-service-directory-audit.json)"
+          oath="$(one artifacts/original-senator-lrl mn-lrl-official-senate-special-swearing-history.html)"
+          acquisition="$(one artifacts/2022-new-original-archive-pages acquisition-manifest.json)"
+          judy="$(one artifacts/2022-new-original-archive-pages judy22-original-20220805034927-0.html)"
+          bonnie="$(one artifacts/2022-new-original-archive-pages bonnie22-original-20220122104435-0.html)"
+          steve="$(one artifacts/2022-new-original-archive-pages steve22-original-20220805062728-0.html)"
+          test "$(dirname "$lrl")" = "$(dirname "$meta")"
+          test "$(dirname "$lrl")" = "$(dirname "$oath")"
+          test "$(dirname "$acquisition")" = "$(dirname "$judy")"
+          test "$(dirname "$acquisition")" = "$(dirname "$bonnie")"
+          test "$(dirname "$acquisition")" = "$(dirname "$steve")"
+          node --import tsx scripts/audit-senate-three-new-served-2022-original-site-excerpts-offline.ts \
+            --official-lrl-original "$lrl" \
+            --official-lrl-metadata "$meta" \
+            --official-special-swearing "$oath" \
+            --archive-acquisition-manifest "$acquisition" \
+            --judy-2022-priorities-original "$judy" \
+            --bonnie-2022-legacy-issues-original "$bonnie" \
+            --steve-2022-vision-original "$steve" \
+            --output artifacts/25-three-served-senator-original-2022-policy-page-excerpts.json
+      - name: Retain independently attested actual Senate member campaign site excerpts with original 2022 source dates
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-three-additional-served-original-pages-25-quotes-legacy-cycle-caveat-v1
+          path: artifacts/25-three-served-senator-original-2022-policy-page-excerpts.json
+          if-no-files-found: error
+          retention-days: 30
