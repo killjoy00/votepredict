@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "cfb-2023-24-revisor-10a245-original-six-year-administrative-termination-law-two-run-v1",
+  "issue": 864,
+  "researchOn": "2026-10-11",
+  "original2023And2024RevisorSources": [
+    {
+      "statuteYear": 2023,
+      "url": "https://www.revisor.mn.gov/statutes/2023/cite/10A.245",
+      "originalHtmlSha256": "2d626e41700f7382a970f79ff507591a8d5407d3252b1f25741628611d35b1a6",
+      "sourceBytes": 65027
+    },
+    {
+      "statuteYear": 2024,
+      "url": "https://www.revisor.mn.gov/statutes/2024/cite/10A.245",
+      "originalHtmlSha256": "ad8e4aa430f624fecfaf64ad9cffa3a559e0a616ee04cf5ed6df6f4213e5103f",
+      "sourceBytes": 65027
+    }
+  ],
+  "sourceLedger": {
+    "path": "docs/evaluation/source-proof/cfb-2023-24-original-revisor-10a245-six-year-admin-termination-source-ledger.psv",
+    "rows": 2,
+    "bytes": 774,
+    "gitBlobSha": "ea754e5a6557d1e2c984acfc461255075c951e8c",
+    "columns": [
+      "originalStatuteYear",
+      "officialRevisorURL",
+      "originalSourceHtmlSha256",
+      "sourceBytes",
+      "principalCampaignCommitteeSixYearInactivityCriterion",
+      "permissiveBoardTerminationAfterCertifiedNoticeCriterion",
+      "anyHistoricalCommitteeSpecificBoardTerminationProven",
+      "anyOneSenatorCommitteeLegallyOwedReportProven",
+      "historicalCFBExactVersionPublicBy"
+    ]
+  },
+  "originalIndependentSourceAcquisitions": [
+    {
+      "runId": 38172118656,
+      "head": "647d8f86a0293f8332095c7f9f2d4aa0d2d8e9a3",
+      "result": "success",
+      "artifactId": 11714351570,
+      "zipSha256": "6368eaa64832e1d05f8217220c4cd9beac22daead9b16504074ccdeed9d5c613",
+      "zipBytes": 1212,
+      "artifactJsonSha256": "72d6d936fe4aef36f73b148c5511765ade87a23a7e6e14c952ff521f5ec46103",
+      "artifactJsonBytes": 3063
+    },
+    {
+      "runId": 38172347388,
+      "head": "924eeea02dd7a76d826d69a97d6409adf1d6398a",
+      "result": "success",
+      "artifactId": 11714865691,
+      "zipSha256": "790a6932d4c5e73d545811148531e94cd0018a1bbb9777f22785904ab81fc637",
+      "zipBytes": 1212,
+      "artifactJsonSha256": "320ad9e5684ff0a0de5efed364c5f947358c905abd53791d10478b7d7c7f72d9",
+      "artifactJsonBytes": 3063
+    }
+  ],
+  "independence": {
+    "bothHistoricalSourceStatuteYearsReverified": true,
+    "bothOriginalRevisorResponseShaAndByteLengthsIdenticalAcrossRuns": true,
+    "exactSixYearLaterOfLastElectionOrOfficeLastServiceVerified": true,
+    "sixtyDaysAfterCertifiedMailNoticeAndBoardDiscretionVerified": true,
+    "noIndividualCommitteeActualTerminationRecordRecovered": true,
+    "lastElectionLossDoesNotProveEndOfReportingDuty": true
+  },
+  "remainsUnknown": {
+    "anyOne2023Or2024PrincipalCommitteeActualTerminationDate": null,
+    "statewide2023Or2024SenateCommitteeLegallyOwedYearEndDenominator": null,
+    "historicalPublicBy2023Or2024ReportVersionCount": 0,
+    "originalCommitteeRegistrationAndFinalTerminationReportsMustBeIndependentlyRecovered": true
+  },
+  "safeguards": {
+    "primaryPublicLawOnly": true,
+    "noRawHTMLOrPersonalContactSaved": true,
+    "noFinanceDonorOrTransactionRowsSaved": true,
+    "noProductionDBReadWrite": true,
+    "noModelForecastSchedulerServingOr2027Changes": true,
+    "keepIssue864Open": true
+  }
+}
