@@ -1,0 +1,35 @@
+name: One-time original April12 2021 Senate Journal SF1159 SF970 committee source leads
+
+# Two INDEXED Rule12.10 committee reports. Provisional source discovery only.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2021-apr12-sf1159-sf970-original-rule1210-leads.yml
+
+permissions:
+  contents: read
+
+jobs:
+  verify-original-apr12-two-committee-leads:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Retrieve authentic April 12 large Journal and probe separate SF1159/SF970 Rule12.10 source sections
+        run: |
+          node --import tsx scripts/probe-senate-2021-apr12-sf1159-sf970-original-journal.ts \
+            --output artifacts/2021-apr12-original-rule1210-two-committee-leads/source-probe.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2021-apr12-sf1159-sf970-original-committee-rule1210-probe
+          path: artifacts/2021-apr12-original-rule1210-two-committee-leads/source-probe.json
+          retention-days: 30
+          if-no-files-found: error
