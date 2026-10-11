@@ -14,6 +14,8 @@ import {
 } from '../src/evidence/senate-committee-caption-motion-cues.js';
 import {SENATE_2025_CAPTION_CUE_V2,findStrict2025OriginalAutoCaptionMotionCues}
  from '../src/evidence/senate-committee-caption-motion-cues-v2.js';
+import {summarizeStrictCaptionCueRows}
+ from '../src/evidence/senate-committee-strict-caption-cue-summary.js';
 
 const args=process.argv.slice(2);
 if(args.length!==8||args[0]!=='--hrefs'||args[2]!=='--original-html'||
@@ -81,9 +83,7 @@ async function main(){
   failedSourceBodies:failures.length,
   combinedSourceCaptionTimestampMarkers:results.reduce((n,r)=>n+Number(r.originalTimestampAttributeMarkers),0),
   sourcePagesWithAnyMotionCue:results.filter(r=>Number(r.categoryThirtySecondWindowsNotDistinctMotions)>0).length,
-  sourceCueWindowsTotal:results.reduce((n,r)=>n+Number(r.totalDistinctThirtySecondCategoryCueWindows),0),
-  sourceCueWindowsInReviewPacket:results.reduce((n,r)=>n+(r.sourceReviewCueTimeWindows as unknown[]).length,0),
-  sourceCueWindowsOmittedByDisplayCap:results.reduce((n,r)=>n+Number(r.cueWindowsAboveOutputCap),0),
+  ...summarizeStrictCaptionCueRows(results),
  };
  const report={
   schemaVersion:SENATE_2025_CAPTION_CUE_V2,issue:864,year:2025,
