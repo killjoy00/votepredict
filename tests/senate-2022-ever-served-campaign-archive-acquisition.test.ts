@@ -201,7 +201,7 @@ test('full fixed-source acquisition: verified 2022 Wayback and HTTP206 WARC plus
   assert.equal(robRow.earliestVerifiedOriginalPageCaptureByUtc,'2022-10-05T12:12:12.000Z');
   assert.equal(robRow.earliestVerifiedOriginalPolicyStatementPublicBy,null);
   assert.ok(readFileSync(join(root,'received',
-    'rob-2022-campaign-20221005121212-CC-MAIN-2022-40.html')).equals(fixture.html));
+    'rob-2022-campaign-20221005121212-cc-main-2022-40.html')).equals(fixture.html));
   assert.equal(statSync(join(root,'received','acquisition-manifest.json')).mode&0o777,0o600);
   assert.ok(readdirSync(join(root,'received')).length>=8);
  }finally{rmSync(root,{recursive:true,force:true});}
