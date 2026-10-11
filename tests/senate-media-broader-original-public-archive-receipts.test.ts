@@ -121,3 +121,68 @@ test('failed original replays preserve indexed proof separately; collective firs
   assert.equal(Object.hasOwn(d,'senatorRecordedRollCallVotes'),false);
   assert.equal(Object.hasOwn(d,'historicApprovedSpeeches'),false);
 });
+
+
+test('independent second public URL run reproducibly matches all 16 earlier hashes and recovers 7 originals',()=>{
+  const s=d.independentSecondPublicRun;
+  assert.equal(s.runId,38160362555);
+  assert.equal(s.runStatus,'success');
+  assert.equal(s.sourceHeadSha,'6cef733fe2a3e1e870bb2b908a71a550561a5a8f');
+  assert.equal(s.artifactId,11710680494);
+  assert.equal(s.artifactName,'senate-media-25-original-public-proof');
+  assert.equal(s.zippedArtifactSha256,
+    '1e4645ff7b058b99258e4f0c4e97379c83778ce507008b53c930274b0d54197c');
+  assert.equal(s.decodedJsonSha256,
+    '506bae0cc853823ab284275679d6ad3733e6314ebc0a6355b42213ab4eaa4dc5');
+  assert.equal(s.decodedJsonBytes,43685);
+  assert.deepEqual(s.sampleTotals,{
+    originalPublicUrlLeadsRequested:25,indexedOriginalUrlCandidates:15,indexEmpty:0,
+    indexUnavailableOrInvalid:10,originalHttpReplaysAttempted:25,
+    matchedIndexedSha1RawHtmlBodies:23,distinctMatchedOriginalUrlLeads:14,
+  });
+  assert.deepEqual(s.byPublisherDisplayedYear.map((x:{year:number;urlsWithOriginalBody:number})=>
+    [x.year,x.urlsWithOriginalBody]),[[2021,1],[2022,2],[2023,4],[2024,5],[2025,2]]);
+  assert.equal(s.original16EarlierSha256AndByteLengthExactEqualityOnAllCommonCaptureKeys,true);
+  assert.equal(s.earlierOriginalBodyVersionsReproducedWithoutChange,16);
+  assert.equal(s.additionalNewExactOriginalBodyVersions,7);
+  assert.equal(s.additionalNewDistinctOriginalUrlLeads,3);
+  assert.equal(s.historicalVersionDateDoesNotBackdateCurrentDisplayedDate,true);
+  assert.equal(s.january2022BighamAndEkenReleaseNowHasTwoExactArchived2022Bodies,true);
+  assert.equal(s.oneOriginalArticleStillContainsTwoSeparateNamedSenatorSpeakerCandidates,true);
+  assert.equal(s.theirQuotedPhrasesNotYetArchivedMarkupChecked,true);
+});
+
+test('two exact original March and June 2022 Bigham/Eken HTML body hashes are separately authenticated but still one article',()=>{
+  const s=d.independentSecondPublicRun;
+  const newRows=s.additionalVerifiedExactArchivedBodyReceipts as Array<{
+    leadId:string;independentlyNewShaConsistentOriginalVersions:Capture[];
+  }>;
+  assert.equal(newRows.length,4);
+  assert.equal(newRows.reduce((n,x)=>n+x.independentlyNewShaConsistentOriginalVersions.length,0),7);
+  const b=newRows.find(x=>x.leadId==='public-2022-bigham-eken-separated')!;
+  assert.ok(b);
+  assert.deepEqual(b.independentlyNewShaConsistentOriginalVersions.map(x=>x.captureUtc),[
+    '2022-03-11T19:51:03Z','2022-06-29T12:45:13Z']);
+  assert.equal(b.independentlyNewShaConsistentOriginalVersions[0]!.rawOriginalSha256,
+    '026e8becb82577a34cc27388faed93048a6f247991853ba3f60f1a5287268131');
+  assert.equal(b.independentlyNewShaConsistentOriginalVersions[0]!.indexSha1Base32,
+    'W6T26AXVFFZJHAPPTOFAAZB6NDQWKV76');
+  assert.equal(b.independentlyNewShaConsistentOriginalVersions[0]!.originalBytes,154251);
+  assert.equal(b.independentlyNewShaConsistentOriginalVersions[1]!.rawOriginalSha256,
+    '7a2621bdbe093c90c594af36124f53203399504758ce48c07eaec168afb9f06b');
+  assert.equal(b.independentlyNewShaConsistentOriginalVersions[1]!.originalBytes,151424);
+  const current=ledger.selectedPublicSourceLeads.find(
+    (x:{id:string})=>x.id===b.leadId);
+  assert.deepEqual(current.individuallyNamedSenatorSpeakers.map((x:{name:string})=>x.name),
+    ['Karla Bigham','Kent Eken']);
+  assert.equal(d.observed.individualHistoricQuotesApproved,0);
+  assert.equal(new Set(newRows.map(x=>x.leadId)).size,4);
+  const earlier=new Set(checked.flatMap(x=>
+    x.verifiedOriginalHttpBodies.map(c=>x.leadId+'|'+c.captureUtc)));
+  for(const group of newRows)for(const c of group.independentlyNewShaConsistentOriginalVersions){
+    assert.equal(earlier.has(group.leadId+'|'+c.captureUtc),false);
+    assert.match(c.indexSha1Base32,/^[A-Z2-7]{32}$/);
+    assert.match(c.rawOriginalSha256,/^[a-f0-9]{64}$/);
+    assert.ok(c.originalBytes>=40&&c.originalBytes<=2_500_000);
+  }
+});
