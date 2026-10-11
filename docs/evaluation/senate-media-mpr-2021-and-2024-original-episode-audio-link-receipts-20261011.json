@@ -1,0 +1,55 @@
+{
+  "version": "senate-media-mpr-episode-historical-original-html-audio-leads-v1",
+  "observedOn": "2026-10-11",
+  "sourceGitHubRun": 38173368712,
+  "sourceGitHubHead": "c7530226bfc178e2d48e293c41e9ecc02916a838",
+  "artifactId": 11714428270,
+  "originalArtifactZipSha256": "c935ad16c5c8c55e74d9cd212fc01e93798cd347221bb0fed86dad8479c4ce06",
+  "decodedArtifactJsonSha256": "872c6df348a82206f3a79ee61b4efc54085e7203e51d4bb8c8a107e5da6b0ea0",
+  "rawJsonBytes": 7133,
+  "episodes": [
+    {
+      "id": "mpr-2021-jeremy-miller-hero-pay",
+      "originalPublisherUrl": "https://www.mprnews.org/episode/2021/11/15/minnesota-senate-majority-leader-talks-bipartisan-effort-to-distribute-hero-pay",
+      "displayedPublisherDay": "2021-11-15",
+      "publisherByline": "Cathy Wurzer and Brian Bakst",
+      "senator": "Jeremy Miller",
+      "officialHistoricalMemberRecord": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15335",
+      "historicalOriginalCaptures": [
+        {"utc":"2021-11-15T21:55:12Z","originalIndexedSha1Base32":"3PZ4AZNKIMNXWJLETZ2JSVWI7ZWXKGLF","rawOriginalSha256":"a5dde038ca7558d8ed8209e57721443e84b569c7e0c7b4eb627be38265a730bf","rawOriginalBytes":91141,"selectedPublisherShortCuePresent":true},
+        {"utc":"2021-11-15T23:26:33Z","originalIndexedSha1Base32":"3PZ4AZNKIMNXWJLETZ2JSVWI7ZWXKGLF","rawOriginalSha256":"a5dde038ca7558d8ed8209e57721443e84b569c7e0c7b4eb627be38265a730bf","rawOriginalBytes":91141,"selectedPublisherShortCuePresent":true}
+      ],
+      "archivedHtmlReferencedPublisherAudioUrl": "https://play.publicradio.org/unreplaced_ua/o/minnesota/news/programs/2021/11/15/Minnesota_Senate_Majority_Leaders_talks_bipartisan_effort_to_distribute_hero_pay_20211115_64.mp3",
+      "audioUrlFoundInShaAuthenticatedOriginalHtml": true,
+      "mp3BinaryAuthenticated": false,
+      "martySecondhandStatementNotAuthenticAudioTranscript": true
+    },
+    {
+      "id": "mpr-2024-grant-hauschild-north-star-act",
+      "originalPublisherUrl": "https://www.mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south",
+      "displayedPublisherDay": "2024-02-19",
+      "publisherByline": "Cathy Wurzer and Alanna Elder",
+      "senator": "Grant Hauschild",
+      "officialHistoricalMemberRecord": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15577",
+      "historicalOriginalCaptures": [
+        {"utc":"2024-02-19T22:55:56Z","originalIndexedSha1Base32":"DHKJFEB7VR76PWGE7EY2ZOUDZKLYKV5X","rawOriginalSha256":"a990fb4207938f11b58b787966f67f1cc9577fd5c1d4feafe081bd8f14242387","rawOriginalBytes":80716,"selectedCurrentTranscriptTextAndSpeakerLabelPresent":false},
+        {"utc":"2024-02-20T03:02:16Z","originalIndexedSha1Base32":"RBCAJH6FOUINBMBZWYXEX7GWIEIBHNDQ","rawOriginalSha256":"da848c28bb3c3e1335076de4606ec472d8695a4c2533add45812614df3fc9536","rawOriginalBytes":80716,"selectedCurrentTranscriptTextAndSpeakerLabelPresent":false}
+      ],
+      "archivedHtmlReferencedPublisherAudioUrl": "https://play.publicradio.org/unreplaced_ua/o/minnesota/podcasts/minnesota_now/2024/02/19/mn_now_20240219_hauschild_20240219_128.mp3",
+      "audioUrlFoundInShaAuthenticatedOriginalHtml": true,
+      "mp3BinaryAuthenticated": false,
+      "currentAudioTranscriptMustNotBeBackdatedToEitherOriginalVersion": true
+    }
+  ],
+  "distinctAuthenticatedHistoricalHttpHtmlBodies": 4,
+  "previouslyAuthenticated2021BodiesReconfirmed": 2,
+  "newlyAuthenticated2024BodyVersions": 2,
+  "historicalSourceAudioUrlPathsRecovered": 2,
+  "historicallyAuthenticatedAudioBodies": 0,
+  "humanReviewedCompleteSenatorQuotations": 0,
+  "publisherInitialPostingClocksProven": 0,
+  "recordedSenateRollVotesAuthenticated": 0,
+  "publisherAudioUrlsAreCandidatesNotAudioByteProof": true,
+  "noPublisherOriginalHtmlOrAudioSaved": true,
+  "noPrivateEvidenceUsed": true
+}
