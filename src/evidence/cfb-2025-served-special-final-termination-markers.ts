@@ -90,7 +90,7 @@ export function probeServedSenatorSpecialFinalTerminationMarkers(
     originalTerminationCheckboxSelectionIndependentlyProven:null,
     originalBoardTerminationNoticeIndependentlyProven:null,
     registeredCommitteeTerminatedEffectiveOn:null,
-    2025YearEndWasLegallyOwed:null,
+    yearEnd2025WasLegallyOwed:null,
     independentHistoricalPublicByOn:null,
     admissibleToHistoricalForecast:false,
     originalPdfOrRawExtractedTextRetained:false,
