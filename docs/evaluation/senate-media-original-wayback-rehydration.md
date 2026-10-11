@@ -18,6 +18,10 @@ When a source document has several context rows, their `mentionedMembers` **revi
 
 **Compatibility:** any previously generated private batch manifest with duplicate context rows that used the older undercounting behavior will not validate against this corrected deterministic plan; regenerate that batch privately using the same original exported inputs. Do not rewrite or publish historic private manifests.
 
+## Public-only Wayback capture research is a separate step
+
+For checked-in public MPR and Reformer leads, see the [bounded CDX index and exact replay research probe](senate-media-public-exact-wayback-probe.md). This does not use a private source export or establish a private SHA-256 match; it simply checks public capture metadata and, where accessible, a response's indexed digest. No real capture was retrieved from this investigation's blocked network. The original private workflow remains unchanged.
+
 ## Local private workflow
 
 First, export `media-context.jsonl` and `senate-roster.jsonl` with the separate [private SELECT-only runbook](senate-media-private-export-runbook.md). On a trusted machine that can reach the public Internet Archive, from the repository root:
