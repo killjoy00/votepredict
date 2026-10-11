@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "cfb-2021-22-11-actual-senators-26-amendment-pdf-source-checkpoint-v1",
+  "originalSourceAcquisition": {
+    "mergedPr": 1030,
+    "mergedCommit": "3e8f76823ad307c979fa3eca9ef20b04b3e7c28f",
+    "exactSourceImplementationHead": "3b921279c9d01cd1a5eef46156bf4590e2ce0c1a",
+    "exactHeadCiRun": 38110090069,
+    "exactHeadCiConclusion": "success",
+    "exactHeadOfficialSourceRun": 38110090051,
+    "officialSourceConclusion": "success_with_one_documentary_hold",
+    "artifactId": 11691073805,
+    "artifactUrl": "https://github.com/killjoy00/votepredict/actions/runs/38110090051/artifacts/11691073805",
+    "artifactExpiry": "2026-11-10T03:59:33Z",
+    "sourceArtifactZipSha256": "ebe280d2560cfa5e4a1093aab4eaf2bba2dc1acebc17eadfc5edf24d094e4931",
+    "zipBytes": 8925,
+    "sourceJsonSha256": "046c78504a1c2d0196d23b7acac1f57c281d1852e5522749d01b8f7a8d64aa3b",
+    "jsonBytes": 83581,
+    "originalSourceObservedAt": "2026-10-11T03:59:33.597Z"
+  },
+  "independentSourceObservationsMatchingEveryVersion": {
+    "distinctRuns": 3,
+    "all26OriginalPdfBinaryHashesAndBytesIdenticalAcrossAllThree": true,
+    "all26OriginalPdfBoardReceiptOutcomesIdenticalAcrossAllThree": true,
+    "observations": [
+      {
+        "run": 38109788636,
+        "artifactId": 11690628622,
+        "zipSha256": "abf259c44e5e605d26dd099c2beba36d8c59d0a9fa36c9821be44241b571e91b",
+        "jsonSha256": "2cac15ca80f9af0ac387aeb0e8fa5499bdfb5d201939682b931d21890d3579d9",
+        "jsonBytes": 61229,
+        "observedAt": "2026-10-11T03:53:43.678Z",
+        "successfulStrictlyVerifiedReports": 25
+      },
+      {
+        "run": 38109917993,
+        "artifactId": 11691167208,
+        "zipSha256": "989fcdeadec1d448237538850661db29421d1ee1a76fcefbfc26d939484d12fe",
+        "jsonSha256": "3ceb75e3c15c50579b4bb8100e6b4350d046e999af494e784222a5f26e85e7e1",
+        "jsonBytes": 83291,
+        "observedAt": "2026-10-11T03:56:16.026Z",
+        "successfulStrictlyVerifiedReports": 25
+      },
+      {
+        "run": 38110090051,
+        "artifactId": 11691073805,
+        "zipSha256": "ebe280d2560cfa5e4a1093aab4eaf2bba2dc1acebc17eadfc5edf24d094e4931",
+        "jsonSha256": "046c78504a1c2d0196d23b7acac1f57c281d1852e5522749d01b8f7a8d64aa3b",
+        "jsonBytes": 83581,
+        "observedAt": "2026-10-11T03:59:33.597Z",
+        "successfulStrictlyVerifiedReports": 25
+      }
+    ]
+  },
+  "permanentNonSensitiveLedger": {
+    "path": "docs/evaluation/source-proof/cfb-2021-22-served-amendment-26-pdf-source.psv",
+    "sha256": "293dcebac622da4ccaa4a5c9ccc3f067ecd9bea005a3b472bcf48856c3fb5891",
+    "bytes": 4321,
+    "includesTrailingNewline": true,
+    "columns": [
+      "officialAmendmentVersionId",
+      "originalAuthenticatedParentId",
+      "originalAmendmentViewerPdfSha256",
+      "originalSourcePdfBytes",
+      "amendedBoardReceivedOnOrDash",
+      "originalPdfPrintedDistrictOrDash",
+      "actualAcquisitionUtc",
+      "conservativePossibleVersionPublicNotBeforeOrDash",
+      "authenticationStatus_AUTH_or_HOLD_HEADER"
+    ]
+  },
+  "originalVerifiedPopulation": {
+    "actualMinnesotaSenators": 11,
+    "originalSourceAuthenticatedReportPdfs": 42,
+    "exactAmendmentVersionReferences": 26,
+    "originalOfficialCfbCandidateViewerRegistrationsRechecked": 11,
+    "original2021YearEndAmendments": 10,
+    "original2022YearEndAmendments": 12,
+    "original2022PrePrimaryAmendments": 2,
+    "original2022PreGeneralAmendments": 2,
+    "pinnedOriginalCeSource": "docs/evaluation/source-proof/cfb-2022-served-d13-24-original-ce-pdfs.psv",
+    "pinnedOriginalYeSource": "docs/evaluation/source-proof/cfb-2021-22-served-11-20-original-ye-pdf-proof.psv",
+    "previousOriginalOfficialApiSource": "docs/evaluation/source-proof/cfb-2021-24-senate-396-original-viewer-source-observations.psv"
+  },
+  "result": {
+    "all26SeparateOfficialPdfBinariesActuallyRetrieved": true,
+    "originalFirstPageAmendedFinanceFormsAuthenticated": 25,
+    "independentlyAuthenticatedHoldDocuments": 0,
+    "originalVersionParentFingerprintMatchesForAll26References": true,
+    "amendmentRevisionChainsFullyVerified": false,
+    "allAuthenticatedAmendedVersionsBinaryDistinctFromOriginalParent": true,
+    "fullHistoricallyAvailableDateForAnyAmendmentIndependentlyVerified": false,
+    "completeOriginalPlusAmendmentSourceVersionCoverageAcrossPinnedViewerRefs": false,
+    "interpretation": "25 authenticated amended finance forms plus one source-PDF identity hold; not 26/26 complete",
+    "amendedDocumentReportYear2022ReceivedIn2024": {
+      "id": "18058:22:pcc:YE:0:2",
+      "verifiedActualSenator": "Gene Dornink",
+      "boardReceivedOn": "2024-04-30",
+      "conservativeVersionNotBeforeOn": "2024-05-01",
+      "actualHistoricallyPublicByIndependentlyVerified": null
+    }
+  },
+  "heldDocument": {
+    "id": "18430:21:pcc:YE:0:1",
+    "person": "Aric Putnam",
+    "originalReportId": "18430:21:pcc:YE:0:0",
+    "originalPdfBinarySha256": "c8ae220986e7e61913c19c7eb6e7028f781ab4450da226a52843c7b7820d19e8",
+    "heldPdfSha256": "7529ad0bf417548f1617d2bb2b74e5115855844df4a979fdbb6ad3e5e6420acf",
+    "heldPdfBytes": 128524,
+    "extractedTextChars": 1836,
+    "originalOfficialViewerAmendmentVersionKey": true,
+    "hasPrincipalCampaignTitle": false,
+    "hasSenateDistrictLabel": false,
+    "hasRegistrationLabel": false,
+    "hasPeriodCoveredLabel": false,
+    "hasBoardReceiptStamp": false,
+    "verifiedAmendedReportReceiptOn": null,
+    "confirmedOriginalFinancialReportForm": false,
+    "sourceMissingMeansNonfiler": false,
+    "laterAmendment2PdfFirstPageSeparatelyAuthenticated": true,
+    "completeVersion1ToVersion2ChainAuthenticated": false,
+    "remedy": "Find independent first-party identification of document and its coverage and Board receipt; do not infer from amendment index alone."
+  },
+  "openQuestions": {
+    "statewideLegallyRequiredSenateFilings": null,
+    "distinctActiveHistoricalSenateCommittees": null,
+    "completeStatewideAmendmentUniverse": null,
+    "nonfilerCount": null,
+    "actualHistoricalPublicByByAmendment": null,
+    "originalFinancialRowsVersusProductionDatasetCompared": false,
+    "historicalPredictionAdmissionPermitted": false
+  },
+  "safeguards": {
+    "onlyOriginalSourcePdfFingerprintsAndMetadata": true,
+    "noRawReportTextsOrPdfsStored": true,
+    "noDonorContactsTransactionsOrFinancialAmountsStored": true,
+    "noNeverServedCandidateNamesStored": true,
+    "noProductionDataReadsOrWrites": true,
+    "noForecastModelRetrainingOrScheduledJobChanges": true,
+    "no2027Expansion": true,
+    "keepIssue864Open": true
+  }
+}
