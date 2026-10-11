@@ -25,7 +25,7 @@ test('exact 71 authentic CFB source versions entail exactly 22 actual 2022-servi
  assert.equal(new Set(people.map(x=>x.district)).size,22);
  assert.ok(!people.some(x=>x.district===31));
  assert.equal(SOS_2023_SENATE_ROSTER_PDF,
- 'https://www.sos.state.mn.us/media/6331/pocket-edition-2023.pdf');
+ 'https://www.sos.mn.gov/media/ybhkokxo/pocket-edition-2023.pdf');
  assert.throws(()=>select22Known2022SenatorsForOfficial2023Roster(
   source71.replace('Gary H. Dahms','Unknown Senator')),/changed/);
 });
