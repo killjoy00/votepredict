@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "senate-2025-apr09-energy-sf2393-original-caption-committee-action-provisional-review-v1",
+  "issue": 864,
+  "recordedOn": "2026-10-10",
+  "sourceHearing": {
+    "hearingDate": "2025-04-09",
+    "committee": "Energy, Utilities, Environment, and Climate",
+    "officialScheduleUrl": "https://www.senate.mn/schedule/senate/20250409",
+    "solePostedCommitteeAgendaBill": "SF2393",
+    "officialMediaUrl": "https://www.lrl.mn.gov/media/file?mtgid=1051286",
+    "mtgid": "1051286",
+    "officialBillHistoryUrl": "https://www.senate.mn/committees/selected_committee_bill_list.html?cmte_id=3122&ls=94",
+    "billHistoryReportDated": "2025-04-10",
+    "officialBillHistoryMotionDisposition": "Comm report: To pass as amended and re-refer to Finance"
+  },
+  "earlierOriginalPageAndCaptionProof": {
+    "captionCueFirstRunId": 38107642535,
+    "firstRunOverallConclusion": "failure_due_to_different_2025_source",
+    "sourceArtifactId": 11689504269,
+    "firstRunZipSha256": "89553b84d8be7d8fc2efc48cd223c59655c01a10129b518694e597ed20a8f676",
+    "firstRunJsonSha256": "6c39b11830b2c3e53e0b14f037203cbbe85e0b0b4e07dc0a3f1610f0d56ff00c",
+    "firstRunJsonBytes": 115002,
+    "sameHearingOriginalRecordHtmlSha256": "1d93e10ed46ba3a1c67b643e60fde2e3cd6da27e614fbe936b5156f6d055502d",
+    "sameHearingOriginalAutoCaptionPayloadSha256": "20489ee0e8556eca5f862d4afc0c6a36b4c4eb0bc42ebb7705386c1409442416",
+    "originalAutoCaptionBytes": 604618,
+    "originalCaptionTimestampMarkers": 3576,
+    "sourcePageReverifiedThisRun": true,
+    "allOtherYearJobFailuresIrrelevantToThisSpecificSource": true
+  },
+  "boundedSourceMotionCueTimeWindow": [
+    {
+      "candidateKind": "roll_call_request",
+      "automaticCaptionDataTimeSeconds": 7654,
+      "approximateElapsed": "02:07:34",
+      "sourceContextSha256": "93ce35a9321217ccc2c4f754095ff8d11b6bfc2e46cbe7247cbb0c5707ac6307"
+    },
+    {
+      "candidateKind": "individual_sides_spoken_auto_caption",
+      "automaticCaptionDataTimeSeconds": 7696,
+      "approximateElapsed": "02:08:16",
+      "sourceContextSha256": "16d3b2ca4895938ced5bf3834ea48d3f6cc8c4ce8421872b754c5d2e2bb95bad"
+    },
+    {
+      "candidateKind": "reported_roll_tally_auto_caption",
+      "automaticCaptionDataTimeSeconds": 7711,
+      "approximateElapsed": "02:08:31",
+      "sourceContextSha256": "ef0777e381b9514968b845b5e0cd58f5add4a48974b0a21278f7d39f8bd8433c"
+    }
+  ],
+  "captionOnlyCandidateClaim": {
+    "reportedYea": 9,
+    "reportedNay": 2,
+    "confidence": "unverified_automatically_generated_caption",
+    "namedIndividualSidesCertified": false,
+    "rollCallAndBillMotionExactIdentityCertified": false,
+    "independentAudioPlaybackPerformed": false,
+    "distinctVoteCertified": false,
+    "displayedMisrecognizedSenateFileCandidate": "SF2323",
+    "displayedMisrecognizedSenateFileCandidateMustNotBeUsed": true
+  },
+  "officialCrossCheck": {
+    "billOnActualAgenda": "SF2393",
+    "officialCommitteeBillActionPublishedNextDay": "2025-04-10",
+    "officialPostHearingCommitteeReportSupportsCommitteeRecommendation": true,
+    "officialReportIndependentOfAutoCaption": true,
+    "officialBillHistoryDoesNotAttestIndividualMemberSides": true,
+    "officialBillHistoryDoesNotAttestSpokenNineToTwoTally": true,
+    "correctBillAttributionBasedOnOfficialAgendaAndBillHistoryNotCaption": true
+  },
+  "provenanceDating": {
+    "hearingEventDate": "2025-04-09",
+    "sourceMediaOriginalHistoricalPublicBy": null,
+    "sourceCaptionHistoricalPublicBy": null,
+    "forecastAvailableOn": null,
+    "noSameDayEligibility": true
+  },
+  "limitations": {
+    "originalMinutesLinkAbsentInElectronicIndex": true,
+    "captionAutoSpeechRecognitionMayMisreadNumbersNamesAndAmendmentIds": true,
+    "cueTimeIsNotIndependentlyConfirmedActionClock": true,
+    "sourceAudioVideoBytesNotReplayValidated": true,
+    "sourceMotionNotEligibleAsRecordedMemberVotes": true,
+    "keepAmendmentDivisionSeparateFromCommitteeRecommendation": true,
+    "sourceWitnessTallyAloneNeverIndividualYeaNay": true,
+    "noPrivateDbOrForecastOrProductionWrites": true,
+    "issue864MustRemainOpen": true
+  }
+}
