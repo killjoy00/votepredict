@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {
  CFB_PUTNAM_ORIGINAL_2024_CONCILIATION,
  select22AuthenticSenatorRegistrationTargets,
@@ -89,7 +90,6 @@ test('current 2026 status is never historical proof of any 2023/24 registration 
 });
 
 test('original signed September 2024 Putnam Board action and 22 as-of-2026 committee web source fingerprints persist without false historic obligations',()=>{
- const {createHash}=require('node:crypto') as typeof import('node:crypto');
  const ck=JSON.parse(readFileSync(
   'docs/evaluation/source-proof/cfb-2023-24-22-committee-signed-board-contemporaneous-status-source-checkpoint.json','utf8'));
  const raw=readFileSync(ck.original22CurrentViewerLedger.path,'utf8');
