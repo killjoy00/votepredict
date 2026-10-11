@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "senate-2021-apr12-original-two-amendment-redacted-layout-source-success-v1",
+  "issue": 864,
+  "sourceMeaning": "One genuine ORIGINAL Senate Journal Apr12 2021 PDF with 2 distinct Rule12.10 amendment roll passages, original named voting sides not yet separately verified",
+  "original": {
+    "url": "https://www.senate.mn/journals/2021-2022/20210412036.pdf",
+    "senateJournalReportDate": "2021-04-12",
+    "originalPdfBytes": 11063699,
+    "originalPdfSHA256": "8dd34868badade8d3d4cd77ce11c6a632705bdd99a59509a5e4d23544f2d3d75",
+    "originalExtractedTextSHA256": "dda780e4fc076f56ff9f271303ba81897b69813acfece416f7741aea64c41214",
+    "originalNormalizedTextSHA256": "11def4e1a01ea4851f59d9a4ff255a13d295fe7843f4c032de27284a0504f54a"
+  },
+  "genuineNameRedactedSourceRun": {
+    "originalRunnerPR": 1125,
+    "originalRunnerMergeCommit": "3749ea670e26e99435c16c1928654ea15cae61a2",
+    "runId": 38170280710,
+    "runURL": "https://github.com/killjoy00/votepredict/actions/runs/38170280710",
+    "conclusion": "success",
+    "sourceErrors": 0,
+    "artifactId": 11713123987,
+    "artifactName": "senate-2021-apr12-original-rule1210-redacted-layout",
+    "independentlyDownloadedZIPBytes": 2033,
+    "independentlyDownloadedZIPSHA256": "9db056b9c2f114ecd18258a9c1520212e5b183e7f6a21ab19827f770b5619c5a",
+    "decodedJSONEntry": "shape.json",
+    "independentlyDecodedJSONBytes": 9716,
+    "independentlyDecodedJSONSHA256": "84ed74a969f920164cbc276a5540a923b1060967d687f78af58ff6a724d36df7",
+    "originalRule1210AnchorsInSource": 3
+  },
+  "strictExactMotionSourceCandidates": [
+    {
+      "bill": "SF1159",
+      "indexedCommittee": "Transportation Finance and Policy",
+      "indexedJournalPage": 2086,
+      "originalMotionNormalizedTextOffset": 1389069,
+      "exact450CharSourceWindowSHA256": "678c5dbbd685e0bd6325575c95e3660ce92f0941db4b1f08aa71805e99f92db1",
+      "previousSourceRedactedMotionDescription": "amendment to SF1159; mover's name redacted",
+      "previousOriginalCommitteeHeadingDistanceChars": 28,
+      "sourceExtractedTally": {
+        "yea": 4,
+        "nay": 6,
+        "absent": null
+      },
+      "sourceExtractedOutcome": "amendment was not adopted",
+      "namedSideDigestsPinnedBySeparateOriginalValidation": false,
+      "verifiedNamedRoll": false
+    },
+    {
+      "bill": "SF970",
+      "indexedCommittee": "Judiciary and Public Safety Finance and Policy",
+      "indexedJournalPage": 2147,
+      "originalMotionNormalizedTextOffset": 1542008,
+      "exact450CharSourceWindowSHA256": "f49a310ef86800ec970ffd65d48c0dcd0a206cfcaca8ae6ce85ec2fa7d9f5353",
+      "previousSourceRedactedMotionDescription": "amendment to SF970; first source probe separately identified Pappas",
+      "previousOriginalCommitteeHeadingDistanceChars": 28,
+      "sourceExtractedTally": {
+        "yea": 3,
+        "nay": 6,
+        "absent": null
+      },
+      "sourceExtractedOutcome": "amendment was not adopted",
+      "namedSideDigestsPinnedBySeparateOriginalValidation": false,
+      "verifiedNamedRoll": false
+    }
+  ],
+  "parserCaveat": {
+    "broad700CharacterSearchWindowCausedDuplicateCandidateAssociation": true,
+    "rawBroadSearchMatchedBothBillsTwice": true,
+    "neighboringBillMotionMustNeverBecomeVoteEvidenceForDifferentBill": true,
+    "onlyOwnExactBillAndOwnImmediateCommitteeHeadingMayBeCounted": true,
+    "strictExactMotionAndIndividuallyPinnedNameSHASeparateWorkerRequired": true
+  },
+  "sourceLimits": {
+    "redactedDiagnosticNotNamedRollAuthentication": true,
+    "noRawSourceOrReadableNameSidesCommitted": true,
+    "printedAbsentNotEstablishedNull": true,
+    "journalReportDateNotIndependentCommitteeHearingOrFirstPublicBy": true,
+    "separateOriginalLRL2021PrintMinutesNotReviewed": true,
+    "selectiveRule1210IndexNotExhaustiveCommitteeDenominator": true,
+    "noStoredProductionMemberVoteParity": true,
+    "noPrivateDBOrVoteBackfill": true,
+    "noFloorOrModelsForecastOr2027": true,
+    "issue864MustRemainOpen": true
+  }
+}
