@@ -1,0 +1,17 @@
+# #864 — historical September 2022 podcast identifies original Nick Frentz campaign domain
+
+## Contemporaneous candidate-owned website lead
+
+An independently published **September 29, 2022** Politically Charged Podcast episode, **Interview with Senator Nick Frentz**, explicitly states the candidate's campaign website is **https://www.frentzforsenate.com/**. Verify from [original podcast aggregator](https://podcast.app/politically-charged-podcast-p1981992) and [independent podcast catalog](https://podcastaddict.com/podcast/politically-charged-podcast/3258813). This is a historically dated and attributed original-domain **discovery lead**, not proof of the website page's original author date or any particular policy wording.
+
+The previous source acquisition [#1033](https://github.com/killjoy00/votepredict/pull/1033) tested the different **frentzformnsenate.com** current campaign site domain and obtained zero 2022 original CDX rows in its bounded sample (source run #38110142626). Those zero rows do not prove the historically podcast-linked separate candidate campaign domain, page texts or issue positions were absent.
+
+## Person-first and dated original-page standard
+
+The same person **Nick Frentz** actually served in the Minnesota State Senate (historic SD19 through 2022, new SD18 in 2023), regardless of redistricting. Original independent [MN LRL served Senator directory](https://www.lrl.mn.gov/legdb/senate_dir) HTML acquired in public [run #38094976711](https://github.com/killjoy00/votepredict/actions/runs/38094976711) artifact 11685387674 must be rehashed with its dated official source receipt and this person's **actual** 2023 service must be checked BEFORE any Wayback original HTTP request. A candidate listing or district identifier alone is insufficient.
+
+The one-person [original HTML acquisition](../scripts/acquire-nick-frentz-2022-podcast-linked-original-campaign-domain.ts) queries exactly **frentzforsenate.com**, from Jan 1 through Nov 7, **2022** original Wayback CDX pre-election pages (300 indexed rows max, four distinct HTML original page replays max). Prioritize issues/priorities/platform/vision then homepage. Authenticate real original archived HTML bytes, separately indexed historical Wayback CDX SHA-1 base32 and full source SHA-256 before granting any text/date proof. The **original archive capture UTC suffices as a genuine publicly available-by date** for any subsequently exact-verified candidate policy excerpt; original first writer date is neither needed nor inferred. The September 29 podcast date is a URL discovery date, not automatically the source policy text's publication date.
+
+The PR-only [source workflow](../.github/workflows/acquire-nick-frentz-2022-contemporaneous-campaign-originals.yml) retains original public first-party archived HTML/CDX and dated failures for 30 days in GitHub Actions. Original source unavailable, archive index capped/empty or source replay digest mismatch means coverage is **unknown**, never zero campaign positions. A historical 2022 original SOS filed-candidate website field remains unverified.
+
+Research-only: no production Neon/Vercel/database, source ingestion, model/forecast/training/serving changes, frozen evaluations, public office contact, scheduled automation, or 2027 changes. Exact issue statement review after original source verification only; keep issue [#864](https://github.com/killjoy00/votepredict/issues/864) OPEN.

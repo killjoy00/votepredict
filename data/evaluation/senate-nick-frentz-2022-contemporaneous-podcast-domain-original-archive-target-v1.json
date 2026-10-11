@@ -1,0 +1,62 @@
+{
+  "schema": "mn-nick-frentz-2022-dated-podcast-linked-original-campaign-domain-v1",
+  "issue": 864,
+  "scope": {
+    "historicalElectionYear": 2022,
+    "generalElectionDate": "2022-11-08",
+    "originalCaptureFromUtc": "2022-01-01T00:00:00.000Z",
+    "originalCaptureUntilExclusiveUtc": "2022-11-08T00:00:00.000Z",
+    "actualSenateServiceBeforeSourceRequestsRequired": true,
+    "oneIndependentlyActuallyServedSenatePerson": true,
+    "fullPreviousOriginalGovernmentDirectoryReceiptRequired": true,
+    "maximumHistoricCDXIndexRowsPerPerson": 300,
+    "maximumOriginalPageReplaysPerPerson": 4,
+    "maximumOriginalPageReplaysTotal": 4,
+    "siteCurrent2026TextIsHistorical2022Proof": false,
+    "firstAuthorDateNotRequired": true,
+    "archiveCaptureDateMayBeUsedAsResearchPublicBy": true,
+    "originalSOS2022FiledWebsiteNotCertified": true,
+    "productionForecastAdmissionAndDatabaseReadsWrites": 0
+  },
+  "officialPublicLRLSource": {
+    "url": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "independentOriginalSourceRunId": 38094976711,
+    "artifactId": 11685387674,
+    "bytesRehashedBeforeNetwork": true
+  },
+  "targets": [
+    {
+      "id": "frentz22-01",
+      "candidateName": "Nick Frentz",
+      "electionDistrict": "18",
+      "domain": "frentzforsenate.com",
+      "discoveryUrl": "https://www.frentzforsenate.com/",
+      "year": 2022,
+      "discoveryBasis": "Independent public Politically Charged Podcast episode Interview with Senator Nick Frentz dated September 29 2022 explicitly identifies www.frentzforsenate.com as Nick Frentz Campaign website.",
+      "contemporaneousPublisherReference": {
+        "publisher": "Politically Charged Podcast",
+        "episodeTitle": "Interview with Senator Nick Frentz",
+        "publishedOn": "2022-09-29",
+        "indexedOn": "https://podcast.app/politically-charged-podcast-p1981992",
+        "additionalIndependentDistributor": "https://podcastaddict.com/podcast/politically-charged-podcast/3258813"
+      },
+      "previousUnsuccessful2022WrongDomainSearch": {
+        "domain": "frentzformnsenate.com",
+        "githubRunId": 38110142626,
+        "originalCdxIndexRows": 0,
+        "interpretation": "different 2026 candidate domain; negative result does not exclude the originally publicly linked 2022 domain"
+      },
+      "originalSOSFiledDomainKnown": false,
+      "currentWebsiteStatementsAre2022Proof": false,
+      "attributable2022OriginalArchivePageUnverifiedBeforeAcquisition": true
+    }
+  ],
+  "cautions": [
+    "The 2022 interview's listed campaign URL is an independently dated historical lead, NOT proof what was on the website or when its first text was authored.",
+    "Only real 2022 Wayback archived HTML body matching independently obtained original historic CDX SHA-1 may prove text and capture UTC.",
+    "The 2026 www.frentzformnsenate.com source and its reported 2022 priorities may not be silently backdated.",
+    "This senator was independently known to have actually served after 2022 in district 18, regardless of prior district number.",
+    "An empty, capped or unavailable archival query is unknown source coverage, never no issue statements.",
+    "No production data, model/forecast feature admission, live service, scheduler, or contact with public offices."
+  ]
+}
