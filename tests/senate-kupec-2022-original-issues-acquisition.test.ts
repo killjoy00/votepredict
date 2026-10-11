@@ -99,6 +99,25 @@ test('positive historical original archived issue body requires exact CDX index 
   assert.ok(readdirSync(join(parent,'out')).length>=3);
  }finally{rmSync(parent,{recursive:true,force:true});}
 });
+test('HTTP 503 and timeouts yield UNKNOWN indexed capture count, never certified missing issue source',async()=>{
+ const dir=mkdtempSync(join(tmpdir(),'kupec-original-503-'));
+ try{
+  let calls=0;
+  const mock=async():Promise<Response>=>{
+   calls++;return new Response('Unavailable',{status:503});
+  };
+  const r=await acquireKupec2022OriginalIssuePages(join(dir,'out'),served(),mock as typeof fetch);
+  assert.equal(calls,3);
+  assert.equal(r.stats.exactPathIndexQueries,3);
+  assert.equal(r.stats.successfulHistoricalIssueCdxParses,0);
+  assert.equal(r.stats.bounded2022IssueOriginalIndexRows,null);
+  assert.equal(r.stats.allThreeHistoricalIndexQueriesSucceeded,false);
+  assert.equal(r.stats.indexFailuresAreNotCertifiedZeroCaptures,true);
+  assert.equal(r.stats.historicalFullIssuesArchiveCompletenessCertified,false);
+  assert.ok(r.originalExactPathQueryResults.every(x=>x.exactSameCandidateIssueUrlIndexedOriginalRows===null));
+  assert.equal(r.stats.policyExcerptsAttributedOrAdmitted,0);
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
 test('mismatched archive HTML never certifies source original date even when Wayback replay reports HTTP 200',async()=>{
  const parent=mkdtempSync(join(tmpdir(),'kupec-senator-mismatched-'));
  try{
