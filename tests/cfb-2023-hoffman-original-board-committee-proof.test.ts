@@ -13,8 +13,8 @@ const syntheticOriginal=[
  'The Committee to Elect John Hoffman is the principal campaign committee of Senator John Hoffman.',
  'The committee’s 2021 and 2022 amended year-end reports of receipts and expenditures disclosed a combined total.',
  'The committee agrees it will transition to using the Board’s Campaign Finance Reporter Online application starting with the 2023 reporting year.',
- '/s/ John Hoffman Dated: June 7, 2023',
- '/s/ Board Chair Dated: June 7, 2023'
+ '/s/ John Hoffman Dated: July 6, 2023',
+ '/s/ Board Chair Dated: July 6, 2023'
 ].join(' ');
 test('source is exact original Minnesota Board signed committee action URL',()=>{
  assert.equal(HOFFMAN_2023_ORIGINAL_BOARD_AGREEMENT,
@@ -28,7 +28,7 @@ test('strict original signed 2023 action proves exactly Senator Hoffman registra
  assert.equal(p.authenticSenateDistrict2022,34);
  assert.equal(p.independentSourceNamedPrincipalCommitteeInSigned2023Action,true);
  assert.equal(p.BoardDiscussedAmended2021and2022AnnualReports,true);
- assert.deepEqual(p.originalSignatureDatesAsPrinted,['June 7, 2023','June 7, 2023']);
+ assert.deepEqual(p.originalSignatureDatesAsPrinted,['July 6, 2023','July 6, 2023']);
  assert.equal(p.actualFirstRegistrationDate,null);
  assert.equal(p.committeeRegistrationStatusOnSpecific2023Or2024Date,null);
  assert.equal(p.originalBoardVoluntaryOrAdministrativeTermination,null);
@@ -44,7 +44,7 @@ test('never attribute a similar person/registration/document/report context to J
   syntheticOriginal.replace('The Committee to Elect John Hoffman is the principal campaign committee','Some other person is the principal campaign committee'),
   syntheticOriginal.replace('2021 and 2022 amended year-end','2021 and 2023 amended year-end'),
   syntheticOriginal.replace('2023 reporting year','2024 reporting year'),
-  syntheticOriginal.replace('Dated: June 7, 2023','Dated: June 7, 2022').replace('Dated: June 7, 2023','Dated: June 7, 2022'),
+  syntheticOriginal.replace('Dated: July 6, 2023','Dated: July 6, 2022').replace('Dated: July 6, 2023','Dated: July 6, 2022'),
  ]){
   assert.throws(()=>inspectHoffman2023OriginalBoardAction({
    original2023BoardPdfText:text,existingAuthenticated71VersionPSV:original71}),
@@ -56,4 +56,11 @@ test('cannot silently edit immutable preauthenticated 71-original financial disc
   original2023BoardPdfText:syntheticOriginal,
   existingAuthenticated71VersionPSV:original71.replace('17319:23:pcc:YE:0:0','99319:23:pcc:YE:0:0')
  }),/changed/);
+});
+test('both distinct original 2023 Board signatures must match the exact primary-government document dates',()=>{
+ const changed=syntheticOriginal.replace('/s/ Board Chair Dated: July 6, 2023',
+  '/s/ Board Chair Dated: July 7, 2023');
+ assert.throws(()=>inspectHoffman2023OriginalBoardAction({
+  original2023BoardPdfText:changed,existingAuthenticated71VersionPSV:original71
+ }),/signed dates do not match/);
 });
