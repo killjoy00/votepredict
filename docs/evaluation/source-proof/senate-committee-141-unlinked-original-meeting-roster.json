@@ -1,0 +1,361 @@
+{
+  "schemaVersion": "senate-2022-25-original-index-141-unlinked-minutes-compact-review-roster-v1",
+  "issue": 864,
+  "recordedOn": "2026-10-10",
+  "scope": "Official electronic LRL 2022-2025 indexed Senate committee meetings without a linked original Minutes PDF; neither a complete official meeting nor vote denominator",
+  "originalIndexedCensus": {
+    "runId": 38065594898,
+    "artifactId": 11674762938,
+    "artifactZipSha256": "cd39d5b334a4917616d614a03ae8b2ec0776e70214ae111ac5b54f877e890c7b",
+    "originalJsonSha256": "ed5fb31e17df7acc035997fa487e55d3156997ac05603fdd046bffa554395ee0",
+    "exactMissingMeetingRosterSha256InPriorProof": "b7702da8e81ae960fc20ae950e957c5172b4d7053a6c1c1424af0e4403cf2558",
+    "canonicalFourFieldRosterSha256ThisLedger": "19b1766e42602e5267e6f9f4db0d3fc9b7eacc120b4f023ea2f15da7565c4584",
+    "indexedMeetings": 1592,
+    "indexedMeetingsWithLinkedMinutes": 1451,
+    "indexedMeetingsWithoutLinkedMinutes": 141,
+    "originalPdfLinks": 1452
+  },
+  "datedMediaCandidateTriage": {
+    "runId": 38076153790,
+    "sourceArtifacts": [
+      {
+        "year": 2022,
+        "artifactId": 11678695461,
+        "zipSha256": "b40fea19ebe7a99f22767b22024fc3d40062578309badf0db3fe7e722ae7cc5f",
+        "jsonSha256": "a25b4be463308dbb2ec91dfeddf061ea89201a287bb4181a296130dcbdaba939"
+      },
+      {
+        "year": 2023,
+        "artifactId": 11678735983,
+        "zipSha256": "8a795340edd3e26ab25731371658d2ac4e645a3eacbf08815c0ebcdebbb58dda",
+        "jsonSha256": "9f3a2ab4fd71c90c39b6897d50b5efa62da4c43cfb048670e17f9ee6b8ba494e"
+      },
+      {
+        "year": 2024,
+        "artifactId": 11679565102,
+        "zipSha256": "f15e6a5e72f1520ba3766203afc8833ed838b837f018eed031234143095b614a",
+        "jsonSha256": "efaa2d4f7ddd78063fa0c9b2d42645b3b9cc8cf3c25b7a2ace438030e394225b"
+      },
+      {
+        "year": 2025,
+        "artifactId": 11679555047,
+        "zipSha256": "a7e5d55c34364d684807d88726a21b7b93e4b7ba7ee11cab3b064b84f042cecc",
+        "jsonSha256": "d3a828a173912dba7221975aed60e8057d03799b911f577c4f14979d134665d3"
+      }
+    ],
+    "indexOnlyMediaCandidateMeetings": 138,
+    "indexedMeetingsWithoutDatedMediaCandidate": 3,
+    "threeNoMediaCandidates": [
+      {
+        "year": 2022,
+        "committeeName": "Energy and Utilities Finance and Policy",
+        "meetingDate": "2022-04-21"
+      },
+      {
+        "year": 2024,
+        "committeeName": "Environment, Climate, and Legacy",
+        "meetingDate": "2024-05-16"
+      },
+      {
+        "year": 2025,
+        "committeeName": "Rules and Administration - Subcommittee on Committees",
+        "meetingDate": "2025-05-12"
+      }
+    ],
+    "mediaLinksDoNotProvePlayableContentOrRecordedVotes": true
+  },
+  "meetingGroups": [
+    {
+      "year": 2022,
+      "committeeName": "Civil Law and Data Practices Policy",
+      "officialIndexCommitteeId": "23828-0",
+      "missingMinutesMeetingDates": [
+        "02-10"
+      ]
+    },
+    {
+      "year": 2022,
+      "committeeName": "Education Finance and Policy",
+      "officialIndexCommitteeId": "23833-0",
+      "missingMinutesMeetingDates": [
+        "04-04"
+      ]
+    },
+    {
+      "year": 2022,
+      "committeeName": "Energy and Utilities Finance and Policy",
+      "officialIndexCommitteeId": "23834-0",
+      "missingMinutesMeetingDates": [
+        "04-21"
+      ]
+    },
+    {
+      "year": 2022,
+      "committeeName": "Environment and Natural Resources Finance",
+      "officialIndexCommitteeId": "23835-0",
+      "missingMinutesMeetingDates": [
+        "02-08",
+        "02-09",
+        "03-08",
+        "03-09",
+        "08-10",
+        "10-03"
+      ]
+    },
+    {
+      "year": 2022,
+      "committeeName": "Housing Finance and Policy",
+      "officialIndexCommitteeId": "23832-0",
+      "missingMinutesMeetingDates": [
+        "03-15",
+        "03-24"
+      ]
+    },
+    {
+      "year": 2022,
+      "committeeName": "Jobs and Economic Growth Finance and Policy",
+      "officialIndexCommitteeId": "23827-0",
+      "missingMinutesMeetingDates": [
+        "02-07"
+      ]
+    },
+    {
+      "year": 2023,
+      "committeeName": "Agriculture, Broadband and Rural Development",
+      "officialIndexCommitteeId": "26143-0",
+      "missingMinutesMeetingDates": [
+        "01-09",
+        "01-11",
+        "01-18",
+        "01-23",
+        "01-30",
+        "02-01",
+        "02-06",
+        "02-08",
+        "02-13",
+        "02-15",
+        "02-20",
+        "02-27",
+        "03-01",
+        "03-06",
+        "03-08",
+        "03-13",
+        "03-15",
+        "03-20",
+        "03-22",
+        "03-27",
+        "03-29",
+        "04-17"
+      ]
+    },
+    {
+      "year": 2023,
+      "committeeName": "Education Finance",
+      "officialIndexCommitteeId": "26140-0",
+      "missingMinutesMeetingDates": [
+        "01-12",
+        "02-16",
+        "03-15"
+      ]
+    },
+    {
+      "year": 2023,
+      "committeeName": "Environment, Climate, and Legacy",
+      "officialIndexCommitteeId": "26147-0",
+      "missingMinutesMeetingDates": [
+        "04-13"
+      ]
+    },
+    {
+      "year": 2023,
+      "committeeName": "Jobs and Economic Development",
+      "officialIndexCommitteeId": "26153-0",
+      "missingMinutesMeetingDates": [
+        "03-20"
+      ]
+    },
+    {
+      "year": 2023,
+      "committeeName": "Taxes",
+      "officialIndexCommitteeId": "26142-0",
+      "missingMinutesMeetingDates": [
+        "01-05",
+        "01-10",
+        "01-11",
+        "01-12",
+        "01-17",
+        "01-18",
+        "01-19",
+        "01-24",
+        "02-01",
+        "02-02",
+        "02-07",
+        "02-08",
+        "02-14",
+        "02-15",
+        "02-16",
+        "02-21",
+        "02-28",
+        "03-01",
+        "03-02",
+        "03-07",
+        "03-08",
+        "03-09",
+        "03-14",
+        "03-15",
+        "03-16",
+        "03-21",
+        "03-22",
+        "03-23",
+        "03-28",
+        "03-29",
+        "03-30",
+        "04-04",
+        "04-13",
+        "04-17",
+        "04-26",
+        "04-27",
+        "05-12"
+      ]
+    },
+    {
+      "year": 2024,
+      "committeeName": "Energy, Utilities, Environment and Climate",
+      "officialIndexCommitteeId": "26145-0",
+      "missingMinutesMeetingDates": [
+        "03-20"
+      ]
+    },
+    {
+      "year": 2024,
+      "committeeName": "Environment, Climate, and Legacy",
+      "officialIndexCommitteeId": "26147-0",
+      "missingMinutesMeetingDates": [
+        "05-16"
+      ]
+    },
+    {
+      "year": 2024,
+      "committeeName": "Health and Human Services",
+      "officialIndexCommitteeId": "26149-0",
+      "missingMinutesMeetingDates": [
+        "04-04"
+      ]
+    },
+    {
+      "year": 2024,
+      "committeeName": "Jobs and Economic Development",
+      "officialIndexCommitteeId": "26153-0",
+      "missingMinutesMeetingDates": [
+        "02-19",
+        "02-26",
+        "03-04"
+      ]
+    },
+    {
+      "year": 2024,
+      "committeeName": "State and Local Government and Veterans",
+      "officialIndexCommitteeId": "26156-0",
+      "missingMinutesMeetingDates": [
+        "02-29",
+        "03-05",
+        "03-07",
+        "03-12",
+        "03-14",
+        "03-19",
+        "03-21",
+        "03-26",
+        "04-05",
+        "04-09",
+        "04-16",
+        "04-19",
+        "05-02"
+      ]
+    },
+    {
+      "year": 2024,
+      "committeeName": "Taxes",
+      "officialIndexCommitteeId": "26142-0",
+      "missingMinutesMeetingDates": [
+        "02-14",
+        "02-15",
+        "02-29",
+        "03-05",
+        "03-06",
+        "03-07",
+        "03-12",
+        "03-13",
+        "03-14",
+        "03-19",
+        "03-20",
+        "03-21",
+        "03-26",
+        "04-03",
+        "04-04",
+        "04-09",
+        "04-16",
+        "04-17",
+        "04-18",
+        "04-25",
+        "05-01",
+        "05-02",
+        "05-07"
+      ]
+    },
+    {
+      "year": 2025,
+      "committeeName": "Energy, Utilities, Environment, and Climate",
+      "officialIndexCommitteeId": "26188-0",
+      "missingMinutesMeetingDates": [
+        "01-22",
+        "01-29",
+        "02-05",
+        "02-17",
+        "02-19",
+        "02-26",
+        "03-03",
+        "03-05",
+        "03-10",
+        "03-12",
+        "03-19",
+        "03-24",
+        "03-26",
+        "04-02",
+        "04-07",
+        "04-09",
+        "04-28"
+      ]
+    },
+    {
+      "year": 2025,
+      "committeeName": "Environment, Climate, and Legacy",
+      "officialIndexCommitteeId": "26189-0",
+      "missingMinutesMeetingDates": [
+        "02-13"
+      ]
+    },
+    {
+      "year": 2025,
+      "committeeName": "Rules and Administration - Subcommittee on Committees",
+      "officialIndexCommitteeId": "26198-21261",
+      "missingMinutesMeetingDates": [
+        "02-14",
+        "02-21",
+        "03-24",
+        "04-07",
+        "05-12"
+      ]
+    }
+  ],
+  "limitations": {
+    "years2021PrintOnlyMeetingVoteDenominator": null,
+    "year2022PrintAndElectronicCollectionsMayDiffer": true,
+    "completeOfficial2021To2025SenateCommitteeRecordedVoteDenominator": null,
+    "sameIndexedDateCanBelongToMultipleCommittees": true,
+    "unlinkedMinutesDoesNotProveNoMeetingOrRecordedVote": true,
+    "mediaRecordLeadIsNotVerifiedRecordingOrNamedVote": true,
+    "noPrivateProductionDatabaseAccessOrWrites": true,
+    "noModelForecastServingTrainingSchedulerFloor2027Changes": true,
+    "issue864MustRemainOpen": true
+  }
+}
