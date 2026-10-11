@@ -8,7 +8,7 @@
  *   --input artifacts/original-396-source.json
  */
 import {createHash} from 'node:crypto';
-import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
 import {resolve,dirname,sep} from 'node:path';
 const ORIGINAL_JSON_SHA='933f9c55c71da049a4a9af21574f562676e8e930f0cb6be6883e50b5f8901da0';
 const ORIGINAL_JSON_BYTES=562731;
@@ -142,8 +142,17 @@ function main(){
       noEligibilityPromotion:true,noSchedulerOrServingChange:true,issue864RemainsOpen:true},
   };
   mkdirSync(dirname(LEDGER),{recursive:true});
-  writeFileSync(LEDGER,result,{flag:'wx'});
-  writeFileSync(CHECKPOINT,JSON.stringify(manifest,null,2)+'\n',{flag:'wx'});
+  // Idempotent ONLY if a previous commit preserved exactly the same authentic
+  // original source bytes; never overwrite altered proof or silently drift.
+  function preserveExact(path:string,body:string){
+    if(existsSync(path)){
+      if(readFileSync(path,'utf8')!==body)throw Error('Existing source proof file differs from original verified bytes');
+      return;
+    }
+    writeFileSync(path,body,{flag:'wx'});
+  }
+  preserveExact(LEDGER,result);
+  preserveExact(CHECKPOINT,JSON.stringify(manifest,null,2)+'\n');
   console.log(JSON.stringify({sourceRows:396,uniqueRegs:275,pccRefs:1378,
     ancillaryRefs:4,originalVersions:941,amendments:437,
     compressedSourceZipSha256:ZIP_SHA,preservedPsvSha256:PSV_SHA,
