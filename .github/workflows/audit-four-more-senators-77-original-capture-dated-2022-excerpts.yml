@@ -1,0 +1,69 @@
+name: Prove 77 capture-dated 2022 Senate campaign issue statements from actual original HTML
+
+# PR-only independent LRL public source + six-senator original acquisition.
+# Captured public-by date is enough; no first author-posted date required.
+# Source-only, no database, serving, forecast, scheduled task or outreach.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-four-more-senators-77-original-capture-dated-2022-excerpts.yml
+      - data/evaluation/senate-four-more-2022-original-campaign-policy-excerpts-capture-dated-v1.json
+      - src/evidence/senate-four-more-2022-original-capture-dated-77-excerpts.ts
+      - scripts/audit-four-more-senate-2022-capture-dated-original-issue-excerpts-offline.ts
+      - tests/senate-four-more-2022-original-77-capture-dated-policy-excerpts.test.ts
+      - docs/SENATE_2022_FOUR_MORE_ORIGINAL_POLICY_PAGES_77_ARCHIVE_DATED_STATEMENTS.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  archived-policy-source-original-77-excerpt-recheck:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-four-additional-senators-dated-original-2022-policy-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Obtain independent original state Senate member directory and UTC/SHA receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: source/original-lrl-senate-roster
+      - name: Obtain real original 2022 public campaign HTML and original historical CDX proof
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38109406776
+          name: senate-six-additional-2022-actual-served-original-campaign-html-v1
+          github-token: ${{ github.token }}
+          path: source/original-six-more-senate-campaign-pages
+      - name: Re-open all 16 original first-party pages and authenticate 77 source quotes against their actual archive capture date
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(find source/original-lrl-senate-roster -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find source/original-lrl-senate-roster -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$actual" && test -n "$receipt"
+          test "$(dirname "$actual")" = "$(dirname "$receipt")"
+          node --import tsx scripts/audit-four-more-senate-2022-capture-dated-original-issue-excerpts-offline.ts \
+            --official-original-senate-directory "$actual" \
+            --official-original-receipt "$receipt" \
+            --actual-2022-original-acquisition-dir source/original-six-more-senate-campaign-pages \
+            --output source/verified-four-2022-senators-77-archive-dated-exact-issue-quotes.json
+      - name: Preserve only verified source policy excerpts and dates, not any new forecast features
+        uses: actions/upload-artifact@v6
+        with:
+          name: four-actually-served-senators-77-original-2022-capture-dated-excerpts-v1
+          path: source/verified-four-2022-senators-77-archive-dated-exact-issue-quotes.json
+          retention-days: 30
+          if-no-files-found: error
