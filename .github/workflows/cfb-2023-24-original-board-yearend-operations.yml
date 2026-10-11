@@ -6,6 +6,9 @@ on:
       - src/evidence/cfb-2023-24-board-contemporaneous-yearend-filing-counts.ts
       - scripts/capture-cfb-2023-24-contemporaneous-board-yearend-operations.ts
       - tests/cfb-2023-24-board-contemporaneous-yearend-counts.test.ts
+      - docs/evaluation/source-proof/cfb-2023-24-original-board-memos-ye-statewide-aggregate-filing-obligations.psv
+      - docs/evaluation/source-proof/cfb-2023-24-original-board-memo-mixed-filer-yearend-count-source-checkpoint.json
+      - docs/evaluation/cfb-2023-24-original-board-statewide-yearend-obligation-counts.md
 permissions:
   contents: read
 jobs:
