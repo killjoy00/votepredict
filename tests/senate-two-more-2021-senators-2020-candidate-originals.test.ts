@@ -95,12 +95,12 @@ test('bounded 300-row candidate archive source sample and empty index are UNKNOW
  assert.equal(selectFourOriginal2020PagesForOneOfTwoSenators(parsed.eligible).length,4);
 });
 test('source outage cannot create two phantom absent campaign positions; original public LRL service checked before any network',async()=>{
- const d=mkdtempSync(join(tmpdir(),'five-ever-served-senators-original-'));
+ const d=mkdtempSync(join(tmpdir(),'two-ever-served-senators-original-'));
  try{
   const folder=join(d,'true-original-receipts');
   let requests=0;
   const fail=(async()=>{requests++;throw new Error('Wayback historic public service temporary outage');}) as typeof fetch;
-  const missing=realSenators();missing.senators.splice(3,1);
+  const missing=realSenators();missing.senators.splice(1,1);
   await assert.rejects(()=>acquireTwoFurther2021ServingSenators2020Originals(
    folder,missing,fail),/Not an independently documented actually serving Minnesota senator/);
   assert.equal(requests,0);
