@@ -17,6 +17,7 @@ test('allowlisted first-party relative audio redirect, reject tracking and off-h
  const base=AUDIO[0].url;
  assert.equal(classifyMediaRedirect(base,'/podcast/o/minnesota/file.mp3').approved,true);
  assert.equal(classifyMediaRedirect(base,'https://ondemand.publicradio.org/audio/file.mp3').approved,true);
+ assert.equal(classifyMediaRedirect(base,'https://download.stream.publicradio.org/media/file.mp3').approved,true);
  assert.equal(classifyMediaRedirect(base,'https://pscrb.fm/track/click/file.mp3').approved,false);
  assert.equal(classifyMediaRedirect(base,'https://ondemand.publicradio.org/audio/file.mp3?token=secret').approved,false);
  assert.equal(classifyMediaRedirect(base,'http://play.publicradio.org/file.mp3').approved,false);
