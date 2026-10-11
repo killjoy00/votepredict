@@ -237,7 +237,7 @@ test('official directory missing a served senator stops BEFORE network and artif
   directory.senators=directory.senators.filter(p=>!p.officialName.includes('Nelson'));
   let called=0;
   await assert.rejects(()=>acquire2022EverServedSenateCampaignOriginals(
-   join(root,'no-run'),directory,async()=>{called++;throw Error('not allowed');} as typeof fetch),
+   join(root,'no-run'),directory,(async()=>{called++;throw Error('not allowed');}) as typeof fetch),
    /has not been verified/);
   assert.equal(called,0);
  }finally{rmSync(root,{recursive:true,force:true});}
