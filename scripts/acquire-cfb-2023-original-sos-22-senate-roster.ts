@@ -36,7 +36,7 @@ async function main(){
    redirect:'follow',signal:AbortSignal.timeout(65_000)});
  if(!original.ok)throw Error('Original MN Secretary of State PDF HTTP '+original.status);
  const final=new URL(original.url);
- if(final.protocol!=='https:'||final.hostname!=='www.sos.state.mn.us')
+ if(final.protocol!=='https:'||final.hostname!=='www.sos.mn.gov')
    throw Error('Official SOS PDF redirected outside Secretary of State');
  const bytes=new Uint8Array(await original.arrayBuffer());
  const count=bytes.byteLength;
