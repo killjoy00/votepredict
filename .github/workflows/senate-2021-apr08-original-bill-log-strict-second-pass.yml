@@ -1,0 +1,37 @@
+name: Strict second original April 8 2021 Senate bill-level committee action source SHA proof
+
+# Independent later acquisition of SAME two original Senate official HTML bodies,
+# now strictly checked against first independent originals' exact byte SHA/length.
+# No amendment motion-level day, DB writes, forecasts, or Senate floor work.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2021-apr08-original-bill-log-strict-second-pass.yml
+
+permissions:
+  contents: read
+
+jobs:
+  certify-both-original-apr08-senate-committee-bill-logs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Independently reacquire and SHA-verify both exact original Senate April 8 bill-log bodies
+        run: |
+          node --import tsx scripts/probe-senate-2021-apr08-official-bill-actions.ts \
+            --output artifacts/2021-apr08-two-original-senate-bill-logs-strict-second/source.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2021-apr08-two-original-bill-logs-strict-second-source
+          path: artifacts/2021-apr08-two-original-senate-bill-logs-strict-second/source.json
+          retention-days: 30
+          if-no-files-found: error
