@@ -134,3 +134,18 @@ test('original Senate HTML named typography &ldquo;/&rdquo; roundtrips before mo
  assert.equal(result.records[0]!.namedNay,0);
  assert.equal(result.records[6]!.actualConclusionPrintedLabel,'A26');
 });
+
+
+test('actual April 2023 outcome grammar may say prevailed rather than did prevail',()=>{
+ const change=synthetic().replace(
+  'With five senators voting “yes” and four voting “no,” the motion did prevail',
+  'With five senators voting “yes” and four voting “no,” the motion prevailed');
+ const m=inspect(change);
+ assert.equal(m.records[2]?.printedMotionLabel,'A20 amendment');
+ assert.equal(m.records[2]?.reportedResult,'adopted');
+});
+test('source printed numeric words and named side partition must match independently',()=>{
+ const corrupt=synthetic().replace('With eight senators voting “yes”',
+  'With seven senators voting “yes”');
+ assert.throws(()=>inspect(corrupt),/printed tally words disagree/);
+});
