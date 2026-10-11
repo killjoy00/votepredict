@@ -32,7 +32,7 @@ test('exact 71 authentic CFB source versions entail exactly 22 actual 2022-servi
 test('synthetic first and surname in Senate-only primary roster confirm independent district-and-name match',()=>{
  const actual=inspectOriginal2023SosSenateRoster({
    source71Psv:source71,originalSosExtractedPdfText:mock()});
- assert.equal(actual.originalSenateRosterSectionLocated,true);
+ assert.equal(actual.exactOriginalSenateRosterSectionLocated,true);
  assert.equal(actual.rosterMemberLineCount,22);
  assert.equal(actual.independentlyMatched2023RosterMembers,22);
  assert.equal(actual.unmatched.length,0);
