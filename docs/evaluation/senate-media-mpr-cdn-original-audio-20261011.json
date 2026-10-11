@@ -1,0 +1,48 @@
+{
+  "version": "senate-media-mpr-queryless-publisher-cdn-original-archive-index-receipts-v1",
+  "observedDay": "2026-10-11",
+  "sourcePublicRun": {
+    "runId": 38176260623,
+    "sourceHead": "c4150384f85644c64d5b42af4ec273ce97ad3080",
+    "artifactId": 11715389149,
+    "zipSha256": "938b2492161bb09d449fa74debd55fc44ee016eba654187f984c84beebfe5f8e",
+    "decodedJsonSha256": "165cb97880c8713552b1a4bd74f1812e079f810a26fae93a5629ef13ec6e0b82",
+    "decodedJsonBytes": 2290
+  },
+  "sourceLead": "docs/evaluation/senate-media-mpr-feed-transcript-bridge-20261011.json",
+  "publisher": "MPR News / Minnesota Public Radio",
+  "distinctExactDerivedCdnOriginalUrlHypotheses": 2,
+  "historicallySha1AuthenticatedOriginalMp3Bodies": 0,
+  "querylessCdnUrlIsNotProvenIdenticalToQueryBearingRedirect": true,
+  "sourceVariants": [
+    {
+      "id": "mpr-2021-jeremy-miller",
+      "exactOriginalUrlHypothesis": "https://download.stream.publicradio.org/minnesota/news/programs/2021/11/15/Minnesota_Senate_Majority_Leaders_talks_bipartisan_effort_to_distribute_hero_pay_20211115_64.mp3",
+      "originalSourceInterviewerPage": "https://www.mprnews.org/episode/2021/11/15/minnesota-senate-majority-leader-talks-bipartisan-effort-to-distribute-hero-pay",
+      "originalTimestampWindow": "2021-11-15 through 2025-12-31",
+      "exactHistoricalCdxStatus": "index_unavailable_unknown",
+      "historicalOriginalIndexedCandidateCount": null,
+      "historicalOriginalBodyAttempts": 0,
+      "sha256CurrentlyServedPublisherAudio": "41c845920ea87ec83c2b955c0e42101d36c03c2c7f9f6273357895aacc1b1b10",
+      "currentPublisherMp3RawBytes": 2606791,
+      "originalHistoricalAudioByteIdentityEstablished": false
+    },
+    {
+      "id": "mpr-2024-grant-hauschild",
+      "exactOriginalUrlHypothesis": "https://download.stream.publicradio.org/minnesota/podcasts/minnesota_now/2024/02/19/mn_now_20240219_hauschild_20240219_128.mp3",
+      "originalSourceInterviewerPage": "https://www.mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south",
+      "originalTimestampWindow": "2024-02-19 through 2025-12-31",
+      "exactHistoricalCdxStatus": "index_unavailable_unknown",
+      "historicalOriginalIndexedCandidateCount": null,
+      "historicalOriginalBodyAttempts": 0,
+      "sha256CurrentlyServedPublisherAudio": "894bdf42ed5bc383827a8cfd258531a7b49e9a3b7751d447f24eea1957ebe0b0",
+      "currentPublisherMp3RawBytes": 6638508,
+      "originalHistoricalAudioByteIdentityEstablished": false
+    }
+  ],
+  "unavailableIndexNotEvidenceUnpublishedOrAudioMissing": true,
+  "originalMp3NotPersisted": true,
+  "noOriginalSpokenSenatorWordsHumanApproved": true,
+  "notRecordedIndividualSenateVotes": true,
+  "noPrivateEvidenceOrForecastDataUsed": true
+}
