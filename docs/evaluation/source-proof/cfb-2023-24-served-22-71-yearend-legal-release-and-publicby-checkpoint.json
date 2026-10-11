@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "cfb-2023-24-served22-official-71-YE-source-version-legal-release-floor-no-publicby-v1",
+  "issue": 864,
+  "reviewedOn": "2026-10-11",
+  "scope": {
+    "independentlyProvenActual2022ServingSenators": 22,
+    "original2023And2024YearEndOfficialViewerReferences": 44,
+    "amendment2023And2024OfficialViewerReferences": 27,
+    "allReportVersionReferences": 71,
+    "originally2022SenateServingCommitteesOnly": true,
+    "actualSenateServiceIn2023Or2024NotAssumed": true,
+    "reportYear2023VersionRefs": 32,
+    "reportYear2024VersionRefs": 39
+  },
+  "ledger": {
+    "path": "docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv",
+    "rows": 71,
+    "bytes": 28467,
+    "gitBlobSha": "bfa1c1eff6a095a3a0d03aa49a34e1d929d6a388",
+    "columns": [
+      "exactOfficialCfbViewerVersionID",
+      "actual2022ServingSenator",
+      "senateDistrict2022",
+      "cfbRegistration",
+      "financialReportYear",
+      "reportType",
+      "originalViewerApiSha256",
+      "sourceVersionPdfSha256",
+      "sourcePdfStatus",
+      "aliasOf",
+      "originalPdfPrintedBoardReceivedOn",
+      "coveredStartOn",
+      "coveredEndOn",
+      "ordinaryYearEndDueOn",
+      "statutoryReleaseNotBeforeLocal",
+      "earliestPossiblePublicDateFloor",
+      "historicallyActuallyPublicByOn",
+      "legallyRequiredCommitteeFiling",
+      "historicalForecastEligible",
+      "authenticatedOriginalSourceLedgerCohort",
+      "historicalPublicationSourceProofKind"
+    ]
+  },
+  "originalIndependentSourceLedgers": [
+    {
+      "cohort": "verified28Originals",
+      "path": "docs/evaluation/source-proof/cfb-2023-24-verified-served-28-original-yearend-pdfs.psv",
+      "rows": 28,
+      "gitBlobSha": "f32027a9efbc6ca60460d3eb9ca77a9f2ec9d50f"
+    },
+    {
+      "cohort": "recovered16Originals",
+      "path": "docs/evaluation/source-proof/cfb-2023-24-eight-more-16-original-yearend-pdf-source-ledger.psv",
+      "rows": 16,
+      "gitBlobSha": "25dd711af3e8fcc5647a5f28473c3b0804cc58a7"
+    },
+    {
+      "cohort": "parentVerified16Amendments",
+      "path": "docs/evaluation/source-proof/cfb-2023-24-parent-authenticated-16-amendment-pdf-source-ledger.psv",
+      "rows": 16,
+      "gitBlobSha": "249e105cdb9bb5dafaaae9acc17a73cdb8baecc3"
+    },
+    {
+      "cohort": "recovered11Amendments",
+      "path": "docs/evaluation/source-proof/cfb-2023-24-eight-verified-senators-11-amended-original-pdf-source-ledger.psv",
+      "rows": 11,
+      "gitBlobSha": "4f2ddaf235dd040fd41d79e47a55930c3f6002c9"
+    }
+  ],
+  "originalPublicLegalSources": {
+    "revisor2023_10A20": "https://www.revisor.mn.gov/statutes/2023/cite/10A.20",
+    "revisor2024_10A20": "https://www.revisor.mn.gov/statutes/2024/cite/10A.20",
+    "board2023Calendar": "https://cfb.mn.gov/pdf/calendars/2023_general_disclosure_calendar.pdf",
+    "board2025Calendar": "https://cfb.mn.gov/pdf/calendars/2025_general_diclosure_calendar.pdf",
+    "revisorCommitteeTermination": "https://www.revisor.mn.gov/statutes/2024/cite/10A.243"
+  },
+  "officialYearEndLegalClocks": [
+    {
+      "reportYear": 2023,
+      "ordinaryDueOn": "2024-01-31",
+      "notPublicBefore": "2024-02-01T08:00:00[America/Chicago]",
+      "publicBy": null
+    },
+    {
+      "reportYear": 2024,
+      "ordinaryDueOn": "2025-01-31",
+      "notPublicBefore": "2025-02-01T08:00:00[America/Chicago]",
+      "publicBy": null
+    }
+  ],
+  "independentCrossLedgerAccounting": {
+    "authenticatedOriginalPdfBinaries": 43,
+    "authenticatedAmendedPdfBinaries": 25,
+    "sourceAuthenticatedDistinctPdfBinariesTotal": 68,
+    "sourceHolds": 2,
+    "officialVersionIdsAliasAnotherIdenticalAuthenticatedPdf": 1,
+    "originalSourceLedgerVersionIdsExhaustedWithinSample": 71,
+    "all68AuthenticatedSha256UniqueAcrossFourOriginalLedgers": true,
+    "noPDFIsPromotedToHistoricalForecastEligibility": true,
+    "actualPublicByProvenCount": 0,
+    "legallyOwedReportDenominator": null,
+    "candidateHistoricalRegistrationsAndTerminationsIndependentlyAuditedCount": 0,
+    "earlierThanStatutoryReleaseMustNotBeAvailable": true,
+    "originalBoardReceiptIsNotTimestampOfPublicDisplay": true
+  },
+  "safeguards": {
+    "researchOnly": true,
+    "noRawOriginalPdfOrDonorText": true,
+    "noSourceToDatabaseFinancialRowLink": true,
+    "noProductionDatabaseReadOrWrite": true,
+    "noModelSchedulerServingOr2027Changes": true,
+    "keepIssue864Open": true
+  }
+}
