@@ -81,3 +81,46 @@ test('only original CFB PDF binaries may be counted; duplicate PDF hashes never 
  assert.equal(wrong.status,'official_source_fetch_failed');
  assert.ok(reports.every(r=>r.statutoryDueOn===null));
 });
+
+test('permanent source ledger has 28 PDF byte hashes from two independent original runs',()=>{
+ const P='docs/evaluation/source-proof/';
+ const checkpoint=JSON.parse(readFileSync(P+
+   'cfb-2023-24-verified-served-28-original-yearend-source-checkpoint.json','utf8'));
+ const ledger=readFileSync(checkpoint.permanentPdfLedger.path,'utf8');
+ const rows=ledger.trimEnd().split('\n').map((l:string)=>l.split('|'));
+ const {createHash}=require('node:crypto') as typeof import('node:crypto');
+ const blobSha=createHash('sha1').update('blob '+Buffer.byteLength(ledger,'utf8')+'\0')
+   .update(ledger).digest('hex');
+ assert.equal(blobSha,checkpoint.permanentPdfLedger.gitBlobSha);
+ assert.equal(Buffer.byteLength(ledger,'utf8'),7494);
+ assert.equal(rows.length,28);
+ assert.equal(checkpoint.independentOriginalSourceRuns.length,2);
+ assert.equal(checkpoint.sourceResult.uniqueOriginalPdfSha256,28);
+ assert.equal(checkpoint.identicalMetadataAcrossTwoOfficialSourceRuns.originalPdfBinarySha256,true);
+ assert.equal(checkpoint.identicalMetadataAcrossTwoOfficialSourceRuns.coveredPeriodAndBoardReceipt,true);
+ assert.equal(checkpoint.remaining.legalDueCalendarIndependentFor2023And2024NotYetAuthenticated,true);
+ const byId=new Map(rows.map((r:string[])=>[r[0],r]));
+ assert.equal(byId.size,28);
+ assert.deepEqual([...byId.keys()].sort(),targets.map(t=>t.id).sort());
+ const sigs=new Set<string>();
+ for(const t of targets){
+   const r=byId.get(t.id)!;
+   assert.equal(r.length,12);
+   assert.equal(r[1],t.actualSenator);
+   assert.equal(r[2],String(t.district2022));
+   assert.equal(r[3],t.reg);
+   assert.equal(r[4],t.originalViewerApiSha256);
+   assert.match(r[5]!,/^[0-9a-f]{64}$/);
+   assert.ok(Number.isInteger(Number(r[6]))&&Number(r[6])>=300);
+   assert.equal(r[7],t.reportYear+'-01-01');
+   assert.equal(r[8],t.reportYear+'-12-31');
+   assert.ok(r[9]!>=r[8]!);
+   assert.equal(r[10],'independently_authenticated_original_pdf_first_page');
+   assert.equal(r[11],'-');
+   sigs.add(r[5]!);
+ }
+ assert.equal(sigs.size,28);
+ assert.equal(checkpoint.scope.statutoryOwedDenominator,null);
+ assert.equal(checkpoint.safeguards.noRawPdfBodiesOrCandidateDonorText,true);
+ assert.equal(checkpoint.safeguards.keepIssue864Open,true);
+});
