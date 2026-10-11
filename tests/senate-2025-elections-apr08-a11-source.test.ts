@@ -91,7 +91,7 @@ test('duplicated result WITHIN one A11 motion is held, no synthetic roster may p
   'Senator Alpha moved the A10 Amendment',
   'With a vote of 10/0/1, the motion prevailed. Senator Alpha moved the A10 Amendment');
  assert.throws(()=>inspect(duplicatedWithinA11),
-  /scoped 10\\/0\\/1 result absent or repeated/);
+  /scoped 10\/0\/1 result absent or repeated/);
  assert.throws(()=>inspectSyntheticApr08A11MotionTextCore(
   synthetic(),['Westlin',...fictionalRoster.slice(1)],'Kilo'),
   /Invalid explicitly fictional synthetic roster/);
