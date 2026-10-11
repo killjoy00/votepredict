@@ -107,7 +107,7 @@
       "originalPublisherUrl": "https://minnesotareformer.com/2021/08/25/2000-rally-against-line-3-at-state-capitol/",
       "originalPublisher": "Minnesota Reformer",
       "displayedNewsPublicationDay": "2021-08-25",
-      "byline": "Minnesota Reformer",
+      "byline": "Rilyn Eischens",
       "reporterAttributionCaveat": "Kunesh direct rally speech; other Indigenous advocates are distinct speakers",
       "namedSenatorSpeakerTurnCandidates": [
         {
@@ -161,7 +161,7 @@
       "originalPublisherUrl": "https://minnesotareformer.com/2022/06/15/senate-ethics-subcommittee-votes-to-continue-investigation-of-sen-omar-fateh/",
       "originalPublisher": "Minnesota Reformer",
       "displayedNewsPublicationDay": "2022-06-15",
-      "byline": "Minnesota Reformer",
+      "byline": "Ricardo Lopez",
       "reporterAttributionCaveat": "Osmek quoted; Omar Fateh subject of reporting not source of these quoted words",
       "namedSenatorSpeakerTurnCandidates": [
         {
@@ -182,7 +182,7 @@
       "originalPublisherUrl": "https://minnesotareformer.com/2022/06/16/no-special-legislative-session-no-tax-cuts-no-extra-education-spending/",
       "originalPublisher": "Minnesota Reformer",
       "displayedNewsPublicationDay": "2022-06-16",
-      "byline": "Minnesota Reformer",
+      "byline": "J. Patrick Coolican",
       "reporterAttributionCaveat": "Miller statement reported secondarily, not directly interviewed; Scott Jensen is former senator",
       "namedSenatorSpeakerTurnCandidates": [
         {
@@ -418,5 +418,32 @@
     "bodyAndFirstPublicationClockNotAutomaticallyAuthenticatedByCorrection": true,
     "housingPagePublisherBylineCorrectedFrom": "Minnesota Reformer",
     "housingPagePublisherBylineCorrectedTo": "Madison McVan"
+  },
+  "bylineCorrections20261011": {
+    "source": "current original Minnesota Reformer published reporter bylines",
+    "preserveEarlierArchiveReceiptRawHashAndTimestamp": true,
+    "originalUrlCountUnchanged": 15,
+    "individualServingSenatorSpeechCandidatesUnchanged": 22,
+    "corrections": [
+      {
+        "id": "new-reporter-2021-line3",
+        "previousGenericPublisherCredit": "Minnesota Reformer",
+        "verifiedIndividualReporterCredit": "Rilyn Eischens",
+        "originalSourceUrl": "https://minnesotareformer.com/2021/08/25/2000-rally-against-line-3-at-state-capitol/"
+      },
+      {
+        "id": "new-reporter-2022-ethics",
+        "previousGenericPublisherCredit": "Minnesota Reformer",
+        "verifiedIndividualReporterCredit": "Ricardo Lopez",
+        "originalSourceUrl": "https://minnesotareformer.com/2022/06/15/senate-ethics-subcommittee-votes-to-continue-investigation-of-sen-omar-fateh/"
+      },
+      {
+        "id": "new-reporter-2022-special-session",
+        "previousGenericPublisherCredit": "Minnesota Reformer",
+        "verifiedIndividualReporterCredit": "J. Patrick Coolican",
+        "originalSourceUrl": "https://minnesotareformer.com/2022/06/16/no-special-legislative-session-no-tax-cuts-no-extra-education-spending/"
+      }
+    ],
+    "missingOriginalBodyProofNeverBackfilledByCurrentByline": true
   }
 }
