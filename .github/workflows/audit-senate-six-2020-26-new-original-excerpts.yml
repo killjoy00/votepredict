@@ -1,0 +1,62 @@
+name: Independently verify 26 more 2020 original MN State Senate website excerpts
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-senate-six-2020-26-new-original-excerpts.yml
+      - data/evaluation/senate-six-2020-original-pages-26-new-exact-first-party-excerpts-v1.json
+      - scripts/audit-senate-six-2020-original-26-excerpts.mjs
+      - tests/senate-six-2020-original-26-new-excerpts.test.ts
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify-entire-official-original-and-six-complete-cdx-indexes-plus-all-24-html-and-26-site-excerpts:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-2020-six-originals-26-issue-excerpts-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen complete original official Minnesota Senate LRL directory and SHA/UTC receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official-government
+      - name: Reopen all 24 original 2019-2020 campaign HTML bodies, six entire CDX indexes and full acquisition manifest
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38107731662
+          name: senate-2020-six-actually-served-campaign-original-html-cdx-source-v1
+          github-token: ${{ github.token }}
+          path: original/six-2020
+      - name: Independently prove every actual senator, full source originals, six CDX indexes, 24 HTML pages and 26 exact snippets
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official-government -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official-government -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test "$(dirname "$gov")" = "$(dirname "$receipt")"
+          node --import tsx scripts/audit-senate-six-2020-original-26-excerpts.mjs \
+            --official-original-html "$gov" \
+            --original-official-utc-sha "$receipt" \
+            --original-six-2020-html-cdx-dir original/six-2020 \
+            --output original/2020-six-originals-26-additional-website-excerpts-proof.json
+      - name: Retain research-only entire original-byte and short quote proof
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-six-2020-originals-26-extra-source-excerpts-proof-v1
+          path: original/2020-six-originals-26-additional-website-excerpts-proof.json
+          if-no-files-found: error
+          retention-days: 30
