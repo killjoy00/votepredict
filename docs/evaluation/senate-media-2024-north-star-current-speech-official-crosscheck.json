@@ -2,5 +2,56 @@
   "version": "senate-media-2024-north-star-public-senator-speech-triage-v1",
   "issue": 946,
   "parentIssue": 912,
-  "researchCheckedAt": "2026-10-10"
+  "researchCheckedAt": "2026-10-10",
+  "officialBill": {
+    "url": "https://www.revisor.mn.gov/bills/93/2023/0/SF/2724/",
+    "session": "93rd legislature 2023-2024",
+    "senateBill": "SF2724",
+    "houseCompanion": "HF2860",
+    "currentPageBillText": "As Introduced",
+    "listedAuthors": [
+      "Fateh",
+      "Pha"
+    ],
+    "actions": [
+      {
+        "day": "2023-03-08",
+        "kind": "introduced_and_referred_to_judiciary_and_public_safety"
+      },
+      {
+        "day": "2023-03-14",
+        "kind": "rereferred_to_state_and_local_government_and_veterans"
+      },
+      {
+        "day": "2023-04-03",
+        "kind": "author_pha_added"
+      }
+    ],
+    "floorPassageListed": false,
+    "articlePublicationProvenByBillAction": false
+  },
+  "members": [
+    {
+      "name": "Grant Hauschild",
+      "district": "03",
+      "oathDay": "2023-01-03",
+      "url": "https://www.lrl.mn.gov/legdb/fulldetail?id=15577",
+      "inOfficeOnDisplayedDay": true
+    },
+    {
+      "name": "Erin P. Murphy",
+      "district": "64",
+      "oathDay": "2023-01-03",
+      "url": "https://www.lrl.mn.gov/legdb/fulldetail?id=15284",
+      "inOfficeOnDisplayedDay": true,
+      "majorityLeaderSince": "2024-02-06"
+    },
+    {
+      "name": "Omar Fateh",
+      "district": "62",
+      "oathDay": "2023-01-03",
+      "url": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15559",
+      "inOfficeOnDisplayedDay": true
+    }
+  ]
 }
