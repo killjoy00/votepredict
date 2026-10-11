@@ -1,0 +1,64 @@
+name: Audit senator-only dated original campaign issue excerpt source ledger
+
+# Public original LRL artifact only; no DB, PR-derived credentials, schedule,
+# model/features or candidate-opponent rows in the final named report.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-senate-only-dated-campaign-issues.yml
+      - src/evidence/senate-only-dated-campaign-issue-leads.ts
+      - scripts/audit-senate-only-dated-campaign-issue-leads-offline.ts
+      - tests/senate-only-dated-campaign-issue-leads.test.ts
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  senator-only-dated-source-ledger:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-dated-ever-served-campaign-excerpt-ledger-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Get independently verified LRL Senate service original bytes and dated source audit
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: artifacts/official-original-senator-service
+      - name: Reverify LRL original SHA and produce dated 14-source-lead senator-only roster
+        shell: bash
+        run: |
+          set -euo pipefail
+          original="$(find artifacts/official-original-senator-service -type f -name 'mn-lrl-official-senate-service-directory.html' -print -quit)"
+          metadata="$(find artifacts/official-original-senator-service -type f -name 'mn-lrl-official-senate-service-directory-audit.json' -print -quit)"
+          swearing="$(find artifacts/official-original-senator-service -type f -name 'mn-lrl-official-senate-special-swearing-history.html' -print -quit)"
+          test -n "$original"
+          test -n "$metadata"
+          test -n "$swearing"
+          test "$(dirname "$original")" = "$(dirname "$metadata")"
+          node --import tsx scripts/audit-senate-only-dated-campaign-issue-leads-offline.ts \
+            --lrl-original "$original" \
+            --lrl-metadata "$metadata" \
+            --lrl-swearing-html "$swearing" \
+            --output artifacts/senate-ever-served-only-2021-25-dated-issue-leads.json
+      - name: Retain named actual senators only with evidence date types, no opponent listings
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-ever-served-only-dated-campaign-issue-leads-v1
+          path: artifacts/senate-ever-served-only-2021-25-dated-issue-leads.json
+          retention-days: 30
+          if-no-files-found: error
