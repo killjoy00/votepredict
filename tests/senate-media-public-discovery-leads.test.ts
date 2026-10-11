@@ -27,6 +27,10 @@ type PublicLead = {
   issueStanceInferred:boolean;
   urlInsideCurrentSeedPrefix:boolean;
   sourceResearchCheckedOn?:string;
+  officialLegislativeActionSource?:string;
+  officialLegislativeActionDayAsRecorded?:string;
+  eventClockTimeFromOriginalSenateJournalVerified?:boolean;
+  presentPublisherPageTemporalOrderingVerified?:boolean;
   memberEverServedSenateVerified?:boolean;
   officialSenateServiceStart?:string;
   officialServiceSource?:string;
@@ -57,7 +61,7 @@ test('curated publicly observed leads cover all five study years, two publishers
   assert.equal(data.sourceUniverseCompletenessKnown,false);
   assert.equal(data.publisherYearSlotsInOriginal44SeedReview,220);
   const leads=data.selectedNonExhaustiveArticleLeads;
-  assert.equal(leads.length,22);
+  assert.equal(leads.length,23);
   assert.equal(new Set(leads.map(x=>x.id)).size,leads.length);
   assert.equal(new Set(leads.map(x=>x.livePageUrl)).size,leads.length);
   assert.deepEqual([...new Set(leads.map(x=>x.publisher))].sort(),[
@@ -130,7 +134,7 @@ test('article-level Reformer /briefs/ links expose a deterministic archive seed-
 
 test('new 2022–2025 publisher leads have dated 2026 research observations without historical availability claims',()=>{
   const added=data.selectedNonExhaustiveArticleLeads.filter(x=>x.sourceResearchCheckedOn);
-  assert.equal(added.length,8);
+  assert.equal(added.length,9);
   assert.ok(added.every(x=>x.sourceResearchCheckedOn==='2026-10-10'));
   assert.ok(added.every(x=>x.archiveCapturePublicByVerified===false
     && x.originalArchivedHttpBytesHashVerified===false
@@ -155,3 +159,23 @@ test('2025-04-30 Heintzeman discovery is ever-served only, not an April 30 incum
   assert.equal(row.directQuoteHumanVerified,false);
 });
 
+
+test('2023 driver-licensing brief and dated alias retain unresolved after-midnight publication-order risk',()=>{
+  const source=data.selectedNonExhaustiveArticleLeads;
+  const brief=source.find(x=>x.id==='mn-reformer-2023-driver-licenses');
+  const dated=source.find(x=>x.id==='mn-reformer-2023-driver-licenses-dated');
+  assert.ok(brief && dated);
+  assert.equal(brief.publicationDayDisplayedOnPublicPage,'2023-02-21');
+  assert.equal(dated.publicationDayDisplayedOnPublicPage,brief.publicationDayDisplayedOnPublicPage);
+  assert.equal(brief.urlInsideCurrentSeedPrefix,false);
+  assert.equal(dated.urlInsideCurrentSeedPrefix,true);
+  assert.equal(dated.sourceResearchCheckedOn,'2026-10-10');
+  assert.equal(dated.officialLegislativeActionDayAsRecorded,'2023-02-21');
+  assert.equal(dated.officialLegislativeActionSource,
+    'https://www.revisor.mn.gov/bills/93/2023/0/HF/4/?body=Senate');
+  assert.equal(dated.eventClockTimeFromOriginalSenateJournalVerified,false);
+  assert.equal(dated.presentPublisherPageTemporalOrderingVerified,false);
+  assert.equal(dated.archiveCapturePublicByVerified,false);
+  assert.equal(dated.historicalForecastEligibilityProven,false);
+  assert.equal(dated.directQuoteHumanVerified,false);
+});
