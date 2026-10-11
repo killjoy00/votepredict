@@ -115,6 +115,10 @@ export function strictCdxReportVersionCaptures(input:{
  target:ArchivedCfbExactVersionTarget;rawCdxJson:unknown;
 }):CdxValidCapture[]{
  const v=input.rawCdxJson;
+ // The Wayback CDX endpoint legitimately returns []\\n for a valid
+ // query with zero matching archived captures. This is not a parser fault
+ // and, critically, does NOT establish that the PDF was historically secret.
+ if(Array.isArray(v)&&v.length===0)return [];
  if(!Array.isArray(v)||!Array.isArray(v[0]))
   throw Error('Internet Archive CDX JSON data rows absent');
  const header=(v[0] as unknown[]).map(String);
