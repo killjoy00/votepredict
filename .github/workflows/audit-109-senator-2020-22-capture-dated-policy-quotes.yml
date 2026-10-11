@@ -1,0 +1,77 @@
+name: Authenticate 109 capture-dated first-party Minnesota Senate campaign issue excerpts
+
+# PR-only original historic-source verification. Archive timestamp is the
+# publicly attested attribution date; first writer posting time is NOT needed.
+# No DB, Vercel, serving, scheduler, contact or model changes.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-109-senator-2020-22-capture-dated-policy-quotes.yml
+      - data/evaluation/senate-capture-dated-original-2020-22-campaign-issue-excerpts-v1.json
+      - src/evidence/senate-capture-dated-2020-22-original-campaign-109-excerpts.ts
+      - scripts/audit-senate-109-capture-dated-campaign-excerpts-offline.ts
+      - tests/senate-109-capture-dated-2020-22-original-campaign-quotes.test.ts
+      - docs/SENATE_2020_22_ARCHIVE_CAPTURE_DATE_ATTRIBUTABLE_109_ISSUE_EXCERPTS.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  recheck-senate-109-candidate-source-policy-excerpts:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-senate-2020-22-original-pages-capture-dated-policy-excerpts-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Obtain independent official Minnesota LRL original Senate-service directory bytes
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: provenance/official-original-senate-member-source
+      - name: Obtain 2022 candidate-owned historical original webpages + independent CDX index
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38107693123
+          name: senate-2022-twelve-original-verified-served-campaign-page-sources-v1
+          github-token: ${{ github.token }}
+          path: provenance/original-2022-campaign-archive
+      - name: Obtain original 2019-20 archived campaign pages and independent CDX receipts
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38107731662
+          name: senate-2020-six-actually-served-campaign-original-html-cdx-source-v1
+          github-token: ${{ github.token }}
+          path: provenance/original-2020-campaign-archive
+      - name: Re-open 68 original sources and independently match 109 policy quotes and their specific true capture dates
+        shell: bash
+        run: |
+          set -euo pipefail
+          official="$(find provenance/official-original-senate-member-source -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find provenance/official-original-senate-member-source -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$official" && test -n "$receipt"
+          test "$(dirname "$official")" = "$(dirname "$receipt")"
+          node --import tsx scripts/audit-senate-109-capture-dated-campaign-excerpts-offline.ts \
+            --lrl-original-html "$official" \
+            --lrl-original-audit-receipt "$receipt" \
+            --2022-campaign-original-source-dir provenance/original-2022-campaign-archive \
+            --2020-campaign-original-source-dir provenance/original-2020-campaign-archive \
+            --output provenance/verified-109-original-candidate-page-capture-dated-policy-quotes.json
+      - name: Retain independent exact archive-date, authentic original byte and quote occurrence report
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-109-candidate-owned-original-issue-excerpts-capture-dated-v1
+          path: provenance/verified-109-original-candidate-page-capture-dated-policy-quotes.json
+          retention-days: 30
+          if-no-files-found: error
