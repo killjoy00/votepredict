@@ -94,6 +94,6 @@ test('deny mutated official PDF SHA, due date, assertion of public-by, or false 
   ] as Array<[string,(p:any)=>void]>) {
     const trial=clone();change(trial);
     assert.throws(()=>reconcileServedSenatorSd6ReportCase(service(),trial),
-      undefined,caseName+' must fail closed');
+      /./,caseName+' must fail closed');
   }
 });
