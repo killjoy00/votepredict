@@ -57,7 +57,10 @@ function matchesExactWinnerLabel(label:string,person:string):boolean{
 function validIso(s:string):boolean {
   if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(s))return false;
   const v=new Date(s);
-  return Number.isFinite(v.getTime())&&v.toISOString()===new Date(s).toISOString();
+  // Acquisition is in 2026; a fabricated 2025 observation is not acceptable.
+  return Number.isFinite(v.getTime())&&v.toISOString()===s
+    &&v.getTime()>=Date.parse('2026-10-09T00:00:00.000Z')
+    &&v.getTime()<=Date.now()+60_000;
 }
 function validatedPinnedLedger(ledger:string){
   if(!ledger.endsWith('\n'))throw Error('Missing pinned report ledger newline');
