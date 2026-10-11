@@ -164,6 +164,11 @@ export function independentlyAuditBillIngebrigtsen27OriginalHistoricalPolicyExce
   full.set(receipt.file,receipt);
   distinctSha.add(receipt.sha256);
  }
+ const firstSha=ledger.originalFullHTMLReceipts[0].sha256;
+ const revisedSha=ledger.originalFullHTMLReceipts[1].sha256;
+ if(firstSha===revisedSha
+   ||ledger.originalFullHTMLReceipts.slice(2).some(x=>x.sha256!==revisedSha))
+  throw Error('Later 2013–2016 originals must be exact byte-identical 2012 page, not newly counted policies');
  if(full.size!==6||distinctSha.size!==2
   ||Object.keys(fullOriginalHistoricIssueHtml).length!==6
   ||Object.keys(fullOriginalHistoricIssueHtml).some(k=>!full.has(k)))
@@ -222,7 +227,9 @@ export function independentlyAuditBillIngebrigtsen27OriginalHistoricalPolicyExce
    productionPredictionEvidenceAdmitted:false as const,
   });
  }
- if(quoted.length!==27||ids.size!==27||counts.get('older2010')!==14
+ if(quoted.length!==27
+   ||new Set(quoted.map(x=>x.exactCandidateFirstPartyText)).size!==27
+   ||ids.size!==27||counts.get('older2010')!==14
    ||counts.get('updated2012')!==13)
   throw Error('Exactly fourteen 2010 and thirteen 2012 original visible candidate-policy excerpts required');
  return{
