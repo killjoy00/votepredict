@@ -72,6 +72,11 @@ test('a real first-party MPR /episode/ audio transcript is excluded by the story
   assert.equal(x.originalUrl,'https://www.mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south');
   assert.equal(x.configuredSeedPrefix,'https://www.mprnews.org/story/202');
   assert.equal(x.currentSeedPrefixWouldIncludeUrl,false);
+  // No configured topical URL keyword appears in the MPR interview's path;
+  // expanding the Wayback URL prefix alone still would not select it.
+  assert.equal(x.currentPathPriorityWouldSelectUrl,false);
+  assert.equal(r.urlLeadsFilteredByTopicalPathPriority,1);
+  assert.equal(r.urlLeadsExcludedByBothGates,1);
   assert.equal(x.currentTwoGateDiscoveryWouldSelectUrl,false);
   assert.equal(x.originalWaybackCaptureVerified,false);
   assert.equal(x.matchedDatabaseSourceDocument,false);
