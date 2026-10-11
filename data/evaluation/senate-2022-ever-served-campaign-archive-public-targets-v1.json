@@ -1,0 +1,129 @@
+{
+  "schema": "senate-2022-ever-served-campaign-archive-public-targets-v1",
+  "scope": {
+    "issue": 864,
+    "specificElection": "2022-11-08",
+    "targetPeopleBasis": "actual_state_senate_service_independently_verified_against_mn_lrl_directory",
+    "sourceDiscoveringDay": "2026-10-10",
+    "sourceDiscoveringDayIsNotOriginalPagePublicationDay": true,
+    "mustRevalidateActualSenateServiceFromLRLRawOriginalBeforeAnyFetch": true,
+    "uniqueEverServedSenators": 4,
+    "exactCampaignUrls": 5,
+    "historicalCandidateFilingWebsiteFieldAlreadyVerified": false,
+    "contemporaneousPageAsOf2022AlreadyVerified": false,
+    "archived2022CandidateStatementPublicByAlreadyVerified": false,
+    "sourceAccessProductionRead": false,
+    "sourceAccessProductionWrite": false,
+    "sourceOnlyNotAsOfForecastEvidence": true
+  },
+  "officialSources": {
+    "senatorDirectory": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "originalDirectoryRunId": 38094976711,
+    "originalDirectoryArtifactId": 11685387674,
+    "lrlPublished2022NewSenatorsReport": "https://www.lrl.mn.gov/webcontent/lrl/history/turnover/2022.pdf",
+    "officialCandidateGeneralResultDate": "2022-11-08",
+    "sourceCoverageReferenceIssue": 864,
+    "everServedClaimIsAboutPersonNotSuccessAtParticularElection": true
+  },
+  "sourceQueryWindows": {
+    "wayback": {
+      "from": "20220101",
+      "to": "20221107",
+      "filterStatus": 200,
+      "originalHtmlHashMustMatchCdxDigest": true
+    },
+    "commoncrawlCollections": [
+      "CC-MAIN-2022-21",
+      "CC-MAIN-2022-33",
+      "CC-MAIN-2022-40"
+    ],
+    "maxOriginalCompressedWarcRangeDownloads": 5,
+    "cutoffUtcExclusive": "2022-11-08T00:00:00Z",
+    "pre2022CapturedPagesExcludedFromThisTargetedElection": true
+  },
+  "targets": [
+    {
+      "id": "carla-2022-page-a",
+      "candidateName": "Carla Nelson",
+      "district": "24",
+      "sourceUrl": "https://www.carlanelson.com/home-page/",
+      "sourceKind": "campaign_site_archived_issue_page_candidate",
+      "officialSenateServiceVerifiedViaLRLSourceAtRuntime": false,
+      "originating2022ArchivedResponseVerified": false,
+      "campaignSiteLive2026ResponseObtained": false,
+      "originalHistoricCampaignFilingWebsiteAssignmentProven": false,
+      "originalPagePublicationDay": null,
+      "earliestAttestedHistoricExactPageCaptureUtc": null,
+      "earliestKnownCurrentRetrievalUtc": null,
+      "historicalIssueStatementPromoted": false
+    },
+    {
+      "id": "carla-2022-page-b",
+      "candidateName": "Carla Nelson",
+      "district": "24",
+      "sourceUrl": "https://www.carlanelson.com/home-page-2/",
+      "sourceKind": "campaign_site_archived_issue_page_candidate",
+      "officialSenateServiceVerifiedViaLRLSourceAtRuntime": false,
+      "originating2022ArchivedResponseVerified": false,
+      "campaignSiteLive2026ResponseObtained": false,
+      "originalHistoricCampaignFilingWebsiteAssignmentProven": false,
+      "originalPagePublicationDay": null,
+      "earliestAttestedHistoricExactPageCaptureUtc": null,
+      "earliestKnownCurrentRetrievalUtc": null,
+      "historicalIssueStatementPromoted": false
+    },
+    {
+      "id": "nicole-2022-press-announcement",
+      "candidateName": "Nicole Mitchell",
+      "district": "47",
+      "sourceUrl": "https://www.nicolemitchell.org/news-events/today-nicole-mitchell-confirmed-her-candidacy-in-the-new-senate-district-47-which-includes-woodbury-and-part-of-maplewood",
+      "sourceKind": "candidate_site_candidate_written_2022_annoucement",
+      "officialSenateServiceVerifiedViaLRLSourceAtRuntime": false,
+      "originating2022ArchivedResponseVerified": false,
+      "campaignSiteLive2026ResponseObtained": false,
+      "originalHistoricCampaignFilingWebsiteAssignmentProven": false,
+      "originalPagePublicationDay": null,
+      "earliestAttestedHistoricExactPageCaptureUtc": null,
+      "earliestKnownCurrentRetrievalUtc": null,
+      "historicalIssueStatementPromoted": false
+    },
+    {
+      "id": "rob-2022-campaign",
+      "candidateName": "Rob Kupec",
+      "district": "4",
+      "sourceUrl": "https://www.kupec4mnsenate.com/our-campaign",
+      "sourceKind": "campaign_site_issues_candidate_mutable",
+      "officialSenateServiceVerifiedViaLRLSourceAtRuntime": false,
+      "originating2022ArchivedResponseVerified": false,
+      "campaignSiteLive2026ResponseObtained": false,
+      "originalHistoricCampaignFilingWebsiteAssignmentProven": false,
+      "originalPagePublicationDay": null,
+      "earliestAttestedHistoricExactPageCaptureUtc": null,
+      "earliestKnownCurrentRetrievalUtc": null,
+      "historicalIssueStatementPromoted": false
+    },
+    {
+      "id": "michael-2022-campaign",
+      "candidateName": "Michael Kreun",
+      "district": "32",
+      "sourceUrl": "https://www.michaelformnsenate.com/",
+      "sourceKind": "campaign_site_homepage_mutable_current_2026",
+      "officialSenateServiceVerifiedViaLRLSourceAtRuntime": false,
+      "originating2022ArchivedResponseVerified": false,
+      "campaignSiteLive2026ResponseObtained": false,
+      "originalHistoricCampaignFilingWebsiteAssignmentProven": false,
+      "originalPagePublicationDay": null,
+      "earliestAttestedHistoricExactPageCaptureUtc": null,
+      "earliestKnownCurrentRetrievalUtc": null,
+      "historicalIssueStatementPromoted": false
+    }
+  ],
+  "sourceGaps": [
+    "Actual 2026 response bytes alone establish only the 2026 retrieval date of those bytes, not their 2022 availability.",
+    "Wayback CDX index row is archive metadata until original page response byte digest is checked.",
+    "Common Crawl WARC index row is metadata until original HTTP response bytes, WARC URI/date/dual digest and gzip CRC match.",
+    "A page text must be candidate authored by the officially served senator; website host matching alone is not policy family stance proof.",
+    "Neither a candidate losing a race nor a senator later losing an election erases that person's separately verified Senate service.",
+    "No historical statewide campaign filing-site completeness inference follows from five source URLs."
+  ]
+}
