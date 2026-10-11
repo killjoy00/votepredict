@@ -45,7 +45,7 @@ async function main(){
   };
   if(d.version!=='public-2021-25-further-independent-15-reformer-articles-v1'
     ||d.newOriginalArticleUrlLeads!==15
-    ||d.newIndividuallyNamedSenatorSpeakerCandidates!==22
+    ||d.newIndividuallyNamedSenatorSpeakerCandidates!==24
     ||!Array.isArray(d.independentOriginalReporterArticleLeads))
     throw Error('Unknown original independent newsroom public source cohort');
   const report=await probeIndependentJournalistOriginals(
