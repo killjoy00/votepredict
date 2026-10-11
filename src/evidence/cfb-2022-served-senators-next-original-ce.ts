@@ -56,12 +56,12 @@ export function load2022PinnedOriginalViewerRows(psv:string){
     const [segment,reg,apiSha,keys,...tail]=line.split('|');
     if(tail.length||!['2022','2024'].includes(segment??'')
       ||!/^\d{3,8}$/.test(reg??'')||!exactSha(apiSha??'')
-      ||!keys||keys.split(',').some(k=>!/^(21|22|23|24):(pcc|aoc):(YE|C|E):[01]:\d+$/.test(k)))
+      ||keys===undefined||(keys.length>0&&keys.split(',').some(k=>!/^(21|22|23|24):(pcc|aoc):(YE|C|E):[01]:\d+$/.test(k)))
       throw Error('Malformed permanent historical CFB API-ledger row');
     count++;
     if(segment==='2022'){
       if(rows.has(reg!))throw Error('Duplicate 2022 Senate CFB registration source');
-      rows.set(reg!,{apiSha:apiSha!,keys:new Set(keys.split(','))});
+      rows.set(reg!,{apiSha:apiSha!,keys:new Set(keys?keys.split(','):[])});
     }
   }
   if(count!==396||rows.size!==270)throw Error('Historical 396-CFB viewer source scope drift');
