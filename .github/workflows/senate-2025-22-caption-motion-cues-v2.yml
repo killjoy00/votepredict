@@ -1,0 +1,61 @@
+name: One-time 2025 Senate 22 original caption procedural cues v2 (strict markup)
+
+# Source-only, one-time-on-merge. Recheck exactly the same original 2025 indexed
+# hearing -> HTML -> caption-body SHA corpus, no new source or auto vote import.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2025-22-caption-motion-cues-v2.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  original-2025-caption-precise-structure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Restore independently verified official 2025 hearing mtgid IDs
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2025-dated-media-href-review
+          run-id: 38079233118
+          github-token: ${{ github.token }}
+          path: artifacts/official-hrefs
+      - name: Restore previously SHA-verified official original HTML metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2025-official-media-record-html-proof
+          run-id: 38081463362
+          github-token: ${{ github.token }}
+          path: artifacts/official-html
+      - name: Restore previously SHA-verified original 2025 caption payloads metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2025-original-caption-surface-metadata
+          run-id: 38103766440
+          github-token: ${{ github.token }}
+          path: artifacts/official-captions
+      - name: Recheck all 22 original full caption body SHAs and locate ONLY strict procedural cue timestamps
+        run: |
+          node --import tsx scripts/review-senate-2025-unlinked-caption-motion-cues-v2.ts \
+            --hrefs artifacts/official-hrefs/senate-2025-media-hrefs.json \
+            --original-html artifacts/official-html/senate-2025-media-record-html.json \
+            --caption-metadata artifacts/official-captions/senate-2025-caption-surface.json \
+            --output artifacts/source-v2/senate-2025-22-original-caption-procedural-motion-cues-v2.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2025-22-original-caption-strict-procedural-cues-v2
+          path: artifacts/source-v2/senate-2025-22-original-caption-procedural-motion-cues-v2.json
+          retention-days: 30
+          if-no-files-found: error
