@@ -2,6 +2,7 @@
 import {createHash} from 'node:crypto';
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {dirname,resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {selectPinnedMtgidRecords} from '../src/evidence/senate-committee-138-mtgid-head-source.js';
 import {fetchBoundedSenateMediaRecordHtml} from '../src/evidence/senate-committee-138-record-html-metadata.js';
 import {readExactPriorMediaHtmlProof,inspectMediaPageCaptionSurface,
@@ -35,14 +36,14 @@ export function checkFailed2023OriginalArtifact(raw:string){
   return j.failures;
 }
 
-const a=process.argv.slice(2);
-if(a.length!==8||a[0]!=='--source-hrefs'||a[2]!=='--prior-html'||
-   a[4]!=='--previous-failed-run'||a[6]!=='--output')
-  throw Error('Pass exact --source-hrefs, --prior-html, --previous-failed-run and --output paths');
-const href=resolve(a[1]!),html=resolve(a[3]!),first=resolve(a[5]!),output=resolve(a[7]!);
 const clean=(e:unknown)=>(e instanceof Error?e.message:String(e))
   .replace(/https?:\/\/\S+/g,'[original LRL record]').slice(0,160);
 async function main(){
+  const a=process.argv.slice(2);
+  if(a.length!==8||a[0]!=='--source-hrefs'||a[2]!=='--prior-html'||
+     a[4]!=='--previous-failed-run'||a[6]!=='--output')
+    throw Error('Pass exact --source-hrefs, --prior-html, --previous-failed-run and --output paths');
+  const href=resolve(a[1]!),html=resolve(a[3]!),first=resolve(a[5]!),output=resolve(a[7]!);
   const hrefs=selectPinnedMtgidRecords(2023,readFileSync(href,'utf8'));
   const prior=readExactPriorMediaHtmlProof(2023,readFileSync(html,'utf8'));
   const failureIdentity=checkFailed2023OriginalArtifact(readFileSync(first,'utf8'));
@@ -104,4 +105,5 @@ async function main(){
     pagesWithTimedCaptionRows:records.filter(r=>Number(r.totalTimedCaptionMarkers)>0).length},null,2));
   if(failures.length)process.exitCode=1;
 }
-main().catch(e=>{console.error(clean(e));process.exitCode=1});
+if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))
+  main().catch(e=>{console.error(clean(e));process.exitCode=1});
