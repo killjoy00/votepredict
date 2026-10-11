@@ -1,5 +1,5 @@
 /**
- * One-shot ORIGINAL campaign archive recovery for six further actual Senate-serving Minnesota state senators.
+ * One-shot ORIGINAL campaign archive recovery for five further actual Senate-serving Minnesota state senators.
  * No network access unless original independent LRL Senate directory HTML and
  * its public observed-at and SHA-256 receipt are reverified.
  */

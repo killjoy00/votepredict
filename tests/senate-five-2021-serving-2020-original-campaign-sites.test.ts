@@ -39,7 +39,7 @@ function realSenators():AuditedOfficialSenateDirectory{
 const header=['timestamp','original','mimetype','statuscode','digest','length'];
 const row=(time:string,url:string)=>
  [time,url,'text/html','200','A'.repeat(32),'2400'];
-test('all six NEW 2021 serving Senate people, exactly their own original campaign hosts; no losing-never-served persons',()=>{
+test('all five NEW 2021 serving Senate people, exactly their own original campaign hosts; no losing-never-served persons',()=>{
  assert.equal(seeds.scope.independentlyVerifiedActualServingPeopleRequired,5);
  assert.equal(seeds.scope.maximumAllOriginalHTMLReplays,20);
  assert.equal(seeds.scope.originalArchiveCaptureUtcMayDateExactStatements,true);
@@ -60,7 +60,7 @@ test('all six NEW 2021 serving Senate people, exactly their own original campaig
  assert.throws(()=>verifyFive2021ServingSenatorsBeforeOriginal2020ArchiveNetwork(wrongService),
   /Not an independently documented actually serving Minnesota senator/);
 });
-test('true 2020 date-specific Wayback source queries, bounded to 300 entries and only six specified people',()=>{
+test('true 2020 date-specific Wayback source queries, bounded to 300 entries and only five specified people',()=>{
  const u=new URL(fiveSenatorsReal2020OriginalCDXIndexUrl('justinformnsenate.com'));
  assert.equal(u.host,'web.archive.org');
  assert.equal(u.searchParams.get('from'),'20200101');
@@ -97,8 +97,8 @@ test('bounded 300-row candidate archive source sample and empty index are UNKNOW
  assert.equal(parsed.indexAtCap,true);
  assert.equal(selectFourOriginal2020PagesForOneOfFiveSenators(parsed.eligible).length,4);
 });
-test('source outage cannot create six phantom absent campaign positions; original public LRL service checked before any network',async()=>{
- const d=mkdtempSync(join(tmpdir(),'six-ever-served-senators-original-'));
+test('source outage cannot create five phantom absent campaign positions; original public LRL service checked before any network',async()=>{
+ const d=mkdtempSync(join(tmpdir(),'five-ever-served-senators-original-'));
  try{
   const folder=join(d,'true-original-receipts');
   let requests=0;

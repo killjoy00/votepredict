@@ -1,6 +1,6 @@
 /**
  * #864: one-shot original 2020 candidate-owned Senate site archival recovery,
- * six independently actually-served MN Senate people, not just ballot filers.
+ * five independently actually-served MN Senate people, not just ballot filers.
  *
  * A real Wayback CDX row is only an index lead. No original 2020 page copy
  * or policy stance is accepted unless its downloaded original HTML matches
@@ -82,7 +82,7 @@ export function verifyFive2021ServingSenatorsBeforeOriginal2020ArchiveNetwork(
     ||t.modernCampaignWebsiteAloneIsNot2020Evidence!==true
     ||t.originalSecretaryOfStateFiledWebsiteNotProven!==true
     ||!t.discoveryBasis||!t.discoverySourceUrl||!t.campaignDomainLead)
-   throw Error('Six fixed actual senator original campaign domain leads changed');
+   throw Error('Five fixed actual senator original campaign domain leads changed');
   exactHost(t.campaignDomainLead,expected.domain);
   const person=validateActualSenateServiceForElection(
    official,expected.name,expected.district,2020);
@@ -97,7 +97,7 @@ export function verifyFive2021ServingSenatorsBeforeOriginal2020ArchiveNetwork(
   });
  }
  if(new Set(matches.map(x=>x.verifiedLRLSenatorName)).size!==5)
-  throw Error('Duplicate senator or undocumented 2021 Senate service in six-person target');
+  throw Error('Duplicate senator or undocumented 2021 Senate service in five-person target');
  return matches;
 }
 export function fiveSenatorsReal2020OriginalCDXIndexUrl(domain:string){
@@ -293,7 +293,7 @@ export async function acquireFive2020OriginalCampaignSitesFor2021Senators(
    totalOriginalArchivedHtmlReplayMaximum:20,
    current2026WebsitesAreDiscoveryLeadsOnly:true,
    sourceAuthorFirstPublishedDateUnknown:true,
-   original2020Or2020SOSFiledCampaignWebsiteFieldCertified:false,
+   original2020SOSFiledCampaignWebsiteFieldCertified:false,
    indexCappedOrUnavailableDoesNotProveNoHistoricalPolicy:true,
    statementAttributionRequiresSeparateCandidateCycleAndQuoteAudit:true,
    networkAllowedOnlyPublicWaybackOriginalArchives:true,

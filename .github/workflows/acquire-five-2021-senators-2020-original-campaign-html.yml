@@ -1,4 +1,4 @@
-name: Recover six additional actual Senate-serving people 2020 original campaign websites
+name: Recover five actual 2021-serving Senate people 2020 original campaign websites
 
 # One-shot verified public historical pages, not 2026 live website stances.
 # No secrets, DB, model, forecast, scheduler or public office contact.
@@ -39,7 +39,7 @@ jobs:
           name: senate-2021-25-ever-served-only-source-coverage-v2
           github-token: ${{ github.token }}
           path: originals/official-senate-directory
-      - name: Rehash entire ACTUAL served-senator LRL original before six candidate campaign archival queries
+      - name: Rehash entire ACTUAL served-senator LRL original before five candidate campaign archival queries
         shell: bash
         timeout-minutes: 19
         run: |
