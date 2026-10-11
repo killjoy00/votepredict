@@ -94,7 +94,7 @@ test('positive historical original archived issue body requires exact CDX index 
   assert.ok(proof.sourceActuallyFetchedAtUtc.startsWith('2026-'));
   assert.equal(proof.originalSiteAuthorPostedAt,null);
   assert.equal(proof.senatorPositionPublicByCertifiedForSpecificExcerpt,false);
-  assert.ok(readFileSync(join(parent,'out','kupec-2022-authenticated-issues-'+capture+'.html')).equals(html));
+  assert.ok(readFileSync(join(parent,'out','kupec-2022-authenticated-issues-'+capture+'-0.html')).equals(html));
   assert.equal(statSync(join(parent,'out','acquisition-manifest.json')).mode&0o777,0o600);
   assert.ok(readdirSync(join(parent,'out')).length>=3);
  }finally{rmSync(parent,{recursive:true,force:true});}
