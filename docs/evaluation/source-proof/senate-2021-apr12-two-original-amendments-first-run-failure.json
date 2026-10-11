@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "senate-2021-apr12-sf1159-sf970-original-two-amendment-first-run-failure-v1",
+  "issue": 864,
+  "scope": "Original April 12 2021 Senate Journal committee amendment named-roll source verification; both historical named-side lists NOT YET authenticated",
+  "firstOriginalStrictProvisionalSideRun": {
+    "runnerPR": 1134,
+    "mergeCommit": "1a3fdaebc4ec11f69751e2f552c18c64790e4707",
+    "originalRunId": 38172259470,
+    "originalRunURL": "https://github.com/killjoy00/votepredict/actions/runs/38172259470",
+    "actualRunConclusion": "failure",
+    "originalPDFObtained": true,
+    "originalPdfBytes": 11063699,
+    "originalPdfSHA256": "8dd34868badade8d3d4cd77ce11c6a632705bdd99a59509a5e4d23544f2d3d75",
+    "originalEmbeddedTextSHA256": "dda780e4fc076f56ff9f271303ba81897b69813acfece416b7741aea64c41214",
+    "scriptPreviouslyExpectedTextSHA256WithTranscriptionError": "dda780e4fc076f56ff9f271303ba81897b69813acfece416f7741aea64c41214",
+    "sourceArtifactId": 11714476334,
+    "sourceArtifactName": "senate-2021-apr12-two-amendments-original-provisional-side-shas",
+    "independentlyDownloadedZIPBytes": 794,
+    "independentlyDownloadedZIPSHA256": "c6bbc7b9d67379c0ca23367bf5e775b62394ac5682135f01400b3192518a438b",
+    "decodedJsonEntry": "provisional-sha.json",
+    "independentlyDecodedJSONBytes": 1123,
+    "independentlyDecodedJSONSHA256": "86843720be89193c79a17eea0c9b95a46269f8184778bdf6bcde63fcaa09cef0",
+    "originalFailureReason": "Original April12 embedded-text SHA does not match prior independently authenticated source",
+    "sourceNoProvisionalSideDigestComputed": true,
+    "namedHistoricalVoterSidesNOTCertified": true
+  },
+  "correctOriginalSHARecheckedAgainstIndependentPriorOriginal": {
+    "originalSourceRunId": 38169533978,
+    "originalRedactedSourceRunId": 38170280710,
+    "bothPreviouslyExtractedOriginalTextSHA256": "dda780e4fc076f56ff9f271303ba81897b69813acfece416b7741aea64c41214",
+    "sourceBinaryHashDidNotChange": true,
+    "falseNegativeWasOnlyOneSHAHexDigitTypoInPinnedConstant": true
+  },
+  "limits": {
+    "failureRemainsFailureDespiteCodeFix": true,
+    "newSourceRetryRequired": true,
+    "noNamedChoicesPublished": true,
+    "noHistoricalNamedRollCertifiedOnFirstRun": true,
+    "printedCountsFromPriorRedactedSourceRemainProvisional": true,
+    "noMeetingDateOrPublicFirstTimeCertified": true,
+    "noPrivateDBOrMemberVoteOrModelsOrFloorChanges": true,
+    "issue864MustRemainOpen": true
+  }
+}
