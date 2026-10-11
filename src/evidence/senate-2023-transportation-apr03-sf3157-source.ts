@@ -34,7 +34,11 @@ const MOTIONS:readonly MotionSpec[]=[
 ];
 const entities=(s:string)=>s
  .replace(/&nbsp;|&#160;|&#xA0;/gi,' ')
- .replace(/&amp;/gi,'&').replace(/&quot;/gi,'"').replace(/&#39;|&apos;/gi,"'")
+ .replace(/&amp;/gi,'&').replace(/&quot;/gi,'"')
+ .replace(/&ldquo;|&laquo;/gi,'“').replace(/&rdquo;|&raquo;/gi,'”')
+ .replace(/&lsquo;/gi,'‘').replace(/&rsquo;/gi,'’')
+ .replace(/&mdash;/gi,'—').replace(/&ndash;/gi,'–')
+ .replace(/&#39;|&apos;/gi,"'")
  .replace(/&lt;/gi,'<').replace(/&gt;/gi,'>')
  .replace(/&#(\d+);/g,(_,n:string)=>String.fromCodePoint(Number(n)))
  .replace(/&#x([\da-f]+);/gi,(_,n:string)=>String.fromCodePoint(parseInt(n,16)));
@@ -67,7 +71,9 @@ function parseHtml(html:string,roster:ReadonlySet<string>){
   const slice=text.slice(start,start+1250);
   const voteAt=slice.search(/The committee voted as follows\s*:/i);
   if(voteAt<0)throw Error('No roll-call names printed for '+spec.label);
-  const outcome=slice.match(/\bWith\s+\w+\s+senators?\s+voting\s+[“"]?yes[”"]?\s+and\s+\w+\s+voting\s+[“"]?no,?[”"]?\s+the\s+motion\s+(?:did\s+)?(not\s+)?prevail\s+and\s+the\s+(A\d+)\s+amendment\s+was\s+(not\s+)?adopted\b/i);
+  // Allow HTML entity/quote punctuation around YES/NO, but REQUIRE both
+  // independently printed number words to match the named-side partition.
+  const outcome=slice.match(/\bWith\s+(\w+)\s+senators?\s+voting[\s\S]{0,50}?\byes\b[\s\S]{0,50}?\band\s+(\w+)\s+voting[\s\S]{0,50}?\bno\b[\s\S]{0,50}?\bthe\s+motion\s+(?:did\s+)?(not\s+)?prevail(?:ed)?\s+and\s+the\s+(A\d+)\s+amendment\s+was\s+(not\s+)?adopted\b/i);
   if(!outcome||outcome.index===undefined||outcome.index<=voteAt||
     outcome.index-voteAt>850)
    throw Error('Original named roll has no bounded disposition for '+spec.label);
@@ -80,10 +86,14 @@ function parseHtml(html:string,roster:ReadonlySet<string>){
    new Set([...yea,...nay,...absent]).size!==10||
    [...yea,...nay,...absent].some(n=>!roster.has(n)))
    throw Error('Official full roster partition mismatch on '+spec.label);
-  const appearedAdopted=!outcome[1]&&!outcome[3];
+  const countWord=(v:string)=>['zero','one','two','three','four',
+   'five','six','seven','eight','nine','ten'].indexOf(v.toLowerCase());
+  if(countWord(outcome[1]!)!==yea.length||countWord(outcome[2]!)!==nay.length)
+   throw Error('Original printed tally words disagree with named sides on '+spec.label);
+  const appearedAdopted=!outcome[3]&&!outcome[5];
   if(appearedAdopted!==(spec.verdict==='adopted'))
    throw Error('Original verdict inconsistent for '+spec.label);
-  const printedOutcomeLabel=outcome[2]!;
+  const printedOutcomeLabel=outcome[4]!;
   const contradiction=printedOutcomeLabel!==spec.label;
   if(contradiction!==(spec.label==='A49'))
    throw Error('Unexpected (or missing) original amendment label conflict on '+spec.label);
