@@ -40,6 +40,8 @@ test('Wayback CDX original URL and version must match exact CFB report, not cand
  const row=(ts:string,url:string,code='200',mime='application/pdf')=>
   [ts,url,code,mime,'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGH'];
  const candidatePage='https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/18430/2024/';
+ assert.deepEqual(strictCdxReportVersionCaptures({target:x,rawCdxJson:[]}),[],
+  'Original Wayback CDX empty [] is a valid no-captures record, never actual public-unavailability proof');
  const records=[good,row('20240201100000',x.sourceSnapshotCfbReportUrl),
   row('20240201141500',candidatePage),
   row('20240201143000',x.sourceSnapshotCfbReportUrl.replace('amend=0','amend=1')),
