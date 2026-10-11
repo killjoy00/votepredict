@@ -175,3 +175,90 @@ export function auditSixteenAmendmentSourceSequence(
     independent2023Or2024ServiceEstablishment:false,
   };
 }
+
+/** The first official original CFB acquisition #38159906340 found one
+ * atypical Putnam 2023 PDF and one exact duplicated 2024 version reference.
+ * Both require a second independent source acquisition before preservation.
+ * The held 2023 PDF is NOT authenticated as an amended financial report.
+ */
+export const REVIEWED_2023_PUTNAM_AMENDMENT_SOURCE_HOLD={
+  id:'18430:23:pcc:YE:0:1',
+  parentId:'18430:23:pcc:YE:0:0',
+  parentPdfSha256:'c6b67bb11a29e56c7ba3675d4769ade759718af535f6b880b43908a8c5875b8c',
+  originalPdfViewerSha256:'f54b43ea2febe9db1407b23d64336da36ddfea53dc9bc633e2f64858ce61a833',
+  officialSourcePdfSha256:'5da25294735f3b7b62608755df926b38917a69aaf90b13c9999396de0d710c54',
+  officialSourcePdfBytes:149845,
+  officialSourceBoardReceipt:'2024-04-04',
+} as const;
+export const REVIEWED_2024_PUTNAM_AMENDMENT_PDF_ALIAS={
+  canonicalReferenceId:'18430:24:pcc:YE:0:1',
+  aliasReferenceId:'18430:24:pcc:YE:0:2',
+  parentOriginalId:'18430:24:pcc:YE:0:0',
+  parentOriginalPdfSha256:'8b46d64701cd4e60387b2705a0bf27e65195fbac69550b55ae0a826a18978570',
+  exactSameAuthenticatedAmendmentPdfSha256:'ff7e8200925b80a6983b00ac17c7dfe1b6a9be746c7754b0055a7dc94dbb5f03',
+  exactSameAuthenticatedAmendmentPdfBytes:30355,
+  exactSameBoardReceipt:'2025-04-10',
+} as const;
+export function classifySixteenReviewed2023to24AmendedSourceReferences(
+  reports:ReturnType<typeof auditAuthenticatedParentYeAmendment>[],
+){
+  const h=REVIEWED_2023_PUTNAM_AMENDMENT_SOURCE_HOLD,
+    alias=REVIEWED_2024_PUTNAM_AMENDMENT_PDF_ALIAS;
+  const held=reports.filter(r=>r.status!=='amended_pdf_and_parent_identity_authenticated');
+  const exceptional=held[0];
+  const exactHeld=held.length===1
+    &&exceptional?.id===h.id&&exceptional?.parentOriginalReportId===h.parentId
+    &&exceptional?.originalPdfSha256===h.parentPdfSha256
+    &&exceptional?.originalViewerApiSha256===h.originalPdfViewerSha256
+    &&exceptional?.pdfSha256===h.officialSourcePdfSha256
+    &&exceptional?.pdfBytes===h.officialSourcePdfBytes
+    &&exceptional?.amendedBoardReceiptOn===h.officialSourceBoardReceipt
+    &&exceptional?.firstPagePrintedSenateDistrictMatched===true
+    &&exceptional?.firstPageRegistrationMatched===false
+    &&exceptional?.amendedFirstPageOfficeRegistrationPeriodReceiptVerified===false
+    &&exceptional?.distinctBinaryFromParent===true
+    &&exceptional?.sourceFailureKind===null
+    &&exceptional?.status==='source_first_page_committee_or_dates_unverified';
+  const certified=reports.filter(r=>r.status==='amended_pdf_and_parent_identity_authenticated');
+  const first=certified.find(r=>r.id===alias.canonicalReferenceId);
+  const second=certified.find(r=>r.id===alias.aliasReferenceId);
+  const exactAlias=!!first&&!!second&&first.parentOriginalReportId===alias.parentOriginalId
+    &&second.parentOriginalReportId===alias.parentOriginalId
+    &&first.originalPdfSha256===alias.parentOriginalPdfSha256
+    &&second.originalPdfSha256===alias.parentOriginalPdfSha256
+    &&first.pdfSha256===alias.exactSameAuthenticatedAmendmentPdfSha256
+    &&second.pdfSha256===alias.exactSameAuthenticatedAmendmentPdfSha256
+    &&first.pdfBytes===alias.exactSameAuthenticatedAmendmentPdfBytes
+    &&second.pdfBytes===alias.exactSameAuthenticatedAmendmentPdfBytes
+    &&first.amendedBoardReceiptOn===alias.exactSameBoardReceipt
+    &&second.amendedBoardReceiptOn===alias.exactSameBoardReceipt
+    &&first.amendedFirstPageOfficeRegistrationPeriodReceiptVerified
+    &&second.amendedFirstPageOfficeRegistrationPeriodReceiptVerified;
+  const hashes=new Set(certified.map(r=>r.pdfSha256!));
+  const duplicateHashes=certified.filter(r=>certified
+    .filter(x=>x.pdfSha256===r.pdfSha256).length>1);
+  const accepted=reports.length===16
+    &&new Set(reports.map(r=>r.id)).size===16
+    &&certified.length===15&&hashes.size===14
+    &&exactHeld&&exactAlias
+    &&duplicateHashes.length===2
+    &&duplicateHashes.map(r=>r.id).sort().join('|')===
+      [alias.canonicalReferenceId,alias.aliasReferenceId].sort().join('|');
+  return{
+    expectedOfficialViewerReferenceCount:16,
+    officialViewerReferencesFetched:reports.length,
+    independentlyAuthenticatedAmendmentReferences:certified.length,
+    uniqueIndependentlyAuthenticatedAmendedPdfs:hashes.size,
+    sourceIdentityHolds:held.length,
+    sourceIdentityHoldVersionIds:held.map(r=>r.id),
+    strictlyReviewedSourceOnlyHold:exactHeld?h.id:null,
+    documentedSamePdfOfficialViewerAliases:exactAlias?1:0,
+    duplicateReferenceVersionId:exactAlias?alias.aliasReferenceId:null,
+    canonicalPdfVersionId:exactAlias?alias.canonicalReferenceId:null,
+    allSixteenAuthenticatedDistinctPdfs:false,
+    completeAmendmentChainsDemonstrated:false,
+    sourceAccountingAcceptedWithOneExactIdentityHoldAndOneBinaryAlias:accepted,
+    legallyRequiredReportsDenominator:null,
+    provenActualPublicByCount:0,
+  };
+}
