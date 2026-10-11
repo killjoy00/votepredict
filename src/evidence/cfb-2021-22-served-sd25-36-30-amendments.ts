@@ -16,19 +16,16 @@ import {load2022PinnedOriginalViewerRows}
 import {
   auditActualSenatorAmendmentPdf,
   amendmentViewerReference,
-  checkAuthenticatedAmendmentChains,
+  checkAuthenticatedAmendmentChains as checkStrictAuthenticatedAmendmentChains,
   type SenatorAmendmentSourceTarget,
   type OriginalSenatorFinanceReport,
   type CfbHistoricalAmendedPdfSource,
 } from './cfb-2021-22-served-senator-amendments.js';
 
-export {
-  auditActualSenatorAmendmentPdf, amendmentViewerReference,
-  checkAuthenticatedAmendmentChains,
-};
+export {auditActualSenatorAmendmentPdf, amendmentViewerReference};
 export type {CfbHistoricalAmendedPdfSource,SenatorAmendmentSourceTarget};
 export const SD25_36_30_AMENDMENT_SOURCE_VERSION=
-  'mn-cfb-2021-22-served-sd25-36-30-original-amendment-pdf-source-v1' as const;
+  'mn-cfb-2021-22-served-sd25-36-30-original-amendment-pdf-source-v2' as const;
 export const SD25_36_AMENDMENT_REFERENCE_COUNTS={
   '21:YE':3,'22:YE':13,'22:C':7,'22:E':7,
 } as const;
@@ -194,24 +191,135 @@ export function selectServedSd25to36AmendmentVersions(
     legallyOwedReportDenominator:null};
 }
 
-/** A fresh acquisition only succeeds if all original 30 amended PDF first
- * pages and chained versions pass authentication. A report-format exception
- * is evidence to HOLD, never grounds for accepting a guessed amendment. */
+/**
+ * Official 2022 John Hoffman YE references #1 and #2 were independently
+ * downloaded on October 11, 2026 as separate CFB viewer requests, but
+ * yielded byte-identical PDFs. The cause of the CFB alias is UNKNOWN.
+ *
+ * The exception is pinned to the *specific* original, viewer indices, SHA,
+ * byte count and stamped date. A changed source must be reviewed, not
+ * silently accepted as a second distinct report or a new alias.
+ */
+export const REVIEWED_HOFFMAN_2022_YE_BINARY_ALIAS={
+  originalReportId:'17319:22:pcc:YE:0:0',
+  originalReportSha256:'9021188adb7c834e0b28273b71fb72f2ceaabb18cbb2c56b1a0e93a6489e7485',
+  canonicalReferenceId:'17319:22:pcc:YE:0:1',
+  aliasedReferenceId:'17319:22:pcc:YE:0:2',
+  binarySha256:'5a95df8f11a8b912b65d4befebd368cf00008e814844c69c3069c77fac7f8e2d',
+  byteLength:686801,
+  boardReceivedOn:'2023-05-28',
+} as const;
+
+type PdfAudit=ReturnType<typeof auditActualSenatorAmendmentPdf>;
+function reviewedHoffmanAliasReconfirmed(audits:ReadonlyArray<PdfAudit>){
+  const match=REVIEWED_HOFFMAN_2022_YE_BINARY_ALIAS;
+  const first=audits.filter(r=>r.id===match.canonicalReferenceId);
+  const second=audits.filter(r=>r.id===match.aliasedReferenceId);
+  if(first.length!==1||second.length!==1)return false;
+  const a=first[0]!,b=second[0]!;
+  return [a,b].every((r,i)=>r.status==='amendment_pdf_and_original_identity_authenticated'
+    &&r.amendmentFirstPageIdentityOfficeDatesVerified
+    &&r.originalReportId===match.originalReportId
+    &&r.originalReportSha256===match.originalReportSha256
+    &&r.registrationNumber==='17319'
+    &&r.reportYear===2022&&r.period==='YE'
+    &&r.amendmentViewerIndex===i+1
+    &&r.amendedPdfSha256===match.binarySha256
+    &&r.amendedPdfByteLength===match.byteLength
+    &&r.amendedBoardReceivedOn===match.boardReceivedOn
+    &&r.amendedCoverageStartOn==='2022-01-01'
+    &&r.amendedCoverageEndOn==='2022-12-31'
+    &&r.amendedPdfPrintedSenateDistrict===34
+    &&r.amendedBinaryDistinctFromOriginal
+    &&r.sourceErrorKind===null
+    &&!!r.amendedPdfSourceUrl)
+    &&a.amendedPdfSourceUrl!==b.amendedPdfSourceUrl
+    &&a.originalViewerApiSha256===b.originalViewerApiSha256;
+}
+
+/** Original, distinct amendment, exact duplicate-reference alias, unverified
+ * paper and failed fetch are separate evidentiary states. In particular, the
+ * duplicate reference is NOT a distinct amended-PDF binary. */
+export function classifySd25to36AmendmentReferences(audits:ReadonlyArray<PdfAudit>){
+  const reviewedAlias=reviewedHoffmanAliasReconfirmed(audits);
+  return audits.map(r=>{
+    const authenticated=r.status==='amendment_pdf_and_original_identity_authenticated';
+    const isAlias=reviewedAlias&&r.id===REVIEWED_HOFFMAN_2022_YE_BINARY_ALIAS.aliasedReferenceId;
+    const referenceClassification=isAlias
+      ?'official_amendment_version_reference_alias_of_identical_pdf' as const
+      :authenticated?'distinct_authenticated_amended_pdf' as const
+      :r.status==='source_http_or_pdf_failure'?'source_fetch_failure' as const
+      :'unverified_report_pdf_identity' as const;
+    return {...r,referenceClassification,
+      aliasOfAmendmentVersionId:isAlias
+        ?REVIEWED_HOFFMAN_2022_YE_BINARY_ALIAS.canonicalReferenceId:null,
+      distinctAmendedPdfBinary:isAlias?false:authenticated};
+  });
+}
+type ClassifiedAudit=ReturnType<typeof classifySd25to36AmendmentReferences>[number];
+
+/** Retain strict shared chain validation, exempting precisely one historically
+ * documented binary alias. Also reject cross-parent or out-of-cohort collisions.
+ * All 30 viewer indices stay present and all first-page checks still apply. */
+export function checkAuthenticatedAmendmentChains(audits:ReadonlyArray<PdfAudit>){
+  const strict=checkStrictAuthenticatedAmendmentChains(audits);
+  const match=REVIEWED_HOFFMAN_2022_YE_BINARY_ALIAS;
+  const reconfirmed=reviewedHoffmanAliasReconfirmed(audits);
+  const violations=strict.violations.filter(v=>!(reconfirmed
+    &&v.id===match.aliasedReferenceId
+    &&v.reason==='amendment_binary_duplicate_of_earlier_revision'));
+  if(!reconfirmed)violations.push({
+    id:match.aliasedReferenceId,
+    reason:'reviewed_2022_hoffman_alias_original_source_changed_or_unconfirmed',
+  });
+  const owners=new Map<string,string>();
+  for(const r of audits){
+    if(!r.amendedPdfSha256)continue;
+    const previous=owners.get(r.amendedPdfSha256);
+    if(previous && !(reconfirmed&&previous===match.canonicalReferenceId
+      &&r.id===match.aliasedReferenceId))
+      violations.push({id:r.id,reason:'unexpected_amendment_pdf_binary_duplicate_across_cohort'});
+    else if(!previous)owners.set(r.amendedPdfSha256,r.id);
+  }
+  const documentedBinaryAliases=reconfirmed?[{
+    canonicalReferenceId:match.canonicalReferenceId,
+    aliasedReferenceId:match.aliasedReferenceId,
+    originalReportId:match.originalReportId,
+    pdfSha256:match.binarySha256,bytes:match.byteLength,
+    boardReceivedOn:match.boardReceivedOn,
+    sourceReasonIndependentlyEstablished:false,
+  }]:[];
+  return {valid:violations.length===0,violations,documentedBinaryAliases};
+}
+
+/** Only 29 *distinct* amended report PDFs are proven when all 30 official
+ * viewer references resolve; the documented second Hoffman reference is an
+ * alias. A changed source, unexpected duplicate, held identity or fetch fails. */
 export function verifyServedSd25to36AmendmentSourceOutcome(
-  reports:ReadonlyArray<ReturnType<typeof auditActualSenatorAmendmentPdf>>,
+  reports:ReadonlyArray<ClassifiedAudit>,
 ){
-  const pass=reports.filter(r=>r.status==='amendment_pdf_and_original_identity_authenticated');
+  const identity=reports.filter(r=>r.status==='amendment_pdf_and_original_identity_authenticated');
+  const distinct=reports.filter(r=>r.referenceClassification==='distinct_authenticated_amended_pdf');
+  const aliases=reports.filter(r=>
+    r.referenceClassification==='official_amendment_version_reference_alias_of_identical_pdf');
   const chain=checkAuthenticatedAmendmentChains(reports);
-  const hashes=pass.map(r=>r.amendedPdfSha256!);
-  const unique=reports.length===30&&new Set(reports.map(r=>r.id)).size===30
-    &&new Set(hashes).size===hashes.length;
-  return {status:unique&&pass.length===30&&chain.valid
-    ?'all_30_pdf_amendment_first_pages_authenticated' as const
+  const sourceIdsUnique=reports.length===30&&new Set(reports.map(r=>r.id)).size===30;
+  const distinctHashes=new Set(identity.map(r=>r.amendedPdfSha256!));
+  const complete=sourceIdsUnique&&identity.length===30&&distinct.length===29
+    &&aliases.length===1&&distinctHashes.size===29&&chain.valid
+    &&aliases[0]?.id===REVIEWED_HOFFMAN_2022_YE_BINARY_ALIAS.aliasedReferenceId
+    &&aliases[0]?.aliasOfAmendmentVersionId===REVIEWED_HOFFMAN_2022_YE_BINARY_ALIAS.canonicalReferenceId;
+  return {status:complete
+    ?'29_distinct_amended_pdfs_1_documented_official_viewer_alias' as const
     :'source_pdf_or_amendment_identity_unresolved' as const,
-    verified:pass.length,holds:reports.length-pass.length,
-    complete:unique&&pass.length===30&&chain.valid,
-    distinctAmendmentPdfBinaries:new Set(hashes).size,
+    verified:identity.length,holds:reports.length-identity.length,
+    complete,sourceVersionReferencesAuthenticated:identity.length,
+    distinctAuthenticatedAmendedPdfForms:distinct.length,
+    documentedDuplicateReferenceAliases:aliases.length,
+    distinctAmendmentPdfBinaries:distinctHashes.size,
     fullOriginalToAmendmentChainsVerified:chain.valid,
+    fullDistinctBinaryRevisionChainsVerified:false,
+    documentedBinaryAliases:chain.documentedBinaryAliases,
     chainViolations:chain.violations,
   };
 }
