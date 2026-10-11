@@ -78,3 +78,12 @@ The full original live [public Actions run #38156337828](https://github.com/kill
 - **Index unresolved (5):** Gary Dahms 2022, Eric Pratt 2023, Karin Housley 2024 session procedure, Doron Clark 2025 oath and Susan Pha 2025. An index failure does not establish absence of the corresponding historical publisher page or senator statement.
 
 **Important interpretation:** all quoted 23 numbers refer to **separate captured original HTTP body versions**, not individual claims/quotes or even 23 unique articles. Two different captures may have identical original bodies, as seen with MPR Miller. These 18 URLs remain a curated sample of two caucus domains, MPR and Enterprise Minnesota, and leave the statewide senator-by-year media statement universe unknown.
+
+
+### Independent source recheck — one additional exact original body verified
+
+A second actual [public source run #38156433947](https://github.com/killjoy00/votepredict/actions/runs/38156433947), at the TypeScript-corrected source head **ede2942e84d3a971fd77ebf99f73a80d6f12b07a**, succeeded. The independently downloaded second ZIP SHA-256 was **38bd36791bca959bfcf07d692e240e3ec7d5035ef24678ed22b3c4d69109caa7**; decoded JSON SHA-256 was **74482667f6cc7bb7c065b32a66dad7dd86e67c9561669b1767aa6c480ee4c47c**.
+
+The recheck reproduced **all 23 common exact captured bodies with identical SHA-256 and byte count**. In addition, the original June 5, 2023 POCI collective caucus page, which had returned a **transient redirect hold** in the first live run, replayed with an exact consistent CDX SHA-1, 116,116 original bytes and observed SHA-256 **307d379de103fcbcda05a1c52d35989121b442dd8783288027b01843ff1b997b**.
+
+Therefore the union is **24 independently SHA-consistent captured original HTTP bodies across the same 13 distinct URLs**. The first run's earlier redirect remains honestly recorded, not erased; its resolution in the second run demonstrates why archive replays and index errors must not be treated as historical absence. The POCI body remains a **collective statement**, not a set of authenticated individual senators' words. All human speaker, original audio and publisher first-posting-time conclusions are still unknown.
