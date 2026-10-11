@@ -1,0 +1,53 @@
+name: Senate media eight early historical original speaker passages
+
+# Exact PUBLIC original archived HTML only; no audio/private evidence/votes.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-eight-early-original-phrases.yml
+      - src/evidence/senate-media-eight-early-original-text-audit.ts
+      - scripts/audit-senate-media-eight-early-original-phrases.ts
+      - tests/senate-media-eight-early-original-text-audit.test.ts
+      - docs/evaluation/senate-media-2021-25-eight-further-original-phrase-queue.json
+      - docs/evaluation/senate-media-2021-25-broader-25-original-public-archive-receipts-20261011.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+concurrency:
+  group: senate-media-eight-early-public-original-language
+  cancel-in-progress: false
+
+jobs:
+  exact-original-senator-remarks:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-independent-reporting-and-archived-speakers-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reverify 8 original indexed-SHA1 and pinned-SHA256 raw article bodies before checking wording
+        run: |
+          node --import tsx scripts/audit-senate-media-eight-early-original-phrases.ts \
+            --output artifacts/senate-media-eight-early-original-phrases.json
+      - name: Retain only public original capture digests and normalized short phrase outcomes
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-eight-early-original-phrase-receipts
+          path: artifacts/senate-media-eight-early-original-phrases.json
+          if-no-files-found: error
+          retention-days: 7
