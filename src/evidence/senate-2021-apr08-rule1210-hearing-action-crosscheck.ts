@@ -62,7 +62,9 @@ export function inspectOriginalApril08BillLog(html:string,spec:HistoricalBillCas
   if(Buffer.byteLength(html,'utf8')<150||Buffer.byteLength(html,'utf8')>2_000_000)
     throw Error('Senate official HTML source size outside allowed bounds');
   const text=visibleHtmlText(html);
-  if(!text.includes('Committee on '+spec.committee))
+  const firstListedBill=text.search(/\bS\.F\.\s*\d{4}\s*:/i);
+  if(firstListedBill<0||!text.slice(Math.max(0,firstListedBill-200),firstListedBill)
+    .includes('Committee on '+spec.committee))
     throw Error('Wrong original Senate committee bill-log page');
   const billNumber=spec.bill.replace('SF','');
   const billStart=new RegExp('\\bS\\.F\\.0?'+billNumber+'\\s*:', 'gi');
