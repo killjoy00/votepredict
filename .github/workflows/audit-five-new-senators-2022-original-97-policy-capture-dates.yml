@@ -1,0 +1,71 @@
+name: Prove 97 authentic capture-dated candidate 2022 issue excerpts for five more serving Minnesota senators
+
+# This is research-source proof only, NOT a production evidence/forecast task.
+# Reopen original state Senate government HTML + rehash all 23 true archived
+# candidate full HTML and indexed historical Wayback CDX SHA1. Original
+# capture UTC is attributable public-by date; first author day not needed.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-five-new-senators-2022-original-97-policy-capture-dates.yml
+      - data/evaluation/senate-eight-probed-six-served-original-2022-23-html-receipts-v1.json
+      - data/evaluation/senate-five-new-2022-original-site-capture-dated-policy-excerpts-v1.json
+      - src/evidence/senate-five-new-served-2022-97-capture-dated-exact-campaign-excerpts.ts
+      - scripts/audit-five-new-2022-senators-97-original-policy-excerpts-offline.ts
+      - tests/senate-five-new-2022-original-97-capture-dated-campaign-quotes.test.ts
+      - docs/SENATE_FIVE_NEW_2022_ORIGINAL_SITE_97_CANDIDATE_POLICY_QUOTE_PROOFS.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-twenty-three-verified-pages-97-candidate-issue-excerpts:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-five-additional-senators-2022-original-policy-excerpts-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Obtain original official MN State Senate actually served roster and independent source SHA-256/UTC receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official-senate-lrl-served
+      - name: Obtain genuine original 2022 first-party candidate archived HTML and historical independent CDX source indices
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38111973466
+          name: senate-eight-uncovered-2022-served-state-senators-original-campaign-html-v1
+          github-token: ${{ github.token }}
+          path: original/2022-authentic-candidate-archive-html
+      - name: Reopen 23 full original page HTMLs to reprove 97 exact candidate issue excerpts, people and historical capture UTC
+        shell: bash
+        run: |
+          set -euo pipefail
+          lrl="$(find original/official-senate-lrl-served -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          lrlReceipt="$(find original/official-senate-lrl-served -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$lrl" && test -n "$lrlReceipt"
+          test "$(dirname "$lrl")" = "$(dirname "$lrlReceipt")"
+          node --import tsx scripts/audit-five-new-2022-senators-97-original-policy-excerpts-offline.ts \
+            --real-original-lrl-senator-directory "$lrl" \
+            --real-original-lrl-sha-utc-receipt "$lrlReceipt" \
+            --original-2022-candidate-archive-dir original/2022-authentic-candidate-archive-html \
+            --output original/verified-five-real-senators-97-original-2022-excerpt-proofs.json
+      - name: Retain the reverified original 2022 excerpt/public-by-date proof report without touching DB/forecast
+        uses: actions/upload-artifact@v6
+        with:
+          name: five-more-actually-served-2022-original-97-policy-excerpts-source-proof-v1
+          path: original/verified-five-real-senators-97-original-2022-excerpt-proofs.json
+          retention-days: 30
+          if-no-files-found: error
