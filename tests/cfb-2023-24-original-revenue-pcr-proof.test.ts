@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {select22AuthenticSenatorRegistrationTargets} from
  '../src/evidence/cfb-2023-24-official-committee-status-proof.js';
 import {inspectOriginalRevenuePcrReport,ORIGINAL_REVENUE_PCR_ANNUAL_SOURCES}
@@ -103,4 +104,57 @@ test('a tampered 71-version source or unproved senator denominator never passes'
  assert.throws(()=>inspectOriginalRevenuePcrReport({
   extractedOriginalPDFText:syntheticOriginal(2023),refundYear:2023,
   senators:senators.slice(0,21)}),/22 previously authenticated/);
+});
+test('permanent 44-row original state register matrix matches separately verified full PDF SHA pins, named identities and explicit missingness',()=>{
+ const checkpoint=JSON.parse(readFileSync(
+  'docs/evaluation/source-proof/cfb-2023-24-original-revenue-pcr-committee-source-checkpoint.json','utf8'));
+ const text=readFileSync(checkpoint.permanentIndependentCommitteeCrosscheck.path,'utf8');
+ const gitBlob=createHash('sha1').update('blob '+Buffer.byteLength(text,'utf8')+'\0')
+  .update(text,'utf8').digest('hex');
+ assert.equal(gitBlob,checkpoint.permanentIndependentCommitteeCrosscheck.gitBlobSha);
+ assert.equal(Buffer.byteLength(text,'utf8'),checkpoint.permanentIndependentCommitteeCrosscheck.utf8Bytes);
+ const lines=text.trimEnd().split('\n').map(line=>line.split('|'));
+ assert.equal(lines.length,44);
+ const people=new Map(senators.map(s=>[s.registrationNumber,s]));
+ const independentlyNamed=new Set<string>();
+ for(const year of [2023,2024] as const){
+  const meta=ORIGINAL_REVENUE_PCR_ANNUAL_SOURCES[year];
+  const source=checkpoint.newOriginalSources.find((r:{pcrReportingYear:number})=>
+   r.pcrReportingYear===year);
+  assert.ok(source);
+  assert.equal(source.originalGovPdfURL,meta.url);
+  assert.equal(source.fullOriginalPdfSha256,meta.originalPdfSha256);
+  assert.equal(source.fullOriginalPdfBytes,meta.originalPdfBytes);
+  assert.equal(source.officialRevenueReportDated,meta.reportDate);
+  const byYear=lines.filter(x=>x[0]===String(year));
+  assert.equal(byYear.length,22);
+  assert.equal(new Set(byYear.map(x=>x[2])).size,22);
+  const named=byYear.filter(x=>x[8]==='independent_named_PCR_register_row');
+  const notObserved=byYear.filter(x=>x[8]==='not_observed_in_this_retrospective_PCR_list');
+  assert.equal(named.length,19);
+  assert.equal(notObserved.length,3);
+  assert.deepEqual(notObserved.map(x=>x[2]),
+   senators.map(x=>x.registrationNumber).filter(id=>source.notObservedCFBRegistrationIds.includes(id)));
+  for(const row of byYear){
+   assert.equal(row.length,16);
+   const p=people.get(row[2]!);
+   assert.ok(p);
+   assert.equal(row[3],p.senator);
+   assert.equal(row[4],String(p.district2022));
+   assert.equal(row[5],meta.url);
+   assert.equal(row[6],meta.originalPdfSha256);
+   assert.equal(row[7],String(meta.originalPdfBytes));
+   assert.equal(row[9],'PCR_retrospective_only_not_legal_registration_date');
+   for(const unknown of row.slice(10))assert.match(unknown!,/^unknown_/);
+  }
+  for(const row of named)independentlyNamed.add(row[2]!);
+ }
+ assert.equal(independentlyNamed.size,20);
+ assert.equal(checkpoint.permanentIndependentCommitteeCrosscheck.sourceVerifiedNamedCommitteeYearRows,38);
+ assert.equal(checkpoint.permanentIndependentCommitteeCrosscheck.distinctSourceVerifiedNamedSenators,20);
+ assert.equal(checkpoint.conservativeLimits.newlyEstablishedSpecific2023or2024YEReportVersionPublicByCount,0);
+ assert.equal(checkpoint.conservativeLimits.actualEachCommittee2023and2024YearEndFilingDuty,null);
+ assert.equal(checkpoint.conservativeLimits.actualVoluntaryOrAdministrativeTerminationDates,null);
+ assert.equal(checkpoint.conservativeLimits.noPrivateDonorsContactsPaymentsOrOriginalPdfBodiesPersisted,true);
+ assert.equal(checkpoint.conservativeLimits.issue864RemainsOpen,true);
 });
