@@ -5,6 +5,7 @@ import {readFileSync} from 'node:fs';
 import {
   selectSixteenParentAuthenticatedYeAmendments,sourceYeAmendmentReference,
   auditAuthenticatedParentYeAmendment,auditSixteenAmendmentSourceSequence,
+  classifySixteenReviewed2023to24AmendedSourceReferences,
 } from '../src/evidence/cfb-2023-24-sixteen-parent-authenticated-amendments.js';
 import {cfbReportViewerUrl}
   from '../src/evidence/cfb-current-report-acquisition.js';
@@ -101,4 +102,27 @@ test('all 16 source refs must be independent PDF binaries before counting 16 new
  assert.ok(rows.every(x=>x.historicallyActuallyPublicByOn===null
   &&x.independentStatutoryDueDate===null&&x.legallyOwedReportCount===null
   &&x.eligibleForHistoricalForecast===false));
+});
+
+test('reviewed unusual official source cases never inflate PDF counts',()=>{
+  const reports=targets.map((x,i)=>{
+    const held=x.id==='18430:23:pcc:YE:0:1';
+    const duplicate=x.id==='18430:24:pcc:YE:0:1'||x.id==='18430:24:pcc:YE:0:2';
+    const sha=held?'5da25294735f3b7b62608755df926b38917a69aaf90b13c9999396de0d710c54':
+      duplicate?'ff7e8200925b80a6983b00ac17c7dfe1b6a9be746c7754b0055a7dc94dbb5f03':
+      (i+201).toString(16).padStart(64,'0');
+    const date=held?'April 4, 2024':duplicate?'April 10, 2025':'May 28, 2025';
+    const text=firstPage(x,date);
+    const pdf={...fake(x,sha,held?text.replace('Registration Number: '+x.registrationNumber,'Registration Number: 00001'):text),
+      bytes:held?149845:duplicate?30355:3500};
+    return auditAuthenticatedParentYeAmendment(x,pdf);
+  });
+  const audit=classifySixteenReviewed2023to24AmendedSourceReferences(reports);
+  assert.equal(audit.sourceAccountingAcceptedWithOneExactIdentityHoldAndOneBinaryAlias,true);
+  assert.equal(audit.independentlyAuthenticatedAmendmentReferences,15);
+  assert.equal(audit.uniqueIndependentlyAuthenticatedAmendedPdfs,14);
+  assert.equal(audit.completeAmendmentChainsDemonstrated,false);
+  const bad=reports.map(x=>x.id==='18430:23:pcc:YE:0:1'?{...x,pdfBytes:149846}:x);
+  assert.equal(classifySixteenReviewed2023to24AmendedSourceReferences(bad)
+    .sourceAccountingAcceptedWithOneExactIdentityHoldAndOneBinaryAlias,false);
 });
