@@ -7,7 +7,7 @@
     "senateJournalReportDate": "2021-04-12",
     "originalPdfBytes": 11063699,
     "originalPdfSHA256": "8dd34868badade8d3d4cd77ce11c6a632705bdd99a59509a5e4d23544f2d3d75",
-    "originalExtractedTextSHA256": "dda780e4fc076f56ff9f271303ba81897b69813acfece416f7741aea64c41214",
+    "originalExtractedTextSHA256": "dda780e4fc076f56ff9f271303ba81897b69813acfece416b7741aea64c41214",
     "originalNormalizedTextSHA256": "11def4e1a01ea4851f59d9a4ff255a13d295fe7843f4c032de27284a0504f54a"
   },
   "genuineNameRedactedSourceRun": {
