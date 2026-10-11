@@ -53,7 +53,7 @@ export function selectFourRealOriginalArchiveAuditTargets(psv:string):ArchivedCf
   const authenticOriginalPDF=sourceStatus==='original_pdf_first_page_authenticated'
     ||sourceStatus==='distinct_authenticated_amended_pdf';
   // Date from historical original state §10A.20 and original archived Board calendar.
-  const lawReleaseFloor=m[2]==='23'?'2024-02-01T14:00:00Z':'2025-02-01T14:00:00Z';
+  const lawReleaseFloor=m[2]==='23'?'2024-02-01T14:00:00.000Z':'2025-02-01T14:00:00.000Z';
   // For Board receipt dates after the statutory release day, exact receipt
   // CLOCK time is unknown. A capture dated the following UTC day might still
   // precede the original local-day receipt. Require the day AFTER the full
@@ -89,7 +89,7 @@ export function selectFourRealOriginalArchiveAuditTargets(psv:string):ArchivedCf
 function utcFromCdx(timestamp:string):string{
  if(!/^\d{14}$/.test(timestamp))throw Error('Archived capture timestamp not 14 digit UTC');
  const iso=timestamp.slice(0,4)+'-'+timestamp.slice(4,6)+'-'+timestamp.slice(6,8)
-  +'T'+timestamp.slice(8,10)+':'+timestamp.slice(10,12)+':'+timestamp.slice(12,14)+'Z';
+  +'T'+timestamp.slice(8,10)+':'+timestamp.slice(10,12)+':'+timestamp.slice(12,14)+'.000Z';
  const date=new Date(iso);
  if(Number.isNaN(date.getTime())||date.toISOString()!==iso)
   throw Error('Archived capture timestamp is not real date');
