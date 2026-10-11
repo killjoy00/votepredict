@@ -7,6 +7,9 @@ on:
     paths:
       - .github/workflows/cfb-2021-24-preserve-396-source-metadata.yml
       - scripts/preserve-cfb-2021-24-396-viewer-metadata.ts
+      - tests/cfb-2021-24-396-original-viewer-source-metadata.test.ts
+      - docs/evaluation/source-proof/cfb-2021-24-senate-396-original-viewer-source-observations.psv
+      - docs/evaluation/source-proof/cfb-2021-24-senate-396-original-viewer-source-observations-checkpoint.json
 
 permissions:
   contents: write
