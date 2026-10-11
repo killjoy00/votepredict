@@ -1,0 +1,246 @@
+{
+  "schemaVersion": "senate-2025-elections-remaining-four-original-pdfs-thirteen-roll-attendance-source-proof-v1",
+  "issue": 864,
+  "recordedOn": "2026-10-10",
+  "originalSourceAuthority": "Minnesota Legislative Reference Library",
+  "officialHistoricalRoster": "https://www.lrl.mn.gov/timecapsule/commmembers?body=s&comtecode=10073&sess=94&subcomtecode=0",
+  "priorFullOriginalPDFManifestRunId": 38075573031,
+  "priorFullOriginalPDFManifestArtifactId": 11678279098,
+  "priorFullOriginalPDFManifestArtifactZipSha256": "1d156a7b6366c3a417d18f3c3868ebbad7f30bbb333d17e7ffb3c988304bd159",
+  "priorFullOriginalPDFManifestJsonSha256": "3777ace81dda499515737486e262041aea7db324d7a2b0afb2d62f7a3f02da23",
+  "priorOriginalSupplementalSourceRunId": 38079646647,
+  "priorExactNineteenCandidateQueueGitBlobSha": "30f1c8ed6d2d2edcbbefadcf61f8019c1c435538",
+  "priorExactNineteenCandidateQueueJsonSha256": "07e3033c52fcab2ee906872b7d6cf248317a6ab057173a5876760f3328639700",
+  "sourceOriginalRosterReviewRunId": 38086019735,
+  "firstIncompleteAttendanceRun": {
+    "runId": 38098209877,
+    "conclusion": "failure",
+    "originalsWithFullRosterBeforeFail": 3,
+    "namedSourceRollsBeforeFail": 8,
+    "failedHearingDate": "2025-04-08",
+    "reason": "source opening-attendance parser required one hardcoded named chair"
+  },
+  "sourceReviewPR": 965,
+  "chairDelimiterRepairPR": 970,
+  "chairDelimiterRepairMergeSHA": "9b612ec46bd6888bd084d99d9ab833ddfdc0786c",
+  "actualSuccessfulOriginalSourceRunId": 38098600457,
+  "actualSuccessfulOriginalSourceUrl": "https://github.com/killjoy00/votepredict/actions/runs/38098600457",
+  "actualSourceRunConclusion": "success",
+  "actualSourceRunHeadSHA": "9b612ec46bd6888bd084d99d9ab833ddfdc0786c",
+  "actualOutputArtifactId": 11686399026,
+  "actualOutputArtifactName": "senate-2025-four-other-originals-thirteen-roll-attendance-proof",
+  "actualOutputArtifactZipSha256": "140604c8c7c08f7674b52e610bfeb9a58118d277e861971bbf32dd0eab55d019",
+  "actualOutputJsonFile": "senate-2025-four-other-originals-thirteen-roll-attendance.json",
+  "actualOutputJsonSha256": "cf9e481ca405e1ddcd92cccbaf3387bdaf8c256888d805a2e873fec8d49e64d3",
+  "originalPdfSourcesReverified": 4,
+  "originalPdfTextSHAReverified": 4,
+  "exactNamedRollOffsetsReverified": 13,
+  "sourceTotalExplicitNamedYea": 72,
+  "sourceTotalExplicitNamedNay": 71,
+  "sourceTotalExplicitYeaNay": 143,
+  "originalSourceAcquisitionHashOrParserFailures": 0,
+  "printedVsIndexedHearingDateDiscrepancies": 0,
+  "rollBlocksWithOpeningAbsentAssignedExplicitNamedVote": 0,
+  "allSourceRollBlocksNameElevenHistoricalRosterSenators": true,
+  "allFourOriginalOpeningRostersPartitionElevenCommitteeMembers": true,
+  "explicitSourceMotionHumanCertifiedDistinctness": false,
+  "eligibleForAutomaticHistoricalMemberVoteImport": false,
+  "sourceRecords": [
+    {
+      "year": 2025,
+      "committeeName": "Elections",
+      "indexedHearingDate": "2025-02-06",
+      "officialOriginalPDFUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/elections/20250206/Elections_20250206_Minutes.pdf",
+      "shaPinnedOriginalPdfBytes": 71635,
+      "shaPinnedOriginalPDF": "054c81c01271e8ef6513f57c29e95cbdb4f3984a8b0676effe6a83f0f812469d",
+      "shaPinnedExtractedText": "99301546122e3bdb2013302b384e4dd3c2bb15d66056efb1888c66c541758750",
+      "printedMeetingDate": "2025-02-06",
+      "printedDateMatchesIndexedHearing": true,
+      "openingHistoricalRosterPresent": 11,
+      "openingHistoricalRosterAbsent": 0,
+      "sourceOpeningAttendancePartitionsOfficialElevenMemberRoster": true,
+      "exactOriginalCandidateCount": 5,
+      "provisionalNamedRollSourceBlocks": [
+        {
+          "sourceTextOffset": 1574,
+          "explicitNamedYea": 5,
+          "explicitNamedNay": 6,
+          "sourceNearbyTextSha256": "82ad59c3733a63dd732afc546ee6db80a0fcd0c12f13ec524c899a641849e677",
+          "matchesHistoricalCommitteeRoster": true,
+          "namedYeaNayAtOpeningAbsentMembers": 0,
+          "candidateNotCertifiedDistinctHistoricalVote": true
+        },
+        {
+          "sourceTextOffset": 1991,
+          "explicitNamedYea": 5,
+          "explicitNamedNay": 6,
+          "sourceNearbyTextSha256": "c3a38daadd2fc50be8a5e3c99c7fc25933717220a86c6c4b9ddf9caa914d349e",
+          "matchesHistoricalCommitteeRoster": true,
+          "namedYeaNayAtOpeningAbsentMembers": 0,
+          "candidateNotCertifiedDistinctHistoricalVote": true
+        },
+        {
+          "sourceTextOffset": 2250,
+          "explicitNamedYea": 5,
+          "explicitNamedNay": 6,
+          "sourceNearbyTextSha256": "bb0a16759565794afd5334a19cc1c6fd1caa0c6eb3e47f282534e0f178297a2b",
+          "matchesHistoricalCommitteeRoster": true,
+          "namedYeaNayAtOpeningAbsentMembers": 0,
+          "candidateNotCertifiedDistinctHistoricalVote": true
+        },
+        {
+          "sourceTextOffset": 2522,
+          "explicitNamedYea": 5,
+          "explicitNamedNay": 6,
+          "sourceNearbyTextSha256": "545113bc57b40cc6325dddd042ee5f4885394f468d288c6e5e805cb46d60d42e",
+          "matchesHistoricalCommitteeRoster": true,
+          "namedYeaNayAtOpeningAbsentMembers": 0,
+          "candidateNotCertifiedDistinctHistoricalVote": true
+        },
+        {
+          "sourceTextOffset": 2946,
+          "explicitNamedYea": 6,
+          "explicitNamedNay": 5,
+          "sourceNearbyTextSha256": "cc188f6e728c1cc6ea0b4773d736663c83a1a684cbbd53873fe2c363a215c6f4",
+          "matchesHistoricalCommitteeRoster": true,
+          "namedYeaNayAtOpeningAbsentMembers": 0,
+          "candidateNotCertifiedDistinctHistoricalVote": true
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "committeeName": "Elections",
+      "indexedHearingDate": "2025-02-11",
+      "officialOriginalPDFUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/elections/20250211/Elections_20250211_Minutes.pdf",
+      "shaPinnedOriginalPdfBytes": 91554,
+      "shaPinnedOriginalPDF": "f4a3bb61a56ccfae91d4cced922cf3b3ad8845e6a08daf8ee3efd02cd2e4a5ef",
+      "shaPinnedExtractedText": "c6fbcf2908f113c3c0443cffa7fb07d572ea8e5a01732f6dc1e9fdcfd5665abf",
+      "printedMeetingDate": "2025-02-11",
+      "printedDateMatchesIndexedHearing": true,
+      "openingHistoricalRosterPresent": 11,
+      "openingHistoricalRosterAbsent": 0,
+      "sourceOpeningAttendancePartitionsOfficialElevenMemberRoster": true,
+      "exactOriginalCandidateCount": 2,
+      "provisionalNamedRollSourceBlocks": [
+        {
+          "sourceTextOffset": 2354,
+          "explicitNamedYea": 5,
+          "explicitNamedNay": 6,
+          "sourceNearbyTextSha256": "ed542e1f573d3a832b846fc49b1bf54a54e09f45ca4ef358367b2c8fc32c0856",
+          "matchesHistoricalCommitteeRoster": true,
+          "namedYeaNayAtOpeningAbsentMembers": 0,
+          "candidateNotCertifiedDistinctHistoricalVote": true
+        },
+        {
+          "sourceTextOffset": 3460,
+          "explicitNamedYea": 7,
+          "explicitNamedNay": 4,
+          "sourceNearbyTextSha256": "534fe2fc04a715c2a96ccf7cd5a61805b1b7a4b1d62fc9ffdf6e58296d828790",
+          "matchesHistoricalCommitteeRoster": true,
+          "namedYeaNayAtOpeningAbsentMembers": 0,
+          "candidateNotCertifiedDistinctHistoricalVote": true
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "committeeName": "Elections",
+      "indexedHearingDate": "2025-03-25",
+      "officialOriginalPDFUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/elections/20250325/Elections_20250325_Minutes.pdf",
+      "shaPinnedOriginalPdfBytes": 87115,
+      "shaPinnedOriginalPDF": "87eb6fcb2c4c436bb2e061d574541f5030db8f0cdd388b190da70578da3ff27b",
+      "shaPinnedExtractedText": "51a3d0dab3335bc0a52f70edd67527da590af25ec33578a1ac54af0142238dd9",
+      "printedMeetingDate": "2025-03-25",
+      "printedDateMatchesIndexedHearing": true,
+      "openingHistoricalRosterPresent": 11,
+      "openingHistoricalRosterAbsent": 0,
+      "sourceOpeningAttendancePartitionsOfficialElevenMemberRoster": true,
+      "exactOriginalCandidateCount": 1,
+      "provisionalNamedRollSourceBlocks": [
+        {
+          "sourceTextOffset": 1326,
+          "explicitNamedYea": 8,
+          "explicitNamedNay": 3,
+          "sourceNearbyTextSha256": "24d45a52fe0dc0080671201c71e4232edd69f48c03419300aa001d6b8f026e02",
+          "matchesHistoricalCommitteeRoster": true,
+          "namedYeaNayAtOpeningAbsentMembers": 0,
+          "candidateNotCertifiedDistinctHistoricalVote": true
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "committeeName": "Elections",
+      "indexedHearingDate": "2025-04-08",
+      "officialOriginalPDFUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/elections/20250408/Elections_20250408_Minutes.pdf",
+      "shaPinnedOriginalPdfBytes": 99628,
+      "shaPinnedOriginalPDF": "d26c583ef3e5caae1b52d379bf9c6cc784e0e9d39a80c056259f65f83f2e4c46",
+      "shaPinnedExtractedText": "6dc40628432da41be2ac4afe24b8725d5638e069421c4f413445042794411101",
+      "printedMeetingDate": "2025-04-08",
+      "printedDateMatchesIndexedHearing": true,
+      "openingHistoricalRosterPresent": 11,
+      "openingHistoricalRosterAbsent": 0,
+      "sourceOpeningAttendancePartitionsOfficialElevenMemberRoster": true,
+      "exactOriginalCandidateCount": 5,
+      "provisionalNamedRollSourceBlocks": [
+        {
+          "sourceTextOffset": 2133,
+          "explicitNamedYea": 5,
+          "explicitNamedNay": 6,
+          "sourceNearbyTextSha256": "0f667c84df52683e6382a6ddfa77196b1a588b5ab7f7d2866d22bed94af26a1e",
+          "matchesHistoricalCommitteeRoster": true,
+          "namedYeaNayAtOpeningAbsentMembers": 0,
+          "candidateNotCertifiedDistinctHistoricalVote": true
+        },
+        {
+          "sourceTextOffset": 2401,
+          "explicitNamedYea": 5,
+          "explicitNamedNay": 6,
+          "sourceNearbyTextSha256": "4180412cbfedd0cd352198492675db25f6a24cc4bc35aecd5bb882549e99e780",
+          "matchesHistoricalCommitteeRoster": true,
+          "namedYeaNayAtOpeningAbsentMembers": 0,
+          "candidateNotCertifiedDistinctHistoricalVote": true
+        },
+        {
+          "sourceTextOffset": 2673,
+          "explicitNamedYea": 5,
+          "explicitNamedNay": 6,
+          "sourceNearbyTextSha256": "a354493af13f2bb65b03826bb0387e2879eca74cc49ae49d593156863046147e",
+          "matchesHistoricalCommitteeRoster": true,
+          "namedYeaNayAtOpeningAbsentMembers": 0,
+          "candidateNotCertifiedDistinctHistoricalVote": true
+        },
+        {
+          "sourceTextOffset": 2941,
+          "explicitNamedYea": 5,
+          "explicitNamedNay": 6,
+          "sourceNearbyTextSha256": "600799dfdcfd8404a49fc21515da0f2dbfbfbd03fa04876db794e8d1acedeb6e",
+          "matchesHistoricalCommitteeRoster": true,
+          "namedYeaNayAtOpeningAbsentMembers": 0,
+          "candidateNotCertifiedDistinctHistoricalVote": true
+        },
+        {
+          "sourceTextOffset": 3303,
+          "explicitNamedYea": 6,
+          "explicitNamedNay": 5,
+          "sourceNearbyTextSha256": "b3825ba136f0286ddc994073c9ea8c4b8b6f07c90a2776bc1dd834c6effa1add",
+          "matchesHistoricalCommitteeRoster": true,
+          "namedYeaNayAtOpeningAbsentMembers": 0,
+          "candidateNotCertifiedDistinctHistoricalVote": true
+        }
+      ]
+    }
+  ],
+  "sourceMeetingOpeningPresenceDoesNotProveMotionTimeAttendance": true,
+  "sourceNumericTallyAndNameParityDoNotCertifyBillOrFloorPolicyStance": true,
+  "sourceMemberNameChoiceListsAndOriginalPdfBytesNotCommitted": true,
+  "otherTwo2025ElectionsHeldOriginalsSeparateProof": "docs/evaluation/source-proof/senate-2025-elections-feb13-mar27-original-attendance-source-proof.json",
+  "sixPdfFifteenCandidateCohortOpeningAttendanceReverified": true,
+  "total2025ElectionsNamedCandidateBlocks": 15,
+  "total2025ElectionsExplicitNamedSourceChoices": 163,
+  "all15SourceCandidateMotionDistinctnessAndPrivateDBEqualityStillUnknown": true,
+  "noPrivateDatabaseReadOrWrite": true,
+  "noModelForecastServingTrainingSchedulerFloor2027Changes": true,
+  "issue864MustRemainOpen": true
+}
