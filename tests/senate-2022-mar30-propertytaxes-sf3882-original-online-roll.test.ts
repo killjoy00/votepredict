@@ -46,9 +46,9 @@ test('original SF3882 2-2 failed referral distinct from subsequent layover and n
  assert.ok(x.originalResultNormalizedTextOffset>x.motionNormalizedTextOffset);
  assert.doesNotMatch(JSON.stringify(x),/FictionalAlpha|FictionalDelta|FictionalEcho/);
 });
-test('authentic original inspector refuses made-up original individual voting sides',()=>{
+test('authentic original inspector refuses the fake requester rather than treating a fixture as official',()=>{
  assert.throws(()=>inspectOriginalMar30SF3882SubcommitteeMinutes(mock()),
-  /original SF3882 individual online minute side hash differs/i);
+  /Exact SF3882 referral motion and roll requester not uniquely found/i);
  assert.equal(S.meetingDate,'2022-03-30');
  assert.equal(S.originalExpectedYeaSideSHA256.length,64);
 });
