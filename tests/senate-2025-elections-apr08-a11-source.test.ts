@@ -77,8 +77,21 @@ test('altered bill, tallies, committee member roster, or absence fails closed',(
  for(const change of changes)assert.throws(()=>inspect(change(synthetic())));
 });
 
-test('a second 10/0/1 result is held and synthetic fixture cannot pose as official roster',()=>{
- assert.throws(()=>inspect(synthetic()+synthetic()),/absent or duplicated/);
+test('identical 10/0/1 outcome on later DIFFERENT motion is not an A11 duplicate',()=>{
+ const anotherResultOnA10=synthetic()
+  +' With a vote of 10/0/1, the motion prevailed.';
+ const r=inspect(anotherResultOnA10);
+ assert.equal(r.originalScopedA11TenZeroOneResultCandidates,1);
+ assert.equal(r.originalWholeMeetingTenZeroOneResultCandidates,2);
+ assert.deepEqual([r.printedYeaCount,r.printedNayCount,r.printedAbsentCount],[10,0,1]);
+});
+
+test('duplicated result WITHIN one A11 motion is held, no synthetic roster may pose as official',()=>{
+ const duplicatedWithinA11=synthetic().replace(
+  'Senator Alpha moved the A10 Amendment',
+  'With a vote of 10/0/1, the motion prevailed. Senator Alpha moved the A10 Amendment');
+ assert.throws(()=>inspect(duplicatedWithinA11),
+  /scoped 10\\/0\\/1 result absent or repeated/);
  assert.throws(()=>inspectSyntheticApr08A11MotionTextCore(
   synthetic(),['Westlin',...fictionalRoster.slice(1)],'Kilo'),
   /Invalid explicitly fictional synthetic roster/);
