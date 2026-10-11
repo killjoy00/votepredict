@@ -77,7 +77,7 @@ async function inspect(bill:'SF173'|'SF1470'){
   sourceFailures:errors,
   historicalExactCommitteeMeetingDateNotIndependentlyProven:true,
   senateFloorVoteExplicitlyExcluded:true,
-  2021OfficialPrintedCommitteeMinutesNotReconciled:true,
+  official2021PrintedCommitteeMinutesNotReconciled:true,
   noPrivateDbReadWriteMemberVoteBackfill:true,
   noModelForecastServingTrainingSchedulerFloor2027Change:true
  };
