@@ -130,7 +130,7 @@ function windowDates(p){
  throw Error('Unproven cycle '+p.year);
 }
 
-function slug(p,i){return String(i+1).padStart(2,'0')+'-'+p.person.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+p.year+(p.prefix?'-'+p.prefix.slice(1):'');}
+function slug(p,i){return String(i+1).padStart(2,'0')+'-'+p.person.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+p.year+(p.prefix?'-'+p.prefix.slice(1).replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,''):'');}
 function queryUrl(p){
  const dates=windowDates(p),u=new URL('https://web.archive.org/cdx/search/cdx');
  const fields={
@@ -252,6 +252,8 @@ await Promise.all(Array.from({length:concurrency},async()=>{
    console.error('RECOVERABLE WINDOW FAILURE',pins[i].person,String(e));}
  }
 }));
+assert.equal(output.filter(v=>v.unexpectedWindowFailure).length,0,
+ 'Unexpected local archive acquisition window failure; cannot silently call 33 windows complete');
 const senatorResults=people.map(p=>({
  person:p.person,officialRosterName:p.officialRosterName,sourceWindows:output.filter(x=>x.person===p.person).length,
  originalHtmlBodies:output.filter(x=>x.person===p.person).reduce((n,x)=>n+(x.sha1CdxMatchedOriginalHtml||0),0),
