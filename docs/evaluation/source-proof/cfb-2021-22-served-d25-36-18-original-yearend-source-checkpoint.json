@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "cfb-2021-22-sd25-36-eleven-senate-senators-18-original-ye-permanent-source-v1",
+  "sourceAcquisition": {
+    "pr": 1051,
+    "mergeCommit": "8415453d3ceeebb3bae1cd0a1e8a9f5eddcf4e05",
+    "exactHead": "b6444418e4309dd3d74d40e1249aa4c7a169367d",
+    "fullCiRunId": 38112505379,
+    "fullCiConclusion": "success",
+    "originalSourceRunId": 38112505375,
+    "originalSourceConclusion": "success",
+    "artifactId": 11691633889,
+    "artifactUrl": "https://github.com/killjoy00/votepredict/actions/runs/38112505375/artifacts/11691633889",
+    "artifactExpires": "2026-11-10T04:44:52Z",
+    "zipSha256": "0b1f194a980973b75cb8c4c4a40c9d5f782c7dcc3df3af155236bf6f6186f720",
+    "zipBytes": 5789,
+    "sourceJsonSha256": "ef758f07253eb0aa2eba0fd8fd01ce7056186f7996a673cc595d36058f7a5758",
+    "sourceJsonBytes": 49140,
+    "sourceRunCompletedAt": "2026-10-11T04:44:52.438Z"
+  },
+  "independentlyObservedOriginalSources": {
+    "lrl": {
+      "url": "https://www.lrl.mn.gov/legdb/senate_dir",
+      "sha256": "09e9adeb2c014853ec822cb63b88b1a0d550911c62cb16c7a95cea59647590b1",
+      "observedAt": "2026-10-11T04:44:32.144Z",
+      "bytes": 1601232
+    },
+    "sos": {
+      "url": "https://electionresultsfiles.sos.mn.gov/20221108/stsenate.txt",
+      "sha256": "eb8980245094cf8af0cd08a69c42ae0262fb5a692b09a49be2aee959aecaae74",
+      "observedAt": "2026-10-11T04:44:30.867Z",
+      "bytes": 16857
+    },
+    "cfb2022Calendar": {
+      "url": "https://cfb.mn.gov/pdf/publications/elections/candidate_packets/2022/House_2022.pdf",
+      "sha256": "3fd6263844d5063156d68d871bd2c575a5b5cef415a61b6125c068491f6b2b25",
+      "observedAt": "2026-10-11T04:44:35.103Z",
+      "bytes": 574447
+    }
+  },
+  "permanentSourceLedger": {
+    "path": "docs/evaluation/source-proof/cfb-2021-22-served-d25-36-18-original-yearend-pdfs.psv",
+    "sha256": "8c3278b1e7dfe4fff3c768308d4d8328a0af065fa2b270406257d49e5aa716db",
+    "bytes": 3482,
+    "columns": [
+      "officialOriginalYeReportId",
+      "actualVerifiedSenator",
+      "sos2022BallotDistrict",
+      "firstPagePdfPrintedSenateDistrict",
+      "originalPdfBinarySha256",
+      "originalPdfBytes",
+      "individualPdfActuallyAcquiredAtUtc",
+      "originalYearEndPeriodStart",
+      "originalYearEndPeriodEnd",
+      "actualBoardReceivedOn",
+      "originalCFBOfficialDueOn",
+      "conservativeLegalPublicNotBeforeOn"
+    ]
+  },
+  "population": {
+    "registeredCommittees": 11,
+    "independentlyActualSenators": 11,
+    "sourceOriginal2021YearEndReferences": 7,
+    "sourceOriginal2022YearEndReferences": 11,
+    "authenticatedDistinctOriginalPdfBinaries": 18,
+    "authenticFirstPageIdentityAndDateCount": 18,
+    "originalCfbCandidateApiBodiesShaMatched": 11,
+    "priorOriginalCOrEIdentitiesExcluded": 68,
+    "failures": 0,
+    "redistrictedPdfPrintedHistoricalDistrictCount": 7,
+    "official2021YearEndDueOn": "2022-01-31",
+    "official2022YearEndDueOn": "2023-01-31",
+    "independentlyVerifiedHistoricalPublicByCount": 0
+  },
+  "originalPriorSourceProofs": {
+    "district2022CE": "docs/evaluation/source-proof/cfb-2022-served-d25-36-original-ce-source-checkpoint.json",
+    "district2022CE22RowLedger": "docs/evaluation/source-proof/cfb-2022-served-d25-36-original-ce-pdfs.psv",
+    "permanent396CfbCandidateApiObservations": "docs/evaluation/source-proof/cfb-2021-24-senate-396-original-viewer-source-observations.psv"
+  },
+  "nextFinanceEvidence": {
+    "originalAndAmendedReportVersionsForTheseElevenActuallyAuthenticated": 40,
+    "otherAmendmentVersionReferencesInPinnedViewerNotAuthenticated": 30,
+    "district31Unique2022CandidateCfbJoinStillUnknown": true,
+    "sourceToProductionFinancialRecordsChecked": false,
+    "historicalCFBActualPublicByProven": false,
+    "statewideLegallyOwedSenateReportCount": null,
+    "statewideActuallyFiledSenateReports": null
+  },
+  "safeguards": {
+    "noPdfBodiesStored": true,
+    "noDonorContactOrTransactionDataStored": true,
+    "noCandidateNamesUnlessActuallyServed": true,
+    "noRawElectionVoteCountsStored": true,
+    "noProductionDatabaseReadOrWrite": true,
+    "noHistoricalPredictionEligibilityGranted": true,
+    "noModelServingSchedulerOr2027Changes": true,
+    "keepIssue864Open": true
+  }
+}
