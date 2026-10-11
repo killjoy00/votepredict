@@ -61,7 +61,7 @@ export function strictlySenatorsOnly2022Targets(official:AuditedOfficialSenateDi
    ||official.source.directoryIsSenatorServiceNotCandidateFiling!==true)
    throw Error('Campaign index targets or independent official Senate service source untrusted');
  const ids=new Set<string>(),sitePeople=new Set<string>(),seenUrls=new Set<string>();
- return targetData.targets.map(t=>{
+ const eligible=targetData.targets.map(t=>{
   if(ids.has(t.id)||seenUrls.has(urlKey(t.sourceUrl))
     ||t.originating2022ArchivedResponseVerified!==false
     ||t.campaignSiteLive2026ResponseObtained!==false
@@ -85,6 +85,8 @@ export function strictlySenatorsOnly2022Targets(official:AuditedOfficialSenateDi
     officialServiceOriginalSourceSha256:official.source.sourceBytesSha256,
     independentlyVerifiedSenatorService:true};
  });
+ if(sitePeople.size!==4)throw Error('All four intended source targets must qualify as independently served senators');
+ return eligible;
 }
 function safeFile(dir:string,name:string,body:Buffer|null){
  if(!body||!body.length)return null;
@@ -109,6 +111,9 @@ function safeNetworkUrl(u:string){
  ];
  if(x.protocol!=='https:'||x.port||x.username||x.password||x.hash||!hosts.includes(x.hostname))
    throw Error('Unapproved fixed public archive network host');
+ if(targetData.targets.some(t=>new URL(t.sourceUrl).hostname===x.hostname)
+   &&!targetData.targets.some(t=>t.sourceUrl===u))
+   throw Error('Unapproved new campaign-site path, only pinned targets allowed');
  if(x.hostname==='index.commoncrawl.org'
    &&!/^(?:\/CC-MAIN-2022-(?:21|33|40)-index)$/.test(x.pathname))
    throw Error('Unapproved 2022 Common Crawl index collection');
@@ -297,7 +302,7 @@ export function verifyActual2022CommonCrawlWarc(
    ||needed(wh.fields,'warc-type')!=='response'
    ||!needed(wh.fields,'content-type').startsWith('application/http')
    ||needed(wh.fields,'warc-target-uri')!==row.url
-   ||needed(wh.fields,'warc-date')!==row.capturedAtUtc.replace('.000Z','Z'))
+   ||Date.parse(needed(wh.fields,'warc-date'))!==Date.parse(row.capturedAtUtc))
    throw Error('Original WARC response URL/date incompatible with source index');
  const size=Number(needed(wh.fields,'content-length'));
  const blockStart=h+4;
@@ -416,8 +421,12 @@ export async function acquire2022EverServedSenateCampaignOriginals(
     start:row.offset,end:row.offset+row.length-1,
    });
    const contentRange='bytes '+row.offset+'-'+(row.offset+row.length-1)+'/';
-   const rangeVerified=http.status===206&&
-     Boolean(http.headers.contentRange?.startsWith(contentRange))
+   const returnedRange=http.headers.contentRange??'';
+   const rangeTotal=/^bytes (\d+)-(\d+)\/(\d+)$/.exec(returnedRange);
+   const rangeVerified=http.status===206&&Boolean(rangeTotal)
+     &&Number(rangeTotal![1])===row.offset
+     &&Number(rangeTotal![2])===row.offset+row.length-1
+     &&Number(rangeTotal![3])>row.offset+row.length-1
      &&http.body?.length===row.length;
    let original:null|ReturnType<typeof verifyActual2022CommonCrawlWarc>=null;
    let proofError:string|null=null;
@@ -457,7 +466,7 @@ export async function acquire2022EverServedSenateCampaignOriginals(
    actualResearchRunObservedAtUtc:new Date().toISOString(),
    currentWebPageRetrieval:withoutBody(live),currentOriginalResponseFile:savedLive,
    currentPageRetrievedAtUtc:live.body?live.observedAtUtc:null,
-   currentPageMinimumKnownDateUtc:live.status===200?live.observedAtUtc:null,
+   currentPageMinimumKnownDateUtc:live.status===200&&live.body?live.observedAtUtc:null,
    currentPageBytesAreNotPreElectionEvidence:true,
    originalFiledCandidateWebsiteFieldVerified:false,
    waybackIndex:{query:withoutBody(waybackIndex),rawFile:savedWaybackIndex,
