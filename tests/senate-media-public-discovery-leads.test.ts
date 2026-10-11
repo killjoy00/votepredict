@@ -60,6 +60,17 @@ type PublicLead = {
   mediaInterviewSpeakerHumanReviewedFromOriginalArchive?:boolean;
   actualSpokenWordsOnHistoricalCutoffIndependentlyVerified?:boolean;
   productionSeedChanged?:boolean;
+  verifiedServingSenatorHistorySources?:Array<{name:string;officialLrlUrl:string;serviceOnPublisherDisplayedDay:boolean}>;
+  currentPublisherClockTimezoneVerified?:boolean;
+  firstPartyAudioInterviewPublisherDescriptionVerified?:boolean;
+  currentTextAndSpeakerProofKind?:string;
+  currentPageDirectSpeechShortResearchExcerpt?:string|null;
+  originalSpeakerAudioAndCurrentTranscriptMatched?:boolean;
+  originalHistoricalAudioAndTranscriptAvailabilityVerified?:boolean;
+  archivedPublisherVersionAndDateProofVerified?:boolean;
+  historicalOriginalHumanQuoteReviewed?:boolean;
+  wasCurrentPageTextPresentBeforeAnyHistoricalVoteCutoffVerified?:boolean;
+  noAutomaticallyInferredSenatorStance?:boolean;
 };
 type Ledger = {
   version:string;
@@ -86,7 +97,7 @@ test('curated publicly observed leads cover all five study years, two publishers
   assert.equal(data.sourceUniverseCompletenessKnown,false);
   assert.equal(data.publisherYearSlotsInOriginal44SeedReview,220);
   const leads=data.selectedNonExhaustiveArticleLeads;
-  assert.equal(leads.length,25);
+  assert.equal(leads.length,31);
   assert.equal(new Set(leads.map(x=>x.id)).size,leads.length);
   assert.equal(new Set(leads.map(x=>x.livePageUrl)).size,leads.length);
   assert.deepEqual([...new Set(leads.map(x=>x.publisher))].sort(),[
@@ -137,7 +148,7 @@ test('the live publication day and senator-name leads never imply archived evide
 test('Reformer /briefs/ and MPR /episode/ links expose independent current seed-prefix gaps',()=>{
   const source=data.selectedNonExhaustiveArticleLeads;
   const outside=source.filter(x=>!x.urlInsideCurrentSeedPrefix);
-  assert.equal(outside.length,11);
+  assert.equal(outside.length,16);
   assert.equal(data.seedPrefixDiscoveryComparison.outsideSeedPrefixLeadCount,outside.length);
   assert.deepEqual(data.seedPrefixDiscoveryComparison.publisherSeedsChecked,[
     'minnesota-reformer-article-archive','mpr-news-story-archive',
@@ -146,10 +157,12 @@ test('Reformer /briefs/ and MPR /episode/ links expose independent current seed-
   const reformer=outside.filter(x=>x.publisher==='Minnesota Reformer');
   const mpr=outside.filter(x=>x.publisher==='MPR News');
   assert.equal(reformer.length,10);
-  assert.equal(mpr.length,1);
+  assert.equal(mpr.length,6);
   assert.ok(reformer.every(x=>new URL(x.livePageUrl).pathname.startsWith('/briefs/')));
-  assert.equal(mpr[0]?.id,'mpr-2024-hauschild-north-star-on-air-interview');
-  assert.ok(mpr[0]?.livePageUrl.startsWith('https://www.mprnews.org/episode/2024/'));
+    assert.ok(mpr.some(x=>x.id==='mpr-2024-hauschild-north-star-on-air-interview'));
+  assert.ok(mpr.every(x=>x.livePageUrl.startsWith('https://www.mprnews.org/episode/20')));
+  assert.deepEqual([...new Set(mpr.map(x=>x.publicationDayDisplayedOnPublicPage.slice(0,4)))].sort(),
+    ['2022','2023','2024','2025']);
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.some(seed=>
     seed.id==='mpr-news-story-archive' && seed.url==='https://www.mprnews.org/story/202'));
   assert.ok(outside.every(x=>x.livePageUrl.startsWith('https://minnesotareformer.com/202')===false
@@ -165,7 +178,7 @@ test('Reformer /briefs/ and MPR /episode/ links expose independent current seed-
 
 test('new 2022–2025 publisher leads have dated 2026 research observations without historical availability claims',()=>{
   const added=data.selectedNonExhaustiveArticleLeads.filter(x=>x.sourceResearchCheckedOn);
-  assert.equal(added.length,11);
+  assert.equal(added.length,17);
   assert.ok(added.every(x=>x.sourceResearchCheckedOn==='2026-10-10'));
   assert.ok(added.every(x=>x.archiveCapturePublicByVerified===false
     && x.originalArchivedHttpBytesHashVerified===false
@@ -276,4 +289,74 @@ test('Feb 19 2024 MPR /episode/ interview is an explicit senator audio-transcrip
   assert.equal(r.sourceSeenInVotePredictExport,'unknown_not_reconciled');
   assert.equal(Object.hasOwn(r,'exactQuote'),false);
   assert.equal(Object.hasOwn(r,'sourceDocumentId'),false);
+});
+
+
+test('2021-25 first-party Minnesota MPR interviews stay typed by CURRENT page proof, not historic archive',()=>{
+  const ids=[
+    'mpr-2021-benson-vaccine-on-air',
+    'mpr-2022-benson-kunesh-parental-curriculum',
+    'mpr-2023-kunesh-native-family-preservation',
+    'mpr-2024-kunesh-charter-school-oversight',
+    'mpr-2025-pha-hmong-lao-veterans',
+    'mpr-2025-coleman-civic-violence',
+  ];
+  const added=ids.map(id=>data.selectedNonExhaustiveArticleLeads.find(x=>x.id===id));
+  assert.ok(added.every(Boolean));
+  assert.deepEqual(added.map(x=>x!.publicationDayDisplayedOnPublicPage),[
+    '2021-01-11','2022-02-23','2023-02-07','2024-10-22',
+    '2025-04-24','2025-09-11',
+  ]);
+  const titles=['Michelle Benson','Mary Kunesh','Susan Pha','Julia Coleman'];
+  for(const lead of added) {
+    assert.ok(lead);
+    assert.equal(lead.seedId,'mpr-news-story-archive');
+    assert.equal(lead.publisher,'MPR News');
+    assert.equal(lead.sourceResearchCheckedOn,'2026-10-10');
+    assert.equal(lead.firstPartyAudioInterviewPublisherDescriptionVerified,true);
+    assert.equal(lead.currentPublisherClockTimezoneVerified,false);
+    assert.match(lead.currentPublisherDisplayedClockWithoutVerifiedTimezone!,
+      /^\d{2}:\d{2}$/);
+    assert.ok(lead.verifiedServingSenatorHistorySources?.length);
+    assert.deepEqual(lead.verifiedServingSenatorHistorySources?.map(x=>x.name),
+      lead.namedSenatorLeadsForManualReview);
+    for(const member of lead.verifiedServingSenatorHistorySources??[]) {
+      assert.ok(titles.includes(member.name));
+      assert.equal(member.serviceOnPublisherDisplayedDay,true);
+      assert.equal(new URL(member.officialLrlUrl).hostname,'www.lrl.mn.gov');
+    }
+    assert.equal(lead.originalSpeakerAudioAndCurrentTranscriptMatched,false);
+    assert.equal(lead.originalHistoricalAudioAndTranscriptAvailabilityVerified,false);
+    assert.equal(lead.archivedPublisherVersionAndDateProofVerified,false);
+    assert.equal(lead.historicalOriginalHumanQuoteReviewed,false);
+    assert.equal(lead.wasCurrentPageTextPresentBeforeAnyHistoricalVoteCutoffVerified,false);
+    assert.equal(lead.noAutomaticallyInferredSenatorStance,true);
+    assert.equal(lead.directQuoteHumanVerified,false);
+    assert.equal(lead.archiveCapturePublicByVerified,false);
+    assert.equal(lead.originalArchivedHttpBytesHashVerified,false);
+    assert.equal(lead.historicalForecastEligibilityProven,false);
+    assert.equal(lead.membershipOnPublicationDateVerified,false);
+    assert.equal(lead.issueStanceInferred,false);
+    assert.equal(lead.sourceSeenInVotePredictExport,'unknown_not_reconciled');
+    assert.equal(Object.hasOwn(lead,'exactQuote'),false);
+    assert.equal(Object.hasOwn(lead,'sourceDocumentId'),false);
+  }
+  assert.equal(added[0]!.urlInsideCurrentSeedPrefix,true); // in-prefix, topical gate still filters
+  assert.equal(added[0]!.currentTextAndSpeakerProofKind,
+    'audio_interview_page_no_transcript_observed');
+  assert.equal(added[0]!.currentPageDirectSpeechShortResearchExcerpt,null);
+  assert.equal(added[1]!.currentTextAndSpeakerProofKind,
+    'publisher_description_confirmed_interviews_transcript_not_inspected');
+  assert.equal(added[1]!.currentPageDirectSpeechShortResearchExcerpt,null);
+  for(const x of added.slice(2)) {
+    assert.equal(x!.currentTextAndSpeakerProofKind,'speaker_labeled_current_page_transcript');
+    assert.ok(x!.currentPageDirectSpeechShortResearchExcerpt!.length>12);
+    assert.equal(x!.urlInsideCurrentSeedPrefix,false);
+  }
+  assert.deepEqual(added[1]!.namedSenatorLeadsForManualReview,
+    ['Michelle Benson','Mary Kunesh']);
+  assert.deepEqual(added[2]!.namedSenatorLeadsForManualReview,['Mary Kunesh']);
+  assert.deepEqual(added[3]!.namedSenatorLeadsForManualReview,['Mary Kunesh']);
+  assert.deepEqual(added[4]!.namedSenatorLeadsForManualReview,['Susan Pha']);
+  assert.deepEqual(added[5]!.namedSenatorLeadsForManualReview,['Julia Coleman']);
 });
