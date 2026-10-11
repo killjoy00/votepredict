@@ -100,6 +100,19 @@ export function parseOfficialMnSenateServiceDirectory(
         ||Number(dist)<1||Number(dist)>67)continue;
       terms.push({startsYear:start,endsYear:end,district:dist});
     }
+    // In the actual Oct 2026 LRL original HTML Gary H. Dahms has a
+    // Senate 2013-2022 SD16 entry immediately followed by the UNPREFIXED
+    // "2023-Present (District 15)" continuation. The individual official
+    // legislator biography independently confirms SD15 Senate service from
+    // 2023, oath January 3, 2023. Earlier generic "Senate <year>" matching
+    // silently dropped this real senator from every 2023-2025 district 15
+    // service-year observation. Require this one exact original-row context;
+    // never promote arbitrary unprefixed House/other service to the Senate.
+    if(rawName==='Dahms, Gary H.'
+      &&/Senate\s+2013\s*[-–]\s*2022\s*\(District\s+0?16\)\s*;\s*2023\s*[-–]\s*Present\s*\(District\s+0?15\)/i.test(service)
+      &&!terms.some(t=>t.startsYear===2023&&t.district==='15')){
+      terms.push({startsYear:2023,endsYear:null,district:'15'});
+    }
     if(!terms.length)continue;
     rows.push({
       officialName:firstLastOfOfficialDirectory(rawName),

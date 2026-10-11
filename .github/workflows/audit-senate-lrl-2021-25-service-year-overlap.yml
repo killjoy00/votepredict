@@ -1,0 +1,67 @@
+name: Audit original LRL Senate service-year overlap 2021-25
+
+# Source-only provisional person-year reconciliation; NOT a certified
+# date-exact occupancy denominator and never a production evidence upload.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-senate-lrl-2021-25-service-year-overlap.yml
+      - src/evidence/senate-official-ever-served-directory.ts
+      - tests/senate-official-ever-served-directory.test.ts
+      - src/evidence/senate-lrl-2021-25-calendar-year-service-window.ts
+      - scripts/audit-senate-lrl-2021-25-calendar-year-overlap-offline.ts
+      - tests/senate-lrl-2021-25-calendar-year-overlap.test.ts
+      - docs/SENATE_2021_25_ORIGINAL_LRL_YEAR_OVERLAP_RESEARCH.md
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  genuine-original-senator-service-year-coverage:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-lrl-senate-year-overlap-2021-25-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Download real previously verified original Minnesota LRL Senate directory and swearing HTML
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: artifacts/lrl-original
+      - name: Require real official original bytes and prove individual year overlaps without invented days
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="artifacts/lrl-original"
+          lrl="$(find "$root" -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          meta="$(find "$root" -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          sworn="$(find "$root" -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$lrl" && test -n "$meta" && test -n "$sworn"
+          test "$(dirname "$lrl")" = "$(dirname "$meta")"
+          test "$(dirname "$lrl")" = "$(dirname "$sworn")"
+          node --import tsx scripts/audit-senate-lrl-2021-25-calendar-year-overlap-offline.ts \
+            --official-lrl-original "$lrl" \
+            --official-lrl-metadata "$meta" \
+            --official-lrl-swearing "$sworn" \
+            --output artifacts/original-lrl-2021-25-senator-year-overlap-report.json
+      - name: Keep dated senator-only year-overlap report for review, no production mutation
+        uses: actions/upload-artifact@v6
+        with:
+          name: original-mn-lrl-2021-25-senator-year-overlap-not-final-denominator-v1
+          path: artifacts/original-lrl-2021-25-senator-year-overlap-report.json
+          if-no-files-found: error
+          retention-days: 30

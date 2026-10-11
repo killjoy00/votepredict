@@ -18,6 +18,7 @@ function fixture():Uint8Array{
   ['Future, Samuel','House 2020-2022 (District 12B); Senate 2025-Present (District 16)'],
   ['Anderson, Bruce Douglas','House 1995-2012 (District 19A); Senate 2013-2022 (District 29); Senate 2023-2025 (District 29)'],
   ['Relph, Jerry','Senate 2017-2020 (District 14)'],
+  ['Dahms, Gary H.','Senate 2011-2012 (District 21); Senate 2013-2022 (District 16); 2023-Present (District 15)'],
  ];
  for(let i=0;i<305;i++)people.push(['OfficialTest, Person'+i,
   'Senate 2011-2025 (District '+(i%67+1)+')']);
@@ -115,4 +116,20 @@ test('two original official LRL pages confirm special-election oath dates for se
   'They were sworn in on November 18, 2025.','They were not sworn in.'));
  assert.throws(()=>parseOfficialMnSenateServiceDirectory(fixture(),DATE,manipulated,DATE),
   /Missing exact officially attested/);
+});
+
+test('exact original LRL Gary Dahms continuation without a repeated Senate prefix is not silently lost in 2023-2025',()=>{
+ const official=parseOfficialMnSenateServiceDirectory(fixture(),DATE);
+ const row=official.senators.find(p=>p.officialName==='Gary H. Dahms');
+ assert.ok(row);
+ assert.ok(row.senateServiceTerms.some(t=>
+  t.startsYear===2023&&t.endsYear===null&&t.district==='15'));
+ const service=validateActualSenateServiceForElection(official,'Gary H. Dahms','15',2022);
+ assert.equal(service.status,'verified_senate_service');
+ assert.equal(service.serviceForThisElectionFollowingYearVerified,true);
+ const wrongDistrict=Buffer.from(fixture().toString().replace(
+  '2023-Present (District 15)','2023-Present (District 14)'));
+ const noPromotion=parseOfficialMnSenateServiceDirectory(wrongDistrict,DATE);
+ assert.equal(noPromotion.senators.find(p=>p.officialName==='Gary H. Dahms')
+  ?.senateServiceTerms.some(t=>t.startsYear===2023&&t.district==='15'),false);
 });
