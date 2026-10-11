@@ -9,6 +9,9 @@ on:
       - scripts/probe-senate-media-mpr-cdn-original-mp3.mjs
       - scripts/run-senate-media-mpr-cdn-original-mp3.mjs
       - tests/senate-media-mpr-cdn-original-mp3.test.mjs
+      - tests/senate-media-mpr-bridge-real-receipts.test.mjs
+      - docs/evaluation/senate-media-mpr-feed-transcript-bridge-20261011.json
+      - docs/evaluation/senate-media-mpr-cdn-original-audio-20261011.json
       - docs/evaluation/senate-media-mpr-cdn-original-audio-20261011.json
   workflow_dispatch:
 
@@ -40,7 +43,7 @@ jobs:
         with:
           node-version: 22
       - name: Bounded public CDN exact original binary SHA checks offline tests
-        run: node --test tests/senate-media-mpr-cdn-original-mp3.test.mjs
+        run: node --test tests/senate-media-mpr-cdn-original-mp3.test.mjs tests/senate-media-mpr-bridge-real-receipts.test.mjs
       - name: Original Wayback indexed SHA-1 MP3 replay for exact publisher CDN resource hypotheses
         run: |
           node scripts/run-senate-media-mpr-cdn-original-mp3.mjs \
