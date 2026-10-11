@@ -1,0 +1,41 @@
+name: One-time 2021-22 original YE campaign finance reports for 11 actual Minnesota senators
+
+# Issue #864, finance Track A only. No schedules, credentials, database,
+# runtime serving, donor or financial transaction persist.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2021-22-served-yearend-originals.yml
+      - scripts/capture-cfb-2021-22-served-yearend-originals.ts
+      - src/evidence/cfb-2021-22-served-senator-yearend-original-proof.ts
+      - tests/cfb-2021-22-served-senator-yearend-original-proof.test.ts
+
+permissions:
+  contents: read
+
+jobs:
+  authenticate-actual-senators-2021-22-yearends:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Test strict original CFB year-end, LRL Senate service, reporting calendar and prior-ledger guards
+        run: node --import tsx --test tests/cfb-2021-22-served-senator-yearend-original-proof.test.ts
+      - name: Re-acquire independently proven actual senators and authenticate 20 new official year-end PDF originals
+        run: |
+          node --import tsx scripts/capture-cfb-2021-22-served-yearend-originals.ts \
+            --output artifacts/cfb-2021-22-served-20-ye-original-pdf-proofs.json
+      - name: Retain only source fingerprints, report dates and error codes (no donor text or PDF)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2021-22-served-11-senators-20-original-yearend-pdf-metadata
+          path: artifacts/cfb-2021-22-served-20-ye-original-pdf-proofs.json
+          retention-days: 30
+          if-no-files-found: warn
