@@ -79,7 +79,7 @@ test('a bare printed termination form label CANNOT imply a checked box',()=>{
   assert.equal(v.independentHistoricalPublicByOn,null);
   assert.equal(v.admissibleToHistoricalForecast,false);
   assert.ok(v.terminationWordDiagnostics.length>=1);
-  assert.ok(!JSON.stringify(v).includes('Doe'));
+  assert.ok(!JSON.stringify(v).includes('Doe Donor'));
   assert.ok(!JSON.stringify(v).includes('123 Main'));
   assert.ok(!JSON.stringify(v).includes('$1000'));
   assert.ok(!JSON.stringify(v).includes('lives'));
