@@ -114,8 +114,9 @@ function validatePinnedSourceMetadata(){
 function exactCampaignSectionContextVisible(
   html:Uint8Array,heading:string,excerpt:string,
 ):boolean{
- const text=originalCampaignVisibleText(html).toLowerCase();
- const label=heading.toLowerCase(),needle=excerpt.toLowerCase();
+ const canonical=(s:string)=>s.toLowerCase().replace(/\s*\/\s*/g,'/');
+ const text=canonical(originalCampaignVisibleText(html));
+ const label=canonical(heading),needle=canonical(excerpt);
  // The source repeats its platform in more than one navigation/layout block.
  // Context is verified inside a bounded following section, never merely a
  // hidden/script-only quote or a reference to somebody else's campaign.
