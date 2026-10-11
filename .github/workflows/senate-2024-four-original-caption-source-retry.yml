@@ -1,0 +1,69 @@
+name: One-time original 2024 4 failed Senate caption record source retry
+
+# Strictly four original historical LRL media page IDs with previously proven
+# metadata SHA, no scheduler, database, media file, raw transcripts or vote sides.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2024-four-original-caption-source-retry.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  retry-original-four-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Restore original year 2024 official hearing-to-media index source
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2024-dated-media-href-review
+          run-id: 38079233118
+          github-token: ${{ github.token }}
+          path: artifacts/2024-official-hrefs
+      - name: Restore independent original 2024 official media record HTML SHA proof
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2024-official-media-record-html-proof
+          run-id: 38081463362
+          github-token: ${{ github.token }}
+          path: artifacts/2024-official-html
+      - name: Restore previously authenticated 41 original 2024 caption payload SHA proof
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2024-original-caption-surface-metadata
+          run-id: 38103766440
+          github-token: ${{ github.token }}
+          path: artifacts/2024-original-caption
+      - name: Restore actual failed 2024 original procedural caption source result
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2024-41-original-caption-motion-cue-source-review
+          run-id: 38109706957
+          github-token: ${{ github.token }}
+          path: artifacts/2024-first-failed
+      - name: Check only four previous exact LRL URLs against original HTML and caption SHA
+        run: |
+          node --import tsx scripts/retry-senate-2024-four-original-caption-source-failures.ts \
+            --hrefs artifacts/2024-official-hrefs/senate-2024-media-hrefs.json \
+            --original-html artifacts/2024-official-html/senate-2024-media-record-html.json \
+            --prior-caption artifacts/2024-original-caption/senate-2024-caption-surface.json \
+            --first-failed-run artifacts/2024-first-failed/senate-2024-41-original-caption-motion-cues.json \
+            --output artifacts/retry-four/senate-2024-four-original-caption-retry-metadata.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2024-four-original-caption-source-retry
+          path: artifacts/retry-four/senate-2024-four-original-caption-retry-metadata.json
+          retention-days: 30
+          if-no-files-found: error
