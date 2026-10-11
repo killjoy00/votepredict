@@ -187,7 +187,7 @@ export function selectNewRemarkLeads(leads:readonly OriginalRemarkLead[],scope:N
       || lead.publisher!==publisherHost(lead.sourceUrl)
       || !Array.isArray(lead.displayedPublisherDates)
       || lead.displayedPublisherDates.length<1||lead.displayedPublisherDates.length>2
-      || lead.displayedPublisherDates.some(day=>typeof day!=='string'
+      || lead.displayedPublisherDates.some((day:string)=>typeof day!=='string'
         || !/^20(?:21|22|23|24|25)-\d\d-\d\d$/.test(day)
         || !Number.isFinite(Date.parse(day+'T00:00:00Z'))
         || new Date(day+'T00:00:00Z').toISOString().slice(0,10)!==day
