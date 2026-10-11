@@ -60,7 +60,7 @@ export function verifyThreeActualServed2022Candidates(official:AuditedOfficialSe
     ||site.domain!==expected.domain
     ||site.currentlyDiscoveredCampaignHostNotVerifiedFiledSite!==true
     ||site.modernUrlLeads.length!==2
-    ||site.modernUrlLeads.some(u=>{try{return exactHost(u,expected.domain)===false;}catch{return true;}}))
+    ||site.modernUrlLeads.some(u=>{try{exactHost(u,expected.domain);return false;}catch{return true;}}))
    throw Error('Unverified candidate identity or mutable current site URL assigned to 2022');
   const person=validateActualSenateServiceForElection(
    official,expected.name,expected.district,2022);
