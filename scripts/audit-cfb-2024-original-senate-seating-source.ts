@@ -75,6 +75,16 @@ async function main(){
      prior2023RosterPsv:initial,original2024PdfExtractedText:doc.text});
    }catch(e){errors.push({url:doc.url,kind:failure(e)});}
  }
+ const layoutDiagnostics=doc?[
+  'Seating Arrangement 2024','Senate Members','Dist.','Abeler, Jim',
+  'Drazkowski, Steve','Duckworth, Steve','Mathews, Andrew',
+  '2024 Seating Arrangement','Jim Abeler','Steve Drazkowski',
+ ].map(needle=>{
+  const pos=doc!.text.toLowerCase().indexOf(needle.toLowerCase());
+  const snippet=pos>=0?doc!.text.slice(Math.max(pos-45,0),pos+needle.length+80):'';
+  return {needle,found:pos>=0,index:pos,
+   sanitizedLayout:snippet.replace(/\d/g,'#').replace(/\S+@\S+/g,'[contact]')};
+ }):[];
  const summary={
   sourceRetrieved:!!doc,sourcePDFContentParsed:!!status,
   officialSourcePdfSHA256:doc?.sha256??null,originalPdfBytes:doc?.bytes??null,
@@ -117,7 +127,7 @@ async function main(){
  };
  mkdirSync(dirname(path),{recursive:true});
  writeFileSync(path,JSON.stringify(artifact,null,2)+'\n',{flag:'wx'});
- console.log(JSON.stringify({issue:864,...summary,output:path,sourceFailures:errors,
+ console.log(JSON.stringify({issue:864,...summary,output:path,sourceFailures:errors,layoutDiagnostics,
    productionWrites:0},null,2));
  if(!doc||!status||!status.counts.original2024SeatingArrangementTitleVerified
   ||!status.counts.originalTableSenateMembersSectionLocated
