@@ -61,7 +61,7 @@ test('neither candidacy nor modern reports-tab alone implies termination or lega
   ...base,originalCfBSpecificTerminationDate:'2024-09-18',
   originalRegulatorTerminationActionProved:true,
   originalSourceUrl:'https://cfb.mn.gov/report-history/placeholder/',
-  }).independentDocumentedTermination,true);
+  }).independentDocumentedTermination,null);
  assert.equal(classifyPrincipalCommitteeTerminatedOnHistoricalDate({
   ...base,originalCfBSpecificTerminationDate:'2024-09-18',
   originalRegulatorTerminationActionProved:false,
