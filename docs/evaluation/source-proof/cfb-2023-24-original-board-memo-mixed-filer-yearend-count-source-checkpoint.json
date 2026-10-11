@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "cfb-2023-24-two-original-contemporaneous-board-yearend-operations-all-filer-population-v1",
+  "issue": 864,
+  "reviewedDate": "2026-10-11",
+  "sourceLedger": {
+    "path": "docs/evaluation/source-proof/cfb-2023-24-original-board-memos-ye-statewide-aggregate-filing-obligations.psv",
+    "rows": 2,
+    "bytes": 569,
+    "gitBlobSha": "d89e73edb111729fbd2b32602c02e42d63e1ed1f",
+    "columns": [
+      "yearEndFinancialReportYear",
+      "sourceBoardOperationsMemoDate",
+      "meetingDate",
+      "officialBoardMeetingOriginalPdf",
+      "officialOriginalPdfSha256",
+      "officialOriginalPdfBytes",
+      "regularYEReportDueOn",
+      "statewideCombinedReportsExpectedOrDue",
+      "aggregateDenominatorType",
+      "statewideReportsFiledByDeadline",
+      "statewideReportsStillOutstandingAsOfMemo",
+      "filingCategoryScope",
+      "notSenateCohort",
+      "historicalActualReportPublicByCount",
+      "SenateCohortLegallyOwedCount"
+    ]
+  },
+  "originalGovernmentDocuments": [
+    {
+      "yearEndReport": 2023,
+      "memoDate": "2024-01-31",
+      "meetingDate": "2024-02-07",
+      "sourcePdfUrl": "https://cfb.mn.gov/pdf/bdinfo/agendas/2024_02_07_materials.pdf",
+      "officialOriginalSha256": "86eed31b03d98146bc95a03918126ffae27bf49a06beb3ab77260fddbad4b8f0",
+      "bytes": 2260587,
+      "originalStatement": "1299 reports expected from all candidate committees, party units, political committees/funds",
+      "exactSenateCommitteeObligationsProven": null,
+      "actualDeadlineFilingCount": null
+    },
+    {
+      "yearEndReport": 2024,
+      "memoDate": "2025-02-05",
+      "meetingDate": "2025-02-13",
+      "sourcePdfUrl": "https://cfb.mn.gov/pdf/bdinfo/agendas/2025_02_13_materials.pdf",
+      "officialOriginalSha256": "506f341af0e0ffdda0ab979798b4439fdda934562615d7680dbabc26ed2243d9",
+      "bytes": 1764590,
+      "originalStatement": "1320 reports due, 1212 filed by Jan31 2025, 64 still outstanding as-of Feb5",
+      "exactSenateCommitteeObligationsProven": null,
+      "actualDeadlineFilingCount": 1212
+    }
+  ],
+  "originalSourceAcquisitions": [
+    {
+      "runId": 38168733267,
+      "headAtAcquisition": "0968c3c683080128f8c33623837ecd29d23d82f2",
+      "result": "success",
+      "artifactId": 11712954190,
+      "zipSha256": "bc3108f06c20691c32a3c9588cd6a25e72f10cbb44f4ba4a2e2401cea11f66f2",
+      "zipBytes": 1416,
+      "artifactJSONSha256": "14e0bfaf421e29a327e3435dfe1c1d3282a043f7342106a5b01603ebf7362f52",
+      "artifactJSONBytes": 3623,
+      "originalTwoPdfShaAndByteCountsReproduced": true,
+      "yearEndExpectedAndDueMemoParagraphsOriginal": true
+    }
+  ],
+  "scopeLimits": {
+    "source2023IsAnticipatedStatewideMixedFilerCountNotFinalLegalDenominator": true,
+    "source2024IsActualStatewideMixedFilerDueCountNotSenateOnly": true,
+    "source2024FiledByDeadlineAndOutstandingHaveDifferentObservationDates": true,
+    "original2023YearEndRequiredFor22SenatorCohort": null,
+    "original2024YearEndRequiredFor22SenatorCohort": null,
+    "contemporaryStatementsNotProofOfExactCfbReportVersionPublication": true,
+    "actualReportPublicByProvenCount": 0,
+    "noSourceFinanceRowsImported": true,
+    "noServingModelOrScheduleChange": true,
+    "keepIssue864Open": true
+  },
+  "safeguards": {
+    "noRawOriginalPDFContentStored": true,
+    "noPrivateContactInformationFromBoardMeetingMaterials": true,
+    "noCommitteeTransactionsOrDonorsStored": true,
+    "noProductionDatabaseAccess": true,
+    "noForecastOrServingChanges": true
+  }
+}
