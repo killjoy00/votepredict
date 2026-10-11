@@ -1,0 +1,69 @@
+name: Authenticate 62 archive-dated 2022 campaign issue statements for five more actual MN senators
+
+# PR-only full original HTML/Wayback original digest and official LRL Senate
+# service recheck. Archive capture UTC, not original first-authored date.
+# No live candidate fetch, production database, model, forecasts or cron.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-five-further-senator-62-original-2022-capture-dated-quotes.yml
+      - data/evaluation/senate-five-further-2022-authenticated-capture-dated-original-issue-excerpts-v1.json
+      - src/evidence/senate-five-further-2022-capture-dated-62-original-campaign-excerpts.ts
+      - scripts/audit-five-further-2022-senators-capture-dated-original-issue-excerpts-offline.ts
+      - tests/senate-five-further-2022-62-capture-dated-original-policy-quotes.test.ts
+      - docs/SENATE_FIVE_ADDITIONAL_2022_ORIGINAL_CAPTURE_DATED_62_POLICY_STATEMENTS.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  true-original-2022-senator-pages-and-62-policy-text-date-proofs:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-five-more-senators-2022-capture-dated-issue-quotes-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Read original MN LRL actual Senate-service directory HTML and independent acquisition UTC/SHA
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: source/official-lrl-senator-original
+      - name: Read genuine 2022 first-party original candidate HTML and historical CDX index + manifest
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38110142626
+          name: senate-six-further-2022-actual-served-original-campaign-html-v1
+          github-token: ${{ github.token }}
+          path: source/actual-candidate-2022-original-html
+      - name: Rehash 13 actual 2022 original page copies and prove 62 policy quotes with true capture dates
+        shell: bash
+        run: |
+          set -euo pipefail
+          lrl="$(find source/official-lrl-senator-original -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find source/official-lrl-senator-original -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$lrl" && test -n "$receipt"
+          test "$(dirname "$lrl")" = "$(dirname "$receipt")"
+          node --import tsx scripts/audit-five-further-2022-senators-capture-dated-original-issue-excerpts-offline.ts \
+            --official-senator-directory-original "$lrl" \
+            --official-lrl-source-receipt "$receipt" \
+            --original-2022-candidate-site-acquisition-dir source/actual-candidate-2022-original-html \
+            --output source/verified-62-actual-senator-original-2022-policy-quotes.json
+      - name: Keep independent 62 exact issue passage and original capture date receipt
+        uses: actions/upload-artifact@v6
+        with:
+          name: five-further-actually-serving-mn-senators-62-original-2022-dated-policy-v1
+          path: source/verified-62-actual-senator-original-2022-policy-quotes.json
+          if-no-files-found: error
+          retention-days: 30
