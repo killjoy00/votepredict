@@ -4,7 +4,8 @@ import {readFileSync} from 'node:fs';
 import {
   select2021to22ActualSenatorAmendmentVersions,
   auditActualSenatorAmendmentPdf,amendmentViewerReference,
-  checkAuthenticatedAmendmentChains,type CfbHistoricalAmendedPdfSource,
+  checkAuthenticatedAmendmentChains,classifySourceVerified2021to22AmendmentBatch,
+  REVIEWED_2021_CFB_AMENDMENT_SOURCE_HOLD,type CfbHistoricalAmendedPdfSource,
 } from '../src/evidence/cfb-2021-22-served-senator-amendments.js';
 import {cfbReportViewerUrl} from '../src/evidence/cfb-current-report-acquisition.js';
 
@@ -136,4 +137,45 @@ test('different amendments must be distinct binaries and their Board receipts mu
     ...two,amendedBoardReceivedOn:'2023-03-01'}]).violations.map(x=>x.reason),
     ['amendment_revision_receipt_out_of_order']);
   assert.equal(checkAuthenticatedAmendmentChains([two]).valid,false);
+});
+
+
+test('source-only 26-version retrieval may preserve exactly 25 proven forms plus source-identical 2021 document HOLD',()=>{
+  const audits=selected().targets.map((t,i)=>{
+    const receipt=t.amendmentIndex===2?'April 12, 2023':'April 11, 2023';
+    return auditActualSenatorAmendmentPdf(t,sample(t,{
+      sha:(i+1).toString(16).padStart(64,'0'),receipt,
+    }));
+  });
+  const full=classifySourceVerified2021to22AmendmentBatch(audits);
+  assert.equal(full.status,'all_26_amendment_pdfs_authenticated');
+  assert.equal(full.sourceAcquisitionCanBePreserved,true);
+  assert.equal(full.authenticated,26);
+  const held=selected().targets.find(t=>t.id===REVIEWED_2021_CFB_AMENDMENT_SOURCE_HOLD.id)!;
+  assert.ok(held);
+  const knownPdf={...sample(held),sha256:REVIEWED_2021_CFB_AMENDMENT_SOURCE_HOLD.binarySha256,
+    bytes:REVIEWED_2021_CFB_AMENDMENT_SOURCE_HOLD.bytes,text:'A'.repeat(1836)};
+  const heldAudit=auditActualSenatorAmendmentPdf(held,knownPdf);
+  assert.equal(heldAudit.status,'amended_pdf_printed_district_unmatched');
+  assert.equal(heldAudit.originalReportId,'18430:21:pcc:YE:0:0');
+  assert.equal(heldAudit.amendedBoardReceivedOn,null);
+  assert.equal(heldAudit.actualHistoricalPublicByIndependentlyEstablished,null);
+  const reviewed=audits.map(a=>a.id===heldAudit.id?heldAudit:a);
+  const result=classifySourceVerified2021to22AmendmentBatch(reviewed);
+  assert.equal(result.status,'25_authenticated_1_official_source_document_hold');
+  assert.equal(result.sourceAcquisitionCanBePreserved,true);
+  assert.equal(result.authenticated,25);
+  assert.equal(result.documentedSourceHolds,1);
+  assert.equal(result.chainValid,false);
+  const forged=reviewed.map(a=>a.id!==heldAudit.id?a:{
+    ...a,amendedPdfSha256:'f'.repeat(64)});
+  assert.equal(classifySourceVerified2021to22AmendmentBatch(forged)
+    .sourceAcquisitionCanBePreserved,false);
+  const unknown=reviewed.map(a=>a.id!==heldAudit.id?a:{
+    ...a,structuralDistrictDiagnostics:{...a.structuralDistrictDiagnostics,
+      registrationLabelPresent:true}});
+  assert.equal(classifySourceVerified2021to22AmendmentBatch(unknown)
+    .sourceAcquisitionCanBePreserved,false);
+  assert.equal(classifySourceVerified2021to22AmendmentBatch(reviewed.slice(1))
+    .sourceAcquisitionCanBePreserved,false);
 });
