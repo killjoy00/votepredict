@@ -1,0 +1,186 @@
+{
+  "version": "senate-media-four-public-reformer-historic-alias-pairs-receipts-v1",
+  "observedLocalDay": "2026-10-11",
+  "publicRun": {
+    "repository": "killjoy00/votepredict",
+    "runId": 38166031062,
+    "sourceHeadSha": "6ccc3ff4e75fa06b61dab07363dc4da0781d742c",
+    "conclusion": "success",
+    "artifactId": 11712620545,
+    "artifactName": "senate-media-four-reformer-historic-url-alias-proof",
+    "downloadedZipSha256": "2e077aadf360b4200de7c32f03bb89e2fa1bc845a0577176e27e6ddee64682f7",
+    "decodedJsonSha256": "5efae7230f24ed73f3bef0e7f9c07bdbd9f15d59e31f9e3c6fe4976d72c47659",
+    "decodedJsonBytes": 14225
+  },
+  "originalSourceURLHypotheses": "docs/evaluation/senate-media-reformer-four-historical-brief-dated-alias-queue-20261011.json",
+  "olderPublicCaptureHashes": "docs/evaluation/senate-media-2021-25-exact-public-replay-receipts-20261010.json",
+  "counts": {
+    "possibleOriginalUrlAliasPairs": 4,
+    "distinctOriginalPublisherPathsQueried": 8,
+    "archiveIndexReturnedCandidateUrls": 4,
+    "indexUnavailableOrInvalidUnknownPaths": 4,
+    "actualOriginalRawHttpBodyReplayAttempts": 8,
+    "originalIndexedSha1ConsistentHtmlCaptures": 6,
+    "rawOriginalBodyReplaysWithIndexDigestMismatch": 2,
+    "distinctOriginalPublisherUrlPathsWithAuthenticatedHistoricallyArchivedBodies": 4,
+    "pairsBothSidesHistoricallyAuthenticated": 0,
+    "pairsSharingHistoricalOriginalCanonicalTargets": 0,
+    "pairsWithIdenticalHistoricalVisibleTextFingerprintAcrossBothSourcePaths": 0,
+    "safeAutomaticDuplicateMerges": 0
+  },
+  "pairOriginalHistoricalFindings": [
+    {
+      "pair": "public-safety-2022",
+      "briefPath": {
+        "cdx": "index_candidates",
+        "candidateIndexedOriginalHttpVersionsFirst20": 13,
+        "firstTwoActualRawOriginalBodyReplays": [
+          {
+            "captureUtc": "2022-03-25T19:14:18Z",
+            "indexSha1Base32": "HQQ4HV7JIH47YSCTHOE3Y75FXSW74VWY",
+            "replayStatus": "indexed_sha1_original_html_authenticated",
+            "rawOriginalBodySha256": "35d2149d9fac934bc79416a290a1550f0ac2c0216fecca8c5a77a25fcf308711",
+            "rawOriginalBytes": 93933,
+            "previousOriginalRawSha256AndSizeVerifiedSameCapture": true,
+            "historicalHtmlCanonicalPointsToOwnBriefUrl": true
+          },
+          {
+            "captureUtc": "2024-03-02T01:38:33Z",
+            "indexSha1Base32": "HOSK6PDXV3QI6NKR4T4J7UV2OIZ6YMFN",
+            "replayStatus": "indexed_sha1_original_html_authenticated",
+            "rawOriginalBodySha256": "4d17530aa74a6fd0ff07a801cfa2c5cee0c04fa4f185968aabdd117ae7306753",
+            "rawOriginalBytes": 124691,
+            "previousOriginalRawSha256AndSizeVerifiedSameCapture": null,
+            "historicalHtmlCanonicalPointsToOwnBriefUrl": true
+          }
+        ]
+      },
+      "datedPath": {
+        "cdx": "index_unavailable_unknown",
+        "firstTwoActualRawOriginalBodyReplays": []
+      },
+      "exactHistoricTwoSidedIdentityProven": false,
+      "canDeduplicateArticleUrls": false
+    },
+    {
+      "pair": "driver-licenses-2023",
+      "briefPath": {
+        "cdx": "index_candidates",
+        "candidateIndexedOriginalHttpVersionsFirst20": 20,
+        "firstTwoActualRawOriginalBodyReplays": [
+          {
+            "captureUtc": "2023-02-27T14:58:20Z",
+            "indexSha1Base32": "RWJUMW3B6DD2SDHJUNABLFBA3KJXFCJY",
+            "replayStatus": "archive_indexed_sha1_mismatch_unknown",
+            "rawOriginalBodySha256": null,
+            "rawOriginalBytes": null,
+            "previousOriginalRawSha256AndSizeVerifiedSameCapture": null,
+            "historicalHtmlCanonicalPointsToOwnBriefUrl": false
+          },
+          {
+            "captureUtc": "2023-03-03T01:54:42Z",
+            "indexSha1Base32": "NFGCH2C42JBLMVTQPDHIH53D5EW2STML",
+            "replayStatus": "indexed_sha1_original_html_authenticated",
+            "rawOriginalBodySha256": "4a56cee75803573f44c08fc4aaeb4183ebf9476bbe1df5315bfd8e7eff6a484b",
+            "rawOriginalBytes": 131515,
+            "previousOriginalRawSha256AndSizeVerifiedSameCapture": null,
+            "historicalHtmlCanonicalPointsToOwnBriefUrl": true
+          }
+        ]
+      },
+      "datedPath": {
+        "cdx": "index_unavailable_unknown",
+        "firstTwoActualRawOriginalBodyReplays": []
+      },
+      "exactHistoricTwoSidedIdentityProven": false,
+      "canDeduplicateArticleUrls": false
+    },
+    {
+      "pair": "sanctuary-2024",
+      "briefPath": {
+        "cdx": "index_candidates",
+        "candidateIndexedOriginalHttpVersionsFirst20": 8,
+        "firstTwoActualRawOriginalBodyReplays": [
+          {
+            "captureUtc": "2024-02-12T22:13:40Z",
+            "indexSha1Base32": "6IG6UOKMJFK2A22VVDFCRWSGRVSCNFPG",
+            "replayStatus": "indexed_sha1_original_html_authenticated",
+            "rawOriginalBodySha256": "ad570161c43fad500dd8bc1dde593369703e1ccba6bb47b5ad6688865d15eed1",
+            "rawOriginalBytes": 128637,
+            "previousOriginalRawSha256AndSizeVerifiedSameCapture": true,
+            "historicalHtmlCanonicalPointsToOwnBriefUrl": true
+          },
+          {
+            "captureUtc": "2024-02-12T22:35:22Z",
+            "indexSha1Base32": "N5XDUHPAYXKPTK225UKQMRFQTJEM4GVD",
+            "replayStatus": "indexed_sha1_original_html_authenticated",
+            "rawOriginalBodySha256": "03813874702f8ec2459db81125868f076958208f078ec34f1ea4d8a07b7df18c",
+            "rawOriginalBytes": 128763,
+            "previousOriginalRawSha256AndSizeVerifiedSameCapture": null,
+            "historicalHtmlCanonicalPointsToOwnBriefUrl": true
+          }
+        ]
+      },
+      "datedPath": {
+        "cdx": "index_unavailable_unknown",
+        "firstTwoActualRawOriginalBodyReplays": []
+      },
+      "exactHistoricTwoSidedIdentityProven": false,
+      "canDeduplicateArticleUrls": false
+    },
+    {
+      "pair": "road-signs-2025",
+      "briefPath": {
+        "cdx": "index_candidates",
+        "candidateIndexedOriginalHttpVersionsFirst20": 5,
+        "firstTwoActualRawOriginalBodyReplays": [
+          {
+            "captureUtc": "2025-05-01T22:45:07Z",
+            "indexSha1Base32": "OCOMTQLAFYHQZ2XGA6YM7UKLBVTFKISY",
+            "replayStatus": "indexed_sha1_original_html_authenticated",
+            "rawOriginalBodySha256": "2c8e1603e83e21d45c3d9c8f7282667e0144b13ce963058994fe5426e3ba5c00",
+            "rawOriginalBytes": 127299,
+            "previousOriginalRawSha256AndSizeVerifiedSameCapture": true,
+            "historicalHtmlCanonicalPointsToOwnBriefUrl": true
+          },
+          {
+            "captureUtc": "2025-05-07T05:40:16Z",
+            "indexSha1Base32": "QGWFK362TS6LKZDHMWH4NV57RQSR3JQE",
+            "replayStatus": "archive_indexed_sha1_mismatch_unknown",
+            "rawOriginalBodySha256": null,
+            "rawOriginalBytes": null,
+            "previousOriginalRawSha256AndSizeVerifiedSameCapture": null,
+            "historicalHtmlCanonicalPointsToOwnBriefUrl": false
+          }
+        ]
+      },
+      "datedPath": {
+        "cdx": "index_unavailable_unknown",
+        "firstTwoActualRawOriginalBodyReplays": []
+      },
+      "exactHistoricTwoSidedIdentityProven": false,
+      "canDeduplicateArticleUrls": false
+    }
+  ],
+  "importantNewFinding": {
+    "original2023DriverLicenseBriefArticleCapturedUtc": "2023-03-03T01:54:42Z",
+    "original2023DriverLicenseRawBodySha256": "4a56cee75803573f44c08fc4aaeb4183ebf9476bbe1df5315bfd8e7eff6a484b",
+    "original2023DriverLicenseBodyBytes": 131515,
+    "earlier2023Feb27OriginalReplayStillIndexedSha1Mismatch": true,
+    "original2025May07RoadSignsReplayAlsoSha1Mismatch": true,
+    "allSixVerifiedHistoricalBriefPagesCanonicalPointToOwnBriefUrls": true,
+    "noneOfFourDatedUrlVariantsWereHistoricallyBodyAuthenticated": true
+  },
+  "interpretation": {
+    "noAliasPairHistoricalDuplicationProof": true,
+    "presentDaySameArticleTitleAndSlugNotHistoricalOriginalEquality": true,
+    "old2023DriverLicenseChecksumMismatchNotErasedByNewSuccessfulCapture": true,
+    "datedPathIndexUnavailableNotHistoricalNonPublication": true,
+    "originalArchiveUtcNotFirstPublicationClock": true,
+    "historicalCanonicalOneSidedOnlyNotTwoSidedOriginalAliasProof": true,
+    "noOriginalArticleRawHtmlOrAudioPersisted": true,
+    "noSenatorIndividualQuoteOrRecordedFloorVoteAutomaticallyVerified": true,
+    "noPrivateVotePredictSourceOrModelAccess": true,
+    "allFourPotentialAliasGroupsRemainUndeduplicated": true
+  }
+}
