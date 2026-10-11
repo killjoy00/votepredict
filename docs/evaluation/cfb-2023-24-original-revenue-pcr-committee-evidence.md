@@ -1,0 +1,36 @@
+# #864 finance: independently dated Department of Revenue PCR registration-number evidence (2023 and 2024)
+
+**Read-only historical Minnesota campaign-finance research only.** The State's original Department of Revenue annual *Political Contribution Refund (PCR)* reports provide an independently authored cross-reference of campaign committee registration number, reported committee name and candidate name. This is a **different original government source family** from the current CFB candidate viewer and the 71 historical 2023/24 CFB year-end report versions. No campaign positions, policy remarks, media, production data, model, forecast or 2027 changes.
+
+## Two bounded original state sources
+
+- **2023 PCR reporting period**: Minnesota Department of Revenue, *Annual Report on Political Contribution Refunds*, dated **July 18, 2024**, January 1–December 31, 2023 reporting period, original LRL PDF: https://www.lrl.mn.gov/docs/2024/mandated/241110.pdf
+- **2024 PCR reporting period**: Minnesota Department of Revenue, *Annual Report on Political Contribution Refunds*, dated **July 17, 2025**, January 1–December 31, 2024 reporting period, original LRL PDF: https://www.lrl.mn.gov/docs/2025/mandated/251307.pdf
+
+Both reports describe retrospective political-contribution refunds on behalf of candidates and political parties under Minnesota Statutes §290.06 subd. 23. Their 'Campaign Finance PCR Report' tables identify *Reg Number*, *Committee Name*, *Candidate First Name*, *Candidate Last Name*, *Subsidy Begin Date*, *Subsidy End Date*, *Term Date*, refund requests and refunded amounts.
+
+The repeatable original-source workflow fetches each **entire original state PDF**, checks the trusted original host, PDF header, date/year/agency/register layout, computes exact original SHA-256 and byte length, and matches ONLY the previously independently authenticated **22 actual senators' exact CFB numbers** against the candidate's name in the same register row. It stores only government source hashes, bounded committee identities and specific proof/hold/unobserved outcomes. Full source PDFs, refund amounts, row-level donor information and raw OCR/extracted text are not committed.
+
+## Limits and legal meaning
+
+- These are **later retrospective PCR annual reports**, not contemporaneous candidate-filed CFB registration applications, original CFB termination filings, Senate service records, statutory campaign year-end filing obligation certificates, or version-level CFB public-disclosure logs.
+- A report's **Subsidy Begin Date is NOT a committee-registration date**. For example, the 2023 refund-period report displays a March **2024** subsidy-begin date for Putnam registration #18430. Do not turn that into 2023 or 2024 initial committee registration, activity, or year-end debt.
+- The reports' **Term Date** column concerns the state refund table and may be blank. Absence of a filled term date is **not evidence** that a principal committee never voluntarily or administratively terminated. Equally, a present-day terminated label does not identify the historical termination date.
+- Presence of a committee in either later annual list is independent **same-number/same-person identification within that document**, NOT proof that the committee was registered on *every* 2023 or 2024 day, nor that it owed a particular 2023 or 2024 CFB year-end filing.
+- Missing or unexpected register rows are documented as **NOT OBSERVED** or **HOLD** and never categorized as a legally delinquent committee or historically unpublished report.
+- Any original CFB report-version **public-by date** still requires independently dated evidence tying an **exact verified CFB report body** to a capture, not a later state refund summary. The 71-version panel, two identity holds, same-PDF alias and 0/71 independent historical public-by count remain unchanged.
+
+This original-state-source step provides a new independent committee-identity cross-check before sourcing original Board registration applications, final termination forms or historical Board orders for the 22. ## Authenticated original-source findings
+
+The first [original two-state-document source workflow, #38176252201](https://github.com/killjoy00/votepredict/actions/runs/38176252201) **PASSED** on the PR's initial source head, acquiring and independently authenticating both complete official PDFs. Source workflow artifact [#11715588786](https://github.com/killjoy00/votepredict/actions/runs/38176252201/artifacts/11715588786) is temporary (30-day retention), with ZIP SHA-256 **afe7399ea88a90e8e8a0697b512ee698f2719f7332ace0956f46bba4fdf7c696**. Source reports and candidate/registration matching require **another independent full binary recheck at the final exact PR head**.
+
+- **2023 PCR report (document dated July 18, 2024)**: original whole-PDF SHA-256 **808f6145dbdd32c3213abd3b432e4ef271940634aab7a34311631991fa60d34e**; **499,552 bytes**. **19/22** expected CFB registration/person pairs are named in the original register rows. **3/22 not observed:** Andrew R. Lang #17994, Nick A. Frentz #17919 and Rich Draheim #17910. **0 identity holds.**
+- **2024 PCR report (document dated July 17, 2025)**: original whole-PDF SHA-256 **b29eecd9a79821982958c44db6f7eef1f9af442d693df3ba01a39618a78c2945**; **510,349 bytes**. **19/22** exact registration/person pairs named, with **3/22 not observed:** Andrew R. Lang #17994, John R. Jasinski #17964 and Rich Draheim #17910. **0 identity holds.**
+
+Across the two reports: **38 of 44 possible retrospective register observations authenticated, covering 20 unique already confirmed actual senators; 6 observations not found, zero name/registration HOLDS**. Both currently labelled-terminated cases from the separate current CFB viewer, Steve Drazkowski #18763 and Bruce Douglas Anderson #17362, have exact same-number/same-person source rows in **both** retrospective state reports. This does **NOT** resolve whether or when either committee terminated, the source meaning of its refund subsidy date, or its legally owed year-end reports.
+
+The permanent [44-row metadata-only matrix](source-proof/cfb-2023-24-original-revenue-pcr-committee-identity.psv) and [source-SHA checkpoint](source-proof/cfb-2023-24-original-revenue-pcr-committee-source-checkpoint.json) preserve the exact original PDF full-body identities, every 22-person-year matched/unobserved state, CFB registration and district, **UNKNOWN** historical status/duty/termination/public-by fields, source run and original 71-version identity reference. Neither source report supplies an exact CFB historical public-by timestamp; **0 of 71 CFB versions gained one**.
+
+These are government-reported *refund* observations, not evidence that all 38 committees were registered on each day of the **2023 or 2024** historical period. A report could document a subsidy start after the year it retrospectively reports, so committee status and legal filing duties remain unproven. Blank refund-form Term Date is not original Board principal-committee termination evidence.
+
+**Merge requires exact-final-head full repository CI and independently re-fetched whole original PDFs against the pinned SHA-256/byte identities. Keep issue #864 OPEN.**

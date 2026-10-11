@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "mn-2023-24-original-revenue-PCR-two-state-PDF-22-senator-identity-ledger-v1",
+  "issue": 864,
+  "researchDate": "2026-10-11",
+  "verifiedSenatorSource": {
+    "originalYearEnd71LedgerPath": "docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv",
+    "originalYearEnd71GitBlobSha": "bfa1c1eff6a095a3a0d03aa49a34e1d929d6a388",
+    "originalAuthenticatedSenators": 22,
+    "exactYearEndVersionRefs": 71
+  },
+  "newOriginalSources": [
+    {
+      "pcrReportingYear": 2023,
+      "officialRevenueReportDated": "2024-07-18",
+      "originalGovPdfURL": "https://www.lrl.mn.gov/docs/2024/mandated/241110.pdf",
+      "fullOriginalPdfSha256": "808f6145dbdd32c3213abd3b432e4ef271940634aab7a34311631991fa60d34e",
+      "fullOriginalPdfBytes": 499552,
+      "independentlyNamedCommitteeRegistrations": 19,
+      "notObservedInThatRetrospectivePCRList": 3,
+      "identityHolds": 0,
+      "notObservedCFBRegistrationIds": [
+        "17994",
+        "17919",
+        "17910"
+      ]
+    },
+    {
+      "pcrReportingYear": 2024,
+      "officialRevenueReportDated": "2025-07-17",
+      "originalGovPdfURL": "https://www.lrl.mn.gov/docs/2025/mandated/251307.pdf",
+      "fullOriginalPdfSha256": "b29eecd9a79821982958c44db6f7eef1f9af442d693df3ba01a39618a78c2945",
+      "fullOriginalPdfBytes": 510349,
+      "independentlyNamedCommitteeRegistrations": 19,
+      "notObservedInThatRetrospectivePCRList": 3,
+      "identityHolds": 0,
+      "notObservedCFBRegistrationIds": [
+        "17994",
+        "17964",
+        "17910"
+      ]
+    }
+  ],
+  "permanentIndependentCommitteeCrosscheck": {
+    "path": "docs/evaluation/source-proof/cfb-2023-24-original-revenue-pcr-committee-identity.psv",
+    "gitBlobSha": "edeb43c82b8ad3369c2a67e3ffa419cf1681965c",
+    "utf8Bytes": 22358,
+    "rows": 44,
+    "sourceVerifiedNamedCommitteeYearRows": 38,
+    "distinctSourceVerifiedNamedSenators": 20,
+    "notObservedRows": 6,
+    "identityHoldRows": 0
+  },
+  "firstIndependentOriginalDocumentSourceRun": {
+    "workflowRun": 38176252201,
+    "url": "https://github.com/killjoy00/votepredict/actions/runs/38176252201",
+    "head": "e2b472b28a56cba095b1f5616c5e532031405658",
+    "artifactId": 11715588786,
+    "artifactZipSha256": "afe7399ea88a90e8e8a0697b512ee698f2719f7332ace0956f46bba4fdf7c696",
+    "result": "success"
+  },
+  "conservativeLimits": {
+    "sourceIsRetrospectiveStatePoliticalContributionRefundNotHistoricalCFBRegistrationForm": true,
+    "subsidyBeginDateNotPrincipalCommitteeInitialRegistration": true,
+    "nameInReportDoesNotProveSpecific2023or2024RegisteredDate": true,
+    "blankRefundTermDateNotEvidenceOfCommitteeNotTerminated": true,
+    "notObservedDoesNotProveNoCommitteeNoYearEndReportOrNoRefundEligibility": true,
+    "actualEachCommittee2023and2024YearEndFilingDuty": null,
+    "actualVoluntaryOrAdministrativeTerminationDates": null,
+    "newlyEstablishedSpecific2023or2024YEReportVersionPublicByCount": 0,
+    "originalCFB71VersionCorpusUnchanged": true,
+    "noPrivateDonorsContactsPaymentsOrOriginalPdfBodiesPersisted": true,
+    "noProductionDBOrMLModelServingForecastSchedulerOr2027Changes": true,
+    "issue864RemainsOpen": true
+  }
+}
