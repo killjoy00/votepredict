@@ -39,6 +39,7 @@ async function main(){
  const output=resolve(args[1]!);
  const failures:string[]=[];
  let motion:ReturnType<typeof inspectOriginalApr08A11Motion>|null=null;
+ let originalPdfAndTextVerified=false;
  try{
   const pdf=await fetchSenateCommitteeMinutePdf({url:SOURCE.originalOfficialUrl,fetchImpl:bounded as typeof fetch});
   if(pdf.extractionMethod!=='embedded_text'
@@ -46,6 +47,7 @@ async function main(){
     ||pdf.contentSha256!==SOURCE.originalPdfSHA256
     ||createHash('sha256').update(pdf.text).digest('hex')!==SOURCE.originalTextSHA256)
     throw Error('Original Apr08 PDF bytes or extracted text changed versus successful prior SHA proof');
+  originalPdfAndTextVerified=true;
   motion=inspectOriginalApr08A11Motion(pdf.text);
  }catch(e){failures.push(safe(e))}
  const result={
@@ -55,7 +57,7 @@ async function main(){
   expectedOriginalTextSha256:SOURCE.originalTextSHA256,
   previousFullRosterAuditRunId:SOURCE.priorElectionsOriginalSourceRun,
   previousSourceEightMotionRunId:SOURCE.priorEightMotionContextSourceRun,
-  originalPdfAndTextSHAReverified:motion!==null,
+  originalPdfAndTextSHAReverified:originalPdfAndTextVerified,
   originalSourceA11MotionParsed:motion!==null,
   failedOriginalPdfOrMotionSources:failures.length,
   sourceResult:motion,failures,
@@ -71,7 +73,7 @@ async function main(){
  mkdirSync(dirname(output),{recursive:true});
  writeFileSync(output,JSON.stringify(result,null,2)+'\n');
  console.log(JSON.stringify({
-   sourcePdfHashVerified:motion!==null,a11Found:motion!==null,
+   sourcePdfHashVerified:originalPdfAndTextVerified,a11Found:motion!==null,
    sourcePrintedTally:motion?[motion.printedYeaCount,
      motion.printedNayCount,motion.printedAbsentCount]:null,
    failures:failures.length
