@@ -54,7 +54,7 @@ test('six actual 2023 MN serving people have 23 authentic full archived 2022 sit
   'Jordan Rasmusson':11,'Ron Latz':24,'Karin Housley':20,
   'Warren Limmer':31,'Mark Koran':11,
  });
- assert.equal(counts['Jim Carlson'],undefined);
+ assert.equal(Object.hasOwn(counts,'Jim Carlson'),false);
 });
 test('every original archived candidate page has 2022 pre-general-election capture UTC and independently pinned SHA-256 and CDX SHA1',()=>{
  const originals=new Map(pages.allAuthenticatedOriginal2022SourcePages.map(x=>[x.originalFile,x]));
