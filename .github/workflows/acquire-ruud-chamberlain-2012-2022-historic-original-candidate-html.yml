@@ -1,0 +1,65 @@
+name: Recover Carrie Ruud and Roger Chamberlain alternate historical campaign original HTML 2012-2022
+
+# #864 SOURCE-ONLY. Two actually serving 2021 MN senators.
+# Reopen ORIGINAL complete Minnesota LRL state Senate service directory
+# and independent SHA/UTC source receipt BEFORE any Wayback network call.
+# Ruud exact documented original archived 2013 candidate bio plus older domain;
+# Chamberlain distinct original 2022 domain linked from an explicitly
+# independent expenditure, NOT candidate-authorized campaign evidence.
+# Full original archived candidate HTML SHA1 must match independent Wayback CDX.
+# No candidate statement counts, production DB, models, forecasts or scheduler.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/acquire-ruud-chamberlain-2012-2022-historic-original-candidate-html.yml
+      - data/evaluation/senate-ruud-chamberlain-2012-2022-alt-original-domain-probes-v1.json
+      - scripts/acquire-ruud-chamberlain-two-historical-first-party-originals.ts
+      - tests/senate-ruud-chamberlain-two-older-first-party-original-site-probes.test.ts
+      - docs/SENATE_2021_SERVED_RUUD_CHAMBERLAIN_HISTORICAL_ORIGINAL_CAMPAIGN_SITES.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  independent-original-lrl-served-2021-then-2012-2022-wayback-sources:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-ruud-chamberlain-two-historical-first-party-domains-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Download entire original independent actual Minnesota Senate service HTML and original source UTC/SHA receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/full-government-actual-senate-service
+      - name: Prove BOTH people actually served in 2021; bounded six original Wayback CDX indices and maximum ten whole first-party historical campaign pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/full-government-actual-senate-service -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/full-government-actual-senate-service -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$gov" && test -n "$receipt"
+          test "$(dirname "$gov")" = "$(dirname "$receipt")"
+          node --import tsx scripts/acquire-ruud-chamberlain-two-historical-first-party-originals.ts \
+            --entire-original-mn-lrl-actual-senator-directory-html "$gov" \
+            --original-mn-lrl-utc-sha-receipt "$receipt" \
+            --output-dir original/ruud-chamberlain-2012-2022-original-candidate-sources
+      - name: Preserve full authenticated original first-party HTML, all six original CDX JSON, exact source provenance and failed gaps only
+        uses: actions/upload-artifact@v6
+        with:
+          name: ruud-chamberlain-2012-2022-original-historical-first-party-campaign-html-v1
+          path: original/ruud-chamberlain-2012-2022-original-candidate-sources/
+          if-no-files-found: error
+          retention-days: 30

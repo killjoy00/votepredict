@@ -1,0 +1,113 @@
+{
+  "schema": "mn-two-served-senators-alternate-historical-first-party-original-sites-2012-2022-v1",
+  "issue": 864,
+  "scope": {
+    "actualMinnesotaSenateServiceBeforeAnyNetwork": true,
+    "senatorsActuallyServing2021": 2,
+    "distinctCandidateWebDomains": 2,
+    "archiveIndexRequests": 6,
+    "maximumRowsPerIndex": 300,
+    "maxFullOriginalHTMLReplaysEach": 5,
+    "maxTotalReplays": 10,
+    "originalHtmlBodyMustMatchIndependentCDXSHA1": true,
+    "acceptedSourceMUSTShowSenatorSurname": true,
+    "verifiedExactIssueStatementsAtThisDiscoveryStage": 0,
+    "unknownOrMissingArchivalSourcesNotProofOfNoPolicies": true,
+    "productionDatabaseEvidenceForecastModelSchedulerChanges": 0
+  },
+  "originalGovernment": {
+    "url": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "run": 38094976711,
+    "artifact": 11685387674,
+    "sha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "requireFullOriginalHTMLAndObservedUTCReceipt": true
+  },
+  "people": [
+    {
+      "senator": "Carrie Ruud",
+      "actual2021ServiceDistrict": "10",
+      "personLRLName": "Carrie L. Ruud",
+      "domain": "carrieruud.com",
+      "candidateAuthorshipOfArchivedPageToBeVerified": true,
+      "domainDiscoveryType": "linked_original_2013_meet_candidate_page",
+      "specificHistoricalOriginal": "http://www.carrieruud.com/index.cfm/pageid/18",
+      "documentedWaybackHistoricalURL": "https://web.archive.org/web/20130922051655/http://www.carrieruud.com/index.cfm/pageid/18",
+      "thirdPartyDiscovery": "https://en.wikipedia.org/wiki/Carrie_Ruud",
+      "historical2013CandidatePageIndependentlyFullBodyVerifiedYet": false
+    },
+    {
+      "senator": "Roger Chamberlain",
+      "actual2021ServiceDistrict": "38",
+      "personLRLName": "Roger C. Chamberlain",
+      "domain": "rogerchamberlainmn.com",
+      "candidateAuthorshipOfArchivedPageToBeVerified": true,
+      "domainDiscoveryType": "independent_expenditure_links_claimed_2022_campaign_domain",
+      "specificHistoricalOriginal": "https://rogerchamberlainmn.com/",
+      "thirdPartyDiscovery": "https://www.rightnowmn.org/roger_chamberlain_for_senate",
+      "thirdPartyElectionYearFromPage": 2022,
+      "independentExpenditureIsNotCandidateAuthorized": true,
+      "domainOwnershipCurrent2026UntrustedBecauseMayHaveExpired": true,
+      "historical2022CandidateHTMLIndependentlyFullBodyVerifiedYet": false
+    }
+  ],
+  "archiveQueries": [
+    {
+      "id": "ruud-2013-exact",
+      "person": "Carrie Ruud",
+      "kind": "exact",
+      "url": "http://www.carrieruud.com/index.cfm/pageid/18",
+      "from": "20120101",
+      "to": "20161107"
+    },
+    {
+      "id": "ruud-2012-2016-domain",
+      "person": "Carrie Ruud",
+      "kind": "domain",
+      "url": "carrieruud.com",
+      "from": "20120101",
+      "to": "20161107"
+    },
+    {
+      "id": "ruud-2017-2020-domain",
+      "person": "Carrie Ruud",
+      "kind": "domain",
+      "url": "carrieruud.com",
+      "from": "20170101",
+      "to": "20201102"
+    },
+    {
+      "id": "chamberlain-2020-2021-domain",
+      "person": "Roger Chamberlain",
+      "kind": "domain",
+      "url": "rogerchamberlainmn.com",
+      "from": "20200101",
+      "to": "20211231"
+    },
+    {
+      "id": "chamberlain-2022-domain",
+      "person": "Roger Chamberlain",
+      "kind": "domain",
+      "url": "rogerchamberlainmn.com",
+      "from": "20220101",
+      "to": "20221107"
+    },
+    {
+      "id": "chamberlain-2022-exact-home",
+      "person": "Roger Chamberlain",
+      "kind": "exact",
+      "url": "https://rogerchamberlainmn.com/",
+      "from": "20220101",
+      "to": "20221107"
+    }
+  ],
+  "limitations": [
+    "Ruud's 2013 source link is only a Wayback reference until exact complete original 2013 page bytes match CDX SHA1.",
+    "Chamberlain's 2022 link appears on an independent expenditure page expressly disclaimed as candidate-authorized; it is a discovery lead not candidate endorsement.",
+    "Current 2026 rogerchamberlainmn.com domain may be re-registered. Original 2022 time-bounded HTML only; never use current responses as old campaign text.",
+    "Carrie Ruud's 2012/2016-era pages and Roger Chamberlain's 2022 losing campaign remain in scope because both individuals independently served the Minnesota Senate in 2021.",
+    "Candidates' self-reported legislative wins or votes are not independently authenticated roll calls.",
+    "All 6 index searches and at most 10 original HTML responses are bounded samples, not statewide historical completeness.",
+    "Original source capture date can establish public-by date only, never first-authored date or continuity across election cycles.",
+    "Do not add quote counts without a separate literal-page-source audit; no production or private app actions."
+  ]
+}
