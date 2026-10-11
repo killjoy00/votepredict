@@ -54,8 +54,8 @@ function inspect(input:string,override?:{yea:string;nay:string}){
  const match=after.match(
   /\bThere\s+were\s+yeas\s+4\s+and\s+nays\s+3,\s+as\s+follows:\s+Those\s+who\s+voted\s+in\s+the\s+affirmative\s+were:\s+(?:714\s*JOURNAL\s+OF\s+THE\s+SENATE\s*\[?\s*21ST\s+DAY\s*\]?\s*)?Senators?\s+([A-Za-z ,.']+?)\.\s+Those\s+who\s+voted\s+in\s+the\s+negative\s+were:\s+Senators?\s+([A-Za-z ,.']+?)\.\s+The\s+motion\s+prevailed\b/i
  );
- if(!match||match.index===undefined)
-  throw Error('Original SF910 exact printed committee 4/3 YEA/NAY and prevailed missing');
+ if(!match||match.index===undefined||match.index>18)
+  throw Error('Original SF910 exact printed committee 4/3 YEA/NAY must immediately follow its own motion and prevail');
  const yea=names(match[1]!),nay=names(match[2]!);
  if(yea.length!==4||nay.length!==3||new Set([...yea,...nay]).size!==7)
   throw Error('SF910 named member choices not exactly seven distinct senators');
