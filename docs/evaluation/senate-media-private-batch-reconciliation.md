@@ -33,6 +33,12 @@ Results are stored only in the newly created private 0700 directory with 0600 fi
 
 The console only prints aggregate counts and the private output path. Failed validation prints no sensitive source data, URLs, credentials, article text or quote fields.
 
+## Reproducible count invariant for reused archived sources
+
+The corrected `planSenateMediaRehydration` now preserves **raw evidence context row** counts even when several context rows share one archived `sourceDocumentId`, while retrieving the source body only once. A private batch manifest must exactly match the re-derived row totals and deterministic unique original-source selection; the reconciliation rejects an old/bad count rather than silently accepting an apparently complete but incomplete source audit.
+
+For the independently verified [protected Neon capture-year baseline](senate-media-verified-live-neon-capture-year-counts.md), there are **794** 2021–2025 context rows, **154** outside-year context rows, and **688** distinct sources **summed within study-year buckets**, never established as globally unique articles. These numbers are **external verification context** only. A future export must be compared with the actual corresponding database/branch snapshot, not forced to satisfy 794 and 154 if the data has since changed. Senator-mention leads from repeated source contexts remain *discovery leads*, not human-authenticated quotations.
+
 ## Interpreting a result
 
 An attempt-coverage rate uses **only eligible archived records in the supplied VotePredict export** as the denominator. `retrievalAttemptsCompleteForEligibleExport=true` means each eligible source received exactly one validated GET attempt across the supplied batches; **it does not mean** all sources were recoverable, all 44 publishers were exhaustively searched, all senators were quoted, or all historical remarks exist in the export. A 2026 archive capture is excluded even when its legislative session is marked 2025–2026. The source collector's 948 previously reported context items span 2021–2026; they are not 948 quotations or the 2025 count.
