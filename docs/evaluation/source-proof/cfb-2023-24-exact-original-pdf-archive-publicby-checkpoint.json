@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "cfb-2023-24-wayback-four-exact-original-report-version-urls-empty-cdx-pilot-v1",
+  "issue": 864,
+  "sourceObservedDate": "2026-10-11",
+  "original71VersionSource": {
+    "path": "docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv",
+    "gitBlobSha": "bfa1c1eff6a095a3a0d03aa49a34e1d929d6a388",
+    "totalVersionIds": 71,
+    "uniqueAuthenticatedOriginalPDFBodies": 68,
+    "heldIdentityVersions": 2,
+    "aliasVersions": 1
+  },
+  "archivalQuery": {
+    "endpoint": "https://web.archive.org/cdx/search/cdx",
+    "exactOriginalCFBReportPdfUrlTargeting": true,
+    "fromYear": 2024,
+    "throughYear": 2026,
+    "outputFormat": "CDX JSON",
+    "statusFilter": "200",
+    "originalResponseJSONText": "[]",
+    "originalCDXResponseBytesForAllFour": 3,
+    "originalResponseSHA256ForAllFour": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "matchType": "exact",
+    "testedExactUrlCount": 4,
+    "originalCDXQueries": [
+      {
+        "versionId": "18430:23:pcc:YE:0:0",
+        "originalQuerySHA256": "9f9385d2e27a6f79ed98cc6c0475acabc1e6d4211fa8d845d3595136653401fc",
+        "priorOriginalPdfIdentityAuthenticated": true,
+        "matchingArchiveCDXPdfCaptureCandidates": 0,
+        "archivedFullOriginalPdfSHA256EqualKnownCfbOriginal": false,
+        "actualHistoricalPublicBy": null
+      },
+      {
+        "versionId": "18430:23:pcc:YE:0:1",
+        "originalQuerySHA256": "9791feea3857854b4023b9733930da875d457c678983f2e299a63f0ecc0b088a",
+        "priorOriginalPdfIdentityAuthenticated": false,
+        "matchingArchiveCDXPdfCaptureCandidates": 0,
+        "archivedFullOriginalPdfSHA256EqualKnownCfbOriginal": false,
+        "actualHistoricalPublicBy": null
+      },
+      {
+        "versionId": "17919:23:pcc:YE:0:0",
+        "originalQuerySHA256": "70049cabbacb627d49e824d63d6058c212308cc08e0edbdcccf6be9d4c982f17",
+        "priorOriginalPdfIdentityAuthenticated": true,
+        "matchingArchiveCDXPdfCaptureCandidates": 0,
+        "archivedFullOriginalPdfSHA256EqualKnownCfbOriginal": false,
+        "actualHistoricalPublicBy": null
+      },
+      {
+        "versionId": "16964:24:pcc:YE:0:3",
+        "originalQuerySHA256": "d4da794ebf400768f5bbbd052218211bf77e43cd84c54e8460f49fcfcf86327f",
+        "priorOriginalPdfIdentityAuthenticated": true,
+        "matchingArchiveCDXPdfCaptureCandidates": 0,
+        "archivedFullOriginalPdfSHA256EqualKnownCfbOriginal": false,
+        "actualHistoricalPublicBy": null
+      }
+    ]
+  },
+  "sourceRuns": [
+    {
+      "runId": 38174327665,
+      "artifactId": 11714839339,
+      "headAtRun": "e2fee295dfaccd2fb26476308842e19fd5724761",
+      "result": "success",
+      "zipSha256": "24f0903982e92caeaa50cad2ce6ec422477f8336db1eed0c9f1636a2afdf666f",
+      "jsonSha256": "81435e48a7dd12bf4cda95ef8396b931d7a8d4b197acdd4f1bf0d364da6994cd",
+      "artifactJsonBytes": 6136,
+      "originalSourceCDXEndpointActuallyQueriedAllFour": true,
+      "eachSourceCDXHTTP200ValidEmptyJSON": true
+    }
+  ],
+  "resultLimits": {
+    "zeroMatchingArchiveCapturesDoesNotProveOriginalPDFWasNonpublic": true,
+    "archiveSearchCoversOnlyExactURLNotAllAliasesAndPOSTQueryVariants": true,
+    "noOriginalArchivedPDFBinaryCanBeAuthenticatedFromEmptyCDX": true,
+    "complete71VersionHistoricalPublicByProvenCount": 0,
+    "noLegalDutyDenominatorProven": true,
+    "originalHeldVersionsMustRemainHeld": true,
+    "noRetroactiveHistoricPredictionEligibility": true
+  },
+  "safeguards": {
+    "noRawOriginalCFBPdfsOrRawArchiveBinariesStored": true,
+    "noRawCdxOrViewerHtmlStored": true,
+    "noPersonalDonorTransactionOrContactRows": true,
+    "noProductionDbWrite": true,
+    "noModelForecastServingSchedulerOr2027": true,
+    "keepIssue864Open": true
+  }
+}
