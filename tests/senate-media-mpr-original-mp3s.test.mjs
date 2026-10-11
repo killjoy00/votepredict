@@ -1,0 +1,18 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {validatePublisherAudioPairs,parseAudioIndex,auditMprSourceMp3s} from '../scripts/probe-senate-media-mpr-original-mp3s.mjs';
+import ledger from '../docs/evaluation/senate-media-mpr-2021-and-2024-original-episode-audio-link-receipts-20261011.json' with {type:'json'};
+const b32=b=>{const a='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';let v=0,bits=0,out='';for(const x of b){v=(v<<8)|x;bits+=8;while(bits>=5){bits-=5;out+=a[(v>>>bits)&31];}v&=(1<<bits)-1;}if(bits)out+=a[(v<<(5-bits))&31];return out;};
+const audio=Buffer.concat([Buffer.from('ID3'),Buffer.alloc(200)]),sha1=b32(createHash('sha1').update(audio).digest());
+const header=['timestamp','original','mimetype','statuscode','digest','length'];
+function stub(mode){return async(u,init)=>{assert.equal(init.method,'GET');assert.equal(init.redirect,'manual');
+ if(String(u).includes('/cdx/search/cdx')){const p=new URL(u);assert.equal(p.searchParams.get('matchType'),'exact');const url=p.searchParams.get('url');return new Response(JSON.stringify(mode==='unavailable'?[header]:[header,['20240221121212',url,'audio/mpeg','200',sha1,''+audio.length]]),{headers:{'content-type':'application/json'}});}
+ if(String(u).includes('web.archive.org'))return new Response(mode==='mismatch'?Buffer.concat([audio,Buffer.from('fake')]):audio,{headers:{'content-type':'audio/mpeg'}});
+ return mode==='redirect'?new Response('',{status:302,headers:{location:'https://ondemand.publicradio.org/audio/2024.mp3'}}):new Response(audio,{headers:{'content-type':'audio/mpeg'}});};}
+test('must originate in specifically pinned two historical original MPR page receipts',()=>{assert.equal(validatePublisherAudioPairs(ledger).length,2);assert.throws(()=>validatePublisherAudioPairs({...ledger,episodes:[{...ledger.episodes[0],archivedHtmlReferencedPublisherAudioUrl:'https://attacker.example/evil.mp3'},ledger.episodes[1]]}));});
+test('CDX origin and audio digest fail closed',()=>{assert.throws(()=>parseAudioIndex([header,['20240221121212','https://attacker.example','audio/mpeg','200',sha1,''+audio.length]],ledger.episodes[1].archivedHtmlReferencedPublisherAudioUrl));});
+test('authentic archived MP3 binary versus modern direct publisher MP3 are distinct',async()=>{const r=await auditMprSourceMp3s(ledger,stub());assert.equal(r.originalHistoricalAudioBinariesAuthenticated,2);assert.equal(r.publisherMp3DirectCurrentHashCount,2);assert.equal(r.rawMp3BytesStored,false);assert.equal(r.episodes[0].archiveReplayVersions[0].status,'authenticated_original_mp3_binary');assert.equal(r.episodes[0].currentOriginalPublisherResourceStatus.isHistoricalOriginalAudioProof,false);assert.ok(!JSON.stringify(r).includes('ID3'));});
+test('replay different from indexed SHA1 cannot authenticate audio',async()=>{const r=await auditMprSourceMp3s(ledger,stub('mismatch'));assert.equal(r.originalHistoricalAudioBinariesAuthenticated,0);assert.equal(r.episodes[0].archiveReplayVersions[0].status,'indexed_sha1_mismatch_unknown');});
+test('publisher redirect does not establish original historic audio binary',async()=>{const r=await auditMprSourceMp3s(ledger,stub('redirect'));assert.equal(r.publisherMp3DirectCurrentHashCount,0);assert.equal(r.episodes[0].currentOriginalPublisherResourceStatus.fetchStatus,'redirect_unfollowed_unknown');assert.ok(r.episodes[0].currentOriginalPublisherResourceStatus.approvedFirstHopRedirectUrl);});
+test('empty index does not prove historical MP3 absent',async()=>{const r=await auditMprSourceMp3s(ledger,stub('unavailable'));assert.equal(r.originalHistoricalAudioBinariesAuthenticated,0);assert.equal(r.episodes[0].archiveIndexStatus,'index_empty_unknown');});

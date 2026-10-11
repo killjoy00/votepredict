@@ -1,0 +1,43 @@
+{
+  "version": "senate-media-mpr-original-mp3-live-probe-negative-receipts-v1",
+  "observedDate": "2026-10-11",
+  "originalPublicSourceWorkflow": {
+    "runId": 38173683365,
+    "sourceHeadSha": "852da89282553c4c07fde8e4632e26c51a04a02b",
+    "artifactId": 11715152201,
+    "originalArtifactZipSha256": "17a0a47edc3b526ce1cb948a84956db635cac43990ca3f2e93f4169ccffc75c6",
+    "decodedJsonSha256": "1da4c9e882b717a29f265c9a9c08cbbd7a5aa85af32624097762a3a174699750",
+    "decodedJsonBytes": 1978
+  },
+  "leads": [
+    {
+      "sourceArticleId": "mpr-2021-jeremy-miller-hero-pay",
+      "originalPublisherUrl": "https://www.mprnews.org/episode/2021/11/15/minnesota-senate-majority-leader-talks-bipartisan-effort-to-distribute-hero-pay",
+      "mediaUrl": "https://play.publicradio.org/unreplaced_ua/o/minnesota/news/programs/2021/11/15/Minnesota_Senate_Majority_Leaders_talks_bipartisan_effort_to_distribute_hero_pay_20211115_64.mp3",
+      "historicalAudioOriginalExactCdxIndex": "index_unavailable_unknown",
+      "historicalAudioOriginalReplayAttemptCount": 0,
+      "currentMp3UrlGet": "redirect_unfollowed_unknown",
+      "currentDirectMp3Sha256": null
+    },
+    {
+      "sourceArticleId": "mpr-2024-grant-hauschild-north-star-act",
+      "originalPublisherUrl": "https://www.mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south",
+      "mediaUrl": "https://play.publicradio.org/unreplaced_ua/o/minnesota/podcasts/minnesota_now/2024/02/19/mn_now_20240219_hauschild_20240219_128.mp3",
+      "historicalAudioOriginalExactCdxIndex": "index_unavailable_unknown",
+      "historicalAudioOriginalReplayAttemptCount": 0,
+      "currentMp3UrlGet": "redirect_unfollowed_unknown",
+      "currentDirectMp3Sha256": null
+    }
+  ],
+  "currentDirectFileRedirectNotAudioProof": true,
+  "absentOrUnresponsiveHistoricalCdxNotEvidenceMediaAbsent": true,
+  "noOriginalRecordedSpokenWordsCertified": true,
+  "historicallyVerifiedOriginalHtmlVersions": 4,
+  "historicallyAuthenticatedAudioBinaries": 0,
+  "publisherMp3CurrentShaVerified": 0,
+  "completeSenatorAudioQuotesHumanReviewed": 0,
+  "publisherFirstPostClockCertified": 0,
+  "individualMemberRecordedVotesProven": 0,
+  "privateDataUsed": false,
+  "fullAudioOrSourceHtmlSaved": false
+}

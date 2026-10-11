@@ -1,0 +1,52 @@
+name: Public MPR original episode transcript and media-reference research
+
+# #987 PUBLIC source-only investigation. Historical HTML != audio verification.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-mpr-episode-original-embeds.yml
+      - scripts/probe-senate-media-mpr-episode-embeds.mjs
+      - scripts/run-senate-media-mpr-episode-embeds.mjs
+      - tests/senate-media-mpr-episode-embeds.test.mjs
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-mpr-episode-embeds
+  cancel-in-progress: false
+
+jobs:
+  public-original-episode-evidence:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-mpr-episode-original-embeds-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Offline provenance tests (no network)
+        run: node --test tests/senate-media-mpr-episode-embeds.test.mjs
+      - name: Probe two exact 2021/2024 MPR /episode/ originals and media metadata only
+        run: |
+          node scripts/run-senate-media-mpr-episode-embeds.mjs \
+            --output artifacts/senate-media-mpr-episode-original-embeds.json
+      - name: Upload bounded original page digests, short speaker cues and candidate media URLs only
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-mpr-episode-original-embeds
+          path: artifacts/senate-media-mpr-episode-original-embeds.json
+          if-no-files-found: error
+          retention-days: 7
