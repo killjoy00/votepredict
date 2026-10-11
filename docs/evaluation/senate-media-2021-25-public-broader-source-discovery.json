@@ -1,0 +1,621 @@
+{
+  "version": "senate-media-2021-25-public-broader-source-discovery-v1",
+  "researchCheckedOn": "2026-10-11",
+  "scope": "public-only current-source discovery; prior samples remain distinct",
+  "samplesNotPublisherUniverse": {
+    "previousSelectedMprAndReformer": 31,
+    "previousCaucusInterviewCohort": 18,
+    "newAdditionalLeads": 25
+  },
+  "countsByDisplayedYear": [
+    {
+      "year": 2021,
+      "leads": 5
+    },
+    {
+      "year": 2022,
+      "leads": 5
+    },
+    {
+      "year": 2023,
+      "leads": 5
+    },
+    {
+      "year": 2024,
+      "leads": 5
+    },
+    {
+      "year": 2025,
+      "leads": 5
+    }
+  ],
+  "sourceAttributionCategoryCounts": {
+    "individual": 20,
+    "two_labeled_individuals": 1,
+    "independent_reporter_attributed": 1,
+    "mixed_chamber_collective": 2,
+    "unattributed_caucus_collective": 1
+  },
+  "distinctPageCount": 25,
+  "separateDirectSpeakerTurnCandidates": 23,
+  "collectivelyUnassignedPages": [
+    "public-2023-blandin-mixed-joint",
+    "public-2024-inclusive-mixed-joint",
+    "public-2025-senate-gop-collective"
+  ],
+  "multiSenatorPageWithIndividuallyLabeledTurns": "public-2022-bigham-eken-separated",
+  "noArchiveBodyOrSpeakerQuoteAuthenticatedInThisNewCohort": true,
+  "publisherChronologyAndFirstPublicByNotProven": true,
+  "noPublisherPublicationCensusOrStatewideDenominator": true,
+  "noDatabasePrivateVoteOrForecastDataCompared": true,
+  "selectedPublicSourceLeads": [
+    {
+      "id": "public-2021-osmek-oath",
+      "url": "https://www.mnsenaterepublicans.com/senator-david-osmek-takes-oath-of-office-as-the-legislature-begins-the-first-day-of-the-2021-2022-legislative-session/",
+      "publisher": "Minnesota Senate Republicans",
+      "currentPageDisplayedDates": [
+        "2021-01-06"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "David Osmek",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15385"
+        }
+      ],
+      "observation": "Oath and budget statement",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2021-koran-budget",
+      "url": "https://www.mnsenaterepublicans.com/senator-mark-koran-surplus-doesnt-mean-new-taxes-the-focus-must-remain-on-helping-struggling-minnesotans/",
+      "publisher": "Minnesota Senate Republicans",
+      "currentPageDisplayedDates": [
+        "2021-03-01"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Mark Koran",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15487"
+        }
+      ],
+      "observation": "2021 surplus and tax remarks",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2021-senjem-schools",
+      "url": "https://www.mnsenaterepublicans.com/senator-senjem-supports-the-largest-school-funding-increase-in-15-years/",
+      "publisher": "Minnesota Senate Republicans",
+      "currentPageDisplayedDates": [
+        "2021-06-30"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "David Senjem",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10806"
+        }
+      ],
+      "observation": "Education formula funding quotation",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2021-isaacson-grants",
+      "url": "https://senatedfl.mn/senator-jason-isaacsons-statement-on-round-10-dual-training-grant/",
+      "publisher": "Minnesota Senate DFL",
+      "currentPageDisplayedDates": [
+        "2021-07-13",
+        "2021-07-15"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Jason Isaacson",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15402"
+        }
+      ],
+      "observation": "Two current page dates July 13 and July 15; vocational grants",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2021-torres-ray-retirement",
+      "url": "https://senatedfl.mn/senator-patricia-torres-ray-announces-she-will-not-be-seeking-re-election/",
+      "publisher": "Minnesota Senate DFL",
+      "currentPageDisplayedDates": [
+        "2021-11-16"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Patricia Torres Ray",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15249"
+        }
+      ],
+      "observation": "Serving senator 2021 retiring after 2022",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2022-bigham-eken-separated",
+      "url": "https://senatedfl.mn/senators-karla-bigham-and-kent-eken-named-senate-dfl-whips-for-2022-legislative-session/",
+      "publisher": "Minnesota Senate DFL",
+      "currentPageDisplayedDates": [
+        "2022-01-31"
+      ],
+      "attributionCategory": "two_labeled_individuals",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Karla Bigham",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15281"
+        },
+        {
+          "name": "Kent Eken",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10764"
+        }
+      ],
+      "observation": "TWO separately explicitly labeled senator quotations in ONE news page",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2022-torres-ray-richfield",
+      "url": "https://senatedfl.mn/senator-patricia-torres-ray-statement-on-shooting-at-south-education-center/",
+      "publisher": "Minnesota Senate DFL",
+      "currentPageDisplayedDates": [
+        "2022-02-02"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Patricia Torres Ray",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15249"
+        }
+      ],
+      "observation": "Senator response to school shooting",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2022-duckworth-ukraine",
+      "url": "https://www.mnsenaterepublicans.com/duckworth-votes-for-minnesota-to-divest-from-russia-and-belarus/",
+      "publisher": "Minnesota Senate Republicans",
+      "currentPageDisplayedDates": [
+        "2022-04-05"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Zach Duckworth",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15558"
+        }
+      ],
+      "observation": "Ukraine policy quote, vote title not authenticated roll call",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2022-pratt-tax",
+      "url": "https://www.mnsenaterepublicans.com/pratt-senate-pass-biggest-tax-cut-ever-to-provide-financial-relief-across-the-state/",
+      "publisher": "Minnesota Senate Republicans",
+      "currentPageDisplayedDates": [
+        "2022-04-07"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Eric Pratt",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15386"
+        }
+      ],
+      "observation": "Tax cut quote",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2022-dahms-safety",
+      "url": "https://www.mnsenaterepublicans.com/senate-passes-comprehensive-public-safety-package-to-reduce-crime-support-law-enforcement/",
+      "publisher": "Minnesota Senate Republicans",
+      "currentPageDisplayedDates": [
+        "2022-04-25"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Gary Dahms",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15326"
+        }
+      ],
+      "observation": "Dahms public safety quote, vote not inferred",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2023-murphy-reproduction",
+      "url": "https://senatedfl.mn/senator-erin-murphy-votes-yes-to-codify-and-protect-minnesotans-right-to-reproductive-healthcare/",
+      "publisher": "Minnesota Senate DFL",
+      "currentPageDisplayedDates": [
+        "2023-01-28"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Erin Murphy",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15284"
+        }
+      ],
+      "observation": "Murphy quote in 2023 reproductive freedom bill press statement",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2023-nelson-voting-rights",
+      "url": "https://www.mnsenaterepublicans.com/sen-nelson-statement-on-senate-passage-of-legislation-to-restore-voting-rights-before-completion-of-sentence/",
+      "publisher": "Minnesota Senate Republicans",
+      "currentPageDisplayedDates": [
+        "2023-02-21"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Carla Nelson",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10778"
+        }
+      ],
+      "observation": "Nelson on voting rights and reentry",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2023-rest-tax-reformer",
+      "url": "https://minnesotareformer.com/2023/04/26/here-are-some-of-the-differences-between-the-senate-and-house-dfl-tax-plans/",
+      "publisher": "Minnesota Reformer",
+      "currentPageDisplayedDates": [
+        "2023-04-26"
+      ],
+      "attributionCategory": "independent_reporter_attributed",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Ann Rest",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10558"
+        }
+      ],
+      "observation": "Independent Reformer reporter quotes Senator Ann Rest directly",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2023-blandin-mixed-joint",
+      "url": "https://www.mnsenaterepublicans.com/statement-from-sen-eichorn-sen-farnsworth-rep-igo-and-rep-davis-blandin-strike/",
+      "publisher": "Minnesota Senate Republicans",
+      "currentPageDisplayedDates": [
+        "2023-07-27"
+      ],
+      "attributionCategory": "mixed_chamber_collective",
+      "individuallyNamedSenatorSpeakers": [],
+      "observation": "Joint Senators Eichorn/Farnsworth plus HOUSE Reps Igo/Davis; no individual speaker turns",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2023-nelson-rochester-schools",
+      "url": "https://www.mnsenaterepublicans.com/statement-from-senator-carla-nelson-following-rochester-public-schools-announcement-of-school-closures-budget-cuts/",
+      "publisher": "Minnesota Senate Republicans",
+      "currentPageDisplayedDates": [
+        "2023-12-01"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Carla Nelson",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10778"
+        }
+      ],
+      "observation": "Rochester public school choices statement",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2024-mitchell-tax",
+      "url": "https://senatedfl.mn/senator-mitchell-responds-to-new-and-expanded-tax-savings-for-2024-providing-relief-to-families-social-security-recipients/",
+      "publisher": "Minnesota Senate DFL",
+      "currentPageDisplayedDates": [
+        "2024-02-09"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Nicole Mitchell",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15586"
+        }
+      ],
+      "observation": "Tax policy statement during 2024 Senate service",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2024-mcewen-mining",
+      "url": "https://senatedfl.mn/senator-jen-mcewen-statement-following-informational-hearing-on-prove-it-first-legislation/",
+      "publisher": "Minnesota Senate DFL",
+      "currentPageDisplayedDates": [
+        "2024-02-26",
+        "2024-03-01"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Jen McEwen",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15537"
+        }
+      ],
+      "observation": "Current Feb 26/Mar 1 dates, hearing topic not a recorded vote",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2024-hawj-transport",
+      "url": "https://senatedfl.mn/senator-foung-hawj-testifies-in-support-of-transportation-equity-legislation/",
+      "publisher": "Minnesota Senate DFL",
+      "currentPageDisplayedDates": [
+        "2024-03-15"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Foung Hawj",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15380"
+        }
+      ],
+      "observation": "Published statement distinct from original testimony",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2024-seeberger-ems",
+      "url": "https://senatedfl.mn/senator-judy-seebergers-bill-to-aid-and-strengthen-minnesotas-emergency-medical-services-passes-senate/",
+      "publisher": "Minnesota Senate DFL",
+      "currentPageDisplayedDates": [
+        "2024-05-20"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Judy Seeberger",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15584"
+        }
+      ],
+      "observation": "EMS statement, no recorded member vote inferred",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2024-inclusive-mixed-joint",
+      "url": "https://senatedfl.mn/inclusive-democracy-caucus-statement-on-scotus-rulings-reflection-on-independence-day/",
+      "publisher": "Minnesota Senate DFL",
+      "currentPageDisplayedDates": [
+        "2024-07-08"
+      ],
+      "attributionCategory": "mixed_chamber_collective",
+      "individuallyNamedSenatorSpeakers": [],
+      "observation": "Sen. Boldon with HOUSE reps Greenman/Frazier; collective not Boldon direct quotation",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2025-senate-gop-collective",
+      "url": "https://www.mnsenaterepublicans.com/statement-from-senate-republicans/",
+      "publisher": "Minnesota Senate Republicans",
+      "currentPageDisplayedDates": [
+        "2025-03-18"
+      ],
+      "attributionCategory": "unattributed_caucus_collective",
+      "individuallyNamedSenatorSpeakers": [],
+      "observation": "Republican caucus statement; no individual senator words",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2025-farnsworth-mining",
+      "url": "https://www.mnsenaterepublicans.com/statement-from-sen-farnsworth-on-local-layoffs-in-the-mining-industry/",
+      "publisher": "Minnesota Senate Republicans",
+      "currentPageDisplayedDates": [
+        "2025-03-21"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Robert Farnsworth",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15579"
+        }
+      ],
+      "observation": "Farnsworth mine layoffs direct quote",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2025-clark-ice-student",
+      "url": "https://senatedfl.mn/senator-doron-clark-statement-on-ice-detainment-of-university-of-minnesota-graduate-student/",
+      "publisher": "Minnesota Senate DFL",
+      "currentPageDisplayedDates": [
+        "2025-03-28",
+        "2025-04-01"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Doron Clark",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15649"
+        }
+      ],
+      "observation": "Displayed Mar 28/Apr 1, Clark first senator term Feb 3 2025",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2025-maye-quade-shooting",
+      "url": "https://senatedfl.mn/senator-erin-maye-quade-statement-on-apple-valley-shooting/",
+      "publisher": "Minnesota Senate DFL",
+      "currentPageDisplayedDates": [
+        "2025-05-12",
+        "2025-05-15"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Erin Maye Quade",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15473"
+        }
+      ],
+      "observation": "Displayed May 12/15, senator quote",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    },
+    {
+      "id": "public-2025-rasmusson-trial",
+      "url": "https://www.mnsenaterepublicans.com/sen-jordan-rasmusson-statement-on-guilty-verdict-in-felony-burglary-trial-of-sen-nicole-mitchell/",
+      "publisher": "Minnesota Senate Republicans",
+      "currentPageDisplayedDates": [
+        "2025-07-21"
+      ],
+      "attributionCategory": "individual",
+      "individuallyNamedSenatorSpeakers": [
+        {
+          "name": "Jordan Rasmusson",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15541"
+        }
+      ],
+      "observation": "Rasmusson quote; Mitchell mentioned as subject only",
+      "existingCohortOverlapCheckedAgainstOriginal31AndEarlier18": true,
+      "hasOriginalHistoricalArchivedBodySha256": false,
+      "exactQuoteFragmentHistoricallyChecked": false,
+      "originalPublishingTimestampVerified": false,
+      "namedSenatorQuotationApprovedForHistoricalEvidence": false,
+      "anyPrivateEvidenceReadOrMatched": false,
+      "anyLegislativeVoteProvedByThisPage": false
+    }
+  ]
+}
