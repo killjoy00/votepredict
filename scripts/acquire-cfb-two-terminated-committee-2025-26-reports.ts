@@ -19,7 +19,10 @@ import {fetchCfbReportViewerText,cfbReportViewerUrl} from
  '../src/evidence/cfb-current-report-acquisition.js';
 import {
  inspectPossibleOriginalCfbTerminationReportText,selectTwoTerminatedSenators,
+ classifyTwoSenatorsInPublicCfbCurrentLists,
 } from '../src/evidence/cfb-two-terminated-original-report-investigation.js';
+import {parseCfbCandidateRegistryGrid, type CfbCandidateRegistryListAction} from
+ '../src/evidence/cfb-current-candidate-registry-join.js';
 
 const SOURCE71='docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv';
 const UA='Mozilla/5.0 VotePredict/2.0 original Minnesota CFB finance historical committee status research';
@@ -120,6 +123,67 @@ async function inspectCandidate(input:{registrationNumber:string;senator:string;
   original2023Or2024ExactReportVersionPublicBy:null,
  };
 }
+
+/** Original nightly *current* public CFB registration and recent termination
+ * lists: historical status-change dates may be present, but the list alone
+ * never proves a signed 2023/24 final PDF or voluntary/admin route. */
+async function acquireCurrentOfficialRegistryTerminationSnapshots(){
+ const app=CFB_ORIGIN+'/reports/current-lists/';
+ const api=CFB_ORIGIN+'/reports/api/';
+ const session=await fetch(app,{headers:{'user-agent':UA},signal:AbortSignal.timeout(40_000)});
+ if(!session.ok||new URL(session.url).hostname!=='register.cfb.mn.gov')
+  throw Error('Original official CFB current registration app session unavailable');
+ const headers=session.headers as Headers & {getSetCookie?:()=>string[]};
+ const cookies=(typeof headers.getSetCookie==='function'?headers.getSetCookie()
+   :[session.headers.get('set-cookie')??''].filter(Boolean))
+   .map(v=>v.split(';',1)[0]?.trim()).filter(Boolean).join('; ');
+ await session.arrayBuffer();
+ async function get(action:CfbCandidateRegistryListAction){
+  const params=new URLSearchParams();
+  params.set('action','grid_data');
+  params.set('data[action]',action);
+  params.set('data[type]','current-lists');
+  params.set('data[params][0]','all');
+  const res=await fetch(api,{method:'POST',redirect:'follow',headers:{
+   'user-agent':UA,'content-type':'application/x-www-form-urlencoded; charset=UTF-8',
+   referer:app,origin:CFB_ORIGIN,'x-requested-with':'XMLHttpRequest',...(cookies?{cookie:cookies}:{})
+  },body:params.toString(),signal:AbortSignal.timeout(40_000)});
+  if(!res.ok||res.url!==api)throw Error('Original CFB register source API failed identity or returned non-2xx');
+  const bytes=new Uint8Array(await res.arrayBuffer());
+  if(bytes.length<200||bytes.length>8_000_000)throw Error('Unexpected CFB current registration grid body size');
+  const grid=parseCfbCandidateRegistryGrid(new TextDecoder().decode(bytes),action);
+  if(grid.rejectedRowCount>0||grid.rawRowCount!==grid.rows.length)
+   throw Error('Original current CFB candidate registration rows malformed/held');
+  return{
+   action,originalOfficialApiURL:api,originalResponseSHA256:createHash('sha256').update(bytes).digest('hex'),
+   originalResponseBytes:bytes.length,sourceRetrievedAtUTC:new Date().toISOString(),
+   originalTotalCandidateRows:grid.rows.length,
+   allTargetRows:grid.rows.filter(row=>KEY_IDS.includes(row.registrationNumber as typeof KEY_IDS[number])),
+   parsed:grid,
+  };
+ }
+ const all=await get('all-registered-candidates');
+ const recent=await get('recent-candidate-terminations');
+ const classifications=classifyTwoSenatorsInPublicCfbCurrentLists(all.parsed.rows,recent.parsed.rows);
+ return{
+  originalCurrentRegisteredCandidates:{
+   action:all.action,url:all.originalOfficialApiURL,
+   fullBodySha256:all.originalResponseSHA256,originalBytes:all.originalResponseBytes,
+   retrievedAtUTC:all.sourceRetrievedAtUTC,totalAllOfficeRows:all.originalTotalCandidateRows,
+   selectedMatchedExactRegistrationOnly:all.allTargetRows,
+  },
+  originalRecentTerminatedCandidateList:{
+   action:recent.action,url:recent.originalOfficialApiURL,
+   fullBodySha256:recent.originalResponseSHA256,originalBytes:recent.originalResponseBytes,
+   retrievedAtUTC:recent.sourceRetrievedAtUTC,totalAllOfficeRows:recent.originalTotalCandidateRows,
+   selectedMatchedExactRegistrationOnly:recent.allTargetRows,
+  },
+  exactPreviouslyAuthenticatedSenators:classifications,
+  notACompleteHistoricalTerminationArchive:true,
+  notProofSignedTerminationForms:true,
+ };
+}
+
 async function main(){
  const a=process.argv.slice(2);
  if(a.length!==2||a[0]!=='--output')throw Error('Only --output artifacts/<filename>.json supported');
@@ -132,6 +196,7 @@ async function main(){
   throw Error('Original 71-version authenticated senator committee source drift');
  const data=[];
  for(const target of targets)data.push(await inspectCandidate(target));
+ const currentBoardRegistry=await acquireCurrentOfficialRegistryTerminationSnapshots();
  const output={
   schemaVersion:'original-cfb-2025-26-two-as-of-2026-terminated-committee-finance-evidence-probe-v1',
   issue:864,researchDate:'2026-10-11',
@@ -139,6 +204,7 @@ async function main(){
    gitBlobSha:'bfa1c1eff6a095a3a0d03aa49a34e1d929d6a388',
    originalVersions:71,servingSenators:22},
   twoOriginalGovernmentCurrentPagesAndFullOfficialReportsTabIndices:data,
+  publicOfficialCurrentRegisteredAndRecentTerminatedOriginalBoardRegistry:currentBoardRegistry,
   limitations:{
    current2026TerminatedLabelNot2023Or2024Termination:true,
    reportContainingWordsTerminationNotLegalTerminationProof:true,
@@ -154,6 +220,7 @@ async function main(){
  };
  mkdirSync(dirname(path),{recursive:true});
  writeFileSync(path,JSON.stringify(output,null,2)+'\n',{flag:'wx'});
+ console.log('EXACT_2026_BOARD_RECENT_TERMINATION_RECORDS='+JSON.stringify(currentBoardRegistry.exactPreviouslyAuthenticatedSenators));
  console.log('TWO_CFB_COMMITTEE_ORIGINAL_INDEX_PROBE='+JSON.stringify(
   data.map(d=>({
    registration:d.registrationNumber,currentLabel:'terminated_2026_only',
@@ -161,6 +228,11 @@ async function main(){
    versionKeys:d.officialCandidate2026ReportsTab.completeExact2025And2026VersionKeys,
    originalPDFs:d.originalReportScans.filter(s=>s.sourceResult==='authenticated_original_pdf_metadata').length,
    holds:d.originalPdfHolds,
+   pdfShaAndReceiptOnly:d.originalReportScans.filter(s=>s.sourceResult==='authenticated_original_pdf_metadata').map(s=>({
+    versionKey:s.versionKey,sha256:(s as {originalPdfSha256?:string}).originalPdfSha256,
+    bytes:(s as {originalPdfBytes?:number}).originalPdfBytes,
+    boardReceipt:(s as {boardPrintedReceiptText?:string|null}).boardPrintedReceiptText??null,
+   })),
    safeTerminationOrFinalKeywords:d.originalReportScans.filter(s=>
     s.sourceResult==='authenticated_original_pdf_metadata').map(s=>({
      versionKey:s.versionKey,sourceResult:s.sourceResult,
