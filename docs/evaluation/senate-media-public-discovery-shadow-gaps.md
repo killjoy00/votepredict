@@ -2,6 +2,10 @@
 
 **Scope:** apply the existing publisher seed-prefix and topical path-priority gates to the **selected 31 public URL leads** (including **four candidate alias pairs**) dated by current publisher labels across five years. No Neon, archive retrieval, production collector, or forecast changes.
 
+## Subsequent public Wayback index and exact-replay proof (separate step)
+
+The original URL path diagnostic below is **offline and never retrieves archived bytes**. A distinct, bounded [public CDX and exact-original replay probe](senate-media-public-exact-wayback-probe.md) now lets a network-enabled operator use **one selected public lead ID at a time** to inspect capture timestamps **without** collapsing repeated content digests, then (optionally) check an actual id_-replayed raw body against its own indexed SHA-1. It never loads private VotePredict source rows, treats CDX alone as original article bytes, or verifies named-senator quotes. The investigation's own network cannot access CDX, so **no real historical capture or article hash was newly verified** here.
+
 ## Reproduce with no credentials or Internet access
 
 From the repository root:
