@@ -201,3 +201,31 @@ export async function researchMprEpisodes(fetcher=fetch) {
     currentPublisherPageNotHistoricProof:true,notAStatewideMediaCensus:true,fullPublisherHtmlOrAudioStored:false,
     noPrivateEvidenceOrProductionDataTouched:true};
 }
+
+/** Separate two later, not-earliest, historical versions of the selected Hauschild MPR episode. */
+export async function researchLater2024HauschildVersions(fetcher=fetch) {
+  const lead=validateEpisodes()[1];
+  let rows=null;
+  try { rows=await lookup(lead,fetcher); } catch { rows=null; }
+  // The original two earliest captures were authenticated in a separately pinned manifest.
+  // This follow-up audits at most the next two original publisher archive timestamps.
+  const chosen=rows?.slice(2,4)??[];
+  const versions=[];
+  for (const row of chosen) versions.push(await replay(lead,row,fetcher));
+  return {version:'senate-media-2024-hauschild-later-historical-transcript-version-audit-v1',
+    examinedOriginalPublisherUrl:lead.url,senator:lead.senator,
+    originalIndexStatus:rows===null?'index_unavailable_unknown':rows.length?'indexed_candidates':'index_empty_unknown',
+    totalIndexedHistoricalOriginalPageCandidatesBounded:rows?.length??null,
+    originalIndexPagePossiblyTruncated:rows?.length===20,
+    earlyPreviouslyAuthenticatedOriginalHtmlVersions:2,
+    laterHistoricalBodyReplayAttempts:versions.length,
+    laterOriginalHtmlBodiesShaAuthenticated:versions.filter(x=>x.status==='authenticated_original_html').length,
+    laterOriginalVersions:versions,
+    currentTranscriptNotBackdatedToEarlierSources:true,
+    initialPublisherTranscriptInsertionTimeUnverified:true,
+    originalMprAudioBinaryAuthenticated:false,
+    completeSenatorSpokenAudioHumanApproved:false,
+    recordedIndividualSenateVoteVerified:false,
+    fullOriginalNewsHtmlOrAudioPersisted:false,
+    noPrivateEvidenceOrModelDataRead:true};
+}
