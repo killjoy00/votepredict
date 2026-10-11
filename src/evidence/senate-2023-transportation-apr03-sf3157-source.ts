@@ -67,7 +67,7 @@ function parseHtml(html:string,roster:ReadonlySet<string>){
   const slice=text.slice(start,start+1250);
   const voteAt=slice.search(/The committee voted as follows\s*:/i);
   if(voteAt<0)throw Error('No roll-call names printed for '+spec.label);
-  const outcome=slice.match(/\bWith\s+\w+\s+senators?\s+voting\s+[“"]?yes[”"]?\s+and\s+\w+\s+voting\s+[“"]?no,?[”"]?\s+the\s+motion\s+did\s+(not\s+)?prevail\s+and\s+the\s+(A\d+)\s+amendment\s+was\s+(not\s+)?adopted\b/i);
+  const outcome=slice.match(/\bWith\s+\w+\s+senators?\s+voting\s+[“"]?yes[”"]?\s+and\s+\w+\s+voting\s+[“"]?no,?[”"]?\s+the\s+motion\s+(?:did\s+)?(not\s+)?prevail\s+and\s+the\s+(A\d+)\s+amendment\s+was\s+(not\s+)?adopted\b/i);
   if(!outcome||outcome.index===undefined||outcome.index<=voteAt||
     outcome.index-voteAt>850)
    throw Error('Original named roll has no bounded disposition for '+spec.label);
