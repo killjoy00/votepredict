@@ -1,0 +1,81 @@
+name: Verify 26 exact original Carrie Ruud 2013 and Roger Chamberlain 2022 policy site statements
+
+# #864 historical RESEARCH ONLY. Check original full LRL Senate service,
+# original 2013/2022 first-party pages and whole independent Wayback CDX.
+# Ruud 2013 site carries post-2012 election copy and is NOT a 2012 forecast
+# source. Chamberlain 2022 home explicitly seeks Senate SD36 election,
+# but his separately original /legislative-priorities/ is a senator-owned
+# issues page; reports of passed bills / past votes are unverified self-claims.
+# Never count third-party independent expenditure as candidate authored.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-ruud-chamberlain-26-historical-first-party-exact-site-excerpts.yml
+      - data/evaluation/senate-ruud-2013-chamberlain-2022-original-26-exact-policy-excerpts-v1.json
+      - src/evidence/senate-ruud-2013-chamberlain-2022-26-original-excerpts-proof.ts
+      - scripts/audit-ruud-2013-chamberlain-2022-26-original-policy-excerpts-offline.ts
+      - tests/senate-ruud-2013-chamberlain-2022-26-authenticated-original-policy-excerpts.test.ts
+      - docs/SENATE_2013_RUUD_2022_CHAMBERLAIN_26_ORIGINAL_POLICY_EXCERPTS.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  independently-prove-26-actual-serving-senators-original-full-page-excerpts:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-ruud-2013-chamberlain-2022-original-26-exact-platform-excerpts-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen entire original full official MN LRL actually-serving state Senate directory + independent UTC SHA receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/complete-independent-actual-senate-service
+      - name: Reopen all TEN whole original 2013 Ruud and 2022 Chamberlain candidate / senator HTML bodies and original acquisition receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38163386171
+          name: ruud-2013-chamberlain-2022-ten-exact-wayback-index-original-html-v1
+          github-token: ${{ github.token }}
+          path: original/complete-ten-historical-first-party-html
+      - name: Reopen BOTH entire independent original 2012-2022 Wayback CDX JSON source indexes, not just quote leads
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38162916977
+          name: ruud-chamberlain-2012-2022-original-historical-first-party-campaign-html-v1
+          github-token: ${{ github.token }}
+          path: original/complete-original-two-independent-cdx
+      - name: Check official actual Senate service, all 10 first-party HTML CDX SHA1, selected campaign issue sections and 26 exact excerpts offline
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/complete-independent-actual-senate-service -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/complete-independent-actual-senate-service -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$gov" && test -n "$receipt"
+          test "$(dirname "$gov")" = "$(dirname "$receipt")"
+          node --import tsx scripts/audit-ruud-2013-chamberlain-2022-26-original-policy-excerpts-offline.ts \
+            --entire-original-mn-lrl-actual-senate-service-html "$gov" \
+            --official-original-government-utc-sha-receipt "$receipt" \
+            --original-ten-historical-senator-site-html-dir original/complete-ten-historical-first-party-html \
+            --original-two-independent-wayback-cdx-json-dir original/complete-original-two-independent-cdx \
+            --output original/ruud-2013-chamberlain-2022-all-original-26-exact-site-quote-proof.json
+      - name: Retain research-only independently verified candidate original historical website short quote proof
+        uses: actions/upload-artifact@v6
+        with:
+          name: ruud-chamberlain-2013-2022-26-original-candidate-policy-exact-source-proofs-v1
+          path: original/ruud-2013-chamberlain-2022-all-original-26-exact-site-quote-proof.json
+          if-no-files-found: error
+          retention-days: 30
