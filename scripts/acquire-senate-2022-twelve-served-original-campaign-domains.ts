@@ -110,7 +110,7 @@ export function twelve2022DomainArchiveIndexUrl(domain:string){
 }
 function rankSourcePagePath(path:string):number{
  const p=path.toLowerCase().replace(/\/+$/,'')||'/';
- if(/^\/(?:issues?(?:-[a-z0-9]+)?|priorities(?:-[a-z0-9]+)?|platform(?:-[a-z0-9]+)?|polic(?:y|ies)|vision|legislative-issues|positions|our-issues|our-priorities)$/.test(p))return 0;
+ if(/^\/(?:issues?(?:-[a-z0-9]+)?|priorities(?:-[a-z0-9]+)?|platform(?:-[a-z0-9]+)?|polic(?:y|ies)|vision|legislative-issues|positions|our-issues|our-priorities)(?:\.html?)?$/.test(p))return 0;
  if(/\/(?:issues?|priorities|platform|polic(?:y|ies)|vision|our-issues)\/[a-z0-9_-]+$/.test(p))return 1;
  if(p==='/')return 2;
  if(/^\/(?:about|meet|bio|our-campaign|campaign|news|news-events|why-im-running|why-i-am-running)$/.test(p))return 3;
@@ -137,8 +137,9 @@ export function parseActualSenatorOriginal2022DomainCDX(
   try{original=exactHost(c.original,domain);}catch{continue;}
   if(c.capturedAt<FROM||c.capturedAt>=UNTIL
     ||c.statuscode!=='200'||!/^[A-Z2-7]{32}$/.test(c.digest)
-    ||/\.(?:js|css|png|jpe?g|webp|gif|svg|ico|woff2?|pdf|mp4|zip|eot)(?:$|\/)/i.test(original.pathname)
-    ||/^\/(?:wp-admin|wp-includes|wp-json|admin|cart|checkout|login)(?:\/|$)/i.test(original.pathname))
+    ||/\.(?:js|css|png|jpe?g|webp|gif|svg|ico|woff2?|pdf|mp4|zip|eot|txt|xml|json|map)(?:$|\/)/i.test(original.pathname)
+    ||/^\/(?:wp-admin|wp-includes|wp-json|wp-content|admin|cart|checkout|login|assets|plugins|_author)(?:\/|$)/i.test(original.pathname)
+    ||/\/(?:embed|donate|contact|volunteer|endorsements|subscribe)(?:\/|$)/i.test(original.pathname))
    continue;
   const id=c.original+'|'+c.timestamp+'|'+c.digest;
   if(unique.has(id))continue;
