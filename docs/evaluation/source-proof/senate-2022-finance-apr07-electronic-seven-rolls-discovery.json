@@ -108,7 +108,7 @@
     "printedNamedRollParagraphCount": 7,
     "distinctBills": 3,
     "ambiguousOrMissingAttendanceSections": 2,
-    "totalYesNoChoicesPrintedInText": 63,
+    "totalYesNoChoicesPrintedInText": 67,
     "printedExplicitAbsentChoiceTokens": 3,
     "sourceParagraphCountIsNotCertifiedDistinctVoteDenominator": true,
     "blankAbsentRowMayNotBeFilledFromRoster": true,
