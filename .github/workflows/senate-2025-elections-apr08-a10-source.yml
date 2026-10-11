@@ -1,0 +1,35 @@
+name: One-time original 2025 Elections April08 SF2384 A10 7-3-1 source check
+
+# Exact original LRL PDF with prior PDF/text sha; no DB, model or scheduler.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2025-elections-apr08-a10-source.yml
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-original-apr08-a10-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify exactly one previous original Apr08 PDF binary/text and A10 motion section
+        run: |
+          node --import tsx scripts/review-senate-2025-elections-apr08-a10-original.ts \
+            --output artifacts/apr08-a10/senate-2025-apr08-sf2384-a10-7-3-1-source.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2025-apr08-original-sf2384-a10-source
+          path: artifacts/apr08-a10/senate-2025-apr08-sf2384-a10-7-3-1-source.json
+          retention-days: 30
+          if-no-files-found: error
