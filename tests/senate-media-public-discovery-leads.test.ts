@@ -26,6 +26,11 @@ type PublicLead = {
   directQuoteHumanVerified:boolean;
   issueStanceInferred:boolean;
   urlInsideCurrentSeedPrefix:boolean;
+  sourceResearchCheckedOn?:string;
+  memberEverServedSenateVerified?:boolean;
+  officialSenateServiceStart?:string;
+  officialServiceSource?:string;
+  senateMemberOnDisplayedPublicationDay?:boolean;
 };
 type Ledger = {
   version:string;
@@ -52,7 +57,7 @@ test('curated publicly observed leads cover all five study years, two publishers
   assert.equal(data.sourceUniverseCompletenessKnown,false);
   assert.equal(data.publisherYearSlotsInOriginal44SeedReview,220);
   const leads=data.selectedNonExhaustiveArticleLeads;
-  assert.ok(leads.length>=14);
+  assert.equal(leads.length,22);
   assert.equal(new Set(leads.map(x=>x.id)).size,leads.length);
   assert.equal(new Set(leads.map(x=>x.livePageUrl)).size,leads.length);
   assert.deepEqual([...new Set(leads.map(x=>x.publisher))].sort(),[
@@ -73,7 +78,7 @@ test('the live publication day and senator-name leads never imply archived evide
     assert.ok(item.searchTopicOnly.length>2);
     assert.ok(item.namedSenatorLeadsForManualReview.length>0);
     assert.ok(item.namedSenatorLeadsForManualReview.every(name=>
-      /^[A-Z][A-Za-z .'-]* [A-Z][A-Za-z .'-]*$/.test(name)));
+      /^\p{Lu}[\p{L} .'-]* \p{Lu}[\p{L} .'-]*$/u.test(name)));
     assert.ok(expectedNames.has(item.publisher));
     const seed=seeds.get(item.seedId);
     assert.ok(seed && seed.publisher===item.publisher && seed.prefix===true);
@@ -103,7 +108,7 @@ test('the live publication day and senator-name leads never imply archived evide
 test('article-level Reformer /briefs/ links expose a deterministic archive seed-prefix gap',()=>{
   const source=data.selectedNonExhaustiveArticleLeads;
   const outside=source.filter(x=>!x.urlInsideCurrentSeedPrefix);
-  assert.equal(outside.length,4);
+  assert.equal(outside.length,10);
   assert.equal(data.seedPrefixDiscoveryComparison.outsideSeedPrefixLeadCount,outside.length);
   assert.deepEqual(data.seedPrefixDiscoveryComparison.publisherSeedsChecked,[
     'minnesota-reformer-article-archive','mpr-news-story-archive',
@@ -114,10 +119,39 @@ test('article-level Reformer /briefs/ links expose a deterministic archive seed-
     assert.ok(new URL(item.livePageUrl).pathname.startsWith('/briefs/'));
     assert.equal(item.livePageUrl.startsWith('https://minnesotareformer.com/202'),false);
   }
-  assert.ok(new Set(outside.map(x=>Number(x.publicationDayDisplayedOnPublicPage.slice(0,4)))).size>=2);
+  assert.deepEqual([...new Set(outside.map(x=>Number(x.publicationDayDisplayedOnPublicPage.slice(0,4))))].sort(),[2021,2022,2023,2024,2025]);
   assert.ok(data.seedPrefixDiscoveryComparison.criticalLimitation.includes('unknown'));
   // This audit DOES NOT change production ingestion seeds or make an all-media census.
   assert.ok(LOCAL_TRADE_NEWS_SEEDS.some(seed=>
     seed.id==='minnesota-reformer-article-archive'
     && seed.url==='https://minnesotareformer.com/202'));
 });
+
+
+test('new 2022–2025 publisher leads have dated 2026 research observations without historical availability claims',()=>{
+  const added=data.selectedNonExhaustiveArticleLeads.filter(x=>x.sourceResearchCheckedOn);
+  assert.equal(added.length,8);
+  assert.ok(added.every(x=>x.sourceResearchCheckedOn==='2026-10-10'));
+  assert.ok(added.every(x=>x.archiveCapturePublicByVerified===false
+    && x.originalArchivedHttpBytesHashVerified===false
+    && x.historicalForecastEligibilityProven===false
+    && x.sourceSeenInVotePredictExport==='unknown_not_reconciled'));
+  assert.ok(added.some(x=>x.namedSenatorLeadsForManualReview.includes('Melisa López Franzen')));
+  assert.ok(added.filter(x=>x.livePageUrl.includes('/briefs/')).length===6);
+});
+
+test('2025-04-30 Heintzeman discovery is ever-served only, not an April 30 incumbent quote',()=>{
+  const row=data.selectedNonExhaustiveArticleLeads.find(x=>
+    x.id==='mn-reformer-2025-special-election-brief');
+  assert.ok(row);
+  assert.equal(row.publicationDayDisplayedOnPublicPage,'2025-04-30');
+  assert.deepEqual(row.namedSenatorLeadsForManualReview,['Keri Heintzeman']);
+  assert.equal(row.memberEverServedSenateVerified,true);
+  assert.equal(row.officialSenateServiceStart,'2025-05-06');
+  assert.ok(row.officialSenateServiceStart>row.publicationDayDisplayedOnPublicPage);
+  assert.equal(row.officialServiceSource,'https://www.lrl.mn.gov/timecapsule/session?lang=en');
+  assert.equal(row.senateMemberOnDisplayedPublicationDay,false);
+  assert.equal(row.membershipOnPublicationDateVerified,false);
+  assert.equal(row.directQuoteHumanVerified,false);
+});
+
