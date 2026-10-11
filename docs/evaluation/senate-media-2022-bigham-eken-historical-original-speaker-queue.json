@@ -1,0 +1,39 @@
+{
+  "version": "senate-media-2022-bigham-eken-original-archived-two-speakers-v1",
+  "originalLeadId": "public-2022-bigham-eken-separated",
+  "originalSourceUrl": "https://senatedfl.mn/senators-karla-bigham-and-kent-eken-named-senate-dfl-whips-for-2022-legislative-session/",
+  "originalPublisher": "Minnesota Senate DFL",
+  "publisherDisplayedDay": "2022-01-31",
+  "originalFirstPostingClockVerified": false,
+  "exactArchiveUtcVersions": [
+    "2022-03-11T19:51:03Z",
+    "2022-06-29T12:45:13Z"
+  ],
+  "twoIndividualsInOnePublisherArticle": true,
+  "independentOriginalAudioCompared": false,
+  "originalBodyShaProofManifest": "docs/evaluation/senate-media-2021-25-broader-25-original-public-archive-receipts-20261011.json",
+  "sourceDiscoveryLedger": "docs/evaluation/senate-media-2021-25-public-broader-source-discovery.json",
+  "cues": [
+    {
+      "id": "bigham-2022-whip-individual-statement",
+      "speaker": "Karla Bigham",
+      "officialSenateService": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15281",
+      "shortOriginalPublisherTextCue": "I look forward to using this position",
+      "currentPublisherAttribution": "said Senator Karla Bigham",
+      "originalSpokenRecordingAuthenticated": false,
+      "senatorQuotedWordsHumanApproved": false
+    },
+    {
+      "id": "eken-2022-whip-individual-statement",
+      "speaker": "Kent Eken",
+      "officialSenateService": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10764",
+      "shortOriginalPublisherTextCue": "As a lifelong resident of Western Minnesota",
+      "currentPublisherAttribution": "said Senator Kent Eken",
+      "originalSpokenRecordingAuthenticated": false,
+      "senatorQuotedWordsHumanApproved": false
+    }
+  ],
+  "historicalSourceNotARecordedVote": true,
+  "twoOriginalPageVersionsDoNotProveDisplayedFirstPublishClock": true,
+  "noPrivateSourceDatabaseOrOriginalAudioUsed": true
+}
