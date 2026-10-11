@@ -1,0 +1,101 @@
+# Minnesota 2021–2025: independent public reporting discovery + existing archive exact-text continuation
+
+**Issue #987 (public historical state senator media remarks only); gap tracking #946.** Both projects and artifacts remain PUBLIC source-only; do not access VotePredict private sources, legislative vote classifications, prediction features, production seeds, or models.
+
+## New source discovery: 15 independently reported newsroom articles
+
+These are **15 additional original Minnesota Reformer publisher URL leads, three per displayed year 2021–2025**, disjoint from previously selected 31 MPR/Reformer URLs, 18 caucus/interview URLs and 25 later caucus/Reformer URLs. This is an intentionally curated selection, **not** exhaustive 2021–25 publisher articles, all politicians, or senator-year media coverage. **21 separately named state-senator reported speech candidates** occur across the 15 webpages: 5 in 2021, 4 in 2022, 3 in 2023, 6 in 2024, 3 in 2025. See the [machine-readable source and serving-senator ledger](senate-media-2021-25-further-independent-reporting-15-leads.json).
+
+The journalist's actual reported speaker quote can be an interview, news conference, recorded-in-print floor statement, committee question, public email/statement quoted by a journalist, or a Capitol rally speech. **Those genres are not interchangeable with original audio or actual individual committee/floor votes.** It is particularly important to distinguish Senate speakers from House members, governors, former senators, and subjects of news reports. Alice Mann began Senate service January 2023, despite earlier House service; Paul Gazelka and Michelle Benson were sitting state senators when quoted during the 2022 gubernatorial campaign.
+
+| Publisher displayed day | Distinct original independent newsroom article | Named serving state senators with reporter attribution type | Context / exclusion |
+| --- | --- | --- | --- |
+| 2021-01-22 | [clean cars](https://minnesotareformer.com/2021/01/22/senate-gop-leader-says-mpca-commissioner-could-face-removal-over-proposed-clean-car-rule/) | [Paul Gazelka](https://www.lrl.mn.gov/legdb/fulldetail?ID=12263) (interview); [Susan Kent](https://www.lrl.mn.gov/legdb/fulldetail?ID=15384) (quoted report) | Reporter interviews Gazelka; Kent independently quoted; Steve Cwodzinski bill mention is contextual |
+| 2021-07-02 | [commissioners](https://minnesotareformer.com/2021/07/02/senate-gop-will-hold-confirmation-hearings-on-walz-commissioners-as-special-session-continues-indefinitely/) | [Michelle Benson](https://www.lrl.mn.gov/legdb/fulldetail?ID=15322) (reported floor speech); [Susan Kent](https://www.lrl.mn.gov/legdb/fulldetail?ID=15384) (public statement) | Benson floor remarks and Kent separate statement; Gazelka mentioned contextually |
+| 2021-08-25 | [line3](https://minnesotareformer.com/2021/08/25/2000-rally-against-line-3-at-state-capitol/) | [Mary Kunesh](https://www.lrl.mn.gov/legdb/fulldetail?ID=15466) (reported capitol rally speech) | Kunesh direct rally speech; other Indigenous advocates are distinct speakers |
+| 2022-02-14 | [curriculum](https://minnesotareformer.com/2022/02/14/senate-gop-bills-would-require-minnesota-teachers-to-disclose-curriculum-to-parents/) | [Paul Gazelka](https://www.lrl.mn.gov/legdb/fulldetail?ID=12263) (reported news conference); [Michelle Benson](https://www.lrl.mn.gov/legdb/fulldetail?ID=15322) (reported news conference) | Two sitting senators each independently reported despite governor candidacies |
+| 2022-06-15 | [ethics](https://minnesotareformer.com/2022/06/15/senate-ethics-subcommittee-votes-to-continue-investigation-of-sen-omar-fateh/) | [David Osmek](https://www.lrl.mn.gov/legdb/fulldetail?ID=15385) (reported subcommittee speech) | Osmek quoted; Omar Fateh subject of reporting not source of these quoted words |
+| 2022-06-16 | [special session](https://minnesotareformer.com/2022/06/16/no-special-legislative-session-no-tax-cuts-no-extra-education-spending/) | [Jeremy Miller](https://www.lrl.mn.gov/legdb/fulldetail?ID=15335) (quoted public statement) | Miller statement reported secondarily, not directly interviewed; Scott Jensen is former senator |
+| 2023-01-03 | [license rally](https://minnesotareformer.com/2023/01/03/give-drivers-licenses-to-minnesotas-undocumented-residents-advocates-say/) | [Zaynab Mohamed](https://www.lrl.mn.gov/legdb/fulldetail?ID=15588) (reported news conference) | First-term serving senator directly attributed; Champion mentioned in context |
+| 2023-01-06 | [family leave](https://minnesotareformer.com/briefs/dfl-launches-effort-for-minnesota-paid-family-leave-program/) | [Alice Mann](https://www.lrl.mn.gov/legdb/fulldetail?ID=15525) (reported news conference) | Alice Mann was a senator in 2023; House member Ruth Richardson excluded |
+| 2023-05-21 | [rideshare floor](https://minnesotareformer.com/2023/05/21/minnesota-legislature-approves-minimum-wage-for-uber-and-lyft-drivers/) | [Omar Fateh](https://www.lrl.mn.gov/legdb/fulldetail?ID=15559) (reported floor speech) | News reporting of a floor remark does not prove individually recorded vote |
+| 2024-02-12 | [session opening](https://minnesotareformer.com/2024/02/12/era-mardi-gras-and-apple-blondies-day-one-of-the-2024-minnesota-legislative-session/) | [Erin Murphy](https://www.lrl.mn.gov/legdb/fulldetail?ID=15284) (reported news conference) | Murphy separately quoted; House members and Governor Walz excluded |
+| 2024-02-21 | [gun proposals](https://minnesotareformer.com/2024/02/21/minnesota-dems-offer-modest-gun-control-agenda-fearing-election-backlash/) | [John Marty](https://www.lrl.mn.gov/legdb/fulldetail?ID=10403) (interview); [Jen McEwen](https://www.lrl.mn.gov/legdb/fulldetail?ID=15537) (interview) | Marty and McEwen each separately quoted; correction on Seeberger name in current article |
+| 2024-04-19 | [housing zoning](https://minnesotareformer.com/2024/04/19/housing-bills-falling-off-legislative-agenda/) | [Steve Drazkowski](https://www.lrl.mn.gov/legdb/fulldetail?ID=15286) (reported committee question); [Heather Gustafson](https://www.lrl.mn.gov/legdb/fulldetail?ID=15582) (reported committee speech); [Lindsey Port](https://www.lrl.mn.gov/legdb/fulldetail?ID=15557) (reported committee speech) | Three speaker turns in one article; committee questions or remarks are not verified individual votes |
+| 2025-04-25 | [federal cuts](https://minnesotareformer.com/2025/04/25/minnesota-democrats-look-for-money-to-stave-off-federal-cuts-and-other-labor-news/) | [Erin Maye Quade](https://www.lrl.mn.gov/legdb/fulldetail?ID=15473) (reported news conference) | Maye Quade quoted; House representative Emma Greenman not senator |
+| 2025-05-06 | [sick leave](https://minnesotareformer.com/2025/05/06/blue-dog-democrats-vote-to-roll-back-paid-sick-leave-for-workers-at-small-farms-and-businesses/) | [Grant Hauschild](https://www.lrl.mn.gov/legdb/fulldetail?ID=15577) (reported floor debate) | Hauschild quote not a signed proof of article-described recorded floor vote |
+| 2025-06-30 | [solar](https://minnesotareformer.com/2025/06/30/minnesota-solar-industry-avoided-legislative-defeat-but-next-session-and-federal-policy-changes-loom/) | [Nick Frentz](https://www.lrl.mn.gov/legdb/fulldetail?ID=15481) (interview) | Frentz quote and earlier 9-2 committee vote described, no personal vote evidenced |
+
+### First-pass public original HTML acquisition
+
+The [15-source original Wayback probe](../../src/evidence/senate-media-independent-reporter-15-wayback.ts) and [its restricted public-only workflow](../../.github/workflows/senate-media-independent-reporter-15-wayback.yml) query CDX exact original URLs, with **2021–2025**, up to 20 indexed historic versions, at most two exact original `id_` HTTP capture responses per URL, bounded 2.5 MB streaming per original, no HTTP redirects, and indexed original raw SHA-1 match before retaining raw SHA-256, HTTP bytes and capture UTC. It does not persist original article HTML or original interview audio. A malformed CDX response or original replay failure means **unverified**, not a historically missing article.
+
+The pilot is explicitly [2021 Paul Gazelka + Susan Kent clean-cars interview, 2022 Paul Gazelka + Michelle Benson school-curriculum news conference, 2023 Alice Mann family leave, 2024 John Marty + Jen McEwen interviews on firearms, and 2025 Nick Frentz solar coverage]. All 15 are probed automatically on the exact owner PR head. These are distinct publisher stories, not per-senator duplicate article counts.
+
+Manual run:
+
+    node --import tsx scripts/probe-senate-media-independent-reporter-15-wayback.ts --scope all --replay-count 2 --output artifacts/independent-reporter-15-original-proofs.json
+
+## Second parallel track: eight previously SHA-pinned older Senate DFL originals
+
+The previous [25-source original archive proof receipts](senate-media-2021-25-broader-25-original-public-archive-receipts-20261011.json) already authenticated *specific capture versions* of eight more original Senate DFL statements. [The new eight-cue queue](senate-media-2021-25-eight-further-original-phrase-queue.json) and [SHA revalidation tool](../../src/evidence/senate-media-eight-early-original-text-audit.ts) repeat exact original indexed SHA-1, raw SHA-256 and byte length BEFORE looking for any **short** current-publisher wording cue in visible HTML. It saves only source capture metadata and presence/absence/unknown status. Named speaker proximity is a weak reporter/source label clue, not a speaker's complete verbatim turn approval.
+
+These eight one-cue original sources represent seven distinct serving senators:
+
+- **2021 Patricia Torres Ray retirement statement:** Nov 16 original archived UTC capture; page today identifies her as speaker.
+- **2022 Patricia Torres Ray school shooting response:** first verified March 11 capture, **not** Feb 2 initial-publisher-time proof.
+- **2023 Erin Murphy PRO Act public statement:** first authenticated March 29 body; publisher's “votes yes” page headline is **not independently verified recorded member choice**.
+- **2024 Nicole Mitchell tax statement:** first archived March 2. A later historical resignation or other facts must not be backdated.
+- **2024 Jen McEwen Prove It First reaction:** first archived April 22. The current page displays Feb 26 and Mar 1 dates, neither original posting time authenticated by archive.
+- **2024 Foung Hawj transportation-equity publisher statement:** first archived March 24. A released statement **after** a committee presentation is not authenticated video/transcript of that presentation.
+- **2024 Judy Seeberger EMS statement:** first archived June 21. The release names additional senators for task-force work **contextually**; they do not become individually quoted source speakers, and bill passage is not a personal recorded vote.
+- **2025 Doron Clark University student/ICE response:** Mar 31 archive UTC body, between the currently visible March 28 and April 1 dates; the March 31 capture can establish page content by the capture instant, but not the site's original authoring or later edits.
+
+Manual run:
+
+    node --import tsx scripts/audit-senate-media-eight-early-original-phrases.ts --output artifacts/senate-media-eight-early-original-phrases.json
+
+**Strict evidence distinctions:** URL discovery ≠ historical original replay. Historical exact raw body ≠ original audio. Text fragment found in specific original HTML ≠ fully human-approved speaker quotation. Journalist reporting a politician's assertion ≠ actual recorded vote. Original archive capture ≠ first publisher post. One journalist article with multiple quoted senators ≠ multiple distinct articles.
+
+No media publisher coverage denominator or statewide collection completeness is currently established. Keep #987 and #946 open and parent owner-closed #912 closed.
+
+## Actual original public source studies: successes and historical version differences
+
+### 15 new independent journalist articles: authentic 21 historical original bodies
+
+Live [independent original Wayback study #38163132356](https://github.com/killjoy00/votepredict/actions/runs/38163132356) succeeded on head cb514c275de8a9484cb22055c8cdc3cecf162355. Original downloaded artifact ID 11710678402, ZIP SHA256 d45e91cf864c556ff504a67b9d5562f699205d4a963cc2a6852d1c336a43b1d1 and exact decoded 33,396-byte JSON SHA256 e1593dc7529142db096c94a8c9884e5d640e99e1fc1d73d29a31b3bfd3a3f0a2. Across the *selected* 15 original Reformer URLs: 11 indexed, four CDX index unavailable/invalid (UNKNOWN, not absent articles), zero CDX empty, 22 exact original raw HTTP replay attempts, **21 actual indexed-SHA1 matched original HTML body versions across 11 source article URLs**. One original January 6 2023 Alice Mann paid-leave replay was redirected/refused, but a later January 7 original was exactly matched. [21 permanent timestamped SHA1+raw SHA256 original historical capture receipts](senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json) preserve per-version digests, body bytes, index outcomes and exclusions.
+
+| Displayed year | Selected independent articles | Source URLs with original SHA-matched HTML |
+| --- | ---: | ---: |
+| 2021 | 3 | 2 |
+| 2022 | 3 | 2 |
+| 2023 | 3 | 3 |
+| 2024 | 3 | 3 |
+| 2025 | 3 | 1 |
+| **Sample total** | **15** | **11** |
+
+Especially valuable authentic original captures: Jan 22 2021 Gazelka/Kent clean-car reporter interview source, Feb14 2022 Gazelka/Benson curriculum source, Feb21 2024 Marty/McEwen gun control interviews, Apr19 2024 housing reporter page containing separate Drazkowski/Gustafson/Port remarks. All are original HTML existence and digest proofs, not yet all historically verified individual speech passages or original recordings. No denominator for total publisher output.
+
+### Eight previously SHA-pinned senator original statements: 8 of 8 text fragments found
+
+[First actual eight-source historical text audit #38163132336](https://github.com/killjoy00/votepredict/actions/runs/38163132336) succeeded. Downloaded original artifact ID 11711032822 ZIP SHA256 74c6fdd59ace1197c41e30f5722eda75c32bdf4c629cd2467939f51fc79e4b3a and decoded 10,675-byte JSON SHA256 6db398027bc9488080ea0d507e3ef9d23520d8848af3ef41d05b067f42b8e026. Eight exact previously indexed-SHA1 and raw-SHA256 authenticated original body replays all matched. Eight current-site brief individual statement text cues were found in the matching historical visible original HTML. Six of eight preceding-600-rendered-character name-proximity clues positive. Negative proximity for 2021 Patricia Torres Ray retirement and 2024 Judy Seeberger EMS does NOT negate source attribution, but neither is a human-confirmed speaker quote or original recording. [Permanent eight-source historical text and source SHA receipts](senate-media-2021-25-eight-early-original-speaker-phrase-receipts-20261011.json) preserve all statuses.
+
+### NEW 2021/2024 multiple-senator journalist article passages: 7 of 8 historical fragments found
+
+[Public original reporter speaker-text audit #38163650683](https://github.com/killjoy00/votepredict/actions/runs/38163650683) succeeded on 9e28f59c7d61d4e3fdf39fdfab72d9c587c7f268. Downloaded artifact ID 11711650924 ZIP SHA256 d06c4efd7a698a3bf55084ffda2c9cee1d05ceaa174d9becbc49c813ba1338c0 and decoded 7,966-byte JSON SHA256 93435d3946c60ce4f8cabfea0503e1af130aa4c21ea897af5533e74447ba8fd5. Four original HTML body versions from TWO original independent newsroom URLs reverified against indexed SHA1 plus pinned raw SHA256 plus original byte count. **7 of 8** short independently attributed senator text cues FOUND; one specifically selected Susan Kent clean-car fragment NOT FOUND in the exact Jan22 2021 original, while it IS present in the Feb03 2021 original. Paul Gazelka original quote fragment present in both; separately named John Marty and Jen McEwen gun-report fragments found in BOTH same-day Feb21 2024 archive versions. **5 of 8** weak nearby speaker-name heuristic checks positive. [Permanent dual-senator journalist original proof receipts](senate-media-2021-and-2024-independent-dual-speaker-historic-text-receipts-20261011.json) capture exact UTC, original body SHA256, quote snippet presence and local-label uncertainty.
+
+The Kent difference is an **exact phrase test in one verified January original**. Do not infer Kent did not speak before February, when a journalist first inserted text, whether some other Kent words existed in the early version, or original audio content. A contemporary archived article never automatically proves authoring time, human whole-quote approval, audio, or recorded individual votes.
+
+### Remaining public research gaps
+
+Four new independent journalist URL CDX queries were unavailable (2021 commissioner confirmations; 2022 Jeremy Miller special session; 2025 Maye Quade labor news; 2025 Grant Hauschild sick-leave coverage) and need retries or alternative original URLs. The previous Reformer /briefs/ possible alias relationships are still unproved. Human-approved individual full quotations remain ZERO in these automated studies; original audio was not inspected and no statewide/publication-year media census has been established. Do not access private database, votes, production collectors or model features. Keep #987/#946 open, #912 owner-closed.
+
+### Final-head independent recheck: 24 original HTTP archive bodies across 12/15 reporter URLs
+
+The independent final-commit public Wayback run [#38163950720](https://github.com/killjoy00/votepredict/actions/runs/38163950720) **SUCCEEDED** on source SHA c01f33a303108175651a1314ed79ca92b285765d. Its downloaded artifact ID 11711546832 has ZIP SHA256 8ff45617a89410995e568fedd34b243b7947d95f93deb0cf8eaf186b5c5b3a19 and decoded 34,993-byte JSON SHA256 7d0ab414c73f7f5cfe3c87f973e02b383acd0a0e2094dc4c6121d7c418d5a298.
+
+**All 21 first-run original body SHA256 values and original raw byte lengths independently matched again**. The repeat additionally recovered THREE historical HTTP body versions: the previously redirected Jan 6 2023 Alice Mann family-leave article original (SHA256 d6d8e25c184613b6725c850a8819ab0d47f6b879fc5c13bfa47523c7d4785be1, 122992 bytes), plus **two April 25 2025 historical original versions of Erin Maye Quade newsroom reporting** (SHA256 3a91a6e66be3296bdf4253c909ea145a82a2c629c55f1a190f54a97dd0010ca2 and 8e344277eeb6c9d30f17c40938e51057ce5b4d8948b399e48c601799ab014577, 146073 bytes each). All three were indexed SHA1-consistent originals, NOT current-only quotes.
+
+Across the 15 selected article URLs the final independent run therefore records **12 indexed candidates and 3 CDX unavailable/invalid statuses, 24 exact replay attempts, 24 SHA1-consistent raw original HTTP body versions across 12 distinct reporter article URLs**. The remaining three unknown-index articles are 2021 commissioner confirmations (Michelle Benson/Susan Kent), 2022 Jeremy Miller special session coverage, and 2025 Grant Hauschild sick leave reporting. Missing CDX is not an absent historical article. Original audio, initial publisher authoring clocks, full reporter-quote human approvals, and individual recorded legislative votes remain unverified.
+
+The [same permanent 15-source historical raw SHA manifest](senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json) records the original first-run 21 matched body receipts, final independently repeated 21 proof flag, these three new indexed-SHA1/raw SHA256/UTC/bytes receipts, both Actions artifacts' exact ZIP/JSON digests, and three remaining index uncertainties. Do not conflate 24 capture bodies with 24 unique articles or a complete publication census.

@@ -1,0 +1,135 @@
+{
+  "version": "senate-media-2021-25-eight-original-speaker-phrase-replay-receipts-v1",
+  "observedOn": "2026-10-11",
+  "provenance": "8 exact 2021-2025 previously indexed SHA1 and raw SHA256 verified Minnesota Senate DFL public original website archived versions, one per selected URL",
+  "sourceOriginalDigestManifest": "docs/evaluation/senate-media-2021-25-broader-25-original-public-archive-receipts-20261011.json",
+  "selectedCueQueue": "docs/evaluation/senate-media-2021-25-eight-further-original-phrase-queue.json",
+  "publicFirstRun": {
+    "id": 38163132336,
+    "workflow": "Senate media eight early historical original speaker passages",
+    "sourceSha": "cb514c275de8a9484cb22055c8cdc3cecf162355",
+    "status": "success",
+    "artifactId": 11711032822,
+    "artifactName": "senate-media-eight-early-original-phrase-receipts",
+    "exactDownloadedZipSha256": "74c6fdd59ace1197c41e30f5722eda75c32bdf4c629cd2467939f51fc79e4b3a",
+    "exactJsonSha256": "6db398027bc9488080ea0d507e3ef9d23520d8848af3ef41d05b067f42b8e026",
+    "decodedJsonBytes": 10675
+  },
+  "totals": {
+    "distinctOriginalPublisherArticleUrls": 8,
+    "verifiedOriginalIndexedSha1AndPinnedRawSha256BodyVersions": 8,
+    "shortTextCueHistoricallyPresent": 8,
+    "shortTextCueNotFoundInHistoricallyVerifiedBody": 0,
+    "rawOriginalReplayFailuresOrUnverified": 0,
+    "speakerNameInPrior600RenderedChars": 6,
+    "nameProximityNegativeButTextPresent": 2,
+    "originalAudioVersionsIndependentlyAuthenticated": 0,
+    "fullVerbatimSenatorIndividualQuotesHumanApproved": 0,
+    "exactPublisherInitialPostClocksAuthenticated": 0,
+    "actualRecordedIndividualMemberVoteChoicesEstablished": 0
+  },
+  "authenticOriginalPageCueObservations": [
+    {
+      "sourceId": "public-2021-torres-ray-retirement",
+      "archiveUtc": "2021-11-16T19:51:35Z",
+      "originalRawSha256": "ea0d1e55c13bf0adb7d99fa0e2ba4abe7c0acedaaa78b4493e460a70d16e839b",
+      "archiveIndexedSha1AndOriginalSha256BothReverified": true,
+      "cueShortTextPresentInArchivedOriginalVisibleHtml": true,
+      "senatorNamePrior600VisibleChars": false,
+      "senatorQuotationManuallyApproved": false,
+      "spokenOriginalAudioCompared": false,
+      "memberRecordedVoteVerified": false
+    },
+    {
+      "sourceId": "public-2022-torres-ray-richfield",
+      "archiveUtc": "2022-03-11T18:20:01Z",
+      "originalRawSha256": "e557389d08602670e3053299b9b0407faa034412935ffabff822d87d642f1d43",
+      "archiveIndexedSha1AndOriginalSha256BothReverified": true,
+      "cueShortTextPresentInArchivedOriginalVisibleHtml": true,
+      "senatorNamePrior600VisibleChars": true,
+      "senatorQuotationManuallyApproved": false,
+      "spokenOriginalAudioCompared": false,
+      "memberRecordedVoteVerified": false
+    },
+    {
+      "sourceId": "public-2023-murphy-reproduction",
+      "archiveUtc": "2023-03-29T03:13:14Z",
+      "originalRawSha256": "96242289cd00e1a3c4d9f595d81b93739e2f7e7a5d75b9a4a972879624b5f9c4",
+      "archiveIndexedSha1AndOriginalSha256BothReverified": true,
+      "cueShortTextPresentInArchivedOriginalVisibleHtml": true,
+      "senatorNamePrior600VisibleChars": true,
+      "senatorQuotationManuallyApproved": false,
+      "spokenOriginalAudioCompared": false,
+      "memberRecordedVoteVerified": false
+    },
+    {
+      "sourceId": "public-2024-mitchell-tax",
+      "archiveUtc": "2024-03-02T15:41:08Z",
+      "originalRawSha256": "2b24252fb488f730d198bd49f4e85a4cfe527bd119fee881f6aad8fd6fc949d9",
+      "archiveIndexedSha1AndOriginalSha256BothReverified": true,
+      "cueShortTextPresentInArchivedOriginalVisibleHtml": true,
+      "senatorNamePrior600VisibleChars": true,
+      "senatorQuotationManuallyApproved": false,
+      "spokenOriginalAudioCompared": false,
+      "memberRecordedVoteVerified": false
+    },
+    {
+      "sourceId": "public-2024-mcewen-mining",
+      "archiveUtc": "2024-04-22T03:56:26Z",
+      "originalRawSha256": "d2a3d97c9519fa64f219dbd8d45be0c4c98904bde749a6a0e3c385e9bde7a6b9",
+      "archiveIndexedSha1AndOriginalSha256BothReverified": true,
+      "cueShortTextPresentInArchivedOriginalVisibleHtml": true,
+      "senatorNamePrior600VisibleChars": true,
+      "senatorQuotationManuallyApproved": false,
+      "spokenOriginalAudioCompared": false,
+      "memberRecordedVoteVerified": false
+    },
+    {
+      "sourceId": "public-2024-hawj-transport",
+      "archiveUtc": "2024-03-24T19:01:09Z",
+      "originalRawSha256": "aa6da6e8722e33f2f692ba31bfd6699cf97768e74c788dbdb0786a75a3ad5743",
+      "archiveIndexedSha1AndOriginalSha256BothReverified": true,
+      "cueShortTextPresentInArchivedOriginalVisibleHtml": true,
+      "senatorNamePrior600VisibleChars": true,
+      "senatorQuotationManuallyApproved": false,
+      "spokenOriginalAudioCompared": false,
+      "memberRecordedVoteVerified": false
+    },
+    {
+      "sourceId": "public-2024-seeberger-ems",
+      "archiveUtc": "2024-06-21T20:28:16Z",
+      "originalRawSha256": "0624e6ff787ccc8f7d0370407db406bdbe89202343c29e60da6a269536119833",
+      "archiveIndexedSha1AndOriginalSha256BothReverified": true,
+      "cueShortTextPresentInArchivedOriginalVisibleHtml": true,
+      "senatorNamePrior600VisibleChars": false,
+      "senatorQuotationManuallyApproved": false,
+      "spokenOriginalAudioCompared": false,
+      "memberRecordedVoteVerified": false
+    },
+    {
+      "sourceId": "public-2025-clark-ice-student",
+      "archiveUtc": "2025-03-31T08:06:09Z",
+      "originalRawSha256": "06e86faf450ecb4250a37e959d6f3dab4b08921f7c7badaf4186624eb7a2aab1",
+      "archiveIndexedSha1AndOriginalSha256BothReverified": true,
+      "cueShortTextPresentInArchivedOriginalVisibleHtml": true,
+      "senatorNamePrior600VisibleChars": true,
+      "senatorQuotationManuallyApproved": false,
+      "spokenOriginalAudioCompared": false,
+      "memberRecordedVoteVerified": false
+    }
+  ],
+  "nameBeforeFragmentNotFoundButPhrasePresent": [
+    "public-2021-torres-ray-retirement",
+    "public-2024-seeberger-ems"
+  ],
+  "interpretationBoundaries": {
+    "absenceOfPriorNameProximityDoesNotProveAbsenceOfPublisherAttribution": true,
+    "quotePresenceInAuthenticHtmlDoesNotProveHumanSpeakerRecordedAudio": true,
+    "currentPublisherDateNotBackdatedToCaptureUTC": true,
+    "printedPublicSenatorStatementNotActualSenateFloorOrCommitteeVote": true,
+    "authoringFirstPostTimeUnknown": true,
+    "noOriginalHtmlOrAudioSaved": true,
+    "noPrivateSourcesDatabaseOrForecastDataRead": true,
+    "noStatewidePublisherArticleCoverageDenominator": true
+  }
+}
