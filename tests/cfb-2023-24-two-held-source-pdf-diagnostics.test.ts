@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {
  selectTwoHeldOfficialCfbSourceDocuments,heldOfficialSourceRef,
  analyzeHeldCfbSourceBinary,compareHeldCfbGetPost,
@@ -94,4 +95,47 @@ test('previously held Putnam original PDF index cannot be promoted to certified 
  assert.equal(result.independentOriginalPdfFirstPageCertified,false);
  assert.equal(result.rawReportTextPersisted,false);
  assert.equal(result.rawPdfBytesPersisted,false);
+});
+
+test('permanent held-source metadata and original CFB GET/POST corroboration never certify those PDFs',()=>{
+ const checkpoint=JSON.parse(readFileSync(P+
+   'cfb-2023-24-two-held-original-source-identity-diagnostic-checkpoint.json','utf8'));
+ const content=readFileSync(checkpoint.permanentStructuralMetadataLedger.path,'utf8');
+ const git=createHash('sha1')
+   .update('blob '+Buffer.byteLength(content,'utf8')+'\0')
+   .update(content).digest('hex');
+ assert.equal(git,checkpoint.permanentStructuralMetadataLedger.gitBlobSha);
+ assert.equal(checkpoint.independentReacquisition.officialGetRequestRetrievedTwoPdfBinaries,true);
+ assert.equal(checkpoint.independentReacquisition.allFourOfficialBinariesSameAsPriorSourcePdfs,true);
+ assert.equal(checkpoint.scope.actualPdfFinanceIdentityResolvedCount,0);
+ assert.equal(checkpoint.scope.legalFilingObligationDenominator,null);
+ const rows=content.trimEnd().split('\n').map(x=>x.split('|'));
+ assert.equal(rows.length,2);
+ assert.equal(content.endsWith('\n'),true);
+ const byId=new Map(rows.map(r=>[r[0],r]));
+ for(const t of target){
+   const r=byId.get(t.id);
+   assert.ok(r);
+   assert.equal(r.length,22);
+   assert.equal(r[1],t.actual2022ServingSenator);
+   assert.equal(r[2],String(t.district2022));
+   assert.equal(r[3],t.reg);
+   assert.equal(r[4],t.viewerSha256);
+   assert.equal(r[5],t.expectedPdfSha256);
+   assert.equal(r[6],String(t.expectedPdfBytes));
+   assert.equal(r[7],t.expectedCoverageStart);
+   assert.equal(r[8],t.expectedCoverageEnd);
+   assert.equal(r[9],t.knownBoardReceipt);
+   assert.equal(r[10],'true');assert.equal(r[11],'true');
+   assert.equal(r[12],'0');
+   assert.equal(r[13],'false');assert.equal(r[14],'true');
+   assert.equal(r[20],'false');
+   assert.equal(r[17],t.id.startsWith('17994:')?'false':'true');
+   assert.equal(r[18],t.id.startsWith('17994:')?'true':'false');
+   assert.ok(Number(r[19])>1000);
+ }
+ assert.equal(checkpoint.sourceHolds.length,2);
+ assert.ok(checkpoint.sourceHolds.every((x:{sourceHoldRetained:boolean})=>x.sourceHoldRetained));
+ assert.equal(checkpoint.strictLimits.noReportPdfTextOrDonorsPersisted,true);
+ assert.equal(checkpoint.strictLimits.keepIssue864Open,true);
 });
