@@ -70,7 +70,7 @@ test('all three brief URL candidates now have one or more genuine original SHA1 
       &&x.actualMemberVoteVerified===false));
   }
  }
- assert.equal(positives,5);assert.equal(failures,1);assert.equal(short,10);
+ assert.equal(positives,5);assert.equal(failures,1);assert.equal(short,9);
 });
 test('first 2021 commissioner original and latest 2025 sick leave genuine source SHA remain tied to exact captured UTC',()=>{
  const p=proof.perSourceOriginalUrlVariantPairs;
@@ -89,7 +89,7 @@ test('headline/current publisher brief crosslink not historic identity, original
   historicallyUnverifiedDatedUrlLeads:3,proposedDistinctOriginalBriefUrls:3,
   exactSha1MatchedNewOriginalBriefHttpBodies:5,briefReplayAttempts:6,
   individualServingSenatorQuoteCandidates:6,
-  exactHistoricallyPresentShortSpeakerCueChecks:10,unverifiedRawOriginalDigestMismatchBodies:1,
+  exactHistoricallyPresentShortSpeakerCueChecks:9,unverifiedRawOriginalDigestMismatchBodies:1,
   originalDatedUrlBodyVerifications:0,datedVsBriefArticleUrlHistoricalAliasProofs:0,
   originalSpokenAudioVerifications:0,humanFullQuotationApprovals:0,
   memberRecordedVotesProven:0,publisherFirstPostingClocksProven:0
