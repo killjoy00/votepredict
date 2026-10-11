@@ -66,6 +66,8 @@ async function pdfCalendar(year:2023|2024):Promise<Snapshot>{
  const threshold=originalCfbYearEndLegalReleaseThreshold(year),
   url=threshold.officialOriginalBoardCalendar;
  const {bytes,sha}=await bytesFromOriginalSource(url,true);
+ // pdf-parse can transfer/detach its Uint8Array input: fingerprint its size BEFORE parse.
+ const sourceByteCount=bytes.byteLength;
  const body=await pdfText(bytes);
  const goodTitle=/Campaign Finance (?:and )?Public Disclosure Board/i.test(body)
   &&/Campaign Finance Disclosure Calendar/i.test(body);
@@ -76,7 +78,7 @@ async function pdfCalendar(year:2023|2024):Promise<Snapshot>{
  const due=/January\s+31/i.test(body)
    &&body.includes(String(year+1))
    &&actualYear;
- return {sourceUrl:url,sourceSha256:sha,bytes:bytes.length,
+ return {sourceUrl:url,sourceSha256:sha,bytes:sourceByteCount,
    observedAt:new Date().toISOString(),sourceType:'official_board_calendar_pdf',
    titleMatched:goodTitle,exactYearEndReportDueMatched:due,
    exactCoveragePeriodMatched:coverage,
@@ -145,7 +147,9 @@ async function main(){
   fixedStatutoryDates:[originalCfbYearEndLegalReleaseThreshold(2023),
     originalCfbYearEndLegalReleaseThreshold(2024)],
   officialSourceAudit:{
-    mandatoryPrimarySourcesFullyVerified:mandatory.every(verified),
+    mandatoryPrimarySourcesFullyVerified:mandatory.every(verified)
+      &&records.every(x=>x.bytes!==null&&x.bytes>=300&&/^[a-f0-9]{64}$/.test(x.sourceSha256??'')),
+    originalSourceMetadataContainsVerifiedNonzeroByteSizes:records.every(x=>x.bytes!==null&&x.bytes>=300),
     original2023StatuteCopyIndependentlyRechecked:verified('revisor_10A20_2023'),
     sourceDocumentFailures:records.filter(x=>x.failureKind).map(x=>({role:x.role,kind:x.failureKind})),
     calendar2023HasExact2023YearEndReportAndCoveredPeriod:verified('official_calendar_2023'),
