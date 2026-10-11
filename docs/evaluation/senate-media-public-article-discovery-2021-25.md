@@ -1,6 +1,6 @@
 # 2021–2025 Minnesota Senate media: independent public article discovery
 
-**Track:** [#912](https://github.com/killjoy00/votepredict/issues/912), [#946](https://github.com/killjoy00/votepredict/issues/946). **Research check:** 2026-10-10. **Status:** **22 selected current-publisher URL leads** across 2021–2025, including **two unverified alias pairs** (thus not 22 demonstrated unique articles). No authenticated original Wayback article bytes, historical public-by dates, private source-document matches, or human-verified Senate quotations were obtained in this research.
+**Track:** [#912](https://github.com/killjoy00/votepredict/issues/912), [#946](https://github.com/killjoy00/votepredict/issues/946). **Research check:** 2026-10-10. **Status:** **23 selected current-publisher URL leads** across 2021–2025, including **three unverified alias pairs** (thus not 23 demonstrated unique articles). No authenticated original Wayback article bytes, historical public-by dates, private source-document matches, or human-verified Senate quotations were obtained in this research.
 
 Structured, offline-tested public ledger: [`senate-media-public-article-discovery-2021-25.json`](senate-media-public-article-discovery-2021-25.json). Its displayed publication date is a **publisher claim seen during present-day research**, not a contemporaneously authenticated release date. The research-check date proves only that the public lead was examined on 2026-10-10. Neither date establishes availability before a historical prediction cutoff. No private rows, original article body, speaker quote, stance, or source hash is published.
 
@@ -12,6 +12,7 @@ Eight new, publicly identified **URL leads**, six on `/briefs/` and two on dated
 | --- | --- | --- | --- |
 | 2022-01-26 | [GOP public-safety/tax/education agenda](https://minnesotareformer.com/briefs/senate-gop-legislative-agenda-get-tougher-on-crime-and-cut-state-taxes/) | Jeremy Miller; Roger Chamberlain | `/briefs/` seed-prefix exclusion |
 | 2022-03-22 | [DFL public-safety plan — brief](https://minnesotareformer.com/briefs/senate-dfl-outlines-500-million-public-safety-plan/) and [dated path](https://minnesotareformer.com/2022/03/22/senate-dfl-outlines-500-million-public-safety-plan/) | Melisa López Franzen; Bobby Joe Champion; Ron Latz; Warren Limmer | Same slug and displayed day, **candidate alias pair**; current brief request resolved to dated publisher path during research, not archived identity proof |
+| 2023-02-21 | [Driver-license Senate story — brief](https://minnesotareformer.com/briefs/minnesota-senate-expected-to-pass-bill-giving-drivers-licenses-to-undocumented-residents/) and [dated path](https://minnesotareformer.com/2023/02/21/minnesota-senate-expected-to-pass-bill-giving-drivers-licenses-to-undocumented-residents/) | Zaynab Mohamed | Same slug and publisher-displayed day: **candidate alias** only. Publisher now describes an early-Wednesday vote even though its displayed timestamp is Tuesday Feb. 21; official Revisor groups final passage under Feb. 21. Exact event/publication sequence unverified. |
 | 2022-04-25 | [Bipartisan Senate crime bill](https://minnesotareformer.com/briefs/senate-approves-tough-on-crime-bill-with-bipartisan-support/) | Jeremy Miller; Warren Limmer; Melisa López Franzen | `/briefs/` seed-prefix exclusion |
 | 2024-02-12 | [North Star Act/sanctuary state reporting](https://minnesotareformer.com/briefs/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/) | Grant Hauschild; Erin Murphy; Omar Fateh | `/briefs/` seed-prefix exclusion; do not misattribute House speaker remarks to senators |
 | 2025-04-30 | [SD6 special-election result](https://minnesotareformer.com/briefs/keri-heintzeman-wins-special-election-for-minnesota-senate-seat/) | Keri Heintzeman | She **later served** as senator but was **not yet sworn in** on the article's displayed date |
@@ -25,10 +26,14 @@ The existing `minnesota-reformer-article-archive` seed requests Wayback original
 
 | Sample only, URL-level | 2021 | 2022 | 2023 | 2024 | 2025 | Total |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Selected public URL leads | 4 | 7 | 3 | 3 | 5 | **22** |
+| Selected public URL leads | 4 | 7 | 4 | 3 | 5 | **23** |
 | Outside configured seed prefix | 2 | 3 | 2 | 1 | 2 | **10** |
 
-Two pairs match on publisher, displayed date and slug: **2022-03-22 public-safety plan** and **2025-05-01 road signs**. These are *proposed* aliases; neither pair has been equated through original archived bytes or a trusted fingerprint. **22 URL leads ≠ 22 authenticated historically unique articles; 10 outside-prefix URLs ≠ 10 missing articles.** Neither statistic is a rate for Minnesota Reformer, 44 seeded publishers, or all Minnesota Senate media.
+Three pairs match on publisher, displayed date and slug: **2022-03-22 public-safety plan**, **2023-02-21 driver licensing**, and **2025-05-01 road signs**. These are *proposed* aliases; neither pair has been equated through original archived bytes or a trusted fingerprint. **23 URL leads ≠ 23 authenticated historically unique articles; 10 outside-prefix URLs ≠ 10 missing articles.** Neither statistic is a rate for Minnesota Reformer, 44 seeded publishers, or all Minnesota Senate media.
+
+### February 2023 displayed-date versus late-night Senate action
+
+The currently served [driver-licensing Reformer page](https://minnesotareformer.com/briefs/minnesota-senate-expected-to-pass-bill-giving-drivers-licenses-to-undocumented-residents/) shows **February 21, 2023 at 8:00 p.m.** while narrating a Senate vote **early Wednesday, February 22**. The separate [official Revisor Senate action index for HF4](https://www.revisor.mn.gov/bills/93/2023/0/HF/4/?body=Senate) lists **February 21, 2023** as the third-reading passage day with **34–31** votes. These observations are not reconciled to an exact clock time, editorial revision history, timezone, or original archived news bytes. The article **cannot** supply the completed-vote claim to a February 21 forecast without specific independent historical public-by proof. Its stored first-public-by status remains unknown.
 
 ## Next private/offline reviewer reconciliation
 
