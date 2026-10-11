@@ -70,14 +70,14 @@
       "captionSourceName": "cmte_fintrans_040821.mp4",
       "recheckState": "UNAVAILABLE_OR_NO_USABLE_CAPTION",
       "exactReason": "Original caption response implausibly short",
-      "missingOriginalMediaNotInferred": false
+      "noMissingRecordingInferredFromCaptionError": true
     },
     {
       "bill": "SF970",
       "captionSourceName": "cmte_jud_040821b.mp4",
       "recheckState": "UNAVAILABLE_OR_NO_USABLE_CAPTION",
       "exactReason": "Original caption response implausibly short",
-      "missingOriginalMediaNotInferred": false
+      "noMissingRecordingInferredFromCaptionError": true
     }
   ],
   "holds": {
