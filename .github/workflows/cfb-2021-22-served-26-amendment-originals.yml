@@ -1,0 +1,40 @@
+name: One-time 2021-22 actual-senator finance amendment PDFs
+
+# #864 finance Track A. No scheduled runs, credentials or production data.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2021-22-served-26-amendment-originals.yml
+      - src/evidence/cfb-2021-22-served-senator-amendments.ts
+      - tests/cfb-2021-22-served-senator-amendments.test.ts
+      - scripts/capture-cfb-2021-22-served-26-amendments.ts
+
+permissions:
+  contents: read
+
+jobs:
+  source-only-amended-pdf-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify actual 11 senators, all 42 original parent reports, 26 amendment keys, first-page and revision constraints
+        run: node --import tsx --test tests/cfb-2021-22-served-senator-amendments.test.ts
+      - name: Re-acquire original CFB amendment versions and verify every unique revision PDF
+        run: |
+          node --import tsx scripts/capture-cfb-2021-22-served-26-amendments.ts \
+            --output artifacts/cfb-2021-22-served-26-amended-report-source.json
+      - name: Preserve non-sensitive report fingerprints and source status only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2021-22-served-26-amendment-original-pdf-source-metadata
+          path: artifacts/cfb-2021-22-served-26-amended-report-source.json
+          if-no-files-found: warn
+          retention-days: 30
