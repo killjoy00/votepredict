@@ -6,7 +6,7 @@
 import {createHash} from 'node:crypto';
 import {selectEightPreviouslyUnobservedActualSenators}
   from './cfb-2024-eight-unobserved-verified-senator-viewers.js';
-import type {Verified2023to24OriginalTarget}
+import {type Verified2023to24OriginalTarget,auditServed2023to24OriginalYearEnd}
   from './cfb-2023-24-served-28-yearend-originals.js';
 
 export const EIGHT_NEW_2023_24_ORIGINALS_VERSION=
@@ -83,4 +83,57 @@ export function selectEightRecoveredSenators16OriginalYearends(input:{
       throw Error('Actual senator has no paired original YE viewer source references');
   }
   return originals.sort((a,b)=>a.district2022-b.district2022||a.reportYear-b.reportYear);
+}
+
+/**
+ * One exact non-authenticated CFB viewer original PDF from independent
+ * official run #38159885061. This is NOT a verified year-end report.
+ * Original reference and SHA/bytes exist; printed identity is unproven.
+ */
+export const REVIEWED_LANG_2023_ANOMALOUS_ORIGINAL_SOURCE={
+  reportId:'17994:23:pcc:YE:0:0',
+  officialViewerSha256:'868366a0649900b205b1b4248bbfaeaae7b8aae8fb8db321d7de6c3854fe2073',
+  originalSourcePdfSha256:'34022e5691aca08f318436ecbc30a1b3e2d5a32c2ad11a19ee0d64fb77443aba',
+  originalSourcePdfBytes:381617,
+  sourcePeriodStartOn:'2023-01-01',
+  sourcePeriodEndOn:'2023-12-31',
+  sourceBoardReceiptOn:'2023-12-29',
+} as const;
+export function classifyEightRecovered16OriginalSourceRuns(
+  reports:ReturnType<typeof auditServed2023to24OriginalYearEnd>[],
+){
+  const hold=REVIEWED_LANG_2023_ANOMALOUS_ORIGINAL_SOURCE;
+  const verified=reports.filter(r=>r.status==='original_pdf_first_page_authenticated');
+  const exceptional=reports.filter(r=>r.status!=='original_pdf_first_page_authenticated');
+  const actual=exceptional[0];
+  const exactReviewedHold=exceptional.length===1&&actual?.originalReportId===hold.reportId
+    &&actual?.originalViewerApiSha256===hold.officialViewerSha256
+    &&actual?.sourcePdfSha256===hold.originalSourcePdfSha256
+    &&actual?.sourcePdfByteCount===hold.originalSourcePdfBytes
+    &&actual?.sourceError===null
+    &&actual?.status==='original_pdf_first_page_identity_coverage_or_receipt_hold'
+    &&actual?.header.principalReportTitle===true
+    &&actual?.header.committeeRegistrationMatches===false
+    &&actual?.header.printedSenateDistrictMatches===false
+    &&actual?.header.startOn===hold.sourcePeriodStartOn
+    &&actual?.header.endOn===hold.sourcePeriodEndOn
+    &&actual?.header.boardReceivedOn===hold.sourceBoardReceiptOn;
+  const hashes=verified.map(r=>r.sourcePdfSha256!);
+  const accepted=reports.length===16
+    &&new Set(reports.map(r=>r.originalReportId)).size===16
+    &&verified.length===15&&new Set(hashes).size===15&&exactReviewedHold
+    &&hashes.every(x=>x!==hold.originalSourcePdfSha256);
+  return{
+    originalOfficialViewerReferenceCount:reports.length,
+    verifiedOriginalPdfBinaries:verified.length,
+    distinctVerifiedOriginalPdfBinaries:new Set(hashes).size,
+    heldOfficialSourceDocuments:exceptional.length,
+    reviewedHeldReportId:exactReviewedHold?hold.reportId:null,
+    heldSourcePdfSha256:exactReviewedHold?hold.originalSourcePdfSha256:null,
+    exactReviewedOriginalSourceHold:exactReviewedHold,
+    authenticatedAsSixteenOriginalPdfs:false,
+    acceptedFifteenOriginalsOneStrictSourceIdentityHold:accepted,
+    actualHistoricalPublicByProvenCount:0,
+    statutoryFilingDutyDenominator:null,
+  };
 }
