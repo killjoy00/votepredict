@@ -95,12 +95,12 @@ export function combineOnlyActualSenatorsDated2022to2025CampaignSources(
   generatedFromIndependentOriginalServiceObservedAtUtc:
     old.sourceValidation.officialLRLSenateDirectoryObservedAtUtc,
   latestRecordedPublicSourceRetrievalUtc:
-    carla.source.sourceCaptureSecondIndependentUtc,
+    carla.originalChecks[1].actualOriginalSourceRetrievedAtUtc,
   sourceControls:{
    onlyIndependentlyVerifiedEverServedSenatorsNamed:true,
    actualLiveStateSenatorMemberYearDenominatorCertified:false,
    original2022CarlaPageHashesRecheckedInThisRun:true,
-   sourceAcquisitionDayForOriginal2012to2025ArchiveReceipts:'2026-10-10',
+   sourceAcquisitionDayForOriginal2022to2025ArchiveReceipts:'2026-10-10',
    exact2022WebsiteOriginalPublicByFromAuthenticatedArchive:
      '2022-10-06T16:15:31.000Z',
    senateCandidateFirstAuthoredDateUnknown:true,
