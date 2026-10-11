@@ -57,7 +57,7 @@ export function inspectEight2025ElectionMotionSource(input:{
  const billMentions=sourceBills(left);
  const classes=[
   ['amendment',/\bamendment\b/i],
-  ['tabling',/\b(?:lay(?:ing)? .{0,45} on the table|table (?:the |this )?(?:bill|motion|senate file))/i],
+  ['tabling',/\b(?:lay(?:ing)? .{0,45} on the table|(?:move|moved|motion)\s+to\s+table(?:\s+(?:S\.?F\.?\s*\d+|senate file|the bill))?|table (?:the |this )?(?:bill|motion|senate file|SF\d+))/i],
   ['pass_or_refer',/\b(?:recommend.{0,70}pass|pass and be referred|re-?referred|report (?:the|a) bill)/i],
   ['other_motion',/\b(?:motion|moved|moves|vote|roll call)\b/i],
  ] as const;
