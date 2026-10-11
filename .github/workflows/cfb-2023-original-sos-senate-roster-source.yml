@@ -1,0 +1,34 @@
+name: 2023 original Minnesota SOS Senate roster source proof for 22 finance senators
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2023-original-sos-senate-roster-source.yml
+      - src/evidence/cfb-2023-official-sos-senate-roster-service.ts
+      - scripts/acquire-cfb-2023-original-sos-22-senate-roster.ts
+      - tests/cfb-2023-original-sos-senate-roster-service.test.ts
+      - docs/evaluation/source-proof/cfb-2023-original-sos-22-real-senators-roster-independent-service-proof.psv
+      - docs/evaluation/source-proof/cfb-2023-original-sos-senate-22-crossyear-service-source-checkpoint.json
+      - docs/evaluation/cfb-2023-secretary-of-state-senate-roster-22-finance-identity-crosscheck.md
+permissions:
+  contents: read
+jobs:
+  original-mn-secretary-of-state-senate-roster:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/cfb-2023-original-sos-senate-roster-service.test.ts
+      - run: node --import tsx scripts/acquire-cfb-2023-original-sos-22-senate-roster.ts --output artifacts/cfb-2023-original-sos-22-senate-roster.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sos-2023-original-22-senate-cfb-member-roster-metadata
+          path: artifacts/cfb-2023-original-sos-22-senate-roster.json
+          if-no-files-found: warn
+          retention-days: 30

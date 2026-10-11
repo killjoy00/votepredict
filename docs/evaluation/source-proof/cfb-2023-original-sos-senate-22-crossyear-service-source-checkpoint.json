@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "mn-sos-2023-senate-official-pocket-roster-22-CFB-senators-source-proof-v1",
+  "issue": 864,
+  "dateObserved": "2026-10-11",
+  "originalSourceDocument": {
+    "url": "https://www.sos.mn.gov/media/ybhkokxo/pocket-edition-2023.pdf",
+    "originalPDFSHA256": "0a7fe8ff6b602dcc8c0d1b00e274f3f2d883f651c3666669c16eb7509731ef03",
+    "pdfBytes": 5803052,
+    "title": "Minnesota Legislative Manual 2023–2024 Pocket Edition",
+    "publishingOffice": "Minnesota Secretary of State",
+    "pdfSenateSectionLabel": "MEMBERS OF THE STATE SENATE",
+    "original2023SenateMemberRows": 67
+  },
+  "crossSourcePrior": {
+    "originalCfb2022ActuallyServingSenatePanel": "docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv",
+    "originalCfbPanelGitBlobSHA": "bfa1c1eff6a095a3a0d03aa49a34e1d929d6a388",
+    "previousProven2022ServingRealSenators": 22
+  },
+  "permanent2023RosterSourceProofLedger": {
+    "path": "docs/evaluation/source-proof/cfb-2023-original-sos-22-real-senators-roster-independent-service-proof.psv",
+    "rows": 22,
+    "bytes": 7697,
+    "gitBlobSha": "d50a7049237a009820051cbb9a74ff185cc1115b",
+    "columns": [
+      "cfbPrincipalCommitteeReg",
+      "actual2022ServingSenatorName",
+      "2022District",
+      "originalSOSPrintedSenateRosterName",
+      "rosterYear",
+      "sourceEditionKind",
+      "sourceGovernmentPdfUrl",
+      "originalPdfSHA256",
+      "originalPdfBytes",
+      "original2023RosterSenatorOfficeAndDistrictMatchStatus",
+      "2024ActualServiceStatus",
+      "historicalCFBLegallyOwedStatus",
+      "historicalPublicByStatus"
+    ]
+  },
+  "originalSourceRuns": [
+    {
+      "runId": 38168804117,
+      "headAtRun": "173857e47f1f049b56fa5ae6454a3447e60f0fe8",
+      "sourceOutcome": "success",
+      "artifactId": 11713335822,
+      "artifactZipSha256": "58b57430a04de57361836d7fb11aea88bf368735f6cf11adddce645ffd6a534b",
+      "artifactZipBytes": 2012,
+      "artifactJsonSHA256": "024dcddaa05a8641a2434a77f089e2dc9b142317caa7e074b1024f7162b36f81",
+      "artifactJsonBytes": 15595,
+      "SenateRosterMemberRows": 67,
+      "originalCfb2022SenatorsMatchedInIndependent2023Roster": 22,
+      "mismatchedCandidateOrDistrictRows": 0
+    },
+    {
+      "runId": 38169115287,
+      "headAtRun": "195218ccf3f8d7b9b3d3129dbe902c9bd88a8b5f",
+      "sourceOutcome": "success",
+      "artifactId": 11713445633,
+      "artifactZipSha256": "968c3819ee8d363f6ba92311c22e7e0cf5b1b41f293bd9a303c56801991538c4",
+      "artifactZipBytes": 2013,
+      "artifactJsonSHA256": "fe999412df1b53720fda82dddeda794cdc663ed0c13ac19d513b67399be41404",
+      "artifactJsonBytes": 15595,
+      "SenateRosterMemberRows": 67,
+      "originalCfb2022SenatorsMatchedInIndependent2023Roster": 22,
+      "mismatchedCandidateOrDistrictRows": 0
+    }
+  ],
+  "scope": {
+    "independent2023SenateRosterFor22ProofCount": 22,
+    "individualExact2023VoteDayServiceEstablishedCount": 0,
+    "serviceAsOf2024NotYetProvenCount": 22,
+    "original2023Or2024PrincipalCommitteeReportingDutyEstablishedCount": 0,
+    "original2023Or2024LegallyOwedYECommitteeCount": null,
+    "original2023Or2024HistoricalPublicByIndependentlyEstablishedCount": 0,
+    "sourceReportVersionsStillNotHistoricallyEligible": 71,
+    "importantSD31Prior2019_2022IdentityCaseExcluded": true
+  },
+  "safeguards": {
+    "originalGovernmentPDFReadOnly": true,
+    "originalPdfBodyOrFullTextStored": false,
+    "donorMoneyTransactionsContactsAndOfficesNotStored": true,
+    "noProductionDbReadWrite": true,
+    "noModelForecastSchedulerServingChanges": true,
+    "noCandidateContactOr2027Changes": true,
+    "keepIssue864Open": true
+  },
+  "independentOriginalSourceReconciliation": {
+    "bothOriginalSOS2023PDFSha256AndByteCountsIdentical": true,
+    "bothRunsSourcePDFMemberEntriesCountIdentical67": true,
+    "bothRunsMatchedAll22ExactMemberNamesAndDistricts": true,
+    "twoRunsNoMemberOrIdentityMismatch": true,
+    "noCfbCandidateRegistrationLegalDutyInferred": true,
+    "no2024ServiceAssumption": true,
+    "noHistoricallyPublicByProven": true
+  }
+}
