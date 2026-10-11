@@ -1,0 +1,69 @@
+{
+  "schema": "mn-two-new-2021-serving-senators-2020-original-campaign-domain-leads-v1",
+  "issue": 864,
+  "scope": {
+    "electionYear": 2020,
+    "generalElectionDate": "2020-11-03",
+    "originalCaptureFromUtc": "2020-01-01T00:00:00.000Z",
+    "originalCaptureUntilExclusiveUtc": "2020-11-03T00:00:00.000Z",
+    "independentlyVerifiedActualServingPeopleRequired": 2,
+    "originalLRLGovernmentBytesSHAAndReceiptRequired": true,
+    "maximumHistoricCDXIndexRowsPerPerson": 300,
+    "maximumOriginalHTMLReplayPerPerson": 4,
+    "maximumAllOriginalHTMLReplays": 8,
+    "originalArchiveCaptureUtcMayDateExactStatements": true,
+    "originalWriterPostingDateRequired": false,
+    "currentLive2026CampaignPageCanBeBackdated": false,
+    "candidateSitePolicyStatementsIndividuallyVerifiedInThisAcquisition": false,
+    "sourceAcquisitionIsNotStatewideCensus": true,
+    "anyProductionDatabaseAccessEvidenceWritesOrForecastUpdates": 0,
+    "preSourceNetworkVerifyEveryPersonServed2021Senate": true,
+    "originalSOSFiledCampaignWebsite2020Verified": false
+  },
+  "independentOriginalActualSenatorService": {
+    "url": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "archiveAcquisitionRunId": 38094976711,
+    "archiveArtifactId": 11685387674,
+    "officialHtmlSHA256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "fullOriginalOfficialHTMLMustBeReopenedBeforeExternalQuery": true
+  },
+  "targets": [
+    {
+      "id": "two20b-01",
+      "candidateName": "Kent Eken",
+      "electionDistrict": "4",
+      "year": 2020,
+      "domain": "votekenteken.com",
+      "campaignDomainLead": "https://votekenteken.com/",
+      "discoverySourceUrl": "https://www.ballotready.org/people/kent-eken-a58f4955-781e-47ed-a01e-696cbf9852f8",
+      "discoveryBasis": "BallotReady verified-candidate-website profile for exactly November 3, 2020 Minnesota Senate SD4 links first-party votekenteken.com issues / education / taxes platform",
+      "personIndependentlyPresentInOfficialOriginalLRLService": true,
+      "original2020CampaignSiteHTMLNotYetAuthenticated": true,
+      "modernCampaignWebsiteAloneIsNot2020Evidence": true,
+      "originalSecretaryOfStateFiledWebsiteNotProven": true
+    },
+    {
+      "id": "two20b-02",
+      "candidateName": "Bill Ingebrigtsen",
+      "electionDistrict": "8",
+      "year": 2020,
+      "domain": "billforsenate.org",
+      "campaignDomainLead": "https://billforsenate.org/",
+      "discoverySourceUrl": "https://www.ballotready.org/people/bill-ingebrigsten",
+      "discoveryBasis": "BallotReady verified-candidate-website profile for exactly November 3, 2020 Minnesota Senate SD8 links original first-party billforsenate.org issue pages",
+      "personIndependentlyPresentInOfficialOriginalLRLService": true,
+      "original2020CampaignSiteHTMLNotYetAuthenticated": true,
+      "modernCampaignWebsiteAloneIsNot2020Evidence": true,
+      "originalSecretaryOfStateFiledWebsiteNotProven": true
+    }
+  ],
+  "limitations": [
+    "Both are independently verified State senators who personally ACTUALLY served 2021, Kent Eken in 2020 SD4 and Bill Ingebrigtsen in 2020 SD8; a BallotReady 2020 domain link is only a discovery lead.",
+    "Candidate website's verified link is historic election-context public attribution, not by itself original Wayback CDX or original 2020 page text; a live current website is never backdated.",
+    "True historical 2020 independently indexed Wayback HTML, if any, must match original SHA-1 Base32 and be retained with HTML SHA-256 and real original UTC.",
+    "Old 2012/2016 Senate policy on a site observed in 2020 cannot be described as newly authored in 2020.",
+    "CDX empty/capped/error and four-page sample per senator are UNKNOWN policy completeness, not absent positions.",
+    "Campaign statements claiming authored/passed/voted legislation are not independent Senate journal roll calls.",
+    "No production DB, evidence imports, Neon/Vercel, forecasts, model, scheduler or 2027 program changes."
+  ]
+}
