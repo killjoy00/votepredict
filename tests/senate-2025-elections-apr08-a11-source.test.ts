@@ -62,7 +62,7 @@ test('multiple A11 motion introductions remain held as ambiguous',()=>{
  const bad=synthetic().replace(
   'Senator Bravo requested a roll call vote',
   'Senator Bravo moved the A11 Amendment. Senator Bravo requested a roll call vote');
- assert.throws(()=>inspect(bad),/No unique A11 motion/);
+ assert.throws(()=>inspect(bad),/motion introduction missing or repeated/);
 });
 
 test('altered bill, tallies, committee member roster, or absence fails closed',()=>{
