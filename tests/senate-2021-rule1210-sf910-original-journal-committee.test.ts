@@ -81,3 +81,18 @@ test('mock roster must be strictly fictional and exactly seven names',()=>{
  assert.throws(()=>inspectFictionalSF9102021JournalCommitteeRoll(fixture(),
   ['Dahms',...YES.slice(1)],NO),/fictitious test-only/);
 });
+
+
+test('real-style source PDF breaks affirmative roll at exact Journal p714 21st-day header',()=>{
+ const x=fixture().replace(
+  'Those who voted in the affirmative were: Senators FictionalAlpha',
+  'Those who voted in the affirmative were: 714 JOURNAL OF THE SENATE [21ST DAY Senators FictionalAlpha');
+ const row=inspect(x);
+ assert.equal(row.sourcePrintedYea,4);
+ assert.equal(row.sourcePrintedNay,3);
+ assert.equal(row.previousSF1470HasSameSideIdentitiesButDifferentBillAndMotion,true);
+ assert.throws(()=>inspect(x.replace('714 JOURNAL','715 JOURNAL')),
+  /exact printed committee 4\/3/);
+ assert.throws(()=>inspect(x.replace('21ST DAY','22ND DAY')),
+  /exact printed committee 4\/3/);
+});
