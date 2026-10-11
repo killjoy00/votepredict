@@ -284,5 +284,65 @@
     "noPrivateVotePredictSourcesOrDatabasesRead": true,
     "noProductionMediaSourceCollectorOrModelsChanged": true,
     "noStatewideOrPublisherArticlePopulationDenominatorEstablished": true
+  },
+  "independentFinalPublicRun": {
+    "runId": 38163950720,
+    "sourceHeadSha": "c01f33a303108175651a1314ed79ca92b285765d",
+    "conclusion": "success",
+    "artifactId": 11711546832,
+    "artifactName": "senate-media-independent-15-original-receipts",
+    "downloadedZipSha256": "8ff45617a89410995e568fedd34b243b7947d95f93deb0cf8eaf186b5c5b3a19",
+    "decodedJsonSha256": "7d0ab414c73f7f5cfe3c87f973e02b383acd0a0e2094dc4c6121d7c418d5a298",
+    "decodedJsonBytes": 34993,
+    "observed": {
+      "originalArticleUrlLeads": 15,
+      "indexedOriginalUrlCandidates": 12,
+      "cdxUnavailableOrInvalidUnknown": 3,
+      "indexEmpty": 0,
+      "originalBodyReplayAttempts": 24,
+      "exactIndexedSha1ConsistentArchivedRawHtmlBodyVersions": 24,
+      "distinctOriginalJournalistArticleUrlsWithMatchedBodies": 12,
+      "cdxUnavailableIds": [
+        "new-reporter-2021-commissioners",
+        "new-reporter-2022-special-session",
+        "new-reporter-2025-sick-leave"
+      ]
+    },
+    "allEarlier21OriginalRawSha256AndBodyLengthsMatchIndependently": true,
+    "originalBodyVersionsIdenticallyReproducedFromFirstRun": 21,
+    "additionalOriginalBodyVersions": 3,
+    "additionalVerifiedHistoricalOriginalArticleUrls": 1,
+    "newExactHistoricalOriginalReceipts": [
+      {
+        "leadId": "new-reporter-2023-family-leave",
+        "captureUtc": "2023-01-06T13:57:07Z",
+        "indexSha1Base32": "IJ4U4GQ2HWF6HEEKA3EINBYRRBMSALDQ",
+        "rawOriginalBodySha256": "d6d8e25c184613b6725c850a8819ab0d47f6b879fc5c13bfa47523c7d4785be1",
+        "originalBytes": 122992,
+        "priorStatus": "replay_redirect_refused_unknown"
+      },
+      {
+        "leadId": "new-reporter-2025-federal-cuts",
+        "captureUtc": "2025-04-25T15:28:44Z",
+        "indexSha1Base32": "R2R6VR7FSIX4KLD53EG7UN5GWL5OULCL",
+        "rawOriginalBodySha256": "3a91a6e66be3296bdf4253c909ea145a82a2c629c55f1a190f54a97dd0010ca2",
+        "originalBytes": 146073,
+        "priorStatus": "cdx_index_unavailable_or_invalid"
+      },
+      {
+        "leadId": "new-reporter-2025-federal-cuts",
+        "captureUtc": "2025-04-25T15:29:28Z",
+        "indexSha1Base32": "SGJ4JTECUI6LHO4BSG7MNK6RRUZM3ME4",
+        "rawOriginalBodySha256": "8e344277eeb6c9d30f17c40938e51057ce5b4d8948b399e48c601799ab014577",
+        "originalBytes": 146073,
+        "priorStatus": "cdx_index_unavailable_or_invalid"
+      }
+    ],
+    "source2025MayeQuadeNewlyOriginalShaVerified": true,
+    "early2023AliceMannRedirectTransientAndRecovered": true,
+    "sourceFirst2021CleanCarsAnd2024GunArticleShaPreserved": true,
+    "historicalOriginalIndexAbsentNeverEvidencePublisherArticleNotWritten": true,
+    "noNewSpeechAudioRecordedMemberVotesOrFirstPostingClockAuthenticated": true,
+    "noPrivateSourceOrModelRead": true
   }
 }
