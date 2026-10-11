@@ -1,0 +1,51 @@
+name: Senate media independent reporter dual-senator historical quotes
+
+# #987 public original publisher Wayback only, no raw article/audio content.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-independent-two-reporter-speaker-phrases.yml
+      - src/evidence/senate-media-independent-reporter-dual-original-phrase-audit.ts
+      - scripts/audit-senate-media-two-original-reporter-speaker-phrases.ts
+      - tests/senate-media-independent-reporter-dual-original-phrase-audit.test.ts
+      - docs/evaluation/senate-media-2021-2024-independent-reporter-two-dual-speaker-original-phrase-queue.json
+      - docs/evaluation/senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: senate-media-independent-two-public-reporter-original-speaker-cues
+  cancel-in-progress: false
+jobs:
+  original-two-independent-articles:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-independent-reporting-and-archived-speakers-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Authenticate 4 original newsroom HTML version bodies before 4 separately named senator cues
+        run: |
+          node --import tsx scripts/audit-senate-media-two-original-reporter-speaker-phrases.ts \
+            --output artifacts/senate-media-two-reporter-original-speaker-cues.json
+      - name: Save short historical phrase statuses and SHA evidence only
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-two-reporter-original-speaker-cues
+          path: artifacts/senate-media-two-reporter-original-speaker-cues.json
+          if-no-files-found: error
+          retention-days: 7
