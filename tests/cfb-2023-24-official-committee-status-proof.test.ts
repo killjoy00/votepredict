@@ -49,7 +49,7 @@ test('historical signed original Board case identifies Putnam reg 18430 in 2019 
  assert.equal(proof.secondAmendedReferenceNotCrossIdentifiedWithModernViewer,true);
  assert.equal(proof.newHistorical2023PdfVersionAuthenticated,false);
  assert.equal(proof.actualPublicByForAny2023PdfVersionProven,false);
- assert.equal(proof.2023Or2024YearEndLegallyOwed,null);
+ assert.equal(proof.yearEnd2023Or2024LegallyOwed,null);
  assert.equal(proof.actualCommitteeRegistrationTerminationOnDate,null);
  assert.equal(CFB_PUTNAM_ORIGINAL_2024_CONCILIATION,
   'https://cfb.mn.gov/pdf/bdactions/1674_Conciliation_Agreement.pdf');
