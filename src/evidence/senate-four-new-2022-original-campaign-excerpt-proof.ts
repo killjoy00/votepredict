@@ -139,6 +139,7 @@ export function auditFour2023ServingSenators47GenuineArchived2022CandidateStatem
    if(receipt.district!==p.district||receipt.domain!==p.domain
     ||matched.has(receipt.originalFile)
     ||!/^[0-9a-f]{64}$/.test(receipt.sha256)
+    ||!/^[A-Z2-7]{32}$/.test(receipt.originalCdxSha1Base32)
     ||!/^six22-0[1345]-archive-\d{14}-[0-3]\.html$/.test(receipt.originalFile)
     ||!DATE(receipt.captureUtc)||receipt.captureUtc<'2022-01-01T00:00:00.000Z'
     ||receipt.captureUtc>='2022-11-08T00:00:00.000Z'
@@ -150,6 +151,7 @@ export function auditFour2023ServingSenators47GenuineArchived2022CandidateStatem
    if(!sourcePage||sourcePage.originalUrl!==receipt.originalUrl
     ||sourcePage.historicalArchiveCaptureUtc!==receipt.captureUtc
     ||sourcePage.originalBodySha256!==receipt.sha256
+    ||sourcePage.independentlyObtainedOriginalCDXSha1Base32!==receipt.originalCdxSha1Base32
     ||sourcePage.originalHtmlExactlyMatchesHistoricalCDXDigest!==true
     ||sourcePage.originalHtmlContainsSenatorSurname!==receipt.acquisitionSurnameHeuristic
     ||!/^[A-Z2-7]{32}$/.test(sourcePage.independentlyObtainedOriginalCDXSha1Base32)

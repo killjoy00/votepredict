@@ -85,7 +85,8 @@
       "captureUtc": "2022-07-06T22:42:07.000Z",
       "originalUrl": "https://www.paulutke.com/priorities.html",
       "sha256": "d756c2b7c0c26a4ee64e5db87fc760015a879fabd13f0f1cdd85ac17558f9448",
-      "acquisitionSurnameHeuristic": true
+      "acquisitionSurnameHeuristic": true,
+      "originalCdxSha1Base32": "3HSJ5AGAYISSVGDN4Y5PNDL5WAIA5WY7"
     },
     {
       "senator": "Paul Utke",
@@ -95,7 +96,8 @@
       "captureUtc": "2022-08-05T05:15:50.000Z",
       "originalUrl": "https://www.paulutke.com/issues.html",
       "sha256": "d589930d35a3205a43abc1b8edc6f612785d7f5c628db0098160ded3b393ffdb",
-      "acquisitionSurnameHeuristic": true
+      "acquisitionSurnameHeuristic": true,
+      "originalCdxSha1Base32": "NLTG3FCVT2EXDXMRB3J6Z5XQNDOIROKH"
     },
     {
       "senator": "Paul Utke",
@@ -105,7 +107,8 @@
       "captureUtc": "2022-02-20T02:20:08.000Z",
       "originalUrl": "https://www.paulutke.com/",
       "sha256": "c48e64bdc3e1875aba718733db91f5985013244dfd549864847e88c539e5a588",
-      "acquisitionSurnameHeuristic": true
+      "acquisitionSurnameHeuristic": true,
+      "originalCdxSha1Base32": "KBCJRKGKQWNE6M2Z7BPCRXJLWARBPNDL"
     },
     {
       "senator": "Paul Utke",
@@ -115,7 +118,8 @@
       "captureUtc": "2022-08-05T05:15:06.000Z",
       "originalUrl": "https://www.paulutke.com/campaign-endorsement.html",
       "sha256": "98f4cd37542ea4325578e30ea59ee0e01ed2c643aa59de6dd2fccc33e26a7fc2",
-      "acquisitionSurnameHeuristic": true
+      "acquisitionSurnameHeuristic": true,
+      "originalCdxSha1Base32": "VBFWH2JSPRAU265OYBFQNBYYWH2WFTZG"
     },
     {
       "senator": "Melissa Wiklund",
@@ -125,7 +129,8 @@
       "captureUtc": "2022-01-21T11:39:41.000Z",
       "originalUrl": "https://www.wiklundforsenate.com/",
       "sha256": "1d085a358a63231034f8786ef03d0ef566e585632ff812c58033669aae976bf6",
-      "acquisitionSurnameHeuristic": true
+      "acquisitionSurnameHeuristic": true,
+      "originalCdxSha1Base32": "AEB2XQAZ2NHEF2YI4YFGMXDT75XPA7HC"
     },
     {
       "senator": "Melissa Wiklund",
@@ -135,7 +140,8 @@
       "captureUtc": "2022-01-21T11:19:05.000Z",
       "originalUrl": "https://www.wiklundforsenate.com/news",
       "sha256": "690cf81bc71e0cc56fb2db6bfc85e4b6094c757cabb60768d9da278d2615d64a",
-      "acquisitionSurnameHeuristic": true
+      "acquisitionSurnameHeuristic": true,
+      "originalCdxSha1Base32": "SZLS4XXFB54JAPZYEYLKCYWH43PWAG66"
     },
     {
       "senator": "Melissa Wiklund",
@@ -145,7 +151,8 @@
       "captureUtc": "2022-05-25T15:42:35.000Z",
       "originalUrl": "https://www.wiklundforsenate.com/about",
       "sha256": "2711978268bd5256b6350bacdbe14100596d08223be234c6180ac707ef3aab54",
-      "acquisitionSurnameHeuristic": true
+      "acquisitionSurnameHeuristic": true,
+      "originalCdxSha1Base32": "FCWFIDAEPYKY72DONDTKUYQFXZSGSMHP"
     },
     {
       "senator": "Melissa Wiklund",
@@ -155,7 +162,8 @@
       "captureUtc": "2022-01-21T12:20:33.000Z",
       "originalUrl": "https://www.wiklundforsenate.com/get-involved",
       "sha256": "da81541b391cb68165e6bb16e905bb622781706cdef35a0f50ccdcd7eca9af89",
-      "acquisitionSurnameHeuristic": true
+      "acquisitionSurnameHeuristic": true,
+      "originalCdxSha1Base32": "CVXTJQBGV5M4KQNO3LC6Z7SBHNNJ7UIU"
     },
     {
       "senator": "Jim Abeler",
@@ -165,7 +173,8 @@
       "captureUtc": "2022-03-10T12:21:15.000Z",
       "originalUrl": "https://www.jimabeler.com/",
       "sha256": "b783b499e735342b212b3dfd8b9cbdfe3ee72a38b6cc22c1bd1f3595d956b5cf",
-      "acquisitionSurnameHeuristic": false
+      "acquisitionSurnameHeuristic": false,
+      "originalCdxSha1Base32": "FQCC62WGTTQQZ4RIHNVYAKVEFINBSS3Y"
     },
     {
       "senator": "Jim Abeler",
@@ -175,7 +184,8 @@
       "captureUtc": "2022-08-05T07:23:15.000Z",
       "originalUrl": "https://www.jimabeler.com/about-jim",
       "sha256": "9c7795345765c30d70f8a874ca8cce775ba859f5bc8914a03f7e68502ece59c1",
-      "acquisitionSurnameHeuristic": false
+      "acquisitionSurnameHeuristic": false,
+      "originalCdxSha1Base32": "RXZQS4FCXCWW3ZLYQOTKBFUZYTEYWITW"
     },
     {
       "senator": "Jim Abeler",
@@ -185,7 +195,8 @@
       "captureUtc": "2022-08-05T02:41:20.000Z",
       "originalUrl": "https://www.jimabeler.com/get-involved",
       "sha256": "75794c4c4fdd9d8c5599910e376464eaea3a3cfa4273581cadab147d6d9c431d",
-      "acquisitionSurnameHeuristic": false
+      "acquisitionSurnameHeuristic": false,
+      "originalCdxSha1Base32": "RKLT2CRWFW6HIC7O6FK2N2KNL2DJSKG4"
     },
     {
       "senator": "Jim Abeler",
@@ -195,7 +206,8 @@
       "captureUtc": "2022-08-05T07:22:01.000Z",
       "originalUrl": "https://www.jimabeler.com/videos",
       "sha256": "bba943df8872dca995f359409084e3ec33bf9d257f1392cb99fbcabd767e0b41",
-      "acquisitionSurnameHeuristic": false
+      "acquisitionSurnameHeuristic": false,
+      "originalCdxSha1Base32": "L44N6F33T4ZQZA32RZ6OK5XQ7SPEMK6J"
     },
     {
       "senator": "Scott Dibble",
@@ -205,7 +217,8 @@
       "captureUtc": "2022-03-19T12:16:24.000Z",
       "originalUrl": "https://www.scottdibble.com/",
       "sha256": "2645d57c063099fc72d30b7b740032dea6babb5da1559381fee1e149e388d623",
-      "acquisitionSurnameHeuristic": true
+      "acquisitionSurnameHeuristic": true,
+      "originalCdxSha1Base32": "SSHKSETVFVBRBPDQTZZMVQBA3ESUN552"
     },
     {
       "senator": "Scott Dibble",
@@ -215,7 +228,8 @@
       "captureUtc": "2022-08-05T02:57:42.000Z",
       "originalUrl": "https://www.scottdibble.com/about",
       "sha256": "3c384a58a4704154cc015f3f4d56be23e38864fee7a8ef5429be0403a37d6f09",
-      "acquisitionSurnameHeuristic": true
+      "acquisitionSurnameHeuristic": true,
+      "originalCdxSha1Base32": "BN7AYVPR7SE6GGNU6EEIOFRXCL7YYTBA"
     },
     {
       "senator": "Scott Dibble",
@@ -225,7 +239,8 @@
       "captureUtc": "2022-08-05T02:59:08.000Z",
       "originalUrl": "https://www.scottdibble.com/events",
       "sha256": "89147fdbb6a57d7b95f23bd4da86bb3a88efed82c79670be9ef6ed8942c5bfe9",
-      "acquisitionSurnameHeuristic": true
+      "acquisitionSurnameHeuristic": true,
+      "originalCdxSha1Base32": "HMOPGM2W4ECWHABXZOTE6WYKLRWNAHFE"
     },
     {
       "senator": "Scott Dibble",
@@ -235,7 +250,8 @@
       "captureUtc": "2022-08-05T02:59:44.000Z",
       "originalUrl": "https://www.scottdibble.com/splash",
       "sha256": "733be4288f92a8ed6d2c44fe90ce75740e30f963c8720702cc52f926313bc326",
-      "acquisitionSurnameHeuristic": true
+      "acquisitionSurnameHeuristic": true,
+      "originalCdxSha1Base32": "FAW7QLFLL5LJZ5YP77BLEW37A6EMFIQN"
     }
   ],
   "policySections": [
