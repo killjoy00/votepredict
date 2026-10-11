@@ -1,0 +1,40 @@
+name: One-time 2025 SD29 seven serving-senator CFB amendment PDF proofs
+
+# #864 finance only; read original CFB sources without donor data or production writes.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2025-served-sd29-seven-amendment-pdfs.yml
+      - scripts/capture-cfb-2025-served-sd29-seven-amendment-pdfs.ts
+      - src/evidence/cfb-2025-served-sd29-seven-amendments.ts
+      - tests/cfb-2025-served-sd29-seven-amendments.test.ts
+
+permissions:
+  contents: read
+
+jobs:
+  verify-senator-and-seven-authentic-source-amendment-pdfs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify only actual SD29 senator, exact CFB viewer source and 4 original PDF parents
+        run: node --import tsx --test tests/cfb-2025-served-sd29-seven-amendments.test.ts
+      - name: Fetch all seven original CFB amended PDFs and verify exact first-page identities
+        run: |
+          node --import tsx scripts/capture-cfb-2025-served-sd29-seven-amendment-pdfs.ts \
+            --output artifacts/cfb-2025-served-sd29-seven-amendment-source.json
+      - name: Preserve metadata-only report source proofs, no donor data or PDF bodies
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2025-served-sd29-seven-amendment-original-pdf-source-metadata
+          path: artifacts/cfb-2025-served-sd29-seven-amendment-source.json
+          if-no-files-found: warn
+          retention-days: 30
