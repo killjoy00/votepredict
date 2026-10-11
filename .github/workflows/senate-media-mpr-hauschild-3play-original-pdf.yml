@@ -1,0 +1,56 @@
+name: Public MPR Hauschild 3Play transcript PDF historical original source
+
+# Public MPR article and transcript PDF byte/provenance metadata only.
+# Raw publisher PDF, article HTML and WARC must not enter artifacts.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-mpr-hauschild-3play-original-pdf.yml
+      - scripts/probe-senate-media-mpr-hauschild-3play-pdf.mjs
+      - scripts/run-senate-media-mpr-hauschild-3play-pdf.mjs
+      - tests/senate-media-mpr-hauschild-3play-pdf.test.mjs
+      - tests/senate-media-mpr-hauschild-3play-real-receipts.test.mjs
+      - docs/evaluation/senate-media-mpr-hauschild-3play-transcript-pdf-provenance-20261011.json
+      - docs/evaluation/senate-media-mpr-hauschild-3play-transcript-pdf-provenance-20261011.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-mpr-hauschild-3play-original-pdf
+  cancel-in-progress: false
+
+jobs:
+  publisher-pdf-and-archived-original-source:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-mpr-hauschild-pdf-original-history-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Exact APM transcript PDF source + SHA1 original archive offline tests
+        run: node --test tests/senate-media-mpr-hauschild-3play-pdf.test.mjs tests/senate-media-mpr-hauschild-3play-real-receipts.test.mjs
+      - name: Independently audit current APM PDF and prior publisher HTML against original historical archival URLs
+        run: |
+          node scripts/run-senate-media-mpr-hauschild-3play-pdf.mjs \
+            --output artifacts/senate-media-mpr-hauschild-3play-original-pdf.json
+      - name: Retain only date metadata, hash and source identity receipts
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-mpr-hauschild-3play-original-pdf
+          path: artifacts/senate-media-mpr-hauschild-3play-original-pdf.json
+          if-no-files-found: error
+          retention-days: 7

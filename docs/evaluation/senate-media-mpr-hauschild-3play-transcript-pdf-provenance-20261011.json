@@ -1,0 +1,80 @@
+{
+  "version": "mpr-hauschild-publisher-transcript-pdf-original-receipt-v1",
+  "observedDay": "2026-10-11",
+  "originalMprEpisode": "https://www.mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south",
+  "pdfUrl": "https://codytranscripts.apmcdn.org/production/70fb369cef19a16a739671110457b6b9.pdf",
+  "firstSourceRun": {
+    "id": 38178140236,
+    "artifactId": 11716461816,
+    "sourceHead": "d5c94584a4d84116c5461b174d5f5916359f4d70",
+    "zipSha256": "e733a4eafe58b4d4a82bf12e63f113a2ae18bd8a67565f0db15a1df3fc51e24c",
+    "jsonSha256": "d9727eee6ec4b03a0fc214a3b8d3ea1e8b24cabdf6bd58f89e3e0fa7a29e7a98",
+    "jsonBytes": 6176,
+    "testsPassed": 12
+  },
+  "currentPublisherPdf": {
+    "httpStatus": 200,
+    "mime": "application/octet-stream",
+    "pdfVersion": "1.4",
+    "rawBytes": 32785,
+    "sha256": "e246a7b8e9a12a47bd65c54031196a08395b02aed490369be954ac9647ce6991",
+    "embeddedPdfCreationDate": "D:20240220064202Z",
+    "httpLastModified": "Tue, 20 Feb 2024 06:42:10 GMT",
+    "httpETagPresent": true
+  },
+  "historicalOriginalPdf": {
+    "archive": "Wayback original",
+    "captureUtc": "2025-07-27T18:09:08Z",
+    "indexedSha1Base32": "S2P5473SIZ7Z6ZDAX4AJF7TMK2VFPXOZ",
+    "rawOriginalSha256": "e246a7b8e9a12a47bd65c54031196a08395b02aed490369be954ac9647ce6991",
+    "rawOriginalBytes": 32785,
+    "embeddedPdfCreationDate": "D:20240220064202Z",
+    "byteIdenticalTo2026CurrentlyServedPublisherPdf": true,
+    "independentlyOriginalSha1Verified": true,
+    "independentlyOriginal2024PdfCaptureVerified": false
+  },
+  "historicalOriginalPublisherHtml": [
+    {
+      "utc": "2024-02-19T22:55:56Z",
+      "indexedSha1": "DHKJFEB7VR76PWGE7EY2ZOUDZKLYKV5X",
+      "sha256": "a990fb4207938f11b58b787966f67f1cc9577fd5c1d4feafe081bd8f14242387",
+      "bytes": 80716,
+      "selectedPdfExactUrlFound": false,
+      "selectedHauschildTranscriptWordsFound": false,
+      "originalSha1AndSha256Reverified": true
+    },
+    {
+      "utc": "2024-02-20T03:02:16Z",
+      "indexedSha1": "RBCAJH6FOUINBMBZWYXEX7GWIEIBHNDQ",
+      "sha256": "da848c28bb3c3e1335076de4606ec472d8695a4c2533add45812614df3fc9536",
+      "bytes": 80716,
+      "selectedPdfExactUrlFound": false,
+      "selectedHauschildTranscriptWordsFound": false,
+      "originalSha1AndSha256Reverified": true
+    },
+    {
+      "utc": "2025-07-24T23:23:22Z",
+      "indexedSha1": "TKIPF5NUQ7HICXBKMOAPLBBOTJCVBLPO",
+      "sha256": "9d1fddfd3983a138515175c6ffe7842cd37e54391a37932e8a503c43876bf725",
+      "bytes": 121462,
+      "selectedPdfExactUrlFound": true,
+      "selectedHauschildTranscriptWordsFound": true,
+      "originalSha1AndSha256Reverified": true
+    }
+  ],
+  "pdfArchiveWaybackIndex": "one_sha1_authenticated_original_2025_pdf",
+  "selectedCommonCrawlPdfArchiveIndexes": {
+    "CC_MAIN_2024_10": "not_indexed_selected_collection_unknown",
+    "CC_MAIN_2024_22": "index_unavailable_unknown",
+    "CC_MAIN_2025_30": "not_indexed_selected_collection_unknown"
+  },
+  "firstPublisherPdfPostingClockCertified": false,
+  "embeddedPdfCreationDateNotHistoricalHttpResponse": true,
+  "currentLastModifiedNotVerifiedHistorical2024Header": true,
+  "historic2025PdfProvesIdenticalContentNoLaterThan2025July27": true,
+  "theHistorical2025MprHtmlLinksExactPdfBy2025July24": true,
+  "notHumanCertifiedCompleteSpokenAudioQuote": true,
+  "noRecordedIndividualLegislativeVotesCertified": true,
+  "noPrivateSourcesOrProductionOrModelChanges": true,
+  "originalPdfHtmlWarcBytesNotPersisted": true
+}
