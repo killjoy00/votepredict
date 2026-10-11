@@ -1,0 +1,253 @@
+{
+  "schema": "mn-kent-eken-actual-2021-serving-2020-original-site-13-capture-dated-issue-excerpts-v1",
+  "scope": {
+    "issue": 864,
+    "historicalElectionYear": 2020,
+    "generalElectionDate": "2020-11-03",
+    "officialActual2021SenateServiceRequired": true,
+    "originalFirstPartyHTMLSourcesRehashed": 5,
+    "independentFull2020CDXIndexSourceFilesReopened": 2,
+    "actualSenatorsWithAuthenticated2020OriginalSitePages": 2,
+    "actualServingSenatorsWithExactPolicyExcerpts": 1,
+    "selectedCandidateOwnedIssuePages": 1,
+    "shortExactPolicyExcerpts": 13,
+    "older2016CycleContentCapturedDuring2020ExplicitlyPreserved": true,
+    "originalArchive2020UTCIsPublicByNotAuthorPosted": true,
+    "claimOfPriorVoteIsNotIndependentlyProvenRollCall": true,
+    "productionEvidenceDatabaseForecastModelSchedulerChanges": 0
+  },
+  "source": {
+    "officialOriginalMNStateSenateLRLDirectory": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "officialOriginalGovRun": 38094976711,
+    "officialOriginalGovArtifact": 11685387674,
+    "officialOriginalGovHtmlSha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "candidateOriginalArchiveRun": 38157868392,
+    "firstPartyOriginalArchiveArtifact": 11709436801,
+    "firstPartyOriginalArchiveArtifactName": "senate-two-more-2021-senators-2020-original-candidate-html-v1",
+    "sourceAcquisitionManifest": "source-acquisition-manifest.json"
+  },
+  "actualSenatePeople": [
+    {
+      "senator": "Kent Eken",
+      "district": "4",
+      "domain": "votekenteken.com",
+      "fullAuthenticated2020OriginalHTMLPages": 4,
+      "exactCandidateSitePolicyExcerpts": 13,
+      "all2020SourceCoverageCertified": false
+    },
+    {
+      "senator": "Bill Ingebrigtsen",
+      "district": "8",
+      "domain": "billforsenate.org",
+      "fullAuthenticated2020OriginalHTMLPages": 1,
+      "exactCandidateSitePolicyExcerpts": 0,
+      "all2020SourceCoverageCertified": false
+    }
+  ],
+  "fullOriginalPageReceipts": [
+    {
+      "senator": "Kent Eken",
+      "district": "4",
+      "domain": "votekenteken.com",
+      "originalFile": "two20b-01-archive-20200303150744-0.html",
+      "originalUrl": "https://votekenteken.com/",
+      "capturedUtc": "2020-03-03T15:07:44.000Z",
+      "htmlSha256": "b5154b3426765d81ed6b7ceb305a02fa4839a6cf9f4d94076b2f8abd0693e14b",
+      "cdxSha1": "WZ3MBMT2DJ2CNFI2DY22TFTE65WLN6EP"
+    },
+    {
+      "senator": "Kent Eken",
+      "district": "4",
+      "domain": "votekenteken.com",
+      "originalFile": "two20b-01-archive-20200413223348-1.html",
+      "originalUrl": "https://votekenteken.com/contribute/",
+      "capturedUtc": "2020-04-13T22:33:48.000Z",
+      "htmlSha256": "601cb6377fa13fd83efb86b330bc1f4f34d249e0b711e632913d85aadb6119e3",
+      "cdxSha1": "W3OQEZW33NIO46ZVMUGQ2EMCLICRDNMI"
+    },
+    {
+      "senator": "Kent Eken",
+      "district": "4",
+      "domain": "votekenteken.com",
+      "originalFile": "two20b-01-archive-20200806093245-2.html",
+      "originalUrl": "https://www.votekenteken.com/contact-us/",
+      "capturedUtc": "2020-08-06T09:32:45.000Z",
+      "htmlSha256": "2468698b924f08d9415164ac75210b2168adc544b456096088bf1d8ad5c242f0",
+      "cdxSha1": "UXLB2ONWJRD3LC4VL7ZKLJEAOLJSDUDP"
+    },
+    {
+      "senator": "Kent Eken",
+      "district": "4",
+      "domain": "votekenteken.com",
+      "originalFile": "two20b-01-archive-20200814193005-3.html",
+      "originalUrl": "https://www.votekenteken.com/kent-ekens-priorities-and-voting-platform/",
+      "capturedUtc": "2020-08-14T19:30:05.000Z",
+      "htmlSha256": "84d546318d875242c8c3b36c5e8eb63d3e3cb2df0d68a4f03fa17f9c1c973dac",
+      "cdxSha1": "RW7N2DQFQB5FHUIFTUDBWQWPN57G5YXK"
+    },
+    {
+      "senator": "Bill Ingebrigtsen",
+      "district": "8",
+      "domain": "billforsenate.org",
+      "originalFile": "two20b-02-archive-20200805220154-0.html",
+      "originalUrl": "http://billforsenate.org/",
+      "capturedUtc": "2020-08-05T22:01:54.000Z",
+      "htmlSha256": "263c155d0560953d418ad84506ef68b9dfe51a1172336da14abb4e5fc93e8a85",
+      "cdxSha1": "PAS6JCDM4S2BDVKVYADI4OVHX7QM7WRU"
+    }
+  ],
+  "policyPage": {
+    "id": "ekenPlatform2020",
+    "senator": "Kent Eken",
+    "originalFile": "two20b-01-archive-20200814193005-3.html",
+    "originalVisibleSectionStartsWith": "Kent Eken's Voting Platform",
+    "originalVisibleSectionEndsBefore": "KENT EKEN for Minnesota State Senate in District 4",
+    "candidateOwnedIssuesWithOlder2016ElectionCopy": true,
+    "exactSourceCaptureIsNotFirstAuthoredDate": true
+  },
+  "exactCandidateOriginalPlatformShortExcerpts": [
+    {
+      "id": "eken2020-issue-001",
+      "pageId": "ekenPlatform2020",
+      "issueFamily": "taxes_revenue",
+      "exactExcerpt": "Reduce our property taxes",
+      "conservativeMeaning": "Prioritizes property tax reduction",
+      "kind": "older_2016_cycle_candidate_policy_copy_observed_2020",
+      "candidateSiteSelfReportedPriorVoteNotOfficiallyProven": true,
+      "attributableByHistoricalOriginalArchiveUtc": true,
+      "automaticallyAdmittedToProductionOrForecast": false
+    },
+    {
+      "id": "eken2020-issue-002",
+      "pageId": "ekenPlatform2020",
+      "issueFamily": "education",
+      "exactExcerpt": "Lower tuition rates",
+      "conservativeMeaning": "Supports reducing education tuition",
+      "kind": "older_2016_cycle_candidate_policy_copy_observed_2020",
+      "candidateSiteSelfReportedPriorVoteNotOfficiallyProven": true,
+      "attributableByHistoricalOriginalArchiveUtc": true,
+      "automaticallyAdmittedToProductionOrForecast": false
+    },
+    {
+      "id": "eken2020-issue-003",
+      "pageId": "ekenPlatform2020",
+      "issueFamily": "environment_natural_resources",
+      "exactExcerpt": "Protect our communities from flooding",
+      "conservativeMeaning": "Advocates flood protection",
+      "kind": "older_2016_cycle_candidate_policy_copy_observed_2020",
+      "candidateSiteSelfReportedPriorVoteNotOfficiallyProven": true,
+      "attributableByHistoricalOriginalArchiveUtc": true,
+      "automaticallyAdmittedToProductionOrForecast": false
+    },
+    {
+      "id": "eken2020-issue-004",
+      "pageId": "ekenPlatform2020",
+      "issueFamily": "state_government",
+      "exactExcerpt": "Maintain and improve the quality of our education, health/long-term care, and transportation system",
+      "conservativeMeaning": "Prioritizes sustaining government services, including education, healthcare and transportation",
+      "kind": "older_2016_cycle_candidate_policy_copy_observed_2020",
+      "candidateSiteSelfReportedPriorVoteNotOfficiallyProven": true,
+      "attributableByHistoricalOriginalArchiveUtc": true,
+      "automaticallyAdmittedToProductionOrForecast": false
+    },
+    {
+      "id": "eken2020-issue-005",
+      "pageId": "ekenPlatform2020",
+      "issueFamily": "taxes_revenue",
+      "exactExcerpt": "Kent Eken is very concerned about the increasing property taxes that hit Greater Minnesota",
+      "conservativeMeaning": "Expresses concern about high rural property taxes",
+      "kind": "older_2016_cycle_candidate_policy_copy_observed_2020",
+      "candidateSiteSelfReportedPriorVoteNotOfficiallyProven": true,
+      "attributableByHistoricalOriginalArchiveUtc": true,
+      "automaticallyAdmittedToProductionOrForecast": false
+    },
+    {
+      "id": "eken2020-issue-006",
+      "pageId": "ekenPlatform2020",
+      "issueFamily": "taxes_revenue",
+      "exactExcerpt": "Kent Eken fought to save the Homestead Credit",
+      "conservativeMeaning": "Campaign site claims earlier work protecting Homestead Credit",
+      "kind": "candidate_claim_of_prior_legislative_action_not_verified_roll_call",
+      "candidateSiteSelfReportedPriorVoteNotOfficiallyProven": true,
+      "attributableByHistoricalOriginalArchiveUtc": true,
+      "automaticallyAdmittedToProductionOrForecast": false
+    },
+    {
+      "id": "eken2020-issue-007",
+      "pageId": "ekenPlatform2020",
+      "issueFamily": "taxes_revenue",
+      "exactExcerpt": "voted against the elimination of this program which is so important to our citizens.",
+      "conservativeMeaning": "Candidate campaign claim of an earlier roll-call choice, not verified in official journal",
+      "kind": "candidate_claim_of_prior_legislative_action_not_verified_roll_call",
+      "candidateSiteSelfReportedPriorVoteNotOfficiallyProven": true,
+      "attributableByHistoricalOriginalArchiveUtc": true,
+      "automaticallyAdmittedToProductionOrForecast": false
+    },
+    {
+      "id": "eken2020-issue-008",
+      "pageId": "ekenPlatform2020",
+      "issueFamily": "taxes_revenue",
+      "exactExcerpt": "This is wrong, and I will work to restore the Homestead Credit if elected to the State Senate",
+      "conservativeMeaning": "Older cycle candidate promise to restore Homestead Credit",
+      "kind": "older_2016_cycle_candidate_policy_copy_observed_2020",
+      "candidateSiteSelfReportedPriorVoteNotOfficiallyProven": true,
+      "attributableByHistoricalOriginalArchiveUtc": true,
+      "automaticallyAdmittedToProductionOrForecast": false
+    },
+    {
+      "id": "eken2020-issue-009",
+      "pageId": "ekenPlatform2020",
+      "issueFamily": "education",
+      "exactExcerpt": "Quality of education and access to education are of up-most importance to Kent Eken.",
+      "conservativeMeaning": "Prioritizes quality and access in education",
+      "kind": "older_2016_cycle_candidate_policy_copy_observed_2020",
+      "candidateSiteSelfReportedPriorVoteNotOfficiallyProven": true,
+      "attributableByHistoricalOriginalArchiveUtc": true,
+      "automaticallyAdmittedToProductionOrForecast": false
+    },
+    {
+      "id": "eken2020-issue-010",
+      "pageId": "ekenPlatform2020",
+      "issueFamily": "state_government",
+      "exactExcerpt": "Eken is also working to maintain and improve the quality of our education, health care, and transportation systems.",
+      "conservativeMeaning": "States commitment to government education, health and transit services",
+      "kind": "older_2016_cycle_candidate_policy_copy_observed_2020",
+      "candidateSiteSelfReportedPriorVoteNotOfficiallyProven": true,
+      "attributableByHistoricalOriginalArchiveUtc": true,
+      "automaticallyAdmittedToProductionOrForecast": false
+    },
+    {
+      "id": "eken2020-issue-011",
+      "pageId": "ekenPlatform2020",
+      "issueFamily": "human_services",
+      "exactExcerpt": "Eken is especially concerned about long-term care for our seniors who have given us so much.",
+      "conservativeMeaning": "Prioritizes older adults' long-term care",
+      "kind": "older_2016_cycle_candidate_policy_copy_observed_2020",
+      "candidateSiteSelfReportedPriorVoteNotOfficiallyProven": true,
+      "attributableByHistoricalOriginalArchiveUtc": true,
+      "automaticallyAdmittedToProductionOrForecast": false
+    },
+    {
+      "id": "eken2020-issue-012",
+      "pageId": "ekenPlatform2020",
+      "issueFamily": "human_services",
+      "exactExcerpt": "Eken has been an out-spoken advocate for our nursing homes and other long-term care services.",
+      "conservativeMeaning": "Campaign site claims advocacy for nursing-home services",
+      "kind": "candidate_claim_of_prior_legislative_action_not_verified_roll_call",
+      "candidateSiteSelfReportedPriorVoteNotOfficiallyProven": true,
+      "attributableByHistoricalOriginalArchiveUtc": true,
+      "automaticallyAdmittedToProductionOrForecast": false
+    },
+    {
+      "id": "eken2020-issue-013",
+      "pageId": "ekenPlatform2020",
+      "issueFamily": "human_services",
+      "exactExcerpt": "If elected, he will continue to work for our seniors and those who provide the care and services they need and deserve.",
+      "conservativeMeaning": "Older cycle pledge to support eldercare services and providers",
+      "kind": "older_2016_cycle_candidate_policy_copy_observed_2020",
+      "candidateSiteSelfReportedPriorVoteNotOfficiallyProven": true,
+      "attributableByHistoricalOriginalArchiveUtc": true,
+      "automaticallyAdmittedToProductionOrForecast": false
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+name: Verify 13 exact 2020-captured Kent Eken original candidate-platform quotations
+
+# Original 2020 captured text includes 2016 election language; NOT
+# first written in 2020. Require entire independent original government
+# directory source, two whole CDX indexes and all five archived HTML files.
+# No production DB, evidence writes, model, forecasts or scheduler.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-kent-eken-2020-original-13-policy-excerpts.yml
+      - data/evaluation/senate-kent-eken-2020-original-13-capture-dated-platform-excerpts-v1.json
+      - src/evidence/senate-kent-eken-2020-13-historical-campaign-excerpt-proof.ts
+      - scripts/audit-kent-eken-2020-original-platform-13-policy-excerpts-offline.ts
+      - tests/senate-kent-eken-2020-original-13-exact-policy-excerpts.test.ts
+      - docs/SENATE_KENT_EKEN_2020_13_ORIGINAL_PLATFORM_QUOTES.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  all-original-pages-and-cdx-check-kent-eken-13-exact-campaign-issue-phrases:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-eken-2020-original-platform-13-exact-capture-dated-quotes-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen whole independently authenticated original Minnesota actual-senators directory HTML and original UTC/SHA receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/complete-lrl-actual-senator-service
+      - name: Reopen all five whole archived original candidate HTML bodies and both original 2020 CDX index responses
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38157868392
+          name: senate-two-more-2021-senators-2020-original-candidate-html-v1
+          github-token: ${{ github.token }}
+          path: original/two-further-2021-serving-senators-2020-pages
+      - name: Prove exact 13 short site excerpts from original HTML plus CDX SHA1 and government Senate service
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/complete-lrl-actual-senator-service -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/complete-lrl-actual-senator-service -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$gov" && test -n "$receipt"
+          test "$(dirname "$gov")" = "$(dirname "$receipt")"
+          node --import tsx scripts/audit-kent-eken-2020-original-platform-13-policy-excerpts-offline.ts \
+            --original-entire-mn-actual-senate-service-html "$gov" \
+            --original-government-senate-service-utc-sha-receipt "$receipt" \
+            --original-2020-campaign-html-cdx-dir original/two-further-2021-serving-senators-2020-pages \
+            --output original/kent-eken-2020-13-whole-source-quoted-issue-proof.json
+      - name: Retain independently source-verified exact historical candidate policy quote proof artifact only, never modify production
+        uses: actions/upload-artifact@v6
+        with:
+          name: kent-eken-2020-13-authenticated-exact-original-campaign-issue-excerpts-v1
+          path: original/kent-eken-2020-13-whole-source-quoted-issue-proof.json
+          retention-days: 30
+          if-no-files-found: error
