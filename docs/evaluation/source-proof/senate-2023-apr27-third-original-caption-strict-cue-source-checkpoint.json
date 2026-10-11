@@ -1,0 +1,166 @@
+{
+  "schemaVersion": "senate-2023-apr27-third-original-caption-strict-cue-permanent-source-checkpoint-v1",
+  "issue": 864,
+  "recordedOn": "2026-10-10",
+  "sourceAuthority": "Minnesota Legislative Reference Library",
+  "actualSourceImplementation": {
+    "pr": 1043,
+    "mergedSquash": "358786a552ce693aeef4083850cdb65929a85825",
+    "exactHeadCiRun": 38110905136,
+    "exactHeadCiConclusion": "success"
+  },
+  "realOriginalSourceRun": {
+    "id": 38111103426,
+    "conclusion": "success",
+    "artifactId": 11691093567,
+    "artifactZipSha256": "4f7e4623914f1e44c4564aefccf7b73ee570e6c6d440268464484533623355a4",
+    "uncompressedJsonSha256": "ffecc8a07bc0e72db407d496c12070649d25fce5cc6ec8bed83aebca23666371",
+    "uncompressedJsonBytes": 7104,
+    "independentlyDownloadedAndShaVerified": true
+  },
+  "originalHearingIdentity": {
+    "indexedHearingDate": "2023-04-27",
+    "committee": "Taxes",
+    "mtgid": "1048125",
+    "officialMediaUrl": "https://www.lrl.mn.gov/media/file?mtgid=1048125",
+    "originalHtmlSha256": "82f26b59ad2210b3b46682a7000a9c237473a71359c3fd72645889b4d86fcf08",
+    "thirdOriginalCaptionTrackOrdinal": 2,
+    "thirdTrackOriginalCaptionSha256": "2b76c31f7ece2a26b60de38493f7ddff43f48bc386ed0260f86c0a8e984ccd10",
+    "thirdOriginalCaptionBytes": 234392,
+    "thirdOriginalCaptionTimestampMarkers": 1390
+  },
+  "separateOriginalSourceAcquisition": {
+    "initialBroadSourceRun": 38103766440,
+    "initialBroadSourceConclusion": "failure",
+    "initialApr27PreviouslyHashedCaptionStreams": 2,
+    "originalThirdCaptionAvailabilityRun": 38110655145,
+    "originalThirdCaptionAvailabilityConclusion": "success",
+    "originalThirdSourceArtifactId": 11691229670,
+    "originalThirdSourceJsonSha256": "1d97c6f530c22dca4ca37d59f5a0004bfe8d9e2cbce525fc910cf8247a46c714"
+  },
+  "actualStrictCueReview": {
+    "originalPageShaReverified": true,
+    "originalThirdCaptionBodyShaReverified": true,
+    "strictThirtySecondCategoryCueWindowsNotMotions": 12,
+    "reviewWindowsCappedOrOmitted": 0,
+    "categoryMatchesInSourceCaptionRowsNotDistinctEvents": {
+      "voice_vote_language": 5,
+      "formal_motion_result": 12,
+      "explicit_roll_request": 8,
+      "reported_tally_language": 3,
+      "formal_motion_introduction": 8
+    },
+    "candidateCueWindows": [
+      {
+        "kind": "voice_vote_language",
+        "elapsedSeconds": 233,
+        "sourceRowOrdinal": 80,
+        "nearbyVisibleCaptionTextSha256": "b7e3fcfb98e7ee3520b2e7e50d0f2f55d32b92d626e743ba65ec530eb388bc27",
+        "requiresHumanSourceAudioAndMotionReview": true
+      },
+      {
+        "kind": "voice_vote_language",
+        "elapsedSeconds": 241,
+        "sourceRowOrdinal": 82,
+        "nearbyVisibleCaptionTextSha256": "1eea6af42872be99a1b3e5a95a3bd8e64f8f4e820ec7bd28d038bd4408c82888",
+        "requiresHumanSourceAudioAndMotionReview": true
+      },
+      {
+        "kind": "formal_motion_result",
+        "elapsedSeconds": 251,
+        "sourceRowOrdinal": 87,
+        "nearbyVisibleCaptionTextSha256": "9651835705adc9092811e2989293d28167ed0c213b146039300ad5c91019018d",
+        "requiresHumanSourceAudioAndMotionReview": true
+      },
+      {
+        "kind": "explicit_roll_request",
+        "elapsedSeconds": 926,
+        "sourceRowOrdinal": 332,
+        "nearbyVisibleCaptionTextSha256": "65f301fb23c3f398eafeb947d90ae2500db8c9fe054c5fd679f2b95f6428df34",
+        "requiresHumanSourceAudioAndMotionReview": true
+      },
+      {
+        "kind": "explicit_roll_request",
+        "elapsedSeconds": 933,
+        "sourceRowOrdinal": 335,
+        "nearbyVisibleCaptionTextSha256": "3330a18d8aa7e5c74365d14511cf0b7a048bd421ca9cbce2a83874da837bfc31",
+        "requiresHumanSourceAudioAndMotionReview": true
+      },
+      {
+        "kind": "explicit_roll_request",
+        "elapsedSeconds": 1820,
+        "sourceRowOrdinal": 674,
+        "nearbyVisibleCaptionTextSha256": "88edf348bed5f5dcd784acd8b88741c63a300bf46b69589d2f15394e39e40bdb",
+        "requiresHumanSourceAudioAndMotionReview": true
+      },
+      {
+        "kind": "formal_motion_result",
+        "elapsedSeconds": 2560,
+        "sourceRowOrdinal": 978,
+        "nearbyVisibleCaptionTextSha256": "669b7f5b6b8fe2e93a4e0aa37032185312e2b0f3a00bfdff3a97d305c8898684",
+        "requiresHumanSourceAudioAndMotionReview": true
+      },
+      {
+        "kind": "reported_tally_language",
+        "elapsedSeconds": 2560,
+        "sourceRowOrdinal": 978,
+        "nearbyVisibleCaptionTextSha256": "669b7f5b6b8fe2e93a4e0aa37032185312e2b0f3a00bfdff3a97d305c8898684",
+        "requiresHumanSourceAudioAndMotionReview": true
+      },
+      {
+        "kind": "formal_motion_introduction",
+        "elapsedSeconds": 2663,
+        "sourceRowOrdinal": 1005,
+        "nearbyVisibleCaptionTextSha256": "3737ab911eaf647c8785a1578945313cb92baacacecd1b4ce55e40f399e0c14f",
+        "requiresHumanSourceAudioAndMotionReview": true
+      },
+      {
+        "kind": "formal_motion_introduction",
+        "elapsedSeconds": 2670,
+        "sourceRowOrdinal": 1007,
+        "nearbyVisibleCaptionTextSha256": "62e0dcf8063df6f750483ea712dce0a52c63330f463a98d7df1d472b9a8220e7",
+        "requiresHumanSourceAudioAndMotionReview": true
+      },
+      {
+        "kind": "formal_motion_introduction",
+        "elapsedSeconds": 3123,
+        "sourceRowOrdinal": 1157,
+        "nearbyVisibleCaptionTextSha256": "ed0b9e8d908432b3c34ad15c2ed5372850054c8e38d567a6493b776289283405",
+        "requiresHumanSourceAudioAndMotionReview": true
+      },
+      {
+        "kind": "formal_motion_result",
+        "elapsedSeconds": 3730,
+        "sourceRowOrdinal": 1382,
+        "nearbyVisibleCaptionTextSha256": "8363256a6e79d0ce2a29d5739313f16d6385f26f9e61fe40e1d79290b2b72189",
+        "requiresHumanSourceAudioAndMotionReview": true
+      }
+    ]
+  },
+  "bounded2023ResearchTotals": {
+    "previousOriginalCaptionStreamsReviewed": 63,
+    "thirdNowOriginalShaAndStrictCueReviewed": 1,
+    "totalIndependentlyHashedCaptionTracksAcross2023": 64,
+    "uniqueHearingPagesWithTimedSource": 58,
+    "previousAutoCaptionTimestampMarkers": 167594,
+    "additionalThirdStreamAutoCaptionTimestampMarkers": 1390,
+    "allSourceTimestampMarkersAcrossSixtyFourStreams": 168984,
+    "priorPerStreamCueCategoryWindows": 393,
+    "thirdStreamPerStreamCueCategoryWindows": 12,
+    "totalPerStreamProceduralCategoryWindowsNotGloballyDistinct": 405,
+    "sixNoTimedCaptionMediaPageHoldsRemain": true
+  },
+  "provenanceSafety": {
+    "candidateTimeWindowsNotUniquelyCountedLegislativeMotions": true,
+    "thirdStreamIsNotThirdMotionOrVote": true,
+    "automaticCaptionSpeakerAndBillErrorsNotHumanAdjudicated": true,
+    "sourceAudioVideoNeverReplayed": true,
+    "noOriginalCaptionWordsOrFullMediaCommitted": true,
+    "noMemberYeaNayInferredFromCaptionOrTally": true,
+    "actualStatewide2021to2025CommitteeVoteDenominator": null,
+    "sourceDbReconciliationUnknown": true,
+    "noPrivateProductionDbAccess": true,
+    "noModelForecastTrainingServingSchedulerFloor2027Changes": true,
+    "keepIssue864Open": true
+  }
+}
