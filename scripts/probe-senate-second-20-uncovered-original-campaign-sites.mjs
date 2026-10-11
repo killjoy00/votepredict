@@ -264,7 +264,7 @@ const report={baselineOriginal95SourceResearchCoverageSHA256:sha(rawCoverage),
  baselineActualSenatorsUnobserved:31,
  special2025SenateElectionCutoffsIndependentlyPinned:true,
  sourceOnlyNoPolicyAutomaticallyCounted:true,
- schema:'mn-2021-25-second-batch-20-distinct-uncovered-actual-senators-26-original-archive-search-windows-v1',
+ schema:'mn-2021-25-second-batch-20-uncovered-actual-senators-33-original-archive-search-windows-v1',
  issue:864,scope:'Historical first-party campaign website research only; no election forecasting',
  branch,independentGovernmentLRLSourceSha256:sha(gov),
  actualServingStateSenatorsVerifiedAgainstGovernmentBeforeArchiveNetwork:20,
@@ -278,7 +278,7 @@ const report={baselineOriginal95SourceResearchCoverageSHA256:sha(rawCoverage),
  senateRoster:senatorResults,originalSourceWindows:output};
 writeFileSync(join(out,'second-20-senators-historical-candidate-site-originals-manifest.json'),
  JSON.stringify(report,null,2)+'\n',{flag:'wx'});
-console.log('FIRST TWENTY ACTUAL SENATORS PUBLIC ORIGINAL ARCHIVE ACQUISITION '+JSON.stringify({
+console.log('SECOND TWENTY ACTUAL SENATORS PUBLIC ORIGINAL ARCHIVE ACQUISITION '+JSON.stringify({
  realSenators:20,windows:pins.length,sourceCdxFiles:report.completeOriginalCdxResponseFilesRetained,
  authenticOriginalHtml:report.digestAndVisibleIdentityMatchedCompleteArchivedHtml,
  automaticPolicyQuotes:0,productionChanges:0}));
