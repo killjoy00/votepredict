@@ -25,6 +25,12 @@ test('five original, source-SHA/byte-verified CFB/Revisor documents fix release 
  assert.equal(ck.coverageScope.historicalActualPublicByCount,0);
  assert.equal(ck.primarySourceAcquisition.correctedFullMetadataRun.allFiveOriginalSourceSHAAndBytesVerified,true);
  assert.equal(ck.primarySourceAcquisition.correctedFullMetadataRun.noSourceFetchOrParseHolds,true);
+ assert.equal(ck.primarySourceAcquisition.independentFullSourceRecheck.allFiveExactOriginalPdfAndStatuteSha256MatchPriorCorrectedRun,true);
+ assert.equal(ck.primarySourceAcquisition.independentFullSourceRecheck.allFiveExactSourceByteLengthsMatchPriorCorrectedRun,true);
+ assert.equal(ck.primarySourceAcquisition.independentFullSourceRecheck.original2023And2024YearEndCalendarCoverageAndDueDateFlagsMatch,true);
+ assert.equal(ck.primarySourceAcquisition.independentFullSourceRecheck.noSourceFetchOrParseHolds,true);
+ assert.notEqual(ck.primarySourceAcquisition.independentFullSourceRecheck.runId,
+   ck.primarySourceAcquisition.correctedFullMetadataRun.runId);
  assert.equal(ck.primarySourceAcquisition.initialExploratoryRun.artifactId,11712580664);
  assert.match(ck.primarySourceAcquisition.initialExploratoryRun.warning,/parser detached/);
  assert.ok(ck.limits.BoardReceivedByDateIsNotActualPublicBy);
