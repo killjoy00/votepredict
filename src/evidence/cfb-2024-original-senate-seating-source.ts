@@ -44,22 +44,34 @@ export function inspect2024OriginalSenateSeatingPdf(input:{
  const raw=norm(input.original2024PdfExtractedText);
  const title=/Seating Arrangement\s+2024/i.test(raw);
  const ix=raw.indexOf('Senate Members');
- const mapIx=raw.indexOf('2024 Seating Arrangement',Math.max(ix+14,0));
- const table=ix>=0?raw.slice(ix,mapIx>ix?mapIx:Math.min(ix+9000,raw.length)):'';
- const seating=mapIx>=0?raw.slice(mapIx):'';
- // A strict printed list is one source scope; the plotted seat-map captions
- // are a SECOND, independent component inside the exact same original PDF.
- // They can disagree (SD20 in original 2024 chart), which must be a HOLD.
+ const titleIndex=raw.indexOf('Seating Arrangement 2024');
+ // ORIGINAL PDF extraction order: the plotted seating map occurs FIRST,
+ // with "First Surname\nTown - district\nSeat", and the printed roster is
+ // later, as "20Drazkowski, Steve J. (R) ...." with NO space after 20.
+ // Search engines' indexed snippets can rearrange the two columns and
+ // even conflate Duckworth with Drazkowski. Use actual government PDF text.
+ const seating=ix>=0?raw.slice(0,ix):'';
+ const table=ix>=0?raw.slice(ix):'';
+ const mapSectionVerified=titleIndex>=0&&titleIndex<ix
+   &&/Seat\s+\d+/i.test(seating);
  const entries=people.map(p=>{
    const words=p.name.trim().split(/\s+/);
    const first=words[0]!,surname=words.at(-1)!;
-   const roster=new RegExp('(?:^|\\n)\\s*0?'+p.district+'\\s+'+
-     esc(surname)+',\\s*'+esc(first)+'\\b[^\\n]{0,60}?\\((?:R|DFL)\\)','i');
+   const roster=new RegExp('(?:^|\\n)\\s*0?'+p.district+'\\s*'+
+     esc(surname)+',\\s*'+esc(first)+'\\b[^\\n]{0,95}?\\((?:R|DFL)\\)','i');
+   // Require the same district, given name and family name in the table;
+   // do not treat missing parser matches as conflicting original names.
    const tableMatched=roster.test(table);
-   const mapPattern=new RegExp(esc(first)+'(?:\\s+[A-Z]\\.?)?\\s+'+
-     esc(surname)+'(?:\\s+[^\\n]{0,65}?)?\\s+-\\s+0?'+p.district+'\\b','i');
-   const mapMatched=mapPattern.test(seating);
-   const conflict=!tableMatched&&mapMatched;
+   const districtRow=new RegExp('(?:^|\\n)\\s*0?'+p.district+
+     '\\s*([A-Za-z][A-Za-z .\\x27-]{1,80}?),\\s*([A-Za-z][A-Za-z .\\x27-]{1,80}?)\\s*\\((?:R|DFL)\\)','i');
+   const tableDistrictPresent=districtRow.test(table);
+   // Seat-map first and family names must be on one line, followed by
+   // original printed "City - NN" district on its *next* line.
+   const mapPattern=new RegExp('(?:^|\\n)\\s*'+esc(first)+
+     '(?:\\s+[A-Z]\\.?)?\\s+'+esc(surname)+
+     '\\s*\\n[^\\n]{0,90}?\\s+-\\s*0?'+p.district+'\\b','i');
+   const mapMatched=mapSectionVerified&&mapPattern.test(seating);
+   const conflict=tableDistrictPresent&&!tableMatched&&mapMatched;
    const status:RosterResult['roster2024SourceStatus']=tableMatched&&mapMatched
      ?'original_2024_member_list_and_map_both_matched'
      :conflict?'HOLD_source_2024_table_and_map_conflict'
@@ -75,14 +87,14 @@ export function inspect2024OriginalSenateSeatingPdf(input:{
  const counts={
   original2024SeatingArrangementTitleVerified:title,
   originalTableSenateMembersSectionLocated:ix>=0,
-  originalMapSectionLocated:mapIx>ix,
+  originalMapSectionLocated:mapSectionVerified,
   numberOfReal2022And2023SenatorsCrossChecked:entries.length,
   exactSourceTableMatches:entries.filter(x=>x.published2024RosterExactNameDistrictMatched).length,
   independentMapCaptionMatches:entries.filter(x=>x['sameDocument2024MapNameDistrictMatched']).length,
   bothSourceSectionsMatched:entries.filter(x=>x.roster2024SourceStatus==='original_2024_member_list_and_map_both_matched').length,
   sourceTableAndMapConflicts:entries.filter(x=>x['sourceTableAndMapConflict']).map(x=>({reg:x.reg,district:x.priorDistrict})),
   unverified:entries.filter(x=>x.roster2024SourceStatus==='HOLD_2024_source_name_or_district_unverified').map(x=>({reg:x.reg,district:x.priorDistrict})),
-  complete2024RosterIdentityAuthentication:false,
+  complete2024RosterIdentityAuthentication:entries.length===22&&entries.every(x=>x.roster2024SourceStatus==='original_2024_member_list_and_map_both_matched'),
   historicalVoteDayIn2024ServiceEstablishedCount:0,
   legal2024CommitteeFilingDutyEstablishedCount:0,
   originalCfbActualPublicByEstablishedCount:0,
