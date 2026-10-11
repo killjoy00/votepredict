@@ -116,10 +116,9 @@ export function inspectSynthetic2021SenateJournalCommitteeRoll(
  mockYea:readonly string[],mockNay:readonly string[]
 ){
  const spec=ORIGINAL_2021_JOURNAL_COMMITTEE_ROLL_SPECS.find(x=>x.bill===bill);
- if(!spec||mockYea.some(x=>ORIGINAL_2021_JOURNAL_COMMITTEE_ROLL_SPECS.some(s=>
-  [...s.realYea,...s.realNay].includes(x as never)))||
-  mockNay.some(x=>ORIGINAL_2021_JOURNAL_COMMITTEE_ROLL_SPECS.some(s=>
-  [...s.realYea,...s.realNay].includes(x as never))))
+ const real=new Set<string>(ORIGINAL_2021_JOURNAL_COMMITTEE_ROLL_SPECS.flatMap(s=>
+  [...s.realYea,...s.realNay]));
+ if(!spec||mockYea.some(x=>real.has(x))||mockNay.some(x=>real.has(x)))
   throw Error('Synthetic mock roster must be purely fictional');
  return parseJournal(text,spec,mockYea,mockNay);
 }
