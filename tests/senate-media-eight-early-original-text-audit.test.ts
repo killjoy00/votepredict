@@ -12,8 +12,7 @@ const raw=(s:string)=>JSON.parse(readFileSync('docs/evaluation/'+s,'utf8')) as a
 const queue=raw('senate-media-2021-25-eight-further-original-phrase-queue.json') as EightQueue;
 const leads=raw('senate-media-2021-25-public-broader-source-discovery.json')
   .selectedPublicSourceLeads as EightLead[];
-const ledger=raw('senate-media-2021-25-broader-25-original-public-archive-receipts-20261011.json')
-  as EightHistoricManifest;
+const ledger=raw('senate-media-2021-25-broader-25-original-public-archive-receipts-20261011.json') as EightHistoricManifest;
 const ALPHA='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 function b32(buf:Uint8Array):string{
   let v=0,bits=0,out='';
