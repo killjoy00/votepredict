@@ -1,0 +1,68 @@
+name: Public senator media 15 independent newsroom original pages
+
+# Research only: actual Wayback HTTP original digest receipts, no article text,
+# private evidence, member vote inference or publisher-universe completeness.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-independent-reporter-15-wayback.yml
+      - src/evidence/senate-media-independent-reporter-15-wayback.ts
+      - scripts/probe-senate-media-independent-reporter-15-wayback.ts
+      - tests/senate-media-independent-reporter-15-wayback.test.ts
+      - docs/evaluation/senate-media-2021-25-further-independent-reporting-15-leads.json
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: Public journalistic original page URL sample
+        type: choice
+        required: true
+        default: all
+        options: [priority, all]
+      replay_count:
+        description: Exact raw original historic page replay captures per URL (0-2)
+        type: choice
+        required: true
+        default: "2"
+        options: ["0", "1", "2"]
+permissions:
+  contents: read
+concurrency:
+  group: senate-media-independent-reporter-15-public-originals
+  cancel-in-progress: false
+jobs:
+  index-and-exact-original:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-independent-reporting-and-archived-speakers-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Replay only original publicly indexed HTTP article bytes
+        env:
+          SCOPE: ${{ github.event_name == 'pull_request' && 'all' || inputs.scope }}
+          CAPTURES: ${{ github.event_name == 'pull_request' && '2' || inputs.replay_count }}
+        run: |
+          node --import tsx scripts/probe-senate-media-independent-reporter-15-wayback.ts \
+            --scope "$SCOPE" --replay-count "$CAPTURES" \
+            --output artifacts/independent-reporter-15-original-proofs.json
+      - name: Upload only URL, archive UTC and raw body SHA receipts
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-independent-15-original-receipts
+          path: artifacts/independent-reporter-15-original-proofs.json
+          if-no-files-found: error
+          retention-days: 7
