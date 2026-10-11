@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "senate-2025-elections-feb06-sf0529-filed-a2-first-original-failure-checkpoint-v1",
+  "issue": 864,
+  "historicalHearingDate": "2025-02-06",
+  "source": "Minnesota Legislative Reference Library",
+  "officialIndexUrl": "https://www.lrl.mn.gov/minutes/comm?commid=10073-0&year=2025",
+  "officialIndexedDocumentLabel": "sf0529-a2-amendment",
+  "expectedOriginalPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/elections/20250206/Elections_20250206_SF0529-A2-Amendment.pdf",
+  "previousAuthenticatedCommitteeMinutes": {
+    "originalPdfSha256": "054c81c01271e8ef6513f57c29e95cbdb4f3984a8b0676effe6a83f0f812469d",
+    "extractedOriginalTextSha256": "99301546122e3bdb2013302b384e4dd3c2bb15d66056efb1888c66c541758750",
+    "oralA2LuceroTextOffset": 1991,
+    "otherA2MathewsTextOffset": 2250,
+    "separatePrintedFiveSixResultsDoNotProveDistinctHistoricalRolls": true
+  },
+  "actualFirstOriginalFiledA2SourceRun": {
+    "runId": 38157040475,
+    "runUrl": "https://github.com/killjoy00/votepredict/actions/runs/38157040475",
+    "sourceAcquisitionPR": 1071,
+    "sourceAcquisitionMergeCommit": "ce5ec9a8226d05d35f645b92d812d5e50e2b9547",
+    "conclusion": "failure",
+    "originalArtifactId": 11709186032,
+    "artifactName": "senate-2025-elections-feb06-original-filed-a2-pdf-and-metadata",
+    "zipBytes": 969,
+    "independentlyDownloadedArtifactZipSha256": "71c8954a141fd48338150c5a67ae1324fd41d88e58a61697e624f3de1180030f",
+    "decodedJsonEntryName": "original-filed-sf0529-a2-metadata.json",
+    "decodedJsonBytes": 1441,
+    "independentlyDownloadedDecodedJsonSha256": "08ae9f983f428ea97f68f0d1b06c46c2e9d6de45a44fd11fafd5e5f9f4267bff",
+    "originalFetchError": "fetch failed",
+    "firstObservedDownloadTimestampUtc": null,
+    "actualOriginalPdfBytesAcquired": false,
+    "sourceOriginalPdfSha256IndependentlyVerified": false,
+    "sourceOriginalFilePagesRead": false,
+    "sourceOriginalPDFFileInArtifact": false
+  },
+  "safetyHolds": {
+    "noConflationOfLuceroA2OralAndMathewsA2Filed": true,
+    "noClaimAmendmentFiledByMathewsFromFilename": true,
+    "noCertificationTwoDistinctFiveSixNamedRolls": true,
+    "noProductionIndividualMemberVoteImport": true,
+    "noSourceToStoredEvidenceParity": true,
+    "noOriginalPdfOrRawMemberChoiceListsCommitted": true,
+    "noPrivateOrProductionDbReadOrWrite": true,
+    "noModelsForecastsTrainingServingSchedulesFloorOr2027": true,
+    "historicallyEarliestPublicByTimestampOfFiledA2NotProven": true,
+    "noSameDayForecastWithoutMotionClock": true,
+    "issue864MustRemainOpen": true
+  }
+}
