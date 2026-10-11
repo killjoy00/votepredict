@@ -91,6 +91,13 @@ test('permanent original 2024/25 Board meeting PDFs source ledger pins two authe
  assert.equal(ck.scopeLimits.original2023YearEndRequiredFor22SenatorCohort,null);
  assert.equal(ck.scopeLimits.original2024YearEndRequiredFor22SenatorCohort,null);
  assert.equal(ck.scopeLimits.actualReportPublicByProvenCount,0);
+ assert.equal(ck.originalSourceAcquisitions.length,2);
+ assert.notEqual(ck.originalSourceAcquisitions[0].runId,ck.originalSourceAcquisitions[1].runId);
+ assert.equal(ck.crossRunOriginalSourceAgreement.bothOriginalBoardPdfSha256AndByteCountsIdentical,true);
+ assert.equal(ck.crossRunOriginalSourceAgreement.statewide2023MemoExpectedCountIdentical,true);
+ assert.equal(ck.crossRunOriginalSourceAgreement.statewide2024MemoDueAndFiledAndOutstandingCountIdentical,true);
+ assert.equal(ck.crossRunOriginalSourceAgreement.noCandidateSpecificLegalObligationEvidenceAdded,true);
+ assert.equal(ck.crossRunOriginalSourceAgreement.noExactReportHistoricalPublicByProven,true);
  assert.equal(ck.safeguards.noProductionDatabaseAccess,true);
  assert.equal(ck.scopeLimits.keepIssue864Open,true);
 });
