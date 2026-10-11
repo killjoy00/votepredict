@@ -6,6 +6,9 @@ on:
       - src/evidence/cfb-2024-original-senate-seating-source.ts
       - scripts/audit-cfb-2024-original-senate-seating-source.ts
       - tests/cfb-2024-original-senate-seating-source.test.ts
+      - docs/evaluation/source-proof/cfb-2024-original-senate-seating-chart-22-member-two-section-crossyear-proof.psv
+      - docs/evaluation/source-proof/cfb-2024-original-senate-22-two-section-2024-service-checkpoint.json
+      - docs/evaluation/cfb-2024-senate-original-seating-22-serving-finance-identity-crosscheck.md
 permissions:
   contents: read
 jobs:
