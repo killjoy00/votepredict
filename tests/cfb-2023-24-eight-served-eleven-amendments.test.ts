@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {
   selectElevenIndependentlyParentAuthenticatedAmendments,
   auditElevenAmendedPdfs,
@@ -115,4 +116,53 @@ test('eleven viewer indexes cannot inflate binary counts when hashes duplicate o
  assert.ok(ok.reports.every(x=>x.eligibleForHistoricalForecast===false
    &&x.historicallyActuallyPublicByOn===null
    &&x.legallyOwedReportCount===null));
+});
+
+test('permanent 11 authentic amended PDF source ledger is pinned to original CFB parents and independent source artifact',()=>{
+ const ck=JSON.parse(readFileSync(P+'cfb-2023-24-eight-verified-senators-11-amendment-original-source-checkpoint.json','utf8'));
+ const original=readFileSync(ck.newAmendedOriginalPdfProofLedger.path,'utf8');
+ const blob=createHash('sha1').update('blob '+Buffer.byteLength(original,'utf8')+'\0')
+   .update(original).digest('hex');
+ assert.equal(blob,ck.newAmendedOriginalPdfProofLedger.gitBlobSha);
+ assert.equal(original.endsWith('\n'),true);
+ assert.equal(Buffer.byteLength(original,'utf8'),3789);
+ assert.equal(ck.authenticatedOfficialSourceAcquisitions.length,1);
+ assert.equal(ck.firstOfficialRun.uniqueDistinctAmendedPdfBinaries,11);
+ assert.equal(ck.firstOfficialRun.sourceFailureOrIdentityHolds,0);
+ const records=original.trimEnd().split('\n').map(r=>r.split('|'));
+ assert.equal(records.length,11);
+ const byId=new Map(selected.map(t=>[t.id,t]));
+ const seen=new Set<string>();
+ const previous=readFileSync(P+'cfb-2023-24-parent-authenticated-16-amendment-pdf-source-ledger.psv','utf8')
+   .trimEnd().split('\n').map(s=>s.split('|'))
+   .filter(row=>row[13]==='distinct_authenticated_amended_pdf');
+ const oldSha=new Set(previous.map(row=>row[7]));
+ assert.equal(oldSha.size,14);
+ for(const row of records){
+  assert.equal(row.length,15);
+  const t=byId.get(row[0]!);
+  assert.ok(t);
+  assert.equal(row[1],t.senatorVerifiedServedIn2022);
+  assert.equal(row[2],String(t.senateDistrict2022));
+  assert.equal(row[3],t.registrationNumber);
+  assert.equal(row[4],t.viewerApiSha256);
+  assert.equal(row[5],t.parentOriginalId);
+  assert.equal(row[6],t.originalPdfSha256);
+  assert.match(row[7]!,/^[a-f0-9]{64}$/);
+  assert.ok(Number(row[8])>=300);
+  assert.equal(row[9],t.originalPeriodStart);
+  assert.equal(row[10],t.originalPeriodEnd);
+  assert.equal(row[11],t.originalBoardReceipt);
+  assert.ok(row[12]!>=row[11]!);
+  assert.equal(row[13],'distinct_authenticated_amended_pdf');
+  assert.equal(row[14],'-');
+  assert.notEqual(row[6],row[7]);
+  assert.ok(!oldSha.has(row[7]!));
+  seen.add(row[7]!);
+ }
+ assert.equal(seen.size,11);
+ assert.equal(ck.boundedUpdated2023to24SourceCohort.totalOriginalPlusAmendmentDistinctSourceAuthPdfs,68);
+ assert.equal(ck.scope.legalFilingDutyDenominator,null);
+ assert.equal(ck.scope.independentlyAuthenticatedActualHistoricalPublicBy,0);
+ assert.equal(ck.safeguards.noProductionReadOrWrite,true);
 });
