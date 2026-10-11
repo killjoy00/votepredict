@@ -52,7 +52,7 @@ test('exhaustive original-PDF binary identity and original Senate member case ar
   assert.equal(result.originalCfbBoardReceivedOn,'2025-11-26');
   assert.equal(result.totalTerminationWordOccurrences,0);
   assert.equal(result.originalTerminationCheckboxSelectionIndependentlyProven,null);
-  assert.equal(result.2025YearEndWasLegallyOwed,null);
+  assert.equal(result.yearEnd2025WasLegallyOwed,null);
   const other=probeServedSenatorSpecialFinalTerminationMarkers(target(1),pdf(1,'Special election cycle final.'));
   assert.equal(other.reportId,'19233:25:pcc:YE:1:0');
   assert.equal(other.originalPdfBytes,38474);
@@ -75,7 +75,7 @@ test('a bare printed termination form label CANNOT imply a checked box',()=>{
   assert.ok(v.totalTerminationWordOccurrences>=3);
   assert.equal(v.originalTerminationCheckboxSelectionIndependentlyProven,null);
   assert.equal(v.registeredCommitteeTerminatedEffectiveOn,null);
-  assert.equal(v.2025YearEndWasLegallyOwed,null);
+  assert.equal(v.yearEnd2025WasLegallyOwed,null);
   assert.equal(v.independentHistoricalPublicByOn,null);
   assert.equal(v.admissibleToHistoricalForecast,false);
   assert.ok(v.terminationWordDiagnostics.length>=1);
