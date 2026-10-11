@@ -1,0 +1,53 @@
+name: One-time 2025 Elections two conflicted original PDF roll and attendance source check
+
+# Only the two exact official 2025 Elections Senate PDF source identities.
+# Original PDF and embedded text SHA256 pin, 3 MiB / 30 pages, no redirects.
+# Source-only; no private database, models, serving, schedulers or 2027.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2025-elections-two-held-original-attendance.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  verify-two-exact-originals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Download pinned independent 2025 source-PDF hash metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2025-unparsed-roll-review-metadata
+          run-id: 38075573031
+          github-token: ${{ github.token }}
+          path: artifacts/original-hashes
+      - name: Ensure bounded PDF page-count tool exists
+        run: |
+          if ! command -v pdfinfo >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils
+          fi
+      - name: Verify exactly two source SHA-pinned original dated rolls and opening attendance
+        run: |
+          node --import tsx scripts/review-senate-2025-two-held-original-attendance.ts \
+            --source-json artifacts/original-hashes/senate-2025-unparsed-roll-review.json \
+            --output artifacts/held/senate-2025-elections-two-held-original-attendance.json
+      - name: Upload metadata only (not original PDF, names or source transcript)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2025-elections-two-held-original-attendance-proof
+          path: artifacts/held/senate-2025-elections-two-held-original-attendance.json
+          retention-days: 30
+          if-no-files-found: error
