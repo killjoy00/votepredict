@@ -1,15 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {APR12_TWO_AMENDMENTS as SOURCE} from
- '../src/evidence/senate-2021-apr12-rule1210-two-amendment-side-discovery.js';
+import {APR12_THREE_STRICT_ORIGINAL as SOURCE} from
+ '../src/evidence/senate-2021-apr12-three-strict-original-committee-amendments.js';
 const failure=JSON.parse(readFileSync(
  'docs/evaluation/source-proof/senate-2021-apr12-two-original-amendments-first-run-failure.json','utf8'
 ));
 const earlier=JSON.parse(readFileSync(
  'docs/evaluation/source-proof/senate-2021-apr12-sf1159-sf970-original-redacted-layout-success.json','utf8'
 ));
-test('April12 original extracted text SHA must be copied exactly from two authenticated earlier runs',()=>{
+test('Retired two-motion probe failure compared against authoritative three-motion source SHA',()=>{
  const correct='dda780e4fc076f56ff9f271303ba81897b69813acfece416b7741aea64c41214';
  assert.equal(SOURCE.originalEmbeddedTextSHA256,correct);
  assert.equal(earlier.original.originalExtractedTextSHA256,correct);
