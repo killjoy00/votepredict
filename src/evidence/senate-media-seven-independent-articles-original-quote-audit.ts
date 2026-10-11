@@ -353,9 +353,9 @@ export async function auditSevenIndependentHistoricalSenatorRemarks(
    shortCurrentPublisherReporterTextCueIds:14,
    historicalBodyVersionCueChecksRequested:28,
    originalBodiesReverifiedIndexedSha1AndPriorSha256:rows.filter(x=>
-     x.replayStatus==='exact_original_raw_sha1_and_pinned_sha256_verified').length,
+     x.status==='exact_original_raw_sha1_and_pinned_sha256_verified').length,
    originalBodiesUnknownOrUnverified:rows.filter(x=>
-     x.replayStatus!=='exact_original_raw_sha1_and_pinned_sha256_verified').length,
+     x.status!=='exact_original_raw_sha1_and_pinned_sha256_verified').length,
    shortTextHistoricallyPresent:positive,shortTextHistoricallyAbsent:negative,
    shortTextHistoricallyUnknown:cues.length-positive-negative,
    speakerFullNameInSameParagraphClues:cues.filter(x=>x.fullNameFoundInSameHistoricalHtmlParagraph===true).length,
