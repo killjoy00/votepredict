@@ -52,3 +52,41 @@ test('an impostor Senate district or person cannot be counted as in-service just
  assert.throws(()=>inspectOriginal2023SosSenateRoster({source71Psv:source71,
   originalSosExtractedPdfText:'Abeler, Jim 35'}),/Exactly one original PDF Senate member roster section required/);
 });
+
+test('permanent original SOS 2023 Senate member source ledger and source PDF identities are fingerprint pinned',async()=>{
+ const {createHash}=await import('node:crypto');
+ const P='docs/evaluation/source-proof/';
+ const ck=JSON.parse(readFileSync(P+
+   'cfb-2023-original-sos-senate-22-crossyear-service-source-checkpoint.json','utf8'));
+ const data=readFileSync(ck.permanent2023RosterSourceProofLedger.path,'utf8');
+ const git=createHash('sha1').update('blob '+Buffer.byteLength(data,'utf8')+'\0')
+  .update(data).digest('hex');
+ assert.equal(git,ck.permanent2023RosterSourceProofLedger.gitBlobSha);
+ assert.equal(Buffer.byteLength(data,'utf8'),ck.permanent2023RosterSourceProofLedger.bytes);
+ const lines=data.trimEnd().split('\n').map(x=>x.split('|'));
+ assert.equal(lines.length,22);
+ const known=new Map(people.map(x=>[x.reg,x]));
+ for(const r of lines){
+  assert.equal(r.length,13);
+  const m=known.get(r[0]!);
+  assert.ok(m);
+  assert.equal(r[1],m.name);
+  assert.equal(r[2],String(m.district));
+  assert.match(r[3]!,/^[A-Z][a-z]+, /);
+  assert.equal(r[4],'2023');
+  assert.equal(r[6],SOS_2023_SENATE_ROSTER_PDF);
+  assert.equal(r[7],ck.originalSourceDocument.originalPDFSHA256);
+  assert.equal(Number(r[8]),ck.originalSourceDocument.pdfBytes);
+  assert.equal(r[9],'official_source_name_district_matched');
+  assert.equal(r[10],'2024_service_interval_unproven');
+  assert.equal(r[11],'CFB_committee_duty_unproven');
+  assert.equal(r[12],'historic_finance_pdf_public_by_unproven');
+ }
+ assert.equal(ck.originalSourceDocument.pdfBytes,5803052);
+ assert.equal(ck.originalSourceDocument.original2023SenateMemberRows,67);
+ assert.equal(ck.originalSourceRuns[0].originalCfb2022SenatorsMatchedInIndependent2023Roster,22);
+ assert.equal(ck.scope.independent2023SenateRosterFor22ProofCount,22);
+ assert.equal(ck.scope.original2023Or2024LegallyOwedYECommitteeCount,null);
+ assert.equal(ck.scope.original2023Or2024HistoricalPublicByIndependentlyEstablishedCount,0);
+ assert.equal(ck.safeguards.noProductionDbReadWrite,true);
+});
