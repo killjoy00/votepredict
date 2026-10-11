@@ -65,7 +65,7 @@ function run(){
    selectedPolicyPages:result.originalCampaignIssuePolicySourcePages,
    independentlyDatedExactQuotes:result.exactOriginalCampaignIssueQuotesCaptureDated,
    bySenator:result.bySenator,byIssue:result.byIssue,
-   firstAuthoredDateRequired:result.noOriginalFirstAuthorPostingDateRequired,
+   firstAuthorPostedDateRequired:!result.noOriginalFirstAuthorPostingDateRequired,
    actualProductionWrites:result.productionDBOrForecastEvidenceWrites,
   }));
 }
