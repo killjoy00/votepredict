@@ -1,0 +1,53 @@
+# Track D: public first-person Senate media remarks, exact historical archive proof
+
+**Scope: public source history only.** Issues #987/#946, 2021–2025. No private VotePredict source rows, database, credentials, recorded-vote inference, production news seeds, collection, models or predictions.
+
+## Which previously found material is being rechecked?
+
+[Previous separate firsthand-media source discovery](senate-media-2021-25-public-firsthand-remarks-discovery.json) has **18 non-exhaustive, currently publicly accessible original-publisher URL leads**: four dated in 2021, three in 2022, four in 2023, three in 2024 and four in 2025. There are 16 named-senator individual speech *candidates* on the currently served pages (13 distinct senators) and **two collective statements** which cannot be turned into individual direct quotations.
+
+This is **separate from the original 31-URL MPR/Reformer research sample**, its 19 indexed-SHA-1-consistent original Wayback replay body receipts, 11 unverified/failed CDX requests and one CDX digest mismatch. Do not silently combine them into a complete publisher or statewide corpus.
+
+The next step is independent **historical original capture** proof for the 18 new pages: exact URL, archive UTC, indexed payload digest, raw actual archive response digest and observed SHA-256. Current URLs, current text and publisher-displayed dates alone do not do that.
+
+## Safe, bounded historical Wayback workflow
+
+Use [Senate media first-person remarks public exact Wayback proof](../../.github/workflows/senate-media-new-public-remarks-wayback.yml). This **public-only** workflow is triggered by manual main-branch dispatch after merge, or solely the named isolated owner-branch PR while under development. It uses no credentials beyond contents-read GitHub permission, does not connect to any database, and writes **metadata only** to a seven-day public artifact.
+
+An equivalent local checkout invocation is:
+
+    node --import tsx scripts/probe-senate-media-new-public-remarks-wayback.ts --scope all --replay-count 2 --output artifacts/senate-media-new-remarks-public-wayback.json
+
+For manual dispatch choose scope pilot (six URLs) or all (18 URLs), and replay_count 0, 1 or 2. The pilot includes Julia Coleman 2021, Jeremy Miller 2021 original MPR, John Marty 2021 caucus statement, the 2023 collective POCI statement, John Marty 2024 sports betting and Karin Housley 2025 bonding.
+
+The probe accepts **only exact checked-in 18 original public URLs**. Each URL must match the expected publisher and one of four HTTPS hosts: senatedfl.mn, www.mnsenaterepublicans.com, www.enterpriseminnesota.org, or www.mprnews.org. Arbitrary URLs, parameters, external hosts, duplicate leads, historical dates outside 2021–2025 and already-claimed quote approvals are rejected **before network calls**.
+
+Each URL uses at most **one CDX request, 20 indexed rows, 96KB of CDX JSON and 2 exact original id_ replay GETs**. Preserve distinct 14-digit capture UTCs even if indexed SHA-1 is the same; never use CDX digest-collapse. Raw original responses are at most 2.5MB, streaming bounded. Accept only an exact indexed 200 original article content type, identical original URL and matching indexed base32 payload SHA-1 before emitting the **observed** SHA-256 and byte length. Concurrency 2, per-response timeout 20 seconds, overall workflow timeout 18 minutes. No raw HTML, audio, snippets or private data is written to artifact, logs or source control.
+
+**Interpret results cautiously:**
+
+- **index_candidates:** the CDX index contains a candidate; source bytes still unverified until exact replay digest consistency.
+- **index_empty:** empty in one bounded exact-CDX query only. Never infer no historical article or speech.
+- **index_failed:** a public API, network, format or non-article check failed. Its historical publication status is **unknown**.
+- **matched_indexed_payload_sha1:** an original archived page's body digest matched its CDX indexed digest and SHA-256 was observed. That specific body version existed by capture UTC. It does not certify first publication clock, original audio, an exact human quotation, its relevance to a particular issue or historical prediction availability at any earlier cutoff.
+- **cdx_payload_sha1_mismatch, redirect, HTTP denial, MIME mismatch, byte cap:** leave the original body **unverified**, never turn into proof of missing publication or a different senator statement.
+
+No first-party senator voice, individual stance, initially posted-by timestamp, original audio, private database source match or legislative vote is certified by this tool. In particular MPR transcripts can be added after radio broadcast; an archived HTML transcript is not original audio authentication.
+
+## Attribution pitfalls to preserve during review
+
+**2021 Miller three-source chain:** Nov 8 Enterprise Minnesota Q&A, Nov 15 MPR Morning Edition Miller interview, and Nov 16 John Marty DFL release responding to Miller are three different publisher sources. Marty quotes or paraphrases Miller secondhand, but his own full statement is a separate, direct senator speech candidate. Do not transfer any wording among the three without exact original-version proof.
+
+**2021 Coleman:** her March 29 caucus statement has directly attributed Coleman words while David Senjem is named in a contextual bill-author role. No Senjem quote is established by this page.
+
+**2023 POCI and 2025 Rochester:** an entire caucus or mixed Senate/House collective statement, even with ten senators listed, does not establish ten individually spoken first-person remarks. In the Rochester text, House representatives are not Senate members.
+
+**2024 Marty:** his sports betting page shows Jan 24 and Jan 26 on its current version. That ambiguity is not proof of the original publication chronology until older captures are inspected.
+
+**2025 Doron Clark:** a Senate member only on/after the official Feb 3 oath; pre-oath campaign quotations cannot be backdated as remarks by a serving state senator.
+
+## After actual original proof is recovered
+
+Save source run provenance, artifact and decoded JSON SHA-256 and exact matching body hashes in a permanent **public metadata-only** receipt, after independently checking the source run and artifact. Then re-fetch a narrowly chosen original page version by exact timestamp and SHA-256 to check short passages in **visible original text only**; a string match is a cue for separate human senator identity, speaker and timing verification, not automatic approval.
+
+The remaining media universe is unknown. Build an evidence queue by individual serving senator and year across original interviews, caucus and personal campaign pages, original news quotations, archived social posts and other publishers, without inventing a statewide denominator or treating gaps in these 18 leads as article absence.
