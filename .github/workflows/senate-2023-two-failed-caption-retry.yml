@@ -1,0 +1,60 @@
+name: One-time retry only 2023 two failed Senate Taxes archive caption pages
+
+# Never a recurring collection; fixed exact source hashes and two mtgid IDs.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2023-two-failed-caption-retry.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  original-retry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Restore exact original 2023 hearing-to-media source
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2023-dated-media-href-review
+          run-id: 38079233118
+          github-token: ${{ github.token }}
+          path: artifacts/original-media-hrefs
+      - name: Restore separately SHA-verified 2023 original HTML page metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2023-official-media-record-html-proof
+          run-id: 38081463362
+          github-token: ${{ github.token }}
+          path: artifacts/original-media-html
+      - name: Restore exact first failed 2023 original-caption result, not inferred missingness
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2023-original-caption-surface-metadata
+          run-id: 38103766440
+          github-token: ${{ github.token }}
+          path: artifacts/first-failed-caption-run
+      - name: Recheck only two exact previously failed 2023 Taxes original record URLs
+        run: |
+          node --import tsx scripts/retry-senate-2023-two-caption-http-failures.ts \
+            --source-hrefs artifacts/original-media-hrefs/senate-2023-media-hrefs.json \
+            --prior-html artifacts/original-media-html/senate-2023-media-record-html.json \
+            --previous-failed-run artifacts/first-failed-caption-run/senate-2023-caption-surface.json \
+            --output artifacts/retry-2023-two/senate-2023-two-failed-caption-retry.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2023-two-exact-original-caption-retry
+          path: artifacts/retry-2023-two/senate-2023-two-failed-caption-retry.json
+          retention-days: 30
+          if-no-files-found: error
