@@ -113,7 +113,7 @@ export function selectMediaPublicBatchLeads(
       throw Error('Unexpected publisher in public media ledger');
     if(!Array.isArray(row.namedSenatorLeadsForManualReview)
       || row.namedSenatorLeadsForManualReview.length>12
-      || !row.namedSenatorLeadsForManualReview.every(x=>typeof x==='string'))
+      || !row.namedSenatorLeadsForManualReview.every((x:unknown)=>typeof x==='string'))
       throw Error('Malformed selected public senator-name lead');
   }
   if(scope==='all')return [...leads];
