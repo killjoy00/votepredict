@@ -1,16 +1,16 @@
-name: Verify real 105 MN senators campaign source coverage and 2020 archive gaps
+name: Verify real 95 actually-serving MN senators (105 historic source directory records) campaign source coverage and 2020 archive gaps
 on:
   pull_request:
     paths:
       - .github/workflows/audit-senate-2020-original-gaps-and-105-served-coverage.yml
-      - scripts/report-senate-2021-25-first-party-original-105-person-coverage.mjs
+      - scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs
       - scripts/probe-senate-three-2020-historical-original-domain-gaps.mjs
       - docs/SENATE_2020_THREE_ARCHIVE_GAPS_AND_105_SERVED_PERSON_COVERAGE.md
 permissions:
   contents: read
   actions: read
 jobs:
-  original-105-actually-served-person-full-ledger-offline-coverage:
+  original-95-actually-served-person-full-ledger-offline-coverage:
     if: >-
       github.repository == 'killjoy00/votepredict' &&
       github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
@@ -34,7 +34,7 @@ jobs:
           name: senate-2021-25-ever-served-only-source-coverage-v2
           github-token: ${{ github.token }}
           path: original/complete-government
-      - name: Independently verify official 105-member source and enumerate every member historical original-candidate-website coverage
+      - name: Independently verify official 95-serving-member source and enumerate every member historical original-candidate-website coverage
         shell: bash
         run: |
           set -euo pipefail
@@ -43,16 +43,16 @@ jobs:
           specials="$(find original/complete-government -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
           test -n "$gov" && test -n "$receipt" && test -n "$specials"
           test "$(dirname "$gov")" = "$(dirname "$receipt")"
-          node --import tsx scripts/report-senate-2021-25-first-party-original-105-person-coverage.mjs \
+          node --import tsx scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs \
             --official-html "$gov" \
             --official-receipt "$receipt" \
             --official-special-swearing-html "$specials" \
-            --out-dir original/official-105-senator-coverage
+            --out-dir original/official-95-senator-coverage
       - name: Retain source-only 105-person senator site evidence coverage JSON and Markdown
         uses: actions/upload-artifact@v6
         with:
-          name: senate-original-official-105-actually-served-person-campaign-coverage-v1
-          path: original/official-105-senator-coverage/
+          name: senate-original-official-95-actually-served-person-campaign-coverage-v1
+          path: original/official-95-senator-coverage/
           if-no-files-found: error
           retention-days: 30
   archived-2020-domain-seven-original-cdx-window-source-gap-probe:

@@ -1,0 +1,14 @@
+# #864 — source-probe-only: two April 12, 2021 Senate Journal committee roll leads
+
+Official [2021 Miscellaneous Journal Rule 12.10 index](https://www.senate.mn/journals/2021-2022/2021misc.pdf) identifies two separate original-publication references for **SF1159 (p2086)** and **SF970 (p2147)**, both reported in the original [April 12, 2021, 36th legislative day Senate Journal](https://www.senate.mn/journals/2021-2022/20210412036.pdf).
+
+These are committee reports indexed from official original publications. They are **not automatically validated historical named-roll votes** and are not the total recorded committee-vote universe. The original April 12 PDF is large (approximately 11 MB) and the present browser retrieval is size-limited; use a separately allowlisted one-time GitHub Action with a 15 MB streaming cap and original embedded PDF text.
+
+Original-source leads to independently validate:
+
+- **SF1159:** Senator Newman, Senate Transportation Finance and Policy, Senate Journal **p2086**. [Revisor original Senate action history](https://www.revisor.mn.gov/bills/92/2021/0/SF/1159/?body=Senate). Proposed report wording/status to be established from the actual original passage; no named sides or totals presumed from index.
+- **SF970:** Senator Limmer, Judiciary and Public Safety Finance and Policy, Journal **p2147**. [Revisor original Senate action history](https://www.revisor.mn.gov/bills/92/2021/0/SF/970/?body=Senate). Proposed report wording/status to be established from actual original passage; no named sides or totals presumed from index.
+
+The staged acquisition is **source discovery, not second-pass authentication**. It records original PDF bytes/SHA256, embedded-text SHA, per-bill source motion context hashes/offsets, precisely attached committee reporter/bill context and separately printed totals and source member-side digests only where unambiguously parseable. These side hashes are labeled **provisional** until separately pinned against the original as expectations in a new strict validator and authenticated by a genuine independent run. A successful source *probe* must not be reported as a certified named-roll verification or an imported/missing database row.
+
+Journal report date is not presumed original committee hearing/roll date or historical first-public-by date. A missing printed absent field is null, never zero. No readable historical member-side identities or original binary/text are committed. No private DB access, member_vote reconciliation/import, Senate floor parsing, forecast/model/serving changes, or government contact. Issue [#864](https://github.com/killjoy00/votepredict/issues/864) stays OPEN. Unindexed committee motions remain unknown.

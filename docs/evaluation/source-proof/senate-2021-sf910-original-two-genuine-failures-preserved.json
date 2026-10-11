@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "senate-2021-rule1210-sf910-two-genuine-original-run-failures-v1",
+  "issue": 864,
+  "context": "Original Senate Housing Finance and Policy SF910 March 8 2021 Journal p714 committee roll; separate SF1470 identical sides is NOT duplicate bill/motion; exact original binary acquired twice but published-named-side parser certification failed both times",
+  "originalSource": {
+    "url": "https://www.senate.mn/journals/2021-2022/20210308021.pdf",
+    "journalReportDate": "2021-03-08",
+    "printedPage": 714,
+    "originalPDFBytes": 827244,
+    "originalPDFSHA256": "2095fcaef148bd7c1f59373c0c9d93c26918c057eb74f46725e1e550358082f0",
+    "originalExtractedTextSHA256": "961d3db8f97164a043833e1e813802c7f321019d8997cd75e3b0d884a1a287c7"
+  },
+  "genuineAttempts": [
+    {
+      "sourceRunId": 38168065141,
+      "sourceRunURL": "https://github.com/killjoy00/votepredict/actions/runs/38168065141",
+      "sourceRunConclusion": "failure",
+      "runnerMergePR": 1107,
+      "runnerMergeCommit": "ec624d41d51dc68cb2514036dae4c8f39e8cd07f",
+      "artifactId": 11712554152,
+      "artifactZipBytes": 909,
+      "independentlyDownloadedZipSHA256": "58349b317d73ced09e3b6f5718c8525815f458726ce7e313bf92af724e7ccebc",
+      "decodedJsonName": "original-sf910-committee-named-roll.json",
+      "decodedJsonBytes": 1274,
+      "independentlyDecodedJsonSHA256": "fd4383c506e1ddd20c647eba948a74baf9168398c40906b3751371bbabfd3e36",
+      "genuineOriginalPDFAcquired": true,
+      "individualCommitteeNamedRollCertified": false,
+      "originalErrorCount": 1,
+      "reason": "Original SF910 exact printed committee 4/3 YEA/NAY must immediately follow its own motion and prevail"
+    },
+    {
+      "sourceRunId": 38168488738,
+      "sourceRunURL": "https://github.com/killjoy00/votepredict/actions/runs/38168488738",
+      "sourceRunConclusion": "failure",
+      "runnerMergePR": 1111,
+      "runnerMergeCommit": "b72617ad5af96cbb425077b63a26ad38ffbf3fed",
+      "artifactId": 11712314102,
+      "artifactZipBytes": 921,
+      "independentlyDownloadedZipSHA256": "2be8c52d22c1273b2da8c8de11b53597ef5df4ca2539279152f49ad0b7588632",
+      "decodedJsonName": "original-sf910-committee-named-roll-retry.json",
+      "decodedJsonBytes": 1274,
+      "independentlyDecodedJsonSHA256": "fd4383c506e1ddd20c647eba948a74baf9168398c40906b3751371bbabfd3e36",
+      "genuineOriginalPDFAcquired": true,
+      "individualCommitteeNamedRollCertified": false,
+      "originalErrorCount": 1,
+      "reason": "Original SF910 exact printed committee 4/3 YEA/NAY must immediately follow its own motion and prevail"
+    }
+  ],
+  "limits": {
+    "twoSourceRunsRemainFailures": true,
+    "realPdfBinaryAcquisitionIsNotIndividualNamedVoteCertification": true,
+    "newDiagnosisWillRequireNewIndependentRun": true,
+    "noFutureSuccessCanRetroactivelyRewritePriorFailure": true,
+    "reportDateNotProvedMotionDate": true,
+    "sourceNamesNotCommitted": true,
+    "sourcePdfNotCommitted": true,
+    "noAbsentFieldPrintedSoNull": true,
+    "noProductionDBOrPrivateRowImport": true,
+    "noPrivateReconciliation": true,
+    "noStatewideCommitteeDenominator": true,
+    "issue864MustRemainOpen": true
+  }
+}

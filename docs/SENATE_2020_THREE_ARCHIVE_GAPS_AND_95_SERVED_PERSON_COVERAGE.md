@@ -2,12 +2,12 @@
 
 ## 1. Research denominator — actual Senate members, not candidates or winners
 
-The **complete independently obtained original** Minnesota Legislative Reference Library 2021–2025 State Senate service roster and actual Senate special-sworn members yields **105 distinct actual state senators**, according to the pinned original government directory and source SHA/UTC audit.
+The **complete independently obtained original** Minnesota Legislative Reference Library 2021–2025 State Senate service roster and actual Senate special-sworn members yields **95 distinct actual 2021–2025 serving state senators (among 105 historical records in the independently parsed original directory)**, according to the pinned original government directory and source SHA/UTC audit.
 
 - Original official Senate service directory: `https://www.lrl.mn.gov/legdb/senate_dir`, source GitHub Actions run `38094976711`, artifact `11685387674`, full HTML SHA-256 `bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51`.
-- The dedicated 105-member coverage job rehashes this **entire original LRL directory**, independent recorded UTC/SHA, original Senate special-swearing history HTML, and compares all 105 original parsed government senator records to the independent audit.
+- The dedicated 95-serving-member coverage job rehashes this **entire original LRL directory**, independent recorded UTC/SHA, original Senate special-swearing history HTML, and compares all all 105 original parsed historical government service records, then explicitly restricts the coverage denominator to the 95 people actually serving in 2021–2025 to the independent audit.
 - It joins short exact first-party source excerpt research-ledger rows by actual serving senator name, with explicitly limited nickname equivalence and **all unresolved identity joins excluded**, not silently conflated. A senator can be in the official denominator yet have **zero currently sourced website short statement leads**. That means **not observed in the selected, bounded research**, *never* "had no positions."
-- The 105-row exact-person report is emitted as downloadable JSON and Markdown source-proof workflow artifacts. It distinguishes member service years, source ledger contributions, archived-site-body-only observations, and explicit gaps. It is **not** a member-year complete enumeration of filed websites nor a source-to-production database reconciliation.
+- The 95-row exact-person report is emitted as downloadable JSON and Markdown source-proof workflow artifacts. It distinguishes member service years, source ledger contributions, archived-site-body-only observations, and explicit gaps. It is **not** a member-year complete enumeration of filed websites nor a source-to-production database reconciliation.
 
 ## 2. Three actually-serving 2021 senators with remaining pre-2020 website archives to investigate
 
@@ -29,4 +29,4 @@ The independent public original-site gap collector must first verify original of
 
 This PR changes historical source-research scripts, docs and one source-proof workflow only. It does **not** read/write production databases; import evidence; change votes, models, forecasts, or target selection; activate a scheduler; alter a 2027 workflow; or contact a public agency. The separate GitHub Actions jobs generate their artifacts without committing original copyrighted site page bodies into the repository.
 
-Issue [#864](https://github.com/killjoy00/votepredict/issues/864) remains **open**. Neither the 105-person original serving denominator nor source ledger quote counts establishes full website text completeness, official SOS filed candidate website URLs, website mutation histories or the official/source-to-database reconciliation required to close the issue.
+Issue [#864](https://github.com/killjoy00/votepredict/issues/864) remains **open**. Neither the 95-person original serving denominator nor source ledger quote counts establishes full website text completeness, official SOS filed candidate website URLs, website mutation histories or the official/source-to-database reconciliation required to close the issue.

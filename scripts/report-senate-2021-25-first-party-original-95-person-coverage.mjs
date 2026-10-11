@@ -49,7 +49,8 @@ const aliases=new Map([
 ]);
 const roster=directory.senators.filter(p=>p.senateServiceTerms.some(t=>
  years.some(y=>y>=t.startsYear&&(t.endsYear===null||y<=t.endsYear))));
-assert.equal(roster.length,105);
+assert.equal(roster.length,95);
+assert.equal(directory.senators.length-roster.length,10);
 const unique=new Map();
 for(const p of roster){const k=firstLast(p.officialName);assert.ok(!unique.has(k),'Official directory ambiguous '+k);unique.set(k,p);}
 const reportMap=new Map(roster.map(p=>[p.officialName,{
@@ -145,7 +146,9 @@ for(const m of rows){
 }
 const withQuote=rows.filter(m=>m.originalSiteQuoteLeadCount>0);
 const withArchiveOnly=rows.filter(m=>m.originalSiteQuoteLeadCount===0&&m.originalArchivedSiteBodiesInSelectedReceiptLedgers>0);
-const summary={actualServingStateSenators:rows.length,sourceOriginalGovernmentSHA256:sha(source),
+const summary={actualServingStateSenators:rows.length,
+ originalGovernmentDirectoryAllHistoricServiceRows:directory.senators.length,
+ originalGovernmentDirectoryOutside2021To2025:directory.senators.length-roster.length,sourceOriginalGovernmentSHA256:sha(source),
  independentOriginalSpecialSwearingSHA256:sha(swearing),
  actuallyServedSenatorsWithAnyKnownSelectedOriginalSiteExcerpt:withQuote.length,
  actuallyServedSenatorsWithOriginalSiteBodiesButNoSelectedQuote:withArchiveOnly.length,
@@ -155,7 +158,7 @@ const summary={actualServingStateSenators:rows.length,sourceOriginalGovernmentSH
  sourceCompleteForAllMemberYears:false,originalCampaignSiteFullCensusProven:false,
  originalSOSFiledWebsiteAssignmentsVerified:false,forecastEvidenceAutoEligible:0,
  productionDatabaseReadsWritesOrForecastChanges:0};
-const result={schema:'mn-2021-25-105-real-state-senator-original-first-party-research-coverage-v1',
+const result={schema:'mn-2021-25-95-real-state-senator-original-first-party-research-coverage-v1',
  scope:{issue:864,serviceYears:years,originalMemberGovernmentSource:'https://www.lrl.mn.gov/legdb/senate_dir',
  sourceIsOriginalGovernmentNotElectionWinnerOr2026CurrentOfficeHolderCensus:true,
  researchQuotesCannotProveNoUnobservedPolicy:true,
@@ -164,7 +167,7 @@ const result={schema:'mn-2021-25-105-real-state-senator-original-first-party-res
  noForecastSourceEligibilityOrSenateOfficialVotesInferred:true},
  summary,byActuallyServedSenator:rows,excludedNonMatchingCampaignCandidateLeadRows:unmatched};
 mkdirSync(outDir,{recursive:true});
-writeFileSync(join(outDir,'105-senators-public-campaign-coverage.json'),JSON.stringify(result,null,2)+'\n',{flag:'wx'});
+writeFileSync(join(outDir,'95-senators-public-campaign-coverage.json'),JSON.stringify(result,null,2)+'\n',{flag:'wx'});
 const md=['# 2021–2025 Minnesota Senate: original first-party historical campaign research inventory',
  '', 'This is a **read-only research coverage inventory** of actual state senators, not a statewide campaign statement completeness certificate.',
  '', '- Original independent Minnesota LRL government service SHA-256: '+govHash,
@@ -179,5 +182,5 @@ for(const row of rows)md.push('| '+row.officialName+' | '+row.yearsActuallyServe
 md.push('','Excluded/no unique original official service match: '+unmatched.length+
  ' lead observations, detailed in JSON; these are not used to count actual senators.',
  '','Historical old website copy, capped CDX samples, missing original HTML and non-2020 campaign branding all remain explicitly unresolved; no database or model changes.');
-writeFileSync(join(outDir,'105-senators-public-campaign-coverage.md'),md.join('\n')+'\n',{flag:'wx'});
-console.log('OFFICIAL 105 SENATOR SOURCE COVERAGE '+JSON.stringify(summary));
+writeFileSync(join(outDir,'95-senators-public-campaign-coverage.md'),md.join('\n')+'\n',{flag:'wx'});
+console.log('OFFICIAL 95 ACTUALLY SERVED SENATOR SOURCE COVERAGE '+JSON.stringify(summary));

@@ -1,0 +1,249 @@
+{
+  "schema": "mn-2020-six-authenticated-senators-26-additional-site-issue-excerpts-v1",
+  "issue": 864,
+  "proof": {
+    "governmentOriginalRun": 38094976711,
+    "governmentSourceArtifact": 11685387674,
+    "originalGovernmentSHA256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "sourceRun": 38107731662,
+    "sourceArtifact": 11689839922,
+    "sourceArtifactName": "senate-2020-six-actually-served-campaign-original-html-cdx-source-v1",
+    "officialActuallyServing2021Senators": 6,
+    "wholeOriginalCDXIndexes": 6,
+    "originalHTMLPages": 24,
+    "selectedPages": 2,
+    "additionalShortStatements": 26,
+    "sourceDatesOnlyPublicByNotFirstAuthorship": true,
+    "StevePageContainsOld2016CopyNotFresh2020Policy": true,
+    "allStatementsResearchOnly": true,
+    "officialRecordedSenateVotesFromCandidateClaim": 0,
+    "productionDatabaseEvidenceForecastModelSchedulerChanges": 0,
+    "fullStatewideCensus": false
+  },
+  "sourcePages": [
+    {
+      "id": "kunesh2020vision",
+      "person": "Mary Kunesh",
+      "district2020": "41",
+      "url": "http://marykunesh.com/vision/",
+      "file": "senate20-05-original-20200804232735-0.html",
+      "captureUtc": "2020-08-04T23:27:35.000Z",
+      "sha256": "f5694a6d912851b21e77da301cadf0f05a26b510b8f8e273a6a9be8b18b0c2a9",
+      "cdxSha1": "SO3T63ZR2NWRCPZNTYLDSOPFHXMI656B",
+      "sourceKind": "2020_senate_campaign_vision"
+    },
+    {
+      "id": "cwod2019news",
+      "person": "Steve Cwodzinski",
+      "district2020": "48",
+      "url": "https://www.cwodforsenate.com/latest-news.html",
+      "file": "senate20-06-original-20190701183630-1.html",
+      "captureUtc": "2019-07-01T18:36:30.000Z",
+      "sha256": "476db1b066c92c752f019e9499136d78afc01ab592083ec6f13399a17fbe3fd8",
+      "cdxSha1": "UTQZR4V7HX6H3HOBDP6T3PXLNUFWF25O",
+      "sourceKind": "2016_candidate_statement_observed_2019_not_new_2020"
+    }
+  ],
+  "statements": [
+    {
+      "id": "six20-extra-001",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "judiciary_civil_law",
+      "exactExcerpt": "ending disparities in opportunities and outcomes",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-002",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "state_government",
+      "exactExcerpt": "centering the voices of people of color, Indigenous people, women, and low-income people",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-003",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "education",
+      "exactExcerpt": "investing in strong, quality education from pre-Kindergarten through post-secondary",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-004",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "education",
+      "exactExcerpt": "shift to “teaching to the test”",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-005",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "education",
+      "exactExcerpt": "fully fund public schools across our state",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-006",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "education",
+      "exactExcerpt": "post-secondary education remain accessible and affordable",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-007",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "human_services",
+      "exactExcerpt": "programs ready to help working parents through tough times",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-008",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "labor_employment",
+      "exactExcerpt": "updating our basic labor standards",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-009",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "labor_employment",
+      "exactExcerpt": "earn a living wage",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-010",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "labor_employment",
+      "exactExcerpt": "paid family leave and earned sick and safe time",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-011",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "human_services",
+      "exactExcerpt": "access to affordable high-quality child care",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-012",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "labor_employment",
+      "exactExcerpt": "expand workplace democracy, strengthen collective bargaining rights",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-013",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "environment_natural_resources",
+      "exactExcerpt": "just transition to a clean energy future",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-014",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "environment_natural_resources",
+      "exactExcerpt": "100% Clean Energy by 2050",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-015",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "environment_natural_resources",
+      "exactExcerpt": "safeguard pollinators, and protect our natural environment",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-016",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "environment_natural_resources",
+      "exactExcerpt": "Mary opposes building Line 3",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-017",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "environment_natural_resources",
+      "exactExcerpt": "Mary also opposes PolyMet and the proposed Twin Metals mine",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-018",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "health",
+      "exactExcerpt": "protect and strengthen MinnesotaCare",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-019",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "health",
+      "exactExcerpt": "fight for a single-payer health care system",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-020",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "health",
+      "exactExcerpt": "dental, vision, and mental health services available to all Minnesotans",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-021",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "health",
+      "exactExcerpt": "life-saving drugs are accessible and affordable for everyone who needs them",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-022",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "public_safety",
+      "exactExcerpt": "automatic universal background checks",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-023",
+      "pageId": "kunesh2020vision",
+      "issueFamily": "public_safety",
+      "exactExcerpt": "passing red flag laws",
+      "statementKind": "original_2020_candidate_vision_platform"
+    },
+    {
+      "id": "six20-extra-024",
+      "pageId": "cwod2019news",
+      "issueFamily": "transportation",
+      "exactExcerpt": "I applaud the efforts of Senators Ron Latz and Scott Dibble",
+      "statementKind": "original_first_person_2016_statement_retained_in_2019_archive"
+    },
+    {
+      "id": "six20-extra-025",
+      "pageId": "cwod2019news",
+      "issueFamily": "transportation",
+      "exactExcerpt": "create solutions for our growing transit and transportation needs",
+      "statementKind": "original_first_person_2016_statement_retained_in_2019_archive"
+    },
+    {
+      "id": "six20-extra-026",
+      "pageId": "cwod2019news",
+      "issueFamily": "transportation",
+      "exactExcerpt": "Inaction at the Legislature is jeopardizing $895 million in investments by the federal government directly into Minnesota",
+      "statementKind": "original_first_person_2016_statement_retained_in_2019_archive"
+    }
+  ],
+  "zeroNewQuotesFromFourOtherSampledSenators": [
+    {
+      "person": "Mark Johnson",
+      "reason": "2019/2020 sample contains unresolved template placeholders"
+    },
+    {
+      "person": "Jen McEwen",
+      "reason": "sampled 2020 homepages contain biography and broad rhetoric, while policy specifics recovered separately in other years"
+    },
+    {
+      "person": "Aric Putnam",
+      "reason": "sampled 2019 bio/kickoff and 2020 voting info yield no additional specific original policy phrases"
+    },
+    {
+      "person": "Gary Dahms",
+      "reason": "original 2019 issues page was already used for seven previously reviewed policy leads"
+    }
+  ]
+}
