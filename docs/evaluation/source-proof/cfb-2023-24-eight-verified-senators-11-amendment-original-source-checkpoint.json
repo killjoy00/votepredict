@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "cfb-2023-24-eight-proven-2022-senators-eleven-distinct-amended-pdf-source-checkpoint-v1",
+  "issueNumber": 864,
+  "reviewedOn": "2026-10-11",
+  "scope": {
+    "independentlyProvenActual2022ServingSenators": 6,
+    "sourceVerifiedOriginalYearendParentPdfs": 8,
+    "amended2023ViewerIds": 4,
+    "amended2024ViewerIds": 7,
+    "officialAmendmentVersionRefs": 11,
+    "candidateViewerSegment": 2024,
+    "legalFilingDutyDenominator": null,
+    "actual2023to24SenateServiceNotAssumed": true,
+    "independentlyAuthenticatedActualHistoricalPublicBy": 0
+  },
+  "originalSourceInputs": {
+    "previousRecovered27ReferenceTargets": "docs/evaluation/source-proof/cfb-2023-24-eight-more-senators-27-source-report-reference-targets.psv",
+    "originalVerified16SourceReports": "docs/evaluation/source-proof/cfb-2023-24-eight-more-16-original-yearend-pdf-source-ledger.psv",
+    "originalAuthenticated2022Service": "docs/evaluation/source-proof/cfb-2022-served-d13-24-original-ce-pdfs.psv",
+    "sourceCandidateViewerPsv": "docs/evaluation/source-proof/cfb-2024-eight-verified-senators-original-viewer-responses.psv",
+    "original16SourceCheckpoint": "docs/evaluation/source-proof/cfb-2023-24-eight-more-16-original-pdf-source-checkpoint.json"
+  },
+  "newAmendedOriginalPdfProofLedger": {
+    "path": "docs/evaluation/source-proof/cfb-2023-24-eight-verified-senators-11-amended-original-pdf-source-ledger.psv",
+    "bytes": 3789,
+    "rows": 11,
+    "gitBlobSha": "4f2ddaf235dd040fd41d79e47a55930c3f6002c9",
+    "columns": [
+      "officialAmendmentVersionId",
+      "actual2022Senator",
+      "senateDistrict2022",
+      "reg",
+      "sourceViewerApiSha256",
+      "authenticatedParentId",
+      "authenticatedParentPdfSha256",
+      "authenticatedAmendedPdfSha256",
+      "pdfBytes",
+      "coveredStart",
+      "coveredEnd",
+      "parentBoardReceivedOn",
+      "amendedBoardReceivedOn",
+      "classification",
+      "aliasOf"
+    ]
+  },
+  "authenticatedOfficialSourceAcquisitions": [
+    {
+      "runId": 38162823828,
+      "head": "b5f80a914158bb21611001e02c28a5efe1d86254",
+      "sourceResult": "success",
+      "artifactId": 11710737887,
+      "zipSha256": "f30c74c76d20dbb128d89e7d7ae99f125d552c0cb5f4b74fa4b1b59606e631aa",
+      "zipBytes": 3593,
+      "jsonSha256": "7d057f4502d225dd10f8e75cf602dd1d0491cd2690b2d48b92209ccda043213f",
+      "jsonBytes": 22486
+    }
+  ],
+  "firstOfficialRun": {
+    "sourcePdfBodiesRetrieved": 11,
+    "sourceFirstPageAndOriginalParentIdentityVerified": 11,
+    "uniqueDistinctAmendedPdfBinaries": 11,
+    "identicalOriginalParentPdfAliases": 0,
+    "duplicateAmendmentVersionBinaryAliases": 0,
+    "sourceFailureOrIdentityHolds": 0,
+    "sixOfficialViewerApiShaResponsesReverified": 6
+  },
+  "boundedUpdated2023to24SourceCohort": {
+    "previouslyAuthenticatedOriginalPdfBinaries": 43,
+    "previouslyAuthenticatedAmendmentPdfBinaries": 14,
+    "newDistinctAmendmentPdfBinaries": 11,
+    "originalPdfHoldCount": 1,
+    "amendmentPdfIdentityHoldCount": 1,
+    "identicalAmendmentPdfViewerAliasCount": 1,
+    "totalOriginalPlusAmendmentDistinctSourceAuthPdfs": 68,
+    "statewideLegalFilingDenominator": null
+  },
+  "safeguards": {
+    "rawPdfBodiesStored": false,
+    "extractedTextOrDonorsStored": false,
+    "originalCFBViewerApiRawResponseStored": false,
+    "noUnprovenCandidateIdentities": true,
+    "noProductionReadOrWrite": true,
+    "noModelForecastSchedulerTrainingOr2027Scope": true,
+    "noHistoricPublicByProven": true,
+    "keepIssue864Open": true
+  }
+}
