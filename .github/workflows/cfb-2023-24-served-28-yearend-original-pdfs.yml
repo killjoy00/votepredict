@@ -1,0 +1,40 @@
+name: One-time 2023-24 fourteen actual-senator 28 CFB YE originals
+
+# #864 finance-only original PDF acquisition. No schedule and no production data.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2023-24-served-28-yearend-original-pdfs.yml
+      - src/evidence/cfb-2023-24-served-28-yearend-originals.ts
+      - scripts/capture-cfb-2023-24-served-28-yearend-original-pdfs.ts
+      - tests/cfb-2023-24-served-28-yearend-originals.test.ts
+
+permissions:
+  contents: read
+
+jobs:
+  verify-twenty-eight-official-cfb-yearend-pdf-headers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Fail closed on inaccurate 2022 Senate service or 2024 official viewer source
+        run: node --import tsx --test tests/cfb-2023-24-served-28-yearend-originals.test.ts
+      - name: Fetch exact 14 2023 and 14 2024 original CFB report PDF bodies in memory
+        run: |
+          node --import tsx scripts/capture-cfb-2023-24-served-28-yearend-original-pdfs.ts \
+            --output artifacts/cfb-2023-24-served-28-yearend-original-source.json
+      - name: Archive only SHA/provenance/date metadata and identity holds
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2023-24-verified-served-28-original-yearend-pdf-metadata
+          path: artifacts/cfb-2023-24-served-28-yearend-original-source.json
+          if-no-files-found: warn
+          retention-days: 30
