@@ -25,7 +25,6 @@ import {
 } from '../src/evidence/cfb-2022-served-senators-next-original-ce.js';
 import {
   CFB_2022_CE_INDEPENDENT_CALENDAR_URL,
-  cfb2022CeRef,
   diagnoseCfb2022CeCalendar,diagnoseCfb2022OriginalCeHeader,
   verifyCfb2022CeCalendar,type Cfb2022PdfProofCapture,
 } from '../src/evidence/cfb-2022-senate-original-ce-pdf-proof.js';
