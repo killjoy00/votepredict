@@ -44,9 +44,13 @@ test('historical signed original Board case identifies Putnam reg 18430 in 2019 
  assert.equal(proof.officialBoardSigningDate,'2024-09-20');
  assert.equal(proof.originalBoardDescribesSecondAmended2023YE,true);
  assert.deepEqual(proof.modernCfbViewer2023YearEndExactVersionRefs,
- ['18430:23:pcc:YE:0:0','18430:23:pcc:YE:0:1']);
- assert.equal(proof.modernViewer2023AmendmentRefsCount,1);
- assert.equal(proof.secondAmendedReferenceNotCrossIdentifiedWithModernViewer,true);
+ ['18430:23:pcc:YE:0:0','18430:23:pcc:YE:0:1',
+  '18430:23:pcc:YE:0:2','18430:23:pcc:YE:0:3']);
+ assert.equal(proof.modernViewer2023AmendmentRefsCount,3);
+ assert.equal(proof.secondAmended2023ReportDoesMatchExistingAmendment2Index,true);
+ assert.equal(proof.secondAmended2023PdfVersionAuthenticFromSeparateCFBOriginal,true);
+ assert.equal(proof.existingSecondAmendmentOriginalBoardReceiptOn,'2024-06-03');
+ assert.equal(proof.firstAmendmentOriginalRegistrationIdentityStillHeld,true);
  assert.equal(proof.newHistorical2023PdfVersionAuthenticated,false);
  assert.equal(proof.actualPublicByForAny2023PdfVersionProven,false);
  assert.equal(proof.yearEnd2023Or2024LegallyOwed,null);
