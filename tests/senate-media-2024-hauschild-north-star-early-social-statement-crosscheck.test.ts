@@ -138,7 +138,7 @@ test('two distinct currently readable newsroom pages cite same X post; source-da
   assert.equal(reformer.separateQuoteSpeakerSenateMajorityLeadershipStart,'2024-02-06');
   assert.equal(reformer.separateQuoteSpeakerServiceOnPublisherDisplayedDayVerified,true);
   assert.equal(reformer.separateQuoteSpeakerMajorityLeadershipOnDisplayedDayVerified,true);
-  assert.ok(reformer.separateQuoteSpeakerSenateMajorityLeadershipStart!<
+  assert.ok(reformer.separateQuoteSpeakerSenateMajorityLeadershipStart! <
     reformer.displayedPublisherDay);
   assert.ok(reformer.separateQuoteShortExcerpt?.includes('committee process'));
   assert.equal(reformer.houseSpeakerMelissaHortmanIsNotMinnesotaSenator,true);
