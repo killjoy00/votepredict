@@ -1,0 +1,53 @@
+name: Recover five uncovered MN senators' original 2020-22 first-party websites
+on:
+  pull_request:
+    paths:
+      - scripts/probe-senate-five-uncovered-2020-22-original-campaign-sites.mjs
+      - .github/workflows/acquire-senate-five-uncovered-2020-22-first-party-originals.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-first-party-archival-source-acquisition:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-five-uncovered-senators-cross-cycle-originals-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen official Minnesota LRL full historical Senate service directory
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Verify five actual senators then recover original Wayback indexes and matching complete HTML
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$gov" && test -n "$receipt"
+          node --import tsx scripts/probe-senate-five-uncovered-2020-22-original-campaign-sites.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --out-dir original/five-senator-archive-originals
+      - name: Preserve complete original CDX responses, SHA-matched HTML, unknowns and text previews
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-five-uncovered-six-historic-first-party-windows-original-cdx-html-v1
+          path: original/five-senator-archive-originals/
+          if-no-files-found: warn
+          retention-days: 30
