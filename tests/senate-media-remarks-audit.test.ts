@@ -426,3 +426,171 @@ test('one original archive cannot be classified both unavailable and an authenti
   const accepted=audit({reviews:[contextual,review()]});
   assert.equal(accepted.verifiedAttributedQuotePassages,1);
 });
+
+
+/**
+ * Entirely synthetic original-page test. The actual 2024 MPR Hauschild page
+ * has NOT been obtained as original Wayback HTML, and this fixture does NOT
+ * represent any newly verified public senator quotation or source row.
+ */
+const transcriptPublished='2024-02-19T10:32:00-06:00';
+const transcriptCaptured='2024-02-22T15:00:00Z';
+const transcriptOriginal='https://www.mprnews.org/episode/2024/02/19/'
+  +'without-total-dfl-support-the-north-star-act-is-going-south';
+const transcriptRemark='I feel that immigration is a federal issue.';
+const transcriptTurn='GRANT HAUSCHILD: Well, that is exactly right. '
+  + transcriptRemark;
+const transcriptHost='CATHY WURZER: Do you support the North Star Act?';
+const transcriptHtml=(heading=true)=>'<html><head><meta property="article:published_time" content="'
+  +transcriptPublished+'"></head><body>'
+  +(heading?'<h2>Audio transcript</h2>':'<h2>Publisher interview story</h2>')
+  +'<p>'+transcriptHost+'</p><p>'+transcriptTurn+'</p>'
+  +'<p>CATHY WURZER: The transcript is only a current synthetic example.</p></body></html>';
+function transcriptInputs(html=transcriptHtml(),url=transcriptOriginal){
+  const capture='20240222150000';
+  const wayback='https://web.archive.org/web/'+capture+'id_/'+url;
+  const c:SenateMediaContextExport={
+    ...context(),
+    sourceDocumentId:'source-transcript',
+    evidenceId:'evidence-transcript',
+    originalUrl:url,archiveUrl:wayback,sourceUrl:wayback,
+    sourceSha256:createHash('sha256').update(html).digest('hex'),
+    archiveCapturedAt:transcriptCaptured,
+    evidencePublishedAt:transcriptCaptured,
+    archiveDigest:'SYNTHETIC-NOT-A-REAL-CDX-DIGEST',
+    publisherPublishedAt:transcriptPublished,
+    mentionedMembers:['Grant Hauschild'],
+  };
+  const m:SenateMediaRosterYear={
+    year:2024,senatorId:'senator-hauschild',membershipId:'membership-hauschild-24',
+    senatorName:'Grant Hauschild',activeFrom:'2023-01-03',activeThrough:'2024-12-31',
+  };
+  const v:SenateMediaReview={
+    sourceDocumentId:c.sourceDocumentId,disposition:'exact_named_quote',
+    membershipId:m.membershipId,
+    quotePresentation:'speaker_labeled_transcript',
+    issueCategory:'immigration-jurisdiction',
+    exactQuote:transcriptRemark,
+    attributionCue:'GRANT HAUSCHILD:',
+    sourcePassage:transcriptTurn,
+    publisherPublishedAt:transcriptPublished,
+    publicationDateProof:'content="'+transcriptPublished+'"',
+    reviewedBy:'synthetic-test-reviewer',reviewedAt:'2026-10-10T19:00:00Z',
+  };
+  const shot:SenateMediaSourceSnapshot={
+    sourceDocumentId:c.sourceDocumentId,rawBodyBase64:Buffer.from(html).toString('base64'),
+  };
+  return {c,m,v,shot};
+}
+function transcriptAudit(input:ReturnType<typeof transcriptInputs>){
+  return audit({contexts:[input.c],roster:[input.m],
+    reviews:[input.v],snapshots:[input.shot]});
+}
+
+test('synthetic 2024 first-party MPR speaker turn permits source-text quote only with exact archived bytes and full speaker name',()=>{
+  const p=transcriptInputs();
+  const verdict=transcriptAudit(p);
+  assert.equal(verdict.verifiedAttributedQuotePassages,1);
+  assert.equal(verdict.reviewResults[0]?.verified,true);
+  assert.equal(verdict.reviewResults[0]?.quotePresentation,'speaker_labeled_transcript');
+  assert.equal(verdict.reviewResults[0]?.archivedAudioIndependentlyAuthenticated,false);
+  assert.equal(verdict.reviewResults[0]?.publishedAt,transcriptPublished);
+  // 3 DAYS AFTER the purported broadcast date: no historical same-day audio/transcript proof!
+  assert.equal(verdict.reviewResults[0]?.provenPublicBy,transcriptCaptured);
+  assert.equal(verdict.policy.noHistoricalCompletenessCertificate,true);
+  assert.equal(verdict.policy.stanceInferred,false);
+  assert.equal(verdict.policy.productionDatabaseRead,false);
+});
+
+test('without explicit transcript mode an unquoted speaker label is not a reporter direct quotation',()=>{
+  const p=transcriptInputs();
+  delete p.v.quotePresentation;
+  const verdict=transcriptAudit(p);
+  assert.equal(verdict.verifiedAttributedQuotePassages,0);
+  assert.ok(verdict.reviewResults[0]?.failures
+    .includes('claimed_quote_not_delimited_as_direct_speech'));
+});
+
+test('speaker-labeled transcript MUST be the original first-party MPR article and contain transcript heading',()=>{
+  const foreign=transcriptInputs(transcriptHtml(),
+    'https://another-publication.example/episode/2024/02/19/senate-interview');
+  const verdict=transcriptAudit(foreign);
+  assert.equal(verdict.verifiedAttributedQuotePassages,0);
+  assert.ok(verdict.reviewResults[0]?.failures
+    .includes('speaker_transcript_requires_original_first_party_mpr_source'));
+
+  const noSection=transcriptInputs(transcriptHtml(false));
+  const missing=transcriptAudit(noSection);
+  assert.equal(missing.verifiedAttributedQuotePassages,0);
+  assert.ok(missing.reviewResults[0]?.failures
+    .includes('speaker_transcript_section_not_in_original_article'));
+});
+
+test('surname-only speaker label, wrong full senator, or wrong cue cannot borrow a full-name MPR voice',()=>{
+  const p=transcriptInputs();
+  p.v.attributionCue='HAUSCHILD:';
+  const missing=transcriptAudit(p);
+  assert.equal(missing.verifiedAttributedQuotePassages,0);
+  assert.ok(missing.reviewResults[0]?.failures
+    .includes('speaker_transcript_full_member_label_missing'));
+  const badMember=transcriptInputs();
+  badMember.m.senatorName='Another Hauschild';
+  const wrong=transcriptAudit(badMember);
+  assert.equal(wrong.verifiedAttributedQuotePassages,0);
+  assert.ok(wrong.reviewResults[0]?.failures
+    .includes('speaker_transcript_full_member_label_missing'));
+});
+
+test('a host next-speaker reply or quote from the other turn cannot be assigned to senator',()=>{
+  const p=transcriptInputs();
+  const otherVoice='The answer belongs to Cathy Wurzer, not the senator.';
+  const html=transcriptHtml().replace(
+    'CATHY WURZER: The transcript is only a current synthetic example.',
+    'CATHY WURZER: '+otherVoice);
+  const x=transcriptInputs(html);
+  x.v.sourcePassage=transcriptTurn+' CATHY WURZER: '+otherVoice;
+  x.v.exactQuote=otherVoice;
+  const result=transcriptAudit(x);
+  assert.equal(result.verifiedAttributedQuotePassages,0);
+  assert.ok(result.reviewResults[0]?.failures
+    .includes('speaker_transcript_quote_outside_named_senator_turn'));
+  assert.equal(x.v.sourcePassage.includes(x.v.exactQuote),true);
+  assert.equal(p.v.exactQuote,transcriptRemark);
+});
+
+test('unverified original bytes, changed hash and future-senator service date still reject labeled transcripts',()=>{
+  const p=transcriptInputs();
+  const noBytes=audit({contexts:[p.c],roster:[p.m],reviews:[p.v],snapshots:[]});
+  assert.equal(noBytes.verifiedAttributedQuotePassages,0);
+  assert.ok(noBytes.reviewResults[0]?.failures.includes('original_snapshot_bytes_unavailable'));
+
+  const changed=transcriptInputs();
+  changed.c.sourceSha256='0'.repeat(64);
+  const mismatch=transcriptAudit(changed);
+  assert.equal(mismatch.verifiedAttributedQuotePassages,0);
+  assert.ok(mismatch.reviewResults[0]?.failures.includes('archived_original_bytes_hash_mismatch'));
+
+  const notSworn=transcriptInputs();
+  notSworn.m.activeFrom='2024-02-20';
+  const invalidMember=transcriptAudit(notSworn);
+  assert.equal(invalidMember.verifiedAttributedQuotePassages,0);
+  assert.ok(invalidMember.reviewResults[0]?.failures.includes('senator_not_active_on_publication_date'));
+});
+
+test('transcript cannot use undated publication, after-capture article time or missing human reviewed issue',()=>{
+  const bad=transcriptInputs();
+  bad.v.publisherPublishedAt='2024-02-19T10:32:00'; // missing publisher timezone
+  assert.equal(transcriptAudit(bad).verifiedAttributedQuotePassages,0);
+  const after=transcriptInputs();
+  after.c.publisherPublishedAt='2024-02-23T10:32:00Z';
+  after.v.publisherPublishedAt=after.c.publisherPublishedAt;
+  assert.equal(transcriptAudit(after).verifiedAttributedQuotePassages,0);
+  const noIssue=transcriptInputs();
+  noIssue.v.issueCategory='';
+  assert.ok(transcriptAudit(noIssue).reviewResults[0]?.failures.includes('issue_not_reviewed'));
+  const unsupported=transcriptInputs();
+  unsupported.v.quotePresentation='asserted_from_live_audio' as SenateMediaReview['quotePresentation'];
+  assert.ok(transcriptAudit(unsupported).reviewResults[0]?.failures
+    .includes('unsupported_direct_quote_presentation'));
+});
+
