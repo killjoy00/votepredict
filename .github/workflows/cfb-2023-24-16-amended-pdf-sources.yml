@@ -1,0 +1,31 @@
+name: Sixteen CFB 2023-24 amendments with original parents
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2023-24-16-amended-pdf-sources.yml
+      - src/evidence/cfb-2023-24-sixteen-parent-authenticated-amendments.ts
+      - scripts/capture-cfb-2023-24-sixteen-parent-verified-amendment-pdfs.ts
+      - tests/cfb-2023-24-sixteen-parent-authenticated-amendments.test.ts
+permissions:
+  contents: read
+jobs:
+  amended-source-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/cfb-2023-24-sixteen-parent-authenticated-amendments.test.ts
+      - run: node --import tsx scripts/capture-cfb-2023-24-sixteen-parent-verified-amendment-pdfs.ts --output artifacts/cfb-2023-24-sixteen-amendment-source.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2023-24-sixteen-amended-pdf-source-metadata
+          path: artifacts/cfb-2023-24-sixteen-amendment-source.json
+          if-no-files-found: warn
+          retention-days: 30
