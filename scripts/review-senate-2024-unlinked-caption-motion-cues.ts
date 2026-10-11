@@ -20,7 +20,7 @@ const argv=process.argv.slice(2);
 if(argv.length!==8||argv[0]!=='--hrefs'||argv[2]!=='--original-html'
   ||argv[4]!=='--prior-caption'||argv[6]!=='--output')
   throw Error('Arguments required: --hrefs FILE --original-html FILE --prior-caption FILE --output FILE');
-const [hrefPath,htmlPath,priorPath,out]=[argv[1]!,argv[3]!,argv[5]!,argv[7]!].map(resolve);
+const [hrefPath,htmlPath,priorPath,out]=[argv[1]!,argv[3]!,argv[5]!,argv[7]!].map(x=>resolve(x));
 const safe=(error:unknown)=>String(error instanceof Error?error.message:error)
   .replace(/https?:\/\/\S+/gi,'[official source]').slice(0,160);
 async function main(){
