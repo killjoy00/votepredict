@@ -594,3 +594,19 @@ test('transcript cannot use undated publication, after-capture article time or m
     .includes('unsupported_direct_quote_presentation'));
 });
 
+
+
+test('an accented or single-token next speaker label terminates the senator turn',()=>{
+  for(const otherLabel of ['MÉLISA LÓPEZ FRANZEN:','HOST:']) {
+    const guestWords='These sentences belong to the next speaker alone.';
+    const after='CATHY WURZER: The transcript is only a current synthetic example.';
+    const orig=transcriptHtml().replace(after,otherLabel+' '+guestWords);
+    const p=transcriptInputs(orig);
+    p.v.sourcePassage=transcriptTurn+' '+otherLabel+' '+guestWords;
+    p.v.exactQuote=guestWords;
+    const result=transcriptAudit(p);
+    assert.equal(result.verifiedAttributedQuotePassages,0);
+    assert.ok(result.reviewResults[0]?.failures.includes(
+      'speaker_transcript_quote_outside_named_senator_turn'));
+  }
+});
