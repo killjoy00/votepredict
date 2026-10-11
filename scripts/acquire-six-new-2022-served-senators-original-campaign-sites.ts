@@ -50,7 +50,7 @@ export function verifyAllSixNewActuallyServingSenatorsBeforeOriginalArchiveNetwo
 ){
  const s=leads.scope,g=leads.independentOriginalActualSenatorService;
  if(leads.schema!=='mn-six-further-2022-actually-served-mn-senators-original-campaign-domains-v1'
-   ||leads.issue!==664||s.electionYear!==2022||s.generalElectionDate!=='2022-11-08'
+   ||leads.issue!==864||s.electionYear!==2022||s.generalElectionDate!=='2022-11-08'
    ||s.originalCaptureFromUtc!==FROM||s.originalCaptureUntilExclusiveUtc!==UNTIL
    ||s.independentlyVerifiedActualServingPeopleRequired!==6
    ||s.preSourceNetworkVerifyEveryPersonServed2023Senate!==true

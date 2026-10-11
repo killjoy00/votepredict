@@ -15,7 +15,7 @@ import {
  acquireSixPreviouslyUncoveredSenators2022OriginalCampaignSites,
 } from '../scripts/acquire-six-new-2022-served-senators-original-campaign-sites.js';
 const GOV='https://www.lrl.mn.gov/legdb/senate_dir';
-const SHA='bdc2bb41872e193149068f1f294fc172e2916a997240056c5c5dab9368410f51';
+const SHA='bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51';
 const official=[
  ["Paul Utke","Utke, Paul","5"],
  ["Gene Dornink","Dornink, Gene","23"],
@@ -28,7 +28,7 @@ function realSenators():AuditedOfficialSenateDirectory{
  return {
   schema:'mn-lrl-official-senate-ever-served-directory-v1',
   source:{url:GOV,observedAt:'2026-10-10T23:26:10.121Z',
-   sourceBytesSha256:SHA,sourceBytesLength:1601224,
+   sourceBytesSha256:SHA,sourceBytesLength:1601232,
    directoryIsSenatorServiceNotCandidateFiling:true,
    originalHistoricDateForDisplayedDirectoryEstablished:false},
   senators:official.map(([name,raw,district])=>({
@@ -39,7 +39,7 @@ function realSenators():AuditedOfficialSenateDirectory{
 }
 const header=['timestamp','original','mimetype','statuscode','digest','length'];
 const row=(time:string,url:string)=>
- [time,url,'text/html','200','A'.repeat(24),'2400'];
+ [time,url,'text/html','200','A'.repeat(32),'2400'];
 test('all six NEW 2023 serving Senate people, exactly their own original campaign hosts; no losing-never-served persons',()=>{
  assert.equal(seeds.scope.independentlyVerifiedActualServingPeopleRequired,6);
  assert.equal(seeds.scope.maximumAllOriginalHTMLReplays,24);
