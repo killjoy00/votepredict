@@ -3,6 +3,7 @@ import test from 'node:test';
 import {readFileSync} from 'node:fs';
 import {
   load2022PinnedOriginalViewerRows,selectServed2022NextOriginalCe,
+  auditServed2022RedistrictedOriginalCe,
   SERVED_2022_GENERAL_SOURCE_SHA,SERVED_2022_NEXT_DISTRICTS,
   SERVED_2022_396_SOURCE_PSV_SHA,
 } from '../src/evidence/cfb-2022-served-senators-next-original-ce.js';
@@ -15,6 +16,8 @@ import type {CfbSenateDistrictPageObservation}
 import {cfbSenateDistrictPageUrl}
   from '../src/evidence/cfb-senate-district-registration-inventory.js';
 import {createHash} from 'node:crypto';
+import {cfbReportViewerUrl} from '../src/evidence/cfb-current-report-acquisition.js';
+import {cfb2022CeRef,CFB_2022_CE_INDEPENDENT_CALENDAR_URL} from '../src/evidence/cfb-2022-senate-original-ce-pdf-proof.js';
 
 const psv=readFileSync(
   'docs/evaluation/source-proof/cfb-2021-24-senate-396-original-viewer-source-observations.psv',
@@ -34,7 +37,8 @@ const official:AuditedOfficialSenateDirectory={
     directoryIsSenatorServiceNotCandidateFiling:true},
   senators:[{officialName:'Ada Testcase',officialNameRaw:'Testcase, Ada',
     officialSourceUrl:'https://www.lrl.mn.gov/legdb/senate_dir',
-    senateServiceTerms:[{district:'13',startsYear:2023,endsYear:null}]}],
+    senateServiceTerms:[{district:'12',startsYear:2017,endsYear:2022},
+      {district:'13',startsYear:2023,endsYear:null}]}],
 };
 const sos:SosSenate2022Result[]=Array.from({length:67},(_,i)=>({
   election:'general',district:i+1,
@@ -110,4 +114,42 @@ test('source roster completeness, original API-body hash and winner tie are mand
   assert.throws(()=>selectServed2022NextOriginalCe({...args(),
     sosGeneral:[...sos,{...sos[12]!,candidateName:'Second',voteCount:1000}]}),
     /cohort empty/);
+});
+
+test('2022 redistricted actual incumbent form may print the SAME senator old official 2022 district',()=>{
+  const t=selectServed2022NextOriginalCe(args()).targets[0]!;
+  assert.deepEqual(t.official2022PreviousSenateDistricts,[12]);
+  const calendar={sourceUrl:CFB_2022_CE_INDEPENDENT_CALENDAR_URL,
+    sha256:'f'.repeat(64),bytes:10000,fetchedAt:observedAt,
+    text:'2022 Disclosure Calendar for Candidates for Senate, House, and District Courts '+ 
+      'July 25 Pre-primary report of receipts and expenditures due. Period covered: 1/1/2022 through 7/18/2022. '+
+      'October 31 Pre-general report of receipts and expenditures due. Period covered: 1/1/2022 through 10/24/2022. '+
+      'Candidates who lost the primary election do not need to file this report.',
+  };
+  const text='Report of Receipts and Expenditures for Principal Campaign Committee '+
+    'Senate District 12 Registration Number: 17373 '+
+    'Period Covered: 1/1/2022 through 7/18/2022 '+
+    'Received by the Board August 1, 2022';
+  const pdf={sourceUrl:cfbReportViewerUrl(cfb2022CeRef(t)),
+    sha256:'a'.repeat(64),bytes:24000,fetchedAt:observedAt,text};
+  const good=auditServed2022RedistrictedOriginalCe(t,pdf,calendar);
+  assert.equal(good.status,'original_version_pdf_header_and_independent_calendar_verified');
+  assert.equal(good.originalPdfSinglePrintedSenateDistrict,12);
+  assert.equal(good.originalPdfPrintedPreviouslyOfficial2022SenateDistrict,true);
+  assert.equal(good.senateDistrict,13);
+  assert.equal(good.reportReceivedByBoardOn,'2022-08-01');
+  assert.equal(good.historicalPublicByDateIndependentlyVerified,null);
+  const wrong=auditServed2022RedistrictedOriginalCe(t,{...pdf,
+    text:text.replace('Senate District 12','Senate District 55')},calendar);
+  assert.equal(wrong.originalPdfHeaderIdentityAndPeriodVerified,false);
+  assert.equal(wrong.earliestLegalAndFilingBoundOn,null);
+  const absentOld=auditServed2022RedistrictedOriginalCe({
+    ...t,official2022PreviousSenateDistricts:[]},pdf,calendar);
+  assert.equal(absentOld.originalPdfHeaderIdentityAndPeriodVerified,false);
+  const ambiguous=auditServed2022RedistrictedOriginalCe(t,{...pdf,text:text+' Senate District 13'},calendar);
+  assert.equal(ambiguous.originalPdfSinglePrintedSenateDistrict,null);
+  assert.equal(ambiguous.originalPdfHeaderIdentityAndPeriodVerified,false);
+  const wrongCommittee=auditServed2022RedistrictedOriginalCe(t,{...pdf,
+    text:text.replace('Registration Number: 17373','Registration Number: 99999')},calendar);
+  assert.equal(wrongCommittee.originalPdfHeaderIdentityAndPeriodVerified,false);
 });
