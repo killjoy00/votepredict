@@ -97,7 +97,26 @@ test('two versions of one URL and an issue-specific alternative are prioritized,
  assert.equal(result.selectedOriginalReplays.length,3);
  assert.equal(result.selectedOriginalReplays[0].capturedAt,'2022-10-01T00:00:00.000Z');
  assert.equal(result.selectedOriginalReplays[1].capturedAt,'2022-10-05T00:00:00.000Z');
- assert.equal(result.selectedOriginalReplays[2].capturedAt,'2022-10-06T00:00:00.000Z');
+ assert.equal(result.selectedOriginalReplays[2].capturedAt,'2022-10-07T00:00:00.000Z');
+});
+test('actual historic top-level campaign homepage outranks malformed nested Wix event 404 path with misleading /issues suffix',()=>{
+ const data=[header,
+  row('20221031012735','https://www.kupec4mnsenate.com/event-details/America/issues'),
+  row('20221101012735','https://www.kupec4mnsenate.com/event-details/America/America/issues',pageB),
+  row('20220703215005','https://www.kupec4mnsenate.com/'),
+  row('20220805050816','https://www.kupec4mnsenate.com/about'),
+ ];
+ const r=senatorDomainPreGeneral2022Cdx('kupec4mnsenate.com',data);
+ assert.equal(r.selectedOriginalReplays[0].original,'https://www.kupec4mnsenate.com/');
+ assert.equal(r.selectedOriginalReplays[1].original,'https://www.kupec4mnsenate.com/about');
+ assert.ok(r.selectedOriginalReplays.every(x=>!x.original.includes('/America/')));
+});
+test('a real HTTP 200 Wayback domain index [] is a bounded zero, not a parse failure or website-absence finding',()=>{
+ const r=senatorDomainPreGeneral2022Cdx('michaelformnsenate.com',[]);
+ assert.equal(r.rawCdxResultRows,0);
+ assert.equal(r.rankedCandidateRows.length,0);
+ assert.equal(r.selectedOriginalReplays.length,0);
+ assert.equal(r.returnedIndexAtCapacity,false);
 });
 test('hard bound on broad index results records completeness gap; cannot treat index 503 or truncated pages as absence',()=>{
  const cap=[header,...Array.from({length:300},(_,i)=>row(
