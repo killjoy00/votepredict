@@ -1,0 +1,69 @@
+name: Audit 2021-25 Senate campaign sources across all official winner observations
+
+# One-time internal PR audit of previously acquired PUBLIC SOS original bytes.
+# Nothing is scheduled; no Vercel, Neon, secret env, DB writes or forecasts.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-senate-statewide-campaign-sources.yml
+      - src/evidence/senate-statewide-winner-campaign-source-coverage.ts
+      - src/evidence/senate-official-ever-served-directory.ts
+      - scripts/acquire-mn-lrl-senate-service-directory.ts
+      - tests/senate-official-ever-served-directory.test.ts
+      - scripts/audit-senate-statewide-campaign-source-coverage-offline.ts
+      - tests/senate-statewide-winner-campaign-source-coverage.test.ts
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  public-archive-crosscheck:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-statewide-senate-campaign-winner-coverage-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Download earlier 2020/22 original public SOS text files, verified in #948
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38089571113
+          name: senate-2020-22-public-candidate-original-source-acquisition
+          github-token: ${{ github.token }}
+          path: artifacts/official-originals
+      - name: Acquire independent official LRL Senate service dates and districts
+        run: |
+          node --import tsx scripts/acquire-mn-lrl-senate-service-directory.ts \
+            --output-dir artifacts/mn-lrl-ever-served-senate-original
+      - name: Independently rehash source files and report ONLY people confirmed to have served in the Minnesota Senate
+        run: |
+          node --import tsx scripts/audit-senate-statewide-campaign-source-coverage-offline.ts \
+            --official-senate-service-html artifacts/mn-lrl-ever-served-senate-original/mn-lrl-official-senate-service-directory.html \
+            --official-senate-service-metadata artifacts/mn-lrl-ever-served-senate-original/mn-lrl-official-senate-service-directory-audit.json \
+            --official-special-swearing-html artifacts/mn-lrl-ever-served-senate-original/mn-lrl-official-senate-special-swearing-history.html \
+            --official-special-identity-proofs artifacts/mn-lrl-ever-served-senate-original/mn-lrl-three-historical-senator-identity-proofs.json \
+            --2020-st artifacts/official-originals/2020-sos-general-stsenate.response \
+            --2020-cand artifacts/official-originals/2020-sos-general-cand.response \
+            --2022-st artifacts/official-originals/2022-sos-general-stsenate.response \
+            --2022-cand artifacts/official-originals/2022-sos-general-cand.response \
+            --output artifacts/senate-2021-25-statewide-source-recovery-gaps.json
+      - name: Preserve senator-only named source coverage and original official service provenance
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          path: |
+            artifacts/senate-2021-25-statewide-source-recovery-gaps.json
+            artifacts/mn-lrl-ever-served-senate-original/
+          if-no-files-found: error
+          retention-days: 30
