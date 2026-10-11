@@ -113,16 +113,16 @@ test('report revision receipt ordering is proven when both amendment versions ha
   for(const group of groups.values()){
     group.sort((a,b)=>Number(a.id.split(':').at(-1))-Number(b.id.split(':').at(-1)));
     const seen=new Set<string>();
-    let previous:string|null=null;
+    let previousReceipt='';
     for(const r of group){
       assert.ok(!seen.has(r.hash));
       seen.add(r.hash);
       if(r.status==='AUTH'){
-        if(previous!==null)assert.ok(r.received>=previous);
-        previous=r.received;
+        if(previousReceipt)assert.ok(r.received>=previousReceipt);
+        previousReceipt=r.received;
       }else{
         assert.equal(r.id,'18430:21:pcc:YE:0:1');
-        previous=null;
+        previousReceipt='';
       }
     }
   }
