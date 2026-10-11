@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "senate-2021-misc-journal-rule1210-ten-publication-references-original-success-v1",
+  "issue": 864,
+  "scope": "Official Minnesota Senate 2021-named MISCELLANEOUS INDEX of the 92nd Legislature (2021-2022), Rule12.10 indexed committee publication leads; one indexed 2022 report, NOT strictly calendar 2021",
+  "originalSource": {
+    "url": "https://www.senate.mn/journals/2021-2022/2021misc.pdf",
+    "originalPdfBytes": 4889272,
+    "originalPdfSHA256": "ab34a4ea20629f8f4cdf663003f284a0ad7e388602a6717ac267cd9240543c0b",
+    "originalExtractedTextSHA256": "b3ecadf714a7029ff72a7819fb2c1f6bae3e850e2aae904456355d58c4f6987f",
+    "originalRule12_10NormalizedSectionOffsetStart": 69493,
+    "originalRule12_10NormalizedSectionOffsetEnd": 70205,
+    "originalRule12_10SectionSHA256": "57ea51f3a0919cbed66e95d5025b5648683fc75038522aa6b594d7245cb3e01c",
+    "originalSectionBoundedBySubsequentRule14_1": true,
+    "originalExtractedSectionBillPageLines": 10,
+    "extractedRule1210BillPagePublicationReferences": [
+      {
+        "bill": "SF1",
+        "journalPage": 297,
+        "status": "NOT_YET_SEPARATELY_ORIGINAL_ROLL_AUTHENTICATED"
+      },
+      {
+        "bill": "SF2",
+        "journalPage": 268,
+        "status": "2026-10-11_ORIGINAL_ROLL_VERIFIED"
+      },
+      {
+        "bill": "SF173",
+        "journalPage": 272,
+        "status": "2026-10-11_ORIGINAL_ROLL_VERIFIED"
+      },
+      {
+        "bill": "SF566",
+        "journalPage": 417,
+        "status": "2026-10-11_ORIGINAL_ROLL_VERIFIED"
+      },
+      {
+        "bill": "SF910",
+        "journalPage": 714,
+        "status": "NOT_YET_SEPARATELY_ORIGINAL_ROLL_AUTHENTICATED"
+      },
+      {
+        "bill": "SF970",
+        "journalPage": 2147,
+        "status": "NOT_YET_SEPARATELY_ORIGINAL_ROLL_AUTHENTICATED"
+      },
+      {
+        "bill": "SF1159",
+        "journalPage": 2086,
+        "status": "NOT_YET_SEPARATELY_ORIGINAL_ROLL_AUTHENTICATED"
+      },
+      {
+        "bill": "SF1457",
+        "journalPage": 764,
+        "status": "2026-10-11_ORIGINAL_ROLL_VERIFIED"
+      },
+      {
+        "bill": "SF1470",
+        "journalPage": 666,
+        "status": "2026-10-11_ORIGINAL_ROLL_VERIFIED"
+      },
+      {
+        "bill": "SF2909",
+        "journalPage": 5098,
+        "status": "NOT_YET_SEPARATELY_ORIGINAL_ROLL_AUTHENTICATED",
+        "independentlyVerifiedJournalPublicationYear": 2022,
+        "independentlyVerifiedJournalReportDate": "2022-02-24"
+      }
+    ],
+    "independent2021SpecialSessionJournalIndexURL": "https://www.senate.mn/journals/2021-2022/2021index_ss1.pdf",
+    "independent2021SpecialSessionRule1210SF9JournalPage": 156,
+    "specialSessionOriginalBinaryAuthenticated": false,
+    "specialSessionSF9NamedCommitteeRollOriginalAuthenticated": false,
+    "specialSessionSourceMustNotBeCountedInRegularSession10": true,
+    "found2021CalendarYearIndexPublicationReferencesAreNotAllTen": true,
+    "independentlyProved2022IndexedItem": {
+      "bill": "SF2909",
+      "revisorSenateStatus": "https://www.revisor.mn.gov/bills/92/2022/0/SF/2909/?body=Senate",
+      "senateJournalCommitteeReportPublicationDate": "2022-02-24",
+      "sourcePage": 5098,
+      "underlyingCommitteeMotionDateNotAuthenticated": true
+    }
+  },
+  "provenance": {
+    "runnerPR": 1103,
+    "runnerMergeCommit": "9d0e9d886c30d5a0703118b6e4764d9dac500117",
+    "sourceRunId": 38163486518,
+    "sourceRunURL": "https://github.com/killjoy00/votepredict/actions/runs/38163486518",
+    "sourceRunConclusion": "success",
+    "sourceFailures": 0,
+    "sourceArtifactId": 11711281341,
+    "sourceArtifactName": "senate-2021-journal-misc-original-rule1210-index-probe",
+    "artifactDownloadedZipBytes": 1596,
+    "independentlyDownloadedZipSHA256": "7d3ce3ced82edc8f19d9f4d8892750a1defdc71d279b09805eefb839f71060b8",
+    "originalJsonEntry": "2021-misc-original-index-rule1210-probe.json",
+    "independentlyDecodedOriginalJsonBytes": 4009,
+    "independentlyDecodedOriginalJsonSHA256": "d43d0740c29e960f790508f1614633429ca4b5aefbe0e901661ad8f397fdbe22"
+  },
+  "limits": {
+    "individualIndexReferenceNotIndependentNamedRollAuthentication": true,
+    "tenIsIndexPublicationReferenceCountNotYearwideOfficialCommitteeVoteCensus": true,
+    "onlyRollsRequestedByThreeMembersMayAppearUnderRule1210": true,
+    "possiblyUnindexedCommitteeMotionsExist": true,
+    "printedSenateJournalIsNotThe2021OriginalLRLPrintedCommitteeMinutes": true,
+    "cannotInferUnlistedOriginalCommitteeRollsWereZero": true,
+    "noOriginalNamedYeaNayChoiceFromIndex": true,
+    "noPrivateProductionDBReadWrite": true,
+    "noRawOriginalFullPdfOrFullTextCommitted": true,
+    "noStatewide2021to2025CommitteeRecordedVoteDenominatorCertified": true,
+    "noModelsForecastTrainingServingSchedulerFloorOr2027": true,
+    "noGovernmentContact": true,
+    "issue864MustRemainOpen": true,
+    "indexFileName2021miscDoesNotProveAllIndexedCommitteeReportsOccurredIn2021": true,
+    "sf2909IsA2022DatedReportNotA2021Vote": true,
+    "regularSession92ndLegislatureIndexNotCalendar2021Census": true
+  }
+}
