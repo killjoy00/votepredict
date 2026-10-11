@@ -1,0 +1,273 @@
+{
+  "version": "senate-media-three-reformer-brief-original-http-recovery-receipts-v1",
+  "observedDay": "2026-10-11",
+  "independentFirstAndSecondSourceRuns": [
+    {
+      "runId": 38168840912,
+      "sourceCommit": "44a86d44f1f33b3f30d6bde96dde7bc5f39ef446",
+      "success": true,
+      "artifactId": 11713003975,
+      "zipSha256": "9cdf7466dd2195133c87405452be4617090602abf5de28583ce683098eb3dac0",
+      "jsonSha256": "ae95d9c45026f32ed24069bbf58308c8f1001d8e9a194bccfcb714ea91cb0e51",
+      "jsonBytes": 13290,
+      "sourceOriginalBriefUrlVariantsVerified": 2,
+      "sourceOriginalBodiesMatched": 3
+    },
+    {
+      "runId": 38168876117,
+      "sourceCommit": "0e2892a46ee5b025ca0f9ad20bab633416dbc88c",
+      "success": true,
+      "artifactId": 11712949670,
+      "zipSha256": "aebcbb4563888c65462d5723641c2907815c3bd3528e6028e94c15099c10013e",
+      "jsonSha256": "d8f94a01a65f1f482421dd383753805ba925c16b3f37368d3128641701665c24",
+      "jsonBytes": 16858,
+      "sourceOriginalBriefUrlVariantsVerified": 3,
+      "sourceOriginalBodiesMatched": 5
+    }
+  ],
+  "sourceQueue": "docs/evaluation/senate-media-three-unverified-reformer-brief-original-archive-hypotheses-20261011.json",
+  "observedTotals": {
+    "historicallyUnverifiedDatedUrlLeads": 3,
+    "proposedDistinctOriginalBriefUrls": 3,
+    "exactSha1MatchedNewOriginalBriefHttpBodies": 5,
+    "briefReplayAttempts": 6,
+    "individualServingSenatorQuoteCandidates": 6,
+    "exactHistoricallyPresentShortSpeakerCueChecks": 9,
+    "unverifiedRawOriginalDigestMismatchBodies": 1,
+    "originalDatedUrlBodyVerifications": 0,
+    "datedVsBriefArticleUrlHistoricalAliasProofs": 0,
+    "originalSpokenAudioVerifications": 0,
+    "humanFullQuotationApprovals": 0,
+    "memberRecordedVotesProven": 0,
+    "publisherFirstPostingClocksProven": 0
+  },
+  "perSourceOriginalUrlVariantPairs": [
+    {
+      "sourceArticleId": "new-reporter-2021-commissioners",
+      "originallySelectedDatedUrl": "https://minnesotareformer.com/2021/07/02/senate-gop-will-hold-confirmation-hearings-on-walz-commissioners-as-special-session-continues-indefinitely/",
+      "originalDatedUrlHistoricalCdx": "index_unavailable_unknown",
+      "originalPublisherBriefsPath": "https://minnesotareformer.com/briefs/senate-gop-will-hold-confirmation-hearings-on-walz-commissioners-as-special-session-continues-indefinitely/",
+      "historicalBriefsPathCdx": "indexed_candidates",
+      "reporterByline": "Ricardo Lopez",
+      "selectedServingSenators": [
+        "Michelle Benson",
+        "Susan Kent"
+      ],
+      "originalBriefsHttpCaptureVersions": [
+        {
+          "captureUtc": "2021-07-02T19:52:54Z",
+          "originalIndexedSha1Base32": "PS4CSCXUR63JRBKENBVCR5HEY5TQPYOK",
+          "rawOriginalSha256": "8431768c84c596604ac4b3061cf3e6b0512316dcd2e1dffc3349ff470ddbd45e",
+          "rawOriginalHttpBytes": 135164,
+          "replayStatus": "actual_original_indexed_sha1_verified",
+          "individualSenatorShortCueOutcomes": [
+            {
+              "cueId": "new-reporter-2021-commissioners-senator-fragment-1",
+              "speaker": "Michelle Benson",
+              "fragmentInHistoricallyVerifiedHtml": true,
+              "surnameSameParagraph": true,
+              "independentOriginalAudioVerified": false,
+              "fullSpeechQuoteHumanApproved": false,
+              "actualMemberVoteVerified": false
+            },
+            {
+              "cueId": "new-reporter-2021-commissioners-senator-fragment-2",
+              "speaker": "Susan Kent",
+              "fragmentInHistoricallyVerifiedHtml": true,
+              "surnameSameParagraph": true,
+              "independentOriginalAudioVerified": false,
+              "fullSpeechQuoteHumanApproved": false,
+              "actualMemberVoteVerified": false
+            }
+          ]
+        },
+        {
+          "captureUtc": "2021-10-20T17:49:55Z",
+          "originalIndexedSha1Base32": "2GO53H4J5PCKKQIOXSN52XX5OJR6OFRC",
+          "rawOriginalSha256": "d23ca75166bac663a0928a6af9a9f4871f6350ef30820c864debc66a4b7bf7cf",
+          "rawOriginalHttpBytes": 97306,
+          "replayStatus": "actual_original_indexed_sha1_verified",
+          "individualSenatorShortCueOutcomes": [
+            {
+              "cueId": "new-reporter-2021-commissioners-senator-fragment-1",
+              "speaker": "Michelle Benson",
+              "fragmentInHistoricallyVerifiedHtml": true,
+              "surnameSameParagraph": true,
+              "independentOriginalAudioVerified": false,
+              "fullSpeechQuoteHumanApproved": false,
+              "actualMemberVoteVerified": false
+            },
+            {
+              "cueId": "new-reporter-2021-commissioners-senator-fragment-2",
+              "speaker": "Susan Kent",
+              "fragmentInHistoricallyVerifiedHtml": true,
+              "surnameSameParagraph": true,
+              "independentOriginalAudioVerified": false,
+              "fullSpeechQuoteHumanApproved": false,
+              "actualMemberVoteVerified": false
+            }
+          ]
+        }
+      ],
+      "bothExactUrlVariantsHistoricallyVerified": false,
+      "historicallySameArticleUrlAliasProven": false,
+      "originalPublisherInitialPostingClockProven": false
+    },
+    {
+      "sourceArticleId": "new-reporter-2022-special-session",
+      "originallySelectedDatedUrl": "https://minnesotareformer.com/2022/06/16/no-special-legislative-session-no-tax-cuts-no-extra-education-spending/",
+      "originalDatedUrlHistoricalCdx": "index_unavailable_unknown",
+      "originalPublisherBriefsPath": "https://minnesotareformer.com/briefs/no-special-legislative-session-no-tax-cuts-no-extra-education-spending/",
+      "historicalBriefsPathCdx": "indexed_candidates",
+      "reporterByline": "J. Patrick Coolican",
+      "selectedServingSenators": [
+        "Jeremy Miller"
+      ],
+      "originalBriefsHttpCaptureVersions": [
+        {
+          "captureUtc": "2022-06-17T02:10:42Z",
+          "originalIndexedSha1Base32": "EDMKTRBQ25UGXFWAVS7TPELOHGYBBOHL",
+          "rawOriginalSha256": "f6b882494cd5ec6d7a884de7c82917d2186af8aefded1f7cc8f7bae5dd0581d5",
+          "rawOriginalHttpBytes": 93597,
+          "replayStatus": "actual_original_indexed_sha1_verified",
+          "individualSenatorShortCueOutcomes": [
+            {
+              "cueId": "new-reporter-2022-special-session-senator-fragment-1",
+              "speaker": "Jeremy Miller",
+              "fragmentInHistoricallyVerifiedHtml": true,
+              "surnameSameParagraph": true,
+              "independentOriginalAudioVerified": false,
+              "fullSpeechQuoteHumanApproved": false,
+              "actualMemberVoteVerified": false
+            }
+          ]
+        },
+        {
+          "captureUtc": "2022-07-02T19:52:33Z",
+          "originalIndexedSha1Base32": "TZBWFUDMG6SLE4ABDV5UWJQW6QJSB7KN",
+          "rawOriginalSha256": "49d33b41ae9627aac18421a29fa6a342f6e9ac3a08aab1fc4f4af291453abf64",
+          "rawOriginalHttpBytes": 93597,
+          "replayStatus": "actual_original_indexed_sha1_verified",
+          "individualSenatorShortCueOutcomes": [
+            {
+              "cueId": "new-reporter-2022-special-session-senator-fragment-1",
+              "speaker": "Jeremy Miller",
+              "fragmentInHistoricallyVerifiedHtml": true,
+              "surnameSameParagraph": true,
+              "independentOriginalAudioVerified": false,
+              "fullSpeechQuoteHumanApproved": false,
+              "actualMemberVoteVerified": false
+            }
+          ]
+        }
+      ],
+      "bothExactUrlVariantsHistoricallyVerified": false,
+      "historicallySameArticleUrlAliasProven": false,
+      "originalPublisherInitialPostingClockProven": false
+    },
+    {
+      "sourceArticleId": "new-reporter-2025-sick-leave",
+      "originallySelectedDatedUrl": "https://minnesotareformer.com/2025/05/06/blue-dog-democrats-vote-to-roll-back-paid-sick-leave-for-workers-at-small-farms-and-businesses/",
+      "originalDatedUrlHistoricalCdx": "index_unavailable_unknown",
+      "originalPublisherBriefsPath": "https://minnesotareformer.com/briefs/blue-dog-democrats-vote-to-roll-back-paid-sick-leave-for-workers-at-small-farms-and-businesses/",
+      "historicalBriefsPathCdx": "indexed_candidates",
+      "reporterByline": "Max Nesterak",
+      "selectedServingSenators": [
+        "Grant Hauschild",
+        "Judy Seeberger",
+        "Jen McEwen"
+      ],
+      "originalBriefsHttpCaptureVersions": [
+        {
+          "captureUtc": "2025-05-07T03:42:47Z",
+          "originalIndexedSha1Base32": "TJ6UJOOFE4AM3YFFGO7UAO5CWM2EUDJ7",
+          "rawOriginalSha256": "66db985360ccece1f58db94b8208630c4fee1e5c1faeef5ea5b133b6a49c9583",
+          "rawOriginalHttpBytes": 130742,
+          "replayStatus": "actual_original_indexed_sha1_verified",
+          "individualSenatorShortCueOutcomes": [
+            {
+              "cueId": "new-reporter-2025-sick-leave-senator-fragment-1",
+              "speaker": "Grant Hauschild",
+              "fragmentInHistoricallyVerifiedHtml": true,
+              "surnameSameParagraph": true,
+              "independentOriginalAudioVerified": false,
+              "fullSpeechQuoteHumanApproved": false,
+              "actualMemberVoteVerified": false
+            },
+            {
+              "cueId": "new-reporter-2025-sick-leave-senator-fragment-2",
+              "speaker": "Judy Seeberger",
+              "fragmentInHistoricallyVerifiedHtml": true,
+              "surnameSameParagraph": true,
+              "independentOriginalAudioVerified": false,
+              "fullSpeechQuoteHumanApproved": false,
+              "actualMemberVoteVerified": false
+            },
+            {
+              "cueId": "new-reporter-2025-sick-leave-senator-fragment-3",
+              "speaker": "Jen McEwen",
+              "fragmentInHistoricallyVerifiedHtml": true,
+              "surnameSameParagraph": true,
+              "independentOriginalAudioVerified": false,
+              "fullSpeechQuoteHumanApproved": false,
+              "actualMemberVoteVerified": false
+            }
+          ]
+        },
+        {
+          "captureUtc": "2025-05-07T09:00:33Z",
+          "originalIndexedSha1Base32": "ZCL3E6MMMQDGLNT4SNTTIWXMRXBPM7NW",
+          "rawOriginalSha256": null,
+          "rawOriginalHttpBytes": null,
+          "replayStatus": "archive_raw_sha1_mismatch_unknown",
+          "individualSenatorShortCueOutcomes": [
+            {
+              "cueId": "new-reporter-2025-sick-leave-senator-fragment-1",
+              "speaker": "Grant Hauschild",
+              "fragmentInHistoricallyVerifiedHtml": null,
+              "surnameSameParagraph": null,
+              "independentOriginalAudioVerified": false,
+              "fullSpeechQuoteHumanApproved": false,
+              "actualMemberVoteVerified": false
+            },
+            {
+              "cueId": "new-reporter-2025-sick-leave-senator-fragment-2",
+              "speaker": "Judy Seeberger",
+              "fragmentInHistoricallyVerifiedHtml": null,
+              "surnameSameParagraph": null,
+              "independentOriginalAudioVerified": false,
+              "fullSpeechQuoteHumanApproved": false,
+              "actualMemberVoteVerified": false
+            },
+            {
+              "cueId": "new-reporter-2025-sick-leave-senator-fragment-3",
+              "speaker": "Jen McEwen",
+              "fragmentInHistoricallyVerifiedHtml": null,
+              "surnameSameParagraph": null,
+              "independentOriginalAudioVerified": false,
+              "fullSpeechQuoteHumanApproved": false,
+              "actualMemberVoteVerified": false
+            }
+          ]
+        }
+      ],
+      "bothExactUrlVariantsHistoricallyVerified": false,
+      "historicallySameArticleUrlAliasProven": false,
+      "originalPublisherInitialPostingClockProven": false
+    }
+  ],
+  "interpretation": {
+    "commissioner2021BriefRecoveredOnlyOnSecondIndependentRun": true,
+    "selectedOriginalDatedUrlIndexesRemainUnavailable": true,
+    "allThreeOriginalStoryBriefsHaveAuthenticatedHistoricRawBodies": true,
+    "contemporaryReformerCrosslinkNotHistoricalBothUrlProof": true,
+    "onlyIndexSha1VerifiedOriginalRawBytesAuthorizeWordPresence": true,
+    "may2025SecondIndexedReplayChecksumMismatchNotVerified": true,
+    "noAutomaticSourceArticleDeduplication": true,
+    "newspaperBillVotesNotOfficialIndividualRollCallProof": true,
+    "firstHistoricalCaptureNotPublisherInitialPostingClock": true,
+    "fullArticleHtmlAndAudioNotPersisted": true,
+    "noPrivateVotePredictSourceOrForecastDataRead": true,
+    "noStatewideNewsPopulationCensus": true
+  }
+}

@@ -1,0 +1,229 @@
+{
+  "version": "senate-media-seven-remaining-authentic-independent-reporter-quote-targets-v1",
+  "preparedOn": "2026-10-11",
+  "originalArticlesLedger": "docs/evaluation/senate-media-2021-25-further-independent-reporting-15-leads.json",
+  "indexedAndPreviouslyVerifiedOriginalBodyManifest": "docs/evaluation/senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json",
+  "selectedSourceArticleUrls": 7,
+  "actualHistoricalBodyVersionsPreviouslySha1Sha256Pinned": 14,
+  "individuallyNamedServingStateSenatorSpeakerCandidates": 7,
+  "shortIndividuallyPublisherAttributedTextFragmentCues": 14,
+  "historicShortPhraseChecksAcrossTwoOriginalVersionsEach": 28,
+  "originalSpeakerRecordedAudioAuthenticated": false,
+  "originalFullQuotationHumanApproved": false,
+  "independentlyAuthenticatedRecordedCommitteeOrFloorVote": false,
+  "originalPublisherInitialPostClockProven": false,
+  "noPrivateVotePredictDataOrModelCodeRead": true,
+  "remainderOfTwelveHistoricallyOriginalVerifiedNewsArticleUrlCohort": true,
+  "sourceArticles": [
+    {
+      "originalLeadId": "new-reporter-2021-line3",
+      "expectedNamedServingSenatorSpeaker": "Mary Kunesh",
+      "historicalOriginalCaptureUtcs": [
+        "2021-08-26T13:52:12Z",
+        "2021-09-18T09:55:47Z"
+      ],
+      "originalCurrentPublisherReporterSpeechType": "reporter_attributed_senator_quote",
+      "attributionExclusionCaveat": "Contemporaneous public Line 3 Capitol rally; Winona LaDuke and Sam Strong are distinct non-senator speakers",
+      "cueFragments": [
+        {
+          "id": "new-reporter-2021-line3-fragment-1",
+          "speakingSenator": "Mary Kunesh",
+          "currentReporterOriginalShortTextFragment": "We have created a permanent",
+          "currentPublisherHasNamedReporterAttribution": true,
+          "fullSpokenAudioCompared": false,
+          "quoteHumanApproved": false,
+          "independentlyRecordedMemberVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2021-line3-fragment-2",
+          "speakingSenator": "Mary Kunesh",
+          "currentReporterOriginalShortTextFragment": "As long as Enbridge has these pipelines running",
+          "currentPublisherHasNamedReporterAttribution": true,
+          "fullSpokenAudioCompared": false,
+          "quoteHumanApproved": false,
+          "independentlyRecordedMemberVoteVerified": false
+        }
+      ]
+    },
+    {
+      "originalLeadId": "new-reporter-2022-ethics",
+      "expectedNamedServingSenatorSpeaker": "David Osmek",
+      "historicalOriginalCaptureUtcs": [
+        "2022-06-15T21:52:00Z",
+        "2022-06-15T22:25:14Z"
+      ],
+      "originalCurrentPublisherReporterSpeechType": "reporter_attributed_senator_quote",
+      "attributionExclusionCaveat": "Reporter quotes ethics-subcommittee chair; Omar Fateh is investigation subject and Kristin Hendrick is his lawyer, not the source senator for Osmek remarks",
+      "cueFragments": [
+        {
+          "id": "new-reporter-2022-ethics-fragment-1",
+          "speakingSenator": "David Osmek",
+          "currentReporterOriginalShortTextFragment": "It brings disrepute upon the body",
+          "currentPublisherHasNamedReporterAttribution": true,
+          "fullSpokenAudioCompared": false,
+          "quoteHumanApproved": false,
+          "independentlyRecordedMemberVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2022-ethics-fragment-2",
+          "speakingSenator": "David Osmek",
+          "currentReporterOriginalShortTextFragment": "We're approaching reckless disregard",
+          "currentPublisherHasNamedReporterAttribution": true,
+          "fullSpokenAudioCompared": false,
+          "quoteHumanApproved": false,
+          "independentlyRecordedMemberVoteVerified": false
+        }
+      ]
+    },
+    {
+      "originalLeadId": "new-reporter-2023-license-rally",
+      "expectedNamedServingSenatorSpeaker": "Zaynab Mohamed",
+      "historicalOriginalCaptureUtcs": [
+        "2023-01-04T01:59:08Z",
+        "2023-01-04T02:05:29Z"
+      ],
+      "originalCurrentPublisherReporterSpeechType": "reporter_attributed_senator_quote",
+      "attributionExclusionCaveat": "First-session bill author's remarks; Governor Walz and House representatives excluded, Bobby Joe Champion mentioned through separate older Star Tribune, not assigned quotation",
+      "cueFragments": [
+        {
+          "id": "new-reporter-2023-license-rally-fragment-1",
+          "speakingSenator": "Zaynab Mohamed",
+          "currentReporterOriginalShortTextFragment": "is a top priority for me as an immigrant",
+          "currentPublisherHasNamedReporterAttribution": true,
+          "fullSpokenAudioCompared": false,
+          "quoteHumanApproved": false,
+          "independentlyRecordedMemberVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2023-license-rally-fragment-2",
+          "speakingSenator": "Zaynab Mohamed",
+          "currentReporterOriginalShortTextFragment": "a top priority for all Minnesotans",
+          "currentPublisherHasNamedReporterAttribution": true,
+          "fullSpokenAudioCompared": false,
+          "quoteHumanApproved": false,
+          "independentlyRecordedMemberVoteVerified": false
+        }
+      ]
+    },
+    {
+      "originalLeadId": "new-reporter-2023-family-leave",
+      "expectedNamedServingSenatorSpeaker": "Alice Mann",
+      "historicalOriginalCaptureUtcs": [
+        "2023-01-06T13:57:07Z",
+        "2023-01-07T01:20:15Z"
+      ],
+      "originalCurrentPublisherReporterSpeechType": "reporter_attributed_senator_quote",
+      "attributionExclusionCaveat": "News conference quote from 2023 serving senator; Rep Ruth Richardson and Speaker Hortman are House lawmakers with their own remarks",
+      "cueFragments": [
+        {
+          "id": "new-reporter-2023-family-leave-fragment-1",
+          "speakingSenator": "Alice Mann",
+          "currentReporterOriginalShortTextFragment": "It will positively impact the health of our children",
+          "currentPublisherHasNamedReporterAttribution": true,
+          "fullSpokenAudioCompared": false,
+          "quoteHumanApproved": false,
+          "independentlyRecordedMemberVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2023-family-leave-fragment-2",
+          "speakingSenator": "Alice Mann",
+          "currentReporterOriginalShortTextFragment": "the economic stability of our families",
+          "currentPublisherHasNamedReporterAttribution": true,
+          "fullSpokenAudioCompared": false,
+          "quoteHumanApproved": false,
+          "independentlyRecordedMemberVoteVerified": false
+        }
+      ]
+    },
+    {
+      "originalLeadId": "new-reporter-2023-rideshare-floor",
+      "expectedNamedServingSenatorSpeaker": "Omar Fateh",
+      "historicalOriginalCaptureUtcs": [
+        "2023-05-22T07:10:00Z",
+        "2023-05-23T11:37:54Z"
+      ],
+      "originalCurrentPublisherReporterSpeechType": "reporter_attributed_senator_quote",
+      "attributionExclusionCaveat": "Reporter quotes a floor speech, but newspaper states bill passed 35-32 and Abeler supported; neither statement establishes independently verified individual member recorded votes",
+      "cueFragments": [
+        {
+          "id": "new-reporter-2023-rideshare-floor-fragment-1",
+          "speakingSenator": "Omar Fateh",
+          "currentReporterOriginalShortTextFragment": "Minnesota has long been a leader in protecting workers",
+          "currentPublisherHasNamedReporterAttribution": true,
+          "fullSpokenAudioCompared": false,
+          "quoteHumanApproved": false,
+          "independentlyRecordedMemberVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2023-rideshare-floor-fragment-2",
+          "speakingSenator": "Omar Fateh",
+          "currentReporterOriginalShortTextFragment": "Minnesota is lagging behind",
+          "currentPublisherHasNamedReporterAttribution": true,
+          "fullSpokenAudioCompared": false,
+          "quoteHumanApproved": false,
+          "independentlyRecordedMemberVoteVerified": false
+        }
+      ]
+    },
+    {
+      "originalLeadId": "new-reporter-2024-session-opening",
+      "expectedNamedServingSenatorSpeaker": "Erin Murphy",
+      "historicalOriginalCaptureUtcs": [
+        "2024-02-12T22:42:53Z",
+        "2024-02-12T22:51:02Z"
+      ],
+      "originalCurrentPublisherReporterSpeechType": "reporter_attributed_senator_quote",
+      "attributionExclusionCaveat": "Reporter quotes new Senate majority leader in press conference; governor, House lawmakers, Ann Rest social-event mention and ex-leader Dziedzic not separately attributed the tested words",
+      "cueFragments": [
+        {
+          "id": "new-reporter-2024-session-opening-fragment-1",
+          "speakingSenator": "Erin Murphy",
+          "currentReporterOriginalShortTextFragment": "The Capitol is a place to hear rumors",
+          "currentPublisherHasNamedReporterAttribution": true,
+          "fullSpokenAudioCompared": false,
+          "quoteHumanApproved": false,
+          "independentlyRecordedMemberVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2024-session-opening-fragment-2",
+          "speakingSenator": "Erin Murphy",
+          "currentReporterOriginalShortTextFragment": "We passed a powerful agenda last session",
+          "currentPublisherHasNamedReporterAttribution": true,
+          "fullSpokenAudioCompared": false,
+          "quoteHumanApproved": false,
+          "independentlyRecordedMemberVoteVerified": false
+        }
+      ]
+    },
+    {
+      "originalLeadId": "new-reporter-2025-solar",
+      "expectedNamedServingSenatorSpeaker": "Nick Frentz",
+      "historicalOriginalCaptureUtcs": [
+        "2025-06-30T13:15:32Z",
+        "2025-06-30T13:51:00Z"
+      ],
+      "originalCurrentPublisherReporterSpeechType": "reporter_attributed_senator_quote",
+      "attributionExclusionCaveat": "Reporter directly quotes senator on solar net metering; newspaper mentions Energy Committee 9-2 vote, not Frentz's individual recorded vote; Logan O'Grady industry non-senator",
+      "cueFragments": [
+        {
+          "id": "new-reporter-2025-solar-fragment-1",
+          "speakingSenator": "Nick Frentz",
+          "currentReporterOriginalShortTextFragment": "These provisions are birds of a feather",
+          "currentPublisherHasNamedReporterAttribution": true,
+          "fullSpokenAudioCompared": false,
+          "quoteHumanApproved": false,
+          "independentlyRecordedMemberVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2025-solar-fragment-2",
+          "speakingSenator": "Nick Frentz",
+          "currentReporterOriginalShortTextFragment": "Flexibility is the selling point",
+          "currentPublisherHasNamedReporterAttribution": true,
+          "fullSpokenAudioCompared": false,
+          "quoteHumanApproved": false,
+          "independentlyRecordedMemberVoteVerified": false
+        }
+      ]
+    }
+  ]
+}

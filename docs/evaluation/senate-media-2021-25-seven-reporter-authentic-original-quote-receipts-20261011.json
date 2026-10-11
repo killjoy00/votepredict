@@ -1,0 +1,481 @@
+{
+  "version": "senate-media-seven-completed-journalist-original-quote-proof-receipts-v1",
+  "recordedLocalDay": "2026-10-11",
+  "publicProofSource": {
+    "repository": "killjoy00/votepredict",
+    "runId": 38168875941,
+    "originalBranchHeadSha": "0e2892a46ee5b025ca0f9ad20bab633416dbc88c",
+    "workflow": "Public Senate seven further original journalist quote passages",
+    "conclusion": "success",
+    "artifactId": 11712249946,
+    "originalZipSha256": "40ccf1a4a3ace27e0d53c25d99e544209f166d28313ae88bf9427e028546c6db",
+    "decodedJsonSha256": "dd03ea36f6f47012471057cc857dc469adf3bd49e1bb97cdf8cb7406b18837af",
+    "decodedJsonBytes": 33285
+  },
+  "sourceOriginalShaManifest": "docs/evaluation/senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json",
+  "separateCurrentOriginalReporterQueue": "docs/evaluation/senate-media-seven-remaining-authentic-independent-reporter-quote-queue-20261011.json",
+  "observedCounts": {
+    "distinctOriginallyReportingPublisherArticleUrls": 7,
+    "distinctIndividuallyNamedServingSenatorSpeakers": 7,
+    "originalExactHistoricalHtmlBodiesSha1AndPreviousSha256Reverified": 14,
+    "originalHtmlReplayUnknown": 0,
+    "shortHistoricHtmlSnippetChecks": 28,
+    "shortHistoricalHtmlSnippetsPresent": 28,
+    "shortHistoricalHtmlSnippetsAbsent": 0,
+    "shortHistoricalHtmlSnippetsUnknown": 0,
+    "weakSameParagraphFullSenatorNameClues": 20,
+    "weakSameParagraphSenatorSurnameClues": 26,
+    "originalAudioVersionsAuthenticated": 0,
+    "completeSpokenSenatorUtterancesHumanApproved": 0,
+    "originalPublisherInitialPostClocksProven": 0,
+    "individualRecordedSenateCommitteeOrFloorVotesEstablished": 0
+  },
+  "originalArticleHttpCaptureVersions": [
+    {
+      "reporterArticleId": "new-reporter-2021-line3",
+      "originalPublisherArticleUrl": "https://minnesotareformer.com/2021/08/25/2000-rally-against-line-3-at-state-capitol/",
+      "namedSenator": "Mary Kunesh",
+      "verifiedOriginalCaptureUtc": "2021-08-26T13:52:12Z",
+      "originalIndexedSha1Base32": "YKX47QUIXIGECCRIZGR67RRQKZF7DTNU",
+      "originalRawSha256Reverified": "bcb45187f0c3cb44789aaf2d6fbf865193c06d5e12863360d866f343c96aa87b",
+      "verifiedOriginalRawHttpBytes": 103678,
+      "observedOriginalRawSha256EqualsPreviousPinnedDigest": true,
+      "replayStatus": "exact_original_raw_sha1_and_pinned_sha256_verified",
+      "shortCueObservations": [
+        {
+          "id": "new-reporter-2021-line3-fragment-1",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": false,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2021-line3-fragment-2",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": false,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        }
+      ]
+    },
+    {
+      "reporterArticleId": "new-reporter-2021-line3",
+      "originalPublisherArticleUrl": "https://minnesotareformer.com/2021/08/25/2000-rally-against-line-3-at-state-capitol/",
+      "namedSenator": "Mary Kunesh",
+      "verifiedOriginalCaptureUtc": "2021-09-18T09:55:47Z",
+      "originalIndexedSha1Base32": "ZZDNYAF3OL5BNOAGUI3K4SCLOT4454GN",
+      "originalRawSha256Reverified": "fc7ebf3ccaab6a15c3993b64b15a706999cdd855267f3bc0295355e1dfd803be",
+      "verifiedOriginalRawHttpBytes": 103676,
+      "observedOriginalRawSha256EqualsPreviousPinnedDigest": true,
+      "replayStatus": "exact_original_raw_sha1_and_pinned_sha256_verified",
+      "shortCueObservations": [
+        {
+          "id": "new-reporter-2021-line3-fragment-1",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": false,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2021-line3-fragment-2",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": false,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        }
+      ]
+    },
+    {
+      "reporterArticleId": "new-reporter-2022-ethics",
+      "originalPublisherArticleUrl": "https://minnesotareformer.com/2022/06/15/senate-ethics-subcommittee-votes-to-continue-investigation-of-sen-omar-fateh/",
+      "namedSenator": "David Osmek",
+      "verifiedOriginalCaptureUtc": "2022-06-15T21:52:00Z",
+      "originalIndexedSha1Base32": "MXXDAF4O2HDUXV2CH744O35STMPVREHY",
+      "originalRawSha256Reverified": "9db8f8088b0715a23ee88afca309f5621f3c9a0844b84e94070c5d7ae0e5b453",
+      "verifiedOriginalRawHttpBytes": 102068,
+      "observedOriginalRawSha256EqualsPreviousPinnedDigest": true,
+      "replayStatus": "exact_original_raw_sha1_and_pinned_sha256_verified",
+      "shortCueObservations": [
+        {
+          "id": "new-reporter-2022-ethics-fragment-1",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2022-ethics-fragment-2",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": false,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        }
+      ]
+    },
+    {
+      "reporterArticleId": "new-reporter-2022-ethics",
+      "originalPublisherArticleUrl": "https://minnesotareformer.com/2022/06/15/senate-ethics-subcommittee-votes-to-continue-investigation-of-sen-omar-fateh/",
+      "namedSenator": "David Osmek",
+      "verifiedOriginalCaptureUtc": "2022-06-15T22:25:14Z",
+      "originalIndexedSha1Base32": "D3Q6JOGHF5Q5VYDAJCKSDQOZKC3TOKOL",
+      "originalRawSha256Reverified": "06a94b687a2df009b83b2b02b96087f19097c93ed955f65107711824ecfc5f5f",
+      "verifiedOriginalRawHttpBytes": 102068,
+      "observedOriginalRawSha256EqualsPreviousPinnedDigest": true,
+      "replayStatus": "exact_original_raw_sha1_and_pinned_sha256_verified",
+      "shortCueObservations": [
+        {
+          "id": "new-reporter-2022-ethics-fragment-1",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2022-ethics-fragment-2",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": false,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        }
+      ]
+    },
+    {
+      "reporterArticleId": "new-reporter-2023-license-rally",
+      "originalPublisherArticleUrl": "https://minnesotareformer.com/2023/01/03/give-drivers-licenses-to-minnesotas-undocumented-residents-advocates-say/",
+      "namedSenator": "Zaynab Mohamed",
+      "verifiedOriginalCaptureUtc": "2023-01-04T01:59:08Z",
+      "originalIndexedSha1Base32": "HKCNJYPBMZHUBFFLVSF5GCSHVZ7EVJWF",
+      "originalRawSha256Reverified": "8c9983d2d330fa853557302822dec5f22411e2b093a363485ce5a35e73f7b1e0",
+      "verifiedOriginalRawHttpBytes": 129170,
+      "observedOriginalRawSha256EqualsPreviousPinnedDigest": true,
+      "replayStatus": "exact_original_raw_sha1_and_pinned_sha256_verified",
+      "shortCueObservations": [
+        {
+          "id": "new-reporter-2023-license-rally-fragment-1",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2023-license-rally-fragment-2",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        }
+      ]
+    },
+    {
+      "reporterArticleId": "new-reporter-2023-license-rally",
+      "originalPublisherArticleUrl": "https://minnesotareformer.com/2023/01/03/give-drivers-licenses-to-minnesotas-undocumented-residents-advocates-say/",
+      "namedSenator": "Zaynab Mohamed",
+      "verifiedOriginalCaptureUtc": "2023-01-04T02:05:29Z",
+      "originalIndexedSha1Base32": "TGACDRH6HWDJRGQ2HQYOOPB2FKA4C5BZ",
+      "originalRawSha256Reverified": "d162e5c465db82d7d1009b51273972c757d209e88d2e8236799956c0af712d15",
+      "verifiedOriginalRawHttpBytes": 129170,
+      "observedOriginalRawSha256EqualsPreviousPinnedDigest": true,
+      "replayStatus": "exact_original_raw_sha1_and_pinned_sha256_verified",
+      "shortCueObservations": [
+        {
+          "id": "new-reporter-2023-license-rally-fragment-1",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2023-license-rally-fragment-2",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        }
+      ]
+    },
+    {
+      "reporterArticleId": "new-reporter-2023-family-leave",
+      "originalPublisherArticleUrl": "https://minnesotareformer.com/briefs/dfl-launches-effort-for-minnesota-paid-family-leave-program/",
+      "namedSenator": "Alice Mann",
+      "verifiedOriginalCaptureUtc": "2023-01-06T13:57:07Z",
+      "originalIndexedSha1Base32": "IJ4U4GQ2HWF6HEEKA3EINBYRRBMSALDQ",
+      "originalRawSha256Reverified": "d6d8e25c184613b6725c850a8819ab0d47f6b879fc5c13bfa47523c7d4785be1",
+      "verifiedOriginalRawHttpBytes": 122992,
+      "observedOriginalRawSha256EqualsPreviousPinnedDigest": true,
+      "replayStatus": "exact_original_raw_sha1_and_pinned_sha256_verified",
+      "shortCueObservations": [
+        {
+          "id": "new-reporter-2023-family-leave-fragment-1",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2023-family-leave-fragment-2",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        }
+      ]
+    },
+    {
+      "reporterArticleId": "new-reporter-2023-family-leave",
+      "originalPublisherArticleUrl": "https://minnesotareformer.com/briefs/dfl-launches-effort-for-minnesota-paid-family-leave-program/",
+      "namedSenator": "Alice Mann",
+      "verifiedOriginalCaptureUtc": "2023-01-07T01:20:15Z",
+      "originalIndexedSha1Base32": "FEOI35E4HJXG6KHYBIRTSOG4MDPJLL7Y",
+      "originalRawSha256Reverified": "7ea65f73b79ed5147a1229283a2c2e893b7522ff5b4733576f879ed96d2f4eb6",
+      "verifiedOriginalRawHttpBytes": 122992,
+      "observedOriginalRawSha256EqualsPreviousPinnedDigest": true,
+      "replayStatus": "exact_original_raw_sha1_and_pinned_sha256_verified",
+      "shortCueObservations": [
+        {
+          "id": "new-reporter-2023-family-leave-fragment-1",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2023-family-leave-fragment-2",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        }
+      ]
+    },
+    {
+      "reporterArticleId": "new-reporter-2023-rideshare-floor",
+      "originalPublisherArticleUrl": "https://minnesotareformer.com/2023/05/21/minnesota-legislature-approves-minimum-wage-for-uber-and-lyft-drivers/",
+      "namedSenator": "Omar Fateh",
+      "verifiedOriginalCaptureUtc": "2023-05-22T07:10:00Z",
+      "originalIndexedSha1Base32": "UJIGEAR34GPFQFUI5BHJ5QVRSGTKTPFY",
+      "originalRawSha256Reverified": "2eb8e2c33f1390f0eaf11ef9f8b90eb79f3acc2a2126dc765076118d16ed5e27",
+      "verifiedOriginalRawHttpBytes": 128617,
+      "observedOriginalRawSha256EqualsPreviousPinnedDigest": true,
+      "replayStatus": "exact_original_raw_sha1_and_pinned_sha256_verified",
+      "shortCueObservations": [
+        {
+          "id": "new-reporter-2023-rideshare-floor-fragment-1",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2023-rideshare-floor-fragment-2",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        }
+      ]
+    },
+    {
+      "reporterArticleId": "new-reporter-2023-rideshare-floor",
+      "originalPublisherArticleUrl": "https://minnesotareformer.com/2023/05/21/minnesota-legislature-approves-minimum-wage-for-uber-and-lyft-drivers/",
+      "namedSenator": "Omar Fateh",
+      "verifiedOriginalCaptureUtc": "2023-05-23T11:37:54Z",
+      "originalIndexedSha1Base32": "XXQCZEATDPJW5GSNQBP4Z7MDVYLLVCMQ",
+      "originalRawSha256Reverified": "943fec6e22957d3cd3f30e238b6ca1d3b0e609486a81b85694824cbee0074fa4",
+      "verifiedOriginalRawHttpBytes": 128667,
+      "observedOriginalRawSha256EqualsPreviousPinnedDigest": true,
+      "replayStatus": "exact_original_raw_sha1_and_pinned_sha256_verified",
+      "shortCueObservations": [
+        {
+          "id": "new-reporter-2023-rideshare-floor-fragment-1",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2023-rideshare-floor-fragment-2",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        }
+      ]
+    },
+    {
+      "reporterArticleId": "new-reporter-2024-session-opening",
+      "originalPublisherArticleUrl": "https://minnesotareformer.com/2024/02/12/era-mardi-gras-and-apple-blondies-day-one-of-the-2024-minnesota-legislative-session/",
+      "namedSenator": "Erin Murphy",
+      "verifiedOriginalCaptureUtc": "2024-02-12T22:42:53Z",
+      "originalIndexedSha1Base32": "YCTRC2LQYLNZPXHBZQAYMBFHMEDR665B",
+      "originalRawSha256Reverified": "94a21a0bbafc779ef528548a7b37aa7335ee2db7c27dbe075f715438f4aa8e07",
+      "verifiedOriginalRawHttpBytes": 146548,
+      "observedOriginalRawSha256EqualsPreviousPinnedDigest": true,
+      "replayStatus": "exact_original_raw_sha1_and_pinned_sha256_verified",
+      "shortCueObservations": [
+        {
+          "id": "new-reporter-2024-session-opening-fragment-1",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2024-session-opening-fragment-2",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        }
+      ]
+    },
+    {
+      "reporterArticleId": "new-reporter-2024-session-opening",
+      "originalPublisherArticleUrl": "https://minnesotareformer.com/2024/02/12/era-mardi-gras-and-apple-blondies-day-one-of-the-2024-minnesota-legislative-session/",
+      "namedSenator": "Erin Murphy",
+      "verifiedOriginalCaptureUtc": "2024-02-12T22:51:02Z",
+      "originalIndexedSha1Base32": "HBNSEGLILTUVDNP7BCBINHWYHKBKNZLQ",
+      "originalRawSha256Reverified": "782aa80055bfdf1402e2f5f13cfd557e23a56c9287db385fd407177d6d0ec93f",
+      "verifiedOriginalRawHttpBytes": 146548,
+      "observedOriginalRawSha256EqualsPreviousPinnedDigest": true,
+      "replayStatus": "exact_original_raw_sha1_and_pinned_sha256_verified",
+      "shortCueObservations": [
+        {
+          "id": "new-reporter-2024-session-opening-fragment-1",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2024-session-opening-fragment-2",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        }
+      ]
+    },
+    {
+      "reporterArticleId": "new-reporter-2025-solar",
+      "originalPublisherArticleUrl": "https://minnesotareformer.com/2025/06/30/minnesota-solar-industry-avoided-legislative-defeat-but-next-session-and-federal-policy-changes-loom/",
+      "namedSenator": "Nick Frentz",
+      "verifiedOriginalCaptureUtc": "2025-06-30T13:15:32Z",
+      "originalIndexedSha1Base32": "YCMBD3N2EDOOVE74GXCHCBEDYNYQ7S5K",
+      "originalRawSha256Reverified": "cc3de976f43645ef3a496d927e9f344a350797f038d1524afb22d186004f4938",
+      "verifiedOriginalRawHttpBytes": 140576,
+      "observedOriginalRawSha256EqualsPreviousPinnedDigest": true,
+      "replayStatus": "exact_original_raw_sha1_and_pinned_sha256_verified",
+      "shortCueObservations": [
+        {
+          "id": "new-reporter-2025-solar-fragment-1",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2025-solar-fragment-2",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": false,
+          "senatorSurnameInSameHtmlParagraph": false,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        }
+      ]
+    },
+    {
+      "reporterArticleId": "new-reporter-2025-solar",
+      "originalPublisherArticleUrl": "https://minnesotareformer.com/2025/06/30/minnesota-solar-industry-avoided-legislative-defeat-but-next-session-and-federal-policy-changes-loom/",
+      "namedSenator": "Nick Frentz",
+      "verifiedOriginalCaptureUtc": "2025-06-30T13:51:00Z",
+      "originalIndexedSha1Base32": "UXJNLMRPN6JYFMMVXJPNZ5YP6PZ4JTH5",
+      "originalRawSha256Reverified": "b453d4fab958f056a3ac49ab10e357aa736432e301483a33491401c3221ea11d",
+      "verifiedOriginalRawHttpBytes": 140403,
+      "observedOriginalRawSha256EqualsPreviousPinnedDigest": true,
+      "replayStatus": "exact_original_raw_sha1_and_pinned_sha256_verified",
+      "shortCueObservations": [
+        {
+          "id": "new-reporter-2025-solar-fragment-1",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": true,
+          "senatorSurnameInSameHtmlParagraph": true,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        },
+        {
+          "id": "new-reporter-2025-solar-fragment-2",
+          "shortHistoricHtmlQuoteFragmentFound": true,
+          "fullSenatorNameInSameHtmlParagraph": false,
+          "senatorSurnameInSameHtmlParagraph": false,
+          "humanApprovedCompleteSpokenQuotation": false,
+          "originalAudioCompared": false,
+          "originalMemberFloorOrCommitteeRecordedVoteVerified": false
+        }
+      ]
+    }
+  ],
+  "evidenceBoundaries": {
+    "eachHistoricalSourceBodyWasRehashedAgainstCdxIndexedRawSha1AndPriorRawSha256": true,
+    "quoteCueCheckedOnlyInVisibleAuthenticatedHistoricalHtml": true,
+    "articleOriginalPostTimeIsNotWaybackCaptureTimestamp": true,
+    "reportedFloorStatementDoesNotProveIndividualFloorVote": true,
+    "reportedCommitteeVoteCountDoesNotProveFrentzIndividualCommitteeChoice": true,
+    "newspaperQuotedTextNotIndependentlyAuthenticatedRecording": true,
+    "sameParagraphSpeakerNameProximityNotHumanFullQuoteApproval": true,
+    "noOriginalArticleHtmlOrAudioPersisted": true,
+    "noPrivateVotePredictDataOrModelsRead": true,
+    "noStatewideOrPublisherYearPublicationDenominator": true
+  }
+}

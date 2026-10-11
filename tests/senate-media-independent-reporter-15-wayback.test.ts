@@ -41,7 +41,7 @@ test('15 new Reformer ORIGINAL articles are disjoint from old 31+18+25 selected 
   assert.equal(d.version,'public-2021-25-further-independent-15-reformer-articles-v1');
   assert.equal(d.discoveredOn,'2026-10-11');
   assert.equal(d.newOriginalArticleUrlLeads,15);
-  assert.equal(d.newIndividuallyNamedSenatorSpeakerCandidates,22);
+  assert.equal(d.newIndividuallyNamedSenatorSpeakerCandidates,24);
   assert.equal(leads.length,15);
   assert.deepEqual(selectJournalistSources(leads,'all'),leads);
   assert.deepEqual(selectJournalistSources(leads,'priority').map(x=>x.id),
@@ -51,7 +51,7 @@ test('15 new Reformer ORIGINAL articles are disjoint from old 31+18+25 selected 
     {year:2022,articles:3,senatorSpeakerTurns:5},
     {year:2023,articles:3,senatorSpeakerTurns:3},
     {year:2024,articles:3,senatorSpeakerTurns:6},
-    {year:2025,articles:3,senatorSpeakerTurns:3},
+    {year:2025,articles:3,senatorSpeakerTurns:5},
   ]);
   const prior=new Set<string>([
     ...old31.selectedNonExhaustiveArticleLeads.map((x:{livePageUrl:string})=>x.livePageUrl),
