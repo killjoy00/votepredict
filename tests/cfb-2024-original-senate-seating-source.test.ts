@@ -108,6 +108,14 @@ test('permanent 2024 Senate original government PDF SHA and 22 member-table/map 
  assert.equal(ck.scope.committeeLegallyOwedOriginalYearendDenominator,null);
  assert.equal(ck.officialSourceAcquisitions[0].verifiedRosterTableMemberMatches,22);
  assert.equal(ck.officialSourceAcquisitions[0].verifiedMapSeatCaptionMatches,22);
+ assert.equal(ck.officialSourceAcquisitions.length,2);
+ assert.notEqual(ck.officialSourceAcquisitions[0].runId,ck.officialSourceAcquisitions[1].runId);
+ assert.equal(ck.officialSourceAcquisitions[1].verifiedRosterTableMemberMatches,22);
+ assert.equal(ck.officialSourceAcquisitions[1].verifiedMapSeatCaptionMatches,22);
+ assert.equal(ck.crossIndependentOriginalPdfRunConfirmation.identicalPdfSHA256AndBytes,true);
+ assert.equal(ck.crossIndependentOriginalPdfRunConfirmation.all22TableMatchesIdentical,true);
+ assert.equal(ck.crossIndependentOriginalPdfRunConfirmation.all22SeatMapMatchesIdentical,true);
+ assert.equal(ck.crossIndependentOriginalPdfRunConfirmation.noSourceConflictOrMissingPersonBothRuns,true);
  assert.equal(ck.safeguards.noProductionDatabaseReadWrite,true);
  assert.equal(ck.safeguards.keepIssue864Open,true);
 });
