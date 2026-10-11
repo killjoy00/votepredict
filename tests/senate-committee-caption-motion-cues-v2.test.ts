@@ -56,7 +56,7 @@ test('multiple near-duplicate caption spans never count multiple unique votes',(
 });
 test('attributes leaking out of old clip boundary cause hard failure, not an accidental cue',()=>{
  const bad='<span class="video_seek_link" data-time="5">Call the roll'
-  +'<script>var t="data-time=\\\"6\\\"";</script>';
+  +'<p>not an opening tag data-time="6" and no caption</p>';
  assert.throws(()=>findStrict2025OriginalAutoCaptionMotionCues(bad),
   /timestamp markers were not embedded in complete HTML/);
 });
