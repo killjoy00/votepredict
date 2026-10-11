@@ -1,37 +1,40 @@
-# 2021–2025 Senate media: independent public article discovery (not historical proof)
+# 2021–2025 Minnesota Senate media: independent public article discovery
 
-**Track:** [#912](https://github.com/killjoy00/votepredict/issues/912), independent of the Neon SQL access path. **Status:** 14 manually located publisher-page discovery leads across all five study years, **zero** historically authenticated archived quotations. These are illustrative and do not estimate a media-publication denominator or completeness.
+**Track:** [#912](https://github.com/killjoy00/votepredict/issues/912), [#946](https://github.com/killjoy00/votepredict/issues/946). **Research check:** 2026-10-10. **Status:** **22 selected current-publisher URL leads** across 2021–2025, including **two unverified alias pairs** (thus not 22 demonstrated unique articles). No authenticated original Wayback article bytes, historical public-by dates, private source-document matches, or human-verified Senate quotations were obtained in this research.
 
-Structured, unit-tested ledger: [`senate-media-public-article-discovery-2021-25.json`](senate-media-public-article-discovery-2021-25.json). It records public page URLs, dates **displayed by current publisher pages**, names to check, topics for research routing, and explicit false flags for archive SHA, independent first-public-by, senator membership, quote verification and vote-prediction eligibility. It does not include any article body, quoted sentence, source/document identity from VotePredict or credentials.
+Structured, offline-tested public ledger: [`senate-media-public-article-discovery-2021-25.json`](senate-media-public-article-discovery-2021-25.json). Its displayed publication date is a **publisher claim seen during present-day research**, not a contemporaneously authenticated release date. The research-check date proves only that the public lead was examined on 2026-10-10. Neither date establishes availability before a historical prediction cutoff. No private rows, original article body, speaker quote, stance, or source hash is published.
 
-## Directly observed collection gap
+## Actual 2022, 2024, and 2025 additions
 
-The existing 44-publisher Wayback seed [`minnesota-reformer-article-archive`](../../src/evidence/local-trade-news-history.ts) requests URLs beginning with `https://minnesotareformer.com/202`. It therefore cannot discover original articles whose canonical URLs instead begin `https://minnesotareformer.com/briefs/` under that seed prefix. This is **a source-path exclusion visible without accessing the private database**.
+Eight new, publicly identified **URL leads**, six on `/briefs/` and two on dated paths, were checked on 2026-10-10. All linked names below are **search leads for people who did serve in the Minnesota Senate**, not verified article quotations.
 
-In our *non-exhaustive* 14-article sample, four source leads have that exact excluded path:
+| Displayed article day | Publisher URLs in this research sample | Senate-member research leads | Audit interpretation |
+| --- | --- | --- | --- |
+| 2022-01-26 | [GOP public-safety/tax/education agenda](https://minnesotareformer.com/briefs/senate-gop-legislative-agenda-get-tougher-on-crime-and-cut-state-taxes/) | Jeremy Miller; Roger Chamberlain | `/briefs/` seed-prefix exclusion |
+| 2022-03-22 | [DFL public-safety plan — brief](https://minnesotareformer.com/briefs/senate-dfl-outlines-500-million-public-safety-plan/) and [dated path](https://minnesotareformer.com/2022/03/22/senate-dfl-outlines-500-million-public-safety-plan/) | Melisa López Franzen; Bobby Joe Champion; Ron Latz; Warren Limmer | Same slug and displayed day, **candidate alias pair**; current brief request resolved to dated publisher path during research, not archived identity proof |
+| 2022-04-25 | [Bipartisan Senate crime bill](https://minnesotareformer.com/briefs/senate-approves-tough-on-crime-bill-with-bipartisan-support/) | Jeremy Miller; Warren Limmer; Melisa López Franzen | `/briefs/` seed-prefix exclusion |
+| 2024-02-12 | [North Star Act/sanctuary state reporting](https://minnesotareformer.com/briefs/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/) | Grant Hauschild; Erin Murphy; Omar Fateh | `/briefs/` seed-prefix exclusion; do not misattribute House speaker remarks to senators |
+| 2025-04-30 | [SD6 special-election result](https://minnesotareformer.com/briefs/keri-heintzeman-wins-special-election-for-minnesota-senate-seat/) | Keri Heintzeman | She **later served** as senator but was **not yet sworn in** on the article's displayed date |
+| 2025-05-01 | [Transportation-signs story — brief](https://minnesotareformer.com/briefs/minnesota-republican-senator-no-more-wit-pop-culture-portmanteaus-on-our-road-signs/) and [dated path](https://minnesotareformer.com/2025/05/01/minnesota-republican-senator-no-more-wit-pop-culture-portmanteaus-on-our-road-signs/) | Steve Drazkowski; Ann Johnson Stewart | Same slug and displayed day, **candidate alias pair**, not proven same historical captured HTTP bytes |
 
-- [March 2, 2021 — rent-control Senate committee reporting](https://minnesotareformer.com/briefs/rent-control-ban-passes-senate-committee-lawmaker-says-minneapolis-is-on-path-to-self-destruction/)
-- [April 22, 2021 — Senate education-finance bill](https://minnesotareformer.com/briefs/minnesota-senate-passes-education-finance-bill/)
-- [February 2, 2023 — carbon-free electricity Senate bill](https://minnesotareformer.com/briefs/minnesota-senate-on-the-cusp-of-passing-bill-mandating-carbon-free-energy-by-2040/)
-- [February 21, 2023 — driver-licensing Senate bill](https://minnesotareformer.com/briefs/minnesota-senate-expected-to-pass-bill-giving-drivers-licenses-to-undocumented-residents/)
+**Exact official membership boundary:** Minnesota Legislative Reference Library's [2025–2026 time capsule](https://www.lrl.mn.gov/timecapsule/session?lang=en) records Keri Heintzeman's SD6 election on **April 29, 2025** and swearing-in on **May 6, 2025**. A separate [Minnesota Senate May 6 journal](https://www.senate.mn/journals/2025-2026/20250506031.pdf) documents the oath. The April 30 news article is within this **ever-served** research universe, but she was **not an incumbent senator at publication**; no contemporary-incumbent quote/stance can be inferred. This official 2025 service date is **not** the article's first-public-by date.
 
-The four are **examples**, not a completeness estimate, and they might be in some other archive collection or DB import. The specific `minnesota-reformer-article-archive` `/202` prefix cannot reach these `/briefs/` URLs. Their current live publication-day labels do not prove historical archive availability. Avoid treating 4/14 as a statewide or publisher-wide missingness rate.
+## Deterministic URL discovery blind spots
 
-| Current public discovery leads | 2021 | 2022 | 2023 | 2024 | 2025 |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Selected live-page articles | 4 | 3 | 3 | 2 | 2 |
-| URL outside its current configured seed prefix | 2 | 0 | 2 | 0 | 0 |
+The existing `minnesota-reformer-article-archive` seed requests Wayback original URLs beginning with `https://minnesotareformer.com/202`. That prefix cannot directly select `/briefs/` paths. The separate collector topical URL-path filter may reject **additional** URLs even within a configured seed (see [shadow audit](senate-media-public-discovery-shadow-gaps.md)). These are **URL-gate findings only** and do not establish that an article is missing from the persisted private corpus, unavailable via an alias, or historically discoverable.
 
-These numbers describe **only this small discovery ledger**, not a publisher/year universe. The existing 44-seed × 5-year coverage report has 220 publisher/year slots, but its zeros mean *not observed in the bounded export*, not *no articles published*.
+| Sample only, URL-level | 2021 | 2022 | 2023 | 2024 | 2025 | Total |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Selected public URL leads | 4 | 7 | 3 | 3 | 5 | **22** |
+| Outside configured seed prefix | 2 | 3 | 2 | 1 | 2 | **10** |
 
-## Independent reviewer workflow after source access is available
+Two pairs match on publisher, displayed date and slug: **2022-03-22 public-safety plan** and **2025-05-01 road signs**. These are *proposed* aliases; neither pair has been equated through original archived bytes or a trusted fingerprint. **22 URL leads ≠ 22 authenticated historically unique articles; 10 outside-prefix URLs ≠ 10 missing articles.** Neither statistic is a rate for Minnesota Reformer, 44 seeded publishers, or all Minnesota Senate media.
 
-1. Cross-reference each lead's **public original URL** against the private `source_documents` / `evidence_items` export, including possible aliases and duplicates. If no match exists, mark *not found in this export*, not *never archived*. Keep per-row evidence identities private.
-2. Independently search Wayback captures of the exact original page at or before the hypothetical prediction cutoff. Reconcile archive capture/public-by dates separately from the displayed publication date. Same-day date-only forecast cutoffs remain excluded.
-3. Fetch and compare the **precise archived HTTP body** against the existing SHA-256 when matching a VotePredict source row; a current live publisher page or text excerpt cannot satisfy the exact-original-bytes gate.
-4. Check Minnesota **state** Senate membership for the senator on the true publisher publication date, confirm the original article's exact named cue and contiguous quote, and have a human reviewer adjudicate actual issue relevance. The names here are search leads, never speaker verdicts, claims of support/opposition or training features.
-5. Separately assess what broadening the Reformer Wayback seed to `/briefs/` would retrieve, with deduplication and archive-rate limits, **before** proposing an ingestion change. This PR intentionally does not change archive seeds or write to any database.
+## Next private/offline reviewer reconciliation
 
-## Boundaries
+1. Cross-reference each public original URL **and possible dated alias** against the separately authorized private `source_documents` and `evidence_items` export. Keep source IDs, article bodies and names from private rows off public PRs and CI artifacts. Mark non-matches only as *not found in this particular export*, never *never published*.
+2. Reconcile exact archived URL, original HTTP bytes/SHA-256 and Wayback capture timestamp. A publisher's displayed day and 2026 research-check day cannot substitute for archive-public-by evidence. Reject same-day date-only cutoffs.
+3. For any proposed quote, separately verify exact senator identity, effective Senate service on the article day (including midterm elections), contiguous quoted passage, substantive relevance and human reviewer signoff. Explicitly distinguish context, paraphrase, ambiguity, and missing original.
+4. Keep distinct denominators for URL leads, potential alias groups, export context rows, within-year source documents, authenticated original articles, and reviewed quotations. Do not deduplicate archival articles solely by public slugs.
 
-No Neon connection, SQL execution, content hashes, article scraping, model/serving change, 2026 evidence promotion, political stance inference, direct-quote transcript or public source-byte artifact was generated by this discovery work. The full coverage denominator remains unknown. Human verified named quotes remain **zero verified by this audit**, not an assertion that no such remarks exist. [Track #912](https://github.com/killjoy00/votepredict/issues/912) stays open.
+**Scope and safety:** Public discovery only; no Neon/SQL reads, private source exports, unverified historical Wayback capture claims, production seed changes, ingestion, feature/stance promotion, forecasting changes, or 2026 study-year contamination. Both #912 and #946 remain open.
