@@ -18,7 +18,8 @@
     "sourceSeenInVotePredictExport": "Unknown without previously authorized private source export",
     "sourceResearchCheckedOn": "Date of the research verification in 2026, NOT original publication or independently proved historical public availability",
     "officialSenateServiceStart": "For the 2025 SD6 special election lead only, official oath date proving later Senate service; April 30 article predates membership and does not prove any quote",
-    "currentPublisherAliasClue": "Matched /briefs/ and dated-path URLs are research alias candidates only; never deduplicate authenticated archives or assert equal original HTTP bytes without exact proof"
+    "currentPublisherAliasClue": "Matched /briefs/ and dated-path URLs are research alias candidates only; never deduplicate authenticated archives or assert equal original HTTP bytes without exact proof",
+    "ambiguousPublisherDayVersusPassageEvent": "2023 driver licensing Reformer current page displays Feb 21 at 8 pm yet narrates a Senate passage early Wednesday Feb 22; official Revisor groups passage under Feb 21. Neither source establishes a retrospective model public-by or exact article revision time."
   },
   "stateSenateOnly": true,
   "selectedNonExhaustiveArticleLeads": [
@@ -300,6 +301,33 @@
       "urlInsideCurrentSeedPrefix": false
     },
     {
+      "id": "mn-reformer-2023-driver-licenses-dated",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2023/02/21/minnesota-senate-expected-to-pass-bill-giving-drivers-licenses-to-undocumented-residents/",
+      "publicationDayDisplayedOnPublicPage": "2023-02-21",
+      "searchTopicOnly": "driver licensing; same slug/day as brief URL, possible alias, Senate passage timing must be reconciled",
+      "namedSenatorLeadsForManualReview": [
+        "Zaynab Mohamed"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true,
+      "sourceResearchCheckedOn": "2026-10-10",
+      "officialLegislativeActionSource": "https://www.revisor.mn.gov/bills/93/2023/0/HF/4/?body=Senate",
+      "officialLegislativeActionDayAsRecorded": "2023-02-21",
+      "officialSenateAction": "HF 4 third reading passed 34-31, recorded under 2023-02-21 in the official Senate action index",
+      "eventClockTimeFromOriginalSenateJournalVerified": false,
+      "presentPublisherPageTemporalOrderingVerified": false,
+      "temporalRiskNote": "Current publisher page displays Feb 21 at 8:00 pm yet describes passage early Wednesday, Feb 22. Official Revisor action index dates the passage Feb 21. Time zones and exact publication/edit timeline are unresolved; never infer the passed result was known at a Feb 21 prediction cutoff."
+    },
+    {
       "id": "mn-reformer-2023-reproductive-health",
       "publisher": "Minnesota Reformer",
       "seedId": "minnesota-reformer-article-archive",
@@ -506,6 +534,6 @@
     ],
     "calculatedAgainstCheckedInSeedUrls": true,
     "outsideSeedPrefixLeadCount": 10,
-    "criticalLimitation": "10 of 22 selected URL leads are outside their configured seed prefixes, but the 22 URLs may include dated-path aliases; this is a non-exhaustive current-publisher URL sample, not 22 distinct authenticated historic articles or a statewide completeness fraction. Private source matching and original Wayback availability remain unknown."
+    "criticalLimitation": "10 of 23 selected URL leads are outside their configured seed prefixes, with three brief-versus-dated research alias pairs (March 2022 DFL public safety, Feb 2023 driver licensing, May 2025 road signs). Current-publisher URL comparisons do not demonstrate missing unique historical archived articles or a statewide publisher denominator."
   }
 }
