@@ -53,5 +53,51 @@
       "url": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15559",
       "inOfficeOnDisplayedDay": true
     }
-  ]
+  ],
+  "scope": "Current public newsroom speech triage and independently verified official Senate membership and 2023 bill history, NOT historical Wayback or authenticated VotePredict media statements.",
+  "currentPublisher": {
+    "name": "Minnesota Reformer",
+    "author": "Deena Winter",
+    "displayedDay": "2024-02-12",
+    "displayedClock": "16:10",
+    "displayedClockTimezone": null,
+    "briefUrl": "https://minnesotareformer.com/briefs/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/",
+    "datedUrl": "https://minnesotareformer.com/2024/02/12/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/",
+    "currentRedirectObservedOn": "2026-10-10",
+    "historicalWaybackCapture": null,
+    "articleOriginalSha256": null,
+    "originalArchiveBriefDatedSameBytesProven": false,
+    "firstPublishedAtVerified": false
+  },
+  "speechLeads": [
+    {
+      "name": "Erin P. Murphy",
+      "classification": "newsroom_current_page_direct_senator_speech_candidate",
+      "exactShortExcerpt": "I think it’s important that we rely on the committee process",
+      "reporterNamedSpeakerAndSaidPresent": true,
+      "originalArchivedQuoteAuthenticated": false,
+      "originalArchiveHumanReviewed": false,
+      "senatorStanceInferred": false
+    },
+    {
+      "name": "Grant Hauschild",
+      "classification": "reporter_paraphrase_of_external_social_media_post",
+      "externalPost": "https://twitter.com/grant_hauschild/status/1756375725714571676",
+      "originalSocialPostAuthenticated": false,
+      "exactVerbatimQuoteInArticle": false,
+      "senatorStanceInferred": false
+    },
+    {
+      "name": "Omar Fateh",
+      "classification": "senate_bill_author_named_without_direct_speech",
+      "exactVerbatimQuoteInArticle": false,
+      "senatorStanceInferred": false
+    }
+  ],
+  "houseSpeaker": {
+    "name": "Melissa Hortman",
+    "chamber": "House",
+    "directSpeechOnCurrentArticle": true,
+    "attributedToSenator": false
+  }
 }
