@@ -1,7 +1,7 @@
 # 2021–2025 Senate media remarks: offline attribution audit v1
 
 **Issue:** #864, bucket D. **Scope:** Minnesota Senate 2021–2025.
-**Status:** offline audit code and synthetic tests. The 44 curated archive publishers and the previously counted 948 historical context items are **not** 948 senator statements. Those 948 span three legislative sessions: 313 (2021–22), 273 (2023–24), 362 (2025–26 combined). A 2025-only count has not been proven.
+**Status:** offline audit code and synthetic tests. The 44 curated archive publishers and **948 verified live Wayback media context rows** are **not** 948 senator statements. The verified protected [capture-year aggregate](senate-media-verified-live-neon-capture-year-counts.md) establishes **2021:131, 2022:182, 2023:155, 2024:118, 2025:208** = **794** in-study rows, plus **154 outside 2021–2025** (not proved entirely 2026); summed within-year distinct source documents = **688** (not globally deduplicated). No original text or human-verified named quote was produced by the aggregate.
 
 ## Correct distinction: article discovery vs quoted senator
 
@@ -49,7 +49,7 @@ The checker makes no DB or network connection. It does not create an evidence ro
 
 This PR supplies the **reproducible attribution gate**, a senator/year and publisher/year missingness report, read-only export templates and synthetic regression tests. It does **not** conduct a private production export, acquire source article bytes, identify human-verified real quotes, reconcile all original source bodies with persisted DB rows, prove a full source denominator, or claim predictive lift.
 
-Keep #864 **open**. The existing historical feature freeze, Senate floor parser, training, serving, Vercel/Neon production records and schedulers are unchanged. No outreach to public agencies is authorized.
+Keep [Track D #912](https://github.com/killjoy00/votepredict/issues/912) **open**; prior historical umbrella #864 has been closed without certifying media source completeness. The existing historical feature freeze, Senate floor parser, training, serving, Vercel/Neon production records and schedulers are unchanged. No outreach to public agencies is authorized.
 
 ## Shared-surname and contradictory availability safeguards (Track D follow-up)
 
@@ -58,3 +58,13 @@ A human review cannot infer a unique speaker from a source saying only **“Sen.
 The stronger deterministic check supplements—but does not replace—human semantic review, whose reviewer must still verify who actually spoke. A direct quotation attributed to “Sen. Surname” is never equivalent to knowing which senator spoke simply because the media collector mentioned an individual with that surname. Similarly, a given exact source-document ID cannot be simultaneously human-classified as **source unavailable** and accepted for an exact named quote; contradictory verdicts are rejected and must be resolved in the private review ledger. A single source can legitimately contain both neutral contextual mentions and a separately verified exact named quote.
 
 These checks neither change the published statewide-media denominator (still **unknown**) nor add any quote to production, predict votes, alter models or access a database. The archive source bytes, member/year roster, and human reviewer record must first exist privately under the earlier `#904/#909/#916` gates.
+
+## Repeated context-source provenance fails closed (2026-10-10 follow-up)
+
+Multiple `evidence_items` context rows can point to the **same archived source document**, and one article can mention multiple different senators. Those rows count separately in the **context-row denominator** but are **one distinct archived source**, not multiple authenticated original articles or quotes.
+
+The offline reviewer now checks neutral-context provenance **for every row** of a shared `sourceDocumentId` and accumulates all provenance problems at the source level. Previously, the same source ID with different context flags could overwrite the stored source reference: an invalid first row followed by a valid row could wrongly remove the earlier provenance failure from `reviewResults`. This order dependence is removed. Either ordering of a neutral and non-neutral context row marks the source invalid for exact quote approval; a benign second context retains both row observations but does not multiply a single reviewed quotation.
+
+Source-level provenance fields (archived URL and capture time, original URL, SHA-256, publisher/seed identity, source kind, archive digest and publisher publication timestamp) must agree across all rows linked to the same source ID; contradictions **throw** rather than silently choose the last row's date. Context-level name mentions may differ between rows and remain *research leads*, not attributable speakers. The independent [private archive rehydration plan](senate-media-original-wayback-rehydration.md) also counts every evidence row before fetching each unique source once.
+
+Tests use deliberately synthetic article text and records; they are **not** historical verified quotations. No private export, Wayback-original acquisition, approval of actual named remarks, production prediction update, or statewide publication denominator is implied.
