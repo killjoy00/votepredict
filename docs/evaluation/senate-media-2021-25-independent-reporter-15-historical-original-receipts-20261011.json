@@ -1,0 +1,288 @@
+{
+  "version": "senate-media-2021-25-independent-reporter-15-original-http-sha1-proof-v1",
+  "checkedOn": "2026-10-11",
+  "publicCohort": "15 additional selected independent original Minnesota Reformer article URL leads, separate from prior selected 31+18+25 URLs",
+  "originalLeadFile": "docs/evaluation/senate-media-2021-25-further-independent-reporting-15-leads.json",
+  "livePublicArchiveRun": {
+    "repository": "killjoy00/votepredict",
+    "runId": 38163132356,
+    "headSha": "cb514c275de8a9484cb22055c8cdc3cecf162355",
+    "conclusion": "success",
+    "artifactId": 11710678402,
+    "artifactName": "senate-media-independent-15-original-receipts",
+    "originalDownloadedZipSha256": "d45e91cf864c556ff504a67b9d5562f699205d4a963cc2a6852d1c336a43b1d1",
+    "originalDecodedJsonSha256": "e1593dc7529142db096c94a8c9884e5d640e99e1fc1d73d29a31b3bfd3a3f0a2",
+    "decodedJsonBytes": 33396
+  },
+  "observed": {
+    "independentArticleUrlLeadsRequested": 15,
+    "articlesWithIndexedCaptureCandidates": 11,
+    "cdxIndexUnavailableOrInvalidUnknown": 4,
+    "cdxIndexEmpty": 0,
+    "originalReplaysAttempted": 22,
+    "sha1MatchedOriginalRawHtmlBodyVersions": 21,
+    "uniqueArticleUrlsWithAtLeastOneVerifiedHistoricalOriginal": 11,
+    "indexedButUnverifiedBodyReplays": 1,
+    "humanApprovedSpokenSenatorQuotations": 0,
+    "originalAudioAuthenticated": 0,
+    "firstPublisherPublishingTimesProven": 0,
+    "individualFloorOrCommitteeVotesVerified": 0
+  },
+  "selectedYearCoverage": [
+    {
+      "year": 2021,
+      "selectedUrls": 3,
+      "matchedUrls": 2
+    },
+    {
+      "year": 2022,
+      "selectedUrls": 3,
+      "matchedUrls": 2
+    },
+    {
+      "year": 2023,
+      "selectedUrls": 3,
+      "matchedUrls": 3
+    },
+    {
+      "year": 2024,
+      "selectedUrls": 3,
+      "matchedUrls": 3
+    },
+    {
+      "year": 2025,
+      "selectedUrls": 3,
+      "matchedUrls": 1
+    }
+  ],
+  "originalSourceBodies": [
+    {
+      "leadId": "new-reporter-2021-clean-cars",
+      "indexCandidatesFirstPage": 13,
+      "rawSha1ConsistentOriginalHttpCaptures": [
+        {
+          "captureUtc": "2021-01-22T18:33:37Z",
+          "indexSha1Base32": "WPPCPDYM3AVXFSH27OURKVT5E27CTHQF",
+          "rawOriginalBodySha256": "23bfc97fcd57f13bf410bf0be272526745387e5735f1754f899c8dd55de69066",
+          "originalBytes": 103621
+        },
+        {
+          "captureUtc": "2021-02-03T17:43:23Z",
+          "indexSha1Base32": "ZZGVA43JIUSI73GBPIZOFOMMDKXMYAJP",
+          "rawOriginalBodySha256": "6a1b1bf09a306745e6fd10b349b0616ddd6fac8cd54e9e0e1c8ef9db627c0324",
+          "originalBytes": 102816
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2021-line3",
+      "indexCandidatesFirstPage": 13,
+      "rawSha1ConsistentOriginalHttpCaptures": [
+        {
+          "captureUtc": "2021-08-26T13:52:12Z",
+          "indexSha1Base32": "YKX47QUIXIGECCRIZGR67RRQKZF7DTNU",
+          "rawOriginalBodySha256": "bcb45187f0c3cb44789aaf2d6fbf865193c06d5e12863360d866f343c96aa87b",
+          "originalBytes": 103678
+        },
+        {
+          "captureUtc": "2021-09-18T09:55:47Z",
+          "indexSha1Base32": "ZZDNYAF3OL5BNOAGUI3K4SCLOT4454GN",
+          "rawOriginalBodySha256": "fc7ebf3ccaab6a15c3993b64b15a706999cdd855267f3bc0295355e1dfd803be",
+          "originalBytes": 103676
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2022-curriculum",
+      "indexCandidatesFirstPage": 8,
+      "rawSha1ConsistentOriginalHttpCaptures": [
+        {
+          "captureUtc": "2022-02-14T22:22:10Z",
+          "indexSha1Base32": "XKV5V4JBYQSINU2F6SORLKZOPN2OMBYU",
+          "rawOriginalBodySha256": "ab06d4f7d26a79d3db2f546906030349b70d4e7a74027b4e43005506e34901bb",
+          "originalBytes": 108943
+        },
+        {
+          "captureUtc": "2022-02-15T03:12:23Z",
+          "indexSha1Base32": "YRL3RX2KYMEVV2DNU6HMWKVMCQDD66YO",
+          "rawOriginalBodySha256": "d8ab6a048fff09ddbdb3c5968323fe4f5ee175727e34d9c6139941fa9920dae9",
+          "originalBytes": 108943
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2022-ethics",
+      "indexCandidatesFirstPage": 20,
+      "rawSha1ConsistentOriginalHttpCaptures": [
+        {
+          "captureUtc": "2022-06-15T21:52:00Z",
+          "indexSha1Base32": "MXXDAF4O2HDUXV2CH744O35STMPVREHY",
+          "rawOriginalBodySha256": "9db8f8088b0715a23ee88afca309f5621f3c9a0844b84e94070c5d7ae0e5b453",
+          "originalBytes": 102068
+        },
+        {
+          "captureUtc": "2022-06-15T22:25:14Z",
+          "indexSha1Base32": "D3Q6JOGHF5Q5VYDAJCKSDQOZKC3TOKOL",
+          "rawOriginalBodySha256": "06a94b687a2df009b83b2b02b96087f19097c93ed955f65107711824ecfc5f5f",
+          "originalBytes": 102068
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2023-license-rally",
+      "indexCandidatesFirstPage": 20,
+      "rawSha1ConsistentOriginalHttpCaptures": [
+        {
+          "captureUtc": "2023-01-04T01:59:08Z",
+          "indexSha1Base32": "HKCNJYPBMZHUBFFLVSF5GCSHVZ7EVJWF",
+          "rawOriginalBodySha256": "8c9983d2d330fa853557302822dec5f22411e2b093a363485ce5a35e73f7b1e0",
+          "originalBytes": 129170
+        },
+        {
+          "captureUtc": "2023-01-04T02:05:29Z",
+          "indexSha1Base32": "TGACDRH6HWDJRGQ2HQYOOPB2FKA4C5BZ",
+          "rawOriginalBodySha256": "d162e5c465db82d7d1009b51273972c757d209e88d2e8236799956c0af712d15",
+          "originalBytes": 129170
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2023-family-leave",
+      "indexCandidatesFirstPage": 18,
+      "rawSha1ConsistentOriginalHttpCaptures": [
+        {
+          "captureUtc": "2023-01-07T01:20:15Z",
+          "indexSha1Base32": "FEOI35E4HJXG6KHYBIRTSOG4MDPJLL7Y",
+          "rawOriginalBodySha256": "7ea65f73b79ed5147a1229283a2c2e893b7522ff5b4733576f879ed96d2f4eb6",
+          "originalBytes": 122992
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2023-rideshare-floor",
+      "indexCandidatesFirstPage": 20,
+      "rawSha1ConsistentOriginalHttpCaptures": [
+        {
+          "captureUtc": "2023-05-22T07:10:00Z",
+          "indexSha1Base32": "UJIGEAR34GPFQFUI5BHJ5QVRSGTKTPFY",
+          "rawOriginalBodySha256": "2eb8e2c33f1390f0eaf11ef9f8b90eb79f3acc2a2126dc765076118d16ed5e27",
+          "originalBytes": 128617
+        },
+        {
+          "captureUtc": "2023-05-23T11:37:54Z",
+          "indexSha1Base32": "XXQCZEATDPJW5GSNQBP4Z7MDVYLLVCMQ",
+          "rawOriginalBodySha256": "943fec6e22957d3cd3f30e238b6ca1d3b0e609486a81b85694824cbee0074fa4",
+          "originalBytes": 128667
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2024-session-opening",
+      "indexCandidatesFirstPage": 18,
+      "rawSha1ConsistentOriginalHttpCaptures": [
+        {
+          "captureUtc": "2024-02-12T22:42:53Z",
+          "indexSha1Base32": "YCTRC2LQYLNZPXHBZQAYMBFHMEDR665B",
+          "rawOriginalBodySha256": "94a21a0bbafc779ef528548a7b37aa7335ee2db7c27dbe075f715438f4aa8e07",
+          "originalBytes": 146548
+        },
+        {
+          "captureUtc": "2024-02-12T22:51:02Z",
+          "indexSha1Base32": "HBNSEGLILTUVDNP7BCBINHWYHKBKNZLQ",
+          "rawOriginalBodySha256": "782aa80055bfdf1402e2f5f13cfd557e23a56c9287db385fd407177d6d0ec93f",
+          "originalBytes": 146548
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2024-gun-proposals",
+      "indexCandidatesFirstPage": 20,
+      "rawSha1ConsistentOriginalHttpCaptures": [
+        {
+          "captureUtc": "2024-02-21T12:39:14Z",
+          "indexSha1Base32": "K5SGE3FBHCRJHAFG5ETKPZ2SIIB5PT5N",
+          "rawOriginalBodySha256": "ad252e1faf91c0318b3e840900a54a183bc069e68dbe8597308178165ae0bc19",
+          "originalBytes": 141208
+        },
+        {
+          "captureUtc": "2024-02-21T17:52:18Z",
+          "indexSha1Base32": "QM6B3SFG4HMRWB7KK3SCY5A72QWONH34",
+          "rawOriginalBodySha256": "ec67f77a95efad7216b0ab7081d27c758e7019fd4c0ab3b719413f3a485a74f0",
+          "originalBytes": 141420
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2024-housing-zoning",
+      "indexCandidatesFirstPage": 20,
+      "rawSha1ConsistentOriginalHttpCaptures": [
+        {
+          "captureUtc": "2024-04-19T12:52:13Z",
+          "indexSha1Base32": "7NI7MFVFQIKWH3YHMZNBOQRHKLI526Q7",
+          "rawOriginalBodySha256": "15e0342c212e0a84cbb495a44d9d12e136e1639aef05b2604c7018d4acb71de5",
+          "originalBytes": 76130
+        },
+        {
+          "captureUtc": "2024-04-19T14:24:44Z",
+          "indexSha1Base32": "ZRA2FKTR7MQ426KCIQ4TWYAG7ME5AOT6",
+          "rawOriginalBodySha256": "6b68d142d279b268d4b19367c0c3a6e54b691c783367aa64ee5aaf685b887661",
+          "originalBytes": 76130
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2025-solar",
+      "indexCandidatesFirstPage": 9,
+      "rawSha1ConsistentOriginalHttpCaptures": [
+        {
+          "captureUtc": "2025-06-30T13:15:32Z",
+          "indexSha1Base32": "YCMBD3N2EDOOVE74GXCHCBEDYNYQ7S5K",
+          "rawOriginalBodySha256": "cc3de976f43645ef3a496d927e9f344a350797f038d1524afb22d186004f4938",
+          "originalBytes": 140576
+        },
+        {
+          "captureUtc": "2025-06-30T13:51:00Z",
+          "indexSha1Base32": "UXJNLMRPN6JYFMMVXJPNZ5YP6PZ4JTH5",
+          "rawOriginalBodySha256": "b453d4fab958f056a3ac49ab10e357aa736432e301483a33491401c3221ea11d",
+          "originalBytes": 140403
+        }
+      ]
+    }
+  ],
+  "cdxIndexUnavailableUnknownNotAbsentArticles": [
+    "new-reporter-2021-commissioners",
+    "new-reporter-2022-special-session",
+    "new-reporter-2025-federal-cuts",
+    "new-reporter-2025-sick-leave"
+  ],
+  "indexedOriginalBodyReplayHoldsNotMissingMediaArticle": [
+    {
+      "id": "new-reporter-2023-family-leave",
+      "captureUtc": "2023-01-06T13:57:07Z",
+      "indexSha1Base32": "IJ4U4GQ2HWF6HEEKA3EINBYRRBMSALDQ",
+      "reason": "archive_redirect_refused_unknown",
+      "laterVerifiedCaptureUtc": "2023-01-07T01:20:15Z"
+    }
+  ],
+  "selectedSpecificSpeakerReviewLeads": [
+    "new-reporter-2021-clean-cars",
+    "new-reporter-2022-curriculum",
+    "new-reporter-2024-gun-proposals",
+    "new-reporter-2024-housing-zoning",
+    "new-reporter-2023-family-leave",
+    "new-reporter-2023-license-rally"
+  ],
+  "boundaries": {
+    "verifiedOriginalRawBodyOnlyAuthenticatesThatArchivedHtmlVersion": true,
+    "indexedArchiveDateDoesNotProveOriginalPublisherInitialClock": true,
+    "originalWebHtmlAndAudioNeverPersisted": true,
+    "reporterNamedContextPersonNotAutomaticallyQuoted": true,
+    "senatorQuotedPressStatementNotDirectReporterInterview": true,
+    "speakerQuotedInCommitteeOrFloorIsNotMemberRecordedVote": true,
+    "htmlQuoteTextNotIndependentlyAuthenticatedAudio": true,
+    "noHumanApprovedFullIndividualQuotations": true,
+    "noPrivateVotePredictSourcesOrDatabasesRead": true,
+    "noProductionMediaSourceCollectorOrModelsChanged": true,
+    "noStatewideOrPublisherArticlePopulationDenominatorEstablished": true
+  }
+}
