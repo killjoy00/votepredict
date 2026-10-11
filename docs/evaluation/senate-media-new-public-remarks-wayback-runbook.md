@@ -51,3 +51,30 @@ No first-party senator voice, individual stance, initially posted-by timestamp, 
 Save source run provenance, artifact and decoded JSON SHA-256 and exact matching body hashes in a permanent **public metadata-only** receipt, after independently checking the source run and artifact. Then re-fetch a narrowly chosen original page version by exact timestamp and SHA-256 to check short passages in **visible original text only**; a string match is a cue for separate human senator identity, speaker and timing verification, not automatic approval.
 
 The remaining media universe is unknown. Build an evidence queue by individual serving senator and year across original interviews, caucus and personal campaign pages, original news quotations, archived social posts and other publishers, without inventing a statewide denominator or treating gaps in these 18 leads as article absence.
+
+
+## Actual first all-18 public source run and durable SHA metadata
+
+The full original live [public Actions run #38156337828](https://github.com/killjoy00/votepredict/actions/runs/38156337828) on research source-head **1e4368694a6da57b59bc33296e425d408619a973** produced a seven-day metadata-only artifact **11708690733**. Its ZIP SHA-256 **a204368dab2c8b68823eb3661cb32d04d77890bfc34c1a423e4acb14d8f16523** and exact decoded 38,745-byte JSON SHA-256 **4b65981dbb3ca9424af4947d986b9a3b0eae8307efc9490b722025a49b82720f** were independently rechecked against the actual downloaded artifact. All source records and original SHA receipts are now preserved in the [permanent, public metadata-only receipt manifest](senate-media-2021-25-new-public-original-replay-receipts-20261011.json). The initially tested source head differs from the final PR head because of a TypeScript-only strict callback annotation; no archive-source bytes or historical data were modified.
+
+**Observed actual bounded sample:** 18 exact selected URLs, **13 indexed URL candidates**, **5 unavailable/unverifiable index responses**, no CDX-empty result, 26 exact original replay attempts. **23 replayed HTML bodies from 13 distinct URLs matched their CDX indexed SHA-1**, yielding true observed raw HTTP body SHA-256 hashes and byte counts. Three other replay attempts are held out: **two SHA-1 mismatches** and **one redirect refused**. These are **not** a count of three additional missing articles. Zero human-approved senator quotes or authenticated original audio, initial publisher clocks and forecast cutoffs.
+
+| Year displayed on current page | URLs sampled | URLs with at least one digest-consistent historical HTML body |
+| --- | ---: | ---: |
+| 2021 | 4 | 4 |
+| 2022 | 3 | 2 |
+| 2023 | 4 | 3 |
+| 2024 | 3 | 2 |
+| 2025 | 4 | 2 |
+| **Sample total** | **18** | **13** |
+
+**Strongest original-version research targets:**
+
+- **2021-11-15 MPR Jeremy Miller** original captured 21:55:12Z and 23:26:33Z, **identical** 91,141-byte original HTTP HTML body SHA-256 **a5dde038ca7558d8ed8209e57721443e84b569c7e0c7b4eb627be38265a730bf**. The snapshot existed on the article's presently displayed day, but the separate Nov 16 Marty paraphrase of a Miller statement is not automatically authenticated by the MPR page. Original audio and wording remain to be compared.
+- **2021-11-16 John Marty original caucus page** captured at **22:45:21Z**, 80,205 bytes, SHA-256 **83d21412e1ba4b94b008169e8a9c4018a6b88a23de665c930abf2a6c3e22fa98**. **2021-04-13 Coleman** captured 88,680-byte original body SHA-256 **14b5aad174248d5cc693ccd2c7c1f23c7bbf096b625a11f500539fcc4ba53a77**. Exact short senator words still require inspection of these captured versions.
+- **2022 Kunesh** first observed archived on Jan 21, **2023 Johnson** first observed on Feb 3, **2024 Marty online-sports-betting** first observed on March 2, and **2025 Housley bonding** first observed on April 5. These capture times are not automatic publisher display-date proof or speech approval.
+- **2023 POCI collective statement** had an early indexed replay redirect, and a separate verified 2023-12-07 original page body. The later verified page does **not** turn the quoted text into ten individual senator statements.
+- **2025 Rochester collective statement** had a 2025-05-02 replay digest mismatch but a later verified 2025-09-04 page, not a first-original-date claim.
+- **Index unresolved (5):** Gary Dahms 2022, Eric Pratt 2023, Karin Housley 2024 session procedure, Doron Clark 2025 oath and Susan Pha 2025. An index failure does not establish absence of the corresponding historical publisher page or senator statement.
+
+**Important interpretation:** all quoted 23 numbers refer to **separate captured original HTTP body versions**, not individual claims/quotes or even 23 unique articles. Two different captures may have identical original bodies, as seen with MPR Miller. These 18 URLs remain a curated sample of two caucus domains, MPR and Enterprise Minnesota, and leave the statewide senator-by-year media statement universe unknown.
