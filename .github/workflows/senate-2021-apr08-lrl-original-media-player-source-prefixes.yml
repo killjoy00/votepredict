@@ -1,0 +1,39 @@
+name: Original 2021 Apr 8 Senate LRL audio video player source identity and bounded prefix probe
+
+# Exactly two SHA-pinned original LRL 2021 Senate hearing media HTML sources.
+# Only allowlisted LRL-hosted media player references receive <=64KiB prefix
+# probes. No whole recording, transcript, vote identities, or DB writes.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2021-apr08-lrl-original-media-player-source-prefixes.yml
+
+permissions:
+  contents: read
+
+jobs:
+  independent-original-lrl-april08-audiovisual-player-source-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Reacquire 2 exact original dated LRL pages and probe only bounded official media file prefixes
+        run: |
+          node --import tsx scripts/probe-senate-2021-apr08-lrl-original-player-streams.ts \
+            --output artifacts/2021-senate-apr08-original-lrl-player-stream-sources/source.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2021-apr08-original-lrl-media-stream-public-prefix-metadata
+          path: artifacts/2021-senate-apr08-original-lrl-player-stream-sources/source.json
+          retention-days: 30
+          if-no-files-found: error
