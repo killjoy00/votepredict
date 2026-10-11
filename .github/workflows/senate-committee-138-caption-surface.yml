@@ -1,0 +1,59 @@
+name: One-time 138 Senate committee archival caption source availability
+
+# Deliberately one-time and source-only; no schedule, dispatch, database, or
+# download of audio/video bytes. Reverify exact prior originals before probing.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-committee-138-caption-surface.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  verify-original-caption-surface:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        year: [2022, 2023, 2024, 2025]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Restore exact original indexed hearing-to-mtgid proof
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-${{ matrix.year }}-dated-media-href-review
+          run-id: 38079233118
+          github-token: ${{ github.token }}
+          path: artifacts/original-media-hrefs
+      - name: Restore original successful 138 HTML record evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-${{ matrix.year }}-official-media-record-html-proof
+          run-id: 38081463362
+          github-token: ${{ github.token }}
+          path: artifacts/original-media-html
+      - name: Check only caption metadata endpoint of the same SHA-verified LRL hearing record
+        run: |
+          node --import tsx scripts/probe-senate-138-caption-surface.ts \
+            --year ${{ matrix.year }} \
+            --hrefs artifacts/original-media-hrefs/senate-${{ matrix.year }}-media-hrefs.json \
+            --original-html-proof artifacts/original-media-html/senate-${{ matrix.year }}-media-record-html.json \
+            --output artifacts/caption-surface/senate-${{ matrix.year }}-caption-surface.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-${{ matrix.year }}-original-caption-surface-metadata
+          path: artifacts/caption-surface/senate-${{ matrix.year }}-caption-surface.json
+          retention-days: 30
+          if-no-files-found: error
