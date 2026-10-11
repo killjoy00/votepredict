@@ -16,6 +16,7 @@ import {
   PARENT_VERIFIED_2023_24_16_AMENDMENTS_VERSION,
   selectSixteenParentAuthenticatedYeAmendments,
   auditAuthenticatedParentYeAmendment,auditSixteenAmendmentSourceSequence,
+  classifySixteenReviewed2023to24AmendedSourceReferences,
 } from '../src/evidence/cfb-2023-24-sixteen-parent-authenticated-amendments.js';
 
 const P='docs/evaluation/source-proof/';
@@ -95,6 +96,7 @@ async function main(){
   const reports=targets.map(t=>auditAuthenticatedParentYeAmendment(t,
     pdfs.get(t.id)??null,failures.get(t.id)??null));
   const assessed=auditSixteenAmendmentSourceSequence(reports);
+  const reviewed=classifySixteenReviewed2023to24AmendedSourceReferences(reports);
   const result={
     schemaVersion:PARENT_VERIFIED_2023_24_16_AMENDMENTS_VERSION,
     observedAt:new Date().toISOString(),
@@ -108,7 +110,8 @@ async function main(){
       previousOriginalYearendAuthenticity:true},
     officialCfbViewerApiRechecks:sourceViewerRechecks.sort((a,b)=>a.reg.localeCompare(b.reg)),
     sourcePdfAmendmentVersions:reports,
-    outcome:{...assessed,sourcePdfBinariesFetched:pdfs.size,
+    outcome:{...assessed,documentedReviewedSourceExceptions:reviewed,
+      sourcePdfBinariesFetched:pdfs.size,
       originalViewerRegistrationsVerified:sourceViewerRechecks
         .filter(x=>x.exactAmendmentKeys>0).length,
       independentlyProvenActualHistoricalPublicBy:0},
@@ -128,7 +131,8 @@ async function main(){
     duplicateVersionRefs:assessed.unexpectedDuplicateVersionPdfContent,
     sourceHolds:assessed.sourceHolds,output:out,
     productionChanges:false},null,2));
-  if(!assessed.acceptedAllSixteenDistinct||pdfs.size!==16
+  if(!reviewed.sourceAccountingAcceptedWithOneExactIdentityHoldAndOneBinaryAlias
+    ||pdfs.size!==16
     ||sourceViewerRechecks.filter(r=>r.exactAmendmentKeys>0).length!==5)
     process.exitCode=1;
 }
