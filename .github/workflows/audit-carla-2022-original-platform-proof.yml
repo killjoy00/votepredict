@@ -1,0 +1,71 @@
+name: Verify real 2022 October Carla Nelson original campaign policy excerpts
+
+# Internal PR-only public artifact recheck. No secrets, DB, scheduling,
+# model, production evidence or candidate never actually seated in Senate.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-carla-2022-original-platform-proof.yml
+      - data/evaluation/senate-carla-nelson-2022-dated-original-platform-excerpts-v1.json
+      - src/evidence/senate-carla-nelson-2022-original-platform-audit.ts
+      - scripts/audit-senate-carla-2022-original-policy-excerpts-offline.ts
+      - tests/senate-carla-nelson-2022-original-platform-audit.test.ts
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  original-2022-source-quote-proof:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-carla-nelson-2022-six-original-policy-excerpts-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Download actual 2022 original Wayback HTML captures from public acquisition run 38098726687
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38098726687
+          name: senate-2022-verified-senators-original-campaign-archive-v1
+          github-token: ${{ github.token }}
+          path: artifacts/2022-official-original-campaign-archive
+      - name: Download original public official Minnesota LRL Senate service evidence
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: artifacts/original-official-senate-service
+      - name: Independently cross-check six named issue snippets in both original 2022 captures
+        shell: bash
+        run: |
+          set -euo pipefail
+          report_a="$(find artifacts/2022-official-original-campaign-archive -type f -name 'carla-2022-page-a-wayback-20221006161531.html' -print -quit)"
+          report_b="$(find artifacts/2022-official-original-campaign-archive -type f -name 'carla-2022-page-b-wayback-20221006164845.html' -print -quit)"
+          lrl_original="$(find artifacts/original-official-senate-service -type f -name 'mn-lrl-official-senate-service-directory.html' -print -quit)"
+          lrl_receipt="$(find artifacts/original-official-senate-service -type f -name 'mn-lrl-official-senate-service-directory-audit.json' -print -quit)"
+          test -n "$report_a" && test -n "$report_b" && test -n "$lrl_original" && test -n "$lrl_receipt"
+          node --import tsx scripts/audit-senate-carla-2022-original-policy-excerpts-offline.ts \
+            --2022-original-a "$report_a" \
+            --2022-original-b "$report_b" \
+            --official-lrl-html "$lrl_original" \
+            --official-lrl-metadata "$lrl_receipt" \
+            --output artifacts/carla-nelson-senate-2022-dated-six-original-policy-excerpts.json
+      - name: Retain dated six issue short excerpts with both original page digest proofs
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-carla-nelson-2022-original-six-issue-excerpt-proofs-v1
+          path: artifacts/carla-nelson-senate-2022-dated-six-original-policy-excerpts.json
+          retention-days: 30
+          if-no-files-found: error
