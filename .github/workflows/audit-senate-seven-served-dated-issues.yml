@@ -1,0 +1,104 @@
+name: Verify seven ACTUAL Senate members and 24 dated campaign-issue statements
+
+# Research-only PR artifact audit. All archived pages come from already
+# independently obtained public-source Actions runs and are byte rehashed.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-senate-seven-served-dated-issues.yml
+      - src/evidence/senate-seven-served-person-dated-campaign-coverage.ts
+      - scripts/audit-senate-seven-served-dated-campaign-sources-offline.ts
+      - tests/senate-seven-served-dated-campaign-sources.test.ts
+      - docs/SENATE_SEVEN_EVER_SERVED_24_DATED_CAMPAIGN_SOURCE_LEDGER.md
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  seven-senator-real-source-reconciliation:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-seven-served-original-campaign-ledger-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Retrieve original public Minnesota Senate service directory and swearing history
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: artifacts/original-lrl
+      - name: Retrieve two original October 2022 Carla campaign pages and CDX proofs
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38098726687
+          name: senate-2022-verified-senators-original-campaign-archive-v1
+          github-token: ${{ github.token }}
+          path: artifacts/original-carla
+      - name: Retrieve original February and November 2022 Nicole campaign pages
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38100551887
+          name: senate-2022-verified-served-domain-wide-historical-originals-v1
+          github-token: ${{ github.token }}
+          path: artifacts/original-nicole
+      - name: Retrieve original 2024/25 served-senator HTML captures
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38086478508
+          name: senate-campaign-public-archive-source-acquisition-v1
+          github-token: ${{ github.token }}
+          path: artifacts/original-2024-25
+      - name: Reopen seven real archived page bodies and validate 30 exact candidate-quote occurrences
+        shell: bash
+        run: |
+          set -euo pipefail
+          one() {
+            local found
+            found="$(find "$1" -type f -name "$2" -print -quit)"
+            test -n "$found"
+            printf '%s' "$found"
+          }
+          lrl="$(one artifacts/original-lrl mn-lrl-official-senate-service-directory.html)"
+          meta="$(one artifacts/original-lrl mn-lrl-official-senate-service-directory-audit.json)"
+          sworn="$(one artifacts/original-lrl mn-lrl-official-senate-special-swearing-history.html)"
+          ca="$(one artifacts/original-carla carla-2022-page-a-wayback-20221006161531.html)"
+          cb="$(one artifacts/original-carla carla-2022-page-b-wayback-20221006164845.html)"
+          nf="$(one artifacts/original-nicole mitchell-historical-20220201005554-0.html)"
+          nn="$(one artifacts/original-nicole mitchell-historical-20221105160301-1.html)"
+          ann="$(one artifacts/original-2024-25 wayback-replay-snapshot-01.html)"
+          keri="$(one artifacts/original-2024-25 wayback-replay-snapshot-05.html)"
+          holm="$(one artifacts/original-2024-25 wayback-replay-snapshot-09.html)"
+          test "$(dirname "$lrl")" = "$(dirname "$meta")"
+          test "$(dirname "$lrl")" = "$(dirname "$sworn")"
+          node --import tsx scripts/audit-senate-seven-served-dated-campaign-sources-offline.ts \
+            --official-lrl-original "$lrl" \
+            --official-lrl-metadata "$meta" \
+            --official-lrl-swearing "$sworn" \
+            --carla-2022-original-a "$ca" \
+            --carla-2022-original-b "$cb" \
+            --nicole-2022-feb-original "$nf" \
+            --nicole-2022-nov-original "$nn" \
+            --archive-2024-ann-original "$ann" \
+            --archive-2025-keri-original "$keri" \
+            --archive-2025-holmstrom-original "$holm" \
+            --output artifacts/seven-served-senators-24-dated-campaign-issue-ledger.json
+      - name: Preserve only seven LRL-verified senators with independently dated research evidence
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-seven-ever-served-24-dated-campaign-issue-source-ledger-v1
+          path: artifacts/seven-served-senators-24-dated-campaign-issue-ledger.json
+          if-no-files-found: error
+          retention-days: 30
