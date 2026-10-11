@@ -1,0 +1,33 @@
+name: Signed 2023 CFB Hoffman 17319 original Board committee action proof
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2023-hoffman-original-signed-board-committee-proof.yml
+      - src/evidence/cfb-2023-hoffman-original-board-committee-proof.ts
+      - scripts/acquire-cfb-2023-hoffman-original-board-action.ts
+      - tests/cfb-2023-hoffman-original-board-committee-proof.test.ts
+      - docs/evaluation/source-proof/cfb-2023-hoffman-original-board-action-checkpoint.json
+      - docs/evaluation/cfb-2023-hoffman-signed-original-board-committee-evidence.md
+permissions:
+  contents: read
+jobs:
+  independent-original-signed-2023-board-agreement:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/cfb-2023-hoffman-original-board-committee-proof.test.ts
+      - run: node --import tsx scripts/acquire-cfb-2023-hoffman-original-board-action.ts --output artifacts/cfb-2023-hoffman-signed-board-committee.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: original-2023-cfb-board-signed-hoffman-17319-only-metadata
+          path: artifacts/cfb-2023-hoffman-signed-board-committee.json
+          if-no-files-found: warn
+          retention-days: 30
