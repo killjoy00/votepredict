@@ -1,0 +1,358 @@
+{
+  "version": "senate-media-2021-25-new-public-original-replay-receipts-v1",
+  "observationDateLocal": "2026-10-11",
+  "studyYears": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "selectedCohort": "18_non_exhaustive_original_publisher_media_pages_after_PR_1058",
+  "exactSourceRun": {
+    "repo": "killjoy00/votepredict",
+    "workflow": "senate-media-new-public-remarks-wayback.yml",
+    "runId": 38156337828,
+    "runAttempt": 1,
+    "sourceHeadSha": "1e4368694a6da57b59bc33296e425d408619a973",
+    "sourceArtifactId": 11708690733,
+    "sourceArtifactName": "senate-media-new-remarks-public-wayback",
+    "originalArtifactZipSha256": "a204368dab2c8b68823eb3661cb32d04d77890bfc34c1a423e4acb14d8f16523",
+    "decodedJsonSha256": "4b65981dbb3ca9424af4947d986b9a3b0eae8307efc9490b722025a49b82720f",
+    "decodedJsonByteCount": 38745
+  },
+  "observedTotals": {
+    "urlLeadsProbed": 18,
+    "candidatesIndexed": 13,
+    "indexEmpty": 0,
+    "indexUnavailableOrInvalid": 5,
+    "exactReplayAttempts": 26,
+    "indexConsistentBodyReplays": 23,
+    "distinctUrlLeadsWithIndexConsistentBodies": 13,
+    "sha1ReplayMismatches": 2,
+    "archiveRedirectHolds": 1,
+    "originalBodySha256Count": 23,
+    "humanApprovedSenatorQuotations": 0,
+    "firstPublisherPostClockAuthenticated": 0
+  },
+  "displayedPublisherYearSample": [
+    {
+      "year": 2021,
+      "selectedUrls": 4,
+      "matchedOriginalUrlLeads": 4
+    },
+    {
+      "year": 2022,
+      "selectedUrls": 3,
+      "matchedOriginalUrlLeads": 2
+    },
+    {
+      "year": 2023,
+      "selectedUrls": 4,
+      "matchedOriginalUrlLeads": 3
+    },
+    {
+      "year": 2024,
+      "selectedUrls": 3,
+      "matchedOriginalUrlLeads": 2
+    },
+    {
+      "year": 2025,
+      "selectedUrls": 4,
+      "matchedOriginalUrlLeads": 2
+    }
+  ],
+  "indexUnavailableOrInvalidIds": [
+    "caucus-2022-dahms-session-agenda",
+    "caucus-2023-pratt-february-budget",
+    "caucus-2024-housley-session-procedure",
+    "caucus-2025-clark-oath-statement",
+    "caucus-2025-pha-justice-statement"
+  ],
+  "matchedOriginalCaptureReceipts": [
+    {
+      "leadId": "caucus-2021-coleman-sexual-assault",
+      "indexedCandidatesOnBoundedFirstPage": 2,
+      "verifiedCaptureReplays": [
+        {
+          "archivedCaptureUtc": "2021-04-13T20:21:28Z",
+          "indexedPayloadSha1Base32": "E5W5QIEJ7OYPSD77AZZL5LTX7JAF2RVV",
+          "observedOriginalBodySha256": "14b5aad174248d5cc693ccd2c7c1f23c7bbf096b625a11f500539fcc4ba53a77",
+          "observedOriginalBodyBytes": 88680
+        },
+        {
+          "archivedCaptureUtc": "2022-11-08T21:59:54Z",
+          "indexedPayloadSha1Base32": "GNBMWSJMIEJGYBSWZIC537V4U5BC3HET",
+          "observedOriginalBodySha256": "477aaed6ae57a54055780014d27cf1bbed460d0a01d377895fc4bb72e32cb962",
+          "observedOriginalBodyBytes": 89564
+        }
+      ]
+    },
+    {
+      "leadId": "enterprise-2021-miller-manufacturing-interview",
+      "indexedCandidatesOnBoundedFirstPage": 10,
+      "verifiedCaptureReplays": [
+        {
+          "archivedCaptureUtc": "2022-10-05T01:59:37Z",
+          "indexedPayloadSha1Base32": "Z55ODFJANQV2PCOGS32J3IZE3GEL2DBR",
+          "observedOriginalBodySha256": "28dada90321263cbf20a75cc9949c176527a97c2d89d33c0831ed63469167f36",
+          "observedOriginalBodyBytes": 65348
+        },
+        {
+          "archivedCaptureUtc": "2023-01-31T06:39:41Z",
+          "indexedPayloadSha1Base32": "KDDZ7S7QX7HETNGDLYUQLZUUTAO5275J",
+          "observedOriginalBodySha256": "fb8fd1d2c4bd209e54a905d5b050310a520a46d46f82c3a910a7270c723f3251",
+          "observedOriginalBodyBytes": 67207
+        }
+      ]
+    },
+    {
+      "leadId": "mpr-2021-miller-hero-pay-interview",
+      "indexedCandidatesOnBoundedFirstPage": 9,
+      "verifiedCaptureReplays": [
+        {
+          "archivedCaptureUtc": "2021-11-15T21:55:12Z",
+          "indexedPayloadSha1Base32": "3PZ4AZNKIMNXWJLETZ2JSVWI7ZWXKGLF",
+          "observedOriginalBodySha256": "a5dde038ca7558d8ed8209e57721443e84b569c7e0c7b4eb627be38265a730bf",
+          "observedOriginalBodyBytes": 91141
+        },
+        {
+          "archivedCaptureUtc": "2021-11-15T23:26:33Z",
+          "indexedPayloadSha1Base32": "3PZ4AZNKIMNXWJLETZ2JSVWI7ZWXKGLF",
+          "observedOriginalBodySha256": "a5dde038ca7558d8ed8209e57721443e84b569c7e0c7b4eb627be38265a730bf",
+          "observedOriginalBodyBytes": 91141
+        }
+      ]
+    },
+    {
+      "leadId": "caucus-2021-marty-malcolm",
+      "indexedCandidatesOnBoundedFirstPage": 10,
+      "verifiedCaptureReplays": [
+        {
+          "archivedCaptureUtc": "2021-11-16T22:45:21Z",
+          "indexedPayloadSha1Base32": "N33KMRP4PRFZ6QNWO5K3ORVXYEGSPSMS",
+          "observedOriginalBodySha256": "83d21412e1ba4b94b008169e8a9c4018a6b88a23de665c930abf2a6c3e22fa98",
+          "observedOriginalBodyBytes": 80205
+        },
+        {
+          "archivedCaptureUtc": "2021-11-28T20:56:58Z",
+          "indexedPayloadSha1Base32": "4UXAK4N2Q2WTVP7IZTJRIMNAU42HKISR",
+          "observedOriginalBodySha256": "49d3807b4e34acf79cf766f92ae2e892c2badb2b41e7c8ae38b62eda1eea7f71",
+          "observedOriginalBodyBytes": 80541
+        }
+      ]
+    },
+    {
+      "leadId": "caucus-2022-kunesh-opioid-grants",
+      "indexedCandidatesOnBoundedFirstPage": 6,
+      "verifiedCaptureReplays": [
+        {
+          "archivedCaptureUtc": "2022-01-21T14:05:41Z",
+          "indexedPayloadSha1Base32": "GU45X6O2MJ7TR45S6LQZZF3GDZK6SSNB",
+          "observedOriginalBodySha256": "47bbde0ec564a05f84ac48b151878b01b81b2e89fec4c73ff3cb4f7fde3abd07",
+          "observedOriginalBodyBytes": 78922
+        },
+        {
+          "archivedCaptureUtc": "2022-05-23T14:09:46Z",
+          "indexedPayloadSha1Base32": "GJJKH4S3AAG5K6QMMENIIXCZOL7XH772",
+          "observedOriginalBodySha256": "854ab9934aaa47f7a47ec1974b7ec1d89688ed32fd5749a65432fa9dc8060dec",
+          "observedOriginalBodyBytes": 149961
+        }
+      ]
+    },
+    {
+      "leadId": "caucus-2022-franzen-reproductive-rights",
+      "indexedCandidatesOnBoundedFirstPage": 6,
+      "verifiedCaptureReplays": [
+        {
+          "archivedCaptureUtc": "2022-08-04T17:11:20Z",
+          "indexedPayloadSha1Base32": "LAXDD4GHSRTKSMV57CBSAZMLJBGWQLUN",
+          "observedOriginalBodySha256": "9fc285d0381c736c3a2959f5848d1ac3e0cc5951cb5dd5db9591518d6be5a5cd",
+          "observedOriginalBodyBytes": 148169
+        },
+        {
+          "archivedCaptureUtc": "2022-08-11T18:03:23Z",
+          "indexedPayloadSha1Base32": "ENM3M5L7JTLQW55ERN5GMEQIJH5TDLUT",
+          "observedOriginalBodySha256": "37a568976fcdc256a94eb12b4703c37c2a632c4f7e27c395f3ca451a4368b2e6",
+          "observedOriginalBodyBytes": 148289
+        }
+      ]
+    },
+    {
+      "leadId": "caucus-2023-johnson-clean-energy",
+      "indexedCandidatesOnBoundedFirstPage": 2,
+      "verifiedCaptureReplays": [
+        {
+          "archivedCaptureUtc": "2023-02-03T21:50:38Z",
+          "indexedPayloadSha1Base32": "DM324WRZFF5ZYDYDXWEBFYAR477DEL6M",
+          "observedOriginalBodySha256": "9a7968573d880fc943fa16e006463d292c66f7eb57ee1c7d5e89343329ffb9f9",
+          "observedOriginalBodyBytes": 81369
+        }
+      ]
+    },
+    {
+      "leadId": "caucus-2023-boldon-budget",
+      "indexedCandidatesOnBoundedFirstPage": 4,
+      "verifiedCaptureReplays": [
+        {
+          "archivedCaptureUtc": "2023-03-29T03:15:14Z",
+          "indexedPayloadSha1Base32": "OPR3NE5X72B56WVBG7NUTBVKXWVZZHOZ",
+          "observedOriginalBodySha256": "f069ab470962b97b5764839de00bae9d185be10985e0c9411f4e1c3189f79bd3",
+          "observedOriginalBodyBytes": 162964
+        },
+        {
+          "archivedCaptureUtc": "2023-09-23T20:31:20Z",
+          "indexedPayloadSha1Base32": "HWLUKGAOE54LKC7HBXTZJ63RCJAGLZZZ",
+          "observedOriginalBodySha256": "ad43ffbc97ed88eca2d23e479ff437b2cc65f75f37a1a832c9ac858907478a26",
+          "observedOriginalBodyBytes": 89535
+        }
+      ]
+    },
+    {
+      "leadId": "caucus-2023-poci-joint-policing",
+      "indexedCandidatesOnBoundedFirstPage": 3,
+      "verifiedCaptureReplays": [
+        {
+          "archivedCaptureUtc": "2023-12-07T04:58:10Z",
+          "indexedPayloadSha1Base32": "FOKYIORW3J67LALVDZGMWD4KCLPZUNIZ",
+          "observedOriginalBodySha256": "31478cab6404037ae764a996e20f61b3bedae8842aeda34dfb7c53788dac97f5",
+          "observedOriginalBodyBytes": 113031
+        }
+      ]
+    },
+    {
+      "leadId": "caucus-2024-marty-sports-betting",
+      "indexedCandidatesOnBoundedFirstPage": 3,
+      "verifiedCaptureReplays": [
+        {
+          "archivedCaptureUtc": "2024-03-02T15:32:31Z",
+          "indexedPayloadSha1Base32": "VRFHI7EWTZONEMQQOQ43WCYTT77HZFAM",
+          "observedOriginalBodySha256": "811f59a8cdd46c7e2edabb8506a01773aa95ad1f74cb9af1e6baf39f84ca965d",
+          "observedOriginalBodyBytes": 92875
+        },
+        {
+          "archivedCaptureUtc": "2024-05-25T19:27:51Z",
+          "indexedPayloadSha1Base32": "CDEF57Y24B53NPWGQVHHSVUVB46WCZCV",
+          "observedOriginalBodySha256": "6665e00288aa2b0be259eb86f4792171ab4dd240b67e67d9707f3b161e2b7f24",
+          "observedOriginalBodyBytes": 92735
+        }
+      ]
+    },
+    {
+      "leadId": "caucus-2024-seeberger-adapted-pe",
+      "indexedCandidatesOnBoundedFirstPage": 2,
+      "verifiedCaptureReplays": [
+        {
+          "archivedCaptureUtc": "2024-05-18T16:20:12Z",
+          "indexedPayloadSha1Base32": "U6MV63ZLAE6H2HL3TQUEAYOHL6ISOCLQ",
+          "observedOriginalBodySha256": "6d0279a941143cf38a7db45b1ee01da5ac559927bef59aba35272b62d79f45fa",
+          "observedOriginalBodyBytes": 92599
+        },
+        {
+          "archivedCaptureUtc": "2025-07-25T02:48:11Z",
+          "indexedPayloadSha1Base32": "RR3YYFEI3NAFQIXQ572UNKEXNOKQJDQK",
+          "observedOriginalBodySha256": "e1023adf8cfe23ac6367a7ab02c7d9690de642d0165bc4a253035a15338a3339",
+          "observedOriginalBodyBytes": 90102
+        }
+      ]
+    },
+    {
+      "leadId": "caucus-2025-housley-bonding",
+      "indexedCandidatesOnBoundedFirstPage": 2,
+      "verifiedCaptureReplays": [
+        {
+          "archivedCaptureUtc": "2025-04-05T17:20:00Z",
+          "indexedPayloadSha1Base32": "BCP7RC2G3KVOZCYN7SKG3RAWIDCUQINA",
+          "observedOriginalBodySha256": "038d9999fb016e26b9b7c8d9b7ac8b8698aed7c0a5819811c5ae7eece9ff78b7",
+          "observedOriginalBodyBytes": 94072
+        },
+        {
+          "archivedCaptureUtc": "2025-07-23T20:44:37Z",
+          "indexedPayloadSha1Base32": "TULV3ZV5Y26WPLBGHYNUZGW432IYKY3D",
+          "observedOriginalBodySha256": "19347a59f4a81147617f1be7a69f2a52558f0fd296cbfc5d059d05450181790a",
+          "observedOriginalBodyBytes": 95348
+        }
+      ]
+    },
+    {
+      "leadId": "caucus-2025-rochester-multi-chamber-joint",
+      "indexedCandidatesOnBoundedFirstPage": 2,
+      "verifiedCaptureReplays": [
+        {
+          "archivedCaptureUtc": "2025-09-04T04:27:26Z",
+          "indexedPayloadSha1Base32": "PLXLJZ4HNWXNXNFFEM35VDE3X7XKKWP2",
+          "observedOriginalBodySha256": "af3eb3fefd92f2eb91415f307c1a4a99919eb35aa46cb4d3af9a66fd4a71aa2f",
+          "observedOriginalBodyBytes": 89214
+        }
+      ]
+    }
+  ],
+  "indexedButUnverifiedReplayHolds": [
+    {
+      "leadId": "caucus-2023-johnson-clean-energy",
+      "archiveCapturedUtc": "2023-03-10T07:01:55Z",
+      "status": "cdx_payload_sha1_mismatch",
+      "indexedPayloadSha1Base32": "I7NQRPDW2K3TA4L2YBOUBCCH2FS6BB4T"
+    },
+    {
+      "leadId": "caucus-2023-poci-joint-policing",
+      "archiveCapturedUtc": "2023-06-05T01:07:20Z",
+      "status": "archive_redirect_refused",
+      "indexedPayloadSha1Base32": "4F5ZFAODVUJQNVXVNU7BQFOPR5X5UQL7"
+    },
+    {
+      "leadId": "caucus-2025-rochester-multi-chamber-joint",
+      "archiveCapturedUtc": "2025-05-02T08:58:39Z",
+      "status": "cdx_payload_sha1_mismatch",
+      "indexedPayloadSha1Base32": "DVJRFSM2J6TZGE4NVAUB2VD773NAG3D3"
+    }
+  ],
+  "interpretation": {
+    "publicSourceObservationIsNotStatewideSenatorPublicationCensus": true,
+    "reporterQuotationAndCaucusStatementSpeakerProofPending": true,
+    "collectiveCaucusTextMustNotBeCountedAsIndividualQuotes": true,
+    "historicalOriginalAudioUnverified": true,
+    "originalSiteInitialPublicationDateTimeUnverified": true,
+    "privateSourceDocumentsOrEvidenceNeverCompared": true,
+    "noStatewideSenatorYearMediaCompletenessDenominator": true,
+    "noAutomaticallyInferredRecordedVotesOrModelStances": true,
+    "failingOrUnindexedCaptureIsNotMissingHistoricalPublication": true,
+    "noPublicRawOriginalArticleTextOrAudioPersisted": true
+  },
+  "independentSecondLiveOriginalRecheck": {
+    "repo": "killjoy00/votepredict",
+    "runId": 38156433947,
+    "runAttempt": 1,
+    "sourceHeadSha": "ede2942e84d3a971fd77ebf99f73a80d6f12b07a",
+    "sourceArtifactId": 11708573575,
+    "sourceArtifactName": "senate-media-new-remarks-public-wayback",
+    "originalArtifactZipSha256": "38bd36791bca959bfcf07d692e240e3ec7d5035ef24678ed22b3c4d69109caa7",
+    "decodedJsonSha256": "74482667f6cc7bb7c065b32a66dad7dd86e67c9561669b1767aa6c480ee4c47c",
+    "decodedJsonByteCount": 38812,
+    "sourceRunConclusion": "success",
+    "secondRunTotals": {
+      "urlLeadsProbed": 18,
+      "candidatesIndexed": 13,
+      "indexEmpty": 0,
+      "indexUnavailableOrInvalid": 5,
+      "exactReplayAttempts": 26,
+      "indexConsistentBodyReplays": 24,
+      "distinctUrlLeadsWithIndexConsistentBodies": 13,
+      "sha1ReplayMismatches": 2,
+      "redirectedReplayHolds": 0
+    },
+    "previouslyVerifiedMatchingCaptureCount": 23,
+    "all23CommonCaptureSha256AndBytesIndependentlyEqual": true,
+    "newlyVerifiedEarlierCapture": {
+      "leadId": "caucus-2023-poci-joint-policing",
+      "archiveCapturedUtc": "2023-06-05T01:07:20Z",
+      "indexedPayloadSha1Base32": "4F5ZFAODVUJQNVXVNU7BQFOPR5X5UQL7",
+      "observedOriginalBodySha256": "307d379de103fcbcda05a1c52d35989121b442dd8783288027b01843ff1b997b",
+      "observedOriginalBodyBytes": 116116,
+      "priorFirstRunDisposition": "archive_redirect_refused",
+      "collectiveCaucusSpeechStillNotIndividuallyAttributable": true
+    },
+    "combinedUniqueExactCapturedUrlAndUtcBodyCount": 24,
+    "these24AreNotUniqueSenatorQuotationsOrPublishedArticleUniverse": true
+  }
+}
