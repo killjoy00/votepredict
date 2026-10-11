@@ -1,0 +1,71 @@
+name: Audit 41 exact authentic 2020 campaign issue words for two actual 2021 MN State Senators
+
+# Original 2020 archived first-party Senate candidate site full HTML SHA-256,
+# independently indexed historical CDX SHA-1 and original full MN LRL Senate
+# SERVICE roster before any quote attribution to genuine 2020 capture UTC.
+# First authored date unnecessary, no DB/model/training/forecast or cron.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-two-former-senators-2020-original-41-policy-dated-excerpts.yml
+      - data/evaluation/senate-two-2021-served-2020-original-campaign-eight-html-source-receipts-v1.json
+      - data/evaluation/senate-two-2021-serving-2020-original-capture-dated-41-policy-excerpts-v1.json
+      - src/evidence/senate-two-2021-serving-2020-41-original-capture-dated-policy-proof.ts
+      - scripts/audit-two-actually-served-2021-senators-41-original-2020-issue-excerpts-offline.ts
+      - tests/senate-two-2021-serving-2020-41-capture-dated-candidate-issue-excerpts.test.ts
+      - docs/SENATE_2020_TWO_TRUE_2021_SERVING_SENATORS_41_ORIGINAL_ISSUE_EXCERPTS.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  two-actual-2021-senators-eight-real-2020-original-webpages-41-issues:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-two-former-senators-2020-original-capture-dated-issues-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Fetch independently original archived whole government MN LRL actual 2021 Senator-service person roster and source SHA receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/real-mn-senate-service-roster
+      - name: Fetch 8 true 2020 candidate-owned first-party campaign full original HTML and CDX archived page receipts
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38112695639
+          name: senate-three-2021-served-2020-original-candidate-HTML-and-CDX-v1
+          github-token: ${{ github.token }}
+          path: original/genuine-2020-senate-campaign-pages
+      - name: Rehash entire genuine MN government person roster and all 8 original 2020 webpages; attribute 41 exact policy words to original capture UTC
+        shell: bash
+        run: |
+          set -euo pipefail
+          roster="$(find original/real-mn-senate-service-roster -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          sourceReceipt="$(find original/real-mn-senate-service-roster -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$roster" && test -n "$sourceReceipt"
+          test "$(dirname "$roster")" = "$(dirname "$sourceReceipt")"
+          node --import tsx scripts/audit-two-actually-served-2021-senators-41-original-2020-issue-excerpts-offline.ts \
+            --entire-original-lrl-senator-directory "$roster" \
+            --entire-original-lrl-source-receipt "$sourceReceipt" \
+            --actual-2020-original-candidate-archive-dir original/genuine-2020-senate-campaign-pages \
+            --output original/two-actual-2021-senators-41-authentic-original-2020-campaign-excerpt-proofs.json
+      - name: Preserve original-source dates and exact policy text proofs (no evidence writes)
+        uses: actions/upload-artifact@v6
+        with:
+          name: two-2021-serving-senators-2020-original-41-capture-dated-issues-v1
+          path: original/two-actual-2021-senators-41-authentic-original-2020-campaign-excerpt-proofs.json
+          if-no-files-found: error
+          retention-days: 30
