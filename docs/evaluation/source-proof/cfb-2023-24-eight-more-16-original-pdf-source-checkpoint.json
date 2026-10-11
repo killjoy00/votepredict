@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "cfb-2023-24-eight-verified-2022-senators-16-ye-source-15-auth-one-hold-v1",
+  "issueNumber": 864,
+  "reviewDate": "2026-10-11",
+  "scope": {
+    "yearEnd2023OriginalViewerIds": 8,
+    "yearEnd2024OriginalViewerIds": 8,
+    "verifiedRealSenatorsServedIn2022": 8,
+    "actualServingInReportYears2023to24NotProven": true,
+    "filingsLegallyOwedDenominator": null,
+    "historicalActualPublicByCount": 0
+  },
+  "ledger": {
+    "path": "docs/evaluation/source-proof/cfb-2023-24-eight-more-16-original-yearend-pdf-source-ledger.psv",
+    "rows": 16,
+    "bytes": 4089,
+    "gitBlobSha": "25dd711af3e8fcc5647a5f28473c3b0804cc58a7",
+    "columns": [
+      "reportVersionId",
+      "actualSenator2022",
+      "district2022",
+      "committeeRegistration",
+      "cfbViewerApiSha256",
+      "pdfSha256",
+      "pdfBytes",
+      "coverageStart",
+      "coverageEnd",
+      "boardReceived",
+      "classification",
+      "reason"
+    ]
+  },
+  "sourceInputs": [
+    "docs/evaluation/source-proof/cfb-2024-eight-verified-senators-original-viewer-responses.psv",
+    "docs/evaluation/source-proof/cfb-2023-24-eight-more-senators-27-source-report-reference-targets.psv",
+    "docs/evaluation/source-proof/cfb-2024-eight-verified-senators-viewer-gap-source-checkpoint.json",
+    "docs/evaluation/source-proof/cfb-2022-served-d13-24-original-ce-pdfs.psv",
+    "docs/evaluation/source-proof/cfb-2022-served-d25-36-original-ce-pdfs.psv"
+  ],
+  "independentOfficialSourceAcquisitions": [
+    {
+      "runId": 38159885061,
+      "initialStrictAll16Gate": "identity_hold_correctly_prevented_false_completeness",
+      "artifactId": 11709509943,
+      "artifactZipSha256": "45a2cd3ccd054b61fb7f7bdf74d103a306a5f225f17ff40ab484122bd7e4de6d",
+      "jsonSha256": "b076b1d2355aa8d3610966aee51c4319a0afd02506e41f9f864c2cdcba189181",
+      "jsonBytes": 28365
+    },
+    {
+      "runId": 38160126888,
+      "outcome": "success_with_exact_reviewed_source_identity_hold",
+      "artifactId": 11709739951,
+      "artifactZipSha256": "0b456efa864a4ac6c9fed60a22730bee9ac54d44c23612c0aa0e6c7bda096fd2",
+      "jsonSha256": "304ee46dc3ceada7c4e6b487938225cb6987b4328e6895599ad1845f8bc52d11",
+      "jsonBytes": 29008
+    }
+  ],
+  "crossRunReconciliation": {
+    "all16VersionIds": true,
+    "all16OfficialPdfSha256": true,
+    "all16PdfByteLengths": true,
+    "all16BoardReceiptAndReportedDates": true,
+    "all8ViewerResponsesSameSha256": true
+  },
+  "results": {
+    "requestedOfficialVersions": 16,
+    "officialPdfBodiesActuallyFetched": 16,
+    "authenticDistinctOriginalPdfForms": 15,
+    "unverifiedSourceIdentityHolds": 1,
+    "fetchErrors": 0,
+    "unexplainedBinaryDuplicates": 0
+  },
+  "sourceHold": {
+    "versionId": "17994:23:pcc:YE:0:0",
+    "actualSenator2022": "Andrew R. Lang",
+    "originalPdfSourceSha256": "34022e5691aca08f318436ecbc30a1b3e2d5a32c2ad11a19ee0d64fb77443aba",
+    "pdfBytes": 381617,
+    "covered": "2023-01-01/2023-12-31",
+    "boardReceived": "2023-12-29",
+    "originalPdfRegistrationMatches": false,
+    "originalPdfSenateDistrictMatches": false,
+    "receiptPredatesCoverageEnd": true,
+    "financialOriginalReportAuthenticated": false
+  },
+  "limits": {
+    "legalCalendarDueOn": null,
+    "actualPublicBy": null,
+    "unverifiedActualServiceIn2023to2024": true,
+    "statutoryOwedCount": null,
+    "sourceToFinancialTransactionRowsDone": false
+  },
+  "safeguards": {
+    "noOriginalPdfBodiesOrExtractedDonorText": true,
+    "noNeverServedCandidateSources": true,
+    "noProductionDatabaseReadsOrWrites": true,
+    "noForecastSchedulerTrainingOr2027Changes": true,
+    "issue864MustRemainOpen": true
+  }
+}
