@@ -6,6 +6,9 @@ on:
       - src/evidence/cfb-2023-24-original-10a245-committee-termination.ts
       - scripts/acquire-cfb-2023-24-original-10a245-termination-law.ts
       - tests/cfb-2023-24-original-10a245-committee-termination.test.ts
+      - docs/evaluation/source-proof/cfb-2023-24-original-revisor-10a245-six-year-admin-termination-source-ledger.psv
+      - docs/evaluation/source-proof/cfb-2023-24-original-revisor-10a245-administrative-termination-source-checkpoint.json
+      - docs/evaluation/cfb-2023-24-original-10a245-administrative-committee-termination-history.md
 permissions:
   contents: read
 jobs:
