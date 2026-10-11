@@ -75,14 +75,12 @@ export function classifyPrincipalCommitteeTerminatedOnHistoricalDate(input:{
    'register.cfb.mn.gov'].includes(u.hostname))
    throw Error('CFB original historical registration proof must be on regulator host');
  }
- const established=input.specificCommitteeIdentityIndependentlyAuthenticated
-   &&input.originalCfBSpecificTerminationDate!==null
-   &&input.originalRegulatorTerminationActionProved
-   &&input.originalSourceUrl!==null;
+ // A claimed action/date + plausible official URL is NOT independently
+ // authenticated original per-committee government evidence. This module
+ // audits legal statutes only, not termination report bodies or action order.
+ // We deliberately never issue a positive committee termination finding.
  return{
-   independentDocumentedTermination:established?true:null,
-   // Even an actual termination event does not alone settle the whole
-   // period-dependent original annual filing duty and final report.
+   independentDocumentedTermination:null,
    filingDutyIn2023Or2024:null,
  };
 }
