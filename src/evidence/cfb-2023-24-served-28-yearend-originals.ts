@@ -51,7 +51,7 @@ export function selectServed2023to24OriginalYearEnds(input:{
   const targets=selected.map(row=>{
     const id=row[1]!,reg=row[6]!;
     const match=/^(\d{4,8}):(23|24):pcc:YE:0:0$/.exec(id);
-    const y=match?.[2]==='23'?2023:2024;
+    const y:2023|2024=match?.[2]==='23'?2023:2024;
     const person=people.get(reg),api=viewerByReg.get(reg);
     if(!match||match[1]!==reg||!person||!api
       ||!expectedRegs.includes(reg)
