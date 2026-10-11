@@ -1,0 +1,72 @@
+name: Reopen actual 2016-2020 Justin Eichorn original campaign issues page HTML after 2020 publisher link
+
+# Archived 2020 first-party home is a JS-only shell; October 20 2020
+# reporting quoted candidate issues, but is publisher RELAY, not original.
+# Authenticate original full LRL state Senate SERVICE and original 2020
+# candidate site HTML/CDX before eight bounded Wayback exact page searches.
+# No production evidence/Neon/Vercel, models, forecasts, scheduler, outreach.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/acquire-justin-eichorn-2016-2020-original-issues-html.yml
+      - data/evaluation/senate-justin-eichorn-2016-2020-original-issues-historical-archive-target-v1.json
+      - scripts/acquire-justin-eichorn-2016-2020-first-party-issues-originals.ts
+      - scripts/run-justin-eichorn-2016-2020-first-party-issues-originals.ts
+      - tests/senate-justin-eichorn-2016-2020-first-party-issues-originals.test.ts
+      - docs/SENATE_JUSTIN_EICHORN_2020_LINKED_CAMPAIGN_ISSUES_FIRST_PARTY_HISTORICAL_RECOVERY.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-independently-rehashed-senator-home-and-eichorn-issues-page-probe:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-eichorn-2020-linked-first-party-issues-original-archive-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen complete independently original MN actual Senate LRL directory and original UTC SHA receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/independent-full-actual-state-senator-service
+      - name: Reopen true May 2020 first-party Justin Eichorn site home full HTML and original CDX SHA provenance
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38156756023
+          name: senate-five-2021-serving-2020-original-candidate-html-v1
+          github-token: ${{ github.token }}
+          path: original/2020-original-first-party-eichorn-site
+      - name: Authenticate ORIGINAL government and original archived campaign home before all eight precise /issues original archive requests
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/independent-full-actual-state-senator-service -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/independent-full-actual-state-senator-service -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          home="original/2020-original-first-party-eichorn-site/five20-02-archive-20200520132938-0.html"
+          test -n "$gov" && test -n "$receipt" && test -s "$home"
+          test "$(dirname "$gov")" = "$(dirname "$receipt")"
+          node --import tsx scripts/run-justin-eichorn-2016-2020-first-party-issues-originals.ts \
+            --whole-original-lrl-actual-senate-service-html "$gov" \
+            --original-lrl-service-utc-sha-receipt "$receipt" \
+            --original-2020-first-party-eichorn-home-html "$home" \
+            --output-dir original/first-party-eichorn-2016-2020-exact-issues-originals
+      - name: Retain independently original CDX/HTML source and empty result receipts, no production ingestion
+        uses: actions/upload-artifact@v6
+        with:
+          name: justin-eichorn-2016-2020-original-candidate-issues-html-source-v1
+          path: original/first-party-eichorn-2016-2020-exact-issues-originals/
+          retention-days: 30
+          if-no-files-found: error
