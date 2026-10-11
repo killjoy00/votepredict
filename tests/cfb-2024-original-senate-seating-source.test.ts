@@ -13,15 +13,15 @@ function fake(withConflict=false){
  const table=members.map(m=>{
   const words=m.name.split(' '),first=words[0]!,surname=words.at(-1)!;
   const printed=withConflict&&m.district===20?'Duckworth, Steve':surname+', '+first;
-  return String(m.district).padStart(2,'0')+' '+printed+' (R) 2207 MSB 6-5555 49';
+  return String(m.district).padStart(2,'0')+printed+' (R) .......2207 MSB .........6-5555 ......49';
  }).join('\n');
  const map=members.map(m=>{
   const words=m.name.split(' ');
-  return words[0]+' '+words.at(-1)+' - '+m.district;
+  return 'Seat 12\n'+words[0]+' '+words.at(-1)+'\nCity - '+m.district;
  }).join('\n');
  return 'The Minnesota Senate\nOffice of the Secretary of the Senate\nSeating Arrangement 2024\n'+
-  'Senate Members\nDist. | Senator (Party) | Room | Phone | Seat\n'+table+
-  '\n2024 Seating Arrangement Minnesota Senate\n'+map;
+  map+'\nSenate Leadership\nSenate Members\n'+
+  'Dist. Senator (Party) \tRoom \tPhone Seat\n'+table;
 }
 test('2024 Senate source must use both official government hosts and already authenticated 22 people',()=>{
  assert.equal(members.length,22);
@@ -62,7 +62,7 @@ test('the documented contradictory 2024 SD20 table/mapping is a HOLD even if els
 });
 test('source mismatch where map is absent cannot be upgraded just from CFB viewer/2023 roster',()=>{
  const a=inspect2024OriginalSenateSeatingPdf({prior2023RosterPsv:source,
- original2024PdfExtractedText:fake().replace('Jim Abeler - 35','Other Name - 35')});
+ original2024PdfExtractedText:fake().replace('Jim Abeler\nCity - 35','Other Name\nCity - 35')});
  const person=a.entries.find(x=>x.priorDistrict===35);
  assert.ok(person);
  assert.equal(person.roster2024SourceStatus,'HOLD_2024_source_name_or_district_unverified');
