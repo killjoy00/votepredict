@@ -30,7 +30,7 @@ jobs:
         with:
           name: senate-2025-unparsed-roll-review-metadata
           run-id: 38075573031
-          github-token: {{ github.token }}
+          github-token: ${{ github.token }}
           path: artifacts/original-hashes
       - name: Ensure bounded PDF page-count tool exists
         run: |
