@@ -15,7 +15,10 @@
     "namedSenatorLeadsForManualReview": "Search/discovery lead only; explicit quote, attribution, Senate term, actual person speaking and issue review still unverified",
     "livePageUrl": "Public current page, never substitute for source_documents original archived HTTP bytes or stored SHA256",
     "evidenceDisposition": "No VotePredict evidence, votes, predictions or model stance are created here",
-    "sourceSeenInVotePredictExport": "Unknown without previously authorized private source export"
+    "sourceSeenInVotePredictExport": "Unknown without previously authorized private source export",
+    "sourceResearchCheckedOn": "Date of the research verification in 2026, NOT original publication or independently proved historical public availability",
+    "officialSenateServiceStart": "For the 2025 SD6 special election lead only, official oath date proving later Senate service; April 30 article predates membership and does not prove any quote",
+    "currentPublisherAliasClue": "Matched /briefs/ and dated-path URLs are research alias candidates only; never deduplicate authenticated archives or assert equal original HTTP bytes without exact proof"
   },
   "stateSenateOnly": true,
   "selectedNonExhaustiveArticleLeads": [
@@ -163,6 +166,99 @@
       "urlInsideCurrentSeedPrefix": true
     },
     {
+      "id": "mn-reformer-2022-gop-agenda-brief",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/briefs/senate-gop-legislative-agenda-get-tougher-on-crime-and-cut-state-taxes/",
+      "publicationDayDisplayedOnPublicPage": "2022-01-26",
+      "searchTopicOnly": "Senate public safety, education and taxes",
+      "namedSenatorLeadsForManualReview": [
+        "Jeremy Miller",
+        "Roger Chamberlain"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": false,
+      "sourceResearchCheckedOn": "2026-10-10"
+    },
+    {
+      "id": "mn-reformer-2022-dfl-public-safety-brief",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/briefs/senate-dfl-outlines-500-million-public-safety-plan/",
+      "publicationDayDisplayedOnPublicPage": "2022-03-22",
+      "searchTopicOnly": "Senate public safety proposals",
+      "namedSenatorLeadsForManualReview": [
+        "Melisa López Franzen",
+        "Bobby Joe Champion",
+        "Ron Latz",
+        "Warren Limmer"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": false,
+      "sourceResearchCheckedOn": "2026-10-10"
+    },
+    {
+      "id": "mn-reformer-2022-dfl-public-safety-dated",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2022/03/22/senate-dfl-outlines-500-million-public-safety-plan/",
+      "publicationDayDisplayedOnPublicPage": "2022-03-22",
+      "searchTopicOnly": "Senate public safety proposals; possible dated alias",
+      "namedSenatorLeadsForManualReview": [
+        "Melisa López Franzen",
+        "Bobby Joe Champion",
+        "Ron Latz",
+        "Warren Limmer"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true,
+      "sourceResearchCheckedOn": "2026-10-10"
+    },
+    {
+      "id": "mn-reformer-2022-crime-bill-brief",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/briefs/senate-approves-tough-on-crime-bill-with-bipartisan-support/",
+      "publicationDayDisplayedOnPublicPage": "2022-04-25",
+      "searchTopicOnly": "Senate crime and judiciary funding",
+      "namedSenatorLeadsForManualReview": [
+        "Jeremy Miller",
+        "Warren Limmer",
+        "Melisa López Franzen"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": false,
+      "sourceResearchCheckedOn": "2026-10-10"
+    },
+    {
       "id": "mn-reformer-2023-clean-energy",
       "publisher": "Minnesota Reformer",
       "seedId": "minnesota-reformer-article-archive",
@@ -265,6 +361,29 @@
       "urlInsideCurrentSeedPrefix": true
     },
     {
+      "id": "mn-reformer-2024-sanctuary-brief",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/briefs/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/",
+      "publicationDayDisplayedOnPublicPage": "2024-02-12",
+      "searchTopicOnly": "North Star Act immigration enforcement legislation",
+      "namedSenatorLeadsForManualReview": [
+        "Grant Hauschild",
+        "Erin Murphy",
+        "Omar Fateh"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": false,
+      "sourceResearchCheckedOn": "2026-10-10"
+    },
+    {
       "id": "mn-reformer-2025-social-media-tax",
       "publisher": "Minnesota Reformer",
       "seedId": "minnesota-reformer-article-archive",
@@ -306,6 +425,76 @@
       "directQuoteHumanVerified": false,
       "issueStanceInferred": false,
       "urlInsideCurrentSeedPrefix": true
+    },
+    {
+      "id": "mn-reformer-2025-special-election-brief",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/briefs/keri-heintzeman-wins-special-election-for-minnesota-senate-seat/",
+      "publicationDayDisplayedOnPublicPage": "2025-04-30",
+      "searchTopicOnly": "Senate District 6 special election; candidate subsequently took office",
+      "namedSenatorLeadsForManualReview": [
+        "Keri Heintzeman"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": false,
+      "sourceResearchCheckedOn": "2026-10-10",
+      "memberEverServedSenateVerified": true,
+      "officialSenateServiceStart": "2025-05-06",
+      "officialServiceSource": "https://www.lrl.mn.gov/timecapsule/session?lang=en",
+      "senateMemberOnDisplayedPublicationDay": false,
+      "serviceTimingNote": "Article predates May 6 swearing-in; candidate subsequently served. Never label her a sitting senator on April 30."
+    },
+    {
+      "id": "mn-reformer-2025-road-signs-brief",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/briefs/minnesota-republican-senator-no-more-wit-pop-culture-portmanteaus-on-our-road-signs/",
+      "publicationDayDisplayedOnPublicPage": "2025-05-01",
+      "searchTopicOnly": "Senate transportation electronic road signs amendment",
+      "namedSenatorLeadsForManualReview": [
+        "Steve Drazkowski",
+        "Ann Johnson Stewart"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": false,
+      "sourceResearchCheckedOn": "2026-10-10"
+    },
+    {
+      "id": "mn-reformer-2025-road-signs-dated",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2025/05/01/minnesota-republican-senator-no-more-wit-pop-culture-portmanteaus-on-our-road-signs/",
+      "publicationDayDisplayedOnPublicPage": "2025-05-01",
+      "searchTopicOnly": "Senate transportation electronic road signs amendment; possible dated alias",
+      "namedSenatorLeadsForManualReview": [
+        "Steve Drazkowski",
+        "Ann Johnson Stewart"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true,
+      "sourceResearchCheckedOn": "2026-10-10"
     }
   ],
   "sourceUniverseCompletenessKnown": false,
@@ -316,7 +505,7 @@
       "mpr-news-story-archive"
     ],
     "calculatedAgainstCheckedInSeedUrls": true,
-    "outsideSeedPrefixLeadCount": 4,
-    "criticalLimitation": "Outside-prefix only proves the existing Wayback discovery prefix would not select this exact current-article URL. The live article may exist in alternate archives or sources; the full statewide and archived universe is unknown."
+    "outsideSeedPrefixLeadCount": 10,
+    "criticalLimitation": "10 of 22 selected URL leads are outside their configured seed prefixes, but the 22 URLs may include dated-path aliases; this is a non-exhaustive current-publisher URL sample, not 22 distinct authenticated historic articles or a statewide completeness fraction. Private source matching and original Wayback availability remain unknown."
   }
 }
