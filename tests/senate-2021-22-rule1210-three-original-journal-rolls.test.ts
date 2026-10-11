@@ -89,3 +89,23 @@ test('special session SF9 is not a whole-bill floor passage or the regular-sessi
  assert.equal(data.sourceJournalPage,156);
  assert.equal(data.noHearingActionTimeOrFirstPublicDateProven,true);
 });
+
+test('authentic special-session SF9 reversed p156 running header after tally',()=>{
+ const key='sf9ss1',testDocument=source(key);
+ const exact=testDocument.text.replace('156 JOURNAL OF THE SENATE [7TH DAY] ',
+  '[7TH DAY JOURNAL OF THE SENATE 156 -- 8 of 118 -- ');
+ const verified=inspectFictionalThreeRule1210CommitteeRoll(
+  key,exact,testDocument.yea,testDocument.nay);
+ assert.equal(verified.printedYea,6);
+ assert.equal(verified.printedNay,4);
+ assert.equal(verified.exactRecordedOutcome,'amendment adopted');
+ assert.equal(verified.recordedActionIsAmendmentNotPassage,true);
+ for(const incorrect of [
+  exact.replace('[7TH DAY JOURNAL','[8TH DAY JOURNAL'),
+  exact.replace('SENATE 156','SENATE 157'),
+  exact.replace('[7TH DAY JOURNAL OF THE SENATE 156','[7TH DAY JOURNAL OF THE HOUSE 156'),
+  exact.replace('There were yeas 6 and nays 4','There were yeas 5 and nays 5'),
+  exact.replace('The amendment was adopted','The amendment was defeated')
+ ])assert.throws(()=>inspectFictionalThreeRule1210CommitteeRoll(
+  key,incorrect,testDocument.yea,testDocument.nay));
+});

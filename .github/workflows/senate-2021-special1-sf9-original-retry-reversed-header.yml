@@ -1,0 +1,35 @@
+name: Second original SF9 special-session COMMITTEE amendment authentication
+
+# Original verification run 38168831620 remains a true failure.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2021-special1-sf9-original-retry-reversed-header.yml
+
+permissions:
+  contents: read
+
+jobs:
+  original-sf9-divided-amendment-second-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Reacquire 2021 First Special Session Journal and verify exact Finance amendment roll
+        run: |
+          node --import tsx scripts/review-senate-2021-22-rule1210-three-original-journals.ts \
+            --target sf9ss1 --output artifacts/2021-special-sf9-original-retry/real-sf9-committee-amendment.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2021-special-sf9-original-reversed-header-retry
+          path: artifacts/2021-special-sf9-original-retry/real-sf9-committee-amendment.json
+          retention-days: 30
+          if-no-files-found: error

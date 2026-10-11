@@ -7,6 +7,7 @@ on:
       - scripts/audit-senate-roger-2016-original-10-and-seven-domain-source-context.mjs
       - tests/senate-roger-2016-10-original-campaign-quotes-and-seven-source-context.test.ts
       - docs/SENATE_CHAMBERLAIN_2016_CANDIDATE_ISSUES_TOMASSONI_WORDPRESS_ORIGINAL_REVIEW.md
+      - scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs
 permissions:
   contents: read
   actions: read
@@ -59,5 +60,63 @@ jobs:
         with:
           name: senate-roger-chamberlain-2016-10-original-issue-excerpts-and-seven-original-source-classes-proof-v1
           path: original/roger-2016-10-quotes-seven-original-site-sources-proof.json
+          if-no-files-found: error
+          retention-days: 30
+
+  independently-rebuild-official-95-senator-791-first-party-site-statement-coverage:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-roger-2016-original-10-excerpts-gap-quality-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Reopen independent original LRL complete actual State Senate service and special-swearing HTML
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/full-official-mn-lrl
+      - name: Prove 95 actual 2021–2025 senators, 791 historical original first-party excerpts and excluded non-senators offline
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/full-official-mn-lrl -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/full-official-mn-lrl -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/full-official-mn-lrl -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
+          node --import tsx scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --out-dir original/95-actually-served-791-site-statements
+          node --input-type=module - <<'JS'
+          import assert from 'node:assert/strict';
+          import {readFileSync} from 'node:fs';
+          const r=JSON.parse(readFileSync('original/95-actually-served-791-site-statements/95-senators-public-campaign-coverage.json','utf8'));
+          assert.equal(r.summary.originalGovernmentDirectoryAllHistoricServiceRows,105);
+          assert.equal(r.summary.actualServingStateSenators,95);
+          assert.equal(r.summary.originalGovernmentDirectoryOutside2021To2025,10);
+          assert.equal(r.summary.actuallyServedSenatorsWithAnyKnownSelectedOriginalSiteExcerpt,53);
+          assert.equal(r.summary.totalExactResearchExcerptRowsForVerifiedSenators,791);
+          assert.equal(r.summary.nonMatchingRowsExcludedOrNeedsSeparateIdentityProof,1);
+          assert.equal(r.byActuallyServedSenator.find(p=>p.officialName==='Roger C. Chamberlain').originalSiteQuoteLeadCount,31);
+          assert.equal(r.summary.productionDatabaseReadsWritesOrForecastChanges,0);
+          JS
+      - name: Retain 95 actually serving original-source Senator coverage including 2016 campaign archive
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-95-original-served-persons-791-first-party-excerpts-source-coverage-v1
+          path: original/95-actually-served-791-site-statements/
           if-no-files-found: error
           retention-days: 30
