@@ -180,8 +180,8 @@ export function auditServed2022RedistrictedOriginalCe(
   target:Served2022OriginalCeTarget,pdf:Cfb2022PdfProofCapture|null,
   calendar:Cfb2022PdfProofCapture|null,error:string|null=null,
 ){
-  const h=pdf?.text.replace(/\\u0000/g,'').replace(/\\s+/g,' ').trim().slice(0,6500)??'';
-  const seen=[...h.matchAll(/Senat(?:e|or)\\s+District\\s*:?\\s*(\\d{1,2})\\b/gi)]
+  const h=pdf?.text.replace(/\u0000/g,'').replace(/\s+/g,' ').trim().slice(0,6500)??'';
+  const seen=[...h.matchAll(/Senat(?:e|or)\s+District\s*:?\s*(\d{1,2})\b/gi)]
     .map(m=>Number(m[1]));
   const unique=[...new Set(seen)];
   const printed=unique.length===1?unique[0]!:null;
