@@ -111,3 +111,20 @@ test('SF910 exact journal p715 continuation survives pdf-parse page delimiting',
   seam.replace('Senators FictionalAlpha','Senators FictionalAlpha and an actual senator')
  ])assert.throws(()=>inspect(bad));
 });
+
+test('genuine redacted PDF structure reverses p714 running header after affirmative heading',()=>{
+ const original=fixture();
+ const authenticReverse=original.replace(
+  'Those who voted in the affirmative were: Senators FictionalAlpha',
+  'Those who voted in the affirmative were: [21ST DAY JOURNAL OF THE SENATE 714 -- 6 of 52 -- Senators FictionalAlpha'
+ );
+ assert.equal(inspect(authenticReverse).sourcePrintedYea,4);
+ assert.equal(inspect(authenticReverse).sourcePrintedNay,3);
+ for(const bad of [
+  authenticReverse.replace('SENATE 714','SENATE 715'),
+  authenticReverse.replace('[21ST DAY','[20TH DAY'),
+  authenticReverse.replace('[21ST DAY JOURNAL OF THE SENATE','[21ST DAY JOURNAL OF THE HOUSE'),
+  authenticReverse.replace('There were yeas 4 and nays 3','There were yeas 5 and nays 2'),
+  authenticReverse.replace('Senators FictionalAlpha','Senators FictionalZulu')
+ ])assert.throws(()=>inspect(bad));
+});
