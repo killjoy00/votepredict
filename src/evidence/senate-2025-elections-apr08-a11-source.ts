@@ -46,22 +46,33 @@ function inspectTextCore(text:string,roster:ReadonlySet<string>,expectedAbsent:s
  const introductions=[...text.matchAll(
   /\bSenator\s+([A-Za-z][A-Za-z .'-]{1,55}?)\s+(?:moved|moves|offered|proposed)\s+(?:to\s+adopt\s+)?(?:the\s+)?A11\s+Amendment\b/gi
  )];
- if(!introductions.length)throw Error('A11 exact amendment motion introduction missing');
- const results=[...text.matchAll(
-  /With\s+a\s+vote\s+of[\s\S]{0,85}?\b10\s*\/\s*0\s*\/\s*1\b[\s\S]{0,45}?\b(?:motion|amendment)\s+prevail(?:ed|s)\b/gi
- )];
- if(results.length!==1)throw Error('A11 unique 10/0/1 printed result absent or duplicated');
- const tallyAt=results[0]!.index??-1;
- const near=introductions.filter(x=>(x.index??-1)<tallyAt&&tallyAt-(x.index??-1)<1100);
- if(near.length!==1)throw Error('No unique A11 motion introduction linked to printed result');
- const motion=near[0]!;
+ if(introductions.length!==1)
+  throw Error('A11 exact amendment motion introduction missing or repeated');
+ const motion=introductions[0]!;
  const motionAt=motion.index??-1;
+ // Fail closed *within A11's own procedural section*. Other amendments may
+ // independently have identical 10/0/1 tallies elsewhere in a long hearing.
+ // End at the next explicitly introduced numbered amendment, not at a
+ // request for roll call or another mere reference to an amendment label.
+ const nextAmendmentMoves=[...text.matchAll(
+  /\bSenator\s+[A-Za-z][A-Za-z .'-]{1,55}?\s+(?:moved|moves|offered|proposed)\s+(?:to\s+adopt\s+)?(?:the\s+)?A\d+\s+Amendment\b/gi
+ )].filter(x=>(x.index??-1)>motionAt+motion[0].length);
+ const nextMotionAt=nextAmendmentMoves[0]?.index??text.length;
+ const sectionEnd=Math.min(text.length,motionAt+1600,nextMotionAt);
+ const tallyRegex=/With\s+a\s+vote\s+of[\s\S]{0,85}?\b10\s*\/\s*0\s*\/\s*1\b[\s\S]{0,45}?\b(?:motion|amendment)\s+prevail(?:ed|s)\b/gi;
+ const allMeetingMatches=[...text.matchAll(tallyRegex)];
+ const sectionMatches=[...text.slice(motionAt,sectionEnd).matchAll(tallyRegex)];
+ if(sectionMatches.length!==1)
+  throw Error('A11 scoped 10/0/1 result absent or repeated within motion section');
+ const tallyAt=motionAt+(sectionMatches[0]!.index??-1);
+ if(tallyAt<=motionAt||tallyAt-motionAt>1100)
+  throw Error('A11 explicit result not connected to uniquely introduced motion');
  const mover=motion[1]!.trim();
  if(!roster.has(mover))throw Error('A11 mover not on validated committee roster');
  const billContext=flat(text.slice(Math.max(0,motionAt-420),tallyAt));
  if(!/\bS\.?\s*F\.?\s*2384\b/i.test(billContext))
   throw Error('A11 actual bill SF2384 not tied to the printed source paragraph');
- const after=flat(text.slice(tallyAt,tallyAt+760));
+ const after=flat(text.slice(tallyAt,Math.min(sectionEnd,tallyAt+760)));
  const parts=after.match(
   /\bAyes:\s*([A-Za-z\s,.'-]+?)\s+Nays:\s*([\s\S]*?)\s*Absent:\s*([A-Za-z\s,.'-]+?)(?=\s+Senator\b|$)/i
  );
@@ -71,7 +82,7 @@ function inspectTextCore(text:string,roster:ReadonlySet<string>,expectedAbsent:s
   ||absent[0]!==expectedAbsent
   ||!isExactRoster([...yea,...nay,...absent],roster))
   throw Error('A11 real printed 10/0/1 partition does not match exact roster');
- const neighborhood=text.slice(Math.max(0,motionAt-300),Math.min(text.length,tallyAt+700));
+ const neighborhood=text.slice(Math.max(0,motionAt-300),Math.min(sectionEnd,tallyAt+700));
  const motionWording=flat(text.slice(motionAt,tallyAt)).slice(0,240);
  if(/\bAyes:\b|\bNays:\b/i.test(motionWording))
   throw Error('Pre-result A11 motion preview leaks member list');
@@ -80,6 +91,9 @@ function inspectTextCore(text:string,roster:ReadonlySet<string>,expectedAbsent:s
   originalMotionLabel:'A11 Amendment',originalPrintedMover:mover,
   originalMotionIntroductionTextOffset:motionAt,
   originalExactResultTextOffset:tallyAt,
+  originalA11MotionSectionEndOffset:sectionEnd,
+  originalWholeMeetingTenZeroOneResultCandidates:allMeetingMatches.length,
+  originalScopedA11TenZeroOneResultCandidates:sectionMatches.length,
   originalNearbyTextSHA256:sha(neighborhood),
   originalPreVoteTextSHA256:sha(text.slice(Math.max(0,motionAt-260),tallyAt)),
   printedYeaCount:10,printedNayCount:0,printedAbsentCount:1,
