@@ -120,8 +120,9 @@ export function parse2020ActualSenatorOriginalCampaignCdx(
   try{u=safeOriginalUrl(p.original,domain);}catch{continue;}
   if(p.capturedAt<BEGIN||p.capturedAt>=END
     ||!/^[A-Z2-7]{32}$/.test(p.digest)||p.statuscode!=='200'
-    ||/\.(?:css|js|png|jpg|jpeg|svg|gif|webp|mp4|pdf|woff2?|zip)$/i.test(u.pathname)
-    ||/^\/(?:wp-admin|wp-includes|wp-json|login|admin)(?:\/|$)/i.test(u.pathname))
+    ||/\.(?:css|js|png|jpg|jpeg|svg|gif|webp|mp4|pdf|woff2?|zip|txt|xml|json|map)$/i.test(u.pathname)
+    ||/^\/(?:wp-admin|wp-includes|wp-json|wp-content|login|admin|assets|plugins)(?:\/|$)/i.test(u.pathname)
+    ||/\/(?:embed|donate|contribute|how-to-vote|buzz360|contact|volunteer)(?:\/|$)/i.test(u.pathname))
    continue;
   const key=p.original+'|'+p.timestamp+'|'+p.digest;
   if(unique.has(key))continue;
