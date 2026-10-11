@@ -56,7 +56,7 @@ export function load2022PinnedOriginalViewerRows(psv:string){
     const [segment,reg,apiSha,keys,...tail]=line.split('|');
     if(tail.length||!['2022','2024'].includes(segment??'')
       ||!/^\d{3,8}$/.test(reg??'')||!exactSha(apiSha??'')
-      ||keys===undefined||(keys.length>0&&keys.split(',').some(k=>!/^(21|22|23|24):(pcc|aoc):(YE|C|E):[01]:\d+$/.test(k)))
+      ||keys===undefined||(keys.length>0&&keys.split(',').some(k=>!/^(21|22|23|24):(pcc|aoc):(YE|C|E):[01]:\d+$/.test(k))))
       throw Error('Malformed permanent historical CFB API-ledger row');
     count++;
     if(segment==='2022'){
