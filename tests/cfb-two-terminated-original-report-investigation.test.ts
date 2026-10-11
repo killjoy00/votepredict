@@ -3,7 +3,8 @@ import test from 'node:test';
 import {readFileSync} from 'node:fs';
 import {select22AuthenticSenatorRegistrationTargets} from
  '../src/evidence/cfb-2023-24-official-committee-status-proof.js';
-import {selectTwoTerminatedSenators,inspectPossibleOriginalCfbTerminationReportText} from
+import {selectTwoTerminatedSenators,inspectPossibleOriginalCfbTerminationReportText,
+ classifyTwoSenatorsInPublicCfbCurrentLists} from
  '../src/evidence/cfb-two-terminated-original-report-investigation.js';
 
 const ORIGINAL='docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv';
@@ -60,4 +61,44 @@ test('original report from a different reg or person or 2024 report cannot authe
    reportText,registrationNumber,expectedSurname,versionKey,reportName:'2025 year-end',
   }),/does not authenticate/);
  }
+});
+
+
+test('only official recent-termination source with exact committee ID/office and actual source date yields a 2026 registry termination date',()=>{
+ const r=classifyTwoSenatorsInPublicCfbCurrentLists([],[
+  {registrationNumber:'18763',office:'Senate',district:'20',registrationDate:'2016-01-01',
+   terminationDate:'2026-09-01'},
+ ]);
+ assert.deepEqual(r.map(x=>x.registrationNumber),['18763','17362']);
+ assert.equal(r[0]?.status,'dated_official_recent_termination_registry_row');
+ assert.equal(r[0]?.terminationDateListedIn2026RecentTerminationSnapshot,'2026-09-01');
+ assert.equal(r[0]?.historical2023Or2024CommitteeTermination,null);
+ assert.equal(r[0]?.legalVoluntaryOrAdministrativeTerminationMechanism,null);
+ assert.equal(r[0]?.verifiedOriginalTerminationReportPdf,null);
+ assert.equal(r[1]?.status,'not_observed_in_these_current_snapshot_lists');
+ assert.equal(r[1]?.terminationDateListedIn2026RecentTerminationSnapshot,null);
+});
+test('a general all-registered current snapshot term date is NOT promoted to an observed recent termination row',()=>{
+ const r=classifyTwoSenatorsInPublicCfbCurrentLists([
+  {registrationNumber:'17362',office:'Senate',district:'29',registrationDate:'2013-01-01',
+   terminationDate:'2025-08-01'}
+ ],[]);
+ assert.equal(r[1]?.observedInAllRegisteredCandidatesCurrent2026,true);
+ assert.equal(r[1]?.observedInRecentlyTerminatedCandidatesCurrent2026,false);
+ assert.equal(r[1]?.terminationDateListedIn2026RecentTerminationSnapshot,null);
+ assert.equal(r[1]?.historical2023Or2024CommitteeTermination,null);
+});
+test('conflicting source target duplicates, wrong office and undated recent-terminated are held',()=>{
+ const good={registrationNumber:'18763',office:'Senate',district:'20',
+  registrationDate:'2022-01-01',terminationDate:'2026-08-01'};
+ assert.throws(()=>classifyTwoSenatorsInPublicCfbCurrentLists([],[good,good]),/multiple rows/);
+ assert.throws(()=>classifyTwoSenatorsInPublicCfbCurrentLists([],[
+  {...good,office:'House'}
+ ]),/chronology contradiction/);
+ assert.throws(()=>classifyTwoSenatorsInPublicCfbCurrentLists([],[
+  {...good,terminationDate:null}
+ ]),/no exact termination date/);
+ assert.throws(()=>classifyTwoSenatorsInPublicCfbCurrentLists([],[
+  {...good,terminationDate:'2021-01-01'}
+ ]),/chronology contradiction/);
 });
