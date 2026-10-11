@@ -78,3 +78,22 @@ The workflow runs on the exact owner-branch PR or manual main dispatch, without 
 Start with historically authenticated wording in the **original 2021 MPR Miller/Marty pair**, then 2022 Bigham/Eken two-speaker text, which has not yet been archive-checked. Independently search additional first-party reporting/interviews by serving senator and year, then revisit **five historical CDX-unverified original leads from the preceding 18** (2022 Gary Dahms, 2023 Eric Pratt, 2024 Karin Housley, 2025 Doron Clark, and 2025 Susan Pha), and the four previous Reformer `/briefs/`↔dated-path possible duplicates; unavailable CDX indexes are **unknown**, not proof the historic article is absent. Do not infer Senate committee or floor vote stances from statements.
 
 All research remains **public-only**: no private VotePredict evidence, no changes to production collectors/seeds, no member vote classification, training, model or forecast behavior.
+
+
+## Actual, independently downloaded public run: all original bodies recovered
+
+The first original [public GitHub Actions phrase audit #38158115041](https://github.com/killjoy00/votepredict/actions/runs/38158115041) **succeeded** against source commit **0246bfd9e920d76bfd76d9f72d1b78c5b4a83147**. I independently downloaded original artifact **11709447123** and verified ZIP SHA-256 **2d40aaeed3df5390ccd7ae66bab36fd7e868467abdc44c41c4fa24fb24648a1a**, and the decoded **5,248-byte** JSON SHA-256 **4aff2220bc02d689eae402a915cf0fc24654da3a941661daceb75d122973ba0a**. Actual metadata-only results are permanently recorded in [the historical phrase review receipt manifest](senate-media-2021-25-public-historical-original-phrase-receipts-20261011.json), with regression tests pinning all original body identities and the result.
+
+| Historical original SHA-pinned page version | Short visible original HTML cue | Boundaries |
+| --- | --- | --- |
+| **Nov 15, 2021 MPR Jeremy Miller** (21:55Z archived HTML) | **PRESENT:** reporter-attributed Miller fragment | Current/archived HTML proof of string presence, not independently authenticated original recording |
+| **The same Nov 15 MPR original** | **NOT FOUND IN ARCHIVED HTML:** additional phrase from Marty's **secondhand** description of Miller's interview | Not found by exact normalized string search in this specific authenticated archive HTML; **NOT proof the phrase was absent from the radio audio**, any transcript, or a different version |
+| **Nov 16, 2021 John Marty DFL original** | **PRESENT:** named Marty release fragment | Proves snippet appears in contemporaneous HTML, not any recorded vote |
+| **Apr 13, 2021 archived Julia Coleman GOP original** | **PRESENT:** Coleman-attributed statement fragment | Original capture on Apr 13, not definitive Mar 29 publisher initial release timestamp |
+| **Mar 2, 2024 archive John Marty betting original** | **PRESENT:** Marty-attributed sports-betting fragment | Does not determine Jan 24 vs Jan 26 initial original release day |
+| **Apr 5, 2025 archive Karin Housley original** | **PRESENT:** Housley bonding fragment | No floor-vote evidence established |
+| **Jun 5, 2023 archive Senate POCI statement** | **PRESENT:** collective POCI written fragment | **NOT individually attributable** to Kunesh or any other caucus member |
+
+**Actual run totals:** six previously SHA1/SHA256-pinned original raw HTTP HTML page bodies **all SHA reverified**; seven distinct short-phrase checks, **six markup presence cues / one phrase not found**, zero original unreplayable, **zero** independently compared audio recordings, **zero** human-approved individual historical quotations, **zero** first publisher posting times proved. The short phrase queue (not full article text) remains publicly inspectable; no article HTML, source audio or surrounding quote paragraphs are included in the research artifact.
+
+These outcomes are **a narrower but real advance** over URL-only source discovery. They establish exactly what appeared in six specific archived HTML versions; they do not turn current article prose, a secondary characterization of an interview, or collective remarks into individual recorded senator speech. The separate 25 freshly discovered URL leads still need their **own** original Wayback capture checks.
