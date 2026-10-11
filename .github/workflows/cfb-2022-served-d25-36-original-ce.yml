@@ -1,0 +1,41 @@
+name: One-time 2022 SD25-36 actual-senator original C/E finance PDF proofs
+
+# #864 Track A: original-source acquisition ONLY. No credentialed databases,
+# production change, donor export, model, re-training, scheduled workflow.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2022-served-d25-36-original-ce.yml
+      - scripts/capture-cfb-2022-served-d25-36-original-ce.ts
+      - src/evidence/cfb-2022-served-d25-36-original-ce.ts
+      - tests/cfb-2022-served-d25-36-original-ce.test.ts
+
+permissions:
+  contents: read
+
+jobs:
+  original-cfb-finance-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify official 2022 Senate-service, SOS, viewer and report exclusion guards
+        run: node --import tsx --test tests/cfb-2022-served-d25-36-original-ce.test.ts
+      - name: Acquire original candidate committee C/E PDFs and authenticate each first-page identity
+        run: |
+          node --import tsx scripts/capture-cfb-2022-served-d25-36-original-ce.ts \
+            --output artifacts/cfb-2022-served-d25-36-original-ce.json
+      - name: Retain original PDF source metadata and failure diagnoses only, never report bodies
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2022-served-d25-36-original-ce-source-metadata
+          path: artifacts/cfb-2022-served-d25-36-original-ce.json
+          if-no-files-found: warn
+          retention-days: 30
