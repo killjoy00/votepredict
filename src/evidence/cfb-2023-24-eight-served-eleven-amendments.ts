@@ -64,11 +64,11 @@ export function selectElevenIndependentlyParentAuthenticatedAmendments(
       ||originalRecord[10]!=='authentic_pdf_report_first_page'
       ||originalRecord[11]!=='verified'
       ||originalRecord[4]!==r[4]
-      ||originalRecord[9]!>=originalRecord[8]!)
+      ||originalRecord[9]!<originalRecord[8]!)
       throw Error('Requested historical amendment does not have independently verified original PDF parent');
     return{
       id:r[0]!,parentOriginalId:parent,
-      year:match[2]==='23'?2023:2024,
+      year:match[2]==='23'?2023 as const:2024 as const,
       registrationNumber:r[3]!,
       senatorVerifiedServedIn2022:r[1]!,
       senateDistrict2022:person.district2022,
