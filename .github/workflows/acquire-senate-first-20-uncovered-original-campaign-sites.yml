@@ -38,10 +38,12 @@ jobs:
           set -euo pipefail
           gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
           receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
-          test -n "$gov" && test -n "$receipt"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
           node --import tsx scripts/probe-senate-first-20-uncovered-original-campaign-sites.mjs \
             --official-html "$gov" \
             --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
             --out-dir original/first-20-campaign-originals
       - name: Retain raw original CDX indexes, complete original Wayback HTML, SHA digests and bounded missingness
         if: always()
