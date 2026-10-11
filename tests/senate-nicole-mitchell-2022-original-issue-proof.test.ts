@@ -19,7 +19,7 @@ function service():AuditedOfficialSenateDirectory {
    directoryIsSenatorServiceNotCandidateFiling:true,
   },
   senators:[
-   {officialName:'Nicole L. Mitchell',officialNameRaw:'Mitchell, Nicole L.',
+   {officialName:'Nicole Mitchell',officialNameRaw:'Mitchell, Nicole L.',
     officialSourceUrl:'https://www.lrl.mn.gov/legdb/senate_dir',
     senateServiceTerms:[{startsYear:2023,endsYear:2025,district:'47'}]},
   ],
