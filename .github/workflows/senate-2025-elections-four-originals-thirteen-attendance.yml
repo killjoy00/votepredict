@@ -1,0 +1,52 @@
+name: One-time original 2025 Elections four PDFs and 13 remaining named source rolls attendance QA
+
+# Exact previously SHA-pinned 2025 official original PDF manifest.
+# Non-ingesting, source-only: no production DB, forecast, models or 2027.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2025-elections-four-originals-thirteen-attendance.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  four-original-source-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Fetch pinned 2025 original PDF and text SHA source metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2025-unparsed-roll-review-metadata
+          run-id: 38075573031
+          github-token: ${{ github.token }}
+          path: artifacts/original-metadata
+      - name: Ensure PDF page-count utility
+        run: |
+          if ! command -v pdfinfo >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils
+          fi
+      - name: Reverify four PDF/text SHA pairs, thirteen exact roll offsets, original 11-member opening attendance
+        run: |
+          node --import tsx scripts/review-senate-2025-four-originals-thirteen-roll-attendance.ts \
+            --source-json artifacts/original-metadata/senate-2025-unparsed-roll-review.json \
+            --output artifacts/qa/senate-2025-four-other-originals-thirteen-roll-attendance.json
+      - name: Upload source metadata and hashes only
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2025-four-other-originals-thirteen-roll-attendance-proof
+          path: artifacts/qa/senate-2025-four-other-originals-thirteen-roll-attendance.json
+          retention-days: 30
+          if-no-files-found: error
