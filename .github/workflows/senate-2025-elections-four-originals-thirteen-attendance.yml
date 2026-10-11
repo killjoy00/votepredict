@@ -1,6 +1,7 @@
 name: One-time original 2025 Elections four PDFs and 13 remaining named source rolls attendance QA
 
 # Exact previously SHA-pinned 2025 official original PDF manifest.
+# 2026-10-10 rerun: generalized named chair call-to-order parsing and hashed source header marker diagnostics; no vote promotion.
 # Non-ingesting, source-only: no production DB, forecast, models or 2027.
 on:
   push:
