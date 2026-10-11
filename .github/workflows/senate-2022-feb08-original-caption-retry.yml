@@ -1,0 +1,68 @@
+name: One-time 2022 Feb08 Senate Environment original caption SHA retry
+
+# Only one previously-failed official original LRL source URL; public only.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2022-feb08-original-caption-retry.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  retry-one-original-2022-feb08:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Restore exact official 2022 dated hearing to mtgid source
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2022-dated-media-href-review
+          run-id: 38079233118
+          github-token: ${{ github.token }}
+          path: artifacts/prior-original-hrefs
+      - name: Restore original independently hashed 2022 media page HTML
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2022-official-media-record-html-proof
+          run-id: 38081463362
+          github-token: ${{ github.token }}
+          path: artifacts/prior-original-html
+      - name: Restore prior actual 2022 11-page original caption metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2022-original-caption-surface-metadata
+          run-id: 38103766440
+          github-token: ${{ github.token }}
+          path: artifacts/prior-original-captions
+      - name: Restore exact FIRST failed 2022 original 10-of-11 source review result
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2022-11-original-caption-cue-source-review
+          run-id: 38110343054
+          github-token: ${{ github.token }}
+          path: artifacts/first-failed-2022-run
+      - name: Retry ONLY 2022 Feb08 original HTML and exact hashed caption source
+        run: |
+          node --import tsx scripts/retry-senate-2022-feb08-original-caption.ts \
+            --hrefs artifacts/prior-original-hrefs/senate-2022-media-hrefs.json \
+            --original-html artifacts/prior-original-html/senate-2022-media-record-html.json \
+            --original-caption artifacts/prior-original-captions/senate-2022-caption-surface.json \
+            --first-failed-run artifacts/first-failed-2022-run/senate-2022-11-original-caption-motion-cues.json \
+            --output artifacts/2022-feb08-retry/senate-2022-feb08-original-caption-retry.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2022-feb08-exact-original-caption-retry
+          path: artifacts/2022-feb08-retry/senate-2022-feb08-original-caption-retry.json
+          retention-days: 30
+          if-no-files-found: error
