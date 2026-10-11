@@ -78,7 +78,7 @@ test('structural metadata from PDF reports neither leaks printed third-party nam
  assert.equal(compareHeldCfbGetPost(l,post,different)
    .independentGetAndPostBinariesIdentical,false);
  const failed=analyzeHeldCfbSourceBinary(l,null,'GET','official_source_http_failure');
- assert.equal(compareHeldCfbGetPost(l,post,failed).independentGetRetrieved,false);
+ assert.equal(compareHeldCfbGetPost(l,post,failed).independentlyGetRetrieved,false);
 });
 test('previously held Putnam original PDF index cannot be promoted to certified amendment',()=>{
  const p=target[1]!;
