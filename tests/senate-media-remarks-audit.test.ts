@@ -554,7 +554,7 @@ test('a host next-speaker reply or quote from the other turn cannot be assigned 
   assert.equal(result.verifiedAttributedQuotePassages,0);
   assert.ok(result.reviewResults[0]?.failures
     .includes('speaker_transcript_quote_outside_named_senator_turn'));
-  assert.equal(x.v.sourcePassage.includes(x.v.exactQuote),true);
+  assert.equal(x.v.sourcePassage!.includes(x.v.exactQuote!),true);
   assert.equal(p.v.exactQuote,transcriptRemark);
 });
 
