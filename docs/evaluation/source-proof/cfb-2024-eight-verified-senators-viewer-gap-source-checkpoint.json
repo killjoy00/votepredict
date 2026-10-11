@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "cfb-2024-eight-previously-unsampled-real-senator-original-api-source-checkpoint-v1",
+  "issue": 864,
+  "date": "2026-10-11",
+  "scope": {
+    "independentlyVerifiedActuallyServingIn2022": 8,
+    "reportYearProbed": [
+      2023,
+      2024
+    ],
+    "originalCfbViewerSegment": 2024,
+    "previousSampleHadNoResponseForTheseEight": true,
+    "absenceFromPastSampleDidNotMeanZeroFilings": true
+  },
+  "viewerSnapshotsLedger": {
+    "path": "docs/evaluation/source-proof/cfb-2024-eight-verified-senators-original-viewer-responses.psv",
+    "rows": 8,
+    "bytes": 1505,
+    "gitBlobSha": "3796cf557387aae3a247131eab4fb75b3d02163f"
+  },
+  "exactNewViewerReferences": {
+    "path": "docs/evaluation/source-proof/cfb-2023-24-eight-more-senators-27-source-report-reference-targets.psv",
+    "rows": 27,
+    "bytes": 4994,
+    "gitBlobSha": "e1a182efd537a1105a2dd492a8e61f161a16c652"
+  },
+  "sourceRun": {
+    "runId": 38158163261,
+    "sourceOutcome": "success",
+    "artifactId": 11709546979,
+    "artifactZipSha256": "e6f0518520ee6c2ec163e7a9085f55f66492ea127bb8170121e5c761d67f247a",
+    "jsonSha256": "b79a1607bc775954cf9cfc49ae308c083c70f2e69168ff7be8ab1a274ef817a2",
+    "jsonBytes": 10411,
+    "observedOn": "2026-10-11"
+  },
+  "results": {
+    "individualOriginalCfbResponsesReverified": 8,
+    "sourceFailures": 0,
+    "reportReferenceIds2023Originals": 8,
+    "reportReferenceIds2024Originals": 8,
+    "reportReferenceIds2023Amendments": 4,
+    "reportReferenceIds2024Amendments": 7,
+    "distinctOfficialVersionIds": 27,
+    "originalPdfBinariesNewlyAuthenticated": 0
+  },
+  "nextAcquisition": {
+    "additional2023And2024YearendOriginals": 16,
+    "additional2023And2024AmendmentReferences": 11,
+    "completeOriginalParentAuthenticationRequiredFirst": true,
+    "allEightSourceReportsPreviouslyUnverifiedInSample": true
+  },
+  "safeguards": {
+    "onlyOfficialSourceMetadata": true,
+    "noPreviouslyUnsampledIsNonfilerInference": true,
+    "noNeverServedCandidateNamesOrTransactionDetails": true,
+    "noRawPdfBodies": true,
+    "noProductionReadsWrites": true,
+    "historicPublicByProofCount": 0,
+    "legallyOwedFilingDenominator": null,
+    "keepIssue864Open": true
+  }
+}
