@@ -383,6 +383,8 @@ export function auditSenateMediaRemarks(input: {
   const classified: Array<{
     sourceDocumentId: string; membershipId: string | null; senatorName: string | null;
     issueCategory: string | null; disposition: SenateMediaReviewDisposition;
+    quotePresentation: SenateMediaQuotePresentation;
+    archivedAudioIndependentlyAuthenticated: false;
     verified: boolean; failures: string[]; publisher: string | null;
     originalUrl: string | null; archiveUrl: string | null;
     sourceSha256: string; publishedAt: string | null; provenPublicBy: string | null;
