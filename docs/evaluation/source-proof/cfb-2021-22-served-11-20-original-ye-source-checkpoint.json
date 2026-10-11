@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "cfb-2021-22-eleven-ever-served-senators-20-original-yearend-pdf-permanent-source-v1",
+  "acquisition": {
+    "pr": 1022,
+    "mergedSquashSha": "68327ba774eea01b9bf69b566a8ea3f92efb2a29",
+    "exactHeadSha": "972255cf4f7ebeb8bce186470b2c541d7df78897",
+    "fullCiRunId": 38108797364,
+    "fullCiConclusion": "success",
+    "originalSourceRunId": 38108797322,
+    "originalSourceConclusion": "success",
+    "originalArtifactId": 11690796660,
+    "originalArtifactUrl": "https://github.com/killjoy00/votepredict/actions/runs/38108797322/artifacts/11690796660",
+    "originalArtifactExpiresAt": "2026-11-10T03:34:55Z",
+    "originalMetadataZipSha256": "d12f7d9ea00ef46a4299382adfd9bcf8f523322ddd02ae3ffc8eedbfa609a850",
+    "originalMetadataJsonSha256": "cb3b9bf86be292f086e5e7cf3cb93a72b6c662e814611cb71b596404775002e6",
+    "originalMetadataJsonBytes": 52839,
+    "sourceObservedAt": "2026-10-11T03:34:55.051Z"
+  },
+  "originalOfficialSources": {
+    "lrlSenateServiceUrl": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "lrlHtmlSha256": "d2e66e7881809a0814050c5bbcd0eef87bc096a22009db7c2831a03fdd09b52e",
+    "lrlOriginalObservedAt": "2026-10-11T03:34:36.357Z",
+    "sosSenateGeneral2022Url": "https://electionresultsfiles.sos.mn.gov/20221108/stsenate.txt",
+    "sosFileSha256": "eb8980245094cf8af0cd08a69c42ae0262fb5a692b09a49be2aee959aecaae74",
+    "sosOriginalObservedAt": "2026-10-11T03:34:35.888Z",
+    "candidateCalendar2022Url": "https://cfb.mn.gov/pdf/publications/elections/candidate_packets/2022/House_2022.pdf",
+    "calendarPdfSha256": "3fd6263844d5063156d68d871bd2c575a5b5cef415a61b6125c068491f6b2b25",
+    "calendarOriginalObservedAt": "2026-10-11T03:34:38.448Z",
+    "candidateViewerAndRosterSourceIdentityFromEarlierPreservedCheckpoint": "docs/evaluation/source-proof/cfb-2022-served-d13-24-original-ce-source-checkpoint.json",
+    "original396ViewerBodiesLedger": "docs/evaluation/source-proof/cfb-2021-24-senate-396-original-viewer-source-observations.psv"
+  },
+  "originalPdfReportLedger": {
+    "file": "docs/evaluation/source-proof/cfb-2021-22-served-11-20-original-ye-pdf-proof.psv",
+    "columns": [
+      "reportId",
+      "verifiedActualSenator",
+      "2022SenateElectionDistrict",
+      "originalPdfPrintedSenateDistrict",
+      "originalPdfBinarySha256",
+      "originalPdfByteLength",
+      "originalPdfAcquiredAtUtc",
+      "reportPeriodStartOn",
+      "reportPeriodEndOn",
+      "boardReceivedOn",
+      "independentOfficialDueOn",
+      "conservativeLegalAndFilingFloorOn"
+    ],
+    "canonicalWithoutTrailingNewlineSha256": "25658d719937b654fab5e74f7b51d2b605bbfaf673396a91239210787110e8fb",
+    "canonicalWithoutTrailingNewlineByteCount": 3845,
+    "withFinalNewlineSha256": "1a7a71108b66a5aafd34db0844f5a28c7f6d0dc357856203215f16b2044f44fd",
+    "reportCount": 20,
+    "distinctPdfBinaryHashes": 20,
+    "actualSenatorsWithOfficialServiceAndRegistration": 11,
+    "sourceViewersReauthenticated": 11,
+    "reportYear2021OriginalYE": 9,
+    "reportYear2022OriginalYE": 11,
+    "originalFirstPageIdentityAndPeriodVerified": 20,
+    "independentOriginalCalendarVerified": true,
+    "previouslyAuthenticatedOriginalCEPdfIdentitiesExcluded": 46,
+    "originalSourceFailures": 0,
+    "independentlyProvenHistoricalPublicBy": 0,
+    "legalSenateRequiredReportDenominator": null,
+    "sourceToProductionFinancialRowsReconciled": false
+  },
+  "originalYearEndCalendarDueOn": {
+    "2021": "2022-01-31",
+    "2022": "2023-01-31"
+  },
+  "separatelyProvenLaterReceipt": {
+    "reportId": "17910:22:pcc:YE:0:0",
+    "actualSenator": "Rich Draheim",
+    "boardReceivedOn": "2023-02-01",
+    "originalOfficialDueOn": "2023-01-31",
+    "conservativeLegallyPossiblePublicNotBeforeOn": "2023-02-02",
+    "actualPublicByIndependentlyEstablished": false,
+    "proofOfLegalNonfiler": false
+  },
+  "unresolved": {
+    "year2021And2022HistoricallyActiveCommitteeDenominator": null,
+    "legallyRequiredSenateReportCount": null,
+    "yearEndNonfilersVerified": null,
+    "district13ElectionToCFBIdentity": "unknown",
+    "historicalPublicByForTwentyReports": null,
+    "retrospectiveForecastEligibility": false,
+    "financialContributionAndExpenditureContainmentInProductionNotChecked": true
+  },
+  "safety": {
+    "noRawOriginalPdfs": true,
+    "noDonorNamesOrTransactions": true,
+    "noUnservedCandidateNames": true,
+    "noSourceToDatabaseReadOrWrite": true,
+    "noServingOrTrainingOrSchedulerChanges": true,
+    "keepIssue864Open": true
+  }
+}
