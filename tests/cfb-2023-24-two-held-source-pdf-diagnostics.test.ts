@@ -107,6 +107,10 @@ test('permanent held-source metadata and original CFB GET/POST corroboration nev
  assert.equal(git,checkpoint.permanentStructuralMetadataLedger.gitBlobSha);
  assert.equal(checkpoint.independentReacquisition.officialGetRequestRetrievedTwoPdfBinaries,true);
  assert.equal(checkpoint.independentReacquisition.allFourOfficialBinariesSameAsPriorSourcePdfs,true);
+ assert.equal(checkpoint.secondIndependentSourceRun.allFourOfficialGETPOSTPdfShaAndByteCountsIdenticalAcrossBothRuns,true);
+ assert.equal(checkpoint.secondIndependentSourceRun.bothOfficialViewerApiSha256SameAcrossBothRuns,true);
+ assert.equal(checkpoint.secondIndependentSourceRun.everyComparedFirstWindowStructuralFlagIdenticalAcrossBothRuns,true);
+ assert.equal(checkpoint.secondIndependentSourceRun.sourceIdentityHoldsRemainTwo,true);
  assert.equal(checkpoint.scope.actualPdfFinanceIdentityResolvedCount,0);
  assert.equal(checkpoint.scope.legalFilingObligationDenominator,null);
  const rows=content.trimEnd().split('\n').map(x=>x.split('|'));
