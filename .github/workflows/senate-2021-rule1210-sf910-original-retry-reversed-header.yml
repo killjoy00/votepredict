@@ -1,6 +1,9 @@
 name: Third original SF910 Rule12.10 committee PDF authentication (reversed header repair)
 
 # Prior genuine #38168065141 / #38168488738 failures remain failures.
+# On-merge third-run workflow at commit 10b5d715 had no recorded push Actions run.
+# This separate source invocation is deliberately triggered through a path-changing PR;
+# it must receive its own genuine Actions run/artifact and may still fail. No success assumed.
 on:
   push:
     branches: [main]
