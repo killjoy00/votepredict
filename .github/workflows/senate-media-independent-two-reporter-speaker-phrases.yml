@@ -10,6 +10,9 @@ on:
       - tests/senate-media-independent-reporter-dual-original-phrase-audit.test.ts
       - docs/evaluation/senate-media-2021-2024-independent-reporter-two-dual-speaker-original-phrase-queue.json
       - docs/evaluation/senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json
+      - docs/evaluation/senate-media-2021-and-2024-independent-dual-speaker-historic-text-receipts-20261011.json
+      - tests/senate-media-independent-reporter-dual-original-text-receipts.test.ts
+      - docs/evaluation/senate-media-2021-25-independent-reporter-expansion-and-early-speaker-review.md
   workflow_dispatch:
 permissions:
   contents: read
