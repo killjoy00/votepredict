@@ -50,6 +50,19 @@
       "SenateRosterMemberRows": 67,
       "originalCfb2022SenatorsMatchedInIndependent2023Roster": 22,
       "mismatchedCandidateOrDistrictRows": 0
+    },
+    {
+      "runId": 38169115287,
+      "headAtRun": "195218ccf3f8d7b9b3d3129dbe902c9bd88a8b5f",
+      "sourceOutcome": "success",
+      "artifactId": 11713445633,
+      "artifactZipSha256": "968c3819ee8d363f6ba92311c22e7e0cf5b1b41f293bd9a303c56801991538c4",
+      "artifactZipBytes": 2013,
+      "artifactJsonSHA256": "fe999412df1b53720fda82dddeda794cdc663ed0c13ac19d513b67399be41404",
+      "artifactJsonBytes": 15595,
+      "SenateRosterMemberRows": 67,
+      "originalCfb2022SenatorsMatchedInIndependent2023Roster": 22,
+      "mismatchedCandidateOrDistrictRows": 0
     }
   ],
   "scope": {
@@ -70,5 +83,14 @@
     "noModelForecastSchedulerServingChanges": true,
     "noCandidateContactOr2027Changes": true,
     "keepIssue864Open": true
+  },
+  "independentOriginalSourceReconciliation": {
+    "bothOriginalSOS2023PDFSha256AndByteCountsIdentical": true,
+    "bothRunsSourcePDFMemberEntriesCountIdentical67": true,
+    "bothRunsMatchedAll22ExactMemberNamesAndDistricts": true,
+    "twoRunsNoMemberOrIdentityMismatch": true,
+    "noCfbCandidateRegistrationLegalDutyInferred": true,
+    "no2024ServiceAssumption": true,
+    "noHistoricallyPublicByProven": true
   }
 }
