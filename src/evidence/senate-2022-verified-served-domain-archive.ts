@@ -79,11 +79,21 @@ export function historicalSenatorDomainCdxUrl(domain:string):string{
 }
 function domainPathPriority(original:string):number{
   const u=new URL(original);
-  const path=u.pathname.toLowerCase();
-  if(/\/(?:issue|issues|polic(?:y|ies)|platform|priorit(?:y|ies)|values|positions)(?:\/|$)/.test(path))return 0;
-  if(/\/(?:news-events|press|news|updates|about|our-campaign|meet|campaign)(?:\/|$)/.test(path))return 1;
-  if(path==='/'||!path)return 2;
-  return 3;
+  const path=u.pathname.replace(/\/+$/,'').toLowerCase();
+  const pieces=path.split('/').filter(Boolean);
+  // Historical Wix sites can have malformed 404 URLs like
+  // /event-details/America/America/issues. They CONTAIN the word "issues"
+  // but are NOT an actual top-level campaign positions page.
+  if(pieces.length===1
+    &&/^(?:issue|issues|policy|policies|platform|priority|priorities|values|positions)$/.test(pieces[0]))
+    return 0;
+  if(pieces.length===0)return 1;
+  if(pieces.length===1
+    &&/^(?:news-events|press|news|updates|about|our-campaign|meet|campaign)$/.test(pieces[0]))
+    return 2;
+  if(pieces.length===2&&pieces[0]==='news-events')return 3;
+  if(pieces.length>=3&&pieces[0]==='event-details')return 10;
+  return 4+Math.min(pieces.length,4);
 }
 /** Per source URL keep first and latest *distinct* exact original digest,
  * biased to issue-specific paths and first pre-vote captures. No more than
@@ -96,6 +106,14 @@ export function senatorDomainPreGeneral2022Cdx(
   filteredOutMismatchedDomainOrWrongYear:number;}{
   if(!Object.values(EXPECTED_DOMAINS).some(t=>t.domain===domain))
     throw Error('Unsafe original source domain');
+  // The public Wayback API uses literal [] to mean no rows on a successful
+  // HTTP 200 response. This is a valid BOUNDED zero hit, not a parser failure
+  // and never a certificate that the campaign site never existed.
+  if(Array.isArray(payload)&&payload.length===0)return{
+    rankedCandidateRows:[],selectedOriginalReplays:[],
+    rawCdxResultRows:0,returnedIndexAtCapacity:false,
+    filteredOutMismatchedDomainOrWrongYear:0,
+  };
   if(!Array.isArray(payload)||!payload.length||!Array.isArray(payload[0]))
     throw Error('Missing domain-wide 2022 Wayback source-index matrix');
   if(payload.length>301)throw Error('Domain-wide archive query exceeded 300-row bounded sample');
