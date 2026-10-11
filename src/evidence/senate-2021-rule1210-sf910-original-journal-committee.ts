@@ -22,7 +22,10 @@ export const SF910_2021_COMMITTEE_SOURCE={
  originalPdfBinaryShaAuthenticatedByNewWorker:false
 } as const;
 const sha=(s:string)=>createHash('sha256').update(s).digest('hex');
-const norm=(s:string)=>s.replace(/\u0000/g,' ').replace(/\s+/g,' ').trim();
+const norm=(s:string)=>s.replace(/\u0000/g,' ')
+ // pdf-parse can insert page delimiters between a roll label and its names.
+ .replace(/--\s*\d+\s+of\s+\d+\s*--/g,' ')
+ .replace(/\s+/g,' ').trim();
 const names=(s:string)=>s.replace(/,\s+and\s+/gi,', ').replace(/\s+and\s+/gi,', ')
  .split(/\s*,\s*/).map(s=>s.trim()).filter(Boolean);
 const commitment=(side:'yea'|'nay',names:readonly string[])=>
@@ -52,7 +55,7 @@ function inspect(input:string,override?:{yea:string;nay:string}){
  const after=flat.slice(start+matches[0]![0].length,
   Math.min(flat.length,start+matches[0]![0].length+680));
  const match=after.match(
-  /\bThere\s+were\s+yeas\s+4\s+and\s+nays\s+3,\s+as\s+follows:\s+Those\s+who\s+voted\s+in\s+the\s+affirmative\s+were:\s+(?:714\s*JOURNAL\s+OF\s+THE\s+SENATE\s*\[?\s*21ST\s+DAY\s*\]?\s*)?Senators?\s+([A-Za-z ,.']+?)\.\s+Those\s+who\s+voted\s+in\s+the\s+negative\s+were:\s+Senators?\s+([A-Za-z ,.']+?)\.\s+The\s+motion\s+prevailed\b/i
+  /\bThere\s+were\s+yeas\s+4\s+and\s+nays\s+3,\s+as\s+follows:\s+Those\s+who\s+voted\s+in\s+the\s+affirmative\s+were:\s+(?:(?:714\s*JOURNAL\s+OF\s+THE\s+SENATE\s*\[?\s*21ST\s+DAY\s*\]?|21ST\s+DAY\s*\]?\s*MONDAY,\s*MARCH\s+8,\s+2021\s*715)\s*)?Senators?\s+([A-Za-z ,.']+?)\.\s+Those\s+who\s+voted\s+in\s+the\s+negative\s+were:\s+Senators?\s+([A-Za-z ,.']+?)\.\s+The\s+motion\s+prevailed\b/i
  );
  if(!match||match.index===undefined||match.index>18)
   throw Error('Original SF910 exact printed committee 4/3 YEA/NAY must immediately follow its own motion and prevail');
