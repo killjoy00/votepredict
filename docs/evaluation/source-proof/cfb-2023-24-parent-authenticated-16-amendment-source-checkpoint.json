@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "cfb-2023-24-sixteen-amendment-14-distinct-1-alias-1-held-v1",
+  "issue": 864,
+  "date": "2026-10-11",
+  "sourceProofPsv": {
+    "path": "docs/evaluation/source-proof/cfb-2023-24-parent-authenticated-16-amendment-pdf-source-ledger.psv",
+    "rows": 16,
+    "bytes": 5534,
+    "gitBlobSha": "249e105cdb9bb5dafaaae9acc17a73cdb8baecc3"
+  },
+  "originalParentProof": "docs/evaluation/source-proof/cfb-2023-24-verified-served-28-original-yearend-pdfs.psv",
+  "priorOriginalViewer": "docs/evaluation/source-proof/cfb-2021-24-senate-396-original-viewer-source-observations.psv",
+  "sourceRuns": [
+    {
+      "id": 38159906340,
+      "artifact": 11709534827,
+      "zipSha256": "e7c7efc87c559c74c4b184e42125e048345f0e51d2843812fdfc4a74b66d2bf6",
+      "jsonBytes": 30194,
+      "jsonSha256": "0d26ab621418f6f7c2bd2853cac581eb132e147bed6412b393c25a1f07cc764e",
+      "strictAllDistinctGate": "correctly_failed"
+    },
+    {
+      "id": 38160209177,
+      "artifact": 11709891737,
+      "zipSha256": "82414dd6fe9890815f897264719fb6b7a38984bc3c4062dda880ee17378ca200",
+      "jsonBytes": 31066,
+      "jsonSha256": "7c210a699f841ec055a1986c90d441574c68df47616869e17a98b943e5b67459",
+      "reviewedOriginalSourceOutcome": "accepted"
+    }
+  ],
+  "independentRunsExactSameVersionHashesBytesAndReceipts": true,
+  "results": {
+    "actual2022ServingSenators": 5,
+    "originalParentPdfsAuthenticated": 6,
+    "originalViewerVersionIds": 16,
+    "pdfBinariesFetched": 16,
+    "firstPageAuthenticatedViewerAmendmentReferences": 15,
+    "distinctAuthenticatedAmendedPdfBinaries": 14,
+    "sourceIdentityHolds": 1,
+    "duplicateViewerPdfReferenceAliases": 1
+  },
+  "hold": {
+    "id": "18430:23:pcc:YE:0:1",
+    "sha256": "5da25294735f3b7b62608755df926b38917a69aaf90b13c9999396de0d710c54",
+    "bytes": 149845,
+    "boardReceived": "2024-04-04",
+    "paperRegistrationIdentityVerified": false,
+    "countedAsAuthenticatedPdf": false
+  },
+  "alias": {
+    "id": "18430:24:pcc:YE:0:2",
+    "canonicalId": "18430:24:pcc:YE:0:1",
+    "sha256": "ff7e8200925b80a6983b00ac17c7dfe1b6a9be746c7754b0055a7dc94dbb5f03",
+    "bytes": 30355,
+    "received": "2025-04-10",
+    "countedOnlyOnce": true
+  },
+  "limitations": {
+    "actualPublicBy": null,
+    "legalFilingDutyDenominator": null,
+    "actual2023to24ServiceProven": false,
+    "allAmendmentChainsComplete": false,
+    "financialRowReconciliationDone": false
+  },
+  "protections": {
+    "sourceOnlyMetadata": true,
+    "noRawPdfDonorText": true,
+    "noProductionDataWrites": true,
+    "noForecastOrSchedulerChanges": true,
+    "no2027Scope": true,
+    "issue864MustRemainOpen": true
+  }
+}
