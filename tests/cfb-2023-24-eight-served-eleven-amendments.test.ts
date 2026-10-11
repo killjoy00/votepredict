@@ -126,8 +126,12 @@ test('permanent 11 authentic amended PDF source ledger is pinned to original CFB
  assert.equal(blob,ck.newAmendedOriginalPdfProofLedger.gitBlobSha);
  assert.equal(original.endsWith('\n'),true);
  assert.equal(Buffer.byteLength(original,'utf8'),3789);
- assert.equal(ck.authenticatedOfficialSourceAcquisitions.length,1);
+ assert.equal(ck.authenticatedOfficialSourceAcquisitions.length,2);
  assert.equal(ck.firstOfficialRun.uniqueDistinctAmendedPdfBinaries,11);
+ assert.equal(ck.secondIndependentOfficialSourceRecheck.all11PdfSha256AndByteCountsReproduced,true);
+ assert.equal(ck.secondIndependentOfficialSourceRecheck.all11BoardReceiptDatesAndCoverageMatched,true);
+ assert.equal(ck.secondIndependentOfficialSourceRecheck.sixOfficialSourceViewerSha256Identical,true);
+ assert.equal(ck.secondIndependentOfficialSourceRecheck.sourcePdfHoldsOrAliases,0);
  assert.equal(ck.firstOfficialRun.sourceFailureOrIdentityHolds,0);
  const records=original.trimEnd().split('\n').map(r=>r.split('|'));
  assert.equal(records.length,11);
