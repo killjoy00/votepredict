@@ -1,0 +1,64 @@
+name: Recover second group of 20 uncovered Minnesota senators historical first-party original websites
+on:
+  pull_request:
+    paths:
+      - scripts/probe-senate-second-20-uncovered-original-campaign-sites.mjs
+      - .github/workflows/acquire-senate-second-20-uncovered-original-campaign-sites.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-second-twenty-senator-website-recovery:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-second-20-senators-archived-firstparty-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen official SHA-pinned original Minnesota historical senate service and special swearing source
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen independently audited statewide first-party coverage to prove these 20 are uniquely uncovered
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38176604516
+          name: senate-95-serving-64-firstparty-869-original-short-excerpts-coverage-v1
+          github-token: ${{ github.token }}
+          path: original/prior-95-coverage
+      - name: Independently verify actual Senate service and uncover 33 original historical 2020 2022 2025 archive windows
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          coverage="$(find original/prior-95-coverage -type f -name 95-senators-public-campaign-coverage.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$coverage"
+          node --import tsx scripts/probe-senate-second-20-uncovered-original-campaign-sites.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --coverage-json "$coverage" \
+            --out-dir original/second20-original-archived-candidate-sites
+      - name: Preserve exact original archive CDX JSON and digest-validated full HTML pages and explicit unknowns
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-second-20-distinct-uncovered-33-historical-wayback-windows-v1
+          path: original/second20-original-archived-candidate-sites/
+          if-no-files-found: warn
+          retention-days: 30
