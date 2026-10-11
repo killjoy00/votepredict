@@ -45,7 +45,7 @@ test('all three brief URL candidates now have one or more genuine original SHA1 
   assert.deepEqual(row.selectedServingSenators,source.namedSenatorSpeakerTurnCandidates.map((x:any)=>x.name));
   assert.equal(row.bothExactUrlVariantsHistoricallyVerified,false);
   assert.equal(row.historicallySameArticleUrlAliasProven,false);
-  assert.equal(row.publisherOriginalInitialPostingClockProven,false);
+  assert.equal(row.originalPublisherInitialPostingClockProven,false);
   assert.equal(row.originalBriefsHttpCaptureVersions.length,2);
   for(const cap of row.originalBriefsHttpCaptureVersions){
     assert.match(cap.originalIndexedSha1Base32,/^[A-Z2-7]{32}$/);
