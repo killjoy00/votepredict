@@ -99,7 +99,7 @@ export interface SevenRawOriginalReceipt {
  previouslyProvenOriginalRawSha256:string;
  previouslyProvenOriginalRawHttpBytes:number;
  observedOriginalSha256:string|null;
- replayStatus:Status;
+ status:Status;
  individualShortTextCueObservations:NamedHistoricalReporterCue[];
  originalPublisherFirstPostingClockEstablished:false;
  newsroomFloorOrCommitteeCoverageIsNotMemberRecordedVoteEvidence:true;
