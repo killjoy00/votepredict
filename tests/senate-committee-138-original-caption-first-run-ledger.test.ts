@@ -5,7 +5,7 @@ import test from 'node:test';
 
 const raw=readFileSync(new URL('../docs/evaluation/source-proof/senate-committee-138-original-caption-surface-first-run-ledger.json',import.meta.url));
 const j=JSON.parse(raw.toString('utf8'));
-const blob=createHash('sha1').update('blob '+raw.byteLength+'\\0'.replace('\\0','\0')).update(raw).digest('hex');
+const blob=createHash('sha1').update('blob '+raw.byteLength+'\0').update(raw).digest('hex');
 const statuses=['caption_payload_no_timed_rows','original_html_fetch_failed','audio_player_only_no_caption_request'];
 test('real original source run including failure and four artifact digests is permanently immutable',()=>{
  assert.equal(blob,'67eadd165c115e12edeafdd41648a288a9b1c9d6');
