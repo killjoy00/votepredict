@@ -43,6 +43,23 @@ type PublicLead = {
   officialSenateServiceStart?:string;
   officialServiceSource?:string;
   senateMemberOnDisplayedPublicationDay?:boolean;
+  officialSenateHistorySource?:string;
+  officialSenateOathDay?:string;
+  senatorServiceOnDisplayedPublisherDayIndependentlyCorroborated?:boolean;
+  currentPublisherDisplayedClock?:string;
+  publisherClockTimezoneIndependentlyVerified?:boolean;
+  currentPublisherShow?:string;
+  currentPageContainsAudioPlayer?:boolean;
+  currentPageContainsSpeakerLabeledTranscript?:boolean;
+  currentPageHostSpeakerLabel?:string;
+  currentPageSenatorSpeakerLabel?:string;
+  currentPageDirectSpeechShortResearchExcerpt?:string;
+  archivedTranscriptByteEqualityAndAvailabilityVerified?:boolean;
+  historicalAudioBytesAndAvailabilityVerified?:boolean;
+  originalSpeakerAudioComparedToTranscript?:boolean;
+  mediaInterviewSpeakerHumanReviewedFromOriginalArchive?:boolean;
+  actualSpokenWordsOnHistoricalCutoffIndependentlyVerified?:boolean;
+  productionSeedChanged?:boolean;
 };
 type Ledger = {
   version:string;
@@ -69,7 +86,7 @@ test('curated publicly observed leads cover all five study years, two publishers
   assert.equal(data.sourceUniverseCompletenessKnown,false);
   assert.equal(data.publisherYearSlotsInOriginal44SeedReview,220);
   const leads=data.selectedNonExhaustiveArticleLeads;
-  assert.equal(leads.length,24);
+  assert.equal(leads.length,25);
   assert.equal(new Set(leads.map(x=>x.id)).size,leads.length);
   assert.equal(new Set(leads.map(x=>x.livePageUrl)).size,leads.length);
   assert.deepEqual([...new Set(leads.map(x=>x.publisher))].sort(),[
@@ -117,20 +134,26 @@ test('the live publication day and senator-name leads never imply archived evide
   }
 });
 
-test('article-level Reformer /briefs/ links expose a deterministic archive seed-prefix gap',()=>{
+test('Reformer /briefs/ and MPR /episode/ links expose independent current seed-prefix gaps',()=>{
   const source=data.selectedNonExhaustiveArticleLeads;
   const outside=source.filter(x=>!x.urlInsideCurrentSeedPrefix);
-  assert.equal(outside.length,10);
+  assert.equal(outside.length,11);
   assert.equal(data.seedPrefixDiscoveryComparison.outsideSeedPrefixLeadCount,outside.length);
   assert.deepEqual(data.seedPrefixDiscoveryComparison.publisherSeedsChecked,[
     'minnesota-reformer-article-archive','mpr-news-story-archive',
   ]);
   assert.equal(data.seedPrefixDiscoveryComparison.calculatedAgainstCheckedInSeedUrls,true);
-  for(const item of outside){
-    assert.equal(item.publisher,'Minnesota Reformer');
-    assert.ok(new URL(item.livePageUrl).pathname.startsWith('/briefs/'));
-    assert.equal(item.livePageUrl.startsWith('https://minnesotareformer.com/202'),false);
-  }
+  const reformer=outside.filter(x=>x.publisher==='Minnesota Reformer');
+  const mpr=outside.filter(x=>x.publisher==='MPR News');
+  assert.equal(reformer.length,10);
+  assert.equal(mpr.length,1);
+  assert.ok(reformer.every(x=>new URL(x.livePageUrl).pathname.startsWith('/briefs/')));
+  assert.equal(mpr[0]?.id,'mpr-2024-hauschild-north-star-on-air-interview');
+  assert.ok(mpr[0]?.livePageUrl.startsWith('https://www.mprnews.org/episode/2024/'));
+  assert.ok(LOCAL_TRADE_NEWS_SEEDS.some(seed=>
+    seed.id==='mpr-news-story-archive' && seed.url==='https://www.mprnews.org/story/202'));
+  assert.ok(outside.every(x=>x.livePageUrl.startsWith('https://minnesotareformer.com/202')===false
+    && x.livePageUrl.startsWith('https://www.mprnews.org/story/202')===false));
   assert.deepEqual([...new Set(outside.map(x=>Number(x.publicationDayDisplayedOnPublicPage.slice(0,4))))].sort(),[2021,2022,2023,2024,2025]);
   assert.ok(data.seedPrefixDiscoveryComparison.criticalLimitation.includes('unknown'));
   // This audit DOES NOT change production ingestion seeds or make an all-media census.
@@ -142,7 +165,7 @@ test('article-level Reformer /briefs/ links expose a deterministic archive seed-
 
 test('new 2022–2025 publisher leads have dated 2026 research observations without historical availability claims',()=>{
   const added=data.selectedNonExhaustiveArticleLeads.filter(x=>x.sourceResearchCheckedOn);
-  assert.equal(added.length,10);
+  assert.equal(added.length,11);
   assert.ok(added.every(x=>x.sourceResearchCheckedOn==='2026-10-10'));
   assert.ok(added.every(x=>x.archiveCapturePublicByVerified===false
     && x.originalArchivedHttpBytesHashVerified===false
@@ -213,4 +236,44 @@ test('Feb 12 2024 Reformer /briefs/ redirect is a CURRENT observation, never arc
   assert.equal(dated.sourceSeenInVotePredictExport,'unknown_not_reconciled');
   assert.ok(dated.namedSenatorLeadsForManualReview.every(n=>
     ['Grant Hauschild','Erin Murphy','Omar Fateh'].includes(n)));
+});
+
+test('Feb 19 2024 MPR /episode/ interview is an explicit senator audio-transcript lead, not Wayback evidence',()=>{
+  const r=data.selectedNonExhaustiveArticleLeads.find(x=>
+    x.id==='mpr-2024-hauschild-north-star-on-air-interview');
+  assert.ok(r);
+  assert.equal(r.publisher,'MPR News');
+  assert.equal(r.seedId,'mpr-news-story-archive');
+  assert.equal(r.publicationDayDisplayedOnPublicPage,'2024-02-19');
+  assert.equal(r.livePageUrl,'https://www.mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south');
+  assert.equal(r.urlInsideCurrentSeedPrefix,false);
+  assert.deepEqual(r.namedSenatorLeadsForManualReview,['Grant Hauschild']);
+  assert.equal(r.currentPublisherShow,'Minnesota Now');
+  assert.equal(r.currentPublisherDisplayedClock,'10:32 AM');
+  assert.equal(r.publisherClockTimezoneIndependentlyVerified,false);
+  assert.equal(r.currentPageContainsAudioPlayer,true);
+  assert.equal(r.currentPageContainsSpeakerLabeledTranscript,true);
+  assert.equal(r.currentPageHostSpeakerLabel,'CATHY WURZER');
+  assert.equal(r.currentPageSenatorSpeakerLabel,'GRANT HAUSCHILD');
+  assert.equal(r.currentPageDirectSpeechShortResearchExcerpt,
+    'I feel that immigration is a federal issue.');
+  assert.equal(r.officialSenateHistorySource,
+    'https://www.lrl.mn.gov/legdb/fulldetail?id=15577');
+  assert.equal(r.officialSenateOathDay,'2023-01-03');
+  assert.equal(r.senatorServiceOnDisplayedPublisherDayIndependentlyCorroborated,true);
+  // Membership on the DISPLAYED day is not independently verified ARTICLE publication.
+  assert.equal(r.membershipOnPublicationDateVerified,false);
+  for(const key of [
+    'archivedTranscriptByteEqualityAndAvailabilityVerified',
+    'historicalAudioBytesAndAvailabilityVerified',
+    'originalSpeakerAudioComparedToTranscript',
+    'mediaInterviewSpeakerHumanReviewedFromOriginalArchive',
+    'actualSpokenWordsOnHistoricalCutoffIndependentlyVerified',
+    'productionSeedChanged','originalArchivedHttpBytesHashVerified',
+    'archiveCapturePublicByVerified','historicalForecastEligibilityProven',
+    'directQuoteHumanVerified','issueStanceInferred',
+  ] as const) assert.equal(r[key],false,'Unproven archive, quote or model advancement: '+key);
+  assert.equal(r.sourceSeenInVotePredictExport,'unknown_not_reconciled');
+  assert.equal(Object.hasOwn(r,'exactQuote'),false);
+  assert.equal(Object.hasOwn(r,'sourceDocumentId'),false);
 });
