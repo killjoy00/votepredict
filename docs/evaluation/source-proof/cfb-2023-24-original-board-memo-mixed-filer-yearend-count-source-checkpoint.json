@@ -61,6 +61,18 @@
       "artifactJSONBytes": 3623,
       "originalTwoPdfShaAndByteCountsReproduced": true,
       "yearEndExpectedAndDueMemoParagraphsOriginal": true
+    },
+    {
+      "runId": 38168953678,
+      "headAtAcquisition": "28a15917bf8bae3f9596a2fff5fefa18fa6530ee",
+      "result": "success",
+      "artifactId": 11713500420,
+      "zipSha256": "fd9e7d0907b2eaec3ca2c8da334da592124a7a5f74e020589be90a45aef7ef2b",
+      "zipBytes": 1415,
+      "artifactJSONSha256": "7eedd8e82878421bfa167d747e8b81fdf5acd3276bdd761ac41db04213b23fc0",
+      "artifactJSONBytes": 3623,
+      "originalTwoPdfShaAndByteCountsReproduced": true,
+      "yearEndExpectedAndDueMemoParagraphsOriginal": true
     }
   ],
   "scopeLimits": {
@@ -81,5 +93,12 @@
     "noCommitteeTransactionsOrDonorsStored": true,
     "noProductionDatabaseAccess": true,
     "noForecastOrServingChanges": true
+  },
+  "crossRunOriginalSourceAgreement": {
+    "bothOriginalBoardPdfSha256AndByteCountsIdentical": true,
+    "statewide2023MemoExpectedCountIdentical": true,
+    "statewide2024MemoDueAndFiledAndOutstandingCountIdentical": true,
+    "noCandidateSpecificLegalObligationEvidenceAdded": true,
+    "noExactReportHistoricalPublicByProven": true
   }
 }
