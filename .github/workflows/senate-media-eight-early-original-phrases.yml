@@ -10,6 +10,9 @@ on:
       - tests/senate-media-eight-early-original-text-audit.test.ts
       - docs/evaluation/senate-media-2021-25-eight-further-original-phrase-queue.json
       - docs/evaluation/senate-media-2021-25-broader-25-original-public-archive-receipts-20261011.json
+      - docs/evaluation/senate-media-2021-25-eight-early-original-speaker-phrase-receipts-20261011.json
+      - tests/senate-media-eight-early-original-speaker-phrase-receipts.test.ts
+      - docs/evaluation/senate-media-2021-25-independent-reporter-expansion-and-early-speaker-review.md
   workflow_dispatch:
 
 permissions:
