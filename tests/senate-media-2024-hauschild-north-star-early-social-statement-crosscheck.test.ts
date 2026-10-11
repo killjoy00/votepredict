@@ -28,12 +28,26 @@ const cross=JSON.parse(readFileSync(
     historicalVisibilityFromTweetIdProven:boolean;
     originalFirstPublicByFromArchiveProven:boolean;
     referencedByCurrentMedia:string[];
+    currentExternalArticleIncludesVisuallyReadScreenshotOfAllegedPost:boolean;
+    actualHistoricScreenshotUploadTimeOrOriginalPostIdentityProven:boolean;
   };
   sourceChronology:Array<{
     id:string;type:string;currentPublisherUrl:string;
     displayedPublisherDay:string;publisher:string;
     originalXStatusIdFromLinkedPage?:string;
     linkedXStatusId?:string;
+    sourceLinksSameStatusId?:string;
+    thirdPartyHostedScreenshotUrl?:string;
+    screenshotVisiblyNamesAccount?:string;
+    screenshotVisiblyNamesHandle?:string;
+    screenshotFirstSentenceShortFragment?:string;
+    screenshotMatchesEarlierReportedRefusalShortFragment?:string;
+    currentScreenshotShowsClaimedPostWording?:boolean;
+    imageShowsOriginalXPostingTimestamp?:boolean;
+    screenshotIndependentlyAuthenticatedAs2024Capture?:boolean;
+    thirdPartyImageBytesHashedAgainstHistoricalOriginal?:boolean;
+    currentPublisherScreenshotProvesOriginalXAccountAuthorship?:boolean;
+    imageFileQueryParameterProves2024CreationTime?:boolean;
     sourceStatementShortQuotation?:string;
     senatorLabel?:string;hostLabel?:string;currentTranscriptShortUtterance?:string;
     separateQuoteSpeaker?:string;separateQuoteShortExcerpt?:string;
@@ -78,7 +92,7 @@ function snowflakeIdClockUtc(id:string):string {
   if(unixMs>BigInt(Number.MAX_SAFE_INTEGER))throw Error('Unsafe timestamp');
   return new Date(Number(unixMs)).toISOString();
 }
-const order=['2024-02-11','2024-02-12','2024-02-19'];
+const order=['2024-02-11','2024-02-12','2024-02-17','2024-02-19'];
 
 test('one serving state senator, correct official bill authors, and no inferred floor vote or content proof',()=>{
   assert.equal(cross.version,'senate-media-2024-hauschild-north-star-first-person-statement-crosscheck-v1');
@@ -115,18 +129,26 @@ test('one reporter-linked canonical X status ID encodes Feb 10 clock without pro
 });
 
 test('two distinct currently readable newsroom pages cite same X post; source-date labels remain unarchived',()=>{
-  const [alpha,reformer,mpr]=cross.sourceChronology;
-  assert.ok(alpha&&reformer&&mpr);
+  const [alpha,reformer,screenshot,mpr]=cross.sourceChronology;
+  assert.ok(alpha&&reformer&&screenshot&&mpr);
   assert.deepEqual(cross.sourceChronology.map(x=>x.displayedPublisherDay),order);
   assert.equal(alpha.publisher,'Alpha News');
   assert.equal(reformer.publisher,'Minnesota Reformer');
+  assert.equal(screenshot.publisher,'Center of the American Experiment');
   assert.equal(mpr.publisher,'MPR News');
   assert.notEqual(alpha.currentPublisherUrl,reformer.currentPublisherUrl);
   assert.equal(alpha.originalXStatusIdFromLinkedPage,
     cross.linkedFirstPartySocialPost.statusId);
   assert.equal(reformer.linkedXStatusId,cross.linkedFirstPartySocialPost.statusId);
   assert.deepEqual([...cross.linkedFirstPartySocialPost.referencedByCurrentMedia].sort(),
-    [alpha.currentPublisherUrl,reformer.currentPublisherUrl].sort());
+    [alpha.currentPublisherUrl,reformer.currentPublisherUrl,
+      screenshot.currentPublisherUrl].sort());
+  assert.equal(
+    cross.linkedFirstPartySocialPost.currentExternalArticleIncludesVisuallyReadScreenshotOfAllegedPost,
+    true);
+  assert.equal(
+    cross.linkedFirstPartySocialPost.actualHistoricScreenshotUploadTimeOrOriginalPostIdentityProven,
+    false);
   assert.ok((alpha.sourceStatementShortQuotation??'').startsWith(
     'I will not be supporting this legislation'));
   assert.equal(alpha.directQuotedReporterTextEqualsFirstPartyOriginalProven,false);
@@ -144,6 +166,22 @@ test('two distinct currently readable newsroom pages cite same X post; source-da
   assert.equal(reformer.houseSpeakerMelissaHortmanIsNotMinnesotaSenator,true);
   assert.equal(reformer.chiefSponsorOmarFatehWasNotQuotedAsSpeakerInThisSource,true);
   assert.equal(reformer.anyNamedQuoteFromOriginalArchivedBytesHumanReviewed,false);
+  assert.equal(screenshot.sourceLinksSameStatusId,
+    cross.linkedFirstPartySocialPost.statusId);
+  assert.equal(screenshot.thirdPartyHostedScreenshotUrl,
+    'https://files.americanexperiment.org/wp-content/uploads/2024/02/Grant-Hauschild.jpg?v=1708198829');
+  assert.equal(screenshot.screenshotVisiblyNamesAccount,'Grant Hauschild');
+  assert.equal(screenshot.screenshotVisiblyNamesHandle,'grant_hauschild');
+  assert.equal(screenshot.currentScreenshotShowsClaimedPostWording,true);
+  assert.equal(screenshot.screenshotFirstSentenceShortFragment,
+    'The Sanctuary State proposal is just that, a proposal.');
+  assert.equal(screenshot.screenshotMatchesEarlierReportedRefusalShortFragment,
+    alpha.sourceStatementShortQuotation);
+  assert.equal(screenshot.imageShowsOriginalXPostingTimestamp,false);
+  assert.equal(screenshot.screenshotIndependentlyAuthenticatedAs2024Capture,false);
+  assert.equal(screenshot.thirdPartyImageBytesHashedAgainstHistoricalOriginal,false);
+  assert.equal(screenshot.currentPublisherScreenshotProvesOriginalXAccountAuthorship,false);
+  assert.equal(screenshot.imageFileQueryParameterProves2024CreationTime,false);
   assert.equal(mpr.hostLabel,'CATHY WURZER:');
   assert.equal(mpr.senatorLabel,'GRANT HAUSCHILD:');
   assert.equal(mpr.currentTranscriptShortUtterance,
@@ -185,6 +223,8 @@ test('all context sources remain research only, and repurposed advocacy domain i
   assert.equal(limits.quoteAndStanceEvidencePromotedToProduction,false);
   assert.equal(limits.uniqueHistoricallyVerifiedSenatorStatements,0);
   assert.equal(limits.statewideSenatorMediaCoverageDenominatorKnown,false);
+  assert.equal(limits.americanExperimentScreenshotOriginalHistorical2024CaptureAuthenticated,false);
+  assert.equal(limits.thirdPartyScreenshotIsNotOriginalXHttpBody,true);
   assert.equal(cross.provenanceDriftWatch.priorSearchResultRepresentedCampaignAdvocacyDomain,
     'northstaract.org');
   assert.equal(cross.provenanceDriftWatch.liveSiteAccessOn2026_10_10,
