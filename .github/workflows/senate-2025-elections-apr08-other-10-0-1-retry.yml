@@ -1,0 +1,35 @@
+name: One-time independent retry Apr 8 Elections second 10-0-1 source
+
+# Preserve failed original run #38156811715 as FAILURE; separate source retry.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2025-elections-apr08-other-10-0-1-retry.yml
+
+permissions:
+  contents: read
+
+jobs:
+  retry-second-apr08-ten-zero-one:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Recheck one exact original PDF and the second 10-0-1 motion section
+        run: |
+          node --import tsx scripts/review-senate-2025-elections-apr08-second-ten-zero-one-original.ts \
+            --output artifacts/apr08-second-10-0-1-targeted-retry/senate-2025-apr08-second-10-0-1-targeted-retry-source.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2025-apr08-original-second-ten-zero-one-targeted-retry
+          path: artifacts/apr08-second-10-0-1-targeted-retry/senate-2025-apr08-second-10-0-1-targeted-retry-source.json
+          retention-days: 30
+          if-no-files-found: error
