@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "senate-2021-apr08-four-original-lrl-audio-prefix-source-success-v1",
+  "issue": 864,
+  "firstOriginalAudioSourceRun": {
+    "runnerPR": 1159,
+    "runnerMergeSHA": "189853c85c06dc36882a53f1327031d12800a2c2",
+    "runId": 38178990727,
+    "runURL": "https://github.com/killjoy00/votepredict/actions/runs/38178990727",
+    "conclusion": "success",
+    "sourcePageFailures": 0,
+    "verified2021LrlHearingPages": 2,
+    "artifactId": 11717117508,
+    "artifactName": "senate-2021-apr08-original-lrl-media-stream-public-prefix-metadata",
+    "independentlyDownloadedZIPBytes": 1824,
+    "independentlyDownloadedZIPSHA256": "6033f00e19e96e6ef98831f554a536f409f1fcc4299a7536c0cbc2b6ac6ca321",
+    "independentlyDecodedJSONEntry": "source.json",
+    "independentlyDecodedJSONBytes": 7875,
+    "independentlyDecodedJSONSHA256": "8190d67341493cfaf010fe9365276c046d155a0bd266f2c85e88a4069ad0fd1e"
+  },
+  "originalLRLHearingMediaPageSHAAndBytes": [
+    {
+      "bill": "SF1159",
+      "officialHearingDay": "2021-04-08",
+      "originalHTMLBytes": 89044,
+      "originalHTMLSHA256": "a204640dcc0ea751fc867ae673492302a48b3dac4c0747475fab1c1ecc2291ce"
+    },
+    {
+      "bill": "SF970",
+      "officialHearingDay": "2021-04-08",
+      "originalHTMLBytes": 96070,
+      "originalHTMLSHA256": "98d4a9be8e08963121f332dcda6fbc602a07dc4a237b633011fc40a1ca2a4194"
+    }
+  ],
+  "originalAudioLeads": [
+    {
+      "bill": "SF1159",
+      "committee": "Transportation Finance and Policy",
+      "url": "https://www.lrl.mn.gov/audio/senate/2021/cmte_fintrans_040821.mp3",
+      "originalFirstPrefixBytes": 65536,
+      "originalFirstPrefixSHA256": "8e2f01c874816f79811facc762146232f34d044a5db1cefecda4795dce04103f"
+    },
+    {
+      "bill": "SF970",
+      "committee": "Judiciary and Public Safety Finance and Policy",
+      "url": "https://www.lrl.mn.gov/audio/senate/2021/cmte_jud_040821.mp3",
+      "originalFirstPrefixBytes": 65536,
+      "originalFirstPrefixSHA256": "74b5c8c5580a805dfdebfbef803df02c0715e04075ba490983f38ec55e0b455a"
+    },
+    {
+      "bill": "SF970",
+      "committee": "Judiciary and Public Safety Finance and Policy",
+      "url": "https://www.lrl.mn.gov/audio/senate/2021/cmte_jud_040821a.mp3",
+      "originalFirstPrefixBytes": 65536,
+      "originalFirstPrefixSHA256": "0930c662d0b95ad73b661e6fd37f1549e6d64704d55d3c617ae2c3d14682f4f1"
+    },
+    {
+      "bill": "SF970",
+      "committee": "Judiciary and Public Safety Finance and Policy",
+      "url": "https://www.lrl.mn.gov/audio/senate/2021/cmte_jud_040821b.mp3",
+      "originalFirstPrefixBytes": 65536,
+      "originalFirstPrefixSHA256": "b777ba4adde388217111376ecedae4d37f353875ffa52846dbb3e67630e514d7"
+    }
+  ],
+  "strictFirstPrefixFacts": {
+    "originalHTTPStatus": 206,
+    "rangeRequestHonored": true,
+    "contentType": "audio/mpeg",
+    "originalPrefixSignature": "id3",
+    "distinctOriginalAudioURLs": 4,
+    "totalOriginalMP3PrefixBytesDownloaded": 262144,
+    "fullOriginalAudioSourcesAuthenticated": false,
+    "originalMotionAudioContentHeard": false
+  },
+  "holds": {
+    "specificAmendmentOccurredOn": null,
+    "exactDibbleMotionHearingDayVerified": false,
+    "exactMcEwenMotionHearingDayVerified": false,
+    "exactPappasMotionHearingDayVerified": false,
+    "independentHistoricalPublicBy": null,
+    "noOriginalPrinted2021MinutesCompared": true,
+    "sourceToPrivateHistoricalVotesReconciled": false,
+    "noMemberVotesInferredFromAudioPrefix": true,
+    "noProductionDatabaseOrModelsServingSchedulerForecastFloor2027Changed": true,
+    "noGovernmentOfficeContact": true,
+    "issue864RemainsOpen": true
+  }
+}
