@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "cfb-original-2023-signed-hoffman-senate-principal-committee-17319-v1",
+  "issue": 864,
+  "researchDate": "2026-10-11",
+  "verifiedServingSenatorIdentity": {
+    "senator": "John A. Hoffman",
+    "senateDistrict2022": 34,
+    "registrationNumber": "17319",
+    "originalAuthenticatedYearEnd71PSVPath": "docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv",
+    "original71GitBlobSha": "bfa1c1eff6a095a3a0d03aa49a34e1d929d6a388"
+  },
+  "originalSigned2023BoardAgreement": {
+    "document": "In the matter of the Committee to Elect John Hoffman (17319)",
+    "originalGovernmentURL": "https://cfb.mn.gov/pdf/bdactions/1641_Conciliation_Agreement.pdf",
+    "originalFullPdfSha256": "14789ad9840503b963c6c1e9198fc6f05d5b096b9d7aea1487839847b71cbba9",
+    "originalFullPdfBytes": 103913,
+    "originalPrintedSignatures": [
+      "July 6, 2023",
+      "July 6, 2023"
+    ],
+    "committeeNamedAsSenatorPrincipalCampaignCommittee": true,
+    "references2021And2022AmendedYearEndReports": true,
+    "describes2023ReportingCFROProspectiveCommitment": true,
+    "documentIsOriginal2023SignedBoardAction": true,
+    "sourceStateAgencyHostVerified": true
+  },
+  "supplementaryOriginalBoardEnforcementIndex": {
+    "url": "https://register.cfb.mn.gov/citizen-resources/the-board/board-decisions/enforcement-actions/date/",
+    "listedCase": "Committee to Elect John Hoffman",
+    "indexedInitiationOn": "2023-06-07",
+    "indexedResolutionOn": "2023-07-06",
+    "notAnExactReportVersionPublicationLog": true
+  },
+  "originalCorrectedSourceRun": {
+    "url": "https://github.com/killjoy00/votepredict/actions/runs/38176754987",
+    "runId": 38176754987,
+    "sourceRunHead": "8db6ec587b87039341afd05ee5fb9c27c8edc729",
+    "artifactId": 11716520181,
+    "artifactZipSha256": "e1277e7136e1be3312328ce8e1fc7818347c35ac2b5b1d88841aca6d49f896fb",
+    "originalPdfSHAandByteCountAfterByteBufferFixVerified": true,
+    "result": "success"
+  },
+  "committeeHistoryLimitations": {
+    "signedBoardAction2023NamingPrincipalCommittee": true,
+    "originalInitialRegistrationDate": null,
+    "actualRegisteredStateOnEach2023or2024Date": null,
+    "specificVoluntaryOrAdministrativeTerminationDocument": null,
+    "legallyOwed2023YearEndReport": null,
+    "legallyOwed2024YearEndReport": null,
+    "mappingOf2021or2022BoardAmendmentMentionsToViewerVersion": null,
+    "exactOriginalReportVersionHistoricalPublicBy": null,
+    "exactVersionHistoricalPublicByAuthenticated2023and2024CfbCohort": 0,
+    "existing71Version68AuthenticTwoHoldsOneAliasUnchanged": true
+  },
+  "safeguards": {
+    "noRawPDFInGit": true,
+    "noDonorNamesContributionRowsOrContacts": true,
+    "noProductionDatabaseWrites": true,
+    "noModelsServingForecastSchedulersOr2027": true,
+    "keepIssue864Open": true
+  }
+}
