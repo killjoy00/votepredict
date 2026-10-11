@@ -35,8 +35,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p artifacts
+          # Artifact download endpoint requires GitHub's JSON API Accept header
+          # despite returning a ZIP redirect. gh api follows it to original bytes.
           gh api repos/${{ github.repository }}/actions/artifacts/11683227803/zip \
-            -H 'Accept: application/octet-stream' > artifacts/cfb-original-396.zip
+            > artifacts/cfb-original-396.zip
           echo '5516f3863ae9e5122df923b2d0f7f1fc88b5a5af3ddcb6dba2d3160570844914  artifacts/cfb-original-396.zip' | sha256sum -c
           unzip -p artifacts/cfb-original-396.zip \
             cfb-2021-24-senate-historical-viewer-reference-counts.json \
