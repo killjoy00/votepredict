@@ -8,6 +8,7 @@ on:
       - src/evidence/cfb-2024-eight-unobserved-verified-senator-viewers.ts
       - scripts/capture-cfb-2024-eight-previously-unobserved-senator-viewers.ts
       - tests/cfb-2024-eight-unobserved-verified-senator-viewers.test.ts
+      - docs/evaluation/source-proof/cfb-2024-eight-verified-senators-viewer-gap-source-checkpoint.json
 
 permissions:
   contents: read
