@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "cfb-2025-sd29-seven-amendment-version-parent-alias-source-checkpoint-v1",
+  "issue": 864,
+  "date": "2026-10-11",
+  "actualSenator": "Michael Holmstrom Jr",
+  "committeeRegistration": "19229",
+  "senateDistrict": 29,
+  "reportYear": 2025,
+  "permanentPdfLedger": {
+    "path": "docs/evaluation/source-proof/cfb-2025-served-sd29-seven-amended-version-pdfs.psv",
+    "rows": 7,
+    "bytes": 1984,
+    "gitBlobSha": "bb9ddf37855adfb79d9f71d2a508f39228866e12"
+  },
+  "originalPinnedViewer": {
+    "url": "https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/19229/2026/",
+    "apiBodySha256": "584b5ed98bca7843b6eba51b378328ef41d209aedbbd6d294b5b7526078e5b50"
+  },
+  "independentOriginalSourceRuns": [
+    {
+      "runId": 38157879242,
+      "headBeforeAliasReview": "f55d13838fd05e06bc39d8da9ad42b163f9cdeb7",
+      "strictAllDistinctGate": "failed_correctly",
+      "artifactId": 11708986852,
+      "artifactZipSha256": "4e57ba433490fda9f206d340c1d5601f90d7c0d28ab581e187a87b52b329d719",
+      "jsonSha256": "0fc15f7b7cbe51b1f348aceb31abaf9fe733b472fa783e665f74bc70e592f474",
+      "jsonBytes": 14514,
+      "cfbApiRecheckedAt": "2026-10-11T17:01:49.965Z"
+    },
+    {
+      "runId": 38158097963,
+      "headWithExactAliasReview": "959e840e8460ddaa99df80953c3de7f1fc2dee05",
+      "sourceOutcome": "success",
+      "artifactId": 11708797494,
+      "artifactZipSha256": "5ee1bfd65e2c0760175d08384d50f66a2027a10ae727823e87e8904ac6c2820e",
+      "jsonSha256": "92479dc4ead04c525d3a0952356ba27cc4ef566854d2ce9423f30107b22717d6",
+      "jsonBytes": 14892,
+      "cfbApiRecheckedAt": "2026-10-11T17:05:03.370Z"
+    }
+  ],
+  "comparison": {
+    "all7ExactOfficialViewerVersionIdsIdentical": true,
+    "all7PdfBinarySha256AndByteLengthsIdenticalAcrossRuns": true,
+    "all7CoverageAndBoardReceiptDatesIdentical": true,
+    "sourceFetchFailures": 0,
+    "firstPageDocumentIdentityHolds": 0,
+    "officialViewerReferenceCount": 7,
+    "uniqueOriginalSourceAmendmentBinaries": 6,
+    "documentedOriginalParentBinaryAliases": 1,
+    "distinctAmendmentPdfsNewlyAuthenticated": 6
+  },
+  "alias": {
+    "amendmentReference": "19229:25:pcc:YE:0:1",
+    "authenticatedOriginalParent": "19229:25:pcc:YE:0:0",
+    "bothSourcePdfSha256": "115af8ec4d2fcf19323ae88cc2e858f1d1cda00c03e9ca994bf31e2070335289",
+    "bothPdfBytes": 18020,
+    "boardReceived": "2026-02-01",
+    "periodStart": "2025-11-20",
+    "periodEnd": "2025-12-31",
+    "cfbReasonUnknown": true,
+    "notSeventhDistinctPdf": true
+  },
+  "safeguards": {
+    "noOriginalReportTextOrDonors": true,
+    "noNonServingCandidates": true,
+    "noProductionWritesOrReads": true,
+    "statutoryLegalDutyDenominator": null,
+    "historicallyPublicByProvenCount": 0,
+    "predictionEligible": false,
+    "no2027OrScheduler": true,
+    "keepIssue864Open": true
+  }
+}
