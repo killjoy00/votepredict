@@ -1,0 +1,34 @@
+name: Original 2024 MN Senate seating chart 22 CFB real senator source audit
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2024-original-senate-seating-source.yml
+      - src/evidence/cfb-2024-original-senate-seating-source.ts
+      - scripts/audit-cfb-2024-original-senate-seating-source.ts
+      - tests/cfb-2024-original-senate-seating-source.test.ts
+      - docs/evaluation/source-proof/cfb-2024-original-senate-seating-chart-22-member-two-section-crossyear-proof.psv
+      - docs/evaluation/source-proof/cfb-2024-original-senate-22-two-section-2024-service-checkpoint.json
+      - docs/evaluation/cfb-2024-senate-original-seating-22-serving-finance-identity-crosscheck.md
+permissions:
+  contents: read
+jobs:
+  original-2024-senate-seating-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/cfb-2024-original-senate-seating-source.test.ts
+      - run: node --import tsx scripts/audit-cfb-2024-original-senate-seating-source.ts --output artifacts/cfb-2024-22-senator-seating-source-audit.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-2024-senate-seating-22-member-source-metadata
+          path: artifacts/cfb-2024-22-senator-seating-source-audit.json
+          if-no-files-found: warn
+          retention-days: 30

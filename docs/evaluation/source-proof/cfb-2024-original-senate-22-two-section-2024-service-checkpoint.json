@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "cfb-2024-original-senate-seating-22-independently-verified-2022-23-real-senators-v1",
+  "issue": 864,
+  "sourceResearchDate": "2026-10-11",
+  "originalDocument": {
+    "url": "https://www.senate.mn/members/2023-2024/info/seating-chart.pdf",
+    "owner": "Minnesota Senate Office of the Secretary of the Senate",
+    "originalPdfSha256": "06e9194a23407ac2f47f5fb141150037558befb2f8004da3f4940e8189aedc4c",
+    "originalPdfBytes": 4444913,
+    "documentPrintedTitle": "Seating Arrangement 2024",
+    "memberListSection": "Senate Members",
+    "seatingMapComponentPresent": true,
+    "sourceAll22MatchingNamePlusDistrictInBothSections": true,
+    "sourceDocumentConflictingMemberIdentities": 0
+  },
+  "exactMemberLedger": {
+    "path": "docs/evaluation/source-proof/cfb-2024-original-senate-seating-chart-22-member-two-section-crossyear-proof.psv",
+    "rows": 22,
+    "bytes": 6708,
+    "gitBlobSha": "cb22d229df35a967a81c6eff6e0724e68f1c8999",
+    "columns": [
+      "cfbPrincipalCommitteeReg",
+      "source2022And2023Senator",
+      "2022SenateDistrict",
+      "sos2023RosterPdfSHA",
+      "originalSenate2024ChartPdfSHA",
+      "original2024PdfBytes",
+      "printed2024MemberListMatch",
+      "2024SeatMapCaptionMatch",
+      "2024RosterSourceStatus",
+      "arbitrary2024VoteDayService",
+      "2024SpecificCFBLegallyOwed",
+      "versionHistoricalPublicBy",
+      "sourceOriginalGovernmentPdfUrl"
+    ]
+  },
+  "prior2023SecretaryOfStateSourceLedger": {
+    "path": "docs/evaluation/source-proof/cfb-2023-original-sos-22-real-senators-roster-independent-service-proof.psv",
+    "gitBlobSha": "d50a7049237a009820051cbb9a74ff185cc1115b",
+    "rows": 22
+  },
+  "officialSourceAcquisitions": [
+    {
+      "runId": 38171863201,
+      "artifactId": 11714301324,
+      "headAtRun": "0a28bba79bb0677bae34ffd2938b543957af579c",
+      "result": "success",
+      "artifactZipSha256": "ddb15988f5f7ae1af2bd90b022e6c4054f3150b1f0852fef09ae51e6456668b3",
+      "artifactZipBytes": 2057,
+      "artifactJSONSha256": "aebc85f83b1614f8b769530781d9750dbd373d9af6818cb655a9903c18e8ae51",
+      "artifactJSONBytes": 11225,
+      "verifiedRosterTableMemberMatches": 22,
+      "verifiedMapSeatCaptionMatches": 22,
+      "sourceIdentityConflicts": 0,
+      "sourceHolds": 0
+    },
+    {
+      "runId": 38172313564,
+      "artifactId": 11714341886,
+      "headAtRun": "3e1f6e24e0e6e17f62aa8a2c1be41e2cf0013c82",
+      "result": "success",
+      "artifactZipSha256": "0b42abd3622f30863833a61f7bb39545adc300765fcb5484cf09135bbe732d81",
+      "artifactZipBytes": 2057,
+      "artifactJSONSha256": "be8e7d93102e6498c1540f0fe0e7d055e2296295998d5bd3a61cf99bc8742ecc",
+      "artifactJSONBytes": 11225,
+      "verifiedRosterTableMemberMatches": 22,
+      "verifiedMapSeatCaptionMatches": 22,
+      "sourceIdentityConflicts": 0,
+      "sourceHolds": 0
+    }
+  ],
+  "rejectedExploratoryParserRuns": [
+    {
+      "runId": 38169753837,
+      "reason": "original PDF seat-map before member table, no space after district row numbers; old extraction assumed opposite layout; source authentic, classifier rejected"
+    },
+    {
+      "runId": 38169922973,
+      "reason": "member table 22/22 matched, but seat caption text partly after member table heading; map incomplete 14/22; source authentic, classifier rejected"
+    }
+  ],
+  "scope": {
+    "memberListReal2024SenatorsMatched": 22,
+    "seatMap2024SenatorsMatched": 22,
+    "exactArbitrary2024VoteDayServiceProvenCount": 0,
+    "originalCFB2023And2024ReportVersionHistoricalPublicByProven": 0,
+    "committeeLegallyOwedOriginalYearendDenominator": null,
+    "twoMatchingSectionsOfOneOriginalGovernmentDocumentNotIndependentDocuments": true
+  },
+  "safeguards": {
+    "originalPublicGovernmentEvidenceOnly": true,
+    "noRawGovernmentPDFOrFullExtractedTextStored": true,
+    "noStaffPhoneAddressOrContactData": true,
+    "noDonorFinancialTransactionRows": true,
+    "noProductionDatabaseReadWrite": true,
+    "noModelForecastServingSchedulerOr2027Changes": true,
+    "keepIssue864Open": true
+  },
+  "crossIndependentOriginalPdfRunConfirmation": {
+    "identicalPdfSHA256AndBytes": true,
+    "all22TableMatchesIdentical": true,
+    "all22SeatMapMatchesIdentical": true,
+    "noSourceConflictOrMissingPersonBothRuns": true,
+    "noSourceTerminationsOrLegallyOwedDutyEstablished": true,
+    "noHistoricalCFBPublicByProven": true
+  }
+}
