@@ -38,11 +38,11 @@ function main(){
  const input={
   lrlHtml:readOriginal(official,9000,5_000_000),
   lrlReceipt:JSON.parse(readOriginal(receipt,100,3_000_000).toString('utf8'))
-   as Parameters<typeof auditPinned68SenateOriginalCampaignPageReceipts>[0]['lrlReceipt'],
+,
   original2022:JSON.parse(readOriginal(join(year22,'source-acquisition-manifest.json'),100,4_000_000).toString('utf8'))
-   as Parameters<typeof auditPinned68SenateOriginalCampaignPageReceipts>[0]['original2022'],
+,
   original2020:JSON.parse(readOriginal(join(year20,'acquisition-manifest.json'),100,4_000_000).toString('utf8'))
-   as Parameters<typeof auditPinned68SenateOriginalCampaignPageReceipts>[0]['original2020'],
+,
   html2022:{} as Record<string,Uint8Array>,
   html2020:{} as Record<string,Uint8Array>,
  };
