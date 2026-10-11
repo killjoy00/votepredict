@@ -22,10 +22,51 @@
     "ambiguousPublisherDayVersusPassageEvent": "2023 driver licensing Reformer current page displays Feb 21 at 8 pm yet narrates a Senate passage early Wednesday Feb 22; official Revisor groups passage under Feb 21. Neither source establishes a retrospective model public-by or exact article revision time.",
     "currentPublisherRedirectObservation": "A public /briefs/ URL was observed currently resolving to a /2024/02/12/ alias on 2026-10-10. Current redirect does not authenticate a historical Wayback redirect or archived original byte equivalence.",
     "currentPublisherDisplayedClockWithoutVerifiedTimezone": "Publisher page displays a local clock but its historical timezone/edit time and initial public-by remain independently unverified.",
-    "currentMprEpisodeAudioInterview": "The currently served 2024-02-19 MPR /episode/ page includes audio and speaker-labeled Senator Grant Hauschild transcript, outside the configured /story/202 seed prefix. Current audio/transcript is not a 2024 archived original, time zone and first-public-by are unproved, and no private source row or verified original-media quote is established."
+    "currentMprEpisodeAudioInterview": "The currently served 2024-02-19 MPR /episode/ page includes audio and speaker-labeled Senator Grant Hauschild transcript, outside the configured /story/202 seed prefix. Current audio/transcript is not a 2024 archived original, time zone and first-public-by are unproved, and no private source row or verified original-media quote is established.",
+    "currentFirstPartyAudioAndTranscriptTriage": "MPR currently serves direct audio interviews for actual serving Minnesota senators in sampled 2021-25 publisher-date years. 2021 /story/ Benson audio has no visible transcript on the inspected current page; 2022 /episode/ Benson/Kunesh report names interviewees but full original speaker transcript was not independently inspected; selected 2023-25 MPR pages expose current speaker labels. None establishes original Wayback body, original audio bytes, historical transcript version, private DB row or quote/stance eligibility.",
+    "officialSenateHistoryCrosscheck": "Official LRL legislator history supports only actual Senate service on the publisher-displayed calendar day. It does NOT authenticate the page's initial publication timestamp, first public-by, a historical Wayback capture, or a reviewed source quote."
   },
   "stateSenateOnly": true,
   "selectedNonExhaustiveArticleLeads": [
+    {
+      "id": "mpr-2021-benson-vaccine-on-air",
+      "publisher": "MPR News",
+      "seedId": "mpr-news-story-archive",
+      "livePageUrl": "https://www.mprnews.org/story/2021/01/11/state-sen-michelle-benson-on-vaccine-rollout",
+      "publicationDayDisplayedOnPublicPage": "2021-01-11",
+      "searchTopicOnly": "COVID-19 vaccine rollout oversight by Senate Health and Human Services chair",
+      "namedSenatorLeadsForManualReview": [
+        "Michelle Benson"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true,
+      "sourceResearchCheckedOn": "2026-10-10",
+      "verifiedServingSenatorHistorySources": [
+        {
+          "name": "Michelle Benson",
+          "officialLrlUrl": "https://www.lrl.mn.gov/legdb/fulldetail?id=15322",
+          "serviceOnPublisherDisplayedDay": true
+        }
+      ],
+      "currentPublisherDisplayedClockWithoutVerifiedTimezone": "15:34",
+      "currentPublisherClockTimezoneVerified": false,
+      "firstPartyAudioInterviewPublisherDescriptionVerified": true,
+      "currentTextAndSpeakerProofKind": "audio_interview_page_no_transcript_observed",
+      "currentPageDirectSpeechShortResearchExcerpt": null,
+      "originalSpeakerAudioAndCurrentTranscriptMatched": false,
+      "originalHistoricalAudioAndTranscriptAvailabilityVerified": false,
+      "archivedPublisherVersionAndDateProofVerified": false,
+      "historicalOriginalHumanQuoteReviewed": false,
+      "wasCurrentPageTextPresentBeforeAnyHistoricalVoteCutoffVerified": false,
+      "noAutomaticallyInferredSenatorStance": true
+    },
     {
       "id": "mn-reformer-2021-rent-control",
       "publisher": "Minnesota Reformer",
@@ -46,6 +87,26 @@
       "directQuoteHumanVerified": false,
       "issueStanceInferred": false,
       "urlInsideCurrentSeedPrefix": false
+    },
+    {
+      "id": "mn-reformer-2021-family-preservation",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2021/03/15/theyre-going-to-take-the-baby-minnesota-foster-care-barriers-separate-families-advocates-say/",
+      "publicationDayDisplayedOnPublicPage": "2021-03-15",
+      "searchTopicOnly": "foster-care and family preservation",
+      "namedSenatorLeadsForManualReview": [
+        "Bobby Joe Champion"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true
     },
     {
       "id": "mn-reformer-2021-education-finance",
@@ -90,86 +151,6 @@
       "urlInsideCurrentSeedPrefix": true
     },
     {
-      "id": "mn-reformer-2021-family-preservation",
-      "publisher": "Minnesota Reformer",
-      "seedId": "minnesota-reformer-article-archive",
-      "livePageUrl": "https://minnesotareformer.com/2021/03/15/theyre-going-to-take-the-baby-minnesota-foster-care-barriers-separate-families-advocates-say/",
-      "publicationDayDisplayedOnPublicPage": "2021-03-15",
-      "searchTopicOnly": "foster-care and family preservation",
-      "namedSenatorLeadsForManualReview": [
-        "Bobby Joe Champion"
-      ],
-      "evidenceDisposition": "public_article_discovery_only",
-      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
-      "originalArchivedHttpBytesHashVerified": false,
-      "archiveCapturePublicByVerified": false,
-      "historicalForecastEligibilityProven": false,
-      "membershipOnPublicationDateVerified": false,
-      "directQuoteHumanVerified": false,
-      "issueStanceInferred": false,
-      "urlInsideCurrentSeedPrefix": true
-    },
-    {
-      "id": "mn-reformer-2022-tax-package",
-      "publisher": "Minnesota Reformer",
-      "seedId": "minnesota-reformer-article-archive",
-      "livePageUrl": "https://minnesotareformer.com/2022/04/07/senate-approves-8-4-billion-in-tax-cuts-and-adjourns-for-easter-break/",
-      "publicationDayDisplayedOnPublicPage": "2022-04-07",
-      "searchTopicOnly": "tax policy and Social Security",
-      "namedSenatorLeadsForManualReview": [
-        "Jeremy Miller"
-      ],
-      "evidenceDisposition": "public_article_discovery_only",
-      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
-      "originalArchivedHttpBytesHashVerified": false,
-      "archiveCapturePublicByVerified": false,
-      "historicalForecastEligibilityProven": false,
-      "membershipOnPublicationDateVerified": false,
-      "directQuoteHumanVerified": false,
-      "issueStanceInferred": false,
-      "urlInsideCurrentSeedPrefix": true
-    },
-    {
-      "id": "mn-reformer-2022-gun-proposals",
-      "publisher": "Minnesota Reformer",
-      "seedId": "minnesota-reformer-article-archive",
-      "livePageUrl": "https://minnesotareformer.com/2022/05/26/after-uvalde-texas-shooting-renewed-calls-for-gun-control-legislation-in-minnesota/",
-      "publicationDayDisplayedOnPublicPage": "2022-05-26",
-      "searchTopicOnly": "firearm policy",
-      "namedSenatorLeadsForManualReview": [
-        "Patricia Torres Ray"
-      ],
-      "evidenceDisposition": "public_article_discovery_only",
-      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
-      "originalArchivedHttpBytesHashVerified": false,
-      "archiveCapturePublicByVerified": false,
-      "historicalForecastEligibilityProven": false,
-      "membershipOnPublicationDateVerified": false,
-      "directQuoteHumanVerified": false,
-      "issueStanceInferred": false,
-      "urlInsideCurrentSeedPrefix": true
-    },
-    {
-      "id": "mn-reformer-2022-secular-caucus",
-      "publisher": "Minnesota Reformer",
-      "seedId": "minnesota-reformer-article-archive",
-      "livePageUrl": "https://minnesotareformer.com/2022/10/05/minnesota-legislators-create-secular-caucus-to-counter-christian-nationalism/",
-      "publicationDayDisplayedOnPublicPage": "2022-10-05",
-      "searchTopicOnly": "church-state and civil rights",
-      "namedSenatorLeadsForManualReview": [
-        "John Marty"
-      ],
-      "evidenceDisposition": "public_article_discovery_only",
-      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
-      "originalArchivedHttpBytesHashVerified": false,
-      "archiveCapturePublicByVerified": false,
-      "historicalForecastEligibilityProven": false,
-      "membershipOnPublicationDateVerified": false,
-      "directQuoteHumanVerified": false,
-      "issueStanceInferred": false,
-      "urlInsideCurrentSeedPrefix": true
-    },
-    {
       "id": "mn-reformer-2022-gop-agenda-brief",
       "publisher": "Minnesota Reformer",
       "seedId": "minnesota-reformer-article-archive",
@@ -190,6 +171,51 @@
       "issueStanceInferred": false,
       "urlInsideCurrentSeedPrefix": false,
       "sourceResearchCheckedOn": "2026-10-10"
+    },
+    {
+      "id": "mpr-2022-benson-kunesh-parental-curriculum",
+      "publisher": "MPR News",
+      "seedId": "mpr-news-story-archive",
+      "livePageUrl": "https://www.mprnews.org/episode/2022/02/23/measures-give-parents-more-control-over-instruction-await-votes",
+      "publicationDayDisplayedOnPublicPage": "2022-02-23",
+      "searchTopicOnly": "Senate Parents Bill of Rights parental curriculum and syllabus review interviews",
+      "namedSenatorLeadsForManualReview": [
+        "Michelle Benson",
+        "Mary Kunesh"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": false,
+      "sourceResearchCheckedOn": "2026-10-10",
+      "verifiedServingSenatorHistorySources": [
+        {
+          "name": "Michelle Benson",
+          "officialLrlUrl": "https://www.lrl.mn.gov/legdb/fulldetail?id=15322",
+          "serviceOnPublisherDisplayedDay": true
+        },
+        {
+          "name": "Mary Kunesh",
+          "officialLrlUrl": "https://www.lrl.mn.gov/legdb/fulldetail?id=15466",
+          "serviceOnPublisherDisplayedDay": true
+        }
+      ],
+      "currentPublisherDisplayedClockWithoutVerifiedTimezone": "15:14",
+      "currentPublisherClockTimezoneVerified": false,
+      "firstPartyAudioInterviewPublisherDescriptionVerified": true,
+      "currentTextAndSpeakerProofKind": "publisher_description_confirmed_interviews_transcript_not_inspected",
+      "currentPageDirectSpeechShortResearchExcerpt": null,
+      "originalSpeakerAudioAndCurrentTranscriptMatched": false,
+      "originalHistoricalAudioAndTranscriptAvailabilityVerified": false,
+      "archivedPublisherVersionAndDateProofVerified": false,
+      "historicalOriginalHumanQuoteReviewed": false,
+      "wasCurrentPageTextPresentBeforeAnyHistoricalVoteCutoffVerified": false,
+      "noAutomaticallyInferredSenatorStance": true
     },
     {
       "id": "mn-reformer-2022-dfl-public-safety-brief",
@@ -240,6 +266,26 @@
       "sourceResearchCheckedOn": "2026-10-10"
     },
     {
+      "id": "mn-reformer-2022-tax-package",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2022/04/07/senate-approves-8-4-billion-in-tax-cuts-and-adjourns-for-easter-break/",
+      "publicationDayDisplayedOnPublicPage": "2022-04-07",
+      "searchTopicOnly": "tax policy and Social Security",
+      "namedSenatorLeadsForManualReview": [
+        "Jeremy Miller"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true
+    },
+    {
       "id": "mn-reformer-2022-crime-bill-brief",
       "publisher": "Minnesota Reformer",
       "seedId": "minnesota-reformer-article-archive",
@@ -263,6 +309,46 @@
       "sourceResearchCheckedOn": "2026-10-10"
     },
     {
+      "id": "mn-reformer-2022-gun-proposals",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2022/05/26/after-uvalde-texas-shooting-renewed-calls-for-gun-control-legislation-in-minnesota/",
+      "publicationDayDisplayedOnPublicPage": "2022-05-26",
+      "searchTopicOnly": "firearm policy",
+      "namedSenatorLeadsForManualReview": [
+        "Patricia Torres Ray"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true
+    },
+    {
+      "id": "mn-reformer-2022-secular-caucus",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2022/10/05/minnesota-legislators-create-secular-caucus-to-counter-christian-nationalism/",
+      "publicationDayDisplayedOnPublicPage": "2022-10-05",
+      "searchTopicOnly": "church-state and civil rights",
+      "namedSenatorLeadsForManualReview": [
+        "John Marty"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true
+    },
+    {
       "id": "mn-reformer-2023-clean-energy",
       "publisher": "Minnesota Reformer",
       "seedId": "minnesota-reformer-article-archive",
@@ -282,6 +368,45 @@
       "directQuoteHumanVerified": false,
       "issueStanceInferred": false,
       "urlInsideCurrentSeedPrefix": false
+    },
+    {
+      "id": "mpr-2023-kunesh-native-family-preservation",
+      "publisher": "MPR News",
+      "seedId": "mpr-news-story-archive",
+      "livePageUrl": "https://www.mprnews.org/episode/2023/02/07/new-bill-would-keep-native-families-together-proponents-say",
+      "publicationDayDisplayedOnPublicPage": "2023-02-07",
+      "searchTopicOnly": "Senate Indian Family Preservation Act legal safeguards interview",
+      "namedSenatorLeadsForManualReview": [
+        "Mary Kunesh"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": false,
+      "sourceResearchCheckedOn": "2026-10-10",
+      "verifiedServingSenatorHistorySources": [
+        {
+          "name": "Mary Kunesh",
+          "officialLrlUrl": "https://www.lrl.mn.gov/legdb/fulldetail?id=15466",
+          "serviceOnPublisherDisplayedDay": true
+        }
+      ],
+      "currentPublisherDisplayedClockWithoutVerifiedTimezone": "11:49",
+      "currentPublisherClockTimezoneVerified": false,
+      "firstPartyAudioInterviewPublisherDescriptionVerified": true,
+      "currentTextAndSpeakerProofKind": "speaker_labeled_current_page_transcript",
+      "currentPageDirectSpeechShortResearchExcerpt": "We want to make sure this is codified in our state legislature.",
+      "originalSpeakerAudioAndCurrentTranscriptMatched": false,
+      "originalHistoricalAudioAndTranscriptAvailabilityVerified": false,
+      "archivedPublisherVersionAndDateProofVerified": false,
+      "historicalOriginalHumanQuoteReviewed": false,
+      "wasCurrentPageTextPresentBeforeAnyHistoricalVoteCutoffVerified": false,
+      "noAutomaticallyInferredSenatorStance": true
     },
     {
       "id": "mn-reformer-2023-driver-licenses",
@@ -339,27 +464,6 @@
       "searchTopicOnly": "reproductive health",
       "namedSenatorLeadsForManualReview": [
         "Kelly Morrison"
-      ],
-      "evidenceDisposition": "public_article_discovery_only",
-      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
-      "originalArchivedHttpBytesHashVerified": false,
-      "archiveCapturePublicByVerified": false,
-      "historicalForecastEligibilityProven": false,
-      "membershipOnPublicationDateVerified": false,
-      "directQuoteHumanVerified": false,
-      "issueStanceInferred": false,
-      "urlInsideCurrentSeedPrefix": true
-    },
-    {
-      "id": "mn-reformer-2024-junk-fees",
-      "publisher": "Minnesota Reformer",
-      "seedId": "minnesota-reformer-article-archive",
-      "livePageUrl": "https://minnesotareformer.com/2024/05/01/senate-approves-ban-on-junk-fees/",
-      "publicationDayDisplayedOnPublicPage": "2024-05-01",
-      "searchTopicOnly": "consumer fees",
-      "namedSenatorLeadsForManualReview": [
-        "Lindsey Port",
-        "Eric Pratt"
       ],
       "evidenceDisposition": "public_article_discovery_only",
       "sourceSeenInVotePredictExport": "unknown_not_reconciled",
@@ -487,6 +591,66 @@
       "productionSeedChanged": false
     },
     {
+      "id": "mn-reformer-2024-junk-fees",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2024/05/01/senate-approves-ban-on-junk-fees/",
+      "publicationDayDisplayedOnPublicPage": "2024-05-01",
+      "searchTopicOnly": "consumer fees",
+      "namedSenatorLeadsForManualReview": [
+        "Lindsey Port",
+        "Eric Pratt"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true
+    },
+    {
+      "id": "mpr-2024-kunesh-charter-school-oversight",
+      "publisher": "MPR News",
+      "seedId": "mpr-news-story-archive",
+      "livePageUrl": "https://www.mprnews.org/episode/2024/10/22/a-21-million-deficit-at-step-academy-make-it-the-largest-charter-school-to-close-in-history",
+      "publicationDayDisplayedOnPublicPage": "2024-10-22",
+      "searchTopicOnly": "Senate education finance chair discussing STEP Academy charter-school oversight and accountability",
+      "namedSenatorLeadsForManualReview": [
+        "Mary Kunesh"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": false,
+      "sourceResearchCheckedOn": "2026-10-10",
+      "verifiedServingSenatorHistorySources": [
+        {
+          "name": "Mary Kunesh",
+          "officialLrlUrl": "https://www.lrl.mn.gov/legdb/fulldetail?id=15466",
+          "serviceOnPublisherDisplayedDay": true
+        }
+      ],
+      "currentPublisherDisplayedClockWithoutVerifiedTimezone": "12:46",
+      "currentPublisherClockTimezoneVerified": false,
+      "firstPartyAudioInterviewPublisherDescriptionVerified": true,
+      "currentTextAndSpeakerProofKind": "speaker_labeled_current_page_transcript",
+      "currentPageDirectSpeechShortResearchExcerpt": "we need to really look at probably some kind of reform",
+      "originalSpeakerAudioAndCurrentTranscriptMatched": false,
+      "originalHistoricalAudioAndTranscriptAvailabilityVerified": false,
+      "archivedPublisherVersionAndDateProofVerified": false,
+      "historicalOriginalHumanQuoteReviewed": false,
+      "wasCurrentPageTextPresentBeforeAnyHistoricalVoteCutoffVerified": false,
+      "noAutomaticallyInferredSenatorStance": true
+    },
+    {
       "id": "mn-reformer-2025-social-media-tax",
       "publisher": "Minnesota Reformer",
       "seedId": "minnesota-reformer-article-archive",
@@ -508,16 +672,14 @@
       "urlInsideCurrentSeedPrefix": true
     },
     {
-      "id": "mpr-2025-minnesotacare-budget",
+      "id": "mpr-2025-pha-hmong-lao-veterans",
       "publisher": "MPR News",
       "seedId": "mpr-news-story-archive",
-      "livePageUrl": "https://www.mprnews.org/story/2025/06/10/minnesota-budget-is-done-immigrant-health-coverage-cut",
-      "publicationDayDisplayedOnPublicPage": "2025-06-10",
-      "searchTopicOnly": "MinnesotaCare budget changes",
+      "livePageUrl": "https://www.mprnews.org/episode/2025/04/24/bill-granting-benefits-to-hmong-lao-veterans-passes-minnesota-senate",
+      "publicationDayDisplayedOnPublicPage": "2025-04-24",
+      "searchTopicOnly": "Senator Susan Pha interviewed about Senate Hmong and Lao veterans benefits legislation",
       "namedSenatorLeadsForManualReview": [
-        "Jordan Rasmusson",
-        "Erin Maye Quade",
-        "Bobby Joe Champion"
+        "Susan Pha"
       ],
       "evidenceDisposition": "public_article_discovery_only",
       "sourceSeenInVotePredictExport": "unknown_not_reconciled",
@@ -527,7 +689,26 @@
       "membershipOnPublicationDateVerified": false,
       "directQuoteHumanVerified": false,
       "issueStanceInferred": false,
-      "urlInsideCurrentSeedPrefix": true
+      "urlInsideCurrentSeedPrefix": false,
+      "sourceResearchCheckedOn": "2026-10-10",
+      "verifiedServingSenatorHistorySources": [
+        {
+          "name": "Susan Pha",
+          "officialLrlUrl": "https://www.lrl.mn.gov/legdb/fulldetail?id=15583",
+          "serviceOnPublisherDisplayedDay": true
+        }
+      ],
+      "currentPublisherDisplayedClockWithoutVerifiedTimezone": "13:00",
+      "currentPublisherClockTimezoneVerified": false,
+      "firstPartyAudioInterviewPublisherDescriptionVerified": true,
+      "currentTextAndSpeakerProofKind": "speaker_labeled_current_page_transcript",
+      "currentPageDirectSpeechShortResearchExcerpt": "Today, most of our veterans are in their 70s and 80s.",
+      "originalSpeakerAudioAndCurrentTranscriptMatched": false,
+      "originalHistoricalAudioAndTranscriptAvailabilityVerified": false,
+      "archivedPublisherVersionAndDateProofVerified": false,
+      "historicalOriginalHumanQuoteReviewed": false,
+      "wasCurrentPageTextPresentBeforeAnyHistoricalVoteCutoffVerified": false,
+      "noAutomaticallyInferredSenatorStance": true
     },
     {
       "id": "mn-reformer-2025-special-election-brief",
@@ -598,6 +779,67 @@
       "issueStanceInferred": false,
       "urlInsideCurrentSeedPrefix": true,
       "sourceResearchCheckedOn": "2026-10-10"
+    },
+    {
+      "id": "mpr-2025-minnesotacare-budget",
+      "publisher": "MPR News",
+      "seedId": "mpr-news-story-archive",
+      "livePageUrl": "https://www.mprnews.org/story/2025/06/10/minnesota-budget-is-done-immigrant-health-coverage-cut",
+      "publicationDayDisplayedOnPublicPage": "2025-06-10",
+      "searchTopicOnly": "MinnesotaCare budget changes",
+      "namedSenatorLeadsForManualReview": [
+        "Jordan Rasmusson",
+        "Erin Maye Quade",
+        "Bobby Joe Champion"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true
+    },
+    {
+      "id": "mpr-2025-coleman-civic-violence",
+      "publisher": "MPR News",
+      "seedId": "mpr-news-story-archive",
+      "livePageUrl": "https://www.mprnews.org/episode/2025/09/11/we-cannot-let-evil-win-minnesota-sen-julia-coleman-on-uptick-in-political-violence",
+      "publicationDayDisplayedOnPublicPage": "2025-09-11",
+      "searchTopicOnly": "Senator Julia Coleman directly interviewed about political violence and public discourse",
+      "namedSenatorLeadsForManualReview": [
+        "Julia Coleman"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": false,
+      "sourceResearchCheckedOn": "2026-10-10",
+      "verifiedServingSenatorHistorySources": [
+        {
+          "name": "Julia Coleman",
+          "officialLrlUrl": "https://www.lrl.mn.gov/legdb/fulldetail?id=15556",
+          "serviceOnPublisherDisplayedDay": true
+        }
+      ],
+      "currentPublisherDisplayedClockWithoutVerifiedTimezone": "12:35",
+      "currentPublisherClockTimezoneVerified": false,
+      "firstPartyAudioInterviewPublisherDescriptionVerified": true,
+      "currentTextAndSpeakerProofKind": "speaker_labeled_current_page_transcript",
+      "currentPageDirectSpeechShortResearchExcerpt": "Thank you for having me.",
+      "originalSpeakerAudioAndCurrentTranscriptMatched": false,
+      "originalHistoricalAudioAndTranscriptAvailabilityVerified": false,
+      "archivedPublisherVersionAndDateProofVerified": false,
+      "historicalOriginalHumanQuoteReviewed": false,
+      "wasCurrentPageTextPresentBeforeAnyHistoricalVoteCutoffVerified": false,
+      "noAutomaticallyInferredSenatorStance": true
     }
   ],
   "sourceUniverseCompletenessKnown": false,
@@ -608,7 +850,7 @@
       "mpr-news-story-archive"
     ],
     "calculatedAgainstCheckedInSeedUrls": true,
-    "outsideSeedPrefixLeadCount": 11,
-    "criticalLimitation": "11 of 25 curated public URL leads fall outside the existing checked-in seed URL prefixes: ten Minnesota Reformer /briefs/ URLs and one MPR News /episode/ direct senator audio-interview transcript. Four Reformer brief-versus-dated path alias pairs are only candidates; no authenticated historical archived bytes, first-public-by, private source equality or publisher-wide denominator. Coverage beyond the selected sample is unknown."
+    "outsideSeedPrefixLeadCount": 16,
+    "criticalLimitation": "16 of 31 selected public URLs are outside the current configured publisher seeds: ten Minnesota Reformer /briefs/ links and six MPR /episode/ direct-interview candidates (including the earlier February 2024 Hauschild interview). A separate 2021 MPR /story/ audio interview passes prefix but fails the topical URL-priority gate. Four Reformer dated-versus-brief alias pairs remain unverified. These bounded public URL lead counts are not authenticated original articles, private source deficits, publisher-wide denominators, or historical public-by proof; statewide completeness is unknown."
   }
 }
