@@ -1,0 +1,36 @@
+name: One-time original 2022 Senate Property Taxes SF3882 committee 2-2 named roll
+
+# Official historical 2022 Senate online subcommittee minutes; NOT Senate floor
+# or certified equivalence to the separately held LRL printed collection.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2022-mar30-sf3882-propertytaxes-online-original.yml
+
+permissions:
+  contents: read
+
+jobs:
+  verify-original-2022-propertytaxes-sf3882-committee-roll:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Authenticate original Senate March30 2022 SF3882 online minutes and actual 2-2 named motion
+        run: |
+          node --import tsx scripts/review-senate-2022-mar30-sf3882-original-online-committee.ts \
+            --output artifacts/2022-mar30-sf3882-subcommittee-original/online-roll.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2022-mar30-sf3882-original-online-named-roll
+          path: artifacts/2022-mar30-sf3882-subcommittee-original/online-roll.json
+          retention-days: 30
+          if-no-files-found: error
