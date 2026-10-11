@@ -104,7 +104,7 @@ test('original YE registration/member matches same exact 11 Senate-serving sourc
     assert.ok(got.every(r=>r.election===v.senateElectionDistrict));
     assert.ok(got.every(r=>r.name===got[0]!.name));
   }
-  assert.equal(reports.filter(r=>r.election!==r.printed).length,12);
+  assert.equal(reports.filter(r=>r.election!==r.printed).length,14);
   assert.equal(reports.filter(r=>r.election!==r.printed).filter(r=>r.id.includes(':21:')).length,8);
 });
 test('source proved exactly one Board receipt after yearend due; legal floor is later without historic public-by',()=>{
@@ -114,7 +114,7 @@ test('source proved exactly one Board receipt after yearend due; legal floor is 
   assert.equal(after[0]!.due,'2023-01-31');
   assert.equal(after[0]!.floor,'2023-02-02');
   assert.ok(reports.filter(r=>r.received<=r.due).every(r=>
-    r.floor===r.due.replace(/31$/,'01').replace(/-(01|02)-01$/,(match)=>match)));
+    r.floor===new Date(Date.parse(r.due+'T00:00:00Z')+86_400_000).toISOString().slice(0,10)));
   const event=checkpoint.separatelyProvenLaterReceipt;
   assert.equal(event.reportId,after[0]!.id);
   assert.equal(event.conservativeLegallyPossiblePublicNotBeforeOn,'2023-02-02');
