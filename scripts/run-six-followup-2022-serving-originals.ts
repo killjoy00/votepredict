@@ -9,7 +9,7 @@ import {createHash} from 'node:crypto';
 import {parseOfficialMnSenateServiceDirectory} from
  '../src/evidence/senate-official-ever-served-directory.js';
 import {acquireSixPreviouslyUncoveredSenators2022OriginalCampaignSites} from
- './acquire-six-new-2022-served-senators-original-campaign-sites.js';
+ './acquire-six-followup-2022-serving-originals.js';
 
 function bounded(path:string,min:number,max:number){
  const st=statSync(path);
