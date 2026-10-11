@@ -1,0 +1,61 @@
+name: One-time 2022 Senate 11 original no-Minutes caption procedural research
+
+# Never recurring, no private secrets. Ten caption-bearing hearing pages,
+# one no-timed-caption hold; one April 4 source includes two separate tracks.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2022-11-unlinked-caption-motion-cues.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  review-original-2022-caption-cues:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Restore original 2022 dated hearing to official mtgid source artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2022-dated-media-href-review
+          run-id: 38079233118
+          github-token: ${{ github.token }}
+          path: artifacts/original-2022-hrefs
+      - name: Restore independent original 2022 LRL HTML page SHA artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2022-official-media-record-html-proof
+          run-id: 38081463362
+          github-token: ${{ github.token }}
+          path: artifacts/original-2022-html
+      - name: Restore verified 2022 original 11 record, 12-caption-request source artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2022-original-caption-surface-metadata
+          run-id: 38103766440
+          github-token: ${{ github.token }}
+          path: artifacts/original-2022-caption
+      - name: Recheck all original 2022 page and 11 caption-body SHA, inspect procedural cue times
+        run: |
+          node --import tsx scripts/review-senate-2022-unlinked-caption-motion-cues.ts \
+            --hrefs artifacts/original-2022-hrefs/senate-2022-media-hrefs.json \
+            --original-html artifacts/original-2022-html/senate-2022-media-record-html.json \
+            --prior-caption artifacts/original-2022-caption/senate-2022-caption-surface.json \
+            --output artifacts/review-2022-cues/senate-2022-11-original-caption-motion-cues.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2022-11-original-caption-cue-source-review
+          path: artifacts/review-2022-cues/senate-2022-11-original-caption-motion-cues.json
+          retention-days: 30
+          if-no-files-found: error
