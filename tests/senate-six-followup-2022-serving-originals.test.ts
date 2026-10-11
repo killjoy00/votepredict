@@ -56,7 +56,7 @@ test('all six NEW 2023 serving Senate people, exactly their own original campaig
  assert.equal(new Set(people.map(x=>x.domain)).size,6);
  assert.deepEqual(people.map(p=>p.domain),
   PINNED_SIX_NEW_SENATE_SERVING_2022_CAMPAIGN_DOMAINS.map(p=>p.domain));
- const lacking=realSenators();lacking.senators=lacking.senators.filter(x=>x.officialName!=='Sandy Pappas');
+ const lacking=realSenators();lacking.senators=lacking.senators.filter(x=>x.officialName!=='Sandra L. Pappas');
  assert.throws(()=>verifyAllSixNewActuallyServingSenatorsBeforeOriginalArchiveNetwork(lacking),
   /Not an independently documented actually serving Minnesota senator/);
  const wrongService=realSenators();wrongService.senators.find(x=>x.officialName==='Foung Hawj')!.senateServiceTerms[0].district='35';
