@@ -1,0 +1,43 @@
+name: One-time official 2025 SD29/47 Senate year-end conditional filing rule audit
+
+# #864 finance denominator track B. PR-only, exactly two independently
+# served senators; no source text/PDF bodies or donor records retained.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2025-two-served-senators-conditional-yearend-duty.yml
+      - scripts/capture-cfb-2025-served-special-yearend-conditional-duty.ts
+      - src/evidence/cfb-2025-two-served-senators-special-yearend-conditional-duty.ts
+      - tests/cfb-2025-two-served-senators-special-yearend-conditional-duty.test.ts
+
+permissions:
+  contents: read
+
+jobs:
+  verify-original-2025-termination-exception:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Enforce official actual Senate service, dated registration distinction, and conditional termination legal rule
+        run: |
+          node --import tsx --test \
+            tests/cfb-2025-two-served-senators-special-yearend-conditional-duty.test.ts
+      - name: Source-verify two original 2025 special-election calendars and original 2025 general disclosure calendar
+        run: |
+          node --import tsx scripts/capture-cfb-2025-served-special-yearend-conditional-duty.ts \
+            --output artifacts/cfb-2025-served-two-special-yearend-conditional-duty.json
+      - name: Preserve only source metadata and explicit legally owed null count
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2025-two-actual-served-senators-yearend-termination-exception-source
+          path: artifacts/cfb-2025-served-two-special-yearend-conditional-duty.json
+          retention-days: 30
+          if-no-files-found: warn
