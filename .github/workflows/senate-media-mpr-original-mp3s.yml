@@ -1,0 +1,53 @@
+name: Public MPR archived original MP3 source provenance
+
+# #987 metadata-only, bounded URL and historical archive byte SHA verification.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-mpr-original-mp3s.yml
+      - scripts/probe-senate-media-mpr-original-mp3s.mjs
+      - scripts/run-senate-media-mpr-original-mp3s.mjs
+      - tests/senate-media-mpr-original-mp3s.test.mjs
+      - docs/evaluation/senate-media-mpr-2021-and-2024-original-episode-audio-link-receipts-20261011.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-mpr-original-mp3s
+  cancel-in-progress: false
+
+jobs:
+  public-original-audio-binaries:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-mpr-episode-original-embeds-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Six offline fail-closed original MP3 source identity tests
+        run: node --test tests/senate-media-mpr-original-mp3s.test.mjs
+      - name: Fetch no more than two original archive MP3 bodies per exact publisher audio URL
+        run: |
+          node scripts/run-senate-media-mpr-original-mp3s.mjs \
+            --output artifacts/senate-media-mpr-original-mp3-source-receipts.json
+      - name: Upload digest metadata and source status only, never audio binary
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-mpr-original-mp3-source-provenance
+          path: artifacts/senate-media-mpr-original-mp3-source-receipts.json
+          if-no-files-found: error
+          retention-days: 7
