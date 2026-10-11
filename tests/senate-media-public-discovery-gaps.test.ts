@@ -32,8 +32,8 @@ const dated=(id:string,slug:string,day='2025-05-01')=>({
 test('shadowed public leads expose configured prefix and secondary topical-path blind spots',()=>{
   const results=diagnoseMediaPublicDiscoveryPaths(ledger.selectedNonExhaustiveArticleLeads);
   assert.equal(results.version,'senate-media-public-url-path-diagnostic-v1');
-  assert.equal(results.totalCuratedPublicUrlLeads,22);
-  assert.equal(results.leads.length,22);
+  assert.equal(results.totalCuratedPublicUrlLeads,23);
+  assert.equal(results.leads.length,23);
   assert.equal(results.urlLeadsOutsideConfiguredSeedPrefix,10);
   assert.ok(results.urlLeadsFilteredByTopicalPathPriority>=1);
   assert.ok(results.urlLeadsExcludedByEitherGate>=10);
@@ -59,13 +59,14 @@ test('shadowed public leads expose configured prefix and secondary topical-path 
 });
 
 
-test('public /briefs/ and dated paths yield two research alias candidates, not deduplicated articles',()=>{
+test('public /briefs/ and dated paths yield three research alias candidates, not deduplicated articles',()=>{
   const result=diagnoseMediaPublicDiscoveryPaths(ledger.selectedNonExhaustiveArticleLeads);
-  assert.equal(result.possibleAliasPairs.length,2);
+  assert.equal(result.possibleAliasPairs.length,3);
   assert.deepEqual(result.possibleAliasPairs.map(p=>[
     p.firstLeadId,p.secondLeadId,p.commonDisplayedPublicationDay,
   ]),[
     ['mn-reformer-2022-dfl-public-safety-brief','mn-reformer-2022-dfl-public-safety-dated','2022-03-22'],
+    ['mn-reformer-2023-driver-licenses','mn-reformer-2023-driver-licenses-dated','2023-02-21'],
     ['mn-reformer-2025-road-signs-brief','mn-reformer-2025-road-signs-dated','2025-05-01'],
   ]);
   assert.ok(result.possibleAliasPairs.every(p=>
