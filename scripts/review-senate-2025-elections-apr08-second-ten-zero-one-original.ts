@@ -4,7 +4,8 @@ import {resolve,dirname} from 'node:path';
 import {createHash} from 'node:crypto';
 import {fetchSenateCommitteeMinutePdf}
  from '../src/evidence/minnesota-senate-committee-source.js';
-import {SOURCE,SECOND_TEN_ZERO_ONE_VERSION,inspectOriginalApr08OtherTenZeroOne}
+import {SOURCE} from '../src/evidence/senate-2025-elections-apr08-a10-source.js';
+import {SECOND_TEN_ZERO_ONE_VERSION,inspectOriginalApr08OtherTenZeroOne}
  from '../src/evidence/senate-2025-elections-apr08-second-ten-zero-one-source.js';
 
 const MAX_PDF_BYTES=3_000_000;
