@@ -11,6 +11,9 @@ on:
       - tests/senate-media-three-missing-reformer-brief-original-audit.test.ts
       - docs/evaluation/senate-media-three-unverified-reformer-brief-original-archive-hypotheses-20261011.json
       - docs/evaluation/senate-media-2021-25-further-independent-reporting-15-leads.json
+      - docs/evaluation/senate-media-three-original-reformer-brief-historical-recovery-receipts-20261011.json
+      - tests/senate-media-three-recovered-brief-real-original-receipts.test.ts
+      - docs/evaluation/senate-media-2021-25-final-seven-reporter-original-review-and-speaking-corrections.md
   workflow_dispatch:
 permissions:
   contents: read
