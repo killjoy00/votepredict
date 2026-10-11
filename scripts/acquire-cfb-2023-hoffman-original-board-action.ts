@@ -34,7 +34,10 @@ async function main(){
  if(bytes.byteLength<10_000||bytes.byteLength>2_000_000
   ||new TextDecoder().decode(bytes.subarray(0,5))!=='%PDF-')
   throw Error('Original signed CFB Hoffman 2023 document body not authenticated as a PDF');
+ const originalByteCount=bytes.byteLength; // PDFParse may transfer and detach Uint8Array
  const originalSha=createHash('sha256').update(bytes).digest('hex');
+ if(originalSha!=='14789ad9840503b963c6c1e9198fc6f05d5b096b9d7aea1487839847b71cbba9')
+  throw Error('Original 2023 Board Hoffman PDF whole-body SHA256 drift from first authenticated source');
  const {PDFParse}=await import('pdf-parse');
  const {CanvasFactory}=await import('pdf-parse/worker');
  const pdf=new PDFParse({data:bytes,CanvasFactory});
@@ -49,7 +52,7 @@ async function main(){
   schemaVersion:'cfb-signed-original-2023-hoffman-principal-committee-reg-17319-v1',
   issue:864,
   sourceOriginal:{url,originalPDFSha256:originalSha,
-   originalPDFBytes:bytes.byteLength,
+   originalPDFBytes:originalByteCount,
    fullOfficialPDFDownloadedAt:new Date().toISOString(),
    originalSourceHostVerified:true},
   independentOriginalBoardProof:proof,
@@ -65,7 +68,7 @@ async function main(){
  mkdirSync(dirname(path),{recursive:true});
  writeFileSync(path,JSON.stringify(result,null,2)+'\n',{flag:'wx'});
  console.log('ORIGINAL_2023_HOFFMAN_BOARD_ACTION_PROOF='+JSON.stringify({
-  url,sha256:originalSha,bytes:bytes.byteLength,
+  url,sha256:originalSha,bytes:originalByteCount,
   exactCommitteeReg:proof.principalCampaignCommitteeRegistration,
   originalDocumentSignedDateStrings:proof.originalSignatureDatesAsPrinted,
   verifiedOfficialBoardAction:proof.independentSourceNamedPrincipalCommitteeInSigned2023Action,
