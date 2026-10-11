@@ -17,7 +17,7 @@ function capture(id:string,timestamp='20240201141500'){
  return {target,capture:{
   timestamp,archivedOriginalUrl:target.sourceSnapshotCfbReportUrl,
   archiveCaptureUtc:timestamp.slice(0,4)+'-'+timestamp.slice(4,6)+'-'+timestamp.slice(6,8)+
-  'T'+timestamp.slice(8,10)+':'+timestamp.slice(10,12)+':'+timestamp.slice(12,14)+'Z',
+  'T'+timestamp.slice(8,10)+':'+timestamp.slice(10,12)+':'+timestamp.slice(12,14)+'.000Z',
   digest:'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGH',
  }};
 }
@@ -27,8 +27,8 @@ test('real four exact IDs are source SHA-pinned, include Putnam held #1 and accu
  assert.equal(actual[0]!.authenticOriginalPDF,true);
  assert.equal(actual[1]!.sourceStatus,'HOLD_first_page_registration_unverified');
  assert.equal(actual[1]!.authenticOriginalPDF,false);
- assert.equal(actual[0]!.expectedEarliestPublicByUtc,'2024-02-01T14:00:00Z');
- assert.equal(actual[2]!.expectedEarliestPublicByUtc,'2024-02-01T14:00:00Z');
+ assert.equal(actual[0]!.expectedEarliestPublicByUtc,'2024-02-01T14:00:00.000Z');
+ assert.equal(actual[2]!.expectedEarliestPublicByUtc,'2024-02-01T14:00:00.000Z');
  assert.equal(actual[3]!.expectedEarliestPublicByUtc,'2025-10-08T00:00:00.000Z');
  assert.equal(new Set(actual.map(x=>x.originalCfbPdfSha256)).size,4);
  assert.throws(()=>selectFourRealOriginalArchiveAuditTargets(
@@ -60,7 +60,7 @@ test('exact archived ORIGINAL PDF full body SHA is required, not CDX digest or s
  const original={...x.target,originalCfbPdfSha256:sourceHash};
  const positive=classifyExactArchivePdfBinaryProof({
   target:original,capture:x.capture,archiveHttpStatus:200,archivePdfBytes:buf});
- assert.equal(positive.originalHistoricalVersionPublicBy,'2024-02-01T14:15:00Z');
+ assert.equal(positive.originalHistoricalVersionPublicBy,'2024-02-01T14:15:00.000Z');
  assert.equal(positive.identicalSourceAuthenticatedVersionBinarySha256,true);
  const mismatched=classifyExactArchivePdfBinaryProof({
   target:x.target,capture:x.capture,archiveHttpStatus:200,archivePdfBytes:buf});
