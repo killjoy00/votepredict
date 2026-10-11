@@ -1,0 +1,74 @@
+name: Senate media 25 new public originals Wayback proof
+
+# #987/#946: only public Wayback exact original HTTP source documents.
+# No original article bytes/audio in artifacts; no private VotePredict source data.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-25-original-wayback.yml
+      - src/evidence/senate-media-broader-original-wayback.ts
+      - scripts/probe-senate-media-25-original-wayback.ts
+      - tests/senate-media-broader-original-wayback.test.ts
+      - docs/evaluation/senate-media-2021-25-public-broader-source-discovery.json
+      - docs/evaluation/senate-media-2021-25-broader-25-original-public-archive-receipts-20261011.json
+      - tests/senate-media-broader-original-public-archive-receipts.test.ts
+      - docs/evaluation/senate-media-2021-25-broader-original-wayback-bridge.md
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: "Probe all 25 public URLs or five high priority ones"
+        type: choice
+        default: all
+        required: true
+        options: [priority, all]
+      replay_count:
+        description: "Maximum historical original id_ captures to replay per URL"
+        type: choice
+        default: "2"
+        required: true
+        options: ["0", "1", "2"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-25-new-public-originals
+  cancel-in-progress: false
+
+jobs:
+  public-original-only:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+         github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+         github.event.pull_request.head.ref == 'research/media-25-original-captures-quote-bridge-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Examine only selected public original archived HTTP body SHA receipts
+        env:
+          SCOPE: ${{ github.event_name == 'pull_request' && 'all' || inputs.scope }}
+          REPLAY_COUNT: ${{ github.event_name == 'pull_request' && '2' || inputs.replay_count }}
+        run: |
+          node --import tsx scripts/probe-senate-media-25-original-wayback.ts \
+            --scope "$SCOPE" --replay-count "$REPLAY_COUNT" \
+            --output artifacts/senate-media-25-original-public-proof.json
+      - name: Retain ONLY public provenance and digest metadata for 7 days
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-25-original-public-proof
+          path: artifacts/senate-media-25-original-public-proof.json
+          if-no-files-found: error
+          retention-days: 7

@@ -1,0 +1,391 @@
+{
+  "version": "senate-media-2021-25-broader-25-original-public-archive-receipts-v1",
+  "researchObservationDate": "2026-10-11",
+  "sample": "25_exact_selected_original_url_leads_disjoint_from_prior_31_and_18",
+  "firstPublicLiveSourceRun": {
+    "repository": "killjoy00/votepredict",
+    "runId": 38159765437,
+    "sourceHeadSha": "bc2fc32c1b6a7e710cc146aa9d499c75351dc63c",
+    "artifactId": 11709539809,
+    "artifactName": "senate-media-25-original-public-proof",
+    "zippedArtifactSha256": "954373dc073e744ee0742e54845bca571c6a7e9ce1a79266d6bc47c1086734bd",
+    "decodedJsonSha256": "f9afab3aefa67b94342fdf9bc6f4bfee894820ddc491ae6aec69423012adf2fb",
+    "decodedJsonBytes": 39109,
+    "runResult": "success"
+  },
+  "observed": {
+    "originalPublicUrlLeadsRequested": 25,
+    "cdxIndexedOriginalUrlCandidates": 12,
+    "cdxIndexEmpty": 0,
+    "cdxIndexUnavailableOrInvalid": 13,
+    "originalExactReplayAttempts": 19,
+    "originalHttpBodiesMatchingIndexedSha1": 16,
+    "distinctOriginalUrlsWithMatchingBodies": 11,
+    "negativeReplayHolds": 3,
+    "individualHistoricQuotesApproved": 0,
+    "firstPublisherPublicationTimesVerified": 0,
+    "originalRecordedAudioVerified": 0
+  },
+  "distributionByDisplayedPublisherYear": [
+    {
+      "year": 2021,
+      "urlsSelected": 5,
+      "urlsWithOriginalBody": 1
+    },
+    {
+      "year": 2022,
+      "urlsSelected": 5,
+      "urlsWithOriginalBody": 1
+    },
+    {
+      "year": 2023,
+      "urlsSelected": 5,
+      "urlsWithOriginalBody": 3
+    },
+    {
+      "year": 2024,
+      "urlsSelected": 5,
+      "urlsWithOriginalBody": 4
+    },
+    {
+      "year": 2025,
+      "urlsSelected": 5,
+      "urlsWithOriginalBody": 2
+    }
+  ],
+  "pinnedExactSha1AndRawSha256OriginalCaptureReceipts": [
+    {
+      "leadId": "public-2021-torres-ray-retirement",
+      "candidateIndexRowsFirstPage": 13,
+      "verifiedOriginalHttpBodies": [
+        {
+          "captureUtc": "2021-11-16T19:51:35Z",
+          "indexSha1Base32": "KQDJ5E5X76MH2E5PXW2LUBD3LSQ4NAUE",
+          "rawOriginalSha256": "ea0d1e55c13bf0adb7d99fa0e2ba4abe7c0acedaaa78b4493e460a70d16e839b",
+          "originalBytes": 78197
+        },
+        {
+          "captureUtc": "2021-11-28T21:36:06Z",
+          "indexSha1Base32": "EFWMFCDKKFKJYWKDAGITCZTKDSSEAHM5",
+          "rawOriginalSha256": "538b5c23161f8b6c4c18de02f525ba90bb0d7ec5d4de6d833c842911566a803a",
+          "originalBytes": 78542
+        }
+      ]
+    },
+    {
+      "leadId": "public-2022-torres-ray-richfield",
+      "candidateIndexRowsFirstPage": 7,
+      "verifiedOriginalHttpBodies": [
+        {
+          "captureUtc": "2022-03-11T18:20:01Z",
+          "indexSha1Base32": "GVP4J2AD2N7BSKHGNUSKJ4EQCWTNCNH7",
+          "rawOriginalSha256": "e557389d08602670e3053299b9b0407faa034412935ffabff822d87d642f1d43",
+          "originalBytes": 149942
+        },
+        {
+          "captureUtc": "2022-07-03T20:11:02Z",
+          "indexSha1Base32": "6CG45U544NPKK5FXMTN57GKKYOEA2K6I",
+          "rawOriginalSha256": "59784765a62161950027fdc3240283ed783dcc5b7c53867879de1d54580d0084",
+          "originalBytes": 147205
+        }
+      ]
+    },
+    {
+      "leadId": "public-2023-murphy-reproduction",
+      "candidateIndexRowsFirstPage": 3,
+      "verifiedOriginalHttpBodies": [
+        {
+          "captureUtc": "2023-03-29T03:13:14Z",
+          "indexSha1Base32": "CHLN3XED54WXA7VPPGKG3CW6CKIVF3CT",
+          "rawOriginalSha256": "96242289cd00e1a3c4d9f595d81b93739e2f7e7a5d75b9a4a972879624b5f9c4",
+          "originalBytes": 163048
+        },
+        {
+          "captureUtc": "2023-10-04T06:00:56Z",
+          "indexSha1Base32": "ROD2KWY7EJXBVWKDLJSK4GPYL47HPV53",
+          "rawOriginalSha256": "085614ad58a1cca2907e0d59234d6170952c18b89ae94b563db78ba40add6104",
+          "originalBytes": 90264
+        }
+      ]
+    },
+    {
+      "leadId": "public-2023-rest-tax-reformer",
+      "candidateIndexRowsFirstPage": 12,
+      "verifiedOriginalHttpBodies": [
+        {
+          "captureUtc": "2023-04-27T00:52:03Z",
+          "indexSha1Base32": "EY5QSKYI6CWLPTANWJY2LSYHCJPNVUPD",
+          "rawOriginalSha256": "3e8b662519a0a5db015f6820d8c4041229d628e487c944d987b31677a58662d7",
+          "originalBytes": 140253
+        },
+        {
+          "captureUtc": "2023-12-03T13:07:09Z",
+          "indexSha1Base32": "PEAZEB4KXSLGTUS3GM2DKI33KDUE3L42",
+          "rawOriginalSha256": "8cfc8583d72c960866a06dc03d1926252ef19531055e30279e21ec3567c4b056",
+          "originalBytes": 137489
+        }
+      ]
+    },
+    {
+      "leadId": "public-2023-blandin-mixed-joint",
+      "candidateIndexRowsFirstPage": 1,
+      "verifiedOriginalHttpBodies": [
+        {
+          "captureUtc": "2023-08-01T13:32:16Z",
+          "indexSha1Base32": "42F7VP3K65IU7TVAAY35T6MTX6PRLBQV",
+          "rawOriginalSha256": "195aaca4a074bbc3bf37632f6d857b616d9367a0d86746e84a6a754d5272a0ab",
+          "originalBytes": 82702
+        }
+      ]
+    },
+    {
+      "leadId": "public-2024-mitchell-tax",
+      "candidateIndexRowsFirstPage": 3,
+      "verifiedOriginalHttpBodies": [
+        {
+          "captureUtc": "2024-03-02T15:41:08Z",
+          "indexSha1Base32": "ENXJCWAWEKFTZKFMBXHZLQIEHLWZ5JCF",
+          "rawOriginalSha256": "2b24252fb488f730d198bd49f4e85a4cfe527bd119fee881f6aad8fd6fc949d9",
+          "originalBytes": 96449
+        },
+        {
+          "captureUtc": "2024-07-17T15:37:09Z",
+          "indexSha1Base32": "SBE2QLBVO2HAJZT2OR67LOD26I5GKS53",
+          "rawOriginalSha256": "04d86d5e0b2d72131579f0f957e7bc895878831edd3700908e9b5328faf94b1c",
+          "originalBytes": 96952
+        }
+      ]
+    },
+    {
+      "leadId": "public-2024-mcewen-mining",
+      "candidateIndexRowsFirstPage": 1,
+      "verifiedOriginalHttpBodies": [
+        {
+          "captureUtc": "2024-04-22T03:56:26Z",
+          "indexSha1Base32": "LUERCXLMTQVWEL5LPAM3RDXGEBHTLMKN",
+          "rawOriginalSha256": "d2a3d97c9519fa64f219dbd8d45be0c4c98904bde749a6a0e3c385e9bde7a6b9",
+          "originalBytes": 94499
+        }
+      ]
+    },
+    {
+      "leadId": "public-2024-hawj-transport",
+      "candidateIndexRowsFirstPage": 3,
+      "verifiedOriginalHttpBodies": [
+        {
+          "captureUtc": "2024-03-24T19:01:09Z",
+          "indexSha1Base32": "YI4BL3IHGZ27R4JBNOVXUTI5XFGMQNSR",
+          "rawOriginalSha256": "aa6da6e8722e33f2f692ba31bfd6699cf97768e74c788dbdb0786a75a3ad5743",
+          "originalBytes": 93076
+        }
+      ]
+    },
+    {
+      "leadId": "public-2024-inclusive-mixed-joint",
+      "candidateIndexRowsFirstPage": 1,
+      "verifiedOriginalHttpBodies": [
+        {
+          "captureUtc": "2024-07-15T01:34:38Z",
+          "indexSha1Base32": "TO74HSCW2WVVDEKBWYCI6Y3WVABRYDVY",
+          "rawOriginalSha256": "7628a13f1d206854ea7cc3ccc6ed79d3c2158f20017223631af8e8ac1a005e1b",
+          "originalBytes": 95990
+        }
+      ]
+    },
+    {
+      "leadId": "public-2025-senate-gop-collective",
+      "candidateIndexRowsFirstPage": 3,
+      "verifiedOriginalHttpBodies": [
+        {
+          "captureUtc": "2025-03-19T15:25:03Z",
+          "indexSha1Base32": "4PXEATOJGUSL4TS25HBZV4IDNUGBQZ75",
+          "rawOriginalSha256": "80cd70d9364997f7d7b1a3f23756d4a609d98a30b88104e1cda67f73d2dacdfd",
+          "originalBytes": 93025
+        }
+      ]
+    },
+    {
+      "leadId": "public-2025-clark-ice-student",
+      "candidateIndexRowsFirstPage": 1,
+      "verifiedOriginalHttpBodies": [
+        {
+          "captureUtc": "2025-03-31T08:06:09Z",
+          "indexSha1Base32": "ZJWOA4ZO7KQIHYZPQAOLN4P57IZOGESX",
+          "rawOriginalSha256": "06e86faf450ecb4250a37e959d6f3dab4b08921f7c7badaf4186624eb7a2aab1",
+          "originalBytes": 86357
+        }
+      ]
+    }
+  ],
+  "cdxUnavailableOrInvalidNotPublisherAbsence": [
+    "public-2021-osmek-oath",
+    "public-2021-koran-budget",
+    "public-2021-senjem-schools",
+    "public-2021-isaacson-grants",
+    "public-2022-bigham-eken-separated",
+    "public-2022-pratt-tax",
+    "public-2022-dahms-safety",
+    "public-2023-nelson-voting-rights",
+    "public-2023-nelson-rochester-schools",
+    "public-2024-seeberger-ems",
+    "public-2025-farnsworth-mining",
+    "public-2025-maye-quade-shooting",
+    "public-2025-rasmusson-trial"
+  ],
+  "knownIndexedReplayHoldsNotOriginalPublicationAbsence": [
+    {
+      "id": "public-2022-duckworth-ukraine",
+      "captureUtc": "2022-04-06T01:37:19Z",
+      "indexedSha1Base32": "3I42H3S6NNFQ2MSVX7XZKYAYSCX5QBYJ",
+      "reason": "replay_too_short"
+    },
+    {
+      "id": "public-2024-hawj-transport",
+      "captureUtc": "2024-04-22T04:14:23Z",
+      "indexedSha1Base32": "RPGCVOQOMF7AOA2UQ6R7E5QIALFQB7S2",
+      "reason": "replay_fetch_failed"
+    },
+    {
+      "id": "public-2025-senate-gop-collective",
+      "captureUtc": "2025-03-19T14:57:18Z",
+      "indexedSha1Base32": "SZUX2I6KCH4EP3YHK6PMDLISWXWCQGDN",
+      "reason": "replay_index_sha1_mismatch"
+    }
+  ],
+  "priorityIndividualQuoteReview": {
+    "verifiedOriginalReady": "public-2023-rest-tax-reformer",
+    "earliestReverifiedOriginalUtc": "2023-04-27T00:52:03Z",
+    "earliestRawBodySha256": "3e8b662519a0a5db015f6820d8c4041229d628e487c944d987b31677a58662d7",
+    "january2022BighamEkenOriginal": "cdx_index_unavailable_or_invalid_NOT_publication_absent",
+    "neverTransferRestQuoteToContextOnlyMattKlein": true,
+    "neverTreatRestStatementAboutExpectedCaucusVotesAsActualSenateVote": true,
+    "twoLabeledBighamAndEkenTurnsRemainCurrentPageCandidatesNotArchiveVerified": true
+  },
+  "provenanceBoundaries": {
+    "noOriginalHtmlOrAudioStored": true,
+    "archiveDigestMatchDoesNotAuthenticateTheIndividualQuote": true,
+    "archivedPageAtCaptureDoesNotProveInitialPublisherPostClock": true,
+    "indexUnavailabilityIsNotHistoricalPublicationAbsence": true,
+    "collectiveSenateAndHousePagesNeverSplitIntoIndividualQuotations": true,
+    "indexedReplayFailuresRemainUnverified": true,
+    "noSourceDocumentOrPrivateDatabaseCompared": true,
+    "noRecordedVoteOrForecastMemberPositionsInferred": true,
+    "noStatewideOrPublisherCoverageDenominatorEstablished": true,
+    "noProductionMediaCollectorOrModelModified": true
+  },
+  "independentSecondPublicRun": {
+    "repository": "killjoy00/votepredict",
+    "runId": 38160362555,
+    "runStatus": "success",
+    "sourceHeadSha": "6cef733fe2a3e1e870bb2b908a71a550561a5a8f",
+    "artifactId": 11710680494,
+    "artifactName": "senate-media-25-original-public-proof",
+    "zippedArtifactSha256": "1e4645ff7b058b99258e4f0c4e97379c83778ce507008b53c930274b0d54197c",
+    "decodedJsonSha256": "506bae0cc853823ab284275679d6ad3733e6314ebc0a6355b42213ab4eaa4dc5",
+    "decodedJsonBytes": 43685,
+    "sampleTotals": {
+      "originalPublicUrlLeadsRequested": 25,
+      "indexedOriginalUrlCandidates": 15,
+      "indexEmpty": 0,
+      "indexUnavailableOrInvalid": 10,
+      "originalHttpReplaysAttempted": 25,
+      "matchedIndexedSha1RawHtmlBodies": 23,
+      "distinctMatchedOriginalUrlLeads": 14
+    },
+    "byPublisherDisplayedYear": [
+      {
+        "year": 2021,
+        "urlsWithOriginalBody": 1
+      },
+      {
+        "year": 2022,
+        "urlsWithOriginalBody": 2
+      },
+      {
+        "year": 2023,
+        "urlsWithOriginalBody": 4
+      },
+      {
+        "year": 2024,
+        "urlsWithOriginalBody": 5
+      },
+      {
+        "year": 2025,
+        "urlsWithOriginalBody": 2
+      }
+    ],
+    "original16EarlierSha256AndByteLengthExactEqualityOnAllCommonCaptureKeys": true,
+    "earlierOriginalBodyVersionsReproducedWithoutChange": 16,
+    "additionalNewExactOriginalBodyVersions": 7,
+    "additionalNewDistinctOriginalUrlLeads": 3,
+    "additionalVerifiedExactArchivedBodyReceipts": [
+      {
+        "leadId": "public-2022-bigham-eken-separated",
+        "independentlyNewShaConsistentOriginalVersions": [
+          {
+            "captureUtc": "2022-03-11T19:51:03Z",
+            "indexSha1Base32": "W6T26AXVFFZJHAPPTOFAAZB6NDQWKV76",
+            "rawOriginalSha256": "026e8becb82577a34cc27388faed93048a6f247991853ba3f60f1a5287268131",
+            "originalBytes": 154251
+          },
+          {
+            "captureUtc": "2022-06-29T12:45:13Z",
+            "indexSha1Base32": "54ASOGEJRZQXKNSVI3XQKOTBVNTH4ON5",
+            "rawOriginalSha256": "7a2621bdbe093c90c594af36124f53203399504758ce48c07eaec168afb9f06b",
+            "originalBytes": 151424
+          }
+        ]
+      },
+      {
+        "leadId": "public-2023-nelson-rochester-schools",
+        "independentlyNewShaConsistentOriginalVersions": [
+          {
+            "captureUtc": "2025-03-25T12:27:51Z",
+            "indexSha1Base32": "OWELKNZ3OF2CKTOQP4OR3XYDAKGV7UBN",
+            "rawOriginalSha256": "005c9ade165508d9865355e2b5af05171a39e46bc0a999df02ee587750d8f7a2",
+            "originalBytes": 95373
+          },
+          {
+            "captureUtc": "2025-07-22T22:42:25Z",
+            "indexSha1Base32": "T42RD762NRMJW4ZWAXTQI5KZLYQJPMLW",
+            "rawOriginalSha256": "6038de654a35fe27f51e1049a5bff5a907f5c044e42e97b6a8e7b6959c8362e2",
+            "originalBytes": 96648
+          }
+        ]
+      },
+      {
+        "leadId": "public-2024-hawj-transport",
+        "independentlyNewShaConsistentOriginalVersions": [
+          {
+            "captureUtc": "2024-04-22T04:14:23Z",
+            "indexSha1Base32": "RPGCVOQOMF7AOA2UQ6R7E5QIALFQB7S2",
+            "rawOriginalSha256": "a168aef89b0f2e50e588c1aa404491de41a241b13739edfe394e4ec6b70e0a01",
+            "originalBytes": 93360
+          }
+        ]
+      },
+      {
+        "leadId": "public-2024-seeberger-ems",
+        "independentlyNewShaConsistentOriginalVersions": [
+          {
+            "captureUtc": "2024-06-21T20:28:16Z",
+            "indexSha1Base32": "UDV5Y5SEEMOI4PKKCAN7ZG7RKFMGUXSJ",
+            "rawOriginalSha256": "0624e6ff787ccc8f7d0370407db406bdbe89202343c29e60da6a269536119833",
+            "originalBytes": 94680
+          },
+          {
+            "captureUtc": "2024-06-25T20:35:01Z",
+            "indexSha1Base32": "CX6TQF2TC7URJW6EY7IRQFWX4SODKKAD",
+            "rawOriginalSha256": "800afc8c818040d715caf57af834619abf67ec7b0913f3ff9b49cd6f1596bdd1",
+            "originalBytes": 94902
+          }
+        ]
+      }
+    ],
+    "historicalVersionDateDoesNotBackdateCurrentDisplayedDate": true,
+    "january2022BighamAndEkenReleaseNowHasTwoExactArchived2022Bodies": true,
+    "oneOriginalArticleStillContainsTwoSeparateNamedSenatorSpeakerCandidates": true,
+    "theirQuotedPhrasesNotYetArchivedMarkupChecked": true,
+    "march2025NelsonCaptureOf2023DisplayedArticleNotProofOriginal2023Text": true
+  }
+}
