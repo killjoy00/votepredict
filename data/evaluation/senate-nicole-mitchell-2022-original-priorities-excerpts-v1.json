@@ -1,0 +1,132 @@
+{
+  "schema": "mn-senate-2022-nicole-mitchell-two-historical-priority-originals-four-excerpts-v1",
+  "scope": {
+    "issue": 864,
+    "person": "Nicole Mitchell",
+    "officialLRLName": "Nicole L. Mitchell",
+    "senateDistrict": "47",
+    "senateServiceTerm": "2023-2025",
+    "actualSenatorServiceConfirmedByOriginalOfficialLRLSource": true,
+    "personNeverServedSenate": false,
+    "issueExcerptCount": 4,
+    "originalHistoricPageVersions": 2,
+    "authenticatedEarliestSourceCaptureUtc": "2022-02-01T00:55:54.000Z",
+    "originalAuthorFirstPostedAt": null,
+    "original2022OfficialFiledCandidateWebsiteFieldVerified": false,
+    "sourceAsOfElection2022Retrospective": true,
+    "forecastAutomaticallyEligible": false,
+    "originalHistoricallyCapturedBytesRelyOnSeparateIndependentCdxSha1": true,
+    "originalPageIssueFamilyStanceLegalOrBillVoteClaimsNotMade": true,
+    "noNeonOrVercelReadsOrWrites": true
+  },
+  "provenance": {
+    "originalCurrentAcquisitionGitHubRunId": 38100551887,
+    "archivedOriginalArtifactId": 11687282664,
+    "archivedOriginalArtifactName": "senate-2022-verified-served-domain-wide-historical-originals-v1",
+    "archivedOriginalArtifactZipSha256": "ec3d348fdf2f1fc5b94a30a0e78f153b5179805ef6f771d99e7dbed36a510857",
+    "originalAcquisitionManifestSha256": "bf84f6110b6984889f98228d848b53f5cddbe8787928b7a9c98836ee487c6c47",
+    "senatorServiceSourceRunId": 38094976711,
+    "senatorServiceSourceArtifactId": 11685387674,
+    "senatorServiceSourceUrl": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "actualSourceBytesNotCommittedToGit": true,
+    "originalSourceAcquisitionArtefactRetainedDays": 30
+  },
+  "originals": [
+    {
+      "id": "nicole2022-priorities-feb01",
+      "originalUrl": "https://www.nicolemitchell.org/priorities",
+      "file": "mitchell-historical-20220201005554-0.html",
+      "waybackReplayUrl": "https://web.archive.org/web/20220201005554id_/https://www.nicolemitchell.org/priorities",
+      "archivedOriginalCapturedAtUtc": "2022-02-01T00:55:54.000Z",
+      "fetchedUtc": "2026-10-11T01:04:48.050Z",
+      "actualHttpStatus": 200,
+      "actualOriginalBodySha256": "e88c085174a9e5cfbdc23216405254763d9816d83d31ef03d18a4975e47daa51",
+      "originalHistoricalCdxIndexBase32Sha1": "TVGIODYLDQ33ZPUY6522BDQDUKJ5CAA7",
+      "independentlyConfirmedOriginalByMatchingCdxDigest": true,
+      "fileIsCandidateOwnedSenateIssuePage": true
+    },
+    {
+      "id": "nicole2022-priorities-nov05",
+      "originalUrl": "https://www.nicolemitchell.org/priorities",
+      "file": "mitchell-historical-20221105160301-1.html",
+      "waybackReplayUrl": "https://web.archive.org/web/20221105160301id_/https://www.nicolemitchell.org/priorities",
+      "archivedOriginalCapturedAtUtc": "2022-11-05T16:03:01.000Z",
+      "fetchedUtc": "2026-10-11T01:04:49.147Z",
+      "actualHttpStatus": 200,
+      "actualOriginalBodySha256": "a950fb05606c470c9ecc88a972afca887b42504130e603111d7e6dfafa57d73b",
+      "originalHistoricalCdxIndexBase32Sha1": "HOD3ELVKGD5SN6NL5THHFTHCMUUWXGZ3",
+      "independentlyConfirmedOriginalByMatchingCdxDigest": true,
+      "fileIsCandidateOwnedSenateIssuePage": true
+    }
+  ],
+  "shortIssues": [
+    {
+      "id": "mitchell22-education-funding",
+      "family": "education",
+      "quotedExcerpt": "fully fund our public schools",
+      "interpretation": "candidate promises to support fully funded public schools",
+      "commitment": "promise_action",
+      "verifiedInBothOriginalCopiesByHumanReview": true,
+      "sourceFirstAttestedPublicByNoLaterThanUtc": "2022-02-01T00:55:54.000Z",
+      "secondIndependentlyAttestedSiteCaptureUtc": "2022-11-05T16:03:01.000Z",
+      "authorFirstPublishedAt": null,
+      "originalSOSFilingCampaignSiteAssignmentConfirmed": false,
+      "linkedSenateMembershipId": null,
+      "historicalForecastFeatureAutomaticallyEligible": false,
+      "billVoteInferredFromCampaignText": false
+    },
+    {
+      "id": "mitchell22-early-education",
+      "family": "education",
+      "quotedExcerpt": "strong supporter of Early Childhood Family Education (ECFE)",
+      "interpretation": "campaign page expressly supports ECFE",
+      "commitment": "explicit_support",
+      "verifiedInBothOriginalCopiesByHumanReview": true,
+      "sourceFirstAttestedPublicByNoLaterThanUtc": "2022-02-01T00:55:54.000Z",
+      "secondIndependentlyAttestedSiteCaptureUtc": "2022-11-05T16:03:01.000Z",
+      "authorFirstPublishedAt": null,
+      "originalSOSFilingCampaignSiteAssignmentConfirmed": false,
+      "linkedSenateMembershipId": null,
+      "historicalForecastFeatureAutomaticallyEligible": false,
+      "billVoteInferredFromCampaignText": false
+    },
+    {
+      "id": "mitchell22-climate",
+      "family": "environment_natural_resources",
+      "quotedExcerpt": "time is now to address climate change",
+      "interpretation": "campaign page advocates action on climate change",
+      "commitment": "priority_statement",
+      "verifiedInBothOriginalCopiesByHumanReview": true,
+      "sourceFirstAttestedPublicByNoLaterThanUtc": "2022-02-01T00:55:54.000Z",
+      "secondIndependentlyAttestedSiteCaptureUtc": "2022-11-05T16:03:01.000Z",
+      "authorFirstPublishedAt": null,
+      "originalSOSFilingCampaignSiteAssignmentConfirmed": false,
+      "linkedSenateMembershipId": null,
+      "historicalForecastFeatureAutomaticallyEligible": false,
+      "billVoteInferredFromCampaignText": false
+    },
+    {
+      "id": "mitchell22-elections",
+      "family": "elections",
+      "quotedExcerpt": "free and fair elections in Minnesota",
+      "interpretation": "campaign page describes commitment to preserving free and fair elections",
+      "commitment": "promise_action",
+      "verifiedInBothOriginalCopiesByHumanReview": true,
+      "sourceFirstAttestedPublicByNoLaterThanUtc": "2022-02-01T00:55:54.000Z",
+      "secondIndependentlyAttestedSiteCaptureUtc": "2022-11-05T16:03:01.000Z",
+      "authorFirstPublishedAt": null,
+      "originalSOSFilingCampaignSiteAssignmentConfirmed": false,
+      "linkedSenateMembershipId": null,
+      "historicalForecastFeatureAutomaticallyEligible": false,
+      "billVoteInferredFromCampaignText": false
+    }
+  ],
+  "limitations": [
+    "2022 Wayback capture date is the latest original page availability, NOT proved original author-first-post date.",
+    "All four short snippets were seen in both 2022 original issue pages; this does not prove every other page/site issue statement.",
+    "Original Nicole Mitchell campaign site states Minnesota State Senate, and MN LRL independently verifies she actually served, 2023-2025 SD47.",
+    "Issue-family interpretation comes from directly authored priorities text, not from legislation or inference from other candidates.",
+    "2022 original SOS filed website entry and actual evidence membership/source database row mapping are not certified.",
+    "Production source/evidence row writes, source promotion, model serving, and retrospective forecast feature admission remain prohibited."
+  ]
+}
