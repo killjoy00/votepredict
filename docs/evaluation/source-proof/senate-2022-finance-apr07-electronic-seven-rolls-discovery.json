@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "senate-2022-finance-apr07-electronic-original-seven-named-roll-paragraphs-research-v1",
+  "issue": 864,
+  "scope": "2021-2025 Minnesota Senate committee proceedings only",
+  "hearingDate": "2022-04-07",
+  "committee": "Finance",
+  "sourceAuthority": "Minnesota Legislative Reference Library electronic 2022 Senate minutes",
+  "originalMinutesPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220407/Fin_20220407_minutes.pdf",
+  "originalPrintVersusElectronicDiscrepancyWarningUrl": "https://www.lrl.mn.gov/minutes/",
+  "sourceRetrieval": {
+    "sourceOriginalPdfOrTextSHA256IndependentlyVerified": false,
+    "screenshotOfOriginalPdfReviewed": false,
+    "retrievedPublicIndexTextReproducesSevenRollPassages": true,
+    "sourceOriginalPdfByteCount": null,
+    "sourceOriginalPdfSHA256": null,
+    "sourceOriginalExtractedTextSHA256": null,
+    "originalPrintMinutesCompared": false,
+    "firstPublicByMinuteLevelUnknown": true,
+    "historicalCommitteeActionDateConvention": "2022-04-07",
+    "noSameDayForecastWithoutMotionClock": true
+  },
+  "namedOriginalTextRollParagraphs": [
+    {
+      "bill": "SF3510",
+      "motion": "A17 amendment",
+      "mover": "Marty",
+      "yea": 3,
+      "nay": 6,
+      "absentPrinted": 1,
+      "printedAbsentMember": "Champion",
+      "outcome": "failed",
+      "motionLabelAmbiguity": false
+    },
+    {
+      "bill": "SF3510",
+      "motion": "A16 amendment",
+      "mover": "Lopez Franzen",
+      "yea": 4,
+      "nay": 6,
+      "absentPrinted": 0,
+      "printedAbsentMember": null,
+      "outcome": "failed",
+      "motionLabelAmbiguity": false
+    },
+    {
+      "bill": "SF3510",
+      "motion": "A15 amendment",
+      "mover": "Kent",
+      "yea": 4,
+      "nay": 6,
+      "absentPrinted": 0,
+      "printedAbsentMember": null,
+      "outcome": "failed",
+      "motionLabelAmbiguity": false
+    },
+    {
+      "bill": "SF4269",
+      "motion": "A15 amendment",
+      "mover": "Marty",
+      "yea": 4,
+      "nay": 6,
+      "absentPrinted": 0,
+      "printedAbsentMember": null,
+      "outcome": "failed",
+      "motionLabelAmbiguity": false
+    },
+    {
+      "bill": "SF4269",
+      "motion": "oral amendment to A16 amendment",
+      "mover": "Marty",
+      "yea": 4,
+      "nay": 6,
+      "absentPrinted": 0,
+      "printedAbsentMember": null,
+      "outcome": "failed",
+      "motionLabelAmbiguity": true,
+      "reason": "Printed motion is oral modification to A16 but closing narrative says A16 amendment not adopted"
+    },
+    {
+      "bill": "SF4269",
+      "motion": "A17 amendment",
+      "mover": "Kent",
+      "yea": 4,
+      "nay": 6,
+      "absentPrinted": null,
+      "printedAbsentMember": null,
+      "outcome": "failed",
+      "motionLabelAmbiguity": false,
+      "missingPrintedAbsentRowInRetrievedText": true
+    },
+    {
+      "bill": "SF4091",
+      "motion": "recommended to pass as amended",
+      "mover": "Pratt",
+      "yea": 5,
+      "nay": 3,
+      "absentPrinted": 2,
+      "printedAbsentMember": [
+        "Kiffmeyer",
+        "Lopez Franzen"
+      ],
+      "outcome": "carried",
+      "motionLabelAmbiguity": false,
+      "committeeRecommendationNotSenateFloorPassage": true
+    }
+  ],
+  "aggregate": {
+    "printedNamedRollParagraphCount": 7,
+    "distinctBills": 3,
+    "ambiguousOrMissingAttendanceSections": 2,
+    "totalYesNoChoicesPrintedInText": 63,
+    "printedExplicitAbsentChoiceTokens": 3,
+    "sourceParagraphCountIsNotCertifiedDistinctVoteDenominator": true,
+    "blankAbsentRowMayNotBeFilledFromRoster": true,
+    "sameAmendmentLabelDifferentBillsMustNotMerge": true,
+    "onlyCommitteeVoteActionsIncluded": true
+  },
+  "holds": {
+    "SF3510WithdrawnA21NotCountedAsRecordedVote": true,
+    "openingRosterDidNotEstablishChampionMotionPresence": true,
+    "SF4269A16OralVsBaseAmendmentNeedsIndependentCorroboration": true,
+    "SF4269A17AbsentListNotPrintedInRetrievedPdfText": true,
+    "SF3510A15IsSeparateBillFromSF4269A15": true,
+    "SF4091PassRecommendationNotFloorVote": true,
+    "noPrintCollectionComparisonPerformed": true,
+    "originalPDFSHAUnverified": true,
+    "noIndividualMemberYeaNayListCommitted": true,
+    "noProductionPrivateDbMemberVoteImport": true,
+    "noModelsForecastTrainingServingSchedulerFloor2027Changes": true,
+    "issue864MustRemainOpen": true
+  }
+}
