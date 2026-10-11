@@ -50,3 +50,47 @@ test('current Board pages, count misprints, missing candidate/party categories a
  assert.equal(BOARD_YE_OPERATIONS_ORIGINAL_SOURCES.report2024.sourceUrl,
   'https://cfb.mn.gov/pdf/bdinfo/agendas/2025_02_13_materials.pdf');
 });
+
+test('permanent original 2024/25 Board meeting PDFs source ledger pins two authentic SHA and prevents Senate-duty inflation',async()=>{
+ const {readFileSync}=await import('node:fs');
+ const {createHash}=await import('node:crypto');
+ const P='docs/evaluation/source-proof/';
+ const ck=JSON.parse(readFileSync(P+
+  'cfb-2023-24-original-board-memo-mixed-filer-yearend-count-source-checkpoint.json','utf8'));
+ const txt=readFileSync(ck.sourceLedger.path,'utf8');
+ const blob=createHash('sha1').update('blob '+Buffer.byteLength(txt,'utf8')+'\0')
+  .update(txt).digest('hex');
+ assert.equal(blob,ck.sourceLedger.gitBlobSha);
+ assert.equal(Buffer.byteLength(txt,'utf8'),ck.sourceLedger.bytes);
+ const rows=txt.trimEnd().split('\n').map(x=>x.split('|'));
+ assert.equal(rows.length,2);
+ assert.equal(ck.originalGovernmentDocuments.length,2);
+ for(const row of rows){
+  assert.equal(row.length,15);
+  assert.match(row[4]!,/^[0-9a-f]{64}$/);
+  assert.ok(Number(row[5])>15000);
+  assert.equal(row[11],'candidate_party_political_committee_fund_combined');
+  assert.equal(row[12],'not_22_senate_committees');
+  assert.equal(row[13],'-');
+  assert.equal(row[14],'-');
+  const proof=ck.originalGovernmentDocuments.find((x:{yearEndReport:number})=>x.yearEndReport===Number(row[0]));
+  assert.ok(proof);
+  assert.equal(proof.officialOriginalSha256,row[4]);
+  assert.equal(proof.bytes,Number(row[5]));
+  assert.equal(proof.exactSenateCommitteeObligationsProven,null);
+ }
+ assert.equal(rows[0]![0],'2023');
+ assert.equal(rows[0]![7],'1299');
+ assert.equal(rows[0]![8],'reports_expected_at_deadline');
+ assert.equal(rows[0]![9],'-');
+ assert.equal(rows[1]![0],'2024');
+ assert.equal(rows[1]![7],'1320');
+ assert.equal(rows[1]![8],'reports_due');
+ assert.equal(rows[1]![9],'1212');
+ assert.equal(rows[1]![10],'64');
+ assert.equal(ck.scopeLimits.original2023YearEndRequiredFor22SenatorCohort,null);
+ assert.equal(ck.scopeLimits.original2024YearEndRequiredFor22SenatorCohort,null);
+ assert.equal(ck.scopeLimits.actualReportPublicByProvenCount,0);
+ assert.equal(ck.safeguards.noProductionDatabaseAccess,true);
+ assert.equal(ck.scopeLimits.keepIssue864Open,true);
+});
