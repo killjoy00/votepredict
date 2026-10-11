@@ -63,7 +63,7 @@ export function verifyTwoLaterAnn2024OriginalPageVersions(
     ||index.capturedAt!==p.capture||index.cdxDigest!==p.digest
     ||index.originalUrl!=='https://annjohnsonstewart.com/priorities/'
     ||index.archiveUrl!==
-      'https://web.archive.org/web/'+p.capture.replace(/\D/g,'').slice(0,14)+'id_/'+p.originalUrl)
+      'https://web.archive.org/web/'+p.capture.replace(/\D/g,'').slice(0,14)+'id_/'+index.originalUrl)
    throw Error('Independently indexed later Ann historical Senate campaign page identity changed');
   recheckOriginalHistoricalExcerpt({
    originalHtml:originals[i],
