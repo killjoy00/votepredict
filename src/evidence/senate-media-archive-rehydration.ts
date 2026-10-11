@@ -79,7 +79,9 @@ function validExactArchiveLocation(row: SenateMediaContextExport): boolean {
 
 export interface SenateMediaRehydrationPlan {
   eligibleDocuments: number;
+  /** All evidence context ROWS captured in 2021-2025, including repeated source IDs. */
   studyYearContexts: number;
+  /** All evidence context ROWS outside 2021-2025, not distinct source IDs. */
   excludedOutside2021To2025: number;
   rejectedInStudy: number;
   rejectionReasons: Record<string, number>;
@@ -102,9 +104,18 @@ export function planSenateMediaRehydration(
     throw Error('Private archive batch size must be between 1 and 12');
   if (contexts.length > 20000) throw Error('Private media context exceeds rehydration row cap');
   const seenEvidence = new Set<string>();
-  const seenSources = new Map<string, string>();
+  // A source document may legitimately back many evidence context rows or
+  // refer to several senator-name research leads. Count EVERY context row,
+  // but retrieve/hash each original archived source only once.
+  const bySource = new Map<string,{
+    identity:string;
+    row:SenateMediaContextExport;
+    captureYear:number;
+    mentionedMembers:Set<string>;
+    problems:Set<string>;
+  }>();
   const candidates: SenateMediaSnapshotCandidate[] = [];
-  const reasons: Record<string, number> = {};
+  const reasons: Record<string,number> = {};
   let excludedOutside2021To2025 = 0;
   let studyYearContexts = 0;
   let rejectedInStudy = 0;
@@ -112,32 +123,57 @@ export function planSenateMediaRehydration(
     if (!row || !row.evidenceId || !row.sourceDocumentId
       || seenEvidence.has(row.evidenceId)) throw Error('Duplicate or missing context evidence id');
     seenEvidence.add(row.evidenceId);
-    const identity = JSON.stringify([row.archiveUrl, row.sourceSha256, row.seedId, row.originalUrl]);
-    const previous = seenSources.get(row.sourceDocumentId);
-    if (previous !== undefined) {
-      if (previous !== identity) throw Error('Conflicting original archived source identity');
-      continue;
+    const captureYear = Number(row.archiveCapturedAt?.slice(0,4));
+    if (YEARS.has(captureYear)) studyYearContexts++;
+    else excludedOutside2021To2025++;
+    // Contradictory source-level metadata must not depend on which evidence
+    // row happens to be encountered first in a private export.
+    const identity = JSON.stringify([
+      row.archiveUrl,row.sourceSha256,row.seedId,row.originalUrl,
+      row.sourceUrl,row.archiveCapturedAt,row.archiveDigest,
+      row.publisher,row.publisherPublishedAt,
+    ]);
+    const existing = bySource.get(row.sourceDocumentId);
+    if (existing && existing.identity !== identity)
+      throw Error('Conflicting original archived source identity');
+    const problems:string[] = [];
+    if (YEARS.has(captureYear)) {
+      problems.push(...senateMediaContextProvenanceIssues(row));
+      if (!validExactArchiveLocation(row))
+        problems.push('unsafe_or_noncanonical_original_archive_url');
+      if (!SHA.test(row.sourceSha256))
+        problems.push('missing_valid_original_sha256');
+      if (!row.seedId || !row.publisher || !row.originalUrl || !row.archiveUrl
+        || !row.archiveCapturedAt) problems.push('incomplete_article_identity');
     }
-    seenSources.set(row.sourceDocumentId, identity);
-    const captureYear = Number(row.archiveCapturedAt?.slice(0, 4));
-    if (!YEARS.has(captureYear)) { excludedOutside2021To2025++; continue; }
-    studyYearContexts++;
-    const problems = senateMediaContextProvenanceIssues(row);
-    if (!validExactArchiveLocation(row)) problems.push('unsafe_or_noncanonical_original_archive_url');
-    if (!SHA.test(row.sourceSha256)) problems.push('missing_valid_original_sha256');
-    if (!row.seedId || !row.publisher || !row.originalUrl || !row.archiveUrl
-      || !row.archiveCapturedAt) problems.push('incomplete_article_identity');
-    if (problems.length) {
+    const group = existing ?? {
+      identity,row,captureYear,mentionedMembers:new Set<string>(),
+      problems:new Set<string>(),
+    };
+    if (Array.isArray(row.mentionedMembers)) {
+      for (const name of row.mentionedMembers)
+        if (typeof name === 'string') group.mentionedMembers.add(name);
+    }
+    for (const problem of problems) group.problems.add(problem);
+    if (!existing) bySource.set(row.sourceDocumentId,group);
+  }
+  for (const [sourceDocumentId, group] of bySource) {
+    if (!YEARS.has(group.captureYear)) continue;
+    if (group.problems.size) {
       rejectedInStudy++;
-      for (const problem of new Set(problems)) reasons[problem] = (reasons[problem] ?? 0) + 1;
+      for (const problem of group.problems)
+        reasons[problem]=(reasons[problem]??0)+1;
       continue;
     }
+    const row=group.row;
     candidates.push({
-      sourceDocumentId: row.sourceDocumentId, archiveUrl: row.archiveUrl!,
-      sourceSha256: row.sourceSha256, archiveCapturedAt: row.archiveCapturedAt!,
-      originalUrl: row.originalUrl!, publisher: row.publisher!,
-      seedId: row.seedId!, mentionedMembers: [...row.mentionedMembers],
-      captureYear,
+      sourceDocumentId, archiveUrl:row.archiveUrl!,
+      sourceSha256:row.sourceSha256, archiveCapturedAt:row.archiveCapturedAt!,
+      originalUrl:row.originalUrl!, publisher:row.publisher!,
+      seedId:row.seedId!,
+      // Mentions are offline reviewer leads, NEVER authenticated speakers.
+      mentionedMembers:[...group.mentionedMembers].sort((a,b)=>a.localeCompare(b)),
+      captureYear:group.captureYear,
     });
   }
   const filtered = candidates.filter(item => year === undefined || item.captureYear === year);

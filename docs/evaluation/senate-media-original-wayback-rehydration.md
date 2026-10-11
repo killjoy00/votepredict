@@ -8,6 +8,16 @@ The first media audit requires the **precise archived HTTP body bytes** hashed b
 
 **Live status:** The ChatGPT Neon connection previously found was `pack1`, not VotePredict. There is not yet an actual restricted-role VotePredict source export. The tool, docs and tests are preparatory. CI synthetic tests do not constitute successful fetching of the production source corpus.
 
+## Source-versus-context arithmetic (corrected 2026-10-10)
+
+The rehydrator must count **every exported evidence context row**, even when multiple evidence rows reference the **same** `sourceDocumentId`. It retrieves each eligible archived `sourceDocumentId` **at most once**. Previously the deduplication check ran before `studyYearContexts` and `excludedOutside2021To2025` were incremented; that silently made those manifest counters *distinct-source counts* instead of *evidence-row counts*. The planner now counts raw rows first and only deduplicates original-source retrieval after validating source identity.
+
+The independently verified [protected Neon live aggregate](senate-media-verified-live-neon-capture-year-counts.md) has **794** study-year context rows versus **688 summed within-year distinct source documents**, and **154** outside-year context rows. The two kinds of counts must never be silently substituted. In the scope of a future private export, `studyYearContexts + excludedOutside2021To2025` must equal the supplied row count. However the live 794/154 figures are a **separate database capture checkpoint**, not assumptions baked into synthetic tests or proof a later private export used the same branch.
+
+When a source document has several context rows, their `mentionedMembers` **review leads** are unioned and deduplicated for the private reviewer queue; these are neither human-attributed speakers nor endorsements. Every row's neutral-context provenance must pass. A contradictory source-level archive URL, timestamp, publisher or publisher date now fails closed; a repeated row with disallowed stance/context fields rejects that source, regardless of export order. `rejectedInStudy` and its reason counts remain **distinct-source** rejection counts, not row counts. All content stays private.
+
+**Compatibility:** any previously generated private batch manifest with duplicate context rows that used the older undercounting behavior will not validate against this corrected deterministic plan; regenerate that batch privately using the same original exported inputs. Do not rewrite or publish historic private manifests.
+
 ## Local private workflow
 
 First, export `media-context.jsonl` and `senate-roster.jsonl` with the separate [private SELECT-only runbook](senate-media-private-export-runbook.md). On a trusted machine that can reach the public Internet Archive, from the repository root:

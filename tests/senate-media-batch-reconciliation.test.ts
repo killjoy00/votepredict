@@ -109,6 +109,36 @@ test('zero private retrieval batches represent missing attempts, NOT zero publis
   assert.deepEqual(result.summary.byCaptureYear.find(r=>r.year===2025)?.notAttempted,1);
 });
 
+test('batch manifest distinguishes four context rows from two original source documents',()=>{
+  const shared=context('a');
+  const repeat={...shared,evidenceId:'evidence-a-second',
+    mentionedMembers:['Senator Rowan','Senator Second']};
+  const out=context('old','20260404101112');
+  const outRepeat={...out,evidenceId:'evidence-old-second'};
+  const contexts=[shared,out,repeat,outRepeat];
+  const planned=planSenateMediaRehydration(contexts);
+  assert.equal(planned.studyYearContexts,2);
+  assert.equal(planned.excludedOutside2021To2025,2);
+  assert.equal(planned.eligibleDocuments,1);
+  assert.deepEqual(planned.selected[0]?.mentionedMembers,
+    ['Senator Rowan','Senator Second']);
+  const original=batch(contexts,{limit:1});
+  assert.equal(original.manifest.selection.studyYearContexts,2);
+  assert.equal(original.manifest.selection.excludedOutside2021To2025,2);
+  assert.equal(original.attempts.length,1);
+  const result=reconcileSenateMediaPrivateBatches({
+    contexts,roster,batches:[original],
+  });
+  assert.equal(result.summary.suppliedContextRows,4);
+  assert.equal(result.summary.outsideStudyYearContextRows,2);
+  assert.equal(result.summary.studyYearDistinctSourceRows,1);
+  assert.equal(result.summary.eligibleDistinctArchivedArticles,1);
+  assert.equal(result.summary.attemptedDistinctSources,1);
+  assert.equal(result.summary.exactOriginalHashMatched,1);
+  assert.equal(result.summary.auditVerifiedQuotePassages,0);
+  assert.equal(result.summary.statewideMediaArticleDenominatorKnown,false);
+});
+
 test('complete multiple batches yield exact source hashes but do not certify senator remarks',()=>{
   const contexts=[context('b','20250404101112'),context('a'),context('old','20260404101112')];
   const one=batch(contexts,{offset:0,limit:1});

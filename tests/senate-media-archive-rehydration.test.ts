@@ -72,6 +72,52 @@ test('plan isolates eligible 2021–2025 archived context from 2026 and never eq
   assert.equal(planSenateMediaRehydration([c2021,c2026,c2025],{year:2025}).eligibleDocuments,1);
 });
 
+test('multiple context rows from one archived source count separately while one source is fetched',()=>{
+  const first=context('20230404101112','first');
+  const second={...first,evidenceId:'ev-second',mentionedMembers:['Bob Example','Alice Example']};
+  const third={...first,evidenceId:'ev-third',mentionedMembers:['Carol Example']};
+  const excluded=context('20260404101112','out');
+  const excludedSecond={...excluded,evidenceId:'ev-out-second'};
+  const rows=[first,excluded,second,excludedSecond,third];
+  const plan=planSenateMediaRehydration(rows);
+  assert.equal(plan.studyYearContexts,3); // raw 2023 context evidence rows
+  assert.equal(plan.excludedOutside2021To2025,2); // raw 2026 context rows
+  assert.equal(plan.eligibleDocuments,1); // one original HTTP body to retrieve
+  assert.equal(plan.rejectedInStudy,0);
+  assert.equal(plan.selected.length,1);
+  assert.deepEqual(plan.selected[0]?.mentionedMembers,
+    ['Alice Example','Bob Example','Carol Example']);
+  assert.equal(plan.selected[0]?.sourceDocumentId,first.sourceDocumentId);
+  assert.equal(plan.nextOffset,null);
+  const reverse=planSenateMediaRehydration([...rows].reverse());
+  assert.equal(reverse.studyYearContexts,3);
+  assert.equal(reverse.excludedOutside2021To2025,2);
+  assert.equal(reverse.eligibleDocuments,1);
+  assert.deepEqual(reverse.selected[0]?.mentionedMembers,plan.selected[0]?.mentionedMembers);
+  assert.equal(planSenateMediaRehydration(rows,{year:2023}).studyYearContexts,3);
+  assert.equal(planSenateMediaRehydration(rows,{year:2021}).eligibleDocuments,0);
+});
+
+test('a second invalid context cannot launder an otherwise valid source by deduplication order',()=>{
+  const valid=context();
+  const nonNeutral={...valid,evidenceId:'ev-other',contextOnly:false,modelWeight:1};
+  for(const rows of [[valid,nonNeutral],[nonNeutral,valid]]) {
+    const plan=planSenateMediaRehydration(rows);
+    assert.equal(plan.studyYearContexts,2);
+    assert.equal(plan.eligibleDocuments,0);
+    assert.equal(plan.rejectedInStudy,1); // distinct rejected SOURCE, not two rows
+    assert.equal(plan.rejectionReasons.not_neutral_archived_context,1);
+  }
+  const conflictingDate={...valid,evidenceId:'ev-other',
+    publisherPublishedAt:'2023-04-03T12:00:00Z'};
+  assert.throws(()=>planSenateMediaRehydration([valid,conflictingDate]),
+    /Conflicting original archived source identity/);
+  const conflictingCapture={...valid,evidenceId:'ev-other',
+    archiveCapturedAt:'2023-04-05T10:11:12Z'};
+  assert.throws(()=>planSenateMediaRehydration([valid,conflictingCapture]),
+    /Conflicting original archived source identity/);
+});
+
 test('untrusted context metadata excluded with explicit recorded problems; no speculative archival fetch',()=>{
   const bad=context();
   bad.contextOnly=false;
