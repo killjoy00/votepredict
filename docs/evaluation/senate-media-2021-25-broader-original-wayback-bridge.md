@@ -72,3 +72,26 @@ The source-specific public research command is:
     node --import tsx scripts/audit-senate-media-rest-2023-original-phrases.ts --output artifacts/senate-media-rest-2023-original-phrase-proof.json
 
 Maintain source distinctions: Rest's direct quotation, House or Senate members mentioned contextually, Senate DFL group statements and actual recorded floor votes are NOT interchangeable. Keep #987/#946 open, #912 owner-closed.
+
+
+## Independent second 25-source run recovers previously unavailable Bigham/Eken originals
+
+The second real public [Wayback original source run #38160362555](https://github.com/killjoy00/votepredict/actions/runs/38160362555) **SUCCESS** (source SHA 6cef733fe2a3e1e870bb2b908a71a550561a5a8f) independently reproduced the first **16/16** historical archived body SHA256/byte lengths exactly, and recovered **seven additional indexed-SHA1-matching original page versions**, including **three newly original-verified URLs**. This proves the importance of retried public archive index results: the first run's unknown CDX outcome does NOT indicate a missing original article.
+
+The independently downloaded second artifact ID 11710680494: ZIP SHA256 1e4645ff7b058b99258e4f0c4e97379c83778ce507008b53c930274b0d54197c, decoded 43,685-byte JSON SHA256 506bae0cc853823ab284275679d6ad3733e6314ebc0a6355b42213ab4eaa4dc5. Its actual total was **15 indexed URL candidates, 10 still unverified/invalid CDX responses, 25 exact archived body attempts, 23 index-SHA1-consistent original HTTP bodies across 14 distinct exact public original URLs**. All 23 distinct capture versions are permanently pinned via the first 16 plus the second-run 7 in the [25-source historical original receipt ledger](senate-media-2021-25-broader-25-original-public-archive-receipts-20261011.json).
+
+The **newly authenticated 2022 Bigham/Eken original Senate DFL release** has **two independent original HTML capture versions**: March 11, 2022, 19:51:03 UTC, SHA256 026e8becb82577a34cc27388faed93048a6f247991853ba3f60f1a5287268131, 154,251 bytes; June 29, 2022, 12:45:13 UTC, SHA256 7a2621bdbe093c90c594af36124f53203399504758ce48c07eaec168afb9f06b, 151,424 bytes. This confirms archived HTML existed by March but does NOT prove the original January 31 publication-clock timing.
+
+Other newly SHA-verified versions: two 2025 archived captures of Carla Nelson's publisher page *displaying a 2023 date* (cannot be backdated to the displayed year); the second 2024 Foung Hawj archive version previously network-denied; and two 2024 Judy Seeberger EMS archived versions. **A displayed 2023 article with only 2025 archived bodies is NOT proof that this exact text was public in 2023.**
+
+### Bigham vs. Eken individually labeled historical source text: both recovered
+
+The new public [two-speaker exact original HTML audit #38160750130](https://github.com/killjoy00/votepredict/actions/runs/38160750130) **SUCCESS**, using both independently pinned 2022 original URL bodies. Its downloaded artifact ID 11710795855 had ZIP SHA256 ab02b4a4e1907816417f78a13c953992b744d9d9ed9bbc1b3a23fe14c4ddc673 and decoded 4,508-byte JSON SHA256 f0356b7fb24218c6c65043a90956d62e1382bf693fb8ffd8d35fcb2db8f25798.
+
+In BOTH authenticated exact 2022 archive versions, **a short publisher Bigham fragment** was found in the original visible HTML with a same-paragraph explicit **Senator Karla Bigham** label, and **a different short Eken fragment** was found with a same-paragraph **Senator Kent Eken** label. **Four positive phrase-present cues and four correct-speaker-paragraph cues, zero archival HTTP failures**. This remains exactly **ONE Senate DFL article with TWO separately labeled senator statement turns**, not two publisher articles or a collective unattributed statement. No sound recording was authenticated; no full individual quote received human final approval, no recorded floor vote inferred, and the March capture does not establish January 31 original posting time.
+
+The [durable 2022 two-speaker original source SHA and phrase receipt manifest](senate-media-2022-bigham-eken-authentic-historical-two-speaker-html-receipts-20261011.json) holds all four original phrase and attribution results without any original article text. It can be independently reverified by rerunning the [public two-speaker research workflow](../../.github/workflows/senate-media-bigham-eken-2022-original-cues.yml) or:
+
+    node --import tsx scripts/audit-senate-media-bigham-eken-2022-phrases.ts --output artifacts/senate-media-bigham-eken-2022-original-phrase-proof.json
+
+**Result of both research tracks together:** 25 new original publisher page leads (2021–2025), with 23 index-consistent public archived HTTP page versions across 14 of those selected source URLs, plus *three named senator reporter/caucus attribution candidates* (Ann Rest, Karla Bigham, Kent Eken) re-checked in their exact archived historic HTML. This is NOT a complete statewide media census, a verified original audio archive, a general claim of individual legislative votes, or automatic model/forecast evidence.
