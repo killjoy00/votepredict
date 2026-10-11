@@ -98,3 +98,27 @@ test('held source PDF NEVER gains historical status even if archive binary match
  assert.equal(l.originalHistoricalVersionPublicBy,null,
   'capture on PDF Board receipt date cannot prove observed receipt time');
 });
+
+test('original archive exact-PDF four-source CDX valid-empty checkpoint cannot be read as original 2023/24 report secrecy',()=>{
+ const ck=JSON.parse(readFileSync(
+  'docs/evaluation/source-proof/cfb-2023-24-exact-original-pdf-archive-publicby-checkpoint.json','utf8'));
+ assert.equal(ck.issue,864);
+ assert.equal(ck.original71VersionSource.gitBlobSha,'bfa1c1eff6a095a3a0d03aa49a34e1d929d6a388');
+ assert.equal(ck.archivalQuery.originalResponseJSONText,'[]');
+ assert.equal(ck.archivalQuery.originalCDXResponseBytesForAllFour,3);
+ assert.equal(ck.archivalQuery.originalResponseSHA256ForAllFour,
+  '37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570');
+ assert.deepEqual(ck.archivalQuery.originalCDXQueries.map((x:{versionId:string})=>x.versionId),
+  [...FOUR_EXACT_ARCHIVE_PILOT_IDS]);
+ assert.ok(ck.archivalQuery.originalCDXQueries.every((x:{
+  originalQuerySHA256:string;matchingArchiveCDXPdfCaptureCandidates:number;
+  actualHistoricalPublicBy:string|null})=>
+  /^[0-9a-f]{64}$/.test(x.originalQuerySHA256)
+  &&x.matchingArchiveCDXPdfCaptureCandidates===0&&x.actualHistoricalPublicBy===null));
+ assert.equal(ck.original71VersionSource.totalVersionIds,71);
+ assert.equal(ck.resultLimits.zeroMatchingArchiveCapturesDoesNotProveOriginalPDFWasNonpublic,true);
+ assert.equal(ck.resultLimits.complete71VersionHistoricalPublicByProvenCount,0);
+ assert.equal(ck.resultLimits.noLegalDutyDenominatorProven,true);
+ assert.equal(ck.safeguards.noProductionDbWrite,true);
+ assert.equal(ck.safeguards.keepIssue864Open,true);
+});
