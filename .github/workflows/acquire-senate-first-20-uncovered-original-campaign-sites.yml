@@ -1,0 +1,55 @@
+name: Recover first 20 unobserved Minnesota senators' original campaign websites
+on:
+  pull_request:
+    paths:
+      - scripts/probe-senate-first-20-uncovered-original-campaign-sites.mjs
+      - .github/workflows/acquire-senate-first-20-uncovered-original-campaign-sites.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-twenty-senator-historical-campaign-recovery:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-20-senator-historical-campaign-original-acquisition-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Recover pinned unmodified official 105-person historical Minnesota Senate directory
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Independently verify first 20 actual senators and recover digest-matched complete historical originals
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
+          node --import tsx scripts/probe-senate-first-20-uncovered-original-campaign-sites.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --out-dir original/first-20-campaign-originals
+      - name: Retain raw original CDX indexes, complete original Wayback HTML, SHA digests and bounded missingness
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-first-20-uncovered-original-26-historic-archive-windows-v1
+          path: original/first-20-campaign-originals/
+          if-no-files-found: warn
+          retention-days: 30
