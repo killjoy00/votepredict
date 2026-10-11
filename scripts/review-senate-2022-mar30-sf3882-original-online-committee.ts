@@ -45,11 +45,11 @@ async function main(){
   throw Error('Expected exact --output PATH');
  const out=resolve(args[1]!);
  let source:Awaited<ReturnType<typeof boundedOneExactPublicPage>>|null=null;
- let proof:ReturnType<typeof inspectSenate2022Mar10SF3882OnlineHtml>|null=null;
+ let proof:ReturnType<typeof inspectOriginalMar30SF3882SubcommitteeMinutes>|null=null;
  const failures:string[]=[];
  try{
   source=await boundedOneExactPublicPage();
-  proof=inspectSenate2022Mar10SF3882OnlineHtml(source.html);
+  proof=inspectOriginalMar30SF3882SubcommitteeMinutes(source.html);
  }catch(e){failures.push(safe(e))}
  const result={
   schemaVersion:SOURCE.version,issue:864,
