@@ -1,0 +1,38 @@
+{
+  "schema": "senate-2022-rob-kupec-original-campaign-issue-page-path-recovery-v1",
+  "issue": 864,
+  "actualPerson": {
+    "candidate": "Rob Kupec",
+    "sourceMemberName": "Robert Kupec",
+    "electionDistrict": "4",
+    "actualSenateServiceVerifiedFromOriginalLRL": true,
+    "sourceLrlOriginalRunId": 38094976711,
+    "researchOnlyThisVerifiedEverServedSenator": true
+  },
+  "researchSource": {
+    "originalSiteHomepage2022CapturedUtc": "2022-07-03T21:50:05.000Z",
+    "originalHomepageSha256": "930de7ddb507262b616a049355625761d4cbf4e979abd7055e4a7deac4295e56",
+    "independentlyAcquiredGithubRunId": 38100967926,
+    "originalGithubArtifactId": 11687347848,
+    "originalHomepageContainsNavigationLabelIssues": true,
+    "historicalExactIssuesPageStillUnverified": true,
+    "currentWebsite2026CannotBeBackdated": true
+  },
+  "fixedHistoricalUrlTargets": [
+    "https://www.kupec4mnsenate.com/issues",
+    "http://www.kupec4mnsenate.com/issues",
+    "https://www.kupec4mnsenate.com/issues/"
+  ],
+  "rules": {
+    "historicalYear": 2022,
+    "earliestAcceptedArchiveCapture": "2022-01-01T00:00:00Z",
+    "lastAcceptedArchiveCaptureExclusive": "2022-11-08T00:00:00Z",
+    "includeNeverServedCandidates": false,
+    "maxWaybackExactPathQueries": 3,
+    "maxWaybackIndexRowsPerQuery": 100,
+    "maxOriginalHtmlReplays": 4,
+    "hashMatchOriginalWaybackCdxSha1Required": true,
+    "originalPostingDateIndependent": null,
+    "modelOrForecastPositionAllowed": false
+  }
+}
