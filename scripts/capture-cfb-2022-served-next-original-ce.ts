@@ -21,10 +21,11 @@ import {
 import {
   SERVED_2022_NEXT_CE_VERSION,SERVED_2022_NEXT_DISTRICTS,
   SERVED_2022_GENERAL_SOURCE_SHA,selectServed2022NextOriginalCe,
+  auditServed2022RedistrictedOriginalCe,
 } from '../src/evidence/cfb-2022-served-senators-next-original-ce.js';
 import {
   CFB_2022_CE_INDEPENDENT_CALENDAR_URL,
-  auditCfb2022OriginalCePdf,cfb2022CeRef,
+  cfb2022CeRef,
   diagnoseCfb2022CeCalendar,diagnoseCfb2022OriginalCeHeader,
   verifyCfb2022CeCalendar,type Cfb2022PdfProofCapture,
 } from '../src/evidence/cfb-2022-senate-original-ce-pdf-proof.js';
@@ -160,7 +161,7 @@ async function main(){
   await Promise.all([worker(),worker()]);
   const reports=chosen.targets.map(t=>{
     const pdf=pdfs.get(t.id)??null;
-    return {...auditCfb2022OriginalCePdf(t,pdf,calendar,failures.get(t.id)??null),
+    return {...auditServed2022RedistrictedOriginalCe(t,pdf,calendar,failures.get(t.id)??null),
       officialServedSenator:t.senator,officialServiceSource:t.officialServiceSource,
       officialServiceObservedAt:t.officialServiceSourceObservedAt,
       sourcePdfHeaderDiagnostics:pdf?diagnoseCfb2022OriginalCeHeader(t,pdf.text):null};
