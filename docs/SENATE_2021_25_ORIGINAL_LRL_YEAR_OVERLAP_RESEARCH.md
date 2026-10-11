@@ -1,0 +1,23 @@
+# #864 — First original-source 2021–2025 Minnesota Senate person-year overlap inventory
+
+**NOT a statewide or day-exact membership denominator certificate.** The earlier 139 election-winner *observations* cannot tell us who actually served or when. This narrowly scoped inventory instead reads the previously retrieved **original official LRL Senate service directory HTML** (plus the original Senate special-election oath history), checks both source SHA-256 hashes and actual 2026 retrieval timestamps, and enumerates only individuals that original Minnesota public source independently documents as having served in the Senate.
+
+## What this actual original-source audit computes
+
+For **each calendar year 2021, 2022, 2023, 2024, 2025**, reopen the actual [official Senate service directory](https://www.lrl.mn.gov/legdb/senate_dir) original and enumerate official person records with at least one LRL Senate service **reported-year range** crossing that year. Preserve official names, raw original LRL names (do not fuzzy-merge same-name people), district(s), original reported start and end years, LRL observation time/hash and the precise meaning of that claim. A person appearing in two terms/districts during a single year appears once with both reported district segments; a 2020 winner who never began a 2021 Senate term does not automatically appear.
+
+Preserve the separate, independently authenticated [official special-election swearing history](https://www.lrl.mn.gov/history/caucus?body=s) dated oath events, but **never infer January 1 or December 31 membership boundaries** from a year in the directory. Original researched oath events include 2024-11-25 Senate District 45, 2025-02-03 District 60, 2025-05-06 District 6 and 2025-11-18 Districts 29 and 47. Each is attached to the matching already official-directory-verified person/district/year only. An oath event is evidence of swearing on that date, **not automatic proof of a unique first-ever start date, a precise resignation date or continuous service every other day of that year**. Actual beginning/ending dates remain explicitly **null** until reconciled with original person biographies and other direct government sources.
+
+This report neither assumes source evidence was online during a forecast year nor infers election results, candidate platforms, website absence, campaign source availability, committee attendance or specific Senate floor votes. It names no candidates without LRL-backed actual service. Its source observation day (original October 2026 download) is separate from the retrospectively documented service years. It does not issue a completeness percentage or production membership ID.
+
+## Reproducible exact-source audit
+
+Original public LRL Senate directory and special swearing evidence: [Actions run #38094976711](https://github.com/killjoy00/votepredict/actions/runs/38094976711), artifact **11685387674**.
+
+PR-only workflow [audit-senate-lrl-2021-25-service-year-overlap.yml](../.github/workflows/audit-senate-lrl-2021-25-service-year-overlap.yml) downloads this original, recomputes both SHA-256 hashes and parses the original documented service terms through the already audited [official service parser](../src/evidence/senate-official-ever-served-directory.ts). The offline command is [audit-senate-lrl-2021-25-calendar-year-overlap-offline.ts](../scripts/audit-senate-lrl-2021-25-calendar-year-overlap-offline.ts). It emits a 30-day, source-only senator-year research JSON artifact with original source hashes, year-by-year individual LRL provenance, exact event dates where proven and explicit unverified in-year start/end dates.
+
+## Why the membership denominator is still open
+
+Original LRL year ranges, however genuine, are not **date-exact service intervals** and may omit particular vacancies, midterm transitions, biography aliases or people not parsed from this modern directory view. Needed before certifying the complete 2021–2025 person-year denominator: independently audit LRL directory extraction for unparsed original service rows; compare original individual legislative biographies and oath/vacancy/service records, including year-internal appointments/deaths/resignations; verify same-name identities rather than auto-merge; reconcile actual start/end days against database membership intervals without modifying production; then integrate the seven-senator, 24-excerpt [dated campaign source ledger](SENATE_SEVEN_EVER_SERVED_24_DATED_CAMPAIGN_SOURCE_LEDGER.md). The separate original 2020/22 SOS **filing website exports** remain unresolved.
+
+**Keep #864 OPEN.** No Neon or Vercel reads/writes, production evidence records, inference, model retraining, frozen evaluation, forecasts, cron collectors or automated site admissions.
