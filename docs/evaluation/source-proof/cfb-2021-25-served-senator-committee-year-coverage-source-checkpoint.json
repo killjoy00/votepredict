@@ -1,0 +1,192 @@
+{
+  "schemaVersion": "cfb-served-senator-2021-25-committee-year-coverage-source-v1",
+  "issueNumber": 864,
+  "producedOn": "2026-10-11",
+  "classification": "metadata_only_scoped_viewer_sample_not_legal_filing_denominator",
+  "matrix": {
+    "path": "docs/evaluation/source-proof/cfb-2021-25-served-senator-committee-year-coverage.psv",
+    "rows": 90,
+    "bytes": 17484,
+    "sha256": "4c606d89676be110974b173c50b98ad29a3a4b80780646ea7a2abe0b98cbf3b7",
+    "columns": [
+      "cohort",
+      "reportYear",
+      "district",
+      "actualSenator",
+      "committeeRegistration",
+      "viewerSource",
+      "viewerApiSha256",
+      "observedOriginalRefs",
+      "authenticatedOriginalPdfs",
+      "observedAmendmentRefs",
+      "authenticatedDistinctAmendedPdfs",
+      "sourceIdentityHolds",
+      "documentedPdfAliases",
+      "nextAction",
+      "unverifiedOriginalVersionIds",
+      "unverifiedAmendmentVersionIds",
+      "sourceHoldVersionIds",
+      "aliasVersionMapping"
+    ]
+  },
+  "acquisitionQueue": {
+    "path": "docs/evaluation/source-proof/cfb-2021-25-served-senator-next-source-pdf-targets.psv",
+    "rows": 51,
+    "bytes": 9071,
+    "sha256": "838b74e9b2a19b75bb0c2d5509ce8b29c126428bfe3938aca0eb5260a743ba38",
+    "columns": [
+      "priority",
+      "reportVersionId",
+      "originalParentReportId",
+      "reportYear",
+      "actualSenator",
+      "district",
+      "committeeRegistration",
+      "officialViewerSegment",
+      "officialViewerApiSha256",
+      "authenticatedOriginalParentSha256"
+    ]
+  },
+  "sourcePanels": {
+    "verified2022Senators": 22,
+    "verified2022Districts": "14-30,32-36",
+    "verified2025SpecialSenators": 2,
+    "verified2025SpecialDistricts": [
+      29,
+      47
+    ],
+    "cohort2022CandidateViewerSegment2022Entries": 22,
+    "cohort2022CandidateViewerSegment2024Entries": 14,
+    "cohort2022RegistrationNotInSampled2024Segment": 8,
+    "legalFilingDutyDenominator": null
+  },
+  "byYear": [
+    {
+      "year": 2021,
+      "rows": 22,
+      "viewerEntries": 22,
+      "noViewerEntry": 0,
+      "observedOriginals": 16,
+      "authenticatedOriginals": 16,
+      "observedAmendments": 13,
+      "authenticatedDistinctAmendments": 12,
+      "sourceOnlyHolds": 1,
+      "documentedAliases": 0,
+      "pendingOriginals": 0,
+      "pendingAmendments": 0
+    },
+    {
+      "year": 2022,
+      "rows": 22,
+      "viewerEntries": 22,
+      "noViewerEntry": 0,
+      "observedOriginals": 66,
+      "authenticatedOriginals": 66,
+      "observedAmendments": 43,
+      "authenticatedDistinctAmendments": 42,
+      "sourceOnlyHolds": 0,
+      "documentedAliases": 1,
+      "pendingOriginals": 0,
+      "pendingAmendments": 0
+    },
+    {
+      "year": 2023,
+      "rows": 22,
+      "viewerEntries": 14,
+      "noViewerEntry": 8,
+      "observedOriginals": 14,
+      "authenticatedOriginals": 0,
+      "observedAmendments": 6,
+      "authenticatedDistinctAmendments": 0,
+      "sourceOnlyHolds": 0,
+      "documentedAliases": 0,
+      "pendingOriginals": 14,
+      "pendingAmendments": 6
+    },
+    {
+      "year": 2024,
+      "rows": 22,
+      "viewerEntries": 14,
+      "noViewerEntry": 8,
+      "observedOriginals": 14,
+      "authenticatedOriginals": 0,
+      "observedAmendments": 10,
+      "authenticatedDistinctAmendments": 0,
+      "sourceOnlyHolds": 0,
+      "documentedAliases": 0,
+      "pendingOriginals": 14,
+      "pendingAmendments": 10
+    },
+    {
+      "year": 2025,
+      "rows": 2,
+      "viewerEntries": 2,
+      "noViewerEntry": 0,
+      "observedOriginals": 8,
+      "authenticatedOriginals": 8,
+      "observedAmendments": 7,
+      "authenticatedDistinctAmendments": 0,
+      "sourceOnlyHolds": 0,
+      "documentedAliases": 0,
+      "pendingOriginals": 0,
+      "pendingAmendments": 7
+    }
+  ],
+  "queue": {
+    "P1_PARENT_VERIFIED_AMENDMENT": 7,
+    "P2_AUTHENTICATE_ORIGINAL_FIRST": 28,
+    "P3_AMEND_AFTER_PARENT": 16
+  },
+  "evidenceReferences": {
+    "reportsViewer396": {
+      "path": "docs/evaluation/source-proof/cfb-2021-24-senate-396-original-viewer-source-observations.psv",
+      "sha256": "6056ce0072adfc6711588fe8d2b4b09694a658e52a249631fbf4e92f65a2a4f9"
+    },
+    "first2022Ce": {
+      "path": "docs/evaluation/source-proof/cfb-2022-served-d13-24-original-ce-pdfs.psv",
+      "sha256": "ff6c330378596c7efd224215908e9e4e70d0cc01b19598dde0f0fc36c57382a2"
+    },
+    "first2021_22Ye": {
+      "path": "docs/evaluation/source-proof/cfb-2021-22-served-11-20-original-ye-pdf-proof.psv",
+      "sha256": "1a7a71108b66a5aafd34db0844f5a28c7f6d0dc357856203215f16b2044f44fd"
+    },
+    "firstAmendment26": {
+      "path": "docs/evaluation/source-proof/cfb-2021-22-served-amendment-26-pdf-source.psv",
+      "sha256": "293dcebac622da4ccaa4a5c9ccc3f067ecd9bea005a3b472bcf48856c3fb5891"
+    },
+    "second2022Ce": {
+      "path": "docs/evaluation/source-proof/cfb-2022-served-d25-36-original-ce-pdfs.psv",
+      "sha256": "263c1b27b425f67332eacdf855e4ae7f7300d111b2330d0a259d239cfea9050c"
+    },
+    "second2021_22Ye": {
+      "path": "docs/evaluation/source-proof/cfb-2021-22-served-d25-36-18-original-yearend-pdfs.psv",
+      "sha256": "8c3278b1e7dfe4fff3c768308d4d8328a0af065fa2b270406257d49e5aa716db"
+    },
+    "secondAmendment30": {
+      "path": "docs/evaluation/source-proof/cfb-2021-22-served-d25-36-30-amended-report-pdfs.psv",
+      "sha256": "5de332aed85aa00c0e4b5ad943ce13a31f586d7333671d519aa91ad0a0341723"
+    },
+    "viewer2025": {
+      "path": "docs/evaluation/source-proof/cfb-2025-dated-senate-85-reference-versions.psv",
+      "sha256WithoutFinalNewline": "d34bb475cccd94481fd2f2215bf47e3c9695ad328e06bed2475967add067f0d0"
+    },
+    "ce2025": "docs/evaluation/source-proof/cfb-2025-senate-12-special-original-pdf-source-ledger.psv",
+    "final2025": "docs/evaluation/source-proof/cfb-2025-served-senators-2-special-cycle-final-original-pdf-ledger.psv",
+    "ye2025": "docs/evaluation/source-proof/cfb-2025-two-served-senators-yearend-original-pdf-ledger.psv"
+  },
+  "documentedAnomalies": {
+    "sourceOnlyHold": "18430:21:pcc:YE:0:1",
+    "versionAlias": "17319:22:pcc:YE:0:2",
+    "versionAliasOf": "17319:22:pcc:YE:0:1",
+    "district31HistoricalRegistrationMatchUnresolved": true
+  },
+  "safeguards": {
+    "noOriginalPdfBodiesOrDonorRows": true,
+    "noNeverServedNamesInOutputs": true,
+    "noProductionDatabaseReadOrWrite": true,
+    "noRetroactivePredictionEligibility": true,
+    "noLegalNonfilerClaimsFromViewerAbsence": true,
+    "no2027SchedulerOrTrainingChanges": true,
+    "keepIssue864Open": true
+  }
+}
