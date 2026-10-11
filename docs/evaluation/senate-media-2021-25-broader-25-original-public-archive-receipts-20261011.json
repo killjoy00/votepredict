@@ -272,5 +272,120 @@
     "noRecordedVoteOrForecastMemberPositionsInferred": true,
     "noStatewideOrPublisherCoverageDenominatorEstablished": true,
     "noProductionMediaCollectorOrModelModified": true
+  },
+  "independentSecondPublicRun": {
+    "repository": "killjoy00/votepredict",
+    "runId": 38160362555,
+    "runStatus": "success",
+    "sourceHeadSha": "6cef733fe2a3e1e870bb2b908a71a550561a5a8f",
+    "artifactId": 11710680494,
+    "artifactName": "senate-media-25-original-public-proof",
+    "zippedArtifactSha256": "1e4645ff7b058b99258e4f0c4e97379c83778ce507008b53c930274b0d54197c",
+    "decodedJsonSha256": "506bae0cc853823ab284275679d6ad3733e6314ebc0a6355b42213ab4eaa4dc5",
+    "decodedJsonBytes": 43685,
+    "sampleTotals": {
+      "originalPublicUrlLeadsRequested": 25,
+      "indexedOriginalUrlCandidates": 15,
+      "indexEmpty": 0,
+      "indexUnavailableOrInvalid": 10,
+      "originalHttpReplaysAttempted": 25,
+      "matchedIndexedSha1RawHtmlBodies": 23,
+      "distinctMatchedOriginalUrlLeads": 14
+    },
+    "byPublisherDisplayedYear": [
+      {
+        "year": 2021,
+        "urlsWithOriginalBody": 1
+      },
+      {
+        "year": 2022,
+        "urlsWithOriginalBody": 2
+      },
+      {
+        "year": 2023,
+        "urlsWithOriginalBody": 4
+      },
+      {
+        "year": 2024,
+        "urlsWithOriginalBody": 5
+      },
+      {
+        "year": 2025,
+        "urlsWithOriginalBody": 2
+      }
+    ],
+    "original16EarlierSha256AndByteLengthExactEqualityOnAllCommonCaptureKeys": true,
+    "earlierOriginalBodyVersionsReproducedWithoutChange": 16,
+    "additionalNewExactOriginalBodyVersions": 7,
+    "additionalNewDistinctOriginalUrlLeads": 3,
+    "additionalVerifiedExactArchivedBodyReceipts": [
+      {
+        "leadId": "public-2022-bigham-eken-separated",
+        "independentlyNewShaConsistentOriginalVersions": [
+          {
+            "captureUtc": "2022-03-11T19:51:03Z",
+            "indexSha1Base32": "W6T26AXVFFZJHAPPTOFAAZB6NDQWKV76",
+            "rawOriginalSha256": "026e8becb82577a34cc27388faed93048a6f247991853ba3f60f1a5287268131",
+            "originalBytes": 154251
+          },
+          {
+            "captureUtc": "2022-06-29T12:45:13Z",
+            "indexSha1Base32": "54ASOGEJRZQXKNSVI3XQKOTBVNTH4ON5",
+            "rawOriginalSha256": "7a2621bdbe093c90c594af36124f53203399504758ce48c07eaec168afb9f06b",
+            "originalBytes": 151424
+          }
+        ]
+      },
+      {
+        "leadId": "public-2023-nelson-rochester-schools",
+        "independentlyNewShaConsistentOriginalVersions": [
+          {
+            "captureUtc": "2025-03-25T12:27:51Z",
+            "indexSha1Base32": "OWELKNZ3OF2CKTOQP4OR3XYDAKGV7UBN",
+            "rawOriginalSha256": "005c9ade165508d9865355e2b5af05171a39e46bc0a999df02ee587750d8f7a2",
+            "originalBytes": 95373
+          },
+          {
+            "captureUtc": "2025-07-22T22:42:25Z",
+            "indexSha1Base32": "T42RD762NRMJW4ZWAXTQI5KZLYQJPMLW",
+            "rawOriginalSha256": "6038de654a35fe27f51e1049a5bff5a907f5c044e42e97b6a8e7b6959c8362e2",
+            "originalBytes": 96648
+          }
+        ]
+      },
+      {
+        "leadId": "public-2024-hawj-transport",
+        "independentlyNewShaConsistentOriginalVersions": [
+          {
+            "captureUtc": "2024-04-22T04:14:23Z",
+            "indexSha1Base32": "RPGCVOQOMF7AOA2UQ6R7E5QIALFQB7S2",
+            "rawOriginalSha256": "a168aef89b0f2e50e588c1aa404491de41a241b13739edfe394e4ec6b70e0a01",
+            "originalBytes": 93360
+          }
+        ]
+      },
+      {
+        "leadId": "public-2024-seeberger-ems",
+        "independentlyNewShaConsistentOriginalVersions": [
+          {
+            "captureUtc": "2024-06-21T20:28:16Z",
+            "indexSha1Base32": "UDV5Y5SEEMOI4PKKCAN7ZG7RKFMGUXSJ",
+            "rawOriginalSha256": "0624e6ff787ccc8f7d0370407db406bdbe89202343c29e60da6a269536119833",
+            "originalBytes": 94680
+          },
+          {
+            "captureUtc": "2024-06-25T20:35:01Z",
+            "indexSha1Base32": "CX6TQF2TC7URJW6EY7IRQFWX4SODKKAD",
+            "rawOriginalSha256": "800afc8c818040d715caf57af834619abf67ec7b0913f3ff9b49cd6f1596bdd1",
+            "originalBytes": 94902
+          }
+        ]
+      }
+    ],
+    "historicalVersionDateDoesNotBackdateCurrentDisplayedDate": true,
+    "january2022BighamAndEkenReleaseNowHasTwoExactArchived2022Bodies": true,
+    "oneOriginalArticleStillContainsTwoSeparateNamedSenatorSpeakerCandidates": true,
+    "theirQuotedPhrasesNotYetArchivedMarkupChecked": true,
+    "march2025NelsonCaptureOf2023DisplayedArticleNotProofOriginal2023Text": true
   }
 }
