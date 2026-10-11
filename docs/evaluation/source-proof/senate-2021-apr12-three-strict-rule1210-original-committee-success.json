@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "senate-2021-apr12-three-rule1210-committee-original-strict-success-v1",
+  "issue": 864,
+  "original": {
+    "url": "https://www.senate.mn/journals/2021-2022/20210412036.pdf",
+    "journalReportDate": "2021-04-12",
+    "originalPDFBytes": 11063699,
+    "originalPDFSHA256": "8dd34868badade8d3d4cd77ce11c6a632705bdd99a59509a5e4d23544f2d3d75",
+    "originalTextSHA256": "dda780e4fc076f56ff9f271303ba81897b69813acfece416b7741aea64c41214",
+    "normalizedTextSHA256": "e3a5ec1d843e7168355a62e24fbe4d85eb8af161f7026c65d8b22abc5d9e751b"
+  },
+  "firstPass": {
+    "runId": 38170792094,
+    "runURL": "https://github.com/killjoy00/votepredict/actions/runs/38170792094",
+    "runnerPR": 1130,
+    "originalSourceAcquired": true,
+    "independentlyDownloadedZipBytes": 1697,
+    "zipSHA256": "65e707c163b75d3ebd99764b3bb12c1cb50e1be5f9593ff00b122c0201d11d53",
+    "decodedJSONBytes": 4548,
+    "decodedJSONSHA256": "68931e7cb02adc11782f0cf4977336a392820d0a33ad86acc92360bd9f520ed3",
+    "wasProvisionalNotIndependentCertification": true
+  },
+  "strictSecondPass": {
+    "runId": 38171360478,
+    "runURL": "https://github.com/killjoy00/votepredict/actions/runs/38171360478",
+    "runnerPR": 1131,
+    "runnerMergeSHA": "2373bfdda211e34fb66e90334829b1cbbf247e6c",
+    "conclusion": "success",
+    "verifiedMotionCount": 3,
+    "sourceErrors": 0,
+    "artifactId": 11714178531,
+    "artifactName": "senate-2021-apr12-original-three-strict-committee-amendments",
+    "zipBytes": 1773,
+    "zipSHA256": "fd4e2c1d95c2427faf495751df463acc9b1880ab56ffb283b7b0caa5f1f4af5f",
+    "decodedJSONEntry": "source.json",
+    "decodedJSONBytes": 5556,
+    "decodedJSONSHA256": "3eaf9d2559b75579bcda3ff2602b7a95f17f66d5b3896ea0013039cc9b94a796"
+  },
+  "motions": [
+    {
+      "bill": "SF1159",
+      "mover": "Dibble",
+      "ordinal": 1,
+      "committee": "Transportation Finance and Policy",
+      "journalPage": 2086,
+      "printedYea": 4,
+      "printedNay": 6,
+      "printedAbsent": null,
+      "result": "amendment not adopted",
+      "motionNormalizedOffset": 1380048,
+      "resultNormalizedOffset": 1380170,
+      "motionNeighborhoodSHA256": "162cf848407798e95f051fa910e78736aca0a2015be310e16600c66897bf47c4",
+      "memberSidesSHA256Only": {
+        "yea": "5c3ccbac5d302497035fcd4634b3539fcefbe3f269f900e065c0a080441bdc83",
+        "nay": "43abc6a115890592bc70e406491bfdc9c25d8707584364eeefb02226943f5dfc"
+      },
+      "originalSourceIndependentlyAuthenticated": true
+    },
+    {
+      "bill": "SF1159",
+      "mover": "McEwen",
+      "ordinal": 2,
+      "committee": "Transportation Finance and Policy",
+      "journalPage": 2086,
+      "printedYea": 4,
+      "printedNay": 6,
+      "printedAbsent": null,
+      "result": "amendment not adopted",
+      "motionNormalizedOffset": 1380442,
+      "resultNormalizedOffset": 1380564,
+      "motionNeighborhoodSHA256": "41f86b874e6f2c9e86fdf8901465f9aa3fe69fff4036b78ee7aed3cfbe441f37",
+      "memberSidesSHA256Only": {
+        "yea": "5c3ccbac5d302497035fcd4634b3539fcefbe3f269f900e065c0a080441bdc83",
+        "nay": "43abc6a115890592bc70e406491bfdc9c25d8707584364eeefb02226943f5dfc"
+      },
+      "originalSourceIndependentlyAuthenticated": true
+    },
+    {
+      "bill": "SF970",
+      "mover": "Pappas",
+      "ordinal": 1,
+      "committee": "Judiciary and Public Safety Finance and Policy",
+      "journalPage": 2147,
+      "printedYea": 3,
+      "printedNay": 6,
+      "printedAbsent": null,
+      "result": "amendment not adopted",
+      "motionNormalizedOffset": 1531950,
+      "resultNormalizedOffset": 1532071,
+      "motionNeighborhoodSHA256": "a604cfab351ab92003b0aa3d46194d22d5d63fe575d19728e53f64dd816cc0ed",
+      "memberSidesSHA256Only": {
+        "yea": "8e209fef83110a3bdda0d988830c014f6f47688c1baabf516b3d0c60e1da3858",
+        "nay": "57dbdf6228cc241dc72bd0a23ae60d939e6ee19c2ac6042188a7ef12b459a314"
+      },
+      "originalSourceIndependentlyAuthenticated": true
+    }
+  ],
+  "limits": {
+    "twoSF1159MotionsHaveSameSidesButDifferentIdentity": true,
+    "notFloorOrBillPassage": true,
+    "reportDateNotOriginalMeetingDate": true,
+    "firstPublicByUnknown": true,
+    "absentUnprintedNull": true,
+    "noOriginalLRL2021PrintMinuteComparison": true,
+    "noRawSourceOrReadableMemberVotingSidesCommitted": true,
+    "noDatabaseVoteReconciliationOrBackfill": true,
+    "noStatewideRecordedVoteDenominator": true,
+    "noModelsForecastServingSchedulerOr2027": true,
+    "noGovernmentContact": true,
+    "issue864MustRemainOpen": true
+  }
+}
