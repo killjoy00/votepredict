@@ -1,0 +1,26 @@
+# #864 — 2022 Senate eleven indexed no-Minutes media leads: actual original caption procedural-cue review
+
+**Public historical source-only.** This tranche covers exactly **eleven** official Minnesota Legislative Reference Library Senate 2022 indexed hearing media records with **no linked electronic Minutes PDF**. The complete official 2022 *printed* committee record might differ, and original 2021 Senate minutes remain print-only/unreconciled. Neither this audit nor an automatic caption is proof of actual AV playback, an individual YEA/NAY, unique parliamentary motion or overall bill stance.
+
+## Three original source identities reauthenticated
+
+Three original already-acquired historical sources are mandatory:
+- Exact 2022 official indexed hearing dates and media mtgid URLs from [source run #38079233118](https://github.com/killjoy00/votepredict/actions/runs/38079233118), original artifact **11679835908**, uncompressed JSON SHA **f0ab42ba46eca582739896956b5dc32a81e6c93b9b834e45eb539c49f19cfd4f**.
+- Exact 2022 LRL media record HTML source SHA from [source run #38081463362](https://github.com/killjoy00/votepredict/actions/runs/38081463362), artifact **11680881578**, uncompressed JSON SHA **29cefe409462e52ed21251053af2c7fc3f3240d01248cecb4fb3f0312880c6e5**.
+- Exact 2022 successful original caption metadata from the **2022 shard** of earlier [run #38103766440](https://github.com/killjoy00/votepredict/actions/runs/38103766440), artifact **11687874692**. This original archive was independently downloaded and verified as ZIP SHA **f2c6628ebea5179c340dd2048c9490a5bfc3d572d596724d0a7d4f46d6388ab7**, uncompressed **12,946-byte** JSON SHA **afcf73a3b757241ed9da987b2df62d455d53e2296c59a493af87cac7e3ba60d4**. The entire 4-year parent workflow originally failed because of separate 2023 page timeouts, subsequently resolved by an exact separate retry; do not rewrite its original overall conclusion as success.
+
+All **eleven** official 2022 media HTML pages were previously independently authenticated. Original caption metadata contains **10** pages with timed captions, **one** held page with no timed data, **12** official caption-interface requests and **24,147** `data-time` timestamp markers in the available streams.
+
+Two cases MUST remain distinguishable:
+1. **2022-03-15 Housing Finance and Policy**, official `mtgid=1046040`: an original permitted caption endpoint returned **zero bytes and zero timed rows**. This is an *unknown* spoken-content source, not a meeting without actions, and it must not be attributed fake speech or votes.
+2. **2022-04-04 Education Finance and Policy**, official `mtgid=1046323`: there are **two separate originally retrieved caption payloads with independent SHA256s**, which together produce the observed **4,458** caption timestamps. **Do not equate two tracks, two caption requests, duplicate timing or two content sources with distinct legislative votes**.
+
+## Source review procedure
+
+The exact one-time [GitHub original-source workflow](../../.github/workflows/senate-2022-11-unlinked-caption-motion-cues.yml) restores all three previous source-proof artifacts and independently re-fetches **all eleven** public official record HTML pages. It first verifies each against its original pinned SHA; it requests each of **eleven** nonempty original caption tracks (ten dated hearing pages) through the strict same-host bounded caption endpoint, checks each original byte SHA and the total stream bytes / timestamp arithmetic, and skips the previously verified empty Housing caption body. No redirects, actual audio/video replay, production data, external office contact or crawl of unrelated meetings.
+
+It uses the **strict visible-text v2 procedural parser** introduced after initial 2025 research: original timestamps start after complete HTML opening tags, not from markup/attributes. Formal parliamentary cues such as recorded roll request, `I move`, amendment outcome, voice-vote language and committee recommendation are grouped by 30-second × category review windows. Unrelated speech like "strategic move that..." is not a formal motion. The output keeps timestamp and exact nearby-text SHA and bounded cue counts, **not quote text, transcript paragraphs, actor/senator names, individual vote sides or any original caption bodies**. The two Education caption streams remain separate original source records and no cross-stream de-duplication of parliamentary events is assumed.
+
+After the **actual** source run, download and independently SHA-verify its ZIP and JSON artifact before preserving any derived findings. Candidate cue windows must be checked against independently accessible original hearing audio and contemporaneous official minute/agenda/bill identities before they can ever become a reviewed source event. **No one-source rule can prove a senator's roll-choice from automatic captions or meeting attendance.**
+
+Statewide 2021–25 committee vote denominator, person/year legal CFB obligations, campaign platform coverage and archived media direct-quote denominators remain UNKNOWN. No private/production DB read or write, senator-vote import, floor parser expansion, model/retraining/forecast/serving/scheduler or 2027 changes. **Keep [issue #864](https://github.com/killjoy00/votepredict/issues/864) OPEN.**
