@@ -105,7 +105,7 @@ test('two exact original replay UTCs for five priority newsroom articles SHA1-ma
         return index([indexRow(original,'20230512123456'),indexRow(original,'20230614123456')]);
       }
       replayCalls++;
-      assert.match(url,/^https:\/\/web\.archive\.org\/web\/20230[56]\d{10}id_\/https:\/\/minnesotareformer\.com\//);
+      assert.match(url,/^https:\/\/web\.archive\.org\/web\/20230[56]\d{8}id_\/https:\/\/minnesotareformer\.com\//);
       assert.equal((init.headers as Record<string,string>)['accept-encoding'],'identity');
       return new Response(html,{headers:{'content-type':'text/html'}});
     }));
