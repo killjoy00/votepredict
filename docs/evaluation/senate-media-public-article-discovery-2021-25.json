@@ -24,7 +24,8 @@
     "currentPublisherDisplayedClockWithoutVerifiedTimezone": "Publisher page displays a local clock but its historical timezone/edit time and initial public-by remain independently unverified.",
     "currentMprEpisodeAudioInterview": "The currently served 2024-02-19 MPR /episode/ page includes audio and speaker-labeled Senator Grant Hauschild transcript, outside the configured /story/202 seed prefix. Current audio/transcript is not a 2024 archived original, time zone and first-public-by are unproved, and no private source row or verified original-media quote is established.",
     "currentFirstPartyAudioAndTranscriptTriage": "MPR currently serves direct audio interviews for actual serving Minnesota senators in sampled 2021-25 publisher-date years. 2021 /story/ Benson audio has no visible transcript on the inspected current page; 2022 /episode/ Benson/Kunesh report names interviewees but full original speaker transcript was not independently inspected; selected 2023-25 MPR pages expose current speaker labels. None establishes original Wayback body, original audio bytes, historical transcript version, private DB row or quote/stance eligibility.",
-    "officialSenateHistoryCrosscheck": "Official LRL legislator history supports only actual Senate service on the publisher-displayed calendar day. It does NOT authenticate the page's initial publication timestamp, first public-by, a historical Wayback capture, or a reviewed source quote."
+    "officialSenateHistoryCrosscheck": "Official LRL legislator history supports only actual Senate service on the publisher-displayed calendar day. It does NOT authenticate the page's initial publication timestamp, first public-by, a historical Wayback capture, or a reviewed source quote.",
+    "mprFirstPartyTranscriptPdfLinksAndTemporalLeakage": "Current 2026 research found MPR-linked 3Play Media PDF transcript URLs for three already known 2023-2025 Senate interview leads. Web retrieval of the octet-stream files was unavailable; no PDF raw bytes/hash, original historic PDF capture/creation date, or matching original audio was verified. MPR states Minnesota Now transcripts are attempted the next business day after broadcast, so a current speaker-labeled transcript must not be backdated to the radio show's displayed day. Exact original archived HTML SHA and capture time plus independent transcript availability and human identity review remain mandatory."
   },
   "stateSenateOnly": true,
   "selectedNonExhaustiveArticleLeads": [
@@ -406,7 +407,13 @@
       "archivedPublisherVersionAndDateProofVerified": false,
       "historicalOriginalHumanQuoteReviewed": false,
       "wasCurrentPageTextPresentBeforeAnyHistoricalVoteCutoffVerified": false,
-      "noAutomaticallyInferredSenatorStance": true
+      "noAutomaticallyInferredSenatorStance": true,
+      "presentDayMprLinkedTranscriptPdfUrl": "https://codytranscripts.apmcdn.org/production/c83342638fa82d6a5d8cdfe5a7ce7ba6.pdf",
+      "transcriptPdfBytesIndependentlyVerified": false,
+      "originalHistoricalTranscriptPdfCaptureVerified": false,
+      "transcriptPdfWasPublicByDisplayedRadioDateVerified": false,
+      "originalAudioShaMatchedToTranscriptPdf": false,
+      "presentDayMprTranscriptMayFollowOriginalBroadcast": true
     },
     {
       "id": "mn-reformer-2023-driver-licenses",
@@ -588,7 +595,13 @@
       "originalSpeakerAudioComparedToTranscript": false,
       "mediaInterviewSpeakerHumanReviewedFromOriginalArchive": false,
       "actualSpokenWordsOnHistoricalCutoffIndependentlyVerified": false,
-      "productionSeedChanged": false
+      "productionSeedChanged": false,
+      "presentDayMprLinkedTranscriptPdfUrl": "https://codytranscripts.apmcdn.org/production/70fb369cef19a16a739671110457b6b9.pdf",
+      "transcriptPdfBytesIndependentlyVerified": false,
+      "originalHistoricalTranscriptPdfCaptureVerified": false,
+      "transcriptPdfWasPublicByDisplayedRadioDateVerified": false,
+      "originalAudioShaMatchedToTranscriptPdf": false,
+      "presentDayMprTranscriptMayFollowOriginalBroadcast": true
     },
     {
       "id": "mn-reformer-2024-junk-fees",
@@ -708,7 +721,13 @@
       "archivedPublisherVersionAndDateProofVerified": false,
       "historicalOriginalHumanQuoteReviewed": false,
       "wasCurrentPageTextPresentBeforeAnyHistoricalVoteCutoffVerified": false,
-      "noAutomaticallyInferredSenatorStance": true
+      "noAutomaticallyInferredSenatorStance": true,
+      "presentDayMprLinkedTranscriptPdfUrl": "https://codytranscripts.apmcdn.org/production/f6c5cb374510772be01fbc20ea88d2d0.pdf",
+      "transcriptPdfBytesIndependentlyVerified": false,
+      "originalHistoricalTranscriptPdfCaptureVerified": false,
+      "transcriptPdfWasPublicByDisplayedRadioDateVerified": false,
+      "originalAudioShaMatchedToTranscriptPdf": false,
+      "presentDayMprTranscriptMayFollowOriginalBroadcast": true
     },
     {
       "id": "mn-reformer-2025-special-election-brief",
