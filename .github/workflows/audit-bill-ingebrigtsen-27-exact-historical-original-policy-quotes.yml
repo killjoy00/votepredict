@@ -1,0 +1,80 @@
+name: Prove 27 historic first-party Bill Ingebrigtsen exact issue excerpts from original 2010 and 2012 campaign sites
+
+# Research only. Full original Minnesota LRL government bytes, candidate
+# authenticated 2020 home linking issues.php, six complete original 2010–2016
+# issue HTML bodies and all four independently obtained original CDX indexes
+# are reopened and rehashed before admitting 27 literal historical excerpts.
+# NEVER backdate old statements to 2020 or infer official Senate votes.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-bill-ingebrigtsen-27-exact-historical-original-policy-quotes.yml
+      - data/evaluation/senate-bill-ingebrigtsen-27-exact-historical-first-party-issues-2010-2012-v1.json
+      - src/evidence/senate-bill-ingebrigtsen-historic-27-original-site-excerpts-proof.ts
+      - scripts/audit-bill-ingebrigtsen-original-historical-27-policy-excerpts-offline.ts
+      - tests/senate-bill-ingebrigtsen-27-historical-original-campaign-quotes.test.ts
+      - docs/SENATE_BILL_INGEBRIGTSEN_27_HISTORICAL_ORIGINAL_CAMPAIGN_POLICY_QUOTES.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  authenticate-27-excerpts-from-all-original-government-cdx-html:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-bill-ingebrigtsen-2010-2012-original-platform-27-exact-issues-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Independent complete original public MN LRL actual Senate government service source HTML and source UTC/SHA receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/complete-mn-lrl-served-senators
+      - name: Original genuine 2020 Ingebrigtsen campaign homepage linking the original issues.php
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38157868392
+          name: senate-two-more-2021-senators-2020-original-candidate-html-v1
+          github-token: ${{ github.token }}
+          path: original/independent-2020-candidate-home
+      - name: All six original 2010–2016 full issue page HTML and four independent 2010–2020 Wayback CDX JSON sources
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38160285047
+          name: bill-ingebrigtsen-original-historical-first-party-issues-2010-2020-v1
+          github-token: ${{ github.token }}
+          path: original/historical-bill-issues-pages
+      - name: Rehash all complete original bytes; check actual 2021 Senate service, each historic source and 27 exact issue phrases
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/complete-mn-lrl-served-senators -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/complete-mn-lrl-served-senators -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          home="original/independent-2020-candidate-home/two20b-02-archive-20200805220154-0.html"
+          test -n "$gov" && test -n "$receipt" && test -s "$home"
+          test "$(dirname "$gov")" = "$(dirname "$receipt")"
+          node --import tsx scripts/audit-bill-ingebrigtsen-original-historical-27-policy-excerpts-offline.ts \
+            --original-entire-government-senate-service-html "$gov" \
+            --original-government-source-utc-sha-receipt "$receipt" \
+            --original-2020-candidate-homepage "$home" \
+            --original-historical-issues-site-html-cdx-dir original/historical-bill-issues-pages \
+            --output original/bill-ingebrigtsen-2010-and-2012-27-full-source-original-quote-proofs.json
+      - name: Retain exact historical short candidate-issue quote source proof, never alter production
+        uses: actions/upload-artifact@v6
+        with:
+          name: bill-ingebrigtsen-2010-2012-27-authenticated-exact-original-issue-quotes-v1
+          path: original/bill-ingebrigtsen-2010-and-2012-27-full-source-original-quote-proofs.json
+          if-no-files-found: error
+          retention-days: 30
