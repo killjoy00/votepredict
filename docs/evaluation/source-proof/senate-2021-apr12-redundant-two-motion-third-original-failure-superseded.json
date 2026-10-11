@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "mn-senate-2021-apr12-retired-two-motion-third-failed-job-v1",
+  "issue": 864,
+  "supersededApproach": "The two-indexed-bill (SF1159, SF970) experimental source probe incorrectly treated only one SF1159 committee amendment as valid because it required an immediate heading for each motion. Independently certified original official Journal establishes TWO separately moved SF1159 amendments plus ONE SF970 amendment. Two index bill references are not the number of recorded motions.",
+  "incorrectInterpretationNowWithdrawn": "SF1159 second 4-6 motion is merely an unanchored duplicate",
+  "authenticatedCorrection": {
+    "authoritativePR": 1133,
+    "authoritativeSourceRunId": 38171360478,
+    "authoritativeSourceRunURL": "https://github.com/killjoy00/votepredict/actions/runs/38171360478",
+    "authoritativeSourceRunConclusion": "success",
+    "strictOriginalNamedCommitteeRolls": 3,
+    "originalOfficialJournalURL": "https://www.senate.mn/journals/2021-2022/20210412036.pdf",
+    "originalJournalReportDate": "2021-04-12",
+    "originalPDFBytes": 11063699,
+    "originalPDFSHA256": "8dd34868badade8d3d4cd77ce11c6a632705bdd99a59509a5e4d23544f2d3d75",
+    "originalEmbeddedTextSHA256": "dda780e4fc076f56ff9f271303ba81897b69813acfece416b7741aea64c41214",
+    "authoritativeSourceProof": "docs/evaluation/source-proof/senate-2021-apr12-three-strict-rule1210-original-committee-success.json",
+    "independentlyDownloadedOriginalStrictZIPBytes": 1773,
+    "independentlyDownloadedOriginalStrictZIPSHA256": "fd4e2c1d95c2427faf495751df463acc9b1880ab56ffb283b7b0caa5f1f4af5f",
+    "independentlyDecodedOriginalStrictJSONBytes": 5556,
+    "independentlyDecodedOriginalStrictJSONSHA256": "3eaf9d2559b75579bcda3ff2602b7a95f17f66d5b3896ea0013039cc9b94a796",
+    "motions": [
+      {
+        "bill": "SF1159",
+        "mover": "Dibble",
+        "journalPage": 2086,
+        "yea": 4,
+        "nay": 6,
+        "outcome": "amendment not adopted",
+        "sourceOffset": 1380048
+      },
+      {
+        "bill": "SF1159",
+        "mover": "McEwen",
+        "journalPage": 2086,
+        "yea": 4,
+        "nay": 6,
+        "outcome": "amendment not adopted",
+        "sourceOffset": 1380442
+      },
+      {
+        "bill": "SF970",
+        "mover": "Pappas",
+        "journalPage": 2147,
+        "yea": 3,
+        "nay": 6,
+        "outcome": "amendment not adopted",
+        "sourceOffset": 1531950
+      }
+    ],
+    "sameSF1159NamedVoterSideHashesDoNotImplyDuplicateMotion": true
+  },
+  "retiredProbeFailures": [
+    {
+      "originalSourceRunId": 38172259470,
+      "originalSourceRunConclusion": "failure",
+      "reason": "Original April12 embedded-text SHA mismatched typo in redundant two-motion source constant",
+      "archivedProof": "docs/evaluation/source-proof/senate-2021-apr12-two-original-amendments-first-run-failure.json"
+    },
+    {
+      "originalSourceRunId": 38172682467,
+      "originalSourceRunConclusion": "failure",
+      "reason": "Redundant two-motion probe incorrectly rejected two different SF1159 amendments as duplicate bill motions",
+      "archivedProof": "docs/evaluation/source-proof/senate-2021-apr12-two-amendments-second-run-repeated-motion-failure.json"
+    },
+    {
+      "originalSourceRunId": 38173089761,
+      "originalSourceRunURL": "https://github.com/killjoy00/votepredict/actions/runs/38173089761",
+      "originalSourceRunConclusion": "failure",
+      "sourceRunnerPR": 1137,
+      "sourceRunnerMergeCommit": "9500be72dbd1e2ef8f6536c8214ec44ee41783f7",
+      "originalPDFReceived": true,
+      "originalPDFBytes": 11063699,
+      "originalPDFSHA256": "8dd34868badade8d3d4cd77ce11c6a632705bdd99a59509a5e4d23544f2d3d75",
+      "originalEmbeddedTextSHA256": "dda780e4fc076f56ff9f271303ba81897b69813acfece416b7741aea64c41214",
+      "originalArtifactId": 11714807052,
+      "originalArtifactName": "senate-2021-apr12-two-rule1210-original-third-run",
+      "independentlyDownloadedZIPBytes": 789,
+      "independentlyDownloadedZIPSHA256": "08fb2e2dea7b7163b5cfc58e45a72332010f2c9618089ce9821af59dc2044bee",
+      "decodedJSONEntry": "provisional-shas.json",
+      "independentlyDecodedJSONBytes": 1086,
+      "independentlyDecodedJSONSHA256": "0cb66a32796c39952eb516b83b8b95f349803f65d1c9a08ff01570447c5910ee",
+      "originalFailureReason": "SF1159 authentic motion-and-voter window SHA mismatch",
+      "originalProvisionalSideResults": null,
+      "strictNamedRollAuthenticationFromThisJob": false
+    }
+  ],
+  "dispositions": {
+    "allFailedSourceRunsRemainFailures": true,
+    "noFourthRunForInvalidRedundantProbe": true,
+    "experimentalTwoMotionSourceScriptTestsAndOneTimeWorkflowsRetired": true,
+    "originalRedactedLayoutsRemainHistoricArtifactsOnly": true,
+    "noOriginalRawPDFOrReadableHistoricalVotingSideListsCommitted": true,
+    "sourceJournalReportDateDoesNotProveActualCommitteeMeetingDate": true,
+    "noCommitteeAbsentCountPrintedSoNull": true,
+    "noHistoricalSameDayFirstPublicByClaim": true,
+    "noPrivateProductionMemberVoteReconciliationOrBackfill": true,
+    "noStatewideCommitteeVoteCensus": true,
+    "noFloorOrModelsForecastOr2027Changes": true,
+    "issue864RemainsOpen": true
+  }
+}
