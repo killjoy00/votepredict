@@ -29,7 +29,8 @@ async function bounded(r,max,min=40){const l=r.headers.get('content-length');if(
 async function get(url,accept,f,timeout=20000){return f(url,{method:'GET',redirect:'manual',headers:{accept,'accept-encoding':'identity','user-agent':'VotePredict/2.0 public-MPR-original-history-probe'},signal:AbortSignal.timeout(timeout)});}
 export function classifyMediaRedirect(origin,location){let u;try{u=new URL(location,origin);}catch{return {status:'invalid_location_unknown',host:null,normalizedPath:null,approved:false,url:null};}
  if(u.username||u.password||u.port||u.hash||u.protocol!=='https:')return {status:'redirect_not_secure_unknown',host:u.hostname,normalizedPath:null,approved:false,url:null};
- const approved=AUDIO_HOSTS.has(u.hostname)&&!u.search&&u.href.length<=800&&/^\/[a-zA-Z0-9%_./~-]+$/.test(u.pathname);
+ const queryPermitted=!u.search || (u.hostname==='download.stream.publicradio.org' && u.search.length<=400 && !u.searchParams.has('url') && !u.searchParams.has('redirect'));
+ const approved=AUDIO_HOSTS.has(u.hostname)&&queryPermitted&&u.href.length<=900&&/^\/[a-zA-Z0-9%_./~-]+$/.test(u.pathname);
  return {status:approved?'allowlisted_first_party_media_redirect':'unapproved_redirect_host_or_query_unknown',
  host:u.hostname,normalizedPath:approved?u.pathname.slice(0,550):null,queryPresent:!!u.search,approved,url:approved?u.href:null};
 }
@@ -38,7 +39,7 @@ export async function traceAudio(ref,f=fetch){if(!AUDIO.some(x=>x.id===ref.id&&x
  const steps=[],visited=new Set();let url=ref.url,currentBinarySha256=null,currentBinaryBytes=null;
  for(let hop=0;hop<4;hop++){if(visited.has(url)){steps.push({status:'cycle_unknown'});break;}visited.add(url);
   try{const r=await get(url,'audio/mpeg,application/octet-stream',f,30000),status=r.status,mime=getMime(r);
-   if(status>=300&&status<400){const redirect=classifyMediaRedirect(url,r.headers.get('location')||'');steps.push({httpStatus:status,status:redirect.status,host:redirect.host,normalizedPath:redirect.normalizedPath,approved:redirect.approved});if(!redirect.approved)break;url=redirect.url;continue;}
+   if(status>=300&&status<400){const redirect=classifyMediaRedirect(url,r.headers.get('location')||'');steps.push({httpStatus:status,status:redirect.status,host:redirect.host,normalizedPath:redirect.normalizedPath,queryPresent:redirect.queryPresent??null,approved:redirect.approved});if(!redirect.approved)break;url=redirect.url;continue;}
    if(status!==200){steps.push({httpStatus:status,status:'non_200_unknown'});break;}
    if(!['audio/mpeg','audio/mp3','audio/x-mpeg','application/octet-stream'].includes(mime)){steps.push({httpStatus:status,status:'unexpected_mime_unknown',mime});break;}
    const raw=await bounded(r,MAXAUDIO,129);if(!mp3(raw)){steps.push({httpStatus:status,status:'not_mp3_unknown'});break;}
@@ -94,6 +95,18 @@ export async function probeIndexAndOriginals(url,from,to,role,f=fetch){let rows=
 const hauschildPin={sha256:'9d1fddfd3983a138515175c6ffe7842cd37e54391a37932e8a503c43876bf725',bytes:121462,indexSha1Base32:'TKIPF5NUQ7HICXBKMOAPLBBOTJCVBLPO'};
 export async function probePinnedHauschildLater(f=fetch){const row={timestamp:'20250724232322',captureUtc:'2025-07-24T23:23:22Z',indexSha1Base32:hauschildPin.indexSha1Base32};
  return originalReplay(PAGE,row,f,'html',hauschildPin);}
+export async function probeCurrentHauschildPage(f=fetch){
+ const r={url:PAGE,status:'unverified_unknown',rawSha256:null,rawBytes:null,sourceMetadata:null,authenticated2024TranscriptOriginal:false};
+ try{const response=await get(PAGE,'text/html',f);
+  if(response.status!==200){r.status=response.status>=300&&response.status<400?'current_page_redirect_unknown':'current_page_non_200_unknown';return r;}
+  if(getMime(response)!=='text/html'){r.status='current_page_mime_unknown';return r;}
+  const bytes=await bounded(response,MAXHTML);
+  r.status='current_publisher_html_sha256_observed';r.rawSha256=sha256(bytes);r.rawBytes=bytes.length;
+  r.sourceMetadata=inspectPublisherPage(new TextDecoder('utf8',{fatal:false}).decode(bytes));
+  return r;
+ }catch{r.status='current_page_fetch_unknown';return r;}
+}
+
 export async function probeCurrentFeed(f=fetch){const result={url:FEED,status:'unknown',observedRawSha256:null,observedBytes:null,relevantFeedItems:null,historicalFeedDateEstablished:false};
  try{const r=await get(FEED,'application/rss+xml,application/xml,text/xml',f);
   if(r.status!==200){result.status=r.status>=300&&r.status<400?'redirect_unfollowed_unknown':'non_200_unknown';return result;}
@@ -101,6 +114,7 @@ export async function probeCurrentFeed(f=fetch){const result={url:FEED,status:'u
   const raw=await bounded(r,MAXRSS);const match=findRelevantFeedItems(new TextDecoder('utf8',{fatal:false}).decode(raw));result.status='current_feed_body_hashed';result.observedRawSha256=sha256(raw);result.observedBytes=raw.length;result.relevantFeedItems=match;return result;
  }catch{result.status='fetch_or_body_unknown';return result;}}
 export async function researchMprHistoryBridge(f=fetch){const currentFeed=await probeCurrentFeed(f);
+ const currentHauschildPage=await probeCurrentHauschildPage(f);
  const historicalFeed=await probeIndexAndOriginals(FEED,'20240215','20240315','feed',f);
  const historicalPageVariants=[];
  for(const url of ALTERNATES)historicalPageVariants.push(await probeIndexAndOriginals(url,'2024','2025','html',f));
@@ -109,7 +123,7 @@ export async function researchMprHistoryBridge(f=fetch){const currentFeed=await 
  for(const lead of AUDIO)mediaRedirects.push(await traceAudio(lead,f));
  return {version:BRIDGE_VERSION,observationDay:'2026-10-11',exactMpr2024HauschildPage:PAGE,publisherOfficialRssLink:FEED,
   historicalFeedCaptureWindowUtc:'2024-02-15 to 2024-03-15',nonExhaustiveBoundedOriginalUrlVariants:ALTERNATES.length,
-  currentPublisherPodcastFeed:currentFeed,historicallyReplayedPublisherFeed:historicalFeed,
+  currentPublisherPodcastFeed:currentFeed,currentPublisherHauschildPageMetadata:currentHauschildPage,historicallyReplayedPublisherFeed:historicalFeed,
   separatelyIndexedHistoricPageUrlHypotheses:historicalPageVariants,
   previouslyShaPinnedJuly2025HtmlMetadataRecheck:laterPinned,
   originalPageLinkedFirstPartyMp3RedirectChecks:mediaRedirects,
