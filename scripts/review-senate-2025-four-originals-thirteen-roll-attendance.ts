@@ -78,7 +78,7 @@ async function main(){
    throw Error('Non-HOLD original source population not exactly four PDFs and 13 rolls');
  const originals=[...new Set(selected.map(x=>x.officialSourcePdfUrl))].sort();
  const allowed=new Set(originals),results:Record<string,unknown>[]=[];
- const errors:Array<{hearingDate:string;urlSha256:string;reason:string}>=[];
+ const errors:Array<{hearingDate:string;urlSha256:string;reason:string;headerShape?:Record<string,number>}>=[];
  for(const url of originals){
    const target=selected.filter(x=>x.officialSourcePdfUrl===url);
    const pinned=manifest.find(x=>x.originalOfficialPdfUrl===url);
@@ -90,6 +90,7 @@ async function main(){
       !target.every(x=>expected.some(offset=>offset===x.sourceTextOffset)&&
         x.sourceNumericTallyMatchesNames===true&&x.eligibleAsMemberVote===false))
      throw Error('Exact thirteen original date/offset/numeric denominator changed');
+   let headerShape:Record<string,number>|undefined;
    try{
      const original=await fetchSenateCommitteeMinutePdf({
        url,
@@ -102,6 +103,10 @@ async function main(){
        original.contentSha256!==pinned.originalPdfSha256||
        sha(original.text)!==pinned.extractedTextSha256)
        throw Error('Original official source PDF/text SHA256 changed from independent proof');
+     const sourceHead=original.text.slice(0,1850);
+     headerShape={presentMarker:sourceHead.search(/\bPresent:/i),absentMarker:sourceHead.search(/\bAbsent:/i),
+       genericSenatorCallToOrderMarker:sourceHead.search(/\bSenator\s+[A-Za-z .'-]{3,80}\s+called\s+the\s+meeting\s+to\s+order\b/i),
+       chairmanJimCarlsonCallToOrderMarker:sourceHead.search(/\bSenator\s+Jim\s+Carlson\s+called\s+the\s+meeting\s+to\s+order\b/i)};
      const parsed=extractSupplementalNamedSenateRollCandidates(original.text);
      const blocks=target.map(row=>{
        const candidate=parsed.find(x=>x.sourceOffset===row.sourceTextOffset&&
@@ -124,7 +129,8 @@ async function main(){
         sourceRollCandidates:blocks,
      });
    }catch(e){
-     errors.push({hearingDate:pinned.hearingDate,urlSha256:sha(url),reason:label(e)});
+     errors.push({hearingDate:pinned.hearingDate,urlSha256:sha(url),reason:label(e),
+       ...(headerShape?{headerShape}:{})});
    }
  }
  const flat=results.flatMap(x=>x.sourceRollCandidates as Array<ReturnType<typeof inspectOther2025ElectionOriginalRoll>>);
