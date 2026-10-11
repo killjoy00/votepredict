@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {
  FEED,PAGE,AUDIO,ALTERNATES,classifyMediaRedirect,findRelevantFeedItems,
- inspectPublisherPage,parseIndex,traceAudio,probeIndexAndOriginals,probeCurrentFeed,
+ inspectPublisherPage,parseIndex,traceAudio,probeIndexAndOriginals,probeCurrentFeed,probeCurrentHauschildPage,
  researchMprHistoryBridge
 } from '../scripts/probe-senate-media-mpr-history-bridge.mjs';
 const B32='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -18,6 +18,7 @@ test('allowlisted first-party relative audio redirect, reject tracking and off-h
  assert.equal(classifyMediaRedirect(base,'/podcast/o/minnesota/file.mp3').approved,true);
  assert.equal(classifyMediaRedirect(base,'https://ondemand.publicradio.org/audio/file.mp3').approved,true);
  assert.equal(classifyMediaRedirect(base,'https://download.stream.publicradio.org/media/file.mp3').approved,true);
+ assert.equal(classifyMediaRedirect(base,'https://download.stream.publicradio.org/media/file.mp3?response-content-disposition=attachment').approved,true);
  assert.equal(classifyMediaRedirect(base,'https://pscrb.fm/track/click/file.mp3').approved,false);
  assert.equal(classifyMediaRedirect(base,'https://ondemand.publicradio.org/audio/file.mp3?token=secret').approved,false);
  assert.equal(classifyMediaRedirect(base,'http://play.publicradio.org/file.mp3').approved,false);
@@ -85,4 +86,26 @@ test('all source index requests unavailable remain UNKNOWN without invented audi
  assert.equal(out.previouslyShaPinnedJuly2025HtmlMetadataRecheck.status,'archive_non_200_unknown');
  assert.equal(out.authenticatedHistoricalMp3Binaries,0);
  assert.equal(out.audioAndHtmlBytesPersisted,false);
+});
+
+test('publisher current transcript metadata remains current-only, not a historical archive',async()=>{
+ const f=stub((url,init)=>{assert.equal(url,PAGE);assert.equal(init.redirect,'manual');return new Response(html,{headers:{'content-type':'text/html'}});});
+ const out=await probeCurrentHauschildPage(f);
+ assert.equal(out.status,'current_publisher_html_sha256_observed');
+ assert.deepEqual(out.sourceMetadata.selectedTranscriptTextCues,[true,true]);
+ assert.equal(out.authenticated2024TranscriptOriginal,false);
+ assert.match(out.rawSha256,/^[a-f0-9]{64}$/);
+});
+test('secure first-party CDN query redirect can return current MP3 without asserting 2024 recording bytes',async()=>{
+ const ref=AUDIO[1];
+ const f=stub((url,init)=>{
+  if(url===ref.url)return new Response('',{status:302,headers:{location:'https://download.stream.publicradio.org/audio/mn20240219.mp3?response-content-disposition=attachment'}});
+  assert.equal(url,'https://download.stream.publicradio.org/audio/mn20240219.mp3?response-content-disposition=attachment');
+  return new Response(mp3,{headers:{'content-type':'audio/mpeg'}});
+ });
+ const r=await traceAudio(ref,f);
+ assert.equal(r.redirectSteps[0].approved,true);
+ assert.equal(r.redirectSteps[0].queryPresent,true);
+ assert.equal(r.redirectSteps[1].status,'current_publisher_mp3_byte_sha256_observed');
+ assert.equal(r.historicalOriginalAudioAuthenticated,false);
 });
