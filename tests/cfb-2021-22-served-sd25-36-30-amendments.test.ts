@@ -5,6 +5,8 @@ import {
   selectServedSd25to36AmendmentVersions,
   auditActualSenatorAmendmentPdf,amendmentViewerReference,
   checkAuthenticatedAmendmentChains,
+  classifySd25to36AmendmentReferences,
+  REVIEWED_HOFFMAN_2022_YE_BINARY_ALIAS,
   verifyServedSd25to36AmendmentSourceOutcome,
   type CfbHistoricalAmendedPdfSource,
 } from '../src/evidence/cfb-2021-22-served-sd25-36-30-amendments.js';
@@ -25,7 +27,7 @@ type Target=ReturnType<typeof chosen>['targets'][number];
 const hash=(s:string)=>createHash('sha256').update(s,'utf8').digest('hex');
 const mdy=(s:string)=>{const [y,m,d]=s.split('-');return Number(m)+'/'+Number(d)+'/'+y;};
 function sample(t:Target,opts:{sha?:string;registration?:string;printedDistrict?:number;
-  coverageEnd?:string;date?:string;text?:string}={}):CfbHistoricalAmendedPdfSource{
+  coverageEnd?:string;date?:string;text?:string;bytes?:number}={}):CfbHistoricalAmendedPdfSource{
   const printed=opts.printedDistrict??t.original.printedOriginalDistrict;
   const body=opts.text??(
     'Report of Receipts and Expenditures for Principal Campaign Committee '+
@@ -36,7 +38,7 @@ function sample(t:Target,opts:{sha?:string;registration?:string;printedDistrict?
     ' Received by the Board '+(opts.date??'April 11, 2023')+
     ' Thank you for filing with the Minnesota CFB');
   return {sourceUrl:cfbReportViewerUrl(amendmentViewerReference(t)),
-    sha256:opts.sha??'f'.repeat(64),bytes:430005,
+    sha256:opts.sha??'f'.repeat(64),bytes:opts.bytes??430005,
     observedAt:'2026-10-11T16:02:00.000Z',text:body};
 }
 
@@ -130,29 +132,109 @@ test('historical former Senate district must be same authenticated member, not a
     printedDistrict:57}))
     .status,'amended_pdf_printed_district_unmatched');
 });
-test('entire 30-source cohort requires full binary unique report headers and complete chronological revision chains',()=>{
+function syntheticReconfirmedCohort(){
+  const pin=REVIEWED_HOFFMAN_2022_YE_BINARY_ALIAS;
   const selected=chosen();
-  const verified=selected.targets.map((t,i)=>{
-    const sha=hash(t.id);
-    const day=11+t.amendmentIndex;
+  const raw=selected.targets.map(t=>{
+    const hoffman=t.id===pin.canonicalReferenceId||t.id===pin.aliasedReferenceId;
     return auditActualSenatorAmendmentPdf(t,sample(t,{
-      sha,date:'April '+day+', 2023',
+      sha:hoffman?pin.binarySha256:hash(t.id),
+      bytes:hoffman?pin.byteLength:430005,
+      date:hoffman?'May 28, 2023':'April '+(11+t.amendmentIndex)+', 2023',
     }));
   });
-  assert.equal(verified.every(r=>r.status==='amendment_pdf_and_original_identity_authenticated'),true);
-  const outcome=verifyServedSd25to36AmendmentSourceOutcome(verified);
+  assert.equal(raw.every(r=>r.status==='amendment_pdf_and_original_identity_authenticated'),true);
+  return raw;
+}
+test('30 official viewer indices preserve the pinned Hoffman duplicate as ONE alias, with 29 distinct verified PDF binaries',()=>{
+  const pin=REVIEWED_HOFFMAN_2022_YE_BINARY_ALIAS;
+  const classified=classifySd25to36AmendmentReferences(syntheticReconfirmedCohort());
+  const outcome=verifyServedSd25to36AmendmentSourceOutcome(classified);
   assert.equal(outcome.complete,true);
   assert.equal(outcome.verified,30);
+  assert.equal(outcome.sourceVersionReferencesAuthenticated,30);
   assert.equal(outcome.holds,0);
-  assert.equal(outcome.distinctAmendmentPdfBinaries,30);
+  assert.equal(outcome.distinctAmendmentPdfBinaries,29);
+  assert.equal(outcome.distinctAuthenticatedAmendedPdfForms,29);
+  assert.equal(outcome.documentedDuplicateReferenceAliases,1);
   assert.equal(outcome.fullOriginalToAmendmentChainsVerified,true);
-  assert.equal(checkAuthenticatedAmendmentChains(verified).valid,true);
-  const dup=verified.slice();
-  dup[1]={...dup[1]!,amendedPdfSha256:dup[0]!.amendedPdfSha256};
-  assert.equal(verifyServedSd25to36AmendmentSourceOutcome(dup).complete,false);
-  const hold=verified.slice();
-  hold[0]={...hold[0]!,status:'amended_pdf_printed_district_unmatched'};
-  assert.equal(verifyServedSd25to36AmendmentSourceOutcome(hold).complete,false);
-  const truncated=verified.slice(1);
-  assert.equal(verifyServedSd25to36AmendmentSourceOutcome(truncated).complete,false);
+  assert.equal(outcome.fullDistinctBinaryRevisionChainsVerified,false);
+  assert.equal(outcome.status,'29_distinct_amended_pdfs_1_documented_official_viewer_alias');
+  assert.equal(checkAuthenticatedAmendmentChains(classified).valid,true);
+  const first=classified.find(x=>x.id===pin.canonicalReferenceId)!;
+  const second=classified.find(x=>x.id===pin.aliasedReferenceId)!;
+  assert.equal(first.referenceClassification,'distinct_authenticated_amended_pdf');
+  assert.equal(first.distinctAmendedPdfBinary,true);
+  assert.equal(second.referenceClassification,'official_amendment_version_reference_alias_of_identical_pdf');
+  assert.equal(second.distinctAmendedPdfBinary,false);
+  assert.equal(second.aliasOfAmendmentVersionId,first.id);
+  assert.equal(second.amendedPdfSha256,first.amendedPdfSha256);
+  assert.equal(second.amendedPdfByteLength,first.amendedPdfByteLength);
+  assert.equal(second.amendedBoardReceivedOn,first.amendedBoardReceivedOn);
+  assert.equal(second.paperFormAmendedCheckboxIndependentlyVerified,null);
+  assert.equal(second.actualHistoricalPublicByIndependentlyEstablished,null);
+  assert.equal(second.historicalForecastEligible,false);
+  assert.deepEqual(outcome.documentedBinaryAliases,[{
+    canonicalReferenceId:pin.canonicalReferenceId,
+    aliasedReferenceId:pin.aliasedReferenceId,
+    originalReportId:pin.originalReportId,
+    pdfSha256:pin.binarySha256,
+    bytes:pin.byteLength,
+    boardReceivedOn:pin.boardReceivedOn,
+    sourceReasonIndependentlyEstablished:false,
+  }]);
+});
+test('unexpected binary alias anywhere else in this 30-reference cohort remains a hard failure',()=>{
+  const raw=syntheticReconfirmedCohort();
+  raw[1]={...raw[1]!,amendedPdfSha256:raw[0]!.amendedPdfSha256};
+  const audited=classifySd25to36AmendmentReferences(raw);
+  const outcome=verifyServedSd25to36AmendmentSourceOutcome(audited);
+  assert.equal(outcome.complete,false);
+  assert.ok(outcome.chainViolations.some(v=>
+    v.reason==='unexpected_amendment_pdf_binary_duplicate_across_cohort'));
+});
+test('unexpected duplicate within another committee parent chain is never legitimized by the Hoffman exemption',()=>{
+  const raw=syntheticReconfirmedCohort();
+  const earlier=raw.find(r=>r.id==='17868:22:pcc:YE:0:1')!;
+  const later=raw.findIndex(r=>r.id==='17868:22:pcc:YE:0:2');
+  assert.ok(later>=0);
+  raw[later]={...raw[later]!,amendedPdfSha256:earlier.amendedPdfSha256};
+  const outcome=verifyServedSd25to36AmendmentSourceOutcome(
+    classifySd25to36AmendmentReferences(raw));
+  assert.equal(outcome.complete,false);
+  assert.ok(outcome.chainViolations.some(v=>v.id==='17868:22:pcc:YE:0:2'
+    &&v.reason==='amendment_binary_duplicate_of_earlier_revision'));
+});
+test('if either Hoffman reference changes bytes, length or date, preserve discrepancy as an unresolved source, never force old alias',()=>{
+  const raw=syntheticReconfirmedCohort();
+  const pin=REVIEWED_HOFFMAN_2022_YE_BINARY_ALIAS;
+  const idx=raw.findIndex(r=>r.id===pin.aliasedReferenceId);
+  for(const modification of [
+    {amendedPdfSha256:hash('changed')},
+    {amendedPdfByteLength:pin.byteLength+1},
+    {amendedBoardReceivedOn:'2023-05-29'},
+  ]){
+    const changed=raw.slice();
+    changed[idx]={...changed[idx]!,...modification};
+    const classified=classifySd25to36AmendmentReferences(changed);
+    const outcome=verifyServedSd25to36AmendmentSourceOutcome(classified);
+    assert.equal(outcome.complete,false);
+    assert.ok(outcome.chainViolations.some(v=>
+      v.reason==='reviewed_2022_hoffman_alias_original_source_changed_or_unconfirmed'));
+    assert.notEqual(classified[idx]!.referenceClassification,
+      'official_amendment_version_reference_alias_of_identical_pdf');
+  }
+});
+test('held identity, failed fetch and truncated viewer references never pass the complete source run',()=>{
+  const raw=syntheticReconfirmedCohort();
+  const held=raw.slice();
+  held[0]={...held[0]!,status:'amended_pdf_printed_district_unmatched'};
+  const classified=classifySd25to36AmendmentReferences(held);
+  assert.equal(classified[0]!.referenceClassification,'unverified_report_pdf_identity');
+  assert.equal(verifyServedSd25to36AmendmentSourceOutcome(classified).complete,false);
+  const failed=raw.slice();
+  failed[0]={...failed[0]!,status:'source_http_or_pdf_failure'};
+  assert.equal(classifySd25to36AmendmentReferences(failed)[0]!.referenceClassification,'source_fetch_failure');
+  assert.equal(verifyServedSd25to36AmendmentSourceOutcome(
+    classifySd25to36AmendmentReferences(raw.slice(1))).complete,false);
 });
