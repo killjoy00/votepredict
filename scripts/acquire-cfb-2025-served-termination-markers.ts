@@ -36,10 +36,23 @@ function safeError(error:unknown):string{
     .replace(/https?:\/\/\S+/g,'[official original source]').slice(0,200);
 }
 async function officialSource(url:string,host:string){
-  const response=await fetch(url,{headers:{
-    'user-agent':'VotePredict/2.0-original-2025-served-senator-termination-marker-audit',
-    accept:'text/html',
-  },signal:AbortSignal.timeout(45000),redirect:'follow'});
+  // Official sites can transiently fail TLS/DNS; retry only bounded
+  // READS. Every accepted response still must pass exact origin/path/hash
+  // and no last-failure response may enter the proof ledger.
+  let response:Response|null=null;
+  for(let attempt=0;attempt<3;attempt++){
+    try{
+      response=await fetch(url,{headers:{
+        'user-agent':'VotePredict/2.0-original-2025-served-senator-termination-marker-audit',
+        accept:'text/html',
+      },signal:AbortSignal.timeout(45000),redirect:'follow'});
+      break;
+    }catch{
+      if(attempt===2)throw Error('Original official source network fetch failed: '+host+new URL(url).pathname);
+      await new Promise(resolve=>setTimeout(resolve,500*(attempt+1)));
+    }
+  }
+  if(!response)throw Error('Original official source did not return a response: '+host);
   const requested=new URL(url),actual=new URL(response.url);
   if(!response.ok||actual.protocol!=='https:'||actual.hostname!==host
     ||actual.pathname!==requested.pathname||actual.search!==requested.search)
@@ -64,10 +77,8 @@ async function main(){
     ||prior.sourceOriginalReports.length!==2||prior.sourceSummary.exactOriginalReportPdfBinaryAndFirstPageVerified!==2
     ||prior.sourceSummary.historicalPublicByVerified!==0)
     throw Error('Missing original externally independently authenticated 2025 source proof');
-  const [directory,swearing]=await Promise.all([
-    officialSource(OFFICIAL_MN_SENATE_SERVICE_DIRECTORY_URL,'www.lrl.mn.gov'),
-    officialSource(OFFICIAL_MN_SENATE_SWEARING_HISTORY_URL,'www.lrl.mn.gov'),
-  ]);
+  const directory=await officialSource(OFFICIAL_MN_SENATE_SERVICE_DIRECTORY_URL,'www.lrl.mn.gov');
+  const swearing=await officialSource(OFFICIAL_MN_SENATE_SWEARING_HISTORY_URL,'www.lrl.mn.gov');
   const official=parseOfficialMnSenateServiceDirectory(
     directory.bytes,directory.observedAt,swearing.bytes,swearing.observedAt);
   const rosters=await Promise.all(([29,47] as const).map(async district=>{
