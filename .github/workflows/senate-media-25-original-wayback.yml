@@ -10,6 +10,8 @@ on:
       - scripts/probe-senate-media-25-original-wayback.ts
       - tests/senate-media-broader-original-wayback.test.ts
       - docs/evaluation/senate-media-2021-25-public-broader-source-discovery.json
+      - docs/evaluation/senate-media-2021-25-broader-25-original-public-archive-receipts-20261011.json
+      - tests/senate-media-broader-original-public-archive-receipts.test.ts
   workflow_dispatch:
     inputs:
       scope:
