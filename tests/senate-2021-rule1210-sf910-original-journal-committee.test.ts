@@ -123,7 +123,7 @@ test('genuine redacted PDF structure reverses p714 running header after affirmat
  for(const bad of [
   authenticReverse.replace('SENATE 714','SENATE 715'),
   authenticReverse.replace('[21ST DAY','[20TH DAY'),
-  authenticReverse.replace('JOURNAL OF THE SENATE','JOURNAL OF THE HOUSE'),
+  authenticReverse.replace('[21ST DAY JOURNAL OF THE SENATE','[21ST DAY JOURNAL OF THE HOUSE'),
   authenticReverse.replace('There were yeas 4 and nays 3','There were yeas 5 and nays 2'),
   authenticReverse.replace('Senators FictionalAlpha','Senators FictionalZulu')
  ])assert.throws(()=>inspect(bad));
