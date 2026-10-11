@@ -90,7 +90,7 @@ export function inspectApril08LrlMediaPage(html:string,spec:April08MediaCase){
     lrlDateHeading:'04/08/2021',
     lrlPageCommitteeIdentityVerified:true,
     lrlPageMeetingDayVerified:true,
-    publishedOriginalCommitteeAmendmentMotivations:motionCount,
+    distinctJournalReportedCommitteeAmendments:motionCount,
     audioTagCount:(html.match(/<audio\b/gi)??[]).length,
     videoTagCount:(html.match(/<video\b/gi)??[]).length,
     captionRequestCount:captionRequests.length,
