@@ -66,7 +66,7 @@ async function main(){
   originalMotion:proof,errors:failures,originalErrorCount:failures.length,
   previousOtherBillSF1470SameNamedSidesNotDeduplicated:true,
   journalReportDayNotIndependentlyAuthenticatedHearingActionDate:true,
-  2021OriginalOfficialLRLPrintCommitteeMinutesNotCompared:true,
+  original2021OfficialLRLPrintCommitteeMinutesNotCompared:true,
   originalSourcePdfAndFullExtractedTextNotCommitted:true,
   noRealNameSideListsCommitted:true,
   noProductionPrivateDBOrMemberVoteImport:true,
