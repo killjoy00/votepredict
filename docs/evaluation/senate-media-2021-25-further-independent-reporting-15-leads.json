@@ -8,7 +8,7 @@
     "broaderCaucusReformerUrls": 25
   },
   "newOriginalArticleUrlLeads": 15,
-  "newIndividuallyNamedSenatorSpeakerCandidates": 22,
+  "newIndividuallyNamedSenatorSpeakerCandidates": 24,
   "displayedYearSelection": [
     {
       "year": 2021,
@@ -33,7 +33,7 @@
     {
       "year": 2025,
       "articles": 3,
-      "senatorSpeakerTurns": 3
+      "senatorSpeakerTurns": 5
     }
   ],
   "cautions": {
@@ -369,11 +369,23 @@
       "originalPublisher": "Minnesota Reformer",
       "displayedNewsPublicationDay": "2025-05-06",
       "byline": "Max Nesterak",
-      "reporterAttributionCaveat": "Hauschild quote not a signed proof of article-described recorded floor vote",
+      "reporterAttributionCaveat": "Current reporter prints separate 2025 floor debate quotations from Hauschild, Seeberger and McEwen; several other lawmakers including Frentz/Klein/Kupec/Putnam/Abeler are described by reported votes or bill authorship, not attributed these words. Original 2025 HTTP archived version STILL unverified; press story is not authenticated Senate roll-call evidence.",
       "namedSenatorSpeakerTurnCandidates": [
         {
           "name": "Grant Hauschild",
           "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15577",
+          "reporterAttributionMode": "reported_floor_debate",
+          "historicalRecordedIndividualQuoteApproved": false
+        },
+        {
+          "name": "Judy Seeberger",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15584",
+          "reporterAttributionMode": "reported_floor_debate",
+          "historicalRecordedIndividualQuoteApproved": false
+        },
+        {
+          "name": "Jen McEwen",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15537",
           "reporterAttributionMode": "reported_floor_debate",
           "historicalRecordedIndividualQuoteApproved": false
         }
@@ -445,5 +457,27 @@
       }
     ],
     "missingOriginalBodyProofNeverBackfilledByCurrentByline": true
+  },
+  "secondSpeakerCorrection20261011": {
+    "sourceUrl": "https://minnesotareformer.com/2025/05/06/blue-dog-democrats-vote-to-roll-back-paid-sick-leave-for-workers-at-small-farms-and-businesses/",
+    "individualSpeakerCandidatesBeforeCorrection": 22,
+    "individualSpeakerCandidatesAfterCorrection": 24,
+    "original2025ArticleReportedQuotedSpeakers": [
+      "Grant Hauschild",
+      "Judy Seeberger",
+      "Jen McEwen"
+    ],
+    "originalRecordedFloorVotesVerified": false,
+    "notSpokenInCurrentArticleJustContext": [
+      "Nick Frentz",
+      "Matt Klein",
+      "Robert Kupec",
+      "Aric Putnam",
+      "Jim Abeler"
+    ],
+    "sourcePublisherOriginal2025ArchivedBodyVerified": false,
+    "independentOfficialLegislativeMemberRecordsChecked": true,
+    "publicationFirstClockProven": false,
+    "oldArchivedOriginalBodyVersionsAndUrlsUnchanged": true
   }
 }
