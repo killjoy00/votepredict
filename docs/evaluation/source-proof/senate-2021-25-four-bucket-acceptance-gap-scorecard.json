@@ -1,0 +1,175 @@
+{
+  "schemaVersion": "senate-2021-25-four-evidence-bucket-source-debt-gates-v1",
+  "issue": 864,
+  "scope": "2021-2025 MN Senate historical committee (no floor expansion), CFB finance, actual-served senator campaign issue platforms and contextual media remarks",
+  "asOf": "2026-10-10",
+  "sourceProofFiles": {
+    "committeeElectronicMinutes": {
+      "path": "docs/evaluation/source-proof/senate-2022-25-committee-original-minutes-source-ledger.json",
+      "expectedGitBlobSha": "6529ecccd2c779fc72dba36da7f69ad8cb71b78c"
+    },
+    "committeeRecoveredLowTextPdfs": {
+      "path": "docs/evaluation/source-proof/senate-committee-final-152-ocr-source-ledger.json",
+      "expectedGitBlobSha": "f486998fb0000a83c0346d51b8a62c90eb5f9e78"
+    },
+    "committeeUnlinkedMeetings": {
+      "path": "docs/evaluation/source-proof/senate-committee-141-unlinked-original-meeting-roster.json",
+      "expectedGitBlobSha": "e6cff658e18fb7ef61b1391e0af5403e3071fd2e"
+    },
+    "finance2021to2024": {
+      "path": "docs/evaluation/source-proof/cfb-2021-24-senate-396-source-viewer-count-checkpoint.json",
+      "expectedGitBlobSha": "911b65f78ff3f3819e36ada2b2b27ea1cebbc3cf"
+    },
+    "finance2025Partial": {
+      "path": "docs/evaluation/source-proof/cfb-2025-dated-senate-85-reference-source-checkpoint.json",
+      "expectedGitBlobSha": "653276dd03d1758e9c950139a1a56d71386195f8"
+    },
+    "financeTerminationHeld": {
+      "path": "docs/evaluation/source-proof/cfb-2025-two-served-special-final-termination-marker-original-source-checkpoint.json",
+      "expectedGitBlobSha": "d2b4b8694dbad20dc4f4dd0141afea36e2e6ebf2"
+    },
+    "campaignSixServed": {
+      "path": "docs/SENATE_SIX_EVER_SERVED_DATED_CAMPAIGN_SOURCE_LEDGER.md",
+      "expectedGitBlobSha": "d0cfb72ddd23d8a953ec68edea6faa559e354a42"
+    },
+    "mediaAggregate": {
+      "path": "docs/evaluation/senate-media-verified-live-neon-capture-year-counts.json",
+      "expectedGitBlobSha": "ce956da6b58b7939cfc2d07416afaa03e8274835"
+    }
+  },
+  "historicalYearCells": [
+    {
+      "year": 2021,
+      "committeeIndexedElectronicMeetings": null,
+      "committeeMinutesLinkedMeetings": null,
+      "committeeMissingMinutesMeetings": null,
+      "committeePdfLinks": null,
+      "financeSourceObservedOriginalVersionReferences": 165,
+      "financeSourceObservedAmendedVersionReferences": 70,
+      "mediaContextItemsObservedCaptureYear": 131,
+      "mediaDistinctSourceDocumentsWithinYear": 122
+    },
+    {
+      "year": 2022,
+      "committeeIndexedElectronicMeetings": 337,
+      "committeeMinutesLinkedMeetings": 325,
+      "committeeMissingMinutesMeetings": 12,
+      "committeePdfLinks": 325,
+      "financeSourceObservedOriginalVersionReferences": 524,
+      "financeSourceObservedAmendedVersionReferences": 247,
+      "mediaContextItemsObservedCaptureYear": 182,
+      "mediaDistinctSourceDocumentsWithinYear": 163
+    },
+    {
+      "year": 2023,
+      "committeeIndexedElectronicMeetings": 517,
+      "committeeMinutesLinkedMeetings": 453,
+      "committeeMissingMinutesMeetings": 64,
+      "committeePdfLinks": 454,
+      "financeSourceObservedOriginalVersionReferences": 118,
+      "financeSourceObservedAmendedVersionReferences": 51,
+      "mediaContextItemsObservedCaptureYear": 155,
+      "mediaDistinctSourceDocumentsWithinYear": 132
+    },
+    {
+      "year": 2024,
+      "committeeIndexedElectronicMeetings": 300,
+      "committeeMinutesLinkedMeetings": 258,
+      "committeeMissingMinutesMeetings": 42,
+      "committeePdfLinks": 258,
+      "financeSourceObservedOriginalVersionReferences": 134,
+      "financeSourceObservedAmendedVersionReferences": 69,
+      "mediaContextItemsObservedCaptureYear": 118,
+      "mediaDistinctSourceDocumentsWithinYear": 103
+    },
+    {
+      "year": 2025,
+      "committeeIndexedElectronicMeetings": 438,
+      "committeeMinutesLinkedMeetings": 415,
+      "committeeMissingMinutesMeetings": 23,
+      "committeePdfLinks": 415,
+      "financeSourceObservedOriginalVersionReferences": 60,
+      "financeSourceObservedAmendedVersionReferences": 25,
+      "mediaContextItemsObservedCaptureYear": 208,
+      "mediaDistinctSourceDocumentsWithinYear": 168
+    }
+  ],
+  "strictlyNonComparableSourceScopes": {
+    "committee": "2022–2025 present electronic meeting index only, one 2023 meeting with two PDFs; 2021 official print-only unenumerated and 2022 official print/electronic disagreement",
+    "finance2021to2024": "396 official source viewer responses for 275 distinct registration IDs, original 941 plus amendments 437; viewer references not certified actual filed PDFs, statutory obligations or actual-ever-served senator filer universe",
+    "finance2025": "2025 original 60 and amended 25 viewer version references from ONLY 41 independently dated 2025 registrations visible in 2026 election viewer; not comparable to whole 2021–24 source strata",
+    "media": "Protected exact VotePredict Neon metadata-only read, capture-year rows not publisher-year; 2021–25 794 context items plus 154 out-of-scope captures; not 794 confirmed quotes or globally unique articles",
+    "campaign": "Six independently documented ever-served Senate people with 20 attributed source research leads; 16 original archived historical capture-public-by proof and four only 2026 observed candidate survey snippets; not a 2021–25 senator-year campaign site denominator"
+  },
+  "sourceProofMilestones": {
+    "electronicIndexedMeetings": 1592,
+    "meetingsWithLinkedMinutes": 1451,
+    "meetingsWithoutLinkedMinutes": 141,
+    "originalMinutesPdfLinks": 1452,
+    "embeddedTextLowTextOriginally": 207,
+    "recoveredByOcr": 207,
+    "unlinkedMediaRecordLeads": 138,
+    "noMediaRecordLeadMeetings": 3,
+    "committeeNamed2025ElectionsSourceCandidateBlocks": 15,
+    "committeeNamed2025ElectionsCandidateChoiceTokens": 163,
+    "finance2021to2024ViewerApiResponses": 396,
+    "finance2021to2024DistinctRegistrationIds": 275,
+    "finance2021to2024OriginalViewerVersions": 941,
+    "finance2021to2024AmendedViewerVersions": 437,
+    "finance2025PartialSenateRegistrationsObserved": 41,
+    "finance2025PartialOriginalViewerVersions": 60,
+    "finance2025PartialAmendedViewerVersions": 25,
+    "finance2025CycleFinalSpecificTerminationSelectionsProven": 0,
+    "campaignEverServedSenatorSourcePersonCount": 6,
+    "campaignDatedSourceResearchExcerpts": 20,
+    "campaignHistoricalArchiveCaptureProvenExcerpts": 16,
+    "campaign2026OnlyObservedExcerpts": 4,
+    "mediaArchivedPublisherSeeds": 44,
+    "mediaSourceContextRowsWithin2021to2025": 794,
+    "mediaContextRowsOtherYears": 154,
+    "mediaAllCaptureYearContextRows": 948,
+    "mediaSourceDocumentsSummedWithinYears": 688
+  },
+  "acceptanceUnknowns": {
+    "officialStatewide2021to2025SenateCommitteeMeetingDenominator": null,
+    "officialStatewide2021to2025SenateCommitteeRecordedVoteDenominator": null,
+    "certifiedDistinctCommitteeNamedMotionVoteCount": null,
+    "certifiedAllOriginalSenateCommitteeMotionsByYear": null,
+    "all2021SenateOfficialPrintCommitteeMinutesCollected": false,
+    "year2022OfficialPrintElectronicDifferenceReconciled": false,
+    "all141UnlinkedMediaLeadsHumanReviewed": false,
+    "committeeOriginalSourcesReconciledToExistingHistoricalVoteAndMemberVoteRows": false,
+    "statewide2021to2025ActuallyServedSenatorsWithDatedActiveCfbFilerYearDenominator": null,
+    "statewide2021to2025StatutorilyOwedCfbReportDenominator": null,
+    "sourcePdfPerFinanceTransactionContainmentProven": false,
+    "independentlyProvenOriginalCfbReportHistoricPublicByCountWithinTheseSourceTranches": 0,
+    "year2025SpecialCycleFinalTerminationCheckboxSelectionsProven": false,
+    "all2020And2022OriginalSosCandidateFilingWebsiteExportsCaptured": false,
+    "statewideEverServedSenatorCampaignWebsiteAndIssueVersionDenominator": null,
+    "campaignOriginalPagesReconciledToExistingSourceAndEvidenceRows": false,
+    "mediaAllStatewideHistoricalPublisherArticleDenominator": null,
+    "mediaSenatorNamedQuoteCertifiedCount": null,
+    "mediaSourcePublicationAndPublicByDatesAndSpeakerIdsReconciled": false,
+    "privateSourceToExistingHistoricalEvidencePerRowComplete": false,
+    "historicalFourBucketCompletenessCertified": false
+  },
+  "dateRules": {
+    "officialCommitteeHearingActionAvailableOnActualHearingDate": true,
+    "committeeSameDayForecastEligibilityWithoutMotionClock": false,
+    "financeOrdinaryReportCannotBeEarlierThanEighthHourLocalDayAfterDue": true,
+    "financeLegalReleaseFloorNotIndependentHistoricallyProvenPublicBy": true,
+    "campaignOriginalArchiveCaptureNeverAuthorFirstPublishedTimestamp": true,
+    "mediaMentionIsNotNamedQuote": true,
+    "mediaArchiveCaptureYearNotPublisherYear": true
+  },
+  "permissionsAndFreeze": {
+    "noAutomaticMemberVotesFromAggregatesOrAttendance": true,
+    "noNonServingPeoplePromotedAsSenatorCampaignPositions": true,
+    "noSenateFloorExpansion": true,
+    "noPrivateSourceRowsPublished": true,
+    "noProductionReadWriteOrModelServingSchedulerChanges": true,
+    "no2027ProgramChanges": true,
+    "noGovernmentOfficeContact": true,
+    "issue864MustRemainOpen": true
+  }
+}
