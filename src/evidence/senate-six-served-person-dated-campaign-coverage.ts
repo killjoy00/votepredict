@@ -94,7 +94,7 @@ export function combineOnlyActualSenatorsDated2022to2025CampaignSources(
   schema:SIX_SENATE_PERSON_2022_25_DATED_ISSUE_RECOVERY_VERSION,
   generatedFromIndependentOriginalServiceObservedAtUtc:
     old.sourceValidation.officialLRLSenateDirectoryObservedAtUtc,
-  latestRecordedPublicSourceRetrievalUtc:
+  secondCarlaOriginalPublicSourceRetrievedAtUtc:
     carla.originalChecks[1].actualOriginalSourceRetrievedAtUtc,
   sourceControls:{
    onlyIndependentlyVerifiedEverServedSenatorsNamed:true,
