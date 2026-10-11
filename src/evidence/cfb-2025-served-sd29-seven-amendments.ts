@@ -187,6 +187,35 @@ export function auditSd29Amendment(t:Sd29AmendmentTarget,
       :'source_pdf_identity_authenticated' as const,
   };
 }
+export const INDEPENDENTLY_OBSERVED_SD29_2025_PARENT_BINARY_ALIAS={
+  amendmentVersionId:'19229:25:pcc:YE:0:1',
+  parentOriginalVersionId:'19229:25:pcc:YE:0:0',
+  identicalSourcePdfSha256:'115af8ec4d2fcf19323ae88cc2e858f1d1cda00c03e9ca994bf31e2070335289',
+  identicalSourcePdfBytes:18020,
+  originalBoardReceivedOn:'2026-02-01',
+  reportPeriodStartOn:'2025-11-20',
+  reportPeriodEndOn:'2025-12-31',
+} as const;
+/**
+ * This single exception is supported by the first independently sourced
+ * Oct 11 2026 GitHub artifact #11708986852 (all seven original bodies).
+ * A second independent real CFB source run is required before treating
+ * the reviewed alias classification as permanent source evidence.
+ */
+function exactlyReviewedParentAlias(r:ReturnType<typeof auditSd29Amendment>):boolean{
+  const v=INDEPENDENTLY_OBSERVED_SD29_2025_PARENT_BINARY_ALIAS;
+  return r.id===v.amendmentVersionId&&r.originalId===v.parentOriginalVersionId
+    &&r.originalSha256===v.identicalSourcePdfSha256
+    &&r.pdfSha256===v.identicalSourcePdfSha256
+    &&r.pdfBytes===v.identicalSourcePdfBytes
+    &&r.sourcePdfReceiptOn===v.originalBoardReceivedOn
+    &&r.originalReceivedOn===v.originalBoardReceivedOn
+    &&r.originalCoverageStartOn===v.reportPeriodStartOn
+    &&r.originalCoverageEndOn===v.reportPeriodEndOn
+    &&r.status==='source_pdf_equals_original_parent'
+    &&r.firstPageIdentityAndDatesVerified&&r.sourceFailure===null
+    &&r.distinctFromOriginalParent===false;
+}
 export function classifySd29AmendmentSequence(reports:ReturnType<typeof auditSd29Amendment>[]){
   const successes=reports.filter(r=>r.status==='source_pdf_identity_authenticated');
   const byHash=new Map<string,typeof successes>();
@@ -200,18 +229,31 @@ export function classifySd29AmendmentSequence(reports:ReturnType<typeof auditSd2
     return duplicates.length>1&&r.id!==first.id?[{id:r.id,canonicalId:first.id,sha256:r.pdfSha256}]:[];
   });
   const uniqueAuthenticatedPdfHashes=byHash.size;
+  const reviewedParentAliases=reports.filter(exactlyReviewedParentAlias);
+  const sourceHolds=reports.filter(r=>r.status!=='source_pdf_identity_authenticated'
+    &&!exactlyReviewedParentAlias(r)).map(r=>({id:r.id,status:r.status}));
   const complete=reports.length===7&&successes.length===7&&aliases.length===0
     &&new Set(reports.map(r=>r.id)).size===7;
+  const acceptedWithExactReviewedParentAlias=reports.length===7&&successes.length===6
+    &&uniqueAuthenticatedPdfHashes===6&&reviewedParentAliases.length===1
+    &&aliases.length===0&&sourceHolds.length===0
+    &&new Set(reports.map(r=>r.id)).size===7;
   return{
-    classification:complete?'all_seven_version_references_distinct_and_authenticated'
-      :aliases.length&&successes.length===7?'all_seven_references_authenticated_with_possible_pdf_alias'
+    classification:acceptedWithExactReviewedParentAlias
+      ?'six_distinct_amended_pdf_binaries_one_exact_original_pdf_reference_alias'
+      :complete?'seven_distinct_source_pdfs_source_changed_from_first_observation'
+      :aliases.length?'unexpected_cross_amendment_binary_reference_alias'
       :'one_or_more_original_pdf_references_held_or_failed',
     sourceVersions:reports.length,sourcePdfIdentityAuthenticated:successes.length,
+    verifiedOfficialReferencesIncludingExactParentAlias:successes.length+reviewedParentAliases.length,
     uniqueAuthenticatedPdfHashes,unexpectedBinaryAliases:aliases,
-    sourceHolds:reports.filter(r=>r.status!=='source_pdf_identity_authenticated')
-      .map(r=>({id:r.id,status:r.status})),
+    documentedOriginalParentAliases:reviewedParentAliases.map(r=>({
+      id:r.id,canonicalOriginalId:r.originalId,originalSha256:r.originalSha256,
+      originalAndAmendedIndexPdfBytes:r.pdfBytes,boardReceivedOn:r.sourcePdfReceiptOn})),
+    sourceHolds,
     strictSevenDistinctFormsVerified:complete,
+    sourceAcquisitionAcceptedWithExactReviewedParentAlias:acceptedWithExactReviewedParentAlias,
     actualHistoricalPublicByProven:0,legallyOwedReportDenominator:null,
-    canClaimSevenDistinctNewPdfs:complete,
+    canClaimSevenDistinctNewPdfs:false,
   };
 }
