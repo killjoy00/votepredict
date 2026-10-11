@@ -185,7 +185,7 @@
     "privateExistingVoteRowEqualityEstablished": false
   },
   "limits": {
-    "printedFeb11A2BillMayBeSourceTypo": false,
+    "printedFeb11A2BillMayBeSourceTypo": true,
     "printedFeb11SF0529VsOfficialFeb11SF0828AttributionHeld": true,
     "one2025Apr08ExtraA10NeedsIndependentFullMotionReview": true,
     "noSameDayPrediction": true,
