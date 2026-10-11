@@ -123,6 +123,11 @@ read('senate-six-2020-original-pages-26-new-exact-first-party-excerpts-v1',
 read('senate-roger-chamberlain-2016-original-10-economic-issue-excerpts-and-domain-review-v1',
  (d,s)=>{assert.equal(d.tenCandidateSiteExactStatements.length,10);
   add('Roger Chamberlain',d.tenCandidateSiteExactStatements.length,s);});
+// Independently original-CDX + complete-HTML-audited 2020 Carlson and 2022/older Hawj sources.
+// 2020 Hawj self-report is older retained website copy, not a fresh 2020 authorship date.
+read('senate-carlson-hawj-2020-22-original-first-party-17-issue-excerpts-v1',
+ (d,s)=>{assert.equal(d.excerpts.length,17);assert.equal(d.pages.length,3);
+   each(d.excerpts,x=>[d.pages.find(p=>p.id===x.pageId)?.person,1],s);});
 const receiptName='data/evaluation/senate-original-2020-22-authenticated-68-pages-v1.json';
 const r=JSON.parse(readFileSync(resolve(receiptName),'utf8'));
 assert.equal(r.pages.length,68);

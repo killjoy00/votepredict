@@ -1,0 +1,86 @@
+name: Independently verify 17 new Carlson and Hawj first-party original historical issue quotes
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-senate-carlson-hawj-17-first-party-original-html.yml
+      - scripts/audit-senate-carlson-hawj-17-original-firstparty-excerpts.mjs
+      - data/evaluation/senate-carlson-hawj-2020-22-original-first-party-17-issue-excerpts-v1.json
+      - tests/senate-carlson-hawj-17-firstparty-original-excerpts.test.ts
+      - docs/SENATE_CARLSON_HAWJ_2020_22_ORIGINAL_17_FIRST_PARTY_QUOTES.md
+      - scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-archive-html-entire-cdx-and-lrl-independent-17-excerpts:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-carlson-hawj-original-17-firstparty-excerpts-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Independently retrieve SHA-pinned original official MN Senate service source
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/full-government
+      - name: Reopen entire original CDX source indexes and three actual Wayback HTML bodies
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38173412344
+          name: senate-five-uncovered-six-historic-first-party-windows-original-cdx-html-v1
+          github-token: ${{ github.token }}
+          path: original/2020-2022-original-candidate-sites
+      - name: Rehash official LRL, complete independent original CDX, complete archived HTML, and all 17 literal snippets
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/full-government -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/full-government -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/full-government -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
+          node --import tsx scripts/audit-senate-carlson-hawj-17-original-firstparty-excerpts.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --original-acquisition-dir original/2020-2022-original-candidate-sites \
+            --output-json original/proof/carlson-hawj-17-complete-original-byte-and-excerpt-checks.json
+      - name: Original-source rebuild of entire 95-real-senator research coverage report
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/full-government -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/full-government -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/full-government -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          node --import tsx scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --out-dir original/official-95-coverage
+          node -e 'const x=require("./original/official-95-coverage/95-senators-public-campaign-coverage.json"); const s=x.summary; if(s.actualServingStateSenators!==95||s.actuallyServedSenatorsWithAnyKnownSelectedOriginalSiteExcerpt!==55||s.actuallyServedSenatorsWithOriginalSiteBodiesButNoSelectedQuote!==0||s.actuallyServedSenatorsUnobservedInSelectedOriginalSiteSourceLedgers!==40||s.totalExactResearchExcerptRowsForVerifiedSenators!==808||s.nonMatchingRowsExcludedOrNeedsSeparateIdentityProof!==1||s.productionDatabaseReadsWritesOrForecastChanges!==0)process.exit(1);console.log("95 OFFICIAL REAL SENATORS / 55 WITH FIRST-PARTY EXCERPTS / 808 QUOTES VERIFIED");'
+      - name: Retain audited original source hashes and exact excerpt proofs
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-carlson-hawj-17-original-source-cdx-full-html-exact-quotes-proof-v1
+          path: original/proof/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Retain updated 95-real-senator read-only original-website source report
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-95-actual-2021-25-senator-808-firstparty-source-coverage-v1
+          path: original/official-95-coverage/
+          if-no-files-found: error
+          retention-days: 30

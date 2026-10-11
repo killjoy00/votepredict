@@ -1,0 +1,266 @@
+{
+  "schema": "mn-senate-two-actually-served-2020-22-original-websites-17-verified-short-first-party-excerpts-v1",
+  "scope": {
+    "issue": 864,
+    "independentOriginalOfficialGovernmentSHA256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "originalSourceAcquisitionRun": 38173412344,
+    "originalAcquisitionArtifact": 11714578217,
+    "actualNewQualifyingSenators": 2,
+    "shortFirstPartyStatements": 17,
+    "trueServiceDenominator2021To2025": 95,
+    "exactOldAuthorPostedDateNeverInferred": true,
+    "hawj2020PastWorkClaimsAreUnverifiedSelfReports": true,
+    "hawj2022CommunityPrioritiesNotUnconditionalPersonalPledges": true,
+    "notEntireHistoricWebsiteCensus": true,
+    "productionEvidenceRowsAdded": 0,
+    "forecastOrTrainingChanges": 0,
+    "archiveFailuresNeverProveNoPolicy": true
+  },
+  "pages": [
+    {
+      "id": "carlson-2020-issues",
+      "person": "Jim Carlson",
+      "district": "51",
+      "electionYear": 2020,
+      "sourceWindowFile": "carlson_2018_2020-entire-original-cdx.json",
+      "sourceIndexSha256": "5413c8878c04dff41f1946d4b9cb396de0f516e572e6547f5ca0dc5611bf1a9f",
+      "archiveCaptureUtc": "2020-09-19T22:32:15.000Z",
+      "originalUrl": "http://www.carlsonforsenate.org/issues.html",
+      "originalSourceFile": "carlson_2018_2020-1-original-20200919223215.html",
+      "htmlSha256": "d4a2f7b3f5e2bdb3c27f76fb86cc988e6530a481044ebf7e785eba3246af7b19",
+      "archiveCdxSha1Base32": "LNCUDWAD5UXGEF5HAMYPTBFOJVWVHX67",
+      "committeeAttributionText": "PREPARED AND PAID FOR BY FRIENDS OF JIM CARLSON",
+      "pageKind": "first_party_2020_election_issue_platform",
+      "firstAuthoredDateProven": false
+    },
+    {
+      "id": "hawj-2022-reelection",
+      "person": "Foung Hawj",
+      "district": "67",
+      "electionYear": 2022,
+      "sourceWindowFile": "hawj_2021_2022-entire-original-cdx.json",
+      "sourceIndexSha256": "31e0f1d079b8514a9df9b10a384187845afa2c093f96d7e62f7d2a33027965ca",
+      "archiveCaptureUtc": "2022-10-02T15:19:14.000Z",
+      "originalUrl": "https://www.founghawj.com/home.html",
+      "originalSourceFile": "hawj_2021_2022-2-original-20221002151914.html",
+      "htmlSha256": "eb4366bb20a025d3ef51a84087e368c68a72b43fc1969bfeab86cb15e7547a65",
+      "archiveCdxSha1Base32": "HPQRW25MMM4J4G45FOCMZZSN2VQEZZXM",
+      "committeeAttributionText": "Prepared and paid for by Foung for Senate 67 Committee",
+      "pageKind": "2022_first_party_candidate_reelection_letter",
+      "firstAuthoredDateProven": false
+    },
+    {
+      "id": "hawj-2020-reused-older",
+      "person": "Foung Hawj",
+      "district": "67",
+      "electionYear": 2020,
+      "sourceWindowFile": "hawj_2018_2020-entire-original-cdx.json",
+      "sourceIndexSha256": "5c45b9e02587e968516aee423a1763accb409c368f250e347d43b7c514273973",
+      "archiveCaptureUtc": "2020-01-31T12:11:43.000Z",
+      "originalUrl": "http://www.founghawj.com:80/home.html",
+      "originalSourceFile": "hawj_2018_2020-2-original-20200131121143.html",
+      "htmlSha256": "45ec6f65e776ca6527859e64836210e1cdd08783261317d149eb110c0cd2fa55",
+      "archiveCdxSha1Base32": "K3GJ247WMHFJXGUG2BWC5I7LTATL4VYH",
+      "committeeAttributionText": "Prepared and paid for by Foung for Senate 67 Committee",
+      "pageKind": "older_cycle_reelection_past_work_copy_observable_by_2020_capture",
+      "firstAuthoredDateProven": false
+    }
+  ],
+  "excerpts": [
+    {
+      "id": "carlson-2020-01",
+      "pageId": "carlson-2020-issues",
+      "issueFamily": "health_care",
+      "exactShortExcerpt": "Expand the current MinnesotaCare plan to allow anyone to buy into it as a pathway to universal healthcare.",
+      "attributionClass": "candidate_platform_policy",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "carlson-2020-02",
+      "pageId": "carlson-2020-issues",
+      "issueFamily": "drug_affordability",
+      "exactShortExcerpt": "Ensure all Minnesotans have access to the prescription drugs they need at a price that they can afford",
+      "attributionClass": "candidate_platform_policy",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "carlson-2020-03",
+      "pageId": "carlson-2020-issues",
+      "issueFamily": "paid_leave",
+      "exactShortExcerpt": "Guarantee every working Minnesotan has access to paid sick time and extended paid family and medical leave",
+      "attributionClass": "candidate_platform_policy",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "carlson-2020-04",
+      "pageId": "carlson-2020-issues",
+      "issueFamily": "clean_energy",
+      "exactShortExcerpt": "Put Minnesota on the path to meet or exceed our state’s clean energy and climate change goals.",
+      "attributionClass": "candidate_platform_policy",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "carlson-2020-05",
+      "pageId": "carlson-2020-issues",
+      "issueFamily": "public_education",
+      "exactShortExcerpt": "Advocate for fully-funding public education from affordable childcare and public pre-K",
+      "attributionClass": "candidate_platform_policy",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "carlson-2020-06",
+      "pageId": "carlson-2020-issues",
+      "issueFamily": "infrastructure",
+      "exactShortExcerpt": "Make meaningful investments in community infrastructure, including utility systems, transportation, and broadband.",
+      "attributionClass": "candidate_platform_policy",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "carlson-2020-07",
+      "pageId": "carlson-2020-issues",
+      "issueFamily": "gun_safety",
+      "exactShortExcerpt": "Prevent senseless gun violence in our communities by keeping guns out of the hands of criminals",
+      "attributionClass": "candidate_platform_policy",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "carlson-2020-08",
+      "pageId": "carlson-2020-issues",
+      "issueFamily": "criminal_justice",
+      "exactShortExcerpt": "Pursue common-sense criminal justice reform that focuses on prevention, fairness, and redemption.",
+      "attributionClass": "candidate_platform_policy",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "hawj-2022-01",
+      "pageId": "hawj-2022-reelection",
+      "issueFamily": "public_safety",
+      "exactShortExcerpt": "greater public safety",
+      "attributionClass": "candidate_letter_community_priority",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "hawj-2022-02",
+      "pageId": "hawj-2022-reelection",
+      "issueFamily": "public_education",
+      "exactShortExcerpt": "properly funded public education",
+      "attributionClass": "candidate_letter_community_priority",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "hawj-2022-03",
+      "pageId": "hawj-2022-reelection",
+      "issueFamily": "tax_policy",
+      "exactShortExcerpt": "tax breaks for middle and lower income workers",
+      "attributionClass": "candidate_letter_community_priority",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "hawj-2022-04",
+      "pageId": "hawj-2022-reelection",
+      "issueFamily": "affordable_housing",
+      "exactShortExcerpt": "increase in affordable housing stock",
+      "attributionClass": "candidate_letter_community_priority",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "hawj-2022-05",
+      "pageId": "hawj-2022-reelection",
+      "issueFamily": "employment",
+      "exactShortExcerpt": "jobs for a growing economy",
+      "attributionClass": "candidate_letter_community_priority",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "hawj-2022-06",
+      "pageId": "hawj-2022-reelection",
+      "issueFamily": "health_care",
+      "exactShortExcerpt": "health care insurance for all.",
+      "attributionClass": "candidate_letter_community_priority",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "hawj-2022-07",
+      "pageId": "hawj-2022-reelection",
+      "issueFamily": "climate",
+      "exactShortExcerpt": "We must work diligently and with haste on addressing the ramifications of climate change",
+      "attributionClass": "candidate_letter_first_person_action",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "hawj-2022-08",
+      "pageId": "hawj-2022-reelection",
+      "issueFamily": "clean_energy",
+      "exactShortExcerpt": "accelerate the development of clean energy",
+      "attributionClass": "candidate_letter_first_person_action",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "hawj-2020-01",
+      "pageId": "hawj-2020-reused-older",
+      "issueFamily": "economic_equity",
+      "exactShortExcerpt": "I have worked hard on economic equity, youth summer jobs, affordable housing",
+      "attributionClass": "older_retained_candidate_past_work_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    }
+  ],
+  "sourceExclusions": [
+    {
+      "person": "Jim Carlson",
+      "originalPage": "http://www.carlsonforsenate.org/issues1.html",
+      "reason": "issue_nav_and_footer_only_no_platform_positions"
+    },
+    {
+      "person": "Foung Hawj",
+      "originalPage": "https://www.founghawj.com/about-1.html",
+      "reason": "2022_archived_replay_digest_mismatch_no_authentic_copy"
+    },
+    {
+      "person": "Eric Lucero",
+      "originalPage": "https://www.ericlucero.com//about/bb743e1c.min.css",
+      "reason": "original_about_biographical_no_new_issue_platform_policy_excerpt_was_verified_in_bounded_capture"
+    },
+    {
+      "person": "Gene Dornink",
+      "reason": "2020_and_2022_bounded_original_domains_no_verified_candidate_quote_2020_index_empty_or_invalid"
+    },
+    {
+      "person": "Michael Kreun",
+      "reason": "2022_CDX_empty_or_invalid_response_not_absence_of_platform"
+    }
+  ]
+}
