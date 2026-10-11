@@ -27,6 +27,14 @@ type PublicLead = {
   issueStanceInferred:boolean;
   urlInsideCurrentSeedPrefix:boolean;
   sourceResearchCheckedOn?:string;
+  currentPublisherRedirectTargetObserved?:string;
+  currentPublisherRedirectSourceUrl?:string;
+  currentPublisherRedirectCheckedOn?:string;
+  currentPublisherRedirectProvesHistoricArchiveAlias?:boolean;
+  currentPublisherDisplayedAuthor?:string;
+  currentPublisherDisplayedClockWithoutVerifiedTimezone?:string;
+  publisherClockIsHistoricalPublicByProof?:boolean;
+  noHouseSpeakerQuoteAttributedToSenator?:boolean;
   officialLegislativeActionSource?:string;
   officialLegislativeActionDayAsRecorded?:string;
   eventClockTimeFromOriginalSenateJournalVerified?:boolean;
@@ -61,7 +69,7 @@ test('curated publicly observed leads cover all five study years, two publishers
   assert.equal(data.sourceUniverseCompletenessKnown,false);
   assert.equal(data.publisherYearSlotsInOriginal44SeedReview,220);
   const leads=data.selectedNonExhaustiveArticleLeads;
-  assert.equal(leads.length,23);
+  assert.equal(leads.length,24);
   assert.equal(new Set(leads.map(x=>x.id)).size,leads.length);
   assert.equal(new Set(leads.map(x=>x.livePageUrl)).size,leads.length);
   assert.deepEqual([...new Set(leads.map(x=>x.publisher))].sort(),[
@@ -134,7 +142,7 @@ test('article-level Reformer /briefs/ links expose a deterministic archive seed-
 
 test('new 2022–2025 publisher leads have dated 2026 research observations without historical availability claims',()=>{
   const added=data.selectedNonExhaustiveArticleLeads.filter(x=>x.sourceResearchCheckedOn);
-  assert.equal(added.length,9);
+  assert.equal(added.length,10);
   assert.ok(added.every(x=>x.sourceResearchCheckedOn==='2026-10-10'));
   assert.ok(added.every(x=>x.archiveCapturePublicByVerified===false
     && x.originalArchivedHttpBytesHashVerified===false
@@ -178,4 +186,31 @@ test('2023 driver-licensing brief and dated alias retain unresolved after-midnig
   assert.equal(dated.archiveCapturePublicByVerified,false);
   assert.equal(dated.historicalForecastEligibilityProven,false);
   assert.equal(dated.directQuoteHumanVerified,false);
+});
+
+test('Feb 12 2024 Reformer /briefs/ redirect is a CURRENT observation, never archive proof',()=>{
+  const brief=data.selectedNonExhaustiveArticleLeads.find(x=>x.id==='mn-reformer-2024-sanctuary-brief');
+  const dated=data.selectedNonExhaustiveArticleLeads.find(x=>x.id==='mn-reformer-2024-sanctuary-dated');
+  assert.ok(brief && dated);
+  assert.equal(brief.urlInsideCurrentSeedPrefix,false);
+  assert.equal(dated.urlInsideCurrentSeedPrefix,true);
+  assert.equal(brief.publicationDayDisplayedOnPublicPage,'2024-02-12');
+  assert.equal(dated.publicationDayDisplayedOnPublicPage,brief.publicationDayDisplayedOnPublicPage);
+  assert.equal(brief.currentPublisherRedirectTargetObserved,dated.livePageUrl);
+  assert.equal(brief.currentPublisherRedirectCheckedOn,'2026-10-10');
+  assert.equal(dated.currentPublisherRedirectSourceUrl,brief.livePageUrl);
+  assert.equal(dated.currentPublisherRedirectTargetObserved,dated.livePageUrl);
+  assert.equal(dated.currentPublisherRedirectCheckedOn,'2026-10-10');
+  assert.equal(dated.currentPublisherDisplayedAuthor,'Deena Winter');
+  assert.equal(dated.currentPublisherDisplayedClockWithoutVerifiedTimezone,'16:10');
+  assert.equal(dated.publisherClockIsHistoricalPublicByProof,false);
+  assert.equal(dated.currentPublisherRedirectProvesHistoricArchiveAlias,false);
+  assert.equal(dated.noHouseSpeakerQuoteAttributedToSenator,true);
+  assert.equal(dated.originalArchivedHttpBytesHashVerified,false);
+  assert.equal(dated.archiveCapturePublicByVerified,false);
+  assert.equal(dated.directQuoteHumanVerified,false);
+  assert.equal(dated.historicalForecastEligibilityProven,false);
+  assert.equal(dated.sourceSeenInVotePredictExport,'unknown_not_reconciled');
+  assert.ok(dated.namedSenatorLeadsForManualReview.every(n=>
+    ['Grant Hauschild','Erin Murphy','Omar Fateh'].includes(n)));
 });

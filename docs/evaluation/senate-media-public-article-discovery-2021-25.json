@@ -19,7 +19,9 @@
     "sourceResearchCheckedOn": "Date of the research verification in 2026, NOT original publication or independently proved historical public availability",
     "officialSenateServiceStart": "For the 2025 SD6 special election lead only, official oath date proving later Senate service; April 30 article predates membership and does not prove any quote",
     "currentPublisherAliasClue": "Matched /briefs/ and dated-path URLs are research alias candidates only; never deduplicate authenticated archives or assert equal original HTTP bytes without exact proof",
-    "ambiguousPublisherDayVersusPassageEvent": "2023 driver licensing Reformer current page displays Feb 21 at 8 pm yet narrates a Senate passage early Wednesday Feb 22; official Revisor groups passage under Feb 21. Neither source establishes a retrospective model public-by or exact article revision time."
+    "ambiguousPublisherDayVersusPassageEvent": "2023 driver licensing Reformer current page displays Feb 21 at 8 pm yet narrates a Senate passage early Wednesday Feb 22; official Revisor groups passage under Feb 21. Neither source establishes a retrospective model public-by or exact article revision time.",
+    "currentPublisherRedirectObservation": "A public /briefs/ URL was observed currently resolving to a /2024/02/12/ alias on 2026-10-10. Current redirect does not authenticate a historical Wayback redirect or archived original byte equivalence.",
+    "currentPublisherDisplayedClockWithoutVerifiedTimezone": "Publisher page displays a local clock but its historical timezone/edit time and initial public-by remain independently unverified."
   },
   "stateSenateOnly": true,
   "selectedNonExhaustiveArticleLeads": [
@@ -409,7 +411,41 @@
       "directQuoteHumanVerified": false,
       "issueStanceInferred": false,
       "urlInsideCurrentSeedPrefix": false,
-      "sourceResearchCheckedOn": "2026-10-10"
+      "sourceResearchCheckedOn": "2026-10-10",
+      "currentPublisherRedirectTargetObserved": "https://minnesotareformer.com/2024/02/12/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/",
+      "currentPublisherRedirectCheckedOn": "2026-10-10",
+      "currentPublisherRedirectProvesHistoricArchiveAlias": false
+    },
+    {
+      "id": "mn-reformer-2024-sanctuary-dated",
+      "publisher": "Minnesota Reformer",
+      "seedId": "minnesota-reformer-article-archive",
+      "livePageUrl": "https://minnesotareformer.com/2024/02/12/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/",
+      "publicationDayDisplayedOnPublicPage": "2024-02-12",
+      "searchTopicOnly": "North Star Act immigration legislation; dated-path alias of current publisher /briefs/ page (not verified historic Wayback identity)",
+      "namedSenatorLeadsForManualReview": [
+        "Grant Hauschild",
+        "Erin Murphy",
+        "Omar Fateh"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": true,
+      "sourceResearchCheckedOn": "2026-10-10",
+      "currentPublisherRedirectTargetObserved": "https://minnesotareformer.com/2024/02/12/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/",
+      "currentPublisherRedirectCheckedOn": "2026-10-10",
+      "currentPublisherRedirectProvesHistoricArchiveAlias": false,
+      "currentPublisherDisplayedAuthor": "Deena Winter",
+      "currentPublisherDisplayedClockWithoutVerifiedTimezone": "16:10",
+      "publisherClockIsHistoricalPublicByProof": false,
+      "currentPublisherRedirectSourceUrl": "https://minnesotareformer.com/briefs/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/",
+      "noHouseSpeakerQuoteAttributedToSenator": true
     },
     {
       "id": "mn-reformer-2025-social-media-tax",
@@ -534,6 +570,6 @@
     ],
     "calculatedAgainstCheckedInSeedUrls": true,
     "outsideSeedPrefixLeadCount": 10,
-    "criticalLimitation": "10 of 23 selected URL leads are outside their configured seed prefixes, with three brief-versus-dated research alias pairs (March 2022 DFL public safety, Feb 2023 driver licensing, May 2025 road signs). Current-publisher URL comparisons do not demonstrate missing unique historical archived articles or a statewide publisher denominator. Publisher-wide and statewide publication denominators, original-archive identity, and historically valid public-by dates remain unknown."
+    "criticalLimitation": "10 of 24 selected public URL leads fall outside the checked-in prefixes; there are four candidate brief-versus-dated alias pairs. Current publisher redirects and matching slugs/days do not prove an archived historical article duplicate. Source-record membership, original HTTP byte equality, first-public-by, and statewide publisher denominators remain unknown."
   }
 }

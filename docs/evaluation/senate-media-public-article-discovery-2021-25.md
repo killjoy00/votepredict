@@ -1,12 +1,12 @@
 # 2021–2025 Minnesota Senate media: independent public article discovery
 
-**Track:** [#912](https://github.com/killjoy00/votepredict/issues/912), [#946](https://github.com/killjoy00/votepredict/issues/946). **Research check:** 2026-10-10. **Status:** **23 selected current-publisher URL leads** across 2021–2025, including **three unverified alias pairs** (thus not 23 demonstrated unique articles). No authenticated original Wayback article bytes, historical public-by dates, private source-document matches, or human-verified Senate quotations were obtained in this research.
+**Track:** [#912](https://github.com/killjoy00/votepredict/issues/912), [#946](https://github.com/killjoy00/votepredict/issues/946). **Research check:** 2026-10-10. **Status:** **24 selected current-publisher URL leads** across 2021–2025, including **four unverified alias pairs** (thus not 24 demonstrated unique articles). No authenticated original Wayback article bytes, historical public-by dates, private source-document matches, or human-verified Senate quotations were obtained in this research.
 
 Structured, offline-tested public ledger: [`senate-media-public-article-discovery-2021-25.json`](senate-media-public-article-discovery-2021-25.json). Its displayed publication date is a **publisher claim seen during present-day research**, not a contemporaneously authenticated release date. The research-check date proves only that the public lead was examined on 2026-10-10. Neither date establishes availability before a historical prediction cutoff. No private rows, original article body, speaker quote, stance, or source hash is published.
 
 ## Actual 2022, 2024, and 2025 additions
 
-Eight new, publicly identified **URL leads**, six on `/briefs/` and two on dated paths, were checked on 2026-10-10. All linked names below are **search leads for people who did serve in the Minnesota Senate**, not verified article quotations.
+Eight public URL leads (six `/briefs/` and two dated paths) were initially added on 2026-10-10. Two more dated-path leads subsequently document the 2023/2024 publisher alias questions. The **24 URLs are not 24 authenticated historical original articles**. All linked names below are **search leads for people who did serve in the Minnesota Senate**, not verified article quotations.
 
 | Displayed article day | Publisher URLs in this research sample | Senate-member research leads | Audit interpretation |
 | --- | --- | --- | --- |
@@ -14,7 +14,7 @@ Eight new, publicly identified **URL leads**, six on `/briefs/` and two on dated
 | 2022-03-22 | [DFL public-safety plan — brief](https://minnesotareformer.com/briefs/senate-dfl-outlines-500-million-public-safety-plan/) and [dated path](https://minnesotareformer.com/2022/03/22/senate-dfl-outlines-500-million-public-safety-plan/) | Melisa López Franzen; Bobby Joe Champion; Ron Latz; Warren Limmer | Same slug and displayed day, **candidate alias pair**; current brief request resolved to dated publisher path during research, not archived identity proof |
 | 2022-04-25 | [Bipartisan Senate crime bill](https://minnesotareformer.com/briefs/senate-approves-tough-on-crime-bill-with-bipartisan-support/) | Jeremy Miller; Warren Limmer; Melisa López Franzen | `/briefs/` seed-prefix exclusion |
 | 2023-02-21 | [Driver-license Senate story — brief](https://minnesotareformer.com/briefs/minnesota-senate-expected-to-pass-bill-giving-drivers-licenses-to-undocumented-residents/) and [dated path](https://minnesotareformer.com/2023/02/21/minnesota-senate-expected-to-pass-bill-giving-drivers-licenses-to-undocumented-residents/) | Zaynab Mohamed | Same slug and publisher-displayed day: **candidate alias** only. Publisher now describes an early-Wednesday vote even though its displayed timestamp is Tuesday Feb. 21; official Revisor groups final passage under Feb. 21. Exact event/publication sequence unverified. |
-| 2024-02-12 | [North Star Act/sanctuary state reporting](https://minnesotareformer.com/briefs/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/) | Grant Hauschild; Erin Murphy; Omar Fateh | `/briefs/` seed-prefix exclusion; do not misattribute House speaker remarks to senators |
+| 2024-02-12 | [North Star Act story — brief](https://minnesotareformer.com/briefs/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/) and [publisher's dated path](https://minnesotareformer.com/2024/02/12/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/) | Grant Hauschild; Erin Murphy; Omar Fateh | **Current publisher redirect** from `/briefs/` to dated path observed on 2026-10-10. Page credits Deena Winter, displays **February 12, 2024 4:10 p.m.** Timezone and historical archive-first-public-by unverified; do not attribute House speaker remarks to senators. |
 | 2025-04-30 | [SD6 special-election result](https://minnesotareformer.com/briefs/keri-heintzeman-wins-special-election-for-minnesota-senate-seat/) | Keri Heintzeman | She **later served** as senator but was **not yet sworn in** on the article's displayed date |
 | 2025-05-01 | [Transportation-signs story — brief](https://minnesotareformer.com/briefs/minnesota-republican-senator-no-more-wit-pop-culture-portmanteaus-on-our-road-signs/) and [dated path](https://minnesotareformer.com/2025/05/01/minnesota-republican-senator-no-more-wit-pop-culture-portmanteaus-on-our-road-signs/) | Steve Drazkowski; Ann Johnson Stewart | Same slug and displayed day, **candidate alias pair**, not proven same historical captured HTTP bytes |
 
@@ -26,10 +26,14 @@ The existing `minnesota-reformer-article-archive` seed requests Wayback original
 
 | Sample only, URL-level | 2021 | 2022 | 2023 | 2024 | 2025 | Total |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Selected public URL leads | 4 | 7 | 4 | 3 | 5 | **23** |
+| Selected public URL leads | 4 | 7 | 4 | 4 | 5 | **24** |
 | Outside configured seed prefix | 2 | 3 | 2 | 1 | 2 | **10** |
 
-Three pairs match on publisher, displayed date and slug: **2022-03-22 public-safety plan**, **2023-02-21 driver licensing**, and **2025-05-01 road signs**. These are *proposed* aliases; neither pair has been equated through original archived bytes or a trusted fingerprint. **23 URL leads ≠ 23 authenticated historically unique articles; 10 outside-prefix URLs ≠ 10 missing articles.** Neither statistic is a rate for Minnesota Reformer, 44 seeded publishers, or all Minnesota Senate media.
+Four pairs match on publisher, displayed date and slug: **2022-03-22 public-safety plan**, **2023-02-21 driver licensing**, **2024-02-12 sanctuary/North Star Act**, and **2025-05-01 road signs**. These are *proposed* aliases; none has been equated through original archived bytes or a trusted fingerprint. **24 URL leads ≠ 24 authenticated historically unique articles; 10 outside-prefix URLs ≠ 10 missing articles.** Neither statistic is a rate for Minnesota Reformer, 44 seeded publishers, or all Minnesota Senate media.
+
+### February 12, 2024 publisher redirect is present-day evidence only
+
+On **2026-10-10**, the current Minnesota Reformer `/briefs/` [North Star Act page](https://minnesotareformer.com/briefs/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/) was observed redirecting to its [dated publisher URL](https://minnesotareformer.com/2024/02/12/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/). The publisher displays byline **Deena Winter** and date/time **February 12, 2024 at 4:10 p.m.** Timezone, initial publishing/edit time, historical redirect, archive capture, original SHA and VotePredict database linkage remain **unverified**. The present-day redirect is stronger URL-alias evidence than mere slug matching, but does not authenticate historical archived bytes or prediction-cutoff availability. The article includes a House speaker's remarks, which must not be attributed to a senator.
 
 ### February 2023 displayed-date versus late-night Senate action
 
