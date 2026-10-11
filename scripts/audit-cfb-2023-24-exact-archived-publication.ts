@@ -145,7 +145,7 @@ async function main(){
    historicalPublicByUnknownOrUnprovenForOther71Versions:true,
    heldSourcePDFVersionsNeverPromoted:held.every(x=>x.firstProvenHistoricalPublicBy===null),
    archiveIndexFailureOrEmptyResultsDoNotProveUnavailability:true,
-   2023And2024LegallyOwedYeReportDenominator:null,
+   historical2023And2024LegallyOwedYeReportDenominator:null,
   },
   limits:{
    WaybackIndexHitIsNotOriginalPDFProof:true,
