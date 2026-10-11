@@ -1,0 +1,61 @@
+name: One-time 2024 Senate 41 unlinked original caption procedural cue source review
+
+# One-time, public historical source-only action. No scheduler or production
+# secrets. No AV media download, private database or inferred recorded votes.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2024-41-unlinked-caption-motion-cues.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  inspect-original-2024-captions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Restore pinned 2024 actual original hearing-to-mtgid references
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2024-dated-media-href-review
+          run-id: 38079233118
+          github-token: ${{ github.token }}
+          path: artifacts/2024-original-hrefs
+      - name: Restore independent original 2024 official media page HTML source proofs
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2024-official-media-record-html-proof
+          run-id: 38081463362
+          github-token: ${{ github.token }}
+          path: artifacts/2024-original-html
+      - name: Restore previously authenticated 41 original 2024 caption body SHA proofs
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2024-original-caption-surface-metadata
+          run-id: 38103766440
+          github-token: ${{ github.token }}
+          path: artifacts/2024-original-caption
+      - name: Recheck 41 original page and caption body SHA then localize unverified motion cues
+        run: |
+          node --import tsx scripts/review-senate-2024-unlinked-caption-motion-cues.ts \
+            --hrefs artifacts/2024-original-hrefs/senate-2024-media-hrefs.json \
+            --original-html artifacts/2024-original-html/senate-2024-media-record-html.json \
+            --prior-caption artifacts/2024-original-caption/senate-2024-caption-surface.json \
+            --output artifacts/2024-caption-cues/senate-2024-41-original-caption-motion-cues.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2024-41-original-caption-motion-cue-source-review
+          path: artifacts/2024-caption-cues/senate-2024-41-original-caption-motion-cues.json
+          retention-days: 30
+          if-no-files-found: error
