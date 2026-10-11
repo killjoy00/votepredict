@@ -32,11 +32,11 @@ const dated=(id:string,slug:string,day='2025-05-01')=>({
 test('shadowed public leads expose configured prefix and secondary topical-path blind spots',()=>{
   const results=diagnoseMediaPublicDiscoveryPaths(ledger.selectedNonExhaustiveArticleLeads);
   assert.equal(results.version,'senate-media-public-url-path-diagnostic-v1');
-  assert.equal(results.totalCuratedPublicUrlLeads,14);
-  assert.equal(results.leads.length,14);
-  assert.equal(results.urlLeadsOutsideConfiguredSeedPrefix,4);
+  assert.equal(results.totalCuratedPublicUrlLeads,22);
+  assert.equal(results.leads.length,22);
+  assert.equal(results.urlLeadsOutsideConfiguredSeedPrefix,10);
   assert.ok(results.urlLeadsFilteredByTopicalPathPriority>=1);
-  assert.ok(results.urlLeadsExcludedByEitherGate>=4);
+  assert.ok(results.urlLeadsExcludedByEitherGate>=10);
   assert.ok(results.urlLeadsExcludedByBothGates<=results.urlLeadsOutsideConfiguredSeedPrefix);
   for(const lead of results.leads) {
     const original=ledger.selectedNonExhaustiveArticleLeads.find(x=>x.id===lead.id)!;
@@ -56,6 +56,35 @@ test('shadowed public leads expose configured prefix and secondary topical-path 
   assert.equal(results.sourceBytesOrDatabaseAccessed,false);
   assert.equal(results.quotesHumanVerified,0);
   assert.equal(results.statewideDenominatorEstablished,false);
+});
+
+
+test('public /briefs/ and dated paths yield two research alias candidates, not deduplicated articles',()=>{
+  const result=diagnoseMediaPublicDiscoveryPaths(ledger.selectedNonExhaustiveArticleLeads);
+  assert.equal(result.possibleAliasPairs.length,2);
+  assert.deepEqual(result.possibleAliasPairs.map(p=>[
+    p.firstLeadId,p.secondLeadId,p.commonDisplayedPublicationDay,
+  ]),[
+    ['mn-reformer-2022-dfl-public-safety-brief','mn-reformer-2022-dfl-public-safety-dated','2022-03-22'],
+    ['mn-reformer-2025-road-signs-brief','mn-reformer-2025-road-signs-dated','2025-05-01'],
+  ]);
+  assert.ok(result.possibleAliasPairs.every(p=>
+    p.status==='candidate_alias_not_verified_same_article'
+    && p.originalArchivedBytesCompared===false
+    && p.publishedMediaDenominatorDeduplicated===false));
+  assert.equal(result.sourceBytesOrDatabaseAccessed,false);
+});
+
+test('2022, 2024 and 2025 current publisher /briefs/ links are represented in the bounded prefix-gap audit',()=>{
+  const r=diagnoseMediaPublicDiscoveryPaths(ledger.selectedNonExhaustiveArticleLeads);
+  for(const year of [2021,2022,2023,2024,2025]) {
+    assert.ok(r.leads.some(x=>x.displayedPublicationDay.startsWith(String(year))
+      && x.originalUrl.startsWith('https://minnesotareformer.com/briefs/')
+      && !x.currentSeedPrefixWouldIncludeUrl));
+  }
+  // These are public URL observations, not database or archived article census rows.
+  assert.equal(r.statewideDenominatorEstablished,false);
+  assert.equal(r.quotesHumanVerified,0);
 });
 
 test('prefix alone is not evidence of capture if URL path scoring rejects an otherwise eligible story',()=>{
