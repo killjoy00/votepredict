@@ -8,7 +8,7 @@ import {APR12_THREE_STRICT_ORIGINAL as journal} from
   '../src/evidence/senate-2021-apr12-three-strict-original-committee-amendments.js';
 
 type Spec=(typeof crosscheck.cases)[number];
-const mockHtml=(spec:Spec,actionDay=spec.committeeActionDay,actionResult:string=spec.recordedResult)=>`
+const mockHtml=(spec:Spec,actionDay:string=spec.committeeActionDay,actionResult:string=spec.recordedResult)=>`
 <html><head><title>Original Senate Committee Bill Log</title></head>
 <body>
 <h1>Committee on ${spec.committee}</h1>
