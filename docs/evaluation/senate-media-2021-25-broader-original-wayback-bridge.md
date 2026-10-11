@@ -33,3 +33,42 @@ Run the public-only probe on a local checkout:
     node --import tsx scripts/probe-senate-media-25-original-wayback.ts --scope all --replay-count 2 --output artifacts/senate-media-25-original-public-proof.json
 
 Required quality gate: exact final PR-head full CI (clean migrations, tests, typecheck, build, production dependency audit), actual public archive workflow success, independent public metadata-artifact verification and durable historical receipt before squash merge. Keep public research issues #987 and #946 open and owner-closed #912 closed.
+
+
+## Actual public original source and historical Rest speaker-fragment results
+
+### Selected 25 new public sources
+
+First full [public Wayback 25 URL run #38159765437](https://github.com/killjoy00/votepredict/actions/runs/38159765437) succeeded on head bc2fc32c1b6a7e710cc146aa9d499c75351dc63c. Independently downloaded original artifact 11709539809: ZIP SHA256 954373dc073e744ee0742e54845bca571c6a7e9ce1a79266d6bc47c1086734bd, decoded 39,109-byte JSON SHA256 f9afab3aefa67b94342fdf9bc6f4bfee894820ddc491ae6aec69423012adf2fb. The [permanent 16 original HTTP body SHA256 receipts](senate-media-2021-25-broader-25-original-public-archive-receipts-20261011.json) include all 25 statuses, first-page indexed candidates, replay holds and tests.
+
+The bounded result: 25 selected exact original URLs; 12 URL index candidates, 13 CDX unavailable/invalid indexes (UNKNOWN), zero index-empty; 19 archived HTTP replay attempts; **16 original HTTP bodies from 11 distinct exact source URLs passed raw CDX SHA1**, producing observed original SHA256 and byte length. Three other replays are not certified: a 2022 Duckworth response too short, a second 2024 Hawj fetch failure, and one 2025 Republican collective statement replay digest mismatch. A later 2025 collective version DID pass.
+
+| Displayed year | New source URL leads | URLs with independently authenticated archived body |
+| --- | ---: | ---: |
+| 2021 | 5 | 1 |
+| 2022 | 5 | 1 |
+| 2023 | 5 | 3 |
+| 2024 | 5 | 4 |
+| 2025 | 5 | 2 |
+| **Selected sample** | **25** | **11** |
+
+These are selected URL observations only, not a Minnesota publisher-wide or senator-year coverage denominator. Unavailable CDX is not proof that an original publication was missing.
+
+**Bigham/Eken January 31, 2022** remains CDX-index unavailable in this first source run. The current publisher page has TWO separately named senator quote turns within one page, but *neither archived historical quote has been validated yet*. Keep both on a targeted public original retry queue, never treat the index error as a missing article.
+
+### Ann Rest original reporter-quoted language
+
+[Public Rest exact-original study #38160243938](https://github.com/killjoy00/votepredict/actions/runs/38160243938) succeeded at head 720a7a64adab85cd8e72142519c396b7e079bab9. The independently downloaded artifact 11709863945 has ZIP SHA256 8c748013214c2175622ed2378463ebac799fd5292a79a07822fa5082bca94435; decoded 4,201-byte JSON SHA256 c7a0241699b20e2265ad49929448e3f28b02ab104b8b2423cdeedbaada31be44. Both exact prior original archived HTML bodies were re-fetched and **passed the indexed CDX SHA1, raw archived SHA256, and original byte-length checks**:
+
+- April 27 2023 at 00:52:03Z: 140,253 original bytes, SHA256 3e8b662519a0a5db015f6820d8c4041229d628e487c944d987b31677a58662d7. That UTC instant was the evening of April 26 in Minnesota.
+- December 3 2023 at 13:07:09Z: 137,489 original bytes, SHA256 8cfc8583d72c960866a06dc03d1926252ef19531055e30279e21ec3567c4b056.
+
+In BOTH authenticated historical bodies, TWO separate short Ann Rest-reported tax policy fragments were present in normalized visible HTML, and a Rest attribution label was found within the same paragraph. **4 of 4 original-version phrase cues present, 4 of 4 same-paragraph Rest speaker-label cues.** The reporter's quote forecasting 34 DFL caucus votes does not prove that a particular senator cast a recorded floor vote. Same-paragraph attribution is a narrower source-text cue, not human-approved speaker/audiotape authentication.
+
+The [durable Rest two-version historical speaker cue receipts](senate-media-rest-2023-exact-public-historical-html-quote-receipts-20261011.json) and tests pin actual results without storing original article HTML/audio. No original speech audio was authenticated; no quote was manually approved; no original publisher posting-clock precision was proven.
+
+The source-specific public research command is:
+
+    node --import tsx scripts/audit-senate-media-rest-2023-original-phrases.ts --output artifacts/senate-media-rest-2023-original-phrase-proof.json
+
+Maintain source distinctions: Rest's direct quotation, House or Senate members mentioned contextually, Senate DFL group statements and actual recorded floor votes are NOT interchangeable. Keep #987/#946 open, #912 owner-closed.
