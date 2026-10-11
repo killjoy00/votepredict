@@ -31,6 +31,28 @@ The other original caption leads were not acquired: Transportation `cmte_fintran
 - The same job makes exactly **one further attempt per two previously unavailable segments**. Any newly retrieved first-original payload from those files receives only provisional source-body bytes/SHA/cue counts, **not a two-independent-source certification**. Failures remain failures/unavailable for that run.
 - The one-shot main push-to-workflow GitHub Action may succeed/ fail independently of the PR CI. Inspect actual separate [Actions workflows](https://github.com/killjoy00/votepredict/actions) and original downloaded artifact before claiming source re-verification or new caption recovery; a green CI build proves only code/tests.
 
+## Verified original strict second-source result (October 11, 2026)
+
+**The separate strict original-source job [#38178393419](https://github.com/killjoy00/votepredict/actions/runs/38178393419) completed SUCCESS after merged [PR #1156](https://github.com/killjoy00/votepredict/pull/1156)**: the entire original **436,144-byte April 8 Judiciary automatic caption** was independently reacquired and the **complete source SHA-256 remained exactly** `6e37f661cb4ced4d33fdce7ed5af0a38cd57f9580efcf55ce5bc90e6ed92e84a`. Structural counts matched original first source exactly: **2,593 timed rows**, 2,594 HTML rows. Neither success reclassifies the other caption endpoints, original MP3 403 responses or any vote event-day HOLD.
+
+The strict second run original metadata artifact **#11717011937** was independently downloaded and decoded:
+
+- ZIP **1,640 bytes**, SHA256 `ba016d3ecdf74041aceb5e3a27fbbd4d129d2b84988bcbceeff92a0631153b2e`;
+- `source.json` **4,291 bytes**, SHA256 `1c5a9fb2ed448f2c364984aca29454bb15b674752af7ea14a8d5ad1a038588d9`;
+- 38 caption rows mentioning Pappas, 147 containing an amendment word, seven mentioning roll call, and only **three** same-row **Pappas + amendment** cues; **none of those three same rows says “roll call.”**
+
+Precise original caption review offsets, retained with each row+13-row-neighborhood **one-way SHA** in [permanent strict second-source proof](source-proof/senate-2021-apr08-judiciary-pappas-strict-second-original-caption-success.json):
+
+| Auto-caption row | Time from start of the indexed **first** Judiciary recording | Source text class |
+|---|---|---|
+| 1375 | **00:58:23** (`3503` seconds) | Pappas and “amendment” appear in same untrusted caption row |
+| 1583 | **01:06:44** (`4004` seconds) | Pappas and “amendment” appear in same untrusted caption row |
+| 1947 | **01:22:23** (`4943` seconds) | Pappas and “amendment” appear in same untrusted caption row |
+
+**These are playback review markers, not established timestamps of the Journal's separate Pappas SF970 3–6 defeated committee amendment.** A mention could concern another amendment; caption transcription may be wrong. To promote an actual motion date, independently authenticate and listen to the indexed original Apr 8 hearing recording (or an original dated official committee print minute), hear the particular introduced SF970 Pappas amendment and vote disposition and reconcile with the original Journal. A caption-only coincidence of name and word is insufficient.
+
+The two optional public caption endpoint rechecks (Transportation `cmte_fintrans_040821.mp4`, second Judiciary segment `cmte_jud_040821b.mp4`) returned **responses too short to contain usable captions**, not an authenticated HTTP 404 and not proof there were no recordings, motions, or different archived caption versions. Their original bytes/side lists were not persisted. Continue using exact LRL media page source identities, not inferred alternative committee IDs.
+
 ## Interpretation and outstanding gates
 
 The [original Senate April 8 official committee bill logs](senate-2021-apr08-sf1159-sf970-committee-action-day-crosscheck.md) and the LRL dated original media pages establish real **bill-level committee action and hearing media dated April 8**. Without matching **actual audible/video motion introduction, motion result and dated recording** or original **2021 printed committee minutes**, they do not individually pin the Dibble, McEwen or Pappas amendment event dates. The Journal's three original choice-side SHA commitments remain primary **reported votes**, not a basis for deducing same-day or member attendance.
