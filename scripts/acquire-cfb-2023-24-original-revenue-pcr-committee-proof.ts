@@ -42,6 +42,10 @@ async function getOriginalGovernmentPDF(year:OriginalPcrPeriod){
 }
 async function inspectReport(year:OriginalPcrPeriod,senators:ReturnType<typeof select22AuthenticSenatorRegistrationTargets>){
  const original=await getOriginalGovernmentPDF(year);
+ const pinned=ORIGINAL_REVENUE_PCR_ANNUAL_SOURCES[year];
+ if(original.originalPDFSHA256!==pinned.originalPdfSha256
+   ||original.originalPDFBytes!==pinned.originalPdfBytes)
+  throw Error('Original full Minnesota Revenue PDF body no longer matches independently authenticated source SHA256/bytes');
  const {PDFParse}=await import('pdf-parse');
  const {CanvasFactory}=await import('pdf-parse/worker');
  const parser=new PDFParse({data:original.data,CanvasFactory});
