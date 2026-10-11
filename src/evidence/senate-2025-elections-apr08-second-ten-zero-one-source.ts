@@ -90,7 +90,7 @@ function inspectOtherTenZeroOneCore(text:string,opts:ReviewerOptions) {
   [...yea,...nay,...absent].every(x=>opts.roster.has(x));
  const candidateUsableOnlyForHumanResearch=resultInCandidateSection&&
   sourceWithinThousandChars&&explicitlyOnRoster&&originalBillExplicit&&
-  otherTallyCountInCandidateSection===1;
+  otherTallyCountInCandidateSection===1&&rosterExact;
  const potentialSameMotionAsA11=candidateAt===opts.authenticatedA11MotionOffset;
  const preview=candidateAt===null?null:
   flatten(text.slice(candidateAt,Math.min(resultAt,candidateAt+260)))
