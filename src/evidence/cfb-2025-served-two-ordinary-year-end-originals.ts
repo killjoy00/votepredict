@@ -20,6 +20,12 @@ export const SERVED_2025_YE_CALENDAR_SHA=
 export const SERVED_2025_YE_REFERENCE_LEDGER_SHA=
   'd34bb475cccd94481fd2f2215bf47e3c9695ad328e06bed2475967add067f0d0' as const;
 const SHA=/^[a-f0-9]{64}$/;
+// Immutable already-authenticated original cycle-final PDF byte hashes
+// (official 2026-10-11 source run 38098411551, merged #972 checkpoint).
+const EXPECTED_ORIGINAL_FINAL_BINARY_SHA:Readonly<Record<string,string>>={
+  '19229':'0cecaf71ada09c3cb7d12dd439438dc432c7998159250b7c62e85bfdb0e383b2',
+  '19233':'e96a87e4bd9d0583382ae2345fd597e7c8d6db7f919c91797516c975b1ca4ab1',
+};
 
 export type Served2025YearEndTarget={
   registrationNumber:string;district:29|47;actualSenator:string;
@@ -95,7 +101,7 @@ export function selectServed2025YearEndTargets(
       ||f.district!==district||f.senator!==senator
       ||f.reportId!==s.reportId
       ||f.originalViewerApiSha256!==s.viewerSha256
-      ||f.originalPdfBinarySha256.length!==64||!SHA.test(f.originalPdfBinarySha256)
+      ||f.originalPdfBinarySha256!==EXPECTED_ORIGINAL_FINAL_BINARY_SHA[reg]||!SHA.test(f.originalPdfBinarySha256)
       ||f.officialCFBDistrictRosterSha256!==s.rosterHtmlSha256
       ||f.coverageEndOn!=='2025-11-19'||f.independentlyProvenHistoricalPublicByOn!==null
       ||v.apiSha!==s.viewerSha256||v.tokens.filter(t=>t==='YE0.0').length!==1)
