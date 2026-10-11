@@ -41,7 +41,7 @@ export function inspectEight2025ElectionMotionSource(input:{
   ||!/^[a-f0-9]{64}$/.test(c.sourceNearbyTextSha256))
   throw Error('Not an original, historical-roster verified eight-roll source block');
  const off=c.sourceTextOffset;
- if(!Number.isInteger(off)||off<500||off+430>text.length)
+ if(!Number.isInteger(off)||off<500||off>=text.length)
   throw Error('Original provisional source offset outside PDF text bounds');
  const exactNear=text.slice(Math.max(0,off-580),Math.min(text.length,off+430));
  if(sha(exactNear)!==c.sourceNearbyTextSha256)
