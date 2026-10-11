@@ -1,0 +1,36 @@
+name: One-time verify 2021 online Senate SF450 committee named 5-3 roll
+
+# #864 2021 print-only OFFICIAL minutes not automatically reconstructed
+# from unofficial public Senate site. On merge, observe online original once.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2021-mar10-sf450-online-original.yml
+
+permissions:
+  contents: read
+
+jobs:
+  verify-2021-original-online-sf450-roll:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Hash original online 2021 Senate SF450 source, not official print
+        run: |
+          node --import tsx scripts/review-senate-2021-state-government-mar10-sf450-original-online.ts \
+            --output artifacts/senate-2021-mar10-sf450/sf450-original-online-named-roll-5-3.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2021-mar10-sf450-original-online-source
+          path: artifacts/senate-2021-mar10-sf450/sf450-original-online-named-roll-5-3.json
+          retention-days: 30
+          if-no-files-found: error
