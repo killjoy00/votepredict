@@ -1,0 +1,68 @@
+name: Prove 47 original capture-dated 2022 candidate issue excerpts for four actual MN State Senators
+
+# Offline research only: original 2022 HTML, real CDX index, original independent
+# Minnesota government service directory. No production database, model or forecast.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-four-new-2022-served-campaign-exact-issue-quotes.yml
+      - data/evaluation/senate-four-new-2022-served-original-2022-exact-policy-quotes-v1.json
+      - src/evidence/senate-four-new-2022-original-campaign-excerpt-proof.ts
+      - scripts/audit-four-new-2022-served-senators-exact-campaign-excerpts-offline.ts
+      - tests/senate-four-new-2022-served-original-issue-quotes.test.ts
+      - docs/SENATE_FOUR_NEW_2022_ORIGINAL_CAMPAIGN_EXACT_ISSUE_EXCERPT_PROOFS.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-six-cdx-indices-sixteen-pages-forty-seven-actual-senators-policy-quotes:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-four-new-served-senators-2022-exact-site-policy-quotes-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Download genuine independently original MN Senate service directory and source SHA/UTC
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/actual-mn-senate-official-directory
+      - name: Download real captured original 2022 first-party campaign HTML plus independent CDX indices
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38147720435
+          name: senate-six-new-2022-served-state-senators-original-campaign-html-v1
+          github-token: ${{ github.token }}
+          path: original/six-first-party-2022-campaign-source-archive
+      - name: Recheck full original Senate service, all 16 HTML, six original CDX index files, 47 exact excerpts
+        shell: bash
+        run: |
+          set -euo pipefail
+          lrl="$(find original/actual-mn-senate-official-directory -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/actual-mn-senate-official-directory -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$lrl" && test -n "$receipt"
+          test "$(dirname "$lrl")" = "$(dirname "$receipt")"
+          node --import tsx scripts/audit-four-new-2022-served-senators-exact-campaign-excerpts-offline.ts \
+            --whole-original-lrl-senate-service-html "$lrl" \
+            --whole-original-lrl-source-sha-utc-receipt "$receipt" \
+            --2022-original-campaign-archive-dir original/six-first-party-2022-campaign-source-archive \
+            --output original/four-new-senators-47-authentic-original-2022-policy-excerpt-proofs.json
+      - name: Retain verified source quote and attributable historical capture date proof
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-four-new-2022-original-site-47-capture-dated-issue-quote-proofs-v1
+          path: original/four-new-senators-47-authentic-original-2022-policy-excerpt-proofs.json
+          if-no-files-found: error
+          retention-days: 30
