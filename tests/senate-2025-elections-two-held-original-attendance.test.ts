@@ -30,7 +30,7 @@ function block(date:HeldElectionDate){
     (feb?'With a vote of 6/5 the motion prevailed. ':'With a vote of 8/1, with two absences, the motion prevailed. ')+
     'Ayes:';
   const off=HELD_ELECTIONS_TARGETS[date].offset;
-  const pad=off-pre.length-action.length;
+  const pad=off-pre.length-action.length+'Ayes:'.length;
   if(pad<0)throw Error('Synthetic test context too long to reproduce official source offset');
   const text=pre+' '.repeat(pad)+action+namedYes.join(', ')+
     '\nNays: '+namedNo.join(', ')+'\nThe meeting was adjourned.';
