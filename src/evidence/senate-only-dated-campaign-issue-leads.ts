@@ -52,7 +52,24 @@ export function buildOnlyActualSenatorsDatedIssueSourceLedger(
   ||!Number.isFinite(Date.parse(official.source.observedAt)))
   throw Error('Cannot output named senator sources without independently observed LRL Senate original');
  const ids=new Set<string>();
- const dated=[];
+ const dated:Array<{
+   quoteId:string;senatorName:string;independentLRLOfficialSenatorName:string|null;
+   senateServiceTerm:string|null;issueFamily:string;excerpt:string;
+   sourceClass:'candidate_owned_campaign_platform_original_historical_archive'|
+     'candidate_submitted_questionnaire_current_publisher_html_only';
+   sourceUrl:string;sourceAcquisitionGithubActionsRunId:number;
+   sourceOriginalHtmlSha256:string;sourceOriginalCaptureAtUtc:string|null;
+   firstAttestedPublicByAtUtc:string|null;
+   originalHtmlSourceRetrievedOn:string;conservativeResearchDate:string;
+   conservativeResearchDateBasis:'archive_original_response_html_matches_independent_cdx_digest'|
+     'current_publisher_original_bytes_observed_2026_only';
+   evidenceDateGranularity:'day'|'second';unknownAuthorFirstPublishedOn:null;
+   originalSosFilingWebsiteFieldIndependentlyVerified:false;
+   sourceIsAvailableAtAllPriorForecastCutoffs:false;
+   admittedEvidenceRecordId:null;eligibleForAutomaticForecast:false;
+   publisherClaimedArticlePublicationOn?:string;
+   publisherDateIsIndependentlyConfirmed?:false;
+ }> = [];
  let excludedUnverifiedPersons=0;
  for(const campaign of archive.candidates){
   const service=validateActualSenateServiceForElection(
