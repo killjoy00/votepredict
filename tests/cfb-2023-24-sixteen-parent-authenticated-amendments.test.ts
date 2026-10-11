@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {
   selectSixteenParentAuthenticatedYeAmendments,sourceYeAmendmentReference,
   auditAuthenticatedParentYeAmendment,auditSixteenAmendmentSourceSequence,
@@ -125,4 +126,49 @@ test('reviewed unusual official source cases never inflate PDF counts',()=>{
   const bad=reports.map(x=>x.id==='18430:23:pcc:YE:0:1'?{...x,pdfBytes:149846}:x);
   assert.equal(classifySixteenReviewed2023to24AmendedSourceReferences(bad)
     .sourceAccountingAcceptedWithOneExactIdentityHoldAndOneBinaryAlias,false);
+});
+
+test('permanent 16-reference source ledger verifies 14 unique PDFs, exact alias and strict hold',()=>{
+ const cp=JSON.parse(readFileSync(P+'cfb-2023-24-parent-authenticated-16-amendment-source-checkpoint.json','utf8'));
+ const s=readFileSync(cp.sourceProofPsv.path,'utf8');
+ assert.equal(createHash('sha1').update('blob '+Buffer.byteLength(s)+'\0').update(s).digest('hex'),
+   cp.sourceProofPsv.gitBlobSha);
+ assert.equal(cp.sourceRuns.length,2);
+ assert.equal(cp.independentRunsExactSameVersionHashesBytesAndReceipts,true);
+ const rows=s.trimEnd().split('\n').map(x=>x.split('|'));
+ const sourceById=new Map(targets.map(x=>[x.id,x]));
+ assert.equal(rows.length,16);
+ assert.equal(new Set(rows.map(x=>x[0])).size,16);
+ let proven=0,alias=0,hold=0;
+ const hashes=new Set<string>();
+ for(const r of rows){
+   assert.equal(r.length,15);
+   const t=sourceById.get(r[0]!);assert.ok(t);
+   assert.equal(r[1],t.senatorVerifiedServedIn2022);
+   assert.equal(r[2],String(t.senateDistrict2022));
+   assert.equal(r[3],t.registrationNumber);
+   assert.equal(r[4],t.viewerApiSha256);
+   assert.equal(r[5],t.parentOriginalId);
+   assert.equal(r[6],t.originalPdfSha256);
+   assert.match(r[7]!,/^[0-9a-f]{64}$/);
+   assert.equal(r[9],t.originalPeriodStart);
+   assert.equal(r[10],t.originalPeriodEnd);
+   assert.equal(r[11],t.originalBoardReceipt);
+   if(r[13]==='distinct_authenticated_amended_pdf'){proven++;hashes.add(r[7]!);}
+   else if(r[13]==='duplicate_official_amendment_reference_pdf_alias'){
+     alias++;assert.equal(r[0],cp.alias.id);
+     assert.equal(r[14],cp.alias.canonicalId);
+     assert.equal(r[7],cp.alias.sha256);
+   }else{
+     hold++;assert.equal(r[0],cp.hold.id);
+     assert.equal(r[13],'HOLD_first_page_registration_unverified');
+     assert.equal(r[7],cp.hold.sha256);
+     assert.equal(r[14],'-');
+   }
+ }
+ assert.equal(proven,14);assert.equal(hashes.size,14);
+ assert.equal(alias,1);assert.equal(hold,1);
+ assert.equal(cp.results.distinctAuthenticatedAmendedPdfBinaries,14);
+ assert.equal(cp.limits.legalFilingDutyDenominator,null);
+ assert.equal(cp.protections.noProductionDataWrites,true);
 });
