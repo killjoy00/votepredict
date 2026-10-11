@@ -9,6 +9,7 @@
  * three-motion original-Journal verifier, set occurred_on, certify historical
  * public-by, infer attendance/member votes, or access a database.
  */
+import {createHash} from 'node:crypto';
 import {APR12_THREE_STRICT_ORIGINAL} from './senate-2021-apr12-three-strict-original-committee-amendments.js';
 
 export const APR08_COMMITTEE_ACTION_CROSSCHECK = {
@@ -21,6 +22,8 @@ export const APR08_COMMITTEE_ACTION_CROSSCHECK = {
       bill:'SF1159',
       committee:'Transportation Finance and Policy',
       source:'https://www.senate.mn/committees/committee_bill_log.html?cmte_id=3102&ls=92',
+      originalHTMLBytes:658255,
+      originalHTMLSHA256:'a993750509e0f5be5db4c0d9af186298a5328f830d1d6a4c2ccd9cc7ad70952e',
       discussionDay:'04/06/2021',
       committeeActionDay:'04/08/2021',
       recordedResult:'Amended, recommended to pass and re-referred to the Committee on Transportation Finance and Policy',
@@ -32,6 +35,8 @@ export const APR08_COMMITTEE_ACTION_CROSSCHECK = {
       bill:'SF970',
       committee:'Judiciary and Public Safety Finance and Policy',
       source:'https://www.senate.mn/committees/committee_bill_log.html?cmte_id=3099&ls=92',
+      originalHTMLBytes:414785,
+      originalHTMLSHA256:'f63ad26f43a7d4c086d14608d69ba236b9bb6c9be2e3e3970e0dcb9e7fa1d5c3',
       discussionDay:'04/07/2021',
       committeeActionDay:'04/08/2021',
       recordedResult:'Amended and recommended to pass',
@@ -45,6 +50,17 @@ export const APR08_COMMITTEE_ACTION_CROSSCHECK = {
 } as const;
 
 export type HistoricalBillCase=(typeof APR08_COMMITTEE_ACTION_CROSSCHECK.cases)[number];
+
+/** Genuine original Apr 8 website HTML source receipts pinned after independent first acquisition. */
+export function verifyPinnedOriginalApril08BillLogBytes(data:Buffer,spec:HistoricalBillCase){
+  if(data.byteLength!==spec.originalHTMLBytes)
+    throw Error('Original Senate committee bill-log binary byte count differs from pinned first source');
+  const digest=createHash('sha256').update(data).digest('hex');
+  if(digest!==spec.originalHTMLSHA256)
+    throw Error('Original Senate committee bill-log binary SHA-256 drifted since independent first source');
+  return {originalBytes:data.byteLength,originalHTMLSHA256:digest};
+}
+
 
 function visibleHtmlText(html:string){
   return html.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi,' ')
