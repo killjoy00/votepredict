@@ -53,7 +53,7 @@
     },
     {
       "id": "senate22-03",
-      "candidateName": "Rob Farnsworth",
+      "candidateName": "Robert Farnsworth",
       "electionDistrict": "7",
       "electionYear": 2022,
       "domain": "robfarnsworth.org",
@@ -62,7 +62,9 @@
       "discoveryUrl": "https://robfarnsworth.org/campaign/",
       "discoveryBasis": "candidate_campaign_page",
       "modernSiteContentMayBeUpdated": true,
-      "historicalSourceToBeProvenByIndependentOriginalHTMLAndCDXSha1": true
+      "historicalSourceToBeProvenByIndependentOriginalHTMLAndCDXSha1": true,
+      "campaignSiteDisplayName": "Rob Farnsworth",
+      "candidateNameFromOfficialLRLRequiresGivenNameRobert": true
     },
     {
       "id": "senate22-04",
