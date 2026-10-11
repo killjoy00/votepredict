@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {SOURCE,probeOriginalApril12ThreeRule1210Amendments} from
  '../src/evidence/senate-2021-apr12-three-rule1210-original-amendments.js';
-const yea=['FictionalAlpha','FictionalBravo','FictionalCharlie','FictionalDelta'];
+const yea=['FictionalAlpha','FictiónalBravo','FictionalCharlie','FictionalDelta'];
 const nay=['FictionalEcho','FictionalFoxtrot','FictionalGolf','FictionalHotel','FictionalIndia','FictionalJuliet'];
 const serialize=(rows:string[])=>
  rows.slice(0,-1).join(', ')+', and '+rows[rows.length-1];
