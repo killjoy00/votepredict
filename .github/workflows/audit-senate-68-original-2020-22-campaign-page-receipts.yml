@@ -1,0 +1,74 @@
+name: Re-open and prove 68 pinned original Minnesota Senate 2020 and 2022 campaign webpages
+
+# PR-only full original public source bytes, no production or live candidate fetch.
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-original-2020-22-authenticated-68-pages-v1.json
+      - scripts/audit-senate-original-68-campaign-page-receipts-offline.ts
+      - tests/senate-original-68-2020-22-campaign-page-receipts.test.ts
+      - docs/SENATE_2020_22_SIXTY_EIGHT_ORIGINAL_CAMPAIGN_PAGE_RECEIPTS.md
+      - .github/workflows/audit-senate-68-original-2020-22-campaign-page-receipts.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-lrl-and-two-archival-samples-68-page-proof:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-pin-68-campaign-original-page-provenance-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Obtain real original official Senate service directory from independent public government acquisition
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: provenance/lrl-source
+      - name: Obtain real original 2022 first-party archived campaign source and independent CDX index receipts
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38107693123
+          name: senate-2022-twelve-original-verified-served-campaign-page-sources-v1
+          github-token: ${{ github.token }}
+          path: provenance/2022-campaign-originals
+      - name: Obtain real original 2019-20 campaign archived source and index receipts
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38107731662
+          name: senate-2020-six-actually-served-campaign-original-html-cdx-source-v1
+          github-token: ${{ github.token }}
+          path: provenance/2020-campaign-originals
+      - name: Verify all 68 independently pinned actual original HTML/capture/sha/CDX receipts with official LRL service
+        shell: bash
+        run: |
+          set -euo pipefail
+          lrl="$(find provenance/lrl-source -name mn-lrl-official-senate-service-directory.html -type f -print -quit)"
+          receipt="$(find provenance/lrl-source -name mn-lrl-official-senate-service-directory-audit.json -type f -print -quit)"
+          test -n "$lrl" && test -n "$receipt"
+          test "$(dirname "$lrl")" = "$(dirname "$receipt")"
+          node --import tsx scripts/audit-senate-original-68-campaign-page-receipts-offline.ts \
+            --official-lrl-original "$lrl" \
+            --official-lrl-receipt "$receipt" \
+            --2022-artifact-extract-dir provenance/2022-campaign-originals \
+            --2020-artifact-extract-dir provenance/2020-campaign-originals \
+            --output provenance/verified-68-original-campaign-source-page-proofs.json
+      - name: Preserve offline source-only audit report, not historical forecast features
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-68-original-archived-campaign-page-senator-proof-v1
+          path: provenance/verified-68-original-campaign-source-page-proofs.json
+          retention-days: 30
+          if-no-files-found: error
