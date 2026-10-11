@@ -143,7 +143,7 @@ const report={schema:'mn-carlson-hawj-17-exact-original-first-party-source-indep
  fullIndependentOriginalCdxIndexesReopened:3,originalFullArchivedHtmlSourcesReopened:3,
  exactDistinctFirstPartyShortExcerptsReauthenticated:17,sourceAcquisitionRun:sourceRun,
  originalSourceArtifactId:sourceArtifact,sourceAuditUtc:new Date().toISOString(),
- originalAuthorPublishedTimeProven:false,2020HawjOldCycleLanguageNotReclassified:true,
+ originalAuthorPublishedTimeProven:false,hawj2020OldCycleLanguageNotReclassified:true,
  Hawj2022CommunityPrioritiesNotSameAsPromise:true,
  authenticOriginalArchivedPages:originalProof,exactQuoteProof:quoteProof,
  researchOnly:true,productionEvidenceRowsWritten:0,forecastsOrModelsModified:0};
