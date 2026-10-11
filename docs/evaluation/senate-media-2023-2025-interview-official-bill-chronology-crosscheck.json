@@ -1,0 +1,136 @@
+{
+  "version": "senate-media-interview-official-bill-chronology-crosscheck-v1",
+  "issues": [
+    987,
+    946
+  ],
+  "researchCheckedOn": "2026-10-10",
+  "scope": "Current first-party reporter/publisher leads cross-referenced with official Senate records for event dates and legislative bill identity; no Wayback archival/public-by proof, no historic forecast quote authorization.",
+  "interviews": [
+    {
+      "id": "mpr-2023-kunesh-native-family-preservation",
+      "senator": "Mary Kunesh",
+      "verifiedSenateServiceSource": "https://www.lrl.mn.gov/legdb/fulldetail?id=15466",
+      "media": {
+        "url": "https://www.mprnews.org/episode/2023/02/07/new-bill-would-keep-native-families-together-proponents-say",
+        "publisher": "MPR News",
+        "currentPageDisplayedDay": "2023-02-07",
+        "currentPageDisplayedClock": "11:49",
+        "timezoneAuthenticated": false,
+        "currentPageContainsNamedSpeakerTranscript": true,
+        "originalHistoricalWaybackBodyVerified": false
+      },
+      "officialHearing": {
+        "source": "https://mnsenate.granicus.com/GeneratedAgendaViewer.php?clip_id=10157&view_id=2",
+        "senateBody": "Health and Human Services",
+        "scheduledDay": "2023-02-07",
+        "scheduledClock": "08:30",
+        "scheduledClockTimezoneUnverified": true,
+        "billScheduled": "SF667",
+        "originalAgendaIsActualAttendanceOrSpeakerProof": false,
+        "actualHearingStartClockVerified": false,
+        "meetingRecordingBytesVerified": false
+      },
+      "officialBill": {
+        "source": "https://www.revisor.mn.gov/bills/93/2023/0/SF/667/?body=Senate",
+        "senateBill": "SF667",
+        "houseCompanion": "HF1071",
+        "revisorBillDescription": "Minnesota Indian Family Preservation Act modifications",
+        "primarySenateAuthor": "Kunesh",
+        "introduced": "2023-01-25",
+        "committeeReport": "2023-02-08",
+        "senateThirdReadingPassageDay": "2023-02-27",
+        "recordedYea": 66,
+        "recordedNay": 1,
+        "governorApproval": "2023-03-16",
+        "sessionLawChapter": 16,
+        "effectiveDay": "2023-08-01",
+        "senatePassageBeforeDisplayedInterviewDay": false,
+        "later2023FinalBillHistoryProvesFebruary7MediaPublication": false,
+        "billSupportDirectQuoteInArchivedMediaVerified": false
+      }
+    },
+    {
+      "id": "mpr-2025-pha-hmong-lao-veterans",
+      "senator": "Susan Pha",
+      "verifiedSenateServiceSource": "https://www.lrl.mn.gov/legdb/fulldetail?id=15583",
+      "media": {
+        "url": "https://www.mprnews.org/episode/2025/04/24/bill-granting-benefits-to-hmong-lao-veterans-passes-minnesota-senate",
+        "publisher": "MPR News",
+        "currentPageDisplayedDay": "2025-04-24",
+        "currentPageDisplayedClock": "13:00",
+        "timezoneAuthenticated": false,
+        "currentPageContainsNamedSpeakerTranscript": true,
+        "originalHistoricalWaybackBodyVerified": false
+      },
+      "relatedStandaloneBill": {
+        "source": "https://www.revisor.mn.gov/bills/94/2025/0/SF/568/?body=Senate",
+        "senateBill": "SF568",
+        "houseCompanion": "HF1845",
+        "revisorBillDescription": "Veteran definition expansion and advisory task force establishment",
+        "primarySenateAuthor": "Hawj",
+        "namedCoauthor": "Pha",
+        "coauthorAddedDay": "2025-02-03",
+        "committeeActionDays": [
+          "2025-04-03",
+          "2025-04-10"
+        ],
+        "senateFloorPassageRecordedOnPage": false,
+        "cannotAssignOmnibusRecordedVoteToStandaloneBill": true
+      },
+      "senatePassedOmnibusBill": {
+        "source": "https://www.revisor.mn.gov/bills/94/2025/0/SF/1959/?body=Senate",
+        "senateBill": "SF1959",
+        "houseCompanion": "HF2444",
+        "revisorBillDescription": "Omnibus Veterans policy and appropriations",
+        "authorsOnStatusPage": [
+          "Putnam",
+          "Carlson",
+          "Mitchell"
+        ],
+        "senatorPhaListedAsSF1959Author": false,
+        "firstSenateThirdReadingPassageDay": "2025-04-23",
+        "yeas": 65,
+        "nays": 0,
+        "senatePassagePrecedesDisplayedInterviewDay": true,
+        "subsequentConferenceReportAndSenateRepassageDay": "2025-05-17",
+        "approvedLawDay": "2025-05-23",
+        "chapter": 30,
+        "effectiveDay": "2025-07-01",
+        "laterEnactmentNotKnownOnInterviewDisplayedDay": true,
+        "firstVoteBelongsToOmnibusSF1959NotStandaloneSF568": true
+      },
+      "presentDaySenateCaucusStatement": {
+        "source": "https://senatedfl.mn/senate-minnesota-asian-pacific-caucus-statement-on-passage-of-senate-veterans-omnibus-bill/",
+        "publisher": "Minnesota Senate DFL",
+        "currentPageDisplayedDay": "2025-04-23",
+        "pageByline": "Senator Susan Pha",
+        "actualAttributedSpeaker": "Senate Minnesota Asian Pacific Caucus",
+        "membersNamed": [
+          "Tou Xiong",
+          "Foung Hawj",
+          "Susan Pha"
+        ],
+        "collectiveStatementNotAutomaticallyAnIndividualSenatorQuote": true,
+        "statementRefersToOmnibus65To0Passage": true,
+        "firstPublicByAndOriginalArchiveShaVerified": false
+      }
+    }
+  ],
+  "safetyBoundary": {
+    "allNamesWereServingStateSenatorsOnDisplayedDays": true,
+    "officialSenateBillHistoryIsEventChronologyNotMediaPublicationProof": true,
+    "currentPublisherDisplayedClockHasVerifiedTimezone": false,
+    "original2023And2025WaybackArticleBytesVerified": false,
+    "originalMediaArticleSha256MatchedToPrivateVotePredict": false,
+    "archiveFirstPublicByProven": false,
+    "individualSenatorQuoteHumanReviewedFromOriginal": false,
+    "caucusCollectiveStatementAttributedAsPhaAlone": false,
+    "relatedSF568GivenSF1959Vote": false,
+    "postVoteBroadcastMovedToPreVoteForecast": false,
+    "future2025EnactmentKnownByPriorAprilInterview": false,
+    "authenticatedHistoricalForecastEligibility": false,
+    "productionIngestionEvidenceOrModelsChanged": false,
+    "knownPublisherWideDenominator": false
+  }
+}
