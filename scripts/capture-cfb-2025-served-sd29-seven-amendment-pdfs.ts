@@ -118,9 +118,10 @@ async function main(){
     authenticated:check.sourcePdfIdentityAuthenticated,
     distinctPdfBinaries:check.uniqueAuthenticatedPdfHashes,
     unexpectedAliases:check.unexpectedBinaryAliases,
+    documentedOriginalParentAliases:check.documentedOriginalParentAliases,
     sourceHolds:check.sourceHolds,sourceFailure:snapshotError,
     output,productionWrites:0},null,2));
-  if(!check.strictSevenDistinctFormsVerified||fetched.size!==7
+  if(!check.sourceAcquisitionAcceptedWithExactReviewedParentAlias||fetched.size!==7
     ||snapshotError)process.exitCode=1;
 }
 main().catch(e=>{console.error(category(e));process.exitCode=1;});
