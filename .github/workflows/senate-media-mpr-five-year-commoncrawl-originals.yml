@@ -1,0 +1,55 @@
+name: Public 2021–2025 MPR Senate statements and independent Common Crawl WARC originals
+
+# Pure public-origin historical source research. Never saves WARC, article HTML,
+# audio, private DB exports, raw transcripts or speaker full-text content.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-mpr-five-year-commoncrawl-originals.yml
+      - scripts/probe-senate-media-mpr-five-year-commoncrawl-originals.mjs
+      - scripts/run-senate-media-mpr-five-year-commoncrawl-originals.mjs
+      - tests/senate-media-mpr-five-year-commoncrawl-originals.test.mjs
+      - tests/senate-media-mpr-five-year-real-receipts.test.mjs
+      - docs/evaluation/senate-media-mpr-five-year-commoncrawl-reporter-original-receipts-20261011.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-mpr-five-year-commoncrawl-originals
+  cancel-in-progress: false
+
+jobs:
+  original-first-party-newsroom-warc-check:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-mpr-five-year-senator-statements-commoncrawl-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Offline public-original WARC and exact MPR reporter-quote tests
+        run: node --test tests/senate-media-mpr-five-year-commoncrawl-originals.test.mjs tests/senate-media-mpr-five-year-real-receipts.test.mjs
+      - name: Bounded original Wayback and Common Crawl index and WARC replay checks
+        run: |
+          node scripts/run-senate-media-mpr-five-year-commoncrawl-originals.mjs \
+            --output artifacts/senate-media-mpr-five-year-commoncrawl-originals.json
+      - name: Save capture timestamps, indexed checksums, reporter short cue statuses only
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-mpr-five-year-commoncrawl-originals
+          path: artifacts/senate-media-mpr-five-year-commoncrawl-originals.json
+          if-no-files-found: error
+          retention-days: 7
