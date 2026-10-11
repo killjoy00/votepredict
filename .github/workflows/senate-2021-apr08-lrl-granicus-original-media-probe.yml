@@ -1,0 +1,39 @@
+name: 2021 Apr 8 Senate committee original LRL media and Granicus source-access audit
+
+# Exactly two dated LRL media pages, three original Senate hearing agendas,
+# and three bounded (64 KiB maximum) indexed MP3 prefix reads.
+# This is self-service public discovery only. No raw audio/video/caption uploads.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2021-apr08-lrl-granicus-original-media-probe.yml
+
+permissions:
+  contents: read
+
+jobs:
+  senate-apr08-2021-media-public-original-source-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Attempt exactly two original LRL pages, three agendas, three bounded media prefixes
+        run: |
+          node --import tsx scripts/probe-senate-2021-apr08-original-hearing-media.ts \
+            --output artifacts/2021-apr08-senate-lrl-granicus-original-media-source/source.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2021-apr08-lrl-granicus-original-media-access-metadata
+          path: artifacts/2021-apr08-senate-lrl-granicus-original-media-source/source.json
+          if-no-files-found: error
+          retention-days: 30
