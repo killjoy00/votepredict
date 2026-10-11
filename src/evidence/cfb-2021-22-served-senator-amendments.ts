@@ -334,3 +334,63 @@ export function checkAuthenticatedAmendmentChains(
   }
   return {valid:violations.length===0,violations};
 }
+
+
+/**
+ * Official 2021 Aric Putnam YE amendment version #1:
+ * both independent CFB source runs returned the SAME distinct 128,524-byte PDF
+ * SHA, but extracted text contains none of the ordinary report title, Senate
+ * district, registration, period or Board-receipt first-page labels.
+ *
+ * That document is a *retrieved source PDF only*, never authenticated as a
+ * normal amended finance report. We can permanently capture 25 proven
+ * amendments plus this explicit HOLD without converting the hold into proof.
+ */
+export const REVIEWED_2021_CFB_AMENDMENT_SOURCE_HOLD={
+  id:'18430:21:pcc:YE:0:1',
+  binarySha256:'7529ad0bf417548f1617d2bb2b74e5115855844df4a979fdbb6ad3e5e6420acf',
+  bytes:128524,priorSuccessfulSourceRuns:2,
+} as const;
+export function classifySourceVerified2021to22AmendmentBatch(
+  audits:ReadonlyArray<ReturnType<typeof auditActualSenatorAmendmentPdf>>,
+){
+  const chain=checkAuthenticatedAmendmentChains(audits);
+  const identityUnique=audits.length===26 && new Set(audits.map(a=>a.id)).size===26;
+  const authenticated=audits.filter(a=>a.status==='amendment_pdf_and_original_identity_authenticated');
+  if(identityUnique&&authenticated.length===26&&chain.valid)
+    return {status:'all_26_amendment_pdfs_authenticated' as const,
+      sourceAcquisitionCanBePreserved:true,authenticated:26,
+      documentedSourceHolds:0,chainValid:true};
+  const holds=audits.filter(a=>a.status!=='amendment_pdf_and_original_identity_authenticated');
+  const h=holds[0],diag=h?.structuralDistrictDiagnostics;
+  const exactOneIndependentlyReviewedHold=identityUnique&&authenticated.length===25
+    &&holds.length===1&&h?.id===REVIEWED_2021_CFB_AMENDMENT_SOURCE_HOLD.id
+    &&h.status==='amended_pdf_printed_district_unmatched'
+    &&h.amendedPdfSha256===REVIEWED_2021_CFB_AMENDMENT_SOURCE_HOLD.binarySha256
+    &&h.amendedPdfByteLength===REVIEWED_2021_CFB_AMENDMENT_SOURCE_HOLD.bytes
+    &&h.sourceErrorKind===null&&h.amendedPdfPrintedSenateDistrict===null
+    &&h.amendmentFirstPageIdentityOfficeDatesVerified===false
+    &&h.amendedBoardReceivedOn===null
+    &&h.conservativeAmendedVersionNotBeforeOn===null
+    &&diag?.originalSourceTextChars===1836
+    &&diag.principalCampaignReportTitlePresent===false
+    &&diag.registrationLabelPresent===false
+    &&diag.coveredPeriodLabelPresent===false
+    &&diag.boardReceiptStampPresent===false
+    &&diag.exactSenateDistrictLabels.length===0
+    &&diag.otherDistrictLabelNumbers.length===0
+    &&diag.officeWordPositions.length===0
+    &&!chain.valid
+    &&chain.violations.map(v=>v.id+':'+v.reason).sort().join('|')===[
+      '18430:21:pcc:YE:0:1:source_identity_or_pdf_not_authenticated',
+      '18430:21:pcc:YE:0:2:nonconsecutive_amendment_index',
+    ].sort().join('|');
+  return {
+    status:exactOneIndependentlyReviewedHold
+      ?'25_authenticated_1_official_source_document_hold' as const
+      :'amendment_source_incomplete_or_identity_unverified' as const,
+    sourceAcquisitionCanBePreserved:!!exactOneIndependentlyReviewedHold,
+    authenticated:authenticated.length,documentedSourceHolds:holds.length,
+    chainValid:chain.valid,
+  };
+}
