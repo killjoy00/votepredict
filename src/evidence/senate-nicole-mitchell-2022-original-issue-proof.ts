@@ -49,7 +49,7 @@ export function auditNicoleMitchell2022OriginalCampaignQuotes(
  const service=validateActualSenateServiceForElection(official,'Nicole Mitchell','47',2022);
  if(service.status!=='verified_senate_service'
    ||service.serviceForThisElectionFollowingYearVerified!==true
-   ||service.officialName!=='Nicole L. Mitchell'
+   ||service.officialName!=='Nicole Mitchell'
    ||service.officialServiceSource!=='https://www.lrl.mn.gov/legdb/senate_dir')
    throw Error('Nicole Mitchell actual Senate service in SD47 must be proven by official original LRL directory');
  if(source.schema!=='mn-senate-2022-nicole-mitchell-two-historical-priority-originals-four-excerpts-v1'
