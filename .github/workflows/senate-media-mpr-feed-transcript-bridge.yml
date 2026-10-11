@@ -1,0 +1,55 @@
+name: Public MPR audio feed and transcript original chronology research
+
+# Public source and historical original SHA only. No raw publisher HTML, feed,
+# MP3 bytes, transcript PDFs, private evidence or production data persisted.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-mpr-feed-transcript-bridge.yml
+      - scripts/probe-senate-media-mpr-history-bridge.mjs
+      - scripts/run-senate-media-mpr-history-bridge.mjs
+      - tests/senate-media-mpr-history-bridge.test.mjs
+      - docs/evaluation/senate-media-mpr-feed-transcript-bridge-20261011.json
+      - docs/evaluation/senate-media-mpr-feed-transcript-bridge-20261011.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-mpr-feed-transcript-bridge
+  cancel-in-progress: false
+
+jobs:
+  original-public-source-bridge:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-mpr-feed-redirect-transcript-window-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Offline public-origin security and historical digest tests
+        run: node --test tests/senate-media-mpr-history-bridge.test.mjs
+      - name: Bound official publisher feed and historical version lookups, 2 page replays max per original URL
+        run: |
+          node scripts/run-senate-media-mpr-history-bridge.mjs \
+            --output artifacts/senate-media-mpr-feed-transcript-bridge.json
+      - name: Save source identity metadata and short cue statuses only
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-mpr-feed-transcript-bridge
+          path: artifacts/senate-media-mpr-feed-transcript-bridge.json
+          if-no-files-found: error
+          retention-days: 7
