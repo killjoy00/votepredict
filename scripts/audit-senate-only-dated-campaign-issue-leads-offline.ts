@@ -24,7 +24,7 @@ function main(){
  const original=arg('--lrl-original'),metadata=arg('--lrl-metadata'),out=arg('--output');
  if(!original||!metadata||!out||args.length!==6)
   throw Error('Require exactly --lrl-original --lrl-metadata --output');
- const paths=[original,metadata,out].map(resolve);
+ const paths=[original,metadata,out].map(value=>resolve(value));
  if(new Set(paths).size!==paths.length)
   throw Error('Do not overwrite official original Senate service source file');
  const a=statSync(paths[0]),b=statSync(paths[1]);
