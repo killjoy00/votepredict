@@ -25,3 +25,18 @@ The [three-source inspector](../../src/evidence/senate-2021-rule1210-sf2-sf566-s
 The [one-time three-original-PDF workflow](../../.github/workflows/senate-2021-rule1210-sf2-sf566-sf1457-original.yml) acquires exactly three official Senate Journal PDF URLs, with strict no redirect, MIME, 4 MB streamed cap and PDF signature plus original embedded-text source. February 8 reuse must match the exact previously independently verified original 517,480-byte SF173 PDF SHA256 e4abf92f914c719dc440e947a683ed870b6ed9bdcddad3e3454d1b6b85794f4a. Original PDF and extracted text SHA, motion offsets, neighborhood hashes, source counts/choice SHA identities and explicit failures are written to a temporary artifact. **Actual new original PDF-source authentication is not claimed until the on-merge original workflow is completed and the real ZIP and decoded JSON are independently downloaded and SHA verified**. Preserve genuine failures.
 
 The 2021 official print-only committee minutes at the Legislative Reference Library remain unreviewed, absent lists are NOT explicitly printed (remain null), and the full count of official named 2021–25 committee motions remains UNKNOWN. No member_vote/production/private DB read-write or ingestion, no forecast/model/training/serving/scheduler, Senate FLOOR or 2027 or public office contact. Keep [issue #864](https://github.com/killjoy00/votepredict/issues/864) OPEN.
+
+
+## Original three-PDF action: source SUCCESS, byte hashes verified
+
+Following exact-head CI, [PR #1101](https://github.com/killjoy00/votepredict/pull/1101) merged at eb356c91bb7defc58e5eb10560391d9afe5bd34a. The real [original source job #38163482503](https://github.com/killjoy00/votepredict/actions/runs/38163482503) **SUCCEEDED with 3/3 distinct Rule12.10 committee roll sections, zero source failures**:
+
+| Journal committee report | Original PDF bytes | Original PDF SHA256 | Embedded source text SHA256 | 2021 report-day SOURCE roll result |
+| --- | ---: | --- | --- | --- |
+| Feb8 SF2 State Government, p268 | **517,480** | e4abf92f914c719dc440e947a683ed870b6ed9bdcddad3e3454d1b6b85794f4a | 7063ae90f776140b0ffd78ba578eb4de2fe50ea7d3ccaf23b4817571d3229987 | 5/3 prevailed |
+| Feb17 SF566 Agriculture, p417 | **557,795** | 7eb8bd12071fbbda2fa2a57c3d8c034926570d875cb4121218a9545bc3651603 | a82cdb414437df02669a99c7a2e82c388d5b3810ac6e37e6539e26e41c2d28fc | 7/1 prevailed |
+| Mar10 SF1457 Judiciary, p764 | **818,926** | 69527407028f0db56ed7e1fd4af3ad7c2036ca93af16a81157b01948067de63e | cdd760afc9cfbcc4f2750a5f81ecf9dcdebffd6728ba5dbc3e054bb8a86a8eed | 7/2 prevailed |
+
+The genuine original source artifact #11711171699 was independently downloaded and authenticated: ZIP **3,454 bytes**, SHA256 cf300ade453b110b68aa72ead98f5729cc0b59b3bc5cde114844b78b4b28fc37; uncompressed original JSON **11,566 bytes**, SHA256 95f7b9e16229d35efc64d11b11774f453020b06cf525cfd0630c5498e720beec. All three PDFs had embedded text extracted and passed the strict source motion/name-side digest verifier. Real original motion offsets and neighborhood hashes are pinned, without readable member-side vote lists, in [permanent source proof](source-proof/senate-2021-rule1210-sf2-sf566-sf1457-original-three-source-success.json) and [tamper regression](../../tests/senate-2021-rule1210-three-plus-index-original-success-proof.test.ts).
+
+This authenticates published JOURNAL Rule12.10 committee results **but not their underlying meeting clock, 2021 LRL separate printed committee minutes, private stored member_vote row parity, or statewide all-committee vote denominator**. SF2 and SF450 remain separate motions, regardless of identical 5/3 named senator sides.
