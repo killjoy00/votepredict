@@ -1,0 +1,42 @@
+{
+  "version": "minnesota-reformer-original-briefs-vs-dated-path-pairs-2021-25-v1",
+  "observedOn": "2026-10-11",
+  "original31UrlLeadLedger": "docs/evaluation/senate-media-public-article-discovery-2021-25.json",
+  "previousOriginalIndexedShaReceipts": "docs/evaluation/senate-media-2021-25-exact-public-replay-receipts-20261010.json",
+  "pairs": [
+    {
+      "pair": "public-safety-2022",
+      "briefId": "mn-reformer-2022-dfl-public-safety-brief",
+      "briefOriginalUrl": "https://minnesotareformer.com/briefs/senate-dfl-outlines-500-million-public-safety-plan/",
+      "datedId": "mn-reformer-2022-dfl-public-safety-dated",
+      "datedOriginalUrl": "https://minnesotareformer.com/2022/03/22/senate-dfl-outlines-500-million-public-safety-plan/"
+    },
+    {
+      "pair": "driver-licenses-2023",
+      "briefId": "mn-reformer-2023-driver-licenses",
+      "briefOriginalUrl": "https://minnesotareformer.com/briefs/minnesota-senate-expected-to-pass-bill-giving-drivers-licenses-to-undocumented-residents/",
+      "datedId": "mn-reformer-2023-driver-licenses-dated",
+      "datedOriginalUrl": "https://minnesotareformer.com/2023/02/21/minnesota-senate-expected-to-pass-bill-giving-drivers-licenses-to-undocumented-residents/"
+    },
+    {
+      "pair": "sanctuary-2024",
+      "briefId": "mn-reformer-2024-sanctuary-brief",
+      "briefOriginalUrl": "https://minnesotareformer.com/briefs/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/",
+      "datedId": "mn-reformer-2024-sanctuary-dated",
+      "datedOriginalUrl": "https://minnesotareformer.com/2024/02/12/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/"
+    },
+    {
+      "pair": "road-signs-2025",
+      "briefId": "mn-reformer-2025-road-signs-brief",
+      "briefOriginalUrl": "https://minnesotareformer.com/briefs/minnesota-republican-senator-no-more-wit-pop-culture-portmanteaus-on-our-road-signs/",
+      "datedId": "mn-reformer-2025-road-signs-dated",
+      "datedOriginalUrl": "https://minnesotareformer.com/2025/05/01/minnesota-republican-senator-no-more-wit-pop-culture-portmanteaus-on-our-road-signs/"
+    }
+  ],
+  "samePresentDayTitleDoesNotProveHistoricallyIdenticalArticle": true,
+  "noPathAliasResolutionWithoutBothOriginalArchivedBodies": true,
+  "noAutomaticArticleDuplicateMerger": true,
+  "originalPublicationTimeUnknown": true,
+  "noSenatorQuoteOrVoteAutomaticallyApproved": true,
+  "originalHtmlAudioNotPersisted": true
+}
