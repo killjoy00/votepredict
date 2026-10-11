@@ -1,0 +1,65 @@
+{
+  "version": "senate-media-public-official-proceedings-crosscheck-v1",
+  "issue": 946,
+  "parentIssue": 912,
+  "researchCheckedAt": "2026-10-10",
+  "scope": "Independently corroborate the legislative event described in a selected public media research lead, not the article contents, archived copy, quote, publication-by or stance.",
+  "researchedMedia": {
+    "publisher": "Minnesota Reformer",
+    "displayedPublicationDay": "2025-05-01",
+    "publicUrlCandidates": [
+      "https://minnesotareformer.com/briefs/minnesota-republican-senator-no-more-wit-pop-culture-portmanteaus-on-our-road-signs/",
+      "https://minnesotareformer.com/2025/05/01/minnesota-republican-senator-no-more-wit-pop-culture-portmanteaus-on-our-road-signs/"
+    ],
+    "identicalOriginalArchivedArticleBytesProven": false,
+    "publicationDateHistoricallyPublicByProven": false,
+    "newsroomQuoteReviewed": false
+  },
+  "independentlyVerifiedLegislativeProceeding": {
+    "type": "original_official_senate_journal_and_amendment_page",
+    "eventDay": "2025-05-01",
+    "MinnesotaSenateJournalUrl": "https://www.senate.mn/journals/2025-2026/20250501029.pdf",
+    "journalDayNumber": 29,
+    "journalPrintedPageStart": 4354,
+    "journalPrintedPageEnd": 4357,
+    "pdfZeroIndexedPages": [
+      26,
+      27,
+      28
+    ],
+    "MinnesotaSenateAmendmentUrl": "https://www.senate.mn/chamber/amendment/sch2438a-4.html",
+    "bill": "HF2438",
+    "companionBill": "SF2082",
+    "amendment": "A-4",
+    "primaryTopic": "changeable roadway traffic-safety signs: prohibit witticisms, portmanteaus, slang and pop-culture references in safety-campaign messages",
+    "introducedBy": "Steve Drazkowski",
+    "recordedYeas": 31,
+    "recordedNays": 34,
+    "adopted": false,
+    "senateMembersNamedInRoll": [
+      {
+        "name": "Steve Drazkowski",
+        "journalSurname": "Drazkowski",
+        "side": "yea"
+      },
+      {
+        "name": "Ann Johnson Stewart",
+        "journalSurname": "Johnson Stewart",
+        "side": "nay"
+      }
+    ],
+    "officialJournalOrAmendmentOriginalByteSha256Captured": false,
+    "officialProceedingDateIsHistoricalMediaPublicByProof": false
+  },
+  "evidenceBoundary": {
+    "historicalWaybackCaptureProven": false,
+    "publisherFirstPublicByProven": false,
+    "articleOriginalSha256Verified": false,
+    "privateVotePredictSourceDocumentMatched": false,
+    "senatorDirectQuoteHumanVerified": false,
+    "newsParaphraseConvertedToSenatorStatement": false,
+    "historicalPredictionEligible": false,
+    "directVoteModelOrProductionMutation": false,
+    "noStatewideArticleDenominator": true
+  }
+}
