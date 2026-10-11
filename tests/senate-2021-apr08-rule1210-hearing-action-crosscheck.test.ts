@@ -14,9 +14,9 @@ const mockHtml=(spec:Spec,actionDay:string=spec.committeeActionDay,actionResult:
 <h1>Committee on ${spec.committee}</h1>
 <p>Other bill heading S.F.0001: DATE UNOFFICIAL STATUS FOR SF0001
  04/08/2021 Meeting scheduled for eleven Discussion only</p>
-<section><h2>S.F.${spec.bill.slice(2)}: (AUTHORS: Fictional Senator)</h2>
+<section><h2>S.F.${spec.bill.slice(2).padStart(4,'0')}: (AUTHORS: Fictional Senator)</h2>
 <p>Historical committee bill discussion and action ledger.</p>
-<div>DATE&nbsp; UNOFFICIAL STATUS FOR ${spec.bill}</div>
+<div>DATE&nbsp; UNOFFICIAL STATUS FOR SF${spec.bill.slice(2).padStart(4,'0')}</div>
 <p>${spec.discussionDay} Meeting scheduled for thirteen in Room Livestream YouTube</p>
 <p>Discussion only</p>
 <p>${actionDay} Meeting scheduled for thirteen in Room Livestream YouTube</p>
@@ -57,11 +57,11 @@ test('only exact original bill-local official action text can establish an April
    mockHtml(spec).replace('Committee on '+spec.committee,
     'Committee on Unrelated Committee'),spec),/Wrong original Senate committee/);
   assert.throws(()=>inspectOriginalApril08BillLog(
-   mockHtml(spec).replace('DATE&nbsp; UNOFFICIAL STATUS FOR '+spec.bill,
+   mockHtml(spec).replace('DATE&nbsp; UNOFFICIAL STATUS FOR SF'+spec.bill.slice(2).padStart(4,'0'),
     'DATE&nbsp; UNOFFICIAL STATUS FOR SF9998'),spec),/Target committee status/);
   assert.throws(()=>inspectOriginalApril08BillLog(
-   mockHtml(spec).replace('DATE&nbsp; UNOFFICIAL STATUS FOR '+spec.bill,
-    'DATE&nbsp; UNOFFICIAL STATUS FOR '+spec.bill+' 04/08/2021'),spec),
+   mockHtml(spec).replace('DATE&nbsp; UNOFFICIAL STATUS FOR SF'+spec.bill.slice(2).padStart(4,'0'),
+    'DATE&nbsp; UNOFFICIAL STATUS FOR SF'+spec.bill.slice(2).padStart(4,'0')+' 04/08/2021'),spec),
    /missing or nonunique/);
  }
 });
