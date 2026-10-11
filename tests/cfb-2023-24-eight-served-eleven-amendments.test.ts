@@ -170,3 +170,36 @@ test('permanent 11 authentic amended PDF source ledger is pinned to original CFB
  assert.equal(ck.scope.independentlyAuthenticatedActualHistoricalPublicBy,0);
  assert.equal(ck.safeguards.noProductionReadOrWrite,true);
 });
+
+test('2023/24 original CFB full four-ledger reconciliation yields exactly 68 non-duplicated authenticated PDFs',()=>{
+ const original28=readFileSync(P+'cfb-2023-24-verified-served-28-original-yearend-pdfs.psv','utf8')
+   .trimEnd().split('\n').map(x=>x.split('|'));
+ const original16=readFileSync(P+'cfb-2023-24-eight-more-16-original-yearend-pdf-source-ledger.psv','utf8')
+   .trimEnd().split('\n').map(x=>x.split('|'));
+ const amended16=readFileSync(P+'cfb-2023-24-parent-authenticated-16-amendment-pdf-source-ledger.psv','utf8')
+   .trimEnd().split('\n').map(x=>x.split('|'));
+ const amended11=readFileSync(P+'cfb-2023-24-eight-verified-senators-11-amended-original-pdf-source-ledger.psv','utf8')
+   .trimEnd().split('\n').map(x=>x.split('|'));
+ assert.equal(original28.length,28);
+ assert.equal(original16.length,16);
+ assert.equal(amended16.length,16);
+ assert.equal(amended11.length,11);
+ const auth=[
+   ...original28.map(x=>({sha:x[5],year:x[0]!.split(':')[1],kind:'original'})),
+   ...original16.filter(x=>x[10]==='authentic_pdf_report_first_page')
+     .map(x=>({sha:x[5],year:x[0]!.split(':')[1],kind:'original'})),
+   ...amended16.filter(x=>x[13]==='distinct_authenticated_amended_pdf')
+     .map(x=>({sha:x[7],year:x[0]!.split(':')[1],kind:'amended'})),
+   ...amended11.map(x=>({sha:x[7],year:x[0]!.split(':')[1],kind:'amended'})),
+ ];
+ assert.equal(auth.length,68);
+ assert.equal(new Set(auth.map(x=>x.sha)).size,68);
+ assert.ok(auth.every(x=>/^[0-9a-f]{64}$/.test(x.sha!)));
+ assert.equal(auth.filter(x=>x.year==='23'&&x.kind==='original').length,21);
+ assert.equal(auth.filter(x=>x.year==='23'&&x.kind==='amended').length,9);
+ assert.equal(auth.filter(x=>x.year==='24'&&x.kind==='original').length,22);
+ assert.equal(auth.filter(x=>x.year==='24'&&x.kind==='amended').length,16);
+ assert.equal(original16.filter(x=>x[10].startsWith('HOLD_')).length,1);
+ assert.equal(amended16.filter(x=>x[13].startsWith('HOLD_')).length,1);
+ assert.equal(amended16.filter(x=>x[13]==='duplicate_official_amendment_reference_pdf_alias').length,1);
+});
