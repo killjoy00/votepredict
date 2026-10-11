@@ -1,0 +1,31 @@
+name: 2023-24 original CFB Board year-end report population memos
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2023-24-original-board-yearend-operations.yml
+      - src/evidence/cfb-2023-24-board-contemporaneous-yearend-filing-counts.ts
+      - scripts/capture-cfb-2023-24-contemporaneous-board-yearend-operations.ts
+      - tests/cfb-2023-24-board-contemporaneous-yearend-counts.test.ts
+permissions:
+  contents: read
+jobs:
+  original-minnesota-board-filing-population-memos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/cfb-2023-24-board-contemporaneous-yearend-counts.test.ts
+      - run: node --import tsx scripts/capture-cfb-2023-24-contemporaneous-board-yearend-operations.ts --output artifacts/cfb-2023-24-original-board-yearend-counts.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: original-board-2023-24-yearend-aggregate-filing-duty-reports-metadata
+          path: artifacts/cfb-2023-24-original-board-yearend-counts.json
+          if-no-files-found: warn
+          retention-days: 30
