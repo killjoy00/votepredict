@@ -1,0 +1,403 @@
+{
+  "version": "public-2021-25-further-independent-15-reformer-articles-v1",
+  "discoveredOn": "2026-10-11",
+  "scope": "15 further distinct independent Minnesota Reformer original article URLs, nonexhaustive selected sample",
+  "earlierSelectedSamples": {
+    "originalMprReformerUrls": 31,
+    "firsthandCaucusInterviewUrls": 18,
+    "broaderCaucusReformerUrls": 25
+  },
+  "newOriginalArticleUrlLeads": 15,
+  "newIndividuallyNamedSenatorSpeakerCandidates": 21,
+  "displayedYearSelection": [
+    {
+      "year": 2021,
+      "articles": 3,
+      "senatorSpeakerTurns": 5
+    },
+    {
+      "year": 2022,
+      "articles": 3,
+      "senatorSpeakerTurns": 4
+    },
+    {
+      "year": 2023,
+      "articles": 3,
+      "senatorSpeakerTurns": 3
+    },
+    {
+      "year": 2024,
+      "articles": 3,
+      "senatorSpeakerTurns": 6
+    },
+    {
+      "year": 2025,
+      "articles": 3,
+      "senatorSpeakerTurns": 3
+    }
+  ],
+  "cautions": {
+    "journalismQuoteNotDirectSourceAudio": true,
+    "publicStatementQuotedByReporterNotReporterInterview": true,
+    "articleAboutVotesNotIndividualAuthenticatedVote": true,
+    "HouseOfficialsFormerSenatorsAndGovernorsNotSenateSpeakerCandidates": true,
+    "officialMinnesotaLrlTermForEachSpeaker": true,
+    "firstPublisherPublicationClockUnknown": true,
+    "exactOriginalWaybackBodyStillUnverified": true,
+    "noStatewideMediaPopulationDenominator": true,
+    "noPrivateSourceOrProductionDataAccess": true
+  },
+  "independentOriginalReporterArticleLeads": [
+    {
+      "id": "new-reporter-2021-clean-cars",
+      "originalPublisherUrl": "https://minnesotareformer.com/2021/01/22/senate-gop-leader-says-mpca-commissioner-could-face-removal-over-proposed-clean-car-rule/",
+      "originalPublisher": "Minnesota Reformer",
+      "displayedNewsPublicationDay": "2021-01-22",
+      "byline": "Ricardo Lopez",
+      "reporterAttributionCaveat": "Reporter interviews Gazelka; Kent independently quoted; Steve Cwodzinski bill mention is contextual",
+      "namedSenatorSpeakerTurnCandidates": [
+        {
+          "name": "Paul Gazelka",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=12263",
+          "reporterAttributionMode": "interview",
+          "historicalRecordedIndividualQuoteApproved": false
+        },
+        {
+          "name": "Susan Kent",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15384",
+          "reporterAttributionMode": "quoted_report",
+          "historicalRecordedIndividualQuoteApproved": false
+        }
+      ],
+      "exactWaybackOriginalRawBytesAlreadyVerified": false,
+      "individualHistoricWordsHumanApproved": false,
+      "originalAudioAuthenticated": false,
+      "initialPublisherPostingClockProven": false,
+      "observedMemberFloorOrCommitteeVoteInferred": false
+    },
+    {
+      "id": "new-reporter-2021-commissioners",
+      "originalPublisherUrl": "https://minnesotareformer.com/2021/07/02/senate-gop-will-hold-confirmation-hearings-on-walz-commissioners-as-special-session-continues-indefinitely/",
+      "originalPublisher": "Minnesota Reformer",
+      "displayedNewsPublicationDay": "2021-07-02",
+      "byline": "Ricardo Lopez",
+      "reporterAttributionCaveat": "Benson floor remarks and Kent separate statement; Gazelka mentioned contextually",
+      "namedSenatorSpeakerTurnCandidates": [
+        {
+          "name": "Michelle Benson",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15322",
+          "reporterAttributionMode": "reported_floor_speech",
+          "historicalRecordedIndividualQuoteApproved": false
+        },
+        {
+          "name": "Susan Kent",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15384",
+          "reporterAttributionMode": "public_statement",
+          "historicalRecordedIndividualQuoteApproved": false
+        }
+      ],
+      "exactWaybackOriginalRawBytesAlreadyVerified": false,
+      "individualHistoricWordsHumanApproved": false,
+      "originalAudioAuthenticated": false,
+      "initialPublisherPostingClockProven": false,
+      "observedMemberFloorOrCommitteeVoteInferred": false
+    },
+    {
+      "id": "new-reporter-2021-line3",
+      "originalPublisherUrl": "https://minnesotareformer.com/2021/08/25/2000-rally-against-line-3-at-state-capitol/",
+      "originalPublisher": "Minnesota Reformer",
+      "displayedNewsPublicationDay": "2021-08-25",
+      "byline": "Minnesota Reformer",
+      "reporterAttributionCaveat": "Kunesh direct rally speech; other Indigenous advocates are distinct speakers",
+      "namedSenatorSpeakerTurnCandidates": [
+        {
+          "name": "Mary Kunesh",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15466",
+          "reporterAttributionMode": "reported_capitol_rally_speech",
+          "historicalRecordedIndividualQuoteApproved": false
+        }
+      ],
+      "exactWaybackOriginalRawBytesAlreadyVerified": false,
+      "individualHistoricWordsHumanApproved": false,
+      "originalAudioAuthenticated": false,
+      "initialPublisherPostingClockProven": false,
+      "observedMemberFloorOrCommitteeVoteInferred": false
+    },
+    {
+      "id": "new-reporter-2022-curriculum",
+      "originalPublisherUrl": "https://minnesotareformer.com/2022/02/14/senate-gop-bills-would-require-minnesota-teachers-to-disclose-curriculum-to-parents/",
+      "originalPublisher": "Minnesota Reformer",
+      "displayedNewsPublicationDay": "2022-02-14",
+      "byline": "Ricardo Lopez",
+      "reporterAttributionCaveat": "Two sitting senators each independently reported despite governor candidacies",
+      "namedSenatorSpeakerTurnCandidates": [
+        {
+          "name": "Paul Gazelka",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=12263",
+          "reporterAttributionMode": "reported_news_conference",
+          "historicalRecordedIndividualQuoteApproved": false
+        },
+        {
+          "name": "Michelle Benson",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15322",
+          "reporterAttributionMode": "reported_news_conference",
+          "historicalRecordedIndividualQuoteApproved": false
+        }
+      ],
+      "exactWaybackOriginalRawBytesAlreadyVerified": false,
+      "individualHistoricWordsHumanApproved": false,
+      "originalAudioAuthenticated": false,
+      "initialPublisherPostingClockProven": false,
+      "observedMemberFloorOrCommitteeVoteInferred": false
+    },
+    {
+      "id": "new-reporter-2022-ethics",
+      "originalPublisherUrl": "https://minnesotareformer.com/2022/06/15/senate-ethics-subcommittee-votes-to-continue-investigation-of-sen-omar-fateh/",
+      "originalPublisher": "Minnesota Reformer",
+      "displayedNewsPublicationDay": "2022-06-15",
+      "byline": "Minnesota Reformer",
+      "reporterAttributionCaveat": "Osmek quoted; Omar Fateh subject of reporting not source of these quoted words",
+      "namedSenatorSpeakerTurnCandidates": [
+        {
+          "name": "David Osmek",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15385",
+          "reporterAttributionMode": "reported_subcommittee_speech",
+          "historicalRecordedIndividualQuoteApproved": false
+        }
+      ],
+      "exactWaybackOriginalRawBytesAlreadyVerified": false,
+      "individualHistoricWordsHumanApproved": false,
+      "originalAudioAuthenticated": false,
+      "initialPublisherPostingClockProven": false,
+      "observedMemberFloorOrCommitteeVoteInferred": false
+    },
+    {
+      "id": "new-reporter-2022-special-session",
+      "originalPublisherUrl": "https://minnesotareformer.com/2022/06/16/no-special-legislative-session-no-tax-cuts-no-extra-education-spending/",
+      "originalPublisher": "Minnesota Reformer",
+      "displayedNewsPublicationDay": "2022-06-16",
+      "byline": "Minnesota Reformer",
+      "reporterAttributionCaveat": "Miller statement reported secondarily, not directly interviewed; Scott Jensen is former senator",
+      "namedSenatorSpeakerTurnCandidates": [
+        {
+          "name": "Jeremy Miller",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15335",
+          "reporterAttributionMode": "quoted_public_statement",
+          "historicalRecordedIndividualQuoteApproved": false
+        }
+      ],
+      "exactWaybackOriginalRawBytesAlreadyVerified": false,
+      "individualHistoricWordsHumanApproved": false,
+      "originalAudioAuthenticated": false,
+      "initialPublisherPostingClockProven": false,
+      "observedMemberFloorOrCommitteeVoteInferred": false
+    },
+    {
+      "id": "new-reporter-2023-license-rally",
+      "originalPublisherUrl": "https://minnesotareformer.com/2023/01/03/give-drivers-licenses-to-minnesotas-undocumented-residents-advocates-say/",
+      "originalPublisher": "Minnesota Reformer",
+      "displayedNewsPublicationDay": "2023-01-03",
+      "byline": "Grace Deng",
+      "reporterAttributionCaveat": "First-term serving senator directly attributed; Champion mentioned in context",
+      "namedSenatorSpeakerTurnCandidates": [
+        {
+          "name": "Zaynab Mohamed",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15588",
+          "reporterAttributionMode": "reported_news_conference",
+          "historicalRecordedIndividualQuoteApproved": false
+        }
+      ],
+      "exactWaybackOriginalRawBytesAlreadyVerified": false,
+      "individualHistoricWordsHumanApproved": false,
+      "originalAudioAuthenticated": false,
+      "initialPublisherPostingClockProven": false,
+      "observedMemberFloorOrCommitteeVoteInferred": false
+    },
+    {
+      "id": "new-reporter-2023-family-leave",
+      "originalPublisherUrl": "https://minnesotareformer.com/briefs/dfl-launches-effort-for-minnesota-paid-family-leave-program/",
+      "originalPublisher": "Minnesota Reformer",
+      "displayedNewsPublicationDay": "2023-01-06",
+      "byline": "Michelle Griffith",
+      "reporterAttributionCaveat": "Alice Mann was a senator in 2023; House member Ruth Richardson excluded",
+      "namedSenatorSpeakerTurnCandidates": [
+        {
+          "name": "Alice Mann",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15525",
+          "reporterAttributionMode": "reported_news_conference",
+          "historicalRecordedIndividualQuoteApproved": false
+        }
+      ],
+      "exactWaybackOriginalRawBytesAlreadyVerified": false,
+      "individualHistoricWordsHumanApproved": false,
+      "originalAudioAuthenticated": false,
+      "initialPublisherPostingClockProven": false,
+      "observedMemberFloorOrCommitteeVoteInferred": false
+    },
+    {
+      "id": "new-reporter-2023-rideshare-floor",
+      "originalPublisherUrl": "https://minnesotareformer.com/2023/05/21/minnesota-legislature-approves-minimum-wage-for-uber-and-lyft-drivers/",
+      "originalPublisher": "Minnesota Reformer",
+      "displayedNewsPublicationDay": "2023-05-21",
+      "byline": "Max Nesterak",
+      "reporterAttributionCaveat": "News reporting of a floor remark does not prove individually recorded vote",
+      "namedSenatorSpeakerTurnCandidates": [
+        {
+          "name": "Omar Fateh",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15559",
+          "reporterAttributionMode": "reported_floor_speech",
+          "historicalRecordedIndividualQuoteApproved": false
+        }
+      ],
+      "exactWaybackOriginalRawBytesAlreadyVerified": false,
+      "individualHistoricWordsHumanApproved": false,
+      "originalAudioAuthenticated": false,
+      "initialPublisherPostingClockProven": false,
+      "observedMemberFloorOrCommitteeVoteInferred": false
+    },
+    {
+      "id": "new-reporter-2024-session-opening",
+      "originalPublisherUrl": "https://minnesotareformer.com/2024/02/12/era-mardi-gras-and-apple-blondies-day-one-of-the-2024-minnesota-legislative-session/",
+      "originalPublisher": "Minnesota Reformer",
+      "displayedNewsPublicationDay": "2024-02-12",
+      "byline": "Michelle Griffith and Madison McVan",
+      "reporterAttributionCaveat": "Murphy separately quoted; House members and Governor Walz excluded",
+      "namedSenatorSpeakerTurnCandidates": [
+        {
+          "name": "Erin Murphy",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15284",
+          "reporterAttributionMode": "reported_news_conference",
+          "historicalRecordedIndividualQuoteApproved": false
+        }
+      ],
+      "exactWaybackOriginalRawBytesAlreadyVerified": false,
+      "individualHistoricWordsHumanApproved": false,
+      "originalAudioAuthenticated": false,
+      "initialPublisherPostingClockProven": false,
+      "observedMemberFloorOrCommitteeVoteInferred": false
+    },
+    {
+      "id": "new-reporter-2024-gun-proposals",
+      "originalPublisherUrl": "https://minnesotareformer.com/2024/02/21/minnesota-dems-offer-modest-gun-control-agenda-fearing-election-backlash/",
+      "originalPublisher": "Minnesota Reformer",
+      "displayedNewsPublicationDay": "2024-02-21",
+      "byline": "Michelle Griffith",
+      "reporterAttributionCaveat": "Marty and McEwen each separately quoted; correction on Seeberger name in current article",
+      "namedSenatorSpeakerTurnCandidates": [
+        {
+          "name": "John Marty",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10403",
+          "reporterAttributionMode": "interview",
+          "historicalRecordedIndividualQuoteApproved": false
+        },
+        {
+          "name": "Jen McEwen",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15537",
+          "reporterAttributionMode": "interview",
+          "historicalRecordedIndividualQuoteApproved": false
+        }
+      ],
+      "exactWaybackOriginalRawBytesAlreadyVerified": false,
+      "individualHistoricWordsHumanApproved": false,
+      "originalAudioAuthenticated": false,
+      "initialPublisherPostingClockProven": false,
+      "observedMemberFloorOrCommitteeVoteInferred": false
+    },
+    {
+      "id": "new-reporter-2024-housing-zoning",
+      "originalPublisherUrl": "https://minnesotareformer.com/2024/04/19/housing-bills-falling-off-legislative-agenda/",
+      "originalPublisher": "Minnesota Reformer",
+      "displayedNewsPublicationDay": "2024-04-19",
+      "byline": "Minnesota Reformer",
+      "reporterAttributionCaveat": "Three speaker turns in one article; committee questions or remarks are not verified individual votes",
+      "namedSenatorSpeakerTurnCandidates": [
+        {
+          "name": "Steve Drazkowski",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15286",
+          "reporterAttributionMode": "reported_committee_question",
+          "historicalRecordedIndividualQuoteApproved": false
+        },
+        {
+          "name": "Heather Gustafson",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15582",
+          "reporterAttributionMode": "reported_committee_speech",
+          "historicalRecordedIndividualQuoteApproved": false
+        },
+        {
+          "name": "Lindsey Port",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15557",
+          "reporterAttributionMode": "reported_committee_speech",
+          "historicalRecordedIndividualQuoteApproved": false
+        }
+      ],
+      "exactWaybackOriginalRawBytesAlreadyVerified": false,
+      "individualHistoricWordsHumanApproved": false,
+      "originalAudioAuthenticated": false,
+      "initialPublisherPostingClockProven": false,
+      "observedMemberFloorOrCommitteeVoteInferred": false
+    },
+    {
+      "id": "new-reporter-2025-federal-cuts",
+      "originalPublisherUrl": "https://minnesotareformer.com/2025/04/25/minnesota-democrats-look-for-money-to-stave-off-federal-cuts-and-other-labor-news/",
+      "originalPublisher": "Minnesota Reformer",
+      "displayedNewsPublicationDay": "2025-04-25",
+      "byline": "Max Nesterak",
+      "reporterAttributionCaveat": "Maye Quade quoted; House representative Emma Greenman not senator",
+      "namedSenatorSpeakerTurnCandidates": [
+        {
+          "name": "Erin Maye Quade",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15473",
+          "reporterAttributionMode": "reported_news_conference",
+          "historicalRecordedIndividualQuoteApproved": false
+        }
+      ],
+      "exactWaybackOriginalRawBytesAlreadyVerified": false,
+      "individualHistoricWordsHumanApproved": false,
+      "originalAudioAuthenticated": false,
+      "initialPublisherPostingClockProven": false,
+      "observedMemberFloorOrCommitteeVoteInferred": false
+    },
+    {
+      "id": "new-reporter-2025-sick-leave",
+      "originalPublisherUrl": "https://minnesotareformer.com/2025/05/06/blue-dog-democrats-vote-to-roll-back-paid-sick-leave-for-workers-at-small-farms-and-businesses/",
+      "originalPublisher": "Minnesota Reformer",
+      "displayedNewsPublicationDay": "2025-05-06",
+      "byline": "Max Nesterak",
+      "reporterAttributionCaveat": "Hauschild quote not a signed proof of article-described recorded floor vote",
+      "namedSenatorSpeakerTurnCandidates": [
+        {
+          "name": "Grant Hauschild",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15577",
+          "reporterAttributionMode": "reported_floor_debate",
+          "historicalRecordedIndividualQuoteApproved": false
+        }
+      ],
+      "exactWaybackOriginalRawBytesAlreadyVerified": false,
+      "individualHistoricWordsHumanApproved": false,
+      "originalAudioAuthenticated": false,
+      "initialPublisherPostingClockProven": false,
+      "observedMemberFloorOrCommitteeVoteInferred": false
+    },
+    {
+      "id": "new-reporter-2025-solar",
+      "originalPublisherUrl": "https://minnesotareformer.com/2025/06/30/minnesota-solar-industry-avoided-legislative-defeat-but-next-session-and-federal-policy-changes-loom/",
+      "originalPublisher": "Minnesota Reformer",
+      "displayedNewsPublicationDay": "2025-06-30",
+      "byline": "Brian Martucci",
+      "reporterAttributionCaveat": "Frentz quote and earlier 9-2 committee vote described, no personal vote evidenced",
+      "namedSenatorSpeakerTurnCandidates": [
+        {
+          "name": "Nick Frentz",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15481",
+          "reporterAttributionMode": "interview",
+          "historicalRecordedIndividualQuoteApproved": false
+        }
+      ],
+      "exactWaybackOriginalRawBytesAlreadyVerified": false,
+      "individualHistoricWordsHumanApproved": false,
+      "originalAudioAuthenticated": false,
+      "initialPublisherPostingClockProven": false,
+      "observedMemberFloorOrCommitteeVoteInferred": false
+    }
+  ]
+}
