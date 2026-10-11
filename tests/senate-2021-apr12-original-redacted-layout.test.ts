@@ -46,3 +46,12 @@ test('wrong original issue day or truncated/duplicated source cannot be represen
  assert.equal(data.noOriginalMemberBySideNamesEmitted,true);
  assert.equal(data.issue864RemainsOpen,true);
 });
+
+test('one indexed committee motion cannot inherit the next bill different motion roll tally',()=>{
+ const changed=make().replace('There were yeas 4 and nays 3, as follows:',
+  'A voice vote was recorded here, no named roll printed:');
+ const result=inspectOriginalApril12SourceLayout(changed);
+ assert.equal(result.indexedRule1210Candidates[0]!.matchingRule1210Candidates[0]!.printedTallyCandidates.length,0);
+ assert.equal(result.indexedRule1210Candidates[1]!.matchingRule1210Candidates[0]!.printedTallyCandidates.length,1);
+ assert.equal(result.noOriginalMemberBySideNamesEmitted,true);
+});
