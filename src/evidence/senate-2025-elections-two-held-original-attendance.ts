@@ -43,7 +43,7 @@ export function parse2025ElectionsOriginalOpeningAttendance(text:string){
     throw Error('Unbounded original Elections source text');
   const head=text.slice(0,1850);
   const present=head.match(/\bPresent:\s*([\s\S]*?)\s*\bAbsent:/i);
-  const absent=head.match(/\bAbsent:\s*([\s\S]*?)(?=\bSenator\s+Jim\s+Carlson\s+called\s+the\s+meeting\s+to\s+order\b)/i);
+  const absent=head.match(/\bAbsent:\s*([\s\S]*?)(?=\bSenator\s+[A-ZÀ-Ÿ][A-Za-zÀ-ÿ .'-]{3,80}?\s+called\s+the\s+meeting\s+to\s+order\b)/i);
   if(!present || !absent)
     throw Error('Both bounded original opening Present/Absent headers required');
   const presentNames=parseExplicitSourceNames(present[1]!,false);
