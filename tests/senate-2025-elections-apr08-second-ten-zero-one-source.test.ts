@@ -25,6 +25,11 @@ function example(){
  const a11ResultOffset=text.indexOf('With a vote of 10/0/1',a11MotionOffset);
  return {text,a11MotionOffset,a11ResultOffset};
 }
+function reanchor(f:ReturnType<typeof example>){
+ f.a11MotionOffset=f.text.indexOf('Senator Bravo moved the A11');
+ f.a11ResultOffset=f.text.indexOf('With a vote of 10/0/1',f.a11MotionOffset);
+ return f;
+}
 function inspect(input=example()){
  return inspectSyntheticOtherTenZeroOne(input.text,[...FAKE],
   input.a11ResultOffset,input.a11MotionOffset);
@@ -78,7 +83,7 @@ test('fake/tampered 10 yes zero no one absent sides never become a member choice
  ]) {
   const fixture=example();
   fixture.text=change(fixture.text);
-  const r=inspect(fixture);
+  const r=inspect(reanchor(fixture));
   assert.equal(r.sourcePrintedNamedTenYesZeroNoOneAbsentRosterExact,false);
   assert.equal(r.sourceSideIdentitySHA256OnlyWhenExactlyValidated,null);
   assert.equal(r.sourceCandidateWorthSeparateMotionReview,false);
@@ -88,7 +93,7 @@ test('without real motion introduction preceding other tally, candidate held',()
  const f=example();
  f.text=f.text.replace('Senator Alpha moved the A8 Amendment to S.F. 2384. ','');
  // First 10/0/1 is still present but has no actual introduced amendment.
- const r=inspect(f);
+ const r=inspect(reanchor(f));
  assert.equal(r.closestIntroducedAmendmentLabel,null);
  assert.equal(r.sourceCandidateWorthSeparateMotionReview,false);
 });
