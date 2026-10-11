@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "senate-2025-elections-apr08-sf2384-a11-original-first-failure-checkpoint-v1",
+  "issue": 864,
+  "historicalHearingDate": "2025-04-08",
+  "sourceAuthority": "Minnesota Legislative Reference Library",
+  "originalOfficialUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/elections/20250408/Elections_20250408_Minutes.pdf",
+  "expectedOriginalPdfSHA256": "d26c583ef3e5caae1b52d379bf9c6cc784e0e9d39a80c056259f65f83f2e4c46",
+  "expectedOriginalTextSHA256": "6dc40628432da41be2ac4afe24b8725d5638e069421c4f413445042794411101",
+  "firstOneTimeOriginalRun": {
+    "githubActionsRunId": 38148643214,
+    "mergeCommit": "a77df15fa22712688daf69b0b8977e37fd73358c",
+    "conclusion": "failure",
+    "artifactId": 11705946102,
+    "artifactName": "senate-2025-apr08-original-sf2384-a11-source",
+    "independentlyDownloadedArtifactZipSHA256": "6f1687ad28306512c46e0accf86e188edde6500f733e104077a9335aabebb3bc",
+    "zipBytes": 923,
+    "originalDecodedJsonSHA256": "8fea4d948469641c28e87104dbe21e245d91b8290bd09c7720a3eb51d746279f",
+    "originalDecodedJsonBytes": 1254,
+    "sourceResultParsed": false,
+    "reportedError": "A11 unique 10/0/1 printed result absent or duplicated",
+    "resultIsDisjunctionOfZeroOrMultipleGlobalMatches": true,
+    "noOriginalSuccessfulA11SourceCertification": true
+  },
+  "correctionBoundedToA11MotionSection": {
+    "initialParserUsedGlobalMeetingTallyUniqueness": true,
+    "revisedParserRequiresExactlyOneGenuineNamedA11MotionIntroduction": true,
+    "revisedParserStopsAtNextExplicitDistinctNumberedAmendmentMotion": true,
+    "revisedParserRequiresExactlyOne10_0_1PrevailingResultInA11Section": true,
+    "allowsSameNumericResultOnOtherIndependentMotionsWithoutConflation": true,
+    "noOriginalSourceSHARequirementsRelaxed": true,
+    "targetedOneTimeRetryWorkflow": ".github/workflows/senate-2025-elections-apr08-a11-scoped-retry.yml",
+    "successOfTargetedRetryNotYetVerified": true
+  },
+  "historicalLimits": {
+    "noHistoricalFullA11MotionCertifiedFromFailedRun": true,
+    "noYeaOrNayImputedForLucero": true,
+    "noProductionOrPrivateDbReadOrWrite": true,
+    "noMemberVoteIngestion": true,
+    "noStatewideRecordedVoteDenominatorEstablished": true,
+    "originalMinutesActionDateProjectConvention": "2025-04-08",
+    "noSameDayForecastWithoutKnownMotionTime": true,
+    "issue864MustRemainOpen": true
+  }
+}
