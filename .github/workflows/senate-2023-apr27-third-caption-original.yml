@@ -1,0 +1,60 @@
+name: One-time 2023 Apr27 Taxes Senate third original caption track
+
+# One-source-only original caption HTML bytes; no AV download/DB/production.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2023-apr27-third-caption-original.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  check-exact-third-original:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Restore original 2023 indexed official meeting/media URL list
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2023-dated-media-href-review
+          run-id: 38079233118
+          github-token: ${{ github.token }}
+          path: artifacts/2023-indexed-hrefs
+      - name: Restore independently verified original 64 LRL record page HTML SHAs
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2023-official-media-record-html-proof
+          run-id: 38081463362
+          github-token: ${{ github.token }}
+          path: artifacts/2023-original-html
+      - name: Restore previous exact failed-parent 2023 original caption source metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2023-original-caption-surface-metadata
+          run-id: 38103766440
+          github-token: ${{ github.token }}
+          path: artifacts/2023-original-caption-metadata
+      - name: Read ONLY previously-unexamined third safe caption track from hashed original Apr27 Taxes page
+        run: |
+          node --import tsx scripts/probe-senate-2023-apr27-taxes-third-caption.ts \
+            --hrefs artifacts/2023-indexed-hrefs/senate-2023-media-hrefs.json \
+            --original-html artifacts/2023-original-html/senate-2023-media-record-html.json \
+            --prior-caption artifacts/2023-original-caption-metadata/senate-2023-caption-surface.json \
+            --output artifacts/2023-third-caption/senate-2023-apr27-third-original-caption-source.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2023-apr27-third-original-caption-source
+          path: artifacts/2023-third-caption/senate-2023-apr27-third-original-caption-source.json
+          retention-days: 30
+          if-no-files-found: error
