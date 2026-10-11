@@ -17,6 +17,7 @@ import {
   SERVED_2021_22_AMENDMENTS_VERSION,
   select2021to22ActualSenatorAmendmentVersions,
   auditActualSenatorAmendmentPdf,checkAuthenticatedAmendmentChains,
+  classifySourceVerified2021to22AmendmentBatch,
   type CfbHistoricalAmendedPdfSource,
 } from '../src/evidence/cfb-2021-22-served-senator-amendments.js';
 
@@ -112,6 +113,7 @@ async function main(){
   const reports=picked.targets.map(t=>auditActualSenatorAmendmentPdf(
     t,rawPdfs.get(t.id)??null,failures.get(t.id)??null));
   const chain=checkAuthenticatedAmendmentChains(reports);
+  const quality=classifySourceVerified2021to22AmendmentBatch(reports);
   const authenticated=reports.filter(r=>r.status==='amendment_pdf_and_original_identity_authenticated');
   const checkpoint={
     schemaVersion:SERVED_2021_22_AMENDMENTS_VERSION,
@@ -141,9 +143,11 @@ async function main(){
       viewerRechecks.sort((a,b)=>a.registrationNumber.localeCompare(b.registrationNumber)),
     reports,
     chainValidation:chain,
+    sourceVerificationOutcome:quality,
     results:{
       sourceVersionReferencesSelected:picked.targets.length,
       originalAmendmentPdfBodiesRetrievedIntoMemoryOnly:rawPdfs.size,
+      originalSourceDocumentsHeldForStrictPaperIdentity:quality.documentedSourceHolds,
       firstPageCommitteeAndOriginalPeriodAndReceiptVerified:authenticated.length,
       completedDistinctAuthenticRevisionChains:chain.valid,
       successes:authenticated.length,holds:reports.length-authenticated.length,
@@ -165,13 +169,14 @@ async function main(){
   console.log(JSON.stringify({issue:864,selectedOriginalAmendmentVersions:26,
     actualSenators:11,originalParents:42,authenticated:authenticated.length,
     held:reports.length-authenticated.length,chainValid:chain.valid,
+    sourceVerificationOutcome:quality,
     holds:reports.filter(r=>r.status!=='amendment_pdf_and_original_identity_authenticated')
       .map(r=>({id:r.id,status:r.status,sourceError:r.sourceErrorKind})),
     chainViolations:chain.violations,
     authenticatedHashes:authenticated.map(x=>({id:x.id,sha256:x.amendedPdfSha256,
       receivedOn:x.amendedBoardReceivedOn})),
     output,productionChanges:false},null,2));
-  if(authenticated.length!==26||!chain.valid||
+  if(!quality.sourceAcquisitionCanBePreserved||rawPdfs.size!==26||
     viewerRechecks.filter(v=>v.exactVersionKeysReconfirmed>0).length!==11)
     process.exitCode=1;
 }
