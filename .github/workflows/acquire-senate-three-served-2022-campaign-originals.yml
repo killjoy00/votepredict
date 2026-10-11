@@ -1,0 +1,65 @@
+name: Acquire 2022 original campaign pages for three new ACTUALLY served MN senators
+
+# Original public historical Wayback CDX + page-body retrieval, one-shot PR.
+# No cron, no candidate site web scraping in production, no forecasts/evidence.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/acquire-senate-three-served-2022-campaign-originals.yml
+      - data/evaluation/senate-three-new-served-person-2022-campaign-domains-v1.json
+      - scripts/acquire-senate-three-new-served-2022-campaign-domains.ts
+      - scripts/run-senate-three-new-served-2022-campaign-domains.ts
+      - tests/senate-three-served-2022-campaign-original-acquisition.test.ts
+      - docs/SENATE_2022_THREE_MORE_VERIFIED_SERVED_CAMPAIGN_SITE_ACQUISITION.md
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  three-actually-served-senators-2022-original-campaign-acquisition:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-2022-three-new-served-senator-site-originals-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Obtain verified original Minnesota LRL senator-service source before ANY campaign archival query
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: artifacts/original-senator-service
+      - name: Query only three verified-served candidates' original 2022 campaign domains
+        timeout-minutes: 9
+        shell: bash
+        run: |
+          set -euo pipefail
+          service="artifacts/original-senator-service"
+          lrl="$(find "$service" -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          metadata="$(find "$service" -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$lrl" && test -n "$metadata"
+          test "$(dirname "$lrl")" = "$(dirname "$metadata")"
+          node --import tsx scripts/run-senate-three-new-served-2022-campaign-domains.ts \
+            --lrl-original "$lrl" \
+            --lrl-metadata "$metadata" \
+            --output-dir artifacts/three-served-2022-original-campaign-public-pages
+      - name: Retain exact original public 2022 archive index and HTML bytes or explicit failure observations
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-2022-three-new-actual-senators-first-party-archive-source-v1
+          path: artifacts/three-served-2022-original-campaign-public-pages/
+          if-no-files-found: warn
+          retention-days: 30
