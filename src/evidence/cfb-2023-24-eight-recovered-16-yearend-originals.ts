@@ -36,7 +36,7 @@ export function selectEightRecoveredSenators16OriginalYearends(input:{
     throw Error('Original independent CFB 2024 viewer sources are not pinned and reverified');
   const sourceRecords=records(input.sourceSnapshotPsv);
   const versionRecords=records(input.source27VersionPsv);
-  const memberByReg=new Map(members.map(x=>[x.reg,x]));
+  const memberByReg=new Map<string,(typeof members)[number]>(members.map(x=>[x.reg,x]));
   const byReg=new Map(sourceRecords.map(x=>[x[0],x]));
   if(byReg.size!==8||sourceRecords.length!==8||versionRecords.length!==27)
     throw Error('Official 8 CFB viewer responses and 27 version references changed');
