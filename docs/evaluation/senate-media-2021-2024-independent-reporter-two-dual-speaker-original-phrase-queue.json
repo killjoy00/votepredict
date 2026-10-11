@@ -1,0 +1,66 @@
+{
+  "version": "senate-media-2021-and-2024-two-original-reformer-dual-senator-speech-cues-v1",
+  "preparedOn": "2026-10-11",
+  "originalsManifest": "docs/evaluation/senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json",
+  "independentReporterLeadLedger": "docs/evaluation/senate-media-2021-25-further-independent-reporting-15-leads.json",
+  "publisher": "Minnesota Reformer",
+  "articleTargets": [
+    {
+      "leadId": "new-reporter-2021-clean-cars",
+      "originalPublisherUrl": "https://minnesotareformer.com/2021/01/22/senate-gop-leader-says-mpca-commissioner-could-face-removal-over-proposed-clean-car-rule/",
+      "historicalOriginalCaptureUtc": [
+        "2021-01-22T18:33:37Z",
+        "2021-02-03T17:43:23Z"
+      ],
+      "shortSeparateSenatorCues": [
+        {
+          "id": "2021-clean-cars-paul-gazelka",
+          "namedSpeaker": "Paul Gazelka",
+          "originalReporterQuoteShortPhrase": "It's mostly about whether they're doing their job or not",
+          "quotedSpeakerCurrentWebReporterAttribution": true,
+          "fullOriginalAudioChecked": false,
+          "humanQuoteSpeakerApproved": false
+        },
+        {
+          "id": "2021-clean-cars-susan-kent",
+          "namedSpeaker": "Susan Kent",
+          "originalReporterQuoteShortPhrase": "It makes it hard for us to bring qualified people in",
+          "quotedSpeakerCurrentWebReporterAttribution": true,
+          "fullOriginalAudioChecked": false,
+          "humanQuoteSpeakerApproved": false
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2024-gun-proposals",
+      "originalPublisherUrl": "https://minnesotareformer.com/2024/02/21/minnesota-dems-offer-modest-gun-control-agenda-fearing-election-backlash/",
+      "historicalOriginalCaptureUtc": [
+        "2024-02-21T12:39:14Z",
+        "2024-02-21T17:52:18Z"
+      ],
+      "shortSeparateSenatorCues": [
+        {
+          "id": "2024-firearms-john-marty",
+          "namedSpeaker": "John Marty",
+          "originalReporterQuoteShortPhrase": "It's still disappointing to me how the public is ahead of the politicians on this one",
+          "quotedSpeakerCurrentWebReporterAttribution": true,
+          "fullOriginalAudioChecked": false,
+          "humanQuoteSpeakerApproved": false
+        },
+        {
+          "id": "2024-firearms-jen-mcewen",
+          "namedSpeaker": "Jen McEwen",
+          "originalReporterQuoteShortPhrase": "Someone has to really devote themselves to working on this",
+          "quotedSpeakerCurrentWebReporterAttribution": true,
+          "fullOriginalAudioChecked": false,
+          "humanQuoteSpeakerApproved": false
+        }
+      ]
+    }
+  ],
+  "noOtherSenatorOrHousePersonAssignedTheseFragments": true,
+  "reporterInterviewAndJournalistSpeechNotAuthenticatedOriginalAudio": true,
+  "rawOriginalHttpArchiveDigestRequiredBeforeTextReview": true,
+  "originalPublisherInitialPostingClocksNotProven": true,
+  "individuallyRecordedFloorOrCommitteeVotesNotInferred": true
+}
