@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "senate-2021-apr08-two-original-committee-bill-actions-first-source-success-v1",
+  "issue": 864,
+  "scope": "Official public Minnesota Senate 2021 committee BILL-level activity date, not committee AMENDMENT-level vote-day proof",
+  "firstIndependentOriginalSourceRun": {
+    "runnerPR": 1146,
+    "runnerMergeSHA": "e64c8d8da819f6fc9337ab4f893eef637937d7a9",
+    "runId": 38176218037,
+    "runURL": "https://github.com/killjoy00/votepredict/actions/runs/38176218037",
+    "conclusion": "success",
+    "sourceChecksPassed": 2,
+    "sourceErrors": 0,
+    "artifactId": 11716255550,
+    "artifactName": "senate-2021-apr08-bill-action-original-source-metadata",
+    "independentlyDownloadedArtifactZIPBytes": 1015,
+    "independentlyDownloadedArtifactZIPSHA256": "6b5fa556f16c7b52dde9a8950a8cb1cad0b8dd50b870804a7756e64e939d60f2",
+    "decodedArtifactEntry": "source.json",
+    "decodedArtifactJSONBytes": 2727,
+    "independentlyDecodedArtifactJSONSHA256": "45c6b89030e9d73ae598ef0bd7fc2356dbb01dd73fe41befde1472f78c61d0e7"
+  },
+  "originalBillLogSources": [
+    {
+      "bill": "SF1159",
+      "committee": "Transportation Finance and Policy",
+      "originalURL": "https://www.senate.mn/committees/committee_bill_log.html?cmte_id=3102&ls=92",
+      "originalHTMLBytes": 658255,
+      "originalHTMLSHA256": "a993750509e0f5be5db4c0d9af186298a5328f830d1d6a4c2ccd9cc7ad70952e",
+      "firstObservationUTC": "2026-10-11T21:24:59.380Z",
+      "precedingDiscussionOnlyDate": "2021-04-06",
+      "originalBillLevelActionDay": "2021-04-08",
+      "originalBillLevelActionResult": "Amended, recommended to pass and re-referred to the Committee on Transportation Finance and Policy",
+      "journalReportDay": "2021-04-12",
+      "distinctCertifiedJournalAmendmentMovers": [
+        "Dibble",
+        "McEwen"
+      ],
+      "distinctJournalAmendments": 2
+    },
+    {
+      "bill": "SF970",
+      "committee": "Judiciary and Public Safety Finance and Policy",
+      "originalURL": "https://www.senate.mn/committees/committee_bill_log.html?cmte_id=3099&ls=92",
+      "originalHTMLBytes": 414785,
+      "originalHTMLSHA256": "f63ad26f43a7d4c086d14608d69ba236b9bb6c9be2e3e3970e0dcb9e7fa1d5c3",
+      "firstObservationUTC": "2026-10-11T21:24:59.474Z",
+      "precedingDiscussionOnlyDate": "2021-04-07",
+      "originalBillLevelActionDay": "2021-04-08",
+      "originalBillLevelActionResult": "Amended and recommended to pass",
+      "journalReportDay": "2021-04-12",
+      "distinctCertifiedJournalAmendmentMovers": [
+        "Pappas"
+      ],
+      "distinctJournalAmendments": 1
+    }
+  ],
+  "holds": {
+    "exactHearingDayOfAnyOfThreeSpecificAmendmentVotesIndependentlyProven": false,
+    "actualAmendmentOccurredOn": null,
+    "historicalFirstPublicByForOriginalCommitteeMotion": null,
+    "journalReportDayNotAutomaticallyHearingDay": true,
+    "official2021SenatePrintedCommitteeMinutesCompared": false,
+    "archivedHearingAudioListened": false,
+    "officialStatewideCommitteeVoteOrPrintMeetingDenominator": null,
+    "sourceToPrivateExistingVoteEventOrMemberVoteRowsReconciled": false,
+    "noProductionDatabaseAccessOrWrites": true,
+    "noForecastModelFloorSchedulerOr2027Change": true,
+    "issue864RemainsOpen": true
+  }
+}
