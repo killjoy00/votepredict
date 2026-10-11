@@ -61,17 +61,17 @@ test('archive source requests fixed to genuine 2022 pre-election domains and at 
 test('safe exact original campaign host, window, HTML path and page ranking isolate real issues',()=>{
  const data=[
   header,
-  row('20220708010203','https://murphyfor64.com/vision'),
-  row('20220204010203','http://www.murphyfor64.com/'),
-  row('20221108010203','https://murphyfor64.com/vision'),
-  row('20260102010203','https://murphyfor64.com/vision'),
-  row('20220708010203','https://murphyfor64.com.evil.example/vision'),
-  row('20220708010203','https://murphyfor64.com/blog?recent=2026'),
-  row('20220708010203','https://murphyfor64.com/background.png'),
+  row('20220708010203','https://colemanforsenate.com/vision'),
+  row('20220204010203','http://www.colemanforsenate.com/'),
+  row('20221108010203','https://colemanforsenate.com/vision'),
+  row('20260102010203','https://colemanforsenate.com/vision'),
+  row('20220708010203','https://colemanforsenate.com.evil.example/vision'),
+  row('20220708010203','https://colemanforsenate.com/blog?recent=2026'),
+  row('20220708010203','https://colemanforsenate.com/background.png'),
  ];
  const found=parseSixFurtherOriginal2022SenatorDomainCDX(data,'colemanforsenate.com');
  assert.equal(found.eligible.length,2);
- assert.equal(found.eligible[0].original,'https://murphyfor64.com/vision');
+ assert.equal(found.eligible[0].original,'https://colemanforsenate.com/vision');
  assert.equal(chooseFourSixFurther2022OriginalCampaignPageCaptures(found.eligible).length,2);
  assert.throws(()=>parseSixFurtherOriginal2022SenatorDomainCDX(data,'opponent.example'),
   /Unapproved candidate domain/);
@@ -80,7 +80,7 @@ test('bounded empty archive and capped index both preserve UNKNOWN campaign site
  assert.deepEqual(parseSixFurtherOriginal2022SenatorDomainCDX([],'voteheathergustafson.com'),{
   eligible:[],rawRows:0,indexAtCap:false,validEmpty:true});
  const threeHundred=Array.from({length:300},(_,i)=>row(
-  '20220805120000','https://www.johnmarty.org/issues/'+i));
+  '20220805120000','https://www.voteheathergustafson.com/issues/'+i));
  const found=parseSixFurtherOriginal2022SenatorDomainCDX(
   [header,...threeHundred],'voteheathergustafson.com');
  assert.equal(found.indexAtCap,true);
