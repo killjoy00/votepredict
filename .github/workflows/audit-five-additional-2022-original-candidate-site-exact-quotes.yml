@@ -1,0 +1,70 @@
+name: Verify 91 exact 2022 original-site issue excerpts for five more real MN State Senators
+
+# 2022 historical original capture UTC is attributable public-by only.
+# Offline: original government senator roster, all 22 2022 first-party source
+# HTMLs and six independently downloaded original CDX JSON, short quotes.
+# NO production reads/writes, forecast/model/evidence changes or schedulers.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-five-additional-2022-original-candidate-site-exact-quotes.yml
+      - data/evaluation/senate-five-additional-served-2022-capture-dated-candidate-quotes-v1.json
+      - src/evidence/senate-five-additional-served-2022-original-candidate-quote-audit.ts
+      - scripts/audit-five-additional-served-2022-candidate-quotes-offline.ts
+      - tests/senate-five-additional-2022-original-candidate-quote-proof.test.ts
+      - docs/SENATE_FIVE_ADDITIONAL_2022_HISTORICAL_ORIGINAL_SITE_91_POLICY_QUOTES.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-six-index-twenty-two-pages-ninety-one-exact-candidate-issues:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-five-more-senators-2022-original-exact-site-statements-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Obtain independently captured original entire actual MN senator-service roster and original SHA/UTC receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: originals/official-full-actual-senate-service
+      - name: Obtain 22 actual 2022 candidate archived original HTML plus six entire original indexed CDX sources
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38148688815
+          name: senate-six-followup-2022-served-original-candidate-html-v1
+          github-token: ${{ github.token }}
+          path: originals/2022-true-candidate-campaign-archive
+      - name: Reopen official whole government service roster and all 22 original HTML, six CDX and 91 personally attributed short issue quotes
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find originals/official-full-actual-senate-service -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find originals/official-full-actual-senate-service -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$gov" && test -n "$receipt"
+          test "$(dirname "$gov")" = "$(dirname "$receipt")"
+          node --import tsx scripts/audit-five-additional-served-2022-candidate-quotes-offline.ts \
+            --original-entire-mn-lrl-senate-service-html "$gov" \
+            --original-mn-lrl-service-utc-sha-receipt "$receipt" \
+            --original-wayback-2022-candidate-full-html-and-cdx-dir originals/2022-true-candidate-campaign-archive \
+            --output originals/five-more-actually-serving-2022-91-original-campaign-quotes-source-proof.json
+      - name: Retain independently original-verified 2022 short-quote/source dates receipt, never insert production data
+        uses: actions/upload-artifact@v6
+        with:
+          name: five-more-2022-serving-senators-91-exact-original-policy-quote-proofs-v1
+          path: originals/five-more-actually-serving-2022-91-original-campaign-quotes-source-proof.json
+          retention-days: 30
+          if-no-files-found: error
