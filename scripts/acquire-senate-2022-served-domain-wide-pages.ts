@@ -145,7 +145,7 @@ export async function acquire2022ServedSenatorDomainHistoricalPages(
     historicalPageNotAutomaticallyPolicyStance:true,
     older2022ElectionDayExcluded:true,
     fetchedDocsMayNotExhaustHistoricalSiteVersions:true,
-    publisher/officeOutreach:false,
+    publisherOrOfficeOutreach:false,
     databaseQueries:false,productionEvidenceWrites:false,
     forecastOrModelChanges:false,
    },
