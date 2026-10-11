@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "senate-2022to25-138-official-media-caption-combined-two-original-runs-proof-v1",
+  "issue": 864,
+  "authority": "Minnesota Legislative Reference Library",
+  "sourceFirstRunId": 38103766440,
+  "sourceFirstRunOverallConclusion": "failure",
+  "firstRunSourceLedgerPath": "docs/evaluation/source-proof/senate-committee-138-original-caption-surface-first-run-ledger.json",
+  "firstRunSourceLedgerGitBlobSha": "67eadd165c115e12edeafdd41648a288a9b1c9d6",
+  "sourceRetryRunId": 38104325591,
+  "sourceRetryRunConclusion": "success",
+  "sourceRetryImplementationPR": 1005,
+  "sourceRetryMergeSha": "0b5b7885321141ce7b15f8fc4bddd51ed6497fdc",
+  "actualRetryArtifactId": 11688688635,
+  "actualRetryArtifactZipSha256": "514c359aeb5c5743ec6538137d9359fe1a82bba186a14eccc2efdedc5ecbc588",
+  "actualRetryUncompressedJsonBytes": 2704,
+  "actualRetryUncompressedJsonSha256": "4c4564531edd35c1c14cf1cc08defc62e107516c1cd371dfd1b9b6e428eeff4e",
+  "originalFirstRunSourceYearArtifactIds": [
+    11687874692,
+    11688587941,
+    11688174345,
+    11688528042
+  ],
+  "reviewedOriginalRetryResults": [
+    {
+      "year": 2023,
+      "hearingDate": "2023-01-12",
+      "committeeName": "Taxes",
+      "mtgid": "1046920",
+      "originalHtmlSha256": "b16bf3a4a626701c007e2a6921ffd44679d372b3e01e72b9ee17e48effdcd73e",
+      "captionSourceBodySha256": "b9589a24e53cbf8544da042eff9e0cf0a1c0aacdbb1dd947bb4637d7647bde87",
+      "captionPayloadBytes": 271994,
+      "captionTimestampMarkers": 1612,
+      "originalHtmlReverified": true,
+      "captionSourceClassification": "caption_timed_rows_observed"
+    },
+    {
+      "year": 2023,
+      "hearingDate": "2023-02-08",
+      "committeeName": "Taxes",
+      "mtgid": "1047266",
+      "originalHtmlSha256": "c2c3e0c92ab5a5cd108004003082c94d05a2b66e596b439edf0745842a71cb04",
+      "captionSourceBodySha256": "5b472917503bfece6dbba0a655cb798c67ccad51bd2d3c09c4b12377f888c37e",
+      "captionPayloadBytes": 542800,
+      "captionTimestampMarkers": 3233,
+      "originalHtmlReverified": true,
+      "captionSourceClassification": "caption_timed_rows_observed"
+    }
+  ],
+  "combinedByYear": [
+    {
+      "year": 2022,
+      "indexedOfficialMediaLeads": 11,
+      "actualOriginalHtmlSHAReverifiedAcrossRuns": 11,
+      "pagesWithTimedCaptionRows": 10,
+      "withoutTimedCaptionRows": 1
+    },
+    {
+      "year": 2023,
+      "indexedOfficialMediaLeads": 64,
+      "actualOriginalHtmlSHAReverifiedAcrossRuns": 64,
+      "pagesWithTimedCaptionRows": 58,
+      "withoutTimedCaptionRows": 6
+    },
+    {
+      "year": 2024,
+      "indexedOfficialMediaLeads": 41,
+      "actualOriginalHtmlSHAReverifiedAcrossRuns": 41,
+      "pagesWithTimedCaptionRows": 41,
+      "withoutTimedCaptionRows": 0
+    },
+    {
+      "year": 2025,
+      "indexedOfficialMediaLeads": 22,
+      "actualOriginalHtmlSHAReverifiedAcrossRuns": 22,
+      "pagesWithTimedCaptionRows": 22,
+      "withoutTimedCaptionRows": 0
+    }
+  ],
+  "combinedSummary": {
+    "officialMediaIndexLeads": 138,
+    "originalHtmlPagesShaReverifiedAcrossFirstAndRetry": 138,
+    "pendingOriginalHtmlFetchErrorsAfterTargetedRetry": 0,
+    "pagesWithTimedCaptionMarkupFromOfficialCaptionResponse": 131,
+    "pagesWithoutTimedCaptionMarkup": 7,
+    "totalCaptionTimestampMarkersAcrossBothSourceRuns": 361175,
+    "timestampsNotAVPlaybackOrVerifiedSpokenWords": true,
+    "officialRecordedCommitteeVoteDenominator2021to2025": null,
+    "independentlyVerifiedNamedSenatorYeaNayFromThisSourceAudit": 0,
+    "humanMotionTimeSemanticsAndSpeakerReviewStillNeeded": true,
+    "year2021OfficialPrintOnlyMinutesStillMissing": true,
+    "year2022PrintElectronicDifferenceUnknown": true,
+    "individual2023AudioOnlyPagesWithoutSafeVideoCaption": 5,
+    "separateNoTimestampHtmlCaptionResponses": 2,
+    "privateHistoricalEvidenceRowsReconciled": false
+  },
+  "safeguards": {
+    "theFirstFourYearRunMustContinueToReportFailure": true,
+    "successfulRetryIsNotSameAsSuccessfulInitialFullFourYearRun": true,
+    "sourceUrlAndOriginalHtmlHashesPinned": true,
+    "noRawCaptionWordsOrAudioVideoBodiesStored": true,
+    "noPersonNameIndividualSidesFromAggregateOrTranscripts": true,
+    "noSenateFloorExpansion": true,
+    "noPrivateProductionDbAccessOrWrites": true,
+    "noModelTrainingForecastServingScheduler2027Changes": true,
+    "noGovernmentOfficeContact": true,
+    "issue864MustRemainOpen": true
+  }
+}
