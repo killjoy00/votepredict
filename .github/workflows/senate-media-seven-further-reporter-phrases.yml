@@ -1,0 +1,55 @@
+name: Public Senate seven further original journalist quote passages
+
+# #987 Original PUBLIC indexed SHA1 + pinned SHA256 raw HTTP body proofs only.
+# Reporter text != audio, human approved full quote, individual roll-call vote.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-seven-further-reporter-phrases.yml
+      - src/evidence/senate-media-seven-independent-articles-original-quote-audit.ts
+      - scripts/audit-senate-media-seven-reporter-originals.ts
+      - tests/senate-media-seven-original-reporter-quote-audit.test.ts
+      - docs/evaluation/senate-media-seven-remaining-authentic-independent-reporter-quote-queue-20261011.json
+      - docs/evaluation/senate-media-2021-25-further-independent-reporting-15-leads.json
+      - docs/evaluation/senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+concurrency:
+  group: senate-media-seven-further-original-reporter-cues
+  cancel-in-progress: false
+
+jobs:
+  original-public-news-quote-fragments:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-seven-remaining-reporter-original-quote-audit-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: SHA revalidate 14 exact original articles before 28 short named senator newsroom text cues
+        run: |
+          node --import tsx scripts/audit-senate-media-seven-reporter-originals.ts \
+            --output artifacts/senate-media-seven-reporter-original-quotes.json
+      - name: Upload URL, original indexed and raw SHA hashes and short text statuses only
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-seven-reporter-original-quote-fragments
+          path: artifacts/senate-media-seven-reporter-original-quotes.json
+          if-no-files-found: error
+          retention-days: 7
