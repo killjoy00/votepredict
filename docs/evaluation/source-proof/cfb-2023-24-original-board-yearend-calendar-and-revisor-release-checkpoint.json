@@ -109,6 +109,20 @@
       "original2023And2024CalendarYEPeriodAndDueVerified": true,
       "original2023And2024Statute8amNonpublicAndTerminationVerified": true,
       "noSourceFetchOrParseHolds": true
+    },
+    "independentFullSourceRecheck": {
+      "runId": 38166579796,
+      "conclusion": "success",
+      "artifactId": 11712831095,
+      "artifactZipBytes": 1699,
+      "artifactZipSha256": "034f87a3be69a1a328c06abd38bcaef54d1189bc579a9150282745933b59fbf6",
+      "JSONBytes": 5964,
+      "JSONSha256": "3bb1a7897bab045ff95745e76cfeb47e726b7d5c19e846887414622bd8e46d59",
+      "allFiveExactOriginalPdfAndStatuteSha256MatchPriorCorrectedRun": true,
+      "allFiveExactSourceByteLengthsMatchPriorCorrectedRun": true,
+      "original2023And2024YearEndCalendarCoverageAndDueDateFlagsMatch": true,
+      "original2023And2024StatuteReleaseAndTerminationPredicatesMatch": true,
+      "noSourceFetchOrParseHolds": true
     }
   },
   "limits": {
