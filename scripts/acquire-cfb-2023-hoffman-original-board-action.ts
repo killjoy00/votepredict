@@ -36,6 +36,7 @@ async function main(){
   throw Error('Original signed CFB Hoffman 2023 document body not authenticated as a PDF');
  const originalByteCount=bytes.byteLength; // PDFParse may transfer and detach Uint8Array
  const originalSha=createHash('sha256').update(bytes).digest('hex');
+ if(originalByteCount!==103913)throw Error('Original complete 2023 CFB Board PDF byte size drift');
  if(originalSha!=='14789ad9840503b963c6c1e9198fc6f05d5b096b9d7aea1487839847b71cbba9')
   throw Error('Original 2023 Board Hoffman PDF whole-body SHA256 drift from first authenticated source');
  const {PDFParse}=await import('pdf-parse');
