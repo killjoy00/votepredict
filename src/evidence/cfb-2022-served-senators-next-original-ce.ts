@@ -15,7 +15,8 @@ import {deriveCfb2022OriginalSegmentRegistrationSet}
   from './cfb-2022-senate-sos-ballot-obligation-reconciliation.js';
 import type {CfbSenateDistrictPageObservation}
   from './cfb-senate-district-registration-inventory.js';
-import {CFB_2022_CE_RULES,type Cfb2022OriginalCeTarget}
+import {CFB_2022_CE_RULES,auditCfb2022OriginalCePdf,
+  type Cfb2022OriginalCeTarget,type Cfb2022PdfProofCapture}
   from './cfb-2022-senate-original-ce-pdf-proof.js';
 
 export const SERVED_2022_NEXT_CE_VERSION=
@@ -40,6 +41,10 @@ function matchesCfbRosterLabel(label:string,name:string):boolean{
 export interface Served2022OriginalCeTarget extends Cfb2022OriginalCeTarget {
   senator:string;officialServiceSource:string;
   officialServiceSourceObservedAt:string;originalElectionSourceSha256:string;
+  /** Previous district(s) recorded for this exact person in the official
+   * LRL Senate service record for 2022. A 2022 campaign report may still
+   * print that district after election redistricting; never infer it. */
+  official2022PreviousSenateDistricts:number[];
 }
 interface PinnedIndex {
   observedCandidateRegistrationIndex:{
@@ -129,6 +134,16 @@ export function selectServed2022NextOriginalCe(input:{
     if(periods.length===0){
       skippedDistricts.push({district,reason:'no_original_C_or_E_viewer_reference_observed'});continue;
     }
+    // Redistricting: an incumbent can be on the 2022 ballot for a NEW district
+    // while their 2022 campaign committee PDF still prints an OLD one. Allow
+    // only old districts from this exact verified senator's original LRL
+    // Senate-service term that overlaps 2022, not any other nearby district.
+    const serviceRows=input.official.senators.filter(r=>r.officialName===service.officialName);
+    if(serviceRows.length!==1)throw Error('Original official Senate service identity duplicate');
+    const previousDistricts=[...new Set(serviceRows[0]!.senateServiceTerms
+      .filter(term=>term.startsYear<=2022&&(term.endsYear===null||term.endsYear>=2022))
+      .map(term=>Number(term.district))
+      .filter(old=>Number.isInteger(old)&&old>=1&&old<=67&&old!==district))].sort((a,b)=>a-b);
     const personTargets=periods.map(period=>{
       const id=reg+':22:pcc:'+period+':0:0';
       if(input.alreadyAuthenticatedReportIds.has(id))throw Error('Previously authenticated PDF double-counted');
@@ -136,6 +151,7 @@ export function selectServed2022NextOriginalCe(input:{
       return {senator:service.officialName!,officialServiceSource:service.officialServiceSource!,
         officialServiceSourceObservedAt:input.official.source.observedAt,
         originalElectionSourceSha256:SERVED_2022_GENERAL_SOURCE_SHA,
+        official2022PreviousSenateDistricts:previousDistricts,
         reg,district,period,id,viewerSha:pinned.apiSha,districtPageSha:page.htmlSha256!,
         dueOn:rule.dueOn,expectedPeriodEndOn:rule.coverageEndOn};
     });
@@ -148,4 +164,40 @@ export function selectServed2022NextOriginalCe(input:{
     ||new Set(selectedSenators.map(t=>t.registrationNumber)).size!==selectedSenators.length)
     throw Error('New serving-senator report cohort empty, duplicate or out of bounds');
   return {targets,selectedSenators,skippedDistricts,legalSenateReportDenominator:null};
+}
+
+/**
+ * Audit the original 2022 PDF without confusing its printed pre-redistricting
+ * Senate district with the 2022 SOS election's new district. ALL other exact
+ * original first-page checks stay enforced by the existing vetted parser.
+ *
+ * Do not allow arbitrary nearby districts, a winning opponent's district or
+ * a district listed for another member. A unique printed district must match
+ * the new SOS district OR this person's own independently proved LRL 2022
+ * Senate term. Otherwise HOLD, never assert source proof.
+ */
+export function auditServed2022RedistrictedOriginalCe(
+  target:Served2022OriginalCeTarget,pdf:Cfb2022PdfProofCapture|null,
+  calendar:Cfb2022PdfProofCapture|null,error:string|null=null,
+){
+  const h=pdf?.text.replace(/\\u0000/g,'').replace(/\\s+/g,' ').trim().slice(0,6500)??'';
+  const seen=[...h.matchAll(/Senat(?:e|or)\\s+District\\s*:?\\s*(\\d{1,2})\\b/gi)]
+    .map(m=>Number(m[1]));
+  const unique=[...new Set(seen)];
+  const printed=unique.length===1?unique[0]!:null;
+  const historic=printed!==null&&printed!==target.district
+    &&target.official2022PreviousSenateDistricts.includes(printed);
+  const matching=printed!==null&&(printed===target.district||historic);
+  const adapted=matching?{...target,district:printed}:target;
+  const proof=auditCfb2022OriginalCePdf(adapted,pdf,calendar,error);
+  return {...proof,senateDistrict:target.district,
+    verifiedOfficialSenator:target.senator,
+    originalPdfSinglePrintedSenateDistrict:printed,
+    priorOfficial2022SenateServiceDistricts:[...target.official2022PreviousSenateDistricts],
+    originalPdfPrintedPreviouslyOfficial2022SenateDistrict:historic,
+    originalPdfPrintedDistrictSupportedByOfficialElectionOrLRL:matching,
+    originalPdfHeaderIdentityAndPeriodVerified:proof.originalPdfHeaderIdentityAndPeriodVerified&&matching,
+    earliestLegalAndFilingBoundOn:matching?proof.earliestLegalAndFilingBoundOn:null,
+    status:!matching&&proof.status==='original_version_pdf_header_and_independent_calendar_verified'
+      ?'source_pdf_district_not_independently_supported':proof.status};
 }
