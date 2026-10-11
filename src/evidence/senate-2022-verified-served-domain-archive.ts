@@ -132,6 +132,7 @@ export function senatorDomainPreGeneral2022Cdx(
       ||!/^[A-Z2-7]{32}$/.test(row.digest)
       ||row.statuscode!=='200'
       ||/\/(?:wp-(?:admin|includes)|admin|login|feed|xmlrpc|api)(?:\/|$)/i.test(path)
+      ||/^\/event-details\/America(?:\/America)?\/issues\/?$/i.test(path)
       ||/\.(?:jpg|jpeg|png|webp|gif|ico|svg|js|css|woff|ttf|pdf|zip)$/i.test(path)
       ||new URL(row.original).search)
       {dropped++;continue;}
