@@ -31,7 +31,7 @@ function fixture(bill:Bill){
   (x.amended?'as amended, ':'')+'be recommended to pass'+
   (x.reReferralInRecordedMotion?' and be re-referred.':'.')+
   ' There were yeas '+x.yea+' and nays '+x.nay+', as follows: '+
-  'Those who voted in the affirmative were: Senator'+(x.yea===1?' ':'s ')+print(totalYes)+'. '+
+  'Those who voted in the affirmative were: Senators '+print(totalYes)+'. '+
   'Those who voted in the negative were: Senator'+(x.nay===1?' ':'s ')+print(totalNo)+'. '+
   'The motion prevailed. ';
  return pre+record+('Introduction and first reading of unrelated bills. ').repeat(18);
