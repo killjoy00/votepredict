@@ -37,6 +37,10 @@ const cross=JSON.parse(readFileSync(
     sourceStatementShortQuotation?:string;
     senatorLabel?:string;hostLabel?:string;currentTranscriptShortUtterance?:string;
     separateQuoteSpeaker?:string;separateQuoteShortExcerpt?:string;
+    separateQuoteSpeakerOfficialSenateHistory?:string;
+    separateQuoteSpeakerServiceOnPublisherDisplayedDayVerified?:boolean;
+    separateQuoteSpeakerSenateMajorityLeadershipStart?:string;
+    separateQuoteSpeakerMajorityLeadershipOnDisplayedDayVerified?:boolean;
     houseSpeakerMelissaHortmanIsNotMinnesotaSenator?:boolean;
     chiefSponsorOmarFatehWasNotQuotedAsSpeakerInThisSource?:boolean;
     grantHauschildWordsPresentedAsReporterParaphraseNotVerbatim?:boolean;
@@ -129,6 +133,13 @@ test('two distinct currently readable newsroom pages cite same X post; source-da
   assert.equal(alpha.originalPublishedArticleBytesSha256Verified,false);
   assert.equal(reformer.grantHauschildWordsPresentedAsReporterParaphraseNotVerbatim,true);
   assert.equal(reformer.separateQuoteSpeaker,'Erin Murphy');
+  assert.equal(reformer.separateQuoteSpeakerOfficialSenateHistory,
+    'https://www.lrl.mn.gov/legdb/fulldetail?id=15284');
+  assert.equal(reformer.separateQuoteSpeakerSenateMajorityLeadershipStart,'2024-02-06');
+  assert.equal(reformer.separateQuoteSpeakerServiceOnPublisherDisplayedDayVerified,true);
+  assert.equal(reformer.separateQuoteSpeakerMajorityLeadershipOnDisplayedDayVerified,true);
+  assert.ok(reformer.separateQuoteSpeakerSenateMajorityLeadershipStart!<
+    reformer.displayedPublisherDay);
   assert.ok(reformer.separateQuoteShortExcerpt?.includes('committee process'));
   assert.equal(reformer.houseSpeakerMelissaHortmanIsNotMinnesotaSenator,true);
   assert.equal(reformer.chiefSponsorOmarFatehWasNotQuotedAsSpeakerInThisSource,true);
