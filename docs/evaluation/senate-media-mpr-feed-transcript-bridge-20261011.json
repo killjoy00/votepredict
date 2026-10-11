@@ -1,0 +1,129 @@
+{
+  "version": "senate-media-mpr-public-rss-cdn-redirect-current-audio-and-transcript-timing-receipts-v1",
+  "observedDay": "2026-10-11",
+  "publicOnly": true,
+  "officialPublisherRss": "https://feeds.publicradio.org/public_feeds/minnesota-now",
+  "mprPodcastDirectoryVerifiesRssLink": "https://www.mprnews.org/podcasts",
+  "liveOriginalEvidence": {
+    "firstRun": {
+      "runId": 38175628309,
+      "artifactId": 11715807119,
+      "artifactZipSha256": "748602eb59fa2e8ac5bc548815af25527b45919b0119da008a54df3c129c176e",
+      "decodedJsonSha256": "728bb2356beba60a9eb736c610c813b16f4e08d79420b9b6779cb9d998e7a3d1",
+      "decodedJsonBytes": 4991,
+      "sourceHead": "e69f0a53dea042049e4d293a0b75a04020e9fb7c",
+      "result": "publisher_redirect_host_discovery_and_negative_archive_status"
+    },
+    "finalPositiveMp3Run": {
+      "runId": 38176008389,
+      "artifactId": 11715802777,
+      "artifactZipSha256": "633769677ff0943362bb5afdc39116d5f6d70f3a446076184f14979dcad363d3",
+      "decodedJsonSha256": "2e2a22463e5e0632c5065022a9d61c74de32a95262bafbb9db799bce5d63e6c3",
+      "decodedJsonBytes": 7283,
+      "sourceHead": "78f3bc56500c9a0f0b448ae1116339ba6070ca94",
+      "result": "two_current_publisher_mp3_original_resource_bodies_SHA256_verified"
+    }
+  },
+  "currentPodcastFeed": {
+    "status": "current_feed_body_hashed",
+    "httpBodyByteLength": 114571,
+    "rawSha256": "cae90ba656c559a5c24aa4b6cd1ee33f0030ad9bf9c1d6a83e01cf5ca61d965b",
+    "targetLegacyEpisodeMatchesFound": 0,
+    "doesNotEstablishHistoricallyAbsentPodcastEpisode": true
+  },
+  "historicalPodcastFeed": {
+    "requestedOriginalUrl": "https://feeds.publicradio.org/public_feeds/minnesota-now",
+    "indexWindowFrom": "2024-02-15",
+    "indexWindowTo": "2024-03-15",
+    "exactCdxStatus": "index_unavailable_unknown",
+    "historicallyAuthenticRssOriginalBodies": 0,
+    "missingIndexIsNotEvidenceOfHistoricalAbsence": true
+  },
+  "originalPageSource": {
+    "publisher": "MPR News",
+    "original": "https://www.mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south",
+    "originalDisplayedDay": "2024-02-19",
+    "byline": "Cathy Wurzer and Alanna Elder",
+    "senator": "Grant Hauschild",
+    "officialMemberHistory": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15577",
+    "latestCurrentPageRawSha256": "19d29d71fb65f2252b42fe995613591eec97c1fab251c88b053a3d05f7cbbaa3",
+    "currentPageRawBytes": 113341,
+    "currentSourceIncludesSelectedTranscriptPhraseAndSpeakerLabel": [
+      true,
+      true
+    ],
+    "currentlyDisplayedPublisherMetadata": {
+      "datePublished": "2024-02-19T10:32:03-06:00",
+      "dateModified": "2024-02-19T14:15:13.000-06:00"
+    },
+    "dateModifiedNotProvenTranscriptInsertionTime": true,
+    "archived2024OriginalSelectedTranscriptCuePresent": false,
+    "earliestSelectedTranscriptPositiveHistoricallyShaAuthenticatedHtml": "2025-07-24T23:23:22Z",
+    "archived2025OriginalMetadataFetchInThisRun": "archive_mime_mismatch_unknown",
+    "previouslyAuthenticated2025OriginalSha256": "9d1fddfd3983a138515175c6ffe7842cd37e54391a37932e8a503c43876bf725",
+    "earlierShaAuthenticated2025VersionNotInvalidatedByTransientMimeStatus": true,
+    "additionalExactOriginalVariantIndexStatuses": [
+      {
+        "original": "https://mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south",
+        "index": "index_unavailable_unknown"
+      },
+      {
+        "original": "http://www.mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south",
+        "index": "index_unavailable_unknown"
+      },
+      {
+        "original": "http://mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south",
+        "index": "index_unavailable_unknown"
+      },
+      {
+        "original": "https://www.mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south/",
+        "index": "index_unavailable_unknown"
+      }
+    ],
+    "separatelyIndexedUrlVariantsNotAssumedHistoricallyEquivalent": true,
+    "noNewAuthenticatedEarlierTranscriptPositive": true
+  },
+  "publisherLinkedAudio": {
+    "originalSourceGenre": "first_party_MPR_reporter_interview",
+    "bothAudioResourcesRecoveredAsCurrentlyServedPublisherMP3s": true,
+    "audioBodiesDownloadedAndSha256HashedInMemoryOnly": true,
+    "numberCurrentlySha256VerifiedPublisherAudioBodies": 2,
+    "audioLeadResults": [
+      {
+        "senator": "Jeremy Miller",
+        "memberHistory": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15335",
+        "originalArticle": "https://www.mprnews.org/episode/2021/11/15/minnesota-senate-majority-leader-talks-bipartisan-effort-to-distribute-hero-pay",
+        "observed200PublisherCdnHost": "download.stream.publicradio.org",
+        "originalHistoricalArticleEmbedsRelatedMp3Resource": true,
+        "currentHttpStatus": 200,
+        "currentAudioMime": "audio/mpeg",
+        "rawCurrentMp3Sha256": "41c845920ea87ec83c2b955c0e42101d36c03c2c7f9f6273357895aacc1b1b10",
+        "rawBytes": 2606791,
+        "twoSequentialAllowedPublisherRedirects": true,
+        "redirectQueryValuesNotPersisted": true,
+        "historicalIdenticalAudioBinaryShaAuthenticated": false,
+        "completeSpokenWordsReviewed": false
+      },
+      {
+        "senator": "Grant Hauschild",
+        "memberHistory": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15577",
+        "originalArticle": "https://www.mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south",
+        "observed200PublisherCdnHost": "download.stream.publicradio.org",
+        "originalHistoricalArticleEmbedsRelatedMp3Resource": true,
+        "currentHttpStatus": 200,
+        "currentAudioMime": "audio/mpeg",
+        "rawCurrentMp3Sha256": "894bdf42ed5bc383827a8cfd258531a7b49e9a3b7751d447f24eea1957ebe0b0",
+        "rawBytes": 6638508,
+        "twoSequentialAllowedPublisherRedirects": true,
+        "redirectQueryValuesNotPersisted": true,
+        "historicalIdenticalAudioBinaryShaAuthenticated": false,
+        "completeSpokenWordsReviewed": false
+      }
+    ]
+  },
+  "noOriginalMp3OrHtmlOrFeedContentsPersisted": true,
+  "noHumanApprovedCompleteSpokenAudioQuotations": true,
+  "noPublisherFirstTranscriptInsertionClockEstablished": true,
+  "noOfficialRecordedIndividualLegislativeVotesAuthenticated": true,
+  "noPrivateEvidenceOrProductionCollectorsOrForecastsTouched": true
+}
