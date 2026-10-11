@@ -1,0 +1,86 @@
+{
+  "version": "senate-media-rest-2023-exact-public-historical-html-quote-receipts-v1",
+  "reviewedOn": "2026-10-11",
+  "individualSenator": "Ann Rest",
+  "officialService": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10558",
+  "originalIndependentReporter": "Michelle Griffith",
+  "originalPublisher": "Minnesota Reformer",
+  "sourceUrl": "https://minnesotareformer.com/2023/04/26/here-are-some-of-the-differences-between-the-senate-and-house-dfl-tax-plans/",
+  "historicalSourcePreviousShaReceipts": "docs/evaluation/senate-media-2021-25-broader-25-original-public-archive-receipts-20261011.json",
+  "shortCuesSource": "docs/evaluation/senate-media-2023-rest-historical-original-quote-fragment-queue.json",
+  "publicSourceAuditRun": {
+    "runId": 38160243938,
+    "workflow": "Senate media 2023 Ann Rest exact historical quote cues",
+    "result": "success",
+    "exactSourceHeadSha": "720a7a64adab85cd8e72142519c396b7e079bab9",
+    "artifactId": 11709863945,
+    "artifactName": "senate-media-rest-2023-original-phrase-proof",
+    "originalDownloadedZipSha256": "8c748013214c2175622ed2378463ebac799fd5292a79a07822fa5082bca94435",
+    "decodedExactOriginalJsonSha256": "c7a0241699b20e2265ad49929448e3f28b02ab104b8b2423cdeedbaada31be44",
+    "decodedExactOriginalJsonBytes": 4201
+  },
+  "resultCounts": {
+    "originalArchivedHttpBodiesRequested": 2,
+    "originalHttpBodySha1AndSha256BothReverified": 2,
+    "unverifiedOriginalHttpBodies": 0,
+    "shortPhraseHtmlChecks": 4,
+    "phraseFoundInHistoricalHtml": 4,
+    "phraseNotFoundInHistoricalHtml": 0,
+    "phraseUnknownDueToOriginalUnavailable": 0,
+    "sameParagraphNamedSpeakerLabelCues": 4,
+    "originalRecordedAudioCompared": 0,
+    "individualHistoricalSenatorQuotationHumanApproved": 0,
+    "actualRecordedVotesVerified": 0,
+    "originalPublisherFirstPostingClocksAuthenticated": 0
+  },
+  "originalVersionSpecificShortPhraseProofs": [
+    {
+      "captureUtc": "2023-04-27T00:52:03Z",
+      "reverifiedOriginalSha256": "3e8b662519a0a5db015f6820d8c4041229d628e487c944d987b31677a58662d7",
+      "reverifiedOriginalBytes": 140253,
+      "archiveStatus": "original_exact_sha_verified",
+      "cues": [
+        {
+          "cueId": "rest-2023-individual-tax-promise",
+          "historicalHtmlShortFragmentFound": true,
+          "sameHtmlParagraphContainsRestSpeakerLabel": true
+        },
+        {
+          "cueId": "rest-2023-anticipated-34-votes",
+          "historicalHtmlShortFragmentFound": true,
+          "sameHtmlParagraphContainsRestSpeakerLabel": true,
+          "sourceStatementIsAboutExpectedFutureCaucusVotesNotObservedRollCall": true
+        }
+      ]
+    },
+    {
+      "captureUtc": "2023-12-03T13:07:09Z",
+      "reverifiedOriginalSha256": "8cfc8583d72c960866a06dc03d1926252ef19531055e30279e21ec3567c4b056",
+      "reverifiedOriginalBytes": 137489,
+      "archiveStatus": "original_exact_sha_verified",
+      "cues": [
+        {
+          "cueId": "rest-2023-individual-tax-promise",
+          "historicalHtmlShortFragmentFound": true,
+          "sameHtmlParagraphContainsRestSpeakerLabel": true
+        },
+        {
+          "cueId": "rest-2023-anticipated-34-votes",
+          "historicalHtmlShortFragmentFound": true,
+          "sameHtmlParagraphContainsRestSpeakerLabel": true,
+          "sourceStatementIsAboutExpectedFutureCaucusVotesNotObservedRollCall": true
+        }
+      ]
+    }
+  ],
+  "strictMeaning": {
+    "exactHtmlFragmentAndNearByRestAttributionObservedInBothArchivedVersions": true,
+    "namedReporterAttributionNotOriginalSpokenAudioAuthentication": true,
+    "sameParagraphSpeakerLabelIsAHeuristicNotAHumanApproval": true,
+    "expectedCaucusVotesQuoteNotAVerifiedSenatorOrHouseRollCall": true,
+    "originalPublisherPostingClockNotProvenByArchivedDate": true,
+    "originalRawArticleHtmlAndAudioNotPersisted": true,
+    "noPrivateVotePredictSourcesInspected": true,
+    "noIndividualLegislatorVotesOrForecastInputsInferred": true
+  }
+}
