@@ -1,0 +1,40 @@
+name: One-time 2021-22 SD25-36 verified-senator CFB amendment PDF proofs
+
+# Issue #864: original finance source PDFs only, no cron/production or donors.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2021-22-served-sd25-36-30-amendments.yml
+      - scripts/capture-cfb-2021-22-served-sd25-36-30-amendments.ts
+      - src/evidence/cfb-2021-22-served-sd25-36-30-amendments.ts
+      - tests/cfb-2021-22-served-sd25-36-30-amendments.test.ts
+
+permissions:
+  contents: read
+
+jobs:
+  validate-30-original-cfb-amendment-pdf-versions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify 11 real senators, 40 parent originals, 30 amendment keys and first-page safeguards
+        run: node --import tsx --test tests/cfb-2021-22-served-sd25-36-30-amendments.test.ts
+      - name: Acquire all 30 original CFB amendment-version PDFs and test real committee report identity
+        run: |
+          node --import tsx scripts/capture-cfb-2021-22-served-sd25-36-30-amendments.ts \
+            --output artifacts/cfb-2021-22-served-sd25-36-30-amended-report-source.json
+      - name: Preserve source-only metadata and clear identity HOLDs, never PDFs or donor records
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2021-22-served-sd25-36-30-amended-pdf-source-metadata
+          path: artifacts/cfb-2021-22-served-sd25-36-30-amended-report-source.json
+          if-no-files-found: warn
+          retention-days: 30
