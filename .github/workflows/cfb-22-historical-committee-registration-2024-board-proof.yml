@@ -6,8 +6,9 @@ on:
       - src/evidence/cfb-2023-24-official-committee-status-proof.ts
       - scripts/acquire-cfb-22-contemporaneous-committee-registration-evidence.ts
       - tests/cfb-2023-24-official-committee-status-proof.test.ts
-      - docs/evaluation/source-proof/cfb-2023-24-22-committee-signed-board-contemporaneous-status*.psv
-      - docs/evaluation/source-proof/cfb-2023-24-22-committee-signed-board-contemporaneous-status*.json
+      - docs/evaluation/source-proof/cfb-2023-24-22-committee-signed-board-contemporaneous-status-matrix.psv
+      - docs/evaluation/source-proof/cfb-2023-24-22-committee-signed-board-contemporaneous-status-source-checkpoint.json
+      - docs/evaluation/cfb-2023-24-22-original-board-specific-committee-registration-history.md
 permissions:
   contents: read
 jobs:
