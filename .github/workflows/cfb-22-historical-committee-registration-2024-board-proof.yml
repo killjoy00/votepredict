@@ -1,0 +1,33 @@
+name: Original 2024 Board Putnam registration and 22 CFB live committee status probes
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-22-historical-committee-registration-2024-board-proof.yml
+      - src/evidence/cfb-2023-24-official-committee-status-proof.ts
+      - scripts/acquire-cfb-22-contemporaneous-committee-registration-evidence.ts
+      - tests/cfb-2023-24-official-committee-status-proof.test.ts
+      - docs/evaluation/source-proof/cfb-2023-24-22-committee-signed-board-contemporaneous-status*.psv
+      - docs/evaluation/source-proof/cfb-2023-24-22-committee-signed-board-contemporaneous-status*.json
+permissions:
+  contents: read
+jobs:
+  original-board-signed-case-and-22-current-viewer-identities:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/cfb-2023-24-official-committee-status-proof.test.ts
+      - run: node --import tsx scripts/acquire-cfb-22-contemporaneous-committee-registration-evidence.ts --output artifacts/cfb-22-committee-board-2024-signature-current-status.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: original-board-2024-named-committee-case-and-22-current-viewer-metadata
+          path: artifacts/cfb-22-committee-board-2024-signature-current-status.json
+          if-no-files-found: warn
+          retention-days: 30
