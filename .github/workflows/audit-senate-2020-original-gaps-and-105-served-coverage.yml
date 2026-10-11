@@ -1,0 +1,99 @@
+name: Verify real 105 MN senators campaign source coverage and 2020 archive gaps
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-senate-2020-original-gaps-and-105-served-coverage.yml
+      - scripts/report-senate-2021-25-first-party-original-105-person-coverage.mjs
+      - scripts/probe-senate-three-2020-historical-original-domain-gaps.mjs
+      - docs/SENATE_2020_THREE_ARCHIVE_GAPS_AND_105_SERVED_PERSON_COVERAGE.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-105-actually-served-person-full-ledger-offline-coverage:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-2020-archive-gaps-105-actual-senator-coverage-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Reopen complete independently retrieved official MN State Senate original actual-serving directory and special-swearing proof
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/complete-government
+      - name: Independently verify official 105-member source and enumerate every member historical original-candidate-website coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/complete-government -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/complete-government -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          specials="$(find original/complete-government -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$specials"
+          test "$(dirname "$gov")" = "$(dirname "$receipt")"
+          node --import tsx scripts/report-senate-2021-25-first-party-original-105-person-coverage.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$specials" \
+            --out-dir original/official-105-senator-coverage
+      - name: Retain source-only 105-person senator site evidence coverage JSON and Markdown
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-original-official-105-actually-served-person-campaign-coverage-v1
+          path: original/official-105-senator-coverage/
+          if-no-files-found: error
+          retention-days: 30
+  archived-2020-domain-seven-original-cdx-window-source-gap-probe:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-2020-archive-gaps-105-actual-senator-coverage-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Reopen complete original government real-serving-senator source and independent UTC SHA proof
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/complete-government
+      - name: First prove all 3 actually served, then query seven bounded historic original public Wayback CDX indices and original HTML
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/complete-government -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/complete-government -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$gov" && test -n "$receipt"
+          node --import tsx scripts/probe-senate-three-2020-historical-original-domain-gaps.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --out-dir original/2020-expanded-domain-original-index-and-html
+      - name: Retain public original source full historical CDX indices, authentic originals and explicit unknown gaps
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-three-actually-served-2020-expanded-seven-original-domain-gap-probes-v1
+          path: original/2020-expanded-domain-original-index-and-html/
+          if-no-files-found: error
+          retention-days: 30
