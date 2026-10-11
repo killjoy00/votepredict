@@ -165,7 +165,7 @@ export function buildOnlyActualSenatorsDatedIssueSourceLedger(
   'candidate_submitted_questionnaire_current_publisher_html_only');
  if(dated.length!==14||persons.length!==5||archives.length!==10
    ||currentlyObservedOnly.length!==4||excludedUnverifiedPersons!==7)
-   throw Error('Senator-only source lead count changed: cannot silently admit a non-senator');
+   throw Error('Senator-only source lead count changed: cannot silently admit a non-senator (qualified='+dated.length+', people='+persons.length+', archives='+archives.length+', publisher='+currentlyObservedOnly.length+', excluded='+excludedUnverifiedPersons+')');
  if(dated.some(x=>!x.conservativeResearchDate||!x.originalHtmlSourceRetrievedOn
    ||x.admittedEvidenceRecordId!==null||x.eligibleForAutomaticForecast!==false))
    throw Error('Undated or production-promoted senator campaign issue research');
