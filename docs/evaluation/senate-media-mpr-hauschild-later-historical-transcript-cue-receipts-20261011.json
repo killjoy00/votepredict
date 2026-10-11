@@ -1,0 +1,59 @@
+{
+  "version": "senate-media-mpr-hauschild-later-historical-transcript-cue-receipts-v1",
+  "observationDay": "2026-10-11",
+  "sourceOriginalPublisherUrl": "https://www.mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south",
+  "journalistByline": "Cathy Wurzer and Alanna Elder",
+  "displayedPublisherDay": "2024-02-19",
+  "senator": "Grant Hauschild",
+  "officialMemberHistory": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15577",
+  "reporterGenre": "first_party_MPR_audio_interview_and_subsequently_published_transcript",
+  "sourceRun": {
+    "workflow": "Public MPR Hauschild later original transcript version provenance",
+    "runId": 38174084860,
+    "prHeadSha": "b0f54f1356b7219bd855ecb83ffb519e72cf8c94",
+    "artifactId": 11715126994,
+    "archiveZipSha256": "100b112fc295739386823de490504ffdec70c32d01487e893a4a86c433156c6d",
+    "decodedJsonSha256": "195c6bf846b26fb334825e5f297c57edc0fb54ee51db3c77b44f5800cf579478",
+    "decodedJsonBytes": 3091,
+    "liveRunCompletedSuccessfully": true
+  },
+  "historicalIndexFirstPageCandidates": 4,
+  "twoEarliestPreviouslyShaAuthenticatedBodies": 2,
+  "twoAdditionalShaAuthenticatedCaptures": 2,
+  "originalCapturedLaterVersions": [
+    {
+      "captureUtc": "2024-02-20T03:02:36Z",
+      "indexedOriginalSha1Base32": "RBCAJH6FOUINBMBZWYXEX7GWIEIBHNDQ",
+      "rawOriginalSha256": "da848c28bb3c3e1335076de4606ec472d8695a4c2533add45812614df3fc9536",
+      "rawBytes": 80716,
+      "shortSelectedHauschildContentFound": false,
+      "selectedExactSpeakerLabelFound": false,
+      "rawBodyMatchesPreviouslyAuthenticated20240220030216Version": true,
+      "originalAudioAuthenticated": false
+    },
+    {
+      "captureUtc": "2025-07-24T23:23:22Z",
+      "indexedOriginalSha1Base32": "TKIPF5NUQ7HICXBKMOAPLBBOTJCVBLPO",
+      "rawOriginalSha256": "9d1fddfd3983a138515175c6ffe7842cd37e54391a37932e8a503c43876bf725",
+      "rawBytes": 121462,
+      "shortSelectedHauschildContentFound": true,
+      "selectedExactSpeakerLabelFound": true,
+      "speakerNameNearBothShortCues": true,
+      "rawBodyMatchesPreviouslyAuthenticated2024Originals": false,
+      "originalAudioAuthenticated": false
+    }
+  ],
+  "selectedCurrentPublisherExactShortCueIdentifiers": [
+    "i feel that immigration is a federal issue",
+    "grant hauschild:"
+  ],
+  "firstHistoricallyAuthenticatedSelectedTranscriptCuePresenceWithinFourIndexedCaptures": "2025-07-24T23:23:22Z",
+  "notProofOfOriginalTranscriptFirstPostingOrAudioSpokenWords": true,
+  "cannotBackdate2025HtmlTranscriptTextTo2024Captures": true,
+  "later2025CaptureNotOriginal2024RecordingTime": true,
+  "selectedCueFoundInOneOriginalHistoricalHtmlVersionNotFullHumanReviewedQuote": true,
+  "indexedHistoricalOriginalAudioBinaryVerified": false,
+  "recordedIndividualSenateMemberVotesVerified": false,
+  "privateEvidenceOrProductionDataUsed": false,
+  "noOriginalPublisherHtmlOrAudioStored": true
+}
