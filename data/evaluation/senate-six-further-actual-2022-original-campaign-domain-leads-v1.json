@@ -1,0 +1,110 @@
+{
+  "schema": "mn-2022-six-further-ever-served-senator-campaign-original-domain-leads-v1",
+  "issue": 864,
+  "scope": {
+    "historicalElectionYear": 2022,
+    "generalElectionDate": "2022-11-08",
+    "originalCaptureFromUtc": "2022-01-01T00:00:00.000Z",
+    "originalCaptureUntilExclusiveUtc": "2022-11-08T00:00:00.000Z",
+    "actualSenateServiceBeforeSourceRequestsRequired": true,
+    "sixDistinctActualSenateServedPeople": true,
+    "fullPreviousOriginalGovernmentDirectoryReceiptRequired": true,
+    "maximumHistoricCDXIndexRowsPerPerson": 300,
+    "maximumOriginalPageReplaysPerPerson": 4,
+    "maximumOriginalPageReplaysTotal": 24,
+    "siteCurrent2026TextIsHistorical2022Proof": false,
+    "firstAuthorDateNotRequired": true,
+    "archiveCaptureDateMayBeUsedAsResearchPublicBy": true,
+    "originalSOS2022FiledWebsiteNotCertified": true,
+    "productionForecastAdmissionAndDatabaseReadsWrites": 0
+  },
+  "officialPublicLRLSource": {
+    "url": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "independentOriginalSourceRunId": 38094976711,
+    "artifactId": 11685387674,
+    "bytesRehashedBeforeNetwork": true
+  },
+  "targets": [
+    {
+      "id": "sixfurther22-01",
+      "candidateName": "Heather Gustafson",
+      "electionDistrict": "36",
+      "domain": "voteheathergustafson.com",
+      "discoveryUrl": "https://www.voteheathergustafson.com/priorities",
+      "discoveryBasis": "candidate_owned_2026_reused_domain_only_historic_2022_not_yet_proven",
+      "year": 2022,
+      "originalSOSFiledDomainKnown": false,
+      "currentWebsiteStatementsAre2022Proof": false,
+      "attributable2022OriginalArchivePageUnverifiedBeforeAcquisition": true
+    },
+    {
+      "id": "sixfurther22-02",
+      "candidateName": "Julia Coleman",
+      "electionDistrict": "48",
+      "domain": "colemanforsenate.com",
+      "discoveryUrl": "https://www.colemanforsenate.com/issues",
+      "discoveryBasis": "candidate_owned_site_2022_campaign_context_unverified",
+      "year": 2022,
+      "originalSOSFiledDomainKnown": false,
+      "currentWebsiteStatementsAre2022Proof": false,
+      "attributable2022OriginalArchivePageUnverifiedBeforeAcquisition": true
+    },
+    {
+      "id": "sixfurther22-03",
+      "candidateName": "Zach Duckworth",
+      "electionDistrict": "57",
+      "domain": "voteduckworth.com",
+      "discoveryUrl": "https://www.voteduckworth.com/issues",
+      "discoveryBasis": "longstanding_candidate_issues_page_historic_2022_date_not_yet_proven",
+      "year": 2022,
+      "originalSOSFiledDomainKnown": false,
+      "currentWebsiteStatementsAre2022Proof": false,
+      "attributable2022OriginalArchivePageUnverifiedBeforeAcquisition": true
+    },
+    {
+      "id": "sixfurther22-04",
+      "candidateName": "Nick Frentz",
+      "electionDistrict": "18",
+      "domain": "frentzformnsenate.com",
+      "discoveryUrl": "https://www.frentzformnsenate.com/about/",
+      "discoveryBasis": "candidate_owned_senate_domain_original_2022_to_be_verified",
+      "year": 2022,
+      "originalSOSFiledDomainKnown": false,
+      "currentWebsiteStatementsAre2022Proof": false,
+      "attributable2022OriginalArchivePageUnverifiedBeforeAcquisition": true
+    },
+    {
+      "id": "sixfurther22-05",
+      "candidateName": "Alice Mann",
+      "electionDistrict": "50",
+      "domain": "dralicemann.com",
+      "discoveryUrl": "https://dralicemann.com/priorities/",
+      "discoveryBasis": "candidate_owned_senate_domain_2022_research_lead_only",
+      "year": 2022,
+      "originalSOSFiledDomainKnown": false,
+      "currentWebsiteStatementsAre2022Proof": false,
+      "attributable2022OriginalArchivePageUnverifiedBeforeAcquisition": true
+    },
+    {
+      "id": "sixfurther22-06",
+      "candidateName": "John Hoffman",
+      "electionDistrict": "34",
+      "domain": "johnhoffmanmn.com",
+      "discoveryUrl": "https://www.johnhoffmanmn.com/",
+      "discoveryBasis": "corrected_candidate_domain_from_state_election_filing_2026_only_not_2022",
+      "year": 2022,
+      "originalSOSFiledDomainKnown": false,
+      "currentWebsiteStatementsAre2022Proof": false,
+      "attributable2022OriginalArchivePageUnverifiedBeforeAcquisition": true
+    }
+  ],
+  "cautions": [
+    "Do not confuse the 2026 Secretary of State candidate website column with a verified 2022 original election filing.",
+    "Original 2022 archived candidate HTML and its Wayback CDX indexed SHA-1 are independently required before any source content date attribution.",
+    "All six candidates must actually have served in Minnesota Senate as confirmed by the full official original LRL source before any archive network.",
+    "Historical district number changes for already serving people are not new candidate identities.",
+    "An empty original archive domain bounded sample remains unknown; user wants actual date one can attribute not original first-posted date.",
+    "Avoid adopting older-cycle campaign copy as a newly written 2022 statement; archive capture date remains a legitimate date of text observable on site.",
+    "No production database, evidence ingestion, model, scheduler, forecast or office contact."
+  ]
+}
