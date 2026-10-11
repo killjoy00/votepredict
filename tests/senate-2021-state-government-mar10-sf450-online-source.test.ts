@@ -81,8 +81,8 @@ test('invalid fake roster with real Senator or duplicated name cannot seed certi
   ['Alpha','Alpha',...FAKE.slice(2)]),/fully fictional/);
 });
 test('voice votes on other 2021 bills not transformed into 5/3 side votes',()=>{
- const f=fixture().replace('<h2>S.F. 1564:',
-  '<p>Motion prevailed on a voice vote.</p><h2>S.F. 1564:');
+ const f=fixture().replace('<h2>S.F. 1564: Senator Rosen: another bill</h2>',
+  '<h2>S.F. 1564: Senator Rosen: another bill</h2><p>Motion prevailed on a voice vote.</p>');
  // An additional voice motion outside SF450 boundary is irrelevant.
  assert.equal(inspect(f).exactOriginalRollParagraphCount,1);
 });
