@@ -69,6 +69,6 @@ test('reject duplicate or inadequate indexed bill-page reference pairs',()=>{
 test('index sources contain bill-page leads ONLY, never day-specific 2021 member votes',()=>{
  const x=find2021SenateJournalRule1210IndexReferences(fixture());
  assert.equal(x.rule1210IndexReferencesNotNamedRollSourceObservations,true);
- assert.equal(x.noPrivateProductionDatabaseReadsWrites,true);
+ assert.equal(x.noProductionPrivateDatabaseReadsWrites,true);
  assert.equal(x.notVerifiedFull2021JournalRule1210Census,true);
 });
