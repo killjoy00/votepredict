@@ -80,7 +80,7 @@ test('misattributed second bill, floor, duplicated motion and wrong edition all 
   fixture.replace('The amendment was not adopted.','The amendment prevailed.'),
   fixture.replace('FictionalDelta','FictionalZulu'),
   fixture.replace('FictionalEcho','FictionalAlpha'),
-  fixture+fixture.slice(fixture.indexOf('Pursuant to Rule 12.10'),
+  fixture+' REPORT OF VOTE IN COMMITTEE '+fixture.slice(fixture.indexOf('Pursuant to Rule 12.10'),
    fixture.indexOf('The amendment was not adopted.')+30)
  ];
  for(const bad of invalid)assert.throws(()=>inspect(bad,fixture));
@@ -95,4 +95,20 @@ test('source-bound original motion SHA rejects altered statement and names',()=>
  assert.equal(SOURCE.sf970.journalPage,2147);
  assert.notEqual(SOURCE.sf1159.original450CharMotionWindowSHA256,
   SOURCE.sf970.original450CharMotionWindowSHA256);
+});
+
+test('unanchored repeated original SF1159 roll passage is not a second independent committee action',()=>{
+ const fixture=originalFixture();
+ const anchor=fixture.indexOf('Pursuant to Rule 12.10');
+ const end=fixture.indexOf('The amendment was not adopted.')+'The amendment was not adopted.'.length;
+ const repeated=fixture+' '+fixture.slice(anchor,end);
+ const result=inspect(repeated,fixture);
+ assert.equal(result.originalCommitteeAmendmentSideCommitmentDiscoveryOnly.length,2);
+ const votes=result.originalCommitteeAmendmentSideCommitmentDiscoveryOnly;
+ assert.deepEqual(votes.map(x=>[x.bill,x.printedYea,x.printedNay]),
+  [['SF1159',4,6],['SF970',3,6]]);
+ assert.equal(result.pendingIndependentExpectedSideSHAAuthentication,true);
+ // Give the copied paragraph a new explicit committee-vote heading: fail closed.
+ const doubleCommittee=fixture+' REPORT OF VOTE IN COMMITTEE '+fixture.slice(anchor,end);
+ assert.throws(()=>inspect(doubleCommittee,fixture),/exactly one under-heading/);
 });
