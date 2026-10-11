@@ -120,7 +120,7 @@ async function main(){
   {type:'revisor_10A20_2024',action:()=>originalStatute(URLS.chapter10A20_2024,'10A20')},
   {type:'revisor_10A243_2024',action:()=>originalStatute(URLS.chapter10A243_2024,'10A243')},
  ];
- const records=[];
+ const records:Array<Omit<Snapshot,'sourceSha256'|'bytes'> & {role:string;sourceSha256:string|null;bytes:number|null}>=[];
  for(const target of definitions){
   try{records.push({role:target.type,...await target.action()});}
   catch(e){records.push({role:target.type,sourceUrl:target.type==='revisor_10A20_2023'
