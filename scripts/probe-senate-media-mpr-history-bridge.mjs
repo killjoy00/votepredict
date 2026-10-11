@@ -18,7 +18,7 @@ export const ALTERNATES=Object.freeze([
  'https://www.mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south/',
 ]);
 const B32='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', MAXINDEX=110_000,MAXHTML=2_500_000,MAXRSS=4_000_000,MAXAUDIO=25_000_000;
-const AUDIO_HOSTS=new Set(['play.publicradio.org','ondemand.publicradio.org','download.publicradio.org','files.apmcdn.org','podcasts.publicradio.org']);
+const AUDIO_HOSTS=new Set(['play.publicradio.org','ondemand.publicradio.org','download.publicradio.org','download.stream.publicradio.org','files.apmcdn.org','podcasts.publicradio.org']);
 const RSS_MIMES=new Set(['application/xml','application/rss+xml','text/xml','text/plain']);
 function hash32(raw){let n=0,b=0,out='';for(const v of raw){n=(n<<8)|v;b+=8;while(b>=5){b-=5;out+=B32[(n>>>b)&31];}n&=(1<<b)-1;}if(b)out+=B32[(n<<(5-b))&31];return out;}
 const sha256=raw=>createHash('sha256').update(raw).digest('hex');
@@ -31,7 +31,7 @@ export function classifyMediaRedirect(origin,location){let u;try{u=new URL(locat
  if(u.username||u.password||u.port||u.hash||u.protocol!=='https:')return {status:'redirect_not_secure_unknown',host:u.hostname,normalizedPath:null,approved:false,url:null};
  const approved=AUDIO_HOSTS.has(u.hostname)&&!u.search&&u.href.length<=800&&/^\/[a-zA-Z0-9%_./~-]+$/.test(u.pathname);
  return {status:approved?'allowlisted_first_party_media_redirect':'unapproved_redirect_host_or_query_unknown',
- host:u.hostname,normalizedPath:approved?u.pathname.slice(0,550):null,approved,url:approved?u.href:null};
+ host:u.hostname,normalizedPath:approved?u.pathname.slice(0,550):null,queryPresent:!!u.search,approved,url:approved?u.href:null};
 }
 function mp3(raw){return raw.length>128&&(raw[0]===73&&raw[1]===68&&raw[2]===51 || raw[0]===255&&(raw[1]&0xe0)===0xe0);}
 export async function traceAudio(ref,f=fetch){if(!AUDIO.some(x=>x.id===ref.id&&x.url===ref.url))throw Error('unapproved contemporary publisher source audio');
