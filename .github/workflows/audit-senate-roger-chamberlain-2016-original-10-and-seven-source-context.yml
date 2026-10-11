@@ -1,0 +1,63 @@
+name: Independently verify Roger Chamberlain genuine 2016 site 10 policy quotes and 7 source classes
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-senate-roger-chamberlain-2016-original-10-and-seven-source-context.yml
+      - data/evaluation/senate-roger-chamberlain-2016-original-10-economic-issue-excerpts-and-domain-review-v1.json
+      - scripts/audit-senate-roger-2016-original-10-and-seven-domain-source-context.mjs
+      - tests/senate-roger-2016-10-original-campaign-quotes-and-seven-source-context.test.ts
+      - docs/SENATE_CHAMBERLAIN_2016_CANDIDATE_ISSUES_TOMASSONI_WORDPRESS_ORIGINAL_REVIEW.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  official-person-and-five-original-complete-cdx-indexes-seven-original-html-10-2016-campaign-issue-excerpts:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-roger-2016-original-10-excerpts-gap-quality-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Reopen entire independently retrieved original official Minnesota State Senate service directory and original UTC SHA source receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/complete-mn-lrl-source
+      - name: Reopen all 5 entire original Wayback indexed JSON sources and 7 full 2016 to 2020 archived original HTML page bodies
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38169118033
+          name: senate-three-actually-served-2020-expanded-seven-original-domain-gap-probes-v1
+          github-token: ${{ github.token }}
+          path: original/complete-historical-seven-window-pages-and-cdx
+      - name: Check all actual serving names, original full CDX JSON and HTML byte hashes, reject WordPress spam and verify 10 Roger 2016 issue quotes
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/complete-mn-lrl-source -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/complete-mn-lrl-source -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test "$(dirname "$gov")" = "$(dirname "$receipt")"
+          node --import tsx scripts/audit-senate-roger-2016-original-10-and-seven-domain-source-context.mjs \
+            --entire-original-government-senate-html "$gov" \
+            --original-government-utc-sha-audit "$receipt" \
+            --original-seven-window-site-html-cdx-dir original/complete-historical-seven-window-pages-and-cdx \
+            --output original/roger-2016-10-quotes-seven-original-site-sources-proof.json
+      - name: Retain genuine 2016 original candidate policy excerpt and rejected unrelated-page proof (research only)
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-roger-chamberlain-2016-10-original-issue-excerpts-and-seven-original-source-classes-proof-v1
+          path: original/roger-2016-10-quotes-seven-original-site-sources-proof.json
+          if-no-files-found: error
+          retention-days: 30
