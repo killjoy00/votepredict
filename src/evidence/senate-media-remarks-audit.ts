@@ -76,8 +76,20 @@ function validDay(value: string | null | undefined): value is string {
   const day = new Date(value + 'T00:00:00Z');
   return Number.isFinite(day.getTime()) && day.toISOString().slice(0, 10) === value;
 }
+/**
+ * Source, reviewer and archive timestamps must declare a timezone.
+ * Date.parse otherwise treats zone-less publisher clocks as process-local and
+ * may silently normalize impossible dates, inventing a historical cutoff.
+ */
 function instant(value: string | null | undefined): number | null {
-  if (!value || !/^\d{4}-\d{2}-\d{2}T/.test(value)) return null;
+  if (typeof value !== 'string') return null;
+  const parts = /^(\d{4}-\d{2}-\d{2})T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,3})?(Z|([+-])(\d{2}):(\d{2}))$/.exec(value);
+  if (!parts || !validDay(parts[1])) return null;
+  if (parts[2] !== 'Z') {
+    const hours = Number(parts[4]), minutes = Number(parts[5]);
+    if (hours > 14 || minutes > 59 || (hours === 14 && minutes !== 0))
+      return null;
+  }
   const ms = Date.parse(value);
   return Number.isFinite(ms) ? ms : null;
 }
@@ -158,7 +170,7 @@ function namedSenatorIssues(
   cue: string,
   member: SenateMediaRosterYear,
   roster: readonly SenateMediaRosterYear[],
-  publishedAt: number | null,
+  publicationDay: string | null,
 ): string[] {
   const last = senatorSurname(member.senatorName);
   if (!last) return ['speaker_not_explicitly_named_in_attribution'];
@@ -168,12 +180,11 @@ function namedSenatorIssues(
     + mediaRegexEscape(last) + '\\b','i').test(cue);
   if (!fullInCue && !surnameOnlyCue)
     return ['speaker_not_explicitly_named_in_attribution'];
-  if (fullInCue || publishedAt === null) return [];
-  const day = new Date(publishedAt).toISOString().slice(0,10);
+  if (fullInCue || publicationDay === null) return [];
   const competingSenator=roster.some(other=>other.year===member.year
     && other.membershipId!==member.membershipId
     && senatorSurname(other.senatorName)===last
-    && possibleOnDate(other,day));
+    && possibleOnDate(other,publicationDay));
   return competingSenator ? ['ambiguous_senator_surname_requires_full_named_cue'] : [];
 }
 function quoteIssues(
@@ -193,7 +204,10 @@ function quoteIssues(
       || review.publisherPublishedAt !== source.publisherPublishedAt) {
     issues.push('publisher_publication_date_not_proven');
   }
-  if (pub !== null && member && !active(member, new Date(pub).toISOString().slice(0, 10)))
+  // Publication date is the *publisher's calendar day* in its declared zone,
+  // not UTC's potentially different day for the same instant.
+  const publicationDay = pub === null ? null : review.publisherPublishedAt!.slice(0, 10);
+  if (publicationDay !== null && member && !active(member, publicationDay))
     issues.push('senator_not_active_on_publication_date');
   if (!review.issueCategory?.trim()) issues.push('issue_not_reviewed');
   if (!review.reviewedBy?.trim() || instant(review.reviewedAt) === null)
@@ -233,7 +247,7 @@ function quoteIssues(
       issues.push('claimed_quote_not_delimited_as_direct_speech');
     // Named-source presence is necessary but not sufficient for semantic
     // attribution. Same-surname peers require a full, unambiguous name cue.
-    if (member) issues.push(...namedSenatorIssues(cue,member,roster,pub));
+    if (member) issues.push(...namedSenatorIssues(cue,member,roster,publicationDay));
     const dateProof = review.publicationDateProof?.trim() ?? '';
     if (dateProof.length < 6 || !raw.includes(dateProof))
       issues.push('original_publisher_date_proof_missing');

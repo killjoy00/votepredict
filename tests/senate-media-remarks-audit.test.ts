@@ -143,6 +143,92 @@ test('publisher date cannot be changed to backdate article before official captu
   assert.equal(audit({ contexts: [unproven] }).verifiedAttributedQuotePassages, 0);
 });
 
+test('zone-less publisher time cannot authenticate a historically available named senator quote',()=>{
+  const unstated='2023-04-02T12:00:00';
+  const matchingArticle=article.replace(published,unstated);
+  const c=context();
+  c.publisherPublishedAt=unstated;
+  c.sourceSha256=createHash('sha256').update(matchingArticle).digest('hex');
+  const v=review();
+  v.publisherPublishedAt=unstated;
+  v.publicationDateProof='content="'+unstated+'"';
+  const result=audit({
+    contexts:[c],reviews:[v],
+    snapshots:[{sourceDocumentId:'source-1',
+      rawBodyBase64:Buffer.from(matchingArticle).toString('base64')}],
+  });
+  assert.equal(result.verifiedAttributedQuotePassages,0);
+  assert.ok(result.reviewResults[0]?.failures.includes('invalid_publisher_date'));
+  assert.ok(result.reviewResults[0]?.failures.includes('publisher_publication_date_not_proven'));
+  const untimed=context();
+  untimed.evidencePublishedAt='2023-04-04T10:11:12'; // not implicitly UTC
+  assert.ok(audit({contexts:[untimed]}).reviewResults[0]?.failures
+    .includes('archive_url_capture_or_evidence_date_mismatch'));
+  const reviewer=review(); reviewer.reviewedAt='2026-10-10T19:00:00';
+  assert.throws(()=>audit({reviews:[reviewer]}),/Invalid disposition or missing human media review/);
+});
+
+test('invalid calendar instants and impossible offset clocks fail closed instead of rolling dates',()=>{
+  const invalid=['2023-02-29T12:00:00Z','2023-04-31T12:00:00Z',
+    '2023-04-02T12:00:00+14:30','2023-04-02T12:00:00+25:00',
+    '2023-04-02T24:00:00Z','2023-04-02T12:00:00.1234Z'];
+  for(const time of invalid) {
+    const matchingArticle=article.replace(published,time);
+    const c=context();c.publisherPublishedAt=time;
+    c.sourceSha256=createHash('sha256').update(matchingArticle).digest('hex');
+    const v=review();v.publisherPublishedAt=time;
+    v.publicationDateProof='content="'+time+'"';
+    const result=audit({
+      contexts:[c],reviews:[v],
+      snapshots:[{sourceDocumentId:'source-1',
+        rawBodyBase64:Buffer.from(matchingArticle).toString('base64')}],
+    });
+    assert.equal(result.verifiedAttributedQuotePassages,0,time);
+    assert.ok(result.reviewResults[0]?.failures.includes('invalid_publisher_date'),time);
+    assert.ok(result.reviewResults[0]?.failures.includes('publisher_publication_date_not_proven'),time);
+  }
+  const invalidArchive=context();
+  invalidArchive.archiveUrl='https://web.archive.org/web/20230431101112id_/'+original;
+  invalidArchive.sourceUrl=invalidArchive.archiveUrl;
+  invalidArchive.archiveCapturedAt='2023-04-31T10:11:12Z';
+  invalidArchive.evidencePublishedAt=invalidArchive.archiveCapturedAt;
+  const result=audit({contexts:[invalidArchive]});
+  assert.equal(result.verifiedAttributedQuotePassages,0);
+  assert.ok(result.reviewResults[0]?.failures.includes('archive_url_capture_or_evidence_date_mismatch'));
+});
+
+test('senator service and same-surname peers use the publisher LOCAL calendar day, not the UTC day',()=>{
+  // April 2 at 11:30 p.m. in a declared -05:00 zone is already April 3 UTC.
+  const local='2023-04-02T23:30:00-05:00';
+  const datedArticle=article.replace(published,local);
+  const c=context();
+  c.publisherPublishedAt=local;
+  c.sourceSha256=createHash('sha256').update(datedArticle).digest('hex');
+  const v=review();
+  v.publisherPublishedAt=local;
+  v.publicationDateProof='content="'+local+'"';
+  const snapshot={sourceDocumentId:'source-1',
+    rawBodyBase64:Buffer.from(datedArticle).toString('base64')};
+  const accepted=audit({contexts:[c],reviews:[v],snapshots:[snapshot]});
+  assert.equal(accepted.verifiedAttributedQuotePassages,1); // valid zoned timestamp
+  assert.equal(accepted.bySenatorYear[0]?.verifiedPublicationYearQuotes,1);
+  const notYetInSenate=member();notYetInSenate.activeFrom='2023-04-03';
+  const blocked=audit({contexts:[c],reviews:[v],snapshots:[snapshot],
+    roster:[notYetInSenate]});
+  assert.equal(blocked.verifiedAttributedQuotePassages,0);
+  assert.ok(blocked.reviewResults[0]?.failures.includes('senator_not_active_on_publication_date'));
+
+  const sameSurnamePeer:SenateMediaRosterYear={
+    year:2023,senatorId:'senator-bob',membershipId:'membership-bob-23',
+    senatorName:'Bob Example',activeFrom:'2023-04-02',activeThrough:'2023-04-02',
+  };
+  const ambiguous=audit({contexts:[c],reviews:[v],snapshots:[snapshot],
+    roster:[member(),sameSurnamePeer]});
+  assert.equal(ambiguous.verifiedAttributedQuotePassages,0);
+  assert.ok(ambiguous.reviewResults[0]?.failures
+    .includes('ambiguous_senator_surname_requires_full_named_cue'));
+});
+
 test('member identity or membership dates not matching publication date cannot be borrowed', () => {
   const altered = member(); altered.activeFrom = '2023-04-03';
   const verdict = audit({ roster: [altered] });
