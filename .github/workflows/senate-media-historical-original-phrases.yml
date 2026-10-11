@@ -10,6 +10,11 @@ on:
       - docs/evaluation/senate-media-2021-25-pinned-historical-original-phrase-review-queue.json
       - docs/evaluation/senate-media-2021-25-new-public-original-replay-receipts-20261011.json
       - tests/senate-media-historical-phrase-presence.test.ts
+      - tests/senate-media-public-historical-original-phrase-receipts.test.ts
+      - tests/senate-media-public-broader-discovery.test.ts
+      - docs/evaluation/senate-media-2021-25-public-historical-original-phrase-receipts-20261011.json
+      - docs/evaluation/senate-media-2021-25-public-broader-source-discovery.json
+      - docs/evaluation/senate-media-2021-25-parallel-public-discovery-and-original-phrase-review.md
   workflow_dispatch:
 
 permissions:
