@@ -28,15 +28,21 @@ export function inspectOriginalApr08A10Motion(text:string){
 }
 /** Pure textual structural test harness; NOT an authenticated original source. */
 export function inspectApr08A10MotionTextCore(text:string){
- const cues=[...text.matchAll(/\bA10\s+Amendment\b/gi)];
- if(!cues.length)throw Error('Original April8 A10 amendment mention missing');
+ // A roll-call request or a second A10 label is NOT a motion introduction.
+ // Multiple nearby introductions remain held rather than silently deduplicated.
+ const introductions=[...text.matchAll(
+  /\bSenator\s+([A-Za-z][A-Za-z .'-]{1,55}?)\s+(?:moved|moves|offered|proposed)\s+(?:to\s+adopt\s+)?(?:the\s+)?A10\s+Amendment\b/gi
+ )];
+ if(!introductions.length)throw Error('Original A10 motion introduction missing');
  const results=[...text.matchAll(/With\s+a\s+vote\s+of[\s\S]{0,85}?\b7\s*\/\s*3\s*\/\s*1\b[\s\S]{0,45}?\b(?:motion|amendment)\s+prevail(?:ed|s)\b/gi)];
  if(results.length!==1)throw Error('Original A10 vote 7/3/1 tally is absent or repeated');
  const result=results[0]!;
  const tallyAt=result.index??-1;
- const eligibleCues=cues.filter(m=>(m.index??-1)<tallyAt&&tallyAt-(m.index??-1)<1100);
- if(eligibleCues.length===0)throw Error('No original A10 motion connected to explicit reported division');
- const nearest=eligibleCues[eligibleCues.length-1]!;
+ const eligible=introductions.filter(m=>(m.index??-1)<tallyAt&&tallyAt-(m.index??-1)<1100);
+ if(eligible.length!==1)throw Error('No unique A10 motion connected to reported division');
+ const nearest=eligible[0]!;
+ const movedBy=nearest[1]!.trim();
+ if(!OFFICIAL.has(movedBy))throw Error('A10 mover not on verified Elections roster');
  const start=Math.max(0,(nearest.index??0)-310),end=Math.min(text.length,tallyAt+620);
  const neighborhood=text.slice(start,end);
  // Restrict named response extraction to the explicit A10 result paragraph.
@@ -49,11 +55,11 @@ export function inspectApr08A10MotionTextCore(text:string){
   ||[...yea,...nay,...absent].some(x=>!OFFICIAL.has(x)))
   throw Error('Original source A10 7/3/1 sides do not exactly partition 11 current Elections senators');
  const beforeMotion=flat(text.slice(Math.max(0,(nearest.index??0)-320),(nearest.index??0)+90));
- const mover=beforeMotion.match(/\bSenator\s+([A-Za-z][A-Za-z .'-]{1,55}?)\s+moved\s+the\s+A10\s+Amendment\b/i);
+ const mover=movedBy;
  return {
   hearingDate:SOURCE.date,originalBillAttribution:'SF2384',
   originalMotionLabel:'A10 Amendment',
-  originalMotionMover: mover?.[1]?.trim()??null,
+  originalMotionMover: mover,
   originalA10SourceNearestLabelTextOffset:nearest.index,
   originalExactVoteTallyTextOffset:tallyAt,
   originalNearbyTextSHA256:sha(neighborhood),
