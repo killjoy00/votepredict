@@ -11,6 +11,9 @@ on:
       - docs/evaluation/senate-media-reformer-four-historical-brief-dated-alias-queue-20261011.json
       - docs/evaluation/senate-media-public-article-discovery-2021-25.json
       - docs/evaluation/senate-media-2021-25-exact-public-replay-receipts-20261010.json
+      - docs/evaluation/senate-media-reformer-four-historic-brief-dated-alias-receipts-20261011.json
+      - tests/senate-media-reformer-four-historic-alias-receipts.test.ts
+      - docs/evaluation/senate-media-2021-25-reporter-speaker-correction-and-alias-originals.md
   workflow_dispatch:
 permissions:
   contents: read
