@@ -1,0 +1,26 @@
+# Minnesota CFB historical principal committee status — signed 2024 source and 22 live-viewer distinctions
+
+**Issue #864 — original public campaign-finance sources only, acquired October 11, 2026.** This is the next committee-by-committee original-source audit after independent 2022 actual service, 2023 SOS and 2024 Senate roster source matches. It addresses the exact problem that a report on today's viewer is not by itself historical evidence of a committee being registered, actively reporting, or legally owing a report.
+
+## Independent original signed regulator record: Aric Putnam
+
+The Minnesota Campaign Finance and Public Disclosure Board's original [2024 conciliation agreement](https://cfb.mn.gov/pdf/bdactions/1674_Conciliation_Agreement.pdf) authenticates **Aric Putnam's principal committee registration #18430**, says that the committee **registered in 2019**, discusses its **second amended 2023 year-end report**, and bears September 2024 Board/candidate signatures. The original public Board PDF was retrieved directly from `cfb.mn.gov`; source **SHA-256 `1e830c6e0b3f45342b801c545c61f3d9720195c8e64d951ab633286776ac0921`**, **85,070 bytes**. This is a specifically named *historical Board action*, not a generic law and not a 2026 web-page status guess.
+
+**Important reconciliation of earlier partial research:** The permanent source-proven 71 version ledger has **four** Putnam 2023 year-end version references, not two: original `18430:23:pcc:YE:0:0` and amendments `:1`, `:2`, `:3`. The **second amended** version `:2` was already an **independently authentic original CFB PDF** (SHA-256 `c87661cb23bbc25c5a74b34fbbaea52ea5862ddad29250eda7d586c6d9b3c7da`) with **June 3, 2024 Board receipt**; the September 2024 original regulator agreement's terminology is therefore consistent with this existing authentic report version. The original **first amendment `:1` remains held** because first-page registration proof has not been authenticated. The **third amendment `:3`** is a separately authenticated later PDF. The Board agreement does **not** prove the precise date when amendment `:2` became publicly accessible, independently verify `:1`, or establish whether any annual filing was legally required under all statutory exceptions. No fifth version was created.
+
+## Committee-by-committee current status observations — **not historical registration**
+
+For all **22 separately proven actually 2022-serving and 2023/2024-rostered Minnesota senators**, the original CFB **2026-segment candidate viewer HTML** was fetched and SHA-256+byte-sized. **22/22** pages matched their expected committee registration numbers and **Senate Committee** headings. On this October 11, 2026 observation:
+
+- Exactly **two** specific current pages explicitly label their committee **Terminated**: **Steve Drazkowski #18763 (Senate District 20)** and **Bruce Douglas Anderson #17362 (SD29)**.
+- The other **20** current pages **do not carry that explicit termination label**. That absence is **not** affirmative "Active" status, and is not proof of continuous committee registration or activity at any past time.
+
+The immutable [22-row original CFB government page SHA/byte matrix](source-proof/cfb-2023-24-22-committee-signed-board-contemporaneous-status-matrix.psv) ties every current observation to committee number and original 2022 person/district; the [signed 2024 Board action and current snapshot source-run checkpoint](source-proof/cfb-2023-24-22-committee-signed-board-contemporaneous-status-source-checkpoint.json) records report-version reconciliation and precisely bounded facts. The original PDFs and 22 raw candidate HTML bodies are **not persisted**; only safe source metadata, SHA values, IDs, names, districts and current labels.
+
+## Unresolved evidence, not assumed
+
+The **historical registration/termination date for any of the 22 specific committees in 2023 or 2024 is still unknown** apart from Putnam's original regulator statement of its initial **2019 registration year** and 2024 signed action. A current 2026 termination label does **not** mean Drazkowski or Anderson terminated in 2023/24. No historical registration-status change, final termination report, Board certified termination notice/action, or committee-by-committee year-end filing-duty denominator was authenticated from these contemporary pages. Earlier original §§10A.20, 10A.243 and 10A.245 legal conditions remain in force; a committee does not automatically terminate on election loss or leaving office.
+
+No source in this audit independently proves an actual historical **public-by** date for any of the **71 report version IDs**, including original Board receipts, amendments, or the separately signed September 2024 agreement. Earlier source proof remains **68 authentic distinct PDF binaries, 2 original identity holds, 1 duplicate amendment PDF alias**, with no history-based forecast eligibility. A separate strict historic Wayback exact-version PDF-SHA audit is under way; an archive index result without full matching PDF bytes is not sufficient.
+
+**Safeguards:** original public government finance sources only, no donor name, raw financial transaction, contact data, raw PDF/HTML, production database reads/writes, model/forecast/serving/scheduler or 2027 changes. **Keep issue #864 OPEN**.

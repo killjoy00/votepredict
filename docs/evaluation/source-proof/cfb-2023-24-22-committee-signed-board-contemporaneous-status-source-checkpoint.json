@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "cfb-2024-original-signed-board-putnam-2019-and-22-current-committee-viewers-v1",
+  "issue": 864,
+  "researchDate": "2026-10-11",
+  "originalBoard": {
+    "url": "https://cfb.mn.gov/pdf/bdactions/1674_Conciliation_Agreement.pdf",
+    "pdfSha256": "1e830c6e0b3f45342b801c545c61f3d9720195c8e64d951ab633286776ac0921",
+    "originalPdfBytes": 85070,
+    "putnamCommitteeRegistration": "18430",
+    "boardStatesRegisteredYear": 2019,
+    "senatorSigned": "2024-09-20",
+    "boardChairSigned": "2024-09-04",
+    "originalBoardMentionsSecondAmended2023YE": true,
+    "originalBoardSecondAmendedReportMatchesExistingVersion": "18430:23:pcc:YE:0:2",
+    "existingVersion2OriginalCfbPdfSha256": "c87661cb23bbc25c5a74b34fbbaea52ea5862ddad29250eda7d586c6d9b3c7da",
+    "existingVersion2BoardReceiptOn": "2024-06-03",
+    "currentViewer2023AmendmentRefs": [
+      1,
+      2,
+      3
+    ],
+    "amendment1StillHeldForOriginalPDFIdentity": true,
+    "originalVersion2ActuallyPublicBy": null,
+    "historicalLegallyOwedYearEnd": null
+  },
+  "original22CurrentViewerLedger": {
+    "path": "docs/evaluation/source-proof/cfb-2023-24-22-committee-signed-board-contemporaneous-status-matrix.psv",
+    "gitBlobSha": "cf0fe5f8edfd240e05db3ff5870491bf4be9b8d8",
+    "bytes": 10078,
+    "rows": 22,
+    "yearObserved": 2026,
+    "sourceStatusIsCurrentNotHistorical": true,
+    "explicitlyTerminatedCurrentRegs": [
+      "18763",
+      "17362"
+    ],
+    "currentUnlabelledTerminatedCount": 20,
+    "all22ExactRegHeadingsValidated": true
+  },
+  "originalPriorAuthenticated71Source": {
+    "path": "docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv",
+    "gitBlobSha": "bfa1c1eff6a095a3a0d03aa49a34e1d929d6a388"
+  },
+  "proofRuns": [
+    {
+      "runId": 38173812185,
+      "artifactId": 11715455687,
+      "head": "6caf14c508a14d273151b40aad2b03607932fe81",
+      "result": "success",
+      "zipSha256": "9c8963d3d3eab8b590dbb71b88876dea12d8c222c01b11842222f9f6b239d7d4",
+      "jsonSha256": "9d73f50ccaf91eefd321418b93d1d524cb0f65dffdaf8cc292e987c90301acb0",
+      "originalCurrent2026ViewerMatched22": true
+    }
+  ],
+  "unresolved": {
+    "specific22CommitteeYearend2023And2024LegallyOwed": null,
+    "specificCommittee2023Or2024TerminationDate": null,
+    "legalDutyFromCurrent2026StatusInferenceForbidden": true,
+    "actualHistoricallyPublicReportVersionProvenCount": 0,
+    "inferredNew2023AmendmentFromBoardMentionForbidden": true
+  },
+  "safeguards": {
+    "noRawPDFOrHtmlStored": true,
+    "noDonorOrContactRows": true,
+    "noProductionDbWrite": true,
+    "noModelForecastOrServing": true,
+    "no2027": true,
+    "issue864Open": true
+  }
+}
