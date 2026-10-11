@@ -1,0 +1,73 @@
+name: Reconcile all original dated 2022-25 campaign issues for served Senate members
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-senate-six-served-dated-issues.yml
+      - src/evidence/senate-six-served-person-dated-campaign-coverage.ts
+      - scripts/audit-senate-six-served-dated-campaign-sources-offline.ts
+      - tests/senate-six-served-dated-campaign-sources.test.ts
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  six-senator-original-reconciliation:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-unified-senator-only-dated-2022-25-campaign-source-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Get independently acquired original 2022 Senate campaign pages
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38098726687
+          name: senate-2022-verified-senators-original-campaign-archive-v1
+          github-token: ${{ github.token }}
+          path: artifacts/original-2022-senate-campaign
+      - name: Get Senate-service and special-election swearing original public bytes
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: artifacts/original-lrl-senate
+      - name: Rehash service/swearing/candidate source bytes, produce dated 2022-25 six-senator source ledger
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="artifacts/original-lrl-senate"
+          campaign="artifacts/original-2022-senate-campaign"
+          lrl="$(find "$root" -type f -name 'mn-lrl-official-senate-service-directory.html' -print -quit)"
+          meta="$(find "$root" -type f -name 'mn-lrl-official-senate-service-directory-audit.json' -print -quit)"
+          oath="$(find "$root" -type f -name 'mn-lrl-official-senate-special-swearing-history.html' -print -quit)"
+          html_a="$(find "$campaign" -type f -name 'carla-2022-page-a-wayback-20221006161531.html' -print -quit)"
+          html_b="$(find "$campaign" -type f -name 'carla-2022-page-b-wayback-20221006164845.html' -print -quit)"
+          test -n "$lrl" && test -n "$meta" && test -n "$oath"
+          test -n "$html_a" && test -n "$html_b"
+          node --import tsx scripts/audit-senate-six-served-dated-campaign-sources-offline.ts \
+            --official-lrl-original "$lrl" \
+            --official-lrl-metadata "$meta" \
+            --official-lrl-swearing "$oath" \
+            --carla-2022-original-a "$html_a" \
+            --carla-2022-original-b "$html_b" \
+            --output artifacts/six-verified-senators-2022-25-dated-campaign-issue-sources.json
+      - name: Preserve named served-senator-only dated 20-excerpt original evidence research report
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-six-ever-served-only-dated-campaign-issue-source-ledger-v1
+          path: artifacts/six-verified-senators-2022-25-dated-campaign-issue-sources.json
+          retention-days: 30
+          if-no-files-found: error
