@@ -120,3 +120,17 @@ test('markup normalization produces content only; source digest must be computed
  assert.ok(t.includes('Yes: Alfa'));
  assert.ok(!t.includes('attack()'));
 });
+
+
+test('original Senate HTML named typography &ldquo;/&rdquo; roundtrips before motion parsing',()=>{
+ const encoded=synthetic().replace(/“/g,'&ldquo;').replace(/”/g,'&rdquo;');
+ const text=normalizeOfficialMinutesHtml(encoded);
+ assert.ok(text.includes('voting “yes”'));
+ assert.ok(text.includes('voting “no,”'));
+ const result=inspect(encoded);
+ assert.equal(result.records.length,7);
+ assert.deepEqual(result.records.map(r=>r.contradictoryMotionVersusConclusionLabel),
+  [false,false,false,false,false,false,true]);
+ assert.equal(result.records[0]!.namedNay,0);
+ assert.equal(result.records[6]!.actualConclusionPrintedLabel,'A26');
+});
