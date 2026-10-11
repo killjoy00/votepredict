@@ -208,6 +208,27 @@ export function auditActualSenatorAmendmentPdf(
   const pdfFound=!!pdf&&pdf.sourceUrl===url
     &&shaOk(pdf.sha256)&&Number.isInteger(pdf.bytes)&&pdf.bytes>=300
     &&pdf.bytes<=30_000_000&&validObserved(pdf.observedAt);
+  // Source-only structured diagnostics: numeric district labels and positions,
+  // never source report prose, donation text, names or addresses. Crucial when
+  // an old PDF layout does not match the 2022 first-page report template.
+  const normalizedForDiagnosis=pdfFound
+    ?pdf!.text.replace(/\u0000/g,'').replace(/\s+/g,' ').trim().slice(0,6500):'';
+  const districtDiagnostic={
+    originalSourceTextChars:pdfFound?pdf!.text.length:0,
+    officialFirstPageWindowChars:normalizedForDiagnosis.length,
+    officeWordPositions:[...normalizedForDiagnosis.matchAll(/\bSenat(?:e|or)\b/gi)]
+      .slice(0,10).map(m=>m.index),
+    exactSenateDistrictLabels:[...normalizedForDiagnosis.matchAll(
+      /Senat(?:e|or)\s+District\s*:?\s*(\d{1,2})\b/gi)].slice(0,15)
+      .map(m=>({district:Number(m[1]),offset:m.index})),
+    otherDistrictLabelNumbers:[...normalizedForDiagnosis.matchAll(
+      /\b(?:District|Dist\.?)\s*(?:No\.?\s*)?(?:#\s*)?(\d{1,2})\b/gi)]
+      .slice(0,15).map(m=>({district:Number(m[1]),offset:m.index})),
+    principalCampaignReportTitlePresent:/Report of Receipts and Expenditures\s+for\s+Principal Campaign Committee/i.test(normalizedForDiagnosis),
+    registrationLabelPresent:/Registration\s+Number\s*:/i.test(normalizedForDiagnosis),
+    coveredPeriodLabelPresent:/Period\s+Covered\s*:/i.test(normalizedForDiagnosis),
+    boardReceiptStampPresent:/Received\s+by\s+the\s+Board/i.test(normalizedForDiagnosis),
+  };
   const district=pdfFound?uniquePrintedSenateDistrict(pdf!.text):null;
   const supportedDistrict=district!==null&&(district===target.original.printedOriginalDistrict
     ||district===target.original.electionDistrict);
@@ -254,6 +275,7 @@ export function auditActualSenatorAmendmentPdf(
     electionDistrict2022:original.electionDistrict,
     originalReportPrintedSenateDistrict:original.printedOriginalDistrict,
     amendedPdfPrintedSenateDistrict:supportedDistrict?district:null,
+    structuralDistrictDiagnostics:districtDiagnostic,
     originalViewerApiSha256:target.originalReportsViewerBodySha256,
     originalCfbRosterSha256:target.originalCfbDistrictRosterSha256,
     amendedPdfSourceUrl:pdfFound?pdf!.sourceUrl:null,
