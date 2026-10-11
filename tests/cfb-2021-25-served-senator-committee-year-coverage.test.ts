@@ -12,7 +12,7 @@ const P='docs/evaluation/source-proof/';
 const cp=JSON.parse(readFileSync(P+
   'cfb-2021-25-served-senator-committee-year-coverage-source-checkpoint.json','utf8'));
 const digest=(s:string)=>createHash('sha256').update(s,'utf8').digest('hex');
-const lines=(s:string)=>{assert.ok(s.endsWith('\n'));return s.slice(0,-1).split('\n');};
+const lines=(s:string)=>{assert.ok(s.length>0);return (s.endsWith('\n')?s.slice(0,-1):s).split('\n');};
 const textMatrix=readFileSync(cp.matrix.path,'utf8');
 const textQueue=readFileSync(cp.acquisitionQueue.path,'utf8');
 const fields=(body:string,keys:string[])=>lines(body).map(line=>{
@@ -101,6 +101,8 @@ function observedIds(row:Record<string,string>):string[]{
     k.startsWith(year.slice(2)+':pcc:')).map(k=>reg+':'+k);
 }
 test('all permanent original sources and the two generated tables are SHA-pinned, without donor rows',()=>{
+  assert.equal(textMatrix.endsWith('\n'),true);
+  assert.equal(textQueue.endsWith('\n'),true);
   assert.equal(cp.schemaVersion,
     'cfb-served-senator-2021-25-committee-year-coverage-source-v1');
   assert.equal(cp.issueNumber,864);
