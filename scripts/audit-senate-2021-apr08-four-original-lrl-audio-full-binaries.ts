@@ -90,6 +90,10 @@ async function oneFullOriginal(spec:April08OriginalAudio,tempFolder:string,index
  const check=verifyFirstPinnedApril08AudioPrefix(spec,Buffer.concat(prefix));
  const fullSHA256=hash.digest('hex');
  const duration=probeDuration(filepath);
+ // Three original first-Judiciary automatic-caption review offsets, not votes.
+ const captionReviewOffsetsSeconds=spec.part==='judiciary-first'?[3503,4004,4943]:null;
+ const captionOffsetsWithinThisWholeRecording=captionReviewOffsetsSeconds===null||duration===null
+  ?null:captionReviewOffsetsSeconds.every(t=>t<=duration);
  return {
   bill:spec.bill,part:spec.part,originalSourceURL:spec.url,
   originalHTTPStatus:res.status,declaredContentType:contentType,
@@ -100,6 +104,8 @@ async function oneFullOriginal(spec:April08OriginalAudio,tempFolder:string,index
   originalFirstPrefixSignature:check.signature,
   ffprobeFullOriginalAudioDurationSeconds:duration,
   ffprobeDurationIndependentlyObtained:duration!==null,
+  captionOffsetsWithinThisWholeRecording,
+  captionReviewOffsetsAreNotMotionTimestamps:true,
   originalAudioSourceCompleteBinaryAuthenticityProven:true,
   originalHumanAudioListeningPerformed:false,
   actualDibbleMcEwenPappasMotionContentVerified:false,
