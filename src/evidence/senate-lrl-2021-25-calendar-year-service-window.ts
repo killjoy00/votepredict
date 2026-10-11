@@ -121,9 +121,25 @@ export function buildActualSenatorOfficialYearOverlapResearch(
   }
   people.sort((a,b)=>a.officialPersonName.localeCompare(b.officialPersonName)
     ||a.officialPersonNameRaw.localeCompare(b.officialPersonNameRaw));
+  const districtLabels=new Map<string,string[]>();
+  for(const p of people)for(const district of p.senateDistrictsReportedForAnyPartOfYear)
+   districtLabels.set(district,[...(districtLabels.get(district)??[]),p.officialPersonName]);
+  const unrepresented=Array.from({length:67},(_,i)=>String(i+1))
+   .filter(d=>!districtLabels.has(d));
+  const repeated=[...districtLabels.entries()]
+   .filter(([,names])=>names.length>1)
+   .map(([district,officialNames])=>({district,officialNames}))
+   .sort((a,b)=>Number(a.district)-Number(b.district));
   return{
    year,
    officialRecordedPeopleWithSomeSenateServiceYearOverlap:people.length,
+   reportedDistrictLabelDiagnostics:{
+    distinctDistrictLabels:districtLabels.size,
+    noOfficialServiceYearRowForTheseLabels:unrepresented,
+    labelsWithMultipleObservedSenateServicePeople:repeated,
+    missingLabelIsNotProofOfVacancyOrNeverServing:true,
+    overlappingLabelMayBeRealMidyearTransitionOrSourceError:true,
+   },
    uniqueOfficialNameRawRows:people.length,
    incompleteDayResolvedMembershipDenominator:true,
    people,
