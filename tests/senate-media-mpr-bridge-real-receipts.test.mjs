@@ -60,7 +60,7 @@ test('first party current RSS is not a source for historical podcast absence or 
  assert.equal(bridge.currentPodcastFeed.rawSha256,'cae90ba656c559a5c24aa4b6cd1ee33f0030ad9bf9c1d6a83e01cf5ca61d965b');
  assert.equal(bridge.currentPodcastFeed.targetLegacyEpisodeMatchesFound,0);
  assert.equal(bridge.currentPodcastFeed.doesNotEstablishHistoricallyAbsentPodcastEpisode,true);
- assert.equal(bridge.historicalPodcastFeed.exactHistoricalCdxStatus,'index_unavailable_unknown');
+ assert.equal(bridge.historicalPodcastFeed.exactCdxStatus,'index_unavailable_unknown');
  assert.equal(bridge.historicalPodcastFeed.historicallyAuthenticRssOriginalBodies,0);
  assert.equal(bridge.historicalPodcastFeed.missingIndexIsNotEvidenceOfHistoricalAbsence,true);
 });
