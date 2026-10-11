@@ -1,5 +1,6 @@
 name: One-time original 2025 Elections remaining 8 named-roll motion contexts
 
+# Rerun after 2026-10-10 prior original artifact 11690925461 failed closed on two near-EOF offsets.
 # Only 2025-02-11, 2025-03-25, 2025-04-08 original official LRL PDFs
 # and immutable prior PDF/text SHA+offset ledger. Never member-vote import.
 on:
