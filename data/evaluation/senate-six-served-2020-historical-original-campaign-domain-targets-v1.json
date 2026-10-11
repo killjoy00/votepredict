@@ -1,0 +1,96 @@
+{
+  "schema": "senate-six-actually-served-2020-original-campaign-domains-v1",
+  "issue": 864,
+  "scope": {
+    "electionYear": 2020,
+    "electionDay": "2020-11-03",
+    "fromInclusive": "2019-01-01T00:00:00.000Z",
+    "toExclusive": "2020-11-03T00:00:00.000Z",
+    "verifiedEverActuallyServedSenatePeople": 6,
+    "onlySenatorsWith2021ActualFollowingElectionSenateService": true,
+    "targetsCount": 6,
+    "domainArchiveIndexMaxRows": 300,
+    "archivedOriginalHtmlPageReplaysPerCandidateMax": 4,
+    "anyLrlIdentityMismatchPreventsAllNetworkFetches": true,
+    "campaignSitesCurrentlyKnownAreDiscoveryLeadsNotHistoricalFiledWebsites": true,
+    "firstPublicationDatesNotProven": true,
+    "noForecastOrProductionEvidenceActions": true
+  },
+  "provenance": {
+    "originalLrlSenateDirectoryRunId": 38094976711,
+    "originalLrlArtifactId": 11685387674,
+    "originalLrlDirectoryUrl": "https://www.lrl.mn.gov/legdb/senate_dir"
+  },
+  "targets": [
+    {
+      "id": "senate20-01",
+      "personLRLName": "Mark Johnson",
+      "electionDistrict2020": "1",
+      "sourceCampaignDomain": "markjohnsonmnsenate.com",
+      "webDiscoveryLead": "https://www.markjohnsonmnsenate.com/",
+      "siteArchivedContent2019Or2020ProofPending": true,
+      "originalSosFiledCampaignWebsiteAt2020Unverified": true,
+      "sourceCampaignTextNotYetHumanVerified": true
+    },
+    {
+      "id": "senate20-02",
+      "personLRLName": "Jen McEwen",
+      "electionDistrict2020": "7",
+      "sourceCampaignDomain": "votemcewen.com",
+      "webDiscoveryLead": "https://www.votemcewen.com/issues-1",
+      "siteArchivedContent2019Or2020ProofPending": true,
+      "originalSosFiledCampaignWebsiteAt2020Unverified": true,
+      "sourceCampaignTextNotYetHumanVerified": true
+    },
+    {
+      "id": "senate20-03",
+      "personLRLName": "Aric Putnam",
+      "electionDistrict2020": "14",
+      "sourceCampaignDomain": "aricformn.com",
+      "webDiscoveryLead": "https://aricformn.com/",
+      "siteArchivedContent2019Or2020ProofPending": true,
+      "originalSosFiledCampaignWebsiteAt2020Unverified": true,
+      "sourceCampaignTextNotYetHumanVerified": true
+    },
+    {
+      "id": "senate20-04",
+      "personLRLName": "Gary Dahms",
+      "electionDistrict2020": "16",
+      "sourceCampaignDomain": "dahmsforsenate.com",
+      "webDiscoveryLead": "https://www.dahmsforsenate.com/",
+      "siteArchivedContent2019Or2020ProofPending": true,
+      "originalSosFiledCampaignWebsiteAt2020Unverified": true,
+      "sourceCampaignTextNotYetHumanVerified": true
+    },
+    {
+      "id": "senate20-05",
+      "personLRLName": "Mary Kunesh",
+      "electionDistrict2020": "41",
+      "sourceCampaignDomain": "marykunesh.com",
+      "webDiscoveryLead": "https://marykunesh.com/",
+      "siteArchivedContent2019Or2020ProofPending": true,
+      "originalSosFiledCampaignWebsiteAt2020Unverified": true,
+      "sourceCampaignTextNotYetHumanVerified": true,
+      "official2020BallotNameVariant": "Mary Kunesh-Podein",
+      "originalLRLFormerNameIdentityVerifiedSeparately": true
+    },
+    {
+      "id": "senate20-06",
+      "personLRLName": "Steve Cwodzinski",
+      "electionDistrict2020": "48",
+      "sourceCampaignDomain": "cwodforsenate.com",
+      "webDiscoveryLead": "https://cwodforsenate.com/vision",
+      "siteArchivedContent2019Or2020ProofPending": true,
+      "originalSosFiledCampaignWebsiteAt2020Unverified": true,
+      "sourceCampaignTextNotYetHumanVerified": true
+    }
+  ],
+  "caveats": [
+    "Official LRL person names govern verification; Mary Kunesh-Podein was a historical ballot name variant, not another person.",
+    "2020 election districts (Jen SD07, Gary SD16, Mary SD41, Steve SD48) are historical service districts and should never be rewritten to 2023 redistricted numbers.",
+    "Any candidate website content archived during 2019 may be from earlier/transitioning elections; original campaign cycle and speaker attribution still require separate HTML review.",
+    "Actual original website text must hash-match historical CDX; this query does not source official SOS filed candidate websites.",
+    "A bounded sample, unavailable index, or lack of 200 HTML pages cannot prove no original policy statement existed.",
+    "No source inserted into predictions, model training or production evidence."
+  ]
+}
