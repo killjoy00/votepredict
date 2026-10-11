@@ -1,0 +1,62 @@
+name: Acquire 12 actual MN senators' original 2022 first-party campaign web pages
+
+# Public 2022 historic source acquisition only, one-shot PR research.
+# No private DB, candidate outreach, scheduler, serving or forecast changes.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/acquire-senate-2022-twelve-verified-served-original-pages.yml
+      - data/evaluation/senate-twelve-served-2022-original-campaign-domain-targets-v1.json
+      - scripts/acquire-senate-2022-twelve-served-original-campaign-domains.ts
+      - scripts/run-senate-2022-twelve-served-original-campaign-domains.ts
+      - tests/senate-twelve-served-2022-original-campaign-domains.test.ts
+      - docs/SENATE_2022_TWELVE_MORE_VERIFIED_PERSON_ORIGINAL_SITE_SEARCH.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-2022-public-campaign-html-for-twelve-actually-served:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-twelve-actual-senators-original-2022-sites-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Fetch previously independently archived official Minnesota Senate directory HTML and source hash
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: source/original-lrl
+      - name: Verify senator identities BEFORE twelve bounded real historical 2022 domain queries and original page replays
+        shell: bash
+        timeout-minutes: 17
+        run: |
+          set -euo pipefail
+          lrl="$(find source/original-lrl -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find source/original-lrl -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$lrl" && test -n "$receipt"
+          test "$(dirname "$lrl")" = "$(dirname "$receipt")"
+          node --import tsx scripts/run-senate-2022-twelve-served-original-campaign-domains.ts \
+            --lrl-directory-html "$lrl" \
+            --lrl-original-source-receipt "$receipt" \
+            --output-dir source/twelve-senators-2022-actual-historical-original-archive
+      - name: Retain original independent 2022 CDX indices, authenticated page bytes and dated source failures
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-2022-twelve-original-verified-served-campaign-page-sources-v1
+          path: source/twelve-senators-2022-actual-historical-original-archive/
+          if-no-files-found: warn
+          retention-days: 30
