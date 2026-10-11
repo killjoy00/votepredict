@@ -133,7 +133,7 @@ test('URL tamper, unpinned original SHA or forged verification flags rejected BE
 
 test('changed body SHA, missing index, redirect, MIME and stream byte limit never approve historical quotes',async()=>{
   const s=synthetic(html);
-  const cases=[
+  const cases:Array<[string,()=>Response]>=[
     ['archive_redirect_refused',()=>new Response(null,{status:302,headers:{location:'https://other.example/'}})],
     ['archive_http_denied',()=>new Response('blocked',{status:403,headers:{'content-type':'text/html'}})],
     ['archive_content_type_untrusted',()=>new Response(s.bytes,{headers:{'content-type':'application/pdf'}})],
