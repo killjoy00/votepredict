@@ -128,7 +128,7 @@
     "historicalPublicByVerified": 0,
     "statewideLegallyRequiredReportDenominator": null,
     "thisCohortLegallyRequiredReportCount": null,
-    "originalVersionViewerKeyDoesNotGuaranteePdfAmendmentCheckbox": false,
+    "originalVersionViewerKeyDoesNotGuaranteePdfAmendmentCheckbox": true,
     "originalPdfBytesOrDonorsStored": false,
     "modelOrProductionDataChanged": false,
     "issue864RemainsOpen": true
