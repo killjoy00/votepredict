@@ -1,0 +1,102 @@
+{
+  "version": "senate-media-three-unverified-reformer-brief-original-urls-v1",
+  "preparedOn": "2026-10-11",
+  "referenced15OriginalNewsroomLeads": "docs/evaluation/senate-media-2021-25-further-independent-reporting-15-leads.json",
+  "originalShaArchiveDatedPathIndexUnavailableAsOfPreviousResearch": true,
+  "originalArticleExactAliasNotAssumedFromMatchingSlug": true,
+  "futureYearOriginalPublisherTimeNotBackdated": true,
+  "humanFullSenatorQuoteApproval": false,
+  "authenticOriginalAudioCompared": false,
+  "individualFloorCommitteeVotesAuthenticated": false,
+  "originalReporterTextOnlyNotOfficialRollCall": true,
+  "articleTextAndAudioNeverSaved": true,
+  "sourcePairs": [
+    {
+      "originalReporterArticleLeadId": "new-reporter-2021-commissioners",
+      "displayedPublisherDay": "2021-07-02",
+      "reporterByline": "Ricardo Lopez",
+      "indexedPreviouslyUnavailableDatedUrl": "https://minnesotareformer.com/2021/07/02/senate-gop-will-hold-confirmation-hearings-on-walz-commissioners-as-special-session-continues-indefinitely/",
+      "proposedAlternativeOriginalBriefUrl": "https://minnesotareformer.com/briefs/senate-gop-will-hold-confirmation-hearings-on-walz-commissioners-as-special-session-continues-indefinitely/",
+      "publisherAlternatePathEvidenceType": "publisher-current-brief-category",
+      "publisherSiblingArticleThatCrossLinksToBriefsUrl": null,
+      "candidateArticleTitleOrSlugIsNotOriginalArchiveIdentityProof": true,
+      "bylineAndPublisherCurrentSiteDateNotHistoricFirstPostingProof": true,
+      "memberQuoteShortCues": [
+        {
+          "id": "new-reporter-2021-commissioners-senator-fragment-1",
+          "memberName": "Michelle Benson",
+          "shortCurrentPublisherReporterCue": "It has been conveyed to me that Sen. Gazelka",
+          "originalAudioChecked": false,
+          "fullTextIndividuallyApproved": false,
+          "recordedVoteProven": false
+        },
+        {
+          "id": "new-reporter-2021-commissioners-senator-fragment-2",
+          "memberName": "Susan Kent",
+          "shortCurrentPublisherReporterCue": "This is a blatant abuse of power",
+          "originalAudioChecked": false,
+          "fullTextIndividuallyApproved": false,
+          "recordedVoteProven": false
+        }
+      ]
+    },
+    {
+      "originalReporterArticleLeadId": "new-reporter-2022-special-session",
+      "displayedPublisherDay": "2022-06-16",
+      "reporterByline": "J. Patrick Coolican",
+      "indexedPreviouslyUnavailableDatedUrl": "https://minnesotareformer.com/2022/06/16/no-special-legislative-session-no-tax-cuts-no-extra-education-spending/",
+      "proposedAlternativeOriginalBriefUrl": "https://minnesotareformer.com/briefs/no-special-legislative-session-no-tax-cuts-no-extra-education-spending/",
+      "publisherAlternatePathEvidenceType": "publisher-current-brief-category",
+      "publisherSiblingArticleThatCrossLinksToBriefsUrl": null,
+      "candidateArticleTitleOrSlugIsNotOriginalArchiveIdentityProof": true,
+      "bylineAndPublisherCurrentSiteDateNotHistoricFirstPostingProof": true,
+      "memberQuoteShortCues": [
+        {
+          "id": "new-reporter-2022-special-session-senator-fragment-1",
+          "memberName": "Jeremy Miller",
+          "shortCurrentPublisherReporterCue": "Even with a bipartisan legislative agreement to cut income taxes",
+          "originalAudioChecked": false,
+          "fullTextIndividuallyApproved": false,
+          "recordedVoteProven": false
+        }
+      ]
+    },
+    {
+      "originalReporterArticleLeadId": "new-reporter-2025-sick-leave",
+      "displayedPublisherDay": "2025-05-06",
+      "reporterByline": "Max Nesterak",
+      "indexedPreviouslyUnavailableDatedUrl": "https://minnesotareformer.com/2025/05/06/blue-dog-democrats-vote-to-roll-back-paid-sick-leave-for-workers-at-small-farms-and-businesses/",
+      "proposedAlternativeOriginalBriefUrl": "https://minnesotareformer.com/briefs/blue-dog-democrats-vote-to-roll-back-paid-sick-leave-for-workers-at-small-farms-and-businesses/",
+      "publisherAlternatePathEvidenceType": "publisher-current-brief-plus-crosslinked-in-2025-05-09-story",
+      "publisherSiblingArticleThatCrossLinksToBriefsUrl": "https://minnesotareformer.com/2025/05/09/labor-fights-to-preserve-recent-gains-at-minnesota-legislature-and-other-labor-news/",
+      "candidateArticleTitleOrSlugIsNotOriginalArchiveIdentityProof": true,
+      "bylineAndPublisherCurrentSiteDateNotHistoricFirstPostingProof": true,
+      "memberQuoteShortCues": [
+        {
+          "id": "new-reporter-2025-sick-leave-senator-fragment-1",
+          "memberName": "Grant Hauschild",
+          "shortCurrentPublisherReporterCue": "It's okay to pass laws",
+          "originalAudioChecked": false,
+          "fullTextIndividuallyApproved": false,
+          "recordedVoteProven": false
+        },
+        {
+          "id": "new-reporter-2025-sick-leave-senator-fragment-2",
+          "memberName": "Judy Seeberger",
+          "shortCurrentPublisherReporterCue": "I'm proud of the earned sick and safe time law",
+          "originalAudioChecked": false,
+          "fullTextIndividuallyApproved": false,
+          "recordedVoteProven": false
+        },
+        {
+          "id": "new-reporter-2025-sick-leave-senator-fragment-3",
+          "memberName": "Jen McEwen",
+          "shortCurrentPublisherReporterCue": "These farmworkers are some of the least protected",
+          "originalAudioChecked": false,
+          "fullTextIndividuallyApproved": false,
+          "recordedVoteProven": false
+        }
+      ]
+    }
+  ]
+}
