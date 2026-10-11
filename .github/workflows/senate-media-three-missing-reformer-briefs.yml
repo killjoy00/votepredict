@@ -1,0 +1,52 @@
+name: Public Senate three missing original Reformer briefs paths
+
+# Public #987/#946: 3 currently unverified reporter news article URL leads.
+# Alternate publisher /briefs/ path is NOT proven historical article identity.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-three-missing-reformer-briefs.yml
+      - src/evidence/senate-media-three-missing-newsroom-brief-original-audit.ts
+      - scripts/probe-senate-media-three-missing-reformer-briefs.ts
+      - tests/senate-media-three-missing-reformer-brief-original-audit.test.ts
+      - docs/evaluation/senate-media-three-unverified-reformer-brief-original-archive-hypotheses-20261011.json
+      - docs/evaluation/senate-media-2021-25-further-independent-reporting-15-leads.json
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: senate-media-three-unverified-reformer-brief-originals
+  cancel-in-progress: false
+jobs:
+  public-original-article-path-archive:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-seven-remaining-reporter-original-quote-audit-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Probe six exact dated and publisher /briefs/ original URLs without assuming URL alias identity
+        run: |
+          node --import tsx scripts/probe-senate-media-three-missing-reformer-briefs.ts \
+            --output artifacts/senate-media-three-original-brief-gap-proofs.json
+      - name: Retain only original indexed SHA1 raw SHA256 UTC and bounded brief original cue statuses
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-three-publisher-brief-original-historical-proofs
+          path: artifacts/senate-media-three-original-brief-gap-proofs.json
+          if-no-files-found: error
+          retention-days: 7
