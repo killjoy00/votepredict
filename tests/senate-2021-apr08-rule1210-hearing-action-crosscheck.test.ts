@@ -8,22 +8,22 @@ import {APR12_THREE_STRICT_ORIGINAL as journal} from
   '../src/evidence/senate-2021-apr12-three-strict-original-committee-amendments.js';
 
 type Spec=(typeof crosscheck.cases)[number];
-const mockHtml=(spec:Spec,actionDay=spec.committeeActionDay,actionResult:string=spec.recordedResult)=>\`
+const mockHtml=(spec:Spec,actionDay=spec.committeeActionDay,actionResult:string=spec.recordedResult)=>`
 <html><head><title>Original Senate Committee Bill Log</title></head>
 <body>
-<h1>Committee on \${spec.committee}</h1>
+<h1>Committee on ${spec.committee}</h1>
 <p>Other bill heading S.F.0001: DATE UNOFFICIAL STATUS FOR SF0001
  04/08/2021 Meeting scheduled for eleven Discussion only</p>
-<section><h2>S.F.\${spec.bill.slice(2)}: (AUTHORS: Fictional Senator)</h2>
+<section><h2>S.F.${spec.bill.slice(2)}: (AUTHORS: Fictional Senator)</h2>
 <p>Historical committee bill discussion and action ledger.</p>
-<div>DATE&nbsp; UNOFFICIAL STATUS FOR \${spec.bill}</div>
-<p>\${spec.discussionDay} Meeting scheduled for thirteen in Room Livestream YouTube</p>
+<div>DATE&nbsp; UNOFFICIAL STATUS FOR ${spec.bill}</div>
+<p>${spec.discussionDay} Meeting scheduled for thirteen in Room Livestream YouTube</p>
 <p>Discussion only</p>
-<p>\${actionDay} Meeting scheduled for thirteen in Room Livestream YouTube</p>
-<p>\${actionResult}</p>
+<p>${actionDay} Meeting scheduled for thirteen in Room Livestream YouTube</p>
+<p>${actionResult}</p>
 </section>
 <section><h2>S.F.9999:</h2><p>04/08/2021 Motion prevailed on unrelated bill</p></section>
-</body></html>\`;
+</body></html>`;
 
 test('separate April 8 action records for TWO bills, not motion-level vote-date proof',()=>{
  const parsed=crosscheck.cases.map(spec=>inspectOriginalApril08BillLog(mockHtml(spec),spec));
