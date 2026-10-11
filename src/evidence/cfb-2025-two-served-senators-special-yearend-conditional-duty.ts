@@ -13,10 +13,17 @@ import {
   validateActualSenateServiceForElection,
   type AuditedOfficialSenateDirectory,
 } from './senate-official-ever-served-directory.js';
-import {
-  SERVED_2025_YE_CALENDAR,SERVED_2025_YE_CALENDAR_SHA,
-  SERVED_2025_YE_DUE,SERVED_2025_YE_REFERENCE_LEDGER_SHA,
-} from './cfb-2025-served-two-ordinary-year-end-originals.js';
+import {CFB_SD6_2025_GENERAL_CALENDAR}
+  from './cfb-sd6-2025-report-pdf-probe.js';
+import {SERVED_2025_SOURCE_LEDGER_SHA256}
+  from './cfb-2025-served-special-final-pdf-proof.js';
+// Independently pinned in original 2025 District 6 CFB calendar source
+// checkpoint and 41-committee source-viewer ledger.
+export const SERVED_2025_YE_CALENDAR=CFB_SD6_2025_GENERAL_CALENDAR;
+export const SERVED_2025_YE_CALENDAR_SHA=
+  '008ed4221d1c660c388023b10fe9159e3ece90d880c422c0d6dddff74dea0d37' as const;
+export const SERVED_2025_YE_DUE='2026-02-02' as const;
+export const SERVED_2025_YE_REFERENCE_LEDGER_SHA=SERVED_2025_SOURCE_LEDGER_SHA256;
 
 export const SPECIAL_2025_SERVING_SENATORS_CONDITIONAL_DUTY_SCHEMA=
   'cfb-2025-actual-senators-2-special-yearend-conditional-duty-original-calendar-v1' as const;
