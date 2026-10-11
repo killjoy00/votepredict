@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "cfb-2025-actual-served-two-senators-yearend-originals-and-conditional-duty-permanent-source-checkpoint-v1",
+  "provenance": {
+    "issue": 864,
+    "sourcePdfAudit": {
+      "run": "https://github.com/killjoy00/votepredict/actions/runs/38099730516",
+      "exactSourceHeadSha": "ff42c2d2ecd4f31e27a435fd0f1e527b640fa92e",
+      "mergedImplementationCommit": "122ab348abeb841742328d8954a5a3fc05398d86",
+      "originalArtifactId": 11686294025,
+      "originalArtifactName": "cfb-2025-two-actual-served-senators-ordinary-yearend-pdf-proof",
+      "originalArtifactZipSha256": "cf00d3ec6cdf53b3e4cf8dc98434ed2d5bb80dc8eb2f5c1132098b3db9aadd36",
+      "originalMetadataJsonBytes": 7314,
+      "originalMetadataJsonSha256": "76ab9f1105449277edbd1a469b21e2c58742f9b11fdb8dc418f6c487fc4f15a9",
+      "capturedAt": "2026-10-11T00:50:24.512Z",
+      "exactHeadFullCi": "https://github.com/killjoy00/votepredict/actions/runs/38099730524"
+    },
+    "independentConditionalAudit": {
+      "run": "https://github.com/killjoy00/votepredict/actions/runs/38099768898",
+      "exactSourceHeadSha": "bb6486ae525bc5139110eaee6cb557225664e92e",
+      "mergedImplementationCommit": "5d040c9aacd02b54c27eebcc2bffbde26af7c73b",
+      "originalArtifactId": 11687725162,
+      "originalArtifactName": "cfb-2025-two-actual-served-senators-yearend-termination-exception-source",
+      "originalArtifactZipSha256": "ee20d71972f1fe19138108f1df313681e5242a3d084476fc56ec458d29e040fe",
+      "originalMetadataJsonBytes": 7251,
+      "originalMetadataJsonSha256": "4a3f1cdbd1307882d048f2edb71a10ddf5c5289eb9b840a9b3b557201a398c69",
+      "capturedAt": "2026-10-11T00:50:57.445Z",
+      "exactHeadFullCi": "https://github.com/killjoy00/votepredict/actions/runs/38099768913"
+    },
+    "parentSpecialFinalCheckpoint": "cfb-2025-served-senators-2-special-cycle-final-original-source-checkpoint.json",
+    "original2025ViewerVersionLedger": "cfb-2025-dated-senate-85-reference-versions.psv",
+    "permanentMetadataLedger": "cfb-2025-two-served-senators-yearend-original-pdf-ledger.psv",
+    "canonicalLedgerSha256WithoutFinalNewline": "6441fe9ccd02ca89706ba68ee8c344b4140983c889258ebce758a1684812eae0",
+    "canonicalLedgerBytesWithoutFinalNewline": 387
+  },
+  "officialSources": {
+    "originalActualSenateServicePdfRun": {
+      "directoryUrl": "https://www.lrl.mn.gov/legdb/senate_dir",
+      "directorySha256": "4255d2763ee78a62878002a526c7b99d40ddab35bbe52f5d12312bbb9f4d8b2c",
+      "directoryBytes": 1601232,
+      "directoryRetrievedAt": "2026-10-11T00:50:17.700Z",
+      "swearingUrl": "https://www.lrl.mn.gov/history/caucus?body=s",
+      "swearingSha256": "83e1a172439da6b3996bb4ec8cb33db5fdea32ab18fbbcc84f8072ebb6d80da5",
+      "swearingBytes": 330790,
+      "swearingRetrievedAt": "2026-10-11T00:50:16.759Z"
+    },
+    "independentConditionalRuleRun": {
+      "directoryUrl": "https://www.lrl.mn.gov/legdb/senate_dir",
+      "directorySha256": "b49b358fc0a008b76fe4fa2a1ba5284d5e5823a4869b1c8e60f9e339d905b875",
+      "directoryBytes": 1601232,
+      "directoryRetrievedAt": "2026-10-11T00:50:54.474Z",
+      "swearingUrl": "https://www.lrl.mn.gov/history/caucus?body=s",
+      "swearingSha256": "2947af485a43683055a3e8ec14556623f81914fb793a77b9d32275236bca54e2",
+      "swearingBytes": 330790,
+      "swearingRetrievedAt": "2026-10-11T00:50:52.762Z"
+    },
+    "originalGeneralDisclosureCalendar": {
+      "url": "https://cfb.mn.gov/pdf/calendars/2025_general_disclosure_calendar.pdf?t=1743206400",
+      "pdfSha256": "008ed4221d1c660c388023b10fe9159e3ece90d880c422c0d6dddff74dea0d37",
+      "pdfBytes": 100283,
+      "originalYearendSourceRunRetrievedAt": "2026-10-11T00:50:19.059Z",
+      "conditionalRuleRunRetrievedAt": "2026-10-11T00:50:55.038Z",
+      "yearEnd2025DueOn": "2026-02-02"
+    },
+    "specialDisclosureCalendars": [
+      {
+        "district": 29,
+        "url": "https://cfb.mn.gov/pdf/calendars/2025_special_election_29.pdf",
+        "pdfSha256": "b102a7297a6ff1add3bcdb4bce03ef9761f3a3433908cbb507e95554fd3d38b2",
+        "pdfBytes": 96309,
+        "retrievedAt": "2026-10-11T00:50:54.957Z",
+        "exactYearEndUnlessTerminationClauseVerified": true
+      },
+      {
+        "district": 47,
+        "url": "https://cfb.mn.gov/pdf/calendars/2025_special_election_47.pdf",
+        "pdfSha256": "3b7669d2597632278b2a0e895a5cbf7199492fd286872127f6d9e36d9eb13291",
+        "pdfBytes": 96308,
+        "retrievedAt": "2026-10-11T00:50:54.959Z",
+        "exactYearEndUnlessTerminationClauseVerified": true
+      }
+    ]
+  },
+  "actualServedSenatorSourceReports": [
+    {
+      "person": "Michael Holmstrom Jr",
+      "district": 29,
+      "registrationNumber": "19229",
+      "originalYearEndReportId": "19229:25:pcc:YE:0:0",
+      "originalPdfSha256": "115af8ec4d2fcf19323ae88cc2e858f1d1cda00c03e9ca994bf31e2070335289",
+      "pdfBytes": 18020,
+      "originalPdfRetrievedAt": "2026-10-11T00:50:22.614Z",
+      "originalPdfUrl": "https://cfb.mn.gov/rptViewer/Main.php?do=viewPDF&downloadpdf=false&year=25&type=pcc&period=YE&se=0&regnum=19229&amend=0",
+      "originalViewerApiSha256": "584b5ed98bca7843b6eba51b378328ef41d209aedbbd6d294b5b7526078e5b50",
+      "viewerApiUnchanged2026": true,
+      "specialCycleFinalReportId": "19229:25:pcc:YE:1:0",
+      "specialCycleFinalOriginalPdfSha256": "0cecaf71ada09c3cb7d12dd439438dc432c7998159250b7c62e85bfdb0e383b2",
+      "specialFinalPeriodEndOn": "2025-11-19",
+      "yearEndPeriodStartOn": "2025-11-20",
+      "yearEndPeriodEndOn": "2025-12-31",
+      "coverageContiguous": true,
+      "boardReceivedOn": "2026-02-01",
+      "calendarDueOn": "2026-02-02",
+      "conservativeLegalAndReceiptNotBeforeOn": "2026-02-03",
+      "october2026CurrentRegistryReportedRegistrationOn": "2025-07-29",
+      "independent2025EffectiveRegistrationProved": false,
+      "terminationReportCheckboxIndependentlyVerified": null,
+      "yearEndLegallyOwed": null,
+      "exactHistoricalPublicByOn": null,
+      "forecastEligible": false
+    },
+    {
+      "person": "Amanda Hemmingsen-Jaeger",
+      "district": 47,
+      "registrationNumber": "19233",
+      "originalYearEndReportId": "19233:25:pcc:YE:0:0",
+      "originalPdfSha256": "49c40d0255ffc20e8ae7b13237f84c9c000753807788108f804daa45a0e7eb4e",
+      "pdfBytes": 18085,
+      "originalPdfRetrievedAt": "2026-10-11T00:50:24.511Z",
+      "originalPdfUrl": "https://cfb.mn.gov/rptViewer/Main.php?do=viewPDF&downloadpdf=false&year=25&type=pcc&period=YE&se=0&regnum=19233&amend=0",
+      "originalViewerApiSha256": "bf4173cf5d5bd0cb796b5d2537d017db7130e7a7d54654bfa0d8f0b95b52ad80",
+      "viewerApiUnchanged2026": true,
+      "specialCycleFinalReportId": "19233:25:pcc:YE:1:0",
+      "specialCycleFinalOriginalPdfSha256": "e96a87e4bd9d0583382ae2345fd597e7c8d6db7f919c91797516c975b1ca4ab1",
+      "specialFinalPeriodEndOn": "2025-11-19",
+      "yearEndPeriodStartOn": "2025-11-20",
+      "yearEndPeriodEndOn": "2025-12-31",
+      "coverageContiguous": true,
+      "boardReceivedOn": "2026-01-31",
+      "calendarDueOn": "2026-02-02",
+      "conservativeLegalAndReceiptNotBeforeOn": "2026-02-03",
+      "october2026CurrentRegistryReportedRegistrationOn": "2025-08-01",
+      "independent2025EffectiveRegistrationProved": false,
+      "terminationReportCheckboxIndependentlyVerified": null,
+      "yearEndLegallyOwed": null,
+      "exactHistoricalPublicByOn": null,
+      "forecastEligible": false
+    }
+  ],
+  "scopeAndLimits": {
+    "reportYear": 2025,
+    "candidateViewerSegmentEndYear": 2026,
+    "sourceAcquiredUtcDate": "2026-10-11",
+    "sourcedActualSenatorsCount": 2,
+    "newAuthenticatedOriginalYearEndPdfCount": 2,
+    "independentSpecialCalendarTerminationExceptionClausesVerified": 2,
+    "previouslyAuthenticatedSpecialFinalOriginalPdfsCountedAgain": 0,
+    "independentOriginalAmendmentCheckboxVerified": 0,
+    "historicallyEffectiveRegistrationIndependentlyEstablished": 0,
+    "terminationCheckboxOrTerminationsIndependentlyEstablished": 0,
+    "legallyOwed2025YearEndReportCount": null,
+    "statewideLegallyOwedReportDenominator": null,
+    "independentHistoricalPublicByCount": 0,
+    "sourceToProductionDbReconciled": false,
+    "sourceViewerOriginalAmendmentZeroDoesNotProveUnamendedCheckbox": true,
+    "retrospective2026CFBRegistryNotContemporaneousTerminationEvidence": true,
+    "reportOriginalsNotAlreadyAuthenticatedInEarlierCohorts": true,
+    "noCandidateContactOrDonorOrTransactionData": true,
+    "noRawOriginalPdfBodiesCommitted": true,
+    "noProductionDatabaseModelServingSchedulerOr2027Changes": true,
+    "issue864MustStayOpen": true
+  }
+}
