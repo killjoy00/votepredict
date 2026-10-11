@@ -32,10 +32,9 @@ async function fetchOfficialHistoricalStatute(input:(typeof SOURCES)[number]){
  const body=new TextDecoder('utf8').decode(bytes);
  const audit=auditOriginalSection10A245Source({
   lawYear:input.year,originalRevisorHtml:body});
- return{year:input.year,sourceUrl:input.url,sha256:sha,
+ return{...audit,year:input.year,sha256:sha,
    originalHtmlBytes:size,observedAt:new Date().toISOString(),
-   sourceTitleAndOperativeLawVerified:true,
-   ...audit};
+   sourceTitleAndOperativeLawVerified:true};
 }
 function err(e:unknown){
  const s=e instanceof Error?e.message:String(e);
