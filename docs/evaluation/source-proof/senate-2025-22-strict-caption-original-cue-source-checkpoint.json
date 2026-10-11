@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "senate-2025-22-strict-original-caption-procedural-cue-first-source-checkpoint-v1",
+  "issue": 864,
+  "sourceAuthority": "Minnesota Legislative Reference Library",
+  "originalParserRepairPR": 1019,
+  "originalParserRepairMergeSha": "f9f73ef77296e6503cd944da1e9b27b9fd2b5ae5",
+  "actualOriginalOneTimeRunId": 38109398816,
+  "actualOriginalOneTimeRunConclusion": "success",
+  "originalArtifactId": 11691027647,
+  "originalArtifactName": "senate-2025-22-original-caption-strict-procedural-cues-v2",
+  "independentlyDownloadedAndHashVerifiedOriginalArtifactZipSha256": "8d50cfc1707b15c9e78d532c62f134f24471d30e7c32e1fd23005b013da91c07",
+  "independentlyDownloadedOriginalArtifactZipBytes": 13728,
+  "independentlyDownloadedAndHashVerifiedUncompressedJsonSha256": "f1e3af71d2ed4543d3a587791ce9f54e92547faef81242618cada7cda06aef4c",
+  "originalUncompressedJsonBytes": 98340,
+  "exactOriginalIndexedHearingToMtgidSourceRunId": 38079233118,
+  "exactOriginalRecordHtmlSourceRunId": 38081463362,
+  "exactPriorCaptionBodyAvailabilitySourceRunId": 38103766440,
+  "prior2025OriginalCaptionSourceArtifactId": 11688528042,
+  "prior2025CaptionMetadataJsonSha256": "2cb3071e63359a62cc74a63625b62aeb57459cebffd0f58a613d35f93383cc3a",
+  "originalOneTimeResult": {
+    "originalOfficialMediaRecordPagesExpected": 22,
+    "originalHTMLAndCaptionByteShaReverified": 22,
+    "originalSourceFailures": 0,
+    "originalTimeMarkersInDecodedCaptionHtml": 47306,
+    "originalPagesWithAtLeastOneStrictProceduralCueWindow": 18,
+    "originalTopLevelSourceCueWindowsTotal": null,
+    "sourceArtifactOldTopLevelWasNaNSerializedAsNull": true,
+    "originalTopLevelSourceCueWindowsSavedInPacket": 160,
+    "independentlyRecomputedCueWindowsFromAll22IndividualSourceRecords": 160,
+    "sourceCueWindowsOmittedByDisplayCap": 0,
+    "strictNoPreviewTimeCategoryWindowCounts": {
+      "committee_recommendation": 11,
+      "formal_motion_introduction": 24,
+      "voice_vote_language": 68,
+      "explicit_roll_request": 29,
+      "formal_motion_result": 28
+    },
+    "originalIndexedHearingDaysWithNoStrictRegexCue": [
+      "2025-01-22",
+      "2025-02-17",
+      "2025-03-03",
+      "2025-03-10"
+    ]
+  },
+  "limitations": {
+    "strictRegexCueWindowsNotIndependentlyConfirmedUniqueMotions": true,
+    "noRegexMatchesIsNotEvidenceNoMotionsOrVotes": true,
+    "originalCaptionsNotReplayedWithOriginalAudioVideo": true,
+    "noNamedSenatorIndividualYeaNayCertified": true,
+    "noHumanBillOrSpeakerSemanticAdjudication": true,
+    "noOriginalCaptionWordsOrHtmlStored": true,
+    "original2021PrintMinutesStillUnenumerated": true,
+    "historical2022PrintElectronicParityStillUnknown": true,
+    "officialStatewide2021to2025SenateCommitteeVoteDenominator": null,
+    "noPrivateDatabaseReadsOrWrites": true,
+    "noProductionModelForecastTrainingServingSchedulerFloor2027Changes": true,
+    "noGovernmentOfficeContact": true,
+    "issue864MustRemainOpen": true
+  }
+}
