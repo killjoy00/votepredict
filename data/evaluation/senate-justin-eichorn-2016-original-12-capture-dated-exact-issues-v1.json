@@ -1,0 +1,225 @@
+{
+  "schema": "mn-justin-eichorn-actual-2021-senator-12-exact-2016-archived-campaign-policy-quotes-v1",
+  "scope": {
+    "issue": 864,
+    "actual2021MNStateSenateServiceRequired": true,
+    "electionYear": 2020,
+    "electionDistrict": "5",
+    "wholeSourceHTMLCopies": 4,
+    "wholeIndependentCDXSources": 8,
+    "oldCandidate2016PageSections": 1,
+    "shortExactPolicyExcerpts": 12,
+    "original2016CampaignCopyNotNew2020Authorship": true,
+    "oldCopied2018ContentNotDoubleCounted": true,
+    "publisherOct2020RelayNotOriginalFirstPartyHtml": true,
+    "archiveCaptureUTCPublicByNotFirstAuthor": true,
+    "productionDatabaseEvidenceModelForecastChanges": 0
+  },
+  "provenance": {
+    "govRun": 38094976711,
+    "govArtifact": 11685387674,
+    "govSHA256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "original2020SiteRun": 38156756023,
+    "original2020Artifact": 11708239911,
+    "original2020HomeFile": "five20-02-archive-20200520132938-0.html",
+    "original2020HomeSHA256": "e1cf0bad13e365607f802de2e881ad8f45773aea308b368fc3e1878e641b3424",
+    "original2020HomeCDX": "O5XRMF3E73RCZZMMUGUEMEVGLACMJJY4",
+    "originalIssuesAcquisitionRun": 38161476583,
+    "originalIssuesArtifact": 11710856244,
+    "originalIssuesArtifactName": "justin-eichorn-2016-2020-original-candidate-issues-html-source-v1",
+    "issuesAcquisitionManifest": "source-acquisition-manifest.json"
+  },
+  "person": {
+    "candidateName": "Justin Eichorn",
+    "actualLRLName": "Justin D. Eichorn",
+    "district2020": "5"
+  },
+  "originalFullPageReceipts": [
+    {
+      "file": "eichornissue-original-20160806111245-0.html",
+      "url": "http://justinformnsenate.com:80/issues",
+      "observedUTC": "2016-08-06T11:12:45.000Z",
+      "sha256": "aaf9ea4ddfda56831f3bf336fe1a32b4b5774a19be80147b91b51c74c0e348c5",
+      "cdxSHA1": "RYHXHZ47IQPVSLTDJLQPJX7YL5RJ7FPO"
+    },
+    {
+      "file": "eichornissue-original-20180831084346-1.html",
+      "url": "http://justinformnsenate.com/issues",
+      "observedUTC": "2018-08-31T08:43:46.000Z",
+      "sha256": "afaa114c0d00659339a70e965c36e87084df307cc010b5c68aa9571364b70e59",
+      "cdxSHA1": "DSDH7A4DPHIHYLVD5N5YPRXZTCBRLOQ2"
+    },
+    {
+      "file": "eichornissue-original-20161013140303-2.html",
+      "url": "http://justinformnsenate.com:80/issues",
+      "observedUTC": "2016-10-13T14:03:03.000Z",
+      "sha256": "aaf9ea4ddfda56831f3bf336fe1a32b4b5774a19be80147b91b51c74c0e348c5",
+      "cdxSHA1": "RYHXHZ47IQPVSLTDJLQPJX7YL5RJ7FPO"
+    },
+    {
+      "file": "eichornissue-original-20160912011224-3.html",
+      "url": "http://justinformnsenate.com:80/issues",
+      "observedUTC": "2016-09-12T01:12:24.000Z",
+      "sha256": "aaf9ea4ddfda56831f3bf336fe1a32b4b5774a19be80147b91b51c74c0e348c5",
+      "cdxSHA1": "RYHXHZ47IQPVSLTDJLQPJX7YL5RJ7FPO"
+    }
+  ],
+  "policyPageSection": {
+    "id": "original2016Issues",
+    "file": "eichornissue-original-20160806111245-0.html",
+    "start": "Mining I will support mining",
+    "end": "More Articles ... Education Health Care",
+    "cycle": "2016_candidate_owned_site_copy_observed_in_2016",
+    "fullOriginalFile": "eichornissue-original-20160806111245-0.html",
+    "begins": "Mining I will support mining",
+    "endsBefore": "More Articles ... Education Health Care",
+    "real2016OriginalCampaignIssuePlatform": true,
+    "noProofSameIssueHTML2020": true
+  },
+  "exactCandidateSiteShortPolicyExcerpts": [
+    {
+      "id": "eichorn-historic-001",
+      "issue": "environment_natural_resources",
+      "quote": "I will support mining every chance I get in St. Paul and not just when it’s election season.",
+      "meaning": "Supports mining consistently",
+      "statementKind": "candidate_owned_historical_policy",
+      "sourceSection": "original2016Issues",
+      "sourceCapturePublicByNotFirstAuthored": true,
+      "copyIn2018NotCountedAgain": true,
+      "notAnOfficialSenateRollCall": true,
+      "productionEvidenceAutomaticImport": false
+    },
+    {
+      "id": "eichorn-historic-002",
+      "issue": "environment_natural_resources",
+      "quote": "Mining is one of Minnesota’s greatest natural resources.",
+      "meaning": "Views mining as a valuable resource",
+      "statementKind": "candidate_owned_historical_policy",
+      "sourceSection": "original2016Issues",
+      "sourceCapturePublicByNotFirstAuthored": true,
+      "copyIn2018NotCountedAgain": true,
+      "notAnOfficialSenateRollCall": true,
+      "productionEvidenceAutomaticImport": false
+    },
+    {
+      "id": "eichorn-historic-003",
+      "issue": "labor_employment",
+      "quote": "Strong mining operations will help bring back great middle class jobs that we greatly need.",
+      "meaning": "Expects mining to create middle-class jobs",
+      "statementKind": "candidate_owned_historical_policy",
+      "sourceSection": "original2016Issues",
+      "sourceCapturePublicByNotFirstAuthored": true,
+      "copyIn2018NotCountedAgain": true,
+      "notAnOfficialSenateRollCall": true,
+      "productionEvidenceAutomaticImport": false
+    },
+    {
+      "id": "eichorn-historic-004",
+      "issue": "taxes_revenue",
+      "quote": "In Minnesota we live in one of the highest overall taxation rates in the country.",
+      "meaning": "Calls the overall tax burden high",
+      "statementKind": "candidate_owned_historical_policy",
+      "sourceSection": "original2016Issues",
+      "sourceCapturePublicByNotFirstAuthored": true,
+      "copyIn2018NotCountedAgain": true,
+      "notAnOfficialSenateRollCall": true,
+      "productionEvidenceAutomaticImport": false
+    },
+    {
+      "id": "eichorn-historic-005",
+      "issue": "taxes_revenue",
+      "quote": "It’s time for the state to start letting the hardworking people of Minnesota keep the money they earn.",
+      "meaning": "Supports lower taxes on workers",
+      "statementKind": "candidate_owned_historical_policy",
+      "sourceSection": "original2016Issues",
+      "sourceCapturePublicByNotFirstAuthored": true,
+      "copyIn2018NotCountedAgain": true,
+      "notAnOfficialSenateRollCall": true,
+      "productionEvidenceAutomaticImport": false
+    },
+    {
+      "id": "eichorn-historic-006",
+      "issue": "taxes_revenue",
+      "quote": "We can and will get Minnesota back to a competitive place to live and work by lowering the tax burden.",
+      "meaning": "Pledges lower tax burden",
+      "statementKind": "candidate_owned_historical_policy",
+      "sourceSection": "original2016Issues",
+      "sourceCapturePublicByNotFirstAuthored": true,
+      "copyIn2018NotCountedAgain": true,
+      "notAnOfficialSenateRollCall": true,
+      "productionEvidenceAutomaticImport": false
+    },
+    {
+      "id": "eichorn-historic-007",
+      "issue": "public_safety",
+      "quote": "I learned at an early age how important our Second Amendment rights truly are.",
+      "meaning": "Supports firearms rights",
+      "statementKind": "candidate_owned_historical_policy",
+      "sourceSection": "original2016Issues",
+      "sourceCapturePublicByNotFirstAuthored": true,
+      "copyIn2018NotCountedAgain": true,
+      "notAnOfficialSenateRollCall": true,
+      "productionEvidenceAutomaticImport": false
+    },
+    {
+      "id": "eichorn-historic-008",
+      "issue": "public_safety",
+      "quote": "I also understand that our Second Amendment rights go well beyond just the right to hunt.",
+      "meaning": "Supports broad firearm rights",
+      "statementKind": "candidate_owned_historical_policy",
+      "sourceSection": "original2016Issues",
+      "sourceCapturePublicByNotFirstAuthored": true,
+      "copyIn2018NotCountedAgain": true,
+      "notAnOfficialSenateRollCall": true,
+      "productionEvidenceAutomaticImport": false
+    },
+    {
+      "id": "eichorn-historic-009",
+      "issue": "public_safety",
+      "quote": "If elected I will be one of the staunchest supporters of our Second Amendment rights",
+      "meaning": "Pledges to protect Second Amendment rights",
+      "statementKind": "candidate_owned_historical_policy",
+      "sourceSection": "original2016Issues",
+      "sourceCapturePublicByNotFirstAuthored": true,
+      "copyIn2018NotCountedAgain": true,
+      "notAnOfficialSenateRollCall": true,
+      "productionEvidenceAutomaticImport": false
+    },
+    {
+      "id": "eichorn-historic-010",
+      "issue": "public_safety",
+      "quote": "I will fight against any additional restrictions for legal gun owners.",
+      "meaning": "Opposes additional restrictions on legal owners",
+      "statementKind": "candidate_owned_historical_policy",
+      "sourceSection": "original2016Issues",
+      "sourceCapturePublicByNotFirstAuthored": true,
+      "copyIn2018NotCountedAgain": true,
+      "notAnOfficialSenateRollCall": true,
+      "productionEvidenceAutomaticImport": false
+    },
+    {
+      "id": "eichorn-historic-011",
+      "issue": "state_government",
+      "quote": "Under the current DFL control they balanced the budget by increasing taxes, shifting money around, and borrowing.",
+      "meaning": "Campaign criticism of the prior budget, not proof of factual events",
+      "statementKind": "candidate_claim_criticizing_opposing_party_budget_not_official_record",
+      "sourceSection": "original2016Issues",
+      "sourceCapturePublicByNotFirstAuthored": true,
+      "copyIn2018NotCountedAgain": true,
+      "notAnOfficialSenateRollCall": true,
+      "productionEvidenceAutomaticImport": false
+    },
+    {
+      "id": "eichorn-historic-012",
+      "issue": "state_government",
+      "quote": "I will work to make sure the budget balances without doing it on the backs of school districts and hardworking Minnesotans.",
+      "meaning": "Promises balancing budget without burdening schools or workers",
+      "statementKind": "candidate_owned_historical_policy",
+      "sourceSection": "original2016Issues",
+      "sourceCapturePublicByNotFirstAuthored": true,
+      "copyIn2018NotCountedAgain": true,
+      "notAnOfficialSenateRollCall": true,
+      "productionEvidenceAutomaticImport": false
+    }
+  ]
+}

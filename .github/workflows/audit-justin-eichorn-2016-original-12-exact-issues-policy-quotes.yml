@@ -1,0 +1,80 @@
+name: Prove 12 exact 2016 Justin Eichorn first-party archived issues policy excerpts
+
+# Research only; original 2016 policy page was ALSO partly carried in 2018,
+# but genuine original 2020 site homepage is JS shell, not an original issue
+# document. Historical first-party 2016 quotes are not newly written 2020.
+# Independently rehash original full MN LRL government Senator-service HTML
+# and actual source receipt, all FOUR full issues HTML and EIGHT whole CDX JSON.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-justin-eichorn-2016-original-12-exact-issues-policy-quotes.yml
+      - data/evaluation/senate-justin-eichorn-2016-original-12-capture-dated-exact-issues-v1.json
+      - src/evidence/senate-justin-eichorn-2016-original-12-quote-proof.ts
+      - scripts/audit-justin-eichorn-2016-original-12-issue-quotations-offline.ts
+      - tests/senate-justin-eichorn-2016-12-original-campaign-policy-excerpts.test.ts
+      - docs/SENATE_JUSTIN_EICHORN_2016_ORIGINAL_12_EXACT_POLICY_EXCERPTS.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  actual-senator-2016-original-first-party-twelve-exact-issue-statements:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-eichorn-2016-first-party-original-12-exact-policy-quotes-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen original entire Minnesota LRL actually served senate directory and independent original SHA UTC receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/entire-official-actual-senator-service
+      - name: Reopen complete genuine original 2020 Eichorn first-party JS campaign homepage
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38156756023
+          name: senate-five-2021-serving-2020-original-candidate-html-v1
+          github-token: ${{ github.token }}
+          path: original/actual-2020-candidate-first-party-site
+      - name: Reopen FOUR complete historic original 2016-2018 Eichorn candidate issue pages and EIGHT independent original CDX sources
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38161476583
+          name: justin-eichorn-2016-2020-original-candidate-issues-html-source-v1
+          github-token: ${{ github.token }}
+          path: original/genuine-eichorn-historical-issues-site-html-and-cdx
+      - name: Independently prove literal 12 genuine first-party issue quotations and actual 2021 State Senator service
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/entire-official-actual-senator-service -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/entire-official-actual-senator-service -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          home="original/actual-2020-candidate-first-party-site/five20-02-archive-20200520132938-0.html"
+          test -n "$gov" && test -n "$receipt" && test -s "$home"
+          test "$(dirname "$gov")" = "$(dirname "$receipt")"
+          node --import tsx scripts/audit-justin-eichorn-2016-original-12-issue-quotations-offline.ts \
+            --entire-original-actual-mn-senate-service-html "$gov" \
+            --independent-original-lrl-government-utc-sha-receipt "$receipt" \
+            --original-may-2020-first-party-eichorn-home-html "$home" \
+            --four-original-2016-2018-issue-html-and-eight-cdx-dir original/genuine-eichorn-historical-issues-site-html-and-cdx \
+            --output original/justin-eichorn-2016-12-original-candidate-quote-proofs.json
+      - name: Retain 12 short exact original 2016 candidate issue excerpts source verification only, no production write
+        uses: actions/upload-artifact@v6
+        with:
+          name: justin-eichorn-2016-12-authenticated-first-party-issue-quote-source-proofs-v1
+          path: original/justin-eichorn-2016-12-original-candidate-quote-proofs.json
+          retention-days: 30
+          if-no-files-found: error
