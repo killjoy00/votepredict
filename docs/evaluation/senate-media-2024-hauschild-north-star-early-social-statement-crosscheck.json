@@ -45,8 +45,11 @@
     "originalFirstPublicByFromArchiveProven": false,
     "referencedByCurrentMedia": [
       "https://alphanews.org/sanctuary-state-proposal-faces-opposition-from-county-board-dfl-senator/",
-      "https://minnesotareformer.com/2024/02/12/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/"
-    ]
+      "https://minnesotareformer.com/2024/02/12/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/",
+      "https://www.americanexperiment.org/is-the-sanctuary-bill-dead-for-this-session/"
+    ],
+    "currentExternalArticleIncludesVisuallyReadScreenshotOfAllegedPost": true,
+    "actualHistoricScreenshotUploadTimeOrOriginalPostIdentityProven": false
   },
   "sourceChronology": [
     {
@@ -94,6 +97,28 @@
       "separateQuoteSpeakerMajorityLeadershipOnDisplayedDayVerified": true
     },
     {
+      "id": "2024-02-17-american-experiment-post-screenshot",
+      "type": "present_day_publisher_embedded_visual_copy_of_alleged_first_party_post",
+      "currentPublisherUrl": "https://www.americanexperiment.org/is-the-sanctuary-bill-dead-for-this-session/",
+      "displayedPublisherDay": "2024-02-17",
+      "publisher": "Center of the American Experiment",
+      "author": "Bill Glahn",
+      "thirdPartyHostedScreenshotUrl": "https://files.americanexperiment.org/wp-content/uploads/2024/02/Grant-Hauschild.jpg?v=1708198829",
+      "screenshotVisiblyNamesAccount": "Grant Hauschild",
+      "screenshotVisiblyNamesHandle": "grant_hauschild",
+      "sourceLinksSameStatusId": "1756375725714571676",
+      "screenshotFirstSentenceShortFragment": "The Sanctuary State proposal is just that, a proposal.",
+      "screenshotMatchesEarlierReportedRefusalShortFragment": "I will not be supporting this legislation and it is very unlikely to become law.",
+      "currentScreenshotShowsClaimedPostWording": true,
+      "imageShowsOriginalXPostingTimestamp": false,
+      "screenshotIndependentlyAuthenticatedAs2024Capture": false,
+      "thirdPartyImageBytesHashedAgainstHistoricalOriginal": false,
+      "currentPublisherScreenshotProvesOriginalXAccountAuthorship": false,
+      "historic2024PublisherArticleHtmlBytesRetrieved": false,
+      "imageFileQueryParameterProves2024CreationTime": false,
+      "historicalForecastEligibilityVerified": false
+    },
+    {
       "id": "2024-02-19-mpr-hauschild-later-interview",
       "type": "present_day_mpr_first_party_labeled_audio_transcript_only",
       "currentPublisherUrl": "https://www.mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south",
@@ -121,7 +146,9 @@
     "matchedPrivateVotePredictSourceDocument": false,
     "quoteAndStanceEvidencePromotedToProduction": false,
     "uniqueHistoricallyVerifiedSenatorStatements": 0,
-    "statewideSenatorMediaCoverageDenominatorKnown": false
+    "statewideSenatorMediaCoverageDenominatorKnown": false,
+    "americanExperimentScreenshotOriginalHistorical2024CaptureAuthenticated": false,
+    "thirdPartyScreenshotIsNotOriginalXHttpBody": true
   },
   "provenanceDriftWatch": {
     "priorSearchResultRepresentedCampaignAdvocacyDomain": "northstaract.org",
@@ -131,5 +158,5 @@
     "campaignSiteAllowedAsOriginalSenatorStatement": false,
     "interpretation": "A formerly indexed historical campaign/advocacy domain no longer serves the research subject; do not use the current live page, search snippet or redirect as historical campaign evidence"
   },
-  "nextOriginalEvidenceAction": "Retrieve authenticated original status URL with explicit content and creation metadata if authorized; separately archive the Feb11 Alpha page, Feb12 Reformer brief AND dated paths, and Feb19 MPR audio/transcript, and compare exact original source SHA/public-by against any separately authorized private VotePredict export. No seed, model, forecast or quote changes without further approval."
+  "nextOriginalEvidenceAction": "Retrieve authenticated original status URL with explicit content and creation metadata if authorized; separately archive the Feb11 Alpha page, Feb12 Reformer brief AND dated paths, and Feb17 publisher-hosted screenshot, and Feb19 MPR audio/transcript, and compare exact original source SHA/public-by against any separately authorized private VotePredict export. No seed, model, forecast or quote changes without further approval."
 }
