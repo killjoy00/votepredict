@@ -8,7 +8,7 @@
     "broaderCaucusReformerUrls": 25
   },
   "newOriginalArticleUrlLeads": 15,
-  "newIndividuallyNamedSenatorSpeakerCandidates": 21,
+  "newIndividuallyNamedSenatorSpeakerCandidates": 22,
   "displayedYearSelection": [
     {
       "year": 2021,
@@ -18,7 +18,7 @@
     {
       "year": 2022,
       "articles": 3,
-      "senatorSpeakerTurns": 4
+      "senatorSpeakerTurns": 5
     },
     {
       "year": 2023,
@@ -129,7 +129,7 @@
       "originalPublisher": "Minnesota Reformer",
       "displayedNewsPublicationDay": "2022-02-14",
       "byline": "Ricardo Lopez",
-      "reporterAttributionCaveat": "Two sitting senators each independently reported despite governor candidacies",
+      "reporterAttributionCaveat": "Three individually quoted serving state senators: Gazelka, Benson and education chair Roger Chamberlain at curriculum news conference; gubernatorial candidates still serving at the time.",
       "namedSenatorSpeakerTurnCandidates": [
         {
           "name": "Paul Gazelka",
@@ -140,6 +140,12 @@
         {
           "name": "Michelle Benson",
           "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15322",
+          "reporterAttributionMode": "reported_news_conference",
+          "historicalRecordedIndividualQuoteApproved": false
+        },
+        {
+          "name": "Roger Chamberlain",
+          "officialMemberServiceUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15325",
           "reporterAttributionMode": "reported_news_conference",
           "historicalRecordedIndividualQuoteApproved": false
         }
@@ -308,7 +314,7 @@
       "originalPublisherUrl": "https://minnesotareformer.com/2024/04/19/housing-bills-falling-off-legislative-agenda/",
       "originalPublisher": "Minnesota Reformer",
       "displayedNewsPublicationDay": "2024-04-19",
-      "byline": "Minnesota Reformer",
+      "byline": "Madison McVan",
       "reporterAttributionCaveat": "Three speaker turns in one article; committee questions or remarks are not verified individual votes",
       "namedSenatorSpeakerTurnCandidates": [
         {
@@ -399,5 +405,18 @@
       "initialPublisherPostingClockProven": false,
       "observedMemberFloorOrCommitteeVoteInferred": false
     }
-  ]
+  ],
+  "sourceCorrection20261011": {
+    "publisherReportOriginalUrl": "https://minnesotareformer.com/2022/02/14/senate-gop-bills-would-require-minnesota-teachers-to-disclose-curriculum-to-parents/",
+    "missingSpeaker": "Roger Chamberlain",
+    "officialLrlId": 15325,
+    "correctedFromSpeakerCandidates": 21,
+    "correctedToSpeakerCandidates": 22,
+    "exactOriginalPageBodyReceiptsUnaffected": true,
+    "historicalPreviousResearchRunEarlierSpeakerListWasIncomplete": true,
+    "currentReporterTextAttributesChamberlainDirectly": true,
+    "bodyAndFirstPublicationClockNotAutomaticallyAuthenticatedByCorrection": true,
+    "housingPagePublisherBylineCorrectedFrom": "Minnesota Reformer",
+    "housingPagePublisherBylineCorrectedTo": "Madison McVan"
+  }
 }

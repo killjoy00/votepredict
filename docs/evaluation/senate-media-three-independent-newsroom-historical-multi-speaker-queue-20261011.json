@@ -1,0 +1,123 @@
+{
+  "version": "senate-media-2021-25-three-new-independent-newsroom-source-quote-review-v1",
+  "preparedOn": "2026-10-11",
+  "originalReporterPageLedger": "docs/evaluation/senate-media-2021-25-further-independent-reporting-15-leads.json",
+  "pinnedOriginalHttpBodyManifest": "docs/evaluation/senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json",
+  "humanVerifiedCompleteSpokenQuotes": false,
+  "originalInterviewAudioCompared": false,
+  "newsroomReportedFloorSpeechNeverRecordedVote": true,
+  "sourceCaptureUtcNotPublisherFirstPostClock": true,
+  "threeDistinctOriginalReporterArticles": true,
+  "individuallyNamedSenatorSpeakerCandidates": 7,
+  "eightShortHistoricallyTestableTextCues": 8,
+  "originalHttpPageVersionsToReverify": 6,
+  "selectedOriginalReporterArticles": [
+    {
+      "leadId": "new-reporter-2022-curriculum",
+      "archiveCapturedUtc": [
+        "2022-02-14T22:22:10Z",
+        "2022-02-15T03:12:23Z"
+      ],
+      "shortReporterAttributedSpeakerCues": [
+        {
+          "cueId": "new-reporter-2022-curriculum-cue-1",
+          "speaker": "Paul Gazelka",
+          "originalReporterShortFragment": "Parents know what's best for their kids",
+          "reportedGenre": "reported_news_conference",
+          "currentSiteNamedSpeakerAttributionObserved": true,
+          "fullOriginalAudioVerified": false,
+          "fullVerbatimIndividualQuotationHumanApproved": false,
+          "verifiedRecordedSenateMemberVote": false
+        },
+        {
+          "cueId": "new-reporter-2022-curriculum-cue-2",
+          "speaker": "Michelle Benson",
+          "originalReporterShortFragment": "Let's make a syllabus available",
+          "reportedGenre": "reported_news_conference",
+          "currentSiteNamedSpeakerAttributionObserved": true,
+          "fullOriginalAudioVerified": false,
+          "fullVerbatimIndividualQuotationHumanApproved": false,
+          "verifiedRecordedSenateMemberVote": false
+        },
+        {
+          "cueId": "new-reporter-2022-curriculum-cue-3",
+          "speaker": "Roger Chamberlain",
+          "originalReporterShortFragment": "The rabbit holes are something we are not",
+          "reportedGenre": "reported_news_conference",
+          "currentSiteNamedSpeakerAttributionObserved": true,
+          "fullOriginalAudioVerified": false,
+          "fullVerbatimIndividualQuotationHumanApproved": false,
+          "verifiedRecordedSenateMemberVote": false
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2024-housing-zoning",
+      "archiveCapturedUtc": [
+        "2024-04-19T12:52:13Z",
+        "2024-04-19T14:24:44Z"
+      ],
+      "shortReporterAttributedSpeakerCues": [
+        {
+          "cueId": "new-reporter-2024-housing-zoning-cue-1",
+          "speaker": "Steve Drazkowski",
+          "originalReporterShortFragment": "Are you concerned at all if you did this",
+          "reportedGenre": "reported_committee_question",
+          "currentSiteNamedSpeakerAttributionObserved": true,
+          "fullOriginalAudioVerified": false,
+          "fullVerbatimIndividualQuotationHumanApproved": false,
+          "verifiedRecordedSenateMemberVote": false
+        },
+        {
+          "cueId": "new-reporter-2024-housing-zoning-cue-2",
+          "speaker": "Heather Gustafson",
+          "originalReporterShortFragment": "It's just kind of a logistical nightmare",
+          "reportedGenre": "reported_committee_speech",
+          "currentSiteNamedSpeakerAttributionObserved": true,
+          "fullOriginalAudioVerified": false,
+          "fullVerbatimIndividualQuotationHumanApproved": false,
+          "verifiedRecordedSenateMemberVote": false
+        },
+        {
+          "cueId": "new-reporter-2024-housing-zoning-cue-3",
+          "speaker": "Lindsey Port",
+          "originalReporterShortFragment": "The status quo isn't working",
+          "reportedGenre": "reported_committee_speech",
+          "currentSiteNamedSpeakerAttributionObserved": true,
+          "fullOriginalAudioVerified": false,
+          "fullVerbatimIndividualQuotationHumanApproved": false,
+          "verifiedRecordedSenateMemberVote": false
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2025-federal-cuts",
+      "archiveCapturedUtc": [
+        "2025-04-25T15:28:44Z",
+        "2025-04-25T15:29:28Z"
+      ],
+      "shortReporterAttributedSpeakerCues": [
+        {
+          "cueId": "new-reporter-2025-federal-cuts-cue-1",
+          "speaker": "Erin Maye Quade",
+          "originalReporterShortFragment": "We will fight to protect Minnesotans",
+          "reportedGenre": "reported_news_conference",
+          "currentSiteNamedSpeakerAttributionObserved": true,
+          "fullOriginalAudioVerified": false,
+          "fullVerbatimIndividualQuotationHumanApproved": false,
+          "verifiedRecordedSenateMemberVote": false
+        },
+        {
+          "cueId": "new-reporter-2025-federal-cuts-cue-2",
+          "speaker": "Erin Maye Quade",
+          "originalReporterShortFragment": "We cannot accept the false trade-offs",
+          "reportedGenre": "reported_news_conference",
+          "currentSiteNamedSpeakerAttributionObserved": true,
+          "fullOriginalAudioVerified": false,
+          "fullVerbatimIndividualQuotationHumanApproved": false,
+          "verifiedRecordedSenateMemberVote": false
+        }
+      ]
+    }
+  ]
+}

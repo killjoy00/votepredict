@@ -1,7 +1,7 @@
 /**
  * #987/#946 PUBLIC independent newsroom original HTML research.
  * Exact 15 additional Minnesota Reformer reporting URLs, 3 each displayed
- * year 2021–25, 21 separately reported current state senator speaker leads.
+ * year 2021–25, 22 separately reported current state senator speaker leads (corrected Roger Chamberlain).
  * This is NOT a source census or approval of original spoken audio or votes.
  */
 import {createHash} from 'node:crypto';
@@ -164,7 +164,7 @@ export function selectJournalistSources(leads:readonly JournalistLead[],scope:Jo
     byYear.set(y,(byYear.get(y)??0)+1);
     urls.add(x.originalPublisherUrl);ids.add(x.id);
   }
-  if(speakers!==21||[2021,2022,2023,2024,2025].some(y=>byYear.get(String(y))!==3))
+  if(speakers!==22||[2021,2022,2023,2024,2025].some(y=>byYear.get(String(y))!==3))
     throw Error('Unexpected individual speaker/year sample coverage');
   if(scope==='all')return [...leads];
   return JOURNALIST_PRIORITY_IDS.map(id=>{

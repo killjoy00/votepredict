@@ -344,5 +344,37 @@
     "historicalOriginalIndexAbsentNeverEvidencePublisherArticleNotWritten": true,
     "noNewSpeechAudioRecordedMemberVotesOrFirstPostingClockAuthenticated": true,
     "noPrivateSourceOrModelRead": true
+  },
+  "thirdIndependentPublicRecheckAfterSpeakerAttributionCorrection": {
+    "runId": 38166093719,
+    "sourceHeadSha": "936f3c8e56ff2337c65331a487558d3e1a9a6727",
+    "status": "success",
+    "artifactId": 11712101954,
+    "artifactName": "senate-media-independent-15-original-receipts",
+    "downloadedZipSha256": "0224f48b02db6d317204086de08e44641f06f543cee5e3794c23f66f0695f326",
+    "decodedJsonSha256": "457f25b7e1dd1def5acaf9813cb296d0046c41279d2a02ed3e99c16100bddc28",
+    "decodedJsonBytes": 33597,
+    "observed": {
+      "originalReporterArticleUrlLeads": 15,
+      "currentSiteServingSenatorQuotationCandidatesCorrectedTo": 22,
+      "originalUrlIndexed": 11,
+      "cdxUnavailableOrInvalidUnknown": 4,
+      "exactHistoricOriginalHtmlReplaysAttempted": 22,
+      "indexedSha1ConsistentRawHtmlBodies": 22,
+      "originalUrlsWithAtLeastOneValidOriginalHtml": 11,
+      "unavailableOriginalIds": [
+        "new-reporter-2021-commissioners",
+        "new-reporter-2022-special-session",
+        "new-reporter-2024-housing-zoning",
+        "new-reporter-2025-sick-leave"
+      ]
+    },
+    "all22ReturnedOriginalRawSha256AndBytesMatchEarlier24Union": true,
+    "housing2024CdxUnavailableThisRunButTwoEarlierMatchedOriginalBodiesStillAuthenticated": true,
+    "threePreviouslyUnresolvedOriginalUrlsRemainUnresolvedInSelected24BodyUnion": true,
+    "noNewOriginalBodyVersionsInThisLiveRun": true,
+    "noHistoricalSpeakerWordsHumanApproved": true,
+    "noInitialPublisherPostingClockOrRecordedVotesProven": true,
+    "noPrivateSourceOrProductionModelRead": true
   }
 }

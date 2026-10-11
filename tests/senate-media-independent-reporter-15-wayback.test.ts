@@ -41,14 +41,14 @@ test('15 new Reformer ORIGINAL articles are disjoint from old 31+18+25 selected 
   assert.equal(d.version,'public-2021-25-further-independent-15-reformer-articles-v1');
   assert.equal(d.discoveredOn,'2026-10-11');
   assert.equal(d.newOriginalArticleUrlLeads,15);
-  assert.equal(d.newIndividuallyNamedSenatorSpeakerCandidates,21);
+  assert.equal(d.newIndividuallyNamedSenatorSpeakerCandidates,22);
   assert.equal(leads.length,15);
   assert.deepEqual(selectJournalistSources(leads,'all'),leads);
   assert.deepEqual(selectJournalistSources(leads,'priority').map(x=>x.id),
     [...JOURNALIST_PRIORITY_IDS]);
   assert.deepEqual(d.displayedYearSelection,[
     {year:2021,articles:3,senatorSpeakerTurns:5},
-    {year:2022,articles:3,senatorSpeakerTurns:4},
+    {year:2022,articles:3,senatorSpeakerTurns:5},
     {year:2023,articles:3,senatorSpeakerTurns:3},
     {year:2024,articles:3,senatorSpeakerTurns:6},
     {year:2025,articles:3,senatorSpeakerTurns:3},
@@ -75,7 +75,8 @@ test('15 new Reformer ORIGINAL articles are disjoint from old 31+18+25 selected 
     }
   }
   assert.equal(leads.find(x=>x.id==='new-reporter-2022-curriculum')
-    ?.namedSenatorSpeakerTurnCandidates.length,2);
+    ?.namedSenatorSpeakerTurnCandidates.length,3);
+  assert.deepEqual(leads.find(x=>x.id==='new-reporter-2022-curriculum')?.namedSenatorSpeakerTurnCandidates.map(x=>x.name),['Paul Gazelka','Michelle Benson','Roger Chamberlain']);
   assert.equal(leads.find(x=>x.id==='new-reporter-2024-housing-zoning')
     ?.namedSenatorSpeakerTurnCandidates.length,3);
   assert.equal(leads.find(x=>x.id==='new-reporter-2023-family-leave')

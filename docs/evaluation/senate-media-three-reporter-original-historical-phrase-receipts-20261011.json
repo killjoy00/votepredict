@@ -1,0 +1,217 @@
+{
+  "version": "senate-media-three-reporter-original-2022-2025-phrase-receipts-v1",
+  "observedLocalDay": "2026-10-11",
+  "originalPublicResearchRun": {
+    "repository": "killjoy00/votepredict",
+    "runId": 38166031166,
+    "sourceHeadSha": "6ccc3ff4e75fa06b61dab07363dc4da0781d742c",
+    "conclusion": "success",
+    "artifactId": 11711912322,
+    "artifactName": "senate-media-three-reporter-original-quote-cues",
+    "downloadedZipSha256": "3a8e9a6889ed9e4fdefa78f882c34df1ad45ea34f69c11fdca8fdaec75ec7777",
+    "decodedJsonSha256": "2010a9b6c2a1c1df2373fa84938d24586000a254fa95ac263964ccea7ac178a7",
+    "decodedJsonBytes": 12921
+  },
+  "sourceQueue": "docs/evaluation/senate-media-three-independent-newsroom-historical-multi-speaker-queue-20261011.json",
+  "sourceAuthProofs": "docs/evaluation/senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json",
+  "observations": {
+    "selectedPublisherArticleUrls": 3,
+    "distinctStateSenatorSpeakerCandidates": 7,
+    "shortIndividuallyNamedPublisherTextCueCandidates": 8,
+    "historicalOriginalHtmlCaptureVersionAttempts": 6,
+    "historicalOriginalRawSha1AndSha256BodyVersionsReverified": 5,
+    "originalBodyVersionFetchUnknown": 1,
+    "positiveShortTextCuesInAuthenticatedHtml": 13,
+    "negativeShortTextCuesInAuthenticatedHtml": 0,
+    "unknownDueToUnreplayedBody": 3,
+    "sameParagraphNameLabelClues": 7,
+    "originalAudioVerified": 0,
+    "fullSpeakerQuotesHumanApproved": 0,
+    "individuallyRecordedFloorOrCommitteeVotesVerified": 0,
+    "sourceFirstPublicationClocksEstablished": 0
+  },
+  "originalSourceVersionResults": [
+    {
+      "leadId": "new-reporter-2022-curriculum",
+      "archiveUtc": "2022-02-14T22:22:10Z",
+      "observedOriginalRawSha256": null,
+      "status": "redirect_unknown",
+      "individuallyAttributedShortTextCues": [
+        {
+          "speaker": "Paul Gazelka",
+          "exactShortQuoteFragmentInHistoricVisibleHtml": null,
+          "speakerNameInSameParagraph": null,
+          "completeSenatorSpokenQuoteHumanApproved": false,
+          "originalAudioVerified": false,
+          "recordedSenateMemberVoteEstablished": false
+        },
+        {
+          "speaker": "Michelle Benson",
+          "exactShortQuoteFragmentInHistoricVisibleHtml": null,
+          "speakerNameInSameParagraph": null,
+          "completeSenatorSpokenQuoteHumanApproved": false,
+          "originalAudioVerified": false,
+          "recordedSenateMemberVoteEstablished": false
+        },
+        {
+          "speaker": "Roger Chamberlain",
+          "exactShortQuoteFragmentInHistoricVisibleHtml": null,
+          "speakerNameInSameParagraph": null,
+          "completeSenatorSpokenQuoteHumanApproved": false,
+          "originalAudioVerified": false,
+          "recordedSenateMemberVoteEstablished": false
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2022-curriculum",
+      "archiveUtc": "2022-02-15T03:12:23Z",
+      "observedOriginalRawSha256": "d8ab6a048fff09ddbdb3c5968323fe4f5ee175727e34d9c6139941fa9920dae9",
+      "status": "raw_sha1_and_prior_sha256_verified",
+      "individuallyAttributedShortTextCues": [
+        {
+          "speaker": "Paul Gazelka",
+          "exactShortQuoteFragmentInHistoricVisibleHtml": true,
+          "speakerNameInSameParagraph": true,
+          "completeSenatorSpokenQuoteHumanApproved": false,
+          "originalAudioVerified": false,
+          "recordedSenateMemberVoteEstablished": false
+        },
+        {
+          "speaker": "Michelle Benson",
+          "exactShortQuoteFragmentInHistoricVisibleHtml": true,
+          "speakerNameInSameParagraph": true,
+          "completeSenatorSpokenQuoteHumanApproved": false,
+          "originalAudioVerified": false,
+          "recordedSenateMemberVoteEstablished": false
+        },
+        {
+          "speaker": "Roger Chamberlain",
+          "exactShortQuoteFragmentInHistoricVisibleHtml": true,
+          "speakerNameInSameParagraph": true,
+          "completeSenatorSpokenQuoteHumanApproved": false,
+          "originalAudioVerified": false,
+          "recordedSenateMemberVoteEstablished": false
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2024-housing-zoning",
+      "archiveUtc": "2024-04-19T12:52:13Z",
+      "observedOriginalRawSha256": "15e0342c212e0a84cbb495a44d9d12e136e1639aef05b2604c7018d4acb71de5",
+      "status": "raw_sha1_and_prior_sha256_verified",
+      "individuallyAttributedShortTextCues": [
+        {
+          "speaker": "Steve Drazkowski",
+          "exactShortQuoteFragmentInHistoricVisibleHtml": true,
+          "speakerNameInSameParagraph": true,
+          "completeSenatorSpokenQuoteHumanApproved": false,
+          "originalAudioVerified": false,
+          "recordedSenateMemberVoteEstablished": false
+        },
+        {
+          "speaker": "Heather Gustafson",
+          "exactShortQuoteFragmentInHistoricVisibleHtml": true,
+          "speakerNameInSameParagraph": false,
+          "completeSenatorSpokenQuoteHumanApproved": false,
+          "originalAudioVerified": false,
+          "recordedSenateMemberVoteEstablished": false
+        },
+        {
+          "speaker": "Lindsey Port",
+          "exactShortQuoteFragmentInHistoricVisibleHtml": true,
+          "speakerNameInSameParagraph": false,
+          "completeSenatorSpokenQuoteHumanApproved": false,
+          "originalAudioVerified": false,
+          "recordedSenateMemberVoteEstablished": false
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2024-housing-zoning",
+      "archiveUtc": "2024-04-19T14:24:44Z",
+      "observedOriginalRawSha256": "6b68d142d279b268d4b19367c0c3a6e54b691c783367aa64ee5aaf685b887661",
+      "status": "raw_sha1_and_prior_sha256_verified",
+      "individuallyAttributedShortTextCues": [
+        {
+          "speaker": "Steve Drazkowski",
+          "exactShortQuoteFragmentInHistoricVisibleHtml": true,
+          "speakerNameInSameParagraph": true,
+          "completeSenatorSpokenQuoteHumanApproved": false,
+          "originalAudioVerified": false,
+          "recordedSenateMemberVoteEstablished": false
+        },
+        {
+          "speaker": "Heather Gustafson",
+          "exactShortQuoteFragmentInHistoricVisibleHtml": true,
+          "speakerNameInSameParagraph": false,
+          "completeSenatorSpokenQuoteHumanApproved": false,
+          "originalAudioVerified": false,
+          "recordedSenateMemberVoteEstablished": false
+        },
+        {
+          "speaker": "Lindsey Port",
+          "exactShortQuoteFragmentInHistoricVisibleHtml": true,
+          "speakerNameInSameParagraph": false,
+          "completeSenatorSpokenQuoteHumanApproved": false,
+          "originalAudioVerified": false,
+          "recordedSenateMemberVoteEstablished": false
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2025-federal-cuts",
+      "archiveUtc": "2025-04-25T15:28:44Z",
+      "observedOriginalRawSha256": "3a91a6e66be3296bdf4253c909ea145a82a2c629c55f1a190f54a97dd0010ca2",
+      "status": "raw_sha1_and_prior_sha256_verified",
+      "individuallyAttributedShortTextCues": [
+        {
+          "speaker": "Erin Maye Quade",
+          "exactShortQuoteFragmentInHistoricVisibleHtml": true,
+          "speakerNameInSameParagraph": true,
+          "completeSenatorSpokenQuoteHumanApproved": false,
+          "originalAudioVerified": false,
+          "recordedSenateMemberVoteEstablished": false
+        },
+        {
+          "speaker": "Erin Maye Quade",
+          "exactShortQuoteFragmentInHistoricVisibleHtml": true,
+          "speakerNameInSameParagraph": false,
+          "completeSenatorSpokenQuoteHumanApproved": false,
+          "originalAudioVerified": false,
+          "recordedSenateMemberVoteEstablished": false
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2025-federal-cuts",
+      "archiveUtc": "2025-04-25T15:29:28Z",
+      "observedOriginalRawSha256": "8e344277eeb6c9d30f17c40938e51057ce5b4d8948b399e48c601799ab014577",
+      "status": "raw_sha1_and_prior_sha256_verified",
+      "individuallyAttributedShortTextCues": [
+        {
+          "speaker": "Erin Maye Quade",
+          "exactShortQuoteFragmentInHistoricVisibleHtml": true,
+          "speakerNameInSameParagraph": true,
+          "completeSenatorSpokenQuoteHumanApproved": false,
+          "originalAudioVerified": false,
+          "recordedSenateMemberVoteEstablished": false
+        },
+        {
+          "speaker": "Erin Maye Quade",
+          "exactShortQuoteFragmentInHistoricVisibleHtml": true,
+          "speakerNameInSameParagraph": false,
+          "completeSenatorSpokenQuoteHumanApproved": false,
+          "originalAudioVerified": false,
+          "recordedSenateMemberVoteEstablished": false
+        }
+      ]
+    }
+  ],
+  "unknownFeb14RawPageReplayNotEvidencePhraseMissing": true,
+  "verifiedFeb15RealHistoricReporterParagraphsLabelAllThreeGazelkaBensonChamberlain": true,
+  "sameParagraphNameProximityFalseMeansAttributionNeedsHumanReview": true,
+  "articleAboutCommitteeOrFloorProceedingsNotProofRecordedMemberVote": true,
+  "sourceRawHtmlAndAudioNeverPersisted": true,
+  "noPrivateVotePredictDataOrForecastUsed": true
+}

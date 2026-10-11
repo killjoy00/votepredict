@@ -184,3 +184,36 @@ test('January 6 2023 Alice Mann early archive and April 25 2025 Maye Quade repor
   assert.equal(x[1]?.priorStatus,'cdx_index_unavailable_or_invalid');
   assert.equal(x[2]?.priorStatus,'cdx_index_unavailable_or_invalid');
 });
+
+
+test('third independently downloaded public URL study fixes 22 speaker candidates without inventing new captures',()=>{
+  const s=d.thirdIndependentPublicRecheckAfterSpeakerAttributionCorrection;
+  assert.equal(s.runId,38166093719);
+  assert.equal(s.sourceHeadSha,'936f3c8e56ff2337c65331a487558d3e1a9a6727');
+  assert.equal(s.status,'success');
+  assert.equal(s.artifactId,11712101954);
+  assert.equal(s.artifactName,'senate-media-independent-15-original-receipts');
+  assert.equal(s.downloadedZipSha256,'0224f48b02db6d317204086de08e44641f06f543cee5e3794c23f66f0695f326');
+  assert.equal(s.decodedJsonSha256,'457f25b7e1dd1def5acaf9813cb296d0046c41279d2a02ed3e99c16100bddc28');
+  assert.equal(s.decodedJsonBytes,33597);
+  assert.deepEqual(s.observed,{
+    originalReporterArticleUrlLeads:15,
+    currentSiteServingSenatorQuotationCandidatesCorrectedTo:22,
+    originalUrlIndexed:11,cdxUnavailableOrInvalidUnknown:4,
+    exactHistoricOriginalHtmlReplaysAttempted:22,
+    indexedSha1ConsistentRawHtmlBodies:22,originalUrlsWithAtLeastOneValidOriginalHtml:11,
+    unavailableOriginalIds:[
+      'new-reporter-2021-commissioners','new-reporter-2022-special-session',
+      'new-reporter-2024-housing-zoning','new-reporter-2025-sick-leave',
+    ],
+  });
+  assert.equal(s.all22ReturnedOriginalRawSha256AndBytesMatchEarlier24Union,true);
+  assert.equal(s.housing2024CdxUnavailableThisRunButTwoEarlierMatchedOriginalBodiesStillAuthenticated,true);
+  assert.equal(s.threePreviouslyUnresolvedOriginalUrlsRemainUnresolvedInSelected24BodyUnion,true);
+  assert.equal(s.noNewOriginalBodyVersionsInThisLiveRun,true);
+  assert.equal(s.noHistoricalSpeakerWordsHumanApproved,true);
+  assert.equal(s.noInitialPublisherPostingClockOrRecordedVotesProven,true);
+  assert.equal(s.noPrivateSourceOrProductionModelRead,true);
+  assert.equal(d.independentFinalPublicRun.observed.exactIndexedSha1ConsistentArchivedRawHtmlBodyVersions,24);
+  assert.equal(d.independentFinalPublicRun.observed.distinctOriginalJournalistArticleUrlsWithMatchedBodies,12);
+});
