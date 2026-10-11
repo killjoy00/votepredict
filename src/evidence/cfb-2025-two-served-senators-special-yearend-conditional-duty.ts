@@ -222,7 +222,7 @@ export function audit2025SpecialConditionalYearEndDuties(input:{
     independentGeneralCalendarProof:{
       url:generalCalendar.url,sha256:generalCalendar.sha256,
       bytes:generalCalendar.bytes,observedAt:generalCalendar.observedAt,
-      2025YearEndDueOn:SERVED_2025_YE_DUE,
+      yearEnd2025DueOn:SERVED_2025_YE_DUE,
     },
     official2025TerminationRuleSource:OFFICIAL_2025_TERMINATION_LAW,
     official2025RegistrationRuleSource:OFFICIAL_2025_REGISTRATION_LAW,
