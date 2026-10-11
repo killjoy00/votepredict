@@ -1,0 +1,41 @@
+name: One-time 2024 eight verified senators missing from sampled CFB viewer
+
+# #864 campaign-finance source discovery only, read-only PR trigger.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2024-eight-verified-senator-viewer-gap-discovery.yml
+      - src/evidence/cfb-2024-eight-unobserved-verified-senator-viewers.ts
+      - scripts/capture-cfb-2024-eight-previously-unobserved-senator-viewers.ts
+      - tests/cfb-2024-eight-unobserved-verified-senator-viewers.test.ts
+      - docs/evaluation/source-proof/cfb-2024-eight-verified-senators-viewer-gap-source-checkpoint.json
+
+permissions:
+  contents: read
+
+jobs:
+  fetch-official-cfb-viewer-original-source-responses:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Prove all 8 actually served Senate and were absent only from the scoped viewer sample
+        run: node --import tsx --test tests/cfb-2024-eight-unobserved-verified-senator-viewers.test.ts
+      - name: Get original 2024 CFB candidate viewer references, no PDF retrieval yet
+        run: |
+          node --import tsx scripts/capture-cfb-2024-eight-previously-unobserved-senator-viewers.ts \
+            --output artifacts/cfb-2024-eight-verified-senator-viewer-responses.json
+      - name: Save exact report version source IDs / SHA only, never candidate details or donors
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2024-eight-real-senators-previously-unobserved-viewer-metadata
+          path: artifacts/cfb-2024-eight-verified-senator-viewer-responses.json
+          if-no-files-found: warn
+          retention-days: 30
