@@ -1,0 +1,72 @@
+name: Verify two ORIGINAL 2022 Nicole Mitchell campaign priorities HTML sources
+
+# One-shot, source-only, same-repository PR. Only after original Minnesota
+# LRL Senate-service directory + historical 2022 archived pages are fetched
+# as public source artifacts and independently hash-checked in code.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-senate-nicole-2022-original-priorities.yml
+      - data/evaluation/senate-nicole-mitchell-2022-original-priorities-excerpts-v1.json
+      - src/evidence/senate-nicole-mitchell-2022-original-issue-proof.ts
+      - scripts/audit-senate-nicole-2022-original-policy-offline.ts
+      - tests/senate-nicole-mitchell-2022-original-issue-proof.test.ts
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  nicole-2022-double-historic-original:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-nicole-mitchell-original-2022-issue-positions-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Obtain separately authenticated original Minnesota LRL Senate-service directory
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: artifacts/official-mn-senate-service
+      - name: Obtain two pre-election Wayback originals independently captured on 2022-02-01 / 2022-11-05
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38100551887
+          name: senate-2022-verified-served-domain-wide-historical-originals-v1
+          github-token: ${{ github.token }}
+          path: artifacts/2022-nicole-real-pages
+      - name: Verify LRL source, both original HTML SHA-256 and original CDX SHA-1; require eight short quote matches
+        shell: bash
+        run: |
+          set -euo pipefail
+          lrl="$(find artifacts/official-mn-senate-service -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          proof="$(find artifacts/official-mn-senate-service -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          early="$(find artifacts/2022-nicole-real-pages -type f -name mitchell-historical-20220201005554-0.html -print -quit)"
+          later="$(find artifacts/2022-nicole-real-pages -type f -name mitchell-historical-20221105160301-1.html -print -quit)"
+          test -n "$lrl" && test -n "$proof" && test -n "$early" && test -n "$later"
+          test "$(dirname "$lrl")" = "$(dirname "$proof")"
+          test "$(dirname "$early")" = "$(dirname "$later")"
+          node --import tsx scripts/audit-senate-nicole-2022-original-policy-offline.ts \
+            --lrl-original "$lrl" --lrl-metadata "$proof" \
+            --feb-original "$early" --nov-original "$later" \
+            --output artifacts/nicole-2022-actual-senator-four-source-verified-issue-excerpts.json
+      - name: Retain only private sanitized 2022 original campaign issue excerpts + timestamps
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-nicole-mitchell-2022-two-original-policy-excerpt-proof-v1
+          path: artifacts/nicole-2022-actual-senator-four-source-verified-issue-excerpts.json
+          if-no-files-found: error
+          retention-days: 30
