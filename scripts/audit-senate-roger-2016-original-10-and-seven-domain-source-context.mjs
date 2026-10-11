@@ -25,15 +25,18 @@ const bounded=(p,min=40,max=5500000)=>{const st=statSync(p);
  assert.ok(st.isFile()&&st.size>=min&&st.size<=max,'missing/unbounded original source '+p);
  return readFileSync(p);};
 function main(){
- assert.equal(process.argv.length,10);
+ assert.equal(process.argv.length,12);
  const officialHTML=bounded(get('--entire-original-government-senate-html'),9000);
  const governmentReceipt=JSON.parse(bounded(get('--original-government-utc-sha-audit')).toString());
+ const specialOriginal=bounded(get('--independent-special-swearing-html'),9000);
  const originalDir=get('--original-seven-window-site-html-cdx-dir');
  const output=get('--output');
  assert.equal(sha(officialHTML),ledger.source.historicalFullMNOfficialLRLHtmlSHA256);
  assert.equal(governmentReceipt.source.url,'https://www.lrl.mn.gov/legdb/senate_dir');
  assert.equal(governmentReceipt.source.sourceBytesSha256,sha(officialHTML));
- const official=parseOfficialMnSenateServiceDirectory(officialHTML,governmentReceipt.source.observedAt);
+ assert.equal(sha(specialOriginal),governmentReceipt.supplementalSwearingSource.sourceBytesSha256);
+ const official=parseOfficialMnSenateServiceDirectory(officialHTML,governmentReceipt.source.observedAt,
+  specialOriginal,governmentReceipt.supplementalSwearingSource.observedAt);
  assert.equal(official.senators.length,105);
  for(const [name,dist]of [['David Tomassoni','6'],['Carrie Ruud','10'],['Roger Chamberlain','38']]){
   const status=validateActualSenateServiceForElection(official,name,dist,2020);
