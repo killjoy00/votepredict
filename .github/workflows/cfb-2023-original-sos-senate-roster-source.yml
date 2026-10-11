@@ -6,6 +6,9 @@ on:
       - src/evidence/cfb-2023-official-sos-senate-roster-service.ts
       - scripts/acquire-cfb-2023-original-sos-22-senate-roster.ts
       - tests/cfb-2023-original-sos-senate-roster-service.test.ts
+      - docs/evaluation/source-proof/cfb-2023-original-sos-22-real-senators-roster-independent-service-proof.psv
+      - docs/evaluation/source-proof/cfb-2023-original-sos-senate-22-crossyear-service-source-checkpoint.json
+      - docs/evaluation/cfb-2023-secretary-of-state-senate-roster-22-finance-identity-crosscheck.md
 permissions:
   contents: read
 jobs:
