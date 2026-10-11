@@ -66,6 +66,18 @@ test('2021–25 source-year overlaps are not Jan-1/Dec-31 continuous-service ass
  assert.equal(nicole?.fullCalendarYearContinuousOccupancyProven,false);
  assert.equal(x.byYear[4].people.some(p=>p.officialPersonName==='Nicole Mitchell'),true);
  assert.equal(x.totals.exactStartEndMembershipIntervalsCertified,0);
+ assert.equal(x.byYear[0].reportedDistrictLabelDiagnostics.missingLabelIsNotProofOfVacancyOrNeverServing,true);
+ assert.ok(x.byYear[0].reportedDistrictLabelDiagnostics.noOfficialServiceYearRowForTheseLabels.includes('15')===false);
+});
+test('original district source labels expose overlapping occupancy and uncovered labels without guessing who served',()=>{
+ const d=official();
+ d.senators[3].senateServiceTerms[0].district='7';
+ d.senators[4].senateServiceTerms[0].district='7';
+ const years=buildActualSenatorOfficialYearOverlapResearch(d).byYear;
+ const conflicts=years[0].reportedDistrictLabelDiagnostics;
+ assert.ok(conflicts.labelsWithMultipleObservedSenateServicePeople.some(x=>x.district==='7'));
+ assert.equal(conflicts.overlappingLabelMayBeRealMidyearTransitionOrSourceError,true);
+ assert.ok(conflicts.noOfficialServiceYearRowForTheseLabels.length>0);
 });
 test('original official 2024/25 Senate oath dates are preserved as oath events, not falsely as generic term start',()=>{
  const x=buildActualSenatorOfficialYearOverlapResearch(official());
