@@ -169,6 +169,6 @@ test('permanent 16-reference source ledger verifies 14 unique PDFs, exact alias 
  assert.equal(proven,14);assert.equal(hashes.size,14);
  assert.equal(alias,1);assert.equal(hold,1);
  assert.equal(cp.results.distinctAuthenticatedAmendedPdfBinaries,14);
- assert.equal(cp.limits.legalFilingDutyDenominator,null);
+ assert.equal(cp.limitations.legalFilingDutyDenominator,null);
  assert.equal(cp.protections.noProductionDataWrites,true);
 });
