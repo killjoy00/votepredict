@@ -45,7 +45,7 @@ async function main(){
   const result=reconcileServedSenatorSd6ReportCase(
     verifiedDirectory,JSON.parse(old.toString('utf8')));
   const artifact={
-    schema:SENATE_SD6_2025_REPORT_OBLIGATION_CASE_VERSION,
+    // 'result' already contains the schema identifier (avoid duplicate object keys).
     assembledAt:new Date().toISOString(),
     sourceProofMetadataFile:SENATE_SD6_2025_PROOF_PATH,
     originalMetadataFileSha256:metadataSourceSha256,
