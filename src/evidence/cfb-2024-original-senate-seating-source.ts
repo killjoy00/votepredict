@@ -22,17 +22,17 @@ export function selectPrior2023SOSRosterCfbPeople(input:string){
   ||r[9]!=='official_source_name_district_matched'))
   throw Error('Exact prior independently authenticated real 2023 SOS Senate panel absent');
  return rows.map(r=>({reg:r[0]!,name:r[1]!,district:Number(r[2]),
-  2023RosterPrintedName:r[3]!})).sort((a,b)=>a.district-b.district);
+  prior2023RosterPrintedName:r[3]!})).sort((a,b)=>a.district-b.district);
 }
 function norm(text:string){return text.replace(/\u0000/g,'')
  .replace(/[‐‑–—]/g,'-').replace(/[ \t]+/g,' ');}
 const esc=(s:string)=>s.replace(/[^a-zA-Z0-9]/g,x=>'\\'+x);
 type RosterResult={
  reg:string;priorVerified2022And2023Member:string;priorDistrict:number;
- 2024PublishedRosterExactNameDistrictMatched:boolean;
+ published2024RosterExactNameDistrictMatched:boolean;
  sameDocument2024MapNameDistrictMatched:boolean;
  sourceTableAndMapConflict:boolean;
- 2024RosterSourceStatus:
+ roster2024SourceStatus:
    'original_2024_member_list_and_map_both_matched'
   |'HOLD_source_2024_table_and_map_conflict'
   |'HOLD_2024_source_name_or_district_unverified';
@@ -60,16 +60,16 @@ export function inspect2024OriginalSenateSeatingPdf(input:{
      esc(surname)+'(?:\\s+[^\\n]{0,65}?)?\\s+-\\s+0?'+p.district+'\\b','i');
    const mapMatched=mapPattern.test(seating);
    const conflict=!tableMatched&&mapMatched;
-   const status:RosterResult['2024RosterSourceStatus']=tableMatched&&mapMatched
+   const status:RosterResult['roster2024SourceStatus']=tableMatched&&mapMatched
      ?'original_2024_member_list_and_map_both_matched'
      :conflict?'HOLD_source_2024_table_and_map_conflict'
      :'HOLD_2024_source_name_or_district_unverified';
    return{
      reg:p.reg,priorVerified2022And2023Member:p.name,priorDistrict:p.district,
-     2024PublishedRosterExactNameDistrictMatched:tableMatched,
+     published2024RosterExactNameDistrictMatched:tableMatched,
      sameDocument2024MapNameDistrictMatched:mapMatched,
      sourceTableAndMapConflict:conflict,
-     2024RosterSourceStatus:status,
+     roster2024SourceStatus:status,
    } as RosterResult;
  });
  const counts={
@@ -77,11 +77,11 @@ export function inspect2024OriginalSenateSeatingPdf(input:{
   originalTableSenateMembersSectionLocated:ix>=0,
   originalMapSectionLocated:mapIx>ix,
   numberOfReal2022And2023SenatorsCrossChecked:entries.length,
-  exactSourceTableMatches:entries.filter(x=>x['2024PublishedRosterExactNameDistrictMatched']).length,
+  exactSourceTableMatches:entries.filter(x=>x.published2024RosterExactNameDistrictMatched).length,
   independentMapCaptionMatches:entries.filter(x=>x['sameDocument2024MapNameDistrictMatched']).length,
-  bothSourceSectionsMatched:entries.filter(x=>x['2024RosterSourceStatus']==='original_2024_member_list_and_map_both_matched').length,
+  bothSourceSectionsMatched:entries.filter(x=>x.roster2024SourceStatus==='original_2024_member_list_and_map_both_matched').length,
   sourceTableAndMapConflicts:entries.filter(x=>x['sourceTableAndMapConflict']).map(x=>({reg:x.reg,district:x.priorDistrict})),
-  unverified:entries.filter(x=>x['2024RosterSourceStatus']==='HOLD_2024_source_name_or_district_unverified').map(x=>({reg:x.reg,district:x.priorDistrict})),
+  unverified:entries.filter(x=>x.roster2024SourceStatus==='HOLD_2024_source_name_or_district_unverified').map(x=>({reg:x.reg,district:x.priorDistrict})),
   complete2024RosterIdentityAuthentication:false,
   historicalVoteDayIn2024ServiceEstablishedCount:0,
   legal2024CommitteeFilingDutyEstablishedCount:0,
