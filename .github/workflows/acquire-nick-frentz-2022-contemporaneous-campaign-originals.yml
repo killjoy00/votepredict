@@ -1,0 +1,62 @@
+name: Recover Nick Frentz ORIGINAL 2022 campaign pages from contemporaneous Sep 2022 podcast URL
+
+# Only candidate-owned 2022 Wayback original HTML, archive capture UTC, CDX digest.
+# No author-first-posted date requirements, production DB/model/forecast or cron.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/acquire-nick-frentz-2022-contemporaneous-campaign-originals.yml
+      - data/evaluation/senate-nick-frentz-2022-contemporaneous-podcast-domain-original-archive-target-v1.json
+      - scripts/acquire-nick-frentz-2022-podcast-linked-original-campaign-domain.ts
+      - scripts/run-nick-frentz-contemporaneous-2022-original-campaign-site.ts
+      - tests/senate-nick-frentz-2022-podcast-domain-original-campaign.test.ts
+      - docs/SENATE_NICK_FRENTZ_2022_CONTEMPORANEOUS_OLD_DOMAIN_SOURCE_RECOVERY.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  one-actually-served-senator-2022-historical-domain-originals:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-nick-frentz-original-2022-podcast-linked-domain-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Obtain independent real official LRL original statewide actual Senator-service directory
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: historical/real-official-minnesota-senate-directory
+      - name: Rehash original LRL state Senator HTML then search real 2022 Frentz podcast-domain archived originals
+        shell: bash
+        timeout-minutes: 8
+        run: |
+          set -euo pipefail
+          lrl="$(find historical/real-official-minnesota-senate-directory -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find historical/real-official-minnesota-senate-directory -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$lrl" && test -n "$receipt"
+          test "$(dirname "$lrl")" = "$(dirname "$receipt")"
+          node --import tsx scripts/run-nick-frentz-contemporaneous-2022-original-campaign-site.ts \
+            --lrl-directory-html "$lrl" \
+            --lrl-original-source-receipt "$receipt" \
+            --output-dir historical/nick-frentz-original-2022-podcast-linked-site
+      - name: Retain 2022 candidate domain CDX + real full original archived HTML/digest or dated unknown source
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-nick-frentz-sep2022-original-campaign-podcast-domain-cdx-html-v1
+          path: historical/nick-frentz-original-2022-podcast-linked-site/
+          if-no-files-found: warn
+          retention-days: 30
