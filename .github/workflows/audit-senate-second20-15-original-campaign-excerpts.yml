@@ -1,0 +1,87 @@
+name: Independently verify 137 original-site historical campaign excerpts for 15 second-batch Minnesota senators
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-second20-15-original-serving-senators-issue-excerpts-v1.json
+      - scripts/audit-senate-second-20-15-original-source-excerpts.mjs
+      - tests/senate-second20-15-authenticated-original-campaign-excerpts.test.ts
+      - scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs
+      - .github/workflows/audit-senate-second20-15-original-campaign-excerpts.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  independent-full-original-lrl-cdx-html-and-137-excerpts:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-second20-verified-campaign-policy-originals-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen full independently pinned original Minnesota Senate service directory and special swearing
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen 33 complete 2020 2022 and special 2025 window archive indexes and complete raw HTML
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38177884783
+          name: senate-second-20-distinct-uncovered-33-historical-wayback-windows-v1
+          github-token: ${{ github.token }}
+          path: original/second20-wayback
+      - name: Verify candidate campaign origins, actual Senate service, 15 original CDX files and 137 exact literal excerpts
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
+          node --import tsx scripts/audit-senate-second-20-15-original-source-excerpts.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --original-acquisition-dir original/second20-wayback \
+            --output-json original/proof/second20-15-new-senators-137-literal-first-party-original-sources.json
+      - name: Independently recompute 95 actual serving senators original-first-party research coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          node --import tsx scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --out-dir original/95-senator-verified-coverage
+          node -e 'const x=require("./original/95-senator-verified-coverage/95-senators-public-campaign-coverage.json");const s=x.summary;for(const [k,v] of Object.entries({actualServingStateSenators:95,actuallyServedSenatorsWithAnyKnownSelectedOriginalSiteExcerpt:79,actuallyServedSenatorsWithOriginalSiteBodiesButNoSelectedQuote:0,actuallyServedSenatorsUnobservedInSelectedOriginalSiteSourceLedgers:16,totalExactResearchExcerptRowsForVerifiedSenators:1006,nonMatchingRowsExcludedOrNeedsSeparateIdentityProof:1,productionDatabaseReadsWritesOrForecastChanges:0})){if(s[k]!==v)throw Error(k+" expected "+v+" actual "+s[k]);}console.log("OFFICIAL VERIFIED 95 ACTUAL SENATORS; 79 HISTORICAL ORIGINAL FIRST-PARTY SITE QUOTE SOURCED; 1006 DISTINCT SOURCE ROWS; 16 STILL BOUNDED UNOBSERVED");'
+      - name: Preserve original-byte evidence trace and independently authenticated 137 quotes
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-second20-15-new-senators-137-exact-original-html-cdx-proof-v1
+          path: original/proof/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Preserve independently official-LRL-grounded 95-senator first-party coverage after second batch
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-95-actual-79-firstparty-original-1006-research-quotes-v1
+          path: original/95-senator-verified-coverage/
+          if-no-files-found: warn
+          retention-days: 30
