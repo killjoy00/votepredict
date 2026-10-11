@@ -6,6 +6,8 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
+import {originalCfbYearEndLegalReleaseThreshold}
+  from '../src/evidence/cfb-2023-24-yearend-statutory-thresholds.js';
 import {
   parseCfb2023to24SourceVersionStatutoryBounds,
   assessCfb2023to24HistoricalAvailability,
@@ -122,4 +124,22 @@ test('source SHA tamper, forged as-of, wrong due date, invalid cutoff are always
    '|-|false|verified28Originals','|2024-02-01|true|verified28Originals')),/changed/);
  assert.throws(()=>assessCfb2023to24HistoricalAvailability(ledger[0]!,'2025-02-30'),
    /exact valid YYYY-MM-DD/);
+});
+
+test('each of 71 source-derived version clocks matches merged primary Board calendar/Revisor legal anchors',()=>{
+ for(const row of ledger){
+  const original=originalCfbYearEndLegalReleaseThreshold(row.reportYear);
+  assert.equal(row.periodStartOn,original.originalCoveredStartOn);
+  assert.equal(row.periodEndOn,original.originalCoveredEndOn);
+  assert.equal(row.legalYearEndDueOn,original.ordinaryYearEndDueOn);
+  assert.equal(row.statutoryNotBeforeLocal,original.statutoryNonpublicUntilLocal);
+  assert.ok(original.officialOriginalBoardCalendar.startsWith('https://cfb.mn.gov/pdf/calendars/'));
+  assert.equal(original.actualHistoricalPublicByOn,null);
+  assert.equal(original.legallyOwedFilingForAnySpecificCommittee,null);
+  if(row.earliestPossibleDateFloor!==null)
+   assert.ok(row.earliestPossibleDateFloor>=original.statutoryReleaseNotBeforeDate);
+  assert.equal(row.actualHistoricalPublicByOn,null);
+  assert.equal(row.thisExactReportLegallyOwed,null);
+  assert.equal(row.historicalForecastEligible,false);
+ }
 });
