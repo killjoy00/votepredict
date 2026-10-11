@@ -174,6 +174,23 @@ async function main(){
   };
   mkdirSync(dirname(output),{recursive:true});
   writeFileSync(output,JSON.stringify(checkpoint,null,2)+'\n',{flag:'wx'});
+  // Metadata-only stdout recovery path for the permanent follow-up ledger:
+  // every row is an authenticated source reference, not any report body or donor.
+  const sourceProofColumns=[
+    'id','actualSenator','electionDistrict2022','originalReportPrintedSenateDistrict',
+    'amendedPdfPrintedSenateDistrict','originalReportId','originalReportSha256',
+    'originalViewerApiSha256','amendedPdfSha256','amendedPdfByteLength',
+    'amendedPdfAcquiredAt','amendedCoverageStartOn','amendedCoverageEndOn',
+    'amendedBoardReceivedOn','originalReportStatutoryDueOn',
+    'conservativeAmendedVersionNotBeforeOn','referenceClassification',
+    'aliasOfAmendmentVersionId',
+  ] as const;
+  console.log('CFB_SD25_36_30_SOURCE_PROOF_COLUMNS '+sourceProofColumns.join('|'));
+  console.log('CFB_SD25_36_30_SOURCE_PROOF_BEGIN');
+  for(const r of reports){
+    console.log(sourceProofColumns.map(k=>String(r[k]??'')).join('|'));
+  }
+  console.log('CFB_SD25_36_30_SOURCE_PROOF_END');
   console.log(JSON.stringify({issue:864,selectedOriginalAmendmentVersions:30,
     actualSenators:11,originalParents:40,individualFirstPageChecks:authenticated.length,
     distinctAuthenticatedPdfBinaries:distinct.length,documentedReferenceAliases:aliases.length,
