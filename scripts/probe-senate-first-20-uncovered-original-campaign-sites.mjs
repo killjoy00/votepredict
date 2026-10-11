@@ -57,7 +57,10 @@ const gov=original(arg('--official-html'),9000),officialReceipt=JSON.parse(origi
 assert.equal(sha(gov),governmentSourceSha);
 assert.equal(officialReceipt.source.url,'https://www.lrl.mn.gov/legdb/senate_dir');
 assert.equal(officialReceipt.source.sourceBytesSha256,governmentSourceSha);
-const directory=parseOfficialMnSenateServiceDirectory(gov,officialReceipt.source.observedAt);
+const swearing=original(arg('--official-special-swearing-html'),9000);
+assert.equal(sha(swearing),officialReceipt.supplementalSwearingSource.sourceBytesSha256);
+const directory=parseOfficialMnSenateServiceDirectory(
+ gov,officialReceipt.source.observedAt,swearing,officialReceipt.supplementalSwearingSource.observedAt);
 assert.equal(directory.senators.length,105);
 for(const p of pins){
  const v=validateActualSenateServiceForElection(directory,p.person,p.district,p.year);
