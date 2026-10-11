@@ -13,6 +13,7 @@ on:
       - docs/evaluation/senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json
       - tests/senate-media-independent-reporter-15-original-receipts.test.ts
       - docs/evaluation/senate-media-2021-25-independent-reporter-expansion-and-early-speaker-review.md
+      - docs/evaluation/senate-media-2021-25-reporter-speaker-correction-and-alias-originals.md
   workflow_dispatch:
     inputs:
       scope:
