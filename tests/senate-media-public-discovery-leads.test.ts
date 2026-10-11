@@ -70,6 +70,12 @@ type PublicLead = {
   historicalOriginalHumanQuoteReviewed?:boolean;
   wasCurrentPageTextPresentBeforeAnyHistoricalVoteCutoffVerified?:boolean;
   noAutomaticallyInferredSenatorStance?:boolean;
+  presentDayMprLinkedTranscriptPdfUrl?:string;
+  transcriptPdfBytesIndependentlyVerified?:boolean;
+  originalHistoricalTranscriptPdfCaptureVerified?:boolean;
+  transcriptPdfWasPublicByDisplayedRadioDateVerified?:boolean;
+  originalAudioShaMatchedToTranscriptPdf?:boolean;
+  presentDayMprTranscriptMayFollowOriginalBroadcast?:boolean;
 };
 type Ledger = {
   version:string;
@@ -358,4 +364,32 @@ test('2021-25 first-party Minnesota MPR interviews stay typed by CURRENT page pr
   assert.deepEqual(added[3]!.namedSenatorLeadsForManualReview,['Mary Kunesh']);
   assert.deepEqual(added[4]!.namedSenatorLeadsForManualReview,['Susan Pha']);
   assert.deepEqual(added[5]!.namedSenatorLeadsForManualReview,['Julia Coleman']);
+});
+
+
+test('three first-party MPR current transcript PDF attachments are only research leads, NOT dated original media',()=>{
+  const links:Record<string,string>={
+    'mpr-2023-kunesh-native-family-preservation':'c83342638fa82d6a5d8cdfe5a7ce7ba6',
+    'mpr-2024-hauschild-north-star-on-air-interview':'70fb369cef19a16a739671110457b6b9',
+    'mpr-2025-pha-hmong-lao-veterans':'f6c5cb374510772be01fbc20ea88d2d0',
+  };
+  const selected=data.selectedNonExhaustiveArticleLeads
+    .filter(x=>x.presentDayMprLinkedTranscriptPdfUrl!==undefined);
+  assert.equal(selected.length,3);
+  for(const [id,fileId] of Object.entries(links)){
+    const row=selected.find(x=>x.id===id);
+    assert.ok(row,id);
+    assert.equal(row.publisher,'MPR News');
+    assert.equal(row.presentDayMprLinkedTranscriptPdfUrl,
+      'https://codytranscripts.apmcdn.org/production/'+fileId+'.pdf');
+    assert.equal(row.transcriptPdfBytesIndependentlyVerified,false);
+    assert.equal(row.originalHistoricalTranscriptPdfCaptureVerified,false);
+    assert.equal(row.transcriptPdfWasPublicByDisplayedRadioDateVerified,false);
+    assert.equal(row.originalAudioShaMatchedToTranscriptPdf,false);
+    assert.equal(row.presentDayMprTranscriptMayFollowOriginalBroadcast,true);
+    assert.equal(row.originalArchivedHttpBytesHashVerified,false);
+    assert.equal(row.archiveCapturePublicByVerified,false);
+    assert.equal(row.directQuoteHumanVerified,false);
+    assert.equal(row.historicalForecastEligibilityProven,false);
+  }
 });

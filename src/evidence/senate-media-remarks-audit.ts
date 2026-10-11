@@ -52,6 +52,15 @@ export interface SenateMediaSourceSnapshot {
 export type SenateMediaReviewDisposition =
   | 'exact_named_quote' | 'contextual_mention' | 'speaker_ambiguous' | 'source_unavailable';
 
+/**
+ * These are ALTERNATIVE forms of direct quotation in original, SHA-verified
+ * publisher HTML. This does not certify that separate audio existed at
+ * publication time, that a transcript is contemporaneous with broadcast,
+ * or that a forecast cutoff can reuse its archive capture.
+ */
+export type SenateMediaQuotePresentation =
+  | 'reported_quotation' | 'speaker_labeled_transcript';
+
 export interface SenateMediaReview {
   sourceDocumentId: string;
   disposition: SenateMediaReviewDisposition;
@@ -60,8 +69,13 @@ export interface SenateMediaReview {
   exactQuote?: string;
   /** Contiguous original article passage containing BOTH the cue and quote. */
   sourcePassage?: string;
-  /** Explicit "Sen. Surname said" / full-name attribution, in sourcePassage. */
+  /** Reporter named cue, OR exact full-name speaker label, in sourcePassage. */
   attributionCue?: string;
+  /**
+   * Opt in explicitly to speaker-labeled original MPR interview transcripts;
+   * absent field retains the old quoted-reporter-text-only rule.
+   */
+  quotePresentation?: SenateMediaQuotePresentation;
   /** Source page's publication date, independently reviewed; not the availability date. */
   publisherPublishedAt?: string;
   /** Exact HTML metadata/date line or visible date passage supporting the publication date. */
@@ -187,6 +201,54 @@ function namedSenatorIssues(
     && possibleOnDate(other,publicationDay));
   return competingSenator ? ['ambiguous_senator_surname_requires_full_named_cue'] : [];
 }
+/**
+ * The original HTML itself must visibly label one FULL-NAME senator speaker
+ * turn under the audio transcript heading. A host's answer, a journalist's
+ * paraphrase, a senator merely named in page metadata, a surname-only cue
+ * and a quote borrowed from the NEXT speaker all remain unverified.
+ *
+ * A transcript-text proof is NOT original MP3/audio proof. The archive's
+ * authenticated capture remains the EARLIEST demonstrated public-by for
+ * the precise page version; the current page's broadcast clock is not.
+ */
+function transcriptTurnIssues(
+  review: SenateMediaReview,
+  source: SenateMediaContextExport,
+  member: SenateMediaRosterYear | undefined,
+  passage: string,
+  cue: string,
+  quote: string,
+  decodedArticle: string,
+): string[] {
+  const issues: string[] = [];
+  const url = source.originalUrl ?? '';
+  if (source.publisher !== 'MPR News' || source.seedId !== 'mpr-news-story-archive'
+    || !/^https:\/\/www\.mprnews\.org\/(?:episode|story)\/20(?:21|22|23|24|25)\//.test(url))
+    issues.push('speaker_transcript_requires_original_first_party_mpr_source');
+  const section = decodedArticle.toLowerCase().indexOf('audio transcript');
+  if (section < 0 || decodedArticle.indexOf(passage) < section)
+    issues.push('speaker_transcript_section_not_in_original_article');
+  if (!member) return issues;
+  // No surname-only fallback for transcript speakers. Require exact member
+  // full name followed by ':' instead of inferring from a nearby mention.
+  const label = member.senatorName.trim().replace(/\s+/g, ' ').toUpperCase() + ':';
+  if (cue.toUpperCase() !== label || !passage.toUpperCase().includes(label)) {
+    issues.push('speaker_transcript_full_member_label_missing');
+    return issues;
+  }
+  const start = passage.toUpperCase().indexOf(label) + label.length;
+  const after = passage.slice(start);
+  // Bound the attributed turn at the NEXT two-word all-caps speaker label.
+  // Also match one-word labels and Unicode uppercase names (e.g. LÓPEZ)
+  // with punctuation and suffixes. False negatives are safer than borrowing
+  // someone else's words.
+  const nextSpeaker = /(?:^|\s)[\p{Lu}][\p{Lu}\p{M}.'’,-]{1,30}(?:\s+[\p{Lu}][\p{Lu}\p{M}.'’,-]{1,30}){0,6}:(?=\s|$)/u.exec(after);
+  const turn = nextSpeaker ? after.slice(0, nextSpeaker.index) : after;
+  if (!quote || !turn.includes(quote))
+    issues.push('speaker_transcript_quote_outside_named_senator_turn');
+  return issues;
+}
+
 function quoteIssues(
   review: SenateMediaReview,
   source: SenateMediaContextExport,
@@ -241,10 +303,17 @@ function quoteIssues(
         || passage.indexOf(quote) - passage.indexOf(cue) > 260) {
       issues.push('quote_or_attribution_cue_not_contiguous');
     }
-    // A reporter's paraphrase is not a verbatim senator quotation.
-    const quotedSpans = [...passage.matchAll(/["“]([^"”]+)["”]/g)];
-    if (!quote || !quotedSpans.some(match => plain(match[1]).includes(quote)))
-      issues.push('claimed_quote_not_delimited_as_direct_speech');
+    const quotePresentation = review.quotePresentation ?? 'reported_quotation';
+    if (quotePresentation === 'speaker_labeled_transcript') {
+      issues.push(...transcriptTurnIssues(review,source,member,passage,cue,quote,decoded));
+    } else if (quotePresentation === 'reported_quotation') {
+      // A reporter's paraphrase is not a verbatim senator quotation.
+      const quotedSpans = [...passage.matchAll(/["“]([^"”]+)["”]/g)];
+      if (!quote || !quotedSpans.some(match => plain(match[1]).includes(quote)))
+        issues.push('claimed_quote_not_delimited_as_direct_speech');
+    } else {
+      issues.push('unsupported_direct_quote_presentation');
+    }
     // Named-source presence is necessary but not sufficient for semantic
     // attribution. Same-surname peers require a full, unambiguous name cue.
     if (member) issues.push(...namedSenatorIssues(cue,member,roster,publicationDay));
@@ -314,6 +383,8 @@ export function auditSenateMediaRemarks(input: {
   const classified: Array<{
     sourceDocumentId: string; membershipId: string | null; senatorName: string | null;
     issueCategory: string | null; disposition: SenateMediaReviewDisposition;
+    quotePresentation: SenateMediaQuotePresentation;
+    archivedAudioIndependentlyAuthenticated: false;
     verified: boolean; failures: string[]; publisher: string | null;
     originalUrl: string | null; archiveUrl: string | null;
     sourceSha256: string; publishedAt: string | null; provenPublicBy: string | null;
@@ -353,6 +424,9 @@ export function auditSenateMediaRemarks(input: {
       senatorName: member?.senatorName ?? null,
       issueCategory: review.issueCategory ?? null,
       disposition: review.disposition,
+      quotePresentation: review.quotePresentation ?? 'reported_quotation',
+      /** Explicitly NOT proof of original audio bytes or original broadcast time. */
+      archivedAudioIndependentlyAuthenticated: false as const,
       verified: review.disposition === 'exact_named_quote' && failures.length === 0,
       failures, publisher: row.publisher, originalUrl: row.originalUrl,
       archiveUrl: row.archiveUrl, sourceSha256: row.sourceSha256,
