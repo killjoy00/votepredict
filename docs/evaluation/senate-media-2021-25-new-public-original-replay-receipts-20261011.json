@@ -318,5 +318,41 @@
     "noAutomaticallyInferredRecordedVotesOrModelStances": true,
     "failingOrUnindexedCaptureIsNotMissingHistoricalPublication": true,
     "noPublicRawOriginalArticleTextOrAudioPersisted": true
+  },
+  "independentSecondLiveOriginalRecheck": {
+    "repo": "killjoy00/votepredict",
+    "runId": 38156433947,
+    "runAttempt": 1,
+    "sourceHeadSha": "ede2942e84d3a971fd77ebf99f73a80d6f12b07a",
+    "sourceArtifactId": 11708573575,
+    "sourceArtifactName": "senate-media-new-remarks-public-wayback",
+    "originalArtifactZipSha256": "38bd36791bca959bfcf07d692e240e3ec7d5035ef24678ed22b3c4d69109caa7",
+    "decodedJsonSha256": "74482667f6cc7bb7c065b32a66dad7dd86e67c9561669b1767aa6c480ee4c47c",
+    "decodedJsonByteCount": 38812,
+    "sourceRunConclusion": "success",
+    "secondRunTotals": {
+      "urlLeadsProbed": 18,
+      "candidatesIndexed": 13,
+      "indexEmpty": 0,
+      "indexUnavailableOrInvalid": 5,
+      "exactReplayAttempts": 26,
+      "indexConsistentBodyReplays": 24,
+      "distinctUrlLeadsWithIndexConsistentBodies": 13,
+      "sha1ReplayMismatches": 2,
+      "redirectedReplayHolds": 0
+    },
+    "previouslyVerifiedMatchingCaptureCount": 23,
+    "all23CommonCaptureSha256AndBytesIndependentlyEqual": true,
+    "newlyVerifiedEarlierCapture": {
+      "leadId": "caucus-2023-poci-joint-policing",
+      "archiveCapturedUtc": "2023-06-05T01:07:20Z",
+      "indexedPayloadSha1Base32": "4F5ZFAODVUJQNVXVNU7BQFOPR5X5UQL7",
+      "observedOriginalBodySha256": "307d379de103fcbcda05a1c52d35989121b442dd8783288027b01843ff1b997b",
+      "observedOriginalBodyBytes": 116116,
+      "priorFirstRunDisposition": "archive_redirect_refused",
+      "collectiveCaucusSpeechStillNotIndividuallyAttributable": true
+    },
+    "combinedUniqueExactCapturedUrlAndUtcBodyCount": 24,
+    "these24AreNotUniqueSenatorQuotationsOrPublishedArticleUniverse": true
   }
 }
