@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "senate-2022-11-original-caption-combined-first-failure-and-one-retry-source-proof-v1",
+  "issue": 864,
+  "recordedOn": "2026-10-10",
+  "sourceAuthority": "Minnesota Legislative Reference Library",
+  "firstImplementation": {
+    "pr": 1034,
+    "mergeSha": "89dd0185487b843ed3d763d139b4e6bb9ef92bd3",
+    "exactHeadCiRun": 38110155589,
+    "ciConclusion": "success"
+  },
+  "firstActualOriginalSource": {
+    "runId": 38110343054,
+    "conclusion": "failure",
+    "artifactId": 11691578389,
+    "sourceZipSha256": "a9decadea79c69858f41a85f03aaac410e2aebaab7d791d34c4872704ede98f7",
+    "sourceUncompressedJsonSha256": "b223b015014ec3444ffe7dae4bd2b85515e9602b9111f2ce9dbf00917a347c29",
+    "sourceUncompressedJsonBytes": 39773,
+    "reverifiedOriginalHtmlPages": 10,
+    "sourceHtmlFetchFailures": 1,
+    "reverifiedTimedCaptionBearingPages": 9,
+    "sourceEmptyCaptionHolds": 1,
+    "verifiedCaptionStreams": 10,
+    "autoCaptionTimeMarkers": 21532,
+    "categoryTimeResearchWindowsNotMotions": 43,
+    "cueBearingSourceHearingPages": 3
+  },
+  "retryImplementation": {
+    "pr": 1040,
+    "mergeSha": "1ad3ec87f2d27088a9bc69e2ab30803c247335b7",
+    "exactHeadCiRun": 38110592545,
+    "ciConclusion": "success"
+  },
+  "actualOneRecordRetry": {
+    "runId": 38110799424,
+    "conclusion": "success",
+    "artifactId": 11691588898,
+    "sourceZipSha256": "c42294055f34c6a4e7ccdcb6bc6a384337a369c85bb1def5fa431d55bf79ce46",
+    "sourceUncompressedJsonSha256": "71ba360e072d95c482479d1f3effa6f491383dd3bf4f04b00f9f66ea017a2e52",
+    "sourceUncompressedJsonBytes": 1979,
+    "indexedHearingDate": "2022-02-08",
+    "committee": "Environment and Natural Resources Finance",
+    "mtgid": "1045607",
+    "originalMediaHtmlSha256": "342a43b65a652fabcaa69c10c61fea25728b3f302e2559fa64c40dc6be42adb1",
+    "originalCaptionBodySha256": "7f11f63f10ea03d899c0555c76e6c8e99aec8b34c50f9900bc50e9067c36b66e",
+    "captionBodyBytes": 440730,
+    "sourceTimeMarkers": 2615,
+    "strictProceduralCategoryTimeCueWindows": 0,
+    "oneSourceDoesNotProveNoMotions": true,
+    "firstRunConclusionMustRemainFailure": true
+  },
+  "previousOriginalInputs": {
+    "officialIndexToMediaRun": 38079233118,
+    "originalHtmlSourceRun": 38081463362,
+    "originalCaptionAvailabilityRun": 38103766440,
+    "originalCaptionSourceArtifactId": 11687874692,
+    "originalCaptionSourceZipSha256": "f2c6628ebea5179c340dd2048c9490a5bfc3d572d596724d0a7d4f46d6388ab7",
+    "originalCaptionSourceJsonSha256": "afcf73a3b757241ed9da987b2df62d455d53e2296c59a493af87cac7e3ba60d4"
+  },
+  "combinedYear2022": {
+    "originalIndexedNoMinutesMeetingMediaLeads": 11,
+    "originalMediaHtmlPageShaVerifiedAcrossTwoSourceRuns": 11,
+    "sourceHtmlFetchFailuresStillUnresolved": 0,
+    "originalCaptionBearingHearingPages": 10,
+    "separateSHAProvenNonemptyCaptionStreams": 11,
+    "originalCaptionTimestampMarkers": 24147,
+    "pagesContainingStrictProvisionalParliamentaryCueWindows": 3,
+    "strictCategoryAndThirtySecondCueWindowsNotUniqueMotions": 43,
+    "additionalCategoryCueWindowsFromTargetedFeb08Retry": 0,
+    "meetingWithNoTimedCaptionSource": {
+      "hearingDate": "2022-03-15",
+      "committee": "Housing Finance and Policy",
+      "mtgid": "1046040"
+    },
+    "originalDoubleTrackHearing": {
+      "hearingDate": "2022-04-04",
+      "committee": "Education Finance and Policy",
+      "mtgid": "1046323",
+      "verifiedCaptionStreams": 2,
+      "notTwoSeparateVotes": true
+    }
+  },
+  "priorityHumanSourceAudioReview": [
+    {
+      "hearingDate": "2022-02-10",
+      "committee": "Civil Law and Data Practices Policy",
+      "mtgid": "1045642",
+      "strictTimeCategoryCueWindows": 27
+    },
+    {
+      "hearingDate": "2022-03-09",
+      "committee": "Environment and Natural Resources Finance",
+      "mtgid": "1045991",
+      "strictTimeCategoryCueWindows": 9
+    },
+    {
+      "hearingDate": "2022-02-07",
+      "committee": "Jobs and Economic Growth Finance and Policy",
+      "mtgid": "1045559",
+      "strictTimeCategoryCueWindows": 7
+    }
+  ],
+  "sourceSafeguards": {
+    "twoOriginalSourceRunsRemainSeparatelyIdentified": true,
+    "humanOriginalAudioSpeakerAndActionMotionReviewCompleted": false,
+    "strictCaptionCueCountIsNotOfficialMotionOrVoteCount": true,
+    "noMemberYeaNayFromCaptionsOrAggregateOrAttendance": true,
+    "noSourceWithoutCueDoesNotProveNoMotion": true,
+    "original2021CommitteeMinutesPrintOnlyRemainUnenumerated": true,
+    "official2022PrintElectronicMeetingDifferencesNotReconciled": true,
+    "completeOfficial2021to2025SenateCommitteeVoteDenominator": null,
+    "noPrivateProductionDBAccessOrWrites": true,
+    "noModelTrainingForecastServingSchedulerFloor2027Changes": true,
+    "noOfficeContact": true,
+    "issue864MustRemainOpen": true
+  }
+}
