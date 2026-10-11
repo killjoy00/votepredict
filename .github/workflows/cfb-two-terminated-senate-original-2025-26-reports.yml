@@ -1,0 +1,34 @@
+name: Original CFB two historical Senate committee termination evidence sources
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-two-terminated-senate-original-2025-26-reports.yml
+      - src/evidence/cfb-two-terminated-original-report-investigation.ts
+      - scripts/acquire-cfb-two-terminated-committee-2025-26-reports.ts
+      - tests/cfb-two-terminated-original-report-investigation.test.ts
+      - docs/evaluation/cfb-2023-26-drazkowski-anderson-termination-source-audit.md
+      - docs/evaluation/source-proof/cfb-two-current-terminated-senate-original-*.json
+      - docs/evaluation/source-proof/cfb-two-current-terminated-senate-original-*.psv
+permissions:
+  contents: read
+jobs:
+  independent-original-cfb-senate-candidate-reports-and-termination-form-probes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/cfb-two-terminated-original-report-investigation.test.ts
+      - run: node --import tsx scripts/acquire-cfb-two-terminated-committee-2025-26-reports.ts --output artifacts/cfb-two-terminated-original-reports-pilot.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: original-CFB-SD20-SD29-two-current-terminated-2025-26-report-probe
+          path: artifacts/cfb-two-terminated-original-reports-pilot.json
+          if-no-files-found: warn
+          retention-days: 30
