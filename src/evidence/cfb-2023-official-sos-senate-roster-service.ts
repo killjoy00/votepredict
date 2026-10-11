@@ -8,7 +8,7 @@ import {createHash} from 'node:crypto';
 export const SOS_2023_SENATE_ROSTER_SOURCE_VERSION=
  'sos-2023-pocket-original-2023-senate-roster-22-CFB-source-only-v1' as const;
 export const SOS_2023_SENATE_ROSTER_PDF=
- 'https://www.sos.state.mn.us/media/6331/pocket-edition-2023.pdf' as const;
+ 'https://www.sos.mn.gov/media/ybhkokxo/pocket-edition-2023.pdf' as const;
 const CFB71_BLOB='bfa1c1eff6a095a3a0d03aa49a34e1d929d6a388';
 const blob=(s:string)=>createHash('sha1')
  .update('blob '+Buffer.byteLength(s,'utf8')+'\0').update(s,'utf8').digest('hex');
