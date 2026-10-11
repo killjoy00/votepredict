@@ -10,6 +10,9 @@ on:
       - docs/evaluation/senate-media-three-independent-newsroom-historical-multi-speaker-queue-20261011.json
       - docs/evaluation/senate-media-2021-25-further-independent-reporting-15-leads.json
       - docs/evaluation/senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json
+      - docs/evaluation/senate-media-three-reporter-original-historical-phrase-receipts-20261011.json
+      - tests/senate-media-three-reporter-original-historical-phrase-receipts.test.ts
+      - docs/evaluation/senate-media-2021-25-reporter-speaker-correction-and-alias-originals.md
   workflow_dispatch:
 
 permissions:
