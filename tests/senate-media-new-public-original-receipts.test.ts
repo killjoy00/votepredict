@@ -148,3 +148,41 @@ test('same-day Miller MPR and Marty releases have real earliest captures but NOT
   assert.equal(coleman.verifiedCaptureReplays[0]!.archivedCaptureUtc,'2021-04-13T20:21:28Z');
   assert.equal(d.observedTotals.humanApprovedSenatorQuotations,0);
 });
+
+
+test('independent second live run reproduces all original 23 hashes and recovers earlier collective POCI archive',()=>{
+  const s=d.independentSecondLiveOriginalRecheck;
+  assert.equal(s.runId,38156433947);
+  assert.equal(s.runAttempt,1);
+  assert.equal(s.sourceHeadSha,'ede2942e84d3a971fd77ebf99f73a80d6f12b07a');
+  assert.equal(s.sourceArtifactId,11708573575);
+  assert.equal(s.originalArtifactZipSha256,
+    '38bd36791bca959bfcf07d692e240e3ec7d5035ef24678ed22b3c4d69109caa7');
+  assert.equal(s.decodedJsonSha256,
+    '74482667f6cc7bb7c065b32a66dad7dd86e67c9561669b1767aa6c480ee4c47c');
+  assert.equal(s.decodedJsonByteCount,38812);
+  assert.equal(s.sourceRunConclusion,'success');
+  assert.equal(s.previouslyVerifiedMatchingCaptureCount,23);
+  assert.equal(s.all23CommonCaptureSha256AndBytesIndependentlyEqual,true);
+  assert.equal(s.secondRunTotals.indexConsistentBodyReplays,24);
+  assert.equal(s.secondRunTotals.distinctUrlLeadsWithIndexConsistentBodies,13);
+  assert.equal(s.secondRunTotals.sha1ReplayMismatches,2);
+  assert.equal(s.secondRunTotals.redirectedReplayHolds,0);
+  assert.equal(s.combinedUniqueExactCapturedUrlAndUtcBodyCount,24);
+  const early=s.newlyVerifiedEarlierCapture;
+  assert.equal(early.leadId,'caucus-2023-poci-joint-policing');
+  assert.equal(early.archiveCapturedUtc,'2023-06-05T01:07:20Z');
+  assert.equal(early.indexedPayloadSha1Base32,'4F5ZFAODVUJQNVXVNU7BQFOPR5X5UQL7');
+  assert.equal(early.observedOriginalBodySha256,
+    '307d379de103fcbcda05a1c52d35989121b442dd8783288027b01843ff1b997b');
+  assert.equal(early.observedOriginalBodyBytes,116116);
+  assert.equal(early.priorFirstRunDisposition,'archive_redirect_refused');
+  assert.equal(early.collectiveCaucusSpeechStillNotIndividuallyAttributable,true);
+  assert.equal(s.these24AreNotUniqueSenatorQuotationsOrPublishedArticleUniverse,true);
+  assert.ok(!matched.some(x=>x.leadId===early.leadId
+    &&x.verifiedCaptureReplays.some(c=>c.archivedCaptureUtc===early.archiveCapturedUtc)));
+  assert.ok(holds.some(x=>x.leadId===early.leadId
+    &&x.archiveCapturedUtc===early.archiveCapturedUtc
+    &&x.status==='archive_redirect_refused'));
+  assert.equal(d.observedTotals.humanApprovedSenatorQuotations,0);
+});
