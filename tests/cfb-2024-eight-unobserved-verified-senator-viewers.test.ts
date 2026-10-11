@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {
   selectEightPreviouslyUnobservedActualSenators,
   auditPreviouslyUnobserved2024CfbViewer,
@@ -63,4 +64,56 @@ test('source failure, legitimate empty CFB source and genuine original version r
      {year:'23',filingYear:2023,registrationNumber:target.reg,
        type:'pcc',period:'YE',se:'0',amendment:0,reportName:'Duplicate'}]});
  assert.equal(duplicated.status,'original_cfb_viewer_report_identity_conflict');
+});
+
+test('all eight genuine CFB viewer responses and all 27 newly observed version IDs are permanently source pinned',()=>{
+ const P='docs/evaluation/source-proof/';
+ const ckpt=JSON.parse(readFileSync(P+
+   'cfb-2024-eight-verified-senators-viewer-gap-source-checkpoint.json','utf8'));
+ const snapshots=readFileSync(ckpt.viewerSnapshotsLedger.path,'utf8');
+ const records=readFileSync(ckpt.exactNewViewerReferences.path,'utf8');
+ const blob=(s:string)=>createHash('sha1').update('blob '+Buffer.byteLength(s,'utf8')+'\0')
+   .update(s).digest('hex');
+ assert.equal(blob(snapshots),ckpt.viewerSnapshotsLedger.gitBlobSha);
+ assert.equal(blob(records),ckpt.exactNewViewerReferences.gitBlobSha);
+ const people=snapshots.trimEnd().split('\n').map(x=>x.split('|'));
+ const refs=records.trimEnd().split('\n').map(x=>x.split('|'));
+ assert.equal(people.length,8);assert.equal(refs.length,27);
+ const byReg=new Map(people.map(x=>[x[0]!,x]));
+ const originalViewer=fixture.priorSampledViewerPsv.trimEnd().split('\n')
+   .map(x=>x.split('|')).filter(x=>x[0]==='2022');
+ const originalSha=new Map(originalViewer.map(x=>[x[1]!,x[2]!]));
+ let originals=0,amendments=0;
+ for(const senator of selected){
+   const row=byReg.get(senator.reg);
+   assert.ok(row,'Missing actually serving senator original source');
+   assert.equal(row.length,10);assert.equal(row[1],senator.senator);
+   assert.equal(row[2],String(senator.district));
+   assert.equal(row[3],originalSha.get(senator.reg));
+   assert.ok(Number.isFinite(Date.parse(row[4]!)));
+   assert.equal(row[5],'1');assert.equal(row[7],'1');
+   const sourceIds=row[9]!.split(',');
+   assert.equal(sourceIds.length,Number(row[5])+Number(row[6])+Number(row[7])+Number(row[8]));
+   assert.deepEqual(refs.filter(x=>x[3]===senator.reg).map(x=>x[0]).sort(),sourceIds.sort());
+ }
+ for(const ref of refs){
+   assert.equal(ref.length,7);
+   assert.ok(byReg.has(ref[3]!));
+   const source=byReg.get(ref[3]!)!;
+   assert.equal(ref[1],source[1]);assert.equal(ref[2],source[2]);
+   assert.equal(ref[4],source[3]);assert.equal(ref[5],source[4]);
+   assert.match(ref[0]!,/^\d+:2[34]:pcc:YE:0:\d+$/);
+   if(ref[0]!.endsWith(':0')){
+     assert.equal(ref[6],'original_viewer_reference_not_yet_pdf_authenticated');
+     originals++;
+   }else{
+     assert.equal(ref[6],'amendment_viewer_reference_not_yet_pdf_authenticated');
+     amendments++;
+   }
+ }
+ assert.equal(originals,16);assert.equal(amendments,11);
+ assert.equal(ckpt.results.originalPdfBinariesNewlyAuthenticated,0);
+ assert.equal(ckpt.results.sourceFailures,0);
+ assert.equal(ckpt.safeguards.legallyOwedFilingDenominator,null);
+ assert.equal(ckpt.safeguards.noPreviouslyUnsampledIsNonfilerInference,true);
 });
