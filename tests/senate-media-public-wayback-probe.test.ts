@@ -112,3 +112,108 @@ test('only exact indexed HTTP response bytes unlock observed SHA-256, never indi
   assert.equal(r.historicalForecastEligibilityProven,false);
   assert.equal(Object.hasOwn(r,'rawBodyBase64'),false);
 });
+
+test('changed replay digest, MIME, redirects, HTTP denial and tiny response fail closed',async()=>{
+  const [c]=await candidates([cdx('20240301120000')]);
+  assert.ok(c);
+  const different=await verifyMediaPublicCdxReplay(c,mock(()=>
+    new Response(article.replace('Example','Someone'),{headers:{'content-type':'text/html'}})));
+  assert.equal(different.status,'cdx_payload_sha1_mismatch');
+  assert.equal(different.observedRawBodySha256,null);
+  assert.equal(different.matchedArchivedIndexPayload,false);
+  for(const [response,status]of [
+    [new Response(null,{status:302,headers:{location:'https://www.mprnews.org/'}}),'redirect_refused'],
+    [new Response('not found',{status:404,headers:{'content-type':'text/html'}}),'http_not_200'],
+    [new Response(article,{headers:{'content-type':'application/pdf'}}),'untrusted_article_content_type'],
+    [new Response('x',{headers:{'content-type':'text/html'}}),'empty_or_short_body'],
+  ] as const){
+    const found=await verifyMediaPublicCdxReplay(c,mock(()=>response));
+    assert.equal(found.status,status);
+    assert.equal(found.privateVotePredictSourceDocumentMatched,false);
+    assert.equal(found.observedRawBodySha256,null);
+  }
+  const network=await verifyMediaPublicCdxReplay(c,mock(async()=>{throw Error('offline');}));
+  assert.equal(network.status,'fetch_failed');
+});
+
+test('impossible dates, cross-publisher aliases, missing digests or non-200 capture rows cannot pass',async()=>{
+  const invalid=[
+    cdx('20240230120000'), // impossible calendar day
+    cdx('20260301120000'), // excluded 2026
+    cdx('20240301240000'), // impossible clock
+    cdx('20240301120000',sha1,'https://www.example.org/misreported-source'),
+    cdx('20240301120000',sha1,original.livePageUrl.replace('https:','http:')),
+    cdx('20240301120000','-'),
+    cdx('20240301120000',sha1,original.livePageUrl,'application/pdf'),
+    cdx('20240301120000',sha1,original.livePageUrl,'text/html','302'),
+    [...cdx('20240301120000').slice(0,5),'invalid_length'],
+  ];
+  for(const item of invalid)
+    await assert.rejects(discoverMediaPublicCdxCaptures(original,
+      mock(()=>indexResponse([item]))));
+  await assert.rejects(discoverMediaPublicCdxCaptures(original,mock(()=>
+    indexResponse([cdx('20240301120000'),
+      cdx('20240301120000','VGMT4NSHA2AWVOR6EVYXQUGCNSONBWE5')]))),
+    /Contradictory CDX metadata/);
+  await assert.rejects(discoverMediaPublicCdxCaptures(original,mock(()=>
+    new Response('<html>error</html>',{headers:{'content-type':'text/html'}}))),
+    /non-JSON/);
+  await assert.rejects(discoverMediaPublicCdxCaptures(original,mock(()=>
+    new Response(null,{status:302,headers:{location:'https://web.archive.org/'}}))),
+    /CDX redirect refused/);
+  await assert.rejects(discoverMediaPublicCdxCaptures(original,mock(()=>
+    new Response('outage',{status:503,headers:{'content-type':'application/json'}}))),
+    /CDX index HTTP status 503/);
+  await assert.rejects(discoverMediaPublicCdxCaptures(original,mock(()=>
+    new Response(JSON.stringify([['timestamp','original'],['20240301120000',original.livePageUrl]]),
+      {headers:{'content-type':'application/json'}}))),
+    /Missing CDX provenance column/);
+});
+
+test('external public URL is rejected BEFORE any CDX fetch',async()=>{
+  let requests=0;
+  const invalid={...original,livePageUrl:'https://www.example.org/episode/2024/02/19/a-story'};
+  await assert.rejects(discoverMediaPublicCdxCaptures(invalid,mock(()=>{
+    requests++;
+    throw Error('should never request');
+  })),/Untrusted/);
+  assert.equal(requests,0);
+});
+
+test('CDX and archive response body caps are enforced on actual streamed bytes',async()=>{
+  const tooBig=new Response(new Uint8Array(MEDIA_PUBLIC_CDX_INDEX_MAX_BYTES+1),
+    {headers:{'content-type':'application/json'}});
+  await assert.rejects(discoverMediaPublicCdxCaptures(original,mock(()=>tooBig)),
+    /body_size_limit/);
+  const [c]=await candidates([cdx('20240301120000')]);
+  assert.ok(c);
+  const declared=await verifyMediaPublicCdxReplay(c,mock(()=>
+    new Response(article,{headers:{'content-type':'text/html',
+      'content-length':String(MEDIA_PUBLIC_REPLAY_MAX_BYTES+1)}})));
+  assert.equal(declared.status,'body_size_limit');
+  const actual=await verifyMediaPublicCdxReplay(c,mock(()=>
+    new Response(new Uint8Array(MEDIA_PUBLIC_REPLAY_MAX_BYTES+1),
+      {headers:{'content-type':'text/html'}})));
+  assert.equal(actual.status,'body_size_limit');
+});
+
+test('modified archive host, capture time or indexed digest is never requested',async()=>{
+  const [c]=await candidates([cdx('20240301120000')]);
+  assert.ok(c);
+  const invalid=[
+    {...c,archiveUrl:c.archiveUrl.replace('web.archive.org','www.example.org')},
+    {...c,archiveUrl:c.archiveUrl.replace('20240301120000','20240401120000')},
+    {...c,archiveCapturedAt:'2024-03-02T12:00:00Z'},
+    {...c,timestamp:'2024030112000X'},
+    {...c,indexedPayloadSha1Base32:'-'},
+  ];
+  for(const row of invalid){
+    let calls=0;
+    const r=await verifyMediaPublicCdxReplay(row,mock(()=>{
+      calls++;throw Error('never request');
+    }));
+    assert.equal(calls,0);
+    assert.equal(r.status,'untrusted_capture_input');
+    assert.equal(r.observedRawBodySha256,null);
+  }
+});
