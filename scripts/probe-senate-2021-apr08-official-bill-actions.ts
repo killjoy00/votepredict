@@ -6,17 +6,16 @@
  * Run: node --import tsx scripts/probe-senate-2021-apr08-official-bill-actions.ts
  *   --output artifacts/2021-senate-apr08-committee-bill-actions/source.json
  */
-import {createHash} from 'node:crypto';
 import {mkdir,writeFile} from 'node:fs/promises';
 import {dirname} from 'node:path';
-import {APR08_COMMITTEE_ACTION_CROSSCHECK,inspectOriginalApril08BillLog} from
+import {APR08_COMMITTEE_ACTION_CROSSCHECK,inspectOriginalApril08BillLog,
+  verifyPinnedOriginalApril08BillLogBytes, type HistoricalBillCase} from
   '../src/evidence/senate-2021-apr08-rule1210-hearing-action-crosscheck.js';
 
-const sha=(x:Buffer)=>createHash('sha256').update(x).digest('hex');
 const maxBytes=2_000_000;
 
-async function readOriginalOfficialSource(url:string){
-  const res=await fetch(url,{
+async function readOriginalOfficialSource(spec:HistoricalBillCase){
+  const res=await fetch(spec.source,{
     headers:{'User-Agent':'VotePredict-2021-Senate-public-source-research/1.0','Accept':'text/html'},
     signal:AbortSignal.timeout(30_000),
     redirect:'follow'
@@ -33,10 +32,12 @@ async function readOriginalOfficialSource(url:string){
   }
   const data=Buffer.concat(received);
   if(data.length<150)throw Error('Official original Senate HTML unexpectedly short');
+  // Actual independent strict second source SHA/byte check, before parsing.
+  const pinned=verifyPinnedOriginalApril08BillLogBytes(data,spec);
   return {
     html:data.toString('utf8'),
-    originalBytes:data.byteLength,
-    originalHTMLSHA256:sha(data),
+    originalBytes:pinned.originalBytes,
+    originalHTMLSHA256:pinned.originalHTMLSHA256,
     observedAtUTC:new Date().toISOString()
   };
 }
@@ -58,12 +59,13 @@ async function main(){
   };
   for(const spec of APR08_COMMITTEE_ACTION_CROSSCHECK.cases){
     try{
-      const original=await readOriginalOfficialSource(spec.source);
+      const original=await readOriginalOfficialSource(spec);
       const parsed=inspectOriginalApril08BillLog(original.html,spec);
       report.originalSourceChecks.push({
         ...parsed,originalSourceBytes:original.originalBytes,
         originalHTMLSHA256:original.originalHTMLSHA256,
-        independentlyObservedAtUTC:original.observedAtUTC
+        independentlyObservedAtUTC:original.observedAtUTC,
+        separatePinnedOriginalHTMLSHA256StrictlyReauthenticated:true
       });
       report.passedBillLevelActionChecks++;
     }catch(e){
