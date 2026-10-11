@@ -94,7 +94,7 @@ test('separate original 2021 official Journal Misc index PDF and successful ZIP/
  assert.equal(x.independentlyDecodedOriginalJsonSHA256,
   'd43d0740c29e960f790508f1614633429ca4b5aefbe0e901661ad8f397fdbe22');
 });
-test('2021 regular session only TEN indexed journal publication references, FIVE separately held',()=>{
+test('2021-named Journal index contains ten publication entries across 2021-2022, not ten 2021 events',()=>{
  const x=i.originalSource;
  assert.deepEqual(x.extractedRule1210BillPagePublicationReferences.map(
   (r:{bill:string;journalPage:number})=>[r.bill,r.journalPage]),[
@@ -104,6 +104,18 @@ test('2021 regular session only TEN indexed journal publication references, FIVE
  assert.deepEqual(x.extractedRule1210BillPagePublicationReferences.filter(
   (r:{status:string})=>r.status==='NOT_YET_SEPARATELY_ORIGINAL_ROLL_AUTHENTICATED'
  ).map((r:{bill:string})=>r.bill),['SF1','SF910','SF970','SF1159','SF2909']);
+ assert.equal(x.found2021CalendarYearIndexPublicationReferencesAreNotAllTen,true);
+ assert.deepEqual(x.independentlyProved2022IndexedItem,{
+  bill:'SF2909',
+  revisorSenateStatus:'https://www.revisor.mn.gov/bills/92/2022/0/SF/2909/?body=Senate',
+  senateJournalCommitteeReportPublicationDate:'2022-02-24',
+  sourcePage:5098,
+  underlyingCommitteeMotionDateNotAuthenticated:true
+ });
+ const entry2022=x.extractedRule1210BillPagePublicationReferences.find(
+  (v:{bill:string})=>v.bill==='SF2909');
+ assert.equal(entry2022.independentlyVerifiedJournalPublicationYear,2022);
+ assert.equal(entry2022.independentlyVerifiedJournalReportDate,'2022-02-24');
  assert.equal(x.independent2021SpecialSessionRule1210SF9JournalPage,156);
  assert.equal(x.specialSessionOriginalBinaryAuthenticated,false);
  assert.equal(x.specialSessionSF9NamedCommitteeRollOriginalAuthenticated,false);
