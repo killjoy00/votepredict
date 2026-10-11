@@ -44,8 +44,9 @@ function textFromOriginalPdf(extractedText:string):string{
 /**
  * This paragraph is an original Board signed September 2024 contemporary
  * named registered principal committee, not simply a generic rule.
- * Critically a Board statement that a report was "second amended" cannot
- * mint a new 2026 CFB report viewer version or prove its exact public-by.
+ * The Board's SECOND amended report matches existing 18430:23:pcc:YE:0:2
+ * (authenticated original PDF, June 3 2024 receipt). Amendment #1 remains
+ * a distinct first-page registration HOLD. No actual historical public-by.
  */
 export function inspectPutnam2024OfficialBoardConciliation(input:{
   source71Psv:string;originalBoardPdfExtractedText:string;
@@ -68,20 +69,30 @@ export function inspectPutnam2024OfficialBoardConciliation(input:{
  };
  if(Object.values(tests).some(x=>!x))
   throw Error('Original signed Board document did not confirm every historical committee-specific primary fact');
- const versions=input.source71Psv.trimEnd().split('\n').filter(s=>
-  s.startsWith('18430:23:pcc:YE:0:')).map(s=>s.split('|')[0]!);
- if(versions.length!==2||!versions.includes('18430:23:pcc:YE:0:0')
-   ||!versions.includes('18430:23:pcc:YE:0:1'))
-  throw Error('Historical 2023 official source viewer amendment scope unexpectedly changed');
+ const rows=input.source71Psv.trimEnd().split('\n').filter(s=>
+  s.startsWith('18430:23:pcc:YE:0:')).map(s=>s.split('|'));
+ const ids=rows.map(r=>r[0]!);
+ const expected=['18430:23:pcc:YE:0:0','18430:23:pcc:YE:0:1',
+  '18430:23:pcc:YE:0:2','18430:23:pcc:YE:0:3'];
+ if(JSON.stringify(ids)!==JSON.stringify(expected)
+   ||rows[1]?.[8]!=='HOLD_first_page_registration_unverified'
+   ||rows[2]?.[8]!=='distinct_authenticated_amended_pdf'
+   ||rows[2]?.[10]!=='2024-06-03'
+   ||rows[3]?.[8]!=='distinct_authenticated_amended_pdf')
+  throw Error('Original actual four 2023 Putnam version records changed or amendment 2 not authenticated');
  return{
   committeeRegistration:'18430',senator:'Aric Putnam',senateDistrict2022:14,
   officialBoardSigningDate:'2024-09-20',officialBoardChairSigningDate:'2024-09-04',
   boardSpecificCommitteeNamedIn2024Case:true,
   originalBoardStatesRegistrationYear:2019,
   originalBoardDescribesSecondAmended2023YE:true,
-  modernCfbViewer2023YearEndExactVersionRefs:versions,
-  modernViewer2023AmendmentRefsCount:1,
-  secondAmendedReferenceNotCrossIdentifiedWithModernViewer:true,
+  modernCfbViewer2023YearEndExactVersionRefs:ids,
+  modernViewer2023AmendmentRefsCount:3,
+  secondAmended2023ReportDoesMatchExistingAmendment2Index:true,
+  secondAmended2023PdfVersionAuthenticFromSeparateCFBOriginal:true,
+  existingSecondAmendmentOriginalCfbPdfSha256:rows[2]![7]!,
+  existingSecondAmendmentOriginalBoardReceiptOn:'2024-06-03',
+  firstAmendmentOriginalRegistrationIdentityStillHeld:true,
   newHistorical2023PdfVersionAuthenticated:false,
   actualPublicByForAny2023PdfVersionProven:false,
   yearEnd2023Or2024LegallyOwed:null,
