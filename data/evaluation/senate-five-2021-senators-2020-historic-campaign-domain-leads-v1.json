@@ -1,0 +1,110 @@
+{
+  "schema": "mn-five-actual-2021-serving-2020-original-campaign-domains-v1",
+  "issue": 864,
+  "scope": {
+    "electionYear": 2020,
+    "generalElectionDate": "2020-11-03",
+    "originalCaptureFromUtc": "2020-01-01T00:00:00.000Z",
+    "originalCaptureUntilExclusiveUtc": "2020-11-03T00:00:00.000Z",
+    "independentlyVerifiedActualServingPeopleRequired": 5,
+    "originalLRLGovernmentBytesSHAAndReceiptRequired": true,
+    "maximumHistoricCDXIndexRowsPerPerson": 300,
+    "maximumOriginalHTMLReplayPerPerson": 4,
+    "maximumAllOriginalHTMLReplays": 20,
+    "originalArchiveCaptureUtcMayDateExactStatements": true,
+    "originalWriterPostingDateRequired": false,
+    "currentLive2026CampaignPageCanBeBackdated": false,
+    "candidateSitePolicyStatementsIndividuallyVerifiedInThisAcquisition": false,
+    "sourceAcquisitionIsNotStatewideCensus": true,
+    "anyProductionDatabaseAccessEvidenceWritesOrForecastUpdates": 0,
+    "preSourceNetworkVerifyEveryPersonServed2021Senate": true,
+    "originalSOSFiledCampaignWebsite2020Verified": false
+  },
+  "independentOriginalActualSenatorService": {
+    "url": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "archiveAcquisitionRunId": 38094976711,
+    "archiveArtifactId": 11685387674,
+    "officialHtmlSHA256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "fullOriginalOfficialHTMLMustBeReopenedBeforeExternalQuery": true
+  },
+  "targets": [
+    {
+      "id": "five20-01",
+      "candidateName": "Carrie Ruud",
+      "electionDistrict": "10",
+      "year": 2020,
+      "domain": "carrieruud.com",
+      "campaignDomainLead": "https://carrieruud.com/",
+      "discoverySourceUrl": "https://en.wikipedia.org/wiki/Carrie_Ruud",
+      "discoveryBasis": "Linked historical campaign domain for former senator",
+      "personIndependentlyPresentInOfficialOriginalLRLService": true,
+      "original2020CampaignSiteHTMLNotYetAuthenticated": true,
+      "modernCampaignWebsiteAloneIsNot2020Evidence": true,
+      "originalSecretaryOfStateFiledWebsiteNotProven": true
+    },
+    {
+      "id": "five20-02",
+      "candidateName": "Justin Eichorn",
+      "electionDistrict": "5",
+      "year": 2020,
+      "domain": "justinformnsenate.com",
+      "campaignDomainLead": "https://justinformnsenate.com/",
+      "discoverySourceUrl": "https://minnesotareformer.com/2020/10/20/state-sen-justin-eichorn-tries-to-hold-off-bemidji-mayor-rita-albrecht-with-control-of-senate-at-stake/",
+      "discoveryBasis": "Dated Oct 20 2020 reporting linked candidate-owned issues page",
+      "personIndependentlyPresentInOfficialOriginalLRLService": true,
+      "original2020CampaignSiteHTMLNotYetAuthenticated": true,
+      "modernCampaignWebsiteAloneIsNot2020Evidence": true,
+      "originalSecretaryOfStateFiledWebsiteNotProven": true
+    },
+    {
+      "id": "five20-03",
+      "candidateName": "Roger Chamberlain",
+      "electionDistrict": "38",
+      "year": 2020,
+      "domain": "rogerchamberlain.org",
+      "campaignDomainLead": "https://rogerchamberlain.org/",
+      "discoverySourceUrl": "https://en.wikipedia.org/wiki/Roger_Chamberlain",
+      "discoveryBasis": "Historical profile links former senator's original campaign website",
+      "personIndependentlyPresentInOfficialOriginalLRLService": true,
+      "original2020CampaignSiteHTMLNotYetAuthenticated": true,
+      "modernCampaignWebsiteAloneIsNot2020Evidence": true,
+      "originalSecretaryOfStateFiledWebsiteNotProven": true
+    },
+    {
+      "id": "five20-04",
+      "candidateName": "Rich Draheim",
+      "electionDistrict": "20",
+      "year": 2020,
+      "domain": "draheimforsenate.com",
+      "campaignDomainLead": "https://draheimforsenate.com/",
+      "discoverySourceUrl": "https://draheimforsenate.com/its-decision-time-why-me/",
+      "discoveryBasis": "Candidate-owned historical 2016 state Senate campaign site, genuine 2020 originals pending",
+      "personIndependentlyPresentInOfficialOriginalLRLService": true,
+      "original2020CampaignSiteHTMLNotYetAuthenticated": true,
+      "modernCampaignWebsiteAloneIsNot2020Evidence": true,
+      "originalSecretaryOfStateFiledWebsiteNotProven": true
+    },
+    {
+      "id": "five20-05",
+      "candidateName": "David Senjem",
+      "electionDistrict": "25",
+      "year": 2020,
+      "domain": "senjemforsenate.com",
+      "campaignDomainLead": "https://senjemforsenate.com/",
+      "discoverySourceUrl": "https://www.majoritystrategies.com/wp-content/uploads/2022/05/MS_casestudy_MN_Senjem.pdf",
+      "discoveryBasis": "2020 campaign advertising reproduced in public portfolio gives first-party domain",
+      "personIndependentlyPresentInOfficialOriginalLRLService": true,
+      "original2020CampaignSiteHTMLNotYetAuthenticated": true,
+      "modernCampaignWebsiteAloneIsNot2020Evidence": true,
+      "originalSecretaryOfStateFiledWebsiteNotProven": true
+    }
+  ],
+  "limitations": [
+    "All five are independently documented actual 2021-serving Minnesota state senators, not merely candidates or winners.",
+    "The domain lead, modern website or earlier campaign material does not prove original 2020 page text; exact 2020 archived HTML must match independent Wayback CDX SHA-1.",
+    "An original 2020 capture UTC can date when identical wording was publicly observable but not first-authored time.",
+    "Redistricted districts and old first-party campaign copies may survive across cycles and are not newly authored 2020 speech.",
+    "A 300-row bounded index, four replays, unavailable archive, or empty result never proves lack of campaign positions.",
+    "No production database reads/writes, forecast, model, 2027, official contact, or scheduler."
+  ]
+}
