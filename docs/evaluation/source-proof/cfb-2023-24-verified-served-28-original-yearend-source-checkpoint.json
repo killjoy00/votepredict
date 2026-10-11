@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "cfb-2023-24-verified-2022-served-fourteen-senators-28-original-ye-pdf-source-checkpoint-v1",
+  "issue": 864,
+  "date": "2026-10-11",
+  "scope": {
+    "independentlyVerifiedActualServingSenatorsIn2022": 14,
+    "originalYear2023PdfCount": 14,
+    "originalYear2024PdfCount": 14,
+    "originalViewerSegment": 2024,
+    "actualSenateServiceLaterYearsNotAssumed": true,
+    "statutoryOwedDenominator": null
+  },
+  "permanentPdfLedger": {
+    "path": "docs/evaluation/source-proof/cfb-2023-24-verified-served-28-original-yearend-pdfs.psv",
+    "rows": 28,
+    "bytes": 7494,
+    "gitBlobSha": "f32027a9efbc6ca60460d3eb9ca77a9f2ec9d50f"
+  },
+  "originalViewerPsv": {
+    "path": "docs/evaluation/source-proof/cfb-2021-24-senate-396-original-viewer-source-observations.psv",
+    "sha256": "6056ce0072adfc6711588fe8d2b4b09694a658e52a249631fbf4e92f65a2a4f9"
+  },
+  "independentOriginalSourceRuns": [
+    {
+      "runId": 38158086886,
+      "sourceOutcome": "success",
+      "artifactId": 11708653415,
+      "artifactZipSha256": "b7a084c4626450c62441a3246061a753d33c780e0b9fc20cbfa1d1e22ad28532",
+      "jsonSha256": "ddd2c869bdadc914e80497e44f3d056992a32fbe1246687e7b4da1fdf88ddc94",
+      "jsonBytes": 47475,
+      "observedAt": "2026-10-11T17:05:13.297Z"
+    },
+    {
+      "runId": 38158214097,
+      "sourceOutcome": "success",
+      "artifactId": 11709307619,
+      "artifactZipSha256": "93dbbb7ae2143d460501446f94f3e602d2e972916deeeeb2beda45262de64ec0",
+      "jsonSha256": "5563fed6d292f26ae3da07852d6144d94c9288c2af7e830b9c2d71dbecd298ce",
+      "jsonBytes": 47475,
+      "observedAt": "2026-10-11T17:07:02.359Z"
+    }
+  ],
+  "identicalMetadataAcrossTwoOfficialSourceRuns": {
+    "exact28ReportIds": true,
+    "originalPdfBinarySha256": true,
+    "originalPdfBytes": true,
+    "coveredPeriodAndBoardReceipt": true,
+    "originalViewerApiResponses": true
+  },
+  "sourceResult": {
+    "officialPdfBodiesFetched": 28,
+    "firstPageRegistrationSenateDistrictOfficePeriodReceiptAuthenticated": 28,
+    "uniqueOriginalPdfSha256": 28,
+    "duplicateSourceBinaries": 0,
+    "sourceIdentityHolds": 0,
+    "sourceFailures": 0
+  },
+  "remaining": {
+    "sixteenNewOriginalReferencesForEightOther2022SenatorsFoundSeparatelyNotCounted": true,
+    "amendmentReferencesNeedOriginalParentSourceAudits": true,
+    "legalDueCalendarIndependentFor2023And2024NotYetAuthenticated": true,
+    "historicActualPublicByProofMissing": true
+  },
+  "safeguards": {
+    "noRawPdfBodiesOrCandidateDonorText": true,
+    "noLegalFilingDenominatorAsserted": true,
+    "noPredictionAsOfEligibilityAsserted": true,
+    "noProductionWritesOrReads": true,
+    "no2027Scope": true,
+    "keepIssue864Open": true
+  }
+}
