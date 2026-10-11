@@ -6,6 +6,8 @@ on:
   pull_request:
     paths:
       - .github/workflows/audit-senate-lrl-2021-25-service-year-overlap.yml
+      - src/evidence/senate-official-ever-served-directory.ts
+      - tests/senate-official-ever-served-directory.test.ts
       - src/evidence/senate-lrl-2021-25-calendar-year-service-window.ts
       - scripts/audit-senate-lrl-2021-25-calendar-year-overlap-offline.ts
       - tests/senate-lrl-2021-25-calendar-year-overlap.test.ts
