@@ -66,12 +66,20 @@ export function discoverOriginalApril12AmendmentSideCommitments(
  }>;
  for(const key of keys){
   const src=APR12_TWO_AMENDMENTS[key];
-  const matches=windows.filter(x=>Number(x[2])===src.number);
+  // The published PDF extraction repeats an SF1159 amendment-roll paragraph
+  // without repeating the formal COMMITTEE heading. This is not a second motion.
+  // Scope uniqueness to bill-exact motions immediately under their own heading.
+  const heading='REPORT OF VOTE IN COMMITTEE';
+  const exactBillOccurrences=windows.filter(x=>Number(x[2])===src.number);
+  const matches=exactBillOccurrences.filter(x=>{
+   const preceding=flat.slice(Math.max(0,x.index!-250),x.index!);
+   const at=preceding.lastIndexOf(heading);
+   return at>=0&&preceding.length-at<=160;
+  });
   if(matches.length!==1)
-   throw Error('April12 '+src.bill+' original committee amendment motion missing or duplicated');
+   throw Error('April12 '+src.bill+' exactly one under-heading committee amendment motion not established');
   const m=matches[0]!,pos=m.index!;
   const before=flat.slice(Math.max(0,pos-250),pos);
-  const heading='REPORT OF VOTE IN COMMITTEE';
   const headAt=before.lastIndexOf(heading);
   if(headAt<0||before.length-headAt>160)
    throw Error(src.bill+' Rule 12.10 is not beneath the immediate COMMITTEE heading');
