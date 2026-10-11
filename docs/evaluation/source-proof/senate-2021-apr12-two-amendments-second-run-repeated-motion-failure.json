@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "senate-2021-apr12-two-amendments-second-original-source-repeated-motion-failure-v1",
+  "issue": 864,
+  "reportDay": "2021-04-12",
+  "originalPDFURL": "https://www.senate.mn/journals/2021-2022/20210412036.pdf",
+  "originalPDFSHA256": "8dd34868badade8d3d4cd77ce11c6a632705bdd99a59509a5e4d23544f2d3d75",
+  "originalPdfBytes": 11063699,
+  "originalEmbeddedTextSHA256": "dda780e4fc076f56ff9f271303ba81897b69813acfece416b7741aea64c41214",
+  "priorOriginalRedactedLayoutRunId": 38170280710,
+  "priorOriginalRedactedLayoutArtifactId": 11713123987,
+  "priorOriginalRedactedLayoutEvidence": {
+    "SF1159FirstOriginalMotionNormalizedTextOffset": 1389069,
+    "immediateHeadingCharactersBeforeFirstOccurrence": 28,
+    "SF1159SecondSameTextUnanchoredNormalizedOffset": 1389463,
+    "nearestHeadingCharactersBeforeRepeatedOccurrence": 422,
+    "SF970FirstOriginalMotionNormalizedTextOffset": 1542008,
+    "immediateHeadingCharactersBeforeSF970": 28,
+    "repeatDoesNotIndependentlyEstablishSecondActualCommitteeMotion": true
+  },
+  "secondRealOriginalSourceAttempt": {
+    "runnerPR": 1136,
+    "runnerMergeCommit": "a902b778df092b4fee1c61cbd3fbe9ffc21156d6",
+    "sourceRunId": 38172682467,
+    "runURL": "https://github.com/killjoy00/votepredict/actions/runs/38172682467",
+    "actualConclusion": "failure",
+    "originalPDFReceived": true,
+    "sourceArtifactId": 11715155077,
+    "sourceArtifactName": "senate-2021-apr12-two-amendments-original-provisional-side-shas-retry",
+    "independentlyDownloadedZIPBytes": 786,
+    "independentlyDownloadedZIPSHA256": "3bd4543baea7d966a511ed1350f7267ccf6ff0b59cb5875f0d293f9eccd892f3",
+    "decodedOriginalJsonEntry": "provisional-sha.json",
+    "independentlyDecodedOriginalJsonBytes": 1105,
+    "independentlyDecodedOriginalJsonSHA256": "fabffae1a272094eb63c1c5301cc3ed1bb5e6160ca1ea7ac87db5c05a12398f2",
+    "exactOriginalSourceFailure": "April12 SF1159 original committee amendment motion missing or duplicated",
+    "originalProvisionalNamedSideSHAResults": null,
+    "originalVoteSideNamedIdentityNotCertified": true
+  },
+  "correction": {
+    "uniqueOfficialCommitteeHeadingRequiredWithin160NormalizedCharacters": true,
+    "onlySourceBillExactMotionUnderImmediateHeadingCanBeConsidered": true,
+    "unanchoredRepeatedRollBodyMustNotBecomeAnotherHistoricalAction": true,
+    "source450CharMotionWindowsRemainPinnedFromEarlierIndependentOriginalSource": true,
+    "originalSourceFirstRunAlsoRemainsFailure": true,
+    "separatelyTriggeredThirdOriginalRunRequired": true
+  },
+  "limits": {
+    "noNamedSideDigestsEstablishedByFailedSecondRun": true,
+    "sourcePrintOnly2021CommitteeMinutesNotCompared": true,
+    "committeeHearingDateAndFirstPublicByUnknown": true,
+    "absenceNotPrintedNullNotZero": true,
+    "noPrivateDBOrMemberVoteBackfill": true,
+    "noFloorOrModelsForecastOr2027": true,
+    "issue864MustRemainOpen": true
+  }
+}
