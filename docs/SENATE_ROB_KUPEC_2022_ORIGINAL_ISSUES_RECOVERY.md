@@ -1,0 +1,17 @@
+# #864: original 2022 Rob Kupec Minnesota Senate candidate issues-page recovery
+
+A completed original public historical 2022 archive acquisition for **actual served Senator Rob Kupec (2023 onward, Minnesota Senate District 4)** found original HOME and ABOUT pages, not the issue text, in the previously bounded 300-row Wayback domain sample. The real July 3, 2022 [home page original](https://web.archive.org/web/20220703215005id_/https://www.kupec4mnsenate.com/) includes an explicit navigation item **Issues**, which by itself is NOT an issue statement or a proof that the separate page existed at the same time.
+
+Independently authenticated homepage original SHA-256 **930de7ddb507262b616a049355625761d4cbf4e979abd7055e4a7deac4295e56**, capture UTC **2022-07-03T21:50:05Z**, source original acquired 2026-10-11 UTC in [public acquisition #38100967926](https://github.com/killjoy00/votepredict/actions/runs/38100967926), artifact **11687347848**. This is a Senate member whom the original public LRL service directory independently confirms served, not a defeated opponent.
+
+## Exact-source response acquisition scope
+
+The PR-only [GitHub Actions workflow](../.github/workflows/acquire-senate-kupec-2022-exact-issues.yml) downloads and rehashes the independently acquired public Minnesota Senate service directory source artifact from [run #38094976711](https://github.com/killjoy00/votepredict/actions/runs/38094976711). It refuses all archive HTTP fetches unless the candidate actually served in Senate District 4 following the November 2022 election.
+
+It then queries **three exact old original Wayback URL variants** of the one page indicated by the 2022 original navigation: https://www.kupec4mnsenate.com/issues, http://www.kupec4mnsenate.com/issues and https://www.kupec4mnsenate.com/issues/. All queries require Jan 1 to Nov 7, 2022, status 200, exact matching host and **only** /issues path. Up to 100 index rows per query and up to four original replay page attempts, selecting first and last historic versions and a midpoint if present; bounded raw HTTP responses, no arbitrary URLs/hosts.
+
+Each request, including 404/429/503 and empty index, retains an actual **UTC requested and completed observation timestamp**, raw source status, source hash and failure reason. An original page becomes verified pre-November 8, 2022 HTML ONLY after its actual retrieved original content SHA-1 Base32 independently matches the public archived CDX digest. The candidate-authored quote and statement first-publication date remain null and are not automatically promoted even when page bytes match.
+
+**Historical semantics:** A site homepage can have an Issues navigation link without the separately linked historical page being archived. A 200 result indexing a Wix 404-style event URL is not a policy stance. An HTML page digest only proves the content existed by the archive capture time, **not** when the original author first wrote or published it. A current 2026 copy never certifies 2022 historic availability. A missing row from this bounded original index is NOT proof the candidate had no 2022 website or policy position.
+
+The original 2020/2022 SOS *filed candidate website* field is still not independently obtained. No non-Senator candidate research, production database reads/writes, evidence ingestion, forecast/frozen evaluation/model modifications or scheduled collectors. [Issue #864](https://github.com/killjoy00/votepredict/issues/864) stays OPEN.
