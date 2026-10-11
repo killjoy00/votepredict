@@ -1,0 +1,69 @@
+name: Verify Nick Frentz 26 exact 2022 archived candidate statement capture dates
+
+# Original public Senator service+campaign HTML bytes, independent CDX payload
+# original SHA1 and exact quotes. 2022 archive capture UTC is the source date,
+# NOT a conjectured original first authored date, roll-call vote or feature.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-nick-frentz-2022-original-26-capture-dated-quotes.yml
+      - data/evaluation/senate-nick-frentz-2022-podcast-site-26-original-capture-dated-policy-excerpts-v1.json
+      - src/evidence/senate-nick-frentz-2022-26-original-capture-dated-campaign-issue-proof.ts
+      - scripts/audit-nick-frentz-2022-original-26-capture-dated-policy-snippets-offline.ts
+      - tests/senate-nick-frentz-2022-original-capture-26-issue-excerpts.test.ts
+      - docs/SENATE_NICK_FRENTZ_26_ISSUE_STATEMENTS_FROM_2022_ARCHIVED_ORIGINALS.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  genuine-original-2022-frentz-homepage-policy-excerpts-and-dates:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-nick-frentz-2022-original-capture-dated-policy-excerpts-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 11
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Obtain independent government LRL entire original Minnesota state Senate service directory
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: historical/public-original-lrl-senate-service
+      - name: Obtain genuine historical 2022 podcast-linked Frentz candidate original Wayback HTML and CDX
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38111095055
+          name: senate-nick-frentz-sep2022-original-campaign-podcast-domain-cdx-html-v1
+          github-token: ${{ github.token }}
+          path: historical/2022-original-frentz-first-party-campaign
+      - name: Independently prove Frentz Senate membership and all 26 exact policy excerpts in 3 original HTML captures
+        shell: bash
+        run: |
+          set -euo pipefail
+          lrl="$(find historical/public-original-lrl-senate-service -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find historical/public-original-lrl-senate-service -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$lrl" && test -n "$receipt"
+          test "$(dirname "$lrl")" = "$(dirname "$receipt")"
+          node --import tsx scripts/audit-nick-frentz-2022-original-26-capture-dated-policy-snippets-offline.ts \
+            --original-lrl-senate-directory "$lrl" \
+            --original-lrl-sha-utc-receipt "$receipt" \
+            --frentz-2022-original-archive-dir historical/2022-original-frentz-first-party-campaign \
+            --output historical/verified-nick-frentz-26-exact-original-policy-text-archive-dates.json
+      - name: Keep only the independent original page, capture UTC and exact issue span receipts
+        uses: actions/upload-artifact@v6
+        with:
+          name: nick-frentz-2022-26-campaign-owned-original-policy-capture-dated-audit-v1
+          path: historical/verified-nick-frentz-26-exact-original-policy-text-archive-dates.json
+          retention-days: 30
+          if-no-files-found: error
