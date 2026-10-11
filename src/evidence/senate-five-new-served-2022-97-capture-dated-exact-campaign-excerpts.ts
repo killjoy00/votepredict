@@ -189,7 +189,7 @@ export function auditFiveNewActuallyServedSenators97ArchiveDatedPolicyExcerpts(
    throw Error('Reopened original campaign html does not match independently indexed original CDX-SHA1 or source SHA256');
   const visible=originalCampaignVisibleText(actual);
   if(['Ron Latz','Jim Carlson'].includes(p.person)
-   &&!visible.includes(p.person))
+   &&!visible.toLowerCase().includes(p.person.toLowerCase()))
    throw Error('Candidate website page with 3-character forename cannot be personally attributed');
   pages.set(p.originalFile,p);
   actualPeople.add(p.person);
