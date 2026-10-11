@@ -1,0 +1,35 @@
+name: Original 2021 First Special Session SF9 second divided amendment 6-4 named committee roll
+
+# One-time original official Senate Journal committee Rule12.10, NOT floor or DB.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2021-special1-sf9-committee-amendment-rule1210.yml
+
+permissions:
+  contents: read
+
+jobs:
+  verify-original-sf9ss1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Acquire original sf9ss1 PDF and strictly authenticate separately named COMMITTEE motion
+        run: |
+          node --import tsx scripts/review-senate-2021-22-rule1210-three-original-journals.ts \
+            --target sf9ss1 --output artifacts/sf9ss1-original-committee/source.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-original-sf9ss1-committee-rule1210
+          path: artifacts/sf9ss1-original-committee/source.json
+          retention-days: 30
+          if-no-files-found: error
