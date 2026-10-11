@@ -69,7 +69,7 @@ export function inspectOriginalApril08BillLog(html:string,spec:HistoricalBillCas
   const intros=[...text.matchAll(billStart)];
   if(intros.length!==1||intros[0]?.index===undefined)
     throw Error('Senate bill identity not uniquely present on original committee page');
-  const marker='DATE UNOFFICIAL STATUS FOR '+spec.bill;
+  const marker='DATE UNOFFICIAL STATUS FOR SF'+billNumber.padStart(4,'0');
   const at=text.indexOf(marker,intros[0].index);
   const afterStart=intros[0].index+intros[0][0].length;
   const nextBill=text.slice(afterStart).search(/\bS\.F\.\s*\d{4}\s*:/i);
