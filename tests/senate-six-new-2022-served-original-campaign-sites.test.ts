@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {existsSync,readFileSync,mkdtempSync,rmSync} from 'node:fs';
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
-import seeds from '../data/evaluation/senate-six-new-2022-verified-served-person-campaign-original-domain-targets-v1.json' with {type:'json'};
+import seeds from '../data/evaluation/senate-six-new-2022-served-senator-campaign-domain-probes-v1.json' with {type:'json'};
 import type {AuditedOfficialSenateDirectory}
  from '../src/evidence/senate-official-ever-served-directory.js';
 import {
