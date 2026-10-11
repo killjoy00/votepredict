@@ -30,6 +30,12 @@ const parentExpected=new Map([
   ['19229:25:pcc:YE:0:0','115af8ec4d2fcf19323ae88cc2e858f1d1cda00c03e9ca994bf31e2070335289'],
   ['19229:25:pcc:YE:1:0','0cecaf71ada09c3cb7d12dd439438dc432c7998159250b7c62e85bfdb0e383b2'],
 ]);
+const parentExactDates=new Map([
+  ['19229:25:pcc:C:1:0',['2025-07-29','2025-08-12','2025-08-19','2025-08-19']],
+  ['19229:25:pcc:E:1:0',['2025-07-29','2025-10-21','2025-10-28','2025-10-28']],
+  ['19229:25:pcc:YE:1:0',['2025-07-29','2025-11-19','2025-11-26','2025-12-01']],
+  ['19229:25:pcc:YE:0:0',['2025-11-20','2025-12-31','2026-02-01','2026-02-02']],
+]);
 const hash=(s:string)=>createHash('sha256').update(s,'utf8').digest('hex');
 const noLastLf=(s:string)=>s.endsWith('\n')?s.slice(0,-1):s;
 const dataLines=(s:string)=>noLastLf(s).split('\n').filter(Boolean).map(l=>l.split('|'));
@@ -86,7 +92,8 @@ export function selectSd29SevenAmendmentTargets(source:{
     if(supportedParents.has(id)||sha!==parentExpected.get(id)
       ||!Number.isInteger(bytes)||bytes<300
       ||![start,end,received,due].every(validDate)
-      ||start>end||received<end||due<end||Number(row[1])!==29)
+      ||start>end||received<end||due<end||Number(row[1])!==29
+      ||[start,end,received,due].join('|')!==parentExactDates.get(id)?.join('|'))
       throw Error('Original SHA-authenticated CFB SD29 PDF parent ledger invalid');
     const parts=id.split(':');
     supportedParents.set(id,{id,parentId:id,period:parts[3] as 'C'|'E'|'YE',
