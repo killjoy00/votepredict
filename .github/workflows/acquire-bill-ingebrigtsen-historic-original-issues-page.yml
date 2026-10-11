@@ -1,0 +1,71 @@
+name: Recover Bill Ingebrigtsen original 2010-2020 first-party issues.php platform site
+
+# Source-only: independently original government senator-service HTML and
+# 2020 first-party campaign HOME linking issues.php must both match hashes
+# before four bounded 2010–2020 historical original-source queries.
+# No production, forecast, model, scheduler or outreach.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/acquire-bill-ingebrigtsen-historic-original-issues-page.yml
+      - data/evaluation/senate-bill-ingebrigtsen-historic-issue-page-2010-2020-original-archive-target-v1.json
+      - scripts/acquire-bill-ingebrigtsen-historic-issues-page-original.ts
+      - scripts/run-bill-ingebrigtsen-historic-issues-page-original.ts
+      - tests/senate-bill-ingebrigtsen-historic-original-issues-probe.test.ts
+      - docs/SENATE_BILL_INGEBRIGTSEN_HISTORIC_ISSUES_PHP_ARCHIVE.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-only-historic-first-party-issues-php:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-bill-ingebrigtsen-historic-first-party-issues-archive-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Independent FULL original government LRL actually-serving senators directory and original SHA UTC receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: originals/complete-government-senator-service
+      - name: Original SHA+CDX verified 2020 candidate homepage with direct literal issues.php link
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38157868392
+          name: senate-two-more-2021-senators-2020-original-candidate-html-v1
+          github-token: ${{ github.token }}
+          path: originals/original-2020-candidate-first-party
+      - name: Recheck both original independent source families before exact historical first-party issues.php searches
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find originals/complete-government-senator-service -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find originals/complete-government-senator-service -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          home="originals/original-2020-candidate-first-party/two20b-02-archive-20200805220154-0.html"
+          test -n "$gov" && test -n "$receipt" && test -s "$home"
+          test "$(dirname "$gov")" = "$(dirname "$receipt")"
+          node --import tsx scripts/run-bill-ingebrigtsen-historic-issues-page-original.ts \
+            --original-complete-mn-lrl-senate-html "$gov" \
+            --original-mn-lrl-utc-sha-receipt "$receipt" \
+            --original-2020-first-party-bill-home "$home" \
+            --output-original-source-dir originals/recovered-bill-historic-first-party-issue-html
+      - name: Preserve original historic page HTML and CDX index, including empty or failed results, as source-only research
+        uses: actions/upload-artifact@v6
+        with:
+          name: bill-ingebrigtsen-original-historical-first-party-issues-2010-2020-v1
+          path: originals/recovered-bill-historic-first-party-issue-html/
+          if-no-files-found: error
+          retention-days: 30

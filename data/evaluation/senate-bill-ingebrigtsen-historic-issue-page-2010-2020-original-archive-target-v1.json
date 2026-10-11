@@ -1,0 +1,61 @@
+{
+  "schema": "mn-bill-ingebrigtsen-served-2021-candidate-owned-2010-2020-issues-archive-probe-v1",
+  "issue": 864,
+  "scope": {
+    "queryWindowFrom": "2010-01-01T00:00:00.000Z",
+    "queryWindowUntilExclusive": "2020-11-03T00:00:00.000Z",
+    "individualActuallyServedMNStateSenateIn2021Required": true,
+    "electionDistrictIn2020": "8",
+    "original2010To2020ArchiveQueryDoesNotProveNew2020Writing": true,
+    "originalWebsiteLink2010To2020CanProveHistoricalPlatformOnlyByActualCaptureUtc": true,
+    "originalSiteHistorical2020HomepageVerifiedBeforeNetworkRequired": true,
+    "completeOriginalOfficialLRLGovernmentServedSenatorsRequired": true,
+    "originalCDXIndexQueries": 4,
+    "maxIndexedRowsPerQuery": 180,
+    "maxFullOriginalIssueHTMLReplays": 6,
+    "currentMutableWebsiteNeverUsedToBackdate": true,
+    "noSourceOrIssueStatementsAutomaticallyAdmitted": true,
+    "emptyIndexOrReplayIsUnknownNotPositionAbsence": true,
+    "originalFirstWrittenDateNotEstablished": true,
+    "campaignLegislativeSelfReportsNotOfficialRollCall": true,
+    "productionDatabaseEvidenceModelForecastSchedulerChanges": 0
+  },
+  "provenance": {
+    "originalSenatorServiceURL": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "originalSenatorServiceRun": 38094976711,
+    "originalSenatorServiceArtifact": 11685387674,
+    "originalGovernmentHtmlSha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "original2020CandidateSiteAcquisitionRun": 38157868392,
+    "original2020CandidateSiteArtifact": 11709436801,
+    "original2020CandidateSiteArchiveName": "senate-two-more-2021-senators-2020-original-candidate-html-v1",
+    "original2020CandidateHomeFile": "two20b-02-archive-20200805220154-0.html",
+    "original2020CandidateHomeSiteUrl": "http://billforsenate.org/",
+    "original2020CandidateHomeCaptureUtc": "2020-08-05T22:01:54.000Z",
+    "original2020CandidateHomeSha256": "263c155d0560953d418ad84506ef68b9dfe51a1172336da14abb4e5fc93e8a85",
+    "original2020CandidateHomeCdxSha1Base32": "PAS6JCDM4S2BDVKVYADI4OVHX7QM7WRU",
+    "original2020CandidateHomeHTMLLiteralIssueLink": "href=\"issues.php\""
+  },
+  "target": {
+    "actuallyServedSenator": "Bill Ingebrigtsen",
+    "district": "8",
+    "domain": "billforsenate.org",
+    "exactCandidateOwnedIssuesPath": "/issues.php",
+    "indexQueryOriginals": [
+      "http://billforsenate.org/issues.php",
+      "http://www.billforsenate.org/issues.php",
+      "https://billforsenate.org/issues.php",
+      "https://www.billforsenate.org/issues.php"
+    ],
+    "issuePageOriginalBytesAuthenticatedYet": false,
+    "anyQuotedPolicyStatementAuthenticatedYet": false,
+    "original2020SOSFiledWebsiteFieldEstablished": false
+  },
+  "warnings": [
+    "Entire actual Minnesota Senate service and 2020 original first-party home bytes must rehash correctly before any 2010–2020 public archive query.",
+    "The originally 2020 archived campaign home specifically links 'issues.php'; this is a source discovery target, not proof that a historical issues-page HTTP body survives.",
+    "A source successfully captured in 2010, 2012 or 2016 proves observable historical candidate wording at that real timestamp; does NOT imply freshly authored or presently endorsed in 2020.",
+    "The original 2020 campaign domain index returned only three homepage captures, so this is deliberately a separate widened historical issues-URL search.",
+    "Even if the page is authentic, direct policy excerpts require a later independent exact visible text audit and clear first-party attribution.",
+    "No production evidence, database, Neon/Vercel, forecast, model, scheduler, 2027 or outreach."
+  ]
+}
