@@ -119,8 +119,8 @@ async function main(){
   historicalAuthenticatedNamed2024BoardCommitteeCases:1,
   sourceAuthenticatedPublic2024PutnamCommitteeRegistrationYear:2019,
   originalSignedBoardMention2023SecondAmendedReport:true,
-  exactModern2023YearEndViewerPutnamAmendments:1,
-  actual2024BoardPdfToViewerVersionMatchProven:false,
+  exactModern2023YearEndViewerPutnamAmendments:3,
+  historicalSignedBoardNamed2023SecondAmendmentMatchesAuthenticatedVersion2:true,
   currentViewerPagesTried:22,currentViewerPagesRetrieved:usable.length,
   currentViewerHeadingsContainingCFBReg:usable.filter(x=>x.exactRegInOfficialPage).length,
   currentViewer2026TerminatedLabelCount:usable.filter(x=>x.statusNowOnly==='terminated_as_of_current_viewer').length,
@@ -139,7 +139,8 @@ async function main(){
   currentObservedNotHistoricalCfbRegistrationViewer:currentResults,
   counts,limitations:{
    signed2024BoardReportAmendmentIsNotPresentDayViewerVersionIndex:true,
-   secondAmended2023YearEndBoardMentionRequiresVersionIdentityReconciliation:true,
+   secondAmended2023YearEndBoardMentionCrossChecksExistingAuthenticatedAmendment2:true,
+   firstAmendmentStillHeldForOriginalRegistrationIdentity:true,
    current2026ViewerStatusNeverEstablishes2023Or2024CommitteeTerminationOrRegistration:true,
    absenceOfTerminatedLabelNotAffirmativeActiveProof:true,
    specificHistorical2023Or2024LegallyOwedReportCount:null,
@@ -158,7 +159,7 @@ async function main(){
    url:originalBoard.documentUrl,sha256:originalBoard.sourceOriginalSHA256,
    bytes:originalBoard.sourceOriginalPDFBytes,
    yearRegistered:originalBoard.committeeEvidence.originalBoardStatesRegistrationYear,
-   secondAmendedReportClaimOriginal:true,modernViewerOneAmendment:true},
+   secondAmendedReportClaimOriginal:true,modernViewerThreeAmendments:true},
   ...counts,productionWrites:0,output:path},null,2));
  if(usable.length<16)process.exitCode=1;
 }
