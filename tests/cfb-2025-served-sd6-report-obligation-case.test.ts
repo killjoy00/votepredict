@@ -88,7 +88,7 @@ test('deny mutated official PDF SHA, due date, assertion of public-by, or false 
     ['source SHA',(p:any)=>{p.reports[0].sourcePdfSha256='b'.repeat(64);}],
     ['fake release',(p:any)=>{p.reports[1].historicallyPublicByOn='2025-04-22';}],
     ['invented due',(p:any)=>{p.reports[0].statutoryDueOnFromCaseSpecificCalendar='2025-04-07';}],
-    ['amendment promoted',(p:any)=>{p.reports[3].amendedVersionNotSeparateRequiredReport=true;}],
+    ['original mislabeled amendment',(p:any)=>{p.reports.find((r:any)=>r.reportId==='19205:25:pcc:YE:0:0').amendedVersionNotSeparateRequiredReport=true;}],
     ['forged period',(p:any)=>{p.periodReview.reportCalendarPeriodMismatchNeedsReview=false;}],
     ['raw missing',(p:any)=>{p.reports=p.reports.slice(1);}],
   ] as Array<[string,(p:any)=>void]>) {
