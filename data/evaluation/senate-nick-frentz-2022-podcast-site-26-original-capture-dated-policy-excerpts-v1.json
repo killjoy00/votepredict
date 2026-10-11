@@ -56,7 +56,7 @@
       "digest": "YTCR6CRE3G5PN2ZQ2WKMA2UD2QRT5JSW",
       "context": "2022 Capitol Report",
       "historicContext": "2022_legislative_session_capitol_report_on_first_party_campaign_homepage",
-      "selected": true,
+      "selected": false,
       "attributableOriginalPublicByCaptureUtc": "2022-11-07T17:19:05.000Z",
       "originalFirstAuthoredOrPublishedDateNeeded": false,
       "originalCampaignWebsite2022SOSFilingVerified": false,
@@ -71,7 +71,7 @@
       "digest": "OTHQLOC3BCXP5XUYJR6OTZXIK2UJWCFU",
       "context": "2022 Capitol Report",
       "historicContext": "distinct_original_page_snapshot_with_same_2022_report_text_requires_exact_span_check_before_earlier_date",
-      "selected": false,
+      "selected": true,
       "attributableOriginalPublicByCaptureUtc": "2022-11-07T17:15:41.000Z",
       "originalFirstAuthoredOrPublishedDateNeeded": false,
       "originalCampaignWebsite2022SOSFilingVerified": false,
@@ -268,12 +268,13 @@
       "exactShortExcerpt": "funding for the Veterinary Diagnostic Lab at the U of M",
       "conservativeMeaning": "Campaign describes legislature-supported livestock veterinary diagnostic investments",
       "statementCharacter": "2022_report_claim_about_legislative_action_not_verified_vote",
-      "sourcePageId": "frentzNovA2022",
-      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:19:05.000Z",
-      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:19:05.000Z",
+      "sourcePageId": "frentzNovB2022",
+      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:15:41.000Z",
+      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:15:41.000Z",
       "candidateOwnedWebsiteTextNotPersonalSpeechOrOfficialRollCall": true,
       "originalFirstAuthorPostedDateRequired": false,
-      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true
+      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true,
+      "laterIndependentlyAuthenticatedSameOriginalWordingPageId": "frentzNovA2022"
     },
     {
       "id": "frentz22-15",
@@ -282,12 +283,13 @@
       "exactShortExcerpt": "$18.4 million for drought relief grants",
       "conservativeMeaning": "Campaign describes agricultural drought assistance appropriations",
       "statementCharacter": "2022_report_claim_about_legislative_action_not_verified_vote",
-      "sourcePageId": "frentzNovA2022",
-      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:19:05.000Z",
-      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:19:05.000Z",
+      "sourcePageId": "frentzNovB2022",
+      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:15:41.000Z",
+      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:15:41.000Z",
       "candidateOwnedWebsiteTextNotPersonalSpeechOrOfficialRollCall": true,
       "originalFirstAuthorPostedDateRequired": false,
-      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true
+      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true,
+      "laterIndependentlyAuthenticatedSameOriginalWordingPageId": "frentzNovA2022"
     },
     {
       "id": "frentz22-16",
@@ -296,12 +298,13 @@
       "exactShortExcerpt": "$60 million for mental health services and staffing across our state",
       "conservativeMeaning": "Campaign describes mental-health staffing funding and initiative",
       "statementCharacter": "2022_report_claim_about_legislative_action_not_verified_vote",
-      "sourcePageId": "frentzNovA2022",
-      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:19:05.000Z",
-      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:19:05.000Z",
+      "sourcePageId": "frentzNovB2022",
+      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:15:41.000Z",
+      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:15:41.000Z",
       "candidateOwnedWebsiteTextNotPersonalSpeechOrOfficialRollCall": true,
       "originalFirstAuthorPostedDateRequired": false,
-      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true
+      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true,
+      "laterIndependentlyAuthenticatedSameOriginalWordingPageId": "frentzNovA2022"
     },
     {
       "id": "frentz22-17",
@@ -310,12 +313,13 @@
       "exactShortExcerpt": "retired teachers to return to the classroom without financial penalty",
       "conservativeMeaning": "Campaign describes pension bill provisions for retired teachers",
       "statementCharacter": "2022_report_claim_about_legislative_action_not_verified_vote",
-      "sourcePageId": "frentzNovA2022",
-      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:19:05.000Z",
-      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:19:05.000Z",
+      "sourcePageId": "frentzNovB2022",
+      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:15:41.000Z",
+      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:15:41.000Z",
       "candidateOwnedWebsiteTextNotPersonalSpeechOrOfficialRollCall": true,
       "originalFirstAuthorPostedDateRequired": false,
-      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true
+      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true,
+      "laterIndependentlyAuthenticatedSameOriginalWordingPageId": "frentzNovA2022"
     },
     {
       "id": "frentz22-18",
@@ -324,12 +328,13 @@
       "exactShortExcerpt": "pass $4 billion in tax cuts",
       "conservativeMeaning": "Campaign claims negotiation of a tax-cut agreement but notes bills were not passed",
       "statementCharacter": "2022_report_claim_about_legislative_action_not_verified_vote",
-      "sourcePageId": "frentzNovA2022",
-      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:19:05.000Z",
-      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:19:05.000Z",
+      "sourcePageId": "frentzNovB2022",
+      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:15:41.000Z",
+      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:15:41.000Z",
       "candidateOwnedWebsiteTextNotPersonalSpeechOrOfficialRollCall": true,
       "originalFirstAuthorPostedDateRequired": false,
-      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true
+      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true,
+      "laterIndependentlyAuthenticatedSameOriginalWordingPageId": "frentzNovA2022"
     },
     {
       "id": "frentz22-19",
@@ -338,12 +343,13 @@
       "exactShortExcerpt": "legislators should be required to return for a special session and finish our work",
       "conservativeMeaning": "Supports special session to complete state budget negotiations",
       "statementCharacter": "2022_report_policy_opinion",
-      "sourcePageId": "frentzNovA2022",
-      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:19:05.000Z",
-      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:19:05.000Z",
+      "sourcePageId": "frentzNovB2022",
+      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:15:41.000Z",
+      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:15:41.000Z",
       "candidateOwnedWebsiteTextNotPersonalSpeechOrOfficialRollCall": true,
       "originalFirstAuthorPostedDateRequired": false,
-      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true
+      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true,
+      "laterIndependentlyAuthenticatedSameOriginalWordingPageId": "frentzNovA2022"
     },
     {
       "id": "frentz22-20",
@@ -352,12 +358,13 @@
       "exactShortExcerpt": "$750 checks directly to approximately 667,000 Minnesotans",
       "conservativeMeaning": "Campaign describes frontline worker bonus checks",
       "statementCharacter": "2022_report_claim_about_legislative_action_not_verified_vote",
-      "sourcePageId": "frentzNovA2022",
-      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:19:05.000Z",
-      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:19:05.000Z",
+      "sourcePageId": "frentzNovB2022",
+      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:15:41.000Z",
+      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:15:41.000Z",
       "candidateOwnedWebsiteTextNotPersonalSpeechOrOfficialRollCall": true,
       "originalFirstAuthorPostedDateRequired": false,
-      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true
+      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true,
+      "laterIndependentlyAuthenticatedSameOriginalWordingPageId": "frentzNovA2022"
     },
     {
       "id": "frentz22-21",
@@ -366,12 +373,13 @@
       "exactShortExcerpt": "fully replenish the UITF",
       "conservativeMeaning": "Campaign describes full unemployment insurance trust replenishment",
       "statementCharacter": "2022_report_claim_about_legislative_action_not_verified_vote",
-      "sourcePageId": "frentzNovA2022",
-      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:19:05.000Z",
-      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:19:05.000Z",
+      "sourcePageId": "frentzNovB2022",
+      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:15:41.000Z",
+      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:15:41.000Z",
       "candidateOwnedWebsiteTextNotPersonalSpeechOrOfficialRollCall": true,
       "originalFirstAuthorPostedDateRequired": false,
-      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true
+      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true,
+      "laterIndependentlyAuthenticatedSameOriginalWordingPageId": "frentzNovA2022"
     },
     {
       "id": "frentz22-22",
@@ -380,12 +388,13 @@
       "exactShortExcerpt": "restore, protect, and enhance wetlands, prairies, forests, and habitat",
       "conservativeMeaning": "Campaign describes funding for habitat conservation projects",
       "statementCharacter": "2022_report_claim_about_legislative_action_not_verified_vote",
-      "sourcePageId": "frentzNovA2022",
-      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:19:05.000Z",
-      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:19:05.000Z",
+      "sourcePageId": "frentzNovB2022",
+      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:15:41.000Z",
+      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:15:41.000Z",
       "candidateOwnedWebsiteTextNotPersonalSpeechOrOfficialRollCall": true,
       "originalFirstAuthorPostedDateRequired": false,
-      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true
+      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true,
+      "laterIndependentlyAuthenticatedSameOriginalWordingPageId": "frentzNovA2022"
     },
     {
       "id": "frentz22-23",
@@ -394,12 +403,13 @@
       "exactShortExcerpt": "expanding the income eligibility from 165% to 200% of the federal poverty line",
       "conservativeMeaning": "Campaign describes expansion of SNAP income eligibility",
       "statementCharacter": "2022_report_claim_about_legislative_action_not_verified_vote",
-      "sourcePageId": "frentzNovA2022",
-      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:19:05.000Z",
-      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:19:05.000Z",
+      "sourcePageId": "frentzNovB2022",
+      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:15:41.000Z",
+      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:15:41.000Z",
       "candidateOwnedWebsiteTextNotPersonalSpeechOrOfficialRollCall": true,
       "originalFirstAuthorPostedDateRequired": false,
-      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true
+      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true,
+      "laterIndependentlyAuthenticatedSameOriginalWordingPageId": "frentzNovA2022"
     },
     {
       "id": "frentz22-24",
@@ -408,12 +418,13 @@
       "exactShortExcerpt": "raises the “growler cap” from 20,000 to 150,000 barrels",
       "conservativeMeaning": "Campaign describes craft brewery growler cap proposal",
       "statementCharacter": "2022_report_claim_about_legislative_action_not_verified_vote",
-      "sourcePageId": "frentzNovA2022",
-      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:19:05.000Z",
-      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:19:05.000Z",
+      "sourcePageId": "frentzNovB2022",
+      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:15:41.000Z",
+      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:15:41.000Z",
       "candidateOwnedWebsiteTextNotPersonalSpeechOrOfficialRollCall": true,
       "originalFirstAuthorPostedDateRequired": false,
-      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true
+      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true,
+      "laterIndependentlyAuthenticatedSameOriginalWordingPageId": "frentzNovA2022"
     },
     {
       "id": "frentz22-25",
@@ -422,12 +433,13 @@
       "exactShortExcerpt": "I was a proud “YES” vote for our state employees wages, benefits, and workplace safety issues",
       "conservativeMeaning": "Campaign claims yes vote on state contracts; no independent roll-call verification",
       "statementCharacter": "2022_report_claim_about_legislative_action_not_verified_vote",
-      "sourcePageId": "frentzNovA2022",
-      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:19:05.000Z",
-      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:19:05.000Z",
+      "sourcePageId": "frentzNovB2022",
+      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:15:41.000Z",
+      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:15:41.000Z",
       "candidateOwnedWebsiteTextNotPersonalSpeechOrOfficialRollCall": true,
       "originalFirstAuthorPostedDateRequired": false,
-      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true
+      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true,
+      "laterIndependentlyAuthenticatedSameOriginalWordingPageId": "frentzNovA2022"
     },
     {
       "id": "frentz22-26",
@@ -436,12 +448,13 @@
       "exactShortExcerpt": "Veteran Stable Housing Initiatives",
       "conservativeMeaning": "Campaign describes funding for veteran stable housing",
       "statementCharacter": "2022_report_claim_about_legislative_action_not_verified_vote",
-      "sourcePageId": "frentzNovA2022",
-      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:19:05.000Z",
-      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:19:05.000Z",
+      "sourcePageId": "frentzNovB2022",
+      "verifiableOriginalArchiveCaptureUtc": "2022-11-07T17:15:41.000Z",
+      "publiclyAttributableNoLaterThanUtc": "2022-11-07T17:15:41.000Z",
       "candidateOwnedWebsiteTextNotPersonalSpeechOrOfficialRollCall": true,
       "originalFirstAuthorPostedDateRequired": false,
-      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true
+      "noAutomaticProductionEvidenceOrHistoricForecastAdmission": true,
+      "laterIndependentlyAuthenticatedSameOriginalWordingPageId": "frentzNovA2022"
     }
   ],
   "caveats": [
