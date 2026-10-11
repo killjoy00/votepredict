@@ -103,7 +103,7 @@ test('14 synthetic exact SHA1/SHA256 original HTTP bodies authorize 28 short ind
  assert.equal(result.individuallyRecordedSenateMemberVotesEstablished,0);
  assert.equal(result.historicOriginalArticleHtmlOrAudioPersisted,false);
  for(const record of result.receipts){
-  assert.equal(record.replayStatus,'exact_original_raw_sha1_and_pinned_sha256_verified');
+  assert.equal(record.status,'exact_original_raw_sha1_and_pinned_sha256_verified');
   assert.equal(record.observedOriginalSha256,f.sha256);
   assert.ok(record.individualShortTextCueObservations.every(x=>
    x.shortPhraseInVerifiedHistoricalOriginalHtml===true
@@ -160,7 +160,7 @@ test('original archive errors and swapped raw body digest are UNKNOWN and cannot
   assert.equal(r.originalBodiesUnknownOrUnverified,14);
   assert.equal(r.shortTextHistoricallyUnknown,28);
   assert.equal(r.shortTextHistoricallyAbsent,0);
-  assert.ok(r.receipts.every(x=>x.replayStatus===status
+  assert.ok(r.receipts.every(x=>x.status===status
    &&x.individualShortTextCueObservations.every(c=>
      c.shortPhraseInVerifiedHistoricalOriginalHtml===null)));
  }
@@ -177,5 +177,5 @@ test('previous raw SHA256 digest mismatch blocks authorizing original wording ev
   stub(()=>new Response(f.bytes,{headers:{'content-type':'text/html'}})));
  assert.equal(r.originalBodiesReverifiedIndexedSha1AndPriorSha256,0);
  assert.equal(r.shortTextHistoricallyUnknown,28);
- assert.ok(r.receipts.every(x=>x.replayStatus==='archive_previous_sha256_or_bytes_mismatch_unknown'));
+ assert.ok(r.receipts.every(x=>x.status==='archive_previous_sha256_or_bytes_mismatch_unknown'));
 });
