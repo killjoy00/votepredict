@@ -1,0 +1,59 @@
+name: One-shot permanent recovery of 396 dated CFB candidate-viewer metadata rows
+
+# #864 PR-only 2026 archival action. ONLY writes two metadata checkpoint files
+# into a single authenticated same-repository PR branch; never to main.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2021-24-preserve-396-source-metadata.yml
+      - scripts/preserve-cfb-2021-24-396-viewer-metadata.ts
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  restore-original-396-metadata-into-pr-branch:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.head_ref == 'audit/864-preserve-396-source-viewer-metadata-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.head_ref }}
+          persist-credentials: true
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Acquire ONLY original historical metadata artifact ID 11683227803 from repo Actions archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p artifacts
+          gh api repos/${{ github.repository }}/actions/artifacts/11683227803/zip \
+            -H 'Accept: application/octet-stream' > artifacts/cfb-original-396.zip
+          echo '5516f3863ae9e5122df923b2d0f7f1fc88b5a5af3ddcb6dba2d3160570844914  artifacts/cfb-original-396.zip' | sha256sum -c
+          unzip -p artifacts/cfb-original-396.zip \
+            cfb-2021-24-senate-historical-viewer-reference-counts.json \
+            > artifacts/original-396-source.json
+          echo '933f9c55c71da049a4a9af21574f562676e8e930f0cb6be6883e50b5f8901da0  artifacts/original-396-source.json' | sha256sum -c
+      - name: Recover original canonical 396-row PSV with fixed original source SHA, without candidate names or financial data
+        run: |
+          node --import tsx scripts/preserve-cfb-2021-24-396-viewer-metadata.ts \
+            --input artifacts/original-396-source.json
+          echo '6056ce0072adfc6711588fe8d2b4b09694a658e52a249631fbf4e92f65a2a4f9  docs/evaluation/source-proof/cfb-2021-24-senate-396-original-viewer-source-observations.psv' | sha256sum -c
+      - name: Commit ONLY the two metadata-only source files onto exact trusted PR branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- \
+            docs/evaluation/source-proof/cfb-2021-24-senate-396-original-viewer-source-observations.psv \
+            docs/evaluation/source-proof/cfb-2021-24-senate-396-original-viewer-source-observations-checkpoint.json
+          git diff --cached --quiet && { echo 'Already preserved'; exit 0; }
+          git commit -m 'audit(#864): permanently preserve original authenticated 396 CFB metadata rows'
+          git push origin HEAD:refs/heads/audit/864-preserve-396-source-viewer-metadata-20261010
