@@ -1,0 +1,54 @@
+name: Public MPR original CDN MP3 historical archive proof
+
+# The two exact queryless publisher CDN paths are distinct archive hypotheses,
+# NOT automatically equivalent to the current parameterized redirects.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-mpr-cdn-original-mp3.yml
+      - scripts/probe-senate-media-mpr-cdn-original-mp3.mjs
+      - scripts/run-senate-media-mpr-cdn-original-mp3.mjs
+      - tests/senate-media-mpr-cdn-original-mp3.test.mjs
+      - docs/evaluation/senate-media-mpr-cdn-original-audio-20261011.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-mpr-cdn-original-mp3
+  cancel-in-progress: false
+
+jobs:
+  first-party-historic-audio-binaries:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-mpr-feed-redirect-transcript-window-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Bounded public CDN exact original binary SHA checks offline tests
+        run: node --test tests/senate-media-mpr-cdn-original-mp3.test.mjs
+      - name: Original Wayback indexed SHA-1 MP3 replay for exact publisher CDN resource hypotheses
+        run: |
+          node scripts/run-senate-media-mpr-cdn-original-mp3.mjs \
+            --output artifacts/senate-media-mpr-cdn-original-mp3.json
+      - name: Upload source and checksum status only, no original audio binary
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-mpr-cdn-original-mp3
+          path: artifacts/senate-media-mpr-cdn-original-mp3.json
+          if-no-files-found: error
+          retention-days: 7
