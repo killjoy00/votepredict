@@ -45,12 +45,15 @@ jobs:
           set -euo pipefail
           original="$(find artifacts/official-original-senator-service -type f -name 'mn-lrl-official-senate-service-directory.html' -print -quit)"
           metadata="$(find artifacts/official-original-senator-service -type f -name 'mn-lrl-official-senate-service-directory-audit.json' -print -quit)"
+          swearing="$(find artifacts/official-original-senator-service -type f -name 'mn-lrl-official-senate-special-swearing-history.html' -print -quit)"
           test -n "$original"
           test -n "$metadata"
+          test -n "$swearing"
           test "$(dirname "$original")" = "$(dirname "$metadata")"
           node --import tsx scripts/audit-senate-only-dated-campaign-issue-leads-offline.ts \
             --lrl-original "$original" \
             --lrl-metadata "$metadata" \
+            --lrl-swearing-html "$swearing" \
             --output artifacts/senate-ever-served-only-2021-25-dated-issue-leads.json
       - name: Retain named actual senators only with evidence date types, no opponent listings
         uses: actions/upload-artifact@v6
