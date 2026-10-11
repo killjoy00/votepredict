@@ -115,3 +115,72 @@ test('no audio, votes, full speaker-text approvals, first publication clocks or 
   assert.equal(Object.hasOwn(d,'rollCallVotesBySenator'),false);
   assert.equal(Object.hasOwn(d,'independentlyVerifiedAudioTranscript'),false);
 });
+
+
+test('independent FINAL live newsroom original run preserves 21 exact old raw hashes and recovers 3 new original body versions',()=>{
+  const s=d.independentFinalPublicRun;
+  assert.equal(s.runId,38163950720);
+  assert.equal(s.sourceHeadSha,'c01f33a303108175651a1314ed79ca92b285765d');
+  assert.equal(s.conclusion,'success');
+  assert.equal(s.artifactId,11711546832);
+  assert.equal(s.artifactName,'senate-media-independent-15-original-receipts');
+  assert.equal(s.downloadedZipSha256,
+    '8ff45617a89410995e568fedd34b243b7947d95f93deb0cf8eaf186b5c5b3a19');
+  assert.equal(s.decodedJsonSha256,
+    '7d0ab414c73f7f5cfe3c87f973e02b383acd0a0e2094dc4c6121d7c418d5a298');
+  assert.equal(s.decodedJsonBytes,34993);
+  assert.deepEqual(s.observed,{
+    originalArticleUrlLeads:15,indexedOriginalUrlCandidates:12,cdxUnavailableOrInvalidUnknown:3,
+    indexEmpty:0,originalBodyReplayAttempts:24,
+    exactIndexedSha1ConsistentArchivedRawHtmlBodyVersions:24,
+    distinctOriginalJournalistArticleUrlsWithMatchedBodies:12,
+    cdxUnavailableIds:['new-reporter-2021-commissioners',
+      'new-reporter-2022-special-session','new-reporter-2025-sick-leave'],
+  });
+  assert.equal(s.allEarlier21OriginalRawSha256AndBodyLengthsMatchIndependently,true);
+  assert.equal(s.originalBodyVersionsIdenticallyReproducedFromFirstRun,21);
+  assert.equal(s.additionalOriginalBodyVersions,3);
+  assert.equal(s.additionalVerifiedHistoricalOriginalArticleUrls,1);
+  assert.equal(s.newExactHistoricalOriginalReceipts.length,3);
+  assert.equal(d.originalSourceBodies.reduce((n:number,x:{
+    rawSha1ConsistentOriginalHttpCaptures:unknown[];
+  })=>n+x.rawSha1ConsistentOriginalHttpCaptures.length,0)+s.newExactHistoricalOriginalReceipts.length,24);
+  const allKnown=new Set(d.originalSourceBodies.map((x:{leadId:string})=>x.leadId));
+  assert.equal(new Set([...allKnown,...s.newExactHistoricalOriginalReceipts.map(
+    (x:{leadId:string})=>x.leadId)]).size,12);
+  const oldCaptureKeys=new Set(d.originalSourceBodies.flatMap((x:{
+    leadId:string;rawSha1ConsistentOriginalHttpCaptures:Array<{captureUtc:string}>;
+  })=>x.rawSha1ConsistentOriginalHttpCaptures.map(c=>x.leadId+'|'+c.captureUtc)));
+  for(const x of s.newExactHistoricalOriginalReceipts){
+    assert.equal(oldCaptureKeys.has(x.leadId+'|'+x.captureUtc),false);
+    assert.ok(sample.independentOriginalReporterArticleLeads.some(
+      (y:{id:string})=>y.id===x.leadId));
+    assert.match(x.indexSha1Base32,/^[A-Z2-7]{32}$/);
+    assert.match(x.rawOriginalBodySha256,/^[a-f0-9]{64}$/);
+    assert.ok(x.originalBytes>40&&x.originalBytes<2_500_000);
+  }
+  assert.equal(s.source2025MayeQuadeNewlyOriginalShaVerified,true);
+  assert.equal(s.early2023AliceMannRedirectTransientAndRecovered,true);
+  assert.equal(s.historicalOriginalIndexAbsentNeverEvidencePublisherArticleNotWritten,true);
+  assert.equal(s.noNewSpeechAudioRecordedMemberVotesOrFirstPostingClockAuthenticated,true);
+  assert.equal(s.noPrivateSourceOrModelRead,true);
+});
+
+test('January 6 2023 Alice Mann early archive and April 25 2025 Maye Quade reporting recovered exact 3 new bodies',()=>{
+  const x=d.independentFinalPublicRun.newExactHistoricalOriginalReceipts;
+  assert.deepEqual(x.map((v:{captureUtc:string})=>v.captureUtc),
+    ['2023-01-06T13:57:07Z','2025-04-25T15:28:44Z','2025-04-25T15:29:28Z']);
+  assert.deepEqual(x.map((v:{rawOriginalBodySha256:string})=>v.rawOriginalBodySha256),[
+    'd6d8e25c184613b6725c850a8819ab0d47f6b879fc5c13bfa47523c7d4785be1',
+    '3a91a6e66be3296bdf4253c909ea145a82a2c629c55f1a190f54a97dd0010ca2',
+    '8e344277eeb6c9d30f17c40938e51057ce5b4d8948b399e48c601799ab014577',
+  ]);
+  assert.deepEqual(x.map((v:{leadId:string})=>v.leadId),[
+    'new-reporter-2023-family-leave',
+    'new-reporter-2025-federal-cuts',
+    'new-reporter-2025-federal-cuts',
+  ]);
+  assert.equal(x[0]?.priorStatus,'replay_redirect_refused_unknown');
+  assert.equal(x[1]?.priorStatus,'cdx_index_unavailable_or_invalid');
+  assert.equal(x[2]?.priorStatus,'cdx_index_unavailable_or_invalid');
+});
