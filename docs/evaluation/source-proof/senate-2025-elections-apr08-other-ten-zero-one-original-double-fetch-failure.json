@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "senate-2025-elections-apr08-other-10-0-1-original-double-fetch-failure-checkpoint-v1",
+  "issue": 864,
+  "hearingDate": "2025-04-08",
+  "committee": "Elections",
+  "bill": "SF2384",
+  "sourceAuthority": "Minnesota Legislative Reference Library",
+  "sourceUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/elections/20250408/Elections_20250408_Minutes.pdf",
+  "priorAuthenticatedSource": {
+    "originalPdfSHA256": "d26c583ef3e5caae1b52d379bf9c6cc784e0e9d39a80c056259f65f83f2e4c46",
+    "originalTextSHA256": "6dc40628432da41be2ac4afe24b8725d5638e069421c4f413445042794411101",
+    "originalPdfBytes": 99628,
+    "alreadyAuthenticatedA11ResultTextOffset": 1422,
+    "alreadyAuthenticatedA11MotionTextOffset": 1286,
+    "originalA11ContainsOneTenZeroOne": true,
+    "originalWholeHearingContainsTwoTenZeroOneResultParagraphsFromEarlierVerifiedSource": true,
+    "otherParagraphStillNotIsolatedByCurrentRuns": true
+  },
+  "failedOriginalSourceAttempts": [
+    {
+      "runId": 38156811715,
+      "sourceRunnerPR": 1067,
+      "sourceRunnerMergeCommit": "9bd2514c0328712813e24d67f4b8deaa5acc0cf3",
+      "conclusion": "failure",
+      "originalArtifactId": 11708731132,
+      "originalZipBytes": 900,
+      "independentlyDownloadedZipSHA256": "eb117ca95cd419234c77df9a6cc829d17a3deebd4dad81744bf548a5dd15e7bd",
+      "decodedJsonEntryName": "senate-2025-apr08-original-second-10-0-1-source.json",
+      "decodedJsonBytes": 1179,
+      "independentlyDownloadedJsonSHA256": "28b14c59e483899bf06a15857d7b05b32bd7350a50567065f6fc70bc9fb7654b",
+      "error": "fetch failed",
+      "originalPdfAndTextSHAReverified": false,
+      "otherTenZeroOneParagraphInspected": false
+    },
+    {
+      "runId": 38157261686,
+      "retryPR": 1072,
+      "retryMergeCommit": "51842fe5cddeb8f4dc02280f49f2cb3b0e5c8728",
+      "conclusion": "failure",
+      "originalArtifactId": 11709126508,
+      "originalZipBytes": 912,
+      "independentlyDownloadedZipSHA256": "4c0a3f350e21475667905519802c6e51e1f31e44a6fb889defbbe5d8534d8390",
+      "decodedJsonEntryName": "senate-2025-apr08-second-10-0-1-targeted-retry-source.json",
+      "decodedJsonBytes": 1179,
+      "independentlyDownloadedJsonSHA256": "28b14c59e483899bf06a15857d7b05b32bd7350a50567065f6fc70bc9fb7654b",
+      "decodedJsonIdenticalToFirstFailure": true,
+      "error": "fetch failed",
+      "originalPdfAndTextSHAReverified": false,
+      "otherTenZeroOneParagraphInspected": false
+    }
+  ],
+  "limits": {
+    "noCurrentVerifiedOtherTenZeroOneOriginalMotion": true,
+    "otherResultNotInferredToBeA8A43A11OrAnyAmendment": true,
+    "noMemberYeaNayFromAggregateOrOtherMotion": true,
+    "noSourceToStoredDbParity": true,
+    "noNewStatewide2021To2025CommitteeVoteDenominatorCertified": true,
+    "noProductionPrivateDbAccess": true,
+    "noNewSourcePDFBytesOrRawSidesCommitted": true,
+    "noForecastModelTrainingServingSchedulerFloorOr2027": true,
+    "noSameDayForecastWithoutPreciseMotionTime": true,
+    "sourceAvailabilityFailureDoesNotProveNoMotionExists": true,
+    "issue864MustRemainOpen": true
+  }
+}
