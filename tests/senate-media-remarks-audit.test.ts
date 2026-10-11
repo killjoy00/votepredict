@@ -194,6 +194,43 @@ test('invalid duplicate input IDs are rejected instead of silently counted as ad
   assert.throws(() => audit({ roster: [member(), member()] }), /duplicate senator-year roster/);
 });
 
+test('repeated source contexts cannot conceal a non-neutral record and certify an exact quote',()=>{
+  const valid=context();
+  const bad={...valid,evidenceId:'evidence-2',contextOnly:false,modelWeight:1};
+  for(const rows of [[valid,bad],[bad,valid]]) {
+    const result=audit({contexts:rows});
+    assert.equal(result.corpusContextItemsInSuppliedExport,2);
+    assert.equal(result.distinctArchivedArticlesInExport,1);
+    assert.equal(result.missingOrInvalidProvenanceArticles,1);
+    assert.equal(result.verifiedAttributedQuotePassages,0);
+    assert.ok(result.reviewResults[0]?.failures.includes('not_neutral_archived_context'));
+    assert.equal(result.byPublisherYear.find(x=>
+      x.year===2023 && x.seedId==='mpr-news-story-archive')?.exportedContextItems,2);
+  }
+  const benign={...valid,evidenceId:'evidence-2',mentionedMembers:['Bob Example']};
+  const accepted=audit({contexts:[valid,benign]});
+  assert.equal(accepted.corpusContextItemsInSuppliedExport,2);
+  assert.equal(accepted.distinctArchivedArticlesInExport,1);
+  assert.equal(accepted.verifiedAttributedQuotePassages,1);
+  // Distinct context observations do not multiply the one reviewed quote.
+  assert.equal(accepted.bySenatorYear[0]?.archiveArticleMentions,1);
+});
+
+test('same archived source must not change capture, publisher or publication date between evidence rows',()=>{
+  const valid=context();
+  const variants=[
+    {...valid,evidenceId:'evidence-2',archiveCapturedAt:'2023-04-05T10:11:12Z'},
+    {...valid,evidenceId:'evidence-2',publisherPublishedAt:'2023-04-01T12:00:00Z'},
+    {...valid,evidenceId:'evidence-2',archiveDigest:'DIFFERENT_ARCHIVE_DIGEST'},
+    {...valid,evidenceId:'evidence-2',publisher:'Another Publisher'},
+    {...valid,evidenceId:'evidence-2',sourceUrl:'https://web.archive.org/web/bad-id_/'},
+  ];
+  for(const other of variants)
+    for(const rows of [[valid,other],[other,valid]])
+      assert.throws(()=>audit({contexts:rows}),
+        /Conflicting source identities in media context export/);
+});
+
 test('a non-quote review is classification only, never admitted as a direct named quotation', () => {
   const contextual: SenateMediaReview = {
     sourceDocumentId: 'source-1', disposition: 'contextual_mention',

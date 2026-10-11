@@ -254,19 +254,30 @@ export function auditSenateMediaRemarks(input: {
   const snapshots = input.snapshots ?? [];
   const seenEvidence = new Set<string>();
   const byDocument = new Map<string, SenateMediaContextExport>();
+  const sourceProblems = new Map<string,Set<string>>();
   let outsideScope = 0;
   const allContexts: SenateMediaContextExport[] = [];
+  const immutableSourceIdentity=(row:SenateMediaContextExport)=>JSON.stringify([
+    row.sourceKind,row.sourceUrl,row.sourceSha256,row.seedId,row.publisher,
+    row.originalUrl,row.archiveUrl,row.archiveCapturedAt,row.archiveDigest,
+    row.publisherPublishedAt,
+  ]);
   for (const row of contexts) {
-    if (!row.evidenceId || !row.sourceDocumentId || seenEvidence.has(row.evidenceId))
+    if (!row?.evidenceId || !row.sourceDocumentId || seenEvidence.has(row.evidenceId))
       throw Error('Missing or duplicate media context evidence identity');
     seenEvidence.add(row.evidenceId);
     const year = Number(row.archiveCapturedAt?.slice(0, 4));
     if (!YEARS.includes(year as typeof YEARS[number])) { outsideScope++; continue; }
     const previous = byDocument.get(row.sourceDocumentId);
-    if (previous && (previous.sourceSha256 !== row.sourceSha256
-        || previous.archiveUrl !== row.archiveUrl || previous.seedId !== row.seedId))
+    if (previous && immutableSourceIdentity(previous) !== immutableSourceIdentity(row))
       throw Error('Conflicting source identities in media context export');
-    byDocument.set(row.sourceDocumentId, row);
+    // A repeated context may carry a different neutral-state verdict:
+    // never let input row order silently erase a provenance failure and
+    // approve a quote based on only the last row's metadata.
+    const issues=sourceProblems.get(row.sourceDocumentId) ?? new Set<string>();
+    for(const issue of senateMediaContextProvenanceIssues(row))issues.add(issue);
+    sourceProblems.set(row.sourceDocumentId,issues);
+    if (!previous) byDocument.set(row.sourceDocumentId,row);
     allContexts.push(row);
   }
   const rosterKeys = new Set<string>();
@@ -284,7 +295,8 @@ export function auditSenateMediaRemarks(input: {
     snapshotsByDocument.set(item.sourceDocumentId, item);
   }
   const invalidSources = new Map<string, string[]>();
-  for (const [id, row] of byDocument) invalidSources.set(id, senateMediaContextProvenanceIssues(row));
+  for (const id of byDocument.keys())
+    invalidSources.set(id,[...(sourceProblems.get(id) ?? [])]);
   const classified: Array<{
     sourceDocumentId: string; membershipId: string | null; senatorName: string | null;
     issueCategory: string | null; disposition: SenateMediaReviewDisposition;
