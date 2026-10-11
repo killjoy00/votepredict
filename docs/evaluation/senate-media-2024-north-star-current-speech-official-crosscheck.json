@@ -99,5 +99,25 @@
     "chamber": "House",
     "directSpeechOnCurrentArticle": true,
     "attributedToSenator": false
+  },
+  "evidenceBoundary": {
+    "sourceIsCurrentPublisherNotHistoricalArchive": true,
+    "officialServiceMembershipOnArticleDisplayedDayVerified": true,
+    "officialBillActionsVerified": true,
+    "historicalWaybackArticleOriginalFetched": false,
+    "historicalFirstPublicByVerified": false,
+    "storedPrivateSourceDocumentShaMatched": false,
+    "briefDatedOriginalBytesProvenIdentical": false,
+    "independentHauschildSocialPostRetrieved": false,
+    "verifiedOriginalNamedSenatorQuotes": 0,
+    "humanOriginalSourceReviews": 0,
+    "houseSpeakerAttributedToSenator": false,
+    "billAuthorshipTreatedAsNewsroomSpeech": false,
+    "reportedExternalParaphraseCountedAsSenatorQuote": false,
+    "currentPublisherClockInterpretedAsUTC": false,
+    "historicalForecastEligibilityProven": false,
+    "databaseQueriedOrWritten": false,
+    "productionCollectorOrModelChanged": false,
+    "statewideMediaDenominatorKnown": false
   }
 }
