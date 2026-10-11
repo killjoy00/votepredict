@@ -10,6 +10,9 @@ on:
       - scripts/probe-senate-media-independent-reporter-15-wayback.ts
       - tests/senate-media-independent-reporter-15-wayback.test.ts
       - docs/evaluation/senate-media-2021-25-further-independent-reporting-15-leads.json
+      - docs/evaluation/senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json
+      - tests/senate-media-independent-reporter-15-original-receipts.test.ts
+      - docs/evaluation/senate-media-2021-25-independent-reporter-expansion-and-early-speaker-review.md
   workflow_dispatch:
     inputs:
       scope:
