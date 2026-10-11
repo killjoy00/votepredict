@@ -210,8 +210,8 @@ export async function acquire2020OriginalCampaignSitesOfSixActualSenators(
   }
   reports.push({
    actualLRLServedSenatorName:p.verifiedOfficialSenateName,
-   2020ElectionDistrict:p.electionDistrict2020,
-   2020CandidateIdentityLead:p.personLRLName,
+   electionDistrict2020:p.electionDistrict2020,
+   candidateIdentity2020Lead:p.personLRLName,
    originalActualSenateServiceTerm:p.provenSenateTerm,
    originalOfficialSenateServiceSource:p.originalOfficialServiceSource,
    originalOfficialSenateDirectoryHtmlSha256:official.source.sourceBytesSha256,
@@ -246,7 +246,7 @@ export async function acquire2020OriginalCampaignSitesOfSixActualSenators(
   },
   totals:{
    actuallyServedSenatorPeople:reports.length,
-   2019To2020OriginalCdxIndexQueries:reports.length,
+   year2019To2020OriginalCdxIndexQueries:reports.length,
    originalIndexSuccessfullyParsed:reports.filter(p=>p.independentlyParsedHistoricalCdx).length,
    originalIndexHTTP200:reports.filter(p=>p.historicIndexHttpReceipt.status===200).length,
    originalPageReplaysAttempted:all.length,
@@ -262,9 +262,9 @@ export async function acquire2020OriginalCampaignSitesOfSixActualSenators(
    allSenatorsPersonallyLRLVerifiedBeforeInternetArchiveQuery:true,
    independentOriginalHistoricalHTMLRequiredForAnyQuote:true,
    pre2020ElectionCutoffStrict:true,
-   2019PagesMayContainOlderCycleContent:true,
+   year2019PagesMayContainOlderCycleContent:true,
    historicalSiteSOS2020FilingUrlProofStillMissing:true,
-   300RowDomainIndexCanMissOtherSourcePages:true,
+   bounded300RowDomainIndexCanMissOtherSourcePages:true,
    failedSourceMeansUnknownNotNoIssuePositions:true,
    current2026SiteNeverProves2020Text:true,
    noProductionSourceModelServingOrDataChanges:true,
