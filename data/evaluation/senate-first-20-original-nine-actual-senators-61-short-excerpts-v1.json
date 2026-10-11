@@ -1,0 +1,878 @@
+{
+  "schema": "mn-senate-first-20-batch-nine-original-firstparty-candidate-issue-quote-leads-v1",
+  "scope": {
+    "issue": 864,
+    "originalSourceAcquisitionRun": 38175993447,
+    "originalAcquisitionArtifact": 11716126718,
+    "trueServiceSenators2021To2025": 95,
+    "originalOfficialGovernmentSHA256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "newActualSenatorsWithFirstPartyIssueQuotes": 9,
+    "shortDistinctLiteralQuoteLeads": 61,
+    "candidateSiteOriginalAuthoredDatesInferred": false,
+    "oldHouseSiteNeverClaimed2022SenatePlatform": true,
+    "pastLegislationSelfReportsNeverOfficialVotes": true,
+    "noCompleteArchiveCensusClaim": true,
+    "archiveErrorsAndRepurposedSitesNeverNoPolicy": true,
+    "sourceResearchNotProduction": true,
+    "productionDBWrites": 0,
+    "forecastTrainingChanges": 0
+  },
+  "pages": [
+    {
+      "id": "torrey-westrom",
+      "person": "Torrey Westrom",
+      "district": "12",
+      "electionYear": 2022,
+      "historicalPageAttribution": "senate_issue_positions_observable_2021_first_authorship_unproven",
+      "committeeAttributionText": "PAID FOR BY THE WESTROM FOR SENATE COMMITTEE",
+      "sourceWindowCdxFile": "07-torrey-westrom-2022-entire-original-cdx.json",
+      "sourceWindowCdxSha256": "73ea5b888737114d34a3993a03347099b285dd9209a85109fea5731be66adf51",
+      "archivedOriginalSiteUrl": "https://www.torreywestrom.com/",
+      "archiveCaptureUtc": "2021-01-20T20:25:27.000Z",
+      "archiveOriginalCdxDigestSha1Base32": "2MLH3XULYROTOJY73MY6QZML4G5ZKEZ6",
+      "originalHtmlFilename": "07-torrey-westrom-2022-1-original-20210120202527.html",
+      "originalHtmlSha256": "f4b803e7c77cef8c23ead1907eaa24aba34483580fd9d8eb03e282ecd85abc6c",
+      "websiteStatementsFirstAuthoredDateKnown": false,
+      "verifiedOfficialVotes": false,
+      "forecastsAutoEligible": false
+    },
+    {
+      "id": "eric-pratt",
+      "person": "Eric Pratt",
+      "district": "54",
+      "electionYear": 2022,
+      "historicalPageAttribution": "2022_senate_candidate_issue_platform",
+      "committeeAttributionText": "Prepared and paid for by the Eric Pratt for Minnesota Committee",
+      "sourceWindowCdxFile": "08-eric-pratt-2022-entire-original-cdx.json",
+      "sourceWindowCdxSha256": "2d969e0da0eaabde7896ad27a4ed4533038b0dffb54d63a7e425673e02d3668d",
+      "archivedOriginalSiteUrl": "https://www.ericprattmn.com/issues.html",
+      "archiveCaptureUtc": "2022-06-26T22:35:26.000Z",
+      "archiveOriginalCdxDigestSha1Base32": "653XFKDSDXMJ3LA7DKUUFMAUNMLWALN3",
+      "originalHtmlFilename": "08-eric-pratt-2022-1-original-20220626223526.html",
+      "originalHtmlSha256": "10a6225c7ca6404b09b3f89366cfb5a2aafdaba89b3a3d1529ffc8518bcfaee1",
+      "websiteStatementsFirstAuthoredDateKnown": false,
+      "verifiedOfficialVotes": false,
+      "forecastsAutoEligible": false
+    },
+    {
+      "id": "jeremy-miller",
+      "person": "Jeremy Miller",
+      "district": "26",
+      "electionYear": 2022,
+      "historicalPageAttribution": "older_senate_sd28_campaign_issues_observable_2021_not_a_fresh_2022_sd26_platform",
+      "committeeAttributionText": "Prepared and paid for by Friends for Miller",
+      "sourceWindowCdxFile": "11-jeremy-miller-2022-entire-original-cdx.json",
+      "sourceWindowCdxSha256": "0c64b9940bb65a0a9e9f334352e85548926ab46e59b45fd054534e1b6554885e",
+      "archivedOriginalSiteUrl": "http://www.friendsformiller.com/issues/",
+      "archiveCaptureUtc": "2021-01-15T18:14:41.000Z",
+      "archiveOriginalCdxDigestSha1Base32": "43C3QTV3DDYPAUAHUOFTLBPC5YMKL22R",
+      "originalHtmlFilename": "11-jeremy-miller-2022-2-original-20210115181441.html",
+      "originalHtmlSha256": "b47100a3cf644c820936013463e946c669122e3a901964c90e64d86b0481c74b",
+      "websiteStatementsFirstAuthoredDateKnown": false,
+      "verifiedOfficialVotes": false,
+      "forecastsAutoEligible": false
+    },
+    {
+      "id": "steve-drazkowski-education",
+      "person": "Steve Drazkowski",
+      "district": "20",
+      "electionYear": 2022,
+      "historicalPageAttribution": "older_minnesota_house_campaign_policy_not_2022_senate_platform",
+      "committeeAttributionText": "Prepared and paid for by the Drazkowski Volunteer Committee",
+      "sourceWindowCdxFile": "12-steve-drazkowski-2022-entire-original-cdx.json",
+      "sourceWindowCdxSha256": "fa71831d6971bf1d00286f52107a38ef790dbc2c1c4bde21b5b7339442c12132",
+      "archivedOriginalSiteUrl": "https://www.draz.com/education/",
+      "archiveCaptureUtc": "2021-03-07T20:15:27.000Z",
+      "archiveOriginalCdxDigestSha1Base32": "WWBSBQFVLBOGHMUS33V5E6RYQTXWT7RE",
+      "originalHtmlFilename": "12-steve-drazkowski-2022-1-original-20210307201527.html",
+      "originalHtmlSha256": "67cb68e8fdfa71789948f5b93a53260774ec6152c8f48ea410a8d65353636be4",
+      "websiteStatementsFirstAuthoredDateKnown": false,
+      "verifiedOfficialVotes": false,
+      "forecastsAutoEligible": false
+    },
+    {
+      "id": "steve-drazkowski-taxes",
+      "person": "Steve Drazkowski",
+      "district": "20",
+      "electionYear": 2022,
+      "historicalPageAttribution": "older_house_campaign_pawlenty_era_copy_observable_2021",
+      "committeeAttributionText": "Prepared and paid for by the Drazkowski Volunteer Committee",
+      "sourceWindowCdxFile": "12-steve-drazkowski-2022-entire-original-cdx.json",
+      "sourceWindowCdxSha256": "fa71831d6971bf1d00286f52107a38ef790dbc2c1c4bde21b5b7339442c12132",
+      "archivedOriginalSiteUrl": "https://www.draz.com/taxes/",
+      "archiveCaptureUtc": "2021-01-25T16:29:17.000Z",
+      "archiveOriginalCdxDigestSha1Base32": "6O257QUMUYV4GJJX7LPTJ7AQHR5FJDSB",
+      "originalHtmlFilename": "12-steve-drazkowski-2022-2-original-20210125162917.html",
+      "originalHtmlSha256": "e37dcb10f2bde69fe0f72ec19c835e7e2e4fef337168fbd8c4eb280c72e3c98d",
+      "websiteStatementsFirstAuthoredDateKnown": false,
+      "verifiedOfficialVotes": false,
+      "forecastsAutoEligible": false
+    },
+    {
+      "id": "andrew-mathews",
+      "person": "Andrew Mathews",
+      "district": "27",
+      "electionYear": 2022,
+      "historicalPageAttribution": "older_2016_senate_campaign_issues_observable_2021",
+      "committeeAttributionText": "Prepared and Paid for by Andrew for Senate",
+      "sourceWindowCdxFile": "13-andrew-mathews-2022-entire-original-cdx.json",
+      "sourceWindowCdxSha256": "9480440eed58d1f33605ec96ec7afc6cab6cadcc342ffabea28d2191082acabf",
+      "archivedOriginalSiteUrl": "http://andrewmathews.com/issues/",
+      "archiveCaptureUtc": "2021-05-05T19:43:42.000Z",
+      "archiveOriginalCdxDigestSha1Base32": "VZNZYNANB7WSD4MSZVHGJ3RXBBWWE2VX",
+      "originalHtmlFilename": "13-andrew-mathews-2022-2-original-20210505194342.html",
+      "originalHtmlSha256": "d0b4776e4662aa77d26f680f18205615378ad684220525cf2ef555849eb415a2",
+      "websiteStatementsFirstAuthoredDateKnown": false,
+      "verifiedOfficialVotes": false,
+      "forecastsAutoEligible": false
+    },
+    {
+      "id": "jason-isaacson-taxes",
+      "person": "Jason Isaacson",
+      "district": "42",
+      "electionYear": 2020,
+      "historicalPageAttribution": "original_2016_senate_issues_article_retained_2019",
+      "committeeAttributionText": "Prepared & paid for by Jason Isaacson for SD42",
+      "sourceWindowCdxFile": "15-jason-isaacson-2020-entire-original-cdx.json",
+      "sourceWindowCdxSha256": "7c1405ceb685ffee2573af25d0f80def8bd8150f5d37160249890b4ad4eecba8",
+      "archivedOriginalSiteUrl": "https://isaacsonforsd42.com/issues/committed-to-middle-class-senior-tax-cuts/",
+      "archiveCaptureUtc": "2019-07-22T06:31:26.000Z",
+      "archiveOriginalCdxDigestSha1Base32": "R23DAGSYE2WZJBCCQDHCOZ7O3H5FEKEV",
+      "originalHtmlFilename": "15-jason-isaacson-2020-1-original-20190722063126.html",
+      "originalHtmlSha256": "c715b7ddd1b621ed9410081b29400881f9a13b63fe465ba690f3d26fbd28250e",
+      "websiteStatementsFirstAuthoredDateKnown": false,
+      "verifiedOfficialVotes": false,
+      "forecastsAutoEligible": false
+    },
+    {
+      "id": "jason-isaacson-education",
+      "person": "Jason Isaacson",
+      "district": "42",
+      "electionYear": 2020,
+      "historicalPageAttribution": "original_2016_senate_issues_article_retained_2019",
+      "committeeAttributionText": "Prepared & paid for by Jason Isaacson for SD42",
+      "sourceWindowCdxFile": "15-jason-isaacson-2020-entire-original-cdx.json",
+      "sourceWindowCdxSha256": "7c1405ceb685ffee2573af25d0f80def8bd8150f5d37160249890b4ad4eecba8",
+      "archivedOriginalSiteUrl": "https://isaacsonforsd42.com/issues/education-innovation-is-our-future/",
+      "archiveCaptureUtc": "2019-07-22T06:30:49.000Z",
+      "archiveOriginalCdxDigestSha1Base32": "3JBTM2NZA3ZPWADILOF4PUXOJZDXB2QF",
+      "originalHtmlFilename": "15-jason-isaacson-2020-2-original-20190722063049.html",
+      "originalHtmlSha256": "afc78e29c63bcac1d2b27e6670c788427c554ded4f34cca41e3cd4d2ca8b08f2",
+      "websiteStatementsFirstAuthoredDateKnown": false,
+      "verifiedOfficialVotes": false,
+      "forecastsAutoEligible": false
+    },
+    {
+      "id": "jeff-howe",
+      "person": "Jeff Howe",
+      "district": "13",
+      "electionYear": 2022,
+      "historicalPageAttribution": "older_2018_senate_campaign_issues_retained_2022",
+      "committeeAttributionText": "Jeff Howe for Minnesota State Senate",
+      "sourceWindowCdxFile": "16-jeff-howe-2022-entire-original-cdx.json",
+      "sourceWindowCdxSha256": "78d3162ef34142ac09273a43c1297a34eafc4cddd5ac06958756466f4ce79de5",
+      "archivedOriginalSiteUrl": "https://jeffhoweformn.com/issues/",
+      "archiveCaptureUtc": "2022-08-05T03:49:10.000Z",
+      "archiveOriginalCdxDigestSha1Base32": "JDO3DZLB4GSOWLSPFCSCEUBIH5UEBGOZ",
+      "originalHtmlFilename": "16-jeff-howe-2022-2-original-20220805034910.html",
+      "originalHtmlSha256": "2064cb7f51762148abcfe2b90df539a5409214752b2b40d049b9e7723514a59d",
+      "websiteStatementsFirstAuthoredDateKnown": false,
+      "verifiedOfficialVotes": false,
+      "forecastsAutoEligible": false
+    },
+    {
+      "id": "bill-lieske",
+      "person": "Bill Lieske",
+      "district": "58",
+      "electionYear": 2022,
+      "historicalPageAttribution": "2022_senate_candidate_issue_platform",
+      "committeeAttributionText": "Prepared and Paid for by Lieske for Senate",
+      "sourceWindowCdxFile": "20-bill-lieske-2022-entire-original-cdx.json",
+      "sourceWindowCdxSha256": "ee08bcd1cd4620105e013205a8705b2b834c6234909e5f6fa71b602a1579a616",
+      "archivedOriginalSiteUrl": "https://www.lieske4senate.com/issues",
+      "archiveCaptureUtc": "2022-08-05T04:47:15.000Z",
+      "archiveOriginalCdxDigestSha1Base32": "OL3PSBGDW25ZZQSY4N6GNSEOBJIDTM55",
+      "originalHtmlFilename": "20-bill-lieske-2022-1-original-20220805044715.html",
+      "originalHtmlSha256": "4198e0eb6a3036d3ab4b80a37c1b1f6cdfc47d9e5f7dba23dee04e1fdfb4d729",
+      "websiteStatementsFirstAuthoredDateKnown": false,
+      "verifiedOfficialVotes": false,
+      "forecastsAutoEligible": false
+    },
+    {
+      "id": "bill-weber",
+      "person": "Bill Weber",
+      "district": "22",
+      "electionYear": 2020,
+      "historicalPageAttribution": "older_2012_senate_candidate_homepage_copy_captured_2016",
+      "committeeAttributionText": "Paid for by Weber for State Senate Volunteer Committee",
+      "sourceWindowCdxFile": "24-bill-weber-2020-entire-original-cdx.json",
+      "sourceWindowCdxSha256": "f8f3f9a9d2e372e29276fa0732612aa9d3d8c469a5816f9857bf1310a21ccbc0",
+      "archivedOriginalSiteUrl": "http://www.weberforsenate.com/",
+      "archiveCaptureUtc": "2016-02-11T16:45:07.000Z",
+      "archiveOriginalCdxDigestSha1Base32": "KDNIQNSJSKWH4NATNXY4QX3EWLTYO5AF",
+      "originalHtmlFilename": "24-bill-weber-2020-1-original-20160211164507.html",
+      "originalHtmlSha256": "3952c8419e410cf58e8552cd8122f20bdc258d6f01b0fe5b09f21979ffac3d40",
+      "websiteStatementsFirstAuthoredDateKnown": false,
+      "verifiedOfficialVotes": false,
+      "forecastsAutoEligible": false
+    }
+  ],
+  "excerpts": [
+    {
+      "id": "torrey-westrom-01",
+      "pageId": "torrey-westrom",
+      "issueFamily": "government_spending",
+      "exactShortExcerpt": "limit the size and reach of government",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "torrey-westrom-02",
+      "pageId": "torrey-westrom",
+      "issueFamily": "federal_budget",
+      "exactShortExcerpt": "support getting a Balanced Budget Amendment added to the U.S. Constitution",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "torrey-westrom-03",
+      "pageId": "torrey-westrom",
+      "issueFamily": "gun_rights",
+      "exactShortExcerpt": "protect the rights of every law-abiding gun owner",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "torrey-westrom-04",
+      "pageId": "torrey-westrom",
+      "issueFamily": "energy",
+      "exactShortExcerpt": "Immediately approve the building of the Keystone Pipeline",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "torrey-westrom-05",
+      "pageId": "torrey-westrom",
+      "issueFamily": "health_care",
+      "exactShortExcerpt": "Replace it with patient-driven, free market solutions",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "torrey-westrom-06",
+      "pageId": "torrey-westrom",
+      "issueFamily": "government_spending",
+      "exactShortExcerpt": "End the career politicians’ reckless, runaway spending",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "torrey-westrom-07",
+      "pageId": "torrey-westrom",
+      "issueFamily": "agriculture",
+      "exactShortExcerpt": "fighting on behalf of policies such as the renewable energy or Fuel Standard",
+      "attributionClass": "candidate_self_reported_prior_advocacy_unverified",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "eric-pratt-01",
+      "pageId": "eric-pratt",
+      "issueFamily": "public_safety",
+      "exactShortExcerpt": "ensure that our first responders have the resources and support they need to do their jobs",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "eric-pratt-02",
+      "pageId": "eric-pratt",
+      "issueFamily": "economy",
+      "exactShortExcerpt": "Creating an economy that makes life affordable for Minnesotans is also a top priority",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "eric-pratt-03",
+      "pageId": "eric-pratt",
+      "issueFamily": "taxes",
+      "exactShortExcerpt": "Minnesotans are overtaxed",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "eric-pratt-04",
+      "pageId": "eric-pratt",
+      "issueFamily": "public_education",
+      "exactShortExcerpt": "Our students need to be receiving quality education in the classroom",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "eric-pratt-05",
+      "pageId": "eric-pratt",
+      "issueFamily": "pandemic_policy",
+      "exactShortExcerpt": "Minnesotans could make choices for themselves",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "eric-pratt-06",
+      "pageId": "eric-pratt",
+      "issueFamily": "vaccine_policy",
+      "exactShortExcerpt": "banning of vaccine passports",
+      "attributionClass": "candidate_listed_bill_not_officially_verified",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "eric-pratt-07",
+      "pageId": "eric-pratt",
+      "issueFamily": "vaccine_policy",
+      "exactShortExcerpt": "banning of vaccine requirements for employment",
+      "attributionClass": "candidate_listed_bill_not_officially_verified",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "eric-pratt-08",
+      "pageId": "eric-pratt",
+      "issueFamily": "emergency_powers",
+      "exactShortExcerpt": "reform of the Governor’s emergency powers",
+      "attributionClass": "candidate_listed_bill_not_officially_verified",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jeremy-miller-01",
+      "pageId": "jeremy-miller",
+      "issueFamily": "health_care",
+      "exactShortExcerpt": "I helped pass reforms that stabilized the individual health insurance market in Minnesota",
+      "attributionClass": "candidate_self_reported_prior_legislation_unverified",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jeremy-miller-02",
+      "pageId": "jeremy-miller",
+      "issueFamily": "public_education",
+      "exactShortExcerpt": "I supported record funding for our schools",
+      "attributionClass": "candidate_self_reported_prior_legislation_unverified",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jeremy-miller-03",
+      "pageId": "jeremy-miller",
+      "issueFamily": "medical_research",
+      "exactShortExcerpt": "investments in innovation and research across the health care sector",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jeremy-miller-04",
+      "pageId": "jeremy-miller",
+      "issueFamily": "mental_health",
+      "exactShortExcerpt": "I strongly supported record investments in mental health services",
+      "attributionClass": "candidate_self_reported_prior_legislation_unverified",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jeremy-miller-05",
+      "pageId": "jeremy-miller",
+      "issueFamily": "public_education",
+      "exactShortExcerpt": "advocate for more local control—parents, teachers, and our local school boards know what’s best",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jeremy-miller-06",
+      "pageId": "jeremy-miller",
+      "issueFamily": "career_training",
+      "exactShortExcerpt": "increase opportunities for internships and apprenticeships",
+      "attributionClass": "candidate_self_reported_prior_legislation_unverified",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jeremy-miller-07",
+      "pageId": "jeremy-miller",
+      "issueFamily": "higher_education",
+      "exactShortExcerpt": "I’m a proud supporter of Higher Education Asset Preservation and Replacement (HEAPR) funding",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "steve-drazkowski-education-01",
+      "pageId": "steve-drazkowski-education",
+      "issueFamily": "public_education",
+      "exactShortExcerpt": "Steve strongly favors reducing state mandates for schools",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "steve-drazkowski-education-02",
+      "pageId": "steve-drazkowski-education",
+      "issueFamily": "public_education",
+      "exactShortExcerpt": "increasing local school board control",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "steve-drazkowski-education-03",
+      "pageId": "steve-drazkowski-education",
+      "issueFamily": "teacher_pay",
+      "exactShortExcerpt": "introducing performance pay for teachers",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "steve-drazkowski-taxes-01",
+      "pageId": "steve-drazkowski-taxes",
+      "issueFamily": "taxes",
+      "exactShortExcerpt": "tax increases are not necessary to balance the state budget",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "steve-drazkowski-taxes-02",
+      "pageId": "steve-drazkowski-taxes",
+      "issueFamily": "government_spending",
+      "exactShortExcerpt": "Government must learn to live within its means",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "andrew-mathews-01",
+      "pageId": "andrew-mathews",
+      "issueFamily": "regulation",
+      "exactShortExcerpt": "start rolling back taxes and regulations",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "andrew-mathews-02",
+      "pageId": "andrew-mathews",
+      "issueFamily": "public_education",
+      "exactShortExcerpt": "Our education priorities must empower parents",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "andrew-mathews-03",
+      "pageId": "andrew-mathews",
+      "issueFamily": "public_education",
+      "exactShortExcerpt": "I am staunchly opposed to Common Core",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "andrew-mathews-04",
+      "pageId": "andrew-mathews",
+      "issueFamily": "abortion",
+      "exactShortExcerpt": "I will always join the fight to completely defund Planned Parenthood in Minnesota",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "andrew-mathews-05",
+      "pageId": "andrew-mathews",
+      "issueFamily": "gun_rights",
+      "exactShortExcerpt": "Will fight against any efforts to expand mandatory government background checks",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "andrew-mathews-06",
+      "pageId": "andrew-mathews",
+      "issueFamily": "energy",
+      "exactShortExcerpt": "Will support a balanced approach to energy that incorporates nuclear, coal",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "andrew-mathews-07",
+      "pageId": "andrew-mathews",
+      "issueFamily": "government_spending",
+      "exactShortExcerpt": "The state government has not lived within its means",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jason-isaacson-taxes-01",
+      "pageId": "jason-isaacson-taxes",
+      "issueFamily": "tax_policy",
+      "exactShortExcerpt": "a true middle class tax cut",
+      "attributionClass": "candidate_self_reported_prior_legislation_unverified",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jason-isaacson-taxes-02",
+      "pageId": "jason-isaacson-taxes",
+      "issueFamily": "tax_policy",
+      "exactShortExcerpt": "property tax and income tax relief for seniors",
+      "attributionClass": "candidate_self_reported_prior_legislation_unverified",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jason-isaacson-taxes-03",
+      "pageId": "jason-isaacson-taxes",
+      "issueFamily": "tax_policy",
+      "exactShortExcerpt": "The only group we should focus tax cuts on are the middle class",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jason-isaacson-taxes-04",
+      "pageId": "jason-isaacson-taxes",
+      "issueFamily": "tax_policy",
+      "exactShortExcerpt": "targeted tax credits for working families and those raising children",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jason-isaacson-education-01",
+      "pageId": "jason-isaacson-education",
+      "issueFamily": "vocational_education",
+      "exactShortExcerpt": "bring career and technical (Vocational) education back into our junior and senior high schools",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jason-isaacson-education-02",
+      "pageId": "jason-isaacson-education",
+      "issueFamily": "teacher_pay",
+      "exactShortExcerpt": "Provide for adequate teacher salaries",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jason-isaacson-education-03",
+      "pageId": "jason-isaacson-education",
+      "issueFamily": "special_education",
+      "exactShortExcerpt": "Provide regulatory relief for our special education teachers",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jason-isaacson-education-04",
+      "pageId": "jason-isaacson-education",
+      "issueFamily": "student_mental_health",
+      "exactShortExcerpt": "adequate counseling and mental health support",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jason-isaacson-education-05",
+      "pageId": "jason-isaacson-education",
+      "issueFamily": "workforce_development",
+      "exactShortExcerpt": "partnering our institutions of higher education with the major employers",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jason-isaacson-education-06",
+      "pageId": "jason-isaacson-education",
+      "issueFamily": "higher_education",
+      "exactShortExcerpt": "We need to shift the burden away from students in our four year and technical education institutions",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jeff-howe-01",
+      "pageId": "jeff-howe",
+      "issueFamily": "health_care",
+      "exactShortExcerpt": "improving access, choice, and affordability of healthcare",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jeff-howe-02",
+      "pageId": "jeff-howe",
+      "issueFamily": "infrastructure",
+      "exactShortExcerpt": "New funding to make Highway 23 four lanes from Willmar to St. Cloud",
+      "attributionClass": "candidate_self_reported_prior_legislation_unverified",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jeff-howe-03",
+      "pageId": "jeff-howe",
+      "issueFamily": "veterans",
+      "exactShortExcerpt": "help veterans’ families with burial expenses",
+      "attributionClass": "candidate_self_reported_prior_legislation_unverified",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jeff-howe-04",
+      "pageId": "jeff-howe",
+      "issueFamily": "school_safety",
+      "exactShortExcerpt": "help make schools safer for our students",
+      "attributionClass": "candidate_self_reported_prior_legislation_unverified",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jeff-howe-05",
+      "pageId": "jeff-howe",
+      "issueFamily": "tax_policy",
+      "exactShortExcerpt": "I will push to pass a tax conformity bill",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jeff-howe-06",
+      "pageId": "jeff-howe",
+      "issueFamily": "government_spending",
+      "exactShortExcerpt": "I will prioritize spending on core services to slow the growth of spending",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "jeff-howe-07",
+      "pageId": "jeff-howe",
+      "issueFamily": "abortion",
+      "exactShortExcerpt": "continue voting for life as a member of the Minnesota Senate",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bill-lieske-01",
+      "pageId": "bill-lieske",
+      "issueFamily": "tax_policy",
+      "exactShortExcerpt": "Bill will sponsor legislation to eliminate the tax on Social Security income",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bill-lieske-02",
+      "pageId": "bill-lieske",
+      "issueFamily": "tax_policy",
+      "exactShortExcerpt": "fight to eliminate the income tax for all Minnesotans",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bill-lieske-03",
+      "pageId": "bill-lieske",
+      "issueFamily": "tax_policy",
+      "exactShortExcerpt": "Bill will return the surplus to the citizens that paid it",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bill-lieske-04",
+      "pageId": "bill-lieske",
+      "issueFamily": "public_safety",
+      "exactShortExcerpt": "Dr. Lieske will support our police",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bill-lieske-05",
+      "pageId": "bill-lieske",
+      "issueFamily": "criminal_justice",
+      "exactShortExcerpt": "ensure that criminals are held accountable for their crimes",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bill-lieske-06",
+      "pageId": "bill-lieske",
+      "issueFamily": "gun_rights",
+      "exactShortExcerpt": "making Constitutional Carry and Stand Your Ground law in Minnesota",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bill-lieske-07",
+      "pageId": "bill-lieske",
+      "issueFamily": "gun_rights",
+      "exactShortExcerpt": "Bill will oppose any attempts to ban firearm ownership",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bill-lieske-08",
+      "pageId": "bill-lieske",
+      "issueFamily": "term_limits",
+      "exactShortExcerpt": "Bill will sponsor legislation to set term limits for all political offices in Minnesota",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bill-weber-01",
+      "pageId": "bill-weber",
+      "issueFamily": "infrastructure",
+      "exactShortExcerpt": "I will be a voice for rural Minnesota roads",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bill-weber-02",
+      "pageId": "bill-weber",
+      "issueFamily": "agriculture",
+      "exactShortExcerpt": "a strong voice for Southwestern Minnesota agriculture",
+      "attributionClass": "candidate_issue_position_or_original_campaign_self_report",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    }
+  ],
+  "excludedUnreliableOriginalSourceCandidates": [
+    {
+      "person": "Robert Kupec",
+      "reason": "authenticated_2022_wix_site_404_error_not_policy"
+    },
+    {
+      "person": "Eric Lucero",
+      "reason": "whole_domain_2022_archive_index_capped_300_about_only_no_issue_body"
+    },
+    {
+      "person": "Mary Kiffmeyer",
+      "reason": "old_candidate_domain_parked_and_repurposed_2020_not_first_party"
+    },
+    {
+      "person": "David Tomassoni",
+      "reason": "2019_original_domain_repurposed_receipt_spam_not_first_party"
+    },
+    {
+      "person": "Bruce Anderson",
+      "reason": "2022_oembed_contains_platform_summary_but_no_full_candidate_paid_for_footer_replayed"
+    },
+    {
+      "person": "Jason Rarick",
+      "reason": "authenticated_2021_issues_page_only_navigation_and_general_candidate_sentiment"
+    },
+    {
+      "person": "Susan Pha",
+      "reason": "bounded_domain_archive_index_only_no_html_original"
+    },
+    {
+      "person": "Matt Klein",
+      "reason": "bounded_domain_archive_index_only_no_html_original"
+    },
+    {
+      "person": "Gene Dornink",
+      "reason": "2020_and_2022_archive_index_empty_or_unparseable"
+    },
+    {
+      "person": "Michael Kreun",
+      "reason": "2022_archive_index_empty_or_unparseable"
+    },
+    {
+      "person": "Julie Rosen",
+      "reason": "2020_archive_index_empty_or_unparseable"
+    }
+  ]
+}
