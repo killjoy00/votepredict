@@ -1,0 +1,35 @@
+name: Original 2023 Transportation April03 SF3157 seven recorded amendment rolls
+
+# Source-only; one-time trigger on first workflow introduction to main.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2023-transportation-apr03-sf3157-original.yml
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-sf3157-original-official-html:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify public 2023 original minutes, named sides and misheaded A49
+        run: |
+          node --import tsx scripts/review-senate-2023-transportation-apr03-sf3157-original-html.ts \
+            --output artifacts/senate-2023-transportation-apr03/sf3157-original-seven-amendment-rolls.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2023-transportation-apr03-sf3157-original-seven-rolls
+          path: artifacts/senate-2023-transportation-apr03/sf3157-original-seven-amendment-rolls.json
+          retention-days: 30
+          if-no-files-found: error
