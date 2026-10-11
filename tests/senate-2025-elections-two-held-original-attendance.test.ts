@@ -120,3 +120,16 @@ test('unknown roster side, swapped source motion bill, incorrect tally and lost 
   }),/not on historical/);
   assert.equal(c.candidateNotVerifiedVote,true);
 });
+
+
+test('an original may be opened by a named senator other than Carlson, but must still identify a real call to order',()=>{
+  const b=block('2025-03-27');
+  const source=b.text.replace('Senator Jim Carlson called the meeting to order',
+    'Senator Bonnie S. Westlin called the meeting to order');
+  const r=parse2025ElectionsOriginalOpeningAttendance(source);
+  assert.equal(r.uniqueElevenMemberOpeningRosterPartition,true);
+  assert.deepEqual([r.openingPresentCount,r.openingAbsentCount],[9,2]);
+  assert.throws(()=>parse2025ElectionsOriginalOpeningAttendance(
+    source.replace('called the meeting to order','made opening remarks')),
+    /Both bounded original opening/);
+});
