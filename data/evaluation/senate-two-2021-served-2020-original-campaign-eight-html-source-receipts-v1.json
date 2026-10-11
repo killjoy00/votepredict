@@ -1,0 +1,134 @@
+{
+  "schema": "mn-two-2021-serving-former-senators-eight-authentic-2020-campaign-original-receipts-v1",
+  "scope": {
+    "issue": 864,
+    "senatorsActuallyServedDuringCalendarYear2021": 2,
+    "original2020HistoricCandidateHTMLBodies": 8,
+    "threeActual2021SenatorsOriginalDomainsSearched": 3,
+    "tomassoni2020ArchiveBoundedIndexRows": 0,
+    "candidateOwnedIssueBearingOriginalPagesSelected": 2,
+    "firstAuthoredDateNotNeeded": true,
+    "realArchive2020CaptureUtcIsAttributablePublicByDate": true,
+    "productionDatabaseReadsOrWrites": 0,
+    "forecastOrTrainingChanges": 0
+  },
+  "originalGovernmentService": {
+    "sourceRunId": 38094976711,
+    "sourceArtifactId": 11685387674,
+    "htmlSha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51"
+  },
+  "actualCandidateOriginalWayback": {
+    "sourceRunId": 38112695639,
+    "sourceArtifactId": 11691923324,
+    "originalSourceZipSHA256": "ffb383c85eec5bf78fadf948702b04bc015c85d79d7e2b4e8ed685619f3570a7",
+    "genuineOriginalSourceAcquisitionManifest": "source-acquisition-manifest.json",
+    "sourceZipExpiresUtc": "2026-11-10T04:48:39.000Z"
+  },
+  "originalFirstPartyWebPages": [
+    {
+      "senator": "Susan Kent",
+      "electionDistrict": "53",
+      "originalSourceFile": "three20-01-archive-20201018021402-0.html",
+      "originalCandidateWebsiteUrl": "https://susankentmn.com/issues/",
+      "actual2020ArchiveCaptureUtc": "2020-10-18T02:14:02.000Z",
+      "originalHTMLSHA256": "3861d9ab184ebf4f47d586d2da5e72f4233862f7431d59c705081ab8e4898487",
+      "independentHistoricCdxPayloadSHA1Base32": "3CFB4S5TQQ3V2EMDEH4KOZ2EQXMD5GQL",
+      "originalSiteHtmlAlreadyDigestAuthenticated": true,
+      "originalAuthorFirstPostingDateEstablished": false,
+      "verifiedSourceYear": 2020
+    },
+    {
+      "senator": "Susan Kent",
+      "electionDistrict": "53",
+      "originalSourceFile": "three20-01-archive-20200918111716-1.html",
+      "originalCandidateWebsiteUrl": "https://susankentmn.com/",
+      "actual2020ArchiveCaptureUtc": "2020-09-18T11:17:16.000Z",
+      "originalHTMLSHA256": "1073d4698f9e862d0a68499acd07cb29f2faea99e1643e4d9632a305662b32cd",
+      "independentHistoricCdxPayloadSHA1Base32": "QX2B4LJQ6HFFKHVF6BZQDXFUPLLXQK5Z",
+      "originalSiteHtmlAlreadyDigestAuthenticated": true,
+      "originalAuthorFirstPostingDateEstablished": false,
+      "verifiedSourceYear": 2020
+    },
+    {
+      "senator": "Susan Kent",
+      "electionDistrict": "53",
+      "originalSourceFile": "three20-01-archive-20201022083120-2.html",
+      "originalCandidateWebsiteUrl": "https://susankentmn.com/tag/policy/",
+      "actual2020ArchiveCaptureUtc": "2020-10-22T08:31:20.000Z",
+      "originalHTMLSHA256": "9b1d3d6f232cf2ade887d440ea5926a9aa3b08e84a11efcc898f70027b68d2a0",
+      "independentHistoricCdxPayloadSHA1Base32": "WFEM6VX2LDXO5ULTERFYTHVPEOBRQFVB",
+      "originalSiteHtmlAlreadyDigestAuthenticated": true,
+      "originalAuthorFirstPostingDateEstablished": false,
+      "verifiedSourceYear": 2020
+    },
+    {
+      "senator": "Susan Kent",
+      "electionDistrict": "53",
+      "originalSourceFile": "three20-01-archive-20200927105147-3.html",
+      "originalCandidateWebsiteUrl": "https://susankentmn.com/vote-early/",
+      "actual2020ArchiveCaptureUtc": "2020-09-27T10:51:47.000Z",
+      "originalHTMLSHA256": "79fe1a5c9638a0a0fa51be3efacf2a5f526bf34504074b8b0ba51a460d5f3db6",
+      "independentHistoricCdxPayloadSHA1Base32": "RECASMG5HTAKKRARU3XGNYLAG44MY5HE",
+      "originalSiteHtmlAlreadyDigestAuthenticated": true,
+      "originalAuthorFirstPostingDateEstablished": false,
+      "verifiedSourceYear": 2020
+    },
+    {
+      "senator": "Karla Bigham",
+      "electionDistrict": "54",
+      "originalSourceFile": "three20-02-archive-20200310200753-0.html",
+      "originalCandidateWebsiteUrl": "https://www.karlabigham.com/",
+      "actual2020ArchiveCaptureUtc": "2020-03-10T20:07:53.000Z",
+      "originalHTMLSHA256": "2b3b8c93c63a2cdcd566367797beee2f3ace16052efdbeb34c4104c57b674dbc",
+      "independentHistoricCdxPayloadSHA1Base32": "KJZS7DH5NPCVYHK5U466JWCRWLGW6YEU",
+      "originalSiteHtmlAlreadyDigestAuthenticated": true,
+      "originalAuthorFirstPostingDateEstablished": false,
+      "verifiedSourceYear": 2020
+    },
+    {
+      "senator": "Karla Bigham",
+      "electionDistrict": "54",
+      "originalSourceFile": "three20-02-archive-20200814220318-1.html",
+      "originalCandidateWebsiteUrl": "https://www.karlabigham.com/copy-of-endorsements",
+      "actual2020ArchiveCaptureUtc": "2020-08-14T22:03:18.000Z",
+      "originalHTMLSHA256": "ba5ac22474c3906fe7283b084d053d851df45d4f4ddd87ffb0c94549335e1d39",
+      "independentHistoricCdxPayloadSHA1Base32": "OI35BGK5SYMNWGH5CRLUWTB33XGQHNHH",
+      "originalSiteHtmlAlreadyDigestAuthenticated": true,
+      "originalAuthorFirstPostingDateEstablished": false,
+      "verifiedSourceYear": 2020
+    },
+    {
+      "senator": "Karla Bigham",
+      "electionDistrict": "54",
+      "originalSourceFile": "three20-02-archive-20200814220818-2.html",
+      "originalCandidateWebsiteUrl": "https://www.karlabigham.com/post/add-images-videos-style-your-text",
+      "actual2020ArchiveCaptureUtc": "2020-08-14T22:08:18.000Z",
+      "originalHTMLSHA256": "eec037be788e57bfa87f221f5f8cb0f36879bee298f26b0b3ddcfa97ddbe8de4",
+      "independentHistoricCdxPayloadSHA1Base32": "S47U6L4DA2TDOFFQAEJVG7A3JJIQU6AB",
+      "originalSiteHtmlAlreadyDigestAuthenticated": true,
+      "originalAuthorFirstPostingDateEstablished": false,
+      "verifiedSourceYear": 2020
+    },
+    {
+      "senator": "Karla Bigham",
+      "electionDistrict": "54",
+      "originalSourceFile": "three20-02-archive-20200814221445-3.html",
+      "originalCandidateWebsiteUrl": "https://www.karlabigham.com/post/add-blog-writers",
+      "actual2020ArchiveCaptureUtc": "2020-08-14T22:14:45.000Z",
+      "originalHTMLSHA256": "f636c333742b29d2b49c28d87fc99e9bbafb125f7e9a80ab982ac96b566f7f57",
+      "independentHistoricCdxPayloadSHA1Base32": "NJRQ2QP3ZNISI3UA7R32TAFE3JJYOXYL",
+      "originalSiteHtmlAlreadyDigestAuthenticated": true,
+      "originalAuthorFirstPostingDateEstablished": false,
+      "verifiedSourceYear": 2020
+    }
+  ],
+  "limitations": [
+    "2020 original current-cycle policy sites belong to genuine separately serving 2021 Minnesota senators, not just 2023 Senate incumbents.",
+    "Karla later reused her domain to run for County Commissioner; the exact March 2020 original HTML expressly identifies State Senate campaign and is the only original site text used.",
+    "Susan Kent 2020 issue page directly claims her earlier activities but official legislative roll calls are not independently proven by self-report.",
+    "August 2020 Wix template instructional example posts on the Karla campaign domain are never adopted as her policy statements.",
+    "David Tomassoni 2020 domain bounded historic Wayback index empty, not proof of no original website or issue position.",
+    "Archive capture UTC is a genuine first-party site visible-by observation, not proof exact first writing/publishing moment.",
+    "This is only original archived research and does not touch production, models or official membership UUID evidence rows."
+  ]
+}
