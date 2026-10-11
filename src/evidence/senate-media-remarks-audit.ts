@@ -239,10 +239,10 @@ function transcriptTurnIssues(
   const start = passage.toUpperCase().indexOf(label) + label.length;
   const after = passage.slice(start);
   // Bound the attributed turn at the NEXT two-word all-caps speaker label.
-  // Names with periods, apostrophes, hyphens and suffixes are conservatively
-  // treated as turn boundaries. False negatives are safer than borrowing
+  // Also match one-word labels and Unicode uppercase names (e.g. LÓPEZ)
+  // with punctuation and suffixes. False negatives are safer than borrowing
   // someone else's words.
-  const nextSpeaker = /(?:^|\s)[A-Z][A-Z.'’,-]{1,30}(?:\s+[A-Z][A-Z.'’,-]{1,30}){1,6}:(?=\s|$)/.exec(after);
+  const nextSpeaker = /(?:^|\s)[\p{Lu}][\p{Lu}\p{M}.'’,-]{1,30}(?:\s+[\p{Lu}][\p{Lu}\p{M}.'’,-]{1,30}){0,6}:(?=\s|$)/u.exec(after);
   const turn = nextSpeaker ? after.slice(0, nextSpeaker.index) : after;
   if (!quote || !turn.includes(quote))
     issues.push('speaker_transcript_quote_outside_named_senator_turn');
