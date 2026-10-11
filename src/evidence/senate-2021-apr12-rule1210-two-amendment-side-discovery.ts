@@ -14,7 +14,7 @@ export const APR12_TWO_AMENDMENTS={
  sourceVersion:'senate-2021-apr12-rule1210-two-distinct-amendments-provisional-sha-v1',
  originalURL:'https://www.senate.mn/journals/2021-2022/20210412036.pdf',
  originalPDFSHA256:'8dd34868badade8d3d4cd77ce11c6a632705bdd99a59509a5e4d23544f2d3d75',
- originalEmbeddedTextSHA256:'dda780e4fc076f56ff9f271303ba81897b69813acfece416f7741aea64c41214',
+ originalEmbeddedTextSHA256:'dda780e4fc076f56ff9f271303ba81897b69813acfece416b7741aea64c41214',
  originalNormalizedTextSHA256:'11def4e1a01ea4851f59d9a4ff255a13d295fe7843f4c032de27284a0504f54a',
  reportDate:'2021-04-12',
  printedDate:'MONDAY, APRIL 12, 2021',
