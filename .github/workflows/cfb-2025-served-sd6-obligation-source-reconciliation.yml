@@ -1,0 +1,41 @@
+name: One-time 2025 served Senator SD6 original filing vs owed-duty source reconciliation
+
+# #864 historical finance completeness only. PR-only source inspection,
+# no scheduler, production Neon or Vercel, backfills, serving or contact.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2025-served-sd6-obligation-source-reconciliation.yml
+      - scripts/reconcile-cfb-2025-served-sd6-report-case.ts
+      - src/evidence/cfb-2025-served-sd6-report-obligation-case.ts
+      - tests/cfb-2025-served-sd6-report-obligation-case.test.ts
+
+permissions:
+  contents: read
+
+jobs:
+  reconcile-senator-confirmed-original-versus-amendment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify original-version count and all negative backdating tests
+        run: node --import tsx --test tests/cfb-2025-served-sd6-report-obligation-case.test.ts
+      - name: Reacquire official LRL service evidence and classify authenticated CFB reports, withholding unproven legal duties
+        run: |
+          node --import tsx scripts/reconcile-cfb-2025-served-sd6-report-case.ts \
+            --output artifacts/cfb-2025-served-sd6-report-obligation-case.json
+      - name: Save bounded metadata source proof, including explicit unknown duty denominator
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2025-actual-served-sd6-original-filing-obligation-source-reconciliation
+          path: artifacts/cfb-2025-served-sd6-report-obligation-case.json
+          retention-days: 30
+          if-no-files-found: warn
