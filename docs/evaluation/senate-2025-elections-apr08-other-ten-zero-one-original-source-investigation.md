@@ -12,6 +12,15 @@ The [pure original section parser](../../src/evidence/senate-2025-elections-apr0
 
 The artifact contains source offsets, original source SHA identities, a tiny motion-only preview and SHA-only individual-side identities where the original complete partition is independently confirmed. It does **not** commit the actual original PDF, full text or unhardened member-by-side source list. Synthetic adversarial tests use deliberately fictional senators, reject mismatched source SHA, missing A11 anchors, fake sides, duplicate names and a third 10/0/1 passage.
 
+
+## Actual first original-source run — FAILED (2026-10-11)
+
+The first source code merged as [PR #1067](https://github.com/killjoy00/votepredict/pull/1067), merge commit \`9bd2514c0328712813e24d67f4b8deaa5acc0cf3\`, after exact-head full CI [#38156451904](https://github.com/killjoy00/votepredict/actions/runs/38156451904) succeeded. But the actual one-time original PDF retrieval [run #38156811715](https://github.com/killjoy00/votepredict/actions/runs/38156811715) **FAILED** with \`fetch failed\` **before the original PDF or extracted text could be SHA-verified**, and **before the other 10/0/1 result could be inspected**.
+
+The actual original failed artifact #11708731132 was independently downloaded and SHA256 checked: ZIP \`eb117ca95cd419234c77df9a6cc829d17a3deebd4dad81744bf548a5dd15e7bd\` / 900 bytes; decoded JSON \`28b14c59e483899bf06a15857d7b05b32bd7350a50567065f6fc70bc9fb7654b\` / 1,179 bytes. Source result is explicitly **null**, with **one failed original fetch**. This is not evidence that the other motion does not exist and not permission to relax source origin checks.
+
+The first failure and precise original ZIP/JSON checksums are preserved in [immutable metadata checkpoint](source-proof/senate-2025-elections-apr08-other-ten-zero-one-original-first-failure-checkpoint.json) and [deterministic tests](../../tests/senate-2025-elections-apr08-other-ten-zero-one-first-failure.test.ts). A **separate** one-time [targeted retry workflow](../../.github/workflows/senate-2025-elections-apr08-other-10-0-1-retry.yml) will run once on main. Its eventual conclusion and source bytes must be independently assessed as a **new** observation, not overwritten into or substituted for the failed first attempt. No second motion or historical member choices are certified yet.
+
 ## Exact follow-up acceptance
 
 Do **not** claim the original source was verified until the real post-merge GitHub Actions job completes and its **actual** ZIP and decoded JSON are independently downloaded and SHA256 checked. Preserve failed original attempts permanently, do not relabel a failure as success or conflate the second 10/0/1 passage with A11. A separately distinct vote would require original motion-level semantics and ideally independent official amendment or hearing media corroboration; even that is **not** source-to-stored-database parity, an eligible member-vote import or a statewide committee-vote denominator.
