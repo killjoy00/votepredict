@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "cfb-2022-served-sd13-24-22-original-ce-permanent-source-proof-v1",
+  "mergedSourceAcquisition": {
+    "pr": 1012,
+    "mergeCommit": "794054d02b115d2ea48e15ad2eb862e2476120c2",
+    "finalImplementationHead": "46df80025905f39376ba1f6026ea2ddd931de069",
+    "fullCiRunId": 38108141165,
+    "fullCiConclusion": "success",
+    "sourceWorkflowRunId": 38108141175,
+    "sourceWorkflowAttempt": 2,
+    "sourceWorkflowConclusion": "success",
+    "sourceArtifactId": 11691465004,
+    "sourceArtifactUrl": "https://github.com/killjoy00/votepredict/actions/runs/38108141175/artifacts/11691465004",
+    "artifactExpiresAt": "2026-11-10T03:24:29Z",
+    "artifactZipSha256": "985e6ff423ea9b7ddbb649f128d9d7dec873352f88d681c4ca7c6b22bd9e4398",
+    "artifactJsonSha256": "f9c37d0eb60d57f4dac8ee2f4df0d8f0a0d61df4c2a7b5f2ed2ab327b1df253f",
+    "artifactJsonBytes": 73677,
+    "observedAt": "2026-10-11T03:24:29.715Z"
+  },
+  "independentlyMatchingOriginalSourceRun": {
+    "sourceWorkflowRunId": 38107882680,
+    "implementationHead": "b218163ec96d57f8d8c470ae5ccfec0548c61bb4",
+    "sourceArtifactId": 11690660273,
+    "sourceArtifactUrl": "https://github.com/killjoy00/votepredict/actions/runs/38107882680/artifacts/11690660273",
+    "artifactZipSha256": "8873ce4ab648dbe0c4baead1834c524d8ee273996dce9094c9dd15a69b05fcf6",
+    "artifactJsonSha256": "daf13482159ebc0f56a0bfcebc3e59a5cca04310e2f62fd001cf56c0fada1c81",
+    "artifactJsonBytes": 73677,
+    "observedAt": "2026-10-11T03:18:20.716Z",
+    "all22OriginalPdfSha256sAndIdentitiesMatchFinalSuccess": true
+  },
+  "originalGovernmentSources": {
+    "lrlSenateServiceUrl": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "lrlSenateServiceSha256": "52a3b82d0ea550e896eddd44c27a0d4b07850b0146fdb4c81c57c82d57c669d5",
+    "lrlObservedAt": "2026-10-11T03:24:11.577Z",
+    "secretaryOfState2022GeneralUrl": "https://electionresultsfiles.sos.mn.gov/20221108/stsenate.txt",
+    "secretaryOfState2022GeneralSha256": "eb8980245094cf8af0cd08a69c42ae0262fb5a692b09a49be2aee959aecaae74",
+    "sosObservedAt": "2026-10-11T03:24:11.001Z",
+    "calendarUrl": "https://cfb.mn.gov/pdf/publications/elections/candidate_packets/2022/House_2022.pdf",
+    "calendarPdfSha256": "3fd6263844d5063156d68d871bd2c575a5b5cef415a61b6125c068491f6b2b25",
+    "calendarPdfObservedAt": "2026-10-11T03:24:13.828Z"
+  },
+  "pinnedOriginalRegistrationApiAndDistrictSources": [
+    {
+      "registrationNumber": "18430",
+      "senateElectionDistrict": 14,
+      "originalCfbReportsTabApiSha256": "f54b43ea2febe9db1407b23d64336da36ddfea53dc9bc633e2f64858ce61a833",
+      "official2022CfbDistrictRosterHtmlSha256": "ee59733bdf8279333396392ed6974fdebc56d6094cf1264c3fa2e46084913b90"
+    },
+    {
+      "registrationNumber": "17117",
+      "senateElectionDistrict": 15,
+      "originalCfbReportsTabApiSha256": "f83b51494405fee8806a96f2fc53f4a909f704793994b19b6411e495b515d954",
+      "official2022CfbDistrictRosterHtmlSha256": "e8c562d997c564715a0f5573a07eb06ded71a23973fe95f47cb6a892bc7750c6"
+    },
+    {
+      "registrationNumber": "17994",
+      "senateElectionDistrict": 16,
+      "originalCfbReportsTabApiSha256": "868366a0649900b205b1b4248bbfaeaae7b8aae8fb8db321d7de6c3854fe2073",
+      "official2022CfbDistrictRosterHtmlSha256": "569a72c52f06fe45588222bd081c888c3349c6d94b5028f0776e7e6919e0bc00"
+    },
+    {
+      "registrationNumber": "18795",
+      "senateElectionDistrict": 17,
+      "originalCfbReportsTabApiSha256": "4821f742deb617ab81acf64079b8f11cfbe477c6c5e8ed9ef41dcc98d5db29f5",
+      "official2022CfbDistrictRosterHtmlSha256": "85c6e607a7cb2ecf9f5ae0d140e2a238145c431a5e1a9fb0d8ba313b66516099"
+    },
+    {
+      "registrationNumber": "17919",
+      "senateElectionDistrict": 18,
+      "originalCfbReportsTabApiSha256": "6320ecf21605acbd592fa6dd8876b57b16341abae6ef6803a2a618a305a29f78",
+      "official2022CfbDistrictRosterHtmlSha256": "4e19a12197af29a34cffa5ff0fd25b31cd146cec59f8287d96cddcdec4950576"
+    },
+    {
+      "registrationNumber": "17964",
+      "senateElectionDistrict": 19,
+      "originalCfbReportsTabApiSha256": "d2bf944327ffc2cd3753aa4aa75056cca8ba56018e3c889cb816530be940ad47",
+      "official2022CfbDistrictRosterHtmlSha256": "8a9b1436c54bdd769322bc3165efd4829a198a28803dd840662c9b924db513db"
+    },
+    {
+      "registrationNumber": "18763",
+      "senateElectionDistrict": 20,
+      "originalCfbReportsTabApiSha256": "258b198252c62b59c89e8e040f134a3493e7efc44fed5905084b72f35adfa256",
+      "official2022CfbDistrictRosterHtmlSha256": "e5c9d7bd1dacf80387b8704369873c06216fcb394a962b67eb042aab4dd4d50a"
+    },
+    {
+      "registrationNumber": "17404",
+      "senateElectionDistrict": 21,
+      "originalCfbReportsTabApiSha256": "c8b41491b9425f76699555e7590755c1ab58a94881ab186b43c280cb20ff5ebe",
+      "official2022CfbDistrictRosterHtmlSha256": "941923515615bd64585b419e943b374cfaa04bddbffb6df4770067cbb6a00956"
+    },
+    {
+      "registrationNumber": "17910",
+      "senateElectionDistrict": 22,
+      "originalCfbReportsTabApiSha256": "285c8fde196ca2e19d3afa141e2149e257563cca67aa50b8a79fc7951109353a",
+      "official2022CfbDistrictRosterHtmlSha256": "293925f6f30a9d90437efeff47e906ff968f36b408aaa2f929ba821d4d5975a2"
+    },
+    {
+      "registrationNumber": "18058",
+      "senateElectionDistrict": 23,
+      "originalCfbReportsTabApiSha256": "2cca879c96a43ca7325fa17b7afc9748e84197bf171594204a80249f48f79bf5",
+      "official2022CfbDistrictRosterHtmlSha256": "2033f52b112a7331f4cdd6546e714bc936c0133bed8080a4e2df8394643a852d"
+    },
+    {
+      "registrationNumber": "17105",
+      "senateElectionDistrict": 24,
+      "originalCfbReportsTabApiSha256": "4f7049586a7ffebafbb5c4c2041fa106a34fd9c274adee8d0c215634a07321c0",
+      "official2022CfbDistrictRosterHtmlSha256": "2b18be2e15c324993823a00cbc227eff80a8386280244f5b17f291b0dc09d345"
+    }
+  ],
+  "verifiedReportMetadata": {
+    "ledgerPath": "docs/evaluation/source-proof/cfb-2022-served-d13-24-original-ce-pdfs.psv",
+    "ledgerColumns": [
+      "originalVersionReportId",
+      "actualSenatorName",
+      "2022ElectionDistrict",
+      "originalPdfPrintedDistrict",
+      "binaryPdfSha256",
+      "originalPdfByteCount",
+      "reportCoverageStartOn",
+      "reportCoverageEndOn",
+      "boardReceivedOn",
+      "officialDueOn",
+      "conservativeLegallyPossibleNotBeforeOn"
+    ],
+    "ledgerCanonicalWithoutTerminalLinefeedSha256": "cae761dacf3dfaa5403f859e8fe5de38bf9a3759dd974f2822d9524ebfa3887b",
+    "ledgerBytesWithoutTerminalLinefeed": 3663,
+    "ledgerWithTerminalLinefeedSha256": "ff6c330378596c7efd224215908e9e4e70d0cc01b19598dde0f0fc36c57382a2",
+    "verifiedNewOriginalReportPdfCount": 22,
+    "prePrimaryC": 11,
+    "preGeneralE": 11,
+    "actualSenatorsVerified": 11,
+    "distinctCFBRegistrations": 11,
+    "officialCalendarAuthenticated": true,
+    "originalReportHeadersAuthenticated": true,
+    "sixRedistrictedSenatorsPrintDifferent2022District": true,
+    "originalPdfsPrintingIndependentlyVerifiedPriorDistrict": 12,
+    "previouslyAuthenticatedSD1to12OriginalReportsExcluded": 24,
+    "sourceAcquisitionFailures": 0,
+    "reportPdfShaMatchesIndependentPriorOriginalRun": 22,
+    "originalPdfAmendmentZeroIsViewerVersionNotVerifiedCheckbox": true,
+    "earlyHistoricalPublicByIndependentlyVerified": 0,
+    "legalFilingObligationDenominator": null,
+    "sourceToFinancialRowsReconciled": false
+  },
+  "unresolved": {
+    "district13CFBCandidateRegistrationJoin": "unknown",
+    "district13NotAProvenNonfiler": true,
+    "statewideSenateMemberYearDenominator": null,
+    "statewideLegallyRequiredOriginalReportCount": null,
+    "statewideActuallyFiledOriginalReportCount": null,
+    "independentlyProvenHistoricalPublicByForTheseReports": null,
+    "authorizedHistoricalForecastEligibility": false
+  },
+  "safeguards": {
+    "reportPdfBodiesStored": false,
+    "rawDonorOrTransactionDataStored": false,
+    "neverServedCandidateNamesStored": false,
+    "originalElectionVoteCountsStored": false,
+    "productionDbReadOrWritten": false,
+    "modelServingSchedulerChanged": false,
+    "issue864ShouldRemainOpen": true
+  }
+}
