@@ -10,6 +10,9 @@ on:
       - tests/senate-media-bigham-eken-2022-original-speaker-audit.test.ts
       - docs/evaluation/senate-media-2022-bigham-eken-historical-original-speaker-queue.json
       - docs/evaluation/senate-media-2021-25-broader-25-original-public-archive-receipts-20261011.json
+      - docs/evaluation/senate-media-2022-bigham-eken-authentic-historical-two-speaker-html-receipts-20261011.json
+      - tests/senate-media-bigham-eken-2022-real-original-speaker-receipts.test.ts
+      - docs/evaluation/senate-media-2021-25-broader-original-wayback-bridge.md
   workflow_dispatch:
 
 permissions:
