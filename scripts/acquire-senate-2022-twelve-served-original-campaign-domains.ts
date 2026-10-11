@@ -284,7 +284,7 @@ export async function acquireOriginal2022SitesForTwelveServedSenators(
   },
   bounds:{
    exactTwelvePinnedActualSenators:true,
-   2022CutoffExclusive:UNTIL,
+   year2022CutoffExclusive:UNTIL,
    perDomainHistoricalIndexRowMaximum:300,
    perDomainActualArchivedHtmlReplayMaximum:4,
    totalOriginalArchivedHtmlReplayMaximum:48,
