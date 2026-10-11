@@ -27,8 +27,6 @@ const rows=psv.trimEnd().split('\n').map(line=>{
     floor:floor!,status:status!};
 });
 const sha=(s:string)=>createHash('sha256').update(s,'utf8').digest('hex');
-const dayAfter=(s:string)=>new Date(Date.parse(s+'T00:00:00Z')+86_400_000)
-  .toISOString().slice(0,10);
 
 test('permanent original CFB artifact ZIP and JSON dates/hashes correspond to exact successful source-only PR head',()=>{
   const a=proof.originalSourceAcquisition;
@@ -150,7 +148,7 @@ test('one and only one exact Aric Putnam source-document hold remains unresolved
   assert.equal(proof.result.originalFirstPageAmendedFinanceFormsAuthenticated,25);
   assert.equal(proof.result.completeOriginalPlusAmendmentSourceVersionCoverageAcrossPinnedViewerRefs,false);
   assert.equal(proof.openQuestions.actualHistoricalPublicByByAmendment,null);
-  assert.equal(proof.openQuestions.legallyRequiredSenateReportCount,null, 'No implicit legal completeness claim');
+  assert.equal(proof.openQuestions.statewideLegallyRequiredSenateFilings,null, 'No implicit legal completeness claim');
   assert.equal(proof.safeguards.noRawReportTextsOrPdfsStored,true);
   assert.equal(proof.safeguards.noProductionDataReadsOrWrites,true);
   assert.equal(proof.safeguards.keepIssue864Open,true);
