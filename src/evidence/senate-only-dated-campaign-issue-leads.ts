@@ -171,9 +171,9 @@ export function buildOnlyActualSenatorsDatedIssueSourceLedger(
    namedIndependentlyConfirmedPeopleWhoServedInSenate:persons.length,
    namedIssueSourceQuoteLeads:dated.length,
    actualArchivedHistoricalCampaignQuoteLeads:archives.length,
-   2026OnlyPublisherStatementQuoteLeads:currentlyObservedOnly.length,
+   '2026OnlyPublisherStatementQuoteLeads':currentlyObservedOnly.length,
    outOfScopeOrUnverifiedStatementRowsSuppressedWithoutNamingAnyone:excludedUnverifiedPersons,
-   2022PublisherQuotesCertifiedHistoricallyPublicPreElection:0,
+   '2022PublisherQuotesCertifiedHistoricallyPublicPreElection':0,
    productionForecastEvidenceStatementsAdmitted:0,
   },
   senators:persons.map(name=>({
