@@ -1,0 +1,80 @@
+{
+  "schema": "mn-three-2021-2022-served-mn-senators-2020-first-party-original-site-probes-v1",
+  "issue": 864,
+  "scope": {
+    "campaignElectionYear": 2020,
+    "electionDay": "2020-11-03",
+    "originalCaptureFromUtc": "2020-01-01T00:00:00.000Z",
+    "originalCaptureUntilExclusiveUtc": "2020-11-03T00:00:00.000Z",
+    "actuallyServedStateSenateIn2021Required": true,
+    "exactDistinctServingPeople": 3,
+    "fullAuthenticatedLRLGovernmentOriginalRequiredBeforeNetwork": true,
+    "maxCDXRowsPerDomain": 300,
+    "maxOriginalHTMLReplaysPerPerson": 4,
+    "maxTotalOriginalHTMLReplays": 12,
+    "originalCaptureUtcSufficesAsPubliclyAttributableDate": true,
+    "originalAuthorFirstPostingDateRequired": false,
+    "current2026WebsiteDoesNotDateHistoric2020Text": true,
+    "officialSOSFiledDomain2020NotAuthenticated": true,
+    "actualOriginalPolicyExcerptsAdmittedByDiscovery": 0,
+    "productionDatabaseReadsWritesOrForecastChanges": 0
+  },
+  "originalActualSenatorGovernmentDirectory": {
+    "url": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "originalRun": 38094976711,
+    "artifactId": 11685387674,
+    "htmlSHA256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "rehashedBeforeNetwork": true
+  },
+  "targets": [
+    {
+      "id": "three20-01",
+      "candidateName": "Susan Kent",
+      "electionDistrict": "53",
+      "year": 2020,
+      "domain": "susankentmn.com",
+      "discoveryUrl": "https://susankentmn.com/",
+      "discoveryBasis": "Independent listed MN State Senator campaign domain only; authentic original 2020 page text not yet verified",
+      "discoverySourceUrl": "https://en.wikipedia.org/wiki/Susan_Kent_(politician)",
+      "actuallyServed2021PersonVerifiedOnOriginalGovernmentSourceRequired": true,
+      "historic2020OriginalWebsiteTextUnverifiedBeforeNetwork": true,
+      "firstWriterPostedAtUnknownAndNotRequired": true,
+      "contemporaneous2020SOSFiledCampaignWebsiteUnknown": true
+    },
+    {
+      "id": "three20-02",
+      "candidateName": "Karla Bigham",
+      "electionDistrict": "54",
+      "year": 2020,
+      "domain": "karlabigham.com",
+      "discoveryUrl": "https://www.karlabigham.com/",
+      "discoveryBasis": "Independent listed MN State Senator campaign domain only; authentic original 2020 page text not yet verified",
+      "discoverySourceUrl": "https://www.eastmetrovoterguide.com/karla-bigham.html",
+      "actuallyServed2021PersonVerifiedOnOriginalGovernmentSourceRequired": true,
+      "historic2020OriginalWebsiteTextUnverifiedBeforeNetwork": true,
+      "firstWriterPostedAtUnknownAndNotRequired": true,
+      "contemporaneous2020SOSFiledCampaignWebsiteUnknown": true
+    },
+    {
+      "id": "three20-03",
+      "candidateName": "David Tomassoni",
+      "electionDistrict": "6",
+      "year": 2020,
+      "domain": "tomassoni4senate.com",
+      "discoveryUrl": "http://www.tomassoni4senate.com/",
+      "discoveryBasis": "Independent listed MN State Senator campaign domain only; authentic original 2020 page text not yet verified",
+      "discoverySourceUrl": "https://en.wikipedia.org/wiki/David_Tomassoni",
+      "actuallyServed2021PersonVerifiedOnOriginalGovernmentSourceRequired": true,
+      "historic2020OriginalWebsiteTextUnverifiedBeforeNetwork": true,
+      "firstWriterPostedAtUnknownAndNotRequired": true,
+      "contemporaneous2020SOSFiledCampaignWebsiteUnknown": true
+    }
+  ],
+  "warnings": [
+    "Only people who actually served in Minnesota State Senate in calendar 2021, not just ballot candidates.",
+    "Do not retroactively attribute modern 2026 campaign website statements to 2020.",
+    "Older original first-party candidate website content may be attributed to its real 2020 archival capture UTC, original first-authored date unnecessary.",
+    "An archive index/capture failure is unknown history, never no policy.",
+    "No production source ingestion, forecasts, Neon/Vercel/database writes/reads, scheduler, public-office contact or 2027 changes."
+  ]
+}
