@@ -53,6 +53,16 @@
       "zipBytes": 3593,
       "jsonSha256": "7d057f4502d225dd10f8e75cf602dd1d0491cd2690b2d48b92209ccda043213f",
       "jsonBytes": 22486
+    },
+    {
+      "runId": 38163061498,
+      "head": "72d74f4a3e57693ab29ac2ac267c69dbdc3dacff",
+      "sourceResult": "success",
+      "artifactId": 11710794864,
+      "zipSha256": "6b1b2b570118132a1334268011642480a8fbeadd4fcb30e634526698691847d5",
+      "zipBytes": 3595,
+      "jsonSha256": "b61d428d8ae6dfcd1355b5177ab90d7c30b9908c6c247530cd3e3a5762115524",
+      "jsonBytes": 22486
     }
   ],
   "firstOfficialRun": {
@@ -83,5 +93,13 @@
     "noModelForecastSchedulerTrainingOr2027Scope": true,
     "noHistoricPublicByProven": true,
     "keepIssue864Open": true
+  },
+  "secondIndependentOfficialSourceRecheck": {
+    "all11ExactReportIdsAndOriginalParentIdsMatch": true,
+    "all11PdfSha256AndByteCountsReproduced": true,
+    "all11BoardReceiptDatesAndCoverageMatched": true,
+    "sixOfficialSourceViewerSha256Identical": true,
+    "sourcePdfHoldsOrAliases": 0,
+    "inspectedArtifactJsonPayloadsDifferOnlyInRetrievalTimestamps": true
   }
 }
