@@ -1,0 +1,70 @@
+name: Prove 47 original 2020 campaign issue excerpts for two actual 2021 MN State Senators
+
+# Reopen and SHA/Cdx verify ALL ten 2020 source HTML, five genuine CDX
+# original indexes and independently original full LRL serving Senate roster.
+# Legacy 2016 wording captured in 2020 remains earlier-cycle copy.
+# No Neon/Vercel, production evidence, scheduler, model or forecast changes.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-two-2021-serving-senators-2020-original-47-policy-quotes.yml
+      - data/evaluation/senate-two-more-2021-served-2020-original-campaign-dated-policy-excerpts-v1.json
+      - src/evidence/senate-two-more-2021-serving-2020-campaign-47-original-quote-proof.ts
+      - scripts/audit-two-2021-serving-senators-2020-original-47-issue-quotes-offline.ts
+      - tests/senate-two-more-2021-serving-2020-original-47-campaign-excerpts.test.ts
+      - docs/SENATE_2020_DRAHEIM_SENJEM_47_AUTHENTIC_ORIGINAL_POLICY_EXCERPTS.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  actual-2021-senators-reopen-ten-original-2020-pages-five-cdx-and-47-excerpts:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-draheim-senjem-2020-original-site-exact-statements-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Retrieve independently original public MN actual Senate directory whole HTML and source SHA UTC receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/actual-senate-government-directory
+      - name: Retrieve original 2020 first-party archived candidate source HTML and all five independent CDX indices
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38156756023
+          name: senate-five-2021-serving-2020-original-candidate-html-v1
+          github-token: ${{ github.token }}
+          path: original/2020-verified-candidate-campaign-pages
+      - name: Reopen and hash all original government/CDX/HTML sources and check 47 exact original short issue excerpts
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/actual-senate-government-directory -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/actual-senate-government-directory -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$gov" && test -n "$receipt"
+          test "$(dirname "$gov")" = "$(dirname "$receipt")"
+          node --import tsx scripts/audit-two-2021-serving-senators-2020-original-47-issue-quotes-offline.ts \
+            --whole-original-independent-lrl-senate-directory "$gov" \
+            --whole-original-lrl-service-utc-sha-receipt "$receipt" \
+            --2020-original-campaign-html-and-cdx-archive-dir original/2020-verified-candidate-campaign-pages \
+            --output original/two-new-2021-senators-2020-47-original-policy-excerpt-source-proofs.json
+      - name: Retain authentic 2020 candidate campaign original page and short issue excerpt source proof
+        uses: actions/upload-artifact@v6
+        with:
+          name: two-actual-2021-serving-senators-2020-47-authentic-policy-quote-proofs-v1
+          path: original/two-new-2021-senators-2020-47-original-policy-excerpt-source-proofs.json
+          retention-days: 30
+          if-no-files-found: error

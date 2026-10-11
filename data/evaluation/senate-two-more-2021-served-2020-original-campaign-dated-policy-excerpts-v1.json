@@ -1,0 +1,719 @@
+{
+  "schema": "mn-two-actual-2021-senators-original-2020-site-47-short-candidate-policy-excerpts-v1",
+  "scope": {
+    "issue": 864,
+    "historicalElectionYear": 2020,
+    "generalElectionDate": "2020-11-03",
+    "actual2021SenateServiceOnly": true,
+    "independentlyRehashedOriginalHTMLPages": 10,
+    "independentlyRetrievedCDXIndexFiles": 5,
+    "actualStateSenatorsWithAuthenticatedOriginal2020SitePages": 3,
+    "senatorsWithVerifiedIssueExcerpts": 2,
+    "shortPolicyExcerptsSelected": 47,
+    "originalCandidatePolicySectionsSelected": 3,
+    "originalObservedAtUTCIsPublicByNotFirstAuthorDate": true,
+    "richCampaignCopyActuallyOlderThan2020": true,
+    "archivedJSOnlyEichornShellIsNotPolicyEvidence": true,
+    "claimOfLegislativePriorActionsIsNotOfficialVote": true,
+    "productionEvidenceNeonVercelForecastOrSchedulerChanges": 0
+  },
+  "sourceProvenance": {
+    "officialLRLSenateServiceFullOriginalURL": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "officialServiceOriginalRun": 38094976711,
+    "officialServiceOriginalArtifactId": 11685387674,
+    "originalGovernmentHtmlSHA256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "historic2020CampaignAcquisitionRun": 38156756023,
+    "originalArchived2020SiteArtifactId": 11708239911,
+    "originalArchived2020SiteArtifactName": "senate-five-2021-serving-2020-original-candidate-html-v1",
+    "fullOriginalSourceManifest": "source-acquisition-manifest.json"
+  },
+  "actualSenators": [
+    {
+      "senator": "Carrie Ruud",
+      "electionDistrict": "10",
+      "domain": "carrieruud.com",
+      "authOriginals": 0,
+      "issueQuotes": 0,
+      "archiveGapMeansAbsenceOfPolicy": false
+    },
+    {
+      "senator": "Justin Eichorn",
+      "electionDistrict": "5",
+      "domain": "justinformnsenate.com",
+      "authOriginals": 2,
+      "issueQuotes": 0,
+      "archiveGapMeansAbsenceOfPolicy": false
+    },
+    {
+      "senator": "Roger Chamberlain",
+      "electionDistrict": "38",
+      "domain": "rogerchamberlain.org",
+      "authOriginals": 0,
+      "issueQuotes": 0,
+      "archiveGapMeansAbsenceOfPolicy": false
+    },
+    {
+      "senator": "Rich Draheim",
+      "electionDistrict": "20",
+      "domain": "draheimforsenate.com",
+      "authOriginals": 4,
+      "issueQuotes": 15,
+      "archiveGapMeansAbsenceOfPolicy": false
+    },
+    {
+      "senator": "David Senjem",
+      "electionDistrict": "25",
+      "domain": "senjemforsenate.com",
+      "authOriginals": 4,
+      "issueQuotes": 32,
+      "archiveGapMeansAbsenceOfPolicy": false
+    }
+  ],
+  "fullOriginalArchivedPageReceipts": [
+    {
+      "senator": "Justin Eichorn",
+      "district": "5",
+      "domain": "justinformnsenate.com",
+      "originalFile": "five20-02-archive-20200520132938-0.html",
+      "originalUrl": "https://www.justinformnsenate.com/",
+      "actualArchiveCaptureUtc": "2020-05-20T13:29:38.000Z",
+      "originalHTMLSHA256": "e1cf0bad13e365607f802de2e881ad8f45773aea308b368fc3e1878e641b3424",
+      "independentIndexedCDXSHA1Base32": "O5XRMF3E73RCZZMMUGUEMEVGLACMJJY4"
+    },
+    {
+      "senator": "Justin Eichorn",
+      "district": "5",
+      "domain": "justinformnsenate.com",
+      "originalFile": "five20-02-archive-20200805124548-1.html",
+      "originalUrl": "https://www.justinformnsenate.com/questions",
+      "actualArchiveCaptureUtc": "2020-08-05T12:45:48.000Z",
+      "originalHTMLSHA256": "e1cf0bad13e365607f802de2e881ad8f45773aea308b368fc3e1878e641b3424",
+      "independentIndexedCDXSHA1Base32": "O5XRMF3E73RCZZMMUGUEMEVGLACMJJY4"
+    },
+    {
+      "senator": "Rich Draheim",
+      "district": "20",
+      "domain": "draheimforsenate.com",
+      "originalFile": "five20-04-archive-20200813075641-0.html",
+      "originalUrl": "http://www.draheimforsenate.com/issues/",
+      "actualArchiveCaptureUtc": "2020-08-13T07:56:41.000Z",
+      "originalHTMLSHA256": "6c23d8e55594dc7de34fe399ab5138847ce1c99b19d2a6a75306cd867fb2eda2",
+      "independentIndexedCDXSHA1Base32": "P52WAWEQXC6BV52PBCYAEQ4W6DOWXRQN"
+    },
+    {
+      "senator": "Rich Draheim",
+      "district": "20",
+      "domain": "draheimforsenate.com",
+      "originalFile": "five20-04-archive-20200813085453-1.html",
+      "originalUrl": "https://www.draheimforsenate.com/",
+      "actualArchiveCaptureUtc": "2020-08-13T08:54:53.000Z",
+      "originalHTMLSHA256": "f26ddf0871624b7dfb49a45f3f60e27afadc0e381ebe17e15a9cd6caf4319d7c",
+      "independentIndexedCDXSHA1Base32": "4EFUUOF7R4HIP5Y7LKLJF2FIR54USR3M"
+    },
+    {
+      "senator": "Rich Draheim",
+      "district": "20",
+      "domain": "draheimforsenate.com",
+      "originalFile": "five20-04-archive-20200924035800-2.html",
+      "originalUrl": "https://www.draheimforsenate.com/about-rich/",
+      "actualArchiveCaptureUtc": "2020-09-24T03:58:00.000Z",
+      "originalHTMLSHA256": "ca32ba92a1acbe0dac789368afab9f92bd3f17c08f94b4c8eb765157d540b318",
+      "independentIndexedCDXSHA1Base32": "4R2FQEDOQJLEBULR5CSQKPYX4ASNI2Z2"
+    },
+    {
+      "senator": "Rich Draheim",
+      "district": "20",
+      "domain": "draheimforsenate.com",
+      "originalFile": "five20-04-archive-20200924043452-3.html",
+      "originalUrl": "https://www.draheimforsenate.com/campaign-trail-photos/",
+      "actualArchiveCaptureUtc": "2020-09-24T04:34:52.000Z",
+      "originalHTMLSHA256": "9a1479f0604350f00dd4b92c9e5818185643d4d9219bbc0cb377c1bccc215df7",
+      "independentIndexedCDXSHA1Base32": "GHRX4S3STQ3GL7V2SIWT6QQZTWTXHFOX"
+    },
+    {
+      "senator": "David Senjem",
+      "district": "25",
+      "domain": "senjemforsenate.com",
+      "originalFile": "five20-05-archive-20200921190243-0.html",
+      "originalUrl": "https://www.senjemforsenate.com/issues/",
+      "actualArchiveCaptureUtc": "2020-09-21T19:02:43.000Z",
+      "originalHTMLSHA256": "dfa9526f80efbeda4b70331bb43c88718e2ca4eef4c869c5f66778393c438f61",
+      "independentIndexedCDXSHA1Base32": "YHIIJYUU5DMXYF2GTDIURG3OOIFHECOZ"
+    },
+    {
+      "senator": "David Senjem",
+      "district": "25",
+      "domain": "senjemforsenate.com",
+      "originalFile": "five20-05-archive-20200807032647-1.html",
+      "originalUrl": "https://www.senjemforsenate.com/",
+      "actualArchiveCaptureUtc": "2020-08-07T03:26:47.000Z",
+      "originalHTMLSHA256": "e44a42ceee9f0828801404b11c97ad1ac3d2b48965a2143cc0a17d3385eeb51d",
+      "independentIndexedCDXSHA1Base32": "HCCMC6MFF2XFW25ZMBQNAVX4Z3I22LXQ"
+    },
+    {
+      "senator": "David Senjem",
+      "district": "25",
+      "domain": "senjemforsenate.com",
+      "originalFile": "five20-05-archive-20201022152049-2.html",
+      "originalUrl": "https://www.senjemforsenate.com/news/",
+      "actualArchiveCaptureUtc": "2020-10-22T15:20:49.000Z",
+      "originalHTMLSHA256": "756b56ebb6813ed9379f5fc6588be51de31e617be57708f7e1148195022e70eb",
+      "independentIndexedCDXSHA1Base32": "ZWPK6L3SZZKVBDRJK3W3IX2OLGQOV7OH"
+    },
+    {
+      "senator": "David Senjem",
+      "district": "25",
+      "domain": "senjemforsenate.com",
+      "originalFile": "five20-05-archive-20201022152523-3.html",
+      "originalUrl": "https://www.senjemforsenate.com/dave-senjem-files-for-re-election-to-minnesota-state-senate/",
+      "actualArchiveCaptureUtc": "2020-10-22T15:25:23.000Z",
+      "originalHTMLSHA256": "f763c1c9f40728df4db398d253abe4c5b2c3a75f2a6635752a14e64f3ba6e058",
+      "independentIndexedCDXSHA1Base32": "J5TA2JKALORLLI2WPDMQNRRI2SQYBZZR"
+    }
+  ],
+  "candidatePolicyPageSections": [
+    {
+      "id": "draheim2020Home",
+      "senator": "Rich Draheim",
+      "originalFile": "five20-04-archive-20200813085453-1.html",
+      "visibleStart": "Common Sense Leadership for Accountable State Government",
+      "visibleStop": "Join Our Campaign",
+      "context": "original 2020 archived campaign homepage but older 2016 campaign-update/issue text, not newly authored 2020 material"
+    },
+    {
+      "id": "draheim2020About",
+      "senator": "Rich Draheim",
+      "originalFile": "five20-04-archive-20200924035800-2.html",
+      "visibleStart": "Draheim lists his legislative priorities as",
+      "visibleStop": "Draheim and his wife",
+      "context": "original 2020 observed About Rich candidate-owned announcement retaining earlier 2016 campaign history, speaker personal quotes present"
+    },
+    {
+      "id": "senjem2020Issues",
+      "senator": "David Senjem",
+      "originalFile": "five20-05-archive-20200921190243-0.html",
+      "visibleStart": "A senator for us",
+      "visibleStop": "Email Facebook Twitter Proudly serving",
+      "context": "original September 2020 full first-party State Senate campaign issues, direct first-person policy and self-described past legislative actions; original first author timestamp unknown"
+    }
+  ],
+  "shortExactCandidateOwnedExcerpts": [
+    {
+      "id": "senate20-senjem-draheim-001",
+      "pageId": "draheim2020Home",
+      "issueFamily": "state_government",
+      "exactExcerpt": "I’ll work with my forward-looking counterparts on both sides of the aisle",
+      "conservativeInterpretation": "Says he will work across parties on accountable governance",
+      "statementCharacter": "older_campaign_copy_observed_in_2020",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-002",
+      "pageId": "draheim2020Home",
+      "issueFamily": "labor_employment",
+      "exactExcerpt": "Promotion of job creation and growth of main street economies.",
+      "conservativeInterpretation": "Prioritizes job creation and small-town business growth",
+      "statementCharacter": "older_campaign_copy_observed_in_2020",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-003",
+      "pageId": "draheim2020Home",
+      "issueFamily": "education",
+      "exactExcerpt": "Fair education funding, reform and accountability.",
+      "conservativeInterpretation": "Prioritizes fair education finance and accountability",
+      "statementCharacter": "older_campaign_copy_observed_in_2020",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-004",
+      "pageId": "draheim2020Home",
+      "issueFamily": "state_government",
+      "exactExcerpt": "Overall emphasis on effective and efficient government.",
+      "conservativeInterpretation": "Advocates government efficiency",
+      "statementCharacter": "older_campaign_copy_observed_in_2020",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-005",
+      "pageId": "draheim2020About",
+      "issueFamily": "agriculture",
+      "exactExcerpt": "a reduced regulatory burden on farmers and small business owners",
+      "conservativeInterpretation": "Supports less regulation of farming and small business",
+      "statementCharacter": "older_campaign_copy_observed_in_2020",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-006",
+      "pageId": "draheim2020About",
+      "issueFamily": "taxes_revenue",
+      "exactExcerpt": "Let’s start with State Income Tax reform",
+      "conservativeInterpretation": "Supports state income-tax reform",
+      "statementCharacter": "older_campaign_copy_observed_in_2020",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-007",
+      "pageId": "draheim2020About",
+      "issueFamily": "taxes_revenue",
+      "exactExcerpt": "tax rates are too high",
+      "conservativeInterpretation": "Says Minnesota tax rates are too high",
+      "statementCharacter": "older_campaign_copy_observed_in_2020",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-008",
+      "pageId": "draheim2020About",
+      "issueFamily": "commerce_consumer",
+      "exactExcerpt": "Let’s scrutinize the ever-growing list of burdensome regulations.",
+      "conservativeInterpretation": "Advocates review of business and farming regulations",
+      "statementCharacter": "older_campaign_copy_observed_in_2020",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-009",
+      "pageId": "draheim2020About",
+      "issueFamily": "commerce_consumer",
+      "exactExcerpt": "overregulation costs Greater Minnesota families money",
+      "conservativeInterpretation": "Argues excessive regulation imposes local economic costs",
+      "statementCharacter": "older_campaign_copy_observed_in_2020",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-010",
+      "pageId": "draheim2020About",
+      "issueFamily": "health",
+      "exactExcerpt": "Runaway healthcare costs in Minnesota impact every worker, family, and business in the state.",
+      "conservativeInterpretation": "Highlights high healthcare costs as an economic problem",
+      "statementCharacter": "older_campaign_copy_observed_in_2020",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-011",
+      "pageId": "draheim2020About",
+      "issueFamily": "health",
+      "exactExcerpt": "MNsure needs a hard look",
+      "conservativeInterpretation": "Advocates scrutiny of the state insurance marketplace",
+      "statementCharacter": "older_campaign_copy_observed_in_2020",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-012",
+      "pageId": "draheim2020About",
+      "issueFamily": "education",
+      "exactExcerpt": "Let’s rebalance education funding through fair taxation",
+      "conservativeInterpretation": "Supports changing education financing",
+      "statementCharacter": "older_campaign_copy_observed_in_2020",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-013",
+      "pageId": "draheim2020About",
+      "issueFamily": "education",
+      "exactExcerpt": "We can improve the quality of education at lower cost",
+      "conservativeInterpretation": "Supports efficiency reforms in education",
+      "statementCharacter": "older_campaign_copy_observed_in_2020",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-014",
+      "pageId": "draheim2020About",
+      "issueFamily": "state_government",
+      "exactExcerpt": "It’s common sense to have a budget that balances taxing and spending",
+      "conservativeInterpretation": "Advocates balancing state tax and spending policy",
+      "statementCharacter": "older_campaign_copy_observed_in_2020",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-015",
+      "pageId": "draheim2020About",
+      "issueFamily": "state_government",
+      "exactExcerpt": "a top-down analysis of agencies and programs that overtax and under deliver",
+      "conservativeInterpretation": "Advocates review of state agency spending/performance",
+      "statementCharacter": "older_campaign_copy_observed_in_2020",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-016",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "education",
+      "exactExcerpt": "We are so fortunate to have great public schools and world class higher education here in Minnesota.",
+      "conservativeInterpretation": "Expresses support for public and higher education",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-017",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "education",
+      "exactExcerpt": "continue to enhance the availability of these proven programs in our schools",
+      "conservativeInterpretation": "Advocates expanding career education programs",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-018",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "education",
+      "exactExcerpt": "encourage public-private partnerships that will give students on-the-job training while still in high school.",
+      "conservativeInterpretation": "Supports work-based learning during high school",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-019",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "education",
+      "exactExcerpt": "I supported $50 million over the last four years for flexible safe schools revenue",
+      "conservativeInterpretation": "Candidate claims prior funding for school safety",
+      "statementCharacter": "candidate_claim_about_prior_legislative_action_not_verified_vote",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-020",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "education",
+      "exactExcerpt": "I proudly supported capping in-state tuition at most of our colleges and universities",
+      "conservativeInterpretation": "Candidate claims past tuition-related support",
+      "statementCharacter": "candidate_claim_about_prior_legislative_action_not_verified_vote",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-021",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "health",
+      "exactExcerpt": "we also have to do more to make sure all Minnesotans have access to affordable and reliable health care",
+      "conservativeInterpretation": "Advocates affordable healthcare access",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-022",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "health",
+      "exactExcerpt": "we need to continue to invest in a health care infrastructure",
+      "conservativeInterpretation": "Supports healthcare infrastructure",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-023",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "health",
+      "exactExcerpt": "reinsurance program I proudly support",
+      "conservativeInterpretation": "Candidate claims support for reinsurance",
+      "statementCharacter": "candidate_claim_about_prior_legislative_action_not_verified_vote",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-024",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "health",
+      "exactExcerpt": "I proudly supported the passage of the Alec Smith Emergency Insulin Act",
+      "conservativeInterpretation": "Candidate claims support for insulin legislation, not a verified vote",
+      "statementCharacter": "candidate_claim_about_prior_legislative_action_not_verified_vote",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-025",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "environment_natural_resources",
+      "exactExcerpt": "Minnesota has the opportunity to lead the nation when it comes to innovation in our energy grid",
+      "conservativeInterpretation": "Advocates innovation in the energy grid",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-026",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "environment_natural_resources",
+      "exactExcerpt": "I’m proud to be the author of the Clean Energy First proposal",
+      "conservativeInterpretation": "Candidate claims authorship of an energy proposal",
+      "statementCharacter": "candidate_claim_about_prior_legislative_action_not_verified_vote",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-027",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "environment_natural_resources",
+      "exactExcerpt": "would modernize Minnesota’s energy resources by prioritizing renewable energy",
+      "conservativeInterpretation": "Supports prioritizing renewable energy",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-028",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "environment_natural_resources",
+      "exactExcerpt": "affordability and reliability, particularly in our harsh climate, will still be prioritized",
+      "conservativeInterpretation": "Prioritizes energy affordability and reliability",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-029",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "transportation",
+      "exactExcerpt": "A safe and reliable network of roadways across Minnesota is essential to our economy",
+      "conservativeInterpretation": "Supports reliable statewide roads",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-030",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "transportation",
+      "exactExcerpt": "critical infrastructure—including roads and bridges across Minnesota—a priority.",
+      "conservativeInterpretation": "Claims emphasis on highway infrastructure",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-031",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "transportation",
+      "exactExcerpt": "we passed these initiatives without raising the gas tax or increasing license tab fees.",
+      "conservativeInterpretation": "Candidate claims transportation actions without fuel/registration tax hikes",
+      "statementCharacter": "candidate_claim_about_prior_legislative_action_not_verified_vote",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-032",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "taxes_revenue",
+      "exactExcerpt": "I was the author of the ‘Retire in Minnesota Act’",
+      "conservativeInterpretation": "Candidate claims authorship of retirement tax bill",
+      "statementCharacter": "candidate_claim_about_prior_legislative_action_not_verified_vote",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-033",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "taxes_revenue",
+      "exactExcerpt": "would eliminate taxes on Social Security benefits",
+      "conservativeInterpretation": "Supports removing tax on Social Security benefits",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-034",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "taxes_revenue",
+      "exactExcerpt": "I also supported a cut to C/I property taxes and the elimination of the inflator.",
+      "conservativeInterpretation": "Candidate claims previous support for property tax reduction",
+      "statementCharacter": "candidate_claim_about_prior_legislative_action_not_verified_vote",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-035",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "taxes_revenue",
+      "exactExcerpt": "vehemently opposed the proposed gas tax and license plate tab fee hikes.",
+      "conservativeInterpretation": "Says he opposed gas-tax and registration fee increases",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-036",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "health",
+      "exactExcerpt": "My goal is to use my own family’s experiences with mental health issues to change things for the better",
+      "conservativeInterpretation": "Advocates improvements in mental-health care",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-037",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "health",
+      "exactExcerpt": "I passed legislation that funded several regional mental health crisis centers across the state",
+      "conservativeInterpretation": "Candidate claims past regional mental-health funding legislation",
+      "statementCharacter": "candidate_claim_about_prior_legislative_action_not_verified_vote",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-038",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "judiciary_civil_law",
+      "exactExcerpt": "my bill to address treatment options for individuals deemed incompetent to stand trial was signed into law",
+      "conservativeInterpretation": "Candidate claims prior mental-competency legislation",
+      "statementCharacter": "candidate_claim_about_prior_legislative_action_not_verified_vote",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-039",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "health",
+      "exactExcerpt": "increase support for mental health services for farmers, students, and families in Minnesota.",
+      "conservativeInterpretation": "Supports expanding mental-health care for families and farmers",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-040",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "labor_employment",
+      "exactExcerpt": "Job creation depends on a well-educated workforce, a competitive tax environment",
+      "conservativeInterpretation": "Connects employment growth to training and tax environment",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-041",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "labor_employment",
+      "exactExcerpt": "I supported additional funding for workforce training and development programs across the state",
+      "conservativeInterpretation": "Candidate claims past workforce training support",
+      "statementCharacter": "candidate_claim_about_prior_legislative_action_not_verified_vote",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-042",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "labor_employment",
+      "exactExcerpt": "an emphasis on on-the-job training",
+      "conservativeInterpretation": "Supports job training",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-043",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "health",
+      "exactExcerpt": "I am pro-life and believe in protecting life from conception until natural death.",
+      "conservativeInterpretation": "Opposes abortion",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-044",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "public_safety",
+      "exactExcerpt": "I also believe in our constitutional right to bear arms—safely, responsibly, and with proper training.",
+      "conservativeInterpretation": "Supports constitutionally protected firearm rights with safety",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-045",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "public_safety",
+      "exactExcerpt": "I also believe in supporting the brave men and women of Minnesota’s law enforcement community",
+      "conservativeInterpretation": "Supports law enforcement",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-046",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "human_services",
+      "exactExcerpt": "better access to mental health services for veterans returning from overseas.",
+      "conservativeInterpretation": "Supports mental healthcare for veterans",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    },
+    {
+      "id": "senate20-senjem-draheim-047",
+      "pageId": "senjem2020Issues",
+      "issueFamily": "human_services",
+      "exactExcerpt": "I’m also proud to support critical initiatives that support veterans and their families",
+      "conservativeInterpretation": "Supports veterans assistance",
+      "statementCharacter": "candidate_policy_view",
+      "attributableByOriginal2020ArchiveCaptureUtc": true,
+      "candidateSiteTextIsNotVerifiedRecordedVote": true,
+      "automaticProductionEvidenceAdmission": false
+    }
+  ]
+}
