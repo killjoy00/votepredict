@@ -84,7 +84,7 @@ export function inspectPutnam2024OfficialBoardConciliation(input:{
   secondAmendedReferenceNotCrossIdentifiedWithModernViewer:true,
   newHistorical2023PdfVersionAuthenticated:false,
   actualPublicByForAny2023PdfVersionProven:false,
-  2023Or2024YearEndLegallyOwed:null,
+  yearEnd2023Or2024LegallyOwed:null,
   actualCommitteeRegistrationTerminationOnDate:null,
  };
 }
