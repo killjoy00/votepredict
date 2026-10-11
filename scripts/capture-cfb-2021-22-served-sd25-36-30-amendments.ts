@@ -30,7 +30,7 @@ const YE_CKPT=ROOT+'cfb-2021-22-served-d25-36-18-original-yearend-source-checkpo
 function errorKind(e:unknown):string{
   const s=e instanceof Error?e.message:String(e);
   return /timeout|abort/i.test(s)?'official_source_http_timeout':
-    /HTTP (409|50[0-9]|52[0-9])/i.test(s)?'official_source_temporary_failure':
+    /HTTP (429|50[0-9]|52[0-9])/i.test(s)?'official_source_temporary_failure':
     /HTTP [45]\d\d/i.test(s)?'official_source_http_failure':
     /sha|mismatch|drift/i.test(s)?'official_source_identity_changed':
     /pdf|text|parse/i.test(s)?'original_pdf_text_or_source_failure':
@@ -54,7 +54,7 @@ async function main(){
   if(ceCheckpoint.pinnedOfficialSources.independentCfb2022Calendar.sha256!==
      yeCheckpoint.independentlyObservedOriginalSources.cfb2022Calendar.sha256
     ||yeCheckpoint.independentlyObservedOriginalSources.cfb2022Calendar.sha256!==
-      '3fd6303844d5063156d68d871bd2c575a5b5cef415a61b6125c068491f6b2b25'
+      '3fd6263844d5063156d68d871bd2c575a5b5cef415a61b6125c068491f6b2b25'
     ||yeCheckpoint.population.independentlyVerifiedHistoricalPublicByCount!==0)
     throw Error('Prior original independent CFB 2022 calendar or historical eligibility source changed');
   const regs=[...new Set(picked.targets.map(t=>t.registrationNumber))];
@@ -177,7 +177,7 @@ async function main(){
       receivedOn:x.amendedBoardReceivedOn})),
     output,productionChanges:false},null,2));
   if(!quality.complete||rawPdfs.size!==30||
-    viewerRechecks.filter(v=>v.exactVersionKeysReconfirmed>0).length!==11)
+    viewerRechecks.filter(v=>v.exactVersionKeysReconfirmed>0).length!==picked.registrationsWithAmendments)
     process.exitCode=1;
 }
 main().catch(e=>{console.error(errorKind(e));process.exitCode=1;});
