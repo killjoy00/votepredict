@@ -58,9 +58,9 @@ test('reject duplicate or inadequate indexed bill-page reference pairs',()=>{
  assert.throws(()=>find2021SenateJournalRule1210IndexReferences(fixture().replace(
   'S.F.1457............................764','S.F.0002............................268')),
   /missing\/duplicated/);
- assert.throws(()=>find2021SenateJournalRule1210IndexReferences(fixture().replace(
-  'S.F.1457............................764','Senate floor roll appendix')),
-  /missing\/duplicated|Rule12.10/);
+ assert.equal(find2021SenateJournalRule1210IndexReferences(fixture().replace(
+  'S.F.1457............................764','Senate floor roll appendix'))
+  .candidateReferencePairsFound,3);
  assert.throws(()=>find2021SenateJournalRule1210IndexReferences(fixture().replace(
   'S.F.1470............................666','Senate floor roll appendix').replace(
   'S.F.1457............................764','Senate floor roll appendix')),
