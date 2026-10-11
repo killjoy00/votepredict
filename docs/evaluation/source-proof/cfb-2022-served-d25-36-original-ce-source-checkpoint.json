@@ -1,0 +1,171 @@
+{
+  "schemaVersion": "cfb-2022-served-sd25-36-22-original-ce-pdf-source-checkpoint-v1",
+  "originalSourceRun": {
+    "acquisitionPr": 1048,
+    "acquisitionHead": "b464d7ee98477c155ca721e9c52a5470b51f0ffc",
+    "mergedCommit": "ffbb1a0787c8be1f4b4607445b2a3114c9f5cabd",
+    "exactHeadFullCiRunId": 38111883321,
+    "fullCiConclusion": "success",
+    "originalSourceRunId": 38111883336,
+    "originalSourceConclusion": "success",
+    "artifactId": 11690714984,
+    "artifactUrl": "https://github.com/killjoy00/votepredict/actions/runs/38111883336/artifacts/11690714984",
+    "expiresOn": "2026-11-10T04:33:05Z",
+    "artifactZipSha256": "6267bb1de4ada57194ae11e2e84f2b9b8aed363388c8292660becfecce3be75e",
+    "artifactZipBytes": 6991,
+    "artifactJsonSha256": "f3d10429584314098683e3764cfe9cf999dc0ba6c0a729bda4888ef607150d5c",
+    "artifactJsonBytes": 73609,
+    "sourceResultCompletedAtUtc": "2026-10-11T04:33:05.735Z"
+  },
+  "pinnedOfficialSources": {
+    "lrlSenateService": {
+      "url": "https://www.lrl.mn.gov/legdb/senate_dir",
+      "sha256": "79657e3f9b0287dc950abd3bd42801c49c4cd01e77e96604db86136fe09db844",
+      "observedAt": "2026-10-11T04:32:40.062Z"
+    },
+    "sos2022General": {
+      "url": "https://electionresultsfiles.sos.mn.gov/20221108/stsenate.txt",
+      "sha256": "eb8980245094cf8af0cd08a69c42ae0262fb5a692b09a49be2aee959aecaae74",
+      "observedAt": "2026-10-11T04:32:38.469Z"
+    },
+    "independentCfb2022Calendar": {
+      "url": "https://cfb.mn.gov/pdf/publications/elections/candidate_packets/2022/House_2022.pdf",
+      "sha256": "3fd6263844d5063156d68d871bd2c575a5b5cef415a61b6125c068491f6b2b25",
+      "observedAt": "2026-10-11T04:32:42.884Z"
+    },
+    "originalCfBApiLedger": "docs/evaluation/source-proof/cfb-2021-24-senate-396-original-viewer-source-observations.psv"
+  },
+  "actualServedSenators": [
+    {
+      "district": 25,
+      "officialName": "Liz Boldon",
+      "registrationNumber": "18901",
+      "officialDistrictRosterHtmlSha256": "aed6a7f5051f90d368db2faef47d9cc3c32f95e7f915567089369195d7e86ba7",
+      "originalCfBReportsTabApiSha256": "6484811b73d47e510c2a685f754d5e403d1d5642b24f58c697e46831c80cbf43"
+    },
+    {
+      "district": 26,
+      "officialName": "Jeremy R. Miller",
+      "registrationNumber": "16891",
+      "officialDistrictRosterHtmlSha256": "eeef264ec9092ceb4ae1ba048d0818412677b739b639f3465ea51c11a7e6afbe",
+      "originalCfBReportsTabApiSha256": "7ba7cee5b83d840e45f430dc4f5b8b25a3c027dbe26a72852a1954effc996195"
+    },
+    {
+      "district": 27,
+      "officialName": "Andrew Mathews",
+      "registrationNumber": "17876",
+      "officialDistrictRosterHtmlSha256": "cb6f4c1dfe182e6267a45c41eccfc7774df111ab8336dd3df8527e9c692cd978",
+      "originalCfBReportsTabApiSha256": "b84f3bbcd6bdf3f9c57baebd21066ba6713e64896764c7c39eb64cbc1d99ba35"
+    },
+    {
+      "district": 28,
+      "officialName": "Mark W. Koran",
+      "registrationNumber": "17893",
+      "officialDistrictRosterHtmlSha256": "a152889ce387f1eb8b0c8beab4ea0931b54c7acd3a8512a1d04d8c9e2369c158",
+      "originalCfBReportsTabApiSha256": "36168859e4ca866b99178f5b0423e03cfb5f58170c7be79d44ce964c60ea5ea9"
+    },
+    {
+      "district": 29,
+      "officialName": "Bruce Douglas Anderson",
+      "registrationNumber": "17362",
+      "officialDistrictRosterHtmlSha256": "68afd8d48f029d21a8a635d29412d57d1a4e6c29c8534bb3f8c6b19b5fe6d75b",
+      "originalCfBReportsTabApiSha256": "bb282b60a3ed91b78278c0ff3c438c098b0c8f74e362a381b4c815965df03652"
+    },
+    {
+      "district": 30,
+      "officialName": "Eric Lucero",
+      "registrationNumber": "18777",
+      "officialDistrictRosterHtmlSha256": "c283d98ce026573e338f26f7cb1dca3d5872155f5a651661ff06cd79f16c778c",
+      "originalCfBReportsTabApiSha256": "f0eb5a555a171440944cc342fee93a638c1442f96eb48474df7d32fc10fa1764"
+    },
+    {
+      "district": 32,
+      "officialName": "Michael E. Kreun",
+      "registrationNumber": "18819",
+      "officialDistrictRosterHtmlSha256": "396ebf5deb7ad02074e1ca635142142dbab34c895c09d31fe3a2ad64c84a6276",
+      "originalCfBReportsTabApiSha256": "8e07bd38820ffa320746b7bd5ca104535e9f107dfb696ff5ca5ae686f5e46a31"
+    },
+    {
+      "district": 33,
+      "officialName": "Karin Housley",
+      "registrationNumber": "16964",
+      "officialDistrictRosterHtmlSha256": "7d69c96dd887abafac1f72fc61214f6ad1e2c81a71dc0acc22f8e0b8ac77bbe8",
+      "originalCfBReportsTabApiSha256": "0f7450b2db7e9341fb02bf49ab59e645b35a77962581380792180fb154b208ce"
+    },
+    {
+      "district": 34,
+      "officialName": "John A. Hoffman",
+      "registrationNumber": "17319",
+      "officialDistrictRosterHtmlSha256": "75365f1f474bb8a0d13b58b09d3a9db25da65a77cbd2bb580ac80f8609262e5f",
+      "originalCfBReportsTabApiSha256": "57624e4cfbae293a783a7b24ea95a6b81bfe16b6018464daf794e86c84c16637"
+    },
+    {
+      "district": 35,
+      "officialName": "Jim Abeler",
+      "registrationNumber": "17868",
+      "officialDistrictRosterHtmlSha256": "ca3f422fda3cc34276a9689a981d81674171993cd297626d37dad9a9fc9b2c2a",
+      "originalCfBReportsTabApiSha256": "d687f3b7398b01e09b0d32d9c2102e8ac85398970dce5d0c2eefe1c8d5d1bee1"
+    },
+    {
+      "district": 36,
+      "officialName": "Heather Gustafson",
+      "registrationNumber": "18781",
+      "officialDistrictRosterHtmlSha256": "d36c8501fed9ce6d6d58e16220bf8ea20b3a739532fd9d9f3ac42141e8c3108e",
+      "originalCfBReportsTabApiSha256": "aa16261a586ee6e68b342b4ae8df53108a63eae6213caa3ad34b63a05805247f"
+    }
+  ],
+  "excludedDistrict31": {
+    "district": 31,
+    "originalDistrictRosterSha256": "ea8985bd318f383064bc402103982b364e2747b91e8cf4320fe623c78e1770da",
+    "reason": "single_original_cfb_registration_identity_unresolved",
+    "proofOfNonfiler": false,
+    "notASenator": false
+  },
+  "verifiedReports": {
+    "ledger": "docs/evaluation/source-proof/cfb-2022-served-d25-36-original-ce-pdfs.psv",
+    "ledgerColumns": [
+      "reportId",
+      "realSenatorOfficialName",
+      "2022ElectionDistrict",
+      "original2022PdfPrintedDistrict",
+      "rawPdfBinarySha256",
+      "rawPdfByteCount",
+      "reportCoverageStart",
+      "reportCoverageEnd",
+      "boardReceivedOn",
+      "officialDueOn",
+      "conservativeLegalNotBeforeOn",
+      "sourceRunMetadataCompletedAtUtc"
+    ],
+    "ledgerUtf8Sha256": "263c1b27b425f67332eacdf855e4ae7f7300d111b2330d0a259d239cfea9050c",
+    "ledgerBytes": 4230,
+    "verifiedOriginalReportPdfCount": 22,
+    "verifiedDistinctSenators": 11,
+    "verifiedOriginalPrePrimaryC": 11,
+    "verifiedOriginalPreGeneralE": 11,
+    "differentEarlierPrintedDistrictPdfs": 4,
+    "calendarVerified": true,
+    "sourceFailures": 0,
+    "independentlyVerifiedActualHistoricalPublicBy": 0,
+    "prior2022COrEOriginalPdfVersionsExcluded": 46,
+    "originalAcquisitionTimeIsBoundedByRunObservedAtNotIndividuallyReported": true
+  },
+  "unresolved": {
+    "district31CfbIdentity": "unknown",
+    "statewideRequiredReportDenominator": null,
+    "originalPdfsAllDistrictsComplete": false,
+    "actuallyFiledReportDenominator": null,
+    "originalReportHistoricalPublicBy": null,
+    "sourceToFinancialDatabaseRowsChecked": false,
+    "historicalForecastEligibility": false
+  },
+  "safeguards": {
+    "rawPdfsStored": false,
+    "donorsOrFinancialTransactionContentsStored": false,
+    "neverServedCandidateNamesStored": false,
+    "originalVoteCountsStored": false,
+    "productionDatabaseReadOrWritten": false,
+    "forecastOrSchedulerOrModelChanged": false,
+    "issue864RemainsOpen": true
+  }
+}
