@@ -195,7 +195,25 @@ export async function replayPinned2013And2022OriginalCandidateSources(
  const dir=resolve(out);
  if(existsSync(dir))throw Error('Immutable original dated candidate archive output already exists');
  mkdirSync(dir,{recursive:true,mode:0o700});
- const results=[];
+ const results:Array<{
+   sourceTargetIndex:number;person:string;
+   actuallyServedMNStateSenateIn2021:boolean;
+   originalFirstPartyHistoricalURL:string;
+   actualArchivedCaptureUTC:string;
+   originalIndexedCDXSHA1Base32:string;
+   archivedReplayUrl:string;
+   originalCandidateFullHtmlFile:string|null;
+   originalCandidateFullHtmlSHA256:string|null;
+   originalWholeHtmlMatchesOriginalIndexedSHA1:boolean;
+   personSurnameVerifiedInVisiblePage:boolean;
+   sourceIsFullAuthenticatedOriginalHistoricalIndividualSite:boolean;
+   conservativeSourceCharacter:string;
+   originalFirstAuthorPublicationDateIndependentlyProven:boolean;
+   automaticallyProvenElectionCampaignPolicyQuote:boolean;
+   exactCandidatePolicyExcerptsYetAdded:number;
+   visibleBodyCharacterCount:number;
+   originalResponse:ReturnType<typeof metadata>;
+ }>=[];
  for(const [i,item] of targets.entries()){
   const original=waybackSnapshotUrl(item.timestamp,item.originalUrl);
   const response=await fetchDatedBoundedPublic(original,2_500_000,network);
