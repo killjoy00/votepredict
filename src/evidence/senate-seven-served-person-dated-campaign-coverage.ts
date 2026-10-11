@@ -316,6 +316,8 @@ export function combineSevenActuallyServedDatedCampaignIssueSources(
  if(!feb||!nov||nicole.datedShortCandidateStatements.length!==nicoleResearch.shortIssues.length)
   throw Error('Missing independently recovered original Nicole February/November source receipts');
  for(const row of nicole.datedShortCandidateStatements){
+  if(!row.independentLRLOfficialName)
+   throw Error('Nicole original-source record lacks verified official Senate-service identity');
   const q=nicoleResearch.shortIssues.find(p=>p.id===row.quoteId);
   if(!q||row.exactShortExcerpt!==q.quotedExcerpt
     ||row.originalSourceRetrievedAtUtc!==feb.fetchedUtc
