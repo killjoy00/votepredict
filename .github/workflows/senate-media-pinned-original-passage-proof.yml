@@ -1,0 +1,66 @@
+name: Senate media pinned original HTML passage evidence
+
+# #987/#946. PUBLIC, NO SECRETS. Recheck exact SHA256-pinned 2023/2024
+# Wayback original body hashes recorded by run 38109279186, then inspect
+# visible text only, emit bool metadata; NEVER archive/store raw HTML.
+on:
+  workflow_dispatch:
+  issue_comment:
+    types: [created]
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-pinned-original-passage-proof.yml
+      - src/evidence/senate-media-pinned-public-passage-audit.ts
+      - scripts/audit-senate-media-pinned-original-passages-public.ts
+      - tests/senate-media-pinned-public-passage-audit.test.ts
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-pinned-original-passage-proof
+  cancel-in-progress: false
+
+jobs:
+  verify-pinned-original-versions:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (
+          github.event_name == 'workflow_dispatch' &&
+          github.ref == 'refs/heads/main'
+        ) ||
+        (
+          github.event_name == 'issue_comment' &&
+          github.event.issue.number == 987 &&
+          github.event.comment.user.login == 'killjoy00' &&
+          github.event.comment.body == '[senate-media-original-passages]'
+        ) ||
+        (
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'audit/media-2021-25-private-proof-reconciliation-coverage'
+        )
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Recheck three exact 2023-24 archive body SHA and visible short excerpt flags
+        run: |
+          node --import tsx scripts/audit-senate-media-pinned-original-passages-public.ts \
+            --output artifacts/senate-media-pinned-original-passages.json
+      - name: Publish only Boolean source-observation metadata for seven days
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-pinned-original-visible-passages
+          path: artifacts/senate-media-pinned-original-passages.json
+          if-no-files-found: error
+          retention-days: 7
