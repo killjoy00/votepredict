@@ -121,7 +121,7 @@ async function main(){
     while(next<chosen.selectedSenators.length){
       const item=chosen.selectedSenators[next++]!;
       const related=chosen.targets.filter(t=>t.reg===item.registrationNumber);
-      let snap;
+      let snap:Awaited<ReturnType<typeof fetchCfbCandidateHistoricalReportReferenceSnapshot>>|undefined;
       try{
         snap=await fetchCfbCandidateHistoricalReportReferenceSnapshot(item.registrationNumber,2022);
         if(snap.responseSha256!==item.originalViewerApiSha256
