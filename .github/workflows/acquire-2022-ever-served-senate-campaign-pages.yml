@@ -1,0 +1,64 @@
+name: Acquire dated 2022 historical campaign pages only for verified former/current senators
+
+# Fixed five campaign URLs. A new internal review PR runs once; no issue-comment
+# trigger, cron, Vercel/Neon access, source ingestion or model modifications.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/acquire-2022-ever-served-senate-campaign-pages.yml
+      - scripts/acquire-senate-2022-ever-served-campaign-originals.ts
+      - scripts/run-senate-2022-ever-served-campaign-originals.ts
+      - data/evaluation/senate-2022-ever-served-campaign-archive-public-targets-v1.json
+      - tests/senate-2022-ever-served-campaign-archive-acquisition.test.ts
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  original-2022-senator-only:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-ever-served-2022-original-campaign-archive-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Retrieve separately authenticated official Senate-service original bytes from prior successful run
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: artifacts/independent-mn-senate-lrl
+      - name: Verify actual served Senate identity, then acquire dated original 2022 source pages
+        timeout-minutes: 11
+        shell: bash
+        run: |
+          set -euo pipefail
+          original="$(find artifacts/independent-mn-senate-lrl -type f -name 'mn-lrl-official-senate-service-directory.html' -print -quit)"
+          metadata="$(find artifacts/independent-mn-senate-lrl -type f -name 'mn-lrl-official-senate-service-directory-audit.json' -print -quit)"
+          test -n "$original"
+          test -n "$metadata"
+          test "$(dirname "$original")" = "$(dirname "$metadata")"
+          node --import tsx scripts/run-senate-2022-ever-served-campaign-originals.ts \
+            --lrl-original "$original" \
+            --lrl-metadata "$metadata" \
+            --output-dir artifacts/senate-2022-actual-served-member-original-campaign-sources
+      - name: Retain exact original indexed/source bytes with real UTC observations
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-2022-verified-senators-original-campaign-archive-v1
+          path: artifacts/senate-2022-actual-served-member-original-campaign-sources/
+          if-no-files-found: warn
+          retention-days: 30
