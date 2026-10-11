@@ -53,7 +53,7 @@ type PublicLead = {
   currentPageContainsSpeakerLabeledTranscript?:boolean;
   currentPageHostSpeakerLabel?:string;
   currentPageSenatorSpeakerLabel?:string;
-  currentPageDirectSpeechShortResearchExcerpt?:string;
+  currentPageDirectSpeechShortResearchExcerpt?:string|null;
   archivedTranscriptByteEqualityAndAvailabilityVerified?:boolean;
   historicalAudioBytesAndAvailabilityVerified?:boolean;
   originalSpeakerAudioComparedToTranscript?:boolean;
@@ -64,7 +64,6 @@ type PublicLead = {
   currentPublisherClockTimezoneVerified?:boolean;
   firstPartyAudioInterviewPublisherDescriptionVerified?:boolean;
   currentTextAndSpeakerProofKind?:string;
-  currentPageDirectSpeechShortResearchExcerpt?:string|null;
   originalSpeakerAudioAndCurrentTranscriptMatched?:boolean;
   originalHistoricalAudioAndTranscriptAvailabilityVerified?:boolean;
   archivedPublisherVersionAndDateProofVerified?:boolean;
