@@ -70,7 +70,7 @@ export function probeOriginalApril12ThreeRule1210Amendments(text:string){
   row.motionNormalizedOffset=pos;
   const nextMotion=matches.find(x=>x.index!==undefined&&x.index>pos)?.index??flat.length;
   const after=flat.slice(pos+m[0].length,Math.min(pos+m[0].length+1250,nextMotion));
-  const pattern=/^\s*There\s+were\s+yeas\s+(\d+)\s+and\s+nays\s+(\d+),\s+as\s+follows:\s*Those\s+who\s+voted\s+in\s+the\s+affirmative\s+were:\s*Senators?\s+([A-Za-z ,.'-]+?)\.\s*Those\s+who\s+voted\s+in\s+the\s+negative\s+were:\s*Senators?\s+([A-Za-z ,.'-]+?)\.\s*The\s+amendment\s+was\s+not\s+adopted\./i;
+  const pattern=/^\s*There\s+were\s+yeas\s+(\d+)\s+and\s+nays\s+(\d+),\s+as\s+follows:\s*Those\s+who\s+voted\s+in\s+the\s+affirmative\s+were:\s*Senators?\s+([\p{L}\p{M} ,.'-]+?)\.\s*Those\s+who\s+voted\s+in\s+the\s+negative\s+were:\s*Senators?\s+([\p{L}\p{M} ,.'-]+?)\.\s*The\s+amendment\s+was\s+not\s+adopted\./iu;
   const result=after.match(pattern);
   if(!result){
    problems.push('Exact named adjacent two-side amendment result missing for '+s.bill+' #'+s.ordinal);
