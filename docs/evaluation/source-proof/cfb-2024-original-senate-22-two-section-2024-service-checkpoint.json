@@ -53,6 +53,20 @@
       "verifiedMapSeatCaptionMatches": 22,
       "sourceIdentityConflicts": 0,
       "sourceHolds": 0
+    },
+    {
+      "runId": 38172313564,
+      "artifactId": 11714341886,
+      "headAtRun": "3e1f6e24e0e6e17f62aa8a2c1be41e2cf0013c82",
+      "result": "success",
+      "artifactZipSha256": "0b42abd3622f30863833a61f7bb39545adc300765fcb5484cf09135bbe732d81",
+      "artifactZipBytes": 2057,
+      "artifactJSONSha256": "be8e7d93102e6498c1540f0fe0e7d055e2296295998d5bd3a61cf99bc8742ecc",
+      "artifactJSONBytes": 11225,
+      "verifiedRosterTableMemberMatches": 22,
+      "verifiedMapSeatCaptionMatches": 22,
+      "sourceIdentityConflicts": 0,
+      "sourceHolds": 0
     }
   ],
   "rejectedExploratoryParserRuns": [
@@ -81,5 +95,13 @@
     "noProductionDatabaseReadWrite": true,
     "noModelForecastServingSchedulerOr2027Changes": true,
     "keepIssue864Open": true
+  },
+  "crossIndependentOriginalPdfRunConfirmation": {
+    "identicalPdfSHA256AndBytes": true,
+    "all22TableMatchesIdentical": true,
+    "all22SeatMapMatchesIdentical": true,
+    "noSourceConflictOrMissingPersonBothRuns": true,
+    "noSourceTerminationsOrLegallyOwedDutyEstablished": true,
+    "noHistoricalCFBPublicByProven": true
   }
 }
