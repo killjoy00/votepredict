@@ -96,3 +96,18 @@ test('real-style source PDF breaks affirmative roll at exact Journal p714 21st-d
  assert.throws(()=>inspect(x.replace('21ST DAY','22ND DAY')),
   /exact printed committee 4\/3/);
 });
+
+test('SF910 exact journal p715 continuation survives pdf-parse page delimiting',()=>{
+ const base=fixture();
+ const seam=base.replace(
+  'Those who voted in the affirmative were: Senators FictionalAlpha',
+  'Those who voted in the affirmative were: -- 6 of 52 -- 21ST DAY] MONDAY, MARCH 8, 2021 715 Senators FictionalAlpha'
+ );
+ assert.equal(inspect(seam).sourcePrintedYea,4);
+ for(const bad of [
+  seam.replace('MARCH 8, 2021 715','MARCH 9, 2021 715'),
+  seam.replace('MARCH 8, 2021 715','MARCH 8, 2021 716'),
+  seam.replace('21ST DAY] MONDAY','20TH DAY] MONDAY'),
+  seam.replace('Senators FictionalAlpha','Senators FictionalAlpha and an actual senator')
+ ])assert.throws(()=>inspect(bad));
+});
