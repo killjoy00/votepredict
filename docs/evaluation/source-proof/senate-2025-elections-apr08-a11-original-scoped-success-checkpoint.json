@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "senate-2025-elections-apr08-sf2384-a11-original-scoped-success-checkpoint-v1",
+  "issue": 864,
+  "eventScope": {
+    "year": 2025,
+    "hearingDate": "2025-04-08",
+    "committee": "Elections",
+    "bill": "SF2384",
+    "amendment": "A11"
+  },
+  "source": {
+    "originalAuthority": "Minnesota Legislative Reference Library",
+    "officialMinutesPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/elections/20250408/Elections_20250408_Minutes.pdf",
+    "originalPdfSHA256": "d26c583ef3e5caae1b52d379bf9c6cc784e0e9d39a80c056259f65f83f2e4c46",
+    "originalPdfBytes": 99628,
+    "originalExtractedTextSHA256": "6dc40628432da41be2ac4afe24b8725d5638e069421c4f413445042794411101",
+    "observedRetrievalUtcDate": "2026-10-11",
+    "originalHearingActionAvailableOnConvention": "2025-04-08",
+    "historicalEarliestMinuteLevelAvailabilityIndependentlyProven": false,
+    "noSameDayForecastUseWithoutMotionClock": true
+  },
+  "failedFirstRunPreserved": {
+    "runId": 38148643214,
+    "conclusion": "failure",
+    "originalArtifactId": 11705946102,
+    "zipSha256": "6f1687ad28306512c46e0accf86e188edde6500f733e104077a9335aabebb3bc",
+    "decodedJsonSha256": "8fea4d948469641c28e87104dbe21e245d91b8290bd09c7720a3eb51d746279f",
+    "reason": "A11 unique 10/0/1 printed result absent or duplicated",
+    "fullSeparateFirstFailureCheckpoint": "docs/evaluation/source-proof/senate-2025-elections-apr08-a11-original-first-failure-checkpoint.json"
+  },
+  "successfulScopedSourceRetry": {
+    "sourceRunnerCorrectionPR": 1063,
+    "mergedSourceRunnerCommit": "bc53fd9cac7e4220837732ec909d4c0738bc668b",
+    "originalActionsRunId": 38149288925,
+    "originalActionsConclusion": "success",
+    "originalActionsRunUrl": "https://github.com/killjoy00/votepredict/actions/runs/38149288925",
+    "originalArtifactId": 11706340911,
+    "originalArtifactName": "senate-2025-apr08-original-sf2384-a11-scoped-retry-source",
+    "independentlyDownloadedOriginalZipSHA256": "f24278e9a7f02d05403ed63d87a3796e396d7e6bbc224da402e2d16822993193",
+    "originalZipBytes": 1934,
+    "originalJsonEntryName": "senate-2025-apr08-sf2384-a11-10-0-1-scoped-retry-source.json",
+    "independentlyDownloadedDecodedJsonSHA256": "05f8464659e1d6d45075600d523ccc257f8189621ef093ae42db343887fc14ad",
+    "originalDecodedJsonBytes": 3402,
+    "originalPdfAndTextSHAReverified": true,
+    "originalSourceA11MotionParsed": true,
+    "failedOriginalPdfOrMotionSources": 0
+  },
+  "exactSourceMotion": {
+    "hearingDate": "2025-04-08",
+    "bill": "SF2384",
+    "committee": "Elections",
+    "sourceMotionLabel": "A11 Amendment",
+    "printedMover": "Westlin",
+    "motionIntroOriginalTextOffset": 1286,
+    "printedResultOriginalTextOffset": 1422,
+    "motionSectionEndOriginalTextOffset": 1574,
+    "wholeMeetingTenZeroOneTalliesFound": 2,
+    "tenZeroOneTalliesInExactA11Section": 1,
+    "originalNearbyTextSHA256": "9f56c02abb1cef0e8f4ea171f1ab53d4696c755dd5144eee350a6ed29a0cc433",
+    "originalPreVoteTextSHA256": "c3bb7c91eab1801f61cd3cce7f261dd50b73efc362707a72fe0425e426fe27d8",
+    "originalPrintedYesCount": 10,
+    "originalPrintedNoCount": 0,
+    "originalPrintedAbsentCount": 1,
+    "absentMember": "Lucero",
+    "originalExactlyElevenNamedRosterPartition": true,
+    "sourceResult": "motion prevailed",
+    "otherTenZeroOneTallyNotConflatedWithA11": true
+  },
+  "boundaries": {
+    "originalSameDayAudioVideoIndependentlyAuthenticated": false,
+    "sourceIdentityNotStoredEvidenceParity": true,
+    "certifiedAdditionalStatewideRecordedVoteDenominatorIncrement": false,
+    "namedIndividualsSidesImported": false,
+    "sourceOriginalPdfOrFullTextCommitted": false,
+    "sourceRawMemberYeaNayListsCommitted": false,
+    "absentNeverConvertedToNoOrYes": true,
+    "nearbyA10SeparateMotion": true,
+    "noProductionPrivateDatabaseReadOrWrite": true,
+    "noModelsForecastTrainingServingSchedulerFloorOr2027Change": true,
+    "issue864MustRemainOpen": true
+  }
+}
