@@ -1,0 +1,62 @@
+name: Recover six additional actual Senate-serving people 2020 original campaign websites
+
+# One-shot verified public historical pages, not 2026 live website stances.
+# No secrets, DB, model, forecast, scheduler or public office contact.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/acquire-five-2021-senators-2020-original-campaign-html.yml
+      - data/evaluation/senate-five-2021-senators-2020-historic-campaign-domain-leads-v1.json
+      - scripts/acquire-five-2020-original-campaign-sites-for-2021-senators.ts
+      - scripts/run-five-2020-original-campaign-sites-for-2021-senators.ts
+      - tests/senate-five-2021-serving-2020-original-campaign-sites.test.ts
+      - docs/SENATE_FIVE_2021_SERVING_2020_HISTORIC_ORIGINAL_CAMPAIGN_SITE_RECOVERY.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-2020-archive-five-proven-2021-serving-senators:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-five-more-real-2021-senators-2020-original-campaign-sites-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Obtain original authenticated official Minnesota Senate service directory and UTC/SHA receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: originals/official-senate-directory
+      - name: Rehash entire ACTUAL served-senator LRL original before six candidate campaign archival queries
+        shell: bash
+        timeout-minutes: 19
+        run: |
+          set -euo pipefail
+          original="$(find originals/official-senate-directory -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find originals/official-senate-directory -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$original" && test -n "$receipt"
+          test "$(dirname "$original")" = "$(dirname "$receipt")"
+          node --import tsx scripts/run-five-2020-original-campaign-sites-for-2021-senators.ts \
+            --lrl-directory-html "$original" \
+            --lrl-original-source-receipt "$receipt" \
+            --output-dir originals/five-2021-senators-2020-original-archive
+      - name: Retain dated original archive requests, genuine CDX source indices and hash-reconciled HTML originals
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-five-2021-serving-2020-original-candidate-html-v1
+          path: originals/five-2021-senators-2020-original-archive/
+          if-no-files-found: warn
+          retention-days: 30
