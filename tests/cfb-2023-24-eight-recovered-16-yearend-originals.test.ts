@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {
   selectEightRecoveredSenators16OriginalYearends,
   classifyEightRecovered16OriginalSourceRuns,
@@ -116,4 +117,44 @@ test('Lang 2023 viewer source PDF is an exact source-identity HOLD, not an authe
     ?{...r,sourcePdfByteCount:381618}:r);
   assert.equal(classifyEightRecovered16OriginalSourceRuns(mutated)
     .acceptedFifteenOriginalsOneStrictSourceIdentityHold,false);
+});
+
+test('permanent 16-row ledger preserves independent CFB PDF sha and 15 + 1 source HOLD',()=>{
+ const cp=JSON.parse(readFileSync(P+'cfb-2023-24-eight-more-16-original-pdf-source-checkpoint.json','utf8'));
+ const body=readFileSync(cp.ledger.path,'utf8');
+ const git=createHash('sha1').update('blob '+Buffer.byteLength(body)+'\0')
+   .update(body).digest('hex');
+ assert.equal(git,cp.ledger.gitBlobSha);
+ assert.equal(cp.independentOfficialSourceAcquisitions.length,2);
+ assert.equal(cp.crossRunReconciliation.all16OfficialPdfSha256,true);
+ assert.equal(cp.crossRunReconciliation.all16PdfByteLengths,true);
+ assert.equal(cp.results.authenticDistinctOriginalPdfForms,15);
+ const rows=body.trimEnd().split('\n').map(x=>x.split('|'));
+ assert.equal(rows.length,16);
+ assert.equal(new Set(rows.map(x=>x[0])).size,16);
+ const targetsById=new Map(targets.map(x=>[x.id,x]));
+ let verified=0,holds=0;
+ for(const row of rows){
+   assert.equal(row.length,12);
+   const t=targetsById.get(row[0]!);
+   assert.ok(t);
+   assert.equal(row[1],t.actualSenator);
+   assert.equal(row[2],String(t.district2022));
+   assert.equal(row[3],t.reg);
+   assert.equal(row[4],t.originalViewerApiSha256);
+   assert.match(row[5]!,/^[a-f0-9]{64}$/);
+   assert.ok(Number(row[6])>=300);
+   assert.equal(row[7],t.reportYear+'-01-01');
+   assert.equal(row[8],t.reportYear+'-12-31');
+   if(row[10]==='authentic_pdf_report_first_page'){verified++;assert.equal(row[11],'verified');}
+   else{holds++;assert.equal(row[0],'17994:23:pcc:YE:0:0');
+     assert.equal(row[10],'HOLD_source_pdf_not_authenticated');
+     assert.equal(row[5],cp.sourceHold.originalPdfSourceSha256);
+     assert.equal(Number(row[6]),cp.sourceHold.pdfBytes);
+     assert.equal(row[9],cp.sourceHold.boardReceived);
+   }
+ }
+ assert.equal(verified,15);assert.equal(holds,1);
+ assert.equal(cp.scope.filingsLegallyOwedDenominator,null);
+ assert.equal(cp.safeguards.noProductionDatabaseReadsOrWrites,true);
 });
