@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "cfb-senate-2021-24-396-original-viewer-source-metadata-preservation-v1",
+  "originalArtifact": {
+    "githubRun": "https://github.com/killjoy00/votepredict/actions/runs/38088965276",
+    "artifactId": 11683227803,
+    "originalZipSha256": "5516f3863ae9e5122df923b2d0f7f1fc88b5a5af3ddcb6dba2d3160570844914",
+    "originalJsonSha256": "933f9c55c71da049a4a9af21574f562676e8e930f0cb6be6883e50b5f8901da0",
+    "originalJsonBytes": 562731,
+    "originalSourceAcquiredOn": "2026-10-10",
+    "originalSourceCapturedAt": "2026-10-10T21:52:48.211Z"
+  },
+  "permanentPsv": {
+    "path": "docs/evaluation/source-proof/cfb-2021-24-senate-396-original-viewer-source-observations.psv",
+    "sha256": "6056ce0072adfc6711588fe8d2b4b09694a658e52a249631fbf4e92f65a2a4f9",
+    "bytes": 49059,
+    "observationRecords": 396,
+    "uniqueCandidateRegistrationIds": 275,
+    "observedRefsPcc": 1378,
+    "observedRefsAncillaryAoc": 4,
+    "originalViewerVersions": 941,
+    "amendmentViewerVersions": 437,
+    "byYear": [
+      {
+        "reportYear": 2021,
+        "viewerOriginalVersionReferences": 165,
+        "viewerAmendmentVersionReferences": 70,
+        "allViewerVersionReferences": 235
+      },
+      {
+        "reportYear": 2022,
+        "viewerOriginalVersionReferences": 524,
+        "viewerAmendmentVersionReferences": 247,
+        "allViewerVersionReferences": 771
+      },
+      {
+        "reportYear": 2023,
+        "viewerOriginalVersionReferences": 118,
+        "viewerAmendmentVersionReferences": 51,
+        "allViewerVersionReferences": 169
+      },
+      {
+        "reportYear": 2024,
+        "viewerOriginalVersionReferences": 134,
+        "viewerAmendmentVersionReferences": 69,
+        "allViewerVersionReferences": 203
+      }
+    ]
+  },
+  "scope": {
+    "viewerSegments": [
+      2022,
+      2024
+    ],
+    "reportYears": [
+      2021,
+      2022,
+      2023,
+      2024
+    ],
+    "thisIsA2026ViewerObservationNotHistoricallyProvenCommitteeRegistration": true,
+    "includesSomeRegistrationsOfNonServingCandidates": true,
+    "noIndividualCandidateNamesOrRawFinancialDetailsRetained": true,
+    "neverImputeLegalReportingDenominatorFromViewerSnapshot": true,
+    "noSourcePdfOriginalAuthenticationByThisArtifact": true,
+    "noHistoricalPublicByProven": true,
+    "requiredSenateLegislatorReportDenominator": null,
+    "actualSenateMemberFilerYearDenominator": null,
+    "allStateSenateHistoricalFilingDenominator": null,
+    "historicalPublicByCount": 0
+  },
+  "originalArtifactPreviouslyPreservedOnlyAsSummaryCheckpoint": "docs/evaluation/source-proof/cfb-2021-24-senate-396-source-viewer-count-checkpoint.json",
+  "safeguards": {
+    "noDonorNames": true,
+    "noReportBodies": true,
+    "noProductionAccess": true,
+    "noEligibilityPromotion": true,
+    "noSchedulerOrServingChange": true,
+    "issue864RemainsOpen": true
+  }
+}
