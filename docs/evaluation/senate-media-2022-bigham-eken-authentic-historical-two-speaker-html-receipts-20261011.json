@@ -1,0 +1,91 @@
+{
+  "version": "senate-media-2022-bigham-eken-authentic-historical-two-speaker-html-receipts-v1",
+  "researchDay": "2026-10-11",
+  "sourcePublisher": "Minnesota Senate DFL",
+  "sourceUrl": "https://senatedfl.mn/senators-karla-bigham-and-kent-eken-named-senate-dfl-whips-for-2022-legislative-session/",
+  "displayedPublisherDay": "2022-01-31",
+  "originalSourceUrlLead": "public-2022-bigham-eken-separated",
+  "sourceOriginalShaProofLedger": "docs/evaluation/senate-media-2021-25-broader-25-original-public-archive-receipts-20261011.json",
+  "shortCueLedger": "docs/evaluation/senate-media-2022-bigham-eken-historical-original-speaker-queue.json",
+  "originalPublicRun": {
+    "repository": "killjoy00/votepredict",
+    "workflow": "Senate media 2022 Bigham and Eken exact two speaker originals",
+    "runId": 38160750130,
+    "status": "success",
+    "headSha": "ed3a58f6fc1a42eefec5b1fbe45b2bbb4e31ebdf",
+    "artifactId": 11710795855,
+    "artifactName": "senate-media-bigham-eken-2022-original-phrase-proof",
+    "zippedOriginalArtifactSha256": "ab02b4a4e1907816417f78a13c953992b744d9d9ed9bbc1b3a23fe14c4ddc673",
+    "decodedJsonSha256": "f0356b7fb24218c6c65043a90956d62e1382bf693fb8ffd8d35fcb2db8f25798",
+    "decodedJsonBytes": 4508
+  },
+  "outcome": {
+    "exactPublicPublisherUrlCount": 1,
+    "separatelyLabeledServingSenatorSpeakers": 2,
+    "exactHistoricalOriginalBodyVersionsRequested": 2,
+    "originalHttpRawBodiesMatchingEarlierIndexedSha1AndSha256": 2,
+    "failedOriginalHttpReplays": 0,
+    "shortHistoricalMarkupPhraseChecks": 4,
+    "positivePhrasePresenceCues": 4,
+    "phraseAbsences": 0,
+    "unavailableMarkupCues": 0,
+    "sameHtmlParagraphCorrectNamedSpeakerLabelCues": 4,
+    "originalInterviewAudioIndependentlyCompared": 0,
+    "individualHistoricalSenatorQuotesHumanApproved": 0,
+    "exactOriginalPublisherPostingClockVerified": 0,
+    "actualRecordedMemberVotesVerified": 0
+  },
+  "exactOriginalArchiveResults": [
+    {
+      "captureUtc": "2022-03-11T19:51:03Z",
+      "rawOriginalBodySha256": "026e8becb82577a34cc27388faed93048a6f247991853ba3f60f1a5287268131",
+      "originalBodyByteCount": 154251,
+      "status": "verified_exact_index_sha1_and_raw_sha256",
+      "cues": [
+        {
+          "cueId": "bigham-2022-whip-individual-statement",
+          "speaker": "Karla Bigham",
+          "shortTextObservedInHistoricalHtml": true,
+          "correctSpeakerLabelInSameParagraph": true
+        },
+        {
+          "cueId": "eken-2022-whip-individual-statement",
+          "speaker": "Kent Eken",
+          "shortTextObservedInHistoricalHtml": true,
+          "correctSpeakerLabelInSameParagraph": true
+        }
+      ]
+    },
+    {
+      "captureUtc": "2022-06-29T12:45:13Z",
+      "rawOriginalBodySha256": "7a2621bdbe093c90c594af36124f53203399504758ce48c07eaec168afb9f06b",
+      "originalBodyByteCount": 151424,
+      "status": "verified_exact_index_sha1_and_raw_sha256",
+      "cues": [
+        {
+          "cueId": "bigham-2022-whip-individual-statement",
+          "speaker": "Karla Bigham",
+          "shortTextObservedInHistoricalHtml": true,
+          "correctSpeakerLabelInSameParagraph": true
+        },
+        {
+          "cueId": "eken-2022-whip-individual-statement",
+          "speaker": "Kent Eken",
+          "shortTextObservedInHistoricalHtml": true,
+          "correctSpeakerLabelInSameParagraph": true
+        }
+      ]
+    }
+  ],
+  "provenanceLimits": {
+    "twoSenatorQuoteTurnsAreOnePublisherArticleNotTwo": true,
+    "separateSameParagraphSpeakerLabelsDoNotProveRecordedAudio": true,
+    "firstArchivedMarchDateDoesNotBackdateJanuaryFirstPosting": true,
+    "noQuoteHumanApprovalInThisAutomaticTextStage": true,
+    "noUnattributedOrCrossSpeakerQuotationAssignment": true,
+    "noOriginalRawHtmlOrAudioStored": true,
+    "noSourcePrivateDatabaseOrRecordedVotesUsed": true,
+    "originalSpokenAudioVersionNotCompared": true,
+    "noForecastInputOrLegislatorPositionAutomaticallyInferred": true
+  }
+}
