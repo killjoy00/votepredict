@@ -57,7 +57,7 @@ test('repeated captions within one time bucket are deduplicated, not double-coun
    '<tr data-time="'+(i+1)+'"><td>All those in favor say aye</td></tr>').join('');
  const r=findStrict2025OriginalAutoCaptionMotionCues(text);
  assert.equal(r.originalTimestampAttributeMarkers,10);
- assert.equal(r.cueWindowIsNotAUniqueRecordedMotionOrVote,true);
+ assert.equal(r.noUniqueMotionOrRecordedSenatorVoteCertified,true);
  assert.ok(r.categoryThirtySecondWindowsNotDistinctMotions<=2);
  assert.ok(r.sourceReviewCueTimeWindows.some(x=>x.repeatedSameCategoryNearbyHits>1));
 });
