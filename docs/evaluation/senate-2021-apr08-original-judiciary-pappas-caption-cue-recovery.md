@@ -39,7 +39,7 @@ The strict second run original metadata artifact **#11717011937** was independen
 
 - ZIP **1,640 bytes**, SHA256 `ba016d3ecdf74041aceb5e3a27fbbd4d129d2b84988bcbceeff92a0631153b2e`;
 - `source.json` **4,291 bytes**, SHA256 `1c5a9fb2ed448f2c364984aca29454bb15b674752af7ea14a8d5ad1a038588d9`;
-- 38 timed caption rows mentioning Pappas, 147 containing an amendment word, seven mentioning roll call, and only **three** same-row **Pappas + amendment** cues; **none of those three same rows says “roll call.”**
+- 38 caption rows mentioning Pappas, 147 containing an amendment word, seven mentioning roll call, and only **three** same-row **Pappas + amendment** cues; **none of those three same rows says “roll call.”**
 
 Precise original caption review offsets, retained with each row+13-row-neighborhood **one-way SHA** in [permanent strict second-source proof](source-proof/senate-2021-apr08-judiciary-pappas-strict-second-original-caption-success.json):
 
