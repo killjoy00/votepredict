@@ -46,12 +46,14 @@ async function pdfCalendar(url:string){
   const r=await source(url,'cfb.mn.gov','application/pdf',12_000_000);
   if(Buffer.from(r.bytes.subarray(0,5)).toString('ascii')!=='%PDF-')
     throw Error('Calendar returned no PDF header');
+  // pdf-parse can detach its input ArrayBuffer; snapshot byte length before parsing.
+  const originalPdfBytes=r.bytes.byteLength;
   const {CanvasFactory}=await import('pdf-parse/worker');
   const {PDFParse}=await import('pdf-parse');
   const parser=new PDFParse({data:r.bytes,CanvasFactory});
   try{
     const text=(await parser.getText()).text??'';
-    return {url,sha256:r.sha256,bytes:r.bytes.length,observedAt:r.observedAt,text};
+    return {url,sha256:r.sha256,bytes:originalPdfBytes,observedAt:r.observedAt,text};
   }finally{await parser.destroy();}
 }
 async function main(){
