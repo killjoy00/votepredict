@@ -32,6 +32,8 @@ export function inspectHoffman2023OriginalBoardAction(input:{
  const dates=[...t.matchAll(/\bDated:\s*(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),?\s*(2023)\b/gi)]
   .map(m=>m[1]+' '+m[2]+', '+m[3]);
  if(!dates.length)throw Error('Original CFB action lacks an independently readable 2023 original signed date');
+ if(dates.length!==2||dates.some(d=>d!=='July 6, 2023'))
+  throw Error('Original 2023 CFB Hoffman signed dates do not match the primary Board source');
  return{
   stateAgencyOriginal:true,
   originalOfficialBoardDocumentType:'conciliation_agreement',
