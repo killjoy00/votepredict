@@ -162,7 +162,7 @@ export function selectBroaderPublicLeads(ledger:readonly BroaderLead[],scope:Bro
         ||date.slice(0,4)!==l.id.slice(7,11))
       ||!Array.isArray(l.individuallyNamedSenatorSpeakers)
       ||l.individuallyNamedSenatorSpeakers.length>2
-      ||l.individuallyNamedSenatorSpeakers.some(x=>
+      ||l.individuallyNamedSenatorSpeakers.some((x:{name:string;officialMemberHistoryUrl:string})=>
         typeof x?.name!=='string'||x.name.length<6||
         !/^https:\/\/www\.lrl\.mn\.gov\/legdb\/fulldetail\?ID=\d+$/
           .test(x.officialMemberHistoryUrl))
