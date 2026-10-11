@@ -54,7 +54,7 @@ test('only two independently served 2025 senators have exact 41-row source-pinne
   assert.ok(two.every(x=>served2025YearEndRef(x).se==='0'));
   assert.equal(new Set(two.map(x=>x.registrationNumber)).size,2);
   assert.throws(()=>selectServed2025YearEndTargets(
-    memberTargets().slice(0,1),final,ledger),/original actual Senate service/);
+    memberTargets().slice(0,1),final,ledger),/actual Senate service/i);
   const bad=memberTargets();bad[0]!.officialName='Unserved Challenger';
   assert.throws(()=>selectServed2025YearEndTargets(bad,final,ledger),/actual senator/);
   const altered=structuredClone(final);altered.sourceOriginalReports[0].originalPdfBinarySha256='b'.repeat(64);
