@@ -72,8 +72,8 @@ async function main(){
  writeFileSync(output,JSON.stringify(result,null,2)+'\n');
  console.log(JSON.stringify({
    sourcePdfHashVerified:motion!==null,a11Found:motion!==null,
-   sourcePrintedTally:motion?[motion.originalResultPrintedYeaCount,
-     motion.originalResultPrintedNayCount,motion.originalResultPrintedAbsentCount]:null,
+   sourcePrintedTally:motion?[motion.printedYeaCount,
+     motion.printedNayCount,motion.printedAbsentCount]:null,
    failures:failures.length
  },null,2));
  if(failures.length)process.exitCode=1;
