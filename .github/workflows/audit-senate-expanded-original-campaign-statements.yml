@@ -1,0 +1,109 @@
+name: Verify 59 dated campaign issue statements from 9 archived original page copies
+
+# Offline source-only, SHA/CDX authenticated, PR-limited to known branch.
+# In particular: four publisher-only statements remain 2026-dated, not 2022.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-senate-expanded-original-campaign-statements.yml
+      - data/evaluation/senate-original-campaign-additional-35-statement-excerpts-v1.json
+      - src/evidence/senate-served-2022-25-original-campaign-statement-expansion.ts
+      - scripts/audit-senate-expanded-historical-campaign-statements-offline.ts
+      - tests/senate-original-campaign-expanded-35-statements.test.ts
+      - docs/SENATE_ORIGINAL_CAMPAIGN_ADDITIONAL_35_STATEMENTS.md
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  nine-original-campaign-pages-109-source-span-checks:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-expanded-original-served-senate-campaign-statements-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Obtain independently archived original Minnesota LRL Senate member and special oath HTML
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: artifacts/official-source
+      - name: Obtain two original Oct 2022 Carla Nelson campaign issue page versions
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38098726687
+          name: senate-2022-verified-senators-original-campaign-archive-v1
+          github-token: ${{ github.token }}
+          path: artifacts/2022-carla
+      - name: Obtain two independent Feb and Nov 2022 Nicole Mitchell originals
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38100551887
+          name: senate-2022-verified-served-domain-wide-historical-originals-v1
+          github-token: ${{ github.token }}
+          path: artifacts/2022-nicole
+      - name: Obtain Sep, Oct, Nov 2024 Ann and 2025 Keri/Holmstrom campaign originals
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38086478508
+          name: senate-campaign-public-archive-source-acquisition-v1
+          github-token: ${{ github.token }}
+          path: artifacts/2024-25-platforms
+      - name: Rehash LRL original and all 9 original campaign page bodies; verify 109 short excerpt occurrences
+        shell: bash
+        run: |
+          set -euo pipefail
+          one() {
+            local found
+            found="$(find "$1" -type f -name "$2" -print -quit)"
+            test -n "$found"
+            printf '%s' "$found"
+          }
+          lrl="$(one artifacts/official-source mn-lrl-official-senate-service-directory.html)"
+          metadata="$(one artifacts/official-source mn-lrl-official-senate-service-directory-audit.json)"
+          sworn="$(one artifacts/official-source mn-lrl-official-senate-special-swearing-history.html)"
+          ca="$(one artifacts/2022-carla carla-2022-page-a-wayback-20221006161531.html)"
+          cb="$(one artifacts/2022-carla carla-2022-page-b-wayback-20221006164845.html)"
+          nf="$(one artifacts/2022-nicole mitchell-historical-20220201005554-0.html)"
+          nn="$(one artifacts/2022-nicole mitchell-historical-20221105160301-1.html)"
+          annSep="$(one artifacts/2024-25-platforms wayback-replay-snapshot-01.html)"
+          annOct="$(one artifacts/2024-25-platforms wayback-replay-snapshot-02.html)"
+          annNov="$(one artifacts/2024-25-platforms wayback-replay-snapshot-03.html)"
+          keri="$(one artifacts/2024-25-platforms wayback-replay-snapshot-05.html)"
+          holm="$(one artifacts/2024-25-platforms wayback-replay-snapshot-09.html)"
+          test "$(dirname "$lrl")" = "$(dirname "$metadata")"
+          test "$(dirname "$lrl")" = "$(dirname "$sworn")"
+          node --import tsx scripts/audit-senate-expanded-historical-campaign-statements-offline.ts \
+            --official-lrl-original "$lrl" \
+            --official-lrl-metadata "$metadata" \
+            --official-lrl-swearing "$sworn" \
+            --carla-2022-original-a "$ca" \
+            --carla-2022-original-b "$cb" \
+            --nicole-2022-feb-original "$nf" \
+            --nicole-2022-nov-original "$nn" \
+            --ann-2024-sep-original "$annSep" \
+            --ann-2024-oct-original "$annOct" \
+            --ann-2024-nov-original "$annNov" \
+            --keri-2025-original "$keri" \
+            --holmstrom-2025-original "$holm" \
+            --output artifacts/59-served-senator-campaign-statement-research-only.json
+      - name: Retain auditor-facing dated original source excerpts without production evidence
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-nine-original-pages-59-campaign-excerpts-109-source-checks-v2
+          path: artifacts/59-served-senator-campaign-statement-research-only.json
+          retention-days: 30
+          if-no-files-found: error
