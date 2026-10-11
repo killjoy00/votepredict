@@ -1,0 +1,36 @@
+name: One-time original 2021 Senate Journal Rule12.10 SF2 SF566 SF1457
+
+# #864 source-only public COMMITTEE Rule 12.10 reports. NOT floor votes.
+# Added only once to main to run. No production/database connections.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2021-rule1210-sf2-sf566-sf1457-original.yml
+
+permissions:
+  contents: read
+
+jobs:
+  authenticate-three-2021-original-rule1210-committee-rolls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify exact three official Senate Journal PDF originals and Rule12.10 named committee motion choices
+        run: |
+          node --import tsx scripts/review-senate-2021-rule1210-sf2-sf566-sf1457-original.ts \
+            --output artifacts/senate-2021-rule1210-three/sf2-sf566-sf1457-original-source-proof.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2021-rule1210-three-original-sf2-sf566-sf1457
+          path: artifacts/senate-2021-rule1210-three/sf2-sf566-sf1457-original-source-proof.json
+          retention-days: 30
+          if-no-files-found: error
