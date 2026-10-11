@@ -11,8 +11,10 @@ import {readExactPriorMediaHtmlProof,inspectMediaPageCaptionSurface}
   from '../src/evidence/senate-committee-138-caption-surface.js';
 import {fetchBoundedSenateMediaRecordHtml}
   from '../src/evidence/senate-committee-138-record-html-metadata.js';
-import {findAutoCaptionMotionCueWindows,retrieveVerifiedOfficialCaptionMarkup}
+import {retrieveVerifiedOfficialCaptionMarkup}
   from '../src/evidence/senate-committee-caption-motion-cues.js';
+import {findStrict2025OriginalAutoCaptionMotionCues}
+  from '../src/evidence/senate-committee-caption-motion-cues-v2.js';
 import {ORIGINAL_2024_CAPTION_PROOF,sourcePinned2024CaptionRecords}
   from '../src/evidence/senate-committee-2024-caption-motion-source.js';
 
@@ -57,8 +59,9 @@ async function main(){
       request.endpointUrl,source.mediaUrl,captionProven.captionPayloadSha256s[0]!);
     if(originalCaption.bytes!==captionProven.returnedPayloadBytes)
       throw Error('Original 2024 caption source byte length mismatch');
-    const result=findAutoCaptionMotionCueWindows(originalCaption.html);
-    if(result.timestampMarkers!==captionProven.timedCaptionRowsVisible)
+    // The v2 strict tagged-text parser is year-neutral. Do NOT use the noisy v1 parser.
+    const result=findStrict2025OriginalAutoCaptionMotionCues(originalCaption.html);
+    if(result.originalTimestampAttributeMarkers!==captionProven.timedCaptionRowsVisible)
       throw Error('Original 2024 caption timestamp marker count changed');
     records.push({
       originalYear:2024,
@@ -87,11 +90,11 @@ async function main(){
    expectedIndexedNoMinutesMediaLeads:41,
    exactOriginalPageAndCaptionBodyShaVerified:records.length,
    originalSourceFailures:failures.length,
-   totalCaptionTimestampMarkers:records.reduce((n,r)=>n+Number(r.timestampMarkers),0),
-   pagesWithProceduralCueWindows:records.filter(r=>Number(r.totalDistinctThirtySecondCategoryCueWindows)>0).length,
+   totalCaptionTimestampMarkers:records.reduce((n,r)=>n+Number(r.originalTimestampAttributeMarkers),0),
+   pagesWithProceduralCueWindows:records.filter(r=>Number(r.categoryThirtySecondWindowsNotDistinctMotions)>0).length,
    totalCueCategoryThirtySecondWindows:records.reduce((n,r)=>n+Number(r.totalDistinctThirtySecondCategoryCueWindows),0),
-   preservedUnverifiedReviewWindows:records.reduce((n,r)=>n+(r.candidateCueWindows as unknown[]).length,0),
-   overflowNotIncludedInReviewWindows:records.reduce((n,r)=>n+Number(r.additionalCueWindowsNotPreserved),0),
+   preservedUnverifiedReviewWindows:records.reduce((n,r)=>n+(r.sourceReviewCueTimeWindows as unknown[]).length,0),
+   overflowNotIncludedInReviewWindows:records.reduce((n,r)=>n+Number(r.cueWindowsAboveOutputCap),0),
  };
  const payload={
    schemaVersion:'senate-2024-41-unlinked-original-caption-procedural-motion-cue-review-v1',
@@ -112,7 +115,7 @@ async function main(){
    audioVideoBodiesNotDownloaded:true,
    noRawCaptionBodyCommitted:true,
    noMemberYeaNaySidesExtracted:true,
-   unverifiedPreviewsMayMentionPublicSenatorsWithoutSpeakerProof:true,
+   noAutoCaptionWordsOrSpeakerPreviewsInSourceArtifact:true,
    noDistinctMotionsOrBillStancesCertified:true,
    actualOfficial2021to2025RecordedVoteDenominator:null,
    noPrivateProductionDBReadWrite:true,
