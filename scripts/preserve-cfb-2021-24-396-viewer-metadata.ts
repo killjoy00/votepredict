@@ -12,8 +12,8 @@ import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {resolve,dirname,sep} from 'node:path';
 const ORIGINAL_JSON_SHA='933f9c55c71da049a4a9af21574f562676e8e930f0cb6be6883e50b5f8901da0';
 const ORIGINAL_JSON_BYTES=562731;
-const PSV_SHA='72c4c509c8bd676cd9398cdfce5f18d2328ccc12ea101a7af394c27aba36c156';
-const PSV_BYTES=58960;
+const PSV_SHA='6056ce0072adfc6711588fe8d2b4b09694a658e52a249631fbf4e92f65a2a4f9';
+const PSV_BYTES=49059;
 const ZIP_SHA='5516f3863ae9e5122df923b2d0f7f1fc88b5a5af3ddcb6dba2d3160570844914';
 const ROOT='docs/evaluation/source-proof/';
 const LEDGER=ROOT+'cfb-2021-24-senate-396-original-viewer-source-observations.psv';
@@ -66,14 +66,15 @@ function toLedger(source:unknown){
         throw Error('Invalid report-version identity in original source');
       if(p[2]==='aoc'&&!(p[1]==='22'&&p[3]==='C'&&p[4]==='0'&&p[5]==='0'))
         throw Error('Unexpected ancillary AOC classification');
-      tokens.push(p.slice(1).join('.'));
+      tokens.push(p.slice(1).join(':'));
       reports.push(ref);
     }
-    lines.push([reg,String(segment),date,sourceSha,tokens.join(',')].join('|'));
+    lines.push([String(segment),reg,sourceSha,tokens.join(',')].join('|'));
   }
   lines.sort((a,b)=>{
     const ka=a.split('|'),kb=b.split('|');
     const aa=ka[0]!,bb=kb[0]!,as=ka[1]!,bs=kb[1]!;
+    // Canonical original source hash: segment-year ascending then reg lexical.
     return aa<bb?-1:aa>bb?1:as<bs?-1:as>bs?1:0;
   });
   if(unique.size!==275||seen.size!==396||lines.length!==396||reports.length!==1382)
@@ -92,7 +93,7 @@ function toLedger(source:unknown){
   if(byYear.some((r,i)=>r.viewerOriginalVersionReferences!==expected[i]![0]
     ||r.viewerAmendmentVersionReferences!==expected[i]![1]))
     throw Error('Yearly original/amendment viewer reference counts changed');
-  const result=lines.join('\n')+'\n';
+  const result=lines.join('\n');
   if(Buffer.byteLength(result)!==PSV_BYTES||hash(result)!==PSV_SHA)
     throw Error('Reconstructed 396-record source PSV canonical SHA mismatch');
   return {result,byYear};
@@ -110,7 +111,7 @@ function main(){
   const manifest={
     schemaVersion:'cfb-senate-2021-24-396-original-viewer-source-metadata-preservation-v1',
     originalArtifact:{
-      githubRun:'https://github.com/killjoy00/votepredict/actions/runs/38094600000',
+      githubRun:'https://github.com/killjoy00/votepredict/actions/runs/38088965276',
       artifactId:11683227803,originalZipSha256:ZIP_SHA,
       originalJsonSha256:ORIGINAL_JSON_SHA,originalJsonBytes:ORIGINAL_JSON_BYTES,
       originalSourceAcquiredOn:'2026-10-10',
