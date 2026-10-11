@@ -50,7 +50,7 @@ test('two separate 10/0/1 motion sections remain distinct despite same totals',(
  assert.equal(x.candidateMotionOwnSectionContainsOneMatchingResult,true);
  assert.equal(x.sourcePrintedNamedTenYesZeroNoOneAbsentRosterExact,true);
  assert.equal(x.printedAbsentIndividualOnlyWhenExactlyValidated,'Kilo');
- assert.deepEqual(Object.values(x.sourceSideIdentitySHA256OnlyWhenExactlyValidated)
+ assert.deepEqual(Object.values(x.sourceSideIdentitySHA256OnlyWhenExactlyValidated??{})
   .map(a=>a.length),[10,0,1]);
  assert.ok(!x.candidateMotionWordingForHumanReview?.includes('Ayes:'));
  assert.equal(x.sourceCandidateWorthSeparateMotionReview,true);
