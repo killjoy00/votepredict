@@ -140,7 +140,7 @@ export function combineOnlyActualSenatorsDated2022to2025CampaignSources(
 function allSenatorQuotes(rows:Array<{sourceStatements:Array<{
  quoteId:string;senatorName:string;sourceClass:string;
  conservativeResearchDate:string;originalHtmlSourceRetrievedOn:string;
- admittedEvidenceRecordId:null;eligibleForAutomaticForecast:false;
+ admittedEvidenceRecordId:null;eligibleForAutomaticForecast:boolean;
 }>}>){
  return rows.flatMap(r=>r.sourceStatements);
 }
