@@ -1,0 +1,34 @@
+name: Original 2023-24 CFB annual calendar and public-release statute proof
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2023-24-original-yearend-legal-calendar-sources.yml
+      - src/evidence/cfb-2023-24-yearend-statutory-thresholds.ts
+      - scripts/audit-cfb-2023-24-original-annual-filing-calendars.ts
+      - tests/cfb-2023-24-yearend-statutory-thresholds.test.ts
+      - tests/cfb-2023-24-original-legal-source-checkpoint.test.ts
+      - docs/evaluation/source-proof/cfb-2023-24-original-board-yearend-calendar-and-revisor-release-checkpoint.json
+      - docs/evaluation/cfb-2023-24-primary-yearend-law-calendar-disclosure-clock-audit.md
+permissions:
+  contents: read
+jobs:
+  cfb-original-calendars-and-revisor-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/cfb-2023-24-yearend-statutory-thresholds.test.ts tests/cfb-2023-24-original-legal-source-checkpoint.test.ts
+      - run: node --import tsx scripts/audit-cfb-2023-24-original-annual-filing-calendars.ts --output artifacts/cfb-2023-24-official-annual-calendars-and-statutes.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2023-24-primary-board-yearend-calendar-and-statute-metadata
+          path: artifacts/cfb-2023-24-official-annual-calendars-and-statutes.json
+          if-no-files-found: warn
+          retention-days: 30

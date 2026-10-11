@@ -1,0 +1,145 @@
+{
+  "schemaVersion": "cfb-2023-24-five-primary-original-yearend-calendars-and-10A-reporting-law-source-v1",
+  "issue": 864,
+  "investigatedOn": "2026-10-11",
+  "coverageScope": {
+    "actual2022ServingSenatorsInPriorSourceCohort": 22,
+    "financeReportYears": [
+      2023,
+      2024
+    ],
+    "committeeSpecificStatutoryFilingObligationDenominator": null,
+    "historicalActualPublicByCount": 0,
+    "actualServiceIn2023Or2024NotInferred": true
+  },
+  "officialPrimarySources": [
+    {
+      "role": "2023_reporting_calendar",
+      "url": "https://cfb.mn.gov/pdf/calendars/2023_general_disclosure_calendar.pdf",
+      "sourceSha256": "1ecdc61c956baca0d9cae9c3c45e0a79df29e2e0906ec99fc5dc72fed7204e10",
+      "bytes": 38871,
+      "media": "pdf",
+      "findings": [
+        "2023 year-end due January 31, 2024",
+        "covered January 1 to December 31, 2023"
+      ]
+    },
+    {
+      "role": "2024_reporting_calendar",
+      "url": "https://cfb.mn.gov/pdf/calendars/2025_general_diclosure_calendar.pdf",
+      "sourceSha256": "4c944f22cc377096020e9d3b9d7cf63c37566e9893e329aa27dac1c53fd2a671",
+      "bytes": 104425,
+      "media": "pdf",
+      "findings": [
+        "2024 year-end due January 31, 2025",
+        "covered January 1 to December 31, 2024"
+      ]
+    },
+    {
+      "role": "2023_MN_10A20",
+      "url": "https://www.revisor.mn.gov/statutes/2023/cite/10A.20",
+      "sourceSha256": "c25ea580f7a2132d650df412a3a5517f8daa0cd2dad62b9a9857121960f7f2f0",
+      "bytes": 107443,
+      "media": "html",
+      "findings": [
+        "subd. 1 continues filing until committee termination",
+        "subd. 1b nonpublic until 8am next day after due",
+        "subd. 2 January 31 annual reports"
+      ]
+    },
+    {
+      "role": "2024_MN_10A20",
+      "url": "https://www.revisor.mn.gov/statutes/2024/cite/10A.20",
+      "sourceSha256": "1145f280c311319bc542547432a3c398f9b86ecadc664c00354fb292435fc45e",
+      "bytes": 108098,
+      "media": "html",
+      "findings": [
+        "subd. 1 continues filing until committee termination",
+        "subd. 1b nonpublic until 8am next day after due",
+        "subd. 2 January 31 annual reports"
+      ]
+    },
+    {
+      "role": "2024_MN_10A243",
+      "url": "https://www.revisor.mn.gov/statutes/2024/cite/10A.243",
+      "sourceSha256": "6fb14c147782d05aa3e5137f0f4d05c9d55f39756405f6fde88fe9bc86232d91",
+      "bytes": 63690,
+      "media": "html",
+      "findings": [
+        "principal committee termination requires final report and asset disposition",
+        "termination timing must be independently established for any committee duty count"
+      ]
+    }
+  ],
+  "exactStatutoryCalendarDates": [
+    {
+      "reportYear": 2023,
+      "coveredFrom": "2023-01-01",
+      "coveredThrough": "2023-12-31",
+      "ordinaryYearEndDueOn": "2024-01-31",
+      "localNonpublicUntil": "2024-02-01T08:00:00[America/Chicago]",
+      "actualHistoricalPublicationOn": null,
+      "filingLegallyOwedBySpecificCommittee": null
+    },
+    {
+      "reportYear": 2024,
+      "coveredFrom": "2024-01-01",
+      "coveredThrough": "2024-12-31",
+      "ordinaryYearEndDueOn": "2025-01-31",
+      "localNonpublicUntil": "2025-02-01T08:00:00[America/Chicago]",
+      "actualHistoricalPublicationOn": null,
+      "filingLegallyOwedBySpecificCommittee": null
+    }
+  ],
+  "primarySourceAcquisition": {
+    "initialExploratoryRun": {
+      "runId": 38166021664,
+      "artifactId": 11712580664,
+      "warning": "PDF source hash authentic, but parser detached PDF byte array before size was recorded; 0 was an invalid reported size; superseded by corrected verified run"
+    },
+    "correctedFullMetadataRun": {
+      "runId": 38166140453,
+      "conclusion": "success",
+      "artifactId": 11712870210,
+      "artifactZipBytes": 1698,
+      "artifactZipSha256": "81a61b871d5cf75134481a273a7d30c31bc026019b1d8f57f33eca74df996b7f",
+      "JSONBytes": 5964,
+      "JSONSha256": "58690314ab1320a27bc21b7fb9110451f1a1a35b979f4df0bb4bd009e42e",
+      "allFiveOriginalSourceSHAAndBytesVerified": true,
+      "original2023And2024CalendarYEPeriodAndDueVerified": true,
+      "original2023And2024Statute8amNonpublicAndTerminationVerified": true,
+      "noSourceFetchOrParseHolds": true
+    },
+    "independentFullSourceRecheck": {
+      "runId": 38166579796,
+      "conclusion": "success",
+      "artifactId": 11712831095,
+      "artifactZipBytes": 1699,
+      "artifactZipSha256": "034f87a3be69a1a328c06abd38bcaef54d1189bc579a9150282745933b59fbf6",
+      "JSONBytes": 5964,
+      "JSONSha256": "3bb1a7897bab045ff95745e76cfeb47e726b7d5c19e846887414622bd8e46d59",
+      "allFiveExactOriginalPdfAndStatuteSha256MatchPriorCorrectedRun": true,
+      "allFiveExactSourceByteLengthsMatchPriorCorrectedRun": true,
+      "original2023And2024YearEndCalendarCoverageAndDueDateFlagsMatch": true,
+      "original2023And2024StatuteReleaseAndTerminationPredicatesMatch": true,
+      "noSourceFetchOrParseHolds": true
+    }
+  },
+  "limits": {
+    "reportDueOnIsNotActualFiledOn": true,
+    "BoardReceivedByDateIsNotActualPublicBy": true,
+    "earliestStatutoryReleaseDateIsNotActualOnlinePublicationDate": true,
+    "anyReportReceivedAfterStatutoryReleaseMustNotPrecedeItsActualBoardReceipt": true,
+    "noCompliantFilingDenominatorWithoutHistoricalActiveRegistrationAndTermination": true,
+    "noAutomatedProductionForecastEligibility": true
+  },
+  "safeguards": {
+    "originalSourceOnly": true,
+    "noRawPdfHtmlBodyPersisted": true,
+    "noFinanceTransactionOrDonorData": true,
+    "noNeverServedCandidates": true,
+    "noProductionReadOrWrite": true,
+    "noTrainingForecastSchedulerOr2027Changes": true,
+    "keepIssue864Open": true
+  }
+}
