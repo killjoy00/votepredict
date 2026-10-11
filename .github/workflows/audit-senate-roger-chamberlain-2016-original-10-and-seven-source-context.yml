@@ -49,10 +49,12 @@ jobs:
           set -euo pipefail
           gov="$(find original/full-government -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
           receipt="$(find original/full-government -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
-          test -n "$gov" && test -n "$receipt"
+          swear="$(find original/full-government -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
           node --import tsx scripts/audit-senate-roger-2016-original-10-and-seven-domain-source-context.mjs \
             --entire-original-government-senate-html "$gov" \
             --original-government-utc-sha-audit "$receipt" \
+            --independent-special-swearing-html "$swear" \
             --original-seven-window-site-html-cdx-dir original/seven-historic-site-bodies \
             --output original/2016-chamberlain-and-seven-original-html-cdx-proof.json
       - name: Recheck full independent 95 actual senator and 791 first-party excerpts source coverage with original government service
