@@ -1,0 +1,36 @@
+{
+  "version": "senate-media-rest-2023-exact-historical-quote-fragment-queue-v1",
+  "original25LeadId": "public-2023-rest-tax-reformer",
+  "historicalRawBodyReceiptSource": "docs/evaluation/senate-media-2021-25-broader-25-original-public-archive-receipts-20261011.json",
+  "originalPublisherUrlSource": "docs/evaluation/senate-media-2021-25-public-broader-source-discovery.json",
+  "person": "Ann Rest",
+  "officialMinnesotaSenateService": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10558",
+  "publisher": "Minnesota Reformer",
+  "reporter": "Michelle Griffith",
+  "displayedArticleDate": "2023-04-26",
+  "cues": [
+    {
+      "id": "rest-2023-individual-tax-promise",
+      "fragment": "There are no new tax increases on any individual",
+      "attributionLabel": "Ann Rest",
+      "currentPublisherAttributionType": "reporter_directly_quotes_senator",
+      "actualMemberRollCallRecordedByThisClaim": false
+    },
+    {
+      "id": "rest-2023-anticipated-34-votes",
+      "fragment": "We will have 34 DFL votes for this bill",
+      "attributionLabel": "Ann Rest",
+      "currentPublisherAttributionType": "reporter_directly_quotes_senator",
+      "actualMemberRollCallRecordedByThisClaim": false
+    }
+  ],
+  "targetExactPriorOriginalCaptures": [
+    "2023-04-27T00:52:03Z",
+    "2023-12-03T13:07:09Z"
+  ],
+  "noOriginalAudioAuthenticated": true,
+  "archivedPageWordingNotHumanApprovedAsOriginalSpeakerRecording": true,
+  "noFirstPublisherPostClockProven": true,
+  "noPrivateSourceOrRecordedVoteCompared": true,
+  "collectiveStatementsOrContextualSenatorsNeverAssignedThisQuote": true
+}
