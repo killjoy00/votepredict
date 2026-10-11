@@ -7,7 +7,7 @@ import {OFFICIAL_MN_SENATE_SERVICE_DIRECTORY_URL,
   OFFICIAL_MN_SENATE_SWEARING_HISTORY_URL}
   from '../src/evidence/senate-official-ever-served-directory.js';
 import {SERVED_2025_YE_CALENDAR,SERVED_2025_YE_CALENDAR_SHA}
-  from '../src/evidence/cfb-2025-served-two-ordinary-year-end-originals.js';
+  from '../src/evidence/cfb-2025-two-served-senators-special-yearend-conditional-duty.js';
 import {
   audit2025SpecialConditionalYearEndDuties,
   verifyOriginalSpecialCalendarConditional,verifyOriginal2025GeneralCalendar,
