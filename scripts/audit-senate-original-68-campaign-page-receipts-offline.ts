@@ -141,30 +141,36 @@ export function auditPinned68SenateOriginalCampaignPageReceipts(args:{
   if(senator.status!=='verified_senate_service'
     ||senator.serviceForThisElectionFollowingYearVerified!==true)
    throw Error('Original archived page person lacks independent actual Minnesota Senate service proof');
-  const sources=p.electionYear===2022?args.original2022.candidates:args.original2020.actualSenateCandidateDomains;
-  const source=sources?.find((r)=>
-   ('candidate' in r?r.candidate:r.candidateIdentity2020Lead)===p.senator);
-  if(!source||('originalGovernmentServiceHtmlSha256' in source
-     ?source.originalGovernmentServiceHtmlSha256
-     :source.originalOfficialSenateDirectoryHtmlSha256)!==gov.originalLRLDirectorySha256)
-   throw Error('Original archived source record assigned to wrong independently served Senator');
-  const expected=p.electionYear===2022?
-   ('archivedOriginalPageChecks' in source?source.archivedOriginalPageChecks:[])?.find(x=>
-     x.originalPageFile===p.sourceFile):
-   ('authenticOriginalPageReceipts' in source?source.authenticOriginalPageReceipts:[])?.find(x=>
+  // Keep 2020 and 2022 source schema branches explicit: 2020 and 2022
+  // original acquisition manifests have different field names by design.
+  // A loose structural union must never bypass person/page association.
+  let sourceUrl:string|undefined,captured:string|undefined;
+  let sourceSha:string|undefined,cdx:string|undefined,matched:boolean|undefined;
+  if(p.electionYear===2022){
+   const candidate=args.original2022.candidates?.find(x=>x.candidate===p.senator);
+   if(!candidate||candidate.originalGovernmentServiceHtmlSha256!==gov.originalLRLDirectorySha256)
+    throw Error('Original 2022 campaign source assigned to wrong independently served senator');
+   const page=candidate.archivedOriginalPageChecks?.find(x=>x.originalPageFile===p.sourceFile);
+   if(!page)throw Error('Original 2022 campaign page missing from original acquisition manifest');
+   sourceUrl=page.originalUrl;
+   captured=page.historicalArchiveCaptureUtc;
+   sourceSha=page.originalBodySha256;
+   cdx=page.independentlyObtainedOriginalCDXSha1Base32;
+   matched=page.originalHtmlExactlyMatchesHistoricalCDXDigest;
+  }else{
+   const candidate=args.original2020.actualSenateCandidateDomains?.find(x=>
+     x.candidateIdentity2020Lead===p.senator);
+   if(!candidate||candidate.originalOfficialSenateDirectoryHtmlSha256!==gov.originalLRLDirectorySha256)
+    throw Error('Original 2020 campaign source assigned to wrong independently served senator');
+   const page=candidate.authenticOriginalPageReceipts?.find(x=>
      x.originalFullHtmlSourceFile===p.sourceFile);
-  if(!expected)throw Error('Original campaign page file not in correct original acquisition manifest');
-  const sourceUrl='originalUrl' in expected?expected.originalUrl:expected.originalWebsiteUrl;
-  const captured='historicalArchiveCaptureUtc' in expected?
-    expected.historicalArchiveCaptureUtc:expected.firstAttestedArchiveCaptureAtUtc;
-  const sourceSha='originalBodySha256' in expected?
-    expected.originalBodySha256:expected.originalFullHtmlSha256;
-  const cdx='independentlyObtainedOriginalCDXSha1Base32' in expected?
-    expected.independentlyObtainedOriginalCDXSha1Base32:
-    expected.independentlyIndexedHistoricalOriginalSha1Base32;
-  const matched='originalHtmlExactlyMatchesHistoricalCDXDigest' in expected?
-    expected.originalHtmlExactlyMatchesHistoricalCDXDigest:
-    expected.actualRetrievedOriginalHtmlMatchesIndependentHistoricalCdxDigest;
+   if(!page)throw Error('Original 2020 campaign page missing from original acquisition manifest');
+   sourceUrl=page.originalWebsiteUrl;
+   captured=page.firstAttestedArchiveCaptureAtUtc;
+   sourceSha=page.originalFullHtmlSha256;
+   cdx=page.independentlyIndexedHistoricalOriginalSha1Base32;
+   matched=page.actualRetrievedOriginalHtmlMatchesIndependentHistoricalCdxDigest;
+  }
   if(sourceUrl!==p.originalUrl||captured!==p.historicalCaptureAtUtc
     ||sourceSha!==p.originalHtmlSha256
     ||cdx!==p.independentHistoricalCdxPayloadSha1Base32
