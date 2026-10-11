@@ -1,0 +1,76 @@
+name: Senate media first-person remarks public exact Wayback proof
+
+# #987/#946. PUBLIC original archive acquisition, no private database, no
+# credentials, no model, forecast, ingestion, article text or audio artifact.
+on:
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: "Pilot six curated public URLs or all eighteen"
+        type: choice
+        required: true
+        default: pilot
+        options: [pilot, all]
+      replay_count:
+        description: "At most this many exact indexed original replays per URL"
+        type: choice
+        required: true
+        default: "1"
+        options: ["0", "1", "2"]
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-new-public-remarks-wayback.yml
+      - src/evidence/senate-media-new-public-remarks-wayback.ts
+      - scripts/probe-senate-media-new-public-remarks-wayback.ts
+      - tests/senate-media-new-public-remarks-wayback.test.ts
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-new-public-remarks-wayback
+  cancel-in-progress: false
+
+jobs:
+  public-original-research:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (
+          github.event_name == 'workflow_dispatch' &&
+          github.ref == 'refs/heads/main'
+        ) ||
+        (
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-2021-25-new-remarks-wayback-20261011'
+        )
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Probe only the 18 selected PUBLIC remark URLs, preserve no originals
+        env:
+          PROBE_SCOPE: ${{ github.event_name == 'pull_request' && 'all' || inputs.scope }}
+          PROBE_REPLAY_COUNT: ${{ github.event_name == 'pull_request' && '2' || inputs.replay_count }}
+        run: |
+          node --import tsx scripts/probe-senate-media-new-public-remarks-wayback.ts \
+            --scope "$PROBE_SCOPE" \
+            --replay-count "$PROBE_REPLAY_COUNT" \
+            --output artifacts/senate-media-new-remarks-public-wayback.json
+      - name: Save metadata only with seven-day artifact retention
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-new-remarks-public-wayback
+          path: artifacts/senate-media-new-remarks-public-wayback.json
+          if-no-files-found: error
+          retention-days: 7
