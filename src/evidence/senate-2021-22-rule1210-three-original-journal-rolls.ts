@@ -82,7 +82,7 @@ function inspect(key:ThreeRule1210Target,text:string,override?:{yea:string;nay:s
  const remaining=flat.slice(pos+m[0].length,pos+m[0].length+1100);
  // The SF9 named vote spans Senate Journal pages 156–157, unlike a whole-bill vote.
  const seam=key==='sf9ss1'
-   ? '(?:156\\s*JOURNAL\\s+OF\\s+THE\\s+SENATE\\s*\\[?\\s*7TH\\s+DAY\\s*\\]?\\s*)?'
+   ? '(?:(?:156\\s*JOURNAL\\s+OF\\s+THE\\s+SENATE\\s*\\[?\\s*7TH\\s+DAY\\s*\\]?|\\[\\s*7TH\\s+DAY\\s+JOURNAL\\s+OF\\s+THE\\s+SENATE\\s+156)\\s*)?'
    : '';
  const outcome=key==='sf9ss1' ? 'amendment\\s+was\\s+adopted' : 'motion\\s+prevailed';
  const re=new RegExp(
