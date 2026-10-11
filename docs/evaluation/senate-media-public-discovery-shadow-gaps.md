@@ -1,36 +1,34 @@
-# #946 — offline public media URL coverage shadow audit (2021–2025)
+# #946 — offline public URL discovery shadow audit (2021–2025)
 
-**Scope:** compare the *existing* 44 publisher seed URL prefixes and actual topical path-selection rules against public 2021–2025 Senate news research leads. **No changes to production collector, Neon, archives or forecasts.**
+**Scope:** apply the existing publisher seed-prefix and topical path-priority gates to the **selected 22 public URL leads** (including **two candidate alias pairs**) dated by current publisher labels across five years. No Neon, archive retrieval, production collector, or forecast changes.
 
-## Reproduce locally, no credentials or Internet connection
+## Reproduce with no credentials or Internet access
 
-Run from the VotePredict repository root:
+From the repository root:
 
 ```bash
 node --import tsx scripts/report-senate-media-public-discovery-gaps.ts
 ```
 
-The command reads the existing 14-lead [`senate-media-public-article-discovery-2021-25.json`](senate-media-public-article-discovery-2021-25.json) fixture and runs `diagnoseMediaPublicDiscoveryPaths`. It checks two *sequential* collector gates: (1) whether the public original URL begins with the **configured** Wayback seed prefix; and (2) whether the same URL survives the collector's **actual topical path-priority filter**. It produces aggregate counts and lead IDs on stdout. No HTTP GET, source-body parsing, SQL, archive capture, data promotion, output artifact or database write is performed.
+The command uses [`senate-media-public-article-discovery-2021-25.json`](senate-media-public-article-discovery-2021-25.json) and `diagnoseMediaPublicDiscoveryPaths`. It checks two **sequential** collector gates: (1) public original URL begins with that publisher's checked-in Wayback seed prefix; (2) current topical path-priority selection passes. It reports public ID-level observations and possible alias pairs, never a private database match.
 
-Passing the first gate is **not enough**: current archive collection requires both. A public article about Minnesota politics can therefore be excluded even if its live publisher URL is inside the archive seed prefix, when its slug lacks the collector's trigger words. One concrete audit fixture is the [MPR News June 10, 2021 school-choice report](https://www.mprnews.org/story/2021/06/10/gop-wants-private-school-option-walz-dfl-push-back). Its public URL starts with the `mpr-news-story-archive` seed prefix but does not match existing topical URL hints. This is a reproducible path-selection limitation, not proof that VotePredict lacks the article under another URL or collection.
+At the 2026-10-10 research checkpoint:
+- **22** selected public URL leads, **10** outside their configured seed prefix (2021:2; 2022:3; 2023:2; 2024:1; 2025:2).
+- **Two** same-host, same-day, same-slug `/briefs/`–dated path **alias candidates**, not two authenticated duplicate articles: [2022-03-22 public-safety plan](https://minnesotareformer.com/briefs/senate-dfl-outlines-500-million-public-safety-plan/) versus [dated link](https://minnesotareformer.com/2022/03/22/senate-dfl-outlines-500-million-public-safety-plan/), and [2025-05-01 road-signs story](https://minnesotareformer.com/briefs/minnesota-republican-senator-no-more-wit-pop-culture-portmanteaus-on-our-road-signs/) versus [dated link](https://minnesotareformer.com/2025/05/01/minnesota-republican-senator-no-more-wit-pop-culture-portmanteaus-on-our-road-signs/).
+- There is an **additional** topical-path gate even for in-prefix URLs: the [June 10, 2021 MPR school-choice story](https://www.mprnews.org/story/2021/06/10/gop-wants-private-school-option-walz-dfl-push-back) is inside MPR's URL prefix but fails the collector's topical path priority. The CLI calculates the **exact** current sample-only gate counts; do not substitute URL exclusions for database missingness.
 
-## Minnesota Reformer /briefs/ and dated-url aliases
+The current `minnesota-reformer-article-archive` prefix is `https://minnesotareformer.com/202`; a `https://minnesotareformer.com/briefs/` URL cannot pass it. Dated aliases may pass that first gate. A current publisher redirect, same slug and displayed day do **not** prove equal **historical Wayback** capture bytes or first-public-by dates, nor that either alias is absent from the private VotePredict export.
 
-The existing `minnesota-reformer-article-archive` prefix starts at `https://minnesotareformer.com/202`; the 14-lead discovery sample includes four 2021/2023 `/briefs/` URLs that cannot satisfy that prefix. Further `/briefs/` Senate-story leads from 2022, 2024 and 2025 are tracked in [#946](https://github.com/killjoy00/votepredict/issues/946) but **not** silently counted in the 14-lead fixture.
+## What is and is not measured
 
-An article can also have a `/briefs/slug/` URL and a `/YYYY/MM/DD/slug/` URL. The helper emits only a **candidate alias pair** when the *same publisher host*, *same displayed publication day* and *exact same final slug* occur in both path forms. It does **not** declare equal archived article bytes, identical underlying article, an archived capture, or a deduplicated source document. Synthetic tests enforce that distinction. Any actual archived equivalence must be verified separately using source URL mapping, original Wayback bytes/digest and independently confirmed capture-time public availability.
-
-## Correct interpretation
-
-| Statistic | What it means | What it does **not** mean |
+| Statistic | Measured meaning | Invalid extrapolation |
 | --- | --- | --- |
-| Outside configured seed prefix | A current public original URL in the research fixture is unreachable by this seed query | An article is absent from all archives or persisted VotePredict records |
-| Excluded by topical URL-path selection | The collector's current `pathPriority` routine drops this URL | The page cannot contain policy content or Senate remarks |
-| Excluded by either gate | URL cannot survive the current two-step collector selection | The article is historically available before a forecast cutoff or is a missed unique story |
-| Candidate alias pair | Same publisher, displayed day and slug across `/briefs/` and dated path | One authenticated original article or a proven duplicate |
+| Outside seed prefix: 10 / 22 sample URLs | Those current URLs fail the current seed prefix | Ten uniquely missed stories, or a 45% publisher/statewide missingness rate |
+| Topical path rejections | Checked-in `pathPriority` excludes those current URL paths | Article unavailable in archive, or no substantive remarks |
+| Two candidate alias pairs | Exact same publisher host, displayed day, and slug across brief and dated URL | Two proven duplicate archived originals or deduction from missing-article count |
+| Displayed publication day | Date currently represented by publisher | Independently known historical first-public-by or a valid forecast cutoff |
+| 2026-10-10 research check | Day the public lead was researched | Date source became available to a 2021–25 model |
 
-**All reported denominators are restricted to the selected public research sample.** Historical publication availability, archive/public-by dates, original SHA fingerprints, senator identity at publication, human named quote verification, full publisher publication counts and statewide completeness remain **unknown**. No quote, stance or model feature is added.
+[Public article discovery ledger](senate-media-public-article-discovery-2021-25.md) supplies the new six research stories (eight URLs), and the independent [Minnesota Legislature time capsule](https://www.lrl.mn.gov/timecapsule/session?lang=en) establishes **Keri Heintzeman's May 6, 2025 oath**, which is later than the displayed April 30 article date. The sample intentionally excludes people who never became Minnesota senators; a later senator is not an incumbent on a pre-service publication date.
 
-### Later controlled follow-up
-
-After separate source availability confirmation, compare potential missed original URLs with the separately authorized private VotePredict source-document export. Deduplicate candidate URLs before any count increase; independently verify a Wayback capture existed before the relevant prediction cutoff; check membership and human reviewer attribution before treating any article text as a senator statement. A production archive seed change requires separate explicit review; this audit alone does not authorize it.
+**Missing: original captured HTTP bytes, matching original SHA-256, historical archive/public-by records, private VotePredict export membership and document identities, reviewed named senator quotations, and any publisher-wide/statewide publication denominator.** Treat every unverified article as a discovery lead; no model stance. Existing protected read-only aggregate (794 in-study contexts) does **not** provide row-level answers. Production collectors and models remain untouched.
