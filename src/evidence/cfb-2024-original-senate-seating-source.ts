@@ -45,15 +45,15 @@ export function inspect2024OriginalSenateSeatingPdf(input:{
  const title=/Seating Arrangement\s+2024/i.test(raw);
  const ix=raw.indexOf('Senate Members');
  const titleIndex=raw.indexOf('Seating Arrangement 2024');
- // ORIGINAL PDF extraction order: the plotted seating map occurs FIRST,
- // with "First Surname\nTown - district\nSeat", and the printed roster is
- // later, as "20Drazkowski, Steve J. (R) ...." with NO space after 20.
- // Search engines' indexed snippets can rearrange the two columns and
- // even conflate Duckworth with Drazkowski. Use actual government PDF text.
- const seating=ix>=0?raw.slice(0,ix):'';
- const table=ix>=0?raw.slice(ix):'';
- const mapSectionVerified=titleIndex>=0&&titleIndex<ix
-   &&/Seat\s+\d+/i.test(seating);
+ // PDF text extraction interleaves the *last eight* seat-map captions
+ // AFTER the "Senate Members" heading but BEFORE the first alphabetic
+ // printed member-table line "35Abeler, Jim (R)...". A heading alone
+ // therefore cannot separate the independent printed chart components.
+ const firstTableRow=raw.search(/(?:^|\n)\s*\d{1,2}\s*[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]{1,65}\((?:R|DFL)\)/m);
+ const validOrder=titleIndex>=0&&ix>titleIndex&&firstTableRow>ix;
+ const seating=validOrder?raw.slice(0,firstTableRow):'';
+ const table=validOrder?raw.slice(firstTableRow):'';
+ const mapSectionVerified=validOrder&&/Seat\s+\d+/i.test(seating);
  const entries=people.map(p=>{
    const words=p.name.trim().split(/\s+/);
    const first=words[0]!,surname=words.at(-1)!;
@@ -86,7 +86,7 @@ export function inspect2024OriginalSenateSeatingPdf(input:{
  });
  const counts={
   original2024SeatingArrangementTitleVerified:title,
-  originalTableSenateMembersSectionLocated:ix>=0,
+  originalTableSenateMembersSectionLocated:validOrder,
   originalMapSectionLocated:mapSectionVerified,
   numberOfReal2022And2023SenatorsCrossChecked:entries.length,
   exactSourceTableMatches:entries.filter(x=>x.published2024RosterExactNameDistrictMatched).length,
