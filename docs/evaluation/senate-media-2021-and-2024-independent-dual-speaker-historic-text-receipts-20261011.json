@@ -1,0 +1,134 @@
+{
+  "version": "senate-media-2021-and-2024-two-reporter-dual-speaker-historical-html-receipts-v1",
+  "reviewedOn": "2026-10-11",
+  "sources": "2 original independent Minnesota Reformer reported articles, four named serving state senator speech candidates",
+  "originalPublisherLeadList": "docs/evaluation/senate-media-2021-25-further-independent-reporting-15-leads.json",
+  "exactPriorOriginalShaProofs": "docs/evaluation/senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json",
+  "shortPhraseQueue": "docs/evaluation/senate-media-2021-2024-independent-reporter-two-dual-speaker-original-phrase-queue.json",
+  "livePublicStudy": {
+    "repository": "killjoy00/votepredict",
+    "runId": 38163650683,
+    "sourceSha": "9e28f59c7d61d4e3fdf39fdfab72d9c587c7f268",
+    "conclusion": "success",
+    "artifactId": 11711650924,
+    "name": "senate-media-two-reporter-original-speaker-cues",
+    "downloadedZipSha256": "d06c4efd7a698a3bf55084ffda2c9cee1d05ceaa174d9becbc49c813ba1338c0",
+    "decodedJsonSha256": "93435d3946c60ce4f8cabfea0503e1af130aa4c21ea897af5533e74447ba8fd5",
+    "decodedJsonBytes": 7966
+  },
+  "counts": {
+    "sourceArticleUrls": 2,
+    "distinctIndividualSenatorSpeechCandidates": 4,
+    "exactOriginalSha1AndRawSha256ReverifiedSourceVersions": 4,
+    "originalHttpBodyFailures": 0,
+    "shortHistoricalHtmlTextChecks": 8,
+    "shortHistoricalHtmlFragmentPresence": 7,
+    "shortHistoricalHtmlFragmentAbsent": 1,
+    "nearNameSpeakerHeuristics": 5,
+    "originalAudioCompared": 0,
+    "fullIndividualQuoteHumanApproved": 0,
+    "initialPublisherPostClockVerified": 0,
+    "actualSenateRecordedMemberVotesVerified": 0
+  },
+  "sourceVersions": [
+    {
+      "leadId": "new-reporter-2021-clean-cars",
+      "captureUtc": "2021-01-22T18:33:37Z",
+      "originalRawSha256": "23bfc97fcd57f13bf410bf0be272526745387e5735f1754f899c8dd55de69066",
+      "phrases": [
+        {
+          "id": "2021-clean-cars-paul-gazelka",
+          "senator": "Paul Gazelka",
+          "shortPhraseInArchivedHtml": true,
+          "namedSpeakerInSameLocalVisibleTextWindow": false
+        },
+        {
+          "id": "2021-clean-cars-susan-kent",
+          "senator": "Susan Kent",
+          "shortPhraseInArchivedHtml": false,
+          "namedSpeakerInSameLocalVisibleTextWindow": false
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2021-clean-cars",
+      "captureUtc": "2021-02-03T17:43:23Z",
+      "originalRawSha256": "6a1b1bf09a306745e6fd10b349b0616ddd6fac8cd54e9e0e1c8ef9db627c0324",
+      "phrases": [
+        {
+          "id": "2021-clean-cars-paul-gazelka",
+          "senator": "Paul Gazelka",
+          "shortPhraseInArchivedHtml": true,
+          "namedSpeakerInSameLocalVisibleTextWindow": false
+        },
+        {
+          "id": "2021-clean-cars-susan-kent",
+          "senator": "Susan Kent",
+          "shortPhraseInArchivedHtml": true,
+          "namedSpeakerInSameLocalVisibleTextWindow": true
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2024-gun-proposals",
+      "captureUtc": "2024-02-21T12:39:14Z",
+      "originalRawSha256": "ad252e1faf91c0318b3e840900a54a183bc069e68dbe8597308178165ae0bc19",
+      "phrases": [
+        {
+          "id": "2024-firearms-john-marty",
+          "senator": "John Marty",
+          "shortPhraseInArchivedHtml": true,
+          "namedSpeakerInSameLocalVisibleTextWindow": true
+        },
+        {
+          "id": "2024-firearms-jen-mcewen",
+          "senator": "Jen McEwen",
+          "shortPhraseInArchivedHtml": true,
+          "namedSpeakerInSameLocalVisibleTextWindow": true
+        }
+      ]
+    },
+    {
+      "leadId": "new-reporter-2024-gun-proposals",
+      "captureUtc": "2024-02-21T17:52:18Z",
+      "originalRawSha256": "ec67f77a95efad7216b0ab7081d27c758e7019fd4c0ab3b719413f3a485a74f0",
+      "phrases": [
+        {
+          "id": "2024-firearms-john-marty",
+          "senator": "John Marty",
+          "shortPhraseInArchivedHtml": true,
+          "namedSpeakerInSameLocalVisibleTextWindow": true
+        },
+        {
+          "id": "2024-firearms-jen-mcewen",
+          "senator": "Jen McEwen",
+          "shortPhraseInArchivedHtml": true,
+          "namedSpeakerInSameLocalVisibleTextWindow": true
+        }
+      ]
+    }
+  ],
+  "specificEarlyVsLaterQuoteDifference": {
+    "article": "new-reporter-2021-clean-cars",
+    "speaker": "Susan Kent",
+    "earlyOriginalVersionUtc": "2021-01-22T18:33:37Z",
+    "laterOriginalVersionUtc": "2021-02-03T17:43:23Z",
+    "currentPageSpecificShortQuoteCueInEarlyOriginal": false,
+    "currentPageSpecificShortQuoteCueInLaterOriginal": true,
+    "cannotInferWhenSpeakerActuallySpoke": true,
+    "cannotInferIfOtherKentQuotesExistedInEarlyVersion": true,
+    "cannotInferReasonTextWasDifferent": true,
+    "laterTextNeverBackdatedToEarlierTimestamp": true
+  },
+  "boundaries": {
+    "GazelkaShortPhrasePresentInBoth2021Archives": true,
+    "MartyAndMcEwenShortPhrasesPresentInBoth2024Archives": true,
+    "namedSpeakerProximityNotHumanFullQuoteApproval": true,
+    "reporterWebPageNotOriginalAudioRecording": true,
+    "printedStatementsOrChamberRemarksNotActualMemberVotes": true,
+    "archiveCaptureNotInitialAuthoringClock": true,
+    "noOriginalArticleHtmlOrAudioSaved": true,
+    "noPrivateSourcesOrForecastDataCompared": true,
+    "noPublisherPopulationCoverageDenominator": true
+  }
+}
