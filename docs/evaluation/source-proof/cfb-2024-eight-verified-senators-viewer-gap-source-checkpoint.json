@@ -58,5 +58,18 @@
     "historicPublicByProofCount": 0,
     "legallyOwedFilingDenominator": null,
     "keepIssue864Open": true
+  },
+  "independentOriginalSourceRecheck": {
+    "runId": 38158590859,
+    "sourceOutcome": "success",
+    "artifactId": 11708887745,
+    "artifactZipBytes": 2094,
+    "artifactZipSha256": "46b7b94879a6f8e3a00cfade91a83ca953b1ca44be29121a63b6d3c754d769b8",
+    "jsonBytes": 10411,
+    "jsonSha256": "60bfabee69f190c704db8be91be9cf74bf47a7f1cd4f36605ef792f4b7b0b7e9",
+    "identitiesIdenticalToFirstIndependentOriginalSourceRun": true,
+    "allEightOriginalCfbApiBodySha256Identical": true,
+    "allTwentySevenExactOriginalViewerReportVersionIdsIdentical": true,
+    "noFetchErrorsOrMalformedVersionIds": true
   }
 }
