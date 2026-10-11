@@ -1,0 +1,405 @@
+{
+  "version": "senate-media-2021-25-public-firsthand-remarks-discovery-v1",
+  "researchObservedOn": "2026-10-11",
+  "scope": "public source pages only; selected non-exhaustive media remarks from caucus publishers, original MPR interviewing, and Enterprise Minnesota, distinct from prior 31-URL Wayback cohort",
+  "studyYears": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "publisherDisplayedDatesAreNotVerifiedFirstPublicationTimes": true,
+  "historicalOriginalCaptureSha256AuthenticatedForTheseNewLeads": false,
+  "noPrivateDatabaseOrSourceDocumentsAccessed": true,
+  "noAutomaticQuoteOrVoteOrForecastPromotion": true,
+  "statewideSenatorYearMediaCoverageDenominatorUnknown": true,
+  "selectedNewPublicSourcePages": [
+    {
+      "id": "caucus-2021-coleman-sexual-assault",
+      "sourceUrl": "https://www.mnsenaterepublicans.com/senator-coleman-pushing-legislation-to-get-justice-for-victims-of-sexual-assault/",
+      "publisher": "Minnesota Senate Republicans",
+      "displayedPublisherDates": [
+        "2021-03-29"
+      ],
+      "topicForResearch": "Criminal sexual conduct statute; direct Coleman quotation, Sen. David Senjem is contextual co-author",
+      "publicPagePresentation": "caucus_release_named_direct_quotation",
+      "individualSenatorSpeaker": "Julia Coleman",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15556",
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": true,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": true,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false,
+      "contextualOnlyNamedSenators": [
+        "David Senjem"
+      ]
+    },
+    {
+      "id": "enterprise-2021-miller-manufacturing-interview",
+      "sourceUrl": "https://www.enterpriseminnesota.org/articles/winter-2021/valuable-legislative-support/",
+      "publisher": "Enterprise Minnesota",
+      "displayedPublisherDates": [
+        "2021-11-08"
+      ],
+      "topicForResearch": "Manufacturing, labor shortages, business regulation; extended speaker-labeled question-and-answer interview",
+      "publicPagePresentation": "original_publisher_qa_speaker_labeled_answers",
+      "individualSenatorSpeaker": "Jeremy Miller",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15335",
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": true,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": true,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false,
+      "originalSpokenAudioIndependentlyCompared": false
+    },
+    {
+      "id": "mpr-2021-miller-hero-pay-interview",
+      "sourceUrl": "https://www.mprnews.org/episode/2021/11/15/minnesota-senate-majority-leader-talks-bipartisan-effort-to-distribute-hero-pay",
+      "publisher": "MPR News",
+      "displayedPublisherDates": [
+        "2021-11-15"
+      ],
+      "topicForResearch": "Original MPR Morning Edition interview with serving Senator Jeremy Miller about frontline hero pay, commissioner confirmation negotiations and public health; reporter directly quotes Miller; separate original from Marty's Nov 16 caucus paraphrase/quotation",
+      "publicPagePresentation": "original_news_publisher_interview_reporter_attributed_quotation",
+      "individualSenatorSpeaker": "Jeremy Miller",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15335",
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": true,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": true,
+      "firstPartyInterviewPageContainsAudioPlayer": true,
+      "originalSpokenAudioIndependentlyCompared": false,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false
+    },
+    {
+      "id": "caucus-2021-marty-malcolm",
+      "sourceUrl": "https://senatedfl.mn/senator-marty-says-republican-attacks-on-health-commissioner-malcolm-are-disingenuous/",
+      "publisher": "Minnesota Senate DFL",
+      "displayedPublisherDates": [
+        "2021-11-16"
+      ],
+      "topicForResearch": "Public-health commissioner and access to lawmakers; Marty direct release plus separately second-hand quoted Jeremy Miller interview",
+      "publicPagePresentation": "caucus_release_named_direct_quotation",
+      "individualSenatorSpeaker": "John Marty",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10403",
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": true,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": true,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false,
+      "secondaryReportedSenatorQuotationNames": [
+        "Jeremy Miller"
+      ],
+      "underlyingMillerNovember15InterviewOriginalPageUrl": "https://www.mprnews.org/episode/2021/11/15/minnesota-senate-majority-leader-talks-bipartisan-effort-to-distribute-hero-pay",
+      "underlyingMillerNovember15InterviewOriginalHistoricalCaptureAuthenticated": false
+    },
+    {
+      "id": "caucus-2022-kunesh-opioid-grants",
+      "sourceUrl": "https://senatedfl.mn/statement-from-senator-mary-kunesh-on-opioid-epidemic-response-advisory-council-announcing-grantees/",
+      "publisher": "Minnesota Senate DFL",
+      "displayedPublisherDates": [
+        "2022-01-11"
+      ],
+      "topicForResearch": "Opioid epidemic response and council grants",
+      "publicPagePresentation": "caucus_release_named_direct_quotation",
+      "individualSenatorSpeaker": "Mary Kunesh",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15466",
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": true,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": true,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false
+    },
+    {
+      "id": "caucus-2022-dahms-session-agenda",
+      "sourceUrl": "https://www.mnsenaterepublicans.com/legislature-reconvenes-for-the-2022-session/",
+      "publisher": "Minnesota Senate Republicans",
+      "displayedPublisherDates": [
+        "2022-02-02"
+      ],
+      "topicForResearch": "2022 legislative agenda and inflation, public safety, COVID-19",
+      "publicPagePresentation": "caucus_release_named_direct_quotation",
+      "individualSenatorSpeaker": "Gary Dahms",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15326",
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": true,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": true,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false,
+      "contextualOnlyNamedSenators": [
+        "David Osmek",
+        "Jeremy Miller"
+      ]
+    },
+    {
+      "id": "caucus-2022-franzen-reproductive-rights",
+      "sourceUrl": "https://senatedfl.mn/senate-dfl-leader-melisa-lopez-franzen-supreme-court-decision-to-overturn-roe-v-wade-is-radical-attack-on-reproductive-freedom/",
+      "publisher": "Minnesota Senate DFL",
+      "displayedPublisherDates": [
+        "2022-06-24"
+      ],
+      "topicForResearch": "Statement responding to June 2022 Roe v. Wade decision",
+      "publicPagePresentation": "caucus_release_named_direct_quotation",
+      "individualSenatorSpeaker": "Melisa López Franzen",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15379",
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": true,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": true,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false
+    },
+    {
+      "id": "caucus-2023-johnson-clean-energy",
+      "sourceUrl": "https://www.mnsenaterepublicans.com/sen-johnson-statement-on-democrats-blackout-bill/",
+      "publisher": "Minnesota Senate Republicans",
+      "displayedPublisherDates": [
+        "2023-02-02"
+      ],
+      "topicForResearch": "Statement on carbon-free electricity legislation",
+      "publicPagePresentation": "caucus_release_named_direct_quotation",
+      "individualSenatorSpeaker": "Mark Johnson",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15485",
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": true,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": true,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false
+    },
+    {
+      "id": "caucus-2023-pratt-february-budget",
+      "sourceUrl": "https://www.mnsenaterepublicans.com/pratt-responds-to-february-forecast-and-17-5-billion-surplus/",
+      "publisher": "Minnesota Senate Republicans",
+      "displayedPublisherDates": [
+        "2023-02-27"
+      ],
+      "topicForResearch": "Budget surplus and proposed tax relief",
+      "publicPagePresentation": "caucus_release_named_direct_quotation",
+      "individualSenatorSpeaker": "Eric Pratt",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15386",
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": true,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": true,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false
+    },
+    {
+      "id": "caucus-2023-boldon-budget",
+      "sourceUrl": "https://senatedfl.mn/assistant-dfl-leader-senator-liz-boldon-statement-on-february-budget-forecast/",
+      "publisher": "Minnesota Senate DFL",
+      "displayedPublisherDates": [
+        "2023-03-02"
+      ],
+      "topicForResearch": "Budget surplus and costs for households",
+      "publicPagePresentation": "caucus_release_named_direct_quotation",
+      "individualSenatorSpeaker": "Liz Boldon",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15545",
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": true,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": true,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false
+    },
+    {
+      "id": "caucus-2023-poci-joint-policing",
+      "sourceUrl": "https://senatedfl.mn/members-of-senate-poci-caucus-minneapolis-consent-decree-on-policing-is-a-step-toward-justice/",
+      "publisher": "Minnesota Senate DFL",
+      "displayedPublisherDates": [
+        "2023-04-04",
+        "2023-04-14"
+      ],
+      "topicForResearch": "Senate POCI Caucus collective statement on Minneapolis policing consent decree; names several senators but does not assign individual words",
+      "publicPagePresentation": "collective_senate_caucus_statement_not_individually_attributable",
+      "individualSenatorSpeaker": null,
+      "officialMemberHistoryUrl": null,
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": false,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": false,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false,
+      "collectiveSenatorNamesListed": [
+        "Mary Kunesh",
+        "Bobby Joe Champion",
+        "Omar Fateh",
+        "Foung Hawj",
+        "Alice Mann",
+        "Erin Maye Quade",
+        "Zaynab Mohamed",
+        "Clare Oumou Verbeten",
+        "Susan Pha",
+        "Tou Xiong"
+      ]
+    },
+    {
+      "id": "caucus-2024-marty-sports-betting",
+      "sourceUrl": "https://senatedfl.mn/senator-john-marty-statement-on-online-sports-betting-legislation/",
+      "publisher": "Minnesota Senate DFL",
+      "displayedPublisherDates": [
+        "2024-01-24",
+        "2024-01-26"
+      ],
+      "topicForResearch": "Online sports betting and problem-gambling concerns",
+      "publicPagePresentation": "caucus_release_named_direct_quotation",
+      "individualSenatorSpeaker": "John Marty",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10403",
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": true,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": true,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false
+    },
+    {
+      "id": "caucus-2024-seeberger-adapted-pe",
+      "sourceUrl": "https://senatedfl.mn/senator-judy-seeberger-ushers-bill-to-streamline-developmental-adapted-physical-education-evaluation/",
+      "publisher": "Minnesota Senate DFL",
+      "displayedPublisherDates": [
+        "2024-03-13"
+      ],
+      "topicForResearch": "Adapted physical education evaluations in schools",
+      "publicPagePresentation": "caucus_release_named_direct_quotation",
+      "individualSenatorSpeaker": "Judy Seeberger",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15584",
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": true,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": true,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false
+    },
+    {
+      "id": "caucus-2024-housley-session-procedure",
+      "sourceUrl": "https://www.mnsenaterepublicans.com/senate-democrats-abandon-minnesotans-in-end-of-session-turmoil-2/",
+      "publisher": "Minnesota Senate Republicans",
+      "displayedPublisherDates": [
+        "2024-05-21"
+      ],
+      "topicForResearch": "End-of-session legislative procedure and floor debate; a public remark, not independently proven actual recorded vote",
+      "publicPagePresentation": "caucus_release_named_direct_quotation",
+      "individualSenatorSpeaker": "Karin Housley",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15382",
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": true,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": true,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false
+    },
+    {
+      "id": "caucus-2025-clark-oath-statement",
+      "sourceUrl": "https://senatedfl.mn/senator-doron-clark-sworn-in-to-minnesota-senate-following-victory-in-senate-district-60-special-election/",
+      "publisher": "Minnesota Senate DFL",
+      "displayedPublisherDates": [
+        "2025-02-03"
+      ],
+      "topicForResearch": "Quoted statement after Feb 3 oath; earlier candidacy is not Senate service",
+      "publicPagePresentation": "caucus_release_named_direct_quotation",
+      "individualSenatorSpeaker": "Doron Clark",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15649",
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": true,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": true,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false,
+      "contextualOnlyNamedSenators": [
+        "Kari Dziedzic"
+      ],
+      "officialTermBegins": "2025-02-03"
+    },
+    {
+      "id": "caucus-2025-pha-justice-statement",
+      "sourceUrl": "https://senatedfl.mn/senator-susan-pha-statement-on-charges-against-justin-eichorn/",
+      "publisher": "Minnesota Senate DFL",
+      "displayedPublisherDates": [
+        "2025-03-20"
+      ],
+      "topicForResearch": "Public statement in response to charges against a different senator; allegations reported by caucus not independently adjudicated here",
+      "publicPagePresentation": "caucus_release_named_direct_quotation",
+      "individualSenatorSpeaker": "Susan Pha",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15583",
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": true,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": true,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false,
+      "contextualOnlyNamedSenators": [
+        "Justin Eichorn"
+      ]
+    },
+    {
+      "id": "caucus-2025-housley-bonding",
+      "sourceUrl": "https://www.mnsenaterepublicans.com/sen-housley-statement-on-senate-dfl-bonding-target/",
+      "publisher": "Minnesota Senate Republicans",
+      "displayedPublisherDates": [
+        "2025-04-03"
+      ],
+      "topicForResearch": "Proposed Senate bonding target and infrastructure priorities",
+      "publicPagePresentation": "caucus_release_named_direct_quotation",
+      "individualSenatorSpeaker": "Karin Housley",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15382",
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": true,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": true,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false
+    },
+    {
+      "id": "caucus-2025-rochester-multi-chamber-joint",
+      "sourceUrl": "https://senatedfl.mn/lawmakers-respond-to-viral-video-of-rochester-woman-attacking-child-with-racial-slurs/",
+      "publisher": "Minnesota Senate DFL",
+      "displayedPublisherDates": [
+        "2025-05-01"
+      ],
+      "topicForResearch": "Joint response by Sen. Liz Boldon and three Minnesota House representatives; do not allocate the jointly attributed passage as Boldon's individual quotation",
+      "publicPagePresentation": "collective_mixed_chambers_statement_not_individually_attributable",
+      "individualSenatorSpeaker": null,
+      "officialMemberHistoryUrl": null,
+      "senateServiceOnDisplayedPublicationDayCorroboratedByOfficialHistory": false,
+      "otherPeopleAreNotAttributedThisSpeakerTurn": true,
+      "currentPublicPageContainsNamedDirectSpeechCandidate": false,
+      "exactHistoricalOriginalCaptureAndBodyHashVerified": false,
+      "initialPublicationTimeOrHistoricalVersionVerified": false,
+      "individualHistoricalSenatorQuotationHumanApproved": false,
+      "recordedLegislativeVoteInferred": false,
+      "collectiveSenatorNamesListed": [
+        "Liz Boldon"
+      ],
+      "collectiveOtherLawmakersListed": [
+        "Andy Smith",
+        "Kim Hicks",
+        "Tina Liebling"
+      ]
+    }
+  ]
+}
