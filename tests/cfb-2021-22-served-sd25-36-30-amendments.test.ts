@@ -140,7 +140,9 @@ function syntheticReconfirmedCohort(){
     return auditActualSenatorAmendmentPdf(t,sample(t,{
       sha:hoffman?pin.binarySha256:hash(t.id),
       bytes:hoffman?pin.byteLength:430005,
-      date:hoffman?'May 28, 2023':'April '+(11+t.amendmentIndex)+', 2023',
+      date:hoffman?'May 28, 2023'
+        :t.id==='17319:22:pcc:YE:0:3'?'July 21, 2023'
+        :'April '+(11+t.amendmentIndex)+', 2023',
     }));
   });
   assert.equal(raw.every(r=>r.status==='amendment_pdf_and_original_identity_authenticated'),true);
@@ -150,7 +152,7 @@ test('30 official viewer indices preserve the pinned Hoffman duplicate as ONE al
   const pin=REVIEWED_HOFFMAN_2022_YE_BINARY_ALIAS;
   const classified=classifySd25to36AmendmentReferences(syntheticReconfirmedCohort());
   const outcome=verifyServedSd25to36AmendmentSourceOutcome(classified);
-  assert.equal(outcome.complete,true);
+  assert.equal(outcome.complete,true,JSON.stringify(outcome.chainViolations));
   assert.equal(outcome.verified,30);
   assert.equal(outcome.sourceVersionReferencesAuthenticated,30);
   assert.equal(outcome.holds,0);
