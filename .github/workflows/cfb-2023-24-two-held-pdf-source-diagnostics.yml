@@ -1,0 +1,31 @@
+name: Two held CFB 2023 original PDF source diagnostics
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2023-24-two-held-pdf-source-diagnostics.yml
+      - src/evidence/cfb-2023-24-held-source-pdf-diagnostics.ts
+      - scripts/audit-cfb-2023-24-two-held-original-source-pdfs.ts
+      - tests/cfb-2023-24-two-held-source-pdf-diagnostics.test.ts
+permissions:
+  contents: read
+jobs:
+  independently-check-two-held-original-source-pdfs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/cfb-2023-24-two-held-source-pdf-diagnostics.test.ts
+      - run: node --import tsx scripts/audit-cfb-2023-24-two-held-original-source-pdfs.ts --output artifacts/cfb-2023-24-two-held-source-diagnostics.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2023-24-two-held-official-get-post-pdf-source-metadata
+          path: artifacts/cfb-2023-24-two-held-source-diagnostics.json
+          if-no-files-found: warn
+          retention-days: 30

@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "cfb-2023-24-two-held-source-pdfs-independent-get-post-validation-checkpoint-v1",
+  "issueNumber": 864,
+  "observedDate": "2026-10-11",
+  "scope": {
+    "originalSourceDocumentCount": 2,
+    "independentlyProvenActuallyServingSenatorsIn2022": 2,
+    "originalSourceVersionRefs": 2,
+    "sourceGetAndPostRoutesChecked": true,
+    "actualPdfFinanceIdentityResolvedCount": 0,
+    "legalFilingObligationDenominator": null,
+    "independentHistoricalPublicByEvidenceCount": 0
+  },
+  "priorSourceAnchors": {
+    "langOriginalHeldSource": "docs/evaluation/source-proof/cfb-2023-24-eight-more-16-original-yearend-pdf-source-ledger.psv",
+    "langOriginalSourceCheckpoint": "docs/evaluation/source-proof/cfb-2023-24-eight-more-16-original-pdf-source-checkpoint.json",
+    "putnamAmendedHeldSource": "docs/evaluation/source-proof/cfb-2023-24-parent-authenticated-16-amendment-pdf-source-ledger.psv",
+    "putnamAmendedSourceCheckpoint": "docs/evaluation/source-proof/cfb-2023-24-parent-authenticated-16-amendment-source-checkpoint.json"
+  },
+  "permanentStructuralMetadataLedger": {
+    "path": "docs/evaluation/source-proof/cfb-2023-24-two-held-original-source-get-post-identity-diagnostics.psv",
+    "rows": 2,
+    "bytes": 632,
+    "gitBlobSha": "fde1cdd6b41e2135a1987527375155e3b0284ea0",
+    "columns": [
+      "officialSourceVersionId",
+      "realSenator2022",
+      "district2022",
+      "reg",
+      "originalViewerApiSha256",
+      "originalPdfSha256",
+      "originalPdfBytes",
+      "periodStart",
+      "periodEnd",
+      "boardReceived",
+      "officialGETsameAsPOST",
+      "bothMatchPriorPdfSha",
+      "recognizedRegistrationNumberFields",
+      "firstWindowExpectedRegistrationFieldMatches",
+      "targetRegElsewhereInPdfText",
+      "targetRegOccurrenceCount",
+      "firstWindowSenateDistrictFields",
+      "printedDistrictMatches",
+      "boardReceiptPredatesCoverageEnd",
+      "normalizedTextLengthWithoutPersistingText",
+      "verifiedValidFinanceForm",
+      "reasonSourceIdentityHeld"
+    ]
+  },
+  "independentReacquisition": {
+    "originalSourceWorkflowRunId": 38163042861,
+    "originalSourceOutcome": "success",
+    "artifactId": 11710588395,
+    "artifactZipBytes": 2087,
+    "artifactZipSha256": "af1a2f93c8f86173b19d8d9a0a2cb8eda9f88c51eb2105e4ca9d37b9403b2070",
+    "JSONSourceSha256": "5fde5be9a06bc53b985e2b6663b284f39bccc1841f01de34ff8f01b5a803c318",
+    "jsonBytes": 10571,
+    "officialGetRequestRetrievedTwoPdfBinaries": true,
+    "officialPostRequestRetrievedTwoPdfBinaries": true,
+    "allFourOfficialBinariesSameAsPriorSourcePdfs": true,
+    "bothOriginalViewerApiResponsesReverified": true
+  },
+  "sourceHolds": [
+    {
+      "versionId": "17994:23:pcc:YE:0:0",
+      "senator": "Andrew R. Lang",
+      "originalPdfSha256": "34022e5691aca08f318436ecbc30a1b3e2d5a32c2ad11a19ee0d64fb77443aba",
+      "pdfBytes": 381617,
+      "originalPeriod": "2023-01-01/2023-12-31",
+      "boardReceived": "2023-12-29",
+      "principalCommitteeTitlePresent": true,
+      "registrationNumberFieldCount": 0,
+      "expectedRegistrationNumberPresentElsewhereInExtractedPdf": true,
+      "expectedRegistrationOccurrences": 8,
+      "printedSenateDistrictMatchesExpected": false,
+      "boardReceivedBeforePeriodEnd": true,
+      "distinctOfficialGETPOSTSamePdf": true,
+      "printedFinanceIdentityAuthenticated": false,
+      "sourceHoldRetained": true
+    },
+    {
+      "versionId": "18430:23:pcc:YE:0:1",
+      "senator": "Aric Putnam",
+      "originalPdfSha256": "5da25294735f3b7b62608755df926b38917a69aaf90b13c9999396de0d710c54",
+      "pdfBytes": 149845,
+      "originalPeriod": "2023-01-01/2023-12-31",
+      "boardReceived": "2024-04-04",
+      "principalCommitteeTitlePresent": true,
+      "registrationNumberFieldCount": 0,
+      "expectedRegistrationNumberPresentElsewhereInExtractedPdf": true,
+      "expectedRegistrationOccurrences": 3,
+      "printedSenateDistrictMatchesExpected": true,
+      "boardReceivedBeforePeriodEnd": false,
+      "distinctOfficialGETPOSTSamePdf": true,
+      "printedFinanceIdentityAuthenticated": false,
+      "sourceHoldRetained": true
+    }
+  ],
+  "strictLimits": {
+    "noFirstPageFormIdentityCertification": true,
+    "noGuessOfOtherPrintedCommitteeIds": true,
+    "noReportPdfTextOrDonorsPersisted": true,
+    "noHistoricalPublicByProof": true,
+    "noStatutoryFilingDutyCount": true,
+    "noProductionDatabaseReadOrWrite": true,
+    "noModelPredictionsTrainingServingSchedulerOr2027Scope": true,
+    "keepIssue864Open": true
+  },
+  "secondIndependentSourceRun": {
+    "runId": 38163287691,
+    "headAtRun": "f0375ca52a14b1336fcb68db0fb0a02742e0d501",
+    "sourceOutcome": "success",
+    "artifactId": 11710934802,
+    "artifactZipSha256": "60d2a53b05a43efadaf34485c92e5db82bcc00726be43d376421b7d6bf61e862",
+    "artifactZipBytes": 2089,
+    "jsonSha256": "95e37a094259c3b19d2cb39fc20cc1fcb5080aa04c96c35429bccb7e2b8d6369",
+    "jsonBytes": 10571,
+    "allFourOfficialGETPOSTPdfShaAndByteCountsIdenticalAcrossBothRuns": true,
+    "bothOfficialViewerApiSha256SameAcrossBothRuns": true,
+    "everyComparedFirstWindowStructuralFlagIdenticalAcrossBothRuns": true,
+    "sourceIdentityHoldsRemainTwo": true
+  }
+}
