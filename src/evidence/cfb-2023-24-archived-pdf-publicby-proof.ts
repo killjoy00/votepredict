@@ -21,7 +21,7 @@ export interface ArchivedCfbExactVersionTarget{
  versionId:string;committeeRegistration:string;reportYear:2023|2024;
  type:string;period:'YE';segment:string;amendment:number;
  originalCfbPdfSha256:string;authenticOriginalPDF:boolean;
- expectedEarliestPublicByDate:string;sourceStatus:string;
+ expectedEarliestPublicByUtc:string;sourceStatus:string;
  sourceSnapshotCfbReportUrl:string;
 }
 export const FOUR_EXACT_ARCHIVE_PILOT_IDS=[
@@ -53,7 +53,20 @@ export function selectFourRealOriginalArchiveAuditTargets(psv:string):ArchivedCf
   const authenticOriginalPDF=sourceStatus==='original_pdf_first_page_authenticated'
     ||sourceStatus==='distinct_authenticated_amended_pdf';
   // Date from historical original state §10A.20 and original archived Board calendar.
-  const earliest=m[2]==='23'?'2024-02-01':'2025-02-01';
+  const lawReleaseFloor=m[2]==='23'?'2024-02-01T14:00:00Z':'2025-02-01T14:00:00Z';
+  // For Board receipt dates after the statutory release day, exact receipt
+  // CLOCK time is unknown. A capture dated the following UTC day might still
+  // precede the original local-day receipt. Require the day AFTER the full
+  // original receipt day has safely elapsed; this deliberately loses some
+  // potentially true matches rather than backdating publication.
+  const boardDate=row[10]!;
+  const localReleaseDay=lawReleaseFloor.slice(0,10);
+  let earliest=lawReleaseFloor;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(boardDate)&&boardDate>localReleaseDay){
+    const after=new Date(boardDate+'T00:00:00Z');
+    after.setUTCDate(after.getUTCDate()+2);
+    earliest=after.toISOString();
+  }
   const url=new URL('https://cfb.mn.gov/rptViewer/Main.php');
   url.searchParams.set('do','viewPDF');
   url.searchParams.set('downloadpdf','false');
@@ -68,7 +81,7 @@ export function selectFourRealOriginalArchiveAuditTargets(psv:string):ArchivedCf
    reportYear:m[2]==='23'?2023:2024,
    type:m[3]!,period:'YE',segment:m[5]!,
    amendment:Number(m[6]),originalCfbPdfSha256:row[7]!,
-   authenticOriginalPDF,expectedEarliestPublicByDate:earliest,
+   authenticOriginalPDF,expectedEarliestPublicByUtc:earliest,
    sourceStatus,sourceSnapshotCfbReportUrl:url.toString(),
   };
  });
@@ -115,7 +128,7 @@ export function strictCdxReportVersionCaptures(input:{
   if(code!=='200'||mimetype!=='application/pdf'
    ||!exactOriginalViewerLinkMatches(original,input.target))continue;
   const iso=utcFromCdx(stamp);
-  if(iso.slice(0,10)<input.target.expectedEarliestPublicByDate)continue;
+  if(iso<input.target.expectedEarliestPublicByUtc)continue;
   if(!/^[A-Z2-7]{20,60}$/.test(digest))continue;
   found.push({timestamp:stamp,archivedOriginalUrl:original,
    archiveCaptureUtc:iso,digest});
@@ -140,7 +153,7 @@ export function classifyExactArchivePdfBinaryProof(input:{
   &&(input.archivePdfBytes?.byteLength??0)<3_000_000;
  const sha=bodyValid?createHash('sha256').update(input.archivePdfBytes!).digest('hex'):null;
  const shaExactlyAuthenticated=bodyValid&&sha===input.target.originalCfbPdfSha256;
- const afterLegalEarliest=observed.slice(0,10)>=input.target.expectedEarliestPublicByDate;
+ const afterLegalEarliest=observed>=input.target.expectedEarliestPublicByUtc;
  const historicPubBy=shaExactlyAuthenticated&&input.target.authenticOriginalPDF
   &&afterLegalEarliest?observed:null;
  return{
