@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "senate-2024-41-original-caption-procedural-cue-partial-first-run-permanent-proof-v1",
+  "issue": 864,
+  "sourceAuthority": "Minnesota Legislative Reference Library",
+  "actualOriginalSourceRunId": 38109706957,
+  "actualOriginalSourceRunConclusion": "failure",
+  "sourceImplementationPr": 1026,
+  "sourceImplementationMergeSha": "e2dfb2dd407eeacc4bdfd954281c80f6df8f39d7",
+  "actualSourceArtifactId": 11691581526,
+  "actualSourceArtifactName": "senate-2024-41-original-caption-motion-cue-source-review",
+  "originalArtifactZipSha256": "d65e12e91b20aadbf23e1ca8a2815820253ac4bb622e352d4514ad97e6a76a03",
+  "originalArtifactZipBytes": 37942,
+  "originalUncompressedJsonSha256": "beaa3b011257804a2672d751d07b514caa4e2f7f2dba3f238882499db4855823",
+  "originalUncompressedJsonBytes": 293209,
+  "priorOriginalMeetingMtgidIndexRun": 38079233118,
+  "priorOriginalMediaHTMLRun": 38081463362,
+  "priorOriginalCaptionSurfaceRun": 38103766440,
+  "priorCaption2024SourceArtifactId": 11688174345,
+  "priorCaption2024OriginalJsonSha256": "5bcc3c7b15d80ddfe37b34b7b2df025251f8ea9f91cf35ecfffe0fdf93402ccd",
+  "actualPartialSourceResults": {
+    "expectedOfficialIndexed2024NoMinutesMediaLeads": 41,
+    "originalHTMLAndCaptionBodySHAReverified": 37,
+    "actualFailedOriginalFetches": 4,
+    "realCaptionTimestampMarkersIn37VerifiedBodies": 110581,
+    "verifiedSourcePagesWithStrictCandidateProceduralCues": 34,
+    "realTopLevelCueWindowSummary": null,
+    "topLevelCueWindowSummaryNaNDueToRemovedV1Field": true,
+    "recomputedStrictCategoryThirtySecondCueWindows": 588,
+    "candidateCueWindowsActuallySavedInSourceArtifact": 588,
+    "cueWindowsOmittedDueToCap": 0,
+    "sourceDaysWithNoMatchedStrictRegexCue": [
+      "2024-02-26",
+      "2024-02-29",
+      "2024-03-06"
+    ],
+    "strictCueCategoryCounts": {
+      "voice_vote_language": 240,
+      "formal_motion_result": 128,
+      "formal_motion_introduction": 76,
+      "committee_recommendation": 63,
+      "explicit_roll_request": 75,
+      "reported_tally_language": 6
+    },
+    "falseConclusionsNeverPermitted": [
+      "37 original page source proofs do not prove actual media playback",
+      "588 category/time windows are not unique motions",
+      "unavailable HTML fetches do not mean zero actions",
+      "automatic caption words cannot establish named senator vote"
+    ]
+  },
+  "fourExactSourceFetchFailures": [
+    {
+      "date": "2024-02-14",
+      "committee": "Taxes",
+      "mtgid": "1049197",
+      "failure": "fetch failed"
+    },
+    {
+      "date": "2024-02-15",
+      "committee": "Taxes",
+      "mtgid": "1049227",
+      "failure": "fetch failed"
+    },
+    {
+      "date": "2024-02-19",
+      "committee": "Jobs and Economic Development",
+      "mtgid": "1049249",
+      "failure": "fetch failed"
+    },
+    {
+      "date": "2024-04-03",
+      "committee": "Taxes",
+      "mtgid": "1049765",
+      "failure": "fetch failed"
+    }
+  ],
+  "limitations": {
+    "originalSourceRunMustRemainMarkedFailure": true,
+    "onlyOriginalFourFailuresMayBeTargetedForRetry": true,
+    "source2021OfficialPrintMinutesMissing": true,
+    "source2022PrintElectronicParityUnknown": true,
+    "actualStatewide2021to2025CommitteeRecordedVoteDenominator": null,
+    "noAudioVideoPlaybackYet": true,
+    "noHumanSpeakerOrNamedMemberYeaNayCertified": true,
+    "noRawCaptionSourceOrNamesByVoteCommitted": true,
+    "noPrivateProductionDbReadWrite": true,
+    "noModelForecastTrainingServingSchedulerFloor2027Changes": true,
+    "noGovernmentOfficeContact": true,
+    "issue864MustRemainOpen": true
+  }
+}
