@@ -14,9 +14,11 @@ const SHA1=/^[A-Z2-7]{32}$/;
 const SHA256=/^[a-f0-9]{64}$/;
 const expected=[
  {id:'new-reporter-2021-clean-cars',sp:['Paul Gazelka','Susan Kent'],
-  captures:['2021-01-22T18:33:37Z','2021-02-03T17:43:23Z']},
+  captures:['2021-01-22T18:33:37Z','2021-02-03T17:43:23Z'],
+  cueIds:['2021-clean-cars-paul-gazelka','2021-clean-cars-susan-kent']},
  {id:'new-reporter-2024-gun-proposals',sp:['John Marty','Jen McEwen'],
-  captures:['2024-02-21T12:39:14Z','2024-02-21T17:52:18Z']},
+  captures:['2024-02-21T12:39:14Z','2024-02-21T17:52:18Z'],
+  cueIds:['2024-firearms-john-marty','2024-firearms-jen-mcewen']},
 ] as const;
 
 export interface ShortReporterCue{
@@ -166,7 +168,7 @@ export function validateTwoJournalistOriginals(
     for(let k=0;k<2;k++){
       const c=item.shortSeparateSenatorCues[k];
       if(!c||c.namedSpeaker!==want.sp[k]
-        ||c.id!==want.id+'-'+k
+        ||c.id!==want.cueIds[k]
         ||typeof c.originalReporterQuoteShortPhrase!=='string'
         ||c.originalReporterQuoteShortPhrase.length<30
         ||c.originalReporterQuoteShortPhrase.length>125
