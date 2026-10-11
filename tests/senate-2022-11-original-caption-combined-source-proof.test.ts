@@ -50,14 +50,13 @@ test('2022 combined actual source verified 11 original pages, 10 with captions a
  assert.equal(c.originalCaptionTimestampMarkers,24147);
  assert.equal(c.pagesContainingStrictProvisionalParliamentaryCueWindows,3);
  assert.equal(c.strictCategoryAndThirtySecondCueWindowsNotUniqueMotions,43);
- assert.equal(j.firstActualOriginalSource.originalCaptionTimestampMarkers,undefined);
- assert.equal(j.firstActualOriginalSource.autoCaptionTimeMarkers+r(j.actualOneRecordRetry),24147);
+ assert.equal(j.firstActualOriginalSource.autoCaptionTimeMarkers,21532);
+ assert.equal(j.firstActualOriginalSource.autoCaptionTimeMarkers+j.actualOneRecordRetry.sourceTimeMarkers,24147);
  assert.equal(j.firstActualOriginalSource.categoryTimeResearchWindowsNotMotions+
     j.actualOneRecordRetry.strictProceduralCategoryTimeCueWindows,43);
  assert.deepEqual(c.meetingWithNoTimedCaptionSource,{hearingDate:'2022-03-15',committee:'Housing Finance and Policy',mtgid:'1046040'});
  assert.deepEqual(c.originalDoubleTrackHearing,{hearingDate:'2022-04-04',committee:'Education Finance and Policy',mtgid:'1046323',verifiedCaptionStreams:2,notTwoSeparateVotes:true});
 });
-function r(v:{sourceTimeMarkers:number}){return v.sourceTimeMarkers}
 test('three original dated 2022 cue-rich hearing leads and freeze requirements remain exact',()=>{
  const rows=j.priorityHumanSourceAudioReview;
  assert.deepEqual(rows.map((x:any)=>[x.hearingDate,x.mtgid,x.strictTimeCategoryCueWindows]),[
