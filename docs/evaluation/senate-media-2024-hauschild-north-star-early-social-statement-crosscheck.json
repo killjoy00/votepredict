@@ -1,0 +1,131 @@
+{
+  "version": "senate-media-2024-hauschild-north-star-first-person-statement-crosscheck-v1",
+  "issue": 987,
+  "researchCheckedOn": "2026-10-10",
+  "scope": "Selected public research sources for one 2024 serving Minnesota senator and one legislative issue, NOT exhaustive media or social posting coverage",
+  "category": "historical_source_custody_and_speaker-attribution_leads_only",
+  "person": {
+    "name": "Grant Hauschild",
+    "chamber": "Minnesota Senate",
+    "senateDistrictOnDisplayedSourceDays": "03",
+    "serviceVerifiedFrom": "2023-01-02",
+    "serviceThroughOfficialDisplay": "2027-01-03",
+    "reference": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15577",
+    "activeOnAllDisplayedFebruary2024ResearchDays": true,
+    "quoteFromOriginalSocialPostAuthenticated": false
+  },
+  "legislation": {
+    "bill": "SF2724",
+    "legislativeSession": "93rd (2023-2024)",
+    "billTopic": "Minnesota sanctuary-state immigration enforcement proposal / North Star Act",
+    "officialSource": "https://www.revisor.mn.gov/bills/93/2023/0/SF/2724/",
+    "introducedFirstRead": "2023-03-08",
+    "listedSenateAuthors": [
+      "Omar Fateh",
+      "Susan Pha"
+    ],
+    "grantHauschildIsListedSenateBillAuthor": false,
+    "floorVoteForThisBillProven": false,
+    "historicalFeb2024VersionTextIndependentlyArchived": false,
+    "noVoteInferredFromSenatorPublicOpposition": true,
+    "billMustNotBeConfusedWithCongressionalImmigrationBills": true
+  },
+  "linkedFirstPartySocialPost": {
+    "canonicalResearchUrl": "https://twitter.com/grant_hauschild/status/1756375725714571676",
+    "handleInPublishedNewsroomLinks": "grant_hauschild",
+    "statusId": "1756375725714571676",
+    "derivation": "X/Twitter Snowflake upper timestamp bits: (BigInt(statusId) >> 22n) + 1288834974657n milliseconds since Unix epoch",
+    "derivedSnowflakeClockUtc": "2024-02-10T17:52:59.550Z",
+    "derivedClockMeans": "Time encoded in a linked status ID if genuine; NOT proof the post existed or was publicly viewable at this time",
+    "platformResponse": "original_post_access_denied",
+    "originalPostRawBytesRetrieved": false,
+    "originalPostTextIndependentlyFetched": false,
+    "postingAccountAndAuthorshipIndependentlyVerified": false,
+    "historicalVisibilityFromTweetIdProven": false,
+    "originalFirstPublicByFromArchiveProven": false,
+    "referencedByCurrentMedia": [
+      "https://alphanews.org/sanctuary-state-proposal-faces-opposition-from-county-board-dfl-senator/",
+      "https://minnesotareformer.com/2024/02/12/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/"
+    ]
+  },
+  "sourceChronology": [
+    {
+      "id": "2024-02-11-alpha-reports-original-post",
+      "type": "present_day_accessible_reporter_quote_of_alleged_senator_social_statement",
+      "currentPublisherUrl": "https://alphanews.org/sanctuary-state-proposal-faces-opposition-from-county-board-dfl-senator/",
+      "publisher": "Alpha News",
+      "displayedPublisherDay": "2024-02-11",
+      "author": "Luke Sprinkel",
+      "reporterExplicitlyNamesServingSenator": "Grant Hauschild",
+      "sourceStatementShortQuotation": "I will not be supporting this legislation and it is very unlikely to become law.",
+      "journalistAttributesWordsToOriginalXPost": true,
+      "originalXStatusIdFromLinkedPage": "1756375725714571676",
+      "displayedDayIsVerifiedOriginalArchivePublicBy": false,
+      "originalPublishedArticleBytesSha256Verified": false,
+      "actualSenatorSocialPostTextAuthenticated": false,
+      "directQuotedReporterTextEqualsFirstPartyOriginalProven": false,
+      "historicalForecastEligibilityVerified": false
+    },
+    {
+      "id": "2024-02-12-reformer-references-same-post",
+      "type": "present_day_accessible_newsroom_paraphrase_plus_other_senator_quote",
+      "currentPublisherUrl": "https://minnesotareformer.com/2024/02/12/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/",
+      "currentBriefAliasUrl": "https://minnesotareformer.com/briefs/sanctuary-state-bill-already-dead-as-house-speaker-says-it-doesnt-have-the-votes/",
+      "publisher": "Minnesota Reformer",
+      "displayedPublisherDay": "2024-02-12",
+      "displayedPublisherClockWithoutIndependentlyVerifiedZone": "16:10",
+      "author": "Deena Winter",
+      "grantHauschildPostLinked": true,
+      "linkedXStatusId": "1756375725714571676",
+      "grantHauschildWordsPresentedAsReporterParaphraseNotVerbatim": true,
+      "separateQuoteSpeaker": "Erin Murphy",
+      "separateQuoteSpeakerChamber": "Minnesota Senate",
+      "separateQuoteShortExcerpt": "I think it’s important that we rely on the committee process",
+      "houseSpeakerMelissaHortmanIsNotMinnesotaSenator": true,
+      "chiefSponsorOmarFatehWasNotQuotedAsSpeakerInThisSource": true,
+      "historicBriefToDatedRedirectAuthenticated": false,
+      "publisherDisplayedDayIsOriginalPublicByProof": false,
+      "exactOriginalArchivedHttpBodyVerified": false,
+      "anyNamedQuoteFromOriginalArchivedBytesHumanReviewed": false,
+      "historicalForecastEligibilityVerified": false
+    },
+    {
+      "id": "2024-02-19-mpr-hauschild-later-interview",
+      "type": "present_day_mpr_first_party_labeled_audio_transcript_only",
+      "currentPublisherUrl": "https://www.mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south",
+      "publisher": "MPR News",
+      "displayedPublisherDay": "2024-02-19",
+      "displayedPublisherClockWithoutIndependentlyVerifiedZone": "10:32",
+      "hostLabel": "CATHY WURZER:",
+      "senatorLabel": "GRANT HAUSCHILD:",
+      "currentTranscriptShortUtterance": "I feel that immigration is a federal issue.",
+      "audioAndTranscriptHistoricallyCoavailableProven": false,
+      "currentTranscriptExistedOnRadioBroadcastDayProven": false,
+      "exactOriginalArchivedHtmlBytesVerified": false,
+      "originalFirstPublicByFromArchiveProven": false,
+      "historicalForecastEligibilityVerified": false
+    }
+  ],
+  "custodyLimitations": {
+    "originalXPostOrHistoricalArchivedReplayAccessible": false,
+    "alphaOriginal2024ArticleCapturedAndHashed": false,
+    "reformerOriginal2024ArticleCapturedAndHashed": false,
+    "mprOriginal2024AudioTranscriptCapturedAndHashed": false,
+    "allDisplayedPublisherDatesAreLivePageMetadataNotVerifiedArchivedClocks": true,
+    "XSnowflakeClockIsStructuralDecodeOnly": true,
+    "independentSpeakerReviewOfExactOriginalBytesPerformed": false,
+    "matchedPrivateVotePredictSourceDocument": false,
+    "quoteAndStanceEvidencePromotedToProduction": false,
+    "uniqueHistoricallyVerifiedSenatorStatements": 0,
+    "statewideSenatorMediaCoverageDenominatorKnown": false
+  },
+  "provenanceDriftWatch": {
+    "priorSearchResultRepresentedCampaignAdvocacyDomain": "northstaract.org",
+    "liveSiteAccessOn2026_10_10": "redirected_to_unrelated_gambling_site",
+    "historicalCampaignPageBytesAuthenticated": false,
+    "historicDomainOwnershipOrContentProven": false,
+    "campaignSiteAllowedAsOriginalSenatorStatement": false,
+    "interpretation": "A formerly indexed historical campaign/advocacy domain no longer serves the research subject; do not use the current live page, search snippet or redirect as historical campaign evidence"
+  },
+  "nextOriginalEvidenceAction": "Retrieve authenticated original status URL with explicit content and creation metadata if authorized; separately archive the Feb11 Alpha page, Feb12 Reformer brief AND dated paths, and Feb19 MPR audio/transcript, and compare exact original source SHA/public-by against any separately authorized private VotePredict export. No seed, model, forecast or quote changes without further approval."
+}
