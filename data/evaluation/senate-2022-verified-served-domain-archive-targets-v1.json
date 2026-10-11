@@ -1,0 +1,68 @@
+{
+  "schema": "mn-2022-ever-served-senate-domain-wide-archive-targets-v1",
+  "scope": {
+    "issue": 864,
+    "election": "2022-11-08",
+    "windowFrom": "2022-01-01T00:00:00Z",
+    "windowToExclusive": "2022-11-08T00:00:00Z",
+    "onlyLRLVerifiedActuallyServedMNStateSenators": true,
+    "senators": 3,
+    "domainSearches": 3,
+    "historicalWebsiteFilingDomainVerified": false,
+    "originalPageTextAvailableDuring2022ProvenBeforeFetching": false,
+    "cachedOriginalExactPathArchiveAttemptsInPreviousRun": "38098726687",
+    "previousExactPathPre2022CapturedRowsForTheseThreeSenators": 0,
+    "successfulCurrent2026PageIsHistorical2022Proof": false,
+    "currentFetchProvidesOnlyObservedAtUtc": true,
+    "statementAsOfEvidenceAdmitted": false,
+    "noProductionReadsOrWrites": true
+  },
+  "targets": [
+    {
+      "id": "mitchell",
+      "candidateName": "Nicole Mitchell",
+      "district": "47",
+      "domain": "nicolemitchell.org",
+      "historicalElectionPageLead": "https://www.nicolemitchell.org/news-events/today-nicole-mitchell-confirmed-her-candidacy-in-the-new-senate-district-47-which-includes-woodbury-and-part-of-maplewood",
+      "previousExactPathFetchHttpStatus": 200,
+      "previousExactPathObservedAtUtc": "2026-10-11T00:34:23.778Z"
+    },
+    {
+      "id": "kupec",
+      "candidateName": "Rob Kupec",
+      "district": "4",
+      "domain": "kupec4mnsenate.com",
+      "historicalElectionPageLead": "https://www.kupec4mnsenate.com/our-campaign",
+      "previousExactPathFetchHttpStatus": 404,
+      "previousExactPathObservedAtUtc": "2026-10-11T00:35:02.763Z"
+    },
+    {
+      "id": "kreun",
+      "candidateName": "Michael Kreun",
+      "district": "32",
+      "domain": "michaelformnsenate.com",
+      "historicalElectionPageLead": "https://www.michaelformnsenate.com/",
+      "previousExactPathFetchHttpStatus": 200,
+      "previousExactPathObservedAtUtc": "2026-10-11T00:35:40.531Z"
+    }
+  ],
+  "sourceProvenance": {
+    "independentOfficialSenateServiceDirectoryOriginalRunId": 38094976711,
+    "independentOfficialSenateServiceArtifactId": 11685387674,
+    "previousExactPathOriginalAcquisitionRunId": 38098726687,
+    "previousExactPathOriginalArtifactId": 11686238089,
+    "officialSenateServiceDirectoryUrl": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "originalCandidateFilingWebsiteAssignmentUnknown": true
+  },
+  "queryRules": {
+    "waybackMatchType": "domain",
+    "queryOriginalArchiveDateFrom": "20220101",
+    "queryOriginalArchiveDateTo": "20221107",
+    "maximumReturnedRowsPerDomain": 300,
+    "maximumOriginalPageByteReplaysPerSenator": 3,
+    "maximumHistoricalOriginalPageReplays": 9,
+    "pageMustMatchOriginalCdxPayloadSha1Base32": true,
+    "firstAuthorPostingTimeUnknownUnlessIndependentProof": true,
+    "ignoredNeverServedCandidateInfo": true
+  }
+}

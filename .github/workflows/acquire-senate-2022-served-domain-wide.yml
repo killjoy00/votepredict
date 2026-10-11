@@ -1,0 +1,71 @@
+name: One-shot broader 2022 archive search for three actual MN senators
+
+# Exact 2022 URL searches returned zero for three real senators. Search
+# historical host names only on a same-repository reviewed PR, with independent
+# official LRL Senate service bytes supplied from a successful prior action.
+# No schedule/push/manual dispatch/Neon/Vercel/model/backfill.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/acquire-senate-2022-served-domain-wide.yml
+      - data/evaluation/senate-2022-verified-served-domain-archive-targets-v1.json
+      - src/evidence/senate-2022-verified-served-domain-archive.ts
+      - scripts/acquire-senate-2022-served-domain-wide-pages.ts
+      - scripts/run-senate-2022-served-domain-wide-archive.ts
+      - tests/senate-2022-verified-served-domain-archive.test.ts
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: ${{ format('senate-2022-domain-archive-{0}', github.run_id) }}
+  cancel-in-progress: false
+
+jobs:
+  senator-only-domain-originals:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-2022-senator-domain-wide-archive-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Fetch exact independent public Minnesota Senate service original
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: artifacts/mn-lrl-original
+      - name: Verify Senate service then query only three 2022 campaign host archives
+        timeout-minutes: 9
+        shell: bash
+        run: |
+          set -euo pipefail
+          lrl="$(find artifacts/mn-lrl-original -type f -name 'mn-lrl-official-senate-service-directory.html' -print -quit)"
+          metadata="$(find artifacts/mn-lrl-original -type f -name 'mn-lrl-official-senate-service-directory-audit.json' -print -quit)"
+          test -n "$lrl"
+          test -n "$metadata"
+          test "$(dirname "$lrl")" = "$(dirname "$metadata")"
+          node --import tsx scripts/run-senate-2022-served-domain-wide-archive.ts \
+            --lrl-original "$lrl" \
+            --lrl-metadata "$metadata" \
+            --output-dir artifacts/senate-2022-served-senator-domain-recovery-v1
+      - name: Preserve actual response bytes, failures and exact UTC observations
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-2022-verified-served-domain-wide-historical-originals-v1
+          path: artifacts/senate-2022-served-senator-domain-recovery-v1/
+          if-no-files-found: warn
+          retention-days: 30
