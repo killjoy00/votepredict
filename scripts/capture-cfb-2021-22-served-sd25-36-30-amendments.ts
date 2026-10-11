@@ -17,6 +17,7 @@ import {
   SD25_36_30_AMENDMENT_SOURCE_VERSION,
   selectServedSd25to36AmendmentVersions,
   auditActualSenatorAmendmentPdf,checkAuthenticatedAmendmentChains,
+  classifySd25to36AmendmentReferences,
   verifyServedSd25to36AmendmentSourceOutcome,
   type CfbHistoricalAmendedPdfSource,
 } from '../src/evidence/cfb-2021-22-served-sd25-36-30-amendments.js';
@@ -110,11 +111,14 @@ async function main(){
     }
   }
   await Promise.all([worker(),worker()]);
-  const reports=picked.targets.map(t=>auditActualSenatorAmendmentPdf(
-    t,rawPdfs.get(t.id)??null,failures.get(t.id)??null));
+  const reports=classifySd25to36AmendmentReferences(picked.targets.map(t=>
+    auditActualSenatorAmendmentPdf(t,rawPdfs.get(t.id)??null,failures.get(t.id)??null)));
   const chain=checkAuthenticatedAmendmentChains(reports);
   const quality=verifyServedSd25to36AmendmentSourceOutcome(reports);
   const authenticated=reports.filter(r=>r.status==='amendment_pdf_and_original_identity_authenticated');
+  const distinct=reports.filter(r=>r.referenceClassification==='distinct_authenticated_amended_pdf');
+  const aliases=reports.filter(r=>r.referenceClassification===
+    'official_amendment_version_reference_alias_of_identical_pdf');
   const checkpoint={
     schemaVersion:SD25_36_30_AMENDMENT_SOURCE_VERSION,
     observedAt:new Date().toISOString(),
@@ -149,8 +153,12 @@ async function main(){
       originalAmendmentPdfBodiesRetrievedIntoMemoryOnly:rawPdfs.size,
       originalSourceDocumentsHeldForStrictPaperIdentity:quality.holds,
       firstPageCommitteeAndOriginalPeriodAndReceiptVerified:authenticated.length,
-      completedDistinctAuthenticRevisionChains:quality.fullOriginalToAmendmentChainsVerified,
-      successes:authenticated.length,holds:reports.length-authenticated.length,
+      uniqueAuthenticatedAmendedPdfBinaries:quality.distinctAmendmentPdfBinaries,
+      distinctlyAuthenticatedAmendedPdfForms:distinct.length,
+      officialAmendmentReferencesAliasingEarlierIdenticalPdf:aliases.length,
+      completedAuthenticatedViewerReferenceChains:quality.fullOriginalToAmendmentChainsVerified,
+      completedDistinctAuthenticRevisionChains:quality.fullDistinctBinaryRevisionChainsVerified,
+      successes:distinct.length,holds:reports.length-authenticated.length,
       independentlyAuthenticatedHistoricalPublicByCount:0,
       statewideLegallyRequiredReports:null,
       historicalProductionDonationAndExpenditureRowReconciliationDone:false,
@@ -167,14 +175,17 @@ async function main(){
   mkdirSync(dirname(output),{recursive:true});
   writeFileSync(output,JSON.stringify(checkpoint,null,2)+'\n',{flag:'wx'});
   console.log(JSON.stringify({issue:864,selectedOriginalAmendmentVersions:30,
-    actualSenators:11,originalParents:40,authenticated:authenticated.length,
+    actualSenators:11,originalParents:40,individualFirstPageChecks:authenticated.length,
+    distinctAuthenticatedPdfBinaries:distinct.length,documentedReferenceAliases:aliases.length,
     held:reports.length-authenticated.length,chainValid:chain.valid,
     sourceVerificationOutcome:quality,
     holds:reports.filter(r=>r.status!=='amendment_pdf_and_original_identity_authenticated')
       .map(r=>({id:r.id,status:r.status,sourceError:r.sourceErrorKind})),
+    documentedBinaryAliases:chain.documentedBinaryAliases,
     chainViolations:chain.violations,
     authenticatedHashes:authenticated.map(x=>({id:x.id,sha256:x.amendedPdfSha256,
-      receivedOn:x.amendedBoardReceivedOn})),
+      receivedOn:x.amendedBoardReceivedOn,classification:x.referenceClassification,
+      aliasOf:x.aliasOfAmendmentVersionId})),
     output,productionChanges:false},null,2));
   if(!quality.complete||rawPdfs.size!==30||
     viewerRechecks.filter(v=>v.exactVersionKeysReconfirmed>0).length!==picked.registrationsWithAmendments)
