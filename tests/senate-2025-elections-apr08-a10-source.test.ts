@@ -49,6 +49,23 @@ test('source term changes, unserved name, duplicate name or side leakage fail cl
   (s:string)=>s.replace('Absent: Lucero','Absent: NotASenator'),
  ])assert.throws(()=>inspectApr08A10MotionTextCore(change(example())));
 });
+test('a roll-call request and repeated A10 label never replace the actual mover clause',()=>{
+ const noMover=example().replace(
+  'Senator Boldon moved the A10 Amendment to SF 2384. ','');
+ assert.throws(()=>inspectApr08A10MotionTextCore(noMover),
+  /motion introduction missing/);
+ const wrongMover=example().replace('Senator Boldon moved',
+  'Senator NotOnTheCommittee moved');
+ assert.throws(()=>inspectApr08A10MotionTextCore(wrongMover),
+  /mover not on verified Elections roster/);
+});
+test('two separate A10 motion introductions require human disambiguation',()=>{
+ const repeated=example().replace(
+  'Senator Carlson requested a roll call vote',
+  'Senator Bahr moved the A10 Amendment. Senator Carlson requested a roll call vote');
+ assert.throws(()=>inspectApr08A10MotionTextCore(repeated),
+  /No unique A10 motion/);
+});
 test('two 7-3-1 sections are not silently collapsed to one',()=>{
  const original=example();
  assert.throws(()=>inspectApr08A10MotionTextCore(original+original),
