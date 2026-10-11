@@ -69,3 +69,45 @@ test('source mismatch where map is absent cannot be upgraded just from CFB viewe
  assert.equal(person.sameDocument2024MapNameDistrictMatched,false);
  assert.equal(a.counts.complete2024RosterIdentityAuthentication,false);
 });
+
+test('permanent 2024 Senate original government PDF SHA and 22 member-table/map crosswalk remain pinned',async()=>{
+ const {createHash}=await import('node:crypto');
+ const P='docs/evaluation/source-proof/';
+ const ck=JSON.parse(readFileSync(P+
+  'cfb-2024-original-senate-22-two-section-2024-service-checkpoint.json','utf8'));
+ const raw=readFileSync(ck.exactMemberLedger.path,'utf8');
+ const sha=createHash('sha1').update('blob '+Buffer.byteLength(raw,'utf8')+'\0')
+  .update(raw).digest('hex');
+ assert.equal(sha,ck.exactMemberLedger.gitBlobSha);
+ assert.equal(Buffer.byteLength(raw,'utf8'),ck.exactMemberLedger.bytes);
+ const r=raw.trimEnd().split('\n').map(x=>x.split('|'));
+ assert.equal(r.length,22);
+ const panel=new Map(members.map(x=>[x.reg,x]));
+ for(const x of r){
+  assert.equal(x.length,13);
+  const m=panel.get(x[0]!);
+  assert.ok(m);
+  assert.equal(x[1],m.name);
+  assert.equal(x[2],String(m.district));
+  assert.equal(x[4],ck.originalDocument.originalPdfSha256);
+  assert.equal(Number(x[5]),ck.originalDocument.originalPdfBytes);
+  assert.equal(x[6],'match');
+  assert.equal(x[7],'match');
+  assert.equal(x[8],'independent_original_2024_senate_member_table_and_seating_map');
+  assert.equal(x[9],'-');
+  assert.equal(x[10],'-');
+  assert.equal(x[11],'-');
+  assert.equal(x[12],ORIGINAL_SENATE_2024_SEATING_PDF);
+ }
+ assert.equal(ck.originalDocument.originalPdfBytes,4444913);
+ assert.equal(ck.originalDocument.sourceDocumentConflictingMemberIdentities,0);
+ assert.equal(ck.scope.memberListReal2024SenatorsMatched,22);
+ assert.equal(ck.scope.seatMap2024SenatorsMatched,22);
+ assert.equal(ck.scope.exactArbitrary2024VoteDayServiceProvenCount,0);
+ assert.equal(ck.scope.originalCFB2023And2024ReportVersionHistoricalPublicByProven,0);
+ assert.equal(ck.scope.committeeLegallyOwedOriginalYearendDenominator,null);
+ assert.equal(ck.officialSourceAcquisitions[0].verifiedRosterTableMemberMatches,22);
+ assert.equal(ck.officialSourceAcquisitions[0].verifiedMapSeatCaptionMatches,22);
+ assert.equal(ck.safeguards.noProductionDatabaseReadWrite,true);
+ assert.equal(ck.safeguards.keepIssue864Open,true);
+});
