@@ -1,0 +1,61 @@
+{
+  "schema": "mn-eichorn-2021-serving-2016-2020-first-party-issues-archive-target-v1",
+  "issue": 864,
+  "scope": {
+    "actual2021SenateServiceRequired": true,
+    "electionDistrict2020": "5",
+    "fromUtc": "2016-01-01T00:00:00.000Z",
+    "toExclusiveUtc": "2020-11-03T00:00:00.000Z",
+    "exactCandidateIssuesOriginalURLCount": 8,
+    "maxCDXRowsPerQuery": 220,
+    "maxOriginalHTMLReplayAttempts": 8,
+    "original2020HomeRehashedBeforeNetwork": true,
+    "originalGovActualSenatorDirectoryRehashedBeforeNetwork": true,
+    "publisher2020QuotationNotIdenticalWithOriginalSiteHTML": true,
+    "archivedJavascriptShellContainsNoPolicyText": true,
+    "sourceAcquisitionAddsPolicyStatements": 0,
+    "productionDatabaseEvidenceModelForecastSchedulerChanges": 0
+  },
+  "source": {
+    "officialSenateDirectory": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "officialDirectoryRun": 38094976711,
+    "officialDirectoryArtifact": 11685387674,
+    "officialDirectorySHA256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "original2020SiteAcquisitionRun": 38156756023,
+    "original2020SiteArtifact": 11708239911,
+    "original2020SiteArtifactName": "senate-five-2021-serving-2020-original-candidate-html-v1",
+    "original2020HomeFile": "five20-02-archive-20200520132938-0.html",
+    "original2020HomeURL": "https://www.justinformnsenate.com/",
+    "original2020HomeCaptureUTC": "2020-05-20T13:29:38.000Z",
+    "original2020HomeSHA256": "e1cf0bad13e365607f802de2e881ad8f45773aea308b368fc3e1878e641b3424",
+    "original2020HomeCDXSHA1": "O5XRMF3E73RCZZMMUGUEMEVGLACMJJY4",
+    "datedPublisher": "Minnesota Reformer",
+    "datedPublisherArticleURL": "https://minnesotareformer.com/2020/10/20/state-sen-justin-eichorn-tries-to-hold-off-bemidji-mayor-rita-albrecht-with-control-of-senate-at-stake/",
+    "datedPublisherPublication": "2020-10-20",
+    "datedPublisherLinkedFirstPartyIssues": "https://www.justinformnsenate.com/issues"
+  },
+  "person": {
+    "actualServingSenator": "Justin Eichorn",
+    "district2020": "5",
+    "firstPartyDomain": "justinformnsenate.com",
+    "historicalOriginalIssuesHTMLUnverified": true
+  },
+  "exactIssuesOriginalURLTargets": [
+    "http://justinformnsenate.com/issues",
+    "http://justinformnsenate.com/issues/",
+    "http://www.justinformnsenate.com/issues",
+    "http://www.justinformnsenate.com/issues/",
+    "https://justinformnsenate.com/issues",
+    "https://justinformnsenate.com/issues/",
+    "https://www.justinformnsenate.com/issues",
+    "https://www.justinformnsenate.com/issues/"
+  ],
+  "cautions": [
+    "2020 Minnesota Reformer quotes candidate website, but a publisher relay does not verify complete original candidate-site HTML.",
+    "Earlier 2020 authentic candidate full HTML recovered as JavaScript-only shell without readable issue positions.",
+    "Every new original must match independent CDX indexed original HTML SHA-1 before any literal issues policy can be considered.",
+    "2016/2018 copies could be old-cycle candidate wording; actual capture UTC is publicly observed by date, not original first-authored date.",
+    "All searches are eight exact /issues page variants, bounded, never infer absent stance from empty result.",
+    "Do not count any excerpts, infer official votes or alter production evidence, database, forecast, model, scheduler or 2027 program."
+  ]
+}
