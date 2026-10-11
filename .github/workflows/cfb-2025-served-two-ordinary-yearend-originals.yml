@@ -1,0 +1,41 @@
+name: One-time 2025 year-end originals for two independently served MN senators
+
+# #864: PR-only source investigation. Original CFB report & calendar PDFs
+# parsed in-memory and discarded; archive metadata only; no production access.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2025-served-two-ordinary-yearend-originals.yml
+      - scripts/capture-cfb-2025-served-two-yearend-originals.ts
+      - src/evidence/cfb-2025-served-two-ordinary-year-end-originals.ts
+      - tests/cfb-2025-served-two-ordinary-yearend-originals.test.ts
+
+permissions:
+  contents: read
+
+jobs:
+  prove-two-senators-2025-original-yearends:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Strict offline actual-senator source / PDF identity / 2026-observation / legal-date tests
+        run: node --import tsx --test tests/cfb-2025-served-two-ordinary-yearend-originals.test.ts
+      - name: Independently acquire exactly two previously unverified original PDF reports and original 2025 CFB calendar
+        run: |
+          node --import tsx scripts/capture-cfb-2025-served-two-yearend-originals.ts \
+            --output artifacts/cfb-2025-served-two-yearend-originals.json
+      - name: Retain metadata-only proof artifact even if authentication fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2025-two-actual-served-senators-ordinary-yearend-pdf-proof
+          path: artifacts/cfb-2025-served-two-yearend-originals.json
+          retention-days: 30
+          if-no-files-found: warn
