@@ -1,0 +1,64 @@
+name: Acquire exact 2022 Rob Kupec original candidate Issues pages
+
+# Independently verified actual Minnesota senator Rob Kupec SD4 2023-present.
+# Public Wayback GETs only after rehashed original official Senate service.
+# No scheduled monitoring, deploy, writes, server secrets or original 2022 file attribution.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/acquire-senate-kupec-2022-exact-issues.yml
+      - data/evaluation/senate-kupec-2022-archived-issues-original-targets-v1.json
+      - scripts/acquire-senate-kupec-2022-original-issues.ts
+      - scripts/run-senate-kupec-2022-original-issues.ts
+      - tests/senate-kupec-2022-original-issues-acquisition.test.ts
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  kupec-pre-general-original-issue-pages:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-kupec-2022-exact-issues-recovery-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Get SHA-pinned official public original MN Senate service directory
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: artifacts/senate-lrl-actual-service
+      - name: Independently verify actual senator, then recover exact historical /issues pages
+        shell: bash
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          original="$(find artifacts/senate-lrl-actual-service -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          metadata="$(find artifacts/senate-lrl-actual-service -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$original" && test -n "$metadata"
+          test "$(dirname "$original")" = "$(dirname "$metadata")"
+          node --import tsx scripts/run-senate-kupec-2022-original-issues.ts \
+            --lrl-original "$original" \
+            --lrl-metadata "$metadata" \
+            --output-dir artifacts/senate-kupec-2022-public-original-issues-source-v1
+      - name: Retain source responses + metadata, never mislabel missing issue page as historical absence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-kupec-2022-original-issue-page-source-probe-v1
+          path: artifacts/senate-kupec-2022-public-original-issues-source-v1/
+          if-no-files-found: warn
+          retention-days: 30
