@@ -393,7 +393,7 @@ export async function acquire2022EverServedSenateCampaignOriginals(
     url:target.sourceUrl,output:'json',
    }).toString();
    const response=await fetchDatedBoundedPublic(queryUrl,MAX_INDEX,impl);
-   const file=safeFile(output,target.id+'-'+collection+'-index.cdxj',
+   const file=safeFile(output,target.id+'-'+collection.toLowerCase()+'-index.cdxj',
      response.status===200?response.body:null);
    let parsed:CcIndexed[]=[];let parseErr:string|null=null;
    if(response.status===200&&response.body){
@@ -434,9 +434,9 @@ export async function acquire2022EverServedSenateCampaignOriginals(
     try{original=verifyActual2022CommonCrawlWarc(row,http.body);}
     catch(e){proofError=e instanceof Error?e.message:'WARC source mismatch';}
    }
-   const warcFile=safeFile(output,target.id+'-'+row.timestamp+'-'+row.originalCollection+'.warc.gz',
+   const warcFile=safeFile(output,target.id+'-'+row.timestamp+'-'+row.originalCollection.toLowerCase()+'.warc.gz',
      original?http.body:null);
-   const originalHtmlFile=safeFile(output,target.id+'-'+row.timestamp+'-'+row.originalCollection+'.html',
+   const originalHtmlFile=safeFile(output,target.id+'-'+row.timestamp+'-'+row.originalCollection.toLowerCase()+'.html',
      original?.html??null);
    verifiedWarcs.push({
     sourceCrawlCollection:row.originalCollection,
