@@ -30,7 +30,7 @@ function main(){
  if(args.length!==10||values.some(x=>!x))
   throw Error('Must supply all five original source/output arguments');
  const [lrlFile,lrlMeta,febFile,novFile,out]=values as string[];
- if(new Set(values.map(resolve)).size!==5)
+ if(new Set(values.map(path=>resolve(path!))).size!==5)
   throw Error('Never overwrite original LRL or original 2022 source HTML files');
  const source=bounded(lrlFile,9000,5*1024*1024);
  const metadata=JSON.parse(bounded(lrlMeta,100,3*1024*1024).toString('utf8')) as {
