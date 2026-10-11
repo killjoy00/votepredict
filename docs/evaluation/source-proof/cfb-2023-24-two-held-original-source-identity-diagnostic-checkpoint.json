@@ -105,5 +105,19 @@
     "noProductionDatabaseReadOrWrite": true,
     "noModelPredictionsTrainingServingSchedulerOr2027Scope": true,
     "keepIssue864Open": true
+  },
+  "secondIndependentSourceRun": {
+    "runId": 38163287691,
+    "headAtRun": "f0375ca52a14b1336fcb68db0fb0a02742e0d501",
+    "sourceOutcome": "success",
+    "artifactId": 11710934802,
+    "artifactZipSha256": "60d2a53b05a43efadaf34485c92e5db82bcc00726be43d376421b7d6bf61e862",
+    "artifactZipBytes": 2089,
+    "jsonSha256": "95e37a094259c3b19d2cb39fc20cc1fcb5080aa04c96c35429bccb7e2b8d6369",
+    "jsonBytes": 10571,
+    "allFourOfficialGETPOSTPdfShaAndByteCountsIdenticalAcrossBothRuns": true,
+    "bothOfficialViewerApiSha256SameAcrossBothRuns": true,
+    "everyComparedFirstWindowStructuralFlagIdenticalAcrossBothRuns": true,
+    "sourceIdentityHoldsRemainTwo": true
   }
 }
