@@ -1,5 +1,7 @@
 # Minnesota 2021–2025: independent public reporting discovery + existing archive exact-text continuation
 
+> **October 11, 2026 source-discovery correction:** The 15 independent reporter articles actually contain **22**, not 21, individually named serving state-senator quotation candidates: the February 14, 2022 curriculum story also directly quotes **Roger Chamberlain** (official [Minnesota LRL Senate service](https://www.lrl.mn.gov/legdb/fulldetail?ID=15325)), in addition to Paul Gazelka and Michelle Benson. The April 19, 2024 housing article's reporter is **Madison McVan**, not an unspecified newsroom staff byline. The old 21-candidate counts below document the earlier incomplete research snapshot; the [current corrected lead ledger](senate-media-2021-25-further-independent-reporting-15-leads.json) is authoritative for individual speaker-candidate counts. **24 original HTTP body captures across 12 article URLs remain unchanged.** See the [correction and original quote/alias verification report](senate-media-2021-25-reporter-speaker-correction-and-alias-originals.md).
+
 **Issue #987 (public historical state senator media remarks only); gap tracking #946.** Both projects and artifacts remain PUBLIC source-only; do not access VotePredict private sources, legislative vote classifications, prediction features, production seeds, or models.
 
 ## New source discovery: 15 independently reported newsroom articles
