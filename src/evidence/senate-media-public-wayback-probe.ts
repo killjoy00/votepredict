@@ -296,6 +296,10 @@ export async function verifyMediaPublicCdxReplay(
     const r=await fetchImpl(candidate.archiveUrl,{
       method:'GET',redirect:'manual',
       headers:{accept:'text/html,text/plain,application/xhtml+xml',
+        // Avoid *requesting* a newly compressed transfer representation.
+        // Fetch may still transparently decode archival compression; when
+        // that changes the WARC payload, SHA-1 mismatch MUST fail closed.
+        'accept-encoding':'identity',
         'user-agent':'VotePredict/2.0 public-media-capture-research'},
       signal:AbortSignal.timeout(20_000),
     });
