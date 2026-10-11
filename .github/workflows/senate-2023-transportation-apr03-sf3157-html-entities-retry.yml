@@ -1,0 +1,36 @@
+name: Retry original 2023 Transportation SF3157 named roll HTML entity decoding
+
+# Original first source run #38158242090 FAILED after HTML download;
+# preserve first artifact hashes, and trigger this retry only when merged.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2023-transportation-apr03-sf3157-html-entities-retry.yml
+
+permissions:
+  contents: read
+
+jobs:
+  revalidate-official-2023-html-entities:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Recheck official SF3157 original HTML seven roll choices and A49 conflict
+        run: |
+          node --import tsx scripts/review-senate-2023-transportation-apr03-sf3157-original-html.ts \
+            --output artifacts/2023-transportation-apr03-original-entities-retry/sf3157-original-entities-retry.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2023-transportation-apr03-sf3157-entities-retry
+          path: artifacts/2023-transportation-apr03-original-entities-retry/sf3157-original-entities-retry.json
+          retention-days: 30
+          if-no-files-found: error
