@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "senate-committee-138-2022to2025-caption-source-first-run-v1",
+  "issue": 864,
+  "authority": "Minnesota Legislative Reference Library",
+  "runId": 38103766440,
+  "runOverallConclusion": "failure",
+  "originalImplementationPR": 999,
+  "originalImplementationMergeSha": "d50cff57544ae3d0d40c28590b58bddb1ce21340",
+  "upstreamHrefProofRun": 38079233118,
+  "upstreamOriginalHtmlProofRun": 38081463362,
+  "independentZipAndJsonChecksVerified": true,
+  "years": [
+    {
+      "year": 2022,
+      "sourceArtifactId": 11687874692,
+      "zipSha256": "f2c6628ebea5179c340dd2048c9490a5bfc3d572d596724d0a7d4f46d6388ab7",
+      "jsonSha256": "afcf73a3b757241ed9da987b2df62d455d53e2296c59a493af87cac7e3ba60d4",
+      "jsonBytes": 12946,
+      "expectedMediaPages": 11,
+      "htmlVerified": 11,
+      "htmlFailed": 0,
+      "pagesWithTimedCaptions": 10,
+      "totalTimestampMarkers": 24147,
+      "status": "success"
+    },
+    {
+      "year": 2023,
+      "sourceArtifactId": 11688587941,
+      "zipSha256": "d8043c34346c21b06b4f2a30d70cf7c80225ae1d5a6d4863e15801a24a2f1240",
+      "jsonSha256": "a1a3155b54c3a55d7f98bc812f75f90653d1727c135cd77972d16b3737bd50a4",
+      "jsonBytes": 64282,
+      "expectedMediaPages": 64,
+      "htmlVerified": 62,
+      "htmlFailed": 2,
+      "pagesWithTimedCaptions": 56,
+      "totalTimestampMarkers": 162749,
+      "status": "partial_failed"
+    },
+    {
+      "year": 2024,
+      "sourceArtifactId": 11688174345,
+      "zipSha256": "abb6130e6c9b5cdb5600453ba86ac94dc88a3bc22976e1518b084824eada1305",
+      "jsonSha256": "5bcc3c7b15d80ddfe37b34b7b2df025251f8ea9f91cf35ecfffe0fdf93402ccd",
+      "jsonBytes": 42908,
+      "expectedMediaPages": 41,
+      "htmlVerified": 41,
+      "htmlFailed": 0,
+      "pagesWithTimedCaptions": 41,
+      "totalTimestampMarkers": 122128,
+      "status": "success"
+    },
+    {
+      "year": 2025,
+      "sourceArtifactId": 11688528042,
+      "zipSha256": "27b77a909ef7f7a609c57c0eab875dccc054c10fbb2d4c1ace30d6196d82c5d2",
+      "jsonSha256": "2cb3071e63359a62cc74a63625b62aeb57459cebffd0f58a613d35f93383cc3a",
+      "jsonBytes": 24278,
+      "expectedMediaPages": 22,
+      "htmlVerified": 22,
+      "htmlFailed": 0,
+      "pagesWithTimedCaptions": 22,
+      "totalTimestampMarkers": 47306,
+      "status": "success"
+    }
+  ],
+  "exceptions": [
+    {
+      "year": 2022,
+      "date": "2022-03-15",
+      "committee": "Housing Finance and Policy",
+      "mtgid": "1046040",
+      "hold": "caption_payload_no_timed_rows"
+    },
+    {
+      "year": 2023,
+      "date": "2023-01-10",
+      "committee": "Taxes",
+      "mtgid": "1046896",
+      "hold": "caption_payload_no_timed_rows"
+    },
+    {
+      "year": 2023,
+      "date": "2023-01-12",
+      "committee": "Taxes",
+      "mtgid": "1046920",
+      "hold": "original_html_fetch_failed"
+    },
+    {
+      "year": 2023,
+      "date": "2023-02-08",
+      "committee": "Taxes",
+      "mtgid": "1047266",
+      "hold": "original_html_fetch_failed"
+    },
+    {
+      "year": 2023,
+      "date": "2023-02-21",
+      "committee": "Taxes",
+      "mtgid": "1047437",
+      "hold": "audio_player_only_no_caption_request"
+    },
+    {
+      "year": 2023,
+      "date": "2023-03-07",
+      "committee": "Taxes",
+      "mtgid": "1047599",
+      "hold": "audio_player_only_no_caption_request"
+    },
+    {
+      "year": 2023,
+      "date": "2023-03-14",
+      "committee": "Taxes",
+      "mtgid": "1047707",
+      "hold": "audio_player_only_no_caption_request"
+    },
+    {
+      "year": 2023,
+      "date": "2023-04-13",
+      "committee": "Environment, Climate, and Legacy",
+      "mtgid": "1048027",
+      "hold": "audio_player_only_no_caption_request"
+    },
+    {
+      "year": 2023,
+      "date": "2023-04-13",
+      "committee": "Taxes",
+      "mtgid": "1048030",
+      "hold": "audio_player_only_no_caption_request"
+    }
+  ],
+  "summary": {
+    "mediaRecordLeads": 138,
+    "originalHtmlShaVerified": 136,
+    "htmlFetchFailures": 2,
+    "pagesWithTimedCaptionRows": 129,
+    "nonTimedSuccessfullyFetchedPages": 7,
+    "totalTimestampMarkersNotSpokenVoteProof": 356330,
+    "actualAudioOrVideoPlaybackVerified": false,
+    "actualCommitteeMotionsOrMemberVotesVerified": false,
+    "sourceRun2023YearIncomplete": true,
+    "official2021to2025VoteDenominator": null
+  },
+  "restrictions": {
+    "originalCaptionTextOrAudioBytesCommitted": false,
+    "noInferredIndividualYeaNay": true,
+    "noPrivateDbAccess": true,
+    "noProductionOrModelServingSchedulerFloor2027Changes": true,
+    "keepIssue864Open": true
+  }
+}
