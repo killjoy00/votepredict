@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "senate-2021-apr08-original-lrl-granicus-media-access-first-source-success-v1",
+  "issue": 864,
+  "firstOriginalRun": {
+    "runId": 38177903789,
+    "runURL": "https://github.com/killjoy00/votepredict/actions/runs/38177903789",
+    "runnerPR": 1153,
+    "runnerMergeSHA": "3432963fc02b5a8c18b70dc185dbfb444ae2d6ef",
+    "conclusion": "success",
+    "artifactId": 11716551428,
+    "artifactName": "senate-2021-apr08-lrl-granicus-original-media-access-metadata",
+    "independentlyDownloadedZipBytes": 2395,
+    "independentlyDownloadedZipSHA256": "b7e499970e1dbe62a0cded2e913d5233bd4d1b0f4b41c21f1bb4c98556400343",
+    "independentlyDecodedJsonEntry": "source.json",
+    "independentlyDecodedJsonBytes": 9122,
+    "independentlyDecodedJsonSHA256": "ba8a5e584999bc16819c0095e0a3f84cd03a40afa77bdcf27f537d7e6962b1b6"
+  },
+  "original2021OfficialPublicLRLDatedPages": [
+    {
+      "bill": "SF1159",
+      "committee": "Transportation Finance and Policy",
+      "day": "2021-04-08",
+      "url": "https://www.lrl.mn.gov/media/file?body=s&cid=3102&date=04%2F08%2F2021",
+      "originalPageBytes": 89044,
+      "originalPageSHA256": "a204640dcc0ea751fc867ae673492302a48b3dac4c0747475fab1c1ecc2291ce",
+      "audioTags": 1,
+      "videoTags": 1,
+      "captionRequests": 1,
+      "distinctOriginalJournalReportedMotions": 2
+    },
+    {
+      "bill": "SF970",
+      "committee": "Judiciary and Public Safety Finance and Policy",
+      "day": "2021-04-08",
+      "url": "https://www.lrl.mn.gov/media/file?body=s&cid=3099&date=04%2F08%2F2021",
+      "originalPageBytes": 96070,
+      "originalPageSHA256": "98d4a9be8e08963121f332dcda6fbc602a07dc4a237b633011fc40a1ca2a4194",
+      "audioTags": 3,
+      "videoTags": 2,
+      "captionRequests": 2,
+      "distinctOriginalJournalReportedMotions": 1
+    }
+  ],
+  "originalSenateGranicusApr08Agendas": [
+    {
+      "bill": "SF1159",
+      "clipId": 6934,
+      "originalBytes": 2874,
+      "originalSHA256": "dbe81f300affb35aaa25368a550f10258154c81c62db15f5e6c5248e93455a58"
+    },
+    {
+      "bill": "SF970",
+      "clipId": 6938,
+      "originalBytes": 3078,
+      "originalSHA256": "71638dff52065ef1b6a5a1084e9c0fd88f536140b7a4553fa0789594dac8982f"
+    },
+    {
+      "bill": "SF970",
+      "clipId": 6939,
+      "originalBytes": 3078,
+      "originalSHA256": "19195564ad554bc78d051bbda75941f959dfa1d3823cdf562ca93eb7c6055530"
+    }
+  ],
+  "originalSenateGranicusMp3SourceResponses": [
+    {
+      "clipId": 6934,
+      "originalHTTPStatus": 403,
+      "sourceState": "HTTP_UNAVAILABLE",
+      "sourcePrefixBytes": 0
+    },
+    {
+      "clipId": 6938,
+      "originalHTTPStatus": 403,
+      "sourceState": "HTTP_UNAVAILABLE",
+      "sourcePrefixBytes": 0
+    },
+    {
+      "clipId": 6939,
+      "originalHTTPStatus": 403,
+      "sourceState": "HTTP_UNAVAILABLE",
+      "sourcePrefixBytes": 0
+    }
+  ],
+  "originalLRL2021AutomaticCaptions": [
+    {
+      "bill": "SF1159",
+      "part": "single",
+      "originalCaptionEndpoint": "https://www.lrl.mn.gov/media/media_functions?type=getCaption&captionid=&strmp4=cmte_fintrans_040821.mp4",
+      "firstSourceState": "CAPTION_UNAVAILABLE",
+      "reason": "network_or_source_error"
+    },
+    {
+      "bill": "SF970",
+      "part": "first",
+      "originalCaptionEndpoint": "https://www.lrl.mn.gov/media/media_functions?type=getCaption&captionid=&strmp4=cmte_jud_040821.mp4",
+      "firstSourceState": "AUTOMATED_CAPTION_PAYLOAD_ACQUIRED",
+      "originalBytes": 436144,
+      "originalSHA256": "6e37f661cb4ced4d33fdce7ed5af0a38cd57f9580efcf55ce5bc90e6ed92e84a",
+      "originalCaptionDataTimeRows": 2593,
+      "originalCaptionTableRows": 2594,
+      "originalCaptionTableCells": 5186,
+      "unverifiedSameRowPappasAndAmendmentOrRollCallCues": 3
+    },
+    {
+      "bill": "SF970",
+      "part": "second",
+      "originalCaptionEndpoint": "https://www.lrl.mn.gov/media/media_functions?type=getCaption&captionid=&strmp4=cmte_jud_040821b.mp4",
+      "firstSourceState": "CAPTION_UNAVAILABLE",
+      "reason": "network_or_source_error"
+    }
+  ],
+  "holds": {
+    "noOriginal2021PrintMinutesCompared": true,
+    "directOriginalAudioOrVideoAuthenticMotionTimingObtained": false,
+    "automaticCaptionAndAgendaIsNotProofOfAnySpecificMotionVoteDay": true,
+    "allThreeDistinctOriginalJournalAmendmentMotionOccurredOn": null,
+    "historicalPublicByForMotions": null,
+    "notACompleteStatewideCommitteeVoteDenominator": true,
+    "noIndividualVoteChoicesInferredFromAudioIndexOrCaption": true,
+    "noPrivateDatabaseSourceToRowsReconciliation": true,
+    "noProductionReadWriteOrForecastModelSchedulerFloorOr2027Change": true,
+    "noGovernmentOfficeOrLRLContact": true,
+    "issue864RemainsOpen": true
+  }
+}
