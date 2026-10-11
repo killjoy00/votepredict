@@ -1,0 +1,62 @@
+name: Recover original 2019-2020 campaign pages for six ACTUAL Minnesota senators
+
+# Research-only one-shot original Wayback HTML/CDX source proof.
+# No production DB, serving, forecast or cron, no public office contact.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/acquire-senate-six-served-2020-original-campaign-pages.yml
+      - data/evaluation/senate-six-served-2020-historical-original-campaign-domain-targets-v1.json
+      - scripts/acquire-senate-six-served-2020-original-campaign-domains.ts
+      - scripts/run-senate-six-served-2020-original-campaign-domains.ts
+      - tests/senate-six-served-2020-original-campaign-domain-acquisition.test.ts
+      - docs/SENATE_2020_SIX_ACTUAL_SENATORS_ORIGINAL_CAMPAIGN_SITE_SEARCH.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  six-officially-served-2021-senators-original-2020-campaign-sites:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-six-actual-senators-2020-original-campaign-sites-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Obtain independent ACTUAL original full Minnesota Senate member directory
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: originals/independent-government-source
+      - name: Rehash original LRL actual Senate service before querying 2019-2020 archives
+        timeout-minutes: 13
+        shell: bash
+        run: |
+          set -euo pipefail
+          original="$(find originals/independent-government-source -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find originals/independent-government-source -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$original" && test -n "$receipt"
+          test "$(dirname "$original")" = "$(dirname "$receipt")"
+          node --import tsx scripts/run-senate-six-served-2020-original-campaign-domains.ts \
+            --original-lrl-senate-html "$original" \
+            --original-lrl-receipt "$receipt" \
+            --output-dir originals/six-2020-historical-campaign-originals
+      - name: Retain original campaign archives or dated failures as reproducible source research
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-2020-six-actually-served-campaign-original-html-cdx-source-v1
+          path: originals/six-2020-historical-campaign-originals/
+          if-no-files-found: warn
+          retention-days: 30
