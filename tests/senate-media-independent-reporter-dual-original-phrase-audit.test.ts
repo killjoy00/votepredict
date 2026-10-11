@@ -13,8 +13,7 @@ const read=(s:string)=>JSON.parse(readFileSync('docs/evaluation/'+s,'utf8')) as 
 const queue=read('senate-media-2021-2024-independent-reporter-two-dual-speaker-original-phrase-queue.json') as DualReporterQueue;
 const leads=read('senate-media-2021-25-further-independent-reporting-15-leads.json')
  .independentOriginalReporterArticleLeads as ReporterArticleLead[];
-const old=read('senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json')
- as JournalistOriginalProof;
+const old=read('senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json') as JournalistOriginalProof;
 const B32='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 function base32(bytes:Uint8Array):string{
  let v=0,bits=0,out='';
