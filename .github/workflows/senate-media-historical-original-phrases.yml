@@ -1,0 +1,54 @@
+name: Senate media public historical original phrase presence
+
+# #987 PUBLIC-ONLY; never store/print original article text, audio or private data.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-historical-original-phrases.yml
+      - src/evidence/senate-media-historical-phrase-presence.ts
+      - scripts/audit-senate-media-historical-original-phrases.ts
+      - docs/evaluation/senate-media-2021-25-pinned-historical-original-phrase-review-queue.json
+      - docs/evaluation/senate-media-2021-25-new-public-original-replay-receipts-20261011.json
+      - tests/senate-media-historical-phrase-presence.test.ts
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-historical-original-phrase-research
+  cancel-in-progress: false
+
+jobs:
+  check-pinned-original-html:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-discovery-and-original-phrases-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Validate only seven short historical text cues in six pinned original HTML bodies
+        run: |
+          node --import tsx scripts/audit-senate-media-historical-original-phrases.ts \
+            --output artifacts/senate-media-historical-original-phrase-cues.json
+      - name: Upload research metadata, NOT source text/audio
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-historical-original-phrase-cues
+          path: artifacts/senate-media-historical-original-phrase-cues.json
+          if-no-files-found: error
+          retention-days: 7
