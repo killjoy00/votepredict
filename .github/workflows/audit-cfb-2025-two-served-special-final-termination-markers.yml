@@ -1,0 +1,40 @@
+name: Verify 2025 original special-final termination markers for actual SD29/47 senators
+
+# #864: one-shot bounded ORIGINAL PDF read. The report PDF bodies are
+# discarded in memory and only narrow whitelisted marker keywords retained.
+# No production credentials, databases or model workflows.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-cfb-2025-two-served-special-final-termination-markers.yml
+      - scripts/acquire-cfb-2025-served-termination-markers.ts
+      - src/evidence/cfb-2025-served-special-final-termination-markers.ts
+      - tests/cfb-2025-served-special-final-termination-markers.test.ts
+permissions:
+  contents: read
+jobs:
+  source-two-pinned-served-senator-original-pdfs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Strict offline original PDF source and no-unchecked-checkbox-inference tests
+        run: node --import tsx --test tests/cfb-2025-served-special-final-termination-markers.test.ts
+      - name: Re-acquire two exact pinned original 2025 PDFs only after original LRL Senate service proof
+        run: |
+          node --import tsx scripts/acquire-cfb-2025-served-termination-markers.ts \
+            --output artifacts/cfb-2025-served-original-termination-markers.json
+      - name: Save bounded keyword-only source evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2025-served-original-termination-form-marker-probe
+          path: artifacts/cfb-2025-served-original-termination-markers.json
+          retention-days: 30
+          if-no-files-found: warn
