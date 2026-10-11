@@ -87,3 +87,50 @@ test('current 2026 status is never historical proof of any 2023/24 registration 
  assert.throws(()=>inspectCurrentOfficialCfbCandidateHeading({
   registrationNumber:'bad',html:'',observedAt:'2026-10-11T20:30:00.000Z'}),/ID invalid/);
 });
+
+test('original signed September 2024 Putnam Board action and 22 as-of-2026 committee web source fingerprints persist without false historic obligations',()=>{
+ const {createHash}=require('node:crypto') as typeof import('node:crypto');
+ const ck=JSON.parse(readFileSync(
+  'docs/evaluation/source-proof/cfb-2023-24-22-committee-signed-board-contemporaneous-status-source-checkpoint.json','utf8'));
+ const raw=readFileSync(ck.original22CurrentViewerLedger.path,'utf8');
+ const sha=createHash('sha1').update('blob '+Buffer.byteLength(raw,'utf8')+'\0')
+  .update(raw,'utf8').digest('hex');
+ assert.equal(ck.original22CurrentViewerLedger.gitBlobSha,sha);
+ assert.equal(ck.original22CurrentViewerLedger.bytes,Buffer.byteLength(raw,'utf8'));
+ const lines=raw.trimEnd().split('\n').map(x=>x.split('|'));
+ assert.equal(lines.length,22);
+ const persons=new Map(select22AuthenticSenatorRegistrationTargets(ledger)
+  .map(x=>[x.registrationNumber,x]));
+ const terminated:string[]=[];
+ for(const r of lines){
+  assert.equal(r.length,14);
+  const p=persons.get(r[0]!);
+  assert.ok(p);
+  assert.equal(r[1],p.senator);
+  assert.equal(r[2],String(p.district2022));
+  assert.equal(r[3], 'https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/'+r[0]+'/2026/');
+  assert.match(r[4]!,/^[a-f0-9]{64}$/);
+  assert.ok(Number(r[5])>1000);
+  assert.equal(r[6],'2026-10-11');
+  assert.equal(r[7],'CFB_live_2026_head_reg_and_Senate_verified');
+  if(r[8]==='explicitly_terminated_on_2026_viewer')terminated.push(r[0]!);
+  else assert.equal(r[8],'no_terminated_label_on_2026_viewer');
+  assert.equal(r[9],'unknown_2023_registration_state');
+  assert.equal(r[10],'unknown_2024_registration_state');
+  assert.equal(r[11],'unknown_historical_termination_event_date');
+  assert.equal(r[12],'unknown_2023_2024_YE_legally_owed');
+  assert.equal(r[13],'unknown_exact_version_original_public_by');
+ }
+ assert.deepEqual(terminated.sort(),['17362','18763']);
+ assert.equal(ck.originalBoard.pdfSha256,'1e830c6e0b3f45342b801c545c61f3d9720195c8e64d951ab633286776ac0921');
+ assert.equal(ck.originalBoard.originalPdfBytes,85070);
+ assert.equal(ck.originalBoard.boardStatesRegisteredYear,2019);
+ assert.equal(ck.originalBoard.originalBoardSecondAmendedReportMatchesExistingVersion,
+  '18430:23:pcc:YE:0:2');
+ assert.equal(ck.originalBoard.amendment1StillHeldForOriginalPDFIdentity,true);
+ assert.equal(ck.originalBoard.originalVersion2ActuallyPublicBy,null);
+ assert.equal(ck.unresolved.specific22CommitteeYearend2023And2024LegallyOwed,null);
+ assert.equal(ck.unresolved.actualHistoricallyPublicReportVersionProvenCount,0);
+ assert.equal(ck.safeguards.noProductionDbWrite,true);
+ assert.equal(ck.safeguards.issue864Open,true);
+});
