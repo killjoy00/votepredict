@@ -24,6 +24,10 @@ const parseNames=(value:string)=>value.split(/\s*,\s*/)
 export function inspectOriginalApr08A10Motion(text:string){
  if(text.length<1800||text.length>200000||sha(text)!==SOURCE.originalTextSHA256)
   throw Error('Original April8 full extracted-text SHA changed');
+ return inspectApr08A10MotionTextCore(text);
+}
+/** Pure textual structural test harness; NOT an authenticated original source. */
+export function inspectApr08A10MotionTextCore(text:string){
  const cues=[...text.matchAll(/\bA10\s+Amendment\b/gi)];
  if(!cues.length)throw Error('Original April8 A10 amendment mention missing');
  const results=[...text.matchAll(/With\s+a\s+vote\s+of[\s\S]{0,85}?\b7\s*\/\s*3\s*\/\s*1\b[\s\S]{0,45}?\b(?:motion|amendment)\s+prevail(?:ed|s)\b/gi)];
