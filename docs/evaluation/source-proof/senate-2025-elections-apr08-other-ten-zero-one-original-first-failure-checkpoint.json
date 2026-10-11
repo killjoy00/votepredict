@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "senate-2025-elections-apr08-other-10-0-1-original-first-failure-checkpoint-v1",
+  "issue": 864,
+  "sourceAuthority": "Minnesota Legislative Reference Library",
+  "hearingDate": "2025-04-08",
+  "originalMinutesPdfUrl": "https://www.lrl.mn.gov/archive/minutes/senate/2025/elections/20250408/Elections_20250408_Minutes.pdf",
+  "expectedPreviouslyAuthenticatedOriginalPdfSha256": "d26c583ef3e5caae1b52d379bf9c6cc784e0e9d39a80c056259f65f83f2e4c46",
+  "expectedPreviouslyAuthenticatedExtractedTextSha256": "6dc40628432da41be2ac4afe24b8725d5638e069421c4f413445042794411101",
+  "originalA11SeparatelyAuthenticatedResultOffset": 1422,
+  "actualFirstOriginalRun": {
+    "runId": 38156811715,
+    "runUrl": "https://github.com/killjoy00/votepredict/actions/runs/38156811715",
+    "sourceRunnerPR": 1067,
+    "sourceRunnerMergeCommit": "9bd2514c0328712813e24d67f4b8deaa5acc0cf3",
+    "conclusion": "failure",
+    "originalArtifactId": 11708731132,
+    "originalArtifactName": "senate-2025-apr08-original-second-ten-zero-one",
+    "independentlyDownloadedOriginalZipSha256": "eb117ca95cd419234c77df9a6cc829d17a3deebd4dad81744bf548a5dd15e7bd",
+    "originalArtifactZipBytes": 900,
+    "uncompressedOriginalJsonSha256": "28b14c59e483899bf06a15857d7b05b32bd7350a50567065f6fc70bc9fb7654b",
+    "uncompressedOriginalJsonBytes": 1179,
+    "reportedFailure": "fetch failed",
+    "originalPdfAndTextSHAReverified": false,
+    "otherTenZeroOneParagraphInspected": false,
+    "failedOriginalSourceChecks": 1,
+    "noCertifiedOriginalSecondTenZeroOneResultFromFirstRun": true
+  },
+  "retryBoundary": {
+    "unchangedOriginalOfficialUrl": true,
+    "unchangedOriginalPdfTextSHARequirements": true,
+    "separateOneTimeWorkflowPath": ".github/workflows/senate-2025-elections-apr08-other-10-0-1-retry.yml",
+    "noFirstOriginalRunRerunOrOverwrittenConclusion": true,
+    "retrySuccessNotYetEstablished": true
+  },
+  "limits": {
+    "noIndividualYeaNaySideImported": true,
+    "noOtherMotionIdentityCertified": true,
+    "no2021to2025StatewideCommitteeVoteDenominatorEstablished": true,
+    "noPrivateProductionDbAccess": true,
+    "noForecastModelTrainingServingSchedulerFloorOr2027": true,
+    "issue864MustRemainOpen": true
+  }
+}
