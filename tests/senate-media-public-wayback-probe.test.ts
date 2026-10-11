@@ -98,6 +98,7 @@ test('only exact indexed HTTP response bytes unlock observed SHA-256, never indi
     assert.equal(opts.method,'GET');
     assert.equal(opts.redirect,'manual');
     assert.ok(opts.signal);
+    assert.equal((opts.headers as Record<string,string>)['accept-encoding'],'identity');
     return new Response(article,{headers:{'content-type':'text/html; charset=utf-8'}});
   }));
   assert.equal(requests,1);
