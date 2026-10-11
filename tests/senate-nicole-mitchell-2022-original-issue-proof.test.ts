@@ -73,7 +73,7 @@ test('missing actual independent official LRL Senate service cannot qualify sour
 test('even a plausible later or tampered mock HTML cannot impersonate original CDX authenticated 2022 source bytes',()=>{
  const bytes={'nicole2022-priorities-feb01':fake,'nicole2022-priorities-nov05':fake};
  assert.throws(()=>auditNicoleMitchell2022OriginalCampaignQuotes(service(),bytes),
-  /original historical campaign HTML SHA-256 mismatch/);
+  /Original historical campaign HTML SHA-256 mismatch/);
  const absent={'nicole2022-priorities-feb01':new Uint8Array(),
   'nicole2022-priorities-nov05':fake};
  assert.throws(()=>auditNicoleMitchell2022OriginalCampaignQuotes(service(),absent),
