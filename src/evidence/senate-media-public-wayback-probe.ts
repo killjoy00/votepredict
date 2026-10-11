@@ -102,7 +102,10 @@ function captureUtc(ts:string):string {
   const iso=ts.slice(0,4)+'-'+ts.slice(4,6)+'-'+ts.slice(6,8)
     +'T'+ts.slice(8,10)+':'+ts.slice(10,12)+':'+ts.slice(12,14)+'Z';
   const ms=Date.parse(iso);
-  if(!Number.isFinite(ms)||new Date(ms).toISOString()!==iso)
+  // Date#toISOString includes ".000Z" even when the CDX timestamp has
+  // second precision only. Compare its canonical same-precision UTC value;
+  // still reject overflow dates (such as February 30) and impossible hours.
+  if(!Number.isFinite(ms)||new Date(ms).toISOString()!==iso.slice(0,-1)+'.000Z')
     throw Error('Impossible or rolled-over CDX capture timestamp');
   const yr=Number(ts.slice(0,4));
   if(yr<2021||yr>2025)throw Error('CDX capture outside 2021-2025 proof window');
