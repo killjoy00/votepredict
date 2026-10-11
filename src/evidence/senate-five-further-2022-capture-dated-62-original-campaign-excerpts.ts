@@ -135,7 +135,7 @@ export function auditFiveMore2022CaptureDatedOriginalSenatorPolicyExcerpts(
    ||!/^[A-Z2-7]{32}$/.test(p.originalCdxSha1Base32)
    ||!['http:','https:'].includes(new URL(p.originalUrl).protocol)
    ||new URL(p.originalUrl).hostname.replace(/^www\./,'')!==expected.domain)
-   throw Error('Unapproved actual serving senator's historical date, original URL or original page hash');
+   throw Error('Unapproved serving Senator historic capture date, original URL or HTML digest');
   usedFiles.add(p.originalFile);byFile.set(p.originalFile,p);peopleFound.add(p.senator);
   const service=validateActualSenateServiceForElection(
    official,p.senator,p.district,2022);
