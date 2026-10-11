@@ -85,6 +85,13 @@ test('permanent original SOS 2023 Senate member source ledger and source PDF ide
  assert.equal(ck.originalSourceDocument.pdfBytes,5803052);
  assert.equal(ck.originalSourceDocument.original2023SenateMemberRows,67);
  assert.equal(ck.originalSourceRuns[0].originalCfb2022SenatorsMatchedInIndependent2023Roster,22);
+ assert.equal(ck.originalSourceRuns.length,2);
+ assert.notEqual(ck.originalSourceRuns[0].runId,ck.originalSourceRuns[1].runId);
+ assert.equal(ck.independentOriginalSourceReconciliation.bothOriginalSOS2023PDFSha256AndByteCountsIdentical,true);
+ assert.equal(ck.independentOriginalSourceReconciliation.bothRunsSourcePDFMemberEntriesCountIdentical67,true);
+ assert.equal(ck.independentOriginalSourceReconciliation.bothRunsMatchedAll22ExactMemberNamesAndDistricts,true);
+ assert.equal(ck.independentOriginalSourceReconciliation.twoRunsNoMemberOrIdentityMismatch,true);
+ assert.equal(ck.independentOriginalSourceReconciliation.noCfbCandidateRegistrationLegalDutyInferred,true);
  assert.equal(ck.scope.independent2023SenateRosterFor22ProofCount,22);
  assert.equal(ck.scope.original2023Or2024LegallyOwedYECommitteeCount,null);
  assert.equal(ck.scope.original2023Or2024HistoricalPublicByIndependentlyEstablishedCount,0);
