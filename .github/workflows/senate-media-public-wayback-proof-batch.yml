@@ -1,0 +1,85 @@
+name: Senate media public Wayback exact proof batch
+
+# #987/#946. PUBLIC RESEARCH ONLY. No VotePredict DB credentials or private
+# SELECT export. Owner-only issue comment can start a manual public run.
+on:
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: "Pilot four exact URLs (three stories) or 31 curated public URLs"
+        type: choice
+        required: true
+        default: pilot
+        options: [pilot, all]
+      replay_count:
+        description: "Max raw original replays per indexed exact URL"
+        type: choice
+        required: true
+        default: "1"
+        options: ["0", "1", "2"]
+  issue_comment:
+    types: [created]
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-public-wayback-proof-batch.yml
+      - src/evidence/senate-media-public-proof-batch.ts
+      - scripts/probe-senate-media-public-wayback-batch.ts
+      - tests/senate-media-public-proof-batch.test.ts
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-public-wayback-proof
+  cancel-in-progress: false
+
+jobs:
+  public-original-cdx:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (
+          github.event_name == 'workflow_dispatch' &&
+          github.ref == 'refs/heads/main'
+        ) ||
+        (
+          github.event_name == 'issue_comment' &&
+          github.event.issue.number == 987 &&
+          github.event.comment.user.login == 'killjoy00' &&
+          (
+            github.event.comment.body == '[senate-media-public-proof]' ||
+            github.event.comment.body == '[senate-media-public-proof-all]'
+          )
+        ) ||
+        (
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-2021-25-public-proof-batch-20261010'
+        )
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Probe bounded, exact checked-in URLs; do not persist original bodies
+        env:
+          PROBE_SCOPE: ${{ github.event_name == 'workflow_dispatch' && inputs.scope || (github.event_name == 'issue_comment' && github.event.comment.body == '[senate-media-public-proof-all]' && 'all' || 'pilot') }}
+          PROBE_REPLAY_COUNT: ${{ github.event_name == 'workflow_dispatch' && inputs.replay_count || '1' }}
+        run: |
+          node --import tsx scripts/probe-senate-media-public-wayback-batch.ts \
+            --scope "$PROBE_SCOPE" --replay-count "$PROBE_REPLAY_COUNT" \
+            --output artifacts/senate-media-public-wayback-proof-batch.json
+      - name: Save PUBLIC metadata only, seven-day retention
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-public-wayback-proof-batch
+          path: artifacts/senate-media-public-wayback-proof-batch.json
+          if-no-files-found: error
+          retention-days: 7
