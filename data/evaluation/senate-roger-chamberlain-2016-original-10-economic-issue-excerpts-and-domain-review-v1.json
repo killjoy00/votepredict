@@ -1,0 +1,214 @@
+{
+  "schema": "mn-2016-roger-chamberlain-one-original-campaign-issue-page-10-unique-website-policy-excerpts-and-2020-archive-context-review-v1",
+  "scope": {
+    "issue": 864,
+    "yearOfOriginalArchiveCapture": 2016,
+    "originalArchivalPublicByUtc": "2016-02-27T08:24:48.000Z",
+    "firstAuthoredDateIndependentlyProven": false,
+    "observed2016PageReferences2011And2012LegislativeWork": true,
+    "newlyAuthoredIn2016Proven": false,
+    "claimOfBeingReissuedAs2020Platform": false,
+    "valid2020ElectionCutoffEvidenceAutoPromoted": false,
+    "independentlyVerifiedReal2021ServingStateSenatorsBeforeArchiveReplay": 3,
+    "originalAuthenticFullHtmlPageBodiesCrosschecked": 7,
+    "fullOriginalIndependentHistoricalCdxJsonSourcesCrosschecked": 5,
+    "distinctExactShortIssueStatements": 10,
+    "Tomassoni2019WordPressReceiptsAreHisPoliticStatements": false,
+    "CarrieRuud2016RepeatOf2013IssueCopyNotRecounted": true,
+    "Roger2020SenatorPodcastSiteNotElectionPlatform": true,
+    "olderPastVotesIn2016SiteNotOfficialVerifiedVotes": true,
+    "productionDatabaseEvidenceModelForecastSchedulerChanges": 0,
+    "statewideCampaignCoverageCertified": false
+  },
+  "source": {
+    "historicalFullMNOfficialLRLRun": 38094976711,
+    "historicalFullMNOfficialLRLArtifact": 11685387674,
+    "historicalFullMNOfficialLRLHtmlSHA256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "originalSevenWindowSourceRun": 38169118033,
+    "originalSevenWindowSourceArtifactId": 11713536195,
+    "originalSevenWindowArtifactName": "senate-three-actually-served-2020-expanded-seven-original-domain-gap-probes-v1",
+    "sourceOriginalManifest": "2020-three-actual-senator-expanded-original-archive-gap-research.json",
+    "originalArchivedCampaignPageFile": "chamberlain_org_2014_2018-1-original-20160227082448.html",
+    "firstPartyArchivedCampaignURL": "http://www.rogerchamberlain.org:80/issues.html",
+    "originalArchivedCaptureUtc": "2016-02-27T08:24:48.000Z",
+    "independentWaybackOriginalPayloadSHA1Base32": "SMSNSVLDYC5VXSGEUTCTDYG25DHQOXA4",
+    "originalWholeHtmlSHA256": "cd15863298425004d7c67a0d2894124a85ed1b8d9e64b625a4b3e3ec08cd51fd",
+    "originalFullIndependentCDXFile": "chamberlain_org_2014_2018-entire-original-cdx.json",
+    "originalWholeCDXSHA256": "61f95b73aba6f529819f1f903c0bdd86104167ad8e3eeb3fc021a932ab2f66df",
+    "person": "Roger Chamberlain",
+    "actual2021SenateDistrict": "38",
+    "historicalSourceClass": "2016_original_chamberlain_for_senate_candidate_campaign_issues_page",
+    "attributionProofText": "Prepared and paid for by Chamberlain for Senate",
+    "priorSourcesAlreadyHave2022RogerExcerpts": 21
+  },
+  "reviewOfAllSevenOriginalHtml": [
+    {
+      "file": "tomassoni_2014_2020-1-original-20190820115245.html",
+      "personDomainLead": "David Tomassoni",
+      "sourceClass": "unrelated_2019_wordpress_receipt_templates_not_candidate_campaign_political_text",
+      "requiredVisibleTerm": "free online printable receipts",
+      "candidateOwnedPoliticalAttributionAllowed": false,
+      "selectedNewExcerpts": 0
+    },
+    {
+      "file": "tomassoni_2014_2020-2-original-20190716210647.html",
+      "personDomainLead": "David Tomassoni",
+      "sourceClass": "unrelated_2019_wordpress_author_aisya_faiha_not_candidate_campaign_political_text",
+      "requiredVisibleTerm": "Aisya Faiha",
+      "candidateOwnedPoliticalAttributionAllowed": false,
+      "selectedNewExcerpts": 0
+    },
+    {
+      "file": "ruud_2014_2016-1-original-20160323055942.html",
+      "personDomainLead": "Carrie Ruud",
+      "sourceClass": "old_2012_senate_candidate_page_copy_still_visible_2016_no_duplicate_2013_quotes",
+      "requiredVisibleTerm": "WE WON! THANK YOU!",
+      "candidateOwnedPoliticalAttributionAllowed": true,
+      "selectedNewExcerpts": 0
+    },
+    {
+      "file": "ruud_2014_2016-2-original-20160316062149.html",
+      "personDomainLead": "Carrie Ruud",
+      "sourceClass": "original_candidate_contact_form_no_issue_position",
+      "requiredVisibleTerm": "Contact Carrie",
+      "candidateOwnedPoliticalAttributionAllowed": true,
+      "selectedNewExcerpts": 0
+    },
+    {
+      "file": "chamberlain_org_2014_2018-1-original-20160227082448.html",
+      "personDomainLead": "Roger Chamberlain",
+      "sourceClass": "genuine_2016_candidate_owned_chamberlain_for_senate_issues_page",
+      "requiredVisibleTerm": "Prepared and paid for by Chamberlain for Senate",
+      "candidateOwnedPoliticalAttributionAllowed": true,
+      "selectedNewExcerpts": 10
+    },
+    {
+      "file": "chamberlain_mn_2018_2020-1-original-20201030013213.html",
+      "personDomainLead": "Roger Chamberlain",
+      "sourceClass": "2020_senator_owned_personal_bio_not_current_election_campaign_platform",
+      "requiredVisibleTerm": "Home of MN State Senator Roger Chamberlain",
+      "candidateOwnedPoliticalAttributionAllowed": false,
+      "selectedNewExcerpts": 0
+    },
+    {
+      "file": "chamberlain_mn_2018_2020-2-original-20201030014434.html",
+      "personDomainLead": "Roger Chamberlain",
+      "sourceClass": "2020_senator_owned_podcast_website_not_current_election_campaign_platform",
+      "requiredVisibleTerm": "Roger, Roger! Podcast",
+      "candidateOwnedPoliticalAttributionAllowed": false,
+      "selectedNewExcerpts": 0
+    }
+  ],
+  "tenCandidateSiteExactStatements": [
+    {
+      "id": "chamberlain-original-2016-01",
+      "issueFamily": "labor_employment",
+      "exactExcerpt": "Revitalizing the economy and allowing businesses to create jobs needs to be our top priority.",
+      "conservativeMeaning": "Prioritize economic revival and job creation",
+      "attributedTo": "Roger Chamberlain",
+      "sourceSection": "original_2016_candidates_issues_goals",
+      "statementKind": "first_party_candidate_historical_economic_or_tax_policy_position_not_verified_vote",
+      "historic2016CaptureOnlyNot2020Authorship": true,
+      "automaticEvidenceForecastAdmission": false
+    },
+    {
+      "id": "chamberlain-original-2016-02",
+      "issueFamily": "taxes_revenue",
+      "exactExcerpt": "Sensible and reasonable spending, tax and regulatory reform will restore confidence in this state",
+      "conservativeMeaning": "Advocates spending restraint and tax/regulatory reform",
+      "attributedTo": "Roger Chamberlain",
+      "sourceSection": "original_2016_candidates_issues_goals",
+      "statementKind": "first_party_candidate_historical_economic_or_tax_policy_position_not_verified_vote",
+      "historic2016CaptureOnlyNot2020Authorship": true,
+      "automaticEvidenceForecastAdmission": false
+    },
+    {
+      "id": "chamberlain-original-2016-03",
+      "issueFamily": "state_government",
+      "exactExcerpt": "empower people, not government, and allow free markets to work.",
+      "conservativeMeaning": "Supports limited government and market allocation",
+      "attributedTo": "Roger Chamberlain",
+      "sourceSection": "original_2016_candidates_issues_goals",
+      "statementKind": "first_party_candidate_historical_economic_or_tax_policy_position_not_verified_vote",
+      "historic2016CaptureOnlyNot2020Authorship": true,
+      "automaticEvidenceForecastAdmission": false
+    },
+    {
+      "id": "chamberlain-original-2016-04",
+      "issueFamily": "labor_employment",
+      "exactExcerpt": "All budget and policy decisions need to consider the effects on the economy and job creation.",
+      "conservativeMeaning": "Weigh job creation in budget and policy decisions",
+      "attributedTo": "Roger Chamberlain",
+      "sourceSection": "original_2016_candidates_issues_goals",
+      "statementKind": "first_party_candidate_historical_economic_or_tax_policy_position_not_verified_vote",
+      "historic2016CaptureOnlyNot2020Authorship": true,
+      "automaticEvidenceForecastAdmission": false
+    },
+    {
+      "id": "chamberlain-original-2016-05",
+      "issueFamily": "commerce_consumer",
+      "exactExcerpt": "With reforms, increase Minnesota’s competitiveness and become more business friendly",
+      "conservativeMeaning": "Improve competitiveness through reforms",
+      "attributedTo": "Roger Chamberlain",
+      "sourceSection": "original_2016_candidates_issues_goals",
+      "statementKind": "first_party_candidate_historical_economic_or_tax_policy_position_not_verified_vote",
+      "historic2016CaptureOnlyNot2020Authorship": true,
+      "automaticEvidenceForecastAdmission": false
+    },
+    {
+      "id": "chamberlain-original-2016-06",
+      "issueFamily": "taxes_revenue",
+      "exactExcerpt": "Phase out the statewide business property tax.",
+      "conservativeMeaning": "Phase out state business property tax",
+      "attributedTo": "Roger Chamberlain",
+      "sourceSection": "original_2016_candidates_issues_goals",
+      "statementKind": "first_party_candidate_historical_economic_or_tax_policy_position_not_verified_vote",
+      "historic2016CaptureOnlyNot2020Authorship": true,
+      "automaticEvidenceForecastAdmission": false
+    },
+    {
+      "id": "chamberlain-original-2016-07",
+      "issueFamily": "commerce_consumer",
+      "exactExcerpt": "Strengthen and improve Angel Investor Credit.",
+      "conservativeMeaning": "Strengthen investor credit",
+      "attributedTo": "Roger Chamberlain",
+      "sourceSection": "original_2016_candidates_issues_goals",
+      "statementKind": "first_party_candidate_historical_economic_or_tax_policy_position_not_verified_vote",
+      "historic2016CaptureOnlyNot2020Authorship": true,
+      "automaticEvidenceForecastAdmission": false
+    },
+    {
+      "id": "chamberlain-original-2016-08",
+      "issueFamily": "judiciary_civil_law",
+      "exactExcerpt": "Pass tort reform",
+      "conservativeMeaning": "Advocates tort reform",
+      "attributedTo": "Roger Chamberlain",
+      "sourceSection": "original_2016_candidates_issues_goals",
+      "statementKind": "first_party_candidate_historical_economic_or_tax_policy_position_not_verified_vote",
+      "historic2016CaptureOnlyNot2020Authorship": true,
+      "automaticEvidenceForecastAdmission": false
+    },
+    {
+      "id": "chamberlain-original-2016-09",
+      "issueFamily": "commerce_consumer",
+      "exactExcerpt": "reduce unnecessary regulations, reduce and reform taxes and control spending",
+      "conservativeMeaning": "Reduce regulations, taxes and state spending",
+      "attributedTo": "Roger Chamberlain",
+      "sourceSection": "original_2016_candidates_issues_goals",
+      "statementKind": "first_party_candidate_historical_economic_or_tax_policy_position_not_verified_vote",
+      "historic2016CaptureOnlyNot2020Authorship": true,
+      "automaticEvidenceForecastAdmission": false
+    },
+    {
+      "id": "chamberlain-original-2016-10",
+      "issueFamily": "commerce_consumer",
+      "exactExcerpt": "increase research and development tax credits.",
+      "conservativeMeaning": "Expand R&D credits",
+      "attributedTo": "Roger Chamberlain",
+      "sourceSection": "original_2016_candidates_issues_goals",
+      "statementKind": "first_party_candidate_historical_economic_or_tax_policy_position_not_verified_vote",
+      "historic2016CaptureOnlyNot2020Authorship": true,
+      "automaticEvidenceForecastAdmission": false
+    }
+  ]
+}

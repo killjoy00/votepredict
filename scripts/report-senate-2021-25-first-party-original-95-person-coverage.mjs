@@ -120,6 +120,9 @@ read('senate-authenticated-campaign-issue-excerpt-leads-2024-25-v1',
  (d,s)=>each(d.candidates,x=>[x.candidateName,x.excerpts.length],s));
 read('senate-six-2020-original-pages-26-new-exact-first-party-excerpts-v1',
  (d,s)=>each(d.statements,x=>[d.sourcePages.find(p=>p.id===x.pageId)?.person,1],s));
+read('senate-roger-chamberlain-2016-original-10-economic-issue-excerpts-and-domain-review-v1',
+ (d,s)=>{assert.equal(d.tenCandidateSiteExactStatements.length,10);
+  add('Roger Chamberlain',d.tenCandidateSiteExactStatements.length,s);});
 const receiptName='data/evaluation/senate-original-2020-22-authenticated-68-pages-v1.json';
 const r=JSON.parse(readFileSync(resolve(receiptName),'utf8'));
 assert.equal(r.pages.length,68);

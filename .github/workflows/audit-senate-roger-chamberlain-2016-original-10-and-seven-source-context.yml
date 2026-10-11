@@ -1,0 +1,87 @@
+name: Independently prove 2016 original Roger Chamberlain site and 95 senator campaign source coverage
+on:
+  pull_request:
+    paths:
+      - .github/workflows/audit-senate-roger-chamberlain-2016-original-10-and-seven-source-context.yml
+      - data/evaluation/senate-roger-chamberlain-2016-original-10-economic-issue-excerpts-and-domain-review-v1.json
+      - scripts/audit-senate-roger-2016-original-10-and-seven-domain-source-context.mjs
+      - tests/senate-roger-2016-10-original-campaign-quotes-and-seven-source-context.test.ts
+      - docs/SENATE_CHAMBERLAIN_2016_CANDIDATE_ISSUES_TOMASSONI_WORDPRESS_ORIGINAL_REVIEW.md
+      - scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify-authentic-original-senator-2016-quotes-and-95-person-research-coverage:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-roger-2016-original-10-excerpts-gap-quality-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen complete original LRL Senate service directory and independent original audit
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/full-government
+      - name: Reopen five entire original Wayback CDX JSON and seven whole originally archived HTML pages
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38169118033
+          name: senate-three-actually-served-2020-expanded-seven-original-domain-gap-probes-v1
+          github-token: ${{ github.token }}
+          path: original/seven-historic-site-bodies
+      - name: Prove all seven source classifications and ten short original 2016 Roger Chamberlain campaign issues
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/full-government -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/full-government -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/full-government -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
+          node --import tsx scripts/audit-senate-roger-2016-original-10-and-seven-domain-source-context.mjs \
+            --entire-original-government-senate-html "$gov" \
+            --original-government-utc-sha-audit "$receipt" \
+            --independent-special-swearing-html "$swear" \
+            --original-seven-window-site-html-cdx-dir original/seven-historic-site-bodies \
+            --output original/2016-chamberlain-and-seven-original-html-cdx-proof.json
+      - name: Recheck full independent 95 actual senator and 791 first-party excerpts source coverage with original government service
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/full-government -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/full-government -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/full-government -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
+          node --import tsx scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --out-dir original/95-serving-campaign-coverage
+          node -e 'const s=require("./original/95-serving-campaign-coverage/95-senators-public-campaign-coverage.json").summary; if(s.actualServingStateSenators!==95||s.originalGovernmentDirectoryAllHistoricServiceRows!==105||s.totalExactResearchExcerptRowsForVerifiedSenators!==791||s.actuallyServedSenatorsWithAnyKnownSelectedOriginalSiteExcerpt!==53||s.nonMatchingRowsExcludedOrNeedsSeparateIdentityProof!==1||s.productionDatabaseReadsWritesOrForecastChanges!==0) process.exit(1); console.log("OFFICIAL SOURCE 95 SENATORS/791 FIRST-PARTY ROWS VERIFIED");'
+      - name: Retain independent full original 2016 campaign statement proof and exclusions
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-roger-2016-10-literal-quotes-seven-original-website-html-and-cdx-proof-v1
+          path: original/2016-chamberlain-and-seven-original-html-cdx-proof.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Retain 95 true serving senator research coverage with 791 authenticated first-party excerpts
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-95-actual-2021-25-senator-791-candidate-site-excerpt-coverage-v1
+          path: original/95-serving-campaign-coverage/
+          if-no-files-found: error
+          retention-days: 30
