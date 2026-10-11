@@ -134,12 +134,12 @@ export async function acquireKupec2022OriginalIssuePages(
  if(rows.length)chosen.push(rows[0]);
  if(rows.length>1)chosen.push(rows.at(-1)!);
  if(rows.length>2)chosen.push(rows[Math.floor(rows.length/2)]);
- for(const source of chosen.slice(0,4)){
+ for(const [i,source] of chosen.slice(0,4).entries()){
   const r=await fetchDatedBoundedPublic(source.archiveUrl,2_500_000,impl);
   const valid=Boolean(r.status===200&&r.body
     &&base32Sha1Archive(r.body)===source.digest
     &&(/^(?:text\/html|text\/plain|application\/xhtml\+xml)/i.test(r.headers.contentType??'')));
-  const file=save(target,'kupec-2022-authenticated-issues-'+source.timestamp+'.html',
+  const file=save(target,'kupec-2022-authenticated-issues-'+source.timestamp+'-'+i+'.html',
     valid?r.body:null);
   const proof={
    originalIssueUrl:source.original,
