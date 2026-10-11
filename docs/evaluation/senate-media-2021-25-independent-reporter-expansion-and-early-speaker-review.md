@@ -58,3 +58,34 @@ Manual run:
 **Strict evidence distinctions:** URL discovery ≠ historical original replay. Historical exact raw body ≠ original audio. Text fragment found in specific original HTML ≠ fully human-approved speaker quotation. Journalist reporting a politician's assertion ≠ actual recorded vote. Original archive capture ≠ first publisher post. One journalist article with multiple quoted senators ≠ multiple distinct articles.
 
 No media publisher coverage denominator or statewide collection completeness is currently established. Keep #987 and #946 open and parent owner-closed #912 closed.
+
+## Actual original public source studies: successes and historical version differences
+
+### 15 new independent journalist articles: authentic 21 historical original bodies
+
+Live [independent original Wayback study #38163132356](https://github.com/killjoy00/votepredict/actions/runs/38163132356) succeeded on head cb514c275de8a9484cb22055c8cdc3cecf162355. Original downloaded artifact ID 11710678402, ZIP SHA256 d45e91cf864c556ff504a67b9d5562f699205d4a963cc2a6852d1c336a43b1d1 and exact decoded 33,396-byte JSON SHA256 e1593dc7529142db096c94a8c9884e5d640e99e1fc1d73d29a31b3bfd3a3f0a2. Across the *selected* 15 original Reformer URLs: 11 indexed, four CDX index unavailable/invalid (UNKNOWN, not absent articles), zero CDX empty, 22 exact original raw HTTP replay attempts, **21 actual indexed-SHA1 matched original HTML body versions across 11 source article URLs**. One original January 6 2023 Alice Mann paid-leave replay was redirected/refused, but a later January 7 original was exactly matched. [21 permanent timestamped SHA1+raw SHA256 original historical capture receipts](senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json) preserve per-version digests, body bytes, index outcomes and exclusions.
+
+| Displayed year | Selected independent articles | Source URLs with original SHA-matched HTML |
+| --- | ---: | ---: |
+| 2021 | 3 | 2 |
+| 2022 | 3 | 2 |
+| 2023 | 3 | 3 |
+| 2024 | 3 | 3 |
+| 2025 | 3 | 1 |
+| **Sample total** | **15** | **11** |
+
+Especially valuable authentic original captures: Jan 22 2021 Gazelka/Kent clean-car reporter interview source, Feb14 2022 Gazelka/Benson curriculum source, Feb21 2024 Marty/McEwen gun control interviews, Apr19 2024 housing reporter page containing separate Drazkowski/Gustafson/Port remarks. All are original HTML existence and digest proofs, not yet all historically verified individual speech passages or original recordings. No denominator for total publisher output.
+
+### Eight previously SHA-pinned senator original statements: 8 of 8 text fragments found
+
+[First actual eight-source historical text audit #38163132336](https://github.com/killjoy00/votepredict/actions/runs/38163132336) succeeded. Downloaded original artifact ID 11711032822 ZIP SHA256 74c6fdd59ace1197c41e30f5722eda75c32bdf4c629cd2467939f51fc79e4b3a and decoded 10,675-byte JSON SHA256 6db398027bc9488080ea0d507e3ef9d23520d8848af3ef41d05b067f42b8e026. Eight exact previously indexed-SHA1 and raw-SHA256 authenticated original body replays all matched. Eight current-site brief individual statement text cues were found in the matching historical visible original HTML. Six of eight preceding-600-rendered-character name-proximity clues positive. Negative proximity for 2021 Patricia Torres Ray retirement and 2024 Judy Seeberger EMS does NOT negate source attribution, but neither is a human-confirmed speaker quote or original recording. [Permanent eight-source historical text and source SHA receipts](senate-media-2021-25-eight-early-original-speaker-phrase-receipts-20261011.json) preserve all statuses.
+
+### NEW 2021/2024 multiple-senator journalist article passages: 7 of 8 historical fragments found
+
+[Public original reporter speaker-text audit #38163650683](https://github.com/killjoy00/votepredict/actions/runs/38163650683) succeeded on 9e28f59c7d61d4e3fdf39fdfab72d9c587c7f268. Downloaded artifact ID 11711650924 ZIP SHA256 d06c4efd7a698a3bf55084ffda2c9cee1d05ceaa174d9becbc49c813ba1338c0 and decoded 7,966-byte JSON SHA256 93435d3946c60ce4f8cabfea0503e1af130aa4c21ea897af5533e74447ba8fd5. Four original HTML body versions from TWO original independent newsroom URLs reverified against indexed SHA1 plus pinned raw SHA256 plus original byte count. **7 of 8** short independently attributed senator text cues FOUND; one specifically selected Susan Kent clean-car fragment NOT FOUND in the exact Jan22 2021 original, while it IS present in the Feb03 2021 original. Paul Gazelka original quote fragment present in both; separately named John Marty and Jen McEwen gun-report fragments found in BOTH same-day Feb21 2024 archive versions. **5 of 8** weak nearby speaker-name heuristic checks positive. [Permanent dual-senator journalist original proof receipts](senate-media-2021-and-2024-independent-dual-speaker-historic-text-receipts-20261011.json) capture exact UTC, original body SHA256, quote snippet presence and local-label uncertainty.
+
+The Kent difference is an **exact phrase test in one verified January original**. Do not infer Kent did not speak before February, when a journalist first inserted text, whether some other Kent words existed in the early version, or original audio content. A contemporary archived article never automatically proves authoring time, human whole-quote approval, audio, or recorded individual votes.
+
+### Remaining public research gaps
+
+Four new independent journalist URL CDX queries were unavailable (2021 commissioner confirmations; 2022 Jeremy Miller special session; 2025 Maye Quade labor news; 2025 Grant Hauschild sick-leave coverage) and need retries or alternative original URLs. The previous Reformer /briefs/ possible alias relationships are still unproved. Human-approved individual full quotations remain ZERO in these automated studies; original audio was not inspected and no statewide/publication-year media census has been established. Do not access private database, votes, production collectors or model features. Keep #987/#946 open, #912 owner-closed.
