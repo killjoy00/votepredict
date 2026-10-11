@@ -89,7 +89,7 @@ export function selectServedD25to36OriginalYearEndTargets(input:{
     }
   }
   const uniq=new Set(targets.map(t=>t.reportId));
-  if(targets.length!==18||uniq.size!==20
+  if(targets.length!==18||uniq.size!==18
     ||targets.filter(t=>t.year===2021).length!==7
     ||targets.filter(t=>t.year===2022).length!==11)
     throw Error('Historical 2021/22 YE source target cohort no longer 7 plus 11 original versions');
