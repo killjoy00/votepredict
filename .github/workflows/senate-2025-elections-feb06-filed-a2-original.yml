@@ -1,0 +1,36 @@
+name: One-time original filed SF0529 A2 document February 6 2025 Elections
+
+# #864 source-only original document, not vote-side or member_vote ingestion.
+# Trigger once when this workflow is newly merged to main.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2025-elections-feb06-filed-a2-original.yml
+
+permissions:
+  contents: read
+
+jobs:
+  acquire-official-original-sf0529-a2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Acquire exact single LRL original filed SF529 A2 amendment PDF
+        run: |
+          node --import tsx scripts/acquire-senate-2025-elections-feb06-original-filed-a2.ts \
+            --output artifacts/senate-feb06-filed-a2/original-filed-sf0529-a2-metadata.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2025-elections-feb06-original-filed-a2-pdf-and-metadata
+          path: artifacts/senate-feb06-filed-a2/
+          retention-days: 30
+          if-no-files-found: error
