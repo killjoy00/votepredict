@@ -87,7 +87,11 @@
       "publisherDisplayedDayIsOriginalPublicByProof": false,
       "exactOriginalArchivedHttpBodyVerified": false,
       "anyNamedQuoteFromOriginalArchivedBytesHumanReviewed": false,
-      "historicalForecastEligibilityVerified": false
+      "historicalForecastEligibilityVerified": false,
+      "separateQuoteSpeakerOfficialSenateHistory": "https://www.lrl.mn.gov/legdb/fulldetail?id=15284",
+      "separateQuoteSpeakerServiceOnPublisherDisplayedDayVerified": true,
+      "separateQuoteSpeakerSenateMajorityLeadershipStart": "2024-02-06",
+      "separateQuoteSpeakerMajorityLeadershipOnDisplayedDayVerified": true
     },
     {
       "id": "2024-02-19-mpr-hauschild-later-interview",
