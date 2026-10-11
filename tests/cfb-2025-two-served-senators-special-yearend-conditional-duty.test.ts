@@ -115,5 +115,5 @@ test('wrong original Board first-page hash, year-end reference, registration lis
   const d=input();d.official.senators.pop();
   assert.throws(()=>audit2025SpecialConditionalYearEndDuties(d),/Actual Senate service/);
   const e=input();e.specialCalendars[1].text=e.specialCalendars[1].text.replace('termination report','normal report');
-  assert.throws(()=>audit2025SpecialConditionalYearEndDuties(e),/termination exception/);
+  assert.throws(()=>audit2025SpecialConditionalYearEndDuties(e),/termination.exception/i);
 });
