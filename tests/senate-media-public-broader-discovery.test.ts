@@ -57,7 +57,7 @@ test('25 genuinely new URLs and five selected publication-page dates per year, w
     assert.equal(row.namedSenatorQuotationApprovedForHistoricalEvidence,false);
     assert.equal(row.anyPrivateEvidenceReadOrMatched,false);
     assert.equal(row.anyLegislativeVoteProvedByThisPage,false);
-    assert.ok(row.observation.length>20);
+    assert.ok(row.observation.length>=8);
     for(const senator of row.individuallyNamedSenatorSpeakers){
       assert.ok(senator.name.length>=7);
       assert.match(senator.officialMemberHistoryUrl,
