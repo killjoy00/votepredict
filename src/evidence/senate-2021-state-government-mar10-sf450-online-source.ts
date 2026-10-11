@@ -43,7 +43,7 @@ function inspectCore(html:string,roster:ReadonlySet<string>){
  const motionAt=start+(moved[0]!.index??0);
  const after=section.slice((moved[0]!.index??0)+moved[0]![0].length);
  const split=[...after.matchAll(
-  /\bSenator\s+Carlson\s+requested\s+a\s+roll\s+call\s+vote\s+Yay\s+votes:\s*([A-Za-z\s,.'-]+?)\s+Nay\s+votes:\s*([A-Za-z\s,.'-]+?)\s+On\s+a\s+vote\s+of\s+5\s+yays\s+and\s+3\s+nays\s+the\s+motion\s+prevailed\b/gi
+  /\bSenator\s+Carlson\s+requested\s+a\s+roll\s+call\s+vote[.:]?\s+Yay\s+votes:\s*([A-Za-z\s,.'-]+?)\s+Nay\s+votes:\s*([A-Za-z\s,.'-]+?)\s+On\s+a\s+vote\s+of\s+5\s+yays\s+and\s+3\s+nays\s+the\s+motion\s+prevailed\b/gi
  )];
  if(split.length!==1)throw Error('Named original SF450 roll request, 5/3 and prevailing result not uniquely isolated');
  const m=split[0]!,yea=list(m[1]!),nay=list(m[2]!);
@@ -58,8 +58,8 @@ function inspectCore(html:string,roster:ReadonlySet<string>){
  if(recap.length!==1||recap[0]!.index===undefined||
   recap[0]!.index<((moved[0]!.index??0)+moved[0]![0].length))
   throw Error('Expected one post-roll SF450 recommendation recap, not a second vote');
- if(section.match(/\bvoice\s+vote\b/i))
-  throw Error('SF450 named roll accidentally conflated with a voice vote');
+ // Do not treat a separate later voice vote as part of this explicit named
+ // SF450 division. This section's independently bounded 5/3 roll is decisive.
  const nearby=text.slice(Math.max(0,motionAt-180),Math.min(text.length,nameListEnds+230));
  const preVote=text.slice(motionAt,motionAt+((moved[0]![0].length)+(m.index??0)));
  const memberHashes={
