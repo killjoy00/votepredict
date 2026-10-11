@@ -32,11 +32,11 @@ const dated=(id:string,slug:string,day='2025-05-01')=>({
 test('shadowed public leads expose configured prefix and secondary topical-path blind spots',()=>{
   const results=diagnoseMediaPublicDiscoveryPaths(ledger.selectedNonExhaustiveArticleLeads);
   assert.equal(results.version,'senate-media-public-url-path-diagnostic-v1');
-  assert.equal(results.totalCuratedPublicUrlLeads,25);
-  assert.equal(results.leads.length,25);
-  assert.equal(results.urlLeadsOutsideConfiguredSeedPrefix,11);
+  assert.equal(results.totalCuratedPublicUrlLeads,31);
+  assert.equal(results.leads.length,31);
+  assert.equal(results.urlLeadsOutsideConfiguredSeedPrefix,16);
   assert.ok(results.urlLeadsFilteredByTopicalPathPriority>=1);
-  assert.ok(results.urlLeadsExcludedByEitherGate>=11);
+  assert.ok(results.urlLeadsExcludedByEitherGate>=16);
   assert.ok(results.urlLeadsExcludedByBothGates<=results.urlLeadsOutsideConfiguredSeedPrefix);
   for(const lead of results.leads) {
     const original=ledger.selectedNonExhaustiveArticleLeads.find(x=>x.id===lead.id)!;
@@ -84,6 +84,47 @@ test('a real first-party MPR /episode/ audio transcript is excluded by the story
   assert.equal(x.forecastEligibilityVerified,false);
   assert.equal(r.sourceBytesOrDatabaseAccessed,false);
   assert.equal(r.statewideDenominatorEstablished,false);
+});
+
+test('MPR interviews 2021-25 show independent URL-prefix versus topical-URL failures',()=>{
+  const cases:[
+    string,string,boolean,boolean
+  ][]=[
+    ['mpr-2021-benson-vaccine-on-air','2021',true,false],
+    ['mpr-2022-benson-kunesh-parental-curriculum','2022',false,false],
+    ['mpr-2023-kunesh-native-family-preservation','2023',false,true],
+    ['mpr-2024-kunesh-charter-school-oversight','2024',false,false],
+    ['mpr-2025-pha-hmong-lao-veterans','2025',false,true],
+    ['mpr-2025-coleman-civic-violence','2025',false,true],
+  ];
+  for(const [id,year,prefix,topical]of cases) {
+    const lead=ledger.selectedNonExhaustiveArticleLeads.find(x=>x.id===id);
+    assert.ok(lead,id);
+    assert.equal(lead.publicationDayDisplayedOnPublicPage.slice(0,4),year);
+    const result=diagnoseMediaPublicDiscoveryPaths([lead]);
+    assert.equal(result.totalCuratedPublicUrlLeads,1);
+    assert.equal(result.possibleAliasPairs.length,0);
+    assert.equal(result.leads[0]?.currentSeedPrefixWouldIncludeUrl,prefix,id);
+    assert.equal(result.leads[0]?.currentPathPriorityWouldSelectUrl,topical,id);
+    assert.equal(result.leads[0]?.currentTwoGateDiscoveryWouldSelectUrl,
+      prefix&&topical,id);
+    assert.equal(result.urlLeadsOutsideConfiguredSeedPrefix,prefix?0:1);
+    assert.equal(result.urlLeadsFilteredByTopicalPathPriority,topical?0:1);
+    assert.equal(result.urlLeadsExcludedByEitherGate,1);
+    assert.equal(result.urlLeadsExcludedByBothGates,!prefix&&!topical?1:0);
+    assert.equal(result.leads[0]?.matchedDatabaseSourceDocument,false);
+    assert.equal(result.leads[0]?.originalWaybackCaptureVerified,false);
+    assert.equal(result.leads[0]?.exactSenatorQuoteVerified,false);
+    assert.equal(result.leads[0]?.forecastEligibilityVerified,false);
+    assert.equal(result.sourceBytesOrDatabaseAccessed,false);
+    assert.equal(result.statewideDenominatorEstablished,false);
+  }
+  // The 2021 Benson story's /story/202 prefix is not enough: path gate alone excludes it.
+  const actual=diagnoseMediaPublicDiscoveryPaths(
+    ledger.selectedNonExhaustiveArticleLeads.filter(x=>x.id==='mpr-2021-benson-vaccine-on-air')
+  );
+  assert.equal(actual.urlLeadsOutsideConfiguredSeedPrefix,0);
+  assert.equal(actual.urlLeadsFilteredByTopicalPathPriority,1);
 });
 
 test('public /briefs/ and dated paths yield four research alias candidates, not deduplicated articles',()=>{
