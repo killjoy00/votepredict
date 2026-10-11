@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "senate-2021-apr12-official-two-indexed-rule1210-leads-original-pdf-probe-v1",
+  "issue": 864,
+  "purpose": "One authentic original April 12 Senate Journal PDF 11MB binary acquisition and source discovery only; two indexed committee vote leads not yet individually named-side authenticated",
+  "originalSource": {
+    "url": "https://www.senate.mn/journals/2021-2022/20210412036.pdf",
+    "senateJournalReportDate": "2021-04-12",
+    "originalPDFBytes": 11063699,
+    "originalPDFSHA256": "8dd34868badade8d3d4cd77ce11c6a632705bdd99a59509a5e4d23544f2d3d75",
+    "originalExtractedTextSHA256": "dda780e4fc076f56ff9f271303ba81897b69813acfece416b7741aea64c41214",
+    "originalNormalizedTextSHA256": "e3a5ec1d843e7168355a62e24fbe4d85eb8af161f7026c65d8b22abc5d9e751b"
+  },
+  "actualGithubActions": {
+    "runnerPR": 1121,
+    "mergeCommit": "bd8e77ca3f3109bde54a77c5ab892e85695659cd",
+    "runId": 38169533978,
+    "runURL": "https://github.com/killjoy00/votepredict/actions/runs/38169533978",
+    "conclusion": "success",
+    "originalSourceErrorCount": 0,
+    "artifactId": 11713906178,
+    "artifactName": "senate-2021-apr12-sf1159-sf970-original-committee-rule1210-probe",
+    "independentlyDownloadedZIPBytes": 1199,
+    "independentlyDownloadedZIPSHA256": "0982aa2fca83d8d27262557cdf6ef99de76f102c809e92fb0091f7ee40b8d438",
+    "originalArtifactEntry": "source-probe.json",
+    "independentlyExtractedJSONBytes": 2689,
+    "independentlyExtractedJSONSHA256": "be5dcd3305412c9c1a2240403c7197cc26443828ccbfeec1282fd7c772de281d"
+  },
+  "exactIndexPublicationLeads": [
+    {
+      "bill": "SF1159",
+      "originalJournalPage": 2086,
+      "committee": "Transportation Finance and Policy",
+      "originalRule1210MotionContextValidatorPassed": false,
+      "originalRule1210MotionTextSHA256": null,
+      "sourcePrintedYea": null,
+      "sourcePrintedNay": null,
+      "sourcePrintedAbsent": null,
+      "originalMotionOutcome": null,
+      "individualSenatorSideSHA": null,
+      "needsPreciseOriginalPassageAttribution": true
+    },
+    {
+      "bill": "SF970",
+      "originalJournalPage": 2147,
+      "committee": "Judiciary and Public Safety Finance and Policy",
+      "originalRule1210MotionContextValidatorPassed": true,
+      "originalRule1210MotionNormalizedTextOffset": 1531950,
+      "sourceMotion": "Pappas amendment to SF970",
+      "originalMotionTextSHA256": "5a6a4ddd19eaf5483839878c1a2362283d1ed8b1f11622258d8b65d8e1268798",
+      "sourcePrintedYea": null,
+      "sourcePrintedNay": null,
+      "sourcePrintedAbsent": null,
+      "originalMotionOutcome": null,
+      "individualSenatorSideSHA": null,
+      "exactAmendmentIdentityDifferentFromGenericBillPassage": true,
+      "needsIndependentOriginalNamedRollParsing": true
+    }
+  ],
+  "sourceLimitations": {
+    "successfulSourceProbeIsNotNamedRollCertification": true,
+    "noClaimOfTwoAuthenticatedNamedRolls": true,
+    "cannotInferAnyIndividualVoterChoiceFromContextOrOtherBills": true,
+    "senateJournalReportDateNotProvenUnderlyingCommitteeMeetingDate": true,
+    "noSameDayPublicByAvailabilityCertification": true,
+    "noOriginal2021LRLPrintCommitteeMinutesComparison": true,
+    "unprintedAbsentCountUnknownNotZero": true,
+    "trueStatewideRecordedCommitteeVoteDenominatorUnknown": true,
+    "notDatabaseMissingRows": true,
+    "sourceFullPDFOrReadablyNamedVoteSidesNotCommitted": true,
+    "noProductionOrPrivateDBReadsOrWrites": true,
+    "noFloorOrModelsForecastOr2027": true,
+    "issue864MustRemainOpen": true
+  }
+}
