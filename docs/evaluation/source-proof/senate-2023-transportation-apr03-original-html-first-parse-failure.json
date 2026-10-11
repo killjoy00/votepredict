@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "senate-2023-transportation-apr03-sf3157-original-html-first-parse-failure-v1",
+  "issue": 864,
+  "eventDate": "2023-04-03",
+  "committee": "Transportation",
+  "bill": "SF3157",
+  "officialSourceUrl": "https://www.senate.mn/schedule/hearing_minutes.html?always_show_minutes=Y&hearing_id=17939&ls=93&type=minutes",
+  "firstOriginalSourceRun": {
+    "githubActionsRunId": 38158242090,
+    "githubActionsRunUrl": "https://github.com/killjoy00/votepredict/actions/runs/38158242090",
+    "sourceRunnerPR": 1078,
+    "sourceRunnerMergeCommit": "4f77962b0fc6d629d964f5682ea67dbdcb352a48",
+    "conclusion": "failure",
+    "originalArtifactId": 11708857555,
+    "originalArtifactName": "senate-2023-transportation-apr03-sf3157-original-seven-rolls",
+    "independentlyDownloadedZipSha256": "6a4d5998d2dd250b3fc82197325ffb22165130eef5c27bdef7fe48b31d6cbe55",
+    "originalZipBytes": 916,
+    "originalDecodedJsonSha256": "3f2bdd8aa68a6fd32ecf13b0d3362eb52fef8ca38125f2110b504ce6e6b0546b",
+    "originalDecodedJsonBytes": 1242,
+    "originalDecodedJsonName": "sf3157-original-seven-amendment-rolls.json",
+    "actualOfficialOriginalHtmlRetrieved": true,
+    "originalHtmlBytes": 78781,
+    "originalHtmlSha256": "efbcf9bf503fcde638854a244748959e89ed336079099a51a44a16bb9bc1c203",
+    "normalizedOriginalTextSha256": "ede07baa4f72e29b009310039bc8cde0011bc0148ab530b711b1e9a7542f7a82",
+    "sourceSevenOriginalNamedRollsSuccessfullyParsed": false,
+    "preciseOriginalParseFailure": "Original named roll has no bounded disposition for A28",
+    "noSuccessfulOriginalVoteCertificationFromThisRun": true
+  },
+  "repairSafety": {
+    "hypothesizedHtmlNamedQuotesWithoutDecodingCausedBoundaryFailure": true,
+    "originalResultCountsAndMemberSidesNotModified": true,
+    "addedNamedHtmlEntityDecodingAndSyntheticAdversarialFixture": true,
+    "sourceUrlAndHtmlMimeAndByteCapsNotRelaxed": true,
+    "retryIsSeparatelyTriggeredAndDoesNotChangeFirstRunConclusion": true,
+    "laterOriginalSuccessfulSourceRunNotYetProven": true
+  },
+  "holds": {
+    "A49OralVsA26MisheadedSourceConclusionUnresolved": true,
+    "noAudioPlaybackConfirmed": true,
+    "noNew2021to2025StatewideVoteDenominator": true,
+    "originalSourceBytesNotCommitted": true,
+    "noNamedMemberSideListCommitted": true,
+    "noProductionPrivateDbReadOrWrite": true,
+    "noModelForecastTrainingServingSchedulerFloorOr2027": true,
+    "issue864MustRemainOpen": true
+  }
+}
