@@ -193,7 +193,7 @@ export function reconcileSenateMediaProofAndCoverage(
     if(x.publisher!==publisherFor.get(x.id)
       || !Array.isArray(x.namedSenatorLeadsForManualReview)
       || x.namedSenatorLeadsForManualReview.length>15
-      || !x.namedSenatorLeadsForManualReview.every(s=>typeof s==='string'&&s.trim()))
+      || !x.namedSenatorLeadsForManualReview.every((s:unknown)=>typeof s==='string'&&!!s.trim()))
       throw Error('Invalid public research senator/publisher label');
   }
   if(publicBatch?.version!=='senate-media-public-archive-batch-v1'
