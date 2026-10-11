@@ -12,6 +12,9 @@ on:
       - docs/evaluation/senate-media-seven-remaining-authentic-independent-reporter-quote-queue-20261011.json
       - docs/evaluation/senate-media-2021-25-further-independent-reporting-15-leads.json
       - docs/evaluation/senate-media-2021-25-independent-reporter-15-historical-original-receipts-20261011.json
+      - docs/evaluation/senate-media-2021-25-seven-reporter-authentic-original-quote-receipts-20261011.json
+      - tests/senate-media-seven-real-original-quote-receipts.test.ts
+      - docs/evaluation/senate-media-2021-25-final-seven-reporter-original-review-and-speaking-corrections.md
   workflow_dispatch:
 
 permissions:
