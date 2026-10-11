@@ -1,0 +1,69 @@
+name: One-time 2023 Senate 64 no-Minutes original caption procedural research
+
+# No schedule, deployment credential, private database, senator vote ingestion or
+# AV file download. Reconcile TWO original source runs without rewriting failure.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2023-64-unlinked-caption-motion-cues.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  review-original-2023-caption-cues:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Restore 2023 original official indexed meeting and mtgid source references
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2023-dated-media-href-review
+          run-id: 38079233118
+          github-token: ${{ github.token }}
+          path: artifacts/original-2023-hrefs
+      - name: Restore all 64 2023 original LRL media HTML page SHA evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2023-official-media-record-html-proof
+          run-id: 38081463362
+          github-token: ${{ github.token }}
+          path: artifacts/original-2023-html
+      - name: Restore actual first partial 2023 caption-source run with two HTTP errors
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2023-original-caption-surface-metadata
+          run-id: 38103766440
+          github-token: ${{ github.token }}
+          path: artifacts/original-2023-first-caption
+      - name: Restore actual successful exact Jan12 and Feb8 2023 caption retry
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2023-two-exact-original-caption-retry
+          run-id: 38104325591
+          github-token: ${{ github.token }}
+          path: artifacts/original-2023-retry
+      - name: Verify all 64 original pages and reparse 63 earlier authenticated caption streams
+        run: |
+          node --import tsx scripts/review-senate-2023-unlinked-caption-motion-cues.ts \
+            --hrefs artifacts/original-2023-hrefs/senate-2023-media-hrefs.json \
+            --original-html artifacts/original-2023-html/senate-2023-media-record-html.json \
+            --first-caption artifacts/original-2023-first-caption/senate-2023-caption-surface.json \
+            --exact-retry artifacts/original-2023-retry/senate-2023-two-failed-caption-retry.json \
+            --output artifacts/2023-strict-cues/senate-2023-64-original-caption-motion-cue-review.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2023-64-original-caption-procedural-cue-review
+          path: artifacts/2023-strict-cues/senate-2023-64-original-caption-motion-cue-review.json
+          retention-days: 30
+          if-no-files-found: error
