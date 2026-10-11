@@ -75,3 +75,15 @@ test('do not cross-address Feb 6/held source offsets or fabricate a distinct mot
    candidate:a.candidate}),/Not an original/);
  assert.equal(a.candidate.candidateNotCertifiedDistinctHistoricalVote,true);
 });
+
+test('exact-hash validated original roll near EOF is allowed when full +430 context is unavailable',()=>{
+ const a=example();
+ const short=a.text.slice(0,2354+120);
+ assert.ok(short.length<2354+430);
+ const candidate={...a.candidate,
+  sourceNearbyTextSha256:sha(short.slice(2354-580,short.length))};
+ const r=inspectEight2025ElectionMotionSource({date:'2025-02-11',text:short,candidate});
+ assert.equal(r.originalSourceOffset,2354);
+ assert.equal(r.sourceNearbyContextSha256,candidate.sourceNearbyTextSha256);
+ assert.equal(r.noSourceParagraphAutomaticallyPromotedAsHistoricalVote,true);
+});

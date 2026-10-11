@@ -1,0 +1,14 @@
+# #864 — exact original 2025 Elections eight roll context source retry after near-end-text bound failure
+
+The previously merged [PR #1013](https://github.com/killjoy00/votepredict/pull/1013) (squash \`ddd27c35ff0e2418061cf8cf5daed54e14fb8602\`, full exact-head CI #38108021219 succeeded) introduced a strictly source-only, exact SHA-verified motion-context reviewer for the previously provisional eight Elections roll paragraphs on **February 11 (2), March 25 (1), April 8 (5)**.
+
+Its **actual first original source run [#38108205193](https://github.com/killjoy00/votepredict/actions/runs/38108205193) FAILED**, despite the 3 original PDF bodies having independently matching binary/text SHA. The first real output artifact **#11690925461**, independently re-downloaded ZIP SHA256 **552b9ed5a290f7b889ab10cc4b4690350c82e5095dfaaa31af739cfdb78e28c4**, JSON SHA256 **4426e571e2d832109841715359f29c8041a23f7dd4a6c028903ecb75e9dc7e49**, recorded:
+- **Feb 11** original source: offset 3460 is within 430 characters of the *end* of the original extracted text, and was incorrectly rejected before the exact-neighborhood SHA was validated.
+- **Mar 25** original source **passed** independently verified original PDF/text and roll-neighborhood SHA. It printed Senator Carlson’s **SF1812 recommendation to pass as amended and re-refer to Judiciary**, with a **named 8–3 source division**. Earlier original oral A2 and A2 amendment votes are recorded as **voice votes**; they have **no invented named YEA/NAY sides**.
+- **Apr 8** original source: offset 3303 is similarly near the end and rejected before SHA check.
+
+The original helper incorrectly required \`offset + 430 <= text.length\`; its own established previous source fingerprint intentionally uses \`text.slice(Math.max(0, offset - 580), Math.min(text.length, offset + 430))\`, so **end-of-document truncation is normal and source-authenticated**. This repair removes only the extra 430-character tail requirement, retaining source offset boundaries, exact immutable prior source-neighborhood SHA, binary/text source SHA, eleven historically served committee members and counts, and all false-promotion safeguards.
+
+The fixed one-time main-push workflow rechecks **only these three original PDF URLs / eight pinned offsets**, not the 207 already OCR-recovered PDFs or all Senate minutes. The earlier failed source run remains permanently a **failure**. After the rerun, verify actual original workflow and independently download/hash its ZIP/JSON before claiming eight successful motion contexts.
+
+No raw PDF bytes, full original text, named side lists, private DB queries or production evidence writes, model/forecast/training/serving/scheduler changes, Senate floor expansion, 2027 changes or public-office contact. These remain source candidates and do **not** certify eight unique motions or historic senator positions. Keep issue #864 OPEN.
