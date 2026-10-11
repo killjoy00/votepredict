@@ -110,7 +110,7 @@ export function twelve2022DomainArchiveIndexUrl(domain:string){
 }
 function rankSourcePagePath(path:string):number{
  const p=path.toLowerCase().replace(/\/+$/,'')||'/';
- if(/^\/(?:issues?|priorities|platform|polic(?:y|ies)|vision|legislative-issues|positions|our-issues|our-priorities)$/.test(p))return 0;
+ if(/^\/(?:issues?(?:-[a-z0-9]+)?|priorities(?:-[a-z0-9]+)?|platform(?:-[a-z0-9]+)?|polic(?:y|ies)|vision|legislative-issues|positions|our-issues|our-priorities)$/.test(p))return 0;
  if(/\/(?:issues?|priorities|platform|polic(?:y|ies)|vision|our-issues)\/[a-z0-9_-]+$/.test(p))return 1;
  if(p==='/')return 2;
  if(/^\/(?:about|meet|bio|our-campaign|campaign|news|news-events|why-im-running|why-i-am-running)$/.test(p))return 3;
