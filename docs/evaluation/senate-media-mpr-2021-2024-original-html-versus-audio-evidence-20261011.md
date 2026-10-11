@@ -17,6 +17,21 @@ Member identity records: [Jeremy Miller](https://www.lrl.mn.gov/legdb/fulldetail
 
 **Critical version finding:** The current Hauschild MPR page includes a transcript with full speaker labels, but neither of two authenticated Feb 19–20 original HTML page bodies includes the two **selected** current-transcript text cues. MPR currently says the `Minnesota Now` transcript is *attempted the next business day after broadcast*. This supplies relevant publisher context, **not** proof of an exact historical transcript-insertion time. Do not backdate the selected text to the archival timestamps. The historical pages' **embedded audio resource references** are a different proof category from historical *transcript text*.
 
+## Independent later-capture transcript version check (new)
+
+The Hauschild page had **four** bounded exact CDX capture UTC rows across 2024–2025. Our original run sampled the earliest two. A separate, intentionally selective two-later-original-replay study [#38174084860](https://github.com/killjoy00/votepredict/actions/runs/38174084860) inspected the other two original page captures and independently verified both against the indexed SHA-1. This is not an extension of the replay limit in the original two-earliest study; it is a distinct, later-version change audit.
+
+| Additional original MPR capture UTC | CDX SHA-1 | Raw original SHA-256 | Bytes | Selected current Hauschild transcript cues |
+| --- | --- | --- | ---: | --- |
+| **2024-02-20T03:02:36Z** | `RBCAJH6FOUINBMBZWYXEX7GWIEIBHNDQ` | `da848c28bb3c3e1335076de4606ec472d8695a4c2533add45812614df3fc9536` | 80,716 | Neither selected phrase nor named transcript label found; **identical raw body to the Feb 20 03:02:16 capture** |
+| **2025-07-24T23:23:22Z** | `TKIPF5NUQ7HICXBKMOAPLBBOTJCVBLPO` | `9d1fddfd3983a138515175c6ffe7842cd37e54391a37932e8a503c43876bf725` | 121,462 | **Both** the current short quoted phrase and printed `GRANT HAUSCHILD:` label historically **present** |
+
+Consequently, selected transcript wording appeared in the actual MPR original HTML by **July 24, 2025**, *not verifiably* in the three 2024 capture timestamps sampled. This does **not** establish the exact first transcript publication day, does **not** prove it was absent between archived snapshots, does **not** prove the wording was in a recorded 2024 audio binary, and does **not** convert an automated nearby full-name cue into manual approval of complete speaker transcription.
+
+Across the **four different capture timestamps for this one MPR URL**, only **three distinct raw original HTML SHA-256 body identities** were observed, because the two Feb 20 captures share the same original raw body. Never count four archived versions as four different reported articles. The two 2021 Miller original timestamps likewise share one raw HTML identity. These new selected-source version data do not change any statewide census denominator.
+
+Source receipt: [July 2025 authenticated positive and Feb 2024 authenticated negative original version identities](senate-media-mpr-hauschild-later-historical-transcript-cue-receipts-20261011.json). Tests include three synthetic proofs and three real-pinned-receipt regression assertions. No full HTML or source audio persisted.
+
 ## Recovered contemporaneous publisher media references
 
 Both independently SHA-authenticated versions of each original page embed a publisher-domain MP3 URL path:
