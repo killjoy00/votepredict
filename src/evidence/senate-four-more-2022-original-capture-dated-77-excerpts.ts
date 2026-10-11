@@ -120,7 +120,7 @@ export function auditFourMoreSenateOriginal2022CampaignCaptureDatedPolicyExcerpt
    ||acquisition.totals?.productionDatabaseReadsOrWrites!==0
    ||acquisition.candidates?.length!==6)
   throw Error('Six actual candidate source original acquisition inconsistent or incomplete');
- const recordByName=new Map(PROFILE.map(x=>[x.name,x]));
+ const recordByName=new Map<string,typeof PROFILE[number]>(PROFILE.map(x=>[x.name,x]));
  const files=new Set<string>(),byFile=new Map<string,typeof ledger.year2022OriginalPages[number]>();
  const pagePerson=new Set<string>();
  for(const p of ledger.year2022OriginalPages){
