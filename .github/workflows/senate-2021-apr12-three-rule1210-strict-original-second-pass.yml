@@ -1,0 +1,36 @@
+name: Second original April12 2021 Senate Journal three COMMITTEE amendment rolls strict source proof
+
+# Genuine separate 11MB PDF source fetch: PINNED named member SHA and motion context.
+# Never a Senate floor vote or member_vote database write.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2021-apr12-three-rule1210-strict-original-second-pass.yml
+
+permissions:
+  contents: read
+
+jobs:
+  authenticate-three-separate-2021-april12-original-committee-amendments:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Fetch original 11MB April12 Journal PDF independently and certify 3 distinct failed committee amendments
+        run: |
+          node --import tsx scripts/verify-senate-2021-apr12-three-strict-original-committee-amendments.ts \
+            --output artifacts/2021-senate-apr12-original-three-strict-committee-amendments/source.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2021-apr12-original-three-strict-committee-amendments
+          path: artifacts/2021-senate-apr12-original-three-strict-committee-amendments/source.json
+          retention-days: 30
+          if-no-files-found: error
