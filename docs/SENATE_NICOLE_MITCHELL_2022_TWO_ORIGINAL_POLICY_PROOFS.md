@@ -2,7 +2,7 @@
 
 ## Verified Senate service and pre-election original sources
 
-The Minnesota Legislative Reference Library's original public Senate service directory confirms that **Nicole L. Mitchell actually served in the Minnesota Senate, SD47, 2023–2025**. The source audit re-hashes the official original directory acquired by [run 38094976711](https://github.com/killjoy00/votepredict/actions/runs/38094976711) (artifact 11685387674), and checks original html identity before any issue quote verification. No candidate who never actually served appears in this output.
+The Minnesota Legislative Reference Library's original public Senate service directory confirms that **Nicole Mitchell actually served in the Minnesota Senate, SD47, 2023–2025**. The source audit re-hashes the official original directory acquired by [run 38094976711](https://github.com/killjoy00/votepredict/actions/runs/38094976711) (artifact 11685387674), and checks original html identity before any issue quote verification. No candidate who never actually served appears in this output.
 
 The [source acquisition run 38100551887](https://github.com/killjoy00/votepredict/actions/runs/38100551887) recovered **two independent historic original page versions** for Nicole Mitchell's candidate-owned 2022 campaign priorities URL (https://www.nicolemitchell.org/priorities), both prior to the November 8 election. Original artifact ID **11687282664**, original ZIP SHA-256 **ec3d348fdf2f1fc5b94a30a0e78f153b5179805ef6f771d99e7dbed36a510857** and source manifest SHA-256 **bf84f6110b6984889f98228d848b53f5cddbe8787928b7a9c98836ee487c6c47**.
 
