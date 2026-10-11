@@ -66,8 +66,12 @@
     "broad700CharacterSearchWindowCausedDuplicateCandidateAssociation": true,
     "rawBroadSearchMatchedBothBillsTwice": true,
     "neighboringBillMotionMustNeverBecomeVoteEvidenceForDifferentBill": true,
-    "onlyOwnExactBillAndOwnImmediateCommitteeHeadingMayBeCounted": true,
-    "strictExactMotionAndIndividuallyPinnedNameSHASeparateWorkerRequired": true
+    "onlyOwnExactBillAndOwnImmediateCommitteeHeadingMayBeCounted": false,
+    "strictExactMotionAndIndividuallyPinnedNameSHASeparateWorkerRequired": true,
+    "originalCommitteeHeadingMayCoverTwoDifferentSF1159AmendmentMotions": true,
+    "sf1159Two4Yea6NayMotionsAreDistinctDespiteIdenticalVotingSides": true,
+    "crossBillFalsePositiveStillRejected": true,
+    "supersededByThreeStrictOriginalAmendmentsProof": "docs/evaluation/source-proof/senate-2021-apr12-three-strict-rule1210-original-committee-success.json"
   },
   "sourceLimits": {
     "redactedDiagnosticNotNamedRollAuthentication": true,
@@ -79,6 +83,20 @@
     "noStoredProductionMemberVoteParity": true,
     "noPrivateDBOrVoteBackfill": true,
     "noFloorOrModelsForecastOr2027": true,
-    "issue864MustRemainOpen": true
+    "issue864MustRemainOpen": true,
+    "twoIndexLeadRowsAreNotAnExhaustiveMotionCount": true,
+    "originalThreeNamedRollsAuthenticatedBySeparateStrictWorkflow": 38171360478
+  },
+  "correctedFinding": {
+    "strictOriginalAmendmentMotions": 3,
+    "amendmentLabels": [
+      "SF1159 Dibble",
+      "SF1159 McEwen",
+      "SF970 Pappas"
+    ],
+    "sourceRunId": 38171360478,
+    "sourceProofPR": 1133,
+    "originalRedactedLayoutRemainsValidAsHistoricalDiagnostic": true,
+    "originalRedactedLayoutIsNotAuthoritativeVoteCount": true
   }
 }

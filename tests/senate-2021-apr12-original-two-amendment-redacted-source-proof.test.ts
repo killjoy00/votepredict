@@ -37,7 +37,11 @@ test('original Apr12 PDF redacted source passes independently audited ZIP/JSON b
   assert.match(candidate.exact450CharSourceWindowSHA256,/^[a-f0-9]{64}$/);
  }
  assert.equal(proof.parserCaveat.broad700CharacterSearchWindowCausedDuplicateCandidateAssociation,true);
- assert.equal(proof.parserCaveat.onlyOwnExactBillAndOwnImmediateCommitteeHeadingMayBeCounted,true);
+ assert.equal(proof.parserCaveat.onlyOwnExactBillAndOwnImmediateCommitteeHeadingMayBeCounted,false);
+ assert.equal(proof.parserCaveat.originalCommitteeHeadingMayCoverTwoDifferentSF1159AmendmentMotions,true);
+ assert.equal(proof.correctedFinding.strictOriginalAmendmentMotions,3);
+ assert.deepEqual(proof.correctedFinding.amendmentLabels,['SF1159 Dibble','SF1159 McEwen','SF970 Pappas']);
+ assert.equal(proof.correctedFinding.originalRedactedLayoutIsNotAuthoritativeVoteCount,true);
  assert.equal(proof.sourceLimits.redactedDiagnosticNotNamedRollAuthentication,true);
  assert.equal(proof.sourceLimits.noPrivateDBOrVoteBackfill,true);
  assert.equal(proof.sourceLimits.issue864MustRemainOpen,true);

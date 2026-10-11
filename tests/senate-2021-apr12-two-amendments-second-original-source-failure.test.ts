@@ -26,7 +26,12 @@ test('genuine second original April12 source run preserves failure, duplicate bo
   [proof.priorOriginalRedactedLayoutEvidence.immediateHeadingCharactersBeforeFirstOccurrence,
    proof.priorOriginalRedactedLayoutEvidence.nearestHeadingCharactersBeforeRepeatedOccurrence],
   [28,422]);
- assert.equal(proof.correction.unanchoredRepeatedRollBodyMustNotBecomeAnotherHistoricalAction,true);
+ assert.equal(proof.correction.unanchoredRepeatedRollBodyMustNotBecomeAnotherHistoricalAction,false);
+ assert.equal(proof.correction.secondRule1210MotionSharesSameCommitteeHeadingAsFirst,true);
+ assert.equal(proof.correctedHistoricalFinding.firstSF1159Motion,'Dibble amendment');
+ assert.equal(proof.correctedHistoricalFinding.secondSF1159Motion,'McEwen amendment');
+ assert.equal(proof.correctedHistoricalFinding.independentStrictSourceRunId,38171360478);
+ assert.equal(proof.correctedHistoricalFinding.firstFailureConclusionUnchanged,true);
  assert.equal(proof.limits.noNamedSideDigestsEstablishedByFailedSecondRun,true);
  assert.equal(proof.limits.issue864MustRemainOpen,true);
 });

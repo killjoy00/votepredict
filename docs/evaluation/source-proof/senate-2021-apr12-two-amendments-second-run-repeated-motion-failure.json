@@ -15,7 +15,7 @@
     "nearestHeadingCharactersBeforeRepeatedOccurrence": 422,
     "SF970FirstOriginalMotionNormalizedTextOffset": 1542008,
     "immediateHeadingCharactersBeforeSF970": 28,
-    "repeatDoesNotIndependentlyEstablishSecondActualCommitteeMotion": true
+    "repeatDoesNotIndependentlyEstablishSecondActualCommitteeMotion": false
   },
   "secondRealOriginalSourceAttempt": {
     "runnerPR": 1136,
@@ -38,10 +38,14 @@
   "correction": {
     "uniqueOfficialCommitteeHeadingRequiredWithin160NormalizedCharacters": true,
     "onlySourceBillExactMotionUnderImmediateHeadingCanBeConsidered": true,
-    "unanchoredRepeatedRollBodyMustNotBecomeAnotherHistoricalAction": true,
+    "unanchoredRepeatedRollBodyMustNotBecomeAnotherHistoricalAction": false,
     "source450CharMotionWindowsRemainPinnedFromEarlierIndependentOriginalSource": true,
     "originalSourceFirstRunAlsoRemainsFailure": true,
-    "separatelyTriggeredThirdOriginalRunRequired": true
+    "separatelyTriggeredThirdOriginalRunRequired": true,
+    "earlierHeadingHeuristicIncorrectForSecondAmendment": true,
+    "supersededByStrictlyCertifiedThreeMotionEvidence": true,
+    "secondRule1210MotionSharesSameCommitteeHeadingAsFirst": true,
+    "twoOriginalSF1159AmendmentsMayHaveIdenticalSides": true
   },
   "limits": {
     "noNamedSideDigestsEstablishedByFailedSecondRun": true,
@@ -51,5 +55,18 @@
     "noPrivateDBOrMemberVoteBackfill": true,
     "noFloorOrModelsForecastOr2027": true,
     "issue864MustRemainOpen": true
+  },
+  "correctedHistoricalFinding": {
+    "correctionDate": "2026-10-11",
+    "independentStrictSourceRunId": 38171360478,
+    "independentProofPR": 1133,
+    "originalNamedRollProofFile": "docs/evaluation/source-proof/senate-2021-apr12-three-strict-rule1210-original-committee-success.json",
+    "firstSF1159Motion": "Dibble amendment",
+    "secondSF1159Motion": "McEwen amendment",
+    "differentMotionAndSamePrinted4Yea6Nay": true,
+    "sameOriginalNamedSideDigestForBoth": true,
+    "originalSecondOccurrenceNotDuplicatedMotionText": true,
+    "firstFailureConclusionUnchanged": true,
+    "narrative": "Original separate strict three-motion validator verified that the second Rule12.10 SF1159 passage is a different McEwen amendment after the Dibble amendment; its lack of a second nearby heading does not invalidate that action. The two-motion-only dedup heuristic was incorrect and has been retired."
   }
 }
