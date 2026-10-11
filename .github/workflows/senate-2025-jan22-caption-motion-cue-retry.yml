@@ -1,0 +1,68 @@
+name: One-time original 2025 Jan22 Energy caption cue retry only
+
+# Fixed historical public source, exact original hash and one failed source ID.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2025-jan22-caption-motion-cue-retry.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  exactly-one-original-hearing-retry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Load original 2025 meeting-to-media record evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2025-dated-media-href-review
+          run-id: 38079233118
+          github-token: ${{ github.token }}
+          path: artifacts/original-media-hrefs
+      - name: Load immutable original 2025 HTML page byte proof
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2025-official-media-record-html-proof
+          run-id: 38081463362
+          github-token: ${{ github.token }}
+          path: artifacts/original-html
+      - name: Load earlier source-hashed original caption SHA/byte/count proof
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2025-original-caption-surface-metadata
+          run-id: 38103766440
+          github-token: ${{ github.token }}
+          path: artifacts/previous-original-caption-metadata
+      - name: Restore true partial 21/22 original caption motion-cue result
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2025-22-original-caption-motion-cue-review
+          run-id: 38107642535
+          github-token: ${{ github.token }}
+          path: artifacts/first-failed-cue-source
+      - name: Retry ONLY the SHA-confirmed January 22 Energy committee original caption source
+        run: |
+          node --import tsx scripts/retry-senate-2025-jan22-caption-motion-cues.ts \
+            --hrefs artifacts/original-media-hrefs/senate-2025-media-hrefs.json \
+            --original-html artifacts/original-html/senate-2025-media-record-html.json \
+            --caption-metadata artifacts/previous-original-caption-metadata/senate-2025-caption-surface.json \
+            --first-failed-cues artifacts/first-failed-cue-source/senate-2025-22-original-caption-motion-cues.json \
+            --output artifacts/retry-jan22/senate-2025-jan22-one-original-caption-motion-cue-retry.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2025-jan22-one-original-caption-cue-retry
+          path: artifacts/retry-jan22/senate-2025-jan22-one-original-caption-motion-cue-retry.json
+          retention-days: 30
+          if-no-files-found: error
