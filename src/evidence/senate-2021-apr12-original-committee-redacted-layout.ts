@@ -34,7 +34,9 @@ export function inspectOriginalApril12SourceLayout(text:string){
    const prefix=full.slice(Math.max(0,pos-290000),pos);
    const heading=prefix.lastIndexOf('REPORT OF VOTE IN COMMITTEE');
    const header=prefix.lastIndexOf('S.F. No. '+number+':');
-   const immediate=full.slice(pos,pos+1400);
+   // Bound at next Rule12.10 motion so a later bill cannot lend its tally.
+   const nextOriginalMotion=motions.find(x=>x.index!==undefined&&x.index>pos)?.index??pos+1400;
+   const immediate=full.slice(pos,Math.min(pos+1400,nextOriginalMotion));
    const tallies=[...immediate.matchAll(/There\s+were\s+yeas\s+(\d+)\s+and\s+nays\s+(\d+),\s+as\s+follows:/gi)];
    const printedOutcome=immediate.match(/The\s+(motion|amendment)\s+(was\s+)?(not\s+)?(adopted|prevailed|failed)/i);
    return {
