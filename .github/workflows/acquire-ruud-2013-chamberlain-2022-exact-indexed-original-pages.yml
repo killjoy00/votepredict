@@ -1,0 +1,72 @@
+name: Replay exact 2013 Ruud and 2022 Chamberlain original index-authenticated campaign-page targets
+
+# #864 targeted SOURCE-ONLY second pass. Initial 2012 Ruud sources
+# actually served a State PARTY CHAIR site, not Senate campaign.
+# Initial 2020 Roger original was personal senator/podcast site.
+# Reopen previously acquired original Wayback CDX JSON whole bytes and SHA,
+# and independent entire MN LRL actual-serving senators original HTML/UTC.
+# Fetch ONLY 10 exact preindexed original 2013/2022 page replays after proof.
+# No candidate policy quotes automatically admitted; no production effects.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/acquire-ruud-2013-chamberlain-2022-exact-indexed-original-pages.yml
+      - data/evaluation/senate-ruud-2013-chamberlain-2022-targeted-first-party-original-replays-v1.json
+      - scripts/acquire-ruud-2013-chamberlain-2022-targeted-cdx-originals.ts
+      - tests/senate-ruud-2013-chamberlain-2022-targeted-original-site-pages.test.ts
+      - docs/SENATE_RUUD_2013_CHAMBERLAIN_2022_ORIGINAL_PRIORITIES_TARGETED_REPLAYS.md
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify-ten-independent-indexed-original-2013-and-2022-site-captures:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-ruud-2013-chamberlain-2022-targeted-original-policy-pages-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen entire official original LRL actual-serving Minnesota State Senator directory and independent source SHA UTC receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: originals/mn-actual-serving-senate
+      - name: Reopen original previously independently downloaded whole CDX source indexes and research manifest
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38162916977
+          name: ruud-chamberlain-2012-2022-original-historical-first-party-campaign-html-v1
+          github-token: ${{ github.token }}
+          path: originals/six-prior-original-wayback-cdx-indexes
+      - name: Authenticate original public government and original historical CDX evidence BEFORE ten precise 2013/2022 original page requests
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find originals/mn-actual-serving-senate -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find originals/mn-actual-serving-senate -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          test -n "$gov" && test -n "$receipt"
+          test "$(dirname "$gov")" = "$(dirname "$receipt")"
+          node --import tsx scripts/acquire-ruud-2013-chamberlain-2022-targeted-cdx-originals.ts \
+            --complete-original-mn-actual-senator-lrl-html "$gov" \
+            --original-government-utc-sha-receipt "$receipt" \
+            --prior-original-wayback-index-artifact-dir originals/six-prior-original-wayback-cdx-indexes \
+            --output-dir originals/ruud-2013-chamberlain-2022-exact-source-originals
+      - name: Retain full original 2013 and 2022 complete candidate-senator-owned HTML and SHA provenance only
+        uses: actions/upload-artifact@v6
+        with:
+          name: ruud-2013-chamberlain-2022-ten-exact-wayback-index-original-html-v1
+          path: originals/ruud-2013-chamberlain-2022-exact-source-originals/
+          retention-days: 30
+          if-no-files-found: error

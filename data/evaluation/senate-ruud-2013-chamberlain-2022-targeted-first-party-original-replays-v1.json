@@ -1,0 +1,155 @@
+{
+  "schema": "mn-ruud-2013-chamberlain-2022-ten-targeted-index-attested-original-html-replays-v1",
+  "scope": {
+    "issue": 864,
+    "peopleIndependentlyProvenActual2021MNStateSenators": 2,
+    "preciselyOriginalCDXIndexedTargets": 10,
+    "ruudOriginal2013Pages": 5,
+    "chamberlainOriginal2022Pages": 5,
+    "realCandidateIssuePolicyQuotesAutomaticallyAdmitted": 0,
+    "original2012RuudStatePartyChairNotSenatePlatform": true,
+    "original2020ChamberlainPersonalPodcastNotCampaign": true,
+    "thirdParty2022IndependentExpenditureNotCandidateStatement": true,
+    "indexRowCappingPreviouslyObserved": true,
+    "wholeOriginalOfficialLRLSenateServiceRequiredBeforeNetwork": true,
+    "originalArchiveCaptureUTCOnlyPublicByNotAuthoredDate": true,
+    "productionDatabaseEvidenceModelForecastSchedulerChanges": 0
+  },
+  "originalGovernment": {
+    "url": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "run": 38094976711,
+    "artifact": 11685387674,
+    "fullHTMLSha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51"
+  },
+  "priorSource": {
+    "acquisitionPR": 1100,
+    "fullOriginalWaybackIndexRun": 38162916977,
+    "originalWaybackIndexArtifact": 11711190862,
+    "originalArchiveArtifactName": "ruud-chamberlain-2012-2022-original-historical-first-party-campaign-html-v1",
+    "sourceManifestFile": "source-acquisition-manifest.json",
+    "sourceManifestSha256": "1df07f5392238ad5954983ab6263f57f27dbf9653e27cb459143fc6b8c2cd1df",
+    "indexFiles": [
+      {
+        "file": "ruudchamberlain-02-original-cdx-index.json",
+        "sha256": "30a84763c9955f24db70d46656c9b71329805f2139a246024f25115e6b0ce473"
+      },
+      {
+        "file": "ruudchamberlain-05-original-cdx-index.json",
+        "sha256": "61dcb8b75fcb80294e31345dc6da42c95fddfbc251b54d348514e52913e784a3"
+      }
+    ]
+  },
+  "targets": [
+    {
+      "person": "Carrie Ruud",
+      "originalUrl": "http://www.carrieruud.com:80/index.cfm/pageid/18",
+      "timestamp": "20130922051655",
+      "archiveCapturedUTC": "2013-09-22T05:16:55.000Z",
+      "cdxSha1": "GDI4FY2WAYU4WJYN27FKWRALSMR554QF",
+      "originalIndexFile": "ruudchamberlain-02-original-cdx-index.json",
+      "prejudgedCampaignPolicyCopy": false,
+      "sourceCharacterizationPendingHumanReview": "2013_meet_candidate_site_exact_cited_historical_date"
+    },
+    {
+      "person": "Carrie Ruud",
+      "originalUrl": "http://www.carrieruud.com:80/index.cfm/pageid/24",
+      "timestamp": "20130922051732",
+      "archiveCapturedUTC": "2013-09-22T05:17:32.000Z",
+      "cdxSha1": "Y33CSIBKFP23EGRXBIFRL3IZDODE7JTS",
+      "originalIndexFile": "ruudchamberlain-02-original-cdx-index.json",
+      "prejudgedCampaignPolicyCopy": false,
+      "sourceCharacterizationPendingHumanReview": "2013_other_first_party_page_context_unknown"
+    },
+    {
+      "person": "Carrie Ruud",
+      "originalUrl": "http://www.carrieruud.com:80/index.cfm/pageid/25",
+      "timestamp": "20130922065609",
+      "archiveCapturedUTC": "2013-09-22T06:56:09.000Z",
+      "cdxSha1": "3E7JTD4FUQZHTISTPPKXKD4OVWHQD453",
+      "originalIndexFile": "ruudchamberlain-02-original-cdx-index.json",
+      "prejudgedCampaignPolicyCopy": false,
+      "sourceCharacterizationPendingHumanReview": "2013_other_first_party_page_context_unknown"
+    },
+    {
+      "person": "Carrie Ruud",
+      "originalUrl": "http://www.carrieruud.com:80/index.cfm/pageid/26",
+      "timestamp": "20130922051813",
+      "archiveCapturedUTC": "2013-09-22T05:18:13.000Z",
+      "cdxSha1": "F3LA7CB75Z7WQWZBX2L7OIXU3CJ3Z7CW",
+      "originalIndexFile": "ruudchamberlain-02-original-cdx-index.json",
+      "prejudgedCampaignPolicyCopy": false,
+      "sourceCharacterizationPendingHumanReview": "2013_other_first_party_page_context_unknown"
+    },
+    {
+      "person": "Carrie Ruud",
+      "originalUrl": "http://www.carrieruud.com:80/index.cfm/home",
+      "timestamp": "20130922051642",
+      "archiveCapturedUTC": "2013-09-22T05:16:42.000Z",
+      "cdxSha1": "IGUCUNWJU7R23UBIJFPPTE5DOIKZVYMM",
+      "originalIndexFile": "ruudchamberlain-02-original-cdx-index.json",
+      "prejudgedCampaignPolicyCopy": false,
+      "sourceCharacterizationPendingHumanReview": "2013_original_site_home_campaign_cycle_to_verify"
+    },
+    {
+      "person": "Roger Chamberlain",
+      "originalUrl": "https://rogerchamberlainmn.com/legislative-priorities/",
+      "timestamp": "20220122073947",
+      "archiveCapturedUTC": "2022-01-22T07:39:47.000Z",
+      "cdxSha1": "3QTK5GPMST6CIUISCA542K4LST7PBOXZ",
+      "originalIndexFile": "ruudchamberlain-05-original-cdx-index.json",
+      "prejudgedCampaignPolicyCopy": false,
+      "sourceCharacterizationPendingHumanReview": "2022_original_named_legislative_priorities_not_preclassified_campaign"
+    },
+    {
+      "person": "Roger Chamberlain",
+      "originalUrl": "https://rogerchamberlainmn.com/legislative-priorities/",
+      "timestamp": "20221031172213",
+      "archiveCapturedUTC": "2022-10-31T17:22:13.000Z",
+      "cdxSha1": "XMJDUGQXEL2K52SD5BOMGQSSYB5H2TUG",
+      "originalIndexFile": "ruudchamberlain-05-original-cdx-index.json",
+      "prejudgedCampaignPolicyCopy": false,
+      "sourceCharacterizationPendingHumanReview": "2022_revised_candidate_senator_priorities_possible"
+    },
+    {
+      "person": "Roger Chamberlain",
+      "originalUrl": "https://rogerchamberlainmn.com/legislative-priorities/",
+      "timestamp": "20221105212327",
+      "archiveCapturedUTC": "2022-11-05T21:23:27.000Z",
+      "cdxSha1": "VWN27PREM4MZDJG5S6E6CL2S3XRGUYFF",
+      "originalIndexFile": "ruudchamberlain-05-original-cdx-index.json",
+      "prejudgedCampaignPolicyCopy": false,
+      "sourceCharacterizationPendingHumanReview": "2022_pre_election_priorities_possible"
+    },
+    {
+      "person": "Roger Chamberlain",
+      "originalUrl": "https://rogerchamberlainmn.com/",
+      "timestamp": "20221107171751",
+      "archiveCapturedUTC": "2022-11-07T17:17:51.000Z",
+      "cdxSha1": "AZSGX7JLCUFUPCEA5PG4JO2Q5IOO7TPX",
+      "originalIndexFile": "ruudchamberlain-05-original-cdx-index.json",
+      "prejudgedCampaignPolicyCopy": false,
+      "sourceCharacterizationPendingHumanReview": "2022_candidate_personal_home_close_to_election"
+    },
+    {
+      "person": "Roger Chamberlain",
+      "originalUrl": "https://rogerchamberlainmn.com/about/",
+      "timestamp": "20220702111736",
+      "archiveCapturedUTC": "2022-07-02T11:17:36.000Z",
+      "cdxSha1": "ZSILY677R3IU3CAYHE27YVQGNJWXEU3C",
+      "originalIndexFile": "ruudchamberlain-05-original-cdx-index.json",
+      "prejudgedCampaignPolicyCopy": false,
+      "sourceCharacterizationPendingHumanReview": "2022_personal_bio_context_to_verify"
+    }
+  ],
+  "rules": [
+    "Use full previously acquired original Wayback CDX index JSON plus pinned digest; do not fabricate archive captures.",
+    "Each entire replayed original HTML must match indexed CDX SHA1 Base32 before storing.",
+    "Ruud 2012 pages were a party-chair site and cannot be labeled a 2012 State Senate campaign platform.",
+    "Roger 2020 originals were a senator-owned personal/podcast site, distinct from the separate unaffiliated 2022 expenditure.",
+    "2022 election campaign relevance of original Roger issues page requires separate human review, not inferred merely from page title.",
+    "Any legislative claims on candidate/legislator site are candidate self reports not official Minnesota Senate roll calls.",
+    "A fresh original 2013 Ruud page might contain old 2012 content and should only be dated by its observed real archive capture.",
+    "Never auto admit original-source finds into the production evidence, prediction, scheduler or model.",
+    "An archive gap or bounded page selection is not proof a senator lacks policies."
+  ]
+}
