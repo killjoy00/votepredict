@@ -21,7 +21,8 @@
     "currentPublisherAliasClue": "Matched /briefs/ and dated-path URLs are research alias candidates only; never deduplicate authenticated archives or assert equal original HTTP bytes without exact proof",
     "ambiguousPublisherDayVersusPassageEvent": "2023 driver licensing Reformer current page displays Feb 21 at 8 pm yet narrates a Senate passage early Wednesday Feb 22; official Revisor groups passage under Feb 21. Neither source establishes a retrospective model public-by or exact article revision time.",
     "currentPublisherRedirectObservation": "A public /briefs/ URL was observed currently resolving to a /2024/02/12/ alias on 2026-10-10. Current redirect does not authenticate a historical Wayback redirect or archived original byte equivalence.",
-    "currentPublisherDisplayedClockWithoutVerifiedTimezone": "Publisher page displays a local clock but its historical timezone/edit time and initial public-by remain independently unverified."
+    "currentPublisherDisplayedClockWithoutVerifiedTimezone": "Publisher page displays a local clock but its historical timezone/edit time and initial public-by remain independently unverified.",
+    "currentMprEpisodeAudioInterview": "The currently served 2024-02-19 MPR /episode/ page includes audio and speaker-labeled Senator Grant Hauschild transcript, outside the configured /story/202 seed prefix. Current audio/transcript is not a 2024 archived original, time zone and first-public-by are unproved, and no private source row or verified original-media quote is established."
   },
   "stateSenateOnly": true,
   "selectedNonExhaustiveArticleLeads": [
@@ -448,6 +449,44 @@
       "noHouseSpeakerQuoteAttributedToSenator": true
     },
     {
+      "id": "mpr-2024-hauschild-north-star-on-air-interview",
+      "publisher": "MPR News",
+      "seedId": "mpr-news-story-archive",
+      "livePageUrl": "https://www.mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south",
+      "publicationDayDisplayedOnPublicPage": "2024-02-19",
+      "searchTopicOnly": "On-air Senator Grant Hauschild North Star Act direct interview transcript; immigration jurisdiction, rural emergency medical services and childcare priorities",
+      "namedSenatorLeadsForManualReview": [
+        "Grant Hauschild"
+      ],
+      "evidenceDisposition": "public_article_discovery_only",
+      "sourceSeenInVotePredictExport": "unknown_not_reconciled",
+      "originalArchivedHttpBytesHashVerified": false,
+      "archiveCapturePublicByVerified": false,
+      "historicalForecastEligibilityProven": false,
+      "membershipOnPublicationDateVerified": false,
+      "directQuoteHumanVerified": false,
+      "issueStanceInferred": false,
+      "urlInsideCurrentSeedPrefix": false,
+      "sourceResearchCheckedOn": "2026-10-10",
+      "officialSenateHistorySource": "https://www.lrl.mn.gov/legdb/fulldetail?id=15577",
+      "officialSenateOathDay": "2023-01-03",
+      "senatorServiceOnDisplayedPublisherDayIndependentlyCorroborated": true,
+      "currentPublisherDisplayedClock": "10:32 AM",
+      "publisherClockTimezoneIndependentlyVerified": false,
+      "currentPublisherShow": "Minnesota Now",
+      "currentPageContainsAudioPlayer": true,
+      "currentPageContainsSpeakerLabeledTranscript": true,
+      "currentPageHostSpeakerLabel": "CATHY WURZER",
+      "currentPageSenatorSpeakerLabel": "GRANT HAUSCHILD",
+      "currentPageDirectSpeechShortResearchExcerpt": "I feel that immigration is a federal issue.",
+      "archivedTranscriptByteEqualityAndAvailabilityVerified": false,
+      "historicalAudioBytesAndAvailabilityVerified": false,
+      "originalSpeakerAudioComparedToTranscript": false,
+      "mediaInterviewSpeakerHumanReviewedFromOriginalArchive": false,
+      "actualSpokenWordsOnHistoricalCutoffIndependentlyVerified": false,
+      "productionSeedChanged": false
+    },
+    {
       "id": "mn-reformer-2025-social-media-tax",
       "publisher": "Minnesota Reformer",
       "seedId": "minnesota-reformer-article-archive",
@@ -569,7 +608,7 @@
       "mpr-news-story-archive"
     ],
     "calculatedAgainstCheckedInSeedUrls": true,
-    "outsideSeedPrefixLeadCount": 10,
-    "criticalLimitation": "10 of 24 selected public URL leads fall outside the checked-in prefixes; there are four candidate brief-versus-dated alias pairs. Current publisher redirects and matching slugs/days do not prove an archived historical article duplicate. Source-record membership, original HTTP byte equality, first-public-by, and statewide publisher denominators remain unknown."
+    "outsideSeedPrefixLeadCount": 11,
+    "criticalLimitation": "11 of 25 curated public URL leads fall outside the existing checked-in seed URL prefixes: ten Minnesota Reformer /briefs/ URLs and one MPR News /episode/ direct senator audio-interview transcript. Four Reformer brief-versus-dated path alias pairs are only candidates; no authenticated historical archived bytes, first-public-by, private source equality or publisher-wide denominator. Coverage beyond the selected sample is unknown."
   }
 }

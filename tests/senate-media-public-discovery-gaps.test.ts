@@ -32,11 +32,11 @@ const dated=(id:string,slug:string,day='2025-05-01')=>({
 test('shadowed public leads expose configured prefix and secondary topical-path blind spots',()=>{
   const results=diagnoseMediaPublicDiscoveryPaths(ledger.selectedNonExhaustiveArticleLeads);
   assert.equal(results.version,'senate-media-public-url-path-diagnostic-v1');
-  assert.equal(results.totalCuratedPublicUrlLeads,24);
-  assert.equal(results.leads.length,24);
-  assert.equal(results.urlLeadsOutsideConfiguredSeedPrefix,10);
+  assert.equal(results.totalCuratedPublicUrlLeads,25);
+  assert.equal(results.leads.length,25);
+  assert.equal(results.urlLeadsOutsideConfiguredSeedPrefix,11);
   assert.ok(results.urlLeadsFilteredByTopicalPathPriority>=1);
-  assert.ok(results.urlLeadsExcludedByEitherGate>=10);
+  assert.ok(results.urlLeadsExcludedByEitherGate>=11);
   assert.ok(results.urlLeadsExcludedByBothGates<=results.urlLeadsOutsideConfiguredSeedPrefix);
   for(const lead of results.leads) {
     const original=ledger.selectedNonExhaustiveArticleLeads.find(x=>x.id===lead.id)!;
@@ -58,6 +58,33 @@ test('shadowed public leads expose configured prefix and secondary topical-path 
   assert.equal(results.statewideDenominatorEstablished,false);
 });
 
+
+test('a real first-party MPR /episode/ audio transcript is excluded by the story-only seed',()=>{
+  const input=ledger.selectedNonExhaustiveArticleLeads.find(x=>x.id===
+    'mpr-2024-hauschild-north-star-on-air-interview');
+  assert.ok(input);
+  const r=diagnoseMediaPublicDiscoveryPaths([input]);
+  assert.equal(r.totalCuratedPublicUrlLeads,1);
+  assert.equal(r.urlLeadsOutsideConfiguredSeedPrefix,1);
+  assert.equal(r.urlLeadsExcludedByEitherGate,1);
+  assert.equal(r.possibleAliasPairs.length,0);
+  const x=r.leads[0]!;
+  assert.equal(x.originalUrl,'https://www.mprnews.org/episode/2024/02/19/without-total-dfl-support-the-north-star-act-is-going-south');
+  assert.equal(x.configuredSeedPrefix,'https://www.mprnews.org/story/202');
+  assert.equal(x.currentSeedPrefixWouldIncludeUrl,false);
+  // No configured topical URL keyword appears in the MPR interview's path;
+  // expanding the Wayback URL prefix alone still would not select it.
+  assert.equal(x.currentPathPriorityWouldSelectUrl,false);
+  assert.equal(r.urlLeadsFilteredByTopicalPathPriority,1);
+  assert.equal(r.urlLeadsExcludedByBothGates,1);
+  assert.equal(x.currentTwoGateDiscoveryWouldSelectUrl,false);
+  assert.equal(x.originalWaybackCaptureVerified,false);
+  assert.equal(x.matchedDatabaseSourceDocument,false);
+  assert.equal(x.exactSenatorQuoteVerified,false);
+  assert.equal(x.forecastEligibilityVerified,false);
+  assert.equal(r.sourceBytesOrDatabaseAccessed,false);
+  assert.equal(r.statewideDenominatorEstablished,false);
+});
 
 test('public /briefs/ and dated paths yield four research alias candidates, not deduplicated articles',()=>{
   const result=diagnoseMediaPublicDiscoveryPaths(ledger.selectedNonExhaustiveArticleLeads);
