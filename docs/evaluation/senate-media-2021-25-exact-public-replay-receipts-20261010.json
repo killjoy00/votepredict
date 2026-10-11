@@ -1,0 +1,230 @@
+{
+  "version": "senate-media-2021-25-public-index-consistent-exact-replay-receipts-v1",
+  "observationDateLocal": "2026-10-10",
+  "studyYears": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "auditedRun": {
+    "repo": "killjoy00/votepredict",
+    "runId": 38109749945,
+    "runAttempt": 1,
+    "workflow": "senate-media-public-wayback-proof-batch.yml",
+    "githubEvent": "issue_comment",
+    "headCommit": "04f8f3e361eb620c27c1deea0e241912aec7427d",
+    "sourceArtifactId": 11690592549,
+    "sourceArtifactName": "senate-media-public-wayback-proof-batch",
+    "sourceJsonSha256": "86ceefa754da091c1f7a3c95c4481a439e1aef001e858797accd4cabbcce4b8f"
+  },
+  "counts": {
+    "checkedInSelectedPublicUrlLeads": 31,
+    "firstPageIndexCandidateUrls": 20,
+    "firstPageIndexUnavailableOrInvalidUrls": 11,
+    "firstPageIndexEmptyUrls": 0,
+    "exactIndexedBodyReplaysAttempted": 20,
+    "indexConsistentSha1BodyReplays": 19,
+    "oneReplayChecksumMismatch": 1,
+    "privateVotePredictSourceRowsMatched": 0,
+    "individualSenatorQuotationsHumanApproved": 0
+  },
+  "byDisplayedPublisherYear": [
+    {
+      "year": 2021,
+      "leads": 5,
+      "indexConsistentReplays": 5
+    },
+    {
+      "year": 2022,
+      "leads": 8,
+      "indexConsistentReplays": 4
+    },
+    {
+      "year": 2023,
+      "leads": 5,
+      "indexConsistentReplays": 2
+    },
+    {
+      "year": 2024,
+      "leads": 6,
+      "indexConsistentReplays": 4
+    },
+    {
+      "year": 2025,
+      "leads": 7,
+      "indexConsistentReplays": 4
+    }
+  ],
+  "indexConsistentCaptureReceipts": [
+    {
+      "leadId": "mpr-2021-benson-vaccine-on-air",
+      "archivedCaptureUtc": "2021-01-11T22:45:19Z",
+      "observedOriginalHtmlSha256": "586f259f93201def83151d50d985ce7b44f9a107be6269adef886c01abaac00c",
+      "observedRawBodyBytes": 69622,
+      "indexedPayloadSha1Base32": "UHBLJEO3RXXWVIRWRQVTDPRQUQ56CKA3"
+    },
+    {
+      "leadId": "mn-reformer-2021-rent-control",
+      "archivedCaptureUtc": "2021-03-02T18:08:51Z",
+      "observedOriginalHtmlSha256": "36597a9966cc38a9ff94fe5f4fef9fcb0d9462417ed60dae0f830d1ba0ff6874",
+      "observedRawBodyBytes": 88685,
+      "indexedPayloadSha1Base32": "QQHHQ2RP5WCULKBRVI6I55F2Q5WTWZE2"
+    },
+    {
+      "leadId": "mn-reformer-2021-family-preservation",
+      "archivedCaptureUtc": "2021-03-15T12:52:57Z",
+      "observedOriginalHtmlSha256": "c79dac955dd9844c05a3a899eb7c05e537ae715526b64be114f05a4a6c263043",
+      "observedRawBodyBytes": 138824,
+      "indexedPayloadSha1Base32": "7RT6JGXO3ZFJV45KXZ6VMYIQGFJSCKLR"
+    },
+    {
+      "leadId": "mn-reformer-2021-education-finance",
+      "archivedCaptureUtc": "2021-04-23T10:44:46Z",
+      "observedOriginalHtmlSha256": "8e62cc2c7ee919326f3b343573bf6fd966917eeb6619a78b7ec84a958f95714a",
+      "observedRawBodyBytes": 90830,
+      "indexedPayloadSha1Base32": "DNINRKP5KBF2ADI2BNSCKICYKMPLBKPE"
+    },
+    {
+      "leadId": "mpr-2021-school-choice",
+      "archivedCaptureUtc": "2021-06-10T10:28:50Z",
+      "observedOriginalHtmlSha256": "af4436242d1db2aeb72d70e309832360037f0592663852ae0e08707f94284884",
+      "observedRawBodyBytes": 77296,
+      "indexedPayloadSha1Base32": "ESOSVLFYIVN4KH6WZBLWRMRA67YRSUM5"
+    },
+    {
+      "leadId": "mn-reformer-2022-gop-agenda-brief",
+      "archivedCaptureUtc": "2022-01-26T19:27:45Z",
+      "observedOriginalHtmlSha256": "31b69f809f46811a63248a2e6ba12328a8231fa36f2ec8283eb1843581616c1b",
+      "observedRawBodyBytes": 97212,
+      "indexedPayloadSha1Base32": "IRHEVFTLTTHHMEJXVJDVFN2DFSIEAYBI"
+    },
+    {
+      "leadId": "mn-reformer-2022-dfl-public-safety-brief",
+      "archivedCaptureUtc": "2022-03-25T19:14:18Z",
+      "observedOriginalHtmlSha256": "35d2149d9fac934bc79416a290a1550f0ac2c0216fecca8c5a77a25fcf308711",
+      "observedRawBodyBytes": 93933,
+      "indexedPayloadSha1Base32": "HQQ4HV7JIH47YSCTHOE3Y75FXSW74VWY"
+    },
+    {
+      "leadId": "mn-reformer-2022-crime-bill-brief",
+      "archivedCaptureUtc": "2022-04-25T21:20:23Z",
+      "observedOriginalHtmlSha256": "d84e0312d9e1afcf2fa34f03a8ad8a76bbb454affe980b29541a2fd1ecd3248c",
+      "observedRawBodyBytes": 94286,
+      "indexedPayloadSha1Base32": "USW3SPIAU7MTBQC4L5SB6WIVA5555UTD"
+    },
+    {
+      "leadId": "mn-reformer-2022-secular-caucus",
+      "archivedCaptureUtc": "2022-10-05T22:38:13Z",
+      "observedOriginalHtmlSha256": "bd4db05defa6d11bfebeb97d05ca453e9cb719aa5d8bc0af0d2c180593021949",
+      "observedRawBodyBytes": 94414,
+      "indexedPayloadSha1Base32": "44FM6RQZIEDDNVGLJ4T72ZAWUICYC7JQ"
+    },
+    {
+      "leadId": "mn-reformer-2023-clean-energy",
+      "archivedCaptureUtc": "2023-02-03T03:51:19Z",
+      "observedOriginalHtmlSha256": "2b33bcbf34150e5460e586c47f577289f81377325bd045d074b38ec2adca2330",
+      "observedRawBodyBytes": 127595,
+      "indexedPayloadSha1Base32": "NR73R2XLIZELNXN7BDPH4WENQLZFVRCD"
+    },
+    {
+      "leadId": "mpr-2023-kunesh-native-family-preservation",
+      "archivedCaptureUtc": "2023-02-10T02:40:30Z",
+      "observedOriginalHtmlSha256": "091376b6f0a3a0a1104d9aa8bd4573212c2ba5953486c082df2877a8eb041f92",
+      "observedRawBodyBytes": 81419,
+      "indexedPayloadSha1Base32": "LSMKP7LJQX2FXTNTSFGN2ACEJ6J46GIV"
+    },
+    {
+      "leadId": "mn-reformer-2024-sanctuary-brief",
+      "archivedCaptureUtc": "2024-02-12T22:13:40Z",
+      "observedOriginalHtmlSha256": "ad570161c43fad500dd8bc1dde593369703e1ccba6bb47b5ad6688865d15eed1",
+      "observedRawBodyBytes": 128637,
+      "indexedPayloadSha1Base32": "6IG6UOKMJFK2A22VVDFCRWSGRVSCNFPG"
+    },
+    {
+      "leadId": "mpr-2024-hauschild-north-star-on-air-interview",
+      "archivedCaptureUtc": "2024-02-19T22:55:56Z",
+      "observedOriginalHtmlSha256": "a990fb4207938f11b58b787966f67f1cc9577fd5c1d4feafe081bd8f14242387",
+      "observedRawBodyBytes": 80716,
+      "indexedPayloadSha1Base32": "DHKJFEB7VR76PWGE7EY2ZOUDZKLYKV5X"
+    },
+    {
+      "leadId": "mn-reformer-2024-junk-fees",
+      "archivedCaptureUtc": "2024-05-01T23:22:20Z",
+      "observedOriginalHtmlSha256": "3c3ef5c9d9ec3226b8b01302b29efd7df59d318193be89ff8f81ded87a84e39c",
+      "observedRawBodyBytes": 127919,
+      "indexedPayloadSha1Base32": "LIOP44XTPOUTTDQGVGE7F6VEQI2M2M6G"
+    },
+    {
+      "leadId": "mpr-2024-kunesh-charter-school-oversight",
+      "archivedCaptureUtc": "2024-10-22T18:31:15Z",
+      "observedOriginalHtmlSha256": "89e55f875d760ff3665a7a1ab381d7d4b0e26b1c27d3a5da5d378c940a1eaada",
+      "observedRawBodyBytes": 91958,
+      "indexedPayloadSha1Base32": "Z5MQ547B3PIGGBKJR5GUHAAOPZFRHHIA"
+    },
+    {
+      "leadId": "mn-reformer-2025-social-media-tax",
+      "archivedCaptureUtc": "2025-04-09T20:19:40Z",
+      "observedOriginalHtmlSha256": "2f458bc3e8cb0f504195c4569d932f25a656a207055fdd21b71597ec996647fe",
+      "observedRawBodyBytes": 76004,
+      "indexedPayloadSha1Base32": "SQCLLSYQ5JVKGOQSR6GZ5HI55ENU3WJ6"
+    },
+    {
+      "leadId": "mn-reformer-2025-special-election-brief",
+      "archivedCaptureUtc": "2025-04-30T23:22:20Z",
+      "observedOriginalHtmlSha256": "234cb6cc06d80adcc85cbb20fcc354fa5ad2cd8247236e778d8171e3f1a125d5",
+      "observedRawBodyBytes": 123710,
+      "indexedPayloadSha1Base32": "W2AOI2O3RXRBWLCVFAWXVQLPMDKJNFVE"
+    },
+    {
+      "leadId": "mn-reformer-2025-road-signs-brief",
+      "archivedCaptureUtc": "2025-05-01T22:45:07Z",
+      "observedOriginalHtmlSha256": "2c8e1603e83e21d45c3d9c8f7282667e0144b13ce963058994fe5426e3ba5c00",
+      "observedRawBodyBytes": 127299,
+      "indexedPayloadSha1Base32": "OCOMTQLAFYHQZ2XGA6YM7UKLBVTFKISY"
+    },
+    {
+      "leadId": "mpr-2025-minnesotacare-budget",
+      "archivedCaptureUtc": "2025-06-10T07:05:04Z",
+      "observedOriginalHtmlSha256": "a6d013381a52db711e63dd56d1627ea245ac4e4774690044d4ddcffda8c640bb",
+      "observedRawBodyBytes": 226708,
+      "indexedPayloadSha1Base32": "OPFNZZ7DRJKUHADUS7H3Q5ZFSMH6VW32"
+    }
+  ],
+  "replaySha1Mismatch": [
+    {
+      "leadId": "mn-reformer-2023-driver-licenses",
+      "indexedCaptureUtc": "2023-02-27T14:58:20Z",
+      "cdxIndexSha1Base32": "RWJUMW3B6DD2SDHJUNABLFBA3KJXFCJY",
+      "actualArticleBodySha256Verified": false
+    }
+  ],
+  "indexUnavailableOrInvalidLeadIds": [
+    "mpr-2022-benson-kunesh-parental-curriculum",
+    "mn-reformer-2022-dfl-public-safety-dated",
+    "mn-reformer-2022-tax-package",
+    "mn-reformer-2022-gun-proposals",
+    "mn-reformer-2023-driver-licenses-dated",
+    "mn-reformer-2023-reproductive-health",
+    "mn-reformer-2024-majority-leader",
+    "mn-reformer-2024-sanctuary-dated",
+    "mpr-2025-pha-hmong-lao-veterans",
+    "mn-reformer-2025-road-signs-dated",
+    "mpr-2025-coleman-civic-violence"
+  ],
+  "interpretation": {
+    "derivedOnlyFromCheckedInNonExhaustive31UrlResearchSample": true,
+    "eachReceiptIsOneReplayOfOneExactCapturedOriginalHttpBody": true,
+    "indexDigestMatchedReplayBodyButNotOriginalPublisherFirstPublicationTime": true,
+    "publisherArticleAndSenatorStatementUniverseUnknown": true,
+    "historicBriefAndDatedPathsMayReferToAliasButNotProvenSameArticle": true,
+    "noRawOriginalArticleTextOrAudioStored": true,
+    "originalAudioAndTranscriptAvailabilityNotIndependentlyEstablished": true,
+    "noPrivateSourceDocumentsSHA256MatchPerformed": true,
+    "metadataDigestDoesNotCertifyOriginalHumanSenatorSpeech": true,
+    "historicalForecastEligibilityNotEstablished": true,
+    "noProductionEvidenceOrForecastChanges": true,
+    "unindexedOrFailedLeadsAreNotProvenAbsent": true
+  }
+}

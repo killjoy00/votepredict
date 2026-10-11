@@ -15,7 +15,28 @@
 
 The public JSON artifact contains capture URLs/times/indexed digests and observed raw body SHA-256 only. It does **not** contain source HTML. Three exact archived original-page versions have been independently fetched and checked against the corresponding CDX digest. **No exact private VotePredict `source_documents.content_sha256` has been compared**, and no actual quotation, article first-publication clock, broadcast transcript content, 2024 newsroom alias identity or vote forecast cutoff has thereby been authenticated. The only established public-by bound for these exact page versions is **no later than their checked archive capture**, not the publisher-displayed broadcast/day.
 
-The fixed pilot checks **four URL aliases representing three stories**. The separately triggered `[senate-media-public-proof-all]` action on #987 requests at most 31 bounded exact public URL checks from the same non-exhaustive ledger, with no arbitrary host access and no private secrets. Index failures remain **unknown**, not “missing media.”
+The fixed pilot checks **four URL aliases representing three stories**. The owner-triggered `[senate-media-public-proof-all]` action on #987 **completed** the at-most-31 exact public URL checks described below, with no arbitrary host access and no private secrets. Index failures remain **unknown**, not “missing media.”
+
+### Five-year live archive batch — final observed outcome, with permanent public hash receipts
+
+The owner-only issue-comment run [#38109749945](https://github.com/killjoy00/votepredict/actions/runs/38109749945), using merged source commit `04f8f3e361eb620c27c1deea0e241912aec7427d`, **completed successfully**. Its source JSON SHA-256 and artifact ID are recorded in the [checked-in 31-URL outcome and SHA-receipt manifest](senate-media-2021-25-exact-public-replay-receipts-20261010.json), so the public observation summary survives the seven-day Actions artifact expiration.
+
+| Current publisher-displayed year | Curated URLs tested | SHA-1-index-consistent original HTTP-body replay |
+| --- | ---: | ---: |
+| 2021 | 5 | 5 |
+| 2022 | 8 | 4 |
+| 2023 | 5 | 2 |
+| 2024 | 6 | 4 |
+| 2025 | 7 | 4 |
+| **Total** | **31** | **19** |
+
+The other **12 URL observations** were **11 unavailable/unverifiable CDX indexes** plus **one 2023 Reformer driver's-license indexed capture whose replay SHA-1 did not match CDX**. There were **zero confirmed missing published articles**, zero authenticated individual politician quotes and zero matches to the private VotePredict source-document corpus. The report did not paginate beyond the first 20 captures or search uncurated publications. Each of the 19 receipts includes exact capture UTC, indexed payload SHA-1, observed original body SHA-256 and verified byte count for one replay (not all archived versions). A 2021 archive capture could still postdate the original publisher's publication day: capture time is a conservative bound for the version observed, not proof of publication-time availability.
+
+The 11 index failures concentrate in 2022, 2023, 2024 and 2025 and are **not negative article evidence**. The 2023 Reformer digest mismatch is also **not enough to infer a missing article**, since archive/replay transfer transformations can disagree with a CDX payload digest. The current Reformer `/briefs/` ↔ dated redirect is still **not a historical alias proof**.
+
+The SHA-pinned second validation [run #38109808936](https://github.com/killjoy00/votepredict/actions/runs/38109808936) independently fetched the **same exact three pilot original HTML bodies again** and matched all three page-byte SHA-256/length receipts. In the *specific captured page versions*, the Feb 12 Reformer article's short attributed Erin Murphy committee-process excerpt appears in non-script page text. The Feb 19 MPR Hauschild archived HTML **did not yield** the later/current-day short sentence or a visible `Audio transcript` heading. The Feb 10, 2023 MPR Kunesh archived HTML **did** contain a transcript heading and a full-name `MARY KUNESH:` speaker label but **did not yield** the particular sentence copied from the current page. These Boolean literal-text probes **do not authenticate audio files**, identify when transcript text was *first* posted, human-certify the actual speaker, or rule out different historical text/encoding/transcript versions. Do not backdate contemporary MPR interviews, publication-time quote snippets or future model inputs.
+
+**Prioritize genuine original-version review next:** 2022 MPR Benson/Kunesh, 2025 MPR Pha/Coleman, the 2023 Reformer driver's-license digest mismatch, and Reformer dated-path aliases; use the independently established original 2024 Murphy quote for separately authorized human review **without** assuming it appears in VotePredict's private evidence. All per-senator-year coverage totals remain restricted to an actual operator-supplied authorized roster/export.
 
 ## 2. Distinguish original HTML page version from human statements
 
@@ -59,6 +80,6 @@ There are 10 publisher/year summary slots for **MPR and Minnesota Reformer × 20
 
 ## Outstanding completion gates
 
-**Achieved now:** exact archived-page replay SHA observations for 3 pilot URLs and new reproducible public-batch machinery. **In progress:** all-31 URL public query and pinned historical HTML statement-text check.
+**Achieved now:** exact archived-page replay SHA observations for 3 pilot URLs and new reproducible public-batch machinery. **Completed publicly:** all-31 URL exact-CDX query and three SHA-pinned historical HTML visible-text checks (with negative speaker/publisher proof flags preserved).
 
 **Awaiting authorized private inputs:** match actual VotePredict stored source SHA and original archived HTML snapshot bytes; complete genuine human named-senator quote reviews; certify which individual historical vote cutoffs, if any, preceded those captures. Neither original 2024 audio/MP3 byte equality nor MPR transcript initial-post timing has been established. Do **not** promote publisher metadata, reporter paraphrases, X screenshots or a retroactive transcript into same-day prediction inputs without those additional checks.
