@@ -123,6 +123,14 @@ read('senate-six-2020-original-pages-26-new-exact-first-party-excerpts-v1',
 read('senate-roger-chamberlain-2016-original-10-economic-issue-excerpts-and-domain-review-v1',
  (d,s)=>{assert.equal(d.tenCandidateSiteExactStatements.length,10);
   add('Roger Chamberlain',d.tenCandidateSiteExactStatements.length,s);});
+// First 20-person uncovered cohort: 61 independent original-CDX + HTML audited
+// short historical candidate site issues; 9 newly source-covered actual senators.
+// Old House-era campaigns and older retained election copy are NOT modern 2022 Senate platforms.
+read('senate-first-20-original-nine-actual-senators-61-short-excerpts-v1',
+ (d,s)=>{assert.equal(d.pages.length,11);assert.equal(d.excerpts.length,61);
+  const persons=new Map(d.pages.map(p=>[p.id,p.person]));
+  assert.equal(new Set(d.pages.map(p=>p.person)).size,9);
+  each(d.excerpts,q=>[persons.get(q.pageId),1],s);});
 // Independently original-CDX + complete-HTML-audited 2020 Carlson and 2022/older Hawj sources.
 // 2020 Hawj self-report is older retained website copy, not a fresh 2020 authorship date.
 read('senate-carlson-hawj-2020-22-original-first-party-17-issue-excerpts-v1',
