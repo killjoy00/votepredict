@@ -1,0 +1,41 @@
+name: One-time 2025 Senate actual-served special cycle-final original PDF proof
+
+# #864: read-only, exact two Minnesota senators. This is PR-only; do NOT
+# schedule, re-run on deployment, ingest data or contact an office.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/cfb-2025-served-special-final-original-pdf-proof.yml
+      - scripts/capture-cfb-2025-served-special-finals.ts
+      - src/evidence/cfb-2025-served-special-final-pdf-proof.ts
+      - tests/cfb-2025-served-special-final-pdf-proof.test.ts
+
+permissions:
+  contents: read
+
+jobs:
+  authenticate-two-senator-only-cycle-finals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify exact Senate service, original report lineage, source calendar and negative tests
+        run: node --import tsx --test tests/cfb-2025-served-special-final-pdf-proof.test.ts
+      - name: Retrieve actual official LRL service and CFB report PDF originals (only two senators)
+        run: |
+          node --import tsx scripts/capture-cfb-2025-served-special-finals.ts \
+            --output artifacts/cfb-2025-served-special-final-originals.json
+      - name: Preserve metadata and any failed provenance, never PDF bodies or donors
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-2025-two-actual-senators-special-cycle-final-pdf-source-proofs
+          path: artifacts/cfb-2025-served-special-final-originals.json
+          retention-days: 30
+          if-no-files-found: warn
