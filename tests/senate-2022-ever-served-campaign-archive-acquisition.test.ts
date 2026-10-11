@@ -76,7 +76,7 @@ test('every one of five historical source queries is independently validated as 
  assert.equal(people.length,5);
  assert.equal(new Set(people.map(x=>x.candidateName)).size,4);
  assert.ok(people.every(p=>p.independentlyVerifiedSenatorService===true));
- assert.ok(people.every(p=>p.officialSenateServiceTerm.includes('SD')));
+ assert.ok(people.every(p=>p.verifiedSenateServiceTerm.includes('SD')));
  const missing=realSenatorFixture();
  missing.senators=missing.senators.filter(p=>!p.officialName.includes('Kreun'));
  assert.throws(()=>strictlySenatorsOnly2022Targets(missing),/has not been verified/);
@@ -195,7 +195,7 @@ test('full fixed-source acquisition: verified 2022 Wayback and HTTP206 WARC plus
   const carlaRow=result.persons.find(p=>p.candidateName==='Carla Nelson'
    &&p.targetId==='carla-2022-page-a')!;
   assert.equal(carlaRow.earliestVerifiedOriginalPageCaptureByUtc,'2022-10-04T03:08:02.000Z');
-  assert.ok(carlaRow.currentPageRetrieval.observedAtUtc.startsWith('2026-'));
+  assert.ok(carlaRow.currentWebPageRetrieval.observedAtUtc.startsWith('2026-'));
   assert.equal(carlaRow.originalPageFirstAuthorPublicationDate,null);
   const robRow=result.persons.find(p=>p.candidateName==='Rob Kupec')!;
   assert.equal(robRow.earliestVerifiedOriginalPageCaptureByUtc,'2022-10-05T12:12:12.000Z');
