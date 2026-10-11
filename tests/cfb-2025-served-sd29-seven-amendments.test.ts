@@ -103,3 +103,76 @@ test('source provenance, binary distinctness and duplicate amendment hashes fail
   assert.ok(texts.every(x=>x.actualHistoricalPublicByProven===null
     &&x.legallyOwedReportCount===null&&!x.historicalForecastEligible));
 });
+
+test('permanent seven-row original PDF evidence has exactly six new binary hashes and one parent alias',()=>{
+  const P='docs/evaluation/source-proof/';
+  const c=JSON.parse(readFileSync(P+
+    'cfb-2025-served-sd29-seven-amended-version-source-checkpoint.json','utf8'));
+  const content=readFileSync(c.permanentPdfLedger.path,'utf8');
+  const records=content.trimEnd().split('\n').map((x:string)=>x.split('|'));
+  assert.equal(c.issue,864);
+  assert.equal(c.independentOriginalSourceRuns.length,2);
+  assert.equal(c.comparison.all7PdfBinarySha256AndByteLengthsIdenticalAcrossRuns,true);
+  assert.equal(c.comparison.distinctAmendmentPdfsNewlyAuthenticated,6);
+  assert.equal(c.comparison.documentedOriginalParentBinaryAliases,1);
+  assert.equal(c.alias.bothPdfBytes,18020);
+  assert.equal(content.endsWith('\n'),true);
+  assert.equal(Buffer.byteLength(content,'utf8'),1984);
+  assert.equal(records.length,7);
+  const observed=new Map(records.map((r:string[])=>[r[0]!,r]));
+  assert.deepEqual([...observed.keys()].sort(),[...SD29_2025_AMENDMENT_KEYS].sort());
+  const expected={
+    '19229:25:pcc:C:1:1':['5e429b554af43ba0fa4546105179d062e4ee0aff2676a3498ab8ff12096460a0','17178','2025-08-25'],
+    '19229:25:pcc:E:1:1':['3ec7deef8d3d10f87e0ae05caa80bce1c992a7f1cc19ce741ff93a15a14581c0','29924','2025-10-30'],
+    '19229:25:pcc:YE:0:1':['115af8ec4d2fcf19323ae88cc2e858f1d1cda00c03e9ca994bf31e2070335289','18020','2026-02-01'],
+    '19229:25:pcc:YE:1:1':['852e9803f0bbbdafd0c5215f0ad1bffb10a45f8be50a06f66703a113ac136504','35139','2026-03-15'],
+    '19229:25:pcc:YE:1:2':['9441f0b745bd36c4dec071148bc01a19e21aa627bb7614f7b3560390d1fb0264','35001','2026-04-13'],
+    '19229:25:pcc:YE:1:3':['6c4a10ea4be1dc900e1d619f7e6bd168b3d37bd12b06ff65c640093582a31f01','34189','2026-06-04'],
+    '19229:25:pcc:YE:1:4':['edd5753d076bb913636aef81a9a3779825ba51a0232c08ed64bad9cde3047ac6','34330','2026-06-05'],
+  } as const;
+  for(const t of targets){
+    const row=observed.get(t.id)!;
+    assert.ok(row,'Exact report version missing from original PDF proof ledger');
+    assert.equal(row.length,14);
+    assert.equal(row[0],t.id);
+    assert.equal(row[1],t.actualSenator);
+    assert.equal(row[2],String(t.district));
+    assert.equal(row[3],t.parentId);
+    assert.equal(row[4],t.parentPdfSha);
+    assert.deepEqual(row.slice(5,7),expected[t.id as keyof typeof expected].slice(0,2));
+    assert.equal(row[7],t.parentStart);assert.equal(row[8],t.parentEnd);
+    assert.equal(row[9],expected[t.id as keyof typeof expected][2]);
+    assert.equal(row[10],t.dueOn);
+    const isAlias=t.id==='19229:25:pcc:YE:0:1';
+    assert.equal(row[12],isAlias?'reviewed_official_index_aliases_original_pdf':'distinct_amended_pdf');
+    assert.equal(row[13],isAlias?t.parentId:'-');
+    assert.equal(row[4]===row[5],isAlias);
+    assert.ok(row[11]>=row[9]&&row[11]>=row[10]);
+  }
+  assert.equal(new Set(records.map((r:string[])=>r[5])).size,7);
+  assert.equal(records.filter((r:string[])=>r[12]==='distinct_amended_pdf').length,6);
+  assert.equal(c.safeguards.historicallyPublicByProvenCount,0);
+  assert.equal(c.safeguards.statutoryLegalDutyDenominator,null);
+  assert.equal(c.safeguards.noProductionWritesOrReads,true);
+});
+
+test('exact real-world original parent alias can be accepted only at its reviewed id/hash/receipt/bytes',()=>{
+  const reports=targets.map((t,i)=>{
+    const alias=t.id==='19229:25:pcc:YE:0:1';
+    const sha=alias?t.parentPdfSha:(i+2).toString(16).padStart(64,'0');
+    const pdf=mockSource(t,sha,syntheticText(t,alias?'February 1, 2026':'June 6, 2026'));
+    return auditSd29Amendment(t,{...pdf,bytes:alias?18020:2000});
+  });
+  const check=classifySd29AmendmentSequence(reports);
+  assert.equal(check.sourceAcquisitionAcceptedWithExactReviewedParentAlias,true);
+  assert.equal(check.sourcePdfIdentityAuthenticated,6);
+  assert.equal(check.uniqueAuthenticatedPdfHashes,6);
+  assert.equal(check.verifiedOfficialReferencesIncludingExactParentAlias,7);
+  assert.equal(check.documentedOriginalParentAliases.length,1);
+  assert.equal(check.sourceHolds.length,0);
+  assert.equal(check.canClaimSevenDistinctNewPdfs,false);
+  const broken=reports.map(x=>x.id==='19229:25:pcc:YE:0:1'?
+    {...x,pdfBytes:18021}:x);
+  assert.equal(classifySd29AmendmentSequence(broken)
+    .sourceAcquisitionAcceptedWithExactReviewedParentAlias,false);
+});
