@@ -123,6 +123,15 @@ read('senate-six-2020-original-pages-26-new-exact-first-party-excerpts-v1',
 read('senate-roger-chamberlain-2016-original-10-economic-issue-excerpts-and-domain-review-v1',
  (d,s)=>{assert.equal(d.tenCandidateSiteExactStatements.length,10);
   add('Roger Chamberlain',d.tenCandidateSiteExactStatements.length,s);});
+// Second distinct twenty uncovered: 137 independently authenticated exact original site
+// short research excerpts, 15 new actually served senators. Preserve old 2012/2014/
+// 2016 site copy, 2018 US House, 2018/2020 Minnesota House and older SD45
+// instead of pretending they were newly authored 2020/22/25 Senate pledges.
+read('senate-second20-15-original-serving-senators-issue-excerpts-v1',
+ (d,s)=>{assert.equal(d.pages.length,18);assert.equal(d.excerpts.length,137);
+  const byId=new Map(d.pages.map(p=>[p.id,p.person]));
+  assert.equal(new Set(d.pages.map(p=>p.person)).size,15);
+  each(d.excerpts,q=>[byId.get(q.pageId),1],s);});
 // First 20-person uncovered cohort: 61 independent original-CDX + HTML audited
 // short historical candidate site issues; 9 newly source-covered actual senators.
 // Old House-era campaigns and older retained election copy are NOT modern 2022 Senate platforms.
