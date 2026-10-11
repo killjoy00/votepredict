@@ -1,0 +1,429 @@
+{
+  "schema": "mn-bill-ingebrigtsen-two-archived-original-issue-cycles-27-exact-source-excerpts-v1",
+  "scope": {
+    "issue": 864,
+    "verifiedActualSenateServiceIn2021": true,
+    "distinctActualServingSenatorsAdded": 1,
+    "originalHTMLBodies": 6,
+    "wholeIndependentCDXIndexFiles": 4,
+    "original2020HomepageIndependentlyReopened": true,
+    "selectedHistoricalPolicyPageSections": 2,
+    "exactCandidateOwnedPolicyExcerpts": 27,
+    "legacy2006WordsObserved2010": true,
+    "budget2012CopyStillByteIdenticalIn2016": true,
+    "noOriginal2020IssuesBodyVerified": true,
+    "historicArchiveUTCIsPublicByNotFirstAuthorDate": true,
+    "campaignSelfReportedPastVotesNotOfficialRollcalls": true,
+    "productionDatabaseEvidenceModelForecastSchedulerChanges": 0
+  },
+  "sources": {
+    "originalOfficialMNLegislativeServiceURL": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "governmentSourceRun": 38094976711,
+    "governmentSourceArtifact": 11685387674,
+    "governmentSourceSHA256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "originalIssuesRecoveryRun": 38160285047,
+    "originalIssuesArtifact": 11710110948,
+    "originalIssuesArtifactName": "bill-ingebrigtsen-original-historical-first-party-issues-2010-2020-v1",
+    "originalIssuesManifest": "source-acquisition-manifest.json",
+    "original2020HomeRun": 38157868392,
+    "original2020HomeArtifact": 11709436801,
+    "original2020HomeFile": "two20b-02-archive-20200805220154-0.html",
+    "original2020HomeSHA256": "263c155d0560953d418ad84506ef68b9dfe51a1172336da14abb4e5fc93e8a85",
+    "original2020HomeCDXSHA1": "PAS6JCDM4S2BDVKVYADI4OVHX7QM7WRU"
+  },
+  "actualSenator": {
+    "name": "Bill Ingebrigtsen",
+    "officialName": "Bill G. Ingebrigtsen",
+    "olderDistrict": "11",
+    "olderElectionYear": 2010,
+    "newerDistrict": "8",
+    "newerElectionYear": 2012,
+    "actual2021ServiceDistrict": "8"
+  },
+  "originalFullHTMLReceipts": [
+    {
+      "file": "billissue-original-20100724205547-0.html",
+      "url": "http://billforsenate.org:80/issues.php",
+      "captureUtc": "2010-07-24T20:55:47.000Z",
+      "sha256": "04c6558bfeaa7086dd2d7753f53fdcf1ce003a6055e3fba63ba626db9457cc5b",
+      "sha1": "RQU6SB4ZTIQ4YSIMW4EXKJLUDLYW2TVS"
+    },
+    {
+      "file": "billissue-original-20121106235157-1.html",
+      "url": "http://billforsenate.org:80/issues.php",
+      "captureUtc": "2012-11-06T23:51:57.000Z",
+      "sha256": "6e68d7440f0a777cccf11260da67d42e560d560c31b4979bb6a2614a77d5f6f6",
+      "sha1": "4GU57V5YQR3AEUUZ52WGINZXKDL7MKJT"
+    },
+    {
+      "file": "billissue-original-20160208060616-2.html",
+      "url": "http://billforsenate.org/issues.php",
+      "captureUtc": "2016-02-08T06:06:16.000Z",
+      "sha256": "6e68d7440f0a777cccf11260da67d42e560d560c31b4979bb6a2614a77d5f6f6",
+      "sha1": "4GU57V5YQR3AEUUZ52WGINZXKDL7MKJT"
+    },
+    {
+      "file": "billissue-original-20150812012927-3.html",
+      "url": "http://billforsenate.org/issues.php",
+      "captureUtc": "2015-08-12T01:29:27.000Z",
+      "sha256": "6e68d7440f0a777cccf11260da67d42e560d560c31b4979bb6a2614a77d5f6f6",
+      "sha1": "4GU57V5YQR3AEUUZ52WGINZXKDL7MKJT"
+    },
+    {
+      "file": "billissue-original-20161105233826-4.html",
+      "url": "http://billforsenate.org:80/issues.php",
+      "captureUtc": "2016-11-05T23:38:26.000Z",
+      "sha256": "6e68d7440f0a777cccf11260da67d42e560d560c31b4979bb6a2614a77d5f6f6",
+      "sha1": "4GU57V5YQR3AEUUZ52WGINZXKDL7MKJT"
+    },
+    {
+      "file": "billissue-original-20130727025251-5.html",
+      "url": "http://billforsenate.org/issues.php",
+      "captureUtc": "2013-07-27T02:52:51.000Z",
+      "sha256": "6e68d7440f0a777cccf11260da67d42e560d560c31b4979bb6a2614a77d5f6f6",
+      "sha1": "4GU57V5YQR3AEUUZ52WGINZXKDL7MKJT"
+    }
+  ],
+  "sourceSections": [
+    {
+      "id": "older2010",
+      "file": "billissue-original-20100724205547-0.html",
+      "begin": "Bill's views on the issues",
+      "end": "Paid for by Ingebrigtsen for Senate Committee",
+      "context": "Actual July 2010 original Senate District 11 candidate issues page retains November 2006 election rhetoric."
+    },
+    {
+      "id": "updated2012",
+      "file": "billissue-original-20121106235157-1.html",
+      "begin": "Bill's views on the issues",
+      "end": "Paid for by Ingebrigtsen for Senate Committee",
+      "context": "Original Nov 2012 Senate District 8 candidate issues page discusses 2012–13 budget; same bytes verified in 2013–2016 sources."
+    }
+  ],
+  "exactShortCandidateIssueExcerpts": [
+    {
+      "id": "billhist-issue-001",
+      "part": "older2010",
+      "issue": "taxes_revenue",
+      "quote": "government should spend within its means.",
+      "meaning": "Supports fiscal restraint",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-002",
+      "part": "older2010",
+      "issue": "taxes_revenue",
+      "quote": "Reducing taxes for wage earners and businesses creates more spending",
+      "meaning": "Supports reducing individual and business taxes",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-003",
+      "part": "older2010",
+      "issue": "judiciary_civil_law",
+      "quote": "Bill supports the institution of marriage as between one man and one woman.",
+      "meaning": "Supports exclusively opposite-sex marriage",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-004",
+      "part": "older2010",
+      "issue": "health",
+      "quote": "Bill is a pro-life candidate who believes life is defined as conception to natural death.",
+      "meaning": "Opposes abortion",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-005",
+      "part": "older2010",
+      "issue": "health",
+      "quote": "abortion should only be allowed to prevent the death of the mother",
+      "meaning": "States an abortion exception to prevent maternal death",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-006",
+      "part": "older2010",
+      "issue": "education",
+      "quote": "Providing adequate and fair funding has to be among the highest priorities of state government.",
+      "meaning": "Prioritizes adequate equitable education funding",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-007",
+      "part": "older2010",
+      "issue": "education",
+      "quote": "our money should be used in the classrooms and less spending on excessive bureaucracy.",
+      "meaning": "Supports prioritizing classroom funding",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-008",
+      "part": "older2010",
+      "issue": "education",
+      "quote": "Schools must encourage parental involvement",
+      "meaning": "Supports parental involvement in schools",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-009",
+      "part": "older2010",
+      "issue": "public_safety",
+      "quote": "Bill will work hard to protect our children by making jail sentences of 20 years to life mandatory for first-time sex offenders.",
+      "meaning": "Supports lengthy mandatory sentences for first sex offenses",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-010",
+      "part": "older2010",
+      "issue": "public_safety",
+      "quote": "known sex-offenders would be required to wear electronic ankle devices",
+      "meaning": "Supports ankle monitoring for convicted sex offenders",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-011",
+      "part": "older2010",
+      "issue": "judiciary_civil_law",
+      "quote": "he will work to enforce stiff penalties on illegal immigration.",
+      "meaning": "Supports stronger immigration-law penalties",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-012",
+      "part": "older2010",
+      "issue": "environment_natural_resources",
+      "quote": "Long-term funding is needed to clean up our lakes and rivers in Minnesota.",
+      "meaning": "Supports long-term waterway cleanup funding",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-013",
+      "part": "older2010",
+      "issue": "taxes_revenue",
+      "quote": "He strongly disagrees with raising the current sales tax for this purpose",
+      "meaning": "Opposes additional sales tax for conservation",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-014",
+      "part": "older2010",
+      "issue": "state_government",
+      "quote": "if you fail to complete your work on time, you don’t receive additional pay.",
+      "meaning": "Supports withholding legislative extra pay for unfinished work",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-015",
+      "part": "updated2012",
+      "issue": "taxes_revenue",
+      "quote": "rejecting a 27% autopilot spending increase, and without raising taxes",
+      "meaning": "Praises spending restraint and avoidance of tax increases",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-016",
+      "part": "updated2012",
+      "issue": "education",
+      "quote": "make sure West-Central Minnesota students get their share of education dollars",
+      "meaning": "Claims prior school finance advocacy",
+      "kind": "candidate_claim_of_prior_legislative_work_not_roll_call",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-017",
+      "part": "updated2012",
+      "issue": "education",
+      "quote": "has passed legislation that helps parents and other taxpayers browse reviews of teachers and principals",
+      "meaning": "Claims prior school evaluation legislation",
+      "kind": "candidate_claim_of_prior_legislative_work_not_roll_call",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-018",
+      "part": "updated2012",
+      "issue": "education",
+      "quote": "scaled back mandates from state and federal laws to allow local school boards",
+      "meaning": "Claims prior efforts to reduce school mandates",
+      "kind": "candidate_claim_of_prior_legislative_work_not_roll_call",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-019",
+      "part": "updated2012",
+      "issue": "education",
+      "quote": "Senator Ingebrigtsen also supported the repayment of borrowing from schools",
+      "meaning": "Claims prior support of school borrowing repayment",
+      "kind": "candidate_claim_of_prior_legislative_work_not_roll_call",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-020",
+      "part": "updated2012",
+      "issue": "commerce_consumer",
+      "quote": "we need to make Minnesota a more attractive state to start and grow a business.",
+      "meaning": "Supports improving environment for business growth",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-021",
+      "part": "updated2012",
+      "issue": "labor_employment",
+      "quote": "Government cannot create jobs; it can only create a positive economic climate",
+      "meaning": "Advocates conditions for private job creation",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-022",
+      "part": "updated2012",
+      "issue": "commerce_consumer",
+      "quote": "Ingebrigtsen helped to cut red tape",
+      "meaning": "Claims prior deregulation efforts",
+      "kind": "candidate_claim_of_prior_legislative_work_not_roll_call",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-023",
+      "part": "updated2012",
+      "issue": "environment_natural_resources",
+      "quote": "streamlining the environmental permitting process and removing duplicate services.",
+      "meaning": "Claims streamlining of permits and government services",
+      "kind": "candidate_claim_of_prior_legislative_work_not_roll_call",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-024",
+      "part": "updated2012",
+      "issue": "public_safety",
+      "quote": "Senator Ingebrigtsen agrees that law abiding people should be able to protect themselves.",
+      "meaning": "Supports lawful self-defense rights",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-025",
+      "part": "updated2012",
+      "issue": "public_safety",
+      "quote": "Senator Ingebrigtsen votes in the Senate for law abiding citizens to be able to exercise their rights under the second amendment.",
+      "meaning": "Self-reported firearm-rights voting stance; no recorded vote proven",
+      "kind": "candidate_claim_of_prior_legislative_work_not_roll_call",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-026",
+      "part": "updated2012",
+      "issue": "health",
+      "quote": "Bill further believes that abortion should only be allowed to prevent the death of the mother",
+      "meaning": "States abortion exception for preventing maternal death",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    },
+    {
+      "id": "billhist-issue-027",
+      "part": "updated2012",
+      "issue": "health",
+      "quote": "when the pregnancy is the result of a reported rape or the result of incest",
+      "meaning": "States abortion exceptions for rape and incest",
+      "kind": "candidate_owned_historical_policy",
+      "genuineOriginalArchiveUTCAttributionRequired": true,
+      "firstAuthorPostingDateEstablished": false,
+      "legislativeSelfReportIsNotRecordedSenateVote": true,
+      "automaticForecastOrProductionEvidenceAdmission": false
+    }
+  ]
+}
