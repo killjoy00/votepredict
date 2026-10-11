@@ -69,7 +69,12 @@
     "file": "eichornissue-original-20160806111245-0.html",
     "start": "Mining I will support mining",
     "end": "More Articles ... Education Health Care",
-    "cycle": "2016_candidate_owned_site_copy_observed_in_2016"
+    "cycle": "2016_candidate_owned_site_copy_observed_in_2016",
+    "fullOriginalFile": "eichornissue-original-20160806111245-0.html",
+    "begins": "Mining I will support mining",
+    "endsBefore": "More Articles ... Education Health Care",
+    "real2016OriginalCampaignIssuePlatform": true,
+    "noProofSameIssueHTML2020": true
   },
   "exactCandidateSiteShortPolicyExcerpts": [
     {
