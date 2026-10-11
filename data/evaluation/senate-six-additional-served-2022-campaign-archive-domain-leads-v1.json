@@ -1,0 +1,109 @@
+{
+  "schema": "mn-2022-six-more-ever-served-senators-original-archive-domain-targets-v1",
+  "issue": 864,
+  "scope": {
+    "historicalElectionYear": 2022,
+    "generalElectionDate": "2022-11-08",
+    "originalCaptureFromUtc": "2022-01-01T00:00:00.000Z",
+    "originalCaptureUntilExclusiveUtc": "2022-11-08T00:00:00.000Z",
+    "actualSenateServiceBeforeSourceRequestsRequired": true,
+    "sixDistinctActualSenateServedPeople": true,
+    "fullPreviousOriginalGovernmentDirectoryReceiptRequired": true,
+    "maximumHistoricCDXIndexRowsPerPerson": 300,
+    "maximumOriginalPageReplaysPerPerson": 4,
+    "maximumOriginalPageReplaysTotal": 24,
+    "siteCurrent2026TextIsHistorical2022Proof": false,
+    "firstAuthorDateNotRequired": true,
+    "archiveCaptureDateMayBeUsedAsResearchPublicBy": true,
+    "originalSOS2022FiledWebsiteNotCertified": true,
+    "productionForecastAdmissionAndDatabaseReadsWrites": 0
+  },
+  "officialPublicLRLSource": {
+    "url": "https://www.lrl.mn.gov/legdb/senate_dir",
+    "independentOriginalSourceRunId": 38094976711,
+    "artifactId": 11685387674,
+    "bytesRehashedBeforeNetwork": true
+  },
+  "targets": [
+    {
+      "id": "sixmore22-01",
+      "candidateName": "John Marty",
+      "electionDistrict": "40",
+      "domain": "johnmarty.org",
+      "discoveryUrl": "https://www.johnmarty.org/issues",
+      "discoveryBasis": "current_candidate_issue_page_discovery_only",
+      "year": 2022,
+      "originalSOSFiledDomainKnown": false,
+      "currentWebsiteStatementsAre2022Proof": false,
+      "attributable2022OriginalArchivePageUnverifiedBeforeAcquisition": true
+    },
+    {
+      "id": "sixmore22-02",
+      "candidateName": "Lindsey Port",
+      "electionDistrict": "55",
+      "domain": "lindseyportmn.com",
+      "discoveryUrl": "https://www.lindseyportmn.com/priorities",
+      "discoveryBasis": "mutable_current_campaign_site_discovery_only",
+      "year": 2022,
+      "originalSOSFiledDomainKnown": false,
+      "currentWebsiteStatementsAre2022Proof": false,
+      "attributable2022OriginalArchivePageUnverifiedBeforeAcquisition": true
+    },
+    {
+      "id": "sixmore22-03",
+      "candidateName": "Erin Murphy",
+      "electionDistrict": "64",
+      "domain": "murphyfor64.com",
+      "discoveryUrl": "https://www.murphyfor64.com/vision",
+      "discoveryBasis": "candidate_2021_policy_and_site_discovery_only",
+      "year": 2022,
+      "originalSOSFiledDomainKnown": false,
+      "currentWebsiteStatementsAre2022Proof": false,
+      "attributable2022OriginalArchivePageUnverifiedBeforeAcquisition": true
+    },
+    {
+      "id": "sixmore22-04",
+      "candidateName": "Susan Pha",
+      "electionDistrict": "38",
+      "domain": "susanphaforsenate.com",
+      "discoveryUrl": "https://susanphaforsenate.com/",
+      "discoveryBasis": "mutable_current_incumbent_site_discovery_only",
+      "year": 2022,
+      "originalSOSFiledDomainKnown": false,
+      "currentWebsiteStatementsAre2022Proof": false,
+      "attributable2022OriginalArchivePageUnverifiedBeforeAcquisition": true
+    },
+    {
+      "id": "sixmore22-05",
+      "candidateName": "Omar Fateh",
+      "electionDistrict": "62",
+      "domain": "omarfateh.org",
+      "discoveryUrl": "https://www.omarfateh.org/vote",
+      "discoveryBasis": "2020_site_link_from_government_historical_document_discovery_only",
+      "year": 2022,
+      "originalSOSFiledDomainKnown": false,
+      "currentWebsiteStatementsAre2022Proof": false,
+      "attributable2022OriginalArchivePageUnverifiedBeforeAcquisition": true
+    },
+    {
+      "id": "sixmore22-06",
+      "candidateName": "John Hoffman",
+      "electionDistrict": "34",
+      "domain": "johnhoffmanforsenate.com",
+      "discoveryUrl": "http://johnhoffmanforsenate.com/",
+      "discoveryBasis": "state_senator_public_historical_campaign_domain_discovery_only",
+      "year": 2022,
+      "originalSOSFiledDomainKnown": false,
+      "currentWebsiteStatementsAre2022Proof": false,
+      "attributable2022OriginalArchivePageUnverifiedBeforeAcquisition": true
+    }
+  ],
+  "cautions": [
+    "All six are candidate/domain *leads* only until genuine pre-November 8 original HTML is acquired and independently CDX-hash-verified.",
+    "The human actor being an actual Minnesota senator is verified against genuine independent official LRL service before accessing public archive sources; redistricting should not exclude someone.",
+    "Current site may contain 2026 articles; only 2022 archived page original bytes and capture UTC provide historical public-by support.",
+    "2022 archived older campaign copy is not claimed newly written for 2022; candidate page cycle still needs source review.",
+    "Empty or unavailable 300-row bounded archive result is UNKNOWN coverage, not no political position.",
+    "No archived page by itself authorizes a candidate-specific quote or historical forecast feature."
+  ]
+}
