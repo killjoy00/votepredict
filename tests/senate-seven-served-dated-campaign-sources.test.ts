@@ -87,7 +87,7 @@ test('not a Senate member means Nicole original campaign quotes never enter the 
    'nicole2022-priorities-feb01':Buffer.alloc(101),
    'nicole2022-priorities-nov05':Buffer.alloc(101),
   },archived2024to25:{},
- }),/Cannot attach original 2022 campaign policy text/);
+ }),/Senator-only source lead count changed/);
 });
 test('the source-only CLI cannot pass without all eleven distinct original input and destination paths',()=>{
  const dir=mkdtempSync(join(tmpdir(),'senate-seven-source-proof-'));
