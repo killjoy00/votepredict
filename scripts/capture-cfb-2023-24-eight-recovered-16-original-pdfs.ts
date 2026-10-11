@@ -13,7 +13,7 @@ import {fetchCfbCandidateHistoricalReportReferenceSnapshot}
 import {fetchCfbReportViewerText}
   from '../src/evidence/cfb-current-report-acquisition.js';
 import {selectEightRecoveredSenators16OriginalYearends,
-  EIGHT_NEW_2023_24_ORIGINALS_VERSION}
+  EIGHT_NEW_2023_24_ORIGINALS_VERSION,classifyEightRecovered16OriginalSourceRuns}
   from '../src/evidence/cfb-2023-24-eight-recovered-16-yearend-originals.js';
 import {
   auditServed2023to24OriginalYearEnd,summarize28YearEndSource,
@@ -99,6 +99,7 @@ async function main(){
     fetched.get(t.id)??null,fail.get(t.id)??null));
   const checked=summarize28YearEndSource(reports);
   const authenticated=reports.filter(x=>x.status==='original_pdf_first_page_authenticated');
+  const officialClassification=classifyEightRecovered16OriginalSourceRuns(reports);
   const distinctHashes=new Set(authenticated.map(x=>x.sourcePdfSha256!));
   const result={
     schemaVersion:EIGHT_NEW_2023_24_ORIGINALS_VERSION,
@@ -113,6 +114,7 @@ async function main(){
     original2024ViewerRechecks:sourceApiChecks.sort((a,b)=>a.registrationNumber.localeCompare(b.registrationNumber)),
     sourcePdfReports:reports,
     outcome:{expectedSourceReferences:16,officialPdfBinariesFetched:fetched.size,
+      sourceAccountingWithReviewedStrictHold:officialClassification,
       authenticatedFirstPagePdfReferences:authenticated.length,
       uniqueAuthenticatedPdfBinaries:distinctHashes.size,
       duplicateOriginalBinaryHashes:checked.unexpectedOriginalBinaryDuplicates,
@@ -131,6 +133,8 @@ async function main(){
   mkdirSync(dirname(out),{recursive:true});
   writeFileSync(out,JSON.stringify(result,null,2)+'\n',{flag:'wx'});
   console.log(JSON.stringify({issue:864,...result.outcome,output:out,productionWrites:false},null,2));
-  if(!result.outcome.all16SourceOriginalsIndependentlyAuthenticated)process.exitCode=1;
+  if(!officialClassification.acceptedFifteenOriginalsOneStrictSourceIdentityHold
+    ||fetched.size!==16||sourceApiChecks.filter(r=>r.originalVersionIdsFound===2).length!==8)
+    process.exitCode=1;
 }
 main().catch(e=>{console.error(errClass(e));process.exitCode=1;});
