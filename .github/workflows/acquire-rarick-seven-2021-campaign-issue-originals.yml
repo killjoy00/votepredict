@@ -1,0 +1,63 @@
+name: Recover seven 2021 Jason Rarick original detailed historical issue subpages
+on:
+  pull_request:
+    paths:
+      - scripts/probe-rarick-seven-full-2021-firstparty-issue-originals.mjs
+      - .github/workflows/acquire-rarick-seven-2021-campaign-issue-originals.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-rarick-seven-2021-detailed-policy-site-pages:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-rarick-seven-2021-original-issue-subpages-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen original unmodified full state LRL historical Senate service source
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen previous independently original-CDX-authenticated 2022 Jason Rarick site archive source
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38175993447
+          name: senate-first-20-uncovered-original-26-historic-archive-windows-v1
+          github-token: ${{ github.token }}
+          path: original/first20
+      - name: Independently validate every one of seven source-indexed historical issue page URL capture and SHA1 before retaining original HTML
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
+          node --import tsx scripts/probe-rarick-seven-full-2021-firstparty-issue-originals.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --previous-first20-original-dir original/first20 \
+            --out-dir original/rarick-seven-original-issues
+      - name: Preserve full original Rarick 2021 candidate policy pages and crossmatched complete source CDX
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-rarick-seven-2021-full-original-candidate-issue-pages-v1
+          path: original/rarick-seven-original-issues/
+          if-no-files-found: warn
+          retention-days: 30
