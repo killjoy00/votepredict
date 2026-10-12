@@ -47,13 +47,15 @@ function publicDateHeader(value){
 export function countPublicCleanedCfbRows(bytes){
  const text=new TextDecoder('utf-8',{fatal:true}).decode(bytes);
  let header=null,selected=null,inQuotes=false,fieldIndex=0;
- let field='',rowActive=false,rows=0,otherYearCount=0;
+ let field='',fieldLength=0,rowActive=false,rows=0,otherYearCount=0;
  let rowYear='',rowType='',yearColumns=null,typeColumns=null;
  const years=Object.fromEntries(yearRange.map(y=>[y,0]));
  const pccYears={'2021':0,'2022':0};
  let headerFields=[];
  function readSelected(){return header===null||fieldIndex===yearColumns||fieldIndex===typeColumns}
  function add(char){
+  fieldLength+=char.length;
+  if(fieldLength>10000)throw Error('Overlong CSV field (including unselected donor columns)');
   if(readSelected()){
    field+=char;
    if(field.length>10000)throw Error('Unbounded selected CSV field');
@@ -64,7 +66,7 @@ export function countPublicCleanedCfbRows(bytes){
   if(header===null)headerFields.push(field.replace(/\r$/,'').trim());
   else if(fieldIndex===yearColumns)rowYear=field.trim();
   else if(fieldIndex===typeColumns)rowType=field.trim();
-  field='';fieldIndex++;
+  field='';fieldLength=0;fieldIndex++;
  }
  function finishRow(){
   if(header===null){
