@@ -8,7 +8,10 @@
     "firstSuccessfulSourceHead": "00efc5b35f82b7419380fc05f4045f50d34e422c",
     "firstMetadataOnlyArtifactId": 11758516879,
     "firstAdversarialSyntheticTestsPassed": 9,
-    "upstreamOfficialHawjJournalPr": 1225
+    "upstreamOfficialHawjJournalPr": 1225,
+    "firstAllFourVerifiedLiveRunId": 38274835110,
+    "firstAllFourVerifiedHead": "66ff00ae20fd8616bfd43d378f2e73649c5d0685",
+    "allFourSourceMetadataArtifactId": 11759115577
   },
   "preexistingPrimaryVoteAndContemporaneousSpeechProof": {
     "senator": "Foung Hawj",
@@ -21,12 +24,12 @@
   },
   "counts": {
     "exactOriginalBillVersionDocumentUrlsAttempted": 4,
-    "completeOriginalRevisorBillVersionDocumentsSHA256Authenticated": 3,
+    "completeOriginalRevisorBillVersionDocumentsSHA256Authenticated": 4,
     "exactMay7DatedDocumentVersionsActuallyRead": 2,
     "exactMay7VersionsHavingAllFourSpecificDvsTranslatedMaterialMarkers": 0,
     "verifiedOriginalMay19ConferenceReportDocuments": 1,
     "may19OriginalContainingThreeCoreTranslatedMaterialsMarkers": 1,
-    "originalSF3257VersionDownloadedAndAuthenticated": 0,
+    "originalSF3257VersionDownloadedAndAuthenticated": 1,
     "exactSF3257ToHF5247SectionEquivalenceApproved": 0,
     "sourceToPolicySpecificVoteForecastTrainingLabelsApproved": 0
   },
@@ -171,15 +174,44 @@
       "originalOfficialBillDocumentUrl": "https://www.revisor.mn.gov/bills/93/2023/0/SF/3257/versions/0/pdf/",
       "documentVersionListPostedDay": "2023-04-12",
       "modernRevisorHtmlVersionDisplayedTimestamp": null,
-      "originalSourceStatus": "original_unavailable_or_parse_unknown",
-      "actualDownloadedEntireSourceRawSha256": null,
-      "originalDownloadedSourceByteLength": null,
-      "sourceOriginalPdfPages": null,
-      "exactDocumentTitleAndSessionVerified": false,
-      "singleRawCompleteSourceExamined": false,
-      "originalVisibleSourceFragmentEvidence": null,
-      "compositeFourSpecificDvsMarkersPresent": null,
-      "originalFetchFailureCategory": "fetch failed",
+      "originalSourceStatus": "exact_official_bill_version_fetched_sha256_and_text_inspected",
+      "actualDownloadedEntireSourceRawSha256": "6b78fd7b510abd7116747c3522700b2f840a9e0903d47e73ea902f94d4e07cbd",
+      "originalDownloadedSourceByteLength": 216439,
+      "sourceOriginalPdfPages": 2,
+      "exactDocumentTitleAndSessionVerified": true,
+      "singleRawCompleteSourceExamined": true,
+      "originalVisibleSourceFragmentEvidence": [
+        {
+          "id": "transportation_translation_provision_title",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "translated_equivalent_materials",
+          "shortSourceCuePresent": true
+        },
+        {
+          "id": "qualifying_nonenglish_languages",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "dvs_deputy_registrar",
+          "shortSourceCuePresent": true
+        },
+        {
+          "id": "DVS_driver_license_agent",
+          "shortSourceCuePresent": true
+        },
+        {
+          "id": "sponsored_bill_exact_SF3257",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "original_SF3257_bilingual_services",
+          "shortSourceCuePresent": true
+        }
+      ],
+      "compositeFourSpecificDvsMarkersPresent": false,
+      "originalFetchFailureCategory": null,
       "exactPdfOrHtmlFullTextNeverSaved": true
     }
   ],
@@ -190,12 +222,14 @@
     "may19ConferenceOriginalContainsEquivalentMaterialsQualifyingLanguageAndDeputyRegistrarCues": true,
     "may19ConferenceOriginalLongSectionTitleExactContinuousMatchNotFound": true,
     "may19ConferenceBillVersionNotYetProvedPubliclyAvailableBeforeBothIndividualHawjVotes": true,
-    "sf3257IntroducedOriginalStillUnknownInThisBoundedRun": true,
+    "sf3257IntroducedOriginalStillUnknownInThisBoundedRun": false,
     "noDirectSF3257VoteFromOmnibusYea": true,
     "noExactRevisorHtmlPostingMinuteAssumedBeforeMay7Roll": true,
     "may20FourthEngrossmentNotProofOfMay19PrevoteText": true,
     "noWholeRawGovernmentPdfOrArticleHtmlStored": true,
     "noPrivateVotePredictSourceRowsOrProdDatabaseInspected": true,
-    "noProductionCollectorIngestionStoredVotesModelServingForecastOrDeploymentTouched": true
+    "noProductionCollectorIngestionStoredVotesModelServingForecastOrDeploymentTouched": true,
+    "sf3257OriginalIncludesBilingualEquivalentMaterialsAndDeputyRegistrarCues": true,
+    "sf3257PrimaryOriginalAndMay19ConferenceSharePolicyTopicMarkersWithoutTextIdentityProved": true
   }
 }
