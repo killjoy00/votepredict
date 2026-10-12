@@ -144,7 +144,7 @@ const report={schema:'senate-864-three-sparse-person-publisher-caucus-original-a
  distinctIndexedWholeOriginalPreElectionHTMLSources:results.filter(r=>r.originalBodyDigestMatchedPages.length>0).length,
  independentCandidateNamedDirectSpeechAlreadyAdmitted:0,independentSpeakerScopeStillRequired:true,
  archiveCaptureOnlyNotAuthored:true,sourceCategoryNoOriginalCampaignOwnedSiteCountIncrease:true,
- 2026MutableSourceNotBackdated:true,missingOrArchiveErrorNotStatementAbsence:true,
+ mutable2026SourceNotBackdated:true,missingOrArchiveErrorNotStatementAbsence:true,
  allOriginalsPreservedOnlyInTemporary30DayArtifacts:true,productionReadsWrites:0,modelOrForecastChanges:0,
  sources:results};
 writeFileSync(join(out,'senate-864-'+group+'-original-caucus-and-publisher-pre-election-probes.json'),JSON.stringify(report,null,2)+'\n',{flag:'wx'});
