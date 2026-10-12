@@ -1,0 +1,34 @@
+# Track D — 2024 Hawj HF 5247 bilingual-materials issue crosswalk: exclude May 7, preserve May 19 cutoff hold
+
+**Public-only, October 12, 2026.** This memo materially narrows what the already verified [Hawj's March 2024 first-party statement and three official May Senate YES votes](senate-media-2024-hawj-hf5247-official-journals-20261012.md) can be used to label. We inspected exact Minnesota **93rd Legislature** source versions rather than inferring the issue contents of the earlier May 7 and later May 19 omnibus votes from the subsequently enacted version of HF 5247.
+
+## Decision
+
+**Exclude Hawj's May 7 HF 5247 YES as an SF 3257 translated-DVS-materials vote.** The entire official original [third engrossment](https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/3/pdf/) (**148 PDF pages**) and [May 7 first unofficial Senate engrossment](https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/ue/1/) (**complete HTML**) were independently fetched and SHA-256 verified. **Neither contains any** of the four highly distinguishing exact policy cues: translated DVS materials article heading, `equivalent materials`, `qualifying language`, or `deputy registrar`. This is a **bounded negative content finding for those two full original documents**, not proof that no related transportation policy was ever in any amendment at the moment of voting.
+
+**May 19 is a meaningful but still conditional policy crosswalk.** The official [HF 5247 conference committee report PDF](https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/ccr/0/pdf/) was completely fetched and SHA-256 verified (**1,432 PDF pages**). Its full extracted text contains the distinct `equivalent materials`, `qualifying language`, `deputy registrar` and `driver's license agent` phrases, and a reference to bilingual services. The compound article heading was not reproduced as a continuous match in the PDF extractor's normalized text, so the automated strict four-part composite check remains **false**; the individual terms are actually present. The [official Minnesota DPS implementation bulletin](https://assets.dps.mn.gov/files/dvs/2024.Legislative-Bulletin.Regular-Session-DVS.pdf) independently identifies **enacted Chapter 127, Article 3, Section 123** as the translated-DVS-materials provision. This is contextual corroboration of later law, not contemporaneous pre-vote section evidence.
+
+Crucially, **a May 19 conference report date does not prove the exact text was available before each May 19 Senate roll call**. The fourth engrossment appeared later and cannot be substituted as the prior text. The Revisor also displays differing May 7 timestamps for the third PDF index (May 3 posting date) and HTML-rendered source (May 7 evening): do not infer that either document was the specific bill version in members' hands before their May 7 roll call.
+
+## Permanent downloaded original-document evidence
+
+| Exact document | Raw-source integrity outcome | Original body bytes | Entire raw SHA-256 | All 4 continuous DVS cue checks |
+| --- | --- | ---: | --- | --- |
+| [hf5247-house-third-engrossment](https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/3/pdf/) | Original downloaded, SHA-verified | 2,421,494 | `acdf6e4f5b1d288a55022bfbfa9be68d7760c6257fca22a33801f9b50e5cef4b` | No |
+| [hf5247-first-unofficial-senate-engrossment](https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/ue/1/) | Original downloaded, SHA-verified | 1,474,193 | `0ac7ca21c2b31fb617fd39e9d03f07de0d7547ba9c6762e763182061759fa0ce` | No |
+| [hf5247-conference-committee-report-may19](https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/ccr/0/pdf/) | Original downloaded, SHA-verified | 20,789,303 | `61e758157d10fbde5a1873376e274604c394b103a0e22cf58f569ffb7fb48663` | No |
+| [sf3257-original-2023-proposal](https://www.revisor.mn.gov/bills/93/2023/0/SF/3257/versions/0/pdf/) | UNKNOWN | — | — | UNKNOWN |
+
+The separate originally introduced [SF 3257 source PDF](https://www.revisor.mn.gov/bills/93/2023/0/SF/3257/versions/0/pdf/) was **unavailable to the bounded live fetch**. Do **not** infer it was absent or that the exact full original wording is identical to HF 5247's May 19 report. The [official SF 3257 bill status](https://www.revisor.mn.gov/bills/93/2023/0/SF/3257/?body=Senate) describes eligible deputy registrar/driver's license bilingual materials and lists **Hawj** among sponsors. This is an issue/topic linkage, **not** legislative-text identity or an SF 3257 personal floor ballot.
+
+**Unchanged independently authenticated member votes:** May 7 HF 5247 third reading, **Hawj YES** (55–10), official Journal p. 16,488; May 19 conference (34–12), **Hawj YES** (p. 20,020); May 19 amended third reading (34–14), **Hawj YES** (p. 20,021). They are **three separate HF 5247 omnibus voting events**, not three votes for the SF 3257 proposal. The first authentically archived Hawj policy statement predates them at **March 24, 2024 19:01:09 UTC**; it still cannot predict his March 11 hearing testimony or March 18 SF 3250 committee action.
+
+## Decision-grade limits and follow-through
+
+1. **May 7:** do not promote the Hawj original statement to a bilingual-materials HF 5247 issue label. Two exact examined versions have no selected specific provision cues.
+2. **May 19:** retain as **potential** issue/cutoff lead only. Need official conference-report clock relative to each roll, full provision/author crosswalk, and exact pre-vote text where possible. The later law is insufficient.
+3. **Broader Track D:** prefer new historical individual written/audio sources over spending more effort assigning provision-level semantics to a many-issue omnibus bill. In particular, the February 15, 2022 WCCO/Audacy Michelle Benson education interview is a new unverified historical-original candidate; the distinct February 23 MPR Benson/Kunesh named program remains UNKNOWN.
+
+The [bounded read-only original-document verifier](../../scripts/probe-senate-media-hf5247-may7-may19-bilingual-versions.mjs) uses no private records, exact official URLs, no redirects, response-integrity SHA/byte receipts and ephemeral government PDF extraction, with [adversarial tests](../../tests/senate-media-hf5247-may7-may19-bilingual-versions.test.mjs) and [real-source receipt tests](../../tests/senate-media-hf5247-bilingual-real-receipts.test.mjs). First successful live source [run #38274372589](https://github.com/killjoy00/votepredict/actions/runs/38274372589) passed 9 adversarial tests and produced public metadata-only artifact **11758516879**. Require final-head public-source replay and full CI before merge.
+
+No original downloaded article, bill HTML/PDF, copyrighted full text, audio, transcript, private VotePredict source/document/row, production collector, ingestion, stored vote label, schema, model, serving, forecast or deployment persisted or changed.
