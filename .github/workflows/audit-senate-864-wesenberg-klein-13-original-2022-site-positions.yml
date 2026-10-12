@@ -1,0 +1,84 @@
+name: Audit 13 newly recovered 2022 candidate-owned issue fragments for two senators
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-864-wesenberg-klein-new-2022-original-issue-source-receipts-v1.json
+      - data/evaluation/senate-864-wesenberg-klein-13-original-2022-firstparty-issue-positions-v1.json
+      - scripts/audit-senate-864-wesenberg-klein-13-original-2022-candidate-issue-positions.mjs
+      - .github/workflows/audit-senate-864-wesenberg-klein-13-original-2022-site-positions.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  independent-2022-original-site-excerpt-audit:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-five-low-depth-original-campaign-sources-20261012'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    name: Whole original 2022 HTML/CDX SHA1 + 13 exact candidate issue excerpts
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --check scripts/audit-senate-864-wesenberg-klein-13-original-2022-candidate-issue-positions.mjs
+      - name: Independently recover whole original 95-person state service and oath
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen previously independently audited 95-person 1272 excerpt baseline
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38202993863
+          name: senate-864-103-2022-25-original-short-fragments-independent-audit-v1
+          github-token: ${{ github.token }}
+          path: original/baseline
+      - name: Reopen whole original November 2022 Nathan Wesenberg campaign pages and CDX indexes
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38259653886
+          name: senate-864-five-thin-original-website-wesenberg-v1
+          github-token: ${{ github.token }}
+          path: original/wesenberg
+      - name: Reopen whole original October 2022 Matt Klein candidate Issues page and CDX index
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38259653886
+          name: senate-864-five-thin-original-website-klein-v1
+          github-token: ${{ github.token }}
+          path: original/klein
+      - name: Independently SHA1/CDX and literal candidate policy-scope verify 13 new excerpts and output updated 95-person matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          baseline="$(find original/baseline -type f -name senate-864-95-person-augmented-issue-depth.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$baseline"
+          node --import tsx scripts/audit-senate-864-wesenberg-klein-13-original-2022-candidate-issue-positions.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --augmented-matrix-json "$baseline" \
+            --wesenberg-original-dir original/wesenberg \
+            --klein-original-dir original/klein \
+            --out-dir research/verified
+      - name: Save compact original fingerprint + quote verification and final 95-person matrix; no full copyrighted HTML
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-five-thin-13-actual-2022-originals-1285-senator-site-excerpts-v1
+          path: research/verified/
+          if-no-files-found: warn
+          retention-days: 30
