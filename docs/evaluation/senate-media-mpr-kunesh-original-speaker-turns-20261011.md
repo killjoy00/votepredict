@@ -1,0 +1,39 @@
+# Historical MPR evidence: authenticated Kunesh transcript speaker-turn adjacency, 2023–2024
+
+**VotePredict issue [#987](https://github.com/killjoy00/votepredict/issues/987) · research October 11, 2026 (America/Chicago).** Public first-party historical source review only. This addresses **quotation attribution precision** rather than another archive URL discovery or a private-production completeness assertion.
+
+## Why repeat previously authenticated originals?
+
+Earlier [six-MPR interview public-original receipts](senate-media-mpr-six-interviews-public-reconciliation-20261011.json) reverified four original first-party MPR HTML versions for two Mary Kunesh interviews. The checks asked whether a selected phrase and the uppercase full-name speaker label appeared somewhere in the (normalized visible) historical page. **Those independent booleans do not show that the phrase occurs inside the named senator's own interview turn.** Speaker turns can be separated by a host question, journalist summary, publisher description or a later-added transcript.
+
+This pass re-fetched the **exact** four historical Wayback `id_` originals and again matched **both** the prior original indexed SHA-1 base32 and independent raw SHA-256 **plus exact body size**. It then removed original HTML scripts, heads, styles, hidden comments and tags **in memory**, located an explicit visible `Audio transcript` heading and checked whether the selected short wording occurred **after** a complete uppercase `MARY KUNESH:` speaker label, **before the next uppercase full-name `SPEAKER:` label**, within a bounded **6,000-character** turn. It separately tracked when the wording was on the page, inside the transcript section, inside the senator's speaker turn, in another speaker's turn, or unattributed. No raw HTML, full quote, audio file, or transcript was persisted.
+
+## Original-source results
+
+| First-party historical original capture | Original raw HTML SHA-256 | Section and speaker-turn result | Valid inference |
+| --- | --- | --- | --- |
+| [Feb 7, 2023 Native family preservation interview](https://www.mprnews.org/episode/2023/02/07/new-bill-would-keep-native-families-together-proponents-say), captured **2023-02-10 02:40:30 UTC** | `091376b6f0a3a0a1104d9aa8bd4573212c2ba5953486c082df2877a8eb041f92` (81,419 bytes) | `Audio transcript` visible with **8** uppercase `MARY KUNESH:` labels; the selected short child-welfare phrase appears elsewhere on the original page, **outside the transcript section**, therefore not in Kunesh's labeled turn | Archived page-context phrase yes; specific transcript spoken-quote **not** authenticated |
+| Same **2023 interview**, different original captured **2024-04-18 02:46:06 UTC** | `40d95fdf4f17d5e5c32f0c3b574e47af83a0526735bef33a9d0ddce09b93b89b` (82,580 bytes) | Same result: section and **8** Kunesh labels, but selected phrase remains **outside** transcript | Another original *version* of same article, not another named speech passage |
+| [Oct 22, 2024 STEP Academy/charter-school interview](https://www.mprnews.org/episode/2024/10/22/a-21-million-deficit-at-step-academy-make-it-the-largest-charter-school-to-close-in-history), captured **2024-10-22 18:31:15 UTC** | `89e55f875d760ff3665a7a1ab381d7d4b0e26b1c27d3a5da5d378c940a1eaada` (91,958 bytes) | No selected `Audio transcript` heading, senator label or selected reform wording | Do **not** backdate later wording to the October broadcast |
+| Same **2024 charter-school interview**, different original captured **2024-12-11 00:46:18 UTC** | `defc2522260a83fa4b8e3c5971d9fae89b78a7fdc25965f7f20121f7a778797a` (129,815 bytes) | `Audio transcript` visible with **5** labeled Kunesh turns; selected charter-school reform phrase occurs **25 characters** into one explicit `MARY KUNESH:` turn and before the next labeled speaker | Printed named-speaker transcript *short-phrase adjacency* authenticated **by Dec 11 capture**; still not original audio or full human-approved verbatim speech |
+
+**Significant correction to earlier interpretation:** the February 2023 historical HTML original *contains* both the short phrase and `MARY KUNESH:` transcript labels, but these are **not co-located in one transcript turn**. This source must not be promoted as authentic *spoken Kunesh quote* for that precise phrase based on separate page-wide string checks. It could be a publisher summary/context quotation; this automated in-memory structural test does **not** determine the author or actual original speaker of the outside-transcript passage.
+
+In December 2024 the evidence is stronger: **one** short phrase is within one bounded printed `MARY KUNESH:` turn on a SHA-authenticated historical version. This does not independently prove what the original interview audio sounded like, the precise transcript publication minute, when the PDF was posted, whether the entire purported quotation is accurate, membership/issue-specific forecasting eligibility, or any individual legislator's recorded vote. Exact document capture is a **latest proven presence** bound for the tested original version, not necessarily the publisher's first posting time.
+
+## Reproduction and public receipts
+
+Initial real public [GitHub Actions run #38194030668](https://github.com/killjoy00/votepredict/actions/runs/38194030668) **SUCCESS** with **12** adversarial offline tests, **four** strict SHA-1/SHA-256/byte-length original HTML replays, **one** same-named-speaker-turn short cue, **two** pre-transcript/context-only cue cases, and **one** earlier original missing the selected current transcript section. Action artifact ID **11722502139**, ZIP SHA-256 `fbb228dadbbdf0c58b8b573dfff8f4d7aff85fa4b3b31864022a38153d4a9029`; nested **7,141-byte** original-source metadata JSON SHA-256 `e013999d57e8844e8c90c5e75617bee7bbcabb496ed497f257dc292b3bf58f8b`. Permanent [machine-readable public original and speaker-turn receipt](senate-media-mpr-kunesh-original-speaker-turns-20261011.json) is checked in; no raw copyrighted article HTML or full transcript is included.
+
+```bash
+node --test tests/senate-media-mpr-kunesh-historic-speaker-turns.test.mjs tests/senate-media-mpr-kunesh-real-speaker-turn-receipts.test.mjs
+node scripts/run-senate-media-mpr-kunesh-original-speaker-turns.mjs --output artifacts/mpr-kunesh-adjacency.json
+```
+
+The source code requires exact checked-in original URL/UTC/index SHA-1/raw SHA-256/byte size, and the final replay runner compares any reverified original with committed speaker-turn receipt flags. Network/index/replay errors remain **UNKNOWN**, and a source-body mismatch cannot produce transcript evidence. Offline tests specifically reject paraphrase-without-label, fake hidden/script phrase, host question that mentions the selected phrase, pre-transcript wording, and mutated source-body bytes.
+
+## Scope and next actual evidence decision
+
+This is **four original HTML versions of two already known MPR source URLs**, not four newly found interviews or an exhaustive senator-media universe. No private VotePredict `source_documents` / `evidence_items` source export was used, and no DB, collector seed, scheduler, ingestion, forecast, retraining, serving model or recorded Senate vote was changed. Keep [#987](https://github.com/killjoy00/votepredict/issues/987) **open**.
+
+Next within this same evidence branch: (1) human review of bounded **original Dec 2024 Kunesh transcript turn** with the original recorded audio if an independently archived audio source is recovered, not a same-day October model input; (2) review exactly what **published page context** attributes the 2023 child-welfare fragment, or choose a different short phrase inside a genuinely original Kunesh speaker turn; (3) independently investigate 2022 Benson/Kunesh original audio/transcript and 2025 Pha/Coleman publication-time evidence without substituting current source metadata for historic public-by.
