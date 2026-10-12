@@ -1,0 +1,81 @@
+{
+  "schema": "senate-864-wiger-three-new-historically-authenticated-firstparty-original-publisher-pages-v1",
+  "issue": 864,
+  "officialServingSenator": "Sr., Charles W. Wiger",
+  "officialFullGovernmentRosterHtmlSha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+  "provenance": {
+    "originalLiveRunId": 38322976362,
+    "artifactId": 11779054359,
+    "sourceKind": "caucus publisher originals, NOT candidate-owned websites"
+  },
+  "counts": {
+    "originalWholePages": 3,
+    "verifiedSignedSingleSenatorQuotedOriginals": 1,
+    "shortVerifiedSF960PolicyClauses": 3,
+    "candidateOwnedOriginalSenateSiteIncrement": 0
+  },
+  "timingCaveats": {
+    "firstOriginalObservedSF960AfterApril22SenateVote": true,
+    "laterBudgetAndEducationPagesNotYetIndividualQuotedBounded": true,
+    "originalFirstPublisherPostingUtcProven": false,
+    "noArchivedAudioOrIndependentIndividualSenateVoteSourceInIncrement": true
+  },
+  "originals": [
+    {
+      "id": "wiger-2021-sf960-response",
+      "publisherDisplayDay": "2021-04-22",
+      "archiveCaptureUtc": "2021-04-24T17:43:32Z",
+      "indexSha1Base32": "CTTW2SUAMLMYP7C3AJBR6SHHYAASTYI6",
+      "rawHtmlSha256": "b183fe353f77249d54ace06d57c37e980f6eb12d6630c84590a36e76c94b4856",
+      "url": "https://senatedfl.mn/senate-wiger-statement-on-omnibus-education-bill/",
+      "originalFullHtmlAndCdxSha1Verified": true,
+      "quoteBoundedToSignedSenator": true,
+      "originalFirstPublicationClockUnknown": true,
+      "notCandidateOwnedSenateCampaignSite": true,
+      "selectedExactShortPolicyFragments": [
+        {
+          "excerpt": "this does not fully fund our schools",
+          "sha256": "3a9a6cb5403d7ab0244bbdd5a7abea9ce3fc4d49e944834371fe624e557db7a7"
+        },
+        {
+          "excerpt": "shifts them towards private vouchers",
+          "sha256": "0721c7d9be0b6c1b09084483a165315ec5ea54462cc42fd8eae69a37a581bdb3"
+        },
+        {
+          "excerpt": "increase funding for our public schools and students",
+          "sha256": "6911f71c730182b00be7a4d7c692c094dc41b6394fe5395d86cdf69819a883b8"
+        }
+      ],
+      "specificIndividuallyNamedVoteOrBillVersionCertified": false
+    },
+    {
+      "id": "wiger-2021-e12-compromise",
+      "publisherDisplayDay": "2021-06-22",
+      "archiveCaptureUtc": "2021-07-03T00:46:57Z",
+      "indexSha1Base32": "SK7KG5BR5OMIQJWMFZMNRT4YVL7NFHLC",
+      "rawHtmlSha256": "0914c4d656d3f521e20c175b5b81ab4edf06ae20094709bdbfc1379e3c5367be",
+      "url": "https://senatedfl.mn/senator-chuck-wiger-statement-on-e-12-budget-agreement/",
+      "originalFullHtmlAndCdxSha1Verified": true,
+      "quoteBoundedToSignedSenator": false,
+      "originalFirstPublicationClockUnknown": true,
+      "notCandidateOwnedSenateCampaignSite": true,
+      "selectedExactShortPolicyFragments": [],
+      "specificIndividuallyNamedVoteOrBillVersionCertified": false
+    },
+    {
+      "id": "wiger-2022-education-proposal",
+      "publisherDisplayDay": "2022-04-01",
+      "archiveCaptureUtc": "2022-05-21T21:59:29Z",
+      "indexSha1Base32": "IO5ARVVZ3NDIVO7KNVU2JH4E5Z7RAJPM",
+      "rawHtmlSha256": "b76dd303a5f470bf2e58775ff80f9e83f635a0c7bb39499d61e3eff39a5a27c2",
+      "url": "https://senatedfl.mn/senator-chuck-wiger-statement-on-republican-education-bill/",
+      "originalFullHtmlAndCdxSha1Verified": true,
+      "quoteBoundedToSignedSenator": false,
+      "originalFirstPublicationClockUnknown": true,
+      "notCandidateOwnedSenateCampaignSite": true,
+      "selectedExactShortPolicyFragments": [],
+      "specificIndividuallyNamedVoteOrBillVersionCertified": false
+    }
+  ],
+  "productionDbModelTrainingServingUpdates": 0
+}
