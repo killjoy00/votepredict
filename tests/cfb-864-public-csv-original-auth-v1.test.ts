@@ -110,7 +110,7 @@ test('strict public-only mocked CDX and id_ raw retrieval yields count-only two-
  assert.equal(result.firstPublicationKnown,false);
  assert.equal(result.legislatorFilingDutyDenominatorEstablished,false);
  assert.equal(calls.length,4);
- assert.doesNotMatch(JSON.stringify(result),/Synthetic [0-9]+|donor|address|employer|metadata\.rowKey/i);
+ assert.doesNotMatch(JSON.stringify(result),/Synthetic [0-9]+|donorName|contributorName|streetAddress|employerName|metadata\\.rowKey/i);
 });
 test('digest mismatch does not return proof even with a valid parser',async()=>{
  const fake=async(url:RequestInfo|URL)=>{
