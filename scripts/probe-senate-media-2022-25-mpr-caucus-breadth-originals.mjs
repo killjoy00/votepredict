@@ -6,7 +6,7 @@
  * vote evidence, and joint-caucus text is NOT individual verbatim speech.
  */
 import {probeWayback,probeCommonCrawl,probeCurrentFirstParty} from './probe-senate-media-mpr-five-year-commoncrawl-originals.mjs';
-export const VERSION='senate-media-mpr-caucus-eight-senator-breadth-source-proof-v1';
+export const VERSION='senate-media-mpr-caucus-ten-senator-breadth-source-proof-v1';
 const MPR='https://www.mprnews.org/episode/',DFL='https://senatedfl.mn/',GOP='https://www.mnsenaterepublicans.com/';
 export const LEADS=Object.freeze([
  {
