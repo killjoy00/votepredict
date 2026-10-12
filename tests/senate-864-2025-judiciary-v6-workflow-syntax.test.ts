@@ -139,3 +139,13 @@ test('strict keyless reporter rejects unexpected private source member key witho
  obj.normalized_member_name='synthetic-do-not-export';
  await assert.rejects(()=>evaluateKeylessReporter(obj),/Unexpected private field/);
 });
+
+test('the complete V6 keyless JavaScript remains indented as a YAML block scalar',()=>{
+ const lines=source.split('\n');
+ const start=lines.indexOf('          script: |');
+ assert.ok(start>=0);
+ const unindented=lines.slice(start+1)
+  .map((line,i)=>({number:i+start+2,line}))
+  .filter(x=>x.line.trim()!==''&&!x.line.startsWith('            '));
+ assert.deepEqual(unindented,[],'No unindented JavaScript may invalidate the GitHub Actions workflow');
+});
