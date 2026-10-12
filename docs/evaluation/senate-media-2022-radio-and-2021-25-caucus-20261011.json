@@ -1,0 +1,221 @@
+{
+  "version": "senate-media-2022-radio-audio-and-seven-individual-statements-evidence-receipts-v1",
+  "researchDateLocal": "2026-10-11",
+  "firstSuccessfulLivePublicSourceWorkflow": {
+    "pr": 1199,
+    "runId": 38198818192,
+    "githubArtifactId": 11724792173,
+    "rawZipBytes": 5224,
+    "rawZipSha256": "f8c42d3c7200ad54b9b38acddb74f94edb05fe7f7c82b1b4b55c28ba97d304ad",
+    "radioJsonFile": "senate-media-2022-benson-kunesh-audio-identity.json",
+    "radioJsonBytes": 10260,
+    "radioJsonRawSha256": "5e72c94ddfda0deb68615a2b4bea556d82ed82e5667b6c7d4a7fe2115d317e8a",
+    "pressJsonFile": "senate-media-2021-22-25-seven-press-originals.json",
+    "pressJsonBytes": 15784,
+    "pressJsonRawSha256": "d52eb758e2821c5846c4bd990a5f2a1ecdec35a242358bee57795c4b1f5f7b92",
+    "initialSyntheticTestsPass": 10,
+    "initialSyntheticTestsFail": 0
+  },
+  "historical2022Radio": {
+    "namedFirstPartyMprEpisodeUrl": "https://www.mprnews.org/episode/2022/02/23/measures-give-parents-more-control-over-instruction-await-votes",
+    "relatedButDistinctFirstPartyMprEpisodeUrl": "https://www.mprnews.org/episode/2022/02/23/a-closer-look-at-the-parents-bill-of-rights-at-the-minnesota-legislature",
+    "namedIntervieweesOnlyAsCurrentPublisherDescription": [
+      "Michelle Benson",
+      "Mary Kunesh"
+    ],
+    "namedPageCurrentHtmlSha256": "66594a1810a9caba65dd8aff6f6b0c97792f529402392b057ae976bf6fbbd054",
+    "namedPageCurrentHtmlBytes": 38553,
+    "relatedPageCurrentHtmlSha256": "65fdf1a631aecc0e9753298bc4b8dc88a528d9faca8e898c1a279cace961fd47",
+    "relatedPageCurrentHtmlBytes": 43449,
+    "namedCurrentFirstPartyAudioMp3UrlSha256Fingerprints": [
+      "1a775e898b632cc74d2281da8e2a93a88245364c9baf11e74685d27c9108931b",
+      "821cab3680de70bac205f93e49bd53964a756596e43a8e723b14ea94c88ffa91"
+    ],
+    "relatedCurrentFirstPartyAudioMp3UrlSha256Fingerprints": [
+      "49aa086f32835db7c990347925c0f549ac2cf4a6fd698b0863b74ebd5339ff9a",
+      "9ab26f5be2c8a2a0b6972e56e7bc068f3c7b1c1e0f83f5d5cc004aa4abe9b860"
+    ],
+    "relatedHistoricalOriginalPageVersions": [
+      {
+        "utc": "2022-02-24T02:53:02Z",
+        "indexedSha1": "JKOP2SQNH64XOLKSKAU6P67ZQGHTFKPQ",
+        "rawHtmlSha256": "4c0d261abbbee79f31a2520b983bb84c8a998a488cf7e834b673b65d3b6be780",
+        "rawBytes": 49351,
+        "firstPartyAudioMp3UrlSha256Fingerprints": [
+          "49aa086f32835db7c990347925c0f549ac2cf4a6fd698b0863b74ebd5339ff9a",
+          "9ab26f5be2c8a2a0b6972e56e7bc068f3c7b1c1e0f83f5d5cc004aa4abe9b860"
+        ],
+        "sha1AndRawSha256Reverified": true
+      },
+      {
+        "utc": "2022-11-08T20:55:33Z",
+        "indexedSha1": "ZXFOYHV5KJIORHRIOQDGLDIZAUXJAGFW",
+        "rawHtmlSha256": "3715f4b97a12a5ed59ef0506a24be311464501dad3ed72bc9192d1efc53a1d1e",
+        "rawBytes": 39930,
+        "firstPartyAudioMp3UrlSha256Fingerprints": [
+          "49aa086f32835db7c990347925c0f549ac2cf4a6fd698b0863b74ebd5339ff9a",
+          "9ab26f5be2c8a2a0b6972e56e7bc068f3c7b1c1e0f83f5d5cc004aa4abe9b860"
+        ],
+        "sha1AndRawSha256Reverified": true
+      }
+    ],
+    "identicalExplicitAudioAssetUrlFingerprintCountBetweenNamedInterviewAndRelatedSameDayPage": 0,
+    "identicalAudioAssetFingerprintCountBetweenNamedCurrentPageAndTwoAuthenticated2022RelatedOriginalHtmlVersions": [
+      0,
+      0
+    ],
+    "sameSubjectDoesNotImplySameProgramOrMp3": true,
+    "original2022NamedBensonKuneshEpisodeHtmlNotAuthenticated": true,
+    "actualMp3ContentsNeverRequestedOrAuthenticated": true,
+    "speakerTranscriptOrRealVoiceNotApproved": true
+  },
+  "individualSenateFirstPartyStatementOriginals": [
+    {
+      "id": "2021-hawj-start-session",
+      "senator": "Foung Hawj",
+      "publisherDisplayedDay": "2021-01-05",
+      "currentOriginalPublisherHttpStatus": "current_http_unknown",
+      "exactWaybackCdxIndex": "unavailable_unknown",
+      "originalHtmlSourceProofs": [],
+      "earlierEventOrVoteEligible": false,
+      "newArticleSourceStatus": "current_lead_or_authentic_archived_first_party_original_not_private_production_source"
+    },
+    {
+      "id": "2022-gazelka-crime-reform-proposed",
+      "senator": "Paul Gazelka",
+      "publisherDisplayedDay": "2022-01-14",
+      "currentOriginalPublisherHttpStatus": "current_publisher_html_sha256_observed",
+      "exactWaybackCdxIndex": "index_candidates",
+      "originalHtmlSourceProofs": [
+        {
+          "archiveCaptureUtc": "2022-01-14T23:25:57Z",
+          "indexedOriginalSha1Base32": "SJ7QINZP3WX5EBNR6TV34CRBQG2LEFV6",
+          "verifiedRawHtmlSha256": "acd579ca2f69e6ef6a18d541b7396ca7a12158a3ceefa2b71f7870b7bd328b77",
+          "rawHtmlBytes": 88497,
+          "selectedShortPolicyPhrasePresentInOriginalPage": true,
+          "directIndividualSenatorPressReleaseNotAudioOrHumanVerbatimQuote": true
+        },
+        {
+          "archiveCaptureUtc": "2022-01-15T00:38:12Z",
+          "indexedOriginalSha1Base32": "3HHDRTEOWMSL4ZZWFNECEC2QJHM253ZL",
+          "verifiedRawHtmlSha256": "ab3665ec6caa1c6734426e986b77c4836c50bdd2e65e2c9061b688e90c62de28",
+          "rawHtmlBytes": 88497,
+          "selectedShortPolicyPhrasePresentInOriginalPage": true,
+          "directIndividualSenatorPressReleaseNotAudioOrHumanVerbatimQuote": true
+        }
+      ],
+      "earlierEventOrVoteEligible": false,
+      "newArticleSourceStatus": "current_lead_or_authentic_archived_first_party_original_not_private_production_source"
+    },
+    {
+      "id": "2022-weber-state-surplus-proposals",
+      "senator": "Bill Weber",
+      "publisherDisplayedDay": "2022-12-06",
+      "currentOriginalPublisherHttpStatus": "current_publisher_html_sha256_observed",
+      "exactWaybackCdxIndex": "index_candidates",
+      "originalHtmlSourceProofs": [
+        {
+          "archiveCaptureUtc": "2022-12-14T18:59:05Z",
+          "indexedOriginalSha1Base32": "OHSNSNQVJ5SN5PKJXEJLY6VSECJ37JCY",
+          "verifiedRawHtmlSha256": "0bdc339c57bfd9a0d33b996327ae1e054fd584911ea14001187951759365edbf",
+          "rawHtmlBytes": 89957,
+          "selectedShortPolicyPhrasePresentInOriginalPage": true,
+          "directIndividualSenatorPressReleaseNotAudioOrHumanVerbatimQuote": true
+        }
+      ],
+      "earlierEventOrVoteEligible": false,
+      "newArticleSourceStatus": "current_lead_or_authentic_archived_first_party_original_not_private_production_source"
+    },
+    {
+      "id": "2025-coleman-education-committee-mandates",
+      "senator": "Julia Coleman",
+      "publisherDisplayedDay": "2025-01-22",
+      "currentOriginalPublisherHttpStatus": "current_publisher_html_sha256_observed",
+      "exactWaybackCdxIndex": "index_candidates",
+      "originalHtmlSourceProofs": [
+        {
+          "archiveCaptureUtc": "2025-01-24T22:56:25Z",
+          "indexedOriginalSha1Base32": "RHVKKLGL3YJID732UVNHXKLL52V3R5GR",
+          "verifiedRawHtmlSha256": "802c0023eac6a6d3b37051fd420169bf756a79ffd41ea6b4c9f9186d8b1188ee",
+          "rawHtmlBytes": 96807,
+          "selectedShortPolicyPhrasePresentInOriginalPage": true,
+          "directIndividualSenatorPressReleaseNotAudioOrHumanVerbatimQuote": true
+        },
+        {
+          "archiveCaptureUtc": "2025-07-24T00:46:10Z",
+          "indexedOriginalSha1Base32": "NBQSQ74MMI6PNA637WZFRIXWHSWK6F7H",
+          "verifiedRawHtmlSha256": "92f79425acf5fe320ce93a7ef890236c9a806379409e0b4f3804b0fa9d83d7cb",
+          "rawHtmlBytes": 99181,
+          "selectedShortPolicyPhrasePresentInOriginalPage": true,
+          "directIndividualSenatorPressReleaseNotAudioOrHumanVerbatimQuote": true
+        }
+      ],
+      "earlierEventOrVoteEligible": false,
+      "newArticleSourceStatus": "current_lead_or_authentic_archived_first_party_original_not_private_production_source"
+    },
+    {
+      "id": "2025-pha-post-charges-child-protection",
+      "senator": "Susan Pha",
+      "publisherDisplayedDay": "2025-03-20",
+      "currentOriginalPublisherHttpStatus": "current_http_unknown",
+      "exactWaybackCdxIndex": "unavailable_unknown",
+      "originalHtmlSourceProofs": [],
+      "earlierEventOrVoteEligible": false,
+      "newArticleSourceStatus": "current_lead_or_authentic_archived_first_party_original_not_private_production_source"
+    },
+    {
+      "id": "2025-pha-hoa-passage-remarks",
+      "senator": "Susan Pha",
+      "publisherDisplayedDay": "2025-05-06",
+      "currentOriginalPublisherHttpStatus": "current_http_unknown",
+      "exactWaybackCdxIndex": "index_candidates",
+      "originalHtmlSourceProofs": [
+        {
+          "archiveCaptureUtc": "2025-07-24T12:15:05Z",
+          "indexedOriginalSha1Base32": "IHEX7UUNNZLAPGTDAO35GZCQWSOSNGK3",
+          "verifiedRawHtmlSha256": "2c9b48e5d973d559685a45cb97a6a082be6caa74d79245119b10ee07728269ce",
+          "rawHtmlBytes": 90381,
+          "selectedShortPolicyPhrasePresentInOriginalPage": true,
+          "directIndividualSenatorPressReleaseNotAudioOrHumanVerbatimQuote": true
+        }
+      ],
+      "earlierEventOrVoteEligible": false,
+      "newArticleSourceStatus": "current_lead_or_authentic_archived_first_party_original_not_private_production_source"
+    },
+    {
+      "id": "2025-coleman-post-annunciation-school-security",
+      "senator": "Julia Coleman",
+      "publisherDisplayedDay": "2025-08-27",
+      "currentOriginalPublisherHttpStatus": "current_publisher_html_sha256_observed",
+      "exactWaybackCdxIndex": "unavailable_unknown",
+      "originalHtmlSourceProofs": [],
+      "earlierEventOrVoteEligible": false,
+      "newArticleSourceStatus": "current_lead_or_authentic_archived_first_party_original_not_private_production_source"
+    }
+  ],
+  "counts": {
+    "selectedCaucusExactIndividualFirstPartyUrls": 7,
+    "additionalNewlySelectedPressReleaseLeads": 5,
+    "previouslyKnownPhaAndColemanStatementLeads": 2,
+    "distinctNamedServingStateSenators": 5,
+    "originalArchiveVerifiedHtmlBodies": 6,
+    "originalArchiveVerifiedDistinctPublisherUrls": 4,
+    "originalBensonKuneshAudioMp3BodiesAuthenticated": 0,
+    "archivedOriginalFullNamedSenatorVerbatimAudioHumanVerified": 0,
+    "recordedIndividualSenateVotesVerified": 0,
+    "noPrivateSourceDocumentsChecked": 0
+  },
+  "limitations": {
+    "capturedHtmlFirstProvedPresentNoLaterThanArchiveUtc": true,
+    "originalPublisherPostAndBroadcastTimestampNotIndependentOriginalAudioOrQuoteEvidence": true,
+    "namedCurrentMprInterviewMediaUrlDistinctFromRelated2022ProgramBasedOnExactMediaIdFingerprints": true,
+    "differentMediaUrlDoesNotProveDifferentActualAudioContentButNoEquivalenceProven": true,
+    "january2025ColemanCommitteeRemarksFollowCommitteeActionNotPredictSameAction": true,
+    "may2025PhaHOAStatementFollowsSenatePassageCannotPredictThatPassage": true,
+    "august2025ColemanStatementFollowsSchoolShooting": true,
+    "march2025PhaStatementFollowsCharges": true,
+    "noPrivateNeonVotePredictDataOrProductionEvidenceSourceReconciliation": true,
+    "noRawArticleHtmlMp3PdfWarcFullTranscriptPersisted": true,
+    "noCollectorIngestionModelTrainingForecastChanges": true
+  }
+}
