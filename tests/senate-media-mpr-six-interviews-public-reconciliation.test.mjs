@@ -125,3 +125,12 @@ test('second archived original HTML version of same source is not a second artic
  assert.equal(r.extraHistoricalVersionSha256NotNewArticlesOrNewVerifiedSpeakerQuotes,true);
  assert.equal(r.missingFromVotePredictProductionCount,null);
 });
+
+
+test('hidden HTML comment, script and head labels cannot become a visible senator quote cue',()=>{
+ const hidden='<!-- MARY KUNESH: We need to really look at probably some kind of reform -->'
+   +'<html><head><script>MARY KUNESH: We need to really look at probably some kind of reform</script></head><body><p>Reporter mentions Mary Kunesh.</p></body></html>';
+ const x=inspectShortSpeakerCues(hidden,LEADS[3]);
+ assert.deepEqual(x.selectedTextCues.map(q=>q.cueFoundInVisibleApproxText),[false,false]);
+ assert.equal(x.selectedSpeakerTurnCandidateObservations[0].twoIndependentVisibleCuesPresent,false);
+});
