@@ -23,7 +23,7 @@ export const JUDICIARY_2025_FULL_SOURCE_ONESHOT_MARKER=
 
 type Output=Awaited<ReturnType<typeof protectedCommitteeSourceParity>>;
 const BASELINE='docs/evaluation/source-proof/senate-864-v2-all-1452-original-pdf-neon-parity-receipt.json';
-function sourceShaPinnedMerged(){
+export function sourceShaPinnedMerged(){
  const original=verifyPinnedOfficialSourceManifests();
  const merged=mergeSourceAuditsWithAuthenticated207Ocr(original);
  const bytes=readFileSync('artifacts/judiciary/'+JUDICIARY_2025_ORIGINAL_PROOF.artifactJsonFilename);
