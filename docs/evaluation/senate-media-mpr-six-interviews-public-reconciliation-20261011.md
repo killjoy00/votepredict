@@ -1,0 +1,52 @@
+# Six MPR senator interviews: historical originals and source-coverage reconciliation
+
+**October 11, 2026 · VotePredict Track D [#987](https://github.com/killjoy00/votepredict/issues/987) · public-only scope.**
+
+## What changed
+
+Instead of treating every first-party interview URL as a new missed senator quotation, this pass joins **six existing public MPR News interview-page leads** (seven named senator *interviewee turns* across five publisher-displayed years) to the public 31-lead inventory and its previously pinned original Wayback receipts. We then separately attempt actual original HTML body replays using independently indexed Wayback original SHA-1 and selected Common Crawl WARC records. We never consult VotePredict's private production `source_documents`, `evidence_items`, or unapproved source exports.
+
+**Result: five SHA-1-index-matched authentic historical HTML captures across three distinct MPR interview URLs.** The first capture of each of those three URL stories was already in the public [31-lead original source receipts](senate-media-2021-25-exact-public-replay-receipts-20261010.json). This pass reverified those existing three original-body identities, and authenticated **two additional distinct original HTML versions** for the *same* 2023 and 2024 MPR stories. It did **not** establish any newly observed unique reporter source URL relative to those three previously pinned URLs, or any first-party **historical original audio** bytes, or any actual Senate vote or human-approved complete quoted senator passage.
+
+## Independent original archival body/selected-speaker-cue result
+
+| MPR publisher-displayed day | Interview source / senator(s) | Authenticated exact historical HTML captures in this pass | Selected short speaker/cue outcome |
+| --- | --- | --- | --- |
+| 2021-01-11 | [COVID vaccination rollout](https://www.mprnews.org/story/2021/01/11/state-sen-michelle-benson-on-vaccine-rollout) — Michelle Benson | **1:** 2021-01-11 22:45:19 UTC (previously pinned) | Reporter interview description only; **no actual Benson transcript/speech authenticated** |
+| 2022-02-23 | [Parent curriculum bills](https://www.mprnews.org/episode/2022/02/23/measures-give-parents-more-control-over-instruction-await-votes) — Michelle Benson and Mary Kunesh | **0:** exact Wayback and selected Common Crawl indexes unavailable | Current article names both interviewees, but no proved original complete transcript |
+| 2023-02-07 | [Native family preservation](https://www.mprnews.org/episode/2023/02/07/new-bill-would-keep-native-families-together-proponents-say) — Mary Kunesh | **2:** 2023-02-10 02:40:30 UTC (previously pinned); **2024-04-18 02:46:06 UTC** (additional original version) | Short selected unpunctuated fragment and literal `MARY KUNESH:` string both detected in each authentic original page; **not** a certified whole speaker turn/audio |
+| 2024-10-22 | [STEP Academy / charter schools](https://www.mprnews.org/episode/2024/10/22/a-21-million-deficit-at-step-academy-make-it-the-largest-charter-school-to-close-in-history) — Mary Kunesh | **2:** 2024-10-22 18:31:15 UTC (previously pinned); **2024-12-11 00:46:18 UTC** (additional original version) | **October original: neither selected speaker label nor short quote. December original: both present.** Precise addition/publication instant remains unknown |
+| 2025-04-24 | [Hmong and Lao veterans](https://www.mprnews.org/episode/2025/04/24/bill-granting-benefits-to-hmong-lao-veterans-passes-minnesota-senate) — Susan Pha | **0:** selected indexes unavailable | Current 2026 publisher page has `SUSAN PHA:` and a veterans-benefit short passage; **no historical original**. Story describes a Senate vote that **already happened**, so it must not predict that vote |
+| 2025-09-11 | [Political violence](https://www.mprnews.org/episode/2025/09/11/we-cannot-let-evil-win-minnesota-sen-julia-coleman-on-uptick-in-political-violence) — Julia Coleman | **0:** selected indexes unavailable | Current 2026 publisher page has `JULIA COLEMAN:` and a gun-policy short passage; **no historical original** |
+
+**Crucial temporal finding:** For the October 22, 2024 Kunesh interview, the exact early original HTML (indexed SHA-1 `Z5MQ547B3PIGGBKJR5GUHAAOPZFRHHIA`, raw SHA-256 `89e55f875d760ff3665a7a1ab381d7d4b0e26b1c27d3a5da5d378c940a1eaada`, **91,958 bytes**) lacks the two selected transcript cues. The December 11 original (indexed SHA-1 `EXUETRMUIVMGRHPLYKSKWB3CXGJBDXWC`, raw SHA-256 `defc2522260a83fa4b8e3c5971d9fae89b78a7fdc25965f7f20121f7a778797a`, **129,815 bytes**) contains both. That authenticates cue presence **no later than 2024-12-11 00:46:18 UTC**, but does **not** prove when between snapshots the selected transcript wording was added or whether a different contemporaneous transcript existed elsewhere. The current transcript is **not** automatically available at October 22's publication/broadcast time.
+
+For the Feb. 2023 Kunesh interview, the original **2023-02-10** HTML body (`LSMKP7LJQX2FXTNTSFGN2ACEJ6J46GIV`, SHA-256 `091376b6f0a3a0a1104d9aa8bd4573212c2ba5953486c082df2877a8eb041f92`, **81,419 bytes**) and distinct **2024-04-18** body (`KTSNDQOWIHKHV2IYGL7T6XWY5W3EZDXN`, SHA-256 `40d95fdf4f17d5e5c32f0c3b574e47af83a0526735bef33a9d0ddce09b93b89b`, **82,580 bytes**) each contain *separately tested normalized short label and unpunctuated wording cues*. The older exact punctuation-sensitive excerpt test in prior research must not be silently overridden: these are **different check predicates**. Neither string-presence test authenticates an entire exclusive named senator speaking turn or independently hashes the original MP3.
+
+All SHA-1, SHA-256, UTC and byte-size observations are pinned in [machine-readable original-source receipts](senate-media-mpr-six-interviews-public-reconciliation-20261011.json); the initial positive public workflow [run #38186907288](https://github.com/killjoy00/votepredict/actions/runs/38186907288) passed **10** offline tests and generated a source metadata artifact ZIP SHA-256 `bc0b9c2e31d1f98eaba8feb66d1609cc8486091d90e0a99e1eacb8c4d4a5b2eb`, decoded JSON SHA-256 `540273affb13781c53a8d217c05f8fdb810cdfd68e0115bd1ce8d7889259e352`, **42,687 bytes**. No original raw article HTML, full transcript, WARC, audio or PDF was saved.
+
+## What actual checked-in collection rules do with these URLs
+
+The real `LOCAL_TRADE_NEWS_SEEDS` MPR News original seed is `https://www.mprnews.org/story/202` with `prefix:true`. The second production code rule, `localTradeNewsUrlPassesCurrentPathPriority`, independently excludes some URLs based on topical pathname terms. This study reads and applies the **actual two current rules**; it does not attempt to change them:
+
+| Bounded six-URL sample | Number |
+| --- | ---: |
+| Outside the current exact MPR original-URL seed prefix | **5/6** |
+| Rejected by the current topical-path priority check | **3/6** |
+| Rejected by **one or both** checked-in public discovery gates | **6/6** |
+| Previously verified original MPR article URLs in the **public 31-URL ledger** | **3/6** |
+| Newly validated historical original *HTML body versions* beyond the previous one-per-URL pins | **2** |
+| Demonstrated missing production `source_documents` or `evidence_items` | **UNKNOWN — not measured** |
+| Authenticated new whole-senator-quote or new Senate-roll-call prediction input | **0** |
+
+These six sources illustrate deterministic **path-selection blind spots**; `6/6` is emphatically **not** a VotePredict missing-article statistic, all-MPR recall, or statewide senator media coverage. For the sole `/story/` Benson URL, prefix passes but topical priority fails; the 2023 Kunesh and both 2025 episode URLs pass topical priority but fail prefix; 2022 parental curriculum and 2024 charter oversight fail both.
+
+## Concrete handoff to a separately authorized private, read-only source reconciliation
+
+The existing [SELECT-only public-context export template](https://github.com/killjoy00/votepredict/blob/main/scripts/export-senate-media-context-readonly.sql) and [senator roster template](https://github.com/killjoy00/votepredict/blob/main/scripts/export-senate-media-roster-readonly.sql) already enumerate the relevant SQL fields, and the [private offline batch reconciliation](https://github.com/killjoy00/votepredict/blob/main/src/evidence/senate-media-batch-reconciliation.ts) performs source-level SHA checks. A subsequent **separately authorized, restricted SELECT-only private export** can compare each first-party original URL, exact Wayback capture URL+UTC, indexed digest, archived HTTP body SHA-256 and existing `source_documents`+`evidence_items` rows. Run those exports and any row-level matched results privately, never in GitHub Actions or public issue comments.
+
+Use conservative dispositions: **(a)** exact original URL+capture+SHA256 confirmed within the supplied export; **(b)** same publisher URL but different original version: archive-version candidate; **(c)** canonical/redirect alternative: potential alias until original historical equivalence verified; **(d)** not observed in a bounded export: **unknown outside that export**; **(e)** exact textual phrase and named speaker in an independently SHA-matched original: human review candidate, **not** an automatically approved quote or legislative stance. The existing media-context export filters `wayback_local_trade_news` / `local_trade_news` rows and therefore cannot establish what other ingestion pipelines might already hold; a nonmatch within those 44-curated-source rows is never proof of globally missing VotePredict evidence.
+
+Explicitly distinguish (1) MPR broadcast date, (2) original article version capture/public-by, (3) transcript or linked 3Play PDF availability, (4) original audio availability, and (5) a relevant future Senate vote. None are interchangeable. A post-passage Susan Pha radio segment **cannot retrospectively predict** the Senate's earlier passage.
+
+**Status:** This PR changes only checked-in public-source research scripts, public proof receipts, tests, and documentation. No private database reads, production source seed/collector/scheduler change, ingestion, evidence promotion, model or forecasting work. Keep [#987](https://github.com/killjoy00/votepredict/issues/987) OPEN; owner-closed #912 remains closed.
