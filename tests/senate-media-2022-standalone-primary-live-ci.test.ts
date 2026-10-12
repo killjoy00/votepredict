@@ -25,6 +25,12 @@ test("focused 2022 Senate primary-roll evidence replay on research PR only", { t
   ], { encoding: "utf8", timeout: 30_000, maxBuffer: 500_000, env: isolatedEnv });
   assert.match(synthetic, /# fail 0/);
   assert.match(synthetic, /# pass 10/);
+  const real = execFileSync(process.execPath, [
+    "--test",
+    "tests/senate-media-2022-standalone-parents-real-receipts.test.mjs",
+  ], { encoding: "utf8", timeout: 30_000, maxBuffer: 500_000, env: isolatedEnv });
+  assert.match(real, /# fail 0/);
+  assert.match(real, /# pass 9/);
 
   if (!exactResearchPR) return;
 
@@ -47,10 +53,17 @@ test("focused 2022 Senate primary-roll evidence replay on research PR only", { t
 
   const data = JSON.parse(readFileSync(out, "utf8")) as {
     version: string;
+    officialJournalOriginalPDFsAuthenticated: number;
+    originalFirstPartyArticleVersionsReauthenticated: number;
+    governmentBillPDFVersionDocumentsAuthenticated: number;
+    verifiedTargetIndividualYesVotes: number;
+    authenticatedNamedOriginalFirstBoundedQuotationSegments: number;
     journals: Array<{
       date: string;
       status: string;
       rawPdfSha256: string | null;
+      rawPdfBytes: number | null;
+      pages: number | null;
       rollResults: {
         matchedExpectedAggregateRolls: Array<{
           bill: string;
@@ -61,8 +74,19 @@ test("focused 2022 Senate primary-roll evidence replay on research PR only", { t
         }>;
       } | null;
     }>;
-    archived: Array<{ status: string; rawOriginalHtmlSha256: string | null }>;
-    texts: Array<{ bill: string; status: string; rawPdfSha256: string | null }>;
+    archived: Array<{
+      status: string;
+      rawOriginalHtmlSha256: string | null;
+      bytes: number | null;
+      observedQuotedSpeakerBoundaries: {
+        visibleBoundedSpeakerOpeningQuotes: Array<{
+          senator: string;
+          quoteSegmentSha256: string | null;
+          exactIssuerSurnameImmediatelyAfterClosedOriginalQuote: boolean;
+        }>;
+      } | null;
+    }>;
+    texts: Array<{ bill: string; status: string; rawPdfSha256: string | null; bytes: number | null }>;
     noVoteInferredFromSponsorshipOrChamberTotals: boolean;
     noOriginalPublisherFirstPublicPostingMinuteProved: boolean;
     noMprBensonKunesh2022RecordedInterviewUsed: boolean;
@@ -85,6 +109,70 @@ test("focused 2022 Senate primary-roll evidence replay on research PR only", { t
     .split("\n")
     .find((line) => line.startsWith("TRACK_D_2022_STANDALONE_BILLS_PRIMARY="));
   assert.ok(summaryLine, "expected only public source metadata log");
+
+  // Live replay must match independently SHA-pinned original PDF / quote
+  // metadata from the first successful source run. Never accept a merely
+  // green synthetic run as historical ballot or source authentication.
+  const pinned = JSON.parse(readFileSync(
+    "docs/evaluation/senate-media-2022-sf2666-sf2575-sf2729-original-rolls-20261012.json", "utf8",
+  )) as {
+    senateJournalOriginals: Array<{
+      sourceDate: string;
+      fullDownloadedOriginalPdfSha256: string;
+      originalRawPdfBytes: number;
+      originalPdfPages: number;
+      namedOriginalSenateBallots: Array<{
+        originalBill: string; senator: string; verifiedDirectOriginalNamedMemberVote: string;
+      }>;
+    }>;
+    historicalPublisher: {
+      firstCapture: { rawOriginalHtmlSha256: string; rawHtmlBytes: number };
+      namedOriginalIndividualFirstCompleteClosedQuoteSegments: Array<{
+        senator: string; firstClosedOriginalQuoteSegmentRawSha256: string;
+      }>;
+    };
+    selectedHistoricalOriginalBillTextVersions: Array<{
+      bill: string; fullOriginalPdfSha256: string; originalPdfBytes: number;
+    }>;
+  };
+  assert.equal(data.officialJournalOriginalPDFsAuthenticated, 2);
+  assert.equal(data.originalFirstPartyArticleVersionsReauthenticated >= 1, true);
+  assert.equal(data.governmentBillPDFVersionDocumentsAuthenticated, 3);
+  assert.equal(data.verifiedTargetIndividualYesVotes, 3);
+  assert.equal(data.authenticatedNamedOriginalFirstBoundedQuotationSegments, 4);
+  for (const j of data.journals) {
+    const p = pinned.senateJournalOriginals.find(x => x.sourceDate === j.date);
+    assert.ok(p);
+    assert.equal(j.rawPdfSha256, p.fullDownloadedOriginalPdfSha256);
+    assert.equal(j.rawPdfBytes, p.originalRawPdfBytes);
+    assert.equal(j.pages, p.originalPdfPages);
+    const expected = p.namedOriginalSenateBallots;
+    const actual = j.rollResults?.matchedExpectedAggregateRolls ?? [];
+    assert.equal(actual.length, expected.length);
+    for (const x of expected) {
+      const a = actual.find(y => y.bill === x.originalBill && y.senator === x.senator);
+      assert.ok(a);
+      assert.equal(a.certifiedPersonalVote, x.verifiedDirectOriginalNamedMemberVote);
+    }
+  }
+  const original = data.archived[0];
+  assert.equal(original.rawOriginalHtmlSha256, pinned.historicalPublisher.firstCapture.rawOriginalHtmlSha256);
+  assert.equal(original.bytes, pinned.historicalPublisher.firstCapture.rawHtmlBytes);
+  const quotes = original.observedQuotedSpeakerBoundaries?.visibleBoundedSpeakerOpeningQuotes ?? [];
+  assert.equal(quotes.length, 4);
+  for (const p of pinned.historicalPublisher.namedOriginalIndividualFirstCompleteClosedQuoteSegments) {
+    const q = quotes.find(x => x.senator === p.senator);
+    assert.ok(q);
+    assert.equal(q.quoteSegmentSha256, p.firstClosedOriginalQuoteSegmentRawSha256);
+    assert.equal(q.exactIssuerSurnameImmediatelyAfterClosedOriginalQuote, true);
+  }
+  for (const p of pinned.selectedHistoricalOriginalBillTextVersions) {
+    const b = data.texts.find(x => x.bill === p.bill);
+    assert.ok(b);
+    assert.equal(b.status, "current_exact_92nd_bill_version_sha256_and_text_inspected");
+    assert.equal(b.rawPdfSha256, p.fullOriginalPdfSha256);
+    assert.equal(b.bytes, p.originalPdfBytes);
+  }
 
   // Every verified direct vote must be from a 2022 official original government
   // journal and the exact standalone bill's separate passage record.
