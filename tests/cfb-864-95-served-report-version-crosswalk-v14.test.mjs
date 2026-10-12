@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {
- SCHEMA,MARKER,buildSourceVerifiedSenatorReportCrosswalk,
+ SCHEMA,MARKER,CROSSWALK_PSV,CROSSWALK_CHECKPOINT,CROSSWALK_FIELDS,
+ serializeOfficialReportPanelCrosswalk,buildSourceVerifiedSenatorReportCrosswalk,
  sourceVerified95ServedReportVersionAudit,
 } from '../scripts/audit-cfb-864-95-served-report-version-crosswalk-v14.mjs';
 const LRL='https://www.lrl.mn.gov/legdb/senate_dir';
@@ -102,4 +103,31 @@ test('public-only senate service and CFB panel source workflow has no protected 
  assert.match(workflow,/node --import tsx scripts\/audit-cfb-864-95-served-report-version-crosswalk-v14\.mjs/);
  assert.match(workflow,/permissions:\s*\n\s*contents: read/);
  assert.doesNotMatch(workflow,/secrets\.|NEON|upload-artifact|issues: write|workflow_dispatch|schedule:|environment:/);
+});
+
+test('immutable 95 original LRL serving senator source-panel rows are preserved without false filing absence',()=>{
+ const rows=readFileSync(CROSSWALK_PSV,'utf8').trimEnd().split('\\n').map(x=>x.split('|'));
+ const checkpoint=JSON.parse(readFileSync(CROSSWALK_CHECKPOINT,'utf8'));
+ assert.equal(rows.length,95);
+ assert.equal(CROSSWALK_FIELDS.length,10);
+ assert.ok(rows.every(r=>r.length===10));
+ assert.equal(new Set(rows.map(r=>r[0])).size,95);
+ assert.equal(rows.filter(r=>r[4]!=='-').length,25);
+ assert.equal(rows.filter(r=>r[4]==='-').length,70);
+ assert.equal(rows.reduce((n,r)=>n+Number(r[5]),0),229);
+ assert.ok(rows.every(r=>r[8]==='false'&&r[9]==='true'));
+ assert.ok(rows.filter(r=>r[4]==='-').every(r=>
+  r[7]==='no_CFB_version_identity_join_yet_not_proof_no_report'));
+ assert.equal(checkpoint.actualServedPersonRows,95);
+ assert.equal(checkpoint.originalCFBSourceProvenReportPrincipals,25);
+ assert.equal(checkpoint.notAlreadyRepresentedBySelectedCFBReportSourceVersionPanel,70);
+ assert.equal(checkpoint.exactHistoricallyPublicByPDFVersionCapturesProved,0);
+ assert.match(checkpoint.originalFullOfficialSenateDirectorySha256,/^[a-f0-9]{64}$/);
+ assert.match(checkpoint.originalFullSpecialSwearingSha256,/^[a-f0-9]{64}$/);
+});
+test('crosswalk serializer prints 95 public official identities only with no raw government HTML',()=>{
+ const mock=buildSourceVerifiedSenatorReportCrosswalk(synthetic());
+ const serialized=serializeOfficialReportPanelCrosswalk(mock.results);
+ assert.equal(serialized.trimEnd().split('\\n').length,95);
+ assert.doesNotMatch(serialized,/donor|contributor|transaction|<html|<script/i);
 });
