@@ -192,6 +192,23 @@ jobs:
               if(!/^[a-zA-Z0-9+/=]+$/.test(b64)||b64.length>35000)
                 throw Error('Missing or invalid bounded counts');
               const data=JSON.parse(Buffer.from(b64,'base64').toString('utf8'));
+              const topKeys=new Set([
+                'schema','issue','reportScope','selectedExistingNeonDefaultBranch',
+                'selectedDatabaseDeploymentBindingUnverified',
+                'readOnlyRepeatableReadTransactionVerified','mandatoryRollbackComplete',
+                'producerWasReadOnly','privateRowsNamesDonorsAndAmountsExported',
+                'candidateTransactionVersionContainmentAudited',
+                'actualHistoricalPublicByIndependentlyVerified','sampledOnlyNotCensus',
+                'notStatewideReportingDutyDenominator','noPersistedAvailabilityCorrection',
+                'sourceDocumentsMaximum','perSourceEvidencePrefixMaximum',
+                'sampleMayOmitLaterEvidenceRows','metadataYearMayBeMissing',
+                'membershipScopeDerivedFromPersistedLinkNotIndependentHistoricalService',
+                'fullSourceToPersistedRowReconciliationCompleted','productionMutations',
+                'issue864RemainsOpen','rows']);
+              if(!data||typeof data!=='object'||Array.isArray(data)
+                ||Object.keys(data).length!==topKeys.size
+                ||Object.keys(data).some(k=>!topKeys.has(k)))
+                throw Error('Unexpected private top-level field');
               if(data.schema!=='cfb-864-existing-neon-bounded-finance-row-metadata-prefix-pilot-v1'
                 ||data.issue!==864||data.readOnlyRepeatableReadTransactionVerified!==true
                 ||data.mandatoryRollbackComplete!==true||data.productionMutations!==0
