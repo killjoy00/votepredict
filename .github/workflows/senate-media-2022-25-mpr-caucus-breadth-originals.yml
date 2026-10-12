@@ -42,7 +42,7 @@ jobs:
         with:
           node-version: 22
       - name: Offline source originality, Senate-only and joint versus individual attribution tests
-        run: node --test tests/senate-media-2022-25-mpr-caucus-breadth.test.mjs
+        run: node --test tests/senate-media-2022-25-mpr-caucus-breadth.test.mjs tests/senate-media-2022-25-mpr-caucus-breadth-real-receipts.test.mjs
       - name: Probe nine strictly bounded public MPR / Senate caucus exact original URLs
         run: |
           node scripts/run-senate-media-2022-25-mpr-caucus-breadth-originals.mjs \
