@@ -83,7 +83,7 @@ export function reconcilePrivateContextRows(rows,receipt){
   const corrupted=sameOriginal.some(g=>invalidIds.has(g.row.sourceDocumentId)
    ||archiveCapture(g.row.archiveUrl,g.row.originalUrl)!==g.row.archiveCapturedAt);
   const conflictingSnapshot=sameOriginal.some(g=>g.row.archiveUrl===expected.archiveUrl
-   &&g.row.sourceSha256!==expected.sha);
+   &&(g.row.sourceSha256!==expected.sha||g.row.archiveDigest!==expected.archiveSha1));
   const sameUrlDiffCapture=sameOriginal.some(g=>g.row.originalUrl===expected.originalUrl&&g.row.archiveUrl!==expected.archiveUrl);
   const match=exact.length>0;
   // Only shape/status leaves scope. No row IDs/hashes/source URLs in output.
