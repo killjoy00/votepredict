@@ -40,7 +40,7 @@ const singlePerson={
  'senate-justin-eichorn-2016-original-12-capture-dated-exact-issues-v1.json':'Justin Eichorn',
  'senate-roger-chamberlain-2016-original-10-economic-issue-excerpts-and-domain-review-v1.json':'Roger Chamberlain'
 };
-const arrays=['excerpts','statements','shortIssues','exactVisibleCandidatePolicyExcerpts',
+const arrays=['issues','excerpts','statements','shortIssues','exactVisibleCandidatePolicyExcerpts',
  'exactOriginalCandidateSiteIssueExcerpts','exactCandidateCampaignPolicyExcerpts',
  'exactOriginalShortExcerpts','exactCandidateOriginalPlatformShortExcerpts',
  'exactSourceCandidateIssueExcerpts','rows','candidateOriginalLiteralResearchStatements',
