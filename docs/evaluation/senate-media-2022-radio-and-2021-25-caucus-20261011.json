@@ -121,6 +121,14 @@
           "rawHtmlBytes": 89957,
           "selectedShortPolicyPhrasePresentInOriginalPage": true,
           "directIndividualSenatorPressReleaseNotAudioOrHumanVerbatimQuote": true
+        },
+        {
+          "archiveCaptureUtc": "2022-12-21T18:52:26Z",
+          "indexedOriginalSha1Base32": "ILOYMFWWVYOU6UKABRX4RLSHO3BCQK73",
+          "verifiedRawHtmlSha256": "6132a85c9bf17ff37048db6dc068d72131e645ae2ccc3865c01f3780c2d468a0",
+          "rawHtmlBytes": 90076,
+          "selectedShortPolicyPhrasePresentInOriginalPage": true,
+          "directIndividualSenatorPressReleaseNotAudioOrHumanVerbatimQuote": true
         }
       ],
       "earlierEventOrVoteEligible": false,
@@ -198,7 +206,7 @@
     "additionalNewlySelectedPressReleaseLeads": 5,
     "previouslyKnownPhaAndColemanStatementLeads": 2,
     "distinctNamedServingStateSenators": 5,
-    "originalArchiveVerifiedHtmlBodies": 6,
+    "originalArchiveVerifiedHtmlBodies": 7,
     "originalArchiveVerifiedDistinctPublisherUrls": 4,
     "originalBensonKuneshAudioMp3BodiesAuthenticated": 0,
     "archivedOriginalFullNamedSenatorVerbatimAudioHumanVerified": 0,
@@ -216,6 +224,17 @@
     "march2025PhaStatementFollowsCharges": true,
     "noPrivateNeonVotePredictDataOrProductionEvidenceSourceReconciliation": true,
     "noRawArticleHtmlMp3PdfWarcFullTranscriptPersisted": true,
-    "noCollectorIngestionModelTrainingForecastChanges": true
+    "noCollectorIngestionModelTrainingForecastChanges": true,
+    "firstSuccessfulRunHadSixOriginalCapturesAndLaterRunAuthenticatedSeventhVersion": true
+  },
+  "firstAdditionalAuthenticatedArchiveCaptureAfterInitialRun": {
+    "observedInRunId": 38199182527,
+    "jobIntentionallyFailedClosedPendingReceiptPin": true,
+    "id": "2022-weber-state-surplus-proposals",
+    "archiveUtc": "2022-12-21T18:52:26Z",
+    "independentIndexedSha1Base32": "ILOYMFWWVYOU6UKABRX4RLSHO3BCQK73",
+    "computedOriginalHtmlSha256": "6132a85c9bf17ff37048db6dc068d72131e645ae2ccc3865c01f3780c2d468a0",
+    "originalHtmlBytes": 90076,
+    "anotherHtmlVersionOfSameWeberSourceNotAnotherNewStory": true
   }
 }
