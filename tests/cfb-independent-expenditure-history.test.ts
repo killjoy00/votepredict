@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { parseCfbIndependentExpenditureCsv,sessionForIndependentExpenditureYear } from '../src/evidence/cfb-independent-expenditure-history.js';
 import {
   CFB_SPECIFIC_LOBBYING_SUBJECT_FIRST_REPORT_YEAR,
@@ -262,5 +263,54 @@ test('filing-derived report windows require independent due-date proof and canno
   }]),null,'an early filing cannot authorize pre-due public availability');
   assert.equal(firstCfbReportAvailabilityForTransaction(tx,[{
     ...base,availableOn:'2024-07-30',filedOn:'2024-07-25',dueOn:'2024-07-29',
-  }])?.availableOn,'2024-07-30');
+  }]),null,'legal release floor is never affirmative historical publication');
+  assert.equal(firstCfbReportAvailabilityForTransaction(tx,[{
+    ...base,availableOn:'2024-08-15',filedOn:'2024-07-25',dueOn:'2024-07-29',
+  }]),null,'an arbitrary post-due date cannot bootstrap historical publication');
+});
+
+
+test('a separately disclosed report must respect the legal floor when due and filing dates are known',()=>{
+  const base={
+    registrationNumber:'19001',reportName:'2024 Pre-Primary',
+    coverageStartOn:'2024-01-01',coverageEndOn:'2024-07-20',
+    filedOn:'2024-07-25',dueOn:'2024-07-29',
+    proofUrl:'https://register.cfb.mn.gov/reports/version-original',
+    proofKind:'cfb_public_disclosure' as const,
+  };
+  const tx={registrationNumber:'19001',occurredOn:'2024-07-01'};
+  assert.equal(firstCfbReportAvailabilityForTransaction(tx,[
+    {...base,availableOn:'2024-07-26'},
+  ]),null,'an asserted disclosure before statutory release must fail closed');
+  assert.equal(firstCfbReportAvailabilityForTransaction(tx,[
+    {...base,availableOn:'2024-08-01'},
+  ])?.availableOn,'2024-08-01','a separately source-labelled public-by date can qualify');
+});
+
+test('large contribution notice windows cannot omit actual filing day',()=>{
+  const base={
+    registrationNumber:'19001',reportName:'large_contribution_notice',
+    coverageStartOn:'2024-07-01',coverageEndOn:'2024-07-01',
+    availableOn:'2024-07-02',
+    proofUrl:'https://register.cfb.mn.gov/notice/version',
+    proofKind:'cfb_large_contribution_notice' as const,
+  };
+  const tx={registrationNumber:'19001',occurredOn:'2024-07-01'};
+  assert.equal(firstCfbReportAvailabilityForTransaction(tx,[base]),null);
+  assert.equal(firstCfbReportAvailabilityForTransaction(tx,[
+    {...base,filedOn:'2024-07-03'},
+  ]),null,'notice cannot be public before filing');
+  assert.equal(firstCfbReportAvailabilityForTransaction(tx,[
+    {...base,filedOn:'2024-07-01'},
+  ])?.availableOn,'2024-07-02');
+});
+
+test('independent expenditure backfill does not directly promote report filing/due-only source facts',()=>{
+  const source=readFileSync('scripts/backfill-cfb-independent-expenditures.ts','utf8');
+  assert.doesNotMatch(source,/buildCfbReportDisclosureProof\(/);
+  assert.match(source,/if \(row\.filedOn && row\.dueOn && row\.reportName\) \{/);
+  assert.match(source,/verifiedDisclosureMappings = disclosureMappings\.filter/);
+  assert.match(source,/disclosure\.proof_kind = 'cfb_public_disclosure'/);
+  assert.match(source,/disclosure\.disclosed_on = disclosure\.available_on/);
+  assert.match(source,/for \(let offset = 0; offset < verifiedDisclosureMappings\.length/);
 });
