@@ -317,6 +317,10 @@ async function main() {
 
     type Mapping = {
       rowKey: string;
+      // The independently source-labelled publication type is mandatory.
+      // Ordinary current report PDFs are only cfb_report_filing legal floors.
+      proofKind: 'cfb_public_disclosure';
+      disclosedOn: string;
       availableOn: string;
       filedOn: string;
       dueOn: string;
@@ -347,13 +351,18 @@ async function main() {
         affectedCommitteeRegistrationNumber:
           row.kind === 'expenditure' ? row.affectedCommitteeRegistrationNumber : null,
       }, acquired.reports.map(report => ({ proof: report.proof, text: report.text })));
-      if (!match) continue;
+      // Defense in depth: current report PDFs yield cfb_report_filing, never
+      // historical public-by. The v8 selector already fails closed; keep an
+      // explicit candidate-writer guard even if that selector later changes.
+      if (!match || match.window.proofKind !== 'cfb_public_disclosure') continue;
       const proof = acquired.reports.find(report =>
         report.proof.textSha256 === match.proof.textSha256
         && report.proof.window.proofUrl === match.window.proofUrl);
       if (!proof) continue;
       mappings.push({
         rowKey: row.rowKey,
+        proofKind: 'cfb_public_disclosure',
+        disclosedOn: match.window.availableOn,
         availableOn: match.window.availableOn,
         filedOn: match.proof.filedOn,
         dueOn: match.proof.dueOn,
@@ -548,7 +557,7 @@ async function main() {
             years: [2021, 2022, 2023, 2024, 2025, 2026],
             boundedRowCount: selected.length,
             rowContentSha256: candidateFinanceContentSha256(selected.map(item => item.row)),
-            historicalAvailability: 'official_report_filing_derived_availability_when_row_level_proven',
+            historicalAvailability: 'current_report_pdf_row_lead_not_historical_public_by',
             availabilityPolicyVersion: CFB_REPORT_AVAILABILITY_VERSION,
           },
         }, batch.map(item => item.draft));
@@ -634,6 +643,8 @@ async function main() {
       const batch = mappings.slice(offset, offset + promotionBatchSize).map(mapping => ({
         row_key: mapping.rowKey,
         available_on: mapping.availableOn,
+        disclosed_on: mapping.disclosedOn,
+        proof_kind: mapping.proofKind,
         filed_on: mapping.filedOn,
         due_on: mapping.dueOn,
         report_name: mapping.reportName,
@@ -649,6 +660,8 @@ async function main() {
             FROM jsonb_to_recordset($1::jsonb) AS d(
               row_key text,
               available_on date,
+              disclosed_on date,
+              proof_kind text,
               filed_on date,
               due_on date,
               report_name text,
@@ -666,10 +679,11 @@ async function main() {
                  'availabilityStatus', 'regulatory_disclosure_date_proven',
                  'availabilityPolicyVersion', $2::text,
                  'availableOn', disclosure.available_on::text,
+                 'disclosedOn', disclosure.disclosed_on::text,
                  'filedOn', disclosure.filed_on::text,
                  'reportDueOn', disclosure.due_on::text,
                  'reportName', disclosure.report_name,
-                 'availabilityProofKind', 'cfb_report_filing',
+                 'availabilityProofKind', disclosure.proof_kind,
                  'availabilityProofUrl', disclosure.proof_url,
                  'availabilityProofTextSha256', disclosure.proof_text_sha256,
                  'availabilityProofContentSha256', disclosure.proof_content_sha256,
@@ -684,6 +698,9 @@ async function main() {
                ))
           FROM source_documents sd, disclosure
          WHERE sd.id = ei.source_document_id
+           AND disclosure.proof_kind = 'cfb_public_disclosure'
+           AND disclosure.disclosed_on IS NOT NULL
+           AND disclosure.disclosed_on = disclosure.available_on
            AND sd.source_kind IN (
              'campaign_finance_candidate_contribution_bulk',
              'campaign_finance_candidate_expenditure_bulk'
@@ -881,7 +898,10 @@ async function main() {
           transactionDateIsAvailability: false,
           reportMustDemonstrateRow: true,
           reportCoverageRequired: true,
-          filingDerivedAvailabilityUsesDocumentedNextDayRule: true,
+          filingDerivedAvailabilityUsesDocumentedNextDayRule: false,
+          filingAndDueDatesOnlyProvideLegalNotBeforeFloor: true,
+          currentPdfIsNotHistoricalExactVersionPublicByProof: true,
+          separateDirectDisclosureEvidenceRequiredForPromotion: true,
           sameDayReplayExcluded: true,
           contextOnly: true,
           mechanicallyActionable: false,
