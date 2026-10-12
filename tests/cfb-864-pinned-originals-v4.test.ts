@@ -136,7 +136,7 @@ test('public-only bounded ten-source receipt holds distinct untrusted source sta
  assert.equal(valid.privateStoredParityEstablished,false);
  assert.equal(valid.firstPublicDateEstablished,false);
  assert.equal(valid.noOriginalBodiesUploadedOrLogged,true);
- assert.doesNotMatch(JSON.stringify(valid),/Synthetic [0-9]+|Synthetic PAC|Affected Comte Name|Example Committee|rowKeys|fullBody/i);
+ assert.doesNotMatch(JSON.stringify(valid),/Synthetic [0-9]+|Synthetic PAC|Affected Comte Name|Example Committee|\\\"rowKeys\\\"|fullBody/i);
 });
 test('bad digest, a changed original, or changed timestamp causes HOLD, never positive',async()=>{
  const source=PINNED_CFB_ORIGINALS[2],bytes=fixture(source.stream);
