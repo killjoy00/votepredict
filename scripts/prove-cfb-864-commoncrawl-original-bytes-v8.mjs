@@ -136,6 +136,7 @@ export function verifyCfbWarcOriginal(gzipBytes,record,source){
  assertOfficialUrl(warc.get('warc-target-uri')||'',source.selector);
  if(warc.get('warc-target-uri')!==record.url)
   throw Error('WARC target and CC index identity disagree');
+ if(warc.has('warc-truncated'))throw Error('WARC record marked truncated');
  if(warc.get('warc-type')!=='response'
   ||!/^application\/http\s*;\s*msgtype=response$/i.test(warc.get('content-type')||'')
   ||warc.get('warc-payload-digest')!=='sha1:'+source.digest)
@@ -212,16 +213,51 @@ function indexRequestUrl(source){
   filter:'status:200',limit:String(MAX_INDEX_ROWS)});
  return 'https://index.commoncrawl.org/'+CFB_864_CRAWL_V8_INDEX+'-index?'+p.toString();
 }
+/** Only fixed, code-authored failure categories may be printed: never raw
+ * exception strings, URLs, WARC bytes, or original CSV row identities.
+ */
+function classifiedIntegrityHold(error){
+ const message=error instanceof Error?error.message:'';
+ const known=[
+  ['Compressed record not exact indexed range','compressed_range_mismatch'],
+  ['Invalid or over-limit gzip WARC record','gzip_invalid_or_oversized'],
+  ['Invalid WARC header boundary','warc_header_invalid'],
+  ['Not an original WARC response','warc_version_invalid'],
+  ['Wrong WARC/HTTP response header','response_header_invalid'],
+  ['Malformed WARC or HTTP header','response_header_invalid'],
+  ['Duplicate WARC or HTTP header','duplicate_header_invalid'],
+  ['WARC/index official original does not match pinned download selector','warc_target_invalid'],
+  ['WARC target and CC index identity disagree','warc_target_index_mismatch'],
+  ['WARC record marked truncated','warc_truncated'],
+  ['Not a complete indexed WARC response payload','warc_payload_header_invalid'],
+  ['WARC timestamp does not match indexed capture day','warc_timestamp_mismatch'],
+  ['Invalid WARC HTTP block length','warc_http_length_invalid'],
+  ['Extraneous WARC bytes after response record','warc_trailing_bytes'],
+  ['Missing HTTP response headers','http_header_missing'],
+  ['Indexed WARC is not HTTP 200','http_status_invalid'],
+  ['Unexpected active HTTP body encoding','http_content_encoded'],
+  ['Truncated or oversize original CSV','csv_size_invalid'],
+  ['Incomplete HTTP entity length','http_entity_length_mismatch'],
+  ['Original HTTP entity is not CSV','http_content_type_invalid'],
+  ['Whole original entity does not match CC SHA1','whole_entity_sha1_mismatch'],
+  ['Original CSV header missing','csv_header_missing'],
+  ['Original CSV has unexpected historical row count','csv_parsed_row_count_invalid'],
+  ['Untrusted original row identities','csv_canonical_keys_invalid'],
+  ['Unapproved finance original stream','unapproved_stream'],
+ ];
+ return known.find(([reason])=>reason===message)?.[1]||'other_integrity_hold';
+}
 export async function verifyOneCfbCrawlSource(source,fetchPublic=fetch){
  const result={sourceId:source.id,status:'index_network_hold',
-  indexDigestPinned:source.digest,verified:null};
+  indexDigestPinned:source.digest,verified:null,
+  indexHttpStatus:null,rangeHttpStatus:null,holdCode:null};
  const url=indexRequestUrl(source);
  let record;
  try{
   const r=await fetchPublic(url,{method:'GET',redirect:'manual',
    headers:{accept:'application/json'},signal:AbortSignal.timeout(25000)});
   assertResponseOrigin(r,url);
-  if(!r.ok){result.status='index_http_hold';return result}
+  if(!r.ok){result.status='index_http_hold';result.indexHttpStatus=r.status;return result}
   record=choosePinnedCrawlRecord(
    (await exactLimitedBytes(r,MAX_INDEX_BYTES)).toString('utf8'),source);
  }catch{result.status='index_invalid_or_network_hold';return result}
@@ -233,7 +269,7 @@ export async function verifyOneCfbCrawlSource(source,fetchPublic=fetch){
    headers:{range:'bytes='+record.offset+'-'+end},
    signal:AbortSignal.timeout(90000)});
   assertResponseOrigin(r,target);
-  if(r.status!==206){result.status='warc_range_http_hold';return result}
+  if(r.status!==206){result.status='warc_range_http_hold';result.rangeHttpStatus=r.status;return result}
   const expectedPrefix='bytes '+record.offset+'-'+end+'/';
   const range=r.headers.get('content-range')||'';
   if(!range.startsWith(expectedPrefix)
@@ -248,7 +284,8 @@ export async function verifyOneCfbCrawlSource(source,fetchPublic=fetch){
   const proof=parseAuthenticatedCfbOriginal(body,source,record);
   result.status='verified_independent_2022_07_04_crawl_original';
   result.verified=proof;
- }catch{result.status='warc_entity_or_csv_integrity_hold'}
+ }catch(error){result.status='warc_entity_or_csv_integrity_hold';
+  result.holdCode=classifiedIntegrityHold(error)}
  return result;
 }
 export async function proveCfbCrawlOriginalsV8(fetchPublic=fetch){
