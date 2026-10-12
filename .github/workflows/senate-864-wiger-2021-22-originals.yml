@@ -1,0 +1,43 @@
+name: Senate 864 2021-22 Wiger original education-source recovery
+on:
+  push:
+    branches:
+      - research/864-substantive-current-lead-audit-20261012
+    paths:
+      - data/evaluation/senate-864-wiger-2021-22-direct-legislative-education-original-leads-v1.json
+      - scripts/probe-senate-864-wiger-2021-22-firstparty-education-originals.mjs
+      - tests/senate-864-wiger-2021-22-firstparty-education-originals.test.mjs
+      - .github/workflows/senate-864-wiger-2021-22-originals.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  wiger-originals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Wiger original/speaker/source vs election-campaign negative control tests
+        run: |
+          node --check scripts/probe-senate-864-wiger-2021-22-firstparty-education-originals.mjs
+          node --test tests/senate-864-wiger-2021-22-firstparty-education-originals.test.mjs
+      - name: Wayback entire original SHA1 verified 2021-22 signed Wiger first-party issue statements
+        run: |
+          mkdir -p research-output
+          node scripts/probe-senate-864-wiger-2021-22-firstparty-education-originals.mjs \
+            research-output/senate-864-wiger-specific-original-signed-2021-22-senate-issue-statements.json
+      - name: Save public original-source provenance only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-wiger-2021-22-authentic-original-specific-legislative-speech-receipts
+          path: research-output/*.json
+          retention-days: 30
+          if-no-files-found: warn
