@@ -152,6 +152,12 @@ export function inspectOfficialRolls(text,journal){
     correctSections=!nh||nh.index>from+yesNames.length;
    }
   }
+  // Proxy blocks can appear between the affirmative and negative headers.
+  // A surname mentioned only as a Rule 40 proxy beneficiary is not proof it
+  // appeared in the individually printed roll roster itself.
+  const proxyBoundary=/\bPursuant\s+to\s+Rule\s+40\b/i;
+  yesNames=yesNames.split(proxyBoundary)[0];
+  noNames=noNames.split(proxyBoundary)[0];
   const member=expected.senator.split(' ').at(-1);
   const memberYea=new RegExp('\\b'+member+'\\b','i').test(yesNames);
   const memberNay=new RegExp('\\b'+member+'\\b','i').test(noNames);
