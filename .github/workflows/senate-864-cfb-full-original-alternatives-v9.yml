@@ -1,0 +1,30 @@
+name: 'Senate #864 CFB June-original range and independent archive research V9'
+on:
+  pull_request:
+    paths:
+      - 'scripts/prove-cfb-864-full-original-range-arquivo-v9.mjs'
+      - 'tests/cfb-864-full-original-alternatives-v9.test.mjs'
+      - 'docs/evaluation/cfb-2021-22-full-original-range-and-arquivo-v9.md'
+      - '.github/workflows/senate-864-cfb-full-original-alternatives-v9.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  public-source-original-only:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install exact pinned parser dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Adversarial Range/CDX and public-receipt tests
+        run: node --import tsx --test tests/cfb-864-full-original-alternatives-v9.test.mjs
+      - name: Bounded original-byte range verification and independent archival CDX metadata
+        run: node --import tsx scripts/prove-cfb-864-full-original-range-arquivo-v9.mjs
