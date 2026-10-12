@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
-import {sha1Base32,validCdxEntries,decodeVisibleOriginal,attributedShortCue,probe}
+import {sha1Base32,validCdxEntries,decodeVisibleOriginal,attributedShortCue,boundedNamedSpeakerQuote,probe}
  from '../scripts/probe-senate-864-substantive-new-originals.mjs';
 const manifest=JSON.parse(readFileSync('data/evaluation/senate-864-substantive-firstparty-current-original-leads-v1.json','utf8'));
 const q=manifest.leads.find(x=>x.id==='lead-2023-kreun-sf551');
@@ -57,4 +57,26 @@ test('duplicate publisher fragment remains one named quote event independent of 
  assert.equal(proof.literalShortPublisherCueFound,true);
  assert.ok(proof.selectedCueOccurrenceCount>1);
  assert.equal(proof.wholeHumanApprovedVerbatimQuote,false);
+});
+
+test('bound historic original short claim to closing quote with Senator FIRST LAST attribution',()=>{
+ const html=Buffer.from('<p>“'+q.exactCurrentlyVisibleShortQuote+' Unfortunately, additional limits apply,” said Senator Michael Kreun (R-Blaine).</p>');
+ const p=boundedNamedSpeakerQuote(html,q);
+ assert.equal(p.boundedNamedSpeakerQuote,true);
+ assert.equal(p.selectedCueInsideClosedQuotedRegion,true);
+ assert.equal(p.completeHumanApprovedWholeSpeech,false);
+});
+test('bound "said Kreun" only with preceding same-turn full senator name',()=>{
+ const html=Buffer.from('<p>Senator Michael Kreun (R-Blaine) presented two pieces of Highway 65 legislation.</p><p>“'+q.exactCurrentlyVisibleShortQuote+'” said Kreun.</p>');
+ assert.equal(boundedNamedSpeakerQuote(html,q).boundedNamedSpeakerQuote,true);
+});
+test('different senator quote or missing curly closure never becomes attributed speech',()=>{
+ const a=Buffer.from('<p>“'+q.exactCurrentlyVisibleShortQuote+'” said Senator Mark Koran.</p>');
+ const b=Buffer.from('<p>Senator Michael Kreun responded. “'+q.exactCurrentlyVisibleShortQuote+' said Kreun.</p>');
+ assert.equal(boundedNamedSpeakerQuote(a,q).boundedNamedSpeakerQuote,false);
+ assert.equal(boundedNamedSpeakerQuote(b,q).boundedNamedSpeakerQuote,false);
+});
+test('repeated short quote not promoted to one uniquely bounded speech',()=>{
+ const html=Buffer.from('<p>“'+q.exactCurrentlyVisibleShortQuote+'” said Senator Michael Kreun.</p>'.repeat(2));
+ assert.equal(boundedNamedSpeakerQuote(html,q).boundedNamedSpeakerQuote,false);
 });
