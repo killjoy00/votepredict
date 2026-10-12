@@ -1,0 +1,293 @@
+name: One-shot #864 2021-22 CFB original archived candidate CSV proof (PUBLIC ONLY)
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-864-cfb-2021-22-public-original-csv-v1.yml
+      - scripts/prove-cfb-864-public-archived-csv-source-v1.ts
+      - tests/cfb-864-public-csv-original-auth-v1.test.ts
+  push:
+    branches: [main]
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+concurrency:
+  group: cfb-864-public-csv-v1-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  pr-source-synthetic:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Independently test public CDX original bytes, source and privacy guards
+        run: node --import tsx --test tests/cfb-864-public-csv-original-auth-v1.test.ts
+
+  one-shot-verify:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V1')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_2021_22_CSV_V1_OWNER_ONE_SHOT'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify reviewed exact main SHA
+        env:
+          MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$MAIN_SHA"
+      - name: Require unique original source proof marker in checked-out main commit
+        run: git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V1'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: node --import tsx --test tests/cfb-864-public-csv-original-auth-v1.test.ts
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+
+  one-shot-public-source:
+    needs: [one-shot-verify]
+    if: >-
+      needs.one-shot-verify.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V1')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_2021_22_CSV_V1_OWNER_ONE_SHOT'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    outputs:
+      public_csv_proof_b64: ${{ steps.probe.outputs.public_csv_proof_b64 }}
+    env:
+      CFB_864_CSV_V1_VERIFIED_MARKER: 'true'
+      CFB_864_CSV_V1_OWNER_ISSUE_COMMENT_VERIFIED: ${{ github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_2021_22_CSV_V1_OWNER_ONE_SHOT' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact reviewed main SHA
+        env:
+          MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$MAIN_SHA"
+      - name: Require committed one-shot raw CSV proof marker
+        run: git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V1'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Acquire and hash only approved historical public CSV originals
+        id: probe
+        run: node --max-old-space-size=4096 --import tsx scripts/prove-cfb-864-public-archived-csv-source-v1.ts
+
+  publish-safe-source-receipt:
+    needs: [one-shot-verify, one-shot-public-source]
+    if: >-
+      always() &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V1')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_2021_22_CSV_V1_OWNER_ONE_SHOT')) &&
+      (needs.one-shot-verify.result == 'failure' ||
+       (needs.one-shot-verify.result == 'success' &&
+        (needs.one-shot-public-source.result == 'success' ||
+         needs.one-shot-public-source.result == 'failure')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    permissions:
+      contents: read
+      issues: write
+    env:
+      VERIFY_RESULT: ${{ needs.one-shot-verify.result }}
+      PROBE_RESULT: ${{ needs.one-shot-public-source.result }}
+      PROBE_RECEIPT_B64: ${{ needs.one-shot-public-source.outputs.public_csv_proof_b64 }}
+    steps:
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const run='https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID;
+            const lead=[
+             '## #864 Track B — independent CFB archived candidate CSV original-byte probe',
+             '',
+             'Reviewed exact main SHA: '+process.env.GITHUB_SHA,
+             'Public-only GitHub run: '+run,
+             '',
+            ];
+            let body;
+            if(process.env.VERIFY_RESULT==='failure'){
+             body=[...lead,'**PRE-SOURCE CI FAILED CLOSED.**',
+              'No new original archived CSV evidence was certified.'].join('\n');
+            }else if(process.env.PROBE_RESULT==='failure'){
+             body=[...lead,'**SOURCE PROBE HELD.**',
+              'Network/script run failed before safe source results could be published.',
+              'This is not proof no Wayback snapshots exist.'].join('\n');
+            }else if(process.env.PROBE_RESULT==='success'){
+             const b64=process.env.PROBE_RECEIPT_B64??'';
+             if(!/^[A-Za-z0-9+/=]+$/.test(b64)||b64.length>50000)
+              throw Error('Invalid public-source receipt encoding');
+             const data=JSON.parse(Buffer.from(b64,'base64').toString('utf8'));
+             const top=new Set([
+              'schema','issue','provenance','years','cappedCandidateUrlCount',
+              'maxCdxCaptureRows','maxOriginalFetchesPerStream','originalBytesCap',
+              'sourceOnlyNoNeon','privateStoredRowParityEstablished',
+              'originalReportPdfHistoricalPublicByEstablished','firstPublicationKnown',
+              'legislatorFilingDutyDenominatorEstablished','noPrivateRowOrDonorOutput',
+              'results']);
+             if(!data||typeof data!=='object'||Array.isArray(data)
+              ||Object.keys(data).length!==top.size||Object.keys(data).some(k=>!top.has(k)))
+              throw Error('Unexpected original source receipt fields');
+             if(data.schema!=='cfb-864-cfb-candidate-archived-original-csv-v1'
+              ||data.issue!==864
+              ||data.provenance!=='public_wayback_raw_replay_and_cdx_exact_source'
+              ||data.years!=='2021-2022'||data.cappedCandidateUrlCount!==2
+              ||data.maxCdxCaptureRows!==60||data.maxOriginalFetchesPerStream!==2
+              ||data.originalBytesCap!==120000000||data.sourceOnlyNoNeon!==true
+              ||data.privateStoredRowParityEstablished!==false
+              ||data.originalReportPdfHistoricalPublicByEstablished!==false
+              ||data.firstPublicationKnown!==false
+              ||data.legislatorFilingDutyDenominatorEstablished!==false
+              ||data.noPrivateRowOrDonorOutput!==true
+              ||!Array.isArray(data.results)||data.results.length!==2)
+              throw Error('Unexpected public source proof claims');
+             const streams=['candidate_contributions','candidate_expenditures'];
+             const sources=[
+              'https://cfb.mn.gov/reports-and-data/self-help/data-downloads/campaign-finance/?download=-2113865252',
+              'https://cfb.mn.gov/reports-and-data/self-help/data-downloads/campaign-finance/?download=-1890073264'];
+             const allowedStatus=new Set([
+              'authenticated','cdx_unavailable','no_indexed_capture',
+              'invalid_cdx_metadata','raw_replay_unavailable','raw_replay_over_cap',
+              'cdx_body_digest_mismatch','missing_candidate_csv_rows','csv_parse_rejected']);
+             const safe=[];
+             for(let i=0;i<2;i++){
+              const row=data.results[i];
+              if(!row||typeof row!=='object'||Array.isArray(row)
+               ||Object.keys(row).length!==5
+               ||Object.keys(row).some(k=>!new Set([
+                'stream','status','capturesConsidered','capturesAttempted','verified']).has(k))
+               ||row.stream!==streams[i]||!allowedStatus.has(row.status)
+               ||!Number.isInteger(row.capturesConsidered)||row.capturesConsidered<0
+               ||row.capturesConsidered>60
+               ||!Number.isInteger(row.capturesAttempted)||row.capturesAttempted<0
+               ||row.capturesAttempted>2||row.capturesAttempted>row.capturesConsidered)
+               throw Error('Unexpected public-only stream result');
+              const proof=row.verified;
+              if((row.status==='authenticated')!==(proof!==null))
+               throw Error('Unsafe source authentication claim');
+              if(proof!==null){
+               const keys=new Set([
+                'stream','original','timestamp','capturedOn','cdxSha1Base32',
+                'originalSha256','originalBytes','parsed2021','parsed2022',
+                'distinctParsedRowKeys','repeatedParsedRowKeys']);
+               if(typeof proof!=='object'||Array.isArray(proof)
+                ||Object.keys(proof).length!==keys.size
+                ||Object.keys(proof).some(k=>!keys.has(k))
+                ||proof.stream!==streams[i]
+                ||!['http:','https:'].includes(new URL(proof.original).protocol)
+                ||new URL(proof.original).hostname!=='cfb.mn.gov'
+                ||new URL(proof.original).pathname!=='/reports-and-data/self-help/data-downloads/campaign-finance/'
+                ||new URL(proof.original).searchParams.size!==1
+                ||new URL(proof.original).searchParams.get('download')!==new URL(sources[i]).searchParams.get('download')
+                ||!/^[0-9]{14}$/.test(proof.timestamp)
+                ||!/^202[1-3]-[0-9]{2}-[0-9]{2}$/.test(proof.capturedOn)
+                ||proof.timestamp.slice(0,4)+'-'+proof.timestamp.slice(4,6)+'-'+proof.timestamp.slice(6,8)!==proof.capturedOn
+                ||!/^[A-Z2-7]{32}$/.test(proof.cdxSha1Base32)
+                ||!/^[a-f0-9]{64}$/.test(proof.originalSha256)
+                ||!Number.isInteger(proof.originalBytes)||proof.originalBytes<500||proof.originalBytes>120000000
+                ||!Number.isInteger(proof.parsed2021)||proof.parsed2021<0||proof.parsed2021>2000000
+                ||!Number.isInteger(proof.parsed2022)||proof.parsed2022<0||proof.parsed2022>2000000
+                ||!Number.isInteger(proof.distinctParsedRowKeys)||proof.distinctParsedRowKeys<1
+                ||!Number.isInteger(proof.repeatedParsedRowKeys)||proof.repeatedParsedRowKeys<0
+                ||proof.parsed2021+proof.parsed2022!==proof.distinctParsedRowKeys+proof.repeatedParsedRowKeys
+                ||proof.parsed2021+proof.parsed2022<25)
+                throw Error('Unsafe public original-byte receipt');
+               safe.push('- **'+streams[i]+' — ORIGINAL RAW CSV/CDX SHA1 MATCH**: archive capture day '
+                +proof.capturedOn+'; verified raw bytes '+proof.originalBytes
+                +'; SHA256 '+proof.originalSha256
+                +'; CDX original-body SHA1 Base32 '+proof.cdxSha1Base32
+                +'; parsed 2021/2022 '+proof.parsed2021+'/'+proof.parsed2022
+                +'; distinct/repeated canonical row keys '+proof.distinctParsedRowKeys
+                +'/'+proof.repeatedParsedRowKeys
+                +'; fixed official download selector confirmed.');
+              }else{
+               safe.push('- **'+streams[i]+' — HOLD**: '+row.status
+                +'; CDX candidates considered '+row.capturesConsidered
+                +'; bounded replay attempts '+row.capturesAttempted
+                +'. NOT a zero-row or absence-of-archive finding.');
+              }
+             }
+             body=[...lead,
+              '**First-party archive BODY verification, public research only.**',
+              'For each authenticated source: fixed official original-download selector,',
+              'exact historical CDX timestamp and SHA1 Base32, raw Wayback id_ replay',
+              'original bytes matching CDX digest, independent full raw-body SHA256,',
+              'and existing canonical CSV parser 2021–22 row-key counts.',
+              '',
+              ...safe,
+              '',
+              'The public original CSV bodies contain finance rows: no such raw body,',
+              'person/donor/amount or individual row key was uploaded or published here.',
+              'Authentication of a source-version original is NOT a private stored',
+              'archiveDigest equality audit, exact 2,150-row match, verified historical',
+              'ordinary-report PDF-version publication, first source publication day,',
+              'or an official Senate registration/filing-duty denominator.',
+              'No Neon key or database accessed; no writes/serving/deploy/2027 work.',
+              '#864 remains OPEN.'].join('\n');
+            }else throw Error('Unrecognized public-only source result');
+            if(body.length>45000)throw Error('Oversized safe issue comment');
+            await github.rest.issues.createComment({
+             owner:'killjoy00',repo:'votepredict',issue_number:864,body,
+            });
