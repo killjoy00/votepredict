@@ -42,7 +42,7 @@ jobs:
         with:
           node-version: 22
       - name: Offline exact original source, session collision, aggregate vote and nonofficial senator-label limits
-        run: node --test tests/senate-media-hawj-hf5247-public-bill-action-bridge.test.mjs
+        run: node --test tests/senate-media-hawj-hf5247-public-bill-action-bridge.test.mjs tests/senate-media-hawj-hf5247-public-real-receipts.test.mjs
       - name: Bounded read-only current Revisor 93rd Legislature action statuses and labeled secondary reporter
         run: node scripts/probe-senate-media-hawj-hf5247-public-bill-action-bridge.mjs --output artifacts/track-d-hawj-2024-hf5247-public-action-metadata.json
       - name: Upload metadata only, no government original HTML or voting documents
