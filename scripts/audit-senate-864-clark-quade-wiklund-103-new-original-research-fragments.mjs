@@ -91,7 +91,7 @@ function verify(r,expected){
  assert.ok(/^[a-z0-9_]+$/.test(r.issueFamily));
  assert.ok(typeof r.cautiousMeaning==='string'&&r.cautiousMeaning.length>=8);
  assert.ok(typeof r.exactShortExcerpt==='string'&&r.exactShortExcerpt.length>=6&&r.exactShortExcerpt.length<=125);
- assert.equal(r.automaticallyForecastEligible,false,'Must not opt into model');
+ assert.equal(r.automaticallyForecastEligible??r.automaticForecastEligible,false,'Must not opt into model');
  const exact=clean(r.exactShortExcerpt);
  assert.ok(!fragments.has(p.officialName+'|'+exact),'Duplicate new excerpt '+p.officialName+' '+r.id);
  fragments.add(p.officialName+'|'+exact);
