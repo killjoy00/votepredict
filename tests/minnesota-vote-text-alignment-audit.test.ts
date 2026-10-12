@@ -180,3 +180,19 @@ test('large omnibus comparison explicitly asks for section chunking and bounded 
   assert.equal(narrow.changes.length, 2);
   assert.equal(narrow.omittedChanges, 4);
 });
+
+test('review requires the exact archived event source and flags impossible amendment adoption', () => {
+  assert.equal(one(event, text, { ...reviewedLink, proofUrl: 'https://example.org/not-the-senate-journal' }).status, 'unproven_text_match');
+  const amendmentVote: VoteTextAuditEvent = {
+    ...event, eventKey: 'amendment-rejected-A7', voteKind: 'amendment', amendmentRef: 'A-7', passed: false,
+  };
+  const amendText: AuditedLegislativeText = {
+    ...text, textId: 'amend-A7', kind: 'amendment_text', amendmentRef: 'A-7',
+  };
+  const proposed: ProposedVoteTextLink = {
+    ...reviewedLink, eventKey: amendmentVote.eventKey,
+    textId: amendText.textId, textDisposition: 'adopted',
+  };
+  assert.equal(one(amendmentVote, amendText, proposed).status, 'disposition_conflict');
+  assert.equal(one(amendmentVote, amendText, { ...proposed, textDisposition: 'rejected' }).status, 'reviewed_exact_text_link');
+});
