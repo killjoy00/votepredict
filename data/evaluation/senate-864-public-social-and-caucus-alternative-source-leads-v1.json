@@ -1,0 +1,156 @@
+{
+  "schema": "senate-864-independent-public-social-and-authored-caucus-statement-discovery-v1",
+  "issue": 864,
+  "asOf": "2026-10-12",
+  "scope": "2020-2022 historical Minnesota Senate candidate/senator speaker-scoped public statement discovery, not campaign-owned site or prediction evidence",
+  "exactGovernmentBaseline": {
+    "actualServingSenators2021to2025": 95,
+    "peopleWithAuthenticatedOriginalCandidateOwnedWebsites": 92,
+    "selectedOwnedWebsiteExcerpts": 1285,
+    "originalOfficialLRLDirectorySha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "official2020StateSenateElectionFileSha256": "c2937b1fee5ae077603d892adf03c4ce83e2bb2592753680d5bfdeb4aecf7ba5",
+    "official2020CandidateResultLookupSha256": "8a0596d788b651ec27c05aa576bed31a3a51efd83c2cd2ee2ae5fdcc2f02965a"
+  },
+  "publicSources": [
+    {
+      "id": "pitt-civicwatch-wiger",
+      "category": "independent_academic_public_research_mirror",
+      "url": "https://picso101.sci.pitt.edu/CivicWatch/who/3290230800",
+      "senator": "Sr., Charles W. Wiger",
+      "official2020District": "43",
+      "publicAccountHandle": "@ChuckWiger",
+      "platform": "Twitter/X",
+      "researchInterfacePostsIncludingRetweets": 2093,
+      "displayedCoverageStart": "2020-01-09",
+      "displayedCoverageEnd": "2022-12-06",
+      "exactOriginalPostIdsObtained": 0,
+      "exactOriginalHistoricalPostBodiesAuthenticated": 0,
+      "unverifiedSpeakerLeads": [
+        {
+          "displayedDate": "2020-09-11",
+          "researchTopic": "Culture",
+          "paraphrase": "Remarks on sponsoring historic-preservation legislation associated with a local remembrance landmark",
+          "isRepostOnResearchDisplay": false,
+          "originalPostId": null
+        },
+        {
+          "displayedDate": "2020-06-15",
+          "researchTopic": "Civil Rights",
+          "paraphrase": "Repost of an NPR Supreme Court news item; NOT original candidate speech",
+          "isRepostOnResearchDisplay": true,
+          "originalPostId": null
+        }
+      ],
+      "retweetsMustNotBeTreatedAsCandidateOwnSpeech": true,
+      "originalElectionCyclePublicationCutoffAuthenticated": false
+    },
+    {
+      "id": "pitt-civicwatch-tomassoni",
+      "category": "independent_academic_public_research_mirror",
+      "url": "https://picso101.sci.pitt.edu/CivicWatch/who/3189770262",
+      "senator": "David J. Tomassoni",
+      "official2020District": "6",
+      "publicAccountHandle": "@Ranuccio11",
+      "platform": "Twitter/X",
+      "researchInterfacePostsIncludingRetweets": 96,
+      "displayedCoverageStart": "2020-01-19",
+      "displayedCoverageEnd": "2021-12-11",
+      "displayedParty": "Independent",
+      "original2020OfficialElectionParty": "Democratic-Farmer-Labor",
+      "retroactivelyLabeledPartyMustNotBeAssignedToPreNov2020Source": true,
+      "exactOriginalPostIdsObtained": 0,
+      "exactOriginalHistoricalPostBodiesAuthenticated": 0,
+      "unverifiedSpeakerLeads": [
+        {
+          "displayedDate": "2020-01-19",
+          "researchTopic": "Uncategorized",
+          "paraphrase": "Comment on the PolyMet permit appeals court decision and employment implications",
+          "isRepostOnResearchDisplay": false,
+          "originalPostId": null
+        },
+        {
+          "displayedDate": "2020-10-16",
+          "researchTopic": "Macroeconomics",
+          "paraphrase": "Comment welcoming Line 3 progress and anticipated employment and investment",
+          "isRepostOnResearchDisplay": false,
+          "originalPostId": null
+        },
+        {
+          "displayedDate": "2020-07-23",
+          "researchTopic": "Macroeconomics",
+          "paraphrase": "Repost of another speaker about a capital investment bill; NOT his original authored words",
+          "isRepostOnResearchDisplay": true,
+          "originalPostId": null
+        }
+      ],
+      "retweetsMustNotBeTreatedAsCandidateOwnSpeech": true,
+      "originalElectionCyclePublicationCutoffAuthenticated": false
+    },
+    {
+      "id": "dapr-methods-and-original-post-id-route",
+      "category": "published_2025_academic_dataset_methodology_and_dehydrated_original_id_lead",
+      "url": "https://www.nature.com/articles/s41597-025-05857-1",
+      "publicDownloadLandingUrl": "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/A9EPYJ",
+      "publicationDate": "2025-09-25",
+      "historicalPostsCollectedFrom": "2020-01-01",
+      "historicalPostsCollectedThrough": "2024-12-31",
+      "method": "Publicly described 2020 onward X/Twitter API collection, weekly aggregates including original post URLs, with content-level redistribution restrictions",
+      "directDatasetFilesIndependentlyRetrievedHere": false,
+      "currentlyPublicDatasetPageAccess": "browser_JavaScript_verification_gate_no_bypass",
+      "archiveResearchMirrorAndDAPRExactRecordCorrespondenceVerified": false,
+      "originalPlatformPostIdDecodedAndTextMatchedForTargets": false,
+      "dateRecordedInAcademicDatasetIsNotDirectOriginalBodyPreElectionSourceReceipt": true
+    },
+    {
+      "id": "wiger-2020-july-school-safety-caucus",
+      "category": "candidate_attributed_official_senate_caucus_statement_discovery_only",
+      "url": "https://senatedfl.mn/senator-wiger-statement-on-inadequate-support-for-school-safety/",
+      "senator": "Sr., Charles W. Wiger",
+      "official2020District": "43",
+      "displayedPublicationDate": "2020-07-20",
+      "paraphrase": "Named direct Wiger statement on school reopening safety, federal COVID relief support and hearings",
+      "originalArchived2020HTMLSha1IndexedAndWholeSha256VerifiedHere": false,
+      "originalCaptureBefore2020ElectionIndependent": false,
+      "alreadyIn1285OwnedSiteCorpus": false,
+      "sourceCandidateOwnedWebsite": false,
+      "literalQuoteAdmittedInThisRound": false
+    },
+    {
+      "id": "bakk-previously-audited-2020-kaxe",
+      "category": "previously_authenticated_publisher_candidate_interview_not_new",
+      "url": "https://www.kaxe.org/vote-2020/2020-10-08/meet-senator-tom-bakk-dfl-candidate-for-senate-3-in-lake-cook-st-louis-koochiching-counties",
+      "senator": "Thomas M. Bakk",
+      "official2020District": "3",
+      "publicationDateClaim": "2020-10-08",
+      "originalSpeakerScopedResearchLedgerAlreadyExists": true,
+      "sourceCandidateOwnedWebsite": false,
+      "newStatementHere": false
+    }
+  ],
+  "currentSourceLimitations": {
+    "candidateOwnedWebsiteStillUnauthenticatedFor": [
+      "Sr., Charles W. Wiger",
+      "David J. Tomassoni",
+      "Thomas M. Bakk"
+    ],
+    "original2020And2022SOS21ColumnFiledCandidateWebsiteExportStillUnretrieved": true,
+    "scrapedRepostIsNotOriginalSpeakerText": true,
+    "currentlyVisibleOldPostDateIsNotIndependentSourceCaptureDate": true,
+    "datedResearchMirrorNotOriginalAuthorshipAndFullHTMLDigest": true,
+    "missingTwitterPostIdAndOriginalPlatformBodyBlockNewStatementAdmission": true,
+    "personallyIdentifyingAddressPhoneEmailOrWholeCopyrightedCorpusNotPersisted": true,
+    "noAutomaticInferenceFromAcademicTopicOrVotingPosition": true,
+    "doNotConflateSocialStatementsAndOwnedWebsites": true,
+    "noOutsideContactEmailsRecordsRequests": true,
+    "noProductionDatabaseReadsWrites": true,
+    "noTrainingForecastAppSchedulerOrDeployChanges": true
+  },
+  "effectOnVerifiedCorpus": {
+    "newAuthenticatedOriginalCandidateOwnedWebsitePeople": 0,
+    "newAuthenticatedOriginalCampaignWebsiteExcerpts": 0,
+    "newAuthenticallyDatedSpeakerScopedStatementExcerpts": 0,
+    "previous95ServingUnchanged": true,
+    "previous92OriginalSiteCoveredUnchanged": true,
+    "previous1285OriginalSiteExcerptsUnchanged": true
+  }
+}
