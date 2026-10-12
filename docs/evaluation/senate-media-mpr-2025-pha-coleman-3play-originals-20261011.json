@@ -1,0 +1,143 @@
+{
+  "version": "mpr-2025-pha-coleman-3play-pdf-public-hash-provenance-receipts-v1",
+  "localResearchDay": "2026-10-11",
+  "utcGithubResearchDay": "2026-10-12",
+  "firstPartyOriginalSourcesOnly": true,
+  "sourceWorkflow": {
+    "pr": 1182,
+    "initialRunId": 38193281218,
+    "runConclusion": "success",
+    "prHeadAtInitialRun": "bb401430eb0cf0f5ce72a4f45f97bccc933a56c2",
+    "artifactId": 11721928325,
+    "artifactName": "senate-media-mpr-2025-pha-coleman-3play-originals",
+    "artifactZipSha256": "6b2ac1f148c5087b559fd2ff64989c0e872e963b5b7194f47bf0d2dc1f1159b9",
+    "decodedMetadataJsonBytes": 6915,
+    "decodedMetadataJsonSha256": "435d0d878f6fb32ea19272bfd191a414cc4c0ac95e258b786a1a830a94226f03",
+    "adversarialOfflineTestsPassed": 12,
+    "adversarialOfflineTestsFailed": 0
+  },
+  "scope": {
+    "namedServingSenators": [
+      "Susan Pha",
+      "Julia Coleman"
+    ],
+    "displayedPublisherYear": 2025,
+    "currentFirstPartyMprEpisodeUrls": 2,
+    "currentMprLinkedFirstPartyApmPdfUrls": 2,
+    "currentlySha256VerifiedApm3PlayPdfs": 2,
+    "independentlySha1IndexedAndRawSha1AuthenticatedHistorical2025PdfOriginals": 0,
+    "unknownHistoricalPdfAvailabilityCases": 2,
+    "historicalOriginalMprEpisodeHtmlProvedByThisPdfStudy": 0,
+    "historicalSpeakerTurnsHumanApproved": 0,
+    "original2025AudioBinariesHistoricallyShaAuthenticated": 0
+  },
+  "sources": [
+    {
+      "id": "mpr-2025-pha-hmong-lao-veterans",
+      "senator": "Susan Pha",
+      "topic": "veterans_benefits_after_senate_passage",
+      "publisherDisplayedDay": "2025-04-24",
+      "currentPublisherMprEpisode": "https://www.mprnews.org/episode/2025/04/24/bill-granting-benefits-to-hmong-lao-veterans-passes-minnesota-senate",
+      "currentFirstPartyApm3PlayPdf": "https://codytranscripts.apmcdn.org/production/f6c5cb374510772be01fbc20ea88d2d0.pdf",
+      "currentMprHtml": {
+        "httpStatus": 200,
+        "sha256": "0171403131721bc673cfa7758dc9004af68990e5aba7fd27c8d3087871ac764b",
+        "bytes": 96470,
+        "exactPdfHrefSeen": true,
+        "visibleShortSpeakerLabelSeen": true,
+        "visibleSelectedShortUtteranceSeen": true
+      },
+      "currentPdf": {
+        "httpStatus": 200,
+        "sha1Base32": "RHRG7QQ6KKWUGFT25CRRNJLPBY4HIHYJ",
+        "rawSha256": "5e2b772277789a5470dc7803019aa970fbcd9566e4f60d8177fcb466eb1c0b9a",
+        "bytes": 32758,
+        "pdfMagicVersion": "1.4",
+        "embeddedCreationDateSelfDeclared": "D:20250425043804Z",
+        "embeddedCreationDateParsedUtc": "2025-04-25T04:38:04Z",
+        "currentHttpLastModified": "Fri, 25 Apr 2025 04:38:10 GMT",
+        "lastModifiedPlusSixSecondsFromEmbeddedCreationNotHistoricalProof": true
+      },
+      "historic2025Wayback": {
+        "exactIndexStatus": "historical_index_unavailable_unknown",
+        "authenticatedOriginalPdfCaptureCount": 0
+      },
+      "historic2025CommonCrawl": {
+        "selectedCollections": [
+          "CC-MAIN-2025-21",
+          "CC-MAIN-2025-26",
+          "CC-MAIN-2025-30"
+        ],
+        "selectedStatuses": [
+          "index_unavailable_unknown",
+          "index_unavailable_unknown",
+          "index_unavailable_unknown"
+        ],
+        "authenticatedWarcOriginalPdfCaptureCount": 0
+      },
+      "retrospectiveCutoff": "Interview is after reported 2025 Minnesota Senate bill passage; cannot serve as evidence available to predict that already recorded Senate vote.",
+      "archiveUnknownNotMissing": true,
+      "transcriptFirstPublicPostingUnknown": true,
+      "recordedSpeakerOrExactVerbatimQuoteHumanApproved": false
+    },
+    {
+      "id": "mpr-2025-coleman-civic-violence",
+      "senator": "Julia Coleman",
+      "topic": "public_safety_political_violence",
+      "publisherDisplayedDay": "2025-09-11",
+      "currentPublisherMprEpisode": "https://www.mprnews.org/episode/2025/09/11/we-cannot-let-evil-win-minnesota-sen-julia-coleman-on-uptick-in-political-violence",
+      "currentFirstPartyApm3PlayPdf": "https://codytranscripts.apmcdn.org/production/2d9064e094aab7627c6e05a3c2aad608.pdf",
+      "currentMprHtml": {
+        "httpStatus": 200,
+        "sha256": "04d07480df86bf832f93840e8afac03df9f5121e79004a1c31d66e5f63430a33",
+        "bytes": 124454,
+        "exactPdfHrefSeen": true,
+        "visibleShortSpeakerLabelSeen": true,
+        "visibleSelectedShortUtteranceSeen": true
+      },
+      "currentPdf": {
+        "httpStatus": 200,
+        "sha1Base32": "UGIDHTEQLBNRADHFACP375KOZWDO6T45",
+        "rawSha256": "463c8e352130d0db9d3407470ae24226cb53f07f50d27515e9a0a6c689e493ca",
+        "bytes": 37276,
+        "pdfMagicVersion": "1.4",
+        "embeddedCreationDateSelfDeclared": "D:20250911192803Z",
+        "embeddedCreationDateParsedUtc": "2025-09-11T19:28:03Z",
+        "currentHttpLastModified": "Thu, 11 Sep 2025 19:28:12 GMT",
+        "lastModifiedPlusNineSecondsFromEmbeddedCreationNotHistoricalProof": true
+      },
+      "historic2025Wayback": {
+        "exactIndexStatus": "historical_index_unavailable_unknown",
+        "authenticatedOriginalPdfCaptureCount": 0
+      },
+      "historic2025CommonCrawl": {
+        "selectedCollections": [
+          "CC-MAIN-2025-40",
+          "CC-MAIN-2025-43",
+          "CC-MAIN-2025-47"
+        ],
+        "selectedStatuses": [
+          "index_unavailable_unknown",
+          "index_unavailable_unknown",
+          "index_unavailable_unknown"
+        ],
+        "authenticatedWarcOriginalPdfCaptureCount": 0
+      },
+      "archiveUnknownNotMissing": true,
+      "transcriptFirstPublicPostingUnknown": true,
+      "recordedSpeakerOrExactVerbatimQuoteHumanApproved": false
+    }
+  ],
+  "limitations": {
+    "onePdfPerMprInterviewIsOriginalFirstPartyCdnDocumentNotOriginalAudioOrCertifiedHumanSenatorSpeech": true,
+    "originalMprHtmlWasHashedOnlyAsCurrentlyServedIn2026": true,
+    "currentlyServedCdnPdfCreationDateAndHttpLastModifiedNotIndependentlyHistoricallyArchived": true,
+    "originalMimeAndRawPdfMagicValidated": true,
+    "didNotCheckEveryCommonCrawl2025Collection": true,
+    "failedArchiveIndexNotProofSourceAbsent": true,
+    "noneOfTheseStatementsOrMediaAcceptedIntoForecast": true,
+    "noPrivateVotePredictSourceDocumentsReadOrProductionEvidenceReconciliationRun": true,
+    "noPrivateBytesOrRawCopyrightedPdfHtmlWarcAudioStored": true,
+    "historicalAvailabilityNoEarlierThanBroadcastDayNotEstablished": true
+  }
+}
