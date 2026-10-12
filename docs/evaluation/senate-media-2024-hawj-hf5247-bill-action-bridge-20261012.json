@@ -1,0 +1,314 @@
+{
+  "version": "track-d-hawj-hf5247-2024-public-bill-action-bridge-receipts-v1",
+  "researchObservedLocalDate": "2026-10-12",
+  "run": {
+    "prNumber": 1220,
+    "firstSuccessfulPublicReadOnlyRunId": 38261313322,
+    "initialSourceHead": "43457fe5f22981c2d219f401a3201e97cc68e48b",
+    "publicMetadataArtifactId": 11752576217,
+    "offlineAdversarialTestsPassed": 9
+  },
+  "historicSenatorStatement": {
+    "senator": "Foung Hawj",
+    "individualPrintedStatementVerified": true,
+    "originalUrl": "https://senatedfl.mn/senator-foung-hawj-testifies-in-support-of-transportation-equity-legislation/",
+    "originalCapturedUtc": "2024-03-24T19:01:09Z",
+    "originalRawSha256": "aa6da6e8722e33f2f692ba31bfd6699cf97768e74c788dbdb0786a75a3ad5743",
+    "originalIndexedSha1Base32": "YI4BL3IHGZ27R4JBNOVXUTI5XFGMQNSR",
+    "officialServiceRecord": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15380",
+    "statementFirstPublicPublisherPostingTimeUnknown": true,
+    "originallyQuotedPolicySFIds": [
+      "SF 4056",
+      "SF 3257",
+      "SF 3250"
+    ]
+  },
+  "totals": {
+    "selectedCurrentPublicUrlProbes": 7,
+    "original93rdLegislatureRevisorPublicStatusSourcesVerified": 5,
+    "independentlyVerifiedFinalHF5247TextVersion": 0,
+    "independentlyVerifiedSecondaryNonofficialVoteListPages": 1,
+    "officialCurrentHF5247StatusChamberAggregateMay7AndMay19Markers": 1,
+    "secondaryReportedHawjMay19YesHints": 1,
+    "senateJournalOriginalHawjIndividualBallotsVerified": 0,
+    "policySpecificOmnibusSectionVersionByVoteVerified": 0,
+    "productionVoteLabelsOrPredictionFeaturesCreated": 0
+  },
+  "sourceResults": [
+    {
+      "sourceId": "sf1416-2023-24",
+      "exactPublicSourceUrl": "https://www.revisor.mn.gov/bills/93/2023/0/SF/1416/?body=Senate",
+      "sourceClassification": "official_revisor_93rd_senate_bill_status",
+      "purpose": "McEwen's source SF 1416, standalone action status",
+      "liveCurrentSourceRetrievalStatus": "exact_first_party_or_labeled_secondary_public_page_observed",
+      "downloadedPublicHtmlSha256": "0bb1bdd85e4a5c3cc84240aa029a3d8a52bacd454a5857eb2bc386dcd1c1f7cd",
+      "downloadedPublicHtmlBytes": 71318,
+      "independentlyCheckedVisibleSourceMarkers": [
+        {
+          "value": "SF 1416",
+          "found": true
+        },
+        {
+          "value": "2023 - 2024",
+          "found": true
+        },
+        {
+          "value": "02/08/2023",
+          "found": true
+        },
+        {
+          "value": "04/11/2023",
+          "found": true
+        }
+      ],
+      "officialOrSecondarySourceMarkerObservations": {
+        "senateMay7FloorPassTallyMentioned": false,
+        "senateMay19ThirdReadingTallyMentioned": false,
+        "senateMay19ConferenceTallyMentioned": false,
+        "laterMay24Chapter127Marker": false,
+        "sectionTextContainsTranslatedMaterials": false,
+        "sectionTextContainsBidding": false,
+        "sectionTextContainsStPaulLocation": false,
+        "secondarySourceListsHawjUnderYesVotes": false
+      },
+      "sourceAs2024HistoricExactStatusCaptureVerified": false,
+      "officialSenateJournalIndividualMemberRollCallVerified": false
+    },
+    {
+      "sourceId": "sf3257-2023-24",
+      "exactPublicSourceUrl": "https://www.revisor.mn.gov/bills/93/2023/0/SF/3257/?body=Senate",
+      "sourceClassification": "official_revisor_93rd_senate_bill_status",
+      "purpose": "Hawj source SF 3257, standalone action status",
+      "liveCurrentSourceRetrievalStatus": "exact_first_party_or_labeled_secondary_public_page_observed",
+      "downloadedPublicHtmlSha256": "2efaab25f4b6d6db3872fb707b4bd79ca344a13cba98570dad3b1300407296f5",
+      "downloadedPublicHtmlBytes": 67234,
+      "independentlyCheckedVisibleSourceMarkers": [
+        {
+          "value": "SF 3257",
+          "found": true
+        },
+        {
+          "value": "2023 - 2024",
+          "found": true
+        },
+        {
+          "value": "04/13/2023",
+          "found": true
+        }
+      ],
+      "officialOrSecondarySourceMarkerObservations": {
+        "senateMay7FloorPassTallyMentioned": false,
+        "senateMay19ThirdReadingTallyMentioned": false,
+        "senateMay19ConferenceTallyMentioned": false,
+        "laterMay24Chapter127Marker": false,
+        "sectionTextContainsTranslatedMaterials": false,
+        "sectionTextContainsBidding": false,
+        "sectionTextContainsStPaulLocation": false,
+        "secondarySourceListsHawjUnderYesVotes": false
+      },
+      "sourceAs2024HistoricExactStatusCaptureVerified": false,
+      "officialSenateJournalIndividualMemberRollCallVerified": false
+    },
+    {
+      "sourceId": "sf3250-2023-24",
+      "exactPublicSourceUrl": "https://www.revisor.mn.gov/bills/93/2023/0/SF/3250/?body=Senate",
+      "sourceClassification": "official_revisor_93rd_senate_bill_status",
+      "purpose": "Hawj source SF 3250, standalone committee report 2024-03-18",
+      "liveCurrentSourceRetrievalStatus": "exact_first_party_or_labeled_secondary_public_page_observed",
+      "downloadedPublicHtmlSha256": "1290f62018fc69322a5a9afa3d1e307dd714384f140e26b4b1e12f7280f43568",
+      "downloadedPublicHtmlBytes": 71417,
+      "independentlyCheckedVisibleSourceMarkers": [
+        {
+          "value": "SF 3250",
+          "found": true
+        },
+        {
+          "value": "2023 - 2024",
+          "found": true
+        },
+        {
+          "value": "03/18/2024",
+          "found": true
+        }
+      ],
+      "officialOrSecondarySourceMarkerObservations": {
+        "senateMay7FloorPassTallyMentioned": false,
+        "senateMay19ThirdReadingTallyMentioned": false,
+        "senateMay19ConferenceTallyMentioned": false,
+        "laterMay24Chapter127Marker": false,
+        "sectionTextContainsTranslatedMaterials": false,
+        "sectionTextContainsBidding": false,
+        "sectionTextContainsStPaulLocation": false,
+        "secondarySourceListsHawjUnderYesVotes": false
+      },
+      "sourceAs2024HistoricExactStatusCaptureVerified": false,
+      "officialSenateJournalIndividualMemberRollCallVerified": false
+    },
+    {
+      "sourceId": "sf4056-2023-24",
+      "exactPublicSourceUrl": "https://www.revisor.mn.gov/bills/93/2024/0/SF/4056/?body=Senate",
+      "sourceClassification": "official_revisor_93rd_senate_bill_status",
+      "purpose": "Hawj source SF 4056, standalone action status",
+      "liveCurrentSourceRetrievalStatus": "exact_first_party_or_labeled_secondary_public_page_observed",
+      "downloadedPublicHtmlSha256": "6e786cfaa409bd851e07dce974660e604012fba53f665ac0d933ee6fb5629d3c",
+      "downloadedPublicHtmlBytes": 69512,
+      "independentlyCheckedVisibleSourceMarkers": [
+        {
+          "value": "SF 4056",
+          "found": true
+        },
+        {
+          "value": "2023 - 2024",
+          "found": true
+        },
+        {
+          "value": "02/22/2024",
+          "found": true
+        },
+        {
+          "value": "04/15/2024",
+          "found": true
+        }
+      ],
+      "officialOrSecondarySourceMarkerObservations": {
+        "senateMay7FloorPassTallyMentioned": false,
+        "senateMay19ThirdReadingTallyMentioned": false,
+        "senateMay19ConferenceTallyMentioned": false,
+        "laterMay24Chapter127Marker": false,
+        "sectionTextContainsTranslatedMaterials": false,
+        "sectionTextContainsBidding": false,
+        "sectionTextContainsStPaulLocation": false,
+        "secondarySourceListsHawjUnderYesVotes": false
+      },
+      "sourceAs2024HistoricExactStatusCaptureVerified": false,
+      "officialSenateJournalIndividualMemberRollCallVerified": false
+    },
+    {
+      "sourceId": "hf5247-2023-24",
+      "exactPublicSourceUrl": "https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/?body=Senate",
+      "sourceClassification": "official_revisor_93rd_senate_bill_status",
+      "purpose": "Different 2024 omnibus HF 5247: chamber aggregate May 7/May 19, chapter 127 post-vote",
+      "liveCurrentSourceRetrievalStatus": "exact_first_party_or_labeled_secondary_public_page_observed",
+      "downloadedPublicHtmlSha256": "a2b405b528aeca09cb044a87df11efa658a00b2f0fbd05aac3d4ccff17bcbdf5",
+      "downloadedPublicHtmlBytes": 121690,
+      "independentlyCheckedVisibleSourceMarkers": [
+        {
+          "value": "HF 5247",
+          "found": true
+        },
+        {
+          "value": "2023 - 2024",
+          "found": true
+        },
+        {
+          "value": "05/07/2024",
+          "found": true
+        },
+        {
+          "value": "05/19/2024",
+          "found": true
+        },
+        {
+          "value": "55-10",
+          "found": true
+        },
+        {
+          "value": "34-14",
+          "found": true
+        },
+        {
+          "value": "05/24/2024",
+          "found": true
+        }
+      ],
+      "officialOrSecondarySourceMarkerObservations": {
+        "senateMay7FloorPassTallyMentioned": true,
+        "senateMay19ThirdReadingTallyMentioned": true,
+        "senateMay19ConferenceTallyMentioned": true,
+        "laterMay24Chapter127Marker": true,
+        "sectionTextContainsTranslatedMaterials": false,
+        "sectionTextContainsBidding": false,
+        "sectionTextContainsStPaulLocation": false,
+        "secondarySourceListsHawjUnderYesVotes": false
+      },
+      "sourceAs2024HistoricExactStatusCaptureVerified": false,
+      "officialSenateJournalIndividualMemberRollCallVerified": false
+    },
+    {
+      "sourceId": "hf5247-fourth-engrossment",
+      "exactPublicSourceUrl": "https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/4/",
+      "sourceClassification": "official_revisor_final_text_unavailable_original_body",
+      "purpose": "Attempted separate fourth-engrossment original text not independently verified in this run",
+      "liveCurrentSourceRetrievalStatus": "public_source_fetch_or_validation_unknown",
+      "downloadedPublicHtmlSha256": null,
+      "downloadedPublicHtmlBytes": null,
+      "independentlyCheckedVisibleSourceMarkers": null,
+      "officialOrSecondarySourceMarkerObservations": null,
+      "sourceAs2024HistoricExactStatusCaptureVerified": false,
+      "officialSenateJournalIndividualMemberRollCallVerified": false
+    },
+    {
+      "sourceId": "hawj-secondary-conservation-yes",
+      "exactPublicSourceUrl": "https://www.conservationminnesota.org/legislation/tax-omnibus-bill-hf5247-senate",
+      "sourceClassification": "secondary_conservation_minnesota_not_senate_journal",
+      "purpose": "Secondary nonofficial reported Hawj May 19 YES vote, not government journal",
+      "liveCurrentSourceRetrievalStatus": "exact_first_party_or_labeled_secondary_public_page_observed",
+      "downloadedPublicHtmlSha256": "09649f92c21e7e4788735b9abe5bad4db8deec44c51238b53cbe23b42da34e73",
+      "downloadedPublicHtmlBytes": 98647,
+      "independentlyCheckedVisibleSourceMarkers": [
+        {
+          "value": "HF5247",
+          "found": true
+        },
+        {
+          "value": "May 19, 2024",
+          "found": true
+        },
+        {
+          "value": "Yes Votes",
+          "found": true
+        },
+        {
+          "value": "Foung Hawj",
+          "found": true
+        }
+      ],
+      "officialOrSecondarySourceMarkerObservations": {
+        "senateMay7FloorPassTallyMentioned": false,
+        "senateMay19ThirdReadingTallyMentioned": false,
+        "senateMay19ConferenceTallyMentioned": false,
+        "laterMay24Chapter127Marker": false,
+        "sectionTextContainsTranslatedMaterials": false,
+        "sectionTextContainsBidding": false,
+        "sectionTextContainsStPaulLocation": false,
+        "secondarySourceListsHawjUnderYesVotes": true
+      },
+      "sourceAs2024HistoricExactStatusCaptureVerified": false,
+      "officialSenateJournalIndividualMemberRollCallVerified": false
+    }
+  ],
+  "chronologicalReview": {
+    "priorHawjTestimony": "2024-03-11",
+    "firstVerifiedHawjWrittenStatement": "2024-03-24T19:01:09Z",
+    "reportedSF3250CommitteeAction": "2024-03-18",
+    "thatCommitteeActionPrecedesAuthenticatedMarch24Quote": true,
+    "HF5247SenateAggregateThirdReadingFirst": "2024-05-07",
+    "aggregateTallyMay7": "55-10",
+    "HF5247SenateAggregateThirdReadingLater": "2024-05-19",
+    "aggregateTallyMay19": "34-14",
+    "separateMay19ConferenceAggregateMarker": "34-12",
+    "chapter127ApprovalActionReported": "2024-05-24",
+    "hf5247AggregatedChamberVoteActionsAfterArchivedQuote": true,
+    "nonofficialTrackerHawjYesMay19LeadNotSenateJournal": true,
+    "HawjSenatorMemberBallotUnverifiedByOfficialJournal": true,
+    "officialFinalFourEngrossmentTextUnavailableInLiveProbe": true,
+    "provenanceDoesNotProve2024VersionAvailableBeforeEachMayVote": true,
+    "noStandaloneSFBillVoteAutomaticallyInferredFromOmnibus": true,
+    "multiSubjectHF5247VoteNotEquivalentToEndorsementOfEachHawjCitedProposal": true,
+    "noProductionTrainLabelOrPreVoteModelEligibilityEstablished": true,
+    "current2026PageDownloadsNotIndependent2024ArchivedOriginals": true,
+    "noFullTextHtmlAudioPdfOrHistoricalWarcPersisted": true,
+    "noPrivateVotePredictSourceOrAccountDataRead": true,
+    "noCollectorIngestDatabaseServingModelForecastOrVoteScoringChanged": true
+  }
+}
