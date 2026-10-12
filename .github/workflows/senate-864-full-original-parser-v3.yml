@@ -36,6 +36,8 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci --no-fund --no-audit
+      - name: TypeScript compilation preflight (no PostgreSQL image needed)
+        run: npm run typecheck
       - name: Source-separated 2024 Education motion and 1452 safe-shard tests
         run: |
           node --import tsx --test tests/senate-864-parser-action-distinctness.test.ts
