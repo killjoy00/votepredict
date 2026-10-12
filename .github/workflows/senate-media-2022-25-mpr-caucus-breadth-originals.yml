@@ -1,0 +1,56 @@
+name: Public Senate evidence 2022-25 MPR interviews and caucus original sources
+
+# Nine exact selected first-party publisher URLs; bounded Wayback/CC.
+# No private rows, raw article HTML/PDF/audio/WARC or complete quotations.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-2022-25-mpr-caucus-breadth-originals.yml
+      - scripts/probe-senate-media-2022-25-mpr-caucus-breadth-originals.mjs
+      - scripts/run-senate-media-2022-25-mpr-caucus-breadth-originals.mjs
+      - tests/senate-media-2022-25-mpr-caucus-breadth.test.mjs
+      - tests/senate-media-2022-25-mpr-caucus-breadth-real-receipts.test.mjs
+      - docs/evaluation/senate-media-2022-25-mpr-caucus-breadth-20261011.json
+      - docs/evaluation/senate-media-2022-25-mpr-caucus-breadth-20261011.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-2022-25-mpr-caucus-original-source-breadth
+  cancel-in-progress: false
+
+jobs:
+  public-only-historic-original-source-probe:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-2022-25-mpr-and-caucus-senator-originals-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Offline source originality, Senate-only and joint versus individual attribution tests
+        run: node --test tests/senate-media-2022-25-mpr-caucus-breadth.test.mjs
+      - name: Probe nine strictly bounded public MPR / Senate caucus exact original URLs
+        run: |
+          node scripts/run-senate-media-2022-25-mpr-caucus-breadth-originals.mjs \
+            --output artifacts/senate-media-2022-25-mpr-caucus-public-only-originals.json
+      - name: Keep only archive checksum and publication/cue metadata
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-2022-25-mpr-caucus-public-originals
+          path: artifacts/senate-media-2022-25-mpr-caucus-public-only-originals.json
+          if-no-files-found: error
+          retention-days: 7
