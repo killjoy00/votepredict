@@ -49,7 +49,7 @@ export const FIXED_FINANCE_SAMPLE_SQL=[
  "count(*) FILTER (WHERE c.slug='senate' AND e.metadata->>'asOfEligible'='true'",
  "AND (e.metadata->>'filingDateDerivedAvailability'='true'",
  "OR e.metadata->>'availabilityProofKind'='cfb_report_filing'))::text",
- 'AS senate_eligible_filing_derived_flag,',
+ 'AS senate_eligible_filing_derived_flag',
  'FROM (SELECT id,source_kind FROM source_documents',
  "WHERE source_kind IN ('campaign_finance_candidate_contribution_bulk',",
  "'campaign_finance_candidate_expenditure_bulk',",
