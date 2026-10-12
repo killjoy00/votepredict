@@ -40,3 +40,12 @@ The SQL counts Senate-linked sampled items and the subset with `metadata.asOfEli
 4. Keep every previously stored v7-or-earlier eligibility claim unapproved pending separate validation. A later eligibility repair, prior-cycle reader policy change or any serving, forecasting or database mutation requires **separate owner authorization**.
 
 Parent [#864](https://github.com/killjoy00/votepredict/issues/864) remains OPEN. No 2027 work, no production data writes, deployment, retraining, scheduler reactivation or outreach.
+
+
+## One-shot owner-comment fallback if the merged push does not emit a run
+
+The original V2 code-only PR [#1218](https://github.com/killjoy00/votepredict/pull/1218) was merged after green PR checks at `9879583b6f78969dd0164fc06ac1b4120a507e80`, but the push-triggered protected workflow was not registered by GitHub Actions when this fallback was designed. This does **not** establish that the Neon source audit executed. GitHub can suppress follow-on events emitted through certain automation tokens.
+
+The separately reviewed fallback adds `issue_comment: created` only as an alternate *one-shot request*; it is not a scheduler or open-ended API endpoint. Its full protected pipeline is gated on all of: repository `killjoy00/votepredict`, issue **#864**, trusted GitHub comment user `killjoy00` with `OWNER` association, the **entire exact comment body** `SENATE_864_CFB_KEYS_V2_OWNER_ONE_SHOT_20261012`, `refs/heads/main`, first run attempt, independently checked-out main SHA, the reviewed unique V2 marker in the **checked-out latest main commit**, clean disposable local migrations/SQL EXPLAIN, full repository check and dependency audit. Only then can the `evidence-readonly-sandbox` job get the existing Neon key and execute the unchanged fixed count-only SQL in a read-only transaction with `ROLLBACK`.
+
+Use this route only if the original merged-main push run has not executed. If unrelated work advanced main so the V2 commit marker is missing, the owner-comment gate MUST fail closed rather than read under an unreviewed commit. The keyless issue publisher is likewise restricted to this exact trusted trigger, and any HELD receipt is not evidence of zero stored rows. No amount of comment text enters SQL, database connection parameters or aggregate output. Keep #864 open.
