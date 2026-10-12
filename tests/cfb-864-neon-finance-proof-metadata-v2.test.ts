@@ -97,6 +97,18 @@ test('protected first-attempt exact-main push requires dedicated fixed second-ru
   VOTEPREDICT_864_CFB_KEYS_V2_MARKER_PRESENT:'true',
  };
  assert.doesNotThrow(()=>assertFinanceV2ProtectedEnv(pass));
+ const verifiedOwnerComment={...pass,
+  GITHUB_EVENT_NAME:'issue_comment',
+  VOTEPREDICT_864_CFB_KEYS_V2_OWNER_COMMENT_VERIFIED:'true',
+ };
+ assert.doesNotThrow(()=>assertFinanceV2ProtectedEnv(verifiedOwnerComment));
+ assert.throws(()=>assertFinanceV2ProtectedEnv({
+  ...verifiedOwnerComment,VOTEPREDICT_864_CFB_KEYS_V2_OWNER_COMMENT_VERIFIED:'false',
+ }));
+ assert.throws(()=>assertFinanceV2ProtectedEnv({
+  ...pass,GITHUB_EVENT_NAME:'issue_comment',
+ }));
+
  for(const [key,value] of [
   ['GITHUB_REPOSITORY','attacker/other'],
   ['GITHUB_EVENT_NAME','pull_request'],
@@ -162,6 +174,14 @@ test('private SQL failure and mismatched DB identity roll back without leaking p
 test('V2 Actions gate: PR keyless, exact SHA verified, one-shot protected, keyless issue reporter',()=>{
  const wf=readFileSync('.github/workflows/senate-864-finance-proof-metadata-v2.yml','utf8');
  assert.match(wf,/environment: evidence-readonly-sandbox/);
+ assert.match(wf,/issue_comment:\\n    types: \\[created\\]/);
+ assert.match(wf,/github\\.event\\.issue\\.number == 864/);
+ assert.match(wf,/github\\.event\\.comment\\.user\\.login == 'killjoy00'/);
+ assert.match(wf,/github\\.event\\.comment\\.author_association == 'OWNER'/);
+ assert.match(wf,/SENATE_864_CFB_KEYS_V2_OWNER_ONE_SHOT_20261012/);
+ assert.match(wf,/git log -1 --format=%B \\| grep -Fq/);
+ assert.match(wf,/VOTEPREDICT_864_CFB_KEYS_V2_OWNER_COMMENT_VERIFIED:/);
+
  assert.match(wf,/one-shot-verify:/);
  assert.match(wf,/one-shot-readonly:/);
  assert.match(wf,/github\.run_attempt == 1/);
