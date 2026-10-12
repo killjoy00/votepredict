@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 const SNOWFLAKE_EPOCH=1288834974657n;
 const handlePattern=/^@[A-Za-z0-9_]{1,15}$/;
 const postPattern=/^https:\/\/(?:twitter\.com|x\.com)\/([A-Za-z0-9_]{1,15})\/status\/([1-9][0-9]{14,19})(?:\/)?$/i;
-const day=s=>/^\d{4}-\d{2}-\d{2}$/.test(String(s)) && !Number.isNaN(Date.parse(s+'T00:00:00.000Z'));
+const day=s=>/^\d{4}-\d{2}-\d{2}$/.test(String(s)) && !Number.isNaN(Date.parse(s+'T00:00:00.000Z')) && new Date(Date.parse(s+'T00:00:00.000Z')).toISOString().slice(0,10)===s;
 export function decodeTwitterSnowflakeDate(id){
  if(!/^[1-9][0-9]{14,19}$/.test(String(id)))return null;
  try{
@@ -52,7 +52,7 @@ export function inspectPublicSocialStatementLead({
   sourcePostIdValidatedAgainstAccountAndDisplayedDay:!!snowflakeConsistent,
   originalPlatformPostCreatedAtUtc:snowflakeConsistent?snowflakeUtc:null,
   originalPostBodyIndependentlyAuthenticated:originalSourceTextProven,
-  historicalPublicByIndependentlyEstablished:originalSourceTextProven,
+  historicalPublicByIndependentlyEstablished:false,
   candidateOwnedCampaignWebsiteEvidence:false,
   originalIssueStatementAutomaticallyAdmitted:false,
   legislatureVoteOrPositionAutomaticallyInferred:false,
