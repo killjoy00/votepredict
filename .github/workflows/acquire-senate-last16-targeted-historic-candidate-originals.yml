@@ -1,0 +1,64 @@
+name: Recover remaining 16 MN senators' targeted historical first-party candidate originals
+on:
+  pull_request:
+    paths:
+      - scripts/probe-senate-last16-targeted-historic-candidate-originals.mjs
+      - .github/workflows/acquire-senate-last16-targeted-historic-candidate-originals.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-last16-candidate-site-recovery:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-last16-targeted-archived-firstparty-domains-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen pinned original full historical LRL Senate service directory plus original supplemental swearing records
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen the completed original 79/95 actual-senator read-only coverage source receipt
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38178392306
+          name: senate-95-actual-79-firstparty-original-1006-research-quotes-v1
+          github-token: ${{ github.token }}
+          path: original/previous-79-coverage
+      - name: Authenticate all 16 actually served senators as not already covered then probe 64 distinct candidate website paths/domains
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          coverage="$(find original/previous-79-coverage -type f -name 95-senators-public-campaign-coverage.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$coverage"
+          node --import tsx scripts/probe-senate-last16-targeted-historic-candidate-originals.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --coverage-json "$coverage" \
+            --out-dir original/last16-targeted-original-site-archives
+      - name: Retain full original CDX and SHA1-matched raw HTML sources; keep all archive errors as unknown not missing policies
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-last16-64-targeted-exact-path-archived-original-cdx-html-v1
+          path: original/last16-targeted-original-site-archives/
+          if-no-files-found: warn
+          retention-days: 30
