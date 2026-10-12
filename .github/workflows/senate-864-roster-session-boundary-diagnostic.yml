@@ -1,0 +1,324 @@
+name: One-shot #864 Senate 2021-25 roster session boundary diagnostic READ ONLY
+on:
+  pull_request:
+    paths:
+      - scripts/senate-864-roster-session-diagnostic-sql.ts
+      - scripts/audit-senate-864-roster-sessions-readonly.ts
+      - scripts/verify-senate-864-roster-session-sql-local.ts
+      - tests/senate-864-roster-session-readonly.test.ts
+      - docs/evaluation/senate-864-senator-roster-session-boundary-diagnostic.md
+      - .github/workflows/senate-864-roster-session-boundary-diagnostic.yml
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: senate-864-senate-roster-session-once-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  pr-roster-offline:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 11
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: V5 source receipt and synthetic protected read-only grouped roster tests
+        run: node --import tsx --test tests/senate-864-roster-session-readonly.test.ts
+      - name: Original V5 seven-family baseline remains immutable
+        run: node --import tsx --test tests/senate-864-v5-protected-baseline.test.ts
+  pr-roster-disposable-sql:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Apply migrations only to disposable local PostgreSQL
+        run: npm run db:migrate
+      - name: Compile three immutable bounded session-clamp diagnostics; no Neon key
+        run: node --import tsx scripts/verify-senate-864-roster-session-sql-local.ts
+  main-presecret-independent-verify:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_SENATE_ROSTER_SESSION_READONLY_ONESHOT_20261012_V1')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Require exact merged and reviewed main SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Only disposable database migrations
+        run: npm run db:migrate
+      - name: EXPLAIN without ANALYZE for all three fixed grouped roster SELECTs
+        run: node --import tsx scripts/verify-senate-864-roster-session-sql-local.ts
+      - name: All repository tests, typechecks, and build before credential access
+        run: npm run check
+      - name: Production dependencies security audit before credential access
+        run: npm audit --omit=dev --audit-level=high
+      - name: Validate V5 original protected roster receipt from immutable source
+        run: node --import tsx scripts/audit-senate-864-roster-sessions-readonly.ts --baseline-preflight
+  protected-existing-neon-roster:
+    needs: [main-presecret-independent-verify]
+    if: >-
+      needs.main-presecret-independent-verify.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_SENATE_ROSTER_SESSION_READONLY_ONESHOT_20261012_V1')
+    runs-on: ubuntu-latest
+    environment: evidence-readonly-sandbox
+    timeout-minutes: 12
+    outputs:
+      public_roster_b64: ${{ steps.roster.outputs.public_roster_b64 }}
+      safe_failure_phase: ${{ steps.roster.outputs.safe_failure_phase }}
+    env:
+      VOTEPREDICT_864_APPROVAL: BOUNDED_COUNTS_ONLY
+      VOTEPREDICT_864_INDEPENDENT_CI_VERIFIED: ${{ needs.main-presecret-independent-verify.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_864_ONE_SHOT_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_SENATE_ROSTER_SESSION_READONLY_ONESHOT_20261012_V1') && 'true' || 'false' }}
+      VOTEPREDICT_864_ROSTER_DIAGNOSTIC_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_SENATE_ROSTER_SESSION_READONLY_ONESHOT_20261012_V1') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify checked-out main equals separately verified exact commit
+        env:
+          VERIFIED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$VERIFIED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Authenticated existing Neon default branch, three bounded read-only roster aggregate queries, ROLLBACK
+        id: roster
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+          VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+        run: node --import tsx scripts/audit-senate-864-roster-sessions-readonly.ts --protected
+  keyless-sanitized-roster-receipt:
+    needs: [main-presecret-independent-verify,protected-existing-neon-roster]
+    if: >-
+      always() &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_SENATE_ROSTER_SESSION_READONLY_ONESHOT_20261012_V1') &&
+      (needs.main-presecret-independent-verify.result == 'failure' ||
+       (needs.main-presecret-independent-verify.result == 'success' &&
+        (needs.protected-existing-neon-roster.result == 'success' ||
+         needs.protected-existing-neon-roster.result == 'failure')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    env:
+      VERIFY_RESULT: ${{ needs.main-presecret-independent-verify.result }}
+      PROTECTED_RESULT: ${{ needs.protected-existing-neon-roster.result }}
+      SAFE_RESULT: ${{ needs.protected-existing-neon-roster.outputs.public_roster_b64 }}
+      SAFE_PHASE: ${{ needs.protected-existing-neon-roster.outputs.safe_failure_phase }}
+    steps:
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const header=[
+              '## #864 — Senate calendar-year roster vs legislative-session boundary V1',
+              '**Exact main SHA:** '+process.env.GITHUB_SHA,
+              '**Protected audit:** https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID,
+              '**Previous protected roster snapshot:** run #38196817626, immutable receipt #6116826026.',
+              'No person names, membership IDs, districts, database rows, secrets, source URLs or private SQL errors are published.',
+            ];
+            let body;
+            if(process.env.VERIFY_RESULT==='failure'){
+              body=[...header,'','**PRE-SECRET HOLD:** full CI, immutable V5 source receipt, or disposable roster SQL EXPLAIN did not pass. Neon key was NOT used; no new roster interpretation.'].join('\n');
+            }else if(process.env.PROTECTED_RESULT==='failure'){
+              const phase=process.env.SAFE_PHASE||'not_reported';
+              if(!/^[a-z_]{1,80}$/.test(phase))throw Error('Untrusted diagnostic stage');
+              body=[...header,'','**PROTECTED READ ONLY HOLD:** failed closed at safe phase '+phase+'. No roster diagnosis established.'].join('\n');
+            }else if(process.env.PROTECTED_RESULT==='success'){
+              const b64=process.env.SAFE_RESULT||'';
+              if(!/^[A-Za-z0-9+/=]+$/.test(b64)||b64.length>25000)
+                throw Error('Invalid base64 or unsafe protected result size');
+              const r=JSON.parse(Buffer.from(b64,'base64').toString('utf8'));
+              if(r.schemaVersion!=='mn-864-senate-calendar-year-vs-session-member-bounds-v1'
+                ||r.issue!==864||r.verifiedPriorAuditRun!==38196817626
+                ||r.pinnedV5ReceiptId!==6116826026
+                ||r.allFiveCalendarYearsIncluded!==true||r.queryCount!==3
+                ||r.selectedVotePredictNeonDefaultBranchAuthenticated!==true
+                ||r.deployedProductionBindingIndependentlyVerified!==false
+                ||r.restrictedTransactionReadOnly!==true
+                ||r.transactionExplicitRollbackCompleted!==true
+                ||r.noDatabaseWrites!==true||r.noPrivatePersonLevelRowsExported!==true
+                ||r.individualSenatorIdentityMatchedToGovernment95Source!==false
+                ||r.sessionClampedYearsNotAutomaticallySenateServiceDates!==true
+                ||r.correctHistoricalTermAndEvidenceAsOfJoinsNotCertified!==true
+                ||r.noPredictionOrIngestionChanges!==true)
+                throw Error('Unproven source scope, private data safety or transaction status');
+              const fields={
+                sessionRows:['v5_membership_rows','v5_people_in_session',
+                  'rows_from_session_not_intersecting_calendar_year',
+                  'rows_from_session_year_but_not_active_within_both_bounds',
+                  'session_clamped_active_membership_rows','session_clamped_active_people_in_session',
+                  'membership_starts_before_session','membership_ends_after_session','missing_session_dates'],
+                years:['v5_memberships','v5_people','session_clamped_active_membership_rows',
+                  'session_clamped_active_people','rows_outside_session_calendar_year',
+                  'people_with_outside_session_membership_rows','records_missing_session_date_boundary'],
+                multiplicity:['people_with_multiple_v5_membership_rows',
+                  'people_with_multiple_v5_session_slugs','v5_extra_rows_from_duplicate_people',
+                  'multi_v5_row_people_with_at_most_one_session_clamped_row',
+                  'people_with_multi_session_clamped_rows','highest_membership_rows_for_one_person',
+                  'highest_sessions_for_one_person'],
+              };
+              const nums=n=>{
+                if(typeof n!=='number'||!Number.isSafeInteger(n)||n<0||n>1000000)
+                  throw Error('Invalid aggregate numeric value');
+                return n;
+              };
+              const years=['2021','2022','2023','2024','2025'];
+              const sessions=['2021-2022','2023-2024','2025-2026'];
+              const check=(kind,min,max,allowSession)=>{
+                const rows=r[kind];
+                if(!Array.isArray(rows)||rows.length<min||rows.length>max)
+                  throw Error('Incorrect number of aggregate rows');
+                const seen=new Set();
+                for(const row of rows){
+                  const allowed=['year',...(allowSession?['session']:[]),...fields[kind]];
+                  if(!row||typeof row!=='object'||Array.isArray(row)
+                    ||JSON.stringify(Object.keys(row).sort())!==JSON.stringify(allowed.sort())
+                    ||!years.includes(row.year)
+                    ||(allowSession&&!sessions.includes(row.session)))
+                    throw Error('Private or unknown field or year exposed by protected job');
+                  const key=row.year+':'+(allowSession?row.session:'');
+                  if(seen.has(key))throw Error('Duplicate count group');
+                  seen.add(key);
+                  for(const key of fields[kind])nums(row[key]);
+                }
+                return rows;
+              };
+              const bySession=check('sessionRows',5,15,true);
+              const byYear=check('years',5,5,false);
+              const multiplicity=check('multiplicity',5,5,false);
+              const drifts=r.driftComparedToPinnedV5;
+              if(!Array.isArray(drifts)||drifts.length!==5)throw Error('V5 drift result absent');
+              const expected=[[67,67],[67,67],[90,198],[68,134],[70,136]];
+              const lines=[...header,'',
+                '**Outcome:** authenticated existing VotePredict Neon default branch. Three bounded aggregate SELECTs inside REPEATABLE READ READ ONLY; explicit ROLLBACK. No database writes.',
+                '**Do not interpret these as verified names/term-level service or all historical senator records.**',
+                '',
+                '| Calendar year | V5 people / memberships | Snapshot people / memberships | Session-clamped people / memberships | V5 rows from non-intersecting sessions | Extra membership rows beyond distinct people |',
+                '|---|---:|---:|---:|---:|---:|'];
+              for(let i=0;i<5;i++){
+                const year=years[i],y=byYear.find(x=>x.year===year),
+                  d=multiplicity.find(x=>x.year===year),diff=drifts.find(x=>x.year===year);
+                if(!y||!d||!diff||diff.year!==year
+                  ||nums(diff.peopleFromV5)!==expected[i][0]
+                  ||nums(diff.membershipRowsFromV5)!==expected[i][1]
+                  ||nums(diff.observedPeople)!==y.v5_people
+                  ||nums(diff.observedMembershipRows)!==y.v5_memberships
+                  ||typeof diff.differentFromPinnedV5Snapshot!=='boolean'
+                  ||diff.differentFromPinnedV5Snapshot!==
+                   (diff.peopleFromV5!==y.v5_people||diff.membershipRowsFromV5!==y.v5_memberships)
+                  ||y.v5_memberships-y.v5_people!==d.v5_extra_rows_from_duplicate_people
+                  ||y.rows_outside_session_calendar_year>y.v5_memberships
+                  ||y.session_clamped_active_people>y.session_clamped_active_membership_rows)
+                  throw Error('V5 roster cross-table reconciliation failed');
+                const sessionRows=bySession.filter(x=>x.year===year);
+                if(!sessionRows.length||sessionRows.reduce((a,x)=>a+x.v5_membership_rows,0)!==y.v5_memberships
+                  ||sessionRows.reduce((a,x)=>a+x.session_clamped_active_membership_rows,0)!==y.session_clamped_active_membership_rows
+                  ||sessionRows.reduce((a,x)=>a+x.rows_from_session_not_intersecting_calendar_year,0)!==y.rows_outside_session_calendar_year)
+                  throw Error('V5 year and session aggregates not reconciled');
+                lines.push('| '+year+' | '+expected[i].join(' / ')+' | '+y.v5_people+' / '+y.v5_memberships+
+                  ' | '+y.session_clamped_active_people+' / '+y.session_clamped_active_membership_rows+
+                  ' | '+y.rows_outside_session_calendar_year+' | '+d.v5_extra_rows_from_duplicate_people+' |');
+              }
+              lines.push('',
+                '**By session (fixed three official session slugs; counts only):**');
+              const names=fields.sessionRows;
+              for(const x of bySession){
+                lines.push('- '+x.year+' / '+x.session+': '+
+                  names.map(k=>k+'='+x[k]).join('; '));
+              }
+              lines.push('',
+                'V5 calendar-year membership rows can reflect repeated session membership, historical date bounds or data-entry problems. The session-clamped comparison is a diagnostic hypothesis test, **not** independently certified actual service dates or eligible historical evidence. Historical senator official roster/parity and 2021 print-source holds remain open; no model promotion, score changes or repairs.');
+              body=lines.join('\n');
+            }else throw Error('Unknown protected audit state');
+            if(body.length>24000)throw Error('Unexpected issue comment size');
+            await github.rest.issues.createComment({
+              owner:'killjoy00',repo:'votepredict',issue_number:864,body,
+            });
