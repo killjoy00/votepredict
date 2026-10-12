@@ -38,7 +38,7 @@ assert.equal(manifest.baseline.selectedCandidateOwnedOriginalSiteExcerpts,1285);
 assert.equal(manifest.baseline.latestSeparateOriginalCaucusFragments,16);
 assert.equal(manifest.productionReadsWrites,0);
 assert.equal(manifest.forecastOrModelChanges,0);
-const track=manifest.groups[group];assert.ok(track&&track.targets.length===3&&track.indexes.length===4);
+const track=manifest.groups[group];assert.ok(track&&track.targets.length===(group==='weber'?4:3)&&track.indexes.length===4);
 const official=file(a('--official-html'),9000),govReceipt=JSON.parse(file(a('--official-receipt'),300).toString()),swear=file(a('--official-special-swearing-html'),9000);
 assert.equal(sha(official),manifest.baseline.officialSenateDirectoryOriginalSha256);
 assert.equal(govReceipt.source.sourceBytesSha256,sha(official));
