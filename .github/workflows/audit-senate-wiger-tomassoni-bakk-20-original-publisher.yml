@@ -1,0 +1,81 @@
+name: Independently authenticate original 2020 Wiger Tomassoni Bakk direct first person published quotes
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-wiger-tomassoni-bakk-2020-original-publisher-20-excerpts-v1.json
+      - scripts/audit-senate-wiger-tomassoni-bakk-20-preelection-publisher-quotes.mjs
+      - tests/senate-wiger-tomassoni-bakk-20-original-publisher-2020-direct-quotes.test.ts
+      - .github/workflows/audit-senate-wiger-tomassoni-bakk-20-original-publisher.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  full-original-2020-archive-publisher-speaker-identity-and-20-exact-fragments:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-wiger-tomassoni-bakk-20-original-preelection-media-speaker-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen true original official Minnesota Senate service and special swearing full historical records
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen authenticated original pre-November3 2020 caucus Senator Wiger published statement
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38196317659
+          name: senate-five-final-original-archives-wiger-v1
+          github-token: ${{ github.token }}
+          path: original/wiger
+      - name: Reopen authenticated original pre-November3 2020 caucus David Tomassoni corrections statement
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38196317659
+          name: senate-five-final-original-archives-tomassoni-v1
+          github-token: ${{ github.token }}
+          path: original/tomassoni
+      - name: Reopen MPR 2020 original pre-election named directly attributed Thomas Bakk written statement
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38196317659
+          name: senate-five-final-original-archives-bakk-v1
+          github-token: ${{ github.token }}
+          path: original/bakk
+      - name: Reopen complete original indexed CDX and raw HTML, isolate actual senator first person original quote blocks
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
+          node --import tsx scripts/audit-senate-wiger-tomassoni-bakk-20-preelection-publisher-quotes.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --wiger-original-dir original/wiger \
+            --tomassoni-original-dir original/tomassoni \
+            --bakk-original-dir original/bakk \
+            --output-json original/proof/three-2020-original-caucus-mpr-named-senator-20-direct-quotes-proof.json
+      - name: Preserve independent source digest proof and exact original 20 senator speaker fragments
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-three-final-2020-wiger-tomassoni-bakk-20-publisher-quotes-v1
+          path: original/proof/
+          if-no-files-found: warn
+          retention-days: 30
