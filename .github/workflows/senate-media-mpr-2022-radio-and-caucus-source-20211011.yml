@@ -46,7 +46,7 @@ jobs:
         with:
           node-version: 22
       - name: Offline MPR audio asset identity, exact original HTML digest, individual State Senate attribution, timing controls
-        run: node --test tests/senate-media-mpr-2022-benson-kunesh-audio-identity.test.mjs tests/senate-media-2021-22-25-individual-caucus-originals.test.mjs
+        run: node --test tests/senate-media-mpr-2022-benson-kunesh-audio-identity.test.mjs tests/senate-media-2021-22-25-individual-caucus-originals.test.mjs tests/senate-media-2022-radio-caucus-real-receipts.test.mjs
       - name: Bounded first-party current and exact SHA-pinned 2022 MPR episode originals; no MP3 fetched
         run: |
           node scripts/run-senate-media-2022-radio-and-individual-originals.mjs radio \
