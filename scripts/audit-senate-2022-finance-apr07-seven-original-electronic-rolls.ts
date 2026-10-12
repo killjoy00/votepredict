@@ -89,7 +89,7 @@ async function main(){
   independentSecondFullOriginalPDFSHAConfirmed:false,
   originalDifferent2022PrintMinutesPagesObtained:false,
   originalPrintVsElectronicVoteParityCertified:false,
-  2022StatewideCommitteeRecordedVoteDenominator:null,
+  year2022StatewideCommitteeRecordedVoteDenominator:null,
   originalHistoricalWebPublishedAt:null,
   heardAudioOrVideo:false,
   independentHistoricalExactPublicBy:null,
