@@ -115,7 +115,7 @@ export async function extractPageOrder(pdf){
  const parser=new PDFParse({data:pdf});
  try{
   const x=await parser.getText({lineEnforce:true,cellSeparator:' '});
-  if(!Number.isInteger(x.total)||x.total<3||x.total>350||
+  if(!Number.isInteger(x.total)||x.total<3||x.total>2200||
      x.pages.length!==x.total||x.pages.some((p,i)=>p.num!==i+1||typeof p.text!=='string'))
     throw Error('PDF partial extraction or page identity unavailable');
   const t=x.pages.map(p=>p.text).join('\f');
