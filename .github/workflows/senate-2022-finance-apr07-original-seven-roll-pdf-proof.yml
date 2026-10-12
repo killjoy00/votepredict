@@ -1,0 +1,43 @@
+name: 2022 April 7 Senate Finance seven-roll original electronic minutes SHA proof
+
+# One-shot once this workflow first lands on main. Official 2022 electronic
+# MINUTES, never assumed equal to the separately collected print originals.
+# Original PDF, extracted text and public named YEA/NAY rosters are ephemeral.
+# Artifact contains only original complete PDF SHA + seven separated digests.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2022-finance-apr07-original-seven-roll-pdf-proof.yml
+
+permissions:
+  contents: read
+
+jobs:
+  authenticate-2022-finance-apr07-seven-original-electronic-rolls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Independently test seven distinct written motion semantics and missingness boundaries
+        run: |
+          node --import tsx --test tests/senate-2022-finance-apr07-seven-original-electronic-rolls.test.ts
+      - name: Get EXACT official original electronically held PDF, parse seven roll passages, retain metadata only
+        run: |
+          node --import tsx scripts/audit-senate-2022-finance-apr07-seven-original-electronic-rolls.ts \
+            --output artifacts/2022-finance-apr07-seven-original-electronic-rolls/source.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2022-finance-apr07-seven-roll-original-electronic-pdf-sha-metadata
+          path: artifacts/2022-finance-apr07-seven-original-electronic-rolls/source.json
+          retention-days: 30
+          if-no-files-found: error
