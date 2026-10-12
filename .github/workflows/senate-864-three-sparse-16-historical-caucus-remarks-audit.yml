@@ -1,0 +1,92 @@
+name: Audit 16 original 2020/22 named senator caucus statements without site-count inflation
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-864-kari-weber-newman-six-original-2020-22-caucus-source-receipts-v1.json
+      - data/evaluation/senate-864-kari-weber-newman-16-new-original-caucus-remarks-v1.json
+      - scripts/audit-senate-864-kari-weber-newman-16-original-caucus-remarks.mjs
+      - .github/workflows/senate-864-three-sparse-16-historical-caucus-remarks-audit.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  independent-original-source-and-senator-quote-audit:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-three-remaining-sparse-senators-direct-statements-20261012'
+    name: Six complete SHA1/CDX original source bodies + 16 short directly scoped quotes
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --check scripts/audit-senate-864-kari-weber-newman-16-original-caucus-remarks.mjs
+      - name: Independently recover official complete true serving Senate directory
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: proof/official
+      - name: Independently recover accepted 1285 original owned-site policy short research matrix
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38261292249
+          name: senate-864-five-thin-13-actual-2022-originals-1285-senator-site-excerpts-v1
+          github-token: ${{ github.token }}
+          path: proof/coverage
+      - name: Reopen full 2022 Kari Dziedzic caucus originals and independent whole CDX indexes
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38264756956
+          name: senate-864-three-sparse-original-caucus-publisher-kari-v1
+          github-token: ${{ github.token }}
+          path: proof/kari
+      - name: Reopen original 2022 Bill Weber caucus energy page and independent whole CDX index
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38264756956
+          name: senate-864-three-sparse-original-caucus-publisher-weber-v1
+          github-token: ${{ github.token }}
+          path: proof/weber
+      - name: Reopen original 2020 Scott Newman caucus pages and independent whole CDX indexes
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38264756956
+          name: senate-864-three-sparse-original-caucus-publisher-newman-v1
+          github-token: ${{ github.token }}
+          path: proof/newman
+      - name: Independently authenticate 16 senator-named and explicitly joint original speaker quotes; no campaign-owned-site attribution
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find proof/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find proof/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find proof/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          baseline="$(find proof/coverage -type f -name senate-864-95-person-historical-candidate-issue-depth-1285.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$baseline"
+          node --import tsx scripts/audit-senate-864-kari-weber-newman-16-original-caucus-remarks.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --prior-1285-matrix "$baseline" \
+            --kari-original-dir proof/kari \
+            --weber-original-dir proof/weber \
+            --newman-original-dir proof/newman \
+            --out-dir proof/validated
+      - name: Retain independently verified short remarks summary only, not copyrighted original full bodies
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-three-sparse-16-original-2020-22-named-caucus-remarks-v1
+          path: proof/validated/
+          if-no-files-found: warn
+          retention-days: 30
