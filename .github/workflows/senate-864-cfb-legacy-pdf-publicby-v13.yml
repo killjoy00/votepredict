@@ -1,0 +1,28 @@
+name: 'Senate #864 historical official legacy PDF link public-by V13'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-legacy-pdf-publicby-v13.mjs'
+      - 'tests/cfb-864-legacy-pdf-publicby-v13.test.mjs'
+      - 'docs/evaluation/cfb-2021-25-exact-pdf-legacy-host-publicby-v13.md'
+      - '.github/workflows/senate-864-cfb-legacy-pdf-publicby-v13.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  public-exact-binary-only:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Exact PDF identity, historical date and privacy regression tests
+        run: node --test tests/cfb-864-legacy-pdf-publicby-v13.test.mjs
+      - name: Bounded alternate official 2021-25 historical PDF archive checks
+        run: node scripts/audit-cfb-864-legacy-pdf-publicby-v13.mjs
