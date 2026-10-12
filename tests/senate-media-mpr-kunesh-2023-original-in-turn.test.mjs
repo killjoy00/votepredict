@@ -62,7 +62,7 @@ test('unavailable replay of an original SHA1+SHA256 original stays UNKNOWN and c
  const r=await runOriginal2023KuneshSpeakerStudy(fail);
  assert.equal(called,6);
  assert.equal(r.exactOriginalArchiveBodiesSelected,2);
- assert.equal(r.totalOriginalRawBodyReplaysAttempted,6);
+ assert.equal(r.totalExactOriginalRawBodyReplaysAttempted,6);
  assert.equal(r.totalOriginalShaMatchedReplays,0);
  assert.equal(r.first2023OriginalPrintedSpeakerCuesAuthenticated,0);
  assert.ok(r.results.every(x=>x.shortCues.every(c=>c.selectedCueWithinExactMaryKuneshLabeledTranscriptTurn===null)));
