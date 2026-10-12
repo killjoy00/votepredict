@@ -40,7 +40,7 @@ jobs:
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V1')
+      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V2')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     services:
@@ -87,7 +87,10 @@ jobs:
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V1')
+      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V2')
+    outputs:
+      public_counts_b64: ${{ steps.audit.outputs.public_counts_b64 }}
+      failure_phase: ${{ steps.audit.outputs.failure_phase }}
     environment: evidence-readonly-sandbox
     runs-on: ubuntu-latest
     timeout-minutes: 9
@@ -97,7 +100,7 @@ jobs:
       VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
       VOTEPREDICT_864_APPROVAL: BOUNDED_COUNTS_ONLY
       VOTEPREDICT_864_INDEPENDENT_CI_VERIFIED: ${{ needs.one-shot-verify.result == 'success' && 'true' || 'false' }}
-      VOTEPREDICT_864_ONE_SHOT_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V1') && 'true' || 'false' }}
+      VOTEPREDICT_864_ONE_SHOT_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V2') && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -114,4 +117,111 @@ jobs:
           cache-dependency-path: package-lock.json
       - run: npm ci --no-fund --no-audit
       - name: Only existing VotePredict management GETs and bounded SELECT aggregates, READ ONLY and ROLLBACK
+        id: audit
         run: node --import tsx scripts/audit-senate-864-neon-one-key-readonly-coverage.ts
+
+  publish-sanitized-counts:
+    # Issue-write permission belongs only to this keyless reporting job.
+    needs: [one-shot-verify, one-shot-readonly]
+    if: >-
+      always() &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V2') &&
+      needs.one-shot-verify.result == 'success' &&
+      (needs.one-shot-readonly.result == 'success' || needs.one-shot-readonly.result == 'failure')
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    permissions:
+      contents: read
+      issues: write
+    env:
+      AUDIT_JOB_RESULT: ${{ needs.one-shot-readonly.result }}
+      SAFE_COUNTS_B64: ${{ needs.one-shot-readonly.outputs.public_counts_b64 }}
+      SAFE_FAILURE_PHASE: ${{ needs.one-shot-readonly.outputs.failure_phase }}
+    steps:
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const result=process.env.AUDIT_JOB_RESULT;
+            const run='https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID;
+            const intro=[
+              '## #864 - existing protected GitHub Neon key, historical SQL audit',
+              '',
+              '**Exact main commit:** '+process.env.GITHUB_SHA,
+              '**Source/DB audit run:** '+run,
+              'Read-only SQL transaction, no database writes or private row exports.',
+              '',
+            ];
+            let body;
+            if(result==='success'){
+              const encoded=process.env.SAFE_COUNTS_B64||'';
+              if(!/^[A-Za-z0-9+/=]+$/.test(encoded)||encoded.length>70000)
+                throw Error('Missing or oversized protected aggregate');
+              const obj=JSON.parse(Buffer.from(encoded,'base64').toString('utf8'));
+              if(obj.issue!==864
+                || obj.schema!=='mn-864-existing-key-cross-track-readonly-counts-v1'
+                || obj.status!=='verified_existing_votepredict_default_branch_aggregate_source_snapshot'
+                || obj.currentTransactionReadOnly!==true
+                || obj.transactionRollbackCompleted!==true
+                || obj.fullPerSourceRowReconciliationCompleted!==false
+                || obj.privateOriginalRowsAndNamesExported!==false
+                || obj.productionMutations!==0
+                || obj.historicalCompletenessCertified!==false)
+                throw Error('Unverified claim of audit success');
+              const kinds=['roster','finance','committeeSources',
+                'committeeVotes','committeeChoices','campaign','media'];
+              if(!obj.groups||JSON.stringify(Object.keys(obj.groups).sort())!==JSON.stringify([...kinds].sort()))
+                throw Error('Unexpected evidence families');
+              const rows=[];
+              const safeFamily=/^(?:campaign_finance_candidate_contribution_bulk|campaign_finance_candidate_expenditure_bulk|campaign_finance_independent_expenditure_bulk|campaign_finance_bulk)$/;
+              for(const kind of kinds){
+                if(!Array.isArray(obj.groups[kind])||obj.groups[kind].length>70)
+                  throw Error('Unexpected year/family count');
+                for(const entry of obj.groups[kind]){
+                  if(!entry||typeof entry!=='object'||Array.isArray(entry)
+                    ||typeof entry.year!=='string'
+                    ||!/^(?:20[0-9]{2}|unknown_or_outside|unknown_or_undated)$/.test(entry.year))
+                    throw Error('Invalid year in protected count');
+                  if(entry.family!==undefined&&(!safeFamily.test(entry.family)||kind!=='finance'))
+                    throw Error('Unexpected source type');
+                  const metrics=[];
+                  for(const [key,value] of Object.entries(entry)){
+                    if(key==='year'||key==='family')continue;
+                    if(!/^[a-z][a-z0-9_]*$/.test(key)||typeof value!=='string'
+                      || !/^[0-9]+$/.test(value)||Number(value)>100000000)
+                      throw Error('Unexpected nonnumeric or private SQL row');
+                    metrics.push(key+': '+value);
+                  }
+                  if(metrics.length<1||metrics.length>10)
+                    throw Error('Unexpected number of evidence metrics');
+                  rows.push('- **'+kind+' / '+entry.year+(entry.family?' / '+entry.family:'')+'**: '+metrics.join('; '));
+                }
+              }
+              body=[...intro,
+                '**Result: SUCCESS.** Existing VotePredict Neon default branch verified.',
+                'SQL transaction READ ONLY, ROLLBACK confirmed.',
+                '',
+                ...rows,
+                '',
+                'These are stored-row and source-document AGGREGATES only.',
+                'They do not prove statewide official completeness, original',
+                'document-to-record equality, historical CFB exact public-by,',
+                'attributed media quotations or the actual production binding.',
+                '#864 remains open and prediction eligibility unchanged.',
+              ].join('\n');
+            }else if(result==='failure'){
+              const phase=process.env.SAFE_FAILURE_PHASE||'not_reported';
+              if(!/^[a-z_]{1,110}$/.test(phase))throw Error('Unsafe phase');
+              body=[...intro,
+                '**Result: FAILED CLOSED** at fixed safe phase: '+phase+'.',
+                'No source counts or database reconciliation may be inferred.',
+                'No private Neon errors, source rows or credentials published.',
+              ].join('\n');
+            }else throw Error('Protected audit status unknown');
+            if(body.length>58000)throw Error('Unexpected issue comment length');
+            await github.rest.issues.createComment({
+              owner:'killjoy00',repo:'votepredict',issue_number:864,body
+            });
