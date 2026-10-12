@@ -191,12 +191,14 @@ async function main() {
             reportName: proof.reportName,
             dueOn: proof.dueOn,
             filedOn: proof.filedOn,
-            provenAvailableOn: proof.availableOn,
+            statutoryNotBeforeOn: proof.availableOn,
+            historicalExactVersionPublicByOn: null,
             statutoryReleaseAtLocal: proof.statutoryReleaseAtLocal,
             reportDueOn: proof.dueOn,
             proofKind: proof.proofKind,
             proofUrl: proof.proofUrl,
-            retrospectiveAvailabilityProof: true,
+            retrospectiveAvailabilityProof: false,
+            legalFloorOnly: true,
             dueDateIsAvailability: false,
             asOfEligible: false,
             contextOnly: true,
@@ -246,7 +248,7 @@ async function main() {
             proofCount: proofs.length,
             bytes: pdf.bytes,
             historicalAvailabilityPolicy:
-              'both exact report due and filing dates; statutory release is 8 AM following due date; late filing bound applied',
+              'legal not-before only: due + 8AM next day with late filing bound; historical PDF public-by unproven',
           },
         }, drafts);
 
