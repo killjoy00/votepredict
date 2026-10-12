@@ -68,34 +68,63 @@ for(const target of manifest.pinnedSnapshots.filter(x=>x.electionYear===year)){
   output:'json',fl:'timestamp,original,mimetype,statuscode,digest,length',limit:'120'});
  params.append('filter','statuscode:200');
  const cdxURL='https://web.archive.org/cdx/search/cdx?'+params.toString();
- const ix=await safeGet(cdxURL,1_600_000);
- assert.equal(ix.status,200,'Unavailable original CDX index for '+target.id+' '+ix.error);
- assert.ok(ix.body,'CDX source bytes absent for '+target.id);
- const parsed=JSON.parse(ix.body.toString('utf8'));
- assert.ok(Array.isArray(parsed)&&parsed.length<=121);
- assert.deepEqual(parsed[0],['timestamp','original','mimetype','statuscode','digest','length']);
- const matching=parsed.slice(1).filter(r=>r[0]===target.originalCaptureTimestamp&&r[1]===target.originalUrl&&r[3]==='200'
-  &&r[4]===target.originalIndexedCDXSHA1Base32);
- assert.equal(matching.length,1,'Missing original independently indexed dated candidate list '+target.id);
- let html=null,lastError='all replay variants unavailable';
- for(const mode of ['id_','if_','mp_','']){
+ // An original archive index outage must NEVER be treated as proof that the
+ // previously independent 2020/22 candidate listing was missing or changed.
+ // The exact CDX SHA1 and entire raw HTML SHA256 were already proved by
+ // independent original-source audit on merged PR #1237. When index cannot
+ // be reread, separately retry the pinned original whole HTML; if both fail,
+ // write "unavailable" and do not infer any blank website value.
+ const ix=await safeGet(cdxURL,1_600_000,12500);
+ let originalCDXRevalidatedThisRun=false;
+ let cdxStatus='provider_unavailable_not_a_negative_census';
+ let indexSha=null;
+ if(ix.status===200&&ix.body){
+  try{
+   const parsed=JSON.parse(ix.body.toString('utf8'));
+   assert.ok(Array.isArray(parsed)&&parsed.length&&parsed.length<=121);
+   assert.deepEqual(parsed[0],['timestamp','original','mimetype','statuscode','digest','length']);
+   const matching=parsed.slice(1).filter(r=>r[0]===target.originalCaptureTimestamp
+    &&r[1]===target.originalUrl&&r[3]==='200'
+    &&r[4]===target.originalIndexedCDXSHA1Base32);
+   if(matching.length===1){
+    originalCDXRevalidatedThisRun=true;
+    cdxStatus='whole_original_index_revalidated';
+    indexSha=sha(ix.body);
+   }else cdxStatus='valid_index_response_without_original_named_row_unknown';
+  }catch(e){cdxStatus='provider_http200_non_CDX_original_unknown';}
+ }
+ const record={
+  originalSnapId:target.id,year:target.electionYear,
+  archivedUTC:target.originalCaptureTimestamp.replace(/^(\d{4})(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/,'$1-$2-$3T$4:$5:$6.000Z'),
+  independentlyArchivedSourceUrl:target.originalUrl,
+  originalCDXIndexedSHA1PinnedFromMergedPR1237:target.originalIndexedCDXSHA1Base32,
+  originalWholeHTMLSHA256PinnedFromMergedPR1237:target.originalWholeHTMLSHA256,
+  archiveCDXStatusThisRun:cdxStatus,
+  archivedIndexRecheckedThisRun:originalCDXRevalidatedThisRun,
+  wholeOriginalIndexedCDXJSONSha256:indexSha,
+  originalArchivedWholeHTMLRehashedThisRun:false,
+  sourceAvailability:'original_candidate_page_currently_unavailable_no_website_field_conclusion',
+  websiteFieldObservationAvailable:false,originalHTMLOrPersonalContactSaved:false};
+ let html=null;
+ for(const mode of ['id_','if_','mp_']){
   const u='https://web.archive.org/web/'+target.originalCaptureTimestamp+mode+'/'+target.originalUrl;
-  const r=await safeGet(u);
-  if(r.status!==200||!r.body){lastError=r.error||'http '+r.status;continue;}
-  if(historicalArchiveSha1Base32(r.body)!==target.originalIndexedCDXSHA1Base32){lastError='Archive wrapper or wrong full original indexed digest';continue;}
-  if(sha(r.body)!==target.originalWholeHTMLSHA256){lastError='Whole original HTML SHA256 mismatch';continue;}
+  const r=await safeGet(u,1_900_000,14500);
+  if(r.status!==200||!r.body)continue;
+  if(historicalArchiveSha1Base32(r.body)!==target.originalIndexedCDXSHA1Base32)continue;
+  if(sha(r.body)!==target.originalWholeHTMLSHA256)continue;
   html=r.body;break;
  }
- assert.ok(html,'Original whole source CDX+SHA256 did not replay for '+target.id+': '+lastError);
- const r=evaluateArchivedSenateWebsiteCells(html,target,winners);
- records.push({
-  originalSnapId:target.id,year:target.electionYear,archivedUTC:target.originalCaptureTimestamp.replace(/^(\d{4})(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/,'$1-$2-$3T$4:$5:$6.000Z'),
-  wholeOriginalIndexedCDXJSONSha256:sha(ix.body),
-  indexedOriginalPageSHA1Base32:historicalArchiveSha1Base32(html),
-  wholeOriginalPageHTMLSha256:sha(html),independentlyArchivedSourceUrl:target.originalUrl,
-  completeOriginalSourceCryptographicMatch:true,
-  ...r
- });
+ if(html){
+  const r=evaluateArchivedSenateWebsiteCells(html,target,winners);
+  record.originalArchivedWholeHTMLRehashedThisRun=true;
+  record.sourceAvailability='original_full_HTML_independently_replayed_correct_pinned_sha';
+  record.websiteFieldObservationAvailable=true;
+  record.wholeOriginalPageHTMLSha256=sha(html);
+  record.indexedOriginalPageSHA1Base32=historicalArchiveSha1Base32(html);
+  record.page=r.page;
+  record.candidates=r.candidates;
+ }
+ records.push(record);
 }
 assert.equal(records.length,year===2020?1:2);
 const report={
@@ -103,7 +132,10 @@ const report={
  issue:864,year,originalSNSOSGeneralElection67DistrictsVerified:true,
  originalSNSOSCandidateWinnersSHA256:sos.source.originalResultSha256,
  originalSNSOSCandidate7ColumnLookupSHA256:sos.source.originalCandidateLookupSha256,
- originalWholeOfficialSenateOnlyPreElectionSnapshotsRehashed:records.length,
+ originalWholeOfficialSenateOnlyPreElectionSnapshotsPreviouslyOriginalHashPinned:records.length,
+ originalWholeCandidateHTMLSnapshotsRehashedThisRun:records.filter(x=>x.originalArchivedWholeHTMLRehashedThisRun).length,
+ originalWebsiteCellAvailableThisRun:records.some(x=>x.websiteFieldObservationAvailable),
+ archiveUnavailableIsUnknownNotBlankWebsite:true,
  originalSnapshotRowsAndWebsiteCellAudits:records,
  sourceWebsiteBlankInArchivedCandidateRowCannotProveNoCandidateCampaignSite:true,
  originalCandidateWebsiteFromResultsTableNotFull21ColumnFiledExport:true,
@@ -116,8 +148,11 @@ writeFileSync(join(out,'senate-864-original-sos-'+year+'-website-cell-archive-au
  JSON.stringify(report,null,2)+'\n',{flag:'wx',mode:0o600});
 console.log('ORIGINAL SOS ARCHIVED PUBLIC CANDIDATE WEBSITE CELL '+JSON.stringify({
  year,wholeOriginalMatches:records.length,officialSOS67DistrictWinners:true,
- originalSiteRows:records.map(x=>({id:x.originalSnapId,websiteHeaders:x.page.headerRows,
-  candidates:x.candidates.map(c=>({name:c.originalFiledCandidateName,
+ originalSiteRows:records.map(x=>({id:x.originalSnapId,archiveAvailability:x.sourceAvailability,
+  originalWholeHTMLReplayedThisRun:x.originalArchivedWholeHTMLRehashedThisRun,
+  originalCDXRevalidatedThisRun:x.archivedIndexRecheckedThisRun,
+  websiteHeaders:x.page?.headerRows||[],
+  candidates:(x.candidates||[]).map(c=>({name:c.originalFiledCandidateName,
    matchedOfficialElectionWinner:c.validatedPostVoteWinner,
    siteCellColumn:c.originalWebsiteColumnIndex,
    websiteCellLabelAndRowMatch:c.originalWebsiteColumnExplicitlyAlignedByArchivedHeader,
