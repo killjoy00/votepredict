@@ -85,12 +85,13 @@ export function recognizeRoll(text) {
 export function archivalStatus(capture,lead){
  if(!LEADS.includes(lead))throw Error('invalid source original lead');
  const historic=boundedTimestamp(capture.captureUtc);
+ const originalRetrievalStatus=capture.status??'unknown';
  const indexed=B32.test(capture.indexedOriginalSha1??'');
  const raw=HEX.test(capture.rawOriginalSha256??'');
  const bytes=Number.isSafeInteger(capture.originalBytes)&&capture.originalBytes>1000;
  const validated=['sha1_authenticated_original_publisher_html','sha1_authenticated_original_commoncrawl_warc_html'].includes(capture.status);
  const issueCue=capture.shortCues?.some(c=>c.senator===lead.senator&&c.cueFound===true);
- return {captureUtc:capture.captureUtc??null,rawOriginalSha256:raw?capture.rawOriginalSha256:null,
+ return {originalRetrievalStatus,captureUtc:capture.captureUtc??null,rawOriginalSha256:raw?capture.rawOriginalSha256:null,
   indexedOriginalSha1Base32:indexed?capture.indexedOriginalSha1:null,
   originalBytes:bytes?capture.originalBytes:null,
   exactOriginalIndexedHashAndRawBodyMatched:validated&&indexed&&raw&&bytes,

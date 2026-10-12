@@ -1,0 +1,132 @@
+{
+  "version": "track-d-2023-hf100-two-authenticated-original-statement-to-named-no-receipts-v1",
+  "observedUtcDate": "2026-10-12",
+  "provenance": {
+    "issue": 987,
+    "pr": 1254,
+    "firstWholeJournalAndPublisherOriginalLiveCI": 38306090967,
+    "firstNamedSpeakerBoundaryAndWholeOriginalCI": 38306925130,
+    "workflow": "CI",
+    "sourceHead": "542eb8be61159848efedb884729b79c0368c3ab5",
+    "fullCIOnSourceHeadPassed": 2913,
+    "fullCIOnSourceHeadFailed": 0
+  },
+  "originalOfficialSenateJournal": {
+    "date": "2023-04-28",
+    "originalJournalUrl": "https://www.senate.mn/journals/2023-2024/20230428059.pdf",
+    "legislativeDay": 59,
+    "rawFullPdfSha256": "9e8160e4c78ef70cc0635226201f12e656ac84a999af8e0a8f8dc3e6737791a3",
+    "entireOriginalPdfBytes": 4472460,
+    "totalOriginalPdfPages": 292,
+    "printedJournalPage": 6890,
+    "originalPdfPageOneBased": 290,
+    "finalPassageBill": "HF100",
+    "notDirectFinalPassageBill": "SF73",
+    "yeas": 34,
+    "nays": 33,
+    "namedNegativeRosterMembers": [
+      {
+        "senator": "Gary Dahms",
+        "vote": "nay",
+        "inOriginalPrintedNegativeRoster": true,
+        "inOriginalPrintedAffirmativeRoster": false,
+        "finalPassageNotAdjacentMotion": true,
+        "notRule40Only": true
+      },
+      {
+        "senator": "Glenn Gruenhagen",
+        "vote": "nay",
+        "inOriginalPrintedNegativeRoster": true,
+        "inOriginalPrintedAffirmativeRoster": false,
+        "finalPassageNotAdjacentMotion": true,
+        "notRule40Only": true
+      }
+    ]
+  },
+  "historicalPublisherOriginals": [
+    {
+      "id": "dahms-feb10-2023-cannabis-sf73",
+      "senator": "Gary Dahms",
+      "officialSenateService": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15326",
+      "exactPublisherUrl": "https://www.mnsenaterepublicans.com/senator-dahms-the-democrats-proposal-to-legalize-recreational-marijuana-in-minnesota-contains-many-glaring-issues/",
+      "displayedPublisherDay": "2023-02-10",
+      "earliestAuthenticatedOriginalCaptureUtc": "2023-03-27T23:22:22Z",
+      "independentlyIndexedOriginalSha1Base32": "U6AGAN3WS5JI3KDBQG7UPCYI5CNRMTAY",
+      "downloadedRawOriginalHtmlSha256": "0db73702a497b3a6859ec265fae9d97b9a8e0df3a618d58171c62cbd63db6b5f",
+      "rawOriginalHtmlBytes": 84459,
+      "originalCaptureBeforeFinalVote": true,
+      "normalizedBoundedSpeakerStatementSha256": "6a88b0eb34b8a45c12a05d67d8113813fa5d1603f55073b7085ee29ae72b58f2",
+      "normalizedBoundedSegmentCharacters": 106,
+      "attributionProof": "closed_original_first_party_quotation_followed_by_full_senator_name",
+      "statementScope": "specific_previous_SF73_cannabis_bill_opposition",
+      "exactApril28FloorAmendedHF100StatementIdentityUnproven": true,
+      "notWholeHumanApprovedVerbatimSpeech": true
+    },
+    {
+      "id": "gruenhagen-feb10-2023-legal-cannabis",
+      "senator": "Glenn Gruenhagen",
+      "officialSenateService": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15350",
+      "exactPublisherUrl": "https://www.mnsenaterepublicans.com/gruenhagen-the-destructiveness-of-legal-marijuana/",
+      "displayedPublisherDay": "2023-02-10",
+      "earliestAuthenticatedOriginalCaptureUtc": "2023-03-19T11:54:13Z",
+      "independentlyIndexedOriginalSha1Base32": "ZMGG3NCOOTVKSASEOVQCNK7HST4VHQ3Y",
+      "downloadedRawOriginalHtmlSha256": "acb3b8b3042a42206e96a92a3687dc153e06e032166cbaa4cb55beaabbcbac3a",
+      "rawOriginalHtmlBytes": 84417,
+      "originalCaptureBeforeFinalVote": true,
+      "normalizedBoundedSpeakerStatementSha256": "4a498ae455f8f898d0e6f2d33820b6be249db79f391156a805067402d934c468",
+      "normalizedBoundedSegmentCharacters": 91,
+      "attributionProof": "first_person_named_headline_with_original_signed_glenn_closing",
+      "statementScope": "general_recreational_marijuana_legalization_opposition_no_bill_number",
+      "exactApril28FloorAmendedHF100StatementIdentityUnproven": true,
+      "notWholeHumanApprovedVerbatimSpeech": true
+    }
+  ],
+  "researchEvidencePairs": [
+    {
+      "senator": "Gary Dahms",
+      "originalSpeakerSource": "dahms-feb10-2023-cannabis-sf73",
+      "voteBill": "HF100",
+      "date": "2023-04-28",
+      "personalVote": "nay",
+      "issueLink": "SF73_companion_replaced_by_HF100_broad_cannabis_scope",
+      "role": "primary_bill_specific_statement_contemporaneously_earlier",
+      "productionTrainingLabelApproved": false
+    },
+    {
+      "senator": "Glenn Gruenhagen",
+      "originalSpeakerSource": "gruenhagen-feb10-2023-legal-cannabis",
+      "voteBill": "HF100",
+      "date": "2023-04-28",
+      "personalVote": "nay",
+      "issueLink": "adult_use_cannabis_legalization_general_not_HF100_bill_number",
+      "role": "supporting_broad_issue_control",
+      "productionTrainingLabelApproved": false
+    }
+  ],
+  "totals": {
+    "distinctPublisherArticleUrls": 2,
+    "verifiedOriginalPublisherVersionsCounted": 2,
+    "uniqueSenators": 2,
+    "individuallyBoundedAuthenticOriginalPrintedPositions": 2,
+    "individuallyVerifiedOfficialSenateFinalPassageNayBallots": 2,
+    "historicalPreVoteStatementToOfficialNamedNoResearchPairs": 2,
+    "crossPartyComparisonPairs": 0,
+    "fullAutomatedProductionOrHistoricalForecastBacktestsRun": 0,
+    "productionTrainingLabelsApproved": 0
+  },
+  "holds": {
+    "archiveCaptureIsLatestKnownByNotFirstPublisherPostingMinute": true,
+    "currentPublisherVersionNeverUsedAs2023Proof": true,
+    "firstSourceFeb10PostingMinuteNotVerified": true,
+    "SF73IsCompanionNotApr28RecordedDirectPassageBill": true,
+    "GruenhagenNoExactBillNumberInStatement": true,
+    "exactHF100FloorAmendmentVersionAndMinuteUnproven": true,
+    "sourceAndVoteAreOnSameCannabisTopicButDifferentTextVersionsPossible": true,
+    "noPrivateAsOfProductionIngestionChecked": true,
+    "completeOriginalSenatorVerbatimUtteranceNotHumanApproved": true,
+    "originalAudioNotAuthenticated": true,
+    "noTrainingLabelsOrModelForecastsOrStoredVotesChanged": true,
+    "noRawCopyrightedPublisherHtmlOrGovernmentPdfCommitted": true,
+    "issue987RemainsOpen": true
+  }
+}
