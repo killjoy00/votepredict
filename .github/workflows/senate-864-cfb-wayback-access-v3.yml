@@ -1,0 +1,125 @@
+name: 'One-shot #864 public CFB Wayback CDX access V3 (metadata-only triage)'
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-864-cfb-wayback-access-v3.yml
+      - scripts/diagnose-cfb-864-public-wayback-access-v3.ts
+      - tests/cfb-864-public-wayback-access-v3.test.ts
+  push:
+    branches: [main]
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+concurrency:
+  group: cfb-864-wayback-transport-v3-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  pr-public-synthetic:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 11
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/cfb-864-public-wayback-access-v3.test.ts
+
+  one-shot-preflight:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_CDX_ACCESS_DIAGNOSTIC_V3_20261012')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_CDX_ACCESS_V3_OWNER_ONE_SHOT_20261012'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact checked-out reviewed main SHA
+        env:
+          MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$MAIN_SHA"
+      - name: Check unique one-shot source diagnostic marker
+        run: git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_CDX_ACCESS_DIAGNOSTIC_V3_20261012'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: node --import tsx --test tests/cfb-864-public-wayback-access-v3.test.ts
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+
+  one-shot-public-diagnostic:
+    needs: [one-shot-preflight]
+    if: >-
+      needs.one-shot-preflight.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_CDX_ACCESS_DIAGNOSTIC_V3_20261012')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_CDX_ACCESS_V3_OWNER_ONE_SHOT_20261012'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      CFB_864_ACCESS_V3_MARKER_APPROVED: 'true'
+      CFB_864_ACCESS_V3_OWNER_COMMENT_VERIFIED: ${{ github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_CDX_ACCESS_V3_OWNER_ONE_SHOT_20261012' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact merge SHA
+        env:
+          MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$MAIN_SHA"
+      - name: Check reviewed one-shot transport diagnostic marker
+        run: git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_CDX_ACCESS_DIAGNOSTIC_V3_20261012'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: PUBLIC fixed two-source small-prefix transport-only diagnostic
+        run: node --import tsx scripts/diagnose-cfb-864-public-wayback-access-v3.ts
