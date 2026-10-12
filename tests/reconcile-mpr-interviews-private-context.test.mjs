@@ -97,3 +97,10 @@ test('public receipts cannot add fake non-MPR or wrong SHA originals without det
  altered2.urls[0].url='https://evil.example/contents';
  assert.throws(()=>expectedPublicOriginals(altered2));
 });
+
+
+test('private archived digest mismatched with indexed public SHA1 must fail closed even if original raw SHA256 agrees',()=>{
+ const out=reconcilePrivateContextRows([context(originals[0],1,{archiveDigest:'A'.repeat(32)})],receipt);
+ assert.equal(out.matchedExactOriginalsWithinExport,0);
+ assert.equal(out.originalStatuses[0].status,'conflicting_or_invalid_private_provenance');
+});
