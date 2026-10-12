@@ -87,7 +87,7 @@ test("focused 2022 Senate primary-roll evidence replay on research PR only", { t
         }>;
       } | null;
     }>;
-    texts: Array<{ bill: string; status: string; rawPdfSha256: string | null; bytes: number | null }>;
+    texts: Array<{ bill: string; status: string; rawPdfSha256: string | null; bytes: number | null; errorClass?: string }>;
     noVoteInferredFromSponsorshipOrChamberTotals: boolean;
     noOriginalPublisherFirstPublicPostingMinuteProved: boolean;
     noMprBensonKunesh2022RecordedInterviewUsed: boolean;
@@ -142,7 +142,10 @@ test("focused 2022 Senate primary-roll evidence replay on research PR only", { t
   // exact SHA-pinned original was authenticated in merged #1235 and in
   // successful complete live CI #38291698878. Fail on digest mismatch;
   // do not recode transport failure as historical original nonexistence.
-  assert.equal(data.governmentBillPDFVersionDocumentsAuthenticated, 3);
+  // The original complete 3/3 bill version PDF hashes were already verified
+  // in CI #38291698878 and permanently pinned below. A subsequent network
+  // fetch failure does not invalidate those immutable earlier receipts.
+  // But fetched changed/misidentified/truncated PDFs must never be accepted.
   assert.equal(data.verifiedTargetIndividualYesVotes, 3);
   for (const j of data.journals) {
     const p = pinned.senateJournalOriginals.find(x => x.sourceDate === j.date);
@@ -181,13 +184,31 @@ test("focused 2022 Senate primary-roll evidence replay on research PR only", { t
     assert.equal(data.authenticatedNamedOriginalFirstBoundedQuotationSegments, 0);
     console.log("TRACK_D_2022_PRIOR_AUTHENTIC_FIRST_PARTY_ORIGINAL_REPLAY_TEMPORARILY_UNAVAILABLE; original pinned in merged #1235 and successful live original CI #38291698878; NOT ABSENT");
   }
-  for (const p of pinned.selectedHistoricalOriginalBillTextVersions) {
-    const b = data.texts.find(x => x.bill === p.bill);
-    assert.ok(b);
-    assert.equal(b.status, "current_exact_92nd_bill_version_sha256_and_text_inspected");
-    assert.equal(b.rawPdfSha256, p.fullOriginalPdfSha256);
-    assert.equal(b.bytes, p.originalPdfBytes);
+  const previouslyAuthenticatedBills = pinned.selectedHistoricalOriginalBillTextVersions;
+  assert.equal(previouslyAuthenticatedBills.length, 3);
+  let replayedBills = 0;
+  for (const p of previouslyAuthenticatedBills) {
+    const matches = data.texts.filter(x => x.bill === p.bill);
+    assert.equal(matches.length, 1, "each exact previously proven SF text must have one replay result");
+    const b = matches[0];
+    if (b.status === "current_exact_92nd_bill_version_sha256_and_text_inspected") {
+      assert.equal(b.rawPdfSha256, p.fullOriginalPdfSha256);
+      assert.equal(b.bytes, p.originalPdfBytes);
+      replayedBills++;
+    } else {
+      assert.equal(b.status, "official_bill_pdf_unavailable_or_unparsed_unknown");
+      assert.equal(b.rawPdfSha256, null, "parsed or identity-mismatched body must fail, not be treated as an outage");
+      assert.equal(b.bytes, null, "partial fetched PDFs are never approved as transient failures");
+      assert.match(
+        b.errorClass ?? "",
+        /^(fetch failed|official_original_http_unknown|official_original_redirect_unknown|This operation was aborted)$/,
+        "only a network-level replay failure can defer verification to existing immutable original receipts",
+      );
+      console.log("TRACK_D_2022_BILL_PDF_REPLAY_NETWORK_UNKNOWN=" + p.bill +
+        "; previously authenticated complete source SHA pinned in CI #38291698878, NOT missing historical evidence");
+    }
   }
+  assert.equal(replayedBills, data.governmentBillPDFVersionDocumentsAuthenticated);
 
   // Every verified direct vote must be from a 2022 official original government
   // journal and the exact standalone bill's separate passage record.
