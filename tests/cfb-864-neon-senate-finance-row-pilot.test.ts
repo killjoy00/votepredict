@@ -163,6 +163,8 @@ test('dedicated pilot CI never exposes protected Neon key on PR and never persis
  assert.doesNotMatch(withSecret,/issues: write/);
  const publisher=wf.split('  publish-sanitized-pilot:\n')[1]??'';
  assert.match(publisher,/issues: write/);
+ assert.match(publisher,/Unexpected private top-level field/);
+ assert.match(publisher,/Object\.keys\(data\)\.some\(k=>!topKeys\.has\(k\)\)/);
  assert.doesNotMatch(publisher,/secrets\.NEON_API_KEY|NEON_API_KEY:/);
  assert.doesNotMatch(wf,/^\s*schedule:/m);
  assert.doesNotMatch(wf,/actions\/upload-artifact/);
