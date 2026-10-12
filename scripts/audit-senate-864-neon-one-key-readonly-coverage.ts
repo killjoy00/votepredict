@@ -14,7 +14,7 @@ import {REQUIRED_MEDIA_EXPORT_TABLES} from
  '../src/evidence/senate-media-readonly-export.js';
 
 export const REQUIRED_864_TABLES=[...REQUIRED_MEDIA_EXPORT_TABLES,'vote_events','member_votes'] as const;
-export const ONE_SHOT_MARKER='SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V1' as const;
+export const ONE_SHOT_MARKER='SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V2' as const;
 export const GROUPS=[
  'roster','finance','committeeSources','committeeVotes','committeeChoices','campaign','media',
 ] as const;
@@ -258,6 +258,15 @@ async function main(){
    projectId:process.env.VOTEPREDICT_NEON_PROJECT_ID?.trim()??'',
    preferredDatabase:process.env.VOTEPREDICT_MEDIA_EXISTING_DATABASE?.trim()||undefined,
   },fetch,undefined,p=>{phase=p});
+  // Cross-job communication carries ONLY the above validator's year/family
+  // grouped integers, with no connection identity or private original records.
+  // A separate job with issues:write publishes this safe receipt to #864;
+  // the protected Neon job itself has no GitHub issue-write permission.
+  if(process.env.GITHUB_OUTPUT){
+   const safe=Buffer.from(JSON.stringify(audit),'utf8').toString('base64');
+   if(safe.length>70000)throw Error('Sanitized aggregate exceeds bounded output');
+   appendFileSync(process.env.GITHUB_OUTPUT,'public_counts_b64='+safe+'\n');
+  }
   console.log('VOTEPREDICT_864_SANITIZED_EXISTING_NEON_COUNTS='+JSON.stringify(audit));
   if(process.env.GITHUB_STEP_SUMMARY){
    const lines=[
@@ -276,6 +285,8 @@ async function main(){
   }
  }catch{
   console.error('VOTEPREDICT_864_SANITIZED_READONLY_SOURCE_AUDIT_FAILED_CLOSED phase='+phase);
+  if(process.env.GITHUB_OUTPUT && /^[a-z_]+$/.test(phase) && phase.length<110)
+   appendFileSync(process.env.GITHUB_OUTPUT,'failure_phase='+phase+'\n');
   process.exitCode=1;
  }
 }
