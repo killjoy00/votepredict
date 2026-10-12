@@ -26,7 +26,7 @@ test('2022 Susan Pha original site old SD40 footer does not override official SD
  assert.deepEqual(ps.map(p=>p.archivePublicByUTC),['2022-01-20T08:23:34.000Z','2022-08-05T03:54:40.000Z']);
  assert.equal(ledger.scope.oneOriginalSusanPhaSiteOldSD40FooterPreservedButActual2022SenateSD38ServiceVerified,true);
  assert.equal(ledger.scope.susanPha2022AugCandidateOriginalEndorsementExplicitlySaysSD38,true);
- assert.ok(ps.every(p=>p.originalFirstAuthoredDateProven===false));
+ assert.ok(ps.every(p=>p.firstAuthoredDateProven===false));
  assert.equal(ledger.excerpts.filter(q=>ps.some(p=>p.id===q.pageId)).length,16);
 });
 
