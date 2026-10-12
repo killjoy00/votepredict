@@ -71,8 +71,8 @@ test('V6 keyless receipt script is valid async JavaScript, exact whitelist and n
 
 function reporterFixture(parity:'FULL_8_OF_8'|'HOLD'='FULL_8_OF_8'){
  const js=getKeylessScript();
- const keys=js.match(/const keys=\\('([^']+)'\\)\\.split\\(' '\\);/);
- const booleans=js.match(/const bKeys=\\('([^']+)'\\)\\.split\\(' '\\);/);
+ const keys=js.match(/const keys=\('([^']+)'\)\.split\(' '\);/);
+ const booleans=js.match(/const bKeys=\('([^']+)'\)\.split\(' '\);/);
  assert.ok(keys&&booleans,'Explicit exact field and boolean whitelists required');
  const obj:Record<string,unknown>={};
  for(const k of keys[1]!.split(' '))obj[k]=0;
