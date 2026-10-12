@@ -17,6 +17,13 @@ test("focused 2022 Senate primary-roll evidence replay on research PR only", { t
     process.env.GITHUB_EVENT_NAME === "pull_request" &&
     process.env.GITHUB_HEAD_REF === "research/2022-sf2666-sf2575-sf2729-primary-votes";
 
+  const synthetic = execFileSync(process.execPath, [
+    "--test",
+    "tests/senate-media-2022-standalone-parents-bills-primary.test.mjs",
+  ], { encoding: "utf8", timeout: 30_000, maxBuffer: 500_000 });
+  assert.match(synthetic, /# fail 0/);
+  assert.match(synthetic, /# pass 9/);
+
   if (!exactResearchPR) return;
 
   const out = "artifacts/track-d-2022-parents-primary-standalone-live.json";
