@@ -190,12 +190,13 @@ async function persistJournal(
         : null;
       const inserted = await client.query<{ id: string }>(
         `INSERT INTO vote_events (
-           session_id,chamber_id,bill_id,source_document_id,external_key,vote_kind,motion_text,
+           session_id,chamber_id,bill_id,source_document_id,external_key,vote_kind,motion_text,amendment_ref,
            occurred_on,yea_count,nay_count,other_count,passed,is_passage,metadata
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14::jsonb)
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb)
          ON CONFLICT (session_id,chamber_id,external_key) DO UPDATE SET
            bill_id=EXCLUDED.bill_id,source_document_id=EXCLUDED.source_document_id,
-           vote_kind=EXCLUDED.vote_kind,motion_text=EXCLUDED.motion_text,occurred_on=EXCLUDED.occurred_on,
+           vote_kind=EXCLUDED.vote_kind,motion_text=EXCLUDED.motion_text,
+           amendment_ref=EXCLUDED.amendment_ref,occurred_on=EXCLUDED.occurred_on,
            yea_count=EXCLUDED.yea_count,nay_count=EXCLUDED.nay_count,other_count=EXCLUDED.other_count,
            passed=EXCLUDED.passed,is_passage=EXCLUDED.is_passage,metadata=vote_events.metadata||EXCLUDED.metadata
          RETURNING id`,
@@ -207,6 +208,7 @@ async function persistJournal(
           event.externalKey,
           event.voteKind,
           event.motionText,
+          event.amendmentRef ?? null,
           event.occurredOn,
           event.yeaCount,
           event.nayCount,
