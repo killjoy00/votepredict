@@ -53,7 +53,7 @@ test('V10 protected errors expose only fixed phase labels, not raw names or exce
  }
 });
 
-import {YEA_YEA_V10_SAFE_SCHEMA_VERSION,YEA_V10_SAFE_ROSTER_KEYS,
+import {YEA_V10_SAFE_SCHEMA_VERSION,YEA_V10_SAFE_ROSTER_KEYS,
  YEA_V10_SAFE_RESOLVER_REASONS,mapActualRosterResolverReason,
  serializeApprovedYeaV10SafeScalars} from
  '../src/evidence/senate-864-2024-yea-v10-roster-safe-scalars.js';
