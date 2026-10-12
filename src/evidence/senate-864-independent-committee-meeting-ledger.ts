@@ -15,7 +15,8 @@ type Meeting={
  indexHeadingVerified:boolean;minutesPdfUrls:string[];
  electronicMinutesStatus:string;
 };
-type Pdf=OriginalSenateCommitteeYearAudit['documentProofs'][number] & {
+type Pdf=Omit<OriginalSenateCommitteeYearAudit['documentProofs'][number],
+ 'voteObservations'|'contextOnlyActions'|'document'> & {
  document:OriginalSenateCommitteeYearAudit['documentProofs'][number]['document']&{
   fetchedAt?:string;extractionMethod?:string;extractedTextSha256?:string;
  };
