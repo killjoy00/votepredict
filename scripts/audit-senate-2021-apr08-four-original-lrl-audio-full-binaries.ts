@@ -16,6 +16,7 @@ import {tmpdir} from 'node:os';
 import {join,dirname} from 'node:path';
 import {
  APR08_FOUR_ORIGINAL_LRL_AUDIO,verifyFirstPinnedApril08AudioPrefix,
+ verifyFirstPinnedWholeOriginalApril08Audio,
  verifyJournalMotionPreservationAcrossAudioSources,
  type April08OriginalAudio
 } from '../src/evidence/senate-2021-apr08-four-original-lrl-audio-pins.js';
@@ -39,7 +40,7 @@ function probeDuration(path:string){
   return Number.isFinite(seconds)&&seconds>0?Number(seconds.toFixed(3)):null;
  }catch{return null;}
 }
-async function oneFullOriginal(spec:April08OriginalAudio,tempFolder:string,index:number){
+async function oneFullOriginal(spec:April08OriginalAudio,tempFolder:string,index:number,strictSecond=false){
  const fixed=new URL(spec.url);
  if(fixed.protocol!=='https:'||
     fixed.hostname!=='www.lrl.mn.gov'||
@@ -89,7 +90,11 @@ async function oneFullOriginal(spec:April08OriginalAudio,tempFolder:string,index
   throw Error('original full MP3 streamed total differs from public HTTP Content-Length');
  const check=verifyFirstPinnedApril08AudioPrefix(spec,Buffer.concat(prefix));
  const fullSHA256=hash.digest('hex');
+ const independentlyMatchedFirstCompleteSource=strictSecond
+  ?verifyFirstPinnedWholeOriginalApril08Audio(spec,total,fullSHA256):null;
  const duration=probeDuration(filepath);
+ if(strictSecond&&duration===null)
+  throw Error('ffprobe original exact-MP3 playable duration unavailable on strict second source');
  // Three original first-Judiciary automatic-caption review offsets, not votes.
  const captionReviewOffsetsSeconds=spec.part==='judiciary-first'?[3503,4004,4943]:null;
  const captionOffsetsWithinThisWholeRecording=captionReviewOffsetsSeconds===null||duration===null
@@ -99,6 +104,8 @@ async function oneFullOriginal(spec:April08OriginalAudio,tempFolder:string,index
   originalHTTPStatus:res.status,declaredContentType:contentType,
   declaredFullSourceBytes:declared,completeOriginalBytesDownloaded:total,
   entireOriginalMP3SHA256:fullSHA256,
+  independentlyVerifiedAgainstFirstCompleteOriginalSHA256:
+   independentlyMatchedFirstCompleteSource?.independentSecondWholeSourceVerified??false,
   independentlyVerifiedOriginalFirstPrefixBytes:check.bytes,
   independentlyRevalidatedOriginalFirstPrefixSHA256:check.sha256,
   originalFirstPrefixSignature:check.signature,
@@ -117,15 +124,18 @@ async function oneFullOriginal(spec:April08OriginalAudio,tempFolder:string,index
 
 async function main(){
  const outAt=process.argv.indexOf('--output');
- if(outAt<0||!process.argv[outAt+1]||process.argv.length!==4)
-  throw Error('Pass exactly --output PATH to preserve metadata only');
+ const strictSecond=process.argv.includes('--strict-original-full-sha');
+ const argShapeOK=process.argv.length===4||
+  (process.argv.length===5&&strictSecond&&process.argv[4]==='--strict-original-full-sha');
+ if(outAt!==2||!process.argv[outAt+1]||!argShapeOK)
+  throw Error('Pass --output PATH and optional final --strict-original-full-sha only');
  const journal=verifyJournalMotionPreservationAcrossAudioSources();
  const tempFolder=await mkdtemp(join(tmpdir(),'votepredict-apr08-2021-public-audio-'));
  const rows:unknown[]=[];let sourceFailures=0;
  try{
   for(const [i,spec] of APR08_FOUR_ORIGINAL_LRL_AUDIO.sourceMP3.entries()){
    try{rows.push({status:'FULL_ORIGINAL_AUDIO_BINARY_AUTHENTICATED',
-      ...(await oneFullOriginal(spec,tempFolder,i))});
+      ...(await oneFullOriginal(spec,tempFolder,i,strictSecond))});
    }catch(e){
     sourceFailures++;
     rows.push({status:'ORIGINAL_FULL_AUDIO_BINARY_ACQUISITION_FAILED',
@@ -138,7 +148,9 @@ async function main(){
   await rm(tempFolder,{recursive:true,force:true});
  }
  const result={
-  schemaVersion:'senate-2021-apr08-four-lrl-original-mp3-full-binary-source-audit-v1',
+  schemaVersion:strictSecond
+   ?'senate-2021-apr08-four-lrl-original-mp3-strict-second-full-sha-duration-v1'
+   :'senate-2021-apr08-four-lrl-original-mp3-full-binary-source-audit-v1',
   issue:864,
   auditedAtUTC:new Date().toISOString(),
   originalMediaPageMeetingDay:'2021-04-08',
@@ -146,6 +158,9 @@ async function main(){
   firstOriginalPrefixRunId:APR08_FOUR_ORIGINAL_LRL_AUDIO.originalFirstRunId,
   mediaSourcesExpected:4,mediaSourcesFullyAuthenticated:4-sourceFailures,
   originalSourceFailures:sourceFailures,
+  independentlyStrictFirstWholeSourceSHAAndBytesRequired:strictSecond,
+  strictFirstWholeSourceSHAAndBytesSuccess:strictSecond&&sourceFailures===0,
+  everyOriginalMP3DurationRequired:strictSecond,
   separateJournalMotionBoundary:journal,
   fullOriginalAudioSources:rows,
   completeAudioBinariesRemovedFromEphemeralRunner:true,
