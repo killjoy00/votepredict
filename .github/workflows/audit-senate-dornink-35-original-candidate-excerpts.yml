@@ -1,0 +1,87 @@
+name: Independently audit 35 Gene Dornink historic original 2020 and 2022 Senate campaign excerpts
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-dornink-35-2019-2022-original-firstparty-excerpts-v1.json
+      - scripts/audit-senate-dornink-35-exact-original-site-excerpts.mjs
+      - scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs
+      - tests/senate-dornink-35-original-firstparty-excerpts.test.ts
+      - .github/workflows/audit-senate-dornink-35-original-candidate-excerpts.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-entire-three-html-three-cdx-and-thirty-five-literals:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-gene-dornink-35-exact-firstparty-2020-22-policy-quotes-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen entire official government Minnesota LRL actual Senate service and special swearing
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen six documented original Dornink domain search windows with full CDX and genuine first-party HTML
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38192154846
+          name: senate-dornink-documented-2020-2022-firstparty-original-six-windows-v1
+          github-token: ${{ github.token }}
+          path: original/dornink
+      - name: Independently rehash original government identity and three entire original CDX and raw HTML bodies and literal short excerpts
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
+          node --import tsx scripts/audit-senate-dornink-35-exact-original-site-excerpts.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --archived-original-source-dir original/dornink \
+            --output-json original/proof/dornink-35-exact-original-2020-2022-cdx-and-html-audit.json
+      - name: Recompute official 95 actual serving senators campaign site research inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          node --import tsx scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --out-dir original/95-serving-source-coverage
+          node -e 'const s=require("./original/95-serving-source-coverage/95-senators-public-campaign-coverage.json").summary;for(const [key,expected] of Object.entries({actualServingStateSenators:95,actuallyServedSenatorsWithAnyKnownSelectedOriginalSiteExcerpt:87,actuallyServedSenatorsWithOriginalSiteBodiesButNoSelectedQuote:0,actuallyServedSenatorsUnobservedInSelectedOriginalSiteSourceLedgers:8,totalExactResearchExcerptRowsForVerifiedSenators:1140,nonMatchingRowsExcludedOrNeedsSeparateIdentityProof:1,productionDatabaseReadsWritesOrForecastChanges:0})){if(s[key]!==expected)throw Error(key+" expected "+expected+" got "+s[key]);}console.log("ORIGINAL GOV 95 SERVING SENATORS; 87 ORIGINAL CAMPAIGN SITE SOURCES; 1140 SHORT ISSUE TEXTS; 8 UNOBSERVED");'
+      - name: Preserve independent original raw CDX, complete HTML and 35 exact quote rehash verification
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-dornink-35-exact-original-firstparty-cdx-html-source-proof-v1
+          path: original/proof/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Preserve official statewide verified 95-person original first-party candidate site coverage
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-95-serving-87-original-source-1140-short-excerpts-v1
+          path: original/95-serving-source-coverage/
+          if-no-files-found: warn
+          retention-days: 30
