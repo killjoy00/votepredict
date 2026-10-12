@@ -1,0 +1,238 @@
+{
+  "version": "track-d-2022-caucus-four-senators-audacy-two-source-historical-original-receipts-v1",
+  "localResearchDay": "2026-10-12",
+  "publicProvenance": {
+    "issue": 987,
+    "pr": 1235,
+    "firstSuccessfulPublicSourceWorkflowRunId": 38276529117,
+    "initialExactSourceHead": "53b46e7c28b71b34112a3fadbdac2df1e5e0b255",
+    "publicMetadataOnlyArtifactId": 11759760341,
+    "syntheticAdversarialTestsPassed": 8
+  },
+  "counts": {
+    "newlyDiscoveredDistinctExactPublisherUrlLeadsNotAmongEarlier18_25_6": 2,
+    "distinctHistoricallyServingStateSenators": 4,
+    "namedSenatorShortCueSourcePairs": 5,
+    "originalPublisherUrlsWithSha1AndSha256AuthenticatedHistoricalHtml": 1,
+    "distinctHistoricalOriginalHtmlBodyVersionsShaAuthenticated": 2,
+    "individuallyNamedSenatorsWithHistoricalShortCueAndFullNameNearby": 4,
+    "originalAudacyWcco2022ArticleHtmlBodiesAuthenticated": 0,
+    "authenticatedOriginalAudioBodies": 0,
+    "approvedWholeQuotedIndividualStatements": 0,
+    "recordedLegislativeMemberVotesProvedByThisResearch": 0,
+    "productionVotePredictSourceDocumentCoverageChecked": 0
+  },
+  "sourceOriginals": [
+    {
+      "id": "2022-feb14-four-gop-senators-parents-rights",
+      "exactPublisherUrl": "https://www.mnsenaterepublicans.com/senate-republicans-propose-parents-bill-of-rights/",
+      "displayedPublisherDayNotIndependentlyInitialPostingClock": "2022-02-14",
+      "publicationCategory": "first_party_senate_gop_caucus_publisher_release_four_separate_named_senator_printed_statement_candidates",
+      "namedServingSenatorIndividuals": [
+        {
+          "name": "Justin Eichorn",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15480",
+          "shortOriginalCueFoundInAtLeastOneHistoricalPublisherHtml": true,
+          "fullSenatorNameNearShortOriginalCue": true,
+          "completeHumanApprovedExactSenatorQuotation": false,
+          "individualQuotedParagraphBoundaryApproved": false,
+          "independentOriginalInterviewRecordedVoiceCertified": false
+        },
+        {
+          "name": "Michelle Benson",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15322",
+          "shortOriginalCueFoundInAtLeastOneHistoricalPublisherHtml": true,
+          "fullSenatorNameNearShortOriginalCue": true,
+          "completeHumanApprovedExactSenatorQuotation": false,
+          "individualQuotedParagraphBoundaryApproved": false,
+          "independentOriginalInterviewRecordedVoiceCertified": false
+        },
+        {
+          "name": "Paul Gazelka",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=12263",
+          "shortOriginalCueFoundInAtLeastOneHistoricalPublisherHtml": true,
+          "fullSenatorNameNearShortOriginalCue": true,
+          "completeHumanApprovedExactSenatorQuotation": false,
+          "individualQuotedParagraphBoundaryApproved": false,
+          "independentOriginalInterviewRecordedVoiceCertified": false
+        },
+        {
+          "name": "Roger Chamberlain",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15325",
+          "shortOriginalCueFoundInAtLeastOneHistoricalPublisherHtml": true,
+          "fullSenatorNameNearShortOriginalCue": true,
+          "completeHumanApprovedExactSenatorQuotation": false,
+          "individualQuotedParagraphBoundaryApproved": false,
+          "independentOriginalInterviewRecordedVoiceCertified": false
+        }
+      ],
+      "currentPublisherHtmlObserved": {
+        "status": "current_publisher_html_sha256_observed",
+        "rawCurrentHttpHtmlSha256": "41759d11de1fb6f41068fb1f00647c20f171d854512e1c7be7070f5abe48039f",
+        "nowVisibleSelectedShortCues": [
+          {
+            "speaker": "Justin Eichorn",
+            "shortCueFound": true,
+            "namedSenatorNearby": true
+          },
+          {
+            "speaker": "Michelle Benson",
+            "shortCueFound": true,
+            "namedSenatorNearby": true
+          },
+          {
+            "speaker": "Paul Gazelka",
+            "shortCueFound": true,
+            "namedSenatorNearby": true
+          },
+          {
+            "speaker": "Roger Chamberlain",
+            "shortCueFound": true,
+            "namedSenatorNearby": true
+          }
+        ],
+        "currentlyExistingPageNotSubstituteForHistoricOriginal": true
+      },
+      "selectedOriginalWaybackIndexStatus": "index_candidates",
+      "selectedCommonCrawlIndexStatus": [
+        {
+          "collection": "CC-MAIN-2022-21",
+          "indexStatus": "not_indexed_this_collection_unknown"
+        },
+        {
+          "collection": "CC-MAIN-2022-49",
+          "indexStatus": "index_unavailable_unknown"
+        }
+      ],
+      "independentlyAuthenticatedHistoricalOriginals": [
+        {
+          "captureUtc": "2022-02-14T23:24:11Z",
+          "indexedOriginalSha1Base32": "QKCIZE6CX4AZ2ZUOT6JNUNDKNYRYLEGP",
+          "downloadedOriginalHtmlRawSha256": "0bf05a87365ca09a6a85114fe867995c4bfe0531a35adf61641454ed322e7696",
+          "rawOriginalHtmlBytes": 91008,
+          "strictSourceStatus": "sha1_authenticated_original_publisher_html",
+          "originalVisibleShortCueNameNearObservations": [
+            {
+              "senator": "Justin Eichorn",
+              "fragmentFound": true,
+              "namedSenatorNearby": true
+            },
+            {
+              "senator": "Michelle Benson",
+              "fragmentFound": true,
+              "namedSenatorNearby": true
+            },
+            {
+              "senator": "Paul Gazelka",
+              "fragmentFound": true,
+              "namedSenatorNearby": true
+            },
+            {
+              "senator": "Roger Chamberlain",
+              "fragmentFound": true,
+              "namedSenatorNearby": true
+            }
+          ],
+          "wholeVerbatimOriginalQuoteNotYetApproved": true
+        },
+        {
+          "captureUtc": "2022-03-07T02:18:03Z",
+          "indexedOriginalSha1Base32": "LWJGXK62GLCLUFK3ELND7PJLHIV6LLXW",
+          "downloadedOriginalHtmlRawSha256": "858c8ee8fdf1b5fb2dee03cf1d5740066dac1476ec5006541f700f3803844cbd",
+          "rawOriginalHtmlBytes": 91648,
+          "strictSourceStatus": "sha1_authenticated_original_publisher_html",
+          "originalVisibleShortCueNameNearObservations": [
+            {
+              "senator": "Justin Eichorn",
+              "fragmentFound": true,
+              "namedSenatorNearby": true
+            },
+            {
+              "senator": "Michelle Benson",
+              "fragmentFound": true,
+              "namedSenatorNearby": true
+            },
+            {
+              "senator": "Paul Gazelka",
+              "fragmentFound": true,
+              "namedSenatorNearby": true
+            },
+            {
+              "senator": "Roger Chamberlain",
+              "fragmentFound": true,
+              "namedSenatorNearby": true
+            }
+          ],
+          "wholeVerbatimOriginalQuoteNotYetApproved": true
+        }
+      ],
+      "earliestIndependentlyAuthenticatedHistoricalPublisherOriginalUtc": "2022-02-14T23:24:11Z",
+      "originalAudioVoiceMp3Authenticated": false,
+      "originalArchiveIndexUnavailableIsUnknownNotAbsent": true
+    },
+    {
+      "id": "2022-feb15-wcco-audacy-benson-parents-education",
+      "exactPublisherUrl": "https://www.audacy.com/talk980am/news/national/minnesota-gop-propose-parental-rights-bill-for-the-classroom",
+      "displayedPublisherDayNotIndependentlyInitialPostingClock": "2022-02-15",
+      "publicationCategory": "audacy_publisher_hosted_wcco_syndicated_reporter_benson_interview_excerpt",
+      "namedServingSenatorIndividuals": [
+        {
+          "name": "Michelle Benson",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15322",
+          "shortOriginalCueFoundInAtLeastOneHistoricalPublisherHtml": false,
+          "fullSenatorNameNearShortOriginalCue": false,
+          "completeHumanApprovedExactSenatorQuotation": false,
+          "individualQuotedParagraphBoundaryApproved": false,
+          "independentOriginalInterviewRecordedVoiceCertified": false
+        }
+      ],
+      "currentPublisherHtmlObserved": {
+        "status": "current_publisher_html_sha256_observed",
+        "rawCurrentHttpHtmlSha256": "3c4bc857cfeeddd325eb010aa7a7224833799985b23bc3b0cee400ebe5aa6ebd",
+        "nowVisibleSelectedShortCues": [
+          {
+            "speaker": "Michelle Benson",
+            "shortCueFound": true,
+            "namedSenatorNearby": true
+          }
+        ],
+        "currentlyExistingPageNotSubstituteForHistoricOriginal": true
+      },
+      "selectedOriginalWaybackIndexStatus": "index_unavailable_unknown",
+      "selectedCommonCrawlIndexStatus": [
+        {
+          "collection": "CC-MAIN-2022-21",
+          "indexStatus": "index_unavailable_unknown"
+        },
+        {
+          "collection": "CC-MAIN-2022-49",
+          "indexStatus": "not_indexed_this_collection_unknown"
+        }
+      ],
+      "independentlyAuthenticatedHistoricalOriginals": [],
+      "earliestIndependentlyAuthenticatedHistoricalPublisherOriginalUtc": null,
+      "originalAudioVoiceMp3Authenticated": false,
+      "originalArchiveIndexUnavailableIsUnknownNotAbsent": true
+    }
+  ],
+  "temporalAndCountingLimits": {
+    "feb14FirstHistoricallyAuthenticatedGopCaucusPageByUtc": "2022-02-14T23:24:11Z",
+    "mar07SecondDistinctHistoricalOriginalVersionUtc": "2022-03-07T02:18:03Z",
+    "initialFeb14PublisherPublicationTimeNotProvedExactly": true,
+    "originalCaptureAtFeb14_2324UtcCannotForecastEarlierFeb14_1500CentralHearing": true,
+    "laterMarch22FloorLegislativeVotesNeedSeparateExactMemberRollAndCutoffCheck": true,
+    "fourSenatorCuesOnOneArticleNotFourArticles": true,
+    "repeatedBensonOnSeparateWccoUrlNotAdditionalUniqueSenator": true,
+    "underlyingWccoInterviewAudioNotAuthenticated": true,
+    "independentlyDifferentMprFeb23NamedBensonKuneshProgramNotAlias": true,
+    "neitherMprAudioUriFingerprintsOr2022NamedOriginalHtmlVerifiedHere": true,
+    "currentWccoArticleNotIndependentlyArchivedInSelectedIndex": true,
+    "WccoArchiveIndexUnavailableNotProofArticleAbsence": true,
+    "adjacentGazelkaIndividualPressReleaseRepeatsSpeechNotSeparateSentenceCandidate": true,
+    "humanApprovedOriginalBoundedSpeakerQuoteTurnsStillZero": true,
+    "twoOriginalCaptureVersionsAreNotTwoSeparateSpeakerEvents": true,
+    "noRawOriginalHtmlAudioWarcOrWholeArticlePersisted": true,
+    "noPrivateSourceRowsOrProductionDbQueried": true,
+    "noCollectorIngestionPredictionModelOrServingChanged": true
+  }
+}
