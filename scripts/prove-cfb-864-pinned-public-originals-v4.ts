@@ -308,7 +308,7 @@ export function validatePinnedV4Receipt(value:unknown):PinnedReceipt{
  for(let i=0;i<PINNED_CFB_ORIGINALS.length;i++){
   const v=o.results[i] as Record<string,unknown>,source=PINNED_CFB_ORIGINALS[i];
   if(!v||typeof v!=='object'||Array.isArray(v)
-   ||Object.keys(v).length!==5
+   ||Object.keys(v).length!==6
    ||Object.keys(v).some(k=>!['id','stream','status','cdxRowsChecked','replayRequests','verified'].includes(k))
    ||v.id!==source.id||v.stream!==source.stream
    ||!status.has(v.status as PinnedStatus)
