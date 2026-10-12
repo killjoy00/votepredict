@@ -172,7 +172,8 @@ test('workflow has no Neon/private input, no source body upload, and script vali
  assert.match(wf,/git log -1 --format=%B \| grep -Fq/);
  assert.match(wf,/npm run check/);
  assert.match(wf,/npm audit --omit=dev --audit-level=high/);
- assert.doesNotMatch(wf,/NEON_API_KEY|DATABASE_URL|VERCEL_TOKEN|secrets\.|upload-artifact|schedule:/);
+ assert.match(wf,/DATABASE_URL_UNPOOLED: postgresql:\/\/postgres:postgres@localhost:5432\/votepredict/);
+ assert.doesNotMatch(wf,/NEON_API_KEY|VERCEL_TOKEN|secrets\.|upload-artifact|^\s*schedule:/m);
  const part=wf.split('          script: |\n')[1]??'';
  assert.ok(part.length>1500);
  const source=part.split('\n').filter(Boolean).map(s=>s.startsWith('            ')?s.slice(12):s).join('\n');
