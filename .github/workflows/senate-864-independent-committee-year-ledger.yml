@@ -9,6 +9,8 @@ on:
       - src/evidence/senate-864-independent-committee-meeting-ledger.ts
       - scripts/build-senate-864-independent-committee-ledger.ts
       - tests/senate-864-independent-committee-meeting-ledger.test.ts
+      - tests/senate-864-2021-partial-source-proof.test.ts
+      - docs/evaluation/source-proof/senate-864-2021-committee-partial-official-original-source-roll-catalogue.json
       - docs/evaluation/senate-864-independent-committee-year-reconciliation.md
       - .github/workflows/senate-864-independent-committee-year-ledger.yml
 
@@ -35,7 +37,9 @@ jobs:
           cache-dependency-path: package-lock.json
       - run: npm ci --no-fund --no-audit
       - name: Fail-closed named/count-only/no-Minutes and OCR source regressions
-        run: node --import tsx --test tests/senate-864-independent-committee-meeting-ledger.test.ts
+        run: |
+          node --import tsx --test tests/senate-864-independent-committee-meeting-ledger.test.ts
+          node --import tsx --test tests/senate-864-2021-partial-source-proof.test.ts
       - name: Original independently inventoried 1592-meeting LRL index
         uses: actions/download-artifact@v4
         with:
