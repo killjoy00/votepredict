@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {VERSION,LEADS,JOURNAL,allowed,recognizeRoll,archivalStatus,inspectJournal,run}
+import {VERSION,LEADS,JOURNAL,allowed,recognizeRoll,archivalStatus,proveSpeakerBoundedTurn,checkBoundedArchivedOriginal,inspectJournal,run}
  from '../scripts/probe-senate-media-2023-hf100-no-originals.mjs';
 
 function vote(yea='Boldon Carlson Champion Cwodzinski Dibble',nay='Abeler Anderson Bahr Coleman Dahms Gruenhagen'){
@@ -113,4 +113,27 @@ test('503 official original and archive outage produce UNKNOWN: no named vote, n
  assert.equal(r.holds.SF73WasCompanionNotRecordedFinalPassageBill,true);
  assert.equal(r.holds.noProductionChanges,true);
  assert.equal(r.sources.length,2);
+});
+
+test('bounded Dahms source must carry closed quote immediately attributed to the correct full senator name',()=>{
+ const h='<p>“The are many glaring issues with the Democrats’ proposal to legalize recreational marijuana in Minnesota,” said Senator Gary Dahms (R). “This legislation is far too broad, and its language leads to countless questions.”</p>';
+ const v=proveSpeakerBoundedTurn(h,LEADS[0]);assert.equal(v.verified,true);
+ assert.match(v.boundedSegmentNormalizedSha256,/^[0-9a-f]{64}$/);
+ assert.ok(v.boundedSegmentCharacters>60);
+ assert.equal(proveSpeakerBoundedTurn(h.replace('said Senator Gary Dahms','a campaign aide said'),LEADS[0]).verified,false);
+ assert.equal(proveSpeakerBoundedTurn(h.replace('This legislation is far too broad','This different bill is far too broad'),LEADS[0]).verified,false);
+});
+test('bounded Gruenhagen source requires signed first-person policy item, not a generic nearby citation',()=>{
+ const h='<h1>Gruenhagen: the destructiveness of legal marijuana</h1><p>Friends and neighbors – One of the hot items on their to-do list is legalizing marijuana.</p><p>The Democrat effort to legalize it here is taking us down a dangerous and destructive path.</p><p>It is a privilege to serve you. God Bless. Glenn</p>';
+ const v=proveSpeakerBoundedTurn(h,LEADS[1]);assert.equal(v.verified,true);
+ assert.match(v.boundedSegmentNormalizedSha256,/^[0-9a-f]{64}$/);
+ assert.equal(proveSpeakerBoundedTurn(h.replace('God Bless. Glenn','God Bless. Someone else'),LEADS[1]).verified,false);
+ assert.equal(proveSpeakerBoundedTurn(h.replace('Gruenhagen: the destructiveness','Anonymous: the destructiveness'),LEADS[1]).verified,false);
+});
+test('altered archived source original cannot match independently indexed original bytes',async()=>{
+ const c={captureUtc:'2023-03-27T23:22:22Z',indexedOriginalSha1Base32:'A'.repeat(32),
+  rawOriginalSha256:'a'.repeat(64),originalBytes:1000,qualifiesAsAuthenticatedPrevoteSourceCue:true};
+ const fake=async()=>new Response('<html>'+('text '.repeat(220))+'</html>',{status:200,headers:{'content-type':'text/html'}});
+ const v=await checkBoundedArchivedOriginal(LEADS[0],c,fake);
+ assert.equal(v.verified,false);assert.equal(v.status,'original_replay_digest_mismatch_fail_closed');
 });

@@ -99,6 +99,65 @@ export function archivalStatus(capture,lead){
   individualSpeakerAttributionIndependentlyBounded:false,
   qualifiesAsAuthenticatedPrevoteSourceCue:historic&&validated&&indexed&&raw&&bytes&&issueCue===true};
 }
+
+/** A second exact-indexed-original-body replay checks ownership, not nearby names. */
+export function proveSpeakerBoundedTurn(html,lead){
+ if(!LEADS.includes(lead)||typeof html!=='string'||html.length>2_500_000)throw Error('untrusted source or oversized original');
+ const text=simplify(html);
+ if(lead===LEADS[0]){
+  const quotes=[...text.matchAll(/"([^"]{35,350})"[,]?\s*said\s+senator\s+gary\s+dahms\b/g)]
+    .filter(m=>m[1].includes('glaring issues')&&m[1].includes('legalize recreational marijuana'));
+  const verified=quotes.length===1&&text.includes('this legislation is far too broad');
+  return {method:'closed_original_first_party_quotation_followed_by_full_senator_name',
+    verified,boundedSegmentNormalizedSha256:verified?sha256(Buffer.from(quotes[0][1],'utf8')):null,
+    boundedSegmentCharacters:verified?quotes[0][1].length:null,
+    senator:'Gary Dahms',wholePublisherQuoteOrSpeechTranscriptApproved:false};
+ }
+ const tagline='the democrat effort to legalize it here is taking us down a dangerous and destructive path.';
+ const found=[...text.matchAll(/the democrat effort to legalize it here is taking us down a dangerous and destructive path\./g)];
+ const verified=text.includes('gruenhagen: the destructiveness of legal marijuana')&&
+  text.includes('friends and neighbors')&&
+  text.includes('one of the hot items on their to-do list is legalizing marijuana')&&
+  /it is a privilege to serve you\.\s*god bless\.?\s*glenn\b/.test(text)&&found.length===1;
+ return {method:'first_person_named_headline_with_original_signed_glenn_closing',
+   verified,boundedSegmentNormalizedSha256:verified?sha256(Buffer.from(tagline,'utf8')):null,
+   boundedSegmentCharacters:verified?tagline.length:null,
+   senator:'Glenn Gruenhagen',wholePublisherQuoteOrSpeechTranscriptApproved:false};
+}
+function originalIndexedSha1Base32(bytes){
+ const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567',sha=createHash('sha1').update(bytes).digest();
+ let out='',acc=0,bits=0;
+ for(const byte of sha){acc=(acc<<8)|byte;bits+=8;while(bits>=5){bits-=5;out+=chars[(acc>>>bits)&31];}acc&=(1<<bits)-1;}
+ if(bits)out+=chars[(acc<<(5-bits))&31];return out;
+}
+export async function checkBoundedArchivedOriginal(lead,capture,f=fetch){
+ const out={status:'original_speaker_bounds_unknown',verified:false,method:null,
+  boundedSegmentNormalizedSha256:null,boundedSegmentCharacters:null,
+  proofAgainstCurrentHTMLOnly:true,sourceOriginalCaptureUtc:capture.captureUtc};
+ if(!LEADS.includes(lead)||!capture.qualifiesAsAuthenticatedPrevoteSourceCue)
+  throw Error('attempt to promote unapproved historical original');
+ const stamp=capture.captureUtc.replace(/\D/g,'');
+ if(!/^\d{14}$/.test(stamp))throw Error('invalid pinned archive timestamp');
+ try{
+  const url='https://web.archive.org/web/'+stamp+'id_/'+lead.url;
+  const r=await f(url,{method:'GET',redirect:'manual',
+   headers:{accept:'text/html','accept-encoding':'identity','user-agent':'VotePredict/2.0 original-senator-statement-bounded-replay'},
+   signal:AbortSignal.timeout(35_000)});
+  if(r.status!==200||(r.headers.get('content-type')||'').split(';')[0].toLowerCase().trim()!=='text/html')
+   return {...out,status:'original_replay_transport_or_mime_unknown'};
+  if(!r.body)return {...out,status:'original_replay_missing_body_unknown'};
+  const reader=r.body.getReader(),chunks=[];let count=0;
+  for(;;){const x=await reader.read();if(x.done)break;count+=x.value.byteLength;
+   if(count>2_500_000)throw Error('oversized original replay');chunks.push(Buffer.from(x.value));}
+  const original=Buffer.concat(chunks);
+  if(original.length!==capture.originalBytes||sha256(original)!==capture.rawOriginalSha256||
+     originalIndexedSha1Base32(original)!==capture.indexedOriginalSha1Base32)
+   return {...out,status:'original_replay_digest_mismatch_fail_closed'};
+  const o=proveSpeakerBoundedTurn(original.toString('utf8'),lead);
+  return {...out,...o,status:o.verified?'exact_original_personally_owned_policy_segment_bounded':'original_owned_quote_boundary_unknown'};
+ }catch(e){return {...out,status:'original_replay_network_or_body_unknown',errorClass:String(e?.message||e).slice(0,90)};}
+}
+
 export async function inspectSource(lead,f=fetch){
  if(!LEADS.includes(lead))throw Error('not allowed lead');
  const [current,wayback,cc]=await Promise.all([
@@ -110,7 +169,13 @@ export async function inspectSource(lead,f=fetch){
  ].map(c=>archivalStatus(c,lead));
  const exact=versions.filter(v=>v.exactOriginalIndexedHashAndRawBodyMatched);
  const unique=[...new Map(exact.map(v=>[v.captureUtc+'|'+v.rawOriginalSha256,v])).values()];
- return {senator:lead.senator,publisherUrl:lead.url,displayed2023PublisherDateNotAuthenticatedPostingMinute:true,
+ const prevote=wayback.originalHtmlReplayAttempts.map(v=>archivalStatus(v,lead))
+  .filter(v=>v.qualifiesAsAuthenticatedPrevoteSourceCue)
+  .sort((a,b)=>a.captureUtc.localeCompare(b.captureUtc));
+ const originalSpeakerTurnReauth=prevote.length
+  ?await checkBoundedArchivedOriginal(lead,prevote[0],f)
+  :{status:'wayback_indexed_original_not_retrieved_unknown',verified:false};
+ return {originalSpeakerTurnReauth,senator:lead.senator,publisherUrl:lead.url,displayed2023PublisherDateNotAuthenticatedPostingMinute:true,
   currentHtmlIsHistoricalEvidence:false,
   currentReadStatus:current.status,
   waybackIndex:wayback.indexStatus,waybackCandidates:wayback.indexCandidates,
@@ -163,14 +228,16 @@ export async function run(f=fetch,extract=ephemeralPDFText){
   journal,sources,
   officialPersonallyNamedFinalPassageNOCount:journal.namedFinalPassageBallot?.qualified?2:0,
   authenticatedPreVoteOriginalCueCount:sources.filter(x=>x.earliestAuthenticatedPreVoteCue).length,
-  fullyQualifiedHistoricalQuoteVotePairs:0,
+  fullyQualifiedHistoricalQuoteVotePairs:journal.namedFinalPassageBallot?.qualified
+   ?sources.filter(s=>s.earliestAuthenticatedPreVoteCue&&s.originalSpeakerTurnReauth?.verified===true).length:0,
   distinction:'A published 2023 page, contemporary first-party quote or 34-33 aggregate cannot stand in for an indexed independently downloaded original and a named final passage roster.',
   holds:{original2023PublisherFirstPostingMinuteUnknown:true,
     GruenhagenDoesNotIdentifyExactBillInStatement:true,
     SF73WasCompanionNotRecordedFinalPassageBill:true,
     April28FloorAmendmentsAndAsOfVersionIdentityNotProved:true,
     privatelyIngestedAsOfSourceRecordsNotChecked:true,
-    quoteBoundariesRequireSeparateAuthentication:true,
+    quoteBoundariesRequireSeparateAuthentication:sources.some(s=>!s.originalSpeakerTurnReauth?.verified),
+    wholeOriginalVerbatimSenatorUtteranceHumanApproved:false,
     noProductionChanges:true}};
 }
 if(process.argv[1]&&import.meta.url==='file://'+process.argv[1]){

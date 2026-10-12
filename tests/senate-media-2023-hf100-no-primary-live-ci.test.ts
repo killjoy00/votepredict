@@ -18,7 +18,7 @@ test("Track D 2023 HF100 named NO official-original research, isolated to this b
     "--test","tests/senate-media-2023-hf100-no-primary.test.mjs"
   ],{encoding:"utf8",timeout:45_000,maxBuffer:450_000,env});
   assert.match(focused,/# fail 0/);
-  assert.match(focused,/# pass 10/);
+  assert.match(focused,/# pass 13/);
   if (!branchOnly) return;
 
   const out="artifacts/track-d-hf100-2023-no-live.json";
@@ -34,7 +34,7 @@ test("Track D 2023 HF100 named NO official-original research, isolated to this b
        personallyNamedVotes:Array<{senator:string,vote:string}>
       }|null};
     sources:Array<{senator:string,earliestAuthenticatedPreVoteCue:unknown|null,
-      waybackIndex:string}>;
+      waybackIndex:string,originalSpeakerTurnReauth?:{status:string,verified:boolean,method?:string|null,boundedSegmentNormalizedSha256?:string|null,boundedSegmentCharacters?:number|null}}>;
     officialPersonallyNamedFinalPassageNOCount:number;
     authenticatedPreVoteOriginalCueCount:number;
     fullyQualifiedHistoricalQuoteVotePairs:number;
@@ -52,8 +52,11 @@ test("Track D 2023 HF100 named NO official-original research, isolated to this b
     ["Gary Dahms","nay"],["Glenn Gruenhagen","nay"]
   ]);
   assert.equal(data.officialPersonallyNamedFinalPassageNOCount,2);
-  assert.equal(data.fullyQualifiedHistoricalQuoteVotePairs,0,
-    "No current publisher page and no cue-only archival snippet is a wholly validated speaker turn");
+  const bounded=data.sources.filter(s=>s.earliestAuthenticatedPreVoteCue&&s.originalSpeakerTurnReauth?.verified).length;
+  assert.equal(data.fullyQualifiedHistoricalQuoteVotePairs,bounded);
+  assert.ok(bounded>=0&&bounded<=2);
+  for(const source of data.sources) assert.notEqual(source.originalSpeakerTurnReauth?.status,
+    "original_replay_digest_mismatch_fail_closed","changed indexed original HTML is a content failure");
   assert.equal(data.sources.length,2);
   assert.equal(data.holds.SF73WasCompanionNotRecordedFinalPassageBill,true);
   assert.equal(data.holds.noProductionChanges,true);
@@ -62,7 +65,7 @@ test("Track D 2023 HF100 named NO official-original research, isolated to this b
     entirePdfBytes:data.journal.rawPdfBytes,pages:data.journal.pages,
     personallyNamedNays:data.journal.namedFinalPassageBallot?.personallyNamedVotes,
     originalHistSources:data.sources.map(s=>({senator:s.senator,earliest:s.earliestAuthenticatedPreVoteCue,
-      waybackIndex:s.waybackIndex})),
+      waybackIndex:s.waybackIndex,originalSpeakerTurnReauth:s.originalSpeakerTurnReauth})),
     stillUnqualifiedSpeakerTurnCount:data.fullyQualifiedHistoricalQuoteVotePairs
   }));
 });
