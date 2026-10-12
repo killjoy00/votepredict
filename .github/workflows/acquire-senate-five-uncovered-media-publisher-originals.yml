@@ -1,0 +1,71 @@
+name: Acquire directly attributed historical publisher originals for five remaining senators in parallel
+on:
+  pull_request:
+    paths:
+      - scripts/probe-senate-five-uncovered-attributed-publisher-originals.mjs
+      - .github/workflows/acquire-senate-five-uncovered-media-publisher-originals.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  archived-directly-attributed-publisher-sources:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-five-remaining-publisher-media-originals-parallel-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        track: [recent, older]
+    name: Original candidate statements hosted by independent publisher — ${{ matrix.track }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen original complete official historic Minnesota LRL Senate service and swearing sources
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen independently authenticated 87/95 original candidate website coverage as separate source type
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38192507843
+          name: senate-95-serving-87-original-source-1140-short-excerpts-v1
+          github-token: ${{ github.token }}
+          path: original/prior-87
+      - name: Search only publisher original indexes and preserve complete original bytes and historical missingness
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          coverage="$(find original/prior-87 -type f -name 95-senators-public-campaign-coverage.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$coverage"
+          node --import tsx scripts/probe-senate-five-uncovered-attributed-publisher-originals.mjs \
+            --track "${{ matrix.track }}" \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --coverage-json "$coverage" \
+            --out-dir original/publisher-research
+      - name: Preserve SHA checks, original site/publisher distinction, full independent CDX original and complete archived publisher HTML
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-uncovered-attributed-publisher-originals-${{ matrix.track }}-v1
+          path: original/publisher-research/
+          if-no-files-found: warn
+          retention-days: 30
