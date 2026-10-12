@@ -84,7 +84,42 @@ vote repair, migrations against Neon, private row export, serving/model
 changes, scheduling, deployments or 2027 changes are authorized.
 Keep #864 **OPEN**.
 
-**Status:** V5 full 2025 original-source proof **verified**, exact database
-fingerprint parity **HELD** as of the post-rollback V5 receipt. V6 is a
-separately reviewed count-only diagnostic proposal until its distinct
-main-only protected run and keyless issue receipt succeed.
+## Verified V6 protected outcome (supersedes the former 2025 key-only hold)
+
+The distinct [first-attempt V6 source-to-stored audit run #38270466090](https://github.com/killjoy00/votepredict/actions/runs/38270466090)
+succeeded on exact reviewed main commit
+`57b3248dca1ad406cda739c531ba9f2edbe5bca6`.
+The separate keyless reporter succeeded and posted
+[issue #864 receipt #6127418525](https://github.com/killjoy00/votepredict/issues/864#issuecomment-6127418525),
+reporting `FULL_8_OF_8` and `COMPLETE`. The nonidentifying immutable
+regression-checked result is preserved in
+[`source-proof/senate-864-2025-judiciary-eight-of-eight-v6-protected-receipt.json`](./source-proof/senate-864-2025-judiciary-eight-of-eight-v6-protected-receipt.json).
+
+The independently SHA-verified March 12, 2025 Judiciary original roll has
+**7 YEA / 1 NAY** and **8 of 8 exact original named-choice digests
+matching stored choices**. All **33 of 33** fully detailed original 2025
+candidate rolls match, with **305 of 305** original named-choice fingerprints
+on fully matching rolls. Across the pinned 2022–25 electronic original
+sources, **1,452 of 1,452** original PDF hashes match, **152 of 153**
+detailed candidate rolls match and **979 of 989** original named-choice
+fingerprints occur on those fully matching rolls.
+
+The sole discrepant 2024 roll remains exactly **10 original / 9 stored
+choice fingerprints, 9 matching, one original YEA missing, zero extra
+stored**. The aggregate original-side token shortfall is **one**, not ten:
+the 10 original tokens on this roll are excluded from the full-roll-matched
+fingerprint total of 979. The missing person and cause remain unidentified.
+
+**Scope and safety:** The protected transaction was
+`REPEATABLE READ READ ONLY` with explicit `ROLLBACK` and zero database
+writes. No member names, private choice SHA digests, raw rows or source
+URLs were exported; the existing Neon default branch is not independently
+proven to be the database bound to the deployed app. Nothing here proves
+a complete official all-meetings or all-motions census, historical
+publication-as-of eligibility or permits a vote repair, forecast change
+or issue closure. **Issue #864 remains OPEN.**
+
+**Chronology:** V5 source proof passed, but its post-rollback strict receipt
+returned a HOLD. V6 diagnosed that reporting ambiguity and established the
+full 2025 8-of-8 database parity independently. Preserve the V5 held receipt
+rather than retrospectively calling the earlier V5 run successful.
