@@ -42,6 +42,15 @@ type OutputAction={
  motionText:null;page:null;historicalMemberId:null;persistedEventId:null;
  parserCandidateNotStableMotionIdentity:true;
 };
+type VerifiedOriginalMotion={
+ sourcePdfSha256:string;printedPdfPage:number;billReference:'SF3534';
+ amendmentNumber:string|null;motionDescription:string;outcome:'failed'|'adopted';
+ printedYea:number|null;printedNay:number|null;
+ sourcePrintedNamedChoiceOccurrences:number;
+ namedSideIdentitiesNotExported:true;
+ noMemberIdentitiesOrPersistedEventsInferred:true;
+ independentOriginalPublicationDay:null;
+};
 type MeetingRow={
  year:number;committee:string;committeePageUrl:string;hearingDate:string;
  status:'linked_originals_sha_authenticated'|'indexed_without_linked_minutes'|'linked_original_unprocessed';
@@ -52,6 +61,7 @@ type MeetingRow={
   ocrRecoveredFromInitiallyLowText:boolean;
   contextActionEnumeration:'first_pass_parser_candidates'|'ocr_original_context_incomplete';
   sourceActions:OutputAction[];
+  separatelyVerifiedOriginalMotionCatalogue:VerifiedOriginalMotion[]|null;
  }>;
  namedRollCandidates:number|null;countOnlyRollCandidates:number|null;
  namedChoiceOccurrences:number|null;
@@ -94,6 +104,47 @@ const EDUCATION={
  pdf:'6d00d812236d4585ea315da9fdf2da8325fcad512e4089e1422fa4a96e2a7f52',
  day:'2024-02-14',committee:'Education Policy',
 } as const;
+/**
+ * Exact two-page original government Minutes source, independently previously
+ * authenticated by PR #1238. Distinct amendment identity + printed source
+ * page are supplementary source proof, NOT new source-v2 parser event keys.
+ * The six recorded YEA/NAY name partitions are not exported here.
+ * The final recommendation has no independently named sides/tally.
+ */
+function educationOriginalMotionCatalogue(proof:Pdf):VerifiedOriginalMotion[]|null{
+ const d=proof.document;
+ if(d.sourceUrl!==EDUCATION.url)return null;
+ if(d.year!==2024||d.meetingDate!==EDUCATION.day||
+   d.committeeName!==EDUCATION.committee||d.originalRawPdfSha256!==EDUCATION.pdf)
+  throw Error('Education original minute motion catalogue SHA/committee date drift');
+ if(proof.voteObservations.length!==2||
+   proof.voteObservations.some(v=>!v.individualVotesAvailable||
+    v.yeaCount!==4||v.nayCount!==6||v.namedMemberChoicesInPdf!==10||
+    v.choiceIdentitySha256.length!==10))
+  throw Error('Independent six-motion original not aligned to two frozen v2 action candidates');
+ const rows=[
+  {number:'10',page:1},{number:'2',page:2},{number:'3',page:2},
+  {number:'5',page:2},{number:'6',page:2},{number:'9',page:2},
+ ];
+ const rolls=rows.map((x):VerifiedOriginalMotion=>({
+  sourcePdfSha256:EDUCATION.pdf,printedPdfPage:x.page,billReference:'SF3534',
+  amendmentNumber:x.number, motionDescription:'Request a roll-call decision on amendment '+x.number,
+  outcome:'failed',printedYea:4,printedNay:6,
+  sourcePrintedNamedChoiceOccurrences:10,namedSideIdentitiesNotExported:true,
+  noMemberIdentitiesOrPersistedEventsInferred:true,
+  independentOriginalPublicationDay:null,
+ }));
+ rolls.push({
+  sourcePdfSha256:EDUCATION.pdf,printedPdfPage:2,billReference:'SF3534',
+  amendmentNumber:null,
+  motionDescription:'Recommend SF3534 for passage and re-referral to Judiciary and Public Safety',
+  outcome:'adopted',printedYea:null,printedNay:null,
+  sourcePrintedNamedChoiceOccurrences:0,namedSideIdentitiesNotExported:true,
+  noMemberIdentitiesOrPersistedEventsInferred:true,
+  independentOriginalPublicationDay:null,
+ });
+ return rolls;
+}
 const isSha=(x:unknown)=>typeof x==='string'&&/^[0-9a-f]{64}$/.test(x);
 const validDay=(value:string,year:number)=>{
  if(!new RegExp('^'+year+'-\\d\\d-\\d\\d$').test(value))return false;
@@ -209,6 +260,7 @@ export function buildIndependentSenateCommitteeLedger(
     sourceUrl:url,originalPdfSha256:null,retrievedAt:null,extractedTextSha256:null,
     publicationAtIndependentlyProven:null,ocrRecoveredFromInitiallyLowText:false,
     contextActionEnumeration:'ocr_original_context_incomplete',sourceActions:[],
+    separatelyVerifiedOriginalMotionCatalogue:null,
    });continue}
    const d=proof.document;
    if(d.meetingDate!==m.meetingDate||d.committeeName!==m.committeeName)
@@ -227,6 +279,7 @@ export function buildIndependentSenateCommitteeLedger(
     ocrRecoveredFromInitiallyLowText:isOcr,
     contextActionEnumeration:isOcr?'ocr_original_context_incomplete':'first_pass_parser_candidates',
     sourceActions:actions,
+    separatelyVerifiedOriginalMotionCatalogue:educationOriginalMotionCatalogue(proof),
    });
   }
   rows.push({
@@ -267,6 +320,9 @@ export function buildIndependentSenateCommitteeLedger(
     &&authentic.some(x=>x.sourceUrl===EDUCATION.url&&x.originalPdfSha256===EDUCATION.pdf);
    const educFirstPass=educ?authentic.find(x=>x.sourceUrl===EDUCATION.url)!
     .sourceActions.filter(x=>x.actionType==='named_roll_call').length:0;
+   if(educ&&authentic.find(x=>x.sourceUrl===EDUCATION.url)!
+    .separatelyVerifiedOriginalMotionCatalogue?.length!==7)
+    throw Error('Exact Education official six amendment rolls plus recommendation missing');
    if(educ&&educFirstPass!==2)
     throw Error('Frozen 2024 Education two-candidate source proof drifted');
    const c:CommitteeYear={
