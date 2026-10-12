@@ -1,4 +1,4 @@
-name: One-shot #864 2021-22 CFB original archived candidate CSV proof (PUBLIC ONLY)
+name: 'One-shot #864 2021-22 CFB original archived candidate CSV proof V2 (PUBLIC ONLY)'
 on:
   pull_request:
     paths:
@@ -12,7 +12,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: cfb-864-public-csv-v1-${{ github.sha }}
+  group: cfb-864-public-csv-v2-${{ github.sha }}
   cancel-in-progress: false
 jobs:
   pr-source-synthetic:
@@ -41,12 +41,12 @@ jobs:
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
       ((github.event_name == 'push' &&
-        contains(github.event.head_commit.message, 'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V1')) ||
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V2')) ||
        (github.event_name == 'issue_comment' &&
         github.event.issue.number == 864 &&
         github.event.comment.user.login == 'killjoy00' &&
         github.event.comment.author_association == 'OWNER' &&
-        github.event.comment.body == 'SENATE_864_CFB_2021_22_CSV_V1_OWNER_ONE_SHOT'))
+        github.event.comment.body == 'SENATE_864_CFB_2021_22_CSV_V2_OWNER_ONE_SHOT'))
     runs-on: ubuntu-latest
     timeout-minutes: 22
     services:
@@ -76,7 +76,7 @@ jobs:
           MAIN_SHA: ${{ github.sha }}
         run: test "$(git rev-parse HEAD)" = "$MAIN_SHA"
       - name: Require unique original source proof marker in checked-out main commit
-        run: git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V1'
+        run: git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V2'
       - uses: actions/setup-node@v7
         with:
           node-version: 22
@@ -95,19 +95,19 @@ jobs:
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
       ((github.event_name == 'push' &&
-        contains(github.event.head_commit.message, 'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V1')) ||
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V2')) ||
        (github.event_name == 'issue_comment' &&
         github.event.issue.number == 864 &&
         github.event.comment.user.login == 'killjoy00' &&
         github.event.comment.author_association == 'OWNER' &&
-        github.event.comment.body == 'SENATE_864_CFB_2021_22_CSV_V1_OWNER_ONE_SHOT'))
+        github.event.comment.body == 'SENATE_864_CFB_2021_22_CSV_V2_OWNER_ONE_SHOT'))
     runs-on: ubuntu-latest
     timeout-minutes: 18
     outputs:
       public_csv_proof_b64: ${{ steps.probe.outputs.public_csv_proof_b64 }}
     env:
-      CFB_864_CSV_V1_VERIFIED_MARKER: 'true'
-      CFB_864_CSV_V1_OWNER_ISSUE_COMMENT_VERIFIED: ${{ github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_2021_22_CSV_V1_OWNER_ONE_SHOT' && 'true' || 'false' }}
+      CFB_864_CSV_V2_VERIFIED_MARKER: 'true'
+      CFB_864_CSV_V2_OWNER_ISSUE_COMMENT_VERIFIED: ${{ github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_2021_22_CSV_V2_OWNER_ONE_SHOT' && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -118,7 +118,7 @@ jobs:
           MAIN_SHA: ${{ github.sha }}
         run: test "$(git rev-parse HEAD)" = "$MAIN_SHA"
       - name: Require committed one-shot raw CSV proof marker
-        run: git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V1'
+        run: git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V2'
       - uses: actions/setup-node@v7
         with:
           node-version: 22
@@ -136,12 +136,12 @@ jobs:
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
       ((github.event_name == 'push' &&
-        contains(github.event.head_commit.message, 'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V1')) ||
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V2')) ||
        (github.event_name == 'issue_comment' &&
         github.event.issue.number == 864 &&
         github.event.comment.user.login == 'killjoy00' &&
         github.event.comment.author_association == 'OWNER' &&
-        github.event.comment.body == 'SENATE_864_CFB_2021_22_CSV_V1_OWNER_ONE_SHOT')) &&
+        github.event.comment.body == 'SENATE_864_CFB_2021_22_CSV_V2_OWNER_ONE_SHOT')) &&
       (needs.one-shot-verify.result == 'failure' ||
        (needs.one-shot-verify.result == 'success' &&
         (needs.one-shot-public-source.result == 'success' ||
@@ -190,7 +190,7 @@ jobs:
              if(!data||typeof data!=='object'||Array.isArray(data)
               ||Object.keys(data).length!==top.size||Object.keys(data).some(k=>!top.has(k)))
               throw Error('Unexpected original source receipt fields');
-             if(data.schema!=='cfb-864-cfb-candidate-archived-original-csv-v1'
+             if(data.schema!=='cfb-864-cfb-candidate-archived-original-csv-v2'
               ||data.issue!==864
               ||data.provenance!=='public_wayback_raw_replay_and_cdx_exact_source'
               ||data.years!=='2021-2022'||data.cappedCandidateUrlCount!==2
