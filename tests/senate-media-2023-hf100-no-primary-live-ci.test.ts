@@ -71,6 +71,14 @@ test("Track D 2023 HF100 named NO official-original research, isolated to this b
   const bounded=data.sources.filter(s=>s.earliestAuthenticatedPreVoteCue&&s.originalSpeakerTurnReauth?.verified).length;
   assert.equal(data.fullyQualifiedHistoricalQuoteVotePairs,bounded);
   assert.ok(bounded>=0&&bounded<=2);
+  console.log("TRACK_D_HF100_ARCHIVE_REPLAY_STATUS="+JSON.stringify(data.sources.map(s=>({
+    senator:s.senator,waybackIndex:s.waybackIndex,
+    attempts:s.replayAttempts.map(x=>({
+      captureUtc:x.captureUtc,indexedStatus:x.originalRetrievalStatus,
+      rawOriginalSha256:x.rawOriginalSha256
+    })),
+    originalTurn:s.originalSpeakerTurnReauth?.status
+  }))));
   assert.equal(pin.historicalPublisherOriginals.length,2);
   for(const p of pin.historicalPublisherOriginals){
     const s=data.sources.find(x=>x.senator===p.senator);
