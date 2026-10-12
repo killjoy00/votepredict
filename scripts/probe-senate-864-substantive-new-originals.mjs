@@ -71,6 +71,44 @@ export function attributedShortCue(originalBytes,q){
   wholeHumanApprovedVerbatimQuote:false,
   fullOriginalPublisherHtmlNotPersisted:true};
 }
+/**
+ * Exact written-quote speaker bound: excerpt must be inside closed curly
+ * quotation marks, followed immediately by "said Senator First Last" or
+ * "said Last" with a uniquely named senator in the preceding source body.
+ * This validates *one selected short cue*, not a whole human speech.
+ */
+export function boundedNamedSpeakerQuote(rawOriginalHtml,q){
+ const full=decodeVisibleOriginal(rawOriginalHtml.toString('utf8'));
+ const cue=decodeVisibleOriginal(q.exactCurrentlyVisibleShortQuote||'');
+ const at=cue.length>=18?full.indexOf(cue):-1;
+ if(at<0||full.indexOf(cue,at+1)>=0)return {boundedNamedSpeakerQuote:false,reason:'cue_not_unique_or_absent'};
+ const open=full.lastIndexOf('“',at),close=full.indexOf('”',at+cue.length);
+ if(open<0||close<0||at-open>1300||close-open>2500||full.indexOf('”',open)<close)
+  return {boundedNamedSpeakerQuote:false,reason:'cue_not_within_one_closed_quotation'};
+ const parts=q.officialSenatorName.toLowerCase().replace(/\./g,'').split(/\s+/).filter(Boolean);
+ const surname=parts.at(-1),given=parts[0];
+ if(!/^[a-z]+$/.test(surname)||!/^[a-z]+$/.test(given))
+  return {boundedNamedSpeakerQuote:false,reason:'untrusted_senator_identity'};
+ const after=full.slice(close+1,close+150);
+ const before=full.slice(Math.max(0,open-1300),open);
+ const e=surname.replace(/[-/\\^$*+?.()|[\]{}]/g,'\\export async function probe(q,fetcher=fetch){');
+ const g=given.replace(/[-/\\^$*+?.()|[\]{}]/g,'\\export async function probe(q,fetcher=fetch){');
+ const x=after.match(new RegExp('^\\s*,?\\s*(?:said|stated|added|noted)\\s+(?:(?:senator|sen\\.)\\s+)?(?:'+g+'\\s+(?:[a-z]\\.??\\s+)?)?'+e+'\\b','i'));
+ const priorFullName=new RegExp('\\b(?:senator|sen\\.)\\s+'+g+'\\s+(?:[a-z]\\.??\\s+)?'+e+'\\b','i').test(before);
+ const afterHasFullName=Boolean(x&&new RegExp('\\b'+g+'\\b','i').test(x[0]));
+ const passed=Boolean(x&&(afterHasFullName||priorFullName));
+ return {boundedNamedSpeakerQuote:passed,
+  reason:passed?'exact_original_closed_quote_immediately_attributed_to_named_senator':'speaker_name_or_quotation_boundary_not_proven',
+  selectedCueInsideClosedQuotedRegion:true,
+  namedPublisherAttributionAfterQuote:Boolean(x),
+  fullSenatorIdentityInSameLocalSpeakerTurn:passed,
+  quoteBeginOffset:open,quoteEndOffset:close,
+  quoteCharacterSpan:close-open+1,
+  completeHumanApprovedWholeSpeech:false,
+  noFullCopyrightedSourceSaved:true
+ };
+}
+
 export async function probe(q,fetcher=fetch){
  const result={sourceId:q.id,originalPublisherUrl:q.originalPublisherUrl,senator:q.officialSenatorName,
   selectedSpeakerCue:q.exactCurrentlyVisibleShortQuote,
@@ -100,7 +138,7 @@ export async function probe(q,fetcher=fetch){
     if(!(b.headers.get('content-type')||'').toLowerCase().startsWith('text/html')){result.errors.push('original_replay_mime_wrong');continue;}
     const body=await bounded(b);
     if(sha1Base32(body)!==e.indexedSha1Base32){result.errors.push('replay_original_sha1_does_not_match_CDX');continue;}
-    const proof=attributedShortCue(body,q);
+    const proof={...attributedShortCue(body,q),...boundedNamedSpeakerQuote(body,q)};
     result.originalIndexedArchivePublicByUtc=e.timestamp.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/,'$1-$2-$3T$4:$5:$6Z');
     result.originalBodySHA256=sha(body);result.indexedOriginalSHA1Base32=e.indexedSha1Base32;
     result.archiveState=proof.literalShortPublisherCueFound?'ARCHIVED_ORIGINAL_BODY_AND_EXACT_SHORT_CUE_VERIFIED':'ARCHIVED_ORIGINAL_BODY_VERIFIED_SHORT_CUE_MISSING';
