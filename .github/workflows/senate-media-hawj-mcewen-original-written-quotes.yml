@@ -41,7 +41,7 @@ jobs:
         with:
           node-version: 22
       - name: Offline exact source, speaker, quotation, archive hash and cutoff adversarial tests
-        run: node --test tests/senate-media-hawj-mcewen-original-written-quotes.test.mjs
+        run: node --test tests/senate-media-hawj-mcewen-original-written-quotes.test.mjs tests/senate-media-hawj-mcewen-original-written-real-receipts.test.mjs
       - name: Reverify three SHA-pinned original publisher historical HTML bodies with bounded individual statement quotes
         run: node scripts/probe-senate-media-hawj-mcewen-2024-original-written-quotes.mjs --output artifacts/senate-media-hawj-mcewen-original-quote-metadata.json
       - name: Keep public original capture hashes and boolean quote provenance only
