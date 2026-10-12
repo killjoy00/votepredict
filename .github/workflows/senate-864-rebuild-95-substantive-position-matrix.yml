@@ -1,0 +1,77 @@
+name: Senate 864 audited 95-person substantive original-position and vote matrix
+on:
+  push:
+    branches:
+      - research/864-substantive-current-lead-audit-20261012
+    paths:
+      - scripts/overlay-senate-864-95-person-historical-position-matrix.mjs
+      - data/evaluation/senate-864-bonding-four-conditional-statements-original-hf669-hf670-personal-rolls-v1.json
+      - data/evaluation/senate-864-wiger-three-2021-22-original-firstparty-publisher-receipts-v1.json
+      - data/evaluation/senate-864-bakk-tomassoni-2021-line3-signed-original-joint-leads-v1.json
+      - tests/senate-864-bonding-2023-verified-position-to-personal-roll-ledger.test.mjs
+      - .github/workflows/senate-864-rebuild-95-substantive-position-matrix.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  independent-full-95-person-year-issue-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify immutable historical original source and individual vote receipts
+        run: |
+          node --check scripts/overlay-senate-864-95-person-historical-position-matrix.mjs
+          node --test tests/senate-864-bonding-2023-verified-position-to-personal-roll-ledger.test.mjs
+      - name: Reopen previously independently audited 95 serving senator original evidence matrix
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38314321104
+          name: senate-864-eight-exact-firstparty-policy-original-source-audit
+          github-token: ${{ github.token }}
+          path: source-proof/95-person
+      - name: Rebuild 95 senator by actual service year and 15 original-source quality categories
+        shell: bash
+        run: |
+          matrix="$(find source-proof/95-person -type f -name 'senate-864-95-actual-serving-person-year-issue-current-leads.json' -print -quit)"
+          test -n "$matrix"
+          mkdir -p research-output
+          node scripts/overlay-senate-864-95-person-historical-position-matrix.mjs \
+            --source-matrix-json "$matrix" \
+            --out research-output/senate-864-95-senator-year-issue-original-speech-and-official-votes.json
+      - name: Strict audit of roster, authentic campaign-site denominator and sparse-legislative evidence
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import {readFileSync} from 'node:fs';
+          const x=JSON.parse(readFileSync('research-output/senate-864-95-senator-year-issue-original-speech-and-official-votes.json'));
+          assert.equal(x.denominators.actualServingSenators,95);
+          assert.equal(x.denominators.candidateOriginalSiteCoveredSenators,92);
+          assert.equal(x.denominators.authenticSelectedCandidateSiteResearchExcerpts,1285);
+          assert.equal(x.denominators.actualServingYearIssueCells,5085);
+          const byName=new Map(x.byActuallyServedSenator.map(q=>[q.officialName,q]));
+          assert.equal(byName.size,95);
+          const at=(n,y,i)=>byName.get(n).serviceYears.find(k=>k.year===y).issueCells[i];
+          assert.equal(at('Sr., Charles W. Wiger',2021,'education_childcare').independentOriginalIndividualStatementEvidence.filter(q=>q.id.startsWith('2021-Wiger')).length,1);
+          assert.equal(at('Mark T. Johnson',2023,'taxes_budget').independentOriginalIndividualStatementEvidence.filter(q=>q.id.startsWith('2023-bonding')).length,1);
+          assert.deepEqual(at('Bill Weber',2023,'transport_infrastructure').officialIndividuallyNamedVoteEvidence.filter(q=>q.officialVoteBill==='HF669').map(q=>q.recordedVoteChoice),['NAY','YEA']);
+          assert.equal(at('Thomas M. Bakk',2021,'climate_environment_energy').signedJointStatementOriginalAuthenticationStatus.historicalOriginalPublicByVerified,false);
+          assert.equal(at('David J. Tomassoni',2021,'climate_environment_energy').signedJointStatementOriginalAuthenticationStatus.historicalOriginalPublicByVerified,false);
+          assert.ok(x.summary.personYearIssueCellsWithAnyIndividuallyNamedArchivedStatement>12);
+          console.log('Senate95 policy originals and named votes source-only coverage',JSON.stringify(x.summary));
+          NODE
+      - name: Save full research-only per-senator 2021 to 2025 original-source and vote matrix
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-95-person-year-issue-substantive-original-speech-and-direct-vote-matrix
+          path: research-output/*.json
+          if-no-files-found: warn
+          retention-days: 30
