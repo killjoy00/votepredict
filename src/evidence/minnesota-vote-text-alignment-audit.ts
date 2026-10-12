@@ -61,9 +61,9 @@ export function discoverRevisorBillTextVersionLeads(
     const versionKey = match[2].replace(/<[^>]*>/g, ' ').replace(/&nbsp;/gi, ' ')
       .replace(/&amp;/gi, '&').replace(/\s+/g, ' ').trim();
     if (!versionKey || !isDate(postedOn)) continue;
-    const family: LegislativeTextFamily = versionPath.startsWith('versions/ue/')
+    const family: LegislativeTextFamily = versionPath.toLowerCase().startsWith('versions/ue/')
       ? 'unofficial_engrossment'
-      : versionPath.startsWith('versions/ccr/')
+      : versionPath.toLowerCase().startsWith('versions/ccr/')
         ? 'conference_report'
         : 'engrossment';
     const row: OfficialBillTextVersionLead = {
@@ -90,6 +90,8 @@ export interface VoteTextAuditEvent {
   amendmentRef?: string | null;
   officialSourceUrl: string;
   officialSourceSha256: string | null;
+  /** The result of this exact motion, not a provision-level stance. */
+  passed?: boolean | null;
 }
 
 export interface AuditedLegislativeText {
@@ -107,9 +109,13 @@ export interface AuditedLegislativeText {
   retrievedAt: string | null;
 }
 
+export type TextDispositionAtEvent = 'proposed' | 'considered' | 'adopted' | 'rejected' | 'superseded' | 'withdrawn' | 'unknown';
+
 export interface ProposedVoteTextLink {
   eventKey: string;
   textId: string;
+  /** Explicit status of the particular paper, never inferred from bill passage. */
+  textDisposition?: TextDispositionAtEvent;
   /** A number match is not proof of a text-to-event link. */
   proofKind: 'bill_number_only' | 'reviewed_official_event_text_match';
   /** Independent primary record identifying the event and document, not a topic. */
@@ -122,7 +128,7 @@ export interface ProposedVoteTextLink {
 export type VoteTextLinkStatus =
   'bill_only' | 'no_text_link' | 'missing_text_document' | 'bill_conflict'
   | 'later_version_conflict' | 'missing_amendment_text' | 'ambiguous_text_links'
-  | 'unproven_text_match' | 'reviewed_exact_text_link';
+  | 'disposition_conflict' | 'unproven_text_match' | 'reviewed_exact_text_link';
 
 export interface VoteTextAuditResult {
   eventKey: string;
@@ -193,12 +199,18 @@ export function auditVoteTextLinks(input: {
         && text!.amendmentRef?.toUpperCase() === event.amendmentRef?.toUpperCase())) {
       return result('missing_amendment_text', 'Amendment decision requires its exact identified amendment text');
     }
+    if (event.voteKind === 'amendment' && event.passed !== undefined && event.passed !== null
+      && paired.some(({ link, text }) => text!.kind === 'amendment_text'
+        && (event.passed === false && link.textDisposition === 'adopted'
+          || event.passed === true && link.textDisposition === 'rejected'))) {
+      return result('disposition_conflict', 'Amendment text status contradicts its recorded motion outcome');
+    }
     if (paired.filter(({ text }) => text!.kind === 'bill_version').length > 1
       || paired.filter(({ text }) => text!.kind === 'conference_report').length > 1) {
       return result('ambiguous_text_links', 'Multiple competing bill or conference texts; no single assumed version');
     }
     if (paired.some(({ link, text }) => link.proofKind !== 'reviewed_official_event_text_match'
-      || !link.proofUrl || !link.proofLocator || !text!.contentSha256
+      || link.proofUrl !== event.officialSourceUrl || !link.proofLocator?.trim() || !text!.contentSha256
       || !SHA256.test(text!.contentSha256)
       || !event.officialSourceSha256 || !SHA256.test(event.officialSourceSha256)
       || link.proofEventSourceSha256 !== event.officialSourceSha256
