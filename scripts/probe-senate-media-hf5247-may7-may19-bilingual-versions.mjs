@@ -56,7 +56,7 @@ export function validateAllowlist(sources=SOURCES){
  for(const s of sources){
   const u=new URL(s.url);
   if(u.protocol!=='https:'||u.hostname!=='www.revisor.mn.gov'||u.search||u.hash||u.port||u.username||u.password||
-   !/^\/bills\/93\/202[34]\/0\/(HF\/5247|SF\/3257)\/versions\/(3|ue\/1|ccr\/0\/pdf|0\/pdf)\/$/.test(u.pathname))throw Error('wrong 93rd legislative source exact version');
+   !/^\/bills\/93\/202[34]\/0\/(HF\/5247|SF\/3257)\/versions\/(3\/pdf|ue\/1|ccr\/0\/pdf|0\/pdf)\/$/.test(u.pathname))throw Error('wrong 93rd legislative source exact version');
  }
  return true;
 }
