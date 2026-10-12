@@ -19,13 +19,13 @@
     "preElectionCrawlCaptureRequired": true,
     "govActualServiceAndOfficialPostVoteSosWinnerIdentityMustMatch": true,
     "old2012ArticleIn2022CaptureNotNew2022Platform": true,
-    "parkedDomainNotCampaign": false,
     "publisherSurveysNotCandidateOwnedWebsite": true,
     "actionNetworkConstituentIssueMenuNotCandidateEndorsement": true,
     "ballotreadyCurrentCopyNotPreElectionProof": true,
     "noStatementsAutomaticallyAccepted": true,
     "unavailableIndexNotEvidenceOfAbsence": true,
-    "sourceNotProductionDBOrForecast": true
+    "sourceNotProductionDBOrForecast": true,
+    "parkedDomainIsNotCandidateCampaign": true
   },
   "groups": {
     "newman": {
@@ -103,6 +103,17 @@
           "matchType": "exact",
           "sourceClass": "publisher_candidate_respondent_questionnaire_historical_version_unproven",
           "context": "Alternative www host may have independent 2022 index entries",
+          "copyCanBeAdmittedOnlyAfterOriginalWholeArchiveHashAndSpeechAudit": true
+        },
+        {
+          "id": "weber-ivoterguide-primary-2022",
+          "person": "Bill Weber",
+          "district": "21",
+          "electionYear": 2022,
+          "url": "https://ivoterguide.com/candidate/50437/race/12100/election/912",
+          "matchType": "exact",
+          "sourceClass": "publisher_candidate_respondent_questionnaire_2022_primary_context_historical_version_unproven",
+          "context": "Separate 2022 August 9 Minnesota primary profile archive displays candidate questionnaire answers and SD21; older 2020 SD22 profile shows 'Did not answer', so never mix election-specific versions. Independently captured original before 2022 general required for any research excerpt.",
           "copyCanBeAdmittedOnlyAfterOriginalWholeArchiveHashAndSpeechAudit": true
         },
         {
