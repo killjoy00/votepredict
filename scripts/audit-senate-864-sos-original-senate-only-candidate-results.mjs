@@ -76,13 +76,29 @@ function candidateRows(html){
    // State SOS profile links. Only a explicitly website-labeled anchor
    // on THE SAME ORIGINAL ROW can be considered a preliminary lead.
    const siteAnchors=[];
+   let externalHttpLinkCount=0;
    for(let i=0;i<cells.length;i++){
-    for(const tag of cells[i].matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)){
-     const label=plain(tag[2]);
-     if(!/(candidate|campaign|official)\s*website|\bwebsite\b/i.test(label))continue;
-     const href=/\bhref=["']([^"']+)["']/i.exec(tag[1])?.[1]||'';
-     const url=tidyUrl(href);
-     if(url&&!/\.sos\.(mn\.gov|state\.mn\.us)\/?/i.test(url))siteAnchors.push({originalTableCellIndex:i,websiteLabel:label.slice(0,50),website:url});
+    const cell=cells[i];
+    for(const tag of cell.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)){
+     const label=plain(tag[2]),href=/\bhref=["']([^"']+)["']/i.exec(tag[1])?.[1]||'';
+     const uri=tidyUrl(href);
+     if(!uri||/https?:\/\/(?:www\.)?(?:candidates\.)?sos\.(?:mn\.gov|state\.mn\.us)\//i.test(uri))continue;
+     externalHttpLinkCount++;
+     // A hyperlink to an external domain on a senator's own original row
+     // is a candidate website LEAD. It is not proven a campaign-owned site,
+     // or proof of the filing export Campaign Website column.
+     if(siteAnchors.length<10)siteAnchors.push({originalTableCellIndex:i,
+       originalLinkVisibleLabel:label.slice(0,75),externalUrlLead:uri,
+       originalFileWebsiteColumnMeaningIndependentlyVerified:false});
+    }
+    const textValue=plain(cell);
+    if(/^((https?:\/\/)?www\.)[a-z0-9][^\s@]{3,260}$/i.test(textValue)){
+     const uri=tidyUrl(textValue);
+     if(uri&&!/sos\.mn\.gov|sos\.state\.mn\.us/i.test(uri)){
+      if(siteAnchors.length<10&&!siteAnchors.some(x=>x.externalUrlLead===uri))
+       siteAnchors.push({originalTableCellIndex:i,originalLinkVisibleLabel:'original row raw URL',
+         externalUrlLead:uri,originalFileWebsiteColumnMeaningIndependentlyVerified:false});
+     }
     }
    }
    // Separately characterize any original field that is actually labeled
@@ -98,9 +114,11 @@ function candidateRows(html){
     originalNamedCandidateShortCellText:personName?.slice(0,115)||null,
     originalTableCellIndexesContainingSurname:nameCellIndexes,
     originalSameRowExplicitSenateDistrict:originalTextSenateDistrict,
-    originalSameRowExplicitWebsiteLinks:siteAnchors.slice(0,5),
+    originalSameRowExternalUrlLeadsNotYetCertifiedWebsites:siteAnchors.slice(0,5),
+    originalSameRowExternalHTTPLinkCount:externalHttpLinkCount,
     originalRawHtmlDoesNotProvideVerifiedCurrentCampaignOwnership:true,
-    validNamedPersonPlusWebsiteAndDistrictStrictlyMatched:siteAnchors.length>0&&originalTextSenateDistrict===d,
+    validNamedPersonPlusWebsiteAndDistrictStrictlyMatched:false,
+    originalSenateCampaignWebsiteOfficialFieldNotConfirmedByRowLinks:true,
     originalFullElectionCensusUnproven:true
    });
   }
