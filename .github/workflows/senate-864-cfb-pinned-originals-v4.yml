@@ -1,0 +1,127 @@
+name: 'One-shot #864 2021-22 candidate and IE raw archived CSV pinned V4 proof (PUBLIC ONLY)'
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-864-cfb-pinned-originals-v4.yml
+      - scripts/prove-cfb-864-pinned-public-originals-v4.ts
+      - scripts/run-cfb-864-pinned-public-originals-v4.ts
+      - tests/cfb-864-pinned-originals-v4.test.ts
+  push:
+    branches: [main]
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+concurrency:
+  group: cfb-864-pinned-source-v4-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  pr-synthetic:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 11
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify pinned source identity, safe redirect and SHA1/parsers
+        run: node --import tsx --test tests/cfb-864-pinned-originals-v4.test.ts
+
+  one-shot-preflight:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_PINNED_ORIGINALS_V4_20261012')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_PINNED_V4_OWNER_ONE_SHOT_20261012'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Exact reviewed merged SHA
+        env:
+          MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$MAIN_SHA"
+      - name: Require one-shot archive proof marker in checked-out HEAD
+        run: git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_PINNED_ORIGINALS_V4_20261012'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: node --import tsx --test tests/cfb-864-pinned-originals-v4.test.ts
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+
+  one-shot-public-proof:
+    needs: [one-shot-preflight]
+    if: >-
+      needs.one-shot-preflight.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_PINNED_ORIGINALS_V4_20261012')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_PINNED_V4_OWNER_ONE_SHOT_20261012'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 27
+    env:
+      CFB_864_PINNED_V4_MARKER_VERIFIED: 'true'
+      CFB_864_PINNED_V4_OWNER_COMMENT_VERIFIED: ${{ github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_PINNED_V4_OWNER_ONE_SHOT_20261012' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Exact reviewed SHA and marker
+        env:
+          MAIN_SHA: ${{ github.sha }}
+        run: |-
+          test "$(git rev-parse HEAD)" = "$MAIN_SHA"
+          git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_PINNED_ORIGINALS_V4_20261012'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Verify only fixed public historical pinned original CSV raw bytes
+        run: node --max-old-space-size=6144 --import tsx scripts/run-cfb-864-pinned-public-originals-v4.ts
