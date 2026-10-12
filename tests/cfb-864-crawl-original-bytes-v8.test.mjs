@@ -124,6 +124,7 @@ test('tamper, incomplete bytes, other source, other day, gzip misidentity and en
   warcBytes({contentType:'text/html'}),
   warcBytes({transferEncoding:'gzip'}),
   warcBytes({warcType:'request'}),
+  warcBytes({extraWarc:'WARC-Truncated: length'}),
  ]){
   assert.throws(()=>verify(replacement));
  }
