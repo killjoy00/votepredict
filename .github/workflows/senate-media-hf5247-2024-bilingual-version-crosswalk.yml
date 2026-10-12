@@ -1,0 +1,54 @@
+name: Public HF5247 2024 May7 versus May19 DVS translation bill-version crosswalk
+
+# Track D #987. Four exact Minnesota Revisor bill source versions, including
+# one 2023 SF3257 original. PDFs ephemeral; only SHA and boolean cues retained.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-hf5247-2024-bilingual-version-crosswalk.yml
+      - scripts/probe-senate-media-hf5247-may7-may19-bilingual-versions.mjs
+      - tests/senate-media-hf5247-may7-may19-bilingual-versions.test.mjs
+      - tests/senate-media-hf5247-bilingual-real-receipts.test.mjs
+      - docs/evaluation/senate-media-2024-hf5247-actual-transport-policy-version-crosswalk-20261012.json
+      - docs/evaluation/senate-media-2024-hf5247-actual-transport-policy-version-crosswalk-20261012.md
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: public-hf5247-2024-bilingual-crosswalk-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  original-dated-hf5247-text-inclusion:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      ((github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+       (github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+        github.event.pull_request.head.ref == 'research/media-2024-hf5247-transport-crosswalk-20261012'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Install ephemeral PDF text utilities
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends poppler-utils
+          command -v pdftotext
+          command -v pdfinfo
+      - name: Synthetic original-source, wrong-legislature, role and cutoff controls
+        run: node --test tests/senate-media-hf5247-may7-may19-bilingual-versions.test.mjs
+      - name: Four exact source original HF5247/SF3257 versions — zero full text retained
+        run: node scripts/probe-senate-media-hf5247-may7-may19-bilingual-versions.mjs --output artifacts/hf5247-may7-may19-source-crosswalk.json
+      - name: Retain public source response digests and matched policy cue metadata only
+        uses: actions/upload-artifact@v6
+        with:
+          name: public-2024-hf5247-bilingual-provision-version-crosswalk
+          path: artifacts/hf5247-may7-may19-source-crosswalk.json
+          retention-days: 7
+          if-no-files-found: error
