@@ -122,7 +122,7 @@ export function validateLeads(list=LEADS){
   if(l.priorKnownSourceLead)previously++;
   ids.add(l.id);urls.add(l.url);
  }
- if(previously!==2||new Set(list.flatMap(l=>l.namedIndividualSenators)).size!==9)throw Error('Person/sample cardinality changed');
+ if(previously!==2||new Set(list.flatMap(l=>l.namedIndividualSenators)).size!==10)throw Error('Person/sample cardinality changed');
  return list;
 }
 function keepPublicArchiveShort(replay){
