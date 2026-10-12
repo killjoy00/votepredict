@@ -1,0 +1,185 @@
+{
+  "schema": "mn-senate-bruce-anderson-14-historical-original-campaign-issues-short-leads-v1",
+  "scope": {
+    "issue": 864,
+    "governmentOriginalSenateServiceSHA256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "source2022ExactOriginalAcquisitionRun": 38187575772,
+    "source2022ExactOriginalArtifact": 11719743549,
+    "independentFullOriginal160RowCDXRun": 38175993447,
+    "independentFullOriginal160RowCDXArtifact": 11716126718,
+    "senatorsPreviouslyWithFirstPartyIssueOriginals": 84,
+    "shortSourceResearchRowsBeforeAddition": 1079,
+    "newlyCoveredActualSenators": 1,
+    "fullOriginalHistoricalIssuePages": 1,
+    "shortLiteralIssueHeadings": 14,
+    "sourceSiteFooterCopyright2012DoesNotProvePageFirstAuthorDate": true,
+    "originalArchived2022CaptureIsPublicByOnly": true,
+    "firstAuthoredDateProven": false,
+    "originCampaignBrandingSeparateAuthenticOEmbed": true,
+    "fullOriginalSiteCensusProven": false,
+    "archiveAbsenceNeverNoPolicy": true,
+    "productionDatabaseOrForecastsOrOfficialVotes": 0
+  },
+  "pages": [
+    {
+      "id": "bruce-original-2022-issues",
+      "person": "Bruce Anderson",
+      "officialSenateDirectoryName": "Bruce Douglas Anderson",
+      "district": "29",
+      "serviceElectionYear": 2022,
+      "originalUrl": "https://www.bruceforsenate.com/issues/",
+      "archiveCapturePublicByUTC": "2022-10-28T09:08:42.000Z",
+      "originalHtmlFile": "bruce-anderson-20221028090842-full-issues-original.html",
+      "originalFullHtmlSHA256": "96b3660689b66e9f727641093653daabbde343fef33e2da363419a1a0c9968e3",
+      "wholeIndependentSourceCdxSHA256": "c9e6bedc2dd0874e3782fb2da431c466f8851a07050d440c23bb3ffe89bb9202",
+      "originalCdxSHA1Base32": "A6VXHCA25EDES6BLU3BTKGLVMMVLFGGE",
+      "historicalSourceKind": "candidate_owned_2022_capture_with_2012_copyright_footer_no_first_authored_date",
+      "candidateIdentityFromSeparateOriginalSameDateOembed": "Issues – Bruce Anderson for State Senate",
+      "firstAuthoredDateKnown": false,
+      "officialVoteVerified": false,
+      "automaticallyEligibleForForecast": false
+    }
+  ],
+  "excerpts": [
+    {
+      "id": "bruce-2022-01",
+      "pageId": "bruce-original-2022-issues",
+      "issueFamily": "property_rights",
+      "exactShortExcerpt": "Protecting Private Property",
+      "attributionClass": "historical_candidate_site_issue_heading_not_specific_first_authorship_date",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bruce-2022-02",
+      "pageId": "bruce-original-2022-issues",
+      "issueFamily": "veterans",
+      "exactShortExcerpt": "Veteran’s rights and benefits",
+      "attributionClass": "historical_candidate_site_issue_heading_not_specific_first_authorship_date",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bruce-2022-03",
+      "pageId": "bruce-original-2022-issues",
+      "issueFamily": "spending",
+      "exactShortExcerpt": "Limiting government spending (state and local government reform)",
+      "attributionClass": "historical_candidate_site_issue_heading_not_specific_first_authorship_date",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bruce-2022-04",
+      "pageId": "bruce-original-2022-issues",
+      "issueFamily": "accountability",
+      "exactShortExcerpt": "Increasing government responsibility and accountability to constituents",
+      "attributionClass": "historical_candidate_site_issue_heading_not_specific_first_authorship_date",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bruce-2022-05",
+      "pageId": "bruce-original-2022-issues",
+      "issueFamily": "small_business",
+      "exactShortExcerpt": "Creating a strong private sector economy",
+      "attributionClass": "historical_candidate_site_issue_heading_not_specific_first_authorship_date",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bruce-2022-06",
+      "pageId": "bruce-original-2022-issues",
+      "issueFamily": "public_education",
+      "exactShortExcerpt": "Raise student achievement levels and test results",
+      "attributionClass": "historical_candidate_site_issue_heading_not_specific_first_authorship_date",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bruce-2022-07",
+      "pageId": "bruce-original-2022-issues",
+      "issueFamily": "health_care",
+      "exactShortExcerpt": "Put people in charge of their health care decisions",
+      "attributionClass": "historical_candidate_site_issue_heading_not_specific_first_authorship_date",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bruce-2022-08",
+      "pageId": "bruce-original-2022-issues",
+      "issueFamily": "business_taxes",
+      "exactShortExcerpt": "Creating a competitive tax climate for businesses",
+      "attributionClass": "historical_candidate_site_issue_heading_not_specific_first_authorship_date",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bruce-2022-09",
+      "pageId": "bruce-original-2022-issues",
+      "issueFamily": "regulation",
+      "exactShortExcerpt": "Reducing regulatory burdens",
+      "attributionClass": "historical_candidate_site_issue_heading_not_specific_first_authorship_date",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bruce-2022-10",
+      "pageId": "bruce-original-2022-issues",
+      "issueFamily": "government_size",
+      "exactShortExcerpt": "Reducing the amount of rules and government interference to get the economy moving again",
+      "attributionClass": "historical_candidate_site_issue_heading_not_specific_first_authorship_date",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bruce-2022-11",
+      "pageId": "bruce-original-2022-issues",
+      "issueFamily": "medical_costs",
+      "exactShortExcerpt": "Instituting reforms designed to reduce medical costs",
+      "attributionClass": "historical_candidate_site_issue_heading_not_specific_first_authorship_date",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bruce-2022-12",
+      "pageId": "bruce-original-2022-issues",
+      "issueFamily": "welfare",
+      "exactShortExcerpt": "Reform the state’s welfare system",
+      "attributionClass": "historical_candidate_site_issue_heading_not_specific_first_authorship_date",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bruce-2022-13",
+      "pageId": "bruce-original-2022-issues",
+      "issueFamily": "transparency",
+      "exactShortExcerpt": "Create transparency in local government spending decisions",
+      "attributionClass": "historical_candidate_site_issue_heading_not_specific_first_authorship_date",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    },
+    {
+      "id": "bruce-2022-14",
+      "pageId": "bruce-original-2022-issues",
+      "issueFamily": "public_pay",
+      "exactShortExcerpt": "Equalizing the pay and benefits of public employees with the private sector",
+      "attributionClass": "historical_candidate_site_issue_heading_not_specific_first_authorship_date",
+      "firstAuthoredDateKnown": false,
+      "officialLegislativeActionVerified": false,
+      "automaticallyEligibleForForecast": false
+    }
+  ]
+}

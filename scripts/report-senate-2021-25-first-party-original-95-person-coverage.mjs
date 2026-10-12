@@ -123,6 +123,9 @@ read('senate-six-2020-original-pages-26-new-exact-first-party-excerpts-v1',
 read('senate-roger-chamberlain-2016-original-10-economic-issue-excerpts-and-domain-review-v1',
  (d,s)=>{assert.equal(d.tenCandidateSiteExactStatements.length,10);
   add('Roger Chamberlain',d.tenCandidateSiteExactStatements.length,s);});
+read('senate-bruce-anderson-14-full-original-issues-leads-v1',
+ (d,s)=>{assert.equal(d.pages.length,1);assert.equal(d.excerpts.length,14);
+  each(d.excerpts,q=>[d.pages[0].person,1],s);});
 read('senate-last16-five-new-original-site-policy-excerpts-v1',
  (d,s)=>{assert.equal(d.pages.length,12);assert.equal(d.excerpts.length,73);
  const names=new Map(d.pages.map(p=>[p.id,p.person]));
