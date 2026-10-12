@@ -1,17 +1,11 @@
+import './senate-2021-apr08-judiciary-acoustic-overlap.synthetic.test.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {execFileSync} from 'node:child_process';
 import {readFileSync} from 'node:fs';
 
-const synth='tests/senate-2021-apr08-judiciary-acoustic-overlap.synthetic.test.mjs';
 const source='scripts/audit-senate-2021-apr08-judiciary-acoustic-overlap.mjs';
 const workflow='.github/workflows/senate-2021-apr08-judiciary-acoustic-overlap-source.yml';
 
-test('original audio acoustic correlation: positive, negative, polarity and original hash drift synthetic tests',()=>{
- const out=execFileSync(process.execPath,['--test',synth],{encoding:'utf8',timeout:30_000,maxBuffer:250_000});
- assert.match(out,/# pass 4/);
- assert.match(out,/# fail 0/);
-});
 test('one-shot public-source action uploads only JSON and rejects unverified original MP3s',()=>{
  const w=readFileSync(workflow,'utf8'),s=readFileSync(source,'utf8');
  assert.match(w,/permissions:\s*\n\s*contents:\s*read/);
