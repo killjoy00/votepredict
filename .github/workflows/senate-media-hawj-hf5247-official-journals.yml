@@ -50,7 +50,7 @@ jobs:
           pdfinfo -v
           pdftotext -v
       - name: Offline adversarial journal name, HF5247 vote, source PDF and cutoff tests
-        run: node --test tests/senate-media-hawj-hf5247-official-journal-pdfs.test.mjs
+        run: node --test tests/senate-media-hawj-hf5247-official-journal-pdfs.test.mjs tests/senate-media-hawj-hf5247-official-journal-real-receipts.test.mjs
       - name: Read and SHA-identify only two official public May 2024 Senate Journal PDFs, parse named Hawj roll sections
         run: node scripts/probe-senate-media-hawj-hf5247-official-journal-pdfs.mjs --output artifacts/hawj-hf5247-primary-journals.json
       - name: Upload PDF SHA and individual-name role metadata only
