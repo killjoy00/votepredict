@@ -127,7 +127,7 @@ const report={schema:'senate-864-103-candidate-original-indexed-full-html-and-sc
  verifiedIssueFamilyCountBySenator:Object.fromEntries(byIssue),
  originalSourceReceiptReference:'data/evaluation/senate-864-new-2022-25-deep-original-source-receipts-v1.json',
  proofs:checked,sourceQuotesAreNotVerifiedVotes:true,firstAuthorshipDateUnknown:true,
- 2025ClarkSiteOriginalAfterJan14PrimaryButBeforeJan28General:true,notProductionReadOrWrite:true,
+ clark2025OriginalAfterJan14PrimaryButBeforeJan28General:true,notProductionReadOrWrite:true,
  noTrainingForecastVotingPredictionChanges:true,olderServiceRetained:true};
 writeFileSync(join(out,'senate-864-original-103-scoped-short-research-fragment-audit.json'),JSON.stringify(report,null,2)+'\n',{flag:'wx'});
 const lines=['# Senate #864: 103 independently original-source-audited short research positions','',
