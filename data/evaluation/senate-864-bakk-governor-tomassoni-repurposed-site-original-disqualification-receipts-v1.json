@@ -1,0 +1,73 @@
+{
+  "schema": "senate-864-three-final-site-gaps-independently-disqualified-original-archive-bodies-v1",
+  "issue": 864,
+  "acquisitionRunId": 38284822219,
+  "originalCandidateOwnedSiteCoveragePeople92Unchanged": true,
+  "originalWebsiteIssueSnippets1285Unchanged": true,
+  "actualServingMinnesotaSenators95": true,
+  "archivedWholeCDXSha1OriginalHtmlMustMatch": true,
+  "sourceCopyrightOnlyTemporaryArtifacts": true,
+  "originalPages": [
+    {
+      "person": "Thomas Bakk",
+      "officialName": "Thomas M. Bakk",
+      "track": "bakk",
+      "sourceArtifactId": 11762593532,
+      "originalUrl": "http://www.tombakk.com:80/",
+      "observedByUtc": "2008-10-20T04:00:20.000Z",
+      "originalIndexedSha1Base32": "BRV6C4KPSZCYHYAQ5RUWVLN65GT3EHLD",
+      "wholeOriginalHtmlSha256": "ba48cce853db10916cd16893cff679fb5423ef3749972418191da29c149c35bd",
+      "originalHtmlArtifactName": "tombakk-www-20081020040020-id_-whole-original.html",
+      "wholeCdxIndexFile": "tombakk-www-original-whole-CDX-index.json",
+      "sourceIdentityHint": "Tom Bakk for Governor; paid for by Bakk - Minnesota's Next Governor Committee",
+      "whyNotOriginalSenateSite": "Authentic campaign is gubernatorial for a DIFFERENT office, not 2020 or any Senate-campaign candidate-owned website"
+    },
+    {
+      "person": "Thomas Bakk",
+      "officialName": "Thomas M. Bakk",
+      "track": "bakk",
+      "sourceArtifactId": 11762593532,
+      "originalUrl": "http://tombakk.com/",
+      "observedByUtc": "2008-09-05T09:33:46.000Z",
+      "originalIndexedSha1Base32": "J7F2ZYCBZW7HQ6BPE6I6A6B66B7S4ND2",
+      "wholeOriginalHtmlSha256": "a6eba16217879ea38b5e8ea54fd66f14c4c1f3d05ac5dbbbfb734e7f89709cb7",
+      "originalHtmlArtifactName": "tombakk-www-20080905093346-id_-whole-original.html",
+      "wholeCdxIndexFile": "tombakk-www-original-whole-CDX-index.json",
+      "sourceIdentityHint": "Tom Bakk for Governor; paid for by Bakk - Minnesota's Next Governor Committee",
+      "whyNotOriginalSenateSite": "Same 2008 gubernatorial election committee, not Senate"
+    },
+    {
+      "person": "David Tomassoni",
+      "officialName": "David J. Tomassoni",
+      "track": "tomassoni",
+      "sourceArtifactId": 11763435134,
+      "originalUrl": "http://tomassoni4senate.com/",
+      "observedByUtc": "2019-08-20T11:52:45.000Z",
+      "originalIndexedSha1Base32": "CNUENN56E7M7IVQKIN3MYJ6MPSZFDOCA",
+      "wholeOriginalHtmlSha256": "d4cf1b66ea5fa3e1942813e1dfa045f82c27ef34a5f835529013629839b951de",
+      "originalHtmlArtifactName": "tomassoni4senate-20190820115245-id_-whole-original.html",
+      "wholeCdxIndexFile": "tomassoni4senate-original-whole-CDX-index.json",
+      "sourceIdentityHint": "Just another WordPress site; free online printable receipts",
+      "whyNotOriginalSenateSite": "Unrelated receipt-template SEO content with no mention of candidate or Senate"
+    },
+    {
+      "person": "David Tomassoni",
+      "officialName": "David J. Tomassoni",
+      "track": "tomassoni",
+      "sourceArtifactId": 11763435134,
+      "originalUrl": "http://tomassoni4senate.com/author/aisya-faiha/",
+      "observedByUtc": "2019-07-16T21:06:47.000Z",
+      "originalIndexedSha1Base32": "UNDPXPUBSYFL5R57DRKFGY6ZMQOSDBEV",
+      "wholeOriginalHtmlSha256": "842458d122c71ef49c4e51ab63555a98f0e771a9d165051a370daf45289919bc",
+      "originalHtmlArtifactName": "tomassoni4senate-20190716210647-id_-whole-original.html",
+      "wholeCdxIndexFile": "tomassoni4senate-original-whole-CDX-index.json",
+      "sourceIdentityHint": "Author Archives: Aisya Faiha; free online printable receipts",
+      "whyNotOriginalSenateSite": "Unrelated author template copy, not Tomassoni candidate statement"
+    }
+  ],
+  "otherAbsentOriginalsNotEvidenceOfCandidatePolicyAbsence": true,
+  "nonSenateCampaignNotEligible": true,
+  "unrelatedReusedDomainNotEligible": true,
+  "governmentAndPublisherPagesDoNotCountAsCampaignSites": true,
+  "noProductionDbReadsWritesOrForecastChanges": true
+}

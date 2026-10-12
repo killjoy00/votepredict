@@ -1,0 +1,200 @@
+{
+  "schema": "senate-864-three-original-campaign-owned-site-gaps-historical-domain-probe-v1",
+  "issue": 864,
+  "baseline": {
+    "actuallyServed2021to2025": 95,
+    "candidateOwnedOriginalSitePeople": 92,
+    "authenticatedSelectedOwnedSiteFragments": 1285,
+    "officialLRLSenateHtmlSha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "official2020SosSenateSha256": "c2937b1fee5ae077603d892adf03c4ce83e2bb2592753680d5bfdeb4aecf7ba5",
+    "official2020SosCandidateLookupSha256": "8a0596d788b651ec27c05aa576bed31a3a51efd83c2cd2ee2ae5fdcc2f02965a"
+  },
+  "archiveStart": "20070101",
+  "archiveEnd": "20201102",
+  "commonCrawlCollections": [
+    "CC-MAIN-2016-44",
+    "CC-MAIN-2018-43",
+    "CC-MAIN-2020-29",
+    "CC-MAIN-2020-34"
+  ],
+  "tracks": {
+    "wiger": {
+      "name": "Charles Wiger",
+      "officialName": "Sr., Charles W. Wiger",
+      "district": "43",
+      "year": 2020,
+      "electionDate": "2020-11-03",
+      "targets": [
+        {
+          "id": "wigerforsenate",
+          "url": "https://www.wigerforsenate.com/",
+          "matchType": "domain",
+          "reason": "Prior unverified campaign domain hypothesis",
+          "sourceClass": "candidate_campaign_domain_hypothesis_unproven",
+          "verifiedOwned": false
+        },
+        {
+          "id": "chuckwiger",
+          "url": "http://www.chuckwiger.com/",
+          "matchType": "domain",
+          "reason": "Previous 2020 original archive provider index unresolved",
+          "sourceClass": "candidate_campaign_domain_hypothesis_unproven",
+          "verifiedOwned": false
+        },
+        {
+          "id": "chuckwigerforsenate",
+          "url": "https://www.chuckwigerforsenate.com/",
+          "matchType": "domain",
+          "reason": "Name plus Senate office slug hypothesis",
+          "sourceClass": "candidate_campaign_domain_hypothesis_unproven",
+          "verifiedOwned": false
+        },
+        {
+          "id": "wiger-site-issues",
+          "url": "https://www.chuckwiger.com/issues/",
+          "matchType": "prefix",
+          "reason": "Possible owned issue path unverified",
+          "sourceClass": "candidate_campaign_domain_hypothesis_unproven",
+          "verifiedOwned": false
+        },
+        {
+          "id": "wiger-senate-government",
+          "url": "https://www.senate.mn/senatorwiger",
+          "matchType": "exact",
+          "reason": "2012 candidate supplied government page as website; this is NOT a campaign-owned domain",
+          "sourceClass": "official_legislator_site_not_campaign_owned",
+          "verifiedOwned": false
+        },
+        {
+          "id": "wiger-patch-2012",
+          "url": "https://patch.com/minnesota/oakdale/chuck-wiger-candidate-for-minnesota-senate-district-43",
+          "matchType": "exact",
+          "reason": "2012 authentic candidate submitted Patch interview is publisher hosted",
+          "sourceClass": "older_candidate_respondent_publisher",
+          "verifiedOwned": false
+        }
+      ]
+    },
+    "tomassoni": {
+      "name": "David Tomassoni",
+      "officialName": "David J. Tomassoni",
+      "district": "6",
+      "year": 2020,
+      "electionDate": "2020-11-03",
+      "targets": [
+        {
+          "id": "tomassoni4senate",
+          "url": "http://www.tomassoni4senate.com/",
+          "matchType": "domain",
+          "reason": "Historical biographical citation linked this original campaign address; commercial reuse after campaign",
+          "sourceClass": "candidate_campaign_domain_hypothesis_unproven",
+          "verifiedOwned": false
+        },
+        {
+          "id": "tomassoni4senate-bare",
+          "url": "http://tomassoni4senate.com/",
+          "matchType": "domain",
+          "reason": "Bare host variant; disqualify commercially repurposed copy",
+          "sourceClass": "candidate_campaign_domain_hypothesis_unproven",
+          "verifiedOwned": false
+        },
+        {
+          "id": "tomassoniforsenate",
+          "url": "https://www.tomassoniforsenate.com/",
+          "matchType": "domain",
+          "reason": "Office-specific domain hypothesis only",
+          "sourceClass": "candidate_campaign_domain_hypothesis_unproven",
+          "verifiedOwned": false
+        },
+        {
+          "id": "davetomassoni",
+          "url": "http://www.davetomassoni.com/",
+          "matchType": "domain",
+          "reason": "Name domain hypothesis only",
+          "sourceClass": "candidate_campaign_domain_hypothesis_unproven",
+          "verifiedOwned": false
+        },
+        {
+          "id": "davidtomassoni",
+          "url": "https://davidtomassoni.com/",
+          "matchType": "domain",
+          "reason": "Name domain hypothesis only",
+          "sourceClass": "candidate_campaign_domain_hypothesis_unproven",
+          "verifiedOwned": false
+        }
+      ]
+    },
+    "bakk": {
+      "name": "Thomas Bakk",
+      "officialName": "Thomas M. Bakk",
+      "district": "3",
+      "year": 2020,
+      "electionDate": "2020-11-03",
+      "targets": [
+        {
+          "id": "tombakk",
+          "url": "http://tombakk.com/",
+          "matchType": "domain",
+          "reason": "Could represent 2010 governor campaign; require Senate office attribution",
+          "sourceClass": "candidate_campaign_domain_hypothesis_unproven",
+          "verifiedOwned": false
+        },
+        {
+          "id": "tombakk-www",
+          "url": "https://www.tombakk.com/",
+          "matchType": "domain",
+          "reason": "Hostname variant of potentially 2010 Governor site",
+          "sourceClass": "candidate_campaign_domain_hypothesis_unproven",
+          "verifiedOwned": false
+        },
+        {
+          "id": "bakkforsenate",
+          "url": "https://www.bakkforsenate.com/",
+          "matchType": "domain",
+          "reason": "Senate domain hypothesis",
+          "sourceClass": "candidate_campaign_domain_hypothesis_unproven",
+          "verifiedOwned": false
+        },
+        {
+          "id": "tombakkforsenate",
+          "url": "https://www.tombakkforsenate.com/",
+          "matchType": "domain",
+          "reason": "Senate domain hypothesis",
+          "sourceClass": "candidate_campaign_domain_hypothesis_unproven",
+          "verifiedOwned": false
+        },
+        {
+          "id": "tombakk4senate",
+          "url": "https://www.tombakk4senate.com/",
+          "matchType": "domain",
+          "reason": "Senate domain hypothesis",
+          "sourceClass": "candidate_campaign_domain_hypothesis_unproven",
+          "verifiedOwned": false
+        },
+        {
+          "id": "tombakkmn",
+          "url": "https://www.tombakkmn.com/",
+          "matchType": "domain",
+          "reason": "Name domain hypothesis",
+          "sourceClass": "candidate_campaign_domain_hypothesis_unproven",
+          "verifiedOwned": false
+        }
+      ]
+    }
+  },
+  "strict": {
+    "archiveObservationDoesNotProveOriginalFirstAuthorship": true,
+    "olderSiteNot2020Platform": true,
+    "nonSenateGovernorSiteNotSenateSite": true,
+    "originalArchivedWholeCDXSHA1MustMatchOriginalWholeHTTP": true,
+    "originalCandidateCommitteeAndSenateOfficeMustBeVerified": true,
+    "provider200NonCDXOr404DoesNotMeanNoSite": true,
+    "commercialRepurposedDomainDisqualified": true,
+    "governmentSenateWebsiteNotCampaignOwned": true,
+    "publisherCandidateStatementsNotCampaignOwned": true,
+    "unverifiedCandidateLegislativeVoteClaimsNotOfficialVotes": true,
+    "noAutomaticallyAcceptedCandidateWebsiteCoverage": true
+  },
+  "productionDatabaseReadsWrites": 0,
+  "modelOrPredictionChanges": 0
+}

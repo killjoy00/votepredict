@@ -1,0 +1,79 @@
+name: Independently disqualify 2008 Bakk Governor and 2019 Tomassoni reused-domain originals
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-864-bakk-governor-tomassoni-repurposed-site-original-disqualification-receipts-v1.json
+      - scripts/audit-senate-864-last-three-disqualified-original-website-pages.mjs
+      - .github/workflows/senate-864-last-three-independent-original-disqualification-audit.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-source-identity-and-original-CDX-SHA1:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-wiger-tomassoni-bakk-last-three-owned-originals-20261012'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    name: Four original source bodies/CDX hashes — Governor and SEO != Senate
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: node --check scripts/audit-senate-864-last-three-disqualified-original-website-pages.mjs
+      - run: npm ci --no-fund --no-audit
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: proof/official
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 38261292249
+          name: senate-864-five-thin-13-actual-2022-originals-1285-senator-site-excerpts-v1
+          github-token: ${{ github.token }}
+          path: proof/baseline
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 38284822219
+          name: senate-864-last-three-original-candidate-website-bakk-v1
+          github-token: ${{ github.token }}
+          path: proof/bakk
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 38284822219
+          name: senate-864-last-three-original-candidate-website-tomassoni-v1
+          github-token: ${{ github.token }}
+          path: proof/tomassoni
+      - name: Independently validate source identity, official actual service and exact original CDX/index/HTML SHA1
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find proof/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find proof/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find proof/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          base="$(find proof/baseline -type f -name senate-864-95-person-historical-candidate-issue-depth-1285.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$base"
+          node --import tsx scripts/audit-senate-864-last-three-disqualified-original-website-pages.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --baseline-1285-json "$base" \
+            --bakk-dir proof/bakk \
+            --tomassoni-dir proof/tomassoni \
+            --out-dir proof/verified
+      - name: Retain only four hash receipts and negative classification, copyrighted whole source in existing ephemeral artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-4-independently-disqualified-campaign-site-originals-v1
+          path: proof/verified/
+          retention-days: 30
+          if-no-files-found: warn
