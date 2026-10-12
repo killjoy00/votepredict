@@ -59,9 +59,9 @@ function syntheticProtectedOutcome(missing:'YEA'|'NAY'|'HOLD'='NAY'):Observation
  return v5 as Observation;
 }
 
-test('the V3 one-shot marker is unique; validates protected receipt and no person/name leak',()=>{
+test('the V4 recovery marker is unique; validates protected receipt and no person/name leak',()=>{
  assert.equal(ONE_MISSING_CHOICE_SIDE_MARKER,
-  'SENATE_864_SINGLE_CHOICE_TALLY_SIDE_ONESHOT_20261012_V3');
+  'SENATE_864_SINGLE_CHOICE_TALLY_SIDE_ONESHOT_20261012_V4');
  const out=buildSingleChoiceSafeReceipt(syntheticProtectedOutcome());
  assert.equal(out.inferredMissingTallySide,'NAY');
  assert.equal(out.oneMissingNaySideCandidate,1);
