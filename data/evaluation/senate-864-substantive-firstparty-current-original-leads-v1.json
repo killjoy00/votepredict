@@ -41,8 +41,8 @@
       "underlyingStatementId": "lead-2023-kreun-energy",
       "attribution": "individually_named_written_quote",
       "exactCurrentlyVisibleShortQuote": "Any legislation that seeks to alter Minnesota’s energy plan must ensure that energy remain reliable and affordable.",
-      "legislativeDecisionDay": null,
-      "retrospectiveRelativeToThatDecision": null,
+      "legislativeDecisionDay": "2023-02-02",
+      "retrospectiveRelativeToThatDecision": true,
       "historicalOriginalAuthentication": "UNKNOWN_NOT_INDEPENDENTLY_ARCHIVED",
       "historicalPublicByUtc": null,
       "historicalOriginalRawSha256": null,
@@ -50,7 +50,7 @@
       "automaticallyHistoricallyEligible": false,
       "productionChangeAuthorized": false,
       "fullOriginalBodyVerbatimApproved": false,
-      "note": "Individual quoted senator; publisher date is not authenticated Wayback public-by."
+      "note": "Caucus article and live original identify SF4 Senate passage on Feb 2; first verified archive Feb 4. This named statement is post-Senate-passage and cannot predict its Feb 2 Senate decision. Exact enrolled final bill version remains unproven."
     },
     {
       "id": "lead-2023-kreun-sf551",
