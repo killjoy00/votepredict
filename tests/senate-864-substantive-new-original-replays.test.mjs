@@ -77,6 +77,6 @@ test('different senator quote or missing curly closure never becomes attributed 
  assert.equal(boundedNamedSpeakerQuote(b,q).boundedNamedSpeakerQuote,false);
 });
 test('repeated short quote not promoted to one uniquely bounded speech',()=>{
- const html=Buffer.from('<p>“'+q.exactCurrentlyVisibleShortQuote+'” said Senator Michael Kreun.</p>'.repeat(2));
+ const html=Buffer.from(('<p>“'+q.exactCurrentlyVisibleShortQuote+'” said Senator Michael Kreun.</p>').repeat(2));
  assert.equal(boundedNamedSpeakerQuote(html,q).boundedNamedSpeakerQuote,false);
 });
