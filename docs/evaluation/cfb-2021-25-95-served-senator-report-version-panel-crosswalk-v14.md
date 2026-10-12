@@ -25,3 +25,23 @@ The output is exactly 95 allowlisted public official serving-person entries with
 For actual-serving people without existing report-version-source matches, seek official CFB principal committee registration and exact contemporary original/amended viewer version ID. Verify exact official PDF first page/period/receipt and entire SHA256, then seek independent **actual historical published-by** evidence. Attach each newly verified PDF version to the [V12 report-version ledger](cfb-2021-25-served-report-version-unified-v12.md) instead of retroactively labeling absent/missing reports from a current viewer. Prior V13 alternate historic CFB 2022-GET-profile Wayback pilot can provide an independently dated full-body positive only on exact SHA agreement; absent CDX hits or retrieval errors do not prove nonpublication.
 
 No legal owed filing-duty accounting, legacy eligibility claims or candidate bulk CSV transaction-to-stored matching will be pursued on this track.
+
+
+## First independently replayed full official service source: positive (2026-10-12)
+
+[GitHub Actions source-only run 38313196069](https://github.com/killjoy00/votepredict/actions/runs/38313196069) **successfully reacquired and parsed both complete original public government HTML sources** with the existing source-authenticating service parser, despite a first output-envelope-size safety HOLD subsequently corrected. Its original source receipts:
+
+| Independently reacquired original source | Source SHA256 |
+| --- | --- |
+| Official Minnesota LRL entire Senate service directory | **9a19784212b9401d34ef29101015718d03edc27592f2a20847de405586ba6bc6** |
+| Official LRL special-senator oath historical page | **c49e90519c24c4c5db9ffa0af9e034b69a1c9d96fde2335e14c475d72837a9a7** |
+
+The re-acquired current source full-body hashes are new **2026 observations**, not a historical original page public-by proof for financial report PDFs. All 95 actual-serving senators were independently source-represented and exact names remained unambiguous. **25/25** previously separately original-CFB-report-proven principal registrations found a unique official serving-senator identity join; **70** additional actually served official senators had **no corresponding registration in this selected existing 229-report-version source panel**, which means **not searched/acquired in this ledger**, never “no CFB report.”
+
+Permanent person-by-person source output:
+- [95-row exact official serving-senator and CFB-report-version panel crosswalk](source-proof/cfb-2021-25-95-serving-senator-report-version-source-crosswalk-v14.psv)
+- [Full original public LRL source SHA/checkpoint and expected counts](source-proof/cfb-2021-25-95-served-report-version-crosswalk-checkpoint-v14.json)
+
+Every person has official name, source-attested term overlap years/districts, official source type, existing independently CFB report-panel registration when source-confirmed, count/years of exact already authenticated original/amended PDF source references, and an explicit UNKNOWN otherwise. Total observed known panel references sum exactly to **229**. *Neither a name match nor this 95-member service roster proves an individual registered principal campaign committee or a legally due report.* The latter filing-obligation exercise remains excluded at the user's direction.
+
+The implementation now demands that repeat full public original government HTML SHA256 and the entire 95-row person-by-person checkpoint regenerate byte-for-byte; a changed source or unexpected committee reassignment safely HOLDS rather than silently rewriting the prior official service roster. Any later 2027/current-site content updates will require separate evidence review.
