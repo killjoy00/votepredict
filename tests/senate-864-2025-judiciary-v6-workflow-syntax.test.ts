@@ -68,3 +68,74 @@ test('V6 keyless receipt script is valid async JavaScript, exact whitelist and n
  assert.match(script,/noDatabaseWrites/);
  assert.doesNotMatch(script,/secrets.NEON_API_KEY|normalized_member_name|postgresql:\/\/|SELECT \*/);
 });
+
+function reporterFixture(parity:'FULL_8_OF_8'|'HOLD'='FULL_8_OF_8'){
+ const js=getKeylessScript();
+ const keys=js.match(/const keys=\\('([^']+)'\\)\\.split\\(' '\\);/);
+ const booleans=js.match(/const bKeys=\\('([^']+)'\\)\\.split\\(' '\\);/);
+ assert.ok(keys&&booleans,'Explicit exact field and boolean whitelists required');
+ const obj:Record<string,unknown>={};
+ for(const k of keys[1]!.split(' '))obj[k]=0;
+ for(const k of booleans[1]!.split(' '))obj[k]=true;
+ Object.assign(obj,{
+  schemaVersion:'mn-864-2025-judiciary-postrollback-v6-safe-numeric-diagnostic',
+  issue:864,priorV5HeldRunId:38266959992,
+  priorV5HeldIssueReceiptId:6126911116,
+  priorV2ProtectedRunId:38201074454,priorV4ProtectedRunId:38262800243,
+  independentlyVerifiedOriginalJudiciaryArtifactId:11676168658,
+  original2025JudiciaryYea:7,original2025JudiciaryNay:1,
+  original2025JudiciaryChoiceHashes:8,
+  originalPdfHashProofsAvailable:1452,
+  storedPdfHashMatches:1452,
+  sourceDetailedCandidateRolls:153,sourceDetailedNamedChoiceTokens:989,
+  original2025DetailedRolls:33,original2025DetailedChoices:305,
+  matched2025DetailedRolls:parity==='FULL_8_OF_8'?33:32,
+  matched2025DetailedChoices:parity==='FULL_8_OF_8'?305:297,
+  missingSingleSourceYeaChoices:1,
+  individual2025FingerprintParity:parity,
+  explicitHoldReason:parity==='FULL_8_OF_8'?'COMPLETE':'TALLY_OR_EVENT_MATCH_UNVERIFIED',
+ });
+ return obj;
+}
+async function evaluateKeylessReporter(payload:Record<string,unknown>){
+ const old:Record<string,string|undefined>={};
+ const settings={
+  SOURCE_RESULT:'success',VERIFY_RESULT:'success',
+  PROTECTED_RESULT:'success',SAFE_RESULT:Buffer.from(JSON.stringify(payload),'utf8').toString('base64'),
+  GITHUB_SHA:'1234567890abcdef1234567890abcdef12345678',
+  GITHUB_RUN_ID:'38269000000',
+ };
+ for(const [k,v] of Object.entries(settings)){
+  old[k]=process.env[k];
+  process.env[k]=v;
+ }
+ const observed:Record<string,unknown>[]=[];
+ const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor;
+ try {
+  await new AsyncFunction('github',getKeylessScript())({
+   rest:{issues:{createComment:async (arg:Record<string,unknown>)=>{observed.push(arg);}}},
+  });
+  return observed;
+ }finally{
+  for(const [k,v] of Object.entries(old)){
+   if(v===undefined)delete process.env[k];
+   else process.env[k]=v;
+  }
+ }
+}
+test('strict numeric-only keyless reporter executes both full and held synthetic receipts without private fields',async()=>{
+ const complete=await evaluateKeylessReporter(reporterFixture());
+ assert.equal(complete.length,1);
+ assert.equal(complete[0]!.issue_number,864);
+ assert.match(String(complete[0]!.body),/FULL_8_OF_8/);
+ assert.match(String(complete[0]!.body),/COMPLETE/);
+ const held=await evaluateKeylessReporter(reporterFixture('HOLD'));
+ assert.equal(held.length,1);
+ assert.match(String(held[0]!.body),/HOLD/);
+ assert.match(String(held[0]!.body),/TALLY_OR_EVENT_MATCH_UNVERIFIED/);
+});
+test('strict keyless reporter rejects unexpected private source member key without publishing',async()=>{
+ const obj=reporterFixture();
+ obj.normalized_member_name='synthetic-do-not-export';
+ await assert.rejects(()=>evaluateKeylessReporter(obj),/Unexpected private field/);
+});
