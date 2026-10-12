@@ -30,11 +30,10 @@ try{
   await c.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
   open=true;
   const id=await c.query(
-   "SELECT current_database() AS db,inet_server_addr() AS host,current_setting('transaction_read_only') AS ro",
+   "SELECT current_database() AS db,current_user AS role,current_setting('transaction_read_only') AS ro",
   );
   if(id.rows.length!==1 ||id.rows[0].db!=='votepredict'||id.rows[0].ro!=='on'
-    ||typeof id.rows[0].host!=='string'
-    ||!['127.0.0.1','::1'].includes(id.rows[0].host))
+    ||id.rows[0].role!=='postgres')
    throw Error('Not isolated disposable local PostgreSQL');
   for(const group of GROUPS){
    const sql=QUERIES[group];
