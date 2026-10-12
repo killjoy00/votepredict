@@ -309,6 +309,10 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
     /On\s+a\s+vote\s+of\s+(\d+)\s+(?:ayes?|yes)\s*(?:,|and)\s*(\d+)\s+(?:nays?|no)\b/gi,
     /(?:requested\s+(?:a\s+)?division|called\s+for\s+division|division)[^\n]{0,160}?(\d+)\s+(?:yes|ayes?)\s*[,;]?\s*(\d+)\s+(?:no|nays?)\b/gi,
   ];
+  // Count-only recorded divisions are not person votes. Still, distinct
+  // explicit requests are distinct committee actions even when totals repeat.
+  // Keep this key independent from the named-vote dedup set.
+  const seenCountOnlyActions = new Set<string>();
   for (const countOnly of countOnlyPatterns) {
     for (const match of text.matchAll(countOnly)) {
     const start = match.index ?? 0;
@@ -317,11 +321,17 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
     const amendmentRef = nearestAmendment(context);
     const yeaCount = Number(match[1]);
     const nayCount = Number(match[2]);
-    if (observations.some((row) =>
-      row.billIdentifier === billIdentifier
-      && row.amendmentRef === amendmentRef
-      && row.yeaCount === yeaCount
-      && row.nayCount === nayCount)) continue;
+    const anchor=recordedMotionAnchor(text,start) ?? 'unanchored';
+    const countKey=[billIdentifier??'none',amendmentRef??'none',
+      yeaCount,nayCount,anchor].join('|');
+    if(seenCountOnlyActions.has(countKey))continue;
+    // Never turn a named roll's aggregate tally into a second count-only
+    // record. This guard is conservative where a source has no request anchor.
+    if(observations.some(row=>row.individualVotesAvailable
+      &&row.billIdentifier===billIdentifier
+      &&row.amendmentRef===amendmentRef
+      &&row.yeaCount===yeaCount&&row.nayCount===nayCount))continue;
+    seenCountOnlyActions.add(countKey);
       observations.push({
         billIdentifier,
         amendmentRef,
