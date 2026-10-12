@@ -106,7 +106,7 @@ test('public-only senate service and CFB panel source workflow has no protected 
 });
 
 test('immutable 95 original LRL serving senator source-panel rows are preserved without false filing absence',()=>{
- const rows=readFileSync(CROSSWALK_PSV,'utf8').trimEnd().split('\\n').map(x=>x.split('|'));
+ const rows=readFileSync(CROSSWALK_PSV,'utf8').trimEnd().split('\n').map(x=>x.split('|'));
  const checkpoint=JSON.parse(readFileSync(CROSSWALK_CHECKPOINT,'utf8'));
  assert.equal(rows.length,95);
  assert.equal(CROSSWALK_FIELDS.length,10);
@@ -128,6 +128,6 @@ test('immutable 95 original LRL serving senator source-panel rows are preserved 
 test('crosswalk serializer prints 95 public official identities only with no raw government HTML',()=>{
  const mock=buildSourceVerifiedSenatorReportCrosswalk(synthetic());
  const serialized=serializeOfficialReportPanelCrosswalk(mock.results);
- assert.equal(serialized.trimEnd().split('\\n').length,95);
+ assert.equal(serialized.trimEnd().split('\n').length,95);
  assert.doesNotMatch(serialized,/donor|contributor|transaction|<html|<script/i);
 });
