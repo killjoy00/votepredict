@@ -1,0 +1,492 @@
+name: One-shot #864 2025 Judiciary post-ROLLBACK numeric parity read-only V6
+on:
+  pull_request:
+    paths:
+      - scripts/senate-864-2025-judiciary-full-source-proof-v5.ts
+      - scripts/audit-senate-864-2025-judiciary-full-source-neon-v5.ts
+      - tests/senate-864-2025-judiciary-full-source-neon-v5.test.ts
+      - tests/senate-864-2025-judiciary-v5-workflow-syntax.test.ts
+      - .github/workflows/senate-864-2025-judiciary-postrollback-v6.yml
+      - docs/evaluation/senate-864-2025-judiciary-8-choice-original-full-source-v5.md
+      - scripts/audit-senate-864-2025-judiciary-postrollback-v6.ts
+      - tests/senate-864-2025-judiciary-postrollback-v6.test.ts
+      - tests/senate-864-2025-judiciary-v6-workflow-syntax.test.ts
+      - docs/evaluation/senate-864-2025-judiciary-postrollback-numeric-v6.md
+  push:
+    branches: [main]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: senate-864-2025-judiciary-v6-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  pr-synthetic-tests:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Offline V5 2025 source bridge and read-only receipt tests
+        run: |
+          node --import tsx --test tests/senate-864-2025-judiciary-full-source-neon-v5.test.ts
+          node --import tsx --test tests/senate-864-2025-judiciary-v5-workflow-syntax.test.ts
+          node --import tsx --test tests/senate-864-2025-judiciary-postrollback-v6.test.ts
+          node --import tsx --test tests/senate-864-2025-judiciary-v6-workflow-syntax.test.ts
+          node --import tsx --test tests/senate-864-protected-source-db-parity.test.ts
+  pr-disposable-sql:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - name: EXPLAIN unchanged three SELECTs without ANALYZE on disposable PostgreSQL
+        run: node --import tsx scripts/verify-senate-864-source-db-sql-local.ts
+  pinned-source-preflight:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      ((github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict') ||
+       (github.event_name == 'push' &&
+        github.ref == 'refs/heads/main' &&
+        github.run_attempt == 1 &&
+        contains(github.event.head_commit.message, 'SENATE_864_JUDICIARY_2025_POSTROLLBACK_NUMERIC_ONESHOT_20261012_V6')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Pin existing original government source artifact 1 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2022-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+      - name: Pin existing original government source artifact 2 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2023-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+      - name: Pin existing original government source artifact 3 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2024-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+      - name: Pin existing original government source artifact 4 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2025-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+      - name: Pin existing original government source artifact 5 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-six-scanned-original-ocr-metadata
+          repository: killjoy00/votepredict
+          run-id: 38068730892
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 6 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2022-second-ocr-sample-metadata
+          repository: killjoy00/votepredict
+          run-id: 38069432305
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 7 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2023-second-ocr-sample-metadata
+          repository: killjoy00/votepredict
+          run-id: 38069432305
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 8 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2024-second-ocr-sample-metadata
+          repository: killjoy00/votepredict
+          run-id: 38069432305
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 9 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2025-second-ocr-sample-metadata
+          repository: killjoy00/votepredict
+          run-id: 38069432305
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 10 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2023-remaining-scanned-originals-metadata
+          repository: killjoy00/votepredict
+          run-id: 38073521109
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 11 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2024-remaining-scanned-originals-metadata
+          repository: killjoy00/votepredict
+          run-id: 38073521109
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 12 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2022-batch-0-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 13 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2022-batch-1-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 14 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2022-batch-2-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 15 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2022-batch-3-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 16 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2022-batch-4-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 17 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2022-batch-5-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 18 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2025-batch-0-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 19 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2025-batch-1-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 20 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2025-batch-2-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Verify original 2025 Judiciary independent artifact ID, immutable ZIP SHA and run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          actual=$(gh api repos/killjoy00/votepredict/actions/artifacts/11676168658 --jq '.digest')
+          test "$actual" = "sha256:841dc184b1596a2af00a7652910c31fa903cde258b85d3cdb4e0ff1d08aeb703"
+      - name: Acquire one separately archived original 2025 Judiciary 7-1 choice proof
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2025-judiciary-original-named-roll-source-proof
+          repository: killjoy00/votepredict
+          run-id: 38070395356
+          github-token: ${{ github.token }}
+          path: artifacts/judiciary
+      - name: SHA-verify all 21 original artifacts; 1452 original PDFs and 2025 eight choice fingerprints
+        run: node --import tsx scripts/audit-senate-864-2025-judiciary-postrollback-v6.ts --source-preflight
+      - name: Carry only verified original source metadata into the protected job
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-2025-judiciary-v6-source-only
+          path: artifacts/
+          retention-days: 1
+          if-no-files-found: error
+  main-presecret-proof:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_JUDICIARY_2025_POSTROLLBACK_NUMERIC_ONESHOT_20261012_V6')
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Exact reviewed main checkout
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Apply migrations to disposable PostgreSQL BEFORE integration tests
+        run: npm run db:migrate
+      - name: Independent repository tests/types/build
+        run: npm run check
+      - name: EXPLAIN same three read-only source/event/member choice queries (disposable PG only)
+        run: node --import tsx scripts/verify-senate-864-source-db-sql-local.ts
+      - name: Audit production dependency vulnerabilities before access to protected key
+        run: npm audit --omit=dev --audit-level=high
+  protected-existing-neon-readonly:
+    needs: [pinned-source-preflight,main-presecret-proof]
+    if: >-
+      needs.pinned-source-preflight.result == 'success' &&
+      needs.main-presecret-proof.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_JUDICIARY_2025_POSTROLLBACK_NUMERIC_ONESHOT_20261012_V6')
+    runs-on: ubuntu-latest
+    environment: evidence-readonly-sandbox
+    timeout-minutes: 16
+    outputs:
+      sanitized_judiciary_v6_b64: ${{ steps.neon.outputs.sanitized_judiciary_v6_b64 }}
+      safe_failure_phase: ${{ steps.neon.outputs.safe_failure_phase }}
+    env:
+      VOTEPREDICT_864_APPROVAL: BOUNDED_COUNTS_ONLY
+      VOTEPREDICT_864_INDEPENDENT_CI_VERIFIED: ${{ needs.main-presecret-proof.result == 'success' && needs.pinned-source-preflight.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_864_ONE_SHOT_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_JUDICIARY_2025_POSTROLLBACK_NUMERIC_ONESHOT_20261012_V6') && 'true' || 'false' }}
+      VOTEPREDICT_864_JUDICIARY_V6_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_JUDICIARY_2025_POSTROLLBACK_NUMERIC_ONESHOT_20261012_V6') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Confirm exact first-attempt reviewed SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Download earlier pre-secret SHA-pinned original artifacts from this same run
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-864-2025-judiciary-v6-source-only
+          path: artifacts/
+      - name: READ ONLY REPEATABLE READ original Judiciary eight-choice source parity and explicit ROLLBACK
+        id: neon
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+          VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+        run: node --import tsx scripts/audit-senate-864-2025-judiciary-postrollback-v6.ts --protected
+  keyless-sanitized-issue-receipt:
+    needs: [pinned-source-preflight,main-presecret-proof,protected-existing-neon-readonly]
+    if: >-
+      always() &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_JUDICIARY_2025_POSTROLLBACK_NUMERIC_ONESHOT_20261012_V6') &&
+      (needs.pinned-source-preflight.result == 'failure' ||
+       needs.main-presecret-proof.result == 'failure' ||
+       needs.protected-existing-neon-readonly.result == 'success' ||
+       needs.protected-existing-neon-readonly.result == 'failure')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    env:
+      SOURCE_RESULT: ${{ needs.pinned-source-preflight.result }}
+      VERIFY_RESULT: ${{ needs.main-presecret-proof.result }}
+      PROTECTED_RESULT: ${{ needs.protected-existing-neon-readonly.result }}
+      SAFE_RESULT: ${{ needs.protected-existing-neon-readonly.outputs.sanitized_judiciary_v6_b64 }}
+      SAFE_PHASE: ${{ needs.protected-existing-neon-readonly.outputs.safe_failure_phase }}
+    steps:
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const head=[
+             '## #864 - 2025 Judiciary eight-choice original vs stored V6 postrollback numeric diagnostic',
+             '**Reviewed main SHA:** '+process.env.GITHUB_SHA,
+             '**Run:** https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID,
+             '**Prior V5 protected HOLD:** https://github.com/killjoy00/votepredict/issues/864#issuecomment-6126911116',
+             '**Independent 2025 original source:** https://github.com/killjoy00/votepredict/actions/runs/38070395356',
+             '',
+            ];
+            let body;
+            if(process.env.SOURCE_RESULT!=='success'||process.env.VERIFY_RESULT!=='success'){
+             body=[...head,'**PRE-SECRET HOLD:** 21 original SHA proof artifacts, main full checks, disposable PG migration/SQL or npm audit failed. Neon key NOT accessed.'].join('\n');
+            }else if(process.env.PROTECTED_RESULT==='failure'){
+             const phase=process.env.SAFE_PHASE||'not_reported';
+             if(!/^[a-z_]{1,80}$/.test(phase))throw Error('Unsafe failure phase');
+             body=[...head,'**PROTECTED HOLD:** safe phase '+phase+'. No 2025 original-to-stored exact-choice parity or repairs certified.'].join('\n');
+            }else if(process.env.PROTECTED_RESULT==='success'){
+             const b64=process.env.SAFE_RESULT||'';
+             if(!/^[A-Za-z0-9+/=]+$/.test(b64)||b64.length>12000)
+              throw Error('Unsafe protected scalar receipt');
+             const r=JSON.parse(Buffer.from(b64,'base64').toString('utf8'));
+             const keys=('schemaVersion issue priorV5HeldRunId priorV5HeldIssueReceiptId priorV2ProtectedRunId priorV4ProtectedRunId independentlyVerifiedOriginalJudiciaryArtifactId original2025JudiciaryYea original2025JudiciaryNay original2025JudiciaryChoiceHashes originalPdfHashProofsAvailable storedPdfHashMatches sourceDetailedCandidateRolls sourceDetailedNamedChoiceTokens storedCommitteeEvents storedCommitteeChoices original2025DetailedRolls original2025DetailedChoices matched2025DetailedRolls matched2025DetailedChoices matchedAllYearsDetailedRolls matchedAllYearsDetailedChoices namedMismatchRolls namedMismatchOriginalTokens namedMismatchStoredTokens namedMismatchDigestIntersections originalChoiceDigestsAbsent storedChoiceDigestsNotInOriginal missingSingleSourceYeaChoices missingSingleSourceNayChoices sourceNamedChoiceMismatchCategories sourceEventTallyMismatchCategories sourceEventDateMismatchCategories sourceEventMissingCategories sourceEventExtraStoredCategories sourceMemberUnresolvedCategories sourceDocumentHashMismatchCategories sourceDocumentMetadataMismatchCategories storedBaselineMatchesV2 otherOriginalRollsStillMatchV2 original2025SourceTotalsExact earlier2024MissingYeaAnchorStillProven individual2025FingerprintParity explicitHoldReason transactionReadOnly transactionRolledBack noDatabaseWrites noPrivateRowsMemberNamesUrlsOrChoiceHashesExported existingNeonDefaultBranchNotDeployedBinding sourceCandidatesNotCompleteOfficialVoteUniverse historicalEligibilityNotCertified print2021Print2022And141MeetingsHeld noProductionRepairOrPredictionChangeAuthorized issue864StillOpen').split(' ');
+             if(!r||Array.isArray(r)||JSON.stringify(Object.keys(r).sort())!==JSON.stringify(keys.sort()))
+              throw Error('Unexpected private field present in protected numeric receipt');
+             const bKeys=('storedBaselineMatchesV2 otherOriginalRollsStillMatchV2 original2025SourceTotalsExact earlier2024MissingYeaAnchorStillProven transactionReadOnly transactionRolledBack noDatabaseWrites noPrivateRowsMemberNamesUrlsOrChoiceHashesExported existingNeonDefaultBranchNotDeployedBinding sourceCandidatesNotCompleteOfficialVoteUniverse historicalEligibilityNotCertified print2021Print2022And141MeetingsHeld noProductionRepairOrPredictionChangeAuthorized issue864StillOpen').split(' ');
+             const sKeys=['schemaVersion','individual2025FingerprintParity','explicitHoldReason'];
+             const numericKeys=keys.filter(x=>!bKeys.includes(x)&&!sKeys.includes(x));
+             if(bKeys.some(k=>typeof r[k]!=='boolean')
+              ||numericKeys.some(k=>typeof r[k]!=='number'||!Number.isSafeInteger(r[k])||r[k]<0||r[k]>3000)
+              ||r.schemaVersion!=='mn-864-2025-judiciary-postrollback-v6-safe-numeric-diagnostic'
+              ||r.issue!==864||r.priorV5HeldRunId!==38266959992||r.priorV5HeldIssueReceiptId!==6126911116
+              ||r.priorV2ProtectedRunId!==38201074454||r.priorV4ProtectedRunId!==38262800243
+              ||r.independentlyVerifiedOriginalJudiciaryArtifactId!==11676168658
+              ||r.original2025JudiciaryYea!==7||r.original2025JudiciaryNay!==1||r.original2025JudiciaryChoiceHashes!==8
+              ||r.originalPdfHashProofsAvailable!==1452||r.sourceDetailedCandidateRolls!==153
+              ||r.sourceDetailedNamedChoiceTokens!==989
+              ||['transactionReadOnly','transactionRolledBack','noDatabaseWrites',
+                  'noPrivateRowsMemberNamesUrlsOrChoiceHashesExported',
+                  'existingNeonDefaultBranchNotDeployedBinding',
+                  'sourceCandidatesNotCompleteOfficialVoteUniverse',
+                  'historicalEligibilityNotCertified','print2021Print2022And141MeetingsHeld',
+                  'noProductionRepairOrPredictionChangeAuthorized','issue864StillOpen'].some(k=>r[k]!==true)
+              ||!['FULL_8_OF_8','HOLD'].includes(r.individual2025FingerprintParity)
+              ||!['COMPLETE','STORED_BASELINE_OR_SOURCE_DOCUMENT_DRIFT',
+                 'PREVIOUS_ORIGINAL_ROLL_BASELINE_CHANGED','2024_YEA_ANCHOR_CHANGED',
+                 'TALLY_OR_EVENT_MATCH_UNVERIFIED','NAMED_CHOICE_OR_MEMBER_MATCH_UNVERIFIED',
+                 'ADDITIONAL_UNEXPLAINED_MISMATCH'].includes(r.explicitHoldReason)
+              ||(r.individual2025FingerprintParity==='FULL_8_OF_8')!==(r.explicitHoldReason==='COMPLETE')
+              ||(r.individual2025FingerprintParity==='FULL_8_OF_8'&&(
+                 r.matched2025DetailedRolls!==33||r.matched2025DetailedChoices!==305
+                 ||r.storedBaselineMatchesV2!==true||r.earlier2024MissingYeaAnchorStillProven!==true)))
+              throw Error('Invalid source, member choice classification or prohibited numeric output');
+             body=[...head,
+              '**2025 original-to-stored 8-choice proof:** '+r.individual2025FingerprintParity,
+              '**Numeric HOLD/match explanation:** '+r.explicitHoldReason,
+              '- Original independent 2025 Judiciary tally: 7 YEA / 1 NAY, 8 original choice SHA fingerprints.',
+              '- Stored PDF byte SHA parity: '+r.storedPdfHashMatches+' / 1452.',
+              '- Candidate detailed original rolls/choice fingerprints: '+r.sourceDetailedCandidateRolls+' / '+r.sourceDetailedNamedChoiceTokens+'.',
+              '- All years exact detailed rolls/fingerprints: '+r.matchedAllYearsDetailedRolls+' / 153 and '+r.matchedAllYearsDetailedChoices+' / 989.',
+              '- Original 2025 detailed roll candidates matching stored: '+r.matched2025DetailedRolls+' / '+r.original2025DetailedRolls+'.',
+              '- 2025 choice fingerprints on fully matched source candidate rolls: '+r.matched2025DetailedChoices+' / '+r.original2025DetailedChoices+'.',
+              '- Named choice mismatch source/stored tokens/intersections: '+r.namedMismatchOriginalTokens+' / '+r.namedMismatchStoredTokens+' / '+r.namedMismatchDigestIntersections+'.',
+              '- Aggregate source SHA tokens absent from stored: '+r.originalChoiceDigestsAbsent+'; extra stored: '+r.storedChoiceDigestsNotInOriginal+'.',
+              '- Aggregate tally mismatch roll categories: '+r.sourceEventTallyMismatchCategories+'; named-choice mismatch categories: '+r.sourceNamedChoiceMismatchCategories+'.',
+              '- Aggregate event date/missing/extra stored: '+r.sourceEventDateMismatchCategories+' / '+r.sourceEventMissingCategories+' / '+r.sourceEventExtraStoredCategories+'.',
+              '- Aggregate unresolved stored member category: '+r.sourceMemberUnresolvedCategories+'.',
+              '- Prior V2 cohort preserved: '+r.storedBaselineMatchesV2+'; prior 2024 single-YEA anchor preserved: '+r.earlier2024MissingYeaAnchorStillProven+'.',
+              '',
+              '**Safety:** one protected REPEATABLE READ READ ONLY transaction explicitly ROLLED BACK before emitting any counts; no raw/private member rows, normalized names, original URLs, keys or individual choice hashes exported. Existing Neon default branch not independently verified as deployed DB. No data repairs or prediction changes.',
+              '**Still held:** official complete vote/motion denominator, 2021 print, 2022 mixed print/electronic, 141 unlinked meetings, historical roster service dates, as-of eligibility. Issue #864 remains OPEN.',
+             ].join('\n');
+            }else throw Error('Unknown protected receipt state');
+            if(body.length>7500)throw Error('Untrusted keyless issue comment length');
+            await github.rest.issues.createComment({
+             owner:'killjoy00',repo:'votepredict',issue_number:864,body,
+            });
