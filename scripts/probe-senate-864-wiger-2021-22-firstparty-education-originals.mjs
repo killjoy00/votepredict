@@ -54,7 +54,7 @@ export function boundSF960WigerSignedOriginal(body,source){
   originalSelectedBoundedExcerptSha256:verified?cue.map(q=>sha(Buffer.from(q))):[],
   firstAuthoredOriginalTimestampIndependentlyProved:false,
   officialSF960PersonalVoteOrPolicyVersionNotInferred:true,
-  thisIsNotCandidateOwnedWebsite:false};
+  thisIsNotCandidateOwnedWebsite:true};
 }
 async function fetchBounded(r,limit){
  if(r.status!==200||!r.body)throw Error('non200');
