@@ -299,3 +299,74 @@ test('dedicated keyless reporter also emits a receipt for pre-secret full CI fai
  assert.match(report,/github\.rest\.issues\.createComment/);
  assert.doesNotMatch(report,/secrets\.NEON_API_KEY|DATABASE_URL_UNPOOLED/);
 });
+
+
+test('a timed-out finance source group is a named HOLD, not zero, and remaining 6 groups retain same READ ONLY snapshot',async()=>{
+ const queries:string[]=[];const phases:string[]=[];let release=0,end=0;
+ const pool=()=>({
+  connect:async()=>({
+   query:async(sql:string)=>{
+    queries.push(sql);
+    if(sql.startsWith('BEGIN')||sql==='ROLLBACK'
+      ||sql.startsWith('SAVEPOINT')||sql.startsWith('RELEASE SAVEPOINT')
+      ||sql.startsWith('ROLLBACK TO SAVEPOINT'))return {rows:[]};
+    if(sql.includes('current_database()'))
+     return {rows:[{db:'neondb',role:'neondb_owner',ro:'on'}]};
+    if(sql.includes('to_regclass'))
+     return {rows:[...REQUIRED_864_TABLES].map(name=>({table_name:name,present:true,readable:true}))};
+    if(sql===QUERIES.finance){
+     const e=new Error('PRIVATE SECRET DATABASE TEXT MUST NEVER APPEAR');
+     (e as Error & {code:string}).code='57014';
+     throw e;
+    }
+    if(Object.values(QUERIES).includes(sql))
+     return {rows:[{year:'2023',verified_existing_rows:'4'}]};
+    throw Error('Unreviewed query issued');
+   },
+   release:()=>{release++},
+  }),
+  end:async()=>{end++},
+ }) as unknown as Pick<Pool,'connect'|'end'>;
+ const result=await auditNeonExistingKey2021To25(conf,fakeNeon,pool,x=>phases.push(x));
+ assert.equal(result.currentTransactionReadOnly,true);
+ assert.equal(result.transactionRollbackCompleted,true);
+ assert.equal(result.allSevenSourceFamilyQueriesSucceeded,false);
+ assert.equal(result.groupHoldsAreNotZeroCounts,true);
+ assert.equal(result.status,'partial_verified_existing_votepredict_default_branch_aggregates');
+ assert.deepEqual(result.groupHolds,{finance:'statement_timeout'});
+ assert.deepEqual(result.groups.finance,[]);
+ assert.equal(result.groups.roster[0].verified_existing_rows,'4');
+ assert.equal(result.groups.media[0].verified_existing_rows,'4');
+ assert.equal(result.groups.campaign[0].verified_existing_rows,'4');
+ assert.equal(queries.filter(q=>q==='SAVEPOINT current_source_group').length,7);
+ assert.equal(queries.filter(q=>q==='ROLLBACK TO SAVEPOINT current_source_group').length,1);
+ assert.equal(queries.at(-1),'ROLLBACK');
+ assert.ok(phases.includes('held_finance_statement_timeout'));
+ assert.equal(phases.at(-1),'rolled_back');
+ assert.equal(release,1);assert.equal(end,1);
+ assert.equal(result.financeEvidenceItemRowsAndEligibilityNotAudited,true);
+ assert.doesNotMatch(JSON.stringify(result),/PRIVATE SECRET|DUMMY_PRIVATE|brisk-stream/);
+});
+test('malformed SQL aggregate result fails closed instead of masking it as source HOLD',async()=>{
+ let rollbacks=0;
+ const pool=()=>({
+  connect:async()=>({
+   query:async(sql:string)=>{
+    if(sql==='ROLLBACK'){rollbacks++;return {rows:[]}}
+    if(sql.startsWith('BEGIN')||sql.startsWith('SAVEPOINT')
+      ||sql.startsWith('RELEASE SAVEPOINT'))return {rows:[]};
+    if(sql.includes('current_database()'))
+     return {rows:[{db:'neondb',role:'neondb_owner',ro:'on'}]};
+    if(sql.includes('to_regclass'))
+     return {rows:[...REQUIRED_864_TABLES].map(name=>({table_name:name,present:true,readable:true}))};
+    if(Object.values(QUERIES).includes(sql))
+     return {rows:[{year:'2023',not_a_private_person_name:'John Doe'}]};
+    throw Error('Unreviewed query issued');
+   },
+   release:()=>{},
+  }),
+  end:async()=>{},
+ }) as unknown as Pick<Pool,'connect'|'end'>;
+ await assert.rejects(()=>auditNeonExistingKey2021To25(conf,fakeNeon,pool));
+ assert.equal(rollbacks,1);
+});
