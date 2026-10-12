@@ -89,17 +89,19 @@ export function inspect2022FinanceApr07OriginalMinutes(text:string){
    throw Error('original committee roll context assigned to wrong bill');
   const roll=rollCalls[index]!;
   const ending=closings[index]!;
+  const closingAt=ending.index??-1;
+  if(closingAt<0)throw Error('original tally closing missing source index');
   if((roll.index??-1)<=sourceIndex+(intro[0]?.length??0)-1||
      (roll.index??0)-sourceIndex>650||
-     (ending.index??0)<=(roll.index??0)||
-     (ending.index??0)-(roll.index??0)>1300)
+     closingAt<=(roll.index??0)||
+     closingAt-(roll.index??0)>1300)
    throw Error('original roll call or tally not adjacent to expected distinct motion');
   const nextIntro=index+1<allMotions.length
    ?findAt(allMotions[index+1]!.intro,flat,sourceIndex+intro[0].length)
    :null;
-  if(nextIntro&&(ending.index??-1)>=(nextIntro.index??-1))
+  if(nextIntro&&closingAt>=(nextIntro.index??-1))
    throw Error('original tally crosses into next distinct motion');
-  const segment=flat.slice((roll.index??0)+roll[0].length,ending.index);
+  const segment=flat.slice((roll.index??0)+roll[0].length,closingAt);
   const ayeStart=segment.search(/\bAYES\s*:/i),nayStart=segment.search(/\bNAYS\s*:/i);
   const absentMatch=/\bABSENT\s*:/i.exec(segment);
   const absentStart=absentMatch?.index??-1;
@@ -123,12 +125,12 @@ export function inspect2022FinanceApr07OriginalMinutes(text:string){
   const distinct=[...namesYea,...namesNay,...(namesAbsent??[])].map(x=>x.toLowerCase());
   if(new Set(distinct).size!==distinct.length)
    throw Error('original senator appears on incompatible YEA/NAY/ABSENT sides');
-  const post=flat.slice(ending.index,(nextIntro?.index??Math.min(flat.length,ending.index+320)));
+  const post=flat.slice(closingAt,(nextIntro?.index??Math.min(flat.length,closingAt+320)));
   const failed=/the motion did not prevail/i.test(post);
   const prevailed=/\bTHE MOTION PREVAILED\b/i.test(post);
   if((spec.disposition==='FAILED'&&!failed)||(spec.disposition==='PREVAILED'&&!prevailed))
    throw Error('original motion disposition differs from explicit minute language');
-  const context=flat.slice(sourceIndex,Math.min(flat.length,ending.index+180));
+  const context=flat.slice(sourceIndex,Math.min(flat.length,closingAt+180));
   const isOral=spec.label==='ORAL_TO_A16';
   if(isOral&&!/oral amendment to the A16/i.test(context))
    throw Error('original oral-versus-base A16 amendment context not preserved');
@@ -137,7 +139,7 @@ export function inspect2022FinanceApr07OriginalMinutes(text:string){
   rows.push({
    motionOrdinal:index+1,bill:spec.bill,mover:spec.mover,label:spec.label,
    sourceIntroNormalizedOffset:sourceIndex,sourceRollNormalizedOffset:roll.index,
-   sourceTallyNormalizedOffset:ending.index,
+   sourceTallyNormalizedOffset:closingAt,
    sourceMotionAndResultNeighborhoodSHA256:sha256(context),
    officialPrintedYea:namesYea.length,officialPrintedNay:namesNay.length,
    officialPrintedAbsent:namesAbsent===null?null:namesAbsent.length,
