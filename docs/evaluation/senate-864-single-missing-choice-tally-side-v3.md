@@ -52,7 +52,8 @@ the original SHA-preflight. **No PR job has the Neon management key.**
 The original government source universe is fixed to the **same 4 original
 indexed source artifacts and 16 independently preserved OCR artifacts** from
 the earlier V2 protected comparison. The separate pre-secret main job runs
-disposable PostgreSQL **migrations before** `npm run check`, followed by\n`EXPLAIN` (without `ANALYZE`) on that disposable database and a
+disposable PostgreSQL **migrations before** `npm run check`, followed by
+`EXPLAIN` (without `ANALYZE`) on that disposable database and a
 dependency audit. The source preflight verifies original metadata artifact
 SHA-256s before packaging them for the protected job; the protected job
 reverifies original SHA proofs, then reuses the exact same three
