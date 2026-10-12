@@ -100,7 +100,29 @@ identity. This is **diagnostic only**, with no live writes or feature promotion.
 - No proof of historical exact public-by timestamp, forecast feature eligibility,
   live repair authorization, all-official-vote completeness or issue #864 closure.
 
-**Status:** V1 is verified above. V2 must remain **UNVERIFIED** until its
-new exact reviewed protected run and separately keyless sanitized issue
-receipt actually succeed. Do not reinterpret the original raw source PDF hash
-coverage as source completeness or live production audit coverage.
+**Verified V2 protected result:** [exact-main READ ONLY run #38201074454](https://github.com/killjoy00/votepredict/actions/runs/38201074454)
+completed successfully on reviewed SHA `7fd5fe14e9819b5e5a084c67529b2d383211f4a1`,
+and published the [sanitized issue receipt](https://github.com/killjoy00/votepredict/issues/864#issuecomment-6117412541).
+The checked, machine-readable [V2 verified receipt](./source-proof/senate-864-v2-all-1452-original-pdf-neon-parity-receipt.json)
+preserves exact counts and held scope.
+
+All **1,452/1,452** original raw government PDF SHA-256s matched stored source hashes,
+including every previously low-text, independently OCR-recovered PDF. All 1,452
+official linked PDF URLs had exactly one stored source row: no missing, duplicates,
+extra source rows, original byte-hash, meeting-date or committee identity mismatches.
+
+Of **152** original candidate roll events with independently retained original
+tally and per-choice fingerprints, **151** fully match stored votes. The remaining
+**one 2024 roll** has **10** original choice fingerprints versus **9** persisted:
+**9** match exactly, **1** original choice fingerprint is absent, **0** new
+stored fingerprints appear. One separately recognized 2025 roll matches original
+source URL/hash/hearing date, event key, and stored **8**-choice row count; its
+individual original choice fingerprints and original tally were not retained,
+so it remains a clearly defined key-only hold, **not** eight verified choices.
+
+The transaction was `REPEATABLE READ READ ONLY`, explicitly `ROLLBACK`ed;
+there were no writes, member-level exports or repairs. This establishes parity
+of the 1,452 *indexed original PDF identities*, **not** all official meeting,
+recorded-action, source interpretation, historical eligibility or deployed
+production database parity. The independent 2021 print and 141 unlinked-meeting
+holds remain; keep #864 open.

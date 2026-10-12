@@ -32,6 +32,32 @@ On pull requests: same-repo synthetic tests and the exact pinned prior V5 baseli
 
 On main: the unique `SENATE_864_SENATE_ROSTER_SESSION_READONLY_ONESHOT_20261012_V1` marker allows only the first attempt of the exact independently reviewed merge commit to pass pre-secret, full `npm run check`, disposable migrations/`EXPLAIN`, and production dependency audit. The protected environment then provides the existing key to the **single final query step only**. A distinct keyless job performs strict aggregate-only validation before publishing the issue #864 receipt. Failing SQL, old checkpoint drift, read-write connection, missing year group, or unexpected personal field is HOLD, not zero.
 
-**Expected interpretation:** once a new successful protected run posts its numerical receipt, we can determine whether V5's 198/134/136 membership-row counts are explained by session/year overlap, and whether any ambiguities remain. Do not speculate before that receipt. This audit is not a government-source comparison and does not establish deployed application's exact active Neon branch.
+## Independently verified protected result
 
-**Status:** V5 checkpoint verified; new roster diagnostic pending reviewed PR CI and protected execution. Keep parent #864 open.
+The [first-attempt exact-main run #38203733724](https://github.com/killjoy00/votepredict/actions/runs/38203733724)
+succeeded on `0283a8d2e3860055164f0d665578ba73e99437fd` and
+published the [sanitized original receipt](https://github.com/killjoy00/votepredict/issues/864#issuecomment-6117769199).
+The checked, immutable-source [numeric checkpoint](./source-proof/senate-864-protected-roster-session-boundary-v1-receipt.json)
+retains all nine year/session group aggregates and the verified V5 comparison.
+
+| Year | Prior distinct people / session memberships | Session-clamped distinct people / memberships | Membership rows from sessions outside this year |
+| --- | ---: | ---: | ---: |
+| 2021 | 67 / 67 | 67 / 67 | 0 |
+| 2022 | 67 / 67 | 67 / 67 | 0 |
+| 2023 | 90 / 198 | 67 / 67 | 131 |
+| 2024 | 68 / 134 | 68 / 68 | 66 |
+| 2025 | 70 / 136 | 70 / 70 | 66 |
+
+The 2023 original V5 report included **66 records from the 2021–22 session**
+and **65 from the 2025–26 session**, both of which do not intersect 2023.
+The original V5 person counts are distinct legislators in all matching
+membership rows; they were not established as actual serving senators in those
+years. The new explicit session clamp explains their cardinality increase.
+
+Many membership effective-start or effective-end dates also cross the boundaries
+of their recorded sessions, which is a **separate data-quality or modeling
+investigation**, not permission to truncate or rewrite service data.
+The session-clamped cohort is not yet independently identity/date-matched to
+the official roster or election and departure evidence. No forecast eligibility,
+production deployment binding, schema, member rows, training or scoring was
+changed. The READ ONLY transaction rolled back successfully. Parent #864 stays open.
