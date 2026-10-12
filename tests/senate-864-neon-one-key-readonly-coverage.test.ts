@@ -47,7 +47,7 @@ test('protected one-shot can use existing GitHub Neon key only after immutable r
  ]){
   assert.throws(()=>assertProtectedOneShot({...protectedEnv,[key]:val}));
  }
- assert.equal(ONE_SHOT_MARKER,'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V3');
+ assert.equal(ONE_SHOT_MARKER,'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V4');
 });
 test('only seven precisely fixed bounded aggregate SELECTs; no live updates/export/free-form SQL',()=>{
  assert.deepEqual([...GROUPS],[
@@ -173,7 +173,7 @@ test('workflow cannot use existing key on PR, unmarked main push or failed indep
  assert.match(yml,/one-shot-readonly/);
  assert.match(yml,/cancel-in-progress: false/);
  assert.match(yml,/persist-credentials: false/);
- assert.match(yml,/SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V3/);
+ assert.match(yml,/SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V4/);
  assert.doesNotMatch(yml,/github\.event_name == 'pull_request' && needs/);
  assert.doesNotMatch(yml,/^\s+schedule:/m);
  assert.doesNotMatch(yml,/actions\/upload-artifact/);
@@ -261,4 +261,34 @@ test('dedicated pre-secret main verification EXPLAINs seven source SELECTs on di
  assert.match(source,/BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY/);
  assert.match(source,/await c\.query\('ROLLBACK'\)/);
  assert.match(source,/for\(const group of GROUPS\)/);
+});
+
+
+test('PR no-key SQL compilation job actually runs before merge, with isolated disposable Postgres',()=>{
+ const yml=readFileSync('.github/workflows/senate-864-existing-neon-key-cross-track-counts.yml','utf8');
+ const pr=yml.split('  pr-local-sql-plan:\n')[1]?.split('  one-shot-verify:\n')[0];
+ assert.ok(pr);
+ assert.match(pr,/github\.event_name == 'pull_request'/);
+ assert.match(pr,/github\.event\.pull_request\.head\.repo\.full_name == 'killjoy00\/votepredict'/);
+ assert.match(pr,/POSTGRES_DB: votepredict/);
+ assert.match(pr,/localhost:5432\/votepredict/);
+ assert.match(pr,/npm run db:migrate/);
+ assert.match(pr,/node --import tsx scripts\/verify-senate-864-aggregate-sql-local\.ts/);
+ assert.doesNotMatch(pr,/secrets\.\w+|NEON_API_KEY|environment: evidence-readonly-sandbox|issues: write/);
+ const local=readFileSync('scripts/verify-senate-864-aggregate-sql-local.ts','utf8');
+ assert.match(local,/trustedSameRepoPull=process\.env\.GITHUB_EVENT_NAME==='pull_request'/);
+ assert.match(local,/trustedMainPush=process\.env\.GITHUB_EVENT_NAME==='push'/);
+ assert.match(local,/parsed\.hostname!=='localhost'/);
+ assert.match(local,/process\.env\.NEON_API_KEY/);
+});
+test('dedicated keyless reporter also emits a receipt for pre-secret full CI failure',()=>{
+ const yml=readFileSync('.github/workflows/senate-864-existing-neon-key-cross-track-counts.yml','utf8');
+ const report=yml.split('  publish-sanitized-counts:\n')[1];
+ assert.ok(report);
+ assert.match(report,/VERIFY_JOB_RESULT: \$\{\{ needs\.one-shot-verify\.result \}\}/);
+ assert.match(report,/needs\.one-shot-verify\.result == 'failure'/);
+ assert.match(report,/process\.env\.VERIFY_JOB_RESULT==='failure'/);
+ assert.match(report,/PRE-SECRET FULL CI FAILED CLOSED/);
+ assert.match(report,/github\.rest\.issues\.createComment/);
+ assert.doesNotMatch(report,/secrets\.NEON_API_KEY|DATABASE_URL_UNPOOLED/);
 });
