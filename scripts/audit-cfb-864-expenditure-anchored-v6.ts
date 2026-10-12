@@ -41,7 +41,7 @@ export const ANCHOR_ROWS_2022=3241;
 export const ANCHOR_DISTINCT_ROW_KEYS=21495;
 export const ANCHOR_MAX_BYTES=120000000;
 
-const source=PINNED_CFB_ORIGINALS.find(x=>x.id===ANCHOR_ID);
+const source=PINNED_CFB_ORIGINALS.find(x=>x.id===ANCHOR_ID)!;
 if(!source||source.timestamp!==ANCHOR_TIMESTAMP
  ||source.stream!=='candidate_expenditures'
  ||new URL(source.original).hostname!=='cfb.mn.gov'
