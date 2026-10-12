@@ -1,0 +1,58 @@
+{
+  "schema": "mn-2022-three-genuine-Senate-campaign-sites-original-CDX-metadata-checkpoint-v1",
+  "issue": 864,
+  "asOfUTC": "2026-10-12T00:16:34Z",
+  "originalSourceRun": "https://github.com/killjoy00/votepredict/actions/runs/38187316172",
+  "originalHead": "b17ebb22b5cca786ab7b15d5d51c7385d7073626",
+  "originalSourceOutcome": "success",
+  "artifactID": 11719982734,
+  "artifactOriginalZIPSHA256": "4c5d652bf70c320f6b6b2d9f28127404172e6f8c8d5f5606ea66ee12e37561e3",
+  "artifactUncompressedJSONBytes": 5330,
+  "originalPrior95GovernmentRosterRebuildSHA256": "a9b6e0345a1b030bde162d83d6b3ab20167ad395ed66aceac8957f6ab11c117a",
+  "verifiedServingSenatorCount": 95,
+  "priorAuthenticOriginalWebsiteExcerptLeadPeople": 79,
+  "remainingPriorUnobservedPeople": 16,
+  "originalCDXResponses": [
+    {
+      "senator": "Gene Dornink",
+      "host": "genedorninkforsenate.com",
+      "sourceHTTPStatus": 200,
+      "entireOriginalCDXBytes": 3,
+      "entireOriginalCDXSHA256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "classification": "HOLD_invalid_original_archive_index_schema",
+      "originalQualifiedPreElectionRows": null,
+      "archivedOriginalHtmlBodiesAuthenticated": 0
+    },
+    {
+      "senator": "Matt D. Klein",
+      "host": "mattklein.org",
+      "sourceHTTPStatus": 200,
+      "entireOriginalCDXBytes": 184,
+      "entireOriginalCDXSHA256": "23b591ffa0c29063ef2210a737a7cb81e6f09ba4a174f0ea126884ba453730da",
+      "classification": "original_full_CDX_schema_and_source_SHA_authentic",
+      "originalQualifiedPreElectionRows": 0,
+      "archivedOriginalHtmlBodiesAuthenticated": 0
+    },
+    {
+      "senator": "Susan Pha",
+      "host": "susanphaforsenate.com",
+      "sourceHTTPStatus": 200,
+      "entireOriginalCDXBytes": 192,
+      "entireOriginalCDXSHA256": "c6a3e6ce510428b06593bcd050b6d1937898039587e475c2368e3ecf505ac55e",
+      "classification": "original_full_CDX_schema_and_source_SHA_authentic",
+      "originalQualifiedPreElectionRows": 0,
+      "archivedOriginalHtmlBodiesAuthenticated": 0
+    }
+  ],
+  "originalCdxFullBodiesHashed": 3,
+  "validOriginalSchemaCdxIndexResponses": 2,
+  "independentlyVerifiedOriginalCandidateHTMLBodies": 0,
+  "newVerbatimHistoricallyProvenIssueExcerpts": 0,
+  "historical2022OriginalCandidateSitePublicByNewProofs": 0,
+  "originalCampaignSiteSourcesAbsentFromWholeInternetProven": false,
+  "emptyArchiveIndexNeverEvidenceNoCampaignPosition": true,
+  "modernSiteCopyNeverBackdatedTo2022": true,
+  "sourceToDBHistoricalReconciliationDone": false,
+  "noRawOriginalHtmlOrCandidateContactDonorInformationPersisted": true,
+  "issue864MustRemainOpen": true
+}

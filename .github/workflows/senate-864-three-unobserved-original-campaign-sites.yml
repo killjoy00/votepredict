@@ -1,0 +1,45 @@
+name: Probe original 2020-22 Wayback archived issue pages for three uncovered MN senators
+on:
+  pull_request:
+    paths:
+      - scripts/probe-three-unobserved-2022-senate-campaign-original-sites.mjs
+      - src/evidence/senate-three-unobserved-2022-campaign-original-archive.ts
+      - tests/senate-three-unobserved-2022-campaign-original-archive.test.ts
+      - docs/evaluation/senate-three-unobserved-2022-original-campaign-source-pilot.md
+      - docs/evaluation/source-proof/senate-three-unobserved-2022-original-firstparty-archive-source-checkpoint.json
+      - .github/workflows/senate-864-three-unobserved-original-campaign-sites.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  independent-original-2022-cdx-and-whole-html-sha1-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: node --import tsx --test tests/senate-three-unobserved-2022-campaign-original-archive.test.ts
+      - name: Reopen original previously verified government-service-matched full 95-person coverage artifact
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38178392306
+          name: senate-95-actual-79-firstparty-original-1006-research-quotes-v1
+          github-token: ${{ github.token }}
+          path: original/95-real-senators
+      - name: Probe original complete archive CDX response and digest-matched whole HTML for three genuine 2022 people
+        run: |
+          node --import tsx scripts/probe-three-unobserved-2022-senate-campaign-original-sites.mjs \
+            --coverage-json original/95-real-senators/95-senators-public-campaign-coverage.json \
+            --out artifacts/senate-three-pre2022-firstparty-original-site-probes.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: original-three-previously-unobserved-senators-2022-cdx-html-source-metadata
+          path: artifacts/senate-three-pre2022-firstparty-original-site-probes.json
+          if-no-files-found: warn
+          retention-days: 30
