@@ -1,0 +1,110 @@
+{
+  "version": "senate-media-bigham-eken-two-original-written-speaker-quote-receipts-v1",
+  "researchLocalDate": "2026-10-11",
+  "publicSource": {
+    "pr": 1214,
+    "firstSuccessWorkflow": 38204122407,
+    "initialSourceHead": "29437bbec9b722f1d1a9b8706e1b394d8e2bcf62",
+    "artifactId": 11726951085,
+    "adversarialSyntheticTestsPassed": 7
+  },
+  "sourceUrl": "https://senatedfl.mn/senators-karla-bigham-and-kent-eken-named-senate-dfl-whips-for-2022-legislative-session/",
+  "namedServingStateSenators": [
+    {
+      "name": "Karla Bigham",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15281"
+    },
+    {
+      "name": "Kent Eken",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10764"
+    }
+  ],
+  "originalBodyVersions": [
+    {
+      "archiveUtc": "2022-03-11T19:51:03Z",
+      "indexedSha1Base32": "W6T26AXVFFZJHAPPTOFAAZB6NDQWKV76",
+      "rawOriginalHtmlSha256": "026e8becb82577a34cc27388faed93048a6f247991853ba3f60f1a5287268131",
+      "rawHtmlBytes": 154251,
+      "sha1Sha256AndBytesReverified": true,
+      "sourceStatus": "previously_pinned_indexed_sha1_raw_sha256_original_reverified",
+      "reviewedVisibleOriginalParagraphs": 7,
+      "individualWrittenQuoteAttributionResults": [
+        {
+          "senator": "Karla Bigham",
+          "selectedCueVisibleAnywhereInArchivedHtml": true,
+          "selectedCueInsideSameParagraphWithCorrectFullNameAndAfterAttribution": true,
+          "individualOwnQuotedParagraphMatches": 1,
+          "cueOccurrencesNotInApprovedOwnAttributedQuotedParagraph": 0,
+          "selectedCueCharDistanceAfterOwnAttribution": 88,
+          "requiresOwnExactSaidSenatorFullNameAndEnclosedLaterQuote": true,
+          "completeVerbatimStatementNotHumanReviewed": true,
+          "independentAudioNotAuthenticated": true
+        },
+        {
+          "senator": "Kent Eken",
+          "selectedCueVisibleAnywhereInArchivedHtml": true,
+          "selectedCueInsideSameParagraphWithCorrectFullNameAndAfterAttribution": true,
+          "individualOwnQuotedParagraphMatches": 1,
+          "cueOccurrencesNotInApprovedOwnAttributedQuotedParagraph": 0,
+          "selectedCueCharDistanceAfterOwnAttribution": 87,
+          "requiresOwnExactSaidSenatorFullNameAndEnclosedLaterQuote": true,
+          "completeVerbatimStatementNotHumanReviewed": true,
+          "independentAudioNotAuthenticated": true
+        }
+      ]
+    },
+    {
+      "archiveUtc": "2022-06-29T12:45:13Z",
+      "indexedSha1Base32": "54ASOGEJRZQXKNSVI3XQKOTBVNTH4ON5",
+      "rawOriginalHtmlSha256": "7a2621bdbe093c90c594af36124f53203399504758ce48c07eaec168afb9f06b",
+      "rawHtmlBytes": 151424,
+      "sha1Sha256AndBytesReverified": true,
+      "sourceStatus": "previously_pinned_indexed_sha1_raw_sha256_original_reverified",
+      "reviewedVisibleOriginalParagraphs": 7,
+      "individualWrittenQuoteAttributionResults": [
+        {
+          "senator": "Karla Bigham",
+          "selectedCueVisibleAnywhereInArchivedHtml": true,
+          "selectedCueInsideSameParagraphWithCorrectFullNameAndAfterAttribution": true,
+          "individualOwnQuotedParagraphMatches": 1,
+          "cueOccurrencesNotInApprovedOwnAttributedQuotedParagraph": 0,
+          "selectedCueCharDistanceAfterOwnAttribution": 88,
+          "requiresOwnExactSaidSenatorFullNameAndEnclosedLaterQuote": true,
+          "completeVerbatimStatementNotHumanReviewed": true,
+          "independentAudioNotAuthenticated": true
+        },
+        {
+          "senator": "Kent Eken",
+          "selectedCueVisibleAnywhereInArchivedHtml": true,
+          "selectedCueInsideSameParagraphWithCorrectFullNameAndAfterAttribution": true,
+          "individualOwnQuotedParagraphMatches": 1,
+          "cueOccurrencesNotInApprovedOwnAttributedQuotedParagraph": 0,
+          "selectedCueCharDistanceAfterOwnAttribution": 87,
+          "requiresOwnExactSaidSenatorFullNameAndEnclosedLaterQuote": true,
+          "completeVerbatimStatementNotHumanReviewed": true,
+          "independentAudioNotAuthenticated": true
+        }
+      ]
+    }
+  ],
+  "counts": {
+    "distinctAlreadyAuthenticatedPublisherUrlReviewed": 1,
+    "originalHtmlVersionsPreviouslyPinnedAndReverified": 2,
+    "newPublisherUrls": 0,
+    "newHistoricalArchiveVersions": 0,
+    "separatelyAttributedShortHistoricalPrintedSenatorPolicyCandidates": 2,
+    "completeHumanApprovedVerbatimQuotations": 0,
+    "recordedAudioVerified": 0,
+    "memberRollCallVotesAuthenticated": 0
+  },
+  "limitations": {
+    "firstPublisherPostingClockNotProvedByCurrent2022Jan31DisplayedDate": true,
+    "earliestOriginalShowingSelectedIndividualWrittenQuoteUtc": "2022-03-11T19:51:03Z",
+    "ownExactNamedAttributionAndSameParagraphQuotationRequired": true,
+    "jointCaucusArticleOneOriginalSourceNotTwo": true,
+    "historicalPrintedWrittenStatementsNotIndependentlyRecordedVoice": true,
+    "noPrivateVotePredictSourceDocQueryOrRowInspected": true,
+    "noProductionCollectorModelIngestionForecastOrDatabaseChanged": true,
+    "noFullArticleHtmlMediaOrVerbatimFullQuotePersisted": true
+  }
+}
