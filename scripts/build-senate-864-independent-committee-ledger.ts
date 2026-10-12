@@ -124,7 +124,7 @@ function main(){
   ].join(' | ')+' |');
  table.push('','## Exact source and persisted-record limits',
   'Original immutable PDF URL/byte SHA and hearing date: in the meeting ledger.',
-  'Full motion text and original PDF page: not retained by frozen source-proof manifests (null, not invented).',
+  'Full motion text and original PDF page: usually not retained by frozen source-proof manifests (null, not invented); independent 2024 Education source catalogue has original pages and paraphrased action descriptions.',
   'Stored member-vote rows and current parser-v3 positional event join: not independently verified (null).',
   'Official recorded-motion denominator, print archive parity and historical service-date proof: not available.',
   '2024 single YEA: original YEA fingerprint is absent in the earlier stored snapshot; identity and root cause remain held.',
