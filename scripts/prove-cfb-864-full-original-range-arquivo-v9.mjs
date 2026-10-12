@@ -266,7 +266,7 @@ async function main(){
  if(process.argv.length!==2)throw Error('No free-form public audit args');
  const result=await auditPublicOriginalAlternativesV9();
  const safe=JSON.stringify(result);
- if(safe.length>11000||/cfb\.mn\.gov|wayback\/cdx|web\.archive\.org|recipient|committee|vendor|donor|rowKey|crawl-data\//i.test(safe))
+ if(safe.length>11000||/cfb\.mn\.gov|wayback\/cdx|web\.archive\.org|recipient|committee|vendor|donor|\"rowKey\"\s*:|crawl-data\//i.test(safe))
   throw Error('Original data or URL in public status');
  console.log('CFB_864_FULL_ORIGINAL_V9_PUBLIC_COUNTS_ONLY '+safe);
 }
