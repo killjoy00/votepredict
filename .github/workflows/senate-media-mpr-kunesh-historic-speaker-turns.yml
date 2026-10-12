@@ -43,7 +43,7 @@ jobs:
         with:
           node-version: 22
       - name: Offline adversarial speaker-adjacency and raw SHA1/SHA256 proof tests
-        run: node --test tests/senate-media-mpr-kunesh-historic-speaker-turns.test.mjs
+        run: node --test tests/senate-media-mpr-kunesh-historic-speaker-turns.test.mjs tests/senate-media-mpr-kunesh-real-speaker-turn-receipts.test.mjs
       - name: Recheck four previously SHA-pinned original first-party MPR HTML bodies
         run: |
           node scripts/run-senate-media-mpr-kunesh-original-speaker-turns.mjs \
