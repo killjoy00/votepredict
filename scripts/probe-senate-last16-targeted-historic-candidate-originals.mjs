@@ -222,7 +222,7 @@ async function research(p,i){
   rec.fullOriginalCdxFilename=id+'-entire-original-cdx.json';
   writeFileSync(join(out,rec.fullOriginalCdxFilename),index.bytes,{flag:'wx'});
  }catch(error){rec.indexError='invalid source CDX JSON '+String(error).slice(0,180);}
- const ranked=rows.filter(v=>v[0]<dates.last&&score(v,p.host)>=0)
+ const ranked=rows.filter(v=>v[0]<dates.last&&score(v,p.host.replace(/^www\./,''))>=0)
   .sort((a,b)=>score(b,p.host)-score(a,p.host)||b[0].localeCompare(a[0]));
  rec.selectableOriginalHtmlRows=ranked.length;
  const selected=[],seen=new Set();
@@ -264,7 +264,7 @@ async function research(p,i){
   rec.indexRows===0?'bounded_index_no_rows_unknown':
   rec.indexCappedAt300?'source_index_capped_or_no_verified_candidate_html_unknown':
   'no_verified_first_party_original_in_bounded_sample_unknown';
- console.log('TWENTY-SENATOR ORIGINAL SOURCE WINDOW '+JSON.stringify({person:p.person,year:p.year,domain:p.host,
+ console.log('LAST16 TARGETED ORIGINAL SOURCE WINDOW '+JSON.stringify({person:p.person,year:p.year,domain:p.host,
   specialPath:p.prefix||null,http:rec.indexHttpStatus,rows:rec.indexRows,capped:rec.indexCappedAt300,
   shaMatchedOriginalHtml:rec.sha1CdxMatchedOriginalHtml,status:rec.boundedSourceResult}));
  return rec;
@@ -299,7 +299,7 @@ const report={baselineOriginal95SourceResearchCoverageSHA256:sha(rawCoverage),
  schema:'mn-2021-25-last16-targeted-uncovered-original-site-64-archive-search-windows-v1',
  issue:864,scope:'Historical first-party campaign website research only; no election forecasting',
  branch,independentGovernmentLRLSourceSha256:sha(gov),
- actualServingStateSenatorsVerifiedAgainstGovernmentBeforeArchiveNetwork:20,
+ actualServingStateSenatorsVerifiedAgainstGovernmentBeforeArchiveNetwork:16,
  independentDateSegmentedCandidateSiteWindows:pins.length,
  completeOriginalCdxResponseFilesRetained:output.filter(x=>x.fullOriginalCdxFilename).length,
  digestAndVisibleIdentityMatchedCompleteArchivedHtml:output.reduce((n,x)=>n+(x.sha1CdxMatchedOriginalHtml||0),0),
@@ -311,6 +311,6 @@ const report={baselineOriginal95SourceResearchCoverageSHA256:sha(rawCoverage),
 writeFileSync(join(out,'last16-targeted-candidate-original-archive-manifest.json'),
  JSON.stringify(report,null,2)+'\n',{flag:'wx'});
 console.log('LAST SIXTEEN ACTUAL SENATORS TARGETED ORIGINAL PUBLIC ARCHIVE ACQUISITION '+JSON.stringify({
- realSenators:20,windows:pins.length,sourceCdxFiles:report.completeOriginalCdxResponseFilesRetained,
+ realSenators:16,windows:pins.length,sourceCdxFiles:report.completeOriginalCdxResponseFilesRetained,
  authenticOriginalHtml:report.digestAndVisibleIdentityMatchedCompleteArchivedHtml,
  automaticPolicyQuotes:0,productionChanges:0}));
