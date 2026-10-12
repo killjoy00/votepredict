@@ -113,7 +113,7 @@ test('six exact original public HTTP bodies indexed SHA1 and downloaded SHA256/l
   assert.ok(p.archivedOriginalHtml.every(x=>x.exactReplayStatus==='sha1_authenticated_original_publisher_html'));
  }
 });
-test('previously pinned Coleman's and Marty's first original source bodies count once, Miller Enterprise is new original URL',()=>{
+test('previously pinned Coleman and Marty first original bodies count once; Miller Enterprise is a newly authenticated URL',()=>{
  for(const [id,older] of [['2021-coleman-sexual-assault-prospective','coleman-2021-caucus-own-statement'],['2024-marty-online-sports-betting','marty-2024-betting-own-statement']]){
   const x=receipts.sources.find(s=>s.id===id).archivedOriginalHtml[0],o=earlier.cues.find(q=>q.id===older);
   assert.equal(x.captureUtc,o.archiveCapturedUtc);
