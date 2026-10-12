@@ -42,7 +42,7 @@ jobs:
           command -v pdftotext
           command -v pdfinfo
       - name: Synthetic original-source, wrong-legislature, role and cutoff controls
-        run: node --test tests/senate-media-hf5247-may7-may19-bilingual-versions.test.mjs
+        run: node --test tests/senate-media-hf5247-may7-may19-bilingual-versions.test.mjs tests/senate-media-hf5247-bilingual-real-receipts.test.mjs
       - name: Four exact source original HF5247/SF3257 versions — zero full text retained
         run: node scripts/probe-senate-media-hf5247-may7-may19-bilingual-versions.mjs --output artifacts/hf5247-may7-may19-source-crosswalk.json
       - name: Retain public source response digests and matched policy cue metadata only
