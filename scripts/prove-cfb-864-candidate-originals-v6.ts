@@ -59,6 +59,7 @@ export function matchesWholePriorOriginal(
 }
 function fixedExpenditureIdentity(){
  if(expenditure.id!==V4_EXPENDITURE_CHECKPOINT.sourceId
+  ||expenditure.original!=='https://cfb.mn.gov/reports-and-data/self-help/data-downloads/campaign-finance/?download=-1890073264'
   ||expenditure.timestamp!==V4_EXPENDITURE_CHECKPOINT.timestamp
   ||new URL(expenditure.original).searchParams.get('download')
     !==V4_EXPENDITURE_CHECKPOINT.officialSelector
@@ -138,7 +139,11 @@ export async function authenticatePriorProvenExpenditureV6(
    }
    // No parser or row keys are trusted until BOTH complete-byte hashes match.
    const csv=Buffer.from(bytes).toString('utf8').replace(/^\uFEFF/,'');
-   const rows=parseCfbCandidateExpenditureCsv(csv,{fromYear:2021,toYear:2022});
+   let rows:ReturnType<typeof parseCfbCandidateExpenditureCsv>;
+   try{rows=parseCfbCandidateExpenditureCsv(csv,{fromYear:2021,toYear:2022})}
+   catch{
+    result.status='replay_parse_hold';return{result,authenticated:null};
+   }
    const rowKeys=new Set(rows.map(x=>x.rowKey));
    const rows2021=rows.filter(x=>x.year===2021).length;
    const rows2022=rows.filter(x=>x.year===2022).length;
