@@ -49,3 +49,20 @@ Dedicated [PR-only public check](../../.github/workflows/senate-864-cfb-public-a
 ## Unchanged separate finance proof debt
 
 2,448 older filing-derived eligible observations still need exact historical original/amended report-version *public-by* evidence, not legal due dates, filed dates, or present-day PDF availability. The Senate-specific official required/received filing denominator and 2023–25 version publication ledger are separate unresolved lines. The 101/101 prior IE stored observations verified in V5 remain independently proved for their bounded cohort. A 500-source × 64-evidence selection rule is **not a statewide denominator** and the selected cohort can change between runs.
+
+
+## First observed live public probe (2026-10-12)
+
+The PR's [first public-only live run 38305630428](https://github.com/killjoy00/votepredict/actions/runs/38305630428) **succeeded**, including all synthetic adversarial tests. It located **independent Common Crawl WARC pointer leads**, not downloaded/authenticated original CSV bodies:
+
+| Original official selector | Common Crawl index | Earliest indexed date | Public index payload SHA1/Base32 | Stage |
+| --- | --- | --- | --- | --- |
+| Candidate contributions -2113865252 | CC-MAIN-2022-27 | **2022-07-04** | **MUZRYIIC5EO6SZH55HJZ5R77RSOT5JNK** | Indexed CSV WARC pointer only |
+| Candidate expenditures -1890073264 | CC-MAIN-2022-27 | **2022-07-04** | **IY4OVW75AC2SDHPMKL5KYDCVQYO7CBBK** | Indexed CSV WARC pointer only |
+| Candidate expenditures -1890073264 | CC-MAIN-2023-23 | **2023-06-07** | **Y6Q3ZD2EBSIGJPJJT7P2R32SAS26AR4S** | Indexed CSV WARC pointer only |
+
+**All three index digests differ from the previously authenticated V4 June 6, 2022 expenditure digest** where comparable; therefore do not claim the July expenditure file is the same original version. Different WARC payload digests may reflect a different content version or response processing; only full-body verification can decide. In particular July 4 is **not** a newly proven original-byte/public-by date yet.
+
+The exact six-index pilot also returned 404/no-match statuses for most individual queries, one contribution 2022-49 invalid/network HOLD and one expenditure 2022-21 HTTP HOLD; these cannot establish total absence. Arquivo.pt's two tested exact time-map queries returned HTTP 404 (for **these two queried URL forms only**). The public S3 HEAD for the independently cleaned contribution file returned HTTP 200 with content length **58,871,220 bytes**; the expenditure HEAD was HTTP HOLD. These are strictly metadata findings, never reconstructed donation/expenditure bodies.
+
+**Next highest-value action:** independently retrieve the **two July 4 WARC records** using only the validated indexed byte ranges in a public-only ephemeral runner; validate exact HTTP entity and WARC identity, hash complete bodies, and parse bounded original 2021-22 row-key *counts only* without publishing private row-key data. This is separate from any protected database comparison, and must not promote the 2022-06-06 original certificate or stored as-of flags without a source/version-specific proof.
