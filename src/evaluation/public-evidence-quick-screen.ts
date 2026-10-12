@@ -75,7 +75,12 @@ export function publicFinanceFeatures(
   let independent = 0;
   let count = 0;
   for (const row of transactions) {
-    if (!row.availableOn || row.availableOn < start || row.availableOn >= cutoffOn) continue;
+    // Fail closed even if a legacy exporter attached a date inferred only from
+    // filing + statutory due. That is a legal release floor, not proof that the
+    // exact source/transaction was historically public.
+    if (row.availabilitySource !== 'direct_disclosure'
+      || !row.availableOn || row.availableOn < row.occurredOn
+      || row.availableOn < start || row.availableOn >= cutoffOn) continue;
     count += 1;
     if (row.kind === 'receipts') receipts += row.amount;
     else if (row.kind === 'spending') spending += row.amount;
