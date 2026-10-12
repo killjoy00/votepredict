@@ -1,0 +1,84 @@
+name: Recover eight uncovered Minnesota Senate original candidate sites in three parallel archival tracks
+on:
+  pull_request:
+    paths:
+      - scripts/probe-senate-eight-parallel-historical-wayback-tracks.mjs
+      - scripts/probe-doron-prejan28-2025-commoncrawl-wayback-originals.mjs
+      - .github/workflows/acquire-senate-eight-three-parallel-archive-tracks.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  historic-original-sites:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-eight-remaining-three-parallel-archive-tracks-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        track:
+          - recent2022
+          - legacy2020
+          - special2025
+    name: Historical original website acquisition — ${{ matrix.track }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen entire government original LRL Minnesota Senate service directory and swearing
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen exact independent 87/95 actual serving senator site quote research coverage
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38192507843
+          name: senate-95-serving-87-original-source-1140-short-excerpts-v1
+          github-token: ${{ github.token }}
+          path: original/prior-87
+      - name: Independently validate all eight historical senator memberships before network and acquire this parallel track
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          coverage="$(find original/prior-87 -type f -name 95-senators-public-campaign-coverage.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$coverage"
+          if [ "${{ matrix.track }}" = "special2025" ]; then
+            node --import tsx scripts/probe-doron-prejan28-2025-commoncrawl-wayback-originals.mjs \
+              --official-html "$gov" \
+              --official-receipt "$receipt" \
+              --official-special-swearing-html "$swear" \
+              --coverage-json "$coverage" \
+              --out-dir original/archival-results
+          else
+            node --import tsx scripts/probe-senate-eight-parallel-historical-wayback-tracks.mjs \
+              --track "${{ matrix.track }}" \
+              --official-html "$gov" \
+              --official-receipt "$receipt" \
+              --official-special-swearing-html "$swear" \
+              --coverage-json "$coverage" \
+              --out-dir original/archival-results
+          fi
+      - name: Preserve original entire Wayback CDX, Common Crawl January 2025 WARC, complete originals, errors and proof
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-eight-parallel-historic-original-sites-${{ matrix.track }}-v1
+          path: original/archival-results/
+          if-no-files-found: warn
+          retention-days: 30
