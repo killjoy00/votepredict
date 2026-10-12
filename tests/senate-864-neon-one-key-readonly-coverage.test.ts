@@ -63,7 +63,7 @@ test('only seven precisely fixed bounded aggregate SELECTs; no live updates/expo
  const f=QUERIES.finance;
  assert.match(f,/FROM source_documents sd/);
  assert.doesNotMatch(f,/FROM evidence_items ei|JOIN evidence_items ei/);
- assert.match(f,/claim.*eligible/i);
+ assert.doesNotMatch(f,/claimed_eligible|asOfEligible|evidence_rows/i);
  assert.match(QUERIES.media,/wayback_local_trade_news/);
  assert.match(QUERIES.committeeVotes,/committeeVote/);
  assert.match(QUERIES.committeeChoices,/normalized_member_name/);
