@@ -126,8 +126,8 @@ test('expenditure retry never requests CDX; disallows different timestamps and w
  const offsite=await authenticatePriorProvenExpenditureV6((async(url)=>
   served('',String(url),{status:302,headers:{location:'https://cfb.mn.gov/'}})) as typeof fetch);
  assert.equal(offsite.result.status,'replay_redirect_hold');
- const inaccessible=await authenticatePriorProvenExpenditureV6((async()=>{throw Error('timeout')})
-  as typeof fetch);
+ const offlineFetch=(async()=>{throw Error('timeout')}) as typeof fetch;
+ const inaccessible=await authenticatePriorProvenExpenditureV6(offlineFetch);
  assert.equal(inaccessible.result.status,'replay_network_hold');
 });
 test('all three candidate originals held means no Neon discovery or private SQL and NO zero-row claim',async()=>{
