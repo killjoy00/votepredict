@@ -18,16 +18,24 @@ export const APR08_FOUR_ORIGINAL_LRL_AUDIO={
  sourceMP3:[
   {bill:'SF1159',part:'transportation',
    url:'https://www.lrl.mn.gov/audio/senate/2021/cmte_fintrans_040821.mp3',
-   firstOriginalPrefixSHA256:'8e2f01c874816f79811facc762146232f34d044a5db1cefecda4795dce04103f'},
+   firstOriginalPrefixSHA256:'8e2f01c874816f79811facc762146232f34d044a5db1cefecda4795dce04103f',
+   firstCompleteOriginalBytes:118836368,
+   firstCompleteOriginalSHA256:'ec5f1ca5183ec0e9b40dfa9f5e30c0b3ae2fc13afefcd935856715430013a8ef'},
   {bill:'SF970',part:'judiciary-first',
    url:'https://www.lrl.mn.gov/audio/senate/2021/cmte_jud_040821.mp3',
-   firstOriginalPrefixSHA256:'74b5c8c5580a805dfdebfbef803df02c0715e04075ba490983f38ec55e0b455a'},
+   firstOriginalPrefixSHA256:'74b5c8c5580a805dfdebfbef803df02c0715e04075ba490983f38ec55e0b455a',
+   firstCompleteOriginalBytes:106416620,
+   firstCompleteOriginalSHA256:'97cbe4438cb4f541f2202cb53a27f72098152107617fe4e21622227b79af9cbc'},
   {bill:'SF970',part:'judiciary-second',
    url:'https://www.lrl.mn.gov/audio/senate/2021/cmte_jud_040821a.mp3',
-   firstOriginalPrefixSHA256:'0930c662d0b95ad73b661e6fd37f1549e6d64704d55d3c617ae2c3d14682f4f1'},
+   firstOriginalPrefixSHA256:'0930c662d0b95ad73b661e6fd37f1549e6d64704d55d3c617ae2c3d14682f4f1',
+   firstCompleteOriginalBytes:116669459,
+   firstCompleteOriginalSHA256:'818e8ddcaad73674444dd39d8033a9887ffc4dadc1e95009817539fe65f91013'},
   {bill:'SF970',part:'judiciary-third',
    url:'https://www.lrl.mn.gov/audio/senate/2021/cmte_jud_040821b.mp3',
-   firstOriginalPrefixSHA256:'b777ba4adde388217111376ecedae4d37f353875ffa52846dbb3e67630e514d7'}
+   firstOriginalPrefixSHA256:'b777ba4adde388217111376ecedae4d37f353875ffa52846dbb3e67630e514d7',
+   firstCompleteOriginalBytes:85774553,
+   firstCompleteOriginalSHA256:'160483667a070a19b6d5b33df8cc1457a2c97a2ac16de831a0882a82a4aea028'}
  ] as const
 } as const;
 
@@ -43,6 +51,18 @@ export function verifyFirstPinnedApril08AudioPrefix(spec:April08OriginalAudio,fi
  if(!validID3&&!validFrame)throw Error('Original Minnesota Senate audio does not have MP3 ID3/frame signature');
  return {sha256:digest,bytes:firstBytes.length,signature:validID3?'id3':'mpeg-frame'};
 }
+/** Only a second full binary SHA match certifies independently stable whole-recording bytes. */
+export function verifyFirstPinnedWholeOriginalApril08Audio(
+ spec:April08OriginalAudio,fullBytes:number,fullSHA256:string
+){
+ if(!Number.isSafeInteger(fullBytes)||fullBytes!==spec.firstCompleteOriginalBytes)
+  throw Error('Original 2021 Senate entire MP3 byte count differs from first completed source');
+ if(fullSHA256!==spec.firstCompleteOriginalSHA256)
+  throw Error('Original 2021 Senate entire MP3 SHA-256 differs from first completed source');
+ return {originalFullBytes:fullBytes,originalFullSHA256:fullSHA256,
+  independentSecondWholeSourceVerified:true};
+}
+
 export function verifyJournalMotionPreservationAcrossAudioSources(){
  const m=APR12_THREE_STRICT_ORIGINAL.motions;
  if(m.length!==3||m[0]!.bill!=='SF1159'||m[0]!.mover!=='Dibble'||

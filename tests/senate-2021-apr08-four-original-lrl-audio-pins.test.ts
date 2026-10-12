@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import {
  APR08_FOUR_ORIGINAL_LRL_AUDIO,
  verifyFirstPinnedApril08AudioPrefix,
+ verifyFirstPinnedWholeOriginalApril08Audio,
  verifyJournalMotionPreservationAcrossAudioSources
 } from '../src/evidence/senate-2021-apr08-four-original-lrl-audio-pins.js';
 import {APR12_THREE_STRICT_ORIGINAL} from
@@ -79,4 +80,57 @@ test('three separate original April 12 Senate committee amendment rolls remain u
  assert.equal(proof.holds.specificAmendmentOccurredOn,null);
  assert.equal(proof.holds.independentHistoricalPublicBy,null);
  assert.equal(proof.holds.issue864RemainsOpen,true);
+});
+
+
+const firstWhole=JSON.parse(readFileSync(
+ 'docs/evaluation/source-proof/senate-2021-apr08-four-original-lrl-mp3-first-complete-source-success.json',
+ 'utf8'
+));
+
+test('first true complete audio acquisitions and artifact SHA receipts match the independent four 64KiB original pins',()=>{
+ assert.equal(firstWhole.sourceRun.mergedPR,1168);
+ assert.equal(firstWhole.sourceRun.id,38187776601);
+ assert.equal(firstWhole.sourceRun.conclusion,'success');
+ assert.equal(firstWhole.sourceRun.expectedFullSources,4);
+ assert.equal(firstWhole.sourceRun.completeSourceSuccesses,4);
+ assert.equal(firstWhole.sourceRun.failures,0);
+ assert.equal(firstWhole.sourceRun.originalMetadataArtifactId,11719963805);
+ assert.equal(firstWhole.sourceRun.independentlyDownloadedArtifactZIPBytes,1606);
+ assert.equal(firstWhole.sourceRun.independentlyDecodedMetadataJSONBytes,5914);
+ assert.match(firstWhole.sourceRun.independentlyDownloadedArtifactZIPSHA256,/^[0-9a-f]{64}$/);
+ assert.match(firstWhole.sourceRun.independentlyDecodedMetadataJSONSHA256,/^[0-9a-f]{64}$/);
+ assert.equal(firstWhole.exactOriginalAudioBinaries.length,4);
+ for(const [i,pinned] of APR08_FOUR_ORIGINAL_LRL_AUDIO.sourceMP3.entries()){
+  const src=firstWhole.exactOriginalAudioBinaries[i];
+  assert.equal(src.bill,pinned.bill);
+  assert.equal(src.part,pinned.part);
+  assert.equal(src.url,pinned.url);
+  assert.equal(src.fullBytes,pinned.firstCompleteOriginalBytes);
+  assert.equal(src.fullSHA256,pinned.firstCompleteOriginalSHA256);
+  assert.equal(src.earlierIndependentFirstPrefixSHA256,pinned.firstOriginalPrefixSHA256);
+  const checked=verifyFirstPinnedWholeOriginalApril08Audio(
+   pinned,src.fullBytes,src.fullSHA256);
+  assert.equal(checked.originalFullBytes,src.fullBytes);
+  assert.equal(checked.originalFullSHA256,src.fullSHA256);
+  assert.equal(checked.independentSecondWholeSourceVerified,true);
+ }
+ assert.equal(firstWhole.firstFullSourceLimits.ffprobeInstalledOnOriginalRunner,false);
+ assert.equal(firstWhole.firstFullSourceLimits.durationSecondsForEverySource,null);
+ assert.equal(firstWhole.holds.individualVerifiedAmendmentVoteOccurredOn,null);
+ assert.equal(firstWhole.holds.historicallyPublicBy,null);
+ assert.equal(firstWhole.holds.issue864RemainsOpen,true);
+});
+
+test('second independent whole-original SHA check must reject length AND equal-sized binary drift for four recordings',()=>{
+ for(const pinned of APR08_FOUR_ORIGINAL_LRL_AUDIO.sourceMP3){
+  assert.throws(()=>verifyFirstPinnedWholeOriginalApril08Audio(
+   pinned,pinned.firstCompleteOriginalBytes+1,pinned.firstCompleteOriginalSHA256),
+   /entire MP3 byte count differs/);
+  assert.throws(()=>verifyFirstPinnedWholeOriginalApril08Audio(
+   pinned,pinned.firstCompleteOriginalBytes,'0'.repeat(64)),
+   /entire MP3 SHA-256 differs/);
+  assert.equal(pinned.firstCompleteOriginalSHA256.length,64);
+  assert.ok(pinned.firstCompleteOriginalBytes>65536);
+ }
 });
