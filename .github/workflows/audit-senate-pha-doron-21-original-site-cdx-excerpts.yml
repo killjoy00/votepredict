@@ -1,0 +1,95 @@
+name: Independent official LRL 2022 Pha and 2025 Clark site original CDX and 21 exact excerpts
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-pha-doron-2022-25-original-campaign-site-21-short-excerpts-v1.json
+      - scripts/audit-senate-pha-doron-21-original-historic-candidate-site-excerpts.mjs
+      - tests/senate-pha-doron-21-original-site-historic-excerpts.test.ts
+      - scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs
+      - .github/workflows/audit-senate-pha-doron-21-original-site-cdx-excerpts.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-2022-and-2025-entire-html-cdx-21-literal-source-evidence:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-pha-doron-21-original-candidate-site-source-excerpts-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen original official historic Senate government service and 2025 special swearing
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen five source-pinned original Susan Pha Senate campaign website captures and entire 26-row CDX index
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38196317659
+          name: senate-five-final-original-archives-pha-v1
+          github-token: ${{ github.token }}
+          path: original/pha
+      - name: Reopen genuine pre-January14 primary and January28 general election Doron for Senate Jan11 About original
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38196317659
+          name: senate-five-final-original-archives-clark-v1
+          github-token: ${{ github.token }}
+          path: original/clark
+      - name: Independently rehash both original full CDX indices and three entire original HTML sources and 21 literal research snippets
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
+          node --import tsx scripts/audit-senate-pha-doron-21-original-historic-candidate-site-excerpts.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --pha-original-dir original/pha \
+            --clark-original-dir original/clark \
+            --output-json original/proof/pha2022-doron2025-three-original-html-two-cdx-21-literal-original-audit.json
+      - name: Independently recompute whole 95-actually-serving-senator first-party original site research inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          node --import tsx scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --out-dir original/official-95-serving
+          node -e 'const s=require("./original/official-95-serving/95-senators-public-campaign-coverage.json").summary;for(const [key,expected] of Object.entries({actualServingStateSenators:95,actuallyServedSenatorsWithAnyKnownSelectedOriginalSiteExcerpt:92,actuallyServedSenatorsWithOriginalSiteBodiesButNoSelectedQuote:0,actuallyServedSenatorsUnobservedInSelectedOriginalSiteSourceLedgers:3,totalExactResearchExcerptRowsForVerifiedSenators:1194,nonMatchingRowsExcludedOrNeedsSeparateIdentityProof:1,productionDatabaseReadsWritesOrForecastChanges:0})){if(s[key]!==expected)throw Error(key+" "+s[key]+" expected "+expected);}console.log("92 true serving state senators with authenticated first-party historical original source quote leads; 1194 selected short snippets, 3 bounded unobserved");'
+      - name: Preserve independent original 26 row CDX, Jan2025 committee and 21 literal full-html-digest checks
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-pha-clark-2022-2025-21-original-site-cdx-html-independent-proof-v1
+          path: original/proof/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Preserve independently computed whole 95 people original LRL actual Senate service source research coverage
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-95-serving-92-original-sites-1194-short-excerpts-v1
+          path: original/official-95-serving/
+          if-no-files-found: warn
+          retention-days: 30
