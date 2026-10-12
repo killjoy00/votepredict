@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "senate-2021-apr08-four-lrl-mp3-first-complete-source-success-v1",
+  "issue": 864,
+  "sourceRun": {
+    "mergedPR": 1168,
+    "mergedSHA": "cb564fb1df7133ed8e8b7f1dc4a6ab4988c4427f",
+    "url": "https://github.com/killjoy00/votepredict/actions/runs/38187776601",
+    "id": 38187776601,
+    "conclusion": "success",
+    "observedUTC": "2026-10-12T00:24:24.940Z",
+    "expectedFullSources": 4,
+    "completeSourceSuccesses": 4,
+    "failures": 0,
+    "originalMetadataArtifactId": 11719963805,
+    "originalMetadataArtifactName": "senate-2021-apr08-four-original-lrl-full-audio-binary-source-metadata",
+    "independentlyDownloadedArtifactZIPBytes": 1606,
+    "independentlyDownloadedArtifactZIPSHA256": "57ecb1dfc1c57deb7e5e85e19580f92688552d649ca026fcf18960bb5c371eb7",
+    "independentlyDecodedMetadataJSONBytes": 5914,
+    "independentlyDecodedMetadataJSONSHA256": "099952b1f0d42856c3b3930f04fb7af806160d2a47ec7264f1a0ef1384cc4168"
+  },
+  "exactOriginalAudioBinaries": [
+    {
+      "bill": "SF1159",
+      "part": "transportation",
+      "url": "https://www.lrl.mn.gov/audio/senate/2021/cmte_fintrans_040821.mp3",
+      "fullBytes": 118836368,
+      "fullSHA256": "ec5f1ca5183ec0e9b40dfa9f5e30c0b3ae2fc13afefcd935856715430013a8ef",
+      "earlierIndependentFirstPrefixSHA256": "8e2f01c874816f79811facc762146232f34d044a5db1cefecda4795dce04103f"
+    },
+    {
+      "bill": "SF970",
+      "part": "judiciary-first",
+      "url": "https://www.lrl.mn.gov/audio/senate/2021/cmte_jud_040821.mp3",
+      "fullBytes": 106416620,
+      "fullSHA256": "97cbe4438cb4f541f2202cb53a27f72098152107617fe4e21622227b79af9cbc",
+      "earlierIndependentFirstPrefixSHA256": "74b5c8c5580a805dfdebfbef803df02c0715e04075ba490983f38ec55e0b455a"
+    },
+    {
+      "bill": "SF970",
+      "part": "judiciary-second",
+      "url": "https://www.lrl.mn.gov/audio/senate/2021/cmte_jud_040821a.mp3",
+      "fullBytes": 116669459,
+      "fullSHA256": "818e8ddcaad73674444dd39d8033a9887ffc4dadc1e95009817539fe65f91013",
+      "earlierIndependentFirstPrefixSHA256": "0930c662d0b95ad73b661e6fd37f1549e6d64704d55d3c617ae2c3d14682f4f1"
+    },
+    {
+      "bill": "SF970",
+      "part": "judiciary-third",
+      "url": "https://www.lrl.mn.gov/audio/senate/2021/cmte_jud_040821b.mp3",
+      "fullBytes": 85774553,
+      "fullSHA256": "160483667a070a19b6d5b33df8cc1457a2c97a2ac16de831a0882a82a4aea028",
+      "earlierIndependentFirstPrefixSHA256": "b777ba4adde388217111376ecedae4d37f353875ffa52846dbb3e67630e514d7"
+    }
+  ],
+  "firstFullSourceLimits": {
+    "originalFullMP3HTTPStatus": 200,
+    "declaredLengthEqualsActualDownloadedBytesForEverySource": true,
+    "earlierIndependent64KiBPrefixSHAReconfirmedForEverySource": true,
+    "completeOriginalMP3sDeletedFromEphemeralGitHubRunner": true,
+    "fullMP3BytesOrTranscriptsCommittedOrUploaded": false,
+    "ffprobeInstalledOnOriginalRunner": false,
+    "durationSecondsForEverySource": null,
+    "exactOriginalPappasCaptionTimecodeReviewPositions": [
+      3503,
+      4004,
+      4943
+    ],
+    "captionOffsetsFitWithinAudioYetProven": false
+  },
+  "holds": {
+    "threeSeparatelyJournalAuthenticatedRule1210CommitteeAmendments": 3,
+    "theseAudioFileSHAProofsAreNotMotionSpecificSpokenRollProof": true,
+    "reportedJournalDay": "2021-04-12",
+    "indexedLRLHearingDay": "2021-04-08",
+    "individualVerifiedAmendmentVoteOccurredOn": null,
+    "historicallyPublicBy": null,
+    "speakerAndNamedRollOriginalAudioReviewed": false,
+    "originalOfficial2021PrintMinutesCompared": false,
+    "completeCommitteeVoteDenominator": null,
+    "privateSourceToStoredVoteEventsReconciled": false,
+    "productionDBTouched": false,
+    "modelsFloorForecastsScheduler2027Touched": false,
+    "externalGovernmentOutreach": false,
+    "issue864RemainsOpen": true
+  }
+}
