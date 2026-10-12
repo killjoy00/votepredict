@@ -46,7 +46,7 @@ test('protected one-shot can use existing GitHub Neon key only after immutable r
  ]){
   assert.throws(()=>assertProtectedOneShot({...protectedEnv,[key]:val}));
  }
- assert.equal(ONE_SHOT_MARKER,'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V1');
+ assert.equal(ONE_SHOT_MARKER,'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V2');
 });
 test('only seven precisely fixed bounded aggregate SELECTs; no live updates/export/free-form SQL',()=>{
  assert.deepEqual([...GROUPS],[
@@ -172,9 +172,42 @@ test('workflow cannot use existing key on PR, unmarked main push or failed indep
  assert.match(yml,/one-shot-readonly/);
  assert.match(yml,/cancel-in-progress: false/);
  assert.match(yml,/persist-credentials: false/);
- assert.match(yml,/SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V1/);
+ assert.match(yml,/SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V2/);
  assert.doesNotMatch(yml,/github\.event_name == 'pull_request' && needs/);
  assert.doesNotMatch(yml,/^\s+schedule:/m);
  assert.doesNotMatch(yml,/actions\/upload-artifact/);
  assert.doesNotMatch(yml,/DATABASE_URL_UNPOOLED: \${{ secrets/);
+});
+
+
+test('safe aggregate receipt: keyless issue-write job only, fail-closed status and decoded integer-only fields',()=>{
+ const yaml=readFileSync('.github/workflows/senate-864-existing-neon-key-cross-track-counts.yml','utf8');
+ assert.match(yaml,/publish-sanitized-counts:/);
+ const parts=yaml.split('  publish-sanitized-counts:\n');
+ assert.equal(parts.length,2);
+ const [keyed,report]=parts;
+ assert.match(keyed,/environment: evidence-readonly-sandbox/);
+ assert.match(keyed,/public_counts_b64: \$\{\{ steps\.audit\.outputs\.public_counts_b64 \}\}/);
+ assert.match(keyed,/id: audit/);
+ assert.match(report,/needs: \[one-shot-verify, one-shot-readonly\]/);
+ assert.match(report,/needs\.one-shot-verify\.result == 'success'/);
+ assert.match(report,/needs\.one-shot-readonly\.result == 'failure'/);
+ assert.match(report,/issues: write/);
+ assert.match(report,/actions\/github-script@v8/);
+ assert.match(report,/JSON\.parse\(Buffer\.from\(encoded,'base64'\)\.toString\('utf8'\)\)/);
+ assert.match(report,/currentTransactionReadOnly!==true/);
+ assert.match(report,/transactionRollbackCompleted!==true/);
+ assert.match(report,/privateOriginalRowsAndNamesExported!==false/);
+ assert.match(report,/productionMutations!==0/);
+ assert.match(report,/SANITIZED_AGGREGATE_B64|SAFE_COUNTS_B64/);
+ assert.doesNotMatch(report,/secrets\.NEON_API_KEY|VOTEPREDICT_NEON_PROJECT_ID/);
+ assert.doesNotMatch(report,/environment: evidence-readonly-sandbox/);
+ assert.doesNotMatch(report,/DATABASE_URL_UNPOOLED|pg\.Pool|psql|NEON_API_KEY:/);
+ assert.doesNotMatch(keyed,/issues: write/);
+ const audit=readFileSync('scripts/audit-senate-864-neon-one-key-readonly-coverage.ts','utf8');
+ assert.match(audit,/GITHUB_OUTPUT/);
+ assert.match(audit,/public_counts_b64/);
+ assert.match(audit,/failure_phase/);
+ assert.match(audit,/JSON\.stringify\(audit\)/);
+ assert.doesNotMatch(audit,/github\.rest\.issues\.createComment/);
 });
