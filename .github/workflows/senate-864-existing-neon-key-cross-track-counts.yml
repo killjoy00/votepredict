@@ -35,13 +35,53 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - name: Confirm source-specific offline tests never access key or production
         run: node --import tsx --test tests/senate-864-neon-one-key-readonly-coverage.test.ts
+  pr-local-sql-plan:
+    # No Neon key, no production credentials, no database permissions.
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Apply migrations only to disposable PostgreSQL
+        run: npm run db:migrate
+      - name: Compile all seven original source SELECTs with EXPLAIN only, without Neon
+        run: node --import tsx scripts/verify-senate-864-aggregate-sql-local.ts
   one-shot-verify:
     if: >-
       github.repository == 'killjoy00/votepredict' &&
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V3')
+      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V4')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     services:
@@ -90,7 +130,7 @@ jobs:
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V3')
+      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V4')
     outputs:
       public_counts_b64: ${{ steps.audit.outputs.public_counts_b64 }}
       failure_phase: ${{ steps.audit.outputs.failure_phase }}
@@ -103,7 +143,7 @@ jobs:
       VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
       VOTEPREDICT_864_APPROVAL: BOUNDED_COUNTS_ONLY
       VOTEPREDICT_864_INDEPENDENT_CI_VERIFIED: ${{ needs.one-shot-verify.result == 'success' && 'true' || 'false' }}
-      VOTEPREDICT_864_ONE_SHOT_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V3') && 'true' || 'false' }}
+      VOTEPREDICT_864_ONE_SHOT_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V4') && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -132,15 +172,17 @@ jobs:
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V3') &&
-      needs.one-shot-verify.result == 'success' &&
-      (needs.one-shot-readonly.result == 'success' || needs.one-shot-readonly.result == 'failure')
+      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V4') &&
+      (needs.one-shot-verify.result == 'failure' ||
+       (needs.one-shot-verify.result == 'success' &&
+       (needs.one-shot-readonly.result == 'success' || needs.one-shot-readonly.result == 'failure')))
     runs-on: ubuntu-latest
     timeout-minutes: 4
     permissions:
       contents: read
       issues: write
     env:
+      VERIFY_JOB_RESULT: ${{ needs.one-shot-verify.result }}
       AUDIT_JOB_RESULT: ${{ needs.one-shot-readonly.result }}
       SAFE_COUNTS_B64: ${{ needs.one-shot-readonly.outputs.public_counts_b64 }}
       SAFE_FAILURE_PHASE: ${{ needs.one-shot-readonly.outputs.failure_phase }}
@@ -159,7 +201,15 @@ jobs:
               '',
             ];
             let body;
-            if(result==='success'){
+            if(process.env.VERIFY_JOB_RESULT==='failure'){
+              body=[...intro,
+                '**Result: PRE-SECRET FULL CI FAILED CLOSED.**',
+                'The disposable SQL compilation, migration, full tests or',
+                'dependency audit stopped before any protected Neon key access.',
+                'Inspect the linked Actions run for NONPRIVATE CI errors.',
+                'No historical DB counts were obtained; #864 remains open.',
+              ].join('\n');
+            }else if(result==='success'){
               const encoded=process.env.SAFE_COUNTS_B64||'';
               if(!/^[A-Za-z0-9+/=]+$/.test(encoded)||encoded.length>70000)
                 throw Error('Missing or oversized protected aggregate');
