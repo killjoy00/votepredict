@@ -1,0 +1,44 @@
+name: Senate 864 historical conditional-bonding speaker original-source research
+
+on:
+  push:
+    branches:
+      - research/864-substantive-current-lead-audit-20261012
+    paths:
+      - data/evaluation/senate-864-2023-bonding-conditional-direct-speech-leads-v1.json
+      - scripts/probe-senate-864-bonding-2023-original-conditional-speakers.mjs
+      - tests/senate-864-bonding-2023-original-conditional-speakers.test.mjs
+      - .github/workflows/senate-864-2023-bonding-conditional-originals.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  independently-prove-named-conditional-statement-originals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Twelve fail-closed attribution, source, date and quote tests
+        run: |
+          node --check scripts/probe-senate-864-bonding-2023-original-conditional-speakers.mjs
+          node --test tests/senate-864-bonding-2023-original-conditional-speakers.test.mjs
+      - name: Recheck exact 2023 archival original CDX and each individual bounded speaker quote
+        run: |
+          mkdir -p research-output
+          node scripts/probe-senate-864-bonding-2023-original-conditional-speakers.mjs \
+            research-output/senate-864-2023-bonding-individually-attributed-conditional-originals.json
+      - name: Public research original source UTC/SHA receipts only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-bonding-2023-original-conditional-senator-statement-receipts
+          path: research-output/*.json
+          retention-days: 30
+          if-no-files-found: warn
