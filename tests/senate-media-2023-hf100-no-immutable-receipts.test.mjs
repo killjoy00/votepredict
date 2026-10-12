@@ -135,3 +135,15 @@ test('mutations of immutable originals, speaker quote digests, page counts or me
   d=>d.historicalPublisherOriginals.pop()
  ]){const d=structuredClone(receipt);edit(d);assert.throws(()=>verifyPinned(d));}
 });
+
+test('separate unselected 2023-04-25 archive capture hash mismatch remains UNKNOWN, not a third speaker event',()=>{
+ assert.equal(receipt.holds.unselectedGruenhagenApril25OriginalIndexedReplayMismatchQuarantinedUnknownNotCounted,true);
+ const q=receipt.unselectedArchiveReplayObservations;
+ assert.equal(q.length,1);
+ assert.equal(q[0].senator,'Glenn Gruenhagen');
+ assert.equal(q[0].captureUtc,'2023-04-25T22:47:57Z');
+ assert.equal(q[0].observedStatus,'original_archive_index_digest_mismatch_unknown');
+ assert.equal(q[0].countAsIndependentlyAuthenticatedHistoricalOriginal,false);
+ assert.equal(q[0].doesNotInvalidateSeparatelyReauthenticatedMarch19Original,true);
+ assert.equal(receipt.totals.verifiedOriginalPublisherVersionsCounted,2);
+});

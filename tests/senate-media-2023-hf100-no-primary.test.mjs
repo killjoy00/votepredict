@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {VERSION,LEADS,JOURNAL,allowed,recognizeRoll,archivalStatus,proveSpeakerBoundedTurn,checkBoundedArchivedOriginal,inspectJournal,run}
+import {VERSION,LEADS,JOURNAL,allowed,recognizeRoll,archivalStatus,quarantineUnselectedArchiveDigestMismatches,proveSpeakerBoundedTurn,checkBoundedArchivedOriginal,inspectJournal,run}
  from '../scripts/probe-senate-media-2023-hf100-no-originals.mjs';
 
 function vote(yea='Boldon Carlson Champion Cwodzinski Dibble',nay='Abeler Anderson Bahr Coleman Dahms Gruenhagen'){
@@ -136,4 +136,31 @@ test('altered archived source original cannot match independently indexed origin
  const fake=async()=>new Response('<html>'+('text '.repeat(220))+'</html>',{status:200,headers:{'content-type':'text/html'}});
  const v=await checkBoundedArchivedOriginal(LEADS[0],c,fake);
  assert.equal(v.verified,false);assert.equal(v.status,'original_replay_digest_mismatch_fail_closed');
+});
+
+test('a separate unselected archive SHA1 mismatch is quarantined UNKNOWN without becoming a third historical original',()=>{
+ const pin='2023-03-19T11:54:13Z';
+ const rows=[
+  {originalRetrievalStatus:'sha1_authenticated_original_publisher_html',
+   captureUtc:pin,rawOriginalSha256:'a'.repeat(64),exactOriginalIndexedHashAndRawBodyMatched:true},
+  {originalRetrievalStatus:'original_archive_index_digest_mismatch_unknown',
+   captureUtc:'2023-04-25T22:47:57Z',rawOriginalSha256:null,exactOriginalIndexedHashAndRawBodyMatched:false}
+ ];
+ const out=quarantineUnselectedArchiveDigestMismatches(rows,pin);
+ assert.equal(out.length,1);
+ assert.equal(out[0].captureUtc,'2023-04-25T22:47:57Z');
+ assert.equal(out[0].eligibleHistoricalSource,false);
+ assert.equal(out[0].doesNotInvalidatePinnedOriginal,true);
+});
+test('a mismatched PINNED SHA1 or a wrongly promoted mismatched archive is a hard error',()=>{
+ const pin='2023-03-19T11:54:13Z';
+ const bad={originalRetrievalStatus:'original_archive_index_digest_mismatch_unknown',
+  captureUtc:pin,rawOriginalSha256:null,exactOriginalIndexedHashAndRawBodyMatched:false};
+ assert.throws(()=>quarantineUnselectedArchiveDigestMismatches([bad],pin),/PINNED/);
+ assert.throws(()=>quarantineUnselectedArchiveDigestMismatches([{
+  ...bad,captureUtc:'2023-04-25T22:47:57Z',rawOriginalSha256:'f'.repeat(64)
+ }],pin),/untrusted archive/);
+ assert.throws(()=>quarantineUnselectedArchiveDigestMismatches([{
+  ...bad,captureUtc:'2023-04-25T22:47:57Z',exactOriginalIndexedHashAndRawBodyMatched:true
+ }],pin),/untrusted archive/);
 });

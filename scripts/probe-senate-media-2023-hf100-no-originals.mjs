@@ -102,6 +102,29 @@ export function archivalStatus(capture,lead){
 }
 
 /** A second exact-indexed-original-body replay checks ownership, not nearby names. */
+
+/**
+ * Quarantine independently indexed but untrusted OTHER archive captures.
+ * A digest mismatch for a PINNED original is always fatal. A mismatch for a
+ * separate, unselected capture is NOT a third historic source and cannot
+ * destroy a previously authenticated original. Preserve it as UNKNOWN.
+ */
+export function quarantineUnselectedArchiveDigestMismatches(replays,pinnedCaptureUtc){
+ if(!Array.isArray(replays)||!boundedTimestamp(pinnedCaptureUtc))
+  throw Error('unapproved receipt replay population or pinned date');
+ const out=[];
+ for(const row of replays){
+  if(row.originalRetrievalStatus!=='original_archive_index_digest_mismatch_unknown')continue;
+  if(row.captureUtc===pinnedCaptureUtc)throw Error('PINNED original archive index SHA1 changed');
+  if(row.exactOriginalIndexedHashAndRawBodyMatched===true||row.rawOriginalSha256!==null)
+   throw Error('untrusted archive content cannot carry approved original bytes');
+  if(!boundedTimestamp(row.captureUtc))throw Error('untrusted mismatched archive capture timestamp');
+  out.push({captureUtc:row.captureUtc,status:'unselected_different_capture_index_digest_mismatch_quarantined_unknown',
+    eligibleHistoricalSource:false,doesNotInvalidatePinnedOriginal:true});
+ }
+ return out;
+}
+
 export function proveSpeakerBoundedTurn(html,lead){
  if(!LEADS.includes(lead)||typeof html!=='string'||html.length>2_500_000)throw Error('untrusted source or oversized original');
  const text=simplify(html);

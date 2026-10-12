@@ -18,12 +18,12 @@ test("Track D 2023 HF100 named NO official-original research, isolated to this b
     "--test","tests/senate-media-2023-hf100-no-primary.test.mjs"
   ],{encoding:"utf8",timeout:45_000,maxBuffer:450_000,env});
   assert.match(focused,/# fail 0/);
-  assert.match(focused,/# pass 13/);
+  assert.match(focused,/# pass 15/);
   const receipts=execFileSync(process.execPath,[
     "--test","tests/senate-media-2023-hf100-no-immutable-receipts.test.mjs"
   ],{encoding:"utf8",timeout:45_000,maxBuffer:450_000,env});
   assert.match(receipts,/# fail 0/);
-  assert.match(receipts,/# pass 11/);
+  assert.match(receipts,/# pass 12/);
   if (!branchOnly) return;
 
   const out="artifacts/track-d-hf100-2023-no-live.json";
@@ -86,8 +86,21 @@ test("Track D 2023 HF100 named NO official-original research, isolated to this b
     // The pinned original was twice independently authenticated in prior
     // SUCCESS CI runs. Network outages now stay UNKNOWN; mutated originals
     // or changed bounded speaker ownership MUST fail, never be treated as outage.
-    assert.ok(s.replayAttempts.every(v=>v.originalRetrievalStatus!=="original_archive_index_digest_mismatch_unknown"),
-      "Indexed original SHA1 mismatch cannot be treated as a network outage");
+    // A *different*, unselected Wayback capture (e.g. Gruenhagen Apr25)
+    // may return a mismatched archive body. This is permanently UNKNOWN,
+    // excluded from all counted historic originals. However, if the pinned
+    // March capture mismatches its indexed original, FAIL this CI.
+    for(const replay of s.replayAttempts){
+      if(replay.originalRetrievalStatus!=="original_archive_index_digest_mismatch_unknown")continue;
+      assert.notEqual(replay.captureUtc,p.earliestAuthenticatedOriginalCaptureUtc,
+        "PINNED historical original archive SHA1 mismatch must fail closed");
+      assert.equal(replay.rawOriginalSha256,null,
+        "untrusted non-pinned capture must not retain an approved SHA256");
+      console.log("TRACK_D_HF100_UNSELECTED_ARCHIVE_CAPTURE_QUARANTINED_UNKNOWN="+JSON.stringify({
+        senator:p.senator,captureUtc:replay.captureUtc,status:replay.originalRetrievalStatus,
+        notAnAuthenticatedHistoricalOriginal:true,notClaimedAbsent:true
+      }));
+    }
     const matched=s.authenticatedDistinctOriginalVersions.filter(v=>
       v.captureUtc===p.earliestAuthenticatedOriginalCaptureUtc);
     for(const v of matched){

@@ -127,6 +127,18 @@
     "originalAudioNotAuthenticated": true,
     "noTrainingLabelsOrModelForecastsOrStoredVotesChanged": true,
     "noRawCopyrightedPublisherHtmlOrGovernmentPdfCommitted": true,
-    "issue987RemainsOpen": true
-  }
+    "issue987RemainsOpen": true,
+    "unselectedGruenhagenApril25OriginalIndexedReplayMismatchQuarantinedUnknownNotCounted": true
+  },
+  "unselectedArchiveReplayObservations": [
+    {
+      "senator": "Glenn Gruenhagen",
+      "captureUtc": "2023-04-25T22:47:57Z",
+      "observedInCI": 38308916230,
+      "observedStatus": "original_archive_index_digest_mismatch_unknown",
+      "countAsIndependentlyAuthenticatedHistoricalOriginal": false,
+      "doesNotInvalidateSeparatelyReauthenticatedMarch19Original": true,
+      "neitherProofOfAbsenceNorAlternativeVerbatimSource": true
+    }
+  ]
 }
