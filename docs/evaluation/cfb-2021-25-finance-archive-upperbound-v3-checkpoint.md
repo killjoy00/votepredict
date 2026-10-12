@@ -16,6 +16,14 @@ The V2 success used the deterministic first **500 selected finance source docume
 
 The 2,150 **unversioned** eligible prefix observations consist only of **2021 (1,761)** and **2022 (389)** sampled rows; 1,140 candidate contributions, 909 candidate expenditures and 101 independent-expenditure observations. Unversioned 2022 expenditure noneligible rows and 1,493 `unknown_or_outside` source-kind legacy `campaign_finance_bulk` rows are not included in the 2,150 eligible total. Across all V2 eligible rows, no `metadata.reportDueOn`, `dueOn`, or `disclosedOn` was populated under those exact names. `published_at` presence by itself is NOT proof of independent public availability.
 
+## Completed V3 protected stored-provenance metadata result
+
+[PR #1226](https://github.com/killjoy00/votepredict/pull/1226) merged as `a016df07122d40b9f3b257610f648e1f5f1a355a`; its first-attempt exact-main [protected workflow run #38265904857](https://github.com/killjoy00/votepredict/actions/runs/38265904857) completed **SUCCESS** with green independent checks, Neon default-branch `READ ONLY REPEATABLE READ` and explicit `ROLLBACK`, and an immutable [count-only issue receipt #6126760508](https://github.com/killjoy00/votepredict/issues/864#issuecomment-6126760508).
+
+The V3 sample returned **6,801** Senate-linked evidence-item observations and **4,598** preexisting eligible claims. **Every one of the 2,150 unversioned eligible observations carries the complete labelled archived-CSV keyset and has day-level agreement between stored `published_at`, `availableAt` and `archiveCapturedAt`.** Their status-label split is **2,049 candidate** and **101 independent-expenditure**; the separate **2,448** older-policy eligible claims are filing-derived. Zero of the 4,598 eligible observations in the selected prefix had a stored publication day equal to or preceding the underlying transaction day.
+
+This **confirms stored archive-claim metadata, not actual independently re-acquired historical archive files**. The CDX-indexed digest/URL and archived CSV row contents were NOT fetched and rehashed during V3. The external original CSV bytes and exact source-to-persisted row identities remain unverified, earliest first publication is unknown, and previously marked eligible rows were not modified. All figures are prefix observations, not a complete legal/report/transaction denominator or deployed database binding.
+
 ## Original source-code explanation to test (not yet a certified attribution)
 
 Review of committed historical repair writers reveals a distinct **archive-capture upper-bound path**, separate from report filing metadata:
