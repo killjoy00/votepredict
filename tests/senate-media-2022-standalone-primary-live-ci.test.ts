@@ -22,7 +22,7 @@ test("focused 2022 Senate primary-roll evidence replay on research PR only", { t
     "tests/senate-media-2022-standalone-parents-bills-primary.test.mjs",
   ], { encoding: "utf8", timeout: 30_000, maxBuffer: 500_000 });
   assert.match(synthetic, /# fail 0/);
-  assert.match(synthetic, /# pass 9/);
+  assert.match(synthetic, /# pass 10/);
 
   if (!exactResearchPR) return;
 
