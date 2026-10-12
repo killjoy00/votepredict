@@ -242,5 +242,6 @@ console.log('2020/22 COMMONCRAWL AND SOS OFFICIAL RECONCILIATION '+JSON.stringif
  government2020or2022OfficialWinnerCensus:true,matchedOfficialSenatorTargets:actualFor.length,
  archiveRequests:totalRequests,newFullyWarcDigestVerifiedOriginals:report.recoveredWholeOriginalWarcPages,
  byTarget:results.map(r=>({id:r.id,idx:r.indexQueries?.map(i=>i.parseStatus||i.originalIndexHttpStatus),
-  qualifyingRows:r.qualifyingRecordsFound||0,fullWarc:r.verifiedFullOriginalPages.length})),
+  qualifyingRows:r.qualifyingRecordsFound||0,fullWarc:r.verifiedFullOriginalPages.length,
+  warcAttempts:(r.indexQueries||[]).filter(q=>q.warcAttempt).map(q=>({collection:q.collection,status:q.warcAttempt.httpStatus,returnedBytes:q.warcAttempt.returnedLength,rangeOK:q.warcAttempt.rangeMatchesExactCompressedWarcSource,reconstructed:q.warcAttempt.warcReconstruction,error:q.warcAttempt.error}))})),
  positionsAutoPromoted:0},null,2));
