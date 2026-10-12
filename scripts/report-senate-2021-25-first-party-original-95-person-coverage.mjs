@@ -125,6 +125,14 @@ read('senate-roger-chamberlain-2016-original-10-economic-issue-excerpts-and-doma
   add('Roger Chamberlain',d.tenCandidateSiteExactStatements.length,s);});
 // Historical original SD24 Julie Rosen site captured March 2004, with
 // IE-rendered conditional VML text; NEVER reinterpret as 2020 SD23 platform.
+// Source-verified Gene Dornink authentic 2019 pre-2020 SD27 campaign home,
+// and original 2022 SD23 platform/home; one senator, 35 short excerpts.
+// Archive capture UTC never asserts initial posting date or official vote.
+read('senate-dornink-35-2019-2022-original-firstparty-excerpts-v1',
+ (d,s)=>{assert.equal(d.pages.length,3);assert.equal(d.excerpts.length,35);
+  assert.equal(new Set(d.pages.map(p=>p.person)).size,1);
+  const byId=new Map(d.pages.map(p=>[p.id,p.person]));
+  each(d.excerpts,q=>[byId.get(q.pageId),1],s);});
 read('senate-rosen-old-sd24-2004-legacy-vml-original-12-excerpts-v1',
  (d,s)=>{assert.equal(d.pages.length,1);assert.equal(d.excerpts.length,12);
   each(d.excerpts,q=>[d.pages[0].person,1],s);});
