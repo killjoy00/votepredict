@@ -1,0 +1,220 @@
+{
+  "version": "mpr-six-senator-interviews-public-original-and-seed-receipts-v1",
+  "sourceObservationDate": "2026-10-11",
+  "sourceLiveRun": {
+    "id": 38186907288,
+    "initialPrHeadSha": "ae20b1335f6a503ca8bce7bbab12df2770b240fb",
+    "artifactId": 11720490737,
+    "zipSha256": "bc0b9c2e31d1f98eaba8feb66d1609cc8486091d90e0a99e1eacb8c4d4a5b2eb",
+    "decodedSourceJsonSha256": "540273affb13781c53a8d217c05f8fdb810cdfd68e0115bd1ce8d7889259e352",
+    "decodedSourceJsonBytes": 42687,
+    "offlineTestsPassed": 10,
+    "runSucceeded": true
+  },
+  "selection": {
+    "distinctFirstPartyOriginalUrls": 6,
+    "displayedYears": [
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "individualArticleIntervieweeTurns": 7,
+    "distinctNamedSenatorPeople": 4,
+    "threeAlreadyPublicOriginalShaPinnedUrlsRechecked": true,
+    "sourceUniverseNotExhaustive": true
+  },
+  "gates": {
+    "configuredMprNewsSeed": "https://www.mprnews.org/story/202",
+    "excludedByExactSeedPrefix": 5,
+    "excludedByTopicalPriority": 3,
+    "excludedByEitherCurrentGate": 6,
+    "neitherGateIndependentlyProvesPrivateDatabaseAbsence": true
+  },
+  "originals": {
+    "historicallySha1AuthenticatedOriginalHtmlCaptureCount": 5,
+    "distinctSelectedPublisherOriginalUrlsWithVerifiedOriginal": 3,
+    "additionalHistoricallyAuthenticatedHtmlSha256BodiesBeyondSingleEarlierPinnedCapturePerOriginalUrl": 2,
+    "historicalClipTranscriptHumanApprovedCount": 0,
+    "additionalHistoricallyVerifiedUniqueArticlesBeyondThreePreviouslyPinnedPublicUrls": 0
+  },
+  "urls": [
+    {
+      "id": "mpr-2021-benson-vaccine-on-air",
+      "url": "https://www.mprnews.org/story/2021/01/11/state-sen-michelle-benson-on-vaccine-rollout",
+      "day": "2021-01-11",
+      "senators": [
+        "Michelle Benson"
+      ],
+      "mode": "publisher_audio_description_no_visible_full_senator_transcript",
+      "passesSeedPrefix": true,
+      "passesTopicalGate": false,
+      "currentHtmlHasHumanReviewedNamedQuote": false,
+      "previouslyPinnedOriginal": true,
+      "originals": [
+        {
+          "captureUtc": "2021-01-11T22:45:19Z",
+          "source": "Wayback exact original",
+          "sha1": "UHBLJEO3RXXWVIRWRQVTDPRQUQ56CKA3",
+          "sha256": "586f259f93201def83151d50d985ce7b44f9a107be6269adef886c01abaac00c",
+          "bytes": 69622,
+          "selectedCueKind": "reporter_description_only",
+          "selectedCuesPresent": [
+            true
+          ],
+          "speakerQuotedWordsVerified": false
+        }
+      ]
+    },
+    {
+      "id": "mpr-2022-benson-kunesh-parental-curriculum",
+      "url": "https://www.mprnews.org/episode/2022/02/23/measures-give-parents-more-control-over-instruction-await-votes",
+      "day": "2022-02-23",
+      "senators": [
+        "Michelle Benson",
+        "Mary Kunesh"
+      ],
+      "mode": "publisher_describes_both_senator_interviews_no_full_current_transcript_verified",
+      "passesSeedPrefix": false,
+      "passesTopicalGate": false,
+      "possibleRelatedSameDayOtherArticle": "https://www.mprnews.org/episode/2022/02/23/a-closer-look-at-the-parents-bill-of-rights-at-the-minnesota-legislature",
+      "possibleRelatedArticleHistoricalAliasVerified": false,
+      "originals": [],
+      "previouslyPinnedOriginal": false,
+      "waybackIndex": "index_unavailable_unknown",
+      "commonCrawlIndexes": [
+        "index_unavailable_unknown",
+        "index_unavailable_unknown"
+      ]
+    },
+    {
+      "id": "mpr-2023-kunesh-native-family-preservation",
+      "url": "https://www.mprnews.org/episode/2023/02/07/new-bill-would-keep-native-families-together-proponents-say",
+      "day": "2023-02-07",
+      "senators": [
+        "Mary Kunesh"
+      ],
+      "mode": "MPR_current_speaker_labeled_transcript",
+      "passesSeedPrefix": false,
+      "passesTopicalGate": true,
+      "previouslyPinnedOriginal": true,
+      "originals": [
+        {
+          "captureUtc": "2023-02-10T02:40:30Z",
+          "source": "Wayback exact original",
+          "sha1": "LSMKP7LJQX2FXTNTSFGN2ACEJ6J46GIV",
+          "sha256": "091376b6f0a3a0a1104d9aa8bd4573212c2ba5953486c082df2877a8eb041f92",
+          "bytes": 81419,
+          "selectedCuesPresent": [
+            true,
+            true
+          ],
+          "kind": "normalized_short_speaker_label_and_unpunctuated_short_fragment"
+        },
+        {
+          "captureUtc": "2024-04-18T02:46:06Z",
+          "source": "Wayback exact original",
+          "sha1": "KTSNDQOWIHKHV2IYGL7T6XWY5W3EZDXN",
+          "sha256": "40d95fdf4f17d5e5c32f0c3b574e47af83a0526735bef33a9d0ddce09b93b89b",
+          "bytes": 82580,
+          "selectedCuesPresent": [
+            true,
+            true
+          ],
+          "kind": "normalized_short_speaker_label_and_unpunctuated_short_fragment"
+        }
+      ],
+      "caveat": "Selected normalized unpunctuated subphrase is present, not a claim that a longer exact punctuation-sensitive earlier quote check passed. Does not verify whole speaker turn or audio."
+    },
+    {
+      "id": "mpr-2024-kunesh-charter-school-oversight",
+      "url": "https://www.mprnews.org/episode/2024/10/22/a-21-million-deficit-at-step-academy-make-it-the-largest-charter-school-to-close-in-history",
+      "day": "2024-10-22",
+      "senators": [
+        "Mary Kunesh"
+      ],
+      "mode": "MPR_current_speaker_labeled_transcript_with_other_newsroom_guest",
+      "passesSeedPrefix": false,
+      "passesTopicalGate": false,
+      "previouslyPinnedOriginal": true,
+      "originals": [
+        {
+          "captureUtc": "2024-10-22T18:31:15Z",
+          "source": "Wayback exact original",
+          "sha1": "Z5MQ547B3PIGGBKJR5GUHAAOPZFRHHIA",
+          "sha256": "89e55f875d760ff3665a7a1ab381d7d4b0e26b1c27d3a5da5d378c940a1eaada",
+          "bytes": 91958,
+          "selectedCuesPresent": [
+            false,
+            false
+          ],
+          "kind": "no_selected_speaker_label_or_short_utterance_in_this_original"
+        },
+        {
+          "captureUtc": "2024-12-11T00:46:18Z",
+          "source": "Wayback exact original",
+          "sha1": "EXUETRMUIVMGRHPLYKSKWB3CXGJBDXWC",
+          "sha256": "defc2522260a83fa4b8e3c5971d9fae89b78a7fdc25965f7f20121f7a778797a",
+          "bytes": 129815,
+          "selectedCuesPresent": [
+            true,
+            true
+          ],
+          "kind": "selected_speaker_label_and_short_utterance_in_this_later_original"
+        }
+      ],
+      "selectedTranscriptCueNoLaterThan": "2024-12-11T00:46:18Z",
+      "earliestSelectedTranscriptInsertionTimeVerified": false,
+      "selectedOctober22SameDayTranscriptAvailableByArchiveProved": false
+    },
+    {
+      "id": "mpr-2025-pha-hmong-lao-veterans",
+      "url": "https://www.mprnews.org/episode/2025/04/24/bill-granting-benefits-to-hmong-lao-veterans-passes-minnesota-senate",
+      "day": "2025-04-24",
+      "senators": [
+        "Susan Pha"
+      ],
+      "mode": "MPR_current_speaker_labeled_transcript_only",
+      "passesSeedPrefix": false,
+      "passesTopicalGate": true,
+      "previouslyPinnedOriginal": false,
+      "originals": [],
+      "waybackIndex": "index_unavailable_unknown",
+      "commonCrawlIndexes": [
+        "index_unavailable_unknown",
+        "index_unavailable_unknown"
+      ],
+      "retrospectiveSenateVoteResultReportingCannotPredictEarlierVote": true
+    },
+    {
+      "id": "mpr-2025-coleman-civic-violence",
+      "url": "https://www.mprnews.org/episode/2025/09/11/we-cannot-let-evil-win-minnesota-sen-julia-coleman-on-uptick-in-political-violence",
+      "day": "2025-09-11",
+      "senators": [
+        "Julia Coleman"
+      ],
+      "mode": "MPR_current_speaker_labeled_transcript_only",
+      "passesSeedPrefix": false,
+      "passesTopicalGate": true,
+      "previouslyPinnedOriginal": false,
+      "originals": [],
+      "waybackIndex": "index_unavailable_unknown",
+      "commonCrawlIndexes": [
+        "index_unavailable_unknown",
+        "index_unavailable_unknown"
+      ]
+    }
+  ],
+  "verificationBoundaries": {
+    "sourceHtmlRawOrAudioOrPdfOrWarcPersisted": false,
+    "reportedSpeakerLabelAndSelectedShortPhraseAreSeparateStringPresenceChecksNotHumanVerifiedWholeSpeakerTurns": true,
+    "original2024SameDayNegativeDoesNotMeanTranscriptHadNotBeenUploadedAnywhereElse": true,
+    "currentPageNotHistoricalQuoteTimestampProof": true,
+    "privateDatabaseSourceDocumentsMatched": 0,
+    "privateEvidenceItemCoverageAndMissedArticleCountKnown": false,
+    "missingFromVotePredictProductionCount": null,
+    "notMprArticlePublicationDenominator": true,
+    "noProductionCollectorOrIngestionOrModelOrForecastChanges": true
+  }
+}
