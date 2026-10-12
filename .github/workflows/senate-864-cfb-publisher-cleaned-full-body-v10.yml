@@ -1,0 +1,28 @@
+name: 'Senate #864 CFB cleaned independent publisher body provenance V10'
+on:
+  pull_request:
+    paths:
+      - 'scripts/verify-cfb-864-public-publisher-cleaned-v10.mjs'
+      - 'tests/cfb-864-public-publisher-cleaned-v10.test.mjs'
+      - 'docs/evaluation/cfb-2021-23-independent-publisher-cleaned-provenance-v10.md'
+      - '.github/workflows/senate-864-cfb-publisher-cleaned-full-body-v10.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  public-publisher-cleaned-body:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Synthetic full-CSV metadata/privacy regressions
+        run: node --test tests/cfb-864-public-publisher-cleaned-v10.test.mjs
+      - name: Bounded independent cleaned CSV integrity and years-only counts
+        run: node scripts/verify-cfb-864-public-publisher-cleaned-v10.mjs
