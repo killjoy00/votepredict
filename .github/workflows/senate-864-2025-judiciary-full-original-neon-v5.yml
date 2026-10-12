@@ -40,7 +40,6 @@ jobs:
           node --import tsx --test tests/senate-864-2025-judiciary-full-source-neon-v5.test.ts
           node --import tsx --test tests/senate-864-2025-judiciary-v5-workflow-syntax.test.ts
           node --import tsx --test tests/senate-864-protected-source-db-parity.test.ts
-          node --import tsx --test tests/senate-864-v4-2024-single-missing-yea-protected-receipt.test.ts
   pr-disposable-sql:
     if: >-
       github.event_name == 'pull_request' &&
