@@ -36,7 +36,7 @@ jobs:
         with:
           node-version: 22
       - name: Adversarial exact source, senator identity and archive SHA tests
-        run: node --test tests/senate-media-2022-parental-rights-four-caucus-audacy-originals.test.mjs
+        run: node --test tests/senate-media-2022-parental-rights-four-caucus-audacy-originals.test.mjs tests/senate-media-2022-parental-rights-real-receipts.test.mjs
       - name: Bounded actual indexed Wayback and Common Crawl original two publisher URLs
         run: node scripts/probe-senate-media-2022-parental-rights-four-caucus-audacy-originals.mjs --output artifacts/track-d-2022-four-gop-senators-audacy-source-metadata.json
       - name: Public source index/authentic SHA metadata only (no publisher HTML)
