@@ -1,0 +1,63 @@
+name: Authenticate 2022 original Bruce Anderson full Issues page independently from same-date campaign oEmbed
+on:
+  pull_request:
+    paths:
+      - scripts/probe-bruce-anderson-2022-full-original-issues-from-cdx.mjs
+      - .github/workflows/acquire-bruce-anderson-2022-exact-original-issues.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  independently-pin-bruce-original-2022-issue-page:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-bruce-anderson-exact-2022-full-original-issues-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen full unmodified official historic LRL Senate directory and special-swearing source
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen original complete 160-row Bruce Senate candidate archive CDX and same-date original first-party identifying oEmbed
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38175993447
+          name: senate-first-20-uncovered-original-26-historic-archive-windows-v1
+          github-token: ${{ github.token }}
+          path: original/prior
+      - name: Authenticate entire original source Wayback digest and campaign identity and retain complete 2022 candidate issue HTML
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
+          node --import tsx scripts/probe-bruce-anderson-2022-full-original-issues-from-cdx.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --prior-first20-original-dir original/prior \
+            --out-dir original/bruce-original-issue-recovery
+      - name: Preserve exact complete original source and independent indexed digest proof
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-bruce-anderson-2022-original-exact-issues-html-with-160-row-cdx-v1
+          path: original/bruce-original-issue-recovery/
+          if-no-files-found: warn
+          retention-days: 30
