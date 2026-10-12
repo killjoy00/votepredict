@@ -18,6 +18,9 @@ console.log(JSON.stringify({
   speakerCueWithinSameTurn:x.turnIndicators?.selectedShortCueInsideBoundedSameExplicitLabeledSpeakerTurn??null,
   transcriptSectionFound:x.turnIndicators?.transcriptSectionHeadingVisible??null,
   selectedCueOnPage:x.turnIndicators?.selectedShortCueVisibleAnywhereOnOriginalPage??null,
+  cueWithinTranscript:x.turnIndicators?.selectedShortCueVisibleInsideTranscriptSection??null,
+  phraseTurnOwnerLabels:x.turnIndicators?.selectedShortCueSpeakerTurnOwnerLabels??null,
+  cueNotInAnyBoundedTurn:x.turnIndicators?.selectedShortCueOutsideAllBoundedSpeakerTurns??null,
   labels:x.turnIndicators?.senatorFullNameSpeakerLabelsInTranscript??null
  })),
  noFullTranscriptOrOriginalHtmlOrAudioPersisted:true,noPrivateDbOrRecordedVoteOrModelChanges:true
