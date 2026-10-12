@@ -24,7 +24,7 @@ export function parseOriginalThreeSenatorCdxResponse(raw:unknown,host:string,bef
   if(!Array.isArray(maybe)||maybe.length!==6||maybe.some(x=>typeof x!=='string'))
    throw Error('Original Wayback CDX row malformed');
   const [timestamp,original,mimetype,statuscode,digest,length]=maybe as string[];
-  if(!/^\d{14}$/.test(timestamp??'')||timestamp!<before||
+  if(!/^\d{14}$/.test(timestamp??'')||timestamp!>=before||
    statuscode!=='200'||!mimetype!.toLowerCase().includes('html')||
    !/^[A-Z2-7]{32}$/.test(digest??'')||!/^\d+$/.test(length??''))
    continue;
