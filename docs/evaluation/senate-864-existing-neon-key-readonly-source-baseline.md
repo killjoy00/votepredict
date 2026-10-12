@@ -106,3 +106,5 @@ explicit ROLLBACK and a separate **keyless** issue-comment reporting job.
 Successful V3 means **bounded DB aggregate coverage**, not complete original
 CFB report-to-transaction matching, 2021 printed committee vote recovery
 or media senator-speaker attribution. Keep #864 OPEN.
+
+**Additional V3 preflight:** before any protected key is supplied, the exact reviewed main-commit CI job uses only its disposable localhost PostgreSQL (migrated from scratch, local postgres role) to run `EXPLAIN` **without `ANALYZE`** on all seven immutable SELECT statements. This catches schema, alias/grouping and SQL syntax problems locally without executing evidence scans or contacting Neon. It then runs the full suite and dependency audit as before. This compile check does **not** prove query performance on the real database, which is why the protected SQL statement timeout and safe SQLSTATE error classification remain enforced.
