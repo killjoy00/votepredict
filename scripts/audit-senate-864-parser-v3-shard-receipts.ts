@@ -4,7 +4,8 @@ import {dirname,join,resolve} from 'node:path';
 
 const yearCounts:{[key:number]:number}={2022:325,2023:454,2024:258,2025:415};
 type SafeShard={
- schemaVersion:string;year:number;shard:number;shards:number;
+ schemaVersion:string;issue:number;year:number;shard:number;shards:number;
+ baselineSourceRun:number;baselineParser:string;currentParser:string;
  originalUrlsAssigned:number;originalPdfAndSourceTextVerified:number;originalsHeld:number;
  originallyRecognizedNamedRolls:number;newParserNamedRolls:number;
  originallyRecognizedCountOnlyRolls:number;newParserCountOnlyRolls:number;
@@ -15,6 +16,21 @@ type SafeShard={
 };
 export function aggregateSafeParserShards(shards:SafeShard[]){
  if(shards.length!==16)throw Error('All sixteen original PDF shards required');
+ const validatedCountKeys=[
+  'originalUrlsAssigned','originalPdfAndSourceTextVerified','originalsHeld',
+  'originallyRecognizedNamedRolls','newParserNamedRolls',
+  'originallyRecognizedCountOnlyRolls','newParserCountOnlyRolls',
+  'docsWithNamedRollDecrease','docsWithCountOnlyDecrease',
+  'verifiedEducationOriginalOldCandidates','verifiedEducationOriginalNewActions',
+ ] as const;
+ for(const receipt of shards){
+  if(receipt.issue!==864||receipt.baselineSourceRun!==38066441841||
+    receipt.baselineParser!=='mn-senate-committee-minutes-v2'||
+    receipt.currentParser!=='mn-senate-committee-minutes-v3'||
+    validatedCountKeys.some(k=>!Number.isSafeInteger(receipt[k])||
+      receipt[k]<0||receipt[k]>500))
+   throw Error('Unverified original source parser/receipt numeric provenance');
+ }
  const output=[] as Array<{year:number;originalPdfs:number;verified:number;held:number;
   oldNamed:number;newNamed:number;oldCountOnly:number;newCountOnly:number;
   namedDecreaseDocs:number;countDecreaseDocs:number}>;
@@ -36,6 +52,10 @@ export function aggregateSafeParserShards(shards:SafeShard[]){
    newCountOnly:sum('newParserCountOnlyRolls'),
    namedDecreaseDocs:sum('docsWithNamedRollDecrease'),
    countDecreaseDocs:sum('docsWithCountOnlyDecrease')};
+  if(row.newNamed<row.oldNamed||row.newCountOnly<row.oldCountOnly||
+    row.oldNamed+row.oldCountOnly>row.originalPdfs*100||
+    row.newNamed+row.newCountOnly>row.originalPdfs*100)
+   throw Error('Aggregate source parser loss or impossible vote candidate total');
   if(row.originalPdfs!==yearCounts[year]||row.verified!==row.originalPdfs||
    row.held!==0||row.namedDecreaseDocs!==0||row.countDecreaseDocs!==0)
    throw Error('Full exact original year coverage or nonregression missing');
