@@ -21,3 +21,18 @@ The metadata-only output contains only original archive source URLs, SHA-256 and
 **No new candidate policy excerpt, individually verified authored timestamp, accepted election-day predictive feature, source-to-database row or 2022 campaign-site completeness claim is produced by this pilot.** Exact original archived words, committee paid-for source attribution and period-appropriate election-cycle context require separate source-review; original archive capture UTC is a public *capture-by* witness, not a first-authored timestamp. 2021–25 separately serving persons and older legislative districts are not automatically the same election platform.
 
 **No production database read/write, media text, forecast/model/serving/scheduler/2027, Senate floor vote changes or public-office contact. Issue #864 remains OPEN.**
+
+
+## Completed original-source pilot outcome (source observed October 12, 2026 UTC)
+
+The independent [original source run #38187316172](https://github.com/killjoy00/votepredict/actions/runs/38187316172) completed **successfully** after correcting an independently caught pre-election cutoff-direction test failure. The [original metadata artifact #11719982734](https://github.com/killjoy00/votepredict/actions/runs/38187316172/artifacts/11719982734) was independently downloaded and verified: ZIP SHA-256 `4c5d652bf70c320f6b6b2d9f28127404172e6f8c8d5f5606ea66ee12e37561e3`, containing one **5,330-byte JSON**. The permanent exact original whole-response SHA-256 and byte lengths, provenance and classifications are in [the separate immutable source checkpoint](source-proof/senate-three-unobserved-2022-original-firstparty-archive-source-checkpoint.json).
+
+| Domain | Exact original full CDX response | Genuine pre-election original candidate HTML bodies re-verified |
+| --- | --- | ---: |
+| `genedorninkforsenate.com` | HTTP 200, **3 bytes**, original SHA-256 `37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570`, **HOLD: response not a valid CDX header/index** | 0 |
+| `mattklein.org` | HTTP 200, **184 bytes**, SHA-256 `23b591ffa0c29063ef2210a737a7cb81e6f09ba4a174f0ea126884ba453730da`, valid full CDX original, **zero 2020–pre-Nov 8 2022 matching HTML rows in this bounded index** | 0 |
+| `susanphaforsenate.com` | HTTP 200, **192 bytes**, SHA-256 `c6a3e6ce510428b06593bcd050b6d1937898039587e475c2368e3ecf505ac55e`, valid full CDX original, **zero 2020–pre-Nov 8 2022 matching HTML rows in this bounded index** | 0 |
+
+**Interpretation:** **0 newly verified first-party original archived page bodies and zero policy snippets** in this bounded pilot. This is meaningful *observed source absence at those three particular bounded original CDX requests*, **NOT** proof those three senators had no contemporary campaign site, no 2022 positions, or that no historical captures exist in different archives, domain variations or earlier/later years. The actual 95-person independent first-party statement-lead inventory remains **79 of 95 / 1,006 exact short research lead rows / 16 unobserved**; none of the three was promoted.
+
+Possible follow-ons: independently verified alternative original campaign hostnames or original archival sources such as Common Crawl WARC, official filed campaign website exhibits, or contemporaneous first-party document PDFs. Preserve each source's distinct originals, receipt SHA and legally meaningful capture/public-by timestamp; don't substitute an October 2026 site. The original CDX queries did not contact any state office.
