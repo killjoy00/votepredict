@@ -156,6 +156,49 @@ async function boundedOfficialHtml(response){
  for(const part of parts){Buffer.from(part).copy(b,at);at+=part.byteLength}
  return b;
 }
+export const CROSSWALK_PSV=
+ 'docs/evaluation/source-proof/cfb-2021-25-95-serving-senator-report-version-source-crosswalk-v14.psv';
+export const CROSSWALK_CHECKPOINT=
+ 'docs/evaluation/source-proof/cfb-2021-25-95-served-report-version-crosswalk-checkpoint-v14.json';
+export const CROSSWALK_FIELDS=[
+ 'officialSenator','serviceYears','annualOfficialDistricts',
+ 'originalServiceSource','matchedAlreadySourceProvenCFBRegistration',
+ 'existingAuthenticatedSourceVersionReferences',
+ 'originalReportYearsObservedInSelectedSourcePanel',
+ 'reportVersionCoverageState','actualVersionHistoricalPublicByVerified',
+ 'noLegalReportFilingDutyConclusion',
+];
+export function serializeOfficialReportPanelCrosswalk(rows){
+ return rows.map(row=>CROSSWALK_FIELDS.map(field=>{
+  const val=row[field]??'-';
+  const text=typeof val==='boolean'?(val?'true':'false'):String(val);
+  if(!text||/[|\r\n]/.test(text))throw Error('Invalid pinned official crosswalk cell');
+  return text;
+ }).join('|')).join('\n')+'\n';
+}
+export function verifyV14ImmutableOfficialCrosswalk(data){
+ const proof=JSON.parse(readFileSync(CROSSWALK_CHECKPOINT,'utf8'));
+ if(proof.actualServedPersonRows!==95
+  ||proof.originalCFBSourceProvenReportPrincipals!==25
+  ||proof.notAlreadyRepresentedBySelectedCFBReportSourceVersionPanel!==70
+  ||proof.exactOfficialReportVersionReferencesInPanel!==229
+  ||proof.exactHistoricallyPublicByPDFVersionCapturesProved!==0
+  ||proof.originalFullOfficialSenateDirectorySha256!==
+   data.originalOfficialSenateDirectorySha256
+  ||proof.originalFullSpecialSwearingSha256!==
+   data.originalOfficialSpecialSwearingSha256
+  ||data.uniqueSourceJoinedCFBReportRegistrations!==25
+  ||data.sourcePanelsStillNeedingOfficialNameReview.length!==0
+  ||data.results.filter(x=>!x.matchedAlreadySourceProvenCFBRegistration).length!==70
+  ||data.results.reduce((n,x)=>n+x.existingAuthenticatedSourceVersionReferences,0)!==229)
+  throw Error('Original LRL source or complete 95/25/70 result drift');
+ const serialized=serializeOfficialReportPanelCrosswalk(data.results);
+ const pinned=readFileSync(CROSSWALK_PSV,'utf8');
+ if(serialized!==pinned)throw Error('Official senator-to-CFB-version immutable person row drift');
+ return{sourceVersionLedgerRows:95,sourcePdfVersionCount:229,
+  joinedActuallyServingSenators:25,notYetInSelectedCFBVersionPanel:70,
+  originalServiceMetadataPsvSha256:createHash('sha256').update(serialized).digest('hex')};
+}
 export async function sourceVerified95ServedReportVersionAudit(fetchPublic=fetch){
  const request=async url=>{
   const response=await fetchPublic(url,{
@@ -170,8 +213,10 @@ export async function sourceVerified95ServedReportVersionAudit(fetchPublic=fetch
    request(DIRECTORY),request(SWEARING)]);
   const now=new Date().toISOString();
   const audit=parseOfficialMnSenateServiceDirectory(directory,now,swearing,now);
+  const data=buildSourceVerifiedSenatorReportCrosswalk(audit);
+  const pinned=verifyV14ImmutableOfficialCrosswalk(data);
   return{status:'original_official_service_identity_and_CFb_source_panel_crosswalk',
-   data:buildSourceVerifiedSenatorReportCrosswalk(audit)};
+   data,pinned};
  }catch{
   return{status:'official_original_service_source_or_join_hold',data:null,
    noAbsenceOrUnregisteredCommitteeInferred:true};
