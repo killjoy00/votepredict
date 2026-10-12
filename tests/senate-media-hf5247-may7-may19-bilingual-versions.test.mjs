@@ -64,12 +64,17 @@ test('redirect, wrong MIME, wrong source body and source outage never become fal
   [async()=>new Response('unavailable',{status:503}),'http_unavailable_unknown'],
   [async()=>new Response('',{status:302,headers:{location:'https://unrelated.example'}}),'original_redirect_unknown'],
   [async()=>new Response('not a bill',{headers:{'content-type':'text/plain'}}),'unexpected_content_type_unknown'],
-  [async()=>new Response('<!doctype html>'+('z'.repeat(11000)),{headers:{'content-type':'text/html'}}),'source_identity_mismatch_unknown']
+  [async()=>new Response('<!doctype html>'+('z'.repeat(11000)),{headers:{'content-type':'text/html'}}),'unexpected_content_type_unknown']
  ]){
   const x=await probeOne(house,f);
   assert.equal(x.status,status);
   assert.equal(x.exactDocumentFragmentProof===null||x.exactDocumentFragmentProof.exactBillAndSessionIdentified===false,true);
  }
+});
+test('malformed but full length HTML bill must still fail exact 93rd session identity',async()=>{
+ const result=await probeOne(unofficial,async()=>new Response('<html>'+('unrelated 94th legislature bill '.repeat(600))+'</html>',{headers:{'content-type':'text/html'}}));
+ assert.equal(result.status,'source_identity_mismatch_unknown');
+ assert.equal(result.exactDocumentFragmentProof.exactBillAndSessionIdentified,false);
 });
 test('all public sources unavailable leaves May7 negatives and May19 positives UNKNOWN, not signed legislative forecasts',async()=>{
  let i=0;
