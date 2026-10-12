@@ -1,0 +1,58 @@
+name: Public MPR 2025 Pha Coleman 3Play original transcript PDF proof
+
+# Strictly bounded public MPR/APM first-party / Wayback / Common Crawl
+# investigation. Only original-source SHA1 / raw SHA256, byte counts, UTC,
+# metadata dates and selected short cue booleans persist. Never the raw
+# PDFs, article HTML, transcript wording, WARC or private source exports.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-mpr-2025-pha-coleman-3play-originals.yml
+      - scripts/probe-senate-media-mpr-2025-pha-coleman-3play-pdfs.mjs
+      - scripts/run-senate-media-mpr-2025-pha-coleman-3play-pdfs.mjs
+      - tests/senate-media-mpr-2025-pha-coleman-3play-originals.test.mjs
+      - tests/senate-media-mpr-2025-pha-coleman-real-receipts.test.mjs
+      - docs/evaluation/senate-media-mpr-2025-pha-coleman-3play-originals-20261011.json
+      - docs/evaluation/senate-media-mpr-2025-pha-coleman-3play-originals-20261011.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-mpr-2025-pha-coleman-3play-pdf-history
+  cancel-in-progress: false
+
+jobs:
+  original-first-party-pdf-provenance:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-mpr-2025-pha-coleman-3play-original-pdfs-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Fully offline adversarial source and exact original PDF proof tests
+        run: node --test tests/senate-media-mpr-2025-pha-coleman-3play-originals.test.mjs tests/senate-media-mpr-2025-pha-coleman-real-receipts.test.mjs
+      - name: Bounded actual current original PDF and original 2025 public archives
+        run: |
+          node scripts/run-senate-media-mpr-2025-pha-coleman-3play-pdfs.mjs \
+            --output artifacts/senate-media-mpr-2025-pha-coleman-3play-originals.json
+      - name: Preserve only public source digests, metadata and UTC original archive proof
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-mpr-2025-pha-coleman-3play-originals
+          path: artifacts/senate-media-mpr-2025-pha-coleman-3play-originals.json
+          if-no-files-found: error
+          retention-days: 7
