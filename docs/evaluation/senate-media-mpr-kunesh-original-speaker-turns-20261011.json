@@ -1,0 +1,112 @@
+{
+  "version": "mpr-kunesh-2023-2024-original-speaker-turn-receipts-v1",
+  "localResearchDay": "2026-10-11",
+  "initialActualGitHubSourceRun": {
+    "runId": 38194030668,
+    "artifactId": 11722502139,
+    "sourcePr": 1185,
+    "actionSucceeded": true,
+    "originalHtmlRechecks": 4,
+    "offlineTestsPassed": 12,
+    "offlineTestsFailed": 0,
+    "artifactZipSha256": "fbb228dadbbdf0c58b8b573dfff8f4d7aff85fa4b3b31864022a38153d4a9029",
+    "metadataJsonBytes": 7141,
+    "metadataJsonSha256": "e013999d57e8844e8c90c5e75617bee7bbcabb496ed497f257dc292b3bf58f8b"
+  },
+  "scope": {
+    "originalHtmlVersions": 4,
+    "distinctMprEpisodeUrls": 2,
+    "originalHistoricalHtmlSha1Sha256Matched": 4,
+    "selectedShortCueWithinSameNamedSenatorTurn": 1,
+    "selectedShortCueOnPageButOutsideTranscript": 2,
+    "selectedCueMissingFromHistoricalPage": 1,
+    "verifiedOriginalSpokenAudioBinaries": 0,
+    "humanReviewedFullVerbatimSpeakerQuotations": 0
+  },
+  "originals": [
+    {
+      "leadId": "mpr-2023-kunesh-native-family-preservation",
+      "originalPublisherUrl": "https://www.mprnews.org/episode/2023/02/07/new-bill-would-keep-native-families-together-proponents-say",
+      "archivedCaptureUtc": "2023-02-10T02:40:30Z",
+      "indexedSha1Base32": "LSMKP7LJQX2FXTNTSFGN2ACEJ6J46GIV",
+      "rawOriginalHtmlSha256": "091376b6f0a3a0a1104d9aa8bd4573212c2ba5953486c082df2877a8eb041f92",
+      "rawOriginalHtmlBytes": 81419,
+      "sha1AndSha256OriginalHtmlReverified": true,
+      "visibleAudioTranscriptSection": true,
+      "maryKuneshSpeakerLabelsInTranscript": 8,
+      "selectedShortCueVisibleOnPage": true,
+      "selectedShortCueInsideTranscriptSection": false,
+      "selectedShortCueWithinMaryKuneshLabeledTurn": false,
+      "selectedShortCueOffsetInLabeledTurnChars": null,
+      "selectedCueOwnerLabeledSpeakerTurns": [],
+      "namedSenatorSpeechHumanApproved": false,
+      "actualSpokenAudioAuthenticated": false
+    },
+    {
+      "leadId": "mpr-2023-kunesh-native-family-preservation",
+      "originalPublisherUrl": "https://www.mprnews.org/episode/2023/02/07/new-bill-would-keep-native-families-together-proponents-say",
+      "archivedCaptureUtc": "2024-04-18T02:46:06Z",
+      "indexedSha1Base32": "KTSNDQOWIHKHV2IYGL7T6XWY5W3EZDXN",
+      "rawOriginalHtmlSha256": "40d95fdf4f17d5e5c32f0c3b574e47af83a0526735bef33a9d0ddce09b93b89b",
+      "rawOriginalHtmlBytes": 82580,
+      "sha1AndSha256OriginalHtmlReverified": true,
+      "visibleAudioTranscriptSection": true,
+      "maryKuneshSpeakerLabelsInTranscript": 8,
+      "selectedShortCueVisibleOnPage": true,
+      "selectedShortCueInsideTranscriptSection": false,
+      "selectedShortCueWithinMaryKuneshLabeledTurn": false,
+      "selectedShortCueOffsetInLabeledTurnChars": null,
+      "selectedCueOwnerLabeledSpeakerTurns": [],
+      "namedSenatorSpeechHumanApproved": false,
+      "actualSpokenAudioAuthenticated": false
+    },
+    {
+      "leadId": "mpr-2024-kunesh-charter-school-oversight",
+      "originalPublisherUrl": "https://www.mprnews.org/episode/2024/10/22/a-21-million-deficit-at-step-academy-make-it-the-largest-charter-school-to-close-in-history",
+      "archivedCaptureUtc": "2024-10-22T18:31:15Z",
+      "indexedSha1Base32": "Z5MQ547B3PIGGBKJR5GUHAAOPZFRHHIA",
+      "rawOriginalHtmlSha256": "89e55f875d760ff3665a7a1ab381d7d4b0e26b1c27d3a5da5d378c940a1eaada",
+      "rawOriginalHtmlBytes": 91958,
+      "sha1AndSha256OriginalHtmlReverified": true,
+      "visibleAudioTranscriptSection": false,
+      "maryKuneshSpeakerLabelsInTranscript": 0,
+      "selectedShortCueVisibleOnPage": false,
+      "selectedShortCueInsideTranscriptSection": false,
+      "selectedShortCueWithinMaryKuneshLabeledTurn": false,
+      "selectedShortCueOffsetInLabeledTurnChars": null,
+      "selectedCueOwnerLabeledSpeakerTurns": [],
+      "namedSenatorSpeechHumanApproved": false,
+      "actualSpokenAudioAuthenticated": false
+    },
+    {
+      "leadId": "mpr-2024-kunesh-charter-school-oversight",
+      "originalPublisherUrl": "https://www.mprnews.org/episode/2024/10/22/a-21-million-deficit-at-step-academy-make-it-the-largest-charter-school-to-close-in-history",
+      "archivedCaptureUtc": "2024-12-11T00:46:18Z",
+      "indexedSha1Base32": "EXUETRMUIVMGRHPLYKSKWB3CXGJBDXWC",
+      "rawOriginalHtmlSha256": "defc2522260a83fa4b8e3c5971d9fae89b78a7fdc25965f7f20121f7a778797a",
+      "rawOriginalHtmlBytes": 129815,
+      "sha1AndSha256OriginalHtmlReverified": true,
+      "visibleAudioTranscriptSection": true,
+      "maryKuneshSpeakerLabelsInTranscript": 5,
+      "selectedShortCueVisibleOnPage": true,
+      "selectedShortCueInsideTranscriptSection": true,
+      "selectedShortCueWithinMaryKuneshLabeledTurn": true,
+      "selectedShortCueOffsetInLabeledTurnChars": 25,
+      "selectedCueOwnerLabeledSpeakerTurns": [
+        "MARY KUNESH:"
+      ],
+      "namedSenatorSpeechHumanApproved": false,
+      "actualSpokenAudioAuthenticated": false
+    }
+  ],
+  "limitations": {
+    "selected2023CueIsOutsideAudioTranscriptSectionDespiteSpeakerLabelsInside": true,
+    "selectedDecember2024CueIsWithinKuneshLabeledTranscriptTurn": true,
+    "shortTextAdjacencyNotHumanApprovedFullSpeechOrAudio": true,
+    "noAutomaticBackdatingToMprEpisodeDisplayedDay": true,
+    "noPredictionsOrLegislativeVoteEvidencePromoted": true,
+    "noPrivateVotePredictSourceDocumentsOrDatabaseTouched": true,
+    "noRawOriginalHtmlOrAudioSaved": true,
+    "source2025MprInterviewsNotInScope": true
+  }
+}
