@@ -1,0 +1,85 @@
+name: Five truly parallel original historical source searches for final five actual Minnesota senators
+on:
+  pull_request:
+    paths:
+      - scripts/probe-senate-five-final-candidate-originals-and-party-questionnaire.mjs
+      - .github/workflows/acquire-senate-five-final-candidate-sources-five-parallel.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  final-five-original-candidate-website-and-direct-attributed-source:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-final-five-five-parallel-campaign-original-and-party-sources-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 38
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        person:
+          - pha
+          - clark
+          - tomassoni
+          - wiger
+          - bakk
+    name: Independent historical original acquisition — ${{ matrix.person }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen full original government Minnesota Senate service and special swearing, 105 historical entries
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen verified original official 95 real senator research coverage 90 site-observed and 1173 short source quotes
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38194127379
+          name: senate-95-serving-90-historical-firstparty-1173-short-excerpts-v1
+          github-token: ${{ github.token }}
+          path: original/prior90
+      - name: Reopen original independent 26-row Susan Pha 2022 complete Wayback CDX for digest-controlled replay variations
+        if: matrix.person == 'pha'
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38193297084
+          name: senate-eight-parallel-historic-original-sites-recent2022-v1
+          github-token: ${{ github.token }}
+          path: original/prior-pha
+      - name: Independently validate real state senator history, original source bytes, election UTC, original archives and attribution
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          coverage="$(find original/prior90 -type f -name 95-senators-public-campaign-coverage.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$coverage"
+          node --import tsx scripts/probe-senate-five-final-candidate-originals-and-party-questionnaire.mjs \
+            --person "${{ matrix.person }}" \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --prior-90-coverage-json "$coverage" \
+            --preindexed-susan2022-dir original/prior-pha \
+            --out-dir original/final-five-acquired
+      - name: Preserve entire original CDX SHA original HTML independent SHA1 and PDF link/version provenance
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-five-final-original-archives-${{ matrix.person }}-v1
+          path: original/final-five-acquired/
+          if-no-files-found: warn
+          retention-days: 30
