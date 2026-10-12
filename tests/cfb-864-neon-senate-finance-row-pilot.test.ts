@@ -47,6 +47,7 @@ test('SQL is a fixed, bounded, source-document-indexed SELECT with no raw rows o
  assert.match(sql,/LIMIT 64/);
  assert.match(sql,/count\(\*\) FILTER/);
  assert.match(sql,/GROUP BY 1,2 ORDER BY 1,2/);
+ assert.doesNotMatch(sql,/,\s+FROM/,'Never allow dangling SELECT projection comma');
  assert.match(sql,/LEFT JOIN memberships/);
  assert.match(sql,/c.slug='senate'/);
  assert.doesNotMatch(sql,/;\s*|RETURNING|SELECT \*|INSERT|UPDATE|DELETE|TRUNCATE|DROP|ALTER|COPY|GRANT|REVOKE|CREATE|pg_sleep/i);
