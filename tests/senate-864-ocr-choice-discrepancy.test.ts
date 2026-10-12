@@ -102,8 +102,12 @@ test('same member count with wrong YEA/NAY identity is NOT falsely classified as
 });
 
 test('one original YEA token absent yields YEA tally-side deficit, not a private member',()=>{
- const missingYea=choices.filter(row=>
-  !(row.vote_event_id==='event1'&&row.normalized_member_name==='Senator0'));
+ // Base fixture already omits the fourth NAY (Senator9). Restore that
+ // synthetic original token before removing YEA Senator0 so nine still match.
+ const missingYea=[...choices.filter(row=>
+  !(row.vote_event_id==='event1'&&row.normalized_member_name==='Senator0')),
+  {vote_event_id:'event1',normalized_member_name:'Senator9',
+   choice:'nay',membership_id:'mem9'}];
  const d=compareOriginalSenateCommitteeToStored(originals(),{
   documents:docs,events,choices:missingYea,
  }).originalVsPersistedNamedChoiceDigestDiscrepancy;
