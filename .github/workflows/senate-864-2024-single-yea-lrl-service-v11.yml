@@ -4,8 +4,8 @@ on:
     paths:
       - src/evidence/senate-864-2024-yea-v11-lrl-safe-scalars.ts
       - src/evidence/senate-864-2024-lrl-year-service-directory.ts
+      - tests/senate-864-2024-original-lrl-service-v11.test.ts
       - scripts/audit-senate-864-2024-one-yea-lrl-service-v11.ts
-      - tests/senate-864-2024-single-yea-v11.test.ts
       - .github/workflows/senate-864-2024-single-yea-lrl-service-v11.yml
   push:
     branches: [main]
@@ -36,7 +36,8 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - name: Exactly bounded, synthetic-only source-to-person proof
         run: |
-          node --import tsx --test tests/senate-864-2024-single-yea-v11.test.ts
+          node --import tsx --test tests/senate-864-2024-single-yea-v10.test.ts
+          node --import tsx --test tests/senate-864-2024-original-lrl-service-v11.test.ts
           npm run typecheck
       - run: npm audit --omit=dev --audit-level=high
 
