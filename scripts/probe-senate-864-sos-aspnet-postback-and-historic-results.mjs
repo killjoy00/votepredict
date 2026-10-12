@@ -113,6 +113,14 @@ async function submitLive2026Form(){
  result.httpContentType=resp.contentType||null;
  result.redirectedToOtherOfficialOriginalEndpoint=resp.finalUrl!==portal&&safelyAllowed(resp.finalUrl)?resp.finalUrl:null;
  result.error=resp.error;
+ if(resp.body&&result.current2026SenateFileShape?.htmlOrProviderFailure){
+  const html=resp.body.toString('utf8');
+  result.sanitizedHtmlResponseTitle=plain(/<title[^>]*>([\s\S]*?)<\/title>/i.exec(html)?.[1]||'').slice(0,90);
+  result.responseLooksLikeCandidateSearch=/(?:Candidate Filings|Candidates Search Results|Search by Office)/i.test(html);
+  result.responseLooksLikeASPNetValidationError=/(?:Validation of viewstate MAC failed|Invalid postback or callback argument|invalid viewstate|event validation failed)/i.test(html);
+  result.responseLooksLikeRequestDenied=/(?:access denied|forbidden|Cloudflare|robot detection|request blocked|captcha)/i.test(html);
+  result.responseIsFullPortalHome=/(?:Search by Office Title|Search by Candidate Name)/i.test(html);
+ }
  return result;
 }
 const live=year===2020?await submitLive2026Form():{checkedOnlyIn2020ParallelTrack:true,historicalClaimFromLiveSite:false};
@@ -176,9 +184,12 @@ for(const target of targets){
    rows=d.slice(1);
   }catch(e){error='Provider HTTP 200 non-CDX result: '+String(e).slice(0,170);}
  }
+ const officeParam=r=>/(?:\?|&)senate=(?:true|1)(?:&|$)/i.test(r?.[1]||'');
+ const indexedSenateMatches=rows.filter(officeParam);
  const meta={target,sourceOriginalWholeIndexURL:endpoint,httpStatus:ix.status,wholeIndexSha256:ix.body?sha(ix.body):null,
-  validCdxRows:rows.length,queriedHistoricalYear:year,
-  fullOriginalHtmlVerified:0,
+  validCdxRows:rows.length,originalCdxRowsWithExplicitSenateTrueQuery:indexedSenateMatches.length,
+  historicallyIndexedSenateResultsUrlCandidates:indexedSenateMatches.slice(0,12).map(r=>({timestamp:r[0],candidateResultsQueryUrl:r[1]})),
+  queriedHistoricalYear:year,fullOriginalHtmlVerified:0,
   missingResultDoesNotProveNoFiledCandidates:true,error};
  queries.push(meta);
  const valid=rows.filter(r=>/^\d{14}$/.test(r?.[0]||'')
@@ -186,14 +197,18 @@ for(const target of targets){
   &&/^https?:\/\/candidates\.sos\.(?:state\.mn\.us|mn\.gov)\//i.test(r?.[1]||'')
   &&/CandidateFilingResults\.aspx/i.test(r[1])
   &&/^[A-Z2-7]{32}$/.test(r?.[4]||'')&&r[3]==='200'&&r[2]==='text/html');
- valid.sort((a,b)=>b[0].localeCompare(a[0]));
+ valid.sort((a,b)=>Number(officeParam(b))-Number(officeParam(a))||b[0].localeCompare(a[0]));
  const seen=new Set();
  for(const r of valid){
-  if(seen.has(r[4])||meta.fullOriginalHtmlVerified>=2)continue;
+  if(seen.has(r[4])||meta.fullOriginalHtmlVerified>=4)continue;
   seen.add(r[4]);
-  const rurl='https://web.archive.org/web/'+r[0]+'id_/'+r[1];
-  const orig=await request(rurl,{},1_900_000,16000);
-  if(orig.status!==200||!orig.body||historicalArchiveSha1Base32(orig.body)!==r[4])continue;
+  let orig=null;
+  for(const mode of ['id_','if_','mp_']){
+   const rurl='https://web.archive.org/web/'+r[0]+mode+'/'+r[1];
+   const response=await request(rurl,{},1_900_000,13000);
+   if(response.status===200&&response.body&&historicalArchiveSha1Base32(response.body)===r[4]){orig=response;break;}
+  }
+  if(!orig)continue;
   const text=orig.body.toString('utf8');
   const personRows=websiteOnSameTableRow(text);
   // Only safe extracted (candidate name, submitted website and district).
