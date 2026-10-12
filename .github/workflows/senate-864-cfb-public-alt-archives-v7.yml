@@ -1,0 +1,28 @@
+name: 'Senate #864 CFB public alternate archive discovery V7'
+on:
+  pull_request:
+    paths:
+      - 'scripts/probe-cfb-864-alt-archives-v7.mjs'
+      - 'tests/cfb-864-alt-archives-v7.test.mjs'
+      - 'docs/evaluation/cfb-2021-22-alternative-archive-source-paths-v7.md'
+      - '.github/workflows/senate-864-cfb-public-alt-archives-v7.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  public-index-only:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Synthetic adversarial archive and privacy tests
+        run: node --test tests/cfb-864-alt-archives-v7.test.mjs
+      - name: Bounded public-only independent archive metadata check
+        run: node scripts/probe-cfb-864-alt-archives-v7.mjs
