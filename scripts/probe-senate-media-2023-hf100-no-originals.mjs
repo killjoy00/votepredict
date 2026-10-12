@@ -109,7 +109,7 @@ export async function inspectSource(lead,f=fetch){
   ...cc.queriedCollections.flatMap(x=>x.originalWarcReplayAttempts)
  ].map(c=>archivalStatus(c,lead));
  const exact=versions.filter(v=>v.exactOriginalIndexedHashAndRawBodyMatched);
- const unique=[...new Map(exact.map(v=>v.captureUtc+'|'+v.rawOriginalSha256)).values()];
+ const unique=[...new Map(exact.map(v=>[v.captureUtc+'|'+v.rawOriginalSha256,v])).values()];
  return {senator:lead.senator,publisherUrl:lead.url,displayed2023PublisherDateNotAuthenticatedPostingMinute:true,
   currentHtmlIsHistoricalEvidence:false,
   currentReadStatus:current.status,
