@@ -64,7 +64,7 @@ async function retrieve(url,headers={},timeout=25000){
  return o;
 }
 function ensurePreElectionTimestamp(d,context){
- const v=d.length===14?d.replace(/^(....)(..)(..)(..)(..)(..)$/,'$1-$2-$3T$4:$5:$6.000Z'):d;
+ const v=d.length===14?d.replace(/^(....)(..)(..)(..)(..)(..)$/,'$1-$2-$3T$4:$5:$6.000Z'):new Date(d).toISOString();
  assert.ok(!Number.isNaN(Date.parse(v)),context+' invalid capture');
  assert.ok(v<before,context+' after special election');
  return v;
@@ -156,13 +156,13 @@ for(const q of ccSearch){
    completeRangedWarcGzipSha256:response.bytes.length?sha(response.bytes):null,
    fullOriginalWarcGzipFile:null,independentWarcPayloadDigestMatched:false,
    originalPayloadHTMLFile:null,warcBodyHtmlSha256:null,originalIdentityCues:null,error:response.error||null};
-  if(response.httpStatus===206&&response.bytes.length===v.length){
+  if(response.httpStatus===206&&response.bytes.length===Number(v.length)){
    try{
     const u=unpackWarc(response.bytes);
     assert.equal(u.warcHeaders['warc-target-uri'],v.url,'Different URL in original WARC');
     assert.equal(ensurePreElectionTimestamp(u.warcHeaders['warc-date'],'WARC header'),p.indexedCapturedUtc,
      'WARC capture time not same as independent index');
-    p.independentWarcPayloadDigestMatched=('sha1:'+historicalArchiveSha1Base32(u.body))===v.digest.toUpperCase();
+    p.independentWarcPayloadDigestMatched=historicalArchiveSha1Base32(u.body)===v.digest.slice(5).toUpperCase();
     p.actualUncompressedWarcSHA256=u.wholeUncompressedWarcSHA256;
     if(p.independentWarcPayloadDigestMatched){
      const n=q.key+'-'+record.selectedOriginalWarcs.length+'-'+v.timestamp;
