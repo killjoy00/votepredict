@@ -89,7 +89,7 @@ assert.equal(clark.doronJanuary2025PartyCandidateQuestionnaire.PDFDownloadedIn20
 assert.equal(clark.doronJanuary2025PartyCandidateQuestionnaire.PDFPolicyQuotesAutomaticallyApproved,0);
 const originalText=new Map(),personNames=new Set(),indexCache=new Map(),fullPageProof=[];
 for(const p of ledger.pages){
- assert.equal(p.originalFirstAuthoredDateProven,false);
+ assert.equal(p.firstAuthoredDateProven,false);
  assert.equal(p.officialLegislativeActsVerified,false);
  assert.equal(p.forecastAutoEligibility,false);
  const lookup=validateActualSenateServiceForElection(roster,p.person,p.verifiedSenateDistrict,p.verifiedElectionYear);
