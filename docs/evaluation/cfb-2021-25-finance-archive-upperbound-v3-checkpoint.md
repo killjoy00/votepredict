@@ -16,6 +16,14 @@ The V2 success used the deterministic first **500 selected finance source docume
 
 The 2,150 **unversioned** eligible prefix observations consist only of **2021 (1,761)** and **2022 (389)** sampled rows; 1,140 candidate contributions, 909 candidate expenditures and 101 independent-expenditure observations. Unversioned 2022 expenditure noneligible rows and 1,493 `unknown_or_outside` source-kind legacy `campaign_finance_bulk` rows are not included in the 2,150 eligible total. Across all V2 eligible rows, no `metadata.reportDueOn`, `dueOn`, or `disclosedOn` was populated under those exact names. `published_at` presence by itself is NOT proof of independent public availability.
 
+## Completed V3 protected stored-provenance metadata result
+
+[PR #1226](https://github.com/killjoy00/votepredict/pull/1226) merged as `a016df07122d40b9f3b257610f648e1f5f1a355a`; its first-attempt exact-main [protected workflow run #38265904857](https://github.com/killjoy00/votepredict/actions/runs/38265904857) completed **SUCCESS** with green independent checks, Neon default-branch `READ ONLY REPEATABLE READ` and explicit `ROLLBACK`, and an immutable [count-only issue receipt #6126760508](https://github.com/killjoy00/votepredict/issues/864#issuecomment-6126760508).
+
+The V3 sample returned **6,801** Senate-linked evidence-item observations and **4,598** preexisting eligible claims. **Every one of the 2,150 unversioned eligible observations carries the complete labelled archived-CSV keyset and has day-level agreement between stored `published_at`, `availableAt` and `archiveCapturedAt`.** Their status-label split is **2,049 candidate** and **101 independent-expenditure**; the separate **2,448** older-policy eligible claims are filing-derived. Zero of the 4,598 eligible observations in the selected prefix had a stored publication day equal to or preceding the underlying transaction day.
+
+This **confirms stored archive-claim metadata, not actual independently re-acquired historical archive files**. The CDX-indexed digest/URL and archived CSV row contents were NOT fetched and rehashed during V3. The external original CSV bytes and exact source-to-persisted row identities remain unverified, earliest first publication is unknown, and previously marked eligible rows were not modified. All figures are prefix observations, not a complete legal/report/transaction denominator or deployed database binding.
+
 ## Original source-code explanation to test (not yet a certified attribution)
 
 Review of committed historical repair writers reveals a distinct **archive-capture upper-bound path**, separate from report filing metadata:
@@ -47,3 +55,16 @@ PR CI runs **no Neon credentials**, disposable local PostgreSQL migrations and E
 - **Existing prior-cycle context reader:** `src/evidence/prior-cycle-finance-context.ts` still trusts preexisting `asOfEligible=true` plus `published_at`. It has not been changed because any serving/forecast changes and persisted eligibility corrections require separate owner authorization.
 
 **No database writes, backfills, migrations outside disposable CI PostgreSQL, serving/model/scheduler changes, or false completion claims.**
+
+
+## Follow-up code-only safeguard: candidate backfill writer cannot promote filing-only windows
+
+The V3 stored-provenance result established the **two different historical proof-label mechanisms** in the selected prefix, but did not change the stored flags. While following the older v1–v6 filing-derived path, source review found a dormant defense-in-depth gap: `scripts/backfill-cfb-candidate-finance.ts` still contained a legacy positive `UPDATE evidence_items` block labelled `availabilityProofKind='cfb_report_filing'`. Under the already-merged v8 selector, a current PDF produces `cfb_report_filing` and that matching route now returns `null`, so no corresponding new mappings are expected; nevertheless the lower-level writer SQL itself previously did **not** enforce the same restriction.
+
+The follow-up code-only change adds all three independent safety gates:
+
+1. Candidate report mapping requires explicit `match.window.proofKind==='cfb_public_disclosure'`; `cfb_report_filing` (including a guessed date after the statutory floor) never enters the mapping queue.
+2. The mapped record must carry the separately source-labelled `disclosedOn` date; the SQL `UPDATE` independently requires `disclosure.proof_kind='cfb_public_disclosure'`, a non-null `disclosed_on` and exact equality to `available_on`.
+3. Stored provenance no longer **mislabels** a mapping as `cfb_report_filing` if it is direct disclosure; script result labels now correctly say filing/due provide only a legal not-before boundary and exact-version historical PDF public-by is not certified.
+
+Synthetic tests confirm current filing-only windows still fail positive historical selection; a valid separately labelled direct public disclosure passes only the normal selector, and source-static tests enforce SQL side filtering even if the selector changes in the future. **No live writer is executed, no database row or model/serving feature is changed, and no existing v1–v6 stored eligibility is repaired.** Independently authenticating a direct disclosure at source is still required before certifying historical as-of eligibility.
