@@ -83,9 +83,10 @@ function signals(b){
  const governorPage=/governor|gubernatorial/i.test(text.slice(0,6500));
  const commercialRepurposed=/(casino|online slot|slot machine|sportsbook|crypto gaming|betting online|jackpot|free spins|betting site)/i.test(text.slice(0,6500));
  const parked=/(domain for sale|buy this domain|namebright|sedoparking|godaddy parking|domain is parked)/i.test(text.slice(0,6500));
+ const unrelatedReceiptSpam=/(receipt template|free online printable receipts|author archives: aisya faiha|another wordpress site)/i.test(text.slice(0,6500));
  return {candidateFullNameOrNicknameMentioned:containsFullName||containsVariant,senateOfficeMentioned:senateSpecific,
   campaignPaidForOrCommitteeCue:campaignCommittee,possibleGovernorCampaignNotSenate:governorPage,
-  commerciallyRepurposedOrGamblingSite:commercialRepurposed,domainParkingSignals:parked,
+  commerciallyRepurposedOrGamblingSite:commercialRepurposed,domainParkingSignals:parked,unrelatedPrintableReceiptOrSeoSpam:unrelatedReceiptSpam,
   originalVisibleLength:text.length,originalVisiblePreview:text.slice(0,1450),
   actualCandidateOwnedWebsiteCertifiedAutomatically:false,
   candidatePolicyQuoteAutocounted:0};
