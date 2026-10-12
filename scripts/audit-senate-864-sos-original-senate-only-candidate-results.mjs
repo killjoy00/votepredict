@@ -57,33 +57,59 @@ const tidyUrl=s=>{
  catch{return null;}
 };
 function candidateRows(html){
- const out=[];
- let sampled=0,anyRealRow=0;
- for(const a of html.matchAll(/<tr\b[^>]*>[\s\S]*?<\/tr>/gi)){
-  if(a[0].length>35000)continue;
-  const cells=[...a[0].matchAll(/<td\b[^>]*>[\s\S]*?<\/td>/gi)].map(c=>c[0]);
-  if(cells.length<3)continue;anyRealRow++;
-  const name=plain(cells[0]);
-  if(sampled<3&&name&&name.length<120)sampled++;
+ const matched=[],allCellsHistogram={},targetMentionedInFullPage={};
+ const originalText=plain(html);
+ for(const [surname] of wishes)targetMentionedInFullPage[surname]=new RegExp('\\b'+surname+'\\b','i').test(originalText);
+ let actualTDrows=0,candidateNameCells=0;
+ for(const hit of html.matchAll(/<tr\b[^>]*>[\s\S]*?<\/tr>/gi)){
+  const row=hit[0];if(row.length>45000)continue;
+  const cells=[...row.matchAll(/<td\b[^>]*>[\s\S]*?<\/td>/gi)].map(x=>x[0]);
+  if(cells.length<2)continue;
+  actualTDrows++;
+  allCellsHistogram[String(cells.length)]=(allCellsHistogram[String(cells.length)]||0)+1;
+  const textCells=cells.map(c=>plain(c));
   for(const [surname,d] of wishes){
-   if(!new RegExp('\\b'+surname+'\\b','i').test(name))continue;
-   let website=null;
-   // Check third cell only. Never assume a district guessed from URL.
-   for(const m of cells[2].matchAll(/<a\b([^>]*)>/gi)){
-    const href=/\bhref=["']([^"']+)/i.exec(m[1])?.[1]||'';
-    website=tidyUrl(href);if(website)break;
+   const nameCellIndexes=textCells.flatMap((v,i)=>new RegExp('\\b'+surname+'\\b','i').test(v)&&v.length<=230?[i]:[]);
+   if(!nameCellIndexes.length)continue;
+   candidateNameCells++;
+   // Never use arbitrary row links as campaign websites, especially
+   // State SOS profile links. Only a explicitly website-labeled anchor
+   // on THE SAME ORIGINAL ROW can be considered a preliminary lead.
+   const siteAnchors=[];
+   for(let i=0;i<cells.length;i++){
+    for(const tag of cells[i].matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)){
+     const label=plain(tag[2]);
+     if(!/(candidate|campaign|official)\s*website|\bwebsite\b/i.test(label))continue;
+     const href=/\bhref=["']([^"']+)["']/i.exec(tag[1])?.[1]||'';
+     const url=tidyUrl(href);
+     if(url&&!/\.sos\.(mn\.gov|state\.mn\.us)\/?/i.test(url))siteAnchors.push({originalTableCellIndex:i,websiteLabel:label.slice(0,50),website:url});
+    }
    }
-   if(!website)website=tidyUrl(plain(cells[2]));
-   out.push({officialGeneralWinnerDistrict:d,officialGeneralWinnerName:winnerByDistrict.get(d),
-    originalSameTableRowCandidateName:name.slice(0,125),originalSameTableRowWebsite:website,
-    originalSiteOwnershipNotYetAuthenticated:true,
-    indexCapturedPriorToGeneralNotGuaranteedFullElectionFilingUniverse:true});
+   // Separately characterize any original field that is actually labeled
+   // Campaign Website, and do not confuse it with candidate district.
+   const originalTextSenateDistrict=textCells.flatMap(v=>{
+    const m=/State\s+Senat(?:e|or)\s+District\s+0*(\d{1,2})/i.exec(v);
+    return m?[String(Number(m[1]))]:[];
+   })[0]||null;
+   const personName=nameCellIndexes.map(i=>textCells[i]).find(x=>x.length<=115&&!x.includes('@'))||null;
+   matched.push({
+    searchedActualSenatorSurname:surname,officialGeneralWinnerDistrict:d,
+    officialGeneralWinnerName:winnerByDistrict.get(d),
+    originalNamedCandidateShortCellText:personName?.slice(0,115)||null,
+    originalTableCellIndexesContainingSurname:nameCellIndexes,
+    originalSameRowExplicitSenateDistrict:originalTextSenateDistrict,
+    originalSameRowExplicitWebsiteLinks:siteAnchors.slice(0,5),
+    originalRawHtmlDoesNotProvideVerifiedCurrentCampaignOwnership:true,
+    validNamedPersonPlusWebsiteAndDistrictStrictlyMatched:siteAnchors.length>0&&originalTextSenateDistrict===d,
+    originalFullElectionCensusUnproven:true
+   });
   }
  }
- return {matchedWinnerRows:out,htmlRowElements: anyRealRow,
+ return {matchedWinnerRows:matched.slice(0,40),htmlRowElements:actualTDrows,
+  originalTableCellCountHistogram:allCellsHistogram,
+  originalDocumentContainsTargetSurnames:targetMentionedInFullPage,
+  originalNamedCandidateRowHits:candidateNameCells,
   textContainsSenateOffice:/(State Senator District|State Senate District|Senate)/i.test(html),
-  // Print only count and booleans about page shape, not candidate contact fields.
-  containsCandidateProfileLinks:/CandidateFilingResults\.aspx/i.test(html),
   sourceIsRawFullCandidateFiledExport:false};
 }
 for(const target of t.targets){
