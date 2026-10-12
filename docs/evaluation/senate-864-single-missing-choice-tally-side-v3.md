@@ -1,4 +1,4 @@
-# #864 — 2024 one-missing-named-choice original tally-side diagnostic V3
+# #864 — 2024 one-missing-named-choice original tally-side diagnostic (V4 recovery)
 
 ## What V2 independently proved
 
@@ -44,7 +44,7 @@ contains only digests for that roll, not a reversible stored member roster.
 ## Protected execution boundary
 
 [The one-time review workflow](../../.github/workflows/senate-864-single-choice-tally-side-readonly-v3.yml)
-requires the unique `SENATE_864_SINGLE_CHOICE_TALLY_SIDE_ONESHOT_20261012_V3`
+requires the **new** unique `SENATE_864_SINGLE_CHOICE_TALLY_SIDE_ONESHOT_20261012_V4`
 marker on a first-attempt *reviewed main merge*. A PR can perform only same-repo
 synthetic tests, disposable migrations/`EXPLAIN` **without ANALYZE**, and
 the original SHA-preflight. **No PR job has the Neon management key.**
@@ -52,7 +52,7 @@ the original SHA-preflight. **No PR job has the Neon management key.**
 The original government source universe is fixed to the **same 4 original
 indexed source artifacts and 16 independently preserved OCR artifacts** from
 the earlier V2 protected comparison. The separate pre-secret main job runs
-`npm run check`, migrations/`EXPLAIN` on disposable PostgreSQL and a
+disposable PostgreSQL **migrations before** `npm run check`, followed by\n`EXPLAIN` (without `ANALYZE`) on that disposable database and a
 dependency audit. The source preflight verifies original metadata artifact
 SHA-256s before packaging them for the protected job; the protected job
 reverifies original SHA proofs, then reuses the exact same three
@@ -63,16 +63,39 @@ explicitly `ROLLBACK`s before allowing strictly allowlisted numeric and
 enumerated output. A separate keyless job checks the output fields before
 posting a sanitized issue #864 receipt.
 
-The V3 result must independently match **all previously frozen V2 counts
+The V4 result must independently match **all previously frozen V2 counts
 and by-year values**; a changed stored cohort, unexpected roll count,
 different original PDF, different digest intersection, or unexpected
 private output causes **HOLD**, not silent acceptance. No row-level
 exports or database repair, forecasts, serving features, data migrations,
 training, deployments or 2027 behavior are authorized.
 
-**Status:** code and test instrumentation only until an exact-main protected
-run and its sanitized receipt are verified. Do not describe a YEA/NAY side
-as an observed production fact before that receipt exists.
+## V3 failure preserved and V4 recovery boundary
+
+The first reviewed V3 one-shot merge, [PR #1219](https://github.com/killjoy00/votepredict/pull/1219),
+was green on the PR's independent source, disposable SQL, full CI and regression
+gates. Its [first-attempt main run #38261106387](https://github.com/killjoy00/votepredict/actions/runs/38261106387)
+then passed the full 20-original-artifact SHA preflight but **failed before the
+protected step**: the dedicated main-presecret job ran `npm run check`
+*before* creating the disposable test schema. Exactly one of 2,785 tests
+then failed because the local test-only relation `public.ingestion_runs`
+was absent. The **protected Neon job was skipped**. There is **no source
+YEA/NAY attribution from V3**. The intended keyless failure reporter also
+failed to parse JavaScript because a literal apostrophe was unescaped. Thus
+V3 produced neither a protected result nor an issue receipt; preserve the
+held run as an observed negative, not an implicit pass.
+
+V4 corrects the **main-only dependency order** to disposable
+`npm run db:migrate` before `npm run check`, while retaining the
+PR's prior green validations. It also repairs the keyless `github-script`
+syntax and adds a **new offline test that compiles the reporter as an async
+JavaScript function** and guards migrations/check/EXPLAIN ordering,
+the exact unique V4 marker, private output and protected-job isolation.
+
+**Status:** V3 protected query **never executed**. V4 is code/test
+instrumentation only until a fresh *exact-main, first-attempt, marker-bound*
+protected audit and sanitized issue receipt both succeed. Do not describe a
+YEA/NAY side as a source-to-Neon observed fact before that receipt exists.
 
 ## Still explicitly not resolved
 
