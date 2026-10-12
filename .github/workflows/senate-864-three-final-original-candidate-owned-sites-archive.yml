@@ -1,0 +1,82 @@
+name: Last three Minnesota senators original 2020 and older owned-campaign site recovery
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-864-last-three-campaign-website-original-archive-2020-and-older-leads-v1.json
+      - scripts/probe-senate-864-last-three-candidate-owned-historic-original-sites.mjs
+      - .github/workflows/senate-864-three-final-original-candidate-owned-sites-archive.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  last-three-owned-original-site-acquisition:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-wiger-tomassoni-bakk-last-three-owned-originals-20261012'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    name: Original website evidence — ${{ matrix.track }}
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        track: [wiger, tomassoni, bakk]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: node --check scripts/probe-senate-864-last-three-candidate-owned-historic-original-sites.mjs
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen original complete MN LRL actual Senate service and oath
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: proof/lrl
+      - name: Reopen original full official Minnesota SOS 2020 election result and seven-field candidate lookup
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38089571113
+          name: senate-2020-22-public-candidate-original-source-acquisition
+          github-token: ${{ github.token }}
+          path: proof/sos
+      - name: Reopen independently audited 2021-25 95 actual senators 1285 first-party site short excerpts
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38261292249
+          name: senate-864-five-thin-13-actual-2022-originals-1285-senator-site-excerpts-v1
+          github-token: ${{ github.token }}
+          path: proof/baseline
+      - name: Original complete HTML whole-CDX-indexed SHA1 acquisition; source identity is a separately audited gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find proof/lrl -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find proof/lrl -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find proof/lrl -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          sos="$(find proof/sos -type f -name 2020-sos-general-stsenate.response -print -quit)"
+          base="$(find proof/baseline -type f -name senate-864-95-person-historical-candidate-issue-depth-1285.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$sos" && test -n "$base"
+          node --import tsx scripts/probe-senate-864-last-three-candidate-owned-historic-original-sites.mjs \
+            --track "${{ matrix.track }}" \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --sos-original-dir "$(dirname "$sos")" \
+            --prior-1285-matrix "$base" \
+            --out-dir proof/candidates
+      - name: Keep entire original candidate HTML/CDX only in 30-day temporary audit artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-last-three-original-candidate-website-${{ matrix.track }}-v1
+          path: proof/candidates/
+          retention-days: 30
+          if-no-files-found: warn
