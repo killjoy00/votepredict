@@ -1,0 +1,88 @@
+{
+  "version": "senate-media-miller-enterprise-original-pinned-answer-speaker-attribution-receipts-v1",
+  "researchLocalDate": "2026-10-11",
+  "firstSuccessfulLivePublicEvidenceWorkflow": {
+    "runId": 38202630302,
+    "headSha": "edbcc9df3978c6dcecba2e25e0bbc30e17a11ff5",
+    "publicMetadataArtifactId": 11726325317,
+    "syntheticTestsPassed": 7,
+    "syntheticTestsFailed": 0
+  },
+  "source": {
+    "originalUrl": "https://www.enterpriseminnesota.org/articles/winter-2021/valuable-legislative-support/",
+    "namedServingSenator": "Jeremy Miller",
+    "historicalMemberRecord": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15335",
+    "publisherDisplayedDay": "2021-11-08",
+    "publisherSourceForm": "first-party magazine editorial interview with printed Miller question-and-answer labels",
+    "selectedShortPolicyFragment": "my view is that the free market is working",
+    "policyIssue": "minimum wage/free-market wage levels and manufacturer labor shortages",
+    "historicalOriginalHtmlOnlyNotRecordedVoice": true
+  },
+  "versions": [
+    {
+      "archiveCaptureUtc": "2022-10-05T01:59:37Z",
+      "indexedOriginalSha1Base32": "Z55ODFJANQV2PCOGS32J3IZE3GEL2DBR",
+      "downloadedOriginalHtmlSha256": "28dada90321263cbf20a75cc9949c176527a97c2d89d33c0831ed63469167f36",
+      "downloadedOriginalHtmlBytes": 65348,
+      "archiveReplaySourceGateStatus": "indexed_sha1_and_raw_sha256_reverified",
+      "paragraphAndSpeakerBoundary": {
+        "totalHtmlParagraphsReviewed": 61,
+        "explicitMillerLabeledParagraphCount": 13,
+        "selectedShortPolicyFragmentPresentInPageVisibleText": true,
+        "paragraphsContainingSelectedShortPolicyFragment": 1,
+        "fragmentInsideSameExplicitMillerLabeledParagraph": true,
+        "independentlyMatchingExplicitMillerParagraphs": 1,
+        "fragmentWithinExplicitOtherSpeakerParagraphs": 0,
+        "characterDistanceFromPrintedMillerLabelToFragment": 242,
+        "proofRequiresSameParagraphStartingWithMillerLabel": true,
+        "zeroApprovalOfRecordedAudioOrCompleteHumanReviewedQuotation": true,
+        "historicalFirstPublicAtCurrentDisplayed2021DateNotEstablished": true
+      },
+      "originalBodyReverifiedAgainstPreviousRealPublicReceipt": true
+    },
+    {
+      "archiveCaptureUtc": "2023-01-31T06:39:41Z",
+      "indexedOriginalSha1Base32": "KDDZ7S7QX7HETNGDLYUQLZUUTAO5275J",
+      "downloadedOriginalHtmlSha256": "fb8fd1d2c4bd209e54a905d5b050310a520a46d46f82c3a910a7270c723f3251",
+      "downloadedOriginalHtmlBytes": 67207,
+      "archiveReplaySourceGateStatus": "indexed_sha1_and_raw_sha256_reverified",
+      "paragraphAndSpeakerBoundary": {
+        "totalHtmlParagraphsReviewed": 61,
+        "explicitMillerLabeledParagraphCount": 13,
+        "selectedShortPolicyFragmentPresentInPageVisibleText": true,
+        "paragraphsContainingSelectedShortPolicyFragment": 1,
+        "fragmentInsideSameExplicitMillerLabeledParagraph": true,
+        "independentlyMatchingExplicitMillerParagraphs": 1,
+        "fragmentWithinExplicitOtherSpeakerParagraphs": 0,
+        "characterDistanceFromPrintedMillerLabelToFragment": 242,
+        "proofRequiresSameParagraphStartingWithMillerLabel": true,
+        "zeroApprovalOfRecordedAudioOrCompleteHumanReviewedQuotation": true,
+        "historicalFirstPublicAtCurrentDisplayed2021DateNotEstablished": true
+      },
+      "originalBodyReverifiedAgainstPreviousRealPublicReceipt": true
+    }
+  ],
+  "totals": {
+    "distinctPublisherUrlsUnderReview": 1,
+    "previouslyAuthenticatedDistinctSourceUrlsReused": 1,
+    "newlyOriginalAuthenticatedSourceUrls": 0,
+    "priorArchiveBodyVersionsIndependentlyReverified": 2,
+    "newlyDiscoveredHtmlArchiveVersions": 0,
+    "authenticatedHistoricPagesWithShortTextInsideSamePrintedMillerParagraph": 2,
+    "distinctIndividualPrintedStatementCandidatePassagesAuthenticated": 1,
+    "originalRecordedAudioBinariesAuthenticated": 0,
+    "humanCertifiedCompleteVerbatimSpeakerQuotations": 0,
+    "recordedStateSenateMemberVotesVerified": 0
+  },
+  "interpretation": {
+    "attribution": "selected_short_policy_fragment_inside_same_HTML_p_paragraph_beginning_Miller_colon",
+    "earliestVerifiedVersionContainingOwnLabeledPrintedAnswerUtc": "2022-10-05T01:59:37Z",
+    "noEvidenceOfNovember2021AuthenticOriginalBodyPublicBy": true,
+    "twoCaptureVersionsNotTwoDifferentSenatorStatements": true,
+    "cannotUseToForecastAnyVoteBeforeFirstAuthenticatedCaptureUtc": true,
+    "notProofOfLiveSpokenInterviewOrIndependentAudio": true,
+    "cannotAutomaticallyTurnIntoForecastFeature": true,
+    "noPrivateDatabaseOrCollectorOrServingOrModelChanges": true,
+    "noRawHtmlOrFullInterviewPersisted": true
+  }
+}
