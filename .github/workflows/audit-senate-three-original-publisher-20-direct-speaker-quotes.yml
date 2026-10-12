@@ -1,0 +1,73 @@
+name: Independently authenticate 20 historic named senator quotes in three full original publisher HTML pages
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-three-original-publisher-direct-speech-20-excerpts-v1.json
+      - scripts/audit-senate-three-original-publisher-20-short-direct-speaker-excerpts.mjs
+      - tests/senate-three-original-archived-publisher-20-direct-quotes.test.ts
+      - .github/workflows/audit-senate-three-original-publisher-20-direct-speaker-quotes.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  independent-original-publisher-three-source-cdx-html-and-20-named-speaker-quotes:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-three-senators-20-independent-original-publisher-speech-quotes-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen fully original government Minnesota LRL historical Senate service and swearing
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen recent 2022 2025 candidate interviews in original Sahan and MPR archive HTML
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38193981012
+          name: senate-uncovered-attributed-publisher-originals-recent-v1
+          github-token: ${{ github.token }}
+          path: original/publisher-recent
+      - name: Reopen old 2020 original direct Tomassoni statement in Senate DFL publisher HTML
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38193981012
+          name: senate-uncovered-attributed-publisher-originals-older-v1
+          github-token: ${{ github.token }}
+          path: original/publisher-older
+      - name: Independently rehash original gov, publisher CDX SHA1, entire HTML SHA256, isolate named first-person quotation scope and verify 20 exact passages
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
+          node --import tsx scripts/audit-senate-three-original-publisher-20-short-direct-speaker-excerpts.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --publisher-recent-original-dir original/publisher-recent \
+            --publisher-older-original-dir original/publisher-older \
+            --output-json original/proof/three-original-publishers-20-literal-senator-speaker-quotes-independent-cdx-html-audit.json
+      - name: Preserve independent authentic historical full HTML CDX and 20 named direct quote proofs separately from candidate website coverage
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-three-original-publishers-20-attributed-speaker-quote-audit-v1
+          path: original/proof/
+          if-no-files-found: warn
+          retention-days: 30
