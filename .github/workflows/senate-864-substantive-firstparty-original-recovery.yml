@@ -7,6 +7,8 @@ on:
     paths:
       - scripts/probe-senate-864-substantive-new-originals.mjs
       - tests/senate-864-substantive-new-original-replays.test.mjs
+      - tests/senate-864-33-substantive-claims-provenance.test.mjs
+      - data/evaluation/senate-864-historically-authenticated-and-current-primary-substantive-claims-v1.json
       - data/evaluation/senate-864-substantive-firstparty-current-original-leads-v1.json
       - .github/workflows/senate-864-substantive-firstparty-original-recovery.yml
   workflow_dispatch:
@@ -27,7 +29,24 @@ jobs:
         run: |
           node --test \
             tests/senate-864-substantive-public-positions-offline.test.mjs \
-            tests/senate-864-substantive-new-original-replays.test.mjs
+            tests/senate-864-substantive-new-original-replays.test.mjs \
+            tests/senate-864-33-substantive-claims-provenance.test.mjs
+      - name: Download independently audited original 95-serving-senator campaign coverage matrix
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38261292249
+          name: senate-864-five-thin-13-actual-2022-originals-1285-senator-site-excerpts-v1
+          github-token: ${{ github.token }}
+          path: research-source/serving-95-original
+      - name: Independently rebuild all actual service-year and fifteen-issue matrix
+        shell: bash
+        run: |
+          matrix="$(find research-source/serving-95-original -type f \
+            -name 'senate-864-95-person-historical-candidate-issue-depth-1285.json' -print -quit)"
+          test -n "$matrix"
+          node scripts/audit-senate-864-substantive-public-positions-offline.mjs \
+            --coverage-json "$matrix" \
+            --out research-output/senate-864-95-actual-serving-person-year-issue-current-leads.json
       - name: Bounded Wayback CDX and SHA-indexed original HTML replay
         run: |
           node scripts/probe-senate-864-substantive-new-originals.mjs \
@@ -37,6 +56,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: senate-864-eight-exact-firstparty-policy-original-source-audit
-          path: research-output/senate-864-eight-exact-2023-25-policy-originals.json
+          path: research-output/*.json
           if-no-files-found: warn
           retention-days: 30
