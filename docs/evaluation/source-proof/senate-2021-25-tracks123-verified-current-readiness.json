@@ -1,0 +1,162 @@
+{
+  "schema": "mn-2021-25-Senate-three-tracks-source-proof-and-private-readonly-db-gate-v2",
+  "issue": 864,
+  "asOf": "2026-10-11",
+  "sourcePins": {
+    "prior": {
+      "path": "docs/evaluation/source-proof/senate-2021-25-four-bucket-acceptance-gap-scorecard.json",
+      "sha": "6a2fbbde9c2d45ffffb6b7748810306e81478c37"
+    },
+    "committee": {
+      "path": "docs/evaluation/source-proof/senate-2022-25-committee-original-minutes-source-ledger.json",
+      "sha": "6529ecccd2c779fc72dba36da7f69ad8cb71b78c"
+    },
+    "unlinked": {
+      "path": "docs/evaluation/source-proof/senate-committee-141-unlinked-original-meeting-roster.json",
+      "sha": "e6cff658e18fb7ef61b1391e0af5403e3071fd2e"
+    },
+    "finance": {
+      "path": "docs/evaluation/source-proof/cfb-2023-24-served-22-71-yearend-version-statutory-release-bounds.psv",
+      "sha": "bfa1c1eff6a095a3a0d03aa49a34e1d929d6a388"
+    },
+    "revenue": {
+      "path": "docs/evaluation/source-proof/cfb-2023-24-original-revenue-pcr-committee-identity.psv",
+      "sha": "edeb43c82b8ad3369c2a67e3ffa419cf1681965c"
+    },
+    "terminated": {
+      "path": "docs/evaluation/source-proof/cfb-two-current-terminated-senate-original-2025-26-financial-report-versions.psv",
+      "sha": "233cb7d2fb8f8f0a2d61590a8d3c760251105e25"
+    },
+    "campaignFirst": {
+      "path": "data/evaluation/senate-first-20-original-nine-actual-senators-61-short-excerpts-v1.json",
+      "sha": "97e7489cf354e4b5e4502e2356cd5b50766e0903"
+    },
+    "campaignSecond": {
+      "path": "data/evaluation/senate-second20-15-original-serving-senators-issue-excerpts-v1.json",
+      "sha": "6f10fa5a95bde5cecdfd4a3d8916a2e21415b771"
+    },
+    "media": {
+      "path": "docs/evaluation/senate-media-verified-live-neon-capture-year-counts.json",
+      "sha": "ce956da6b58b7939cfc2d07416afaa03e8274835"
+    }
+  },
+  "committee": {
+    "electronicIndexedMeetings2022To2025": 1592,
+    "withOriginalMinutes": 1451,
+    "withoutOriginalMinutes": 141,
+    "originalMinutesPdfUrls": 1452,
+    "previouslyRecoveredOriginalOCR": 207,
+    "datedMediaLeadsForUnlinked": 138,
+    "unlinkedWithoutMediaLeads": 3,
+    "original2021OfficialPrintMeetingDenominator": null,
+    "year2022PrintElectronicParityEstablished": false,
+    "allOfficialDistinctVoteOrMotionDenominator": null,
+    "exactStoredVoteRowsReconciled": false
+  },
+  "finance": {
+    "actualServedSenatorPanel": 22,
+    "yearEnd2023And2024VersionReferences": 71,
+    "authenticDistinctOriginalPdfBodies": 68,
+    "originalIdentityHolds": 2,
+    "duplicateOfficialVersionAlias": 1,
+    "independentlyObservedRevenueCommitteeYears": 38,
+    "independentlyCheckedRevenueCommitteeYears": 44,
+    "exactPublicByHistReportVersionsProven": 0,
+    "newAuthenticatedReportPdfsForCurrentTerminatedPair": 5,
+    "official2026RecentTermination": {
+      "registration": "18763",
+      "registeredOn": "2022-02-07",
+      "terminatedOn": "2026-09-05",
+      "officialFullAPIbodySHA256": "41e0a0e0e31f7eb7d7289260f4137e81da714f3025b633adc8fd8b2505dafb1d",
+      "originalAPIbytes": 3121,
+      "sourceRun": 38177847361,
+      "artifactId": 11716481480,
+      "originalArtifactZipSHA256": "751ae1ed1a624c7346ce76bd801d536721946f855848e7914c65f17e4632ff2f",
+      "notProofTerminatedIn2023Or2024": true,
+      "mechanism": null
+    },
+    "andersonExactTerminationDate": null,
+    "legallyOwed2021To2025ReportDenominator": null,
+    "noSourceReportVersionHistoricPublicByFromStatutoryReleaseFloor": true
+  },
+  "campaign": {
+    "actualServing2021To2025StateSenators": 95,
+    "senatorsWithOriginalFirstPartyExcerptLeads": 79,
+    "exactOriginalExcerptResearchRows": 1006,
+    "noSelectedExcerptLeadsCount": 16,
+    "stillUnobservedSelectedResearchSenators": [
+      "Bruce Douglas Anderson",
+      "David J. Tomassoni",
+      "Doron Clark",
+      "Eric Lucero",
+      "Gene Dornink",
+      "Jason Rarick",
+      "Julie A. Rosen",
+      "Kelly L. Morrison",
+      "Mary Kiffmeyer",
+      "Matt D. Klein",
+      "Michael E. Kreun",
+      "Robert Kupec",
+      "Scott J. Newman",
+      "Sr., Charles W. Wiger",
+      "Susan Pha",
+      "Thomas M. Bakk"
+    ],
+    "firstTwentyNewPeople": 9,
+    "firstTwentyExactExcerpts": 61,
+    "secondTwentyNewPeople": 15,
+    "secondTwentyExactExcerpts": 137,
+    "officialWholeOriginalLRLSHA256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "independentOriginalSourceRebuildRun": 38178392306,
+    "artifactId": 11716621910,
+    "artifactZIP_SHA256": "b0ebf822fd3fc040e40986afd195fab4fb58a55d860c0ba6161ee0826f16b0ea",
+    "originalFullRosterJSON_SHA256": "a9b6e0345a1b030bde162d83d6b3ab20167ad395ed66aceac8957f6ab11c117a",
+    "originalFullRosterJSONbytes": 87438,
+    "allOfficialFiledCampaignWebsiteAndVersionsDenominator": null,
+    "archivedCopyCaptureDateIsNotFirstAuthoredDate": true
+  },
+  "media": {
+    "originalProtectedReadOnlyNeonAggregateRun": 38093691235,
+    "contextRowsByArchiveYear": {
+      "2021": 131,
+      "2022": 182,
+      "2023": 155,
+      "2024": 118,
+      "2025": 208
+    },
+    "studyYearContextRows": 794,
+    "otherYearContextRows": 154,
+    "allYearsContextRows": 948,
+    "distinctDocCountSummedWithinYears": 688,
+    "actuallyHumanVerifiedSenatorQuoteCount": null,
+    "protectedTransactionReadOnlyRolledBack": true,
+    "protectedOriginalSQLRoleGloballyStrictSELECTOnly": false,
+    "verifiedDeployedProductionBranch": false,
+    "privateRowExportPerformed": false,
+    "contextMentionNotSpeaker": true
+  },
+  "reconciliation": {
+    "userDirectedReadOnlyCompletion": true,
+    "exactAuthorizedVotePredictRestrictedSELECTOnlyRoleAvailableInThisAudit": false,
+    "fullRowLevelSourceToExistingEvidenceComplete": false,
+    "existingMediaAggregateDoesNotProveRowLevelCompleteness": true,
+    "existingThreeDistrictCampaignPilotDoesNotProveStatewide": true,
+    "committeeSQL": "scripts/export-senate-committee-actions-reconciliation-readonly.sql",
+    "committeeOffline": "scripts/reconcile-senate-committee-actions-offline.ts",
+    "financeSQL": "scripts/export-cfb-historical-senate-evidence-readonly.sql",
+    "financeOffline": "scripts/audit-cfb-historical-release-offline.ts",
+    "mediaStrictPrivateExport": "scripts/export-senate-media-readonly.ts",
+    "mediaOffline": "scripts/audit-senate-media-remarks-offline.ts",
+    "exactOriginalPerRowSHARequired": true,
+    "exportOnlyToPrivateLocalFiles": true,
+    "noFallbackToUnrestrictedOwnerRole": true,
+    "officialRealDenominatorsUnproved": true,
+    "historyCompleteAndModelEligible": false
+  },
+  "freeze": {
+    "noRawSourceBodiesSensitiveDonorsContactOrTransactionsCommitted": true,
+    "noProductionDatabaseReadWriteInThisIncrement": true,
+    "noForecastServingModelSchedulerOr2027Actions": true,
+    "issue864MustStayOpen": true
+  }
+}

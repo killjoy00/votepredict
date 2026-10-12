@@ -1,0 +1,24 @@
+name: Verify MN Senate 2021-25 three historical evidence tracks and private DB gates
+on:
+  pull_request:
+    paths:
+      - docs/evaluation/source-proof/senate-2021-25-tracks123-verified-current-readiness.json
+      - docs/evaluation/senate-2021-25-tracks123-historical-source-to-db-readiness.md
+      - tests/senate-2021-25-tracks123-verified-current-readiness.test.ts
+      - .github/workflows/senate-864-tracks123-source-to-db-readiness.yml
+permissions:
+  contents: read
+jobs:
+  strict-independent-nine-source-file-hash-and-database-permission-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Audit nine immutable upstream source ledgers, authentic senator people/years, and no private production access
+        run: node --import tsx --test tests/senate-2021-25-tracks123-verified-current-readiness.test.ts
