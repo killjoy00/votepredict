@@ -95,10 +95,6 @@ function recordedMotionAnchor(text:string, tallyStart:number):number|undefined {
   )];
   const last=requests.at(-1);
   if(!last)return undefined;
-  const after=preceding.slice((last.index??0)+last[0].length);
-  // A fully finished prior motion is not the active request for a later roll.
-  if(/\bMOTION\s+(?:FAILED|PASSED|PREVAILED|ADOPTED|CARRIED)\b/i.test(after))
-    return undefined;
   return left+(last.index??0);
 }
 
