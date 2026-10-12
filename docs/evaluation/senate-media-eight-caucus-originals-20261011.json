@@ -1,0 +1,450 @@
+{
+  "version": "senate-media-eight-caucus-originals-public-receipts-v1",
+  "researchLocalDate": "2026-10-11",
+  "firstSuccessfulPublicWorkflow": {
+    "runId": 38203331052,
+    "initialHead": "38f775d13359534de670087602d78b123fb59302",
+    "artifactId": 11725833641,
+    "syntheticTestsPassed": 6
+  },
+  "counts": {
+    "selectedFirstPartyUrls": 8,
+    "distinctNamedServingSenators": 9,
+    "verifiedDistinctHistoricalOriginalUrls": 5,
+    "verifiedArchiveHtmlVersions": 8,
+    "namedIndividualShortCueCandidatesInHistoricalOriginalPages": 6,
+    "unknownOriginalSourceUrls": 3,
+    "sourceUrlLeadsNewlyDiscovered": 0,
+    "humanApprovedFullSenatorQuotations": 0,
+    "recordedVotesVerified": 0,
+    "originalVoiceAudioVerified": 0
+  },
+  "sources": [
+    {
+      "id": "public-2021-osmek-oath",
+      "url": "https://www.mnsenaterepublicans.com/senator-david-osmek-takes-oath-of-office-as-the-legislature-begins-the-first-day-of-the-2021-2022-legislative-session/",
+      "displayDates": [
+        "2021-01-06"
+      ],
+      "individuals": [
+        {
+          "name": "David Osmek",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15385"
+        }
+      ],
+      "observation": "Oath and budget statement",
+      "commonCrawlIndex": [
+        {
+          "collection": "CC-MAIN-2021-10",
+          "indexStatus": "index_unavailable_unknown"
+        },
+        {
+          "collection": "CC-MAIN-2021-17",
+          "indexStatus": "index_unavailable_unknown"
+        }
+      ],
+      "firstVerifiedUtc": null,
+      "cues": [
+        {
+          "speaker": "David Osmek",
+          "foundInAnOriginal": false
+        }
+      ],
+      "originals": []
+    },
+    {
+      "id": "public-2021-koran-budget",
+      "url": "https://www.mnsenaterepublicans.com/senator-mark-koran-surplus-doesnt-mean-new-taxes-the-focus-must-remain-on-helping-struggling-minnesotans/",
+      "displayDates": [
+        "2021-03-01"
+      ],
+      "individuals": [
+        {
+          "name": "Mark Koran",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15487"
+        }
+      ],
+      "observation": "2021 surplus and tax remarks",
+      "commonCrawlIndex": [
+        {
+          "collection": "CC-MAIN-2021-17",
+          "indexStatus": "index_unavailable_unknown"
+        },
+        {
+          "collection": "CC-MAIN-2021-25",
+          "indexStatus": "index_unavailable_unknown"
+        }
+      ],
+      "firstVerifiedUtc": null,
+      "cues": [
+        {
+          "speaker": "Mark Koran",
+          "foundInAnOriginal": false
+        }
+      ],
+      "originals": []
+    },
+    {
+      "id": "public-2022-bigham-eken-separated",
+      "url": "https://senatedfl.mn/senators-karla-bigham-and-kent-eken-named-senate-dfl-whips-for-2022-legislative-session/",
+      "displayDates": [
+        "2022-01-31"
+      ],
+      "individuals": [
+        {
+          "name": "Karla Bigham",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15281"
+        },
+        {
+          "name": "Kent Eken",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10764"
+        }
+      ],
+      "observation": "TWO separately explicitly labeled senator quotations in ONE news page",
+      "commonCrawlIndex": [
+        {
+          "collection": "CC-MAIN-2022-05",
+          "indexStatus": "index_unavailable_unknown"
+        },
+        {
+          "collection": "CC-MAIN-2022-21",
+          "indexStatus": "index_unavailable_unknown"
+        }
+      ],
+      "firstVerifiedUtc": "2022-03-11T19:51:03Z",
+      "cues": [
+        {
+          "speaker": "Karla Bigham",
+          "foundInAnOriginal": true
+        },
+        {
+          "speaker": "Kent Eken",
+          "foundInAnOriginal": true
+        }
+      ],
+      "originals": [
+        {
+          "utc": "2022-03-11T19:51:03Z",
+          "indexSha1": "W6T26AXVFFZJHAPPTOFAAZB6NDQWKV76",
+          "rawSha256": "026e8becb82577a34cc27388faed93048a6f247991853ba3f60f1a5287268131",
+          "bytes": 154251,
+          "status": "sha1_authenticated_original_publisher_html",
+          "shortCues": [
+            {
+              "name": "Karla Bigham",
+              "cuePresentInOriginalVisibleBody": true,
+              "namedSenatorNearSelectedIssueCue": true,
+              "completeIndividualQuotationApproved": false,
+              "printedQuoteTurnBoundedAndApproved": false
+            },
+            {
+              "name": "Kent Eken",
+              "cuePresentInOriginalVisibleBody": true,
+              "namedSenatorNearSelectedIssueCue": true,
+              "completeIndividualQuotationApproved": false,
+              "printedQuoteTurnBoundedAndApproved": false
+            }
+          ]
+        },
+        {
+          "utc": "2022-06-29T12:45:13Z",
+          "indexSha1": "54ASOGEJRZQXKNSVI3XQKOTBVNTH4ON5",
+          "rawSha256": "7a2621bdbe093c90c594af36124f53203399504758ce48c07eaec168afb9f06b",
+          "bytes": 151424,
+          "status": "sha1_authenticated_original_publisher_html",
+          "shortCues": [
+            {
+              "name": "Karla Bigham",
+              "cuePresentInOriginalVisibleBody": true,
+              "namedSenatorNearSelectedIssueCue": true,
+              "completeIndividualQuotationApproved": false,
+              "printedQuoteTurnBoundedAndApproved": false
+            },
+            {
+              "name": "Kent Eken",
+              "cuePresentInOriginalVisibleBody": true,
+              "namedSenatorNearSelectedIssueCue": true,
+              "completeIndividualQuotationApproved": false,
+              "printedQuoteTurnBoundedAndApproved": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public-2023-nelson-rochester-schools",
+      "url": "https://www.mnsenaterepublicans.com/statement-from-senator-carla-nelson-following-rochester-public-schools-announcement-of-school-closures-budget-cuts/",
+      "displayDates": [
+        "2023-12-01"
+      ],
+      "individuals": [
+        {
+          "name": "Carla Nelson",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=10778"
+        }
+      ],
+      "observation": "Rochester public school choices statement",
+      "commonCrawlIndex": [
+        {
+          "collection": "CC-MAIN-2023-50",
+          "indexStatus": "index_unavailable_unknown"
+        },
+        {
+          "collection": "CC-MAIN-2024-10",
+          "indexStatus": "index_unavailable_unknown"
+        }
+      ],
+      "firstVerifiedUtc": "2025-03-25T12:27:51Z",
+      "cues": [
+        {
+          "speaker": "Carla Nelson",
+          "foundInAnOriginal": true
+        }
+      ],
+      "originals": [
+        {
+          "utc": "2025-03-25T12:27:51Z",
+          "indexSha1": "OWELKNZ3OF2CKTOQP4OR3XYDAKGV7UBN",
+          "rawSha256": "005c9ade165508d9865355e2b5af05171a39e46bc0a999df02ee587750d8f7a2",
+          "bytes": 95373,
+          "status": "sha1_authenticated_original_publisher_html",
+          "shortCues": [
+            {
+              "name": "Carla Nelson",
+              "cuePresentInOriginalVisibleBody": true,
+              "namedSenatorNearSelectedIssueCue": true,
+              "completeIndividualQuotationApproved": false,
+              "printedQuoteTurnBoundedAndApproved": false
+            }
+          ]
+        },
+        {
+          "utc": "2025-07-22T22:42:25Z",
+          "indexSha1": "T42RD762NRMJW4ZWAXTQI5KZLYQJPMLW",
+          "rawSha256": "6038de654a35fe27f51e1049a5bff5a907f5c044e42e97b6a8e7b6959c8362e2",
+          "bytes": 96648,
+          "status": "sha1_authenticated_original_publisher_html",
+          "shortCues": [
+            {
+              "name": "Carla Nelson",
+              "cuePresentInOriginalVisibleBody": true,
+              "namedSenatorNearSelectedIssueCue": true,
+              "completeIndividualQuotationApproved": false,
+              "printedQuoteTurnBoundedAndApproved": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public-2024-mcewen-mining",
+      "url": "https://senatedfl.mn/senator-jen-mcewen-statement-following-informational-hearing-on-prove-it-first-legislation/",
+      "displayDates": [
+        "2024-02-26",
+        "2024-03-01"
+      ],
+      "individuals": [
+        {
+          "name": "Jen McEwen",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15537"
+        }
+      ],
+      "observation": "Current Feb 26/Mar 1 dates, hearing topic not a recorded vote",
+      "commonCrawlIndex": [
+        {
+          "collection": "CC-MAIN-2024-10",
+          "indexStatus": "index_unavailable_unknown"
+        },
+        {
+          "collection": "CC-MAIN-2024-18",
+          "indexStatus": "index_unavailable_unknown"
+        }
+      ],
+      "firstVerifiedUtc": "2024-04-22T03:56:26Z",
+      "cues": [
+        {
+          "speaker": "Jen McEwen",
+          "foundInAnOriginal": true
+        }
+      ],
+      "originals": [
+        {
+          "utc": "2024-04-22T03:56:26Z",
+          "indexSha1": "LUERCXLMTQVWEL5LPAM3RDXGEBHTLMKN",
+          "rawSha256": "d2a3d97c9519fa64f219dbd8d45be0c4c98904bde749a6a0e3c385e9bde7a6b9",
+          "bytes": 94499,
+          "status": "sha1_authenticated_original_publisher_html",
+          "shortCues": [
+            {
+              "name": "Jen McEwen",
+              "cuePresentInOriginalVisibleBody": true,
+              "namedSenatorNearSelectedIssueCue": true,
+              "completeIndividualQuotationApproved": false,
+              "printedQuoteTurnBoundedAndApproved": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public-2024-hawj-transport",
+      "url": "https://senatedfl.mn/senator-foung-hawj-testifies-in-support-of-transportation-equity-legislation/",
+      "displayDates": [
+        "2024-03-15"
+      ],
+      "individuals": [
+        {
+          "name": "Foung Hawj",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15380"
+        }
+      ],
+      "observation": "Published statement distinct from original testimony",
+      "commonCrawlIndex": [
+        {
+          "collection": "CC-MAIN-2024-18",
+          "indexStatus": "index_unavailable_unknown"
+        },
+        {
+          "collection": "CC-MAIN-2024-22",
+          "indexStatus": "index_unavailable_unknown"
+        }
+      ],
+      "firstVerifiedUtc": "2024-03-24T19:01:09Z",
+      "cues": [
+        {
+          "speaker": "Foung Hawj",
+          "foundInAnOriginal": true
+        }
+      ],
+      "originals": [
+        {
+          "utc": "2024-03-24T19:01:09Z",
+          "indexSha1": "YI4BL3IHGZ27R4JBNOVXUTI5XFGMQNSR",
+          "rawSha256": "aa6da6e8722e33f2f692ba31bfd6699cf97768e74c788dbdb0786a75a3ad5743",
+          "bytes": 93076,
+          "status": "sha1_authenticated_original_publisher_html",
+          "shortCues": [
+            {
+              "name": "Foung Hawj",
+              "cuePresentInOriginalVisibleBody": true,
+              "namedSenatorNearSelectedIssueCue": true,
+              "completeIndividualQuotationApproved": false,
+              "printedQuoteTurnBoundedAndApproved": false
+            }
+          ]
+        },
+        {
+          "utc": "2024-04-22T04:14:23Z",
+          "indexSha1": "RPGCVOQOMF7AOA2UQ6R7E5QIALFQB7S2",
+          "rawSha256": "a168aef89b0f2e50e588c1aa404491de41a241b13739edfe394e4ec6b70e0a01",
+          "bytes": 93360,
+          "status": "sha1_authenticated_original_publisher_html",
+          "shortCues": [
+            {
+              "name": "Foung Hawj",
+              "cuePresentInOriginalVisibleBody": true,
+              "namedSenatorNearSelectedIssueCue": true,
+              "completeIndividualQuotationApproved": false,
+              "printedQuoteTurnBoundedAndApproved": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public-2025-farnsworth-mining",
+      "url": "https://www.mnsenaterepublicans.com/statement-from-sen-farnsworth-on-local-layoffs-in-the-mining-industry/",
+      "displayDates": [
+        "2025-03-21"
+      ],
+      "individuals": [
+        {
+          "name": "Robert Farnsworth",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15579"
+        }
+      ],
+      "observation": "Farnsworth mine layoffs direct quote",
+      "commonCrawlIndex": [
+        {
+          "collection": "CC-MAIN-2025-13",
+          "indexStatus": "index_unavailable_unknown"
+        },
+        {
+          "collection": "CC-MAIN-2025-18",
+          "indexStatus": "index_unavailable_unknown"
+        }
+      ],
+      "firstVerifiedUtc": null,
+      "cues": [
+        {
+          "speaker": "Robert Farnsworth",
+          "foundInAnOriginal": false
+        }
+      ],
+      "originals": []
+    },
+    {
+      "id": "public-2025-clark-ice-student",
+      "url": "https://senatedfl.mn/senator-doron-clark-statement-on-ice-detainment-of-university-of-minnesota-graduate-student/",
+      "displayDates": [
+        "2025-03-28",
+        "2025-04-01"
+      ],
+      "individuals": [
+        {
+          "name": "Doron Clark",
+          "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15649"
+        }
+      ],
+      "observation": "Displayed Mar 28/Apr 1, Clark first senator term Feb 3 2025",
+      "commonCrawlIndex": [
+        {
+          "collection": "CC-MAIN-2025-13",
+          "indexStatus": "index_unavailable_unknown"
+        },
+        {
+          "collection": "CC-MAIN-2025-18",
+          "indexStatus": "index_unavailable_unknown"
+        }
+      ],
+      "firstVerifiedUtc": "2025-03-31T08:06:09Z",
+      "cues": [
+        {
+          "speaker": "Doron Clark",
+          "foundInAnOriginal": true
+        }
+      ],
+      "originals": [
+        {
+          "utc": "2025-03-31T08:06:09Z",
+          "indexSha1": "ZJWOA4ZO7KQIHYZPQAOLN4P57IZOGESX",
+          "rawSha256": "06e86faf450ecb4250a37e959d6f3dab4b08921f7c7badaf4186624eb7a2aab1",
+          "bytes": 86357,
+          "status": "sha1_authenticated_original_publisher_html",
+          "shortCues": [
+            {
+              "name": "Doron Clark",
+              "cuePresentInOriginalVisibleBody": true,
+              "namedSenatorNearSelectedIssueCue": true,
+              "completeIndividualQuotationApproved": false,
+              "printedQuoteTurnBoundedAndApproved": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "boundaries": {
+    "sameUrlMultipleCapturesNotSeparateArticles": true,
+    "bighamEkenTwoNamedSpeakerLeadsButOneArticle": true,
+    "originalCaptureNotExactInitialPublisherTime": true,
+    "shortIssueCueWithNearbyNameNotFullVerbatimQuote": true,
+    "2021OsmekKoranAnd2025FarnsworthSelectedOriginalsRemainUnknown": true,
+    "Nelson2025FirstCaptureDoesNotAuthenticate2023PublicationTime": true,
+    "Clark2025StatementCannotForecastPrecedingStudentDetention": true,
+    "HawjAndMcEwenReleasesPostHearingCannotForecastEarlierHearings": true,
+    "noPrivateVotePredictSourcesUsed": true,
+    "noCollectorIngestionModelOrProductionChanges": true,
+    "noFullArticleAudioWarcOrTranscriptCommitted": true
+  }
+}
