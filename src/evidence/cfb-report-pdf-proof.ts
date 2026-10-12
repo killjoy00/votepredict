@@ -119,6 +119,9 @@ export function parseCfbReportPdfAvailability(
   if (coverageEndOn < coverageStartOn || dueOn < coverageEndOn || filedOn < coverageEndOn) return null;
 
   const proofUrl = viewerProofUrl(reference);
+  // The current PDF establishes document identity / coverage / a legal
+  // release floor, not the exact historical date this binary became public.
+  // Keep proofKind=cfb_report_filing so historical finance selectors fail closed.
   const filingProof = buildCfbReportDisclosureProof({
     registrationNumber: reference.registrationNumber,
     reportName: reference.reportName + (reference.amendment ? ` - Amendment #${reference.amendment}` : ''),
