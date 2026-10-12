@@ -1,0 +1,73 @@
+name: Three sparse senators 2020/22 original caucus and publisher witness search
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-864-three-sparse-senator-original-caucus-and-2022-questionnaire-targets-v1.json
+      - scripts/probe-senate-864-three-sparse-publisher-caucus-originals.mjs
+      - .github/workflows/senate-864-three-sparse-original-caucus-publisher-probe.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  acquire-indexed-original-2020-22-caucus-and-publisher:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-three-remaining-sparse-senators-direct-statements-20261012'
+    name: Verify pre-election original whole indexed SHA1 — ${{ matrix.track }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        track: [kari, weber, newman, ivoter]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --check scripts/probe-senate-864-three-sparse-publisher-caucus-originals.mjs
+      - name: Independent immutable 2021-25 original LRL actual service directory
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: proof/official
+      - name: Reopen 95 actual-person original-campaign site matrix 1285 short excerpts
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38261292249
+          name: senate-864-five-thin-13-actual-2022-originals-1285-senator-site-excerpts-v1
+          github-token: ${{ github.token }}
+          path: proof/coverage
+      - name: Independently verify original pre-election source indexed digest; never auto infer statement
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find proof/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find proof/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find proof/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          baseline="$(find proof/coverage -type f -name senate-864-95-person-historical-candidate-issue-depth-1285.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$baseline"
+          node --import tsx scripts/probe-senate-864-three-sparse-publisher-caucus-originals.mjs \
+            --track "${{ matrix.track }}" \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --prior-1285-matrix "$baseline" \
+            --out-dir proof/original/
+      - name: Store complete whole original HTML and CDX only in 30-day time-limited audit artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-three-sparse-original-caucus-publisher-${{ matrix.track }}-v1
+          path: proof/original/
+          if-no-files-found: warn
+          retention-days: 30
