@@ -125,8 +125,10 @@ export function firstCfbReportAvailabilityForTransaction(
     // A current official PDF plus filing/due dates only establishes a legal
     // not-before boundary. Even if the date equals or exceeds that bound,
     // nothing here independently proves this exact version was public then.
-    // Never promote filing-derived windows into historical as-of features.
-    if(report.proofKind==='cfb_report_filing')return [];
+    // Accept only the explicitly recognised types with affirmative
+    // publication evidence. Unknown runtime proof labels must fail closed too.
+    if(report.proofKind!=='cfb_public_disclosure'
+      &&report.proofKind!=='cfb_large_contribution_notice')return [];
     // If a separately source-dated disclosure also records ordinary report
     // dates, the claimed disclosure may not precede the statutory floor.
     if(report.filedOn&&report.dueOn
