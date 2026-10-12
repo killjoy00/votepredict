@@ -1,0 +1,103 @@
+name: Independently audit 73 recovered historical original candidate website excerpts across five serving senators
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-last16-five-new-original-site-policy-excerpts-v1.json
+      - scripts/audit-senate-five-original-firstparty-73-excerpts.mjs
+      - scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs
+      - tests/senate-last16-five-original-73-excerpts.test.ts
+      - .github/workflows/audit-senate-last16-five-original-73-excerpts.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  independently-reopen-original-source-cdx-html-and-all-73-excerpts:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-five-recovered-senator-sites-exact-original-quotes-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen pinned full official original MN LRL service directory and swearing source
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/lrl
+      - name: Reopen all 64 targeted historical exact/prefix campaign site original CDX and full HTML
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38186753218
+          name: senate-last16-64-targeted-exact-path-archived-original-cdx-html-v1
+          github-token: ${{ github.token }}
+          path: original/last16
+      - name: Reopen all seven full Rarick Senate committee archived issues original HTML from 2021
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38186897084
+          name: senate-rarick-seven-2021-full-original-candidate-issue-pages-v1
+          github-token: ${{ github.token }}
+          path: original/rarick7
+      - name: Reopen earlier complete 32-row original Wayback CDX Rarick source index
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38175993447
+          name: senate-first-20-uncovered-original-26-historic-archive-windows-v1
+          github-token: ${{ github.token }}
+          path: original/first20
+      - name: Independently rehash entire original government, Wayback CDX and HTML and verify all 73 literal short candidate excerpts
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/lrl -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/lrl -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/lrl -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
+          node --import tsx scripts/audit-senate-five-original-firstparty-73-excerpts.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --last16-original-dir original/last16 \
+            --rarick-seven-original-dir original/rarick7 \
+            --first20-original-dir original/first20 \
+            --output-json original/proof/five-new-senate-service-persons-73-historical-issue-excerpts-complete-original-byte-proof.json
+      - name: Rebuild statewide actual 95 serving senators entirely from official LRL and source research ledgers
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/lrl -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/lrl -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/lrl -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          node --import tsx scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --out-dir original/95-senator-coverage
+          node -e 'const x=require("./original/95-senator-coverage/95-senators-public-campaign-coverage.json");const s=x.summary;for(const [k,v] of Object.entries({actualServingStateSenators:95,actuallyServedSenatorsWithAnyKnownSelectedOriginalSiteExcerpt:84,actuallyServedSenatorsWithOriginalSiteBodiesButNoSelectedQuote:0,actuallyServedSenatorsUnobservedInSelectedOriginalSiteSourceLedgers:11,totalExactResearchExcerptRowsForVerifiedSenators:1079,nonMatchingRowsExcludedOrNeedsSeparateIdentityProof:1,productionDatabaseReadsWritesOrForecastChanges:0})){if(s[k]!==v)throw Error(k+" expected "+v+" found "+s[k]);}console.log("VERIFIED OFFICIAL ORIGINAL 95 SERVED / 84 ORIGINAL SITE SOURCED / 1079 HISTORIC EXCERPTS / 11 UNOBSERVED");'
+      - name: Preserve original byte and exact literal source proofs
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-last16-five-new-73-exact-original-html-cdx-proof-v1
+          path: original/proof/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Preserve authentic official statewide first-party website research coverage report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-95-serving-84-original-firstparty-1079-excerpts-v1
+          path: original/95-senator-coverage/
+          if-no-files-found: warn
+          retention-days: 30
