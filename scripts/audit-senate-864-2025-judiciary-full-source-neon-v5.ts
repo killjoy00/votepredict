@@ -62,7 +62,7 @@ export function build2025JudiciaryFullSourceSanitizedV5(out:Output){
   ||out.sourceParsedRawPdfShaMatches!==1452
   ||out.sourceParsedRawPdfShaMismatches!==0
   ||out.originalUrlsAbsentFromStoredRecords!==0
-  ||out.duplicatePersistedSourceUrls!==0
+  ||out.duplicateStoredUrlsForOriginals!==0
   ||out.storedRowsOutsideOriginalUrlSet!==0
   ||out.sourceCandidateRollCallEvents!==153
   ||out.sourceCandidateNamedChoiceTokens!==989
