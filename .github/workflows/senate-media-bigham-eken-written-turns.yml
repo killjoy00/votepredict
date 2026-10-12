@@ -1,0 +1,53 @@
+name: Public historical Bigham Eken two distinct written quote turn proofs
+
+# Issue 987 only. Two exact SHA-pinned original article replays, no raw article,
+# audio, private DB, model, votes, production sources or deployments.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-bigham-eken-written-turns.yml
+      - scripts/probe-senate-media-bigham-eken-original-written-attribution.mjs
+      - tests/senate-media-bigham-eken-original-written-attribution.test.mjs
+      - tests/senate-media-bigham-eken-original-real-receipts.test.mjs
+      - docs/evaluation/senate-media-bigham-eken-original-written-turns-20261011.json
+      - docs/evaluation/senate-media-bigham-eken-original-written-turns-20261011.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-bigham-eken-original-written-quote-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  two-original-publisher-versions:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-bigham-eken-2022-original-written-turns-20261012')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Offline adversarial named attribution, source hash and post-event time controls
+        run: node --test tests/senate-media-bigham-eken-original-written-attribution.test.mjs
+      - name: Exact previously SHA1 indexed and SHA256 pinned public 2022 HTML originals only
+        run: node scripts/probe-senate-media-bigham-eken-original-written-attribution.mjs --output artifacts/senate-media-bigham-eken-original-quote-paragraphs.json
+      - name: Retain brief attribution booleans, original source digests and archive capture UTC only
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-bigham-eken-two-2022-original-written-turns
+          path: artifacts/senate-media-bigham-eken-original-quote-paragraphs.json
+          retention-days: 7
+          if-no-files-found: error
