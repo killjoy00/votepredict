@@ -44,7 +44,7 @@ jobs:
         with:
           node-version: 22
       - name: Fully offline adversarial source and exact original PDF proof tests
-        run: node --test tests/senate-media-mpr-2025-pha-coleman-3play-originals.test.mjs
+        run: node --test tests/senate-media-mpr-2025-pha-coleman-3play-originals.test.mjs tests/senate-media-mpr-2025-pha-coleman-real-receipts.test.mjs
       - name: Bounded actual current original PDF and original 2025 public archives
         run: |
           node scripts/run-senate-media-mpr-2025-pha-coleman-3play-pdfs.mjs \
