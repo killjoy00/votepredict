@@ -1,0 +1,73 @@
+name: Five original 2020-22 low-depth senator campaign site sources
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-864-five-thin-served-senator-firstparty-original-targets-v1.json
+      - scripts/probe-senate-864-five-thin-original-owned-site-pre-election.mjs
+      - .github/workflows/acquire-senate-864-five-thin-owned-campaign-originals.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  candidate-original-elections-pre-date-audit:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-five-low-depth-original-campaign-sources-20261012'
+    name: Historical first-party whole HTML + indexed SHA1 — ${{ matrix.track }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        track: [kari, weber, newman, wesenberg, klein]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --check scripts/probe-senate-864-five-thin-original-owned-site-pre-election.mjs
+      - name: Reopen unmodified original whole government Senate service directory and oath
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: proof/official
+      - name: Reopen independent 1272 selected first-party site excerpts statewide depth ledger
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38202993863
+          name: senate-864-103-2022-25-original-short-fragments-independent-audit-v1
+          github-token: ${{ github.token }}
+          path: proof/baseline
+      - name: Authenticate every actual senator and compare full archival HTML digest to original pre-election SHA1 CDX
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find proof/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find proof/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find proof/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          augmented="$(find proof/baseline -type f -name senate-864-95-person-augmented-issue-depth.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$augmented"
+          node --import tsx scripts/probe-senate-864-five-thin-original-owned-site-pre-election.mjs \
+            --track "${{ matrix.track }}" \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --augmented-matrix-json "$augmented" \
+            --out-dir research/original/
+      - name: Retain only original index + digest matching entire original HTML for independent manual admissibility; no auto promotion
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-five-thin-original-website-${{ matrix.track }}-v1
+          path: research/original/
+          if-no-files-found: warn
+          retention-days: 30
