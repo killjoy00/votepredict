@@ -32,7 +32,7 @@ test("Track D HF100 cross-party four archived originals and official final-passa
    version:string;readOnlyPublicSources:boolean;
    journal:{status:string,originalSha256:string|null,originalBytes:number|null,pages:number|null,
      roll:{qualified:boolean,originalPdfPageOneBased:number,individualVotes:Array<{senator:string,vote:string}>}|null};
-   sources:Array<{id:string,status:string,originalCaptureUtc:string,
+   sources:Array<{id:string,senator:string,status:string,originalCaptureUtc:string,
      archivedSha1:string,verifiedRawSha256:string|null,verifiedBytes:number|null,
      authenticatedOriginal:boolean,speaker:{verified:boolean,
      normalizedBoundedSegmentSha256:string|null,normalizedBoundedSegmentCharacters:number|null}|null}>;
