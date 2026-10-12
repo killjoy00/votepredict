@@ -174,12 +174,12 @@ test('private SQL failure and mismatched DB identity roll back without leaking p
 test('V2 Actions gate: PR keyless, exact SHA verified, one-shot protected, keyless issue reporter',()=>{
  const wf=readFileSync('.github/workflows/senate-864-finance-proof-metadata-v2.yml','utf8');
  assert.match(wf,/environment: evidence-readonly-sandbox/);
- assert.match(wf,/issue_comment:\\n    types: \\[created\\]/);
- assert.match(wf,/github\\.event\\.issue\\.number == 864/);
- assert.match(wf,/github\\.event\\.comment\\.user\\.login == 'killjoy00'/);
- assert.match(wf,/github\\.event\\.comment\\.author_association == 'OWNER'/);
+ assert.match(wf,/issue_comment:\n    types: \[created\]/);
+ assert.match(wf,/github\.event\.issue\.number == 864/);
+ assert.match(wf,/github\.event\.comment\.user\.login == 'killjoy00'/);
+ assert.match(wf,/github\.event\.comment\.author_association == 'OWNER'/);
  assert.match(wf,/SENATE_864_CFB_KEYS_V2_OWNER_ONE_SHOT_20261012/);
- assert.match(wf,/git log -1 --format=%B \\| grep -Fq/);
+ assert.match(wf,/git log -1 --format=%B \| grep -Fq/);
  assert.match(wf,/VOTEPREDICT_864_CFB_KEYS_V2_OWNER_COMMENT_VERIFIED:/);
 
  assert.match(wf,/one-shot-verify:/);
