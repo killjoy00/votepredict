@@ -175,7 +175,7 @@ const proof={schema:'mn-3-actual-senators-33-historical-office-scope-firstparty-
  wholeSHA1MatchedFullOriginalCandidateHTMLPages:originalProof.length,
  actualServingSenatorsVerified:serving.size,
  exactLiteralShortResearchExcerptsMatched:qProof.length,
- 2007SecretaryOfStateAnd2008HouseAnd2021SchoolBoardNotSenatePositions:true,
+ olderSecretaryOfStateAndHouseAndSchoolBoardNotSenatePositions:true,
  2020NewmanHomepageOnlyGenericIssueSalienceNotSpecificBillPromise:true,
  archivalFullSiteCensusNotAsserted:true,firstAuthorDatesUnproven:true,
  officialVoteAndForecastAutomaticallyEligible:0,productionDatabaseChanges:0,
