@@ -1,0 +1,408 @@
+name: '#864 bounded retry of six original-PDF reparse HOLDS'
+# 12 prior passing source-only proofs are pinned byte-for-byte to their original
+# artifact ZIP SHA. Exactly four prior held shards are re-examined; no private
+# source/member/Neon/model/serving/2027 access.
+on:
+  pull_request:
+    paths:
+      - scripts/audit-senate-864-original-1452-parser-v3.ts
+      - tests/senate-864-six-original-hold-classification.test.ts
+      - .github/workflows/senate-864-six-held-original-retry-v4.yml
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-864-six-held-original-retry-v4.yml
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: senate-864-six-source-holds-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  synthetic-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: |
+          node --import tsx --test tests/senate-864-six-original-hold-classification.test.ts
+          node --import tsx --test tests/senate-864-full-corpus-parser-v3.test.ts
+          npm run typecheck
+      - run: npm audit --omit=dev --audit-level=high
+  retry-only-four-held-shards:
+    needs: synthetic-gates
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - {year: 2022, shard: 3}
+          - {year: 2023, shard: 0}
+          - {year: 2025, shard: 0}
+          - {year: 2025, shard: 1}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Confirm bounded renderer and original scan OCR utilities
+        run: |
+          if ! command -v pdfinfo >/dev/null || ! command -v tesseract >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils tesseract-ocr
+          fi
+      - name: Pin existing original government source artifact 1 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2022-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+      - name: Pin existing original government source artifact 2 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2023-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+      - name: Pin existing original government source artifact 3 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2024-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+      - name: Pin existing original government source artifact 4 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2025-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+      - name: Pin existing original government source artifact 5 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-six-scanned-original-ocr-metadata
+          repository: killjoy00/votepredict
+          run-id: 38068730892
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 6 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2022-second-ocr-sample-metadata
+          repository: killjoy00/votepredict
+          run-id: 38069432305
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 7 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2023-second-ocr-sample-metadata
+          repository: killjoy00/votepredict
+          run-id: 38069432305
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 8 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2024-second-ocr-sample-metadata
+          repository: killjoy00/votepredict
+          run-id: 38069432305
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 9 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2025-second-ocr-sample-metadata
+          repository: killjoy00/votepredict
+          run-id: 38069432305
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 10 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2023-remaining-scanned-originals-metadata
+          repository: killjoy00/votepredict
+          run-id: 38073521109
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 11 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2024-remaining-scanned-originals-metadata
+          repository: killjoy00/votepredict
+          run-id: 38073521109
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 12 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2022-batch-0-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 13 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2022-batch-1-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 14 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2022-batch-2-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 15 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2022-batch-3-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 16 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2022-batch-4-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 17 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2022-batch-5-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 18 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2025-batch-0-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 19 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2025-batch-1-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Pin existing original government source artifact 20 of 20
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-final-scanned-2025-batch-2-metadata
+          repository: killjoy00/votepredict
+          run-id: 38075234242
+          github-token: ${{ github.token }}
+          path: artifacts/ocr
+      - name: Acquire one separately archived original 2025 Judiciary 7-1 choice proof
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-2025-judiciary-original-named-roll-source-proof
+          repository: killjoy00/votepredict
+          run-id: 38070395356
+          github-token: ${{ github.token }}
+          path: artifacts/judiciary
+      - name: Independently SHA re-fetch only this frozen held shard, one bounded retry per transient exception
+        env:
+          VOTEPREDICT_SENATE_COMMITTEE_OCR: '1'
+        run: |
+          node --import tsx scripts/audit-senate-864-original-1452-parser-v3.ts \
+            --year ${{ matrix.year }} --shard ${{ matrix.shard }} \
+            --output artifacts/safe/senate864-v3-${{ matrix.year }}-${{ matrix.shard }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-864-parser-v4-retry-${{ matrix.year }}-${{ matrix.shard }}
+          path: artifacts/safe/senate864-v3-${{ matrix.year }}-${{ matrix.shard }}.json
+          retention-days: 30
+          if-no-files-found: warn
+  aggregate-frozen-12-plus-reverified-4:
+    needs: [synthetic-gates,retry-only-four-held-shards]
+    if: >-
+      always() &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Verify old original-run identity and 12 immutable SHA256 ZIP digests
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$(gh api repos/killjoy00/votepredict/actions/runs/38292166407 --jq '.head_sha')" = "9b7bb8f57fca9bf991b78c030fb1bb7e7b13a2ce"
+          test "$(gh api repos/killjoy00/votepredict/actions/runs/38292166407 --jq '.run_attempt')" = "1"
+          test "$(gh api repos/killjoy00/votepredict/actions/artifacts/11766861900 --jq '.digest')" = "sha256:2ce0db8864dfa33345b2153701aaf9950bac24b0260e0fb71745cd8c93ff5d7b"
+          test "$(gh api repos/killjoy00/votepredict/actions/artifacts/11767591442 --jq '.digest')" = "sha256:0114792d25094962489972bf0a8f8d4eaba2377be7589ee64695ca599b9c341b"
+          test "$(gh api repos/killjoy00/votepredict/actions/artifacts/11766632718 --jq '.digest')" = "sha256:3a3abc9e4fe68fbbe64d9f1a054a15e77412766efac337bf771a996c48929950"
+          test "$(gh api repos/killjoy00/votepredict/actions/artifacts/11767242001 --jq '.digest')" = "sha256:1998f2cf2d44effce1ddf71be8ea56082f8b3e96d56d06a6a3e15e642b6926de"
+          test "$(gh api repos/killjoy00/votepredict/actions/artifacts/11767136964 --jq '.digest')" = "sha256:ea1b7bff6542f89e0d884534a730c677c581c901bb25219adf77a51b419f9f9f"
+          test "$(gh api repos/killjoy00/votepredict/actions/artifacts/11767002213 --jq '.digest')" = "sha256:1b1c7e59a7f97c27ee7b7980a159f8d14314511615532b6f4b2c3f367d0d7e9d"
+          test "$(gh api repos/killjoy00/votepredict/actions/artifacts/11767027236 --jq '.digest')" = "sha256:c847cbd27efe90c3580714c529282ccee95b17688d27af045b28a611fc111bfe"
+          test "$(gh api repos/killjoy00/votepredict/actions/artifacts/11767322139 --jq '.digest')" = "sha256:76d89258f3cc0eabf5111bf5b8ea91109d5bd9a737a15dadd3b627f20ae53e9b"
+          test "$(gh api repos/killjoy00/votepredict/actions/artifacts/11766388397 --jq '.digest')" = "sha256:4214985dd81ec10034bd08a2c92b2549bc7c016e48b24542add83e91f29ead9b"
+          test "$(gh api repos/killjoy00/votepredict/actions/artifacts/11766358448 --jq '.digest')" = "sha256:2f86806ad341f6b7754f6c09911174999f6b3972494197fe8b920a8ba69c88ea"
+          test "$(gh api repos/killjoy00/votepredict/actions/artifacts/11767492502 --jq '.digest')" = "sha256:c5eed0f8b506b398f9091d7ab30ba7f4cc158b7b1949df279f3aeb3d3a2f5ad4"
+          test "$(gh api repos/killjoy00/votepredict/actions/artifacts/11766248812 --jq '.digest')" = "sha256:cae176d516006ec68b6003bb9ed2a7601fec914ffe244497e13d339429cf095e"
+      - name: Recover previously verified source shard 2022-0 from frozen first attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-864-parser-v3-2022-0
+          repository: killjoy00/votepredict
+          run-id: 38292166407
+          github-token: ${{ github.token }}
+          path: artifacts/safe
+      - name: Recover previously verified source shard 2022-1 from frozen first attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-864-parser-v3-2022-1
+          repository: killjoy00/votepredict
+          run-id: 38292166407
+          github-token: ${{ github.token }}
+          path: artifacts/safe
+      - name: Recover previously verified source shard 2022-2 from frozen first attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-864-parser-v3-2022-2
+          repository: killjoy00/votepredict
+          run-id: 38292166407
+          github-token: ${{ github.token }}
+          path: artifacts/safe
+      - name: Recover previously verified source shard 2023-1 from frozen first attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-864-parser-v3-2023-1
+          repository: killjoy00/votepredict
+          run-id: 38292166407
+          github-token: ${{ github.token }}
+          path: artifacts/safe
+      - name: Recover previously verified source shard 2023-2 from frozen first attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-864-parser-v3-2023-2
+          repository: killjoy00/votepredict
+          run-id: 38292166407
+          github-token: ${{ github.token }}
+          path: artifacts/safe
+      - name: Recover previously verified source shard 2023-3 from frozen first attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-864-parser-v3-2023-3
+          repository: killjoy00/votepredict
+          run-id: 38292166407
+          github-token: ${{ github.token }}
+          path: artifacts/safe
+      - name: Recover previously verified source shard 2024-0 from frozen first attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-864-parser-v3-2024-0
+          repository: killjoy00/votepredict
+          run-id: 38292166407
+          github-token: ${{ github.token }}
+          path: artifacts/safe
+      - name: Recover previously verified source shard 2024-1 from frozen first attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-864-parser-v3-2024-1
+          repository: killjoy00/votepredict
+          run-id: 38292166407
+          github-token: ${{ github.token }}
+          path: artifacts/safe
+      - name: Recover previously verified source shard 2024-2 from frozen first attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-864-parser-v3-2024-2
+          repository: killjoy00/votepredict
+          run-id: 38292166407
+          github-token: ${{ github.token }}
+          path: artifacts/safe
+      - name: Recover previously verified source shard 2024-3 from frozen first attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-864-parser-v3-2024-3
+          repository: killjoy00/votepredict
+          run-id: 38292166407
+          github-token: ${{ github.token }}
+          path: artifacts/safe
+      - name: Recover previously verified source shard 2025-2 from frozen first attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-864-parser-v3-2025-2
+          repository: killjoy00/votepredict
+          run-id: 38292166407
+          github-token: ${{ github.token }}
+          path: artifacts/safe
+      - name: Recover previously verified source shard 2025-3 from frozen first attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-864-parser-v3-2025-3
+          repository: killjoy00/votepredict
+          run-id: 38292166407
+          github-token: ${{ github.token }}
+          path: artifacts/safe
+      - name: Recover exactly four fresh source-only bounded retries
+        uses: actions/download-artifact@v4
+        with:
+          pattern: senate-864-parser-v4-retry-*
+          merge-multiple: true
+          path: artifacts/safe
+      - name: Only if all sixteen source shard receipts are complete, issue safe source total
+        run: |
+          node --import tsx scripts/audit-senate-864-parser-v3-shard-receipts.ts \
+            --input artifacts/safe \
+            --output artifacts/report/senate-864-1452-original-pdf-parser-v3-revalidated-v4.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-1452-parser-v3-revalidated-safe-source-v4
+          path: artifacts/report/senate-864-1452-original-pdf-parser-v3-revalidated-v4.json
+          retention-days: 30
+          if-no-files-found: error
