@@ -114,3 +114,45 @@ test('strict production mode rejects an incomplete synthetic official index',()=
  assert.throws(()=>buildIndependentSenateCommitteeLedger(input(),proofs(),new Set(),true),
   /Pinned independent statewide electronic year\/meeting denominator drift/);
 });
+
+test('authentic SHA-gated 2024 Education source keeps six distinct amendment pages plus count-unknown recommendation',()=>{
+ const educ='https://www.lrl.mn.gov/archive/minutes/senate/2024/educ/20240214/educ_20240214_Minutes.pdf';
+ const educSha='6d00d812236d4585ea315da9fdf2da8325fcad512e4089e1422fa4a96e2a7f52';
+ const p=proofs(),year=p.find(y=>y.auditedYear===2024)!;
+ year.independentlyDiscoveredOriginalMinutesPdfLinks=1;
+ year.originalPdfsFetchedAndParsed=1;
+ year.documentProofs.push({
+  document:{year:2024,committeeName:'Education Policy',meetingDate:'2024-02-14',
+   sourceUrl:educ,originalRawPdfSha256:educSha},
+  voteObservations:[0,1].map(i=>({
+   externalKey:'senate-committee:fixture:'+i,yeaCount:4,nayCount:6,
+   individualVotesAvailable:true,namedMemberChoicesInPdf:10,
+   choiceIdentitySha256:Array.from({length:10},(_,j)=>(String(j)+String(i)).padEnd(64,'c')),
+  })),
+  contextOnlyActions:[],
+ });
+ const census=input();
+ census.indexedMeetings.push({year:2024,committeeName:'Education Policy',
+  committeeUrl:'https://www.lrl.mn.gov/minutes/comm.aspx?year=2024&commid=23450-0&body=senate',
+  meetingDate:'2024-02-14',indexHeadingVerified:true,minutesPdfUrls:[educ],
+  electronicMinutesStatus:'linked'});
+ const out=buildIndependentSenateCommitteeLedger(census,p,new Set(),false);
+ const ed=out.meetings.find(m=>m.year===2024)!;
+ const seven=ed.originalMinutes[0]!.separatelyVerifiedOriginalMotionCatalogue!;
+ assert.equal(seven.length,7);
+ assert.deepEqual(seven.map(x=>x.amendmentNumber),['10','2','3','5','6','9',null]);
+ assert.deepEqual(seven.map(x=>x.printedPdfPage),[1,2,2,2,2,2,2]);
+ assert.deepEqual(seven.map(x=>x.outcome),['failed','failed','failed','failed','failed','failed','adopted']);
+ assert.deepEqual(seven.map(x=>x.printedYea),[4,4,4,4,4,4,null]);
+ assert.deepEqual(seven.map(x=>x.sourcePrintedNamedChoiceOccurrences),[10,10,10,10,10,10,0]);
+ assert.equal(ed.namedRollCandidates,2,'frozen parser results must not be overwritten by the separate original-motion catalogue');
+ assert.equal(out.committeeYears.find(x=>x.year===2024)?.independentlyVerifiedExtraEducationMotionsOverFirstPass,4);
+ assert.doesNotMatch(JSON.stringify(seven),/choiceIdentitySha256|normalized_member_name|membership_id/);
+ const wrong=proofs(),badYear=wrong.find(y=>y.auditedYear===2024)!;
+ badYear.independentlyDiscoveredOriginalMinutesPdfLinks=1;
+ badYear.originalPdfsFetchedAndParsed=1;
+ badYear.documentProofs=[{...year.documentProofs[0]!,
+  document:{...year.documentProofs[0]!.document,originalRawPdfSha256:'e'.repeat(64)}}];
+ assert.throws(()=>buildIndependentSenateCommitteeLedger(census,wrong,new Set(),false),
+  /original minute motion catalogue SHA\/committee date drift/);
+});
