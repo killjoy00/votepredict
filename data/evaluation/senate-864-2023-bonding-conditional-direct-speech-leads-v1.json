@@ -1,0 +1,145 @@
+{
+  "schema": "senate-864-2023-bonding-predecision-named-direct-statement-leads-v1",
+  "issue": 864,
+  "originalVerifiedHistoricalBodiesInThisManifestBeforeLiveProbe": 0,
+  "officialServiceRosterSha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+  "sourceRule": "publisher_display_date_is_not_independently_verified_public_by;_article_quote_does_not_identify_exact_bill_version_or_individual_vote;_no_retrospective_backdating",
+  "sourceArticles": [
+    {
+      "id": "bonding-20230306-leaders",
+      "url": "https://www.mnsenaterepublicans.com/senate-gop-offers-win-win-tax-cuts-for-bonding/",
+      "publisherDisplayedDay": "2023-03-06",
+      "originalSourceKind": "named_individual_quotes_in_caucus_multi_speaker_original",
+      "speakerIds": [
+        "mark-johnson-conditional",
+        "karin-housley-bond-timing",
+        "bill-weber-conditional"
+      ]
+    },
+    {
+      "id": "bonding-20230307-housley-repost",
+      "url": "https://www.mnsenaterepublicans.com/housley-senate-gop-offers-win-win-tax-cuts-for-bonding/",
+      "publisherDisplayedDay": "2023-03-07",
+      "originalSourceKind": "reprinted_previous_day_housley_quote",
+      "speakerIds": [
+        "karin-housley-bond-timing"
+      ],
+      "newIndependentSpeakerStatement": false
+    },
+    {
+      "id": "bonding-20230307-wesenberg",
+      "url": "https://www.mnsenaterepublicans.com/wesenberg-senate-gop-offers-win-win-tax-cuts-for-bonding/",
+      "publisherDisplayedDay": "2023-03-07",
+      "originalSourceKind": "named_individual_quote_in_caucus_article",
+      "speakerIds": [
+        "nathan-wesenberg-conditional"
+      ]
+    }
+  ],
+  "speakers": [
+    {
+      "id": "mark-johnson-conditional",
+      "officialName": "Mark T. Johnson",
+      "onPublisherName": "Mark Johnson",
+      "sourcePrimaryPageId": "bonding-20230306-leaders",
+      "issue": "tax_bonding_negotiation_condition",
+      "stance": "qualified_support",
+      "exactShortQuoteCue": "that bill is dead on arrival until we see tax cuts",
+      "condition": "tax cuts before bonding bill; accepts compromise with bond financing",
+      "speakerAttribution": "Republican Senate Minority Leader Mark Johnson (East Grand Forks) said",
+      "relevantDecisions": [
+        "2023-03-16 HF669 final passage failed",
+        "2023-05-22 HF669 amended third reading passed",
+        "2023-05-22 HF670 amended third reading passed"
+      ]
+    },
+    {
+      "id": "karin-housley-bond-timing",
+      "officialName": "Karin Housley",
+      "onPublisherName": "Karin Housley",
+      "sourcePrimaryPageId": "bonding-20230306-leaders",
+      "issue": "capital_bonding_tax_sequence",
+      "stance": "qualified_support",
+      "exactShortQuoteCue": "whether we pass a bonding bill today or in May, the bonds are issued in August",
+      "condition": "do not put infrastructure borrowing ahead of tax relief despite bond issuance timing",
+      "speakerAttribution": "Republican Bonding Lead Karin Housley (Stillwater) asked",
+      "relevantDecisions": [
+        "2023-03-16 HF669 final passage failed",
+        "2023-05-22 HF669 amended third reading passed",
+        "2023-05-22 HF670 amended third reading passed"
+      ]
+    },
+    {
+      "id": "bill-weber-conditional",
+      "officialName": "Bill Weber",
+      "onPublisherName": "Bill Weber",
+      "sourcePrimaryPageId": "bonding-20230306-leaders",
+      "issue": "tax_relief_before_budget_bonding",
+      "stance": "qualified_support",
+      "exactShortQuoteCue": "we recognize there is a need for a bonding bill, but if you leave the tax bill until the end of session",
+      "condition": "tax relief must be front and center in budget/bonding negotiations",
+      "speakerAttribution": "Republican Tax Lead Bill Weber (Luverne) said",
+      "relevantDecisions": [
+        "2023-03-16 HF669 final passage failed",
+        "2023-05-22 HF669 amended third reading passed",
+        "2023-05-22 HF670 amended third reading passed"
+      ]
+    },
+    {
+      "id": "nathan-wesenberg-conditional",
+      "officialName": "Nathan Wesenberg",
+      "onPublisherName": "Nathan Wesenberg",
+      "sourcePrimaryPageId": "bonding-20230307-wesenberg",
+      "issue": "rural_equity_bonding_after_tax_relief",
+      "stance": "qualified_support",
+      "exactShortQuoteCue": "if we are going to tackle bonding this year, it needs to be after providing tax relief",
+      "condition": "after tax relief and broadly beneficial to rural communities, not solely metro projects",
+      "speakerAttribution": "said Senator Nathan Wesenberg (R-Little Falls)",
+      "relevantDecisions": [
+        "2023-03-16 HF669 final passage failed",
+        "2023-05-22 HF669 amended third reading passed",
+        "2023-05-22 HF670 amended third reading passed"
+      ]
+    }
+  ],
+  "distinctUnderlyingSpeakerStatements": 4,
+  "independentOfficialDecisionChronology": [
+    {
+      "chamber": "Senate",
+      "bill": "HF669",
+      "eventDate": "2023-03-16",
+      "eventKind": "third_reading_failed_after_floor_amendments",
+      "yeas": 33,
+      "nays": 32,
+      "source": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/",
+      "officialJournal": "https://www.senate.mn/journals/2023-2024/20230316037.pdf",
+      "individualVoterRollUnverifiedInNewResearch": true
+    },
+    {
+      "chamber": "Senate",
+      "bill": "HF669",
+      "eventDate": "2023-05-22",
+      "eventKind": "third_reading_passed_as_amended",
+      "yeas": 56,
+      "nays": 11,
+      "source": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/",
+      "officialJournal": "https://www.senate.mn/journals/2023-2024/20230522077.pdf",
+      "individualVoterRollUnverifiedInNewResearch": true
+    },
+    {
+      "chamber": "Senate",
+      "bill": "HF670",
+      "eventDate": "2023-05-22",
+      "eventKind": "third_reading_passed_as_amended",
+      "yeas": 35,
+      "nays": 14,
+      "source": "https://www.revisor.mn.gov/bills/93/2023/0/HF/670/",
+      "officialJournal": "https://www.senate.mn/journals/2023-2024/20230522077.pdf",
+      "individualVoterRollUnverifiedInNewResearch": true
+    }
+  ],
+  "historicalPredictionOrSourceIngestionAuthorized": false,
+  "officeContactsOrSourceRequestsAuthorized": false,
+  "sourceStatementNotExactBillVersionOrVoteProof": true,
+  "noProductionDbWritesOrReads": true
+}
