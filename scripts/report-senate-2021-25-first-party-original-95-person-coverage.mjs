@@ -128,6 +128,15 @@ read('senate-roger-chamberlain-2016-original-10-economic-issue-excerpts-and-doma
 // Source-verified Gene Dornink authentic 2019 pre-2020 SD27 campaign home,
 // and original 2022 SD23 platform/home; one senator, 35 short excerpts.
 // Archive capture UTC never asserts initial posting date or official vote.
+// Three remaining actual senators, FOUR authentic candidate-owned historical
+// websites: old Kiffmeyer House 16B and Secretary of State campaigns, 2020
+// Newman Senate SD18 broad-issue home, 2021 Kreun SCHOOL BOARD priorities.
+// None of the non-Senate pages is a newly authored 2020/22 Senate pledge.
+read('senate-kiffmeyer-newman-kreun-four-original-historic-site-excerpts-v1',
+ (d,s)=>{assert.equal(d.pages.length,4);assert.equal(d.excerpts.length,33);
+  assert.equal(new Set(d.pages.map(p=>p.person)).size,3);
+  const byId=new Map(d.pages.map(p=>[p.id,p.person]));
+  each(d.excerpts,q=>[byId.get(q.pageId),1],s);});
 read('senate-dornink-35-2019-2022-original-firstparty-excerpts-v1',
  (d,s)=>{assert.equal(d.pages.length,3);assert.equal(d.excerpts.length,35);
   assert.equal(new Set(d.pages.map(p=>p.person)).size,1);
