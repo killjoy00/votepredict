@@ -1,0 +1,57 @@
+name: Public MPR four additional senators original named speaker-turn proof
+
+# The exact original MPR archived page bodies are fetched in memory,
+# verified against public independently CDX-indexed SHA1 + raw SHA256,
+# and only metadata/booleans persist. No private data or model changes.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-four-more-original-mpr-speaker-turns.yml
+      - scripts/probe-senate-media-four-more-original-mpr-speaker-turns.mjs
+      - scripts/run-senate-media-four-more-original-mpr-speaker-turns.mjs
+      - tests/senate-media-four-more-original-mpr-speaker-turns.test.mjs
+      - tests/senate-media-four-more-original-mpr-real-receipts.test.mjs
+      - docs/evaluation/senate-media-2022-25-mpr-caucus-breadth-20261011.json
+      - docs/evaluation/senate-media-four-more-original-mpr-speaker-turns-20261011.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-four-more-original-mpr-named-speaker-turns
+  cancel-in-progress: false
+
+jobs:
+  original-indexed-html-four-state-senator-printed-transcript-cue-proof:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-2022-25-mpr-and-caucus-senator-originals-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Offline selected senator speaker-turn proof and source SHA negative controls
+        run: node --test tests/senate-media-four-more-original-mpr-speaker-turns.test.mjs tests/senate-media-four-more-original-mpr-real-receipts.test.mjs
+      - name: Independently replay seven pinned original HTML bodies of four senators
+        run: |
+          node scripts/run-senate-media-four-more-original-mpr-speaker-turns.mjs \
+            --output artifacts/mpr-four-more-authenticated-original-speaker-turns.json
+      - name: Preserve only indexed original hashes UTC and printed named speaker cue flags
+        uses: actions/upload-artifact@v6
+        with:
+          name: mpr-four-more-authenticated-original-speaker-turns
+          path: artifacts/mpr-four-more-authenticated-original-speaker-turns.json
+          if-no-files-found: error
+          retention-days: 7
