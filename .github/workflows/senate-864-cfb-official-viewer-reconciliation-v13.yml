@@ -1,0 +1,31 @@
+name: 'Senate #864 CFB official viewer-to-original-PDF crosscheck V13'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-official-viewer-pdf-reconciliation-v13.mjs'
+      - 'tests/cfb-864-official-viewer-pdf-reconciliation-v13.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2021-25-served-25-committee-year-crosssource-v13.psv'
+      - 'docs/evaluation/cfb-2021-25-official-viewer-pdf-reconciliation-v13.md'
+      - '.github/workflows/senate-864-cfb-official-viewer-reconciliation-v13.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  offline-viewer-original-identity-join:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify existing immutable 229-report original/PDF source gate
+        run: node --test tests/cfb-864-served-report-version-ledger-v12.test.mjs
+      - name: Verify exact official source viewer version IDs, SHA-256 and 91 committee-year identities
+        run: node --test tests/cfb-864-official-viewer-pdf-reconciliation-v13.test.mjs
+      - name: Regenerate and byte-compare permanent committee-year version crosscheck
+        run: node scripts/audit-cfb-864-official-viewer-pdf-reconciliation-v13.mjs
