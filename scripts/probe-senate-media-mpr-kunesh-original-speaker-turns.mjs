@@ -85,22 +85,31 @@ export function inspectBoundedNamedSpeakerTurn(originalHtml,pin){
   marks.push({name:m[1].toUpperCase()+':',start,end:m.index+m[0].length});
  }
  let matchingSenatorLabels=0,withinSameTurn=false,closestShortCueWindowChars=null;
+ const shortCueOwners=[];
  for(let i=0;i<marks.length;i++){
   const speaker=marks[i];
-  if(speaker.name!==label)continue;
-  matchingSenatorLabels++;
+  if(speaker.name===label)matchingSenatorLabels++;
   const stop=i+1<marks.length?marks[i+1].start:segment.length;
   if(stop<speaker.end)throw Error('invalid speaker turn boundaries');
   const length=Math.min(6000,stop-speaker.end);
   const turn=normalize(segment.slice(speaker.end,speaker.end+length));
   const idx=turn.indexOf(selectedCue);
-  if(idx>=0){withinSameTurn=true;closestShortCueWindowChars=idx;break;}
+  if(idx<0)continue;
+  const name=speaker.name===label?label:
+   (speaker.name==='NINA MOINI:'||speaker.name==='CATHY WURZER:'?speaker.name:'OTHER NAMED SPEAKER:');
+  if(!shortCueOwners.includes(name))shortCueOwners.push(name);
+  if(speaker.name===label){withinSameTurn=true;closestShortCueWindowChars=idx;}
  }
+ const hasShortCueInTranscript=normalize(segment).includes(selectedCue);
  return {
   transcriptSectionHeadingVisible:headingSeen,
   senatorFullNameSpeakerLabelsInTranscript:matchingSenatorLabels,
   selectedShortCueVisibleAnywhereOnOriginalPage:lower.includes(selectedCue),
+  selectedShortCueVisibleInsideTranscriptSection:hasShortCueInTranscript,
   selectedShortCueInsideBoundedSameExplicitLabeledSpeakerTurn:withinSameTurn,
+  selectedShortCueInsideOtherNamedSpeakerTurn:shortCueOwners.some(s=>s!==label),
+  selectedShortCueSpeakerTurnOwnerLabels:shortCueOwners.slice(0,5),
+  selectedShortCueOutsideAllBoundedSpeakerTurns:hasShortCueInTranscript&&shortCueOwners.length===0,
   selectedShortCueCharacterDistanceFromStartOfTurn:withinSameTurn?closestShortCueWindowChars:null,
   maximumConsideredSpeakerTurnCharacters:6000,
   speakerTurnAdjacencyIsNotRecordedAudioOrHumanCertifiedFullQuotation:true,
