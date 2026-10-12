@@ -32,7 +32,7 @@ export const LEADS=Object.freeze([
   displayedDay:'2023-02-10',
   url:'https://www.mnsenaterepublicans.com/gruenhagen-the-destructiveness-of-legal-marijuana/',
   attribution:'first_person_signed_caucus_constituent_letter_no_exact_bill_number',
-  member:'https://www.lrl.mn.gov/legdb/fulldetail?ID=15333',
+  member:'https://www.lrl.mn.gov/legdb/fulldetail?ID=15350',
   quoted:Object.freeze([{senator:'Glenn Gruenhagen',cue:'one of the hot items on their to-do list is legalizing marijuana'}]),
   ccCollections:Object.freeze(['CC-MAIN-2023-14','CC-MAIN-2023-23'])
  })
@@ -51,6 +51,8 @@ export function allowed(){
     ||l.displayedDay!=='2023-02-10'||l.quoted.length!==1)throw Error('unapproved speaker source');
  }
  if(LEADS[0].senator!=='Gary Dahms'||LEADS[1].senator!=='Glenn Gruenhagen'
+    ||LEADS[0].member!=='https://www.lrl.mn.gov/legdb/fulldetail?ID=15326'
+    ||LEADS[1].member!=='https://www.lrl.mn.gov/legdb/fulldetail?ID=15350'
     ||new Set(LEADS.map(x=>x.url)).size!==2)throw Error('not two distinct personally attributed publisher URLs');
  return true;
 }
