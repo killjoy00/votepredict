@@ -1,0 +1,73 @@
+name: Four parallel historical 2020 original campaign gaps and Doron 2025 priorities provenance
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-864-last-three-and-doron-2025-deep-original-source-queries-v1.json
+      - scripts/probe-senate-864-last-three-and-doron-deep-original-archives.mjs
+      - .github/workflows/acquire-senate-864-last-three-and-doron-originals-four-parallel.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  historical-original-site-and-questionnaire-probe:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-final-three-deep-historic-cdx-doron-priorities-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        track: [wiger, tomassoni, bakk, doron]
+    name: Independently indexed original archival proof — ${{ matrix.track }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --check scripts/probe-senate-864-last-three-and-doron-deep-original-archives.mjs
+      - name: Reopen original government complete actual-serving Senate directory and swearing proof
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen independently authenticated 92-of-95 campaign original-site coverage after PR 1194
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38197279787
+          name: senate-95-serving-92-original-sites-1194-short-excerpts-v1
+          github-token: ${{ github.token }}
+          path: original/statewide
+      - name: Verify true individual official service then independently search original archive CDX and full bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          covered="$(find original/statewide -type f -name 95-senators-public-campaign-coverage.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$covered"
+          node --import tsx scripts/probe-senate-864-last-three-and-doron-deep-original-archives.mjs \
+            --track "${{ matrix.track }}" \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --source-coverage-json "$covered" \
+            --out-dir original/deep-probe
+      - name: Preserve original source indexes and digest-matching complete original bodies only for manual admissibility audit
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-deep-original-historic-probe-${{ matrix.track }}-v1
+          path: original/deep-probe/
+          if-no-files-found: warn
+          retention-days: 30
