@@ -22,7 +22,7 @@ import {fetchSenateCommitteeMinutePdf} from
 import {parseSenateCommitteeMinuteVotes} from
  '../src/evidence/minnesota-senate-committee-minutes.js';
 
-export const ONE_YEA_2024_V7_MARKER=
+export const ONE_YEA_2024_V8_MARKER=
  'SENATE_864_2024_MISSING_YEA_PHASED_READONLY_20261012_V8' as const;
 const sha=(s:string|Uint8Array)=>createHash('sha256').update(s).digest('hex');
 const MAX_BYTES=12_000_000;
@@ -275,7 +275,7 @@ async function main(){
   phase='protected_authorization_gate';
   assertProtectedOneShot(process.env);
   if(process.env.VOTEPREDICT_864_YEA_V8_MARKER_PRESENT!=='true')
-   throw Error('First-attempt V7 marker not independently authorized');
+   throw Error('First-attempt V8 marker not independently authorized');
   const safe=await protectedCheck(original,p=>{phase=safeYeaV8Phase(p)});
   phase='final_scalar_output_safety';
   const data=JSON.stringify(safe);
