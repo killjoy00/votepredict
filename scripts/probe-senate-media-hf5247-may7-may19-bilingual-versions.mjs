@@ -18,8 +18,8 @@ import journal from '../docs/evaluation/senate-media-2024-hawj-hf5247-official-j
 export const VERSION='track-d-hawj-2024-hf5247-actual-versions-bilingual-crosswalk-v1';
 export const SOURCES=Object.freeze([
  Object.freeze({id:'hf5247-house-third-engrossment',
-  url:'https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/3/',
-  media:'html',bill:'HF5247',version:'3rd Engrossment',listedPostedDay:'2024-05-03',htmlDisplayedTimestamp:'2024-05-07 19:29'}),
+  url:'https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/3/pdf/',
+  media:'pdf',bill:'HF5247',version:'3rd Engrossment',listedPostedDay:'2024-05-03',htmlDisplayedTimestamp:'2024-05-07 19:29'}),
  Object.freeze({id:'hf5247-first-unofficial-senate-engrossment',
   url:'https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/ue/1/',
   media:'html',bill:'HF5247',version:'1st Unofficial Engrossment',listedPostedDay:'2024-05-07',htmlDisplayedTimestamp:'2024-05-07 17:36'}),
@@ -30,7 +30,7 @@ export const SOURCES=Object.freeze([
   url:'https://www.revisor.mn.gov/bills/93/2023/0/SF/3257/versions/0/pdf/',
   media:'pdf',bill:'SF3257',version:'As Introduced',listedPostedDay:'2023-04-12',htmlDisplayedTimestamp:null})
 ]);
-const CONTENT_MAX=32_000_000, TEXT_MAX=4_000_000;
+const CONTENT_MAX=32_000_000, TEXT_MAX=25_000_000;
 export const FRAGMENTS=Object.freeze([
  Object.freeze({id:'transportation_translation_provision_title',phrase:'driver and vehicle services; materials in a language other than english'}),
  Object.freeze({id:'translated_equivalent_materials',phrase:'equivalent materials'}),
@@ -73,7 +73,7 @@ export function inspectText(text,source,htmlMode=false){
  if(typeof text!=='string'||text.length>TEXT_MAX||!SOURCES.includes(source))throw Error('untrusted official bill-source text');
  const normalized=htmlMode?visibleHtml(text):normalize(text);
  const session93=source.media==='pdf'?
-   (/\b(?:hf|sf)\s*(?:no\.\s*)?(?:5247|3257)\b/i.test(normalized)||normalized.includes(source.bill.toLowerCase())):
+   (/a bill for an act|conference committee report/i.test(normalized)):
    (normalized.includes('93rd legislature')&&normalized.includes('2023 - 2024'));
  const billIdentified=source.bill==='HF5247'?
    (/\bh\.?\s*f\.?\s*(?:no\.?\s*)?5247\b/i.test(normalized)):
