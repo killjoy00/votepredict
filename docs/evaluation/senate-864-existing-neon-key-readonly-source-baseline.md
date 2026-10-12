@@ -64,3 +64,47 @@ This is a *visibility mechanism*, not a SQL-role privilege escalation,
 new read policy, raw row export, statement evidence, or source-completeness
 certification. Source-level exact document joins and official per-year
 denominators remain separate requirements even after a successful count.
+
+
+## Verified first protected run and reviewed V3 correction
+
+[Protected V2 main Actions run #38192700703](https://github.com/killjoy00/votepredict/actions/runs/38192700703)
+**reached the actual existing VotePredict-selected Neon default branch**,
+passed project/database/SQL READ ONLY identity and all eight table checks,
+completed the full bounded Senate **roster** SELECT, then **FAILED CLOSED**
+during the finance group. The independently separate keyless job successfully
+published [its exact safe failure receipt in #864](https://github.com/killjoy00/votepredict/issues/864).
+No previous partial cohort totals were falsely presented as completed.
+Neon access or secret availability was **not** the blocker.
+
+The finance query joined the *entire* finance evidence corpus with broad
+OR conditions spanning stored membership chamber and arbitrary metadata
+chamber. Since the source documents have no standalone source-kind index,
+the resulting planner path might be expensive. The live failure occurred
+approximately one server-side 15-second statement-timeout window after
+the roster query, strongly suggesting but **not independently proving** a
+statement timeout. Original PostgreSQL errors are intentionally suppressed
+to avoid leaking private connection information.
+
+V3 changes **only the finance SELECT's source scope**: it starts from
+**actual Senate memberships in the three 2021–2026 session slugs**, joins
+the indexed evidence_items.membership_id relation, then source_documents,
+and filters to the four existing candidate-finance source kinds.
+It uses explicit SELECT-column ordinal grouping to avoid ambiguity.
+Unlike V2, it **does not claim** to cover finance rows that have no
+persisted membership ID and merely carry a metadata chamber field.
+That missing population requires a separately reviewed, safely bounded
+future source query. It does not promote any stored as-of eligibility.
+
+V3 also classifies PostgreSQL SQLSTATE values into fixed safe categories
+(e.g., statement timeout versus schema/grouping problems); no raw SQL,
+connection string, private row, role or exception text enters logs,
+GitHub issues or workflow artifacts. All seven source-group counts remain
+bounded SELECT-only inside one REPEATABLE READ READ ONLY transaction with
+explicit ROLLBACK and a separate **keyless** issue-comment reporting job.
+
+Successful V3 means **bounded DB aggregate coverage**, not complete original
+CFB report-to-transaction matching, 2021 printed committee vote recovery
+or media senator-speaker attribution. Keep #864 OPEN.
+
+**Additional V3 preflight:** before any protected key is supplied, the exact reviewed main-commit CI job uses only its disposable localhost PostgreSQL (migrated from scratch, local postgres role) to run `EXPLAIN` **without `ANALYZE`** on all seven immutable SELECT statements. This catches schema, alias/grouping and SQL syntax problems locally without executing evidence scans or contacting Neon. It then runs the full suite and dependency audit as before. This compile check does **not** prove query performance on the real database, which is why the protected SQL statement timeout and safe SQLSTATE error classification remain enforced.
