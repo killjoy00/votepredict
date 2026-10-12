@@ -17,10 +17,12 @@ test("focused 2022 Senate primary-roll evidence replay on research PR only", { t
     process.env.GITHUB_EVENT_NAME === "pull_request" &&
     process.env.GITHUB_HEAD_REF === "research/2022-sf2666-sf2575-sf2729-primary-votes";
 
+  const isolatedEnv = { ...process.env };
+  delete isolatedEnv.NODE_TEST_CONTEXT;
   const synthetic = execFileSync(process.execPath, [
     "--test",
     "tests/senate-media-2022-standalone-parents-bills-primary.test.mjs",
-  ], { encoding: "utf8", timeout: 30_000, maxBuffer: 500_000 });
+  ], { encoding: "utf8", timeout: 30_000, maxBuffer: 500_000, env: isolatedEnv });
   assert.match(synthetic, /# fail 0/);
   assert.match(synthetic, /# pass 10/);
 
@@ -39,6 +41,7 @@ test("focused 2022 Senate primary-roll evidence replay on research PR only", { t
       timeout: 525_000,
       maxBuffer: 3_000_000,
       stdio: ["ignore", "pipe", "pipe"],
+      env: isolatedEnv,
     },
   );
 
