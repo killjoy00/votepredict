@@ -25,6 +25,10 @@ export interface CfbFinanceAvailabilityMatch {
   window: CfbReportAvailabilityWindow;
 }
 
+// Current report-PDF parsing produces cfb_report_filing windows. Those can
+// demonstrate row containment, but not historical public-by; the shared
+// selector excludes them until independently dated publication exists.
+// Do not substitute a current PDF fetch timestamp or statutory release floor.
 export function firstProvenCfbFinanceAvailability(
   row: CfbFinanceRowForAvailability,
   reportTexts: ReadonlyArray<{ proof: CfbParsedReportProof; text: string }>,

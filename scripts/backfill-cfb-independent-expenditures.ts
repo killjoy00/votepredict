@@ -92,7 +92,6 @@ async function main() {
   const {
     CFB_REPORT_AVAILABILITY_VERSION,
     buildCfbPublicDisclosureProof,
-    buildCfbReportDisclosureProof,
   } = await import('../src/evidence/cfb-report-availability.js');
   const { discoverCampaignFinanceDownloadUrls, fetchCampaignFinanceBulkText } =
     await import('../src/evidence/campaign-finance-live.js');
@@ -185,28 +184,9 @@ async function main() {
       }
 
       if (row.filedOn && row.dueOn && row.reportName) {
-        const proof = buildCfbReportDisclosureProof({
-          registrationNumber,
-          reportName: row.reportName,
-          filedOn: row.filedOn,
-          dueOn: row.dueOn,
-          proofUrl: urls.independentExpenditures,
-        });
-        disclosureMappings.push({
-          rowKey: row.rowKey,
-          availableOn: proof.availableOn,
-          disclosedOn: null,
-          filedOn: proof.filedOn,
-          dueOn: proof.dueOn ?? null,
-          reportName: proof.reportName,
-          proofKind: 'cfb_report_filing',
-          proofUrl: proof.proofUrl,
-          source: 'bulk_direct',
-          proofTextSha256: null,
-          proofContentSha256: null,
-          proofFetchedAt: null,
-          proofBytes: null,
-        });
+        // A filed/due pair is only a statutory NOT-BEFORE boundary.
+        // Keep these fields in the unpromoted context draft, but never
+        // manufacture a historically-public-by eligibility mapping.
         continue;
       }
 
@@ -245,7 +225,15 @@ async function main() {
         }
       }
     }
-    const disclosureByRowKey = new Map(disclosureMappings.map(mapping => [mapping.rowKey, mapping]));
+    // Defense in depth: report-PDF and filing-derived candidates must not
+    // pass to the legacy promotion SQL, even if a caller regresses later.
+    const verifiedDisclosureMappings = disclosureMappings.filter(mapping =>
+      mapping.proofKind === 'cfb_public_disclosure'
+      && mapping.disclosedOn !== null
+      && mapping.disclosedOn === mapping.availableOn);
+    const disclosureByRowKey = new Map(
+      verifiedDisclosureMappings.map(mapping => [mapping.rowKey, mapping]),
+    );
 
     const drafts = rows.map(row => {
       const disclosure = disclosureByRowKey.get(row.rowKey);
@@ -323,9 +311,9 @@ async function main() {
           years: [2021, 2022, 2023, 2024, 2025, 2026],
           rowCount: rows.length,
           rowContentSha256,
-          historicalAvailability: disclosureMappings.length
-            ? 'official_disclosure_or_due_date_bounded_availability_when_row_level_proven'
-            : 'pending_disclosure_proof',
+          historicalAvailability: verifiedDisclosureMappings.length
+            ? 'source_labelled_direct_disclosure_candidates_only'
+            : 'pending_independent_historic_public_by_proof',
           availabilityPolicyVersion: CFB_REPORT_AVAILABILITY_VERSION,
         },
       }, batch);
@@ -350,10 +338,10 @@ async function main() {
     }
 
     let promotedThisRun = 0;
-    if (disclosureMappings.length > 0) {
+    if (verifiedDisclosureMappings.length > 0) {
       const promotionBatchSize = 500;
-      for (let offset = 0; offset < disclosureMappings.length; offset += promotionBatchSize) {
-        const batch = disclosureMappings.slice(offset, offset + promotionBatchSize).map(mapping => ({
+      for (let offset = 0; offset < verifiedDisclosureMappings.length; offset += promotionBatchSize) {
+        const batch = verifiedDisclosureMappings.slice(offset, offset + promotionBatchSize).map(mapping => ({
           row_key: mapping.rowKey,
           available_on: mapping.availableOn,
           disclosed_on: mapping.disclosedOn,
@@ -412,6 +400,9 @@ async function main() {
                  ))
             FROM source_documents sd, disclosure
            WHERE sd.id = ei.source_document_id
+             AND disclosure.proof_kind = 'cfb_public_disclosure'
+             AND disclosure.disclosed_on IS NOT NULL
+             AND disclosure.disclosed_on = disclosure.available_on
              AND sd.source_kind = 'campaign_finance_independent_expenditure_bulk'
              AND ei.metadata->>'rowKey' = disclosure.row_key
              AND (
@@ -457,7 +448,7 @@ async function main() {
         unresolved,
         sourceDocumentId,
         disclosureMappedRows: disclosureMappings.length,
-        directDisclosureRows: disclosureMappings.filter(row => row.proofKind === 'cfb_public_disclosure').length,
+        directDisclosureRows: verifiedDisclosureMappings.length,
         dueDateBoundedReportRows: disclosureMappings.filter(row => row.proofKind === 'cfb_report_filing').length,
         currentReportMappedRows: disclosureMappings.filter(row => row.source === 'current_report_pdf').length,
         currentReportAcquisition: {

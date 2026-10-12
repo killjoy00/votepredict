@@ -225,9 +225,12 @@ test('finance row mapping requires the report to demonstrate the specific row', 
     contributor: 'Example Donor',
   };
   assert.equal(cfbReportTextDemonstratesFinanceRow(row, reportText), true);
+  // Matching transaction text proves content evidence, but a PDF
+  // fetched now does not prove this exact version was published in 2026.
   const match = firstProvenCfbFinanceAvailability(row, [{ proof, text: reportText }]);
-  assert.ok(match);
-  assert.equal(match.window.availableOn, '2026-09-23');
+  assert.equal(match, null);
+  assert.equal(proof.window.availableOn, '2026-09-23');
+  assert.equal(proof.window.proofKind, 'cfb_report_filing');
 
   assert.equal(cfbReportTextDemonstratesFinanceRow({
     ...row,

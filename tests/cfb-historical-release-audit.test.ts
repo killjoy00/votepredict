@@ -203,6 +203,8 @@ test('same-day cannot be mistaken for a certified historical forecast cutoff', (
   });
   const audit = auditCfbHistoricalReleaseDebt([item], [reportProof('same-day')]);
   assert.equal(audit.rows[0]?.sourceLinkedBoundOn, '2025-02-01');
+  assert.ok(audit.rows[0]?.flags.includes('legacy_eligibility_requires_revalidation'),
+    'v7 materialized evidence needs v8 public-by revalidation even at the correct floor');
   assert.equal(audit.policy.noForecastCutoffOnSameAvailableDay, true);
   assert.equal(audit.denominator.reconciliationCertified, false);
   assert.equal(audit.byYearFamily.find(x => x.year === 2024 &&

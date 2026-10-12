@@ -1,4 +1,4 @@
-export const CFB_REPORT_AVAILABILITY_VERSION='mn-cfb-report-availability-v7' as const;
+export const CFB_REPORT_AVAILABILITY_VERSION='mn-cfb-report-availability-v8' as const;
 export const CFB_SPECIFIC_LOBBYING_SUBJECT_FIRST_REPORT_YEAR=2024 as const;
 
 function exactDate(value:string,label:string):string{
@@ -122,12 +122,21 @@ export function firstCfbReportAvailabilityForTransaction(
     const availableOn=exactDate(report.availableOn,'CFB report availability date');
     if(coverageEndOn<coverageStartOn)throw new Error('CFB report coverage end date cannot precede start date');
     if(availableOn<coverageEndOn)throw new Error('CFB report availability date cannot precede coverage end date');
-    // Older filing-derived windows without independently established due dates
-    // must never participate in historical eligibility selection.
-    if(report.proofKind==='cfb_report_filing'){
-      if(!report.filedOn||!report.dueOn)return [];
-      if(availableOn<cfbElectronicReportAvailableOn(report.filedOn,report.dueOn))return [];
-    }
+    // A current official PDF plus filing/due dates only establishes a legal
+    // not-before boundary. Even if the date equals or exceeds that bound,
+    // nothing here independently proves this exact version was public then.
+    // Accept only the explicitly recognised types with affirmative
+    // publication evidence. Unknown runtime proof labels must fail closed too.
+    if(report.proofKind!=='cfb_public_disclosure'
+      &&report.proofKind!=='cfb_large_contribution_notice')return [];
+    // If a separately source-dated disclosure also records ordinary report
+    // dates, the claimed disclosure may not precede the statutory floor.
+    if(report.filedOn&&report.dueOn
+      &&availableOn<cfbElectronicReportAvailableOn(report.filedOn,report.dueOn))return [];
+    // Notices require a genuine filing date in addition to a publication day.
+    if(report.proofKind==='cfb_large_contribution_notice'
+      &&(!report.filedOn||availableOn<exactDate(report.filedOn,'CFB notice filing date')))
+      return [];
     if(occurredOn<coverageStartOn||occurredOn>coverageEndOn)return [];
     return [{
       ...report,
@@ -148,6 +157,9 @@ export function firstCfbReportAvailabilityForTransaction(
   return eligible[0]??null;
 }
 
+// The legacy availableOn field of this return value represents only the
+// conservative statutory / filing NOT-BEFORE day. It is NOT an affirmative
+// historically-public-by certificate. Do not use it to set asOfEligible.
 export function buildCfbReportDisclosureProof(input:{
   registrationNumber:string;
   reportName:string;
