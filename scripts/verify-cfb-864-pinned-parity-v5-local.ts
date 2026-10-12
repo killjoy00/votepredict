@@ -11,13 +11,13 @@ let uri:URL;
 try{uri=new URL(raw)}catch{throw Error('Expected disposable local PostgreSQL')}
 const pr=process.env.GITHUB_EVENT_NAME==='pull_request'
  &&/^refs\/pull\/[0-9]+\/merge$/.test(process.env.GITHUB_REF??'');
-const main=(process.env.GITHUB_EVENT_NAME==='push'
+const mainEvent=(process.env.GITHUB_EVENT_NAME==='push'
  ||(process.env.GITHUB_EVENT_NAME==='issue_comment'
  &&process.env.CFB_864_PARITY_V5_OWNER_COMMENT_VERIFIED==='true'))
  &&process.env.GITHUB_REF==='refs/heads/main';
 if(process.argv.length!==2
  ||process.env.GITHUB_REPOSITORY!=='killjoy00/votepredict'
- ||(!pr&&!main)
+ ||(!pr&&!mainEvent)
  ||uri.hostname!=='localhost'||uri.port!=='5432'
  ||uri.pathname!=='/votepredict'
  ||!['postgres:','postgresql:'].includes(uri.protocol)
