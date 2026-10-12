@@ -270,9 +270,22 @@ jobs:
                   +'; proof digest '+rec.eligible_any_proof_digest
                   +'; rowKey '+rec.eligible_row_key);
               }
+              const overall=data.rows.reduce((sum,rec)=>({
+                senate:sum.senate+Number(rec.senate_rows),
+                eligible:sum.eligible+Number(rec.eligible_claims),
+                filing:sum.filing+Number(rec.eligible_filing_derived),
+              }),{senate:0,eligible:0,filing:0});
+              if(overall.senate>32000||overall.eligible>overall.senate
+                ||overall.filing>overall.eligible)throw Error('Invalid total sample cardinality');
               body=[...intro,
                 '**Completed protected metadata-only 500-document / first-64-evidence-prefix audit.**',
-                'Groups use exactly the same deterministic source/row prefix as the previous V1 run.',
+                'V2 linked Senate sampled observations: '+overall.senate
+                +'; stored eligible claims: '+overall.eligible
+                +'; eligible filing-derived labelled: '+overall.filing+'.',
+                'Prior V1 corresponding numbers: 6801 / 4598 / 2448.',
+                'Differences may reflect changed source inventory; matching totals do NOT certify row identity.',
+                'Groups use the V1 deterministic selection RULE, not a locked earlier snapshot.',
+                'Changes to the source inventory since V1 can change the selected cohort.',
                 'Version buckets: v8, v7, v1_to_v6, missing, other_or_unrecognized.',
                 'All counts below refer to rows with an existing Senate membership link.',
                 'Evidence key presence is NOT evidence validity: published_at, availableOn, URL,',
