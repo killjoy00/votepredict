@@ -76,8 +76,8 @@ export function inspectText(text,source,htmlMode=false){
    (/\b(?:hf|sf)\s*(?:no\.\s*)?(?:5247|3257)\b/i.test(normalized)||normalized.includes(source.bill.toLowerCase())):
    (normalized.includes('93rd legislature')&&normalized.includes('2023 - 2024'));
  const billIdentified=source.bill==='HF5247'?
-   (normalized.includes('hf5247')||normalized.includes('hf 5247')||normalized.includes('h.f. no. 5247')):
-   (normalized.includes('sf3257')||normalized.includes('sf 3257')||normalized.includes('s.f. no. 3257'));
+   (/\bh\.?\s*f\.?\s*(?:no\.?\s*)?5247\b/i.test(normalized)):
+   (/\bs\.?\s*f\.?\s*(?:no\.?\s*)?3257\b/i.test(normalized));
  const postedDaySourceOnly=source.listedPostedDay;
  const present=FRAGMENTS.map(t=>({id:t.id,shortSourceCuePresent:normalized.includes(t.phrase)}));
  const required=['transportation_translation_provision_title','translated_equivalent_materials','qualifying_nonenglish_languages','dvs_deputy_registrar'];
