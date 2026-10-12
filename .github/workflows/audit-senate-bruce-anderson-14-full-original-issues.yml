@@ -1,0 +1,95 @@
+name: Independently audit 14 historic Bruce Anderson first-party original source issue headings
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-bruce-anderson-14-full-original-issues-leads-v1.json
+      - scripts/audit-senate-bruce-anderson-14-exact-original-headings.mjs
+      - tests/senate-bruce-anderson-original-14-headings.test.ts
+      - scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs
+      - .github/workflows/audit-senate-bruce-anderson-14-full-original-issues.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  independent-bruce-original-160-cdx-html-and-14-short-issues:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-bruce-anderson-14-older-original-policy-headings-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen pinned exact original LRL full historical state Senate service and special swearing
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen Bruce independently original complete 160-row CDX and same-date authentic senate committee identifying oEmbed
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38175993447
+          name: senate-first-20-uncovered-original-26-historic-archive-windows-v1
+          github-token: ${{ github.token }}
+          path: original/first20
+      - name: Reopen acquired exact 2022 whole original Issues HTML and digest
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38187575772
+          name: senate-bruce-anderson-2022-original-exact-issues-html-with-160-row-cdx-v1
+          github-token: ${{ github.token }}
+          path: original/bruce-source
+      - name: Independent source SHA256, CDX SHA1, original candidate identity and 14 exact short source heading verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
+          node --import tsx scripts/audit-senate-bruce-anderson-14-exact-original-headings.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --first20-source-dir original/first20 \
+            --bruce-exact-original-dir original/bruce-source \
+            --output-json original/proof/bruce-anderson-14-original-historic-short-headings-sha-rechecked.json
+      - name: Rebuild original-government-grounded all 95 serving senators historical first-party research coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          node --import tsx scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --out-dir original/95-senator-coverages
+          node -e 'const x=require("./original/95-senator-coverages/95-senators-public-campaign-coverage.json");const s=x.summary;for(const [k,v] of Object.entries({actualServingStateSenators:95,actuallyServedSenatorsWithAnyKnownSelectedOriginalSiteExcerpt:85,actuallyServedSenatorsWithOriginalSiteBodiesButNoSelectedQuote:0,actuallyServedSenatorsUnobservedInSelectedOriginalSiteSourceLedgers:10,totalExactResearchExcerptRowsForVerifiedSenators:1093,nonMatchingRowsExcludedOrNeedsSeparateIdentityProof:1,productionDatabaseReadsWritesOrForecastChanges:0})){if(s[k]!==v)throw Error(k+" expected "+v+" got "+s[k]);}console.log("85/95 ACTUAL SENATORS ORIGINAL WEBSITE SOURCE LEADS; 1093 SHORT EXCERPTS; 10 REMAIN UNKNOWN");'
+      - name: Retain independently source-reopened Bruce 14 headings original proof
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-bruce-14-exact-original-issues-html-cdx-independent-proof-v1
+          path: original/proof/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Retain original 95 member complete coverage after Bruce addition
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-95-serving-85-original-firstparty-1093-short-research-excerpts-v1
+          path: original/95-senator-coverages/
+          if-no-files-found: warn
+          retention-days: 30
