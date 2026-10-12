@@ -1,0 +1,56 @@
+name: Historic MPR 2023 Kunesh original printed transcript short-turn proof
+
+# Public source research only; no raw MPR HTML, audio, full transcript,
+# private data, model predictions or historical ingestion artifacts persisted.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-mpr-kunesh-2023-original-in-turn.yml
+      - scripts/probe-senate-media-mpr-kunesh-2023-speaker-cues.mjs
+      - scripts/run-senate-media-mpr-kunesh-2023-speaker-cues.mjs
+      - tests/senate-media-mpr-kunesh-2023-original-in-turn.test.mjs
+      - tests/senate-media-mpr-kunesh-2023-original-receipts.test.mjs
+      - docs/evaluation/senate-media-mpr-kunesh-2023-original-in-turn-20261011.json
+      - docs/evaluation/senate-media-mpr-kunesh-2023-original-in-turn-20261011.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mpr-2023-kunesh-historical-printed-short-speaker-original-proof
+  cancel-in-progress: false
+
+jobs:
+  source-original-sha-and-printed-speech-cues:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'evidence/mpr-kunesh-2023-in-transcript-first-original-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Offline original 2023 MPR printed speaker-turn falsification tests
+        run: node --test tests/senate-media-mpr-kunesh-2023-original-in-turn.test.mjs
+      - name: Six checks across two independently pinned full original 2023 MPR HTML versions
+        run: |
+          node scripts/run-senate-media-mpr-kunesh-2023-speaker-cues.mjs \
+            --output artifacts/mpr-2023-kunesh-original-printed-short-cue-evidence.json
+      - name: Preserve only source fingerprints UTC and short printed phrase speaker-label booleans
+        uses: actions/upload-artifact@v6
+        with:
+          name: mpr-2023-kunesh-original-printed-short-cue-evidence
+          path: artifacts/mpr-2023-kunesh-original-printed-short-cue-evidence.json
+          if-no-files-found: error
+          retention-days: 7
