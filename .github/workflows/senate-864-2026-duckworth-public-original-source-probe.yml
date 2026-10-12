@@ -3,8 +3,10 @@ on:
   pull_request:
     paths:
       - data/evaluation/senate-864-2026-incumbent-duckworth-exact-speaker-leads-v1.json
+      - data/evaluation/senate-864-2026-49-incumbent-public-source-reference-crosswalk-v1.json
       - scripts/probe-senate-864-2026-duckworth-dated-original-public-statements.mjs
       - tests/senate-864-2026-incumbent-duckworth-public-source.test.mjs
+      - tests/senate-864-2026-49-incumbent-source-parity-boundary.test.mjs
       - docs/evaluation/senate-864-2026-49-incumbent-source-parity-and-duckworth.md
       - .github/workflows/senate-864-2026-duckworth-public-original-source-probe.yml
 permissions:
@@ -28,7 +30,7 @@ jobs:
       - name: Offline tests: no speaker, date, provider, original-site or database claims invented
         run: |
           node --check scripts/probe-senate-864-2026-duckworth-dated-original-public-statements.mjs
-          node --test tests/senate-864-2026-incumbent-duckworth-public-source.test.mjs
+          node --test tests/senate-864-2026-incumbent-duckworth-public-source.test.mjs tests/senate-864-2026-49-incumbent-source-parity-boundary.test.mjs
       - name: Read four exact public URLs and preserve safe source fingerprint receipts
         run: |
           node scripts/probe-senate-864-2026-duckworth-dated-original-public-statements.mjs --out-dir proof
