@@ -53,7 +53,7 @@ export function classifySafeOriginalPdfHold(error:unknown):OriginalPdfHoldCode{
  if(/pdfinfo|PDF information/i.test(m))return 'pdfinfo_failure';
  if(/OCR|tesseract|pdftoppm|render failed|page images/i.test(m))
   return 'ocr_or_render_failure';
- if(/extracted text digest drift|text SHA mismatch/i.test(m))
+ if(/(?:extracted|embedded) text digest drift|text SHA mismatch/i.test(m))
   return 'source_text_drift';
  if(/Education original six-action|observations outside safe|source parser action/i.test(m))
   return 'semantic_original_mismatch';
