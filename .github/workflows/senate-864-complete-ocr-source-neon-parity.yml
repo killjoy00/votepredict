@@ -304,9 +304,6 @@ jobs:
       public_full_ocr_parity_b64: ${{ steps.neon.outputs.public_full_ocr_parity_b64 }}
       safe_failure_phase: ${{ steps.neon.outputs.safe_failure_phase }}
     env:
-      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
-      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
-      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
       VOTEPREDICT_864_APPROVAL: BOUNDED_COUNTS_ONLY
       VOTEPREDICT_864_INDEPENDENT_CI_VERIFIED: ${{ needs.main-presecret-independent-proof.result == 'success' && 'true' || 'false' }}
       VOTEPREDICT_864_ONE_SHOT_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_FULL_207_OCR_NEON_PARITY_ONESHOT_20261012_V2') && 'true' || 'false' }}
@@ -488,6 +485,10 @@ jobs:
           path: artifacts/ocr
       - name: Readonly 1452 original SHA / 153 recognized source event / choice comparison and ROLLBACK
         id: neon
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+          VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
         run: node --import tsx scripts/audit-senate-864-protected-source-db-parity-v2.ts --protected
   keyless-sanitized-issue-receipt:
     needs: [main-presecret-independent-proof,protected-existing-neon-readonly]
