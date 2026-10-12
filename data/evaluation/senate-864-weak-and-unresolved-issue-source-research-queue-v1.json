@@ -99,6 +99,61 @@
           "dateClaim": "2022-05-12",
           "identityCue": "Kari Dziedzic",
           "why": "Original 2022 direct abortion/sexual-consent legislative statement; party publisher, not 2022 campaign platform"
+        },
+        {
+          "id": "quade22-child-children",
+          "person": "Erin Maye Quade",
+          "office": "Minnesota Senate SD56",
+          "electionDate": "2022-11-08",
+          "url": "https://erinmayequade.com/priorities/putting-children-and-families-first/",
+          "sourceKind": "candidate_owned_2022_issue_child_page_historical_version_unknown",
+          "dateClaim": "linked-on-original-2022-11-05-priorities-menu",
+          "identityCue": "Erin Maye Quade",
+          "why": "Actual hyperlink found in SHA1/CDX verified 2022-11-05 original candidate-owned /priorities menu. Childcare, schooling and family support. Need original child HTML pre-election, not mutable 2026 campaign copy."
+        },
+        {
+          "id": "quade22-child-economy",
+          "person": "Erin Maye Quade",
+          "office": "Minnesota Senate SD56",
+          "electionDate": "2022-11-08",
+          "url": "https://erinmayequade.com/priorities/strengthening-our-economy/",
+          "sourceKind": "candidate_owned_2022_issue_child_page_historical_version_unknown",
+          "dateClaim": "linked-on-original-2022-11-05-priorities-menu",
+          "identityCue": "Erin Maye Quade",
+          "why": "Actual hyperlink found in SHA1/CDX verified 2022-11-05 original candidate-owned /priorities menu. 2022 Senate economic issue policy specifics. Need original child HTML pre-election, not mutable 2026 campaign copy."
+        },
+        {
+          "id": "quade22-child-democracy",
+          "person": "Erin Maye Quade",
+          "office": "Minnesota Senate SD56",
+          "electionDate": "2022-11-08",
+          "url": "https://erinmayequade.com/priorities/defending-our-democracy/",
+          "sourceKind": "candidate_owned_2022_issue_child_page_historical_version_unknown",
+          "dateClaim": "linked-on-original-2022-11-05-priorities-menu",
+          "identityCue": "Erin Maye Quade",
+          "why": "Actual hyperlink found in SHA1/CDX verified 2022-11-05 original candidate-owned /priorities menu. 2022 voting rights and government accountabilities. Need original child HTML pre-election, not mutable 2026 campaign copy."
+        },
+        {
+          "id": "quade22-child-reproductive",
+          "person": "Erin Maye Quade",
+          "office": "Minnesota Senate SD56",
+          "electionDate": "2022-11-08",
+          "url": "https://erinmayequade.com/priorities/protecting-reproductive-rights/",
+          "sourceKind": "candidate_owned_2022_issue_child_page_historical_version_unknown",
+          "dateClaim": "linked-on-original-2022-11-05-priorities-menu",
+          "identityCue": "Erin Maye Quade",
+          "why": "Actual hyperlink found in SHA1/CDX verified 2022-11-05 original candidate-owned /priorities menu. 2022 rights and abortion access issue page. Need original child HTML pre-election, not mutable 2026 campaign copy."
+        },
+        {
+          "id": "quade22-child-veterans",
+          "person": "Erin Maye Quade",
+          "office": "Minnesota Senate SD56",
+          "electionDate": "2022-11-08",
+          "url": "https://erinmayequade.com/priorities/serving-our-veterans/",
+          "sourceKind": "candidate_owned_2022_issue_child_page_historical_version_unknown",
+          "dateClaim": "linked-on-original-2022-11-05-priorities-menu",
+          "identityCue": "Erin Maye Quade",
+          "why": "Actual hyperlink found in SHA1/CDX verified 2022-11-05 original candidate-owned /priorities menu. 2022 military and veteran services policy specifics. Need original child HTML pre-election, not mutable 2026 campaign copy."
         }
       ]
     },
