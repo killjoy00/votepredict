@@ -97,6 +97,28 @@ other evidence tracks and historical eligibility are not certified. The
 No finance, forecasting, training, serving, deployment, scheduler, 2027
 or database write is authorized. Parent issue #864 must remain **OPEN**.
 
-**Status:** full original source proof verified, but 2025 original-to-stored
-individual-fingerprint parity is pending a reviewed successful V5 protected
-run and its exact keyless issue receipt.
+## Subsequent source-to-stored resolution: V6 (not V5)
+
+The [first V5 protected run #38266959992](https://github.com/killjoy00/votepredict/actions/runs/38266959992)
+read and explicitly rolled back but its strict numeric classifier **HELD**.
+That run did **not** certify eight stored individual choices; its separate
+[keyless HOLD receipt #6126911116](https://github.com/killjoy00/votepredict/issues/864#issuecomment-6126911116)
+remains authoritative for V5.
+
+A distinct reviewed
+[V6 protected run #38270466090](https://github.com/killjoy00/votepredict/actions/runs/38270466090)
+and [issue receipt #6127418525](https://github.com/killjoy00/votepredict/issues/864#issuecomment-6127418525)
+subsequently established **FULL_8_OF_8 / COMPLETE** against the existing
+Neon default branch: **33/33** source-detailed 2025 candidate rolls and
+**305/305** 2025 individual source named-choice fingerprints match.
+The historical 2025 key-only comparison limitation is now **resolved for
+this one source event**; all 153 parser-recognized original candidate
+rolls now have detailed original choice fingerprints. Exact all-years
+detailed roll parity is **152/153**, with the sole remaining 2024
+**single missing original YEA choice** still held. See
+[V6 verified evidence checkpoint](./senate-864-2025-judiciary-postrollback-numeric-v6.md).
+
+This is source-to-*existing default Neon branch* parity only—not an official
+complete historical-vote census, proof of the deployed database binding,
+authorization to repair a row, or a historical prediction-eligibility claim.
+**Issue #864 remains OPEN.**

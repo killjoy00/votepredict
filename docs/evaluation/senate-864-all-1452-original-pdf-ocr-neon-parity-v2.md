@@ -140,3 +140,32 @@ is cross-checked with this V2 result by a regression test.
 This narrows *which side* is missing, not *which person* or why the
 choice was absent; neither V4 nor V2 authorizes a row repair, historical
 prediction eligibility, all-source completeness or closing #864.
+
+## Subsequent V6: 2025 Judiciary individual-choice proof closes former source key-only limitation
+
+The original V2 snapshot and its **one key-only 2025 roll** remain immutable
+as a truthful description of the evidence originally available at V2.
+A separately archived SHA-verified March 12, 2025 Judiciary original
+7 YEA / 1 NAY roll provided all eight one-way original choice fingerprints.
+The subsequent [successful V6 protected run #38270466090](https://github.com/killjoy00/votepredict/actions/runs/38270466090)
+and [keyless receipt #6127418525](https://github.com/killjoy00/votepredict/issues/864#issuecomment-6127418525)
+found those **8 of 8** original fingerprints exactly in the existing
+Neon default branch, with **33 of 33 2025 detailed candidate rolls and
+305 of 305 2025 detailed fingerprints matching**.
+
+The upgraded full original detailed source universe is now **153 candidate
+rolls / 989 fingerprint tokens**, with **152 fully matched candidate
+rolls** and **979 individual tokens on those fully matching rolls**.
+One separate **2024 YEA-side original named choice** is still absent
+(10 original/9 stored, nine matching, zero extras). Earlier V2 rows
+remain frozen; they must not be silently rewritten or interpreted as
+current global completeness. The V5 intervening post-rollback HOLD
+[receipt #6126911116](https://github.com/killjoy00/votepredict/issues/864#issuecomment-6126911116)
+was superseded by V6, not retroactively reclassified as successful.
+
+The [immutable V6 source-to-stored proof](./source-proof/senate-864-2025-judiciary-eight-of-eight-v6-protected-receipt.json)
+does **not** prove an exhaustive official roll/motion census, 2021 print-only
+minutes, 2022 print/electronic equivalence, the 141 unlinked electronic
+meetings, historical membership service dates, deployed app DB binding or
+publication-as-of prediction eligibility. No vote repair is authorized;
+#864 remains **OPEN**.
