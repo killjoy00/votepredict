@@ -317,3 +317,12 @@ test('independent expenditure backfill does not directly promote report filing/d
   assert.match(source,/disclosure\.disclosed_on = disclosure\.available_on/);
   assert.match(source,/for \(let offset = 0; offset < verifiedDisclosureMappings\.length/);
 });
+
+test('Board meeting filing tables cannot label a statutory bound as proven public-by',()=>{
+  const source=readFileSync('scripts/backfill-cfb-filing-proofs.ts','utf8');
+  assert.match(source,/statutoryNotBeforeOn: proof\.availableOn/);
+  assert.match(source,/historicalExactVersionPublicByOn: null/);
+  assert.match(source,/retrospectiveAvailabilityProof: false/);
+  assert.match(source,/legalFloorOnly: true/);
+  assert.doesNotMatch(source,/provenAvailableOn: proof\.availableOn/);
+});
