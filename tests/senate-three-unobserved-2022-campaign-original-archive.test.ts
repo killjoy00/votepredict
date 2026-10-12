@@ -46,3 +46,29 @@ test('2022 archive date is a public archive capture bound, NEVER proof of candid
  assert.equal(sourceYear2022CitationLimit({timestamp:'20261011020000'},'20221108000000'),false);
  assert.equal(sourceYear2022CitationLimit({timestamp:'2022-11-07'},'20221108000000'),false);
 });
+
+
+test('permanent source receipt pins original CDX SHA and evidence absent without manufacturing policy',async()=>{
+ const {readFileSync}=await import('node:fs');
+ const c=JSON.parse(readFileSync('docs/evaluation/source-proof/senate-three-unobserved-2022-original-firstparty-archive-source-checkpoint.json','utf8'));
+ assert.equal(c.issue,864);
+ assert.equal(c.originalSourceOutcome,'success');
+ assert.equal(c.originalCdxFullBodiesHashed,3);
+ assert.equal(c.validOriginalSchemaCdxIndexResponses,2);
+ assert.deepEqual(c.originalCDXResponses.map((x:any)=>x.senator),UNOBSERVED_SENATE_SITE_2022_LEADS.map(x=>x.officialName));
+ assert.deepEqual(c.originalCDXResponses.map((x:any)=>x.entireOriginalCDXBytes),[3,184,192]);
+ assert.ok(c.originalCDXResponses.every((x:any)=>x.sourceHTTPStatus===200&&/^[a-f0-9]{64}$/.test(x.entireOriginalCDXSHA256)));
+ assert.equal(c.originalCDXResponses[0].classification,'HOLD_invalid_original_archive_index_schema');
+ assert.equal(c.originalCDXResponses[0].originalQualifiedPreElectionRows,null);
+ assert.equal(c.originalCDXResponses[1].originalQualifiedPreElectionRows,0);
+ assert.equal(c.originalCDXResponses[2].originalQualifiedPreElectionRows,0);
+ assert.equal(c.independentlyVerifiedOriginalCandidateHTMLBodies,0);
+ assert.equal(c.newVerbatimHistoricallyProvenIssueExcerpts,0);
+ assert.equal(c.historical2022OriginalCandidateSitePublicByNewProofs,0);
+ assert.equal(c.priorAuthenticOriginalWebsiteExcerptLeadPeople,79);
+ assert.equal(c.remainingPriorUnobservedPeople,16);
+ assert.equal(c.emptyArchiveIndexNeverEvidenceNoCampaignPosition,true);
+ assert.equal(c.modernSiteCopyNeverBackdatedTo2022,true);
+ assert.equal(c.sourceToDBHistoricalReconciliationDone,false);
+ assert.equal(c.issue864MustRemainOpen,true);
+});
