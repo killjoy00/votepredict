@@ -74,3 +74,56 @@ scheduler, Senate floor, 2027 work, or government office contact.
 **Issue #864 stays OPEN.** A green PR CI is insufficient to certify source
 acquisition. Inspect the independent *post-merge* original-source Actions run
 and metadata artifact before freezing any new source result.
+
+## Observed separate original-source outcome — 2026-10-12
+
+The actual one-time GitHub Actions source run
+[#38192274549](https://github.com/killjoy00/votepredict/actions/runs/38192274549)
+**succeeded**, separately from green PR-head CI
+[#38192064667](https://github.com/killjoy00/votepredict/actions/runs/38192064667).
+It reacquired **4/4 exact full original LRL MP3s**, with each whole-file
+SHA-256 and byte size matching both previously independent source runs,
+strict first-64-KiB prefix authentication, exact ffprobe durations and
+**zero acquisition failures**. No raw MP3, PCM or transcript was committed
+or uploaded; the ephemeral runner removed every temporary media file.
+
+The recorded `source.json` (9,597 bytes, SHA-256
+`c37b4b662055af24a9ae94d7c36479563b8b5d837c2c833ac54222975ac83660`)
+was downloaded directly in artifact **#11722930167** as a 2,117-byte ZIP,
+SHA-256
+`95f31173d20c57399548ccf78c3397f468efebfdcb34200e195f91772bd38014`.
+The independently inspected result is frozen in
+[permanent original-source proof](source-proof/senate-2021-apr08-judiciary-original-full-audio-acoustic-overlap-success.json).
+
+**Substantive acoustic overlap discovery:**
+
+- Original Judiciary first `cmte_jud_040821.mp3` and alternate
+  `cmte_jud_040821a.mp3` have **eight separate 36-second sampled windows**
+  at the **same recording-relative times, zero offset**. The envelope
+  correlations were 0.9996–0.9998; independently decoded PCM sample
+  correlations were 0.9962–0.9976. Sampling locations included seconds
+  798, 1862, 2926, 3990, 5054, 3485, 3986 and 4925. These establish
+  **shared acoustic content in the tested windows**, not whole-track
+  equivalence, verified speech identity or MP3 byte identity (whole SHAs
+  differ).
+- The three original first-Judiciary *untrusted automated-caption review
+  leads* at seconds **3503, 4004 and 4943** fall inside three separately
+  matched 36-second windows at 3485, 3986 and 4925, respectively.
+  Therefore these source-relative lead timecodes also apply in the
+  alternate `a` file **for sampled audio navigation only**. There has
+  been no original speech listening or verified transcription, named
+  Pappas roll-call introduction, full motion, vote tally or outcome
+  certification through this audio.
+- Neither `first`–`b` nor `a`–`b` produced a strong sampled
+  envelope match at the tested source offsets. This **does not establish
+  that all material is disjoint** or the order of sessions. `b` remains
+  an independent 01:24:33.006 recording with no certified relation
+  to the first/`a` source clock.
+
+Consequently, the three distinct April 12 Journal-reported amendment
+motions still have **`occurred_on=null`**, with no authenticated
+motion-specific Apr 8 hearing date and no proven original first-public-by.
+Bill-level Apr 8 committee action is not vote-level timing. No same-day
+eligibility; next-day-only policy remains contingent on eventual
+motion-level authentication. Issue #864 remains OPEN; no database/import,
+model, floor, scheduler, 2027 or government office contact change.
