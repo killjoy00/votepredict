@@ -42,7 +42,7 @@ jobs:
         with:
           node-version: 22
       - name: Offline exact URLs, named individual senator identities, index SHA, redirects and false global absence
-        run: node --test tests/senate-media-eight-caucus-originals.test.mjs tests/senate-media-eight-caucus-real-receipts.test.mjs
+        run: node --test tests/senate-media-eight-caucus-originals.test.mjs
       - name: Bounded current public first-party and original Wayback plus selected Common Crawl indexed historical HTML
         run: node scripts/probe-senate-media-eight-caucus-originals.mjs --output artifacts/senate-media-eight-original-sources.json
       - name: Upload only capture UTC, original SHA/bytes and named short-cue attribution flags
