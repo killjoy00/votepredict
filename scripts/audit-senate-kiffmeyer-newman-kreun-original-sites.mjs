@@ -176,7 +176,7 @@ const proof={schema:'mn-3-actual-senators-33-historical-office-scope-firstparty-
  actualServingSenatorsVerified:serving.size,
  exactLiteralShortResearchExcerptsMatched:qProof.length,
  olderSecretaryOfStateAndHouseAndSchoolBoardNotSenatePositions:true,
- 2020NewmanHomepageOnlyGenericIssueSalienceNotSpecificBillPromise:true,
+ newmanHomepage2020GeneralPriorities:true,
  archivalFullSiteCensusNotAsserted:true,firstAuthorDatesUnproven:true,
  officialVoteAndForecastAutomaticallyEligible:0,productionDatabaseChanges:0,
  originals:originalProof,shortExcerpts:qProof};
