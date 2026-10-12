@@ -1,0 +1,53 @@
+name: Public Miller Enterprise independently SHA-pinned original printed Q&A turn
+
+# #987. Public original-publisher replay only; no full original, audio,
+# model, collector, source_documents, private context or user credentials.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-miller-enterprise-original-qa-turns.yml
+      - scripts/probe-senate-media-miller-enterprise-original-qa-turns.mjs
+      - tests/senate-media-miller-enterprise-original-qa-turns.test.mjs
+      - tests/senate-media-miller-enterprise-qa-real-receipts.test.mjs
+      - docs/evaluation/senate-media-miller-enterprise-original-speaker-qa-20261011.json
+      - docs/evaluation/senate-media-miller-enterprise-original-speaker-qa-20261011.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-miller-enterprise-original-turn-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  two-immutable-first-party-html-originals:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-miller-enterprise-2022-original-qa-turn-20261012')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Test synthetic adversarial speaker attribution and immutable public originals
+        run: node --test tests/senate-media-miller-enterprise-original-qa-turns.test.mjs tests/senate-media-miller-enterprise-qa-real-receipts.test.mjs
+      - name: Recheck the two SHA-pinned original article bodies, preserve only Miller-labeled paragraph flags
+        run: node scripts/probe-senate-media-miller-enterprise-original-qa-turns.mjs --output artifacts/senate-media-miller-enterprise-speaker-qa.json
+      - name: Upload metadata only, no article or audio bytes
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-miller-enterprise-two-historical-original-turns
+          path: artifacts/senate-media-miller-enterprise-speaker-qa.json
+          retention-days: 7
+          if-no-files-found: error
