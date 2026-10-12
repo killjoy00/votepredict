@@ -1,0 +1,47 @@
+name: Independent 95-served-senator historical issue depth matrix
+on:
+  pull_request:
+    paths:
+      - scripts/report-senate-864-95-person-issue-depth-and-source-context.mjs
+      - .github/workflows/senate-864-policy-depth-matrix-audit.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  reconcile-all-original-candidate-site-ledgers:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-depth-matrix-weak-coverage-source-probes-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - run: node --check scripts/report-senate-864-95-person-issue-depth-and-source-context.mjs
+      - name: Reopen independently verified official 95-person senator original coverage report
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38197279787
+          name: senate-95-serving-92-original-sites-1194-short-excerpts-v1
+          github-token: ${{ github.token }}
+          path: original/statewide
+      - name: Reconcile 1194 site research excerpts to actual senators and issue tags
+        run: |
+          test -s original/statewide/95-senators-public-campaign-coverage.json
+          node scripts/report-senate-864-95-person-issue-depth-and-source-context.mjs \
+            --coverage-json original/statewide/95-senators-public-campaign-coverage.json \
+            --out-dir research/issue-depth
+      - name: Retain copyright-aware issue metadata counts and weak-coverage research queue
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-95-person-historical-campaign-issue-depth-matrix-v1
+          path: research/issue-depth/
+          if-no-files-found: warn
+          retention-days: 30
