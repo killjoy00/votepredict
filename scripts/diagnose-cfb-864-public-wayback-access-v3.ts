@@ -58,7 +58,8 @@ function sameArchiveDestination(response:Response,url:string,kind:'index'|'repla
     ||actual.port||actual.username||actual.password)return false;
   if(original.origin!=='https://web.archive.org')return false;
   if(kind==='index')return actual.pathname==='/cdx/search/cdx'
-    &&original.pathname==='/cdx/search/cdx';
+    &&original.pathname==='/cdx/search/cdx'
+    &&actual.search===original.search;
   return actual.pathname===original.pathname
     &&actual.search===original.search;
  }catch{return false}
@@ -88,10 +89,7 @@ async function readLimited(response:Response,max:number):Promise<Uint8Array>{
 async function discardAfterPrefix(response:Response):Promise<number>{
  // Deliberately read only a small in-memory prefix, then cancel the stream.
  // Nothing from the prefix is retained, printed, hashed or persisted.
- if(!response.body){
-  const bytes=new Uint8Array(await response.arrayBuffer());
-  return Math.min(bytes.length,MAX_PREFIX_BYTES);
- }
+ if(!response.body)throw Error('No streaming body for bounded diagnostic');
  const reader=response.body.getReader();let seen=0;
  try{
   while(seen<MAX_PREFIX_BYTES){
