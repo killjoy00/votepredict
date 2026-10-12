@@ -1,0 +1,126 @@
+{
+  "schema": "mn-senate-864-2026-fortynine-incumbent-research-source-parity-duckworth-v1",
+  "issue": 864,
+  "asOf": "2026-10-12",
+  "electionDate": "2026-11-03",
+  "population": {
+    "currentIncumbentGeneralNominees": 49,
+    "withVerifiedOlderCandidateOwnedCampaignWebsiteExcerpts": 49,
+    "totalSelectedOriginalHistoricalCampaignSiteExcerpts": 716,
+    "sourceCandidatePopulationIncludesChallengers": false,
+    "verifiedOwnedWebsiteCoveredPeople2021to2025": 92,
+    "actualEverServing2021to2025": 95
+  },
+  "sourceReferenceBoundedGitHubCodeSearch": {
+    "observedReferencesOrOldDomains": 22,
+    "notObservedInSearch": 27,
+    "assertsExactCurrentPageContentMatch": false,
+    "assertsPrivateDatabasePresenceOrAbsence": false,
+    "queryMethod": "49 URL/path/host bounded searches on existing main code index, not stored private source row enumeration"
+  },
+  "existingProtectedAggregate": {
+    "sourceReceipt": "https://github.com/killjoy00/votepredict/issues/864#issuecomment-6116826026",
+    "record": "docs/evaluation/source-proof/senate-864-v5-protected-neon-seven-family-baseline.json",
+    "verifiedReadOnlyDefaultBranch": true,
+    "deployedProductionBindingVerified": false,
+    "campaignEvidenceRowsYearBucket2026": 140,
+    "distinct2026CampaignSourceDocuments": 65,
+    "personByPersonMatchedAgainstNew2026Leads": 0,
+    "exactSourceShaUrlOrClaimMatchAvailable": false
+  },
+  "duckworth": {
+    "senator": "Zach Duckworth",
+    "officialDistrict2026": "57",
+    "electionNomineeVerifiedPreviously": true,
+    "sourceOriginal2022OwnedCampaignPage": "https://www.voteduckworth.com/issues",
+    "original2022CaptureUtc": "2022-01-18T02:14:14.000Z",
+    "original2022PageSha256": "a66629f93b36290064ac1f959590aa95f14b6a22d819ea37dc0ef54e9ddc9929",
+    "original2022CdxIndexedSha1Base32": "3J4BJQQIJWTO6ZBAOBGEDCKJ6QMWGEYK",
+    "selectedOlderOriginalSiteExcerpts": 14,
+    "legacyPageIssueCycle": "2020-era text retained in 2022 original; no first-authored or renewed 2026 pledge inferred",
+    "newDated2026SourceLeads": [
+      {
+        "id": "duckworth-20260125-cnn-direct-turn",
+        "publisher": "CNN",
+        "kind": "publisher_original_printed_direct_speaker_transcript",
+        "dateDisplayed": "2026-01-25",
+        "url": "https://transcripts.cnn.com/show/cnr/date/2026-01-25/segment/06",
+        "speakerCue": "ZACH DUCKWORTH (R)",
+        "shortIssueCue": "We still want to apprehend people who are not here legally that are violent criminals",
+        "issue": "Federal-state enforcement coordination; prioritize violent crime enforcement and de-escalate encounters",
+        "overlapCluster": "federal_state_enforcement_2026",
+        "transcriptIsRushCopy": true
+      },
+      {
+        "id": "duckworth-20260126-caucus-pretti-letter",
+        "publisher": "Minnesota Senate Republican Caucus",
+        "kind": "caucus_own_attributed_public_quote",
+        "dateDisplayed": "2026-01-26",
+        "url": "https://www.mnsenaterepublicans.com/duckworth-calls-for-federal-state-cooperation-in-pretti-shooting-investigation/",
+        "speakerCue": "Senator Zach Duckworth",
+        "shortIssueCue": "They should partner on investigations",
+        "issue": "Transparent state/federal shooting investigation and safer lawful federal immigration enforcement",
+        "overlapCluster": "federal_state_enforcement_2026",
+        "thematicOverlapWithPriorDayCnn": true
+      },
+      {
+        "id": "duckworth-20260317-shield-school-safety",
+        "publisher": "Minnesota Senate Republican Caucus",
+        "kind": "caucus_personal_quote_and_bill_chief_authorship",
+        "dateDisplayed": "2026-03-17",
+        "url": "https://www.mnsenaterepublicans.com/senate-republicans-roll-out-a-plan-for-safe-and-smart-kids/",
+        "speakerCue": "Sen. Zach Duckworth",
+        "shortIssueCue": "No families or teacher should wonder if their school has the protection it needs",
+        "issue": "School security grants, access controls, protective glass and staff safety training; SF637",
+        "overlapCluster": "school_hard_security_shield_2026",
+        "quoteMixedWithOtherSpeakersRequiresScope": true
+      },
+      {
+        "id": "duckworth-20260516-mpr-charitable-raffle",
+        "publisher": "MPR News",
+        "kind": "publisher_reported_exact_individual_quote",
+        "dateDisplayed": "2026-05-16",
+        "url": "https://www.mprnews.org/story/2026/05/16/minnesota-lawmakers-race-to-pass-bills-before-end-of-session-on-sunday",
+        "speakerCue": "Sen. Zach Duckworth",
+        "shortIssueCue": "a lot of good for local charities",
+        "issue": "Raising maximum meat-raffle prize from $70 to $200 to improve charitable fundraising",
+        "overlapCluster": "charitable_gaming_fundraising_2026",
+        "doesNotVerifySubsequentEnactment": true
+      }
+    ],
+    "excludedFalsePositives": [
+      {
+        "id": "duckworth-20260519-house-title-not-speaker",
+        "dateDisplayed": "2026-05-19",
+        "url": "https://www.house.mn.gov/Caucus/View/NR/52130",
+        "reason": "Named in joint transportation release, but the direct quotation is attributed to Rep. Jon Koznick, not Duckworth."
+      },
+      {
+        "id": "duckworth-20260916-forum-scheduled-not-quote",
+        "dateDisplayed": "2026-09-16",
+        "url": "https://www.lakevillemn.gov/Calendar.aspx?EID=17241&calType=0&day=16&month=9&year=2026",
+        "reason": "Listed as participating in district forum; no authenticated named transcript turn obtained."
+      },
+      {
+        "id": "duckworth-20250501-caucus-post-is-prior-year",
+        "dateDisplayed": "2025-05-01",
+        "url": "https://www.mnsenaterepublicans.com/senate-passes-higher-education-bill-that-shores-up-state-grant-shortfall-but-fails-to-address-record-tuition-increases/",
+        "reason": "Authentic Duckworth quote published in 2025, not new 2026 content despite 2026 footer."
+      }
+    ]
+  },
+  "boundaries": {
+    "publisher2026DisplayedDateNotExactFirstPublishedInstant": true,
+    "liveOriginalFetchNeedsWholeBodyShaAndIdentityScopeProof": true,
+    "publicationObservedBefore2026ElectionNotAutomaticForecastEligibility": true,
+    "jan25Jan26SamePolicyClusterNotTwoUnrelatedPositions": true,
+    "caucusNotCandidateOwnedCampaignWebsite": true,
+    "publisherNotIndividualLegislativeVote": true,
+    "noRawCopyrightedPageStoredInGit": true,
+    "sourceResearchNotIngestion": true,
+    "perMemberProductionEvidenceStillUnknownForAll49": true,
+    "noOutsideContactOrEmail": true,
+    "noProductionDatabaseReadsOrWrites": true,
+    "noForecastModelSchedulerChanges": true
+  }
+}
