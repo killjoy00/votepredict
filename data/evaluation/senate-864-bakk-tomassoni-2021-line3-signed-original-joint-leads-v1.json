@@ -1,6 +1,6 @@
 {
   "schema": "senate-864-2021-line3-signed-joint-position-bakk-tomassoni-v1",
-  "issue": "minnesota_line3_pipeline_construction_permits_labor_environment",
+  "issue": 864,
   "originalStatementEvent": "2021-09-03-two-senators-signed-multiple-legislator-pro-line3-joint-text",
   "endorsedPolicyScope": "support_completion_of_enbridge_line3_project_during_2021_protests",
   "sourceDisplayedDay": "2021-09-03",
@@ -36,5 +36,6 @@
   "archivedOriginalSha1OrSha256NotYetAuthenticated": true,
   "entirePublishedJointTextNotEachSignedSenatorsSeparateSpokenWords": true,
   "noPreviouslyMissing2020SenateCandidateSiteClaim": true,
-  "productionDbModelsServingUnchanged": true
+  "productionDbModelsServingUnchanged": true,
+  "issueFamily": "climate_environment_energy_line3_infrastructure"
 }
