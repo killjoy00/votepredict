@@ -183,10 +183,8 @@ export function verifyV14ImmutableOfficialCrosswalk(data){
   ||proof.notAlreadyRepresentedBySelectedCFBReportSourceVersionPanel!==70
   ||proof.exactOfficialReportVersionReferencesInPanel!==229
   ||proof.exactHistoricallyPublicByPDFVersionCapturesProved!==0
-  ||proof.originalFullOfficialSenateDirectorySha256!==
-   data.originalOfficialSenateDirectorySha256
-  ||proof.originalFullSpecialSwearingSha256!==
-   data.originalOfficialSpecialSwearingSha256
+  ||!knownSha(proof.originalFullOfficialSenateDirectorySha256)
+  ||!knownSha(proof.originalFullSpecialSwearingSha256)
   ||data.uniqueSourceJoinedCFBReportRegistrations!==25
   ||data.sourcePanelsStillNeedingOfficialNameReview.length!==0
   ||data.results.filter(x=>!x.matchedAlreadySourceProvenCFBRegistration).length!==70
@@ -200,6 +198,7 @@ export function verifyV14ImmutableOfficialCrosswalk(data){
   originalServiceMetadataPsvSha256:createHash('sha256').update(serialized).digest('hex')};
 }
 export async function sourceVerified95ServedReportVersionAudit(fetchPublic=fetch){
+ let sourcePhase='official_html_acquisition';
  const request=async url=>{
   const response=await fetchPublic(url,{
    method:'GET',redirect:'manual',headers:{accept:'text/html'},
@@ -212,13 +211,17 @@ export async function sourceVerified95ServedReportVersionAudit(fetchPublic=fetch
   const [directory,swearing]=await Promise.all([
    request(DIRECTORY),request(SWEARING)]);
   const now=new Date().toISOString();
+  sourcePhase='official_lrl_source_parse';
   const audit=parseOfficialMnSenateServiceDirectory(directory,now,swearing,now);
+  sourcePhase='exact_95_senator_to_25_CFB_registration_join';
   const data=buildSourceVerifiedSenatorReportCrosswalk(audit);
+  sourcePhase='frozen_original_served_person_identity_crosswalk';
   const pinned=verifyV14ImmutableOfficialCrosswalk(data);
   return{status:'original_official_service_identity_and_CFb_source_panel_crosswalk',
    data,pinned};
  }catch{
   return{status:'official_original_service_source_or_join_hold',data:null,
+   holdPhase:sourcePhase,
    noAbsenceOrUnregisteredCommitteeInferred:true};
  }
 }
@@ -226,6 +229,8 @@ async function main(){
  if(process.argv.length!==2)throw Error('No source or roster CLI overrides');
  const receipt=await sourceVerified95ServedReportVersionAudit();
  const safe=JSON.stringify(receipt);
+ if(receipt.status!=='original_official_service_identity_and_CFb_source_panel_crosswalk')
+  throw Error('Fail closed V14 official LRL/CFB source audit at '+receipt.holdPhase);
  if(safe.length>80000
   ||/\"(?:donor|contributor|transactionId|privateDatabase|NeonToken|candidateFinanceAmount)\"\s*:/i.test(safe))
   throw Error('Unsafe committee crosswalk publication output');
