@@ -440,7 +440,8 @@ jobs:
               throw Error('Unexpected private field present in protected numeric receipt');
              const bKeys=('storedBaselineMatchesV2 otherOriginalRollsStillMatchV2 original2025SourceTotalsExact earlier2024MissingYeaAnchorStillProven transactionReadOnly transactionRolledBack noDatabaseWrites noPrivateRowsMemberNamesUrlsOrChoiceHashesExported existingNeonDefaultBranchNotDeployedBinding sourceCandidatesNotCompleteOfficialVoteUniverse historicalEligibilityNotCertified print2021Print2022And141MeetingsHeld noProductionRepairOrPredictionChangeAuthorized issue864StillOpen').split(' ');
              const sKeys=['schemaVersion','individual2025FingerprintParity','explicitHoldReason'];
-             const numericKeys=keys.filter(x=>!bKeys.includes(x)&&!sKeys.includes(x));
+             const ids=['priorV5HeldRunId','priorV5HeldIssueReceiptId','priorV2ProtectedRunId','priorV4ProtectedRunId','independentlyVerifiedOriginalJudiciaryArtifactId'];
+ const numericKeys=keys.filter(x=>!bKeys.includes(x)&&!sKeys.includes(x)&&!ids.includes(x));
              if(bKeys.some(k=>typeof r[k]!=='boolean')
               ||numericKeys.some(k=>typeof r[k]!=='number'||!Number.isSafeInteger(r[k])||r[k]<0||r[k]>3000)
               ||r.schemaVersion!=='mn-864-2025-judiciary-postrollback-v6-safe-numeric-diagnostic'
