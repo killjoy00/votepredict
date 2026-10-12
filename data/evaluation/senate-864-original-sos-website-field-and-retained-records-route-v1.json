@@ -1,0 +1,117 @@
+{
+  "schema": "senate-864-official-sos-preelection-candidate-website-tablefield-and-retained-records-route-v1",
+  "issue": 864,
+  "originalOfficialArchivedSource": "Minnesota Secretary of State 2020/2022 State Senate-only CandidateFilingResults.aspx",
+  "pinnedSnapshots": [
+    {
+      "id": "sos2020-10-21",
+      "electionYear": 2020,
+      "originalCaptureTimestamp": "20201021211752",
+      "originalUrl": "https://candidates.sos.state.mn.us/CandidateFilingResults.aspx?county=0&municipality=0&schooldistrict=0&hospitaldistrict=0&level=1&party=0&federal=False&judicial=False&executive=False&senate=True&representative=False&title=&office=0&candidateid=0",
+      "originalIndexedCDXSHA1Base32": "BBYBU7X3BAFEV27UGT5BGV6WMWIOJ7IM",
+      "originalWholeHTMLSHA256": "89fe0c0cb330a005ad662a5b9d993b520954b247934b93204c324218e1022d89",
+      "people": [
+        {
+          "surname": "Bakk",
+          "officialName": "Thomas M. Bakk",
+          "officialSosWinnerDistrict": "3",
+          "originalFiledName": "Thomas (Tom) Bakk"
+        },
+        {
+          "surname": "Tomassoni",
+          "officialName": "David J. Tomassoni",
+          "officialSosWinnerDistrict": "6",
+          "originalFiledName": "David J Tomassoni"
+        },
+        {
+          "surname": "Wiger",
+          "officialName": "Sr., Charles W. Wiger",
+          "officialSosWinnerDistrict": "43",
+          "originalFiledName": "Charles \"Chuck\" Wiger"
+        }
+      ]
+    },
+    {
+      "id": "sos2022-05-28",
+      "electionYear": 2022,
+      "originalCaptureTimestamp": "20220528164023",
+      "originalUrl": "https://candidates.sos.state.mn.us/CandidateFilingResults.aspx?county=0&municipality=0&schooldistrict=0&hospitaldistrict=0&level=1&party=0&federal=False&judicial=False&executive=False&senate=True&representative=False&title=&office=0&candidateid=0",
+      "originalIndexedCDXSHA1Base32": "EY2O2CJG3DA3DTAVCRX3DZWZNZAM7IMH",
+      "originalWholeHTMLSHA256": "55dec1666b6664beaafb125a7321a52fdf48aa56c4b3d96cbeb1e5b418a1e69d",
+      "people": [
+        {
+          "surname": "Weber",
+          "officialName": "Bill Weber",
+          "officialSosWinnerDistrict": "21",
+          "originalFiledName": "Bill Weber"
+        },
+        {
+          "surname": "Dziedzic",
+          "officialName": "Kari Dziedzic",
+          "officialSosWinnerDistrict": "60",
+          "originalFiledName": "Kari Dziedzic"
+        }
+      ]
+    },
+    {
+      "id": "sos2022-08-16",
+      "electionYear": 2022,
+      "originalCaptureTimestamp": "20220816152037",
+      "originalUrl": "https://candidates.sos.state.mn.us/CandidateFilingResults.aspx?county=0&municipality=0&schooldistrict=0&hospitaldistrict=0&level=1&party=0&federal=False&judicial=False&executive=False&senate=True&representative=False&title=&office=0&candidateid=0",
+      "originalIndexedCDXSHA1Base32": "7WHUBL6VSXWR36YI2PMWCIMWC3QFZLZX",
+      "originalWholeHTMLSHA256": "1776f314b4ef3b35eb8610ec883f7f0033b91199f3c1b4e6b55bfece5b537464",
+      "people": [
+        {
+          "surname": "Weber",
+          "officialName": "Bill Weber",
+          "officialSosWinnerDistrict": "21",
+          "originalFiledName": "Bill Weber"
+        },
+        {
+          "surname": "Dziedzic",
+          "officialName": "Kari Dziedzic",
+          "officialSosWinnerDistrict": "60",
+          "originalFiledName": "Kari Dziedzic"
+        }
+      ]
+    }
+  ],
+  "electionAndRosterAnchors": {
+    "actualServingSenators2021to2025": 95,
+    "originalCandidateOwnedSitePeople92": 92,
+    "selectedOriginalOwnedSiteIssueResearchSnippets": 1285,
+    "originalOfficialLRLSenateDirectoryHtmlSHA256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "sos2020SenateResultsSHA256": "c2937b1fee5ae077603d892adf03c4ce83e2bb2592753680d5bfdeb4aecf7ba5",
+    "sos2020CandLookupSHA256": "8a0596d788b651ec27c05aa576bed31a3a51efd83c2cd2ee2ae5fdcc2f02965a",
+    "sos2022SenateResultsSHA256": "eb8980245094cf8af0cd08a69c42ae0262fb5a692b09a49be2aee959aecaae74",
+    "sos2022CandLookupSHA256": "0973d5962a0afc830ac9374c43f70269871a6377d956b552065c0cf06bec3538"
+  },
+  "officialPublicRecordsProcess": {
+    "currentSOSPolicy": "https://www.sos.mn.gov/about-the-office/rulemaking-data-practice/data-practice-requests/",
+    "statutoryDataAccess": "https://www.revisor.mn.gov/statutes/cite/13.03",
+    "historicalWebsitePostingRule": "https://www.revisor.mn.gov/statutes/2021/cite/10.60",
+    "candidateFilingPage": "https://www.sos.mn.gov/election-administration-campaigns/data-maps/candidate-filings/",
+    "current2026PortalOnly": "https://candidates.sos.mn.gov/",
+    "currentPolicyIdentifiesDataPracticesOfficer": "Lauren Bethke",
+    "currentPolicyEmail": "lauren.bethke@state.mn.us",
+    "recordRequestUserAuthorizationRequiredToSend": true,
+    "scopeExistingRecordsNotCustomNewExtract": true,
+    "privacyOnlyPublicCandidateNameOfficeWebsiteAndRecordVersionDates": true,
+    "doNotRequestHomeAddressPhoneOrEmail": true
+  },
+  "provenanceHolds": {
+    "originalCDXSHA1AndWholeHTMLSHA256MustMatch": true,
+    "officialSOSPostElectionWinnersOnlyIdentityCheck": true,
+    "archivedListingNameNotCampaignWebsiteFiling": true,
+    "blankDisplayedWebsiteCellIsNotProofNoPrivateCandidateOwnedSite": true,
+    "unknownArchiveOrPostbackNotProofOfNoCampaign": true,
+    "originalObservedCaptureDateIsNotFirstAuthoredDate": true,
+    "current2026FilingIsNotHistorical": true,
+    "noFullRawHistoricalCandidateHTMLSaved": true,
+    "noPersonalContactDetailsExposed": true
+  },
+  "newOwnedSitePeople": 0,
+  "newCandidateSitePolicyQuoteExcerpts": 0,
+  "productionDatabaseReadsWrites": 0,
+  "forecastModelTrainingOrDeploymentChanges": 0
+}

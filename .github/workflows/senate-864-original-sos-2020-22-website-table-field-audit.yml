@@ -1,0 +1,65 @@
+name: Independently audit 2020 and 2022 original SOS candidate Website table cells
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-864-original-sos-website-field-and-retained-records-route-v1.json
+      - scripts/audit-senate-864-original-sos-candidate-website-table-field.mjs
+      - src/evidence/senate-sos-original-candidate-website-table.mjs
+      - tests/senate-864-sos-original-candidate-website-table.test.mjs
+      - .github/workflows/senate-864-original-sos-2020-22-website-table-field-audit.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  actual-historical-sos-website-column:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-sos-archived-site-field-and-records-route-20261012'
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    strategy:
+      max-parallel: 2
+      fail-fast: false
+      matrix:
+        year: [2020, 2022]
+    name: Exact original website header and candidate cells — ${{ matrix.year }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: node --check scripts/audit-senate-864-original-sos-candidate-website-table-field.mjs
+      - run: node --check src/evidence/senate-sos-original-candidate-website-table.mjs
+      - name: Offline regressions - website header alignment, blank versus unknown, no false site inference
+        run: node --test tests/senate-864-sos-original-candidate-website-table.test.mjs
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen original independently verified Minnesota 2020 and 2022 SoS Senate election results
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38089571113
+          name: senate-2020-22-public-candidate-original-source-acquisition
+          github-token: ${{ github.token }}
+          path: proof/sos
+      - name: Strict original CDX SHA1 and whole original SOS website table header and candidate cell audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          sos="$(find proof/sos -type f -name 2020-sos-general-stsenate.response -print -quit)"
+          test -n "$sos"
+          node --import tsx scripts/audit-senate-864-original-sos-candidate-website-table-field.mjs \
+            --election-year "${{ matrix.year }}" \
+            --sos-original-dir "$(dirname "$sos")" \
+            --out-dir research/evidence
+      - name: Retain ONLY safe candidate names and public website field status; no original personal contacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-soS-${{ matrix.year }}-original-website-column-independent-proof-v1
+          path: research/evidence/
+          retention-days: 30
+          if-no-files-found: warn
