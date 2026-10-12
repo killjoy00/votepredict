@@ -34,3 +34,19 @@ The new `senate-864-pre2018-independent-commoncrawl-campaign-site-probe.yml` aud
 The current Secretary of State [candidate filing website](https://candidates.sos.mn.gov/) is explicitly for the **November 2026** election, not the missing historical 2020/2022 21-field filing source. The [SOS candidate filings data page](https://www.sos.mn.gov/election-administration-campaigns/data-maps/candidate-filings/) distinguishes currently filed candidate files from separate election-results downloads. Independent research also re-identified a candidate-completed 2020 Bakk KAXE interview and 2022 Bill Weber biofuels questionnaire **already covered by merged source ledgers**; neither is a newly retrieved candidate-owned site or a nonduplicated campaign-site statement.
 
 No outside contacts, correspondence, public-records requests, data access bypass, production database operations, prediction/model changes, 2027 election work, or deployed application modifications. Do not close issue #864.
+
+## Actual bounded public archive result — 2026-10-12
+
+All three [original official-government/source audit jobs](https://github.com/killjoy00/votepredict/actions/runs/38296842531) completed **successfully**, including seven offline SHA1/WARC/index safety regressions and original LRL/SOS 2020 actual-person/winner reconciliations. Their 12 public Common Crawl requests returned **HTTP 504**:
+
+| Candidate | 2013-48 | 2014-52 | 2015-11 | 2017-04 | Original HTML verified |
+| --- | --- | --- | --- | --- | ---: |
+| Wiger | 504 | 504 | 504 | 504 | 0 |
+| Tomassoni | 504 | 504 | 504 | 504 | 0 |
+| Bakk | 504 | 504 | 504 | 504 | 0 |
+
+**Meaning:** Twelve timed-out archival index responses are not twelve empty original indexes. No actual eligible original CDXJ records were returned, no WARC `206` body range could be requested, and no historical campaign issue text was newly verified. This is **provider unavailability**, not authenticated proof the candidates had no websites, no issues, or no early captures.
+
+Permanent machine-readable [sanitized source checkpoint](../../data/evaluation/senate-864-2013-17-commoncrawl-availability-checkpoint-v1.json) preserves each target/collection HTTP status, official-identity validation, correctly null original hashes, and 14-day research-artifact IDs/digests. The three artifacts are stored in the same Actions run and contain no original HTML, original complete WARC, or candidate personal-contact fields.
+
+**Research conclusion:** Original owned-site coverage still **92/95**, selected short original-site excerpts still **1,285**, unresolved candidate-owned Senate websites still **Wiger, Tomassoni and Bakk**, SOS historical 21-column 2020/2022 campaign website exports still **not recovered**. Do not repeatedly retry the same failing Common Crawl endpoints without independent evidence of archive service recovery; move to genuinely different public self-service evidence and keep all missingness explicitly unknown.
