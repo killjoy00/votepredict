@@ -1,0 +1,41 @@
+name: Senate 864 verify 2021 Bakk Tomassoni signed joint Line 3 originals
+on:
+  push:
+    branches:
+      - research/864-substantive-current-lead-audit-20261012
+    paths:
+      - data/evaluation/senate-864-bakk-tomassoni-2021-line3-signed-original-joint-leads-v1.json
+      - scripts/probe-senate-864-bakk-tomassoni-2021-line3-joint-originals.mjs
+      - tests/senate-864-bakk-tomassoni-2021-line3-original-joint-proofs.test.mjs
+      - .github/workflows/senate-864-bakk-tomassoni-2021-line3-signed-originals.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  joint-signer-original:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Synthetic speaker vs signatory, quote integrity and original CDX controls
+        run: |
+          node --check scripts/probe-senate-864-bakk-tomassoni-2021-line3-joint-originals.mjs
+          node --test tests/senate-864-bakk-tomassoni-2021-line3-original-joint-proofs.test.mjs
+      - name: Replay original actual 2021 first-party government and caucus SHA-indexed articles
+        run: |
+          mkdir -p research-output
+          node scripts/probe-senate-864-bakk-tomassoni-2021-line3-joint-originals.mjs \
+            research-output/senate-864-bakk-tomassoni-2021-exact-original-signed-joint-statement.json
+      - name: Save source proof receipts, no full original bodies
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-bakk-tomassoni-2021-line3-original-joint-signers
+          path: research-output/*.json
+          retention-days: 30
+          if-no-files-found: warn
