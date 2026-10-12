@@ -1,0 +1,195 @@
+{
+  "schema": "senate-864-four-new-personally-attributed-2023-original-bill-statements-v1",
+  "issue": 864,
+  "researchObservedDate": "2026-10-12",
+  "authoritativeReplay": {
+    "run": "https://github.com/killjoy00/votepredict/actions/runs/38314321104",
+    "headSha": "826e50434b5426b08d0948aaf3f6dd95e9d825a2",
+    "artifactId": 11775972272,
+    "originalRawBytesPersisted": false,
+    "CDXIndexedSHA1IndependentlyComparedToWholeDownloadedOriginal": true,
+    "originalRawSHA256IndependentlyComputed": true,
+    "exactShortQuotedFragmentInAuthenticatedOriginalUnique": true,
+    "closedOriginalQuoteSpeakerBoundedDirectlyToSenator": true,
+    "originalFullHumanApprovedSpeechCount": 0,
+    "senateIndividualBallotsValidatedInThisIncrement": 0
+  },
+  "counts": {
+    "distinctCurrentFirstPartyStatementsAudited": 8,
+    "underlyingStatementEventsOriginalIndependentlyAuthenticated": 4,
+    "originalBillCrosswalkRowsCorrespondingToFourStatements": 5,
+    "currentPublisherOriginalsStillUnavailableOrIndexInvalid": 4,
+    "newFullHistoricalOriginalBodiesWithNamedBoundedShortQuote": 4,
+    "historicalCutoffModelTrainingOrProductionRowsApproved": 0
+  },
+  "authenticatedHistoricalOriginals": [
+    {
+      "originalSourceId": "lead-2023-kreun-energy",
+      "officialSenatorName": "Michael E. Kreun",
+      "issue": "climate_environment_energy",
+      "originalPublisherUrl": "https://www.mnsenaterepublicans.com/democrat-blackout-bill-raises-energy-costs-lowers-reliability/",
+      "publisherDisplayedDateNotAuthenticatedFirstPublish": "2023-02-02",
+      "archiveCaptureUtcOriginalPublicBy": "2023-02-04T06:26:19Z",
+      "indexOriginalSha1Base32": "ASWA6SBXPIBHTLXL3736KEE3ILRCL4AM",
+      "wholeRawOriginalHtmlSha256": "d8b975fd0d9e5536fc05300916fe69dba79fd0fcdda0b9fb6017e5d9cc39b53a",
+      "firstOriginalUrlAndExactHtmlBodyAuthenticityVerified": true,
+      "quotedShortCueExactAndUniqueInOriginal": true,
+      "originalWrittenShortQuoteClosedAndNamedSenatorDirectAttributionVerified": true,
+      "fullVerbatimWrittenStatementHumanApproved": false,
+      "originalRecordedAudioProven": false,
+      "publisherFirstPublicOrOriginalEditingTimeNotProven": true,
+      "individualCommitteeOrFloorMemberBallotNotAuthenticatedInThisIncrement": true,
+      "originalClearlyLaterThanReferencedDecision": "post_2023_02_02_senate_SF4_passage",
+      "noRetroactivePreviousDecisionPredictionAllowed": true,
+      "currentlyObservedShortExactQuote": "Any legislation that seeks to alter Minnesota’s energy plan must ensure that energy remain reliable and affordable.",
+      "observedReferencedBills": [
+        "SF4"
+      ],
+      "proofProvenance": {
+        "githubActionsRunId": 38314321104,
+        "githubActionsArtifactId": 11775972272,
+        "strictSpeakerBoundsVerifier": "scripts/probe-senate-864-substantive-new-originals.mjs"
+      }
+    },
+    {
+      "originalSourceId": "lead-2023-kreun-sf551",
+      "officialSenatorName": "Michael E. Kreun",
+      "issue": "transport_infrastructure",
+      "originalPublisherUrl": "https://www.mnsenaterepublicans.com/kreun-bill-funding-hwy-65-safety-improvements-heard-in-transportation-committee/",
+      "publisherDisplayedDateNotAuthenticatedFirstPublish": "2023-04-18",
+      "archiveCaptureUtcOriginalPublicBy": "2023-04-21T21:14:58Z",
+      "indexOriginalSha1Base32": "GMNV2MS5LARSEVYN3GEIG7BJAJWQNNF4",
+      "wholeRawOriginalHtmlSha256": "0c1f14448a18bc5ade8ff798eabf6d35a3095d8c27db93e9da7800df2ec58733",
+      "firstOriginalUrlAndExactHtmlBodyAuthenticityVerified": true,
+      "quotedShortCueExactAndUniqueInOriginal": true,
+      "originalWrittenShortQuoteClosedAndNamedSenatorDirectAttributionVerified": true,
+      "fullVerbatimWrittenStatementHumanApproved": false,
+      "originalRecordedAudioProven": false,
+      "publisherFirstPublicOrOriginalEditingTimeNotProven": true,
+      "individualCommitteeOrFloorMemberBallotNotAuthenticatedInThisIncrement": true,
+      "originalClearlyLaterThanReferencedDecision": "post_2023_04_17_transportation_committee_hearing",
+      "noRetroactivePreviousDecisionPredictionAllowed": true,
+      "currentlyObservedShortExactQuote": "Highway 65 hosts 60,000 drivers per day, and it is incredibly important that we fund improvements to this corridor",
+      "observedReferencedBills": [
+        "SF551"
+      ],
+      "proofProvenance": {
+        "githubActionsRunId": 38314321104,
+        "githubActionsArtifactId": 11775972272,
+        "strictSpeakerBoundsVerifier": "scripts/probe-senate-864-substantive-new-originals.mjs"
+      }
+    },
+    {
+      "originalSourceId": "lead-2023-pha-pro-act",
+      "officialSenatorName": "Susan Pha",
+      "issue": "reproductive_rights",
+      "originalPublisherUrl": "https://senatedfl.mn/senator-susan-pha-celebrates-passage-of-pro-act-as-victory-for-reproductive-freedoms/",
+      "publisherDisplayedDateNotAuthenticatedFirstPublish": "2023-01-28",
+      "archiveCaptureUtcOriginalPublicBy": "2023-02-04T12:52:14Z",
+      "indexOriginalSha1Base32": "JP3HZDVQ63VXWBRGGB2YDJWUY5UYUXBH",
+      "wholeRawOriginalHtmlSha256": "d540ece904a4515184df87973e74b87cb5423c7b1c5b55b4ee85e3e0b4694b3f",
+      "firstOriginalUrlAndExactHtmlBodyAuthenticityVerified": true,
+      "quotedShortCueExactAndUniqueInOriginal": true,
+      "originalWrittenShortQuoteClosedAndNamedSenatorDirectAttributionVerified": true,
+      "fullVerbatimWrittenStatementHumanApproved": false,
+      "originalRecordedAudioProven": false,
+      "publisherFirstPublicOrOriginalEditingTimeNotProven": true,
+      "individualCommitteeOrFloorMemberBallotNotAuthenticatedInThisIncrement": true,
+      "originalClearlyLaterThanReferencedDecision": "post_2023_01_27_HF1_final_Senate_passage",
+      "noRetroactivePreviousDecisionPredictionAllowed": true,
+      "currentlyObservedShortExactQuote": "The PRO Act upholds Minnesotans’ fundamental right to reproductive freedom",
+      "observedReferencedBills": [
+        "HF1",
+        "SF1"
+      ],
+      "proofProvenance": {
+        "githubActionsRunId": 38314321104,
+        "githubActionsArtifactId": 11775972272,
+        "strictSpeakerBoundsVerifier": "scripts/probe-senate-864-substantive-new-originals.mjs"
+      }
+    },
+    {
+      "originalSourceId": "lead-2023-westlin-wills",
+      "officialSenatorName": "Bonnie Westlin",
+      "issue": "judiciary_civil_law",
+      "originalPublisherUrl": "https://senatedfl.mn/senator-bonnie-westlin-ushers-bill-to-simplify-estate-planning-through-passage-in-the-senate/",
+      "publisherDisplayedDateNotAuthenticatedFirstPublish": "2023-03-28",
+      "archiveCaptureUtcOriginalPublicBy": "2023-04-06T17:11:29Z",
+      "indexOriginalSha1Base32": "RSOFKWLDAKVU4LSCF3D27TOY6WHWFRGZ",
+      "wholeRawOriginalHtmlSha256": "a86e518f24e418a83fa6e1ee51a47b1af4d211c227c3ca71574bf091fd30923d",
+      "firstOriginalUrlAndExactHtmlBodyAuthenticityVerified": true,
+      "quotedShortCueExactAndUniqueInOriginal": true,
+      "originalWrittenShortQuoteClosedAndNamedSenatorDirectAttributionVerified": true,
+      "fullVerbatimWrittenStatementHumanApproved": false,
+      "originalRecordedAudioProven": false,
+      "publisherFirstPublicOrOriginalEditingTimeNotProven": true,
+      "individualCommitteeOrFloorMemberBallotNotAuthenticatedInThisIncrement": true,
+      "originalClearlyLaterThanReferencedDecision": "post_2023_03_22_HF244_final_Senate_passage",
+      "noRetroactivePreviousDecisionPredictionAllowed": true,
+      "currentlyObservedShortExactQuote": "The Uniform Electronic Wills Act will streamline the estate planning process by making it easier for people to prepare and execute their wills",
+      "observedReferencedBills": [
+        "HF244",
+        "SF1030"
+      ],
+      "proofProvenance": {
+        "githubActionsRunId": 38314321104,
+        "githubActionsArtifactId": 11775972272,
+        "strictSpeakerBoundsVerifier": "scripts/probe-senate-864-substantive-new-originals.mjs"
+      }
+    }
+  ],
+  "unresolvedOriginalSourceProbes": [
+    {
+      "originalSourceId": "lead-2023-rasmusson-tax",
+      "senator": "Jordan Rasmusson",
+      "originalUrl": "https://www.mnsenaterepublicans.com/senator-jordan-rasmusson-senate-passes-tax-conformity-bill-cuts-taxes-for-individuals-and-small-businesses/",
+      "selectedBillReferences": [
+        "HF31",
+        "SF25"
+      ],
+      "archiveState": "CDX_INVALID_UNKNOWN",
+      "noArchiveOriginalDoesNotProveAbsence": true,
+      "knownPublisherDisplayDateNotAuthenticatedPostingDay": "2023-01-11"
+    },
+    {
+      "originalSourceId": "lead-2023-weber-pro-act",
+      "senator": "Bill Weber",
+      "originalUrl": "https://www.mnsenaterepublicans.com/senator-weber-responds-to-the-passage-of-the-democrats-extreme-abortion-bill/",
+      "selectedBillReferences": [
+        "HF1"
+      ],
+      "archiveState": "CDX_INVALID_UNKNOWN",
+      "noArchiveOriginalDoesNotProveAbsence": true,
+      "knownPublisherDisplayDateNotAuthenticatedPostingDay": "2023-01-29"
+    },
+    {
+      "originalSourceId": "lead-2023-dziedzic-bipartisan-housing",
+      "senator": "Kari Dziedzic",
+      "originalUrl": "https://senatedfl.mn/senate-majority-leader-kari-dziedzic-says-two-more-strongly-bipartisan-measures-pass-senate-monday/",
+      "selectedBillReferences": [],
+      "archiveState": "UNAVAILABLE_UNKNOWN",
+      "noArchiveOriginalDoesNotProveAbsence": true,
+      "knownPublisherDisplayDateNotAuthenticatedPostingDay": "2023-03-27"
+    },
+    {
+      "originalSourceId": "lead-2025-pha-hoa",
+      "senator": "Susan Pha",
+      "originalUrl": "https://senatedfl.mn/bipartisan-homeowners-association-and-common-interest-communities-reforms-passes-senate-housing-committee/",
+      "selectedBillReferences": [
+        "SF1750"
+      ],
+      "archiveState": "CDX_INVALID_UNKNOWN",
+      "noArchiveOriginalDoesNotProveAbsence": true,
+      "knownPublisherDisplayDateNotAuthenticatedPostingDay": "2025-03-13"
+    }
+  ],
+  "deduplicationNotes": [
+    {
+      "sourceId": "lead-2023-kreun-sf862",
+      "sameOriginalAs": "lead-2023-kreun-sf551",
+      "bill": "SF862",
+      "samePolicyQuotationIsNotSecondSpeech": true
+    }
+  ],
+  "noProductionDbOrForecastChanges": true
+}
