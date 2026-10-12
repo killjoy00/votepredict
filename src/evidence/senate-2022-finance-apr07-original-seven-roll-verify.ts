@@ -126,7 +126,7 @@ export function inspect2022FinanceApr07OriginalMinutes(text:string){
   if(new Set(distinct).size!==distinct.length)
    throw Error('original senator appears on incompatible YEA/NAY/ABSENT sides');
   const post=flat.slice(closingAt,(nextIntro?.index??Math.min(flat.length,closingAt+320)));
-  const failed=/the motion did not prevail/i.test(post);
+  const failed=/the motion (?:did|does) not prevail/i.test(post);
   const prevailed=/\bTHE MOTION PREVAILED\b/i.test(post);
   if((spec.disposition==='FAILED'&&!failed)||(spec.disposition==='PREVAILED'&&!prevailed))
    throw Error('original motion disposition differs from explicit minute language');
