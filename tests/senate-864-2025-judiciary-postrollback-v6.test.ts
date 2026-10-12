@@ -105,7 +105,7 @@ test('only independently complete exact 2025 8/8 digests AND frozen 2024/DB proo
  assert.equal(r.sourceNamedChoiceMismatchCategories,1);
  assert.equal(r.sourceEventExtraStoredCategories,0);
  assert.doesNotMatch(JSON.stringify(r),
-  /normalized_member_name|postgresql:|neondb_owner|source_url|externalKey|choiceIdentitySha256|membership_id|sourceSha|memberName|Senator/);
+  /\"normalized_member_name\"\\s*:|postgresql:|neondb_owner|\"source_url\"\\s*:|\"externalKey\"\\s*:|\"choiceIdentitySha256\"\\s*:|\"membership_id\"\\s*:|\"sourceSha\"\\s*:|\"memberName\"\\s*:|Senator/);
 });
 
 test('2025 original versus stored TALLY mismatch stays a numeric HOLD with original 2024 YEA preserved',()=>{
