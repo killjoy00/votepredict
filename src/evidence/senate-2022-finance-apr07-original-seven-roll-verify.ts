@@ -34,6 +34,30 @@ export const FINANCE_APR07_2022={
  ] as const
 } as const;
 
+export const FINANCE_APR07_FIRST_FULL_ORIGINAL_SOURCE={
+ runId:38196825837,
+ artifactId:11723219510,
+ originalPDFBytes:140671,
+ originalFullPDFSHA256:'213fbba6aa942cadc6a97fc70fb5e259790cdfadc91d4a645047da67e0dc0a6f',
+ originalEmbeddedTextSHA256:'804daf007ca99c7dd1d501b09199592d3509d203972054fec6511d30140760a8',
+ sourceAcquisitionSucceeded:true,
+ initialParserPassFailedOnWording:'original motion disposition',
+ sameSourceRepeatMustMatchFirstWholePDFAndTextSHA:true,
+ firstPassDidNotCertifySevenOriginalWrittenRolls:true
+} as const;
+export function requireExactFirstFinanceOriginalPdfSource(input:{
+ pdfBytes:number;fullSHA256:string;embeddedTextSHA256:string
+}){
+ const first=FINANCE_APR07_FIRST_FULL_ORIGINAL_SOURCE;
+ if(input.pdfBytes!==first.originalPDFBytes||
+   input.fullSHA256!==first.originalFullPDFSHA256||
+   input.embeddedTextSHA256!==first.originalEmbeddedTextSHA256)
+  throw Error('strict_original_source_sha_mismatch');
+ return {originalFullPDFSHA256:input.fullSHA256,
+  originalEmbeddedTextSHA256:input.embeddedTextSHA256,
+  independentlySameSourceReverified:true,
+  initialFailedOriginalParserNotSevenRollCertification:true};
+}
 type Motion=(typeof FINANCE_APR07_2022.motions)[number];
 export const sha256=(bytes:Uint8Array|string)=>createHash('sha256').update(bytes).digest('hex');
 export function normalizeFinanceMinutes(value:string){
@@ -126,7 +150,7 @@ export function inspect2022FinanceApr07OriginalMinutes(text:string){
   if(new Set(distinct).size!==distinct.length)
    throw Error('original senator appears on incompatible YEA/NAY/ABSENT sides');
   const post=flat.slice(closingAt,(nextIntro?.index??Math.min(flat.length,closingAt+320)));
-  const failed=/the motion did not prevail/i.test(post);
+  const failed=/the motion (?:did|does) not prevail/i.test(post);
   const prevailed=/\bTHE MOTION PREVAILED\b/i.test(post);
   if((spec.disposition==='FAILED'&&!failed)||(spec.disposition==='PREVAILED'&&!prevailed))
    throw Error('original motion disposition differs from explicit minute language');
