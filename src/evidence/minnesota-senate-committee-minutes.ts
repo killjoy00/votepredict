@@ -1,7 +1,7 @@
 import { normalizeMemberName } from '@/sources/minnesota/house-votes';
 
 export const MN_SENATE_COMMITTEE_MINUTES_PARSER_VERSION =
-  'mn-senate-committee-minutes-v2' as const;
+  'mn-senate-committee-minutes-v3' as const;
 
 export interface SenateCommitteeMemberVote {
   sourceName: string;
@@ -70,8 +70,36 @@ function nearestBill(context: string): string | undefined {
 }
 
 function nearestAmendment(context: string): string | undefined {
-  const matches = [...context.matchAll(/\b(?:amendment\s+)?([A-Z]\d{1,3}(?:-\d+)?)\b/gi)];
-  return matches.length ? matches[matches.length - 1][1].toUpperCase() : undefined;
+  // The Senate also numbers amendments as "10 amendment", not just A10.
+  // Preserve the source spelling of letter-coded refs; numeric-only refs
+  // must never collide with an "A10" reference.
+  const refs = [
+    ...[...context.matchAll(/\b(?:amendment\s+)?([A-Z]\d{1,3}(?:-\d+)?)\b/gi)]
+      .map(m => ({at:m.index ?? -1,ref:m[1]!.toUpperCase()})),
+    ...[...context.matchAll(/\b(\d{1,2})\s+amendment\b/gi)]
+      .map(m => ({at:m.index ?? -1,ref:'#'+Number(m[1])})),
+  ];
+  refs.sort((a,b) => a.at - b.at);
+  return refs.at(-1)?.ref;
+}
+
+/** Distinct explicit roll-call requests are distinct source actions even when
+ * bill, amendment and every voter/side repeat. This is ephemeral parser state:
+ * no offset is exported to stored identifiers or public evidence receipts.
+ */
+function recordedMotionAnchor(text:string, tallyStart:number):number|undefined {
+  const left=Math.max(0,tallyStart-2500);
+  const preceding=text.slice(left,tallyStart);
+  const requests=[...preceding.matchAll(
+    /\brequested\s+(?:a\s+)?roll\s+call(?:\s+vote)?\b/gi,
+  )];
+  const last=requests.at(-1);
+  if(!last)return undefined;
+  const after=preceding.slice((last.index??0)+last[0].length);
+  // A fully finished prior motion is not the active request for a later roll.
+  if(/\bMOTION\s+(?:FAILED|PASSED|PREVAILED|ADOPTED|CARRIED)\b/i.test(after))
+    return undefined;
+  return left+(last.index??0);
 }
 
 export function normalizeSenateCommitteeMemberSourceName(value:string):string{
@@ -132,6 +160,7 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
         nearestAmendment(context) ?? 'none',
         yeaVotes.map((row) => row.normalizedName).join(','),
         nayVotes.map((row) => row.normalizedName).join(','),
+      recordedMotionAnchor(text,start) ?? 'unanchored',
       ].join('|');
       if (seen.has(key)) continue;
       seen.add(key);
@@ -169,6 +198,7 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
       nearestAmendment(context) ?? 'none',
       yeaVotes.map((row) => row.normalizedName).join(','),
       nayVotes.map((row) => row.normalizedName).join(','),
+      recordedMotionAnchor(text,start) ?? 'unanchored',
     ].join('|');
     if (seen.has(key)) continue;
     seen.add(key);
@@ -197,6 +227,7 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
       nearestAmendment(context)??'none',
       yeaVotes.map(row=>row.normalizedName).join(','),
       '',
+      recordedMotionAnchor(text,start) ?? 'unanchored',
     ].join('|');
     if(seen.has(key))continue;
     seen.add(key);
@@ -227,6 +258,7 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
       nearestAmendment(context)??'none',
       yeaVotes.map(row=>row.normalizedName).join(','),
       nayVotes.map(row=>row.normalizedName).join(','),
+      recordedMotionAnchor(text,start) ?? 'unanchored',
     ].join('|');
     if(seen.has(key))continue;
     seen.add(key);
@@ -257,6 +289,7 @@ export function parseSenateCommitteeMinuteVotes(html: string): SenateCommitteeVo
       nearestAmendment(context)??'none',
       yeaVotes.map(row=>row.normalizedName).join(','),
       nayVotes.map(row=>row.normalizedName).join(','),
+      recordedMotionAnchor(text,start) ?? 'unanchored',
     ].join('|');
     if(seen.has(key))continue;
     seen.add(key);
