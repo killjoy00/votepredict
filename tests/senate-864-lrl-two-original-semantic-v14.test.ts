@@ -59,7 +59,7 @@ test('V14 changed actual 2024 serving name or term changes the canonical digest'
 test('V14 duplicates, missing original source provenance, malformed service term fail closed',()=>{
  const dup=synthetic();dup.senators[1]!.officialName=dup.senators[0]!.officialName;
  assert.throws(()=>canonicalLrl2024SenateServiceProjection(dup));
- const falseYear=synthetic();falseYear.source.originalHistoricDateForDisplayedDirectoryEstablished=true;
+ const falseYear=synthetic();Reflect.set(falseYear.source,'originalHistoricDateForDisplayedDirectoryEstablished',true);
  assert.throws(()=>canonicalLrl2024SenateServiceProjection(falseYear));
  const badTerm=synthetic();badTerm.senators[1]!.senateServiceTerms[0]!.district='700';
  assert.throws(()=>canonicalLrl2024SenateServiceProjection(badTerm));
