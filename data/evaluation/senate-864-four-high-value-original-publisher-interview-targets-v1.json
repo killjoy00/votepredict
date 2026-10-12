@@ -1,0 +1,110 @@
+{
+  "schema": "mn-senate-864-four-preelection-publisher-firstperson-source-queries-v1",
+  "issue": 864,
+  "sourceTrack": "historical_original_publisher_candidate_direct_statement_not_candidate_owned_campaign_site",
+  "baseline": {
+    "peopleActuallyServed2021To2025": 95,
+    "candidateOwnedCampaignWebsiteCoverage": 92,
+    "candidateOwnedWebsiteShortExcerpts": 1194
+  },
+  "proofRequirements": [
+    "Original source publisher full HTML body",
+    "Independent original pre-election CDX index SHA1/base32",
+    "Full archived page matches original indexed body digest",
+    "Verify individual person in original MN LRL Senate service",
+    "Exact named-speaker attribution for literal quoted words",
+    "Publisher source rows excluded from candidate-owned website coverage"
+  ],
+  "people": {
+    "bakk": {
+      "person": "Thomas Bakk",
+      "official": "Thomas M. Bakk",
+      "district": "3",
+      "year": 2020,
+      "election": "2020-11-03",
+      "sources": [
+        {
+          "url": "https://www.kaxe.org/vote-2020/2020-10-08/meet-senator-tom-bakk-dfl-candidate-for-senate-3-in-lake-cook-st-louis-koochiching-counties",
+          "claimDate": "2020-10-08",
+          "kind": "candidate_original_publisher_interview_transcript",
+          "why": "13 minute pre-vote KAXE edited, speaker-labeled campaign interview transcript with rural redistricting, pandemic, mining, and environmental evaluation original named firstperson speech; independent historical version proof pending"
+        },
+        {
+          "url": "http://www.kaxe.org/post/meet-senator-tom-bakk-dfl-candidate-senate-3-lake-cook-st-louis-koochiching-counties",
+          "claimDate": "2020-10-08",
+          "kind": "publisher_historical_url_hypothesis",
+          "why": "Legacy pre-Brightspot KAXE /post/ original hostname slug variant; neither URL nor content pre-verified"
+        }
+      ]
+    },
+    "doron": {
+      "person": "Doron Clark",
+      "official": "Doron Clark",
+      "district": "60",
+      "year": 2025,
+      "election": "2025-01-28",
+      "sources": [
+        {
+          "url": "https://mndaily.com/city/qa-with-state-senate-candidates/01/26/2025/adviser/",
+          "claimDate": "2025-01-26",
+          "kind": "candidate_original_publisher_interview_transcript",
+          "why": "Minnesota Daily Jan26 2025 pre-general election complete Clark firstperson direct quotes on college grants, housing rent/landlords, climate energy efficiency, universal health care, jobs; separate from Jan14 MPR publisher and candidate-owned About"
+        },
+        {
+          "url": "https://mndaily.com/city/qa-with-state-senate-candidates/01/26/2025/",
+          "claimDate": "2025-01-26",
+          "kind": "publisher_historical_url_hypothesis",
+          "why": "Alternative original newspaper WordPress path without /adviser suffix; same article possible"
+        }
+      ]
+    },
+    "tomassoni": {
+      "person": "David Tomassoni",
+      "official": "David J. Tomassoni",
+      "district": "6",
+      "year": 2020,
+      "election": "2020-11-03",
+      "sources": [
+        {
+          "url": "https://energynow.ca/2020/01/regulators-revisit-environmental-review-for-line-3-pipeline/",
+          "claimDate": "2020-01",
+          "kind": "candidate_original_publisher_direct_interview_quote",
+          "why": "January 2020 dated AP syndicated direct Tomassoni quote urging replacement of aging Line 3 pipeline for natural resources and construction jobs; not original candidate committee"
+        },
+        {
+          "url": "https://archive.timesleader.com/article/771283/regulators-revisit-environmental-review-for-line-3-pipeline",
+          "claimDate": "2020-01",
+          "kind": "candidate_original_publisher_direct_interview_quote",
+          "why": "Separate original AP syndication date, check version; identical text at present not automatically 2020-certified"
+        }
+      ]
+    },
+    "wiger": {
+      "person": "Charles Wiger",
+      "official": "Sr., Charles W. Wiger",
+      "district": "43",
+      "year": 2020,
+      "election": "2020-11-03",
+      "sources": [
+        {
+          "url": "https://patch.com/minnesota/oakdale/chuck-wiger-candidate-for-minnesota-senate-district-43",
+          "claimDate": "2012-08-20",
+          "kind": "candidate_submitted_publisher_questionnaire_older_2012_cycle",
+          "why": "Aug 2012 old Senate SD43 pre-election candidate submission with first-person six policy priority areas; preserve original 2012 office/cycle, not a 2020 policy pledge"
+        },
+        {
+          "url": "https://senatedfl.mn/sen-wiger-responds-to-governors-veto-of-e-12-bill/",
+          "claimDate": "2015-05-19",
+          "kind": "caucus_published_firstperson_older_2015_statement",
+          "why": "2015 direct Wiger firstperson education spending statement; not candidate website and not 2020 platform, unlike #1196 July2020 quotes"
+        }
+      ]
+    }
+  },
+  "researchOnly": true,
+  "noOriginalCampaignSiteCoverageChange": true,
+  "noAutomaticDirectQuotesAdmitted": true,
+  "preelectionCaptureNotSameAsOriginalAuthorDate": true,
+  "productionDBAccess": 0,
+  "forecastOrModelChanges": 0
+}
