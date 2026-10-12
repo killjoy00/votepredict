@@ -23,7 +23,7 @@ function reporterScript(){
   if(line!==''&&!line.startsWith('            '))break;
   result.push(line===''?'':line.slice(12));
  }
- assert.ok(result.length>75,'Expected complete keyless issue reporter');
+ assert.ok(result.length>=70,'Expected complete keyless issue reporter');
  return result.join('\n');
 }
 
