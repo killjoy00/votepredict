@@ -9,7 +9,8 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import {dirname,resolve} from 'node:path';
 import {fetchSenateCommitteeMinutePdf} from
  '../src/evidence/minnesota-senate-committee-source.js';
-import {FINANCE_APR07_2022,inspect2022FinanceApr07OriginalMinutes,sha256} from
+import {FINANCE_APR07_2022,inspect2022FinanceApr07OriginalMinutes,sha256,
+ requireExactFirstFinanceOriginalPdfSource,FINANCE_APR07_FIRST_FULL_ORIGINAL_SOURCE} from
  '../src/evidence/senate-2022-finance-apr07-original-seven-roll-verify.js';
 const MAX_BYTES=8*1024*1024;
 function failCode(e:unknown){
@@ -21,7 +22,8 @@ function failCode(e:unknown){
   'original motion mover','original committee roll','original YEA NAY ABSENT',
   'original senator appears','original PDF roll side','original motion disposition',
   'original oral','withdrawn A21','voice motions',
-  'original SF4269','original 67 named','original roll tally crosses'];
+  'original SF4269','original 67 named','original roll tally crosses',
+  'strict_original_source_sha_mismatch'];
  return codes.find(c=>str.includes(c))??'source_or_parser_error';
 }
 export async function fetchStrictOriginalFinancePDF(input:string,init?:RequestInit){
@@ -56,8 +58,10 @@ export async function fetchStrictOriginalFinancePDF(input:string,init?:RequestIn
 }
 async function main(){
  const args=process.argv.slice(2);
- if(args.length!==2||args[0]!=='--output'||!args[1]||args[1].startsWith('-'))
-  throw Error('Expected only --output PATH (metadata JSON, no original media)');
+ const strictSecond=args.includes('--strict-first-source-sha');
+ if(args.length!==(strictSecond?3:2)||args[0]!=='--output'||!args[1]||
+    args[1].startsWith('-')||(strictSecond&&args[2]!=='--strict-first-source-sha'))
+  throw Error('Expected --output PATH and optional final --strict-first-source-sha');
  const out=resolve(args[1]);
  let original:null|Awaited<ReturnType<typeof fetchSenateCommitteeMinutePdf>>=null;
  let analysis:null|ReturnType<typeof inspect2022FinanceApr07OriginalMinutes>=null;
@@ -69,15 +73,25 @@ async function main(){
   });
   if(original.httpStatus!==200||original.extractionMethod!=='embedded_text')
    throw Error('source_or_parser_error');
+  if(strictSecond)requireExactFirstFinanceOriginalPdfSource({
+   pdfBytes:original.bytes,
+   fullSHA256:original.contentSha256,
+   embeddedTextSHA256:sha256(original.text)
+  });
   analysis=inspect2022FinanceApr07OriginalMinutes(original.text);
  }catch(e){failure=failCode(e);}
  const report={
-  schemaVersion:'senate-2022-finance-apr07-seven-original-electronic-rolls-first-raw-source-audit-v1',
+  schemaVersion:strictSecond
+   ?'senate-2022-finance-apr07-seven-original-electronic-rolls-strict-second-raw-source-audit-v1'
+   :'senate-2022-finance-apr07-seven-original-electronic-rolls-first-raw-source-audit-v1',
   issue:864,
   sourceObservationUTC:new Date().toISOString(),
   originalPublicURL:FINANCE_APR07_2022.officialUrl,
   sourceAuthority:'Minnesota Legislative Reference Library official 2022 ELECTRONIC Senate Finance minutes',
-  sourceAcquisitionStatus:failure===null?'ORIGINAL_COMPLETE_PDF_SHA_AND_SEVEN_ROLLS_VERIFIED':'FAILED_CLOSED',
+  sourceAcquisitionStatus:failure===null
+   ?(strictSecond?'SECOND_SOURCE_COMPLETE_PDF_SHA_AND_SEVEN_ROLLS_VERIFIED':
+      'ORIGINAL_COMPLETE_PDF_SHA_AND_SEVEN_ROLLS_VERIFIED')
+   :'FAILED_CLOSED',
   originalPDFHTTPStatus:original?.httpStatus??null,
   originalPDFByteLength:original?.bytes??null,
   originalFullPDFFirstSourceSHA256:original?.contentSha256??null,
@@ -86,7 +100,12 @@ async function main(){
   structuredSevenOriginalElectronicRolls:failure===null?analysis:null,
   acquisitionOrContentFailures:failure===null?0:1,
   sourceFailureCode:failure,
-  independentSecondFullOriginalPDFSHAConfirmed:false,
+  independentFirstPDFSourceRunId:FINANCE_APR07_FIRST_FULL_ORIGINAL_SOURCE.runId,
+  priorFullOriginalPDFSourceSHA256:FINANCE_APR07_FIRST_FULL_ORIGINAL_SOURCE.originalFullPDFSHA256,
+  priorOriginalPDFEmbeddedTextSHA256:FINANCE_APR07_FIRST_FULL_ORIGINAL_SOURCE.originalEmbeddedTextSHA256,
+  firstOriginalSourceParserFailedOnDoesNotPrevailWordForm:true,
+  strictIndependentFirstPDFAndTextSHARequired:strictSecond,
+  independentSecondFullOriginalPDFSHAConfirmed:strictSecond&&failure===null,
   originalDifferent2022PrintMinutesPagesObtained:false,
   originalPrintVsElectronicVoteParityCertified:false,
   year2022StatewideCommitteeRecordedVoteDenominator:null,
