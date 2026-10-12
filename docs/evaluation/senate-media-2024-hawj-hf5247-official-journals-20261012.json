@@ -1,0 +1,142 @@
+{
+  "version": "track-d-2024-hawj-hf5247-primary-official-senate-journal-individual-ballot-receipts-v1",
+  "researchObservedDateLocal": "2026-10-12",
+  "origin": {
+    "issue": 987,
+    "pr": 1225,
+    "firstSuccessfulLiveOfficialPdfRunId": 38265042318,
+    "sourceHead": "dbb8d7dd78a1564f354ce4b2f204b9bb02ed3a96",
+    "publicMetadataOnlyArtifactId": 11753813661,
+    "offlineSyntheticAdversarialTestsPassed": 9
+  },
+  "priorAuthenticatedPreVoteHistoricWrittenHawjPolicySource": {
+    "firstPartyOriginalUrl": "https://senatedfl.mn/senator-foung-hawj-testifies-in-support-of-transportation-equity-legislation/",
+    "earliestSourceVerifiedCaptureUtc": "2024-03-24T19:01:09Z",
+    "rawHistoricalOriginalHtmlSha256": "aa6da6e8722e33f2f692ba31bfd6699cf97768e74c788dbdb0786a75a3ad5743",
+    "officialMinnesotaLegislativeMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15380",
+    "ownNamedBoundedWrittenPolicyStatement": true,
+    "namedProposalTopicBills": [
+      "SF 4056",
+      "SF 3257",
+      "SF 3250"
+    ],
+    "earliestWrittenPolicyStatementNotFirstPublisherPostingClock": true
+  },
+  "counts": {
+    "exactOriginalOfficialSenateJournalPdfUrlsAttempted": 2,
+    "originalOfficialJournalPdfsIndependentlyDownloadedSha256HashedAndParsed": 2,
+    "distinctHF5247IndividualRollCallsPersonallyListingHawjYes": 3,
+    "individualHawjNayVotesIdentifiedForThoseEvents": 0,
+    "may7OriginalJournalIndividualYeaConfirmed": 1,
+    "may19ConferenceOriginalJournalIndividualYeaConfirmed": 1,
+    "may19SeparateAmendedThirdReadingOriginalJournalIndividualYeaConfirmed": 1,
+    "relatedStandaloneHawjSFPolicyVotesCertified": 0,
+    "currentAsOfRelevantBillTextSectionsIndependentlyAuthenticated": 0,
+    "predictionEligibleSourceToIssueVoteTrainingLabelsApproved": 0
+  },
+  "exactOfficialPrimaryJournalSources": [
+    {
+      "id": "2024-senate-day113-may07",
+      "originalOfficialJournalUrl": "https://www.senate.mn/journals/2023-2024/20240507113.pdf",
+      "legislativeDay": 113,
+      "date": "2024-05-07",
+      "firstPrintedJournalPage": 16432,
+      "completeOriginalPdfSha256": "bea831ff7e8a9c51f388641012189af7c72cc2155e21de66717a6331f9a7b7b4",
+      "originalPdfBytes": 1474362,
+      "originalPdfPages": 86,
+      "selectedTailPdfPageRangeOneBased": {
+        "first": 42,
+        "last": 86,
+        "inspected": 45
+      },
+      "PDFDownloadedAndHashedBeforeParsing": true,
+      "publicOriginalOfficialJournalRollCallStatus": "official_journal_pdf_sha256_authenticated_and_tail_text_inspected",
+      "namedHF5247RollCalls": [
+        {
+          "event": "third_reading_passage",
+          "aggregateYeas": 55,
+          "aggregateNays": 10,
+          "sourcePdfPageOneBased": 57,
+          "printedJournalPageWhereRollCallBegins": 16488,
+          "name": "Foung Hawj",
+          "journalPersonallyListedInAffirmativeSection": true,
+          "journalPersonallyListedInNegativeSection": false,
+          "individualVoteOnThisHF5247RollCall": "yea",
+          "exactHF5247BillContext": true,
+          "sourceOriginalPdfExactSha256Proved": true,
+          "noSF3250SF3257SF4056IndividualVoteCertified": true,
+          "originalJournalSectionDistinguishesFromAttendanceAndRule40Proxy": true,
+          "sourceContextCharactersBeforeRoll": 159
+        }
+      ],
+      "rawPdfOrExtractedJournalTextCommitted": false
+    },
+    {
+      "id": "2024-senate-day119-may19",
+      "originalOfficialJournalUrl": "https://www.senate.mn/journals/2023-2024/20240519119.pdf",
+      "legislativeDay": 119,
+      "date": "2024-05-19",
+      "firstPrintedJournalPage": 17999,
+      "completeOriginalPdfSha256": "fdc77ecf62de6f56ae33915105316f26f2f7c60765b9296dddf14d94c9f9584c",
+      "originalPdfBytes": 28283947,
+      "originalPdfPages": 2026,
+      "selectedTailPdfPageRangeOneBased": {
+        "first": 1987,
+        "last": 2026,
+        "inspected": 40
+      },
+      "PDFDownloadedAndHashedBeforeParsing": true,
+      "publicOriginalOfficialJournalRollCallStatus": "official_journal_pdf_sha256_authenticated_and_tail_text_inspected",
+      "namedHF5247RollCalls": [
+        {
+          "event": "conference_report",
+          "aggregateYeas": 34,
+          "aggregateNays": 12,
+          "sourcePdfPageOneBased": 2022,
+          "printedJournalPageWhereRollCallBegins": 20020,
+          "name": "Foung Hawj",
+          "journalPersonallyListedInAffirmativeSection": true,
+          "journalPersonallyListedInNegativeSection": false,
+          "individualVoteOnThisHF5247RollCall": "yea",
+          "exactHF5247BillContext": true,
+          "sourceOriginalPdfExactSha256Proved": true,
+          "noSF3250SF3257SF4056IndividualVoteCertified": true,
+          "originalJournalSectionDistinguishesFromAttendanceAndRule40Proxy": true,
+          "sourceContextCharactersBeforeRoll": 108
+        },
+        {
+          "event": "third_reading_amended",
+          "aggregateYeas": 34,
+          "aggregateNays": 14,
+          "sourcePdfPageOneBased": 2023,
+          "printedJournalPageWhereRollCallBegins": 20021,
+          "name": "Foung Hawj",
+          "journalPersonallyListedInAffirmativeSection": true,
+          "journalPersonallyListedInNegativeSection": false,
+          "individualVoteOnThisHF5247RollCall": "yea",
+          "exactHF5247BillContext": true,
+          "sourceOriginalPdfExactSha256Proved": true,
+          "noSF3250SF3257SF4056IndividualVoteCertified": true,
+          "originalJournalSectionDistinguishesFromAttendanceAndRule40Proxy": true,
+          "sourceContextCharactersBeforeRoll": 214
+        }
+      ],
+      "rawPdfOrExtractedJournalTextCommitted": false
+    }
+  ],
+  "hardLimits": {
+    "officialJournalMay7SourceIsDay113May7": true,
+    "officialJournalMay19SourceIsDay119May19": true,
+    "journalNameInCorrectYeasListNotAttendanceRollOrRule40Proxy": true,
+    "chamberTalliesSeparatelyMatched55_10_34_12_34_14": true,
+    "officialMay19ConferenceAndThirdReadingTwoDifferentVoteEvents": true,
+    "historicalPolicyWrittenSourcePrecedesBothMayVoteDates": true,
+    "eachMemberOmnibusYeaDoesNotProveAllThreeIndividualSFSponsorshipVotes": true,
+    "completeFirstPartyLegislativeProvisionVersionAtMay7OrMay19Unproved": true,
+    "fourthEngrossmentPostedAfterMay19CannotServeAsAsOfVoteText": true,
+    "noneOfThreeRollCallsIsForecastOutput": true,
+    "noRestrictedVotePredictSourceExportOrProductionDbUsed": true,
+    "noPublicPdfOrExtractedFullJournalTextSavedInRepo": true,
+    "noStoredVoteLabelsProductionCollectorIngestDatabaseServingModelOrForecastChanged": true
+  }
+}
