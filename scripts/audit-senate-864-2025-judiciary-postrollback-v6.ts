@@ -151,7 +151,7 @@ export function build2025JudiciaryPostRollbackV6(out:Result){
   &&rows[2]!.matchedRecognizedRollCalls===48
   &&rows[2]!.originalNamedChoiceTokens===228
   &&rows[2]!.matchedNamedChoiceTokens===218;
- const 2025FullDigestProof=current2025.matchedRecognizedRollCalls===33
+ const judiciary2025FullDigestProof=current2025.matchedRecognizedRollCalls===33
   &&current2025.matchedNamedChoiceTokens===305;
  const onlyOriginal2024Mismatch=
   d.sourceRollEventsWithNamedChoiceMismatch===1
@@ -168,7 +168,7 @@ export function build2025JudiciaryPostRollbackV6(out:Result){
    :mismatch[key]===0);
  const full=existingStoredCohortMatchesV2
   &&originalDetailed2025SourceStillExact&&earlierDetailedRollsStillExact
-  &&original2024MissingYeaStillProven&&2025FullDigestProof
+  &&original2024MissingYeaStillProven&&judiciary2025FullDigestProof
   &&onlyOriginal2024Mismatch&&unmatchedRollKeysEliminated
   &&otherMismatchCategoriesClean
   &&out.matchedCandidateRollCallEvents===152
@@ -190,7 +190,7 @@ export function build2025JudiciaryPostRollbackV6(out:Result){
   reason='TALLY_OR_EVENT_MATCH_UNVERIFIED';
  else if(mismatch.original_named_choices_mismatch>1
   ||mismatch.unresolved_persisted_member_identity>0
-  ||!2025FullDigestProof)
+  ||!judiciary2025FullDigestProof)
   reason='NAMED_CHOICE_OR_MEMBER_MATCH_UNVERIFIED';
  const result={
   schemaVersion:'mn-864-2025-judiciary-postrollback-v6-safe-numeric-diagnostic',
@@ -243,7 +243,7 @@ export function build2025JudiciaryPostRollbackV6(out:Result){
   existingNeonDefaultBranchNotDeployedBinding:true,
   sourceCandidatesNotCompleteOfficialVoteUniverse:true,
   historicalEligibilityNotCertified:true,
-  2021Print2022PrintElectronicAnd141MeetingsHeld:true,
+  print2021Print2022And141MeetingsHeld:true,
   noProductionRepairOrPredictionChangeAuthorized:true,
   issue864StillOpen:true,
  };
