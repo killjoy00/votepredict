@@ -31,6 +31,22 @@ In [the earlier protected source-to-Neon comparison](https://github.com/killjoy0
 
 **Old historical backfill is not replay safe:** [PR #1260](https://github.com/killjoy00/votepredict/pull/1260) demonstrates event IDs constructed from PDF URL hash and parser position; v3 motion insertions can map old indices to different motions under ON CONFLICT UPDATE. No existing-record reingestion until protected, authorized motion-anchor comparison.
 
+## Authenticated 2021 alternate-source committee rolls, NOT the printed-Minutes universe
+
+The separately verified [2021 partial machine-readable original-source ledger](./source-proof/senate-864-2021-committee-partial-official-original-source-roll-catalogue.json) reconstructs **12 distinct officially printed Senate Journal Rule 12.10 or public Senate archived-online named committee motions** with **103 explicitly named YEA/NAY positions**. This includes **one independently authenticated first-special-session SF9 amendment**, not just the ten indexed regular-session bill report references. This is **source evidence, not 12 new stored vote rows or 12 independently dated committee meetings**.
+
+| 2021 historical committee | Authenticated distinct named motions (partial) | Named YEA/NAY occurrences |
+|---|---:|---:|
+| Agriculture and Rural Development Finance and Policy | 1 | 8 |
+| Finance (first special session SF9) | 1 | 10 |
+| Housing Finance and Policy | 2 | 14 |
+| Judiciary and Public Safety Finance and Policy | 2 | 18 |
+| State Government Finance and Policy and Elections | 3 | 24 |
+| Transportation Finance and Policy | 3 | 29 |
+| **Verified selective alternate-source evidence only** | **12** | **103** |
+
+Eleven motions are authenticated in official Senate Journal committee reports, where the journal **report date is NOT an independently proved underlying hearing/vote date**. The twelfth (SF450, March 10, 2021) has an independently dated official Senate **online hearing-minutes page**, *not* the 2021 LRL printed volume. Its historical first-public availability remains unknown. The separate original **2021 printed committee-minute meeting denominator, all motions, all subcommittees and print reconciliation remain unknown**. Exact source report/PDF SHA, printed page, unique bill/amendment identity, and separate first-failure/later-success history for special-session SF9 are documented in the catalogue; no private membership ID/name sides are exposed.
+
 ## New offline ledger implementation
 
 [Independent ledger builder](../../src/evidence/senate-864-independent-committee-meeting-ledger.ts), [exact-source CLI](../../scripts/build-senate-864-independent-committee-ledger.ts), [fail-closed tests](../../tests/senate-864-independent-committee-meeting-ledger.test.ts), and [PR source-only workflow](../../.github/workflows/senate-864-independent-committee-year-ledger.yml) join the **whole original SHA-verified meeting index** against the separately original-hashed **1,452** PDF proof records, all **207** OCR recoveries, the independent Judiciary 8-choice proof, and the previously verified **141** no-Minutes indexed meeting roster.
