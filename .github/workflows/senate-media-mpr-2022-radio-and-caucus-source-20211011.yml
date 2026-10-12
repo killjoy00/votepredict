@@ -1,0 +1,66 @@
+name: Public MPR 2022 radio identity and 2021-25 caucus original-source proof
+
+# Only precisely selected first-party source URLs, original Wayback and 2021-25
+# Common Crawl indexed bodies; exact 2022 original MPR parent source replay.
+# Writes public SHA/UTC/asset fingerprint metadata only. No raw article, audio,
+# full transcript, private db or production evidence/model modifications.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-mpr-2022-radio-and-caucus-source-20211011.yml
+      - scripts/probe-senate-media-mpr-2022-benson-kunesh-audio-identity.mjs
+      - scripts/probe-senate-media-2021-22-25-individual-caucus-originals.mjs
+      - scripts/run-senate-media-2022-radio-and-individual-originals.mjs
+      - tests/senate-media-mpr-2022-benson-kunesh-audio-identity.test.mjs
+      - tests/senate-media-2021-22-25-individual-caucus-originals.test.mjs
+      - tests/senate-media-2022-radio-caucus-real-receipts.test.mjs
+      - docs/evaluation/senate-media-2022-radio-and-2021-25-caucus-20261011.json
+      - docs/evaluation/senate-media-2022-radio-and-2021-25-caucus-20261011.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-mpr-2022-radio-and-2021-25-caucus-press-history
+  cancel-in-progress: false
+
+jobs:
+  exact-first-party-radio-and-archived-press-source-proof:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-2022-radio-2025-statements-and-2021-22-originals-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Offline MPR audio asset identity, exact original HTML digest, individual State Senate attribution, timing controls
+        run: node --test tests/senate-media-mpr-2022-benson-kunesh-audio-identity.test.mjs tests/senate-media-2021-22-25-individual-caucus-originals.test.mjs
+      - name: Bounded first-party current and exact SHA-pinned 2022 MPR episode originals; no MP3 fetched
+        run: |
+          node scripts/run-senate-media-2022-radio-and-individual-originals.mjs radio \
+            --output artifacts/senate-media-2022-benson-kunesh-audio-identity.json
+      - name: Bounded seven exact direct first-party Senate caucus pages and independently indexed original HTML sources
+        run: |
+          node scripts/run-senate-media-2022-radio-and-individual-originals.mjs statements \
+            --output artifacts/senate-media-2021-22-25-seven-press-originals.json
+      - name: Preserve only public URI digests, original HTML SHA/UTC source metadata and attribution boundaries
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-mpr-2022-radio-and-2021-25-individual-caucus-originals
+          path: |
+            artifacts/senate-media-2022-benson-kunesh-audio-identity.json
+            artifacts/senate-media-2021-22-25-seven-press-originals.json
+          if-no-files-found: error
+          retention-days: 7
