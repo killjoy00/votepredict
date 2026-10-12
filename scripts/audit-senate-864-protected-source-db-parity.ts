@@ -87,6 +87,18 @@ export function verifyPinnedOfficialSourceManifests(
    throw Error('Official original PDF metadata source validation failed');
   result.push(proof);
  }
+ // Pre-secret source parser compatibility gate: independently audit all pinned
+ // original URL/year/choice-token structures against the exact comparator.
+ // An empty synthetic stored cohort is deliberately NOT a DB observation;
+ // only the source totals/validation are consumed from this preflight.
+ const dry=compareOriginalSenateCommitteeToStored(result,{
+  documents:[],events:[],choices:[],
+ });
+ if(dry.sourceOriginalPdfUrlReferences!==1452
+   ||dry.originalPdfsWithIndependentRawPdfSha!==1245
+   ||dry.originalPdfsWithoutIndependentRawPdfSha!==207
+   ||dry.sourceExactUrlOneToOne!==0)
+  throw Error('Pinned source manifests fail strict pre-secret comparator validation');
  return result;
 }
 function checkRows<T>(rows:unknown,limit:number):T[]{
