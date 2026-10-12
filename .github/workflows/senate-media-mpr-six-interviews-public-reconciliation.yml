@@ -1,0 +1,59 @@
+name: Public MPR six senator interviews historical archive and collector gate audit
+
+# Read-only first-party public research. The only uploaded artifact is a bounded
+# JSON manifest of source digests/UTC, short cue booleans and public seed gates.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-mpr-six-interviews-public-reconciliation.yml
+      - scripts/probe-senate-media-mpr-six-interviews-originals.mjs
+      - scripts/reconcile-senate-media-mpr-interviews-public.mjs
+      - scripts/run-senate-media-mpr-six-interviews-public.mjs
+      - tests/senate-media-mpr-six-interviews-public-reconciliation.test.mjs
+      - tests/senate-media-mpr-six-interviews-real-receipts.test.mjs
+      - docs/evaluation/senate-media-mpr-six-interviews-public-reconciliation-20261011.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-mpr-six-interviews-source-originals
+  cancel-in-progress: false
+
+jobs:
+  selected-mpr-original-html-and-public-only-coverage:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-mpr-six-interviews-public-reconciliation-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install only repository dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Provenance and seed-gate offline adversarial tests
+        run: node --import tsx --test tests/senate-media-mpr-six-interviews-public-reconciliation.test.mjs tests/senate-media-mpr-six-interviews-real-receipts.test.mjs
+      - name: Bounded live public first-party MPR / Wayback / Common Crawl research
+        run: |
+          node --import tsx scripts/run-senate-media-mpr-six-interviews-public.mjs \
+            --output artifacts/senate-media-mpr-six-interviews-public-reconciliation.json
+      - name: Preserve only public checksum, date, selected cue and seed gate receipts
+        uses: actions/upload-artifact@v6
+        with:
+          name: mpr-six-interviews-public-reconciliation
+          path: artifacts/senate-media-mpr-six-interviews-public-reconciliation.json
+          if-no-files-found: error
+          retention-days: 7
