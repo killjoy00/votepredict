@@ -1,0 +1,98 @@
+name: Audit 103 new original 2022-25 direct candidate position fragments
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-864-new-2022-25-deep-original-source-receipts-v1.json
+      - data/evaluation/senate-864-three-sparse-candidate-2022-25-original-site-policy-expansion-v1.json
+      - data/evaluation/senate-864-low-covered-2022-original-publisher-candidate-questionnaires-issue-fragments-v1.json
+      - scripts/audit-senate-864-clark-quade-wiklund-103-new-original-research-fragments.mjs
+      - scripts/build-senate-864-95-person-augmented-original-2022-25-issue-depth.mjs
+      - .github/workflows/senate-864-103-original-2022-25-candidate-issue-fragments-audit.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  whole-original-cdx-and-speaker-quote-audit:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-depth-matrix-weak-coverage-source-probes-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --check scripts/audit-senate-864-clark-quade-wiklund-103-new-original-research-fragments.mjs
+      - name: Obtain original government service and oath source
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen independently verified statewide 95 actual-serving senator website coverage
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38197279787
+          name: senate-95-serving-92-original-sites-1194-short-excerpts-v1
+          github-token: ${{ github.token }}
+          path: original/statewide
+      - name: Obtain original 95-person 1194-excerpt issue depth matrix
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38201968761
+          name: senate-864-95-person-historical-campaign-issue-depth-matrix-v1
+          github-token: ${{ github.token }}
+          path: original/baseline-matrix
+      - name: Reopen exact historical 2025 Doron original candidate priorities HTML and CDX
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38202453076
+          name: senate-864-weak-campaign-original-source-research-clark2025-v1
+          github-token: ${{ github.token }}
+          path: original/clark
+      - name: Reopen exact historical 2022 candidate and publisher HTML plus CDX bodies
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38202453076
+          name: senate-864-weak-campaign-original-source-research-low2022-v1
+          github-token: ${{ github.token }}
+          path: original/low
+      - name: Reconstruct complete original SHA1/CDX and verify literal candidate speaker scope for all 103 short fragments
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          covered="$(find original/statewide -type f -name 95-senators-public-campaign-coverage.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$covered"
+          node --import tsx scripts/audit-senate-864-clark-quade-wiklund-103-new-original-research-fragments.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --coverage-json "$covered" \
+            --clark-original-dir original/clark \
+            --low-original-dir original/low \
+            --out-dir research/verified
+      - name: Produce final 95-person original-first-party issue depth including the 78 independently authenticated addendum
+        run: |
+          node scripts/build-senate-864-95-person-augmented-original-2022-25-issue-depth.mjs \
+            --baseline-matrix-json original/baseline-matrix/senate-95-issue-depth-matrix.json \
+            --verified-103-audit-json research/verified/senate-864-original-103-scoped-short-research-fragment-audit.json \
+            --out-dir research/verified
+      - name: Retain verified quote-scoped original source proof report and summary
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-103-2022-25-original-short-fragments-independent-audit-v1
+          path: research/verified/
+          if-no-files-found: warn
+          retention-days: 30

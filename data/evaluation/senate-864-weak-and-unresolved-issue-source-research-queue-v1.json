@@ -1,0 +1,273 @@
+{
+  "schema": "mn-senate-864-low-issue-depth-doron-and-last-three-original-source-queue-v1",
+  "issue": 864,
+  "baseline": {
+    "actualSenators": 95,
+    "siteCoveredPersons": 92,
+    "siteResearchExcerpts": 1194,
+    "websiteGapPeople": [
+      "Charles Wiger",
+      "David Tomassoni",
+      "Thomas Bakk"
+    ],
+    "sourceOfficialSenateRosterSha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51"
+  },
+  "sourcePolicy": [
+    "Candidate-owned sites, publisher direct answers, official caucus statements and party questionnaires remain distinct evidence types.",
+    "Only SHA1/CDX matched whole original pre-election archives may be admitted as new original evidence.",
+    "Historic capture public-by UTC never proves first authorship, same election adoption, actual legislative vote or prediction eligibility.",
+    "Modern post-election site content must not be silently backdated.",
+    "Failed archive queries are unknown, not proof the candidate did not express a view."
+  ],
+  "groups": {
+    "low2022": {
+      "title": "Add specificity for 2–5 original-site excerpt senators, not repeat broad statements",
+      "sources": [
+        {
+          "id": "weber22-biofuels",
+          "person": "Bill Weber",
+          "office": "Minnesota Senate SD21",
+          "electionDate": "2022-11-08",
+          "url": "https://mnbiofuels.org/candidates-biofuels-weber-dornink",
+          "sourceKind": "publisher_hosted_candidate_answer_questionnaire",
+          "dateClaim": "2022-10-18",
+          "identityCue": "Bill Weber",
+          "why": "2022 candidate responses on biofuel blending, infrastructure and production permits; not a candidate-owned site"
+        },
+        {
+          "id": "klein22-reader",
+          "person": "Matt Klein",
+          "office": "Minnesota Senate SD53",
+          "electionDate": "2022-11-08",
+          "url": "https://weststpaulreader.com/2022/09/21/2022-state-legislature-election-top-priorities/",
+          "sourceKind": "publisher_hosted_direct_2022_candidate_questionnaire",
+          "dateClaim": "2022-09-21",
+          "identityCue": "Matt Klein",
+          "why": "2022 self-authored answers on healthcare, prescription prices, tax, education, environmental goals and policing"
+        },
+        {
+          "id": "klein22-voter-guide",
+          "person": "Matt Klein",
+          "office": "Minnesota Senate SD53",
+          "electionDate": "2022-11-08",
+          "url": "https://www.eastmetrovoterguide.com/matt-klein.html",
+          "sourceKind": "publisher_hosted_candidate_completed_questionnaire",
+          "dateClaim": "2022-unspecified",
+          "identityCue": "Matt Klein",
+          "why": "2022 original voter guide named office and priorities; ensure archived version predates general election"
+        },
+        {
+          "id": "quade22-jejune",
+          "person": "Erin Maye Quade",
+          "office": "Minnesota Senate SD56",
+          "electionDate": "2022-11-08",
+          "url": "https://www.jejunemagazine.com/home/erin-maye-quade",
+          "sourceKind": "publisher_candidate_interview_full_firstperson",
+          "dateClaim": "2022",
+          "identityCue": "Erin Maye Quade",
+          "why": "Original questionnaire on teacher shortages, reproductive freedom, public safety and economics"
+        },
+        {
+          "id": "quade22-owned",
+          "person": "Erin Maye Quade",
+          "office": "Minnesota Senate SD56",
+          "electionDate": "2022-11-08",
+          "url": "https://erinmayequade.com/priorities/",
+          "sourceKind": "candidate_owned_page_historical_version_unknown",
+          "dateClaim": "undated",
+          "identityCue": "Erin",
+          "why": "Current site revised for 2026; test strictly historic before 2022 election not current content"
+        },
+        {
+          "id": "wiklund22-owned",
+          "person": "Melissa Wiklund",
+          "office": "Minnesota Senate SD51",
+          "electionDate": "2022-11-08",
+          "url": "https://www.wiklundforsenate.com/",
+          "sourceKind": "candidate_owned_original_senate_site_historical_version_unknown",
+          "dateClaim": "undated",
+          "identityCue": "Wiklund",
+          "why": "Currently substantive owned platform with 2022 district 51 wording; must prove original 2022 indexed body digest before new quotes"
+        },
+        {
+          "id": "dziedzic22-caucus",
+          "person": "Kari Dziedzic",
+          "office": "Minnesota Senate SD60",
+          "electionDate": "2022-11-08",
+          "url": "https://senatedfl.mn/senator-kari-dziedzic-attempts-to-move-bill-relating-to-stealthing-%EF%BF%BC/",
+          "sourceKind": "caucus_firstperson_legislative_statement_not_campaign_site",
+          "dateClaim": "2022-05-12",
+          "identityCue": "Kari Dziedzic",
+          "why": "Original 2022 direct abortion/sexual-consent legislative statement; party publisher, not 2022 campaign platform"
+        },
+        {
+          "id": "quade22-child-children",
+          "person": "Erin Maye Quade",
+          "office": "Minnesota Senate SD56",
+          "electionDate": "2022-11-08",
+          "url": "https://erinmayequade.com/priorities/putting-children-and-families-first/",
+          "sourceKind": "candidate_owned_2022_issue_child_page_historical_version_unknown",
+          "dateClaim": "linked-on-original-2022-11-05-priorities-menu",
+          "identityCue": "Erin Maye Quade",
+          "why": "Actual hyperlink found in SHA1/CDX verified 2022-11-05 original candidate-owned /priorities menu. Childcare, schooling and family support. Need original child HTML pre-election, not mutable 2026 campaign copy."
+        },
+        {
+          "id": "quade22-child-economy",
+          "person": "Erin Maye Quade",
+          "office": "Minnesota Senate SD56",
+          "electionDate": "2022-11-08",
+          "url": "https://erinmayequade.com/priorities/strengthening-our-economy/",
+          "sourceKind": "candidate_owned_2022_issue_child_page_historical_version_unknown",
+          "dateClaim": "linked-on-original-2022-11-05-priorities-menu",
+          "identityCue": "Erin Maye Quade",
+          "why": "Actual hyperlink found in SHA1/CDX verified 2022-11-05 original candidate-owned /priorities menu. 2022 Senate economic issue policy specifics. Need original child HTML pre-election, not mutable 2026 campaign copy."
+        },
+        {
+          "id": "quade22-child-democracy",
+          "person": "Erin Maye Quade",
+          "office": "Minnesota Senate SD56",
+          "electionDate": "2022-11-08",
+          "url": "https://erinmayequade.com/priorities/defending-our-democracy/",
+          "sourceKind": "candidate_owned_2022_issue_child_page_historical_version_unknown",
+          "dateClaim": "linked-on-original-2022-11-05-priorities-menu",
+          "identityCue": "Erin Maye Quade",
+          "why": "Actual hyperlink found in SHA1/CDX verified 2022-11-05 original candidate-owned /priorities menu. 2022 voting rights and government accountabilities. Need original child HTML pre-election, not mutable 2026 campaign copy."
+        },
+        {
+          "id": "quade22-child-reproductive",
+          "person": "Erin Maye Quade",
+          "office": "Minnesota Senate SD56",
+          "electionDate": "2022-11-08",
+          "url": "https://erinmayequade.com/priorities/protecting-reproductive-rights/",
+          "sourceKind": "candidate_owned_2022_issue_child_page_historical_version_unknown",
+          "dateClaim": "linked-on-original-2022-11-05-priorities-menu",
+          "identityCue": "Erin Maye Quade",
+          "why": "Actual hyperlink found in SHA1/CDX verified 2022-11-05 original candidate-owned /priorities menu. 2022 rights and abortion access issue page. Need original child HTML pre-election, not mutable 2026 campaign copy."
+        },
+        {
+          "id": "quade22-child-veterans",
+          "person": "Erin Maye Quade",
+          "office": "Minnesota Senate SD56",
+          "electionDate": "2022-11-08",
+          "url": "https://erinmayequade.com/priorities/serving-our-veterans/",
+          "sourceKind": "candidate_owned_2022_issue_child_page_historical_version_unknown",
+          "dateClaim": "linked-on-original-2022-11-05-priorities-menu",
+          "identityCue": "Erin Maye Quade",
+          "why": "Actual hyperlink found in SHA1/CDX verified 2022-11-05 original candidate-owned /priorities menu. 2022 military and veteran services policy specifics. Need original child HTML pre-election, not mutable 2026 campaign copy."
+        }
+      ]
+    },
+    "clark2025": {
+      "title": "Resolve original Jan2025 Doron Clark and version-specific candidate questionnaire provenance",
+      "sources": [
+        {
+          "id": "clark25-daily",
+          "person": "Doron Clark",
+          "office": "Minnesota Senate SD60",
+          "electionDate": "2025-01-28",
+          "url": "https://mndaily.com/city/qa-with-state-senate-candidates/01/26/2025/adviser/",
+          "sourceKind": "publisher_2025_pre_general_candidate_firstperson_questionnaire",
+          "dateClaim": "2025-01-26",
+          "identityCue": "Doron Clark",
+          "why": "University newspaper complete pre-general interview; need original by Jan27"
+        },
+        {
+          "id": "clark25-kritzer",
+          "person": "Doron Clark",
+          "office": "Minnesota Senate SD60",
+          "electionDate": "2025-01-28",
+          "url": "https://naomikritzer.com/2025/01/12/special-election-2025-senate-district-60/",
+          "sourceKind": "publisher_2025_direct_candidate_email_response",
+          "dateClaim": "2025-01-12",
+          "identityCue": "Doron Clark",
+          "why": "Contemporaneous journalist describes candidate's directly received answer on school lunch reimbursements and Education Finance; publisher source, not candidate website"
+        },
+        {
+          "id": "clark25-owned",
+          "person": "Doron Clark",
+          "office": "Minnesota Senate SD60",
+          "electionDate": "2025-01-28",
+          "url": "https://www.doronforsenate.org/priorities",
+          "sourceKind": "candidate_owned_original_senate_site_body_digest_mismatch_prev_attempts",
+          "dateClaim": "undated",
+          "identityCue": "Doron",
+          "why": "Previous indexed snapshots of historical priorities exist but full replays failed indexed SHA1; test alternate capture modes without promotion on mismatch"
+        },
+        {
+          "id": "clark25-sd60",
+          "person": "Doron Clark",
+          "office": "Minnesota Senate SD60",
+          "electionDate": "2025-01-28",
+          "url": "https://sd60dfl.com/",
+          "sourceKind": "party_publisher_candidate_questionnaire_links_historical_versions_unknown",
+          "dateClaim": "2025-01-12-cited",
+          "identityCue": "SD60",
+          "why": "Historical party questionnaire index changed by 2026; Jan12 journalist links questionnaires, but current site doesn't establish PDF body back then"
+        },
+        {
+          "id": "clark25-dfl-drive",
+          "person": "Doron Clark",
+          "office": "Minnesota Senate SD60",
+          "electionDate": "2025-01-28",
+          "url": "https://drive.google.com/file/d/1pbX-cHOKJFfMT4roJDXx-cNUdPs_-G46/view",
+          "sourceKind": "candidate_completed_dfl_questionnaire_google_drive_version_unverified",
+          "dateClaim": "linked-by-2025-01-12",
+          "identityCue": "D. Clark",
+          "why": "Current bytes SHA256 20af081301bf740ff2cb9a9825985fff72110daa16c6a46356d9938e552390dc never proven to be Jan2025 version; do not backdate"
+        }
+      ]
+    },
+    "lastthree2020": {
+      "title": "Seek separately original evidence and true first-party campaign site identification for remaining three",
+      "sources": [
+        {
+          "id": "wiger2012-patch",
+          "person": "Charles Wiger",
+          "office": "Minnesota Senate SD43",
+          "electionDate": "2020-11-03",
+          "url": "https://patch.com/minnesota/oakdale/chuck-wiger-candidate-for-minnesota-senate-district-43",
+          "sourceKind": "older_2012_candidate_submitted_questionnaire_thirdparty_publisher",
+          "dateClaim": "2012-08-20",
+          "identityCue": "Wiger",
+          "why": "Actual submitted earlier Senate Q&A, but never count as 2020 newly authored pledge or campaign website"
+        },
+        {
+          "id": "wiger20-owned-alt",
+          "person": "Charles Wiger",
+          "office": "Minnesota Senate SD43",
+          "electionDate": "2020-11-03",
+          "url": "https://www.wigerforsenate.com/",
+          "sourceKind": "candidate_owned_site_hypothesis_original_not_yet_found",
+          "dateClaim": "unknown",
+          "identityCue": "Wiger",
+          "why": "Known historical domain lead; true complete original page and independent digest still unobserved"
+        },
+        {
+          "id": "tomassoni2010-owned",
+          "person": "David Tomassoni",
+          "office": "Minnesota Senate SD6",
+          "electionDate": "2020-11-03",
+          "url": "http://www.tomassoni4senate.com/",
+          "sourceKind": "historical_original_candidate_owned_site_hypothesis_old_2010s",
+          "dateClaim": "unknown",
+          "identityCue": "Tomassoni",
+          "why": "Historic domain documented as official campaign website, but archive full pre-repurposing political body not authenticated"
+        },
+        {
+          "id": "bakk20-owned-guess",
+          "person": "Thomas Bakk",
+          "office": "Minnesota Senate SD3",
+          "electionDate": "2020-11-03",
+          "url": "https://tombakkforsenate.com/",
+          "sourceKind": "candidate_owned_site_domain_hypothesis_not_original_identity_proof",
+          "dateClaim": "unknown",
+          "identityCue": "Bakk",
+          "why": "New domain candidate, not automatically an official Bakk Senate campaign even if Wayback has captures"
+        }
+      ]
+    }
+  },
+  "producedAs": "source discovery and source-verification proposal only; never changes coverage until archive and identity proofs pass",
+  "productionReadsWrites": 0,
+  "forecastOrTrainingChanges": 0
+}
