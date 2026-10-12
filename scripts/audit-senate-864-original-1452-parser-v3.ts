@@ -184,5 +184,5 @@ async function main(){
  console.log('SENATE_864_CORPUS_SAFE='+JSON.stringify(result));
  if(held||namedDecreased||countsDecreased)process.exitCode=1;
 }
-if(process.argv[1]?.replace(/\/g,'/').endsWith('/audit-senate-864-original-1452-parser-v3.ts'))
+if(process.argv[1]?.replace(/\\/g,'/').endsWith('/audit-senate-864-original-1452-parser-v3.ts'))
  void main().catch(()=>{console.error('SENATE_864_CORPUS_HOLD=preflight');process.exitCode=1});
