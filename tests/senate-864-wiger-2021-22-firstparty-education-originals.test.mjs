@@ -36,12 +36,12 @@ test('quote cue in unrelated other senator statement with no Wiger signature is 
  const q=boundSF960WigerSignedOriginal(Buffer.from('<h1>Senate Wiger statement</h1><p>Senator Martha said '+s.cues.join(' and ')+'</p>'),s);
  assert.equal(q.verified,false);
 });
-test('archived original full source body can be source-authenticated without asserting whole individual quote proof',async()=>{
+test('archived original full source body plus independently checked signed Wiger quote can be authenticated',async()=>{
  const q=await probeWiger(s,f());
  assert.equal(q.originalHtmlVerified,true);
  assert.equal(q.originalCapturedPublicByUtc,'2021-05-12T00:00:00Z');
  assert.equal(q.doesNotProve2020ElectionCandidateOriginalSite,true);
- assert.equal(q.originalWigerNamedIssuePositionVerified,false);
+ assert.equal(q.originalWigerNamedIssuePositionVerified,true);
  assert.equal(q.originalWasBefore2021June22,true);
 });
 test('archive provider blocked / malformed CDX always unknown, no missing policy inference',async()=>{
