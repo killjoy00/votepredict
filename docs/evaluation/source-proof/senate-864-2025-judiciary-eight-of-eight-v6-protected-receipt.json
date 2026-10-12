@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "mn-864-2025-judiciary-v6-verified-eight-original-named-choices-v1",
+  "issue": 864,
+  "reviewedMainCommit": "57b3248dca1ad406cda739c531ba9f2edbe5bca6",
+  "protectedRunId": 38270466090,
+  "protectedRunUrl": "https://github.com/killjoy00/votepredict/actions/runs/38270466090",
+  "keylessIssueReceiptId": 6127418525,
+  "keylessIssueReceiptUrl": "https://github.com/killjoy00/votepredict/issues/864#issuecomment-6127418525",
+  "originalIndependentSourceRunId": 38070395356,
+  "originalIndependentSourceProofArtifactId": 11676168658,
+  "previouslyHeldV5RunId": 38266959992,
+  "previouslyHeldV5IssueReceiptId": 6126911116,
+  "pinnedV2ProtectedRunId": 38201074454,
+  "pinnedV2IssueReceiptId": 6117412541,
+  "pinnedV4ProtectedRunId": 38262800243,
+  "pinnedV4IssueReceiptId": 6126317993,
+  "result": "FULL_8_OF_8",
+  "explanation": "COMPLETE",
+  "originalJudiciarySource": {
+    "meetingDate": "2025-03-12",
+    "yea": 7,
+    "nay": 1,
+    "independentlyHashedOriginalNamedChoices": 8,
+    "matchedStoredNamedChoices": 8
+  },
+  "frozenOriginalPdfAndStoredSourceSha": {
+    "originalPdfs": 1452,
+    "storedMatches": 1452,
+    "sourceCohortUnchanged": true
+  },
+  "candidateRollSummary": {
+    "originalDetailedCandidateRolls": 153,
+    "fullyMatchedDetailedCandidateRolls": 152,
+    "originalDetailedNamedChoiceFingerprints": 989,
+    "originalNamedChoiceFingerprintsOnFullyMatchedRolls": 979
+  },
+  "year2025": {
+    "originalDetailedCandidateRolls": 33,
+    "fullyMatchedDetailedCandidateRolls": 33,
+    "originalDetailedNamedChoiceFingerprints": 305,
+    "originalNamedChoiceFingerprintsOnFullyMatchedRolls": 305
+  },
+  "storedCommittee": {
+    "candidateVoteEvents": 153,
+    "individualChoiceRows": 988
+  },
+  "onlyDetailedMismatchYear2024": {
+    "originalChoiceFingerprints": 10,
+    "storedChoiceFingerprintsOnRoll": 9,
+    "exactDigestIntersections": 9,
+    "originalChoiceFingerprintsAbsent": 1,
+    "unexpectedStoredFingerprints": 0,
+    "missingOriginalChoiceTallySide": "YEA",
+    "personIdentityVerified": false,
+    "absenceRootCauseVerified": false
+  },
+  "additionalMismatchCategories": {
+    "sourceEventTally": 0,
+    "sourceEventDate": 0,
+    "sourceEventMissing": 0,
+    "sourceEventExtraStored": 0,
+    "unresolvedStoredMember": 0,
+    "originalNamedChoiceMismatch": 1
+  },
+  "transaction": {
+    "authenticatedExistingDefaultNeonBranch": true,
+    "readOnly": true,
+    "isolation": "REPEATABLE READ",
+    "explicitRollback": true,
+    "databaseWrites": 0,
+    "privateMemberRowsNamesOriginalUrlsAndChoiceHashesExported": false
+  },
+  "remainingLimits": {
+    "sourceParserCandidatesAreOfficialAllActionsCensus": false,
+    "printYear2021Complete": false,
+    "printElectronicYear2022Equivalent": false,
+    "unlinked141MeetingsReconciled": false,
+    "historicalServiceDatesAuthenticated": false,
+    "asOfEligibilityCertified": false,
+    "liveDeployedAppDatabaseBindingVerified": false,
+    "allHistoricalSourceFamiliesComplete": false,
+    "voteRepairAuthorized": false,
+    "productionDeploymentChanged": false,
+    "issue864Closed": false
+  }
+}
