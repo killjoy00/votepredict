@@ -1,0 +1,42 @@
+# Track D — 2024 Hawj transportation and McEwen mining original written quotation boundaries
+
+**Public-only evidence memo, October 12, 2026 (America/Chicago).** This audit does not add new articles, change production, or infer a member's legislative vote. It strengthens individual printed-senator attribution in two known [2024 Senate DFL first-party original pages](senate-media-eight-caucus-originals-20261011.md). Original archive HTML was independently SHA1-indexed and SHA256-hashed in the merged [#1212](https://github.com/killjoy00/votepredict/pull/1212) discovery-only cohort; this new verifier downloads and rechecks those *same* exact original versions and inspects their own article quote boundaries. It does not use today's publisher HTML to assert what historical content was present.
+
+## Result: TWO individually attributed written policy statements, THREE original capture versions
+
+- **Jen McEwen**: one personally attributed Prove It First sulfide-mining policy written statement (the short cue beginning with her support for the legislation) is present within a historically captured **closed three-paragraph quotation**. The article includes an explicit `Senator Jen McEwen ... issued the following statement` introduction immediately preceding the quoted policy passage. The cue begins at offset **0** within the opening quoted text; **one** such intro and **one** such bounded quote run were found in the original HTML captured **2024-04-22T03:56:26Z**. The original visible article/body also references **SF 1416**. Its displayed Feb 26 / Mar 1 publisher dates are *not* an independently proven first publisher-post timestamp.
+- **Foung Hawj**: a distinct personally attributed transportation-equity written policy statement (the short cue beginning with his inclusive legislative proposals) is present after `Senator Foung Hawj issued the following statement`, within a **closed one-HTML-paragraph quotation**; the cue also begins at opening quote offset **0**. There is **one** original issuer intro and **one** bounded quote run in each of the **2024-03-24T19:01:09Z** and **2024-04-22T04:14:23Z** original bodies. The original publisher body references **SF 4056, SF 3257, and SF 3250**.
+
+Both original senator names have publicly documented state senate service: [McEwen](https://www.lrl.mn.gov/legdb/fulldetail?ID=15537) and [Hawj](https://www.lrl.mn.gov/legdb/fulldetail?ID=15380). The script limits attribution to an exact named issuer, a *directly subsequent* visible quoted paragraph, a single selected short issue-cue occurrence before the quotation closes, and rejection of intervening re-attribution. These source observations are **historically attributable printed statement candidates**, not human-reviewed complete verbatim citations or independently recorded spoken testimony.
+
+## Exact archived original-source metadata
+
+| Senator | Original Wayback capture UTC | Indexed original source SHA-1 base32 | Downloaded original HTML SHA-256 | Bytes | Quoted HTML paragraphs |
+| --- | --- | --- | --- | ---: | ---: |
+| Jen McEwen | `2024-04-22T03:56:26Z` | `LUERCXLMTQVWEL5LPAM3RDXGEBHTLMKN` | `d2a3d97c9519fa64f219dbd8d45be0c4c98904bde749a6a0e3c385e9bde7a6b9` | 94499 | 3 |
+| Foung Hawj | `2024-03-24T19:01:09Z` | `YI4BL3IHGZ27R4JBNOVXUTI5XFGMQNSR` | `aa6da6e8722e33f2f692ba31bfd6699cf97768e74c788dbdb0786a75a3ad5743` | 93076 | 1 |
+| Foung Hawj | `2024-04-22T04:14:23Z` | `RPGCVOQOMF7AOA2UQ6R7E5QIALFQB7S2` | `a168aef89b0f2e50e588c1aa404491de41a241b13739edfe394e4ec6b70e0a01` | 93360 | 1 |
+
+All three downloaded raw publisher HTML responses were independently checked for exact original URL plus archive UTC, manual redirect/no cross-origin follow, HTTP 200, `text/html` MIME, a 2.5 MB byte limit, raw original SHA-1 matching the existing separately indexed CDX digest, raw SHA-256 and the already pinned byte length. Failing any check yields `UNKNOWN`, not an inferred current page, absence of articles, or a senator's statement. Whole article HTML, WARC, audio, video and the full quoted text are **never persisted in code, CI logs or the JSON report**.
+
+## Temporal and prediction boundaries
+
+The [current McEwen publisher page](https://senatedfl.mn/senator-jen-mcewen-statement-following-informational-hearing-on-prove-it-first-legislation/) displays February 26 and March 1, 2024 and describes a **February 22, 2024 informational hearing**. The independently archived original first verified here is **April 22, 2024**. The statement thus cannot be used to forecast the previous February hearing, even though its general policy support might be relevant to *later* legislative events only after independent bill/action matching and cutoff checks.
+
+The [current Hawj publisher page](https://senatedfl.mn/senator-foung-hawj-testifies-in-support-of-transportation-equity-legislation/) displays March 15, 2024 and says Hawj testified on **March 11** in the Senate Transportation Committee. Earliest verified original quote is **March 24**. This quoted *post-testimony press response* is **not** independently authenticated audio of the March 11 hearing or pre-hearing evidence. It could be context for subsequent legislative actions only with separately verified votes, actions and as-of-date filtering.
+
+Cited **SF 1416 / 4056 / 3257 / 3250** are verified references within the authenticated original visible publisher bodies, **not proof those bills were passed, that these senators cast a vote, or that VotePredict contained or lacked their quotes**. No legislative roll-call dates, individual votes, private source-row reconciliation, human-approved full quotations, or forecast readiness were established by this PR. Do not treat archive timestamp as exact original-publication time, and do not automatically credit the displayed earlier publication dates.
+
+## Permanent engineering evidence and regression gates
+
+- [Original-source SHA and personally attributed quote verifier](../../scripts/probe-senate-media-hawj-mcewen-2024-original-written-quotes.mjs): reuses hard-pinned publisher URLs, senators, official service identities, SHA-1 / SHA-256 and bytes from the earlier eight-originals JSON. A manually redirected, altered, unavailable or mismatched body never upgrades the result.
+- [Adversarial synthetic tests](../../tests/senate-media-hawj-mcewen-original-written-quotes.test.mjs): wrong URL/person/dates/hash, reporter or someone else issuing statement, quoted cue outside the exact senator's statement, unclosed quotes, quotation too far away, hidden markup, missed cues and original replay failures. Original policy words only from short synthetic fixtures.
+- [Real-original-source regression tests](../../tests/senate-media-hawj-mcewen-original-written-real-receipts.test.mjs): lock down the three exact archive timestamps, indexed SHA1, raw SHA256, sizes, same original-source identities, quote-span paragraph counts (3 for McEwen, 1 for Hawj) and the precise individual source bill-reference flags.
+- First successful public [source workflow #38259377134](https://github.com/killjoy00/votepredict/actions/runs/38259377134) on initial head `6c708c6a8a81e65f8d16d4aeda3470390e314a13`, with **9 synthetic adversarial tests passing**, **3/3 exact original bodies reverified**, **3/3 individual bounded quote versions**, and **2 distinct personally attributed senators**; source-artifact ID `11752251196` holds only public metadata.
+- [Machine-readable historical source receipts](senate-media-2024-hawj-mcewen-original-written-quote-receipts-20261012.json). Both final-head live evidence and *full repository CI* must pass before merge.
+
+Net article/capture additions: **0 new original publisher URLs, 0 new archive-version identities.** Net attribution advance: **two individual short policy fragments within personally named, closed original 2024 written quotations**, independently verified in 3 previously known capture versions. They are not audio, complete verbatim human-reviewed utterances, pre-hearing comments or recorded Senate votes.
+
+No private VotePredict source-document export/DB rows, account identifiers, production collector/ingest, schema, serving, model, forecast or deployment were accessed or changed.
+
+The next Track D steps are to independently establish **later bill/action dates and relevant votes** for the four cited SF bills, not to infer those votes; separately pursue exact 2022 Benson/Kunesh original MPR MP3 and stronger archived 2025 Pha/Coleman, 2023 Pratt and 2021 Osmek/Koran/Farnsworth cases.

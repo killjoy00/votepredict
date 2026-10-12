@@ -1,0 +1,53 @@
+name: Public Hawj McEwen 2024 original senator written statement attribution
+
+# Track D #987. Exact three already SHA-indexed raw HTML original replays;
+# no original publisher body, user data, production config, audio or vote action.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-hawj-mcewen-original-written-quotes.yml
+      - scripts/probe-senate-media-hawj-mcewen-2024-original-written-quotes.mjs
+      - tests/senate-media-hawj-mcewen-original-written-quotes.test.mjs
+      - tests/senate-media-hawj-mcewen-original-written-real-receipts.test.mjs
+      - docs/evaluation/senate-media-2024-hawj-mcewen-original-written-quote-receipts-20261012.json
+      - docs/evaluation/senate-media-2024-hawj-mcewen-original-written-quote-report-20261012.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: track-d-hawj-mcewen-2024-quote-proofs-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  historical-written-policy-speaker-proof:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-hawj-mcewen-2024-original-quote-turns-20261012')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Offline exact source, speaker, quotation, archive hash and cutoff adversarial tests
+        run: node --test tests/senate-media-hawj-mcewen-original-written-quotes.test.mjs tests/senate-media-hawj-mcewen-original-written-real-receipts.test.mjs
+      - name: Reverify three SHA-pinned original publisher historical HTML bodies with bounded individual statement quotes
+        run: node scripts/probe-senate-media-hawj-mcewen-2024-original-written-quotes.mjs --output artifacts/senate-media-hawj-mcewen-original-quote-metadata.json
+      - name: Keep public original capture hashes and boolean quote provenance only
+        uses: actions/upload-artifact@v6
+        with:
+          name: hawj-mcewen-2024-public-historical-written-statement-proofs
+          path: artifacts/senate-media-hawj-mcewen-original-quote-metadata.json
+          retention-days: 7
+          if-no-files-found: error
