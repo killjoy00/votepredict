@@ -1,0 +1,30 @@
+name: 'Senate #864 CFB Common Crawl original-body verification V8'
+on:
+  pull_request:
+    paths:
+      - 'scripts/prove-cfb-864-commoncrawl-original-bytes-v8.mjs'
+      - 'tests/cfb-864-crawl-original-bytes-v8.test.mjs'
+      - 'docs/evaluation/cfb-2021-22-independent-commoncrawl-originals-v8.md'
+      - '.github/workflows/senate-864-cfb-public-crawl-originals-v8.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  public-original-bodies:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned parsing dependencies
+        run: npm ci --no-fund --no-audit
+      - name: Synthetic adversarial WARC integrity and privacy tests
+        run: node --import tsx --test tests/cfb-864-crawl-original-bytes-v8.test.mjs
+      - name: Verify pinned public-only independent July 2022 original WARC bytes
+        run: node --import tsx scripts/prove-cfb-864-commoncrawl-original-bytes-v8.mjs
