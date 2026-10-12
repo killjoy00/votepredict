@@ -132,6 +132,15 @@ read('senate-roger-chamberlain-2016-original-10-economic-issue-excerpts-and-doma
 // websites: old Kiffmeyer House 16B and Secretary of State campaigns, 2020
 // Newman Senate SD18 broad-issue home, 2021 Kreun SCHOOL BOARD priorities.
 // None of the non-Senate pages is a newly authored 2020/22 Senate pledge.
+// Entire original Wayback CDX independently sha1-pinned Susan Pha 2022 Senate
+// actual SD38 campaign and Doron Clark Jan11 2025 pre-special original ABOUT.
+// Pha stale SD40 copyright footer is NOT the 2022 Senate district;
+// Doron biographical first-party issue salience is NOT unverified /priorities.
+read('senate-pha-doron-2022-25-original-campaign-site-21-short-excerpts-v1',
+ (d,s)=>{assert.equal(d.pages.length,3);assert.equal(d.excerpts.length,21);
+  assert.equal(new Set(d.pages.map(p=>p.person)).size,2);
+  const byPage=new Map(d.pages.map(p=>[p.id,p.person]));
+  each(d.excerpts,q=>[byPage.get(q.pageId),1],s);});
 read('senate-kiffmeyer-newman-kreun-four-original-historic-site-excerpts-v1',
  (d,s)=>{assert.equal(d.pages.length,4);assert.equal(d.excerpts.length,33);
   assert.equal(new Set(d.pages.map(p=>p.person)).size,3);
