@@ -1,4 +1,4 @@
-name: Senate #864 CFB public alternate archive discovery V7
+name: 'Senate #864 CFB public alternate archive discovery V7'
 on:
   pull_request:
     paths:
