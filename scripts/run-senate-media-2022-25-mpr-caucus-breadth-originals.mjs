@@ -19,7 +19,8 @@ for(const s of r.sourcePages){
     &&p.indexedSha1Base32===original.indexedOriginalSha1
     &&p.rawOriginalHtmlSha256===original.originalBodySha256
     &&p.rawOriginalHtmlBytes===original.originalBodyBytes))
-   throw Error('New or changed historical original requires independent source-receipt review');
+  {console.error('Previously unpinned public original source receipt',JSON.stringify({id:s.id,utc:original.utc,indexedSha1:original.indexedOriginalSha1,rawSha256:original.originalBodySha256,bytes:original.originalBodyBytes,originalStatus:original.originalStatus}));
+   throw Error('New or changed historical original requires independent source-receipt review');}
  }
 }
 mkdirSync(dirname(dest),{recursive:true});
