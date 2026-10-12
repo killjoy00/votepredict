@@ -1,0 +1,233 @@
+{
+  "schemaVersion": "senate-2021-apr08-judiciary-original-acoustic-overlap-source-proof-v1",
+  "issue": 864,
+  "sourceRun": {
+    "id": 38192274549,
+    "url": "https://github.com/killjoy00/votepredict/actions/runs/38192274549",
+    "conclusion": "success",
+    "originalSourceRunObservedStartUTC": "2026-10-12T01:32:59.334Z",
+    "completedUTC": "2026-10-12T01:41:02Z",
+    "originatingMergedPR": 1175,
+    "mergeSHA": "9e7d7924d2d1be2fadc80213b3527e6ca004f2d4",
+    "prHeadCIDone": 38192064667,
+    "previouslyIndependentWholeOriginalRunIDs": [
+      38187776601,
+      38188288307
+    ],
+    "exactFullSourcesReacquiredAndSHAReverified": 4,
+    "failures": 0,
+    "JudiciarySourcePairsCompared": 3,
+    "wholeMP3OrPCMUploaded": false,
+    "temporaryWholeMP3AndPCMDeleted": true,
+    "productionWrites": 0
+  },
+  "independentlyDownloadedSourceArtifact": {
+    "id": 11722930167,
+    "name": "senate-2021-apr08-judiciary-original-acoustic-overlap-metadata-only",
+    "zipBytes": 2117,
+    "zipSHA256": "95f31173d20c57399548ccf78c3397f468efebfdcb34200e195f91772bd38014",
+    "sourceJSONBytes": 9597,
+    "sourceJSONSHA256": "c37b4b662055af24a9ae94d7c36479563b8b5d837c2c833ac54222975ac83660",
+    "zipContents": [
+      "source.json"
+    ],
+    "fullRecordingAudioInArtifact": false
+  },
+  "originalArchiveHearingDay": "2021-04-08",
+  "journalReportDay": "2021-04-12",
+  "originalAudio": [
+    {
+      "bill": "SF1159",
+      "part": "transportation",
+      "url": "https://www.lrl.mn.gov/audio/senate/2021/cmte_fintrans_040821.mp3",
+      "wholeOriginalBytes": 118836368,
+      "wholeOriginalSHA256": "ec5f1ca5183ec0e9b40dfa9f5e30c0b3ae2fc13afefcd935856715430013a8ef",
+      "first65536BytesSHA256": "8e2f01c874816f79811facc762146232f34d044a5db1cefecda4795dce04103f",
+      "ffprobeDurationSeconds": 8179.357,
+      "wholeOriginalConfirmedInThreeSeparateSourceRuns": true
+    },
+    {
+      "bill": "SF970",
+      "part": "judiciary-first",
+      "url": "https://www.lrl.mn.gov/audio/senate/2021/cmte_jud_040821.mp3",
+      "wholeOriginalBytes": 106416620,
+      "wholeOriginalSHA256": "97cbe4438cb4f541f2202cb53a27f72098152107617fe4e21622227b79af9cbc",
+      "first65536BytesSHA256": "74b5c8c5580a805dfdebfbef803df02c0715e04075ba490983f38ec55e0b455a",
+      "ffprobeDurationSeconds": 6651.037,
+      "wholeOriginalConfirmedInThreeSeparateSourceRuns": true
+    },
+    {
+      "bill": "SF970",
+      "part": "judiciary-second",
+      "url": "https://www.lrl.mn.gov/audio/senate/2021/cmte_jud_040821a.mp3",
+      "wholeOriginalBytes": 116669459,
+      "wholeOriginalSHA256": "818e8ddcaad73674444dd39d8033a9887ffc4dadc1e95009817539fe65f91013",
+      "first65536BytesSHA256": "0930c662d0b95ad73b661e6fd37f1549e6d64704d55d3c617ae2c3d14682f4f1",
+      "ffprobeDurationSeconds": 6651.011,
+      "wholeOriginalConfirmedInThreeSeparateSourceRuns": true
+    },
+    {
+      "bill": "SF970",
+      "part": "judiciary-third",
+      "url": "https://www.lrl.mn.gov/audio/senate/2021/cmte_jud_040821b.mp3",
+      "wholeOriginalBytes": 85774553,
+      "wholeOriginalSHA256": "160483667a070a19b6d5b33df8cc1457a2c97a2ac16de831a0882a82a4aea028",
+      "first65536BytesSHA256": "b777ba4adde388217111376ecedae4d37f353875ffa52846dbb3e67630e514d7",
+      "ffprobeDurationSeconds": 5073.006,
+      "wholeOriginalConfirmedInThreeSeparateSourceRuns": true
+    }
+  ],
+  "verifiedAcousticSampleAlignment": {
+    "fileOne": "cmte_jud_040821.mp3",
+    "fileTwo": "cmte_jud_040821a.mp3",
+    "originalFullFileSHA256sDifferent": true,
+    "durationsDifferBySeconds": 0.026,
+    "method": "Mono PCM decoded locally from individually full-SHA-verified genuine original MP3s at 1000Hz; 36s sampled windows, independent 1Hz and 8Hz RMS envelopes plus offset-search decoded waveform correlation",
+    "outcome": "EIGHT_INDEPENDENT_SAMPLE_WINDOWS_MATCH_AT_ZERO_SECONDS_OFFSET",
+    "numberOfAlignedSeparatedWindows": 8,
+    "estimatedOffsetBetweenOriginalFilesSeconds": 0,
+    "matchedSamples": [
+      {
+        "firstAudioWindowStartSeconds": 798,
+        "aAudioWindowStartSeconds": 798,
+        "windowSeconds": 36,
+        "energyCorrelation": 0.9998,
+        "decodedPCMCorrelation": 0.9975,
+        "alignedOffsetSeconds": 0,
+        "untrustedCaptionClueReviewWindow": false
+      },
+      {
+        "firstAudioWindowStartSeconds": 1862,
+        "aAudioWindowStartSeconds": 1862,
+        "windowSeconds": 36,
+        "energyCorrelation": 0.9998,
+        "decodedPCMCorrelation": 0.9976,
+        "alignedOffsetSeconds": 0,
+        "untrustedCaptionClueReviewWindow": false
+      },
+      {
+        "firstAudioWindowStartSeconds": 2926,
+        "aAudioWindowStartSeconds": 2926,
+        "windowSeconds": 36,
+        "energyCorrelation": 0.9997,
+        "decodedPCMCorrelation": 0.9976,
+        "alignedOffsetSeconds": 0,
+        "untrustedCaptionClueReviewWindow": false
+      },
+      {
+        "firstAudioWindowStartSeconds": 3990,
+        "aAudioWindowStartSeconds": 3990,
+        "windowSeconds": 36,
+        "energyCorrelation": 0.9998,
+        "decodedPCMCorrelation": 0.9964,
+        "alignedOffsetSeconds": 0,
+        "untrustedCaptionClueReviewWindow": false
+      },
+      {
+        "firstAudioWindowStartSeconds": 5054,
+        "aAudioWindowStartSeconds": 5054,
+        "windowSeconds": 36,
+        "energyCorrelation": 0.9996,
+        "decodedPCMCorrelation": 0.9965,
+        "alignedOffsetSeconds": 0,
+        "untrustedCaptionClueReviewWindow": false
+      },
+      {
+        "firstAudioWindowStartSeconds": 3485,
+        "aAudioWindowStartSeconds": 3485,
+        "windowSeconds": 36,
+        "energyCorrelation": 0.9998,
+        "decodedPCMCorrelation": 0.9976,
+        "alignedOffsetSeconds": 0,
+        "untrustedCaptionClueReviewWindow": true
+      },
+      {
+        "firstAudioWindowStartSeconds": 3986,
+        "aAudioWindowStartSeconds": 3986,
+        "windowSeconds": 36,
+        "energyCorrelation": 0.9998,
+        "decodedPCMCorrelation": 0.9962,
+        "alignedOffsetSeconds": 0,
+        "untrustedCaptionClueReviewWindow": true
+      },
+      {
+        "firstAudioWindowStartSeconds": 4925,
+        "aAudioWindowStartSeconds": 4925,
+        "windowSeconds": 36,
+        "energyCorrelation": 0.9997,
+        "decodedPCMCorrelation": 0.9973,
+        "alignedOffsetSeconds": 0,
+        "untrustedCaptionClueReviewWindow": true
+      }
+    ],
+    "observedSameAudioContentAtTheseSampleWindows": true,
+    "entireMediaTracksByteIdentical": false,
+    "entireMediaTracksAcousticallyIdenticalNotProven": true,
+    "noHumanListeningOrSpokenMotionContentVerification": true
+  },
+  "otherPairComparisons": [
+    {
+      "fileOne": "cmte_jud_040821.mp3",
+      "fileTwo": "cmte_jud_040821b.mp3",
+      "separatedSampleMatches": 0,
+      "observedState": "FULL_SESSION_OVERLAP_NOT_PROVEN",
+      "notEvidenceOfNonOverlap": true
+    },
+    {
+      "fileOne": "cmte_jud_040821a.mp3",
+      "fileTwo": "cmte_jud_040821b.mp3",
+      "separatedSampleMatches": 0,
+      "observedState": "FULL_SESSION_OVERLAP_NOT_PROVEN",
+      "notEvidenceOfNonOverlap": true
+    }
+  ],
+  "untrustedOriginalJudiciaryFirstAutoCaptionCueSeconds": [
+    3503,
+    4004,
+    4943
+  ],
+  "captionCuesAlignedInFirstAndAlternateARecording": true,
+  "captionCuesNotAuthenticatedSpeakersAmendmentMotionOrVoteTimestamps": true,
+  "journalDistinctMotions": [
+    {
+      "bill": "SF1159",
+      "mover": "Dibble",
+      "printedYea": 4,
+      "printedNay": 6,
+      "printedDisposition": "not adopted",
+      "spokenAmendmentAndRollCallVerified": false,
+      "occurred_on": null
+    },
+    {
+      "bill": "SF1159",
+      "mover": "McEwen",
+      "printedYea": 4,
+      "printedNay": 6,
+      "printedDisposition": "not adopted",
+      "spokenAmendmentAndRollCallVerified": false,
+      "occurred_on": null
+    },
+    {
+      "bill": "SF970",
+      "mover": "Pappas",
+      "printedYea": 3,
+      "printedNay": 6,
+      "printedDisposition": "not adopted",
+      "spokenAmendmentAndRollCallVerified": false,
+      "occurred_on": null
+    }
+  ],
+  "holds": {
+    "meetingDateDoesNotProveExactMotionRollDay": true,
+    "firstPublicBy": null,
+    "noAuthenticatedSpecificAmendmentMotionOrVoteAudio": true,
+    "allThreeExactMotionOccurredOn": null,
+    "no2021PrintedMinutesMotionDateCompared": true,
+    "nextDayEligibilityOnlyIfMotionDayVerified": true,
+    "noSameDayForecastUse": true,
+    "noDeduplicationOfDibbleAndMcEwen": true,
+    "noProductionReadsWritesMemberVoteImportsModelTrainingForecastServingSchedulerFloorOr2027": true,
+    "noLegislativeOfficeContact": true,
+    "issue864RemainsOpen": true
+  }
+}
