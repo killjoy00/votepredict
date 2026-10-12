@@ -1,4 +1,7 @@
-import { cfbElectronicReportAvailableOn } from './cfb-report-availability.js';
+import {
+  cfbElectronicReportAvailableOn,
+  CFB_REPORT_AVAILABILITY_VERSION,
+} from './cfb-report-availability.js';
 
 export const CFB_HISTORICAL_RELEASE_AUDIT_VERSION = 'cfb-historical-release-debt-v1' as const;
 export const CFB_HISTORICAL_RELEASE_YEARS = [2021, 2022, 2023, 2024, 2025] as const;
@@ -233,7 +236,7 @@ export function auditCfbHistoricalReleaseDebt(
     if (!filedDates.length) flags.add('missing_report_filing_date');
     if (storedEligible && copies.some(({ row }) =>
       !str(row.metadata.availabilityPolicyVersion)
-      || row.metadata.availabilityPolicyVersion !== 'mn-cfb-report-availability-v7'
+      || row.metadata.availabilityPolicyVersion !== CFB_REPORT_AVAILABILITY_VERSION
     )) flags.add('legacy_eligibility_requires_revalidation');
     if (storedEligible && !storedAvailableOn) flags.add('eligible_without_stored_date');
     if (
