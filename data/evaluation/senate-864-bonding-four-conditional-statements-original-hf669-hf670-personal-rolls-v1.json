@@ -1,0 +1,264 @@
+{
+  "schema": "senate-864-bonding-2023-four-senator-conditions-and-original-rolls-v1",
+  "issue": 864,
+  "verifiedAsOfResearchDate": "2026-10-12",
+  "officialGovernmentRosterOriginalSha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+  "sourceOriginalFullDocumentAndQuoteProof": {
+    "id": "mark-johnson-2023-03-06-tax-relief-before-bonding",
+    "statementDateDisplayed": "2023-03-06",
+    "speaker": "Mark T. Johnson",
+    "sourceUrl": "https://www.mnsenaterepublicans.com/senate-gop-offers-win-win-tax-cuts-for-bonding/",
+    "sourceType": "individual_personally_named_printed_first_party_quote",
+    "issue": "tax_cuts_before_infrastructure_bonding",
+    "policyMeaning": "He was willing to support bonding but wanted tax cuts before the bonding bill advanced; described possible negotiated simultaneous passage.",
+    "exactShortCue": "that bill is dead on arrival until we see tax cuts",
+    "independentlyAuthenticatedOriginalArchivePublicByUtc": "2023-03-07T22:07:14Z",
+    "originalIndexedSha1Base32": "HB6IVRHSZVLL6D7BJ33UOFUNEQL4XTF7",
+    "wholeRawHtmlSha256": "95f8ff71b78198c39b51400d1d4b8dd4621077fdd98514e361c2353fdd6aae85",
+    "wholeRawHtmlBytes": 82012,
+    "selectedBoundedNamedQuoteSha256": "138109280dfcb7c4e22958456a545eca725b1221092a10fa2c15da8e35ed9bbf",
+    "namedSpeakerDirectQuoteBounded": true,
+    "originalFirstPublisherPostingMinuteUnknown": true,
+    "provenBeforeMarch16": true,
+    "provenBeforeMay22": true,
+    "predictionAsOfIngestionNotVerified": true,
+    "specificFloorVersionNotMentioned": true,
+    "notAnOfficialPersonalVote": true,
+    "originalLiveAuditRun": 38322285543,
+    "artifactId": 11779381317
+  },
+  "senateOriginalJournalAudit": {
+    "runUrl": "https://github.com/killjoy00/votepredict/actions/runs/38322618545",
+    "artifactId": 11779810918,
+    "allOriginalPdfSha256ComputedOnExactCompleteBytes": true,
+    "primaryJournalPdfs": 2,
+    "directBillMotionEventsCertified": 2,
+    "thirdEventHF670TwoIndividualVotesStillUnknown": true,
+    "numberOfVerifiedPersonallyNamedSenatorVoteChoices": 10,
+    "rawPdfBytesOrJournalBodyCommitted": false
+  },
+  "eventJournals": [
+    {
+      "id": "senate-hf669-march16-failed",
+      "bill": "HF669",
+      "date": "2023-03-16",
+      "motion": "third_reading_final_passage_after_amendment",
+      "status": "failed",
+      "yeas": 33,
+      "nays": 32,
+      "originalPdfUrl": "https://www.senate.mn/journals/2023-2024/20230316037.pdf",
+      "sha256": "5bb04ac1a09813b8f6fcde5c432458e17a2050ef051632a73e5bae4586c2cd50",
+      "rawBytes": 2698337,
+      "pages": 168,
+      "rollPageOneBased": 165,
+      "publishedOriginalPublicByIndependentProof": null
+    },
+    {
+      "id": "senate-hf669-may22-passed",
+      "bill": "HF669",
+      "date": "2023-05-22",
+      "motion": "third_reading_final_passage_as_amended",
+      "status": "passed",
+      "yeas": 56,
+      "nays": 11,
+      "originalPdfUrl": "https://www.senate.mn/journals/2023-2024/20230522077.pdf",
+      "sha256": "ad8463bc465a620c21931dd1a7c7c81d9f450c41478ca68bc2741b188cb8119b",
+      "rawBytes": 12314742,
+      "pages": 848,
+      "rollPageOneBased": 821,
+      "publishedOriginalPublicByIndependentProof": null
+    },
+    {
+      "id": "senate-hf670-may22-passed",
+      "bill": "HF670",
+      "date": "2023-05-22",
+      "motion": "third_reading_final_passage_as_amended",
+      "status": "passed",
+      "yeas": 35,
+      "nays": 14,
+      "originalPdfUrl": "https://www.senate.mn/journals/2023-2024/20230522077.pdf",
+      "sha256": "ad8463bc465a620c21931dd1a7c7c81d9f450c41478ca68bc2741b188cb8119b",
+      "rawBytes": 12314742,
+      "pages": 848,
+      "rollPageOneBased": 751,
+      "publishedOriginalPublicByIndependentProof": null
+    }
+  ],
+  "bySenator": [
+    {
+      "officialName": "Mark T. Johnson",
+      "individualOriginalPublishedStatementPrimaryId": "mark-johnson-conditional",
+      "positionSpecificity": "conditional_policy_and_negotiation_preference",
+      "quoteSourceHistoricOriginalAuthenticated": true,
+      "originalQuoteArchivePublicByUtc": "2023-03-07T22:07:14Z",
+      "sourceDisplayDay": "2023-03-06",
+      "sourcePageUrl": "https://www.mnsenaterepublicans.com/senate-gop-offers-win-win-tax-cuts-for-bonding/",
+      "caucusPublisherSummaryAloneNotUniqueSenatorApproval": true,
+      "verifiedVotes": [
+        {
+          "eventId": "senate-hf669-march16-failed",
+          "senatorChoice": "NAY",
+          "proof": "exact_named_list_from_original_Senate_Journal_correct_third_reading"
+        },
+        {
+          "eventId": "senate-hf669-may22-passed",
+          "senatorChoice": "YEA",
+          "proof": "exact_named_list_from_original_Senate_Journal_correct_third_reading"
+        },
+        {
+          "eventId": "senate-hf670-may22-passed",
+          "senatorChoice": "NAY",
+          "proof": "exact_named_list_from_original_Senate_Journal_correct_third_reading"
+        }
+      ],
+      "sameBillNumberDifferentFloorAmendedTextsMustNotBeConflated": true,
+      "knownVoteChangeOnHF669": "NAY_TO_YEA",
+      "whetherConditionalSourceExplainsVote": "UNKNOWN_NO_MOTIVE_INFERRED",
+      "asOfProductionFeatureApproved": false
+    },
+    {
+      "officialName": "Karin Housley",
+      "individualOriginalPublishedStatementPrimaryId": "karin-housley-bond-timing",
+      "positionSpecificity": "conditional_policy_and_negotiation_preference",
+      "quoteSourceHistoricOriginalAuthenticated": false,
+      "originalQuoteArchivePublicByUtc": null,
+      "sourceDisplayDay": "2023-03-06",
+      "sourcePageUrl": "https://www.mnsenaterepublicans.com/senate-gop-offers-win-win-tax-cuts-for-bonding/",
+      "caucusPublisherSummaryAloneNotUniqueSenatorApproval": true,
+      "verifiedVotes": [
+        {
+          "eventId": "senate-hf669-march16-failed",
+          "senatorChoice": "NAY",
+          "proof": "exact_named_list_from_original_Senate_Journal_correct_third_reading"
+        },
+        {
+          "eventId": "senate-hf669-may22-passed",
+          "senatorChoice": "YEA",
+          "proof": "exact_named_list_from_original_Senate_Journal_correct_third_reading"
+        },
+        {
+          "eventId": "senate-hf670-may22-passed",
+          "senatorChoice": "UNKNOWN",
+          "proof": "exact_bill_roster_personal_presence_unproven_UNKNOWN"
+        }
+      ],
+      "sameBillNumberDifferentFloorAmendedTextsMustNotBeConflated": true,
+      "knownVoteChangeOnHF669": "NAY_TO_YEA",
+      "whetherConditionalSourceExplainsVote": "UNKNOWN_NO_MOTIVE_INFERRED",
+      "asOfProductionFeatureApproved": false
+    },
+    {
+      "officialName": "Bill Weber",
+      "individualOriginalPublishedStatementPrimaryId": "bill-weber-conditional",
+      "positionSpecificity": "conditional_policy_and_negotiation_preference",
+      "quoteSourceHistoricOriginalAuthenticated": false,
+      "originalQuoteArchivePublicByUtc": null,
+      "sourceDisplayDay": "2023-03-06",
+      "sourcePageUrl": "https://www.mnsenaterepublicans.com/senate-gop-offers-win-win-tax-cuts-for-bonding/",
+      "caucusPublisherSummaryAloneNotUniqueSenatorApproval": true,
+      "verifiedVotes": [
+        {
+          "eventId": "senate-hf669-march16-failed",
+          "senatorChoice": "NAY",
+          "proof": "exact_named_list_from_original_Senate_Journal_correct_third_reading"
+        },
+        {
+          "eventId": "senate-hf669-may22-passed",
+          "senatorChoice": "YEA",
+          "proof": "exact_named_list_from_original_Senate_Journal_correct_third_reading"
+        },
+        {
+          "eventId": "senate-hf670-may22-passed",
+          "senatorChoice": "UNKNOWN",
+          "proof": "exact_bill_roster_personal_presence_unproven_UNKNOWN"
+        }
+      ],
+      "sameBillNumberDifferentFloorAmendedTextsMustNotBeConflated": true,
+      "knownVoteChangeOnHF669": "NAY_TO_YEA",
+      "whetherConditionalSourceExplainsVote": "UNKNOWN_NO_MOTIVE_INFERRED",
+      "asOfProductionFeatureApproved": false
+    },
+    {
+      "officialName": "Nathan Wesenberg",
+      "individualOriginalPublishedStatementPrimaryId": "nathan-wesenberg-conditional",
+      "positionSpecificity": "conditional_policy_and_negotiation_preference",
+      "quoteSourceHistoricOriginalAuthenticated": false,
+      "originalQuoteArchivePublicByUtc": null,
+      "sourceDisplayDay": "2023-03-06",
+      "sourcePageUrl": "https://www.mnsenaterepublicans.com/wesenberg-senate-gop-offers-win-win-tax-cuts-for-bonding/",
+      "caucusPublisherSummaryAloneNotUniqueSenatorApproval": true,
+      "verifiedVotes": [
+        {
+          "eventId": "senate-hf669-march16-failed",
+          "senatorChoice": "NAY",
+          "proof": "exact_named_list_from_original_Senate_Journal_correct_third_reading"
+        },
+        {
+          "eventId": "senate-hf669-may22-passed",
+          "senatorChoice": "NAY",
+          "proof": "exact_named_list_from_original_Senate_Journal_correct_third_reading"
+        },
+        {
+          "eventId": "senate-hf670-may22-passed",
+          "senatorChoice": "NAY",
+          "proof": "exact_named_list_from_original_Senate_Journal_correct_third_reading"
+        }
+      ],
+      "sameBillNumberDifferentFloorAmendedTextsMustNotBeConflated": true,
+      "knownVoteChangeOnHF669": "NO_RECORDED_CHANGE",
+      "whetherConditionalSourceExplainsVote": "UNKNOWN_NO_MOTIVE_INFERRED",
+      "asOfProductionFeatureApproved": false
+    }
+  ],
+  "crossBillPolicyContext": [
+    {
+      "date": "2023-03-27",
+      "publisher": "Minnesota Legislative Reference Library retained historical Caucus Compromise Offer",
+      "sourcePage": "https://www.lrl.mn.gov/vf/item?record=266236",
+      "linkedOriginalPdf": "https://www.leg.mn/archive/clippings/266236-29471.pdf",
+      "sourceMeaning": "Complete-package caucus offer listed HF669 + $200M additional rural roads/bridges, HF670 cash investment, omnibus $3B tax relief/full Social Security income tax elimination/no tax increases, long-term care and agriculture funding",
+      "attribution": "organizational_collective_policy_not_individually_attributable_without_more_proof",
+      "firstIndependentlyAuthenticatedHistoricalPublicByUtc": null,
+      "mayNotBackdateCurrentArchivedCollection": true
+    },
+    {
+      "date": "2023-05-20",
+      "publisher": "Star Tribune",
+      "url": "https://www.startribune.com/minnesota-legislators-strike-last-minute-deal-on-infrastructure/600276484",
+      "sourceMeaning": "Named Mark Johnson quotation after bipartisan deal prioritizing nursing-home aid; source reporter quote not independently time-stamped archived",
+      "specificPolicyAllocation": "$300M distressed nursing homes within bonding compromise",
+      "individualRecordedSpeechAudioOrSourceExactVersionAuthenticated": false,
+      "firstIndependentlyAuthenticatedHistoricalPublicByUtc": null,
+      "doNotAssumeMotivation": true
+    },
+    {
+      "date": "2023-05-22",
+      "publisher": "Minnesota House Session Daily",
+      "url": "https://www.house.mn.gov/SessionDaily/Story/18028",
+      "sourceMeaning": "Legislative leaders reached final $1.5B bond and $400M cash package with nursing home deal; House concurred after Senate amendments",
+      "firstIndependentlyAuthenticatedHistoricalPublicByUtc": null,
+      "postVoteRetrospectiveInfoCannotBePredate": true
+    }
+  ],
+  "controls": {
+    "noPartyWhipOrAuthorshipInferredVote": true,
+    "ambiguousMemberOrProxyNeverYeaOrNay": true,
+    "noIndividuallyVerifiedFullStatementForHousleyWeberWesenbergYet": true,
+    "noIndividualApprovalImpliedByCollectiveMarch27Proposal": true,
+    "noSelfReportedMotivationCausality": true,
+    "differentFinalPolicyTextVersionsUnknown": true,
+    "noProductionDatabaseReadsWritesModelRetrainingOrDeployments": true
+  },
+  "summary": {
+    "actualServedSenators4": true,
+    "namedIndividualOriginalQuoteVerifiedBeforeMarch16": 1,
+    "march16HF669NamedNay": 4,
+    "may22HF669NamedYea": 3,
+    "may22HF669NamedNay": 1,
+    "naysToYeasInHF669": 3,
+    "bothHF669Nays": 1,
+    "may22HF670NamedNay": 2,
+    "may22HF670NamedUnknown": 2,
+    "sourceToVoteMatchedPositiveHistoricalBacktestEligibilityApproved": 0
+  }
+}
