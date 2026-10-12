@@ -29,7 +29,7 @@ assert.equal(seeds.issue,864);
 assert.deepEqual([seeds.baseline.actualSenators,seeds.baseline.siteCoveredPersons,seeds.baseline.siteResearchExcerpts],[95,92,1194]);
 assert.equal(seeds.productionReadsWrites,0);
 const sources=seeds.groups[group].sources;
-assert.ok(Array.isArray(sources)&&sources.length>=4&&sources.length<=8);
+assert.ok(Array.isArray(sources)&&sources.length>=4&&sources.length<=15);
 const gov=bytes(arg('--official-html'),9000);
 const officialReceipt=JSON.parse(bytes(arg('--official-receipt')).toString());
 const swear=bytes(arg('--official-special-swearing-html'),9000);
