@@ -50,7 +50,7 @@ test('SQL is a fixed, bounded, source-document-indexed SELECT with no raw rows o
  assert.doesNotMatch(sql,/,\s+FROM/,'Never allow dangling SELECT projection comma');
  assert.match(sql,/LEFT JOIN memberships/);
  assert.match(sql,/c.slug='senate'/);
- assert.doesNotMatch(sql,/;\s*|RETURNING|SELECT \*|INSERT|UPDATE|DELETE|TRUNCATE|DROP|ALTER|COPY|GRANT|REVOKE|CREATE|pg_sleep/i);
+ assert.doesNotMatch(sql,/;\s*|\b(?:RETURNING|INSERT|UPDATE|DELETE|TRUNCATE|DROP|ALTER|COPY|GRANT|REVOKE|CREATE|pg_sleep)\b|SELECT \*/i);
  assert.equal(FINANCE_FAMILIES.length,4);
  assert.equal(CFB_864_ROW_PILOT_MARKER,'SENATE_864_CFB_ROWS_READONLY_20261011_V1');
 });
