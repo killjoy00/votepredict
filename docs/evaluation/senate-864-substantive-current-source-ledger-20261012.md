@@ -56,3 +56,16 @@ Offline adversarial regression: \`node --test tests/senate-864-substantive-publi
 - **Prediction/public-by**: For every source, compare indexed original capture to the **actual decision event and exact bill version**, not merely the publisher header date; the same-day first posting minute remains unknown even for archived sources. Existing source-to-private-production evidence row matching is not authorized and was not attempted here.
 
 No emails, outreach, records requests, contacts, production DB writes/reads, forecasts, backtests, model training, scheduler/collector changes, deployment, or serving changes. Parent [#864](https://github.com/killjoy00/votepredict/issues/864) stays **OPEN**.
+## 2026-10-12 NEW archived original source recovery — verified after initial page-lead pass
+
+The new dedicated archive run [#38313706122](https://github.com/killjoy00/votepredict/actions/runs/38313706122) **succeeded** with all 21 offline tests. It recovered **two authentic new complete original first-party HTML archive bodies** for Michael Kreun, not just present-day articles. Each independently matches its complete archive-CDX SHA1 Base32 and raw-body SHA256 and contains the exact short quote cue (one unique occurrence in that original):
+
+| Bill-specific source and qualifier | Exact first verified original archive by UTC | Indexed original SHA1/Base32 | Downloaded raw HTML SHA256 | Decision cutoff limitation |
+| --- | --- | --- | --- | --- |
+| Kreun SF4 carbon-free electricity affordability / reliability objections | **2023-02-04T06:26:19Z** | `ASWA6SBXPIBHTLXL3736KEE3ILRCL4AM` | `d8b975fd0d9e5536fc05300916fe69dba79fd0fcdda0b9fb6017e5d9cc39b53a` | Source explicitly responds to **Feb 2 Senate passage**, not a pre-Feb2 prediction |
+| Kreun SF551 and SF862 Highway 65 construction funds / road safety | **2023-04-21T21:14:58Z** | `GMNV2MS5LARSEVYN3GEIG7BJAJWQNNF4` | `0c1f14448a18bc5ade8ff798eabf6d35a3095d8c27db93e9da7800df2ec58733` | Original source *after* Apr 17 Transportation hearing, not prior hearing proof |
+
+The first successful raw archive replay identified full-body SHA, original page and exact short phrase; full quote-to-individual-speaker boundary checking was tightened in the follow-up workflow. Do not equate a single exact printed phrase with an approved complete speech/audio, certified committee personal ballot, or source ingestion before a prediction cutoff.
+
+All six OTHER distinct publisher leads remain **UNKNOWN**: two indexed queries returned invalid/incomplete CDX responses (Rasmusson and Weber), and four (Pha Jan2023; Westlin; Dziedzic; Pha Mar2025) could not access archived original bytes. A 200/current article or missing archive is never proof of historical absence. The 2023 SF551 and SF862 are separately documented original bills ([SF551](https://www.revisor.mn.gov/bills/93/2023/0/SF/551/), [SF862](https://www.revisor.mn.gov/bills/93/2023/0/SF/862/)); the official committee index records **SF551 laid over April 17**, while SF862 was previously referred to Capital Investment. No false claim they were identically voted as standalone floor files.
+
