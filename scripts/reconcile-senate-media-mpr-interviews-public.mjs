@@ -25,7 +25,7 @@ export function validatePublicInputs(){
   const x=ledger.selectedNonExhaustiveArticleLeads.find(r=>r.id===lead.id);
   if(!x||x.livePageUrl!==lead.url||x.publicationDayDisplayedOnPublicPage!==lead.displayedDay
     ||x.publisher!=='MPR News'||x.seedId!==seed.id
-    ||JSON.stringify(x.namedSenatorLeadsForManualReview.sort())!==JSON.stringify([...new Set(lead.quoted.map(q=>q.senator))].sort()))
+    ||JSON.stringify([...x.namedSenatorLeadsForManualReview].sort())!==JSON.stringify([...new Set(lead.quoted.map(q=>q.senator))].sort()))
    throw Error('MPR public research source ID changed');
   const raw=previous.indexConsistentCaptureReceipts.filter(r=>r.leadId===lead.id);
   if(raw.length>1)throw Error('unexpected previous original receipt count');
@@ -47,7 +47,7 @@ export function reconcileSelectedPublicCoverage(live){
   if(original.length>4||l.historic?.historicallySha1AuthenticatedBodies!==original.length)throw Error('invalid original source attempt summary');
   for(const capture of original){
    if(!/^[a-f0-9]{64}$/.test(capture.rawSha256)||!/^[A-Z2-7]{32}$/.test(capture.indexedSha1)
-    ||!/^20(?:21|22|23|24|25)\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ$/.test(capture.utc??'')
+    ||!/^20(?:21|22|23|24|25)-\d\d-\d\dT\d\d:\d\d:\d\dZ$/.test(capture.utc??'')
     ||!Number.isSafeInteger(capture.rawBytes)||capture.rawBytes<40)throw Error('invalid authenticated original source proof');
   }
   const sameAsPrior=original.filter(r=>input.previousOriginal?.observedOriginalHtmlSha256===r.rawSha256);
