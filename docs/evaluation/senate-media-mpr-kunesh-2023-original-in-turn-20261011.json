@@ -1,0 +1,134 @@
+{
+  "version": "mpr-2023-original-kunesh-printed-two-policy-cues-public-provenance-v1",
+  "localResearchDay": "2026-10-11",
+  "sourceRun": {
+    "repo": "killjoy00/votepredict",
+    "runId": 38194711492,
+    "runConclusion": "success",
+    "artifactId": 11722727635,
+    "artifactName": "mpr-2023-kunesh-original-printed-short-cue-evidence",
+    "offlineAdversarialTestCount": 6,
+    "offlineTestFailureCount": 0,
+    "authenticatedRealOriginalHtmlReplayCount": 6
+  },
+  "originalPublisherEpisodeUrl": "https://www.mprnews.org/episode/2023/02/07/new-bill-would-keep-native-families-together-proponents-say",
+  "displayedPublisherDay": "2023-02-07",
+  "senator": "Mary Kunesh",
+  "previouslyKnownSourceDocumentCount": 1,
+  "authenticatedDifferentOriginalHtmlVersions": 2,
+  "historicalCaptures": [
+    {
+      "captureUtc": "2023-02-10T02:40:30Z",
+      "indexedOriginalSha1Base32": "LSMKP7LJQX2FXTNTSFGN2ACEJ6J46GIV",
+      "rawOriginalSha256": "091376b6f0a3a0a1104d9aa8bd4573212c2ba5953486c082df2877a8eb041f92",
+      "bytes": 81419,
+      "rawOriginalHtmlBodySha1AndSha256Reverified": true,
+      "printedAudioTranscriptHeadingSeen": true,
+      "studies": [
+        {
+          "shortPhraseStudyId": "native-tribal-sovereignty",
+          "labeledSenatorSpeakerTurn": "MARY KUNESH:",
+          "selectedPhraseOnOriginalPage": true,
+          "selectedPhraseInsideOriginalAudioTranscriptSection": true,
+          "selectedPhraseInsideSameExplicitMaryKuneshTranscriptTurn": true,
+          "selectedPhraseOwnerLabels": [
+            "MARY KUNESH:"
+          ],
+          "selectedPhraseDistanceFromStartOfNamedTurnCharacters": 394,
+          "printedTranscriptTurnNotAuthenticatedRecordedAudio": true,
+          "originalMemberSpeechHumanVerbatimReviewApproved": false
+        },
+        {
+          "shortPhraseStudyId": "native-family-first-placement",
+          "labeledSenatorSpeakerTurn": "MARY KUNESH:",
+          "selectedPhraseOnOriginalPage": true,
+          "selectedPhraseInsideOriginalAudioTranscriptSection": true,
+          "selectedPhraseInsideSameExplicitMaryKuneshTranscriptTurn": true,
+          "selectedPhraseOwnerLabels": [
+            "MARY KUNESH:"
+          ],
+          "selectedPhraseDistanceFromStartOfNamedTurnCharacters": 397,
+          "printedTranscriptTurnNotAuthenticatedRecordedAudio": true,
+          "originalMemberSpeechHumanVerbatimReviewApproved": false
+        },
+        {
+          "shortPhraseStudyId": "outside-transcript-summary-control",
+          "labeledSenatorSpeakerTurn": "MARY KUNESH:",
+          "selectedPhraseOnOriginalPage": true,
+          "selectedPhraseInsideOriginalAudioTranscriptSection": false,
+          "selectedPhraseInsideSameExplicitMaryKuneshTranscriptTurn": false,
+          "selectedPhraseOwnerLabels": [],
+          "selectedPhraseDistanceFromStartOfNamedTurnCharacters": null,
+          "printedTranscriptTurnNotAuthenticatedRecordedAudio": true,
+          "originalMemberSpeechHumanVerbatimReviewApproved": false
+        }
+      ]
+    },
+    {
+      "captureUtc": "2024-04-18T02:46:06Z",
+      "indexedOriginalSha1Base32": "KTSNDQOWIHKHV2IYGL7T6XWY5W3EZDXN",
+      "rawOriginalSha256": "40d95fdf4f17d5e5c32f0c3b574e47af83a0526735bef33a9d0ddce09b93b89b",
+      "bytes": 82580,
+      "rawOriginalHtmlBodySha1AndSha256Reverified": true,
+      "printedAudioTranscriptHeadingSeen": true,
+      "studies": [
+        {
+          "shortPhraseStudyId": "native-tribal-sovereignty",
+          "labeledSenatorSpeakerTurn": "MARY KUNESH:",
+          "selectedPhraseOnOriginalPage": true,
+          "selectedPhraseInsideOriginalAudioTranscriptSection": true,
+          "selectedPhraseInsideSameExplicitMaryKuneshTranscriptTurn": true,
+          "selectedPhraseOwnerLabels": [
+            "MARY KUNESH:"
+          ],
+          "selectedPhraseDistanceFromStartOfNamedTurnCharacters": 394,
+          "printedTranscriptTurnNotAuthenticatedRecordedAudio": true,
+          "originalMemberSpeechHumanVerbatimReviewApproved": false
+        },
+        {
+          "shortPhraseStudyId": "native-family-first-placement",
+          "labeledSenatorSpeakerTurn": "MARY KUNESH:",
+          "selectedPhraseOnOriginalPage": true,
+          "selectedPhraseInsideOriginalAudioTranscriptSection": true,
+          "selectedPhraseInsideSameExplicitMaryKuneshTranscriptTurn": true,
+          "selectedPhraseOwnerLabels": [
+            "MARY KUNESH:"
+          ],
+          "selectedPhraseDistanceFromStartOfNamedTurnCharacters": 397,
+          "printedTranscriptTurnNotAuthenticatedRecordedAudio": true,
+          "originalMemberSpeechHumanVerbatimReviewApproved": false
+        },
+        {
+          "shortPhraseStudyId": "outside-transcript-summary-control",
+          "labeledSenatorSpeakerTurn": "MARY KUNESH:",
+          "selectedPhraseOnOriginalPage": true,
+          "selectedPhraseInsideOriginalAudioTranscriptSection": false,
+          "selectedPhraseInsideSameExplicitMaryKuneshTranscriptTurn": false,
+          "selectedPhraseOwnerLabels": [],
+          "selectedPhraseDistanceFromStartOfNamedTurnCharacters": null,
+          "printedTranscriptTurnNotAuthenticatedRecordedAudio": true,
+          "originalMemberSpeechHumanVerbatimReviewApproved": false
+        }
+      ]
+    }
+  ],
+  "counts": {
+    "selectedNewSenatorPrintedShortPolicyPhraseCandidates": 2,
+    "alreadyAuthenticatedFirstHistoricalCaptureIn2023": true,
+    "distinctOriginalPublisherUrlsNewlyDiscovered": 0,
+    "newlyAuthenticatedRecordedAudioBinaries": 0,
+    "approvedWholeSenatorVerbatimQuotes": 0,
+    "verifiedOriginalHistoricalIndividualMemberVotes": 0,
+    "retrospectiveModelEligibilityProved": 0
+  },
+  "limits": {
+    "selectedOriginalVersionPublicByBoundNoLaterThan": "2023-02-10T02:40:30Z",
+    "original2023PublicationTimeNotProved": true,
+    "audioOriginallyPlayedAtBroadcastNotIndependentlyShaAuthenticated": true,
+    "onPageReporterSummaryNegativeControlMustNotCountAsTranscriptSpeech": true,
+    "current2026HtmlWordsNotRetroactivelyAttributedWithoutIndexedOriginalBodyMatch": true,
+    "noRawHtmlTranscriptAudioWarcPersisted": true,
+    "noPrivateSourceDocumentsEvidenceItemsOrDatabaseAccess": true,
+    "noSeedCollectorOrTrainingForecastChanges": true
+  }
+}
