@@ -1,0 +1,88 @@
+name: '#864 2024 Education repeated original amendment rolls'
+
+# Public-source-only audit of exactly one original Minnesota Senate PDF.
+# No protected credentials, database access, writes, member names or choice hashes.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-2024-education-repeated-original-rolls.yml
+      - src/evidence/senate-2024-education-repeated-amendment-rolls.ts
+      - tests/senate-2024-education-repeated-amendment-rolls.test.ts
+      - scripts/audit-senate-2024-education-repeated-rolls.ts
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2024-education-repeated-original-rolls.yml
+      - src/evidence/senate-2024-education-repeated-amendment-rolls.ts
+      - tests/senate-2024-education-repeated-amendment-rolls.test.ts
+      - scripts/audit-senate-2024-education-repeated-rolls.ts
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  synthetic-source-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Independent source identity, six actions, duplicate and HOLD regression tests
+        run: node --import tsx --test tests/senate-2024-education-repeated-amendment-rolls.test.ts
+      - name: Production dependency audit
+        run: npm audit --omit=dev --audit-level=high
+
+  original-public-minutes-proof:
+    needs: synthetic-source-gates
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Acquire original 2024 official PDF audit metadata artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2024-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts/original
+      - name: Check PDF page cap utility
+        run: |
+          if ! command -v pdfinfo >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends poppler-utils
+          fi
+      - name: Reverify official original and six distinct amendment rolls
+        run: |
+          node --import tsx scripts/audit-senate-2024-education-repeated-rolls.ts \
+            --source-json artifacts/original/senate-committee-2024-original-pdf-actions.json \
+            --output artifacts/report/senate-864-2024-education-repeated-rolls-safe.json
+      - name: Preserve safe verified original-source counts
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-2024-education-six-distinct-original-amendment-rolls
+          path: artifacts/report/senate-864-2024-education-repeated-rolls-safe.json
+          retention-days: 30
+          if-no-files-found: error
