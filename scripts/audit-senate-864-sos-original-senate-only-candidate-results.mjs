@@ -108,11 +108,28 @@ function candidateRows(html){
     return m?[String(Number(m[1]))]:[];
    })[0]||null;
    const personName=nameCellIndexes.map(i=>textCells[i]).find(x=>x.length<=115&&!x.includes('@'))||null;
+   const officialCandidateProfileLinks=[];
+   for(const i of nameCellIndexes){
+    for(const tag of cells[i].matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)){
+     const href=/\bhref=["']([^"']+)["']/i.exec(tag[1])?.[1]||'';
+     if(!href||href.length>320)continue;
+     if(/^javascript:/i.test(href)){
+      officialCandidateProfileLinks.push({originalNameCellIndex:i,type:'ASPNet_click_or_postback',sourceLengthOnly:href.length,
+        originalCandidateDetailsDirectUrlKnown:false});continue;
+     }
+     try{const url=new URL(href,'https://candidates.sos.state.mn.us/CandidateFilingResults.aspx');
+      if(/^candidates\.sos\.(?:state\.mn\.us|mn\.gov)$/i.test(url.hostname)&&/CandidateFiling/i.test(url.pathname))
+       officialCandidateProfileLinks.push({originalNameCellIndex:i,type:'official_candidate_filing_detail_original_link',originalDetailUrl:url.toString(),
+        originalDetailUrlIsNotAuthenticatedCandidateWebsite:true});
+     }catch{}
+    }
+   }
    matched.push({
     searchedActualSenatorSurname:surname,officialGeneralWinnerDistrict:d,
     officialGeneralWinnerName:winnerByDistrict.get(d),
     originalNamedCandidateShortCellText:personName?.slice(0,115)||null,
     originalTableCellIndexesContainingSurname:nameCellIndexes,
+    originalOfficialCandidateDetailLinkLeads:officialCandidateProfileLinks.slice(0,3),
     originalSameRowExplicitSenateDistrict:originalTextSenateDistrict,
     originalSameRowExternalUrlLeadsNotYetCertifiedWebsites:siteAnchors.slice(0,5),
     originalSameRowExternalHTTPLinkCount:externalHttpLinkCount,
