@@ -27,6 +27,9 @@ function requireCounts(rows:unknown,fields:readonly string[],limit:number,sessio
   if(!raw||typeof raw!=='object'||Array.isArray(raw))
    throw Error('Roster aggregate row not object');
   const row=raw as Row;
+  const allowed=['year',...(session?['session_slug']:[]),...fields].sort();
+  if(JSON.stringify(Object.keys(row).sort())!==JSON.stringify(allowed))
+   throw Error('Unexpected aggregate field, possible private row or changed SQL');
   if(!REQUIRED_2021_25_YEARS.includes(row.year as typeof REQUIRED_2021_25_YEARS[number]))
    throw Error('Roster year out of fixed source scope');
   if(session&&!ALLOWED_SESSIONS.includes(row.session_slug as typeof ALLOWED_SESSIONS[number]))
