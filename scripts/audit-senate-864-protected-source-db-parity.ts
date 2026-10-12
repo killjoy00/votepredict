@@ -112,6 +112,10 @@ export async function protectedCommitteeSourceParity(
  poolFactory:(opts:ConstructorParameters<typeof Pool>[0])=>Pick<Pool,'connect'|'end'>=
   opts=>new Pool(opts),
  onPhase:(phase:string)=>void=()=>{},
+ keyOnlyOriginal:readonly {
+  year:number;sourceUrl:string;externalKey:string;meetingDate:string;
+  sourceNamedChoiceTokensKnownCount:number;
+ }[]=[],
 ){
  const selected=await discoverExistingVotePredictNeonConnection(input,fetchApi);
  onPhase('existing_project_and_branch_verified');
@@ -145,7 +149,7 @@ export async function protectedCommitteeSourceParity(
    onPhase('bounded_named_member_choices_queried');
    const counts=compareOriginalSenateCommitteeToStored(sourceReports,{
     documents:docs,events,choices,
-   });
+   },keyOnlyOriginal);
    // Explicit ROLLBACK before emitting even the sanitized result.
    await client.query('ROLLBACK');begun=false;
    onPhase('rolled_back');

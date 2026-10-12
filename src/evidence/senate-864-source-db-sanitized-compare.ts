@@ -59,6 +59,10 @@ export function compareOriginalSenateCommitteeToStored(
   events:readonly CommitteeStoredEvent[];
   choices:readonly CommitteeStoredChoice[];
  },
+ keyOnlyOriginal:readonly {
+  year:number;sourceUrl:string;externalKey:string;meetingDate:string;
+  sourceNamedChoiceTokensKnownCount:number;
+ }[]=[],
 ){
  if(reports.length<1||reports.length>4 ||stored.documents.length>2200
    ||stored.events.length>600||stored.choices.length>4000)
@@ -209,6 +213,91 @@ export function compareOriginalSenateCommitteeToStored(
    if(found[0]!.meeting_date===unresolved.meetingDate)y.unparsedMeetingDateMatches++;
   }
  }
+ // The 2025 Judiciary OCR pilot retained only the external key plus an
+ // original named-choice COUNT, not yea/nay tally or per-name fingerprints.
+ // Prove its persisted key/link/date/count while explicitly refusing to mark
+ // the individual choices or the tally as source-certified.
+ const keyOnly={
+  sourceRecognizedButOriginalTallyOrNameDigestsUnavailable:keyOnlyOriginal.length,
+  persistedExactKeyAndHearingDateMatches:0,
+  persistedKeyDateAndChoiceCountMatches:0,
+  sourceKeyOnlyNamedChoiceTokens:keyOnlyOriginal.reduce((n,k)=>
+   n+k.sourceNamedChoiceTokensKnownCount,0),
+  storedCountMatchedButIndividualNamedChoiceIdentitiesNotProven:0,
+ };
+ const fullEventKeys=new Set(reports.flatMap(r=>r.documentProofs.flatMap(p=>
+  p.voteObservations.map(v=>v.externalKey))));
+ const seenKeys=new Set<string>();
+ for(const k of keyOnlyOriginal){
+  if(!originalUrls.has(k.sourceUrl)||yearOf(k.sourceUrl)!==k.year
+    ||!Number.isSafeInteger(k.sourceNamedChoiceTokensKnownCount)
+    ||k.sourceNamedChoiceTokensKnownCount<0
+    ||fullEventKeys.has(k.externalKey)||seenKeys.has(k.externalKey)
+    ||!/^senate-committee:[a-f0-9]{16}:[0-9]+$/.test(k.externalKey))
+   throw Error('Key-only OCR candidate cannot be double-counted or unscoped');
+  seenKeys.add(k.externalKey);
+  const sourceProof=reports.flatMap(r=>r.documentProofs)
+   .find(p=>p.document.sourceUrl===k.sourceUrl);
+  if(!sourceProof||sourceProof.document.meetingDate!==k.meetingDate)throw Error('Key-only original hearing proof absent');
+  const found=byUrl.get(k.sourceUrl)??[];
+  if(found.length!==1)continue;
+  const db=found[0]!;
+  if(db.source_sha!==sourceProof.document.originalRawPdfSha256
+    ||db.meeting_date!==k.meetingDate
+    ||db.committee_name!==sourceProof.document.committeeName)continue;
+  const candidate=(rawEventsByDoc.get(db.id)??[])
+   .filter(e=>e.external_key===k.externalKey&&e.occurred_on===k.meetingDate);
+  if(candidate.length!==1)continue;
+  keyOnly.persistedExactKeyAndHearingDateMatches++;
+  const memberRows=memberByEvent.get(candidate[0]!.id)??[];
+  if(memberRows.length===k.sourceNamedChoiceTokensKnownCount){
+   keyOnly.persistedKeyDateAndChoiceCountMatches++;
+   keyOnly.storedCountMatchedButIndividualNamedChoiceIdentitiesNotProven+=memberRows.length;
+  }
+ }
+ // On full-proof source events distinguish an entire roll not passing the
+ // digest equality gate from each independently unmatched named token.
+ // All output is counts. No names, choices, keys or URLs leave this function.
+ const choiceDiscrepancy={
+  sourceRollEventsWithNamedChoiceMismatch:0,
+  originalNamedTokensInThoseRolls:0,
+  persistedNamedTokensInThoseRolls:0,
+  exactChoiceDigestIntersectionTokensInThoseRolls:0,
+  originalNamedChoiceTokensAbsentFromPersistedDigestSet:0,
+  storedNamedChoiceTokensNotInOriginalDigestSet:0,
+ };
+ for(const r of reports)for(const p of r.documentProofs){
+  const found=byUrl.get(p.document.sourceUrl)??[];
+  if(found.length!==1)continue;
+  const db=found[0]!;
+  if(db.source_sha!==p.document.originalRawPdfSha256
+    ||db.meeting_date!==p.document.meetingDate
+    ||db.committee_name!==p.document.committeeName)continue;
+  for(const v of p.voteObservations){
+   if(!v.individualVotesAvailable)continue;
+   const events=(rawEventsByDoc.get(db.id)??[]).filter(e=>e.external_key===v.externalKey);
+   if(events.length!==1)continue;
+   const e=events[0]!;
+   if(e.occurred_on!==p.document.meetingDate
+     ||e.yea_count!==v.yeaCount||e.nay_count!==v.nayCount)continue;
+   const actual=(memberByEvent.get(e.id)??[]).map(m=>digest(m.choice,m.normalized_member_name)).sort();
+   const originalHashes=[...v.choiceIdentitySha256].sort();
+   if(JSON.stringify(actual)===JSON.stringify(originalHashes))continue;
+   choiceDiscrepancy.sourceRollEventsWithNamedChoiceMismatch++;
+   choiceDiscrepancy.originalNamedTokensInThoseRolls+=originalHashes.length;
+   choiceDiscrepancy.persistedNamedTokensInThoseRolls+=actual.length;
+   const pool=new Map<string,number>();
+   for(const sha of actual)pool.set(sha,(pool.get(sha)??0)+1);
+   let intersection=0;
+   for(const sha of originalHashes){
+    const available=pool.get(sha)??0;
+    if(available>0){pool.set(sha,available-1);intersection++}
+   }
+   choiceDiscrepancy.exactChoiceDigestIntersectionTokensInThoseRolls+=intersection;
+   choiceDiscrepancy.originalNamedChoiceTokensAbsentFromPersistedDigestSet+=originalHashes.length-intersection;
+   choiceDiscrepancy.storedNamedChoiceTokensNotInOriginalDigestSet+=actual.length-intersection;
+  }
+ }
  const yearResults=[...yearMap.values()].sort((a,b)=>a.year-b.year);
  return {
   schemaVersion:'mn-864-senate-committee-original-vs-neon-sanitized-v1',
@@ -232,6 +321,8 @@ export function compareOriginalSenateCommitteeToStored(
   persistedCommitteeMemberVoteRows:stored.choices.length,
   orphanedStoredCommitteeEvents,orphanedStoredCommitteeMemberChoices,
   mismatchDocumentCountsByCategory:errors,byYear:yearResults,
+  keyOnlyOriginalEventVerification:keyOnly,
+  originalVsPersistedNamedChoiceDigestDiscrepancy:choiceDiscrepancy,
   sourceContextActionsReconciled:false,
   committeeMemberDateServiceIdentityReconciled:false,
   observedCandidateVoteDenominatorIsNotAllOfficialActions:true,
