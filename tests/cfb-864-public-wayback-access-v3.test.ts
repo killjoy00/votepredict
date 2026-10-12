@@ -95,6 +95,21 @@ test('cross-host index, mutated replay capture and Wayback HTML hold',async()=>{
  };
  const index=await diagnoseCfb864WaybackTransportV3(evilIndex as typeof fetch);
  assert.ok(index.results.every(x=>x.indexCode==='url_identity_hold'));
+ const changedIndex=async(url:RequestInfo|URL)=>{
+  const val=String(url);
+  return reply(indexed(originalOf(val)!),val+'&limit=61');
+ };
+ const indexQuery=await diagnoseCfb864WaybackTransportV3(changedIndex as typeof fetch);
+ assert.ok(indexQuery.results.every(x=>x.indexCode==='url_identity_hold'));
+ const noBody=async(url:RequestInfo|URL)=>{
+  const val=String(url);
+  if(indexOf(val))return reply(indexed(originalOf(val)!),val);
+  const r=new Response(null,{status:204});
+  Object.defineProperty(r,'url',{value:val});
+  return r;
+ };
+ const noStream=await diagnoseCfb864WaybackTransportV3(noBody as typeof fetch);
+ assert.ok(noStream.results.every(x=>x.replayCode==='read_error'));
  const rawChanged=async(url:RequestInfo|URL)=>{
   const val=String(url);
   if(indexOf(val))return reply(indexed(originalOf(val)!),val);
