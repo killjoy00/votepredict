@@ -1,0 +1,164 @@
+name: One-shot MN Senate 2021-25 finance archive upper-bound V3 protected counts
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-864-finance-archive-upperbound-v3.yml
+      - scripts/audit-cfb-864-neon-finance-archive-upperbound-v3.ts
+      - scripts/verify-cfb-864-neon-finance-archive-upperbound-v3-local.ts
+      - tests/cfb-864-finance-archive-upperbound-v3.test.ts
+  push:
+    branches: [main]
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+concurrency:
+  group: cfb-864-finance-v3-archive-provenance-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  pr-presecret:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - name: Verify bounded SQL plan on only disposable local PostgreSQL
+        run: node --import tsx scripts/verify-cfb-864-neon-finance-archive-upperbound-v3-local.ts
+      - name: Synthetic protected read-only and private-output regression
+        run: node --import tsx --test tests/cfb-864-finance-archive-upperbound-v3.test.ts
+
+  one-shot-verify:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_ARCHIVE_READONLY_20261012_V3')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_ARCHIVE_V3_OWNER_ONE_SHOT_20261012'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify precise main SHA
+        env:
+          MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$MAIN_SHA"
+      - name: Require one-shot reviewed merge marker in the checked-out main commit
+        run: git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_ARCHIVE_READONLY_20261012_V3'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - name: Verify archive V3 SQL only on disposable keyless PostgreSQL
+        env:
+          VOTEPREDICT_864_CFB_ARCHIVE_V3_OWNER_COMMENT_VERIFIED: ${{ github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_ARCHIVE_V3_OWNER_ONE_SHOT_20261012' && 'true' || 'false' }}
+        run: node --import tsx scripts/verify-cfb-864-neon-finance-archive-upperbound-v3-local.ts
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+
+  one-shot-readonly:
+    needs: [one-shot-verify]
+    if: >-
+      needs.one-shot-verify.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_ARCHIVE_READONLY_20261012_V3')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_ARCHIVE_V3_OWNER_ONE_SHOT_20261012'))
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    outputs:
+      safe_archive_v3_b64: ${{ steps.audit.outputs.safe_archive_v3_b64 }}
+      held_phase: ${{ steps.audit.outputs.held_phase }}
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_864_CFB_ARCHIVE_V3_APPROVAL: ARCHIVE_METADATA_KEY_PRESENCE_COUNTS_ONLY
+      VOTEPREDICT_864_CFB_ARCHIVE_V3_CI_GREEN: ${{ needs.one-shot-verify.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_864_CFB_ARCHIVE_V3_MARKER_PRESENT: ${{ ((github.event_name == 'push' && contains(github.event.head_commit.message, 'SENATE_864_CFB_ARCHIVE_READONLY_20261012_V3')) || (github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_ARCHIVE_V3_OWNER_ONE_SHOT_20261012')) && 'true' || 'false' }}
+      VOTEPREDICT_864_CFB_ARCHIVE_V3_OWNER_COMMENT_VERIFIED: ${{ github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_ARCHIVE_V3_OWNER_ONE_SHOT_20261012' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Exact reviewed main SHA required
+        env:
+          MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$MAIN_SHA"
+      - name: Require one-shot reviewed merge marker in the checked-out main commit
+        run: git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_ARCHIVE_READONLY_20261012_V3'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Archive provenance V3 key-presence aggregate on bounded source prefix
+        id: audit
+        run: node --import tsx scripts/audit-cfb-864-neon-finance-archive-upperbound-v3.ts
+
