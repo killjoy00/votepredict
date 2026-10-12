@@ -1,0 +1,287 @@
+{
+  "schema": "senate-864-five-selected-weak-served-senators-new-original-firstparty-site-probe-v1",
+  "issue": 864,
+  "baseline": {
+    "actualServed2021_25Senators": 95,
+    "peopleWithAnyPreviouslyVerifiedCandidateOwnedSiteExcerpts": 92,
+    "selectedAuthenticatedCandidateOwnedResearchExcerpts": 1272,
+    "sourceGovernmentSha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "sourceAugmentedMatrixRun": 38202993863,
+    "augmentedMatrixArtifactId": 11725884810
+  },
+  "tracks": {
+    "kari": {
+      "name": "Kari Dziedzic",
+      "officialName": "Kari Dziedzic",
+      "district": "60",
+      "electionYear": 2022,
+      "electionDate": "2022-11-08",
+      "baselineOriginalSiteResearchExcerpts": 2,
+      "probes": [
+        {
+          "id": "kari-owned-2022-www",
+          "url": "http://www.kariforsenate.com/",
+          "matchType": "exact",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "historical campaign-owned domain linked by archival biographical directory; prioritize 2022 versions"
+        },
+        {
+          "id": "kari-owned-2022-root",
+          "url": "https://kariforsenate.com/",
+          "matchType": "domain",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "same historical candidate-owned domain; 2013 source known, do not treat as 2022 fresh authorship"
+        },
+        {
+          "id": "kari-owned-issues",
+          "url": "http://kariforsenate.com/issues",
+          "matchType": "prefix",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "candidate issue path hypothesis"
+        },
+        {
+          "id": "kari-owned-priorities",
+          "url": "https://www.kariforsenate.com/priorities",
+          "matchType": "prefix",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "candidate priorities path hypothesis"
+        },
+        {
+          "id": "kari-owned-home-alt",
+          "url": "https://www.kariforsenate.com/",
+          "matchType": "exact",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "protocol variant of documented historical site"
+        },
+        {
+          "id": "kari-owned-environment",
+          "url": "http://www.kariforsenate.com/environment",
+          "matchType": "prefix",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "previous 2013 campaign environment issue excerpt; locate other topic child pages"
+        }
+      ]
+    },
+    "weber": {
+      "name": "Bill Weber",
+      "officialName": "Bill Weber",
+      "district": "21",
+      "electionYear": 2022,
+      "electionDate": "2022-11-08",
+      "baselineOriginalSiteResearchExcerpts": 2,
+      "probes": [
+        {
+          "id": "weber-owned-2022-root",
+          "url": "http://www.weberforsenate.com/",
+          "matchType": "exact",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "historical original 2016 homepage plus older campaign issue copy"
+        },
+        {
+          "id": "weber-owned-2022-domain",
+          "url": "http://weberforsenate.com/",
+          "matchType": "domain",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "source identity documented as older campaign-owned domain; probe all candidate URLs"
+        },
+        {
+          "id": "weber-owned-issues",
+          "url": "https://weberforsenate.com/issues",
+          "matchType": "prefix",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "first-party issue page hypothesis"
+        },
+        {
+          "id": "weber-owned-issues-php",
+          "url": "http://www.weberforsenate.com/issues.php",
+          "matchType": "exact",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "pre-2016 traditional PHP issue path hypothesis"
+        },
+        {
+          "id": "weber-owned-priorities",
+          "url": "https://www.weberforsenate.com/priorities",
+          "matchType": "prefix",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "2022 Senate SD21 priority page hypothesis"
+        },
+        {
+          "id": "weber-owned-home-https",
+          "url": "https://www.weberforsenate.com/",
+          "matchType": "exact",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "possible 2022 HTTPS root"
+        }
+      ]
+    },
+    "newman": {
+      "name": "Scott Newman",
+      "officialName": "Scott J. Newman",
+      "district": "18",
+      "electionYear": 2020,
+      "electionDate": "2020-11-03",
+      "baselineOriginalSiteResearchExcerpts": 2,
+      "probes": [
+        {
+          "id": "newman-owned-2020-issues",
+          "url": "https://www.scottnewmanforsenate.com/issues",
+          "matchType": "prefix",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "exact campaign site original 2020 home navigation linked Issues"
+        },
+        {
+          "id": "newman-owned-2020-root",
+          "url": "https://www.scottnewmanforsenate.com/",
+          "matchType": "exact",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "original authenticated July 2020 Senate SD18 campaign home"
+        },
+        {
+          "id": "newman-owned-issues-http",
+          "url": "http://scottnewmanforsenate.com/issues",
+          "matchType": "prefix",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "older protocol variant with candidate issues"
+        },
+        {
+          "id": "newman-owned-priorities",
+          "url": "https://scottnewmanforsenate.com/priorities",
+          "matchType": "prefix",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "alternate policy section name"
+        },
+        {
+          "id": "newman-owned-policy",
+          "url": "https://www.scottnewmanforsenate.com/on-the-issues",
+          "matchType": "prefix",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "candidate policy slug hypothesis"
+        },
+        {
+          "id": "newman-owned-domain",
+          "url": "https://scottnewmanforsenate.com/",
+          "matchType": "domain",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "all pre-Nov2020 campaign domain original-page URLs; avoid Josh Newman California domain"
+        }
+      ]
+    },
+    "wesenberg": {
+      "name": "Nathan Wesenberg",
+      "officialName": "Nathan Wesenberg",
+      "district": "10",
+      "electionYear": 2022,
+      "electionDate": "2022-11-08",
+      "baselineOriginalSiteResearchExcerpts": 4,
+      "probes": [
+        {
+          "id": "wesenberg-owned-2022-issues",
+          "url": "https://www.wesenbergforsenate.com/issues",
+          "matchType": "exact",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "already original August 2022 issue page, seek additional original issues beyond four selected"
+        },
+        {
+          "id": "wesenberg-owned-2022-home",
+          "url": "https://www.wesenbergforsenate.com/",
+          "matchType": "exact",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "original March 2022 home documented in prior archive"
+        },
+        {
+          "id": "wesenberg-owned-domain",
+          "url": "https://wesenbergforsenate.com/",
+          "matchType": "domain",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "full pre-2022 original site URL discovery"
+        },
+        {
+          "id": "wesenberg-owned-about",
+          "url": "https://www.wesenbergforsenate.com/about",
+          "matchType": "prefix",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "candidate 2022 About priority leads"
+        },
+        {
+          "id": "wesenberg-owned-priorities",
+          "url": "https://www.wesenbergforsenate.com/priorities",
+          "matchType": "prefix",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "candidate priorities path hypothesis"
+        },
+        {
+          "id": "wesenberg-owned-platform",
+          "url": "https://www.wesenbergforsenate.com/platform",
+          "matchType": "prefix",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "candidate detailed platform path hypothesis"
+        }
+      ]
+    },
+    "klein": {
+      "name": "Matt Klein",
+      "officialName": "Matt D. Klein",
+      "district": "53",
+      "electionYear": 2022,
+      "electionDate": "2022-11-08",
+      "baselineOriginalSiteResearchExcerpts": 4,
+      "probes": [
+        {
+          "id": "klein-owned-mattklein-root",
+          "url": "https://www.mattklein.org/",
+          "matchType": "exact",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "2022 guide contemporaneously names mattklein.org as Senate campaign site"
+        },
+        {
+          "id": "klein-owned-mattklein-issues",
+          "url": "https://www.mattklein.org/issues",
+          "matchType": "prefix",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "candidate specific issue child pages hypothesis"
+        },
+        {
+          "id": "klein-owned-mattklein-domain",
+          "url": "https://mattklein.org/",
+          "matchType": "domain",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "discover other pre-Nov2022 candidate-owned issue URLs"
+        },
+        {
+          "id": "klein-owned-kleinforsenate-domain",
+          "url": "https://mattkleinforsenate.com/",
+          "matchType": "domain",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "2022 independent reporting directly links this Senate campaign-owned domain"
+        },
+        {
+          "id": "klein-owned-kleinforsenate-issues",
+          "url": "https://www.mattkleinforsenate.com/issues",
+          "matchType": "prefix",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "2022 campaign policy path hypothesis"
+        },
+        {
+          "id": "klein-owned-kleinforsenate-priorities",
+          "url": "https://www.mattkleinforsenate.com/priorities",
+          "matchType": "prefix",
+          "sourceClass": "candidate_owned_domain_page_hypothesis_only_until_verified",
+          "reason": "2022 candidate policy page path hypothesis"
+        }
+      ]
+    }
+  },
+  "policy": {
+    "originalWholeHistoricHtmlSHA1MustMatchIndependentWholeCDX": true,
+    "preElectionArchiveCaptureOnly": true,
+    "historicCaptureIsNotFirstAuthoredDate": true,
+    "candidateWebsiteOwnershipMustBeVerifiedPerOriginal": true,
+    "newQuotesRequireExactOriginalDocumentAndPersonContext": true,
+    "candidateReportedVoteNotOfficialVote": true,
+    "sourceIsResearchNotModelFeatures": true,
+    "doNotCountProviderErrorsAsAbsent": true,
+    "doNotPromoteLive2026ContentAs2020or2022": true
+  },
+  "productionDbReadWrites": 0,
+  "forecastModelOrSchedulerChanges": 0
+}
