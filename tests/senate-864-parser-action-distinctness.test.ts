@@ -50,3 +50,15 @@ test('count-only and context motions still do not manufacture named choices',()=
  assert.equal(actual[0]?.individualVotesAvailable,false);
  assert.deepEqual(actual[0]?.memberVotes,[]);
 });
+
+
+test('two separately requested count-only divisions stay separate without votes',()=>{
+ const source='S.F. 345 was considered.\n'+
+  'Senator Mock requested a roll call vote on motion one. Vote was 5-4. Motion failed.\n'+
+  'Senator Mock requested a roll call vote on motion two. Vote was 5-4. Motion failed.';
+ const actual=parseSenateCommitteeMinuteVotes(source);
+ assert.equal(actual.length,2);
+ assert.deepEqual(actual.map(x=>[x.yeaCount,x.nayCount,x.individualVotesAvailable]),
+  [[5,4,false],[5,4,false]]);
+ assert.ok(actual.every(x=>x.memberVotes.length===0));
+});
