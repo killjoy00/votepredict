@@ -171,8 +171,11 @@ export function buildViewerCrosscheck(){
  let hasRegistry=0,terminationLabels=0;
  for(const [reg,p] of [...selected].sort(([a],[b])=>Number(a)-Number(b))){
   const registration=registrations.get(reg);
-  const terminatedLabel=historicalStatus.get(reg)==='explicitly_terminated_on_2026_viewer'
-   ?'label_terminated_on_2026_viewer':'not_verified_as_terminated_in_2026_viewer';
+  const priorStatus=historicalStatus.get(reg);
+  const terminatedLabel=priorStatus==='explicitly_terminated_on_2026_viewer'
+   ?'label_terminated_on_2026_viewer'
+   :priorStatus==='no_terminated_label_on_2026_viewer'
+    ?'no_terminated_label_on_2026_viewer':'not_in_22_committee_status_sample';
   if(registration)hasRegistry++;
   if(terminatedLabel==='label_terminated_on_2026_viewer')terminationLabels++;
   const years=pre2025.has(reg)?[2021,2022,2023,2024]:[2025];
