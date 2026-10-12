@@ -95,7 +95,7 @@ test('missing affirmative or negative individually listed member cannot be infer
  for(const altered of [
   r.replace('Boldon Carlson Champion Port Oumou Verbeten','Boldon Carlson Champion'),
   r.replace('Abeler Anderson Bahr Dahms Gruenhagen','Abeler Anderson Bahr'),
-  r.replace('Port Oumou Verbeten','Dahms Gruenhagen'),
+  r.replace('Boldon Carlson Champion Port Oumou Verbeten','Boldon Carlson Champion Dahms Gruenhagen'),
   r.replace('Dahms Gruenhagen','Port Oumou Verbeten'),
  ])assert.equal(rollFromOriginalJournal(altered).qualified,false);
 });
