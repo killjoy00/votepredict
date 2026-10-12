@@ -28,12 +28,12 @@ const annualCp=JSON.parse(readFileSync(BASE+
   'cfb-2023-24-served-22-71-yearend-legal-release-and-publicby-checkpoint.json','utf8'));
 const specialCp=JSON.parse(readFileSync(BASE+
   'cfb-2025-served-sd29-seven-amended-version-source-checkpoint.json','utf8'));
-const isDate=(v:string)=>/^\\d{4}-\\d{2}-\\d{2}$/.test(v)
+const isDate=(v:string)=>/^\d{4}-\d{2}-\d{2}$/.test(v)
   &&new Date(v+'T00:00:00Z').toISOString().slice(0,10)===v;
 const nextDay=(v:string)=>new Date(Date.parse(v+'T00:00:00Z')+86400000)
   .toISOString().slice(0,10);
 
-test('all input source ledgers are exactly immutable proven repository inputs, not today's viewers',()=>{
+test('all input source ledgers are exactly immutable proven repository inputs, not present-day viewers',()=>{
   assert.equal(queue.length,51);
   assert.equal(annual.length,71);
   assert.equal(special.length,7);
