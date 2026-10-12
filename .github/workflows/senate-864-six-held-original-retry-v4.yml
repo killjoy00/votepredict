@@ -7,6 +7,7 @@ on:
     paths:
       - scripts/audit-senate-864-original-1452-parser-v3.ts
       - tests/senate-864-six-original-hold-classification.test.ts
+      - tests/senate-864-original-1452-aggregate-v4.test.ts
       - .github/workflows/senate-864-six-held-original-retry-v4.yml
   push:
     branches: [main]
@@ -35,6 +36,7 @@ jobs:
       - run: |
           node --import tsx --test tests/senate-864-six-original-hold-classification.test.ts
           node --import tsx --test tests/senate-864-full-corpus-parser-v3.test.ts
+          node --import tsx --test tests/senate-864-original-1452-aggregate-v4.test.ts
           npm run typecheck
       - run: npm audit --omit=dev --audit-level=high
   retry-only-four-held-shards:
