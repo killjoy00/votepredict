@@ -1,0 +1,323 @@
+name: One-shot MN Senate 2021-25 finance archive upper-bound V3 protected counts
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-864-finance-archive-upperbound-v3.yml
+      - scripts/audit-cfb-864-neon-finance-archive-upperbound-v3.ts
+      - scripts/verify-cfb-864-neon-finance-archive-upperbound-v3-local.ts
+      - tests/cfb-864-finance-archive-upperbound-v3.test.ts
+  push:
+    branches: [main]
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+concurrency:
+  group: cfb-864-finance-v3-archive-provenance-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  pr-presecret:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - name: Verify bounded SQL plan on only disposable local PostgreSQL
+        run: node --import tsx scripts/verify-cfb-864-neon-finance-archive-upperbound-v3-local.ts
+      - name: Synthetic protected read-only and private-output regression
+        run: node --import tsx --test tests/cfb-864-finance-archive-upperbound-v3.test.ts
+
+  one-shot-verify:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_ARCHIVE_READONLY_20261012_V3')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_ARCHIVE_V3_OWNER_ONE_SHOT_20261012'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify precise main SHA
+        env:
+          MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$MAIN_SHA"
+      - name: Require one-shot reviewed merge marker in the checked-out main commit
+        run: git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_ARCHIVE_READONLY_20261012_V3'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - name: Verify archive V3 SQL only on disposable keyless PostgreSQL
+        env:
+          VOTEPREDICT_864_CFB_ARCHIVE_V3_OWNER_COMMENT_VERIFIED: ${{ github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_ARCHIVE_V3_OWNER_ONE_SHOT_20261012' && 'true' || 'false' }}
+        run: node --import tsx scripts/verify-cfb-864-neon-finance-archive-upperbound-v3-local.ts
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+
+  one-shot-readonly:
+    needs: [one-shot-verify]
+    if: >-
+      needs.one-shot-verify.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_ARCHIVE_READONLY_20261012_V3')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_ARCHIVE_V3_OWNER_ONE_SHOT_20261012'))
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    outputs:
+      safe_archive_v3_b64: ${{ steps.audit.outputs.safe_archive_v3_b64 }}
+      held_phase: ${{ steps.audit.outputs.held_phase }}
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_864_CFB_ARCHIVE_V3_APPROVAL: ARCHIVE_METADATA_KEY_PRESENCE_COUNTS_ONLY
+      VOTEPREDICT_864_CFB_ARCHIVE_V3_CI_GREEN: ${{ needs.one-shot-verify.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_864_CFB_ARCHIVE_V3_MARKER_PRESENT: ${{ ((github.event_name == 'push' && contains(github.event.head_commit.message, 'SENATE_864_CFB_ARCHIVE_READONLY_20261012_V3')) || (github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_ARCHIVE_V3_OWNER_ONE_SHOT_20261012')) && 'true' || 'false' }}
+      VOTEPREDICT_864_CFB_ARCHIVE_V3_OWNER_COMMENT_VERIFIED: ${{ github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_ARCHIVE_V3_OWNER_ONE_SHOT_20261012' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Exact reviewed main SHA required
+        env:
+          MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$MAIN_SHA"
+      - name: Require one-shot reviewed merge marker in the checked-out main commit
+        run: git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_ARCHIVE_READONLY_20261012_V3'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Archive provenance V3 key-presence aggregate on bounded source prefix
+        id: audit
+        run: node --import tsx scripts/audit-cfb-864-neon-finance-archive-upperbound-v3.ts
+
+  publish-sanitized-v3:
+    needs: [one-shot-verify, one-shot-readonly]
+    if: >-
+      always() &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_ARCHIVE_READONLY_20261012_V3')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_ARCHIVE_V3_OWNER_ONE_SHOT_20261012')) &&
+      (needs.one-shot-verify.result == 'failure' ||
+        (needs.one-shot-verify.result == 'success' &&
+          (needs.one-shot-readonly.result == 'success' ||
+           needs.one-shot-readonly.result == 'failure')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    permissions:
+      contents: read
+      issues: write
+    env:
+      CI_RESULT: ${{ needs.one-shot-verify.result }}
+      AUDIT_RESULT: ${{ needs.one-shot-readonly.result }}
+      SAFE_ARCHIVE_V3_B64: ${{ needs.one-shot-readonly.outputs.safe_archive_v3_b64 }}
+      HELD_PHASE: ${{ needs.one-shot-readonly.outputs.held_phase }}
+    steps:
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const run='https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID;
+            const intro=[
+             '## #864 Track B — CFB archived bulk upper-bound metadata V3',
+             '',
+             'Reviewed exact main SHA: '+process.env.GITHUB_SHA,
+             'Protected run: '+run,
+             '',
+            ];
+            let body;
+            if(process.env.CI_RESULT==='failure'){
+             body=[...intro,'**PRE-SECRET CI FAILED CLOSED.**',
+              'No protected SQL executed; there are no new counts.'].join('\n');
+            }else if(process.env.AUDIT_RESULT==='failure'){
+             const phase=process.env.HELD_PHASE||'unknown';
+             if(!/^[a-z_]{1,70}$/.test(phase))throw Error('Unsafe failure phase');
+             body=[...intro,'**READ-ONLY QUERY HELD:** '+phase,
+              'No aggregate available; never interpret this as zero stored rows.'].join('\n');
+            }else if(process.env.AUDIT_RESULT==='success'){
+             const b64=process.env.SAFE_ARCHIVE_V3_B64??'';
+             if(!/^[a-zA-Z0-9+/=]+$/.test(b64)||b64.length>120000)
+              throw Error('Missing or oversized safe V3 count payload');
+             const data=JSON.parse(Buffer.from(b64,'base64').toString('utf8'));
+             const keys=new Set([
+              'schema','issue','years','readOnlyRepeatableReadVerified',
+              'mandatoryRollbackComplete','selectedExistingNeonDefaultBranch',
+              'deployedProductionBindingUnverified',
+              'samePrefixSelectionRuleAsV2NotFrozenIdentities',
+              'sourceDocumentCap','perSourceEvidenceCap',
+              'archiveOriginalBytesIndependentlyAuthenticated',
+              'officialPdfPublicationProven','archiveExactRowContentIndependentlyReconciled',
+              'officialFilingDutyDenominatorEstablished','noPrivateRowsDonorDataUrlsOrDigestsExported',
+              'availabilityNotRepaired','productionWrites','issue864Open','rows']);
+             if(!data||typeof data!=='object'||Array.isArray(data)
+              ||Object.keys(data).length!==keys.size||Object.keys(data).some(k=>!keys.has(k)))
+              throw Error('Unexpected private top-level field');
+             if(data.schema!=='cfb-864-senate-archive-upperbound-metadata-v3'
+              ||data.issue!==864||data.years!=='2021-2025_plus_unknown_or_outside'
+              ||data.readOnlyRepeatableReadVerified!==true||data.mandatoryRollbackComplete!==true
+              ||data.selectedExistingNeonDefaultBranch!==true||data.deployedProductionBindingUnverified!==true
+              ||data.samePrefixSelectionRuleAsV2NotFrozenIdentities!==true
+              ||data.sourceDocumentCap!==500||data.perSourceEvidenceCap!==64
+              ||data.archiveOriginalBytesIndependentlyAuthenticated!==false
+              ||data.officialPdfPublicationProven!==false
+              ||data.archiveExactRowContentIndependentlyReconciled!==false
+              ||data.officialFilingDutyDenominatorEstablished!==false
+              ||data.noPrivateRowsDonorDataUrlsOrDigestsExported!==true
+              ||data.availabilityNotRepaired!==true||data.productionWrites!==0
+              ||data.issue864Open!==true||!Array.isArray(data.rows)||data.rows.length>120)
+               throw Error('Unsafe V3 metadata claim');
+             const families=new Set([
+              'campaign_finance_candidate_contribution_bulk',
+              'campaign_finance_candidate_expenditure_bulk',
+              'campaign_finance_independent_expenditure_bulk','campaign_finance_bulk']);
+             const policies=new Set(['v8','v7','v1_to_v6','missing','other_or_unrecognized']);
+             const metrics=["senate_rows","eligible_claims","archive_exact_row_claim","candidate_archive_status","ie_archive_status","candidate_upperbound_marker","ie_upperbound_marker","archive_captured_at","archive_digest","available_at","archive_proof_url","archived_source_url","upper_bound_flag","first_publication_not_known","complete_archive_keyset","archive_day_agrees_with_stored","transaction_day_matches_published","transaction_day_after_published","filing_derived_claim"];
+             const allowed=new Set(['year','family','policy_bucket',...metrics]);
+             const seen=new Set(),groups=[];
+             const totals={senate:0,eligible:0,archive:0,complete:0,matched:0,filing:0,
+              candidate:0,ie:0,sameDay:0,earlier:0};
+             for(const row of data.rows){
+              if(!row||typeof row!=='object'||Array.isArray(row)
+                ||!(/^(?:202[1-5]|unknown_or_outside)$/.test(row.year))
+                ||!families.has(row.family)||!policies.has(row.policy_bucket)
+                ||Object.keys(row).length!==allowed.size
+                ||Object.keys(row).some(k=>!allowed.has(k)))
+                throw Error('Private or unexpected V3 row label');
+              const group=row.year+'|'+row.family+'|'+row.policy_bucket;
+              if(seen.has(group))throw Error('Duplicate V3 bucket');
+              seen.add(group);
+              for(const k of metrics){
+               if(typeof row[k]!=='string'||!/^[0-9]+$/.test(row[k])||Number(row[k])>32000)
+                throw Error('Unexpected private V3 value');
+              }
+              if(Number(row.eligible_claims)>Number(row.senate_rows)
+                ||metrics.slice(2).some(k=>Number(row[k])>Number(row.eligible_claims))
+                ||Number(row.complete_archive_keyset)>Number(row.archive_exact_row_claim)
+                ||Number(row.archive_day_agrees_with_stored)>Number(row.archive_exact_row_claim))
+                throw Error('Invalid V3 count subset');
+              totals.senate+=Number(row.senate_rows);
+              totals.eligible+=Number(row.eligible_claims);
+              totals.archive+=Number(row.archive_exact_row_claim);
+              totals.complete+=Number(row.complete_archive_keyset);
+              totals.matched+=Number(row.archive_day_agrees_with_stored);
+              totals.filing+=Number(row.filing_derived_claim);
+              totals.candidate+=Number(row.candidate_archive_status);
+              totals.ie+=Number(row.ie_archive_status);
+              totals.sameDay+=Number(row.transaction_day_matches_published);
+              totals.earlier+=Number(row.transaction_day_after_published);
+              groups.push('- **'+group.replaceAll('|',' / ')+'**: '+
+               metrics.map(k=>k+'='+row[k]).join('; '));
+             }
+             if(totals.senate>32000||totals.eligible>totals.senate
+              ||totals.archive>totals.eligible||totals.complete>totals.archive
+              ||totals.matched>totals.archive||totals.filing>totals.eligible)
+              throw Error('Aggregate exceeds fixed finite prefix');
+             body=[...intro,
+              '**Protected metadata-only 500-source x first-64-evidence-rows-per-source audit completed.**',
+              'Same deterministic V1/V2 selection RULE, not independently frozen ID cohort.',
+              'Counts are eligible evidence observations tied to existing Senate membership',
+              'records, NOT deduplicated transactions, independently authenticated archive',
+              'bytes, official PDF historical public-by, or a legal filing-duty denominator.',
+              '',
+              'Senate-linked sampled observations: '+totals.senate,
+              'Preexisting eligible claims: '+totals.eligible,
+              'Stored archival EXACT-ROW claim labels: '+totals.archive,
+              'Complete labelled archive-key metadata sets: '+totals.complete,
+              'Captured archive UTC day agrees with stored available/published day: '+totals.matched,
+              'Candidate/IE archive-status labels: '+totals.candidate+' / '+totals.ie,
+              'Filing-derived eligible claims: '+totals.filing,
+              'Published same day as underlying transaction: '+totals.sameDay,
+              'Stored publication day before underlying transaction: '+totals.earlier,
+              '',
+              'Important: archiveDigest is an UNVERIFIED stored CDX source digest, not an',
+              'independently rehashed original PDF SHA. Exact row keys, archived CSV bodies,',
+              'and historical original-byte publication were NOT re-acquired or independently',
+              'validated by this query. Recorded archive capture is a conservative public-by',
+              'UPPER bound only; earliest publication is unknown.',
+              'READ ONLY REPEATABLE READ / ROLLBACK, no DB writes or model changes.',
+              '',
+              ...groups,'',
+              '#864 remains OPEN. Separately verify archive source identities and actual',
+              'parsed exact-row parity before upgrading any prior eligibility claims.'].join('\n');
+            }else throw Error('Unsafe unknown V3 outcome');
+            if(body.length>49000)throw Error('Oversized count-only issue receipt');
+            await github.rest.issues.createComment({
+             owner:'killjoy00',repo:'votepredict',issue_number:864,body,
+            });
