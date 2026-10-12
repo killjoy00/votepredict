@@ -35,6 +35,39 @@ export function safeReparseCountComparison(old:OldProof,newNamed:number,newCount
   addedNamed:newNamed-beforeNamed,addedCountOnly:newCountOnly-beforeCountOnly,
   namedDecreased:newNamed<beforeNamed,countsDecreased:newCountOnly<beforeCountOnly};
 }
+export const SOURCE_ONLY_HOLD_CODES=[
+ 'pdf_integrity_or_bounds','pdf_page_cap','pdfinfo_failure',
+ 'ocr_or_render_failure','pdf_parser_failure',
+ 'source_text_drift','semantic_original_mismatch',
+ 'network_or_timeout','insufficient_text','unclassified',
+] as const;
+export type OriginalPdfHoldCode=typeof SOURCE_ONLY_HOLD_CODES[number];
+/** Classify errors; original exceptions (which may contain paths or URLs)
+ * must never become a public receipt field or an emitted log line.
+ */
+export function classifySafeOriginalPdfHold(error:unknown):OriginalPdfHoldCode{
+ const m=error instanceof Error?error.message:'';
+ if(/Original PDF SHA|original source raw PDF SHA|byte cap|PDF cap|URL scope|signature|redirect/i.test(m))
+  return 'pdf_integrity_or_bounds';
+ if(/page cap failed|page count.*cap/i.test(m))return 'pdf_page_cap';
+ if(/pdfinfo|PDF information/i.test(m))return 'pdfinfo_failure';
+ if(/OCR|tesseract|pdftoppm|render failed|page images/i.test(m))
+  return 'ocr_or_render_failure';
+ if(/(?:extracted|embedded) text digest drift|text SHA mismatch/i.test(m))
+  return 'source_text_drift';
+ if(/Education original six-action|observations outside safe|source parser action/i.test(m))
+  return 'semantic_original_mismatch';
+ if(/too little extractable text/i.test(m))return 'insufficient_text';
+ if(/timeout|timed out|network|fetch failed|abort|transport/i.test(m))
+  return 'network_or_timeout';
+ if(/PDF|pdf-parse|extract|worker/i.test(m))return 'pdf_parser_failure';
+ return 'unclassified';
+}
+export function safeOriginalRetryPermitted(code:OriginalPdfHoldCode):boolean{
+ return ['pdfinfo_failure','ocr_or_render_failure','pdf_parser_failure',
+  'network_or_timeout','insufficient_text'].includes(code);
+}
+
 export function selectPinnedYearShard(
  years:ReturnType<typeof sourceShaPinnedMerged>['years'],year:number,shard:number
 ){
@@ -106,51 +139,64 @@ async function main(){
  const docs=selectPinnedYearShard(source.years,year,shard);
  let verified=0,held=0,ocr=0,embedded=0,oldNamed=0,newNamed=0,
   oldCountOnly=0,newCountOnly=0,namedDecreased=0,countsDecreased=0,
-  sourceTextDrift=0,pdfShaHolds=0,otherHolds=0,educationOld=0,educationNew=0;
- // Max two official PDF fetch/extraction tasks concurrently per shard.
+  sourceTextDrift=0,pdfShaHolds=0,otherHolds=0,educationOld=0,educationNew=0,
+  boundedRetriesAttempted=0,boundedRetriesSucceeded=0;
+ const safeHoldReasonCounts=Object.fromEntries(
+  SOURCE_ONLY_HOLD_CODES.map(code=>[code,0]),
+ ) as Record<OriginalPdfHoldCode,number>;
+ // Two concurrent jobs per bounded original shard; at most ONE retry per
+ // original and never retry SHA-integrity, metadata or semantic proof failures.
  let cursor=0;
  await Promise.all(Array.from({length:2},async()=>{
   for(;;){
    const doc=docs[cursor++];
    if(!doc)break;
    const old=doc as OldProof;
-   try{
-    const pdf=await fetchSenateCommitteeMinutePdf({
-     url:doc.document.sourceUrl,
-     fetchImpl:((_:string|URL|Request,init?:RequestInit)=>
-      refetchExactPdf(doc.document.sourceUrl,doc.document.originalRawPdfSha256,init)) as typeof fetch,
-    });
-    if(pdf.contentSha256!==doc.document.originalRawPdfSha256)
-     throw Error('Pinned original PDF SHA verification drift');
-    // The original 1245 embedded text bytes must be identical for a meaningful
-    // old-v-new parser comparison. OCR text may vary with the OCR binary; its
-    // change is visible in the provenance scorecard, not called a parser gain.
-    const originalTextSha=old.document.extractedTextSha256;
-    if(originalTextSha&&sha(pdf.text)!==originalTextSha){
-     sourceTextDrift++;throw Error('Original embedded text digest drift');
+   for(let attempt=1;attempt<=2;attempt++){
+    try{
+     const pdf=await fetchSenateCommitteeMinutePdf({
+      url:doc.document.sourceUrl,
+      fetchImpl:((_:string|URL|Request,init?:RequestInit)=>
+       refetchExactPdf(doc.document.sourceUrl,doc.document.originalRawPdfSha256,init)) as typeof fetch,
+     });
+     if(pdf.contentSha256!==doc.document.originalRawPdfSha256)
+      throw Error('Pinned original PDF SHA verification drift');
+     const oldTextSha=old.document.extractedTextSha256;
+     if(oldTextSha&&sha(pdf.text)!==oldTextSha)
+      throw Error('Original embedded text digest drift');
+     const newer=parseSenateCommitteeMinuteVotes(pdf.text);
+     const newerNamed=newer.filter(x=>x.individualVotesAvailable).length;
+     const newerCountOnly=newer.length-newerNamed;
+     const counts=safeReparseCountComparison(old,newerNamed,newerCountOnly);
+     if(doc.document.sourceUrl===PIN.sourceUrl){
+      if(year!==2024||old.voteObservations.length!==2||newer.length!==6||
+       newerNamed!==6||newer.some(x=>x.yeaCount!==4||x.nayCount!==6||
+        x.memberVotes.length!==10))
+       throw Error('Verified Education original six-action pin failed');
+      educationOld=2;educationNew=6;
+     }
+     oldNamed+=counts.beforeNamed;newNamed+=counts.afterNamed;
+     oldCountOnly+=counts.beforeCountOnly;newCountOnly+=counts.afterCountOnly;
+     if(counts.namedDecreased)namedDecreased++;
+     if(counts.countsDecreased)countsDecreased++;
+     verified++;
+     if(attempt===2)boundedRetriesSucceeded++;
+     if(pdf.extractionMethod==='ocr_tesseract')ocr++;else embedded++;
+     break;
+    }catch(err){
+     const code=classifySafeOriginalPdfHold(err);
+     if(attempt===1&&safeOriginalRetryPermitted(code)){
+      boundedRetriesAttempted++;
+      continue;
+     }
+     held++;
+     safeHoldReasonCounts[code]++;
+     if(code==='source_text_drift')sourceTextDrift++;
+     else if(code==='pdf_integrity_or_bounds'||code==='network_or_timeout')
+      pdfShaHolds++;
+     else otherHolds++;
+     break;
     }
-    const newer=parseSenateCommitteeMinuteVotes(pdf.text);
-    const newerNamed=newer.filter(x=>x.individualVotesAvailable).length;
-    const newerCountOnly=newer.length-newerNamed;
-    const counts=safeReparseCountComparison(old,newerNamed,newerCountOnly);
-    if(doc.document.sourceUrl===PIN.sourceUrl){
-     if(year!==2024||old.voteObservations.length!==2||newer.length!==6||
-      newerNamed!==6||newer.some(x=>x.yeaCount!==4||x.nayCount!==6||
-       x.memberVotes.length!==10))
-      throw Error('Verified Education original six-action pin failed');
-     educationOld=2;educationNew=6;
-    }
-    oldNamed+=counts.beforeNamed;newNamed+=counts.afterNamed;
-    oldCountOnly+=counts.beforeCountOnly;newCountOnly+=counts.afterCountOnly;
-    if(counts.namedDecreased)namedDecreased++;
-    if(counts.countsDecreased)countsDecreased++;
-    verified++;
-    if(pdf.extractionMethod==='ocr_tesseract')ocr++;else embedded++;
-   }catch(err){
-    held++;
-    const kind=err instanceof Error?err.message:'Unknown source failure';
-    if(/PDF SHA|transport|stream|PDF cap|exceeds PDF cap/i.test(kind))pdfShaHolds++;
-    else otherHolds++;
    }
   }
  }));
@@ -164,6 +210,8 @@ async function main(){
   originalsHeld:held,originalOcrRecovered:ocr,originalEmbeddedText:embedded,
   sourceTextDriftHolds:sourceTextDrift,originalPdfByteOrTransportHolds:pdfShaHolds,
   otherFailClosedHolds:otherHolds,
+  safeHoldReasonCounts,boundedRetriesAttempted,boundedRetriesSucceeded,
+  originalSourceParserHoldReasonCodesOnly:true,
   originallyRecognizedNamedRolls:oldNamed,newParserNamedRolls:newNamed,
   originallyRecognizedCountOnlyRolls:oldCountOnly,newParserCountOnlyRolls:newCountOnly,
   docsWithNamedRollDecrease:namedDecreased,docsWithCountOnlyDecrease:countsDecreased,
