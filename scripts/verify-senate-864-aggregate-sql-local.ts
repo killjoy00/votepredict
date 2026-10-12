@@ -8,17 +8,20 @@ import {GROUPS,QUERIES} from './audit-senate-864-neon-one-key-readonly-coverage.
 const url=process.env.DATABASE_URL_UNPOOLED??'';
 let parsed:URL;
 try{parsed=new URL(url);}catch{throw Error('Disposable local CI PostgreSQL URL required')}
+const trustedMainPush=process.env.GITHUB_EVENT_NAME==='push'
+ &&process.env.GITHUB_REF==='refs/heads/main';
+const trustedSameRepoPull=process.env.GITHUB_EVENT_NAME==='pull_request'
+ &&/^refs\/pull\/[0-9]+\/merge$/.test(process.env.GITHUB_REF??'');
 if(process.argv.length!==2
  ||process.env.GITHUB_REPOSITORY!=='killjoy00/votepredict'
- ||process.env.GITHUB_EVENT_NAME!=='push'
- ||process.env.GITHUB_REF!=='refs/heads/main'
+ ||(!trustedMainPush&&!trustedSameRepoPull)
  ||parsed.hostname!=='localhost'
  ||parsed.port!=='5432'
  ||parsed.pathname!=='/votepredict'
  ||!['postgres:','postgresql:'].includes(parsed.protocol)
  ||url.includes('neon.tech')
  ||process.env.NEON_API_KEY)
- throw Error('Refuse SQL compilation outside exact disposable no-Neon main CI');
+ throw Error('Refuse SQL compilation outside verified disposable no-Neon CI main or same-repo PR');
 const pool=new Pool({connectionString:url,max:1,connectionTimeoutMillis:4000,
  query_timeout:6000,statement_timeout:5000,
  application_name:'votepredict-864-local-only-sql-plan-validation',
