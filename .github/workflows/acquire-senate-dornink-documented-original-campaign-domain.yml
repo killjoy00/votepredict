@@ -1,0 +1,64 @@
+name: Acquire real 2020 and 2022 DorninkForSenate documented candidate original domain
+on:
+  pull_request:
+    paths:
+      - scripts/probe-dornink-documented-historic-original-campaign-domain.mjs
+      - .github/workflows/acquire-senate-dornink-documented-original-campaign-domain.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-dornink-candidate-historical-website:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-dornink-documented-2020-22-original-campaign-domain-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 27
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen government-original complete MN Senate service and special swearing receipts
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen latest independent 86/95 senator authenticated original candidate website coverage
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38191464507
+          name: senate-95-serving-86-original-source-quotes-1105-research-excerpts-v1
+          github-token: ${{ github.token }}
+          path: original/prior-86
+      - name: Independently verify both Dornink historical Senate elections then replay original documented campaign domain
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          coverage="$(find original/prior-86 -type f -name 95-senators-public-campaign-coverage.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$coverage"
+          node --import tsx scripts/probe-dornink-documented-historic-original-campaign-domain.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --prior-86-coverage-json "$coverage" \
+            --out-dir original/dornink-candidate-original-archives
+      - name: Preserve entire original indexed candidate CDX and SHA1-index-verified complete archive HTML
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-dornink-documented-2020-2022-firstparty-original-six-windows-v1
+          path: original/dornink-candidate-original-archives/
+          if-no-files-found: warn
+          retention-days: 30
