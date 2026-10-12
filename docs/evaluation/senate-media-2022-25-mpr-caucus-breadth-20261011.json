@@ -1,0 +1,149 @@
+{
+  "version": "senate-media-nine-mpr-caucus-public-original-receipts-v1",
+  "localResearchDate": "2026-10-11",
+  "initialSuccessfulLiveAction": {
+    "githubRunId": 38196297501,
+    "pr": 1190,
+    "artifactId": 11723990035,
+    "artifactFile": "senate-media-breadth-originals-38196297501.zip",
+    "artifactZipBytes": 4651,
+    "artifactZipSha256": "eaf10600bedc7481931f9c6c816b7e0037604acec6b34ea7a97a22993d0f5d0b",
+    "decodedSourceMetadataBytes": 27605,
+    "decodedSourceMetadataSha256": "ddc315562b5f08fad78578aee45066204e139f7d8945f48150c95428a76c6834",
+    "originalProbeAdversarialOfflineTestsPassed": 8
+  },
+  "scope": {
+    "selectedExactCurrentPublisherURLs": 9,
+    "selectedExistingKnownLeads": 2,
+    "additionalSelectedPublisherURLLeads": 7,
+    "namedDistinctServingSenatorsRepresented": 10,
+    "independentlySha1AuthenticatedOriginalHtmlCaptureCount": 10,
+    "distinctOriginalPublisherUrlsWithAuthenticatedOriginalHtml": 6,
+    "newCurrentQuotedIndividualsNotAutomaticallyHumanReviewed": 4,
+    "individualSpeakerTurnsAuthenticatedByFirstPass": 0,
+    "originalAudioBinariesAuthenticated": 0,
+    "personalFullVerbatimQuotesHumanApproved": 0,
+    "privateSourceDocumentOrEvidenceRowsChecked": 0
+  },
+  "indexBoundaries": {
+    "original2022TwoSenatorInterview": "index_unavailable_unknown",
+    "relatedSameDayDifferentPage": "2 originals indexed and SHA1+SHA256 authenticated, no identical audio or article alias relationship proved",
+    "cwodzinskiFirstIndexed2023Capture": "2023-02-01T22:08:13Z was digest mismatch, cannot authenticate that early body",
+    "phaMarch2025IndividualStatement": "current_publisher_http_unknown_in_actions_and_original_indexes_unavailable",
+    "colemanAug2025IndividualStatement": "current publisher page observed but historical original index unavailable",
+    "selectedCommonCrawlIndexes": "unavailable_or_not_independently_verified",
+    "groupPhaVeteransStatement": "joint collective words of three named senators, not three separately attributed original remarks"
+  },
+  "sourceOriginals": [
+    {
+      "id": "2022-parental-rights-mpr-second-episode",
+      "captureUtc": "2022-02-24T02:53:02Z",
+      "indexedSha1Base32": "JKOP2SQNH64XOLKSKAU6P67ZQGHTFKPQ",
+      "rawOriginalHtmlSha256": "4c0d261abbbee79f31a2520b983bb84c8a998a488cf7e834b673b65d3b6be780",
+      "rawOriginalHtmlBytes": 49351,
+      "originalSha1IndexedAndRawBodySha1Consistent": true,
+      "selectedShortCuePresentSomewhereOnOriginalPage": true,
+      "senatorPrintedSpeakerTurnAuthenticatedByThisFirstPass": false
+    },
+    {
+      "id": "2022-parental-rights-mpr-second-episode",
+      "captureUtc": "2022-11-08T20:55:33Z",
+      "indexedSha1Base32": "ZXFOYHV5KJIORHRIOQDGLDIZAUXJAGFW",
+      "rawOriginalHtmlSha256": "3715f4b97a12a5ed59ef0506a24be311464501dad3ed72bc9192d1efc53a1d1e",
+      "rawOriginalHtmlBytes": 39930,
+      "originalSha1IndexedAndRawBodySha1Consistent": true,
+      "selectedShortCuePresentSomewhereOnOriginalPage": true,
+      "senatorPrintedSpeakerTurnAuthenticatedByThisFirstPass": false
+    },
+    {
+      "id": "2023-steve-cwodzinski-education-funding",
+      "captureUtc": "2023-03-14T11:26:30Z",
+      "indexedSha1Base32": "S7VF2BCRMZKBWC7XA2NDYVO25RU22MHH",
+      "rawOriginalHtmlSha256": "f7e6d920043056b50bdf9d37a8ea830fb8c99e7646114d29ae26bc129da4c3b2",
+      "rawOriginalHtmlBytes": 97555,
+      "originalSha1IndexedAndRawBodySha1Consistent": true,
+      "selectedShortCuePresentSomewhereOnOriginalPage": true,
+      "senatorPrintedSpeakerTurnAuthenticatedByThisFirstPass": false
+    },
+    {
+      "id": "2023-john-hoffman-mississippi-compact",
+      "captureUtc": "2023-11-30T10:11:31Z",
+      "indexedSha1Base32": "UQSIVGOCZSV3A2EEC6HT3B7M23JO2XKX",
+      "rawOriginalHtmlSha256": "1e67e040a9cf85e35b3448a34f88e615ad11b3a14b28b13c108dbea3d737337c",
+      "rawOriginalHtmlBytes": 113826,
+      "originalSha1IndexedAndRawBodySha1Consistent": true,
+      "selectedShortCuePresentSomewhereOnOriginalPage": true,
+      "senatorPrintedSpeakerTurnAuthenticatedByThisFirstPass": false
+    },
+    {
+      "id": "2023-john-hoffman-mississippi-compact",
+      "captureUtc": "2024-01-19T09:30:22Z",
+      "indexedSha1Base32": "VAVT2ME5WGZOZMHTJ4OXAIBQH5OW23IJ",
+      "rawOriginalHtmlSha256": "0cafafdd11674284945932a37755b0de527f11d837a3fb73566477190e5f78dd",
+      "rawOriginalHtmlBytes": 113826,
+      "originalSha1IndexedAndRawBodySha1Consistent": true,
+      "selectedShortCuePresentSomewhereOnOriginalPage": true,
+      "senatorPrintedSpeakerTurnAuthenticatedByThisFirstPass": false
+    },
+    {
+      "id": "2024-zach-duckworth-free-meals",
+      "captureUtc": "2024-09-23T07:50:05Z",
+      "indexedSha1Base32": "ESNQPRJXBVKJ5YBICEA6MRWBZDCBPMYJ",
+      "rawOriginalHtmlSha256": "26dd0c2998e905db49e973ee19fa0bb465afaaf9c95a8c764174c7bfdf715599",
+      "rawOriginalHtmlBytes": 150293,
+      "originalSha1IndexedAndRawBodySha1Consistent": true,
+      "selectedShortCuePresentSomewhereOnOriginalPage": true,
+      "senatorPrintedSpeakerTurnAuthenticatedByThisFirstPass": false
+    },
+    {
+      "id": "2024-zach-duckworth-free-meals",
+      "captureUtc": "2024-10-08T15:38:38Z",
+      "indexedSha1Base32": "X23VCU4EEKOKAVU4HQGQOPKUOIMWOKH5",
+      "rawOriginalHtmlSha256": "b8785f5f189462053b2f3583fab31a3279f4c9de0b87308582cce940a7c3ee84",
+      "rawOriginalHtmlBytes": 150471,
+      "originalSha1IndexedAndRawBodySha1Consistent": true,
+      "selectedShortCuePresentSomewhereOnOriginalPage": true,
+      "senatorPrintedSpeakerTurnAuthenticatedByThisFirstPass": false
+    },
+    {
+      "id": "2025-sandra-pappas-capital-bonding",
+      "captureUtc": "2025-04-21T03:45:59Z",
+      "indexedSha1Base32": "2J4I3G7SNVGGMDT5LPQGXBJ42PLAPVEZ",
+      "rawOriginalHtmlSha256": "6c1524c4cc8a06b24e4f5c327a99fccd8e6719f9e8d23312375fa9ef172ab481",
+      "rawOriginalHtmlBytes": 121236,
+      "originalSha1IndexedAndRawBodySha1Consistent": true,
+      "selectedShortCuePresentSomewhereOnOriginalPage": true,
+      "senatorPrintedSpeakerTurnAuthenticatedByThisFirstPass": false
+    },
+    {
+      "id": "2025-sandra-pappas-capital-bonding",
+      "captureUtc": "2025-05-01T17:07:38Z",
+      "indexedSha1Base32": "PU2WI66NYCIDKGB5QQ5VR6ZGHYORWHBX",
+      "rawOriginalHtmlSha256": "e604a7c167992fafb46e0def2cc1e2ea24e7fa4f64461b9a825193ce6bf31da4",
+      "rawOriginalHtmlBytes": 121186,
+      "originalSha1IndexedAndRawBodySha1Consistent": true,
+      "selectedShortCuePresentSomewhereOnOriginalPage": true,
+      "senatorPrintedSpeakerTurnAuthenticatedByThisFirstPass": false
+    },
+    {
+      "id": "2025-senate-asian-pacific-joint-caucus-sgu-veterans",
+      "captureUtc": "2025-07-25T01:47:33Z",
+      "indexedSha1Base32": "EV2IJ7QE7ITGFI273FZCBYYYRXOBATJ5",
+      "rawOriginalHtmlSha256": "a6982f2e6f6ec438d280d928b4a0d39dbfcf79df7cb8c48c302ca49780ca33a2",
+      "rawOriginalHtmlBytes": 95758,
+      "originalSha1IndexedAndRawBodySha1Consistent": true,
+      "selectedShortCuePresentSomewhereOnOriginalPage": true,
+      "senatorPrintedSpeakerTurnAuthenticatedByThisFirstPass": false
+    }
+  ],
+  "interpretation": {
+    "shaIndexedHtmlAndBodyProofNotHumanReviewedFullQuote": true,
+    "selectedTextPageWideFoundDoesNotProveSameLabeledSpeakerTurn": true,
+    "jointCaucusPostPassageVeteransStatementCannotForecastThatPriorVote": true,
+    "duckworth2024ExplanationOf2023MealsVoteCannotForecast2023Vote": true,
+    "listedCurrentPublisherDatesAreNotIndependentHistoricalFirstPublicTimestamps": true,
+    "noRawHtmlMp3PdfWarcPersisted": true,
+    "noForecastModelServingCollectorOrProductionDatabaseChanges": true,
+    "sourceLeadsNotStatewidePopulationDenominator": true
+  }
+}
