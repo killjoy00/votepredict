@@ -1,0 +1,62 @@
+name: Public 2024 Hawj HF5247 official Senate Journal individual roll call proof
+
+# Issue #987 / Track D. Exact two official MN Senate Journal PDFs transiently
+# downloaded only. Runner extracts bounded last-page evidence and destroys
+# full PDFs/text; artifact contains original PDF SHA, size, pages, roll flags.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-hawj-hf5247-official-journals.yml
+      - scripts/probe-senate-media-hawj-hf5247-official-journal-pdfs.mjs
+      - tests/senate-media-hawj-hf5247-official-journal-pdfs.test.mjs
+      - tests/senate-media-hawj-hf5247-official-journal-real-receipts.test.mjs
+      - docs/evaluation/senate-media-2024-hawj-hf5247-official-journals-20261012.json
+      - docs/evaluation/senate-media-2024-hawj-hf5247-official-journals-20261012.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-hawj-hf5247-journal-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  official-2024-primary-senate-member-rollcalls:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-hawj-hf5247-2024-official-senate-journal-20261012')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Install public Senate Journal PDF-only text utilities in isolated CI runner
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends poppler-utils
+          command -v pdfinfo
+          command -v pdftotext
+          pdfinfo -v
+          pdftotext -v
+      - name: Offline adversarial journal name, HF5247 vote, source PDF and cutoff tests
+        run: node --test tests/senate-media-hawj-hf5247-official-journal-pdfs.test.mjs tests/senate-media-hawj-hf5247-official-journal-real-receipts.test.mjs
+      - name: Read and SHA-identify only two official public May 2024 Senate Journal PDFs, parse named Hawj roll sections
+        run: node scripts/probe-senate-media-hawj-hf5247-official-journal-pdfs.mjs --output artifacts/hawj-hf5247-primary-journals.json
+      - name: Upload PDF SHA and individual-name role metadata only
+        uses: actions/upload-artifact@v6
+        with:
+          name: public-2024-hawj-hf5247-primary-journal-original-receipts
+          path: artifacts/hawj-hf5247-primary-journals.json
+          retention-days: 7
+          if-no-files-found: error
