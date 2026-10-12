@@ -1,0 +1,94 @@
+name: Independently verify 25 new Bakk Wiger Tomassoni direct publisher speaker excerpts
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-bakk-tomassoni-wiger-25-original-publisher-direct-positions-v1.json
+      - scripts/audit-senate-bakk-wiger-tomassoni-25-original-publisher-quotes.mjs
+      - tests/senate-bakk-wiger-tomassoni-25-original-publisher-direct-positions.test.ts
+      - .github/workflows/audit-senate-864-bakk-wiger-tomassoni-25-original-publisher-direct-positions.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  full-original-independent-audit:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-25-original-publisher-speech-bakk-wiger-tomassoni-20261011'
+    name: Independent original 3 publisher source CDX SHA1 + 25 named-speaker excerpts audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: node --check scripts/audit-senate-bakk-wiger-tomassoni-25-original-publisher-quotes.mjs
+      - run: node --import tsx --test tests/senate-bakk-wiger-tomassoni-25-original-publisher-direct-positions.test.ts
+      - name: Reopen entire original official government Senate directory and swearing history
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: independent/official
+      - name: Reopen 92 of 95 senator original candidate owned site coverage
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38197279787
+          name: senate-95-serving-92-original-sites-1194-short-excerpts-v1
+          github-token: ${{ github.token }}
+          path: independent/statewide
+      - name: Reopen full pre-November 2020 original KAXE candidate interview
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38199484424
+          name: senate-864-historic-publisher-interview-bakk-v1
+          github-token: ${{ github.token }}
+          path: independent/bakk
+      - name: Reopen full original January 2020 Canadian Press Tomassoni direct statement
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38199484424
+          name: senate-864-historic-publisher-interview-tomassoni-v1
+          github-token: ${{ github.token }}
+          path: independent/tomassoni
+      - name: Reopen full original pre-2020 election Wiger older education remarks
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38199484424
+          name: senate-864-historic-publisher-interview-wiger-v1
+          github-token: ${{ github.token }}
+          path: independent/wiger
+      - name: Authenticate real senators and CDX indexed full original bytes before accepting exact short quote fragments
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find independent/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find independent/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find independent/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          covered="$(find independent/statewide -type f -name 95-senators-public-campaign-coverage.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$covered"
+          mkdir -p proof
+          node --import tsx scripts/audit-senate-bakk-wiger-tomassoni-25-original-publisher-quotes.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --coverage-json "$covered" \
+            --bakk-original-dir independent/bakk \
+            --tomassoni-original-dir independent/tomassoni \
+            --wiger-original-dir independent/wiger \
+            --output-json proof/senate-three-pre2020election-original-publisher-25-quoted-speaker-proof.json
+      - name: Save small independent whole-original digest and exact fragment proof (NOT full copyrighted originals)
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-original-pre2020election-publisher-25-literal-speaker-fragments-v1
+          path: proof/senate-three-pre2020election-original-publisher-25-quoted-speaker-proof.json
+          if-no-files-found: warn
+          retention-days: 30
