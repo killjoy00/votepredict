@@ -243,3 +243,22 @@ test('safe issue receipt requires finance to declare its limited membership-link
  assert.match(source,/fullStatewideFinanceDatabaseCompletenessNotEstablished:true/);
  assert.match(source,/failed_.*safeSqlFailureReason\(error\)/s);
 });
+
+
+test('dedicated pre-secret main verification EXPLAINs seven source SELECTs on disposable local Postgres only',()=>{
+ const workflow=readFileSync('.github/workflows/senate-864-existing-neon-key-cross-track-counts.yml','utf8');
+ const beforeSecrets=workflow.split('  one-shot-readonly:\n')[0];
+ assert.match(beforeSecrets,/npm run db:migrate[\s\S]*?node --import tsx scripts\/verify-senate-864-aggregate-sql-local\.ts[\s\S]*?npm run check/);
+ assert.doesNotMatch(beforeSecrets,/secrets\.NEON_API_KEY/);
+ const source=readFileSync('scripts/verify-senate-864-aggregate-sql-local.ts','utf8');
+ assert.match(source,/process\.env\.DATABASE_URL_UNPOOLED/);
+ assert.match(source,/parsed\.hostname!=='localhost'/);
+ assert.match(source,/parsed\.pathname!=='\/votepredict'/);
+ assert.match(source,/process\.env\.NEON_API_KEY/);
+ assert.match(source,/id\.rows\[0\]\.role!=='postgres'/);
+ assert.match(source,/EXPLAIN '\+sql/);
+ assert.doesNotMatch(source,/EXPLAIN ANALYZE'\+sql|DROP TABLE|CREATE TABLE|INSERT INTO/i);
+ assert.match(source,/BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY/);
+ assert.match(source,/await c\.query\('ROLLBACK'\)/);
+ assert.match(source,/for\(const group of GROUPS\)/);
+});
