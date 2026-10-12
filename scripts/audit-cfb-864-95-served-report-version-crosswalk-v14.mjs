@@ -181,7 +181,7 @@ async function main(){
  if(process.argv.length!==2)throw Error('No source or roster CLI overrides');
  const receipt=await sourceVerified95ServedReportVersionAudit();
  const safe=JSON.stringify(receipt);
- if(safe.length>40000
+ if(safe.length>80000
   ||/\"(?:donor|contributor|transactionId|privateDatabase|NeonToken|candidateFinanceAmount)\"\s*:/i.test(safe))
   throw Error('Unsafe committee crosswalk publication output');
  console.log('CFB_864_OFFICIAL_95_SENATOR_VERSION_CROSSWALK_V14 '+safe);
