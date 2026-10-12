@@ -74,3 +74,15 @@ test('original source mismatches, fabricated calendar changes and malformed date
   /source checkpoint changed/);
  assert.throws(()=>compareDueVersusReceipt('2025-02-30','2025-03-03'),/invalid calendar day/);
 });
+
+test('immutable report freezes all twelve source-derived no-publication-by legal-floor rows exactly',()=>{
+ const recorded=JSON.parse(readFileSync(path+
+  'cfb-2025-senate-12-special-due-vs-received-historical-release-floor-audit.json','utf8'));
+ const recomputed=audit2025SpecialTwelveOriginalFinanceReleaseFloors(psv,checkpoint);
+ assert.deepEqual(recorded,recomputed);
+ assert.equal(recorded.rows.length,12);
+ assert.equal(recorded.counts.originalReportVersionsHistoricallyPublicByProven,0);
+ assert.equal(recorded.counts.originalRowContainmentProven,0);
+ assert.equal(recorded.rows.every((r:{independentExactPDFHistoricallyPublicByOn:null})=>
+  r.independentExactPDFHistoricallyPublicByOn===null),true);
+});
