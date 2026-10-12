@@ -8,7 +8,8 @@ import {
 } from '../scripts/probe-senate-media-mpr-kunesh-original-speaker-turns.mjs';
 const receipt=JSON.parse(readFileSync(new URL('../docs/evaluation/senate-media-mpr-six-interviews-public-reconciliation-20261011.json',import.meta.url),'utf8'));
 const pins=publicPinnedOriginals(receipt);
-const p=QUOTES['mpr-2023-kunesh-native-family-preservation'],charter=QUOTES['mpr-2024-kunesh-charter-school-oversight'];
+const p={cue:QUOTES['mpr-2023-kunesh-native-family-preservation'].shortCue,label:QUOTES['mpr-2023-kunesh-native-family-preservation'].speakerLabel};
+const charter={cue:QUOTES['mpr-2024-kunesh-charter-school-oversight'].shortCue,label:QUOTES['mpr-2024-kunesh-charter-school-oversight'].speakerLabel};
 const example='<html><head><script>NINA MOINI: bad hidden script</script></head><body>'
   +'<h2>Audio transcript</h2><p>NINA MOINI: Today we hear from Senator Kunesh.</p>'
   +'<p>MARY KUNESH: We want to make sure this is codified in our state legislature. The point is protecting children.</p>'
