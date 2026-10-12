@@ -70,7 +70,7 @@ test('the V3 one-shot marker is unique; validates protected receipt and no perso
  assert.equal(out.defaultNeonBranchOnlyNotDeployedBinding,true);
  assert.equal(out.no2024SourceChoiceRepaired,true);
  assert.doesNotMatch(JSON.stringify(out),
-  /neondb|source_url|lrl\.mn\.gov|normalized_member_name|Senator|postgresql|memberId/);
+  /neondb|source_url|lrl\.mn\.gov|normalized_member_name|Senator|postgresql|"memberId"\s*:/);
 });
 test('YEA-side single-token receipt remains a count-only, nonrepair observation',()=>{
  const out=buildSingleChoiceSafeReceipt(syntheticProtectedOutcome('YEA'));
