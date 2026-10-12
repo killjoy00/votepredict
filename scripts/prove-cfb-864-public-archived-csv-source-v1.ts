@@ -14,7 +14,7 @@ import {
   parseCfbCandidateExpenditureCsv,
 } from '../src/evidence/cfb-candidate-finance-history.js';
 
-export const CFB_ARCHIVED_CSV_V1_MARKER =
+export const CFB_ARCHIVED_CSV_V2_MARKER =
   'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V2' as const;
 export const PUBLIC_CFB_ARCHIVED_CSV_SOURCES = [
   {
@@ -308,20 +308,20 @@ export async function provePublicCandidateCsvSources(
   noPrivateRowOrDonorOutput:true,results,
  };
 }
-export function assertPublicCfbCsvV1MainOnly(env:Record<string,string|undefined>){
+export function assertPublicCfbCsvV2MainOnly(env:Record<string,string|undefined>){
  const ownerComment=env.GITHUB_EVENT_NAME==='issue_comment'
-  &&env.CFB_864_CSV_V1_OWNER_ISSUE_COMMENT_VERIFIED==='true';
+  &&env.CFB_864_CSV_V2_OWNER_ISSUE_COMMENT_VERIFIED==='true';
  if(env.GITHUB_REPOSITORY!=='killjoy00/votepredict'
   ||env.GITHUB_REF!=='refs/heads/main'
   ||env.GITHUB_RUN_ATTEMPT!=='1'
   ||!(/^[a-f0-9]{40}$/.test(env.GITHUB_SHA??''))
-  ||env.CFB_864_CSV_V1_VERIFIED_MARKER!=='true'
+  ||env.CFB_864_CSV_V2_VERIFIED_MARKER!=='true'
   ||!(env.GITHUB_EVENT_NAME==='push'||ownerComment))
   throw Error('Reviewed one-shot main source probe only');
 }
 async function main(){
  if(process.argv.length!==2)throw Error('No options permitted on archived source probe');
- assertPublicCfbCsvV1MainOnly(process.env);
+ assertPublicCfbCsvV2MainOnly(process.env);
  const receipt=await provePublicCandidateCsvSources();
  const json=JSON.stringify(receipt);
  if(json.length>18000)throw Error('Unexpected oversized public safe proof receipt');
