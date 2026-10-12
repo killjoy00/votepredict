@@ -66,13 +66,13 @@ function options(){
 async function refetchExactPdf(url:string,expectedSha:string,init?:RequestInit){
  const u=new URL(url);
  if(u.protocol!=='https:'||!['www.lrl.mn.gov','lrl.mn.gov'].includes(u.hostname)||
-  !/^\\/archive\\/minutes\\/senate\\/202[2-5]\\//.test(u.pathname)||
-  !/_Minutes\\.pdf$/i.test(u.pathname)||u.search||u.hash)
+  !/^\/archive\/minutes\/senate\/202[2-5]\//.test(u.pathname)||
+  !/_Minutes\.pdf$/i.test(u.pathname)||u.search||u.hash)
   throw Error('Official PDF URL scope invalid');
  const response=await fetch(url,{...init,redirect:'manual'});
  if(response.status!==200||response.url!==url)throw Error('Original PDF transport HOLD');
  const length=response.headers.get('content-length');
- if(length!==null&&(!/^\\d+$/.test(length)||Number(length)>MAX_PDF_BYTES))
+ if(length!==null&&(!/^\d+$/.test(length)||Number(length)>MAX_PDF_BYTES))
   throw Error('Original source exceeds PDF cap');
  const reader=response.body?.getReader();
  if(!reader)throw Error('Original PDF stream unavailable');
@@ -94,7 +94,7 @@ async function refetchExactPdf(url:string,expectedSha:string,init?:RequestInit){
  try{
   const file=join(folder,'original.pdf');writeFileSync(file,bytes);
   const info=execFileSync('pdfinfo',[file],{encoding:'utf8',timeout:20_000,maxBuffer:100_000});
-  const pages=Number(info.match(/^Pages:\\s*(\\d+)\\s*$/mi)?.[1]??NaN);
+  const pages=Number(info.match(/^Pages:\s*(\d+)\s*$/mi)?.[1]??NaN);
   if(!Number.isInteger(pages)||pages<1||pages>MAX_PAGES)
    throw Error('Original PDF page cap failed');
  }finally{rmSync(folder,{recursive:true,force:true})}
@@ -184,5 +184,5 @@ async function main(){
  console.log('SENATE_864_CORPUS_SAFE='+JSON.stringify(result));
  if(held||namedDecreased||countsDecreased)process.exitCode=1;
 }
-if(process.argv[1]?.replace(/\\/g,'/').endsWith('/audit-senate-864-original-1452-parser-v3.ts'))
+if(process.argv[1]?.replace(/\/g,'/').endsWith('/audit-senate-864-original-1452-parser-v3.ts'))
  void main().catch(()=>{console.error('SENATE_864_CORPUS_HOLD=preflight');process.exitCode=1});
