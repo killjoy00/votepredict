@@ -32,7 +32,7 @@ function mock(match=true):Output{
   originalPdfsWithIndependentRawPdfSha:1452,originalPdfsWithoutIndependentRawPdfSha:0,
   sourceExactUrlOneToOne:1452,sourceParsedRawPdfShaMatches:1452,
   sourceParsedRawPdfShaMismatches:0,originalUrlsAbsentFromStoredRecords:0,
-  duplicatePersistedSourceUrls:0,storedRowsOutsideOriginalUrlSet:0,
+  duplicateStoredUrlsForOriginals:0,storedRowsOutsideOriginalUrlSet:0,
   sourceCandidateRollCallEvents:153,sourceCandidateNamedChoiceTokens:989,
   persistedCommitteeVoteEvents:153,persistedCommitteeMemberVoteRows:988,
   matchedCandidateRollCallEvents:match?152:151,
