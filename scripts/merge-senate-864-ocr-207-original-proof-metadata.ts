@@ -13,9 +13,9 @@ import type {
  OriginalSenateCommitteeYearAudit,OriginalSenateCommitteePdfProof,
 } from '../src/evidence/senate-committee-source-to-db-reconciliation.js';
 
-type OcrArtifact={year:2022|2023|2024|2025;id:number;run:number;filename:string;sha:string;expected:number};
+type OcrArtifact={year:2022|2023|2024|2025|null;id:number;run:number;filename:string;sha:string;expected:number};
 export const OCR_207_SOURCE_ARTIFACTS:readonly OcrArtifact[]=[
- {year:2022,id:11676072623,run:38068730892,filename:'senate-committee-six-scanned-ocr-metadata.json',sha:'a530d9121f676d32079d88e514d6d2ae26aac86a3902244234a7bcb886ba3731',expected:6},
+ {year:null,id:11676072623,run:38068730892,filename:'senate-committee-six-scanned-ocr-metadata.json',sha:'a530d9121f676d32079d88e514d6d2ae26aac86a3902244234a7bcb886ba3731',expected:6},
  {year:2022,id:11675539378,run:38069432305,filename:'senate-committee-2022-second-ocr-sample.json',sha:'6df6f4305f9e1068884aabcf1adcb2ddb19eeacf93995c5c13a3201258ee2eee',expected:8},
  {year:2023,id:11676162360,run:38069432305,filename:'senate-committee-2023-second-ocr-sample.json',sha:'6c0208c2e590ae066bb06f621b74f28a705180ad6886369791ca548c52ef206c',expected:4},
  {year:2024,id:11675569424,run:38069432305,filename:'senate-committee-2024-second-ocr-sample.json',sha:'15884929cd21cfbb699129249b34581431cce89b753637bf7747c4efcca54ddf',expected:4},
@@ -88,16 +88,17 @@ export function mergeSourceAuditsWithAuthenticated207Ocr(
   };
   const proofs=parsed.originalProofs??parsed.proofs;
   if(!Array.isArray(proofs)||proofs.length!==art.expected
-    ||(parsed.year!==undefined&&parsed.year!==art.year))
+    ||(art.year!==null&&parsed.year!==undefined&&parsed.year!==art.year))
    throw Error('Original government OCR batch proof count/year not exact');
   for(const item of proofs){
    const d=item.document??item.source;
-   if(!d||d.year!==art.year
+   if(!d||![2022,2023,2024,2025].includes(d.year)
+     ||(art.year!==null&&d.year!==art.year)
      ||!/^[a-f0-9]{64}$/.test(d.originalRawPdfSha256)
      ||!/^https:\/\/(?:www\.)?lrl\.mn\.gov\/archive\/minutes\/senate\/202[2-5]\//i.test(d.sourceUrl))
     throw Error('Bad original OCR PDF URL/raw byte SHA');
    const source=missing.get(d.sourceUrl);
-   if(!source||source.seen||source.year!==art.year
+   if(!source||source.seen||source.year!==d.year
      ||source.meetingDate!==d.meetingDate
      ||(source.committeeName!==''&&source.committeeName!==d.committeeName))
     throw Error('Recovered PDF must match one unique original low-text source and its meeting');
@@ -114,7 +115,7 @@ export function mergeSourceAuditsWithAuthenticated207Ocr(
    for(const key of keys){
     if(typeof key!=='string'||!/^[a-z-]+:[a-f0-9]{16}:[0-9]+$/.test(key))
      throw Error('Unsupported original key-only OCR event');
-    keyOnly.push({year:art.year,sourceUrl:d.sourceUrl,externalKey:key,
+    keyOnly.push({year:d.year,sourceUrl:d.sourceUrl,externalKey:key,
      meetingDate:d.meetingDate,
      sourceNamedChoiceTokensKnownCount:totals.namedMemberChoicesInPdf});
    }
@@ -129,7 +130,7 @@ export function mergeSourceAuditsWithAuthenticated207Ocr(
     },voteObservations:fullVotes,contextOnlyActions:[],
    };
    recovered.set(d.sourceUrl,[docProof]);
-   ocrPerYear.set(art.year,ocrPerYear.get(art.year)!+1);
+   ocrPerYear.set(d.year,ocrPerYear.get(d.year)!+1);
   }
  }
  if([...missing.values()].some(r=>!r.seen)||recovered.size!==207
