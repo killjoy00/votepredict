@@ -141,3 +141,48 @@ All three outcomes preserve the distinction between the actual existing
 Neon default branch, independently proven deployed production bindings,
 the source completeness denominator and per-document source-to-DB
 row-level equality. #864 stays OPEN.
+
+
+## V4 actual outcome, V5 independent per-source SAVEPOINT baseline
+
+**Confirmed:** Original V4 exact-main [run #38194386858](https://github.com/killjoy00/votepredict/actions/runs/38194386858)
+completed the local seven-statement SQL plan compilation and protected
+GitHub Neon project/transaction/catalog/roster checks, then the **finance**
+evidence-item aggregation returned PostgreSQL SQLSTATE \`57014\`,
+**statement timeout**. The independently published [fixed safe #864
+failure receipt](https://github.com/killjoy00/votepredict/issues/864#issuecomment-6116493435)
+is original evidence of the timeout. As intended, neither a false count
+nor a statement/model update was emitted.
+
+**V5** separates the expensive historical candidate-finance-item counting
+question from a lighter **original stored \`source_documents\` finance
+source-kind registry**. The bounded source-document query is ALL
+CHAMBERS, not actual 2021–25 Senate financial transaction or legislator
+coverage. It uses the source document's optional \`metadata.year\`
+and explicitly groups missing/non-2021–25 years as
+\`unknown_or_outside\`. The source count contains neither report
+filing-denominator proofs, individual contributor identities,
+source-to-row containment, historical version exact public-by nor
+eligible evidence-item counts. Those remain **not measured**.
+
+All seven immutable aggregate SELECTs still execute on one authenticated
+existing VotePredict Neon default branch, within a single PostgreSQL
+\`REPEATABLE READ READ ONLY\` transaction with explicit \`ROLLBACK\`.
+Each independent source group now uses a SQL \`SAVEPOINT\`, permitting
+a known SQLSTATE statement timeout, undefined column, grouping,
+syntax, or invalid-input error to be **rolled back to that savepoint**.
+The remaining source families still use the original pinned transaction
+snapshot; the corresponding group gets a **named HOLD** rather than
+count zero. Unsafe/unrecognized query errors or savepoint recovery
+failure cause the whole audit to **fail closed** without a result.
+The protected source job never receives GitHub issue-write permission,
+while the separate keyless reporter validates and publishes only
+bounded grouped nonnegative integers and named safe source HOLDs.
+
+All-seven success, partial query success and complete protected SQL
+failure are separately disclosed. A successful V5 read-only source
+baseline is **not** complete original source-to-persisted-database
+equality and does not establish the deployed production binding.
+The issue's official 2021 print, campaign finance statutory duties
+and retro publication proof, campaign-website source pages and
+individual named media speech attribution remain separately open.

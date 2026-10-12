@@ -47,7 +47,7 @@ test('protected one-shot can use existing GitHub Neon key only after immutable r
  ]){
   assert.throws(()=>assertProtectedOneShot({...protectedEnv,[key]:val}));
  }
- assert.equal(ONE_SHOT_MARKER,'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V4');
+ assert.equal(ONE_SHOT_MARKER,'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V5');
 });
 test('only seven precisely fixed bounded aggregate SELECTs; no live updates/export/free-form SQL',()=>{
  assert.deepEqual([...GROUPS],[
@@ -61,8 +61,9 @@ test('only seven precisely fixed bounded aggregate SELECTs; no live updates/expo
   assert.match(sql,/\bGROUP BY\b/i,name);
  }
  const f=QUERIES.finance;
- assert.match(f,/metadata->>'asOfEligible'/);
- assert.match(f,/claim.*eligible/i);
+ assert.match(f,/FROM source_documents sd/);
+ assert.doesNotMatch(f,/FROM evidence_items ei|JOIN evidence_items ei/);
+ assert.doesNotMatch(f,/claimed_eligible|asOfEligible|evidence_rows/i);
  assert.match(QUERIES.media,/wayback_local_trade_news/);
  assert.match(QUERIES.committeeVotes,/committeeVote/);
  assert.match(QUERIES.committeeChoices,/normalized_member_name/);
@@ -73,8 +74,8 @@ test('aggregate-only result validator rejects row bodies, source URLs, identity 
   {year:'2023',people:'67',memberships:'67',memberships_missing_date_boundary:'12'},
  ]),[{year:'2023',people:'67',memberships:'67',memberships_missing_date_boundary:'12'}]);
  assert.deepEqual(validateCountRows('finance',[
-  {year:'2024',family:'campaign_finance_bulk',evidence_rows:'8'},
- ]),[{year:'2024',family:'campaign_finance_bulk',evidence_rows:'8'}]);
+  {year:'2024',family:'campaign_finance_bulk',source_document_rows:'8'},
+ ]),[{year:'2024',family:'campaign_finance_bulk',source_document_rows:'8'}]);
  for(const bad of [
   [{year:'2023',people:'1',name:'Senator Named'}],
   [{year:'2023',people:12}],
@@ -103,7 +104,7 @@ test('same established management key: five API GETs and one read-only rolled-ba
    connect:async()=>({
     query:async(sql:string,params?:unknown[])=>{
      queries.push(sql);
-     if(sql.startsWith('BEGIN')||sql==='ROLLBACK')return {rows:[]};
+     if(sql.startsWith('BEGIN')||sql==='ROLLBACK'||sql.startsWith('SAVEPOINT')||sql.startsWith('RELEASE SAVEPOINT')||sql.startsWith('ROLLBACK TO SAVEPOINT'))return {rows:[]};
      if(sql.includes('current_database()'))
       return {rows:[{db:'neondb',role:'neondb_owner',ro:'on'}]};
      if(sql.includes('to_regclass')){
@@ -112,7 +113,7 @@ test('same established management key: five API GETs and one read-only rolled-ba
      }
      const slot=Object.entries(QUERIES).find(([,v])=>v===sql);
      if(slot){seen++;return {rows:slot[0]==='finance'
-       ?[{year:'2023',family:'campaign_finance_bulk',evidence_rows:'13'}]
+       ?[{year:'2023',family:'campaign_finance_bulk',source_document_rows:'13'}]
        :[{year:'2023',context_rows:'22',source_rows:'3'}]};}
      throw Error('Unexpected attempted SQL statement');
     },
@@ -129,7 +130,11 @@ test('same established management key: five API GETs and one read-only rolled-ba
  assert.equal(report.fullPerSourceRowReconciliationCompleted,false);
  assert.equal(report.historicalCompletenessCertified,false);
  assert.equal(report.privateOriginalRowsAndNamesExported,false);
- assert.equal(report.groups.finance[0].evidence_rows,'13');
+ assert.equal(report.groups.finance[0].source_document_rows,'13');
+ assert.deepEqual(report.groupHolds,{});
+ assert.equal(report.allSevenSourceFamilyQueriesSucceeded,true);
+ assert.equal(report.financeQuerySourceDocumentOnlyAcrossAllChambers,true);
+ assert.equal(report.financeEvidenceItemRowsAndEligibilityNotAudited,true);
  assert.equal(Object.values(report.groups).length,7);
  assert.equal(queries[0],'BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
  assert.equal(queries.at(-1),'ROLLBACK');
@@ -145,7 +150,7 @@ test('unsafe identity or missing VotePredict relations means NO evidence SELECT 
    connect:async()=>({
     query:async(sql:string)=>{
      calls.push(sql);
-     if(sql.startsWith('BEGIN')||sql==='ROLLBACK')return {rows:[]};
+     if(sql.startsWith('BEGIN')||sql==='ROLLBACK'||sql.startsWith('SAVEPOINT')||sql.startsWith('RELEASE SAVEPOINT')||sql.startsWith('ROLLBACK TO SAVEPOINT'))return {rows:[]};
      if(sql.includes('current_database()'))return {rows:[{
       db:scenario==='wrongDB'?'anotherdb':'neondb',role:'neondb_owner',ro:'on'}]};
      if(sql.includes('to_regclass'))return {rows:REQUIRED_864_TABLES.slice(0,7)
@@ -173,7 +178,7 @@ test('workflow cannot use existing key on PR, unmarked main push or failed indep
  assert.match(yml,/one-shot-readonly/);
  assert.match(yml,/cancel-in-progress: false/);
  assert.match(yml,/persist-credentials: false/);
- assert.match(yml,/SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V4/);
+ assert.match(yml,/SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V5/);
  assert.doesNotMatch(yml,/github\.event_name == 'pull_request' && needs/);
  assert.doesNotMatch(yml,/^\s+schedule:/m);
  assert.doesNotMatch(yml,/actions\/upload-artifact/);
@@ -214,16 +219,16 @@ test('safe aggregate receipt: keyless issue-write job only, fail-closed status a
 });
 
 
-test('known finance expensive cross-chamber OR scan is replaced by a bounded indexed actual Senate membership subset',()=>{
+test('historically expensive finance item scan is now an all-chamber source-doc registry, explicitly not Senate finance row coverage',()=>{
  const sql=QUERIES.finance;
- assert.match(sql,/FROM memberships m JOIN chambers c ON c\.id=m\.chamber_id/);
- assert.match(sql,/JOIN evidence_items ei ON ei\.membership_id=m\.id/);
- assert.match(sql,/JOIN source_documents sd ON sd\.id=ei\.source_document_id/);
- assert.match(sql,/WHERE c\.slug='senate'/);
- assert.match(sql,/s\.slug IN \('2021-2022','2023-2024','2025-2026'\)/);
+ assert.match(sql,/FROM source_documents sd/);
+ assert.match(sql,/sd.source_kind IN/);
+ assert.match(sql,/sd.metadata->>'year'/);
+ assert.match(sql,/source_document_rows/);
+ assert.match(sql,/documents_without_stored_chamber/);
  assert.match(sql,/GROUP BY 1,2 ORDER BY 1,2/);
- assert.doesNotMatch(sql,/OR ei\.metadata->>'chamber'='senate'/);
- assert.match(sql,/metadata->>'availabilityProofContentSha256'/);
+ assert.doesNotMatch(sql,/JOIN evidence_items ei|FROM evidence_items ei|FROM memberships m/);
+ assert.doesNotMatch(sql,/metadata->>'asOfEligible'|availabilityProofContentSha256/);
 });
 test('only fixed non-sensitive SQLSTATE error classifications are permitted to escape failed query path',()=>{
  assert.equal(safeSqlFailureReason({code:'57014',message:'private.example.com'}),'statement_timeout');
@@ -233,18 +238,20 @@ test('only fixed non-sensitive SQLSTATE error classifications are permitted to e
  assert.equal(safeSqlFailureReason({code:'22P02'}),'invalid_input');
  assert.equal(safeSqlFailureReason(new Error('private data')),'unknown_query_or_validation');
 });
-test('safe issue receipt requires finance to declare its limited membership-linked scope',()=>{
+test('keyless issue receipt explicitly separates all-chamber finance source-only discovery and verified group holds',()=>{
  const workflow=readFileSync('.github/workflows/senate-864-existing-neon-key-cross-track-counts.yml','utf8');
- assert.match(workflow,/financeQueryOnlyExplicitHistoricSenateMembershipLinkedEvidence!==true/);
- assert.match(workflow,/unlinkedAndMetadataOnlyFinanceEvidenceNotAuditedInThisSnapshot!==true/);
- assert.match(workflow,/unlinked finance metadata rows were not audited/);
+ assert.match(workflow,/financeQuerySourceDocumentOnlyAcrossAllChambers!==true/);
+ assert.match(workflow,/financeEvidenceItemRowsAndEligibilityNotAudited!==true/);
+ assert.match(workflow,/groupHoldsAreNotZeroCounts!==true/);
+ assert.match(workflow,/source_documents registry across ALL chambers/);
+ assert.match(workflow,/Not measured \(NOT zero\)/);
  const source=readFileSync('scripts/audit-senate-864-neon-one-key-readonly-coverage.ts','utf8');
- assert.match(source,/financeQueryOnlyExplicitHistoricSenateMembershipLinkedEvidence:true/);
+ assert.match(source,/financeQuerySourceDocumentOnlyAcrossAllChambers:true/);
  assert.match(source,/fullStatewideFinanceDatabaseCompletenessNotEstablished:true/);
- assert.match(source,/failed_.*safeSqlFailureReason\(error\)/s);
+ assert.match(source,/ROLLBACK TO SAVEPOINT current_source_group/);
+ assert.match(source,/groupHolds\[name\]=kind/);
+ assert.match(source,/safeSqlFailureReason\(error\)/);
 });
-
-
 test('dedicated pre-secret main verification EXPLAINs seven source SELECTs on disposable local Postgres only',()=>{
  const workflow=readFileSync('.github/workflows/senate-864-existing-neon-key-cross-track-counts.yml','utf8');
  const beforeSecrets=workflow.split('  one-shot-readonly:\n')[0];
@@ -291,4 +298,75 @@ test('dedicated keyless reporter also emits a receipt for pre-secret full CI fai
  assert.match(report,/PRE-SECRET FULL CI FAILED CLOSED/);
  assert.match(report,/github\.rest\.issues\.createComment/);
  assert.doesNotMatch(report,/secrets\.NEON_API_KEY|DATABASE_URL_UNPOOLED/);
+});
+
+
+test('a timed-out finance source group is a named HOLD, not zero, and remaining 6 groups retain same READ ONLY snapshot',async()=>{
+ const queries:string[]=[];const phases:string[]=[];let release=0,end=0;
+ const pool=()=>({
+  connect:async()=>({
+   query:async(sql:string)=>{
+    queries.push(sql);
+    if(sql.startsWith('BEGIN')||sql==='ROLLBACK'
+      ||sql.startsWith('SAVEPOINT')||sql.startsWith('RELEASE SAVEPOINT')
+      ||sql.startsWith('ROLLBACK TO SAVEPOINT'))return {rows:[]};
+    if(sql.includes('current_database()'))
+     return {rows:[{db:'neondb',role:'neondb_owner',ro:'on'}]};
+    if(sql.includes('to_regclass'))
+     return {rows:[...REQUIRED_864_TABLES].map(name=>({table_name:name,present:true,readable:true}))};
+    if(sql===QUERIES.finance){
+     const e=new Error('PRIVATE SECRET DATABASE TEXT MUST NEVER APPEAR');
+     (e as Error & {code:string}).code='57014';
+     throw e;
+    }
+    if(Object.values(QUERIES).includes(sql))
+     return {rows:[{year:'2023',verified_existing_rows:'4'}]};
+    throw Error('Unreviewed query issued');
+   },
+   release:()=>{release++},
+  }),
+  end:async()=>{end++},
+ }) as unknown as Pick<Pool,'connect'|'end'>;
+ const result=await auditNeonExistingKey2021To25(conf,fakeNeon,pool,x=>phases.push(x));
+ assert.equal(result.currentTransactionReadOnly,true);
+ assert.equal(result.transactionRollbackCompleted,true);
+ assert.equal(result.allSevenSourceFamilyQueriesSucceeded,false);
+ assert.equal(result.groupHoldsAreNotZeroCounts,true);
+ assert.equal(result.status,'partial_verified_existing_votepredict_default_branch_aggregates');
+ assert.deepEqual(result.groupHolds,{finance:'statement_timeout'});
+ assert.deepEqual(result.groups.finance,[]);
+ assert.equal(result.groups.roster[0].verified_existing_rows,'4');
+ assert.equal(result.groups.media[0].verified_existing_rows,'4');
+ assert.equal(result.groups.campaign[0].verified_existing_rows,'4');
+ assert.equal(queries.filter(q=>q==='SAVEPOINT current_source_group').length,7);
+ assert.equal(queries.filter(q=>q==='ROLLBACK TO SAVEPOINT current_source_group').length,1);
+ assert.equal(queries.at(-1),'ROLLBACK');
+ assert.ok(phases.includes('held_finance_statement_timeout'));
+ assert.equal(phases.at(-1),'rolled_back');
+ assert.equal(release,1);assert.equal(end,1);
+ assert.equal(result.financeEvidenceItemRowsAndEligibilityNotAudited,true);
+ assert.doesNotMatch(JSON.stringify(result),/PRIVATE SECRET|DUMMY_PRIVATE|brisk-stream/);
+});
+test('malformed SQL aggregate result fails closed instead of masking it as source HOLD',async()=>{
+ let rollbacks=0;
+ const pool=()=>({
+  connect:async()=>({
+   query:async(sql:string)=>{
+    if(sql==='ROLLBACK'){rollbacks++;return {rows:[]}}
+    if(sql.startsWith('BEGIN')||sql.startsWith('SAVEPOINT')
+      ||sql.startsWith('RELEASE SAVEPOINT'))return {rows:[]};
+    if(sql.includes('current_database()'))
+     return {rows:[{db:'neondb',role:'neondb_owner',ro:'on'}]};
+    if(sql.includes('to_regclass'))
+     return {rows:[...REQUIRED_864_TABLES].map(name=>({table_name:name,present:true,readable:true}))};
+    if(Object.values(QUERIES).includes(sql))
+     return {rows:[{year:'2023',not_a_private_person_name:'John Doe'}]};
+    throw Error('Unreviewed query issued');
+   },
+   release:()=>{},
+  }),
+  end:async()=>{},
+ }) as unknown as Pick<Pool,'connect'|'end'>;
+ await assert.rejects(()=>auditNeonExistingKey2021To25(conf,fakeNeon,pool));
+ assert.equal(rollbacks,1);
 });
