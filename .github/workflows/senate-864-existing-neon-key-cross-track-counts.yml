@@ -1,0 +1,117 @@
+name: One-shot existing Neon key MN Senate 2021-25 historical stored evidence counts
+on:
+  pull_request:
+    paths:
+      - scripts/audit-senate-864-neon-one-key-readonly-coverage.ts
+      - tests/senate-864-neon-one-key-readonly-coverage.test.ts
+      - .github/workflows/senate-864-existing-neon-key-cross-track-counts.yml
+      - docs/evaluation/senate-864-existing-neon-key-readonly-source-baseline.md
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: senate-864-one-shot-existing-neon-key-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  pr-static-guard:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Confirm source-specific offline tests never access key or production
+        run: node --import tsx --test tests/senate-864-neon-one-key-readonly-coverage.test.ts
+  one-shot-verify:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V1')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify exact reviewed main push commit
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - name: Full source revision tests, typechecks and build before key access
+        run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+  one-shot-readonly:
+    needs: [one-shot-verify]
+    if: >-
+      needs.one-shot-verify.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V1')
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_864_APPROVAL: BOUNDED_COUNTS_ONLY
+      VOTEPREDICT_864_INDEPENDENT_CI_VERIFIED: ${{ needs.one-shot-verify.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_864_ONE_SHOT_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V1') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify checked out revision is exactly the previously independently verified commit
+        env:
+          REVIEWED_MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_MAIN_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Only existing VotePredict management GETs and bounded SELECT aggregates, READ ONLY and ROLLBACK
+        run: node --import tsx scripts/audit-senate-864-neon-one-key-readonly-coverage.ts
