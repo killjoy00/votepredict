@@ -1,0 +1,48 @@
+name: Public 2022 four GOP senators and Audacy Benson historical originals
+
+# Track D issue 987: two publisher URLs, read-only original source checks.
+# No raw copyrighted HTML, audio/WARC, private DB or production state.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-2022-parental-rights-originals.yml
+      - scripts/probe-senate-media-2022-parental-rights-four-caucus-audacy-originals.mjs
+      - tests/senate-media-2022-parental-rights-four-caucus-audacy-originals.test.mjs
+      - tests/senate-media-2022-parental-rights-real-receipts.test.mjs
+      - docs/evaluation/senate-media-2022-parents-rights-gop-wcco-archive-20261012.json
+      - docs/evaluation/senate-media-2022-parents-rights-gop-wcco-archive-20261012.md
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: public-2022-parents-originals-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  selected-2022-original-senator-html-provenance:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      ((github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+       (github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+        github.event.pull_request.head.ref == 'research/media-2022-parents-bill-four-senators-audacy-originals-20261012'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Adversarial exact source, senator identity and archive SHA tests
+        run: node --test tests/senate-media-2022-parental-rights-four-caucus-audacy-originals.test.mjs
+      - name: Bounded actual indexed Wayback and Common Crawl original two publisher URLs
+        run: node scripts/probe-senate-media-2022-parental-rights-four-caucus-audacy-originals.mjs --output artifacts/track-d-2022-four-gop-senators-audacy-source-metadata.json
+      - name: Public source index/authentic SHA metadata only (no publisher HTML)
+        uses: actions/upload-artifact@v6
+        with:
+          name: public-2022-four-senators-audacy-selected-original-html-metadata
+          path: artifacts/track-d-2022-four-gop-senators-audacy-source-metadata.json
+          retention-days: 7
+          if-no-files-found: error
