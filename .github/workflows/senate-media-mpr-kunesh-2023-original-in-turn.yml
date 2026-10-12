@@ -42,7 +42,7 @@ jobs:
         with:
           node-version: 22
       - name: Offline original 2023 MPR printed speaker-turn falsification tests
-        run: node --test tests/senate-media-mpr-kunesh-2023-original-in-turn.test.mjs
+        run: node --test tests/senate-media-mpr-kunesh-2023-original-in-turn.test.mjs tests/senate-media-mpr-kunesh-2023-original-receipts.test.mjs
       - name: Six checks across two independently pinned full original 2023 MPR HTML versions
         run: |
           node scripts/run-senate-media-mpr-kunesh-2023-speaker-cues.mjs \
