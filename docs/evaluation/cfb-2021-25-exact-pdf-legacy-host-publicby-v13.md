@@ -39,3 +39,18 @@ Commands:
     node scripts/audit-cfb-864-legacy-pdf-publicby-v13.mjs
 
 **Remaining requested-scope work after this finite pilot:** independently establish actual historical public-by of the exact authentic PDF versions, including earlier original and amended versions, and expand the report ledger beyond the already source-verified 25 actual Senate-serving committee registrations toward the full actual-serving senator panel. Do not collect legally owed filing denominator, bulk CSV stored-transaction parity or older filing-derived evidence. No production writes; keep #864 OPEN.
+
+
+## Actual live V13 original historic-URL pilot result (2026-10-12)
+
+[Public-only run 38312512329](https://github.com/killjoy00/votepredict/actions/runs/38312512329) completed successfully (all focused synthetic tests and all 18 bounded live CFB official URL-profile lookups). **ZERO historic PDF bodies were fetched or independently authenticated as exact earlier public-by proofs.** The 9 selected PDF IDs × 2 government-host URL profiles produced:
+
+| Bounded metadata response status | Number of exact queries | Meaning |
+| --- | ---: | --- |
+| HTTP 200 with valid CDX JSON, but **no indexed full original PDF capture** for that exact legacy URL | **13** | A finite negative for this exact URL query, not a claim that the report was never available |
+| Invalid CDX response or network HOLD | **5** | Archive response cannot establish absence, availability or PDF identity |
+| Independently SHA256-matched archived original report PDF | **0** | No positive historical PDF public-by date in this pilot |
+
+The 2021 YE original, 2022 C/E, 2023 YE original/amendment, 2024 YE original/amendment and 2025 selected exact special/ordinary version remained **actual historically public-by UNKNOWN** after these 18 query attempts. Historical *original* CFB source PDF SHA and report coverage remain independently authenticated under V12 and are **not changed** by a negative archive metadata search. The tested official 2022 Board legacy hyperlink **proves the earlier URL form was documented**, but does not establish Internet Archive captured our other nine senator PDFs.
+
+**Practical decision:** a blanket repeat of current and legacy **exact** Wayback CDX queries is unlikely to resolve the 0/229 public-by debt. Next in-scope candidates are capture of an **actual full original report PDF** embedded as a contemporaneously timestamped first-party/regulator exhibit, independent public source with equivalent exact byte hash, or a regulator-authenticated historical listing that attaches a verifiable original binary. Board possession/receipt without proof of anonymous public distribution still is not sufficient. Prioritize the 2021–22 originals with smallest PDFs and contemporaneous official documents, but insist on exact complete-body SHA256 equality and a timestamp at/after the version's own legal/reception floor. Expand 25 source-verified committee crosswalk toward all independently attested 95 actually-serving people separately, with no attempt to classify legal owed-filing obligations.
