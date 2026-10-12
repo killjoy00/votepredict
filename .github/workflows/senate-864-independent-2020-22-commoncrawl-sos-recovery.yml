@@ -1,0 +1,83 @@
+name: Independent 2020 and 2022 original archive campaign pages and SOS census cross-check
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-864-2020-22-original-archive-alternate-index-and-official-sos-reconciliation-v1.json
+      - scripts/probe-senate-864-commoncrawl-2020-22-sos-warc-originals.mjs
+      - .github/workflows/senate-864-independent-2020-22-commoncrawl-sos-recovery.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-warc-and-official-postvote-sos-reconciliation:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-pre2020-22-commoncrawl-sos-original-crosscheck-20261012'
+    name: 2020/22 primary source WARC with LRL and original SOS census — ${{ matrix.group }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        group: [newman, weber, kari, threegap]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Verify probe source syntax without installing dependencies
+        run: node --check scripts/probe-senate-864-commoncrawl-2020-22-sos-warc-originals.mjs
+      - run: npm ci --no-fund --no-audit
+      - name: Original complete Minnesota LRL actual Senate service directory and special swearing
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Acquire independently preserved FOUR ORIGINAL 2020/2022 SOS general stsenate and cand files
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38089571113
+          name: senate-2020-22-public-candidate-original-source-acquisition
+          github-token: ${{ github.token }}
+          path: original/sos
+      - name: Reopen 95-person 1285 exact original campaign website excerpt audit matrix
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38261292249
+          name: senate-864-five-thin-13-actual-2022-originals-1285-senator-site-excerpts-v1
+          github-token: ${{ github.token }}
+          path: original/baseline
+      - name: Index official Common Crawl pre-election archives with strict WARC byte Range and original SHA1 proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          sos2020="$(find original/sos -type f -name 2020-sos-general-stsenate.response -print -quit)"
+          base="$(find original/baseline -type f -name senate-864-95-person-historical-candidate-issue-depth-1285.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$sos2020" && test -n "$base"
+          node --import tsx scripts/probe-senate-864-commoncrawl-2020-22-sos-warc-originals.mjs \
+            --group "${{ matrix.group }}" \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --sos-original-dir "$(dirname "$sos2020")" \
+            --baseline-1285-json "$base" \
+            --out-dir research/strict-originals
+      - name: Preserve full WARC and original HTML only in ephemeral 30-day audit artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-2020-22-commoncrawl-original-sos-${{ matrix.group }}-v1
+          path: research/strict-originals/
+          if-no-files-found: warn
+          retention-days: 30
