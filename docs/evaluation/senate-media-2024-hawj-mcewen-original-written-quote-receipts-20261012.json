@@ -1,0 +1,155 @@
+{
+  "version": "senate-media-2024-hawj-mcewen-historical-individually-bounded-written-quotes-receipts-v1",
+  "localResearchDate": "2026-10-12",
+  "provenance": {
+    "issue": 987,
+    "pr": 1216,
+    "originalSourceParentPr": 1212,
+    "firstSuccessLiveSourceRunId": 38259377134,
+    "firstSuccessHead": "6c708c6a8a81e65f8d16d4aeda3470390e314a13",
+    "publicMetadataOnlyArtifactId": 11752251196,
+    "initialOfflineAdversarialTestsPassed": 9
+  },
+  "counts": {
+    "alreadyDiscoveredDistinctFirstPartyArticles": 2,
+    "archivedOriginalHtmlVersionsReverified": 3,
+    "distinctNamedSenatorsWithIndividuallyBoundedOriginalWrittenShortQuotes": 2,
+    "archivedOriginalBodiesWithPersonallyBoundedWrittenQuote": 3,
+    "newDistinctPublisherArticleUrls": 0,
+    "newArchivedSourceVersions": 0,
+    "completeHumanApprovedVerbatimSpeakerQuotations": 0,
+    "independentlyRecordedOriginalAudioAuthenticated": 0,
+    "independentStateSenateRollCallsOrForecastCutoffsVerified": 0
+  },
+  "sources": [
+    {
+      "sourceId": "public-2024-mcewen-mining",
+      "exactOriginalUrl": "https://senatedfl.mn/senator-jen-mcewen-statement-following-informational-hearing-on-prove-it-first-legislation/",
+      "senator": "Jen McEwen",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15537",
+      "publisherDisplayedDates": [
+        "2024-02-26",
+        "2024-03-01"
+      ],
+      "sourceHistoricalArchiveUtc": "2024-04-22T03:56:26Z",
+      "independentlyIndexedOriginalSha1Base32": "LUERCXLMTQVWEL5LPAM3RDXGEBHTLMKN",
+      "rawOriginalHttpHtmlSha256": "d2a3d97c9519fa64f219dbd8d45be0c4c98904bde749a6a0e3c385e9bde7a6b9",
+      "rawOriginalHtmlBytes": 94499,
+      "originalIntegrity": "original_archive_index_sha1_and_raw_sha256_bytes_rechecked_identical_to_earlier_authenticated_receipt",
+      "originalVisibleParagraphsReviewed": 10,
+      "namedSenatorIssuedStatementIntroParagraphs": 1,
+      "matchingIntroducedQuoteRuns": 1,
+      "hasBoundedQuoteOwnedByNamedSenator": true,
+      "ownNamedIntroImmediatelyBeforeQuote": true,
+      "shortPolicyCueExactlyOnceInsideOpenAndClosedQuote": true,
+      "boundQuoteParagraphCount": 3,
+      "cueOffsetFromOpeningQuote": 0,
+      "namedBillReferencesInOriginalVisibleBody": [
+        {
+          "bill": "SF 1416",
+          "visibleOriginalPublisherBodyContainsReference": true
+        }
+      ],
+      "humanApprovedFullVerbatimQuote": false,
+      "audioRecordingAuthenticated": false,
+      "firstPublisherPublicationTimestampAuthenticated": false,
+      "SenateRollCallOrVotePredictionTimeProved": false
+    },
+    {
+      "sourceId": "public-2024-hawj-transport",
+      "exactOriginalUrl": "https://senatedfl.mn/senator-foung-hawj-testifies-in-support-of-transportation-equity-legislation/",
+      "senator": "Foung Hawj",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15380",
+      "publisherDisplayedDates": [
+        "2024-03-15"
+      ],
+      "sourceHistoricalArchiveUtc": "2024-03-24T19:01:09Z",
+      "independentlyIndexedOriginalSha1Base32": "YI4BL3IHGZ27R4JBNOVXUTI5XFGMQNSR",
+      "rawOriginalHttpHtmlSha256": "aa6da6e8722e33f2f692ba31bfd6699cf97768e74c788dbdb0786a75a3ad5743",
+      "rawOriginalHtmlBytes": 93076,
+      "originalIntegrity": "original_archive_index_sha1_and_raw_sha256_bytes_rechecked_identical_to_earlier_authenticated_receipt",
+      "originalVisibleParagraphsReviewed": 8,
+      "namedSenatorIssuedStatementIntroParagraphs": 1,
+      "matchingIntroducedQuoteRuns": 1,
+      "hasBoundedQuoteOwnedByNamedSenator": true,
+      "ownNamedIntroImmediatelyBeforeQuote": true,
+      "shortPolicyCueExactlyOnceInsideOpenAndClosedQuote": true,
+      "boundQuoteParagraphCount": 1,
+      "cueOffsetFromOpeningQuote": 0,
+      "namedBillReferencesInOriginalVisibleBody": [
+        {
+          "bill": "SF 4056",
+          "visibleOriginalPublisherBodyContainsReference": true
+        },
+        {
+          "bill": "SF 3257",
+          "visibleOriginalPublisherBodyContainsReference": true
+        },
+        {
+          "bill": "SF 3250",
+          "visibleOriginalPublisherBodyContainsReference": true
+        }
+      ],
+      "humanApprovedFullVerbatimQuote": false,
+      "audioRecordingAuthenticated": false,
+      "firstPublisherPublicationTimestampAuthenticated": false,
+      "SenateRollCallOrVotePredictionTimeProved": false
+    },
+    {
+      "sourceId": "public-2024-hawj-transport",
+      "exactOriginalUrl": "https://senatedfl.mn/senator-foung-hawj-testifies-in-support-of-transportation-equity-legislation/",
+      "senator": "Foung Hawj",
+      "officialMemberHistoryUrl": "https://www.lrl.mn.gov/legdb/fulldetail?ID=15380",
+      "publisherDisplayedDates": [
+        "2024-03-15"
+      ],
+      "sourceHistoricalArchiveUtc": "2024-04-22T04:14:23Z",
+      "independentlyIndexedOriginalSha1Base32": "RPGCVOQOMF7AOA2UQ6R7E5QIALFQB7S2",
+      "rawOriginalHttpHtmlSha256": "a168aef89b0f2e50e588c1aa404491de41a241b13739edfe394e4ec6b70e0a01",
+      "rawOriginalHtmlBytes": 93360,
+      "originalIntegrity": "original_archive_index_sha1_and_raw_sha256_bytes_rechecked_identical_to_earlier_authenticated_receipt",
+      "originalVisibleParagraphsReviewed": 8,
+      "namedSenatorIssuedStatementIntroParagraphs": 1,
+      "matchingIntroducedQuoteRuns": 1,
+      "hasBoundedQuoteOwnedByNamedSenator": true,
+      "ownNamedIntroImmediatelyBeforeQuote": true,
+      "shortPolicyCueExactlyOnceInsideOpenAndClosedQuote": true,
+      "boundQuoteParagraphCount": 1,
+      "cueOffsetFromOpeningQuote": 0,
+      "namedBillReferencesInOriginalVisibleBody": [
+        {
+          "bill": "SF 4056",
+          "visibleOriginalPublisherBodyContainsReference": true
+        },
+        {
+          "bill": "SF 3257",
+          "visibleOriginalPublisherBodyContainsReference": true
+        },
+        {
+          "bill": "SF 3250",
+          "visibleOriginalPublisherBodyContainsReference": true
+        }
+      ],
+      "humanApprovedFullVerbatimQuote": false,
+      "audioRecordingAuthenticated": false,
+      "firstPublisherPublicationTimestampAuthenticated": false,
+      "SenateRollCallOrVotePredictionTimeProved": false
+    }
+  ],
+  "temporalHonesty": {
+    "hawjEarliestIndependentlyVerifiedOriginalByUtc": "2024-03-24T19:01:09Z",
+    "hawjReleasedAfterMarch11TransportationHearing": true,
+    "mcewenEarliestIndependentlyVerifiedOriginalByUtc": "2024-04-22T03:56:26Z",
+    "mcewenReleasedAfterFebruary22InformationalHearing": true,
+    "publisherDisplayedDatesMayPrecedeOnlyAuthenticatedArchiveOriginal": true,
+    "originalAudioOfHearingNotVerifiedByThisSource": true,
+    "citedBillIdsNotAnAuthenticatedActualSenatorVote": true,
+    "laterLegislativeEventsWouldRequireIndependentVoteChronologyAndPreVoteCutoff": true,
+    "originalCompleteHumanVerbatimQuoteNotApproved": true,
+    "originalSourceBodyQuoteBoundaryConfirmedOnlyForSelectedShortPolicyCue": true,
+    "threeCaptureVersionsNotThreeDifferentSpeechEvents": true,
+    "noRawOriginalHtmlPdfWarcFullQuoteVideoOrAudioCommitted": true,
+    "noPrivateVotePredictDbSourceRowOrPersonalInfoAccess": true,
+    "noCollectorProductionDeploymentDbModelOrServingModifications": true
+  }
+}
