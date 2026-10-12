@@ -15,7 +15,7 @@ const vote=(yea:number,nay:number,absent:number|null,i:number,oral=false)=>{
   'AYES: '+yes.join(', ')+' NAYS: '+no.join(', ')+
   (absent===null?'':(absent===0?' ABSENT: -':' ABSENT: '+others.join(', ')))+
   ' On a vote of '+yea+' AYES'+(i%2?' and ':', ')+nay+' NAYS, '+
-  (i===6?'THE MOTION PREVAILED.':('the motion did not prevail and the '+
+  (i===6?'THE MOTION PREVAILED.':((i>=1&&i<=4?'the motion does not prevail and the ':'the motion did not prevail and the ')+
    (oral?'A16':i===0?'A17':i===1?'A16':i===2?'A15':i===3?'A15':'A17')+
    ' Amendment was not adopted.'))+' ';
 };
@@ -70,6 +70,14 @@ test('synthetic minute with seven distinct roll contexts resolves bill, motion, 
   assert.equal(r.individualNamedVoteImported,false);
   assert.equal(r.noSeparatePrintMinuteParityCertificate,true);
  }
+});
+test('real original electronic minutes mix \"did not prevail\" and \"does not prevail\"; both are failed amendments',()=>{
+ const cases=inspect2022FinanceApr07OriginalMinutes(fixture).originalRollSourceProofs;
+ assert.equal(cases[0].reportedOutcome,'FAILED');
+ assert.equal(cases[1].reportedOutcome,'FAILED');
+ assert.equal(cases[4].reportedOutcome,'FAILED');
+ assert.equal(cases[5].reportedOutcome,'FAILED');
+ assert.equal(cases[6].reportedOutcome,'PREVAILED');
 });
 test('refuse count drift or extra/missing roll without silently dropping an amendment',()=>{
  assert.throws(()=>inspect2022FinanceApr07OriginalMinutes(fixture.replace(
