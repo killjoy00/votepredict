@@ -1,0 +1,34 @@
+name: '#864 original 141 no-Minutes and 2021-22 print boundary'
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-committee-coverage-gap-gates.ts
+      - tests/senate-864-committee-coverage-gap-gates.test.ts
+      - docs/evaluation/senate-864-2021-print-and-141-unlinked-meetings-remaining-evidence.md
+      - .github/workflows/senate-864-committee-source-coverage-gates.yml
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-864-committee-source-coverage-gates.yml
+permissions:
+  contents: read
+jobs:
+  offline-government-evidence-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Independent source-denominator/print-context guards
+        run: |
+          node --import tsx --test tests/senate-864-committee-coverage-gap-gates.test.ts
+      - name: Read-only type check without production keys
+        run: npm run typecheck
+      - run: npm audit --omit=dev --audit-level=high
