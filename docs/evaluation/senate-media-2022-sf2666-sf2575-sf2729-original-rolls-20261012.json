@@ -1,0 +1,295 @@
+{
+  "version": "track-d-2022-three-standalone-bills-official-journal-and-first-party-original-receipts-v1",
+  "researchObservedOn": "2026-10-12",
+  "provenance": {
+    "issue": 987,
+    "pr": 1242,
+    "firstSuccessfulCompleteLiveReadOnlyCI": 38291698878,
+    "sourceCommitHead": "9fd8788a1672083d4fe65e02a004a1779e7d1343",
+    "githubActionsWorkflow": "CI",
+    "repositoryWideTestsPassed": 2863,
+    "repositoryWideTestsFailed": 0,
+    "adversarialStandaloneSourceVoteAndProxyTestsPassed": 10
+  },
+  "historicalPublisher": {
+    "title": "Senate Republicans Propose Parents' Bill of Rights",
+    "originalPublisherUrl": "https://www.mnsenaterepublicans.com/senate-republicans-propose-parents-bill-of-rights/",
+    "earliestOriginalPublisherOriginalAuthenticatedCaptureUtc": "2022-02-14T23:24:11Z",
+    "firstCapture": {
+      "utc": "2022-02-14T23:24:11Z",
+      "indexedSha1Base32": "QKCIZE6CX4AZ2ZUOT6JNUNDKNYRYLEGP",
+      "rawOriginalHtmlSha256": "0bf05a87365ca09a6a85114fe867995c4bfe0531a35adf61641454ed322e7696",
+      "rawHtmlBytes": 91008,
+      "independentlyReauthenticatedOnInitialDirectVoteRun": true
+    },
+    "secondPriorPreviouslyAuthenticatedVersion": {
+      "utc": "2022-03-07T02:18:03Z",
+      "indexedSha1Base32": "LWJGXK62GLCLUFK3ELND7PJLHIV6LLXW",
+      "rawOriginalHtmlSha256": "858c8ee8fdf1b5fb2dee03cf1d5740066dac1476ec5006541f700f3803844cbd",
+      "rawHtmlBytes": 91648,
+      "directVoteRunRetrieval": "http_unavailable_unknown",
+      "positiveHistoricalOriginalProofFromPriorMergedIssue987": true
+    },
+    "namedOriginalIndividualFirstCompleteClosedQuoteSegments": [
+      {
+        "senator": "Justin Eichorn",
+        "sourceSelectedShortCueId": "it is the fundamental right of parents to direct the upbringing and education of their children",
+        "firstClosedOriginalQuoteSegmentRawSha256": "17449db698d3ccbcad420e653c040ef2d6a6d983bb48b8ffc2a9824003966f5e",
+        "firstClosedQuoteLengthCharacters": 96,
+        "fullNamedSenatorBeforeQuote": true,
+        "issuerSurnameImmediatelyAfterClosingQuote": true,
+        "oneBoundedMatchInThisExactArchivedOriginal": true,
+        "completeFollowingParagraphsAsWholeSenatorVerbatimNotHumanApproved": true,
+        "actualRecordedVoiceNotAuthenticated": true
+      },
+      {
+        "senator": "Michelle Benson",
+        "sourceSelectedShortCueId": "parents have the right to know what their kids are being taught",
+        "firstClosedOriginalQuoteSegmentRawSha256": "3dbf76a78e179e8fa642185c6edcaac07ac985c1a96ee487c4f5165d956a5922",
+        "firstClosedQuoteLengthCharacters": 64,
+        "fullNamedSenatorBeforeQuote": true,
+        "issuerSurnameImmediatelyAfterClosingQuote": true,
+        "oneBoundedMatchInThisExactArchivedOriginal": true,
+        "completeFollowingParagraphsAsWholeSenatorVerbatimNotHumanApproved": true,
+        "actualRecordedVoiceNotAuthenticated": true
+      },
+      {
+        "senator": "Paul Gazelka",
+        "sourceSelectedShortCueId": "children are most successful when their parents are engaged and involved in their education",
+        "firstClosedOriginalQuoteSegmentRawSha256": "b8995d111cb1492fc3cbedcdcdf31f064eee9268a99b92af71264e7ba7b8b739",
+        "firstClosedQuoteLengthCharacters": 101,
+        "fullNamedSenatorBeforeQuote": true,
+        "issuerSurnameImmediatelyAfterClosingQuote": true,
+        "oneBoundedMatchInThisExactArchivedOriginal": true,
+        "completeFollowingParagraphsAsWholeSenatorVerbatimNotHumanApproved": true,
+        "actualRecordedVoiceNotAuthenticated": true
+      },
+      {
+        "senator": "Roger Chamberlain",
+        "sourceSelectedShortCueId": "it is a parent's absolute, fundamental right to be actively involved",
+        "firstClosedOriginalQuoteSegmentRawSha256": "2bfbc206218daf7ab0e0bf5e74f5b482626637fdb35e73ac10c551dd4eb2f11d",
+        "firstClosedQuoteLengthCharacters": 117,
+        "fullNamedSenatorBeforeQuote": true,
+        "issuerSurnameImmediatelyAfterClosingQuote": true,
+        "oneBoundedMatchInThisExactArchivedOriginal": true,
+        "completeFollowingParagraphsAsWholeSenatorVerbatimNotHumanApproved": true,
+        "actualRecordedVoiceNotAuthenticated": true
+      }
+    ],
+    "firstPublisherPostingMinuteNotIndependentlyVerified": true,
+    "noOriginalRawPublisherHtmlOrFullQuotationPersisted": true
+  },
+  "senateJournalOriginals": [
+    {
+      "sourceDate": "2022-03-03",
+      "senateLegislativeDay": 73,
+      "officialOriginalPdfUrl": "https://www.senate.mn/journals/2021-2022/20220303073.pdf",
+      "fullDownloadedOriginalPdfSha256": "57508a799f660850e0794b4f09a7c958cd72dff606e58a493f7557a15358aa3b",
+      "originalRawPdfBytes": 412715,
+      "originalPdfPages": 18,
+      "verifiedExactOfficialPdfBodyAndSeparateMemberLists": true,
+      "namedOriginalSenateBallots": [
+        {
+          "originalBill": "SF2729",
+          "senator": "Roger Chamberlain",
+          "standaloneVoteKind": "Senate third-reading passage",
+          "role": "supporting_control",
+          "topic": "school_board_contact_privacy",
+          "officialWholeJournalPdfPageOneBased": 17,
+          "revisorListedPrintedSenateJournalPage": 5209,
+          "officialRecordedChamberYeas": 67,
+          "officialRecordedChamberNays": 0,
+          "personallyInOriginalOfficialAffirmativeList": true,
+          "personallyInOriginalOfficialNegativeList": false,
+          "correctBillIsNearestPriorSenateFile": true,
+          "strictSeparateThirdReadingRollCallContext": true,
+          "billBeforeVoteAnchorDistanceChars": 134,
+          "verifiedDirectOriginalNamedMemberVote": "yea",
+          "voteNotInferredFromAuthorshipOrChamberTotals": true
+        },
+        {
+          "originalBill": "SF2575",
+          "senator": "Paul Gazelka",
+          "standaloneVoteKind": "Senate third-reading passage",
+          "role": "primary",
+          "topic": "parental_curriculum_review",
+          "officialWholeJournalPdfPageOneBased": 17,
+          "revisorListedPrintedSenateJournalPage": 5209,
+          "officialRecordedChamberYeas": 37,
+          "officialRecordedChamberNays": 30,
+          "personallyInOriginalOfficialAffirmativeList": true,
+          "personallyInOriginalOfficialNegativeList": false,
+          "correctBillIsNearestPriorSenateFile": true,
+          "strictSeparateThirdReadingRollCallContext": true,
+          "billBeforeVoteAnchorDistanceChars": 109,
+          "verifiedDirectOriginalNamedMemberVote": "yea",
+          "voteNotInferredFromAuthorshipOrChamberTotals": true
+        }
+      ],
+      "fullGovernmentPDFTextNotPersisted": true
+    },
+    {
+      "sourceDate": "2022-03-10",
+      "senateLegislativeDay": 76,
+      "officialOriginalPdfUrl": "https://www.senate.mn/journals/2021-2022/20220310076.pdf",
+      "fullDownloadedOriginalPdfSha256": "3319cd7bbcebaca4b19657eb6a99d2a8cf70ee9b03251b608513084e235cb431",
+      "originalRawPdfBytes": 508243,
+      "originalPdfPages": 26,
+      "verifiedExactOfficialPdfBodyAndSeparateMemberLists": true,
+      "namedOriginalSenateBallots": [
+        {
+          "originalBill": "SF2666",
+          "senator": "Michelle Benson",
+          "standaloneVoteKind": "Senate third-reading passage",
+          "role": "primary",
+          "topic": "class_syllabi_parent_access",
+          "officialWholeJournalPdfPageOneBased": 25,
+          "revisorListedPrintedSenateJournalPage": 5293,
+          "officialRecordedChamberYeas": 36,
+          "officialRecordedChamberNays": 31,
+          "personallyInOriginalOfficialAffirmativeList": true,
+          "personallyInOriginalOfficialNegativeList": false,
+          "correctBillIsNearestPriorSenateFile": true,
+          "strictSeparateThirdReadingRollCallContext": true,
+          "billBeforeVoteAnchorDistanceChars": 109,
+          "verifiedDirectOriginalNamedMemberVote": "yea",
+          "voteNotInferredFromAuthorshipOrChamberTotals": true
+        }
+      ],
+      "fullGovernmentPDFTextNotPersisted": true
+    }
+  ],
+  "selectedHistoricalOriginalBillTextVersions": [
+    {
+      "bill": "SF2575",
+      "officialRevisorTextVersion": 0,
+      "url": "https://www.revisor.mn.gov/bills/92/2022/0/SF/2575/versions/0/pdf/",
+      "fullOriginalPdfSha256": "a73c9ba43aa269fb7201299511e981c30bcde54203a9939a0fad46da6ec34648",
+      "originalPdfBytes": 211399,
+      "originalPdfPages": 1,
+      "officialCorrect92ndSenateBillAndVersionTextAuthenticated": true,
+      "selectedTopicLexicalCues": [
+        {
+          "shortPolicyCue": "parental curriculum review",
+          "present": true
+        },
+        {
+          "shortPolicyCue": "instructional materials",
+          "present": true
+        }
+      ],
+      "allSelectedPolicyTopicTermsPresent": true,
+      "currentRevisorVersionListingNotIndependently2022PreVoteHtmlCapture": true,
+      "exactFirstPublicPostingMinuteNotProved": true,
+      "identicalToEveryFloorAmendmentAtVoteNotIndependentlyCertified": true,
+      "noFullGovernmentBillPdfTextPersisted": true
+    },
+    {
+      "bill": "SF2729",
+      "officialRevisorTextVersion": 1,
+      "url": "https://www.revisor.mn.gov/bills/92/2022/0/SF/2729/versions/1/pdf/",
+      "fullOriginalPdfSha256": "b537a8f8b1142066fff5a8b9516028478f9650ca2a8a8d701b1ae3d8afaf5a70",
+      "originalPdfBytes": 219967,
+      "originalPdfPages": 2,
+      "officialCorrect92ndSenateBillAndVersionTextAuthenticated": true,
+      "selectedTopicLexicalCues": [
+        {
+          "shortPolicyCue": "school district board meetings",
+          "present": true
+        },
+        {
+          "shortPolicyCue": "address or other contact information",
+          "present": true
+        }
+      ],
+      "allSelectedPolicyTopicTermsPresent": true,
+      "currentRevisorVersionListingNotIndependently2022PreVoteHtmlCapture": true,
+      "exactFirstPublicPostingMinuteNotProved": true,
+      "identicalToEveryFloorAmendmentAtVoteNotIndependentlyCertified": true,
+      "noFullGovernmentBillPdfTextPersisted": true
+    },
+    {
+      "bill": "SF2666",
+      "officialRevisorTextVersion": 1,
+      "url": "https://www.revisor.mn.gov/bills/92/2022/0/SF/2666/versions/1/pdf/",
+      "fullOriginalPdfSha256": "746e101e83590fe85fe6374a2f4bf96d7b093586055b9724f9b648642dece4e1",
+      "originalPdfBytes": 221128,
+      "originalPdfPages": 2,
+      "officialCorrect92ndSenateBillAndVersionTextAuthenticated": true,
+      "selectedTopicLexicalCues": [
+        {
+          "shortPolicyCue": "class syllab",
+          "present": true
+        },
+        {
+          "shortPolicyCue": "parent",
+          "present": true
+        }
+      ],
+      "allSelectedPolicyTopicTermsPresent": true,
+      "currentRevisorVersionListingNotIndependently2022PreVoteHtmlCapture": true,
+      "exactFirstPublicPostingMinuteNotProved": true,
+      "identicalToEveryFloorAmendmentAtVoteNotIndependentlyCertified": true,
+      "noFullGovernmentBillPdfTextPersisted": true
+    }
+  ],
+  "evidenceJoinCandidates": [
+    {
+      "senator": "Roger Chamberlain",
+      "bill": "SF2729",
+      "role": "supporting_control",
+      "date": "2022-03-03",
+      "earliestOriginalPublisherArticleBeforeVoteDay": true,
+      "originalPersonallyOwnedBoundedFirstPrintedQuote": true,
+      "originalOfficialSenatePersonalVote": "yea",
+      "selectedGovernmentBillTextPolicyCueMatch": true,
+      "strongResearchSourceBeforeDirectStandaloneVoteCandidate": true,
+      "validStoredTrainingOrProductionPredictionLabelApproved": false
+    },
+    {
+      "senator": "Paul Gazelka",
+      "bill": "SF2575",
+      "role": "primary",
+      "date": "2022-03-03",
+      "earliestOriginalPublisherArticleBeforeVoteDay": true,
+      "originalPersonallyOwnedBoundedFirstPrintedQuote": true,
+      "originalOfficialSenatePersonalVote": "yea",
+      "selectedGovernmentBillTextPolicyCueMatch": true,
+      "strongResearchSourceBeforeDirectStandaloneVoteCandidate": true,
+      "validStoredTrainingOrProductionPredictionLabelApproved": false
+    },
+    {
+      "senator": "Michelle Benson",
+      "bill": "SF2666",
+      "role": "primary",
+      "date": "2022-03-10",
+      "earliestOriginalPublisherArticleBeforeVoteDay": true,
+      "originalPersonallyOwnedBoundedFirstPrintedQuote": true,
+      "originalOfficialSenatePersonalVote": "yea",
+      "selectedGovernmentBillTextPolicyCueMatch": true,
+      "strongResearchSourceBeforeDirectStandaloneVoteCandidate": true,
+      "validStoredTrainingOrProductionPredictionLabelApproved": false
+    }
+  ],
+  "totals": {
+    "historicallyOriginalAuthenticatedPublisherArticleUrlCountNewThisIncrement": 0,
+    "historicalPublisherOriginalHtmlVersionsReauthenticatedThisIncrement": 1,
+    "verifiedSeparatelyAttributedFirstClosedOriginalSenatorQuotes": 4,
+    "independentlyDownloadedAndSHA256VerifiedOriginalOfficialSenateJournalPDFs": 2,
+    "verifiedOfficialIndividualMemberYeaVotesOnThreeDistinctStandaloneBills": 3,
+    "independentlyDownloadedAndSHA256VerifiedOfficialOriginalBillVersions": 3,
+    "fullyProductionEligibleHistoricalSourceToVoteLabelsCreated": 0
+  },
+  "holdBoundaries": {
+    "originalPublisherInitialPostingExactUtcStillUnknown": true,
+    "archivedFeb14OriginalActuallyPredatesAllThreeMarchVotes": true,
+    "feb14OriginalMayNotPredictEarlierFeb14Hearing": true,
+    "journalNamedMemberVoteProofIndependentOfSenatorBillAuthorship": true,
+    "Rule40ProxyNoteOnlyNotConsideredPersonalRosterEntry": true,
+    "exactFirstPublicAsOfTextVersionOrLastFloorAmendmentStillNotCertified": true,
+    "unrecordedAudioAndDifferentMprBensonKuneshProgramRemainUnknown": true,
+    "noPrivateVotePredictCorpusOrProductionSourceRowCompared": true,
+    "noForecastCollectorModelDatabaseStoredVoteOrServingChanged": true,
+    "noCopyrightedCompleteArticleTranscriptOrGovernmentOriginalFullPdfCommitted": true
+  }
+}
