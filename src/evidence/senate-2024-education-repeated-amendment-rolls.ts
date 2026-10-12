@@ -122,7 +122,7 @@ export function audit2024EducationRepeatedAmendmentRolls(
   const flat=originalPdfExtractedText.replace(/\s+/g,' ').trim();
   const requestCount=[...flat.matchAll(/\brequested a roll call vote\b/gi)].length;
   const requests=[...flat.matchAll(
-    /\bSenator\s+[A-Za-zÀ-ž][A-Za-zÀ-ž .'-]{0,80}?\s+requested a roll call vote for the adoption of\s+(\d{1,2})\s+amendment\./gi,
+    /Senator\s+[A-Za-zÀ-ž][A-Za-zÀ-ž .'-]{0,80}?\s+requested a roll call vote for the adoption of\s+(\d{1,2})\s+amendment\./gi,
   )];
   if(requestCount!==6||requests.length!==6)
     throw Error('Every original roll-call request must be separately located');
@@ -143,7 +143,7 @@ export function audit2024EducationRepeatedAmendmentRolls(
     if(start<0||stop<=start)throw Error('Original action offsets not provable');
     const block=flat.slice(start,stop);
     const found=block.match(
-      /4\s*\/\s*6\s*\(\s*Ayes?\s*:\s*([^)]*?)\s*;\s*Nays?\s*:\s*([^)]*?)\s*\)\s*MOTION\s+FAILED\b/i,
+      /4\s*\/\s*6\s*\(\s*Ayes?\s*:\s*([^)]*?)\s*;\s*Nays?\s*:\s*([^)]*?)\s*\)\s*MOTION\s+FAILED/i,
     );
     if(!found)throw Error('Original individual motion result/tally ambiguous');
     const snippet='4/6 (Ayes: '+found[1]+'; Nays: '+found[2]+') MOTION FAILED';
