@@ -1,0 +1,296 @@
+{
+  "schemaVersion": "mn-864-2021-25-neon-v5-protected-verified-baseline-v1",
+  "issue": 864,
+  "sourceReceipt": "https://github.com/killjoy00/votepredict/issues/864#issuecomment-6116826026",
+  "sourceReceiptId": 6116826026,
+  "run": {
+    "id": 38196817626,
+    "url": "https://github.com/killjoy00/votepredict/actions/runs/38196817626",
+    "startedAt": "2026-10-12T02:42:07Z",
+    "completedAt": "2026-10-12T02:46:14Z",
+    "conclusion": "success",
+    "mainCommit": "1b02981cfd204911c2834816dfe777222725f791",
+    "runnerFileBlobSha": "a3eccdf603e407824fbf79267c08a9d1ccd2c973",
+    "workflowFileBlobSha": "85a3a1ba4e4c7c4e680eab3ad043df0a5dd0e515",
+    "schema": "mn-864-existing-key-cross-track-readonly-counts-v2"
+  },
+  "transaction": {
+    "readOnly": true,
+    "isolation": "REPEATABLE READ",
+    "allSevenSourceFamilyQueriesSucceeded": true,
+    "sqlSavepointsUsed": true,
+    "explicitRollbackSucceeded": true,
+    "productionMutations": 0
+  },
+  "limits": {
+    "countedDatabase": "existing VotePredict Neon project default branch, not independently tied to deployed production",
+    "deployedProductionBindingIndependentlyVerified": false,
+    "exactOriginalSourceToDatabaseIdentityProven": false,
+    "sourceFamilyHolds": [],
+    "zeroStoredFieldNullsAreNotOriginalTruthProof": true,
+    "committeeOriginalIndependentPdfReferenceCount": 1452,
+    "committeeOriginalPdfReferencesIdentitiesMatched": false,
+    "committee2021OfficialPrintMinutesCollected": false,
+    "financeSourceDocumentsAllChambers": true,
+    "financeSourceDocumentsYearMetadataUnknown": true,
+    "financeCandidateEvidenceItemsAudited": false,
+    "campaignRowsAreNotSenatePromiseCount": true,
+    "mediaRowsAreNotAttributedQuoteCount": true,
+    "sourceOriginalEventDenominatorComplete": false,
+    "historicalAsOfEligibilityCertified": false,
+    "noDataRepairOrForecastPromotion": true
+  },
+  "groups": {
+    "roster": [
+      {
+        "year": "2021",
+        "people": "67",
+        "memberships": "67",
+        "memberships_missing_date_boundary": "0"
+      },
+      {
+        "year": "2022",
+        "people": "67",
+        "memberships": "67",
+        "memberships_missing_date_boundary": "0"
+      },
+      {
+        "year": "2023",
+        "people": "90",
+        "memberships": "198",
+        "memberships_missing_date_boundary": "0"
+      },
+      {
+        "year": "2024",
+        "people": "68",
+        "memberships": "134",
+        "memberships_missing_date_boundary": "0"
+      },
+      {
+        "year": "2025",
+        "people": "70",
+        "memberships": "136",
+        "memberships_missing_date_boundary": "0"
+      }
+    ],
+    "finance": [
+      {
+        "year": "unknown_or_outside",
+        "family": "campaign_finance_bulk",
+        "source_document_rows": "70",
+        "documents_without_stored_chamber": "70",
+        "documents_without_stored_session": "70",
+        "missing_source_sha": "0"
+      },
+      {
+        "year": "unknown_or_outside",
+        "family": "campaign_finance_candidate_contribution_bulk",
+        "source_document_rows": "117",
+        "documents_without_stored_chamber": "117",
+        "documents_without_stored_session": "117",
+        "missing_source_sha": "0"
+      },
+      {
+        "year": "unknown_or_outside",
+        "family": "campaign_finance_candidate_expenditure_bulk",
+        "source_document_rows": "116",
+        "documents_without_stored_chamber": "116",
+        "documents_without_stored_session": "116",
+        "missing_source_sha": "0"
+      },
+      {
+        "year": "unknown_or_outside",
+        "family": "campaign_finance_independent_expenditure_bulk",
+        "source_document_rows": "5",
+        "documents_without_stored_chamber": "5",
+        "documents_without_stored_session": "5",
+        "missing_source_sha": "0"
+      }
+    ],
+    "committeeSources": [
+      {
+        "year": "2022",
+        "source_document_rows": "325",
+        "unique_source_urls": "325",
+        "missing_source_sha": "0",
+        "missing_meeting_date": "0",
+        "missing_committee_name": "0"
+      },
+      {
+        "year": "2023",
+        "source_document_rows": "454",
+        "unique_source_urls": "454",
+        "missing_source_sha": "0",
+        "missing_meeting_date": "0",
+        "missing_committee_name": "0"
+      },
+      {
+        "year": "2024",
+        "source_document_rows": "258",
+        "unique_source_urls": "258",
+        "missing_source_sha": "0",
+        "missing_meeting_date": "0",
+        "missing_committee_name": "0"
+      },
+      {
+        "year": "2025",
+        "source_document_rows": "415",
+        "unique_source_urls": "415",
+        "missing_source_sha": "0",
+        "missing_meeting_date": "0",
+        "missing_committee_name": "0"
+      }
+    ],
+    "committeeVotes": [
+      {
+        "year": "2022",
+        "committee_vote_events": "38",
+        "events_missing_document": "0",
+        "events_missing_key": "0",
+        "missing_tally": "0"
+      },
+      {
+        "year": "2023",
+        "committee_vote_events": "33",
+        "events_missing_document": "0",
+        "events_missing_key": "0",
+        "missing_tally": "0"
+      },
+      {
+        "year": "2024",
+        "committee_vote_events": "49",
+        "events_missing_document": "0",
+        "events_missing_key": "0",
+        "missing_tally": "0"
+      },
+      {
+        "year": "2025",
+        "committee_vote_events": "33",
+        "events_missing_document": "0",
+        "events_missing_key": "0",
+        "missing_tally": "0"
+      }
+    ],
+    "committeeChoices": [
+      {
+        "year": "2022",
+        "member_vote_rows": "259",
+        "unresolved_member_identity": "0",
+        "missing_source_member_name": "0"
+      },
+      {
+        "year": "2023",
+        "member_vote_rows": "197",
+        "unresolved_member_identity": "0",
+        "missing_source_member_name": "0"
+      },
+      {
+        "year": "2024",
+        "member_vote_rows": "227",
+        "unresolved_member_identity": "0",
+        "missing_source_member_name": "0"
+      },
+      {
+        "year": "2025",
+        "member_vote_rows": "305",
+        "unresolved_member_identity": "0",
+        "missing_source_member_name": "0"
+      }
+    ],
+    "campaign": [
+      {
+        "year": "2020",
+        "campaign_evidence_rows": "54",
+        "distinct_source_documents": "20",
+        "missing_source_sha": "0",
+        "undated_rows": "0"
+      },
+      {
+        "year": "2021",
+        "campaign_evidence_rows": "84",
+        "distinct_source_documents": "31",
+        "missing_source_sha": "0",
+        "undated_rows": "0"
+      },
+      {
+        "year": "2022",
+        "campaign_evidence_rows": "468",
+        "distinct_source_documents": "160",
+        "missing_source_sha": "0",
+        "undated_rows": "0"
+      },
+      {
+        "year": "2023",
+        "campaign_evidence_rows": "154",
+        "distinct_source_documents": "68",
+        "missing_source_sha": "0",
+        "undated_rows": "0"
+      },
+      {
+        "year": "2024",
+        "campaign_evidence_rows": "253",
+        "distinct_source_documents": "90",
+        "missing_source_sha": "0",
+        "undated_rows": "0"
+      },
+      {
+        "year": "2025",
+        "campaign_evidence_rows": "115",
+        "distinct_source_documents": "57",
+        "missing_source_sha": "0",
+        "undated_rows": "0"
+      },
+      {
+        "year": "2026",
+        "campaign_evidence_rows": "140",
+        "distinct_source_documents": "65",
+        "missing_source_sha": "0",
+        "undated_rows": "0"
+      }
+    ],
+    "media": [
+      {
+        "year": "2021",
+        "context_rows": "131",
+        "distinct_source_documents": "122",
+        "missing_source_sha": "0",
+        "missing_archive_url": "0"
+      },
+      {
+        "year": "2022",
+        "context_rows": "182",
+        "distinct_source_documents": "163",
+        "missing_source_sha": "0",
+        "missing_archive_url": "0"
+      },
+      {
+        "year": "2023",
+        "context_rows": "155",
+        "distinct_source_documents": "132",
+        "missing_source_sha": "0",
+        "missing_archive_url": "0"
+      },
+      {
+        "year": "2024",
+        "context_rows": "118",
+        "distinct_source_documents": "103",
+        "missing_source_sha": "0",
+        "missing_archive_url": "0"
+      },
+      {
+        "year": "2025",
+        "context_rows": "208",
+        "distinct_source_documents": "168",
+        "missing_source_sha": "0",
+        "missing_archive_url": "0"
+      },
+      {
+        "year": "2026",
+        "context_rows": "154",
+        "distinct_source_documents": "117",
+        "missing_source_sha": "0",
+        "missing_archive_url": "0"
+      }
+    ]
+  }
+}

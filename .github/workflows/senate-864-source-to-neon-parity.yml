@@ -1,0 +1,364 @@
+name: One-shot #864 original Senate minutes vs stored Neon exact source parity
+on:
+  pull_request:
+    paths:
+      - scripts/audit-senate-864-protected-source-db-parity.ts
+      - scripts/verify-senate-864-source-db-sql-local.ts
+      - src/evidence/senate-864-source-db-sanitized-compare.ts
+      - tests/senate-864-protected-source-db-parity.test.ts
+      - tests/senate-864-v5-protected-baseline.test.ts
+      - docs/evaluation/source-proof/senate-864-v5-protected-neon-seven-family-baseline.json
+      - .github/workflows/senate-864-source-to-neon-parity.yml
+  push:
+    branches: [main]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: senate-864-original-source-parity-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  pr-static:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Compare synthetic fixture, guarded transaction and immutable V5 receipt offline
+        run: |
+          node --import tsx --test tests/senate-864-protected-source-db-parity.test.ts
+          node --import tsx --test tests/senate-864-v5-protected-baseline.test.ts
+  pr-disposable-sql:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Apply migrations to disposable local database only
+        run: npm run db:migrate
+      - name: EXPLAIN without ANALYZE for all three fixed immutable SELECT statements
+        run: node --import tsx scripts/verify-senate-864-source-db-sql-local.ts
+  main-independent-verify:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_SOURCE_TO_DB_PARITY_ONESHOT_20261011_V1')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Confirm reviewed exact SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Apply migrations only to disposable PostgreSQL
+        run: npm run db:migrate
+      - run: node --import tsx scripts/verify-senate-864-source-db-sql-local.ts
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+      - name: Retrieve independently hashed original 2022 LRL PDF metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2022-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+      - name: Retrieve independently hashed original 2023 LRL PDF metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2023-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+      - name: Retrieve independently hashed original 2024 LRL PDF metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2024-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+      - name: Retrieve independently hashed original 2025 LRL PDF metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2025-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+      - name: Reject mismatched original four SHA-pinned JSON manifests before key access
+        run: node --import tsx scripts/audit-senate-864-protected-source-db-parity.ts --source-preflight
+  protected-readonly-original-parity:
+    needs: [main-independent-verify]
+    if: >-
+      needs.main-independent-verify.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_SOURCE_TO_DB_PARITY_ONESHOT_20261011_V1')
+    runs-on: ubuntu-latest
+    environment: evidence-readonly-sandbox
+    timeout-minutes: 12
+    outputs:
+      public_parity_b64: ${{ steps.parity.outputs.public_parity_b64 }}
+      safe_failure_phase: ${{ steps.parity.outputs.safe_failure_phase }}
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_864_APPROVAL: BOUNDED_COUNTS_ONLY
+      VOTEPREDICT_864_INDEPENDENT_CI_VERIFIED: ${{ needs.main-independent-verify.result == 'success' && 'true' || 'false' }}
+      VOTEPREDICT_864_ONE_SHOT_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_SOURCE_TO_DB_PARITY_ONESHOT_20261011_V1') && 'true' || 'false' }}
+      VOTEPREDICT_864_SOURCE_PARITY_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_SOURCE_TO_DB_PARITY_ONESHOT_20261011_V1') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Confirm checked-out commit exactly passed independent verification
+        env:
+          VERIFIED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$VERIFIED_SHA"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2022-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+      - uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2023-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+      - uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2024-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+      - uses: actions/download-artifact@v4
+        with:
+          name: senate-committee-2025-original-action-source-metadata
+          repository: killjoy00/votepredict
+          run-id: 38066441841
+          github-token: ${{ github.token }}
+          path: artifacts
+      - name: Exact URL/raw PDF SHA/hearing metadata/vote/choice comparison in READ ONLY ROLLBACK
+        id: parity
+        run: node --import tsx scripts/audit-senate-864-protected-source-db-parity.ts --protected
+  publish-sanitized-parity:
+    needs: [main-independent-verify, protected-readonly-original-parity]
+    if: >-
+      always() &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      contains(github.event.head_commit.message, 'SENATE_864_SOURCE_TO_DB_PARITY_ONESHOT_20261011_V1') &&
+      (needs.main-independent-verify.result == 'failure' ||
+       (needs.main-independent-verify.result == 'success' &&
+       (needs.protected-readonly-original-parity.result == 'success' ||
+        needs.protected-readonly-original-parity.result == 'failure')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    permissions:
+      contents: read
+      issues: write
+    env:
+      VERIFY_RESULT: ${{ needs.main-independent-verify.result }}
+      PROTECTED_RESULT: ${{ needs.protected-readonly-original-parity.result }}
+      SAFE_RESULT: ${{ needs.protected-readonly-original-parity.outputs.public_parity_b64 }}
+      SAFE_PHASE: ${{ needs.protected-readonly-original-parity.outputs.safe_failure_phase }}
+    steps:
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const run='https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID;
+            const prefix=[
+              '## #864 — Original 2022–25 Senate Minutes PDFs vs existing Neon source identity',
+              '**Reviewed main SHA:** '+process.env.GITHUB_SHA,
+              '**Protected run:** '+run,
+              '**Original metadata provenance:** action 38066441841; four pinned original JSON SHA-256s',
+              'No private row, name, PDF body, person-level data or credentials are published.',
+            ];
+            let body;
+            if(process.env.VERIFY_RESULT==='failure'){
+              body=[...prefix,'','**PRE-SECRET HOLD:** one of disposable SQL EXPLAIN, SHA-pinned original source manifest, full CI or audit checks failed. Protected key was not accessed. No parity can be inferred.'].join('\n');
+            }else if(process.env.PROTECTED_RESULT==='failure'){
+              const stage=process.env.SAFE_PHASE||'not_reported';
+              if(!/^[a-z_]{1,80}$/.test(stage))throw Error('Untrusted stage');
+              body=[...prefix,'','**PROTECTED READ-ONLY AUDIT FAILED CLOSED:** safe phase '+stage+'. No source parity can be inferred; no data repair authorized.'].join('\n');
+            }else if(process.env.PROTECTED_RESULT==='success'){
+              const encoded=process.env.SAFE_RESULT||'';
+              if(!/^[A-Za-z0-9+/=]+$/.test(encoded)||encoded.length>30000)
+                throw Error('Invalid protected result');
+              const r=JSON.parse(Buffer.from(encoded,'base64').toString('utf8'));
+              const n=v=>{
+                if(typeof v!=='number'||!Number.isSafeInteger(v)||v<0||v>100000000)
+                  throw Error('Invalid sanitized numeric count');
+                return v;
+              };
+              if(r.schemaVersion!=='mn-864-senate-committee-original-vs-neon-sanitized-v1'
+                ||r.issue!==864
+                ||r.status!=='verified_default_neon_branch_original_to_stored_source_audit'
+                ||r.pinnedOfficialOriginalSourceRun!==38066441841
+                ||r.authenticatedNeonDefaultBranch!==true
+                ||r.deployedProductionBindingIndependentlyVerified!==false
+                ||r.protectedTransactionReadOnly!==true
+                ||r.transactionRollbackCompleted!==true
+                ||r.noDatabaseMutations!==true
+                ||r.noPrivateRawRowExports!==true
+                ||r.noRawDatabaseRowsOrSourceNamesEmitted!==true
+                ||r.sourceContextActionsReconciled!==false
+                ||r.fullHistoricalReconciliationCertified!==false
+                ||r.neverEligibleForPredictionFromThisAudit!==true
+                ||!Array.isArray(r.scopeYears)
+                ||JSON.stringify(r.scopeYears)!=='[2022,2023,2024,2025]'
+                ||!Array.isArray(r.byYear)||r.byYear.length!==4
+                ||JSON.stringify(r.pinnedOriginalMetadataArtifacts)!==
+                  '[11674729430,11674568363,11675315164,11675014092]')
+                throw Error('Protected result scope flags incorrect');
+              if(r.sourceOriginalPdfUrlReferences!==1452
+                ||r.originalPdfsWithIndependentRawPdfSha!==1245
+                ||r.originalPdfsWithoutIndependentRawPdfSha!==207)
+                throw Error('Different original source cohort: fail closed');
+              const parts=[...prefix,'',
+                '**Completed:** independent authenticated default Neon branch, exact original URL identity and bounded event/choice source comparison. Transaction READ ONLY, explicit ROLLBACK.',
+                '**Not certified:** deployed production branch binding, 2021 print minutes, 2022 print/electronic differences, all official actions, or campaign/finance/media row parity.',
+                '',
+                '- Original PDF URLs: '+n(r.sourceOriginalPdfUrlReferences),
+                '- Original PDFs with independently SHA-observed bytes: '+n(r.originalPdfsWithIndependentRawPdfSha),
+                '- Original URLs with original raw byte SHA unresolved (NOT zero): '+n(r.originalPdfsWithoutIndependentRawPdfSha),
+                '- Stored minutes source rows: '+n(r.storedCommitteeSourceRows),
+                '- Original URLs with exactly one stored URL row: '+n(r.sourceExactUrlOneToOne),
+                '- Exact original PDF byte SHA equals stored content SHA: '+n(r.sourceParsedRawPdfShaMatches),
+                '- Original PDF byte SHA mismatches: '+n(r.sourceParsedRawPdfShaMismatches),
+                '- Official original URLs not found: '+n(r.originalUrlsAbsentFromStoredRecords),
+                '- Duplicate stored URLs pointing at source references: '+n(r.duplicateStoredUrlsForOriginals),
+                '- Extra stored minutes rows outside original cohort: '+n(r.storedRowsOutsideOriginalUrlSet),
+                '',
+                '- Recognized original PDF candidate recorded rolls: '+n(r.sourceCandidateRollCallEvents),
+                '- Matched original candidate rolls, including count/date/key/explicit choices: '+n(r.matchedCandidateRollCallEvents),
+                '- Candidate named choice tokens in original parsed PDFs: '+n(r.sourceCandidateNamedChoiceTokens),
+                '- Exact matching named tokens with a non-null stored membership key: '+n(r.matchingCandidateNamedChoiceTokensWithNonNullMembership),
+                '- Stored committee vote events: '+n(r.persistedCommitteeVoteEvents),
+                '- Stored committee member vote rows: '+n(r.persistedCommitteeMemberVoteRows),
+                '- Stored committee events lacking an in-scope source link: '+n(r.orphanedStoredCommitteeEvents),
+                '- Stored member choices lacking in-scope matched event link: '+n(r.orphanedStoredCommitteeMemberChoices),
+                ''];
+              const names=['originalPdfUrls','parsedOriginalPdfs','originalUnparsedPdfs',
+                'storedSourceRows','exactUrlOneToOne','originalParsedRawShaMatches',
+                'originalParsedRawShaMismatches','parsedMetadataMatches','parsedMetadataMismatches',
+                'unparsedUrlLocated','unparsedMeetingDateMatches','missingOriginalUrls',
+                'duplicateStoredOriginalUrls','storedRowsOutsideOriginalUrlSet',
+                'recognizedOriginalRollCalls','matchedRecognizedRollCalls',
+                'originalNamedChoiceTokens','matchedNamedChoiceTokens',
+                'storedCommitteeEvents','storedCommitteeMemberChoices'];
+              for(let i=0;i<r.byYear.length;i++){
+                const y=r.byYear[i];
+                if(y.year!==2022+i)throw Error('Year labels wrong');
+                parts.push('**'+y.year+'**: '+names.map(k=>k+'='+n(y[k])).join('; '));
+              }
+              const allowed=[
+                'official_original_pdf_not_retrieved','original_source_not_in_export',
+                'original_pdf_hash_mismatch','duplicate_persisted_source',
+                'source_meeting_or_committee_mismatch','missing_original_roll_call_event',
+                'duplicate_persisted_roll_call','persisted_event_date_mismatch',
+                'persisted_roll_call_tally_mismatch','unexpected_individual_choices_on_count_only',
+                'original_named_choices_mismatch','unresolved_persisted_member_identity',
+                'persisted_vote_event_not_matched_to_source'];
+              if(!r.mismatchDocumentCountsByCategory
+                ||JSON.stringify(Object.keys(r.mismatchDocumentCountsByCategory).sort())!==
+                  JSON.stringify(allowed.sort()))
+                throw Error('Unexpected category keys');
+              parts.push('','**PDF-level recognized candidate mismatch categories (not additive):**');
+              for(const k of allowed)parts.push('- '+k+': '+n(r.mismatchDocumentCountsByCategory[k]));
+              parts.push('','No context-motion evidence_items scan performed; no Senate membership date/role parity certified. Existing 1,452 stored document count is only a reference until these identity checks pass. #864 remains OPEN.');
+              body=parts.join('\n');
+            }else throw Error('Unknown protected status');
+            if(body.length>24000)throw Error('Unexpected issue comment size');
+            await github.rest.issues.createComment({
+              owner:'killjoy00',repo:'votepredict',issue_number:864,body,
+            });
