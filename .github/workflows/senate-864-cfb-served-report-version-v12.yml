@@ -1,0 +1,29 @@
+name: 'Senate #864 exact 2021-25 report-version provenance ledger V12'
+on:
+  pull_request:
+    paths:
+      - 'scripts/audit-cfb-864-served-report-version-ledger-v12.mjs'
+      - 'tests/cfb-864-served-report-version-ledger-v12.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2021-25-served-25-panel-229-exact-version-ledger.psv'
+      - 'docs/evaluation/cfb-2021-25-served-report-version-unified-v12.md'
+      - '.github/workflows/senate-864-cfb-served-report-version-v12.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  offline-original-source-join:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Fail closed on source ledger identity, alias or cutoff drift
+        run: node --test tests/cfb-864-served-report-version-ledger-v12.test.mjs
+      - name: Independently regenerate and compare all 229 version rows
+        run: node scripts/audit-cfb-864-served-report-version-ledger-v12.mjs
