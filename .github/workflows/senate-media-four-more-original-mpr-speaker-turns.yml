@@ -43,7 +43,7 @@ jobs:
         with:
           node-version: 22
       - name: Offline selected senator speaker-turn proof and source SHA negative controls
-        run: node --test tests/senate-media-four-more-original-mpr-speaker-turns.test.mjs
+        run: node --test tests/senate-media-four-more-original-mpr-speaker-turns.test.mjs tests/senate-media-four-more-original-mpr-real-receipts.test.mjs
       - name: Independently replay seven pinned original HTML bodies of four senators
         run: |
           node scripts/run-senate-media-four-more-original-mpr-speaker-turns.mjs \
