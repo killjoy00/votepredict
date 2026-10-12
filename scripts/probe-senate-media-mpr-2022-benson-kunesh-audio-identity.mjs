@@ -49,7 +49,8 @@ export function audioSourceIndicators(html){
   const extension=path.match(/\.(mp3|m4a|aac|m4b|ogg|wav|flac|m3u8|mp4)$/)?.[1]||null;
   const audioHost=/^(?:download|audio|ondemand|mediadownload|media|assets)\.(?:publicradio\.org|mpr\.org|mprnews\.org|apmcdn\.org|americanpublicmedia\.org)$/.test(host)
    ||/^(?:download|assets|codytranscripts)\.apmcdn\.org$/.test(host);
-  const playable=extension!==null||(/\b(?:audio|ondemand|podcast|enclosure)\b/.test(path)&&audioHost);
+  const approvedAudioPublisherHost=/(?:^|\.)(?:publicradio\.org|mpr\.org|mprnews\.org|apmcdn\.org|americanpublicmedia\.org|apmg\.io)$/.test(host);
+  const playable=approvedAudioPublisherHost&&(extension!==null||(/\b(?:audio|ondemand|podcast|enclosure)\b/.test(path)&&audioHost));
   if(!playable)continue;
   // No raw signed URL or source download keys persisted.
   const normalized=u.origin+u.pathname;
