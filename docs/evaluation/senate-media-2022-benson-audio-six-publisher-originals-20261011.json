@@ -1,0 +1,237 @@
+{
+  "version": "senate-media-2022-benson-kunesh-and-six-source-originals-public-receipts-v1",
+  "researchDateAmericaChicago": "2026-10-11",
+  "source": {
+    "repo": "killjoy00/votepredict",
+    "pr": 1208,
+    "firstSuccessfulLiveRunId": 38201877808,
+    "initialProbeHeadSha": "cd794cea30855cbbb75f776f6e55cfc751386b72",
+    "publicArtifactId": 11726132245,
+    "sourceWorkflowUrl": "https://github.com/killjoy00/votepredict/actions/runs/38201877808",
+    "offlineSyntheticTestsPassed": 8
+  },
+  "counts": {
+    "selectedExactPublisherPressUrls": 6,
+    "distinctNamedSenatorsInPressUrls": 5,
+    "pressOriginalUrlsAuthenticatedWithinNewRun": 3,
+    "archiveHtmlCaptureVersionsIndependentlyAuthenticatedWithinNewRun": 6,
+    "sourceUrlsAlreadyAuthenticatedInPriorPublicReceipts": 2,
+    "firstTimeAuthenticatedDistinctOriginalUrlsAcrossTheEarlierSample": 1,
+    "newArchiveVersionsOfAlreadyAuthenticatedUrls": 2,
+    "previouslyAuthenticatedCaptureVersionsIndependentlyReverified": 2,
+    "newCaptureVersionsForMillerEnterpriseUrl": 2,
+    "exact2022NamedInterviewHtmlOriginalsAuthenticated": 0,
+    "exact2022NamedInterviewAudioBinariesAuthenticated": 0,
+    "pressUrlsStillHistoricalOriginalUnknownWithinThisSelectedRun": 3,
+    "completeSpokenSenatorQuotationsHumanApproved": 0,
+    "memberRollCallVotesVerified": 0
+  },
+  "earlierOverlaps": [
+    {
+      "id": "2021-coleman-sexual-assault-prospective",
+      "priorReceiptQueueId": "coleman-2021-caucus-own-statement",
+      "shaAndUtcReverified": true,
+      "secondArchiveVersionIndependentlyAuthenticated": true
+    },
+    {
+      "id": "2024-marty-online-sports-betting",
+      "priorReceiptQueueId": "marty-2024-betting-own-statement",
+      "shaAndUtcReverified": true,
+      "secondArchiveVersionIndependentlyAuthenticated": true
+    }
+  ],
+  "sources": [
+    {
+      "id": "2021-coleman-sexual-assault-prospective",
+      "url": "https://www.mnsenaterepublicans.com/senator-coleman-pushing-legislation-to-get-justice-for-victims-of-sexual-assault/",
+      "date": "2021-03-29",
+      "senator": "Julia Coleman",
+      "memberId": 15556,
+      "prospective": true,
+      "source": "individual caucus written statement",
+      "prior": "first_capture_previously_authenticated",
+      "archivedOriginalHtml": [
+        {
+          "captureUtc": "2021-04-13T20:21:28Z",
+          "indexedOriginalSha1Base32": "E5W5QIEJ7OYPSD77AZZL5LTX7JAF2RVV",
+          "rawOriginalHtmlSha256": "14b5aad174248d5cc693ccd2c7c1f23c7bbf096b625a11f500539fcc4ba53a77",
+          "rawOriginalBytes": 88680,
+          "exactReplayStatus": "sha1_authenticated_original_publisher_html",
+          "selectedShortIssueCueFoundInAuthenticatedPage": true,
+          "namedSenatorWithinNearbySelectedCueContext": true
+        },
+        {
+          "captureUtc": "2022-11-08T21:59:54Z",
+          "indexedOriginalSha1Base32": "GNBMWSJMIEJGYBSWZIC537V4U5BC3HET",
+          "rawOriginalHtmlSha256": "477aaed6ae57a54055780014d27cf1bbed460d0a01d377895fc4bb72e32cb962",
+          "rawOriginalBytes": 89564,
+          "exactReplayStatus": "sha1_authenticated_original_publisher_html",
+          "selectedShortIssueCueFoundInAuthenticatedPage": true,
+          "namedSenatorWithinNearbySelectedCueContext": true
+        }
+      ],
+      "selectedStatementIsHumanApprovedVerbatimSpeech": false,
+      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true,
+      "earliestAuthenticatedCaptureUtc": "2021-04-13T20:21:28Z"
+    },
+    {
+      "id": "2021-miller-enterprise-manufacturing-qa",
+      "url": "https://www.enterpriseminnesota.org/articles/winter-2021/valuable-legislative-support/",
+      "date": "2021-11-08",
+      "senator": "Jeremy Miller",
+      "memberId": 15335,
+      "prospective": true,
+      "source": "first-party magazine printed speaker Q&A",
+      "prior": "newly_historically_authenticated_distinct_url",
+      "archivedOriginalHtml": [
+        {
+          "captureUtc": "2022-10-05T01:59:37Z",
+          "indexedOriginalSha1Base32": "Z55ODFJANQV2PCOGS32J3IZE3GEL2DBR",
+          "rawOriginalHtmlSha256": "28dada90321263cbf20a75cc9949c176527a97c2d89d33c0831ed63469167f36",
+          "rawOriginalBytes": 65348,
+          "exactReplayStatus": "sha1_authenticated_original_publisher_html",
+          "selectedShortIssueCueFoundInAuthenticatedPage": true,
+          "namedSenatorWithinNearbySelectedCueContext": false
+        },
+        {
+          "captureUtc": "2023-01-31T06:39:41Z",
+          "indexedOriginalSha1Base32": "KDDZ7S7QX7HETNGDLYUQLZUUTAO5275J",
+          "rawOriginalHtmlSha256": "fb8fd1d2c4bd209e54a905d5b050310a520a46d46f82c3a910a7270c723f3251",
+          "rawOriginalBytes": 67207,
+          "exactReplayStatus": "sha1_authenticated_original_publisher_html",
+          "selectedShortIssueCueFoundInAuthenticatedPage": true,
+          "namedSenatorWithinNearbySelectedCueContext": false
+        }
+      ],
+      "selectedStatementIsHumanApprovedVerbatimSpeech": false,
+      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true,
+      "earliestAuthenticatedCaptureUtc": "2022-10-05T01:59:37Z"
+    },
+    {
+      "id": "2023-pratt-budget-tax-relief",
+      "url": "https://www.mnsenaterepublicans.com/pratt-responds-to-february-forecast-and-17-5-billion-surplus/",
+      "date": "2023-02-27",
+      "senator": "Eric Pratt",
+      "memberId": 15386,
+      "prospective": true,
+      "source": "individual caucus written statement",
+      "prior": "source_candidate_only_unresolved",
+      "archivedOriginalHtml": [],
+      "selectedStatementIsHumanApprovedVerbatimSpeech": false,
+      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true,
+      "earliestAuthenticatedCaptureUtc": null
+    },
+    {
+      "id": "2024-marty-online-sports-betting",
+      "url": "https://senatedfl.mn/senator-john-marty-statement-on-online-sports-betting-legislation/",
+      "date": "2024-01-24",
+      "senator": "John Marty",
+      "memberId": 10403,
+      "prospective": true,
+      "source": "individual caucus written statement",
+      "prior": "first_capture_previously_authenticated",
+      "archivedOriginalHtml": [
+        {
+          "captureUtc": "2024-03-02T15:32:31Z",
+          "indexedOriginalSha1Base32": "VRFHI7EWTZONEMQQOQ43WCYTT77HZFAM",
+          "rawOriginalHtmlSha256": "811f59a8cdd46c7e2edabb8506a01773aa95ad1f74cb9af1e6baf39f84ca965d",
+          "rawOriginalBytes": 92875,
+          "exactReplayStatus": "sha1_authenticated_original_publisher_html",
+          "selectedShortIssueCueFoundInAuthenticatedPage": true,
+          "namedSenatorWithinNearbySelectedCueContext": true
+        },
+        {
+          "captureUtc": "2024-05-25T19:27:51Z",
+          "indexedOriginalSha1Base32": "CDEF57Y24B53NPWGQVHHSVUVB46WCZCV",
+          "rawOriginalHtmlSha256": "6665e00288aa2b0be259eb86f4792171ab4dd240b67e67d9707f3b161e2b7f24",
+          "rawOriginalBytes": 92735,
+          "exactReplayStatus": "sha1_authenticated_original_publisher_html",
+          "selectedShortIssueCueFoundInAuthenticatedPage": true,
+          "namedSenatorWithinNearbySelectedCueContext": true
+        }
+      ],
+      "selectedStatementIsHumanApprovedVerbatimSpeech": false,
+      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true,
+      "earliestAuthenticatedCaptureUtc": "2024-03-02T15:32:31Z"
+    },
+    {
+      "id": "2025-pha-post-eichorn-charges",
+      "url": "https://senatedfl.mn/senator-susan-pha-statement-on-charges-against-justin-eichorn/",
+      "date": "2025-03-20",
+      "senator": "Susan Pha",
+      "memberId": 15583,
+      "prospective": false,
+      "source": "individual caucus written post-event statement",
+      "prior": "source_candidate_only_unresolved",
+      "archivedOriginalHtml": [],
+      "selectedStatementIsHumanApprovedVerbatimSpeech": false,
+      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true,
+      "earliestAuthenticatedCaptureUtc": null
+    },
+    {
+      "id": "2025-coleman-post-annunciation",
+      "url": "https://www.mnsenaterepublicans.com/sen-coleman-statement-on-annunciation-church-and-school-shooting/",
+      "date": "2025-08-27",
+      "senator": "Julia Coleman",
+      "memberId": 15556,
+      "prospective": false,
+      "source": "individual caucus written post-event statement",
+      "prior": "source_candidate_only_unresolved",
+      "archivedOriginalHtml": [],
+      "selectedStatementIsHumanApprovedVerbatimSpeech": false,
+      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true,
+      "earliestAuthenticatedCaptureUtc": null
+    }
+  ],
+  "audio": {
+    "namedEpisodeUrl": "https://www.mprnews.org/episode/2022/02/23/measures-give-parents-more-control-over-instruction-await-votes",
+    "currentPageIdentifiedBothPreviouslyPinnedPublisherMp3PathFingerprints": true,
+    "exactAudioAssets": [
+      {
+        "firstPartyOriginPathSha256": "1a775e898b632cc74d2281da8e2a93a88245364c9baf11e74685d27c9108931b",
+        "exactWaybackIndexStatus": "index_unavailable_unknown",
+        "archiveReplayVersions": [],
+        "historicMp3BinaryAuthenticated": false
+      },
+      {
+        "firstPartyOriginPathSha256": "821cab3680de70bac205f93e49bd53964a756596e43a8e723b14ea94c88ffa91",
+        "exactWaybackIndexStatus": "index_unavailable_unknown",
+        "archiveReplayVersions": [],
+        "historicMp3BinaryAuthenticated": false
+      }
+    ],
+    "namedEpisodeHistoricalHtmlStatus": {
+      "indexStatus": "index_unavailable_unknown",
+      "indexCandidates": null,
+      "waybackReplays": [],
+      "commonCrawl": [
+        {
+          "collection": "CC-MAIN-2022-21",
+          "indexStatus": "index_unavailable_unknown",
+          "indexCandidates": null,
+          "replays": []
+        },
+        {
+          "collection": "CC-MAIN-2022-49",
+          "indexStatus": "index_unavailable_unknown",
+          "indexCandidates": null,
+          "replays": []
+        }
+      ],
+      "authenticatedHistoricalHtmlVersions": 0
+    },
+    "differentSameDayParentsRightsMprEpisodeNotAcceptedAsAlias": true,
+    "noAudioSpeakerTurnOrTranscriptApproved": true
+  },
+  "boundaries": {
+    "currentPublisherDisplayedDatesNotAuthenticatedPublicationUTC": true,
+    "earliestOriginalCaptureIsVersionPresentNoLaterThanNotInitialPublicationTime": true,
+    "cuePresenceWithinAFirstPartyPageNotNecessarilySpeakerTurnForMagazineQAndA": true,
+    "historicTranscriptVoiceMP3AndRecordedVoteSeparateEvidenceLevels": true,
+    "postEventPhaAndColemanCannotForecastNamedTriggeringEvents": true,
+    "noPrivateVotePredictDatabaseOrSourceRowsAccessed": true,
+    "noCollectorSeedPipelineModelServingOrForecastChanged": true,
+    "noFullHtmlAudioPdfWarcOrTranscriptSaved": true,
+    "noGlobalMissingnessInferredFromPublicArchiveOrCollectorGates": true
+  }
+}
