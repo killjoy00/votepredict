@@ -7,6 +7,12 @@ import {execFileSync} from "node:child_process";
 import {readFileSync} from "node:fs";
 
 test("Track D HF100 cross-party four archived originals and official final-passage ballot", {timeout:550_000}, ()=>{
+ const clean={...process.env};delete clean.NODE_TEST_CONTEXT;
+ const offline=execFileSync(process.execPath,[
+   "--test","tests/senate-media-2023-hf100-crossparty-originals.test.mjs"
+ ],{encoding:"utf8",timeout:45_000,maxBuffer:250000,env:clean});
+ assert.match(offline,/# fail 0/);
+ assert.match(offline,/# pass 12/);
  const branchOnly=process.env.GITHUB_REPOSITORY==="killjoy00/votepredict" &&
    process.env.GITHUB_EVENT_NAME==="pull_request" &&
    process.env.GITHUB_HEAD_REF==="research/2023-hf100-democratic-yes-crossparty-primary";
