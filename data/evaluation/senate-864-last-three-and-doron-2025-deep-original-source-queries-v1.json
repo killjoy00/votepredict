@@ -1,0 +1,346 @@
+{
+  "schema": "mn-senate-864-remaining-three-and-doron-deep-original-source-queries-v1",
+  "issue": 864,
+  "verification": {
+    "officialSenateRosterSha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "trueServingSenators": 95,
+    "currentOriginalWebsiteCovered": 92,
+    "currentSiteExcerpts": 1194,
+    "coverageRun": 38197279787,
+    "originalSiteCountOnlyWithIndependentFullOriginalAndNamedCampaignOwnership": true,
+    "preElectionArchiveCaptureNotCreationDate": true,
+    "publisherOrPartyOriginalsNeverIncreaseCampaignSiteCoverage": true,
+    "noAutomaticForecastEligibility": true,
+    "productionReadWrites": 0
+  },
+  "people": {
+    "wiger": {
+      "name": "Charles Wiger",
+      "official": "Sr., Charles W. Wiger",
+      "district": "43",
+      "electionYear": 2020,
+      "electionDate": "2020-11-03",
+      "siteQuotesBefore": 0,
+      "queries": [
+        {
+          "url": "chuckwigerforsenate.com",
+          "match": "domain",
+          "from": "20050101",
+          "to": "20201102",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Untested personal-name campaign domain.",
+          "mime": "text/html"
+        },
+        {
+          "url": "votewiger.com",
+          "match": "domain",
+          "from": "20050101",
+          "to": "20201102",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Untested Vote-name domain.",
+          "mime": "text/html"
+        },
+        {
+          "url": "wiger4senate.com",
+          "match": "domain",
+          "from": "20050101",
+          "to": "20201102",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Untested 4-for synonym.",
+          "mime": "text/html"
+        },
+        {
+          "url": "wigerforsenate.org",
+          "match": "domain",
+          "from": "20050101",
+          "to": "20201102",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Untested .org alternative.",
+          "mime": "text/html"
+        },
+        {
+          "url": "chuckwiger.org",
+          "match": "domain",
+          "from": "20050101",
+          "to": "20201102",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Untested personal-name alternative.",
+          "mime": "text/html"
+        },
+        {
+          "url": "www.wigerforsenate.com/issues",
+          "match": "prefix",
+          "from": "20050101",
+          "to": "20201102",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Previously domain-indexed but now inspect page prefixes, not only URL collapse.",
+          "mime": "text/html"
+        },
+        {
+          "url": "https://nspmoea.org/images/newsletter.pdf",
+          "match": "exact",
+          "from": "20150101",
+          "to": "20191231",
+          "kind": "campaign_produced_collateral_at_third_party_host",
+          "why": "2015 publication contains Prepared and paid for by Wiger for Senate; not a candidate website.",
+          "mime": "application/pdf"
+        }
+      ]
+    },
+    "tomassoni": {
+      "name": "David Tomassoni",
+      "official": "David J. Tomassoni",
+      "district": "6",
+      "electionYear": 2020,
+      "electionDate": "2020-11-03",
+      "siteQuotesBefore": 0,
+      "queries": [
+        {
+          "url": "www.tomassoni4senate.com",
+          "match": "domain",
+          "from": "20000101",
+          "to": "20151231",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Inspect original pre-spam site subpaths separately. Exclude 2016+ repurposed Japanese ads.",
+          "mime": "text/html"
+        },
+        {
+          "url": "tomassoni4senate.com/issues",
+          "match": "prefix",
+          "from": "20000101",
+          "to": "20151231",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Pre-repurposing issues pages.",
+          "mime": "text/html"
+        },
+        {
+          "url": "tomassoni4senate.com/platform",
+          "match": "prefix",
+          "from": "20000101",
+          "to": "20151231",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Pre-repurposing platform pages.",
+          "mime": "text/html"
+        },
+        {
+          "url": "tomassoni4senate.com/index.html",
+          "match": "exact",
+          "from": "20000101",
+          "to": "20151231",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Pre-repurposing exact traditional homepage.",
+          "mime": "text/html"
+        },
+        {
+          "url": "davetomassoniforsenate.com",
+          "match": "domain",
+          "from": "20000101",
+          "to": "20201102",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Untested Dave + for Senate domain.",
+          "mime": "text/html"
+        },
+        {
+          "url": "votetomassoni.com",
+          "match": "domain",
+          "from": "20000101",
+          "to": "20201102",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Untested Vote-name domain.",
+          "mime": "text/html"
+        },
+        {
+          "url": "tomassoniforsenate.org",
+          "match": "domain",
+          "from": "20000101",
+          "to": "20201102",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Untested .org alternative.",
+          "mime": "text/html"
+        },
+        {
+          "url": "davetomassoni.org",
+          "match": "domain",
+          "from": "20000101",
+          "to": "20201102",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Untested personal .org.",
+          "mime": "text/html"
+        }
+      ]
+    },
+    "bakk": {
+      "name": "Thomas Bakk",
+      "official": "Thomas M. Bakk",
+      "district": "3",
+      "electionYear": 2020,
+      "electionDate": "2020-11-03",
+      "siteQuotesBefore": 0,
+      "queries": [
+        {
+          "url": "tombakk.com/issues",
+          "match": "prefix",
+          "from": "20050101",
+          "to": "20151231",
+          "kind": "other_office_governor_site_not_2020_senate",
+          "why": "Inspect 2008-10 governor issues ONLY as older-office evidence, never count toward contemporaneous Senate 2020 campaign.",
+          "mime": "text/html"
+        },
+        {
+          "url": "tombakk.com/platform",
+          "match": "prefix",
+          "from": "20050101",
+          "to": "20151231",
+          "kind": "other_office_governor_site_not_2020_senate",
+          "why": "Old governor issue paths.",
+          "mime": "text/html"
+        },
+        {
+          "url": "tombakk.com/issues.html",
+          "match": "exact",
+          "from": "20050101",
+          "to": "20151231",
+          "kind": "other_office_governor_site_not_2020_senate",
+          "why": "Legacy static issue file hypothesis.",
+          "mime": "text/html"
+        },
+        {
+          "url": "bakkforsenate.org",
+          "match": "domain",
+          "from": "20000101",
+          "to": "20201102",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Untested Senate .org variant.",
+          "mime": "text/html"
+        },
+        {
+          "url": "bakk4senate.com",
+          "match": "domain",
+          "from": "20000101",
+          "to": "20201102",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Untested 4-for domain.",
+          "mime": "text/html"
+        },
+        {
+          "url": "votetombakk.com",
+          "match": "domain",
+          "from": "20000101",
+          "to": "20201102",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Untested Vote-name domain.",
+          "mime": "text/html"
+        },
+        {
+          "url": "bakkformnsenate.com",
+          "match": "domain",
+          "from": "20000101",
+          "to": "20201102",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Untested MN senate variation.",
+          "mime": "text/html"
+        },
+        {
+          "url": "tombakkforsenate.org",
+          "match": "domain",
+          "from": "20000101",
+          "to": "20201102",
+          "kind": "candidate_owned_domain_hypothesis",
+          "why": "Untested Tom Bakk Senate .org.",
+          "mime": "text/html"
+        }
+      ]
+    },
+    "doron": {
+      "name": "Doron Clark",
+      "official": "Doron Clark",
+      "district": "60",
+      "electionYear": 2025,
+      "electionDate": "2025-01-28",
+      "siteQuotesBefore": 5,
+      "queries": [
+        {
+          "url": "www.doronforsenate.org/priorities",
+          "match": "exact",
+          "from": "20241201",
+          "to": "20250127",
+          "kind": "candidate_owned_policy_page_historic",
+          "why": "2025 policy issue page, earlier original body digest mismatch. Test multiple exact replay modes.",
+          "mime": "text/html"
+        },
+        {
+          "url": "www.doronforsenate.org/priorities/",
+          "match": "exact",
+          "from": "20241201",
+          "to": "20250127",
+          "kind": "candidate_owned_policy_page_historic",
+          "why": "Alternative canonical slash.",
+          "mime": "text/html"
+        },
+        {
+          "url": "doronforsenate.org/priorities",
+          "match": "exact",
+          "from": "20241201",
+          "to": "20250127",
+          "kind": "candidate_owned_policy_page_historic",
+          "why": "Non-www host alternative.",
+          "mime": "text/html"
+        },
+        {
+          "url": "www.doronforsenate.org/issues",
+          "match": "prefix",
+          "from": "20241201",
+          "to": "20250127",
+          "kind": "candidate_owned_policy_page_historic",
+          "why": "Candidate issue-path alternates.",
+          "mime": "text/html"
+        },
+        {
+          "url": "www.doronforsenate.org/policies",
+          "match": "prefix",
+          "from": "20241201",
+          "to": "20250127",
+          "kind": "candidate_owned_policy_page_historic",
+          "why": "Candidate policy-path alternates.",
+          "mime": "text/html"
+        },
+        {
+          "url": "sd60dfl.com",
+          "match": "domain",
+          "from": "20241201",
+          "to": "20250127",
+          "kind": "party_questionnaire_link_page_not_candidate_site",
+          "why": "Contemporaneous SD60 DFL party questionnaire host; don't count candidate-owned.",
+          "mime": "text/html"
+        },
+        {
+          "url": "https://naomikritzer.com/2025/01/12/special-election-2025-senate-district-60/",
+          "match": "exact",
+          "from": "20250112",
+          "to": "20250127",
+          "kind": "independent_publisher_candidate_written_reply_not_site",
+          "why": "Contemporaneous reporter quote of Doron school meals and education priorities; verify pre-Jan28 original.",
+          "mime": "text/html"
+        },
+        {
+          "url": "https://drive.google.com/file/d/1pbX-cHOKJFfMT4roJDXx-cNUdPs_-G46/view",
+          "match": "exact",
+          "from": "20250101",
+          "to": "20250127",
+          "kind": "party_questionnaire_version_not_proven",
+          "why": "PDF file ID linked Jan12; historical doc bytes must be proven, do not use present-day PDF.",
+          "mime": "text/html"
+        },
+        {
+          "url": "https://drive.google.com/uc?export=download&id=1pbX-cHOKJFfMT4roJDXx-cNUdPs_-G46",
+          "match": "exact",
+          "from": "20250101",
+          "to": "20250127",
+          "kind": "party_questionnaire_version_not_proven",
+          "why": "Historic archived PDF bytes only admissible with matching original indexed digest.",
+          "mime": "application/pdf"
+        }
+      ]
+    }
+  }
+}
