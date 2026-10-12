@@ -1,0 +1,36 @@
+name: Audit historical public social statement original-source and speaker boundaries
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-864-public-social-and-caucus-alternative-source-leads-v1.json
+      - docs/evaluation/senate-864-alternative-2020-public-social-and-caucus-speaker-discovery-20261012.md
+      - src/evidence/senate-864-public-social-post-source-boundary.mjs
+      - tests/senate-864-public-social-post-source-boundary.test.mjs
+      - tests/senate-864-public-social-discovery-ledger.test.mjs
+      - .github/workflows/senate-864-public-social-statement-identity-boundary.yml
+permissions:
+  contents: read
+jobs:
+  conservative-historical-social-post-authentication:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-public-social-speaker-archive-alternative-20261012'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Validate research module and offline test syntax
+        run: |
+          node --check src/evidence/senate-864-public-social-post-source-boundary.mjs
+          node --check tests/senate-864-public-social-post-source-boundary.test.mjs
+          node --check tests/senate-864-public-social-discovery-ledger.test.mjs
+      - name: Account mismatch, chronological original ID, retweet, and no-position offline audit
+        run: |
+          node --test tests/senate-864-public-social-post-source-boundary.test.mjs tests/senate-864-public-social-discovery-ledger.test.mjs
