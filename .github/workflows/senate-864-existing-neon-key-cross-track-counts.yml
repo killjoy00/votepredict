@@ -81,7 +81,7 @@ jobs:
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V4')
+      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V5')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     services:
@@ -130,7 +130,7 @@ jobs:
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V4')
+      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V5')
     outputs:
       public_counts_b64: ${{ steps.audit.outputs.public_counts_b64 }}
       failure_phase: ${{ steps.audit.outputs.failure_phase }}
@@ -143,7 +143,7 @@ jobs:
       VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
       VOTEPREDICT_864_APPROVAL: BOUNDED_COUNTS_ONLY
       VOTEPREDICT_864_INDEPENDENT_CI_VERIFIED: ${{ needs.one-shot-verify.result == 'success' && 'true' || 'false' }}
-      VOTEPREDICT_864_ONE_SHOT_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V4') && 'true' || 'false' }}
+      VOTEPREDICT_864_ONE_SHOT_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V5') && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -172,7 +172,7 @@ jobs:
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V4') &&
+      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V5') &&
       (needs.one-shot-verify.result == 'failure' ||
        (needs.one-shot-verify.result == 'success' &&
        (needs.one-shot-readonly.result == 'success' || needs.one-shot-readonly.result == 'failure')))
@@ -215,21 +215,37 @@ jobs:
                 throw Error('Missing or oversized protected aggregate');
               const obj=JSON.parse(Buffer.from(encoded,'base64').toString('utf8'));
               if(obj.issue!==864
-                || obj.schema!=='mn-864-existing-key-cross-track-readonly-counts-v1'
-                || obj.status!=='verified_existing_votepredict_default_branch_aggregate_source_snapshot'
+                || obj.schema!=='mn-864-existing-key-cross-track-readonly-counts-v2'
+                || !['verified_existing_votepredict_default_branch_aggregate_source_snapshot',
+                     'partial_verified_existing_votepredict_default_branch_aggregates'].includes(obj.status)
                 || obj.currentTransactionReadOnly!==true
                 || obj.transactionRollbackCompleted!==true
                 || obj.fullPerSourceRowReconciliationCompleted!==false
                 || obj.privateOriginalRowsAndNamesExported!==false
                 || obj.productionMutations!==0
                 || obj.historicalCompletenessCertified!==false
-                || obj.financeQueryOnlyExplicitHistoricSenateMembershipLinkedEvidence!==true
-                || obj.unlinkedAndMetadataOnlyFinanceEvidenceNotAuditedInThisSnapshot!==true)
+                || obj.financeQuerySourceDocumentOnlyAcrossAllChambers!==true
+                || obj.financeEvidenceItemRowsAndEligibilityNotAudited!==true
+                || obj.financeSourceMetadataYearMayBeMissing!==true
+                || obj.groupHoldsAreNotZeroCounts!==true
+                || !obj.groupHolds || typeof obj.groupHolds!=='object' || Array.isArray(obj.groupHolds))
                 throw Error('Unverified claim of audit success');
               const kinds=['roster','finance','committeeSources',
                 'committeeVotes','committeeChoices','campaign','media'];
               if(!obj.groups||JSON.stringify(Object.keys(obj.groups).sort())!==JSON.stringify([...kinds].sort()))
                 throw Error('Unexpected evidence families');
+              const holds=Object.entries(obj.groupHolds);
+              const reasons=new Set(['statement_timeout','undefined_column','aggregate_grouping',
+                'sql_syntax','invalid_input']);
+              for(const [group,why] of holds){
+                if(!kinds.includes(group)||!reasons.has(why)||obj.groups[group].length!==0)
+                  throw Error('HOLD cannot be represented as zero source rows');
+              }
+              const allSucceeded=holds.length===0;
+              if(obj.allSevenSourceFamilyQueriesSucceeded!==allSucceeded ||
+                 (allSucceeded && obj.status!=='verified_existing_votepredict_default_branch_aggregate_source_snapshot') ||
+                 (!allSucceeded && obj.status!=='partial_verified_existing_votepredict_default_branch_aggregates'))
+                throw Error('Incorrect aggregate status or missing source HOLD');
               const rows=[];
               const safeFamily=/^(?:campaign_finance_candidate_contribution_bulk|campaign_finance_candidate_expenditure_bulk|campaign_finance_independent_expenditure_bulk|campaign_finance_bulk)$/;
               for(const kind of kinds){
@@ -256,18 +272,27 @@ jobs:
                 }
               }
               body=[...intro,
-                '**Result: SUCCESS.** Existing VotePredict Neon default branch verified.',
-                'SQL transaction READ ONLY, ROLLBACK confirmed.',
+                allSucceeded?'**Result: SUCCESS (all seven grouped SELECTs).**'
+                  :'**Result: PARTIAL, source groups listed below are on HOLD.**',
+                'Existing VotePredict Neon branch and transaction READ ONLY verified.',
+                'Original REPEATABLE READ snapshot preserved by SQL SAVEPOINTs;',
+                'explicit ROLLBACK succeeded. Any held source group was NOT counted.',
                 '',
                 ...rows,
+                ...(holds.length?['',
+                  '**Not measured (NOT zero):**',
+                  ...holds.map(([group,why])=>'- **'+group+'**: HOLD ('+why+')'),
+                ]:[]),
                 '',
-                'These are stored-row and source-document AGGREGATES only.',
-                'Finance is restricted to explicitly membership-linked historic',
-                'Senate evidence; unlinked finance metadata rows were not audited.',
-                'They do not prove statewide official completeness, original',
-                'document-to-record equality, historical CFB exact public-by,',
-                'attributed media quotations or the actual production binding.',
-                '#864 remains open and prediction eligibility unchanged.',
+                'Finance here is a source_documents registry across ALL chambers.',
+                'Its year uses optional document metadata, so unknown years are',
+                'expected. No candidate finance evidence_items, senator-only CFB',
+                'transaction rows, legal filing duty or as-of eligibility audited.',
+                'Other family rows are only existing persisted count aggregates.',
+                'This does NOT prove all original historic events are stored,',
+                'any source PDF-to-vote equality, media named speaker attribution,',
+                'historic CFB exact public-by, or deployed production binding.',
+                '#864 stays OPEN; no forecast changes.',
               ].join('\n');
             }else if(result==='failure'){
               const phase=process.env.SAFE_FAILURE_PHASE||'not_reported';
