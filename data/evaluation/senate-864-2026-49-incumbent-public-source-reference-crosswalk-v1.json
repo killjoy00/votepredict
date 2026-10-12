@@ -1,0 +1,524 @@
+{
+  "schema": "mn-senate-864-2026-49-incumbent-main-branch-code-reference-source-join-v1",
+  "issue": 864,
+  "researchAsOf": "2026-10-12",
+  "election": "2026-11-03",
+  "sourceScopes": [
+    "Prior candidate-by-candidate October 12 research CSV generated for user, not yet independently authenticated whole current 2026 HTML originals for all 49",
+    "GitHub public main-branch CODE SEARCH for each current source URL/path/host, not SELECT from private source_documents/evidence_items",
+    "Independently source-pinned 95 actual-serving Senate owned-site historical excerpt matrix; 49 nominees matched, 716 snippets"
+  ],
+  "summary": {
+    "incumbentNominees": 49,
+    "withHistoricalOriginalCandidateOwnedSiteExcerpt": 49,
+    "selectedOlderSiteResearchExcerpts": 716,
+    "publicRepositoryMentionDetectedByBoundedQuery": 22,
+    "noMentionDetectedByBoundedQuery": 27,
+    "exactFull2026PageVersionOrDirectClaimMatchesProven": 0,
+    "privateOrProductionPerMemberDatabaseRecordsAccessed": 0,
+    "sourceIndexMayHaveFalseNegatives": true
+  },
+  "limitations": {
+    "aGitHubCodeSearchHitMayOnlyReferToHistoricalDomain": true,
+    "codeSearchMissIsUnknownNotDatabaseAbsence": true,
+    "exactArticleBodyHashAndQuoteNotProvenBySearch": true,
+    "sourceVersionAsOfPublication2026UnknownForManyMutableSites": true,
+    "protectedNeonAggregateDoesNotCertifyProductionIdentityOrIndividualMatches": true,
+    "doNotAutoIngestOrPromote": true,
+    "doNotAssignNewPositionFromIndirectSpeakerQuote": true,
+    "noPrivateDatabaseAccess": true,
+    "noOutsideHumanContact": true
+  },
+  "rows": [
+    {
+      "district": 1,
+      "senator": "Mark T. Johnson",
+      "selectedOlderOriginalSiteExcerpts": 8,
+      "researchSourceUrl": "https://www.mnsenaterepublicans.com/senate-republicans-propose-tax-relief-that-makes-a-difference/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 2,
+      "senator": "Steve Green",
+      "selectedOlderOriginalSiteExcerpts": 6,
+      "researchSourceUrl": "https://www.stevegreenforsenate.com/issues-mp.html",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 3,
+      "senator": "Grant Hauschild",
+      "selectedOlderOriginalSiteExcerpts": 9,
+      "researchSourceUrl": "https://grantformn.com/news/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 4,
+      "senator": "Robert Kupec",
+      "selectedOlderOriginalSiteExcerpts": 24,
+      "researchSourceUrl": "https://www.kupec4mnsenate.com/issues",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 6,
+      "senator": "Keri Heintzeman",
+      "selectedOlderOriginalSiteExcerpts": 7,
+      "researchSourceUrl": "https://heintzemanforsenate.com/",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 7,
+      "senator": "Robert Farnsworth",
+      "selectedOlderOriginalSiteExcerpts": 8,
+      "researchSourceUrl": "https://robfarnsworth.org/campaign/",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 8,
+      "senator": "Jennifer A McEwen",
+      "selectedOlderOriginalSiteExcerpts": 9,
+      "researchSourceUrl": "https://www.votemcewen.com/",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 9,
+      "senator": "Jordan Rasmusson",
+      "selectedOlderOriginalSiteExcerpts": 11,
+      "researchSourceUrl": "https://jordanrasmusson.com/",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 10,
+      "senator": "Nathan Wesenberg",
+      "selectedOlderOriginalSiteExcerpts": 10,
+      "researchSourceUrl": "https://www.wesenbergforsenate.com/",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 11,
+      "senator": "Jason Rarick",
+      "selectedOlderOriginalSiteExcerpts": 20,
+      "researchSourceUrl": "https://www.mnsenaterepublicans.com/a-productive-end-to-a-short-session/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 12,
+      "senator": "Torrey Westrom",
+      "selectedOlderOriginalSiteExcerpts": 7,
+      "researchSourceUrl": "https://video.pioneer.org/video/6-mn-senate-district-12-4vbkxw/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 14,
+      "senator": "Aric Putnam",
+      "selectedOlderOriginalSiteExcerpts": 10,
+      "researchSourceUrl": "https://aricformn.com/issues/",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 16,
+      "senator": "Andrew R. Lang",
+      "selectedOlderOriginalSiteExcerpts": 13,
+      "researchSourceUrl": "https://www.mnsenaterepublicans.com/senator-lang-introduces-bill-to-ban-unfunded-mandates-and-make-life-more-affordable-for-minnesotans/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 17,
+      "senator": "Glenn Gruenhagen",
+      "selectedOlderOriginalSiteExcerpts": 14,
+      "researchSourceUrl": "https://www.mnsenaterepublicans.com/gruenhagen-if-there-is-fraud-people-need-to-be-fired/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 18,
+      "senator": "Nick A. Frentz",
+      "selectedOlderOriginalSiteExcerpts": 26,
+      "researchSourceUrl": "https://www.frentzformnsenate.com/",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 19,
+      "senator": "John R. Jasinski",
+      "selectedOlderOriginalSiteExcerpts": 22,
+      "researchSourceUrl": "https://www.mnsenaterepublicans.com/jasinski-tax-season-reminds-us-that-affordability-is-the-top-priority/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 23,
+      "senator": "Gene Dornink",
+      "selectedOlderOriginalSiteExcerpts": 35,
+      "researchSourceUrl": "https://www.mnsenaterepublicans.com/sen-dornink-priorities-for-the-session-ahead/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 25,
+      "senator": "Liz Boldon",
+      "selectedOlderOriginalSiteExcerpts": 11,
+      "researchSourceUrl": "https://senatedfl.mn/senator-liz-boldon-statement-on-minnesotas-february-budget-and-economic-forecast/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 27,
+      "senator": "Andrew Mathews",
+      "selectedOlderOriginalSiteExcerpts": 7,
+      "researchSourceUrl": "https://www.mnsenaterepublicans.com/mathews-democrats-chose-gun-grab-over-protecting-minnesota-students/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 28,
+      "senator": "Mark W. Koran",
+      "selectedOlderOriginalSiteExcerpts": 11,
+      "researchSourceUrl": "https://www.markkoranmn.com/issues/",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 29,
+      "senator": "Michael Holmstrom Jr",
+      "selectedOlderOriginalSiteExcerpts": 12,
+      "researchSourceUrl": "https://www.mike4mnsenate.com/platform",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 30,
+      "senator": "Eric Lucero",
+      "selectedOlderOriginalSiteExcerpts": 10,
+      "researchSourceUrl": "https://www.mnsenaterepublicans.com/sen-lucero-speaks-at-health-and-parental-rights-rally-at-the-capitol/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 31,
+      "senator": "Calvin K. Bahr",
+      "selectedOlderOriginalSiteExcerpts": 7,
+      "researchSourceUrl": "https://www.mnsenaterepublicans.com/sen-bahrs-capitol-update-feb-23-2026/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 32,
+      "senator": "Michael E. Kreun",
+      "selectedOlderOriginalSiteExcerpts": 5,
+      "researchSourceUrl": "https://www.michaelformnsenate.com/priorities",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 33,
+      "senator": "Karin Housley",
+      "selectedOlderOriginalSiteExcerpts": 20,
+      "researchSourceUrl": "https://www.housleyforsenate.com/issues/",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 34,
+      "senator": "John A. Hoffman",
+      "selectedOlderOriginalSiteExcerpts": 7,
+      "researchSourceUrl": "https://senatedfl.mn/senator-john-hoffmans-bill-increasing-penalties-for-impersonating-a-peace-officer-becomes-law/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 35,
+      "senator": "Jim Abeler",
+      "selectedOlderOriginalSiteExcerpts": 8,
+      "researchSourceUrl": "https://www.jimabeler.com/priorities",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 36,
+      "senator": "Heather Gustafson",
+      "selectedOlderOriginalSiteExcerpts": 19,
+      "researchSourceUrl": "https://www.voteheathergustafson.com/priorities",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 38,
+      "senator": "Susan Pha",
+      "selectedOlderOriginalSiteExcerpts": 16,
+      "researchSourceUrl": "https://susanphaforsenate.com/",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 39,
+      "senator": "Mary K. Kunesh",
+      "selectedOlderOriginalSiteExcerpts": 31,
+      "researchSourceUrl": "https://senatedfl.mn/senator-mary-kunesh-applauds-increase-in-student-graduation-rates-urges-continued-support-for-minnesota-students/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 40,
+      "senator": "John J. Marty",
+      "selectedOlderOriginalSiteExcerpts": 14,
+      "researchSourceUrl": "https://www.johnmarty.org/issues",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 41,
+      "senator": "Judy Seeberger",
+      "selectedOlderOriginalSiteExcerpts": 7,
+      "researchSourceUrl": "https://judyforsenate.com/priorities/",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 42,
+      "senator": "Bonnie Westlin",
+      "selectedOlderOriginalSiteExcerpts": 8,
+      "researchSourceUrl": "https://www.bonniewestlinformnsenate.com/",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 45,
+      "senator": "Ann M Johnson Stewart",
+      "selectedOlderOriginalSiteExcerpts": 18,
+      "researchSourceUrl": "https://annjohnsonstewart.com/priorities/infrastructure-oversight/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 46,
+      "senator": "Ronald Steven Latz",
+      "selectedOlderOriginalSiteExcerpts": 24,
+      "researchSourceUrl": "https://www.ronlatz.org/",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 47,
+      "senator": "Amanda Hemmingsen-Jaeger",
+      "selectedOlderOriginalSiteExcerpts": 5,
+      "researchSourceUrl": "https://mhponline.org/2026_questionnaire/amanda-hemmingsen-jaeger-2/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 48,
+      "senator": "Julia E. Coleman",
+      "selectedOlderOriginalSiteExcerpts": 10,
+      "researchSourceUrl": "https://www.colemanforsenate.com/issues",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 55,
+      "senator": "Lindsey Port",
+      "selectedOlderOriginalSiteExcerpts": 22,
+      "researchSourceUrl": "https://www.lindseyportmn.com/",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 56,
+      "senator": "Erin K. Maye Quade",
+      "selectedOlderOriginalSiteExcerpts": 35,
+      "researchSourceUrl": "https://erinmayequade.com/priorities/",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 57,
+      "senator": "Zach Duckworth",
+      "selectedOlderOriginalSiteExcerpts": 14,
+      "researchSourceUrl": "https://www.voteduckworth.com/issues",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "This URL is older-site text: see separate four 2026 Duckworth dated speaker/source leads"
+    },
+    {
+      "district": 58,
+      "senator": "Bill Lieske",
+      "selectedOlderOriginalSiteExcerpts": 8,
+      "researchSourceUrl": "https://www.mnsenaterepublicans.com/lieske-priorities-for-the-upcoming-legislative-session/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 59,
+      "senator": "Bobby Joe Champion",
+      "selectedOlderOriginalSiteExcerpts": 15,
+      "researchSourceUrl": "https://senatedfl.mn/president-bobby-joe-champion-backs-senate-passage-of-comprehensive-gun-violence-prevention-bill/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 60,
+      "senator": "Doron Clark",
+      "selectedOlderOriginalSiteExcerpts": 41,
+      "researchSourceUrl": "https://senatedfl.mn/senator-doron-clark-applauds-city-of-minneapolis-for-initiative-to-address-non-fatal-shootings/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 61,
+      "senator": "D. Scott Dibble",
+      "selectedOlderOriginalSiteExcerpts": 12,
+      "researchSourceUrl": "https://www.scottdibble.com/vision",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 62,
+      "senator": "Omar Fateh",
+      "selectedOlderOriginalSiteExcerpts": 22,
+      "researchSourceUrl": "https://www.fatehfor62.com/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 63,
+      "senator": "Zaynab Mohamed",
+      "selectedOlderOriginalSiteExcerpts": 15,
+      "researchSourceUrl": "https://www.zaynabmohamed.org/work",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 64,
+      "senator": "Erin P. Murphy",
+      "selectedOlderOriginalSiteExcerpts": 19,
+      "researchSourceUrl": "https://communityreporter.org/2026-election-guide-minnesota-senate-district-64-erin-murphy/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 66,
+      "senator": "Clare Oumou Verbeten",
+      "selectedOlderOriginalSiteExcerpts": 15,
+      "researchSourceUrl": "https://www.clareverbeten.com/issues",
+      "mainPublicRepoStringSearch": "observed_string_in_prior_research_or_code",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    },
+    {
+      "district": 67,
+      "senator": "Foung Hawj",
+      "selectedOlderOriginalSiteExcerpts": 9,
+      "researchSourceUrl": "https://senatedfl.mn/senator-foung-hawj-celebrates-release-of-dnr-electronic-licensing-system/",
+      "mainPublicRepoStringSearch": "not_observed_by_bounded_search_unknown",
+      "exactCurrentVersionInPublicLedger": "unverified",
+      "privateVotePredictSourceDocumentAndEvidenceItemJoin": "unknown_not_performed",
+      "note": "Research-source URL only: no inferred 2026 authored wording or source-to-database parity"
+    }
+  ]
+}
