@@ -100,6 +100,14 @@ test('no-member vote with zero nays is not evidence of YES, even if surname appe
  const r=inspectOfficialRolls(bad,MAR03);
  assert.equal(r.matchedExpectedAggregateRolls[0].certifiedPersonalVote,'UNKNOWN');
 });
+test('member surnames appearing only in Rule 40 proxy assignments are not silently promoted to named roster YES',()=>{
+ const t=rolls(2666,36,31,
+  'Abeler Chamberlain\nPursuant to Rule 40, Senator Abeler cast an affirmative vote on behalf of Senator Benson.',
+  'Bigham Latz');
+ const x=inspectOfficialRolls(t,MAR10);
+ assert.equal(x.matchedExpectedAggregateRolls[0].certifiedPersonalVote,'UNKNOWN');
+ assert.equal(x.matchedExpectedAggregateRolls[0].personallyInAffirmativeVoterList,false);
+});
 test('bounded source failure is UNKNOWN, never not-voted or reason to promote a production label',async()=>{
  const f=async(_url,options)=>{assert.equal(options.redirect,'manual');return new Response('offline',{status:503});};
  const j=await inspectJournalOriginal(MAR03,f);
