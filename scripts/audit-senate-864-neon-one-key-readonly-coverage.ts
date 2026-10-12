@@ -14,7 +14,7 @@ import {REQUIRED_MEDIA_EXPORT_TABLES} from
  '../src/evidence/senate-media-readonly-export.js';
 
 export const REQUIRED_864_TABLES=[...REQUIRED_MEDIA_EXPORT_TABLES,'vote_events','member_votes'] as const;
-export const ONE_SHOT_MARKER='SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V2' as const;
+export const ONE_SHOT_MARKER='SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V3' as const;
 export const GROUPS=[
  'roster','finance','committeeSources','committeeVotes','committeeChoices','campaign','media',
 ] as const;
@@ -53,14 +53,20 @@ export const QUERIES:Record<Group,string>={
   'AS missing_stored_availability_proof_digest,',
   "count(*) FILTER (WHERE sd.content_sha256 IS NULL OR sd.content_sha256 !~ '^[a-f0-9]{64}$')::text",
   'AS missing_source_sha',
-  'FROM evidence_items ei JOIN source_documents sd ON sd.id=ei.source_document_id',
-  'LEFT JOIN memberships m ON m.id=ei.membership_id',
-  'LEFT JOIN chambers c ON c.id=m.chamber_id',
-  "WHERE sd.source_kind IN ('campaign_finance_candidate_contribution_bulk',",
+  // Existing original indexed membership filtering avoids the unbounded
+  // cross-chamber finance JSONB OR scan that exceeded the prior bound.
+  // DO NOT claim that unlinked/chamber-metadata-only finance rows are audited.
+  'FROM memberships m',
+  'JOIN chambers c ON c.id=m.chamber_id',
+  'JOIN legislative_sessions s ON s.id=m.session_id',
+  'JOIN evidence_items ei ON ei.membership_id=m.id',
+  'JOIN source_documents sd ON sd.id=ei.source_document_id',
+  "WHERE c.slug='senate'",
+  "AND s.slug IN ('2021-2022','2023-2024','2025-2026')",
+  "AND sd.source_kind IN ('campaign_finance_candidate_contribution_bulk',",
   "'campaign_finance_candidate_expenditure_bulk','campaign_finance_independent_expenditure_bulk',",
   "'campaign_finance_bulk')",
-  "AND (c.slug='senate' OR ei.metadata->>'chamber'='senate')",
-  'GROUP BY year,sd.source_kind ORDER BY year,sd.source_kind',
+  'GROUP BY 1,2 ORDER BY 1,2',
  ].join(' '),
  committeeSources:[
   "SELECT COALESCE(substring(sd.source_url from '/senate/(202[2-5])/'),",
@@ -172,6 +178,19 @@ export function validateCountRows(name:Group,rows:unknown):CountRow[]{
  }
  return out;
 }
+/** Diagnostic classification is fixed and cannot reveal PostgreSQL messages. */
+export function safeSqlFailureReason(error:unknown):
+ 'statement_timeout'|'undefined_column'|'aggregate_grouping'|
+ 'sql_syntax'|'invalid_input'|'unknown_query_or_validation'{
+ const code=error&&typeof error==='object'&&'code' in error?
+  (error as {code?:unknown}).code:undefined;
+ if(code==='57014')return 'statement_timeout';
+ if(code==='42703')return 'undefined_column';
+ if(code==='42803')return 'aggregate_grouping';
+ if(code==='42601')return 'sql_syntax';
+ if(code==='22P02')return 'invalid_input';
+ return 'unknown_query_or_validation';
+}
 export function assertProtectedOneShot(env:Record<string,string|undefined>):void{
  if(env.GITHUB_REPOSITORY!=='killjoy00/votepredict'
   ||env.GITHUB_EVENT_NAME!=='push'||env.GITHUB_REF!=='refs/heads/main'
@@ -220,9 +239,17 @@ export async function auditNeonExistingKey2021To25(
    phase('tables_verified');
    const groups={} as CountResults;
    for(const name of GROUPS){
-    const rows=await client.query(QUERIES[name]);
-    groups[name]=validateCountRows(name,rows.rows);
-    phase('completed_'+name);
+    try {
+     const rows=await client.query(QUERIES[name]);
+     groups[name]=validateCountRows(name,rows.rows);
+     phase('completed_'+name);
+    } catch(error) {
+     // Never leak Neon URI, original SQL errors, role name or private data.
+     // Only fixed PostgreSQL SQLSTATE classes may be reported.
+     const safeName=name.replace(/[A-Z]/g,v=>'_'+v.toLowerCase());
+     phase('failed_'+safeName+'_'+safeSqlFailureReason(error));
+     throw Error('Bounded source-group query failed closed');
+    }
    }
    await client.query('ROLLBACK');
    transaction=false;
@@ -232,6 +259,9 @@ export async function auditNeonExistingKey2021To25(
     status:'verified_existing_votepredict_default_branch_aggregate_source_snapshot',
     defaultBranchExisting:true,deployedProductionBindingIndependentlyVerified:false,
     originalSqlRoleMayHaveWriteGrantsOutsideReadOnlyTransaction:true,
+    financeQueryOnlyExplicitHistoricSenateMembershipLinkedEvidence:true,
+    unlinkedAndMetadataOnlyFinanceEvidenceNotAuditedInThisSnapshot:true,
+    fullStatewideFinanceDatabaseCompletenessNotEstablished:true,
     currentTransactionReadOnly:true,transactionRollbackCompleted:true,
     privateOriginalRowsAndNamesExported:false,originalArticleBodiesOrDonorRowsExported:false,
     fullPerSourceRowReconciliationCompleted:false,
