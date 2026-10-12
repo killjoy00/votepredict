@@ -11,7 +11,7 @@ function b32(raw){let v=0,b=0,o='';for(const k of createHash('sha1').update(raw)
 const cols=['timestamp','original','mimetype','statuscode','digest','length'];
 test('nine selected direct publisher URLs across 2022–25 with four new individual MPR senator voices, no federal senators',()=>{
  const leads=validateLeads();
- assert.equal(VERSION,'senate-media-mpr-caucus-eight-senator-breadth-source-proof-v1');
+ assert.equal(VERSION,'senate-media-mpr-caucus-ten-senator-breadth-source-proof-v1');
  assert.equal(leads.length,9);
  assert.equal(new Set(leads.map(x=>x.url)).size,9);
  assert.equal(new Set(leads.flatMap(x=>x.namedIndividualSenators)).size,10);
