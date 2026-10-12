@@ -1,0 +1,148 @@
+{
+  "schema": "senate-864-three-sparse-served-senators-independent-original-2020-2022-caucus-publisher-research-v1",
+  "issue": 864,
+  "baseline": {
+    "actualServing2021to2025Senators": 95,
+    "peopleWithCandidateOwnedHistoricalSiteExcerpts": 92,
+    "selectedCandidateSiteResearchExcerpts": 1285,
+    "sourceGovernmentSha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "lastSiteBaselineAuditRun": 38261292249,
+    "lastSiteBaselineArtifactId": 11752034352
+  },
+  "tracks": {
+    "kari": {
+      "person": "Kari Dziedzic",
+      "officialName": "Kari Dziedzic",
+      "district": "60",
+      "electionYear": 2022,
+      "electionDate": "2022-11-08",
+      "sources": [
+        {
+          "id": "kari22-tax-student-loan",
+          "url": "https://senatedfl.mn/dfl-senators-on-tax-committee-say-minnesota-should-not-tax-residents-getting-student-loan-forgiveness-2/",
+          "dateDisplayed": "2022-09-06",
+          "candidateSpeakerCue": "said Sen. Dziedzic",
+          "expectedType": "caucus_named_candidate_direct_quote",
+          "topic": "student_loan_forgiveness_no_state_tax",
+          "speakerBoundaryKind": "quoted_turn_for_named_kari"
+        },
+        {
+          "id": "kari22-housing",
+          "url": "https://senatedfl.mn/senators-melisa-lopez-franzen-kari-dziedzic-recognized-by-key-housing-group-for-work-to-expand-home-ownership-make-housing-more-affordable-in-minnesota/",
+          "dateDisplayed": "2022-07-14",
+          "candidateSpeakerCue": "said SenatorDziedzic",
+          "expectedType": "caucus_named_candidate_direct_quote",
+          "topic": "housing_security_affordability",
+          "speakerBoundaryKind": "quoted_turn_for_named_kari"
+        },
+        {
+          "id": "kari22-joint",
+          "url": "https://senatedfl.mn/senators-dziedzic-champion-release-statement-condemning-recent-harmful-remarks-by-minneapolis-council-member-michael-rainville/",
+          "dateDisplayed": "2022-07-11",
+          "candidateSpeakerCue": "Senators Kari Dziedzic and Bobby Joe Champion",
+          "expectedType": "caucus_named_joint_statement_not_sole_speech",
+          "topic": "community_trust_anti_bias",
+          "speakerBoundaryKind": "joint_statement_not_sole_personal_quote"
+        }
+      ]
+    },
+    "weber": {
+      "person": "Bill Weber",
+      "officialName": "Bill Weber",
+      "district": "21",
+      "electionYear": 2022,
+      "electionDate": "2022-11-08",
+      "sources": [
+        {
+          "id": "weber22-may23-tax-education",
+          "url": "https://www.mnsenaterepublicans.com/sen-weber-democrats-block-minnesotans-from-getting-tax-relief-prove-they-are-unable-to-compromise-to-improve-lives-of-minnesotans/",
+          "dateDisplayed": "2022-05-23",
+          "candidateSpeakerCue": "Senator Bill Weber (R-Luverne) said",
+          "expectedType": "caucus_named_candidate_direct_quote",
+          "topic": "tax_relief_public_safety_education"
+        },
+        {
+          "id": "weber22-apr27-broadband",
+          "url": "https://www.mnsenaterepublicans.com/senator-weber-senate-pass-significant-agriculture-broadband-and-housing-package-to-help-minnesotans-compete-in-the-modern-economy/",
+          "dateDisplayed": "2022-04-27",
+          "candidateSpeakerCue": "Senator Bill Weber (R-Luverne) said",
+          "expectedType": "caucus_named_candidate_direct_quote",
+          "topic": "agriculture_broadband"
+        },
+        {
+          "id": "weber22-jul28-energy",
+          "url": "https://www.mnsenaterepublicans.com/coalition-for-a-secure-energy-future-honors-sen-bill-weber-with-energy-champion-award/",
+          "dateDisplayed": "2022-07-28",
+          "candidateSpeakerCue": "Senator Weber said",
+          "expectedType": "caucus_named_candidate_direct_quote",
+          "topic": "energy_all_of_above"
+        }
+      ]
+    },
+    "newman": {
+      "person": "Scott Newman",
+      "officialName": "Scott J. Newman",
+      "district": "18",
+      "electionYear": 2020,
+      "electionDate": "2020-11-03",
+      "sources": [
+        {
+          "id": "newman20-feb20-tax",
+          "url": "https://www.mnsenaterepublicans.com/senator-newman-tax-cut-plan-gives-surplus-to-all-minnesota-taxpayers/",
+          "dateDisplayed": "2020-02-20",
+          "candidateSpeakerCue": "said Senator Scott Newman",
+          "expectedType": "caucus_named_candidate_direct_quote",
+          "topic": "income_social_security_tax_cuts"
+        },
+        {
+          "id": "newman20-mar17-covid",
+          "url": "https://www.mnsenaterepublicans.com/statement-from-senator-newman-regarding-bar-and-restaurant-closures/",
+          "dateDisplayed": "2020-03-17",
+          "candidateSpeakerCue": "Senator Scott Newman (R-Hutchinson)",
+          "expectedType": "caucus_named_candidate_signed_speech",
+          "topic": "emergency_public_health_small_business"
+        },
+        {
+          "id": "newman20-mar03-vote-admin",
+          "url": "https://www.mnsenaterepublicans.com/senate-republicans-raise-questions-on-sos-directing-voters-to-partisan-websites-on-election-day/",
+          "dateDisplayed": "2020-03-03",
+          "candidateSpeakerCue": "asked Senator Scott Newman",
+          "expectedType": "caucus_named_candidate_direct_quote",
+          "topic": "election_administration_accountability"
+        }
+      ]
+    },
+    "ivoter": {
+      "person": "Bill Weber",
+      "officialName": "Bill Weber",
+      "district": "21",
+      "electionYear": 2022,
+      "electionDate": "2022-11-08",
+      "sources": [
+        {
+          "id": "weber22-ivoter-guide-general",
+          "url": "https://ivoterguide.com/candidate/50437/race/12100/election/981",
+          "dateDisplayed": "2022-election-race-current-mutable",
+          "candidateSpeakerCue": "Bill Weber",
+          "expectedType": "thirdparty_candidate_questionnaire_historical_version_unproven",
+          "topic": "abortion_taxes_education_energy_immigration_public_safety",
+          "sourceAddedOnlyAsDiscoveryCandidate": true
+        }
+      ]
+    }
+  },
+  "cautions": {
+    "caucusDirectPersonQuotesAreNotCandidateOwnedWebpages": true,
+    "jointFirstPersonSpeechNotSoleStatement": true,
+    "officialSittingSenatorStatementsNotCampaignSiteElectionPromises": true,
+    "archiveOriginalCaptureOnlyNotFirstPosted": true,
+    "original2026PageNot2020or2022Evidence": true,
+    "thirdpartyQuestionnaireLivePageCannotBeBackdated": true,
+    "CDXStatus200MightBeNonCdxProviderError": true,
+    "senatorClaimsAboutVotesNeedOfficialRolls": true,
+    "missingPageNotNoPolicy": true,
+    "noProductionOrModelUse": true
+  },
+  "productionReadsWrites": 0,
+  "automaticForecastFeatures": 0
+}
