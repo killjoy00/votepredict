@@ -35,3 +35,28 @@ The object Last-Modified header or GitHub notebook's February 2023 date is **not
 No protected source-to-stored parity is executed. Existing bounded sample unresolved candidate source-matched archive-labelled records remain 909 expenditures, 1,140 contributions, and 2,448 older filing-derived as-of claims requiring original version historically public-by evidence. Prior V5 independent expenditure 101/101 sampled stored observations (29 keys) remain proven. Exact source version, Senate-specific official filer-duty universe, amendments, and original/amended 2023–25 PDF historical public-by remain independent outstanding evidence tasks.
 
 Do not merge any later actual correction or backfill without a separate owner authorization. Any future private count-only parity must have its own reviewed main-only, protected READ ONLY REPEATABLE READ transaction and explicit rollback, never PR credentials or open raw finance artifacts.
+
+
+## First successful full independent body audit (October 12, 2026)
+
+The [V10 source-only live workflow run 38309468823](https://github.com/killjoy00/votepredict/actions/runs/38309468823) **succeeded** (all synthetic tests and complete cleaned body acquisition/validation). Its exact non-identifying provenance receipt:
+
+| Whole cleaned object property | Verified observation |
+| --- | --- |
+| Full S3 HEAD HTTP status | 200 |
+| Full S3 GET HTTP status | 200 |
+| Historical notebook's named cleaned object | mn_contribs_clean.csv |
+| Complete original 2023 *cleaned derivative*, bytes | **58,871,220** (agrees with previous V7 HEAD) |
+| Entire body SHA256, computed independently in public CI | **cb7b829bfe6a3b5d6b44745462cb6e994c179d9e841ad648d73994ce0df0492e** |
+| S3 current object HTTP Last-Modified calendar day | **2023-02-26** |
+| Cleaned normalized schema fields | **19** |
+| Parsed all-filer contribution records | **359,673**, exactly as independent publisher notebook |
+| 2021 records across ALL recipient classes | **41,277** |
+| 2022 records across ALL recipient classes | **94,348** |
+| 2021 CFB filer-type **PCC** records | **20,472** |
+| 2022 CFB filer-type **PCC** records | **64,544** |
+| 2023 / outside-2015–2023 records in this current body | **0 / 0** |
+
+The observed all-filer year counts are **2015: 31,064; 2016: 33,869; 2017: 29,816; 2018: 55,473; 2019: 28,767; 2020: 45,059; 2021: 41,277; 2022: 94,348; 2023: 0**, summing to 359,673. All 359,673 data rows had the required normalized header/column cardinality. The apparent **2023: 0** is fully consistent with the publisher's late-February 2023 notebook having a max transaction date only through the end of 2022, but is **NOT** evidence that statewide 2023 campaign contributions were absent: this is a fixed *earlier cleaned source snapshot*, not a complete live dataset.
+
+**Important cutoffs:** the S3 Last-Modified timestamp is a current HTTP object metadata assertion about the stored derivative and agrees in chronology with the February 27, 2023 notebook. It does **not** authenticate when that exact body was first anonymously downloadable, whether the source was already public on a given February 2023 date, or when the corresponding ORIGINAL CFB report or specific contribution rows were publicly filed. The candidate PCC tally includes every candidate office/type in this derivative; it is neither a Senate-only item denominator nor a public-by proof. There is **no** comparison with protected database records. The successfully audited dataset now has a fixed body SHA256 that could be compared to independently dated future or historic **same-file** captures if located, but only with a new separately reviewed source-verification procedure.
