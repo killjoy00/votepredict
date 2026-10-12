@@ -1,0 +1,60 @@
+name: Audit exact original 2020 and 2022 Senate-only SOS candidate website rows
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-864-sos-official-2020-22-state-senate-only-archived-results-targets-v1.json
+      - scripts/audit-senate-864-sos-original-senate-only-candidate-results.mjs
+      - .github/workflows/senate-864-sos-2020-22-original-senate-only-websites.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  strict-original-sos-candidate-site-row:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-historical-sos-candidate-website-originals-20261012'
+    name: Exact archived original State Senate only SOS filing rows — ${{ matrix.year }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        year: [2020, 2022]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: node --check scripts/audit-senate-864-sos-original-senate-only-candidate-results.mjs
+      - run: npm ci --no-fund --no-audit
+      - name: Original Minnesota Secretary of State Senate postvote winners and candidate lookup
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38089571113
+          name: senate-2020-22-public-candidate-original-source-acquisition
+          github-token: ${{ github.token }}
+          path: proof/sos
+      - name: Replay whole independently indexed original official SOS Senate-only pages and conservatively extract named site rows
+        shell: bash
+        run: |
+          set -euo pipefail
+          original="$(find proof/sos -type f -name 2020-sos-general-stsenate.response -print -quit)"
+          test -n "$original"
+          node --import tsx scripts/audit-senate-864-sos-original-senate-only-candidate-results.mjs \
+            --year "${{ matrix.year }}" \
+            --sos-original-dir "$(dirname "$original")" \
+            --out-dir research/verified
+      - name: Save only original-source hashes and safe three field witness, never full filing personal contacts or viewstate
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-sos-original-candidate-senate-only-${{ matrix.year }}-v1
+          path: research/verified/
+          retention-days: 30
+          if-no-files-found: warn

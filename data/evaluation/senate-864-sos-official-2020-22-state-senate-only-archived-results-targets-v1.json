@@ -1,0 +1,41 @@
+{
+  "schema": "senate-864-official-sos-2020-2022-original-state-senate-candidate-results-targets-v1",
+  "issue": 864,
+  "sourceKind": "Minnesota Secretary of State original pre-election candidate filing results HTML with public Candidate/Website columns, distinct from bulk filed candidates export",
+  "years": {
+    "2020": {
+      "election": "2020-11-03",
+      "to": "20201102",
+      "year": 2020,
+      "targets": [
+        "https://candidates.sos.state.mn.us/CandidateFilingResults.aspx?county=0&municipality=0&schooldistrict=0&hospitaldistrict=0&level=1&party=0&federal=False&judicial=False&executive=False&senate=True&representative=False&title=&office=0&candidateid=0"
+      ],
+      "independentlyIndexedRelevantOriginalExample": {
+        "timestamp": "20201021211752",
+        "url": "https://candidates.sos.state.mn.us/CandidateFilingResults.aspx?county=0&municipality=0&schooldistrict=0&hospitaldistrict=0&level=1&party=0&federal=False&judicial=False&executive=False&senate=True&representative=False&title=&office=0&candidateid=0"
+      }
+    },
+    "2022": {
+      "election": "2022-11-08",
+      "to": "20221107",
+      "year": 2022,
+      "targets": [
+        "https://candidates.sos.state.mn.us/CandidateFilingResults.aspx?county=0&municipality=0&schooldistrict=0&hospitaldistrict=0&level=1&party=0&federal=False&judicial=False&executive=False&senate=True&representative=False&title=&office=0&candidateid=0",
+        "https://candidates.sos.mn.gov/CandidateFilingResults.aspx?county=0&municipality=0&schooldistrict=0&hospitaldistrict=0&level=1&party=0&federal=False&judicial=False&executive=False&senate=True&representative=False&title=&office=0&candidateid=0"
+      ]
+    }
+  },
+  "versionedOriginalMetadata": {
+    "archiveWholeOriginalCDXSha1MustMatchWholeRawHtml": true,
+    "fullHTMLSHA256Retained": true,
+    "speakerPlatformStanceNotInferred": true,
+    "officialPostVote67DistrictWinnersForPersonDistrictCheckOnly": true,
+    "originalCaptureBeforeElectionMustBeVerified": true,
+    "sourceCannotProveFirstPublishedDateOrCompleteFilingUniverse": true,
+    "onlySenateCandidateNameDistrictWebsiteAllowedToPersist": true,
+    "allResidenceAddressPhoneEmailOrCookiesNeverPersisted": true,
+    "providerIndexErrorsAreUnknown": true
+  },
+  "productionDBReadsWrites": 0,
+  "predictionTrainingOrDeploymentChanges": 0
+}
