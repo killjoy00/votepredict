@@ -15,7 +15,7 @@ import {
 } from '../src/evidence/cfb-candidate-finance-history.js';
 
 export const CFB_ARCHIVED_CSV_V1_MARKER =
-  'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V1' as const;
+  'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V2' as const;
 export const PUBLIC_CFB_ARCHIVED_CSV_SOURCES = [
   {
     stream: 'candidate_contributions',
@@ -41,7 +41,7 @@ const B32 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 const HASH_RE = /^[a-f0-9]{64}$/;
 const CDX_RE = /^[A-Z2-7]{32}$/;
 const CAPTURE_RE = /^202[1-3](?:0[1-9]|1[0-2])(?:0[1-9]|[12][0-9]|3[01])(?:[01][0-9]|2[0-3])[0-5][0-9][0-5][0-9]$/;
-export const PUBLIC_CFB_ARCHIVE_RESULT_SCHEMA = 'cfb-864-cfb-candidate-archived-original-csv-v1';
+export const PUBLIC_CFB_ARCHIVE_RESULT_SCHEMA = 'cfb-864-cfb-candidate-archived-original-csv-v2';
 
 export interface OriginalCsvCapture {
  stream: CandidateCsvStream;
@@ -199,6 +199,7 @@ function reason(error:unknown):OriginalCsvAttemptStatus{
 }
 async function limitedFetchBytes(
  fetchImpl:typeof fetch,url:string,maximum:number,timeoutMs:number,
+ purpose:'cdx'|'raw_replay',
 ):Promise<Uint8Array>{
  const response=await fetchImpl(url,{
   redirect:'follow',
@@ -206,11 +207,23 @@ async function limitedFetchBytes(
   signal:AbortSignal.timeout(timeoutMs),
  });
  if(!response.ok)throw Error('Public source HTTP unavailable');
- if(response.url){
-  const end=new URL(response.url);
-  if(end.hostname!=='web.archive.org'||end.protocol!=='https:'
-    ||!end.pathname.startsWith('/web/'))
-   throw Error('Original replay redirected away from Wayback');
+ // A CDX metadata endpoint is NOT a /web/<capture>id_/ raw replay.
+ // Validate the final endpoint according to what was actually requested.
+ // Source URL metadata and CDX records undergo their own strict validation.
+ const expected=new URL(url);
+ if(expected.origin!=='https://web.archive.org'||!response.url)
+  throw Error('Wayback response final URL missing or unapproved');
+ const end=new URL(response.url);
+ if(end.origin!=='https://web.archive.org')
+  throw Error('Wayback response redirected outside trusted archive host');
+ if(purpose==='cdx'){
+  if(expected.pathname!=='/cdx/search/cdx'
+    ||end.pathname!=='/cdx/search/cdx')
+   throw Error('CDX metadata response redirected outside index endpoint');
+ }else if(!expected.pathname.startsWith('/web/')
+  ||end.pathname!==expected.pathname
+  ||end.search!==expected.search){
+  throw Error('Raw replay changed archived capture identity');
  }
  const sizeHeader=response.headers.get('content-length');
  if(sizeHeader!==null&&Number(sizeHeader)>maximum)
@@ -253,7 +266,7 @@ export async function provePublicCandidateCsvSources(
   let rows:Array<{timestamp:string;original:string;digest:string}>=[];
   try{
    const bytes=await limitedFetchBytes(fetchImpl,indexedCdxUrl(source.original),
-    MAX_CDX_RESULT_BYTES,45000);
+    MAX_CDX_RESULT_BYTES,45000,'cdx');
    rows=validateCdxCandidateCsvCaptures(JSON.parse(Buffer.from(bytes).toString('utf8')),source);
   }catch(error){
    results.push({stream:source.stream,
@@ -274,7 +287,7 @@ export async function provePublicCandidateCsvSources(
    attempted++;
    try{
     const bytes=await limitedFetchBytes(fetchImpl,rawReplayUrl(row),
-     MAX_PUBLIC_ORIGINAL_BYTES,180000);
+     MAX_PUBLIC_ORIGINAL_BYTES,180000,'raw_replay');
     verified=verifyAndCountCandidateCsv(bytes,row,source.stream);
     status='authenticated';break;
    }catch(error){status=reason(error)}
