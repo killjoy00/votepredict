@@ -6,6 +6,7 @@ on:
       - scripts/audit-senate-864-single-choice-side-readonly-v3.ts
       - tests/senate-864-ocr-choice-discrepancy.test.ts
       - tests/senate-864-single-choice-side-v3.test.ts
+      - tests/senate-864-single-choice-workflow-order-syntax.test.ts
       - .github/workflows/senate-864-single-choice-tally-side-readonly-v3.yml
       - docs/evaluation/senate-864-single-missing-choice-tally-side-v3.md
   push:
@@ -39,6 +40,7 @@ jobs:
         run: |
           node --import tsx --test tests/senate-864-ocr-choice-discrepancy.test.ts
           node --import tsx --test tests/senate-864-single-choice-side-v3.test.ts
+          node --import tsx --test tests/senate-864-single-choice-workflow-order-syntax.test.ts
           node --import tsx --test tests/senate-864-protected-source-db-parity.test.ts
           node --import tsx --test tests/senate-864-v2-roster-protected-receipts.test.ts
   pr-disposable-sql:
