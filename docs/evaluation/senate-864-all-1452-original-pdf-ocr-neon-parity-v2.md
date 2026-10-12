@@ -126,3 +126,17 @@ of the 1,452 *indexed original PDF identities*, **not** all official meeting,
 recorded-action, source interpretation, historical eligibility or deployed
 production database parity. The independent 2021 print and 141 unlinked-meeting
 holds remain; keep #864 open.
+## Subsequent V4 narrow tally-side proof (does not change V2 counts)
+
+After an explicitly held V3 presecret attempt (no Neon query), the
+[successful protected V4 run #38262800243](https://github.com/killjoy00/votepredict/actions/runs/38262800243)
+and its [keyless sanitized issue receipt #6126317993](https://github.com/killjoy00/votepredict/issues/864#issuecomment-6126317993)
+verified that the **single absent original 2024 named-choice SHA fingerprint
+is a YEA-side choice**, using the retained original numeric tally, all
+**9 of 9** exact stored token intersections and non-null membership IDs.
+The [machine-readable V4 proof receipt](./source-proof/senate-864-2024-one-missing-choice-yea-side-v4-protected-receipt.json)
+is cross-checked with this V2 result by a regression test.
+
+This narrows *which side* is missing, not *which person* or why the
+choice was absent; neither V4 nor V2 authorizes a row repair, historical
+prediction eligibility, all-source completeness or closing #864.
