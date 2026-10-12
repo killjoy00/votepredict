@@ -1,0 +1,34 @@
+name: '#864 historical Senate committee positional event-key replay HOLD'
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-positional-event-key-replay-risk.ts
+      - tests/senate-864-positional-event-key-risk.test.ts
+      - docs/evaluation/senate-864-parser-v3-positional-event-key-replay-hold.md
+      - scripts/backfill-senate-committee-minutes.ts
+      - .github/workflows/senate-864-positional-event-key-gates.yml
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-864-positional-event-key-gates.yml
+permissions:
+  contents: read
+jobs:
+  synthetic-no-database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Prove legacy SQL positional key risk and fail-closed parser sample
+        run: |
+          node --import tsx --test tests/senate-864-positional-event-key-risk.test.ts
+          npm run typecheck
+      - run: npm audit --omit=dev --audit-level=high
