@@ -62,11 +62,12 @@ for(const kind of Object.keys(roots)){
  assert.equal(d.originalFullGovernmentLRLSHA256,govSha);
  assert.equal(d.independentOriginal87of95CampaignSiteCoverageSHA256,
   'a59826f30bd46fd955d9136091ae18c00977351f2420f1f55819264a15f68713');
- assert.equal(d.initialActuallyServedSenatorCount,95);
- assert.equal(d.initialOriginalCampaignSiteQuotedPeople,87);
- assert.equal(d.candidateSiteSourceCoverageIncrementFromPublisherSources,0);
- assert.equal(d.originalDirectSpeechQuotesAutomaticallyApproved,0);
- assert.equal(d.productionDBReadsWrites,0);
+ assert.equal(d.distinctHistoricalPublisherSources,kind==='recent'?2:5);
+ assert.equal(d.publisherArticlesNotCandidateCampaignWebsites,true);
+ assert.equal(d.automaticallyNewCandidateCampaignSiteQuotes,0);
+ assert.equal(d.postVotePublicationNeverRetroactivelyPredictsVote,true);
+ assert.equal(d.originalArchivedCaptureNotFirstPublishedDate,true);
+ assert.equal(d.productionDatabaseReadsWrites,0);
  sourceManifest[kind]=d;
 }
 const provenOriginalSections=new Map(),cdxHashes=new Map(),verifiedPeople=new Set(),proof=[];
