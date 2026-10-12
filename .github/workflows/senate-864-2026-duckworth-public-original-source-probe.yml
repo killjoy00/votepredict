@@ -1,0 +1,42 @@
+name: Public source proof for 2026 Duckworth attributed policy remarks
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-864-2026-incumbent-duckworth-exact-speaker-leads-v1.json
+      - scripts/probe-senate-864-2026-duckworth-dated-original-public-statements.mjs
+      - tests/senate-864-2026-incumbent-duckworth-public-source.test.mjs
+      - docs/evaluation/senate-864-2026-49-incumbent-source-parity-and-duckworth.md
+      - .github/workflows/senate-864-2026-duckworth-public-original-source-probe.yml
+permissions:
+  contents: read
+jobs:
+  four-independent-2026-public-sources:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-2026-incumbent-source-parity-duckworth-20261012'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Offline tests: no speaker, date, provider, original-site or database claims invented
+        run: |
+          node --check scripts/probe-senate-864-2026-duckworth-dated-original-public-statements.mjs
+          node --test tests/senate-864-2026-incumbent-duckworth-public-source.test.mjs
+      - name: Read four exact public URLs and preserve safe source fingerprint receipts
+        run: |
+          node scripts/probe-senate-864-2026-duckworth-dated-original-public-statements.mjs --out-dir proof
+      - name: Upload tiny source receipt only, not copyrighted pages or contact data
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-2026-duckworth-four-dated-original-speaker-html-receipts-v1
+          path: proof/
+          if-no-files-found: warn
+          retention-days: 30
