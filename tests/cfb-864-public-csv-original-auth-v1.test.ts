@@ -3,11 +3,11 @@ import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import test from 'node:test';
 import {
- CFB_ARCHIVED_CSV_V1_MARKER,PUBLIC_CFB_ARCHIVED_CSV_SOURCES,
+ CFB_ARCHIVED_CSV_V2_MARKER,PUBLIC_CFB_ARCHIVED_CSV_SOURCES,
  PUBLIC_CFB_ARCHIVE_RESULT_SCHEMA,
  sha1Base32,exactCaptureOn,validateCdxCandidateCsvCaptures,
  verifyAndCountCandidateCsv,rawReplayUrl,provePublicCandidateCsvSources,
- assertPublicCfbCsvV1MainOnly,
+ assertPublicCfbCsvV2MainOnly,
 } from '../scripts/prove-cfb-864-public-archived-csv-source-v1.js';
 
 const stamp='20230227163825';
@@ -30,6 +30,13 @@ function fixture(stream:'candidate_contributions'|'candidate_expenditures'):Buff
 }
 function cdxRows(original:string,timestamp:string,bytes:Buffer){
  return [headers,[timestamp,original,'200',sha1Base32(bytes),'text/plain',String(bytes.length)]];
+}
+// Model the actual nonempty final fetch URL; blank Response.url mocks masked
+// the V1 defect of treating the CDX index as a raw /web/...id_/ replay.
+function served(body:string,url:string):Response{
+ const response=new Response(body,{status:200});
+ Object.defineProperty(response,'url',{value:url});
+ return response;
 }
 const image1=fixture(first.stream),image2=fixture(second.stream);
 const dig1=sha1Base32(image1),dig2=sha1Base32(image2);
@@ -89,14 +96,14 @@ test('strict public-only mocked CDX and id_ raw retrieval yields count-only two-
   if(value.startsWith('https://web.archive.org/cdx/search/cdx?')){
    const query=new URL(value).searchParams.get('url');
    if(query===first.original)
-    return new Response(JSON.stringify(cdxRows(first.original,stamp,image1)),{status:200});
+    return served(JSON.stringify(cdxRows(first.original,stamp,image1)),value);
    if(query===second.original)
-    return new Response(JSON.stringify(cdxRows(second.original,stamp,image2)),{status:200});
+    return served(JSON.stringify(cdxRows(second.original,stamp,image2)),value);
   }
   if(value===rawReplayUrl({timestamp:stamp,original:first.original}))
-   return new Response(image1.toString('utf8'),{status:200});
+   return served(image1.toString('utf8'),value);
   if(value===rawReplayUrl({timestamp:stamp,original:second.original}))
-   return new Response(image2.toString('utf8'),{status:200});
+   return served(image2.toString('utf8'),value);
   throw Error('Unexpected public source URL');
  };
  const result=await provePublicCandidateCsvSources(fake as typeof fetch);
@@ -112,16 +119,44 @@ test('strict public-only mocked CDX and id_ raw retrieval yields count-only two-
  assert.equal(calls.length,4);
  assert.doesNotMatch(JSON.stringify(result),/Synthetic [0-9]+|donorName|contributorName|streetAddress|employerName|metadata\\.rowKey/i);
 });
+test('CDX final index URL is accepted, but cross-host and changed raw replay capture redirects HOLD',async()=>{
+ const cdxbad=async(url:RequestInfo|URL)=>{
+  const value=String(url);
+  if(value.includes('/cdx/search/cdx?'))
+   return served(JSON.stringify(cdxRows(first.original,stamp,image1)),
+    'https://evil.invalid/cdx/search/cdx');
+  throw Error('Original replay must never be requested after CDX redirect');
+ };
+ const failCdx=await provePublicCandidateCsvSources(cdxbad as typeof fetch);
+ assert.ok(failCdx.results.every(x=>x.status==='cdx_unavailable'));
+ assert.ok(failCdx.results.every(x=>x.capturesAttempted===0));
+ const replayBad=async(url:RequestInfo|URL)=>{
+  const value=String(url);
+  if(value.includes('/cdx/search/cdx?')){
+   const source=new URL(value).searchParams.get('url')===first.original?first:second;
+   const bytes=source.stream==='candidate_contributions'?image1:image2;
+   return served(JSON.stringify(cdxRows(source.original,stamp,bytes)),value);
+  }
+  const body=value.includes('-2113865252')?image1:image2;
+  // An id_ response must not silently change to a different timestamp.
+  return served(body.toString('utf8'),
+   value.replace(stamp,'20230228163825'));
+ };
+ const failRaw=await provePublicCandidateCsvSources(replayBad as typeof fetch);
+ assert.ok(failRaw.results.every(x=>x.status==='raw_replay_unavailable'));
+ assert.ok(failRaw.results.every(x=>x.capturesAttempted===1));
+ assert.ok(failRaw.results.every(x=>x.verified===null));
+});
 test('digest mismatch does not return proof even with a valid parser',async()=>{
  const fake=async(url:RequestInfo|URL)=>{
   const value=String(url);
   if(value.includes('/cdx/search/cdx?')){
    const source=new URL(value).searchParams.get('url')===first.original?first:second;
    const bytes=source.stream==='candidate_contributions'?image1:image2;
-   return new Response(JSON.stringify(cdxRows(source.original,stamp,bytes)),{status:200});
+   return served(JSON.stringify(cdxRows(source.original,stamp,bytes)),value);
   }
   // Raw replay has changed without matching the CDX original snapshot.
-  return new Response('X'.repeat(510),{status:200});
+  return served('X'.repeat(510),value);
  };
  const result=await provePublicCandidateCsvSources(fake as typeof fetch);
  assert.deepEqual(result.results.map(x=>x.status),[
@@ -133,13 +168,13 @@ test('digest mismatch does not return proof even with a valid parser',async()=>{
 test('malformed CDX, unknown source and unavailable captures fail closed; not zero original rows',async()=>{
  const fake=async(url:RequestInfo|URL)=>{
   if(String(url).includes('/cdx/search/cdx?'))
-   return new Response(JSON.stringify([headers.slice(1)]),{status:200});
+   return served(JSON.stringify([headers.slice(1)]),String(url));
   throw Error('Unexpected replay fetch');
  };
  const result=await provePublicCandidateCsvSources(fake as typeof fetch);
  assert.ok(result.results.every(x=>x.status==='invalid_cdx_metadata'));
  assert.ok(result.results.every(x=>x.verified===null));
- const none=async()=>new Response(JSON.stringify([headers]),{status:200});
+ const none=async(url:RequestInfo|URL)=>served(JSON.stringify([headers]),String(url));
  const empty=await provePublicCandidateCsvSources(none as typeof fetch);
  assert.ok(empty.results.every(x=>x.status==='no_indexed_capture'));
 });
@@ -147,20 +182,20 @@ test('reviewed first attempt main-only owner comment or genuine push, never a PR
  const pass={
   GITHUB_EVENT_NAME:'push',GITHUB_REPOSITORY:'killjoy00/votepredict',
   GITHUB_REF:'refs/heads/main',GITHUB_RUN_ATTEMPT:'1',
-  GITHUB_SHA:'a'.repeat(40),CFB_864_CSV_V1_VERIFIED_MARKER:'true',
+  GITHUB_SHA:'a'.repeat(40),CFB_864_CSV_V2_VERIFIED_MARKER:'true',
  };
- assert.doesNotThrow(()=>assertPublicCfbCsvV1MainOnly(pass));
- assert.throws(()=>assertPublicCfbCsvV1MainOnly({...pass,GITHUB_EVENT_NAME:'issue_comment'}));
- assert.doesNotThrow(()=>assertPublicCfbCsvV1MainOnly({
+ assert.doesNotThrow(()=>assertPublicCfbCsvV2MainOnly(pass));
+ assert.throws(()=>assertPublicCfbCsvV2MainOnly({...pass,GITHUB_EVENT_NAME:'issue_comment'}));
+ assert.doesNotThrow(()=>assertPublicCfbCsvV2MainOnly({
   ...pass,GITHUB_EVENT_NAME:'issue_comment',
-  CFB_864_CSV_V1_OWNER_ISSUE_COMMENT_VERIFIED:'true',
+  CFB_864_CSV_V2_OWNER_ISSUE_COMMENT_VERIFIED:'true',
  }));
  for(const change of [
   {GITHUB_EVENT_NAME:'pull_request'},{GITHUB_REPOSITORY:'other/repo'},
   {GITHUB_REF:'refs/heads/feature'},{GITHUB_RUN_ATTEMPT:'2'},
-  {GITHUB_SHA:'bad'},{CFB_864_CSV_V1_VERIFIED_MARKER:'false'},
- ])assert.throws(()=>assertPublicCfbCsvV1MainOnly({...pass,...change}));
- assert.equal(CFB_ARCHIVED_CSV_V1_MARKER,'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V1');
+  {GITHUB_SHA:'bad'},{CFB_864_CSV_V2_VERIFIED_MARKER:'false'},
+ ])assert.throws(()=>assertPublicCfbCsvV2MainOnly({...pass,...change}));
+ assert.equal(CFB_ARCHIVED_CSV_V2_MARKER,'SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V2');
 });
 test('workflow has no Neon/private input, no source body upload, and script validates as JavaScript',()=>{
  const wf=readFileSync('.github/workflows/senate-864-cfb-2021-22-public-original-csv-v1.yml','utf8');
@@ -168,7 +203,7 @@ test('workflow has no Neon/private input, no source body upload, and script vali
  assert.match(wf,/github\.event\.issue\.number == 864/);
  assert.match(wf,/github\.event\.comment\.user\.login == 'killjoy00'/);
  assert.match(wf,/github\.event\.comment\.author_association == 'OWNER'/);
- assert.match(wf,/SENATE_864_CFB_2021_22_CSV_V1_OWNER_ONE_SHOT/);
+ assert.match(wf,/SENATE_864_CFB_2021_22_CSV_V2_OWNER_ONE_SHOT/);
  assert.match(wf,/git log -1 --format=%B \| grep -Fq/);
  assert.match(wf,/npm run check/);
  assert.match(wf,/npm audit --omit=dev --audit-level=high/);
