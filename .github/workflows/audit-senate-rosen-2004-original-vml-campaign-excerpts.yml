@@ -1,0 +1,87 @@
+name: Audit original 2004 Julie Rosen Senate SD24 Internet Explorer VML site campaign excerpts
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-rosen-old-sd24-2004-legacy-vml-original-12-excerpts-v1.json
+      - scripts/audit-senate-rosen-2004-vml-original-12-campaign-excerpts.mjs
+      - scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs
+      - tests/senate-rosen-2004-legacy-vml-original-campaign-excerpts.test.ts
+      - .github/workflows/audit-senate-rosen-2004-original-vml-campaign-excerpts.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  independent-legacy-browser-vml-authentic-original-campaign-excerpts:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-rosen-2004-vml-original-candidate-issues-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen full official original Minnesota Legislature historical Senate service directory
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen original entire historical Wayback CDX and full Julie Rosen 2004 candidate homepage VML
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38186753218
+          name: senate-last16-64-targeted-exact-path-archived-original-cdx-html-v1
+          github-token: ${{ github.token }}
+          path: original/last16
+      - name: Independently verify original Senate service, CDX bytes, full legacy IE HTML, and all 12 exact VML text quotes
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
+          node --import tsx scripts/audit-senate-rosen-2004-vml-original-12-campaign-excerpts.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --last16-original-dir original/last16 \
+            --output-json original/proof/rosen-historic-sd24-2004-original-conditional-vml-12-quotes-audit.json
+      - name: Recompute all 95 true historically served senators first-party website research quote coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          node --import tsx scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --out-dir original/95-serving-verified-coverage
+          node -e 'const s=require("./original/95-serving-verified-coverage/95-senators-public-campaign-coverage.json").summary;for(const [key,expected] of Object.entries({actualServingStateSenators:95,actuallyServedSenatorsWithAnyKnownSelectedOriginalSiteExcerpt:86,actuallyServedSenatorsWithOriginalSiteBodiesButNoSelectedQuote:0,actuallyServedSenatorsUnobservedInSelectedOriginalSiteSourceLedgers:9,totalExactResearchExcerptRowsForVerifiedSenators:1105,nonMatchingRowsExcludedOrNeedsSeparateIdentityProof:1,productionDatabaseReadsWritesOrForecastChanges:0})){if(s[key]!==expected)throw Error(key+" got "+s[key]+" expected "+expected);}console.log("86/95 actual senators have original first-party site research quote leads; 1105 short literal rows; 9 unknown");'
+      - name: Retain independent entire original 2004 source and 12 exact IE conditional quote proofs
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-rosen-2004-original-sd24-vml-12-literal-excerpts-proof-v1
+          path: original/proof/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Retain official independently rechecked statewide 95 senator original site research coverage
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-95-serving-86-original-source-quotes-1105-research-excerpts-v1
+          path: original/95-serving-verified-coverage/
+          if-no-files-found: warn
+          retention-days: 30

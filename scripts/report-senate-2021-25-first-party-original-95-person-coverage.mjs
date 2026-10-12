@@ -123,6 +123,11 @@ read('senate-six-2020-original-pages-26-new-exact-first-party-excerpts-v1',
 read('senate-roger-chamberlain-2016-original-10-economic-issue-excerpts-and-domain-review-v1',
  (d,s)=>{assert.equal(d.tenCandidateSiteExactStatements.length,10);
   add('Roger Chamberlain',d.tenCandidateSiteExactStatements.length,s);});
+// Historical original SD24 Julie Rosen site captured March 2004, with
+// IE-rendered conditional VML text; NEVER reinterpret as 2020 SD23 platform.
+read('senate-rosen-old-sd24-2004-legacy-vml-original-12-excerpts-v1',
+ (d,s)=>{assert.equal(d.pages.length,1);assert.equal(d.excerpts.length,12);
+  each(d.excerpts,q=>[d.pages[0].person,1],s);});
 read('senate-bruce-anderson-14-full-original-issues-leads-v1',
  (d,s)=>{assert.equal(d.pages.length,1);assert.equal(d.excerpts.length,14);
   each(d.excerpts,q=>[d.pages[0].person,1],s);});
