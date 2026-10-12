@@ -1,0 +1,95 @@
+name: Authenticate original Kiffmeyer Newman Kreun 33 historical candidate issue excerpts independently
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-kiffmeyer-newman-kreun-four-original-historic-site-excerpts-v1.json
+      - scripts/audit-senate-kiffmeyer-newman-kreun-original-sites.mjs
+      - tests/senate-kiffmeyer-newman-kreun-historical-33-original-excerpts.test.ts
+      - scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs
+      - .github/workflows/audit-senate-kiffmeyer-newman-kreun-33-historic-excerpts.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-html-cdx-and-33-literal-excerpts:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-kiffmeyer-newman-kreun-original-historical-site-excerpts-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen original entire government historical Senate service and supplemental special swearing records
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen parallel original House Secretary-of-State and MN-Senate campaign Wayback sources
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38193297084
+          name: senate-eight-parallel-historic-original-sites-legacy2020-v1
+          github-token: ${{ github.token }}
+          path: original/legacy2020
+      - name: Reopen parallel original 2021 Kreun school board pre Senate campaign Wayback sources
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38193297084
+          name: senate-eight-parallel-historic-original-sites-recent2022-v1
+          github-token: ${{ github.token }}
+          path: original/recent2022
+      - name: Independently rehash full official source and 3 raw archive indexes, four full historical candidate sites, 33 exact short excerpts
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear"
+          node --import tsx scripts/audit-senate-kiffmeyer-newman-kreun-original-sites.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --legacy2020-source-dir original/legacy2020 \
+            --recent2022-source-dir original/recent2022 \
+            --output-json original/proof/three-senators-33-office-scoped-historical-original-byte-verified-source-excerpts.json
+      - name: Independently rebuild 95 actually-serving senator original-firstparty-site research coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          node --import tsx scripts/report-senate-2021-25-first-party-original-95-person-coverage.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --out-dir original/95-member-source-coverage
+          node -e 'const s=require("./original/95-member-source-coverage/95-senators-public-campaign-coverage.json").summary;for(const [key,expected] of Object.entries({actualServingStateSenators:95,actuallyServedSenatorsWithAnyKnownSelectedOriginalSiteExcerpt:90,actuallyServedSenatorsWithOriginalSiteBodiesButNoSelectedQuote:0,actuallyServedSenatorsUnobservedInSelectedOriginalSiteSourceLedgers:5,totalExactResearchExcerptRowsForVerifiedSenators:1173,nonMatchingRowsExcludedOrNeedsSeparateIdentityProof:1,productionDatabaseReadsWritesOrForecastChanges:0})){if(s[key]!==expected)throw Error(key+" expected "+expected+" got "+s[key]);}console.log("ORIGINAL GOV LRL 95 ACTUAL SENATORS: 90 historical first-party site quoted; 1173 literal short source leads; 5 bounded unobserved");'
+      - name: Preserve fully reauthenticated original byte and literal quote audit
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-kiffmeyer-newman-kreun-33-original-cdx-html-independent-proof-v1
+          path: original/proof/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Preserve official 95 actual serving senator statewide original-site coverage after three additions
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-95-serving-90-historical-firstparty-1173-short-excerpts-v1
+          path: original/95-member-source-coverage/
+          if-no-files-found: warn
+          retention-days: 30
