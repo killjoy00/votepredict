@@ -10,7 +10,7 @@ test('correct independently proven Hawj March24 source and 3 actual official ind
  assert.equal(VERSION,'track-d-hawj-2024-hf5247-actual-versions-bilingual-crosswalk-v1');
  const a=proofAnchor();assert.equal(a.historicalSenator,'Foung Hawj');
  assert.equal(a.firstOriginalVerifiedUtc,'2024-03-24T19:01:09Z');
- assert.equal(a.originalSha256,'aa6da6e8722e33f2f692ba31bfd6699cf97768e74c788dbdb0786a75a3ad5743');
+ assert.equal(a.originalHtmlSha256,'aa6da6e8722e33f2f692ba31bfd6699cf97768e74c788dbdb0786a75a3ad5743');
  assert.equal(a.knownOfficialMay7AndMay19Hf5247YesVotes,3);
  assert.deepEqual(a.namedStandaloneBills,['SF 4056','SF 3257','SF 3250']);
  assert.throws(()=>proofAnchor({...structuredClone(old),counts:{currentAsOfRelevantBillTextSectionsIndependentlyAuthenticated:1,distinctHF5247IndividualRollCallsPersonallyListingHawjYes:3}}));
