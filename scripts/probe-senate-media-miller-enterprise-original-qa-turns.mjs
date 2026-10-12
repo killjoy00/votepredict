@@ -59,7 +59,7 @@ export function boundedMillerParagraphProof(html){
   // No named interviewer/senator turn-switch before the policy phrase, and no
   // cross-paragraph prose carryover. The same HTML <p> must START Miller:.
   const prefix=t.slice(0,distance);
-  const otherTurnBefore=/(?:^|\s)(?:kill|bob kill|speaker|interviewer|moderator|reporter|other)\s*:\s+\S/i.test(prefix);
+  const otherTurnBefore=/(?:^|\s)(?:kill|bob kill|speaker|interviewer|moderator|reporter|other)\s*:/i.test(prefix);
   const anotherLabelBefore=/(?:^|\s)(?:miller)\s*:\s+\S/gi;
   const countLabels=[...prefix.matchAll(anotherLabelBefore)].length;
   if(isMiller&&!otherTurnBefore&&distance<=700&&countLabels===1){
