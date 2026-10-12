@@ -1,0 +1,52 @@
+{
+  "schema": "senate-864-2021-22-charles-wiger-bill-provision-original-recovery-leads-v1",
+  "issue": 864,
+  "senatorOfficialServiceName": "Sr., Charles W. Wiger",
+  "official2021District": "43",
+  "officialRosterFirstPartyWebsiteExcerptCount": 0,
+  "doNotCountPublisherAsCampaignSite": true,
+  "originalGovernmentServingSenatorDirectorySha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+  "originalArchivedPublisherPageProofStatusAtManifestCreation": "UNVERIFIED_NEEDS_ORIGINAL_CDXX_SHA_REPLAY",
+  "sources": [
+    {
+      "id": "wiger-2021-sf960-response",
+      "date": "2021-04-22",
+      "url": "https://senatedfl.mn/senate-wiger-statement-on-omnibus-education-bill/",
+      "bill": "SF960",
+      "statementRelativeToBillDecision": "after_2021_04_22_senate_37_29_passage",
+      "issue": "education_childcare",
+      "reportedSpeakerKind": "signed_individual_original_first_party_written_statement",
+      "cues": [
+        "this does not fully fund our schools",
+        "shifts them towards private vouchers",
+        "increase funding for our public schools and students"
+      ],
+      "originalCuesFromLivePublisher": true
+    },
+    {
+      "id": "wiger-2021-e12-compromise",
+      "date": "2021-06-22",
+      "url": "https://senatedfl.mn/senator-chuck-wiger-statement-on-e-12-budget-agreement/",
+      "bill": null,
+      "statementRelativeToBillDecision": "after_compromise_negotiation_before_later_special_session_final_passage_uncrosswalked",
+      "issue": "education_childcare",
+      "reportedSpeakerKind": "signed_individual_original_first_party_written_statement",
+      "cues": [],
+      "originalCuesFromLivePublisher": false
+    },
+    {
+      "id": "wiger-2022-education-proposal",
+      "date": "2022-04-01",
+      "url": "https://senatedfl.mn/senator-chuck-wiger-statement-on-republican-education-bill/",
+      "bill": null,
+      "statementRelativeToBillDecision": "before_may_2022_senate_education_supplemental_passage_exact_bill_to_be_identified",
+      "issue": "education_childcare",
+      "reportedSpeakerKind": "signed_individual_original_first_party_written_statement",
+      "cues": [],
+      "originalCuesFromLivePublisher": false
+    }
+  ],
+  "sourceDateNotAuthoredOrOriginalPublicTimestamp": true,
+  "exactSourceBillVersionAndIndividualVoteNeedIndependentOfficialProof": true,
+  "noOutreachNoProductionDbNoModelChange": true
+}
