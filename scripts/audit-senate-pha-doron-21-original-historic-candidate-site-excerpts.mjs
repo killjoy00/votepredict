@@ -185,7 +185,6 @@ for(const q of ledger.excerpts){
  assert.ok(text.includes(q.exactShortExcerpt),'Original visible HTML lacks literal exact quote '+q.id);
  if(q.attributionClass==='candidate_owned_original_senate_site_explicit_policy_priority'){
   const after=text.indexOf('AS YOUR SENATOR I WILL STAND STRONG FOR');
-  const end=text.indexOf('END',after); // Use actual full priority region boundaries below, never trim at partial "END".
   const endSection=text.indexOf('Donate Thank you',after);
   const fallbackEnd=text.indexOf('ENDORSEMENTS',after);
   const stop=endSection>=0?endSection:fallbackEnd;
@@ -193,7 +192,7 @@ for(const q of ledger.excerpts){
   assert.ok(text.slice(after,stop).includes(q.exactShortExcerpt),'Policy quote belongs outside original priorities section '+q.id);
  }else if(q.pageId.startsWith('clark')){
   assert.match(q.attributionClass,/^candidate_owned_original_about_/);
-  assert.ok(!q.attributionClass.includes('platform_pledge'));
+  assert.match(q.attributionClass,/(?:not_platform_pledge|not_official_result|not_specific_bill)$/);
  }else assert.match(q.attributionClass,/^candidate_owned_original_senate_site_/);
  perPage.set(q.pageId,(perPage.get(q.pageId)||0)+1);
  proof.push({id:q.id,exactShortOriginalHtmlLiteralSHA256:sha(Buffer.from(q.exactShortExcerpt)),
