@@ -112,7 +112,7 @@ function fakePool(rows=valid(),opt?:{badSql?:number,badRow?:boolean,badIdentity?
      if(index<0)throw Error('Unexpected query attempt');
      if(opt?.badSql===index)throw Error('PRIVATE SQL ERROR WITH SECRET');
      const source=index===0?rows.sessions:index===1?rows.years:rows.duplicate;
-     if(opt?.badRow&&index===0)return{rows:[{...source[0],row_id:'PRIVATE_ID',v5_people_in_session:'Taylor Swift'}]};
+     if(opt?.badRow&&index===0)return{rows:[{...source[0],row_id:'PRIVATE_ID'}]};
      return{rows:source};
     },
     release:()=>{released++},
@@ -187,9 +187,16 @@ test('malformed or oversized per-session aggregates fail closed with ROLLBACK (n
  const bad=fakePool(undefined,{badRow:true});
  await assert.rejects(
   ()=>auditProtectedRosterSessionMultiplicity(config,fakeNeon,bad.factory),
-  /Invalid or unsafe annual roster aggregate/);
+  /Unexpected aggregate field/);
  assert.equal(bad.queries.at(-1),'ROLLBACK');
  assert.equal(bad.releases(),1);assert.equal(bad.ends(),1);
+ const invalid=valid();
+ invalid.sessions[0]={...invalid.sessions[0]!,v5_membership_rows:'PRIVATE NAME'};
+ const malformed=fakePool(invalid);
+ await assert.rejects(
+  ()=>auditProtectedRosterSessionMultiplicity(config,fakeNeon,malformed.factory),
+  /Invalid or unsafe annual roster aggregate/);
+ assert.equal(malformed.queries.at(-1),'ROLLBACK');
  const oversized=valid();
  oversized.sessions.push(...oversized.sessions,...oversized.sessions);
  const other=fakePool(oversized);
