@@ -11,7 +11,10 @@
       "publisherDisplayedDay": "2023-01-11",
       "originalPublisherUrl": "https://www.mnsenaterepublicans.com/senator-jordan-rasmusson-senate-passes-tax-conformity-bill-cuts-taxes-for-individuals-and-small-businesses/",
       "researchPositionClassification": "qualified_support",
-      "bills": [],
+      "bills": [
+        "HF31",
+        "SF25"
+      ],
       "shortPolicyMeaning": "Tax conformity supported but Social Security tax relief for retirees omitted",
       "underlyingStatementId": "lead-2023-rasmusson-tax",
       "attribution": "individually_named_written_quote",
@@ -25,7 +28,7 @@
       "automaticallyHistoricallyEligible": false,
       "productionChangeAuthorized": false,
       "fullOriginalBodyVerbatimApproved": false,
-      "note": "Current source says chamber passage already happened: cannot serve as before-the-vote position."
+      "note": "Official 2023 Minnesota Revisor HF31 (substituted for SF25) completed Senate third reading on Jan 11, while current first-party statement explicitly responds after Senate passage. Social Security exemption was a separate unresolved proposal; no named personal ballot independently proven. Official bill identity https://www.revisor.mn.gov/bills/93/2023/0/HF/31/"
     },
     {
       "id": "lead-2023-kreun-energy",
@@ -116,7 +119,7 @@
       "underlyingStatementId": "lead-2023-weber-pro-act",
       "attribution": "individually_named_written_quote",
       "exactCurrentlyVisibleShortQuote": "The extreme abortion bill goes too far and takes steps far beyond codifying current law",
-      "legislativeDecisionDay": "2023-01-28",
+      "legislativeDecisionDay": "2023-01-27",
       "retrospectiveRelativeToThatDecision": true,
       "historicalOriginalAuthentication": "UNKNOWN_NOT_INDEPENDENTLY_ARCHIVED",
       "historicalPublicByUtc": null,
@@ -125,7 +128,7 @@
       "automaticallyHistoricallyEligible": false,
       "productionChangeAuthorized": false,
       "fullOriginalBodyVerbatimApproved": false,
-      "note": "Explicitly after the Jan28 Senate HF1 passage. Not prior-day proof."
+      "note": "Legislative-day Jan27 HF1 final Senate passage verified by Revisor; displayed Jan29 written response follows it. Exact original public-by unknown and no individual ballot proven."
     },
     {
       "id": "lead-2023-pha-pro-act",
@@ -135,13 +138,14 @@
       "originalPublisherUrl": "https://senatedfl.mn/senator-susan-pha-celebrates-passage-of-pro-act-as-victory-for-reproductive-freedoms/",
       "researchPositionClassification": "supports",
       "bills": [
+        "HF1",
         "SF1"
       ],
       "shortPolicyMeaning": "Supports PRO Act's reproductive freedom provisions",
       "underlyingStatementId": "lead-2023-pha-pro-act",
       "attribution": "individually_named_written_quote",
       "exactCurrentlyVisibleShortQuote": "The PRO Act upholds Minnesotans’ fundamental right to reproductive freedom",
-      "legislativeDecisionDay": "2023-01-28",
+      "legislativeDecisionDay": "2023-01-27",
       "retrospectiveRelativeToThatDecision": true,
       "historicalOriginalAuthentication": "UNKNOWN_NOT_INDEPENDENTLY_ARCHIVED",
       "historicalPublicByUtc": null,
@@ -150,7 +154,7 @@
       "automaticallyHistoricallyEligible": false,
       "productionChangeAuthorized": false,
       "fullOriginalBodyVerbatimApproved": false,
-      "note": "Post-Senate-passage first-party quote; self-reported vote not independent Journal personal ballot."
+      "note": "HF1, substituted for SF1, passed MN Senate on OFFICIAL legislative day Jan 27 (34-33); SF1 was indefinitely postponed Jan 26. Publisher statement displayed Jan28 is retrospective. Official record https://www.revisor.mn.gov/bills/93/2023/0/HF/1/ . Do not infer Pha personally voted from 34-33 totals."
     },
     {
       "id": "lead-2023-westlin-wills",
@@ -160,7 +164,8 @@
       "originalPublisherUrl": "https://senatedfl.mn/senator-bonnie-westlin-ushers-bill-to-simplify-estate-planning-through-passage-in-the-senate/",
       "researchPositionClassification": "supports",
       "bills": [
-        "HF244"
+        "HF244",
+        "SF1030"
       ],
       "shortPolicyMeaning": "Uniform Electronic Wills Act for electronic witnessing/notarization; ordinary unanimous measure",
       "underlyingStatementId": "lead-2023-westlin-wills",
@@ -175,7 +180,7 @@
       "automaticallyHistoricallyEligible": false,
       "productionChangeAuthorized": false,
       "fullOriginalBodyVerbatimApproved": false,
-      "note": "Publisher says 67-0, but official individually named passage vote unverified in this round."
+      "note": "Official HF244 67-0 Senate passage Mar22; SF1030 companion had been substituted by HF244. Official Mar8 Senate Judiciary minutes show Westlin offered A1 amendment and moved HF244 as amended pass (motion prevailed); personally named floor ballot remains to be separately checked. Revisor https://www.revisor.mn.gov/bills/93/2023/0/HF/244/; official minutes https://www.senate.mn/schedule/hearing_minutes.html?hearing_id=17724&ls=93 . Printed Westlin quote displayed Mar28, original archived body public-by unknown."
     },
     {
       "id": "lead-2023-dziedzic-bipartisan-housing",
