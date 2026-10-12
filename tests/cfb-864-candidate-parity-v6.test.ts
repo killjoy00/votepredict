@@ -110,23 +110,23 @@ test('complete-body double hashing accepts synthetic exact bytes, rejects any ta
 test('expenditure retry never requests CDX; disallows different timestamps and wrong bytes',async()=>{
  const requested='https://web.archive.org/web/'+expenditure.timestamp+'id_/'+expenditure.original;
  const seen:string[]=[];
- const invalid=await authenticatePriorProvenExpenditureV6(async(url)=>{
+ const invalid=await authenticatePriorProvenExpenditureV6((async(url)=>{
   seen.push(String(url));return served('Not original CSV',String(url));
- } as typeof fetch);
+ }) as typeof fetch);
  assert.deepEqual(seen,[requested]);
  assert.equal(invalid.result.status,'replay_digest_mismatch');
  assert.equal(invalid.result.cdxRowsChecked,0);
  assert.equal(invalid.authenticated,null);
- const changed=await authenticatePriorProvenExpenditureV6(async(url)=>
+ const changed=await authenticatePriorProvenExpenditureV6((async(url)=>
   served('',String(url),{status:302,headers:{
    location:'https://web.archive.org/web/20220607103037id_/'+expenditure.original,
-  }}) as typeof fetch);
+  }})) as typeof fetch);
  assert.equal(changed.result.status,'replay_redirect_hold');
  assert.equal(changed.result.replayRequests,1);
- const offsite=await authenticatePriorProvenExpenditureV6(async(url)=>
-  served('',String(url),{status:302,headers:{location:'https://cfb.mn.gov/'}}) as typeof fetch);
+ const offsite=await authenticatePriorProvenExpenditureV6((async(url)=>
+  served('',String(url),{status:302,headers:{location:'https://cfb.mn.gov/'}})) as typeof fetch);
  assert.equal(offsite.result.status,'replay_redirect_hold');
- const inaccessible=await authenticatePriorProvenExpenditureV6(async()=>{throw Error('timeout')}
+ const inaccessible=await authenticatePriorProvenExpenditureV6((async()=>{throw Error('timeout')})
   as typeof fetch);
  assert.equal(inaccessible.result.status,'replay_network_hold');
 });
