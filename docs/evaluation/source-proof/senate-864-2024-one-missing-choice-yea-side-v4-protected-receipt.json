@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "mn-864-2024-single-missing-candidate-choice-tally-side-v4-protected-receipt",
+  "issue": 864,
+  "reviewedMainSha": "26110b8bc39f13cac70cacf3230cce9d1e436273",
+  "protectedRunId": 38262800243,
+  "protectedRunUrl": "https://github.com/killjoy00/votepredict/actions/runs/38262800243",
+  "issueReceiptId": 6126317993,
+  "issueReceiptUrl": "https://github.com/killjoy00/votepredict/issues/864#issuecomment-6126317993",
+  "pinnedOriginalV2RunId": 38201074454,
+  "pinnedOriginalV2ReceiptId": 6117412541,
+  "v3PresecretHoldRunId": 38261106387,
+  "v3DidNotAccessNeon": true,
+  "counts": {
+    "originalRawPdfShaAndStoredSourceMatches": 1452,
+    "detailedCandidateRolls": 152,
+    "fullyMatchedCandidateRolls": 151,
+    "originalNamedChoiceTokensOn2024DiscrepantRoll": 10,
+    "exactStoredChoiceDigestIntersections": 9,
+    "originalNamedChoiceTokensAbsent": 1,
+    "extraStoredNamedChoiceTokens": 0,
+    "exactStoredChoiceRowsWithNonNullMembership": 9,
+    "exactStoredChoiceRowsWithNullMembership": 0
+  },
+  "inferredMissing2024ChoiceSide": "YEA",
+  "observedSourceToStoredChoiceSideProved": true,
+  "transaction": {
+    "existingDefaultNeonBranchAuthenticated": true,
+    "liveDeployedBindingProven": false,
+    "isolation": "REPEATABLE READ",
+    "readOnly": true,
+    "explicitRollback": true,
+    "mutations": 0,
+    "rawPrivateRowsMemberNamesChoiceDigestsAndUrlsExported": false
+  },
+  "holds": {
+    "missingPersonCertified": false,
+    "missingRowRootCauseProven": false,
+    "parserCandidateRollsEqualOfficialAllMotions": false,
+    "roll2025KeyOnlyIndividualChoiceProof": false,
+    "print2021MinutesDenominatorComplete": false,
+    "printElectronic2022Equivalence": false,
+    "unlinked141ElectronicMeetingsReconciled": false,
+    "rosterServiceDatesAuthenticated": false,
+    "asOfEvidenceEligibilityCertified": false,
+    "allSourceFamiliesComplete": false,
+    "productionVoteRepairAuthorized": false,
+    "issue864Closed": false
+  }
+}

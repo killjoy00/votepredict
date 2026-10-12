@@ -93,10 +93,40 @@ syntax and adds a **new offline test that compiles the reporter as an async
 JavaScript function** and guards migrations/check/EXPLAIN ordering,
 the exact unique V4 marker, private output and protected-job isolation.
 
-**Status:** V3 protected query **never executed**. V4 is code/test
-instrumentation only until a fresh *exact-main, first-attempt, marker-bound*
-protected audit and sanitized issue receipt both succeed. Do not describe a
-YEA/NAY side as a source-to-Neon observed fact before that receipt exists.
+## Protected V4 outcome — verified one missing YEA-side choice
+
+The [V4 first-attempt protected run #38262800243](https://github.com/killjoy00/votepredict/actions/runs/38262800243)
+succeeded on independently reviewed exact-main commit
+`26110b8bc39f13cac70cacf3230cce9d1e436273`.
+The separate keyless reporter completed successfully and posted the
+[sanitized issue receipt #6126317993](https://github.com/killjoy00/votepredict/issues/864#issuecomment-6126317993).
+The immutable numerical result is retained as
+[`source-proof/senate-864-2024-one-missing-choice-yea-side-v4-protected-receipt.json`](./source-proof/senate-864-2024-one-missing-choice-yea-side-v4-protected-receipt.json).
+
+The comparison reverified all **1,452 original PDF raw SHA-to-stored-source
+matches**, all previously frozen V2 roll totals (**152 original detailed
+candidate rolls**, **151 matching fully**) and the one 2024 mismatched roll.
+That roll has **10 source named-choice SHA tokens**, **9 exact source/stored
+named-choice intersections**, **1 source token absent**, **0 unexpected
+stored tokens**, **9 non-null stored membership references** and **0 missing
+stored membership references**. Its independently parsed original numeric
+YEA/NAY tally differs from its nine matched persisted choices by **exactly
+one YEA choice**.
+
+**New verified finding: the one absent original choice token is on the
+YEA side, not the NAY side.** This is *not* proof of the missing person's
+identity, nor evidence of why the token was not persisted; names/digests,
+identifying keys, URLs and raw private records were not exported. The
+protected transaction was `REPEATABLE READ READ ONLY`, explicitly
+`ROLLBACK`ed with zero writes. The authenticated database is the existing
+Neon default branch, *not* independently proven to be the deployed app's
+live DB binding.
+
+V3 is still an explicit presecret **HOLD** with **no V3 protected result**,
+as documented above. Neither V4 nor V2 establishes that parser-recognized
+candidate rolls exhaust all official recorded votes or committee motions.
+No vote repair, feature promotion, eligibility or full historical
+completeness claim is authorized. Parent #864 remains OPEN.
 
 ## Still explicitly not resolved
 
