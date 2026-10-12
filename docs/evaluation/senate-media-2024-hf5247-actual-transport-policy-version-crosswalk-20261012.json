@@ -1,0 +1,235 @@
+{
+  "version": "senate-media-hf5247-2024-actual-version-bilingual-policy-crosswalk-public-receipts-v1",
+  "localObservationDate": "2026-10-12",
+  "provenance": {
+    "issue": 987,
+    "pr": 1230,
+    "firstSuccessfulLivePublicSourceRunId": 38274372589,
+    "firstSuccessfulSourceHead": "00efc5b35f82b7419380fc05f4045f50d34e422c",
+    "firstMetadataOnlyArtifactId": 11758516879,
+    "firstAdversarialSyntheticTestsPassed": 9,
+    "upstreamOfficialHawjJournalPr": 1225,
+    "firstAllFourVerifiedLiveRunId": 38274835110,
+    "firstAllFourVerifiedHead": "66ff00ae20fd8616bfd43d378f2e73649c5d0685",
+    "allFourSourceMetadataArtifactId": 11759115577
+  },
+  "preexistingPrimaryVoteAndContemporaneousSpeechProof": {
+    "senator": "Foung Hawj",
+    "historicalOriginalWrittenSourceUtc": "2024-03-24T19:01:09Z",
+    "originalWrittenSourceRawSha256": "aa6da6e8722e33f2f692ba31bfd6699cf97768e74c788dbdb0786a75a3ad5743",
+    "official2024HF5247May7NamedHawjYea": true,
+    "officialMay19ConferenceNamedHawjYea": true,
+    "officialMay19ThirdReadingNamedHawjYea": true,
+    "standaloneSF3257NamedRollcallProven": false
+  },
+  "counts": {
+    "exactOriginalBillVersionDocumentUrlsAttempted": 4,
+    "completeOriginalRevisorBillVersionDocumentsSHA256Authenticated": 4,
+    "exactMay7DatedDocumentVersionsActuallyRead": 2,
+    "exactMay7VersionsHavingAllFourSpecificDvsTranslatedMaterialMarkers": 0,
+    "verifiedOriginalMay19ConferenceReportDocuments": 1,
+    "may19OriginalContainingThreeCoreTranslatedMaterialsMarkers": 1,
+    "originalSF3257VersionDownloadedAndAuthenticated": 1,
+    "exactSF3257ToHF5247SectionEquivalenceApproved": 0,
+    "sourceToPolicySpecificVoteForecastTrainingLabelsApproved": 0
+  },
+  "billVersionDocuments": [
+    {
+      "id": "hf5247-house-third-engrossment",
+      "originalOfficialBillDocumentUrl": "https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/3/pdf/",
+      "documentVersionListPostedDay": "2024-05-03",
+      "modernRevisorHtmlVersionDisplayedTimestamp": "2024-05-07 19:29",
+      "originalSourceStatus": "exact_official_bill_version_fetched_sha256_and_text_inspected",
+      "actualDownloadedEntireSourceRawSha256": "acdf6e4f5b1d288a55022bfbfa9be68d7760c6257fca22a33801f9b50e5cef4b",
+      "originalDownloadedSourceByteLength": 2421494,
+      "sourceOriginalPdfPages": 148,
+      "exactDocumentTitleAndSessionVerified": true,
+      "singleRawCompleteSourceExamined": true,
+      "originalVisibleSourceFragmentEvidence": [
+        {
+          "id": "transportation_translation_provision_title",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "translated_equivalent_materials",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "qualifying_nonenglish_languages",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "dvs_deputy_registrar",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "DVS_driver_license_agent",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "sponsored_bill_exact_SF3257",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "original_SF3257_bilingual_services",
+          "shortSourceCuePresent": false
+        }
+      ],
+      "compositeFourSpecificDvsMarkersPresent": false,
+      "originalFetchFailureCategory": null,
+      "exactPdfOrHtmlFullTextNeverSaved": true
+    },
+    {
+      "id": "hf5247-first-unofficial-senate-engrossment",
+      "originalOfficialBillDocumentUrl": "https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/ue/1/",
+      "documentVersionListPostedDay": "2024-05-07",
+      "modernRevisorHtmlVersionDisplayedTimestamp": "2024-05-07 17:36",
+      "originalSourceStatus": "exact_official_bill_version_fetched_sha256_and_text_inspected",
+      "actualDownloadedEntireSourceRawSha256": "0ac7ca21c2b31fb617fd39e9d03f07de0d7547ba9c6762e763182061759fa0ce",
+      "originalDownloadedSourceByteLength": 1474193,
+      "sourceOriginalPdfPages": null,
+      "exactDocumentTitleAndSessionVerified": true,
+      "singleRawCompleteSourceExamined": true,
+      "originalVisibleSourceFragmentEvidence": [
+        {
+          "id": "transportation_translation_provision_title",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "translated_equivalent_materials",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "qualifying_nonenglish_languages",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "dvs_deputy_registrar",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "DVS_driver_license_agent",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "sponsored_bill_exact_SF3257",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "original_SF3257_bilingual_services",
+          "shortSourceCuePresent": false
+        }
+      ],
+      "compositeFourSpecificDvsMarkersPresent": false,
+      "originalFetchFailureCategory": null,
+      "exactPdfOrHtmlFullTextNeverSaved": true
+    },
+    {
+      "id": "hf5247-conference-committee-report-may19",
+      "originalOfficialBillDocumentUrl": "https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/ccr/0/pdf/",
+      "documentVersionListPostedDay": "2024-05-19",
+      "modernRevisorHtmlVersionDisplayedTimestamp": null,
+      "originalSourceStatus": "exact_official_bill_version_fetched_sha256_and_text_inspected",
+      "actualDownloadedEntireSourceRawSha256": "61e758157d10fbde5a1873376e274604c394b103a0e22cf58f569ffb7fb48663",
+      "originalDownloadedSourceByteLength": 20789303,
+      "sourceOriginalPdfPages": 1432,
+      "exactDocumentTitleAndSessionVerified": true,
+      "singleRawCompleteSourceExamined": true,
+      "originalVisibleSourceFragmentEvidence": [
+        {
+          "id": "transportation_translation_provision_title",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "translated_equivalent_materials",
+          "shortSourceCuePresent": true
+        },
+        {
+          "id": "qualifying_nonenglish_languages",
+          "shortSourceCuePresent": true
+        },
+        {
+          "id": "dvs_deputy_registrar",
+          "shortSourceCuePresent": true
+        },
+        {
+          "id": "DVS_driver_license_agent",
+          "shortSourceCuePresent": true
+        },
+        {
+          "id": "sponsored_bill_exact_SF3257",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "original_SF3257_bilingual_services",
+          "shortSourceCuePresent": true
+        }
+      ],
+      "compositeFourSpecificDvsMarkersPresent": false,
+      "originalFetchFailureCategory": null,
+      "exactPdfOrHtmlFullTextNeverSaved": true
+    },
+    {
+      "id": "sf3257-original-2023-proposal",
+      "originalOfficialBillDocumentUrl": "https://www.revisor.mn.gov/bills/93/2023/0/SF/3257/versions/0/pdf/",
+      "documentVersionListPostedDay": "2023-04-12",
+      "modernRevisorHtmlVersionDisplayedTimestamp": null,
+      "originalSourceStatus": "exact_official_bill_version_fetched_sha256_and_text_inspected",
+      "actualDownloadedEntireSourceRawSha256": "6b78fd7b510abd7116747c3522700b2f840a9e0903d47e73ea902f94d4e07cbd",
+      "originalDownloadedSourceByteLength": 216439,
+      "sourceOriginalPdfPages": 2,
+      "exactDocumentTitleAndSessionVerified": true,
+      "singleRawCompleteSourceExamined": true,
+      "originalVisibleSourceFragmentEvidence": [
+        {
+          "id": "transportation_translation_provision_title",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "translated_equivalent_materials",
+          "shortSourceCuePresent": true
+        },
+        {
+          "id": "qualifying_nonenglish_languages",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "dvs_deputy_registrar",
+          "shortSourceCuePresent": true
+        },
+        {
+          "id": "DVS_driver_license_agent",
+          "shortSourceCuePresent": true
+        },
+        {
+          "id": "sponsored_bill_exact_SF3257",
+          "shortSourceCuePresent": false
+        },
+        {
+          "id": "original_SF3257_bilingual_services",
+          "shortSourceCuePresent": true
+        }
+      ],
+      "compositeFourSpecificDvsMarkersPresent": false,
+      "originalFetchFailureCategory": null,
+      "exactPdfOrHtmlFullTextNeverSaved": true
+    }
+  ],
+  "decision": {
+    "originalMay7SourceDocumentsBothLackAllFourDvsTranslatedMaterialsMarkers": true,
+    "originalMay7SourceDocumentsBothLackEachOfFourDistinctDvsCoreCues": true,
+    "doNotLabelMay7OmnibusYeaAsHawjSpecificBilingualSF3257Vote": true,
+    "may19ConferenceOriginalContainsEquivalentMaterialsQualifyingLanguageAndDeputyRegistrarCues": true,
+    "may19ConferenceOriginalLongSectionTitleExactContinuousMatchNotFound": true,
+    "may19ConferenceBillVersionNotYetProvedPubliclyAvailableBeforeBothIndividualHawjVotes": true,
+    "sf3257IntroducedOriginalStillUnknownInThisBoundedRun": false,
+    "noDirectSF3257VoteFromOmnibusYea": true,
+    "noExactRevisorHtmlPostingMinuteAssumedBeforeMay7Roll": true,
+    "may20FourthEngrossmentNotProofOfMay19PrevoteText": true,
+    "noWholeRawGovernmentPdfOrArticleHtmlStored": true,
+    "noPrivateVotePredictSourceRowsOrProdDatabaseInspected": true,
+    "noProductionCollectorIngestionStoredVotesModelServingForecastOrDeploymentTouched": true,
+    "sf3257OriginalIncludesBilingualEquivalentMaterialsAndDeputyRegistrarCues": true,
+    "sf3257PrimaryOriginalAndMay19ConferenceSharePolicyTopicMarkersWithoutTextIdentityProved": true
+  }
+}
