@@ -86,7 +86,7 @@ const additional=[
 ];
 const pins=[...people,...additional];
 assert.equal(people.length,16);
-assert.equal(new Set(people.map(p=>p.person)).size,20);
+assert.equal(new Set(people.map(p=>p.person)).size,16);
 assert.equal(pins.length,64);
 const inputs=process.argv.slice(2);
 function arg(k){const i=inputs.indexOf(k);assert.ok(i>=0&&inputs[i+1]&&!inputs[i+1].startsWith('--'),k);return resolve(inputs[i+1]);}
