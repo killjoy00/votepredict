@@ -121,11 +121,40 @@ const PINNED=[
   {
     "id": "sf3257-original-2023-proposal",
     "url": "https://www.revisor.mn.gov/bills/93/2023/0/SF/3257/versions/0/pdf/",
-    "status": "original_unavailable_or_parse_unknown",
-    "sha": null,
-    "bytes": null,
-    "pages": null,
-    "cues": null
+    "status": "exact_official_bill_version_fetched_sha256_and_text_inspected",
+    "sha": "6b78fd7b510abd7116747c3522700b2f840a9e0903d47e73ea902f94d4e07cbd",
+    "bytes": 216439,
+    "pages": 2,
+    "cues": [
+      {
+        "name": "transportation_translation_provision_title",
+        "present": false
+      },
+      {
+        "name": "translated_equivalent_materials",
+        "present": true
+      },
+      {
+        "name": "qualifying_nonenglish_languages",
+        "present": false
+      },
+      {
+        "name": "dvs_deputy_registrar",
+        "present": true
+      },
+      {
+        "name": "DVS_driver_license_agent",
+        "present": true
+      },
+      {
+        "name": "sponsored_bill_exact_SF3257",
+        "present": false
+      },
+      {
+        "name": "original_SF3257_bilingual_services",
+        "present": true
+      }
+    ]
   }
 ];
 test('first live four official source version checks plus nine synthetic adversarial tests are pinned',()=>{
@@ -145,7 +174,7 @@ test('authentic entire government source raw SHA256 and byte receipts and expect
  assert.deepEqual(now,PINNED);
  assert.equal(now.length,4);
  assert.deepEqual(now.map(x=>x.url),SOURCES.map(x=>x.url));
- for(const x of now.slice(0,3)){
+ for(const x of now){
   assert.equal(x.status,'exact_official_bill_version_fetched_sha256_and_text_inspected');
   assert.match(x.sha,/^[0-9a-f]{64}$/);
   assert.ok(x.bytes>200000);
@@ -183,16 +212,24 @@ test('May19 conference PDF authentic original contains exact three DVS issue cue
  assert.equal(report.decision.may19ConferenceOriginalLongSectionTitleExactContinuousMatchNotFound,true);
  assert.equal(report.decision.may19ConferenceBillVersionNotYetProvedPubliclyAvailableBeforeBothIndividualHawjVotes,true);
 });
-test('SF3257 failed fetch is UNKNOWN, not false proof text differs; strict no production label',()=>{
+test('real 2023 SF3257 introduced PDF recovers substantive bilingual terminology but cannot automatically equate omnibus and original bill votes',()=>{
  const s=report.billVersionDocuments[3];
  assert.equal(s.id,'sf3257-original-2023-proposal');
- assert.equal(s.originalSourceStatus,'original_unavailable_or_parse_unknown');
- assert.equal(s.actualDownloadedEntireSourceRawSha256,null);
- assert.equal(s.originalVisibleSourceFragmentEvidence,null);
- assert.equal(report.counts.completeOriginalRevisorBillVersionDocumentsSHA256Authenticated,3);
- assert.equal(report.counts.originalSF3257VersionDownloadedAndAuthenticated,0);
+ assert.equal(s.originalSourceStatus,'exact_official_bill_version_fetched_sha256_and_text_inspected');
+ assert.equal(s.actualDownloadedEntireSourceRawSha256,'6b78fd7b510abd7116747c3522700b2f840a9e0903d47e73ea902f94d4e07cbd');
+ assert.equal(s.originalDownloadedSourceByteLength,216439);
+ assert.equal(s.sourceOriginalPdfPages,2);
+ for(const key of ['translated_equivalent_materials','dvs_deputy_registrar','DVS_driver_license_agent','original_SF3257_bilingual_services'])
+  assert.equal(s.originalVisibleSourceFragmentEvidence.find(x=>x.id===key).shortSourceCuePresent,true);
+ assert.equal(report.counts.completeOriginalRevisorBillVersionDocumentsSHA256Authenticated,4);
+ assert.equal(report.counts.originalSF3257VersionDownloadedAndAuthenticated,1);
+ assert.equal(report.provenance.firstAllFourVerifiedLiveRunId,38274835110);
+ assert.equal(report.provenance.firstAllFourVerifiedHead,'66ff00ae20fd8616bfd43d378f2e73649c5d0685');
+ assert.equal(report.provenance.allFourSourceMetadataArtifactId,11759115577);
  assert.equal(report.counts.exactSF3257ToHF5247SectionEquivalenceApproved,0);
- assert.equal(report.decision.sf3257IntroducedOriginalStillUnknownInThisBoundedRun,true);
+ assert.equal(report.decision.sf3257IntroducedOriginalStillUnknownInThisBoundedRun,false);
+ assert.equal(report.decision.sf3257OriginalIncludesBilingualEquivalentMaterialsAndDeputyRegistrarCues,true);
+ assert.equal(report.decision.sf3257PrimaryOriginalAndMay19ConferenceSharePolicyTopicMarkersWithoutTextIdentityProved,true);
  assert.equal(report.decision.noDirectSF3257VoteFromOmnibusYea,true);
  assert.equal(report.counts.sourceToPolicySpecificVoteForecastTrainingLabelsApproved,0);
 });
