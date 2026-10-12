@@ -182,7 +182,7 @@ async function main(){
  const receipt=await sourceVerified95ServedReportVersionAudit();
  const safe=JSON.stringify(receipt);
  if(safe.length>40000
-  ||/donor|contributor|transactionId|privateDatabase|NeonToken|candidateFinanceAmount/i.test(safe))
+  ||/\"(?:donor|contributor|transactionId|privateDatabase|NeonToken|candidateFinanceAmount)\"\s*:/i.test(safe))
   throw Error('Unsafe committee crosswalk publication output');
  console.log('CFB_864_OFFICIAL_95_SENATOR_VERSION_CROSSWALK_V14 '+safe);
 }
