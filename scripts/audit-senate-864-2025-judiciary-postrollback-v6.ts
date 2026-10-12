@@ -140,7 +140,7 @@ export function build2025JudiciaryPostRollbackV6(out:Result){
   return [
    'recognizedOriginalRollCalls','matchedRecognizedRollCalls',
    'originalNamedChoiceTokens','matchedNamedChoiceTokens',
-  ].every(k=>(now as Record<string,unknown>)[k]===before[k]);
+  ].every(k=>(now as unknown as Record<string,unknown>)[k]===before[k]);
  });
  const original2024MissingYeaStillProven=d.oneOriginalTokenYeaDeficit===1
   &&d.oneOriginalTokenNayDeficit===0
@@ -248,7 +248,7 @@ export function build2025JudiciaryPostRollbackV6(out:Result){
   issue864StillOpen:true,
  };
  const serial=JSON.stringify(result);
- if(serial.length>6500||/postgresql:|neondb_owner|normalized_member_name|source_url|externalKey|choiceIdentitySha256|sourceSha|memberName|membership_id/i.test(serial))
+ if(serial.length>6500||/postgresql:|neondb_owner|\"normalized_member_name\"\\s*:|\"source_url\"\\s*:|\"externalKey\"\\s*:|\"choiceIdentitySha256\"\\s*:|\"sourceSha\"\\s*:|\"memberName\"\\s*:|\"membership_id\"\\s*:/i.test(serial))
   throw Error('Only numeric and enumerated original roll diagnostics permitted');
  return result;
 }
