@@ -151,7 +151,7 @@ export function buildViewerCrosscheck(){
  const registrations=new Map(sourceRows('cfb-2026-public-current-senate-registration-dates.psv',230,3)
   .map(r=>[r[0],{registeredOn:r[1],terminatedOn:r[2]}]));
  const historicalStatus=new Map(sourceRows(
-  'cfb-2023-24-22-committee-signed-board-contemporaneous-status-matrix.psv',22,15)
+  'cfb-2023-24-22-committee-signed-board-contemporaneous-status-matrix.psv',22,14)
   .map(r=>[r[0],r[8]]));
  const selected=new Map();
  for(const r of authenticated){
