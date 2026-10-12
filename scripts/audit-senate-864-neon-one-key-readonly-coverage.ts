@@ -14,7 +14,7 @@ import {REQUIRED_MEDIA_EXPORT_TABLES} from
  '../src/evidence/senate-media-readonly-export.js';
 
 export const REQUIRED_864_TABLES=[...REQUIRED_MEDIA_EXPORT_TABLES,'vote_events','member_votes'] as const;
-export const ONE_SHOT_MARKER='SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V4' as const;
+export const ONE_SHOT_MARKER='SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V5' as const;
 export const GROUPS=[
  'roster','finance','committeeSources','committeeVotes','committeeChoices','campaign','media',
 ] as const;
@@ -39,31 +39,20 @@ export const QUERIES:Record<Group,string>={
   'GROUP BY yr.y ORDER BY yr.y',
  ].join(' '),
  finance:[
-  "SELECT CASE WHEN ei.metadata->>'year' ~ '^202[1-5]$'",
-  "THEN ei.metadata->>'year' ELSE 'unknown_or_outside' END AS year,",
+  // Finance source-document discovery only; original bulk evidence_items
+  // by-year/legislator counts exceeded the live statement timeout twice.
+  // This source table is ALL CHAMBERS, and metadata year may be absent.
+  // Do NOT call these stored CFB sources Senate evidence rows or filers.
+  "SELECT CASE WHEN sd.metadata->>'year' ~ '^202[1-5]$'",
+  "THEN sd.metadata->>'year' ELSE 'unknown_or_outside' END AS year,",
   'sd.source_kind AS family,',
-  'count(*)::text AS evidence_rows,',
-  'count(DISTINCT sd.id)::text AS distinct_source_documents,',
-  "count(*) FILTER (WHERE NULLIF(ei.metadata->>'rowKey','') IS NULL)::text AS missing_row_keys,",
-  "count(*) FILTER (WHERE ei.metadata->>'asOfEligible'='true')::text AS claimed_eligible_not_reverified,",
-  "count(*) FILTER (WHERE ei.metadata->>'asOfEligible'='true'",
-  "AND COALESCE(ei.metadata->>'availabilityPolicyVersion','') NOT LIKE '%v7%')::text",
-  'AS claimed_eligible_not_v7,',
-  "count(*) FILTER (WHERE NULLIF(ei.metadata->>'availabilityProofContentSha256','') IS NULL)::text",
-  'AS missing_stored_availability_proof_digest,',
+  'count(*)::text AS source_document_rows,',
+  "count(*) FILTER (WHERE sd.chamber_id IS NULL)::text AS documents_without_stored_chamber,",
+  "count(*) FILTER (WHERE sd.session_id IS NULL)::text AS documents_without_stored_session,",
   "count(*) FILTER (WHERE sd.content_sha256 IS NULL OR sd.content_sha256 !~ '^[a-f0-9]{64}$')::text",
   'AS missing_source_sha',
-  // Existing original indexed membership filtering avoids the unbounded
-  // cross-chamber finance JSONB OR scan that exceeded the prior bound.
-  // DO NOT claim that unlinked/chamber-metadata-only finance rows are audited.
-  'FROM memberships m',
-  'JOIN chambers c ON c.id=m.chamber_id',
-  'JOIN legislative_sessions s ON s.id=m.session_id',
-  'JOIN evidence_items ei ON ei.membership_id=m.id',
-  'JOIN source_documents sd ON sd.id=ei.source_document_id',
-  "WHERE c.slug='senate'",
-  "AND s.slug IN ('2021-2022','2023-2024','2025-2026')",
-  "AND sd.source_kind IN ('campaign_finance_candidate_contribution_bulk',",
+  'FROM source_documents sd',
+  "WHERE sd.source_kind IN ('campaign_finance_candidate_contribution_bulk',",
   "'campaign_finance_candidate_expenditure_bulk','campaign_finance_independent_expenditure_bulk',",
   "'campaign_finance_bulk')",
   'GROUP BY 1,2 ORDER BY 1,2',
@@ -238,28 +227,54 @@ export async function auditNeonExistingKey2021To25(
     throw Error('Expected VotePredict committee/finance/media/roster sources missing');
    phase('tables_verified');
    const groups={} as CountResults;
+   const groupHolds:Partial<Record<Group,ReturnType<typeof safeSqlFailureReason>>>={};
+   // SAVEPOINTs are transactional and permitted in a READ ONLY transaction.
+   // When a single expensive source family times out, isolate that failure,
+   // preserve the original REPEATABLE READ snapshot, and continue other
+   // immutable SELECTs. Never turn a held query into a zero count.
    for(const name of GROUPS){
+    await client.query('SAVEPOINT current_source_group');
     try {
      const rows=await client.query(QUERIES[name]);
-     groups[name]=validateCountRows(name,rows.rows);
+     const checked=validateCountRows(name,rows.rows);
+     await client.query('RELEASE SAVEPOINT current_source_group');
+     groups[name]=checked;
      phase('completed_'+name);
     } catch(error) {
-     // Never leak Neon URI, original SQL errors, role name or private data.
-     // Only fixed PostgreSQL SQLSTATE classes may be reported.
      const safeName=name.replace(/[A-Z]/g,v=>'_'+v.toLowerCase());
-     phase('failed_'+safeName+'_'+safeSqlFailureReason(error));
-     throw Error('Bounded source-group query failed closed');
+     const kind=safeSqlFailureReason(error);
+     // Unknown SQL failures, unsafe result shape and lost connections do not
+     // qualify for graceful partial data release.
+     if(kind==='unknown_query_or_validation'){
+      phase('failed_'+safeName+'_'+kind);
+      throw Error('Unverified source query could not be safely classified');
+     }
+     try{
+      await client.query('ROLLBACK TO SAVEPOINT current_source_group');
+      await client.query('RELEASE SAVEPOINT current_source_group');
+     }catch{
+      phase('failed_'+safeName+'_savepoint_recovery');
+      throw Error('READ ONLY source query savepoint could not recover');
+     }
+     groups[name]=[];
+     groupHolds[name]=kind;
+     phase('held_'+safeName+'_'+kind);
     }
    }
    await client.query('ROLLBACK');
    transaction=false;
    phase('rolled_back');
    return{
-    schema:'mn-864-existing-key-cross-track-readonly-counts-v1',issue:864,
-    status:'verified_existing_votepredict_default_branch_aggregate_source_snapshot',
+    schema:'mn-864-existing-key-cross-track-readonly-counts-v2',issue:864,
+    status:Object.keys(groupHolds).length
+     ?'partial_verified_existing_votepredict_default_branch_aggregates'
+     :'verified_existing_votepredict_default_branch_aggregate_source_snapshot',
     defaultBranchExisting:true,deployedProductionBindingIndependentlyVerified:false,
     originalSqlRoleMayHaveWriteGrantsOutsideReadOnlyTransaction:true,
-    financeQueryOnlyExplicitHistoricSenateMembershipLinkedEvidence:true,
+    financeQueryOnlyExplicitHistoricSenateMembershipLinkedEvidence:false,
+    financeQuerySourceDocumentOnlyAcrossAllChambers:true,
+    financeEvidenceItemRowsAndEligibilityNotAudited:true,
+    financeSourceMetadataYearMayBeMissing:true,
     unlinkedAndMetadataOnlyFinanceEvidenceNotAuditedInThisSnapshot:true,
     fullStatewideFinanceDatabaseCompletenessNotEstablished:true,
     currentTransactionReadOnly:true,transactionRollbackCompleted:true,
@@ -270,7 +285,9 @@ export async function auditNeonExistingKey2021To25(
     historicalOriginalPublicByProofUnchanged:true,
     historicalStatewideMediaArticleDenominator:null,
     historicalCompletenessCertified:false,productionMutations:0,
-    groups,
+    groups,groupHolds,
+    allSevenSourceFamilyQueriesSucceeded:Object.keys(groupHolds).length===0,
+    groupHoldsAreNotZeroCounts:true,
    } as const;
   }finally{
    if(transaction){try{await client.query('ROLLBACK')}catch{/* close */}}
@@ -306,7 +323,8 @@ async function main(){
     'prove database deployment binding or all-official-source completeness.',
     '| Original evidence class | Number of year/family aggregate groups |',
     '| --- | ---: |',
-    ...GROUPS.map(x=>'| '+x+' | '+audit.groups[x].length+' |'),
+    ...GROUPS.map(x=>'| '+x+' | '+audit.groups[x].length
+      +(audit.groupHolds[x]?' (HOLD: '+audit.groupHolds[x]+')':'')+' |'),
     '',
     'No individual private rows, names, source URLs or credentials logged.',
     'No database writes or historical feature promotions.',
