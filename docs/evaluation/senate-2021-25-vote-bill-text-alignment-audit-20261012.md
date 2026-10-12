@@ -1,0 +1,95 @@
+# Minnesota Senate 2021–2025: exact vote-to-text evidence audit
+
+**Audit date:** October 12, 2026. **Baseline main SHA:** bef22e2b4a5685e428581a3dc10f4a15ccbf2e57. **Scope:** public sources, code, prior SHA-backed research, and synthetic offline checks only. No protected database access, historical imports, model/serving modifications, deployments, or official outreach.
+
+## Architecture and concrete defects
+
+| Component | Existing strengths | Deficiency |
+| --- | --- | --- |
+| migrations/0002_historical_votes.sql; src/lib/db/schema.ts | Per-event motion text, session, chamber, bill ID, amendment reference, recorded outcome, individual votes, official source document | No explicit vote-event-to-bill-version/amendment relationship or independently verified historical public-by |
+| src/sources/minnesota/senate-journals.ts | v3 keeps separate passage, amendment, procedural/motion observations and in-memory amendment refs; preserves legacy passage identity | Nearest preceding bill-number heuristic is not independently verified exact text; no amendment body recovery |
+| scripts/ingest-senate-history.ts | Persists journal PDF SHA and motion context, reconciles named members | **Bug:** parsed amendmentRef was not stored in vote_events.amendment_ref; fixed on this branch for FUTURE import only |
+| src/evidence/minnesota-senate-committee-minutes.ts and scripts/backfill-senate-committee-minutes.ts | v3 recognizes separately anchored repeated-roll actions | Legacy event keys depend on observationIndex. Replaying additional actions with ON CONFLICT UPDATE may relabel stored votes. Explicit HOLD; no rerun |
+| src/sources/minnesota/revisor.ts | Extracts numbered Revisor introduction and engrossment versions with normalized-text hashes | Numeric-only version URL pattern omits unofficial engrossments and conference reports; lacks rejected amendment texts and conference variants |
+| scripts/enrich-revisor-bills.ts; src/forecasting/runtime.ts | Stored dated version texts, source URLs, hashes and historical analogue date filtering | Version text/hashes can be overwritten on conflict; dated selector can use same-day postedOn <= event day, insufficient for independently proven earlier publication or sequence |
+
+**Design boundary:** The live Revisor parser feeds historical replay and live forecasting. Modifying its version universe could change selected historical texts or predictions without the user-authorized evaluation. This PR therefore adds a completely separate offline version catalog/alignment/diff helper. No production selector is changed.
+
+## Official example: HF100 (2023, 93rd Legislature)
+
+Primary status and history: https://www.revisor.mn.gov/bills/93/2023/0/HF/100/
+
+Official bill text families:
+
+- Numbered introduction plus 1st–12th engrossments: **13** version listings. Introduction https://www.revisor.mn.gov/bills/93/2023/0/HF/100/versions/0/; 11th engrossment https://www.revisor.mn.gov/bills/93/2023/0/HF/100/versions/11/ (Apr 25); 12th https://www.revisor.mn.gov/bills/93/2023/0/HF/100/versions/12/ (May 20).
+- Unofficial Senate engrossment **two** listings: https://www.revisor.mn.gov/bills/93/2023/0/HF/100/versions/ue/1/ (Apr 26) and https://www.revisor.mn.gov/bills/93/2023/0/HF/100/versions/ue/2/ (Apr 28).
+- Conference committee reports **two** listings: https://www.revisor.mn.gov/bills/93/2023/0/HF/100/versions/ccr/0/ (May 16) and https://www.revisor.mn.gov/bills/93/2023/0/HF/100/versions/ccr/A/ (May 17). The **alphabetic A path** is important: a numeric CCR parser would still miss it.
+- Revisor companion SF73 https://www.revisor.mn.gov/bills/93/2023/0/SF/73/ is *not* proof of text identity.
+
+**Scoped structural count:** 17 official listings = 13 numbered + 2 UE + 2 CCR; the existing numeric-only parser cannot recognize **four** nonnumeric-family paths. Four parser-family omissions do **not** prove four missing persisted database rows.
+
+| Date | Distinct official Senate decision | Tally / official result | Exact-text caveat |
+| --- | --- | --- | --- |
+| Apr 28, 2023 | Lay on table | 33–34, failed | Procedural; not a policy endorsement |
+| Apr 28, 2023 | Re-refer to Finance | 33–34, failed | Procedural; same tally as table motion is NOT same event |
+| Apr 28, 2023 | Passage of HF100 | 34–33, passed | Text as amended; second UE has same-day posting only, not a proven pre-vote availability time |
+| May 19, 2023 | Reject conference report | 32–34, failed | Vote concerned *rejection* of report, not standalone bill passage |
+| May 19, 2023 | Adopt conference report / repass | 34–32, passed | CCR 0 versus CCR A and the actual vote-time artifact require exact journal-to-text corroboration; May 20 engrossment is later |
+
+The Revisor's additional May 19 third-reading action shows 34–32. Do not manufacture an extra independent named roll from that status entry without official Senate journal event identity verification. The action list links original printed journal pages. **This audit did not inspect stored event rows.**
+
+## Official example: HF5247 transportation omnibus (2024)
+
+[Existing independently source-verified research](./senate-media-2024-hf5247-actual-transport-policy-version-crosswalk-20261012.md) documents an important policy-provision change, not a generic “transportation vote” label.
+
+| Source document | Exact public Revisor link | Previously verified original SHA-256 | Selected provision evidence |
+| --- | --- | --- | --- |
+| Third engrossment | https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/3/pdf/ | acdf6e4f5b1d288a55022bfbfa9be68d7760c6257fca22a33801f9b50e5cef4b | Four selected distinguishing translated-DVS policy cues absent from full body |
+| First unofficial Senate engrossment | https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/ue/1/ | 0ac7ca21c2b31fb617fd39e9d03f07de0d7547ba9c6762e763182061759fa0ce | Those same selected cues absent |
+| Conference committee report | https://www.revisor.mn.gov/bills/93/2024/0/HF/5247/versions/ccr/0/pdf/ | 61e758157d10fbde5a1873376e274604c394b103a0e22cf58f569ffb7fb48663 | Individual “equivalent materials,” “qualifying language,” “deputy registrar” cues present; the prior study's strict four-part compound phrase check remained false |
+
+The prior original-source research verified **three distinct Senator Hawj YEA roll calls**: May 7 third reading (55–10); May 19 conference decision (34–12); May 19 amended third reading (34–14). It expressly **excluded interpreting May 7 as a vote for the translated-DVS-materials SF3257 provision**. May 19 is a conditional, not definitively time-eligible, crosswalk: no demonstrated exact text-publication minute before the two rolls; a later enrolled/engrossed version cannot replace the earlier acted-on source. These original source hashes are pre-existing receipts, **not new source re-downloads in this audit**.
+
+## Exact identity warning: February 14, 2024 Education Policy
+
+[Original government Minutes PDF](https://www.lrl.mn.gov/archive/minutes/senate/2024/educ/20240214/educ_20240214_Minutes.pdf) and [prior independent SHA-authenticated review](./senate-864-2024-education-repeated-amendment-six-rolls.md) record numbered amendments **10, 2, 3, 5, 6, 9**, each separately put to a **4 YEA / 6 NAY failed** roll with the **same ten member choices**. Earlier parser candidate observations: **2**; actual original named amendment motions: **6**; discrepancy: **4 candidate observations** for this exact PDF. That is not a finding of four confirmed absent or corrupted production vote_events rows. Event-key replay is expressly held by [the existing positional-key risk report](./senate-864-parser-v3-positional-event-key-replay-hold.md).
+
+## Numbers with true scope
+
+| Observed/audited population | Verified or previously source-authenticated finding | Statewide inference? |
+| --- | --- | --- |
+| HF100 Revisor versions (one bill) | 17 listed, 4 structurally missed by old numeric-only discovery regex | No |
+| HF100 Apr 28 official Senate decision types | 3 distinct | No stored-row identity/parity claim |
+| HF100 May 19 distinct substantive/procedural decisions | 2 decision families; third-reading line requires source-level deduplication | No |
+| Feb 14 2024 Education Minutes | 6 source amendment motions; 2 earlier parser candidates; 4 source-candidate gap | No |
+| Prior #864 electronic linked Senate Minutes corpus for 2022–25 | 1,452 original PDF links/source bodies independently reverified | **Not** official all-meeting or all-vote denominator |
+| Earlier vs v3 named parser candidates in above corpus | 104 versus 112 (**8** additional candidate observations) | **Not** new stored rows or complete official vote count |
+| Prior electronic meeting index with no linked Minutes PDF | 141 entries | Do not assume no votes |
+| 2021 official printed Minutes, 2022 print/electronic parity | Unresolved | Not zero |
+| Whole 2021–25 exact-motion/verifiable-text, bill-only, missing amendment, procedural-error, wrong-version, omnibus unresolved counts | **Unknown** until authorized full official-event universe plus protected read-only stored mapping | No invented denominators |
+
+Previous source audit: [#864 original-pdf and database reconciliation design](./senate-committee-source-to-db-reconciliation.md). Required SELECT-only export is deliberately not run without separate reviewed authorization. No numeric aggregate from a sample is substituted for the missing population.
+
+## Changes included in this branch
+
+The pure **src/evidence/minnesota-vote-text-alignment-audit.ts** does not query production data. It finds *all three official URL families* in Revisor status HTML (including alphabetic CCR IDs), rejects cross-bill and untrusted source links, and tags independently verified public-by **null** rather than treating “Posted on” as certified publication time.
+
+It audits vote-to-text links on exact event identity, same session/bill, original source hashes, reported motion locator, recognized amendment text and exact reference, unique conference report, and no later-version substitution. It requires explicitly reviewed *independent primary-source proof* to mark a reviewed link. This is **consistency validation of a supplied human-reviewed source mapping**, not independent text authentication by itself. Results always disallow inferring support for a provision, whether passage or procedural.
+
+A separate deterministic line-based version diff emits source-backed before/after SHA-256, original line deltas, excerpt/truncation metadata and an explicit **unclassified** policy-change label. Long omnibus texts return **needs_chunking**, not an inaccurate comprehensive comparison or generated policy verdict.
+
+The Senate ingester **future-write mapping only** now persists its already-parsed amendment reference without altering event keys, rosters, or acceptance tests. **Do not rerun** legacy journal/committee imports, apply DB migrations, overwrite historic vote rows, or ship this audit into serving. Synthetic and SQL-contract regression tests guard the changes.
+
+## Ranked open defects and next gain
+
+**P0: append-only event-text link layer** — design a reviewed relational table associating exact vote event, base/companion bill text, amendment or conference report, source URLs+SHA, official motion/journal locator, considered/adopted/rejected/withdrawn/superseded state, version date and separately nullable proven public-by, reviewer/method/version, and conflicting revisions. Never join to “latest” by default.
+
+**P0: safe committee-event key reconciliation** — source-original-to-protected-stored SELECT-only inspection before parser v3 2022–25 backfill. If old motion anchors were never preserved, HOLD rather than inventing a match.
+
+**P1: recover acted-on papers and ordered bill lineage** — HF100 Senate amended paper and exact May 19 CCR, HF5247 May 7/19 source-time eligibility, amendment originals, fiscal notes and section-referenced committee analyses; distinguish proposed, adopted, rejected and later enacted status. Compare bounded article/section text using primary hashes and official locators rather than guessed topic labels.
+
+**P1: close as-of risk after separate authorization** — runtime historical candidate selection currently allows same-day “posted” version at a date-only roll and an update-on-conflict hash. Introduce explicit as-of provenance and immutable content revisions under separately reviewed serving migration; no serving changes in this branch.
+
+**P2: complete official event universe** — 2021 print minutes, possible 2022 print-only, missing linked Minutes meetings and official journal amendments/reconsiderations; preserved count-only/voice observations are not invented named senator votes.
+
+**Recommendation: improve the existing event-to-text linkage first.** The archive already contains significant vote and bill-text raw material, but the relationship from a motion to the exact text is unproved. Targeted additional **primary text/availability collection** remains essential for missing amendments, substitutes, conference papers and print minutes. Hold any production migration, re-ingestion or model use until separately authorized and independently validated.
