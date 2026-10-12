@@ -31,3 +31,19 @@ Run locally (public-only):
 **Next gate after successfully authenticated original bodies:** separate reviewed, unique first-attempt merged-main **read-only** comparison of *these specific exact source capture versions only*, against private evidence using bounded in-memory canonical keys, single read-only repeatable-read transaction, count-only source-specific metrics and explicit rollback. Do not reuse/retroactively bless previously stored Wayback-labelled June 2022 source claims by matching a July 2022 different file: as-of eligibility remains unchanged absent separate review and authorization. V5 101/101 IE bounded proof unaffected, and the 909 candidate expenditure/1,140 contribution archive-labelled observation debt plus 2,448 older filing-derived sample records persist until source-and-date-specific verification.
 
 The separate statewide Senate filer-year duties, amendments, 2023–25 report public-by evidence and complete statewide denominator remain distinct unresolved tasks.
+
+
+## First live whole-original attempt and documented capture-size barrier (2026-10-12)
+
+The public-only [V8 read-only original byte run 38306830106](https://github.com/killjoy00/votepredict/actions/runs/38306830106) completed its adversarial synthetic tests and checked independently indexed public July 4 WARC objects. Its bounded source-only outcome was:
+
+| Original | Source proof status | Specific failure | Original transaction claim |
+| --- | --- | --- | --- |
+| July 4 candidate contributions | **HELD** | The fetched WARC record explicitly marked itself **WARC-Truncated** | No complete original body or row keys authenticated |
+| July 4 candidate expenditures | **HELD** | Public WARC byte-range endpoint returned **HTTP 503** this run | No complete original body or row keys authenticated |
+
+A prior V8 public run did reach the expenditure WARC body but rejected it under full-original integrity criteria; the current more diagnostic run did not reauthenticate it. A failure to download is not an absent historical campaign transaction.
+
+**External documentation materially reduces this route's expected payoff:** Common Crawl's own [errata on truncated content](https://www.commoncrawl.org/errata/content-is-truncated) say captures before March 2025 were capped at approximately **1 MiB**; this includes July 2022. The independently verified V4 June expenditure CSV was **41,138,871 bytes**, far beyond that threshold. A short, independently indexed WARC record can establish an archive capture lead but cannot be used as proof of a **complete, original 41 MB CSV**, cannot be reconstructed from its missing tail, and cannot validate the full original stored-row set. Common Crawl's [WARC truncation documentation](https://www.commoncrawl.org/errata/no-truncation-indicator-in-warc-records) also notes historical caveats about truncation markers. In this case **the contribution WARC explicitly had one**.
+
+**Consequence:** The July candidate Common Crawl pointers remain useful public historical source-discovery metadata, not a practical substitute for full historical candidate CSV original reauthentication. Do not repeatedly re-run protected storage parity using these truncated captures. Prior V4 *June* expenditure original independent proof is unaffected. Prior V6 three held source-to-stored checks remain unverified. More productive next public paths are exact Wayback full-file alternative delivery modes or independently retained raw CFB exports (not TAP's cleaned 2023 derivatives), and separately exact original/amended report-PDF publication and Senate filer-duty tracking.
