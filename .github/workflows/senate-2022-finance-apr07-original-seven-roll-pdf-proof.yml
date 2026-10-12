@@ -1,4 +1,4 @@
-name: 2022 April 7 Senate Finance seven-roll original electronic minutes SHA proof
+name: Strict second independent original 2022 April 7 Finance PDF SHA and seven written rolls
 
 # One-shot once this workflow first lands on main. Official 2022 electronic
 # MINUTES, never assumed equal to the separately collected print originals.
@@ -30,14 +30,15 @@ jobs:
       - name: Independently test seven distinct written motion semantics and missingness boundaries
         run: |
           node --import tsx --test tests/senate-2022-finance-apr07-seven-original-electronic-rolls.test.ts
-      - name: Get EXACT official original electronically held PDF, parse seven roll passages, retain metadata only
+      - name: Independently re-fetch original full PDF, require first-run PDF/text SHA, then verify seven passages
         run: |
           node --import tsx scripts/audit-senate-2022-finance-apr07-seven-original-electronic-rolls.ts \
-            --output artifacts/2022-finance-apr07-seven-original-electronic-rolls/source.json
+            --output artifacts/2022-finance-apr07-seven-original-electronic-rolls/source.json \
+            --strict-first-source-sha
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: senate-2022-finance-apr07-seven-roll-original-electronic-pdf-sha-metadata
+          name: senate-2022-finance-apr07-seven-roll-strict-second-original-pdf-metadata
           path: artifacts/2022-finance-apr07-seven-original-electronic-rolls/source.json
           retention-days: 30
           if-no-files-found: error
