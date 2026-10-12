@@ -33,6 +33,8 @@ test('same speaker turn with full-name MARY KUNESH label and selected short phra
  assert.equal(v.senatorFullNameSpeakerLabelsInTranscript,1);
  assert.equal(v.selectedShortCueVisibleAnywhereOnOriginalPage,true);
  assert.equal(v.selectedShortCueInsideBoundedSameExplicitLabeledSpeakerTurn,true);
+ assert.deepEqual(v.selectedShortCueSpeakerTurnOwnerLabels,['MARY KUNESH:']);
+ assert.equal(v.selectedShortCueInsideOtherNamedSpeakerTurn,false);
  assert.equal(v.speakerTurnAdjacencyIsNotRecordedAudioOrHumanCertifiedFullQuotation,true);
  assert.equal(v.noPrivateEvidenceOrForecastPromotion,true);
 });
@@ -43,6 +45,8 @@ test('host turn quoting Kunesh phrase is not the senator speaking her own labele
  assert.equal(r.selectedShortCueVisibleAnywhereOnOriginalPage,true);
  assert.equal(r.senatorFullNameSpeakerLabelsInTranscript,1);
  assert.equal(r.selectedShortCueInsideBoundedSameExplicitLabeledSpeakerTurn,false);
+ assert.deepEqual(r.selectedShortCueSpeakerTurnOwnerLabels,['NINA MOINI:']);
+ assert.equal(r.selectedShortCueInsideOtherNamedSpeakerTurn,true);
 });
 test('same statement phrase and named senator attribution reported in news description but no full speaker label is insufficient',()=>{
  const src='<html><body><h2>Audio transcript</h2><p>Reporter says Mary Kunesh wants to make sure this is codified in our state legislature.</p></body></html>';
@@ -113,3 +117,16 @@ test('entire bounded selected sample is not a private source export and cannot c
  assert.equal(r.neverSavedRawMprHtmlOrAudioOrTranscript,true);
  assert.equal(r.noPrivateDbOrCollectorOrModelTouched,true);
 });
+
+
+test('selected short phrase in transcript introduction without any labeled speaker remains unattributed, not Kunesh',()=>{
+ const src='<html><body><h2>Audio transcript</h2>'
+  +'<p>We want to make sure this is codified in our state legislature.</p>'
+  +'<p>NINA MOINI: Welcome to the news show.</p></body></html>';
+ const r=inspectBoundedNamedSpeakerTurn(src,p);
+ assert.equal(r.selectedShortCueVisibleInsideTranscriptSection,true);
+ assert.equal(r.selectedShortCueOutsideAllBoundedSpeakerTurns,true);
+ assert.deepEqual(r.selectedShortCueSpeakerTurnOwnerLabels,[]);
+ assert.equal(r.selectedShortCueInsideBoundedSameExplicitLabeledSpeakerTurn,false);
+});
+
