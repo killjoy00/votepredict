@@ -1,0 +1,55 @@
+name: Public 2022 Benson-Kunesh MP3 identity and six exact 2021-25 source originals
+
+# Issue #987: metadata-only PUBLIC research. Never ingest, change model, fetch
+# private rows, or persist publisher articles/audio/copyrighted transcripts.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-benson-kunesh-audio-six-direct-originals.yml
+      - scripts/probe-senate-media-benson-kunesh-audio-six-direct-originals.mjs
+      - tests/senate-media-benson-kunesh-audio-six-direct-originals.test.mjs
+      - tests/senate-media-benson-kunesh-six-real-receipts.test.mjs
+      - docs/evaluation/senate-media-2022-benson-audio-six-publisher-originals-20261011.json
+      - docs/evaluation/senate-media-2022-benson-audio-six-publisher-originals-20261011.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-benson-2022-six-direct-originals-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  bounded-public-source-research:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-2022-benson-audio-six-direct-publisher-originals-20261012')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 19
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Offline exact publisher identity, archive and unknown-state controls
+        run: node --test tests/senate-media-benson-kunesh-audio-six-direct-originals.test.mjs
+      - name: Public bounded Wayback / selected Common Crawl source proof and two pinned 2022 audio asset indexes
+        run: |
+          node scripts/probe-senate-media-benson-kunesh-audio-six-direct-originals.mjs \
+            --output artifacts/senate-media-benson-kunesh-2022-six-direct-originals.json
+      - name: Retain only public source URL, indexed digests, capture UTC, brief cue flags and audio URI fingerprints
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-2022-benson-kunesh-and-six-direct-originals-public
+          path: artifacts/senate-media-benson-kunesh-2022-six-direct-originals.json
+          if-no-files-found: error
+          retention-days: 7
