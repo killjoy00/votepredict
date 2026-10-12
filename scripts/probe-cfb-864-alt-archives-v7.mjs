@@ -196,9 +196,12 @@ export async function probeCfbAltArchivesV7(fetchPublic=fetch){
    else if(!response.ok)row.status='head_http_hold';
    else{
     row.status='head_200_cleaned_public_object_only';
-    const length=Number(response.headers.get('content-length'));
-    if(Number.isSafeInteger(length)&&length>=0)
-     row.contentLength=length;
+    const headLength=response.headers.get('content-length');
+    if(headLength!==null){
+     const length=Number(headLength);
+     if(Number.isSafeInteger(length)&&length>=0)
+      row.contentLength=length;
+    }
    }
   }catch{row.status='head_invalid_or_network_hold'}
   publisherHeads.push(row);
