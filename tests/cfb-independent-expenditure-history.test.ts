@@ -285,6 +285,9 @@ test('a separately disclosed report must respect the legal floor when due and fi
   assert.equal(firstCfbReportAvailabilityForTransaction(tx,[
     {...base,availableOn:'2024-08-01'},
   ])?.availableOn,'2024-08-01','a separately source-labelled public-by date can qualify');
+  assert.equal(firstCfbReportAvailabilityForTransaction(tx,[
+    {...base,proofKind:'unsupported_legacy_kind' as never,availableOn:'2024-08-01'},
+  ]),null,'unrecognized runtime proof types cannot grant public-by');
 });
 
 test('large contribution notice windows cannot omit actual filing day',()=>{
