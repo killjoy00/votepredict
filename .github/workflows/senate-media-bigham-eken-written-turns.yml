@@ -41,7 +41,7 @@ jobs:
         with:
           node-version: 22
       - name: Offline adversarial named attribution, source hash and post-event time controls
-        run: node --test tests/senate-media-bigham-eken-original-written-attribution.test.mjs
+        run: node --test tests/senate-media-bigham-eken-original-written-attribution.test.mjs tests/senate-media-bigham-eken-original-real-receipts.test.mjs
       - name: Exact previously SHA1 indexed and SHA256 pinned public 2022 HTML originals only
         run: node scripts/probe-senate-media-bigham-eken-original-written-attribution.mjs --output artifacts/senate-media-bigham-eken-original-quote-paragraphs.json
       - name: Retain brief attribution booleans, original source digests and archive capture UTC only
