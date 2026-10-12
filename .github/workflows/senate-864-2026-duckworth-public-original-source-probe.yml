@@ -7,6 +7,7 @@ on:
       - scripts/probe-senate-864-2026-duckworth-dated-original-public-statements.mjs
       - tests/senate-864-2026-incumbent-duckworth-public-source.test.mjs
       - tests/senate-864-2026-49-incumbent-source-parity-boundary.test.mjs
+      - tests/senate-864-2026-incumbent-public-source-regression.test.ts
       - docs/evaluation/senate-864-2026-49-incumbent-source-parity-and-duckworth.md
       - .github/workflows/senate-864-2026-duckworth-public-original-source-probe.yml
 permissions:
