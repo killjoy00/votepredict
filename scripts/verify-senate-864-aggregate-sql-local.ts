@@ -22,6 +22,7 @@ if(process.argv.length!==2
  ||url.includes('neon.tech')
  ||process.env.NEON_API_KEY)
  throw Error('Refuse SQL compilation outside verified disposable no-Neon CI main or same-repo PR');
+async function main():Promise<void>{
 const pool=new Pool({connectionString:url,max:1,connectionTimeoutMillis:4000,
  query_timeout:6000,statement_timeout:5000,
  application_name:'votepredict-864-local-only-sql-plan-validation',
@@ -55,3 +56,9 @@ try{
   c.release(true);
  }
 }finally{await pool.end()}
+}
+void main().catch(error=>{
+ const safe=error instanceof Error?error.message:'unidentified disposable SQL issue';
+ console.error('DISPOSABLE_LOCAL_SEVEN_SQL_PLANS_FAILED_CLOSED '+safe.slice(0,500));
+ process.exitCode=1;
+});
