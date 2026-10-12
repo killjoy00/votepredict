@@ -19,7 +19,7 @@ export const LEADS=Object.freeze([
            {name:'Mary Kunesh',lrl:15466,cue:'sen. mary kunesh'}],
  topic:'school_parents_rights_curriculum',priorKnownSourceLead:true,
  collectionIds:['CC-MAIN-2022-21','CC-MAIN-2022-49'],
- historicalQuoteCandidate:false,postEvent:true
+ historicalQuoteCandidate:false,postEvent:false
  },
  {
  id:'2022-parental-rights-mpr-second-episode',
@@ -30,7 +30,7 @@ export const LEADS=Object.freeze([
  selected:[{name:'unattributed publisher topic lead',lrl:null,cue:"parents' bill of rights"}],
  topic:'school_parents_rights_curriculum',priorKnownSourceLead:true,
  collectionIds:['CC-MAIN-2022-21','CC-MAIN-2022-49'],
- historicalQuoteCandidate:false,postEvent:true
+ historicalQuoteCandidate:false,postEvent:false
  },
  {
  id:'2023-steve-cwodzinski-education-funding',
