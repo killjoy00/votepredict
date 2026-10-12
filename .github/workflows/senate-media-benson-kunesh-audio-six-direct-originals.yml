@@ -41,7 +41,7 @@ jobs:
         with:
           node-version: 22
       - name: Offline exact publisher identity, archive and unknown-state controls
-        run: node --test tests/senate-media-benson-kunesh-audio-six-direct-originals.test.mjs
+        run: node --test tests/senate-media-benson-kunesh-audio-six-direct-originals.test.mjs tests/senate-media-benson-kunesh-six-real-receipts.test.mjs
       - name: Public bounded Wayback / selected Common Crawl source proof and two pinned 2022 audio asset indexes
         run: |
           node scripts/probe-senate-media-benson-kunesh-audio-six-direct-originals.mjs \
