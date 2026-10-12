@@ -1,0 +1,54 @@
+name: Public 2024 Hawj original quote to HF5247 omnibus action cutoff bridge
+
+# Evidence Track D #987. Read-only exact 93rd Legislature Revisor and
+# explicitly secondary Conservation Minnesota public pages; no private DB,
+# roll-call-member certification, model, sources, deployment or source texts saved.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-hawj-hf5247-public-omnibus-bridge.yml
+      - scripts/probe-senate-media-hawj-hf5247-public-bill-action-bridge.mjs
+      - tests/senate-media-hawj-hf5247-public-bill-action-bridge.test.mjs
+      - tests/senate-media-hawj-hf5247-public-real-receipts.test.mjs
+      - docs/evaluation/senate-media-2024-hawj-hf5247-bill-action-bridge-20261012.json
+      - docs/evaluation/senate-media-2024-hawj-hf5247-bill-action-bridge-20261012.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: track-d-hawj-hf5247-public-bill-cutoff-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  public-legislative-action-and-cutoff-observation:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-2024-hawj-hf5247-public-omnibus-bridge-20261012')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Offline exact original source, session collision, aggregate vote and nonofficial senator-label limits
+        run: node --test tests/senate-media-hawj-hf5247-public-bill-action-bridge.test.mjs tests/senate-media-hawj-hf5247-public-real-receipts.test.mjs
+      - name: Bounded read-only current Revisor 93rd Legislature action statuses and labeled secondary reporter
+        run: node scripts/probe-senate-media-hawj-hf5247-public-bill-action-bridge.mjs --output artifacts/track-d-hawj-2024-hf5247-public-action-metadata.json
+      - name: Upload metadata only, no government original HTML or voting documents
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-media-hawj-2024-omnibus-cutoff-public-status-metadata
+          path: artifacts/track-d-hawj-2024-hf5247-public-action-metadata.json
+          retention-days: 7
+          if-no-files-found: error
