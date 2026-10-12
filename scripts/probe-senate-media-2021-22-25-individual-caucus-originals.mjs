@@ -10,11 +10,11 @@ export const VERSION='senate-media-2021-22-25-seven-first-party-individual-origi
 const DFL='https://senatedfl.mn/',GOP='https://www.mnsenaterepublicans.com/';
 const l=[
  ['2021-hawj-start-session','2021-01-05',DFL+'senator-foung-hawj-sworn-in-as-senate-district-67-senator/',
-  'Foung Hawj',15347,'we have much work to do in building a brighter future','2021 state budget, environment and veterans legislative priorities',false],
+  'Foung Hawj',15380,'we have much work to do in building a brighter future','2021 state budget, environment and veterans legislative priorities',false],
  ['2022-gazelka-crime-reform-proposed','2022-01-14',GOP+'senator-paul-gazelka-announces-legislation-combating-minnesotas-weak-stance-on-crime/',
-  'Paul Gazelka',15378,'minimum sentencing for carjackings','2022 prospective violent crime sentencing reform',false],
+  'Paul Gazelka',12263,'minimum sentencing for carjackings','2022 prospective violent crime sentencing reform',false],
  ['2022-weber-state-surplus-proposals','2022-12-06',GOP+'senator-bill-weber-surplus-shows-minnesota-is-collecting-too-much-in-taxes-time-to-shift-focus-to-providing-relief-to-minnesotans/',
-  'Bill Weber',15449,'meaningful ongoing tax relief','2023 prospective budget and tax relief',false],
+  'Bill Weber',15388,'meaningful ongoing tax relief','2023 prospective budget and tax relief',false],
  ['2025-coleman-education-committee-mandates','2025-01-22',GOP+'coleman-leads-effort-to-listen-to-school-concerns-regarding-education-mandates/',
   'Julia Coleman',15556,'one-size-fits-all mandates do not serve our schools well','education committee school mandates and local control after committee action',true],
  ['2025-pha-post-charges-child-protection','2025-03-20',DFL+'senator-susan-pha-statement-on-charges-against-justin-eichorn/',
