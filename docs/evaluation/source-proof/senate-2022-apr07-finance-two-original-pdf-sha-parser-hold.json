@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "mn-senate-2022-apr07-finance-two-whole-original-pdf-matching-source-but-parser-fail-closed-v1",
+  "issue": 864,
+  "committee": "Finance",
+  "hearingDate": "2022-04-07",
+  "officialSourceURL": "https://www.lrl.mn.gov/archive/minutes/senate/2022/Fin/20220407/Fin_20220407_minutes.pdf",
+  "scope": "The exact 2022 electronic LRL committee minutes PDF only. Original separate print minutes not compared.",
+  "exactWholeOriginalSource": {
+    "bytes": 140671,
+    "sha256": "213fbba6aa942cadc6a97fc70fb5e259790cdfadc91d4a645047da67e0dc0a6f",
+    "embeddedTextSHA256": "804daf007ca99c7dd1d501b09199592d3509d203972054fec6511d30140760a8",
+    "identicalAcrossTwoIndependentOriginalDownloads": true
+  },
+  "sourceRuns": [
+    {
+      "runId": 38196825837,
+      "runURL": "https://github.com/killjoy00/votepredict/actions/runs/38196825837",
+      "conclusion": "failure",
+      "originalPdfHTTPStatus": 200,
+      "originalPdfDownloaded": true,
+      "originalPdfHashMatchesPinnedWholeSource": true,
+      "sevenRollParserCertified": false,
+      "parseFailureCode": "original motion disposition",
+      "artifactId": 11723219510,
+      "artifactZIPBytes": 979,
+      "artifactZIPSHA256": "3e424dbf4d8af68958ee37552f287444b47f026e3b52eb1bbcfd0d7e9ea3c44c",
+      "jsonEntry": "source.json",
+      "sourceJSONBytes": 1537,
+      "sourceJSONSHA256": "831d27ff7db949a9347059253fbad44fa8a8afa0f50ce50f25a2d2f5c54b3ecb"
+    },
+    {
+      "runId": 38197287278,
+      "runURL": "https://github.com/killjoy00/votepredict/actions/runs/38197287278",
+      "conclusion": "failure",
+      "originalPdfHTTPStatus": 200,
+      "originalPdfDownloaded": true,
+      "originalPdfHashMatchesPinnedWholeSource": true,
+      "embeddedTextHashMatchesPinnedSource": true,
+      "strictShaGateRequired": true,
+      "sevenRollParserCertified": false,
+      "parseFailureCode": "original PDF roll side",
+      "artifactId": 11723811939,
+      "artifactZIPBytes": 1079,
+      "artifactZIPSHA256": "984c527ac4483d0e2e5cf10bef1c4ddc644d8d0675bd47239b180fbfbe2517db",
+      "jsonEntry": "source.json",
+      "sourceJSONBytes": 1925,
+      "sourceJSONSHA256": "8906a66764c2d204f65e1a1bf5a52b002c6a4a7e38e3020756e37d3867bf40bd"
+    }
+  ],
+  "existingResearchLead": {
+    "path": "docs/evaluation/source-proof/senate-2022-finance-apr07-electronic-seven-rolls-discovery.json",
+    "claimedElectronicTextPassages": 7,
+    "claimedNamedYeaNayNameOccurrences": 67,
+    "semanticIndependentlyCertified": false,
+    "specificHeldMotion": "SF4269 Marty oral amendment to A16 versus base-A16 closing line",
+    "unprintedAbsentVote": "SF4269 Kent A17",
+    "unprintedAbsentCount": null
+  },
+  "conclusion": {
+    "wholeOriginalPDFAndEmbeddedTextStable": true,
+    "sevenMotionsNotAuthenticatedByStrictParser": true,
+    "noNewCertifiedOriginalMemberChoiceCount": true,
+    "noIndividualVotesImported": true,
+    "audioOrHumanListeningPerformed": false,
+    "skipFurtherParserOrAudioReviewForThisTask": true,
+    "sourcePublicationClockVerified": false,
+    "originalPrint2022ElectronicParityEstablished": false,
+    "statewideRecordedVoteDenominator": null,
+    "sourceToExistingHistoricalDatabaseRowsReconciled": false,
+    "noProductionReadsWritesOrModelServingTrainingScheduler2027": true,
+    "governmentOfficeContactMade": false,
+    "issue864Open": true
+  }
+}
