@@ -27,3 +27,40 @@ These are **actual data observations only when the protected run succeeds**. The
 A count-only audit does **not** compare each archived Senate minute's original SHA and specific named choice directly against each database `vote_events` / `member_votes` row, each CFB original report transaction proof against a stored row, each campaign-page original hash against a stored evidence item or each media archival copy against a personally attributed verified quote. Doing those needs separately reviewed **source-by-source in-memory comparisons or a private restricted per-row export**, exact original binary receipts and source identities. Never release sensitive source rows to GitHub logs/artifacts just because a management API key works. A permanently restricted SELECT-only SQL role would be a stronger defense for a *bulk* private data export, but should not be inaccurately presented as a prerequisite for this safe aggregate audit.
 
 **Not altered:** No write, migration, backfill, source ingestion, published date repair, as-of eligibility promotion, training/serving/model/scheduler/2027, Senate floor expansion or agency contact. The 2021 official print-only committee universe, 2022 printed-versus-electronic discrepancy, legally owed finance report denominator, historical exact CFB report public-by, full campaign-domain universe and statewide published-media denominator remain unknown. Issue #864 stays OPEN.
+
+
+## Follow-up: verified GitHub-visible sanitized result receipt (one-shot V2)
+
+The initial independently tested V1 one-shot main-commit workflow could be read
+in the web GitHub Actions UI but the current connected GitHub API only exposes
+pull-request-associated workflow run lists, not the new protected main-push run.
+Thus a successful PR/merge alone does not independently establish the count
+outcome. We must not report that live database counts succeeded without
+an authenticated successful protected run.
+
+The V2 marker is SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V2.
+After the marked, independently reviewed main revision passes its own clean
+local Postgres and full repository CI, the existing protected GitHub Neon
+read-only job runs seven immutable aggregate SELECTs and explicitly ROLLBACKs.
+The protected secret-bearing job has no GitHub issue-write permission.
+On genuine success it emits only a capped base64-encoded JSON of prevalidated
+year/family-grouped **nonnegative integer counts** as an Actions job output,
+never raw private source rows, passwords, donor records, archived article
+bodies, or exact evidence-row URLs.
+
+A distinct **keyless** job, after success *or fail-closed failure*, has
+GitHub **issues: write** permission but **no protected Neon environment and
+no secret**. It strictly revalidates the source result schema, transaction
+read-only and ROLLBACK attestations, and every numeric aggregate row. It then
+posts one self-contained, sanitized success table to
+[issue #864](https://github.com/killjoy00/votepredict/issues/864)
+or an explicit fixed-safe-phase failure without private database errors.
+The issue comment links the exact GitHub workflow run for later inspection.
+It cannot perform SQL or retrieve the Neon key. If the GitHub environment
+has a required human reviewer, approval is still enforced by GitHub and
+cannot be bypassed by either job.
+
+This is a *visibility mechanism*, not a SQL-role privilege escalation,
+new read policy, raw row export, statement evidence, or source-completeness
+certification. Source-level exact document joins and official per-year
+denominators remain separate requirements even after a successful count.
