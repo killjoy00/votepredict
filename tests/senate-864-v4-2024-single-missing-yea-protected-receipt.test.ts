@@ -70,7 +70,7 @@ test('V4 never identifies senator or authorizes missing vote repair or forecasti
  assert.doesNotMatch(JSON.stringify(v4),/source_url|normalized_member_name|postgresql:|neondb_owner|choiceIdentitySha256|external_key|membership_id|sourceSha|meetingDate/);
  assert.match(doc,/Protected V4 outcome — verified one missing YEA-side choice/);
  assert.match(doc,/one absent original choice token is on the\s+YEA side/);
- assert.match(doc,/V3 protected query \*\*never executed\*\*/);
+ assert.match(doc,/V3 is still an explicit presecret \*\*HOLD\*\*/);
  assert.match(doc,/live DB binding/);
  assert.match(doc,/Parent #864 remains OPEN/);
 });
