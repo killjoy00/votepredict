@@ -1,0 +1,48 @@
+name: 2021 April 8 four original Senate LRL full audio binary SHA authentication
+
+# First genuine complete-source acquisition of FOUR exact archived public 2021
+# Senate committee MP3s. The ephemeral runner streams <=160 MiB per file,
+# authenticates each previously pinned 64 KiB original prefix, hashes full
+# original binary, inspects ffprobe duration, and deletes every MP3.
+# Artifact contains only metadata, never source audio/words/named votes.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/senate-2021-apr08-four-original-lrl-full-audio-binary-proof.yml
+
+permissions:
+  contents: read
+
+jobs:
+  authenticate-four-original-apr08-2021-senate-committee-mp3s:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Record installed ffprobe version for duration provenance
+        run: |
+          if command -v ffprobe >/dev/null 2>&1; then
+            ffprobe -version | head -n 1
+          else
+            echo "ffprobe unavailable: duration will remain null; MP3 digest proof still meaningful"
+          fi
+      - name: Fetch and hash four real original complete Senate April 8 2021 LRL MP3 binaries
+        run: |
+          node --import tsx scripts/audit-senate-2021-apr08-four-original-lrl-audio-full-binaries.ts \
+            --output artifacts/2021-apr08-senate-four-full-lrl-mp3-original-binaries/source.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: senate-2021-apr08-four-original-lrl-full-audio-binary-source-metadata
+          path: artifacts/2021-apr08-senate-four-full-lrl-mp3-original-binaries/source.json
+          retention-days: 30
+          if-no-files-found: error
