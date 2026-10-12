@@ -34,6 +34,30 @@ export const FINANCE_APR07_2022={
  ] as const
 } as const;
 
+export const FINANCE_APR07_FIRST_FULL_ORIGINAL_SOURCE={
+ runId:38196825837,
+ artifactId:11723219510,
+ originalPDFBytes:140671,
+ originalFullPDFSHA256:'213fbba6aa942cadc6a97fc70fb5e259790cdfadc91d4a645047da67e0dc0a6f',
+ originalEmbeddedTextSHA256:'804daf007ca99c7dd1d501b09199592d3509d203972054fec6511d30140760a8',
+ sourceAcquisitionSucceeded:true,
+ initialParserPassFailedOnWording:'original motion disposition',
+ sameSourceRepeatMustMatchFirstWholePDFAndTextSHA:true,
+ firstPassDidNotCertifySevenOriginalWrittenRolls:true
+} as const;
+export function requireExactFirstFinanceOriginalPdfSource(input:{
+ pdfBytes:number;fullSHA256:string;embeddedTextSHA256:string
+}){
+ const first=FINANCE_APR07_FIRST_FULL_ORIGINAL_SOURCE;
+ if(input.pdfBytes!==first.originalPDFBytes||
+   input.fullSHA256!==first.originalFullPDFSHA256||
+   input.embeddedTextSHA256!==first.originalEmbeddedTextSHA256)
+  throw Error('strict_original_source_sha_mismatch');
+ return {originalFullPDFSHA256:input.fullSHA256,
+  originalEmbeddedTextSHA256:input.embeddedTextSHA256,
+  independentlySameSourceReverified:true,
+  initialFailedOriginalParserNotSevenRollCertification:true};
+}
 type Motion=(typeof FINANCE_APR07_2022.motions)[number];
 export const sha256=(bytes:Uint8Array|string)=>createHash('sha256').update(bytes).digest('hex');
 export function normalizeFinanceMinutes(value:string){
