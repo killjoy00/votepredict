@@ -55,7 +55,7 @@ function mock(match=true):Output{
   },
   byYear,
  };
- return candidate as Output;
+ return candidate as unknown as Output;
 }
 test('pin distinct original source-only proof to independent run, archive ZIP SHA and JSON SHA',()=>{
  assert.equal(JUDICIARY_2025_FULL_SOURCE_ONESHOT_MARKER,
