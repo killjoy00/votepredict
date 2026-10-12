@@ -55,10 +55,10 @@ async function main(){
    schemaVersion:'senate-864-lrl-2024-public-original-probe-v12',
    sourceStatus:'ORIGINAL_SHA_VERIFIED',
    observedDirectoryPublishedIn2024IndependentlyProven:false,
-   2024YearServiceNotExactHearingDate:true,
+   year2024ServiceNotExactHearingDate:true,
    bytes,
    originalSha256:createHash('sha256').update(original).digest('hex'),
-   2024NamedSenateServiceCount:year2024.length,
+   year2024NamedSenateServiceCount:year2024.length,
    noNameOrSourceBodyPublished:true,noDatabaseAccess:true,
   }));
  }catch{
