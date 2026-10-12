@@ -1,0 +1,46 @@
+name: Senate 864 original HF669 and HF670 Senator roll evidence only
+
+on:
+  push:
+    branches:
+      - research/864-substantive-current-lead-audit-20261012
+    paths:
+      - scripts/audit-senate-864-2023-bonding-original-journal-personal-votes.mjs
+      - tests/senate-864-2023-bonding-original-journal-personal-votes.test.mjs
+      - .github/workflows/senate-864-bonding-official-2023-journal.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  official-named-roll-originals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install existing lockfile version of PDF parser
+        run: npm ci --no-fund --no-audit
+      - name: Test bill, chamber, third-reading, proxy and individual roster safeguards
+        run: |
+          node --check scripts/audit-senate-864-2023-bonding-original-journal-personal-votes.mjs
+          node --test tests/senate-864-2023-bonding-original-journal-personal-votes.test.mjs
+      - name: Independently read March16 and May22 ORIGINAL Senate Journal PDFs, emit only vote and SHA receipts
+        run: |
+          mkdir -p research-output
+          node scripts/audit-senate-864-2023-bonding-original-journal-personal-votes.mjs \
+            research-output/senate-864-original-hf669-hf670-personal-2023-senate-rolls.json
+      - name: Persist public government PDF fingerprint and personally named vote proof only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-2023-hf669-hf670-original-official-journal-vote-receipts
+          path: research-output/*.json
+          retention-days: 30
+          if-no-files-found: warn
