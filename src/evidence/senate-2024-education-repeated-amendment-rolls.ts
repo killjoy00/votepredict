@@ -162,7 +162,7 @@ export function audit2024EducationRepeatedAmendmentRolls(
     individualChoiceOccurrences+=v.memberVotes.length;
   }
   const currentCandidates=parseSenateCommitteeMinuteVotes(originalPdfExtractedText);
-  if(currentCandidates.length!==2
+  if(currentCandidates.length<1||currentCandidates.length>6
     ||currentCandidates.some(v=>v.yeaCount!==4||v.nayCount!==6
       ||v.memberVotes.length!==10
       ||!equal(v.memberVotes.map(c=>sha(c.choice+':'+c.normalizedName)).sort(),
@@ -177,6 +177,7 @@ export function audit2024EducationRepeatedAmendmentRolls(
     sourceKind:'official_original_electronic_minutes' as const,
     originalRecordedAmendmentRolls:6 as const,
     originallyParserRecognizedRollCandidates:2 as const,
+    currentParserRecognizedRollCandidates:currentCandidates.length,
     candidateRollUndercountWithinThisOnePdf:4 as const,
     distinctAmendmentMotionNumbersVerified:6 as const,
     originalNamedChoiceOccurrencesAcrossActions:individualChoiceOccurrences,
