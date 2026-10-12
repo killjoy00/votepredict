@@ -4,6 +4,8 @@ on:
     paths:
       - 'scripts/audit-cfb-864-95-served-report-version-crosswalk-v14.mjs'
       - 'tests/cfb-864-95-served-report-version-crosswalk-v14.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-serving-senator-report-version-source-crosswalk-v14.psv'
+      - 'docs/evaluation/source-proof/cfb-2021-25-95-served-report-version-crosswalk-checkpoint-v14.json'
       - 'docs/evaluation/cfb-2021-25-95-served-senator-report-version-panel-crosswalk-v14.md'
       - '.github/workflows/senate-864-cfb-95-served-report-crosswalk-v14.yml'
 
