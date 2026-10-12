@@ -1,12 +1,27 @@
 import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {mkdirSync,writeFileSync} from 'node:fs';
+import {mkdirSync,writeFileSync,readFileSync} from 'node:fs';
 import {runMprAndCaucusSenateEvidenceBreadth} from './probe-senate-media-2022-25-mpr-caucus-breadth-originals.mjs';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..'),args=process.argv.slice(2);
 if(args.length!==2||args[0]!=='--output'||!args[1])throw Error('Only --output artifacts/public-bounded-source-metadata.json');
 const dest=resolve(args[1]);
 if(!dest.startsWith(resolve(root,'artifacts')+'/')||!dest.endsWith('.json'))throw Error('Only source metadata under ignored artifacts/');
 const r=await runMprAndCaucusSenateEvidenceBreadth();
+const receipt=JSON.parse(readFileSync(new URL('../docs/evaluation/senate-media-2022-25-mpr-caucus-breadth-20261011.json',import.meta.url),'utf8'));
+if(receipt.version!=='senate-media-nine-mpr-caucus-public-original-receipts-v1'
+ ||receipt.sourceOriginals?.length!==10||r.publicFirstPartyUrlsTested!==9)throw Error('Public original source study scope changed');
+for(const s of r.sourcePages){
+ const present=[...s.wayback.originals,
+  ...s.commonCrawl.collections.flatMap(c=>c.originalAttempts)].filter(x=>
+   x.originalStatus==='sha1_authenticated_original_publisher_html'||x.originalStatus==='sha1_authenticated_original_commoncrawl_warc_html');
+ for(const original of present){
+  if(!receipt.sourceOriginals.some(p=>p.id===s.id&&p.captureUtc===original.utc
+    &&p.indexedSha1Base32===original.indexedOriginalSha1
+    &&p.rawOriginalHtmlSha256===original.originalBodySha256
+    &&p.rawOriginalHtmlBytes===original.originalBodyBytes))
+   throw Error('New or changed historical original requires independent source-receipt review');
+ }
+}
 mkdirSync(dirname(dest),{recursive:true});
 writeFileSync(dest,JSON.stringify(r,null,2)+'\n',{flag:'wx',mode:0o600});
 console.log(JSON.stringify({
