@@ -15,6 +15,21 @@ The original 2021–22 candidate archived-CSV research writer `scripts/probe-cfb
 
 The historical selectors are **research leads**. They are neither the full original archived CFB source catalog, nor proof that their captures cover all private archived claims, nor the legally required filing/report denominator. This first pass **does not** include the 101 IE-labelled claims; that archive used a separate old download catalog and requires a separately verified bounded original source selector.
 
+## V1 live result HOLD and corrected V2 exact-source retry
+
+[PR #1232](https://github.com/killjoy00/votepredict/pull/1232) merged cleanly with green CI as `0c233b1d1f198b2b34696a81e5da82f4c899048d`. Its first-attempt [original-source GitHub Actions run #38275247968](https://github.com/killjoy00/votepredict/actions/runs/38275247968) completed green preflight and public job, posting an explicit [V1 HOLD receipt](https://github.com/killjoy00/votepredict/issues/864#issuecomment-6128080613): both candidate streams returned `cdx_unavailable`, zero indexed candidates processed and zero original `id_` replay attempts. **This is not independently authenticated historical CSV evidence and not a negative finding about archived copies.**
+
+Reviewing that run's source discovered a deterministic *local validation bug*: the shared HTTP download helper required every response's final path to begin with `/web/`, but a legitimate CDX index JSON GET ends at `/cdx/search/cdx`, not at a raw replay path. Previous synthetic test doubles used `new Response()` without a final response URL, so this defect went undetected. The V1 `cdx_unavailable` result cannot distinguish index availability from this local restriction; the evidence remains HOLD and the original result is preserved.
+
+The corrective source-only V2 retry:
+
+- explicitly separates a **CDX metadata index GET** from an original **`/web/<timestamp>id_/` raw replay GET** with a typed `purpose` parameter;
+- checks both final response destinations remain on `https://web.archive.org`; the CDX path must remain `/cdx/search/cdx`, while a raw replay must preserve the *exact requested capture pathname and query* to block redirect-to-other-date or current-source substitutions;
+- requires a **nonempty actual final response URL**, with synthetic tests now supplying realistic `Response.url` values and independently testing forged CDX hosts and changed capture timestamps;
+- uses a fresh unique `SENATE_864_CFB_2021_22_ARCHIVE_RAW_CSV_V2` main-only marker and matching **V2** exact owner-comment fallback; prior V1 trigger and HOLD are not replayed or overwritten.
+
+No private database, row identity, original finance CSV raw content, donor data, source report PDF, model/forecast, or deployed production configuration is accessed by this corrected public-only path. The V2 retry may still report genuine CDX/Wayback endpoint unavailability; if so, the source remains HOLD until a separately authenticated original archival channel is available.
+
 ## Independent public source validation
 
 The public-only script `scripts/prove-cfb-864-public-archived-csv-source-v1.ts`:
