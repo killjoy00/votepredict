@@ -1,0 +1,160 @@
+name: 'One-shot #864 2021-22 candidate original dual digest and stored parity V6 (protected READ ONLY)'
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-864-cfb-candidate-parity-v6.yml
+      - scripts/audit-cfb-864-candidate-parity-v6.ts
+      - scripts/prove-cfb-864-candidate-originals-v6.ts
+      - scripts/verify-cfb-864-pinned-parity-v5-local.ts
+      - tests/cfb-864-candidate-parity-v6.test.ts
+  push:
+    branches: [main]
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+concurrency:
+  group: cfb-864-candidate-parity-v6-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  pr-presecret:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - name: Compile fixed aggregate source-to-stored SQL on disposable local PostgreSQL
+        run: node --import tsx scripts/verify-cfb-864-pinned-parity-v5-local.ts
+      - name: Synthetic source authenticated then READ ONLY SQL (and all-HOLD never calls Neon)
+        run: node --import tsx --test tests/cfb-864-candidate-parity-v6.test.ts
+
+  one-shot-preflight:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_CANDIDATE_PARITY_READONLY_V6_20261012')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_CANDIDATE_V6_OWNER_ONE_SHOT_20261012'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify checked-out immutable reviewed main SHA
+        env:
+          MAIN_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$MAIN_SHA"
+      - name: Exact one-shot reviewed V6 commit marker
+        run: git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_CANDIDATE_PARITY_READONLY_V6_20261012'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - name: Keyless fixed V6 SQL EXPLAIN
+        env:
+          CFB_864_CANDIDATE_V6_OWNER_COMMENT_VERIFIED: ${{ github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_CANDIDATE_V6_OWNER_ONE_SHOT_20261012' && 'true' || 'false' }}
+          CFB_864_PARITY_V5_OWNER_COMMENT_VERIFIED: ${{ github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_CANDIDATE_V6_OWNER_ONE_SHOT_20261012' && 'true' || 'false' }}
+        run: node --import tsx scripts/verify-cfb-864-pinned-parity-v5-local.ts
+      - run: node --import tsx --test tests/cfb-864-candidate-parity-v6.test.ts
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+
+  one-shot-protected:
+    needs: [one-shot-preflight]
+    if: >-
+      needs.one-shot-preflight.result == 'success' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_CANDIDATE_PARITY_READONLY_V6_20261012')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_CANDIDATE_V6_OWNER_ONE_SHOT_20261012'))
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 36
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      CFB_864_CANDIDATE_V6_APPROVAL: PRIOR_V4_DUAL_DIGEST_AND_FRESH_CDX_CANDIDATE_ROW_PARITY_COUNTS_ONLY
+      CFB_864_CANDIDATE_V6_FULL_CI_GREEN: ${{ needs.one-shot-preflight.result == 'success' && 'true' || 'false' }}
+      CFB_864_CANDIDATE_V6_MARKER_VERIFIED: ${{ ((github.event_name == 'push' && contains(github.event.head_commit.message, 'SENATE_864_CFB_CANDIDATE_PARITY_READONLY_V6_20261012')) || (github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_CANDIDATE_V6_OWNER_ONE_SHOT_20261012')) && 'true' || 'false' }}
+      CFB_864_CANDIDATE_V6_OWNER_COMMENT_VERIFIED: ${{ github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_CANDIDATE_V6_OWNER_ONE_SHOT_20261012' && 'true' || 'false' }}
+      CFB_864_PARITY_V5_OWNER_COMMENT_VERIFIED: ${{ github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_CANDIDATE_V6_OWNER_ONE_SHOT_20261012' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Exact main SHA, one-shot code marker
+        env:
+          MAIN_SHA: ${{ github.sha }}
+        run: |-
+          test "$(git rev-parse HEAD)" = "$MAIN_SHA"
+          git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_CANDIDATE_PARITY_READONLY_V6_20261012'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Dual-digest expenditure or fresh CDX contribution original, only then fixed READ ONLY counts and rollback
+        run: node --max-old-space-size=6144 --import tsx scripts/audit-cfb-864-candidate-parity-v6.ts
