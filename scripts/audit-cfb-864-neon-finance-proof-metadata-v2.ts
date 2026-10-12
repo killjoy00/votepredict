@@ -131,8 +131,14 @@ export function validateFinanceV2Rows(value:unknown):SafeFinanceV2Row[]{
  return out;
 }
 export function assertFinanceV2ProtectedEnv(e:Record<string,string|undefined>):void{
+ // GitHub may suppress push workflows for token-caused merges. A separately
+ // reviewed owner-comment route is permitted ONLY after exact issue/owner/
+ // one-shot-command checks in Actions and an explicit positive guard below.
+ const approvedEvent=e.GITHUB_EVENT_NAME==='push'
+   ||(e.GITHUB_EVENT_NAME==='issue_comment'
+      &&e.VOTEPREDICT_864_CFB_KEYS_V2_OWNER_COMMENT_VERIFIED==='true');
  if(e.GITHUB_REPOSITORY!=='killjoy00/votepredict'
-   ||e.GITHUB_EVENT_NAME!=='push'||e.GITHUB_REF!=='refs/heads/main'
+   ||!approvedEvent||e.GITHUB_REF!=='refs/heads/main'
    ||e.GITHUB_RUN_ATTEMPT!=='1'||!(/^[a-f0-9]{40}$/.test(e.GITHUB_SHA??''))
    ||e.VOTEPREDICT_864_CFB_KEYS_V2_APPROVAL!=='METADATA_KEY_PRESENCE_AGGREGATE_ONLY'
    ||e.VOTEPREDICT_864_INDEPENDENT_CI_VERIFIED!=='true'

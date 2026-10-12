@@ -8,6 +8,8 @@ on:
       - tests/cfb-864-neon-finance-proof-metadata-v2.test.ts
   push:
     branches: [main]
+  issue_comment:
+    types: [created]
 permissions:
   contents: read
 concurrency:
@@ -58,10 +60,15 @@ jobs:
   one-shot-verify:
     if: >-
       github.repository == 'killjoy00/votepredict' &&
-      github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      contains(github.event.head_commit.message, 'SENATE_864_CFB_KEYS_READONLY_20261012_V2')
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_KEYS_READONLY_20261012_V2')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_KEYS_V2_OWNER_ONE_SHOT_20261012'))
     runs-on: ubuntu-latest
     timeout-minutes: 20
     services:
@@ -90,6 +97,8 @@ jobs:
         env:
           MAIN_SHA: ${{ github.sha }}
         run: test "$(git rev-parse HEAD)" = "$MAIN_SHA"
+      - name: Require one-shot reviewed merge marker in the checked-out main commit
+        run: git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_KEYS_READONLY_20261012_V2'
       - uses: actions/setup-node@v7
         with:
           node-version: 22
@@ -106,10 +115,15 @@ jobs:
     if: >-
       needs.one-shot-verify.result == 'success' &&
       github.repository == 'killjoy00/votepredict' &&
-      github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      contains(github.event.head_commit.message, 'SENATE_864_CFB_KEYS_READONLY_20261012_V2')
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_KEYS_READONLY_20261012_V2')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_KEYS_V2_OWNER_ONE_SHOT_20261012'))
     environment: evidence-readonly-sandbox
     runs-on: ubuntu-latest
     timeout-minutes: 9
@@ -122,7 +136,8 @@ jobs:
       VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
       VOTEPREDICT_864_CFB_KEYS_V2_APPROVAL: METADATA_KEY_PRESENCE_AGGREGATE_ONLY
       VOTEPREDICT_864_INDEPENDENT_CI_VERIFIED: ${{ needs.one-shot-verify.result == 'success' && 'true' || 'false' }}
-      VOTEPREDICT_864_CFB_KEYS_V2_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_CFB_KEYS_READONLY_20261012_V2') && 'true' || 'false' }}
+      VOTEPREDICT_864_CFB_KEYS_V2_MARKER_PRESENT: ${{ ((github.event_name == 'push' && contains(github.event.head_commit.message, 'SENATE_864_CFB_KEYS_READONLY_20261012_V2')) || (github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_KEYS_V2_OWNER_ONE_SHOT_20261012')) && 'true' || 'false' }}
+      VOTEPREDICT_864_CFB_KEYS_V2_OWNER_COMMENT_VERIFIED: ${{ github.event_name == 'issue_comment' && github.event.issue.number == 864 && github.event.comment.user.login == 'killjoy00' && github.event.comment.author_association == 'OWNER' && github.event.comment.body == 'SENATE_864_CFB_KEYS_V2_OWNER_ONE_SHOT_20261012' && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -132,6 +147,8 @@ jobs:
         env:
           MAIN_SHA: ${{ github.sha }}
         run: test "$(git rev-parse HEAD)" = "$MAIN_SHA"
+      - name: Require one-shot reviewed merge marker in the checked-out main commit
+        run: git log -1 --format=%B | grep -Fq 'SENATE_864_CFB_KEYS_READONLY_20261012_V2'
       - uses: actions/setup-node@v7
         with:
           node-version: 22
@@ -147,10 +164,15 @@ jobs:
     if: >-
       always() &&
       github.repository == 'killjoy00/votepredict' &&
-      github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      contains(github.event.head_commit.message, 'SENATE_864_CFB_KEYS_READONLY_20261012_V2') &&
+      ((github.event_name == 'push' &&
+        contains(github.event.head_commit.message, 'SENATE_864_CFB_KEYS_READONLY_20261012_V2')) ||
+       (github.event_name == 'issue_comment' &&
+        github.event.issue.number == 864 &&
+        github.event.comment.user.login == 'killjoy00' &&
+        github.event.comment.author_association == 'OWNER' &&
+        github.event.comment.body == 'SENATE_864_CFB_KEYS_V2_OWNER_ONE_SHOT_20261012')) &&
       (needs.one-shot-verify.result == 'failure' ||
         (needs.one-shot-verify.result == 'success' &&
           (needs.one-shot-readonly.result == 'success' ||
