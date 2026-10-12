@@ -1,0 +1,72 @@
+name: Recover nine final unobserved MN Senate candidate websites with exact historic originals
+on:
+  pull_request:
+    paths:
+      - scripts/probe-senate-final-nine-specific-candidate-archive-sites.mjs
+      - .github/workflows/acquire-senate-final-nine-specific-archived-candidate-originals.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  original-final-nine-date-specific-candidate-archive-source-acquisition:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'audit/864-final-nine-historical-source-specific-recovery-20261011'
+    runs-on: ubuntu-latest
+    timeout-minutes: 33
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen full pinned original Minnesota Legislative Reference Library historical Senate directory and swearing
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen last verified statewide 85/95 actual serving senator original website coverage
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38187799003
+          name: senate-95-serving-85-original-firstparty-1093-short-research-excerpts-v1
+          github-token: ${{ github.token }}
+          path: original/prior-85-coverage
+      - name: Reopen Susan Pha 2022 original entire Wayback 300-row CDX index and original full HTML
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38186753218
+          name: senate-last16-64-targeted-exact-path-archived-original-cdx-html-v1
+          github-token: ${{ github.token }}
+          path: original/prior-last16
+      - name: Validate nine original government service identities and recover candidate-specific historical originals
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          swear="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          coverage="$(find original/prior-85-coverage -type f -name 95-senators-public-campaign-coverage.json -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$swear" && test -n "$coverage"
+          node --import tsx scripts/probe-senate-final-nine-specific-candidate-archive-sites.mjs \
+            --official-html "$gov" \
+            --official-receipt "$receipt" \
+            --official-special-swearing-html "$swear" \
+            --prior-85-coverage-json "$coverage" \
+            --prior-64-window-original-dir original/prior-last16 \
+            --out-dir original/final-nine-specific-historical-originals
+      - name: Preserve each full independent CDX index, exact replays, SHA digests and bounded archive failures
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-final-nine-12-precise-historic-original-windows-and-six-pha-replays-v1
+          path: original/final-nine-specific-historical-originals/
+          if-no-files-found: warn
+          retention-days: 30
