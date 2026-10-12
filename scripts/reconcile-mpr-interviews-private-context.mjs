@@ -74,6 +74,7 @@ export function reconcilePrivateContextRows(rows,receipt){
    &&g.row.archiveCapturedAt===expected.capture
    &&g.row.sourceUrl===expected.archiveUrl
    &&g.row.sourceSha256===expected.sha
+   &&g.row.archiveDigest===expected.archiveSha1
    &&g.row.sourceKind==='wayback_local_trade_news'
    &&g.row.publisher==='MPR News'
    &&g.row.seedId==='mpr-news-story-archive'
