@@ -150,7 +150,7 @@ test('two contributions remain independent CDX checks and expenditure checkpoint
  const result=await collectCandidateOriginalsV6(publicOne as typeof fetch);
  assert.deepEqual(result.results.map(r=>r.id),V6_CANDIDATE_SOURCES.map(s=>s.id));
  assert.equal(result.results[0].status,'verified');
- assert.equal(result.results[1].status,'cdx_network_hold');
+ assert.equal(result.results[1].status,'cdx_pin_not_indexed');
  assert.equal(result.results[2].status,'replay_network_hold');
  assert.equal(result.results[0].verified?.distinctRowKeys,35);
 });
