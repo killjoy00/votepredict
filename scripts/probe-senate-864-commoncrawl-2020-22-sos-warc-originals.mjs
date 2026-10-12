@@ -112,7 +112,19 @@ function originalPage(source,original,entry){
   const httpHeaders=gz.subarray(bodyStart,he).toString('latin1');
   assert.match(httpHeaders,/^HTTP\/\d(?:\.\d)? 200(?:\s|\r)/,'Not actual original 200 HTTP response');
   assert.match(httpHeaders,/content-type:\s*(?:text\/html|application\/xhtml\+xml)/i,'Original HTTP page is not HTML');
-  const html=gz.subarray(he+sep.length);
+  // WARC Content-Length is the exact length of the encapsulated HTTP record.
+  // A gzip WARC member includes CRLF record separators AFTER this boundary.
+  // Hashing these trailing separators would falsely disagree with the CDX/WARC
+  // payload digest even though HTTP 206 and the original byte range are valid.
+  const originalHttpRecordLength=Number(h('Content-Length'));
+  assert.ok(Number.isSafeInteger(originalHttpRecordLength)
+    &&originalHttpRecordLength>=100&&originalHttpRecordLength<=9_000_000,
+    'Invalid whole WARC HTTP-record Content-Length');
+  const recordEnd=bodyStart+originalHttpRecordLength;
+  assert.ok(recordEnd<=gz.length&&he+sep.length<recordEnd,'WARC HTTP source overruns compressed record declared length');
+  const originalWarcSeparator=gz.subarray(recordEnd).toString('latin1');
+  assert.ok(/^(?:\r\n){0,4}$/.test(originalWarcSeparator),'Unexpected WARC record trailer');
+  const html=gz.subarray(he+sep.length,recordEnd);
   assert.ok(html.length>=200&&html.length<=5_000_000,'Original HTML length invalid');
   assert.equal(historicalArchiveSha1Base32(html),entry.digest,'Original HTML does not match independent Common Crawl WARC payload digest');
   return {ok:true,originalHtml:html,originalCompressedWarcSourceSha256:sha(source),
