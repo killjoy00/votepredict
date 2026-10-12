@@ -265,6 +265,14 @@ export function compareOriginalSenateCommitteeToStored(
   exactChoiceDigestIntersectionTokensInThoseRolls:0,
   originalNamedChoiceTokensAbsentFromPersistedDigestSet:0,
   storedNamedChoiceTokensNotInOriginalDigestSet:0,
+  // Independent original yea/nay tally MINUS nine source-hash-matched
+  // stored choices can identify a single missing *side*, never a person.
+  oneOriginalTokenAbsentAllStoredHashesExact:0,
+  oneOriginalTokenYeaDeficit:0,
+  oneOriginalTokenNayDeficit:0,
+  oneOriginalTokenSideHeld:0,
+  storedRowsOnSingleTokenRollWithMembership:0,
+  storedRowsOnSingleTokenRollWithoutMembership:0,
  };
  for(const r of reports)for(const p of r.documentProofs){
   const found=byUrl.get(p.document.sourceUrl)??[];
@@ -296,6 +304,26 @@ export function compareOriginalSenateCommitteeToStored(
    choiceDiscrepancy.exactChoiceDigestIntersectionTokensInThoseRolls+=intersection;
    choiceDiscrepancy.originalNamedChoiceTokensAbsentFromPersistedDigestSet+=originalHashes.length-intersection;
    choiceDiscrepancy.storedNamedChoiceTokensNotInOriginalDigestSet+=actual.length-intersection;
+   // Only a strict (N original, N-1 stored, N-1 identical SHA digests, zero
+   // added stored digests) cohort qualifies for the direction inference.
+   // Other mismatches must remain separate holds, not be attributed to YEA/NAY.
+   if(originalHashes.length!==actual.length+1||intersection!==actual.length)continue;
+   choiceDiscrepancy.oneOriginalTokenAbsentAllStoredHashesExact++;
+   const persisted=memberByEvent.get(e.id)??[];
+   const withMembership=persisted.filter(x=>x.membership_id!==null).length;
+   choiceDiscrepancy.storedRowsOnSingleTokenRollWithMembership+=withMembership;
+   choiceDiscrepancy.storedRowsOnSingleTokenRollWithoutMembership+=persisted.length-withMembership;
+   const storedYea=persisted.filter(x=>x.choice==='yea').length;
+   const storedNay=persisted.filter(x=>x.choice==='nay').length;
+   if(withMembership!==persisted.length){
+    choiceDiscrepancy.oneOriginalTokenSideHeld++;
+   }else if(v.yeaCount===storedYea+1&&v.nayCount===storedNay){
+    choiceDiscrepancy.oneOriginalTokenYeaDeficit++;
+   }else if(v.nayCount===storedNay+1&&v.yeaCount===storedYea){
+    choiceDiscrepancy.oneOriginalTokenNayDeficit++;
+   }else{
+    choiceDiscrepancy.oneOriginalTokenSideHeld++;
+   }
   }
  }
  const yearResults=[...yearMap.values()].sort((a,b)=>a.year-b.year);

@@ -71,6 +71,12 @@ test('2024 original roll has exactly one missing choice digest rather than ten m
  assert.equal(r.originalVsPersistedNamedChoiceDigestDiscrepancy.exactChoiceDigestIntersectionTokensInThoseRolls,9);
  assert.equal(r.originalVsPersistedNamedChoiceDigestDiscrepancy.originalNamedChoiceTokensAbsentFromPersistedDigestSet,1);
  assert.equal(r.originalVsPersistedNamedChoiceDigestDiscrepancy.storedNamedChoiceTokensNotInOriginalDigestSet,0);
+ assert.equal(r.originalVsPersistedNamedChoiceDigestDiscrepancy.oneOriginalTokenAbsentAllStoredHashesExact,1);
+ assert.equal(r.originalVsPersistedNamedChoiceDigestDiscrepancy.oneOriginalTokenYeaDeficit,0);
+ assert.equal(r.originalVsPersistedNamedChoiceDigestDiscrepancy.oneOriginalTokenNayDeficit,1);
+ assert.equal(r.originalVsPersistedNamedChoiceDigestDiscrepancy.oneOriginalTokenSideHeld,0);
+ assert.equal(r.originalVsPersistedNamedChoiceDigestDiscrepancy.storedRowsOnSingleTokenRollWithMembership,9);
+ assert.equal(r.originalVsPersistedNamedChoiceDigestDiscrepancy.storedRowsOnSingleTokenRollWithoutMembership,0);
  assert.equal(r.keyOnlyOriginalEventVerification.sourceRecognizedButOriginalTallyOrNameDigestsUnavailable,1);
  assert.equal(r.keyOnlyOriginalEventVerification.persistedExactKeyAndHearingDateMatches,1);
  assert.equal(r.keyOnlyOriginalEventVerification.persistedKeyDateAndChoiceCountMatches,1);
@@ -93,6 +99,49 @@ test('same member count with wrong YEA/NAY identity is NOT falsely classified as
  assert.equal(r.originalVsPersistedNamedChoiceDigestDiscrepancy.exactChoiceDigestIntersectionTokensInThoseRolls,9);
  assert.equal(r.originalVsPersistedNamedChoiceDigestDiscrepancy.originalNamedChoiceTokensAbsentFromPersistedDigestSet,1);
  assert.equal(r.originalVsPersistedNamedChoiceDigestDiscrepancy.storedNamedChoiceTokensNotInOriginalDigestSet,1);
+});
+
+test('one original YEA token absent yields YEA tally-side deficit, not a private member',()=>{
+ // Base fixture already omits the fourth NAY (Senator9). Restore that
+ // synthetic original token before removing YEA Senator0 so nine still match.
+ const missingYea=[...choices.filter(row=>
+  !(row.vote_event_id==='event1'&&row.normalized_member_name==='Senator0')),
+  {vote_event_id:'event1',normalized_member_name:'Senator9',
+   choice:'nay',membership_id:'mem9'}];
+ const d=compareOriginalSenateCommitteeToStored(originals(),{
+  documents:docs,events,choices:missingYea,
+ }).originalVsPersistedNamedChoiceDigestDiscrepancy;
+ assert.equal(d.oneOriginalTokenAbsentAllStoredHashesExact,1);
+ assert.equal(d.oneOriginalTokenYeaDeficit,1);
+ assert.equal(d.oneOriginalTokenNayDeficit,0);
+ assert.equal(d.oneOriginalTokenSideHeld,0);
+ assert.equal(d.storedRowsOnSingleTokenRollWithMembership,9);
+});
+
+test('a correct digest but NULL stored membership holds side inference',()=>{
+ const missingNay=choices.map(x=>x.vote_event_id==='event1' && x.normalized_member_name==='Senator0'
+  ?{...x,membership_id:null}:x);
+ const d=compareOriginalSenateCommitteeToStored(originals(),{
+  documents:docs,events,choices:missingNay,
+ }).originalVsPersistedNamedChoiceDigestDiscrepancy;
+ assert.equal(d.oneOriginalTokenAbsentAllStoredHashesExact,1);
+ assert.equal(d.oneOriginalTokenYeaDeficit,0);
+ assert.equal(d.oneOriginalTokenNayDeficit,0);
+ assert.equal(d.oneOriginalTokenSideHeld,1);
+ assert.equal(d.storedRowsOnSingleTokenRollWithMembership,8);
+ assert.equal(d.storedRowsOnSingleTokenRollWithoutMembership,1);
+});
+
+test('a wrong stored name with same 9 vote count cannot be miscalled one missing original choice',()=>{
+ const mislabelled=choices.map(x=>x.vote_event_id==='event1' && x.normalized_member_name==='Senator0'
+  ?{...x,normalized_member_name:'SyntheticError'}:x);
+ const d=compareOriginalSenateCommitteeToStored(originals(),{
+  documents:docs,events,choices:mislabelled,
+ }).originalVsPersistedNamedChoiceDigestDiscrepancy;
+ assert.equal(d.originalNamedChoiceTokensAbsentFromPersistedDigestSet,2);
+ assert.equal(d.storedNamedChoiceTokensNotInOriginalDigestSet,1);
+ assert.equal(d.oneOriginalTokenAbsentAllStoredHashesExact,0);
+ assert.equal(d.oneOriginalTokenYeaDeficit+d.oneOriginalTokenNayDeficit+d.oneOriginalTokenSideHeld,0);
 });
 
 test('key-only original cannot be double counted, source-unattributed or promoted to exact named votes',()=>{
