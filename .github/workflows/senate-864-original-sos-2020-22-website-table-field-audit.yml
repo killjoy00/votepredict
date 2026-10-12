@@ -4,6 +4,8 @@ on:
     paths:
       - data/evaluation/senate-864-original-sos-website-field-and-retained-records-route-v1.json
       - scripts/audit-senate-864-original-sos-candidate-website-table-field.mjs
+      - src/evidence/senate-sos-original-candidate-website-table.mjs
+      - tests/senate-864-sos-original-candidate-website-table.test.mjs
       - .github/workflows/senate-864-original-sos-2020-22-website-table-field-audit.yml
 permissions:
   contents: read
@@ -32,6 +34,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: node --check scripts/audit-senate-864-original-sos-candidate-website-table-field.mjs
+      - run: node --check src/evidence/senate-sos-original-candidate-website-table.mjs
+      - name: Offline regressions - website header alignment, blank versus unknown, no false site inference
+        run: node --test tests/senate-864-sos-original-candidate-website-table.test.mjs
       - run: npm ci --no-fund --no-audit
       - name: Reopen original independently verified Minnesota 2020 and 2022 SoS Senate election results
         uses: actions/download-artifact@v4
