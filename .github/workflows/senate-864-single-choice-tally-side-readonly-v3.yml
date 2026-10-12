@@ -432,7 +432,7 @@ jobs:
                 if(typeof v!=='number'||!Number.isSafeInteger(v)||v<0||v>max)throw Error('unsafe count');
                 return v;
               };
-              if(r.schemaVersion!=='mn-864-one-missing-2024-choice-source-tally-side-v3'
+              if(r.schemaVersion!=='mn-864-one-missing-2024-choice-source-tally-side-v4'
                 ||r.issue!==864||r.scope!=='one-original-2024-roll-missing-choice-token'
                 ||r.previousV2ProtectedRunId!==38201074454||r.previousV2IssueReceiptId!==6117412541
                 ||r.originalPdfRawShaAndStoredSourceParities!==1452
