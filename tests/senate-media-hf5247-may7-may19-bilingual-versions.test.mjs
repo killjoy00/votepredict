@@ -28,21 +28,21 @@ test('source allowlist fixes 93rd Legislature exact 4 document versions, no late
  assert.throws(()=>validateAllowlist(SOURCES.map(s=>({...s}))));
 });
 test('absence of EXACT full DVS translated materials within May7 full visible bill is distinct from generic language mention',()=>{
- const x=inspectText(html('Transportation policy generally matters. A report may discuss language access. Hmong and deputy registrars.'),house,true);
+ const x=inspectText('HF No. 5247. A bill for an act relating to transportation policy, languages and deputy registrars.',house,false);
  assert.equal(x.exactBillAndSessionIdentified,true);
  assert.equal(x.allFourSpecificDvsLanguageMarkersInExactDocument,false);
  assert.equal(x.shortSourcePolicyFragments.find(z=>z.id==='qualifying_nonenglish_languages').shortSourceCuePresent,false);
- const y=inspectText(html(allDvs),house,true);
+ const y=inspectText('HF No. 5247. A bill for an act. '+allDvs,house,false);
  assert.equal(y.allFourSpecificDvsLanguageMarkersInExactDocument,true);
  assert.ok(y.shortSourcePolicyFragments.filter(z=>z.shortSourceCuePresent).length>=4);
  assert.equal(y.publicationClockBeforeRollNotIndependentlyProven,true);
 });
 test('hidden script and someone else on a 94th session cannot supply original source bilingual matches',()=>{
  const content=html('Some local tax measure, no DVS provisions')+'<script>'+allDvs+'</script>';
- const x=inspectText(content,house,true);
+ const x=inspectText(content,unofficial,true);
  assert.equal(x.allFourSpecificDvsLanguageMarkersInExactDocument,false);
  const different=inspectText(html('HF 5247, 94th Legislature (2025 - 2026), '+allDvs)
- .replace('93rd Legislature (2023 - 2024)','not 2024'),house,true);
+ .replace('93rd Legislature (2023 - 2024)','not 2024'),unofficial,true);
  assert.equal(different.exactBillAndSessionIdentified,false);
 });
 test('conference committee PDF text parser confirms DVS specific composite marker but cannot prove timestamp before May19 vote',()=>{
@@ -54,7 +54,7 @@ test('conference committee PDF text parser confirms DVS specific composite marke
  assert.equal(x.noIndividualHawjVoteOnThisSpecificSFProven,true);
 });
 test('SF3257 bilingual original does not mechanically equate SF to omnibus yes vote or guarantee exact same legislative section',()=>{
- const x=inspectText('SF3257 AS INTRODUCED. A bill requiring bilingual services from deputy registrar. '+allDvs,sf,false);
+ const x=inspectText('SF3257 AS INTRODUCED. A bill for an act requiring bilingual services from deputy registrar. '+allDvs,sf,false);
  assert.equal(x.exactBillAndSessionIdentified,true);
  assert.equal(x.shortSourcePolicyFragments.find(k=>k.id==='original_SF3257_bilingual_services').shortSourceCuePresent,true);
  assert.equal(x.noIndividualHawjVoteOnThisSpecificSFProven,true);
