@@ -6,6 +6,7 @@ on:
       - src/evidence/senate-three-unobserved-2022-campaign-original-archive.ts
       - tests/senate-three-unobserved-2022-campaign-original-archive.test.ts
       - docs/evaluation/senate-three-unobserved-2022-original-campaign-source-pilot.md
+      - docs/evaluation/source-proof/senate-three-unobserved-2022-original-firstparty-archive-source-checkpoint.json
       - .github/workflows/senate-864-three-unobserved-original-campaign-sites.yml
 permissions:
   contents: read
