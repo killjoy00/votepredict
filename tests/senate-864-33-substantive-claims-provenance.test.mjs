@@ -25,14 +25,41 @@ test('all original historical source-capture claims pin SHA1+SHA256 but NEVER fi
   assert.equal(q.historicalSourceCutoffAndIngestionReconciled,false);
  }
 });
-test('newly found live publisher quotes cannot masquerade as archive-authenticated',()=>{
- for (const q of claims.slice(24)){
+test('four new SHA verified original bodies promote five bill crosswalk rows, four others stay UNKNOWN',()=>{
+ const promoted=claims.slice(24).filter(x=>x.sourceIntegrity==='independently_archived_full_body_sha1_sha256');
+ const remaining=claims.slice(24).filter(x=>x.sourceIntegrity==='currently_retrievable_first_party_lead_historical_original_unverified');
+ assert.equal(promoted.length,5,'Kreun road funding links SF551 and SF862 to ONE original source');
+ assert.equal(new Set(promoted.map(x=>x.sourceUrl)).size,4);
+ assert.equal(remaining.length,4);
+ for(const q of promoted){
+  assert.match(q.sourceOriginalHtmlSha256,sha);
+  assert.match(q.archivalIndexedOriginalSha1Base32,indexed);
+  assert.match(q.independentlyEstablishedHistoricalPublicByUtc,/^2023-/);
+  assert.equal(q.quoteSpeakerBoundedInVerifiedOriginal,true);
+  assert.equal(q.asOfPredictionUsable,false);
+  assert.equal(q.originalFullStatementHumanApproved,false);
+ }
+ for(const q of remaining){
   assert.equal(q.independentlyEstablishedHistoricalPublicByUtc,null);
   assert.equal(q.sourceOriginalHtmlSha256,null);
   assert.equal(q.archivalIndexedOriginalSha1Base32,null);
-  assert.equal(q.sourceIntegrity,'currently_retrievable_first_party_lead_historical_original_unverified');
   assert.equal(q.asOfPredictionUsable,false);
   assert.equal(q.productionAsOfSourcePresenceVerified,false);
+ }
+});
+test('original archive captures pin four directly named senator excerpts after referenced decisions',()=>{
+ const r=JSON.parse(readFileSync('data/evaluation/senate-864-four-new-2023-named-legislative-originals-receipts-v1.json','utf8'));
+ assert.equal(r.counts.underlyingStatementEventsOriginalIndependentlyAuthenticated,4);
+ assert.equal(r.counts.originalBillCrosswalkRowsCorrespondingToFourStatements,5);
+ assert.equal(r.authenticatedHistoricalOriginals.length,4);
+ assert.equal(r.unresolvedOriginalSourceProbes.length,4);
+ for (const x of r.authenticatedHistoricalOriginals){
+  assert.match(x.wholeRawOriginalHtmlSha256,sha);
+  assert.match(x.indexOriginalSha1Base32,indexed);
+  assert.equal(x.originalWrittenShortQuoteClosedAndNamedSenatorDirectAttributionVerified,true);
+  assert.equal(x.originalClearlyLaterThanReferencedDecision.startsWith('post_'),true);
+  assert.equal(x.fullVerbatimWrittenStatementHumanApproved,false);
+  assert.equal(x.noRetroactivePreviousDecisionPredictionAllowed,true);
  }
 });
 test('historically authenticated 2022/2023 named official member votes never promote own quotes as labels',()=>{
