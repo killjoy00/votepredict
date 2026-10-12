@@ -1,0 +1,75 @@
+{
+  "schema": "senate-864-pre2018-new-collection-original-candidate-site-research-v1",
+  "issue": 864,
+  "note": "Bounded independent earlier Common Crawl collection route not covered by PR #1239's 2016-44/2018-43/2020-era query. No discovery lead is presumed campaign-owned.",
+  "pre2018Collections": [
+    "CC-MAIN-2013-48",
+    "CC-MAIN-2014-52",
+    "CC-MAIN-2015-11",
+    "CC-MAIN-2017-04"
+  ],
+  "originalOfficialCensus": {
+    "servingStateSenators2021to2025": 95,
+    "ownedSitePeopleBefore": 92,
+    "selectedOwnedSiteShortFragmentsBefore": 1285,
+    "governmentActualSenateDirectorySha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "original2020SosStsenateSha256": "c2937b1fee5ae077603d892adf03c4ce83e2bb2592753680d5bfdeb4aecf7ba5",
+    "original2020SosCandSha256": "8a0596d788b651ec27c05aa576bed31a3a51efd83c2cd2ee2ae5fdcc2f02965a"
+  },
+  "targets": [
+    {
+      "id": "wiger",
+      "name": "Charles Wiger",
+      "district": "43",
+      "electionYear": 2020,
+      "originalUrl": "http://www.chuckwiger.com/",
+      "referenceClass": "unverified_historical_domain_hypothesis",
+      "disqualifications": [
+        "official government Senate site does not qualify as campaign-owned"
+      ]
+    },
+    {
+      "id": "tomassoni",
+      "name": "David Tomassoni",
+      "district": "6",
+      "electionYear": 2020,
+      "originalUrl": "http://www.tomassoni4senate.com/",
+      "referenceClass": "historically_attributed_domain_later_repurposed",
+      "disqualifications": [
+        "2019 original receipt-template content is ineligible",
+        "pre2018 capture would need distinct Senate campaign ownership and real issue text"
+      ]
+    },
+    {
+      "id": "bakk",
+      "name": "Thomas Bakk",
+      "district": "3",
+      "electionYear": 2020,
+      "originalUrl": "http://www.tombakk.com/",
+      "referenceClass": "authenticated_2008_governor_campaign_domain_not_senate",
+      "disqualifications": [
+        "authentic 2008 governor site is not a Minnesota Senate campaign",
+        "even a 2013-17 site cannot be represented as 2020-authored"
+      ]
+    }
+  ],
+  "sourceSafety": {
+    "onlyPublicCommonCrawlOfficialIndexes": true,
+    "publicArchiveOriginalWarcExact206Required": true,
+    "indexedSha1Base32MustEqualWholeOriginalBody": true,
+    "originalHttpRecordBoundedByWarcContentLength": true,
+    "candidateOwnedSenateOfficeAndOriginalIssueStatementsManualIndependentAuditRequired": true,
+    "doNotPersistWholeHistoricalHtmlOrCandidatePersonalContacts": true,
+    "noAutoAttributionOfCandidatePositions": true,
+    "noProductionDatabaseReadsWrites": true,
+    "noModelTrainingForecastSchedulerDeployChanges": true,
+    "neverTreatUnavailableIndexAsWebsiteAbsence": true,
+    "neverBackdateOlderCycleTo2020": true,
+    "noExternalContactOrCorrespondence": true,
+    "noDataPracticesRequests": true
+  },
+  "expectedEffectUntilIndependentPromotion": {
+    "newOwnedSitePeople": 0,
+    "newSiteExcerpts": 0
+  }
+}

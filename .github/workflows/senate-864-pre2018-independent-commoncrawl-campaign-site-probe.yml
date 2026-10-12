@@ -1,0 +1,79 @@
+name: Audit old 2013-17 original Common Crawl candidate-site leads
+
+on:
+  pull_request:
+    paths:
+      - data/evaluation/senate-864-pre2018-alternative-commoncrawl-original-site-targets-v1.json
+      - src/evidence/senate-864-pre2018-commoncrawl-provenance.mjs
+      - tests/senate-864-pre2018-commoncrawl-provenance.test.mjs
+      - scripts/probe-senate-864-pre2018-commoncrawl-senate-site-originals.mjs
+      - .github/workflows/senate-864-pre2018-independent-commoncrawl-campaign-site-probe.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  early-original-provenance-and-official-sos-service:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.ref == 'research/864-pre2018-commoncrawl-original-senate-sites-20261012'
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        target: [wiger, tomassoni, bakk]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Source syntax
+        run: |
+          node --check scripts/probe-senate-864-pre2018-commoncrawl-senate-site-originals.mjs
+          node --check src/evidence/senate-864-pre2018-commoncrawl-provenance.mjs
+      - name: Pure exact-source source-boundary regressions, including parked/false-positive and unknown
+        run: node --test tests/senate-864-pre2018-commoncrawl-provenance.test.mjs
+      - run: npm ci --no-fund --no-audit
+      - name: Reopen independently pinned original LRL directory and swearing
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38094976711
+          name: senate-2021-25-ever-served-only-source-coverage-v2
+          github-token: ${{ github.token }}
+          path: original/official
+      - name: Reopen original 2020 SOS general State Senate winner and candidate source files
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 38089571113
+          name: senate-2020-22-public-candidate-original-source-acquisition
+          github-token: ${{ github.token }}
+          path: original/sos
+      - name: Probe limited public 2013-17 Common Crawl archived originals
+        shell: bash
+        run: |
+          set -euo pipefail
+          gov="$(find original/official -type f -name mn-lrl-official-senate-service-directory.html -print -quit)"
+          receipt="$(find original/official -type f -name mn-lrl-official-senate-service-directory-audit.json -print -quit)"
+          sworn="$(find original/official -type f -name mn-lrl-official-senate-special-swearing-history.html -print -quit)"
+          sos="$(find original/sos -type f -name 2020-sos-general-stsenate.response -print -quit)"
+          test -n "$gov" && test -n "$receipt" && test -n "$sworn" && test -n "$sos"
+          node --import tsx scripts/probe-senate-864-pre2018-commoncrawl-senate-site-originals.mjs \
+            --target "${{ matrix.target }}" \
+            --official-html "$gov" --official-receipt "$receipt" \
+            --official-special-swearing-html "$sworn" \
+            --sos-original-dir "$(dirname "$sos")" \
+            --out-dir research/safe-receipts
+      - name: Retain only hashes, safe candidate identity, and status; no candidate page or contacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: senate-864-2013-17-${{ matrix.target }}-public-original-warc-proof-v1
+          path: research/safe-receipts/
+          if-no-files-found: warn
+          retention-days: 14

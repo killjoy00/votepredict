@@ -1,0 +1,161 @@
+{
+  "schema": "senate-864-pre2018-commoncrawl-public-archive-availability-v1",
+  "issue": 864,
+  "runDateUTC": "2026-10-12",
+  "runId": 38296842531,
+  "runUrl": "https://github.com/killjoy00/votepredict/actions/runs/38296842531",
+  "originalGovernmentServiceAnd2020ElectionIdentityReconciled": true,
+  "offlineOriginalBodyValidationTestsPassed": true,
+  "researchJobsGreen": 3,
+  "requestsMade": 12,
+  "requestsReturned504": 12,
+  "originalBodyAuthenticated": 0,
+  "newCampaignSiteExcerpts": 0,
+  "newSenatorCampaignSiteCoverage": 0,
+  "siteCoveragePeopleUnchanged": 92,
+  "siteShortExcerptsUnchanged": 1285,
+  "claimsOfNoHistoricalCampaignSiteAllowed": false,
+  "allProvider504AreUnknownNotProofOfIndexAbsence": true,
+  "sourceResults": [
+    {
+      "id": "wiger",
+      "person": "Sr., Charles W. Wiger",
+      "district2020": "43",
+      "officialIdentityVerified": true,
+      "indexes": [
+        {
+          "collection": "CC-MAIN-2013-48",
+          "status": 504,
+          "sourceConclusion": "original_archive_index_unavailable_unknown",
+          "actualIndexedRowsObserved": 0,
+          "originalSha1Base32": null,
+          "originalHtmlSha256": null
+        },
+        {
+          "collection": "CC-MAIN-2014-52",
+          "status": 504,
+          "sourceConclusion": "original_archive_index_unavailable_unknown",
+          "actualIndexedRowsObserved": 0,
+          "originalSha1Base32": null,
+          "originalHtmlSha256": null
+        },
+        {
+          "collection": "CC-MAIN-2015-11",
+          "status": 504,
+          "sourceConclusion": "original_archive_index_unavailable_unknown",
+          "actualIndexedRowsObserved": 0,
+          "originalSha1Base32": null,
+          "originalHtmlSha256": null
+        },
+        {
+          "collection": "CC-MAIN-2017-04",
+          "status": 504,
+          "sourceConclusion": "original_archive_index_unavailable_unknown",
+          "actualIndexedRowsObserved": 0,
+          "originalSha1Base32": null,
+          "originalHtmlSha256": null
+        }
+      ],
+      "validWholeOriginalPages": 0,
+      "artifactId": 11768234100,
+      "artifactZipSha256": "9a0faafb8c9f89c93e3ad59a9bac341294d9f32f6612bc562685f8a7a902e33b",
+      "artifactUrl": "https://github.com/killjoy00/votepredict/actions/runs/38296842531/artifacts/11768234100"
+    },
+    {
+      "id": "tomassoni",
+      "person": "David J. Tomassoni",
+      "district2020": "6",
+      "officialIdentityVerified": true,
+      "indexes": [
+        {
+          "collection": "CC-MAIN-2013-48",
+          "status": 504,
+          "sourceConclusion": "original_archive_index_unavailable_unknown",
+          "actualIndexedRowsObserved": 0,
+          "originalSha1Base32": null,
+          "originalHtmlSha256": null
+        },
+        {
+          "collection": "CC-MAIN-2014-52",
+          "status": 504,
+          "sourceConclusion": "original_archive_index_unavailable_unknown",
+          "actualIndexedRowsObserved": 0,
+          "originalSha1Base32": null,
+          "originalHtmlSha256": null
+        },
+        {
+          "collection": "CC-MAIN-2015-11",
+          "status": 504,
+          "sourceConclusion": "original_archive_index_unavailable_unknown",
+          "actualIndexedRowsObserved": 0,
+          "originalSha1Base32": null,
+          "originalHtmlSha256": null
+        },
+        {
+          "collection": "CC-MAIN-2017-04",
+          "status": 504,
+          "sourceConclusion": "original_archive_index_unavailable_unknown",
+          "actualIndexedRowsObserved": 0,
+          "originalSha1Base32": null,
+          "originalHtmlSha256": null
+        }
+      ],
+      "validWholeOriginalPages": 0,
+      "artifactId": 11768778404,
+      "artifactZipSha256": "5d6db703d3b485f2db75cbddf180b830b444e477d6c288483c4403dfac515a9b",
+      "artifactUrl": "https://github.com/killjoy00/votepredict/actions/runs/38296842531/artifacts/11768778404"
+    },
+    {
+      "id": "bakk",
+      "person": "Thomas M. Bakk",
+      "district2020": "3",
+      "officialIdentityVerified": true,
+      "indexes": [
+        {
+          "collection": "CC-MAIN-2013-48",
+          "status": 504,
+          "sourceConclusion": "original_archive_index_unavailable_unknown",
+          "actualIndexedRowsObserved": 0,
+          "originalSha1Base32": null,
+          "originalHtmlSha256": null
+        },
+        {
+          "collection": "CC-MAIN-2014-52",
+          "status": 504,
+          "sourceConclusion": "original_archive_index_unavailable_unknown",
+          "actualIndexedRowsObserved": 0,
+          "originalSha1Base32": null,
+          "originalHtmlSha256": null
+        },
+        {
+          "collection": "CC-MAIN-2015-11",
+          "status": 504,
+          "sourceConclusion": "original_archive_index_unavailable_unknown",
+          "actualIndexedRowsObserved": 0,
+          "originalSha1Base32": null,
+          "originalHtmlSha256": null
+        },
+        {
+          "collection": "CC-MAIN-2017-04",
+          "status": 504,
+          "sourceConclusion": "original_archive_index_unavailable_unknown",
+          "actualIndexedRowsObserved": 0,
+          "originalSha1Base32": null,
+          "originalHtmlSha256": null
+        }
+      ],
+      "validWholeOriginalPages": 0,
+      "artifactId": 11767754296,
+      "artifactZipSha256": "8b18b0325b025ef411cf962a0823651fe1537c8d61eb85fd84a0801b1a52ce95",
+      "artifactUrl": "https://github.com/killjoy00/votepredict/actions/runs/38296842531/artifacts/11767754296"
+    }
+  ],
+  "restrictions": {
+    "noContactOrRecordsRequests": true,
+    "noProductionReadsWrites": true,
+    "noForecastChanges": true,
+    "noPersonalContactsOrHtmlRetained": true,
+    "priorDisqualifiedSitesStayExcluded": true,
+    "historicalSOSFiledWebsiteExportStillUnavailable": true
+  }
+}
