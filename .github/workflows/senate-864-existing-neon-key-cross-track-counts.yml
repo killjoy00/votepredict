@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - scripts/audit-senate-864-neon-one-key-readonly-coverage.ts
+      - scripts/verify-senate-864-aggregate-sql-local.ts
       - tests/senate-864-neon-one-key-readonly-coverage.test.ts
       - .github/workflows/senate-864-existing-neon-key-cross-track-counts.yml
       - docs/evaluation/senate-864-existing-neon-key-readonly-source-baseline.md
@@ -76,6 +77,8 @@ jobs:
           cache-dependency-path: package-lock.json
       - run: npm ci --no-fund --no-audit
       - run: npm run db:migrate
+      - name: Compile all seven fixed aggregate SELECTs against clean disposable Postgres, no Neon key
+        run: node --import tsx scripts/verify-senate-864-aggregate-sql-local.ts
       - name: Full source revision tests, typechecks and build before key access
         run: npm run check
       - run: npm audit --omit=dev --audit-level=high
