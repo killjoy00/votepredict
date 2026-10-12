@@ -113,7 +113,7 @@ export function inspectHistoricalAttributedStatement(html,target){
   const between=at<0?'':p.slice(at+name.length,action).trim();
   // Exact issuer must be this named senator, not an intervening reporter,
   // different speaker or contextual "senator X was present" description.
-  const personallyIssued=between===''||/^\\(dfl[-\\s.a-z]+\\)$/.test(between);
+  const personallyIssued=between===''||/^\(dfl[-\s.a-z]+\)$/.test(between);
   if(at>=0&&action>at&&action-at<=240&&action+preamble.length<=p.length&&personallyIssued){
    introductionIndices.push(i);
   }
