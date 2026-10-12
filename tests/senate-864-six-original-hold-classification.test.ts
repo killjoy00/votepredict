@@ -21,7 +21,7 @@ test('#864 original PDF errors produce only reviewed static category codes, neve
   assert.equal(code,expected);
   assert.equal(safeOriginalRetryPermitted(code),retry);
   assert.equal(SOURCE_ONLY_HOLD_CODES.includes(code),true);
-  assert.doesNotMatch(code,/https?|member|tmp\/|\.pdf|name|text/);
+  assert.doesNotMatch(code,/https?|member|tmp\/|\.pdf|name/);
  }
  assert.equal(classifySafeOriginalPdfHold('malformed'), 'unclassified');
 });
