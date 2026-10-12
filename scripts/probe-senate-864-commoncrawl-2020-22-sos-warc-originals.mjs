@@ -255,5 +255,6 @@ console.log('2020/22 COMMONCRAWL AND SOS OFFICIAL RECONCILIATION '+JSON.stringif
  archiveRequests:totalRequests,newFullyWarcDigestVerifiedOriginals:report.recoveredWholeOriginalWarcPages,
  byTarget:results.map(r=>({id:r.id,idx:r.indexQueries?.map(i=>i.parseStatus||i.originalIndexHttpStatus),
   qualifyingRows:r.qualifyingRecordsFound||0,fullWarc:r.verifiedFullOriginalPages.length,
+  verifiedOriginalFingerprints:r.verifiedFullOriginalPages.map(p=>({originalUrl:p.sourceOriginalUrl,archivedUtc:p.archivedAtUtc,sourceIndexedSHA1:p.originalIndexedPayloadSHA1Base32,fullHttpHtmlSHA256:p.wholeOriginalHtmlSHA256,fullWarcRangeSHA256:p.originalWarcRangeSHA256,candidateIdentityCueFound:p.originalCandidateIdentityCueFound})),
   warcAttempts:(r.indexQueries||[]).filter(q=>q.warcAttempt).map(q=>({collection:q.collection,status:q.warcAttempt.httpStatus,returnedBytes:q.warcAttempt.returnedLength,rangeOK:q.warcAttempt.rangeMatchesExactCompressedWarcSource,reconstructed:q.warcAttempt.warcReconstruction,error:q.warcAttempt.error}))})),
  positionsAutoPromoted:0},null,2));
