@@ -8,7 +8,7 @@ The first protected [2021–25 Senate finance prefix audit](cfb-2021-25-finance-
 
 ## Deterministic sample and grouping
 
-The one fixed SQL SELECT chooses the **first 500** `source_documents` sorted by `source_kind,id` from four fixed campaign-finance source families, and the first **64** `evidence_items` sorted by `created_at,id` **per selected document**. The candidate selection across *all chambers* occurs **before** filtering to persisted `memberships → chambers.slug = senate`; the V2 subset is thus directly comparable to V1. It does not sample later records, extra source documents, unlinked metadata-only Senate hints, or independent source-confirmed Senate service dates.
+The one fixed SQL SELECT chooses the **first 500** `source_documents` sorted by `source_kind,id` from four fixed campaign-finance source families, and the first **64** `evidence_items` sorted by `created_at,id` **per selected document**. The candidate selection across *all chambers* occurs **before** filtering to persisted `memberships → chambers.slug = senate`; the V2 subset follows V1's exact **selection rule**, but a changed database inventory between protected runs could change which source/row IDs are selected. Equal aggregate totals do not independently prove the two selected private ID cohorts were identical. It does not sample later records, extra source documents, unlinked metadata-only Senate hints, or independent source-confirmed Senate service dates.
 
 All emitted groups are defined by a **fixed** source-family enum, `metadata.year` (only 2021–2025 or `unknown_or_outside`), and these static policy buckets:
 
@@ -34,7 +34,7 @@ The SQL counts Senate-linked sampled items and the subset with `metadata.asOfEli
 
 ## Required separate work after V2
 
-1. Compare counts for V1 and V2 only over the **same exact capped source prefix and persisted Senate membership links**. If keys are present under other names, investigate provenance individually in a separately authorized privacy-preserving source-to-record reconciliation.
+1. Compare V1 and V2 counts under the **same deterministic capped source-prefix selection rule and persisted Senate membership-link filter**, noting that this does not freeze exact private source/row IDs between run dates. If keys are present under other names, investigate provenance individually in a separately authorized privacy-preserving source-to-record reconciliation.
 2. Independently enumerate each actual-serving 2021–25 senator's CFB registration/effective-period filing obligations from official records before claiming any true report denominator.
 3. Independently authenticate contemporaneous *exact original/amended report version public-by date* **and** transaction identity/row containment for the stored data. The 2023–24 71-version, 2025 special 12-report and old 51-request cohorts are not official denominators.
 4. Keep every previously stored v7-or-earlier eligibility claim unapproved pending separate validation. A later eligibility repair, prior-cycle reader policy change or any serving, forecasting or database mutation requires **separate owner authorization**.
