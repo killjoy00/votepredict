@@ -106,7 +106,7 @@ export function validateLeads(leads=LEADS){
  return leads;
 }
 function normalized(html){
- return html.replace(/<!--[\\s\\S]*?-->/g,' ')
+ return html.replace(/<!--[\s\S]*?-->/g,' ')
   .replace(/<(?:script|style|head|svg|noscript|template)\b[^>]*>[\s\S]*?<\/(?:script|style|head|svg|noscript|template)>/gi,' ')
   .replace(/<[^>]+>/g,' ')
   .replace(/&(?:rsquo|lsquo|apos|#39|#x27);/gi,"'").replace(/&(?:ldquo|rdquo|quot|#34);/gi,'"')
