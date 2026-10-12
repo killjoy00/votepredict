@@ -108,3 +108,36 @@ CFB report-to-transaction matching, 2021 printed committee vote recovery
 or media senator-speaker attribution. Keep #864 OPEN.
 
 **Additional V3 preflight:** before any protected key is supplied, the exact reviewed main-commit CI job uses only its disposable localhost PostgreSQL (migrated from scratch, local postgres role) to run `EXPLAIN` **without `ANALYZE`** on all seven immutable SELECT statements. This catches schema, alias/grouping and SQL syntax problems locally without executing evidence scans or contacting Neon. It then runs the full suite and dependency audit as before. This compile check does **not** prove query performance on the real database, which is why the protected SQL statement timeout and safe SQLSTATE error classification remain enforced.
+
+
+## V4 observability correction: test SQL on PR and report pre-key failures
+
+The historical V2 protected Actions run **definitively failed during its
+finance aggregate** after completing an actual existing-DB roster SELECT.
+V3 changed the finance SELECT to the restricted indexed Senate membership
+subset and added a strictly disposable *main-push* SQL EXPLAIN preflight,
+but the existing issue reporter still did not run if that pre-secret main
+verification failed, leaving another visibility gap. **Absence of a new
+reporting comment does not prove what happened.**
+
+V4 makes that original seven-query SQL compilation run in a dedicated
+**unprivileged same-repo PR check** as well, using only a disposable
+PostgreSQL container and local schema migrations. It never sees
+NEON_API_KEY, any other Neon secret, the actual SQL password, donor/source
+rows, or a production network connection. Invalid schema/query plans
+fail the PR directly, before a protected key can become available.
+A second independent post-main CI still performs the same compilation,
+entire application test/build check and dependency audit on the **exact
+merged main commit** before the protected audit runs.
+
+The existing isolated **keyless** issue-comment job now also reports
+when the full **pre-secret verification failed**. Consequently a genuine
+V4 post-main run can produce a verifiable comment for one of three
+outcomes: pre-secret CI failure, protected READ ONLY SQL failure with
+only a fixed safe last phase, or protected READ ONLY SQL SUCCESS with
+sanitized year/family aggregates and confirmed ROLLBACK.
+
+All three outcomes preserve the distinction between the actual existing
+Neon default branch, independently proven deployed production bindings,
+the source completeness denominator and per-document source-to-DB
+row-level equality. #864 stays OPEN.

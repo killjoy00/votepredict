@@ -14,7 +14,7 @@ import {REQUIRED_MEDIA_EXPORT_TABLES} from
  '../src/evidence/senate-media-readonly-export.js';
 
 export const REQUIRED_864_TABLES=[...REQUIRED_MEDIA_EXPORT_TABLES,'vote_events','member_votes'] as const;
-export const ONE_SHOT_MARKER='SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V3' as const;
+export const ONE_SHOT_MARKER='SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V4' as const;
 export const GROUPS=[
  'roster','finance','committeeSources','committeeVotes','committeeChoices','campaign','media',
 ] as const;
