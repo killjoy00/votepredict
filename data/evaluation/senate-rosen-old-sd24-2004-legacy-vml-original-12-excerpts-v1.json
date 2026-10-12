@@ -1,0 +1,174 @@
+{
+  "schema": "mn-rosen-original-pre2004-vml-conditional-candidate-website-12-short-excerpts-v1",
+  "scope": {
+    "issue": 864,
+    "officialActuallyServedMinnesotaSenators2021to2025": 95,
+    "priorVerifiedSiteQuotedSenators": 85,
+    "priorVerifiedShortSourceResearchExcerpts": 1093,
+    "independentOriginalLRLServiceSha256": "bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51",
+    "originalAcquisitionActionRun": 38186753218,
+    "originalAcquisitionArtifactId": 11719882698,
+    "originalArchiveSourceFormat": "Internet_Explorer_VML_conditionally_rendered_legacy_text",
+    "originalSiteHistoricalDistrict": "24",
+    "officialServing2020SenateDistrict": "23",
+    "originalCaptureOnlyPublicByDate": "2004-03-25T07:00:23.000Z",
+    "capturedWebsiteFirstAuthorshipYearEstablished": false,
+    "statementsNotReinterpretedAs2020SenateCampaignPledges": true,
+    "conditionalVMLExtractedSeparatelyFromModernBrowserVisibleText": true,
+    "officialVotesConfirmedFromCampaignClaims": 0,
+    "researchNotForecastEvidence": true,
+    "noCompleteWebsiteCensusClaim": true,
+    "productionDatabaseWrites": 0,
+    "modelsForecastsSchedulerChanges": 0
+  },
+  "pages": [
+    {
+      "id": "rosen-legacy-sd24-vml-2004-homepage",
+      "person": "Julie Rosen",
+      "officialOriginalGovernmentServiceName": "Julie A. Rosen",
+      "originalSiteUrl": "http://julierosen.com:80/",
+      "originalHistoricalDistrict": "24",
+      "verified2020ServingDistrict": "23",
+      "verified2020ElectionYear": 2020,
+      "archiveCaptureUtc": "2004-03-25T07:00:23.000Z",
+      "originalRawCompleteHTMLFile": "09-julie-rosen-2020--1-original-20040325070023.html",
+      "independentOriginalFullCDXFile": "09-julie-rosen-2020--entire-original-cdx.json",
+      "originalFullHTMLSHA256": "16be70899907f95eadb522e65a5a39de0a60f53fc87b84e81650923aa69bb015",
+      "independentOriginalFullCDXSHA256": "992a7550431545c3f4b4e4bca8fbf0569ad9d6f69cf6dc99a5b1678022e57816",
+      "originalCDXSHA1Base32": "RZYILMCALWQDKL6ZFGCXNTB33ZVSRTN3",
+      "originalMarkup": "legacy_ie_conditional_vml_text_boxes",
+      "campaignIdentityOutsideVML": "Senator Julie Rosen Home Page",
+      "candidateSiteLinks": [
+        "knowjulie.htm",
+        "platform.htm",
+        "contributions.htm",
+        "team.htm"
+      ],
+      "firstAuthoredDateKnown": false,
+      "officialVoteVerified": false,
+      "forecastEligible": false
+    }
+  ],
+  "excerpts": [
+    {
+      "id": "rosen-vml-01",
+      "pageId": "rosen-legacy-sd24-vml-2004-homepage",
+      "issueFamily": "regional_income",
+      "exactShortExcerpt": "We need to ensure that our bright, well-adjusted children have an opportunity to make a fair and equitable living",
+      "attributionClass": "candidate_original_legacy_IE_conditional_VML_site_quotation_not_2020_pledge",
+      "firstAuthoredDateKnown": false,
+      "officialVoteVerified": false,
+      "forecastEligible": false
+    },
+    {
+      "id": "rosen-vml-02",
+      "pageId": "rosen-legacy-sd24-vml-2004-homepage",
+      "issueFamily": "rural_equity",
+      "exactShortExcerpt": "The disparity between the metro and rural areas affects everything from median household income to job opportunities",
+      "attributionClass": "candidate_original_legacy_IE_conditional_VML_site_quotation_not_2020_pledge",
+      "firstAuthoredDateKnown": false,
+      "officialVoteVerified": false,
+      "forecastEligible": false
+    },
+    {
+      "id": "rosen-vml-03",
+      "pageId": "rosen-legacy-sd24-vml-2004-homepage",
+      "issueFamily": "workforce_training",
+      "exactShortExcerpt": "Greater Minnesota will need to provide appropriate work force training",
+      "attributionClass": "candidate_original_legacy_IE_conditional_VML_site_quotation_not_2020_pledge",
+      "firstAuthoredDateKnown": false,
+      "officialVoteVerified": false,
+      "forecastEligible": false
+    },
+    {
+      "id": "rosen-vml-04",
+      "pageId": "rosen-legacy-sd24-vml-2004-homepage",
+      "issueFamily": "rural_technology",
+      "exactShortExcerpt": "increase out-sourcing options, become wired for technology",
+      "attributionClass": "candidate_original_legacy_IE_conditional_VML_site_quotation_not_2020_pledge",
+      "firstAuthoredDateKnown": false,
+      "officialVoteVerified": false,
+      "forecastEligible": false
+    },
+    {
+      "id": "rosen-vml-05",
+      "pageId": "rosen-legacy-sd24-vml-2004-homepage",
+      "issueFamily": "agriculture",
+      "exactShortExcerpt": "continue the emphasis on value-added ag products.",
+      "attributionClass": "candidate_original_legacy_IE_conditional_VML_site_quotation_not_2020_pledge",
+      "firstAuthoredDateKnown": false,
+      "officialVoteVerified": false,
+      "forecastEligible": false
+    },
+    {
+      "id": "rosen-vml-06",
+      "pageId": "rosen-legacy-sd24-vml-2004-homepage",
+      "issueFamily": "agriculture",
+      "exactShortExcerpt": "Agriculture and ag-related business is the lifeblood of",
+      "attributionClass": "candidate_original_legacy_IE_conditional_VML_site_quotation_not_2020_pledge",
+      "firstAuthoredDateKnown": false,
+      "officialVoteVerified": false,
+      "forecastEligible": false
+    },
+    {
+      "id": "rosen-vml-07",
+      "pageId": "rosen-legacy-sd24-vml-2004-homepage",
+      "issueFamily": "business_growth",
+      "exactShortExcerpt": "It is vital that we provide a positive business climate for agribusiness",
+      "attributionClass": "candidate_original_legacy_IE_conditional_VML_site_quotation_not_2020_pledge",
+      "firstAuthoredDateKnown": false,
+      "officialVoteVerified": false,
+      "forecastEligible": false
+    },
+    {
+      "id": "rosen-vml-08",
+      "pageId": "rosen-legacy-sd24-vml-2004-homepage",
+      "issueFamily": "local_economy",
+      "exactShortExcerpt": "When the local economy prospers, everything else in the community prosper",
+      "attributionClass": "candidate_original_legacy_IE_conditional_VML_site_quotation_not_2020_pledge",
+      "firstAuthoredDateKnown": false,
+      "officialVoteVerified": false,
+      "forecastEligible": false
+    },
+    {
+      "id": "rosen-vml-09",
+      "pageId": "rosen-legacy-sd24-vml-2004-homepage",
+      "issueFamily": "education_health",
+      "exactShortExcerpt": "including schools and health care options.",
+      "attributionClass": "candidate_original_legacy_IE_conditional_VML_site_quotation_not_2020_pledge",
+      "firstAuthoredDateKnown": false,
+      "officialVoteVerified": false,
+      "forecastEligible": false
+    },
+    {
+      "id": "rosen-vml-10",
+      "pageId": "rosen-legacy-sd24-vml-2004-homepage",
+      "issueFamily": "jobs",
+      "exactShortExcerpt": "support job creation and seek out business development",
+      "attributionClass": "candidate_original_legacy_IE_conditional_VML_site_quotation_not_2020_pledge",
+      "firstAuthoredDateKnown": false,
+      "officialVoteVerified": false,
+      "forecastEligible": false
+    },
+    {
+      "id": "rosen-vml-11",
+      "pageId": "rosen-legacy-sd24-vml-2004-homepage",
+      "issueFamily": "senior_services",
+      "exactShortExcerpt": "championing the aging population in our district.",
+      "attributionClass": "candidate_original_legacy_IE_conditional_VML_site_quotation_not_2020_pledge",
+      "firstAuthoredDateKnown": false,
+      "officialVoteVerified": false,
+      "forecastEligible": false
+    },
+    {
+      "id": "rosen-vml-12",
+      "pageId": "rosen-legacy-sd24-vml-2004-homepage",
+      "issueFamily": "accountability",
+      "exactShortExcerpt": "Leaders today must be innovative, focused and accountable.",
+      "attributionClass": "candidate_original_legacy_IE_conditional_VML_site_quotation_not_2020_pledge",
+      "firstAuthoredDateKnown": false,
+      "officialVoteVerified": false,
+      "forecastEligible": false
+    }
+  ]
+}
