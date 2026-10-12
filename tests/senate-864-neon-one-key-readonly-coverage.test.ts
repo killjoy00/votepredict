@@ -5,6 +5,7 @@ import type {Pool} from 'pg';
 import {
  GROUPS,QUERIES,REQUIRED_864_TABLES,ONE_SHOT_MARKER,
  validateCountRows,assertProtectedOneShot,auditNeonExistingKey2021To25,
+ safeSqlFailureReason,
 } from '../scripts/audit-senate-864-neon-one-key-readonly-coverage.js';
 
 const ID='blue-owl-12345',BR='br-quiet-moon-111',EP='ep-brisk-stream-123';
@@ -46,7 +47,7 @@ test('protected one-shot can use existing GitHub Neon key only after immutable r
  ]){
   assert.throws(()=>assertProtectedOneShot({...protectedEnv,[key]:val}));
  }
- assert.equal(ONE_SHOT_MARKER,'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V2');
+ assert.equal(ONE_SHOT_MARKER,'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V3');
 });
 test('only seven precisely fixed bounded aggregate SELECTs; no live updates/export/free-form SQL',()=>{
  assert.deepEqual([...GROUPS],[
@@ -172,7 +173,7 @@ test('workflow cannot use existing key on PR, unmarked main push or failed indep
  assert.match(yml,/one-shot-readonly/);
  assert.match(yml,/cancel-in-progress: false/);
  assert.match(yml,/persist-credentials: false/);
- assert.match(yml,/SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V2/);
+ assert.match(yml,/SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V3/);
  assert.doesNotMatch(yml,/github\.event_name == 'pull_request' && needs/);
  assert.doesNotMatch(yml,/^\s+schedule:/m);
  assert.doesNotMatch(yml,/actions\/upload-artifact/);
@@ -210,4 +211,35 @@ test('safe aggregate receipt: keyless issue-write job only, fail-closed status a
  assert.match(audit,/failure_phase/);
  assert.match(audit,/JSON\.stringify\(audit\)/);
  assert.doesNotMatch(audit,/github\.rest\.issues\.createComment/);
+});
+
+
+test('known finance expensive cross-chamber OR scan is replaced by a bounded indexed actual Senate membership subset',()=>{
+ const sql=QUERIES.finance;
+ assert.match(sql,/FROM memberships m JOIN chambers c ON c\.id=m\.chamber_id/);
+ assert.match(sql,/JOIN evidence_items ei ON ei\.membership_id=m\.id/);
+ assert.match(sql,/JOIN source_documents sd ON sd\.id=ei\.source_document_id/);
+ assert.match(sql,/WHERE c\.slug='senate'/);
+ assert.match(sql,/s\.slug IN \('2021-2022','2023-2024','2025-2026'\)/);
+ assert.match(sql,/GROUP BY 1,2 ORDER BY 1,2/);
+ assert.doesNotMatch(sql,/OR ei\.metadata->>'chamber'='senate'/);
+ assert.match(sql,/metadata->>'availabilityProofContentSha256'/);
+});
+test('only fixed non-sensitive SQLSTATE error classifications are permitted to escape failed query path',()=>{
+ assert.equal(safeSqlFailureReason({code:'57014',message:'private.example.com'}),'statement_timeout');
+ assert.equal(safeSqlFailureReason({code:'42703',message:'postgres://secret'}),'undefined_column');
+ assert.equal(safeSqlFailureReason({code:'42803'}),'aggregate_grouping');
+ assert.equal(safeSqlFailureReason({code:'42601'}),'sql_syntax');
+ assert.equal(safeSqlFailureReason({code:'22P02'}),'invalid_input');
+ assert.equal(safeSqlFailureReason(new Error('private data')),'unknown_query_or_validation');
+});
+test('safe issue receipt requires finance to declare its limited membership-linked scope',()=>{
+ const workflow=readFileSync('.github/workflows/senate-864-existing-neon-key-cross-track-counts.yml','utf8');
+ assert.match(workflow,/financeQueryOnlyExplicitHistoricSenateMembershipLinkedEvidence!==true/);
+ assert.match(workflow,/unlinkedAndMetadataOnlyFinanceEvidenceNotAuditedInThisSnapshot!==true/);
+ assert.match(workflow,/unlinked finance metadata rows were not audited/);
+ const source=readFileSync('scripts/audit-senate-864-neon-one-key-readonly-coverage.ts','utf8');
+ assert.match(source,/financeQueryOnlyExplicitHistoricSenateMembershipLinkedEvidence:true/);
+ assert.match(source,/fullStatewideFinanceDatabaseCompletenessNotEstablished:true/);
+ assert.match(source,/failed_.*safeSqlFailureReason\(error\)/s);
 });
