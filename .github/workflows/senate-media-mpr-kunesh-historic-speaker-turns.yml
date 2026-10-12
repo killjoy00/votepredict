@@ -1,0 +1,57 @@
+name: Public MPR Kunesh historical original speaker-turn proof
+
+# Selected original publisher article body bytes are consumed ONLY in memory.
+# Persist public SHA1/SHA256/UTC/length + speaker-turn bounded boolean flags.
+# No full transcript, quote, article body, audio, private DB or forecast input.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/senate-media-mpr-kunesh-historic-speaker-turns.yml
+      - scripts/probe-senate-media-mpr-kunesh-original-speaker-turns.mjs
+      - scripts/run-senate-media-mpr-kunesh-original-speaker-turns.mjs
+      - tests/senate-media-mpr-kunesh-historic-speaker-turns.test.mjs
+      - tests/senate-media-mpr-kunesh-real-speaker-turn-receipts.test.mjs
+      - docs/evaluation/senate-media-mpr-kunesh-original-speaker-turns-20261011.json
+      - docs/evaluation/senate-media-mpr-kunesh-original-speaker-turns-20261011.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: senate-media-mpr-kunesh-original-speaker-turns
+  cancel-in-progress: false
+
+jobs:
+  verify-existing-public-first-party-original-speaker-attribution:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
+          github.event.pull_request.head.ref == 'research/media-mpr-kunesh-historic-speaker-turn-check-20261011')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Offline adversarial speaker-adjacency and raw SHA1/SHA256 proof tests
+        run: node --test tests/senate-media-mpr-kunesh-historic-speaker-turns.test.mjs
+      - name: Recheck four previously SHA-pinned original first-party MPR HTML bodies
+        run: |
+          node scripts/run-senate-media-mpr-kunesh-original-speaker-turns.mjs \
+            --output artifacts/mpr-kunesh-2023-24-original-speaker-turns.json
+      - name: Preserve only original HTML source metadata and bounded same-speaker-turn flags
+        uses: actions/upload-artifact@v6
+        with:
+          name: mpr-kunesh-2023-24-original-speaker-turns
+          path: artifacts/mpr-kunesh-2023-24-original-speaker-turns.json
+          if-no-files-found: error
+          retention-days: 7
