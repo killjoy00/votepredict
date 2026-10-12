@@ -49,7 +49,7 @@ test('two SHA1+raw SHA256 independently certified 2022 Feb24/Nov08 related-progr
  }
  assert.equal(receipts.historical2022Radio.original2022NamedBensonKuneshEpisodeHtmlNotAuthenticated,true);
 });
-test('seven original first-party individual caucus press source URLs, four archived originals found, 6 historical raw HTML versions',()=>{
+test('seven original first-party individual caucus press source URLs, four archived originals found, 7 historical raw HTML versions',()=>{
  assert.equal(LEADS.length,7);
  assert.equal(by.size,7);
  let count=0;
@@ -66,8 +66,8 @@ test('seven original first-party individual caucus press source URLs, four archi
    assert.equal(orig.directIndividualSenatorPressReleaseNotAudioOrHumanVerbatimQuote,true);
   }
  }
- assert.equal(count,6);
- assert.equal(receipts.counts.originalArchiveVerifiedHtmlBodies,6);
+ assert.equal(count,7);
+ assert.equal(receipts.counts.originalArchiveVerifiedHtmlBodies,7);
  assert.equal(receipts.counts.originalArchiveVerifiedDistinctPublisherUrls,4);
  assert.equal(receipts.counts.distinctNamedServingStateSenators,5);
  assert.equal(receipts.counts.additionalNewlySelectedPressReleaseLeads,5);
@@ -83,9 +83,13 @@ test('Gazelka original 2022 Jan 14 policy remarks are independently indexed and 
 test('Weber 2022 tax statement and two Coleman Jan 2025 school-mandates original versions are archived, not model-cutoff proof',()=>{
  const w=by.get('2022-weber-state-surplus-proposals').originalHtmlSourceProofs;
  const c=by.get('2025-coleman-education-committee-mandates').originalHtmlSourceProofs;
- assert.equal(w.length,1);
+ assert.equal(w.length,2);
  assert.equal(w[0].archiveCaptureUtc,'2022-12-14T18:59:05Z');
  assert.equal(w[0].verifiedRawHtmlSha256,'0bdc339c57bfd9a0d33b996327ae1e054fd584911ea14001187951759365edbf');
+ assert.equal(w[1].archiveCaptureUtc,'2022-12-21T18:52:26Z');
+ assert.equal(w[1].indexedOriginalSha1Base32,'ILOYMFWWVYOU6UKABRX4RLSHO3BCQK73');
+ assert.equal(w[1].verifiedRawHtmlSha256,'6132a85c9bf17ff37048db6dc068d72131e645ae2ccc3865c01f3780c2d468a0');
+ assert.equal(w[1].rawHtmlBytes,90076);
  assert.deepEqual(c.map(x=>x.archiveCaptureUtc),['2025-01-24T22:56:25Z','2025-07-24T00:46:10Z']);
  assert.equal(c[0].verifiedRawHtmlSha256,'802c0023eac6a6d3b37051fd420169bf756a79ffd41ea6b4c9f9186d8b1188ee');
  assert.equal(receipts.limitations.january2025ColemanCommitteeRemarksFollowCommitteeActionNotPredictSameAction,true);
@@ -112,4 +116,6 @@ test('never substitute date printed today for historical publication, or member 
  assert.equal(receipts.limitations.noPrivateNeonVotePredictDataOrProductionEvidenceSourceReconciliation,true);
  assert.equal(receipts.limitations.noRawArticleHtmlMp3PdfWarcFullTranscriptPersisted,true);
  assert.equal(receipts.limitations.noCollectorIngestionModelTrainingForecastChanges,true);
+ assert.equal(receipts.firstAdditionalAuthenticatedArchiveCaptureAfterInitialRun.observedInRunId,38199182527);
+ assert.equal(receipts.firstAdditionalAuthenticatedArchiveCaptureAfterInitialRun.anotherHtmlVersionOfSameWeberSourceNotAnotherNewStory,true);
 });
