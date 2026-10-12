@@ -83,7 +83,7 @@ test('changed tally, individual name choice or outcome invalidates original sour
     mockText().replace('Nays: Echo,','Nays: Kilo,'),candidates(),
   ),/fingerprinted choices/);
   assert.throws(()=>audit2024EducationRepeatedAmendmentRolls(
-    mockText().replace('MOTION FAILED.','MOTION PASSED.'),candidates(),
+    mockText().replace('MOTION FAILED','MOTION PASSED'),candidates(),
   ),/individual motion result/);
 });
 
