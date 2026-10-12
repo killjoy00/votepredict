@@ -79,5 +79,5 @@ function main(){
  writeFileSync(output,JSON.stringify(result,null,2)+'\n');
  console.log('SENATE_864_COMPLETE_ORIGINAL_PDF_PARSER_V3='+JSON.stringify(result));
 }
-if(process.argv[1]?.replace(/\/g,'/').endsWith('/audit-senate-864-parser-v3-shard-receipts.ts'))
+if(process.argv[1]?.replace(/\\/g,'/').endsWith('/audit-senate-864-parser-v3-shard-receipts.ts'))
  try{main()}catch{console.error('SENATE_864_COMPLETE_ORIGINAL_PDF_PARSER_V3_HOLD=aggregate');process.exitCode=1}
