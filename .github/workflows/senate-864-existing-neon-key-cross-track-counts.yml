@@ -40,7 +40,7 @@ jobs:
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V2')
+      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V3')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     services:
@@ -87,7 +87,7 @@ jobs:
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V2')
+      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V3')
     outputs:
       public_counts_b64: ${{ steps.audit.outputs.public_counts_b64 }}
       failure_phase: ${{ steps.audit.outputs.failure_phase }}
@@ -100,7 +100,7 @@ jobs:
       VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
       VOTEPREDICT_864_APPROVAL: BOUNDED_COUNTS_ONLY
       VOTEPREDICT_864_INDEPENDENT_CI_VERIFIED: ${{ needs.one-shot-verify.result == 'success' && 'true' || 'false' }}
-      VOTEPREDICT_864_ONE_SHOT_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V2') && 'true' || 'false' }}
+      VOTEPREDICT_864_ONE_SHOT_MARKER_PRESENT: ${{ contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V3') && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -129,7 +129,7 @@ jobs:
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       github.run_attempt == 1 &&
-      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V2') &&
+      contains(github.event.head_commit.message, 'SENATE_864_EXISTING_NEON_KEY_COUNTS_ONESHOT_20261011_V3') &&
       needs.one-shot-verify.result == 'success' &&
       (needs.one-shot-readonly.result == 'success' || needs.one-shot-readonly.result == 'failure')
     runs-on: ubuntu-latest
@@ -169,7 +169,9 @@ jobs:
                 || obj.fullPerSourceRowReconciliationCompleted!==false
                 || obj.privateOriginalRowsAndNamesExported!==false
                 || obj.productionMutations!==0
-                || obj.historicalCompletenessCertified!==false)
+                || obj.historicalCompletenessCertified!==false
+                || obj.financeQueryOnlyExplicitHistoricSenateMembershipLinkedEvidence!==true
+                || obj.unlinkedAndMetadataOnlyFinanceEvidenceNotAuditedInThisSnapshot!==true)
                 throw Error('Unverified claim of audit success');
               const kinds=['roster','finance','committeeSources',
                 'committeeVotes','committeeChoices','campaign','media'];
@@ -207,6 +209,8 @@ jobs:
                 ...rows,
                 '',
                 'These are stored-row and source-document AGGREGATES only.',
+                'Finance is restricted to explicitly membership-linked historic',
+                'Senate evidence; unlinked finance metadata rows were not audited.',
                 'They do not prove statewide official completeness, original',
                 'document-to-record equality, historical CFB exact public-by,',
                 'attributed media quotations or the actual production binding.',
