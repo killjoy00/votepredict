@@ -123,6 +123,11 @@ read('senate-six-2020-original-pages-26-new-exact-first-party-excerpts-v1',
 read('senate-roger-chamberlain-2016-original-10-economic-issue-excerpts-and-domain-review-v1',
  (d,s)=>{assert.equal(d.tenCandidateSiteExactStatements.length,10);
   add('Roger Chamberlain',d.tenCandidateSiteExactStatements.length,s);});
+read('senate-last16-five-new-original-site-policy-excerpts-v1',
+ (d,s)=>{assert.equal(d.pages.length,12);assert.equal(d.excerpts.length,73);
+ const names=new Map(d.pages.map(p=>[p.id,p.person]));
+ assert.equal(new Set(d.pages.map(p=>p.person)).size,5);
+ each(d.excerpts,q=>[names.get(q.pageId),1],s);});
 // Second distinct twenty uncovered: 137 independently authenticated exact original site
 // short research excerpts, 15 new actually served senators. Preserve old 2012/2014/
 // 2016 site copy, 2018 US House, 2018/2020 Minnesota House and older SD45
