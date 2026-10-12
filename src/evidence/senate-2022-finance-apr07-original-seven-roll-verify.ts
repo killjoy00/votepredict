@@ -97,7 +97,7 @@ export function inspect2022FinanceApr07OriginalMinutes(text:string){
   const nextIntro=index+1<allMotions.length
    ?findAt(allMotions[index+1]!.intro,flat,sourceIndex+intro[0].length)
    :null;
-  if(nextIntro&&ending.index!>=nextIntro.index!)
+  if(nextIntro&&(ending.index??-1)>=(nextIntro.index??-1))
    throw Error('original tally crosses into next distinct motion');
   const segment=flat.slice((roll.index??0)+roll[0].length,ending.index);
   const ayeStart=segment.search(/\bAYES\s*:/i),nayStart=segment.search(/\bNAYS\s*:/i);
