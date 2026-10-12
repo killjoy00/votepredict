@@ -71,7 +71,8 @@
         }
       ],
       "selectedStatementIsHumanApprovedVerbatimSpeech": false,
-      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true
+      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true,
+      "earliestAuthenticatedCaptureUtc": "2021-04-13T20:21:28Z"
     },
     {
       "id": "2021-miller-enterprise-manufacturing-qa",
@@ -103,7 +104,8 @@
         }
       ],
       "selectedStatementIsHumanApprovedVerbatimSpeech": false,
-      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true
+      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true,
+      "earliestAuthenticatedCaptureUtc": "2022-10-05T01:59:37Z"
     },
     {
       "id": "2023-pratt-budget-tax-relief",
@@ -116,7 +118,8 @@
       "prior": "source_candidate_only_unresolved",
       "archivedOriginalHtml": [],
       "selectedStatementIsHumanApprovedVerbatimSpeech": false,
-      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true
+      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true,
+      "earliestAuthenticatedCaptureUtc": null
     },
     {
       "id": "2024-marty-online-sports-betting",
@@ -148,7 +151,8 @@
         }
       ],
       "selectedStatementIsHumanApprovedVerbatimSpeech": false,
-      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true
+      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true,
+      "earliestAuthenticatedCaptureUtc": "2024-03-02T15:32:31Z"
     },
     {
       "id": "2025-pha-post-eichorn-charges",
@@ -161,7 +165,8 @@
       "prior": "source_candidate_only_unresolved",
       "archivedOriginalHtml": [],
       "selectedStatementIsHumanApprovedVerbatimSpeech": false,
-      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true
+      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true,
+      "earliestAuthenticatedCaptureUtc": null
     },
     {
       "id": "2025-coleman-post-annunciation",
@@ -174,7 +179,8 @@
       "prior": "source_candidate_only_unresolved",
       "archivedOriginalHtml": [],
       "selectedStatementIsHumanApprovedVerbatimSpeech": false,
-      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true
+      "archiveLookupsWithoutAuthenticatedOriginalRemainUnknown": true,
+      "earliestAuthenticatedCaptureUtc": null
     }
   ],
   "audio": {
