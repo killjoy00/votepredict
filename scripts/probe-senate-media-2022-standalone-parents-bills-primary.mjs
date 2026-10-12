@@ -201,12 +201,31 @@ export async function ephemeralPDFText(pdf){
  const dir=await mkdtemp(join(tmpdir(),'vp-track-d-2022-vote-'));
  try{
   const p=join(dir,'source.pdf');await writeFile(p,pdf,{flag:'wx'});
-  const info=execFileSync('pdfinfo',[p],{encoding:'utf8',timeout:45000,maxBuffer:100000});
-  const pages=Number(info.match(/^Pages:\s*(\d+)/m)?.[1]);
-  if(!Number.isSafeInteger(pages)||pages<1||pages>2200)throw Error('unknown PDF page count');
-  const text=execFileSync('pdftotext',['-layout','-enc','UTF-8',p,'-'],{encoding:'utf8',maxBuffer:MAXTXT,timeout:120000});
-  if(text.length<1000||text.length>=MAXTXT)throw Error('unusable journal text size');
-  return {pages,text};
+  try{
+   const info=execFileSync('pdfinfo',[p],{encoding:'utf8',timeout:45000,maxBuffer:100000});
+   const pages=Number(info.match(/^Pages:\s*(\d+)/m)?.[1]);
+   if(!Number.isSafeInteger(pages)||pages<1||pages>2200)throw Error('unknown PDF page count');
+   const text=execFileSync('pdftotext',['-layout','-enc','UTF-8',p,'-'],{encoding:'utf8',maxBuffer:MAXTXT,timeout:120000});
+   if(text.length<1000||text.length>=MAXTXT)throw Error('unusable journal text size');
+   return {pages,text,extractor:'poppler_pdftotext_layout'};
+  }catch(err){
+   // The existing npm CI runner does not guarantee system poppler utilities.
+   // A missing executable is distinct from invalid/failed original PDF parsing.
+   if(err?.code!=='ENOENT')throw err;
+   const {PDFParse}=await import('pdf-parse');
+   const parser=new PDFParse({data:pdf});
+   try{
+    const result=await parser.getText({lineEnforce:true,cellSeparator:' '});
+    const pages=result.total,parts=result.pages;
+    if(!Number.isSafeInteger(pages)||pages<1||pages>2200||
+     parts.length!==pages||parts.some((row,i)=>row.num!==i+1||typeof row.text!=='string'))
+     throw Error('incomplete native-JS PDF original page extraction');
+    // Preserve exact PDF page positions for direct journal roll citations.
+    const text=parts.map(row=>row.text).join('\f');
+    if(text.length<1000||text.length>=MAXTXT)throw Error('unusable JS PDF page text size');
+    return {pages,text,extractor:'locked_pdf_parse_js_fallback'};
+   }finally{await parser.destroy();}
+  }
  }finally{await rm(dir,{recursive:true,force:true});}
 }
 export async function inspectJournalOriginal(j,f=fetch,extract=ephemeralPDFText){
