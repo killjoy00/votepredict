@@ -1,5 +1,5 @@
 /**
- * #864 V3: infer the YEA/NAY tally *side* of the one independently proven
+ * #864 V4: infer the YEA/NAY tally *side* of the one independently proven
  * missing 2024 source-choice SHA. Never identify/export a person or write rows.
  * Uses EXACT same 20 SHA-pinned original metadata artifacts and three bounded
  * SELECTs as protected V2. All saved SQL names/choices remain in memory only.
@@ -13,7 +13,7 @@ import {mergeSourceAuditsWithAuthenticated207Ocr} from
  './merge-senate-864-ocr-207-original-proof-metadata.js';
 
 export const ONE_MISSING_CHOICE_SIDE_MARKER=
- 'SENATE_864_SINGLE_CHOICE_TALLY_SIDE_ONESHOT_20261012_V3' as const;
+ 'SENATE_864_SINGLE_CHOICE_TALLY_SIDE_ONESHOT_20261012_V4' as const;
 
 type Audit=Awaited<ReturnType<typeof protectedCommitteeSourceParity>>;
 const REQUIRED_FIELDS=[
@@ -100,7 +100,7 @@ export function buildSingleChoiceSafeReceipt(observed:Audit){
       !Number.isSafeInteger(n)||n<0||n>9))
   throw Error('One-token direction classifier did not meet exact digest gate');
  return {
-  schemaVersion:'mn-864-one-missing-2024-choice-source-tally-side-v3' as const,
+  schemaVersion:'mn-864-one-missing-2024-choice-source-tally-side-v4' as const,
   issue:864 as const,
   scope:'one-original-2024-roll-missing-choice-token' as const,
   previousV2ProtectedRunId:38201074454 as const,
@@ -154,7 +154,7 @@ async function main(){
   }
   assertProtectedOneShot(process.env);
   if(process.env.VOTEPREDICT_864_SINGLE_CHOICE_MARKER_PRESENT!=='true')
-   throw Error('Unique V3 reviewed protected marker not present');
+   throw Error('Unique V4 reviewed protected marker not present');
   phase='protected_neon_query';
   const out=await protectedCommitteeSourceParity(merged.years,{
    apiKey:process.env.NEON_API_KEY?.trim()??'',
