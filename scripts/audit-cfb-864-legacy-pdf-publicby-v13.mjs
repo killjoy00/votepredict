@@ -214,11 +214,18 @@ export async function probeLegacyPdfExactTarget(target,host,fetchPublic=fetch){
  return result;
 }
 export async function auditLegacyReportPublicationV13(fetchPublic=fetch){
- const targets=loadV13Targets(),results=[];
- for(const target of targets){
-  for(const host of HOSTS){
-   results.push(await probeLegacyPdfExactTarget(target,host,fetchPublic));
-  }
+ const targets=loadV13Targets(),requests=[];
+ for(const target of targets)
+  for(const host of HOSTS)
+   requests.push({target,host});
+ // Three concurrent fixed public lookups avoid serial 18 x timeout cost
+ // without overwhelming a public archive or exposing unbounded controls.
+ const results=[];
+ for(let at=0;at<requests.length;at+=3){
+  const wave=requests.slice(at,at+3);
+  const replies=await Promise.all(wave.map(({target,host})=>
+   probeLegacyPdfExactTarget(target,host,fetchPublic)));
+  results.push(...replies);
  }
  const proved=results.filter(r=>r.exactCfbPdfSha256Verified);
  return{
