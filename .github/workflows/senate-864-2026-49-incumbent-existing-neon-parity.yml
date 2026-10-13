@@ -1,0 +1,271 @@
+name: One-shot 2026 MN Senate 49 incumbent current-source overlap with existing VotePredict Neon
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-2026-incumbent-source-parity.mjs
+      - scripts/audit-senate-864-2026-49-incumbent-existing-neon-parity.mjs
+      - scripts/verify-senate-864-2026-incumbent-sql-local.mjs
+      - tests/senate-864-2026-49-incumbent-protected-source-parity.test.mjs
+      - tests/senate-864-2026-49-incumbent-protected-source-parity-ci.test.ts
+      - docs/evaluation/senate-864-2026-49-current-source-protected-parity.md
+      - .github/workflows/senate-864-2026-49-incumbent-existing-neon-parity.yml
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+concurrency:
+  group: senate-864-2026-incumbent-parity-${{ github.event_name }}-${{ github.run_id }}
+  cancel-in-progress: false
+jobs:
+  pr-offline-tests:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: 49 public source URL plus protected no-data mocks
+        run: node --import tsx --test tests/senate-864-2026-49-incumbent-protected-source-parity.test.mjs
+  pr-disposable-sql-plan:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - name: Only EXPLAIN the two fixed SELECTs on migrated localhost, no Neon keys
+        run: node --import tsx scripts/verify-senate-864-2026-incumbent-sql-local.mjs
+  public-ci-verify:
+    if: >-
+      github.event_name == 'issue_comment' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.issue.number == 864 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      github.event.comment.body == '[campaign-864-2026-49-incumbents-source-readonly-20261013-v1]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Commit identity before potential protected Neon access
+        env:
+          REVIEWED_COMMIT: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_COMMIT"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: node --import tsx scripts/verify-senate-864-2026-incumbent-sql-local.mjs
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+  protected-readonly:
+    needs: [public-ci-verify]
+    if: >-
+      needs.public-ci-verify.result == 'success' &&
+      github.event_name == 'issue_comment' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.issue.number == 864 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      github.event.comment.body == '[campaign-864-2026-49-incumbents-source-readonly-20261013-v1]'
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      safe_source_parity_b64: ${{ steps.audit.outputs.safe_source_parity_b64 }}
+      safe_failure_phase: ${{ steps.audit.outputs.safe_failure_phase }}
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_864_2026_APPROVAL: '[campaign-864-2026-49-incumbents-source-readonly-20261013-v1]'
+      VOTEPREDICT_864_2026_CI_PASSED: ${{ needs.public-ci-verify.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Require same reviewed main commit before owner-role connection
+        env:
+          REVIEWED_COMMIT: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_COMMIT"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Only 49+4 public URLs matched IN MEMORY to bounded existing Neon SELECTs; ROLLBACK
+        id: audit
+        run: node --import tsx scripts/audit-senate-864-2026-49-incumbent-existing-neon-parity.mjs
+  issue-keyless-report:
+    needs: [public-ci-verify, protected-readonly]
+    if: >-
+      always() &&
+      github.event_name == 'issue_comment' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.issue.number == 864 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      github.event.comment.body == '[campaign-864-2026-49-incumbents-source-readonly-20261013-v1]' &&
+      (needs.public-ci-verify.result == 'failure' ||
+      (needs.public-ci-verify.result == 'success' &&
+      (needs.protected-readonly.result == 'success' || needs.protected-readonly.result == 'failure')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    permissions:
+      contents: read
+      issues: write
+    env:
+      VERIFY_RESULT: ${{ needs.public-ci-verify.result }}
+      READONLY_RESULT: ${{ needs.protected-readonly.result }}
+      SAFE_PARITY_B64: ${{ needs.protected-readonly.outputs.safe_source_parity_b64 }}
+      SAFE_FAILURE_PHASE: ${{ needs.protected-readonly.outputs.safe_failure_phase }}
+    steps:
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const run='https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID;
+            const fixed=[
+              '## #864 — 49 2026 sitting Senate nominees, source URL vs protected existing Neon evidence',
+              '','**Workflow:** '+run,
+              '**Reviewed main commit:** '+process.env.GITHUB_SHA,
+              'Bounded exact/URL-spelling-only document lookup in read-only transaction.',
+              'No private rows, raw source URLs, names, hashes or credentials exported.',
+              'Deployed production binding and original source content SHA are NOT proven.',''
+            ];
+            let body;
+            if(process.env.VERIFY_RESULT!=='success'){
+              body=[...fixed,'**HOLD: pre-secret full CI or disposable SQL plan failed.**',
+                'No protected database comparison executed.'].join('\n');
+            }else if(process.env.READONLY_RESULT==='success'){
+              const encoded=process.env.SAFE_PARITY_B64||'';
+              if(!/^[A-Za-z0-9+/=]+$/.test(encoded)||encoded.length>38000)throw Error('Unsafe sanitized receipt');
+              const r=JSON.parse(Buffer.from(encoded,'base64').toString('utf8'));
+              if(r.schema!=='mn-864-2026-49-incumbent-protected-url-parity-v1'
+                ||r.issue!==864||r.researchCandidateCount!==49
+                ||r.comparedPublicCurrentSourceUrls!==49
+                ||r.currentTransactionReadOnly!==true||r.transactionRollbackCompleted!==true
+                ||r.productionMutations!==0||r.deployedProductionDbBindingProven!==false
+                ||r.currentSourceOriginalHtmlRawShaParityProven!==false
+                ||r.outputContainsPrivateSourceRows!==false||r.outputContainsPrivateUrls!==false
+                ||r.outputContainsPrivatePeopleNames!==false||r.outputContainsPrivateHashes!==false
+                ||!Array.isArray(r.sourceUrlStatusByDistrict)||r.sourceUrlStatusByDistrict.length!==49
+                ||r.duckworth?.perSource?.length!==4)throw Error('Unsafe source-level receipt');
+              const allowed=new Set(['matched_exact_url_with_named_senator_evidence',
+                'matched_url_alias_with_named_senator_evidence',
+                'source_url_present_but_no_named_senator_evidence',
+                'source_url_not_observed_in_bounded_lookup',
+                'senator_membership_identity_unresolved']);
+              const expected=[1,2,3,4,6,7,8,9,10,11,12,14,16,17,18,19,23,25,27,28,29,30,31,32,33,34,35,36,38,39,40,41,42,45,46,47,48,55,56,57,58,59,60,61,62,63,64,66,67];
+              const counts={};
+              for(let i=0;i<49;i++){
+                const p=r.sourceUrlStatusByDistrict[i];
+                if(p.district!==expected[i]||!allowed.has(p.status)
+                  ||JSON.stringify(Object.keys(p).sort())!==JSON.stringify(['district','status']))
+                  throw Error('Unexpected individual result');
+                counts[p.status]=(counts[p.status]||0)+1;
+              }
+              if(Object.values(counts).reduce((a,b)=>a+b,0)!==49
+                ||JSON.stringify(counts)!==JSON.stringify(r.groupedStatusCounts))
+                throw Error('Bad source status counts');
+              const parsed=JSON.stringify(r);
+              if(parsed.length>28000||/https?:\/\/|neon\.tech|postgres:|evidenceItemId|sourceDocumentId|sourceSha256|password/i.test(parsed))
+                throw Error('Private data in receipt');
+              for(let i=0;i<4;i++){
+                const p=r.duckworth.perSource[i];
+                if(p.sourceOrdinal!==i+1
+                  ||!['urlInStoredDocuments','currentSenatorEvidenceLinked','exactShortCueInStoredEvidence',
+                    'originalRawPublisherBodyShaProvenSame','originalFirstPublicationTimeProven'].every(k=>typeof p[k]==='boolean'))
+                  throw Error('Unsafe Duckworth result');
+              }
+              const labels={
+                matched_exact_url_with_named_senator_evidence:'Exact URL plus named incumbent membership evidence rows',
+                matched_url_alias_with_named_senator_evidence:'Only equivalent URL spelling plus member-linked evidence',
+                source_url_present_but_no_named_senator_evidence:'URL stored, no correctly joined incumbent evidence row in this lookup',
+                source_url_not_observed_in_bounded_lookup:'No listed URL variant observed (NOT global absence)',
+                senator_membership_identity_unresolved:'Current senator membership identity unproven — HOLD',
+              };
+              body=[...fixed,'**Verified limited-scope result: SUCCESS.**',
+                ...Object.entries(labels).map(([key,label])=>'- **'+label+':** '+(counts[key]||0)),
+                '', '**Duckworth four individually dated 2026 public URLs:**',
+                '- Listed public URL observed in source_documents: '+r.duckworth.sourceUrlsObserved+'/4',
+                '- Linked to his current Senate membership evidence: '+r.duckworth.senatorEvidenceLinked+'/4',
+                '- Exact short issue cue present in associated stored excerpt: '+r.duckworth.literalShortCueObserved+'/4',
+                '', 'URL/source records are not proof of byte-for-byte 2026 original published content.',
+                'Unobserved matches can reside under a different URL, archival alias, source kind or another evidence pipeline.',
+                'This is a read-only existing-default-branch snapshot, not an independently confirmed deployed production connection.',
+                '#864 remains OPEN. No source ingestion, row repair, forecast or model update.'
+              ].join('\n');
+            }else if(process.env.READONLY_RESULT==='failure'){
+              const phase=process.env.SAFE_FAILURE_PHASE||'not_reported';
+              if(!/^[a-z_]{1,90}$/.test(phase))throw Error('Unsafe failure metadata');
+              body=[...fixed,'**HOLD:** protected read-only comparison failed at safe phase: '+phase,
+                'No candidate matching/absence counts may be inferred.'].join('\n');
+            }else throw Error('Unrecognized owner-triggered protected job status');
+            if(body.length>12000)throw Error('Oversized protected audit comment');
+            await github.rest.issues.createComment({
+              owner:'killjoy00',repo:'votepredict',issue_number:864,body
+            });
