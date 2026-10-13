@@ -36,3 +36,15 @@ test('production Senate PDF fetcher snapshots raw source identity BEFORE creatin
     'The original body must be SHA-hashed before pdf-parse worker transfers/detaches the input');
   assert.match(fetcher, /return \{\s*text: result\.text,\s*pdfSha256,\s*byteLength\s*\}/);
 });
+
+test('House Research legislative summary PDFs likewise must be hashed before parser-worker detachment', () => {
+  const source = readFileSync(
+    new URL('../src/operations/historical-house-research-summary-backfill.ts', import.meta.url), 'utf8',
+  );
+  const snippet = source.slice(source.indexOf('const bytes = new Uint8Array(await response.arrayBuffer())'));
+  const hashBeforeParser = snippet.indexOf("const sourcePdfSha256 = createHash('sha256').update(bytes).digest('hex')");
+  const parser = snippet.indexOf('new PDFParse({ data: bytes, CanvasFactory })');
+  const savedReceipt = snippet.indexOf('sha256: sourcePdfSha256');
+  assert.ok(hashBeforeParser >= 0 && parser >= 0 && savedReceipt >= 0 && hashBeforeParser < parser,
+    'House legislative research document sha must identify raw PDF bytes, not the detached worker buffer');
+});
