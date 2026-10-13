@@ -36,8 +36,8 @@ const sha=(s)=>createHash('sha256').update(s).digest('hex');
 export function select69ServedOriginals({
  targetPsv,viewerPsv,viewerCheckpoint,v12Psv
 }){
- const raw=Buffer.from(targetPsv,'utf8');
- const gitBlobSha=createHash('sha1').update('blob '+raw.byteLength+'\0').update(raw).digest('hex');
+ const targetRaw=Buffer.from(targetPsv,'utf8');
+ const gitBlobSha=createHash('sha1').update('blob '+targetRaw.byteLength+'\0').update(targetRaw).digest('hex');
  if(gitBlobSha!=='779e581b74299533439939f6552672bb8b2f0c6d')
   throw Error('Original serving-senator source-target manifest git blob SHA mismatch');
  const checkpoint=JSON.parse(viewerCheckpoint);
