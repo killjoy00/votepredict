@@ -120,8 +120,8 @@
       "officialName": "Karin Housley",
       "individualOriginalPublishedStatementPrimaryId": "karin-housley-bond-timing",
       "positionSpecificity": "conditional_policy_and_negotiation_preference",
-      "quoteSourceHistoricOriginalAuthenticated": false,
-      "originalQuoteArchivePublicByUtc": null,
+      "quoteSourceHistoricOriginalAuthenticated": true,
+      "originalQuoteArchivePublicByUtc": "2023-03-07T22:07:14Z",
       "sourceDisplayDay": "2023-03-06",
       "sourcePageUrl": "https://www.mnsenaterepublicans.com/senate-gop-offers-win-win-tax-cuts-for-bonding/",
       "caucusPublisherSummaryAloneNotUniqueSenatorApproval": true,
@@ -151,8 +151,8 @@
       "officialName": "Bill Weber",
       "individualOriginalPublishedStatementPrimaryId": "bill-weber-conditional",
       "positionSpecificity": "conditional_policy_and_negotiation_preference",
-      "quoteSourceHistoricOriginalAuthenticated": false,
-      "originalQuoteArchivePublicByUtc": null,
+      "quoteSourceHistoricOriginalAuthenticated": true,
+      "originalQuoteArchivePublicByUtc": "2023-03-07T22:07:14Z",
       "sourceDisplayDay": "2023-03-06",
       "sourcePageUrl": "https://www.mnsenaterepublicans.com/senate-gop-offers-win-win-tax-cuts-for-bonding/",
       "caucusPublisherSummaryAloneNotUniqueSenatorApproval": true,
@@ -251,7 +251,7 @@
   },
   "summary": {
     "actualServedSenators4": true,
-    "namedIndividualOriginalQuoteVerifiedBeforeMarch16": 1,
+    "namedIndividualOriginalQuoteVerifiedBeforeMarch16": 3,
     "march16HF669NamedNay": 4,
     "may22HF669NamedYea": 3,
     "may22HF669NamedNay": 1,
@@ -260,5 +260,21 @@
     "may22HF670NamedNay": 2,
     "may22HF670NamedUnknown": 2,
     "sourceToVoteMatchedPositiveHistoricalBacktestEligibilityApproved": 0
-  }
+  },
+  "sourceOriginalThreeIndividuallyNamedQuoteProofs": [
+    {
+      "officialSenatorName": "Mark T. Johnson",
+      "boundedNormalizedQuoteSha256": "138109280dfcb7c4e22958456a545eca725b1221092a10fa2c15da8e35ed9bbf"
+    },
+    {
+      "officialSenatorName": "Karin Housley",
+      "boundedNormalizedQuoteSha256": "884f86819a5b4e7b6073734bc8f12cb2a4a658e859b30ad7493d105fb09f1db9"
+    },
+    {
+      "officialSenatorName": "Bill Weber",
+      "boundedNormalizedQuoteSha256": "ff59c05215c28b14423949a8f02da55b3639c19f99bd2b9c6995c5fa837ddc0b"
+    }
+  ],
+  "reverifiedThreeSpeakersRunId": 38339711431,
+  "reverifiedThreeSpeakersReceiptArtifactId": 11785918533
 }
