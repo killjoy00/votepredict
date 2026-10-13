@@ -8,11 +8,19 @@ import {
   type HF100ConferenceSourceLedger,
 } from '../src/evidence/minnesota-hf100-conference-source-verifier.js';
 
-function ledger(): HF100ConferenceSourceLedger {
+function pinnedLedger(): HF100ConferenceSourceLedger {
   return JSON.parse(readFileSync(
     new URL('../data/evaluation/senate-hf100-2023-conference-three-rolls-v1.json', import.meta.url),
     'utf8',
   )) as HF100ConferenceSourceLedger;
+}
+function ledger(): HF100ConferenceSourceLedger {
+  // All original-source hashes stay permanently pinned in the file. Synthetic
+  // short texts intentionally cannot impersonate the real 726,984-char report.
+  const fixture = pinnedLedger();
+  fixture.sourceJournal.embeddedConferenceReportTextSha256 = null;
+  fixture.sourceJournal.embeddedConferenceReportNormalizedLength = null;
+  return fixture;
 }
 
 const replacement = 'ARTICLE 1 REGULATION OF ADULT-USE CANNABIS Section 1. Office of Cannabis Management. '
@@ -105,4 +113,19 @@ test('cannot certify invented CCR variant, same-day availability, wrong governme
   const badTextSha = ledger();
   badTextSha.sourceJournal.embeddedConferenceReportTextSha256 = 'f'.repeat(64);
   assert.throws(() => verifyHf100ConferenceSenateJournal(journal, badTextSha), /Previously SHA-pinned/);
+});
+
+test('two official originals and complete printed report text remain permanently pinned to verified independent source receipts', () => {
+  const fixture = pinnedLedger();
+  assert.equal(fixture.sourceJournal.pdfSha256, '58d5e75bfe0a2181957e69a2f9a70f8bdfc5d88414a8234cc89f438d3c730d25');
+  assert.equal(fixture.sourceJournal.originalBytes, 10452382);
+  assert.equal(fixture.sourceJournal.extractedTextSha256, '4612929e0aa374d8c583f8c573ceb3a410df6a279cb5bc31b7a515e21104a385');
+  assert.equal(fixture.sourceJournal.embeddedConferenceReportTextSha256, 'd54bdb5cfd025ed02e8809c092a1fe9ed8e9d7b26386a9d2332aa047dce422ba');
+  assert.equal(fixture.sourceJournal.embeddedConferenceReportNormalizedLength, 726984);
+  assert.equal(fixture.sourceFloorLog.pdfSha256, 'c38ebfc43d8150742c44ee2541c596822a85757e3838de806bbdad8381e94c7e');
+  assert.equal(fixture.sourceFloorLog.originalBytes, 96361);
+  assert.equal(fixture.sourceFloorLog.extractedTextSha256, 'b1e5654d8fe7a06b381fc1c3f7414e7017d658f40f6b1cca6ac741c32b3bfdf7');
+  assert.equal(fixture.sourceJournal.independentlyVerifiedPublicBy, null);
+  assert.equal(fixture.sourceFloorLog.independentlyVerifiedPublicBy, null);
+  validateHf100ConferenceSourceLedger(fixture);
 });
