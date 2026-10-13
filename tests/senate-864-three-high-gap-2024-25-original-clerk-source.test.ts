@@ -166,3 +166,39 @@ test('missing motion grammar, lack of clerk result and attendance never proves z
  assert.equal(x.fullOfficialMotionUniverseCertified,false);
  assert.equal(x.allIndividualVoterSidesUnknownInThisParser,true);
 });
+
+test('one source-specific Senate anchor without detail card is PROVISIONAL until separate authenticated Clerk original agrees on day/committee',()=>{
+ const html=calendar(state,18636).replace(
+  /<div class='card border-dark senate_item[\s\S]*?<\/div><\/div>/,'');
+ const justAnchor=inspectOriginalGovernmentCombinedDay(html,state);
+ assert.equal(justAnchor.exactOfficialHearingId,null);
+ assert.equal(justAnchor.uniqueSenateAnchorHearingIdRequiringIndependentClerkBody,18636);
+ assert.equal(justAnchor.idsNamedBySenateCard.length,0);
+ assert.equal(justAnchor.status,'unique_exact_senate_anchor_without_card_needs_independent_clerk_body');
+ const source=minute(state,
+  '<p>S.F. 4738: Senator Fictional Alpha: Original bill hearing.</p>'+
+  '<p>Senator Fictional Beta moved that S.F. 4738 be recommended to pass. - MOTION PREVAILED.</p>',
+  'Friday, April 5, 2024');
+ const actual=inspectOriginalHighGapSenateClerkHtml(source,
+  {...state,hearingDate:'2024-04-05'},18636,
+  {...justAnchor,hearingDate:'2024-04-05'},'2026-10-13T07:30:00Z');
+ assert.equal(actual.hearingIdentityProofTier,
+  'official_calendar_single_named_senate_anchor_plus_independently_authenticated_original_clerk_body');
+ assert.equal(actual.allIndividualVoterSidesUnknownInThisParser,true);
+ assert.equal(actual.canonicalMotionCandidates,1);
+ assert.throws(()=>inspectOriginalHighGapSenateClerkHtml(
+  source,{...state,hearingDate:'2024-04-05'},18637,
+  {...justAnchor,hearingDate:'2024-04-05'},'2026-10-13T07:30:00Z'),/not independently established/);
+ assert.throws(()=>inspectOriginalHighGapSenateClerkHtml(
+  source,{...state,hearingDate:'2024-04-19'},18636,
+  {...justAnchor,hearingDate:'2024-04-19'},'2026-10-13T07:30:00Z'),/printed committee, actual date/);
+});
+test('calendar lone Senate anchor is rejected when another card contradicts identity or when committee has duplicate anchors',()=>{
+ const withCard=calendar(state,18636);
+ const conflicting=withCard.replace("id='s_18636'","id='s_18637'");
+ const x=inspectOriginalGovernmentCombinedDay(conflicting,state);
+ assert.equal(x.exactOfficialHearingId,null);
+ assert.equal(x.uniqueSenateAnchorHearingIdRequiringIndependentClerkBody,null);
+ const dup=inspectOriginalGovernmentCombinedDay(calendar(state,18636,{duplicate:true}),state);
+ assert.equal(dup.uniqueSenateAnchorHearingIdRequiringIndependentClerkBody,null);
+});
