@@ -38,6 +38,28 @@ Official bill text families:
 
 The Revisor's additional May 19 third-reading action shows 34–32. Do not manufacture an extra independent named roll from that status entry without official Senate journal event identity verification. The action list links original printed journal pages. **This audit did not inspect stored event rows.**
 
+### Follow-up: full original April 28, 2023 Senate floor motion sequence
+
+A direct reading of the [original Senate Journal, Day 59 (PDF)](https://www.senate.mn/journals/2023-2024/20230428059.pdf), **printed pages 6883–6891**, recovers substantially more motion identity than Revisor's short status summary. It identifies FIVE separate proposed floor amendments, one result-only (voice) adopted amendment, four named recorded amendment rolls, two named procedural rolls, and one named final-passage roll: **eight separate decisions, seven recorded individual-division events**. The tally sequence is original-document source order rather than a same-bill topical aggregation.
+
+| Original source order | Printed journal page | Specific question, named mover | Named tally | Official outcome | What text was considered / disposition |
+| ---: | ---: | --- | ---: | --- | --- |
+| 1 | 6883–6884 | Port amendment | no named roll | adopted | Wording of numerical limits and certain funding/program provisions, explicitly against first unofficial engrossment; no individual senator position reconstructed |
+| 2 | 6884–6885 | Hauschild local retailer/city restriction amendment | 38–28 | adopted | Explicit proposed restrictions on cannabis outlet densities, potential city opt-out and sales hours; **enters later amended text state** |
+| 3 | 6886 | Hauschild tax-escalation amendment | 27–37 | rejected | Proposed change to 12% and step-up to 20%; **never enters adopted legislative text state in this floor sequence** |
+| 4 | 6887 | Johnson motion to lay HF100 on the table | 33–34 | failed | Procedural question; YEA = table the bill, not support for a specific cannabis provision |
+| 5 | 6887–6888 | Hauschild drug-recognition training and funding amendment | 35–30 | adopted | Different appropriations/trunk highway financing; **enters later amended text state** |
+| 6 | 6888–6889 | Hoffman appropriations amendment | 65–1 | adopted | Changes specified $4m amounts to $5.5m; **enters later amended text state** |
+| 7 | 6889–6890 | Pratt motion to re-refer to Finance | 33–34 | failed | Separate procedural question with same 33–34 tally as tabling |
+| 8 | 6890–6891 | Final passage of HF100, **as amended** | 34–33 | passed | Encompasses the four adopted floor amendments; rejected tax proposal explicitly excluded. Full assembled bill-text SHA remains unverified |
+
+For **all five amendment motions**, the Journal explicitly names the **first unofficial engrossment** as the underlying paper. Revisor lists [that original version](https://www.revisor.mn.gov/bills/93/2023/0/HF/100/versions/ue/1/) with an April 26 posted date and [the second unofficial engrossment](https://www.revisor.mn.gov/bills/93/2023/0/HF/100/versions/ue/2/) with an April 28 posted date. This proves that *the Journal described the first as the amendment baseline*; it **does not** prove the second was already available when votes were cast on April 28, or that this ledger has a reconstructable, original-byte verified complete text for each moment.
+
+The permanent source-only ledger [data/evaluation/senate-2023-hf100-apr28-official-motion-sequence-v1.json](../../data/evaluation/senate-2023-hf100-apr28-official-motion-sequence-v1.json) preserves **eight** independent event anchors, page locators, motion types, adoption/rejection states, named-versus-voice distinction, original bill-paper reference and explicit unknown timestamps/source hashes. **These are not the stored event external keys.** The pure [source-state reconstructor](../../src/evidence/minnesota-official-motion-sequence.ts) computes exactly which amendments were adopted BEFORE each subsequent question and refuses to promote the rejected proposal. Synthetic regressions guard eight actions, seven named rolls, one voice action, cumulative policy-state ordering, conflicting dispositions, provenance, and duplicated/positional keys.
+
+The accompanying source-only [original-Journal verifier](../../src/evidence/minnesota-hf100-original-source-verifier.ts) independently checks original PDF-extracted action anchors, ordered tallies, proposed text cues and results against the fixed ledger. The separate [no-secret GitHub read-only original-PDF workflow](../../.github/workflows/senate-hf100-apr28-original-motion-text-proof.yml) must first succeed before its raw PDF SHA-256 and exact 8-action text extraction can be called source-byte authenticated. This document does not assert a successful live original-source run until that receipt exists. Neither source-only source inspection nor an original SHA establishes protected stored-event parity or historical before-vote public availability.
+
+
 ## Official example: HF5247 transportation omnibus (2024)
 
 [Existing independently source-verified research](./senate-media-2024-hf5247-actual-transport-policy-version-crosswalk-20261012.md) documents an important policy-provision change, not a generic “transportation vote” label.
@@ -59,7 +81,7 @@ The prior original-source research verified **three distinct Senator Hawj YEA ro
 | Observed/audited population | Verified or previously source-authenticated finding | Statewide inference? |
 | --- | --- | --- |
 | HF100 Revisor versions (one bill) | 17 listed, 4 structurally missed by old numeric-only discovery regex | No |
-| HF100 Apr 28 official Senate decision types | 3 distinct | No stored-row identity/parity claim |
+| HF100 Apr 28 original Senate journal printed pages 6883–6891 | **8 distinct source actions: 5 amendment decisions (4 adopted, 1 rejected), 2 procedural decisions, 1 passage; 7 named divisions and 1 voice-only action** | No stored-row identity/parity or statewide coverage claim |
 | HF100 May 19 distinct substantive/procedural decisions | 2 decision families; third-reading line requires source-level deduplication | No |
 | Feb 14 2024 Education Minutes | 6 source amendment motions; 2 earlier parser candidates; 4 source-candidate gap | No |
 | Prior #864 electronic linked Senate Minutes corpus for 2022–25 | 1,452 original PDF links/source bodies independently reverified | **Not** official all-meeting or all-vote denominator |
@@ -74,7 +96,7 @@ Previous source audit: [#864 original-pdf and database reconciliation design](./
 
 The pure **src/evidence/minnesota-vote-text-alignment-audit.ts** does not query production data. It finds *all three official URL families* in Revisor status HTML (including alphabetic CCR IDs), rejects cross-bill and untrusted source links, and tags independently verified public-by **null** rather than treating “Posted on” as certified publication time.
 
-It audits vote-to-text links on exact event identity, same session/bill, original source hashes, reported motion locator, recognized amendment text and exact reference, unique conference report, and no later-version substitution. It requires explicitly reviewed *independent primary-source proof* to mark a reviewed link. This is **consistency validation of a supplied human-reviewed source mapping**, not independent text authentication by itself. Results always disallow inferring support for a provision, whether passage or procedural.
+It audits vote-to-text links on exact event identity, same session/bill, original source hashes, reported motion locator, recognized amendment text and exact reference **or independently reviewable page/sequence anchor for unnumbered Senate amendments**, unique conference report, and no later-version substitution. It requires explicitly reviewed *independent primary-source proof* to mark a reviewed link. This is **consistency validation of a supplied human-reviewed source mapping**, not independent text authentication by itself. Results always disallow inferring support for a provision, whether passage or procedural.
 
 A separate deterministic line-based version diff emits source-backed before/after SHA-256, original line deltas, excerpt/truncation metadata and an explicit **unclassified** policy-change label. Long omnibus texts return **needs_chunking**, not an inaccurate comprehensive comparison or generated policy verdict.
 
