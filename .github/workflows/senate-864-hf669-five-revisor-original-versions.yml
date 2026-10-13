@@ -7,6 +7,9 @@ on:
       - data/evaluation/senate-864-2023-hf669-five-official-text-versions-asof-research-v1.json
       - scripts/audit-senate-864-hf669-five-current-original-legislative-versions.mjs
       - tests/senate-864-hf669-five-revisor-original-version-asof-audit.test.mjs
+      - tests/senate-864-hf669-original-five-version-sha-and-3-speaker-permanent-receipts.test.mjs
+      - data/evaluation/senate-864-2023-hf669-five-authenticated-original-pdf-sha-lexical-differences-v1.json
+      - data/evaluation/senate-864-bonding-four-conditional-statements-original-hf669-hf670-personal-rolls-v1.json
       - .github/workflows/senate-864-hf669-five-revisor-original-versions.yml
   workflow_dispatch:
 permissions:
@@ -28,7 +31,7 @@ jobs:
       - name: Exact bill, legislative year, version-code and point-in-time controls
         run: |
           node --check scripts/audit-senate-864-hf669-five-current-original-legislative-versions.mjs
-          node --test tests/senate-864-hf669-five-revisor-original-version-asof-audit.test.mjs
+          node --test tests/senate-864-hf669-five-revisor-original-version-asof-audit.test.mjs tests/senate-864-hf669-original-five-version-sha-and-3-speaker-permanent-receipts.test.mjs
       - name: Download and SHA-pin current official Revisor original PDFs; compare text without storing whole bill
         shell: bash
         run: |
