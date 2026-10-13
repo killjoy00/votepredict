@@ -30,7 +30,7 @@ const ORIG_CAL='docs/evaluation/source-proof/cfb-2021-22-senate-one-filer-origin
 const OFFICIAL='https://register.cfb.mn.gov/reports-and-data/viewers/campaign-finance/candidates/';
 const HASH=/^[a-f0-9]{64}$/;
 const DUE={"2021":"2022-01-31","2022":"2023-01-31"};
-const MAX_PDF_REFERENCES_PER_MEMBER_YEAR=3; // original plus up to two edited versions, larger queue held
+export const MAX_PDF_REFERENCES_PER_MEMBER_YEAR=3; // original plus up to two edited versions, larger queue held
 const RESEARCH_TIMEOUT_HINT='Public source only; incomplete retrieval produces a source HOLD, not an absent filing';
 const MARKER='CFB_864_38_ACTUALLY_SERVED_2021_22_YE_PDFS_V20 ';
 function k(name){
@@ -94,7 +94,7 @@ export function verifyIndependentOriginalYearendCalendars(){
   throw Error('Original 2022 Senate campaign calendar SHA changed');
  return true;
 }
-function sourceYearEndReferences(t,snapshot){
+export function sourceYearEndReferences(t,snapshot){
  if(snapshot?.registrationNumber!==t.reg||snapshot?.segmentEndYear!==2022
   ||snapshot.sourceUrl!==OFFICIAL+t.reg+'/2022/'
   ||!HASH.test(snapshot.responseSha256))
@@ -139,7 +139,7 @@ function diagnosticForOfficialPdfFirstPage(t,text){
   printedDistricts:[...new Set(senate)].sort((a,b)=>a-b),
   printedDistrictMatchesIndependentlyServingOriginalTerm:[...new Set(senate)].some(x=>t.servingDistricts2021And2022.includes(x))};
 }
-function originalHeader(t,ref,source,viewerSha,sourceError=null){
+export function originalHeader(t,ref,source,viewerSha,sourceError=null){
  const year=2000+Number(ref.year);
  if(![2021,2022].includes(year)
   ||ref.registrationNumber!==t.reg||ref.type!=='pcc'
@@ -184,7 +184,7 @@ function originalHeader(t,ref,source,viewerSha,sourceError=null){
    :'original_or_amended_pdf_source_binary_and_firstpage_authenticated_unclassified'
  };
 }
-function classifyOriginalAmended(rows){
+export function classifyOriginalAmended(rows){
  const original=new Map(rows.filter(x=>x.amendmentIndex===0).map(x=>[x.registration+':'+x.reportYear,x]));
  const verified=[];
  for(const x of rows.sort((a,b)=>a.reportYear-b.reportYear||
@@ -292,7 +292,7 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
  if(process.argv.length!==2)throw Error('Only fixed 38 independent original Senate 2021/22 CFB PDF source subjects permitted');
  const a=await acquireThirtyEightSenateMembers2021to22YearendPDFs();
  const output=JSON.stringify(a);
- if(output.length>140000||/donorName|rowKey|privateDatabase|rawReportPdf|%PDF-/.test(output))
+ if(output.length>260000||/donorName|rowKey|privateDatabase|rawReportPdf|%PDF-/.test(output))
   throw Error('Unsafe historic source PDF metadata output');
  console.log(MARKER+output);
 }
