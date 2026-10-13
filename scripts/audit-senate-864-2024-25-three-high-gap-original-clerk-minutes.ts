@@ -94,7 +94,7 @@ function sourceArgs(){
  const a=process.argv.slice(2);
  if(a.length!==6||a[0]!=='--source-index'||a[2]!=='--selected-53'||a[4]!=='--output'||!a[1]||!a[3]||!a[5])
   throw Error('Only --source-index ORIGINAL --selected-53 SCOPE --output REPORT allowed');
- const paths=[a[1],a[3],a[5]].map(resolve);
+ const paths=[a[1],a[3],a[5]].map(s=>resolve(s));
  if(new Set(paths).size!==3)throw Error('Do not overwrite original evidence inputs');
  return paths;
 }
