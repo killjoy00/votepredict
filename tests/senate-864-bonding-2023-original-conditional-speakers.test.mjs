@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {sha1Base32} from '../scripts/probe-senate-864-substantive-new-originals.mjs';
-import {validateManifest,boundNamedOriginalQuote,checkOriginal,run}
+import {validateManifest,boundNamedOriginalQuote,checkOriginal,run,inspectExactKnownIndexedOriginal,PRIOR_CDX_ORIGINAL}
  from '../scripts/probe-senate-864-bonding-2023-original-conditional-speakers.mjs';
 const manifest=JSON.parse(readFileSync('data/evaluation/senate-864-2023-bonding-conditional-direct-speech-leads-v1.json','utf8'));
 const johnson=manifest.speakers[0],housley=manifest.speakers[1],weber=manifest.speakers[2],wesenberg=manifest.speakers[3];
@@ -151,4 +152,17 @@ test('earlier nearby full name cannot acquire another named senator quote with a
 test('quote paired to wrong full name after end and different name before start must not certify either',()=>{
  const p=Buffer.from('<p>Karin Housley asked: “'+weber.exactShortQuoteCue+'.” Bill Weber replied separately.</p>');
  assert.equal(boundNamedOriginalQuote(p,weber).verified,false);
+});
+
+test('live 2023 previous full original CDX SHA1, raw SHA256 and byte-count pin cannot be bypassed',()=>{
+ assert.equal(PRIOR_CDX_ORIGINAL.stamp,'20230307220714');
+ assert.equal(PRIOR_CDX_ORIGINAL.earlierIndependentOriginalCDXLiveRun,38322285543);
+ assert.equal(inspectExactKnownIndexedOriginal(html),false);
+ const synthetic={...PRIOR_CDX_ORIGINAL,indexSha1Base32:sha1Base32(html),
+   rawHtmlSha256:createHash('sha256').update(html).digest('hex'),
+   exactHtmlBytes:html.length};
+ assert.equal(inspectExactKnownIndexedOriginal(html,synthetic),true);
+ const altered=Buffer.from(html.toString().replace('Historic speaker','Mutated speaker'));
+ assert.equal(inspectExactKnownIndexedOriginal(altered,synthetic),false);
+ assert.equal(inspectExactKnownIndexedOriginal(html,{...synthetic,exactHtmlBytes:0}),false);
 });
