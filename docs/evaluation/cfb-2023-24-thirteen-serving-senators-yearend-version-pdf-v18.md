@@ -15,3 +15,31 @@ Amendments are included only as independently indexed original source viewer **v
 The acquisition limits 13 source-verified people, two report years, 12 indexed report versions per person-year, three concurrent original government API/PDF requests, and a 20-minute PR-only job. Original report bytes/text, donor/recipient data and transaction rows are never uploaded, committed or printed. Results are metadata-only exact source PDF SHA, size, original viewer response SHA, report version identity, period and received/date possible floor, with explicit source/HOLD/alias status. Any legally owed-filed denominator, private production update or 2027 work is excluded. The [fail-closed tests](../../tests/cfb-864-thirteen-2023-24-yearend-version-pdfs-v18.test.mjs) separately exercise viewer original ref identity, independent Senate service, official calendar dates, different source PDF hashes, postreceipt legal floor, missing original parent, aliases and original first-page mismatch.
 
 **After live source verification:** permanently pin newly authenticated original/amended PDF metadata rows to the version-ledger source proof and update the true 95-serving-person source coverage, without incorrectly calling unknown original historical PDF public-by a zero observed filing. Maintain issue #864 OPEN. The existing V16 source base **255 official version refs, 249 authenticated unique original PDFs and 0 independently proven exact historical published-by dates** stays unchanged until the actual original-source acquisition produces independently checked new version IDs and source hashes.
+
+
+
+## Actual original 2023/24 full-PDF acquisition results — independently reproduced twice, October 13, 2026
+
+The live read-only government-source [first acquisition run 38455766999](https://github.com/killjoy00/votepredict/actions/runs/38455766999) and [independent full 43-version PDF body re-acquisition run 38456123723](https://github.com/killjoy00/votepredict/actions/runs/38456123723) both passed source-specific verification. They retrieved **all 43 original CFB source-PDF binary bodies** for **13 original candidate viewer APIs**, proved the **same exact full PDF SHA256 and byte size** at both runs, and found no new source version ID or original PDF SHA already present in the prior V16 255-report-version/249-original-PDF proof.
+
+| Exact official CFB 2023/24 year-end version source result | Report references |
+| --- | ---: |
+| Original version index zero, first-page committee/office/period/Board receipt authenticated | **25** |
+| Distinct amended viewer-index source PDF, full SHA and parent original first page authenticated | **14** |
+| Viewer indexed duplicate of a previously authenticated full PDF SHA | **1** |
+| Original downloaded source PDF with **committee registration first-page identity HOLD** | **3** |
+| **Total original viewer reference IDs** | **43** |
+
+This is **39 genuinely additional distinct independently source-authenticated full original CFB PDF binaries**, not 43 additional unique documents. The 1 verified identical-binary alias is **18724:24:pcc:YE:0:3**, returning exactly the same full original PDF SHA as **18724:24:pcc:YE:0:2** (Erin Maye Quade). The alias is retained as a separate official version index, not treated as a separate contribution or new distinct PDF.
+
+The 3 strict holds are:
+- Kelly L. Morrison, **18809:23:pcc:YE:0:0** (2023 original) and **18809:23:pcc:YE:0:1** (2023 amended).
+- Bill Lieske, **18910:23:pcc:YE:0:1** (2023 first amendment).
+
+For all three, the acquired government PDF body has its own SHA256 and size, the independent original CFB source viewer references it under that exact version ID, and the first-page title, reported Senate district, calendar-year coverage and Board received date parse successfully. **The printed Registration Number does not pass the existing strict direct adjacent registration parser.** These remain source **identity HOLDS**: they might reflect PDF layout extraction, original actual report identity differences or another unresolved discrepancy. Neither a matched person-name guess nor a matching printed district can replace independently authenticating the exact printed committee registration.
+
+For the 3 held PDF bodies, Board receipts shown by a source-only first-page diagnostic are original 2024-01-30 (Morrison original), 2024-03-16 (Morrison amendment), and 2024-01-12 (Lieske amendment); their period and receipt **diagnostics** do not elevate the full report version to authenticated source identity or establish actual historical public-by. Actual public-by **remains UNKNOWN for all 43 newly observed version references**, even where the source PDF identity itself is authenticated.
+
+The permanent [43-version original PDF source metadata ledger](source-proof/cfb-2023-24-thirteen-served-43-original-amended-yearend-pdfs-v18.psv) pins CFB exact report ID, official senator and source district, principal committee registration, full official candidate viewer response SHA, entire government PDF SHA/bytes, original report coverage, Board receipt and original independently authenticated calendar due day when first-page identity verified, a separately conservative potential release floor (never public-by), identical-PDF alias canonical version ID, original CFB district candidate page source SHA, and explicit HOLD/UNKNOWN statuses. The independent [original-source acquisition checkpoint](source-proof/cfb-2023-24-13-serving-original-amended-source-checkpoint-v18.json) preserves both source-run IDs, original source API SHA values for all 13 committees and exact metadata proof identity for 43 version references, plus three safely non-financial first-page diagnostic records.
+
+**Subsequent exact version consolidation:** Only the 39 newly authenticated source PDF bodies are eligible to count as *distinct* PDF proofs in the expanded 2021–25 version ledger; all 43 source viewer IDs must remain present, with original/amended/alias/held distinctions explicit. No older original report ledger values change, and the three unresolved 2023 first-page registration checks are not declared missing filings.
