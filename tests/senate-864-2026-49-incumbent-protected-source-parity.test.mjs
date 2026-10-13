@@ -5,7 +5,7 @@ import c from '../data/evaluation/senate-864-2026-49-incumbent-public-source-ref
 import d from '../data/evaluation/senate-864-2026-incumbent-duckworth-exact-speaker-leads-v1.json' with {type:'json'};
 import {
  auditPublic2026IncumbentSourceManifest,publicUrlVariants,urlFingerprint,
- compare49IncumbentSources
+ compare49IncumbentSources as compare49Core
 } from '../src/evidence/senate-864-2026-incumbent-source-parity.mjs';
 import {
  ONE_SHOT_COMMENT,REQUIRED,MEMBERSHIPS_SQL,PUBLIC_SOURCE_SQL,
@@ -13,6 +13,8 @@ import {
  auditExistingVotePredict49SourceParity,validateSanitizedReport
 } from '../scripts/audit-senate-864-2026-49-incumbent-existing-neon-parity.mjs';
 
+const verifiedPublicRaw=JSON.parse(readFileSync('data/evaluation/senate-864-2026-duckworth-four-live-publisher-original-sha-receipts-v1.json','utf8'));
+const compare49IncumbentSources=(m,d,members,sourceRows)=>compare49Core(m,d,members,sourceRows,verifiedPublicRaw);
 const baselineMemberships=c.rows.map(r=>({
  district:String(r.district),senatorName:r.senator,membershipId:'member-'+String(r.district).padStart(4,'0')
 }));
@@ -258,4 +260,24 @@ test('four 2026 Duckworth publisher first-party original HTML SHA receipts were 
  }
  assert.equal(receipt.boundaries.productionWritesZero,true);
  assert.equal(receipt.boundaries.privateDatabaseAccessZero,true);
+});
+
+
+test('actual October 13 Duckworth full publisher raw HTML SHA equality requires both correct current senator and source document',()=>{
+ const source=d.duckworth.newDated2026SourceLeads[0],raw=verifiedPublicRaw.sourcePages[0];
+ const saved=src(57,{
+   sourceDocumentId:'verified-current-original-2026',
+   sourceUrl:source.url,contentSha256:raw.rawWholeHtmlSha256,
+   excerpt:'Zach Duckworth: '+source.shortIssueCue,
+ });
+ const result=compare49IncumbentSources(c,d,baselineMemberships,[saved]);
+ assert.equal(result.duckworth.exactLiveWholePublisherHtmlShaMatches,1);
+ assert.equal(result.duckworth.senatorEvidenceLinked,1);
+ assert.equal(result.duckworth.literalShortCueObserved,1);
+ assert.equal(result.duckworth.perSource[0].originalRawPublisherBodyShaProvenSame,true);
+ assert.equal(result.duckworth.perSource[0].originalFirstPublicationTimeProven,false);
+ const wrongPerson=compare49IncumbentSources(c,d,baselineMemberships,[{...saved,membershipId:'member-9999'}]);
+ assert.equal(wrongPerson.duckworth.exactLiveWholePublisherHtmlShaMatches,0);
+ const wrongHash=compare49IncumbentSources(c,d,baselineMemberships,[{...saved,contentSha256:'b'.repeat(64)}]);
+ assert.equal(wrongHash.duckworth.exactLiveWholePublisherHtmlShaMatches,0);
 });
