@@ -113,6 +113,9 @@ async function main(){
  held.sort((x,y)=>x.hearingDate.localeCompare(y.hearingDate)||
   x.committeeName.localeCompare(y.committeeName));
  const recovered=ok.length,actions=ok.reduce((n,r)=>n+r.actions.length,0);
+ const countOnly=ok.reduce((n,r)=>n+r.parsedCountOnlyRollCallCandidates,0);
+ const resultOnly=ok.reduce((n,r)=>n+r.parsedResultOnlyActionCandidates,0);
+ if(countOnly+resultOnly!==actions)throw Error('Source action category partition mismatch');
  const report={
   schemaVersion:'senate-864-2023-no-lrl-linked-pdf-official-senate-online-source-recovery-v1',
   issue:864,originalLrlIndexSourceRun:SENATE_MISSING_MINUTES_SOURCE.originalRunId,
@@ -122,10 +125,11 @@ async function main(){
   boundedOriginalSenateOnlineHearingTargets:MAX_ROWS,
   independentSenateOnlineMinutesRecovered:recovered,
   officialSenateOnlineHtmlFailures:held.length,
-  distinctSourceResultOnlyActionCandidates:actions,
+  sourceMotionCandidates:actions,explicitCountOnlyRollCallCandidates:countOnly,
+  sourceResultOnlyActionCandidates:resultOnly,
   originalElectronicLrlPdfLinksStillMissingForTargets:MAX_ROWS,
   sourceOriginalPublicByTimestampsIndependentlyProven:0,
-  namedMemberVotesRecoveredByThisResultOnlyParser:0,
+  namedMemberVotesRecoveredByThisConservativeParser:0,
   originalHtmlSourceDocuments:ok,
   unresolvedOnlineHtmlTargets:held,
   notAnOfficialAllMotionOrCommitteeMeetingDenominator:true,
@@ -148,7 +152,9 @@ async function main(){
  console.log('SENATE_864_ONLINE_2023_SOURCE_RECOVERY='+JSON.stringify({
   independentNoPdfMeetingDenominator:counts.indexedWithoutLrlMinutes,
   targetedHearingMinutes:MAX_ROWS,originalSenateHtmlRecovered:recovered,
-  verifiedResultOnlyActionCandidates:actions,
+  sourceMotionCandidates:actions,
+  verifiedResultOnlyActionCandidates:resultOnly,
+  verifiedAggregateCountOnlyRollCalls:countOnly,
   sourcesHeld:held.length,
   individualPositionsInferred:false,
   existingDatabaseAccess:false,allHistoryComplete:false
@@ -166,6 +172,7 @@ async function main(){
   normalizedOriginalTextSha256:x.normalizedOriginalTextSha256,
   retrievedAt:x.retrievedAt,
   parsedResultOnlyActionCandidates:x.parsedResultOnlyActionCandidates,
+  parsedCountOnlyRollCallCandidates:x.parsedCountOnlyRollCallCandidates,
   independentHtmlPublicationAt:null,
   namedMemberVotesInferred:0,
  }));
