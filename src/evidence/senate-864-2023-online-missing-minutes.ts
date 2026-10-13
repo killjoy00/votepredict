@@ -89,7 +89,7 @@ export interface OriginalOnlineSourceAction{
 const mover=/\bSenator\s+([A-Za-zÀ-ž.'-]+(?:\s+[A-Za-zÀ-ž.'-]+){0,5})\s+(?:moved|motioned)\b/giu;
 const result=/\b(?:MOTION\s+(PREVAILED|FAILED)|The\s+motion\s+(prevailed|failed))\b/giu;
 const billHeading=/\bS\s*\.?\s*F\s*\.?\s*(\d{1,5})\s*:\s*Senator\b/giu;
-const amendment=/\b(A-?\d{1,3}(?:-\d{1,4})?)\s+Amendment\b/giu;
+const amendment=/\b(A-?\d{1,3}(?:-\d{1,4})?)\s+(?:[A-Za-z]{1,16}\s+)?Amendment\b/giu;
 export function inspectOriginalSenateOnlineMinutes(
  html:string,target:Target,receivedAt:string
 ){
