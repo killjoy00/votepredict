@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "cfb-864-35-senate-2023-24-69-exact-yearend-original-pdf-result-v15",
+  "reviewedOn": "2026-10-13",
+  "existingSourceSelection": {
+    "originalViewerMetadataPsv": "cfb-2021-24-senate-396-original-viewer-source-observations.psv",
+    "originalPanelProof": "cfb-2021-25-served-25-panel-229-exact-version-ledger.psv",
+    "sourceTargetManifest": "cfb-2023-24-35-senators-69-yearend-original-source-targets-v15.psv",
+    "sourceTargetManifestGitBlobSha": "779e581b74299533439939f6552672bb8b2f0c6d"
+  },
+  "independentGithubSourceProof": {
+    "sourcePr": 1277,
+    "sourceCommit": "a8c265a56b3467030d6d31ac357a46ebbfc44a0d",
+    "actionRunId": 38355353281,
+    "actionRunUrl": "https://github.com/killjoy00/votepredict/actions/runs/38355353281",
+    "sourceAcquisitionJob": "live-original-pdf-source-only",
+    "sourceAcquisitionJobStatus": "success",
+    "originalViewerShaRechecks": 35,
+    "originalViewerShaFailures": 0,
+    "sourceArtifactId": 11792916750,
+    "sourceArtifactName": "cfb-864-69-original-pdf-proof-v15",
+    "sourceArtifactUrl": "https://github.com/killjoy00/votepredict/actions/runs/38355353281/artifacts/11792916750",
+    "sourceArtifactZipSha256": "32fbf452c74d128d90bdf9bd072532a27d67299b55bcdeb539227f1728f5db4b",
+    "sourceArtifactJsonSha256": "f020e2a7d7375fc1cf82a1378a84c393d25f2abd0f1b0ab01039c5c04860074b",
+    "sourceArtifactJsonBytes": 94374,
+    "originalReportBodiesEphemeralNotPersisted": true
+  },
+  "permanentOutput": {
+    "path": "docs/evaluation/source-proof/cfb-2023-24-69-original-pdf-source-results-v15.psv",
+    "records": 69,
+    "sha256": "15e3111f8b806f362773d34771e7821454f4813bf845877bbac72a985eacac09",
+    "gitBlobSha": "6d80a806860c5d0cb6e1a43e44fa8f4c70dceb8f",
+    "columns": [
+      "exactOfficialReportVersionId",
+      "sourceBodyReviewStatus",
+      "completeOriginalPdfSha256",
+      "completePdfBytes",
+      "verifiedReportedCoverageStartOn",
+      "verifiedReportedCoverageEndOn",
+      "boardReceiptDate",
+      "independentOrdinaryYearendCalendarDueOn",
+      "conservativeLegalNotBeforeDateOrHold",
+      "firstPageRegistrationNumberMatchesOfficialViewer",
+      "firstPageDistrictMatchesServingSenator",
+      "originalPdfObservedAtUtc"
+    ]
+  },
+  "result": {
+    "sourcePersonRegistrations": 35,
+    "officialExactYearendOriginalReferences": 69,
+    "actualFullPdfBodiesFetched": 69,
+    "sourcePdfOriginalSha256Observed": 69,
+    "independentlyAuthenticatedDistinctPdfBinaries": 63,
+    "firstPageIdentityHolds": 6,
+    "authenticated2023": 29,
+    "authenticated2024": 34,
+    "originalViewerApiBodiesExactShaMatch": 35,
+    "legallyOwedReportDenominator": null,
+    "independentlyProvenHistoricalPublicByOnCount": 0,
+    "amendmentVersionContentComparisons": 0,
+    "transactionLevelFinancialTotalsVerified": 0,
+    "priorV12AuthenticatedDistinctPdfs": 223,
+    "newCombinedDistinctAuthenticatedPdfs": 286
+  },
+  "heldOriginals": [
+    {
+      "id": "12339:23:pcc:YE:0:0",
+      "committee": "Sandra L. Pappas",
+      "reason": "first_page_registration_number_not_verified"
+    },
+    {
+      "id": "17316:23:pcc:YE:0:0",
+      "committee": "Bobby Joe Champion",
+      "reason": "first_page_registration_number_not_verified"
+    },
+    {
+      "id": "18011:23:pcc:YE:0:0",
+      "committee": "Mark T. Johnson",
+      "reason": "first_page_registration_number_not_verified"
+    },
+    {
+      "id": "18453:24:pcc:YE:0:0",
+      "committee": "Ann M Johnson Stewart",
+      "reason": "verified_partial_period_2024_11_26_through_2024_12_31_not_full_calendar_year"
+    },
+    {
+      "id": "18809:23:pcc:YE:0:0",
+      "committee": "Kelly L. Morrison",
+      "reason": "first_page_registration_number_not_verified"
+    },
+    {
+      "id": "18917:23:pcc:YE:0:0",
+      "committee": "Robert Kupec",
+      "reason": "first_page_registration_number_not_verified"
+    }
+  ],
+  "cautions": {
+    "exact2021to25PublicByDatesUnknown": true,
+    "originalOnlyNoAmendedPDFProofHere": true,
+    "reportedCoverageDoesNotCertifyFilingDuty": true,
+    "current2026ObservationDoesNotProveHistoricalRelease": true,
+    "candidateFirstNameVariantsNotUpgraded": true,
+    "fullSenateLegalObligationsDenominatorUnknown": true,
+    "noPrivateTransactionRowsOrPdfBodySaved": true,
+    "noProductionOrEligibilityUpdates": true,
+    "noOutreach": true
+  }
+}
