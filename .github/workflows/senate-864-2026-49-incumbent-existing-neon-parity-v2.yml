@@ -1,0 +1,241 @@
+name: One-shot 2026 MN Senate 49 per-district evidence V2
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-2026-incumbent-source-parity.mjs
+      - scripts/audit-senate-864-2026-49-incumbent-existing-neon-parity-v2.mjs
+      - scripts/verify-senate-864-2026-incumbent-sql-local-v2.mjs
+      - scripts/render-senate-864-2026-49-incumbent-parity-v2-issue.mjs
+      - tests/senate-864-2026-incumbent-per-district-parity-v2.test.mjs
+      - tests/senate-864-2026-incumbent-per-district-parity-ci.test.ts
+      - docs/evaluation/senate-864-2026-per-district-source-to-evidence-v2.md
+      - .github/workflows/senate-864-2026-49-incumbent-existing-neon-parity-v2.yml
+      - scripts/audit-senate-864-2026-49-incumbent-existing-neon-parity.mjs
+      - data/evaluation/senate-864-2026-duckworth-four-live-publisher-original-sha-receipts-v1.json
+      - scripts/verify-senate-864-2026-incumbent-sql-local-v2.mjs
+      - tests/senate-864-2026-49-incumbent-protected-source-parity.test.mjs
+      - tests/senate-864-2026-49-incumbent-protected-source-parity-ci.test.ts
+      - docs/evaluation/senate-864-2026-49-current-source-protected-parity.md
+      - .github/workflows/senate-864-2026-49-incumbent-existing-neon-parity.yml
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+concurrency:
+  group: senate-864-2026-incumbent-parity-${{ github.event_name }}-${{ github.run_id }}
+  cancel-in-progress: false
+jobs:
+  pr-offline-tests:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: 49 public source URL plus protected no-data mocks
+        run: node --import tsx --test tests/senate-864-2026-incumbent-per-district-parity-v2.test.mjs
+  pr-disposable-sql-plan:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - name: Only EXPLAIN the two fixed SELECTs on migrated localhost, no Neon keys
+        run: node --import tsx scripts/verify-senate-864-2026-incumbent-sql-local-v2.mjs
+  pr-duckworth-public-originals:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Four exact 2026 public publisher URLs, raw HTML SHA + named speaker cue, no copyrighted text saved
+        run: |
+          mkdir -p public-proof
+          node scripts/probe-senate-864-2026-duckworth-dated-original-public-statements.mjs --out-dir public-proof
+          cat public-proof/senate-864-2026-duckworth-original-html-speaker-source-receipts.json
+      - name: Remove temporary public-source receipts
+        if: always()
+        run: rm -rf public-proof
+  public-ci-verify:
+    if: >-
+      github.event_name == 'issue_comment' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.issue.number == 864 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      github.event.comment.body == '[campaign-864-2026-49-incumbents-detail-readonly-20261013-v2]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: public.ecr.aws/docker/library/postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: votepredict
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d votepredict"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/votepredict
+      VOTEPREDICT_INTEGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/votepredict
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Commit identity before potential protected Neon access
+        env:
+          REVIEWED_COMMIT: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_COMMIT"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run db:migrate
+      - run: node --import tsx scripts/verify-senate-864-2026-incumbent-sql-local-v2.mjs
+      - run: npm run check
+      - run: npm audit --omit=dev --audit-level=high
+  protected-readonly:
+    needs: [public-ci-verify]
+    if: >-
+      needs.public-ci-verify.result == 'success' &&
+      github.event_name == 'issue_comment' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.issue.number == 864 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      github.event.comment.body == '[campaign-864-2026-49-incumbents-detail-readonly-20261013-v2]'
+    environment: evidence-readonly-sandbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      safe_candidate_report_b64: ${{ steps.audit.outputs.safe_candidate_report_b64 }}
+      safe_failure_stage: ${{ steps.audit.outputs.safe_failure_stage }}
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VOTEPREDICT_NEON_PROJECT_ID: ${{ vars.VOTEPREDICT_NEON_PROJECT_ID }}
+      VOTEPREDICT_MEDIA_EXISTING_DATABASE: ${{ vars.VOTEPREDICT_MEDIA_EXISTING_DATABASE }}
+      VOTEPREDICT_864_2026_V2_APPROVAL: '[campaign-864-2026-49-incumbents-detail-readonly-20261013-v2]'
+      VOTEPREDICT_864_2026_V2_INDEPENDENT_CI: ${{ needs.public-ci-verify.result == 'success' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Require same reviewed main commit before owner-role connection
+        env:
+          REVIEWED_COMMIT: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$REVIEWED_COMMIT"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Three bounded SELECTs for 49 current senators in READ ONLY Neon; ROLLBACK
+        id: audit
+        run: node --import tsx scripts/audit-senate-864-2026-49-incumbent-existing-neon-parity-v2.mjs
+  issue-keyless-report:
+    needs: [public-ci-verify, protected-readonly]
+    if: >-
+      always() &&
+      github.event_name == 'issue_comment' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == 1 &&
+      github.event.issue.number == 864 &&
+      github.event.comment.user.login == 'killjoy00' &&
+      github.event.comment.body == '[campaign-864-2026-49-incumbents-detail-readonly-20261013-v2]' &&
+      (needs.public-ci-verify.result == 'failure' ||
+      (needs.public-ci-verify.result == 'success' &&
+      (needs.protected-readonly.result == 'success' || needs.protected-readonly.result == 'failure')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    permissions:
+      contents: read
+      issues: write
+    env:
+      VERIFY_RESULT: ${{ needs.public-ci-verify.result }}
+      READONLY_RESULT: ${{ needs.protected-readonly.result }}
+      SAFE_CANDIDATE_REPORT_B64: ${{ needs.protected-readonly.outputs.safe_candidate_report_b64 }}
+      SAFE_FAILURE_STAGE: ${{ needs.protected-readonly.outputs.safe_failure_stage }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const {pathToFileURL}=require('node:url');
+            const {resolve}=require('node:path');
+            const file=pathToFileURL(resolve('scripts/render-senate-864-2026-49-incumbent-parity-v2-issue.mjs')).href;
+            const {renderSanitizedIncumbentIssueComment}=await import(file);
+            const body=renderSanitizedIncumbentIssueComment({
+              verifyResult:process.env.VERIFY_RESULT,
+              readOnlyResult:process.env.READONLY_RESULT,
+              safeCandidateReportB64:process.env.SAFE_CANDIDATE_REPORT_B64,
+              safeFailureStage:process.env.SAFE_FAILURE_STAGE,
+              runUrl:'https://github.com/killjoy00/votepredict/actions/runs/'+process.env.GITHUB_RUN_ID,
+              mainSha:process.env.GITHUB_SHA
+            });
+            await github.rest.issues.createComment({
+              owner:'killjoy00',repo:'votepredict',issue_number:864,body
+            });
