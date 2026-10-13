@@ -8,6 +8,7 @@ on:
       - scripts/render-senate-864-2026-49-incumbent-parity-v2-issue.mjs
       - tests/senate-864-2026-incumbent-per-district-parity-v2.test.mjs
       - tests/senate-864-2026-incumbent-per-district-parity-ci.test.ts
+      - tests/senate-864-2026-incumbent-keyless-v2-renderer.test.mjs
       - docs/evaluation/senate-864-2026-per-district-source-to-evidence-v2.md
       - .github/workflows/senate-864-2026-49-incumbent-existing-neon-parity-v2.yml
       - scripts/audit-senate-864-2026-49-incumbent-existing-neon-parity.mjs
@@ -43,7 +44,7 @@ jobs:
           cache: npm
       - run: npm ci --no-fund --no-audit
       - name: 49 public source URL plus protected no-data mocks
-        run: node --import tsx --test tests/senate-864-2026-incumbent-per-district-parity-v2.test.mjs
+        run: node --import tsx --test tests/senate-864-2026-incumbent-per-district-parity-v2.test.mjs tests/senate-864-2026-incumbent-keyless-v2-renderer.test.mjs
   pr-disposable-sql-plan:
     if: >-
       github.event_name == 'pull_request' &&
