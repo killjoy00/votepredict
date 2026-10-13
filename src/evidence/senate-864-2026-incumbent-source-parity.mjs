@@ -379,7 +379,7 @@ export function compare49IncumbentSourcesV2(
   schema:'mn-864-2026-49-incumbent-protected-url-and-evidence-parity-v2',
   dataWindow:'existing_2025_2026_senate_memberships_as_of_2026_10_13',
   calendarYearIsStoredPublishedAtMetadataNotIndependentOriginalPublication:true,
-  2026ElectionEligibleStatementCompletenessProven:false,
+  election2026EligibleStatementCompletenessProven:false,
   candidateIssueEvidenceBeyondCurrentSenateMembershipNotEnumerated:true,
   memberRowsAreAggregateCountsOnly:true,
   sourceUrlStatusByDistrict:undefined,
