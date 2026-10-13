@@ -15,18 +15,21 @@
       "decisionsStart": 10083,
       "decisionsEnd": 10084
     },
-    "pdfSha256": null,
-    "originalBytes": null,
-    "embeddedConferenceReportTextSha256": null,
-    "independentlyVerifiedPublicBy": null
+    "pdfSha256": "58d5e75bfe0a2181957e69a2f9a70f8bdfc5d88414a8234cc89f438d3c730d25",
+    "originalBytes": 10452382,
+    "embeddedConferenceReportTextSha256": "d54bdb5cfd025ed02e8809c092a1fe9ed8e9d7b26386a9d2332aa047dce422ba",
+    "independentlyVerifiedPublicBy": null,
+    "extractedTextSha256": "4612929e0aa374d8c583f8c573ceb3a410df6a279cb5bc31b7a515e21104a385",
+    "embeddedConferenceReportNormalizedLength": 726984
   },
   "sourceFloorLog": {
     "url": "https://www.leg.mn.gov/archive/leg/floorlogs/senate/2023/20230519slog.pdf",
     "kind": "official_senate_bill_log_pdf",
     "pdfPageIndex": 1,
-    "pdfSha256": null,
-    "originalBytes": null,
-    "independentlyVerifiedPublicBy": null
+    "pdfSha256": "c38ebfc43d8150742c44ee2541c596822a85757e3838de806bbdad8381e94c7e",
+    "originalBytes": 96361,
+    "independentlyVerifiedPublicBy": null,
+    "extractedTextSha256": "b1e5654d8fe7a06b381fc1c3f7414e7017d658f40f6b1cca6ac741c32b3bfdf7"
   },
   "conferenceVariants": [
     {
@@ -97,5 +100,12 @@
     "Journal prints the complete replacement text but the particular Revisor CCR/0 versus CCR/A body is not yet compared line-for-line.",
     "Same-day source availability and individual passage support for every provision are not inferred.",
     "Stored vote_events and private row parity not inspected; no accepted roll calls changed."
-  ]
+  ],
+  "originalSourceVerification": {
+    "runUrl": "https://github.com/killjoy00/votepredict/actions/runs/38356387990",
+    "verifiedAt": "2026-10-13T06:23:44.433Z",
+    "independentlyReproducedAllThreeMotions": true,
+    "underlyingVersionHistoricalAvailability": null,
+    "persistedDatabaseRowParity": null
+  }
 }
