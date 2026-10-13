@@ -69,8 +69,11 @@ type OfficialDay={
  idsNamedByCommitteeAnchor:number[];
  idsNamedBySenateCard:number[];
  exactOfficialHearingId:number|null;
+ uniqueSenateAnchorHearingIdRequiringIndependentClerkBody:number|null;
  calendarMarkedCanceled:boolean;
- status:'exact_original_calendar_committee_day_hearing_id'|'ambiguous_or_no_exact_calendar_hearing_id';
+ status:'exact_original_calendar_committee_day_hearing_id'|
+  'unique_exact_senate_anchor_without_card_needs_independent_clerk_body'|
+  'ambiguous_or_no_exact_calendar_hearing_id';
 };
 const attr=(s:string,k:string)=>{
  const m=s.match(new RegExp('\\b'+k+'\\s*=\\s*([\\x27\\x22])([\\s\\S]*?)\\1','i'));
@@ -116,13 +119,24 @@ export function inspectOriginalGovernmentCombinedDay(
  const as=[...anchors.entries()].filter(([,v])=>v===target.committeeName).map(([id])=>id).sort();
  const cs=[...cards.entries()].filter(([,v])=>v.name===target.committeeName).map(([id])=>id).sort();
  const same=as.length===1&&cs.length===1&&as[0]===cs[0];
+ // Government calendars sometimes omit the rendered detail card while
+ // retaining one unique exact Senate committee/date hyperlink. That alone
+ // is NOT a confirmed hearing: a separately authenticated official Clerk
+ // original with matching printed date and committee must be obtained.
+ // Never accept multiple anchors, another committee's same-ID card, or
+ // a mismatched named target committee card.
+ const uniqueAnchorNoCard=as.length===1&&cs.length===0&&
+  !cards.has(as[0]!)?as[0]!:null;
  return {
   calendarOriginalHtmlSha256:sha(html),calendarOriginalHtmlBytes:size,
   committeeName:target.committeeName,hearingDate:target.hearingDate,
   idsNamedByCommitteeAnchor:as,idsNamedBySenateCard:cs,
   exactOfficialHearingId:same?as[0]!:null,
+  uniqueSenateAnchorHearingIdRequiringIndependentClerkBody:uniqueAnchorNoCard,
   calendarMarkedCanceled:same?(cards.get(as[0]!)?.canceled??false):false,
-  status:same?'exact_original_calendar_committee_day_hearing_id':'ambiguous_or_no_exact_calendar_hearing_id',
+  status:same?'exact_original_calendar_committee_day_hearing_id':
+   uniqueAnchorNoCard!==null?'unique_exact_senate_anchor_without_card_needs_independent_clerk_body':
+   'ambiguous_or_no_exact_calendar_hearing_id',
  };
 }
 type ChoiceStatus='never_inferred_no_explicit_named_vote_proof';
@@ -154,10 +168,14 @@ export function inspectOriginalHighGapSenateClerkHtml(
  html:string,target:HighGapTarget,id:number,calendar:OfficialDay,retrievedAt:string
 ){
  validateHighGapTarget(target);
- if(calendar.status!=='exact_original_calendar_committee_day_hearing_id'||
-  calendar.exactOfficialHearingId!==id||
-  calendar.hearingDate!==target.hearingDate||
-  calendar.committeeName!==target.committeeName)
+ const exactDayAndCommittee=calendar.hearingDate===target.hearingDate&&
+  calendar.committeeName===target.committeeName;
+ const doubleGovernmentCalendarProof=calendar.status==='exact_original_calendar_committee_day_hearing_id'&&
+  calendar.exactOfficialHearingId===id;
+ const uniqueCalendarAnchorOnly=calendar.status==='unique_exact_senate_anchor_without_card_needs_independent_clerk_body'&&
+  calendar.uniqueSenateAnchorHearingIdRequiringIndependentClerkBody===id&&
+  calendar.idsNamedBySenateCard.length===0&&calendar.idsNamedByCommitteeAnchor.length===1;
+ if(!exactDayAndCommittee||!(doubleGovernmentCalendarProof||uniqueCalendarAnchorOnly))
   throw Error('Original Senate Clerk hearing ID not independently established by exact official calendar');
  originalSenateClerkMinutesUrl(target,id);
  if(!Number.isFinite(Date.parse(retrievedAt)))throw Error('No 2026 government source retrieval-time evidence');
@@ -257,6 +275,9 @@ export function inspectOriginalHighGapSenateClerkHtml(
   originalLrlIndexedCommitteeId:target.officialIndexCommitteeId,
   year:target.year,hearingDate:target.hearingDate,committeeName:target.committeeName,
   exactCalendarOriginalSourceHtmlSha256:calendar.calendarOriginalHtmlSha256,
+  hearingIdentityProofTier:doubleGovernmentCalendarProof?
+   'official_calendar_exact_senate_anchor_and_matching_card_plus_original_clerk_body':
+   'official_calendar_single_named_senate_anchor_plus_independently_authenticated_original_clerk_body',
   exactCalendarMarkedCanceled:calendar.calendarMarkedCanceled,
   calendarCanceledAndSenateClerkMinutesBodyBothPresent:calendar.calendarMarkedCanceled,
   clerkOriginalSenateHearingId:id,clerkOriginalUrl:originalSenateClerkMinutesUrl(target,id),
