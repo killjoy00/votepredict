@@ -139,14 +139,18 @@ export function inspectOriginalGovernmentCombinedDay(
    'ambiguous_or_no_exact_calendar_hearing_id',
  };
 }
-type ChoiceStatus='never_inferred_no_explicit_named_vote_proof';
+type ChoiceStatus='never_inferred_no_explicit_named_vote_proof'|
+ 'explicitly_named_in_original_clerk_minutes_no_historical_day_roster_or_db_join';
 export type ClerkAction={
  sourceTextOffset:number;billReference:string|null;amendmentReference:string|null;
  observedMotionText:string;boundedOriginalMotionSha256:string;
  sourceResult:'prevailed'|'failed';
- evidenceClassification:'result_only'|'aggregate_count_only'|'voice_amendment';
+ evidenceClassification:'result_only'|'aggregate_count_only'|'voice_amendment'|'explicit_named_roll';
  explicitYeaCount:number|null;explicitNayCount:number|null;
  explicitAbsentCount:number|null;namedMemberChoiceStatus:ChoiceStatus;
+ originalExplicitNamedChoiceCount:number|null;
+ sourceExactNamedTallyAndUniqueNamesVerified:boolean;
+ originalMotionTextContainsNamedSidesButPublishedExcerptRedacted:boolean;
  isNotAnExhaustiveSourceMotionCensus:true;
 };
 const billHeading=/\bS\s*\.?\s*F\s*\.?\s*(\d{1,5})\s*:\s*Senator\b/giu;
@@ -156,6 +160,25 @@ const mover=/\bSenator\s+([\p{L}\p{M}.'-]+(?:\s+[\p{L}\p{M}.'-]+){0,6})\s+(?:mov
 const result=/(?:\bMOTION\s+(PREVAILED|FAILED|ADOPTED|DID\s+NOT\s+PREVAIL)\b|\bthe\s+motion\s+(prevailed|failed|was\s+adopted|did\s+not\s+prevail)\b)/giu;
 const localTally=/\b(?:roll\s+call\s+(?:vote\s+)?(?:of\s+)?)?(\d{1,2})\s*(?:yeas?|yays?|ayes?|yes)\s*,?\s*(?:and\s+)?(\d{1,2})\s*(?:nays?|no)\b/giu;
 const aggregateShort=/\bmotion\s+prevails?\s+on\s+a\s+(\d{1,2})\s*[-–]\s*(\d{1,2})\s+roll\s+call\b/giu;
+/** Parliamentary minute original explicit Ayes/Nays names, only inside an
+ * independently authenticated source passage, not a member_id resolver. */
+function verifyExplicitNamedOriginalRoll(passage:string){
+ const pattern=/\b(\d{1,2})\s*\/\s*(\d{1,2})\s*\(\s*Ayes?\s*:\s*([^;)]*?)\s*;\s*Nays?\s*:\s*([^)]*?)\s*\)/giu;
+ const found=[...passage.matchAll(pattern)];
+ if(found.length!==1)return null;
+ const m=found[0]!;
+ const parse=(s:string)=>s.trim()?s.split(/\s*,\s*/).map(n=>n.trim()):[];
+ const yes=parse(m[3]!),no=parse(m[4]!);
+ const printedYes=Number(m[1]),printedNo=Number(m[2]);
+ const all=[...yes,...no];
+ if(!checkedTally(printedYes,printedNo)||yes.length!==printedYes||no.length!==printedNo||
+   all.some(n=>!/^([\p{L}\p{M}][\p{L}\p{M}.' -]{0,85})$/u.test(n))||
+   new Set(all.map(n=>n.toLocaleLowerCase('en-US'))).size!==all.length)
+  throw Error('Explicit named Clerk roll has mismatched tally, invalid original name or duplicate identity');
+ return {yes:printedYes,no:printedNo,count:all.length,
+  redactedOriginalExcerpt:passage.replace(m[0],
+   printedYes+'/'+printedNo+' (original independently source-verified named AYE/NAY lists redacted from excerpt)')};
+}
 function nearestBillInSource(text:string,at:number,heads:{at:number;bill:string}[]){
  const head=heads.filter(x=>x.at<at).at(-1);
  return head&&at-head.at<=5200?head.bill:null;
@@ -227,17 +250,29 @@ export function inspectOriginalHighGapSenateClerkHtml(
       !/\bMOTION\s+(?:PREVAILED|FAILED)\b/i.test(lead.slice((summaries[0].index??0))))
     numeric={yea:Number(summaries[0][1]),nay:Number(summaries[0][2]),absent:null};
   }
+  const named=verifyExplicitNamedOriginalRoll(passage);
+  if(named&&numeric.yea!==null&&
+     (numeric.yea!==named.yes||numeric.nay!==named.no))
+   throw Error('Original named and aggregate parliamentary rolls have contradictory tallies');
+  if(named)numeric={yea:named.yes,nay:named.no,absent:null};
   const absent=passage.match(/\b(?:with\s+)?(\d{1,2})\s+members?\s+absent\b/i);
   if(numeric.yea!==null&&absent)numeric.absent=Number(absent[1]);
   seen.add(start);
   actions.push({
    sourceTextOffset:start,billReference:bill,amendmentReference:amend,
-   observedMotionText:passage.slice(0,510),boundedOriginalMotionSha256:sha(passage),
+   observedMotionText:(named?.redactedOriginalExcerpt??passage).slice(0,510),
+   boundedOriginalMotionSha256:sha(passage),
    sourceResult:failed?'failed':'prevailed',
-   evidenceClassification:numeric.yea!==null?'aggregate_count_only':'result_only',
+   evidenceClassification:named?'explicit_named_roll':
+    numeric.yea!==null?'aggregate_count_only':'result_only',
    explicitYeaCount:numeric.yea,explicitNayCount:numeric.nay,
    explicitAbsentCount:numeric.absent,
-   namedMemberChoiceStatus:'never_inferred_no_explicit_named_vote_proof',
+   namedMemberChoiceStatus:named?
+    'explicitly_named_in_original_clerk_minutes_no_historical_day_roster_or_db_join':
+    'never_inferred_no_explicit_named_vote_proof',
+   originalExplicitNamedChoiceCount:named?.count??null,
+   sourceExactNamedTallyAndUniqueNamesVerified:named!==null,
+   originalMotionTextContainsNamedSidesButPublishedExcerptRedacted:named!==null,
    isNotAnExhaustiveSourceMotionCensus:true,
   });
  }
@@ -259,6 +294,9 @@ export function inspectOriginalHighGapSenateClerkHtml(
    sourceResult:'prevailed',evidenceClassification:'voice_amendment',
    explicitYeaCount:null,explicitNayCount:null,explicitAbsentCount:null,
    namedMemberChoiceStatus:'never_inferred_no_explicit_named_vote_proof',
+   originalExplicitNamedChoiceCount:null,
+   sourceExactNamedTallyAndUniqueNamesVerified:false,
+   originalMotionTextContainsNamedSidesButPublishedExcerptRedacted:false,
    isNotAnExhaustiveSourceMotionCensus:true
   });
  }
@@ -266,9 +304,12 @@ export function inspectOriginalHighGapSenateClerkHtml(
  const classifications={
   resultOnly:actions.filter(a=>a.evidenceClassification==='result_only').length,
   countOnly:actions.filter(a=>a.evidenceClassification==='aggregate_count_only').length,
+  explicitNamedRolls:actions.filter(a=>a.evidenceClassification==='explicit_named_roll').length,
+  sourceExplicitNamedYeaNayEntries:actions.reduce((n,a)=>n+(a.originalExplicitNamedChoiceCount??0),0),
   voiceAmendment:actions.filter(a=>a.evidenceClassification==='voice_amendment').length
  };
- if(actions.length!==classifications.resultOnly+classifications.countOnly+classifications.voiceAmendment)
+ if(actions.length!==classifications.resultOnly+classifications.countOnly+classifications.voiceAmendment+
+   classifications.explicitNamedRolls)
   throw Error('Source action classification conservation failure');
  return {
   schemaVersion:HIGH_GAP_SCHEMA,
@@ -292,7 +333,9 @@ export function inspectOriginalHighGapSenateClerkHtml(
   sameDayEligibilityExcludedWithoutTimeProof:true,
   fullOfficialMotionUniverseCertified:false,
   originalLrlElectronicPdfAvailable:false,
-  allIndividualVoterSidesUnknownInThisParser:true,
+  allIndividualVoterSidesUnknownInThisParser:classifications.explicitNamedRolls===0,
+  originalNamedMemberListsCanBeProvenButNoHistoricallyMatchedMemberIds:true,
+  noDirectSourceToMemberVoteImport:true,
   noVoiceOrAttendanceInferredIndividualVotes:true,
   noSourceToPersistedVoteEventsOrMemberVotesPerformed:true,
   noProductionDatabaseModelOrSchedulerWrites:true,
