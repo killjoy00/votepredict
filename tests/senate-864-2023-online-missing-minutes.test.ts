@@ -114,3 +114,45 @@ test('source 14 targets must match frozen official 64 no-PDF year cases exactly,
  assert.throws(()=>validateOnline2023TargetsAgainstOfficialNoPdfCensus(
   SENATE_864_ONLINE_MISSING_MINUTE_TARGETS,changed),/does not uniquely match/);
 });
+
+test('source-exact April 17 Taxes separate A138 amendment and SF73 recommendation are COUNT ONLY 6-3 rolls, with one explicitly absent',()=>{
+ const april=SENATE_864_ONLINE_MISSING_MINUTE_TARGETS.find(t=>
+  t.day==='2023-04-17'&&t.committeeName==='Taxes')!;
+ const body=[
+  '<p>S.F. 73: Senator Fictional Port: Cannabis provisions modification.</p>',
+  '<p>Senator Fictional Klein moved the A128 Technical Amendment. The motion prevailed and the A128 Technical Amendment was adopted.</p>',
+  '<p>Senator Fictional Klein moved the A138 DE Amendment. Senator Fictional Rest requested a roll call. With a roll call vote of 6 yay, 3 nay, and with 1 member absent, the motion prevailed and the A138 DE Amendment was adopted.</p>',
+  '<p>Senator Fictional Klein moved that SF 73 be recommended to pass and referred to the Finance Committee and requested a roll call. From a roll call vote of 6 yay, 3 nay, and with 1 member absent, the motion prevailed.</p>',
+ ].join('');
+ const html=synthetic(body,'Taxes Committee','Monday, April 17, 2023');
+ const result=inspectOriginalSenateOnlineMinutes(html,april,'2026-10-13T03:15:00Z');
+ assert.equal(result.parsedActionCandidates,3);
+ assert.equal(result.parsedResultOnlyActionCandidates,1);
+ assert.equal(result.parsedCountOnlyRollCallCandidates,2);
+ const rolls=result.actions.filter(a=>a.classification==='count_only_roll_call');
+ assert.equal(rolls.length,2);
+ assert.deepEqual(rolls.map(a=>[a.billReference,a.amendmentReference,a.yeaCount,a.nayCount,a.absentCount]),
+  [['SF73','A138',6,3,1],['SF73',null,6,3,1]]);
+ assert.deepEqual(rolls.map(a=>a.outcome),['prevailed','prevailed']);
+ assert.ok(rolls.every(a=>a.individualVotesAvailable===false&&
+  a.namedMemberIdentitiesInferred===false&&a.persistedEventIdentity===null));
+ assert.notEqual(rolls[0]!.originalMotionTextSha256,rolls[1]!.originalMotionTextSha256);
+ assert.equal(result.actions[0]!.classification,'amendment_motion_result_only');
+ assert.equal(result.actions[0]!.yeaCount,null);
+ assert.equal(result.actions[0]!.nayCount,null);
+});
+test('mere roll-call phrase, opening attendance and unlinked numeric tallies cannot manufacture count-only choice sides',()=>{
+ const t={...target,minimumObservedMotions:1};
+ const body=[
+  '<p>Present: Senator Fictional Alpha, Senator Fictional Bravo.</p>',
+  '<p>The records mention a roll call vote of 4 yay, 2 nay in an earlier session.</p>',
+  '<p>S.F. 2128: Senator Fictional Alpha: Bill topic.</p>',
+  '<p>Senator Fictional Bravo moved the A-2 Amendment. The motion prevailed.</p>',
+ ].join('');
+ const x=inspectOriginalSenateOnlineMinutes(synthetic(body),t,'2026-10-13T03:15:00Z');
+ assert.equal(x.parsedActionCandidates,1);
+ assert.equal(x.parsedCountOnlyRollCallCandidates,0);
+ assert.equal(x.actions[0]?.yeaCount,null);
+ assert.equal(x.actions[0]?.absentCount,null);
+ assert.equal(x.sourceHasPossibleNamedRollCallOrTallyCue,true);
+});
