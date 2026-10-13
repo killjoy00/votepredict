@@ -88,8 +88,26 @@ function lastName(name){
  const atoms=normalizeWords(name).replace(/[^a-z-]+/g,' ').trim().split(/\s+/);
  return atoms.at(-1)?.replace(/[^a-z]/g,'')||'';
 }
-export function compare49IncumbentSources(m,d,sqlMemberships,sqlSourceEvidence){
+export function compare49IncumbentSources(m,d,sqlMemberships,sqlSourceEvidence,publisherRawReceipt){
  auditPublic2026IncumbentSourceManifest(m,d);
+ if(!publisherRawReceipt ||
+  publisherRawReceipt.schema!=='senate-864-2026-duckworth-four-successful-live-first-party-publisher-original-html-sha-fingerprints-v1'
+  ||publisherRawReceipt.sourcePages?.length!==4
+  ||publisherRawReceipt.completeRawHtmlSha256SourceBodies!==4)
+  throw Error('Independent exact whole publisher HTML fingerprints required before private parity');
+ const publicRawByUrl=new Map();
+ for(let i=0;i<4;i++){
+  const raw=publisherRawReceipt.sourcePages[i];
+  if(raw.id!==d.duckworth.newDated2026SourceLeads[i].id
+    ||raw.url!==d.duckworth.newDated2026SourceLeads[i].url
+    ||raw.originalHttpStatus!==200
+    ||raw.observedAtUtc.slice(0,10)!=='2026-10-13'
+    ||! /^[a-f0-9]{64}$/.test(raw.rawWholeHtmlSha256)
+    ||raw.rawWholeHtmlBytes<1000 ||!raw.namedDuckworthSpeakerCueVisible
+    ||raw.firstAuthoredOnDisplayedDateProven!==false)
+   throw Error('Pinned source-original SHA/date/speaker identity mismatch');
+  publicRawByUrl.set(raw.url,raw.rawWholeHtmlSha256);
+ }
  if(!Array.isArray(sqlMemberships)||sqlMemberships.length>210
   ||!Array.isArray(sqlSourceEvidence)||sqlSourceEvidence.length>1200)
   throw Error('Private in-memory source compare bound exceeded');
@@ -169,11 +187,12 @@ export function compare49IncumbentSources(m,d,sqlMemberships,sqlSourceEvidence){
   const individual=sourceRows.filter(x=>x.sourceEvidenceId&&memberIds.has(x.membershipId));
   const cue=normalizeWords(s.shortIssueCue);
   const literal=individual.some(x=>normalizeWords(x.excerpt).includes(cue));
+  const rawBodyParity=individual.some(x=>x.contentSha256===publicRawByUrl.get(s.url));
   return {sourceOrdinal:d.duckworth.newDated2026SourceLeads.indexOf(s)+1,
    urlInStoredDocuments:sourceRows.length>0,
    currentSenatorEvidenceLinked:individual.length>0,
    exactShortCueInStoredEvidence:literal,
-   originalRawPublisherBodyShaProvenSame:false,
+   originalRawPublisherBodyShaProvenSame:rawBodyParity,
    originalFirstPublicationTimeProven:false};
  });
  const summarize=(items,key)=>items.filter(x=>x[key]===true).length;
@@ -186,6 +205,7 @@ export function compare49IncumbentSources(m,d,sqlMemberships,sqlSourceEvidence){
   outputContainsPrivateSourceRows:false,outputContainsPrivateUrls:false,
   outputContainsPrivatePeopleNames:false,outputContainsPrivateHashes:false,
   currentSourceOriginalHtmlRawShaParityProven:false,
+  duckworthLiveOriginalRawShaComparedAgainstStoredSourceSha:true,
   currentSourceHumanAttributedStatementsReviewed:false,
   deployedProductionDbBindingProven:false,
   sourceUrlStatusByDistrict:statuses,
@@ -195,6 +215,7 @@ export function compare49IncumbentSources(m,d,sqlMemberships,sqlSourceEvidence){
    sourceUrlsObserved:summarize(duckworth,'urlInStoredDocuments'),
    senatorEvidenceLinked:summarize(duckworth,'currentSenatorEvidenceLinked'),
    literalShortCueObserved:summarize(duckworth,'exactShortCueInStoredEvidence'),
+   exactLiveWholePublisherHtmlShaMatches:summarize(duckworth,'originalRawPublisherBodyShaProvenSame'),
    historic2022WebsiteStillIndependent:true,
   },
  };
