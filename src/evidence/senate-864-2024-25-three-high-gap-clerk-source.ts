@@ -226,7 +226,7 @@ export function inspectOriginalHighGapSenateClerkHtml(
  // Explicit voice amendments can be useful source decisions, BUT never
  // senator-side votes. Require bounded unique amendment label and result;
  // reject overlaps with an already captured formal motion passage.
- const voice=/(?:\bSenator\s+)?[\p{L}\p{M}.'-]{2,25}\s+(?:moved|moves|offered|offers)\s+(?:the\s+)?(A-?\d{1,3})\b[\s\S]{0,90}?\bamendment\b[\s\S]{0,70}?\badopted\s+(?:by|via|on)\s+(?:a\s+)?voice\s+vote\b/giu;
+ const voice=/(?:\bSenator\s+)?[\p{L}\p{M}.'-]{2,25}\s+(?:moved|moves|offered|offers)\s+(?:the\s+)?(A-?\d{1,3})\b[\s\S]{0,90}?\bamendment\b[\s;:,.–-]{0,16}adopted\s+(?:by|via|on)\s+(?:a\s+)?voice\s+vote\b/giu;
  for(const m of text.matchAll(voice)){
   const at=m.index??0;
   if(at<d||actions.some(a=>at>=a.sourceTextOffset &&
