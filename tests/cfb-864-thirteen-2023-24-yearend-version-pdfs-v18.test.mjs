@@ -66,6 +66,9 @@ test('original government PDF first-page registration/district/coverage/Board re
   'f'.repeat(64));
  assert.equal(r.id,ref.registrationNumber+':23:pcc:YE:0:0');
  assert.equal(r.firstPageIdentityAndReportPeriodVerified,true);
+ assert.equal(r.sourceFirstPageIdentityDiagnostic.committeeRegistrationMatches,true);
+ assert.equal(r.sourceFirstPageIdentityDiagnostic.exactPrintedSenateDistrictMatches,true);
+ assert.equal(r.sourceFirstPageIdentityDiagnostic.parsedPeriodEndOn,'2023-12-31');
  assert.equal(r.sourceStatus,'authenticated_pdf_first_page_version_unclassified');
  assert.equal(r.originalIndependentCalendarDueOn,'2024-01-31');
  assert.equal(r.legalAndBoardReceivedEarliestPossiblePublicDate,'2024-02-01');
