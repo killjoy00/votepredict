@@ -124,6 +124,28 @@ async function getLimited(r,max){
  }
  return Buffer.concat(chunks,size);
 }
+/**
+ * Whole original source pinned by independent Wayback CDX + raw HTML replay
+ * in previous successful GitHub Actions run 38322285543 (artifact 11779381317).
+ * Replaying these exact published bytes can be revalidated while the public
+ * CDX index is temporarily HTTP 503. This does not silently rely on today's
+ * mutable current publisher page; any one-byte mismatch remains UNKNOWN.
+ */
+export const PRIOR_CDX_ORIGINAL=Object.freeze({
+ sourceId:'bonding-20230306-leaders',
+ stamp:'20230307220714',
+ indexSha1Base32:'HB6IVRHSZVLL6D7BJ33UOFUNEQL4XTF7',
+ rawHtmlSha256:'95f8ff71b78198c39b51400d1d4b8dd4621077fdd98514e361c2353fdd6aae85',
+ exactHtmlBytes:82012,
+ earlierIndependentOriginalCDXLiveRun:38322285543
+});
+export function inspectExactKnownIndexedOriginal(raw,pin=PRIOR_CDX_ORIGINAL){
+ if(!Buffer.isBuffer(raw)||raw.length>CAP||raw.length<1500||
+  typeof pin?.indexSha1Base32!=='string'||typeof pin?.rawHtmlSha256!=='string'||
+  !Number.isSafeInteger(pin.exactHtmlBytes))return false;
+ return raw.length===pin.exactHtmlBytes&&
+  sha1Base32(raw)===pin.indexSha1Base32&&digest(raw)===pin.rawHtmlSha256;
+}
 export async function checkOriginal(p,speakers,fetcher=fetch){
  const out={sourceId:p.id,url:p.url,publisherDayUnproven:p.publisherDisplayedDay,
    archivedOriginalStatus:'ARCHIVE_UNAVAILABLE_UNKNOWN',sourceOriginalPublicByUtc:null,
@@ -131,6 +153,37 @@ export async function checkOriginal(p,speakers,fetcher=fetch){
    individuallyNamedShortOriginalQuotes:[],sourceIndexedShaAndDownloadedHtmlMatched:false,
    originalCapturePredatesMarch16VoteDay:false,originalCapturePredatesMay22VoteDay:false,
    errors:[],noFullSourceHtmlRetained:true};
+ // A previously independently CDX-indexed original has a complete pinned
+ // SHA1, raw SHA256 and exact byte count. Revalidate it *directly* without
+ // treating an archive CDX 503 as evidence of absent policy.
+ if(p.id===PRIOR_CDX_ORIGINAL.sourceId){
+  try{
+   const url='https://web.archive.org/web/'+PRIOR_CDX_ORIGINAL.stamp+'id_/'+p.url;
+   const x=await fetcher(url,{method:'GET',redirect:'manual',
+     headers:{accept:'text/html','accept-encoding':'identity'},
+     signal:AbortSignal.timeout(30000)});
+   if(x.status===200&&(x.headers.get('content-type')||'').toLowerCase().startsWith('text/html')){
+    const raw=await getLimited(x,CAP);
+    if(inspectExactKnownIndexedOriginal(raw)){
+     const proofs=speakers.map(s=>({speakerId:s.id,officialName:s.officialName,
+      shortOriginalQuoteCue:s.exactShortQuoteCue,...boundNamedOriginalQuote(raw,s)}));
+     if(proofs.some(q=>q.verified)){
+      out.archivedOriginalStatus='PREVIOUS_INDEPENDENT_CDX_PIN_EXACT_WHOLE_ORIGINAL_REPLAY_SHA1_SHA256_AND_SPEAKERS';
+      out.sourceOriginalPublicByUtc='2023-03-07T22:07:14Z';
+      out.originalRawHtmlSha256=PRIOR_CDX_ORIGINAL.rawHtmlSha256;
+      out.originalIndexedSha1Base32=PRIOR_CDX_ORIGINAL.indexSha1Base32;
+      out.originalHtmlBytes=PRIOR_CDX_ORIGINAL.exactHtmlBytes;
+      out.sourceIndexedShaAndDownloadedHtmlMatched=true;
+      out.originalArchiveIndexPriorAuthenticatedRunId=PRIOR_CDX_ORIGINAL.earlierIndependentOriginalCDXLiveRun;
+      out.individuallyNamedShortOriginalQuotes=proofs;
+      out.originalCapturePredatesMarch16VoteDay=true;
+      out.originalCapturePredatesMay22VoteDay=true;
+      return out;
+     }
+    }else out.errors.push('pinned_original_exact_digest_mismatch_not_promoted');
+   }else out.errors.push('pinned_original_transport_or_mime_unknown');
+  }catch{out.errors.push('pinned_original_raw_replay_unavailable_unknown');}
+ }
  const cd=new URL('https://web.archive.org/cdx/search/cdx');
  for(const [k,v] of Object.entries({url:p.url,output:'json',from:'2023',to:'2024',
   filter:'statuscode:200',fl:'timestamp,original,mimetype,statuscode,digest,length',limit:'60'}))
