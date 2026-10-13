@@ -12,11 +12,13 @@
       "first": 6883,
       "last": 6891
     },
-    "rawPdfSha256": null,
-    "extractedTextSha256": null,
+    "rawPdfSha256": "9e8160e4c78ef70cc0635226201f12e656ac84a999af8e0a8f8dc3e6737791a3",
+    "extractedTextSha256": "d07e50d4bd185f4fdebcb5ac8f857a232c83c672a2d990572aeec1ae5998856d",
     "historicalPublicBy": null,
     "sourceTextReviewed": "official PDF page inspection",
-    "storedRowIdentityVerified": false
+    "storedRowIdentityVerified": false,
+    "originalPdfByteLength": 4472460,
+    "sourceProofRun": "https://github.com/killjoy00/votepredict/actions/runs/38355438815"
   },
   "versionReferences": [
     {
@@ -165,7 +167,7 @@
     }
   ],
   "explicitHolds": [
-    "No source PDF SHA was captured in this reviewed-page ledger before an independently fetched SHA proof.",
+    "PDF raw bytes and extracted-text digest independently verified on 2026-10-13 source-proof run #38355438815; exact historical first-public timestamp remains unknown.",
     "No protected persisted vote_event or member_vote mapping was inspected.",
     "Amendments lack separate A-number references; use page/sequence and text anchors, not invented amendment IDs.",
     "Final as-amended bill text hash and before-each-vote public-by minutes are unknown.",
