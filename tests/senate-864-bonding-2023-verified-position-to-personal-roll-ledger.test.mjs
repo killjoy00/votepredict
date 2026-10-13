@@ -37,15 +37,22 @@ test('May22 HF670 unidentified Housley Weber choices quarantined as UNKNOWN, nev
  for (const x of b.filter(x=>x.senatorChoice==='UNKNOWN'))assert.match(x.proof,/unproven_UNKNOWN/);
  assert.equal(d.summary.may22HF670NamedUnknown,2);
 });
-test('one historical original direct quote BEFORE both decisions, but no other quote was promoted from live publisher',()=>{
+test('three independently full-original-authenticated personally named policy quotes before both HF669 decisions',()=>{
  const q=d.sourceOriginalFullDocumentAndQuoteProof;
  assert.equal(q.speaker,'Mark T. Johnson');
  assert.match(q.wholeRawHtmlSha256,sha);
  assert.match(q.selectedBoundedNamedQuoteSha256,sha);
  assert.equal(q.originalIndexedSha1Base32.length,32);
  assert.ok(q.independentlyAuthenticatedOriginalArchivePublicByUtc<'2023-03-16');
- assert.equal(d.summary.namedIndividualOriginalQuoteVerifiedBeforeMarch16,1);
- assert.deepEqual(d.bySenator.map(x=>x.quoteSourceHistoricOriginalAuthenticated),[true,false,false,false]);
+ assert.equal(d.summary.namedIndividualOriginalQuoteVerifiedBeforeMarch16,3);
+ assert.equal(d.reverifiedThreeSpeakersRunId,38339711431);
+ assert.equal(d.reverifiedThreeSpeakersReceiptArtifactId,11785918533);
+ assert.equal(d.sourceOriginalThreeIndividuallyNamedQuoteProofs.length,3);
+ assert.deepEqual(d.sourceOriginalThreeIndividuallyNamedQuoteProofs.map(x=>x.officialSenatorName),['Mark T. Johnson','Karin Housley','Bill Weber']);
+ assert.ok(d.sourceOriginalThreeIndividuallyNamedQuoteProofs.every(x=>sha.test(x.boundedNormalizedQuoteSha256)));
+ assert.equal(new Set(d.sourceOriginalThreeIndividuallyNamedQuoteProofs.map(x=>x.boundedNormalizedQuoteSha256)).size,3);
+ assert.deepEqual(d.bySenator.map(x=>x.quoteSourceHistoricOriginalAuthenticated),[true,true,true,false]);
+ assert.deepEqual(d.bySenator.map(x=>x.originalQuoteArchivePublicByUtc),['2023-03-07T22:07:14Z','2023-03-07T22:07:14Z','2023-03-07T22:07:14Z',null]);
 });
 test('collective March27 caucus compromise NOT four individually pledged support positions',()=>{
  const c=d.crossBillPolicyContext[0];
