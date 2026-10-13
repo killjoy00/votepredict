@@ -1,0 +1,105 @@
+{
+  "schema": "senate-864-2023-hf669-original-floor-versions-asof-candidate-audit-v1",
+  "issue": 864,
+  "officialRevisorBillStatusUrl": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/",
+  "governmentRecordedSenateDecisions": [
+    {
+      "date": "2023-03-16",
+      "bill": "HF669",
+      "type": "Senate third reading failed after amendment",
+      "yes": 33,
+      "no": 32,
+      "sourceOriginalSenateJournalUrl": "https://www.senate.mn/journals/2023-2024/20230316037.pdf"
+    },
+    {
+      "date": "2023-05-22",
+      "bill": "HF669",
+      "type": "Senate third reading passed as amended",
+      "yes": 56,
+      "no": 11,
+      "sourceOriginalSenateJournalUrl": "https://www.senate.mn/journals/2023-2024/20230522077.pdf"
+    }
+  ],
+  "legislativeJournalSourceAuditProvenance": {
+    "workflowRunId": 38322618545,
+    "artifactId": 11779810918,
+    "originalJournalEntirePdfSHA256Known": true,
+    "actualVotingClockWithinDayUnknown": true
+  },
+  "versionSources": [
+    {
+      "id": "third_engrossment_march07",
+      "path": "3",
+      "printedTitle": "THIRD ENGROSSMENT",
+      "listedPostedDate": "2023-03-07",
+      "versionPageCurrentPostedAtLocal": null,
+      "listedBeforeMarch16Vote": true,
+      "documentVoteRelationship": "earlier_official_House_passed_version_before_March16_Senate_committee_and_floor_amendments",
+      "htmlUrl": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/3/",
+      "pdfUrl": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/3/pdf/"
+    },
+    {
+      "id": "first_unofficial_march14",
+      "path": "ue/1",
+      "printedTitle": "FIRST UNOFFICIAL ENGROSSMENT",
+      "listedPostedDate": "2023-03-14",
+      "versionPageCurrentPostedAtLocal": "2023-03-14 10:06 a.m.",
+      "listedBeforeMarch16Vote": true,
+      "documentVoteRelationship": "candidate_post_March14_Senate_committee_report_before_March16_floor",
+      "htmlUrl": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/ue/1/",
+      "pdfUrl": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/ue/1/pdf/"
+    },
+    {
+      "id": "second_unofficial_march16",
+      "path": "ue/2",
+      "printedTitle": "SECOND UNOFFICIAL ENGROSSMENT",
+      "listedPostedDate": "2023-03-16",
+      "versionPageCurrentPostedAtLocal": "2023-03-16 04:54 p.m.",
+      "listedBeforeMarch16Vote": false,
+      "documentVoteRelationship": "same_day_published_time_without_official_roll_clock_not_certified_pre_March16_passage",
+      "htmlUrl": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/ue/2/",
+      "pdfUrl": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/ue/2/pdf/"
+    },
+    {
+      "id": "third_unofficial_may22",
+      "path": "ue/3",
+      "printedTitle": "THIRD UNOFFICIAL ENGROSSMENT",
+      "listedPostedDate": "2023-05-22",
+      "versionPageCurrentPostedAtLocal": "2023-08-16 01:09 p.m.",
+      "listedBeforeMarch16Vote": false,
+      "documentVoteRelationship": "after_March16_vote_and_contemporaneous_May22_list_date_but_later_version_page_header_so_not_independently_proved_before_May22_roll",
+      "htmlUrl": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/ue/3/",
+      "pdfUrl": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/ue/3/pdf/"
+    },
+    {
+      "id": "fourth_engrossment_may23",
+      "path": "4",
+      "printedTitle": "FOURTH ENGROSSMENT",
+      "listedPostedDate": "2023-05-23",
+      "versionPageCurrentPostedAtLocal": "2024-03-18 08:09 a.m.",
+      "listedBeforeMarch16Vote": false,
+      "documentVoteRelationship": "after_May22_floor_decision; final enacted text candidate not predecision feature",
+      "htmlUrl": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/4/",
+      "pdfUrl": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/4/pdf/"
+    }
+  ],
+  "versionPublicByGate": "posted_in_current_Revisor_version_list_or_page_header_is_not_independently_archived_contemporaneous_public_by_UTC",
+  "originalVersionSignedFloorAmendmentExactIdentityProofPending": true,
+  "relatedButDistinctLegislativeDecisions": [
+    {
+      "bill": "HF670",
+      "scope": "separate_cash_capital_investment_bill",
+      "notLegallySameAsHF669": true,
+      "sourceUrl": "https://www.house.mn.gov/SessionDaily/Story/18028"
+    },
+    {
+      "bill": "HF3342",
+      "scope": "nursing_home_financial_support_negotiated_alongside_infrastructure_not_part_of_HF669_vote",
+      "notLegallySameAsHF669": true,
+      "sourceUrl": "https://www.house.mn.gov/sessiondaily/Story/18029"
+    }
+  ],
+  "sourceTextMayNotBeUsedForEarlierDecisionWithoutAsOfProof": true,
+  "noSenatorMotiveInferredFromBillVersionChanges": true,
+  "noDirectProductionWritesDeployServingBacktestFeatureApproval": true
+}
