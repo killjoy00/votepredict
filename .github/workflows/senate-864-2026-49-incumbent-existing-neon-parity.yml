@@ -4,6 +4,7 @@ on:
     paths:
       - src/evidence/senate-864-2026-incumbent-source-parity.mjs
       - scripts/audit-senate-864-2026-49-incumbent-existing-neon-parity.mjs
+      - data/evaluation/senate-864-2026-duckworth-four-live-publisher-original-sha-receipts-v1.json
       - scripts/verify-senate-864-2026-incumbent-sql-local.mjs
       - tests/senate-864-2026-49-incumbent-protected-source-parity.test.mjs
       - tests/senate-864-2026-49-incumbent-protected-source-parity-ci.test.ts
