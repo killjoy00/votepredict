@@ -43,6 +43,9 @@ export interface SenateSourceMotionLedger {
     date: string;
     journalPrintedPages: { first: number; last: number };
     rawPdfSha256: string | null;
+    extractedTextSha256?: string | null;
+    originalPdfByteLength?: number | null;
+    sourceProofRun?: string | null;
     historicalPublicBy: string | null;
     storedRowIdentityVerified: boolean;
   };
@@ -117,7 +120,10 @@ export function reconstructSenateSourceMotionSequence(
     || source.journalPrintedPages.first > source.journalPrintedPages.last
     || source.storedRowIdentityVerified
     || source.historicalPublicBy !== null
-    || (source.rawPdfSha256 !== null && !/^[a-f0-9]{64}$/i.test(source.rawPdfSha256))) {
+    || (source.rawPdfSha256 !== null && !/^[a-f0-9]{64}$/i.test(source.rawPdfSha256))
+    || (source.extractedTextSha256 != null && !/^[a-f0-9]{64}$/i.test(source.extractedTextSha256))
+    || (source.originalPdfByteLength != null && (!Number.isSafeInteger(source.originalPdfByteLength)
+      || source.originalPdfByteLength < 1000 || source.originalPdfByteLength > 45_000_000))) {
     throw new Error('Untrusted or mismatched official source identity, availability, or proof');
   }
   if (input.sourceActions.length === 0) throw new Error('No original motion actions to reconstruct');
