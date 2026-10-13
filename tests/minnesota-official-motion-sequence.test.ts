@@ -31,7 +31,9 @@ test('source-only HF100 original Journal reconstructs eight distinct actions, se
       ['re_refer_to_committee', '33-34'], ['final_passage_as_amended', '34-33'],
     ],
   );
-  assert.equal(input.source.rawPdfSha256, null); // Not fabricated from a page-view.
+  assert.equal(input.source.rawPdfSha256, '9e8160e4c78ef70cc0635226201f12e656ac84a999af8e0a8f8dc3e6737791a3');
+  assert.equal(input.source.extractedTextSha256, 'd07e50d4bd185f4fdebcb5ac8f857a232c83c672a2d990572aeec1ae5998856d');
+  assert.equal(input.source.originalPdfByteLength, 4472460);
   assert.equal(input.source.historicalPublicBy, null);
   assert.equal(input.source.storedRowIdentityVerified, false);
 });
@@ -106,6 +108,12 @@ test('original journal identity and ordered event anchors must not be inferred f
   const pretendDbReconciled = fixture();
   pretendDbReconciled.source.storedRowIdentityVerified = true;
   assert.throws(() => reconstructSenateSourceMotionSequence(pretendDbReconciled), /Untrusted/);
+  const invalidContentHash = fixture();
+  invalidContentHash.source.extractedTextSha256 = 'detached';
+  assert.throws(() => reconstructSenateSourceMotionSequence(invalidContentHash), /Untrusted/);
+  const emptyByteCount = fixture();
+  emptyByteCount.source.originalPdfByteLength = 0;
+  assert.throws(() => reconstructSenateSourceMotionSequence(emptyByteCount), /Untrusted/);
 });
 
 test('the original named policy changes stay distinct from passage and rejected amendments', () => {
