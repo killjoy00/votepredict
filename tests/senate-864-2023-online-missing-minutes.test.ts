@@ -219,7 +219,7 @@ test('independent 2023 64-meeting no-PDF -> 14 Clerk originals + 50 unverified c
  assert.equal(ledger.parserRecognizedCountOnlyRollCallCandidatesOnVerifiedAlternates,2);
  const sources=JSON.parse(readFileSync(
   'docs/evaluation/source-proof/senate-864-2023-14-senate-online-original-html-source-receipts.json','utf8'));
- const expected=new Map(sources.verifiedOriginals.map((x:any)=>[
+ const expected=new Map<string,any>(sources.verifiedOriginals.map((x:any):[string,any]=>[
   x.committeeName+'|'+x.hearingDate,x]));
  const seen=new Set<string>();
  for(const meeting of ledger.perOfficiallyIndexedMeeting){
