@@ -38,6 +38,21 @@ Permanent machine-readable, per-hearing **raw original HTML SHA-256, normalized-
 
 The 2023 LRL index still has **64 meetings with no linked electronic PDF**. Of those, **14 now have separately authenticated original Senate online written Minutes** from this bounded research; the other **50 have not been authenticated through this *new* source route**. This is not a claim that the other 50 have no Clerk minutes or that the original 14 have no LRL printed-volume counterpart. 2021 separate printed volumes, 2022 print/electronic differences, the 2024 missing-YEA identity and safe stored-row parity remain **UNKNOWN**. Exact historical original Senate online page first-public-by date stays **null**, not equated to current retrieval or the hearing date.
 
+### Independent per-committee denominator crosswalk for the unrecovered 50
+
+The [per-original-indexed-meeting 64-row crosswalk](./source-proof/senate-864-2023-64-no-lrl-pdf-to-senate-clerk-original-html-crosswalk.json) joins the frozen official 2023 LRL 64-no-PDF roster to exactly the 14 original Clerk-HTML source receipts, preserving **all 50 still unverified alternative-source meeting identities** by precise official committee/date. No source unverified means no meeting/vote:
+
+| Committee | LRL indexed, no linked PDF | Clerk HTML authenticated | Alternate HTML not yet authenticated |
+|---|---:|---:|---:|
+| Agriculture, Broadband and Rural Development | 22 | 5 | 17 |
+| Education Finance | 3 | 0 | 3 |
+| Environment, Climate, and Legacy | 1 | 0 | 1 |
+| Jobs and Economic Development | 1 | 0 | 1 |
+| Taxes | 37 | 9 | 28 |
+| **2023 official electronic no-PDF meetings** | **64** | **14** | **50** |
+
+The same crosswalk pins the 14 original SHA/doc IDs, 31 result-only and two count-only candidate counts, and explicit null values rather than invented missing-source actions for the 50 other meetings. The validation test rejects duplicated committee/date rows, unlinked wrong-year source pages or dropped official LRL denominators.
+
 ## Next bounded expansion if original-source authentication succeeds
 
 The proof pipeline can then expand its allowlist against the **remaining 50 indexed 2023 no-LRL-PDF committee meetings** (the 14 are 9 Taxes and 5 Agriculture; remaining groups include the other 28 Taxes, 17 Agriculture and five other committees). Because original 2023 official hearing-page IDs are not implied by LRL mtgid IDs, require independent match of original URL/hearing ID, exact committee and date before adding. Prioritize the high-action-density original caption windows on March 15/29 Agriculture and April 17 Taxes. Recorded hearing minutes are much stronger for distinct paper motions than a generic caption saying “all those in favor,” but **a result-only Clerk minutes paragraph is still not a named roll call**.
