@@ -102,7 +102,7 @@ test('source 14 targets must match frozen official 64 no-PDF year cases exactly,
   minutesPdfUrls:[],electronicMinutesStatus:'meeting_without_linked_minutes',
  }));
  for(let i=0;i<50;i++)rows.push({
-  year:2023,committeeName:'Other Committee',meetingDate:'2023-02-'+String(i%28+1).padStart(2,'0'),
+  year:2023,committeeName:'Other Committee '+i,meetingDate:'2023-02-'+String(i%28+1).padStart(2,'0'),
   minutesPdfUrls:[],electronicMinutesStatus:'meeting_without_linked_minutes',
  });
  const x=validateOnline2023TargetsAgainstOfficialNoPdfCensus(
