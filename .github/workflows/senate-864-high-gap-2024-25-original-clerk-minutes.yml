@@ -1,0 +1,56 @@
+name: '#864 53 high-gap Senate 2024/25 official originals (read-only)'
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-2024-25-three-high-gap-clerk-source.ts
+      - scripts/audit-senate-864-2024-25-three-high-gap-original-clerk-minutes.ts
+      - tests/senate-864-three-high-gap-2024-25-original-clerk-source.test.ts
+      - docs/evaluation/source-proof/senate-864-three-high-gap-2024-25-original-53-no-pdf-official-index.json
+      - docs/evaluation/source-proof/senate-864-three-high-gap-2024-25-original-source-receipts.json
+      - docs/evaluation/senate-864-three-high-gap-2024-25-independent-online-clerk-reconciliation.md
+      - .github/workflows/senate-864-high-gap-2024-25-original-clerk-minutes.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  independent-53-original-committee-minutes:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Exact 53 indexed meetings, original calendar and no inferred vote-choice regressions
+        run: node --import tsx --test tests/senate-864-three-high-gap-2024-25-original-clerk-source.test.ts
+      - name: Fetch SHA-pinned official original 1592 indexed meeting census
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11674762938'
+          repository: killjoy00/votepredict
+          run-id: 38065594898
+          github-token: ${{ github.token }}
+          path: artifacts
+          merge-multiple: true
+      - name: Recheck exact original 141 no-PDF census then re-fetch government calendars and Senate Clerk minutes
+        run: |
+          node --import tsx scripts/audit-senate-864-2024-25-three-high-gap-original-clerk-minutes.ts \
+            --source-index artifacts/senate-2021-25-official-meeting-census.json \
+            --selected-53 docs/evaluation/source-proof/senate-864-three-high-gap-2024-25-original-53-no-pdf-official-index.json \
+            --output artifacts/senate-864-2024-25-53-original-clerk-motions.json
+      - name: Upload all source proof and source gap HOLDS; no original HTML bodies
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-2024-25-53-high-gap-original-source-records
+          path: artifacts/senate-864-2024-25-53-original-clerk-motions.json
+          if-no-files-found: ignore
+          retention-days: 30
