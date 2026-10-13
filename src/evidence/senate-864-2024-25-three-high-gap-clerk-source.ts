@@ -229,7 +229,8 @@ export function inspectOriginalHighGapSenateClerkHtml(
  const voice=/(?:\bSenator\s+)?[\p{L}\p{M}.'-]{2,25}\s+(?:moved|moves|offered|offers)\s+(?:the\s+)?(A-?\d{1,3})\b[\s\S]{0,90}?\bamendment\b[\s\S]{0,70}?\badopted\s+(?:by|via|on)\s+(?:a\s+)?voice\s+vote\b/giu;
  for(const m of text.matchAll(voice)){
   const at=m.index??0;
-  if(at<d||actions.some(a=>Math.abs(a.sourceTextOffset-at)<75))continue;
+  if(at<d||actions.some(a=>at>=a.sourceTextOffset &&
+    at<a.sourceTextOffset+a.observedMotionText.length))continue;
   const p=m[0].replace(/\s+/g,' ').trim();
   const bill=nearestBillInSource(text,at,headings);
   if(!bill||p.length>300)continue;
