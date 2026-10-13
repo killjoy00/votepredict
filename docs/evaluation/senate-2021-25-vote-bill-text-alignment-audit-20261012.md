@@ -65,6 +65,28 @@ The accompanying source-only [original-Journal verifier](../../src/evidence/minn
 **Impact boundary:** Existing stored `source_documents` SHA-256 identities, `bill_versions` and House Research summary receipts have **not** been audited row-by-row. An incorrect hash in previous source acquisitions is a credible lineage hazard, **not independently proven corruption of every existing journal, roll, report or historical evidence row**. No production DB or historic ingestion was read or changed. Preserve all old revisions; any source-document repair requires separate authorized protected SELECT-only source-to-stored comparison and append-only lineage reconciliation. Neither original source SHA nor the observed source motion sequence independently proves historical before-vote public-by clocks or private stored-event parity.
 
 
+
+### Follow-up: official May 19 HF100 conference report, THREE roll calls, and midnight legislative-day clock
+
+The original [74th-day May 19 Senate Journal](https://www.senate.mn/journals/2023-2024/20230519074.pdf), printed pages **9817–10084** (report text pp9817–10083; three decisions pp10083–10084), and separate official [Senate May 19 legislative floor log](https://www.leg.mn.gov/archive/leg/floorlogs/senate/2023/20230519slog.pdf), PDF page 2, independently prove **three distinct named divisions**. These must not be collapsed because the latter two recorded identical 34–32 totals:
+
+| Sequence | Exact Senate legislative motion | Named roll | Floor-log local clock | Recorded result and YEA interpretation |
+| ---: | --- | --- | --- | --- |
+| 1 | Rasmusson motion to **reject** the conference report and return HF100 to conference committee | 32–34 | **11:13 p.m.** | Failed; a YEA supports *rejecting and reopening conference*, not the report |
+| 2 | Port motion to **adopt** the conference report, replacing legislative provisions | 34–32 | **12:45 a.m.** | Adopted; a YEA supports accepting the report as a whole |
+| 3 | Formal third-reading **repassage** of HF100 as amended by conference committee | 34–32 | **1:19 a.m.** | Passed; a YEA supports repassage *of the amended vehicle*, not every provision |
+
+The clerks' **legislative day is May 19** even though the latter two recorded motions are **after midnight** and naturally correspond to an **inferred May 20 local calendar date**. This is a real example where a simple `vote_events.occurred_on` DATE or Revisor status date loses motion sequence and clock granularity; the official floor-log clock is not itself proof of an absolute UTC timestamp nor of when legislative text first became publicly accessible. A 12:45 a.m. report-adoption tally should never be used as a stand-in for the distinct 1:19 a.m. repassage tally.
+
+**Two independent complete original government PDFs SHA-proven.** Dedicated [original dual-source run #38356387990](https://github.com/killjoy00/votepredict/actions/runs/38356387990) independently downloaded and checked:
+
+- Full **714-page** original Senate Journal: **10,452,382 bytes**, raw SHA-256 `58d5e75bfe0a2181957e69a2f9a70f8bdfc5d88414a8234cc89f438d3c730d25`, extracted text SHA-256 `4612929e0aa374d8c583f8c573ceb3a410df6a279cb5bc31b7a515e21104a385`.
+- Exact original Senate floor-log PDF: **96,361 bytes**, raw SHA-256 `c38ebfc43d8150742c44ee2541c596822a85757e3838de806bbdad8381e94c7e`, extracted text SHA-256 `b1e5654d8fe7a06b381fc1c3f7414e7017d658f40f6b1cca6ac741c32b3bfdf7`.
+- The Senate Journal's **complete conference committee replacement text** from "Delete everything after the enacting clause" up to the report's ending was independently delimited and source-hashed: **726,984 normalized characters**, original-document extracted-text SHA-256 **`d54bdb5cfd025ed02e8809c092a1fe9ed8e9d7b26386a9d2332aa047dce422ba`**. This authenticates the particular printed paper considered on the Senate floor, **not** yet which Revisor `/versions/ccr/0/` versus `/versions/ccr/A/` is fully identical to the 726,984-character extracted version.
+
+The metadata-only [conference report source ledger](../../data/evaluation/senate-hf100-2023-conference-three-rolls-v1.json), [pure source verifier](../../src/evidence/minnesota-hf100-conference-source-verifier.ts), and [live source/clock proof](../../scripts/audit-hf100-may19-original-conference.ts) preserve **three separate yes-vote meanings**, original clock chronology, raw/document/text hashes and exact unknown first-public-by, with synthetic adverse evidence tests. Historical *stored* DB event identity and individual member parity remain **unverified**; protect accepted records. No raw 714-page PDF, floor log, complete conference text or named roster has been committed here.
+
+
 ## Official example: HF5247 transportation omnibus (2024)
 
 [Existing independently source-verified research](./senate-media-2024-hf5247-actual-transport-policy-version-crosswalk-20261012.md) documents an important policy-provision change, not a generic “transportation vote” label.
@@ -87,7 +109,7 @@ The prior original-source research verified **three distinct Senator Hawj YEA ro
 | --- | --- | --- |
 | HF100 Revisor versions (one bill) | 17 listed, 4 structurally missed by old numeric-only discovery regex | No |
 | HF100 Apr 28 original Senate journal printed pages 6883–6891 | **8 distinct source actions: 5 amendment decisions (4 adopted, 1 rejected), 2 procedural decisions, 1 passage; 7 named divisions and 1 voice-only action** | No stored-row identity/parity or statewide coverage claim |
-| HF100 May 19 distinct substantive/procedural decisions | 2 decision families; third-reading line requires source-level deduplication | No |
+| HF100 May 19 legislative-day conference sequence | **3 separately named source rolls: 32–34 rejection, 34–32 report adoption, 34–32 final repassage** | Original government log crosses midnight; no verified DB stored-row parity or precise UTC clock |
 | Feb 14 2024 Education Minutes | 6 source amendment motions; 2 earlier parser candidates; 4 source-candidate gap | No |
 | Prior #864 electronic linked Senate Minutes corpus for 2022–25 | 1,452 original PDF links/source bodies independently reverified | **Not** official all-meeting or all-vote denominator |
 | Earlier vs v3 named parser candidates in above corpus | 104 versus 112 (**8** additional candidate observations) | **Not** new stored rows or complete official vote count |
