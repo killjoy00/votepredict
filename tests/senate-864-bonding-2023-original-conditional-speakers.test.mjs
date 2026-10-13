@@ -117,3 +117,38 @@ test('duplicate Housley direct quote across different releases deduplicates unde
  // Wesenberg's distinct source page; never silently add a fifth speech.
  assert.equal(x,null);
 });
+
+test('full named Housley reporting clause immediately BEFORE closed quoted source is an independently attributable written statement',()=>{
+ const p=Buffer.from('<p>Republican Bonding Lead Karin Housley (Stillwater) asked: “'+
+   housley.exactShortQuoteCue+'; this is important for Minnesota infrastructure.”</p>');
+ const q=boundNamedOriginalQuote(p,housley);
+ assert.equal(q.verified,true,q.reason);
+ assert.equal(q.reason,'direct_full_named_senator_reporting_clause_immediately_before_closed_original_quote');
+ assert.match(q.normalizedBoundedOriginalQuotedPassageSha256,/^[0-9a-f]{64}$/);
+});
+test('full named Bill Weber said before quoted source passes but non-senator comment does not',()=>{
+ const p=Buffer.from('<p>Republican Tax Lead Bill Weber (Luverne) said: “'+
+  weber.exactShortQuoteCue+'; tax relief has to come first.”</p>');
+ const x=boundNamedOriginalQuote(p,weber);
+ assert.equal(x.verified,true,x.reason);
+ assert.equal(x.completeHumanApprovedWholeSpeech,false);
+ const wrong=Buffer.from('<p>Bill Weber addressed reporters. “'+weber.exactShortQuoteCue+'.”</p>');
+ assert.equal(boundNamedOriginalQuote(wrong,weber).verified,false);
+});
+test('earlier nearby full name cannot acquire another named senator quote with an intervening attribution',()=>{
+ const invalid=[
+  '<p>Bill Weber said. Senator Karin Housley said: “'+weber.exactShortQuoteCue+'.”</p>',
+  '<p>Bill Weber said. Mark Johnson said: “'+weber.exactShortQuoteCue+'.”</p>',
+  '<p>Bill Weber said. “Unrelated first remark.” “'+weber.exactShortQuoteCue+'.”</p>',
+  '<p>Bill Weber reported on committee business for '+('several weeks and months '.repeat(12))+' then: “'+weber.exactShortQuoteCue+'.”</p>',
+  '<p>Bill Weber stated no specific position. However the reporter wrote: “'+weber.exactShortQuoteCue+'.”</p>'
+ ];
+ for(const t of invalid){
+  const p=boundNamedOriginalQuote(Buffer.from(t),weber);
+  assert.equal(p.verified,false,p.reason);
+ }
+});
+test('quote paired to wrong full name after end and different name before start must not certify either',()=>{
+ const p=Buffer.from('<p>Karin Housley asked: “'+weber.exactShortQuoteCue+'.” Bill Weber replied separately.</p>');
+ assert.equal(boundNamedOriginalQuote(p,weber).verified,false);
+});
