@@ -1,0 +1,141 @@
+{
+  "schema": "senate-864-2023-hf669-five-full-official-revisor-version-pdf-sha-and-lexical-results-v1",
+  "issue": 864,
+  "authenticatedRun": "https://github.com/killjoy00/votepredict/actions/runs/38339574532",
+  "sourceArtifactId": 11786261922,
+  "originalEntireFiveOfficialPdfSourcesIndependentlyDownloadedAndSHA256Verified": true,
+  "originalCompletePdfBodiesPersistedInRepo": false,
+  "originalPublisherDocumentFirstReleaseUtcKnown": false,
+  "originalVoteEventsFromOfficialSenateJournal": [
+    {
+      "day": "2023-03-16",
+      "bill": "HF669",
+      "event": "failed 33–32 third-reading vote after amendments",
+      "exactGovernmentFloorTimestampUnknown": true
+    },
+    {
+      "day": "2023-05-22",
+      "bill": "HF669",
+      "event": "passed 56–11 third-reading vote after amendments",
+      "exactGovernmentFloorTimestampUnknown": true
+    }
+  ],
+  "fullPdfOriginals": [
+    {
+      "id": "third_engrossment_march07",
+      "listedDisplayDate": "2023-03-07",
+      "officialFullPdfUrl": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/3/pdf/",
+      "pdfPages": 65,
+      "wholeRawOfficialPdfBytes": 1215932,
+      "wholeOfficialPdfRawSha256": "6564a683136ad9bff5d408b4669ebc06553ac2eeb909a0e753e49e30ef79ed6e",
+      "rawPdfAndTextNotPersisted": true,
+      "historicalOriginalWebPublicByAtFloorVoteUtcUnproven": true
+    },
+    {
+      "id": "first_unofficial_march14",
+      "listedDisplayDate": "2023-03-14",
+      "officialFullPdfUrl": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/ue/1/pdf/",
+      "pdfPages": 66,
+      "wholeRawOfficialPdfBytes": 1223901,
+      "wholeOfficialPdfRawSha256": "bf913609cd974f7fa77c738ba10ada3805e654eea56fead0e5b56e743eec36c9",
+      "rawPdfAndTextNotPersisted": true,
+      "historicalOriginalWebPublicByAtFloorVoteUtcUnproven": true
+    },
+    {
+      "id": "second_unofficial_march16",
+      "listedDisplayDate": "2023-03-16",
+      "officialFullPdfUrl": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/ue/2/pdf/",
+      "pdfPages": 66,
+      "wholeRawOfficialPdfBytes": 1228389,
+      "wholeOfficialPdfRawSha256": "fe8548ef0fb023e472dfcc4edf202b19ce3d343f5f432487cdecd5f0b1edce29",
+      "rawPdfAndTextNotPersisted": true,
+      "historicalOriginalWebPublicByAtFloorVoteUtcUnproven": true
+    },
+    {
+      "id": "third_unofficial_may22",
+      "listedDisplayDate": "2023-05-22",
+      "officialFullPdfUrl": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/ue/3/pdf/",
+      "pdfPages": 83,
+      "wholeRawOfficialPdfBytes": 1496653,
+      "wholeOfficialPdfRawSha256": "98356c54e8efb2a02b621106183349cd9fddce8b171be91db39939f9513064e6",
+      "rawPdfAndTextNotPersisted": true,
+      "historicalOriginalWebPublicByAtFloorVoteUtcUnproven": true
+    },
+    {
+      "id": "fourth_engrossment_may23",
+      "listedDisplayDate": "2023-05-23",
+      "officialFullPdfUrl": "https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/4/pdf/",
+      "pdfPages": 83,
+      "wholeRawOfficialPdfBytes": 1504808,
+      "wholeOfficialPdfRawSha256": "7a6d4880f0ed3ab053133561ecd6f48ed84c334b9b39f7f201a31b3eca437f00",
+      "rawPdfAndTextNotPersisted": true,
+      "historicalOriginalWebPublicByAtFloorVoteUtcUnproven": true
+    }
+  ],
+  "lexicalComparisons": [
+    {
+      "from": "third_engrossment_march07",
+      "to": "first_unofficial_march14",
+      "eightWordContiguousShingleJaccard": 0.357,
+      "metric": "unique_normalized_contiguous_eight_word_shingles",
+      "notALegalStatutoryLineByLineAmendmentDiff": true
+    },
+    {
+      "from": "first_unofficial_march14",
+      "to": "second_unofficial_march16",
+      "eightWordContiguousShingleJaccard": 0.8489,
+      "metric": "unique_normalized_contiguous_eight_word_shingles",
+      "notALegalStatutoryLineByLineAmendmentDiff": true
+    },
+    {
+      "from": "second_unofficial_march16",
+      "to": "third_unofficial_may22",
+      "eightWordContiguousShingleJaccard": 0.059,
+      "metric": "unique_normalized_contiguous_eight_word_shingles",
+      "notALegalStatutoryLineByLineAmendmentDiff": true
+    },
+    {
+      "from": "third_unofficial_may22",
+      "to": "fourth_engrossment_may23",
+      "eightWordContiguousShingleJaccard": 0.9393,
+      "metric": "unique_normalized_contiguous_eight_word_shingles",
+      "notALegalStatutoryLineByLineAmendmentDiff": true
+    },
+    {
+      "from": "first_unofficial_march14",
+      "to": "third_unofficial_may22",
+      "eightWordContiguousShingleJaccard": 0.0589,
+      "metric": "unique_normalized_contiguous_eight_word_shingles",
+      "notALegalStatutoryLineByLineAmendmentDiff": true
+    }
+  ],
+  "revisionAvailabilityConflicts": [
+    {
+      "version": "second_unofficial_march16",
+      "currentRevisorPageHeading": "March 16 2023, 04:54 PM local",
+      "officialVoteTimeUnproven": true
+    },
+    {
+      "version": "third_unofficial_may22",
+      "currentRevisorPageHeading": "August 16 2023, 01:09 PM local",
+      "currentVersionListDay": "May 22 2023",
+      "versionPageHeadingNotOriginalPublicByMinute": true
+    },
+    {
+      "version": "fourth_engrossment_may23",
+      "currentRevisorPageHeading": "March 18 2024, 08:09 AM local",
+      "currentVersionListDay": "May 23 2023",
+      "versionPageHeadingNotOriginalPublicByMinute": true
+    }
+  ],
+  "crossBillNegotiationScope": {
+    "HF669": "bond-financed capital investment",
+    "HF670": "separate cash-funded capital investment",
+    "HF3342": "separate 2023 nursing-home funding policy deal",
+    "neverAttributeFundingInHF3342ToTextOfHF669": true,
+    "originalEveryChangedSectionAndFloorAmendmentCrosswalkStillPending": true
+  },
+  "noSelfReportedIndividualSenatorVoteMotivationProven": true,
+  "zeroNewProductionModelHistoricalSourceAsOfFeaturesApproved": true,
+  "noDeploymentOrProductionChanges": true
+}
