@@ -97,7 +97,8 @@ test('rejects a same-day wrong committee or wrong hearing date and a short or st
   target,'2026-10-12T23:00:00Z'),/outside byte bounds/);
 });
 test('source 14 targets must match frozen official 64 no-PDF year cases exactly, not invented meetings',()=>{
- const rows=SENATE_864_ONLINE_MISSING_MINUTE_TARGETS.map(t=>({
+ const rows:Array<{year:number;committeeName:string;meetingDate:string;minutesPdfUrls:string[];electronicMinutesStatus:string}>=
+  SENATE_864_ONLINE_MISSING_MINUTE_TARGETS.map(t=>({
   year:2023,committeeName:t.committeeName,meetingDate:t.day,
   minutesPdfUrls:[],electronicMinutesStatus:'meeting_without_linked_minutes',
  }));
