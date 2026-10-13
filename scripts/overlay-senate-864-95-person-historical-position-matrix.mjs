@@ -134,10 +134,17 @@ export function auditOverlayMatrix(matrix,ledgers=readAll()){
     noVoteMotivationInferred:true
   };
   if(person.quoteSourceHistoricOriginalAuthenticated){
-   assert.equal(person.officialName,'Mark T. Johnson');
+   const proof=bonding.sourceOriginalThreeIndividuallyNamedQuoteProofs
+     .filter(q=>q.officialSenatorName===person.officialName);
+   assert.equal(proof.length,1,'Each promoted historic person must own unique independently SHA-pinned quote');
+   assert.match(proof[0].boundedNormalizedQuoteSha256,sha);
+   assert.equal(person.originalQuoteArchivePublicByUtc,'2023-03-07T22:07:14Z');
    tax.independentOriginalIndividualStatementEvidence.push({...entry,
     sourceSha256:bonding.sourceOriginalFullDocumentAndQuoteProof.wholeRawHtmlSha256,
-    quotedBoundedSha256:bonding.sourceOriginalFullDocumentAndQuoteProof.selectedBoundedNamedQuoteSha256});
+    quotedBoundedSha256:proof[0].boundedNormalizedQuoteSha256,
+    originalPublisherSourceSharedAcrossThreeNamedSenators:true,
+    originalWholeHtmlIndependentSHA1AndSHA256Verified:true,
+    sourceFullVerbatimOriginalSpeechHumanApproved:false});
   }else tax.originalPublisherUnsignedOrUnverifiedLeads.push(entry);
  }
  for(const orig of wiger.originals){
