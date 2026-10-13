@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {
- SCHEMA,CROSSWALK,PDF_LEDGER,readPinnedActualSenatorRoster,
+ SCHEMA,CROSSWALK,PDF_LEDGER,VERIFIED_REGISTRATION_NAME_FORMS,readPinnedActualSenatorRoster,
  readPinnedOriginal24ReportPdfs,joinOfficial2022DistrictLabelsToSenateService,
  acquireV15Source,
 } from '../scripts/audit-cfb-864-2022-first-12-original-pdfs-v15.mjs';
@@ -18,7 +18,7 @@ function ideal(){
   const displayName=parts.at(-1)+', '+parts[0]+' M.';
   return{
    district,segmentEndYear:2022,sourceUrl:'https://register.cfb.mn.gov/source',
-   status:'candidate_labels_observed',htmlSha256:'a'.repeat(64),
+   status:'candidate_labels_observed',htmlSha256:group.districtPageSha,
    candidates:[{registrationNumber:group.reg,candidateDisplayName:displayName},
     {registrationNumber:'99999',candidateDisplayName:'Never Served, Random'}]
   };
@@ -101,4 +101,44 @@ test('PR source workflow is public read-only and never scheduled or database con
  assert.match(y,/node --import tsx --test tests\/cfb-864-2022-first-12-original-pdfs-v15.test.mjs/);
  assert.match(y,/node --import tsx scripts\/audit-cfb-864-2022-first-12-original-pdfs-v15.mjs/);
  assert.doesNotMatch(y,/secrets\.|NEON|upload-artifact|issues: write|workflow_dispatch|schedule:|environment:/);
+});
+
+test('all three specifically independently corroborated official CFB name variations map uniquely to true senators',()=>{
+ const pages=ideal();
+ const overrides={
+  4:'Kupec, Rob',
+  8:'McEwen, Jen',
+  10:'Wesenberg, Nathanial L',
+ };
+ for(const [district,label] of Object.entries(overrides)){
+  const page=pages[Number(district)-1];
+  page.candidates[0].candidateDisplayName=label;
+ }
+ assert.equal(VERIFIED_REGISTRATION_NAME_FORMS.length,3);
+ const audited=joinOfficial2022DistrictLabelsToSenateService(pages);
+ assert.equal(audited.actualSenatorPrincipalRegistrationsSourceRejoined,12);
+ assert.equal(audited.actualSenatorExactSourceReportPdfVersions,24);
+ for(const district of [4,8,10]){
+  const row=audited.rows[district-1];
+  assert.equal(row.sourceStatus,
+   'original_CFB_exact_registration_label_independently_corrob_LRL_name_form_verified');
+  assert.match(row.sourceAliasProofUrl,/^https:\/\/(?:www\.lrl\.mn\.gov|cfb\.mn\.gov)\//);
+  assert.ok(row.observedMatchedOfficialSenator);
+  assert.equal(row.exactHistoricalActualPublicByDates[0],null);
+ }
+});
+test('generic shared surname, wrong nickname spelling or changed official historical district page SHA never certifies source report identity',()=>{
+ const pages=ideal();
+ pages[3].candidates[0].candidateDisplayName='Kupec, Fictional';
+ pages[7].candidates[0].candidateDisplayName='McEwen, Fictional';
+ pages[9].candidates[0].candidateDisplayName='Wesenberg, Fictional';
+ let r=joinOfficial2022DistrictLabelsToSenateService(pages);
+ assert.equal(r.actualSenatorPrincipalRegistrationsSourceRejoined,9);
+ assert.equal(r.rows[3].sourceAliasProofUrl,null);
+ assert.equal(r.rows[7].sourceAliasProofUrl,null);
+ assert.equal(r.rows[9].sourceAliasProofUrl,null);
+ pages[0].htmlSha256='f'.repeat(64);
+ r=joinOfficial2022DistrictLabelsToSenateService(pages);
+ assert.equal(r.actualSenatorPrincipalRegistrationsSourceRejoined,8);
+ assert.equal(r.rows[0].sourceStatus,'official_page_or_candidate_labels_unverified_hold');
 });
