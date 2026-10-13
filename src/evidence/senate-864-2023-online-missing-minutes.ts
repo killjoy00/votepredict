@@ -73,14 +73,14 @@ function sourceOriginalForTarget(html:string,t:Target){
 }
 export interface OriginalOnlineSourceAction{
  observationOrdinal:number;
- classification:'amendment_motion_result_only'|'recommend_pass_result_only'|'other_motion_result_only';
+ classification:'amendment_motion_result_only'|'recommend_pass_result_only'|'other_motion_result_only'|'count_only_roll_call';
  billReference:string|null;amendmentReference:string|null;
  outcome:'prevailed'|'failed';
  sourceMotionText:string;
  originalMotionTextSha256:string;
  originalMotionResultOffset:number;
  originalMotionNeighborhoodSha256:string;
- yeaCount:null;nayCount:null;
+ yeaCount:number|null;nayCount:number|null;absentCount:number|null;
  individualVotesAvailable:false;
  namedMemberIdentitiesInferred:false;
  isNotAnOfficialUniqueMotionDenominator:true;
@@ -125,14 +125,28 @@ export function inspectOriginalSenateOnlineMinutes(
    /\brecommended\s+to\s+pass\b|\brecommend(?:ation)?\s+to\s+pass\b/i.test(motion)
      ?'recommend_pass_result_only':'other_motion_result_only';
   const outcome=(res[1]??res[2])!.toLowerCase()==='failed'?'failed':'prevailed';
+  // Only explicit numeric tally tied to THIS motion may be count-only.
+  // An opening attendance list, printed absent count, result alone, or
+  // separate named-list section cannot yield individual choices.
+  const tallyMentions=[...motion.matchAll(
+   /\b(\d{1,2})\s*(?:yeas?|yays?|ayes?|yes)\s*,?\s*(?:and\s+)?(\d{1,2})\s*(?:nays?|no)\b/giu)];
+  const hasRollCall=/\broll\s+call\b/i.test(motion);
+  const hasNamedSideList=/\b(?:yes|no|ayes|nays|yeas|yays)\s*[:\-]\s*[A-Za-zÀ-ž]/i.test(motion);
+  const tally=tallyMentions.length===1&&hasRollCall&&!hasNamedSideList?
+   tallyMentions[0]:null;
+  const yay=tally?Number(tally[1]):null,nay=tally?Number(tally[2]):null;
+  const absent=tally?motion.match(/\b(?:with\s+)?(\d{1,2})\s+members?\s+absent\b/i):null;
+  if(yay!==null&&(yay+nay!>60||yay+nay!<1))
+   throw Error('Original Senate roll-call tally not plausible');
   actions.push({
-   observationOrdinal:actions.length,classification:cls,billReference:bill,
+   observationOrdinal:actions.length,classification:tally?'count_only_roll_call':cls,billReference:bill,
    amendmentReference:amend,outcome,sourceMotionText:motion.slice(0,410),
    originalMotionTextSha256:sha(motion),
    originalMotionResultOffset:resultAt,
    originalMotionNeighborhoodSha256:sha(text.slice(Math.max(0,motionAt-100),
     Math.min(text.length,resultAt+res[0].length+100))),
-   yeaCount:null,nayCount:null,individualVotesAvailable:false,
+   yeaCount:yay,nayCount:nay,absentCount:absent?Number(absent[1]):null,
+   individualVotesAvailable:false,
    namedMemberIdentitiesInferred:false,isNotAnOfficialUniqueMotionDenominator:true,
    persistedEventIdentity:null,
   });
@@ -153,7 +167,9 @@ export function inspectOriginalSenateOnlineMinutes(
   sourceIsNotOfficialLrlMinutesPdf:true,
   sourceHasPossibleNamedRollCallOrTallyCue:
    /\broll\s+call\b|\b(?:yeas?|nays?|ayes?)\s*[:\-]/i.test(text),
-  parsedResultOnlyActionCandidates:actions.length,
+  parsedActionCandidates:actions.length,
+  parsedCountOnlyRollCallCandidates:actions.filter(a=>a.classification==='count_only_roll_call').length,
+  parsedResultOnlyActionCandidates:actions.filter(a=>a.classification!=='count_only_roll_call').length,
   unrecognizedOfficialMotionCount:null,
   transcriptParsingNotExhaustive:true,
   noVoteOrNoMotionInferredFromEmptyParserOutput:true,
