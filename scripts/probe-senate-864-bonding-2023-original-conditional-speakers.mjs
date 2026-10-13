@@ -74,8 +74,27 @@ export function boundNamedOriginalQuote(rawOriginal,speaker) {
  const after=t.slice(closing+1,closing+330);
  const name=norm(speaker.onPublisherName);
  const k=after.indexOf(name);
- if(k<0||k>210||after.slice(0,k).includes('“')||after.slice(0,k).includes('"'))
-  return {verified:false,reason:'named_senator_missing_after_closed_quote'};
+ if(k<0||k>210||after.slice(0,k).includes('“')||after.slice(0,k).includes('"')){
+  // Observed first-party articles may use "Senator X said: [quotation]"
+  // instead of "[quotation], Senator X said". Do not promote from mere
+  // nearby names. Emit only safe booleans and lengths for a later audited
+  // specific preceding-clause speaker rule; NEVER the publisher prose.
+  const pre=t.slice(Math.max(0,opener-430),opener),needle=pre.lastIndexOf(name);
+  const contextual=needle>=0?pre.slice(needle):'';
+  const closestFullNameWithin180=needle>=0&&contextual.length<180;
+  const directSpeechVerbAfterFullName=closestFullNameWithin180&&
+    /\b(?:said|asked|stated|added|noted)\b/i.test(contextual);
+  const interveningQuotation=/[“”"]/.test(contextual);
+  const surname=name.split(' ').at(-1);
+  const postSurnameAttribution=after.toLowerCase().slice(0,120).includes(surname)&&
+    /\b(?:said|asked|stated|added|noted)\b/i.test(after.slice(0,120));
+  return {verified:false,reason:'named_senator_missing_after_closed_quote',
+    safeDiagnosticFullNameWithin180BeforeQuote:closestFullNameWithin180,
+    safeDiagnosticBeforeQuoteDirectSpeechVerb:directSpeechVerbAfterFullName,
+    safeDiagnosticInterveningQuoteAfterName:interveningQuotation,
+    safeDiagnosticPostQuoteSurnameSpeechVerb:postSurnameAttribution,
+    noPublisherTextExposedInDiagnostic:true};
+ }
  const left=after.slice(0,k),right=after.slice(k+name.length,k+name.length+100);
  const attribution=/\b(?:said|asked|stated|added|noted)\b/i.test(left)||/\b(?:said|asked|stated|added|noted)\b/i.test(right);
  if(!attribution)return {verified:false,reason:'no_attribution_verb_next_to_full_speaker'};
