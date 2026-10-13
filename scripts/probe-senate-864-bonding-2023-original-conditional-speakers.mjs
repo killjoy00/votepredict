@@ -74,32 +74,39 @@ export function boundNamedOriginalQuote(rawOriginal,speaker) {
  const after=t.slice(closing+1,closing+330);
  const name=norm(speaker.onPublisherName);
  const k=after.indexOf(name);
- if(k<0||k>210||after.slice(0,k).includes('“')||after.slice(0,k).includes('"')){
-  // Observed first-party articles may use "Senator X said: [quotation]"
-  // instead of "[quotation], Senator X said". Do not promote from mere
-  // nearby names. Emit only safe booleans and lengths for a later audited
-  // specific preceding-clause speaker rule; NEVER the publisher prose.
-  const pre=t.slice(Math.max(0,opener-430),opener),needle=pre.lastIndexOf(name);
-  const contextual=needle>=0?pre.slice(needle):'';
-  const closestFullNameWithin180=needle>=0&&contextual.length<180;
-  const directSpeechVerbAfterFullName=closestFullNameWithin180&&
-    /\b(?:said|asked|stated|added|noted)\b/i.test(contextual);
-  const interveningQuotation=/[“”"]/.test(contextual);
-  const surname=name.split(' ').at(-1);
-  const postSurnameAttribution=after.toLowerCase().slice(0,120).includes(surname)&&
-    /\b(?:said|asked|stated|added|noted)\b/i.test(after.slice(0,120));
-  return {verified:false,reason:'named_senator_missing_after_closed_quote',
-    safeDiagnosticFullNameWithin180BeforeQuote:closestFullNameWithin180,
-    safeDiagnosticBeforeQuoteDirectSpeechVerb:directSpeechVerbAfterFullName,
-    safeDiagnosticInterveningQuoteAfterName:interveningQuotation,
-    safeDiagnosticPostQuoteSurnameSpeechVerb:postSurnameAttribution,
-    noPublisherTextExposedInDiagnostic:true};
+ const afterValid=k>=0&&k<=210&&!/[“”"]/.test(after.slice(0,k))&&
+   /\b(?:said|asked|stated|added|noted)\b/i.test(
+     after.slice(0,k)+after.slice(k+name.length,k+name.length+100));
+ // A second, equally direct first-party format is "Senator X said: [quote]".
+ // Tie the FULL named person to the LAST short introductory reporting clause,
+ // not to a page heading, a distant paragraph, or another named senator.
+ const pre=t.slice(Math.max(0,opener-430),opener),idx=pre.lastIndexOf(name);
+ const context=idx<0?'':pre.slice(idx),following=idx<0?'':context.slice(name.length);
+ const verbs=[...following.matchAll(/\b(?:said|asked|stated|added|noted)\b/gi)];
+ const lastVerb=verbs.at(-1),afterVerb=lastVerb?following.slice(lastVerb.index+lastVerb[0].length):'';
+ const otherKnownNames=['mark johnson','karin housley','bill weber','nathan wesenberg']
+   .filter(other=>other!==name);
+ const competingPerson=otherKnownNames.some(other=>following.includes(other))||
+   /\b(?:senator|sen\.|representative|rep\.)\s+[a-z-]+\s+[a-z-]+/i.test(following);
+ const beforeValid=idx>=0&&context.length<=180&&verbs.length===1&&
+   afterVerb.length<=85&&!/[“”"]/.test(context)&&!competingPerson&&
+   // A trailing speech verb may introduce a brief explanatory question,
+   // but the target quote itself must immediately follow that clause.
+   !/\b(?:however|in contrast|meanwhile|another senator)\b/i.test(afterVerb);
+ if(!afterValid&&!beforeValid){
+  return {verified:false,reason:'no_direct_named_senator_reporting_clause_adjoining_closed_original_quote',
+   safeDiagnosticFullNameWithin180BeforeQuote:idx>=0&&context.length<=180,
+   safeDiagnosticBeforeQuoteDirectSpeechVerb:verbs.length>0,
+   safeDiagnosticInterveningQuoteAfterName:/[“”"]/.test(context),
+   safeDiagnosticCompetingFullNameOrSenatorFollowingName:competingPerson,
+   safeDiagnosticVerbWithin85BeforeOpeningQuote:!!lastVerb&&afterVerb.length<=85,
+   safeDiagnosticPostQuoteFullNameAttribution:afterValid,
+   noPublisherTextExposedInDiagnostic:true};
  }
- const left=after.slice(0,k),right=after.slice(k+name.length,k+name.length+100);
- const attribution=/\b(?:said|asked|stated|added|noted)\b/i.test(left)||/\b(?:said|asked|stated|added|noted)\b/i.test(right);
- if(!attribution)return {verified:false,reason:'no_attribution_verb_next_to_full_speaker'};
  const quoted=t.slice(opener+1,closing),quoteHash=digest(Buffer.from(quoted,'utf8'));
- return {verified:true,reason:'bounded_short_cue_in_closed_original_quote_with_direct_full_named_speaker',
+ return {verified:true,reason:afterValid?
+   'closed_original_quote_followed_by_direct_full_named_senator_attribution':
+   'direct_full_named_senator_reporting_clause_immediately_before_closed_original_quote',
   normalizedBoundedOriginalQuotedPassageSha256:quoteHash,
   normalizedBoundedOriginalQuotedPassageChars:quoted.length,
   sourceQuoteBeginsAtOriginalVisibleChar:opener,
