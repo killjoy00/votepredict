@@ -56,7 +56,9 @@ async function main(): Promise<void> {
   const journalTextSha256 = createHash('sha256').update(journal.text).digest('hex');
   if ((ledger.sourceJournal.pdfSha256 && ledger.sourceJournal.pdfSha256 !== journal.pdfSha256)
     || (ledger.sourceJournal.originalBytes && ledger.sourceJournal.originalBytes !== journal.byteLength)
+    || (ledger.sourceJournal.extractedTextSha256 && ledger.sourceJournal.extractedTextSha256 !== journalTextSha256)
     || (ledger.sourceFloorLog.pdfSha256 && ledger.sourceFloorLog.pdfSha256 !== log.pdfSha256)
+    || (ledger.sourceFloorLog.extractedTextSha256 && ledger.sourceFloorLog.extractedTextSha256 !== log.textSha256)
     || (ledger.sourceFloorLog.originalBytes && ledger.sourceFloorLog.originalBytes !== log.bytes)) {
     throw new Error('HOLD: source PDF body no longer matches independently pinned hash/bytes');
   }
