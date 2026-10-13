@@ -168,9 +168,10 @@ test('missing motion grammar, lack of clerk result and attendance never proves z
 });
 
 test('one source-specific Senate anchor without detail card is PROVISIONAL until separate authenticated Clerk original agrees on day/committee',()=>{
- const html=calendar(state,18636).replace(
+ const apr05={...state,hearingDate:'2024-04-05'};
+ const html=calendar(apr05,18636).replace(
   /<div class='card border-dark senate_item[\s\S]*?<\/div><\/div>/,'');
- const justAnchor=inspectOriginalGovernmentCombinedDay(html,state);
+ const justAnchor=inspectOriginalGovernmentCombinedDay(html,apr05);
  assert.equal(justAnchor.exactOfficialHearingId,null);
  assert.equal(justAnchor.uniqueSenateAnchorHearingIdRequiringIndependentClerkBody,18636);
  assert.equal(justAnchor.idsNamedBySenateCard.length,0);
@@ -180,15 +181,15 @@ test('one source-specific Senate anchor without detail card is PROVISIONAL until
   '<p>Senator Fictional Beta moved that S.F. 4738 be recommended to pass. - MOTION PREVAILED.</p>',
   'Friday, April 5, 2024');
  const actual=inspectOriginalHighGapSenateClerkHtml(source,
-  {...state,hearingDate:'2024-04-05'},18636,
-  {...justAnchor,hearingDate:'2024-04-05'},'2026-10-13T07:30:00Z');
+  apr05,18636,
+  justAnchor,'2026-10-13T07:30:00Z');
  assert.equal(actual.hearingIdentityProofTier,
   'official_calendar_single_named_senate_anchor_plus_independently_authenticated_original_clerk_body');
  assert.equal(actual.allIndividualVoterSidesUnknownInThisParser,true);
  assert.equal(actual.canonicalMotionCandidates,1);
  assert.throws(()=>inspectOriginalHighGapSenateClerkHtml(
-  source,{...state,hearingDate:'2024-04-05'},18637,
-  {...justAnchor,hearingDate:'2024-04-05'},'2026-10-13T07:30:00Z'),/not independently established/);
+  source,apr05,18637,
+  justAnchor,'2026-10-13T07:30:00Z'),/not independently established/);
  assert.throws(()=>inspectOriginalHighGapSenateClerkHtml(
   source,{...state,hearingDate:'2024-04-19'},18636,
   {...justAnchor,hearingDate:'2024-04-19'},'2026-10-13T07:30:00Z'),/printed committee, actual date/);
