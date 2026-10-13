@@ -385,7 +385,7 @@ export function compare49IncumbentSourcesV2(
   sourceUrlStatusByDistrict:undefined,
   groupedStatusCounts:byStatus,
   perPublicDistrict:rows,
-  v1HistoricalReference:{successfulReport:'https://github.com/killjoy00/votepredict/issues/864#issuecomment-6140101805',
+  v1HistoricalReference:{previousPublicIssueCommentId:6140101805,
    matchedUrlWithEvidence:25,noSelectedUrlSeen:23,identityHold:1,
    v2ComparisonIndependentSnapshotNotNecessarilyIdentical:true}
  };
