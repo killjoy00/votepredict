@@ -11,6 +11,7 @@ on:
       - tests/senate-864-2023-online-missing-minutes.test.ts
       - docs/evaluation/senate-864-2023-missing-pdf-alternate-senate-online-originals.md
       - docs/evaluation/source-proof/senate-864-2023-14-senate-online-original-html-source-receipts.json
+      - docs/evaluation/source-proof/senate-864-2023-64-no-lrl-pdf-to-senate-clerk-original-html-crosswalk.json
       - .github/workflows/senate-864-2023-online-missing-minute-originals.yml
 
 permissions:
