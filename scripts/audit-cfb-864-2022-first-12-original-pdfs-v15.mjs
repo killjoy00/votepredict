@@ -85,7 +85,7 @@ export function joinOfficial2022DistrictLabelsToSenateService(observations,
   const companion=targets.find(t=>t.district===district && t.period==='E');
   if(!companion||companion.reg!==target.reg)throw Error('Official C/E original parent registration drift');
   const page=pages.get(district);
-  let status='official_page_not_acquired_hold',person=null,possibleNameAliasOf=null;
+  let status='official_page_not_acquired_hold',person=null,possibleNameAliasOf=null,aliasCandidateCfbSourceLabel=null;
   if(page){
    if(page.status==='candidate_labels_observed'
      &&page.candidates?.length&&HEX.test(page.htmlSha256??'')){
@@ -110,7 +110,13 @@ export function joinOfficial2022DistrictLabelsToSenateService(observations,
        const eligible=[...roster.values()].filter(r=>
         (r.districts.has('2022:'+district)||r.districts.has('2023:'+district))
         &&identityKey(r.name)?.split('|').at(-1)===surname);
-       if(eligible.length===1)possibleNameAliasOf=eligible[0].name;
+       if(eligible.length===1){
+        possibleNameAliasOf=eligible[0].name;
+        // The SOURCE CFB public principal name is retained ONLY where
+        // unique independently serving-senator surname and district agree;
+        // this is a manual nickname review LEAD, never an inferred alias.
+        aliasCandidateCfbSourceLabel=originalLabel;
+       }
       }
       status='registration_label_not_uniquely_proven_serving_senator_hold';
      }
@@ -120,6 +126,7 @@ export function joinOfficial2022DistrictLabelsToSenateService(observations,
   const entry={
    district,registration:target.reg,observedMatchedOfficialSenator:person,
    independentlyUnverifiedNicknameIdentityLead:possibleNameAliasOf,
+   sourceCandidateLabelNeedsOfficialNicknameReview:aliasCandidateCfbSourceLabel,
    sourceStatus:status,
    originalDistrict2022SourcePageSha256:page?.htmlSha256??null,
    originalDistrictSourcePageStatus:page?.status??'not_acquired',
