@@ -22,7 +22,7 @@ The independent whole-PDF audit with *bill-nearest roll anchor, exact chamber ta
 
 This is **three NAY→YEA changes on two DIFFERENT floor-amended HF669 decision events**, one NAY→NAY, and **no invented explanation**. The HF670 roll is a different bill; an unidentified person cannot be assigned yea or nay based on its 35–14 tally.
 
-Independent [live government original-PDF audit #38322618545](https://github.com/killjoy00/votepredict/actions/runs/38322618545), artifact `11779810918`; **10 synthetic source/roll/proxy/adjacent-motion tests passed**. Full raw PDFs and extracted page text are intentionally NOT committed.
+Independent member-by-member [original government Journal verification #38339273105](https://github.com/killjoy00/votepredict/actions/runs/38339273105), artifact `11785772897`; **13 synthetic source/roll/proxy/adjacent-motion tests passed**. Exactly **3** separate bill-specific roll events, **10** recorded sampled-senator choices proved, and **2** still `UNKNOWN` (Housley and Weber on HF670). Full raw PDFs and extracted page text are intentionally NOT committed.
 
 ## 2. March 6 personally attributable written condition **before** March 16 decision
 
@@ -30,7 +30,7 @@ The March 6 original Senate GOP publisher release [“tax cuts for bonding”](h
 
 **Mark T. Johnson**'s precise publisher-bounded individually named original written quote states that a bonding bill was conditioned on obtaining tax cuts. The selected originally attributed whole printed quote SHA256 is `138109280dfcb7c4e22958456a545eca725b1221092a10fa2c15da8e35ed9bbf`.
 
-The same article *currently* also contains statements individually credited to **Karin Housley** and **Bill Weber**, but the deliberately strict archived original post-quotation speaker gate has **not independently validated their full quote boundaries**; do not count their current source as historical pre-vote statement. The [March 7 Nathan Wesenberg statement](https://www.mnsenaterepublicans.com/wesenberg-senate-gop-offers-win-win-tax-cuts-for-bonding/) similarly has not passed entire indexed original authentication. The differently published Housley repetition is not another underlying policy event. Original archived source validation run [#38322285543](https://github.com/killjoy00/votepredict/actions/runs/38322285543), 12 synthetic tests passed, source artifact `11779381317`.
+**New independently authenticated full-original speaker audit**: The same original March 6 publisher release, independently indexed and full-SHA pinned by March 7, contains **THREE distinct directly attributed original short written quotations**, from **Mark T. Johnson** (`138109280dfcb7c4e22958456a545eca725b1221092a10fa2c15da8e35ed9bbf`), **Karin Housley** (`884f86819a5b4e7b6073734bc8f12cb2a4a658e859b30ad7493d105fb09f1db9`) and **Bill Weber** (`ff59c05215c28b14423949a8f02da55b3639c19f99bd2b9c6995c5fa837ddc0b`), here shown as their individually bounded normalized quoted passage SHA256 values. Housley/Weber original printing places their **full names with speech attribution immediately before the closed quotation**, while Johnson's source quote puts the full name after. All three pass exact prior independently indexed CDX SHA1, complete original raw HTML SHA256 and full speaker clause checks. Original proof replay [#38339711431](https://github.com/killjoy00/votepredict/actions/runs/38339711431), artifact `11785918533` (**17 bounded attribution and original-digest tests passed**). All **three named statements were publicly archived by 2023-03-07T22:07:14Z, prior to March 16**, in **one** publisher document, not three separate releases. [Nathan Wesenberg's March 7 separate release](https://www.mnsenaterepublicans.com/wesenberg-senate-gop-offers-win-win-tax-cuts-for-bonding/) remains archive **UNKNOWN** after provider CDX 503; current story ≠ historic original. Housley's separate reprint of the same quote remains a **duplicate**, not another underlying statement. Neither the authentic quote nor its timing independently certifies the senator's actual motivational reasoning behind a ballot.
 
 ### Do not claim a solved causal mechanism
 
@@ -58,7 +58,7 @@ Machine-readable Wiger full original SHA/source attribution: `data/evaluation/se
 
 ## 5. Recomputed all-senator audit
 
-Independent actual-served person original 95 report is SHA-pinned to the government 2021–25 directory `bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51`. The read-only new `scripts/overlay-senate-864-95-person-historical-position-matrix.mjs` reconciles previous direct-speaker claim ledger, current authenticated original audit and new source-to-original-government-vote joins without conflation. [Successful workflow #38323588015](https://github.com/killjoy00/votepredict/actions/runs/38323588015), artifact `11779717749`:
+Independent actual-served person original 95 report is SHA-pinned to the government 2021–25 directory `bdc2bb41872e193149068f1f294fc172e2916a997320056c5c5dab9368410f51`. The read-only new `scripts/overlay-senate-864-95-person-historical-position-matrix.mjs` reconciles previous direct-speaker claim ledger, current authenticated original audit and new source-to-original-government-vote joins without conflation. [Successful updated full-matrix workflow #38339999521](https://github.com/killjoy00/votepredict/actions/runs/38339999521), artifact `11785988972`:
 
 | Bounded source-audited matrix metric | Result |
 | --- | ---: |
@@ -66,19 +66,39 @@ Independent actual-served person original 95 report is SHA-pinned to the governm
 | People with ANY separately authenticated historic candidate-owned site snippet | **92** |
 | Selected historic candidate-owned site snippets | **1,285** |
 | Person/actual-service-year × policy issue cells | **5,085** |
-| Cells with ANY independently authentic individually attributed original historic written statement | **18** |
+| Cells with ANY independently authentic individually attributed original historic written statement | **20** |
 | Cells with ANY direct independently checked original Senate named-person ballot | **9** |
-| Cells having only currently retrieved/archival-UNVERIFIED source lead | **7** |
+| Cells having only currently retrieved/archival-UNVERIFIED source lead | **5** |
 | Cells with unresolved jointly signed 2021 Line 3 source | **2** |
 
 These last four metrics describe **this SELECTED proof corpus**, not all historical statements, hearings, bill decisions, or social-media positions in Minnesota. Multiple votes in the SAME senator/year/issue cell correctly add events, not extra coverage cells. The vast majority of cells were not systematically searched and are NEVER labeled "had no position". Five genuine original **2020** publisher research passages remain earlier-cycle context and are not relabeled 2021 evidence.
 
 ## Priorities and failed-source route documentation
 
-1. **Legislative chronology / causal uncertainty**: HF669 March 16 version and May 22 amended version, tax/social-security and nursing-home compromise timeline, original Mark Johnson later May statements, individual source-bound speaker proof for Housley/Weber/Wesenberg; never infer motivations from votes.
+1. **Legislative chronology / causal uncertainty**: HF669 March 16 version and May 22 amended version, tax/social-security and nursing-home compromise timeline, original Mark Johnson later May statements, individual historic original source proof for Wesenberg, and independent individual explanations of the March-to-May choice changes; never infer motivations from votes.
 2. **Wiger**: 2021 E12 and 2022 exact statement quote boundaries and associated later bill versions, separate from already authenticated original page provenance; no value in repeating guessed 2020 election candidate-domain archives.
 3. **Bakk/Tomassoni**: named joint Line3 current first-party + House reprint original historical bytes unavailable (record two failure classes); search alternative original primary Senate hearings or contemporaneous audio, not a fake joint solo quote.
 4. **Other serving persons**: targeted senator/year/issue from 95-person matrix emphasizing legislative decisions and ordinary measures; current-only Rasmusson tax response, Weber PRO Act, Dziedzic housing and Pha 2025 HOA remain UNKNOWN raw historic original.
 5. **Source-as-of and production**: archived original-by UTC ≠ original first-authored or database ingestion timestamp. No restricted read-only private source-to-evidence export attempted. All source-to-backtest feature eligibility remains UNKNOWN/false in this increment.
 
 No contact, public records request, email, interview, source-original paywall evasion, production data modification, deployment, model training, forecasting, ingestion or scheduler changes. Parent **#864 remains open**.
+
+## 6. Independently authenticated five HF669 official ORIGINAL text versions: a source-availability HOLD, not a vote-text identification
+
+**Additional exact official original-PDF replay [#38339574532](https://github.com/killjoy00/votepredict/actions/runs/38339574532)**, source artifact `11786261922`. All five current official Revisor PDF files downloaded, independently whole-byte SHA256'd and text-parsed; every original PDF verified to carry its own **specific HF669 engrossment identifier**, without accidentally matching `H0669-3` inside `UEH0669-3`. Files and complete extracted text were ephemeral; only metadata and method-limited lexical summaries were saved. Permanent machine-readable record: `data/evaluation/senate-864-2023-hf669-five-authenticated-original-pdf-sha-lexical-differences-v1.json`.
+
+| Official HF669 source document | PDF pages | Whole current official original PDF raw SHA256 |
+| --- | ---: | --- |
+| [Mar 7 third engrossment](https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/3/pdf/) | 65 | `6564a683136ad9bff5d408b4669ebc06553ac2eeb909a0e753e49e30ef79ed6e` |
+| [Mar 14 first unofficial](https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/ue/1/pdf/) | 66 | `bf913609cd974f7fa77c738ba10ada3805e654eea56fead0e5b56e743eec36c9` |
+| [Mar 16 second unofficial](https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/ue/2/pdf/) | 66 | `fe8548ef0fb023e472dfcc4edf202b19ce3d343f5f432487cdecd5f0b1edce29` |
+| [May 22 third unofficial](https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/ue/3/pdf/) | 83 | `98356c54e8efb2a02b621106183349cd9fddce8b171be91db39939f9513064e6` |
+| [May 23 fourth engrossment](https://www.revisor.mn.gov/bills/93/2023/0/HF/669/versions/4/pdf/) | 83 | `7a6d4880f0ed3ab053133561ecd6f48ed84c334b9b39f7f201a31b3eca437f00` |
+
+Text-derived contiguous eight-word shingle Jaccard overlap: **Mar 7 vs Mar 14: .3570; Mar 14 vs Mar 16: .8489; Mar 16 vs May 22: .0590; May 22 vs May 23: .9393**. This establishes strongly different normalized *document sequences*, **not** a provision-level policy equivalence, legal amendment history, individual legislative intent, fiscal dollar reconciliation, or actual exact enacted amendment. Any automated historical backtest equivalence across the two votes remains **HOLD**. Revisor's *current* version list dates and version-page headings disagree: a May 22-version HTML header says **August 16, 2023** and the May 23-version header says **March 18, 2024**, so current official documents do not establish their exact 2023 first public-by UTC or an earlier historical VotePredict ingestion.
+
+**HF670 is its own cash investment bill**, not a second HF669 PDF. **HF3342 is a separate nursing-home support measure** in the negotiated compromise, not the legal text of either HF669 passage vote. A [March 27 legislative-caucus package](https://www.lrl.mn.gov/vf/item?record=266236) is **organizational** negotiating context, not a four-senator personal roll-call or motive. No Senate floor member-ballot imputation from package text or current-version publisher chronology.
+
+## Updated auditable totals
+
+In the *selected original-source* 95-person/2021–25 issue matrix: **20** person/year/issue cells have individually attributable original historic statements, **9** have exact named official individual vote evidence, **5** have only current/unverified publisher source leads, **2** have unverified 2021 Line 3 joint-statement leads. Candidate-site original evidence remains 92 / 95 people and 1,285 selected excerpts. None of these numbers means all 5,085 cells were exhaustively searched. All historical source-to-forecast-as-of claims remain **unapproved**.
