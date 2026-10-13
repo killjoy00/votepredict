@@ -36,6 +36,10 @@ const sha=(s)=>createHash('sha256').update(s).digest('hex');
 export function select69ServedOriginals({
  targetPsv,viewerPsv,viewerCheckpoint,v12Psv
 }){
+ const raw=Buffer.from(targetPsv,'utf8');
+ const gitBlobSha=createHash('sha1').update('blob '+raw.byteLength+'\0').update(raw).digest('hex');
+ if(gitBlobSha!=='779e581b74299533439939f6552672bb8b2f0c6d')
+  throw Error('Original serving-senator source-target manifest git blob SHA mismatch');
  const checkpoint=JSON.parse(viewerCheckpoint);
  if(checkpoint.schemaVersion!=='cfb-2021to24-275-senate-registrations-396-official-viewer-source-count-checkpoint-v1'
   ||sha(viewerPsv.trimEnd())!==checkpoint.provenance.metadataOnly396SourceRowsCanonicalPsvSha256WithoutTrailingNewline)
