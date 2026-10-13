@@ -232,3 +232,30 @@ test('workflow source does not authorize arbitrary private SQL export or backgro
  assert.ok(report);
  assert.doesNotMatch(report,/secrets.NEON_API_KEY|environment: evidence-readonly-sandbox/);
 });
+
+
+test('four 2026 Duckworth publisher first-party original HTML SHA receipts were actually fetched on October 13',()=>{
+ const receipt=JSON.parse(readFileSync('data/evaluation/senate-864-2026-duckworth-four-live-publisher-original-sha-receipts-v1.json','utf8'));
+ assert.equal(receipt.expectedDistinctSourceBodies,4);
+ assert.equal(receipt.successfulHttpHtmlFetches,4);
+ assert.equal(receipt.completeRawHtmlSha256SourceBodies,4);
+ assert.equal(receipt.publicSourceAcquisitionRun,'https://github.com/killjoy00/votepredict/actions/runs/38358491766');
+ assert.deepEqual(receipt.sourcePages.map(s=>s.id),d.duckworth.newDated2026SourceLeads.map(s=>s.id));
+ assert.deepEqual(receipt.sourcePages.map(s=>s.displayedDate),
+  ['2026-01-25','2026-01-26','2026-03-17','2026-05-16']);
+ assert.equal(new Set(receipt.sourcePages.map(s=>s.rawWholeHtmlSha256)).size,4);
+ for(const [i,r]of receipt.sourcePages.entries()){
+  assert.equal(r.url,d.duckworth.newDated2026SourceLeads[i].url);
+  assert.match(r.rawWholeHtmlSha256,/^[a-f0-9]{64}$/);
+  assert.ok(r.rawWholeHtmlBytes>=40000 && r.rawWholeHtmlBytes<=200000);
+  assert.equal(r.originalHttpStatus,200);
+  assert.equal(r.visibleDisplayedDate,true);
+  assert.equal(r.namedDuckworthSpeakerCueVisible,true);
+  assert.equal(r.duckworthWithinSelectedClaimContext,true);
+  assert.equal(r.separatelyArchivedHistoricallyIn2026,false);
+  assert.equal(r.firstAuthoredOnDisplayedDateProven,false);
+  assert.equal(r.exactVotePredictStoredOriginalRawShaParityProven,false);
+ }
+ assert.equal(receipt.boundaries.productionWritesZero,true);
+ assert.equal(receipt.boundaries.privateDatabaseAccessZero,true);
+});
