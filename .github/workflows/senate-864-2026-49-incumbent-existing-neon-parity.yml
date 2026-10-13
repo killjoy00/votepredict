@@ -73,6 +73,31 @@ jobs:
       - run: npm run db:migrate
       - name: Only EXPLAIN the two fixed SELECTs on migrated localhost, no Neon keys
         run: node --import tsx scripts/verify-senate-864-2026-incumbent-sql-local.mjs
+  pr-duckworth-public-originals:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Four exact 2026 public publisher URLs, raw HTML SHA + named speaker cue, no copyrighted text saved
+        run: |
+          mkdir -p public-proof
+          node scripts/probe-senate-864-2026-duckworth-dated-original-public-statements.mjs --out-dir public-proof
+          cat public-proof/senate-864-2026-duckworth-original-html-speaker-source-receipts.json
+      - name: Remove temporary public-source receipts
+        if: always()
+        run: rm -rf public-proof
   public-ci-verify:
     if: >-
       github.event_name == 'issue_comment' &&
