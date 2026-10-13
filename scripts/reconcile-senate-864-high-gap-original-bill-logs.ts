@@ -191,8 +191,16 @@ async function main(){
     originalOfficialPdfBytes:downloaded.bytes,originalOfficialPdfPages:extracted.pages,
     originalPdfFetchedAt:downloaded.fetchedAt});
   }catch(e){
-   holds.push({year:source.year,committeeName:source.committeeName,
-    category:'original_official_bill_log_pdf_or_text_HOLD'});
+   const detail=e instanceof Error?e.message:'';
+   const category=/HTTP\/redirect/i.test(detail)?'original_pdf_http_or_official_redirect_HOLD':
+    /MIME|PDF size bound|PDF declared oversized/i.test(detail)?'original_pdf_response_format_or_size_HOLD':
+    /text, title or committee source/i.test(detail)?'original_pdf_extracted_text_heading_HOLD':
+    /bill section count/i.test(detail)?'original_pdf_bill_sections_HOLD':
+    /page count/i.test(detail)?'original_pdf_pagecount_HOLD':
+    /not a valid bounded PDF/i.test(detail)?'original_pdf_invalid_pdf_header_HOLD':
+    /ENOENT|spawn|pdftotext|pdfinfo/i.test(detail)?'original_pdf_extraction_executable_HOLD':
+    'original_pdf_transport_or_unclassified_integrity_HOLD';
+   holds.push({year:source.year,committeeName:source.committeeName,category});
   }
  }
  const byDay=HEADERS.flatMap(source=>{
@@ -224,6 +232,7 @@ async function main(){
   selectedUnresolvedOriginalClerkMeetings:14,
   originalOfficialPdfBodiesAndTextAuthenticated:docs.length,
   sourcePdfHolds:holds.length,
+  sourcesHeldByReviewedSafeCategory:holds,
   exactOriginalBillStatusRows:sum,
   byYear:docs.map(x=>({year:x.year,sourcePdfSha256:x.originalOfficialPdfSha256,
     pages:x.originalOfficialPdfPages,bytes:x.originalOfficialPdfBytes,
