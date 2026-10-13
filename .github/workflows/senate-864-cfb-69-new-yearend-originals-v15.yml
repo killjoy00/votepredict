@@ -29,7 +29,11 @@ jobs:
         run: node tests/cfb-864-served-report-version-ledger-v12.test.mjs
 
   live-original-pdf-source-only:
-    if: github.event_name == 'pull_request'
+    # Single source-proven acquisition COMPLETED in run 38355353281 at
+    # a8c265a56b3467030d6d31ac357a46ebbfc44a0d. Source artifact
+    # 11792916750 is pinned by its ZIP/JSON hashes in V15 checkpoint.
+    # Do not repeatedly hit 69 original PDFs for documentation-only pushes.
+    if: ${{ false }}
     needs: [offline-fixed-source-identity-tests]
     runs-on: ubuntu-latest
     timeout-minutes: 15
