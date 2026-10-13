@@ -71,7 +71,7 @@ export function chooseActual38ServingSenatorsIn2021And2022(){
    originalCfb2020CandidateLabel:p.originalCfbCandidateLabel,
    source2020District:p.originalCandidatePageDistrict,
    originalPageSha:p.originalCandidatePageSha256,
-   2021and2022ServiceDistricts:originalDistricts
+   servingDistricts2021And2022:originalDistricts
   };
  }).sort((a,b)=>a.source2020District-b.source2020District);
  return result;
@@ -137,7 +137,7 @@ function diagnosticForOfficialPdfFirstPage(t,text){
   printedNumberFoundNearRegLabel:near,
   differentDirectNumberPrinted:direct!==null&&!directOk,
   printedDistricts:[...new Set(senate)].sort((a,b)=>a-b),
-  printedDistrictMatchesIndependentlyServingOriginalTerm:[...new Set(senate)].some(x=>t["2021and2022ServiceDistricts"].includes(x))};
+  printedDistrictMatchesIndependentlyServingOriginalTerm:[...new Set(senate)].some(x=>t.servingDistricts2021And2022.includes(x))};
 }
 function originalHeader(t,ref,source,viewerSha,sourceError=null){
  const year=2000+Number(ref.year);
@@ -155,7 +155,7 @@ function originalHeader(t,ref,source,viewerSha,sourceError=null){
  const head=valid?parseServedYearEnd2021to22Header({
   reg:t.reg,reportId:id,year,person:t.officialSenator,
   electionDistrict:t.source2020District,
-  originalOfficial2021or2022SenateDistricts:t['2021and2022ServiceDistricts'],
+  originalOfficial2021or2022SenateDistricts:t.servingDistricts2021And2022,
   dueOn:DUE[String(year)],
   periodStartOn:year+'-01-01',periodEndOn:year+'-12-31'
  },source.text):null;
@@ -164,7 +164,7 @@ function originalHeader(t,ref,source,viewerSha,sourceError=null){
   year===2021?'2022-02-01':'2023-02-01'].sort().at(-1):null;
  return{
   id,person:t.officialSenator,sourceSenateDistrict:t.source2020District,
-  source2021and2022ServingDistricts:t['2021and2022ServiceDistricts'],
+  source2021and2022ServingDistricts:t.servingDistricts2021And2022,
   registration:t.reg,reportYear:year,amendmentIndex:ref.amendment,
   viewerApiSha256:viewerSha,
   originalCandidateSourcePageSha256:t.originalPageSha,
