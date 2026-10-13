@@ -51,7 +51,9 @@ test('wrong bill nearest preceding the tally must fail even when correct HF669 a
 test('multiple same tally and bill appearing independently creates ambiguity not fabricated one vote',()=>{
  const roll=voteBlock(ROLL_TARGETS[0]);
  const q=memberRollFromOriginalText(roll+'\n'+roll,ROLL_TARGETS[0]);
- assert.equal(q.certifiedUniqueDirectPersonalRollCount,2);
+ assert.equal(q.certifiedUniqueDirectPersonalRollCount,0);
+ assert.equal(q.uniquelyIdentifiedBillSpecificThirdReadingRollCount,0);
+ assert.equal(q.certifiedDirectMemberChoiceCount,0);
  assert.equal(q.certifiedUniqueDirectPersonalRoll,null);
 });
 test('separate HF669/HF670 same day have separate bill-anchored named rolls',()=>{
