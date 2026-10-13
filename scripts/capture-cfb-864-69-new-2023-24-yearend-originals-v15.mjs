@@ -272,7 +272,7 @@ async function main(){
   safeguards:{reportTextDonorRowsOrAmountsUploaded:false,
    historicalPublicByNeverDerivedFromBoardReceipt:true,
    specialReportsNotConflatedWithYearEnd:false,
-   2026SourceObservationNotBackdated:true,
+   sourceObservation2026NotBackdated:true,
    noPrivateNeonOrProductionAccess:true,
    noForecastEligibilityRecalculation:true,noDeploymentScheduler2027OrOutreach:true}
  };
