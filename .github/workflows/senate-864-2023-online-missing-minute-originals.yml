@@ -1,0 +1,60 @@
+name: '#864 source-only Senate online Minutes for missing LRL 2023 meetings'
+
+# This workflow accesses ONLY original public Minnesota Senate archived HTML.
+# It never runs a scheduler, reads Neon/private DB, uploads source HTML bodies,
+# replays positional vote keys or mutates production and models.
+on:
+  pull_request:
+    paths:
+      - src/evidence/senate-864-2023-online-missing-minutes.ts
+      - scripts/capture-senate-864-2023-online-missing-minutes.ts
+      - tests/senate-864-2023-online-missing-minutes.test.ts
+      - docs/evaluation/senate-864-2023-missing-pdf-alternate-senate-online-originals.md
+      - .github/workflows/senate-864-2023-online-missing-minute-originals.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  independent-official-online-minutes:
+    if: >-
+      github.repository == 'killjoy00/votepredict' &&
+      github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict'
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-fund --no-audit
+      - name: Fail-closed official no-PDF, original-motion and no-inferred-member regression tests
+        run: node --import tsx --test tests/senate-864-2023-online-missing-minutes.test.ts
+      - name: Exact original independent 1592 meeting LRL source-index metadata
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11674762938'
+          repository: killjoy00/votepredict
+          run-id: 38065594898
+          github-token: ${{ github.token }}
+          path: artifacts
+          merge-multiple: true
+      - name: Re-fetch and independently hash 14 bounded original Senate online Minutes
+        run: |
+          node --import tsx scripts/capture-senate-864-2023-online-missing-minutes.ts \
+            --source-index artifacts/senate-2021-25-official-meeting-census.json \
+            --output artifacts/2023-online-senate-no-LRL-minutes-original-source-actions.json
+      - name: Preserve public source receipt and categorized unresolved holds, even when source comparison fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: senate-864-2023-official-online-hearing-minute-action-proofs
+          path: artifacts/2023-online-senate-no-LRL-minutes-original-source-actions.json
+          if-no-files-found: ignore
+          retention-days: 30
