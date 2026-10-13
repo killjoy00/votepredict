@@ -91,5 +91,5 @@ test('run whole PDF byte SHA checks on all five versions; compare different Marc
  assert.equal(result.comparisons[2].sameNormalizedOriginalTextHash,false);
  assert.equal(result.observations.noExactMomentOfFloorDecisionStatutoryTextIndependentlyProved,true);
  assert.equal(result.noProductionWritesModelForecastTrainingServingOrDeployments,true);
- assert.ok(result.documents.every(x=>/^[a-f0-9]{64}$/.test(x.rawPdfSha256)&&x.sourcePdfOrFullBillTextNotPersisted));
+ assert.ok(result.documents.every(x=>/^[a-f0-9]{64}$/.test(x.originalPdfSha256)&&x.sourcePdfOrFullBillTextNotPersisted));
 });
