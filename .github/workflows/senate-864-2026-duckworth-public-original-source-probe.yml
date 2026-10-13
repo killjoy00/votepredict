@@ -4,6 +4,9 @@ on:
     paths:
       - data/evaluation/senate-864-2026-incumbent-duckworth-exact-speaker-leads-v1.json
       - data/evaluation/senate-864-2026-49-incumbent-public-source-reference-crosswalk-v1.json
+      - src/evidence/senate-864-2026-incumbent-source-parity.mjs
+      - scripts/audit-senate-864-2026-49-incumbent-existing-neon-parity.mjs
+      - .github/workflows/senate-864-2026-49-incumbent-existing-neon-parity.yml
       - scripts/probe-senate-864-2026-duckworth-dated-original-public-statements.mjs
       - tests/senate-864-2026-incumbent-duckworth-public-source.test.mjs
       - tests/senate-864-2026-49-incumbent-source-parity-boundary.test.mjs
@@ -17,7 +20,7 @@ jobs:
     if: >-
       github.repository == 'killjoy00/votepredict' &&
       github.event.pull_request.head.repo.full_name == 'killjoy00/votepredict' &&
-      github.event.pull_request.head.ref == 'research/864-2026-incumbent-source-parity-duckworth-20261012'
+      github.event.pull_request.head.ref == 'research/864-2026-incumbent-49-neon-parity-20261013'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
