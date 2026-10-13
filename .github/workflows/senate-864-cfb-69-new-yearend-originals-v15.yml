@@ -1,0 +1,53 @@
+name: 'Senate #864 69 new 2023-24 annual original CFB PDF source proofs V15'
+on:
+  pull_request:
+    paths:
+      - 'scripts/capture-cfb-864-69-new-2023-24-yearend-originals-v15.mjs'
+      - 'tests/cfb-864-69-new-yearend-originals-v15.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2023-24-35-senators-69-yearend-original-source-targets-v15.psv'
+      - 'docs/evaluation/cfb-2023-24-69-new-originals-source-checkpoint-v15.md'
+      - '.github/workflows/senate-864-cfb-69-new-yearend-originals-v15.yml'
+permissions:
+  contents: read
+jobs:
+  offline-fixed-source-identity-tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Validate 35 senator original-viewer source SHA and synthetic PDF identity/receipt gates
+        run: node --import tsx --test tests/cfb-864-69-new-yearend-originals-v15.test.mjs
+      - name: Recheck existing 229 authenticated original PDF baselines
+        run: node tests/cfb-864-served-report-version-ledger-v12.test.mjs
+
+  live-original-pdf-source-only:
+    if: github.event_name == 'pull_request'
+    needs: [offline-fixed-source-identity-tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Fetch, hash, and verify 69 exact historical original CFB PDF headers in ephemeral memory
+        run: node --import tsx scripts/capture-cfb-864-69-new-2023-24-yearend-originals-v15.mjs --output cfb-864-69-original-pdf-proof-v15.json
+      - name: Publish source-only metadata; never original report bodies or transactions
+        uses: actions/upload-artifact@v4
+        with:
+          name: cfb-864-69-original-pdf-proof-v15
+          path: artifacts/cfb-864-69-original-pdf-proof-v15.json
+          if-no-files-found: error
+          retention-days: 30
