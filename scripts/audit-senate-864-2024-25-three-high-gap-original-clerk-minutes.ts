@@ -211,7 +211,12 @@ async function main(){
  const actions=authenticated.reduce((n,x)=>n+(x.senateOriginal as any).canonicalMotionCandidates,0);
  const tally=authenticated.reduce((n,x)=>n+(x.senateOriginal as any).classificationCounts.countOnly,0);
  const voice=authenticated.reduce((n,x)=>n+(x.senateOriginal as any).classificationCounts.voiceAmendment,0);
- const resultOnly=actions-tally-voice;
+ const named=authenticated.reduce((n,x)=>n+(x.senateOriginal as any).classificationCounts.explicitNamedRolls,0);
+ const namedOriginalChoiceEntries=authenticated.reduce((n,x)=>n+
+   (x.senateOriginal as any).classificationCounts.sourceExplicitNamedYeaNayEntries,0);
+ const resultOnly=actions-tally-voice-named;
+ if(resultOnly<0||namedOriginalChoiceEntries<named)
+  throw Error('Explicitly named original source choice partition inconsistent with total actions');
  const cohorts=([
   {year:2024,committeeName:'Taxes',n:23},
   {year:2024,committeeName:'State and Local Government and Veterans',n:13},
@@ -234,6 +239,8 @@ async function main(){
    originalSourceCalendarOrClerkHolds:c.n-yes.length,
    originalCalendarCanceledAndClerkBodyBothAuthenticated:yes.filter(x=>(x.senateOriginal as any).exactCalendarMarkedCanceled).length,
    sourceMotionCandidates:yes.reduce((n,x)=>n+(x.senateOriginal as any).canonicalMotionCandidates,0),
+   independentlyNamedOriginalRollsWithoutHistoricallyJoinedMembers:yes.reduce((n,x)=>n+
+    (x.senateOriginal as any).classificationCounts.explicitNamedRolls,0),
    officialAllRecordedActionsDenominator:null,
    originalSenatorIndividualVoteSidesInferred:0
   };
@@ -258,6 +265,8 @@ async function main(){
   originalCalendarCancellationVsArchivedClerkMinutesConflicts:authenticated.filter(x=>(x.senateOriginal as any).exactCalendarMarkedCanceled).length,
   recognizedNonExhaustiveSourceActionCandidates:actions,
   recognizedResultOnlyActions:resultOnly,recognizedCountOnlyRollCalls:tally,
+  originalExplicitNamedRollSourceCandidates:named,
+  originalExplicitNamedYeaNayChoiceEntriesButNoHistoricallyJoinedIds:namedOriginalChoiceEntries,
   recognizedVoiceAmendmentCues:voice,
   originalLrlNoPdfMeetingsCannotBeCalledNoVoteOrNoMinutes:true,
   originalHtmlFirstPublicByDatesKnown:0,
@@ -281,6 +290,8 @@ async function main(){
   sourceAuthenticatedClerkMinutes:authenticated.length,
   sourceHolds:53-authenticated.length,actionCandidates:actions,
   resultOnly,aggregateCountOnly:tally,voiceCues:voice,
+  sourceExplicitNamedRollCandidates:named,
+  sourceExplicitNamedYeaNayChoiceEntries:namedOriginalChoiceEntries,
   canceledCalendarVsClerkBody:report.originalCalendarCancellationVsArchivedClerkMinutesConflicts,
   cohorts:cohorts.map(x=>({year:x.year,committee:x.committeeName,
    originalMinutes:x.originalClerkMinutesHtmlAuthenticated,
@@ -302,6 +313,8 @@ async function main(){
    clerkOriginalHtmlBytes:(r.senateOriginal as any)?.originalClerkHtmlBytes??null,
    actionCandidates:(r.senateOriginal as any)?.canonicalMotionCandidates??null,
    resultOnly:(r.senateOriginal as any)?.classificationCounts?.resultOnly??null,
+   originalExplicitNamedRolls:(r.senateOriginal as any)?.classificationCounts?.explicitNamedRolls??null,
+   originalExplicitNamedChoiceEntries:(r.senateOriginal as any)?.classificationCounts?.sourceExplicitNamedYeaNayEntries??null,
    countOnly:(r.senateOriginal as any)?.classificationCounts?.countOnly??null,
    voice:(r.senateOriginal as any)?.classificationCounts?.voiceAmendment??null,
    canceledAndClerkProven:(r.senateOriginal as any)?.calendarCanceledAndSenateClerkMinutesBodyBothPresent??null,
