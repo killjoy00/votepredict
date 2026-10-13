@@ -153,6 +153,26 @@ async function main(){
   individualPositionsInferred:false,
   existingDatabaseAccess:false,allHistoryComplete:false
  }));
+ // Each immutable original source receipt is a public hearing's metadata only.
+ // Emitting SHA + date + hearing ID allows permanent verification even after
+ // the 30-day artifact expires. No extracted text, people, vote choices or
+ // individual-choice hashes can appear in this constrained projection.
+ const sourceReceipts=ok.map(x=>({
+  committeeName:x.committeeName,hearingDate:x.hearingDate,
+  officialSenateHearingId:x.officialSenateHearingId,
+  originalSourceUrl:x.originalSourceUrl,
+  sourceOriginalHtmlBytes:x.sourceOriginalHtmlBytes,
+  sourceOriginalHtmlSha256:x.sourceOriginalHtmlSha256,
+  normalizedOriginalTextSha256:x.normalizedOriginalTextSha256,
+  retrievedAt:x.retrievedAt,
+  parsedResultOnlyActionCandidates:x.parsedResultOnlyActionCandidates,
+  independentHtmlPublicationAt:null,
+  namedMemberVotesInferred:0,
+ }));
+ const projection=JSON.stringify(sourceReceipts);
+ if(projection.length>14000||/normalized_member_name|membership_id|choiceIdentitySha256|sourceMotionText|sourceName/i.test(projection))
+  throw Error('Public source receipt projection violates names/choice/text boundary');
+ console.log('SENATE_864_ONLINE_2023_ORIGINAL_SOURCE_RECEIPTS='+projection);
  if(recovered!==MAX_ROWS||held.length||actions<16)process.exitCode=1;
 }
 main().catch(()=>{
