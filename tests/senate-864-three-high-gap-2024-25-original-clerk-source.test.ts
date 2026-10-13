@@ -203,3 +203,46 @@ test('calendar lone Senate anchor is rejected when another card contradicts iden
  const dup=inspectOriginalGovernmentCombinedDay(calendar(state,18636,{duplicate:true}),state);
  assert.equal(dup.uniqueSenateAnchorHearingIdRequiringIndependentClerkBody,null);
 });
+
+test('distinct explicitly named amendment rolls with identical committees and same bill remain independent source records, NO DB member-vote import',()=>{
+ const d=inspectOriginalGovernmentCombinedDay(calendar(state,18532,{canceled:true}),state);
+ const yes=['FictionalAtlas','FictionalBirch','FictionalCedar','FictionalDalia',
+  'FictionalEcho','FictionalFable','FictionalGrove'];
+ const no=['FictionalHawk','FictionalIris','FictionalJuniper','FictionalKilo',
+  'FictionalLotus','FictionalMaple'];
+ const block=minute(state,
+  '<p>S.F. 3787: Senator Fictional Atlas: Historic measure.</p>'+
+  '<p>Senator Fictional Hawk moved the A11 amendment. Senator Fictional Birch requested a roll call vote for the adoption of A11 amendment. 7/6 (Ayes: '+yes.join(', ')+'; Nays: '+no.join(', ')+') MOTION PREVAILED.</p>'+
+  '<p>Senator Fictional Birch moved the A10 amendment. Senator Fictional Maple requested a roll call vote. 6/7 (Ayes: '+no.join(', ')+'; Nays: '+yes.join(', ')+') MOTION FAILED.</p>',
+  'Thursday, March 14, 2024');
+ const x=inspectOriginalHighGapSenateClerkHtml(block,state,18532,d,'2026-10-13T07:55:00Z');
+ assert.equal(x.canonicalMotionCandidates,2);
+ assert.equal(x.classificationCounts.explicitNamedRolls,2);
+ assert.equal(x.classificationCounts.sourceExplicitNamedYeaNayEntries,26);
+ assert.deepEqual(x.actions.map(a=>[a.billReference,a.amendmentReference,
+  a.evidenceClassification,a.explicitYeaCount,a.explicitNayCount,a.sourceResult]),[
+   ['SF3787','A11','explicit_named_roll',7,6,'prevailed'],
+   ['SF3787','A10','explicit_named_roll',6,7,'failed'],
+ ]);
+ assert.ok(x.actions.every(a=>a.originalExplicitNamedChoiceCount===13&&
+  a.sourceExactNamedTallyAndUniqueNamesVerified===true&&
+  a.namedMemberChoiceStatus==='explicitly_named_in_original_clerk_minutes_no_historical_day_roster_or_db_join'));
+ assert.ok(x.actions.every(a=>a.originalMotionTextContainsNamedSidesButPublishedExcerptRedacted===true));
+ assert.ok(x.actions.every(a=>!a.observedMotionText.includes('FictionalIris')&&
+  !a.observedMotionText.includes('FictionalAtlas')&&a.observedMotionText.includes('redacted')));
+ assert.notEqual(x.actions[0]?.boundedOriginalMotionSha256,x.actions[1]?.boundedOriginalMotionSha256);
+ assert.equal(x.allIndividualVoterSidesUnknownInThisParser,false);
+ assert.equal(x.noDirectSourceToMemberVoteImport,true);
+});
+test('named source roll with duplicate voter, side mismatch or bad tally holds without inferring senator support',()=>{
+ const d=inspectOriginalGovernmentCombinedDay(calendar(state,18532),state);
+ const org=minute(state,
+  '<p>S.F. 3787: Senator Fictional Atlas: Hearing item.</p>'+
+  '<p>Senator Fictional Birch moved A11 amendment. 2/1 (Ayes: FictionalAtlas, FictionalBirch; Nays: FictionalBirch) MOTION FAILED.</p>',
+  'Thursday, March 14, 2024');
+ assert.throws(()=>inspectOriginalHighGapSenateClerkHtml(org,state,18532,d,
+  '2026-10-13T07:55:00Z'),/mismatched tally.*duplicate identity|duplicate identity/);
+ const fewer=org.replace('2/1 (Ayes:','3/1 (Ayes:');
+ assert.throws(()=>inspectOriginalHighGapSenateClerkHtml(fewer,state,18532,d,
+  '2026-10-13T07:55:00Z'),/mismatched tally/);
+});
