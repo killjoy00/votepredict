@@ -24,6 +24,12 @@ async function main(): Promise<void> {
     // Never authenticate a source-body receipt under those conditions.
     throw new Error('HOLD: original Senate Journal PDF body hash/byte integrity invalid');
   }
+  const extractedTextSha256 = createHash('sha256').update(original.text).digest('hex');
+  if (ledger.source.rawPdfSha256 && ledger.source.rawPdfSha256 !== original.pdfSha256
+    || ledger.source.extractedTextSha256 && ledger.source.extractedTextSha256 !== extractedTextSha256
+    || ledger.source.originalPdfByteLength != null && ledger.source.originalPdfByteLength !== original.byteLength) {
+    throw new Error('HOLD: independently SHA-pinned original Senate Journal changed or was not faithfully acquired');
+  }
   const proof = verifyHf100April28JournalText(original.text, ledger);
   const receipt = {
     schemaVersion: 'mn-hf100-apr28-source-body-integrity-receipt-v1',
@@ -31,7 +37,7 @@ async function main(): Promise<void> {
     originalOfficialUrl: ledger.source.url,
     sourcePdfSha256: original.pdfSha256,
     sourcePdfBytes: original.byteLength,
-    extractedTextSha256: createHash('sha256').update(original.text).digest('hex'),
+    extractedTextSha256,
     sourceActionsVerified: proof.originalSourceActionsVerified,
     namedRollsVerified: proof.namedRollsVerified,
     voiceOrResultOnlyDecisions: proof.voiceOnlyDecisionsVerified,
