@@ -1,4 +1,5 @@
 import test from 'node:test';
+import {readFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
 import {
  SENATE_864_ONLINE_MISSING_MINUTE_TARGETS,
@@ -155,4 +156,42 @@ test('mere roll-call phrase, opening attendance and unlinked numeric tallies can
  assert.equal(x.actions[0]?.yeaCount,null);
  assert.equal(x.actions[0]?.absentCount,null);
  assert.equal(x.sourceHasPossibleNamedRollCallOrTallyCue,true);
+});
+
+test('independently authenticated original 14 Senate HTML body SHA + 31/2 action receipt remains an immutable 64-no-LRL-PDF subset',()=>{
+ const proof=JSON.parse(readFileSync(
+  'docs/evaluation/source-proof/senate-864-2023-14-senate-online-original-html-source-receipts.json','utf8'));
+ assert.equal(proof.schemaVersion,'senate-864-2023-original-14-senate-clerk-minutes-sha-receipts-v1');
+ assert.equal(proof.originalSenateOnlineMinutesSourceRun.runId,38339994639);
+ assert.equal(proof.originalSenateOnlineMinutesSourceRun.sourceArtifactId,11786463448);
+ assert.equal(proof.originalSenateOnlineMinutesSourceRun.sourceArtifactZipSha256,
+  '8a0f31a90127ad099ff8ab52e718bd13e586f3de08f94d2bbad9e2413c635518');
+ assert.equal(proof.inheritedOfficialLrl2022To2025Census.year2023IndexedMeetingsWithoutLinkedMinutesPdf,64);
+ assert.equal(proof.verifiedOriginals.length,14);
+ assert.equal(proof.sourceProvenResultOnlyMotionCandidates,31);
+ assert.equal(proof.sourceProvenCountOnlyRollCallCandidates,2);
+ assert.equal(proof.verifiedOriginals.reduce((sum:number,x:any)=>
+  sum+x.parsedResultOnlyActionCandidates,0),31);
+ assert.equal(proof.verifiedOriginals.reduce((sum:number,x:any)=>
+  sum+x.parsedCountOnlyRollCallCandidates,0),2);
+ const known=new Set(SENATE_864_ONLINE_MISSING_MINUTE_TARGETS.map(t=>
+  [t.committeeName,t.day,t.hearingId].join('|')));
+ const seen=new Set();
+ for(const source of proof.verifiedOriginals){
+  const key=[source.committeeName,source.hearingDate,source.officialSenateHearingId].join('|');
+  assert.ok(known.has(key));
+  assert.ok(!seen.has(key));seen.add(key);
+  assert.match(source.originalSourceUrl,/^https:\/\/www\.senate\.mn\/schedule\/hearing_minutes\.html\?/);
+  assert.match(source.sourceOriginalHtmlSha256,/^[0-9a-f]{64}$/);
+  assert.match(source.normalizedOriginalTextSha256,/^[0-9a-f]{64}$/);
+  assert.equal(source.independentHtmlPublicationAt,null);
+  assert.equal(source.namedMemberVotesInferred,0);
+  assert.ok(source.sourceOriginalHtmlBytes>=1500);
+ }
+ assert.equal(seen.size,14);
+ assert.equal(proof.independentlyEstablishedHistoricalHtmlPublishedAtCount,0);
+ assert.equal(proof.allParsedCandidatesExhaustiveOfOriginalOfficialMotions,false);
+ assert.equal(proof.currentPersistedEventChoiceEqualityCertified,false);
+ const publicBody=JSON.stringify(proof);
+ assert.doesNotMatch(publicBody,/choiceIdentitySha256|normalized_member_name|membership_id|originalSourceHtmlBody/);
 });
