@@ -12,6 +12,7 @@ import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
 import candidates from '../data/evaluation/senate-864-2026-49-incumbent-public-source-reference-crosswalk-v1.json' with {type:'json'};
 import duckworth from '../data/evaluation/senate-864-2026-incumbent-duckworth-exact-speaker-leads-v1.json' with {type:'json'};
+import verifiedDuckworth2026RawHtml from '../data/evaluation/senate-864-2026-duckworth-four-live-publisher-original-sha-receipts-v1.json' with {type:'json'};
 import {
  auditPublic2026IncumbentSourceManifest,compare49IncumbentSources,publicUrlVariants,
 } from '../src/evidence/senate-864-2026-incumbent-source-parity.mjs';
@@ -76,6 +77,8 @@ export function validateSanitizedReport(r){
  assert.equal(r.productionMutations,0);
  assert.equal(r.deployedProductionDbBindingProven,false);
  assert.equal(r.currentSourceOriginalHtmlRawShaParityProven,false);
+ assert.equal(r.duckworthLiveOriginalRawShaComparedAgainstStoredSourceSha,true);
+ assert.ok(Number.isInteger(r.duckworth.exactLiveWholePublisherHtmlShaMatches)&&r.duckworth.exactLiveWholePublisherHtmlShaMatches>=0&&r.duckworth.exactLiveWholePublisherHtmlShaMatches<=4);
  assert.equal(r.outputContainsPrivateSourceRows,false);
  assert.equal(r.outputContainsPrivateUrls,false);
  assert.equal(r.outputContainsPrivatePeopleNames,false);
@@ -143,7 +146,7 @@ export async function auditExistingVotePredict49SourceParity(
    stage('private_source_rows_bounded_in_memory');
    // No existing row is printed, saved as an artifact or returned to GitHub.
    const publicOnly=compare49IncumbentSources(candidates,duckworth,
-     memberSet.rows,evidenceSet.rows);
+     memberSet.rows,evidenceSet.rows,verifiedDuckworth2026RawHtml);
    await client.query('ROLLBACK');open=false;
    stage('readonly_rollback_succeeded');
    return validateSanitizedReport({...publicOnly,
