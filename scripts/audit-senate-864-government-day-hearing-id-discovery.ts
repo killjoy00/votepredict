@@ -48,6 +48,7 @@ async function get(url:string){
  if(a.byteLength<300||a.byteLength>2_000_000)throw Error('Government original day HTML out of bounds');
  return {text:new TextDecoder('utf-8',{fatal:true}).decode(a),bytes:a.length};
 }
+async function main(){
 for(const c of cases){
  for(const sourceType of ['leg','senate'] as const){
   const [y,m,d]=c.date.split('-'),url=sourceType==='leg'?
@@ -67,3 +68,6 @@ for(const c of cases){
   }
  }
 }
+
+}
+main().catch(()=>{console.error('SENATE864_GOV_CALENDAR_PROBE_HOLD=unexpected');process.exitCode=1});
