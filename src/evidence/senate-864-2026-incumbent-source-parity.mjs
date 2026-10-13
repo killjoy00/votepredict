@@ -236,7 +236,7 @@ export function compare49IncumbentSources(m,d,sqlMemberships,sqlSourceEvidence,p
  * initial publication or predictive legal eligibility. All private identities,
  * content and original source fingerprints stay in the protected runner.
  */
-const PUBLISHED_FIELD=/^(?:20[0-9]{2}-\d\d-\d\d(?:\s|T)|)$/;
+const PUBLISHED_FIELD=/^20[0-9]{2}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:[+-]\d{2}(?::?\d{2})?|Z)?$/;
 const MAX_COUNT=100000;
 export const V2_MEMBER_METRICS=[
  'campaignIssueRowsCurrentMembership',
