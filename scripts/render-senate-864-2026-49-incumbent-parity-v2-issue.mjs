@@ -50,7 +50,7 @@ function compactV2Snapshot(encoded){
   ||r.currentTransactionReadOnly!==true||r.transactionRollbackCompleted!==true
   ||r.productionMutations!==0||r.deployedProductionDbBindingProven!==false
   ||r.calendarYearIsStoredPublishedAtMetadataNotIndependentOriginalPublication!==true
-  ||r.2026ElectionEligibleStatementCompletenessProven!==false
+  ||r.election2026EligibleStatementCompletenessProven!==false
   ||r.memberRowsAreAggregateCountsOnly!==true
   ||r.outputContainsPrivateSourceRows!==false||r.outputContainsPrivateUrls!==false
   ||r.outputContainsPrivatePeopleNames!==false||r.outputContainsPrivateHashes!==false
