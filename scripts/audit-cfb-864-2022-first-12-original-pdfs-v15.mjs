@@ -85,7 +85,7 @@ export function joinOfficial2022DistrictLabelsToSenateService(observations,
   const companion=targets.find(t=>t.district===district && t.period==='E');
   if(!companion||companion.reg!==target.reg)throw Error('Official C/E original parent registration drift');
   const page=pages.get(district);
-  let status='official_page_not_acquired_hold',person=null;
+  let status='official_page_not_acquired_hold',person=null,possibleNameAliasOf=null;
   if(page){
    if(page.status==='candidate_labels_observed'
      &&page.candidates?.length&&HEX.test(page.htmlSha256??'')){
@@ -99,12 +99,27 @@ export function joinOfficial2022DistrictLabelsToSenateService(observations,
        status='original_CFB_district_label_and_actual_Senate_service_verified';
        person=serving.name;
       }else status='name_matches_senator_but_district_service_year_unconfirmed_hold';
-     }else status='registration_label_not_uniquely_proven_serving_senator_hold';
+     }else{
+      // Diagnostic only: the original CFB display label may use a nickname,
+      // but an exact shared surname and 2022/2023 district NEVER by itself
+      // authenticates identity or a distinct CFB registration.
+      const originalLabel=matched[0].candidateDisplayName;
+      const labelParts=String(originalLabel).split(',').map(x=>x.trim());
+      if(labelParts.length===2 && labelParts[0] && labelParts[1]){
+       const surname=identityKey(labelParts[0]+', '+labelParts[1],true)?.split('|').at(-1);
+       const eligible=[...roster.values()].filter(r=>
+        (r.districts.has('2022:'+district)||r.districts.has('2023:'+district))
+        &&identityKey(r.name)?.split('|').at(-1)===surname);
+       if(eligible.length===1)possibleNameAliasOf=eligible[0].name;
+      }
+      status='registration_label_not_uniquely_proven_serving_senator_hold';
+     }
     }else status='registration_not_uniquely_in_source_district_hold';
    }else status='official_page_or_candidate_labels_unverified_hold';
   }
   const entry={
    district,registration:target.reg,observedMatchedOfficialSenator:person,
+   independentlyUnverifiedNicknameIdentityLead:possibleNameAliasOf,
    sourceStatus:status,
    originalDistrict2022SourcePageSha256:page?.htmlSha256??null,
    originalDistrictSourcePageStatus:page?.status??'not_acquired',
