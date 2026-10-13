@@ -4,6 +4,9 @@ on:
     paths:
       - 'scripts/capture-cfb-864-69-new-2023-24-yearend-originals-v15.mjs'
       - 'tests/cfb-864-69-new-yearend-originals-v15.test.mjs'
+      - 'tests/cfb-864-69-pinned-results-v15.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2023-24-69-original-pdf-source-results-v15.psv'
+      - 'docs/evaluation/source-proof/cfb-2023-24-69-original-pdf-source-result-checkpoint-v15.json'
       - 'docs/evaluation/source-proof/cfb-2023-24-35-senators-69-yearend-original-source-targets-v15.psv'
       - 'docs/evaluation/cfb-2023-24-69-new-originals-source-checkpoint-v15.md'
       - '.github/workflows/senate-864-cfb-69-new-yearend-originals-v15.yml'
@@ -25,6 +28,8 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - name: Validate 35 senator original-viewer source SHA and synthetic PDF identity/receipt gates
         run: node --import tsx --test tests/cfb-864-69-new-yearend-originals-v15.test.mjs
+      - name: Verify immutable 69 original-PDF source receipts against independently downloaded artifact hashes
+        run: node --test tests/cfb-864-69-pinned-results-v15.test.mjs
       - name: Recheck existing 229 authenticated original PDF baselines
         run: node tests/cfb-864-served-report-version-ledger-v12.test.mjs
 
