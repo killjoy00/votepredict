@@ -4,6 +4,8 @@ on:
     paths:
       - 'scripts/acquire-cfb-864-thirteen-served-2023-24-original-amended-yearend-pdfs-v18.mjs'
       - 'tests/cfb-864-thirteen-2023-24-yearend-version-pdfs-v18.test.mjs'
+      - 'docs/evaluation/source-proof/cfb-2023-24-thirteen-served-43-original-amended-yearend-pdfs-v18.psv'
+      - 'docs/evaluation/source-proof/cfb-2023-24-13-serving-original-amended-source-checkpoint-v18.json'
       - 'docs/evaluation/cfb-2023-24-thirteen-serving-senators-yearend-version-pdf-v18.md'
       - '.github/workflows/senate-864-13-served-2023-24-original-amended-yearend-pdfs-v18.yml'
 
